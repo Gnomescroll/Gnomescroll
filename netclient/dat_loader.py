@@ -84,7 +84,7 @@ class Dat(object):
         for prop in self.dat[0].keys():
             setattr(obj, prop, self.get(obj.type, prop))
 
-w_dat = Dat('weapons')
+#w_dat = Dat('weapons')
 #i_dat = Dat('items')
 #p_dat = Dat('projectiles')
 c_dat = Dat('cubes')

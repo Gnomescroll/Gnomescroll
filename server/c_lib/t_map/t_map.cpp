@@ -7,40 +7,6 @@
 #include <stdlib.h>
 
 #include <c_lib/common/functional.h>
-#include <c_lib/template/net.hpp>
-
-/* Network */
-class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
-{
-    public:
-
-        int x,y,z;
-        int val;
-        
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u16(&x, buff, buff_n, pack);
-            pack_u16(&y, buff, buff_n, pack);
-            pack_u16(&z, buff, buff_n, pack);
-            pack_u16(&val, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-            _set(x,y,z,val);
-        }
-
-        block_StoC(int x, int y, int z, int val) {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->val = val;
-        }
-        
-        block_StoC() {
-            x=y=z=val=0;
-        }
-};
-
 /*
     Non-networking
 */
@@ -361,19 +327,44 @@ int _get_lowest_solid_block(int x, int y) {
 }
 
 int _set_broadcast(int x, int y, int z, int value) {
-    block_StoC* msg;
+    static block_StoC msg;
     int i,j=0;
     i = _get(x,y,z);
     if (i != value) {
         j = _set(x,y,z, value);
-        msg = new block_StoC(x,y,z,value);
-        msg->broadcast();
+        msg.x = x;
+        msg.y = y;
+        msg.z = z;
+        msg.val = value;
+        msg.broadcast();
     }
     return j;
 }
 
 void _block_broadcast(int x, int y, int z, int value) {
-    block_StoC* msg;
-    msg = new block_StoC(x,y,z, value);
-    msg->broadcast();
+    static block_StoC msg;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
+    msg.val = value;
+    msg.broadcast();
 }
+
+
+#ifdef DC_CLIENT
+#include <c_lib/animations/animations.hpp>
+#include <c_lib/common/random.h>
+inline void block_StoC::handle() {
+    int cube_id = _get(x,y,z);
+    Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
+    _set(x,y,z,val);
+}
+inline void block_CtoS::handle(){}
+#endif
+
+#ifdef DC_SERVER
+inline void block_CtoS::handle() {
+    _set(x,y,z, val);
+}
+inline void block_StoC::handle() {}
+#endif

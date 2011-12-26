@@ -1,5 +1,7 @@
 #include "packets.hpp"
 
+#include <c_lib/weapons/weapons.hpp>
+
 namespace Weapons {
 
 #ifdef DC_CLIENT

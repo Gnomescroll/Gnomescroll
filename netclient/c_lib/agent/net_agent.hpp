@@ -452,3 +452,59 @@ class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicide
         }
         inline void handle();
 };
+
+class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentActiveWeapon_StoC>
+{
+    public:
+        int id;
+        int slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
+{
+    public:
+        int id;
+        int slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentReloadWeapon_StoC>
+{
+    public:
+        int id;
+        int type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
+{
+    public:
+        int id;
+        int type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+        inline void handle();
+};

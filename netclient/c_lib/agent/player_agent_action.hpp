@@ -14,7 +14,10 @@ class PlayerAgent_action {
         PlayerAgent_action(PlayerAgent_state* player_agent): p(player_agent) {}
 
         void fire();
+        void hitscan();
         void hit_block();
+        void set_block();
         void throw_grenade();
-        
+
+        void reload();
 };

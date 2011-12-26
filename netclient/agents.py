@@ -17,107 +17,107 @@ from net_out import NetOut
 from input import InputGlobal
 import camera
 
-class AgentWeapons(object):
+#class AgentWeapons(object):
 
-    max_weapons = 8
+    #max_weapons = 8
 
-    def __init__(self, agent, weapons=None):
-        self.agent = agent
+    #def __init__(self, agent, weapons=None):
+        #self.agent = agent
 
-        if weapons is None:
-            weapons = []
-            active_weapon = None
-        else:
-            if 'active' in weapons:
-                active_weapon = weapons['active']
-            else:
-                active_weapon = None
-            if 'weapons' in weapons:
-                weapons = weapons['weapons']
-            else:
-                weapons = []
+        #if weapons is None:
+            #weapons = []
+            #active_weapon = None
+        #else:
+            #if 'active' in weapons:
+                #active_weapon = weapons['active']
+            #else:
+                #active_weapon = None
+            #if 'weapons' in weapons:
+                #weapons = weapons['weapons']
+            #else:
+                #weapons = []
 
-        weapon_objs = []
-        for weapon in weapons:
-            known_weapon = GameStateGlobal.weaponList.get(weapon['id'], None)
-            if known_weapon is None:
-                known_weapon = GameStateGlobal.weaponList.create(**weapon)
-            weapon_objs.append(known_weapon)
-        self.weapons = weapon_objs
+        #weapon_objs = []
+        #for weapon in weapons:
+            #known_weapon = GameStateGlobal.weaponList.get(weapon['id'], None)
+            #if known_weapon is None:
+                #known_weapon = GameStateGlobal.weaponList.create(**weapon)
+            #weapon_objs.append(known_weapon)
+        #self.weapons = weapon_objs
 
-        if active_weapon is None:
-            self._active_weapon = None
-            self._adjust_active_weapon()
-        else:
-            self._active_weapon = active_weapon #    which weapon is held
+        #if active_weapon is None:
+            #self._active_weapon = None
+            #self._adjust_active_weapon()
+        #else:
+            #self._active_weapon = active_weapon #    which weapon is held
     
-    def active(self):
-        if self._active_weapon is None:
-            return None
-        return self.weapons[self._active_weapon]
+    #def active(self):
+        #if self._active_weapon is None:
+            #return None
+        #return self.weapons[self._active_weapon]
 
 
-    def update_info(self, **weapons_data):
-        if 'weapons' in weapons_data:
-            weapons = weapons_data['weapons']
-            new_weapons = []
-            for weapon in weapons:
-                try:
-                    wid = weapon['id']
-                except KeyError:
-                    print 'WARNING: Weapon updating via agent; weapon id missing'
-                    continue
-                known_weapon = GameStateGlobal.weaponList.get(wid, None)
-                if known_weapon is None: # agent assigned unknown weapon
-                    known_weapon = GameStateGlobal.weaponList.create(**weapon)
-                else:
-                    known_weapon.update_info(**weapon)
-                new_weapons.append(known_weapon)
-            self.weapons = new_weapons
-            self._adjust_active_weapon()
+    #def update_info(self, **weapons_data):
+        #if 'weapons' in weapons_data:
+            #weapons = weapons_data['weapons']
+            #new_weapons = []
+            #for weapon in weapons:
+                #try:
+                    #wid = weapon['id']
+                #except KeyError:
+                    #print 'WARNING: Weapon updating via agent; weapon id missing'
+                    #continue
+                #known_weapon = GameStateGlobal.weaponList.get(wid, None)
+                #if known_weapon is None: # agent assigned unknown weapon
+                    #known_weapon = GameStateGlobal.weaponList.create(**weapon)
+                #else:
+                    #known_weapon.update_info(**weapon)
+                #new_weapons.append(known_weapon)
+            #self.weapons = new_weapons
+            #self._adjust_active_weapon()
 
-        if 'active' in weapons_data:
-            self._active_weapon = weapons_data['active']
+        #if 'active' in weapons_data:
+            #self._active_weapon = weapons_data['active']
 
-    def drop(self, weapon):
-        self.weapons.remove(weapon)
-        self._adjust_active_weapon()
+    #def drop(self, weapon):
+        #self.weapons.remove(weapon)
+        #self._adjust_active_weapon()
 
-    def add(self, weapon, index=None):
-        if index is None:
-            self.weapons.append(weapon)
-        else:
-            self.weapons.insert(index, weapon)
-        self._adjust_active_weapon()
+    #def add(self, weapon, index=None):
+        #if index is None:
+            #self.weapons.append(weapon)
+        #else:
+            #self.weapons.insert(index, weapon)
+        #self._adjust_active_weapon()
 
-    def _adjust_active_weapon(self):
-        n = len(self)                   # number of weapons
-        aw = self._active_weapon        # active list index in weapons
+    #def _adjust_active_weapon(self):
+        #n = len(self)                   # number of weapons
+        #aw = self._active_weapon        # active list index in weapons
 
-        if aw is None:                 # no weapon equipped (default init state)
-            if n > 0:                   # if there are weapons now
-                aw = 0                  # set it to the first weapon
+        #if aw is None:                 # no weapon equipped (default init state)
+            #if n > 0:                   # if there are weapons now
+                #aw = 0                  # set it to the first weapon
 
-        else:                               # weapon is currently equipped
-            last_weapon = n - 1
-            if aw > last_weapon:                  # num weapons shrunk below active index
-                aw = last_weapon                  # set active to last weapon
-                if aw < 0:                  # if there are no weapons
-                    aw = None               # active is None
+        #else:                               # weapon is currently equipped
+            #last_weapon = n - 1
+            #if aw > last_weapon:                  # num weapons shrunk below active index
+                #aw = last_weapon                  # set active to last weapon
+                #if aw < 0:                  # if there are no weapons
+                    #aw = None               # active is None
 
-        self._active_weapon = aw
+        #self._active_weapon = aw
 
-    def has(self, weapon_type):
-        for weapon in self.weapons:
-            if weapon.type == weapon_type:
-                return weapon
-        return False
+    #def has(self, weapon_type):
+        #for weapon in self.weapons:
+            #if weapon.type == weapon_type:
+                #return weapon
+        #return False
 
-    def __len__(self):
-        return len(self.weapons)
+    #def __len__(self):
+        #return len(self.weapons)
 
-    def __iter__(self):
-        return iter(self.weapons)
+    #def __iter__(self):
+        #return iter(self.weapons)
 
 
 '''
@@ -171,77 +171,78 @@ class Agent(AgentModel):
         print 'Python Agent creation: id %s' % (self.id,)
         self.weapons = AgentWeapons(self, weapons)
 
-class PlayerAgentWeapons(AgentWeapons):
+#class PlayerAgentWeapons(AgentWeapons):
+class PlayerAgentWeapons():
 
-    def __init__(self, agent, weapons=None):
-        AgentWeapons.__init__(self, agent, weapons)
+    #def __init__(self, agent, weapons=None):
+    def __init__(self, agent):
+        #AgentWeapons.__init__(self, agent, weapons)
         self.set_hud_icons()
 
     def switch(self, weapon_index):
         if self.agent.team.viewers:
             return
-        old = self._active_weapon
-        num_weapons = len(self.weapons)
+        old = self.agent.active_weapon
+        #num_weapons = len(self.weapons)
         if num_weapons == 0:
-            self._active_weapon = None
+            self.agent.active_weapon = None
             if old is not None:
-                NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+                NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
             return
 
         if type(weapon_index) == int:
             weapon_index += -1
 
-        if self._active_weapon is None:
+        if self.agent.active_weapon is None:
             active = 0
 
         if weapon_index == 'up':
-            if self._active_weapon is None:
-                self._active_weapon = 0
+            if self.agent.active_weapon is None:
+                self.agent.active_weapon = 0
             else:
-                self._active_weapon = (self._active_weapon + 1) % num_weapons
+                self.agent.active_weapon = (self.agent.active_weapon + 1) % num_weapons
         elif weapon_index == 'down':
-            if self._active_weapon is None:
-                self._active_weapon = num_weapons - 1
+            if self.agent.active_weapon is None:
+                self.agent.active_weapon = num_weapons - 1
             else:
-                self._active_weapon = (self._active_weapon - 1) % num_weapons
+                self.agent.active_weapon = (self.agent.active_weapon - 1) % num_weapons
         elif weapon_index < num_weapons:
-                self._active_weapon = weapon_index
+                self.agent.active_weapon = weapon_index
 
-        if old != self._active_weapon:
+        if old != self.agent.active_weapon:
             camera.camera.unzoom()
-            NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+            NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
 
         print 'weapon is: %s' % (self.active(),)
 
-    def drop(self, weapon):
-        old_len = len(self.weapons)
-        AgentWeapons.drop(self, weapon)
-        if old_len != len(self.weapons):
-            NetOut.sendMessage.drop_weapon(self.agent, weapon.id)
+    #def drop(self, weapon):
+        #old_len = len(self.weapons)
+        #AgentWeapons.drop(self, weapon)
+        #if old_len != len(self.weapons):
+            #NetOut.sendMessage.drop_weapon(self.agent, weapon.id)
 
-    def _adjust_active_weapon(self):
-        prev = self._active_weapon
-        AgentWeapons._adjust_active_weapon(self)
-        if self._active_weapon != prev:
-            NetOut.sendMessage.change_weapon(self.agent, self._active_weapon)
+    #def _adjust_active_weapon(self):
+        #prev = self.agent.active_weapon
+        #AgentWeapons._adjust_active_weapon(self)
+        #if self.agent.active_weapon != prev:
+            #NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
 
     def hud_slot(self):
-        if self._active_weapon is None:
+        if self.agent.active_weapon is None:
             return -1
-        return self._active_weapon
+        return self.agent.active_weapon
 
     def set_hud_icons(self):
-        for i in range(self.max_weapons):
-            try:
-                weapon = self.weapons[i]
-                cHUD.Equipment.set_equipment_icon(i, weapon.icon)
-            except IndexError:
-                cHUD.Equipment.set_equipment_icon(i, 0)
+        for i in range(4):
+            cHUD.Equipment.set_equipment_icon(i, weapon.icon)
 
-    def update_info(self, **weapon_data):
-        ret = AgentWeapons.update_info(self, **weapon_data)
-        self.set_hud_icons()
-        return ret
+        #for i in range(4,8):
+            #cHUD.Equipment.set_equipment_icon(i, 0)
+
+    #def update_info(self, **weapon_data):
+        #ret = AgentWeapons.update_info(self, **weapon_data)
+        #self.set_hud_icons()
+        #return ret
 
 '''
 Client's player's agent
@@ -281,33 +282,35 @@ class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
     def fire(self):
         if self.team.viewers:
             return
+        cAgents.PlayerAgentWrapper.fire(self)
 
-        weapon = self.weapons.active()
-        if weapon is None:
-            return
+        #weapon = self.weapons.active()
+        #if weapon is None:
+            #return
 
-        fire_command = weapon.fire()
+        #fire_command = weapon.fire()
 
-        if fire_command == 'set_block':
-            NetOut.sendMessage.set_block(agent=self)
-        elif fire_command == 'hit_block':
-            self.hit_block()    # defined in C agent wrapper
-        elif fire_command == 'hitscan':
-            self.fire_hitscan()
-        elif fire_command == 'throw_grenade':
-            self.throw_grenade()
-        else:
-            print "Agent.fire :: unknown command %s" % (fire_command,)
+        #if fire_command == 'set_block':
+            #NetOut.sendMessage.set_block(agent=self)
+        #elif fire_command == 'hit_block':
+            #self.hit_block()    # defined in C agent wrapper
+        #elif fire_command == 'hitscan':
+            #self.fire_hitscan()
+        #elif fire_command == 'throw_grenade':
+            #self.throw_grenade()
+        #else:
+            #print "Agent.fire :: unknown command %s" % (fire_command,)
 
-    def reload(self):
-        if self.team.viewers:
-            return
-        weapon = self.weapons.active()
-        if weapon is None:
-            return
-        reload_command = weapon.reload()
-        if reload_command:
-            NetOut.sendMessage(reload_command, self)
+    #def reload(self):
+        #if self.team.viewers:
+            #return
+        
+        #weapon = self.weapons.active()
+        #if weapon is None:
+            #return
+        #reload_command = weapon.reload()
+        #if reload_command:
+            #NetOut.sendMessage(reload_command, self)
 
     def set_active_block(self, block_type=None):
         if self.team.viewers:
@@ -320,6 +323,7 @@ class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
         if not block_type:
             return
         InputGlobal.cube_selector.active_id = block_type
+        cAgents.PlayerAgentWrapper.set_active_block(block_type)
 
     def active_block(self):
         return InputGlobal.cube_selector.active_id

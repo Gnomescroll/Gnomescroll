@@ -122,14 +122,27 @@ inline void AgentSuicides_StoC::handle() {
     a->status.suicides = suicides;
 }
 
+inline void AgentActiveWeapon_StoC::handle() {
+    Agent_state* a =  ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->weapons.set_active(slot);
+}
+
+inline void AgentReloadWeapon_StoC::handle() {
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->event.reload_weapon(type);
+}
+
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
-
 inline void ThrowGrenade_CtoS::handle(){}
-
+inline void AgentActiveWeapon_CtoS::handle() {}
+inline void AgentReloadWeapon_CtoS::handle(){}
 #endif
 
 
@@ -149,6 +162,8 @@ inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
+inline void AgentActiveWeapon_StoC::handle() {}
+
 //for benchmarking
 //static int _total = 0;
 //static const int a_DEBUG = 1;
@@ -257,5 +272,18 @@ inline void ThrowGrenade_CtoS::handle() {
     Grenade* g = ServerState::grenade_list.create(x,y,z, vx,vy,vz);
     g->owner = id;
 }
+
+inline void AgentActiveWeapon_CtoS::handle() {
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+    a->weapons.set_active(slot);
+}
+
+inline void AgentReloadWeapon_CtoS::handle() {
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+    a->weapons.reload(type);
+}
+
 
 #endif

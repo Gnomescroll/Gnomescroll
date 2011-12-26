@@ -66,4 +66,9 @@ void Agent_event::life_changing(bool dead) {
     else born();
 }
 
+void Agent_event::reload_weapon(int type) {
+    if (! a->weapons.is_active(type)) return;
+    // play reload animation/sound for the weapon
+}
+
 #endif

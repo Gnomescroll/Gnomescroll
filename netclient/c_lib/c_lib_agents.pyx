@@ -41,6 +41,12 @@ cdef extern from "./agent/agent_status.hpp":
         unsigned int deaths
         unsigned int suicides
         unsigned int health_max
+
+cdef extern from "./agent/agent_weapons.hpp":
+    cdef cppclass Agent_weapons:
+        int active
+        char* hud_display()
+        void set_active_block(int block)
         
 #collision box
 cdef extern from "./agent/agent.hpp":
@@ -66,6 +72,7 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
         Agent_status status
+        Agent_weapons weapons
 
 cdef extern from "./agent/agent.hpp":
     int AGENT_MAX
@@ -82,9 +89,10 @@ cdef extern from "./agent/agent.hpp":
 
 cdef extern from "./agent/player_agent_action.hpp":
     cdef cppclass PlayerAgent_action:
-        void hit_block()
+#        void hit_block()
+#        void throw_grenade()
         void fire()
-        void throw_grenade()
+        void reload()
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
@@ -150,6 +158,7 @@ class AgentWrapper(object):
         'kills',
         'deaths',
         'suicides',
+        'active_weapon',
     ]
 
     def __init__(self, int id):
@@ -219,6 +228,9 @@ class AgentWrapper(object):
             return a.status.deaths
         elif name == 'suicides':
             return a.status.suicides
+
+        elif name == 'active_weapon':
+            return a.weapons.active
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
@@ -277,17 +289,38 @@ class PlayerAgentWrapper(object):
         z = playerAgent_state.camera_state.z
         return [x, y, z+z_off]
 
-    def hit_block(self):
-        playerAgent_state.action.hit_block()
-
-    def fire_hitscan(self):
+    def fire(self):
         playerAgent_state.action.fire()
 
-    def throw_grenade(self):
-        playerAgent_state.action.throw_grenade()
+#    def hit_block(self):
+#        playerAgent_state.action.hit_block()
+
+#    def fire_hitscan(self):
+#        playerAgent_state.action.fire()
+
+#    def throw_grenade(self):
+#        playerAgent_state.action.throw_grenade()
 
     def update_sound(self):
         playerAgent_state.update_sound()
+
+    def weapon_hud_display(self):
+        cdef Agent_state* a
+        a = agent_list.get(playerAgent_state.agent_id)
+        if a == NULL:
+            return "No agent yet"
+        return a.weapons.hud_display()
+
+    def reload(self):
+        playerAgent_state.action.reload()
+
+    def set_active_block(self, int block_id):
+        cdef Agent_state* a
+        a = agent_list.get(playerAgent_state.agent_id)
+        if a == NULL:
+            return
+        a.weapons.set_active_block(block_id)
+        
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
     set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
@@ -315,4 +348,3 @@ class AgentListWrapper:
         for k in range(n):
             ids.append(agent_list.ids_in_use[k])
         return ids
-        

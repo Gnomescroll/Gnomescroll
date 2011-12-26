@@ -14,6 +14,7 @@ class Agent_event {
         void died();
         void born();
         void life_changing(bool dead);
+        void reload_weapon(int type);
 
         Agent_event(Agent_state* owner) : a(owner) {}
 };

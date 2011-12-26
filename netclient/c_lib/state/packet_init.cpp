@@ -38,6 +38,7 @@ void RegisterMessages() {
 
     // block value change
     block_StoC::register_client_packet();
+    block_CtoS::register_server_packet();
     
     // agent hit block action
     hit_block_CtoS::register_server_packet();
@@ -71,6 +72,11 @@ void RegisterMessages() {
     AgentKills_StoC::register_client_packet();
     AgentDeaths_StoC::register_client_packet();
     AgentSuicides_StoC::register_client_packet();
+
+    AgentActiveWeapon_CtoS::register_server_packet();
+    AgentActiveWeapon_StoC::register_client_packet();
+    AgentReloadWeapon_CtoS::register_server_packet();
+    AgentReloadWeapon_StoC::register_client_packet();
 
 }
 }

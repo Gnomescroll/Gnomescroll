@@ -93,19 +93,6 @@ class Hud(object):
             )
             i += 1
 
-    def _format_scoreboard_html(self, stats):
-        for prop in self._scoreboard_properties:
-            lprop = prop.lower()
-            lines = []
-            lines.append(prop + '<br>')
-
-            vals = stats[lprop]
-            for val in vals:
-                lines.append(str(val))
-            stats[lprop] = '<font face="Times New Roman" size="15" color="red">%s</font>' % ('<br>'.join(lines),)
-
-        return stats
-
     def _format_scoreboard_plain(self, stats):
         for prop in self._scoreboard_properties:
             lprop = prop.lower()
@@ -125,22 +112,6 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def _format_player_stats_html(self):
-        agent = GameStateGlobal.agent
-        if agent is None:
-            s = 'No agent yet'
-        elif agent.team.viewers:
-            s = 'Viewer Mode'
-        else:
-            health = '%i/%i' % (agent.health, agent.health_max,)
-            weapon = agent.weapons.active()
-            if weapon is not None:
-                s = 'HP %s :: Ammo %s' % (health, weapon.hud_display(),)
-            else:
-                s = 'HP %s :: No weapon equipped' % (health,)
-        s = '<font face="Monospace" color="green"><b>%s</b></font>' % (s,)
-        return s
-
     def _format_player_stats_plain(self):
         agent = GameStateGlobal.agent
         if agent is None:
@@ -152,11 +123,7 @@ class Hud(object):
                 pass
             else:
                 health = '%i/%i' % (agent.health, agent.health_max,)
-                weapon = agent.weapons.active()
-                if weapon is None:
-                    w = 'No weapon equipped'
-                else:
-                    w = 'Ammo %s' % (weapon.hud_display(),)
+                w = 'Ammo %s' % (agent.weapon_hud_display(),)
                 s = 'HP %s::%s' % (health, w,)
         return s
 

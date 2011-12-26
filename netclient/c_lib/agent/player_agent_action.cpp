@@ -3,6 +3,31 @@
 #include <c_lib/ray_trace/hitscan.hpp>
 
 void PlayerAgent_action::fire() {
+    Agent_state* a = ClientState::agent_list.get(p->agent_id);
+    if (a==NULL) return;
+
+    int type = a->weapons.active_type();
+    if (!a->weapons.fire()) return;
+    switch (type) {
+        case Weapons::TYPE_block_applier:
+            set_block();
+            break;
+        case Weapons::TYPE_hitscan_laser:
+            hitscan();
+            break;
+        case Weapons::TYPE_block_pick:
+            hit_block();
+            break;
+        case Weapons::TYPE_grenade_thrower:
+            throw_grenade();
+            break;
+        default:
+            printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
+            break;
+    }
+}
+
+void PlayerAgent_action::hitscan() {
 
     // play sound
     char soundfile[] = "laser_01.wav";
@@ -74,7 +99,34 @@ void PlayerAgent_action::hit_block() {
     p->camera_state.forward_vector(f);
     int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
     if (pos != NULL) {
-        hit_block_CtoS* msg = new hit_block_CtoS(p->agent_id, pos[0], pos[1], pos[2]);
-        msg->send();
+        static hit_block_CtoS msg;
+        msg.id = p->agent_id;
+        msg.x = pos[0];
+        msg.y = pos[1];
+        msg.z = pos[2];
+        msg.send();
     }
+}
+
+void PlayerAgent_action::set_block() {
+    Agent_state* a = ClientState::agent_list.get(p->agent_id);
+    if (a==NULL) return;
+
+    static block_CtoS msg;
+    // UPDATE WITH FACING POSITION
+    msg.x = 0;
+    msg.y = 0;
+    msg.z = 0;
+    msg.val = a->weapons.blocks.block;
+    msg.send();
+}
+
+void PlayerAgent_action::reload() {
+    Agent_state* a = ClientState::agent_list.get(p->agent_id);
+    if (a==NULL) return;
+
+    static AgentReloadWeapon_CtoS msg;
+    msg.id = p->agent_id;
+    msg.type = a->weapons.active_type();
+    msg.send();
 }
