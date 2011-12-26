@@ -102,7 +102,8 @@ static GLenum voxel_shader_vert = 0;
 static GLenum voxel_shader_frag = 0;
 static GLenum voxel_shader_prog = 0;
 
-int InXYZT; 
+int InXYZ; 
+int InSide;
 int InRGBA; 
 
 void Voxel_render_list::init_voxel_render_list_shader1()
@@ -120,9 +121,6 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     vs = textFileRead((char*) "./media/shaders/voxel/voxel.vsh");
     fs = textFileRead((char*) "./media/shaders/voxel/voxel.fsh");
 
-    //vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
-    //fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
-
     glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
     glCompileShaderARB(voxel_shader_vert);
@@ -138,8 +136,21 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
     
-    InXYZT = glGetAttribLocation(voxel_shader_prog, "InXYZT");
+    InXYZ = glGetAttribLocation(voxel_shader_prog, "InXYZ");
+    InSide = glGetAttribLocation(voxel_shader_prog, "InSide");
     InRGBA = glGetAttribLocation(voxel_shader_prog, "InRGBA");
+
+    //uniforms
+    //GLint glGetUniformLocationARB(GLhandleARB program, const GLcharARB * name)
+    //voxel_vertex_index
+
+/*
+specifying uniforms
+void glUniform{1|2|3|4}{f|i}ARB(GLint location, TYPE val)
+void glUniform{1|2|3|4}{f|i}vARB(GLint location, GLuint count, const TYPE * vals)
+void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transpose, const GLfloat * vals)
+*/
+
 }
 
 void Voxel_render_list::draw()

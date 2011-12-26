@@ -133,6 +133,8 @@ class Voxel_volume
     void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set(int x, int y, int z, Voxel* v);
 
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
     {
         return &voxel[x+(y << index1)+(z << index1)];
@@ -181,6 +183,48 @@ inline uint32_t PACK(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3) {
 */
 
 #include <stdio.h>
+
+
+/*
+#north/south is +/- x
+#west/east is +/- y
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+
+inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+
+void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
+{
+    Voxel_vertex tmp;
+
+    tmp.x = x;
+    tmp.y = y;
+    tmp.z = z;
+    tmp.t = 0;   //size zero
+
+    //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+    *(int*)&tmp.rgba = get_as_int(x,y,z);
+
+    scratch[*index + 0] = tmp;
+    scratch[*index + 1] = tmp;
+    scratch[*index + 2] = tmp;
+    scratch[*index + 3] = tmp;
+
+    side *= 4;
+    scratch[*index + 0].t = side + 0;
+    scratch[*index + 1].t = side + 1;
+    scratch[*index + 2].t = side + 2;
+    scratch[*index + 3].t = side + 3;
+
+    *index += 4;
+}
 
 void Voxel_volume::update_vertex_list()
 {   

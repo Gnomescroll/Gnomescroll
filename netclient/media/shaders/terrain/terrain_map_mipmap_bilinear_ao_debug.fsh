@@ -25,3 +25,4 @@ void main()
 		vec3 color = vec3( intensity, intensity, intensity);
 		gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 	}
+}
