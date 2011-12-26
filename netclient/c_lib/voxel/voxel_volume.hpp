@@ -62,16 +62,34 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     class Voxel_render_list; //forward declaration
 #endif
 
+class VBO_t
+{
+    public:
+    unsigned short vnum;   //number of vertices
+    unsigned short voff;   //offset of vertices
+
+    VBO_t()
+    {
+        vnum = 0;
+        voff = 0;
+    }
+};
+
+
+
 class Voxel_volume
 {
     public:
+
+#ifdef DC_CLIENT
+    VBO_t vbo_t[2]; //VBO for drawing properties
+#endif
+
     Vector v[4]; // forward, up, right (x,y,z), offset
     float scale;    //size of voxels
     //bounding sphere
     Vector center;
     float radius2;
-
-    bool needs_vbo_update;
 
     int xdim,ydim,zdim;
     int _xdim,_ydim,_zdim;
@@ -79,6 +97,8 @@ class Voxel_volume
     int index1, index12;
 
     float hdx,hdy,hdz;  //half of width, height, depth as floats
+
+    bool needs_vbo_update;
 
 #ifdef DC_CLIENT
     Voxel_render_list* voxel_render_list;
