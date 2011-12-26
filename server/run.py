@@ -293,7 +293,6 @@ class Main:
                 #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
                 if tc == 0 or sl_c > 3: #net out
                     break
-                GameStateGlobal.gameState.tick()
                 c_lib.c_lib_particles.tick()
                 sl_c+=1
                 tick+=1

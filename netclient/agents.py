@@ -6,24 +6,13 @@ Agents:
 import opts
 opts = opts.opts
 
-import random
-import vector_lib
-import animations
-import c_lib.c_lib_particles
-import c_lib.c_lib_agents
-import c_lib._ray_trace as ray_tracer
 import c_lib.c_lib_agents as cAgents
+import c_lib._ray_trace as ray_tracer
 import c_lib.terrain_map as terrainMap
-import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_game_modes as cGame
 
-from math import sin, cos, pi
-from math import floor, ceil, fabs, pow
-from game_state import GameStateGlobal #Deprecate?
-from weapons import Pick, BlockApplier
-from c_lib.c_lib_agents import AgentWrapper, PlayerAgentWrapper, AgentListWrapper, set_agent_control_state
-from draw_utils import *
+from game_state import GameStateGlobal
 from net_out import NetOut
 from input import InputGlobal
 import camera
@@ -131,142 +120,28 @@ class AgentWeapons(object):
         return iter(self.weapons)
 
 
-class AgentInventory(object):
-
-    def __init__(self, agent, items=None):
-        self.agent = agent
-        self.size = 100
-        self.inv = []
-        if items is not None:
-            self.update_info(**items)
-
-    def update_info(self, **inv_data):
-        if 'inventory' in inv_data:
-            inv = inv_data['inventory']
-            new_inv = []
-            for item in inv:
-                try:
-                    iid = item['id']
-                except KeyError:
-                    print 'WARNING: Object update via agent inventory; object id missing [ object :: %s ]' % (item,)
-                    continue
-                known_item = GameStateGlobal.itemList.get(iid, None)
-                if known_item is None:
-                    known_item = GameStateGlobal.itemList.create(**item)
-                else:
-                    known_item.update_info(**item)
-                new_inv.append(known_item)
-            self.inv = new_inv
-
-    # checks for object a specific type (e.g. Flag)
-    # rename to: has_object_type
-    def has(self, obj_type):
-        for obj in self.inv:
-            if obj.type == obj_type:
-                return obj
-        return False
-
-    def _add(self, item, index=None):
-        if item not in self.inv:
-            if index is None:
-                self.inv.append(item)
-            else:
-                self.inv.insert(index, item)
-            return item
-        return False
-
-    def add(self, item, index=None):
-        if item.take(self.agent):
-            return self._add(item, index)
-        return False
-
-    def can_add(self, item):
-        return (item not in self.inv and item.can_take(self.agent))
-
-    def can_drop(self, item):
-        return (item in self.inv and item.can_drop(self.agent))
-
-    def _drop(self, item):
-        if item in self.inv:
-            self.inv.remove(item)
-            return item
-        return False
-
-    def drop(self, item):
-        if item.drop(self.agent):
-            return self._drop(item)
-        return False
-
-    def __len__(self):
-        return len(self.inv)
-    def __iter__(self):
-        return iter(self.inv)
-    def __str__(self):
-        return repr(self)
-    def __repr__(self):
-        return repr(self.inv)
-
 '''
 Data model for agent
 '''
-class AgentModel(AgentWrapper):
+class AgentModel(cAgents.AgentWrapper):
 
-    HEALTH_MAX = 100
-    _RESPAWN_TIME = 1000. # milliseconds
-    _TICK_RATE = 30. # milliseconds
-    RESPAWN_TICKS = int(_RESPAWN_TIME / _TICK_RATE)
-
-    def __init__(self, owner, id, state=None, health=None, dead=False):
-        if state is None:
-            state = [0,0,0,0,0,0,0,0,0]
-        state = map(float, state)
-
-        self.collisionDetection = terrainMap.collisionDetection
-
-        self.state = state #position, velocity, acceleration
-        self.xa = state[3]
-        self.ya = state[4]
+    def __init__(self, id):
 
         self.button_state = [0 for i in range(11)]
 
         self.id = id
-
-        self.x_int = int(state[0])
-        self.y_int = int(state[1])
-        self.z_int = int(state[2])
-
         self.client_id = id
 
         self.you = False
         self.name = '' # fix later
 
-    def tick(self):
-        if not self.dead:
-            self._tick_physics()
-
     def update_info(self, **agent):
-        args = []
-
-        if 'id' in agent:
-            args.append(self.id)
-            self.id = agent['id']
-
         if 'weapons' in agent:
             self.weapons.update_info(**agent['weapons'])
 
-        if 'inventory' in agent:
-            self.inventory.update_info(**agent['inventory'])
-
-        if 'state' in agent:
-            state = agent['state']
-            if type(state) == list and len(state) == len(self.state):
-                self.state = state
-
-        GameStateGlobal.agentList.update(self, *args)
-
     def __getattribute__(self, name):
         try:
-            val = AgentWrapper.__getattribute__(self, name)
+            val = cAgents.AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
             
@@ -281,44 +156,6 @@ class AgentModel(AgentWrapper):
         else:
             self.x, self.y, self.z = xyz
             
-    def velocity(self):
-        return self.state[3:6]
-
-    def forward(self):
-        return vector_lib.forward_vector(self.x_angle)
-
-    def upward(self):
-        return [0,0,1]
-
-    def listener_state(self):
-        return [self.pos(), self.velocity(), self.forward(), self.upward()]
-
-    def direction(self, normalize=True):
-        v = vector_lib.angle2vector(self.x_angle, self.y_angle)
-        if normalize:
-            v = vector_lib.normalize(v)
-        return v
-
-    def angles(self):
-        return [self.x_angle, self.y_angle]
-
-    def set_angle(self, angle):
-        self.x_angle, self.y_angle = angle
-
-    def control_state(self):
-        return [\
-            self.d_x,
-            self.d_y,
-            self.v_x,
-            self.v_y,
-            self.jetpack,
-            self.brake
-        ]
-
-    def set_velocity(self, v_x, v_y):
-        self.v_x = v_x
-        self.v_y = v_y
-
     @property
     def state(self):
         return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
@@ -326,17 +163,12 @@ class AgentModel(AgentWrapper):
     def state(self, val):
         self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
 
-    def normalized_direction(self):
-        vec = vector_lib.angle2vector(self.x_angle, self.y_angle)
-        return vector_lib.normalize(vec)
-
 # represents an agent under control of a player
 class Agent(AgentModel):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
-        AgentModel.__init__(self, owner, id, state, health, dead)
+    def __init__(self, id=None, weapons=None):
+        AgentModel.__init__(self, id)
         print 'Python Agent creation: id %s' % (self.id,)
-        self.inventory = AgentInventory(self, items)
         self.weapons = AgentWeapons(self, weapons)
 
 class PlayerAgentWeapons(AgentWeapons):
@@ -411,50 +243,25 @@ class PlayerAgentWeapons(AgentWeapons):
         self.set_hud_icons()
         return ret
 
-
-class PlayerAgentInventory(AgentInventory):
-
-    def __init__(self, agent, items=None):
-        AgentInventory.__init__(self, agent, items)
-
-    def add(self, item, index=None):
-        item = AgentInventory.add(self, item, index)
-        return item
-
-    def drop(self, item):
-        item = AgentInventory.drop(self, item)
-        return item
-
-
 '''
 Client's player's agent
 '''
-class PlayerAgent(AgentModel, PlayerAgentWrapper):
+class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
 
-    def __init__(self, owner=None, id=None, state=None, weapons=None, health=None, dead=False, items=None):
-        AgentModel.__init__(self, owner, id, state, health, dead)
-        PlayerAgentWrapper.__init__(self, id)
+    def __init__(self, id=None, weapons=None):
+        AgentModel.__init__(self, id)
+        cAgents.PlayerAgentWrapper.__init__(self, id)
 
         self.weapons = PlayerAgentWeapons(self, weapons)
-        self.inventory = PlayerAgentInventory(self, items)
-
         self.you = True
-
-        self.vx = 0
-        self.vy = 0
-        self.vz = 0
-        self.ax = 0
-        self.ay = 0
-        self.az = 0
-
         self.camera = None
 
     def __getattribute__(self, name):
         try:
-            val = AgentWrapper.__getattribute__(self, name)
+            val = cAgents.AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             try:
-                val = PlayerAgentWrapper.__getattribute__(self, name)
+                val = cAgents.PlayerAgentWrapper.__getattribute__(self, name)
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
@@ -469,7 +276,7 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
 
         f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = self.button_state
         theta, phi = self.camera.angles()
-        set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
+        cAgents.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     def fire(self):
         if self.team.viewers:
@@ -491,14 +298,6 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
             self.throw_grenade()
         else:
             print "Agent.fire :: unknown command %s" % (fire_command,)
-
-    def add_ammo(self, amt, weapon_type):
-        if self.team.viewers:
-            return
-        for weapon in weapons:
-            if weapon.type == weapon_type:
-                weapon.restock(amt)
-                break
 
     def reload(self):
         if self.team.viewers:
@@ -541,26 +340,3 @@ class PlayerAgent(AgentModel, PlayerAgentWrapper):
         if self.camera is None:
             return
         return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
-
-    def pickup_item(self, item, index=None):
-        if self.team.viewers:
-            return
-        if self.inventory.can_add(item):
-            NetOut.sendMessage.pickup_item(self, item, index)
-
-    def drop_item(self, item):
-        if self.team.viewers:
-            return
-        if self.inventory.can_drop(item):
-            NetOut.sendMessage.drop_item(self, item)
-
-    def nearby_objects(self):
-        for obj in GameStateGlobal.itemList.values():
-            if vector_lib.distance(self.pos(), obj.pos()) < obj.radius:
-                self.pickup_item(obj)
-                if obj.proximity_effect:
-                    NetOut.sendMessage.near_item(self, obj)
-
-    def tick(self):
-        AgentModel.tick(self)
-        PlayerAgentWrapper.tick(self)

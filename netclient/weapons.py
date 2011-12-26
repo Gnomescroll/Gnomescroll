@@ -1,9 +1,6 @@
-import animations
-
-from game_objects import GameObject, EquippableObject
 from dat_loader import w_dat
 
-class Weapon(EquippableObject):
+class Weapon():
 
     _types = {
         'Weapon'    :   0,
@@ -20,11 +17,10 @@ class Weapon(EquippableObject):
     _hud_undef = '--'
 
     def __init__(self, id, owner=None, state=None):
-        EquippableObject.__init__(self, id, state)
+        self.id = id
         self.owner = owner
         self._set_type()
         self.dat.apply(self)
-        self._animation = animations.Animation
 
     def fire(self):
         return False
@@ -84,7 +80,6 @@ class HitscanLaserGun(Weapon):
         if clip is None:
             clip = self.clip_size
         self.clip = clip
-        self._animation = animations.HitscanLaserGunAnimation
 
     def fire(self):
         if self.clip == 0:
@@ -99,15 +94,6 @@ class HitscanLaserGun(Weapon):
         self.ammo -= amt
         self.clip += amt
         return 'reload_weapon'
-
-    def animation(self, target=None, agent=None, vector=None):
-        if agent is None:
-            agent = GameStateGlobal.agentList[self.owner]
-        origin = agent.camera_position()
-        if vector is None:
-            vector = agent.direction()
-        anim = self._animation(origin, vector, target)
-        return anim
 
     def update_info(self, **weapon):
         args = self._update_info(**weapon)
@@ -143,7 +129,6 @@ class BlockApplier(Weapon):
     def fire(self):
         if self.clip == 0:
             return False
-        #self.clip -= 1
         return 'set_block'
 
     def hud_display(self):
@@ -155,12 +140,8 @@ class BlockApplier(Weapon):
         args = self._update_info(**weapon)
         if 'clip' in weapon:
             self.clip = weapon['clip']
-        #if 'ammo' in weapon:
-            #self.ammo = weapon['ammo']
         if 'clip_size' in weapon:
             self.clip_size = weapon['clip_size']
-        #if 'max_ammo' in weapon:
-            #self.max_ammo = weapon['max_ammo']
         GameStateGlobal.weaponList.update(*args)
 
 class Pick(Weapon):

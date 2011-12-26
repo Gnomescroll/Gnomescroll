@@ -3,6 +3,7 @@ Incoming net events
 '''
 
 import c_lib.c_lib_game_modes as cGame
+import c_lib.terrain_map as terrain_map
 
 class NetEvent:
 
@@ -319,18 +320,17 @@ class AdminMessageHandler(GenericMessageHandler):
 
     @requireKey('list')
     def _set_map(self, msg, conn, blocks):
-        terrainMap = GameStateGlobal.terrainMap
         for x,y,z,value in blocks:
-            terrainMap.set(x,y,z,value)
+            terrain_map.set(x,y,z,value)
         NetOut.event.set_map(blocks)
 
     def _clear_map(self, msg, conn):
-        GameStateGlobal.terrainMap.clear()
+        terrain_map.clear()
         NetOut.event.clear_map()
 
     @requireKey('name')
     def _save_map(self, msg, conn, name):
-        GameStateGlobal.terrainMap.save_to_disk(name)
+        terrain_map.save_to_disk(name)
 
 class AgentMessageHandler(GenericMessageHandler):
 
@@ -432,7 +432,7 @@ class MapMessageHandler(GenericMessageHandler):
         weapon = agent.active_weapon()
         if weapon.fire_command == 'set_block' and weapon.fire():
             print 'setting block'
-            GameStateGlobal.terrainMap.set(*block)
+            terrain_map.set(*block)
             NetOut.event.set_map([block])
             client.sendMessage.send_weapon(weapon, properties='clip')
 

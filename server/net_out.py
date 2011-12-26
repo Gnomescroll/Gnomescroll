@@ -10,6 +10,7 @@ import struct
 import zlib
 
 import dats.loader as dl
+import c_lib.terrain_map as terrain_map
 
 class NetOut:
 
@@ -24,8 +25,7 @@ class NetOut:
 from game_state import GameStateGlobal
 from net_server import NetServer
 
-
-def sendJSONevent(cmd=None, tick=True, zlib=0):
+def sendJSONevent(cmd=None, zlib=0):
     def outer(f, *args, **kwargs):
         def wrapped(*args, **kwargs):
             self = args[0]
@@ -40,9 +40,6 @@ def sendJSONevent(cmd=None, tick=True, zlib=0):
                 cmd_final = ''
             if cmd_final or 'cmd' not in json_data:
                 json_data['cmd'] = cmd_final
-
-            if tick:
-                json_data['tick'] = GameStateGlobal.gameState.time
 
             if not zlib:
                 self.add_json_event(json_data)
@@ -92,17 +89,17 @@ class EventOut:
             'id'    :   weapon.id,
         }
 
-    @sendJSONevent('client_quit', tick=False)
+    @sendJSONevent('client_quit')
     def client_quit(self, client_id):
         return {
             'id'    : client_id,
         }
 
-    @sendJSONevent('clear_map', tick=False)
+    @sendJSONevent('clear_map')
     def clear_map(self):
         return True
 
-    @sendJSONevent('set_map', tick=False)
+    @sendJSONevent('set_map')
     def set_map(self, list):
         return {
             'list' : list,
@@ -249,11 +246,11 @@ class SendMessage: #each connection has one of these
     def send_chunk_list(self):
         print "Sending chunk list"
         return {
-            'list' : GameStateGlobal.terrainMap.get_server_chunk_list(),
+            'list' : terrain_map.get_server_chunk_list(),
         }
 
     def send_chunk(self, x, y, z, XXX=[0]):
-        chunk_str = GameStateGlobal.terrainMap.get_packed_chunk(x,y,z)
+        chunk_str = terrain_map.get_packed_chunk(x,y,z)
         if chunk_str != '':
             self.client.send(self.add_prefix(3, chunk_str))
         else:

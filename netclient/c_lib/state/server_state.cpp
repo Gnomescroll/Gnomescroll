@@ -16,7 +16,7 @@ namespace ServerState {
     Neutron_list neutron_list;
 
     CTF ctf;
-        
+
     void InitServerState() {
     
         agent_list.create(0); //create agent 0

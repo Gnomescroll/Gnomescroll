@@ -3,32 +3,36 @@ Dat files
 '''
 
 #all__ = ['weapons', 'items', 'projectiles', 'cubes']
-all__ = ['weapons', 'items', 'cubes']
+#all__ = ['weapons', 'items', 'cubes']
+all__ = ['weapons', 'cubes']
 
 #_imports = ['weapon', 'item', 'projectile', 'cube']
-_imports = ['weapon', 'item', 'cube']
+#_imports = ['weapon', 'item', 'cube']
+_imports = ['weapon', 'cube']
 _prop = 'dat'
 
 import weapon
-import item
+#import item
 #import projectile
 import cube
 
 
 def _set():
     #global weapons, items, projectiles, cubes
-    global weapons, items, cubes
+    #global weapons, items, cubes
+    global weapons, cubes
     weapons = weapon.dat
-    items = item.dat
+    #items = item.dat
     #projectiles = projectile.dat
     cubes = cube.dat
 
 def _reload():
     print "RELOADING"
     #global weapon, item, projectile, cube
-    global weapon, item, cube
+    #global weapon, item, cube
+    global weapon, cube
     reload(weapon)
-    reload(item)
+    #reload(item)
     #reload(projectile)
     reload(cube)
 
