@@ -118,7 +118,7 @@ class BlockApplier: public Weapon {
     {
         max_ammo = 9999;
         ammo = 9999;
-        block = 1;
+        block = 2;
     }
 };
 
