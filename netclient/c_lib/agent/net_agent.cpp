@@ -127,7 +127,6 @@ inline void AgentActiveWeapon_StoC::handle() {
     if (a==NULL) return;
     //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
     a->weapons.active = slot;
-    printf("set slot to %d\n", slot);
 }
 
 inline void AgentReloadWeapon_StoC::handle() {
@@ -292,12 +291,12 @@ inline void AgentReloadWeapon_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
     a->weapons.reload(type);
-    printf("should have reloaded agent %d\n", id);
     // forward action
     static AgentReloadWeapon_StoC msg;
     msg.id = id;
     msg.type = type;
     msg.broadcast();
+    printf("should have reloaded agent %d\n", id);
 }
 
 #endif

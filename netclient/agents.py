@@ -126,7 +126,7 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
         cAgents.PlayerAgentWrapper.switch_weapon(self, i)
         if old != self.active_weapon:
             camera.camera.unzoom()
-        print 'weapon is: %s' % (self.active_weapon,)
+        #print 'weapon is: %s' % (self.active_weapon,)
 
     def hud_equipment_slot(self):
         return self.active_weapon
