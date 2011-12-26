@@ -66,9 +66,9 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 
     struct Voxel_vertex
     {
-        unsigned char x,y,z,t;
+        float x,y,z;
         unsigned char rgba[4]; //8
-        //char normal[4]; //16
+        char normal[4]; //16
         //can compute normals from t
     };
 
@@ -198,33 +198,70 @@ l = [
 ]
 */
 
+
+static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+};
+
 inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
 
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
 {
-    Voxel_vertex tmp;
+    float fx, fy, fz;
 
-    tmp.x = x;
-    tmp.y = y;
-    tmp.z = z;
-    tmp.t = 0;   //size zero
+    fx = (float) x;
+    fy = (float) y;
+    fz = (float) z;
 
-    //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-    *(int*)&tmp.rgba = get_as_int(x,y,z);
+    //*(int*)&tmp.rgba 
 
-    scratch[*index + 0] = tmp;
-    scratch[*index + 1] = tmp;
-    scratch[*index + 2] = tmp;
-    scratch[*index + 3] = tmp;
+    //set rgba
+    int color = get_as_int(x,y,z);
+    *(int*)scratch[*index + 0].rgba = color;
+    *(int*)scratch[*index + 1].rgba = color;
+    *(int*)scratch[*index + 2].rgba = color;
+    *(int*)scratch[*index + 3].rgba = color;
 
-    side *= 4;
-    scratch[*index + 0].t = side + 0;
-    scratch[*index + 1].t = side + 1;
-    scratch[*index + 2].t = side + 2;
-    scratch[*index + 3].t = side + 3;
+    //set x,y,z
+    side *= 12;
 
+    scratch[*index + 0].x = fx + vset[side + 0];
+    scratch[*index + 0].y = fy + vset[side + 1 ];
+    scratch[*index + 0].z = fz + vset[side + 2 ];
+    
+    scratch[*index + 0].x = fx + vset[side + 3 ];
+    scratch[*index + 0].y = fy + vset[side + 4 ];
+    scratch[*index + 0].z = fz + vset[side + 5 ];
+    
+    scratch[*index + 0].x = fx + vset[side + 6 ];
+    scratch[*index + 0].y = fy + vset[side + 7 ];
+    scratch[*index + 0].z = fz + vset[side + 8 ];
+    
+    scratch[*index + 0].x = fx + vset[side + 9 ];
+    scratch[*index + 0].y = fy + vset[side + 10];
+    scratch[*index + 0].z = fz + vset[side + 11];
+    
+    
     *index += 4;
 }
+
+/*
+#north/south is +/- x
+#west/east is +/- y
+l = [
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
+]
+*/
+
 
 void Voxel_volume::update_vertex_list()
 {   
@@ -236,77 +273,39 @@ void Voxel_volume::update_vertex_list()
     for(int z=0; z < zdim; z++){
         if( get_as_int(x,y,z) == 0) continue;
 
-        if(x == 0 || get_as_int(x-1,y,z) != 0)
-        {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 0;   //size zero
 
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
-        }
+        //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
+
  
+        if(z+1 == zdim || get_as_int(x,y,z+1) != 0)
+        {
+            push_voxel_quad(scratch, &index, x,y,z, 0);
+        }
+        
+
+        if(z == 0 || get_as_int(x,y,z-1) != 0)
+        {
+            push_voxel_quad(scratch, &index, x,y,z, 0);
+        }
+
         if(x+1 == xdim || get_as_int(x+1,y,z) != 0)
         {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 1;   //size zero
-
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
+            push_voxel_quad(scratch, &index, x,y,z, 0);
         }
 
-        if(y == 0 || get_as_int(x,y-1,z) != 0)
+        if(x == 0 || get_as_int(x-1,y,z) != 0)
         {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 0;   //size zero
-
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
+            push_voxel_quad(scratch, &index, x,y,z, 0);
         }
  
         if(y+1 ==ydim || get_as_int(x,y+1,z) != 0)
         {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 1;   //size zero
-
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
+            push_voxel_quad(scratch, &index, x,y,z, 0);
         }
 
-
-        if(z == 0 || get_as_int(x,y,z-1) != 0)
+        if(y == 0 || get_as_int(x,y-1,z) != 0)
         {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 0;   //size zero
-
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
-        }
- 
-        if(z+1 == zdim || get_as_int(x,y,z+1) != 0)
-        {
-            scratch[index].x = x;
-            scratch[index].y = y;
-            scratch[index].z = z;
-            scratch[index].t = 1;   //size zero
-
-            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
-            *(int*)scratch[index].rgba = get_as_int(x,y,z);
-            index++;
+            push_voxel_quad(scratch, &index, x,y,z, 0);
         }
 
     }}}

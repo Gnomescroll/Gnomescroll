@@ -102,8 +102,7 @@ static GLenum voxel_shader_vert = 0;
 static GLenum voxel_shader_frag = 0;
 static GLenum voxel_shader_prog = 0;
 
-int InXYZ; 
-int InSide;
+int InCood0; 
 int InRGBA; 
 
 void Voxel_render_list::init_voxel_render_list_shader1()
@@ -136,8 +135,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
     
-    InXYZ = glGetAttribLocation(voxel_shader_prog, "InXYZ");
-    InSide = glGetAttribLocation(voxel_shader_prog, "InSide");
+    InCood0 = glGetAttribLocation(voxel_shader_prog, "InCood0");
     InRGBA = glGetAttribLocation(voxel_shader_prog, "InRGBA");
 
     //uniforms
