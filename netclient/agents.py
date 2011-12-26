@@ -182,37 +182,45 @@ class PlayerAgentWeapons():
     def switch(self, weapon_index):
         if self.agent.team.viewers:
             return
-        old = self.agent.active_weapon
-        #num_weapons = len(self.weapons)
-        if num_weapons == 0:
-            self.agent.active_weapon = None
-            if old is not None:
-                NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
-            return
+        #old = self.agent.active_weapon
+        ##num_weapons = len(self.weapons)
+        #if num_weapons == 0:
+            #self.agent.active_weapon = None
+            #if old is not None:
+                #NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
+            #return
 
-        if type(weapon_index) == int:
-            weapon_index += -1
+        #if type(weapon_index) == int:
+            #weapon_index += -1
 
-        if self.agent.active_weapon is None:
-            active = 0
+        #if self.agent.active_weapon is None:
+            #active = 0
+
+        #if weapon_index == 'up':
+            #if self.agent.active_weapon is None:
+                #self.agent.active_weapon = 0
+            #else:
+                #self.agent.active_weapon = (self.agent.active_weapon + 1) % num_weapons
+        #elif weapon_index == 'down':
+            #if self.agent.active_weapon is None:
+                #self.agent.active_weapon = num_weapons - 1
+            #else:
+                #self.agent.active_weapon = (self.agent.active_weapon - 1) % num_weapons
+        #elif weapon_index < num_weapons:
+                #self.agent.active_weapon = weapon_index
 
         if weapon_index == 'up':
-            if self.agent.active_weapon is None:
-                self.agent.active_weapon = 0
-            else:
-                self.agent.active_weapon = (self.agent.active_weapon + 1) % num_weapons
+            i = -1
         elif weapon_index == 'down':
-            if self.agent.active_weapon is None:
-                self.agent.active_weapon = num_weapons - 1
-            else:
-                self.agent.active_weapon = (self.agent.active_weapon - 1) % num_weapons
-        elif weapon_index < num_weapons:
-                self.agent.active_weapon = weapon_index
+            i = -2
+        else:
+            i = weapon_index
 
+        old = self.agent.active_weapon
+        cAgents.PlayerAgentWrapper.switch_weapon(self.agent, i)
         if old != self.agent.active_weapon:
             camera.camera.unzoom()
-            NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
-
+            #NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
         print 'weapon is: %s' % (self.active(),)
 
     #def drop(self, weapon):
@@ -228,8 +236,6 @@ class PlayerAgentWeapons():
             #NetOut.sendMessage.change_weapon(self.agent, self.agent.active_weapon)
 
     def hud_slot(self):
-        if self.agent.active_weapon is None:
-            return -1
         return self.agent.active_weapon
 
     def set_hud_icons(self):

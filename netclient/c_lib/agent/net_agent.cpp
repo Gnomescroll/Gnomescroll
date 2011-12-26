@@ -163,6 +163,7 @@ inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
 inline void AgentActiveWeapon_StoC::handle() {}
+inline void AgentReloadWeapon_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
@@ -284,6 +285,5 @@ inline void AgentReloadWeapon_CtoS::handle() {
     if (a==NULL) return;
     a->weapons.reload(type);
 }
-
 
 #endif

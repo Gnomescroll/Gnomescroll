@@ -130,3 +130,19 @@ void PlayerAgent_action::reload() {
     msg.type = a->weapons.active_type();
     msg.send();
 }
+
+void PlayerAgent_action::switch_weapon(int i) {
+    static const int UP = -1;
+    static const int DOWN = -2;
+
+    Agent_state* a = ClientState::agent_list.get(p->agent_id);
+    if (a==NULL) return;
+
+    if (i == UP) {
+        a->weapons.switch_up();
+    } else if (i == DOWN) {
+        a->weapons.switch_down();
+    } else {
+        a->weapons.set_active(i);
+    }
+}

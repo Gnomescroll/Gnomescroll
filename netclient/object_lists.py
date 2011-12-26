@@ -316,21 +316,21 @@ class GenericMultiObjectList(GenericObjectList):
         o.update_info(**obj)
         return o
     
-class WeaponList(GenericMultiObjectList):
+#class WeaponList(GenericMultiObjectList):
 
-    def __init__(self):
-        from weapons import Pick, BlockApplier, HitscanLaserGun, GrenadePouch
-        GenericMultiObjectList.__init__(self)
-        self._allow_klasses([ \
-            Pick,
-            BlockApplier,
-            HitscanLaserGun,
-            GrenadePouch,
-        ])
-        self.name_from_type = Weapon.name_from_type
-        self._metaname = 'WeaponList'
-        self._itemname = 'Weapon'
+    #def __init__(self):
+        #from weapons import Pick, BlockApplier, HitscanLaserGun, GrenadePouch
+        #GenericMultiObjectList.__init__(self)
+        #self._allow_klasses([ \
+            #Pick,
+            #BlockApplier,
+            #HitscanLaserGun,
+            #GrenadePouch,
+        #])
+        #self.name_from_type = Weapon.name_from_type
+        #self._metaname = 'WeaponList'
+        #self._itemname = 'Weapon'
 
-from weapons import Weapon
+#from weapons import Weapon
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal

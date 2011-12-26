@@ -54,6 +54,24 @@ void Agent_weapons::set_active(int slot) {
     static const int n_weapons = 4;
     if (slot < 0 || slot >= n_weapons) return;
     active = slot;
+    weapon_change_message();
+}
+
+void Agent_weapons::switch_up() {
+    active = (active+1)%4;
+    weapon_change_message();
+}
+
+void Agent_weapons::switch_down() {
+    active = (active-1)%4;
+    weapon_change_message();
+}
+
+void Agent_weapons::weapon_change_message() {
+    static AgentActiveWeapon_CtoS msg;
+    msg.id = a->id;
+    msg.slot = active;
+    msg.send();
 }
 
 #define LASER_SLOT 0
@@ -199,4 +217,27 @@ bool Agent_weapons::fire() {
             break;
     }
     return fired;
+}
+
+bool Agent_weapons::can_zoom() {
+    bool zoom = false;
+    switch (active) {
+        case BLOCKS_SLOT:
+            zoom = blocks.scope;
+            break;
+        case PICK_SLOT:
+            zoom = pick.scope;
+            break;
+        case GRENADES_SLOT:
+            zoom = grenades.scope;
+            break;
+        case LASER_SLOT:
+            zoom = laser.scope;
+            break;
+        default:
+            printf("Agent_weapons::can_zoom unknown or invalid weapon slot %d\n", active);
+            break;
+    }
+    return zoom;
+
 }

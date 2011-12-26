@@ -47,6 +47,7 @@ cdef extern from "./agent/agent_weapons.hpp":
         int active
         char* hud_display()
         void set_active_block(int block)
+        bool can_zoom()
         
 #collision box
 cdef extern from "./agent/agent.hpp":
@@ -93,6 +94,7 @@ cdef extern from "./agent/player_agent_action.hpp":
 #        void throw_grenade()
         void fire()
         void reload()
+        void switch_weapon(int i)
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
@@ -289,6 +291,9 @@ class PlayerAgentWrapper(object):
         z = playerAgent_state.camera_state.z
         return [x, y, z+z_off]
 
+    def switch_weapon(self, int i):
+        playerAgent_state.action.switch_weapon(i)
+
     def fire(self):
         playerAgent_state.action.fire()
 
@@ -320,6 +325,13 @@ class PlayerAgentWrapper(object):
         if a == NULL:
             return
         a.weapons.set_active_block(block_id)
+
+    def can_zoom(self):
+        cdef Agent_state* a
+        a = agent_list.get(playerAgent_state.agent_id)
+        if a == NULL:
+            return False
+        return a.weapons.can_zoom()
         
  
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):

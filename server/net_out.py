@@ -256,41 +256,41 @@ class SendMessage: #each connection has one of these
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
 
-    @sendJSON('agent_list')
-    def send_agents(self):
-        return {
-            'agent_list':   GameStateGlobal.agentList.json()
-        }
+    #@sendJSON('agent_list')
+    #def send_agents(self):
+        #return {
+            #'agent_list':   GameStateGlobal.agentList.json()
+        #}
 
-    @sendJSON('agent_update')
-    def send_agent(self, agent, properties=None):
-        if type(agent) == int:
-            agent = GameStateGlobal.agentList[agent]
-        return {
-            'agent' :   agent.json(properties),
-            'full'  :   int(not properties),
-        }
+    #@sendJSON('agent_update')
+    #def send_agent(self, agent, properties=None):
+        #if type(agent) == int:
+            #agent = GameStateGlobal.agentList[agent]
+        #return {
+            #'agent' :   agent.json(properties),
+            #'full'  :   int(not properties),
+        #}
 
-    @sendJSON('weapon_list')
-    def send_weapons(self):
-        return {
-            'weapon_list'   :   GameStateGlobal.weaponList.json(),
-        }
+    #@sendJSON('weapon_list')
+    #def send_weapons(self):
+        #return {
+            #'weapon_list'   :   GameStateGlobal.weaponList.json(),
+        #}
 
-    @sendJSON('weapon_update')
-    def send_weapon(self, weapon, properties=None):
-        if not hasattr(weapon, 'id'):
-            weapon = GameStateGlobal.weaponList[weapon]
-        return {
-            'weapon'    :   weapon.json(properties),
-            'full'  :   int(not properties),
-        }
+    #@sendJSON('weapon_update')
+    #def send_weapon(self, weapon, properties=None):
+        #if not hasattr(weapon, 'id'):
+            #weapon = GameStateGlobal.weaponList[weapon]
+        #return {
+            #'weapon'    :   weapon.json(properties),
+            #'full'  :   int(not properties),
+        #}
 
-    @sendJSON('agent_destroy')
-    def remove_agent(self, agent):
-        return {
-            'id'    : agent.id,
-        }
+    #@sendJSON('agent_destroy')
+    #def remove_agent(self, agent):
+        #return {
+            #'id'    : agent.id,
+        #}
 
     @sendJSON('you_died')
     def you_died(self, msg):

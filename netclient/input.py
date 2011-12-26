@@ -187,7 +187,7 @@ class Mouse(object):
                 pass
 
         if button == 3 and state == 1:  # right click down
-            if not InputGlobal.input == 'agent' or GameStateGlobal.agent.weapons.active().scope:
+            if not InputGlobal.input == 'agent' or GameStateGlobal.agent.can_zoom():
                 camera.camera.toggle_zoom()
 
 
@@ -422,10 +422,10 @@ class AgentInput:
     @classmethod
     @requireAgent
     def adjust_block(cls, symbol=None, modifiers=None):
-        aw = GameStateGlobal.agent.weapons.active()
+        #aw = GameStateGlobal.agent.active_weapon
 
-        if not aw or aw.type != 3:  # block applier
-            return
+        #if aw.type != 3:  # block applier
+            #return
         if symbol == 'left':
             InputGlobal.cube_selector.left()
         elif symbol == 'right':

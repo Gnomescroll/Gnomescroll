@@ -21,7 +21,7 @@ class NetEventGlobal:
     mapMessageHandler = None
     agentMessageHandler = None
     miscMessageHandler = None
-    weaponMessageHandler = None
+    #weaponMessageHandler = None
     datMessageHandler = None
 
     @classmethod
@@ -33,7 +33,7 @@ class NetEventGlobal:
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.weaponMessageHandler = WeaponMessageHandler()
+        #cls.weaponMessageHandler = WeaponMessageHandler()
 
         cls.datMessageHandler = DatMessageHandler()
 
@@ -330,24 +330,24 @@ class AgentMessageHandler(DatastoreMessageInterface):
         self._default_list(**args)
 
 
-class WeaponMessageHandler(DatastoreMessageInterface):
+#class WeaponMessageHandler(DatastoreMessageInterface):
 
-    def __init__(self):
-        self.name = 'weapon'
-        self.store = GameStateGlobal.weaponList
-        DatastoreMessageInterface.__init__(self)
+    #def __init__(self):
+        #self.name = 'weapon'
+        #self.store = GameStateGlobal.weaponList
+        #DatastoreMessageInterface.__init__(self)
 
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_weapon(data['id'])
+    #def request_data(self, **data):
+        #if 'id' in data:
+            #NetOut.sendMessage.request_weapon(data['id'])
 
-    def _weapon_destroy(self, **args):
-        id = self._default_destroy(**args)
-        if id is not None:
-            GameStateGlobal.remove_weapon(id)
+    #def _weapon_destroy(self, **args):
+        #id = self._default_destroy(**args)
+        #if id is not None:
+            #GameStateGlobal.remove_weapon(id)
 
-    def _weapon_update(self, **args):
-        return self._default_update(**args)
+    #def _weapon_update(self, **args):
+        #return self._default_update(**args)
 
 
 class DatMessageHandler(GenericMessageHandler):

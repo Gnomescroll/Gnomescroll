@@ -24,6 +24,8 @@ class Weapon {
 
         int ammo;
 
+        bool scope;
+
         char hud_string[20+1];
 
         Weapon(weapon_type type) :
@@ -31,7 +33,8 @@ class Weapon {
         id(0),
         owner(0),
         type(type),
-        ammo(0)
+        ammo(0),
+        scope(false)
         {}
 };
 
@@ -67,6 +70,7 @@ class HitscanLaser: public Weapon {
         clip = 100;
         max_ammo = 100;
         ammo = 100;
+        scope = true;
     }
 };
 
