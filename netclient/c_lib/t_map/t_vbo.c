@@ -2308,7 +2308,6 @@ void DRAW_VBOS5() {
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
     */
-
     glDisable(GL_TEXTURE_2D);
         //printf("vnum= %i\n", _vnum);
 

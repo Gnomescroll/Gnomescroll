@@ -67,7 +67,7 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     struct Voxel_vertex
     {
         float x,y,z;
-        unsigned char rgba[4]; //8
+        unsigned char rgba[4]; //12
         char normal[4]; //16
         //can compute normals from t
     };
@@ -133,7 +133,9 @@ class Voxel_volume
     void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set(int x, int y, int z, Voxel* v);
 
+#ifdef DC_CLIENT
     inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+#endif
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
     {
@@ -250,38 +252,45 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 0].normal[1] = vnset[_side + 1 ];
     scratch[*index + 0].normal[2] = vnset[_side + 2 ];
     
-    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+    scratch[*index + 1].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 1].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 1].normal[2] = vnset[_side + 2 ];
 
-    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+    scratch[*index + 2].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 2].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 2].normal[2] = vnset[_side + 2 ];
 
-    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+    scratch[*index + 3].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 3].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 3].normal[2] = vnset[_side + 2 ];
 
 
     //set x,y,z
-    side *= 12;
+    _side = side*12;
 
-    scratch[*index + 0].x = fx + vset[side + 0];
-    scratch[*index + 0].y = fy + vset[side + 1 ];
-    scratch[*index + 0].z = fz + vset[side + 2 ];
+    scratch[*index + 0].x = fx + vset[_side + 0];
+    scratch[*index + 0].y = fy + vset[_side + 1 ];
+    scratch[*index + 0].z = fz + vset[_side + 2 ];
     
-    scratch[*index + 1].x = fx + vset[side + 3 ];
-    scratch[*index + 1].y = fy + vset[side + 4 ];
-    scratch[*index + 1].z = fz + vset[side + 5 ];
+    scratch[*index + 1].x = fx + vset[_side + 3 ];
+    scratch[*index + 1].y = fy + vset[_side + 4 ];
+    scratch[*index + 1].z = fz + vset[_side + 5 ];
     
-    scratch[*index + 2].x = fx + vset[side + 6 ];
-    scratch[*index + 2].y = fy + vset[side + 7 ];
-    scratch[*index + 2].z = fz + vset[side + 8 ];
+    scratch[*index + 2].x = fx + vset[_side + 6 ];
+    scratch[*index + 2].y = fy + vset[_side + 7 ];
+    scratch[*index + 2].z = fz + vset[_side + 8 ];
     
-    scratch[*index + 3].x = fx + vset[side + 9 ];
-    scratch[*index + 3].y = fy + vset[side + 10];
-    scratch[*index + 3].z = fz + vset[side + 11];
+    scratch[*index + 3].x = fx + vset[_side + 9 ];
+    scratch[*index + 3].y = fy + vset[_side + 10];
+    scratch[*index + 3].z = fz + vset[_side + 11];
 
+    printf("start side %i \n", side);
+    for(int j=0; j<4; j++)
+    {
+        printf("x,y,z= %f, %f, %f \n", scratch[*index + j].x, scratch[*index + j].y, scratch[*index + j].z);
+    }
+
+    if(*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
     *index += 4;
 }
 
@@ -304,6 +313,10 @@ void Voxel_volume::update_vertex_list()
     static Voxel_vertex* scratch = new Voxel_vertex[65536]; //64 k of memory
     int index = 0;
 
+
+    push_voxel_quad(scratch, &index, -5,-5,10, 0);
+    push_voxel_quad(scratch, &index, 5,5,10, 0);
+/*
     for(int x=0; x < xdim; x++){
     for(int y=0; y < ydim; y++){
     for(int z=0; z < zdim; z++){
@@ -311,7 +324,6 @@ void Voxel_volume::update_vertex_list()
 
 
         //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
-
  
         if(z+1 == zdim || get_as_int(x,y,z+1) != 0)
         {
@@ -321,36 +333,39 @@ void Voxel_volume::update_vertex_list()
 
         if(z == 0 || get_as_int(x,y,z-1) != 0)
         {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 1);
         }
 
         if(x+1 == xdim || get_as_int(x+1,y,z) != 0)
         {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 2);
         }
 
         if(x == 0 || get_as_int(x-1,y,z) != 0)
         {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 3);
         }
  
         if(y+1 ==ydim || get_as_int(x,y+1,z) != 0)
         {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 4);
         }
 
         if(y == 0 || get_as_int(x,y-1,z) != 0)
         {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 5);
         }
 
     }}}
+*/
+    printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );
 
     if(index == 0)
     {
         printf("Warning: generate vertex voxel list, 0 voxels\n");
 
     }
+
     if(vvl.vertex_list != NULL) delete vvl.vertex_list;
     vvl.vertex_list = new Voxel_vertex[index];
 
@@ -358,6 +373,8 @@ void Voxel_volume::update_vertex_list()
     memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
     vvl.size = index*sizeof(Voxel_vertex);  //wtf is size for
     vvl.vnum = index;
+
+    printf("Voxel_volume::update_vertex_list finished \n");
 }
 
 #endif
