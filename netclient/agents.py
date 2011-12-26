@@ -60,34 +60,21 @@ class Agent(AgentModel):
         AgentModel.__init__(self, id)
         print 'Python Agent creation: id %s' % (self.id,)
 
-class PlayerAgentWeapons():
 
-    def __init__(self, agent):
-        self.agent = agent
-        self.set_hud_icons()
+# decorators
+def noViewer(f):
+    def outer(*args, **kwargs):
+        self = args[0]
+        if not self.team.viewers:
+            return f(*args, **kwargs)
+    return outer
 
-    def switch(self, weapon_index):
-        if self.agent.team.viewers:
-            return
-        if weapon_index == 'up':
-            i = -1
-        elif weapon_index == 'down':
-            i = -2
-        else:
-            i = weapon_index-1
-
-        old = self.agent.active_weapon
-        cAgents.PlayerAgentWrapper.switch_weapon(self.agent, i)
-        if old != self.agent.active_weapon:
-            camera.camera.unzoom()
-        print 'weapon is: %s' % (self.agent.active_weapon,)
-
-    def hud_slot(self):
-        return self.agent.active_weapon
-
-    def set_hud_icons(self):
-        for i in range(4):
-            cHUD.Equipment.set_equipment_icon(i, i+1)
+def requireCamera(f):
+    def outer(*args, **kwargs):
+        self = args[0]
+        if self.camera is not None:
+            return f(*args, **kwargs)
+    return outer
 
 '''
 Client's player's agent
@@ -98,7 +85,7 @@ class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
         AgentModel.__init__(self, id)
         cAgents.PlayerAgentWrapper.__init__(self, id)
 
-        self.weapons = PlayerAgentWeapons(self)
+        self.set_hud_icons()
         self.you = True
         self.camera = None
 
@@ -116,48 +103,50 @@ class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
 
         return val
 
+    @requireCamera
     def set_button_state(self):
-        if self.camera is None:
-            return
-
         f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = self.button_state
         theta, phi = self.camera.angles()
         cAgents.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
+    @requireCamera
+    @noViewer
     def fire(self):
-        if self.team.viewers:
-            return
         cAgents.PlayerAgentWrapper.fire(self)
 
-    def set_active_block(self, block_type=None):
-        if self.team.viewers:
+    @requireCamera
+    @noViewer
+    def set_active_block(self):
+        block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
+        if block is None:
             return
-        if self.camera is None:
-            return
-        if block_type is None:
-            block_type = self.facing_block()
-            print "Setting active block type to ", block_type
-        if not block_type:
-            return
+        block_type = terrainMap.get(*block)
+        print "Setting active block type to ", block_type
+
         InputGlobal.cube_selector.active_id = block_type
         cAgents.PlayerAgentWrapper.set_active_block(self, block_type)
 
     def active_block(self):
         return InputGlobal.cube_selector.active_id
 
-    def facing_block(self):
-        block = self.nearest_block_position()
-        if block is None:
-            return None
-        block = terrainMap.get(*block)
-        return block
+    @noViewer
+    def switch_weapons(self, weapon_index):
+        if weapon_index == 'up':
+            i = -1
+        elif weapon_index == 'down':
+            i = -2
+        else:
+            i = weapon_index-1
 
-    def facing_block_position(self):
-        if self.camera is None:
-            return
-        return ray_tracer.farthest_empty_block(self.camera_position(), self.camera.forward())
+        old = self.active_weapon
+        cAgents.PlayerAgentWrapper.switch_weapon(self, i)
+        if old != self.active_weapon:
+            camera.camera.unzoom()
+        print 'weapon is: %s' % (self.active_weapon,)
 
-    def nearest_block_position(self):
-        if self.camera is None:
-            return
-        return ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
+    def hud_equipment_slot(self):
+        return self.active_weapon
+
+    def set_hud_icons(self):
+        for i in range(4):
+            cHUD.Equipment.set_equipment_icon(i, i+1)

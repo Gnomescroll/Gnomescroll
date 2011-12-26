@@ -179,10 +179,10 @@ class Mouse(object):
                     GameStateGlobal.agent.set_active_block()
                 elif button == 4: #scroll up
                     direction = 'up'
-                    GameStateGlobal.agent.weapons.switch(direction)
+                    GameStateGlobal.agent.switch_weapons(direction)
                 elif button == 5: #scroll down
                     direction = 'down'
-                    GameStateGlobal.agent.weapons.switch(direction)
+                    GameStateGlobal.agent.switch_weapons(direction)
             elif state == 0: #mouse button released
                 pass
 
@@ -417,7 +417,7 @@ class AgentInput:
         except (ValueError, TypeError):
             pass
         else:
-            GameStateGlobal.agent.weapons.switch(weapon_index)
+            GameStateGlobal.agent.switch_weapons(weapon_index)
 
     @classmethod
     @requireAgent

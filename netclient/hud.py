@@ -307,7 +307,7 @@ class Hud(object):
 
         active_equipment_slot = -1
         if GameStateGlobal.agent:
-            active_equipment_slot = GameStateGlobal.agent.weapons.hud_slot()
+            active_equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
         cHUD.Equipment.draw(active_equipment_slot)
 
         cHUD.Compass.draw()
