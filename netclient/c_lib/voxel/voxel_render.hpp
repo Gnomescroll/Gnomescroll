@@ -4,6 +4,8 @@
 
 #include <voxel/voxel_volume.hpp>
 
+#include <c_lib/SDL/shader_loader.hpp>
+
 void voxel_render_init();
 
 
@@ -50,6 +52,12 @@ class Voxel_render_list
         vbo[0].vertex_list = NULL;
         vbo[1].vertex_list = NULL;
 
+        vbo[0].id = 0;
+        vbo[1].id = 0;
+
+        vbo[0].vnum = 0;
+        vbo[1].vnum = 0;
+
         render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
         num_elements = 0;
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) render_list[i] = NULL;
@@ -90,11 +98,48 @@ void Voxel_render_list::update_vertex_buffer_object()
 
 }
 
+static GLenum voxel_shader_vert = 0;
+static GLenum voxel_shader_frag = 0;
+static GLenum voxel_shader_prog = 0;
+
+int InXYZT; 
+int InRGBA; 
 
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
-    printf("test\n");
+    printf("init voxel shader\n");
 
+    int DEBUG = 1;
+
+    voxel_shader_prog = glCreateProgramObjectARB();
+    voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    voxel_shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+
+    vs = textFileRead((char*) "./media/shaders/voxel/voxel.vsh");
+    fs = textFileRead((char*) "./media/shaders/voxel/voxel.fsh");
+
+    //vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
+    //fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
+
+    glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
+    glCompileShaderARB(voxel_shader_vert);
+    if(DEBUG) printShaderInfoLog(voxel_shader_vert);
+
+    glCompileShaderARB(voxel_shader_frag);
+    if(DEBUG) printShaderInfoLog(voxel_shader_frag);
+    
+    glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
+    glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
+
+    glLinkProgramARB(voxel_shader_prog);
+
+    if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
+    
+    InXYZT = glGetAttribLocation(voxel_shader_prog, "InXYZT");
+    InRGBA = glGetAttribLocation(voxel_shader_prog, "InRGBA");
 }
 
 void Voxel_render_list::draw()
