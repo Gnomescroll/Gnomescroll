@@ -36,8 +36,12 @@ class Voxel_render_list
     int num_elements;
 
     void register_voxel_volume(Voxel_volume* vv);
-
     void unregister_voxel_volume(Voxel_volume* vv);
+
+    static void init_voxel_render_list_shader1();
+
+    void draw();
+    void update_vertex_buffer_object();
 
     Voxel_render_list()
     {
@@ -46,6 +50,34 @@ class Voxel_render_list
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) render_list[i] = NULL;
     }
 };
+
+void Voxel_render_list::update_vertex_buffer_object()
+{
+    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    {
+        if(render_list[i] != NULL && render_list[i]->needs_vbo_update == true)
+        {
+            render_list[i]->update_vertex_list();
+        }
+    }
+}
+
+
+void Voxel_render_list::init_voxel_render_list_shader1()
+{
+    printf("test\n");
+
+}
+
+void Voxel_render_list::draw()
+{
+    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    {
+        if(render_list[i] == NULL) continue;
+        
+    }
+}
+
 
 
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)

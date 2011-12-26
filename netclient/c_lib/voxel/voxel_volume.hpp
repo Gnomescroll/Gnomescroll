@@ -62,20 +62,41 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     class Voxel_render_list; //forward declaration
 #endif
 
-class VBO_t
-{
-    public:
-    unsigned short vnum;   //number of vertices
-    unsigned short voff;   //offset of vertices
+#ifdef DC_CLIENT
 
-    VBO_t()
+    struct Voxel_vertex
     {
-        vnum = 0;
-        voff = 0;
-    }
-};
+        float x,y,z;
+        unsigned char r,g,b,a; //12
+        char normal[4]; //16
+    };
 
+    class VBO_t
+    {
+        public:
+        unsigned short vnum;   //number of vertices
+        unsigned short voff;   //offset of vertices
 
+        VBO_t()
+        {
+            vnum = 0;
+            voff = 0;
+        }
+    };
+
+    class Voxel_vertex_list
+    {
+        public:
+        Voxel_vertex* vertex_list;   //number of vertices
+        int size;   //offset of vertices
+
+        Voxel_vertex_list()
+        {
+            vertex_list = NULL;
+            size = 0;
+        }
+    };
+#endif
 
 class Voxel_volume
 {
@@ -83,6 +104,7 @@ class Voxel_volume
 
 #ifdef DC_CLIENT
     VBO_t vbo_t[2]; //VBO for drawing properties
+    Voxel_vertex_list voxel_vertex_list;
 #endif
 
     Vector v[4]; // forward, up, right (x,y,z), offset
@@ -103,6 +125,7 @@ class Voxel_volume
 #ifdef DC_CLIENT
     Voxel_render_list* voxel_render_list;
     void register_with_renderer(Voxel_render_list* vrl);
+    void update_vertex_list();
 #endif
 
     void set_unit_axis();
@@ -143,8 +166,14 @@ class Voxel_volume
 
 };
 
+#ifdef DC_CLIENT
+void Voxel_volume::update_vertex_list()
+{
 
+    return;
 
+}
+#endif
 void voxel_test()
 {
     //static Voxel_volume vv(1,1,1, 1.0);
