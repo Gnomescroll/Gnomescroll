@@ -66,9 +66,10 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 
     struct Voxel_vertex
     {
-        float x,y,z;
-        unsigned char r,g,b,a; //12
-        char normal[4]; //16
+        unsigned char x,y,z,t;
+        unsigned char rgba[4]; //8
+        //char normal[4]; //16
+        //can compute normals from t
     };
 
     class VBO_t
@@ -146,6 +147,12 @@ class Voxel_volume
         return &voxel[x+(y << index1)+(z << index1)];
     }
 
+
+    inline int get_as_int(int x, int y, int z) __attribute((always_inline)) 
+    {
+        return *((int*)(&voxel[x+(y << index1)+(z << index1)].r));
+    }
+
     //internal methods
     inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
     {
@@ -167,12 +174,120 @@ class Voxel_volume
 };
 
 #ifdef DC_CLIENT
-void Voxel_volume::update_vertex_list()
-{
 
-    return;
+/*
+    struct Voxel_vertex
+    {
+        unsigned char x,y,z,t;
+        unsigned char rgba[4]; //8
+    };
+*/
+
+/*
+inline uint32_t PACK(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3) {
+    return (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
+}
+*/
+
+#include <stdio.h>
+
+void Voxel_volume::update_vertex_list()
+{   
+    static Voxel_vertex* scratch = new Voxel_vertex[65536]; //64 k of memory
+    int index = 0;
+
+    for(int x=0; x < xdim; x++){
+    for(int y=0; y < ydim; y++){
+    for(int z=0; z < zdim; z++){
+        if( get_as_int(x,y,z) == 0) continue;
+
+        if(x == 0 || get_as_int(x-1,y,z) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 0;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+ 
+        if(x+1 == xdim || get_as_int(x+1,y,z) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 1;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+
+        if(y == 0 || get_as_int(x,y-1,z) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 0;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+ 
+        if(y+1 ==ydim || get_as_int(x,y+1,z) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 1;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+
+
+        if(z == 0 || get_as_int(x,y,z-1) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 0;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+ 
+        if(z+1 == zdim || get_as_int(x,y,z+1) != 0)
+        {
+            scratch[index].x = x;
+            scratch[index].y = y;
+            scratch[index].z = z;
+            scratch[index].t = 1;   //size zero
+
+            //*(int*)&scratch[index].x = (x << 24) | (y << 16) | (z << 8) | t;
+            *(int*)scratch[index].rgba = get_as_int(x,y,z);
+            index++;
+        }
+
+    }}}
+
+    if(index == 0)
+    {
+        printf("Warning: generate vertex voxel list, 0 voxels\n");
+
+    }
+    if(voxel_vertex_list.vertex_list != NULL) delete voxel_vertex_list.vertex_list;
+    voxel_vertex_list.vertex_list = new Voxel_vertex[index];
+    //void * memcpy ( void * destination, const void * source, size_t num );
+    memcpy(voxel_vertex_list.vertex_list, scratch, index*sizeof(Voxel_vertex));
 
 }
+
 #endif
 void voxel_test()
 {
