@@ -169,7 +169,7 @@ class Agent(AgentModel):
     def __init__(self, id=None, weapons=None):
         AgentModel.__init__(self, id)
         print 'Python Agent creation: id %s' % (self.id,)
-        self.weapons = AgentWeapons(self, weapons)
+        #self.weapons = AgentWeapons(self, weapons)
 
 #class PlayerAgentWeapons(AgentWeapons):
 class PlayerAgentWeapons():

@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 #include <c_lib/common/functional.h>
+#include <c_lib/template/net.hpp>
+
 /*
     Non-networking
 */
@@ -350,7 +352,6 @@ void _block_broadcast(int x, int y, int z, int value) {
     msg.broadcast();
 }
 
-
 #ifdef DC_CLIENT
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
@@ -368,3 +369,5 @@ inline void block_CtoS::handle() {
 }
 inline void block_StoC::handle() {}
 #endif
+
+

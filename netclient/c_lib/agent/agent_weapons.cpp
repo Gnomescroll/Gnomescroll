@@ -54,7 +54,16 @@ void Agent_weapons::set_active(int slot) {
     static const int n_weapons = 4;
     if (slot < 0 || slot >= n_weapons) return;
     active = slot;
+
+    #ifdef DC_CLIENT
+    if (a->id == ClientState::playerAgent_state.agent_id) {
+        weapon_change_message();
+    }
+    #endif
+
+    #ifdef DC_SERVER
     weapon_change_message();
+    #endif
 }
 
 void Agent_weapons::switch_up() {
@@ -68,10 +77,18 @@ void Agent_weapons::switch_down() {
 }
 
 void Agent_weapons::weapon_change_message() {
+    #ifdef DC_CLIENT
     static AgentActiveWeapon_CtoS msg;
     msg.id = a->id;
     msg.slot = active;
     msg.send();
+    #endif
+    #ifdef DC_SERVER
+    static AgentActiveWeapon_StoC msg;
+    msg.id = a->id;
+    msg.slot = active;
+    msg.broadcast();
+    #endif
 }
 
 #define LASER_SLOT 0

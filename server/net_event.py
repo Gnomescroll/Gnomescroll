@@ -12,7 +12,7 @@ class NetEvent:
     miscMessageHandler = None
     agentMessageHandler = None
     mapMessageHandler = None
-    weaponMessageHandler = None
+    #weaponMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
 
@@ -23,7 +23,7 @@ class NetEvent:
         cls.agentMessageHandler = AgentMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.weaponMessageHandler = WeaponMessageHandler()
+        #cls.weaponMessageHandler = WeaponMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
@@ -344,10 +344,10 @@ class AgentMessageHandler(GenericMessageHandler):
     def request_agent(self, msg, connection, aid):
         connection.sendMessage.send_agent(aid)
 
-'''
-move reload, to C
-Deprecate drop weapon
-'''
+#'''
+#move reload, to C
+#Deprecate drop weapon
+#'''
 #class WeaponMessageHandler(GenericMessageHandler):
 
     #def events(self):

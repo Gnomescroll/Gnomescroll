@@ -125,7 +125,8 @@ inline void AgentSuicides_StoC::handle() {
 inline void AgentActiveWeapon_StoC::handle() {
     Agent_state* a =  ClientState::agent_list.get(id);
     if (a==NULL) return;
-    a->weapons.set_active(slot);
+    //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
+    a->weapons.active = slot;
 }
 
 inline void AgentReloadWeapon_StoC::handle() {
