@@ -6,6 +6,7 @@
 #include <c_lib/agent/agent.cpp>
 #include <c_lib/agent/net_agent.cpp>
 #include <c_lib/agent/agent_status.cpp>
+#include <c_lib/agent/agent_weapons.cpp>
 #include <c_lib/agent/player_agent.cpp>
 
 #ifdef DC_CLIENT

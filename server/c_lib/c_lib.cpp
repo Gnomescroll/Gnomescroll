@@ -14,9 +14,6 @@
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
 
-/* Weapons */
-#include <c_lib/weapons/weapons.cpp>
-
 #include <c_lib/particles/particle_lib.cpp>
 
 #include <c_lib/items/items.cpp>
@@ -27,6 +24,10 @@
 #include <c_lib/game/packets.cpp>
 
 #include "./agent/agent_include.h"
+
+/* Weapons */
+#include <c_lib/weapons/weapons.cpp>
+#include <c_lib/weapons/packets.cpp>
 
 #include "./map_gen/noise.c"
 
