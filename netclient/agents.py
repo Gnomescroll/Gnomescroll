@@ -45,12 +45,6 @@ class AgentModel(cAgents.AgentWrapper):
             val = cGame.get_team(val)
                     
         return val
-
-    #def pos(self, xyz=None):
-        #if xyz is None:
-            #return self.state[0:3]
-        #else:
-            #self.x, self.y, self.z = xyz
             
     @property
     def state(self):
@@ -146,7 +140,7 @@ class PlayerAgent(AgentModel, cAgents.PlayerAgentWrapper):
         if not block_type:
             return
         InputGlobal.cube_selector.active_id = block_type
-        cAgents.PlayerAgentWrapper.set_active_block(block_type)
+        cAgents.PlayerAgentWrapper.set_active_block(self, block_type)
 
     def active_block(self):
         return InputGlobal.cube_selector.active_id

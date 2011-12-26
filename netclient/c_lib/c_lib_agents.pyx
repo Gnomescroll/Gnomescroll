@@ -90,8 +90,6 @@ cdef extern from "./agent/agent.hpp":
 
 cdef extern from "./agent/player_agent_action.hpp":
     cdef cppclass PlayerAgent_action:
-#        void hit_block()
-#        void throw_grenade()
         void fire()
         void reload()
         void switch_weapon(int i)

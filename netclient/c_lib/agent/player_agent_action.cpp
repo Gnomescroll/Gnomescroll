@@ -112,11 +112,25 @@ void PlayerAgent_action::set_block() {
     Agent_state* a = ClientState::agent_list.get(p->agent_id);
     if (a==NULL) return;
 
+    // get nearest empty block
+    const float max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+
+    float f[3];
+    a->s.forward_vector(f);
+    int* b = _farthest_empty_block(
+        a->s.x, a->s.y, a->s.z + a->camera_height(),
+        f[0], f[1], f[2],
+        max_dist, z_low, z_high
+    );
+    if (b==NULL) return;
+    
     static block_CtoS msg;
     // UPDATE WITH FACING POSITION
-    msg.x = 0;
-    msg.y = 0;
-    msg.z = 0;
+    msg.x = b[0];
+    msg.y = b[1];
+    msg.z = b[2];
     msg.val = a->weapons.blocks.block;
     msg.send();
 }

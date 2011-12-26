@@ -365,7 +365,7 @@ inline void block_CtoS::handle(){}
 
 #ifdef DC_SERVER
 inline void block_CtoS::handle() {
-    _set(x,y,z, val);
+    _set_broadcast(x,y,z, val);
 }
 inline void block_StoC::handle() {}
 #endif

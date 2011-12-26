@@ -21,4 +21,5 @@ class PlayerAgent_action {
 
         void switch_weapon(int i);
         void reload();
+        int select_block();
 };
