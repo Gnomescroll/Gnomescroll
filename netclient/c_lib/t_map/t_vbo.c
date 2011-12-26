@@ -174,7 +174,7 @@ void setShaders4()
     
     texCoord0Loc_4 = glGetAttribLocation(shader_prog4, "InTexCoord0");
     LightMatrix0Loc_4 = glGetAttribLocation(shader_prog4, "InLightMatrix0");
-    LightMatrix1Loc_4 = glGetAttribLocation(shader_prog4, "InLightMatrix1");      
+    //LightMatrix1Loc_4 = glGetAttribLocation(shader_prog4, "InLightMatrix1");      
 }
 
 SDL_Surface *terrain_map_glsl_surface_1;
@@ -2183,7 +2183,7 @@ void DRAW_VBOS5() {
 
         glEnableVertexAttribArray(texCoord0Loc_4);
         glEnableVertexAttribArray(LightMatrix0Loc_4);
-        glEnableVertexAttribArray(LightMatrix1Loc_4);
+        //glEnableVertexAttribArray(LightMatrix1Loc_4);
 
         glColor3b(255,255,255);
 
@@ -2229,8 +2229,9 @@ void DRAW_VBOS5() {
             
             glVertexAttribPointer(texCoord0Loc_4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
 
-            glVertexAttribPointer(LightMatrix0Loc_4, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
-            glVertexAttribPointer(LightMatrix1Loc_4, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)34);
+            glVertexAttribPointer(LightMatrix0Loc_4, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
+            //glVertexAttribPointer(LightMatrix1Loc_4, 2, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)34);
+            
             //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)28);
 
             //glVertexAttribPointer(20, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)28);
