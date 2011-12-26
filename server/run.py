@@ -218,7 +218,7 @@ class Main:
             terrain_map.load_from_disk(opts.map)
         else:
             pass
-            #terrain_map.load_from_disk("natural_terrain")
+            terrain_map.load_from_disk("natural_terrain")
             #terrain_map.load_from_disk("natural2_max")
             #terrain_map.load_from_disk("natural4")
             #terrain_map.load_from_disk("savetest2")
@@ -230,7 +230,8 @@ class Main:
         #map_gen.cave2(terrain_map)
         #map_gen.ore1(terrain_map)
 
-        map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+        #map_gen.ground_plane(terrain_map, xsize=256, ysize=256, tile=11)
+        
         #map_gen.castle_tower1(terrain_map, 15,15,1, height=10, wall_length=10)
         #map_gen.castle_tower2(terrain_map, 15,5,1, height=10, wall_length=3, tile=10)
         #map_gen.castle_tower2(terrain_map, 30,5,1, height=10, wall_length=5, tile=9)

@@ -4,7 +4,7 @@ struct Voxel {
 unsigned char r,g,b,a;
 };
 
-/*
+//fast rond up to next power of two
 unsigned NextPow2( unsigned x ) {
     --x;
     x |= x >> 1;
@@ -14,7 +14,7 @@ unsigned NextPow2( unsigned x ) {
     x |= x >> 16;
     return ++x;
 }
-*/
+
 
 //round up to next power of 2 log 2
 int pow2_1(int n)
