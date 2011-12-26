@@ -78,11 +78,11 @@ class EventOut:
     def clear_map(self):
         return True
 
-    @sendJSONevent('set_map')
-    def set_map(self, list):
-        return {
-            'list' : list,
-        }
+    #@sendJSONevent('set_map')
+    #def set_map(self, list):
+        #return {
+            #'list' : list,
+        #}
 
     @sendJSONevent('hitscan')
     def hitscan(self, target, agent_id, weapon_type): # use projectile_id if we want multiple projectiles per weapon

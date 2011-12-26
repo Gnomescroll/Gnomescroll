@@ -146,7 +146,6 @@ class MapMessageHandler(GenericMessageHandler):
     events = {
         'chunk_list' : '_chunk_list',
         'map_chunk' : '_map_chunk',
-        'set_map' : '_set_map',
         'clear_map': '_clear_map',
     }
 
@@ -158,12 +157,6 @@ class MapMessageHandler(GenericMessageHandler):
         #print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         MapControllerGlobal.mapController.incoming_map_chunk(x,y,z)
-
-    def _set_map(self, list, **msg):
-        for x,y,z,value in list:
-            terrainMap.set(x,y,z,value)
-            if value == 0:
-                animations.BlockCrumbleAnimation([x,y,z]).play()
 
     def _clear_map(self, **msg):
         terrainMap.clear()

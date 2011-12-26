@@ -356,8 +356,10 @@ void _block_broadcast(int x, int y, int z, int value) {
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
 inline void block_StoC::handle() {
-    int cube_id = _get(x,y,z);
-    Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
+    if (val == 0) {
+        int cube_id = _get(x,y,z);
+        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
+    }
     _set(x,y,z,val);
 }
 inline void block_CtoS::handle(){}
