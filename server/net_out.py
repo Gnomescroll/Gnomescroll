@@ -68,27 +68,6 @@ class EventOut:
     def add_json_compressed_event(self, data, level):
         self.event_packets.append(SendMessage.get_json_compressed(data, level))
 
-    #Deprecate?
-    @sendJSONevent('agent_update')
-    def agent_update(self, agent, properties=None):
-        print 'sending agent update'
-        return {
-            'agent' :   agent.json(properties),
-        }
-
-    @sendJSONevent('weapon_update')
-    def weapon_update(self, weapon, properties=None):
-        print 'weapon update'
-        return {
-            'weapon'    :   weapon.json(properties)
-        }
-
-    @sendJSONevent('weapon_destroy')
-    def weapon_destroy(self, weapon):
-        return {
-            'id'    :   weapon.id,
-        }
-
     @sendJSONevent('client_quit')
     def client_quit(self, client_id):
         return {
@@ -261,36 +240,6 @@ class SendMessage: #each connection has one of these
         return {
             'agent_list':   GameStateGlobal.agentList.json()
         }
-
-    #@sendJSON('agent_update')
-    #def send_agent(self, agent, properties=None):
-        #if type(agent) == int:
-            #agent = GameStateGlobal.agentList[agent]
-        #return {
-            #'agent' :   agent.json(properties),
-            #'full'  :   int(not properties),
-        #}
-
-    #@sendJSON('weapon_list')
-    #def send_weapons(self):
-        #return {
-            #'weapon_list'   :   GameStateGlobal.weaponList.json(),
-        #}
-
-    #@sendJSON('weapon_update')
-    #def send_weapon(self, weapon, properties=None):
-        #if not hasattr(weapon, 'id'):
-            #weapon = GameStateGlobal.weaponList[weapon]
-        #return {
-            #'weapon'    :   weapon.json(properties),
-            #'full'  :   int(not properties),
-        #}
-
-    #@sendJSON('agent_destroy')
-    #def remove_agent(self, agent):
-        #return {
-            #'id'    : agent.id,
-        #}
 
     @sendJSON('you_died')
     def you_died(self, msg):

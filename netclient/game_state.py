@@ -17,7 +17,6 @@ class GameStateGlobal:
     @classmethod
     def init(cls):
         cls.agentList = AgentList()
-        #cls.weaponList = WeaponList()
         cls.exit = False
 
     @classmethod
@@ -26,21 +25,6 @@ class GameStateGlobal:
         if agent is None:
             return
         cls.agentList.destroy(agent)
-
-        #for weapon in agent.weapons:
-            #cls.remove_weapon(weapon, seek=False)
-
-    #@classmethod
-    #def remove_weapon(cls, id, seek=True):
-        #weapon = cls.weaponList.get(id, None)
-        #if weapon is None:
-            #return
-        #cls.weaponList.destroy(weapon)
-
-        #if seek:
-            #owner = cls.agentList.get(weapon.owner, None)
-            #if owner is not None:
-                #owner.weapons.drop(weapon)
 
     @classmethod
     def scoreboard(cls):
@@ -59,7 +43,6 @@ class GameStateGlobal:
 
 from object_lists import AgentList
 from agents import Agent, PlayerAgent
-#from object_lists import WeaponList
 from net_client import NetClientGlobal
 from net_out import NetOut
 

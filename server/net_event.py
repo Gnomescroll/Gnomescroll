@@ -12,7 +12,6 @@ class NetEvent:
     miscMessageHandler = None
     agentMessageHandler = None
     mapMessageHandler = None
-    #weaponMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
 
@@ -23,7 +22,6 @@ class NetEvent:
         cls.agentMessageHandler = AgentMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        #cls.weaponMessageHandler = WeaponMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
@@ -343,45 +341,6 @@ class AgentMessageHandler(GenericMessageHandler):
     @requireKey('id')
     def request_agent(self, msg, connection, aid):
         connection.sendMessage.send_agent(aid)
-
-#'''
-#move reload, to C
-#Deprecate drop weapon
-#'''
-#class WeaponMessageHandler(GenericMessageHandler):
-
-    #def events(self):
-        #return {
-            #'request_weapon'    :   self.request_weapon, #deprecate
-            #'reload_weapon'     :   self.reload_weapon, #move to c
-            #'change_weapon'     :   self.change_weapon, #move to C
-        #}
-
-    #@logError('request_weapon')
-    #@requireKey('id')
-    #def request_weapon(self, msg, conn, wid):
-        #conn.sendMessage.send_weapon(wid)
-
-    #@logError('reload_weapon')
-    #@processAgent('aid')
-    #@requireKeyType('weapon', int)
-    #def reload_weapon(self, msg, client, agent, weapon_type):
-        #try:
-            #weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
-        #except ValueError:
-            #return 'weapon unknown to agent'
-
-        #weapon = agent.weapons[weapon_index]
-        #if weapon.reload():
-            #NetOut.event.agent_update(agent, 'weapons')
-
-    #@logError('change_weapon')
-    #@processAgent('aid')
-    #@requireKey('windex', err_key='windex (active_weapon)')
-    #def change_weapon(self, msg, client, agent, active_weapon):
-        #if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
-            #active_weapon = None
-        #agent.set_active_weapon(active_weapon)
 
 
 class MiscMessageHandler(GenericMessageHandler):
