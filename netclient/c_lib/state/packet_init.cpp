@@ -78,5 +78,8 @@ void RegisterMessages() {
     AgentReloadWeapon_CtoS::register_server_packet();
     AgentReloadWeapon_StoC::register_client_packet();
 
+    Weapons::WeaponAmmo_StoC::register_client_packet();
+    Weapons::WeaponClip_StoC::register_client_packet();
+
 }
 }

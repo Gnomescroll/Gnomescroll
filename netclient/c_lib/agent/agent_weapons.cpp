@@ -7,7 +7,6 @@ Agent_weapons::Agent_weapons(Agent_state* a)
     pick.owner = a->id;
     blocks.owner = a->id;
     grenades.owner = a->id;
-    
 }
 
 void Agent_weapons::set_ammo(int type, int ammo) {

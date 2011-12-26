@@ -296,7 +296,6 @@ inline void AgentReloadWeapon_CtoS::handle() {
     msg.id = id;
     msg.type = type;
     msg.broadcast();
-    printf("should have reloaded agent %d\n", id);
 }
 
 #endif
