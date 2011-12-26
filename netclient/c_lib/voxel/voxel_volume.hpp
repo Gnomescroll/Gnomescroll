@@ -72,29 +72,21 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
         //can compute normals from t
     };
 
-    class VBO_t
-    {
-        public:
-        unsigned short vnum;   //number of vertices
-        unsigned short voff;   //offset of vertices
-
-        VBO_t()
-        {
-            vnum = 0;
-            voff = 0;
-        }
-    };
-
     class Voxel_vertex_list
     {
         public:
         Voxel_vertex* vertex_list;   //number of vertices
         int size;   //offset of vertices
 
+        unsigned short vnum;   //number of vertices
+        unsigned short voff;   //offset of vertices
+
         Voxel_vertex_list()
         {
             vertex_list = NULL;
             size = 0;
+            vnum = 0;
+            voff = 0;
         }
     };
 #endif
@@ -104,8 +96,7 @@ class Voxel_volume
     public:
 
 #ifdef DC_CLIENT
-    VBO_t vbo_t[2]; //VBO for drawing properties
-    Voxel_vertex_list voxel_vertex_list;
+    Voxel_vertex_list vvl;
 #endif
 
     Vector v[4]; // forward, up, right (x,y,z), offset
@@ -281,11 +272,11 @@ void Voxel_volume::update_vertex_list()
         printf("Warning: generate vertex voxel list, 0 voxels\n");
 
     }
-    if(voxel_vertex_list.vertex_list != NULL) delete voxel_vertex_list.vertex_list;
-    voxel_vertex_list.vertex_list = new Voxel_vertex[index];
+    if(vvl.vertex_list != NULL) delete vvl.vertex_list;
+    vvl.vertex_list = new Voxel_vertex[index];
     //void * memcpy ( void * destination, const void * source, size_t num );
-    memcpy(voxel_vertex_list.vertex_list, scratch, index*sizeof(Voxel_vertex));
-
+    memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
+    vvl.size = index;
 }
 
 #endif
