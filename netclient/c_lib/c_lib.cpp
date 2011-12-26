@@ -24,6 +24,7 @@
 #include <c_lib/particles/particle_lib.cpp>
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
+#include <c_lib/weapons/packets.cpp>
 /* Items */
 #include <c_lib/items/items.cpp>
 

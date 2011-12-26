@@ -32,7 +32,11 @@ class Weapon {
 class HitscanLaser: public Weapon {
 
     public:
-        void fire();
+        int clip_size;
+        int clip;
+
+        bool fire();
+        void reload();
 
     HitscanLaser() :
     Weapon(TYPE_hitscan_laser)
@@ -42,7 +46,7 @@ class HitscanLaser: public Weapon {
 class BlockPick: public Weapon {
 
     public:
-        void fire();
+        bool fire();
 
     BlockPick() :
     Weapon(TYPE_block_pick)
@@ -52,7 +56,7 @@ class BlockPick: public Weapon {
 class BlockApplier: public Weapon {
 
     public:
-        void fire();
+        bool fire();
 
     BlockApplier() :
     Weapon(TYPE_block_applier)
@@ -62,7 +66,7 @@ class BlockApplier: public Weapon {
 class GrenadeThrower: public Weapon {
 
     public:
-        void fire();
+        bool fire();
 
     GrenadeThrower() :
     Weapon(TYPE_grenade_thrower)
