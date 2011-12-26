@@ -1,11 +1,13 @@
 
+attribute vec3 InTexCoord0;
+attribute vec4 InLightMatrix0;
+
 //varying float intensity;
+
 varying vec3 texCoord;
 varying mat2 lightMatrix0;
 
-attribute vec3 InTexCoord0;
 
-attribute vec4 InLightMatrix0;
 
 void main(void) 
 {			

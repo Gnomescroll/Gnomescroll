@@ -1,5 +1,4 @@
 
-//varying float intensity;
 varying vec3 texCoord;
 varying mat2 lightMatrix0;
 

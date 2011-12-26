@@ -9,6 +9,7 @@
     void Voxel_volume::register_with_renderer(Voxel_render_list* vrl)
     {
         vrl->register_voxel_volume(this);
+        voxel_render_list = vrl;
     }
 #endif
 
@@ -89,7 +90,7 @@ void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
     return;
-    
+
     //disable to draw over
     glEnable (GL_DEPTH_TEST);
 
