@@ -207,6 +207,14 @@ static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
 };
 
+static const char vnset[18] = { 0,0,1, 
+0,0,-1, 
+1,0,0 , 
+-1,0,0 ,
+0,1,0 , 
+0,-1,0 
+};
+
 inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
 
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
@@ -226,6 +234,35 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     *(int*)scratch[*index + 2].rgba = color;
     *(int*)scratch[*index + 3].rgba = color;
 
+//optimized version
+/*
+    int normal = (vnset[3*side + 0 ] << 24) | (vnset[3*side + 1 ] << 16) | (vnset[3*side + 2 ] << 8) | 0;
+
+    *(int*)scratch[*index + 0].normal = normal;
+    *(int*)scratch[*index + 1].normal = normal;
+    *(int*)scratch[*index + 2].normal = normal;
+    *(int*)scratch[*index + 3].normal = normal;
+*/
+    int _side = side*3;
+
+
+    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+    
+    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+
+    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+
+    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
+    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
+    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
+
+
     //set x,y,z
     side *= 12;
 
@@ -233,18 +270,18 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 0].y = fy + vset[side + 1 ];
     scratch[*index + 0].z = fz + vset[side + 2 ];
     
-    scratch[*index + 0].x = fx + vset[side + 3 ];
-    scratch[*index + 0].y = fy + vset[side + 4 ];
-    scratch[*index + 0].z = fz + vset[side + 5 ];
+    scratch[*index + 1].x = fx + vset[side + 3 ];
+    scratch[*index + 1].y = fy + vset[side + 4 ];
+    scratch[*index + 1].z = fz + vset[side + 5 ];
     
-    scratch[*index + 0].x = fx + vset[side + 6 ];
-    scratch[*index + 0].y = fy + vset[side + 7 ];
-    scratch[*index + 0].z = fz + vset[side + 8 ];
+    scratch[*index + 2].x = fx + vset[side + 6 ];
+    scratch[*index + 2].y = fy + vset[side + 7 ];
+    scratch[*index + 2].z = fz + vset[side + 8 ];
     
-    scratch[*index + 0].x = fx + vset[side + 9 ];
-    scratch[*index + 0].y = fy + vset[side + 10];
-    scratch[*index + 0].z = fz + vset[side + 11];
-    
+    scratch[*index + 3].x = fx + vset[side + 9 ];
+    scratch[*index + 3].y = fy + vset[side + 10];
+    scratch[*index + 3].z = fz + vset[side + 11];
+
     *index += 4;
 }
 
@@ -316,9 +353,11 @@ void Voxel_volume::update_vertex_list()
     }
     if(vvl.vertex_list != NULL) delete vvl.vertex_list;
     vvl.vertex_list = new Voxel_vertex[index];
+
     //void * memcpy ( void * destination, const void * source, size_t num );
     memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
-    vvl.size = index;
+    vvl.size = index*sizeof(Voxel_vertex);  //wtf is size for
+    vvl.vnum = index;
 }
 
 #endif

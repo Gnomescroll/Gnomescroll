@@ -11,7 +11,7 @@ void voxel_render_init();
 
 struct VBOmeta
 {
-    GLint id;
+    GLuint id;
     Voxel_vertex* vertex_list;
     int vnum;
     //use to prevent constant mallocing
@@ -68,6 +68,7 @@ class Voxel_render_list
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
+    VBOmeta* _vbo = &vbo[0]; 
     int v_num = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
@@ -79,12 +80,24 @@ void Voxel_render_list::update_vertex_buffer_object()
         v_num +=  render_list[i]->vvl.size;
     }
 
-    VBOmeta* _vbo = &vbo[0]; 
+
     //vbo->id
     _vbo->vnum = v_num;
 
+    printf("1 vnum= %i \n", _vbo->vnum);
+
     if(vbo->vertex_list != NULL) delete vbo->vertex_list;
+
+    if(v_num == 0)
+    {
+        printf("Voxel_render_list::update_vertex_buffer_object, zero vertices \n");
+        return;
+    }
+    //printf("2 vnum= %i \n", v_num);
+
+
     vbo->vertex_list = new Voxel_vertex[v_num];
+
 
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -95,6 +108,13 @@ void Voxel_render_list::update_vertex_buffer_object()
         render_list[i]->vvl.voff = index;
         index += _vbo->vnum*sizeof(Voxel_vertex);
     }
+
+    if( _vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
+    glBufferData(GL_ARRAY_BUFFER, index, NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, index, vbo->vertex_list, GL_STATIC_DRAW);
+
+    printf("Uploaded %i bytes to VBO \n", index);
 
 }
 
@@ -155,7 +175,7 @@ void Voxel_render_list::draw()
 {
     VBOmeta* _vbo = &vbo[0]; 
 
-    if(_vbo->vnum == 0 )
+    if( _vbo->vnum == 0 )
     {
         printf("Voxel_render_list::draw, vnum equals zero \n");
         return;
@@ -182,22 +202,43 @@ void Voxel_render_list::draw()
 
         glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
-        glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)12);
-        glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)32);
-
-
+        glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)0);
+        glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)12);
 
     }
 
 
-    glDisableVertexAttribArray(texCoord0Loc_4);
-    glDisableVertexAttribArray(LightMatrix0Loc_4);
+    glDisableVertexAttribArray(InCood0);
+    glDisableVertexAttribArray(InRGBA);
+
+    glUseProgramObjectARB(0);
 
 }
 
 void voxel_renderer_draw_test()
 {
     
+
+    static Voxel_volume voxel_volume (4,4,4, 1.0);
+    static Voxel_render_list voxel_render_list;
+
+    static int init = 0;
+    if(init == 0)
+    {
+
+        voxel_render_list.init_voxel_render_list_shader1();
+        printf("voxel_render_list.register(&voxel_volume); \n");
+        voxel_render_list.register_voxel_volume(&voxel_volume);
+
+    }
+
+    init = 1;
+
+    printf("voxel_render_list.update_vertex_buffer_object(); \n");
+    voxel_render_list.update_vertex_buffer_object();
+
+    printf("draw \n");
+    voxel_render_list.draw();
     return;
 
 }

@@ -1227,7 +1227,7 @@ int update_column_VBO(struct vm_column* column) {
     */
 
 //  GLuint VBO_id;
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
 
     if(vbo->VBO_id == 0)  glGenBuffers(1, &vbo->VBO_id);
     glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
@@ -1254,7 +1254,7 @@ int update_column_VBO(struct vm_column* column) {
         glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
     }
 */
-    glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_TEXTURE_2D);
 
     return 0;
 }
