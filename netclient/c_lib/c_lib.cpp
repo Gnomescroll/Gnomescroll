@@ -19,6 +19,7 @@
 
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
+#include <c_lib/voxel/voxel_render.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>

@@ -19,7 +19,7 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
     scale = _scale;
 
 #ifdef DC_CLIENT
-    Voxel_render_list* voxel_render_list = NULL;
+    voxel_render_list = NULL;
 #endif
 
     v[0] = Vector_init(1.0f,0.0f,0.0f);
