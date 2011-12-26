@@ -245,7 +245,6 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 0].y = fy + vset[side + 10];
     scratch[*index + 0].z = fz + vset[side + 11];
     
-    
     *index += 4;
 }
 

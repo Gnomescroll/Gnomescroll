@@ -106,6 +106,7 @@ void CCamera::move(float dx, float dy, float dz) {
 }
 
 #include <voxel/voxel_volume.hpp>
+#include <voxel/voxel_render.hpp>
 
 void CCamera::world_projection() {
 
@@ -142,6 +143,7 @@ void CCamera::world_projection() {
 
     //DEBUG!!!
     //voxel_test();
+    voxel_renderer_draw_test();
 }
 
 void CCamera::set_angles(float theta, float phi) {

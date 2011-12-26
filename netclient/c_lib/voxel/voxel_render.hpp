@@ -153,8 +153,51 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
 
 void Voxel_render_list::draw()
 {
+    VBOmeta* _vbo = &vbo[0]; 
+
+    if(_vbo->vnum == 0 )
+    {
+        printf("Voxel_render_list::draw, vnum equals zero \n");
+        return;
+    }
+
+    glUseProgramObjectARB(voxel_shader_prog);
+
+    glEnableVertexAttribArray(InCood0);
+    glEnableVertexAttribArray(InRGBA);
+
+    glColor3b(255,255,255);
+
+    glShadeModel(GL_FLAT);
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_TEXTURE_2D);
+
+
+    Voxel_volume* vv;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
+        vv = render_list[i];
+        if(vv->vvl.vnum == 0) printf("no vertices \n");
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
+
+        glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)12);
+        glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)32);
+
+
+
     }
+
+
+    glDisableVertexAttribArray(texCoord0Loc_4);
+    glDisableVertexAttribArray(LightMatrix0Loc_4);
+
+}
+
+void voxel_renderer_draw_test()
+{
+    
+    return;
+
 }
