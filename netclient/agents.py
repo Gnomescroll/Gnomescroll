@@ -100,11 +100,12 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 
     @requireCamera
     @noViewer
-    def set_active_block(self):
-        block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
-        if block is None:
-            return
-        block_type = terrainMap.get(*block)
+    def set_active_block(self, block_type=None):
+        if block_type is None:
+            block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
+            if block is None:
+                return
+            block_type = terrainMap.get(*block)
         print "Setting active block type to ", block_type
 
         InputGlobal.cube_selector.active_id = block_type

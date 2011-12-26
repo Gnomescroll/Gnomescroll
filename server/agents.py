@@ -44,14 +44,6 @@ class Agent(cAgents.AgentWrapper):
 
         return val
 
-    @property
-    def state(self):
-        return [self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az]
-    @state.setter
-    def state(self, val):
-        self.x, self.y, self.z, self.vx, self.vy, self.vz, self.ax, self.ay, self.az = val
-
-
     def json(self, properties=None):
         d = {
             'id':   self.id,

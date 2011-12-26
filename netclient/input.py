@@ -448,6 +448,8 @@ class CubeSelector(object):
         self.__dict__[k] = v
         if k == 'active':
             InputGlobal.app.hud.cube_selector.set(v)
+            if GameStateGlobal.agent is not None:
+                GameStateGlobal.agent.set_active_block(self.active_id)
         elif k == 'active_id':
             InputGlobal.app.hud.cube_selector.set_id(v)
 
