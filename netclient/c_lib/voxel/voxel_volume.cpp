@@ -30,10 +30,11 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
 
 /*
     v[0].w = 0.0f;
-    v[0].w = 0.0f;
-    v[0].w = 0.0f;
-    v[0].w = 1.0f;
+    v[1].w = 0.0f;
+    v[2].w = 0.0f;
+    v[3].w = 1.0f;
 */
+
     xdim = __xdim;
     ydim = __ydim;
     zdim = __zdim;
@@ -185,6 +186,8 @@ void Voxel_volume::set_axis(Vector4* f, Vector4* u)
     v[0] = *f;
     v[2] = *u; 
     vector_cross(u, f, &v[1]);
+
+    update_center();
 }
 
 void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
@@ -231,7 +234,11 @@ void Voxel_volume::update_center()
     {
         printf("out_sum v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
     }
-    //printf("3v x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
+
+    v[0].w = 0.0f;
+    v[1].w = 0.0f;
+    v[2].w = 0.0f;
+    v[3].w = 1.0f;
 }
 
 void Voxel_volume::set_center(float x, float y, float z)
@@ -240,25 +247,14 @@ void Voxel_volume::set_center(float x, float y, float z)
     center.y = y;
     center.z = z;
 
-    //rintf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-    //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-    //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-    //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
-
     Vector4 vx = vector_scalar2(&v[0],-1.0*hdx*scale);
     Vector4 vy = vector_scalar2(&v[1],-1.0*hdy*scale);
     Vector4 vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
-    //printf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-
-
-    //printf("0v x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-    //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-    //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
-
     v[3] = vector_add4(&vx,&vy,&vz,&center);
-    //printf("3v x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
 
-    //printf("0c x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
-
+    v[0].w = 0.0f;
+    v[1].w = 0.0f;
+    v[2].w = 0.0f;
+    v[3].w = 1.0f;
 }
