@@ -1,6 +1,6 @@
 
-//uniform mat3 axis;
-//uniform vec3 offset;
+uniform mat3 InRotationMatrix;
+uniform vec3 InTranslation;
 
 //attribute vec3 InCood0;
 //attribute vec4 InRGBA;

@@ -131,6 +131,9 @@ static GLenum voxel_shader_prog = 0;
 //int InCood0; 
 //int InRGBA; 
 
+int InRotationMatrix;
+int InTranslation;
+
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
     printf("init voxel shader\n");
@@ -166,6 +169,10 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     //InRGBA = glGetAttribLocation(voxel_shader_prog, "InRGBA");
 
     //uniforms
+
+    InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
+    InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
+
     //GLint glGetUniformLocationARB(GLhandleARB program, const GLcharARB * name)
     //voxel_vertex_index
 
@@ -251,6 +258,13 @@ void Voxel_render_list::draw()
         //printf("drawing %i vertices from offset %i \n", vv->vvl.vnum, vv->vvl.voff);
 
         //GL_POINTS
+
+//int InRotationMatrix;
+//int InTranslation;
+
+        void glUniformMatrix3fv(InRotationMatrix, 9, false, &vv->v[0]);
+        void glUniform3fvARB(InTranslation, 3, &vv->v[4]);
+
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
         //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
     }
