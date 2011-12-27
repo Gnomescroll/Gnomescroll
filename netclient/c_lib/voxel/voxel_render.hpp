@@ -199,7 +199,7 @@ void Voxel_render_list::draw()
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
 
-    printf("buff= %i \n",  _vbo->id);
+    //printf("buff= %i \n",  _vbo->id);
 
     if( _vbo->vnum == 0 )
     {
@@ -228,7 +228,7 @@ void Voxel_render_list::draw()
     glDisable(GL_TEXTURE_2D);
     //glDisable (GL_DEPTH_TEST);
 
-    printf("Start Draw\n");
+    //printf("Start Draw\n");
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -248,7 +248,7 @@ void Voxel_render_list::draw()
         //glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)0);
         //glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)12);
 
-        printf("drawing %i vertices from offset %i \n", vv->vvl.vnum, vv->vvl.voff);
+        //printf("drawing %i vertices from offset %i \n", vv->vvl.vnum, vv->vvl.voff);
 
         //GL_POINTS
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );

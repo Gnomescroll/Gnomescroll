@@ -284,13 +284,14 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 3].y = fy + vset[_side + 10];
     scratch[*index + 3].z = fz + vset[_side + 11];
 
+/*
     printf("start side %i \n", side);
     for(int j=0; j<4; j++)
     {
         printf("x,y,z= %f, %f, %f \n", scratch[*index + j].x, scratch[*index + j].y, scratch[*index + j].z);
     }
-
-    if(*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
+*/
+    //if(*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
     *index += 4;
 }
 
@@ -314,9 +315,9 @@ void Voxel_volume::update_vertex_list()
     int index = 0;
 
 
-    push_voxel_quad(scratch, &index, -5,-5,10, 0);
-    push_voxel_quad(scratch, &index, 5,5,10, 0);
-/*
+    //push_voxel_quad(scratch, &index, -5,-5,10, 0);
+    //push_voxel_quad(scratch, &index, 5,5,10, 0);
+
     for(int x=0; x < xdim; x++){
     for(int y=0; y < ydim; y++){
     for(int z=0; z < zdim; z++){
@@ -357,7 +358,7 @@ void Voxel_volume::update_vertex_list()
         }
 
     }}}
-*/
+
     printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );
 
     if(index == 0)
