@@ -1,25 +1,13 @@
 #pragma once 
 
 #include <voxel/common.h>
-#include <physics/vector.hpp>
-
-//z vector rotated in x,y plane by theta degrees
-//theta from 0 to 1
-static inline struct Vector unit_z_rot(float theta) __attribute((always_inline));
-struct Vector unit_z_rot(float theta)
-{   
-    Vector u;
-    u.x = 0.0;
-    u.y = sin(theta * 2*PI);
-    u.z = cos(theta * 2*PI);
-    return u;
-}
+#include <physics/vector4.hpp>
 
 /*
 optimization: compute matix and return matrix
 */
-struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
-struct Vector euler_rotation(Vector v, float x, float y, float z)
+struct Vector4 euler_rotation(Vector4 v, float theta) __attribute((always_inline));
+struct Vector4 euler_rotation(Vector4 v, float x, float y, float z)
 {   
     x *= 2*PI;
     y *= 2*PI;
@@ -33,7 +21,7 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     double sz = sin(z);
     
     Vector m[3];
-    Vector u;
+    Vector4 u;
 
     m[0].x = (cy*cz); 
     m[0].y = (cy*sz);
@@ -99,10 +87,10 @@ class Voxel_volume
     Voxel_vertex_list vvl;
 #endif
 
-    Vector v[4]; // forward, up, right (x,y,z), offset
+    Vector4 v[4]; // forward, up, right (x,y,z), offset
     float scale;    //size of voxels
     //bounding sphere
-    Vector center;
+    Vector4 center;
     float radius2;
 
     int xdim,ydim,zdim;
@@ -123,7 +111,7 @@ class Voxel_volume
     void set_unit_axis();
 
     //forward and up vector
-    void set_axis(Vector* f, Vector* u);
+    void set_axis(struct Vector4* f, struct Vector4* u);
 
     void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
 

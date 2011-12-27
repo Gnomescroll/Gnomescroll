@@ -22,12 +22,18 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
     voxel_render_list = NULL;
 #endif
 
-    v[0] = Vector_init(1.0f,0.0f,0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f);
-    //v[3] = Vector_init(0,0,0);  //center
+    v[0] = Vector4_init(1.0f,0.0f,0.0f);
+    v[1] = Vector4_init(0.0f,1.0f,0.0f);
+    v[2] = Vector4_init(0.0f,0.0f,1.0f);
+    //v[3] = Vector4_init(0,0,0);  //center
     this->set_center(0.0,0.0,0.0);
 
+/*
+    v[0].w = 0.0f;
+    v[0].w = 0.0f;
+    v[0].w = 0.0f;
+    v[0].w = 1.0f;
+*/
     xdim = __xdim;
     ydim = __ydim;
     zdim = __zdim;
@@ -110,11 +116,11 @@ void Voxel_volume::draw_bounding_box()
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
-    Vector vx;
-    Vector vy;
-    Vector vz;
+    Vector4 vx;
+    Vector4 vy;
+    Vector4 vz;
 
-    Vector u;
+    Vector4 u;
 
     for(i=0; i<12; i++) {
             j = 3*vertex_index2[2*i+0];
@@ -166,15 +172,15 @@ void Voxel_volume::draw_bounding_box()
 
 void Voxel_volume::set_unit_axis()
 {
-    v[0] = Vector_init(1.0f,0.0f,0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f);
+    v[0] = Vector4_init(1.0f,0.0f,0.0f);
+    v[1] = Vector4_init(0.0f,1.0f,0.0f);
+    v[2] = Vector4_init(0.0f,0.0f,1.0f);
     update_center();
 }
 
 //vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
-//forward and up vector
-void Voxel_volume::set_axis(Vector* f, Vector* u)
+//forward and up vector4
+void Voxel_volume::set_axis(Vector4* f, Vector4* u)
 {
     v[0] = *f;
     v[2] = *u; 
@@ -183,10 +189,10 @@ void Voxel_volume::set_axis(Vector* f, Vector* u)
 
 void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
 {
-    Vector vx = Vector_init(1.0f,0.0f,0.0f);
+    Vector4 vx = Vector4_init(1.0f,0.0f,0.0f);
     vx = euler_rotation(vx, x_angle, y_angle, z_angle);
 
-    Vector vz = Vector_init(0.0f,0.0f,1.0f);
+    Vector4 vz = Vector4_init(0.0f,0.0f,1.0f);
     vz = euler_rotation(vz, x_angle, y_angle, z_angle);
     vector_cross(&vz, &vx, &v[1]); //set v1
     v[0] = vx;
@@ -209,9 +215,9 @@ void Voxel_volume::update_center()
         printf("v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
     }
 
-    Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+    Vector4 vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+    Vector4 vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+    Vector4 vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
     if(DEBUG)
     {
@@ -239,9 +245,9 @@ void Voxel_volume::set_center(float x, float y, float z)
     //printf("1v x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
     //printf("2v x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
 
-    Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+    Vector4 vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+    Vector4 vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+    Vector4 vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
     //printf("0v x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
 

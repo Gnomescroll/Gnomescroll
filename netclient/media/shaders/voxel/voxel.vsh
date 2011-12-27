@@ -10,7 +10,9 @@ uniform vec3 InTranslation;
 void main(void) 
 {
 	gl_FrontColor = gl_Color;
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+
+	vec4 pos = gl_Vertex + InTranslation;
+	gl_Position = gl_ModelViewProjectionMatrix * pos;
 
 	//gl_Position = gl_ModelViewProjectionMatrix * InCood0;
 	//_rgba = InRGBA;

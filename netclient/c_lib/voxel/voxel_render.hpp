@@ -262,8 +262,8 @@ void Voxel_render_list::draw()
 //int InRotationMatrix;
 //int InTranslation;
 
-        void glUniformMatrix3fv(InRotationMatrix, 9, false, &vv->v[0]);
-        void glUniform3fvARB(InTranslation, 3, &vv->v[4]);
+        glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) &vv->v[0]);
+        glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
         //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
