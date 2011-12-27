@@ -166,8 +166,8 @@ def build(bld):
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
-    #noise_libraries = ['libnoise', 'noise', "NOISE"]
     noise_libraries = ['noise']
+    png_libs=['png']
 
     time_lib = ['rt']
     if OS == "Darwin":
@@ -175,9 +175,9 @@ def build(bld):
 
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
 
-        lib=sound_libraries+noise_libraries,
+        lib=sound_libraries+noise_libraries+png_libs,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -485,12 +485,14 @@ def exceptions(conf):
                mandatory=True)
                
     conf.check(header_name='libnoise/noise.h',
-                #lib="libnoise",
-               #use='libnoise',
                includes=['/usr/include'],
                fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
-               mandatory=True,
-               uselib_store="NOISE")
+               mandatory=True)
+               
+    conf.check(header_name='png.h',
+               includes=['/usr/include'],
+               fragment='#include <png.h>' + NOISE_MAIN_TEST_CODE,
+               mandatory=True)
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
@@ -510,6 +512,7 @@ def exceptions(conf):
 
     conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
+    #conf.check(lib=['fmodex'], libpath=[libp],includes=[incp])
 
     conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']

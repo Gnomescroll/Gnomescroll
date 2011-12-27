@@ -293,7 +293,7 @@ class Hud(object):
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
         if InputGlobal.vn:
             cHUD.VN.draw()
-
+            return
         # draw non-text first
         if zoom:
             self.draw_scope_reticle()

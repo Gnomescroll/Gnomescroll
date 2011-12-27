@@ -82,6 +82,7 @@ class App(object):
     def __init__(self):
         cOptions.load(opts)
         self.init_globals()
+        
         self.animations = animations
 
         camera.set_callback(c_lib.terrain_map.camera_callback)
@@ -90,6 +91,13 @@ class App(object):
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
 
         self.hud = Hud()
+
+        #print 'preparing to generate frames'
+        #secs = 1./30.
+        #secs = 5.
+        #cHUD.VN.frames(secs)
+        #print 'frames generated'
+        #return
 
         self.intervals = intervals.Intervals()
         def send_agent_pos():

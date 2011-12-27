@@ -359,8 +359,12 @@ Voronoi texture surface
 """
 cdef extern from "SDL/v.hpp" namespace "vn":
     void draw_vn()
+    void generate_frames(float seconds)
 
 class VN(object):
     @classmethod
     def draw(cls):
         draw_vn()
+    @classmethod
+    def frames(cls, float seconds):
+        generate_frames(seconds)
