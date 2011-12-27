@@ -351,7 +351,6 @@ class optimized_ctx(ConfigurationContext):
     cmd = 'optimized2'
     fun = 'optimized2'
 
-from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):
     cmd = 'debug'
     fun = 'debug'
@@ -363,6 +362,10 @@ class lint_ctx(ConfigurationContext):
 class profile_ctx(ConfigurationContext):
     cmd = 'profile'
     fun = 'profile'
+    
+class exceptions_ctx(ConfigurationContext):
+    cmd = 'exceptions'
+    fun = 'exceptions'
 
 def profile(ctx):
     configure(ctx)
@@ -392,6 +395,11 @@ def debug(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-fstack-protector-all')
     ctx.env.CXXFLAGS.append('-fstack-protector-all')
+
+def exceptions(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.remove('-fno-exceptions')
+    ctx.env.CXXFLAGS.remove('-fno-exceptions')
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code
 # just throws a shit ton of errors starting from the SDL libraries
