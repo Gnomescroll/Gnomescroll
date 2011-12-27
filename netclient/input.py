@@ -94,6 +94,7 @@ class InputGlobal:
     use_voxel_aligner = False
     inventory = False
     agent_can_jump = True
+    vn = False
     
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -262,6 +263,7 @@ class Keyboard(object):
             "n" : toggle_t_viz_vbo_indicator_style,
             "o" : toggle_terrain_map_blend_mode,
             "m" : self.toggle_map,
+            'k' : self.toggle_vn,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
@@ -283,6 +285,9 @@ class Keyboard(object):
 
     def toggle_map(self):
         InputGlobal.map = not InputGlobal.map
+
+    def toggle_vn(self):
+        InputGlobal.vn = not InputGlobal.vn
 
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()

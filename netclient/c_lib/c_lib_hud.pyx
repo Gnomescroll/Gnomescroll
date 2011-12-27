@@ -352,3 +352,15 @@ class Compass:
     @classmethod
     def draw(cls):
         draw_compass()
+
+
+"""
+Voronoi texture surface
+"""
+cdef extern from "SDL/v.hpp" namespace "vn":
+    void draw_vn()
+
+class VN(object):
+    @classmethod
+    def draw(cls):
+        draw_vn()

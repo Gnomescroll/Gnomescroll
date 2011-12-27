@@ -291,6 +291,9 @@ class Hud(object):
             self.disconnected_message.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+        if InputGlobal.vn:
+            cHUD.VN.draw()
+
         # draw non-text first
         if zoom:
             self.draw_scope_reticle()
@@ -311,6 +314,7 @@ class Hud(object):
         cHUD.Equipment.draw(active_equipment_slot)
 
         cHUD.Compass.draw()
+
 
         self.draw_text_items(fps, ping)
 

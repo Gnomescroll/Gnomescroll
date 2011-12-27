@@ -111,6 +111,7 @@ int init_c_lib() {
         HudMap::init();
         HudEquipment::init();
         Compass::init();
+        vn::init();
 
         Sound::init();
     #endif
