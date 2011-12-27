@@ -139,21 +139,15 @@ class fire_weapon_StoC: public FixedSizeNetPacketToClient<fire_weapon_StoC>
 {
     public:
         int id;
-        int weapon_id;
+        int type;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&weapon_id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
         }
 
         inline void handle();
-        
-        fire_weapon_StoC() {}
-        fire_weapon_StoC(int id, int weapon_id) {
-            this->id = id;
-            this->weapon_id = weapon_id;
-        }
 };
 
 // damage indicator packet
@@ -171,12 +165,6 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
         }
 
         inline void handle();
-
-        agent_damage_StoC(){}
-        agent_damage_StoC(int id, int dmg) {
-            this->id = id;
-            this->dmg = dmg;
-        }
 };
 
 
@@ -239,20 +227,20 @@ class fire_weapon_CtoS: public FixedSizeNetPacketToServer<fire_weapon_CtoS>
 {
     public:
         int id;
-        int weapon_id;
+        int type;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&weapon_id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
         }
 
         inline void handle();
         
         fire_weapon_CtoS() {}
-        fire_weapon_CtoS(int id, int weapon_id) {
+        fire_weapon_CtoS(int id, int type) {
             this->id = id;
-            this->weapon_id = weapon_id;
+            this->type = type;
         }
 };
 
@@ -272,13 +260,6 @@ class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
         }
 
         inline void handle();
-
-        hitscan_agent_CtoS() {}
-        hitscan_agent_CtoS(int id, int agent_id, int body_part) {
-            this->id = id;
-            this->agent_id = agent_id;
-            this->body_part = body_part;
-        }
 };
 
 // hitscan: target = block
@@ -297,14 +278,6 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
         }
 
         inline void handle();
-        
-        hitscan_block_CtoS() {}
-        hitscan_block_CtoS(int id, int x, int y, int z) {
-            this->id = id;
-            this->x = x;
-            this->y = y;
-            this->z = z;
-        }
 };
 
 // agent death notification
@@ -321,9 +294,6 @@ class agent_dead_StoC: public FixedSizeReliableNetPacketToClient<agent_dead_StoC
         }
 
         inline void handle();
-        
-        agent_dead_StoC() {}
-        agent_dead_StoC(int id, bool dead) : id(id), dead(dead) {}
 };
 
 class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
@@ -339,9 +309,6 @@ class agent_health_StoC: public FixedSizeNetPacketToClient<agent_health_StoC>
         }
 
         inline void handle();
-
-        agent_health_StoC() {}
-        agent_health_StoC(int id, int health): id(id), health(health) {}
 };
 
 class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_StoC>
@@ -379,11 +346,6 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
             pack_u8(&id, buff, buff_n, pack);
         }
         inline void handle();
-
-        PlayerAgent_id_StoC(){}
-        PlayerAgent_id_StoC(int id)
-        : id(id)
-        {}
 };
 
 class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_CtoS>
@@ -404,11 +366,6 @@ class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_
             pack_float(&vz, buff, buff_n, pack);
         }
         inline void handle();
-
-        ThrowGrenade_CtoS(){}
-        ThrowGrenade_CtoS(int id, float x, float y, float z, float vx, float vy, float vz)
-        : id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz)
-        {}
 };
 
 class AgentKills_StoC: public FixedSizeReliableNetPacketToClient<AgentKills_StoC>
@@ -449,6 +406,62 @@ class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicide
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&suicides, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentActiveWeapon_StoC>
+{
+    public:
+        int id;
+        int slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
+{
+    public:
+        int id;
+        int slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentReloadWeapon_StoC>
+{
+    public:
+        int id;
+        int type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
+{
+    public:
+        int id;
+        int type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
         }
         inline void handle();
 };

@@ -87,65 +87,6 @@ class SendMessage(GenericMessage):
     @sendJSON('received_client_id')
     def received_client_id(self):
         return True
-
-    @sendJSON('request_agent')
-    def request_agent(self, agent_id):
-        return {
-            'id'   :   agent_id,
-        }
-
-    @sendJSON('request_weapon')
-    def request_weapon(self, wid):
-        return {
-            'id'    :   wid,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('reload_weapon')
-    def reload_weapon(self, agent=None):
-        if agent is None or agent.id is None:
-            return
-        return {
-            'aid'   :   agent.id,
-            'weapon':   GameStateGlobal.agent.weapons.active().type
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('change_weapon')
-    def change_weapon(self, agent, active_weapon):
-        if active_weapon is None:
-            active_weapon = -1
-        return {
-            'aid'   :   agent.id,
-            'windex':   active_weapon,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('drop_weapon')
-    def drop_weapon(self, agent, wid):
-        return {
-            'aid'   :   agent.id,
-            'wid'   :   wid,
-        }
-
-    @idRequired
-    @noViewer
-    @sendJSON('set_block')
-    def set_block(self, agent=None):
-        if agent is None or agent.id is None:
-            return
-        block_position = agent.facing_block_position()
-        if block_position is None:
-            return
-        return {
-            'aid'   :   agent.id,
-            'type'  :   agent.active_block(),
-            'pos'   :   block_position,
-        }
-
     @sendJSON('identify')
     def identify(self, name=None):
         if name is None:
@@ -171,10 +112,7 @@ class MapMessage:
         return True
 
     @sendJSON('request_chunk')
-    def request_chunk(self, x,y,z, XXX=[0]):
-        #if XXX[0]:
-            #assert False
-        #XXX[0] += 1
+    def request_chunk(self, x,y,z):
         return {
             'value' : (x,y,z),
         }

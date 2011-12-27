@@ -94,7 +94,7 @@ class Dat(object):
     def json(self):
         return self.dat
 
-w_dat = Dat('weapons')
+#w_dat = Dat('weapons')
 #i_dat = Dat('items')
 #p_dat = Dat('projectiles')
 c_dat = Dat('cubes')

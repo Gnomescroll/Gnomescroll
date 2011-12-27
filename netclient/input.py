@@ -179,15 +179,15 @@ class Mouse(object):
                     GameStateGlobal.agent.set_active_block()
                 elif button == 4: #scroll up
                     direction = 'up'
-                    GameStateGlobal.agent.weapons.switch(direction)
+                    GameStateGlobal.agent.switch_weapons(direction)
                 elif button == 5: #scroll down
                     direction = 'down'
-                    GameStateGlobal.agent.weapons.switch(direction)
+                    GameStateGlobal.agent.switch_weapons(direction)
             elif state == 0: #mouse button released
                 pass
 
         if button == 3 and state == 1:  # right click down
-            if not InputGlobal.input == 'agent' or GameStateGlobal.agent.weapons.active().scope:
+            if not InputGlobal.input == 'agent' or GameStateGlobal.agent.can_zoom():
                 camera.camera.toggle_zoom()
 
 
@@ -417,15 +417,11 @@ class AgentInput:
         except (ValueError, TypeError):
             pass
         else:
-            GameStateGlobal.agent.weapons.switch(weapon_index)
+            GameStateGlobal.agent.switch_weapons(weapon_index)
 
     @classmethod
     @requireAgent
     def adjust_block(cls, symbol=None, modifiers=None):
-        aw = GameStateGlobal.agent.weapons.active()
-
-        if not aw or aw.type != 3:  # block applier
-            return
         if symbol == 'left':
             InputGlobal.cube_selector.left()
         elif symbol == 'right':
@@ -452,6 +448,8 @@ class CubeSelector(object):
         self.__dict__[k] = v
         if k == 'active':
             InputGlobal.app.hud.cube_selector.set(v)
+            if GameStateGlobal.agent is not None:
+                GameStateGlobal.agent.set_active_block(self.active_id)
         elif k == 'active_id':
             InputGlobal.app.hud.cube_selector.set_id(v)
 

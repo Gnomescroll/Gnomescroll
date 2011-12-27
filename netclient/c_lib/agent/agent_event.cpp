@@ -5,7 +5,23 @@
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/sound/sound.hpp>
 
-void Agent_event::fired_weapon(int weapon_id) {
+void Agent_event::fired_weapon(int type) {
+    switch (type) {
+        case Weapons::TYPE_block_applier:
+            break;
+        case Weapons::TYPE_block_pick:
+            break;
+        case Weapons::TYPE_grenade_thrower:
+            break;
+        case Weapons::TYPE_hitscan_laser:
+            fired_laser();
+            break;
+        default:
+            break;
+    }
+}
+
+void Agent_event::fired_laser() {
     // play weapon animation & sound
     char soundfile[] = "laser_01.wav";
     if (a->id != ClientState::playerAgent_state.agent_id) { // only play for other agents
@@ -42,6 +58,7 @@ void Agent_event::fired_weapon(int weapon_id) {
     z += f[2] * _distance;
 
     Animations::block_damage(x,y,z, f[0], f[1], f[2], _cube, side);
+
 }
 
 // side effects of taking damage. dont modify health/death here
@@ -64,6 +81,11 @@ void Agent_event::born() {
 void Agent_event::life_changing(bool dead) {
     if (dead) died();
     else born();
+}
+
+void Agent_event::reload_weapon(int type) {
+    if (! a->weapons.is_active(type)) return;
+    // play reload animation/sound for the weapon
 }
 
 #endif

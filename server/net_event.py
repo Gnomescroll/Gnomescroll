@@ -12,7 +12,6 @@ class NetEvent:
     miscMessageHandler = None
     agentMessageHandler = None
     mapMessageHandler = None
-    weaponMessageHandler = None
     chatMessageHandler = None
     datMessageHandler = None
 
@@ -23,7 +22,6 @@ class NetEvent:
         cls.agentMessageHandler = AgentMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.weaponMessageHandler = WeaponMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
         cls.datMessageHandler = DatMessageHandler()
 
@@ -310,7 +308,7 @@ class AdminMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'admin'     : self.is_admin,
-            'set_map' : self._set_map,
+            #'set_map' : self._set_map,
             'clear_map': self._clear_map,
             'save_map': self._save_map,
         }
@@ -318,11 +316,11 @@ class AdminMessageHandler(GenericMessageHandler):
     def is_admin(self, msg, conn):
         conn.admin = True
 
-    @requireKey('list')
-    def _set_map(self, msg, conn, blocks):
-        for x,y,z,value in blocks:
-            terrain_map.set(x,y,z,value)
-        NetOut.event.set_map(blocks)
+    #@requireKey('list')
+    #def _set_map(self, msg, conn, blocks):
+        #for x,y,z,value in blocks:
+            #terrain_map.set(x,y,z,value)
+        #NetOut.event.set_map(blocks)
 
     def _clear_map(self, msg, conn):
         terrain_map.clear()
@@ -343,45 +341,6 @@ class AgentMessageHandler(GenericMessageHandler):
     @requireKey('id')
     def request_agent(self, msg, connection, aid):
         connection.sendMessage.send_agent(aid)
-
-'''
-move reload, to C
-Deprecate drop weapon
-'''
-class WeaponMessageHandler(GenericMessageHandler):
-
-    def events(self):
-        return {
-            'request_weapon'    :   self.request_weapon, #deprecate
-            'reload_weapon'     :   self.reload_weapon, #move to c
-            'change_weapon'     :   self.change_weapon, #move to C
-        }
-
-    @logError('request_weapon')
-    @requireKey('id')
-    def request_weapon(self, msg, conn, wid):
-        conn.sendMessage.send_weapon(wid)
-
-    @logError('reload_weapon')
-    @processAgent('aid')
-    @requireKeyType('weapon', int)
-    def reload_weapon(self, msg, client, agent, weapon_type):
-        try:
-            weapon_index = [weapon.type for weapon in agent.weapons].index(weapon_type)
-        except ValueError:
-            return 'weapon unknown to agent'
-
-        weapon = agent.weapons[weapon_index]
-        if weapon.reload():
-            NetOut.event.agent_update(agent, 'weapons')
-
-    @logError('change_weapon')
-    @processAgent('aid')
-    @requireKey('windex', err_key='windex (active_weapon)')
-    def change_weapon(self, msg, client, agent, active_weapon):
-        if active_weapon == -1: # json doesnt have None, but None is a valid input; careful, -1 is a valid index.
-            active_weapon = None
-        agent.set_active_weapon(active_weapon)
 
 
 class MiscMessageHandler(GenericMessageHandler):
@@ -409,7 +368,7 @@ class MapMessageHandler(GenericMessageHandler):
         return {
             'request_chunk' :   self.request_chunk,
             'request_chunk_list':  self.send_chunk_list,
-            'set_block'     :   self.set_block,
+            #'set_block'     :   self.set_block,
         }
 
     @logError('request_chunk')
@@ -422,19 +381,19 @@ class MapMessageHandler(GenericMessageHandler):
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
 
-    @logError('set_block')
-    @processAgent('aid')
-    @processIterable('pos', 3)
-    @requireKeyType('type', int, err_key='type (block)')
-    def set_block(self, msg, client, agent, pos, block_type):
-        x,y,z = pos
-        block = (x, y, z, block_type,)
-        weapon = agent.active_weapon()
-        if weapon.fire_command == 'set_block' and weapon.fire():
-            print 'setting block'
-            terrain_map.set(*block)
-            NetOut.event.set_map([block])
-            client.sendMessage.send_weapon(weapon, properties='clip')
+    #@logError('set_block')
+    #@processAgent('aid')
+    #@processIterable('pos', 3)
+    #@requireKeyType('type', int, err_key='type (block)')
+    #def set_block(self, msg, client, agent, pos, block_type):
+        #x,y,z = pos
+        #block = (x, y, z, block_type,)
+        #weapon = agent.active_weapon()
+        #if weapon.fire_command == 'set_block' and weapon.fire():
+            #print 'setting block'
+            #terrain_map.set(*block)
+            ##NetOut.event.set_map([block])
+            #client.sendMessage.send_weapon(weapon, properties='clip')
 
 
 class ChatMessageHandler(GenericMessageHandler):

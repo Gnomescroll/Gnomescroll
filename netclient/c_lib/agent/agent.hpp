@@ -19,6 +19,7 @@ const int AGENT_MAX = 256;
 #include <c_lib/agent/agent_event.hpp>
 #endif
 #include <c_lib/agent/agent_status.hpp>
+#include <c_lib/agent/agent_weapons.hpp>
 
 
 //store last network messsage
@@ -110,6 +111,7 @@ class Agent_state {
         int _new_control_state; //Deprecate
 
         class Agent_status status;
+        class Agent_weapons weapons;
 
         #ifdef DC_CLIENT
         class Agent_vox* vox;

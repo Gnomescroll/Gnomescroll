@@ -23,8 +23,7 @@
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
-/* Weapons */
-#include <c_lib/weapons/weapons.cpp>
+
 /* Items */
 #include <c_lib/items/items.cpp>
 
@@ -36,6 +35,10 @@
 
 /* Agents */
 #include <c_lib/agent/agent_include.h>
+
+/* Weapons */
+#include <c_lib/weapons/weapons.cpp>
+#include <c_lib/weapons/packets.cpp>
 
 #ifdef DC_CLIENT
     /* animations */

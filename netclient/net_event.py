@@ -21,7 +21,6 @@ class NetEventGlobal:
     mapMessageHandler = None
     agentMessageHandler = None
     miscMessageHandler = None
-    weaponMessageHandler = None
     datMessageHandler = None
 
     @classmethod
@@ -33,7 +32,6 @@ class NetEventGlobal:
 
         cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.weaponMessageHandler = WeaponMessageHandler()
 
         cls.datMessageHandler = DatMessageHandler()
 
@@ -148,7 +146,6 @@ class MapMessageHandler(GenericMessageHandler):
     events = {
         'chunk_list' : '_chunk_list',
         'map_chunk' : '_map_chunk',
-        'set_map' : '_set_map',
         'clear_map': '_clear_map',
     }
 
@@ -160,12 +157,6 @@ class MapMessageHandler(GenericMessageHandler):
         #print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         MapControllerGlobal.mapController.incoming_map_chunk(x,y,z)
-
-    def _set_map(self, list, **msg):
-        for x,y,z,value in list:
-            terrainMap.set(x,y,z,value)
-            if value == 0:
-                animations.BlockCrumbleAnimation([x,y,z]).play()
 
     def _clear_map(self, **msg):
         terrainMap.clear()
@@ -328,27 +319,6 @@ class AgentMessageHandler(DatastoreMessageInterface):
 
     def _agent_list(self, **args):
         self._default_list(**args)
-
-
-class WeaponMessageHandler(DatastoreMessageInterface):
-
-    def __init__(self):
-        self.name = 'weapon'
-        self.store = GameStateGlobal.weaponList
-        DatastoreMessageInterface.__init__(self)
-
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_weapon(data['id'])
-
-    def _weapon_destroy(self, **args):
-        id = self._default_destroy(**args)
-        if id is not None:
-            GameStateGlobal.remove_weapon(id)
-
-    def _weapon_update(self, **args):
-        return self._default_update(**args)
-
 
 class DatMessageHandler(GenericMessageHandler):
     events = {
