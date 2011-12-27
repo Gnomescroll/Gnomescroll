@@ -96,23 +96,17 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
-    return;
 
     //disable to draw over
-    glEnable (GL_DEPTH_TEST);
+    //glEnable (GL_DEPTH_TEST);
+
+    glDisable (GL_DEPTH_TEST);
 
     glDisable(GL_TEXTURE_2D);
     glLineWidth(5.0f);
 
     int i,j;
     float _x,_y,_z;
-
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(center.x,center.y, center.z);
-    glEnd();
-    glPointSize(1.0);
 
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
@@ -155,10 +149,20 @@ void Voxel_volume::draw_bounding_box()
     glEnd();
 
     glDisable (GL_DEPTH_TEST);
+
+    //offset
     glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
     glPointSize(10.0);
     glBegin(GL_POINTS);
     glVertex3f(v[3].x, v[3].y, v[3].z);
+    glEnd();
+    glPointSize(1.0);
+
+    //center
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(center.x,center.y, center.z);
     glEnd();
     glPointSize(1.0);
 
@@ -167,6 +171,8 @@ void Voxel_volume::draw_bounding_box()
 
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
+
+    glEnable (GL_DEPTH_TEST);
 
 #endif
 }

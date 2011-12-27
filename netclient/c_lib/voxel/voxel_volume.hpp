@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <voxel/common.h>
-#include <physics/vector4.hpp>
+#include <physics/vector.hpp>
 
 /*
 optimization: compute matix and return matrix

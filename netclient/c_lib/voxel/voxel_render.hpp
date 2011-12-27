@@ -132,7 +132,7 @@ static GLenum voxel_shader_prog = 0;
 //int InRGBA; 
 
 int InRotationMatrix;
-int InTranslation;
+//int InTranslation;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
@@ -171,7 +171,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     //uniforms
 
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
-    InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
+    //InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
 
     //GLint glGetUniformLocationARB(GLhandleARB program, const GLcharARB * name)
     //voxel_vertex_index
@@ -202,7 +202,7 @@ void Voxel_render_list::draw()
     glPointSize(1.0);
 
 
-    //glEnable (GL_DEPTH_TEST);
+    glEnable (GL_DEPTH_TEST);
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
 
@@ -262,8 +262,8 @@ void Voxel_render_list::draw()
 //int InRotationMatrix;
 //int InTranslation;
 
-        glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) &vv->v[0]);
-        glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
+        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->v);
+        //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
         //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
@@ -285,7 +285,8 @@ void voxel_renderer_draw_test()
 {
     
 
-    static Voxel_volume voxel_volume (4,4,4, 1.0);
+    static Voxel_volume vv (4,4,2, 2.0);
+
     static Voxel_render_list voxel_render_list;
 
     static int init = 0;
@@ -294,19 +295,32 @@ void voxel_renderer_draw_test()
 
         voxel_render_list.init_voxel_render_list_shader1();
         printf("voxel_render_list.register(&voxel_volume); \n");
-        voxel_render_list.register_voxel_volume(&voxel_volume);
+        voxel_render_list.register_voxel_volume(&vv);
 
         //printf("voxel_render_list.update_vertex_buffer_object(); \n");
-        //voxel_render_list.update_vertex_buffer_object();
+        voxel_render_list.update_vertex_buffer_object();
     }
-
     init = 1;
 
-    //printf("voxel_render_list.update_vertex_buffer_object(); \n");
-    voxel_render_list.update_vertex_buffer_object();
 
-    //printf("draw \n");
+    static float c0 = 0.0;
+    static float c1 = 0.0;
+    static float c2 = 0.0;
+    c0 += 0.0050 / (2*PI);
+    c1 += 0.0025 / (2*PI);
+    c2 += 0.0100 / (2*PI);
+
+    //printf("start\n");
+    //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+    
+    vv.set_rotated_unit_axis(c0, c1, c2);
+    
+    //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
+    vv.set_center( 8.0, 8.0, 8.0);
+
     voxel_render_list.draw();
+    vv.draw_bounding_box();
+
     return;
 
 }
