@@ -6,6 +6,8 @@
 
 #include <c_lib/SDL/shader_loader.hpp>
 
+#include <physics/vector4.hpp>
+
 void voxel_render_init();
 
 
@@ -246,6 +248,13 @@ void Voxel_render_list::draw()
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
 
     Voxel_volume* vv;
+    Vector4 v[4];
+
+    v[0].w = 0.0f;
+    v[1].w = 0.0f;
+    v[2].w = 0.0f;
+    v[3].w = 1.0f;
+
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
@@ -262,7 +271,21 @@ void Voxel_render_list::draw()
 //int InRotationMatrix;
 //int InTranslation;
 
-        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->v);
+        //vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
+        //vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
+        //vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+    /*
+        *((Vector*) &v[0]) = vv->v[0];
+        *((Vector*) &v[1]) = vv->v[1];
+        *((Vector*) &v[2]) = vv->v[2];
+        *((Vector*) &v[3]) = vv->v[3];
+    */
+        *((Vector*) &v[0]) = vector_scalar2(&vv->v[0], vv->scale);
+        *((Vector*) &v[1]) = vector_scalar2(&vv->v[1], vv->scale);
+        *((Vector*) &v[2]) = vector_scalar2(&vv->v[2], vv->scale);
+        *((Vector*) &v[3]) = vv->v[3];
+        
+        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
         //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
@@ -283,8 +306,6 @@ void Voxel_render_list::draw()
 
 void voxel_renderer_draw_test()
 {
-    
-
     static Voxel_volume vv (4,4,2, 2.0);
 
     static Voxel_render_list voxel_render_list;
@@ -302,10 +323,10 @@ void voxel_renderer_draw_test()
     }
     init = 1;
 
-
     static float c0 = 0.0;
     static float c1 = 0.0;
     static float c2 = 0.0;
+
     c0 += 0.0050 / (2*PI);
     c1 += 0.0025 / (2*PI);
     c2 += 0.0100 / (2*PI);

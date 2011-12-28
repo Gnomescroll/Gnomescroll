@@ -122,29 +122,7 @@ class NetPeer
 
     int received_since_last_send;
 
-    NetPeer() {
-        for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
-        unreliable_net_message_array_index = 0;
-
-        //reliable message que
-        rnma_insert = NetMessageArray::acquire();
-        rnma_insert->reference_count = 1;
-        rnma_insert_index = 0;
-        rnma_read = rnma_insert;
-        rnma_read_index = 0;
-        rnma_pending_messages = 0;
-
-        pending_bytes_out = 0;
-        pending_reliable_packets_out = 0;
-
-        pending_unreliable_bytes_out = 0;
-        pending_reliable_bytes_out = 0;
-
-        py_in.np = this;
-
-        received_since_last_send = 0;
-    }
-
+    NetPeer();
 
 };
 

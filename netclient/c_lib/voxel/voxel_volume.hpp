@@ -6,8 +6,8 @@
 /*
 optimization: compute matix and return matrix
 */
-struct Vector4 euler_rotation(Vector4 v, float theta) __attribute((always_inline));
-struct Vector4 euler_rotation(Vector4 v, float x, float y, float z)
+struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
+struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
     x *= 2*PI;
     y *= 2*PI;
@@ -21,7 +21,7 @@ struct Vector4 euler_rotation(Vector4 v, float x, float y, float z)
     double sz = sin(z);
     
     Vector m[3];
-    Vector4 u;
+    Vector u;
 
     m[0].x = (cy*cz); 
     m[0].y = (cy*sz);
@@ -87,10 +87,10 @@ class Voxel_volume
     Voxel_vertex_list vvl;
 #endif
 
-    Vector4 v[4]; // forward, up, right (x,y,z), offset
+    Vector v[4]; // forward, up, right (x,y,z), offset
     float scale;    //size of voxels
     //bounding sphere
-    Vector4 center;
+    Vector center;
     float radius2;
 
     int xdim,ydim,zdim;
@@ -111,7 +111,7 @@ class Voxel_volume
     void set_unit_axis();
 
     //forward and up vector
-    void set_axis(struct Vector4* f, struct Vector4* u);
+    void set_axis(struct Vector* f, struct Vector* u);
 
     void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
 

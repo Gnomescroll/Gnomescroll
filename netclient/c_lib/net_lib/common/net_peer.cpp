@@ -6,9 +6,44 @@
 #include <errno.h>
 #include <sys/types.h>
 
-static char net_out_buff[2000];
-
 #define NET_PEER_DEBUG 1
+
+#if NET_PEER_DEBUG
+    static char* net_out_buff;
+#else
+    static char net_out_buff[2000];
+#endif 
+
+//static char net_out_buff;
+
+NetPeer::NetPeer() {
+
+#if NET_PEER_DEBUG
+    if( net_out_buff == NULL ) net_out_buff = new char[2000];
+#endif
+
+    for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;
+    unreliable_net_message_array_index = 0;
+
+    //reliable message que
+    rnma_insert = NetMessageArray::acquire();
+    rnma_insert->reference_count = 1;
+    rnma_insert_index = 0;
+    rnma_read = rnma_insert;
+    rnma_read_index = 0;
+    rnma_pending_messages = 0;
+
+    pending_bytes_out = 0;
+    pending_reliable_packets_out = 0;
+
+    pending_unreliable_bytes_out = 0;
+    pending_reliable_bytes_out = 0;
+
+    py_in.np = this;
+
+    received_since_last_send = 0;
+}
+
 /*
     Use arrays/pointers/pool later for packets, to remove limits
     ???
