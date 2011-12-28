@@ -314,33 +314,33 @@ void Voxel_volume::update_vertex_list()
 
         //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
  
-        if(z+1 == zdim || get_as_int(x,y,z+1) != 0)
+        if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
         }
         
 
-        if(z == 0 || get_as_int(x,y,z-1) != 0)
+        if(z == 0 || get_as_int(x,y,z-1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 1);
         }
 
-        if(x+1 == xdim || get_as_int(x+1,y,z) != 0)
+        if(x+1 == xdim || get_as_int(x+1,y,z) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 2);
         }
 
-        if(x == 0 || get_as_int(x-1,y,z) != 0)
+        if(x == 0 || get_as_int(x-1,y,z) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 3);
         }
  
-        if(y+1 ==ydim || get_as_int(x,y+1,z) != 0)
+        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 4);
         }
 
-        if(y == 0 || get_as_int(x,y-1,z) != 0)
+        if(y == 0 || get_as_int(x,y-1,z) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 5);
         }
