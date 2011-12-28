@@ -88,6 +88,7 @@ class Voxel_volume
 #endif
 
     Vector v[4]; // forward, up, right (x,y,z), offset
+
     float scale;    //size of voxels
     //bounding sphere
     Vector center;
@@ -197,7 +198,7 @@ static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
 };
 
-static const char vnset[18] = { 0,0,1, 
+static const int vnset[18] = { 0,0,1, 
 0,0,-1, 
 1,0,0 , 
 -1,0,0 ,
@@ -219,10 +220,10 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
 
     //set rgba
     int color = get_as_int(x,y,z);
-    *(int*)scratch[*index + 0].rgba = color;
-    *(int*)scratch[*index + 1].rgba = color;
-    *(int*)scratch[*index + 2].rgba = color;
-    *(int*)scratch[*index + 3].rgba = color;
+    *(int*)&scratch[*index + 0].rgba = color;
+    *(int*)&scratch[*index + 1].rgba = color;
+    *(int*)&scratch[*index + 2].rgba = color;
+    *(int*)&scratch[*index + 3].rgba = color;
 
 //optimized version
 /*

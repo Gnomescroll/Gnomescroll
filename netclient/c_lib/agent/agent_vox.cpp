@@ -120,7 +120,7 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
         return;
     }
 
-    struct Voxel* vo = &vox[x + y*xdim + z*xdim*ydim];
+    union Voxel* vo = &vox[x + y*xdim + z*xdim*ydim];
     if(vo == NULL) {
         printf("set_agent_vox_volume: null pointer \n");
         return;
@@ -134,7 +134,7 @@ void Vox::set_volume(int x, int y, int z, int r, int g, int b, int a) {
 void Vox::set_color(int r, int g, int b, int a) {
     int n,j;
     n = xdim*ydim*zdim;
-    struct Voxel* vo;
+    union Voxel* vo;
     for (j=0; j<n; j++) {
         vo = &vox[j];
         vo->r = r;
@@ -145,7 +145,7 @@ void Vox::set_color(int r, int g, int b, int a) {
 }
 
 void Vox::set_color(int x, int y, int z, int r, int g, int b, int a) {
-    struct Voxel* vo = &vox[x + y*xdim + z*xdim*ydim];
+    union Voxel* vo = &vox[x + y*xdim + z*xdim*ydim];
     if (vo==NULL) {
         printf("set_agent_vox_volume: null ptr\n");
         return;

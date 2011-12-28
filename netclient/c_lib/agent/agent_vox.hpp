@@ -30,7 +30,7 @@ class Vox {
         unsigned short zdim;
         float vox_size;
         float radius;
-        struct Voxel* vox; // will be malloc'd
+        union Voxel* vox; // will be malloc'd
         unsigned int num_vox;
 
         struct Vector c; //center
@@ -50,7 +50,7 @@ class Vox {
             vox_size = vosize;
             radius = sqrt((vox_size*xdim)*(vox_size*xdim) + (vox_size*ydim)*(vox_size*ydim) + (vox_size*zdim)*(vox_size*zdim));
             num_vox = _xdim*_ydim*_zdim;
-            vox = (struct Voxel*) malloc(num_vox*sizeof(struct Voxel));
+            vox = (union Voxel*) malloc(num_vox*sizeof(union Voxel));
 
             unsigned int i;
             for(i=0; i<num_vox; i++) {

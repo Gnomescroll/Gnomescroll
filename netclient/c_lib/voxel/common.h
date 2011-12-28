@@ -1,8 +1,20 @@
 #pragma once
 
-struct Voxel {
-unsigned char r,g,b,a;
+
+union Voxel {
+    struct
+    {
+        unsigned char r,g,b,a;
+    };
+    unsigned int color;
 };
+
+
+/*
+struct Voxel {
+    unsigned char r,g,b,a;
+};
+*/
 
 //fast rond up to next power of two
 unsigned NextPow2( unsigned x ) {
