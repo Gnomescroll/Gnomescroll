@@ -357,9 +357,13 @@ class Compass:
 """
 Voronoi texture surface
 """
+from libcpp cimport bool
 cdef extern from "SDL/v.hpp" namespace "vn":
     void draw_vn()
     void generate_frames(float seconds)
+    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
+#    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
+    void init_vn(int width, int height, int gradient)
 
 class VN(object):
     @classmethod
@@ -368,3 +372,11 @@ class VN(object):
     @classmethod
     def frames(cls, float seconds):
         generate_frames(seconds)
+    @classmethod
+    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
+#    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
+        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
+#        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
+    @classmethod
+    def init(cls, int width, int height, int gradient):
+        init_vn(width, height, gradient)

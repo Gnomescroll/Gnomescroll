@@ -191,3 +191,5 @@ void noise_destroy() {
 #include "gradient.c"
 #include "perturb.c"
 #include "features.c"
+
+#include "dragon.cpp"

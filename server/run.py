@@ -213,18 +213,18 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
-        if opts.map:
-            print "str= %s" % (opts.map)
-            terrain_map.load_from_disk(opts.map)
-        else:
-            pass
-            terrain_map.load_from_disk("natural_terrain")
-            #terrain_map.load_from_disk("natural2_max")
-            #terrain_map.load_from_disk("natural4")
-            #terrain_map.load_from_disk("savetest2")
-            #_gen_map()
-            #terrain_map.load_from_disk("nat5")
-            pass
+        #if opts.map:
+            #print "str= %s" % (opts.map)
+            #terrain_map.load_from_disk(opts.map)
+        #else:
+            #pass
+            #terrain_map.load_from_disk("natural_terrain")
+            ##terrain_map.load_from_disk("natural2_max")
+            ##terrain_map.load_from_disk("natural4")
+            ##terrain_map.load_from_disk("savetest2")
+            ##_gen_map()
+            ##terrain_map.load_from_disk("nat5")
+            #pass
 
         #map_gen.grass(terrain_map)
         #map_gen.cave2(terrain_map)
@@ -240,10 +240,12 @@ class Main:
         #map_gen.castle_tower1(terrain_map, 45,15,1, height=10, wall_length=5, tile=9)
         #draw_sphere(block=100, radius=30, x=64,y=64,z=90)
 
-        clear_pillar(x=1,y=0)
-        clear_pillar(x=0,y=1)
-        clear_pillar(x=1,y=1)
-        pallet_pillar(0,0,0)
+        #clear_pillar(x=1,y=0)
+        #clear_pillar(x=0,y=1)
+        #clear_pillar(x=1,y=1)
+        #pallet_pillar(0,0,0)
+
+        c_lib.map_gen.Dragon.generate()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)
