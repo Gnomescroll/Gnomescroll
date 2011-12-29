@@ -34,13 +34,23 @@ class L_System {
         char** rules;
         int* rule_lengths;
 
-        char* current_rule;
         int iterations;
+
+        // save initial state
+        double ogx,ogy;
+        double ogdegrees;
 
         double x,y;
         double degrees;
         double dx,dy;
         double xstep,ystep;
+
+        void reset_state() {
+            x = ogx;
+            y = ogy;
+            degrees = ogdegrees;
+        }
+        
         void turn_left() {
             degrees += 90;
             compute_delta(degrees);
@@ -89,10 +99,11 @@ class L_System {
         void set_starting_position(double x, double y) {
             this->x = x;
             this->y = y;
+            this->ogx = x;
+            this->ogy = y;
         }
 
         void set_starting_degrees(double degrees) {
-            compute_delta(degrees);
             compute_delta(degrees);
         }
 
@@ -103,6 +114,7 @@ class L_System {
 
         void set_degrees(double degrees) {
             this->degrees = degrees;
+            this->ogdegrees = degrees;
         }
 
         void set_step_size(double step) {
@@ -278,11 +290,11 @@ void init() {
     int tile = 101;
     int z = 0;
     char tokens[]= "XYF+-";
-    int iterations = 10;
+    int iterations = 9;
     double degrees = 90;
     //double step = 2.5;
-    double xstep = 4;
-    double ystep = 5;
+    double xstep = 7;
+    double ystep = 15;
     L->set_n_rules(strlen(tokens));
     L->set_tokens(tokens);
     L->set_iterations(iterations);
@@ -307,14 +319,21 @@ void init() {
 
     L->run();
 
+    L->reset_state();
+    //L->set_starting_degrees(90);
+    L->set_step_size(15,7);
+    L->run();
+
     delete L;
 }
 
-bool pattern_match(int x, int y, int z) {
+bool pattern_match(int x, int y, int z, int pattern_w, int pattern_h) {
     int edge_tile = 101;
     int inside_tile = 11;
-    int width = 4;
-    int height = 5;
+    //int width = 4;
+    //int height = 5;
+    int width = pattern_w;
+    int height = pattern_h;
     int i,j;
     bool match = true;
 
@@ -361,7 +380,7 @@ void place_building(int x, int y, int z, int w, int h, int depth) {
     }
 }
 
-void raster() {
+void raster(int pattern_w, int pattern_h) {
     int x = width;
     int y = height;
     int z = 0;
@@ -369,11 +388,12 @@ void raster() {
     int i,j;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
-            matched = pattern_match(i,j,z);
+            matched = pattern_match(i,j,z,pattern_w, pattern_h);
             if (matched) {
                 //printf("%d %d\n", i,j);
                 if (randrange(0,1) == 0) {
-                    place_building(i+1,j+1,z, randrange(3,6), randrange(3,6), randrange(7,15));
+                    //place_building(i+1,j+1,z, randrange(3,6), randrange(3,6), randrange(7,15));
+                    place_building(i+1,j+1,z, randrange((int)(((float)pattern_w)*0.8),(int)(((float)pattern_w)*1.2)), randrange((int)(((float)pattern_h)*0.8),(int)(((float)pattern_h)*1.2)), randrange(15,45));
                 }
             }
         }
@@ -388,9 +408,13 @@ void generate() {
     int tile = 11;
     _floor(x,y, z, h, tile);
     init();
-    raster();
+    int pattern_w = 7;
+    int pattern_h = 15;
+    raster(pattern_w, pattern_h);
+    pattern_w = 15;
+    pattern_h = 7;
+    raster(pattern_w, pattern_h);
     _floor(x,y, z, h, tile);
-
 }
 
 //cython
