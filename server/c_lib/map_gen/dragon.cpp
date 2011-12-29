@@ -346,11 +346,15 @@ bool pattern_match(int x, int y, int z) {
 void place_building(int x, int y, int z, int w, int h, int depth) {
     int i,j,k;
     //int tile = 7;
-    int tile = 101;
+    int tile = randrange(100,101);
     for (i=x; i<w+x; i++) {
         for (j=y; j<h+y; j++) {
             for (k=z; k<depth+z; k++) {
-                if (i > x && i < w+x-1 && j > y && j < h+y-1 && k != depth+z-1) continue; // hollow
+                if (   i > x && i < w+x-1
+                    && j > y && j < h+y-1
+                    && k != depth+z-1
+                ) continue; // hollow
+                if ( k != depth+z-1 && (k%3) ==2 && ((i > x && i < w+x-1) || (j > y && j < h+y-1)) && !randrange(0,2)) continue; // windows
                 _set(i,j,k,tile);
             }
         }
@@ -368,7 +372,7 @@ void raster() {
             matched = pattern_match(i,j,z);
             if (matched) {
                 //printf("%d %d\n", i,j);
-                if (randrange(0,2) == 0) {
+                if (randrange(0,1) == 0) {
                     place_building(i+1,j+1,z, randrange(3,6), randrange(3,6), randrange(7,15));
                 }
             }
