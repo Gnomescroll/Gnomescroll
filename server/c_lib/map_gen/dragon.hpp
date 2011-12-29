@@ -2,6 +2,7 @@
 
 namespace Dragon {
 
+void l_system();
 void generate();
 
 //cython
