@@ -329,7 +329,7 @@ void init() {
 
 bool pattern_match(int x, int y, int z, int pattern_w, int pattern_h) {
     int edge_tile = 101;
-    int inside_tile = 11;
+    //int inside_tile = 11;
     //int width = 4;
     //int height = 5;
     int width = pattern_w;
@@ -362,22 +362,10 @@ bool pattern_match(int x, int y, int z, int pattern_w, int pattern_h) {
     return match;
 }
 
-void place_building(int x, int y, int z, int w, int h, int depth) {
-    int i,j,k;
-    //int tile = 7;
-    int tile = randrange(100,101);
-    for (i=x; i<w+x; i++) {
-        for (j=y; j<h+y; j++) {
-            for (k=z; k<depth+z; k++) {
-                if (   i > x && i < w+x-1
-                    && j > y && j < h+y-1
-                    && k != depth+z-1
-                ) continue; // hollow
-                if ( k != depth+z-1 && (k%3) ==2 && ((i > x && i < w+x-1) || (j > y && j < h+y-1)) && !randrange(0,2)) continue; // windows
-                _set(i,j,k,tile);
-            }
-        }
-    }
+static Building_list buildings;
+
+inline void create_building(int x, int y, int z, int w, int h, int l, int tile) {
+    buildings.add(x,y,z,w,h,l,tile);
 }
 
 void raster(int pattern_w, int pattern_h) {
@@ -386,16 +374,26 @@ void raster(int pattern_w, int pattern_h) {
     int z = 0;
     bool matched;
     int i,j;
+    //int roads = 0;
     for (i=0; i<x; i++) {
         for (j=0; j<y; j++) {
             matched = pattern_match(i,j,z,pattern_w, pattern_h);
             if (matched) {
-                //printf("%d %d\n", i,j);
                 if (randrange(0,1) == 0) {
-                    //place_building(i+1,j+1,z, randrange(3,6), randrange(3,6), randrange(7,15));
-                    place_building(i+1,j+1,z, randrange((int)(((float)pattern_w)*0.8),(int)(((float)pattern_w)*1.2)), randrange((int)(((float)pattern_h)*0.8),(int)(((float)pattern_h)*1.2)), randrange(15,45));
+                    //create_building(i+1,j+1,z, randrange(3,6), randrange(3,6), randrange(7,15));
+                    create_building(i+1,j+1,z, randrange((int)(((float)pattern_w)*0.8),(int)(((float)pattern_w)*1.2)), randrange((int)(((float)pattern_h)*0.8),(int)(((float)pattern_h)*1.2)), randrange(15,45), randrange(100,101));
                 }
             }
+            // road
+            //matched = pattern_match(i,j,z, pattern_w, pattern_h*2);
+            //if (matched && roads < 3 && randrange(0,3)==1) {
+                //roads++;
+                //if (pattern_w < pattern_h) {
+                    //create_building(i, j, z, 6, pattern_h*100, 1, 2);
+                //} else {
+                    //create_building(i, j, z, pattern_w*100, 6, 1, 2);
+                //}
+            //}
         }
     }
 }
@@ -414,7 +412,8 @@ void generate() {
     pattern_w = 15;
     pattern_h = 7;
     raster(pattern_w, pattern_h);
-    _floor(x,y, z, h, tile);
+    buildings.set();
+    //_floor(x,y, z, h, tile);
 }
 
 //cython
