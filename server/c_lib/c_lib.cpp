@@ -50,3 +50,7 @@ int init_c_lib() {
     ServerState::ctf.init();
 return 0;
 }
+
+void _set_seed(int seed) {
+    srand(seed);
+}

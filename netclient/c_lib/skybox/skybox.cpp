@@ -45,8 +45,10 @@ void load() {
         glGenTextures(1, &skybox_texture[i]);
         glBindTexture(GL_TEXTURE_2D, skybox_texture[i]);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -96,7 +98,7 @@ void render() {
     glScalef(_sky_scale, _sky_scale, _sky_scale);
 
     float cz = -0.0f,cx = 1.0f; // texture corners
-    float r = 1.000f; // If you have border issues change this to 1.005f
+    float r = 1.005f; // If you have border issues change this to 1.005f
     // increasing it further does not eliminate remaining border problems & warps the skybox to bad statezzzzzzzzzz
     float y = 1.0f;//dont change this
 
