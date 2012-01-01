@@ -436,10 +436,10 @@ void init() {
     L_System* L = new L_System();
 
     int tile;
-    tile = 101;
     tile = 0;
-    int z_min = 32-10;
-    int z_max = 32+5;
+    tile = 101;
+    int z_min = 12;
+    int z_max = 13;
     char tokens[]= "XYF+-B[]f";
     int iterations = 20;
     double degrees = 90;
@@ -487,6 +487,55 @@ void init() {
     ////L->set_starting_degrees(90);
     //L->set_step_size(15,7);
     //L->run();
+
+    delete L;
+}
+
+void caves() {
+
+    L_System* L = new L_System();
+
+    int tile = 0;
+    int z_min = 32-10;
+    int z_max = 32+5;
+    char tokens[]= "XYF+-B[]f";
+    int iterations = 20;
+    double degrees = 90;
+    double step = 4;
+    double xstep = 1;
+    double ystep = 1;
+    L->set_tokens(tokens);
+    L->set_iterations(iterations);
+    L->set_degrees(degrees);
+    L->set_step_size(step);
+    L->set_step_size(xstep, ystep);
+    L->set_starting_degrees(0);
+    L->set_starting_position(width/2+0.5,height/2+0.5);
+    L->set_map_tile(tile);
+    L->set_map_z_level(z_min, z_max);
+    L->set_dimensions(width,height);
+    L->set_draw_width(.1);
+    L->set_probability(0.7);
+
+    // rules
+    L->add_rule("B > B");
+    L->add_rule("X > X]YF");
+    L->add_rule("Y > FX[Y");
+    L->add_rule("F > F");
+    //L->add_rule("+ > ]");
+    //L->add_rule("- > [");
+    //L->add_rule("] > +");
+    //L->add_rule("[ > -");
+    L->add_rule("+ > +");
+    L->add_rule("- > -");
+    L->add_rule("] > ]");
+    L->add_rule("[ > [");
+    L->add_rule("f > f");
+
+    // start condition
+    L->set_init_condition("FX");
+
+    L->run();
 
     delete L;
 }
@@ -727,15 +776,90 @@ void outline_boxes(int inner_tile, int outline_tile) {
     
 }
 
-void generate() {
+void generate_caves() {
     int x = width;
     int y = height;
     int z = 0;
     int h = 64;
     int tile = 3;
     _floor(x,y, z, h, tile);
-    init();
+    caves();
     _box(x,y,z,h,tile);
+}
+
+bool block_is_edge(int i, int j, int k, int limit) {
+    int tile = _get(i,j,k);
+    int ct = 0;
+
+    if (_get(i+1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+
+    if (_get(i+1, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i+1, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    
+    return false;
+}
+
+struct Location {
+    unsigned char x,y,z;
+};
+void segment_caves(int z, int tile,  int limit) {
+    int i,j;
+    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
+    int index = 0;
+    // check for a cave block
+    // look at all 8 surrounding blocks
+    // if >1 is non cave, convert to orange (blocked)
+
+    Location* loc = NULL;
+    int new_tile = 7; // lava
+    
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (_get(i,j,z) != tile) continue;
+            if (block_is_edge(i,j,z, limit)) {
+                loc = &blocks[index];
+                loc->x = i;
+                loc->y = j;
+                loc->z = z;
+                index++;
+            }
+        }
+    }
+
+    for (i=0; i<index; i++) {
+        loc = &blocks[i];
+        _set(loc->x, loc->y, loc->z, new_tile);
+    }
+
+    free(blocks);
+}
+
+void generate() {
+    int x = width;
+    int y = height;
+    int z = 0;
+    int h = 14;
+    int tile = 3;
+    _floor(x,y, z, h, tile);
+    init();
+    _walls(x,y,z+1,h-1,tile);
+
+    segment_caves(13, 101, 2);
+    segment_caves(13, 101, 7);
+    segment_caves(13, 101, 8);
     //int pattern_w = 7;
     //int pattern_h = 15;
     //raster(pattern_w, pattern_h);
@@ -747,6 +871,7 @@ void generate() {
     //make_roads();
     //roads.set();
 
+    // test box
     //int i,j;
     //for (i=10;i<20;i++) {
         //for (j=10;j<30;j++) {

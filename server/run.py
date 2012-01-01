@@ -209,27 +209,27 @@ def good_cave1():
     c_lib.map_gen.Dragon.generate()
 
     ##base heightmap, smooth shallow hills
-    c_lib.map_gen.conf\
-    .size(128,128,128)\
-    .group(0)\
-    .tile(3)\
-    .interpolate(4,2,1)\
-    .scale(4.0, 4.0, 1.0)\
-    .heightmap(baseline=22, maxheight=6)\
-    .p2(octaves=6, persistence=0.35)\
-    .start()\
-    .reset()
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(0)\
+    #.tile(3)\
+    #.interpolate(4,2,1)\
+    #.scale(4.0, 4.0, 1.0)\
+    #.heightmap(baseline=22, maxheight=6)\
+    #.p2(octaves=6, persistence=0.35)\
+    #.start()\
+    #.reset()
     
-    c_lib.map_gen.conf\
-    .size(128,128,128)\
-    .group(1)\
-    .tile(3)\
-    .interpolate(4,4,1)\
-    .scale(2.0, 2.0, 1.0)\
-    .reverse_heightmap(baseline=37, maxheight=7)\
-    .p2(octaves=6, persistence=0.6)\
-    .start()\
-    .reset()
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(1)\
+    #.tile(3)\
+    #.interpolate(4,2,1)\
+    #.scale(2.0, 2.0, 1.0)\
+    #.reverse_heightmap(baseline=37, maxheight=7)\
+    #.p2(octaves=6, persistence=0.6)\
+    #.start()\
+    #.reset()
 
 
 class Main:
