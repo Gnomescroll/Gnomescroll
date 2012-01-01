@@ -43,14 +43,14 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     //class AgentState c;
 
 
-    c = s1;
+    //c = s1;
 
-    return;
+    //return;
 
     //printf("delta= %f \n", delta);
-    c.x = s0.x*delta + s1.x*(1.0-delta);
-    c.y = s0.y*delta + s1.y*(1.0-delta);
-    c.z = s0.z*delta + s1.z*(1.0-delta);  
+    c.x = s0.x*(1-delta) + s1.x*delta;
+    c.y = s0.y*(1-delta) + s1.y*delta;
+    c.z = s0.z*(1-delta) + s1.z*delta;  
 
 
 }

@@ -690,7 +690,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
             PlayerAgent_Snapshot P;
             
             P.id = id;
-            P.seq = cs_seq;
+            P.seq = (cs_seq+1) % 256;
 
             P.x = s.x;
             P.y = s.y;
@@ -709,7 +709,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
             Agent_state_message A;
 
             A.id = id;
-            A.seq = cs_seq;
+            A.seq = (cs_seq+1) % 256;
 
             A.x = s.x;
             A.y = s.y;
