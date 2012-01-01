@@ -5,6 +5,7 @@
 
 //extern "C" {
 
+
 int f;
 long start_time;
 long last_tick;
@@ -122,8 +123,12 @@ void _START_CLOCK() {
 
 #define TICK_MS 33
 
+int _delta;
+float _deltaf;
+
 int _GET_TICK() {
     int s_sec, n_sec;
+    long _ti;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
         clock_serv_t cclock;
         mach_timespec_t mts;
@@ -152,19 +157,23 @@ int _GET_TICK() {
 		//printf("s= %i n=%i \n", cs_sec, cn_sec/1000000);
 
 		int t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
+        _ti = cs_sec*1000 + cn_sec/(1000*1000);
 		//printf("t=%i ;%i, %i \n", t, cs_sec*1000/TICK_MS, cn_sec/(1000*1000)/TICK_MS);
     //printf("d=%i t=%i c=%i \n", t - c_tick, t, c_tick);
 	#else
 		int cs_ms = GetTickCount();
 		int t = (cs_ms-window_ms_start) / TICK_MS;		
+        _ti = (cs_ms-window_ms_start)
 	#endif
 	
     if(c_tick < t) {
         c_tick++;
+        _delta = _ti - c_tick*TICK_MS;
+        _deltaf =  ((float)_delta)/ (float)TICK_MS;
         return 1;
-        //return t-c_tick;
-        //return 1;
     } else {
+        _delta = _ti - c_tick*TICK_MS;
+        _deltaf =  ((float)_delta)/ (float)TICK_MS;
         return 0;
     }
 }
@@ -203,4 +212,9 @@ int _GET_MS_TIME() {
 
 }
 
+float _TIME_DELTA()
+{
+    printf("real delta= %i \n", _delta);
+    return _deltaf;
+}
 //}

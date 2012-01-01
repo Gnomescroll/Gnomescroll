@@ -62,6 +62,7 @@ def configure(conf):
         pass
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
+        conf.env.append_value("LINKFLAGS", "-lwinmm")
 
     ##TEST REMOVE LATER
     #conf.check(header_name='GL/glew.h', mandatory=True)

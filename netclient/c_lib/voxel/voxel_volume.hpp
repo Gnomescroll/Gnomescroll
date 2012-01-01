@@ -52,11 +52,28 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 
 #ifdef DC_CLIENT
 
+    struct Voxel_normal
+    {
+        union
+        {
+            char normal[4]; //16
+            unsigned int n;
+        };
+    };
+
     struct Voxel_vertex
     {
         float x,y,z;
-        unsigned char rgba[4]; //12
-        char normal[4]; //16
+        union
+        {
+            unsigned char rgba[4]; //12
+            unsigned int color;
+        };
+        union
+        {
+            char normal[4]; //16
+            unsigned int n;
+        };
         //can compute normals from t
     };
 
@@ -132,9 +149,9 @@ class Voxel_volume
     }
 
 
-    inline int get_as_int(int x, int y, int z) __attribute((always_inline)) 
+    inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
     {
-        return *((int*)(&voxel[x+(y << index1)+(z << index1)].r));
+        return voxel[x+(y << index1)+(z << index1)].color;
     }
 
     //internal methods
@@ -205,6 +222,15 @@ static const int vnset[18] = { 0,0,1,
 0,1,0 , 
 0,-1,0 
 };
+ 
+static const struct Voxel_normal voxel_normal_array[6] = { 
+{{{0,0,1,0}}},
+{{{0,0,-1,0}}},
+{{{1,0,0,0}}},
+{{{-1,0,0,0}}},
+{{{0,1,0,0}}},
+{{{0,-1,0,0}}},
+};
 
 inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
 
@@ -219,11 +245,11 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     //*(int*)&tmp.rgba 
 
     //set rgba
-    int color = get_as_int(x,y,z);
-    *(int*)&scratch[*index + 0].rgba = color;
-    *(int*)&scratch[*index + 1].rgba = color;
-    *(int*)&scratch[*index + 2].rgba = color;
-    *(int*)&scratch[*index + 3].rgba = color;
+    unsigned int color = get_as_int(x,y,z);
+    scratch[*index + 0].color = color;
+    scratch[*index + 1].color = color;
+    scratch[*index + 2].color = color;
+    scratch[*index + 3].color = color;
 
 //optimized version
 /*
@@ -236,7 +262,23 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
 */
     int _side = side*3;
 
+    Voxel_normal normal;
+    normal.n = voxel_normal_array[side].n;
 
+    scratch[*index + 0].n = normal.n;
+    scratch[*index + 1].n = normal.n;
+    scratch[*index + 2].n = normal.n;
+    scratch[*index + 3].n = normal.n;
+
+    /*
+    Voxel_normal normal;
+    normal.n = 0;
+    normal.normal[0] = vnset[_side + 0 ];
+    normal.normal[1] = vnset[_side + 1 ];
+    normal.normal[2] = vnset[_side + 2 ];  
+    */
+
+/*
     scratch[*index + 0].normal[0] = vnset[_side + 0 ];
     scratch[*index + 0].normal[1] = vnset[_side + 1 ];
     scratch[*index + 0].normal[2] = vnset[_side + 2 ];
@@ -252,12 +294,12 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 3].normal[0] = vnset[_side + 0 ];
     scratch[*index + 3].normal[1] = vnset[_side + 1 ];
     scratch[*index + 3].normal[2] = vnset[_side + 2 ];
-
+*/
 
     //set x,y,z
     _side = side*12;
 
-    scratch[*index + 0].x = fx + vset[_side + 0];
+    scratch[*index + 0].x = fx + vset[_side + 0 ];
     scratch[*index + 0].y = fy + vset[_side + 1 ];
     scratch[*index + 0].z = fz + vset[_side + 2 ];
     

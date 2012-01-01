@@ -23,4 +23,6 @@
     void _START_CLOCK();
     int _GET_TICK();
     int _GET_MS_TIME();
+
+    float _TIME_DELTA();
 //}

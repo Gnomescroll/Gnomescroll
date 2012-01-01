@@ -1,3 +1,8 @@
+Bloom Shader and Gaussian Blur
+http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+http://prideout.net/archive/bloom/index.php
+
+You could certainly bloom each level you downsample to...that's actually how Halo 3 does it. They downsample to a small size, blur, upscale, blur, upscale, blur once more, and then upscale and composite with the tone mapped source image. I find that approach to be a little overkill, so I just blur the lowest level about 4 times (4 vertical and 4 horizontal passes) instead. I would just experiment and see what works best for you.
 
 !!! Minecraft: "implementing new features that will “reward exploration and combat more."
 <-- inventives

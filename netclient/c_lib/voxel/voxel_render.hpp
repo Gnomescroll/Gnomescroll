@@ -280,11 +280,11 @@ void Voxel_render_list::draw()
         *((Vector*) &v[2]) = vv->v[2];
         *((Vector*) &v[3]) = vv->v[3];
     */
-        *((Vector*) &v[0]) = vector_scalar2(&vv->v[0], vv->scale);
-        *((Vector*) &v[1]) = vector_scalar2(&vv->v[1], vv->scale);
-        *((Vector*) &v[2]) = vector_scalar2(&vv->v[2], vv->scale);
-        *((Vector*) &v[3]) = vv->v[3];
-        
+        v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
+        v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
+        v[2].v3 = vector_scalar2(&vv->v[2], vv->scale);
+        v[3].v3 = vv->v[3];
+    
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
         //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
 

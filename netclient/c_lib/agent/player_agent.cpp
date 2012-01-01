@@ -9,6 +9,8 @@
 #include <c_lib/sound/sound.hpp>
 #endif
 
+#include <c_lib/time/physics_timer.h>
+
 /*
 Net Messages
 */
@@ -24,8 +26,30 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
     agent_id = id;
 }
 
-void PlayerAgent_state::update_client_side_prediction_interpolated(){
-    return;
+
+void PlayerAgent_state::update_client_side_prediction_interpolated()
+{
+    static int _last_update = _GET_MS_TIME();
+    int _t = _GET_MS_TIME();
+
+    printf("ms since last update= %i \n", _t - _last_update);
+    float delta = ((float)(_t - _last_update)) / 33.0f;
+
+    _last_update = _t;
+
+    //float delta = _TIME_DELTA();
+
+    class AgentState a = state_history[(state_history_index-1+AGENT_STATE_HISTORY_SIZE)%AGENT_STATE_HISTORY_SIZE];
+    class AgentState b = state_history[state_history_index%AGENT_STATE_HISTORY_SIZE];
+    //class AgentState c;
+
+
+    //printf("delta= %f \n", delta);
+    c.x = a.x*delta + b.x*(1.0-delta);
+    c.y = a.y*delta + b.y*(1.0-delta);
+    c.z = a.z*delta + b.z*(1.0-delta);  
+
+
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {

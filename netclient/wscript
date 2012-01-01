@@ -63,7 +63,7 @@ def configure(conf):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
-    extra_options = [ '-fno-exceptions', '-Winline']
+    extra_options = [ '-fno-exceptions', '-Winline'] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
         conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
@@ -77,7 +77,15 @@ def configure(conf):
         pass
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
-        
+        conf.env.append_value("LINKFLAGS", "-lwinmm")
+    
+    '''
+    incremental linking
+    may reduce recompile time
+    should not be used for release builds
+    ''' 
+    #conf.env.append_value("LINKFLAGS", "--incremental")
+
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':

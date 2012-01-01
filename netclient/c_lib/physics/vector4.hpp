@@ -5,8 +5,20 @@
 
 #define PI 3.14159265
 
+#include <physics/vector.hpp>
+
 struct Vector4 {
-    float x,y,z,w;
+    union
+    {
+        struct 
+        {
+            float x,y,z,w;
+        };
+        struct 
+        {
+            Vector v3;    
+        };
+    };
 };
 
 
