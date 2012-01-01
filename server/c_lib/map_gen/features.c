@@ -102,3 +102,14 @@ void _ceiling(int x, int y, int z, int height, int tile) {
         }
     }
 }
+
+void _floor(int x, int y, int z_start, int height, int tile) {
+    int i,j,k;
+    for (k=z_start; k<z_start+height; k++) {
+        for (i=0; i<x; i++) {
+            for (j=0; j<y; j++) {
+                _set(i,j,k, tile);
+            }
+        }
+    }
+}

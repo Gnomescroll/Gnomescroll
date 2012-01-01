@@ -25,6 +25,12 @@ int main(int argc, char *argv[]) {
 }
 """
 
+NOISE_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
 _OS = None
 os_libpth = ''
 
@@ -108,7 +114,6 @@ def configure(conf):
                fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
     
-
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
@@ -169,6 +174,8 @@ def build(bld):
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
+    noise_libraries = ['noise']
+    png_libs=['png']
 
     time_lib = ['rt']
     if OS == "Darwin":
@@ -176,9 +183,9 @@ def build(bld):
 
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
 
-        lib=sound_libraries,
+        lib=sound_libraries+noise_libraries+png_libs,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -217,7 +224,7 @@ def build(bld):
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_hud.pyx'],
-        use=common_libraries + ['c_lib'],
+        use=common_libraries + ['c_lib'] + noise_libraries,
         target='c_lib.c_lib_hud')
 
     bld(features='cxx cshlib pyext',
@@ -359,7 +366,6 @@ class optimized_ctx(ConfigurationContext):
     cmd = 'optimized2'
     fun = 'optimized2'
 
-from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):
     cmd = 'debug'
     fun = 'debug'
@@ -371,6 +377,10 @@ class lint_ctx(ConfigurationContext):
 class profile_ctx(ConfigurationContext):
     cmd = 'profile'
     fun = 'profile'
+    
+class exceptions_ctx(ConfigurationContext):
+    cmd = 'exceptions'
+    fun = 'exceptions'
 
 def profile(ctx):
     configure(ctx)
@@ -400,6 +410,120 @@ def debug(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-fstack-protector-all')
     ctx.env.CXXFLAGS.append('-fstack-protector-all')
+
+#def exceptions(ctx):
+    #configure(ctx)
+    #ctx.env.CFLAGS.remove('-fno-exceptions')
+    #ctx.env.CXXFLAGS.remove('-fno-exceptions')
+    #ctx.check(header_name='libnoise/noise.h',
+                #lib="noise",
+               ##use='libnoise',
+               #includes=['/usr/include'],
+               #fragment='#include <libnoise/noise.h>',
+               #mandatory=True)
+def exceptions(conf):
+    global _OS
+    global os_libpth
+
+    conf.check_tool('gcc')
+    conf.check_tool('g++')
+    conf.check_tool('python')
+    conf.check_tool('cython')
+    #conf.load('compiler_c compiler_cxx python cython')
+
+    conf.check_python_version((2,6,0))
+    conf.check_python_headers()
+
+    conf.cc_add_flags()     #"-g" -ggdb
+    conf.link_add_flags()   #"-g" -ggdb
+
+    OS = platform.system()
+    _OS = OS
+    conf.env.os = OS
+    
+    '''
+    Using -Winline will warn when a function marked inline could not be substituted, and will give the reason for the failure.
+    '''
+
+    '''
+    GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
+    '''
+
+    extra_options = [ '-Winline']
+    #extra_options = ['-Winline']
+    if OS == 'Windows':
+        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
+        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
+    else:
+        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
+        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
+
+    if OS == 'Windows':
+        pass
+        conf.env.append_value("LINKFLAGS", "-lwsock32")
+        conf.env.append_value("LINKFLAGS", "-lws2_32")
+        
+    conf.check(header_name='GL/glew.h', mandatory=True)
+
+    if OS == 'Windows':
+        glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
+        conf.check(lib=['opengl32', 'glu32', 'glew32'], libpath=glew_lib_path, uselib_store='GL') 
+    elif OS == 'Linux':
+        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+    elif OS == 'Darwin':
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
+
+    if OS != 'Windows':
+        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
+    if OS == 'Windows':
+        conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
+
+    conf.env.INCLUDES = []
+
+    conf.check(header_name='SDL.h',
+               use='SDL',
+               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+    
+    conf.check(header_name='SDL_image.h',
+               lib='SDL_image',
+               use='SDL',
+               uselib_store='SDL_image',
+               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               mandatory=True)
+               
+    conf.check(header_name='libnoise/noise.h',
+               includes=['/usr/include'],
+               fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
+               mandatory=True)
+               
+    conf.check(header_name='png.h',
+               includes=['/usr/include'],
+               fragment='#include <png.h>' + NOISE_MAIN_TEST_CODE,
+               mandatory=True)
+
+    incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
+    libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+
+    if OS == 'Windows':
+        os_libpth = './libraries/win'
+        incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
+        libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
+    elif OS == 'Linux':
+        os_libpth = './libraries/lin'
+        incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
+        libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
+    elif OS == 'Darwin':
+        os_libpth = './libraries/osx'
+        incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
+        libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
+
+    conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
+    conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
+    #conf.check(lib=['fmodex'], libpath=[libp],includes=[incp])
+
+    conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code
 # just throws a shit ton of errors starting from the SDL libraries

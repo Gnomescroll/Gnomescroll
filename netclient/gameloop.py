@@ -58,7 +58,6 @@ c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
 
 P2 = c_lib.terrain_map.Profiler()
 
-
 class App(object):
 
     def init_globals(self):
@@ -82,6 +81,7 @@ class App(object):
     def __init__(self):
         cOptions.load(opts)
         self.init_globals()
+        
         self.animations = animations
 
         camera.set_callback(c_lib.terrain_map.camera_callback)
@@ -91,6 +91,8 @@ class App(object):
 
         self.hud = Hud()
 
+        #gif_maker()
+        
         self.intervals = intervals.Intervals()
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
@@ -441,6 +443,27 @@ def billboard_text_fountain():
     cParticles._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
 
 
+def gif_maker():
+    z_step = 0.0013
+    freq = 9
+    seed = 9090
+    distance_enabled = True
+    w = 256
+    h = 256
+    gradient = 6
+    turb_enable = False
+    turb_f = 1
+    turb_pow = 1
+    cHUD.VN.configure(z_step, freq, seed, distance_enabled, turb_enable, turb_f, turb_pow)
+    #cHUD.VN.configure(z_step, freq, seed, distance_enabled, turb_f, turb_pow)
+    cHUD.VN.init(width=w, height=h, gradient=gradient)
+    print 'preparing to generate frames'
+    secs = 1./30.
+    #secs = 1.
+    cHUD.VN.frames(secs)
+    print 'frames generated'
+    sys.exit()
+
 if __name__ == '__main__':
     app = App()
     app.mainLoop()
@@ -448,5 +471,4 @@ else:
     print "Not Run as Main!"
 #app.mainLoop()
 
-import sys
 sys.exit()

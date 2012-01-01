@@ -1,0 +1,9 @@
+generate voronoi pattern
+
+find center of each cell
+check perlin, use threshold
+if > threshhold, place building
+
+building size is determined from the noise function + area of voronoi cell
+http://www.mathopenref.com/coordpolygonarea2.html
+http://ubuntuforums.org/archive/index.php/t-947457.html

@@ -475,3 +475,11 @@ def heightmap(int x, int y, int z, int baseline=64, int maxheight=64, int base_t
 
 def ceiling(int x, int y, int z, int height=1,int tile=2):
     _ceiling(x,y,z, height, tile);
+
+cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
+    void generate_dragon()
+
+class Dragon(object):
+    @classmethod
+    def generate(cls):
+        generate_dragon()
