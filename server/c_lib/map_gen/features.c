@@ -113,3 +113,28 @@ void _floor(int x, int y, int z_start, int height, int tile) {
         }
     }
 }
+
+void _walls(int x, int y, int z_start, int height, int tile) {
+    int i,j,k;
+    for (i=0; i<x; i+=x-1) {
+        for (j=0; j<y; j++) {
+            for (k=z_start; k<height; k++) {
+                _set(i,j,k,tile);
+            }
+        }
+    }
+    
+    for (j=0; j<y; j+=y-1) {
+        for (i=0; i<y; i++) {
+            for (k=z_start; k<height; k++) {
+                _set(i,j,k,tile);
+            }
+        }
+    }
+}
+
+void _box(int x, int y, int z_start, int height, int tile) {
+    _walls(x,y,z_start,height,tile);
+    _floor(x,y,z_start, 1, tile);
+    _floor(x,y,z_start+height, 1, tile);
+}

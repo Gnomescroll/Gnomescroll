@@ -735,13 +735,14 @@ void generate() {
     int tile = 3;
     _floor(x,y, z, h, tile);
     init();
+    _box(x,y,z,h,tile);
     //int pattern_w = 7;
     //int pattern_h = 15;
     //raster(pattern_w, pattern_h);
     //pattern_w = 15;
     //pattern_h = 7;
     //raster(pattern_w, pattern_h);
-    buildings.set();
+    //buildings.set();
     //_floor(x,y, z, h, tile);
     //make_roads();
     //roads.set();
