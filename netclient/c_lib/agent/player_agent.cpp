@@ -29,13 +29,12 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
 
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
-    static int _last_update = _GET_MS_TIME();
+    int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
 
-    printf("ms since last update= %i \n", _t - _last_update);
-    float delta = ((float)(_t - _last_update)) / 33.0f;
+    printf("ms since last update= %i \n", _t - last_tick);
+    float delta = ((float)(_t - last_tick)) / 33.0f;
 
-    _last_update = _t;
 
     //float delta = _TIME_DELTA();
 

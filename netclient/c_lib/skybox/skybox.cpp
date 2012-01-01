@@ -13,6 +13,8 @@
  * https://developer.valvesoftware.com/wiki/Skybox_(2D)_with_Terragen
  */
 
+
+
 namespace Skybox {
 
 static GLuint skybox_texture[6];
@@ -49,7 +51,7 @@ void load() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
+    
         glTexImage2D(
             GL_TEXTURE_2D,  //target
             0,  // level
@@ -60,7 +62,7 @@ void load() {
             GL_UNSIGNED_BYTE,   // type
             surface->pixels // pixels
         );
-
+    
         SDL_FreeSurface(surface);
     }
 
@@ -73,6 +75,7 @@ void load() {
  * http://content.gpwiki.org/index.php/Sky_Box
  */
 void render() {
+
 // Begin DrawSkybox
     glColor4f(1.0, 1.0, 1.0,1.0f);
 

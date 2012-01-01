@@ -24,5 +24,5 @@
     int _GET_TICK();
     int _GET_MS_TIME();
 
-    float _TIME_DELTA();
+    int _LAST_TICK();
 //}

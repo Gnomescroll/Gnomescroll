@@ -206,28 +206,30 @@ class App(object):
 
             NetClientNetInTick() #every draw frame, process incoming
 
-            P.event("MapControllerGlobal.mapController.tick()")
-            MapControllerGlobal.mapController.tick()
-            P.event("Camera Setup")
-            if InputGlobal.camera == 'agent':
-                self.camera.unload()
-                self.agent_camera.load()
-                if agent:
-                    agent.update_camera()
-                    #self.agent_camera.pos(agent.camera_position())
-                    self.agent_camera.pos(agent.camera_position())
-            elif InputGlobal.camera == 'camera':
-                self.agent_camera.unload()
-                self.camera.load()
-
             '''
             !?
                 What is delta tick used for?
                 --mouse motion interpolation
             '''
+            #start frame
             current_tick = cSDL.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
+
+            P.event("MapControllerGlobal.mapController.tick()")
+            MapControllerGlobal.mapController.tick()
+            P.event("Camera Setup")
+
+            if InputGlobal.camera == 'agent':
+                self.camera.unload()
+                self.agent_camera.load()
+                if agent:
+                    #agent.update_camera()
+                    self.agent_camera.pos(agent.camera_position())
+            elif InputGlobal.camera == 'camera':
+                self.agent_camera.unload()
+                self.camera.load()
+
 
             #update camera before drawing
             if InputGlobal.input == 'agent':

@@ -123,8 +123,7 @@ void _START_CLOCK() {
 
 #define TICK_MS 33
 
-int _delta;
-float _deltaf;
+int _last_tick;
 
 int _GET_TICK() {
     int s_sec, n_sec;
@@ -163,17 +162,15 @@ int _GET_TICK() {
 	#else
 		int cs_ms = GetTickCount();
 		int t = (cs_ms-window_ms_start) / TICK_MS;		
-        _ti = (cs_ms-window_ms_start)
+        _ti = (cs_ms-window_ms_start);
 	#endif
 	
     if(c_tick < t) {
         c_tick++;
-        _delta = _ti - c_tick*TICK_MS;
-        _deltaf =  ((float)_delta)/ (float)TICK_MS;
+        _last_tick = _ti;
         return 1;
     } else {
-        _delta = _ti - c_tick*TICK_MS;
-        _deltaf =  ((float)_delta)/ (float)TICK_MS;
+
         return 0;
     }
 }
@@ -212,9 +209,8 @@ int _GET_MS_TIME() {
 
 }
 
-float _TIME_DELTA()
+int _LAST_TICK()
 {
-    printf("real delta= %i \n", _delta);
-    return _deltaf;
+    return _last_tick;
 }
 //}
