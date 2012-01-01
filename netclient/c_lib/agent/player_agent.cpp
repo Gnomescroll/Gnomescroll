@@ -32,21 +32,25 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
 
-    printf("ms since last update= %i \n", _t - last_tick);
+    //printf("ms since last update= %i \n", _t - last_tick);
     float delta = ((float)(_t - last_tick)) / 33.0f;
 
 
     //float delta = _TIME_DELTA();
 
-    class AgentState a = state_history[(state_history_index-1+AGENT_STATE_HISTORY_SIZE)%AGENT_STATE_HISTORY_SIZE];
-    class AgentState b = state_history[state_history_index%AGENT_STATE_HISTORY_SIZE];
+    //class AgentState a = state_history[(state_history_index-1+AGENT_STATE_HISTORY_SIZE)%AGENT_STATE_HISTORY_SIZE];
+    //class AgentState b = state_history[state_history_index%AGENT_STATE_HISTORY_SIZE];
     //class AgentState c;
 
 
+    c = s1;
+
+    return;
+
     //printf("delta= %f \n", delta);
-    c.x = a.x*delta + b.x*(1.0-delta);
-    c.y = a.y*delta + b.y*(1.0-delta);
-    c.z = a.z*delta + b.z*(1.0-delta);  
+    c.x = s0.x*delta + s1.x*(1.0-delta);
+    c.y = s0.y*delta + s1.y*(1.0-delta);
+    c.z = s0.z*delta + s1.z*(1.0-delta);  
 
 
 }
@@ -54,6 +58,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
     //printf("should never be called");
 
+    printf("snapshot cs= %i, z= %f \n", seq, z);
 
     class AgentState ss;
 
@@ -67,31 +72,29 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
     state_history[index] = ss;
 
-    if((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) state_history_index = index;
-
-    //save
-
-    snapshot_net[seq%128] = ss;
-
-    int i;
-    for(i=32;i<64;i++){
-        index = (seq + i)%128;
-        snapshot_net[index].seq = -1;
+    if(! ((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) ) 
+    {
+        printf("PlayerAgent_state::handle_state_snapshot: ERROR out of sequence agent state snapshot!! WTF!?!?! \n");
     }
 
-    if( (most_recent_net_snapshot_seq - seq) > 5 || seq > most_recent_net_snapshot_seq) {
-        most_recent_net_snapshot_seq = seq;
-        //if newest snapshot is newer than previous snapshot, do tick stuff
+    //snapshot_net[seq%128] = ss; //snapshot net is for detecting prediction errors
+
+    if( (state_history_seq - seq) > 5 || seq > state_history_seq) {
+
+        state_history_index = index;
+        state_history_seq = seq; //set index
+        
         state_snapshot = ss;    //set state snapsot
-
-        // DISABLED DUE TO COMPILER WARNING "set but not used"
-        // might be actual error
-        //class AgentState s_backup = s; //back up the current latest
-
     }
-    //do tick and update stuff
 
-    //printf("received snaphshot %i\n", seq);
+/*
+    int i;
+    for(i=48;i<64;i++){
+        index = (seq + i)%128;
+        state_history[index].seq = -1;
+    }
+*/
+
 }
 
 #ifdef DC_CLIENT
@@ -162,6 +165,8 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
+    //printf("set cs= %i \n", cs_seq_local);
+
     Agent_cs_CtoS csp;
 
     csp.id = agent_id;
@@ -173,6 +178,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     csp.send();
 
     //add control state to control buffer
+    
     //handle_local_control_state(cs_seq_local, cs, theta, phi);
 
     //save control state
@@ -186,15 +192,75 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     cs_local[(index+1)%128].seq = -1;
     //client side tick forward
 
+    //printf("0 _cs seq= %i \n", index);
+
     Agent_state* A = ClientState::agent_list.get(agent_id);
     if(A == NULL) return;
 
+    //working version
     struct Agent_control_state _cs;
-
+    //printf("0 index= %i \n", index);
     _cs = cs_local[index];
 
+    class AgentState s_tmp = s;
+
     s = _agent_tick(_cs, A->box, s);
+
+    //experimental
+    //tick from last received snapshot to current
+
+    // (state_history_index+1)%AGENT_STATE_HISTORY_SIZE
+
+    int csindex = (state_history_seq-3+256) % 256;
+    class AgentState tmp = state_history[ (state_history_seq-3+AGENT_STATE_HISTORY_SIZE) % AGENT_STATE_HISTORY_SIZE ];
+    printf("l seq= %i, tseq= %i, z= %f \n", tmp.seq, tmp.seq, tmp.z);
+
+    int stop_index = (cs_seq_local-1+256) % 256;
+
+    //printf("start index= %i, stop index= %i \n", csindex, stop_index);
+    int _i = 0;
+    while(1)
+    {
+        _i++;
+        if(csindex == stop_index) break;
+
+        _cs = cs_local[csindex%128]; //check seq number
+
+        tmp = _agent_tick(_cs, A->box, tmp);
+        printf("r  seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
+        tmp.seq = (tmp.seq+1) % 256;
+
+        csindex = (csindex+1) % 256;
+    }
+    if(_i > 5) printf("i= %i \n", _i);
+
+    //printf("1 _cs seq= %i \n", _cs.seq % 128);
+
+    _cs = cs_local[csindex%128];
+    tmp = _agent_tick(_cs, A->box, tmp);
+    tmp.seq = (tmp.seq+1) % 256;
+    printf("f1 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
+
+    s0 = tmp;
+
+
+    //printf("2 _cs seq= %i \n", _cs.seq % 128);
+    //printf("2 index= %i \n", cs_seq_local % 128);
+
+    //printf("s x,y,z = %f, %f, %f \n", s.x,s.y,s.z);
+    //printf("t x,y,z = %f, %f, %f \n", tmp.x, tmp.y, tmp.z);
+
+    if( (cs_seq_local % 128) != ((csindex+1)%128) ) printf("SAGSDAGASG !!! \n");
+     
+    _cs = cs_local[cs_seq_local % 128];
+
+    tmp = _agent_tick(cs_local[cs_seq_local % 128], A->box, tmp);
+    tmp.seq = (tmp.seq+1) % 256;
+    printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
+
+    s1 = tmp;
 }
+
 
 float PlayerAgent_state::camera_height() {
     

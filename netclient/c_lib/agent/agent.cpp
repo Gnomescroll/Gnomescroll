@@ -438,7 +438,7 @@ void Agent_state::_tick()
 
 
 //takes an agent state and control state and returns new agent state
-inline class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
+class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
 //void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
  {
 

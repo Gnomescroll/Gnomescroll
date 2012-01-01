@@ -5,7 +5,7 @@
 
 #include <c_lib/state/client_state.hpp>
 
-#define AGENT_STATE_HISTORY_SIZE 8
+#define AGENT_STATE_HISTORY_SIZE 64
 #define AGENT_INTERPOLATION_DECAY 0.8f
 
 enum active_camera_states {
@@ -24,6 +24,10 @@ class PlayerAgent_state {
         //client side state variables
         bool jump_ready;    //move client side
         bool crouching;     //move client side
+
+        //use for interpolated client side prediction
+        class AgentState s0;
+        class AgentState s1;
 
         //cameras
         class AgentState smooth;
@@ -104,12 +108,14 @@ class PlayerAgent_state {
         struct Agent_control_state cs_net[128];
 
         class AgentState snapshot_local[128];
-        class AgentState snapshot_net[128];
+        //class AgentState snapshot_net[128];
 
-        int most_recent_net_snapshot_seq;
+        //int most_recent_net_snapshot_seq;
+        int state_history_seq;
 
-        class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
-        
+        //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
+        class AgentState* state_history;
+
         int state_history_index;
         int last_snapshot_time;
 
@@ -132,6 +138,9 @@ class PlayerAgent_state {
         PlayerAgent_action action;
 
         PlayerAgent_state() : status(this), action(this) {
+
+            state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
+
             //init
             static int inited=0;
             if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
@@ -141,7 +150,7 @@ class PlayerAgent_state {
             jump_ready = false;
             crouching = false;
             //camera
-            camera_mode = 0;
+            camera_mode = client_side_prediction_interpolated;
 
             agent_id = -1;
 
@@ -149,7 +158,8 @@ class PlayerAgent_state {
             cs_seq_net = -1;
 
             state_history_index = 0;
-            most_recent_net_snapshot_seq = -1;
+            state_history_seq = 0;
+            //most_recent_net_snapshot_seq = -1;
 
             int i;
             for(i=0; i<128; i++) cs_local[i].seq = -1;
@@ -169,6 +179,8 @@ class PlayerAgent_state {
         }
 
         void update_sound();
+
+
 };
 
 

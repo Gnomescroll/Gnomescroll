@@ -183,7 +183,7 @@ class Agent_state {
         //set_control_state(int[8] _cs, float theta, float phi);
 };
 
-inline class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
+class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 #include <c_lib/template/object_list.hpp>
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
