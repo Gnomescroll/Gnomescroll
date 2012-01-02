@@ -58,7 +58,8 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
     //printf("should never be called");
 
-    printf("snapshot cs= %i, z= %f \n", seq, z);
+    //printf("snapshot cs= %i, z= %f \n", seq, z);
+    printf("snapshot cs= %i \n", seq );
 
     class AgentState ss;
 
@@ -72,14 +73,14 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
     state_history[index] = ss;
 
-    if(! ((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) ) 
-    {
-        printf("PlayerAgent_state::handle_state_snapshot: ERROR out of sequence agent state snapshot!! WTF!?!?! \n");
-    }
+    //if(! ((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) ) 
+    //{
+    //    printf("PlayerAgent_state::handle_state_snapshot: ERROR out of sequence agent state snapshot!! WTF!?!?! \n");
+    //}
 
     //snapshot_net[seq%128] = ss; //snapshot net is for detecting prediction errors
 
-    if( (state_history_seq - seq) > 5 || seq > state_history_seq) {
+    if( (state_history_seq - seq) > 30 || seq > state_history_seq) {
 
         state_history_index = index;
         state_history_seq = seq; //set index
@@ -175,6 +176,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     csp.theta = theta;
     csp.phi = phi;
 
+    //printf("send cs= %i \n", cs_seq_local);
     csp.send();
 
     //add control state to control buffer
@@ -211,11 +213,17 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     // (state_history_index+1)%AGENT_STATE_HISTORY_SIZE
 
+/*
     int csindex = (state_history_seq-3+256) % 256;
     class AgentState tmp = state_history[ (state_history_seq-3+AGENT_STATE_HISTORY_SIZE) % AGENT_STATE_HISTORY_SIZE ];
-    printf("l seq= %i, tseq= %i, z= %f \n", tmp.seq, tmp.seq, tmp.z);
+*/
+    int csindex = (state_history_seq) % 256;
+    class AgentState tmp = state_history[ state_history_index ];
+    //printf("l seq= %i, tseq= %i, z= %f \n", tmp.seq, tmp.seq, tmp.z);
 
-    int stop_index = (cs_seq_local-1+256) % 256;
+    //int stop_index = (cs_seq_local-1+256) % 256;
+    int stop_index = cs_seq_local;
+
 
     //printf("start index= %i, stop index= %i \n", csindex, stop_index);
     int _i = 0;
@@ -227,22 +235,22 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
         _cs = cs_local[csindex%128]; //check seq number
 
         tmp = _agent_tick(_cs, A->box, tmp);
-        printf("r  seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
+        //printf("r  seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
         tmp.seq = (tmp.seq+1) % 256;
 
         csindex = (csindex+1) % 256;
     }
-    if(_i > 5) printf("i= %i \n", _i);
+    //if(_i > 5) printf("i= %i \n", _i);
 
     //printf("1 _cs seq= %i \n", _cs.seq % 128);
 
-    _cs = cs_local[csindex%128];
-    tmp = _agent_tick(_cs, A->box, tmp);
-    tmp.seq = (tmp.seq+1) % 256;
-    printf("f1 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
+    //_cs = cs_local[csindex%128];
+    //tmp = _agent_tick(_cs, A->box, tmp);
+    //tmp.seq = (tmp.seq+1) % 256;
+
 
     s0 = tmp;
-
+    //printf("f1 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
 
     //printf("2 _cs seq= %i \n", _cs.seq % 128);
     //printf("2 index= %i \n", cs_seq_local % 128);
@@ -250,15 +258,13 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     //printf("s x,y,z = %f, %f, %f \n", s.x,s.y,s.z);
     //printf("t x,y,z = %f, %f, %f \n", tmp.x, tmp.y, tmp.z);
 
-    if( (cs_seq_local % 128) != ((csindex+1)%128) ) printf("SAGSDAGASG !!! \n");
+    //if( (cs_seq_local % 128) != ((csindex+1)%128) ) printf("SAGSDAGASG !!! \n");
      
     _cs = cs_local[cs_seq_local % 128];
-
-    tmp = _agent_tick(cs_local[cs_seq_local % 128], A->box, tmp);
-    tmp.seq = (tmp.seq+1) % 256;
-    printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
-
-    s1 = tmp;
+    s1 = _agent_tick(cs_local[cs_seq_local % 128], A->box, tmp);
+    
+    //tmp.seq = (tmp.seq+1) % 256;
+    //printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
 }
 
 
