@@ -218,7 +218,7 @@ class Main:
             #terrain_map.load_from_disk(opts.map)
         #else:
             #pass
-            #terrain_map.load_from_disk("natural_terrain")
+        terrain_map.load_from_disk("natural_terrain")
             
             ##terrain_map.load_from_disk("natural2_max")
             ##terrain_map.load_from_disk("natural4")
@@ -246,7 +246,7 @@ class Main:
         #clear_pillar(x=1,y=1)
         #pallet_pillar(0,0,0)
 
-        c_lib.map_gen.Dragon.generate()
+        #c_lib.map_gen.Dragon.generate()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

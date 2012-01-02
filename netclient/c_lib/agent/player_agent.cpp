@@ -59,7 +59,7 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
     //printf("should never be called");
 
     //printf("snapshot cs= %i, z= %f \n", seq, z);
-    printf("snapshot cs= %i \n", seq );
+    //printf("snapshot cs= %i \n", seq );
 
     class AgentState ss;
 
