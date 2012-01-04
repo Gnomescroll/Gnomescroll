@@ -434,7 +434,7 @@ const static float ve[4*3*6] = {
 
 
 
-    float i_f = 0;
+    float i_f;
 
 /*
 USE ORDER
@@ -447,41 +447,9 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 */
 
 glBegin(GL_QUADS);
-// Common Axis Z - FRONT side
-    glTexCoord3f(cx, cx, i_f);
-    glVertex3f(-r ,y,-r);
-    glTexCoord3f(cz, cx, i_f);
-    glVertex3f( r ,y,-r);
-    glTexCoord3f(cz, cz, i_f);
-    glVertex3f( r,y,r);
-    glTexCoord3f(cx, cz, i_f);
-    glVertex3f(-r,y,r);
 
-// Common Axis Z - BACK side
-    i_f = 1.0;
-    glTexCoord3f(cx,cx, i_f);
-    glVertex3f( r,-y,-r);
-    glTexCoord3f(cz,cx, i_f);
-    glVertex3f(-r,-y,-r);
-    glTexCoord3f(cz,cz, i_f);
-    glVertex3f(-r,-y, r);
-    glTexCoord3f(cx,cz, i_f);
-    glVertex3f( r,-y, r);
- 
-
-// Common Axis X - Left side
-    i_f = 2.0;
-    glTexCoord3f(cx,cx, i_f);
-    glVertex3f(-y, -r,-r);
-    glTexCoord3f(cz,cx, i_f);
-    glVertex3f(-y, r,-r);
-    glTexCoord3f(cz,cz, i_f);
-    glVertex3f(-y, r, r);
-    glTexCoord3f(cx,cz, i_f);
-    glVertex3f(-y, -r, r);
- 
-// Common Axis X - Right side
-    i_f = 3.0;
+// +X
+    i_f = 0.0;
     glTexCoord3f( cx,cx, i_f);
     glVertex3f(y, r,-r);
     glTexCoord3f(cz, cx, i_f);
@@ -491,7 +459,41 @@ glBegin(GL_QUADS);
     glTexCoord3f(cx, cz, i_f);
     glVertex3f(y, r, r);
 
-// Common Axis Y - Draw Up side
+// -X
+    i_f = 1.0;
+    glTexCoord3f(cx,cx, i_f);
+    glVertex3f(-y, -r,-r);
+    glTexCoord3f(cz,cx, i_f);
+    glVertex3f(-y, r,-r);
+    glTexCoord3f(cz,cz, i_f);
+    glVertex3f(-y, r, r);
+    glTexCoord3f(cx,cz, i_f);
+    glVertex3f(-y, -r, r);
+
+// +Y
+    i_f = 2.0;
+    glTexCoord3f(cx, cx, i_f);
+    glVertex3f(-r ,y,-r);
+    glTexCoord3f(cz, cx, i_f);
+    glVertex3f( r ,y,-r);
+    glTexCoord3f(cz, cz, i_f);
+    glVertex3f( r,y,r);
+    glTexCoord3f(cx, cz, i_f);
+    glVertex3f(-r,y,r);
+
+// -Y
+    i_f = 3.0;
+    glTexCoord3f(cx,cx, i_f);
+    glVertex3f( r,-y,-r);
+    glTexCoord3f(cz,cx, i_f);
+    glVertex3f(-r,-y,-r);
+    glTexCoord3f(cz,cz, i_f);
+    glVertex3f(-r,-y, r);
+    glTexCoord3f(cx,cz, i_f);
+    glVertex3f( r,-y, r);
+
+
+// +Z
     i_f = 4.0;
     glTexCoord3f(cz, cz, i_f);
     glVertex3f(-r, -r,y);
@@ -503,7 +505,7 @@ glBegin(GL_QUADS);
     glVertex3f( r, -r,y);
 
 
-// Common Axis Y - Down side
+// -Z
     i_f = 5.0;
     glTexCoord3f(cz, cz, i_f);
     glVertex3f( r, -r,-y);
@@ -513,6 +515,7 @@ glBegin(GL_QUADS);
     glVertex3f(-r, r,-y);
     glTexCoord3f(cz, cx, i_f);
     glVertex3f(-r, -r,-y);
+
 glEnd();
 
 /*
