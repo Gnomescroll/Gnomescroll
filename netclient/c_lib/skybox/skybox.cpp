@@ -450,70 +450,68 @@ glBegin(GL_QUADS);
 
 // +X
     i_f = 0.0;
-    glTexCoord3f( cx,cx, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f(y, r,-r);
-    glTexCoord3f(cz, cx, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f(y, -r,-r);
-    glTexCoord3f(cz, cz, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f(y, -r, r);
-    glTexCoord3f(cx, cz, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f(y, r, r);
 
 // -X
     i_f = 1.0;
-    glTexCoord3f(cx,cx, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f(-y, -r,-r);
-    glTexCoord3f(cz,cx, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f(-y, r,-r);
-    glTexCoord3f(cz,cz, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f(-y, r, r);
-    glTexCoord3f(cx,cz, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f(-y, -r, r);
 
 // +Y
     i_f = 2.0;
-    glTexCoord3f(cx, cx, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f(-r ,y,-r);
-    glTexCoord3f(cz, cx, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f( r ,y,-r);
-    glTexCoord3f(cz, cz, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f( r,y,r);
-    glTexCoord3f(cx, cz, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f(-r,y,r);
 
 // -Y
     i_f = 3.0;
-    glTexCoord3f(cx,cx, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f( r,-y,-r);
-    glTexCoord3f(cz,cx, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f(-r,-y,-r);
-    glTexCoord3f(cz,cz, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f(-r,-y, r);
-    glTexCoord3f(cx,cz, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f( r,-y, r);
-
 
 // +Z
     i_f = 4.0;
-    glTexCoord3f(cz, cz, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f(-r, -r,y);
-    glTexCoord3f(cx, cz, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f(-r, r,y);
-    glTexCoord3f(cx, cx, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f( r, r,y);
-    glTexCoord3f(cz, cx, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f( r, -r,y);
-
 
 // -Z
     i_f = 5.0;
-    glTexCoord3f(cz, cz, i_f);
+    glTexCoord3f(cx,cx,i_f);
     glVertex3f( r, -r,-y);
-    glTexCoord3f(cx, cz, i_f);
+    glTexCoord3f(cz,cx,i_f);
     glVertex3f( r, r,-y);
-    glTexCoord3f(cx, cx, i_f);
+    glTexCoord3f(cz,cz,i_f);
     glVertex3f(-r, r,-y);
-    glTexCoord3f(cz, cx, i_f);
+    glTexCoord3f(cx,cz,i_f);
     glVertex3f(-r, -r,-y);
 
 glEnd();
