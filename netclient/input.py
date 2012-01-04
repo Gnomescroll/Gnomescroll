@@ -9,6 +9,7 @@ opts = opts.opts
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
+import c_lib.c_lib_map_gen as cMapGen
 
 from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
@@ -95,6 +96,8 @@ class InputGlobal:
     inventory = False
     agent_can_jump = True
     vn = False
+
+    hk = False
     
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -272,10 +275,16 @@ class Keyboard(object):
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
             '[' : self.cycle_agent_camera_mode,
+            ']': self.hk,
         }
 
         self.key_release_handlers = {
         }
+
+    def hk(self):
+        #camera.camera.world_projection()
+        #cMapGen.Dragon.generate()
+        InputGlobal.hk = True
         
     def toggle_hud(self):
         opts.hud = not opts.hud

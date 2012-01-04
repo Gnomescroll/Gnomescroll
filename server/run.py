@@ -205,9 +205,37 @@ def draw_sphere(block, radius, x,y,z):
                 if d < radius**2:
                     m.set(_x+x,_y+y,_z+z,block)
 
+def good_cave1():
+    c_lib.map_gen.Dragon.generate()
+
+    ##base heightmap, smooth shallow hills
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(0)\
+    #.tile(3)\
+    #.interpolate(4,2,1)\
+    #.scale(4.0, 4.0, 1.0)\
+    #.heightmap(baseline=22, maxheight=6)\
+    #.p2(octaves=6, persistence=0.35)\
+    #.start()\
+    #.reset()
+    
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(1)\
+    #.tile(3)\
+    #.interpolate(4,2,1)\
+    #.scale(2.0, 2.0, 1.0)\
+    #.reverse_heightmap(baseline=37, maxheight=7)\
+    #.p2(octaves=6, persistence=0.6)\
+    #.start()\
+    #.reset()
+
+
 class Main:
 
     def __init__(self):
+        init_c_lib.set_seed(opts.seed)
         ##setup
 
         '''
@@ -247,6 +275,9 @@ class Main:
         #pallet_pillar(0,0,0)
 
         #c_lib.map_gen.Dragon.generate()
+        c_lib.map_gen.conf.seed(opts.seed)
+
+        good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

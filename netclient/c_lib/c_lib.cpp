@@ -84,6 +84,10 @@
 
 #endif
 
+/* client side map gen / utils */
+#include <c_lib/map_gen/hk2.cpp>
+#include <c_lib/map_gen/dragon.cpp>
+
 #include <c_lib/state/client_state.cpp>
 #include <c_lib/state/packet_init.cpp>
 

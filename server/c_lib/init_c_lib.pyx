@@ -142,3 +142,10 @@ cpdef init_python_net():
     set_python_net_event_callback_function(py_net_event_callback)
 
 #register_client_creation, register_client_deletion, register_client_message_handling
+
+
+cdef extern from "c_lib.hpp":
+    void _set_seed(int seed)
+    
+def set_seed(int seed):
+    _set_seed(seed)

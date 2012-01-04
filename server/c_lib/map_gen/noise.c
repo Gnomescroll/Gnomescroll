@@ -127,6 +127,67 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     }
 }
 
+void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int tile) {
+
+    if (maxheight <= 0) {
+        printf("WARNING: reverse_heightmap. maxheight <= 0. Will trigger FPE. abort.\n");
+        return;
+    } else if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+        printf("WARNING: reverse_heightmap. x,y,z out of bounds\n");
+        return;
+    } else if (baseline-maxheight < 0) {
+        printf("WARNING: reverse_heightmap. baseline-maxheight goes below z=0. abort.\n");
+        return;
+    } else if (baseline > zmax) {
+        printf("WARNING: reverse_heightmap. baseline > zmax. abort.\n");
+        return;
+    }
+
+    int maxh=-1000, minh=1000;  // arbitrary distance outside of map height range
+    int h_range = 0;
+
+    float fz = (float)z;
+    int i,j,k,h;
+    float fh;
+
+    // compute heightmap
+    for (i=0; i<x; i++) {       // calculate heights and set to noisemap
+        for (j=0; j<y; j++) {
+            fh = noisemap[i + x*j];
+            fh *= fz;
+            h = (int)fh;
+            //if (maxheight < abs(h)) { printf("h double cycle. %d\n", h); h%=maxheight; printf("h %d\n", h);}
+            //else{h %= maxheight;}  // h can be negative
+
+            if (h > maxh) maxh = h;
+            if (h < minh) minh = h;
+
+            noisemap[i + x*j] = h;  // will cause problems if noisemap is reused without clearing
+        }
+    }
+
+    float scale = 1.0f;
+    const int plateau_factor = 0;   // use 0 for no ceiling plateaus
+    h_range = maxh - minh;
+    if (h_range > maxheight) {
+        scale = ((float)maxheight + plateau_factor)/((float)h_range);
+    }
+
+    // set tiles
+    for (i=0; i<x; i++) {
+        for (j=0; j<y; j++) {
+            h = noisemap[i + x*j];
+            h -= minh;
+            //h %= maxheight;
+            h = (int)(((float)h) * scale);
+            h = (h >= maxheight) ? maxheight : (h%maxheight);
+            for (k=0;k<h;k++) {
+                _set(i,j,baseline-k, tile);
+            }
+        }
+    }
+}
+
 void clear_noisemap() {
     int i;
     for (i=0; i<xmax*ymax*zmax; i++) {

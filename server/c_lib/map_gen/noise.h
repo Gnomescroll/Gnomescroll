@@ -82,6 +82,7 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
 void set_terrain_density(int x, int y, int z, float threshold, int tile);
 void clear_noisemap();
 void invert_map(int x, int y, int z, int tile);
+void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int tile);
 
 int _oct = 1;
 float _per = 0.6f;
