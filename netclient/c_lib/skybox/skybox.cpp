@@ -22,6 +22,16 @@ const int size = 1024;
 
 static GLuint skybox_texture[6];
 
+/*
+USE ORDER
+GL_TEXTURE_CUBE_MAP_POSITIVE_X
+GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+
+*/
 
 void load() {
 
@@ -426,7 +436,18 @@ const static float ve[4*3*6] = {
 
     float i_f = 0;
 
+/*
+USE ORDER
+GL_TEXTURE_CUBE_MAP_POSITIVE_X
+GL_TEXTURE_CUBE_MAP_NEGATIVE_X
+GL_TEXTURE_CUBE_MAP_POSITIVE_Y
+GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
+GL_TEXTURE_CUBE_MAP_POSITIVE_Z
+GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+*/
+
 glBegin(GL_QUADS);
+// Common Axis Z - FRONT side
     glTexCoord3f(cx, cx, i_f);
     glVertex3f(-r ,y,-r);
     glTexCoord3f(cz, cx, i_f);
@@ -549,7 +570,7 @@ glEnd();
     glDisable(GL_TEXTURE_CUBE_MAP);
     glPopMatrix();
 
-    glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_TEXTURE_2D);
 
 }
 
