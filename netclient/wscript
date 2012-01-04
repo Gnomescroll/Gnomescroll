@@ -253,6 +253,11 @@ def build(bld):
         source=['c_lib/c_lib_game_modes.pyx'],
         use=common_libraries+['c_lib'],
         target='c_lib.c_lib_game_modes')
+        
+    bld(features='cxx cshlib pyext',      #cython
+        source=['c_lib/c_lib_map_gen.pyx'],
+        use=common_libraries+['c_lib'],
+        target='c_lib.c_lib_map_gen')
 
     # final
     bld(features='cxx cprogram pyembed',
@@ -298,6 +303,7 @@ def install_in_ext(ctx):
        'c_lib.c_lib_camera',
        'c_lib.c_lib_options',
        'c_lib.c_lib_game_modes',
+       'c_lib.c_lib_map_gen',
     ]
 
     for target in targets:

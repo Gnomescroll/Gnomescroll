@@ -18,6 +18,12 @@ int main(int argc, char *argv[]) {
 }
 """
 
+LEMON_GRAPH_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
 
 def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
@@ -94,9 +100,14 @@ def configure(conf):
                 #use="noise",
                 #mandatory=True)
 
-    conf.env.INCLUDES = ['.', 'c_lib',]
+    conf.env.INCLUDES = ['.', 'c_lib', '/usr/local/include']
     #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
+
+    conf.check(header_name='lemon/concept/bpugraph.h',
+               includes=['/usr/local/include'],
+               fragment='#include <lemon/concepts/bpugraph.h>' + LEMON_GRAPH_MAIN_TEST_CODE,
+               mandatory=True)
 
     if OS == 'Darwin':
         conf.env.ARCH = ['x86_64']
@@ -115,6 +126,7 @@ def build(bld):
 
     #common_libraries = ['GL', 'SDL', 'SDL_image']
     common_libraries = []
+    lemon_graph_lib = ['emon']
 
     '''
     bld(features='c cshlib',
@@ -136,8 +148,8 @@ def build(bld):
                 #'c_lib/test.cpp',
                 #'c_lib/physics/common.c',
             ],
-        use=common_libraries+time_lib + ['noise'],
-        lib=time_lib,
+        use=common_libraries+time_lib + lemon_graph_lib,
+        lib=time_lib + lemon_graph_lib,
         target='c_lib')
 
     bld(features='cxx cshlib pyext',

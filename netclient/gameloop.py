@@ -34,6 +34,7 @@ import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_camera as cCamera
 import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
+import c_lib.c_lib_map_gen as cMapGen
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -241,6 +242,9 @@ class App(object):
                 agent.update_camera()
 
             camera.camera.world_projection()
+
+            if InputGlobal.hk:
+                cMapGen.Dragon.generate()
 
             P.event("Draw skybox")
             cCamera.render_skybox()

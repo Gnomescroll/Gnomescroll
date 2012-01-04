@@ -5,8 +5,7 @@
 #include <math.h>
 //#include <c_lib/common/random.h>
 
-#define min(X,Y) ((X) < (Y) ? : (X) : (Y))
-#define max(X,Y) ((X) > (Y) ? : (X) : (Y))
+#include "hk2.cpp"
 
 namespace Dragon {
 
@@ -938,214 +937,140 @@ void segment_caves_2(int z, int tile) {
 
     free(blocks);
 }
-class Rect {
-    public:
-    unsigned char ox,oy;
-    unsigned char x,y,w,h;
-    bool placed;
-    int area() {
-        return w*h;
+
+
+
+void rect_solver() {
+    int vertex_max = 1024;
+    Point* pts = (Point*)malloc(sizeof(Point)*vertex_max);
+
+    int i;
+    int z = 13;
+    int tile = 103; // solar panel
+    int points=0;
+    get_convex_vertices(z, tile, pts, vertex_max, &points);
+    printf("Got %d vertices\n", points);
+
+    pts = (Point*)realloc(pts, sizeof(Point)*points);
+    Point* pts2 = (Point*)malloc(sizeof(Point)*points);
+    memcpy(pts2, pts, sizeof(Point)*points);
+    for (i=0; i<points;i++) {
+        if (!(pts[i].x%2) || !(pts[i].y%2)) printf("WARNING Even point: %d :: %d %d\n", i, pts[i].x, pts[i].y);
     }
-    bool collides(Rect* r) {
-        return !(x+w > r->x || x < r->x+r->w ||
-            y+h > r->y || y < r->y+r->h);
+
+    int diagonals_max = 2048;
+    Diagonal* h_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
+    int h_diag_ct = 0;
+    get_horizontal_diagonals(pts, points, h_diagonals, diagonals_max, &h_diag_ct, z, tile);
+    h_diagonals = (Diagonal*)realloc(h_diagonals, sizeof(Diagonal)*h_diag_ct);
+
+    Diagonal* v_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
+    int v_diag_ct = 0;
+    get_vertical_diagonals(pts2, points, v_diagonals, diagonals_max, &v_diag_ct, z, tile);
+    v_diagonals = (Diagonal*)realloc(v_diagonals, sizeof(Diagonal)*v_diag_ct);
+
+    Point *p,*q;
+    int j;
+    int start,end;
+    //printf("Horizontals:\n");
+    //for (i=0; i<h_diag_ct; i++) {
+        //p = &pts[h_diagonals[i].p];
+        //q = &pts[h_diagonals[i].q];
+        //start = (p->x > q->x) ? q->x : p->x;
+        //end = (p->x < q->x) ? q->x : p->x;
+        //for (j=start+1; j<end; j++) {
+            //_set(j/2,p->y/2,z, 7);
+        //}
+        //printf("%d,%d -> %d,%d\n", pts[h_diagonals[i].p].x, pts[h_diagonals[i].p].y, pts[h_diagonals[i].q].x, pts[h_diagonals[i].q].y);
+    //}
+    //printf("Verticals:\n");
+    //for (i=0; i<v_diag_ct; i++) {
+        //p = &pts2[v_diagonals[i].p];
+        //q = &pts2[v_diagonals[i].q];
+        //start = (p->y > q->y) ? q->y : p->y;
+        //end = (p->y < q->y) ? q->y : p->y;
+        //for (j=start+1; j<end; j++) {
+            //_set(p->x/2,j/2,z, 1);
+        //}
+
+        //printf("%d,%d -> %d,%d\n", pts2[v_diagonals[i].p].x, pts2[v_diagonals[i].p].y, pts2[v_diagonals[i].q].x, pts2[v_diagonals[i].q].y);
+    //}
+
+    // TODO: double the point so that corners of blocks can be used, instead of treating blocks as single points
+
+    // find intersections
+    int i_ct = 0;
+    Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
+    find_intersections(pts, h_diagonals, h_diag_ct, pts2, v_diagonals, v_diag_ct, intersections, &i_ct);
+    intersections = (Intersection*)realloc(intersections, sizeof(Intersection)*i_ct);
+
+    // apply Hopcropt-Karp to the bipartite graph (Horizontals, Verticals, Intersections)
+    int n_matches = hk(h_diag_ct, v_diag_ct, i_ct, intersections);
+
+    // get a maximum independent vertex (diagonals) set from hk results
+    int* independent_set = (int*)malloc(sizeof(int)*(h_diag_ct+v_diag_ct));
+    int n_ind = 0;
+    int use_h=1;
+    int k;
+    for (i=0; i<h_diag_ct; i++) {
+        if (!HK::map[i+1]) {  // free h_diag vertex
+            independent_set[n_ind++] = i;
+        } else {
+            //if (_i >= h_diag_ct) {
+                //continue;   // should have processed all these by now
+            //}
+            if (use_h) {    // use h_diag endpoint
+                independent_set[n_ind++] = i;
+            } else {        // use v_diag endpoint
+                k = find_matching_diagonal(i, intersections, i_ct, h_diag_ct, HK::map);
+                independent_set[n_ind++] = h_diag_ct + k;
+            }
+            use_h++;
+            use_h%=2;
+            //use_h = randrange(0,1);
+        }
     }
-    void place(int z) {
-        int new_tile = 7;
-        int i,j;
-        for (i=x; i<x+w; i++) {
-            for (j=y; j<y+h; j++) {
-                if (i > x && i < x+w-1 && j > y && j < y+h-1) continue;
-                _set(i,j,z+2, new_tile);
+
+    for (i=h_diag_ct; i<v_diag_ct+h_diag_ct; i++) {
+        if (!HK::map[i+1]) {
+            independent_set[n_ind++] = i;
+        }
+    }
+
+    printf("Independent Diagonals: %d\n", n_ind);
+    if (n_ind != (h_diag_ct+v_diag_ct)-n_matches) {
+        printf("ERROR: independent diagonals processed wrong. Should be %d\n", (h_diag_ct+v_diag_ct)-n_matches);
+    }
+    int index;
+    for (i=0; i<n_ind; i++) {
+        index = independent_set[i];
+        if (index < h_diag_ct) {
+            p = &pts[h_diagonals[index].p];
+            q = &pts[h_diagonals[index].q];
+            start = (p->x > q->x) ? q->x : p->x;
+            end = (p->x < q->x) ? q->x : p->x;
+            for (j=start+1; j<end; j++) {
+                _set(j/2,p->y/2,z, 7);
+            }
+        } else {
+            index -= h_diag_ct;
+            p = &pts2[v_diagonals[index].p];
+            q = &pts2[v_diagonals[index].q];
+            start = (p->y > q->y) ? q->y : p->y;
+            end = (p->y < q->y) ? q->y : p->y;
+            for (j=start+1; j<end; j++) {
+                _set(p->x/2,j/2,z, 1);
             }
         }
-        _set(ox,oy,z+2, 1);
-        placed = true;
-        printf("Placed rect at %d,%d  w,h: %d,%d\n", x,y,w,h);
     }
-    Rect() :
-    x(0), y(0), w(0), h(0),
-    placed(false)
-    {}
-};
-class Point {
-    public:
-    unsigned char x,y;
-    bool is_connected_axis_aligned_y(Point* p, int z, int tile) {
-        int start,end;
-        if (p->y == y) {
-            start = (p->x < x) ? p->x : x;
-            end = (p->x > x) ? p->x : x;
-        } else if (p->x == x) {
-            printf("same point\n");
-            return false;
-        } else {
 
-            printf("%d,%d %d,%d not aligned\n", x,y, p->x, p->y);
-            return false;
-        }
+    // last step: connecting remaining free vertices
 
-        int i;
-        for (i=start+1; i<end; i++) {
-            if (_get(i,y,z) != tile) return false;
-        }
-
-        return true;
-    }
     
-    bool is_connected_axis_aligned_x(Point* p, int z, int tile) {
-        int start,end;
-        if (p->x == x) {
-            start = (p->y < y) ? p->y : y;
-            end = (p->y > y) ? p->y : y;
-        } else if (p->y == y) {
-            printf("same point\n");
-            return false;
-        } else {
-            printf("%d,%d %d,%d not aligned\n", x,y, p->x, p->y);
-            return false;
-        }
-
-        int i;
-        for (i=start+1; i<end; i++) {
-            if (_get(x,i,z) != tile) return false;
-        }
-
-        return true;
-    }
-};
-bool point_taken(struct Point* pts, int n, struct Point* pt) {
-    int i;
-    for (i=0; i<n; i++) {
-        if (pt->x == pts[i].x && pt->y == pts[i].y) {
-            printf("point taken %d,%d\n", pt->x, pt->y);
-            return true;
-        }
-    }
-    return false;
+    free(independent_set);
 }
-inline void rotate90(int* x, int *y) {
-    int _x = *x;
-    *x = -*y;
-    *y = _x;
-}
-void expand_rect_at_point(struct Point* pt, int z, Rect* r) {
-    int tile = _get(pt->x, pt->y, z);
-    int x = pt->x;
-    int y = pt->y;
-    r->ox = x;
-    r->oy = y;
-    r->w = 1;
-    r->h = 1;
 
-    int dx=1,dy=0;
-    int ct=0;
-    int lw=0,rw=0,lh=0,rh=0;
-    //int nx,ny;
-    int dw,dh;
-    while (ct < 4) {
-        rotate90(&dx,&dy);
-        if (dx < 0) dw = rw;
-        else dw = lw;
-        if (dy < 0) dh = rh;
-        else dh = lh;
-        if (_get(x+dw,y+dh,z) != tile) {
-            ct++;
-            continue;
-        }
 
-        if (dx < 0) rw += 1;
-        else lw += dx;
-        if (dy < 0) rh += 1;
-        else lh += dy;
-    }
-    r->x = x-rw;
-    r->y = y-rh;
-    r->w = lw + rw;
-    r->h = lh + rh;
-    r->w = (!r->w) ? 1 : r->w;
-    r->h = (!r->h) ? 1 : r->h;
-}
-// quicksort
-void swap(Rect *a, Rect *b)
-{
-  Rect t=*a; *a=*b; *b=t;
-}
-void quicksort(Rect* rects, int beg, int end)
-{
-  if (end > beg + 1)
-  {
-    Rect piv = rects[beg];
-    int l = beg + 1, r = end;
-    while (l < r)
-    {
-      if (rects[l].area() >= piv.area())
-        l++;
-      else
-        swap(&rects[l], &rects[--r]);
-    }
-    swap(&rects[--l], &rects[beg]);
-    quicksort(rects, beg, l);
-    quicksort(rects, r, end);
-  }
-}
-bool rect_fits(Rect* rects, int n_rects, Rect* rect) {
-    int i;
-    Rect* r;
-    for (i=0; i<n_rects;i++) {
-        r = &rects[i];
-        if (r->placed && rect->collides(r)) return false;
-    }
-    return true;
-}
-void expand_rects(int z, int tile, double sample_rate=0.2) {
-    
-    // count # of cave blocks to cover
-    int n=0;
-    int i,j;
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            if (_get(i,j,z) == tile) n++;
-        }
-    }
-
-    printf("%d inner cave tiles\n", n);
-
-    if (sample_rate > 1.0) sample_rate = 1.0;
-    int samples = ((double)n) * sample_rate;
-    Rect* rects = (Rect*)malloc(sizeof(Rect)*samples);
-    struct Point* points = (struct Point*)malloc(sizeof(struct Point)*samples);
-    int x,y;
-    struct Point pt;
-    Rect* rect;
-    printf("Looking for %d samples\n", samples);
-    for (i=0; i<samples; i++) {
-        do {
-            do {
-                x = randrange(0,width-1);
-                y = randrange(0,height-1);
-            } while (_get(x,y,z) != tile);
-            pt.x = x;
-            pt.y = y;
-        } while(point_taken(points, i, &pt));
-
-        printf("Collected point %d,%d\n", x,y);
-        points[i] = pt;
-        expand_rect_at_point(&pt, z, &rects[i]);
-    }
-    int samples_collected = i;
-    printf("Collected %d samples\n", samples_collected);
-    quicksort(rects, 0, samples_collected);
-
-    // draw rects
-    for (n=0; n<samples_collected; n++) {
-        rect = &rects[n];
-        if (rect_fits(rects, samples_collected, rect)) {rect->place(z);break;}
-    }
-    
-    free(rects);
-    free(points);
-}
 
 void generate() {
     int x = width;
@@ -1187,8 +1112,6 @@ void generate() {
 
     rect_solver();
 
-    //expand_rects(h-1, 103, 0.05);
-    
     //int pattern_w = 7;
     //int pattern_h = 15;
     //raster(pattern_w, pattern_h);
@@ -1221,314 +1144,5 @@ void outline() {
     outline_boxes(11,7);
 }
 
-
-
-/*
-A naive implementation of an algorithm that reduces the problem to a bipartite
-graph and then applies a general-purpose bipartite graph matching algorithm would
-solve the problem in time O(n
-2:5
-), where n denotes the number of vertices of the input
-polygon: this is the time needed to apply the Hopcroft–Karp matching algorithm [41] to
-the intersection graph of the good diagonals, which may have Q(n) vertices and Q(n
-2
-)
-edges. However, by using geometric range searching data structures to speed up the
-search for alternating paths within the matching algorithm, it is possible to improve the
-overall running time to O(n
-3=2
-logn) [42, 53, 54].
-*
-* Isolate independent cave networks
-* Collect convex vertices
-* Connect all axis parallel diagonals between vertices
-* Horizontal in one, vertical in another
-* Find all intersections between horizontal and vertical; these are graph edges
-* Apply Hopcroft-Karp, get maximum matching (edges)
-* Using maximum matching, get maximum independent set (vertices aka convex diagonals)
-* Draw the maximum independent set
-*
-* Iterate remaining unconnected convex vertices,
-*   connecting to nearest intersection
-*/
-
-// quicksort
-void swap(Point *a, Point *b)
-{
-  Point t=*a; *a=*b; *b=t;
-}
-void quicksort_pts_x(Point* points, int beg, int end)
-{
-  if (end > beg + 1)
-  {
-    Point piv = points[beg];
-    int l = beg + 1, r = end;
-    while (l < r)
-    {
-      if (points[l].x <= piv.x)
-        l++;
-      else
-        swap(&points[l], &points[--r]);
-    }
-    swap(&points[--l], &points[beg]);
-    quicksort_pts_x(points, beg, l);
-    quicksort_pts_x(points, r, end);
-  }
-}
-void quicksort_pts_y(Point* points, int beg, int end)
-{
-  if (end > beg + 1)
-  {
-    Point piv = points[beg];
-    int l = beg + 1, r = end;
-    while (l < r)
-    {
-      if (points[l].y <= piv.y)
-        l++;
-      else
-        swap(&points[l], &points[--r]);
-    }
-    swap(&points[--l], &points[beg]);
-    quicksort_pts_y(points, beg, l);
-    quicksort_pts_y(points, r, end);
-  }
-}
-
-inline bool is_convex_vertex(int x, int y, int z, int poly_tile) {
-
-    if (_get(x,y,z) == poly_tile) return false;
-
-    int dx=1,dy=0;
-    int dx1=0,dy1=1;
-
-    int i;
-    for (i=0; i<4; i++) {
-        rotate90(&dx,&dy);
-        rotate90(&dx1,&dy1);
-        if (_get(x+dx, y+dy, z) == poly_tile
-         && _get(x+dx1, y+dy1, z) == poly_tile
-         && _get(x+dx+dx1, y+dy+dy1, z) == poly_tile)
-         return true;
-    }
-    return false;
-}
-
-void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* points) {
-    int p = 0;
-    int i,j;
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            if (is_convex_vertex(i,j,z, poly_tile)) {
-                if (p == vertex_max) {
-                    printf("get_convex_vertices Fatal Error -- exceed vertex max %d\n", vertex_max);
-                    *points = 0;
-                    return;
-                }
-                pts[p].x = i;
-                pts[p].y = j;
-                p++;
-            }
-        }
-    }
-    *points = p;
-}
-
-class Diagonal {
-    public:
-    int p,q;
-};
-
-void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
-    quicksort_pts_x(pts, 0, points);
-    int i;
-    int* indices = (int*)malloc(sizeof(int)*(width+1));
-    for (i=0; i<width; i++) indices[i] = 0;
-    for (i=0; i<points;i++) {
-        indices[pts[i].x]++;
-    }
-    indices[width] = points;
-
-    int dct = 0;
-    int j,k;
-    int off;
-    Point* pt,*pt2;
-    int index = 0;
-    for (i=0; i<width; i++) {
-        off = 0;
-        for (j=0; j<indices[i]; j++) {
-            pt = &pts[j+index];
-            for (k=off; k<indices[i]; k++) {
-                if (j==k) continue;
-                pt2 = &pts[k+index];
-                if (pt->is_connected_axis_aligned_x(pt2, z, tile)) {
-                    if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
-                        return;
-                    }
-                    diagonals[dct].p = j+index;
-                    diagonals[dct].q = k+index;
-                    dct++;
-                }
-            }
-            off++;
-        }
-        index += indices[i];
-    }
-    *diag_ct = dct;
-    free(indices);
-}
-
-void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
-    quicksort_pts_y(pts, 0, points);
-    int i;
-    int* indices = (int*)malloc(sizeof(int)*(height+1));
-    for (i=0; i<height; i++) indices[i] = 0;
-    for (i=0; i<points;i++) {
-        indices[pts[i].y]++;
-    }
-    indices[height] = points;
-
-    int dct = 0;
-    int j,k;
-    int off;
-    Point* pt,*pt2;
-    int index = 0;
-    for (i=0; i<height; i++) {
-        off = 0;
-        for (j=0; j<indices[i]; j++) {
-            pt = &pts[j+index];
-            for (k=off; k<indices[i]; k++) {
-                if (j==k) continue;
-                pt2 = &pts[k+index];
-                if (pt->is_connected_axis_aligned_y(pt2, z, tile)) {
-                    if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
-                        return;
-                    }
-                    diagonals[dct].p = j+index;
-                    diagonals[dct].q = k+index;
-                    dct++;
-                }
-            }
-            off++;
-        }
-        index += indices[i];
-    }
-    *diag_ct = dct;
-    free(indices);
-}
-
-class Intersection {
-    public:
-    int dh,dv;
-};
-bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
-    Point* top = (v1->y > v2->y) ? v1 : v2;
-    Point* bottom = (v1->y < v2->y) ? v1 : v2;
-    Point* left = (h1->x > h2->x) ? h1 : h2;
-    Point* right = (h1->x < h2->x) ? h1 : h2;
-    
-    if (v1->x < left->x && v1->x > right->x
-     && h1->y <  top->y  && h1->y > bottom->y) return true;
-    return false;
-}
-void find_intersections(Point* hp, Diagonal* h, int h_ct, Point* vp, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
-    int i,j;
-    int index = 0;
-    //Point *i1 = NULL, *i2 = NULL;
-    Point *p1, *p2, *q1, *q2;
-    for (i=0; i<v_ct; i++) {
-        p1 = &vp[v[i].p];
-        p2 = &vp[v[i].q];
-        for (j=0; j<h_ct; j++) {
-            q1 = &hp[h[j].p];
-            q2 = &hp[h[j].q];
-            if (orthogonal_intersection(p1, p2, q1, q2)) {
-                in[index].dh = i;
-                in[index].dv = j;
-                index++;
-            }
-        }
-    }
-    *i_ct = index;
-    printf("%d intersections found\n", index);
-}
-void rect_solver() {
-    int vertex_max = 1024;
-    Point* pts_ = (Point*)malloc(sizeof(Point)*vertex_max);
-
-    int z = 13;
-    int tile = 103; // solar panel
-    int points=0;
-    get_convex_vertices(z, tile, pts_, vertex_max, &points);
-
-    Point* pts = (Point*)malloc(sizeof(Point)*points);
-    int i;
-    for (i=0; i<points; i++) {
-        pts[i] = pts_[i];
-    }
-    Point* pts2 = (Point*)malloc(sizeof(Point)*points);
-    for (i=0; i<points; i++) {
-        pts2[i] = pts[i];
-    }
-
-    int diagonals_max = 2048;
-    Diagonal* h_diagonals_ = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    int h_diag_ct = 0;
-    get_horizontal_diagonals(pts, points, h_diagonals_, diagonals_max, &h_diag_ct, z, tile);
-    Diagonal* h_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*h_diag_ct);
-    for (i=0; i<h_diag_ct; i++) {
-        h_diagonals[i] = h_diagonals_[i];
-    }
-    free(h_diagonals_);
-    
-    Diagonal* v_diagonals_ = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    int v_diag_ct = 0;
-    get_vertical_diagonals(pts2, points, v_diagonals_, diagonals_max, &v_diag_ct, z, tile);
-    Diagonal* v_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*v_diag_ct);
-    for (i=0; i<v_diag_ct; i++) {
-        v_diagonals[i] = v_diagonals_[i];
-    }
-    free(v_diagonals_);
-    
-    printf("Horizontals:\n");
-    Point *p,*q;
-    int j;
-    int start,end;
-    for (i=0; i<h_diag_ct; i++) {
-        p = &pts[h_diagonals[i].p];
-        q = &pts[h_diagonals[i].q];
-        start = (p->x > q->x) ? q->x : p->x;
-        end = (p->x < q->x) ? q->x : p->x;
-        for (j=start+1; j<end; j++) {
-            _set(j,p->y,z, 7);
-        }
-        printf("%d,%d -> %d,%d\n", pts[h_diagonals[i].p].x, pts[h_diagonals[i].p].y, pts[h_diagonals[i].q].x, pts[h_diagonals[i].q].y);
-    }
-    printf("Verticals:\n");
-    for (i=0; i<v_diag_ct; i++) {
-        p = &pts2[v_diagonals[i].p];
-        q = &pts2[v_diagonals[i].q];
-        start = (p->y > q->y) ? q->y : p->y;
-        end = (p->y < q->y) ? q->y : p->y;
-        for (j=start+1; j<end; j++) {
-            _set(p->x,j,z, 1);
-        }
-
-        printf("%d,%d -> %d,%d\n", pts2[v_diagonals[i].p].x, pts2[v_diagonals[i].p].y, pts2[v_diagonals[i].q].x, pts2[v_diagonals[i].q].y);
-    }
-
-    // TODO: double the point so that corners of blocks can be used, instead of treating blocks as single points
-
-    // find intersections
-    int i_ct = 0;
-    Intersection* intersections_ = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
-    find_intersections(pts, h_diagonals, h_diag_ct, pts2, v_diagonals, v_diag_ct, intersections_, &i_ct);
-    Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
-    for (i=0; i<i_ct; i++) {
-        intersections[i] = intersections_[i];
-    }
-    free(intersections_);
-}
 
 }
