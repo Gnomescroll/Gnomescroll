@@ -48,11 +48,30 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     //return;
 
     //printf("delta= %f \n", delta);
+
+    if(delta > 1.0f)
+    {
+        //printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta >1\n");
+        delta = 1.0f;
+    }
+
+
+    if(delta < 0.0f)
+    {
+        printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta is negative\n");
+
+    }
+
+
     c.x = s0.x*(1-delta) + s1.x*delta;
     c.y = s0.y*(1-delta) + s1.y*delta;
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
-
+/*
+    c.x = s1.x*(1-delta) + s0.x*delta;
+    c.y = s1.y*(1-delta) + s0.y*delta;
+    c.z = s1.z*(1-delta) + s0.z*delta;  
+*/
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
