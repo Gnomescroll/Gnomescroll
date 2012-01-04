@@ -171,6 +171,11 @@ class Point {
 
         return true;
     }
+
+    bool operator==(Point p) {
+        if (p.x == x && p.y == y) return true;
+        return false;
+    }
 };
 bool point_taken(struct Point* pts, int n, struct Point* pt) {
     int i;

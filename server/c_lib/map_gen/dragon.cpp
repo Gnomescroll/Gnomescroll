@@ -1110,7 +1110,7 @@ void generate() {
         }
     }
 
-    rect_solver();
+    //rect_solver();
 
     //int pattern_w = 7;
     //int pattern_h = 15;
