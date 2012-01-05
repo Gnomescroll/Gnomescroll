@@ -246,7 +246,7 @@ class App(object):
             camera.camera.world_projection()
 
             if InputGlobal.hk:
-                cMapGen.Dragon.generate()
+                cMapGen.Dragon.draw()
 
             P.event("Draw skybox")
             cCamera.render_skybox()

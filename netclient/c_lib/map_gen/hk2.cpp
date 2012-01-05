@@ -127,6 +127,8 @@ class Rect {
 class Point {
     public:
     int x,y;
+    //int b;
+    int bx,by;
     bool is_connected_axis_aligned_y(Point* p, int z, int tile) {
         int start,end;
         if (p->y == y) {
@@ -176,6 +178,16 @@ class Point {
         if (p.x == x && p.y == y) return true;
         return false;
     }
+
+    void print() {
+        //printf("%d %d %d\n", x,y,b);
+        printf("%d %d %d %d\n", x,y,bx,by);
+    }
+
+    Point() :
+    //x(0),y(0),b(0)
+    x(0),y(0),bx(0),by(0)
+    {}
 };
 bool point_taken(struct Point* pts, int n, struct Point* pt) {
     int i;
@@ -266,9 +278,9 @@ void quicksort_pts_y(Point* points, int beg, int end)
   }
 }
 
-inline void get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int *q2, int *q3, int *q4) {
+inline bool get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int *q2, int *q3, int *q4) {
 
-    if (_get(x,y,z) == poly_tile) return;
+    if (_get(x,y,z) == poly_tile) return false;
 
     int dx=1,dy=0;
     int dx1=0,dy1=1;
@@ -299,6 +311,7 @@ inline void get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int
         rotate90(&dx,&dy);
         rotate90(&dx1,&dy1);
     }
+    return true;
 }
 
 void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* points) {
@@ -307,7 +320,10 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
     int q1=0,q2=0,q3=0,q4=0;
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            get_convex_vertices(i,j,z, poly_tile, &q1, &q2, &q3, &q4);
+            q1=q2=q3=q4=0;
+            if (!get_convex_vertices(i,j,z, poly_tile, &q1, &q2, &q3, &q4)) {
+                continue;
+            }
             _p = p+q1+q2+q3+q4;
             if (_p >= vertex_max) {
                 printf("get_convex_vertices Fatal Error -- exceed vertex max %d\n", vertex_max);
@@ -315,27 +331,38 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
                 *points = 0;
                 return;
             }
-            if (q1) {
+            if (q1) {   // top left
                 pts[p].x = 2*i+1;
                 pts[p].y = 2*j+1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q2) {
+            if (q2) {   // bottom left
                 pts[p].x = 2*i-1;
                 pts[p].y = 2*j+1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q3) {
+            if (q3) {   // bottom right
                 pts[p].x = 2*i-1;
                 pts[p].y = 2*j-1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q4) {
+            if (q4) {   // top right
                 pts[p].x = 2*i+1;
                 pts[p].y = 2*j-1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            q1=q2=q3=q4=0;
         }
     }
     *points = p;
@@ -358,6 +385,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
     for (i=0; i<width; i++) indices[i] = 0;
     for (i=0; i<points;i++) {
         indices[pts[i].x/2]++;
+        //indices[pts[i].bx]++;
     }
     indices[width] = points;
 
@@ -375,7 +403,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_x(pt2, z, tile)) {
                     if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
+                        printf("get_vertical_diagonals :: Max diagonals reached\n");
                         return;
                     }
                     diagonals[dct].p = j+index;
@@ -398,24 +426,26 @@ void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int d
     for (i=0; i<height; i++) indices[i] = 0;
     for (i=0; i<points;i++) {
         indices[pts[i].y/2]++;
+        //indices[pts[i].by]++;
     }
     indices[height] = points;
 
     int dct = 0;
     int j,k;
     int off;
-    Point* pt,*pt2;
+    Point *pt,*pt2;
     int index = 0;
     for (i=0; i<height; i++) {
         off = 0;
         for (j=0; j<indices[i]; j++) {
             pt = &pts[j+index];
+            pt->print();
             for (k=off; k<indices[i]; k++) {
                 if (j==k) continue;
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_y(pt2, z, tile)) {
                     if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
+                        printf("get_horizontal_diagonals :: Max diagonals reached\n");
                         return;
                     }
                     diagonals[dct].p = j+index;

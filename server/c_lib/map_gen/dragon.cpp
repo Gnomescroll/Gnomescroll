@@ -1066,11 +1066,8 @@ void rect_solver() {
 
     // last step: connecting remaining free vertices
 
-    
     free(independent_set);
 }
-
-
 
 void generate() {
     int x = width;

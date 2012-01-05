@@ -951,113 +951,151 @@ Diagonal* v_diagonals;
 Diagonal* diagonals;
 int n_diagonals;
 
-inline bool point_in_set(Point p, int* independent_set, int i_ct, Diagonal* h_diag, int h_ct, Diagonal* v_diag, Point* pts, Point* pts2) {
+inline bool point_in_set(Point p, Diagonal* loose_ends, int n_ends, Point* pts) {
     int i;
-    int d;
     Diagonal* diag;
-    for (i=0; i<i_ct; i++) {
-        d = independent_set[i];
-        if (d < h_ct) { // h_diag
-            diag = &h_diag[d];
-            if (pts[diag->p] == p || pts[diag->q] == p) return true;
-        } else {        // v_diag
-            d -= h_ct;
-            diag = &v_diag[d];
-            if (pts2[diag->p] == p || pts2[diag->q] == p) return true;
-        }
+    for (i=0; i<n_ends; i++) {
+        diag = &loose_ends[i];
+        if (pts[diag->p] == p || pts[diag->q] == p) return true;
     }
     return false;
 }
 
-inline bool point_intersects_diagonal(int x, int y, int* independent_set, int n_ind, Diagonal* h_diags, int h_ct, Diagonal* v_diags, Point* pts, Point* pts2) {
+inline int point_in_points(Point p, Point* pts, int points) {
     int i;
-    int index;
+    for (i=0; i<points; i++) {
+        if (pts[i] == p) return i;
+    }
+    return -1;
+}
+
+inline bool point_intersects_diagonal(int x, int y, Diagonal* loose_ends, int n_ends, Point* pts) {
+    int i;
     Diagonal* d;
     Point *p,*q;
     int start_x, end_x, start_y, end_y;
-    for (i=0; i<n_ind; i++) {
-        index = independent_set[i];
-        if (index < h_ct) {
-            d = &h_diags[index];
-        } else {
-            d = &v_diags[index-h_ct];
-        }
+    for (i=0; i<n_ends; i++) {
+        d = &loose_ends[i];
         p = &pts[d->p];
-        q = &pts2[d->q];
-        start_x = (p->x > q->x) ? q->x : p->x;
+        q = &pts[d->q];
+        start_x = (p->x >= q->x) ? q->x : p->x;
         end_x = (p->x < q->x) ? q->x : p->x;
-        start_y = (p->y > q->y) ? q->y : p->y;
+        start_y = (p->y >= q->y) ? q->y : p->y;
         end_y = (p->y < q->y) ? q->y : p->y;
-        if (x >= start_x || x <= end_x || y >= start_y || y <= end_y) return true;
+        if (x >= start_x && x <= end_x && y >= start_y && y <= end_y) return true;
     }
     return false;
 }
 
-Point get_nearest_endpoint(Point _p, int* independent_set, int n_ind, Diagonal* h_diagonals, int h_ct, Diagonal* v_diagonals, Point* pts, Point* pts2, int z, int tile) {
+Point get_nearest_endpoint(Point _p, Diagonal* loose_ends, int n_ends, Point* pts, int z, int tile) {
     Point *p = &_p;
     Point q;
-    // move in rotating directions
-    // dont go in direction of adjacent block
-    // check interstion w/ independent set or wall collision
-
-    // orient 2 vectors away from point
-    int i;
-    int dx1=1,dy1=0,dx2=0,dy2=1;
-    for (i=0; i<4; i++) {
-        if (_get(p->x+dx1+dx2, p->y+dy1+dy2, z) != tile) break;
-        rotate90(&dx1, &dy1);
-        rotate90(&dx2, &dy2);
-    }
-    dx1*=-1;
-    dy1*=-1;
-    dx2*=-1;
-    dy2*=-1;
 
     int dx,dy;
-    int x,y;
-    if (dx1) x = dx = dx1;
-    if (dx2) x = dx = dx2;
-    if (dy1) y = dy = dy1;
-    if (dy2) y = dy = dy2;
-    i=0;
+    int x=0,y=0;
+    dx = p->x - 2*p->bx;
+    dy = p->y - 2*p->by;
     while(1) {
-        if (_get(p->x + x, p->y+1, z) != tile || _get(p->x + x, p->y-1, z) != tile // another vertex
-            || point_intersects_diagonal(p->x+x,p->y, independent_set, n_ind, h_diagonals, h_ct, v_diagonals, pts, pts2))      // intersection with existing diagonal
+        x += dx;
+        y += dy;
+        if (_get((p->x + x)/2, (p->y+1)/2, z) != tile || _get((p->x + x)/2, (p->y-1)/2, z) != tile) // another vertex
         {
-            q.x = p->x+x-dx;
+            q.x = p->x+x;
+            if (x>0) q.x-=1;
             q.y = p->y;
             break;
         }
-        if (_get(p->x+1, p->y+y, z) != tile || _get(p->x-1, p->y+y, z) != tile // another vertex
-            || point_intersects_diagonal(p->x,p->y+y, independent_set, n_ind,  h_diagonals, h_ct, v_diagonals, pts, pts2))      // intersection with existing diagonal
+        if (point_intersects_diagonal(p->x+x,p->y, loose_ends, n_ends, pts))      // intersection with existing diagonal
         {
-            q.x = p->x;
-            q.y = p->y+y-dy;
+            q.x = p->x+x;
+            q.y = p->y;
             break;
         }
-        x += dx;
-        y += dy;
+        if (_get((p->x+1)/2, (p->y+y)/2, z) != tile || _get((p->x-1)/2, (p->y+y)/2, z) != tile) // another vertex
+        {
+            q.x = p->x;
+            q.y = p->y+y;
+            if (y>0) q.y-=1;
+            break;
+        }
+        if (point_intersects_diagonal(p->x,p->y+y, loose_ends, n_ends, pts))      // intersection with existing diagonal
+        {
+            q.x = p->x;
+            q.y = p->y+y;
+            break;
+        }
         if (((p->x+x)/2 > width || p->x+x < 0) && ((p->y+y)/2 > height || p->y+y < 0))
         {
             printf("ERROR get_nearest_endpoint left the map\n");
             break;
         }
     }
-    
     return q;
 }
 
+void renumber_v_diagonals(Diagonal *v_diagonals, int v_diag_ct, Point* pts2, Point* pts, int points) {
+    bool p_found,q_found;
+    int i,j;
+    Diagonal *d;
+    Point p;
+    for (i=0; i<v_diag_ct; i++) {
+        p_found = false;
+        q_found = false;
+        d = &v_diagonals[i];
+        
+        p = pts2[d->p];
+        for (j=0; j<points; j++) {
+            if (p == pts[j]) {
+                d->p = j;
+                p_found = true;
+                break;
+            }
+        }
+
+        p = pts2[d->q];
+        for (j=0; j<points; j++) {
+            if (p == pts[j]) {
+                d->q = j;
+                q_found = true;
+                break;
+            }
+        }
+
+        if (!p_found) printf("d->p not found in pts.\n");
+        if (!q_found) printf("d->p not found in pts.\n");
+    }
+}
+
 void rect_solver() {
+
+static int _tile = 103;
+if (_tile == 103) _tile = 1;
+else if (_tile == 1) _tile = 103;
+    
     int vertex_max = 1024;
     //Point* pts = (Point*)malloc(sizeof(Point)*vertex_max);
     pts = (Point*)malloc(sizeof(Point)*vertex_max);
 
     int i;
+    for (i=0; i<vertex_max; i++) {
+        pts[i].x = 0;
+        pts[i].y = 0;
+        //pts[i].b = 0;
+        pts[i].bx = 0;
+        pts[i].by = 0;
+    }
+
     int z = 13;
     int tile = 103; // solar panel
     int points=0;
     get_convex_vertices(z, tile, pts, vertex_max, &points);
+    //for (i=0; i<points; i++) {
+        ////_set(pts[i].bx, pts[i].by, z, _tile);
+        //pts[i].print();
+    //}
+    if (points > vertex_max) printf("ERROR: points %d exceeds vertex_max %d\n", points, vertex_max);
     printf("Got %d vertices\n", points);
+    //return;
 
     pts = (Point*)realloc(pts, sizeof(Point)*points);
     pts2 = (Point*)malloc(sizeof(Point)*points);
@@ -1136,38 +1174,50 @@ void rect_solver() {
         printf("ERROR: independent diagonals processed wrong. Should be %d\n", (h_diag_ct+v_diag_ct)-n_matches);
     }
 
+    renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, points);
+
     // connect loose ends
-    //int n_ends_max = points-(n_ind*2);
-    int n_ends_max = points;
+    int n_ends_max = points-n_ind;
     int index;
     Diagonal* loose_ends = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
     for (i=0; i<n_ind; i++) {
         index = independent_set[i];
         if (index < h_diag_ct) {
-            loose_ends[i] = h_diagonals[i];
+            loose_ends[i] = h_diagonals[index];
         } else {
-            loose_ends[i] = v_diagonals[i-h_diag_ct];
+            loose_ends[i] = v_diagonals[index-h_diag_ct];
         }
     }
+    
     Point* new_pts = (Point*)malloc(sizeof(Point)*(points+n_ends_max));
     memcpy(new_pts, pts, sizeof(Point)*points);
     int n_ends = 0;
     Point p;
     Diagonal* d;
     Point new_p;
+    int new_p_slot;
     for (i=0; i<points; i++) {
         p = pts[i];
-        if (point_in_set(p, independent_set, i_ct, h_diagonals, h_diag_ct, v_diagonals, pts, pts2)) continue;
+        if (point_in_set(p, loose_ends, n_ends+n_ind, pts)) continue;
         d = &loose_ends[n_ind+n_ends];
         d->p = i;
-        // find other endpoint
-        // add to new_pts array
-        new_p = get_nearest_endpoint(p, independent_set, n_ind, h_diagonals, h_diag_ct, v_diagonals, pts, pts2, z, tile);
-        d->q = points+n_ends;
-        new_pts[points+n_ends] = new_p;
+        new_p = get_nearest_endpoint(p, loose_ends, n_ind, pts, z, tile);   // find new endpoint
+        if (abs(p.x - new_p.x)==1 || abs(p.y - new_p.y)==1) {
+            printf("Lonely\n");
+        }
+        new_p_slot = point_in_points(new_p, pts, points);
+        if (new_p_slot < 0) {
+            new_p_slot = points+n_ends;
+            new_pts[new_p_slot] = new_p;     // add new point
+        }
+        d->q = new_p_slot;
+        printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
         n_ends++;
     }
-    printf("%d %d\n", n_ends, n_ends_max);
+
+    if (n_ends > n_ends_max) {
+        printf("ERROR: n_ends %d exceeded n_ends_max %d\n", n_ends, n_ends_max);
+    }
     loose_ends = (Diagonal*)realloc(loose_ends, sizeof(Diagonal)*(n_ends+n_ind));
     new_pts = (Point*)realloc(new_pts, sizeof(Point)*(points+n_ends));
     free(pts2);
@@ -1183,17 +1233,14 @@ void draw() {
     Point *p, *q;
     Diagonal d;
     int z = 14;
-    //int start,end;
     for (i=0; i<n_diagonals; i++) {
         d = diagonals[i];
         p = &pts[d.p];
         q = &pts[d.q];
-        //start = (p->x > q->x) ? q->x : p->x;
-        //end = (p->x < q->x) ? q->x : p->x;
-        _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
-        //for (j=start+1; j<end; j++) {
-            //_set(j/2,p->y/2,z, 7);
+        //if (abs(p->x - q->x) == 1) {
+            //printf("%d %d\n", d.p, d.q);
         //}
+        _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
     }
 }
 
@@ -1236,12 +1283,7 @@ void generate() {
         //}
     //}
 
-    static int _gen = 0;
-    if (!_gen)
-        rect_solver();
-    else
-        draw();
-    _gen++;
+    rect_solver();
 
     //int pattern_w = 7;
     //int pattern_h = 15;
@@ -1270,7 +1312,9 @@ void generate() {
 void generate_dragon() {
     generate();
 }
-
+void draw_dragon() {
+    draw();
+}
 //void outline() {
     //outline_boxes(11,7);
 //}

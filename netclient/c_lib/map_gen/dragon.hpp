@@ -147,5 +147,6 @@ void rect_solver();
 
 //cython
 void generate_dragon();
+void draw_dragon();
 //void outline();
 }

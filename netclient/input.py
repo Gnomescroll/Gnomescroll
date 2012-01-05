@@ -283,8 +283,8 @@ class Keyboard(object):
 
     def hk(self):
         #camera.camera.world_projection()
-        #cMapGen.Dragon.generate()
-        InputGlobal.hk = True
+        cMapGen.Dragon.generate()
+        InputGlobal.hk = not InputGlobal.hk
         
     def toggle_hud(self):
         opts.hud = not opts.hud
