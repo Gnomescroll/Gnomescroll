@@ -57,26 +57,25 @@ Put client and server message ids in seperate counters so they dont overlap
 */
 
 
-int pop_message(char* buff, int *n, int max_n, int client_id) {
+int process_packet_messages(char* buff, int *n, int max_n, int client_id) {
 
     int size;
     int message_id;
 
     //int _n = *n;
-    
+PROCESS:
     //UNPACK_uint8_t(&message_id, buff, n);
     unpack_message_id(&message_id, buff, n);
-
     //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
 
-    if(IS_SERVER)
-    {
+#ifdef DC_SERVER
         size  = h_server_packet_size[message_id];
-    }
-    if(IS_CLIENT)
-    {
+    
+#endif
+
+#ifdef DC_CLIENT
         size  = h_client_packet_size[message_id];
-    }
+#endif
 
     if(*n+size-1 > max_n) { // > or >= ?
         printf("ERROR! message processor would read past end of packet!\n");
@@ -87,8 +86,7 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
 
     int read_bytes;
     
-    if(IS_CLIENT)
-    {
+#ifdef DC_CLIENT
         //remove this!
         if(client_handler_array[message_id] == NULL) {
             printf("message_handler error: no handler for message_id= %i\n", message_id);
@@ -96,39 +94,60 @@ int pop_message(char* buff, int *n, int max_n, int client_id) {
         }
         client_handler_array[message_id](buff, *n, &read_bytes, client_id);
     }
+#endif
 
-    if(IS_SERVER)
-    {
+#ifdef DC_SERVER
+
         //remove this check
         if(server_handler_array[message_id] == NULL) {
             printf("message_handler error: no handler for message_id=%i\n", message_id);
             return -5;
         }
         server_handler_array[message_id](buff, *n, &read_bytes, client_id);
-    }
+#endif
 
     if(read_bytes != size) {
         printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, read_bytes);
         return 0;
     }
 
-    //*n += size;
-    *n += read_bytes;
-    //if(IS_CLIENT) printf("1 n1= %i n1= %i, diff=%i \n", _n, *n, *n-_n);
-    //if(IS_CLIENT) printf("read bytes= %i, size= %i *n-_n= %i\n", read_bytes, size, *n-_n);
-    
+    *n += read_bytes; //works for non fixed fized
     //printf("n= %i, size= %i, read_bytes= %i \n", *n, size, read_bytes);
-    //*n += read_bytes; //works for non fixed fized
 
-    if(*n < max_n) { return 1; }        //more messages
-    if(*n == max_n) { return 0; }       //finished
-    if(*n > max_n) {                    //error, read past buff 
-        printf("network error!!! Error: read past buffer\n");
-        return -3; 
+    //process next message
+    if(*n < max_n) 
+    { 
+        goto PROCESS;     
     }
-    return -4;
+    //finished procesing messages
+    if(*n == max_n) 
+    { 
+        return 0; 
+    }       
+
+    //error that should never occur
+    if(*n > max_n) 
+    {                    
+        //error, read past buff 
+        printf("network error!!! Error: read past buffer\n");
+        return -1; 
+    }
+
 }
 
+
+int process_python_messages(char* buff, int *n, int max_n, int client_id)
+{
+    return 0;
+}
+
+
+int process_large_messages(char* buff, int *n, int max_n, int client_id)
+{
+    return 0;
+}
+
+/*
 void process_packet_messages(char* buff, int n, int max_n, int client_id) 
 {
 
@@ -156,4 +175,4 @@ void process_packet_messages(char* buff, int n, int max_n, int client_id)
         i++;
     };
 }
-
+*/

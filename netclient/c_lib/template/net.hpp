@@ -47,7 +47,7 @@ class FixedSizeNetPacketToServer {
         
 
         //will overflow if more than 64 bytes
-        int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
 
         //virtual inline void handle() = 0;
 
@@ -76,11 +76,14 @@ template <class Derived>
 class FixedSizeNetPacketToClient {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        class Net_message* nm;
     public:
         static int message_id;
         static int size;
         //int client_id; //not used yet
 
+        FixedSizeNetPacketToClient() { nm = NULL; }
+        
         void serialize(char* buff, int* buff_n) { //, int* size
             //int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n, true);
@@ -94,18 +97,33 @@ class FixedSizeNetPacketToClient {
             *size = *buff_n - _buff_n;
         }
 
+        /*
+            For higher performance, require explicit serialization
+        */
         void sendToClient(int client_id) {
             /*
-            char buff[64]; //max message size
+            char buff[128]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
             push_message(client_id, buff, size);
             */
+
+            //this will segfault
+            
+            if(nm == NULL) 
+            {
+                nm = Net_message::acquire_unreliable(Derived::size);
+                int buff_n = 0;
+                serialize(nm->buff, &buff_n);
+            }
+            
+        /*
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             //NetClient::NPserver.push_unreliable_packet(nm);
+        */     
             if(NetServer::pool.connection[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
@@ -116,7 +134,7 @@ class FixedSizeNetPacketToClient {
 
         void broadcast() {
             /*
-            char buff[64]; //max message size
+            char buff[128]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
@@ -137,7 +155,7 @@ class FixedSizeNetPacketToClient {
         }
 
         //will overflow if more than 64 bytes
-        int _size() { char buff[64];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
+        int _size() { char buff[128];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -198,7 +216,7 @@ class FixedSizeReliableNetPacketToServer {
         
 
         //will overflow if more than 64 bytes
-        int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
 
         //virtual inline void handle() = 0;
 
@@ -255,18 +273,22 @@ class FixedSizeReliableNetPacketToClient {
 
         void sendToClient(int client_id) {
             /*
-            char buff[64]; //max message size
+            char buff[128]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
             push_message(client_id, buff, size);
             */
+
+            
             if(nm == NULL) 
             {
                 nm = Net_message::acquire_reliable(Derived::size);
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
+            
+
             /*
             Net_message* nm = Net_message::acquire_reliable(Derived::size);
             int buff_n = 0;
@@ -283,7 +305,7 @@ class FixedSizeReliableNetPacketToClient {
 
         void broadcast() {
             /*
-            char buff[64]; //max message size
+            char buff[128]; //max message size
             int buff_n = 0;
             int size;
             serialize(buff, &buff_n, &size);
@@ -304,7 +326,7 @@ class FixedSizeReliableNetPacketToClient {
         }
 
         //will overflow if more than 64 bytes
-        int _size() { char buff[64];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
+        int _size() { char buff[128];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -350,7 +372,7 @@ class PythonStreamNetPacketToServer {
         
 
         //will overflow if more than 64 bytes
-        int Size() { char buff[64];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
 
         //virtual inline void handle() = 0;
 
