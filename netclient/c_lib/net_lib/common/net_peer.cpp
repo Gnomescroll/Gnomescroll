@@ -218,6 +218,9 @@ void NetPeer::resend_packet(struct packet_sequence* ps)
         nma_index++;
         if(nma_index == NET_MESSAGE_ARRAY_SIZE)
         {
+            #if NET_PEER_DEBUG
+                if(nma->next == NULL) printf("NetPeer::resend_packet: NMA NULL, SEGFAULT!! \n");
+            #endif    
             nma = nma->next;
             nma_index=0;
         }

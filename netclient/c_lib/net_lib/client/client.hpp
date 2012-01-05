@@ -17,7 +17,7 @@ namespace NetClient {
 extern class NetPeer NPserver;
 extern struct Socket client_socket;
 
-int header_size1();
+//int header_size1();
 
 void init_client();
 class NetPeer* CLIENT_get_NP();
