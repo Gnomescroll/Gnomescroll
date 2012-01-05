@@ -8,6 +8,7 @@
 
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
+#include <c_lib/map_gen/dragon.hpp>
 #endif
 
 
@@ -242,6 +243,7 @@ inline void fire_weapon_CtoS::handle() {
         msg.type = type;
         msg.broadcast();
     }
+    Dragon::outline();
 }
 
 // hitscan target:agent

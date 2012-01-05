@@ -25,6 +25,7 @@ cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
     void set_terrain_density(int x, int y, int z, float threshold, int tile)
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
+    void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int tile)
     void invert_map(int x, int y, int z, int tile)
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
     void set_noise_scale(float xscale, float yscale, float zscale)
@@ -97,6 +98,7 @@ class Config:
         
         self.use_rmf = False
         self.use_heightmap = False
+        self.use_reverse_heightmap = False
         self.use_density = False
 
         self.use_perturb = False
@@ -165,6 +167,17 @@ class Config:
             
         self.baseline = baseline
         self.maxheight = maxheight
+        return self
+
+    def reverse_heightmap(self, baseline, maxheight=0):
+        self.use_reverse_heightmap = True
+        if baseline + maxheight > zmax:
+            print "reverse heightmap settings: baseline+maxheight > zmax (%d + %d > %d)" % (baseline, maxheight, zmax)
+        if baseline - maxheight < 0:
+            print "reverse heightmap: will reach negative z_levels"
+
+        self.reverse_baseline = baseline
+        self.reverse_maxheight = maxheight
         return self
 
     def density(self, threshold=0.5):
@@ -326,6 +339,9 @@ class Config:
             set_terrain_height(self.x, self.y, self.z, self.baseline, self.maxheight, self.base_tile)
             if self.use_perturb:
                 perturb_heightmap(self.x, self.y, self.turbulence, self.base_tile, self.perturb_height_clamp)
+
+        if self.use_reverse_heightmap:
+            reverse_heightmap(self.x, self.y, self.z, self.reverse_baseline, self.reverse_maxheight, self.base_tile)
 
         '''
         elif self.dim == 1:

@@ -29,7 +29,8 @@
 #include <c_lib/weapons/weapons.cpp>
 #include <c_lib/weapons/packets.cpp>
 
-#include "./map_gen/noise.c"
+#include <c_lib/map_gen/hk2.cpp>
+#include <c_lib/map_gen/noise.c>
 
 #include "./t_map/t_serialize.c"
 
@@ -49,4 +50,8 @@ int init_c_lib() {
     srand(time(NULL));
     ServerState::ctf.init();
 return 0;
+}
+
+void _set_seed(int seed) {
+    srand(seed);
 }
