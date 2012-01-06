@@ -122,17 +122,25 @@ void process_incoming_packets() {
 
     while(1) {
         bytes_received = recvfrom(client_socket.socket, (char*)buffer, 4096, 0, (struct sockaddr*)&from, &fromLength);
-        if(bytes_received <= 0) {return;}
+        
+        if(bytes_received <= 0) 
+        {
+            if(bytes_received == -1) return; //erno set to EAGAIN
+
+            printf("lient.cpp: process_incoming_packets, bytes_received < 0, = %i \n", bytes_received );
+            printf( "Socket error: %s\n", strerror( errno ) );
+            return;
+        }
         if(bytes_received >= 1500) 
         {
             printf("NetClient Warning: Packet received was over 1500 bytes!  %i bytes\n ", bytes_received);
         }
-        if(validate_packet(buffer, bytes_received, &from)) {
+        if(validate_packet(buffer, bytes_received, &from)) 
+        {
             process_packet(buffer, bytes_received);
         }
 
         //force flush to make sure acks get through during stalls
-
 
         NPserver.received_since_last_send++;
         if( NPserver.received_since_last_send >= 8)
@@ -143,9 +151,11 @@ void process_incoming_packets() {
     }
 }
 
+/*
 int header_size1() {
     return sizeof(uint8_t)+3*sizeof(uint16_t)+ 2*sizeof(uint32_t);
 }
+*/
 
 void process_packet(char* buff, int n) {
     if(n==6) return;

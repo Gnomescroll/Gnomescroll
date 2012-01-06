@@ -373,7 +373,7 @@ void draw_skybox_cubemap()
 
 
 
-    const float SQRT_3_3 = 1.0f;
+    //const float SQRT_3_3 = 1.0f;
 /*
     const static float ve[24] = 
     {  // the idea is that all vectors have a length of 1 so that position can also be used as cubemap texture coords
@@ -402,6 +402,7 @@ void draw_skybox_cubemap()
     // increasing it further does not eliminate remaining border problems & warps the skybox to bad statezzzzzzzzzz
     const float y = 1.0f;//dont change this
 
+/*
 const static float ve[4*3*6] = {
     -r,y,-r,
     r,y,-r,
@@ -433,7 +434,7 @@ const static float ve[4*3*6] = {
     -r, r,-y,
     -r, -r,-y,
 };
-
+*/
 
 
     float i_f;
@@ -573,7 +574,7 @@ glEnd();
     glDisable(GL_TEXTURE_CUBE_MAP);
     glPopMatrix();
 
-    //glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
 
 }
 

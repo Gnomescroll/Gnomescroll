@@ -135,7 +135,7 @@ def sendJSON(cmd=None, zlib=0):
                 self.send_json_compressed(json_data, zlib)
         return wrapped
     return outer
-    
+
 def sendJSONCompressed(cmd=None):
     def outer(f, *args, **kwargs):
         def wrapped(*args, **kwargs):
@@ -221,7 +221,7 @@ class SendMessage: #each connection has one of these
             'name'  :   connection.name,
         }
 
-    @sendJSON('chunk_list')
+    @sendJSON('chunk_list', zlib=6)
     def send_chunk_list(self):
         print "Sending chunk list"
         return {

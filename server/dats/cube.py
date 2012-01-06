@@ -67,14 +67,16 @@ def _build_cubes():
             'transparent': 0,
         }
 
+#bloats cube dat size
+'''
     def set_cube_list_defaults():
         global dat
 
         for i in range(256):
             j = i+1
             dat.setdefault(j, get_default_tile(i))
-
-    set_cube_list_defaults()
+'''
+    #set_cube_list_defaults()
 _build_cubes()
 
 # module reload behavior
