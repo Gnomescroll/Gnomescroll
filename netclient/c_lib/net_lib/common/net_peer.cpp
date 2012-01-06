@@ -8,10 +8,12 @@
 
 #define NET_PEER_DEBUG 1
 
+
+static const int NET_OUT_BUFF_SIZE = 8192;
 #if NET_PEER_DEBUG
     static char* net_out_buff;
 #else
-    static char net_out_buff[2000];
+    static char net_out_buff[ NET_OUT_BUFF_SIZE ];
 #endif 
 
 //static char net_out_buff;
@@ -19,7 +21,7 @@
 NetPeer::NetPeer() {
 
 #if NET_PEER_DEBUG
-    if( net_out_buff == NULL ) net_out_buff = new char[2000];
+    if( net_out_buff == NULL ) net_out_buff = new char[ NET_OUT_BUFF_SIZE ];
 #endif
 
     for(int i=0; i< 256; i++) unreliable_net_message_array[i] = NULL;

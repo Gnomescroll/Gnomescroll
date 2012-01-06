@@ -94,6 +94,8 @@ class MessageHandler:
             msg = zlib.decompress(datagram)
             sizeb = len(msg)
             print "Compressed Json: compressed size= %i, uncompressed size= %i " % (sizea, sizeb)
+            #f = open('./tmp', 'w')
+            #f.write(msg)
         except Exception, e:
             print "MessageHandler zlib decompression failed"
             print e

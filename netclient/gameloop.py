@@ -166,7 +166,7 @@ class App(object):
             sl_c = 0
             while True: #physics loop
                 tc = GET_TICK()
-                if tc == 0 or sl_c > 2:
+                if tc == 0 or sl_c > 0: #only run once
                     break
                 if sl_c == 0:
                     NetClientStartFrame() #physics tick
