@@ -33,7 +33,7 @@ struct packet_sequence {
     short ack;
     int time;
 
-    int retry_attempts; //can only use for reliable, ordered packet sequences
+    //int retry_attempts; //can only use for reliable, ordered packet sequences
 };
 
 struct packet_sequence2 {
