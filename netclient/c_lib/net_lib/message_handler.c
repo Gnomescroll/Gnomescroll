@@ -138,7 +138,14 @@ PROCESS:
 
 int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
-    return 0;
+    //PACK_uint16_t(bytes, nm->buff, &n1);    //length
+
+    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
+    {
+        printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
+    } else {
+        PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, np->client_id);
+    }
 }
 
 

@@ -151,7 +151,7 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 //extern int get_flag(struct vm_column* c, unsigned int flag);
 /* Network */
 
-#include <c_lib/template/net.hpp>
+#include <net_lib/net.hpp>
 
 class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
 {

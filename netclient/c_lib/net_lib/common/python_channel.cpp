@@ -181,6 +181,9 @@ void Python_channel_in::process()
         char* tmp = new char[need];
         fcb.read(tmp, need);
         
+
+        //PACK_uint16_t(bytes, nm->buff, &n1);    //length
+
         if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
         {
             printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    

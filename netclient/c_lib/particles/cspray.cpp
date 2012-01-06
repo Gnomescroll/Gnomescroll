@@ -162,7 +162,7 @@ void Cspray_list::draw() {
  */
 
 
-#include <c_lib/template/net.hpp>
+#include <net_lib/net.hpp>
 
 class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
 {

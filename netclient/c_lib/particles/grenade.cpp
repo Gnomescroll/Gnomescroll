@@ -23,7 +23,7 @@ static float grenade_proj_mtrx[16];
  *  Networking; spawn packet from server to client
  */
 
-#include <c_lib/template/net.hpp>
+#include <net_lib/net.hpp>
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {

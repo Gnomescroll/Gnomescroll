@@ -6,7 +6,8 @@
 /*
 __attribute((always_inline)); will force gcc to inline
 */
-static inline void pack_message_id(int message_id, char* buff, int*buff_n, bool pack)  __attribute((always_inline));
+static inline void pack_message_id(int message_id, char* buff, int*buff_n)  __attribute((always_inline));
+static inline void unpack_message_id(int* message_id, char* buff, int*buff_n)  __attribute((always_inline));
 
 static inline void pack_float(float* x, char* buff, int*buff_n, bool pack) __attribute((always_inline));
 
@@ -25,9 +26,13 @@ static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __att
 //combined pack/unpack
 
 
-static inline void pack_message_id(int message_id, char* buff, int*buff_n, bool pack) {
-    if(pack == true) *((uint8_t*)(buff+*buff_n)) = (uint8_t)message_id;
-    //if(pack == false); //do nothing
+static inline void pack_message_id(int message_id, char* buff, int*buff_n) {
+    *((uint8_t*)(buff+*buff_n)) = message_id;
+    *buff_n += sizeof(uint8_t);
+}
+
+static inline void unpack_message_id(int* message_id, char* buff, int*buff_n) {
+    *message_id = *((uint8_t*)(buff+*buff_n));
     *buff_n += sizeof(uint8_t);
 }
 
