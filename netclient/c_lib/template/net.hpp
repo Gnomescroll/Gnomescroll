@@ -326,7 +326,7 @@ class FixedSizeReliableNetPacketToClient {
         }
 
         //will overflow if more than 64 bytes
-        int _size() { static char buff = new char[512] ;int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
+        int _size() { static char* buff = new char[512]; int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
