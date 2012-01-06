@@ -78,11 +78,14 @@ int seed_noise(int seed);
 int next_seed();
 int set_seed_grp(int grp);
 
-void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
+void set_heightmap_tile(int tile);
 void set_terrain_density(int x, int y, int z, float threshold, int tile);
 void clear_noisemap();
 void invert_map(int x, int y, int z, int tile);
-void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int tile);
+void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile);
+void reverse_heightmap (int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
+void set_terrain_height_over_tile(int x, int y, int z, int baseline, int maxheight, int tile);
+void reverse_heightmap_over_tile (int x, int y, int z, int baseline, int maxheight, int minheight, int tile);
 
 int _oct = 1;
 float _per = 0.6f;

@@ -1162,14 +1162,6 @@ void rect_solver() {
     renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, n_points);
     free(pts2);
 
-    Diagonal* d_tmp = v_diagonals;
-    v_diagonals = h_diagonals;
-    h_diagonals = d_tmp;
-
-    int dct_tmp = v_diag_ct;
-    v_diag_ct = h_diag_ct;
-    h_diag_ct = dct_tmp;
-
     // find intersections
     int i_ct = 0;
     Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
@@ -1183,11 +1175,16 @@ void rect_solver() {
     int* independent_set = (int*)malloc(sizeof(int)*(n_diagonals));
     int n_ind = 0;
     int k;
+    int h_len,v_len;
     for (i=0; i<h_diag_ct; i++) {
         if (!HK::map[i+1]) {  // free h_diag vertex
             independent_set[n_ind++] = i;
         } else {
-            k = choose_shortest_diagonal(i, intersections, i_ct, h_diag_ct, h_diagonals, v_diagonals, pts, HK::map);
+            h_len = h_diagonals[i].length(pts);
+            v_len = v_diagonals[HK::map[i+1] - h_diag_ct].length(pts);
+            if (v_len < h_len) k = HK::map[i+1] - h_diag_ct;
+            else k = i;
+            //k = choose_shortest_diagonal(i, intersections, i_ct, h_diag_ct, h_diagonals, v_diagonals, pts, HK::map);
             independent_set[n_ind++] = k;
         }
     }
@@ -1203,18 +1200,16 @@ void rect_solver() {
         printf("ERROR: independent diagonals processed wrong. Should be %d\n", (n_diagonals)-n_matches);
     }
 
-    //renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, n_points);
-
     // connect loose ends
     int n_ends_max = n_points-n_ind;
     int index;
-    Diagonal* loose_ends = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
+    diagonals = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
     for (i=0; i<n_ind; i++) {
         index = independent_set[i];
         if (index < h_diag_ct) {
-            loose_ends[i] = h_diagonals[index];
+            diagonals[i] = h_diagonals[index];
         } else {
-            loose_ends[i] = v_diagonals[index-h_diag_ct];
+            diagonals[i] = v_diagonals[index-h_diag_ct];
         }
     }
     
@@ -1225,33 +1220,33 @@ void rect_solver() {
     Diagonal* d;
     Point new_p;
     int new_p_slot;
-    //for (i=0; i<n_points; i++) {
-        //p = pts[i];
-        //if (point_in_set(p, loose_ends, n_ends+n_ind, pts)) continue;
-        //d = &loose_ends[n_ind+n_ends];
-        //d->p = i;
-        //new_p = get_nearest_endpoint(p, loose_ends, n_ind, pts, z, tile);   // find new endpoint
-        //new_p_slot = point_in_points(new_p, pts, n_points);
-        //if (new_p_slot < 0) {
-            //new_p_slot = n_points+n_ends;
-            //new_pts[new_p_slot] = new_p;     // add new point
-        //}
-        //d->q = new_p_slot;
-        ////printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
-        //n_ends++;
-    //}
+    for (i=0; i<n_points; i++) {
+        p = pts[i];
+        if (point_in_set(p, diagonals, n_ends+n_ind, pts)) continue;
+        d = &diagonals[n_ind+n_ends];
+        d->p = i;
+        new_p = get_nearest_endpoint(p, diagonals, n_ind, pts, z, tile);   // find new endpoint
+        new_p_slot = point_in_points(new_p, pts, n_points);
+        if (new_p_slot < 0) {
+            new_p_slot = n_points+n_ends;
+            new_pts[new_p_slot] = new_p;     // add new point
+        }
+        d->q = new_p_slot;
+        printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
+        n_ends++;
+    }
 
     if (n_ends > n_ends_max) {
         printf("ERROR: n_ends %d exceeded n_ends_max %d\n", n_ends, n_ends_max);
     }
-    loose_ends = (Diagonal*)realloc(loose_ends, sizeof(Diagonal)*(n_ends+n_ind));
+    diagonals = (Diagonal*)realloc(diagonals, sizeof(Diagonal)*(n_ends+n_ind));
     new_pts = (Point*)realloc(new_pts, sizeof(Point)*(n_points+n_ends));
 
     //free(pts2);
     free(pts);
     free(independent_set);
 
-    diagonals = loose_ends;
+    //diagonals = loose_ends;
     n_diagonals = n_ind + n_ends;
     points = new_pts;
 
@@ -1271,6 +1266,49 @@ void draw() {
     }
 }
 
+class Room {
+    public:
+    unsigned char ox,oy;
+    unsigned char x,y,w,h;
+    bool placed;
+    int area() {
+        return w*h;
+    }
+    bool collides(Room* r) {
+        return !(x+w > r->x || x < r->x+r->w ||
+            y+h > r->y || y < r->y+r->h);
+    }
+    void place(int z) {
+        int new_tile = 7;
+        int i,j;
+        for (i=x; i<x+w; i++) {
+            for (j=y; j<y+h; j++) {
+                if (i > x && i < x+w-1 && j > y && j < y+h-1) continue;
+                _set(i,j,z+2, new_tile);
+            }
+        }
+        _set(ox,oy,z+2, 1);
+        placed = true;
+        printf("Placed rect at %d,%d  w,h: %d,%d\n", x,y,w,h);
+    }
+    Room() :
+    x(0), y(0), w(0), h(0),
+    placed(false)
+    {}
+};
+
+Room* rooms;
+int n_rooms = 0;
+
+void resolve_rooms() {
+    rooms = (Room*)malloc(sizeof(Room) * n_diagonals);
+    int i;
+    for (i=0; i<n_diagonals; i++) {
+        
+    }
+
+    rooms = (Room*)realloc(rooms, sizeof(Room) * n_rooms);
+}
 
 void generate() {
     //int x = width;
@@ -1311,6 +1349,9 @@ void generate() {
     //}
 
     rect_solver();
+
+    resolve_rooms();
+    //build_adjacency_graph();
 
     //int pattern_w = 7;
     //int pattern_h = 15;

@@ -49,7 +49,7 @@ void load() {
     glEnable(GL_TEXTURE_2D);
     
     for (i=0; i<6; i++) {
-        sprintf(filename, fmt_str, i+1);
+        sprintf(filename, fmt_str, i);
         surface = IMG_Load(filename);
         if (surface == NULL || !surface) {
             printf("IMG_Load: %s \n", IMG_GetError());

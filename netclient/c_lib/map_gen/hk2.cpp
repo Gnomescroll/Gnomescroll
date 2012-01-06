@@ -94,36 +94,6 @@ bool MaxPaths() {
 int width = 128;
 int height = 128;
 
-class Rect {
-    public:
-    unsigned char ox,oy;
-    unsigned char x,y,w,h;
-    bool placed;
-    int area() {
-        return w*h;
-    }
-    bool collides(Rect* r) {
-        return !(x+w > r->x || x < r->x+r->w ||
-            y+h > r->y || y < r->y+r->h);
-    }
-    void place(int z) {
-        int new_tile = 7;
-        int i,j;
-        for (i=x; i<x+w; i++) {
-            for (j=y; j<y+h; j++) {
-                if (i > x && i < x+w-1 && j > y && j < y+h-1) continue;
-                _set(i,j,z+2, new_tile);
-            }
-        }
-        _set(ox,oy,z+2, 1);
-        placed = true;
-        printf("Placed rect at %d,%d  w,h: %d,%d\n", x,y,w,h);
-    }
-    Rect() :
-    x(0), y(0), w(0), h(0),
-    placed(false)
-    {}
-};
 class Point {
     public:
     int x,y;
@@ -439,7 +409,6 @@ void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int d
         off = 0;
         for (j=0; j<indices[i]; j++) {
             pt = &pts[j+index];
-            pt->print();
             for (k=off; k<indices[i]; k++) {
                 if (j==k) continue;
                 pt2 = &pts[k+index];
@@ -466,15 +435,17 @@ class Intersection {
     int dh,dv;
 };
 bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
-    Point* top = (v1->y > v2->y) ? v1 : v2;
+    Point* top = (v1->y >= v2->y) ? v1 : v2;
     Point* bottom = (v1->y < v2->y) ? v1 : v2;
-    Point* left = (h1->x > h2->x) ? h1 : h2;
+    Point* left = (h1->x >= h2->x) ? h1 : h2;
     Point* right = (h1->x < h2->x) ? h1 : h2;
     //printf("%d %d %d %d\n", v1->x, v1->y, v2->x, v2->y);
     //printf("%d %d %d %d\n", h1->x, h1->y, h2->x, h2->y);
     //printf("\n");
-    if (v1->x < left->x && v1->x > right->x
-     && h1->y < top->y  && h1->y > bottom->y) return true;
+    //if (v1->x < left->x && v1->x > right->x
+     //&& h1->y < top->y  && h1->y > bottom->y) return true;
+    if (v1->x <= left->x && v1->x >= right->x
+     && h1->y <= top->y  && h1->y >= bottom->y) return true;
     return false;
 }
 void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
@@ -488,8 +459,8 @@ void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, 
             q1 = &p[h[j].p];
             q2 = &p[h[j].q];
             if (orthogonal_intersection(p1, p2, q1, q2)) {
-                in[index].dh = i;
-                in[index].dv = j;
+                in[index].dh = j;
+                in[index].dv = i;
                 index++;
             }
         }
@@ -526,6 +497,7 @@ int hk(int h_ct, int v_ct, int i_ct, Intersection* intersections) {
     }
     int ile=0;
     FOR(i,1,HK::M) {
+        //printf("%d\n", HK::map[i]);
         if( HK::map[i] ) ile++;
     }
     printf("Maximal matching cardinality: %d\n", ile);
@@ -558,17 +530,31 @@ int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, 
     // look in intersections for dh==h_index
     // if multiple matches, find which dv is in matching set map
     // assign ptr to d
+    int DEFAULT_V_LEN = 1000000;
     int i;
     int h_len = h_diagonals[h_index].length(p);
-    int v_len;
+    int v_len = DEFAULT_V_LEN;
+    int v_len_tmp;
+    int v_index;
+    int ct = 0;
     for (i=0; i<i_ct; i++) {
         if (in[i].dh == h_index) {
-            v_len = v_diagonals[in[i].dv].length(p);
-            if (v_len < h_len) return in[i].dv+h_ct;
-            else return h_index;
+            ct++;
+            v_len_tmp = v_diagonals[in[i].dv].length(p);
+            if (v_len_tmp < v_len) {
+                v_len = v_len_tmp;
+                v_index = in[i].dv+h_ct;
+            }
+            //if (v_len < h_len) return in[i].dv+h_ct;
+            //else return h_index;
         }
     }
-    printf("No matching diagonal found\n");
+    if (ct > 1) printf("Found %d possible diags\n", ct);
+    if (v_len != DEFAULT_V_LEN) {
+        if (v_len < h_len) return v_index;
+        else return h_index;
+    }
+    printf("ERROR No matching diagonal found for diagonal %d\n", h_index);
     return -1;
 }
 

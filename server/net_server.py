@@ -78,7 +78,7 @@ class PyClient:
         self.loaded_once = True
         self._register()
         self.send_map()
-        #self.send_agents()  # temporary, really only for weapons
+        self.send_agents()  # temporary, really only for weapons
         # ^ weapons gone, but python interface is buggy and map wont be accepted without this obligatory attempt
         # only agent ids are sent
 

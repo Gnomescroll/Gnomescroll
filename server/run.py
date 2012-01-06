@@ -231,6 +231,30 @@ def good_cave1():
     #.start()\
     #.reset()
 
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(0)\
+    #.tile(103)\
+    #.interpolate(4,2,1)\
+    #.scale(4.0, 4.0, 1.0)\
+    #.heightmap(baseline=13, maxheight=20, tile=103)\
+    #.p2(octaves=6, persistence=0.6)\
+    #.start()\
+    #.reset()
+    
+    c_lib.map_gen.conf\
+    .size(128,128,128)\
+    .group(0)\
+    .tile(0)\
+    .interpolate(4,2,1)\
+    .scale(2.0, 2.0, 1.0)\
+    .reverse_heightmap(baseline=13, maxheight=12, minheight=3, tile=103)\
+    .p2(octaves=6, persistence=0.35)\
+    .start()\
+    .reset()
+
+    c_lib.map_gen.floor(128,128,14,1,101)
+
 
 class Main:
 
@@ -275,9 +299,7 @@ class Main:
         #pallet_pillar(0,0,0)
 
         c_lib.map_gen.conf.seed(opts.seed)
-        c_lib.map_gen.Dragon.generate()
-
-        #good_cave1()
+        good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

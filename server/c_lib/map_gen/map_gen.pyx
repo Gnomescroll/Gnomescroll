@@ -23,9 +23,10 @@ cdef extern from "./map_gen/gradient.h":
 
 cdef extern from "./map_gen/noise.h":
     void clear_noisemap()
+    void set_heightmap_tile(int tile)
     void set_terrain_density(int x, int y, int z, float threshold, int tile)
     void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile)
-    void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int tile)
+    void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int minheight, int tile)
     void invert_map(int x, int y, int z, int tile)
     void set_noise_parameters(int octaves, float persistence, float amplitude, float lacunarity, float frequency)
     void set_noise_scale(float xscale, float yscale, float zscale)
@@ -37,6 +38,7 @@ cdef extern from "./map_gen/features.h":
     void _grass(int x, int y, int base)
     void _caves(int x, int y, int z, float threshold, int base)
     void _ceiling(int x, int y, int z, int height, int tile)
+    void _floor(int x, int y, int z, int h, int tile)
     
 cdef extern from "./map_gen/perturb.h":
     void perturb_perlin2(int x, int y, int z, float turbulence)
@@ -99,7 +101,11 @@ class Config:
         self.use_rmf = False
         self.use_heightmap = False
         self.use_reverse_heightmap = False
+        self.use_heightmap_tile = False
+        self.heightmap_tile = None
+        self.set_heightmap_tile(0)
         self.use_density = False
+        
 
         self.use_perturb = False
         self.turbulence = 1.0
@@ -150,7 +156,7 @@ class Config:
         self.iz = int(z)
         return self
 
-    def heightmap(self, baseline=0, maxheight=0):
+    def heightmap(self, baseline=0, maxheight=0, tile=None):
         self.use_heightmap = True
         if baseline + maxheight > zmax:
             print "Map_gen heightmap settings: baseline + maxheight exceed map height. Scaling down"
@@ -167,9 +173,10 @@ class Config:
             
         self.baseline = baseline
         self.maxheight = maxheight
+        self.set_heightmap_tile(tile)
         return self
 
-    def reverse_heightmap(self, baseline, maxheight=0):
+    def reverse_heightmap(self, baseline, maxheight=0, minheight=0, tile=None):
         self.use_reverse_heightmap = True
         if baseline + maxheight > zmax:
             print "reverse heightmap settings: baseline+maxheight > zmax (%d + %d > %d)" % (baseline, maxheight, zmax)
@@ -178,8 +185,16 @@ class Config:
 
         self.reverse_baseline = baseline
         self.reverse_maxheight = maxheight
+        self.reverse_minheight = minheight
+        self.set_heightmap_tile(tile)
         return self
 
+    def set_heightmap_tile(self, tile=None):
+        if tile is not None:
+            self.use_heightmap_tile = True
+            self.heightmap_tile = tile
+
+    
     def density(self, threshold=0.5):
         self.use_density = True
         self.density_threshold = threshold
@@ -333,6 +348,9 @@ class Config:
             #gradients[self.dim](*(size_args+grad_args))
             apply_gradient3(self.x, self.y, self.z, self.gx0, self.gx1, self.gy0, self.gy1, self.gz0, self.gz1)
 
+        if self.use_heightmap_tile:
+            set_heightmap_tile(self.heightmap_tile)
+
         if self.use_density:
             set_terrain_density(self.x, self.y, self.z, self.density_threshold, self.base_tile)
         elif self.use_heightmap:
@@ -341,7 +359,7 @@ class Config:
                 perturb_heightmap(self.x, self.y, self.turbulence, self.base_tile, self.perturb_height_clamp)
 
         if self.use_reverse_heightmap:
-            reverse_heightmap(self.x, self.y, self.z, self.reverse_baseline, self.reverse_maxheight, self.base_tile)
+            reverse_heightmap(self.x, self.y, self.z, self.reverse_baseline, self.reverse_maxheight, self.reverse_minheight, self.base_tile)
 
         '''
         elif self.dim == 1:
@@ -491,6 +509,9 @@ def heightmap(int x, int y, int z, int baseline=64, int maxheight=64, int base_t
 
 def ceiling(int x, int y, int z, int height=1,int tile=2):
     _ceiling(x,y,z, height, tile);
+
+def floor(int x, int y, int z, int height, int tile):
+    _floor(x,y,z,height,tile)
 
 cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
     void generate_dragon()

@@ -437,7 +437,7 @@ void init() {
     int tile;
     tile = 0;
     tile = 101;
-    int z_min = 12;
+    int z_min = 13;
     int z_max = 13;
     char tokens[]= "XYF+-B[]f";
     int iterations = 20;
@@ -1079,17 +1079,18 @@ void generate() {
     _floor(x,y, z, h, tile);
     init();
     //caves();
-    _walls(x,y,z+1,h,tile);
+    //_walls(x,y,z+1,h,tile);
+    //_walls(x,y,z+1,h-1,tile);
 
     segment_caves(13, 101, 2);
     segment_caves(13, 101, 7);
     segment_caves(13, 101, 8);
     segment_caves_4(13, 101, 2);
     segment_caves_4(13, 101, 2);
-    segment_caves_4(13, 101, 2);
-    segment_caves_4(13, 101, 2);
-    segment_caves_2(13,101);
-    segment_caves_2(13,101);
+    //segment_caves_4(13, 101, 2);
+    //segment_caves_4(13, 101, 2);
+    //segment_caves_2(13,101);
+    //segment_caves_2(13,101);
 
     // post processing for good visual of cave isolation
     int i,j;
