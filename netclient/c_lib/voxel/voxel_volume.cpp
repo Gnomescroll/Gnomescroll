@@ -214,7 +214,7 @@ void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_a
 void Voxel_volume::update_center()
 {
 
-    int DEBUG = 0;
+    const int DEBUG = 0;
 
     if(DEBUG)
     {
