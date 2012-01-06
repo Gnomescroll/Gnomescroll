@@ -105,11 +105,6 @@ def configure(conf):
     #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
-    conf.check(header_name='lemon/concept/bpugraph.h',
-               includes=['/usr/local/include'],
-               fragment='#include <lemon/concepts/bpugraph.h>' + LEMON_GRAPH_MAIN_TEST_CODE,
-               mandatory=True)
-
     if OS == 'Darwin':
         conf.env.ARCH = ['x86_64']
 
