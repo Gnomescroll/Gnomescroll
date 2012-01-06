@@ -288,41 +288,27 @@ void NetPeer::flush_to_net()
     int seq = get_next_sequence_number(this);
     
     //printf("Sending Packet: seq= %i \n", seq);
-
-    #if NET_PEER_DEBUG
-        _TotalBytes = 0;
-    #endif
-
     //pack header
     PACK_uint16_t(client_id, net_out_buff, &n1); //client id
-
-    #if NET_PEER_DEBUG 
-        int size_tmp = n1;
-    #endif
     
     PACK_uint16_t(0, net_out_buff, &n1);  //packet_size
     PACK_uint16_t(seq, net_out_buff, &n1); //sequence number
 
     if(py_out.fcb.size != 0 && pending_reliable_bytes_out + pending_unreliable_bytes_out < 1450)
     {
-        //may want to cap packet size at 512
-        //printf("flush python packets: py_out.size()= %i \n", py_out.fcb.size );
-        int max_bytes = 1450 - (pending_reliable_bytes_out + pending_unreliable_bytes_out);
+        int max_bytes = 512;
         Net_message* nm = py_out.serialize_to_packet(max_bytes);
-        //printf("flush python packets: py_out.size()= %i, packet_size= %i \n", py_out.fcb.size, nm->len );
-        //printf("py packet size= %i \n", nm->len);
         push_reliable_packet(nm);
     }
 
     PACK_uint16_t(get_sequence_number(this), net_out_buff, &n1); //max seq
     PACK_uint32_t(generate_outgoing_ack_flag(this), net_out_buff, &n1); //sequence number
 
+
+    //HEADER
+
     flush_unreliable_to_buffer(net_out_buff, &n1);
     flush_reliable_to_buffer(net_out_buff, &n1, &packet_sequence_buffer[seq%256]);
-
-    #if NET_PEER_DEBUG   
-        PACK_uint16_t(_TotalBytes, net_out_buff, &size_tmp);
-    #endif
 
     #ifdef DC_CLIENT
     pviz_packet_sent(seq, n1);
