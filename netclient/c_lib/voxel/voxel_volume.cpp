@@ -52,9 +52,9 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
     index1 = pow2_1(__xdim);
     index12 = pow2_1(__xdim) + pow2_1(__ydim);
 
-    printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
-    printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
-    printf("index1, index12= %i, %i \n", index1, index12);
+    //printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
+    //printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
+    //printf("index1, index12= %i, %i \n", index1, index12);
 
     voxel = new Voxel[_xdim*_ydim*_zdim];
     int r,g,b,a;

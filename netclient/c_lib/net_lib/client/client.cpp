@@ -122,9 +122,13 @@ void process_incoming_packets() {
 
     while(1) {
         bytes_received = recvfrom(client_socket.socket, (char*)buffer, 4096, 0, (struct sockaddr*)&from, &fromLength);
+        
         if(bytes_received <= 0) 
         {
-            printf("client.cpp: process_incoming_packets, bytes_received < 0 \n");
+            if(bytes_received == -1) return; //erno set to EAGAIN
+
+            printf("lient.cpp: process_incoming_packets, bytes_received < 0, = %i \n", bytes_received );
+            printf( "Socket error: %s\n", strerror( errno ) );
             return;
         }
         if(bytes_received >= 1500) 

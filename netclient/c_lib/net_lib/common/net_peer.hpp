@@ -25,18 +25,20 @@ struct Socket {
 class NetMessageArray; //forward declaration
 
 struct packet_sequence {
-    int seq;
-    int ack;
+    class NetMessageArray* nma;   //pointer to buffer
+    short read_index;  //starting index in buffer
+    short messages_n;    //number of packets
+
+    short seq;
+    short ack;
     int time;
 
-    class NetMessageArray* nma;   //pointer to buffer
-    int read_index;  //starting index in buffer
-    int messages_n;    //number of packets
+    int retry_attempts; //can only use for reliable, ordered packet sequences
 };
 
 struct packet_sequence2 {
-    int seq;
-    int received;
+    short seq;
+    short received;
 };
 
 /*

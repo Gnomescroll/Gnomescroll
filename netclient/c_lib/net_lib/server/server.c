@@ -203,7 +203,15 @@ void process_packets() {
     int bytes_received;
     while(1) {
         bytes_received = recvfrom(server_socket.socket, (char*) buffer, 1500, 0, (struct sockaddr*)&from, &fromLength);
-        if(bytes_received <= 0) return;
+
+        if(bytes_received < 0) 
+        {
+            if(bytes_received == -1) return; //errmp set to EAGAIN
+
+            printf("server.c: process_packets, bytes_received < 0, = %i \n", bytes_received );
+            printf( "Socket error: %s\n", strerror( errno ) );
+            return;
+        }
         process_packet(buffer, bytes_received, &from);
     }
 }

@@ -121,14 +121,19 @@ void check_for_dropped_packets(class NetPeer* np) {
 
     int i,j;
     j = (np->packet_sequence_number+1) % 256;
+
+    struct packet_sequence* ps;
     for(i=0;i<32;i++) {
-        //printf("i=%i, t=%i\n", j, NP_time_delta1(np->packet_sequence_buffer[j].time));
-        if((np->packet_sequence_buffer[j].seq != -1) && (np->packet_sequence_buffer[j].ack == 0)) {
-            np->resend_packet(&np->packet_sequence_buffer[j]);  //retransmit on drop
-            printf("***Packet Dropped: %i:%i ***\n", np->client_id, np->packet_sequence_buffer[j].seq);
+        //printf("i=%i, t=%i\n", j, NP_time_delta1(ps->time));
+
+        ps = &np->packet_sequence_buffer[j];
+
+        if( (ps->seq != -1) && (ps->ack == 0) ) {
+            if( ps-> messages_n != 0 ) np->resend_packet(ps);  //retransmit on drop
+            printf("***Packet Dropped: %i:%i ***\n", np->client_id, ps->seq);
             DROPPED_PACKETS++;
-            //np->packet_sequence_buffer[i].ack = 0;
-            np->packet_sequence_buffer[j].seq = -1;
+            //ps->ack = 0;
+            ps->seq = -1;
         }
         j= (j+1) %256;
     }

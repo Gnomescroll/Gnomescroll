@@ -90,7 +90,10 @@ class MessageHandler:
 
     def process_json_compressed_event(self, msg_type, datagram):
         try:
+            sizea = len(datagram)
             msg = zlib.decompress(datagram)
+            sizeb = len(msg)
+            print "Compressed Json: compressed size= %i, uncompressed size= %i \n" % (sizea, sizeb)
         except Exception, e:
             print "MessageHandler zlib decompression failed"
             print e

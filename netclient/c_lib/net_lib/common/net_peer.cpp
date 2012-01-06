@@ -201,7 +201,9 @@ void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index, struct packet_s
 
 void NetPeer::resend_packet(struct packet_sequence* ps)
 {
-    if(ps->messages_n == 0) return;
+    #if NET_PEER_DEBUG
+        if(ps->messages_n == 0) printf("NetPeer::resend_packet: ps->messages_n == 0 \n");
+    #endif
 
     NetMessageArray* nma = ps->nma;
     int nma_index = ps->read_index;
