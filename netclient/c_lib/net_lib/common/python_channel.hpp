@@ -48,7 +48,8 @@ class Channel_message {
 
 static const int SEQUENCE_BUFFER_SIZE = 32;
 
-class Sequence_buffer_element {
+class Sequence_buffer_element
+{
     public:
         Sequence_buffer_element* next;
         Channel_message cm[SEQUENCE_BUFFER_SIZE];
