@@ -940,14 +940,66 @@ namespace Dragon {
     //free(blocks);
 //}
 
+class Hole {
+    public:
+    unsigned char h,w;
+    int x,y;
+    int tile;
+    void restore(int z) {
+        int i,j;
+        for (i=x; i<x+w; i++) {
+            for(j=y; j<y+h; j++) {
+                _set(i,j,z,this->tile);
+            }
+        }
+    }
+};
 
-Point *pts,*pts2;
-int* independent_set;
-int h_diag_ct = 0;
-int v_diag_ct = 0;
-int n_ind = 0;
-Diagonal* h_diagonals;
-Diagonal* v_diagonals;
+int max_holes = 256;
+Hole* holes;
+int n_holes = 0;
+
+void save_and_remove_holes(int z, int tile) {
+    Hole* h = (Hole*)malloc(sizeof(Hole)*max_holes);
+    int n=0;
+
+    // raster for holes
+    int i,j;
+    int tmp_tile;
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            tmp_tile = _get(i,j,z);
+            if (tmp_tile != tile) {
+                if (_get(i+1, j,z)==tile
+                 && _get(i-1, j,z)==tile
+                 && _get(i, j+1,z)==tile
+                 && _get(i, j-1,z)==tile)
+                {
+                    h[n].w = 1;
+                    h[n].h = 1;
+                    h[n].x = i;
+                    h[n].y = j;
+                    h[n].tile = tmp_tile;
+                    n++;
+                    _set(i,j,z,tile);
+                }
+            }
+        }
+    }
+
+    n_holes = n;
+    h = (Hole*)realloc(h, sizeof(Hole)*n);
+    holes = h;
+}
+
+void restore_saved_holes(int z) {
+    int i;
+    for (i=0; i<n_holes;i++) {
+        holes[i].restore(z);
+    }
+}
+
+Point *points;
 Diagonal* diagonals;
 int n_diagonals;
 
@@ -1067,117 +1119,94 @@ void renumber_v_diagonals(Diagonal *v_diagonals, int v_diag_ct, Point* pts2, Poi
 }
 
 void rect_solver() {
+    int z = 13;
+    int tile = 103; // solar panel
 
-static int _tile = 103;
-if (_tile == 103) _tile = 1;
-else if (_tile == 1) _tile = 103;
-    
-    int vertex_max = 1024;
-    //Point* pts = (Point*)malloc(sizeof(Point)*vertex_max);
-    pts = (Point*)malloc(sizeof(Point)*vertex_max);
+    // temporarily remove 2x2 or smaller "holes" from map
+    save_and_remove_holes(z, tile);
+
+    int vertex_max = 1024*4;
+    Point* pts = (Point*)malloc(sizeof(Point)*vertex_max);
 
     int i;
     for (i=0; i<vertex_max; i++) {
         pts[i].x = 0;
         pts[i].y = 0;
-        //pts[i].b = 0;
         pts[i].bx = 0;
         pts[i].by = 0;
     }
 
-    int z = 13;
-    int tile = 103; // solar panel
-    int points=0;
-    get_convex_vertices(z, tile, pts, vertex_max, &points);
-    //for (i=0; i<points; i++) {
-        ////_set(pts[i].bx, pts[i].by, z, _tile);
-        //pts[i].print();
-    //}
-    if (points > vertex_max) printf("ERROR: points %d exceeds vertex_max %d\n", points, vertex_max);
-    printf("Got %d vertices\n", points);
-    //return;
+    int n_points=0;
+    get_convex_vertices(z, tile, pts, vertex_max, &n_points);
+    if (n_points > vertex_max) printf("ERROR: n_points %d exceeds vertex_max %d\n", n_points, vertex_max);
+    printf("Got %d vertices\n", n_points);
 
-    pts = (Point*)realloc(pts, sizeof(Point)*points);
-    pts2 = (Point*)malloc(sizeof(Point)*points);
-    memcpy(pts2, pts, sizeof(Point)*points);
-    for (i=0; i<points;i++) {
+    pts = (Point*)realloc(pts, sizeof(Point)*n_points);
+    Point* pts2 = (Point*)malloc(sizeof(Point)*n_points);
+    memcpy(pts2, pts, sizeof(Point)*n_points);
+    for (i=0; i<n_points;i++) {
         if (!(pts[i].x%2) || !(pts[i].y%2)) printf("WARNING Even point: %d :: %d %d\n", i, pts[i].x, pts[i].y);
     }
 
-    int diagonals_max = 2048;
-    h_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    get_horizontal_diagonals(pts, points, h_diagonals, diagonals_max, &h_diag_ct, z, tile);
+    int h_diag_ct,v_diag_ct;
+    int diagonals_max = 2048*4;
+    Diagonal* h_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
+    get_horizontal_diagonals(pts, n_points, h_diagonals, diagonals_max, &h_diag_ct, z, tile);
     h_diagonals = (Diagonal*)realloc(h_diagonals, sizeof(Diagonal)*h_diag_ct);
 
-    v_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    get_vertical_diagonals(pts2, points, v_diagonals, diagonals_max, &v_diag_ct, z, tile);
+    Diagonal* v_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
+    get_vertical_diagonals(pts2, n_points, v_diagonals, diagonals_max, &v_diag_ct, z, tile);
     v_diagonals = (Diagonal*)realloc(v_diagonals, sizeof(Diagonal)*v_diag_ct);
 
-    //Point *p,*q;
-    //int j;
-    //int start,end;
-    //printf("Horizontals:\n");
-    //for (i=0; i<h_diag_ct; i++) {
-        //p = &pts[h_diagonals[i].p];
-        //q = &pts[h_diagonals[i].q];
-        //start = (p->x > q->x) ? q->x : p->x;
-        //end = (p->x < q->x) ? q->x : p->x;
-        //for (j=start+1; j<end; j++) {
-            //_set(j/2,p->y/2,z, 7);
-        //}
-        //printf("%d,%d -> %d,%d\n", pts[h_diagonals[i].p].x, pts[h_diagonals[i].p].y, pts[h_diagonals[i].q].x, pts[h_diagonals[i].q].y);
-    //}
-    //printf("Verticals:\n");
-    //for (i=0; i<v_diag_ct; i++) {
-        //p = &pts2[v_diagonals[i].p];
-        //q = &pts2[v_diagonals[i].q];
-        //start = (p->y > q->y) ? q->y : p->y;
-        //end = (p->y < q->y) ? q->y : p->y;
-        //for (j=start+1; j<end; j++) {
-            //_set(p->x/2,j/2,z, 1);
-        //}
+    n_diagonals = h_diag_ct + v_diag_ct;
+    renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, n_points);
+    free(pts2);
 
-        //printf("%d,%d -> %d,%d\n", pts2[v_diagonals[i].p].x, pts2[v_diagonals[i].p].y, pts2[v_diagonals[i].q].x, pts2[v_diagonals[i].q].y);
-    //}
+    Diagonal* d_tmp = v_diagonals;
+    v_diagonals = h_diagonals;
+    h_diagonals = d_tmp;
 
-    // TODO: double the point so that corners of blocks can be used, instead of treating blocks as single points
+    int dct_tmp = v_diag_ct;
+    v_diag_ct = h_diag_ct;
+    h_diag_ct = dct_tmp;
 
     // find intersections
     int i_ct = 0;
     Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
-    find_intersections(pts, h_diagonals, h_diag_ct, pts2, v_diagonals, v_diag_ct, intersections, &i_ct);
+    find_intersections(pts, h_diagonals, h_diag_ct, v_diagonals, v_diag_ct, intersections, &i_ct);
     intersections = (Intersection*)realloc(intersections, sizeof(Intersection)*i_ct);
 
     // apply Hopcropt-Karp to the bipartite graph (Horizontals, Verticals, Intersections)
     int n_matches = hk(h_diag_ct, v_diag_ct, i_ct, intersections);
 
     // get a maximum independent vertex (diagonals) set from hk results
-    independent_set = (int*)malloc(sizeof(int)*(h_diag_ct+v_diag_ct));
+    int* independent_set = (int*)malloc(sizeof(int)*(n_diagonals));
+    int n_ind = 0;
     int k;
     for (i=0; i<h_diag_ct; i++) {
         if (!HK::map[i+1]) {  // free h_diag vertex
             independent_set[n_ind++] = i;
         } else {
-            k = choose_shortest_diagonal(i, intersections, i_ct, h_diag_ct, h_diagonals, v_diagonals, pts, pts2, HK::map);
+            k = choose_shortest_diagonal(i, intersections, i_ct, h_diag_ct, h_diagonals, v_diagonals, pts, HK::map);
             independent_set[n_ind++] = k;
         }
     }
 
-    for (i=h_diag_ct; i<v_diag_ct+h_diag_ct; i++) {
+    for (i=h_diag_ct; i<n_diagonals; i++) {
         if (!HK::map[i+1]) {
             independent_set[n_ind++] = i;
         }
     }
 
     printf("Independent Diagonals: %d\n", n_ind);
-    if (n_ind != (h_diag_ct+v_diag_ct)-n_matches) {
-        printf("ERROR: independent diagonals processed wrong. Should be %d\n", (h_diag_ct+v_diag_ct)-n_matches);
+    if (n_ind != n_diagonals-n_matches) {
+        printf("ERROR: independent diagonals processed wrong. Should be %d\n", (n_diagonals)-n_matches);
     }
 
-    renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, points);
+    //renumber_v_diagonals(v_diagonals, v_diag_ct, pts2, pts, n_points);
 
     // connect loose ends
-    int n_ends_max = points-n_ind;
+    int n_ends_max = n_points-n_ind;
     int index;
     Diagonal* loose_ends = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
     for (i=0; i<n_ind; i++) {
@@ -1189,43 +1218,44 @@ else if (_tile == 1) _tile = 103;
         }
     }
     
-    Point* new_pts = (Point*)malloc(sizeof(Point)*(points+n_ends_max));
-    memcpy(new_pts, pts, sizeof(Point)*points);
+    Point* new_pts = (Point*)malloc(sizeof(Point)*(n_points+n_ends_max));
+    memcpy(new_pts, pts, sizeof(Point)*n_points);
     int n_ends = 0;
     Point p;
     Diagonal* d;
     Point new_p;
     int new_p_slot;
-    for (i=0; i<points; i++) {
-        p = pts[i];
-        if (point_in_set(p, loose_ends, n_ends+n_ind, pts)) continue;
-        d = &loose_ends[n_ind+n_ends];
-        d->p = i;
-        new_p = get_nearest_endpoint(p, loose_ends, n_ind, pts, z, tile);   // find new endpoint
-        if (abs(p.x - new_p.x)==1 || abs(p.y - new_p.y)==1) {
-            printf("Lonely\n");
-        }
-        new_p_slot = point_in_points(new_p, pts, points);
-        if (new_p_slot < 0) {
-            new_p_slot = points+n_ends;
-            new_pts[new_p_slot] = new_p;     // add new point
-        }
-        d->q = new_p_slot;
-        printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
-        n_ends++;
-    }
+    //for (i=0; i<n_points; i++) {
+        //p = pts[i];
+        //if (point_in_set(p, loose_ends, n_ends+n_ind, pts)) continue;
+        //d = &loose_ends[n_ind+n_ends];
+        //d->p = i;
+        //new_p = get_nearest_endpoint(p, loose_ends, n_ind, pts, z, tile);   // find new endpoint
+        //new_p_slot = point_in_points(new_p, pts, n_points);
+        //if (new_p_slot < 0) {
+            //new_p_slot = n_points+n_ends;
+            //new_pts[new_p_slot] = new_p;     // add new point
+        //}
+        //d->q = new_p_slot;
+        ////printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
+        //n_ends++;
+    //}
 
     if (n_ends > n_ends_max) {
         printf("ERROR: n_ends %d exceeded n_ends_max %d\n", n_ends, n_ends_max);
     }
     loose_ends = (Diagonal*)realloc(loose_ends, sizeof(Diagonal)*(n_ends+n_ind));
-    new_pts = (Point*)realloc(new_pts, sizeof(Point)*(points+n_ends));
-    free(pts2);
+    new_pts = (Point*)realloc(new_pts, sizeof(Point)*(n_points+n_ends));
+
+    //free(pts2);
     free(pts);
-    pts = new_pts;
     free(independent_set);
+
     diagonals = loose_ends;
     n_diagonals = n_ind + n_ends;
+    points = new_pts;
+
+    restore_saved_holes(z);
 }
 
 void draw() {
@@ -1235,11 +1265,8 @@ void draw() {
     int z = 14;
     for (i=0; i<n_diagonals; i++) {
         d = diagonals[i];
-        p = &pts[d.p];
-        q = &pts[d.q];
-        //if (abs(p->x - q->x) == 1) {
-            //printf("%d %d\n", d.p, d.q);
-        //}
+        p = &points[d.p];
+        q = &points[d.q];
         _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
     }
 }

@@ -477,16 +477,16 @@ bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
      && h1->y < top->y  && h1->y > bottom->y) return true;
     return false;
 }
-void find_intersections(Point* hp, Diagonal* h, int h_ct, Point* vp, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
+void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
     int i,j;
     int index = 0;
     Point *p1, *p2, *q1, *q2;
     for (i=0; i<v_ct; i++) {
-        p1 = &vp[v[i].p];
-        p2 = &vp[v[i].q];
+        p1 = &p[v[i].p];
+        p2 = &p[v[i].q];
         for (j=0; j<h_ct; j++) {
-            q1 = &hp[h[j].p];
-            q2 = &hp[h[j].q];
+            q1 = &p[h[j].p];
+            q2 = &p[h[j].q];
             if (orthogonal_intersection(p1, p2, q1, q2)) {
                 in[index].dh = i;
                 in[index].dv = j;
@@ -554,16 +554,16 @@ int find_matching_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, in
     return -1;
 }
 
-int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, Diagonal* h_diagonals, Diagonal* v_diagonals, Point* p1, Point* p2, int* map) {
+int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, Diagonal* h_diagonals, Diagonal* v_diagonals, Point* p, int* map) {
     // look in intersections for dh==h_index
     // if multiple matches, find which dv is in matching set map
     // assign ptr to d
     int i;
-    int h_len = h_diagonals[h_index].length(p1);
+    int h_len = h_diagonals[h_index].length(p);
     int v_len;
     for (i=0; i<i_ct; i++) {
         if (in[i].dh == h_index) {
-            v_len = v_diagonals[in[i].dv].length(p2);
+            v_len = v_diagonals[in[i].dv].length(p);
             if (v_len < h_len) return in[i].dv+h_ct;
             else return h_index;
         }

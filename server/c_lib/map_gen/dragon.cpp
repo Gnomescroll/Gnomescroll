@@ -1079,7 +1079,7 @@ void generate() {
     _floor(x,y, z, h, tile);
     init();
     //caves();
-    _walls(x,y,z+1,h-1,tile);
+    _walls(x,y,z+1,h,tile);
 
     segment_caves(13, 101, 2);
     segment_caves(13, 101, 7);
