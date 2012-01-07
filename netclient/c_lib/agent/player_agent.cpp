@@ -10,6 +10,7 @@
 #endif
 
 #include <c_lib/time/physics_timer.h>
+#include <c_lib/state/client_state.hpp>
 
 /*
 Net Messages
@@ -66,6 +67,13 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.x = s0.x*(1-delta) + s1.x*delta;
     c.y = s0.y*(1-delta) + s1.y*delta;
     c.z = s0.z*(1-delta) + s1.z*delta;  
+
+#ifdef DC_CLIENT // whole file should be ifdef'd?
+    Agent_state* A = ClientState::agent_list.get(agent_id);
+    if (A==NULL) return;
+    c.theta = A->s.theta;
+    c.phi = A->s.phi;
+#endif
 
 /*
     c.x = s1.x*(1-delta) + s0.x*delta;
@@ -345,6 +353,13 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vx /= divisor;
     a->vy /= divisor;
     a->vz /= divisor;
+
+#ifdef DC_CLIENT // whole file should be ifdef'd?
+    Agent_state* A = ClientState::agent_list.get(agent_id);
+    if (A==NULL) return;
+    c.theta = A->s.theta;
+    c.phi = A->s.phi;
+#endif
 }
 
 void PlayerAgent_state::update_sound() {
