@@ -3,6 +3,8 @@
 #//include <net_lib/client/client.hpp>
 //#include <net_lib/server/server.h>
 
+#include <net_lib/type_pack.h>
+
 #include <net_lib/packet_buffer.hpp>
 
 #include <net_lib/global.hpp>

@@ -41,17 +41,17 @@ void send_python_net_message(char* message, int length, int client_id)
     #ifdef DC_CLIENT
         static int t_count = 0;
         //printf("py_out: packet %i \n", t_count);
-        NetClient::NPserver.write_python_packet(message, length);
+        //NetClient::Server.write_python_packet(message, length);
         t_count++;
     #endif
 
     #ifdef DC_SERVER
-        if(NetServer::pool.connection[client_id] == NULL)
+        if(NetServer::pool[client_id] == NULL)
         {
             printf("send_python_net_message: client_id % is null\n", client_id);
             return;
         }
-        NetServer::pool.connection[client_id]->write_python_packet(message, length);
+        NetServer::pool[client_id]->write_python_packet(message, length);
     #endif    
 
 }
@@ -59,7 +59,7 @@ void send_python_net_message(char* message, int length, int client_id)
 int _get_client_id() 
 {
     #ifdef DC_CLIENT
-        return NetClient::NPserver.client_id;
+        return NetClient::Server.client_id;
     #else
         return 0;
     #endif
@@ -68,7 +68,7 @@ int _get_client_id()
 int _check_connection_status()
 {
     #ifdef DC_CLIENT
-        return NetClient::NPserver.connected;
+        return NetClient::Server.connected;
     #else
         return 0;
     #endif
@@ -77,12 +77,12 @@ int _check_connection_status()
 int _check_connection_status(int client_id) 
 {
     #ifdef DC_SERVER
-        if(NetServer::pool.connection[client_id] == NULL)
+        if(NetServer::pool[client_id] == NULL)
         {
             printf("_check_connection_status: client_id % is null\n", client_id);
             return 0;
         }
-        return NetServer::pool.connection[client_id]->connected;
+        return NetServer::pool[client_id]->connected;
     #else
         return 0;
     #endif

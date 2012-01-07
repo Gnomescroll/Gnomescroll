@@ -1,7 +1,6 @@
 #include "./t_vbo.h"
 
 #include <stdio.h>
-#include <compat_gl.h>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 

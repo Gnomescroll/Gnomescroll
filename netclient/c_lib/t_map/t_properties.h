@@ -1,10 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <compat.h>
-
 #include "t_map.hpp"
 
 // cube properties

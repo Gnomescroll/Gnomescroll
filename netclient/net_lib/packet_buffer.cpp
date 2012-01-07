@@ -18,7 +18,7 @@ void NetMessageArray::retire()
     net_message_array_pool.retire(this);
 }
 
-NetMessageArray* NetMessageArray::acquire()
+static NetMessageArray* NetMessageArray::acquire()
 {
     NetMessageArray* a = net_message_array_pool.acquire();
     a->next = NULL; //debug

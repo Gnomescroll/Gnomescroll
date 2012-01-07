@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//#include <compat.h>
+
 #include "t_vbo.h"
+
+#include "t_extern.h"
 
 struct cubeProperties cube_list[max_cubes];
 
