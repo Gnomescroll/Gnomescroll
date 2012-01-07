@@ -1004,6 +1004,9 @@ Diagonal* diagonals;
 int n_diagonals;
 int n_horizontals;
 
+Point *corners;
+int n_corners;
+
 inline bool point_in_set(Point p, Diagonal* loose_ends, int n_ends, Point* pts) {
     int i;
     Diagonal* diag;
@@ -1294,45 +1297,35 @@ void rect_solver() {
     restore_saved_holes(z);
 }
 
-void draw() {
-    int i;
-    Point *p, *q;
-    Diagonal d;
-    int z = 14;
-    for (i=0; i<n_diagonals; i++) {
-    //for (i=0; i<n_horizontals; i++) {
-        d = diagonals[i];
-        p = &points[d.p];
-        q = &points[d.q];
-        _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
-    }
-}
-
 class Room {
     public:
-    unsigned char ox,oy;
-    unsigned char x,y,w,h;
+    int x,y,w,h;
     bool placed;
+
     int area() {
         return w*h;
     }
+
     bool collides(Room* r) {
         return !(x+w > r->x || x < r->x+r->w ||
             y+h > r->y || y < r->y+r->h);
     }
-    void place(int z) {
-        int new_tile = 7;
+
+    void draw(int z, int tile) {
         int i,j;
         for (i=x; i<x+w; i++) {
             for (j=y; j<y+h; j++) {
-                if (i > x && i < x+w-1 && j > y && j < y+h-1) continue;
-                _set(i,j,z+2, new_tile);
+                _set(i,j,z,tile);
             }
         }
-        _set(ox,oy,z+2, 1);
-        placed = true;
-        printf("Placed rect at %d,%d  w,h: %d,%d\n", x,y,w,h);
+        printf("drew ");
+        print();
     }
+
+    void print() {
+        printf("%d %d %d %d\n", x,y,w,h);
+    }
+
     Room() :
     x(0), y(0), w(0), h(0),
     placed(false)
@@ -1349,13 +1342,74 @@ inline bool is_topleft_corner(int x, int y, int z, int tile) {
     if (_get(x-1,y-1,z) == tile) return false;
     return true;
 }
+inline bool is_topright_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    if (_get(x+1,y,z) == tile) return false;
+    if (_get(x,y-1,z) == tile) return false;
+    if (_get(x+1,y-1,z) == tile) return false;
+    return true;
+}
+inline bool is_bottomleft_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    if (_get(x-1,y,z) == tile) return false;
+    if (_get(x,y+1,z) == tile) return false;
+    if (_get(x-1,y+1,z) == tile) return false;
+    return true;
+}
+inline bool is_bottomright_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    if (_get(x+1,y,z) == tile) return false;
+    if (_get(x,y+1,z) == tile) return false;
+    if (_get(x+1,y+1,z) == tile) return false;
+    return true;
+}
+inline bool is_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    
+    if(is_topleft_corner(x,y,z,tile)) return true;
+    if(is_topright_corner(x,y,z,tile)) return true;
+    if(is_bottomleft_corner(x,y,z,tile)) return true;
+    if(is_bottomright_corner(x,y,z,tile)) return true;
+    return false;
+}
+
+inline bool point_is_leftmost_horizontal_endpoint(Point p, Point* points, Diagonal* diagonals, int n_diagonals, int n_horizontals) {
+    int i;
+    Diagonal *d;
+    Point smaller;
+    Point r,s;
+    for (i=0; i<n_horizontals; i++) {
+        d = &diagonals[i];
+        r = points[d->p];
+        s = points[d->q];
+        smaller = (r.x > s.x) ? r : s;
+        if (p == smaller) return true;
+    }
+    return false;
+}
+
+inline bool point_is_bottommost_vertical_endpoint(Point p, Point* points, Diagonal* diagonals, int n_diagonals, int n_horizontals) {
+    int i;
+    Diagonal *d;
+    Point higher;
+    Point r,s;
+    for (i=n_horizontals; i<n_diagonals; i++) {
+        d = &diagonals[i];
+        r = points[d->p];
+        s = points[d->q];
+        higher = (r.y < s.y) ? r : s;
+        if (p == higher) return true;
+    }
+    return false;
+}
+
 
 void resolve_rooms(int z, int tile) {
-    rooms = (Room*)malloc(sizeof(Room) * n_diagonals);
 
     int corners_max = 2048;
-    Point* corners = (Point*)malloc(sizeof(Point)*corners_max);
-    int n_corners = 0;
+    corners = (Point*)malloc(sizeof(Point)*corners_max);
+    n_corners = 0;
+    int n_bottom_corners = 0;
 
     int i,j;
     Point *p,*q;
@@ -1418,7 +1472,7 @@ void resolve_rooms(int z, int tile) {
 
     Intersection* in;
     Diagonal *e;
-    Point *top,*bottom,*left,*right;
+    Point *top,*left;
     int x,y;
     for (i=0; i<i_ct; i++) {
         in = &intersections[i];
@@ -1427,9 +1481,7 @@ void resolve_rooms(int z, int tile) {
         e = &diagonals[in->dv];
 
         left = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
-        right = (points[d->p].x < points[d->q].x) ? &points[d->p] : &points[d->q];
         top = (points[e->p].y > points[e->q].y) ? &points[e->p] : &points[e->q];
-        bottom = (points[e->p].y < points[e->q].y) ? &points[e->p] : &points[e->q];
 
         if (top->y-left->y < 1) continue;
         if (left->x-top->x < 1) continue;
@@ -1444,14 +1496,225 @@ void resolve_rooms(int z, int tile) {
         p->by = (y-1)/2 + 1;
     }
 
+    n_bottom_corners = n_corners;
+
     if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
 
-    for (i=0; i<n_corners;i++) {
-        corners[i].print();
-        _set(corners[i].bx, corners[i].by, z, 1);
+    // get the rest of the corners
+
+    // all the intersection points are corners
+    Point qq;
+    for (i=0; i<i_ct; i++) {
+        in = &intersections[i];
+
+        d = &diagonals[in->dh];
+        e = &diagonals[in->dv];
+
+        qq.x = points[e->p].x;
+        qq.y = points[d->p].y;
+
+        if (point_in_points(qq, corners, n_corners) < 0) {
+            p = &corners[n_corners++];
+            p->x = qq.x;
+            p->y = qq.y;
+        }
     }
 
-    rooms = (Room*)realloc(rooms, sizeof(Room) * n_rooms);
+    // tile patterns
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (_get(i,j,z) != tile) continue;
+
+            if (is_topright_corner(i,j,z,tile)) {
+                p = &corners[n_corners++];
+                p->bx = i;
+                p->by = j;
+                p->x = 2*i+1;
+                p->y = 2*j-1;
+            } else if (is_bottomright_corner(i,j,z,tile)) {
+                p = &corners[n_corners++];
+                p->bx = i;
+                p->by = j;
+                p->x = 2*i+1;
+                p->y = 2*j+1;
+            } else if (is_bottomleft_corner(i,j,z,tile)) {
+                p = &corners[n_corners++];
+                p->bx = i;
+                p->by = j;
+                p->x = 2*i-1;
+                p->y = 2*j+1;
+            }
+        }
+    }
+
+    //// diagonal-wall patterns
+    Point *right,*bottom;
+    Point *pp;
+    for (i=0; i<n_diagonals; i++) {
+        d = &diagonals[i];
+        p = &points[d->p];
+        q = &points[d->q];
+
+        if (i < n_horizontals) {
+            left = (p->x < q->x) ? q : p;
+            right = (p->x > q->x) ? q : p;
+
+            bx = (left->x - 1)/2;
+            by = (left->y - 1)/2;
+            if (_get(bx, by, z) == tile
+             && _get(bx+1, by, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx;
+                pp->by = by;
+                pp->x = left->x;
+                pp->y = left->y;
+            }
+
+            if (_get(bx, by+1, z) == tile
+             && _get(bx+1, by+1, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx;
+                pp->by = by+1;
+                pp->x = left->x;
+                pp->y = left->y;
+            }
+
+            bx = (right->x - 1)/2;
+            by = (right->y - 1)/2;
+            if (_get(bx+1, by, z) == tile
+             && _get(bx, by, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx+1;
+                pp->by = by;
+                pp->x = right->x;
+                pp->y = right->y;
+            }
+
+        } else {
+            top = (p->y < q->y) ? q : p;
+            bottom = (p->y > q->y) ? q : p;
+
+            bx = (top->x - 1)/2;
+            by = (top->y - 1)/2;
+            if (_get(bx, by, z) == tile
+             && _get(bx, by+1, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx+1;
+                pp->by = by+1;
+                pp->x = top->x;
+                pp->y = top->y;
+            }
+            
+            if (_get(bx+1, by, z) == tile
+             && _get(bx+1, by+1, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx+1;
+                pp->by = by;
+                pp->x = top->x;
+                pp->y = top->y;
+            }
+
+            bx = (bottom->x - 1)/2;
+            by = (bottom->y - 1)/2;
+            if (_get(bx, by+1, z) == tile
+             && _get(bx, by, z) != tile)            // corner
+            {
+                pp = &corners[n_corners++];
+                pp->bx = bx;
+                pp->by = by+1;
+                pp->x = bottom->x;
+                pp->y = bottom->y;
+            }
+
+        }
+    }
+
+    if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
+
+    corners = (Point*)realloc(corners, sizeof(Point)*n_corners);
+
+    rooms = (Room*)malloc(sizeof(Room) * n_bottom_corners);
+
+    Room *r;
+    n_rooms = 0;
+    int k;
+    for (i=0; i<n_bottom_corners;i++) {
+        r = &rooms[n_rooms++];
+        p = &corners[i];
+        r->x = (p->x)/2 + 1;
+        r->y = (p->y)/2 + 1;
+        qq = *p;
+        // trace from here
+        dx = 1;
+        dy = 0;
+        k = 0;
+        do {
+            qq.x += dx;
+            qq.y += dy;
+            if (qq.x<0||qq.x>width*2||qq.y<0||qq.y>height*2) {
+                printf("out of bounds\n");
+                n_rooms--;
+                break;
+            }
+            if (point_in_points(qq, corners, n_corners) >= 0) {
+                // check that point is actual vertex
+                // if ++ isnt a wall
+                // and pt is the smaller of a diag
+                if (dx) {
+                    if (_get((qq.x-1)/2 + 1, (qq.y-1)/2 + 1, z) == tile
+                     && !(point_is_bottommost_vertical_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                    ) {
+                        printf("skipping x\n");
+                        continue;
+                    }
+                    r->w = (qq.x - p->x)/2;
+                }
+                if (dy) {
+                    if (_get((qq.x-1)/2, (qq.y-1)/2+1, z) == tile
+                     && !(point_is_leftmost_horizontal_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                    ) {
+                        printf("skipping y\n");
+                        continue;
+                    }
+                    r->h = (qq.y - p->y)/2;
+                }
+                rotate90(&dx, &dy);
+                k++;
+            }
+        } while (k < 2);
+    }
+
+    rooms = (Room*)realloc(rooms, sizeof(Room)*n_rooms);
+
+    for (i=0; i<n_rooms; i++) {
+        rooms[i].draw(z, 1);
+    }
+
+    free(intersections);
+}
+
+void draw() {
+    int i;
+    Point *p, *q;
+    Diagonal d;
+    int z = 14;
+    for (i=0; i<n_diagonals; i++) {
+        d = diagonals[i];
+        p = &points[d.p];
+        q = &points[d.q];
+        _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
+    }
+
+    for (i=0; i<n_corners; i++) {
+        p = &corners[i];
+        _draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5+0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5-0.25, z+0.1);
+        _draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5-0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5+0.25, z+0.1);
+    }
 }
 
 void generate() {
