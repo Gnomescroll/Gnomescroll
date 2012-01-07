@@ -5,6 +5,8 @@
 
 #include <net_lib/packet_buffer.hpp>
 
+#include <net_lib/global.hpp>
+
 static int _server_packet_id = 1;
 int next_server_packet_id() { return _server_packet_id++; }
 
@@ -41,7 +43,7 @@ class FixedSizeNetPacketToServer {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::NPserver.push_unreliable_packet(nm);
+            NetClient::Server.push_unreliable_packet(nm);
             //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
         
@@ -122,14 +124,14 @@ class FixedSizeNetPacketToClient {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            //NetClient::NPserver.push_unreliable_packet(nm);
+            //NetClient::Server.push_unreliable_packet(nm);
         */     
-            if(NetServer::pool.connection[client_id] == NULL)
+            if(NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
-            NetServer::pool.connection[client_id]->push_unreliable_packet(nm);
+            NetServer::pool[client_id]->push_unreliable_packet(nm);
         }
 
         void broadcast() {
@@ -148,7 +150,7 @@ class FixedSizeNetPacketToClient {
 
             for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
-                np = NetServer::pool.connection[i]; //use better iterator
+                np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
                 np->push_unreliable_packet(nm);
             }
@@ -206,12 +208,12 @@ class FixedSizeReliableNetPacketToServer {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::NPserver.push_unreliable_packet(nm);
+            NetClient::Server.push_unreliable_packet(nm);
             */
             Net_message* nm = Net_message::acquire_reliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::NPserver.push_reliable_packet(nm);
+            NetClient::Server.push_reliable_packet(nm);
         }
         
 
@@ -295,12 +297,12 @@ class FixedSizeReliableNetPacketToClient {
             serialize(nm->buff, &buff_n);
             */
 
-            if(NetServer::pool.connection[client_id] == NULL)
+            if(NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
-            NetServer::pool.connection[client_id]->push_reliable_packet(nm);
+            NetServer::pool[client_id]->push_reliable_packet(nm);
         }
 
         void broadcast() {
@@ -319,14 +321,13 @@ class FixedSizeReliableNetPacketToClient {
 
             for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
             {
-                np = NetServer::pool.connection[i]; //use better iterator
+                np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
                 np->push_reliable_packet(nm);
             }
         }
 
-        //will overflow if more than 64 bytes
-        int _size() { static char* buff = new char[512]; int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
+        int _size() { char buff[128]; int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -345,53 +346,3 @@ class FixedSizeReliableNetPacketToClient {
 
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
-
-/*
-    Python Stream
-*/
-
-/*
-    Need to send/receive
-
-
-*/
-
-/*
-class PythonStreamNetPacketToServer {
-    private:
-    public:
-        //void serialize(char* buff, int* buff_n) {}
-        //inline void unserialize(char* buff, int* buff_n, int* size) {}
-        
-        void send() {
-            Net_message* nm = Net_message::acquire_reliable(Derived::size);
-            int buff_n = 0;
-            serialize(nm->buff, &buff_n);
-            NetClient::NPserver.push_reliable_packet(nm);
-        }
-        
-
-        //will overflow if more than 64 bytes
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
-
-        //virtual inline void handle() = 0;
-
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
-            Derived x;  //allocated on stack
-            x.client_id = _client_id;   //client id of client who sent the packet
-            x.unserialize(buff, &buff_n, bytes_read);
-            x.handle();
-        }
-
-        static void register_server_packet() {
-            Derived x = Derived();
-            Derived::message_id = 254;
-            register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
-        }
-
-};
-*/
-
-//template <typename T> int Base<T>::staticVar(0);
-//template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::message_id(255);
-//template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::size(-1);

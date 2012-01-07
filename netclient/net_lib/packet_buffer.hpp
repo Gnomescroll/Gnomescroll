@@ -126,7 +126,7 @@ class NetMessageManager
 
         class Net_message* nm;
 
-        for(int i=0; i < nma_pending_messages; i++)
+        for(int i=0; i < pending_messages; i++)
         {
             nm = nma_read->net_message_array[nma_read_index];
 
@@ -152,5 +152,5 @@ class NetMessageManager
         nma_read_index = 0;
 
         pending_messages = 0;
-        pending_bytes = 0;
+        pending_bytes_out = 0;
     }

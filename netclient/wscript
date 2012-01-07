@@ -140,7 +140,8 @@ def configure(conf):
     conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
 
-    conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    #'cube_lib', 'vox_lib'
+    conf.env.INCLUDES += ['./','c_lib', 'net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
     
 def build(bld):
