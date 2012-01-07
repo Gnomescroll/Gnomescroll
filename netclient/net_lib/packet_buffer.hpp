@@ -49,12 +49,9 @@ class Net_message {
 
         OBJECT_POOL_OBJECT_MACRO
 
-    static inline class Net_message* acquire();
+    static inline class Net_message* acquire(int length);
 
     void inline decrement();
-
-    static class Net_message* acquire_reliable(int length);
-    static class Net_message* acquire_unreliable(int length);
 
     Net_message() {
         reference_count = 0; 

@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 #include <c_lib/common/functional.h>
-#include <c_lib/template/net.hpp>
+#include <net_lib/net.hpp>
 
 /*
     Non-networking

@@ -1,10 +1,6 @@
 #pragma once
 
-#//include <net_lib/client/client.hpp>
-//#include <net_lib/server/server.h>
-
 #include <net_lib/type_pack.h>
-
 #include <net_lib/packet_buffer.hpp>
 
 #include <net_lib/global.hpp>
@@ -21,57 +17,22 @@ template <class Derived>
 class FixedSizeNetPacketToServer {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
+
+        void serialize(char* buff, int* buff_n) __attribute((always_inline)) = 0;
+        void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline)) = 0;
+        int  get_size();
     public:
         static int message_id;
         static int size;
         int client_id; //id of the UDP client who sent message
 
-        //flatten this
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
-            pack_message_id(Derived::message_id, buff, buff_n, true);
-            packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
-        }
-        //flatten this
-        inline void unserialize(char* buff, int* buff_n, int* size) {
-            int _buff_n = *buff_n;
-            pack_message_id(Derived::message_id, buff, buff_n, false); //auto message unpack
-            packet(buff, buff_n, false);
-            *size = *buff_n - _buff_n;
-        }
-        
-        void send() {
-            Net_message* nm = Net_message::acquire_unreliable(Derived::size);
-            int buff_n = 0;
-            serialize(nm->buff, &buff_n);
-            NetClient::Server.push_unreliable_message(nm);
-            //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
-        }
-        
+        void send();
 
-        //will overflow if more than 64 bytes
-        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
-
-        //virtual inline void handle() = 0;
-
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
-            Derived x;  //allocated on stack
-            x.client_id = _client_id;   //client id of client who sent the packet
-            x.unserialize(buff, &buff_n, bytes_read);
-            x.handle();
-        }
-
-        static void register_server_packet() {
-            Derived x = Derived();
-            Derived::message_id = next_server_packet_id(); //set size
-            Derived::size = x.Size();
-            register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
-        }
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id);
+        static void register_server_packet();
 
 };
 
-//template <typename T> int Base<T>::staticVar(0);
 template <class Derived> int FixedSizeNetPacketToServer<Derived>::message_id(255);
 template <class Derived> int FixedSizeNetPacketToServer<Derived>::size(-1);
 
@@ -117,13 +78,13 @@ class FixedSizeNetPacketToClient {
             
             if(nm == NULL) 
             {
-                nm = Net_message::acquire_unreliable(Derived::size);
+                nm = Net_message::acquire(Derived::size);
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
             
         /*
-            Net_message* nm = Net_message::acquire_unreliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             //NetClient::Server.push_unreliable_message(nm);
@@ -144,7 +105,7 @@ class FixedSizeNetPacketToClient {
             serialize(buff, &buff_n, &size);
             push_broadcast_message(buff, size);
             */
-            Net_message* nm = Net_message::acquire_unreliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
@@ -207,12 +168,12 @@ class FixedSizeReliableNetPacketToServer {
         
         void send() {
             /*
-            Net_message* nm = Net_message::acquire_unreliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
             */
-            Net_message* nm = Net_message::acquire_reliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
@@ -287,14 +248,14 @@ class FixedSizeReliableNetPacketToClient {
             
             if(nm == NULL) 
             {
-                nm = Net_message::acquire_reliable(Derived::size);
+                nm = Net_message::acquire(Derived::size);
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
             
 
             /*
-            Net_message* nm = Net_message::acquire_reliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             */
@@ -315,7 +276,7 @@ class FixedSizeReliableNetPacketToClient {
             serialize(buff, &buff_n, &size);
             push_broadcast_message(buff, size);
             */
-            Net_message* nm = Net_message::acquire_reliable(Derived::size);
+            Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
