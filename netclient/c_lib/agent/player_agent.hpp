@@ -31,7 +31,7 @@ class PlayerAgent_state {
 
         //cameras
         class AgentState smooth;
-        class AgentState c;                 //Use for camera, smoothed
+        class AgentState c;                 //smoothed
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
         //camera update functions   

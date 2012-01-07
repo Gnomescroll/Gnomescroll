@@ -11,57 +11,6 @@ static const int NET_MESSAGE_ARRAY_SIZE = 256; //use 256
 
 #define PACKET_BUFFER_DEBUG 1
 
-void NetPeer::flush_reliable_to_buffer(char* buff_, int* _index)
-{
-    NetMessageArray* nma = ps->nma;
-    int nma_index = ps->read_index;
-    int num = ps->messages_n;
-
-    class Net_message* nm;
-
-    //for(int i=0; i < num; i++)
-    /*        
-        Iterate over num packets
-        Dont let retire check 1 on last loop
-    */
-    for(int i=0; i < num; i++)
-    {
-        nm = nma->net_message_array[nma_index];
-        nma->net_message_array[nma_index] = NULL; //!!! DEBUG
-
-        nm->decrement_reliable();
-        nma->reference_count--;    //decrement on confirmation
-        nma_index++;
-        
-        if(nma_index == NET_MESSAGE_ARRAY_SIZE)
-        {
-            NetMessageArray* tmp = nma->next;
-            if(nma->reference_count == 0)
-            {
-                if(i+1 == num) break;   //prevent from running on last loop, to avoid double retiring
-                //printf("1 delete nma %i \n", (int)nma);
-                nma->retire();
-            }
-            nma = tmp;
-            nma_index=0;
-        }
-    }
-    if(nma->reference_count == 0)
-    {
-        //printf("2 delete nma %i \n", (int) nma);
-        nma->retire();
-    }
-
-
-    pending_bytes = 0;
-    pending_messages = 0;
-
-    *_index = index;    //bytes out
-}
-
-
-};
-
 //used by net_peer
 class NetMessageArray {
     private:
@@ -163,7 +112,7 @@ class NetMessageManager
         }
     }
 
-    void NetMessageManager::serialize_messages(char* buff_, int* _index)
+    void NetMessageManager::serialize_messages(char* buff_, int index)
     {
         if(pending_messages == 0) return;
         /*
@@ -176,8 +125,8 @@ class NetMessageManager
         {
             nm = rnma_read->net_message_array[rnma_read_index];
 
-            memcpy(buff_+*_index, nm->buff, nm->len);
-            *_index += nm->len;
+            memcpy(buff_+index, nm->buff, nm->len);
+            index += nm->len;
 
             nm->decrement_reliable(); //reference count on packet
 

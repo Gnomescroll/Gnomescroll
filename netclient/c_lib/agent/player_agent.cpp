@@ -35,20 +35,6 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     //printf("ms since last update= %i \n", _t - last_tick);
     float delta = ((float)(_t - last_tick)) / 33.0f;
 
-
-    //float delta = _TIME_DELTA();
-
-    //class AgentState a = state_history[(state_history_index-1+AGENT_STATE_HISTORY_SIZE)%AGENT_STATE_HISTORY_SIZE];
-    //class AgentState b = state_history[state_history_index%AGENT_STATE_HISTORY_SIZE];
-    //class AgentState c;
-
-
-    //c = s1;
-
-    //return;
-
-    //printf("delta= %f \n", delta);
-
     if(delta > 1.0f)
     {
         //printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta >1\n");
@@ -59,9 +45,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     if(delta < 0.0f)
     {
         printf("PlayerAgent_state::update_client_side_prediction_interpolated: delta is negative\n");
-
     }
-
 
     c.x = s0.x*(1-delta) + s1.x*delta;
     c.y = s0.y*(1-delta) + s1.y*delta;
