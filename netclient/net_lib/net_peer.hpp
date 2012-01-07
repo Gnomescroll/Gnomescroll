@@ -54,7 +54,7 @@ class NetPeer
     class NetMessageManager unreliable_message_manager;
     class NetMessageManager python_message_manager;
 
-    void push_unreliable_packet(class Net_message* nm) __attribute__((always_inline)); ;
+    void push_unreliable_message(class Net_message* nm) __attribute__((always_inline)); ;
     void push_reliable_message(class Net_message* nm) __attribute__((always_inline)); ;
     void push_python_message(class Net_message* nm) __attribute__((always_inline)); ;
 

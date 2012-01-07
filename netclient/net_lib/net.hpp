@@ -43,7 +43,7 @@ class FixedSizeNetPacketToServer {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::Server.push_unreliable_packet(nm);
+            NetClient::Server.push_unreliable_message(nm);
             //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
         
@@ -124,14 +124,14 @@ class FixedSizeNetPacketToClient {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            //NetClient::Server.push_unreliable_packet(nm);
+            //NetClient::Server.push_unreliable_message(nm);
         */     
             if(NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
-            NetServer::pool[client_id]->push_unreliable_packet(nm);
+            NetServer::pool[client_id]->push_unreliable_message(nm);
         }
 
         void broadcast() {
@@ -152,7 +152,7 @@ class FixedSizeNetPacketToClient {
             {
                 np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
-                np->push_unreliable_packet(nm);
+                np->push_unreliable_message(nm);
             }
         }
 
@@ -208,12 +208,12 @@ class FixedSizeReliableNetPacketToServer {
             Net_message* nm = Net_message::acquire_unreliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::Server.push_unreliable_packet(nm);
+            NetClient::Server.push_unreliable_message(nm);
             */
             Net_message* nm = Net_message::acquire_reliable(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            NetClient::Server.push_reliable_packet(nm);
+            NetClient::Server.push_reliable_message(nm);
         }
         
 
@@ -302,7 +302,7 @@ class FixedSizeReliableNetPacketToClient {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
                 return;
             }
-            NetServer::pool[client_id]->push_reliable_packet(nm);
+            NetServer::pool[client_id]->push_reliable_message(nm);
         }
 
         void broadcast() {
@@ -323,7 +323,7 @@ class FixedSizeReliableNetPacketToClient {
             {
                 np = NetServer::pool[i]; //use better iterator
                 if(np == NULL) continue;
-                np->push_reliable_packet(nm);
+                np->push_reliable_message(nm);
             }
         }
 

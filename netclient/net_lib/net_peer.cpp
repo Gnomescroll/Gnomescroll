@@ -25,7 +25,7 @@ void NetPeer::push_reliable_message(class Net_message* nm)
     reliable_message_manager.push_message(nm);
 }
 
-void NetPeer::push_unreliable_packet(Net_message* nm) 
+void NetPeer::push_unreliable_message(Net_message* nm) 
 {
     unreliable_message_manager.push_message(nm);
 }
