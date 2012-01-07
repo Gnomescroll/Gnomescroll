@@ -18,8 +18,8 @@ class FixedSizeNetPacketToServer {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
 
-        void serialize(char* buff, int* buff_n) __attribute((always_inline)) = 0;
-        void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline)) = 0;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline));
+        void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline));
         int  get_size();
     public:
         static int message_id;

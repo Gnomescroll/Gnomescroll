@@ -7,13 +7,13 @@ static int h_client_packet_size[256];
 static int h_server_packet_size[256]; 
 
 typedef void (*pt2handler)(char*, int, int* read_bytes, int client_id);
-//pt2handler* handler_array[256];
 
 pt2handler handler_array[256] = {NULL};
 
 pt2handler client_handler_array[256] = {NULL};
 pt2handler server_handler_array[256] = {NULL};
 
+//should disconnect client
 void default_handler_function(char* buff, int n, int* read_bytes, int client_id) {
     //printf("ERROR!!\nNo handler for message_id= %i\n", message_id);
     printf("ERROR! No message handler assigned for this message id!\n");
@@ -57,6 +57,7 @@ int process_packet_messages(char* buff, int *n, int max_n, int client_id)
     int read_bytes;
 
 PROCESS:
+
     //UNPACK_uint8_t(&message_id, buff, n);
     unpack_message_id(&message_id, buff, n);
     //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
@@ -85,7 +86,6 @@ PROCESS:
             return -4;
         }
         client_handler_array[message_id](buff, *n, &read_bytes, client_id);
-    }
 #endif
 
 #ifdef DC_SERVER
@@ -125,20 +125,22 @@ PROCESS:
         printf("network error!!! Error: read past buffer\n");
         return -1; 
     }
-
 }
+
 
 
 int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
     //PACK_uint16_t(bytes, nm->buff, &n1);    //length
 
-    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
-    {
-        printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
-    } else {
-        PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, np->client_id);
-    }
+//    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
+//    {
+//        printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
+//    } else {
+//        PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, np->client_id);
+//    }
+    
+    return 0;
 }
 
 

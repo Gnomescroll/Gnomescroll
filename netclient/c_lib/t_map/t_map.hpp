@@ -36,9 +36,9 @@ struct VBO {
 
         #ifdef DC_CLIENT
             //GLuint VBO_id;
-            int VBO_id;
+            unsigned int VBO_id;
         #else
-            int VBO_id;
+            unsigned int VBO_id;
         #endif
         int _v_num[4];       //parameters for draw pass
         int _v_offset[4];

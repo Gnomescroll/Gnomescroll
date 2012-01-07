@@ -16,9 +16,12 @@ typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
 void RegisterMessages() {
 
+/*
+    add back in 
     benchmarkCtoS::register_server_packet();    //packet for benchmarking
     benchmarkReliableCtoS::register_server_packet();  
-    
+*/  
+
     //Agent_control_state_message::register_server_packet();
     Agent_state_message::register_client_packet();
     Agent_teleport_message::register_client_packet();
