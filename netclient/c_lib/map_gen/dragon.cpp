@@ -1200,7 +1200,11 @@ void rect_solver() {
         printf("ERROR: independent diagonals processed wrong. Should be %d\n", (n_diagonals)-n_matches);
     }
 
-    // connect loose ends
+    /*
+     *  Connect remaining vertices
+     */
+
+    // copy diagonals into one array, with room for new diagonals
     int n_ends_max = n_points-n_ind;
     int index;
     diagonals = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
@@ -1213,8 +1217,9 @@ void rect_solver() {
         }
     }
     
-    Point* new_pts = (Point*)malloc(sizeof(Point)*(n_points+n_ends_max));
-    memcpy(new_pts, pts, sizeof(Point)*n_points);
+    //Point* new_pts = (Point*)malloc(sizeof(Point)*(n_points+n_ends_max));
+    //memcpy(new_pts, pts, sizeof(Point)*n_points);
+    pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends_max));
     int n_ends = 0;
     Point p;
     Diagonal* d;
@@ -1226,10 +1231,11 @@ void rect_solver() {
         d = &diagonals[n_ind+n_ends];
         d->p = i;
         new_p = get_nearest_endpoint(p, diagonals, n_ind, pts, z, tile);   // find new endpoint
-        new_p_slot = point_in_points(new_p, pts, n_points);
+        new_p_slot = point_in_points(new_p, pts, n_points+n_ends);
         if (new_p_slot < 0) {
             new_p_slot = n_points+n_ends;
-            new_pts[new_p_slot] = new_p;     // add new point
+            //new_pts[new_p_slot] = new_p;     // add new point
+            pts[new_p_slot] = new_p;     // add new point
         }
         d->q = new_p_slot;
         printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
@@ -1240,15 +1246,15 @@ void rect_solver() {
         printf("ERROR: n_ends %d exceeded n_ends_max %d\n", n_ends, n_ends_max);
     }
     diagonals = (Diagonal*)realloc(diagonals, sizeof(Diagonal)*(n_ends+n_ind));
-    new_pts = (Point*)realloc(new_pts, sizeof(Point)*(n_points+n_ends));
+    //new_pts = (Point*)realloc(new_pts, sizeof(Point)*(n_points+n_ends));
+    pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends));
 
-    //free(pts2);
-    free(pts);
+    //free(pts);
     free(independent_set);
 
-    //diagonals = loose_ends;
     n_diagonals = n_ind + n_ends;
-    points = new_pts;
+    //points = new_pts;
+    points = pts;
 
     restore_saved_holes(z);
 }

@@ -1087,10 +1087,10 @@ void generate() {
     segment_caves(13, 101, 8);
     segment_caves_4(13, 101, 2);
     segment_caves_4(13, 101, 2);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_2(13,101);
-    //segment_caves_2(13,101);
+    segment_caves_4(13, 101, 2);
+    segment_caves_4(13, 101, 2);
+    segment_caves_2(13,101);
+    segment_caves_2(13,101);
 
     // post processing for good visual of cave isolation
     int i,j;
