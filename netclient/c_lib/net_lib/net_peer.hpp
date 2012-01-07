@@ -35,6 +35,8 @@ NetPeer
 
 #include <packet_buffer.hpp>
 
+struct ENetPeer;
+
 class NetPeer
 {
     private:
@@ -42,9 +44,11 @@ class NetPeer
     public:
     int client_id;
     int connected;
+    
+    ENetPeer *  peer;
 
-    uint32_t ip;
-    uint16_t port;
+    //uint32_t ip;
+    //uint16_t port;
 
     void flush_to_net();
 
