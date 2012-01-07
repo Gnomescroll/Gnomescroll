@@ -19,18 +19,14 @@ def close():
 #network stuff
 
 cdef extern from "./net_lib/host.hpp":
-    void init_net_client()
     void dispatch_network_events()
     void client_connect_to(int a, int b, int c, int d, unsigned short port)
-
-def InitNetClient():
-    init_net_client()
 
 def NetClientDispatchNetworkEvents():
     dispatch_network_events()
 
 def ClientConnectTo(int a, int b,int c, int d, unsigned short _port):
-    client_connect_to(a, b, c, d, port)
+    client_connect_to(a, b, c, d, _port)
 
 
 

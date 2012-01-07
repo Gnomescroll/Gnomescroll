@@ -111,6 +111,10 @@ int init_c_lib() {
 
     srand(time(NULL));   // seed the RNG
 
+
+    init_network();
+    init_net_client();
+    
     #ifdef DC_CLIENT
         init_video();
         init_image_loader();

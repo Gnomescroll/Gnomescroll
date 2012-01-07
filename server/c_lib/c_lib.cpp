@@ -48,6 +48,8 @@ int init_c_lib() {
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
     srand(time(NULL));
+
+    init_network();
     ServerState::ctf.init();
 return 0;
 }
