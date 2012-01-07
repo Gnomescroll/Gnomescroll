@@ -51,8 +51,7 @@ class Net_message {
 
     static inline class Net_message* acquire();
 
-    void inline decrement_reliable();
-    void inline decrement_unreliable();
+    void inline decrement();
 
     static class Net_message* acquire_reliable(int length);
     static class Net_message* acquire_unreliable(int length);
@@ -135,7 +134,7 @@ class NetMessageManager
             memcpy(buff_+index, nm->buff, nm->len);
             index += nm->len;
 
-            nm->decrement_reliable(); //reference count on packet
+            nm->decrement(); //reference count on packet
 
             nma_read_index++;
             if(nma_read_index == NET_MESSAGE_ARRAY_SIZE)

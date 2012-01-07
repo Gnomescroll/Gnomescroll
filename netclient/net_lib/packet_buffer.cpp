@@ -18,7 +18,7 @@ void NetMessageArray::retire()
     net_message_array_pool.retire(this);
 }
 
-static NetMessageArray* NetMessageArray::acquire()
+class NetMessageArray* NetMessageArray::acquire()
 {
     NetMessageArray* a = net_message_array_pool.acquire();
     a->next = NULL; //debug
@@ -80,7 +80,7 @@ class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128>
     }
 };
 
-static Net_message_buffer_pool reliable_net_message_buffer_pool;
+static Net_message_buffer_pool net_message_buffer_pool;
 
 
 

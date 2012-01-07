@@ -7,8 +7,10 @@
 
 #include <net_lib/net_peer.cpp>
 //#include <net_lib/common/sequencer.c>
-#include <net_lib/message_handler.c>
+
 #include <net_lib/packet_buffer.cpp>
+
+#include <net_lib/message_handler.c>
 
 //#include <net_lib/common/python_channel.cpp>
 
