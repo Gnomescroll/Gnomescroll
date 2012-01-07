@@ -1217,8 +1217,6 @@ void rect_solver() {
         }
     }
     
-    //Point* new_pts = (Point*)malloc(sizeof(Point)*(n_points+n_ends_max));
-    //memcpy(new_pts, pts, sizeof(Point)*n_points);
     pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends_max));
     int n_ends = 0;
     Point p;
@@ -1230,30 +1228,26 @@ void rect_solver() {
         if (point_in_set(p, diagonals, n_ends+n_ind, pts)) continue;
         d = &diagonals[n_ind+n_ends];
         d->p = i;
-        new_p = get_nearest_endpoint(p, diagonals, n_ind, pts, z, tile);   // find new endpoint
+        new_p = get_nearest_endpoint(p, diagonals, n_ind+n_ends, pts, z, tile);   // find new endpoint
         new_p_slot = point_in_points(new_p, pts, n_points+n_ends);
-        if (new_p_slot < 0) {
+        if (new_p_slot < 0) {   // point not in pts
             new_p_slot = n_points+n_ends;
-            //new_pts[new_p_slot] = new_p;     // add new point
             pts[new_p_slot] = new_p;     // add new point
         }
         d->q = new_p_slot;
-        printf("Zipped point %d,%d -> %d,%d\n", p.x, p.y, new_p.x, new_p.y);
         n_ends++;
+        if (n_ends >= n_ends_max) {
+            printf("n_ends_max %d reached.\n", n_ends_max);
+            break;
+        }
     }
 
-    if (n_ends > n_ends_max) {
-        printf("ERROR: n_ends %d exceeded n_ends_max %d\n", n_ends, n_ends_max);
-    }
     diagonals = (Diagonal*)realloc(diagonals, sizeof(Diagonal)*(n_ends+n_ind));
-    //new_pts = (Point*)realloc(new_pts, sizeof(Point)*(n_points+n_ends));
     pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends));
 
-    //free(pts);
     free(independent_set);
 
     n_diagonals = n_ind + n_ends;
-    //points = new_pts;
     points = pts;
 
     restore_saved_holes(z);
@@ -1306,11 +1300,78 @@ class Room {
 Room* rooms;
 int n_rooms = 0;
 
-void resolve_rooms() {
+inline bool is_topleft_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    if (_get(x-1,y,z) == tile) return false;
+    if (_get(x,y-1,z) == tile) return false;
+    if (_get(x-1,y-1,z) == tile) return false;
+    return true;
+}
+
+void resolve_rooms(int z, int tile) {
     rooms = (Room*)malloc(sizeof(Room) * n_diagonals);
-    int i;
+
+    int corners_max = 2048;
+    Point* corners = (Point*)malloc(sizeof(Point)*corners_max);
+    int n_corners = 0;
+
+    int i,j;
+    Point *p,*q;
+    Diagonal *d;
+
+    int bx,by;
+    int dx,dy;
+    // iterate diagonals
+    // look for bottom or right point intersection with block
     for (i=0; i<n_diagonals; i++) {
+        d = &diagonals[i];
+        p = &points[d->p];
+        q = &points[d->q];
+
+        if (p->y == q->y)        // right
+        {
+            p = (p->x < q->x) ? p : q;
+            dx = 0;
+            dy = 1;
+        }
+        else if (p->x == q->x)  // bottom
+        {
+            p = (p->y < q->y) ? p : q;
+            dx = 1;
+            dy = 0;
+        }
         
+        bx = (p->x - 1)/2;
+        by = (p->y - 1)/2;
+        if (_get(bx+1, by+1, z) == tile
+         && _get(bx+dx, by+dy, z) != tile)            // corner
+        {
+            q = &corners[n_corners++];
+            q->bx = bx+1;
+            q->by = by+1;
+            q->x = p->x;
+            q->y = p->y;
+        }
+    }
+
+    // iterate for tile patterns
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (!is_topleft_corner(i,j,z, tile)) continue;
+            // save corner
+            p = &corners[n_corners++];
+            p->bx = i;
+            p->by = j;
+            p->x = 2*i-1;
+            p->y = 2*j-1;
+        }
+    }
+
+    if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
+
+    for (i=0; i<n_corners;i++) {
+        corners[i].print();
+        _set(corners[i].bx, corners[i].by, z, 1);
     }
 
     rooms = (Room*)realloc(rooms, sizeof(Room) * n_rooms);
@@ -1354,9 +1415,11 @@ void generate() {
         //}
     //}
 
+    int z = 13;
+    int tile = 103;
     rect_solver();
 
-    resolve_rooms();
+    resolve_rooms(z, tile);
     //build_adjacency_graph();
 
     //int pattern_w = 7;
