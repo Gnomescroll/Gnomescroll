@@ -1,13 +1,14 @@
 #include "./packet_init.hpp"
 
-#include <net_lib/common/message_handler.h>
+#include <net_lib/message_handler.h>
+#include <c_lib/game/packets.hpp>
+
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/player_agent.hpp>
 
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
-#include <c_lib/game/packets.hpp>
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);

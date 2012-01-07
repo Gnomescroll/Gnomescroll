@@ -528,7 +528,8 @@ def exceptions(conf):
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
     #conf.check(lib=['fmodex'], libpath=[libp],includes=[incp])
 
-    conf.env.INCLUDES += ['./','c_lib', 'SDL', 'cube_lib', 'vox_lib', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    #'cube_lib', 'vox_lib',
+    conf.env.INCLUDES += ['./','c_lib', './c_lib/net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code

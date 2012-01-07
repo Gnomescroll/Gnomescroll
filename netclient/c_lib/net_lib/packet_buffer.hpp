@@ -81,13 +81,18 @@ class NetMessageManager
         nma_insert = NetMessageArray::acquire();
 
         nma_insert_index = 0;
-        nma_read = rnma_insert;
+        nma_read = nma_insert;
         nma_read_index = 0;
 
         pending_messages = 0;
-        pending_bytes = 0;
+        pending_bytes_out = 0;
     }
-        
+
+    void push_message(Net_message* nm);
+    void serialize_messages(char* buff_, int index);
+
+};
+
 
     void NetMessageManager::push_message(Net_message* nm) 
     {
@@ -121,17 +126,17 @@ class NetMessageManager
 
         class Net_message* nm;
 
-        for(int i=0; i < rnma_pending_messages; i++)
+        for(int i=0; i < nma_pending_messages; i++)
         {
-            nm = rnma_read->net_message_array[rnma_read_index];
+            nm = nma_read->net_message_array[nma_read_index];
 
             memcpy(buff_+index, nm->buff, nm->len);
             index += nm->len;
 
             nm->decrement_reliable(); //reference count on packet
 
-            rnma_read_index++;
-            if(rnma_read_index == NET_MESSAGE_ARRAY_SIZE)
+            nma_read_index++;
+            if(nma_read_index == NET_MESSAGE_ARRAY_SIZE)
             {
                 printf("NetMessageManager::serialize_messages, rare condition \n");
                 NetMessageArray* tmp = nma_read;
@@ -143,9 +148,9 @@ class NetMessageManager
 
         //reset to virgin state
         nma_insert_index = 0;
-        nma_read = rnma_insert;
+        nma_read = nma_insert;
         nma_read_index = 0;
 
         pending_messages = 0;
         pending_bytes = 0;
-};
+    }

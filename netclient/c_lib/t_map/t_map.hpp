@@ -35,7 +35,8 @@ struct VBO {
         int v_list_max_size;
 
         #ifdef DC_CLIENT
-            GLuint VBO_id;
+            //GLuint VBO_id;
+            int VBO_id;
         #else
             int VBO_id;
         #endif

@@ -1,14 +1,13 @@
 #pragma once
 
-#include "net_lib_common.h"
-
 //#include "./sequencer.h"
 //#include <net_lib/client/pviz.h>
 //#include <net_lib/common/sequencer.h>
+//#include <net_lib/common/python_channel.hpp>
 
 #include <net_lib/packet_buffer.hpp>
 
-//#include <net_lib/common/python_channel.hpp>
+
 
 class NetMessageArray; //forward declaration
 
@@ -33,7 +32,6 @@ struct packet_sequence2 {
 NetPeer
 */
 
-#include <packet_buffer.hpp>
 
 struct ENetPeer;
 

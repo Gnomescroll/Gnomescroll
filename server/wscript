@@ -95,7 +95,7 @@ def configure(conf):
                 #use="noise",
                 #mandatory=True)
 
-    conf.env.INCLUDES = ['.', 'c_lib', '/usr/local/include']
+    conf.env.INCLUDES = ['.', 'c_lib', './c_lib/net_lib', '/usr/local/include']
     #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 
