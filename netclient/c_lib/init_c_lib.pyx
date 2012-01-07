@@ -18,32 +18,21 @@ def close():
 
 #network stuff
 
-cdef extern from "./net_lib/client.h":
-    void _NetClientStartFrame()
-    void _NetClientStateTick()
-    void _NetClientNetInTick()
-    void _NetClientNetOutTick()
-    void _NetClientConnect(int a, int b,int c, int d, int _port)
-#   void _NetClientTick()
+cdef extern from "./net_lib/host.hpp":
+    void init_net_client()
+    void dispatch_network_events()
+    void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
-#def NetClientTick():
-#    _NetClientTick()
+def InitNetClient():
+    init_net_client()
 
-def NetClientStateTick():
-    _NetClientStateTick()
+def NetClientDispatchNetworkEvents():
+    dispatch_network_events()
 
-def NetClientNetInTick():
-    _NetClientNetInTick()
+def ClientConnectTo(int a, int b,int c, int d, unsigned short _port):
+    client_connect_to(a, b, c, d, port)
 
-def NetClientNetOutTick():
-    _NetClientNetOutTick()
 
-### The problem
-def NetClientStartFrame():
-    _NetClientStartFrame()
-
-def NetClientConnect(int a, int b,int c, int d, int _port):
-    _NetClientConnect(a,b,c,d, _port)
 
 ##timer
 

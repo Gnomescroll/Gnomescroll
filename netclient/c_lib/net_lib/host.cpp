@@ -18,7 +18,7 @@ ENetAddress address;
 
 ENetHost * enet_host = NULL;
 
-void init_server()
+void init_net_server()
 {
     
     /* Bind the server to the default localhost.     */
@@ -43,7 +43,7 @@ void init_server()
     //enet_host_destroy(server);
 }
 
-void init_client()
+void init_net_client()
 {
     enet_host = enet_host_create (NULL /* create a client host */,
                 1 /* only allow 1 outgoing connection */,

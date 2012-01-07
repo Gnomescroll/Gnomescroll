@@ -11,8 +11,8 @@ extern ENetHost * enet_host; //the host
 extern ENetHost * server_host;
 extern ENetHost * client_host;
 
-void init_server();
-void init_client();
+void init_net_server();
+void init_net_client();
 
 
 
