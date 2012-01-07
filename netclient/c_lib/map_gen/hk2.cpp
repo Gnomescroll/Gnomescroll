@@ -439,11 +439,7 @@ bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
     Point* bottom = (v1->y < v2->y) ? v1 : v2;
     Point* left = (h1->x >= h2->x) ? h1 : h2;
     Point* right = (h1->x < h2->x) ? h1 : h2;
-    //printf("%d %d %d %d\n", v1->x, v1->y, v2->x, v2->y);
-    //printf("%d %d %d %d\n", h1->x, h1->y, h2->x, h2->y);
-    //printf("\n");
-    //if (v1->x < left->x && v1->x > right->x
-     //&& h1->y < top->y  && h1->y > bottom->y) return true;
+
     if (v1->x <= left->x && v1->x >= right->x
      && h1->y <= top->y  && h1->y >= bottom->y) return true;
     return false;
@@ -458,6 +454,27 @@ void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, 
         for (j=0; j<h_ct; j++) {
             q1 = &p[h[j].p];
             q2 = &p[h[j].q];
+            if (orthogonal_intersection(p1, p2, q1, q2)) {
+                in[index].dh = j;
+                in[index].dv = i;
+                index++;
+            }
+        }
+    }
+    *i_ct = index;
+    printf("%d intersections found\n", index);
+}
+
+void find_intersections(Point* p, Diagonal* d, int d_ct, int h_ct, Intersection* in, int* i_ct) {
+    int i,j;
+    int index = 0;
+    Point *p1, *p2, *q1, *q2;
+    for (i=h_ct; i<d_ct; i++) {
+        p1 = &p[d[i].p];
+        p2 = &p[d[i].q];
+        for (j=0; j<h_ct; j++) {
+            q1 = &p[d[j].p];
+            q2 = &p[d[j].q];
             if (orthogonal_intersection(p1, p2, q1, q2)) {
                 in[index].dh = j;
                 in[index].dv = i;

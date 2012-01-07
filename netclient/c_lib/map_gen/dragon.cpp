@@ -1002,6 +1002,7 @@ void restore_saved_holes(int z) {
 Point *points;
 Diagonal* diagonals;
 int n_diagonals;
+int n_horizontals;
 
 inline bool point_in_set(Point p, Diagonal* loose_ends, int n_ends, Point* pts) {
     int i;
@@ -1118,6 +1119,31 @@ void renumber_v_diagonals(Diagonal *v_diagonals, int v_diag_ct, Point* pts2, Poi
     }
 }
 
+void swap_diag(Diagonal *a, Diagonal *b)
+{
+  Diagonal t=*a; *a=*b; *b=t;
+}
+void quicksort_diagonals_HV(Diagonal* d, Point* p, int beg, int end)
+{
+    bool is_h = false;
+  if (end > beg + 1)
+  {
+    Diagonal diag = d[beg];
+    if (p[diag.p].y == p[diag.q].y) is_h = true;
+    int l = beg + 1, r = end;
+    while (l < r)
+    {
+      if (p[d[l].p].y == p[d[l].q].y && !is_h)
+        l++;
+      else
+        swap_diag(&d[l], &d[--r]);
+    }
+    swap_diag(&d[--l], &d[beg]);
+    quicksort_diagonals_HV(d, p, beg, l);
+    quicksort_diagonals_HV(d, p, r, end);
+  }
+}
+
 void rect_solver() {
     int z = 13;
     int tile = 103; // solar panel
@@ -1216,6 +1242,8 @@ void rect_solver() {
             diagonals[i] = v_diagonals[index-h_diag_ct];
         }
     }
+
+    free(independent_set);
     
     pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends_max));
     int n_ends = 0;
@@ -1242,13 +1270,26 @@ void rect_solver() {
         }
     }
 
-    diagonals = (Diagonal*)realloc(diagonals, sizeof(Diagonal)*(n_ends+n_ind));
     pts = (Point*)realloc(pts, sizeof(Point)*(n_points+n_ends));
-
-    free(independent_set);
+    points = pts;
 
     n_diagonals = n_ind + n_ends;
-    points = pts;
+    diagonals = (Diagonal*)realloc(diagonals, sizeof(Diagonal)*n_diagonals);
+
+    // sort diagonals by horizontal-vertical
+    // save h_diag_ct;
+    quicksort_diagonals_HV(diagonals, points, 0, n_diagonals);
+    n_horizontals = 0;
+    Point *pp, *qq;
+    for (i=0; i<n_diagonals; i++) {
+        pp = &points[diagonals[i].p];
+        qq = &points[diagonals[i].q];
+        if (pp->x == qq->x) // reached verticals
+        {
+            n_horizontals = i-1;
+            break;
+        }
+    }
 
     restore_saved_holes(z);
 }
@@ -1259,6 +1300,7 @@ void draw() {
     Diagonal d;
     int z = 14;
     for (i=0; i<n_diagonals; i++) {
+    //for (i=0; i<n_horizontals; i++) {
         d = diagonals[i];
         p = &points[d.p];
         q = &points[d.q];
@@ -1365,6 +1407,41 @@ void resolve_rooms(int z, int tile) {
             p->x = 2*i-1;
             p->y = 2*j-1;
         }
+    }
+
+    // find all intersections between diagonals (endpoint inclusive)
+    int intersect_max = (n_horizontals)*(n_diagonals-n_horizontals);
+    int i_ct = 0;
+    Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*intersect_max);    
+    find_intersections(points, diagonals, n_diagonals, n_horizontals, intersections, &i_ct);
+    intersections = (Intersection*)realloc(intersections, sizeof(Intersection)*i_ct);
+
+    Intersection* in;
+    Diagonal *e;
+    Point *top,*bottom,*left,*right;
+    int x,y;
+    for (i=0; i<i_ct; i++) {
+        in = &intersections[i];
+
+        d = &diagonals[in->dh];
+        e = &diagonals[in->dv];
+
+        left = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
+        right = (points[d->p].x < points[d->q].x) ? &points[d->p] : &points[d->q];
+        top = (points[e->p].y > points[e->q].y) ? &points[e->p] : &points[e->q];
+        bottom = (points[e->p].y < points[e->q].y) ? &points[e->p] : &points[e->q];
+
+        if (top->y-left->y < 1) continue;
+        if (left->x-top->x < 1) continue;
+
+        x = top->x;
+        y = left->y;
+
+        p = &corners[n_corners++];
+        p->x = x;
+        p->y = y;
+        p->bx = (x-1)/2 + 1;
+        p->by = (y-1)/2 + 1;
     }
 
     if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
