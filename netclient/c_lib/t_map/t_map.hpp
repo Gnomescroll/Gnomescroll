@@ -2,7 +2,6 @@
 
 
 #include <compat.h>
-#include <compat_gl.h>
 
 #include <c_lib/common/functional.h>
 

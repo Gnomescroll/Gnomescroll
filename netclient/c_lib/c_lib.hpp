@@ -1,7 +1,5 @@
 #pragma once
 
-    #include "compat.h"
-    #include "compat_gl.h"
 
     int init_c_lib();
     void close_c_lib();

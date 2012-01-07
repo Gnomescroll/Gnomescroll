@@ -9,6 +9,16 @@
 
 #include <c_lib.hpp>
 
+
+/* Network */
+#include <net_lib/net_lib.h>
+
+
+/* Graphics */
+#include "compat.h"
+#include "compat_gl.h"
+
+
 #include <defines.h>
 
 /* Vectors, Ray Tracers, Physics */
@@ -48,9 +58,6 @@
 /* map */
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.c>
-
-/* Network */
-#include <net_lib/net_lib.h>
 
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+#include <compat_gl.h>
 
 //#include "./t_inline.c"
 //globals
