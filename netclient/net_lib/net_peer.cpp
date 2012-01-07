@@ -2,15 +2,13 @@
 
 //#include <sys/types.h>
 
-#include <net_lib/enet/enet.h>
-
 #define NET_PEER_DEBUG 1
 
 NetPeer::NetPeer() 
 {
     connected = 0;
     client_id = -1;
-    peer = NULL;
+    enet_peer = NULL;
 
 }
 
@@ -46,22 +44,22 @@ void NetPeer::flush_to_net()
 
     if(reliable_message_manager.pending_messages != 0) 
     {
-        ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes, ENET_PACKET_FLAG_RELIABLE);
-        reliable_message_manager.serialize_messages( reliable_p->data, 0);
+        ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
+        reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0);
         enet_peer_send (enet_peer, 0, reliable_p);
     }
 
     if(unreliable_message_manager.pending_messages != 0) 
     {
-        ENetPacket* unreliable_p = enet_packet_create(NULL, unreliable_message_manager.pending_bytes, ENET_PACKET_FLAG_RELIABLE);
-        unreliable_message_manager.serialize_messages( unreliable_p->data, 0);
+        ENetPacket* unreliable_p = enet_packet_create(NULL, unreliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
+        unreliable_message_manager.serialize_messages( (char*)unreliable_p->data, 0);
         enet_peer_send (enet_peer, 0, unreliable_p);
     }
 
     if(python_message_manager.pending_messages != 0) 
     {
-        ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes, ENET_PACKET_FLAG_RELIABLE);
-        reliable_message_manager.serialize_messages( python_p->data, 0);
+        ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
+        reliable_message_manager.serialize_messages( (char*)python_p->data, 0);
         enet_peer_send (enet_peer, 2, python_p);
     }
 

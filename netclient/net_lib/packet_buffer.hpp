@@ -2,6 +2,8 @@
 
 #include <c_lib/template/object_pool.hpp>
 
+#include <string.h>
+
 /*
 NetMessage Array
 */

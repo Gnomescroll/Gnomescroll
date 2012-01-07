@@ -7,7 +7,7 @@
 
 #include <net_lib/packet_buffer.hpp>
 
-
+#include <net_lib/enet/enet.h>
 
 class NetMessageArray; //forward declaration
 
@@ -33,7 +33,7 @@ NetPeer
 */
 
 
-struct ENetPeer;
+//struct ENetPeer;
 
 class NetPeer
 {
@@ -43,7 +43,7 @@ class NetPeer
     int client_id;
     int connected;
     
-    ENetPeer *  peer;
+    ENetPeer *  enet_peer;
 
     //uint32_t ip;
     //uint16_t port;

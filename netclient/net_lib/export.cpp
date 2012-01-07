@@ -1,5 +1,7 @@
 #include "export.hpp"
 
+#include <net_lib/global.hpp>
+
 //typedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id);
 PY_MESSAGE_CALLBACK PY_MESSAGE_CALLBACK_GLOBAL = NULL;
 
