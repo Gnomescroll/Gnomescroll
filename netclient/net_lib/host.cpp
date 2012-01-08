@@ -114,7 +114,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     }
 
     printf("Client is connected to server \n");
-    client.connected = 1;
+    NetClient::Server.connected = 1;
 }
 
 
@@ -149,7 +149,8 @@ void dispatch_network_events()
                     event.peer -> address.host,
                     event.peer -> address.port);
             /* Store any relevant client information here. */
-            event.peer -> data = "Client information";
+            //event.peer -> data = "Client information";
+            event.peer -> data = NULL;
             break;
 
         //handle disconnect
