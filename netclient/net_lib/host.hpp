@@ -4,7 +4,7 @@ void init_network();
 
 struct _ENetHost;
 
-extern struct _ENetHost* enet_host; //the host
+//extern struct _ENetHost* enet_host; //the host
 
 //extern ENetAddress address;
 extern struct _ENetHost* server_host;

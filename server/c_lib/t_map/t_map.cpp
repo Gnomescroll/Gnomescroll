@@ -7,7 +7,10 @@
 #include <stdlib.h>
 
 #include <c_lib/common/functional.h>
-#include <net_lib/net.hpp>
+
+#include <t_map/t_map_net.hpp>
+
+//#include <net_lib/net.hpp>
 
 /*
     Non-networking

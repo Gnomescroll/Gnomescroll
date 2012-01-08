@@ -69,7 +69,7 @@ def configure(conf):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
-    extra_options = [ '-fno-exceptions', '-Winline'] #'-fstrict-aliasing'
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch'] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
         conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
@@ -456,7 +456,7 @@ def exceptions(conf):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
-    extra_options = [ '-Winline']
+    extra_options = [ '-Winline', '-Wno-switch-enum', '-Wno-switch']
     #extra_options = ['-Winline']
     if OS == 'Windows':
         conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)

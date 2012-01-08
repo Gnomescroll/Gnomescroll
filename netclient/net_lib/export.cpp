@@ -53,7 +53,13 @@ void send_python_net_message(char* message, int length, int client_id)
             printf("send_python_net_message: client_id % is null\n", client_id);
             return;
         }
-        NetServer::pool[client_id]->write_python_packet(message, length);
+        
+        printf("send_python_net_message: export.cpp, need to create a net message packet... \n");
+
+        /*
+            Check message size and if it is large enough, send as fragment
+        */
+        //NetServer::pool[client_id]->push_python_message(message, length);
     #endif    
 
 }

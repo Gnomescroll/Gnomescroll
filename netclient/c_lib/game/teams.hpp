@@ -3,6 +3,7 @@
 #include <c_lib/game/game.hpp>
 #include <c_lib/items/flag.hpp>
 #include <c_lib/items/base.hpp>
+
 const int TEAM_NAME_MAX_LENGTH = 31;
 const int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;
 

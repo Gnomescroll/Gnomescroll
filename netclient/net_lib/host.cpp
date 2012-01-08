@@ -74,7 +74,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
     ENetPeer *peer;
 
-    if (enet_host == NULL)
+    if (client_host == NULL)
     {
         fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
         exit (EXIT_FAILURE);
@@ -94,7 +94,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     
     ENetEvent event;
     /* Wait up to 5 seconds for the connection attempt to succeed. */
-    if (enet_host_service (enet_host, & event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+    if (enet_host_service (client_host, & event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
     {
         printf("Client connected with server \n");
         NetClient::Server.enet_peer = peer;
@@ -155,16 +155,16 @@ void dispatch_network_events()
 
         //handle disconnect
         case ENET_EVENT_TYPE_DISCONNECT:
-            printf ("%s disconected.\n", event.peer -> data);
+            printf ("%s disconected.\n", (char*) event.peer -> data);
             /* Reset the peer's client information. */
             event.peer -> data = NULL;
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
-            printf ("A packet of length %u containing %s was received from %s on channel %u.\n",
+            printf ("A packet of length %u channel %u.\n",
                     event.packet -> dataLength,
-                    event.packet -> data,
-                    event.peer -> data,
+                    //(char*) event.packet -> data,
+                    //(event.peer -> data,
                     event.channelID);
             /* Clean up the packet now that we're done using it. */
             enet_packet_destroy (event.packet);

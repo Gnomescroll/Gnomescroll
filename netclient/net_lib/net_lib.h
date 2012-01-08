@@ -1,23 +1,39 @@
 #pragma once
 
+//enet
 
-#include <c_lib/time/physics_timer.c>
+#define HAS_POLL
+#define HAS_MSGHDR_FLAGS
+#define HAS_SOCKLEN_T
+#define HAS_FCNTL
+
+#include <enet/callbacks.c>
+#include <enet/compress.c>
+#include <enet/host.c>
+#include <enet/list.c>
+#include <enet/packet.c>
+#include <enet/peer.c>
+#include <enet/protocol.c>
+
+#ifdef _WIN32
+    #include <enet/win32.c>
+#else 
+    #include <enet/unix.c>
+#endif
 
 
+//stuff
 
 #include <net_lib/host.cpp>
-
 #include <net_lib/export.cpp>
-
+#include <net_lib/global.cpp>
 #include <net_lib/net_peer.cpp>
-//#include <net_lib/common/sequencer.c>
-
 #include <net_lib/packet_buffer.cpp>
+#include <net_lib/message_handler.c>
 
 #include <net_lib/net.cpp>
 
-#include <net_lib/message_handler.c>
-
+//#include <net_lib/common/sequencer.c>
 
 //#include <net_lib/common/python_channel.cpp>
 

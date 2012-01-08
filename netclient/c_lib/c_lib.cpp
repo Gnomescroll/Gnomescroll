@@ -18,8 +18,10 @@
 #include "compat.h"
 #include "compat_gl.h"
 
-
 #include <defines.h>
+
+//utility
+#include <c_lib/time/physics_timer.c>
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vector.cpp>
@@ -70,6 +72,7 @@
     #include <c_lib/skybox/skybox.cpp>
 
     /* SDL */
+    #include <c_lib/SDL/shader_loader.cpp>
     #include <c_lib/SDL/texture_loader.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
