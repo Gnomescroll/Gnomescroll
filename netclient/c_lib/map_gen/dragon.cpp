@@ -1000,6 +1000,7 @@ void restore_saved_holes(int z) {
 }
 
 Point *points;
+int n_points;
 Diagonal* diagonals;
 int n_diagonals;
 int n_horizontals;
@@ -1165,10 +1166,12 @@ void rect_solver() {
         pts[i].by = 0;
     }
 
-    int n_points=0;
+    n_points=0;
     get_convex_vertices(z, tile, pts, vertex_max, &n_points);
     if (n_points > vertex_max) printf("ERROR: n_points %d exceeds vertex_max %d\n", n_points, vertex_max);
     printf("Got %d vertices\n", n_points);
+
+    if (!n_points) return;
 
     pts = (Point*)realloc(pts, sizeof(Point)*n_points);
     Point* pts2 = (Point*)malloc(sizeof(Point)*n_points);
@@ -1441,6 +1444,8 @@ inline bool is_horizontal_line_segment(int lx, int ly, int rx, int ry, Point* po
 }
 
 void resolve_rooms(int z, int tile) {
+
+    if (!n_points) return;
 
     int corners_max = 2048;
     corners = (Point*)malloc(sizeof(Point)*corners_max);
@@ -1732,11 +1737,11 @@ void resolve_rooms(int z, int tile) {
     rooms = (Room*)realloc(rooms, sizeof(Room)*n_rooms);
 
     int _tile = 0;
-    int tiles[6] = { 1, 4,5,7,11,100};
+    int tiles[8] = { 1, 4,5,7,11,100,102,190};
     for (i=0; i<n_rooms; i++) {
         rooms[i].draw(z, tiles[_tile]);
         _tile++;
-        _tile%=6;
+        _tile%=8;
     }
 
 }
