@@ -1,11 +1,11 @@
-#pragma once
 /**
  @file  protocol.h
  @brief ENet protocol
 */
+#ifndef __ENET_PROTOCOL_H__
+#define __ENET_PROTOCOL_H__
 
-
-#include <enet/types.h>
+#include "enet/types.h"
 
 enum
 {
@@ -192,3 +192,6 @@ typedef union _ENetProtocol
 #ifdef _MSC_VER_
 #pragma pack(pop)
 #endif
+
+#endif /* __ENET_PROTOCOL_H__ */
+

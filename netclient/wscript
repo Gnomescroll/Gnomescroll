@@ -141,7 +141,7 @@ def configure(conf):
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
 
     #'cube_lib',
-    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', 'net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
     
 def build(bld):
@@ -530,7 +530,7 @@ def exceptions(conf):
     #conf.check(lib=['fmodex'], libpath=[libp],includes=[incp])
 
     #'cube_lib', 'vox_lib',
-    conf.env.INCLUDES += ['./','c_lib', './c_lib/net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
+    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', 'net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
 
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code

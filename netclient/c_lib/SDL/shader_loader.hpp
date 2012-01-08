@@ -3,8 +3,8 @@
 
 
 
-static char *textFileRead(char *fn);
+char *textFileRead(char *fn);
 
 //info log print
-static void printShaderInfoLog(GLuint obj);
-static void printProgramInfoLog(GLuint obj);
+void printShaderInfoLog(GLuint obj);
+void printProgramInfoLog(GLuint obj);

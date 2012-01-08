@@ -1,15 +1,14 @@
 #pragma once
 
-
-struct ENetHost;
-
 void init_network();
 
-extern ENetHost * enet_host; //the host
+struct _ENetHost;
+
+extern struct _ENetHost* enet_host; //the host
 
 //extern ENetAddress address;
-extern ENetHost * server_host;
-extern ENetHost * client_host;
+extern struct _ENetHost* server_host;
+extern struct _ENetHost* client_host;
 
 void init_net_server();
 void init_net_client();

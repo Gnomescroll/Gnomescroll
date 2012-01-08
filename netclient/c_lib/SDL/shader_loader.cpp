@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static char *textFileRead(char *fn) {
+char *textFileRead(char *fn) {
     FILE *fp;
     char *content = NULL;
 
@@ -37,7 +37,7 @@ static char *textFileRead(char *fn) {
 }
 
 //info log print
-static void printShaderInfoLog(GLuint obj)
+void printShaderInfoLog(GLuint obj)
 {
     int infologLength = 0;
     int charsWritten  = 0;
@@ -54,7 +54,7 @@ static void printShaderInfoLog(GLuint obj)
     }
 }
 
-static void printProgramInfoLog(GLuint obj)
+void printProgramInfoLog(GLuint obj)
 {
     int infologLength = 0;
     int charsWritten  = 0;

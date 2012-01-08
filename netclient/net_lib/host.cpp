@@ -2,12 +2,18 @@
 
 #include <net_lib/enet/enet.h>
 
+#include <net_lib/global.hpp>
+
+//struct _ENetHost* enet_host; //the host
+struct _ENetHost* server_host;
+struct _ENetHost* client_host;
+
 void init_network()
 {
     if (enet_initialize () != 0)
     {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
-        return EXIT_FAILURE;
+        return;
     }
     atexit (enet_deinitialize);
 }
@@ -16,7 +22,7 @@ ENetAddress address;
 //ENetHost * server_host = NULL;
 //ENetHost * client_host = NULL;
 
-ENetHost * enet_host = NULL;
+//ENetHost * enet_host = NULL;
 
 void init_net_server()
 {
@@ -29,12 +35,12 @@ void init_net_server()
     /* Bind the server to port 1234. */
     address.port = 8011;
 
-    enet_host = enet_host_create (& address /* the address to bind the server host to */, 
+    server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,
                                   4      /* allow up to 4 channels to be used*/,
                                   0      /* assume any amount of incoming bandwidth */,
                                   0      /* assume any amount of outgoing bandwidth */);
-    if (server == NULL)
+    if (server_host == NULL)
     {
         fprintf (stderr, 
                  "An error occurred while trying to create an ENet server host.\n");
@@ -45,13 +51,13 @@ void init_net_server()
 
 void init_net_client()
 {
-    enet_host = enet_host_create (NULL /* create a client host */,
+    client_host = enet_host_create (NULL /* create a client host */,
                 1 /* only allow 1 outgoing connection */,
                 4 /* allow up 4 channels*/,
                 65536 /* 56K modem with 56 Kbps downstream bandwidth */,
                 65536 /* 56K modem with 14 Kbps upstream bandwidth */);
 
-    if (client == NULL)
+    if (client_host == NULL)
     {
         fprintf (stderr, 
                  "An error occurred while trying to create an ENet client host.\n");
@@ -66,6 +72,8 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 {
     printf("connect_to: attempting connection with server \n");
 
+    ENetPeer *peer;
+
     if (enet_host == NULL)
     {
         fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
@@ -76,7 +84,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
-    peer = enet_host_connect (enet_host, & address, 4, 0);    
+    peer = enet_host_connect (client_host, & address, 4, 0);    
     
     if (peer == NULL)
     {
@@ -89,8 +97,9 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     if (enet_host_service (enet_host, & event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
     {
         printf("Client connected with server \n");
-        client.peer = peer;
-        peer -> data = (void*) &client;
+        NetClient::Server.enet_peer = peer;
+        peer -> data = (void*) &NetClient::Server.enet_peer;
+        //NetClient::Server.connected = 0;
     }
     else
     {
@@ -98,9 +107,10 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         /* received. Reset the peer in the event the 5 seconds   */
         /* had run out without any significant event.            */
         enet_peer_reset (peer);
-        client.peer = NULL;
+        NetClient::Server.enet_peer = NULL;
+        NetClient::Server.connected = 0;
 
-        puts ("connection to some.server.net:1234 failed.");
+        puts ("client_connect_to: connection attempt failed \n");
     }
 
     printf("Client is connected to server \n");
@@ -114,7 +124,12 @@ void dispatch_network_events()
     ENetEvent event;
     
     /* Wait up to 5 milliseconds for an event. */
-    while (enet_host_service (enet_host, & event, 5) > 0)
+
+    #ifdef DC_CLIENT
+        while (enet_host_service (client_host, & event, 5) > 0)
+    #else
+        while (enet_host_service (server_host, & event, 5) > 0)
+    #endif
     {
         switch (event.type)
         {

@@ -11,6 +11,7 @@ typedef void (*pt2handler)(char*, int, int*, int);
 */
 
 
+/*
 template <class Derived>
 void FixedSizeNetPacketToServer<Derived>::serialize(char* buff, int* buff_n) 
 { 
@@ -18,7 +19,7 @@ void FixedSizeNetPacketToServer<Derived>::serialize(char* buff, int* buff_n)
     //int _buff_n = *buff_n;
     pack_message_id(Derived::message_id, buff, buff_n, true);
     packet(buff, buff_n, true);
-    //*size = *buff_n - _buff_n;
+    // *size = *buff_n - _buff_n;
 }
 
 template <class Derived>     
@@ -64,5 +65,5 @@ void FixedSizeNetPacketToServer<Derived>::register_server_packet()
 }
 
 
-
+*/
 //template <typename T> int Base<T>::staticVar(0);

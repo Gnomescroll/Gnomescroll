@@ -1,9 +1,9 @@
-#pragma once
 /** 
  @file  enet.h
  @brief ENet public header file
 */
-
+#ifndef __ENET_ENET_H__
+#define __ENET_ENET_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -13,15 +13,15 @@ extern "C"
 #include <stdlib.h>
 
 #ifdef WIN32
-#include <enet/win32.h>
+#include "enet/win32.h"
 #else
-#include <enet/unix.h>
+#include "enet/unix.h"
 #endif
 
-#include <enet/types.h>
-#include <enet/protocol.h>
-#include <enet/list.h>
-#include <enet/callbacks.h>
+#include "enet/types.h"
+#include "enet/protocol.h"
+#include "enet/list.h"
+#include "enet/callbacks.h"
 
 #define ENET_VERSION_MAJOR 1
 #define ENET_VERSION_MINOR 3
