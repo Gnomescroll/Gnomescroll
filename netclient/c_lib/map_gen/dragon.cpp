@@ -1006,6 +1006,7 @@ int n_diagonals;
 int n_horizontals;
 
 Point *corners;
+int n_bottom_corners;
 int n_corners;
 
 inline bool point_in_set(Point p, Diagonal* loose_ends, int n_ends, Point* pts) {
@@ -1022,6 +1023,13 @@ inline int point_in_points(Point p, Point* pts, int points) {
     int i;
     for (i=0; i<points; i++) {
         if (pts[i] == p) return i;
+    }
+    return -1;
+}
+inline int point_in_points_both(Point p, Point* pts, int points) {
+    int i;
+    for (i=0; i<points; i++) {
+        if (pts[i] == p && pts[i].bx == p.bx && pts[i].by == p.by) return i;
     }
     return -1;
 }
@@ -1315,14 +1323,14 @@ class Room {
     }
 
     void draw(int z, int tile) {
-        int i,j=y;
-        for (i=x; i<x+w; i++) {
+        int i,j;
+        for (i=x-w; i<x; i++) {
             for (j=y; j<y+h; j++) {
                 _set(i,j,z,tile);
             }
         }
-        printf("drew ");
-        print();
+        //printf("drew ");
+        //print();
     }
 
     void print() {
@@ -1340,30 +1348,30 @@ int n_rooms = 0;
 
 inline bool is_topleft_corner(int x, int y, int z, int tile) {
     if (_get(x,y,z) != tile) return false;
-    if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y-1,z) == tile) return false;
-    if (_get(x-1,y-1,z) == tile) return false;
-    return true;
-}
-inline bool is_topright_corner(int x, int y, int z, int tile) {
-    if (_get(x,y,z) != tile) return false;
     if (_get(x+1,y,z) == tile) return false;
     if (_get(x,y-1,z) == tile) return false;
     if (_get(x+1,y-1,z) == tile) return false;
     return true;
 }
-inline bool is_bottomleft_corner(int x, int y, int z, int tile) {
+inline bool is_topright_corner(int x, int y, int z, int tile) {
     if (_get(x,y,z) != tile) return false;
     if (_get(x-1,y,z) == tile) return false;
-    if (_get(x,y+1,z) == tile) return false;
-    if (_get(x-1,y+1,z) == tile) return false;
+    if (_get(x,y-1,z) == tile) return false;
+    if (_get(x-1,y-1,z) == tile) return false;
     return true;
 }
-inline bool is_bottomright_corner(int x, int y, int z, int tile) {
+inline bool is_bottomleft_corner(int x, int y, int z, int tile) {
     if (_get(x,y,z) != tile) return false;
     if (_get(x+1,y,z) == tile) return false;
     if (_get(x,y+1,z) == tile) return false;
     if (_get(x+1,y+1,z) == tile) return false;
+    return true;
+}
+inline bool is_bottomright_corner(int x, int y, int z, int tile) {
+    if (_get(x,y,z) != tile) return false;
+    if (_get(x-1,y,z) == tile) return false;
+    if (_get(x,y+1,z) == tile) return false;
+    if (_get(x-1,y+1,z) == tile) return false;
     return true;
 }
 inline bool is_corner(int x, int y, int z, int tile) {
@@ -1450,7 +1458,7 @@ void resolve_rooms(int z, int tile) {
     int corners_max = 2048;
     corners = (Point*)malloc(sizeof(Point)*corners_max);
     n_corners = 0;
-    int n_bottom_corners = 0;
+    n_bottom_corners = 0;
 
     int i,j;
     Point *p,*q;
@@ -1459,47 +1467,55 @@ void resolve_rooms(int z, int tile) {
     int bx,by;
     int dx,dy;
     // iterate diagonals
-    // look for bottom or right point intersection with block
+    // look for bottom or left point intersection with block
     for (i=0; i<n_diagonals; i++) {
         d = &diagonals[i];
         p = &points[d->p];
         q = &points[d->q];
 
-        if (p->y == q->y)        // right
+        if (p->y == q->y)        // left
         {
-            p = (p->x < q->x) ? p : q;
-            dx = 0;
-            dy = 1;
+            p = (p->x > q->x) ? p : q;
+            bx = (p->x - 1)/2;
+            by = (p->y - 1)/2;
+            if (_get(bx, by+1, z) == tile
+             && _get(bx+1, by+1, z) != tile)            // corner
+            {
+                q = &corners[n_corners++];
+                q->bx = bx;
+                q->by = by+1;
+                q->x = p->x;
+                q->y = p->y;
+            }
         }
         else if (p->x == q->x)  // bottom
         {
             p = (p->y < q->y) ? p : q;
-            dx = 1;
-            dy = 0;
+            bx = (p->x - 1)/2;
+            by = (p->y - 1)/2;
+            if (_get(bx, by+1, z) == tile
+             && _get(bx, by, z) != tile)            // corner
+            {
+                q = &corners[n_corners++];
+                q->bx = bx;
+                q->by = by+1;
+                q->x = p->x;
+                q->y = p->y;
+            }
         }
         
-        bx = (p->x - 1)/2;
-        by = (p->y - 1)/2;
-        if (_get(bx+1, by+1, z) == tile
-         && _get(bx+dx, by+dy, z) != tile)            // corner
-        {
-            q = &corners[n_corners++];
-            q->bx = bx+1;
-            q->by = by+1;
-            q->x = p->x;
-            q->y = p->y;
-        }
     }
 
     // iterate for tile patterns
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
             if (!is_topleft_corner(i,j,z, tile)) continue;
+            //if (!is_bottomleft_corner(i,j,z, tile)) continue;
             // save corner
             p = &corners[n_corners++];
             p->bx = i;
             p->by = j;
-            p->x = 2*i-1;
+            p->x = 2*i+1;
             p->y = 2*j-1;
         }
     }
@@ -1514,6 +1530,7 @@ void resolve_rooms(int z, int tile) {
     Intersection* in;
     Diagonal *e;
     Point *top,*left;
+    Point *right,*bottom;
     int x,y;
     for (i=0; i<i_ct; i++) {
         in = &intersections[i];
@@ -1521,19 +1538,23 @@ void resolve_rooms(int z, int tile) {
         d = &diagonals[in->dh];
         e = &diagonals[in->dv];
 
-        left = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
+        //left = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
         top = (points[e->p].y > points[e->q].y) ? &points[e->p] : &points[e->q];
+        right = (points[d->p].x < points[d->q].x) ? &points[d->p] : &points[d->q];
+        //bottom = (points[e->p].y < points[e->q].y) ? &points[e->p] : &points[e->q];
 
-        if (top->y-left->y < 1) continue;
-        if (left->x-top->x < 1) continue;
+        if (top->y - right->y < 2) continue;
+        if (top->x - right->x < 2) continue;
 
         x = top->x;
-        y = left->y;
+        //y = left->y;
+        y = right->y;
 
         p = &corners[n_corners++];
         p->x = x;
         p->y = y;
-        p->bx = (x-1)/2 + 1;
+        //p->bx = (x-1)/2 + 1;
+        p->bx = (x-1)/2;
         p->by = (y-1)/2 + 1;
     }
 
@@ -1554,11 +1575,122 @@ void resolve_rooms(int z, int tile) {
         qq.x = points[e->p].x;
         qq.y = points[d->p].y;
 
-        if (point_in_points(qq, corners, n_corners) < 0) {
+        // intersection, but not endpoint inclusive. 4way intersection
+        if (orthogonal_intersection(&points[e->p], &points[e->q], &points[d->p], &points[d->q])) {
+            
+            qq.bx = (qq.x-1)/2;
+            qq.by = (qq.y-1)/2;
             p = &corners[n_corners++];
             p->x = qq.x;
             p->y = qq.y;
+            p->bx = qq.bx;
+            p->by = qq.by;
+
+            qq.bx = (qq.x-1)/2+1;
+            qq.by = (qq.y-1)/2;
+            p = &corners[n_corners++];
+            p->x = qq.x;
+            p->y = qq.y;
+            p->bx = qq.bx;
+            p->by = qq.by;
+
+            qq.bx = (qq.x-1)/2+1;
+            qq.by = (qq.y-1)/2+1;
+            p = &corners[n_corners++];
+            p->x = qq.x;
+            p->y = qq.y;
+            p->bx = qq.bx;
+            p->by = qq.by;
+            
+        } else {    // endpoint intersects
+
+            right = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
+            left = (points[d->p].x < points[d->q].x) ? &points[d->p] : &points[d->q];
+            top = (points[e->p].y > points[e->q].y) ? &points[e->p] : &points[e->q];
+            bottom = (points[e->p].y < points[e->q].y) ? &points[e->p] : &points[e->q];
+
+            bool right_edge = false;
+            bool left_edge = false;
+            bool top_edge = false;
+            bool bottom_edge = false;
+
+            if (right->x == top->x) left_edge = true;   // -|
+            else
+            if (left->x == top->x) right_edge = true;   // |-
+            else
+            if (top->y == left->y) bottom_edge = true;  // T
+            else
+            if (bottom->y == left->y) top_edge = true;  // ⟂
+
+            if (!(left_edge || right_edge || top_edge || bottom_edge)) {
+                left->print();
+                right->print();
+                top->print();
+                bottom->print();
+                printf("WTF\n");
+            }
+
+            if (left_edge) { // -|
+                //printf("left edge\n");
+                qq.bx = (qq.x-1)/2;
+                qq.by = (qq.y-1)/2;
+                //_set(qq.bx, qq.by, z, 1);
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+            }
+            else
+            if (right_edge) { // |-
+                qq.bx = (qq.x-1)/2+1;
+                qq.by = (qq.y-1)/2+1;
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+
+                qq.bx = (qq.x-1)/2+1;
+                qq.by = (qq.y-1)/2;
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+            }
+            else
+            if (bottom_edge) {  // T
+                qq.bx = (qq.x-1)/2;
+                qq.by = (qq.y-1)/2;
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+
+                qq.bx = (qq.x-1)/2+1;
+                qq.by = (qq.y-1)/2;
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+            }
+            else
+            if (top_edge) {     // ⟂
+                qq.bx = (qq.x-1)/2+1;
+                qq.by = (qq.y-1)/2+1;
+                p = &corners[n_corners++];
+                p->x = qq.x;
+                p->y = qq.y;
+                p->bx = qq.bx;
+                p->by = qq.by;
+            }
+
         }
+
+        
     }
 
     free(intersections);
@@ -1572,26 +1704,25 @@ void resolve_rooms(int z, int tile) {
                 p = &corners[n_corners++];
                 p->bx = i;
                 p->by = j;
-                p->x = 2*i+1;
+                p->x = 2*i-1;
                 p->y = 2*j-1;
             } else if (is_bottomright_corner(i,j,z,tile)) {
                 p = &corners[n_corners++];
                 p->bx = i;
                 p->by = j;
-                p->x = 2*i+1;
+                p->x = 2*i-1;
                 p->y = 2*j+1;
             } else if (is_bottomleft_corner(i,j,z,tile)) {
                 p = &corners[n_corners++];
                 p->bx = i;
                 p->by = j;
-                p->x = 2*i-1;
+                p->x = 2*i+1;
                 p->y = 2*j+1;
             }
         }
     }
 
     //// diagonal-wall patterns
-    Point *right,*bottom;
     Point *pp;
     for (i=0; i<n_diagonals; i++) {
         d = &diagonals[i];
@@ -1599,61 +1730,64 @@ void resolve_rooms(int z, int tile) {
         q = &points[d->q];
 
         if (i < n_horizontals) {
-            left = (p->x < q->x) ? q : p;
-            right = (p->x > q->x) ? q : p;
+            right = (p->x > q->x) ? p : q;
+            left = (p->x < q->x) ? p : q;
 
+            //      |-
             bx = (left->x - 1)/2;
             by = (left->y - 1)/2;
-            if (_get(bx, by, z) == tile
-             && _get(bx+1, by, z) != tile)            // corner
+            if (_get(bx+1, by, z) == tile
+             && _get(bx, by, z) != tile)
             {
                 pp = &corners[n_corners++];
-                pp->bx = bx;
+                pp->bx = bx+1;
                 pp->by = by;
                 pp->x = left->x;
                 pp->y = left->y;
             }
 
-            if (_get(bx, by+1, z) == tile
-             && _get(bx+1, by+1, z) != tile)            // corner
+            if (_get(bx+1, by+1, z) == tile
+             && _get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
-                pp->bx = bx;
+                pp->bx = bx+1;
                 pp->by = by+1;
                 pp->x = left->x;
                 pp->y = left->y;
             }
 
+            //      -|
             bx = (right->x - 1)/2;
             by = (right->y - 1)/2;
-            if (_get(bx+1, by, z) == tile
-             && _get(bx, by, z) != tile)            // corner
+            if (_get(bx, by, z) == tile
+             && _get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
-                pp->bx = bx+1;
+                pp->bx = bx;
                 pp->by = by;
                 pp->x = right->x;
                 pp->y = right->y;
             }
 
         } else {
-            top = (p->y < q->y) ? q : p;
-            bottom = (p->y > q->y) ? q : p;
+            top = (p->y > q->y) ? p : q;
+            bottom = (p->y < q->y) ? p : q;
 
+            //      T
             bx = (top->x - 1)/2;
             by = (top->y - 1)/2;
             if (_get(bx, by, z) == tile
-             && _get(bx, by+1, z) != tile)            // corner
+             && _get(bx, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
-                pp->bx = bx+1;
-                pp->by = by+1;
+                pp->bx = bx;
+                pp->by = by;
                 pp->x = top->x;
                 pp->y = top->y;
             }
             
             if (_get(bx+1, by, z) == tile
-             && _get(bx+1, by+1, z) != tile)            // corner
+             && _get(bx+1, by+1, z) != tile)
             {
                 pp = &corners[n_corners++];
                 pp->bx = bx+1;
@@ -1662,13 +1796,14 @@ void resolve_rooms(int z, int tile) {
                 pp->y = top->y;
             }
 
+            //      ⟂
             bx = (bottom->x - 1)/2;
             by = (bottom->y - 1)/2;
-            if (_get(bx, by+1, z) == tile
-             && _get(bx, by, z) != tile)            // corner
+            if (_get(bx+1, by+1, z) == tile
+             && _get(bx+1, by, z) != tile)
             {
                 pp = &corners[n_corners++];
-                pp->bx = bx;
+                pp->bx = bx+1;
                 pp->by = by+1;
                 pp->x = bottom->x;
                 pp->y = bottom->y;
@@ -1686,6 +1821,7 @@ void resolve_rooms(int z, int tile) {
     Room *r;
     n_rooms = 0;
     int k;
+    int p_index;
     for (i=0; i<n_bottom_corners;i++) {
         r = &rooms[n_rooms++];
         p = &corners[i];
@@ -1693,42 +1829,56 @@ void resolve_rooms(int z, int tile) {
         r->y = (p->y)/2 + 1;
         qq = *p;
         // trace from here
-        dx = 1;
-        dy = 0;
+        dx = 0;
+        dy = 1;
         k = 0;
         do {
             qq.x += dx;
             qq.y += dy;
+            if (dx) {
+                qq.bx = qq.x/2 + 1;
+                qq.by = qq.y/2;
+            }
+            if (dy) {
+                qq.bx = qq.x/2;
+                qq.by = qq.y/2;
+            }
+
             if (qq.x<0||qq.x>width*2||qq.y<0||qq.y>height*2) {
-                printf("out of bounds\n");
+                printf("EERROR room trace out of bounds\n");
+                pp->print();
                 n_rooms--;
                 break;
             }
-            if (point_in_points(qq, corners, n_corners) >= 0) {
+            p_index = point_in_points_both(qq, corners, n_corners);
+            if (p_index >= 0) {
                 // check that point is actual vertex
                 // if ++ isnt a wall
                 // and pt is the smaller of a diag
+                pp = &corners[p_index];
+                pp->print();
                 if (dx) {
-                    if (_get((qq.x-1)/2 + 1, (qq.y-1)/2 + 1, z) == tile
-                     //&& !(point_is_bottommost_vertical_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
-                     && !(is_vertical_line_segment(qq.x, qq.y+1, qq.x, qq.y, points, diagonals, n_diagonals, n_horizontals))
-                    ) {
-                        printf("skipping x\n");
+                    //if (_get((qq.x-1)/2 + 1, (qq.y-1)/2 + 1, z) == tile
+                     //&& !(is_vertical_line_segment(qq.x, qq.y+1, qq.x, qq.y, points, diagonals, n_diagonals, n_horizontals))
+                    //) {
+                    //if (pp->bx*2 - qq.x != 1 && pp->by*2 - qq.y != -1) {
+                    if (pp->bx+1 != (qq.x)/2 && pp->by != (qq.y)/2) {
                         continue;
                     }
-                    r->w = (qq.x - p->x)/2;
+                    r->w = (p->x - qq.x)/2;
                 }
                 if (dy) {
-                    if (_get((qq.x-1)/2, (qq.y-1)/2+1, z) == tile
-                     //&& !(point_is_leftmost_horizontal_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
-                     && !(is_horizontal_line_segment(qq.x, qq.y, qq.x-1, qq.y, points, diagonals, n_diagonals, n_horizontals))
-                    ) {
-                        printf("skipping y\n");
+                    //if (_get((qq.x-1)/2, (qq.y-1)/2+1, z) == tile
+                     //&& !(is_horizontal_line_segment(qq.x, qq.y, qq.x-1, qq.y, points, diagonals, n_diagonals, n_horizontals))
+                    //) {
+                    //if (pp->bx*2 - qq.x != -1 && pp->by*2 - qq.y != -1) {
+                    if (pp->bx != (qq.x)/2 && pp->by != (qq.y)/2) {
                         continue;
                     }
                     r->h = (qq.y - p->y)/2;
                 }
                 rotate90(&dx, &dy);
+                //printf("turned\n");
                 k++;
             }
         } while (k < 2);
@@ -1737,11 +1887,11 @@ void resolve_rooms(int z, int tile) {
     rooms = (Room*)realloc(rooms, sizeof(Room)*n_rooms);
 
     int _tile = 0;
-    int tiles[8] = { 1, 4,5,7,11,100,102,190};
+    int tiles[7] = { 1, 4,5,7,11,100,102};
     for (i=0; i<n_rooms; i++) {
         rooms[i].draw(z, tiles[_tile]);
         _tile++;
-        _tile%=8;
+        _tile%=7;
     }
 
 }
@@ -1758,10 +1908,15 @@ void draw() {
         _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, ((float)q->x)/2+0.5, ((float)q->y)/2+0.5, z+0.1);
     }
 
+    //for (i=0; i<n_corners; i++) {
+        //p = &corners[i];
+        //_draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5+0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5-0.25, z+0.1);
+        //_draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5-0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5+0.25, z+0.1);
+    //}
     for (i=0; i<n_corners; i++) {
+    //for (i=0; i<n_bottom_corners; i++) {
         p = &corners[i];
-        _draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5+0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5-0.25, z+0.1);
-        _draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5-0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5+0.25, z+0.1);
+        _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, (float)p->bx + 0.5, (float)p->by + 0.5, z+0.1);
     }
 }
 
@@ -1835,7 +1990,10 @@ void generate() {
 
 //cython
 void generate_dragon() {
-    generate();
+    static int i = 0;
+    if (!i) 
+        generate();
+    i++;
 }
 void draw_dragon() {
     draw();
