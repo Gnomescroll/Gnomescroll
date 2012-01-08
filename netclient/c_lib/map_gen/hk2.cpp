@@ -338,10 +338,10 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
 class Diagonal {
     public:
     int p,q;
-    int length(Point* p1) {
-        Point* _p = &p1[p];
-        Point* _q = &p1[q];
-        return sqrt((_q->x - _p->x)*(_q->x - _p->x) +(_q->y - _p->y)*(_q->y - _p->y));
+    int length(Point* pts) {
+        Point* _p = &pts[this->p];
+        Point* _q = &pts[this->q];
+        return sqrt((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
     }
 };
 
@@ -498,7 +498,8 @@ int hk(int h_ct, int v_ct, int i_ct, Intersection* intersections) {
     HK::N = v_ct;
 
     // init graph
-    FOR(i,1,HK::N+HK::M) {
+    //FOR(i,1,HK::N+HK::M) {
+    FOR(i,0,HK::N+HK::M) {
         HK::graph[i].clear();
         HK::map[i]=0;
     }
