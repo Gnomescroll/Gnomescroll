@@ -1312,7 +1312,7 @@ class Room {
     }
 
     void draw(int z, int tile) {
-        int i,j;
+        int i,j=y;
         for (i=x; i<x+w; i++) {
             for (j=y; j<y+h; j++) {
                 _set(i,j,z,tile);
@@ -1403,6 +1403,42 @@ inline bool point_is_bottommost_vertical_endpoint(Point p, Point* points, Diagon
     return false;
 }
 
+inline bool is_vertical_line_segment(int tx, int ty, int bx, int by, Point* points, Diagonal *diagonals, int n_diagonals,  int n_horizontals) {
+    // tx,ty must be >= bx,by
+    int i;
+    Point *p,*q;
+    Diagonal* d;
+    Point *top,*bottom;
+    for (i=n_horizontals; i<n_diagonals; i++) {
+        d = &diagonals[i];
+        p = &points[d->p];
+        q = &points[d->q];
+        if (p->x != tx) continue;
+        top = (p->y > q->y) ? p : q;
+        bottom = (p->y < q->y) ? p : q;
+        if (ty <= top->y && by >= bottom->y) return true;
+    }
+    return false;
+}
+
+
+inline bool is_horizontal_line_segment(int lx, int ly, int rx, int ry, Point* points, Diagonal *diagonals, int n_diagonals,  int n_horizontals) {
+    // lx,ly must be >= rx,ry
+    int i;
+    Point *p,*q;
+    Diagonal* d;
+    Point *left,*right;
+    for (i=0; i<n_horizontals; i++) {
+        d = &diagonals[i];
+        p = &points[d->p];
+        q = &points[d->q];
+        if (p->y != ly) continue;
+        left = (p->x > q->x) ? p : q;
+        right = (p->x < q->x) ? p : q;
+        if (lx <= left->x && rx >= right->x) return true;
+    }
+    return false;
+}
 
 void resolve_rooms(int z, int tile) {
 
@@ -1519,6 +1555,8 @@ void resolve_rooms(int z, int tile) {
             p->y = qq.y;
         }
     }
+
+    free(intersections);
 
     // tile patterns
     for (i=0; i<width; i++) {
@@ -1667,7 +1705,8 @@ void resolve_rooms(int z, int tile) {
                 // and pt is the smaller of a diag
                 if (dx) {
                     if (_get((qq.x-1)/2 + 1, (qq.y-1)/2 + 1, z) == tile
-                     && !(point_is_bottommost_vertical_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                     //&& !(point_is_bottommost_vertical_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                     && !(is_vertical_line_segment(qq.x, qq.y+1, qq.x, qq.y, points, diagonals, n_diagonals, n_horizontals))
                     ) {
                         printf("skipping x\n");
                         continue;
@@ -1676,7 +1715,8 @@ void resolve_rooms(int z, int tile) {
                 }
                 if (dy) {
                     if (_get((qq.x-1)/2, (qq.y-1)/2+1, z) == tile
-                     && !(point_is_leftmost_horizontal_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                     //&& !(point_is_leftmost_horizontal_endpoint(qq, points, diagonals, n_diagonals, n_horizontals))
+                     && !(is_horizontal_line_segment(qq.x, qq.y, qq.x-1, qq.y, points, diagonals, n_diagonals, n_horizontals))
                     ) {
                         printf("skipping y\n");
                         continue;
@@ -1691,11 +1731,14 @@ void resolve_rooms(int z, int tile) {
 
     rooms = (Room*)realloc(rooms, sizeof(Room)*n_rooms);
 
+    int _tile = 0;
+    int tiles[6] = { 1, 4,5,7,11,100};
     for (i=0; i<n_rooms; i++) {
-        rooms[i].draw(z, 1);
+        rooms[i].draw(z, tiles[_tile]);
+        _tile++;
+        _tile%=6;
     }
 
-    free(intersections);
 }
 
 void draw() {
