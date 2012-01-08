@@ -1380,9 +1380,9 @@ void rect_solver() {
         } else {
             h_len = h_diagonals[i].length(pts);
             v_len = v_diagonals[HK::map[i+1] - h_diag_ct - 1].length(pts);
-            if (v_len < h_len) k = HK::map[i+1] - h_diag_ct;
+            //if (v_len < h_len) k = HK::map[i+1] - h_diag_ct - 1;
+            if (v_len < h_len) k = HK::map[i+1] - 1;
             else k = i;
-            //k = choose_shortest_diagonal(i, intersections, i_ct, h_diag_ct, h_diagonals, v_diagonals, pts, HK::map);
             independent_set[n_ind++] = k;
         }
     }
@@ -1405,7 +1405,7 @@ void rect_solver() {
     // copy diagonals into one array, with room for new diagonals
     int n_ends_max = n_points-n_ind;
     int index;
-    diagonals = (Diagonal*)malloc(sizeof(Diagonal)*(n_ends_max+n_ind));
+    diagonals = (Diagonal*)malloc(sizeof(Diagonal)*(n_points));
     for (i=0; i<n_ind; i++) {
         index = independent_set[i];
         if (index < h_diag_ct) {
@@ -1714,10 +1714,7 @@ void resolve_rooms(int z, int tile) {
                 p->bx = qq.bx;
                 p->by = qq.by;
             }
-
         }
-
-        
     }
 
     free(intersections);
@@ -1886,34 +1883,21 @@ void resolve_rooms(int z, int tile) {
             }
             p_index = point_in_points_both(qq, corners, n_corners);
             if (p_index >= 0) {
-                // check that point is actual vertex
-                // if ++ isnt a wall
-                // and pt is the smaller of a diag
                 pp = &corners[p_index];
                 pp_p_index = p_index;
-                //pp->print();
                 if (dx) {
-                    //if (_get((qq.x-1)/2 + 1, (qq.y-1)/2 + 1, z) == tile
-                     //&& !(is_vertical_line_segment(qq.x, qq.y+1, qq.x, qq.y, points, diagonals, n_diagonals, n_horizontals))
-                    //) {
-                    //if (pp->bx*2 - qq.x != 1 && pp->by*2 - qq.y != -1) {
                     if (pp->bx+1 != (qq.x)/2 && pp->by != (qq.y)/2) {
                         continue;
                     }
                     r->w = (p->x - qq.x)/2;
                 }
                 if (dy) {
-                    //if (_get((qq.x-1)/2, (qq.y-1)/2+1, z) == tile
-                     //&& !(is_horizontal_line_segment(qq.x, qq.y, qq.x-1, qq.y, points, diagonals, n_diagonals, n_horizontals))
-                    //) {
-                    //if (pp->bx*2 - qq.x != -1 && pp->by*2 - qq.y != -1) {
                     if (pp->bx != (qq.x)/2 && pp->by != (qq.y)/2) {
                         continue;
                     }
                     r->h = (qq.y - p->y)/2;
                 }
                 rotate90(&dx, &dy);
-                //printf("turned\n");
                 k++;
             }
         } while (k < 2);
