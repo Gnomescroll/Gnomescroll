@@ -5,10 +5,11 @@
 class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
-        const char* name();
+        //char* name();
 };
-const char* NetMessageArray_pool::name() {
-    return "NetMessageArray_pool";
+
+char* NetMessageArray_pool::name() {
+    return (char*) "NetMessageArray_pool";
 } 
 
 static NetMessageArray_pool net_message_array_pool;
@@ -45,7 +46,7 @@ class Net_message_buffer {
 class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128> 
 {
     public:
-    const char* name() {  static const char x[] = "Net_message_buffer_pool"; return x;} 
+    char* name() { static char* x = (char*) "Net_message_buffer_pool"; return x; } 
 
     Net_message_buffer* current;
     int remaining;
@@ -88,9 +89,9 @@ static Net_message_buffer_pool net_message_buffer_pool;
 class Net_message_pool: public Object_pool<Net_message, 4096> // {}; //use 4096
 {
 public:
-const char* name() 
+    char* name() 
     { 
-        static const char x[] = "Net_message_pool";
+        static char* x = (char*) "Net_message_pool";
         return x;
     } 
 };

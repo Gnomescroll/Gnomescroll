@@ -20,7 +20,7 @@ class Object_pool {
         //batch malloc/link method
         void batch_alloc();
 
-        virtual const char* name() { return "generic object pool"; }
+        virtual char* name() { static char* x = (char*) "Error: generic object pool"; return x; }
 
     public:
 
@@ -61,8 +61,8 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
     }
     ar[BUFFER_POOL_SIZE-1].next = NULL;
 
-    static const char* _name = name();
-    printf("%s: Batch Alloc: %i n_elements: %i \n", _name, batch_num, BUFFER_POOL_SIZE);
+    //static char* _name = name();
+    printf("%s: Batch Alloc: %i n_elements: %i \n", name(), batch_num, BUFFER_POOL_SIZE);
 }
 
 template <class Object, int BUFFER_POOL_SIZE>
