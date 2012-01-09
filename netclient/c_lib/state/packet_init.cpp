@@ -1,6 +1,7 @@
 #include "./packet_init.hpp"
 
-#include <net_lib/message_handler.h>
+//#include <net_lib/common/message_handler.h>
+
 #include <c_lib/game/packets.hpp>
 
 #include <c_lib/agent/net_agent.hpp>

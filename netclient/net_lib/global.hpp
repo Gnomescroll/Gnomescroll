@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <net_lib/net_peer.hpp>
+#include <net_lib/common/net_peer.hpp>
 
 namespace NetClient
 {

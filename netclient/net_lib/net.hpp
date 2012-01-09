@@ -1,9 +1,9 @@
 #pragma once
 
-#include <net_lib/type_pack.h>
-#include <net_lib/packet_buffer.hpp>
-
 #include <net_lib/global.hpp>
+
+#include <net_lib/common/type_pack.h>
+#include <net_lib/common/packet_buffer.hpp>
 
 static int _server_packet_id = 1;
 int next_server_packet_id() { return _server_packet_id++; }

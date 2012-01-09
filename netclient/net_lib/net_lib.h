@@ -27,9 +27,11 @@
 #include <net_lib/host.cpp>
 #include <net_lib/export.cpp>
 #include <net_lib/global.cpp>
-#include <net_lib/net_peer.cpp>
-#include <net_lib/packet_buffer.cpp>
-#include <net_lib/message_handler.c>
+
+#include <net_lib/common/net_peer.cpp>
+#include <net_lib/common/packet_buffer.cpp>
+#include <net_lib/common/message_handler.c>
+#include <net_lib/common/net_time.c>
 
 #include <net_lib/net.cpp>
 
