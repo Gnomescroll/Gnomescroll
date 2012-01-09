@@ -39,8 +39,7 @@ import c_lib.c_lib_map_gen as cMapGen
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
-from init_c_lib import _pviz_draw
-from init_c_lib import NetClientStateTick, NetClientNetInTick, NetClientNetOutTick, NetClientStartFrame, NetClientConnect
+from init_c_lib import NetClientDispatchNetworkEvents, ClientConnectTo
 from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -52,6 +51,8 @@ from map_controller import MapControllerGlobal
 from input import Mouse, Keyboard
 from hud import Hud
 from animations import animations
+
+#from init_c_lib import _pviz_draw
 
 cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
@@ -116,7 +117,7 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         a,b,c,d = opts.server.split(".")
-        NetClientConnect(int(a),int(b),int(c),int(d), 0)
+        ClientConnectTo(int(a),int(b),int(c),int(d), 8080)
 
     def mainLoop(self):
         global P, Phy
