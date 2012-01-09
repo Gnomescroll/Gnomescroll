@@ -70,7 +70,7 @@ void init_net_client()
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
 {
-    printf("connect_to: attempting connection with server \n");
+    printf("client attempting connection with server \n");
 
     ENetPeer *peer;
 
