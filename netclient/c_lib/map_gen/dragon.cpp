@@ -1150,7 +1150,7 @@ class Room {
     public:
     int x,y,w,h;
     bool placed;
-
+    int edges;
     int area() {
         return w*h;
     }
@@ -1175,9 +1175,25 @@ class Room {
         printf("%d %d %d %d\n", x,y,w,h);
     }
 
+    bool shares_edge_with(Room* r) {
+        // horizontal edges
+        if (y == r->y || y == r->y+r->h || y+h == r->y || y+h == r->y+r->h) {
+            if (x < r->x && x > r->x-r->w) return true;
+            if (x-w < r->x && x-w > r->x-r->w) return true;
+        }
+        // vertical edges
+        if (x == r->x || x == r->x-r->w || x-w == r->x || x-w == r->x-r->w) {
+            if (y > r->y && y < r->y+r->h) return true;
+            if (y+h > r->y && y+h < r->y+r->h) return true;
+        }
+
+        return false;
+    }
+
     Room() :
     x(0), y(0), w(0), h(0),
-    placed(false)
+    placed(false),
+    edges(0)
     {}
 };
 
@@ -1972,15 +1988,163 @@ void resolve_rooms(int z, int tile) {
 
     rooms = (Room*)realloc(rooms, sizeof(Room)*n_rooms);
 
-    int _tile = 0;
-    int tiles[7] = { 1, 4,5,7,11,100,102};
-    for (i=0; i<n_rooms; i++) {
-        rooms[i].draw(z, tiles[_tile]);
-        _tile++;
-        _tile%=7;
-    }
+    //int _tile = 0;
+    //int tiles[7] = { 1, 4,5,7,11,100,102};
+    //for (i=0; i<n_rooms; i++) {
+        //rooms[i].draw(z, tiles[_tile]);
+        //_tile++;
+        //_tile%=7;
+    //}
 
     find_duplicate_corners(corners, n_corners);
+}
+
+class RoomEdge {
+    public:
+    int room;
+    int n;
+    int *rooms;
+
+    void set_room(int id) {
+        this->room = id;
+    }
+
+    int has(int id) {
+        int i;
+        for (i=0; i<n; i++) {
+            if (rooms[i] == id) return i;
+        }
+        return -1;
+    }
+
+    void add_multiple(int *ids, int n_ids) {
+        if (n_ids <= 0) return;
+        int new_n = this->n + n_ids;
+        if (rooms == NULL) {
+            rooms = (int*)malloc(sizeof(int)*new_n);
+        } else {
+            rooms = (int*)realloc(rooms, sizeof(int)*new_n);
+        }
+
+        int i;
+        for (i=0; i<n_ids; i++) {
+            if (this->has(ids[i]) < 0 && !(this->room = ids[i])) {
+                this->n++;
+                rooms[this->n] = ids[i];
+            }
+        }
+
+        if (this->n != new_n) {
+            rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+        }
+
+    }
+
+    void add(int id) {
+        if (id < 0) return;
+        if (id == this->room) return;
+        if (this->has(id) >= 0) return;
+        this->n++;
+        if (rooms == NULL) {
+            rooms = (int*)malloc(sizeof(int)*this->n);
+        } else {
+            rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+        }
+        rooms[n-1] = id;
+    }
+
+    void remove(int id) {
+        if (id < 0) return;
+        if (id == this->room) return;
+        int index;
+        index = this->has(id);
+        if (index < 0) return;
+        if (rooms == NULL) return;
+        if (n == 0) return;
+
+        this->n--;
+        int i;
+        for (i=index; i<this->n; i++) {
+            rooms[i] = rooms[i+1];
+        }
+        
+        rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+    }
+
+    void teardown() {
+        if (rooms != NULL) {
+            free(rooms);
+            rooms = NULL;
+        }
+    }
+
+    void print() {
+        if (rooms == NULL) return;
+        int i;
+        for (i=0; i<this->n; i++) {
+            printf("%d", rooms[i]);
+            printf("\n");
+        }
+    }
+
+    RoomEdge() :
+    n(0),
+    rooms(NULL)
+    {}
+
+    ~RoomEdge()
+    {
+        if (rooms != NULL) {
+            free(rooms);
+            rooms = NULL;
+        }
+    }
+};
+
+RoomEdge* room_edges = NULL;
+
+void build_adjacency_graph() {
+
+    // 2 rooms share an edge if one of their bounding lines share a line segment
+    int i,j;
+
+    if (room_edges != NULL) {
+        for (i=0; i<n_rooms; i++) {
+            room_edges[i].teardown();
+        }
+        free(room_edges);
+    }
+
+    room_edges = (RoomEdge*)malloc(sizeof(RoomEdge)*n_rooms);
+    for (i=0; i<n_rooms; i++) {
+        room_edges[i].n = 0;
+        room_edges[i].rooms = NULL;
+    }
+    
+    Room *r,*s;
+    RoomEdge *re;
+    for (i=0; i<n_rooms; i++) {
+        r = &rooms[i];
+        re = &room_edges[i];
+        r->edges = i;
+        re->room = i;
+        for (j=0; j<n_rooms; j++) {
+            if (i==j) continue;
+            s = &rooms[j];
+            if (r->shares_edge_with(s)) {
+                re->add(j);
+            }
+        }
+    }
+
+    //room_edges = (RoomEdge*)realloc(room_edges, sizeof(RoomEdge)*n_room_edges);
+    for (i=0; i<n_rooms; i++) {
+        printf("Room %d: \n", i);
+        r = &rooms[i];
+        re = &room_edges[r->edges];
+        re->print();
+        printf("\n");
+    }
 }
 
 void draw() {
@@ -1997,14 +2161,8 @@ void draw() {
         }
     }
 
-    //for (i=0; i<n_corners; i++) {
-        //p = &corners[i];
-        //_draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5+0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5-0.25, z+0.1);
-        //_draw_line(255,10,10, ((float)p->x)/2+0.5+0.25, ((float)p->y)/2+0.5-0.25, z+0.1, ((float)p->x)/2+0.5-0.25, ((float)p->y)/2+0.5+0.25, z+0.1);
-    //}
     if (corners != NULL) {
         for (i=0; i<n_corners; i++) {
-        //for (i=0; i<n_bottom_corners; i++) {
             p = &corners[i];
             _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, (float)p->bx + 0.5, (float)p->by + 0.5, z+0.1);
         }
@@ -2054,7 +2212,7 @@ void generate() {
     rect_solver();
 
     resolve_rooms(z, tile);
-    //build_adjacency_graph();
+    build_adjacency_graph();
 
     //int pattern_w = 7;
     //int pattern_h = 15;
