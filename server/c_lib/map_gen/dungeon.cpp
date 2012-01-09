@@ -1415,8 +1415,8 @@ void generate_dungeon() {
     }
 
     int si,sj;
-    si = randrange(highest->x-highest->w, highest->x);
-    sj = randrange(highest->y, highest->y + highest->w);
+    si = (int)highest->center_fx();
+    sj = (int)highest->center_fy();
     printf("%d %d\n", si,sj);
 
     _box(128,128,0,127,101);
