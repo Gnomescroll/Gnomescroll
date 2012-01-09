@@ -35,6 +35,10 @@
 
 #include <net_lib/net.cpp>
 
+
+#ifdef DC_CLIENT
+#include <net_lib/common/pviz.c>
+#endif
 //#include <net_lib/common/sequencer.c>
 
 //#include <net_lib/common/python_channel.cpp>

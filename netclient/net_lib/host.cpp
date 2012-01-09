@@ -33,7 +33,7 @@ void init_net_server()
 
     address.host = ENET_HOST_ANY;
     /* Bind the server to port 1234. */
-    address.port = 8011;
+    address.port = 8080;
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,

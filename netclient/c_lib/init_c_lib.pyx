@@ -79,8 +79,7 @@ def GET_MS_TIME():
 
 ### pviz
 
-'''
-cdef extern from "./net_lib/client/pviz.h":
+cdef extern from "../net_lib/common/pviz.h":
     void pviz_draw(float x, float y, float z)
     void toggle_latency_unit()
 
@@ -89,7 +88,7 @@ def _pviz_draw(float x, float y, float z):
 
 def _toggle_latency_unit():
     toggle_latency_unit()
-'''
+
 
 ### python network
 
