@@ -80,7 +80,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         exit (EXIT_FAILURE);
     }
 
-    address.port = 8011;
+    address.port = 8080;
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
