@@ -1337,6 +1337,9 @@ int choose_unplaced_room(Room *rooms, int n_rooms, int *not_placed, int n_not_pl
 }
 
 void set_room_z_levels() {
+
+    // breadth first search
+    
     if (!n_rooms) return;
     
     int room_height = 7;
@@ -1400,11 +1403,25 @@ void generate_dungeon() {
             }
         }
     }
+
+    Room *highest;
+    int highest_room_z = -100;
     for (i=0; i<n_rooms; i++) {
         rooms[i].draw_3d(0);
+        if (rooms[i].z > highest_room_z) {
+            highest = &rooms[i];
+            highest_room_z = highest->z;
+        }
     }
 
+    int si,sj;
+    si = randrange(highest->x-highest->w, highest->x);
+    sj = randrange(highest->y, highest->y + highest->w);
+    printf("%d %d\n", si,sj);
+
     _box(128,128,0,127,101);
+    _set(si,sj,127,103);
+    _set(si,sj,128,103);
 
 }
 

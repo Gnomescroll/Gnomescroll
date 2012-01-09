@@ -680,6 +680,159 @@ void generate_caves() {
     _box(x,y,z,h,tile);
 }
 
+bool block_is_edge(int i, int j, int k, int limit) {
+    int tile = _get(i,j,k);
+    int ct = 0;
+
+    if (_get(i+1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+
+    if (_get(i+1, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i+1, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    
+    return false;
+}
+
+bool block_is_edge_4(int i, int j, int k, int limit) {
+    int tile = _get(i,j,k);
+    int ct = 0;
+
+    if (_get(i+1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i-1, j, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j+1, k) != tile) ct++;
+    if (ct == limit) return true;
+    if (_get(i, j-1, k) != tile) ct++;
+    if (ct == limit) return true;
+
+    return false;
+}
+
+bool block_is_edge_2(int i, int j, int k) {
+    int tile = _get(i,j,k);
+
+    if (_get(i+1, j, k) != tile
+     && _get(i-1, j, k) != tile)
+     return true;
+
+    if (_get(i, j+1, k) != tile
+     && _get(i, j-1, k) != tile)
+     return true;
+
+    return false;
+}
+
+struct Location {
+    unsigned char x,y,z;
+};
+void segment_caves(int z, int tile, int limit) {
+    int i,j;
+    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
+    int index = 0;
+    // check for a cave block
+    // look at all 8 surrounding blocks
+    // if >1 is non cave, convert to orange (blocked)
+
+    Location* loc = NULL;
+    int new_tile = 7; // lava
+    
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (_get(i,j,z) != tile) continue;
+            if (block_is_edge(i,j,z, limit)) {
+                loc = &blocks[index];
+                loc->x = i;
+                loc->y = j;
+                loc->z = z;
+                index++;
+            }
+        }
+    }
+
+    for (i=0; i<index; i++) {
+        loc = &blocks[i];
+        _set(loc->x, loc->y, loc->z, new_tile);
+    }
+
+    free(blocks);
+}
+void segment_caves_4(int z, int tile, int limit) {
+    int i,j;
+    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
+    int index = 0;
+    // check for a cave block
+    // look at all 8 surrounding blocks
+    // if >1 is non cave, convert to orange (blocked)
+
+    Location* loc = NULL;
+    int new_tile = 7; // lava
+    
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (_get(i,j,z) != tile) continue;
+            if (block_is_edge_4(i,j,z, limit)) {
+                loc = &blocks[index];
+                loc->x = i;
+                loc->y = j;
+                loc->z = z;
+                index++;
+            }
+        }
+    }
+
+    for (i=0; i<index; i++) {
+        loc = &blocks[i];
+        _set(loc->x, loc->y, loc->z, new_tile);
+    }
+
+    free(blocks);
+}
+void segment_caves_2(int z, int tile) {
+    int i,j;
+    Location* blocks = (Location*)malloc(sizeof(Location)*width*height);
+    int index = 0;
+    // check for a cave block
+    // look at all 8 surrounding blocks
+    // if >1 is non cave, convert to orange (blocked)
+
+    Location* loc = NULL;
+    int new_tile = 7; // lava
+    
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            if (_get(i,j,z) != tile) continue;
+            if (block_is_edge_2(i,j,z)) {
+                loc = &blocks[index];
+                loc->x = i;
+                loc->y = j;
+                loc->z = z;
+                index++;
+            }
+        }
+    }
+
+    for (i=0; i<index; i++) {
+        loc = &blocks[i];
+        _set(loc->x, loc->y, loc->z, new_tile);
+    }
+
+    free(blocks);
+}
+
+
 void generate() {
     int x = width;
     int y = height;
@@ -693,9 +846,9 @@ void generate() {
     //_walls(x,y,z+1,h,tile);
     //_walls(x,y,z+1,h-1,tile);
 
-    //segment_caves(13, 101, 2);
-    //segment_caves(13, 101, 7);
-    //segment_caves(13, 101, 8);
+    segment_caves(13, 101, 2);
+    segment_caves(13, 101, 7);
+    segment_caves(13, 101, 8);
     //segment_caves_4(13, 101, 2);
     //segment_caves_4(13, 101, 2);
     //segment_caves_4(13, 101, 2);
@@ -719,8 +872,7 @@ void generate() {
         }
     }
 
-    //rect_solver();
-
+    /* ROADS */
     //int pattern_w = 7;
     //int pattern_h = 15;
     //raster(pattern_w, pattern_h);
@@ -740,7 +892,6 @@ void generate() {
             //_set(i,j,0,101);
         //}
     //}
-
 }
 
 //cython
