@@ -520,3 +520,11 @@ class Dragon(object):
     @classmethod
     def generate(cls):
         generate_dragon()
+        
+cdef extern from "./map_gen/dungeon.hpp" namespace "Dungeon":
+    void generate_dungeon()
+
+class Dungeon(object):
+    @classmethod
+    def generate(cls):
+        generate_dungeon()

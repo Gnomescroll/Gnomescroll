@@ -5,7 +5,7 @@
 #include <math.h>
 //#include <c_lib/common/random.h>
 
-#include "hk2.cpp"
+#include "hopcroft-karp.cpp"
 
 namespace Dragon {
 
@@ -669,112 +669,6 @@ void make_roads() {
 
 }
 
-bool is_corner(int x, int y, int z, int inner_tile) {
-    if (_get(x,y,z) == inner_tile
-     && _get(x-1,y,z) != inner_tile
-     && _get(x,y-1,z) != inner_tile
-     //&& _get(x-1,y,z) == 2
-     //&& _get(x,y-1,z) == 2
-     ) return true;
-     return false;
-}
-
-void turn90(int* x, int *y) {
-    int _x=*x;
-    *x = -*y;
-    *y = _x;
-    //printf("turned\n");
-}
-
-//class LineSegment {
-    //public:
-        //int z;
-        //int x1,y1;
-        //int x2,y2;
-        //int tile;
-
-        //void set() {
-            //int i,j;
-            //for (i=x1; i<=x2; i++) {
-                //for (j=y1; j<=y2; j++) {
-                    //_set(i,j,z, tile);
-                //}
-            //}
-        //}
-//};
-
-struct Corner {
-    int i,j,k;
-};
-
-int corner_index=0;
-struct Corner corners[50];
-
-void outline_box(int x, int y, int z, int inner_tile, int outline_tile) {
-    printf("outlining box at %d %d %d\n", x,y,z);
-    //move in the x direction
-    int ox=x,oy=y,oz=z; //save beginning
-    int dx=1,dy=0;  // motion
-
-    int cx=x+1,cy=y,cz=z; // current pos, start one step ahead
-
-    if (_get(cx,cy,cz) != inner_tile) {
-        printf("special case at %d %d %d\n", cx,cy,cz);
-        return;
-        turn90(&dx,&dy);  // special case where corner is 1 high
-        cx = x;
-        cy = y+1;
-    }
-    
-    //while (cx!=ox || cy!=oy || cz!=oz) {
-    while (1) {
-        if (cx==ox && cy==oy && cz==oz) break;
-        //printf("settings %d %d %d to %d\n", cx,cy,cz, outline_tile);
-        //_set_broadcast(cx,cy,cz, outline_tile);
-        _set(cx,cy,cz, outline_tile);
-        turn90(&dx,&dy);
-        turn90(&dx,&dy);
-        turn90(&dx,&dy);
-        if (_get(cx+dx, cy+dy, cz) != inner_tile) turn90(&dx,&dy);
-        cx += dx;
-        cy += dy;
-        if (_get(cx,cy,cz) != inner_tile) {
-            //if (_get(cx+1, cy,cz) == outline_tile) return;
-            cx -= dx;
-            cy -= dy;
-            turn90(&dx,&dy);
-            cx += dx;
-            cy += dy;
-        }
-    }
-    _set(ox,oy,oz,outline_tile);
-}
-
-void outline_boxes(int inner_tile, int outline_tile) {
-    // look for a corner where the inside tile is in the top left
-    int z = 0;
-    int i,j;
-    struct Corner* c = NULL;
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            //if (is_corner(i,j,z,inner_tile)) outline_box(i,j,z,inner_tile,outline_tile);
-            if (is_corner(i,j,z,inner_tile)) {
-                c = &corners[corner_index];
-                c->i = i;
-                c->j = j;
-                c->k = z;
-                corner_index++;
-            }
-        }
-    }
-
-    for (i=0;i<corner_index;i++) {
-        c = &corners[i];
-        outline_box(c->i, c->j, c->k, inner_tile, outline_tile);
-    }
-    
-}
-
 void generate_caves() {
     int x = width;
     int y = height;
@@ -939,136 +833,6 @@ void segment_caves_2(int z, int tile) {
 }
 
 
-
-void rect_solver() {
-    int vertex_max = 1024;
-    Point* pts = (Point*)malloc(sizeof(Point)*vertex_max);
-
-    int i;
-    int z = 13;
-    int tile = 103; // solar panel
-    int points=0;
-    get_convex_vertices(z, tile, pts, vertex_max, &points);
-    printf("Got %d vertices\n", points);
-
-    pts = (Point*)realloc(pts, sizeof(Point)*points);
-    Point* pts2 = (Point*)malloc(sizeof(Point)*points);
-    memcpy(pts2, pts, sizeof(Point)*points);
-    for (i=0; i<points;i++) {
-        if (!(pts[i].x%2) || !(pts[i].y%2)) printf("WARNING Even point: %d :: %d %d\n", i, pts[i].x, pts[i].y);
-    }
-
-    int diagonals_max = 2048;
-    Diagonal* h_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    int h_diag_ct = 0;
-    get_horizontal_diagonals(pts, points, h_diagonals, diagonals_max, &h_diag_ct, z, tile);
-    h_diagonals = (Diagonal*)realloc(h_diagonals, sizeof(Diagonal)*h_diag_ct);
-
-    Diagonal* v_diagonals = (Diagonal*)malloc(sizeof(Diagonal)*diagonals_max);
-    int v_diag_ct = 0;
-    get_vertical_diagonals(pts2, points, v_diagonals, diagonals_max, &v_diag_ct, z, tile);
-    v_diagonals = (Diagonal*)realloc(v_diagonals, sizeof(Diagonal)*v_diag_ct);
-
-    Point *p,*q;
-    int j;
-    int start,end;
-    //printf("Horizontals:\n");
-    //for (i=0; i<h_diag_ct; i++) {
-        //p = &pts[h_diagonals[i].p];
-        //q = &pts[h_diagonals[i].q];
-        //start = (p->x > q->x) ? q->x : p->x;
-        //end = (p->x < q->x) ? q->x : p->x;
-        //for (j=start+1; j<end; j++) {
-            //_set(j/2,p->y/2,z, 7);
-        //}
-        //printf("%d,%d -> %d,%d\n", pts[h_diagonals[i].p].x, pts[h_diagonals[i].p].y, pts[h_diagonals[i].q].x, pts[h_diagonals[i].q].y);
-    //}
-    //printf("Verticals:\n");
-    //for (i=0; i<v_diag_ct; i++) {
-        //p = &pts2[v_diagonals[i].p];
-        //q = &pts2[v_diagonals[i].q];
-        //start = (p->y > q->y) ? q->y : p->y;
-        //end = (p->y < q->y) ? q->y : p->y;
-        //for (j=start+1; j<end; j++) {
-            //_set(p->x/2,j/2,z, 1);
-        //}
-
-        //printf("%d,%d -> %d,%d\n", pts2[v_diagonals[i].p].x, pts2[v_diagonals[i].p].y, pts2[v_diagonals[i].q].x, pts2[v_diagonals[i].q].y);
-    //}
-
-    // TODO: double the point so that corners of blocks can be used, instead of treating blocks as single points
-
-    // find intersections
-    int i_ct = 0;
-    Intersection* intersections = (Intersection*)malloc(sizeof(Intersection)*v_diag_ct*h_diag_ct);
-    find_intersections(pts, h_diagonals, h_diag_ct, pts2, v_diagonals, v_diag_ct, intersections, &i_ct);
-    intersections = (Intersection*)realloc(intersections, sizeof(Intersection)*i_ct);
-
-    // apply Hopcropt-Karp to the bipartite graph (Horizontals, Verticals, Intersections)
-    int n_matches = hk(h_diag_ct, v_diag_ct, i_ct, intersections);
-
-    // get a maximum independent vertex (diagonals) set from hk results
-    int* independent_set = (int*)malloc(sizeof(int)*(h_diag_ct+v_diag_ct));
-    int n_ind = 0;
-    int use_h=1;
-    int k;
-    for (i=0; i<h_diag_ct; i++) {
-        if (!HK::map[i+1]) {  // free h_diag vertex
-            independent_set[n_ind++] = i;
-        } else {
-            //if (_i >= h_diag_ct) {
-                //continue;   // should have processed all these by now
-            //}
-            if (use_h) {    // use h_diag endpoint
-                independent_set[n_ind++] = i;
-            } else {        // use v_diag endpoint
-                k = find_matching_diagonal(i, intersections, i_ct, h_diag_ct, HK::map);
-                independent_set[n_ind++] = h_diag_ct + k;
-            }
-            use_h++;
-            use_h%=2;
-            //use_h = randrange(0,1);
-        }
-    }
-
-    for (i=h_diag_ct; i<v_diag_ct+h_diag_ct; i++) {
-        if (!HK::map[i+1]) {
-            independent_set[n_ind++] = i;
-        }
-    }
-
-    printf("Independent Diagonals: %d\n", n_ind);
-    if (n_ind != (h_diag_ct+v_diag_ct)-n_matches) {
-        printf("ERROR: independent diagonals processed wrong. Should be %d\n", (h_diag_ct+v_diag_ct)-n_matches);
-    }
-    int index;
-    for (i=0; i<n_ind; i++) {
-        index = independent_set[i];
-        if (index < h_diag_ct) {
-            p = &pts[h_diagonals[index].p];
-            q = &pts[h_diagonals[index].q];
-            start = (p->x > q->x) ? q->x : p->x;
-            end = (p->x < q->x) ? q->x : p->x;
-            for (j=start+1; j<end; j++) {
-                _set(j/2,p->y/2,z, 7);
-            }
-        } else {
-            index -= h_diag_ct;
-            p = &pts2[v_diagonals[index].p];
-            q = &pts2[v_diagonals[index].q];
-            start = (p->y > q->y) ? q->y : p->y;
-            end = (p->y < q->y) ? q->y : p->y;
-            for (j=start+1; j<end; j++) {
-                _set(p->x/2,j/2,z, 1);
-            }
-        }
-    }
-
-    // last step: connecting remaining free vertices
-
-    free(independent_set);
-}
-
 void generate() {
     int x = width;
     int y = height;
@@ -1085,8 +849,8 @@ void generate() {
     segment_caves(13, 101, 2);
     segment_caves(13, 101, 7);
     segment_caves(13, 101, 8);
-    segment_caves_4(13, 101, 2);
-    segment_caves_4(13, 101, 2);
+    //segment_caves_4(13, 101, 2);
+    //segment_caves_4(13, 101, 2);
     //segment_caves_4(13, 101, 2);
     //segment_caves_4(13, 101, 2);
     //segment_caves_2(13,101);
@@ -1108,8 +872,7 @@ void generate() {
         }
     }
 
-    //rect_solver();
-
+    /* ROADS */
     //int pattern_w = 7;
     //int pattern_h = 15;
     //raster(pattern_w, pattern_h);
@@ -1129,18 +892,11 @@ void generate() {
             //_set(i,j,0,101);
         //}
     //}
-
-    //outline_boxes(tile, 7);
 }
 
 //cython
 void generate_dragon() {
     generate();
 }
-
-void outline() {
-    outline_boxes(11,7);
-}
-
 
 }

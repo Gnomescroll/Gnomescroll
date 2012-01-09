@@ -94,39 +94,10 @@ bool MaxPaths() {
 int width = 128;
 int height = 128;
 
-class Rect {
-    public:
-    unsigned char ox,oy;
-    unsigned char x,y,w,h;
-    bool placed;
-    int area() {
-        return w*h;
-    }
-    bool collides(Rect* r) {
-        return !(x+w > r->x || x < r->x+r->w ||
-            y+h > r->y || y < r->y+r->h);
-    }
-    void place(int z) {
-        int new_tile = 7;
-        int i,j;
-        for (i=x; i<x+w; i++) {
-            for (j=y; j<y+h; j++) {
-                if (i > x && i < x+w-1 && j > y && j < y+h-1) continue;
-                _set(i,j,z+2, new_tile);
-            }
-        }
-        _set(ox,oy,z+2, 1);
-        placed = true;
-        printf("Placed rect at %d,%d  w,h: %d,%d\n", x,y,w,h);
-    }
-    Rect() :
-    x(0), y(0), w(0), h(0),
-    placed(false)
-    {}
-};
 class Point {
     public:
     int x,y;
+    int bx,by;
     bool is_connected_axis_aligned_y(Point* p, int z, int tile) {
         int start,end;
         if (p->y == y) {
@@ -171,6 +142,19 @@ class Point {
 
         return true;
     }
+
+    bool operator==(Point p) {
+        if (p.x == x && p.y == y) return true;
+        return false;
+    }
+
+    void print() {
+        printf("%d %d %d %d\n", x,y,bx,by);
+    }
+
+    Point() :
+    x(0),y(0),bx(0),by(0)
+    {}
 };
 bool point_taken(struct Point* pts, int n, struct Point* pt) {
     int i;
@@ -220,6 +204,30 @@ logn) [42, 53, 54].
 */
 
 // quicksort
+
+void swap(int *a, int *b)
+{
+  int t=*a; *a=*b; *b=t;
+}
+void quicksort_int(int* points, int beg, int end)
+{
+  if (end > beg + 1)
+  {
+    int piv = points[beg];
+    int l = beg + 1, r = end;
+    while (l < r)
+    {
+      if (points[l] <= piv)
+        l++;
+      else
+        swap(&points[l], &points[--r]);
+    }
+    swap(&points[--l], &points[beg]);
+    quicksort_int(points, beg, l);
+    quicksort_int(points, r, end);
+  }
+}
+
 void swap(Point *a, Point *b)
 {
   Point t=*a; *a=*b; *b=t;
@@ -261,9 +269,9 @@ void quicksort_pts_y(Point* points, int beg, int end)
   }
 }
 
-inline void get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int *q2, int *q3, int *q4) {
+inline bool get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int *q2, int *q3, int *q4) {
 
-    if (_get(x,y,z) == poly_tile) return;
+    if (_get(x,y,z) == poly_tile) return false;
 
     int dx=1,dy=0;
     int dx1=0,dy1=1;
@@ -294,6 +302,7 @@ inline void get_convex_vertices(int x, int y, int z, int poly_tile, int *q1, int
         rotate90(&dx,&dy);
         rotate90(&dx1,&dy1);
     }
+    return true;
 }
 
 void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* points) {
@@ -302,7 +311,10 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
     int q1=0,q2=0,q3=0,q4=0;
     for (i=0; i<width; i++) {
         for (j=0; j<height; j++) {
-            get_convex_vertices(i,j,z, poly_tile, &q1, &q2, &q3, &q4);
+            q1=q2=q3=q4=0;
+            if (!get_convex_vertices(i,j,z, poly_tile, &q1, &q2, &q3, &q4)) {
+                continue;
+            }
             _p = p+q1+q2+q3+q4;
             if (_p >= vertex_max) {
                 printf("get_convex_vertices Fatal Error -- exceed vertex max %d\n", vertex_max);
@@ -310,27 +322,38 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
                 *points = 0;
                 return;
             }
-            if (q1) {
+            if (q1) {   // top left
                 pts[p].x = 2*i+1;
                 pts[p].y = 2*j+1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q2) {
+            if (q2) {   // bottom left
                 pts[p].x = 2*i-1;
                 pts[p].y = 2*j+1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q3) {
+            if (q3) {   // bottom right
                 pts[p].x = 2*i-1;
                 pts[p].y = 2*j-1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            if (q4) {
+            if (q4) {   // top right
                 pts[p].x = 2*i+1;
                 pts[p].y = 2*j-1;
+                pts[p].bx = i;
+                pts[p].by = j;
+                //pts[p].b = j*width + i;
                 p++;
             }
-            q1=q2=q3=q4=0;
         }
     }
     *points = p;
@@ -339,6 +362,11 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
 class Diagonal {
     public:
     int p,q;
+    int length(Point* pts) {
+        Point* _p = &pts[this->p];
+        Point* _q = &pts[this->q];
+        return sqrt((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
+    }
 };
 
 void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int diagonals_max, int* diag_ct, int z, int tile) {
@@ -348,6 +376,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
     for (i=0; i<width; i++) indices[i] = 0;
     for (i=0; i<points;i++) {
         indices[pts[i].x/2]++;
+        //indices[pts[i].bx]++;
     }
     indices[width] = points;
 
@@ -365,7 +394,7 @@ void get_vertical_diagonals(Point* pts, int points, Diagonal* diagonals, int dia
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_x(pt2, z, tile)) {
                     if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
+                        printf("get_vertical_diagonals :: Max diagonals reached\n");
                         return;
                     }
                     diagonals[dct].p = j+index;
@@ -388,13 +417,14 @@ void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int d
     for (i=0; i<height; i++) indices[i] = 0;
     for (i=0; i<points;i++) {
         indices[pts[i].y/2]++;
+        //indices[pts[i].by]++;
     }
     indices[height] = points;
 
     int dct = 0;
     int j,k;
     int off;
-    Point* pt,*pt2;
+    Point *pt,*pt2;
     int index = 0;
     for (i=0; i<height; i++) {
         off = 0;
@@ -405,7 +435,7 @@ void get_horizontal_diagonals(Point* pts, int points, Diagonal* diagonals, int d
                 pt2 = &pts[k+index];
                 if (pt->is_connected_axis_aligned_y(pt2, z, tile)) {
                     if (dct > diagonals_max) {
-                        printf("Max diagonals reached\n");
+                        printf("get_horizontal_diagonals :: Max diagonals reached\n");
                         return;
                     }
                     diagonals[dct].p = j+index;
@@ -426,30 +456,59 @@ class Intersection {
     int dh,dv;
 };
 bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
-    Point* top = (v1->y > v2->y) ? v1 : v2;
+    Point* top = (v1->y >= v2->y) ? v1 : v2;
     Point* bottom = (v1->y < v2->y) ? v1 : v2;
-    Point* left = (h1->x > h2->x) ? h1 : h2;
+    Point* left = (h1->x >= h2->x) ? h1 : h2;
     Point* right = (h1->x < h2->x) ? h1 : h2;
-    //printf("%d %d %d %d\n", v1->x, v1->y, v2->x, v2->y);
-    //printf("%d %d %d %d\n", h1->x, h1->y, h2->x, h2->y);
-    //printf("\n");
+
     if (v1->x < left->x && v1->x > right->x
      && h1->y < top->y  && h1->y > bottom->y) return true;
     return false;
 }
-void find_intersections(Point* hp, Diagonal* h, int h_ct, Point* vp, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
+bool orthogonal_intersection_inclusive(Point* v1, Point* v2, Point* h1, Point* h2) {
+    Point* top = (v1->y >= v2->y) ? v1 : v2;
+    Point* bottom = (v1->y < v2->y) ? v1 : v2;
+    Point* left = (h1->x >= h2->x) ? h1 : h2;
+    Point* right = (h1->x < h2->x) ? h1 : h2;
+
+    if (v1->x <= left->x && v1->x >= right->x
+     && h1->y <= top->y  && h1->y >= bottom->y) return true;
+    return false;
+}
+void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, Intersection* in, int* i_ct) {
     int i,j;
     int index = 0;
     Point *p1, *p2, *q1, *q2;
     for (i=0; i<v_ct; i++) {
-        p1 = &vp[v[i].p];
-        p2 = &vp[v[i].q];
+        p1 = &p[v[i].p];
+        p2 = &p[v[i].q];
         for (j=0; j<h_ct; j++) {
-            q1 = &hp[h[j].p];
-            q2 = &hp[h[j].q];
-            if (orthogonal_intersection(p1, p2, q1, q2)) {
-                in[index].dh = i;
-                in[index].dv = j;
+            q1 = &p[h[j].p];
+            q2 = &p[h[j].q];
+            if (orthogonal_intersection_inclusive(p1, p2, q1, q2)) {
+                in[index].dh = j;
+                in[index].dv = i;
+                index++;
+            }
+        }
+    }
+    *i_ct = index;
+    printf("%d intersections found\n", index);
+}
+
+void find_intersections(Point* p, Diagonal* d, int d_ct, int h_ct, Intersection* in, int* i_ct) {
+    int i,j;
+    int index = 0;
+    Point *p1, *p2, *q1, *q2;
+    for (i=h_ct; i<d_ct; i++) {
+        p1 = &p[d[i].p];
+        p2 = &p[d[i].q];
+        for (j=0; j<h_ct; j++) {
+            q1 = &p[d[j].p];
+            q2 = &p[d[j].q];
+            if (orthogonal_intersection_inclusive(p1, p2, q1, q2)) {
+                in[index].dh = j;
+                in[index].dv = i;
                 index++;
             }
         }
@@ -463,7 +522,8 @@ int hk(int h_ct, int v_ct, int i_ct, Intersection* intersections) {
     HK::N = v_ct;
 
     // init graph
-    FOR(i,1,HK::N+HK::M) {
+    //FOR(i,1,HK::N+HK::M) {
+    FOR(i,0,HK::N+HK::M) {
         HK::graph[i].clear();
         HK::map[i]=0;
     }
@@ -486,6 +546,7 @@ int hk(int h_ct, int v_ct, int i_ct, Intersection* intersections) {
     }
     int ile=0;
     FOR(i,1,HK::M) {
+        //printf("%d\n", HK::map[i]);
         if( HK::map[i] ) ile++;
     }
     printf("Maximal matching cardinality: %d\n", ile);
@@ -511,6 +572,38 @@ int find_matching_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, in
     printf("No matching diagonal found\n");
     if (h_found) printf("h %d was found\n", h_index);
     else printf("h %d not found\n", h_index);
+    return -1;
+}
+
+int choose_shortest_diagonal(int h_index, Intersection* in, int i_ct, int h_ct, Diagonal* h_diagonals, Diagonal* v_diagonals, Point* p, int* map) {
+    // look in intersections for dh==h_index
+    // if multiple matches, find which dv is in matching set map
+    // assign ptr to d
+    int DEFAULT_V_LEN = 1000000;
+    int i;
+    int h_len = h_diagonals[h_index].length(p);
+    int v_len = DEFAULT_V_LEN;
+    int v_len_tmp;
+    int v_index;
+    int ct = 0;
+    for (i=0; i<i_ct; i++) {
+        if (in[i].dh == h_index) {
+            ct++;
+            v_len_tmp = v_diagonals[in[i].dv].length(p);
+            if (v_len_tmp < v_len) {
+                v_len = v_len_tmp;
+                v_index = in[i].dv+h_ct;
+            }
+            //if (v_len < h_len) return in[i].dv+h_ct;
+            //else return h_index;
+        }
+    }
+    if (ct > 1) printf("Found %d possible diags\n", ct);
+    if (v_len != DEFAULT_V_LEN) {
+        if (v_len < h_len) return v_index;
+        else return h_index;
+    }
+    printf("ERROR No matching diagonal found for diagonal %d\n", h_index);
     return -1;
 }
 

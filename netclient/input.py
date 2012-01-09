@@ -275,7 +275,7 @@ class Keyboard(object):
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
             '[' : self.cycle_agent_camera_mode,
-            ']': self.hk,
+            #']': self.hk,
         }
 
         self.key_release_handlers = {

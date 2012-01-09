@@ -143,9 +143,6 @@ class Road_list: public Object_list<Road,ROAD_MAX>
 void l_system();
 void generate();
 
-void rect_solver();
-
 //cython
 void generate_dragon();
-void outline();
 }

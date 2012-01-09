@@ -97,7 +97,6 @@ int height = 128;
 class Point {
     public:
     int x,y;
-    //int b;
     int bx,by;
     bool is_connected_axis_aligned_y(Point* p, int z, int tile) {
         int start,end;
@@ -150,12 +149,10 @@ class Point {
     }
 
     void print() {
-        //printf("%d %d %d\n", x,y,b);
         printf("%d %d %d %d\n", x,y,bx,by);
     }
 
     Point() :
-    //x(0),y(0),b(0)
     x(0),y(0),bx(0),by(0)
     {}
 };
@@ -207,6 +204,30 @@ logn) [42, 53, 54].
 */
 
 // quicksort
+
+void swap(int *a, int *b)
+{
+  int t=*a; *a=*b; *b=t;
+}
+void quicksort_int(int* points, int beg, int end)
+{
+  if (end > beg + 1)
+  {
+    int piv = points[beg];
+    int l = beg + 1, r = end;
+    while (l < r)
+    {
+      if (points[l] <= piv)
+        l++;
+      else
+        swap(&points[l], &points[--r]);
+    }
+    swap(&points[--l], &points[beg]);
+    quicksort_int(points, beg, l);
+    quicksort_int(points, r, end);
+  }
+}
+
 void swap(Point *a, Point *b)
 {
   Point t=*a; *a=*b; *b=t;
@@ -341,10 +362,10 @@ void get_convex_vertices(int z, int poly_tile, Point* pts, int vertex_max, int* 
 class Diagonal {
     public:
     int p,q;
-    int length(Point* p1) {
-        Point* _p = &p1[p];
-        Point* _q = &p1[q];
-        return sqrt((_q->x - _p->x)*(_q->x - _p->x) +(_q->y - _p->y)*(_q->y - _p->y));
+    int length(Point* pts) {
+        Point* _p = &pts[this->p];
+        Point* _q = &pts[this->q];
+        return sqrt((_q->x - _p->x)*(_q->x - _p->x) + (_q->y - _p->y)*(_q->y - _p->y));
     }
 };
 
@@ -439,11 +460,17 @@ bool orthogonal_intersection(Point* v1, Point* v2, Point* h1, Point* h2) {
     Point* bottom = (v1->y < v2->y) ? v1 : v2;
     Point* left = (h1->x >= h2->x) ? h1 : h2;
     Point* right = (h1->x < h2->x) ? h1 : h2;
-    //printf("%d %d %d %d\n", v1->x, v1->y, v2->x, v2->y);
-    //printf("%d %d %d %d\n", h1->x, h1->y, h2->x, h2->y);
-    //printf("\n");
-    //if (v1->x < left->x && v1->x > right->x
-     //&& h1->y < top->y  && h1->y > bottom->y) return true;
+
+    if (v1->x < left->x && v1->x > right->x
+     && h1->y < top->y  && h1->y > bottom->y) return true;
+    return false;
+}
+bool orthogonal_intersection_inclusive(Point* v1, Point* v2, Point* h1, Point* h2) {
+    Point* top = (v1->y >= v2->y) ? v1 : v2;
+    Point* bottom = (v1->y < v2->y) ? v1 : v2;
+    Point* left = (h1->x >= h2->x) ? h1 : h2;
+    Point* right = (h1->x < h2->x) ? h1 : h2;
+
     if (v1->x <= left->x && v1->x >= right->x
      && h1->y <= top->y  && h1->y >= bottom->y) return true;
     return false;
@@ -458,7 +485,28 @@ void find_intersections(Point* p, Diagonal* h, int h_ct, Diagonal* v, int v_ct, 
         for (j=0; j<h_ct; j++) {
             q1 = &p[h[j].p];
             q2 = &p[h[j].q];
-            if (orthogonal_intersection(p1, p2, q1, q2)) {
+            if (orthogonal_intersection_inclusive(p1, p2, q1, q2)) {
+                in[index].dh = j;
+                in[index].dv = i;
+                index++;
+            }
+        }
+    }
+    *i_ct = index;
+    printf("%d intersections found\n", index);
+}
+
+void find_intersections(Point* p, Diagonal* d, int d_ct, int h_ct, Intersection* in, int* i_ct) {
+    int i,j;
+    int index = 0;
+    Point *p1, *p2, *q1, *q2;
+    for (i=h_ct; i<d_ct; i++) {
+        p1 = &p[d[i].p];
+        p2 = &p[d[i].q];
+        for (j=0; j<h_ct; j++) {
+            q1 = &p[d[j].p];
+            q2 = &p[d[j].q];
+            if (orthogonal_intersection_inclusive(p1, p2, q1, q2)) {
                 in[index].dh = j;
                 in[index].dv = i;
                 index++;
@@ -474,7 +522,8 @@ int hk(int h_ct, int v_ct, int i_ct, Intersection* intersections) {
     HK::N = v_ct;
 
     // init graph
-    FOR(i,1,HK::N+HK::M) {
+    //FOR(i,1,HK::N+HK::M) {
+    FOR(i,0,HK::N+HK::M) {
         HK::graph[i].clear();
         HK::map[i]=0;
     }

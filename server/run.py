@@ -207,7 +207,7 @@ def draw_sphere(block, radius, x,y,z):
 
 def good_cave1():
     c_lib.map_gen.Dragon.generate()
-
+    c_lib.map_gen.Dungeon.generate()
     ##base heightmap, smooth shallow hills
     #c_lib.map_gen.conf\
     #.size(128,128,128)\
@@ -242,18 +242,18 @@ def good_cave1():
     #.start()\
     #.reset()
     
-    c_lib.map_gen.conf\
-    .size(128,128,128)\
-    .group(0)\
-    .tile(0)\
-    .interpolate(4,2,1)\
-    .scale(2.0, 2.0, 1.0)\
-    .reverse_heightmap(baseline=13, maxheight=12, minheight=3, tile=103)\
-    .p2(octaves=6, persistence=0.35)\
-    .start()\
-    .reset()
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(0)\
+    #.tile(0)\
+    #.interpolate(4,2,1)\
+    #.scale(2.0, 2.0, 1.0)\
+    #.reverse_heightmap(baseline=13, maxheight=12, minheight=3, tile=103)\
+    #.p2(octaves=6, persistence=0.35)\
+    #.start()\
+    #.reset()
 
-    c_lib.map_gen.floor(128,128,14,1,101)
+    #c_lib.map_gen.floor(128,128,14,1,101)
 
 
 class Main:
