@@ -1279,11 +1279,80 @@ inline bool is_horizontal_line_segment(int lx, int ly, int rx, int ry, Point* po
         p = &points[d->p];
         q = &points[d->q];
         if (p->y != ly) continue;
-        left = (p->x > q->x) ? p : q;
+        left = (p->x >= q->x) ? p : q;
         right = (p->x < q->x) ? p : q;
         if (lx <= left->x && rx >= right->x) return true;
     }
     return false;
+}
+
+void find_duplicate_corners(Point* corners, int n_corners) {
+    int i,j;
+    int n = 0;
+    Point *p,*q;
+    for (i=0; i<n_corners; i++) {
+        p = &corners[i];
+        for (j=0; j<n_corners; j++) {
+            if (i==j) continue;
+            q = &corners[j];
+            if (p->x == q->x && p->y == q->y && p->bx == q->bx && p->by == q->by) {
+                //p->print();
+                n++;
+                _set(p->bx, p->by, 13, 1);
+            }
+        }
+    }
+    if (n) printf("ERROR: %d duplicate corners found.\n", n);
+}
+
+void remove_corner(int id, Point* corners, int* n_corners) {
+    Point* p;
+    p = &corners[id];
+    p->x = 0;
+    p->y = 0;
+    p->bx = 0;
+    p->by = 0;
+    
+    int i;
+    for (i=id; i<*n_corners-1; i++) {
+        corners[i] = corners[i+1];
+    }
+    *n_corners -= 1;
+}
+
+void remove_duplicate_corners(Point* corners, int* n_corners) {
+    int i,j;
+    Point *p,*q;
+    int n_dupes = 0;
+    Point* dupes = (Point*)malloc(sizeof(Point)*(*n_corners/2));
+    int* dupe_ids = (int*)malloc(sizeof(int)*(*n_corners/2));
+    for (i=0; i<*n_corners; i++) {
+        p = &corners[i];
+        for (j=0; j<*n_corners; j++) {
+            if (i==j) continue;
+            q = &corners[j];
+            if (p->x == q->x && p->y == q->y && p->bx == q->bx && p->by == q->by) {
+                if (point_in_points_both(*p, dupes, n_dupes) < 0) {
+                    dupes[n_dupes] = *p;
+                    dupe_ids[n_dupes] = j;
+                    n_dupes++;
+                }
+            }
+        }
+    }
+
+    quicksort_int(dupe_ids, 0, n_dupes);
+
+    int id;
+    for (i=n_dupes-1; i>=0; i--) {
+        id = dupe_ids[i];
+        remove_corner(id, corners, n_corners);
+    }
+
+    printf("removed %d corners\n", n_dupes);
+    
+    free(dupes);
+    free(dupe_ids);
 }
 
 Point *points = NULL;
@@ -1403,7 +1472,7 @@ void rect_solver() {
      */
 
     // copy diagonals into one array, with room for new diagonals
-    int n_ends_max = n_points-n_ind;
+    int n_ends_max = n_points * 2;
     int index;
     diagonals = (Diagonal*)malloc(sizeof(Diagonal)*(n_points));
     for (i=0; i<n_ind; i++) {
@@ -1565,22 +1634,18 @@ void resolve_rooms(int z, int tile) {
         d = &diagonals[in->dh];
         e = &diagonals[in->dv];
 
-        //left = (points[d->p].x > points[d->q].x) ? &points[d->p] : &points[d->q];
         top = (points[e->p].y > points[e->q].y) ? &points[e->p] : &points[e->q];
         right = (points[d->p].x < points[d->q].x) ? &points[d->p] : &points[d->q];
-        //bottom = (points[e->p].y < points[e->q].y) ? &points[e->p] : &points[e->q];
 
         if (top->y - right->y < 2) continue;
         if (top->x - right->x < 2) continue;
 
         x = top->x;
-        //y = left->y;
         y = right->y;
 
         p = &corners[n_corners++];
         p->x = x;
         p->y = y;
-        //p->bx = (x-1)/2 + 1;
         p->bx = (x-1)/2;
         p->by = (y-1)/2 + 1;
     }
@@ -1756,7 +1821,7 @@ void resolve_rooms(int z, int tile) {
         q = &points[d->q];
 
         if (i < n_horizontals) {
-            right = (p->x > q->x) ? p : q;
+            right = (p->x >= q->x) ? p : q;
             left = (p->x < q->x) ? p : q;
 
             //      |-
@@ -1796,7 +1861,7 @@ void resolve_rooms(int z, int tile) {
             }
 
         } else {
-            top = (p->y > q->y) ? p : q;
+            top = (p->y >= q->y) ? p : q;
             bottom = (p->y < q->y) ? p : q;
 
             //      T
@@ -1840,6 +1905,10 @@ void resolve_rooms(int z, int tile) {
 
     if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
 
+    remove_duplicate_corners(corners, &n_corners);
+
+    if (n_corners > corners_max) printf("ERROR: n_corners %d exceeds corners_max %d\n", n_corners, corners_max);
+
     corners = (Point*)realloc(corners, sizeof(Point)*n_corners);
 
     rooms = (Room*)malloc(sizeof(Room) * n_bottom_corners);
@@ -1848,7 +1917,6 @@ void resolve_rooms(int z, int tile) {
     n_rooms = 0;
     int k;
     int p_index;
-    int pp_p_index = 0;
     for (i=0; i<n_bottom_corners;i++) {
         r = &rooms[n_rooms++];
         p = &corners[i];
@@ -1884,7 +1952,6 @@ void resolve_rooms(int z, int tile) {
             p_index = point_in_points_both(qq, corners, n_corners);
             if (p_index >= 0) {
                 pp = &corners[p_index];
-                pp_p_index = p_index;
                 if (dx) {
                     if (pp->bx+1 != (qq.x)/2 && pp->by != (qq.y)/2) {
                         continue;
@@ -1913,6 +1980,7 @@ void resolve_rooms(int z, int tile) {
         _tile%=7;
     }
 
+    find_duplicate_corners(corners, n_corners);
 }
 
 void draw() {
