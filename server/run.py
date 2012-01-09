@@ -207,7 +207,7 @@ def draw_sphere(block, radius, x,y,z):
 
 def good_cave1():
     c_lib.map_gen.Dragon.generate()
-
+    c_lib.map_gen.Dungeon.generate()
     ##base heightmap, smooth shallow hills
     #c_lib.map_gen.conf\
     #.size(128,128,128)\
