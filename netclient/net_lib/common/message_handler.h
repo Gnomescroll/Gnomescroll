@@ -1,6 +1,6 @@
 #pragma once
 
-#include "type_pack.h"
+#include <net_lib/common/type_pack.h>
 
 //typedef int (*pt2handler)(int, char*);
 typedef void (*pt2handler)(char*, int, int*, int);

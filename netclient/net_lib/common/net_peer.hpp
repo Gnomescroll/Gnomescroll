@@ -5,7 +5,7 @@
 //#include <net_lib/common/sequencer.h>
 //#include <net_lib/common/python_channel.hpp>
 
-#include <net_lib/packet_buffer.hpp>
+#include <net_lib/common/packet_buffer.hpp>
 
 #include <net_lib/enet/enet.h>
 
