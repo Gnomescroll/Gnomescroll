@@ -1149,6 +1149,7 @@ void quicksort_diagonals_HV(Diagonal* d, Point* p, int beg, int end)
 class Room {
     public:
     int x,y,w,h;
+    int z,d;
     bool placed;
     int edges;
     int area() {
@@ -1167,8 +1168,13 @@ class Room {
                 _set(i,j,z,tile);
             }
         }
-        //printf("drew ");
-        //print();
+    }
+
+    void draw_3d(int tile) {
+        int k;
+        for (k=z; k<z+d; k++) {
+            this->draw(k, tile);
+        }
     }
 
     void print() {
@@ -1180,18 +1186,29 @@ class Room {
         if (y == r->y || y == r->y+r->h || y+h == r->y || y+h == r->y+r->h) {
             if (x < r->x && x > r->x-r->w) return true;
             if (x-w < r->x && x-w > r->x-r->w) return true;
+            if (x == r->x && w == r->w) return true;
         }
         // vertical edges
         if (x == r->x || x == r->x-r->w || x-w == r->x || x-w == r->x-r->w) {
             if (y > r->y && y < r->y+r->h) return true;
             if (y+h > r->y && y+h < r->y+r->h) return true;
+            if (y == r->y && h == r->h) return true;
         }
 
         return false;
     }
 
+    float center_fx() {
+        return ((float)x) - ((float)w)/2.0f;
+    }
+
+    float center_fy() {
+        return ((float)y) + ((float)h)/2.0f;
+    }
+
     Room() :
     x(0), y(0), w(0), h(0),
+    z(0), d(0),
     placed(false),
     edges(0)
     {}
@@ -2137,21 +2154,24 @@ void build_adjacency_graph() {
         }
     }
 
-    //room_edges = (RoomEdge*)realloc(room_edges, sizeof(RoomEdge)*n_room_edges);
-    for (i=0; i<n_rooms; i++) {
-        printf("Room %d: \n", i);
-        r = &rooms[i];
-        re = &room_edges[r->edges];
-        re->print();
-        printf("\n");
-    }
+    printf("%d rooms found\n", n_rooms);
+
+    //for (i=0; i<n_rooms; i++) {
+        //printf("Room %d: \n", i);
+        //r = &rooms[i];
+        //re = &room_edges[r->edges];
+        //re->print();
+        //printf("\n");
+    //}
 }
 
 void draw() {
-    int i;
+    int i,j;
     Point *p, *q;
     Diagonal d;
     int z = 14;
+
+    // draw diagonals
     if (diagonals != NULL) {
         for (i=0; i<n_diagonals; i++) {
             d = diagonals[i];
@@ -2161,12 +2181,144 @@ void draw() {
         }
     }
 
-    if (corners != NULL) {
-        for (i=0; i<n_corners; i++) {
-            p = &corners[i];
-            _draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, (float)p->bx + 0.5, (float)p->by + 0.5, z+0.1);
+    //// draw corners
+    //if (corners != NULL) {
+        //for (i=0; i<n_corners; i++) {
+            //p = &corners[i];
+            //_draw_line(255,10,10, ((float)p->x)/2+0.5, ((float)p->y)/2+0.5, z+0.1, (float)p->bx + 0.5, (float)p->by + 0.5, z+0.1);
+        //}
+    //}
+
+    Room *r,*s;
+    RoomEdge *re;
+    // draw adjacency graph
+    if (room_edges != NULL) {
+        for (i=0; i<n_rooms; i++) {
+            r = &rooms[i];
+            re = &room_edges[r->edges];
+            // draw line from center of room to center of adjacent room
+            for (j=0; j<re->n; j++) {
+                s = &rooms[re->rooms[j]];
+                _draw_line(255,10,10, r->center_fx(), r->center_fy(), z+0.1, s->center_fx(), s->center_fy(), z+0.1);
+            }
         }
     }
+}
+
+void place_rooms(Room *rooms, int* current, int n_current, int z) {
+    int i;
+    Room *r;
+    for (i=0; i<n_current;i++) {
+        r = &rooms[current[i]];
+        r->z = z;
+        r->placed = true;
+    }
+}
+
+inline bool int_in_array(int i, int *arr, int arr_size) {
+    int k;
+    for (k=0; k<arr_size;k++) {
+        if (arr[k] == i) return true;
+    }
+    return false;
+}
+
+void get_adjacent_rooms(Room *rooms, RoomEdge *room_edges, int *current, int *next, int *n_current) {
+    int i,j;
+    int n = 0;
+    Room *r,*s;
+    RoomEdge *re;
+    int adj;
+    for (i=0; i<*n_current; i++) {
+        r = &rooms[current[i]];
+        re = &room_edges[r->edges];
+        for (j=0; j<re->n; j++) {
+            adj = re->rooms[j];
+            s = &rooms[adj];
+            if (s->placed) continue;
+            if (int_in_array(adj, next, n)) continue;
+            printf("%d\n", adj);
+            next[n++] = adj;
+        }
+    }
+    *n_current = n;
+}
+
+void rooms_not_placed(Room* rooms, int n_rooms, int* not_placed, int *n_not_placed) {
+    int i;
+    int n = 0;
+    for (i=0; i<n_rooms; i++) {
+        if (rooms[i].placed) continue;
+        not_placed[n++] = i;
+    }
+    *n_not_placed = n;
+}
+
+int choose_unplaced_room(Room *rooms, int n_rooms, int *not_placed, int n_not_placed) {
+    int id = randrange(0, n_not_placed-1);
+    id = not_placed[id];
+    return id;
+}
+
+/*
+1  procedure BFS(G,v):
+2      create a queue Q
+3      enqueue v onto Q
+4      mark v
+5      while Q is not empty:
+6          t ← Q.dequeue()
+7          if t is what we are looking for:
+8              return t
+9          for all edges e in G.incidentEdges(t) do
+10             o ← G.opposite(t,e)
+11             if o is not marked:
+12                  mark o
+13                  enqueue o onto Q
+*/
+
+void set_room_z_levels() {
+    if (!n_rooms) return;
+    
+    int room_height = 6;
+    int i;
+    for (i=0; i<n_rooms; i++) {
+        rooms[i].placed = false;
+        rooms[i].z = 0;
+        rooms[i].d = room_height;
+    }
+
+    int z = 128-room_height-1;
+    int z_decrement = 1;
+
+    int *not_placed = (int*)malloc(sizeof(int)*n_rooms);
+    int n_not_placed = n_rooms;
+    rooms_not_placed(rooms, n_rooms, not_placed, &n_not_placed);
+    if (n_rooms != n_not_placed) {
+        printf("WARNING: initial rooms_not_placed scan finds %d rooms not placed, out of %d\n", n_not_placed, n_rooms);
+    }
+    int *current = (int*)malloc(sizeof(int)*n_rooms);
+    int *next = (int*)malloc(sizeof(int)*n_rooms);
+    int n_current = 0;
+    
+    while (n_not_placed) {
+        if (!n_current) {
+            current[n_current++] = choose_unplaced_room(rooms, n_rooms, not_placed, n_not_placed);
+        }
+
+        place_rooms(rooms, current, n_current, z);
+        //z -= z_decrement;
+        z -= randrange(1,2);
+        z = (z < 1) ? 1 : z;
+
+        get_adjacent_rooms(rooms, room_edges, current, next, &n_current);
+        memcpy(current, next, sizeof(int)*n_rooms);
+
+        rooms_not_placed(rooms, n_rooms, not_placed, &n_not_placed);
+    }
+
+    free(current);
+    free(next);
+    free(not_placed);
 }
 
 void generate() {
@@ -2213,6 +2365,27 @@ void generate() {
 
     resolve_rooms(z, tile);
     build_adjacency_graph();
+    set_room_z_levels();
+
+    //static block_CtoS msg;
+
+    int i,j,k;
+    int depth = 128;
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            for (k=0; k<depth; k++) {
+                _set(i,j,k,101);
+                //msg.x = i;
+                //msg.y = j;
+                //msg.z = k;
+                //msg.val = 101;
+                //msg.send();
+            }
+        }
+    }
+    for (i=0; i<n_rooms; i++) {
+        rooms[i].draw_3d(0);
+    }
 
     //int pattern_w = 7;
     //int pattern_h = 15;
