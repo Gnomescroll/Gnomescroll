@@ -99,8 +99,8 @@
 #include <c_lib/state/client_state.cpp>
 #include <c_lib/state/packet_init.cpp>
 
-#include <c_lib/SDL/pngfuncs.c>
-#include <c_lib/SDL/v.cpp>
+//#include <c_lib/SDL/pngfuncs.c>
+//#include <c_lib/SDL/v.cpp>
 
 //page size
 #include <unistd.h>
