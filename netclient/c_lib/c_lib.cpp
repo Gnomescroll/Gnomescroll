@@ -9,7 +9,17 @@
 
 #include <c_lib.hpp>
 
-#include <defines.h>
+
+/* Network */
+#include <net_lib/net_lib.h>
+
+
+/* Graphics */
+#include "compat_gl.h"
+#include "defines.h"
+
+//utility
+#include <c_lib/time/physics_timer.c>
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vector.cpp>
@@ -49,9 +59,6 @@
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.c>
 
-/* Network */
-#include <net_lib/net_lib.h>
-
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
     #include <c_lib/t_map/t_vbo.c>
@@ -63,6 +70,7 @@
     #include <c_lib/skybox/skybox.cpp>
 
     /* SDL */
+    #include <c_lib/SDL/shader_loader.cpp>
     #include <c_lib/SDL/texture_loader.c>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
@@ -104,6 +112,10 @@ int init_c_lib() {
 
     srand(time(NULL));   // seed the RNG
 
+
+    init_network();
+    init_net_client();
+    
     #ifdef DC_CLIENT
         init_video();
         init_image_loader();

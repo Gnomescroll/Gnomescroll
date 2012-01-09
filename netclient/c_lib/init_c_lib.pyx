@@ -18,32 +18,17 @@ def close():
 
 #network stuff
 
-cdef extern from "./net_lib/client.h":
-    void _NetClientStartFrame()
-    void _NetClientStateTick()
-    void _NetClientNetInTick()
-    void _NetClientNetOutTick()
-    void _NetClientConnect(int a, int b,int c, int d, int _port)
-#   void _NetClientTick()
+cdef extern from "./net_lib/host.hpp":
+    void dispatch_network_events()
+    void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
-#def NetClientTick():
-#    _NetClientTick()
+def NetClientDispatchNetworkEvents():
+    dispatch_network_events()
 
-def NetClientStateTick():
-    _NetClientStateTick()
+def ClientConnectTo(int a, int b,int c, int d, unsigned short _port):
+    client_connect_to(a, b, c, d, _port)
 
-def NetClientNetInTick():
-    _NetClientNetInTick()
 
-def NetClientNetOutTick():
-    _NetClientNetOutTick()
-
-### The problem
-def NetClientStartFrame():
-    _NetClientStartFrame()
-
-def NetClientConnect(int a, int b,int c, int d, int _port):
-    _NetClientConnect(a,b,c,d, _port)
 
 ##timer
 
@@ -94,7 +79,7 @@ def GET_MS_TIME():
 
 ### pviz
 
-cdef extern from "./net_lib/client/pviz.h":
+cdef extern from "../net_lib/common/pviz.h":
     void pviz_draw(float x, float y, float z)
     void toggle_latency_unit()
 
@@ -142,19 +127,6 @@ cdef void py_net_message_callback(char* buff, int n, int client_id):
     ustring = buff[:n]
     if(_CLIENT_MESSAGE_CALLBACK != None):
         _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
-'''
-    cdef bytes py_string = buff[:n]
-    if(_CLIENT_MESSAGE_CALLBACK != None):
-        _CLIENT_MESSAGE_CALLBACK(client_id, bytes)
-'''
-
-'''
-    ustring = buff[:n].decode('UTF-8')
-    if(_CLIENT_MESSAGE_CALLBACK != None):
-        _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
-    #print "python callback: received %i bytes from client %i" % (n, client_id)
-    #print "str: %s" % (ustring)
-'''
 
 def _send_python_net_message(message, int client_id):
     #print "Send python net message"

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include <compat.h>
+#include <defines.h>
 
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>

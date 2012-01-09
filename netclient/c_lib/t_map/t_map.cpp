@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <compat_gl.h>
 
+#include <c_lib/t_map/t_map_net.hpp>
 
 //#include "./t_inline.c"
 //globals

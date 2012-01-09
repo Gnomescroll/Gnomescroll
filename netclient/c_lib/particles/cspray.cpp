@@ -1,6 +1,5 @@
 #include "cspray.hpp"
 
-#include <compat.h>
 #ifdef DC_CLIENT
     #include <compat_gl.h>
 #endif
@@ -162,7 +161,7 @@ void Cspray_list::draw() {
  */
 
 
-#include <c_lib/template/net.hpp>
+#include <net_lib/net.hpp>
 
 class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
 {

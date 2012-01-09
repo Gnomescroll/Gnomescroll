@@ -2,6 +2,11 @@
 
 #copies over stuff
 
+#netlib
+rm -rf ./server/net_lib
+cp -rf ./netclient/net_lib ./server/net_lib
+
+#other stuff
 rm -rf ./server/c_lib/agent
 cp -rf ./netclient/c_lib/agent ./server/c_lib/agent
 
@@ -10,9 +15,6 @@ cp -rf ./netclient/c_lib/common ./server/c_lib/common
 
 rm -rf ./server/c_lib/game
 cp -rf ./netclient/c_lib/game ./server/c_lib/game
-
-rm -rf ./server/c_lib/net_lib
-cp -rf ./netclient/c_lib/net_lib ./server/c_lib/net_lib
 
 rm -rf ./server/c_lib/particles
 cp -rf ./netclient/c_lib/particles ./server/c_lib/particles

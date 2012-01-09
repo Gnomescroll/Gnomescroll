@@ -2,6 +2,8 @@
 
 #include <c_lib/ray_trace/hitscan.hpp>
 
+#include <c_lib/t_map/t_map_net.hpp>
+
 void PlayerAgent_action::fire() {
     Agent_state* a = ClientState::agent_list.get(p->agent_id);
     if (a==NULL) return;

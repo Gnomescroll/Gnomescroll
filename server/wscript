@@ -45,7 +45,7 @@ def configure(conf):
     #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
     #conf.env.CXXFLAGS = conf.env.CFLAGS
 
-    extra_options = [ '-fno-exceptions', '-Winline']
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch']
     if OS == 'Windows':
         conf.env.append_value('CFLAGS', ['-g','-Wall','-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
         conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
@@ -95,7 +95,7 @@ def configure(conf):
                 #use="noise",
                 #mandatory=True)
 
-    conf.env.INCLUDES = ['.', 'c_lib', '/usr/local/include']
+    conf.env.INCLUDES = ['.', 'c_lib', 'net_lib', '/usr/local/include']
     #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/']
 

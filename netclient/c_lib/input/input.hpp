@@ -6,8 +6,6 @@
 
 #include <compat_gl.h>
 
-#include <compat.h>
-
 typedef struct {
   int x;
   int y;

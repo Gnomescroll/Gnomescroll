@@ -1,16 +1,5 @@
 #pragma once
 
-#include <compat_gl.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "t_vbo.h"
-
-
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
-
 int _draw_vbo_indicator(float x, float y, float z);
 
 void _toggle_t_viz_vbo_indicator_style();

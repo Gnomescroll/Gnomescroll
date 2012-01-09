@@ -39,8 +39,7 @@ import c_lib.c_lib_map_gen as cMapGen
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
-from init_c_lib import _pviz_draw
-from init_c_lib import NetClientStateTick, NetClientNetInTick, NetClientNetOutTick, NetClientStartFrame, NetClientConnect
+from init_c_lib import NetClientDispatchNetworkEvents, ClientConnectTo
 from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -52,6 +51,8 @@ from map_controller import MapControllerGlobal
 from input import Mouse, Keyboard
 from hud import Hud
 from animations import animations
+
+#from init_c_lib import _pviz_draw
 
 cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
@@ -116,7 +117,7 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         a,b,c,d = opts.server.split(".")
-        NetClientConnect(int(a),int(b),int(c),int(d), 0)
+        ClientConnectTo(int(a),int(b),int(c),int(d), 8080)
 
     def mainLoop(self):
         global P, Phy
@@ -152,7 +153,6 @@ class App(object):
 
             NetClientGlobal.connection.dispatch_buffer()
 
-
             tc = 0
             _density = 1
             _min = 0.025
@@ -177,16 +177,11 @@ class App(object):
                 ParticleTestSpawn(_i)
                 _i+=1
 
-                #billboard_text_fountain()
-
                 #process input
                 cInput.process_events()
                 cInput.get_key_state()
                 if agent:
                     agent.set_button_state()
-                #TCP in
-                #NetClientGlobal.connection.attempt_recv()
-
                 #physics tick routine
                 self.animations.tick()
                 if GameStateGlobal.agent is not None:
@@ -194,20 +189,19 @@ class App(object):
 
                 cParticles.tick() ## TESTING
 
-
-                NetClientNetInTick()    #UDP in
-                NetClientStateTick()    #state tick (this does nothing?)
-
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
                 print "Physics: %i ticks this frame" % (sl_c)
 
             #if there has been at least one physics tick
             if sl_c > 0:
-                #NetClientTick()
-                NetClientNetOutTick()
+                pass
 
-            NetClientNetInTick() #every draw frame, process incoming
+            '''
+                May only want to send output every 30 ms
+            '''
+            P.event("Networking 1")
+            NetClientDispatchNetworkEvents() #networking input/output
 
             '''
             !?
@@ -278,7 +272,7 @@ class App(object):
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
                     P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
-                    _pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
+                    #_pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
 
             P.event("SDL flip")
             cSDL.flip()

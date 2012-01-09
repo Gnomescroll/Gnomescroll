@@ -3,7 +3,6 @@
 #include <math.h>
 
 #ifdef DC_CLIENT
-#include <c_lib/compat.h>
 #include <c_lib/compat_gl.h>
 
 #include <c_lib/agent/agent.hpp>

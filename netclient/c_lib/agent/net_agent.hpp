@@ -1,10 +1,6 @@
 #pragma once
 
-#include <c_lib/template/net.hpp>
-#include <net_lib/common/message_handler.h>
-#include <net_lib/client/client.hpp>
-#include <net_lib/server/server.h>
-
+#include <net_lib/net.hpp>
 
 /*
  *  Player Agent Packets

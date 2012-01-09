@@ -1,9 +1,0 @@
-Using Ctags
-
-Command	Key Binding
-rebuild_ctags					ctrl+alt+shift+t
-navigate_to_definition			ctrl+rightbracket
-jump_back						ctrl+leftbracket
-jump_back to_last_modification	ctrl+shift+leftbracket
-show_symbols					alt+s
-show_symbols multi				alt+shift+s

@@ -1,5 +1,15 @@
 #include "t_viz.h"
 
+#include <compat_gl.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "t_vbo.h"
+
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
+
 #define xw 5
 #define yh 5
 

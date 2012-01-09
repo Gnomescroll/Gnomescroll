@@ -1,7 +1,5 @@
 #pragma once
 
-#include <compat_gl.h>
-#include <stdio.h>
 
 struct VertexDraw {
     float x,y,z;

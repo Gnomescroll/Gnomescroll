@@ -1,22 +1,28 @@
 #include "./packet_init.hpp"
 
-#include <net_lib/common/message_handler.h>
+//#include <net_lib/common/message_handler.h>
+
+#include <c_lib/game/packets.hpp>
+
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/player_agent.hpp>
 
 #include <c_lib/particles/particle_lib.hpp>
-#include <c_lib/t_map/t_map.hpp>
 
-#include <c_lib/game/packets.hpp>
+#include <c_lib/t_map/t_map_net.hpp>
+
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
 void RegisterMessages() {
 
+/*
+    add back in 
     benchmarkCtoS::register_server_packet();    //packet for benchmarking
     benchmarkReliableCtoS::register_server_packet();  
-    
+*/  
+
     //Agent_control_state_message::register_server_packet();
     Agent_state_message::register_client_packet();
     Agent_teleport_message::register_client_packet();
