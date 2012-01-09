@@ -15,10 +15,8 @@
 
 
 /* Graphics */
-#include "compat.h"
 #include "compat_gl.h"
-
-#include <defines.h>
+#include "defines.h"
 
 //utility
 #include <c_lib/time/physics_timer.c>

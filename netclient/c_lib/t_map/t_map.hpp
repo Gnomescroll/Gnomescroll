@@ -1,8 +1,5 @@
 #pragma once
 
-
-#include <compat.h>
-
 #include <c_lib/common/functional.h>
 
 /*

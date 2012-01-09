@@ -12,7 +12,7 @@
     #define OBJECT_POOL_OBJECT_MACRO
 #endif
 
-template <class Object, int BUFFER_POOL_SIZE>
+template <class Base, class Object, int BUFFER_POOL_SIZE>
 class Object_pool {
     private:
         int batch_num;
@@ -20,7 +20,7 @@ class Object_pool {
         //batch malloc/link method
         void batch_alloc();
 
-        virtual char* name() { static char* x = (char*) "Error: generic object pool"; return x; }
+        //virtual char* name() { static char* x = (char*) "Error: generic object pool"; return x; }
 
     public:
 
@@ -35,15 +35,15 @@ class Object_pool {
 
 };
 
-template <class Object, int BUFFER_POOL_SIZE>
-Object_pool<Object, BUFFER_POOL_SIZE>::Object_pool()
+template <class Base, class Object, int BUFFER_POOL_SIZE>
+Object_pool<Base, Object, BUFFER_POOL_SIZE>::Object_pool()
 {
     batch_num = 0;
     first = NULL;
 }
 
-template <class Object, int BUFFER_POOL_SIZE>
-void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
+template <class Base, class Object, int BUFFER_POOL_SIZE>
+void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
 {
     batch_num++;
 
@@ -62,11 +62,11 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::batch_alloc()
     ar[BUFFER_POOL_SIZE-1].next = NULL;
 
     //static char* _name = name();
-    printf("%s: Batch Alloc: %i n_elements: %i \n", name(), batch_num, BUFFER_POOL_SIZE);
+    printf("%s: Batch Alloc: %i n_elements: %i \n", Base::name(), batch_num, BUFFER_POOL_SIZE);
 }
 
-template <class Object, int BUFFER_POOL_SIZE>
-Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
+template <class Base, class Object, int BUFFER_POOL_SIZE>
+Object* Object_pool<Base, Object, BUFFER_POOL_SIZE>::acquire()
 {
     #if OBJECT_POOL_DEBUG_BATCH 
         Object* tmp2 = (Object*) malloc(sizeof(Object));
@@ -84,8 +84,8 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
     #if OBJECT_POOL_DEBUG 
         if(tmp->allocated != 0)
         {
-            static const char* _name = name();
-            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %lx \n", _name, tmp->allocated, (long) tmp );
+            //static const char* _name = name();
+            printf("%s: Memory Pool Acquire Error, allocated= %i, object= %lx \n", Base::name(), tmp->allocated, (long) tmp );
             //int segfault = *((int*) NULL);
         }
         tmp->allocated++;
@@ -93,8 +93,8 @@ Object* Object_pool<Object, BUFFER_POOL_SIZE>::acquire()
     return tmp;
 }
 
-template <class Object, int BUFFER_POOL_SIZE>
-void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
+template <class Base, class Object, int BUFFER_POOL_SIZE>
+void Object_pool<Base, Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
 {
     #if OBJECT_POOL_DEBUG_BATCH
         free(nmb);
@@ -104,8 +104,8 @@ void Object_pool<Object, BUFFER_POOL_SIZE>::retire(Object* nmb)
     #if OBJECT_POOL_DEBUG
         if(nmb->allocated != 1)
         {
-            static const char* _name = name();
-            printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", _name, nmb->allocated, (long) nmb );
+            //static const char* _name = name();
+            printf("%s: Memory Pool Retire Error, allocated= %i, object= %lx \n", Base::name(), nmb->allocated, (long) nmb );
             int segfault = *((int*) NULL);
             printf("sefault= %i", segfault);
         }

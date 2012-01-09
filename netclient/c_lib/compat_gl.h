@@ -1,5 +1,4 @@
-#ifndef compat_gl_h
-#define compat_gl_h
+#pragma once
 
 
     #ifdef linux
@@ -24,4 +23,3 @@
 
     #include <SDL_image.h>
 
-#endif

@@ -1,6 +1,5 @@
 #include "minivox.hpp"
 
-#include <compat.h>
 #ifdef DC_CLIENT
     #include <compat_gl.h>
 #endif

@@ -2,14 +2,14 @@
 
 
 
-class NetMessageArray_pool: public Object_pool<NetMessageArray, 64>  //set to 64, 2 for testing
+class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
 {
     public:
-        //char* name();
+        static char* name();
 };
 
 char* NetMessageArray_pool::name() {
-    return (char*) "NetMessageArray_pool";
+    static char* x = (char*) "NetMessageArray_pool"; return x;
 } 
 
 static NetMessageArray_pool net_message_array_pool;
@@ -43,10 +43,10 @@ class Net_message_buffer {
     Net_message_buffer() { reference_count = 0; }
 };
 
-class Net_message_buffer_pool: public Object_pool<Net_message_buffer, 128> 
+class Net_message_buffer_pool: public Object_pool<Net_message_buffer_pool, Net_message_buffer, 128> 
 {
     public:
-    char* name() { static char* x = (char*) "Net_message_buffer_pool"; return x; } 
+    static char* name() { static char* x = (char*) "Net_message_buffer_pool"; return x; } 
 
     Net_message_buffer* current;
     int remaining;
@@ -86,10 +86,10 @@ static Net_message_buffer_pool net_message_buffer_pool;
 
 
 
-class Net_message_pool: public Object_pool<Net_message, 4096> // {}; //use 4096
+class Net_message_pool: public Object_pool<Net_message_pool, Net_message, 4096> // {}; //use 4096
 {
 public:
-    char* name() 
+    static char* name() 
     { 
         static char* x = (char*) "Net_message_pool";
         return x;

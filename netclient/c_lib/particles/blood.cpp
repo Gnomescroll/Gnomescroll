@@ -5,7 +5,6 @@
 static float blood_proj_mtrx[16];
 #endif
 
-#include <compat.h>
 #ifdef DC_CLIENT
     #include <compat_gl.h>
 #endif

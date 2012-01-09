@@ -1,7 +1,6 @@
 #include "circuit_tree.hpp"
 #pragma once
 
-#include <compat.h>
 #ifdef DC_CLIENT
     #include <compat_gl.h>
 #endif
