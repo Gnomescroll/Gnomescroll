@@ -44,21 +44,31 @@ void send_python_net_message(char* message, int length, int client_id)
     #ifdef DC_CLIENT
         static int t_count = 0;
         t_count++;
-        printf("py_out: packet %i \n", t_count);
+        printf("py_out: packet %i, size= %i \n", t_count, length);
         
         if(length > 256)
         {
             printf("Error: Client to Server python packet would exceed 512 bytes\n");
             return;
         }
+
         Net_message* nm = Net_message::acquire( length + 2 );
-        int n1 =0;
-        PACK_uint16_t(length, nm->buff, &n1);    //length
+        int n1 = 0;
+        //PACK_uint16_t(length, nm->buff, &n1);    //length
+        pack_u16(&length, nm->buff, &n1, true);
+/*
+        n1 = 0;
+        int len2;
+        pack_u16(&len2, nm->buff, &n1, true);
+        printf("len2= %i \n", len2);
+*/
         memcpy(nm->buff+2, message, length);
+
         NetClient::Server.push_python_message(nm);
     #endif
 
     #ifdef DC_SERVER
+
         if(NetServer::pool[client_id] == NULL)
         {
             printf("send_python_net_message: client_id % is null\n", client_id);
@@ -87,8 +97,7 @@ void send_python_net_message(char* message, int length, int client_id)
         NetServer::pool[client_id]->push_python_message(nm);
         
         //printf("send_python_net_message: export.cpp, need to create a net message packet... \n");
-    #endif    
-
+    #endif
 }
 
 int _get_client_id() 

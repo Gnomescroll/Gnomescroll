@@ -59,7 +59,7 @@ void NetPeer::flush_to_net()
     if(python_message_manager.pending_messages != 0) 
     {
         ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
-        reliable_message_manager.serialize_messages( (char*)python_p->data, 0);
+        python_message_manager.serialize_messages( (char*)python_p->data, 0);
         enet_peer_send (enet_peer, 2, python_p);
     }
 
