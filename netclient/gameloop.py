@@ -308,59 +308,6 @@ class App(object):
         init_c_lib.close()
 
 
-'''
-if sl_c > 0:
-    _o = -1
-    _a_id= 0
-    if _o==0:
-        if _m < 50:
-            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _m < 100:
-            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _m < 150:
-            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _m < 200:
-            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-
-        if _m == 199:
-            _m = 0
-        else:
-            _m += 1
-    if _o==1:
-        if _m < 32:
-            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _m < 64:
-            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-
-        if _m == 64:
-            _m = 0
-        else:
-            _m += 1
-    if _o==2:
-        _r = random.random()
-        #print str(_r)
-        if _r < 0.25:
-            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _r < 0.50:
-            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _r < 0.75:
-            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        else:
-            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-    if _o==3:
-        set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-    if _o==4:
-        if _m < 32:
-            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-        elif _m < 64:
-            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
-
-        if _m == 64:
-            _m = 0
-        else:
-            _m += 1
-'''
-
 def ParticleTestSpawn(_i):
     return
     #neutron_fountain()
@@ -470,3 +417,56 @@ else:
 #app.mainLoop()
 
 sys.exit()
+
+'''
+if sl_c > 0:
+    _o = -1
+    _a_id= 0
+    if _o==0:
+        if _m < 50:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 100:
+            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 150:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 200:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+
+        if _m == 199:
+            _m = 0
+        else:
+            _m += 1
+    if _o==1:
+        if _m < 32:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 64:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+
+        if _m == 64:
+            _m = 0
+        else:
+            _m += 1
+    if _o==2:
+        _r = random.random()
+        #print str(_r)
+        if _r < 0.25:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _r < 0.50:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _r < 0.75:
+            set_agent_control_state(0,0,1,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        else:
+            set_agent_control_state(0,0,0,1, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+    if _o==3:
+        set_agent_control_state(0,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+    if _o==4:
+        if _m < 32:
+            set_agent_control_state(1,0,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+        elif _m < 64:
+            set_agent_control_state(0,1,0,0, 0,0, 0,0) #f,b,l,r,j,jet, theta,phi
+
+        if _m == 64:
+            _m = 0
+        else:
+            _m += 1
+'''

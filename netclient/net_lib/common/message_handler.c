@@ -125,6 +125,8 @@ PROCESS:
         printf("network error!!! Error: read past buffer\n");
         return -1; 
     }
+
+    return 0; //should not happen
 }
 
 

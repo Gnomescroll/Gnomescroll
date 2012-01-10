@@ -16,13 +16,13 @@ def init():
 
 cdef extern from "./net_lib/host.hpp":
     cdef extern void init_net_server()
-    cdef extern void dispatch_network_events()
+    cdef extern void server_dispatch_network_events()
 
 def NetServerInit():
     init_net_server()
 
 def NetServerDispatchNetworkEvents():
-    dispatch_network_events()
+    server_dispatch_network_events()
 
 ##timer
 

@@ -4,6 +4,22 @@
 
 /* Server -> Client */
 
+class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_StoC>
+{
+    public:
+        int client_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&client_id, buff, buff_n, pack);
+        }
+        inline void handle()
+        {
+            printf("Client Received Client id = %i \n", client_id);
+        }
+};
+
+
 class TeamColor_StoC: public FixedSizeReliableNetPacketToClient<TeamColor_StoC>
 {
     public:
