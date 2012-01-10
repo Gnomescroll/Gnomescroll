@@ -19,7 +19,7 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
         }
         inline void handle()
         {
-            printf("Client Received Client id = %i \n", client_id);
+            //printf("Client Received Client id = %i \n", client_id);
             NetClient::Server.client_id = client_id;
             client_connect_event(client_id);
         }

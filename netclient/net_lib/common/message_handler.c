@@ -135,6 +135,36 @@ PROCESS:
 
 int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
+    //int n1 = 0;
+    int length;
+PYTHON_LOOP:
+
+    //UNPACK_uint16_t(&length, n, &n1);    //length
+    pack_u16(&length, buff, n, false);
+
+    printf("Received a python packet of size %i \n", length);
+
+    *n += length;
+
+    if(*n < max_n) 
+    { 
+        goto PYTHON_LOOP;     
+    }
+    //finished procesing messages
+    if(*n == max_n) 
+    { 
+        return 0; 
+    }       
+
+    //error that should never occur
+    if(*n > max_n) 
+    {                    
+        //error, read past buff 
+        printf("process_python_messages: network error!!! Error: read past buffer\n");
+        return -1; 
+    }
+
+
     //PACK_uint16_t(bytes, nm->buff, &n1);    //length
 
 //    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 

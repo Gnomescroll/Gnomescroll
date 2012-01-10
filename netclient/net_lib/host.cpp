@@ -170,7 +170,7 @@ void client_dispatch_network_events()
             switch(event.channelID)
             {
                 case 0:
-                    printf("server received channel 1 message \n");
+                    printf("server received channel 0 message \n");
                     process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -179,6 +179,15 @@ void client_dispatch_network_events()
                         ); 
                     break;
                 case 1:
+                    printf("server received channel 1 message \n");
+                    process_large_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 2:
                     printf("server received channel 2 message \n");
                     process_python_messages(
                         (char*) event.packet -> data, 
@@ -187,17 +196,8 @@ void client_dispatch_network_events()
                         0
                         ); 
                     break;
-                case 2:
-                    printf("server received channel 3 message \n");
-                    process_large_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        0
-                        ); 
-                    break;
                 case 3:
-                    printf("server received channel 4 message \n");
+                    printf("server received channel 3 message \n");
                     break;
             }
 
@@ -220,14 +220,14 @@ static void client_connect(ENetEvent* event)
     //event->peer -> data = (void*) &NetClient::Server;
     //NetClient::Server.connected = 1;
 
-    printf ("new client connected from %x:%u.\n", event->peer -> address.host, event->peer -> address.port);
+
 
     class NetPeer* nc = NULL;
 
     if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
-        //force disconnect client
+        enet_peer_reset(event->peer);   //force disconnect client
         return;
     }
     NetServer::number_of_clients++;
@@ -248,7 +248,11 @@ static void client_connect(ENetEvent* event)
         break;    
     }
 
-
+    printf ("client %i connected from %x:%u. %i clients connected\n", 
+    index,
+    event->peer -> address.host, 
+    event->peer -> address.port, 
+    NetServer::number_of_clients+1);
     //startup sequence
 
     /*
@@ -277,7 +281,7 @@ static void client_disconnect(ENetEvent* event)
     NetServer::pool[client_id] = NULL;
 
     client_disconnect_event(client_id);
-    printf("Client %i disconnected\n", client_id);
+    printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
 
     delete nc;
     //printf ("%s disconected.\n", (char*) event->peer -> data);
@@ -336,21 +340,21 @@ void server_dispatch_network_events()
                         ); 
                     break;
                 case 1:
+                    printf("server received channel 1 message \n");
+                    process_large_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 2:
                     printf("server received channel 2 message \n");
                     process_python_messages(
                         (char*) event.packet -> data, 
                         &index, 
                         event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
-                    break;
-                case 2:
-                    printf("server received channel 3 message \n");
-                    process_large_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
+                        0
                         ); 
                     break;
                 case 3:
