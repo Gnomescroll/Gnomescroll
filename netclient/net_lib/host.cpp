@@ -95,6 +95,7 @@ static void client_disconnect(ENetEvent* event)
     printf ("Client disconected from server\n");
 
     event->peer -> data = NULL;
+    enet_peer_reset(event->peer); //TEST
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 
@@ -233,7 +234,9 @@ static void client_connect(ENetEvent* event)
     if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
-        enet_peer_reset(event->peer);   //force disconnect client
+        //send a disconnect reason packet
+        //enet_peer_disconnect(event->peer, 0); //gracefull disconnect client
+        enet_peer_reset(event->peer);   //force disconnect client, does not notify client
         return;
     }
     NetServer::number_of_clients++;
@@ -287,10 +290,12 @@ static void client_disconnect(ENetEvent* event)
     client_disconnect_event(client_id);
     printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
 
+    enet_peer_reset(event->peer); //TEST
+    event->peer -> data = NULL;
+
     delete nc;
     //printf ("%s disconected.\n", (char*) event->peer -> data);
     /* Reset the peer's client information. */
-    event->peer -> data = NULL;
 }
 
 }
