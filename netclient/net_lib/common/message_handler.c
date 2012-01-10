@@ -64,7 +64,7 @@ PROCESS:
     unpack_message_id(&message_id, buff, n);
     //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
 
-    printf("0 n= %i, max_n= %i \n", *n, max_n);
+    //printf("0 n= %i, max_n= %i \n", *n, max_n);
 
 #ifdef DC_SERVER
         size  = h_server_packet_size[message_id];
@@ -102,7 +102,7 @@ PROCESS:
         server_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
 
-    printf("1 n= %i, max_n= %i \n", *n, max_n);
+    //printf("1 n= %i, max_n= %i \n", *n, max_n);
 
     if(read_bytes+1 != size) 
     {
@@ -113,7 +113,7 @@ PROCESS:
     *n += read_bytes; //works for non fixed sized
     //printf("n= %i, size= %i, read_bytes= %i \n", *n, size, read_bytes);
 
-    printf("2 n= %i, max_n= %i \n", *n, max_n);
+    //printf("2 n= %i, max_n= %i \n", *n, max_n);
     //process next message
     if(*n < max_n) 
     { 
@@ -172,7 +172,7 @@ int process_python_messages(char* buff, int *n, int max_n, int client_id)
 
     //printf("py3 n= %i, max_n= %i \n", *n, max_n);
     *n += length;
-    printf("py4 n= %i, max_n= %i \n", *n, max_n);
+    //printf("py4 n= %i, max_n= %i \n", *n, max_n);
 
     if(*n < max_n) 
     { 
