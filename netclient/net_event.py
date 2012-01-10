@@ -67,6 +67,7 @@ class MessageHandler:
     def process_json_event(self, msg_type, datagram):
         try:
             msg = json.loads(datagram)
+            #print msg
         except Exception, e:
             print "MessageHandler.process_json_event error"
             print e
@@ -79,6 +80,7 @@ class MessageHandler:
             return
         #use json_events when possible
         cmd = str(cmd)
+        print cmd
         if cmd in self.json_events:
             #print msg
             self.json_events[cmd](**msg)

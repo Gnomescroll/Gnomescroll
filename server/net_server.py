@@ -121,7 +121,11 @@ class PyClient:
             valid = False
         return (valid, name, you,)
 
+    _i = 0
     def send(self, MESSAGE):
+        #if self._i > 700 and 20 < len(MESSAGE) < 50:
+            #raise Exception
+        #self._i += 1
         _send_python_net_message(MESSAGE, self.client_id)
 
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling

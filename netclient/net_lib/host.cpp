@@ -192,7 +192,7 @@ void client_dispatch_network_events()
                         ); 
                     break;
                 case 2:
-                    printf("server received channel 2 message \n");
+                    //printf("server received channel 2 message \n");
                     index= 0;
                     process_python_messages(
                         (char*) event.packet -> data, 
@@ -355,7 +355,7 @@ void server_dispatch_network_events()
                         ); 
                     break;
                 case 2:
-                    printf("server received channel 2 message \n");
+                    //printf("server received channel 2 message \n");
                     index= 0;
                     process_python_messages(
                         (char*) event.packet -> data, 

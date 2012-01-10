@@ -55,18 +55,13 @@ _msg_buffer = True
 class PyClient(object):
 
     messageHandler = None
-    #@classmethod
-    #def init(cls):
-        #cls.messageHandler = NetEventGlobal.messageHandler
-        #assert cls.messageHandler != None
+
     def __init__(self):
         self.connected = False
         self.out = SendPacket(self)
 
         self.fmt = '<H'
         self.fmtlen = struct.calcsize(self.fmt)
-        #PyClient.messageHandler = NetEventGlobal.messageHandler
-        #assert PyClient.messageHandler != None
 
         global _msg_buffer     
         if _msg_buffer: 
@@ -84,9 +79,6 @@ class PyClient(object):
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
         self.connected = True
-        # HACK -- This is required or else python will not accept dats
-        # Could not figure out why.
-        NetOut.mapMessage.request_chunk(0,0,0)
         NetOut.sendMessage.identify()
 
     def on_disconnect(self):

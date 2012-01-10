@@ -44,7 +44,7 @@ void send_python_net_message(char* message, int length, int client_id)
     #ifdef DC_CLIENT
         static int t_count = 0;
         t_count++;
-        printf("py_out: packet %i, size= %i \n", t_count, length);
+        //printf("py_out: packet %i, size= %i \n", t_count, length);
         
         if(length > 256)
         {
@@ -88,7 +88,7 @@ void send_python_net_message(char* message, int length, int client_id)
 
         static int t_count = 0;
         t_count++;
-        printf("py_out: packet %i, size= %i \n", t_count, length);
+        //printf("py_out: packet %i, size= %i \n", t_count, length);
         
         Net_message* nm = Net_message::acquire( length + 2 );
 

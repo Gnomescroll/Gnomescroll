@@ -780,9 +780,13 @@ void Agent_state::set_angles(float theta, float phi) {
 }
 
 void Agent_state::get_spawn_point(int* spawn) {
-    spawn[0] = randrange(0, 128); // use actual map sizes!
-    spawn[1] = randrange(0, 128);
-    spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)ceil(box.b_height));
+    do {
+        spawn[0] = randrange(0, xmax-1); // use actual map sizes!
+        spawn[1] = randrange(0, ymax-1);
+        spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
+    } while (spawn[2] <= 0);
+    printf("Spawning at z_level %d\n", spawn[2]);
+    //printf("ceil(box_height): %d\n", (int)(ceil(box.b_height)));
 }
 
 void Agent_state::spawn_state() {

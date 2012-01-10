@@ -159,7 +159,7 @@ int process_python_messages(char* buff, int *n, int max_n, int client_id)
         return -1;
     }
 
-    printf("python message: size %i \n", length);
+    //printf("python message: size %i \n", length);
 
     //printf("py1 n= %i, max_n= %i \n", *n, max_n);
 
