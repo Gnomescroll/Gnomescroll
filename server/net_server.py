@@ -186,6 +186,7 @@ class PyClientPool:
         elif msg_type == 1: #client json messages
             try:
                 msg = json.loads(message)
+                #print msg['cmd']
             except Exception, e:
                 print Exception, e
                 print "JSON DECODING ERROR: %s" % (str(message),)
@@ -194,6 +195,7 @@ class PyClientPool:
         elif msg_type == 2: #client admin messages
             try:
                 msg = json.loads(message)
+                #print msg['cmd']
             except:
                 print "JSON DECODING ERROR: %s" % (str(message),)
                 return
