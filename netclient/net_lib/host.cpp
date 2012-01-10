@@ -349,7 +349,7 @@ void server_dispatch_network_events()
                         (char*) event.packet -> data, 
                         &index, 
                         event.packet->dataLength, 
-                        0
+                        ((class NetPeer*)event.peer->data)->client_id 
                         ); 
                     break;
                 case 2:
@@ -359,7 +359,7 @@ void server_dispatch_network_events()
                         (char*) event.packet -> data, 
                         &index, 
                         event.packet->dataLength, 
-                        0
+                        ((class NetPeer*)event.peer->data)->client_id 
                         ); 
                     break;
                 case 3:

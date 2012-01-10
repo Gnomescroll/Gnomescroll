@@ -148,7 +148,7 @@ int process_python_messages(char* buff, int *n, int max_n, int client_id)
 
     //UNPACK_uint16_t(&length, n, &n1);    //length
 
-    //printf("py0 n= %i, max_n= %i \n", *n, max_n);
+    printf("py0 n= %i, max_n= %i \n", *n, max_n);
 
     pack_u16(&length, buff, n, false);
 
@@ -172,7 +172,7 @@ int process_python_messages(char* buff, int *n, int max_n, int client_id)
 
     //printf("py3 n= %i, max_n= %i \n", *n, max_n);
     *n += length;
-    printf("py4 n= %i, max_n= %i \n", *n, max_n);
+    //printf("py4 n= %i, max_n= %i \n", *n, max_n);
 
     if(*n < max_n) 
     { 
