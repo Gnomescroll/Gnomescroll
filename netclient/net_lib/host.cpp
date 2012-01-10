@@ -162,16 +162,17 @@ void client_dispatch_network_events()
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
+        /*
             printf ("A packet of length %u channel %u.\n",
                     event.packet -> dataLength,
                     //(char*) event.packet -> data,
                     //(event.peer -> data,
                     event.channelID);
-
+        */
             switch(event.channelID)
             {
                 case 0:
-                    printf("server received channel 0 message \n");
+                    //printf("server received channel 0 message \n");
                     index= 0;
                     process_packet_messages(
                         (char*) event.packet -> data, 
@@ -324,16 +325,17 @@ void server_dispatch_network_events()
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
+        /*
             printf ("A packet of length %u channel %u.\n",
                     event.packet -> dataLength,
                     //(char*) event.packet -> data,
                     //(event.peer -> data,
                     event.channelID);
-
+        */
             switch(event.channelID)
             {
                 case 0:
-                    printf("server received channel 0 message \n");
+                    //printf("server received channel 0 message \n");
                     index= 0;
                     process_packet_messages(
                         (char*) event.packet -> data, 

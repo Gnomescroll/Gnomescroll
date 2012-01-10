@@ -142,7 +142,7 @@ int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
     int length;
     
-    printf("Received a python packet of size %i \n", max_n);
+    //printf("Received a python packet of size %i \n", max_n);
 
     PYTHON_LOOP:
 
