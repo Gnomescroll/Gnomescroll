@@ -1287,9 +1287,16 @@ void place_rooms(Room *rooms, int* current, int n_current, int z) {
     Room *r;
     for (i=0; i<n_current;i++) {
         r = &rooms[current[i]];
+        if (r->placed) continue;
         r->z = z;
         r->placed = true;
     }
+}
+
+// returns suggested initial z level
+// inputs: first room, ceiling z of first room
+int get_inital_z_level(Room* room, int z_top) {
+    return z_top - room->d;
 }
 
 inline bool int_in_array(int i, int *arr, int arr_size) {
@@ -1352,7 +1359,7 @@ void set_room_z_levels() {
     }
 
     int z = 128-room_height-1;
-    int z_decrement = 1;
+    //int z_decrement = 1;
 
     int *not_placed = (int*)malloc(sizeof(int)*n_rooms);
     int n_not_placed = n_rooms;
@@ -1363,6 +1370,11 @@ void set_room_z_levels() {
     int *current = (int*)malloc(sizeof(int)*n_rooms);
     int *next = (int*)malloc(sizeof(int)*n_rooms);
     int n_current = 0;
+
+    // first room, anchor it
+    current[n_current++] = choose_unplaced_room(rooms, n_rooms, not_placed, n_not_placed);
+    int z_top = 128-1;
+    z = get_inital_z_level(&rooms[current[0]], z_top);
     
     while (n_not_placed) {
         if (!n_current) {
@@ -1420,8 +1432,8 @@ void generate_dungeon() {
     printf("%d %d\n", si,sj);
 
     _box(128,128,0,127,101);
-    _set(si,sj,127,103);
-    _set(si,sj,128,103);
+    _set(si,sj,127,0);
+    //_set(si,sj,128,103);
 
 }
 
