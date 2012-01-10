@@ -12,6 +12,7 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&client_id, buff, buff_n, pack);
+            pack_u8(&client_id, buff, buff_n, pack);
         }
         inline void handle()
         {

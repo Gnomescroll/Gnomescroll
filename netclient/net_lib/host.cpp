@@ -7,6 +7,8 @@
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/message_handler.h>
 
+#include <c_lib/game/packets.hpp>
+#include <c_lib/state/packet_init.hpp>
 
 //struct _ENetHost* enet_host; //the host
 struct _ENetHost* server_host;
@@ -14,6 +16,8 @@ struct _ENetHost* client_host;
 
 void init_network()
 {
+    PacketInit::RegisterMessages();
+
     if (enet_initialize () != 0)
     {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
@@ -46,8 +50,7 @@ void init_net_server()
                                   0      /* assume any amount of outgoing bandwidth */);
     if (server_host == NULL)
     {
-        fprintf (stderr, 
-                 "An error occurred while trying to create an ENet server host.\n");
+        fprintf (stderr, "An error occurred while trying to create an ENet server host.\n");
         exit (EXIT_FAILURE);
     }
     //enet_host_destroy(server);
@@ -63,8 +66,7 @@ void init_net_client()
 
     if (client_host == NULL)
     {
-        fprintf (stderr, 
-                 "An error occurred while trying to create an ENet client host.\n");
+        fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
         exit (EXIT_FAILURE);
     }
 
@@ -76,7 +78,6 @@ namespace NetClient
 
 static void client_connect(ENetEvent* event)
 {
-
     printf("Client connected with server \n");
 
     NetClient::Server.enet_peer = event->peer;
@@ -246,10 +247,23 @@ static void client_connect(ENetEvent* event)
         break;    
     }
 
-    client_connect_event(nc->client_id);
-    //const int HARD_MAX_CONNECTIONS = 64;
-    //extern NetPeer* pool[HARD_MAX_CONNECTIONS];
 
+    //startup sequence
+
+    /*
+        Send client id, flush netclient, then flush enet packet que
+    */
+
+    SendClientId_StoC u;
+    u.client_id = nc->client_id;
+    u.sendToClient(nc->client_id);
+
+    printf("size= %i \n", u.size);
+
+    nc->flush_to_net();
+    enet_host_flush(server_host);
+
+    client_connect_event(nc->client_id);
 }
 
 static void client_disconnect(ENetEvent* event)

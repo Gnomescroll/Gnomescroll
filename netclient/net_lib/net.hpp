@@ -319,7 +319,7 @@ class FixedSizeReliableNetPacketToClient {
             }
         }
 
-        int _size() { char buff[128]; int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size;}
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -331,7 +331,7 @@ class FixedSizeReliableNetPacketToClient {
         static void register_client_packet() {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
-            x.size = x._size();
+            Derived::size = x.Size();
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 }; 
