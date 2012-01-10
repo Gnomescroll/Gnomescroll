@@ -240,6 +240,7 @@ static void client_connect(ENetEvent* event)
         index = (index+1) % NetServer::HARD_MAX_CONNECTIONS;
         if(NetServer::pool[index] != NULL) continue;
         nc = new NetPeer;
+        nc->enet_peer = event->peer;
         nc->client_id = index;
         nc->connected = 1;
         NetServer::pool[index]= nc;

@@ -50,6 +50,8 @@ void init_message_handler() {
 int process_packet_messages(char* buff, int *n, int max_n, int client_id) 
 {
 
+    printf("*n= %i, max_n= %i \n", *n, max_n);
+
     int size;
     int message_id;
 
@@ -98,7 +100,7 @@ PROCESS:
         server_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
 
-    if(read_bytes != size) 
+    if(read_bytes+1 != size) 
     {
         printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, read_bytes);
         return 0;
