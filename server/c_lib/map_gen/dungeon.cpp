@@ -222,6 +222,7 @@ class Room {
     int z,d;
     bool placed;
     int edges;
+    int clique;
     int area() {
         return w*h;
     }
@@ -235,6 +236,7 @@ class Room {
         int i,j;
         for (i=x-w; i<x; i++) {
             for (j=y; j<y+h; j++) {
+                if (z>=zmax) printf("Room -- clique %d\n", clique);
                 _set(i,j,z,tile);
             }
         }
@@ -1282,13 +1284,14 @@ void build_adjacency_graph() {
     //}
 //}
 
-void place_rooms(Room *rooms, int* current, int n_current, int z) {
+void place_rooms(Room *rooms, int* current, int n_current, int z, int clique) {
     int i;
     Room *r;
     for (i=0; i<n_current;i++) {
         r = &rooms[current[i]];
         if (r->placed) continue;
         r->z = z;
+        r->clique = clique;
         r->placed = true;
     }
 }
@@ -1296,7 +1299,7 @@ void place_rooms(Room *rooms, int* current, int n_current, int z) {
 // returns suggested initial z level
 // inputs: first room, ceiling z of first room
 int get_inital_z_level(Room* room, int z_top) {
-    return z_top - room->d;
+    return z_top - room->d - 1;
 }
 
 inline bool int_in_array(int i, int *arr, int arr_size) {
@@ -1343,11 +1346,26 @@ int choose_unplaced_room(Room *rooms, int n_rooms, int *not_placed, int n_not_pl
     return id;
 }
 
+class Clique {
+    public:
+    int length;
+    int size;
+};
+
+Clique* cliques = NULL;
+int n_cliques = 0;
+
 void set_room_z_levels() {
 
     // breadth first search
     
     if (!n_rooms) return;
+
+    if (cliques != NULL) {
+        free(cliques);
+        cliques = NULL;
+        n_cliques = 0;
+    }
     
     int room_height = 7;
     int i;
@@ -1356,6 +1374,7 @@ void set_room_z_levels() {
         rooms[i].z = 0;
         //rooms[i].d = room_height;
         rooms[i].d = randrange(room_height-2, room_height);
+        rooms[i].clique = -1;
     }
 
     int z = 128-room_height-1;
@@ -1370,28 +1389,109 @@ void set_room_z_levels() {
     int *current = (int*)malloc(sizeof(int)*n_rooms);
     int *next = (int*)malloc(sizeof(int)*n_rooms);
     int n_current = 0;
+    int n_current_prev = 0;
 
     // first room, anchor it
     current[n_current++] = choose_unplaced_room(rooms, n_rooms, not_placed, n_not_placed);
     int z_top = 128-1;
     z = get_inital_z_level(&rooms[current[0]], z_top);
-    
+//printf("Initial z-level: ");
+    int length = n_current;
+    cliques = (Clique*)malloc(sizeof(Clique)*n_rooms);
+    n_cliques = 0;
     while (n_not_placed) {
         if (!n_current) {
+            // advance clique, lengths
+            cliques[n_cliques].length = length;
+            printf("Clique %d length %d\n", n_cliques, length);
+            cliques[n_cliques].size = n_current_prev;
+            n_cliques++;
+
+            // get new room
             current[n_current++] = choose_unplaced_room(rooms, n_rooms, not_placed, n_not_placed);
+            length = n_current;
         }
 
-        place_rooms(rooms, current, n_current, z);
+        place_rooms(rooms, current, n_current, z, n_cliques);
         //z -= z_decrement;
         z -= randrange(0,1);
         z = (z < 1) ? 1 : z;
 
+        n_current_prev = n_current;
         get_adjacent_rooms(rooms, room_edges, current, next, &n_current);
         memcpy(current, next, sizeof(int)*n_rooms);
+        length += n_current;
 
         rooms_not_placed(rooms, n_rooms, not_placed, &n_not_placed);
     }
 
+    cliques[n_cliques].length = length;
+    printf("Clique %d length %d\n", n_cliques, length);
+    cliques[n_cliques].size = n_current_prev;
+    n_cliques++;
+    printf("%d cliques found\n", n_cliques);
+    cliques = (Clique*)realloc(cliques, sizeof(Clique)*n_cliques);
+
+    Clique* c;
+    int longest = -1;
+    int longest_clique;
+    for (i=0; i<n_cliques; i++) {
+        c = &cliques[i];
+        if (c->length > longest) {
+            longest = c->length;
+            longest_clique = i;
+        }
+    }
+
+    printf("Longest clique: %d, length: %d\n", longest_clique, longest);
+
+    // calculate depth of the largest clique
+    Room *r;
+    Room *top;
+    int lowest_z = 100000;
+    int highest_z = -1;
+    for (i=0; i<n_rooms; i++) {
+        r = &rooms[i];
+        if (r->clique != longest_clique) continue;
+        if (r->z > highest_z) {
+            top = r;
+            highest_z = r->z;
+        }
+        lowest_z = (r->z < lowest_z) ? r->z : lowest_z;
+    }
+    highest_z = top->d + top->z;
+
+    // rearrange the smaller cliques to fit within this range
+    int j;
+    int z_off;
+    int highest_z_inner;
+    int highest_z_inner_height;
+    int clique_z;
+    for (i=0; i<n_cliques; i++) {
+        if (i == longest_clique) continue;
+
+        highest_z_inner = -1;
+        highest_z_inner_height = 0;
+
+        for (j=0; j<n_rooms; j++) {
+            r = &rooms[j];
+            if (r->clique != i) continue;
+            if (r->z + r->d > highest_z_inner) {
+                highest_z_inner = r->z;
+                highest_z_inner_height = r->d;
+            }
+        }
+
+        if (lowest_z > highest_z - highest_z_inner_height - 1)printf("WARNING\n");
+        clique_z = randrange(lowest_z, highest_z - highest_z_inner_height - 1);
+        z_off = clique_z - highest_z_inner;
+        for (j=0; j<n_rooms; j++) {
+            r = &rooms[j];
+            if (r->clique != i) continue;
+            r->z += z_off;
+        }
+    }
+    
     free(current);
     free(next);
     free(not_placed);
@@ -1420,9 +1520,9 @@ void generate_dungeon() {
     int highest_room_z = -100;
     for (i=0; i<n_rooms; i++) {
         rooms[i].draw_3d(0);
-        if (rooms[i].z > highest_room_z) {
-            highest = &rooms[i];
-            highest_room_z = highest->z;
+        highest = &rooms[i];
+        if (highest->z + highest->d > highest_room_z) {
+            highest_room_z = highest->z + highest->d;
         }
     }
 
@@ -1432,8 +1532,11 @@ void generate_dungeon() {
     printf("%d %d\n", si,sj);
 
     _box(128,128,0,127,101);
-    _set(si,sj,127,0);
-    //_set(si,sj,128,103);
+    printf("Setting entrance\n");
+    for (i=127; i>=highest_room_z-1; i--) {
+        printf("%d\n", i);
+        _set(si,sj,i,0);
+    }
 
 }
 
