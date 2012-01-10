@@ -179,7 +179,7 @@ class PyClientPool:
         message = message[2:]
         connection = self.clients_by_id.get(client_id, None)
         if connection == None:
-            print "PyClientPool: handleMessage, client id does not exist in pool"
+            print "PyClientPool: handleMessage, client id %d does not exist in pool" % (client_id,)
             return
         if msg_type == 0:
             print "test message received"
@@ -201,6 +201,8 @@ class PyClientPool:
 
     #called when client connection established
     def add_client(self, _client_id):
+        print "python add_client callback: client_id %d" % (_client_id,)
+        #assert False
         client =  PyClient(_client_id)
         self.clients_by_id[_client_id] = client
         print "PyClientPool: connection associated with client_id= %s" % (_client_id)
