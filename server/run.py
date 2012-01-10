@@ -28,7 +28,7 @@ import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
-from init_c_lib import NetServerInit,  NetServerDispatchNetworkEvents
+from init_c_lib import NetServerInit,  NetServerDispatchNetworkEvents, NetServerFlushToNet
 from init_c_lib import START_CLOCK, GET_TICK
 from net_server import NetServer
 from net_out import NetOut
@@ -352,10 +352,14 @@ class Main:
                 c_lib.c_lib_particles.tick()
                 sl_c+=1
                 tick+=1
-            if sl_c != 0:
-                NetServerDispatchNetworkEvents()
+            #if sl_c != 0:
+            #    NetServerDispatchNetworkEvents()
             if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
+            
+            NetServerFlushToNet()
+            NetServerDispatchNetworkEvents()
+            
             NetOut.event.process_events()
             self.intervals.process()
             time.sleep(0.0001)

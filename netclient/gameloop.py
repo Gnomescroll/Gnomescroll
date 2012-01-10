@@ -39,7 +39,7 @@ import c_lib.c_lib_map_gen as cMapGen
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
-from init_c_lib import NetClientDispatchNetworkEvents, ClientConnectTo
+from init_c_lib import NetClientDispatchNetworkEvents, NetClientConnectTo, NetClientFlushToNet
 from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -117,7 +117,7 @@ class App(object):
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
         a,b,c,d = opts.server.split(".")
-        ClientConnectTo(int(a),int(b),int(c),int(d), 8080)
+        NetClientConnectTo(int(a),int(b),int(c),int(d), 8080)
 
     def mainLoop(self):
         global P, Phy
@@ -201,8 +201,9 @@ class App(object):
                 May only want to send output every 30 ms
             '''
             P.event("Networking 1")
+            NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
-
+            
             '''
             !?
                 What is delta tick used for?

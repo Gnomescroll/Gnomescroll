@@ -71,14 +71,14 @@ void send_python_net_message(char* message, int length, int client_id)
             printf("send_python_net_message: sending large %i byte python packet to client %i \n", length, client_id);
             ENetPacket* python_p = enet_packet_create(NULL, length+2, ENET_PACKET_FLAG_RELIABLE);
             PACK_uint16_t(length, (char*)python_p->data, &n1);    //length
-            memcpy(((char*)python_p->data)+2, message, length);
+            memcpy( ((char*)python_p->data)+2, message, length);
             enet_peer_send (NetServer::pool[client_id]->enet_peer, 2, python_p);
             return;
         }
 
         static int t_count = 0;
         t_count++;
-        printf("py_out: packet %i \n", t_count);
+        printf("py_out: packet %i, size= %i \n", t_count, length);
         
         Net_message* nm = Net_message::acquire( length + 2 );
 

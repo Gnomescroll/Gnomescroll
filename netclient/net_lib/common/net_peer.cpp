@@ -44,7 +44,6 @@ void NetPeer::flush_to_net()
 
     if(reliable_message_manager.pending_messages != 0) 
     {
-        printf("%i = \n", reliable_message_manager.pending_bytes_out);
         ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
         reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0);
         enet_peer_send (enet_peer, 0, reliable_p);

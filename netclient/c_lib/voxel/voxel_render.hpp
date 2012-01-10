@@ -80,7 +80,7 @@ void Voxel_render_list::update_vertex_buffer_object()
             printf("%i vnum= %i \n", i, _vbo->vnum);
             render_list[i]->update_vertex_list();
         }
-        v_num +=  render_list[i]->vvl.size;
+        v_num +=  render_list[i]->vvl.vnum;
     }
 
 

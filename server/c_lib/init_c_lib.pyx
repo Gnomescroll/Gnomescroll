@@ -15,14 +15,18 @@ def init():
 ## net stuff
 
 cdef extern from "./net_lib/host.hpp":
-    cdef extern void init_net_server()
-    cdef extern void server_dispatch_network_events()
+    void init_net_server()
+    void server_dispatch_network_events()
+    void flush_to_net()
 
 def NetServerInit():
     init_net_server()
 
 def NetServerDispatchNetworkEvents():
     server_dispatch_network_events()
+
+def NetServerFlushToNet():
+    flush_to_net()
 
 ##timer
 

@@ -21,13 +21,16 @@ def close():
 cdef extern from "./net_lib/host.hpp":
     void client_dispatch_network_events()
     void client_connect_to(int a, int b, int c, int d, unsigned short port)
+    void flush_to_net()
 
 def NetClientDispatchNetworkEvents():
     client_dispatch_network_events()
 
-def ClientConnectTo(int a, int b,int c, int d, unsigned short _port):
+def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
     client_connect_to(a, b, c, d, _port)
 
+def NetClientFlushToNet():
+    flush_to_net()
 
 
 ##timer

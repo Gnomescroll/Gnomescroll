@@ -98,6 +98,7 @@ static void client_disconnect(ENetEvent* event)
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
 
+    client_disconnect_event(0);
 }
 
 }
@@ -171,6 +172,7 @@ void client_dispatch_network_events()
             {
                 case 0:
                     printf("server received channel 0 message \n");
+                    index= 0;
                     process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -180,6 +182,7 @@ void client_dispatch_network_events()
                     break;
                 case 1:
                     printf("server received channel 1 message \n");
+                    index= 0;
                     process_large_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -189,6 +192,7 @@ void client_dispatch_network_events()
                     break;
                 case 2:
                     printf("server received channel 2 message \n");
+                    index= 0;
                     process_python_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -198,6 +202,7 @@ void client_dispatch_network_events()
                     break;
                 case 3:
                     printf("server received channel 3 message \n");
+                    index= 0;
                     break;
             }
 
@@ -263,8 +268,6 @@ static void client_connect(ENetEvent* event)
     u.client_id = nc->client_id;
     u.sendToClient(nc->client_id);
 
-    printf("size= %i \n", u.size);
-
     nc->flush_to_net();
     enet_host_flush(server_host);
 
@@ -287,7 +290,6 @@ static void client_disconnect(ENetEvent* event)
     //printf ("%s disconected.\n", (char*) event->peer -> data);
     /* Reset the peer's client information. */
     event->peer -> data = NULL;
-
 }
 
 }
@@ -299,7 +301,7 @@ void server_dispatch_network_events()
     /* Wait up to 5 milliseconds for an event. */
 
     int index = 0;
-    while (enet_host_service (server_host, & event, 5) > 0)
+    while (enet_host_service (server_host, &event, 5) > 0)
     {
         switch (event.type)
         {
@@ -331,7 +333,8 @@ void server_dispatch_network_events()
             switch(event.channelID)
             {
                 case 0:
-                    printf("server received channel1 message \n");
+                    printf("server received channel 0 message \n");
+                    index= 0;
                     process_packet_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -341,6 +344,7 @@ void server_dispatch_network_events()
                     break;
                 case 1:
                     printf("server received channel 1 message \n");
+                    index= 0;
                     process_large_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -350,6 +354,7 @@ void server_dispatch_network_events()
                     break;
                 case 2:
                     printf("server received channel 2 message \n");
+                    index= 0;
                     process_python_messages(
                         (char*) event.packet -> data, 
                         &index, 
@@ -359,6 +364,7 @@ void server_dispatch_network_events()
                     break;
                 case 3:
                     printf("server received channel 4 message \n");
+                    index= 0;
                     break;
             }
 
@@ -368,4 +374,21 @@ void server_dispatch_network_events()
            
         }
     }
+}
+
+void flush_to_net()
+{
+#ifdef DC_CLIENT
+    NetClient::Server.flush_to_net();
+#endif
+
+#ifdef DC_SERVER
+    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
+    {
+        if(NetServer::pool[i] == NULL) continue;
+        NetServer::pool[i]->flush_to_net();
+    }
+#endif
+
+
 }
