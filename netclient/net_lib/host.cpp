@@ -3,6 +3,12 @@
 #include <net_lib/enet/enet.h>
 
 #include <net_lib/global.hpp>
+#include <net_lib/export.hpp>
+#include <net_lib/common/net_peer.hpp>
+#include <net_lib/common/message_handler.h>
+
+#include <c_lib/game/packets.hpp>
+#include <c_lib/state/packet_init.hpp>
 
 //struct _ENetHost* enet_host; //the host
 struct _ENetHost* server_host;
@@ -10,6 +16,8 @@ struct _ENetHost* client_host;
 
 void init_network()
 {
+    PacketInit::RegisterMessages();
+
     if (enet_initialize () != 0)
     {
         fprintf (stderr, "An error occurred while initializing ENet.\n");
@@ -42,8 +50,7 @@ void init_net_server()
                                   0      /* assume any amount of outgoing bandwidth */);
     if (server_host == NULL)
     {
-        fprintf (stderr, 
-                 "An error occurred while trying to create an ENet server host.\n");
+        fprintf (stderr, "An error occurred while trying to create an ENet server host.\n");
         exit (EXIT_FAILURE);
     }
     //enet_host_destroy(server);
@@ -59,14 +66,42 @@ void init_net_client()
 
     if (client_host == NULL)
     {
-        fprintf (stderr, 
-                 "An error occurred while trying to create an ENet client host.\n");
+        fprintf (stderr, "An error occurred while trying to create an ENet client host.\n");
         exit (EXIT_FAILURE);
     }
 
     //enet_host_destroy(client);
 }
 
+namespace NetClient
+{
+
+static void client_connect(ENetEvent* event)
+{
+    printf("Client connected with server \n");
+
+    NetClient::Server.enet_peer = event->peer;
+    event->peer -> data = (void*) &NetClient::Server;
+    NetClient::Server.connected = 1;
+ 
+    //dont send until client id received
+    //client_connect_event(nc->client_id);
+    
+
+}
+
+static void client_disconnect(ENetEvent* event)
+{
+    printf ("Client disconected from server\n");
+
+    event->peer -> data = NULL;
+    NetClient::Server.connected = 0;
+    NetClient::Server.client_id = -1;
+
+    client_disconnect_event(0);
+}
+
+}
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
 {
@@ -80,7 +115,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         exit (EXIT_FAILURE);
     }
 
-    address.port = 8011;
+    address.port = 8080;
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
@@ -91,45 +126,20 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
        fprintf (stderr, "No available peers for initiating an ENet connection.\n");
        exit (EXIT_FAILURE);
     }
-    
-    ENetEvent event;
-    /* Wait up to 5 seconds for the connection attempt to succeed. */
-    if (enet_host_service (client_host, & event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
-    {
-        printf("Client connected with server \n");
-        NetClient::Server.enet_peer = peer;
-        peer -> data = (void*) &NetClient::Server.enet_peer;
-        //NetClient::Server.connected = 0;
-    }
-    else
-    {
-        /* Either the 5 seconds are up or a disconnect event was */
-        /* received. Reset the peer in the event the 5 seconds   */
-        /* had run out without any significant event.            */
-        enet_peer_reset (peer);
-        NetClient::Server.enet_peer = NULL;
-        NetClient::Server.connected = 0;
 
-        puts ("client_connect_to: connection attempt failed \n");
-    }
-
-    printf("Client is connected to server \n");
-    NetClient::Server.connected = 1;
 }
 
+//enet_peer_reset (peer);
 
-//iterate through client list
-void dispatch_network_events()
+void client_dispatch_network_events()
 {
     ENetEvent event;
     
     /* Wait up to 5 milliseconds for an event. */
 
-    #ifdef DC_CLIENT
-        while (enet_host_service (client_host, & event, 5) > 0)
-    #else
-        while (enet_host_service (server_host, & event, 5) > 0)
-    #endif
+    int index = 0;
+
+    while (enet_host_service (client_host, & event, 5) > 0)
     {
         switch (event.type)
         {
@@ -143,21 +153,12 @@ void dispatch_network_events()
             printf("Nothing happened \n");
             break;
 
-        //handle connect
         case ENET_EVENT_TYPE_CONNECT:
-            printf ("A new client connected from %x:%u.\n", 
-                    event.peer -> address.host,
-                    event.peer -> address.port);
-            /* Store any relevant client information here. */
-            //event.peer -> data = "Client information";
-            event.peer -> data = NULL;
+            NetClient::client_connect(&event);
             break;
 
-        //handle disconnect
         case ENET_EVENT_TYPE_DISCONNECT:
-            printf ("%s disconected.\n", (char*) event.peer -> data);
-            /* Reset the peer's client information. */
-            event.peer -> data = NULL;
+            NetClient::client_disconnect(&event);
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:
@@ -166,10 +167,228 @@ void dispatch_network_events()
                     //(char*) event.packet -> data,
                     //(event.peer -> data,
                     event.channelID);
+
+            switch(event.channelID)
+            {
+                case 0:
+                    printf("server received channel 0 message \n");
+                    index= 0;
+                    process_packet_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 1:
+                    printf("server received channel 1 message \n");
+                    index= 0;
+                    process_large_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 2:
+                    printf("server received channel 2 message \n");
+                    index= 0;
+                    process_python_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 3:
+                    printf("server received channel 3 message \n");
+                    index= 0;
+                    break;
+            }
+
+            /* Clean up the packet now that we're done using it. */
+            enet_packet_destroy (event.packet);
+            break;
+        }
+    }
+}
+
+
+namespace NetServer
+{
+
+static int client_id_offset = 1;
+
+static void client_connect(ENetEvent* event)
+{
+    //NetClient::Server.enet_peer = event->peer;
+    //event->peer -> data = (void*) &NetClient::Server;
+    //NetClient::Server.connected = 1;
+
+
+
+    class NetPeer* nc = NULL;
+
+    if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)
+    {
+        printf("Cannot allow client connection: hard max connection reached \n");
+        enet_peer_reset(event->peer);   //force disconnect client
+        return;
+    }
+    NetServer::number_of_clients++;
+
+    int index = client_id_offset;
+    client_id_offset++;
+
+    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
+    {
+        index = (index+1) % NetServer::HARD_MAX_CONNECTIONS;
+        if(NetServer::pool[index] != NULL) continue;
+        nc = new NetPeer;
+        nc->enet_peer = event->peer;
+        nc->client_id = index;
+        nc->connected = 1;
+        NetServer::pool[index]= nc;
+        event->peer->data = (NetPeer*) nc;
+        break;    
+    }
+
+    printf ("client %i connected from %x:%u. %i clients connected\n", 
+    index,
+    event->peer -> address.host, 
+    event->peer -> address.port, 
+    NetServer::number_of_clients+1);
+    //startup sequence
+
+    /*
+        Send client id, flush netclient, then flush enet packet que
+    */
+
+    SendClientId_StoC u;
+    u.client_id = nc->client_id;
+    u.sendToClient(nc->client_id);
+
+    nc->flush_to_net();
+    enet_host_flush(server_host);
+
+    client_connect_event(nc->client_id);
+}
+
+static void client_disconnect(ENetEvent* event)
+{
+    NetServer::number_of_clients--;
+    class NetPeer* nc = (NetPeer*) event->peer -> data;
+    
+    int client_id = nc->client_id;
+
+    NetServer::pool[client_id] = NULL;
+
+    client_disconnect_event(client_id);
+    printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
+
+    delete nc;
+    //printf ("%s disconected.\n", (char*) event->peer -> data);
+    /* Reset the peer's client information. */
+    event->peer -> data = NULL;
+}
+
+}
+
+void server_dispatch_network_events()
+{
+    ENetEvent event;
+    
+    /* Wait up to 5 milliseconds for an event. */
+
+    int index = 0;
+    while (enet_host_service (server_host, &event, 5) > 0)
+    {
+        switch (event.type)
+        {
+
+        //ENET_EVENT_TYPE_NONE       = 0,  
+        //ENET_EVENT_TYPE_CONNECT    = 1,  
+        //ENET_EVENT_TYPE_DISCONNECT = 2,  
+        //ENET_EVENT_TYPE_RECEIVE    = 3
+
+        case ENET_EVENT_TYPE_NONE:
+            printf("Nothing happened \n");
+            break;
+
+        case ENET_EVENT_TYPE_CONNECT:
+            NetServer::client_connect(&event);
+            break;
+
+        case ENET_EVENT_TYPE_DISCONNECT:
+            NetServer::client_disconnect(&event);
+            break;
+
+        case ENET_EVENT_TYPE_RECEIVE:
+            printf ("A packet of length %u channel %u.\n",
+                    event.packet -> dataLength,
+                    //(char*) event.packet -> data,
+                    //(event.peer -> data,
+                    event.channelID);
+
+            switch(event.channelID)
+            {
+                case 0:
+                    printf("server received channel 0 message \n");
+                    index= 0;
+                    process_packet_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        ((class NetPeer*)event.peer->data)->client_id 
+                        ); 
+                    break;
+                case 1:
+                    printf("server received channel 1 message \n");
+                    index= 0;
+                    process_large_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 2:
+                    printf("server received channel 2 message \n");
+                    index= 0;
+                    process_python_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
+                    break;
+                case 3:
+                    printf("server received channel 4 message \n");
+                    index= 0;
+                    break;
+            }
+
             /* Clean up the packet now that we're done using it. */
             enet_packet_destroy (event.packet);
             break;
            
         }
     }
+}
+
+void flush_to_net()
+{
+#ifdef DC_CLIENT
+    NetClient::Server.flush_to_net();
+#endif
+
+#ifdef DC_SERVER
+    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
+    {
+        if(NetServer::pool[i] == NULL) continue;
+        NetServer::pool[i]->flush_to_net();
+    }
+#endif
+
+
 }

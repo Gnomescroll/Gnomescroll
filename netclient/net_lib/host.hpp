@@ -18,4 +18,6 @@ void init_net_client();
 void client_connect_to(int a, int b, int c, int d, unsigned short port) ;
 
 //iterate through client list
-void dispatch_network_events();
+void client_dispatch_network_events();
+void server_dispatch_network_events();
+void flush_to_net();

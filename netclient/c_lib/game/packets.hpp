@@ -1,6 +1,29 @@
 #pragma once
 
 #include <net_lib/net.hpp>
+#include <net_lib/global.hpp>
+#include <net_lib/export.hpp>
+
+/*
+    Packet that handles startup
+*/
+
+class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_StoC>
+{
+    public:
+        int client_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&client_id, buff, buff_n, pack);
+        }
+        inline void handle()
+        {
+            //printf("Client Received Client id = %i \n", client_id);
+            NetClient::Server.client_id = client_id;
+            client_connect_event(client_id);
+        }
+};
 
 /* Server -> Client */
 

@@ -1,6 +1,7 @@
 #include "export.hpp"
 
 #include <net_lib/global.hpp>
+#include <net_lib/host.hpp>
 
 //typedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id);
 PY_MESSAGE_CALLBACK PY_MESSAGE_CALLBACK_GLOBAL = NULL;
@@ -42,9 +43,19 @@ void send_python_net_message(char* message, int length, int client_id)
 {
     #ifdef DC_CLIENT
         static int t_count = 0;
-        //printf("py_out: packet %i \n", t_count);
-        //NetClient::Server.write_python_packet(message, length);
         t_count++;
+        printf("py_out: packet %i \n", t_count);
+        
+        if(length > 256)
+        {
+            printf("Error: Client to Server python packet would exceed 512 bytes\n");
+            return;
+        }
+        Net_message* nm = Net_message::acquire( length + 2 );
+        int n1 =0;
+        PACK_uint16_t(length, nm->buff, &n1);    //length
+        memcpy(nm->buff+2, message, length);
+        NetClient::Server.push_python_message(nm);
     #endif
 
     #ifdef DC_SERVER
@@ -53,13 +64,29 @@ void send_python_net_message(char* message, int length, int client_id)
             printf("send_python_net_message: client_id % is null\n", client_id);
             return;
         }
-        
-        printf("send_python_net_message: export.cpp, need to create a net message packet... \n");
 
-        /*
-            Check message size and if it is large enough, send as fragment
-        */
-        //NetServer::pool[client_id]->push_python_message(message, length);
+        int n1 =0;
+        if(length > 256)
+        {
+            printf("send_python_net_message: sending large %i byte python packet to client %i \n", length, client_id);
+            ENetPacket* python_p = enet_packet_create(NULL, length+2, ENET_PACKET_FLAG_RELIABLE);
+            PACK_uint16_t(length, (char*)python_p->data, &n1);    //length
+            memcpy( ((char*)python_p->data)+2, message, length);
+            enet_peer_send (NetServer::pool[client_id]->enet_peer, 2, python_p);
+            return;
+        }
+
+        static int t_count = 0;
+        t_count++;
+        printf("py_out: packet %i, size= %i \n", t_count, length);
+        
+        Net_message* nm = Net_message::acquire( length + 2 );
+
+        PACK_uint16_t(length, nm->buff, &n1);    //length
+        memcpy(nm->buff+2, message, length);
+        NetServer::pool[client_id]->push_python_message(nm);
+        
+        //printf("send_python_net_message: export.cpp, need to create a net message packet... \n");
     #endif    
 
 }

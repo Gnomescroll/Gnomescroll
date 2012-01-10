@@ -50,6 +50,8 @@ void init_message_handler() {
 int process_packet_messages(char* buff, int *n, int max_n, int client_id) 
 {
 
+    //printf("*n= %i, max_n= %i \n", *n, max_n);
+
     int size;
     int message_id;
 
@@ -61,6 +63,8 @@ PROCESS:
     //UNPACK_uint8_t(&message_id, buff, n);
     unpack_message_id(&message_id, buff, n);
     //if(IS_CLIENT) printf("pop message: n= %i, message_id= %i \n", _n, message_id);
+
+    printf("0 n= %i, max_n= %i \n", *n, max_n);
 
 #ifdef DC_SERVER
         size  = h_server_packet_size[message_id];
@@ -98,15 +102,18 @@ PROCESS:
         server_handler_array[message_id](buff, *n, &read_bytes, client_id);
 #endif
 
-    if(read_bytes != size) 
+    printf("1 n= %i, max_n= %i \n", *n, max_n);
+
+    if(read_bytes+1 != size) 
     {
         printf("ERROR!: message_id= %i, bytes expected= %i, bytes read=%i\n", message_id, size, read_bytes);
         return 0;
     }
 
-    *n += read_bytes; //works for non fixed fized
+    *n += read_bytes; //works for non fixed sized
     //printf("n= %i, size= %i, read_bytes= %i \n", *n, size, read_bytes);
 
+    printf("2 n= %i, max_n= %i \n", *n, max_n);
     //process next message
     if(*n < max_n) 
     { 
@@ -125,27 +132,60 @@ PROCESS:
         printf("network error!!! Error: read past buffer\n");
         return -1; 
     }
+
+    return 0; //should not happen
 }
 
 
 
 int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
-    //PACK_uint16_t(bytes, nm->buff, &n1);    //length
-
-//    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
-//    {
-//        printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
-//    } else {
-//        PY_MESSAGE_CALLBACK_GLOBAL(tmp, need, np->client_id);
-//    }
+    int length;
     
+    PYTHON_LOOP:
+
+    //UNPACK_uint16_t(&length, n, &n1);    //length
+    pack_u16(&length, buff, n, false);
+
+    printf("Received a python packet of size %i \n", length);
+
+    printf("py0 n= %i, max_n= %i \n", *n, max_n);
+
+    if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
+    {
+        printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
+    } else {
+        PY_MESSAGE_CALLBACK_GLOBAL(buff+*n, length, client_id);
+    }
+    printf("py1 n= %i, max_n= %i \n", *n, max_n);
+    *n += length;
+    printf("py2 n= %i, max_n= %i \n", *n, max_n);
+    
+    if(*n < max_n) 
+    { 
+        goto PYTHON_LOOP;     
+    }
+    //finished procesing messages
+    if(*n == max_n) 
+    { 
+        return 0; 
+    }       
+
+    //error that should never occur
+    if(*n > max_n) 
+    {                    
+        //error, read past buff 
+        printf("process_python_messages: network error!!! Error: read past buffer\n");
+        return -1; 
+    }
+
     return 0;
 }
 
 
 int process_large_messages(char* buff, int *n, int max_n, int client_id)
 {
+    printf("WARNING: process_large_messages, received message on large message channel \n");
     return 0;
 }
 
