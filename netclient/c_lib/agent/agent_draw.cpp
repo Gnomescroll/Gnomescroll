@@ -18,7 +18,7 @@ AgentState snapshot_draw_array[SNAPSHOT_DRAW_ARRAY_SIZE];
 static int _last_seq = 0;
 
 void add_snapshot_to_history(Agent_state* g) {
-
+    return;
     if(g->state_snapshot.seq != snapshot_draw_last_seq) {
         snapshot_draw_last_seq = g->state_snapshot.seq;
         snapshot_draw_array[snapshot_draw_array_i] = g->state_snapshot;
@@ -47,13 +47,13 @@ void draw_agent(Agent_state* g) {
     //AgentState* ss = &g->state_snapshot;
     //draw_agent_bounding_box(g->x,g->y, g->z, 0.4, 1.8, 2.5);s
 
+/*
     int i;
     for(i=0; i < SNAPSHOT_DRAW_ARRAY_SIZE; i++) {
         draw_agent_bounding_box(snapshot_draw_array[i].x,snapshot_draw_array[i].y, snapshot_draw_array[i].z, 0.4, 1.0, 2.0);  
     }
-
+*/
     draw_agent_bounding_box(s->x,s->y, s->z, 0.4, 1.8, 2.5, 0,0,255);
-
 }
 
 void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle) {

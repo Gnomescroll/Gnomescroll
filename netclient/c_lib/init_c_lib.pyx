@@ -128,6 +128,7 @@ def connected():
 
 cdef void py_net_message_callback(char* buff, int n, int client_id):
     ustring = buff[:n]
+    #ustring1 = ustring2
     if(_CLIENT_MESSAGE_CALLBACK != None):
         _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
 

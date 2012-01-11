@@ -43,8 +43,13 @@ class Net_message {
     public:
         class Net_message_buffer* b;
         char* buff;
+    #if PACKET_BUFFER_DEBUG
+        int len;
+        int reference_count;
+    #else
         short len;
         short reference_count;
+    #endif
         Net_message* next;
 
         OBJECT_POOL_OBJECT_MACRO
@@ -94,6 +99,8 @@ class NetMessageManager
 
     void NetMessageManager::push_message(Net_message* nm) 
     {
+        if(nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
+
         pending_bytes_out += nm->len;
         pending_messages++;
 
@@ -117,7 +124,13 @@ class NetMessageManager
 
     void NetMessageManager::serialize_messages(char* buff_, int index)
     {
-        if(pending_messages == 0) return;
+        int max = pending_bytes_out;
+        //printf("Starting serialization at address %i \n", buff_);
+        if(pending_messages == 0)
+        {
+            printf("impossible error \n");
+            return;
+        }
         /*
             Create packet and serialize to it
         */
@@ -130,6 +143,12 @@ class NetMessageManager
 
             memcpy(buff_+index, nm->buff, nm->len);
             index += nm->len;
+
+
+            if(index > max)
+            {
+                printf("BLOODY HELL: %i, %i \n", index, max);
+            }
 
             nm->decrement(); //reference count on packet
 
@@ -144,6 +163,10 @@ class NetMessageManager
             }
         }      
 
+        if(max != index)
+        {
+            printf("NetMessageManager, ERROR, index exceeds bytes to be wrrite: index= %i, max= %i \n", index, max);
+        }
         //reset to virgin state
         nma_insert_index = 0;
         nma_read = nma_insert;

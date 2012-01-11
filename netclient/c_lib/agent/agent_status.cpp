@@ -18,6 +18,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id) {
     
     // forward dmg indicator packet
     agent_damage_StoC dmg_msg;
+    
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();

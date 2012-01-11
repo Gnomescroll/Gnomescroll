@@ -687,7 +687,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
     
         if(client_id != -1) 
         {
-            PlayerAgent_Snapshot P;
+            class PlayerAgent_Snapshot P;
             
             P.id = id;
             P.seq = (cs_seq+1) % 256;
@@ -706,7 +706,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
 
         if( _seq % 32 == 0 ) {
-            Agent_state_message A;
+            class Agent_state_message A;
 
             A.id = id;
             A.seq = (cs_seq+1) % 256;

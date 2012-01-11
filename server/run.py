@@ -206,8 +206,10 @@ def draw_sphere(block, radius, x,y,z):
                     m.set(_x+x,_y+y,_z+z,block)
 
 def good_cave1():
-    c_lib.map_gen.Dragon.generate()
-    c_lib.map_gen.Dungeon.generate()
+    pass
+    #c_lib.map_gen.Dragon.generate()
+    #c_lib.map_gen.Dungeon.generate()
+    
     ##base heightmap, smooth shallow hills
     #c_lib.map_gen.conf\
     #.size(128,128,128)\
@@ -270,10 +272,10 @@ class Main:
             #terrain_map.load_from_disk(opts.map)
         #else:
             #pass
-        #terrain_map.load_from_disk("natural_terrain")
+        terrain_map.load_from_disk("natural_terrain")
             
-            ##terrain_map.load_from_disk("natural2_max")
-            ##terrain_map.load_from_disk("natural4")
+        #terrain_map.load_from_disk("natural2_max")
+        #terrain_map.load_from_disk("natural4")
             ##terrain_map.load_from_disk("savetest2")
             ##_gen_map()
             ##terrain_map.load_from_disk("nat5")
@@ -298,8 +300,9 @@ class Main:
         #clear_pillar(x=1,y=1)
         #pallet_pillar(0,0,0)
 
-        c_lib.map_gen.conf.seed(opts.seed)
-        good_cave1()
+        #c_lib.map_gen.conf.seed(opts.seed)
+        
+        #good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

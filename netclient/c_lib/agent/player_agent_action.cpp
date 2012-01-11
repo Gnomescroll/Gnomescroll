@@ -86,7 +86,7 @@ void PlayerAgent_action::throw_grenade() {
     msg.y = p->camera_state.y;
     msg.z = p->camera_state.z + p->camera_height();
 
-    static float f[3];
+    float f[3];
     p->camera_state.forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];

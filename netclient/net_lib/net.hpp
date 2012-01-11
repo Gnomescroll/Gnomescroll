@@ -5,6 +5,17 @@
 #include <net_lib/common/type_pack.h>
 #include <net_lib/common/packet_buffer.hpp>
 
+#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
+/*
+    When this is set to zero, each packet only needs to be serialized/allocated once even if sent to multiple clients
+    This causes issues with staticly allocated packet, unless you set nm to NULL before using
+*/
+
+/*
+    TODO:
+    have a "start" and "fast send" function for server to client packets sent to multiple clients
+*/
+
 static int _server_packet_id = 1;
 int next_server_packet_id() { return _server_packet_id++; }
 
@@ -107,7 +118,7 @@ class FixedSizeNetPacketToClient {
 
             //this will segfault
             
-            if(nm == NULL) 
+            if(nm == NULL || NET_PERF1_DISABLED ) 
             {
                 nm = Net_message::acquire(Derived::size);
                 int buff_n = 0;
@@ -275,7 +286,7 @@ class FixedSizeReliableNetPacketToClient {
             */
 
             
-            if(nm == NULL) 
+            if(nm == NULL || NET_PERF1_DISABLED ) 
             {
                 nm = Net_message::acquire(Derived::size);
                 int buff_n = 0;
