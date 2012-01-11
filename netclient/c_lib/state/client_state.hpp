@@ -6,6 +6,8 @@
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/game/ctf.hpp>
 
+#include <c_lib/animations/hitscan.hpp>
+
 class PlayerAgent_state; //forward declaration
 
 namespace ClientState {
@@ -22,6 +24,7 @@ namespace ClientState {
     extern Neutron_list neutron_list;
     extern Minivox_list minivox_list;
     extern BillboardText_list billboard_text_list;
+    extern Animations::HitscanEffect_list hitscan_effect_list;
 
     extern CTF ctf;
         

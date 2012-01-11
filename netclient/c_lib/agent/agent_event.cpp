@@ -3,6 +3,7 @@
 #ifdef DC_CLIENT
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/animations/animations.hpp>
+#include <c_lib/animations/hitscan.hpp>
 #include <c_lib/sound/sound.hpp>
 
 void Agent_event::fired_weapon(int type) {
@@ -46,6 +47,14 @@ void Agent_event::fired_laser() {
         x = a->s.x,
         y = a->s.y,
         z = a->s.z + a->camera_height();
+
+
+    // play laser anim
+    const float hitscan_speed = 30.0f;
+    ClientState::hitscan_effect_list.create(
+        x,y,z,
+        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+    );
 
     int collided = _ray_cast6(x,y,z, f[0], f[1], f[2], max_l, distance, collision, pre_collision, cube, side);
     if (!collided) {

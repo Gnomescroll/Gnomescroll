@@ -18,6 +18,7 @@ namespace ClientState {
     Neutron_list neutron_list;
     Minivox_list minivox_list;
     BillboardText_list billboard_text_list;
+    Animations::HitscanEffect_list hitscan_effect_list;
 
     CTF ctf;
     

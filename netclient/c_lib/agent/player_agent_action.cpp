@@ -1,6 +1,7 @@
 #include "player_agent_action.hpp"
 
 #include <c_lib/ray_trace/hitscan.hpp>
+#include <c_lib/animations/hitscan.hpp>
 
 #include <c_lib/t_map/t_map_net.hpp>
 
@@ -76,6 +77,13 @@ void PlayerAgent_action::hitscan() {
         default:
             break;
     }
+
+    // play laser anim
+    const float hitscan_speed = 30.0f;
+    ClientState::hitscan_effect_list.create(
+        p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
+        vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
+    );
 }
 
 void PlayerAgent_action::throw_grenade() {
