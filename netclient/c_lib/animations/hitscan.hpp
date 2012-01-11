@@ -39,7 +39,7 @@ void HitscanEffect::draw()
 {
 
     const float width = 0.5;
-    const float height = 4.0;
+    const float height = 1.0;   //length per velocity
 
 
     //for billboarding
@@ -63,8 +63,10 @@ void HitscanEffect::draw()
     normalize_vector( &u1 );
     //printf("u1 length= %f \n", vector_length( &u1 ) );
 
-    float norm = sqrt(vx*vx+vy*vy+vz*vz);
-    struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
+    // float norm = sqrt(vx*vx+vy*vy+vz*vz);
+    // struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
+    struct Vector x2 = Vector_init(x- height*vx, y - height*vy, z - height*vz);
+
     struct Vector l2 = sub_vec(&x2, &c);
 
     struct Vector u2 = vector_cross( l2, r);
@@ -175,11 +177,17 @@ void HitscanEffect_list::tick()
 
     if(debug)
     {
+        static int frame = 0;
+        frame++;
+
+        if(frame % 12 == 0 )
+        {
         const float vm = 4.0;
         float vx = vm*(float)rand()/(float)RAND_MAX;
-        float vy = vm*(float)rand()/(float)RAND_MAX;
+        float vy = 320.0+vm*(float)rand()/(float)RAND_MAX;
         float vz = vm*(float)rand()/(float)RAND_MAX;
         create_hitscan(32.0, 32.0, 64.0, vx, vy, vz);
+        }
     }
 
     int i;
