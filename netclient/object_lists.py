@@ -120,10 +120,17 @@ class GenericObjectListWrapper(GenericObjectList):
 
     def update_from_list(self):
         ids = self._wrapper.ids()
+
+        # add unknown
         for id in ids:
             if id not in self.objects:
                 obj = self._object_type(id=id)  # create object
                 self.objects[id] = obj
+
+        # remove dead
+        for id in self.objects:
+            if id not in ids:
+                del self.objects[id]
     
     def __getitem__(self, key):
         return GenericObjectList.__getitem__(self, key)
