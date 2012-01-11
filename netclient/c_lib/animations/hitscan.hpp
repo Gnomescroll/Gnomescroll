@@ -29,24 +29,26 @@ class HitscanEffect
     float vx,vy,vz;
     int ttl;
 
-    void draw();
+    void draw(float delta);
     void tick();
 
     HitscanEffect() { ttl = 3000; }
 };
 
-void HitscanEffect::draw()
+void HitscanEffect::draw(float delta)
 {
 
     const float width = 0.50;
-    const float height = 1.0/16;   //length per velocity
+    const float height = 1.0/32.0;   //length per velocity
 
 
-    //for billboarding
-    float cx = current_camera->x;
-    float cy = current_camera->y;
-    float cz = current_camera->z;
+    float _x = x + vx*delta;
+    float _y = y + vy*delta;
+    float _z = z + vz*delta;  
 
+    _x = x;
+    _y = y;
+    _z = z;
 
     struct Vector c = Vector_init(current_camera->x, current_camera->y, current_camera->z);
 
@@ -56,7 +58,7 @@ void HitscanEffect::draw()
 
     //printf("r length= %f \n", vector_length( &r ) );
 
-    struct Vector x1 = Vector_init(x,y,z);
+    struct Vector x1 = Vector_init(_x,_y,_z);
     struct Vector l1 = sub_vec(&x1, &c);
 
     struct Vector u1 = vector_cross( l1, r);
@@ -65,7 +67,7 @@ void HitscanEffect::draw()
 
     // float norm = sqrt(vx*vx+vy*vy+vz*vz);
     // struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
-    struct Vector x2 = Vector_init(x- height*vx, y - height*vy, z - height*vz);
+    struct Vector x2 = Vector_init(_x- height*vx, _y - height*vy, _z - height*vz);
 
     struct Vector l2 = sub_vec(&x2, &c);
 
@@ -129,6 +131,18 @@ class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
 
 void HitscanEffect_list::draw()
 {
+
+    int last_tick = _LAST_TICK();
+    int _t = _GET_MS_TIME();
+    //printf("ms since last update= %i \n", _t - last_tick);
+    float delta = ((float)(_t - last_tick)) / 33.0f;
+    if(delta > 1.0f)
+    {
+        delta = 1.0f;
+    }
+    delta /= 30.0f;
+    //printf("delta= %f \n", delta);
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -142,7 +156,7 @@ void HitscanEffect_list::draw()
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
-        a[i]->draw();
+        a[i]->draw(delta);
     }
 
     glEnd();
