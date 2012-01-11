@@ -71,7 +71,7 @@ void Agent_state::teleport(float x,float y,float z) {
     s.y = y;
     s.z = z;
 
-    static Agent_teleport_message A;
+    class Agent_teleport_message A;
 
     A.id = id;
 
@@ -97,7 +97,7 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.theta = theta;
     s.phi = phi;
     
-    static Agent_teleport_message A;
+    class Agent_teleport_message A;
 
     A.id = id;
 
@@ -687,7 +687,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
     
         if(client_id != -1) 
         {
-            PlayerAgent_Snapshot P;
+            class PlayerAgent_Snapshot P;
             
             P.id = id;
             P.seq = (cs_seq+1) % 256;
@@ -706,7 +706,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
         }
 
         if( _seq % 32 == 0 ) {
-            Agent_state_message A;
+            class Agent_state_message A;
 
             A.id = id;
             A.seq = (cs_seq+1) % 256;
@@ -881,7 +881,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
 Agent_state::~Agent_state() {
 
     #ifdef DC_SERVER
-    static agent_destroy_StoC msg;
+    class agent_destroy_StoC msg;
     msg.id = id;
     msg.broadcast();
     #endif
@@ -907,7 +907,7 @@ void Agent_state::server_tick() {
 
 void Agent_list::send_to_client(int client_id) {
     int i;
-    static agent_create_StoC msg;
+    class agent_create_StoC msg;
     for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
         if (a[i]==NULL) continue;
         msg.id = a[i]->id;

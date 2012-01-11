@@ -11,6 +11,11 @@
     This causes issues with staticly allocated packet, unless you set nm to NULL before using
 */
 
+/*
+    TODO:
+    have a "start" and "fast send" function for server to client packets sent to multiple clients
+*/
+
 static int _server_packet_id = 1;
 int next_server_packet_id() { return _server_packet_id++; }
 

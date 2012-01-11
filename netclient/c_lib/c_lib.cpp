@@ -53,6 +53,7 @@
 #ifdef DC_CLIENT
     /* animations */
     #include <c_lib/animations/animations.cpp>
+    #include <c_lib/animations/hitscan.cpp>
 #endif
 
 /* map */
@@ -91,6 +92,8 @@
     #include <c_lib/sound/sound.cpp>
 
 #endif
+
+#include <c_lib/export.cpp>
 
 /* client side map gen / utils */
 #include <c_lib/map_gen/hopcroft-karp.cpp>
@@ -131,6 +134,8 @@ int init_c_lib() {
         Compass::init();
         //vn::init();
 
+        Animations::init_hitscan();
+        
         Sound::init();
     #endif
 

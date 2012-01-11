@@ -17,7 +17,8 @@ int Agent_status::apply_damage(int dmg, int inflictor_id) {
     if (dead) return health;
     
     // forward dmg indicator packet
-    static agent_damage_StoC dmg_msg;
+    class agent_damage_StoC dmg_msg;
+    
     dmg_msg.id = a->id;
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
@@ -42,12 +43,12 @@ int Agent_status::die() {
     dead = true;
     deaths++;
 
-    static AgentDeaths_StoC deaths_msg;
+    class AgentDeaths_StoC deaths_msg;
     deaths_msg.id = a->id;
     deaths_msg.deaths = deaths;
     deaths_msg.broadcast();
     
-    static agent_dead_StoC dead_msg;
+    class agent_dead_StoC dead_msg;
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
@@ -86,17 +87,17 @@ int Agent_status::score() {
 }
 
 void Agent_status::send_scores(int client_id) {
-    static AgentKills_StoC ak;
+    class AgentKills_StoC ak;
     ak.id = a->id;
     ak.kills = kills;
     ak.sendToClient(client_id);
     
-    static AgentDeaths_StoC ad;
+    class AgentDeaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
     ad.sendToClient(client_id);
 
-    static AgentSuicides_StoC as;
+    class AgentSuicides_StoC as;
     as.id = a->id;
     as.suicides = suicides;
     as.sendToClient(client_id);
@@ -104,17 +105,17 @@ void Agent_status::send_scores(int client_id) {
 
 // to all
 void Agent_status::send_scores() {
-    static AgentKills_StoC ak;
+    class AgentKills_StoC ak;
     ak.id = a->id;
     ak.kills = kills;
     ak.broadcast();
     
-    static AgentDeaths_StoC ad;
+    class AgentDeaths_StoC ad;
     ad.id = a->id;
     ad.deaths = deaths;
     ad.broadcast();
 
-    static AgentSuicides_StoC as;
+    class AgentSuicides_StoC as;
     as.id = a->id;
     as.suicides = suicides;
     as.broadcast();
@@ -130,14 +131,14 @@ void Agent_status::respawn() {
     
     // restore health
     health = AGENT_HEALTH;
-    static agent_health_StoC health_msg;
+    class agent_health_StoC health_msg;
     health_msg.id = a->id;
     health_msg.health = health;
     health_msg.sendToClient(a->client_id);
 
     // revive
     dead = false;
-    static agent_dead_StoC dead_msg;
+    class agent_dead_StoC dead_msg;
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();

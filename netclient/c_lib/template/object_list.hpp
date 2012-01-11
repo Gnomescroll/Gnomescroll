@@ -30,6 +30,8 @@ class Object_list {
 
         Object_state* get(int id);
         Object_state* create();         //object auto id
+        Object_state* create_imp_id();         //auto id, assigns to id field automaticly
+
         Object_state* create(int id);   //create object with id
         Object_state* create(float x, float y, float z, float vx, float vy, float vz);
         Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
@@ -104,12 +106,33 @@ Object_state* Object_list<Object_state, max_n>::create() {
         id = (i+id)%n_max;
         if(a[id] == NULL) break;
     }
-    if(i==1024) {
+    if(i==n_max) {
         printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
         return NULL;
     }
     num++;
     a[id] = new Object_state(id);
+    //printf("%s_list: Created object %i\n", name(), id);
+    return a[id];
+}
+
+template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::create_imp_id() {
+    //where();
+    int i;
+    int id = id_c;
+    id_c++;
+    for(i=0; i<n_max;i++) {
+        id = (i+id)%n_max;
+        if(a[id] == NULL) break;
+    }
+    if(i==n_max) {
+        printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
+        return NULL;
+    }
+    num++;
+    a[id] = new Object_state();
+    a[id]->id = id;
     //printf("%s_list: Created object %i\n", name(), id);
     return a[id];
 }

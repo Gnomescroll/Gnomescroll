@@ -36,6 +36,8 @@ import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
 import c_lib.c_lib_map_gen as cMapGen
 
+import c_lib.c_lib_animations as cAnimations
+
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
