@@ -22,8 +22,10 @@ class ChatClientGlobal:
         ChatClientGlobal.chatRender = ChatRender()
 
     @classmethod
-    def on_identify(cls): # called after client connects
+    def on_identify(cls, note=''): # called after client connects
+        ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
         ChatClientGlobal.chatClient.on_identify()
+        
 
 
 from net_client import NetClientGlobal

@@ -22,15 +22,20 @@ Data model for agent
 '''
 class Agent(cAgents.AgentWrapper):
 
-    def __init__(self, id):
+    def __init__(self, id, name='undefined-default'):
         self.id = id
         self.client_id = id
         self.you = False
-        self.name = '' # fix later
+        #if name == 'undefined-default':
+            #print name
+            #raise Exception
+        self.name = name
         print 'Python Agent creation: id %s' % (self.id,)
 
     def update_info(self, **agent):
-        pass
+        print "UPDATE INFO ", agent
+        if 'name' in agent:
+            self.name = agent['name']
 
     def __getattribute__(self, name):
         try:
@@ -63,8 +68,8 @@ Client's player's agent
 '''
 class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 
-    def __init__(self, id):
-        Agent.__init__(self, id)
+    def __init__(self, id, name='playerAgent-undefined-default'):
+        Agent.__init__(self, id, name)
         cAgents.PlayerAgentWrapper.__init__(self, id)
 
         self.button_state = [0 for i in range(11)]

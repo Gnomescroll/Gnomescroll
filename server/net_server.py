@@ -82,7 +82,7 @@ class PyClient:
         self.send_agents()
 
     def send_agents(self):
-        self.sendMessage.send_agents()#python interface is buggy and map wont be accepted without this obligatory attempt. only agent ids are sent
+        self.sendMessage.send_agents() # REQUIRED still, python creates python agents for this, and puts in agent_list. will be deprecated later
         cAgents.AgentListWrapper.send_to_client(self.client_id)
 
     def send_map(self):
@@ -100,6 +100,7 @@ class PyClient:
             self.agent.update_info(name=self.name)
         else:
             self.agent = GameStateGlobal.agentList.create(self.client_id)
+            self.agent.name = self.name
             print 'Created new agent'
             # send player agent id
             self.agent.send_id_to_client(self.client_id)

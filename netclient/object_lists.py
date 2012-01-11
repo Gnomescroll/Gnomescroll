@@ -59,6 +59,7 @@ class GenericObjectList:
         if kwargs['id'] in self.objects:
             print '%s::id %s already exists' % (self._itemname, kwargs['id'],)
             obj = self.objects[kwargs['id']]
+            obj.update_info(**kwargs)
         else:
             obj = self._object_type(*args, **kwargs)
             self.objects[obj.id] = obj
@@ -177,6 +178,7 @@ class AgentList(GenericObjectListWrapper):
 
     def create(self, *args, **agent):
         a = self._add(*args, **agent)
+        #print "Create check against player agent: %d" % (cAgents.get_player_agent_id())
         if a.id == cAgents.get_player_agent_id():
             self._remove(a, remove_c=False)
             a = self.create_player_agent(*args, **agent)

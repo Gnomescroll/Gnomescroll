@@ -33,7 +33,7 @@ class GameStateGlobal:
         stats = dict(zip(props, defs))
 
         for agent in cls.agentList.values():
-            stats['name'].append(NetClientGlobal.name)
+            stats['name'].append(agent.name)
             stats['kills'].append(agent.kills)
             stats['deaths'].append(agent.deaths)
             stats['score'].append(agent.score)

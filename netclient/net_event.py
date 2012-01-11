@@ -80,7 +80,9 @@ class MessageHandler:
             return
         #use json_events when possible
         cmd = str(cmd)
-        print cmd
+        print "Received python message: %s" % (cmd,)
+        if cmd == 'agent_list':
+            print msg
         if cmd in self.json_events:
             #print msg
             self.json_events[cmd](**msg)
@@ -183,7 +185,6 @@ class ClientMessageHandler(GenericMessageHandler):
 
     def _identified(self, **msg):
         note = msg.get('msg', '')
-        ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
 
         name = msg.get('name', None)
         if name is None:
@@ -196,8 +197,9 @@ class ClientMessageHandler(GenericMessageHandler):
 
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
-        ChatClientGlobal.on_identify()
-
+        if GameStateGlobal.agent is not None:
+            GameStateGlobal.agent.name = name
+        ChatClientGlobal.on_identify(note)
         return True
 
     used_alt = False
