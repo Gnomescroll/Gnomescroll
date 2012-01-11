@@ -45,7 +45,7 @@ void NetPeer::flush_to_net()
     if(reliable_message_manager.pending_messages != 0) 
     {
         ENetPacket* reliable_p = enet_packet_create(NULL, reliable_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
-        reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0);
+        reliable_message_manager.serialize_messages( (char*) reliable_p->data, 0); //error
         enet_peer_send (enet_peer, 0, reliable_p);
     }
 
@@ -58,8 +58,9 @@ void NetPeer::flush_to_net()
 
     if(python_message_manager.pending_messages != 0) 
     {
+        //printf("Python Pending bytes out = %i \n", python_message_manager.pending_bytes_out);
         ENetPacket* python_p = enet_packet_create(NULL, python_message_manager.pending_bytes_out, ENET_PACKET_FLAG_RELIABLE);
-        python_message_manager.serialize_messages( (char*)python_p->data, 0);
+        python_message_manager.serialize_messages( (char*)python_p->data, 0); //error
         enet_peer_send (enet_peer, 2, python_p);
     }
 

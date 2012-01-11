@@ -13,7 +13,7 @@ extern struct _ENetHost* client_host;
 void init_net_server();
 void init_net_client();
 
-
+void shutdown_net_client();
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) ;
 

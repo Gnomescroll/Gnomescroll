@@ -1,6 +1,9 @@
 #include "packet_buffer.hpp"
 
 
+#define PACKET_BUFFER_MALLOC_DEBUG 1
+
+#define NET_MESSAGE_ARRAY_MALLOC_DEBUG 1
 
 class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
 {
@@ -16,15 +19,24 @@ static NetMessageArray_pool net_message_array_pool;
 
 void NetMessageArray::retire() 
 {
+#if NET_MESSAGE_ARRAY_MALLOC_DEBUG
+    delete this;
+#else
     net_message_array_pool.retire(this);
+#endif
 }
 
 class NetMessageArray* NetMessageArray::acquire()
 {
+#if NET_MESSAGE_ARRAY_MALLOC_DEBUG
+    NetMessageArray* a = new NetMessageArray;
+    return a;
+#else
     NetMessageArray* a = net_message_array_pool.acquire();
     a->next = NULL; //debug
     //a->reference_count = 0; //set to 1 automaticly
     return a;
+#endif
 }    
 
 /*
@@ -101,6 +113,20 @@ static Net_message_pool net_message_pool;
 
 void inline Net_message::decrement() 
 {
+
+#if PACKET_BUFFER_MALLOC_DEBUG
+    reference_count--;
+    if(reference_count == 0) 
+    {
+        delete[] buff;
+        delete this;
+        len = 0;
+        return;
+    }
+    return;
+#else
+
+
     //printf("net message decrement: object=%lx ref count= %i, b->refcount= %i \n", (long)this, reference_count, b->reference_count);
     reference_count--;
     if(reference_count == 0) 
@@ -114,15 +140,25 @@ void inline Net_message::decrement()
             b = NULL;   //debug
         }
         //cannot retire it here
+        len = 0; //for safety
         net_message_pool.retire(this);
     }
+#endif
 }
 
 class Net_message* Net_message::acquire(int length)
 {
+#if PACKET_BUFFER_MALLOC_DEBUG
+    Net_message* t = new Net_message;
+    t->len = length;
+    t->buff = new char[length];
+    t->reference_count = 0;
+    return t;
+#else
     Net_message* t = net_message_pool.acquire();
     t->len = length;
     net_message_buffer_pool.get_char_buffer(length, &t->buff, &t->b); //set buffer and set char pool
     t->reference_count = 0;
     return t;
+#endif
 }
