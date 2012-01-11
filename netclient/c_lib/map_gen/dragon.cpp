@@ -2279,7 +2279,7 @@ void set_room_z_levels() {
     }
 
     int z = 128-room_height-1;
-    int z_decrement = 1;
+    //int z_decrement = 1;
 
     int *not_placed = (int*)malloc(sizeof(int)*n_rooms);
     int n_not_placed = n_rooms;

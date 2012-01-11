@@ -23,11 +23,6 @@ class HitscanEffect
     void draw();
     void tick();
 
-    //HitscanEffect()
-    //:
-    //ttl(3000)
-    //{}
-    
     HitscanEffect(int id)
     :
     id(id),

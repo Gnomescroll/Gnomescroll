@@ -462,24 +462,24 @@ void init(int z) {
     L->set_probability(0.7);
 
     // rules
-    L->add_rule("B > B");
-    L->add_rule("X > X]YF");
-    L->add_rule("Y > FX[Y");
-    //L->add_rule("X > X+YF");
-    //L->add_rule("Y > FX-Y");
-    L->add_rule("F > F");
-    //L->add_rule("+ > ]");
-    //L->add_rule("- > [");
-    //L->add_rule("] > +");
-    //L->add_rule("[ > -");
-    L->add_rule("+ > +");
-    L->add_rule("- > -");
-    L->add_rule("] > ]");
-    L->add_rule("[ > [");
-    L->add_rule("f > f");
+    L->add_rule((char*) "B > B");
+    L->add_rule((char*) "X > X]YF");
+    L->add_rule((char*) "Y > FX[Y");
+    //L->add_rule((char*) "X > X+YF");
+    //L->add_rule((char*) "Y > FX-Y");
+    L->add_rule((char*) "F > F");
+    //L->add_rule((char*) "+ > ]");
+    //L->add_rule((char*) "- > [");
+    //L->add_rule((char*) "] > +");
+    //L->add_rule((char*) "[ > -");
+    L->add_rule((char*) "+ > +");
+    L->add_rule((char*) "- > -");
+    L->add_rule((char*) "] > ]");
+    L->add_rule((char*) "[ > [");
+    L->add_rule((char*) "f > f");
 
     // start condition
-    L->set_init_condition("FX");
+    L->set_init_condition((char*) "FX");
 
     L->run();
 
@@ -518,22 +518,22 @@ void caves() {
     L->set_probability(0.7);
 
     // rules
-    L->add_rule("B > B");
-    L->add_rule("X > X]YF");
-    L->add_rule("Y > FX[Y");
-    L->add_rule("F > F");
-    //L->add_rule("+ > ]");
-    //L->add_rule("- > [");
-    //L->add_rule("] > +");
-    //L->add_rule("[ > -");
-    L->add_rule("+ > +");
-    L->add_rule("- > -");
-    L->add_rule("] > ]");
-    L->add_rule("[ > [");
-    L->add_rule("f > f");
+    L->add_rule((char*) "B > B");
+    L->add_rule((char*) "X > X]YF");
+    L->add_rule((char*) "Y > FX[Y");
+    L->add_rule((char*) "F > F");
+    //L->add_rule((char*) "+ > ]");
+    //L->add_rule((char*) "- > [");
+    //L->add_rule((char*) "] > +");
+    //L->add_rule((char*) "[ > -");
+    L->add_rule((char*) "+ > +");
+    L->add_rule((char*) "- > -");
+    L->add_rule((char*) "] > ]");
+    L->add_rule((char*) "[ > [");
+    L->add_rule((char*) "f > f");
 
     // start condition
-    L->set_init_condition("FX");
+    L->set_init_condition((char*) "FX");
 
     L->run();
 
@@ -632,14 +632,14 @@ void make_roads() {
     L->set_dimensions(width,height);
 
     // rules
-    L->add_rule("X > X+YF");
-    L->add_rule("Y > FX-Y");
-    L->add_rule("F > F");
-    L->add_rule("+ > +");
-    L->add_rule("- > -");
+    L->add_rule((char*) "X > X+YF");
+    L->add_rule((char*) "Y > FX-Y");
+    L->add_rule((char*) "F > F");
+    L->add_rule((char*) "+ > +");
+    L->add_rule((char*) "- > -");
 
     // start condition
-    L->set_init_condition("FX");
+    L->set_init_condition((char*) "FX");
 
     L->run();
 
