@@ -472,6 +472,7 @@ int n_corners = 0;
 
 Room* rooms = NULL;
 int n_rooms = 0;
+int n_room_edges = 0;
 
 void rect_solver() {
     if (points != NULL) {
@@ -642,25 +643,22 @@ void rect_solver() {
 
 void resolve_rooms(int z, int tile) {
 
+    n_bottom_corners = 0;
+    n_corners = 0;
     if (corners != NULL) {
         free(corners);
         corners = NULL;
-        n_bottom_corners = 0;
-        n_corners = 0;
     }
+    int corners_max = 2048*4;
+    corners = (Point*)malloc(sizeof(Point)*corners_max);
 
+    n_rooms = 0;
     if (rooms != NULL) {
         free(rooms);
         rooms = NULL;
-        n_rooms = 0;
     }
 
     //if (!n_points) return;
-
-    int corners_max = 2048*4;
-    corners = (Point*)malloc(sizeof(Point)*corners_max);
-    n_corners = 0;
-    n_bottom_corners = 0;
 
     int i,j;
     Point *p,*q;
@@ -1101,7 +1099,7 @@ class RoomEdge {
     int has(int id) {
         int i;
         for (i=0; i<n; i++) {
-            if (rooms[i] == id) return i;
+            if (this->rooms[i] == id) return i;
         }
         return -1;
     }
@@ -1109,22 +1107,22 @@ class RoomEdge {
     void add_multiple(int *ids, int n_ids) {
         if (n_ids <= 0) return;
         int new_n = this->n + n_ids;
-        if (rooms == NULL) {
-            rooms = (int*)malloc(sizeof(int)*new_n);
+        if (this->rooms == NULL) {
+            this->rooms = (int*)malloc(sizeof(int)*new_n);
         } else {
-            rooms = (int*)realloc(rooms, sizeof(int)*new_n);
+            this->rooms = (int*)realloc(this->rooms, sizeof(int)*new_n);
         }
 
         int i;
         for (i=0; i<n_ids; i++) {
             if (this->has(ids[i]) < 0 && !(this->room = ids[i])) {
                 this->n++;
-                rooms[this->n] = ids[i];
+                this->rooms[this->n] = ids[i];
             }
         }
 
         if (this->n != new_n) {
-            rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+            this->rooms = (int*)realloc(this->rooms, sizeof(int)*this->n);
         }
 
     }
@@ -1134,12 +1132,12 @@ class RoomEdge {
         if (id == this->room) return;
         if (this->has(id) >= 0) return;
         this->n++;
-        if (rooms == NULL) {
-            rooms = (int*)malloc(sizeof(int)*this->n);
+        if (this->rooms == NULL) {
+            this->rooms = (int*)malloc(sizeof(int)*this->n);
         } else {
-            rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+            this->rooms = (int*)realloc(this->rooms, sizeof(int)*this->n);
         }
-        rooms[n-1] = id;
+        this->rooms[n-1] = id;
     }
 
     void remove(int id) {
@@ -1148,30 +1146,30 @@ class RoomEdge {
         int index;
         index = this->has(id);
         if (index < 0) return;
-        if (rooms == NULL) return;
+        if (this->rooms == NULL) return;
         if (n == 0) return;
 
         this->n--;
         int i;
         for (i=index; i<this->n; i++) {
-            rooms[i] = rooms[i+1];
+            this->rooms[i] = this->rooms[i+1];
         }
         
-        rooms = (int*)realloc(rooms, sizeof(int)*this->n);
+        this->rooms = (int*)realloc(this->rooms, sizeof(int)*this->n);
     }
 
     void teardown() {
-        if (rooms != NULL) {
-            free(rooms);
-            rooms = NULL;
+        if (this->rooms != NULL) {
+            free(this->rooms);
+            this->rooms = NULL;
         }
     }
 
     void print() {
-        if (rooms == NULL) return;
+        if (this->rooms == NULL) return;
         int i;
         for (i=0; i<this->n; i++) {
-            printf("%d", rooms[i]);
+            printf("%d", this->rooms[i]);
             printf("\n");
         }
     }
@@ -1183,9 +1181,9 @@ class RoomEdge {
 
     ~RoomEdge()
     {
-        if (rooms != NULL) {
-            free(rooms);
-            rooms = NULL;
+        if (this->rooms != NULL) {
+            free(this->rooms);
+            this->rooms = NULL;
         }
     }
 };
@@ -1198,18 +1196,18 @@ void build_adjacency_graph() {
     int i,j;
 
     if (room_edges != NULL) {
-        for (i=0; i<n_rooms; i++) {
+        for (i=0; i<n_room_edges; i++) {
             room_edges[i].teardown();
         }
         free(room_edges);
     }
+    n_room_edges = n_rooms;
 
-    room_edges = (RoomEdge*)malloc(sizeof(RoomEdge)*n_rooms);
-    for (i=0; i<n_rooms; i++) {
+    room_edges = (RoomEdge*)malloc(sizeof(RoomEdge)*n_room_edges);
+    for (i=0; i<n_room_edges; i++) {
         room_edges[i].n = 0;
         room_edges[i].rooms = NULL;
         room_edges[i].room = i;
-
         rooms[i].edges = i;
     }
     
@@ -1482,7 +1480,7 @@ void set_room_z_levels() {
             }
         }
 
-        if (lowest_z > highest_z - highest_z_inner_height - 1)printf("WARNING\n");
+        if (lowest_z > highest_z - highest_z_inner_height - 1)printf("WARNING clique range will fail\n");
         clique_z = randrange(lowest_z, highest_z - highest_z_inner_height - 1);
         z_off = clique_z - highest_z_inner;
         for (j=0; j<n_rooms; j++) {
@@ -1495,6 +1493,19 @@ void set_room_z_levels() {
     free(current);
     free(next);
     free(not_placed);
+}
+
+int draw_rooms(Room* rooms, int n_rooms, Room* highest) {
+    int i;
+    int highest_room_z = -100;
+    for (i=0; i<n_rooms; i++) {
+        rooms[i].draw_3d(0);
+        highest = &rooms[i];
+        if (highest->z + highest->d > highest_room_z) {
+            highest_room_z = highest->z + highest->d;
+        }
+    }
+    return highest_room_z;
 }
 
 void generate_dungeon() {
@@ -1516,26 +1527,60 @@ void generate_dungeon() {
         }
     }
 
-    Room *highest;
+    Room *highest = NULL;
     int highest_room_z = -100;
-    for (i=0; i<n_rooms; i++) {
-        rooms[i].draw_3d(0);
-        highest = &rooms[i];
-        if (highest->z + highest->d > highest_room_z) {
-            highest_room_z = highest->z + highest->d;
-        }
+    highest_room_z = draw_rooms(rooms, n_rooms, highest);
+
+    //Room *highest;
+    //int highest_room_z = -100;
+    //for (i=0; i<n_rooms; i++) {
+        //rooms[i].draw_3d(0);
+        //highest = &rooms[i];
+        //if (highest->z + highest->d > highest_room_z) {
+            //highest_room_z = highest->z + highest->d;
+        //}
+    //}
+
+    int si=-1,sj=-1;
+    if (highest != NULL)
+    {
+        si = (int)highest->center_fx();
+        sj = (int)highest->center_fy();
     }
 
-    int si,sj;
-    si = (int)highest->center_fx();
-    sj = (int)highest->center_fy();
-    printf("%d %d\n", si,sj);
+
+    //int n_rooms2 = n_rooms;
+    //Room *rooms2 = (Room*)malloc(sizeof(Room) * n_rooms);
+    //memcpy(rooms2, rooms, sizeof(Room)*n_rooms);
+    
+// generate 2nd dungeon, then link
+
+//switch seeds
+// next_seed(); //???
+    srand(70777);
+
+// draw on highest z level
+    Dragon::generate();
+
+// process, with highest z level
+    rect_solver();
+    resolve_rooms(z, tile);
+    build_adjacency_graph();
+    set_room_z_levels();
+
+// draw rooms
+    if (draw_rooms(rooms, n_rooms, highest) > highest_room_z) printf("WARNING: z level bug, 2nd dungeon is higher than  first\n");
+    //highest_room_z = draw_rooms(rooms, n_rooms, highest);
+
+    // encase map as a box, place dungeon entrace
+
+    //highest_room_z = draw_rooms(rooms2, n_rooms2, highest);
 
     _box(128,128,0,127,101);
-    printf("Setting entrance\n");
-    for (i=127; i>=highest_room_z-1; i--) {
-        printf("%d\n", i);
-        _set(si,sj,i,0);
+    if (si >= 0 && si < xmax && sj >= 0 && sj < ymax) {
+        for (i=127; i>=highest_room_z-1; i--) {
+            _set(si,sj,i,0);
+        }
     }
 
 }

@@ -304,7 +304,7 @@ class L_System {
                 j++;
             }
             parsed[j] = '\0';
-            char* _parsed = (char*)malloc(j * sizeof(char));
+            char* _parsed = (char*)malloc(j * sizeof(char) + 1);    //EDIT
             strcpy(_parsed, parsed);
             free(parsed);
             parsed = _parsed;

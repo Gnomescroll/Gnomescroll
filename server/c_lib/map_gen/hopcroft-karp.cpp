@@ -143,8 +143,8 @@ class Point {
         return true;
     }
 
-    bool operator==(Point p) {
-        if (p.x == x && p.y == y) return true;
+    bool operator==(const Point& p) {   //EDIT
+        if (p.x == this->x && p.y == this->y) return true;  //EDIT
         return false;
     }
 
