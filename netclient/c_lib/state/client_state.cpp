@@ -29,7 +29,9 @@ namespace ClientState {
     int active_agent = 0;
     int agent_control_state[16];
         
-    void InitClientState() {
+    void init() {
+        ctf.init();
+        voxel_render_list.init_voxel_render_list_shader1();
     }
 
     void set_PlayerAgent_id(int id) {

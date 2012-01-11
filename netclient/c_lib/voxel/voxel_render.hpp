@@ -8,9 +8,6 @@
 
 #include <physics/vector4.hpp>
 
-void voxel_render_init();
-
-
 struct VBOmeta
 {
     GLuint id;
@@ -50,6 +47,8 @@ class Voxel_render_list
     void update_vertex_buffer_object();
 
     Voxel_render_list()
+    :
+    num_elements(0)
     {
         vbo_wrapper[0].vertex_list = NULL;
         vbo_wrapper[1].vertex_list = NULL;
@@ -61,7 +60,6 @@ class Voxel_render_list
         vbo_wrapper[1].vnum = 0;
 
         render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
-        num_elements = 0;
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) render_list[i] = NULL;
     }
 };

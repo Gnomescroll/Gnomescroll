@@ -47,100 +47,56 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 }
 
 #ifdef DC_CLIENT
-    class Voxel_render_list; //forward declaration
+class Voxel_render_list; //forward declaration
 #endif
 
 #ifdef DC_CLIENT
 
-    struct Voxel_normal
+struct Voxel_normal
+{
+    union
     {
-        union
-        {
-            char normal[4]; //16
-            unsigned int n;
-        };
+        char normal[4]; //16
+        unsigned int n;
     };
+};
 
-    struct Voxel_vertex
+struct Voxel_vertex
+{
+    float x,y,z;
+    union
     {
-        float x,y,z;
-        union
-        {
-            unsigned char rgba[4]; //12
-            unsigned int color;
-        };
-        union
-        {
-            char normal[4]; //16
-            unsigned int n;
-        };
-        //can compute normals from t
+        unsigned char rgba[4]; //12
+        unsigned int color;
     };
-
-    class Voxel_vertex_list
+    union
     {
-        public:
-        Voxel_vertex* vertex_list;   //number of vertices
-        int size;   //offset of vertices
-
-        unsigned short vnum;   //number of vertices
-        unsigned short voff;   //offset of vertices
-
-        Voxel_vertex_list()
-        {
-            vertex_list = NULL;
-            size = 0;
-            vnum = 0;
-            voff = 0;
-        }
+        char normal[4]; //16
+        unsigned int n;
     };
+    //can compute normals from t
+};
+
+class Voxel_vertex_list
+{
+    public:
+    Voxel_vertex* vertex_list;   //number of vertices
+    int size;   //offset of vertices
+
+    unsigned short vnum;   //number of vertices
+    unsigned short voff;   //offset of vertices
+
+    Voxel_vertex_list()
+    :
+    vertex_list(NULL),
+    size(0), vnum(0), voff(0)
+    {}
+};
 #endif
 
 class Voxel_volume
 {
-    public:
-
-#ifdef DC_CLIENT
-    Voxel_vertex_list vvl;
-#endif
-
-    Vector v[4]; // forward, up, right (x,y,z), offset
-
-    float scale;    //size of voxels
-    //bounding sphere
-    Vector center;
-    float radius2;
-
-    int xdim,ydim,zdim;
-    int _xdim,_ydim,_zdim;
-    Voxel* voxel;
-    int index1, index12;
-
-    float hdx,hdy,hdz;  //half of width, height, depth as floats
-
-    bool needs_vbo_update;
-
-#ifdef DC_CLIENT
-    Voxel_render_list* voxel_render_list;
-    void register_with_renderer(Voxel_render_list* vrl);
-    void update_vertex_list();
-#endif
-
-    void set_unit_axis();
-
-    //forward and up vector
-    void set_axis(struct Vector* f, struct Vector* u);
-
-    void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
-
-    void update_center();
-    void set_center(float x, float y, float z);
-
-    void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set(int x, int y, int z, Voxel* v);
-
-    void set_parameters(int xdim, int ydim, int zdim, float scale);
-
+    private:
 #ifdef DC_CLIENT
     inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
 #endif
@@ -168,13 +124,56 @@ class Voxel_volume
         v->r = r;v->g = g;v->b = b;v->a = a;
     }
 
-    void init(int xdim, int ydim, int zdim, float scale);
+    public:
 
-    Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale);
-    Voxel_volume();
+#ifdef DC_CLIENT
+    Voxel_vertex_list vvl;
+#endif
 
-    ~Voxel_volume();
+    Vector v[4]; // forward, up, right (x,y,z), offset
+
+    float scale;    //size of voxels
+    //bounding sphere
+    Vector center;
+    float radius2;  // unused
+
+    int xdim,ydim,zdim;
+    int _xdim,_ydim,_zdim;
+    Voxel* voxel;
+    int index1;
+    int index12;    //unused
+
+    float hdx,hdy,hdz;  //half of width, height, depth as floats
+
+    bool needs_vbo_update;
+
+#ifdef DC_CLIENT
+    Voxel_render_list* voxel_render_list;
+    void register_with_renderer(Voxel_render_list* vrl);
+    void update_vertex_list();
+#endif
+
+    void set_unit_axis();
+
+    //forward and up vector
+    void set_axis(struct Vector* f, struct Vector* u);
+
+    void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
+
+    void update_center();
+    void set_center(float x, float y, float z);
+
+    void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set(int x, int y, int z, Voxel* v);
+
+    void set_parameters(int xdim, int ydim, int zdim, float scale);
 
     void draw_bounding_box();
 
+    void init(int xdim, int ydim, int zdim, float scale);
+
+    Voxel_volume(int xdim, int ydim, int zdim, float scale);
+    Voxel_volume();
+
+    ~Voxel_volume();
 };

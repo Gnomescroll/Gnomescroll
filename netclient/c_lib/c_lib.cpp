@@ -137,10 +137,8 @@ int init_c_lib() {
         
         Sound::init();
 
-        init_voxel_render();
+        ClientState::init();
     #endif
-
-    ClientState::ctf.init();
     
     return 0;
 }

@@ -38,15 +38,6 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
     }
 }
 
-void init_voxel_render() {
-    ClientState::voxel_render_list.init_voxel_render_list_shader1();
-}
-
-void draw_voxel_render() {
-    ClientState::voxel_render_list.draw();
-}
-
-
 void Voxel_render_list::update_vertex_buffer_object()
 {
     VBOmeta* _vbo = &vbo_wrapper[0]; 

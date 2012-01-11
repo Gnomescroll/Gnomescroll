@@ -33,9 +33,14 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     v[2] = Vector_init(0.0f,0.0f,1.0f);
     this->set_center(0.0,0.0,0.0);
 
-    hdx = ((float) xdim) / 2;
-    hdy = ((float) ydim) / 2;
-    hdz = ((float) zdim) / 2;
+    this->hdx = ((float) xdim) / 2;
+    this->hdy = ((float) ydim) / 2;
+    this->hdz = ((float) zdim) / 2;
+
+    this->index1 = pow2_1(xdim);
+    this->index12 = pow2_1(xdim) + pow2_1(xdim);
+
+    this->radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
 
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);
@@ -57,10 +62,10 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 }
 
 Voxel_volume::Voxel_volume(){}
-Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
+Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 {
+    this->set_parameters(xdim, ydim, zdim, scale);
     needs_vbo_update = false;
-    scale = _scale;
 
 #ifdef DC_CLIENT
     voxel_render_list = NULL;
@@ -69,49 +74,34 @@ Voxel_volume::Voxel_volume(int __xdim, int __ydim, int __zdim, float _scale)
     v[0] = Vector_init(1.0f,0.0f,0.0f);
     v[1] = Vector_init(0.0f,1.0f,0.0f);
     v[2] = Vector_init(0.0f,0.0f,1.0f);
-    //v[3] = Vector_init(0,0,0);  //center
     this->set_center(0.0,0.0,0.0);
 
-/*
-    v[0].w = 0.0f;
-    v[1].w = 0.0f;
-    v[2].w = 0.0f;
-    v[3].w = 1.0f;
-*/
+    this->hdx = ((float) xdim) / 2;
+    this->hdy = ((float) ydim) / 2;
+    this->hdz = ((float) zdim) / 2;
 
-    xdim = __xdim;
-    ydim = __ydim;
-    zdim = __zdim;
+    this->radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
 
-    hdx = ((float) xdim) / 2;
-    hdy = ((float) ydim) / 2;
-    hdz = ((float) zdim) / 2;
+    this->index1 = pow2_1(xdim);
+    this->index12 = pow2_1(xdim) + pow2_1(xdim);
 
-    radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
+    int powx = pow2_2(xdim);
+    int powy = pow2_2(ydim);
+    int powz = pow2_2(zdim);
 
-    _xdim = pow2_2(__xdim);
-    _ydim = pow2_2(__ydim);
-    _zdim = pow2_2(__zdim);
-    
-    index1 = pow2_1(__xdim);
-    index12 = pow2_1(__xdim) + pow2_1(__ydim);
-
-    //printf("__xdim, __ydim, __zdim= %i, %i, %i \n", __xdim, __ydim,__zdim);
-    //printf("_xdim, _ydim, _zdim= %i, %i, %i \n", _xdim, _ydim, _zdim);
-    //printf("index1, index12= %i, %i \n", index1, index12);
-
-    voxel = new Voxel[_xdim*_ydim*_zdim];
+    voxel = new Voxel[powx*powy*powz];
     int r,g,b,a;
     a = 255;
-    for(int i=0; i < _xdim; i++){
-    for(int j=0; j < _ydim; j++){
-    for(int k=0; k < _zdim; k++){
-        r = i*(256/_xdim);
-        g = j*(256/_ydim);
-        b = k*(256/_zdim);
+    for(int i=0; i < powx; i++){
+    for(int j=0; j < powy; j++){
+    for(int k=0; k < powz; k++){
+        r = i*(256/powx);
+        g = j*(256/powy);
+        b = k*(256/powz);
         _set(i,j,k,r,g,b,a);
     }}}
     needs_vbo_update = true;
+
 }
 
 Voxel_volume::~Voxel_volume()
