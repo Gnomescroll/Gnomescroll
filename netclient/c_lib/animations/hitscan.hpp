@@ -35,9 +35,6 @@ class HitscanEffect
     vx(vx), vy(vy), vz(vz),
     ttl(3000)
     {}
-    _x = x;
-    _y = y;
-    _z = z;
     
     HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz)
     :
@@ -58,17 +55,5 @@ class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
 
         HitscanEffect_list() {}
 };
-
-
-    int last_tick = _LAST_TICK();
-    int _t = _GET_MS_TIME();
-    //printf("ms since last update= %i \n", _t - last_tick);
-    float delta = ((float)(_t - last_tick)) / 33.3f;
-    if(delta > 1.0f)
-    {
-        delta = 1.0f;
-    }
-    delta /= 30.0f;
-    //printf("delta= %f \n", delta);
 
 }
