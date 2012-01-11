@@ -27,7 +27,7 @@ void PlayerAgent_action::fire() {
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
             break;
     }
-    static fire_weapon_CtoS msg;
+    fire_weapon_CtoS msg;
     msg.id = p->agent_id;
     msg.type = a->weapons.active_type();   // just send type for now. weapons arent in a list
     msg.send();
@@ -52,8 +52,8 @@ void PlayerAgent_action::hitscan() {
         p->agent_id
     );
 
-    static hitscan_agent_CtoS agent_msg;
-    static hitscan_block_CtoS block_msg;
+    hitscan_agent_CtoS agent_msg;
+    hitscan_block_CtoS block_msg;
 
     switch (target) {
         case Hitscan::HITSCAN_TARGET_AGENT:
@@ -79,7 +79,7 @@ void PlayerAgent_action::hitscan() {
 }
 
 void PlayerAgent_action::throw_grenade() {
-    static ThrowGrenade_CtoS msg;
+    ThrowGrenade_CtoS msg;
     msg.id = p->agent_id;
 
     msg.x = p->camera_state.x;
@@ -103,7 +103,7 @@ void PlayerAgent_action::hit_block() {
     p->camera_state.forward_vector(f);
     int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
     if (pos != NULL) {
-        static hit_block_CtoS msg;
+        hit_block_CtoS msg;
         msg.id = p->agent_id;
         msg.x = pos[0];
         msg.y = pos[1];
@@ -130,7 +130,7 @@ void PlayerAgent_action::set_block() {
     );
     if (b==NULL) return;
     
-    static block_CtoS msg;
+    block_CtoS msg;
     // UPDATE WITH FACING POSITION
     msg.x = b[0];
     msg.y = b[1];
@@ -143,7 +143,7 @@ void PlayerAgent_action::reload() {
     Agent_state* a = ClientState::agent_list.get(p->agent_id);
     if (a==NULL) return;
 
-    static AgentReloadWeapon_CtoS msg;
+    AgentReloadWeapon_CtoS msg;
     msg.id = p->agent_id;
     msg.type = a->weapons.active_type();
     msg.send();

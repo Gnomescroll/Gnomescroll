@@ -242,7 +242,7 @@ inline void fire_weapon_CtoS::handle() {
     bool fired = a->weapons.fire(type);
     // forward the packet
     if (fired) {
-        static fire_weapon_StoC msg;
+        fire_weapon_StoC msg;
         msg.id = id;
         msg.type = type;
         msg.broadcast();
@@ -297,7 +297,7 @@ inline void AgentReloadWeapon_CtoS::handle() {
     if (a==NULL) return;
     a->weapons.reload(type);
     // forward action
-    static AgentReloadWeapon_StoC msg;
+    AgentReloadWeapon_StoC msg;
     msg.id = id;
     msg.type = type;
     msg.broadcast();
