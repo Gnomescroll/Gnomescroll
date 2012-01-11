@@ -18,7 +18,8 @@ namespace ServerState {
     CTF ctf;
 
     void init() {
-        agent_list.create(0); //create agent 0
+        ctf.init();
+        //agent_list.create(0); //create agent 0
     }
 
 }

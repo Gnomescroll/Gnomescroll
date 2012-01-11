@@ -54,7 +54,7 @@ int init_c_lib() {
     srand(time(NULL));
 
     init_network();
-    ServerState::ctf.init();
+    ServerState::init();
 return 0;
 }
 
