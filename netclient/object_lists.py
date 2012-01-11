@@ -128,9 +128,13 @@ class GenericObjectListWrapper(GenericObjectList):
                 self.objects[id] = obj
 
         # remove dead
+        objs_to_delete = []
         for id in self.objects:
             if id not in ids:
-                del self.objects[id]
+                objs_to_delete.append(id)
+
+        for id in objs_to_delete:
+            del self.objects[id]
     
     def __getitem__(self, key):
         return GenericObjectList.__getitem__(self, key)
