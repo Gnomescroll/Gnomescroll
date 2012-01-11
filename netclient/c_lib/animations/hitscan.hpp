@@ -27,11 +27,12 @@ class HitscanEffect
     int id;
     float x,y,z;
     float vx,vy,vz;
+    int ttl;
 
     void draw();
     void tick();
 
-    HitscanEffect() {}
+    HitscanEffect() { ttl = 3000; }
 };
 
 void HitscanEffect::draw()
@@ -72,16 +73,6 @@ void HitscanEffect::draw()
     Vector bottom_right = Vector_init(x2.x - width*u2.x, x2.y - width*u2.y, x2.z - width*u2.z);
     Vector bottom_left = Vector_init(x2.x + width*u2.x, x2.y + width*u2.y, x2.z + width*u2.z);
 
-    glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
-    glEnable(GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
-
-    glBegin( GL_QUADS );
-
     const float tx_min = 0.0;
     const float tx_max = 1.0;
     const float ty_min = 0.0;
@@ -99,11 +90,6 @@ void HitscanEffect::draw()
     glTexCoord2f(tx_max,ty_max );
     glVertex3f( x2.x - width*u2.x, x2.y - width*u2.y, x2.z - width*u2.z );  // Bottom right
 
-    glEnd();
-    glDepthMask(GL_TRUE);
-    glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
 }
 
 void HitscanEffect::tick()
@@ -130,6 +116,15 @@ class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
 
 void HitscanEffect_list::draw()
 {
+    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
+    glEnable(GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
+    glBegin( GL_QUADS );
 
     int i;
     for(i=0; i<n_max; i++) {
@@ -137,14 +132,34 @@ void HitscanEffect_list::draw()
         a[i]->draw();
     }
 
+    glEnd();
+    glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+
 }
+
+void create_hitscan(float x,float y,float z, float vx, float vy, float vz);
+
+#include <stdlib.h>
 
 void HitscanEffect_list::tick()
 {
+    const float vm = 4.0;
+    float vx = vm*(float)rand()/(float)RAND_MAX;
+    float vy = vm*(float)rand()/(float)RAND_MAX;
+    float vz = vm*(float)rand()/(float)RAND_MAX;
+
+    create_hitscan(32.0, 32.0, 64.0, vx, vy, vz);
+
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
+        a[i]->ttl--;
+        if(a[i]->ttl == 0) destroy(a[i]->id);
     }
 }
 
@@ -154,10 +169,12 @@ void create_hitscan(float x,float y,float z, float vx, float vy, float vz)
 {
     HitscanEffect* he = hitscanEffect_list.create_imp_id();
 
+    if(he == NULL) return;
+
     he->x=x; he->y=y; he->z=z;
-    he->vz=vx; he->vy=vy; he->vz=vz;
+    he->vx=vx; he->vy=vy; he->vz=vz;
    
-    printf("Hitscan created: id= %i \n", he->id);
+    //printf("Hitscan created: id= %i \n", he->id);
 }
 
 }

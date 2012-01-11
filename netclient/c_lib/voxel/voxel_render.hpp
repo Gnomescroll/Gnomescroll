@@ -189,8 +189,6 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
 
 void Voxel_render_list::draw()
 {
-
-
     glDisable(GL_TEXTURE_2D);
     //    glEnable(GL_TEXTURE_2D);
 
@@ -306,6 +304,7 @@ void Voxel_render_list::draw()
 
 void voxel_renderer_draw_test()
 {
+    return;
     static Voxel_volume vv (4,4,2, 2.0);
 
     static Voxel_render_list voxel_render_list;
