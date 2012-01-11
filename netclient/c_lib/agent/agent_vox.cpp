@@ -32,6 +32,68 @@ void Agent_vox::init() {
     }
 }
 
+void Agent_vox::init2() {
+
+    //this->vv.set_parameters(10,10,5, 0.2f);
+    this->vv.init(10,10,5, 0.2f);
+
+    printf("voxel_render_list.register(&voxel_volume); \n");
+    ClientState::voxel_render_list.register_voxel_volume(&vv);
+    ClientState::voxel_render_list.update_vertex_buffer_object();
+
+    //static float c0 = 0.0;
+    //static float c1 = 0.0;
+    //static float c2 = 0.0;
+
+    //c0 += 0.0050 / (2*PI);
+    //c1 += 0.0025 / (2*PI);
+    //c2 += 0.0100 / (2*PI);
+
+    //printf("start\n");
+    //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
+    
+    //vv.set_rotated_unit_axis(c0, c1, c2);
+    
+    //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
+    //vv.set_center( 8.0, 8.0, 8.0);
+
+    //voxel_render_list.draw();
+    //vv.draw_bounding_box();
+
+}
+
+void Agent_vox::update(float x, float y, float z, float theta, float phi) {
+
+    this->vv.set_center(x,y,z);
+    this->vv.set_rotated_unit_axis(cos(theta*PI), sin(theta*PI), 0.0f);
+    
+    //struct Vector right;
+    //struct Vector look;
+    //struct Vector forward;
+
+    //look = Vector_init(
+        //cos(theta * PI) * cos(phi * PI),
+        //sin(theta * PI) * cos(phi * PI),
+        //sin(phi)
+    //);
+    //normalize_vector(&look);
+
+    //right = Vector_init(
+        //cos(theta * PI + PI/2), 
+        //sin(theta * PI + PI/2),
+        //0.0f
+    //);
+    //normalize_vector(&right);
+
+    //forward = Vector_init(
+        //cos(theta * PI),
+        //sin(theta * PI),
+        //0.0f
+    //);
+    //normalize_vector(&forward);
+}
+
+
 void Agent_vox::init_vox_part(int part, int xdim, int ydim, int zdim, float vosize) {
     if(vox_part[part] != NULL) {
         delete vox_part[part];

@@ -9,6 +9,8 @@
 #include <c_lib/voxel/common.h>
 #include <physics/vector.hpp>
 
+#include <c_lib/voxel/voxel_render.hpp>
+
 const int AGENT_PART_NUM = 6;
 #define AGENT_PART_HEAD 0
 #define AGENT_PART_TORSO 1
@@ -34,6 +36,7 @@ class Vox {
 
         struct Vector c; //center
         float length;
+        
         Vox(int pt_num,
             unsigned short _xdim, unsigned short _ydim, unsigned short _zdim,
             float vosize) {
@@ -89,7 +92,9 @@ class Agent_vox {
         float camera_height;
         float cbox_height;
         float cbox_radius; // collision box
-        class Vox* vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
+        Vox* vox_part[AGENT_PART_NUM]; //head,torso, larm,rarm, lleg, rleg
+
+        Voxel_volume vv;
         Agent_vox() {
             lv=ly=lz=0.0;
             camera_height=2.5;
@@ -99,16 +104,19 @@ class Agent_vox {
                 vox_part[i] = NULL;
             }
             init();
+            init2();
         }
         
         ~Agent_vox() {
-            for (int  i=0; i<AGENT_PART_NUM; i++) {
+            int i;
+            for (i=0; i<AGENT_PART_NUM; i++) {
                 if (vox_part[i] != NULL) {
                     delete vox_part[i];
                 }
             }
         }
         void init();
+        void init2();
         void init_vox_part(int part, int _xdim, int _ydim, int _zdim, float vosize);
         void set_limb_direction(int part, float fx, float fy, float fz, float nx, float ny, float nz);
         void set_limb_anchor_point(int part, float ax, float ay, float az);
@@ -117,6 +125,7 @@ class Agent_vox {
 
         #ifdef DC_CLIENT
         void draw(float x, float y, float z, float theta, float phi);
+        void update(float x, float y, float z, float theta, float phi);
         #endif
 };
 

@@ -213,6 +213,7 @@ void render() {
     glPopMatrix();
 
     glDisable(GL_TEXTURE_2D);
+    glColor4f(1.0, 1.0, 1.0,1.0f);
 
 }
 

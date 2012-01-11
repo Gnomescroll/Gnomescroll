@@ -7,6 +7,7 @@
 #include <c_lib/game/ctf.hpp>
 
 #include <c_lib/animations/hitscan.hpp>
+#include <c_lib/voxel/voxel_render.hpp>
 
 class PlayerAgent_state; //forward declaration
 
@@ -25,6 +26,7 @@ namespace ClientState {
     extern Minivox_list minivox_list;
     extern BillboardText_list billboard_text_list;
     extern Animations::HitscanEffect_list hitscan_effect_list;
+    extern Voxel_render_list voxel_render_list;
 
     extern CTF ctf;
         

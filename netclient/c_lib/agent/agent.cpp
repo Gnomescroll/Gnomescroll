@@ -8,6 +8,8 @@
 #include <math.h>
 #include <c_lib/common/random.h>
 
+#include <c_lib/voxel/voxel_volume.hpp>
+
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
@@ -33,6 +35,7 @@ void Agent_list::draw()
     glEnable(GL_TEXTURE_2D);
     glColor3ub(255,255,255);
 
+    ClientState::voxel_render_list.draw();
     #endif
 }
 
@@ -890,7 +893,8 @@ Agent_state::~Agent_state() {
 void Agent_state::draw() {
 #ifdef DC_CLIENT
     if (vox != NULL) {
-        vox->draw(s.x, s.y, s.z, s.theta, s.phi);
+        //vox->draw(s.x, s.y, s.z, s.theta, s.phi);
+        vox->update(s.x, s.y, s.z, s.theta, s.phi);
     }
 #endif
 }

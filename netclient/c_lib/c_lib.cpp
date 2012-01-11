@@ -115,7 +115,6 @@ int init_c_lib() {
 
     srand(time(NULL));   // seed the RNG
 
-
     init_network();
     init_net_client();
     
@@ -137,6 +136,8 @@ int init_c_lib() {
         Animations::init_hitscan();
         
         Sound::init();
+
+        init_voxel_render();
     #endif
 
     ClientState::ctf.init();
