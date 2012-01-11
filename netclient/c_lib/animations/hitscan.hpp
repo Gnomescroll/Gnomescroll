@@ -38,8 +38,8 @@ class HitscanEffect
 void HitscanEffect::draw()
 {
 
-    const float width = 0.25;
-    const float height = 1.0/32;   //length per velocity
+    const float width = 0.50;
+    const float height = 1.0/16;   //length per velocity
 
 
     //for billboarding
