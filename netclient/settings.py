@@ -24,7 +24,7 @@ invert_mouse = False
 agent_motion = 'normal'
 
 ''' HUD/Info panels '''
-hud = False  # show hud
+hud = True  # show hud
 diagnostic_hud = False # show diagnostic HUD elements (graphs, ping, fps)
 
 inventory_hud_x_offset = 250

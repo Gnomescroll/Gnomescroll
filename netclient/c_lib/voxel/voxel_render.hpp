@@ -304,7 +304,6 @@ void Voxel_render_list::draw()
 
 void voxel_renderer_draw_test()
 {
-    return;
     static Voxel_volume vv (4,4,2, 2.0);
 
     static Voxel_render_list voxel_render_list;
