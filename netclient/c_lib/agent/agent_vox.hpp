@@ -11,12 +11,14 @@
 #include <physics/vector.hpp>
 
 const int AGENT_PART_NUM = 6;
-#define AGENT_PART_HEAD 0
-#define AGENT_PART_TORSO 1
-#define AGENT_PART_LARM 2
-#define AGENT_PART_RARM 3
-#define AGENT_PART_LLEG 4
-#define AGENT_PART_RLEG 5
+enum AGENT_BODY_PARTS {
+    AGENT_PART_TORSO,
+    AGENT_PART_HEAD,
+    AGENT_PART_LARM,
+    AGENT_PART_RARM,
+    AGENT_PART_LLEG,
+    AGENT_PART_RLEG
+};
 
 class Agent_state; // forward declaration
 
@@ -31,7 +33,6 @@ class Agent_vox {
         Voxel_volume vv[AGENT_PART_NUM];
 
         void init_parts();
-
         void update();
 
         Agent_vox(Agent_state* a);

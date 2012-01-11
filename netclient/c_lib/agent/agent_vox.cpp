@@ -42,10 +42,16 @@ void Agent_vox::update() {
 
     Vector up = {0.0f,0.0f,1.0f};
 
+    VoxPart* vp;
+    float ax,ay,az;
     int i;
     //for (i=0; i<AGENT_PART_NUM; i++) {
     for (i=0; i<1; i++) {
-        this->vv[i].set_center(x,y,z); // add vox config offsets
+        vp = agent_vox_dat.vox_part[i];
+        ax = vp->anchor.x;
+        ay = vp->anchor.y;
+        az = vp->anchor.z;
+        this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
         if (i == AGENT_PART_HEAD) {
             this->vv[i].set_rotated_unit_axis(phi, 0.0f, theta);
         } else {
