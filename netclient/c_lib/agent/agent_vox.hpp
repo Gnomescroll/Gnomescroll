@@ -22,15 +22,20 @@ class Agent_state; // forward declaration
 
 class Agent_vox {
     public:
-        //float lv,ly,lz; //looking vector
+        void right(Vector *f, float theta);
+        void forward(Vector *f, float theta);
+        void look(Vector *f, float theta, float phi);
+
         Agent_state* a;
 
-        Voxel_volume vv;
-        Agent_vox(Agent_state* a);
-        
-        #ifdef DC_CLIENT
+        Voxel_volume vv[AGENT_PART_NUM];
+
+        void init_parts();
+
         void update();
-        #endif
+
+        Agent_vox(Agent_state* a);
+        ~Agent_vox();
 };
 
 

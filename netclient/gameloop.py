@@ -71,7 +71,6 @@ class App(object):
         NetOut.init()
         ChatClientGlobal.init()
         MapControllerGlobal.init()
-
         init_c_lib.init()
 
     def init_inputs(self):

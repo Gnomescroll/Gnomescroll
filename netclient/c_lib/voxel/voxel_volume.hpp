@@ -6,6 +6,7 @@
 /*
 optimization: compute matix and return matrix
 */
+// possibly wrong
 struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
 struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
@@ -37,7 +38,6 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     m[2].x = (cxsy*cz+sx*sz);
     m[2].y = (cxsy*sz-sx*cz);
     m[2].z = (cx*cy);
-
 
     u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
     u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
