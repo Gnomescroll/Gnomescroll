@@ -2,6 +2,6 @@
 
 namespace Dungeon {
     
-void generate_dungeon();
+void generate_dungeon(int z=13, int tile=103);
 
 }

@@ -284,7 +284,7 @@ class ChatCommand():
             else:
                 channel = args[0]
             ChatClientGlobal.chatClient.unsubscribe(channel)
-        elif command == 'nick':
+        elif command == 'nick' or command == 'name':
             if len(args) < 1:
                 return
             NetOut.sendMessage.identify(args[0])

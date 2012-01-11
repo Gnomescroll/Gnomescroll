@@ -32,7 +32,6 @@ void _grass(int x, int y, int base) {
 
 void _caves(int x, int y, int z, float threshold, int base) {
 
-
     float cutoff;
     cutoff = percentile_cutoff_calculation(threshold, noisemap, x*y*z);
 

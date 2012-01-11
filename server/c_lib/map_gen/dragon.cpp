@@ -430,15 +430,15 @@ class L_System {
     }
 };
 
-void init() {
+void init(int z) {
 
     L_System* L = new L_System();
 
     int tile;
     tile = 0;
     tile = 101;
-    int z_min = 13;
-    int z_max = 13;
+    //int z_min = 13;
+    //int z_max = 13;
     char tokens[]= "XYF+-B[]f";
     int iterations = 20;
     double degrees = 90;
@@ -455,7 +455,8 @@ void init() {
     //L->set_starting_position(width/2+0.5,height/2+0.5);
     L->set_starting_position(64.5,64.5);
     L->set_map_tile(tile);
-    L->set_map_z_level(z_min, z_max);
+    //L->set_map_z_level(z_min, z_max);
+    L->set_map_z_level(z,z);
     L->set_dimensions(width,height);
     L->set_draw_width(.1);
     L->set_probability(0.7);
@@ -833,42 +834,42 @@ void segment_caves_2(int z, int tile) {
 }
 
 
-void generate() {
+void generate(int z) {
     int x = width;
     int y = height;
-    int z = 0;
+    //int z = 0;
     //int h = 64;
-    int h = 14;
+    //int h = z+1;
     int tile = 3;
-    _floor(x,y, z, h, tile);
-    init();
+    _floor(x,y, z, 1, tile);
+    init(z);
     //caves();
     //_walls(x,y,z+1,h,tile);
     //_walls(x,y,z+1,h-1,tile);
 
-    segment_caves(13, 101, 2);
-    segment_caves(13, 101, 7);
-    segment_caves(13, 101, 8);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_4(13, 101, 2);
-    //segment_caves_2(13,101);
-    //segment_caves_2(13,101);
+    segment_caves(z, 101, 2);
+    segment_caves(z, 101, 7);
+    segment_caves(z, 101, 8);
+    //segment_caves_4(z, 101, 2);
+    //segment_caves_4(z, 101, 2);
+    //segment_caves_4(z, 101, 2);
+    //segment_caves_4(z, 101, 2);
+    //segment_caves_2(z,101);
+    //segment_caves_2(z,101);
 
     // post processing for good visual of cave isolation
     int i,j;
     // convert blue_tron to solar panel (inner caves)
     for (i=0;i<width;i++) {
         for (j=0;j<height;j++) {
-            if (_get(i,j,13) == 101) _set(i,j,13, 103);
+            if (_get(i,j,z) == 101) _set(i,j,z, 103);
         }
     }
     // convert lava (outline) to blue_tron
     for (i=0;i<width;i++) {
         for (j=0;j<height;j++) {
-            //if (_get(i,j,13) == 7) _set(i,j,13, 101);
-            if (_get(i,j,13) == 7) _set(i,j,13, 3);
+            //if (_get(i,j,z) == 7) _set(i,j,z, 101);
+            if (_get(i,j,z) == 7) _set(i,j,z, 3);
         }
     }
 

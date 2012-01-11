@@ -141,7 +141,7 @@ class Road_list: public Object_list<Road,ROAD_MAX>
 };
 
 void l_system();
-void generate();
+void generate(int z=13);
 
 //cython
 void generate_dragon();

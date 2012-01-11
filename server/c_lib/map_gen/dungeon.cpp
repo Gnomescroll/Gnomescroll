@@ -474,7 +474,7 @@ Room* rooms = NULL;
 int n_rooms = 0;
 int n_room_edges = 0;
 
-void rect_solver() {
+void rect_solver(int z) {
     if (points != NULL) {
         free(points);
         points = NULL;
@@ -487,7 +487,6 @@ void rect_solver() {
         n_horizontals = 0;
     }
     
-    int z = 13;
     int tile = 103; // solar panel
 
     // temporarily remove 2x2 or smaller "holes" from map
@@ -1353,7 +1352,7 @@ class Clique {
 Clique* cliques = NULL;
 int n_cliques = 0;
 
-void set_room_z_levels() {
+void set_room_z_levels(int z_top) {
 
     // breadth first search
     
@@ -1375,9 +1374,6 @@ void set_room_z_levels() {
         rooms[i].clique = -1;
     }
 
-    int z = 128-room_height-1;
-    //int z_decrement = 1;
-
     int *not_placed = (int*)malloc(sizeof(int)*n_rooms);
     int n_not_placed = n_rooms;
     rooms_not_placed(rooms, n_rooms, not_placed, &n_not_placed);
@@ -1391,8 +1387,7 @@ void set_room_z_levels() {
 
     // first room, anchor it
     current[n_current++] = choose_unplaced_room(rooms, n_rooms, not_placed, n_not_placed);
-    int z_top = 128-1;
-    z = get_inital_z_level(&rooms[current[0]], z_top);
+    int z = get_inital_z_level(&rooms[current[0]], z_top);
 //printf("Initial z-level: ");
     int length = n_current;
     cliques = (Clique*)malloc(sizeof(Clique)*n_rooms);
@@ -1411,7 +1406,6 @@ void set_room_z_levels() {
         }
 
         place_rooms(rooms, current, n_current, z, n_cliques);
-        //z -= z_decrement;
         z -= randrange(0,1);
         z = (z < 1) ? 1 : z;
 
@@ -1495,27 +1489,43 @@ void set_room_z_levels() {
     free(not_placed);
 }
 
-int draw_rooms(Room* rooms, int n_rooms, Room* highest) {
+void draw_rooms(Room* rooms, int n_rooms) {
     int i;
-    int highest_room_z = -100;
     for (i=0; i<n_rooms; i++) {
         rooms[i].draw_3d(0);
-        highest = &rooms[i];
-        if (highest->z + highest->d > highest_room_z) {
-            highest_room_z = highest->z + highest->d;
+    }
+}
+void draw_rooms(Room* rooms, int n_rooms, Room* highest, int *highest_room_z, Room* lowest, int *lowest_room_z) {
+    int i;
+    int highest_z = -100;
+    int lowest_z = 10000;
+    Room *r;
+    Room *high_r=NULL, *low_r=NULL;
+    for (i=0; i<n_rooms; i++) {
+        rooms[i].draw_3d(0);
+        r = &rooms[i];
+        if (r->z + r->d > highest_z) {
+            highest_z = r->z + r->d;
+            high_r = r;
+        }
+        if (r->z < lowest_z) {
+            lowest_z = r->z;
+            low_r = r;
         }
     }
-    return highest_room_z;
+    if (high_r != NULL) *highest = *high_r;
+    if (low_r != NULL) *lowest = *low_r;
+    *highest_room_z = highest_z;
+    *lowest_room_z = lowest_z;
 }
 
-void generate_dungeon() {
-    int z = 13;
-    int tile = 103;
-    rect_solver();
-
+void generate_dungeon(int z, int tile) {
+    rect_solver(z);
     resolve_rooms(z, tile);
     build_adjacency_graph();
-    set_room_z_levels();
+    
+    z=127;
+    set_room_z_levels(z);
 
     int i,j,k;
     int depth = 128;
@@ -1527,10 +1537,12 @@ void generate_dungeon() {
         }
     }
 
-    Room *highest = NULL;
-    int highest_room_z = -100;
-    highest_room_z = draw_rooms(rooms, n_rooms, highest);
-
+    //Room *highest = NULL, *lowest = NULL;
+    Room highest, lowest;
+    int highest_room_z = -100, lowest_room_z = 10000;
+    draw_rooms(rooms, n_rooms, &highest, &highest_room_z, &lowest, &lowest_room_z);
+printf("Highest: %d\n", highest_room_z);
+printf("Lowest: %d\n", lowest_room_z);
     //Room *highest;
     //int highest_room_z = -100;
     //for (i=0; i<n_rooms; i++) {
@@ -1542,11 +1554,11 @@ void generate_dungeon() {
     //}
 
     int si=-1,sj=-1;
-    if (highest != NULL)
-    {
-        si = (int)highest->center_fx();
-        sj = (int)highest->center_fy();
-    }
+    //if (highest != NULL)
+    //{
+        si = (int)highest.center_fx();
+        sj = (int)highest.center_fy();
+    //}
 
 
     //int n_rooms2 = n_rooms;
@@ -1560,25 +1572,70 @@ void generate_dungeon() {
     srand(70777);
 
 // draw on highest z level
-    Dragon::generate();
+    z = 127;
+    printf("Generate dragon2\n");
+    Dragon::generate(z);
 
 // process, with highest z level
-    rect_solver();
+printf("Solve rect2\n");
+    rect_solver(z);
+printf("Resolve rooms2\n");
     resolve_rooms(z, tile);
+printf("Build adjacency graph2\n");
     build_adjacency_graph();
-    set_room_z_levels();
+printf("set room z levels2\n");
+    set_room_z_levels(lowest_room_z - 2);
 
 // draw rooms
-    if (draw_rooms(rooms, n_rooms, highest) > highest_room_z) printf("WARNING: z level bug, 2nd dungeon is higher than  first\n");
-    //highest_room_z = draw_rooms(rooms, n_rooms, highest);
+printf("draw rooms2\n");
 
-    // encase map as a box, place dungeon entrace
+    Room highest2, lowest2;
+    int highest_room_z2 = -100, lowest_room_z2 = 10000;
+    draw_rooms(rooms, n_rooms, &highest2, &highest_room_z2, &lowest2, &lowest_room_z2);
+    //draw_rooms(rooms, n_rooms);
 
-    //highest_room_z = draw_rooms(rooms2, n_rooms2, highest);
+// connect rooms
+i = lowest.z;
+int end;
+int cx,cy;
+cx = lowest.center_fx();
+cy = lowest.center_fy();
+while(i >= 0) {
+    i--;
+    if (_get(cx, cy, i) == 0) break;
+}
+if (i >= 0) {
+    end = i;
+    for (i=lowest.z; i>end; i--) {
+        _set(cx, cy, i, 0);
+    }
+} else {
+    printf("FAILED\n");
+    // connect rooms
+    i = highest2.z + highest2.d;
+    int end;
+    cx = highest2.center_fx();
+    cy = highest2.center_fy();
+    while(i < zmax) {
+        i++;
+        if (_get(cx,cy, i) == 0) break;
+    }
+    if (i < zmax) {
+        end = i;
+        for (i=highest2.z+highest.d; i<end; i++) {
+            _set(cx,cy, i, 0);
+        }
+    } else printf("FAILED2\n");
+}
 
+printf("box it in\n");
     _box(128,128,0,127,101);
+printf("make dungeon entrance\n");
+printf("highest_room_z: %d\n", highest_room_z);
+printf("si,sj %d,%d\n", si,sj);
     if (si >= 0 && si < xmax && sj >= 0 && sj < ymax) {
         for (i=127; i>=highest_room_z-1; i--) {
+            printf("%d\n", i);
             _set(si,sj,i,0);
         }
     }
