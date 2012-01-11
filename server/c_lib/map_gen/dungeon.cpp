@@ -1541,8 +1541,8 @@ void generate_dungeon(int z, int tile) {
     Room highest, lowest;
     int highest_room_z = -100, lowest_room_z = 10000;
     draw_rooms(rooms, n_rooms, &highest, &highest_room_z, &lowest, &lowest_room_z);
-printf("Highest: %d\n", highest_room_z);
-printf("Lowest: %d\n", lowest_room_z);
+//printf("Highest: %d\n", highest_room_z);
+//printf("Lowest: %d\n", lowest_room_z);
     //Room *highest;
     //int highest_room_z = -100;
     //for (i=0; i<n_rooms; i++) {
@@ -1573,21 +1573,21 @@ printf("Lowest: %d\n", lowest_room_z);
 
 // draw on highest z level
     z = 127;
-    printf("Generate dragon2\n");
+    //printf("Generate dragon2\n");
     Dragon::generate(z);
 
 // process, with highest z level
-printf("Solve rect2\n");
+//printf("Solve rect2\n");
     rect_solver(z);
-printf("Resolve rooms2\n");
+//printf("Resolve rooms2\n");
     resolve_rooms(z, tile);
-printf("Build adjacency graph2\n");
+//printf("Build adjacency graph2\n");
     build_adjacency_graph();
-printf("set room z levels2\n");
+//printf("set room z levels2\n");
     set_room_z_levels(lowest_room_z - 2);
 
 // draw rooms
-printf("draw rooms2\n");
+//printf("draw rooms2\n");
 
     Room highest2, lowest2;
     int highest_room_z2 = -100, lowest_room_z2 = 10000;
@@ -1610,7 +1610,7 @@ if (i >= 0) {
         _set(cx, cy, i, 0);
     }
 } else {
-    printf("FAILED\n");
+    //printf("FAILED\n");
     // connect rooms
     i = highest2.z + highest2.d;
     int end;
@@ -1625,17 +1625,18 @@ if (i >= 0) {
         for (i=highest2.z+highest.d; i<end; i++) {
             _set(cx,cy, i, 0);
         }
-    } else printf("FAILED2\n");
+    }
+    //else printf("FAILED2\n");
 }
 
-printf("box it in\n");
+//printf("box it in\n");
     _box(128,128,0,127,101);
-printf("make dungeon entrance\n");
-printf("highest_room_z: %d\n", highest_room_z);
-printf("si,sj %d,%d\n", si,sj);
+//printf("make dungeon entrance\n");
+//printf("highest_room_z: %d\n", highest_room_z);
+//printf("si,sj %d,%d\n", si,sj);
     if (si >= 0 && si < xmax && sj >= 0 && sj < ymax) {
         for (i=127; i>=highest_room_z-1; i--) {
-            printf("%d\n", i);
+            //printf("%d\n", i);
             _set(si,sj,i,0);
         }
     }
