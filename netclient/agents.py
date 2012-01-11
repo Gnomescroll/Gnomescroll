@@ -26,14 +26,10 @@ class Agent(cAgents.AgentWrapper):
         self.id = id
         self.client_id = id
         self.you = False
-        #if name == 'undefined-default':
-            #print name
-            #raise Exception
         self.name = name
         print 'Python Agent creation: id %s' % (self.id,)
 
     def update_info(self, **agent):
-        print "UPDATE INFO ", agent
         if 'name' in agent:
             self.name = agent['name']
 

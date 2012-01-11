@@ -81,8 +81,6 @@ class MessageHandler:
         #use json_events when possible
         cmd = str(cmd)
         print "Received python message: %s" % (cmd,)
-        if cmd == 'agent_list':
-            print msg
         if cmd in self.json_events:
             #print msg
             self.json_events[cmd](**msg)
