@@ -49,6 +49,7 @@ cdef extern from "./agent/agent.hpp":
         void destroy(int _id)
         void draw()
         void draw(int all)
+        void send_to_client(int client_id)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Agent_list agent_list
@@ -162,4 +163,8 @@ class AgentListWrapper:
     def remove(cls, int id):
         agent_list.destroy(id)
         return id
+
+    @classmethod
+    def send_to_client(cls, int client_id):
+        agent_list.send_to_client(client_id)
         

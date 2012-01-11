@@ -60,7 +60,7 @@ bool Agent_state::is_you() {
 
 void Agent_state::send_id_to_client(int client_id) {
     #ifdef DC_SERVER
-    static PlayerAgent_id_StoC msg;
+    PlayerAgent_id_StoC msg;
     msg.id = id;
     msg.sendToClient(client_id);
     #endif
@@ -71,7 +71,7 @@ void Agent_state::teleport(float x,float y,float z) {
     s.y = y;
     s.z = z;
 
-    static Agent_teleport_message A;
+    Agent_teleport_message A;
 
     A.id = id;
 
@@ -97,7 +97,7 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     s.theta = theta;
     s.phi = phi;
     
-    static Agent_teleport_message A;
+    Agent_teleport_message A;
 
     A.id = id;
 
@@ -825,7 +825,7 @@ Agent_state::Agent_state(int id) : id (id), status(this), weapons(this)
     client_id = -1;
 
     #ifdef DC_SERVER
-    static agent_create_StoC msg;
+    agent_create_StoC msg;
     msg.id = id;
     msg.broadcast();
 
@@ -866,7 +866,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
     client_id = -1;
 
     #ifdef DC_SERVER
-    static agent_create_StoC msg;
+    agent_create_StoC msg;
     msg.id = id;
     msg.broadcast();
 
@@ -881,7 +881,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
 Agent_state::~Agent_state() {
 
     #ifdef DC_SERVER
-    static agent_destroy_StoC msg;
+    agent_destroy_StoC msg;
     msg.id = id;
     msg.broadcast();
     #endif
@@ -907,7 +907,7 @@ void Agent_state::server_tick() {
 
 void Agent_list::send_to_client(int client_id) {
     int i;
-    static agent_create_StoC msg;
+    agent_create_StoC msg;
     for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
         if (a[i]==NULL) continue;
         msg.id = a[i]->id;

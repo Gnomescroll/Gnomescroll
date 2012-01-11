@@ -9,6 +9,7 @@ import struct
 import platform
 
 import init_c_lib
+import c_lib.c_lib_agents as cAgents
 
 class NetServer:
     connectionPool = None
@@ -78,12 +79,11 @@ class PyClient:
         self.loaded_once = True
         self._register()
         self.send_map()
-        self.send_agents()  # temporary, really only for weapons
-        # ^ weapons gone, but python interface is buggy and map wont be accepted without this obligatory attempt
-        # only agent ids are sent
+        self.send_agents()
 
     def send_agents(self):
-        self.sendMessage.send_agents()
+        self.sendMessage.send_agents()#python interface is buggy and map wont be accepted without this obligatory attempt. only agent ids are sent
+        cAgents.AgentListWrapper.send_to_client(self.client_id)
 
     def send_map(self):
         print "Sending map"
@@ -101,6 +101,9 @@ class PyClient:
         else:
             self.agent = GameStateGlobal.agentList.create(self.client_id)
             print 'Created new agent'
+            # send player agent id
+            self.agent.send_id_to_client(self.client_id)
+            print "Send playerAgent id"
         self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
 
     def valid_player_name(self, name):
@@ -208,7 +211,6 @@ class PyClientPool:
     #called when client connection established
     def add_client(self, _client_id):
         print "python add_client callback: client_id %d" % (_client_id,)
-        #assert False
         client =  PyClient(_client_id)
         self.clients_by_id[_client_id] = client
         print "PyClientPool: connection associated with client_id= %s" % (_client_id)

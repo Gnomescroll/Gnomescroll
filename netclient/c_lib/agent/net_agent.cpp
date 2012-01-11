@@ -27,6 +27,10 @@ inline void PlayerAgent_Snapshot::handle() {
 // Server -> Client handlers
 #ifdef DC_CLIENT
 
+inline void Client_ID::handle() {
+    // nothing, for now
+}
+
 inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
@@ -150,6 +154,7 @@ inline void AgentReloadWeapon_CtoS::handle(){}
 // Client -> Server handlers
 #ifdef DC_SERVER
 
+inline void Client_ID::handle() {}
 inline void AgentKills_StoC::handle() {}
 inline void AgentDeaths_StoC::handle() {}
 inline void AgentSuicides_StoC::handle() {}

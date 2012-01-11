@@ -44,6 +44,19 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
 /*
  *  Server -> Client packets
  */
+
+ class Client_ID: public FixedSizeReliableNetPacketToClient<Client_ID>
+ {
+     public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
  
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
