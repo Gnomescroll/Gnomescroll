@@ -241,6 +241,15 @@ class SendMessage: #each connection has one of these
             'agent_list':   GameStateGlobal.agentList.json()
         }
 
+    @sendJSON('agent_update')
+    def send_agent_name(self, id, name):
+        return {
+        'agent': {
+                'id'    :   id,
+                'name'  : name,
+                }
+            }
+
     @sendJSON('you_died')
     def you_died(self, msg):
         return {

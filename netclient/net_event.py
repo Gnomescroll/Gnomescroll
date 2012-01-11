@@ -327,6 +327,9 @@ class AgentMessageHandler(DatastoreMessageInterface):
     def _agent_list(self, **args):
         self._default_list(**args)
 
+    #def _agent_update(self, **args):    # just for agent name
+        #self._default_update(**args)
+
 class DatMessageHandler(GenericMessageHandler):
     events = {
         'dat'   :   '_load_dat',

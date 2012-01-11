@@ -80,10 +80,16 @@ class PyClient:
         self._register()
         self.send_map()
         self.send_agents()
+        self.send_name_to_clients()
 
     def send_agents(self):
         self.sendMessage.send_agents() # REQUIRED still, python creates python agents for this, and puts in agent_list. will be deprecated later
         cAgents.AgentListWrapper.send_to_client(self.client_id)
+
+    def send_name_to_clients(self):
+        for client in NetServer.connectionPool.clients_by_id.values():
+            if client.id == self.client_id: continue
+            client.sendMessage.send_agent_name(self.agent.id, self.name)
 
     def send_map(self):
         print "Sending map"
