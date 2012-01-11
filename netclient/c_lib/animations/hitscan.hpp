@@ -38,8 +38,8 @@ class HitscanEffect
 void HitscanEffect::draw()
 {
 
-    const float width = 0.5;
-    const float height = 1.0;   //length per velocity
+    const float width = 0.25;
+    const float height = 1.0/32;   //length per velocity
 
 
     //for billboarding
@@ -182,9 +182,9 @@ void HitscanEffect_list::tick()
 
         if(frame % 12 == 0 )
         {
-        const float vm = 4.0;
+        const float vm = 32.0;
         float vx = vm*(float)rand()/(float)RAND_MAX;
-        float vy = 320.0+vm*(float)rand()/(float)RAND_MAX;
+        float vy = 320.0; //+vm*(float)rand()/(float)RAND_MAX;
         float vz = vm*(float)rand()/(float)RAND_MAX;
         create_hitscan(32.0, 32.0, 64.0, vx, vy, vz);
         }
