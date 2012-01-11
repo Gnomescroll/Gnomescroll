@@ -436,6 +436,6 @@ void voxel_test()
 
     vv.set_center( 2.0, 2.0, 2.0);
 
-    vv.draw_bounding_box();
+    //vv.draw_bounding_box();
 }
 

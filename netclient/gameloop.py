@@ -171,6 +171,8 @@ class App(object):
                 tc = GET_TICK()
                 if tc == 0 or sl_c > 0: #only run once
                     break
+
+                cAnimations.AnimationTick()
                 #if sl_c == 0:
                 #    NetClientStartFrame() #physics tick
 
@@ -261,6 +263,9 @@ class App(object):
             self.animations.draw()
             P.event("c_lib_particles.draw()")
             cParticles.draw() ## TESTING
+
+            cAnimations.AnimationDraw()
+
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
             #camera prospective
