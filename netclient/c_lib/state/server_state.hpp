@@ -16,7 +16,5 @@ namespace ServerState {
     
     void InitServerState();
 
-    void ServerTick();
-
 }
 #endif

@@ -23,12 +23,5 @@ namespace ServerState {
         
     }
 
-
-    void ServerTick() {
-        //printf("server tick\n");
-        agent_list.server_tick();
-
-    }
-
 }
 #endif
