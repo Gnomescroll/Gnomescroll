@@ -47,6 +47,7 @@ class Object_list {
         void server_tick(); //override on template specilization
 
         void where();
+        void print_members();
 };
 
 //template <class T>
@@ -91,9 +92,20 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
     } 
     if(a[id] == NULL) {
         printf("%s get error: object is null, id=%i\n",name(), id);
+        this->print_members();
         return NULL;
     }
     return a[id];
+}
+
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::print_members() {
+    int i;
+    printf("%s members:\n", name());
+    for (i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        printf("%d\n", i);
+    }
 }
 
 template <class Object_state, int max_n>

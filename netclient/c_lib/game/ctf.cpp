@@ -62,7 +62,7 @@ void CTF::on_client_connect(int client_id) {
 
 void CTF::auto_assign_agent(int agent_id) {
     // choose the less populated team
-    printf("Team one: %d, team two: %d\n", one.n, two.n);
+    printf("Attempt to auto assign agent %d to team\n", agent_id);
     CTFTeam* team = (one.n > two.n) ? &two : &one;
     bool added = false;
     if (!team->full()) {

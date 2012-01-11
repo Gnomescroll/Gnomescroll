@@ -207,8 +207,8 @@ def draw_sphere(block, radius, x,y,z):
 
 def good_cave1():
     pass
-    #c_lib.map_gen.Dragon.generate()
-    #c_lib.map_gen.Dungeon.generate()
+    c_lib.map_gen.Dragon.generate()
+    c_lib.map_gen.Dungeon.generate()
     
     ##base heightmap, smooth shallow hills
     #c_lib.map_gen.conf\
@@ -302,7 +302,7 @@ class Main:
 
         #c_lib.map_gen.conf.seed(opts.seed)
         
-        #good_cave1()
+        good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)
