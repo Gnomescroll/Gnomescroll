@@ -79,7 +79,7 @@ void PlayerAgent_action::hitscan() {
     }
 
     // play laser anim
-    const float hitscan_speed = 30.0f;
+    const float hitscan_speed = 120.0f;
     ClientState::hitscan_effect_list.create(
         p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
