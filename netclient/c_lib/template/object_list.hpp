@@ -43,8 +43,6 @@ class Object_list {
 
         void draw();    //overide in template specilization on client
         void draw(int all);
-        void client_tick(); //override on template specilization
-        void server_tick(); //override on template specilization
 
         void where();
         void print_members();
@@ -253,22 +251,4 @@ void Object_list<Object_state, max_n>::draw(int all) {
         a[i]->draw();
     }
     #endif
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::client_tick() {
-    int i;
-    for(i=0;i<n_max;i++){
-        if(a[i]==NULL) continue;
-        a[i]->client_tick();
-    }   
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::server_tick() {
-    int i;
-    for(i=0;i<n_max;i++){
-        if(a[i]==NULL) continue;
-        a[i]->server_tick();
-    }   
 }

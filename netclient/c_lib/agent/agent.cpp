@@ -13,27 +13,32 @@
 void Agent_list::draw() 
 {
     #ifdef DC_CLIENT
-    int i;
 
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
+    //glEnable(GL_DEPTH_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    //glBegin(GL_QUADS);
 
     bool you;
-    for(i=0; i<AGENT_MAX; i++) { //max_n
-        if (a[i] == NULL) continue;
-        you = (a[i]->id == ClientState::playerAgent_state.agent_id);
+    int i;
+    Agent_state* agent;
+    for(i=0; i<n_max; i++) {
+        agent = a[i];
+        if (agent == NULL) continue;
+        you = (agent->id == ClientState::playerAgent_state.agent_id);
         if ((first_person && you) ||
-            a[i]->status.dead) {
+            agent->status.dead) {
             continue;
         }
-        a[i]->draw();
+        if (agent->vox != NULL) {
+            agent->vox->update();
+            //agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+        }
     }
-    glEnd();
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
-    glColor3ub(255,255,255);
+    //glEnd();
+    //glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
+    //glColor3ub(255,255,255);
 
     ClientState::voxel_render_list.draw();
     #endif
@@ -836,7 +841,7 @@ Agent_state::Agent_state(int id) : id (id), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    vox = new Agent_vox();
+    vox = new Agent_vox(this);
     #endif
 }
 
@@ -877,7 +882,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
     #endif
 
     #ifdef DC_CLIENT
-    vox = new Agent_vox();
+    vox = new Agent_vox(this);
     #endif
 }
 
@@ -888,25 +893,10 @@ Agent_state::~Agent_state() {
     msg.id = id;
     msg.broadcast();
     #endif
-}
 
-void Agent_state::draw() {
-#ifdef DC_CLIENT
-    if (vox != NULL) {
-        //vox->draw(s.x, s.y, s.z, s.theta, s.phi);
-        vox->update(s.x, s.y, s.z, s.theta, s.phi);
-    }
-#endif
-}
-
-void Agent_state::client_tick() {
-    //_tick();
-    //tick on input received
-    return;
-}
-
-void Agent_state::server_tick() {
-    return;
+    #ifdef DC_CLIENT
+    if (this->vox != NULL) delete this->vox;
+    #endif
 }
 
 void Agent_list::send_to_client(int client_id) {

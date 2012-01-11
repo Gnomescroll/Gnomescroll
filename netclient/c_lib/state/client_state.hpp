@@ -35,8 +35,6 @@ namespace ClientState {
     void set_PlayerAgent_id(int id);
     
     void init();
-
-    void ClientTick();
 }
 
 #endif

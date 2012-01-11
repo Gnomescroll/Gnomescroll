@@ -86,9 +86,5 @@ namespace ClientState {
         */
     //void send_control_state() {}
 
-    void ClientTick() {
-        //does nothing
-        agent_list.client_tick();
-    }
 }
 //#endif

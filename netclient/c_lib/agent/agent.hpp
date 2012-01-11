@@ -131,14 +131,6 @@ class Agent_state {
 
         void send_id_to_client(int client_id);
 
-        void client_tick();
-        void server_tick();
-        /*
-            server tick:
-            -advances agent position on server
-            -sends state snapshot every second
-        */
-    
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 
         //this is for client
