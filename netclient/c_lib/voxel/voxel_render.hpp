@@ -43,7 +43,7 @@ class Voxel_render_list
 
     static void init_voxel_render_list_shader1();
 
-    void draw();
+    void draw(int* exclude, int n_exclude);
     void update_vertex_buffer_object();
 
     Voxel_render_list()

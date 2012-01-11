@@ -89,7 +89,7 @@ class App(object):
         self.animations = animations
 
         camera.set_callback(c_lib.terrain_map.camera_callback)
-        self.camera = camera.Camera(x=0., z=50., fov=opts.fov, name='camera')
+        self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='camera')
         self.camera.load()
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
 

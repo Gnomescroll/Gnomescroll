@@ -3,7 +3,7 @@
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
-const int AGENT_MAX = 256;
+const int AGENT_MAX = 128;
 #define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT_CROUCHED 0.9f
 #define AGENT_BOX_RADIUS 0.4f

@@ -129,6 +129,7 @@ class Voxel_volume
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
 #endif
+    int id;
 
     Vector v[4]; // forward, up, right (x,y,z), offset
 

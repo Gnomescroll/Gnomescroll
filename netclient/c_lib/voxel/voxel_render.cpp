@@ -16,6 +16,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
         if(render_list[i] == NULL)
         {
             render_list[i] = vv;
+            vv->id = i;
             printf("Added voxel volume %i \n", i);
             break;
         }
@@ -36,6 +37,7 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
             break;
         }
     }
+    vv->id = -1;
 }
 
 void Voxel_render_list::update_vertex_buffer_object()
@@ -160,7 +162,7 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
     init=1;
 }
 
-void Voxel_render_list::draw()
+void Voxel_render_list::draw(int* exclude, int n_exclude)
 {
     glDisable(GL_TEXTURE_2D);
     //    glEnable(GL_TEXTURE_2D);
@@ -226,9 +228,20 @@ void Voxel_render_list::draw()
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    int i,j;
+    bool skip;
+    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
+
+        // check against exclude list
+        skip = false;
+        for (j=0; j<n_exclude; j++) {
+            if (i==j) skip=true;
+            break;
+        }
+        if (skip) continue;
+        
         vv = render_list[i];
         if(vv->vvl.vnum == 0) printf("no vertices \n");
 
@@ -310,6 +323,6 @@ void voxel_renderer_draw_test()
     //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
     vv.set_center( 8.0, 8.0, 8.0);
 
-    voxel_render_list.draw();
+    voxel_render_list.draw((int*)NULL, 0);
     vv.draw_bounding_box();
 }
