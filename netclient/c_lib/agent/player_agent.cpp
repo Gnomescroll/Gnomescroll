@@ -34,7 +34,7 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     int _t = _GET_MS_TIME();
 
     //printf("ms since last update= %i \n", _t - last_tick);
-    float delta = ((float)(_t - last_tick)) / 33.0f;
+    float delta = ((float)(_t - last_tick)) / 33.3f;
 
     if(delta > 1.0f)
     {
