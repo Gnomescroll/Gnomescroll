@@ -1396,7 +1396,7 @@ void set_room_z_levels(int z_top) {
         if (!n_current) {
             // advance clique, lengths
             cliques[n_cliques].length = length;
-            printf("Clique %d length %d\n", n_cliques, length);
+            //printf("Clique %d length %d\n", n_cliques, length);
             cliques[n_cliques].size = n_current_prev;
             n_cliques++;
 
