@@ -32,14 +32,14 @@ class HitscanEffect
     void draw(float delta);
     void tick();
 
-    HitscanEffect() { ttl = 3000; }
+    HitscanEffect() { ttl = 60; }
 };
 
 void HitscanEffect::draw(float delta)
 {
 
     const float width = 0.50;
-    const float height = 1.0/32.0;   //length per velocity
+    const float height = 1.0/4.0;   //length per velocity
 
 
     float _x = x + vx*delta;
@@ -135,7 +135,7 @@ void HitscanEffect_list::draw()
     int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
     //printf("ms since last update= %i \n", _t - last_tick);
-    float delta = ((float)(_t - last_tick)) / 33.0f;
+    float delta = ((float)(_t - last_tick)) / 33.3f;
     if(delta > 1.0f)
     {
         delta = 1.0f;
@@ -194,11 +194,11 @@ void HitscanEffect_list::tick()
         static int frame = 0;
         frame++;
 
-        if(frame % 12 == 0 )
+        if(frame % 8 == 0 )
         {
-        const float vm = 32.0;
+        const float vm = 16.0;
         float vx = vm*(float)rand()/(float)RAND_MAX;
-        float vy = 320.0; //+vm*(float)rand()/(float)RAND_MAX;
+        float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
         float vz = vm*(float)rand()/(float)RAND_MAX;
         create_hitscan(32.0, 32.0, 64.0, vx, vy, vz);
         }
