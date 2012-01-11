@@ -14,7 +14,7 @@ namespace ServerState {
         
     extern CTF ctf;
     
-    void InitServerState();
+    void init();
 
 }
 #endif
