@@ -38,9 +38,11 @@ void Agent_vox::update() {
     phi = this->a->s.phi;
     
     struct Vector forward;
+    struct Vector forward_tmp;
     this->forward(&forward, theta);
 
     Vector up = {0.0f,0.0f,1.0f};
+    Vector up_tmp = up;
 
     VoxPart* vp;
     float ax,ay,az;
@@ -52,10 +54,23 @@ void Agent_vox::update() {
         ay = vp->anchor.y;
         az = vp->anchor.z;
         this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
+        
         if (i == AGENT_PART_HEAD) {
             this->vv[i].set_rotated_unit_axis(phi, 0.0f, theta);
         } else {
-            this->vv[i].set_axis(&forward, &up);
+            // add vox conf adjustments
+            forward_tmp = forward;
+            forward_tmp.x += vp->rotation.fx;
+            forward_tmp.y += vp->rotation.fy;
+            forward_tmp.z += vp->rotation.fz;
+            normalize_vector(&forward_tmp);
+
+            up_tmp = up;
+            up_tmp.x += vp->rotation.nx;
+            up_tmp.y += vp->rotation.ny;
+            up_tmp.z += vp->rotation.nz;
+            normalize_vector(&up_tmp);
+            this->vv[i].set_axis(&forward_tmp, &up);
         }
     }
 }

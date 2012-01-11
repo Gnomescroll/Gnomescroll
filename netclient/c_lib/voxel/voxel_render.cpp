@@ -9,29 +9,30 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
         printf("Voxel_render_list Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
         return;
     }
-    num_elements++;
-
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    int i;
+    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL)
         {
+            num_elements++;
             render_list[i] = vv;
             vv->id = i;
             printf("Added voxel volume %i \n", i);
             break;
         }
     }
+    if (i == VOXEL_RENDER_LIST_SIZE) printf("WARNING: register_voxel_volume - no space available\n");
 
     vv->voxel_render_list = this;
 }
 
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
-    num_elements--;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == vv)
         {
+            num_elements--;
             render_list[i] = NULL;
             printf("Removed voxel volume %i \n", i);
             break;
@@ -54,7 +55,6 @@ void Voxel_render_list::update_vertex_buffer_object()
         }
         v_num +=  render_list[i]->vvl.vnum;
     }
-
 
     //vbo->id
     _vbo->vnum = v_num;

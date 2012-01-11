@@ -12,8 +12,8 @@
 
 const int AGENT_PART_NUM = 6;
 enum AGENT_BODY_PARTS {
-    AGENT_PART_TORSO,
     AGENT_PART_HEAD,
+    AGENT_PART_TORSO,
     AGENT_PART_LARM,
     AGENT_PART_RARM,
     AGENT_PART_LLEG,
@@ -47,6 +47,17 @@ class VoxPartRotation {
         float fx,fy,fz;     // internal orientation
         float nx,ny,nz; // orientation vector relative to main anchor point ??
         void set(float fx, float fy, float fz, float nx, float ny, float nz) {
+            // normalize
+            float len;
+            len = sqrt(fx*fx + fy*fy + fz*fz);
+            fx /= len;
+            fy /= len;
+            fz /= len;
+            len = sqrt(nx*nx + ny*ny + nz*nz);
+            nx /= len;
+            ny /= len;
+            nz /= len;
+            
             this->fx = fx;
             this->fy = fy;
             this->fz = fz;
@@ -56,7 +67,9 @@ class VoxPartRotation {
         }
         VoxPartRotation(){}
         VoxPartRotation(float fx, float fy, float fz, float nx, float ny, float nz)
-        :   fx(fx), fy(fy), fz(fz), nx(nx), ny(ny), nz(nz) {}
+        {
+            this->set(fx,fy,fz,nx,ny,nz);
+        }
 };
 
 class VoxPartAnchor {
