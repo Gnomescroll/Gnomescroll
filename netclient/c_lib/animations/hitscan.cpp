@@ -124,6 +124,7 @@ void HitscanEffect_list::draw()
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
+        printf("Drawing %d\n", i);
         a[i]->draw(delta);
     }
 
