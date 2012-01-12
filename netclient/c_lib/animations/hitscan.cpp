@@ -136,6 +136,8 @@ void HitscanEffect_list::draw()
         if (a[i] == NULL) continue;
         //printf("Drawing %d\n", i);
         //count++;
+
+        a[i]->draw(delta, &camera);
     }
     //printf("count= %i \n", count);
 
