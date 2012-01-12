@@ -43,7 +43,7 @@ void HitscanEffect::tick()
     //play animations for terrain/player collision
 }
 
-void HitscanEffect::draw(float delta)
+void HitscanEffect::draw(float delta, Vector* camera)
 {
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
@@ -57,8 +57,6 @@ void HitscanEffect::draw(float delta)
     _y = y;
     _z = z;
 
-    struct Vector c = Vector_init(current_camera->x, current_camera->y, current_camera->z);
-
     struct Vector r = Vector_init(vx,vy,vz);
     normalize_vector( &r );
     //vector_scalar2(&r)
@@ -66,7 +64,7 @@ void HitscanEffect::draw(float delta)
     //printf("r length= %f \n", vector_length( &r ) );
 
     struct Vector x1 = Vector_init(_x,_y,_z);
-    struct Vector l1 = sub_vec(&x1, &c);
+    struct Vector l1 = sub_vec(&x1, camera);
 
     struct Vector u1 = vector_cross( l1, r);
     normalize_vector( &u1 );
@@ -76,7 +74,7 @@ void HitscanEffect::draw(float delta)
     // struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
     struct Vector x2 = Vector_init(_x- height*vx, _y - height*vy, _z - height*vz);
 
-    struct Vector l2 = sub_vec(&x2, &c);
+    struct Vector l2 = sub_vec(&x2, camera);
 
     struct Vector u2 = vector_cross( l2, r);
     normalize_vector( &u2 );
@@ -130,6 +128,8 @@ void HitscanEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
+    struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -145,7 +145,7 @@ void HitscanEffect_list::draw()
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
-        a[i]->draw(delta);
+        a[i]->draw(delta, &camera);
         //count++;
     }
     //printf("count= %i \n", count);
@@ -182,7 +182,7 @@ void HitscanEffect_list::tick()
         //ClientState::hitscan_effect_list.create(0.0, 0.0, 0.0, -0.0, 0.0, 0.0);
     }
 
-    create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
+    //create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
 
     //int count= 0;
     int i;

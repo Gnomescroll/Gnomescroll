@@ -153,6 +153,7 @@ void Minivox_list::draw() {
 
     if(num == 0) { return; }
 
+    glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);

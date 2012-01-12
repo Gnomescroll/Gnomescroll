@@ -43,7 +43,7 @@ const int SHADER_ON = 1;
 void setShaders2() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog = glCreateProgramObjectARB();
     shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -97,7 +97,7 @@ int texCoord0Loc; // = glGetAttribLocation(MyShader, "InTexCoord0");
 void setShaders3() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog3 = glCreateProgramObjectARB();
     shader_vert3 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
