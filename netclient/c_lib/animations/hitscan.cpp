@@ -21,18 +21,6 @@ void init_hitscan()
     if (i) { printf("init_hitscan failed with code %d\n", i); }
 }
 
-void create_hitscan(float x,float y,float z, float vx, float vy, float vz)
-{
-    HitscanEffect* he = ClientState::hitscan_effect_list.create();
-
-    if(he == NULL) return;
-
-    he->x=x; he->y=y; he->z=z;
-    he->vx=vx; he->vy=vy; he->vz=vz;
-   
-    //printf("Hitscan created: id= %i \n", he->id);
-}
-
 void HitscanEffect::tick()
 {
     x += vx /30.0;
@@ -179,11 +167,9 @@ void HitscanEffect_list::tick()
         ClientState::hitscan_effect_list.create(32.0, 32.0, 64.0, vx, vy, vz);
         }
 
-
-        //ClientState::hitscan_effect_list.create(0.0, 0.0, 0.0, -0.0, 0.0, 0.0);
     }
 
-    create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
+    ClientState::hitscan_effect_list.create(0,0,0,0,0,160);
 
     //int count= 0;
     int i;
