@@ -125,12 +125,11 @@ int InRotationMatrix;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
-
     static int init=0;
     if (init) return;
     printf("init voxel shader\n");
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     voxel_shader_prog = glCreateProgramObjectARB();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -182,18 +181,6 @@ void Voxel_render_list::draw()
     glDisable(GL_TEXTURE_2D);
     //    glEnable(GL_TEXTURE_2D);
 
-    glDisable (GL_DEPTH_TEST);
-
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(-5.0, -5.0, 10.);
-    glEnd();
-    glPointSize(1.0);
-
-
-    glEnable (GL_DEPTH_TEST);
-
     VBOmeta* _vbo = &vbo_wrapper[0]; 
 
     //printf("buff= %i \n",  _vbo->id);
@@ -203,14 +190,11 @@ void Voxel_render_list::draw()
         printf("Voxel_render_list::draw, vnum equals zero \n");
         return;
     }
-
     if( _vbo->id == 0 )
     {
         printf("Voxel_render_list::draw, vbo is zero \n");
         return;
     }
-
-    glPointSize(10.0);
 
     glUseProgramObjectARB(voxel_shader_prog);
 
@@ -258,15 +242,17 @@ void Voxel_render_list::draw()
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
-    glEnable(GL_TEXTURE_2D);
+    glEnable (GL_DEPTH_TEST);
+
+    //glEnable(GL_TEXTURE_2D);
 
     glUseProgramObjectARB(0);
-    glPointSize(1.0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glPointSize(1.0);
 }
 
 void voxel_renderer_draw_test()
 {   
-    return;
     printf("voxel test \n");
 
     static Voxel_volume vv (4,4,2, 2.0);
