@@ -15,8 +15,8 @@ void Agent_vox::init_parts() {
     int x,y,z;
     VoxPart *vp;
     float size = agent_vox_dat.vox_size;
-    //for (i=0; i<AGENT_PART_NUM; i++) {
-    for (i=0; i<1; i++) {
+    for (i=0; i<AGENT_PART_NUM; i++) {
+    //for (i=0; i<1; i++) {
         vp = agent_vox_dat.vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
@@ -47,8 +47,8 @@ void Agent_vox::update() {
     VoxPart* vp;
     float ax,ay,az;
     int i;
-    //for (i=0; i<AGENT_PART_NUM; i++) {
-    for (i=0; i<1; i++) {
+    for (i=0; i<AGENT_PART_NUM; i++) {
+    //for (i=0; i<1; i++) {
         vp = agent_vox_dat.vox_part[i];
         ax = vp->anchor.x;
         ay = vp->anchor.y;
