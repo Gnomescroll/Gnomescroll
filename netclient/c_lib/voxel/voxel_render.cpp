@@ -165,7 +165,7 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
     init=1;
 }
 
-void Voxel_render_list::draw(int* exclude, int n_exclude)
+void Voxel_render_list::draw()
 {
     
     glDisable(GL_TEXTURE_2D);
@@ -232,19 +232,12 @@ void Voxel_render_list::draw(int* exclude, int n_exclude)
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
-    int i,j;
-    bool skip;
+    int i;
     for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
 
-        // check against exclude list
-        skip = false;
-        for (j=0; j<n_exclude; j++) {
-            if (i==j) skip=true;
-            break;
-        }
-        if (skip) continue;
+        if (!render_list[i]->draw) continue;
         
         vv = render_list[i];
         if(vv->vvl.vnum == 0) printf("no vertices \n");
@@ -327,6 +320,6 @@ void voxel_renderer_draw_test()
     //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
     vv.set_center( 8.0, 8.0, 8.0);
 
-    voxel_render_list.draw((int*)NULL, 0);
+    voxel_render_list.draw();
     vv.draw_bounding_box();
 }

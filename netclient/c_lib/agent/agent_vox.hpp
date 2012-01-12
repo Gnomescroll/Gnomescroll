@@ -34,6 +34,7 @@ class Agent_vox {
 
         void init_parts();
         void update();
+        void set_draw(bool draw);
 
         Agent_vox(Agent_state* a);
         ~Agent_vox();

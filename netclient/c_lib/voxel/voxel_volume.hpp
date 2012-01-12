@@ -130,6 +130,7 @@ class Voxel_volume
     Voxel_vertex_list vvl;
 #endif
     int id;
+    bool draw;
 
     Vector v[4]; // forward, up, right (x,y,z), offset
 
