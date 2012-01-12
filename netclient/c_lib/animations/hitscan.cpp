@@ -119,6 +119,7 @@ void HitscanEffect_list::draw()
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
 
     glColor3ub(255,255,255);
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);

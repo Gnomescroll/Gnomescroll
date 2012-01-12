@@ -214,6 +214,8 @@ void render() {
 
     glDisable(GL_TEXTURE_2D);
 
+    glColor3ub(255,255,255);
+
 }
 
 static GLuint skybox_cubemap;
