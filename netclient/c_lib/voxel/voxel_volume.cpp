@@ -63,12 +63,14 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 
 Voxel_volume::Voxel_volume()
 :
-id(-1)
+id(-1),
+draw(true)
 {}
 
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
-id(-1)
+id(-1),
+draw(true)
 {
     this->set_parameters(xdim, ydim, zdim, scale);
     needs_vbo_update = false;

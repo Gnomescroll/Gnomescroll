@@ -17,13 +17,13 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             num_elements++;
             render_list[i] = vv;
             vv->id = i;
+            vv->voxel_render_list = this;
             printf("Added voxel volume %i \n", i);
             break;
         }
     }
     if (i == VOXEL_RENDER_LIST_SIZE) printf("WARNING: register_voxel_volume - no space available\n");
 
-    vv->voxel_render_list = this;
 }
 
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
@@ -39,6 +39,7 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
         }
     }
     vv->id = -1;
+    vv->voxel_render_list = NULL;
 }
 
 void Voxel_render_list::update_vertex_buffer_object()
@@ -50,8 +51,8 @@ void Voxel_render_list::update_vertex_buffer_object()
         if(render_list[i] == NULL) continue;
         if(render_list[i]->needs_vbo_update == true)
         {
-            printf("%i vnum= %i \n", i, _vbo->vnum);
             render_list[i]->update_vertex_list();
+            //printf("%i vnum= %i \n", i, _vbo->vnum);
         }
         v_num +=  render_list[i]->vvl.vnum;
     }
@@ -72,23 +73,25 @@ void Voxel_render_list::update_vertex_buffer_object()
     Avoid mallocing all the time if possible
 
 */
-    if(_vbo->vertex_list != NULL) delete _vbo->vertex_list;
+    if(_vbo->vertex_list != NULL) {
+        delete[] _vbo->vertex_list;
+        _vbo->vertex_list = NULL;
+    }
     _vbo->vertex_list = new Voxel_vertex[v_num];
-
 
     int index = 0;
     Voxel_volume* vv;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    {   
+    {
         if(render_list[i] == NULL) continue;
         vv = render_list[i];
 
         memcpy( _vbo->vertex_list+index, vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
-
+        
         render_list[i]->vvl.voff = index;
-        index += vv->vvl.vnum*sizeof(Voxel_vertex);
+        //index += vv->vvl.vnum*sizeof(Voxel_vertex);   // BUG
+        index += vv->vvl.vnum;
     }
-
     if( _vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index, NULL, GL_STATIC_DRAW);
@@ -162,7 +165,7 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
     init=1;
 }
 
-void Voxel_render_list::draw(int* exclude, int n_exclude)
+void Voxel_render_list::draw()
 {
     
     glDisable(GL_TEXTURE_2D);
@@ -229,19 +232,12 @@ void Voxel_render_list::draw(int* exclude, int n_exclude)
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
-    int i,j;
-    bool skip;
+    int i;
     for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
 
-        // check against exclude list
-        skip = false;
-        for (j=0; j<n_exclude; j++) {
-            if (i==j) skip=true;
-            break;
-        }
-        if (skip) continue;
+        if (!render_list[i]->draw) continue;
         
         vv = render_list[i];
         if(vv->vvl.vnum == 0) printf("no vertices \n");
@@ -326,6 +322,6 @@ void voxel_renderer_draw_test()
     //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
     vv.set_center( 8.0, 8.0, 8.0);
 
-    voxel_render_list.draw((int*)NULL, 0);
+    voxel_render_list.draw();
     vv.draw_bounding_box();
 }

@@ -15,17 +15,24 @@ void Agent_vox::init_parts() {
     int x,y,z;
     VoxPart *vp;
     float size = agent_vox_dat.vox_size;
-    //for (i=0; i<AGENT_PART_NUM; i++) {
-    for (i=0; i<1; i++) {
+    for (i=0; i<AGENT_PART_NUM; i++) {
         vp = agent_vox_dat.vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
         z = vp->dimension.z;
+        printf("init part %d,%d,%d %0.2f\n", x,y,z,size);
         this->vv[i].init(x,y,z,size);
         this->vv[i].set_unit_axis();
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
     }
     ClientState::voxel_render_list.update_vertex_buffer_object();
+}
+
+void Agent_vox::set_draw(bool draw) {
+    int i;
+    for (i=0; i<AGENT_PART_NUM; i++) {
+        this->vv[i].draw = draw;
+    }
 }
 
 void Agent_vox::update() {
@@ -47,8 +54,7 @@ void Agent_vox::update() {
     VoxPart* vp;
     float ax,ay,az;
     int i;
-    //for (i=0; i<AGENT_PART_NUM; i++) {
-    for (i=0; i<1; i++) {
+    for (i=0; i<AGENT_PART_NUM; i++) {
         vp = agent_vox_dat.vox_part[i];
         ax = vp->anchor.x;
         ay = vp->anchor.y;

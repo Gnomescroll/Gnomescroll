@@ -18,9 +18,6 @@ void Agent_list::draw()
     //glDisable(GL_TEXTURE_2D);
     //glBegin(GL_QUADS);
 
-    int exclude[1];
-    int n_exclude = 0;
-
     bool you;
     int i;
     Agent_state* agent;
@@ -28,16 +25,16 @@ void Agent_list::draw()
         agent = a[i];
         if (agent == NULL) continue;
         you = (agent->id == ClientState::playerAgent_state.agent_id);
-        if (agent->vox != NULL) {
-            agent->vox->update();
-            //agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
-        }
-        if ((first_person && you)
-           || agent->status.dead)
+        if (agent->vox == NULL) continue;
+        
+        agent->vox->update();
+        if ((first_person && you) || agent->status.dead)
         {
-            exclude[0] = i;
-            n_exclude = 1;
-            continue;
+            agent->vox->set_draw(false);
+        }
+        else
+        {
+            agent->vox->set_draw(true);
         }
     }
 
@@ -46,7 +43,7 @@ void Agent_list::draw()
     //glEnable(GL_TEXTURE_2D);
     //glColor3ub(255,255,255);
 
-    ClientState::voxel_render_list.draw(exclude, n_exclude);
+    ClientState::voxel_render_list.draw();
     #endif
 }
 
