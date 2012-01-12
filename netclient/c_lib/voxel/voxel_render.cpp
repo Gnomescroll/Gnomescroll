@@ -129,7 +129,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     if (init) return;
     printf("init voxel shader\n");
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     voxel_shader_prog = glCreateProgramObjectARB();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);

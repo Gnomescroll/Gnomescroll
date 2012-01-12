@@ -43,7 +43,7 @@ const int SHADER_ON = 1;
 void setShaders2() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog = glCreateProgramObjectARB();
     shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -53,7 +53,7 @@ void setShaders2()
     //vs = textFileRead((char*) "./media/shaders/lsd.vsh");
     //fs = textFileRead((char*) "./media/shaders/lsd.fsh");
 
-    printf("setShaders2: \n");
+    if(DEBUG) printf("setShaders2: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.fsh");
@@ -97,7 +97,7 @@ int texCoord0Loc; // = glGetAttribLocation(MyShader, "InTexCoord0");
 void setShaders3() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog3 = glCreateProgramObjectARB();
     shader_vert3 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -105,7 +105,7 @@ void setShaders3()
 
     char *vs, *fs;
 
-    printf("setShaders3: \n");
+    if(DEBUG) printf("setShaders3: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -148,7 +148,7 @@ void setShaders4()
 
     char *vs, *fs;
 
-    printf("setShaders4: \n");
+    if(DEBUG) printf("setShaders4: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");
