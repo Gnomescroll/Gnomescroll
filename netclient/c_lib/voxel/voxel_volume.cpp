@@ -533,14 +533,16 @@ void Voxel_volume::update_vertex_list()
     if(index == 0)
     {
         printf("Warning: generate vertex voxel list, 0 voxels\n");
-
+        vvl.vnum = 0;
+        if(vvl.vertex_list != NULL) delete vvl.vertex_list;
+        return;
     }
 
     if(vvl.vertex_list != NULL) delete vvl.vertex_list;
     vvl.vertex_list = new Voxel_vertex[index];
 
     //void * memcpy ( void * destination, const void * source, size_t num );
-    memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
+    memcpy((char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
     vvl.size = index*sizeof(Voxel_vertex);  //wtf is size for
     vvl.vnum = index;
 
