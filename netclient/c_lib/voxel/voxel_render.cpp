@@ -291,6 +291,8 @@ void Voxel_render_list::draw(int* exclude, int n_exclude)
 
 void voxel_renderer_draw_test()
 {
+    printf("voxel test \n");
+
     static Voxel_volume vv (4,4,2, 2.0);
 
     static Voxel_render_list voxel_render_list;
