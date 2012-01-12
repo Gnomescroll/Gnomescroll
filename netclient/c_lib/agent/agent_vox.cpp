@@ -16,21 +16,16 @@ void Agent_vox::init_parts() {
     VoxPart *vp;
     float size = agent_vox_dat.vox_size;
     for (i=0; i<AGENT_PART_NUM; i++) {
-        printf("part %d\n", i);
         vp = agent_vox_dat.vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
         z = vp->dimension.z;
-        printf("init part\n");
+        printf("init part %d,%d,%d %0.2f\n", x,y,z,size);
         this->vv[i].init(x,y,z,size);
-        printf("setting axis\n");
         this->vv[i].set_unit_axis();
-        printf("registering\n");
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
     }
-    printf("setup all parts\n");
     ClientState::voxel_render_list.update_vertex_buffer_object();
-    printf("updated vertex buff\n");
 }
 
 void Agent_vox::set_draw(bool draw) {
