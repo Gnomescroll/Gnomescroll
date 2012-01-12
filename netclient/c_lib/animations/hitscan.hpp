@@ -2,13 +2,6 @@
 
 #include <c_lib/template/object_list.hpp>
 
-#include <c_lib/camera/camera.hpp>
-
-#include <compat_gl.h>
-#include <c_lib/SDL/texture_loader.h>
-#include <c_lib/physics/vector.hpp>
-
-
 namespace Animations
 {
 
@@ -26,14 +19,14 @@ class HitscanEffect
     HitscanEffect(int id)
     :
     id(id),
-    ttl(3000)
+    ttl(60)
     {}
     
     HitscanEffect(int x, int y, int z, int vx, int vy, int vz)
     :
     x(x), y(y), z(z),
     vx(vx), vy(vy), vz(vz),
-    ttl(3000)
+    ttl(60)
     {}
     
     HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz)
@@ -41,7 +34,7 @@ class HitscanEffect
     id(id),
     x(x), y(y), z(z),
     vx(vx), vy(vy), vz(vz),
-    ttl(3000)
+    ttl(60)
     {}
 };
 

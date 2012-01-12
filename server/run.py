@@ -302,7 +302,7 @@ class Main:
 
         #c_lib.map_gen.conf.seed(opts.seed)
         
-        good_cave1()
+        #good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

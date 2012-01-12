@@ -246,8 +246,8 @@ class App(object):
             if InputGlobal.hk:
                 cMapGen.Dragon.draw()
 
-            P.event("Draw skybox")
-            cCamera.render_skybox()
+            #P.event("Draw skybox")
+            #cCamera.render_skybox()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
@@ -255,11 +255,13 @@ class App(object):
             #import pdb; pdb.set_trace()
 
             P.event("World.draw(), draw agents")
+            
             if opts.draw_agents:
                 cAgents.draw_agents()
 
             P.event("Animations Draw")
             self.animations.draw()
+
             P.event("c_lib_particles.draw()")
             cParticles.draw() ## TESTING
 

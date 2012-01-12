@@ -3,6 +3,12 @@
 #include <c_lib/state/client_state.hpp>
 #include <stdlib.h>
 
+#include <c_lib/camera/camera.hpp>
+
+#include <compat_gl.h>
+#include <c_lib/SDL/texture_loader.h>
+#include <c_lib/physics/vector.hpp>
+
 namespace Animations
 {
 
@@ -13,6 +19,18 @@ void init_hitscan()
     int i;
     i = create_texture_from_file( (char*) "./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
     if (i) { printf("init_hitscan failed with code %d\n", i); }
+}
+
+void create_hitscan(float x,float y,float z, float vx, float vy, float vz)
+{
+    HitscanEffect* he = ClientState::hitscan_effect_list.create();
+
+    if(he == NULL) return;
+
+    he->x=x; he->y=y; he->z=z;
+    he->vx=vx; he->vy=vy; he->vz=vz;
+   
+    //printf("Hitscan created: id= %i \n", he->id);
 }
 
 void HitscanEffect::tick()
@@ -27,7 +45,6 @@ void HitscanEffect::tick()
 
 void HitscanEffect::draw(float delta)
 {
-
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 
@@ -92,6 +109,7 @@ void HitscanEffect::draw(float delta)
 
     glTexCoord2f(tx_max,ty_min);
     glVertex3f( x2.x - u2.x, x2.y - u2.y, x2.z - u2.z );  // Bottom right
+
 }
 
 
@@ -99,6 +117,7 @@ void HitscanEffect::draw(float delta)
 
 void HitscanEffect_list::draw()
 {
+    //printf("draw \n");
 
     int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
@@ -111,6 +130,7 @@ void HitscanEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
+    glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -121,11 +141,14 @@ void HitscanEffect_list::draw()
 
     glBegin( GL_QUADS );
 
+    //int count= 0;
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->draw(delta);
+        //count++;
     }
+    //printf("count= %i \n", count);
 
     glEnd();
     glDepthMask(GL_TRUE);
@@ -137,19 +160,8 @@ void HitscanEffect_list::draw()
 
 void HitscanEffect_list::tick()
 {
+    //printf("tick \n");
 
-    static int once = 0;
-
-    if(once == 0 )
-    {
-        const float vm = 4.0;
-        float vx = vm*(float)rand()/(float)RAND_MAX;
-        float vy = vm*(float)rand()/(float)RAND_MAX;
-        float vz = vm*(float)rand()/(float)RAND_MAX;
-        ClientState::hitscan_effect_list.create(32.0, 32.0, 64.0, vx, vy, vz);
-        once = 1;
-    }
-    
     const int debug = 1;
 
     if(debug)
@@ -165,15 +177,23 @@ void HitscanEffect_list::tick()
         float vz = vm*(float)rand()/(float)RAND_MAX;
         ClientState::hitscan_effect_list.create(32.0, 32.0, 64.0, vx, vy, vz);
         }
+
+
+        //ClientState::hitscan_effect_list.create(0.0, 0.0, 0.0, -0.0, 0.0, 0.0);
     }
 
+    create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
+
+    //int count= 0;
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
         a[i]->ttl--;
         if(a[i]->ttl == 0) destroy(a[i]->id);
+        //count++;
     }
+    //printf("count= %i \n", count);
 }
 
 }
