@@ -254,43 +254,14 @@ void Voxel_render_list::draw()
         vv = render_list[i];
         if(vv->vvl.vnum == 0) printf("no vertices \n");
 
-        //glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)0);
-        //glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)12);
-
-        //printf("drawing %i vertices from offset %i \n", vv->vvl.vnum, vv->vvl.voff);
-
-        //GL_POINTS
-
-//int InRotationMatrix;
-//int InTranslation;
-
-        //vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-        //vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-        //vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
-    /*
-        *((Vector*) &v[0]) = vv->v[0];
-        *((Vector*) &v[1]) = vv->v[1];
-        *((Vector*) &v[2]) = vv->v[2];
-        *((Vector*) &v[3]) = vv->v[3];
-    */
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
         v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
         v[2].v3 = vector_scalar2(&vv->v[2], vv->scale);
         v[3].v3 = vv->v[3];
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
-        //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
-
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
-        //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
-
     }
-
-    //glEnable (GL_DEPTH_TEST);
-
-    //glDisableVertexAttribArray(InCood0);
-    //glDisableVertexAttribArray(InRGBA);
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
