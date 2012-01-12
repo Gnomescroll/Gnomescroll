@@ -179,7 +179,7 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
 
 void Voxel_render_list::draw()
 {
-    
+    return;
     glDisable(GL_TEXTURE_2D);
     //    glEnable(GL_TEXTURE_2D);
 
@@ -215,18 +215,12 @@ void Voxel_render_list::draw()
 
     glUseProgramObjectARB(voxel_shader_prog);
 
-    //glEnableVertexAttribArray(InCood0);
-    //glEnableVertexAttribArray(InRGBA);
-
     glColor3b(255,255,255);
 
     //glShadeModel(GL_FLAT);
     //glEnable(GL_CULL_FACE);
 
     glDisable(GL_TEXTURE_2D);
-    //glDisable (GL_DEPTH_TEST);
-
-    //printf("Start Draw\n");
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -265,12 +259,15 @@ void Voxel_render_list::draw()
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
+    glEnable(GL_TEXTURE_2D);
+
     glUseProgramObjectARB(0);
     glPointSize(1.0);
 }
 
 void voxel_renderer_draw_test()
-{
+{   
+    return;
     printf("voxel test \n");
 
     static Voxel_volume vv (4,4,2, 2.0);
