@@ -88,6 +88,8 @@ class Voxel_vertex_list
     unsigned short vnum;   //number of vertices
     unsigned short voff;   //offset of vertices
 
+    void set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+
     Voxel_vertex_list()
     :
     vertex_list(NULL),
@@ -156,6 +158,10 @@ class Voxel_volume
     void register_with_renderer(Voxel_render_list* vrl);
     void update_vertex_list();
 #endif
+
+    void set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_color(int i, unsigned char rgba[4]);
+    void set_colors(int start, int end, unsigned char rgba[][4]);
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;

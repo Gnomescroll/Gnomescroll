@@ -43,6 +43,50 @@ class Agent_vox {
 
 /* Dat storage */
 
+class VoxColors {
+    public:
+        unsigned char** rgba;
+        int n;
+        void init(int n) {
+            if (this->rgba != NULL) return;
+            this->n = n;
+            this->rgba = (unsigned char**)malloc(sizeof(unsigned char)*n*4);
+            int i;
+            for (i=0; i<n; i++) {
+                this->rgba[i] = (unsigned char*)malloc(sizeof(unsigned char)*4);
+            }
+        }
+        void set(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        {
+            if (i >= this->n)
+            {
+                printf("VoxColors::set -- index %d exceeds voxel count %d\n", i, this->n);
+                return;
+            }
+
+            if (this->rgba == NULL) return;
+            
+            this->rgba[i][0] = r;
+            this->rgba[i][1] = g;
+            this->rgba[i][2] = b;
+            this->rgba[i][3] = a;
+        }
+        VoxColors()
+        : rgba(NULL), n(0)
+        {}
+        ~VoxColors() {
+            if (this->rgba == NULL) return;
+            if (this->n <= 0) return;
+            
+            int i;
+            for (i=0; i<this->n; i++) {
+                if (this->rgba[i] == NULL) continue;
+                free(this->rgba[i]);
+            }
+            free(this->rgba);
+        }
+};
+
 class VoxPartRotation {
     public:
         float fx,fy,fz;     // internal orientation
@@ -96,6 +140,9 @@ class VoxPartDimension {
             this->y = y;
             this->z = z;
         }
+        int count() {
+            return this->x * this->y * this->z;
+        }
         VoxPartDimension(){}
         VoxPartDimension(int x, int y, int z)
         :   x(x), y(y), z(z) {}
@@ -103,9 +150,11 @@ class VoxPartDimension {
 
 struct VoxPart {
     public:
-        struct VoxPartRotation rotation;
-        struct VoxPartAnchor anchor;
-        struct VoxPartDimension dimension;
+        VoxPartRotation rotation;
+        VoxPartAnchor anchor;
+        VoxPartDimension dimension;
+        VoxColors colors;
+        
         int part_num;
 
         void set_rotation(float fx, float fy, float fz, float nx, float ny, float nz) {
@@ -119,7 +168,7 @@ struct VoxPart {
         void set_dimension(int x, int y, int z) {
             dimension.set(x,y,z);
         }
-        
+
         VoxPart(
             float rot_fx, float rot_fy, float rot_fz,
             float rot_nx, float rot_ny, float rot_nz,
@@ -130,7 +179,9 @@ struct VoxPart {
             anchor(anc_len, anc_x, anc_y, anc_z),
             dimension(dim_x, dim_y, dim_z),
             part_num(part_num)
-        {}
+        {
+            colors.init(dim_x*dim_y*dim_z);
+        }
 };
 
 class VoxBody {
@@ -162,6 +213,14 @@ class VoxBody {
                 p->part_num = part_num;
             }
         }
+
+        void set_color(int part, int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        {
+            VoxPart* p = vox_part[part];
+            if (p==NULL) return;
+            p->colors.set(i, r,g,b,a);
+        }
+
 
         VoxBody() {}
         VoxBody(float vox_size) : vox_size(vox_size) {}
