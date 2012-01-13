@@ -49,6 +49,11 @@ class Voxel_vertex_list
     vertex_list(NULL),
     size(0), vnum(0), voff(0)
     {}
+
+    ~Voxel_vertex_list()
+    {
+        if(vertex_list != NULL) free(vertex_list);
+    }
 };
 #endif
 

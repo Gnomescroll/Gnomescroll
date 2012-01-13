@@ -29,7 +29,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 #ifdef DC_CLIENT
     voxel_render_list = NULL;
 #endif
-  
+    voxel_hitscan_list = NULL;
+
     v[0] = Vector_init(1.0f,0.0f,0.0f);
     v[1] = Vector_init(0.0f,1.0f,0.0f);
     v[2] = Vector_init(0.0f,0.0f,1.0f);
@@ -75,44 +76,7 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 id(-1),
 draw(true)
 {
-    this->set_parameters(xdim, ydim, zdim, scale);
-    needs_vbo_update = false;
-
-#ifdef DC_CLIENT
-    voxel_render_list = NULL;
-#endif
-  
-    v[0] = Vector_init(1.0f,0.0f,0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f);
-    this->set_center(0.0,0.0,0.0);
-
-    this->hdx = ((float) xdim) / 2;
-    this->hdy = ((float) ydim) / 2;
-    this->hdz = ((float) zdim) / 2;
-
-    this->radius =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
-
-    this->index1 = pow2_1(xdim);
-    this->index12 = pow2_1(xdim) + pow2_1(xdim);
-
-    int powx = pow2_2(xdim);
-    int powy = pow2_2(ydim);
-    int powz = pow2_2(zdim);
-
-    voxel = new Voxel[powx*powy*powz];
-    int r,g,b,a;
-    a = 255;
-    for(int i=0; i < powx; i++){
-    for(int j=0; j < powy; j++){
-    for(int k=0; k < powz; k++){
-        r = i*(256/powx);
-        g = j*(256/powy);
-        b = k*(256/powz);
-        _set(i,j,k,r,g,b,a);
-    }}}
-    needs_vbo_update = true;
-
+    this->init(xdim, ydim, zdim, scale);
 }
 
 Voxel_volume::~Voxel_volume()
@@ -120,6 +84,7 @@ Voxel_volume::~Voxel_volume()
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) voxel_render_list->unregister_voxel_volume(this);
     #endif
+    if(voxel_hitscan_list != NULL) voxel_hitscan_list->unregister_voxel_volume(this);
     delete voxel;
 }
 
@@ -317,20 +282,6 @@ void Voxel_volume::set_center(float x, float y, float z)
 
 #ifdef DC_CLIENT
 
-/*
-    struct Voxel_vertex
-    {
-        unsigned char x,y,z,t;
-        unsigned char rgba[4]; //8
-    };
-*/
-
-/*
-inline uint32_t PACK(uint8_t c0, uint8_t c1, uint8_t c2, uint8_t c3) {
-    return (c0 << 24) | (c1 << 16) | (c2 << 8) | c3;
-}
-*/
-
 #include <stdio.h>
 
 
@@ -392,15 +343,7 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 2].color = color;
     scratch[*index + 3].color = color;
 
-//optimized version
-/*
-    int normal = (vnset[3*side + 0 ] << 24) | (vnset[3*side + 1 ] << 16) | (vnset[3*side + 2 ] << 8) | 0;
 
-    *(int*)scratch[*index + 0].normal = normal;
-    *(int*)scratch[*index + 1].normal = normal;
-    *(int*)scratch[*index + 2].normal = normal;
-    *(int*)scratch[*index + 3].normal = normal;
-*/
     int _side = side*3;
 
     Voxel_normal normal;
@@ -410,32 +353,6 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     scratch[*index + 1].n = normal.n;
     scratch[*index + 2].n = normal.n;
     scratch[*index + 3].n = normal.n;
-
-    /*
-    Voxel_normal normal;
-    normal.n = 0;
-    normal.normal[0] = vnset[_side + 0 ];
-    normal.normal[1] = vnset[_side + 1 ];
-    normal.normal[2] = vnset[_side + 2 ];  
-    */
-
-/*
-    scratch[*index + 0].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 0].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 0].normal[2] = vnset[_side + 2 ];
-    
-    scratch[*index + 1].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 1].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 1].normal[2] = vnset[_side + 2 ];
-
-    scratch[*index + 2].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 2].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 2].normal[2] = vnset[_side + 2 ];
-
-    scratch[*index + 3].normal[0] = vnset[_side + 0 ];
-    scratch[*index + 3].normal[1] = vnset[_side + 1 ];
-    scratch[*index + 3].normal[2] = vnset[_side + 2 ];
-*/
 
     //set x,y,z
     _side = side*12;
