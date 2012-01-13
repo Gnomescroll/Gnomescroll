@@ -132,15 +132,12 @@ void HitscanEffect_list::draw()
 
     //int count= 0;
     int i;
-    for(i=0; i<n_max; i++) {
+    for(i=0; i<n_max; i++) 
+    {
         if (a[i] == NULL) continue;
-        //printf("Drawing %d\n", i);
-        //count++;
-
         a[i]->draw(delta, &camera);
     }
-    //printf("count= %i \n", count);
-
+    
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
