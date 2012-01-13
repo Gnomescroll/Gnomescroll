@@ -35,13 +35,6 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vector camera, Vector*
     fulstrum_f = *forward;
     fulstrum_r = *right;
     fulstrum_u = *up;
-
-    print_vector_length(&fulstrum_f);;
-    print_vector_length(&fulstrum_r);
-
-    print_vector_dot(fulstrum_f, fulstrum_r);
-    print_vector_dot(fulstrum_f, fulstrum_u);
-    print_vector_dot(fulstrum_u, fulstrum_r);
 }
 
 

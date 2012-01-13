@@ -242,8 +242,6 @@ void Voxel_render_list::draw()
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
-
-        break;
     }
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
