@@ -2,6 +2,7 @@
 
 #include <c_lib/camera/fulstrum_test.hpp>
 
+
 extern float _xresf;
 extern float _yresf;
 
@@ -110,6 +111,9 @@ void CCamera::move(float dx, float dy, float dz) {
 #include <voxel/voxel_volume.hpp>
 #include <voxel/voxel_render.hpp>
 
+#include <c_lib/physics/vector.hpp>
+#include <c_lib/physics/matrix.hpp>
+
 void CCamera::world_projection() {
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -121,9 +125,23 @@ void CCamera::world_projection() {
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    xl = cos( x_angle * PI) * cos( y_angle * PI);
-    yl = sin( x_angle * PI) * cos( y_angle * PI);
-    zl = sin( y_angle * PI);
+
+/*
+    double _x_angle = x_angle * PI; 
+    double _y_angle = y_angle * PI;
+
+    xl = cos( _x_angle ) * cos( _y_angle );
+    yl = sin( _x_angle ) * cos( _y_angle );
+    zl = sin( _y_angle );
+*/
+
+    Vector f = Vector_init(1.0, 0.0, 0.0);
+    Vector r = Vector_init(0.0, 1.0, 0.0);
+    Vector u = Vector_init(0.0, 0.0, 1.0);
+    
+    Vector _l  = euler_rotation(f, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+
+    xl = _l.x; yl = _l.y; zl = _l.z;
 
     xu = 0.0f;
     yu = 0.0f;
@@ -139,7 +157,16 @@ void CCamera::world_projection() {
         printf("camera world_projection :: model_view_matrix is null\n");
     }
 
-    setup_fulstrum(); //fulstrum test
+    //set fulstrum camera up
+    {
+
+        f = euler_rotation(f, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+        r = euler_rotation(r, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+        u = euler_rotation(u, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+
+        setup_fulstrum(fov, ratio, z_far, Vector_init(x,y,z), &f,&r,&u );
+         //fulstrum test
+    }
 
     glEnable (GL_DEPTH_TEST);
 

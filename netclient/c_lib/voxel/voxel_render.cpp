@@ -225,13 +225,14 @@ void Voxel_render_list::draw()
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
-    int i;
-    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == NULL || !render_list[i]->draw) continue;
+        if( render_list[i] == NULL || !render_list[i]->draw ) continue;
         vv = render_list[i];
 
-        if( sphere_fulstrum_test() )
+        sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius);
+        //if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
+        
         //if(vv->vvl.vnum == 0) printf("no vertices \n");
 
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
@@ -241,17 +242,16 @@ void Voxel_render_list::draw()
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
+
+        break;
     }
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
     glEnable (GL_DEPTH_TEST);
 
-    //glEnable(GL_TEXTURE_2D);
-
     glUseProgramObjectARB(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //glPointSize(1.0);
 }
 
 void voxel_renderer_draw_test()

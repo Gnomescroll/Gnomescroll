@@ -91,7 +91,7 @@ draw(true)
     this->hdy = ((float) ydim) / 2;
     this->hdz = ((float) zdim) / 2;
 
-    this->radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
+    this->radius =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
 
     this->index1 = pow2_1(xdim);
     this->index12 = pow2_1(xdim) + pow2_1(xdim);
