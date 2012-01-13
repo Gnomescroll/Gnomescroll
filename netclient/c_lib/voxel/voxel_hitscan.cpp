@@ -1,6 +1,6 @@
 #include "voxel_hitscan.hpp"
 
-void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
+void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type)
 {
     if(num_elements >= VOXEL_HITSCAN_LIST_SIZE)
     {
@@ -12,9 +12,12 @@ void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
     {
         if(hitscan_list[i] == NULL)
         {
+            hitscan_list[i] = new Voxel_hitscan_element;
             num_elements++;
-            hitscan_list[i] = vv;
-            vv->id = i;
+            hitscan_list[i]->vv = vv;
+            hitscan_list[i]->entity_id = entity_id;
+            hitscan_list[i]->entity_type = entity_type;
+                      
             vv->voxel_hitscan_list = this;
             break;
         }
@@ -27,12 +30,12 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        if(hitscan_list[i] == vv)
+        if(hitscan_list[i]->vv == vv)
         {
             num_elements--;
+            delete hitscan_list[i];
             hitscan_list[i] = NULL;
             printf("Removed voxel volume %i \n", i);
-            vv->id = -1;
             vv->voxel_hitscan_list = NULL;
             return;
         }

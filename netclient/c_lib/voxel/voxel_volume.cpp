@@ -15,12 +15,6 @@
 
     #include <voxel/voxel_hitscan.hpp>
 
-    void Voxel_volume::register_with_hitscan(Voxel_hitscan_list* vhl)
-    {
-        vhl->register_voxel_volume(this);
-        voxel_hitscan_list = vhl;
-    }
-
 void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale) {
     this->xdim = xdim;
     this->ydim = ydim;

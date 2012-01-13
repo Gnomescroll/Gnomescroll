@@ -159,7 +159,7 @@ class Voxel_volume
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;
-    void register_with_hitscan(Voxel_hitscan_list* vhl);
+    //void register_with_hitscan(Voxel_hitscan_list* vhl);
 
     //methods
     void set_unit_axis();
