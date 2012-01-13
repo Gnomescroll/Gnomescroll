@@ -19,6 +19,8 @@ struct Voxel_hitscan_element
     Voxel_volume* vv;
 };
 
+
+
 class Voxel_hitscan_list
 {
     private:
@@ -28,6 +30,9 @@ class Voxel_hitscan_list
 
     void register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type);
     void unregister_voxel_volume(Voxel_volume* vv);
+
+    //pass in x,y,z fire point and direction of projectile
+    void hitscan_test(const float _x0, const float _y0, const float _z0, const float x1, const float y1, const float z1);
 
     Voxel_hitscan_list()
     :
