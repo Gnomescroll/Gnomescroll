@@ -579,4 +579,32 @@ void voxel_test()
     //vv.draw_bounding_box();
 }
 
+void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+    if (this->vertex_list == NULL) return;
+    if (i >= this->vnum) {
+        printf("Voxel_vertex_list::set_color WARNING: index %d exceeds vnum %d\n", i, this->vnum);
+        return;
+    }
+    this->vertex_list[i].rgba[0] = r;
+    this->vertex_list[i].rgba[1] = g;
+    this->vertex_list[i].rgba[2] = b;
+    this->vertex_list[i].rgba[3] = a;
+}
 
+void Voxel_volume::set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
+    //if (this->vvl == NULL) return;
+    this->vvl.set_color(i,r,g,b,a);
+}
+
+void Voxel_volume::set_color(int i, unsigned char rgba[4]) {
+    //if (this->vvl == NULL) return;
+    this->vvl.set_color(i, rgba[0], rgba[1], rgba[2], rgba[3]);
+}
+
+void Voxel_volume::set_colors(int start, int end, unsigned char rgba[][4]) {
+    //if (this->vvl == NULL) return;
+    int i;
+    for (i=start; i<end; i++) {
+        this->set_color(i, rgba[i-start]);
+    }
+}

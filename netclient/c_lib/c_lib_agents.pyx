@@ -111,6 +111,14 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
 
 cdef extern from "./agent/agent_vox.hpp":
     int AGENT_PART_NUM
+    cdef enum AGENT_BODY_PARTS:
+        AGENT_PART_HEAD
+        AGENT_PART_TORSO
+        AGENT_PART_LARM
+        AGENT_PART_RARM
+        AGENT_PART_LLEG
+        AGENT_PART_RLEG
+
     cdef cppclass VoxBody:
         float vox_size
         void set_part(
@@ -120,21 +128,37 @@ cdef extern from "./agent/agent_vox.hpp":
             int dim_x, int dim_y, int dim_z,
             int part_num
         )
+        void set_color(int part, int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     VoxBody agent_vox_dat
 
 def draw_agents():
     agent_list.draw()
+
+head={"voxels":[[11,7,3,31,223,223,255],[11,7,4,31,223,223,255],[11,7,5,31,223,223,255],[11,8,5,31,223,223,255],[11,8,3,31,223,223,255],[11,7,2,31,223,223,255],[11,7,1,31,223,223,255],[11,8,1,31,223,223,255],[11,8,2,48,48,48,255],[11,8,4,48,48,48,255],[10,7,1,31,223,223,255],[10,7,3,31,223,223,255],[10,7,2,31,223,223,255],[10,7,5,31,223,223,255],[10,7,4,31,223,223,255],[9,7,5,31,223,223,255],[9,7,4,31,223,223,255],[9,7,3,31,223,223,255],[9,7,2,31,223,223,255],[9,7,1,31,223,223,255],[10,8,5,31,223,223,255],[9,8,5,31,223,223,255],[10,8,1,31,223,223,255],[9,8,1,31,223,223,255],[8,7,1,31,223,223,255],[8,8,1,31,223,223,255],[8,7,3,31,223,223,255],[8,7,2,31,223,223,255],[8,7,5,31,223,223,255],[8,7,4,31,223,223,255],[8,8,5,31,223,223,255],[8,8,4,31,223,223,255],[8,8,3,31,223,223,255],[8,8,2,31,223,223,255],[8,9,5,31,223,223,255],[8,9,4,31,223,223,255],[8,9,3,31,223,223,255],[8,9,2,31,223,223,255],[8,9,1,31,223,223,255],[9,9,1,31,223,223,255],[10,9,1,31,223,223,255],[11,9,1,31,223,223,255],[9,9,5,31,223,223,255],[10,9,5,31,223,223,255],[11,9,5,31,223,223,255],[11,9,4,31,223,223,255],[11,9,3,31,223,223,255],[11,9,2,31,223,223,255],[9,9,2,31,223,223,255],[9,9,3,31,223,223,255],[9,9,4,31,223,223,255],[10,9,4,31,223,223,255],[10,9,3,31,223,223,255],[10,9,2,31,223,223,255],[9,9,6,31,223,80,255],[9,9,0,31,223,80,255]],"vosize":0.2,"dim":[11,11,11]}
 
 import dat.agent_dim as dat
 def load_agent_voxel_dat():
     agent_vox_dat.vox_size = dat.vosize
 
     for part in range(AGENT_PART_NUM):
-        xdim,ydim,zdim = dat.lu1[part]
+        if part == AGENT_PART_HEAD:
+            xdim,ydim,zdim = head['dim']
+        else:
+            xdim,ydim,zdim = dat.lu1[part]
+            
         length, ax,ay,az= dat.lu2[part]
         fx,fy,fz, nx,ny,nz = dat.lu3[part]
 
         agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
+
+        if part == AGENT_PART_HEAD:
+            for i in range(xdim*ydim*zdim):
+                a = 255
+                try:
+                    r,g,b = head['voxels'][i][-3:]
+                except IndexError:
+                    r,g,b,a = 255,255,255,0
+                agent_vox_dat.set_color(part,i,r,g,b,a)
 
 
 '''
