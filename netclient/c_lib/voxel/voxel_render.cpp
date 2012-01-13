@@ -52,6 +52,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
     int v_num = 0;
+    bool needs_update = false;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
@@ -59,6 +60,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         vv = render_list[i];
         if( vv->needs_vbo_update == true )
         {
+            needs_update = true;
             vv->update_vertex_list();
             //printf("%i vnum= %i \n", i, _vbo->vnum);
         }
@@ -67,39 +69,40 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     _vbo->vnum = v_num;
 
-    printf("total vnum= %i \n", _vbo->vnum);
+    if(needs_update == false)
+    {
+        return;         //no voxel volumes were updated
+    }
 
     if(v_num == 0)
     {
         printf("Voxel_render_list::update_vertex_buffer_object, zero vertices \n");
         return;
     }
-    //printf("2 vnum= %i \n", v_num);
 
-/*
-    Avoid mallocing all the time if possible
+    printf("Voxel_render_list::update_vertex_buffer_object: total vnum= %i \n", _vbo->vnum);
 
-*/
-    if(_vbo->vertex_list != NULL) 
+    if( v_num >= _vbo->max_size ) 
     {
-        free(_vbo->vertex_list);
-        _vbo->vertex_list = NULL;
+        while(v_num >= _vbo->max_size)
+        {
+            _vbo->max_size *= 2; //double max size until its large enough and realloc
+        }
+        _vbo->vertex_list = (Voxel_vertex*) realloc (_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex) );
     }
-    _vbo->vertex_list = (Voxel_vertex*) malloc(sizeof(Voxel_vertex) *v_num );
+    
+    //_vbo->vertex_list = (Voxel_vertex*) malloc(sizeof(Voxel_vertex) *v_num );
     //printf("array size= %i \n", sizeof(Voxel_vertex) *v_num );
 
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
-
         vv = render_list[i];
 
         //printf("%i: memcpy: %i vertices, %i bytes at offset %i \n", i,vv->vvl.vnum, vv->vvl.vnum*sizeof(Voxel_vertex) , index);
-
         //memcpy( _vbo->vertex_list+index*sizeof(Voxel_vertex), vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
-
         render_list[i]->vvl.voff = index;
         //index += vv->vvl.vnum*sizeof(Voxel_vertex);   // BUG
         index += vv->vvl.vnum;
@@ -224,12 +227,11 @@ void Voxel_render_list::draw()
     int i;
     for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == NULL) continue;
-
-        if (!render_list[i]->draw) continue;
-        
+        if(render_list[i] == NULL || !render_list[i]->draw) continue;
         vv = render_list[i];
-        if(vv->vvl.vnum == 0) printf("no vertices \n");
+
+        if(fulstrum_test::sphere_fulstrum_test() )
+        //if(vv->vvl.vnum == 0) printf("no vertices \n");
 
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
         v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);

@@ -13,6 +13,7 @@ struct VBOmeta
     GLuint id;
     Voxel_vertex* vertex_list;
     int vnum;
+    int max_size; //in voxel vertex elements
     //use to prevent constant mallocing
     //int size_max; //increase size if it goes over this
 };
@@ -27,15 +28,18 @@ class Voxel_volume_token
 #define VOXEL_RENDER_LIST_SIZE 1024
 
 /*
+    Note: again, here need a list template for adding/removing/iterating
     list, add, remove, swap, iterate
 */
 
 class Voxel_render_list
 {
-    public:
+    private:
+    Voxel_volume** render_list;
     struct VBOmeta vbo_wrapper[2];
 
-    Voxel_volume** render_list;
+    public:
+
     int num_elements;
 
     void register_voxel_volume(Voxel_volume* vv);
@@ -50,8 +54,13 @@ class Voxel_render_list
     :
     num_elements(0)
     {
-        vbo_wrapper[0].vertex_list = NULL;
-        vbo_wrapper[1].vertex_list = NULL;
+        const int starting_size = 1024;
+
+        vbo_wrapper[0].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
+        vbo_wrapper[1].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
+
+        vbo_wrapper[0].max_size = starting_size; //in voxel vertex
+        vbo_wrapper[1].max_size = starting_size;
 
         vbo_wrapper[0].id = 0;
         vbo_wrapper[1].id = 0;

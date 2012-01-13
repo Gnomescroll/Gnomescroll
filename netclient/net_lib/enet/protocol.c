@@ -743,6 +743,7 @@ enet_protocol_handle_bandwidth_limit (ENetHost * host, ENetPeer * peer, const EN
     if (peer -> windowSize > ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE)
       peer -> windowSize = ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE;
 
+    printf("enet_protocol_handle_bandwidth_limit \n");
     return 0;
 }
 
@@ -753,6 +754,7 @@ enet_protocol_handle_throttle_configure (ENetHost * host, ENetPeer * peer, const
     peer -> packetThrottleAcceleration = ENET_NET_TO_HOST_32 (command -> throttleConfigure.packetThrottleAcceleration);
     peer -> packetThrottleDeceleration = ENET_NET_TO_HOST_32 (command -> throttleConfigure.packetThrottleDeceleration);
 
+    printf("enet_protocol_handle_throttle_configure \n");
     return 0;
 }
 
@@ -1267,6 +1269,9 @@ enet_protocol_send_unreliable_outgoing_commands (ENetHost * host, ENetPeer * pee
 
        currentCommand = enet_list_next (currentCommand);
 
+       /*
+        Is this the packet throttle!?
+       */
        if (outgoingCommand -> packet != NULL && outgoingCommand -> fragmentOffset == 0)
        {
           peer -> packetThrottleCounter += ENET_PEER_PACKET_THROTTLE_COUNTER;
@@ -1274,6 +1279,7 @@ enet_protocol_send_unreliable_outgoing_commands (ENetHost * host, ENetPeer * pee
           
           if (peer -> packetThrottleCounter > peer -> packetThrottle)
           {
+            printf("enet_protocol_send_unreliable_outgoing_commands: packet throttle? \n");
              enet_uint16 reliableSequenceNumber = outgoingCommand -> reliableSequenceNumber,
                          unreliableSequenceNumber = outgoingCommand -> unreliableSequenceNumber;
              for (;;)
@@ -1749,6 +1755,10 @@ enet_host_service (ENetHost * host, ENetEvent * event, enet_uint32 timeout)
 
     do
     {
+
+      /*
+        Note: this does bandwidth throttling update, can set this to inifinity or comment it out?
+      */
        if (ENET_TIME_DIFFERENCE (host -> serviceTime, host -> bandwidthThrottleEpoch) >= ENET_HOST_BANDWIDTH_THROTTLE_INTERVAL)
          enet_host_bandwidth_throttle (host);
 

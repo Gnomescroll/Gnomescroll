@@ -1,5 +1,7 @@
 #include "./camera.hpp"
 
+#include <c_lib/camera/fulstrum_test.hpp>
+
 extern float _xresf;
 extern float _yresf;
 
@@ -136,6 +138,8 @@ void CCamera::world_projection() {
     } else {
         printf("camera world_projection :: model_view_matrix is null\n");
     }
+
+    fulstrum_test::setup_fulstrum(); //fulstrum test
 
     glEnable (GL_DEPTH_TEST);
 

@@ -309,7 +309,10 @@ enet_host_bandwidth_limit (ENetHost * host, enet_uint32 incomingBandwidth, enet_
 {
     host -> incomingBandwidth = incomingBandwidth;
     host -> outgoingBandwidth = outgoingBandwidth;
-    host -> recalculateBandwidthLimits = 1;
+    host -> recalculateBandwidthLimits = 1;   //was 1
+    /*
+      Note, what effect does this have?
+    */
 }
 
 void
@@ -410,6 +413,8 @@ enet_host_bandwidth_throttle (ENetHost * host)
           peer -> packetThrottle = peer -> packetThrottleLimit;
     }
     
+
+    //this is disabled
     if (host -> recalculateBandwidthLimits)
     {
        host -> recalculateBandwidthLimits = 0;
