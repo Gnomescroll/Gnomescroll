@@ -581,6 +581,7 @@ void voxel_test()
     //vv.draw_bounding_box();
 }
 
+/*
 void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
     if (this->vertex_list == NULL) return;
     if (i >= this->vnum) {
@@ -592,17 +593,25 @@ void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsig
     this->vertex_list[i].rgba[2] = b;
     this->vertex_list[i].rgba[3] = a;
 }
+*/
 
-void Voxel_volume::set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
-    //if (this->vvl == NULL) return;
-    this->vvl.set_color(i,r,g,b,a);
+void Voxel_volume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
+{
+    _set(x,y,z,r,g,b,a);
+    needs_vbo_update = true;
 }
 
-void Voxel_volume::set_color(int i, unsigned char rgba[4]) {
+
+void Voxel_volume::set_color(int x, int y, int z, unsigned char rgba[4]) 
+{
     //if (this->vvl == NULL) return;
-    this->vvl.set_color(i, rgba[0], rgba[1], rgba[2], rgba[3]);
+    //this->vvl.set_color(i, rgba[0], rgba[1], rgba[2], rgba[3]);
+    _set(x,y,z, rgba[0], rgba[1], rgba[2], rgba[3] );
+    needs_vbo_update = true;
 }
 
+
+/*
 void Voxel_volume::set_colors(int start, int end, unsigned char rgba[][4]) {
     //if (this->vvl == NULL) return;
     int i;
@@ -610,3 +619,4 @@ void Voxel_volume::set_colors(int start, int end, unsigned char rgba[][4]) {
         this->set_color(i, rgba[i-start]);
     }
 }
+*/

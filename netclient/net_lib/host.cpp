@@ -61,8 +61,8 @@ void init_net_client()
     client_host = enet_host_create (NULL /* create a client host */,
                 1 /* only allow 1 outgoing connection */,
                 4 /* allow up 4 channels*/,
-                65536 /* 56K modem with 56 Kbps downstream bandwidth */,
-                65536 /* 56K modem with 14 Kbps upstream bandwidth */);
+                0 /* 56K modem with 56 Kbps downstream bandwidth */,
+                0 /* 56K modem with 14 Kbps upstream bandwidth */);
 
     if (client_host == NULL)
     {

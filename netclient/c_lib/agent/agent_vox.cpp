@@ -30,7 +30,16 @@ void Agent_vox::init_parts() {
             g = vp->colors.rgba[i][1];
             b = vp->colors.rgba[i][2];
             a = vp->colors.rgba[i][3];
-            this->vv[i].set_color(j, r,g,b,a);
+
+        /*
+            Need to get x,y,z cordinates of voxel in volume
+
+            WARNING!! Conversion might be wrong
+        */
+            int _x = i % x;
+            int _y = i / x;
+            int _z = i / (x*y);
+            this->vv[i].set_color(_x, _y, _z, r,g,b,a);
         }
 
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));

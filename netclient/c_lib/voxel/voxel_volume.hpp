@@ -159,9 +159,9 @@ class Voxel_volume
     void update_vertex_list();
 #endif
 
-    void set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-    void set_color(int i, unsigned char rgba[4]);
-    void set_colors(int start, int end, unsigned char rgba[][4]);
+    void set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    void set_color(int x, int y, int z, unsigned char rgba[4]);
+    //void set_colors(int start, int end, unsigned char rgba[][4]);
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;
