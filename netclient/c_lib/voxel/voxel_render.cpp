@@ -230,8 +230,8 @@ void Voxel_render_list::draw()
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
         vv = render_list[i];
 
-        sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius);
-        //if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
+        //sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius);
+        if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
         
         //if(vv->vvl.vnum == 0) printf("no vertices \n");
 
