@@ -214,10 +214,11 @@ class VoxBody {
             }
         }
 
-        void set_color(int part, int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
         {
             VoxPart* p = vox_part[part];
             if (p==NULL) return;
+            int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
             p->colors.set(i, r,g,b,a);
         }
 
