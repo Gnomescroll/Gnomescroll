@@ -11,6 +11,8 @@
 #include <t_map/t_properties.h>
 #include <t_map/t_extern.h>
 
+#include <c_lib/camera/fulstrum_test.hpp>
+
 //#include <t_map/t_map.hpp>
 //#include <t_map/t_vbo.h>
 
@@ -160,10 +162,14 @@ void Minivox_list::draw() {
     glBegin(GL_QUADS);
 
     int i;
+
+
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->draw();
-    }
+    }        
+  
+
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
@@ -174,13 +180,24 @@ void Minivox_list::draw() {
 
 void Minivox::draw() {
 #ifdef DC_CLIENT
-    if (draw_mode == MINIVOX_DRAW_MODE_TEXTURED) {
+
+    // Quit if voxel is completely transparent
+    //if(vox.a == 0) return;
+
+    // copy the particle position for cleaner code
+    const float
+        x0 = particle.state.p.x,
+        y0 = particle.state.p.y,
+        z0 = particle.state.p.z;
+
+        
+    if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
+
+    if (draw_mode == MINIVOX_DRAW_MODE_TEXTURED) 
+    {
         draw_textured();
         return;
     }
-    
-    // Quit if voxel is completely transparent
-    if(vox.a == 0) return;
 
     // set color mode
     glColor3ub(vox.r, vox.g, vox.b);
@@ -200,11 +217,6 @@ void Minivox::draw() {
         }
     }
 
-    // copy the particle position for cleaner code
-    const float
-        x0 = particle.state.p.x,
-        y0 = particle.state.p.y,
-        z0 = particle.state.p.z;
 
     // draw voxel
     for(i=0; i<6; i++) {

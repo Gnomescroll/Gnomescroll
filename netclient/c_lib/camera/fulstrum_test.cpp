@@ -59,6 +59,23 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
     return true;
 }
 
+bool point_fulstrum_test(float x, float y, float  z)
+{
+    x -= fulstrum_c.x;
+    y -= fulstrum_c.y;
+    z -= fulstrum_c.z;
+
+    float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
+    if( dz < 0 || dz > fulstrum_zfar ) return false;
+
+    float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
+    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+
+    float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
+    if( dy < -dz*fulstrum_hy || dy > dz*fulstrum_hy ) return false;
+
+    return true;
+}
 
 void draw_fulstrum()
 {

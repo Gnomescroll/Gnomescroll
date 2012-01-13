@@ -41,14 +41,17 @@ class Minivox {
             particle.ttl = ttl;
         }
 
-        int draw_mode;
+
         float pix_margin;
         float tx,ty;
-        int texture_pixel_width;
+        
+        short draw_mode;
+        short texture_pixel_width;
+        
         void set_texture(int tex_id);
         void set_texture(int tex_id, int pixels_wide);
         
-        void draw();
+        void draw() __attribute((always_inline));
         void draw_textured();
         void tick();
         Minivox(int id);

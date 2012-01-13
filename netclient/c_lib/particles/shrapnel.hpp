@@ -16,7 +16,7 @@ class Shrapnel {
     public:
         Particle2 particle;
 
-        void draw();
+        void draw() __attribute((always_inline));
         void tick();
         Shrapnel(int id);
         Shrapnel(int id, float x, float y, float z, float vx, float vy, float vz);
