@@ -50,6 +50,8 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 class Voxel_render_list; //forward declaration
 #endif
 
+class Voxel_hitscan_list; //forward declaration
+
 #ifdef DC_CLIENT
 
 struct Voxel_normal
@@ -161,6 +163,11 @@ class Voxel_volume
     void set_color(int i, unsigned char rgba[4]);
     void set_colors(int start, int end, unsigned char rgba[][4]);
 
+    //hitscan registration
+    Voxel_hitscan_list* voxel_hitscan_list;
+    void register_with_hitscan(Voxel_hitscan_list* vhl);
+
+    //methods
     void set_unit_axis();
 
     //forward and up vector

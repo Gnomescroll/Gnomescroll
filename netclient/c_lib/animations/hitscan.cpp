@@ -119,6 +119,7 @@ void HitscanEffect_list::draw()
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
 
     glColor3ub(255,255,255);
+
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -131,13 +132,12 @@ void HitscanEffect_list::draw()
 
     //int count= 0;
     int i;
-    for(i=0; i<n_max; i++) {
+    for(i=0; i<n_max; i++) 
+    {
         if (a[i] == NULL) continue;
-        //printf("Drawing %d\n", i);
-        //count++;
+        a[i]->draw(delta, &camera);
     }
-    //printf("count= %i \n", count);
-
+    
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);

@@ -53,7 +53,7 @@ void setShaders2()
     //vs = textFileRead((char*) "./media/shaders/lsd.vsh");
     //fs = textFileRead((char*) "./media/shaders/lsd.fsh");
 
-    printf("setShaders2: \n");
+    if(DEBUG) printf("setShaders2: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_00.fsh");
@@ -105,7 +105,7 @@ void setShaders3()
 
     char *vs, *fs;
 
-    printf("setShaders3: \n");
+    if(DEBUG) printf("setShaders3: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain_map_mipmap.fsh");
@@ -148,7 +148,7 @@ void setShaders4()
 
     char *vs, *fs;
 
-    printf("setShaders4: \n");
+    if(DEBUG) printf("setShaders4: \n");
 
     vs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.vsh");
     fs = textFileRead((char*) "./media/shaders/terrain/terrain_map_mipmap_bilinear_ao.fsh");

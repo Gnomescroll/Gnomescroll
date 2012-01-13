@@ -86,7 +86,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         _vbo->vertex_list = NULL;
     }
     _vbo->vertex_list = (Voxel_vertex*) malloc(sizeof(Voxel_vertex) *v_num );
-    printf("array size= %i \n", sizeof(Voxel_vertex) *v_num );
+    //printf("array size= %i \n", sizeof(Voxel_vertex) *v_num );
 
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -95,8 +95,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 
         vv = render_list[i];
 
-        printf("%i: memcpy: %i vertices, %i bytes at offset %i \n", 
-        i,vv->vvl.vnum, vv->vvl.vnum*sizeof(Voxel_vertex) , index);
+        //printf("%i: memcpy: %i vertices, %i bytes at offset %i \n", i,vv->vvl.vnum, vv->vvl.vnum*sizeof(Voxel_vertex) , index);
 
         //memcpy( _vbo->vertex_list+index*sizeof(Voxel_vertex), vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
@@ -110,7 +109,7 @@ void Voxel_render_list::update_vertex_buffer_object()
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
 
-    printf("Uploaded %i bytes to VBO \n", index);
+    //printf("Uploaded %i bytes to VBO \n", index);
 
 }
 
@@ -126,7 +125,6 @@ int InRotationMatrix;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
-
     static int init=0;
     if (init) return;
     printf("init voxel shader\n");
@@ -178,112 +176,10 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
     init=1;
 }
 
-
-void Voxel_render_list::draw_debug()
-{
-    
-    glDisable(GL_TEXTURE_2D);
-    //    glEnable(GL_TEXTURE_2D);
-
-    glDisable (GL_DEPTH_TEST);
-
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(-5.0, -5.0, 10.);
-    glEnd();
-    glPointSize(1.0);
-
-
-    glEnable (GL_DEPTH_TEST);
-
-    VBOmeta* _vbo = &vbo_wrapper[0]; 
-
-    //printf("buff= %i \n",  _vbo->id);
-
-    if( _vbo->vnum == 0 )
-    {
-        printf("Voxel_render_list::draw, vnum equals zero \n");
-        return;
-    }
-
-    if( _vbo->id == 0 )
-    {
-        printf("Voxel_render_list::draw, vbo is zero \n");
-        return;
-    }
-
-    glPointSize(10.0);
-
-    glUseProgramObjectARB(voxel_shader_prog);
-
-    glColor3b(255,255,255);
-
-    glDisable(GL_TEXTURE_2D);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
-
-    Voxel_volume* vv;
-    Vector4 v[4];
-
-    v[0].w = 0.0f;
-    v[1].w = 0.0f;
-    v[2].w = 0.0f;
-    v[3].w = 1.0f;
-
-    int i;
-    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    {
-        if(render_list[i] == NULL) continue;
-
-        if (!render_list[i]->draw) continue;
-        
-        vv = render_list[i];
-        if(vv->vvl.vnum == 0) printf("no vertices \n");
-
-        v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
-        v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
-        v[2].v3 = vector_scalar2(&vv->v[2], vv->scale);
-        v[3].v3 = vv->v[3];
-    
-        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
-        //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
-
-        glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
-        //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
-
-    }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-
-    glUseProgramObjectARB(0);
-    glPointSize(1.0);
-}
-
-
 void Voxel_render_list::draw()
 {
-    
     glDisable(GL_TEXTURE_2D);
     //    glEnable(GL_TEXTURE_2D);
-
-    glDisable (GL_DEPTH_TEST);
-
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(-5.0, -5.0, 10.);
-    glEnd();
-    glPointSize(1.0);
-
-
-    glEnable (GL_DEPTH_TEST);
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
 
@@ -294,19 +190,13 @@ void Voxel_render_list::draw()
         printf("Voxel_render_list::draw, vnum equals zero \n");
         return;
     }
-
     if( _vbo->id == 0 )
     {
         printf("Voxel_render_list::draw, vbo is zero \n");
         return;
     }
 
-    glPointSize(10.0);
-
     glUseProgramObjectARB(voxel_shader_prog);
-
-    //glEnableVertexAttribArray(InCood0);
-    //glEnableVertexAttribArray(InRGBA);
 
     glColor3b(255,255,255);
 
@@ -314,9 +204,6 @@ void Voxel_render_list::draw()
     //glEnable(GL_CULL_FACE);
 
     glDisable(GL_TEXTURE_2D);
-    //glDisable (GL_DEPTH_TEST);
-
-    //printf("Start Draw\n");
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -344,52 +231,28 @@ void Voxel_render_list::draw()
         vv = render_list[i];
         if(vv->vvl.vnum == 0) printf("no vertices \n");
 
-        //glVertexAttribPointer(InCood0 , 3, GL_FLOAT, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)0);
-        //glVertexAttribPointer(InRGBA , 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)12);
-
-        //printf("drawing %i vertices from offset %i \n", vv->vvl.vnum, vv->vvl.voff);
-
-        //GL_POINTS
-
-//int InRotationMatrix;
-//int InTranslation;
-
-        //vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-        //vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-        //vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
-    /*
-        *((Vector*) &v[0]) = vv->v[0];
-        *((Vector*) &v[1]) = vv->v[1];
-        *((Vector*) &v[2]) = vv->v[2];
-        *((Vector*) &v[3]) = vv->v[3];
-    */
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
         v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
         v[2].v3 = vector_scalar2(&vv->v[2], vv->scale);
         v[3].v3 = vv->v[3];
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
-        //glUniform3fvARB(InTranslation, 1, (GLfloat*)&vv->v[3]);
-
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
-        //glDrawArrays( GL_POINTS, vv->vvl.voff, vv->vvl.vnum );
-
     }
-
-    //glEnable (GL_DEPTH_TEST);
-
-    //glDisableVertexAttribArray(InCood0);
-    //glDisableVertexAttribArray(InRGBA);
-
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
 
+    glEnable (GL_DEPTH_TEST);
+
+    //glEnable(GL_TEXTURE_2D);
+
     glUseProgramObjectARB(0);
-    glPointSize(1.0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glPointSize(1.0);
 }
 
 void voxel_renderer_draw_test()
-{
+{   
     printf("voxel test \n");
 
     static Voxel_volume vv (4,4,2, 2.0);
