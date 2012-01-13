@@ -9,6 +9,48 @@ union Voxel {
     unsigned int color;
 };
 
+struct Voxel_normal
+{
+    union
+    {
+        char normal[4]; //16
+        unsigned int n;
+    };
+};
+
+struct Voxel_vertex
+{
+    float x,y,z;
+    union
+    {
+        unsigned char rgba[4]; //12
+        unsigned int color;
+    };
+    union
+    {
+        char normal[4]; //16
+        unsigned int n;
+    };
+    //can compute normals from t
+};
+
+#ifdef DC_CLIENT
+class Voxel_vertex_list
+{
+    public:
+    Voxel_vertex* vertex_list;   //number of vertices
+    int size;   //offset of vertices
+
+    unsigned short vnum;   //number of vertices
+    unsigned short voff;   //offset of vertices
+
+    Voxel_vertex_list()
+    :
+    vertex_list(NULL),
+    size(0), vnum(0), voff(0)
+    {}
+};
+#endif
 
 /*
 struct Voxel {

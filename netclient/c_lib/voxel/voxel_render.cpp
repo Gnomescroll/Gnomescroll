@@ -1,6 +1,7 @@
 #include "voxel_render.hpp"
 
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/camera/fulstrum_test.hpp>
 
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 {
@@ -230,7 +231,7 @@ void Voxel_render_list::draw()
         if(render_list[i] == NULL || !render_list[i]->draw) continue;
         vv = render_list[i];
 
-        if(fulstrum_test::sphere_fulstrum_test() )
+        if( sphere_fulstrum_test() )
         //if(vv->vvl.vnum == 0) printf("no vertices \n");
 
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);

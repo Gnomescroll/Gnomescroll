@@ -2,101 +2,13 @@
 
 #include <voxel/common.h>
 #include <physics/vector.hpp>
-
-/*
-optimization: compute matix and return matrix
-*/
-// possibly wrong
-struct Vector euler_rotation(Vector v, float theta) __attribute((always_inline));
-struct Vector euler_rotation(Vector v, float x, float y, float z)
-{   
-    x *= 2*PI;
-    y *= 2*PI;
-    z *= 2*PI;
-
-    double cx = cos(x);
-    double sx = sin(x);
-    double cy = cos(y);
-    double sy = sin(y);
-    double cz = cos(z);
-    double sz = sin(z);
-    
-    Vector m[3];
-    Vector u;
-
-    m[0].x = (cy*cz); 
-    m[0].y = (cy*sz);
-    m[0].z = (-sy);
-
-    double sxsy = sx*sy;
-    double cxsy = cx*sy;
-    
-    m[1].x = (sxsy*cz-cx*sz);
-    m[1].y = (sxsy*sz+cx*cz);
-    m[1].z = (sx*cy);
-
-    m[2].x = (cxsy*cz+sx*sz);
-    m[2].y = (cxsy*sz-sx*cz);
-    m[2].z = (cx*cy);
-
-    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
-    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
-    u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
-
-    return u;
-}
+#include <physics/matrix.hpp>
 
 #ifdef DC_CLIENT
 class Voxel_render_list; //forward declaration
 #endif
-
 class Voxel_hitscan_list; //forward declaration
 
-#ifdef DC_CLIENT
-
-struct Voxel_normal
-{
-    union
-    {
-        char normal[4]; //16
-        unsigned int n;
-    };
-};
-
-struct Voxel_vertex
-{
-    float x,y,z;
-    union
-    {
-        unsigned char rgba[4]; //12
-        unsigned int color;
-    };
-    union
-    {
-        char normal[4]; //16
-        unsigned int n;
-    };
-    //can compute normals from t
-};
-
-class Voxel_vertex_list
-{
-    public:
-    Voxel_vertex* vertex_list;   //number of vertices
-    int size;   //offset of vertices
-
-    unsigned short vnum;   //number of vertices
-    unsigned short voff;   //offset of vertices
-
-    void set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-
-    Voxel_vertex_list()
-    :
-    vertex_list(NULL),
-    size(0), vnum(0), voff(0)
-    {}
-};
-#endif
 
 class Voxel_volume
 {
@@ -106,27 +18,16 @@ class Voxel_volume
 #endif
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
-    {
-        return &voxel[x+(y << index1)+(z << index1)];
-    }
-
+    { return &voxel[x+(y << index1)+(z << index1)]; }
 
     inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
-    {
-        return voxel[x+(y << index1)+(z << index1)].color;
-    }
+    { return voxel[x+(y << index1)+(z << index1)].color; }
 
-    //internal methods
     inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
-    {
-        voxel[x+(y << index1)+(z << index1)] = *v;
-    }
+    { voxel[x+(y << index1)+(z << index1)] = *v; }
 
     inline void _set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
-    {
-        Voxel* v = &voxel[x+(y << index1)+(z << index1)];
-        v->r = r;v->g = g;v->b = b;v->a = a;
-    }
+    {  Voxel* v = &voxel[x+(y << index1)+(z << index1)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
     public:
 
@@ -141,7 +42,7 @@ class Voxel_volume
     float scale;    //size of voxels
     //bounding sphere
     Vector center;
-    float radius2;  // unused
+    float radius;   //update when changing scale
 
     int xdim,ydim,zdim;
     int _xdim,_ydim,_zdim;

@@ -139,7 +139,7 @@ void CCamera::world_projection() {
         printf("camera world_projection :: model_view_matrix is null\n");
     }
 
-    fulstrum_test::setup_fulstrum(); //fulstrum test
+    setup_fulstrum(); //fulstrum test
 
     glEnable (GL_DEPTH_TEST);
 

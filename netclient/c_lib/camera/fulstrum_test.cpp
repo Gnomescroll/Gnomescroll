@@ -1,7 +1,5 @@
 #include "fulstrum_test.hpp"
 
-namespace fulstrum_test
-{
 
 void setup_test_fulstrum(int camera)
 {}
@@ -19,6 +17,4 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 void draw_fulstrum()
 {
     //implement later
-}
-
 }

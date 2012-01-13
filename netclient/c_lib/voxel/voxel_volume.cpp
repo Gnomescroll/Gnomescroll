@@ -42,7 +42,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     this->index1 = pow2_1(xdim);
     this->index12 = pow2_1(xdim) + pow2_1(xdim);
 
-    this->radius2 =  (hdx*hdz + hdy*hdy + hdz*hdz) * (scale*scale); //radius squared of bounding sphere
+    //update radius if changing scale
+    this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);

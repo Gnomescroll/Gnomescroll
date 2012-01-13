@@ -1,5 +1,50 @@
 #pragma once
 
+
+
+/*
+optimization: compute matix and return matrix
+*/
+// possibly wrong
+struct Vector euler_rotation(Vector v, float x, float y, float z)
+{   
+    x *= 2*PI;
+    y *= 2*PI;
+    z *= 2*PI;
+
+    double cx = cos(x);
+    double sx = sin(x);
+    double cy = cos(y);
+    double sy = sin(y);
+    double cz = cos(z);
+    double sz = sin(z);
+    
+    Vector m[3];
+    Vector u;
+
+    m[0].x = (cy*cz); 
+    m[0].y = (cy*sz);
+    m[0].z = (-sy);
+
+    double sxsy = sx*sy;
+    double cxsy = cx*sy;
+    
+    m[1].x = (sxsy*cz-cx*sz);
+    m[1].y = (sxsy*sz+cx*cz);
+    m[1].z = (sx*cy);
+
+    m[2].x = (cxsy*cz+sx*sz);
+    m[2].y = (cxsy*sz-sx*cz);
+    m[2].z = (cx*cy);
+
+    u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
+    u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
+
+    return u;
+}
+
+
 //Matix reference implementation
 
 /*

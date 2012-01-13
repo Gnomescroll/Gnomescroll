@@ -23,6 +23,9 @@
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vector.cpp>
+#include <c_lib/physics/vector4.cpp>
+#include <c_lib/physics/matrix.cpp>
+
 #include <c_lib/ray_trace/ray_trace.c>
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.c>
