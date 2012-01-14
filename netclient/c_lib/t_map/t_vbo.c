@@ -816,7 +816,7 @@ static inline int hash_function4(int x,int y,int z) __attribute((always_inline))
 
 static inline int hash_function4(int x,int y,int z)
 {
-    unsigned int v = ((x*967 + y)*337 + z);
+    unsigned int v = ((x*967 + y)*337 + 17*z);
     v ^= v >> 16;
     v ^= v >> 8;
     v ^= v >> 4;
@@ -834,6 +834,9 @@ const char _pallet[3*_pallet_num] =
     0x3d,0x52,0x5e,
     0x94,0xb2,0xbb,
 };
+
+#include <c_lib/physics/color_matrix.hpp>
+
 
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
@@ -870,18 +873,32 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+3].AO = _ao.AO;
 
         //deprecate when done
-
+        
         int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
+        
+        //float rot = -0.0125 + 0.050*(((float) (hash_function4(x, y, z) % 256)) / 256.0);
+        //printf("rot= %f \n", rot);
 
+        static float rot = 0.0;
+        rot += 0.001;
         /*
             Performance: use union for color copy
         */
 
+        //rot = 0;
+
         struct ColorElement _ce;
+        index = 0;
         _ce.r = _pallet[index+0];
         _ce.g = _pallet[index+1];
         _ce.b = _pallet[index+2];
         _ce.a = 0;
+
+        float mat[4][4];
+
+        identmat(mat);
+        huerotatemat(mat, rot );
+        applymatrix(&_ce.color, mat, 1);
 
         v_list[offset+0].color = _ce.color;
         v_list[offset+1].color = _ce.color;
@@ -919,7 +936,7 @@ static inline int hash_function3(int x,int y,int z) __attribute((always_inline))
 
 static inline int hash_function2(int x,int y,int z)
  {
-    unsigned int v = ((x*967 + y)*337 + z);
+    unsigned int v = ((x*967 + y)*337 + 17*z);
     v ^= v >> 16;
     v ^= v >> 8;
     v ^= v >> 4;
@@ -929,7 +946,7 @@ static inline int hash_function2(int x,int y,int z)
 
 static inline int hash_function3(int x,int y,int z)
 {
-    unsigned int v = ((x*967 + y)*337 + z);
+    unsigned int v = ((x*967 + y)*337 + 17*z);
     v ^= v >> 16;
     v ^= v >> 8;
     v ^= v >> 4;

@@ -22,7 +22,7 @@ void printmat( float mat[4][4] );
  *  applymatrix -
  *      use a matrix to transform colors.
  */
-void applymatrix(int *ptr, float mat[4][4], int n);
+void applymatrix(unsigned int *ptr, float mat[4][4], int n);
 
 /*
  *  matrixmult -

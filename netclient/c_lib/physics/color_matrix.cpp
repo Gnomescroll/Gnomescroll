@@ -38,7 +38,7 @@ void printmat( float mat[4][4] )
  *  applymatrix -
  *      use a matrix to transform colors.
  */
-void applymatrix(int *ptr, float mat[4][4], int n)
+void applymatrix(unsigned int *ptr, float mat[4][4], int n)
 {
     int ir, ig, ib, r, g, b;
     unsigned char *cptr;
@@ -462,8 +462,8 @@ float rot )
     zshearmat(mmat,zsx,zsy);
 
 /* rotate the hue */
-    zrs = sin(rot*M_PI/180.0);
-    zrc = cos(rot*M_PI/180.0);
+    zrs = sin(rot*2*M_PI);
+    zrc = cos(rot*2*M_PI);
     zrotatemat(mmat,zrs,zrc);
 
 /* unshear the space to put the luminance plane back */
