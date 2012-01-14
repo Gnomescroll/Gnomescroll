@@ -103,7 +103,7 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 {
 
     _set(x,y,z,r,g,b,a);
-    
+
     needs_vbo_update = true;
 }
 
@@ -419,7 +419,7 @@ void Voxel_volume::update_vertex_list()
 
 
         //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
-
+        /*
             push_voxel_quad(scratch, &index, x,y,z, 0);
             push_voxel_quad(scratch, &index, x,y,z, 1);
             push_voxel_quad(scratch, &index, x,y,z, 2);
@@ -428,7 +428,7 @@ void Voxel_volume::update_vertex_list()
             push_voxel_quad(scratch, &index, x,y,z, 5);
              
             continue;
-
+        */
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
