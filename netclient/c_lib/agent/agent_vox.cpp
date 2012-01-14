@@ -36,7 +36,7 @@ void Agent_vox::init_parts() {
             ix = j % x;
             iy = ((j - ix) / x) % y;
             iz = (j - ix - iy*x) / (x*y);
-            printf("%d %d %d %d\n", r,g,b,a);
+            //printf("%d %d %d %d\n", r,g,b,a);
             this->vv[i].set_color(ix, iy, iz, r,g,b,a);
         }
     }
