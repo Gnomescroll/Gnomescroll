@@ -51,6 +51,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     int powz = pow2_2(zdim);
 
     voxel = new Voxel[powx*powy*powz];
+
     int r,g,b,a;
     a = 255;
     for(int i=0; i < powx; i++){
@@ -81,24 +82,28 @@ draw(true)
 
 Voxel_volume::~Voxel_volume()
 {
+    printf("voxel volume deconstrutor \n");
+
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) voxel_render_list->unregister_voxel_volume(this);
     #endif
     if(voxel_hitscan_list != NULL) voxel_hitscan_list->unregister_voxel_volume(this);
-    delete voxel;
+    delete[] voxel;
 }
 
 
 //external methods
 void Voxel_volume::set(int x, int y, int z, Voxel* v)
 {
-    set(x,y,z,v);
+    _set(x,y,z,v);
     needs_vbo_update = true;
 }
 
 inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-    set(x,y,z,r,g,b,a);
+
+    _set(x,y,z,r,g,b,a);
+    
     needs_vbo_update = true;
 }
 
@@ -414,7 +419,16 @@ void Voxel_volume::update_vertex_list()
 
 
         //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
- 
+
+            push_voxel_quad(scratch, &index, x,y,z, 0);
+            push_voxel_quad(scratch, &index, x,y,z, 1);
+            push_voxel_quad(scratch, &index, x,y,z, 2);
+            push_voxel_quad(scratch, &index, x,y,z, 3);
+            push_voxel_quad(scratch, &index, x,y,z, 4);
+            push_voxel_quad(scratch, &index, x,y,z, 5);
+             
+            continue;
+
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
@@ -518,7 +532,14 @@ void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsig
 
 void Voxel_volume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
 {
-    _set(x,y,z,r,g,b,a);
+    if(voxel != NULL) { 
+        printf("not null\n");
+        } else
+        {
+            printf("null\n");
+        }
+
+    _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }
 

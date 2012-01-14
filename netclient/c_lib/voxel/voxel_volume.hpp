@@ -18,16 +18,16 @@ class Voxel_volume
 #endif
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
-    { return &voxel[x+(y << index1)+(z << index1)]; }
+    { return &voxel[x+(y << index1)+(z << index12)]; }
 
     inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
-    { return voxel[x+(y << index1)+(z << index1)].color; }
+    { return voxel[x+(y << index1)+(z << index12)].color; }
 
     inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
-    { voxel[x+(y << index1)+(z << index1)] = *v; }
+    { voxel[x+(y << index1)+(z << index12)] = *v; }
 
     inline void _set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
-    {  Voxel* v = &voxel[x+(y << index1)+(z << index1)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+    {  Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
     public:
 
@@ -48,7 +48,7 @@ class Voxel_volume
     int _xdim,_ydim,_zdim;
     Voxel* voxel;
     int index1;
-    int index12;    //unused
+    int index12;
 
     float hdx,hdy,hdz;  //half of width, height, depth as floats
 
