@@ -77,7 +77,8 @@ void Agent_vox::update() {
         this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
         
         if (i == AGENT_PART_HEAD) {
-            this->vv[i].set_rotated_unit_axis(phi, 0.0f, theta);
+            this->vv[i].set_rotated_unit_axis(0.0f, phi/2 - 0.50, theta/2+0.50 );
+            //y_angle/2 - 0.50, x_angle/2+0.50
         } else {
             // add vox conf adjustments
             //forward_tmp = forward;

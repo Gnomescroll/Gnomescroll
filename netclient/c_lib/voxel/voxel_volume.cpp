@@ -499,6 +499,9 @@ void voxel_test()
     //vv.draw_bounding_box();
 }
 
+
+// NOTE: set color on the voxel volume, not on the vertex list!!!
+
 /*
 void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
     if (this->vertex_list == NULL) return;
@@ -528,6 +531,8 @@ void Voxel_volume::set_color(int x, int y, int z, unsigned char rgba[4])
     needs_vbo_update = true;
 }
 
+
+//note, needs to be initialized AND you need to set with x,y,z inputs
 
 /*
 void Voxel_volume::set_colors(int start, int end, unsigned char rgba[][4]) {
