@@ -18,79 +18,7 @@ void Agent_vox::init_parts() {
     int ix,iy,iz;
     VoxPart *vp;
     float size = agent_vox_dat.vox_size;
-    for (p=0; p<AGENT_PART_NUM; p++) {
-        vp = agent_vox_dat.vox_part[p];
-        ///x = vp->dimension.x;
-        //y = vp->dimension.y;
-        //z = vp->dimension.z;
-
-        x = 4;
-        y = 4;
-        z = 4;
-
-        this->vv[p].init(x,y,z,size);
-        this->vv[p].set_unit_axis();
-
-/*
-        for (j=0; j<x*y*z; j++) {
-            r = vp->colors.rgba[j][0];
-            g = vp->colors.rgba[j][1];
-            b = vp->colors.rgba[j][2];
-            a = vp->colors.rgba[j][3];
-
-            ix = j % x;
-            iy = ((j - ix) / x) % y;
-            iz = (j - ix - iy*x) / (x*y);
-            this->vv[i].set_color(ix, iy, iz, r,g,b,a);
-        }
-*/
-        int k;
     
-        for(i=0; i<x; i++){
-        for(j=0; j<y; j++){
-        for(k=0; k<z; k++){
-/*
-            r = (256*i)/x;
-            g = (256*j)/y;
-            b = (256*k)/z;
-            a = 0;
-            this->vv[p].set_color(i, j, k, r,g,b,a);
-*/        
-            r = 0;
-            g = 0;
-            b = 0;
-            a = 0;
-            this->vv[p].set_color(i, j, k, r,g,b,a);
-
-        }}}
-
-        for(i=0; i<x; i++)
-        {
-            r = (256*i)/x;
-            g = 0;
-            b = 0;
-            a = 1;
-            this->vv[p].set_color(i, 0, 0, r,g,b,a);
-        }
-
-        for(j=0; j<y; j++)
-        {
-            r = 0;
-            g = (256*j)/y;
-            b = 0;
-            a = 1;
-            this->vv[p].set_color(0, j, 0, r,g,b,a);
-        }
-
-        for(k=0; k<z; k++)
-        {
-            r = 0;
-            g = 0;
-            b = (256*k)/z;
-            a = 1;
-            this->vv[p].set_color(0, 0, k, r,g,b,a);
-        }
-
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[p]));
     }
     ClientState::voxel_render_list.update_vertex_buffer_object();
