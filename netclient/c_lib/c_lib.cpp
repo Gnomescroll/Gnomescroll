@@ -84,7 +84,7 @@
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
 
-    //#include <c_lib/SDL/IMG_savepng.c>
+    #include <c_lib/SDL/IMG_savepng.c>
     /* HUD */
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>

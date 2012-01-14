@@ -181,7 +181,11 @@ def build(bld):
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
     #noise_libraries = ['noise']
-    png_libs=['png']
+
+    if OS == "Darwin":
+        png_libs = []
+    else:
+        png_libs=['png']
 
     time_lib = ['rt']
     if OS == "Darwin":
