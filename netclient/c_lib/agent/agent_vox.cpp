@@ -26,15 +26,15 @@ void Agent_vox::init_parts() {
         this->vv[i].init(x,y,z,size);
         this->vv[i].set_unit_axis();
 
-        for (j=0; j<x*y*z; j++) {
+        for (j=0; j<vp->colors.n; j++) {
+            ix = vp->colors.index[j][0];
+            iy = vp->colors.index[j][1];
+            iz = vp->colors.index[j][2];
             r = vp->colors.rgba[j][0];
             g = vp->colors.rgba[j][1];
             b = vp->colors.rgba[j][2];
             a = vp->colors.rgba[j][3];
 
-            ix = j % x;
-            iy = ((j - ix) / x) % y;
-            iz = (j - ix - iy*x) / (x*y);
             this->vv[i].set_color(ix, iy, iz, r,g,b,a);
         }
 

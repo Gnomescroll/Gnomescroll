@@ -46,21 +46,40 @@ class Agent_vox {
 class VoxColors {
     public:
         unsigned char** rgba;
+        int **index;
         int n;
-        void init(int n) {
+        void init(int dx, int dy, int dz) {
             if (this->rgba != NULL) return;
-            this->n = n;
-            this->rgba = (unsigned char**)malloc(sizeof(unsigned char)*n*4);
+            this->n = dx*dy*dz;
+            this->rgba = (unsigned char**)malloc(sizeof(unsigned char)*n*7);
+            this->index = (int**)malloc(sizeof(int)*n*3);
             int i;
+            int x=0,y=0,z=0;
             for (i=0; i<n; i++) {
-                this->rgba[i] = (unsigned char*)malloc(sizeof(unsigned char)*4);
+                this->rgba[i] = (unsigned char*)malloc(sizeof(unsigned char)*7);
                 this->rgba[i][0] = 0;
                 this->rgba[i][1] = 0;
                 this->rgba[i][2] = 0;
-                this->rgba[i][3] = 0;                
+                this->rgba[i][3] = 0;
+
+                this->index[i] = (int*)malloc(sizeof(int)*3);
+                this->index[i][0] = x;
+                this->index[i][1] = y;
+                this->index[i][2] = z;
+
+                x++;
+                if (x==dx) {
+                    y++;
+                    if (y==dy) {
+                        z++;
+                    }
+                }
+                x %= dx;
+                y %= dy;
+                z %= dz;
             }
         }
-        void set(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        void set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
         {
             if (i >= this->n)
             {
@@ -69,25 +88,40 @@ class VoxColors {
             }
 
             if (this->rgba == NULL) return;
+            if (this->index == NULL) return;
             
             this->rgba[i][0] = r;
             this->rgba[i][1] = g;
             this->rgba[i][2] = b;
             this->rgba[i][3] = a;
+
+            this->index[i][0] = x;
+            this->index[i][1] = y;
+            this->index[i][2] = z;
         }
+        
         VoxColors()
-        : rgba(NULL), n(0)
+        : rgba(NULL), index(NULL), n(0)
         {}
         ~VoxColors() {
-            if (this->rgba == NULL) return;
             if (this->n <= 0) return;
             
             int i;
-            for (i=0; i<this->n; i++) {
-                if (this->rgba[i] == NULL) continue;
-                free(this->rgba[i]);
+            if (this->rgba != NULL) {
+                for (i=0; i<this->n; i++) {
+                    if (this->rgba[i] == NULL) continue;
+                    free(this->rgba[i]);
+                }
+                free(this->rgba);
             }
-            free(this->rgba);
+
+            if (this->index != NULL) {
+                for (i=0; i<this->n; i++) {
+                    if (this->index[i] == NULL) continue;
+                    free(this->index[i]);
+                }
+                free(this->index);
+            }
         }
 };
 
@@ -184,7 +218,7 @@ struct VoxPart {
             dimension(dim_x, dim_y, dim_z),
             part_num(part_num)
         {
-            colors.init(dim_x*dim_y*dim_z);
+            colors.init(dim_x, dim_y, dim_z);
         }
 };
 
@@ -214,7 +248,7 @@ class VoxBody {
                 p->set_rotation(rot_fx, rot_fy, rot_fz, rot_nx, rot_ny, rot_nz);
                 p->set_anchor(anc_len, anc_x, anc_y, anc_z);
                 p->set_dimension(dim_x, dim_y, dim_z);
-                p->colors.init(dim_x*dim_y*dim_z);
+                p->colors.init(dim_x, dim_y, dim_z);
                 p->part_num = part_num;
             }
         }
@@ -224,9 +258,8 @@ class VoxBody {
             VoxPart* p = vox_part[part];
             if (p==NULL) return;
             int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
-            p->colors.set(i, r,g,b,a);
+            p->colors.set(i, x,y,z, r,g,b,a);
         }
-
 
         VoxBody() {}
         VoxBody(float vox_size) : vox_size(vox_size) {}
