@@ -139,7 +139,7 @@ void CCamera::world_projection() {
     Vector r = Vector_init(0.0, 1.0, 0.0);
     Vector u = Vector_init(0.0, 0.0, 1.0);
     
-    Vector _l  = euler_rotation(f, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+    Vector _l  = euler_rotation(f, 0.0, y_angle - 1.00, x_angle + 1.00 );
 
     xl = _l.x; yl = _l.y; zl = _l.z;
 
@@ -160,9 +160,9 @@ void CCamera::world_projection() {
     //set fulstrum camera up
     {
 
-        f = euler_rotation(f, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
-        r = euler_rotation(r, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
-        u = euler_rotation(u, 0.0, y_angle/2 - 0.50, x_angle/2+0.50 );
+        f = euler_rotation(f, 0.0, y_angle - 1.00, x_angle+1.00 );
+        r = euler_rotation(r, 0.0, y_angle - 1.00, x_angle+1.00 );
+        u = euler_rotation(u, 0.0, y_angle - 1.00, x_angle+1.00 );
 
         setup_fulstrum(fov, ratio, z_far, Vector_init(x,y,z), &f,&r,&u );
          //fulstrum test

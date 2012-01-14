@@ -8,9 +8,9 @@ optimization: compute matix and return matrix
 // possibly wrong
 struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
-    x *= 2*PI;
-    y *= 2*PI;
-    z *= 2*PI;
+    x *= PI;
+    y *= PI;
+    z *= PI;
 
     double cx = cos(x);
     double sx = sin(x);
