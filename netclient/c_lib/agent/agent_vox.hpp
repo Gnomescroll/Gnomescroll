@@ -54,6 +54,10 @@ class VoxColors {
             int i;
             for (i=0; i<n; i++) {
                 this->rgba[i] = (unsigned char*)malloc(sizeof(unsigned char)*4);
+                this->rgba[i][0] = 0;
+                this->rgba[i][1] = 0;
+                this->rgba[i][2] = 0;
+                this->rgba[i][3] = 0;                
             }
         }
         void set(int i, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -210,6 +214,7 @@ class VoxBody {
                 p->set_rotation(rot_fx, rot_fy, rot_fz, rot_nx, rot_ny, rot_nz);
                 p->set_anchor(anc_len, anc_x, anc_y, anc_z);
                 p->set_dimension(dim_x, dim_y, dim_z);
+                p->colors.init(dim_x*dim_y*dim_z);
                 p->part_num = part_num;
             }
         }

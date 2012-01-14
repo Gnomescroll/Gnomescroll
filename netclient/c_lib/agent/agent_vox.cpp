@@ -26,7 +26,6 @@ void Agent_vox::init_parts() {
         this->vv[i].init(x,y,z,size);
         this->vv[i].set_unit_axis();
 
-    if(i==AGENT_PART_HEAD){
         for (j=0; j<x*y*z; j++) {
             r = vp->colors.rgba[j][0];
             g = vp->colors.rgba[j][1];
@@ -36,10 +35,8 @@ void Agent_vox::init_parts() {
             ix = j % x;
             iy = ((j - ix) / x) % y;
             iz = (j - ix - iy*x) / (x*y);
-            //printf("%d %d %d %d\n", r,g,b,a);
             this->vv[i].set_color(ix, iy, iz, r,g,b,a);
         }
-    }
 
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
     }

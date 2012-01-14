@@ -150,7 +150,6 @@ def load_agent_voxel_dat():
         fx,fy,fz, nx,ny,nz = dat.lu3[part]
 
         agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
-
         if part == AGENT_PART_HEAD:
             for vox in head['voxels']:
                 x,y,z, r,g,b,a = vox
@@ -253,8 +252,9 @@ class AgentWrapper(object):
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
-        
 
+
+        
 '''
 
 Player Agent Stuff
