@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -812,6 +812,29 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 }
 */
 
+static inline int hash_function4(int x,int y,int z) __attribute((always_inline));
+
+static inline int hash_function4(int x,int y,int z)
+{
+    unsigned int v = ((x*967 + y)*337 + z);
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    return v;
+}
+
+//#3D525E
+
+const int _pallet_num = 5;
+const char _pallet[3*_pallet_num] = 
+{
+    0x3d, 0x52,0x5e,
+    0x57, 0x6e,0x62,
+    0x6d,0x8e, 0x86,
+    0x3d,0x52,0x5e,
+    0x94,0xb2,0xbb,
+};
+
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -839,6 +862,9 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         //printf("occ1= %i \n", occ1);
 
         //int value = occ1
+        /*
+            Performance: use union for AO copy
+        */
         v_list[offset+0].ao[0] = occ1;
         v_list[offset+0].ao[1] = occ2;
         v_list[offset+0].ao[2] = occ3;
@@ -861,21 +887,26 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
         //deprecate when done
 
-        v_list[offset+0].r = occ1;
-        v_list[offset+0].g = occ1;
-        v_list[offset+0].b = occ1;
+        int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
 
-        v_list[offset+1].r = occ3;
-        v_list[offset+1].g = occ3;
-        v_list[offset+1].b = occ3;
+        /*
+            Performance: use union for color copy
+        */
+        v_list[offset+0].r = _pallet[index+0];
+        v_list[offset+0].g = _pallet[index+1];
+        v_list[offset+0].b = _pallet[index+2];
 
-        v_list[offset+2].r = occ4;
-        v_list[offset+2].g = occ4;
-        v_list[offset+2].b = occ4;
+        v_list[offset+1].r = _pallet[index+0];
+        v_list[offset+1].g = _pallet[index+1];
+        v_list[offset+1].b = _pallet[index+2];
 
-        v_list[offset+3].r = occ2;
-        v_list[offset+3].g = occ2;
-        v_list[offset+3].b = occ2;
+        v_list[offset+2].r = _pallet[index+0];
+        v_list[offset+2].g = _pallet[index+1];
+        v_list[offset+2].b = _pallet[index+2];
+
+        v_list[offset+3].r = _pallet[index+0];
+        v_list[offset+3].g = _pallet[index+1];
+        v_list[offset+3].b = _pallet[index+2];
     }
 }
 
@@ -905,7 +936,6 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
 static inline int hash_function2(int x,int y,int z) __attribute((always_inline));
 static inline int hash_function3(int x,int y,int z) __attribute((always_inline));
-
 
 static inline int hash_function2(int x,int y,int z)
  {

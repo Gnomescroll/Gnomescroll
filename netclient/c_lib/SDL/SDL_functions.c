@@ -300,6 +300,9 @@ int init_video() {
     //if(GLEW_ATI_meminfo) { ati_meminfo(); } 
 
     printf("Finished OpenGL init\n");
+
+    glClearColor(0.0,0.0,0.0,0.0);
+
     return 0;
 }
 
@@ -367,4 +370,48 @@ void close_SDL()
 	printf("close_SDL: Deconstructing SDL OpenGL Window\n");
     _del_video();
 	
+}
+
+void save_screenshot()
+{
+    int window_width = _xres;
+    int window_height = _yres;
+
+    const char *FileName = "test.bmp";
+
+    SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
+                                                   32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
+
+
+    SDL_LockSurface(surface);
+
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(surface->pitch);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        height_div_2 = (int) (surface->h * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy((Uint8 *)temp_row,(Uint8 *)(surface->pixels) + surface->pitch * index, surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * index, (Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), temp_row, surface->pitch);
+        }
+        free(temp_row); 
+    }
+
+    SDL_UnlockSurface(surface);
+    //unsigned int *pixels = new unsigned int[window.width * window.height];
+    //unsigned int *pixelsbuf = new unsigned int[window.width * window.height];
+    
+    SDL_SaveBMP(surface, FileName);
+    SDL_FreeSurface(surface);
+
 }

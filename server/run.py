@@ -181,6 +181,39 @@ def _gen_map():
 
         print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
 
+
+def gen_map_simple():
+    terrain_map.set_map_size(128,128,128) # TODO:: get this value from the map gen or saved map
+
+    c_lib.map_gen.init(128,128,128)
+    c_lib.map_gen.conf.seed(opts.seed)
+    _n = time.time()
+
+    ##base heightmap, smooth shallow hills
+    c_lib.map_gen.conf\
+    .size(128,128,128)\
+    .group(0)\
+    .tile(2)\
+    .interpolate(4,2,1)\
+    .scale(4.0, 4.0, 1.0)\
+    .heightmap(baseline=40, maxheight=60)\
+    .p2(octaves=6, persistence=0.45)\
+    .start()\
+    .reset()
+
+     ###base heightmap, smooth shallowER hills
+    c_lib.map_gen.conf\
+    .size(128,128,128)\
+    .group(5)\
+    .scale(x=1.0, y=1.0, z=1.0)\
+    .tile(2)\
+    .interpolate(2,4,1)\
+    .heightmap(baseline=30, maxheight=45)\
+    .p2(octaves=6, persistence=0.4)\
+    .start()\
+    .reset()
+
+
 def pallet_pillar(x,y,z):
     for i in range(0,32):
         m = terrain_map
@@ -262,6 +295,8 @@ class Main:
 
     def __init__(self):
         init_c_lib.set_seed(opts.seed)
+        
+
         ##setup
 
         '''
@@ -272,7 +307,11 @@ class Main:
             #terrain_map.load_from_disk(opts.map)
         #else:
             #pass
-        terrain_map.load_from_disk("natural_terrain")
+        
+        #_gen_map()
+        gen_map_simple()
+
+        #terrain_map.load_from_disk("natural_terrain")
             
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
