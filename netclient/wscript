@@ -428,6 +428,7 @@ def debug(ctx):
                #includes=['/usr/include'],
                #fragment='#include <libnoise/noise.h>',
                #mandatory=True)
+               
 def exceptions(conf):
     global _OS
     global os_libpth
@@ -466,9 +467,12 @@ def exceptions(conf):
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
 
     if OS == 'Windows':
-        pass
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
+
+    if OS == 'Darwin':
+        conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib]')
+        conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
         
     conf.check(header_name='GL/glew.h', mandatory=True)
 
