@@ -7,14 +7,14 @@ attribute vec4 InLightMatrix0;
 varying vec3 texCoord;
 varying mat2 lightMatrix0;
 
-
+varying vec4 inColor;
 
 void main(void) 
 {			
 
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
-	//intensity = gl_Color.r;
+	inColor = gl_Color;
 
 	texCoord = InTexCoord0;
 

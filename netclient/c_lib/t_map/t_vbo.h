@@ -1,13 +1,57 @@
 #pragma once
 
 
+    struct ColorElement
+    {
+        union
+        {
+            struct
+            {
+                unsigned char r,g,b,a;
+            };
+            unsigned int color;
+        };
+    };
+
+    struct AOElement
+    {
+        union
+        {
+            struct
+            {
+                unsigned char ao[4]; //32
+            };
+            unsigned int AO;
+        };
+    };
+
     //normal is a uniform variable when rendering by sides
     struct Vertex {
         float x,y,z;
         float tx,ty,tz; //12
-        unsigned char r,g,b,a; //24
-        char normal[4]; //28
-        unsigned char ao[4]; //32
+
+        //unsigned char r,g,b,a;
+        union
+        {
+            struct
+            {
+                unsigned char r,g,b,a;
+            };
+            unsigned int color;
+        };
+
+        //char normal[4];
+        union
+        {
+            char normal[4]; //16
+            unsigned int n;
+        };
+
+        union
+        {
+            unsigned char ao[4]; //32
+            unsigned int AO;
+        };
     };
 
 

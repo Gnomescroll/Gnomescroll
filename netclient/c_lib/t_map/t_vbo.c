@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -812,6 +812,32 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 }
 */
 
+static inline int hash_function4(int x,int y,int z) __attribute((always_inline));
+
+static inline int hash_function4(int x,int y,int z)
+{
+    unsigned int v = ((x*967 + y)*337 + 17*z);
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    return v;
+}
+
+//#3D525E
+
+const int _pallet_num = 5;
+const char _pallet[3*_pallet_num] = 
+{
+    0x3d, 0x52,0x5e,
+    0x57, 0x6e,0x62,
+    0x6d,0x8e, 0x86,
+    0x3d,0x52,0x5e,
+    0x94,0xb2,0xbb,
+};
+
+#include <c_lib/physics/color_matrix.hpp>
+
+
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -831,51 +857,53 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         occ4 = calcAdj(CX[3], CX[5], CX[4]);
         occ2 = calcAdj(CX[5], CX[7], CX[6]);
 
-        //occ1 = 255;
-        //occ2 = 255;
-        //occ3 = 255;
-        //occ4 = 255;
+        /*
+            Performance: use union for AO copy
+        */
 
-        //printf("occ1= %i \n", occ1);
+        AOElement _ao;
+        _ao.ao[0] = occ1;
+        _ao.ao[1] = occ2;
+        _ao.ao[2] = occ3;
+        _ao.ao[3] = occ4;
 
-        //int value = occ1
-        v_list[offset+0].ao[0] = occ1;
-        v_list[offset+0].ao[1] = occ2;
-        v_list[offset+0].ao[2] = occ3;
-        v_list[offset+0].ao[3] = occ4;
-
-        v_list[offset+1].ao[0] = occ1;
-        v_list[offset+1].ao[1] = occ2;
-        v_list[offset+1].ao[2] = occ3;
-        v_list[offset+1].ao[3] = occ4;
-
-        v_list[offset+2].ao[0] = occ1;
-        v_list[offset+2].ao[1] = occ2;
-        v_list[offset+2].ao[2] = occ3;
-        v_list[offset+2].ao[3] = occ4;
-
-        v_list[offset+3].ao[0] = occ1;
-        v_list[offset+3].ao[1] = occ2;
-        v_list[offset+3].ao[2] = occ3;
-        v_list[offset+3].ao[3] = occ4;
+        v_list[offset+0].AO = _ao.AO;
+        v_list[offset+1].AO = _ao.AO;
+        v_list[offset+2].AO = _ao.AO;
+        v_list[offset+3].AO = _ao.AO;
 
         //deprecate when done
+        
+        int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
+        
+        //float rot = -0.0125 + 0.050*(((float) (hash_function4(x, y, z) % 256)) / 256.0);
+        //printf("rot= %f \n", rot);
 
-        v_list[offset+0].r = occ1;
-        v_list[offset+0].g = occ1;
-        v_list[offset+0].b = occ1;
+        static float rot = 0.0;
+        rot += 0.001;
+        /*
+            Performance: use union for color copy
+        */
 
-        v_list[offset+1].r = occ3;
-        v_list[offset+1].g = occ3;
-        v_list[offset+1].b = occ3;
+        //rot = 0;
 
-        v_list[offset+2].r = occ4;
-        v_list[offset+2].g = occ4;
-        v_list[offset+2].b = occ4;
+        struct ColorElement _ce;
+        index = 0;
+        _ce.r = _pallet[index+0];
+        _ce.g = _pallet[index+1];
+        _ce.b = _pallet[index+2];
+        _ce.a = 0;
 
-        v_list[offset+3].r = occ2;
-        v_list[offset+3].g = occ2;
-        v_list[offset+3].b = occ2;
+        float mat[4][4];
+
+        identmat(mat);
+        huerotatemat(mat, rot );
+        applymatrix(&_ce.color, mat, 1);
+
+        v_list[offset+0].color = _ce.color;
+        v_list[offset+1].color = _ce.color;
+        v_list[offset+2].color = _ce.color;
+        v_list[offset+3].color = _ce.color;
     }
 }
 
@@ -906,10 +934,9 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 static inline int hash_function2(int x,int y,int z) __attribute((always_inline));
 static inline int hash_function3(int x,int y,int z) __attribute((always_inline));
 
-
 static inline int hash_function2(int x,int y,int z)
  {
-    unsigned int v = ((x*967 + y)*337 + z);
+    unsigned int v = ((x*967 + y)*337 + 17*z);
     v ^= v >> 16;
     v ^= v >> 8;
     v ^= v >> 4;
@@ -919,7 +946,7 @@ static inline int hash_function2(int x,int y,int z)
 
 static inline int hash_function3(int x,int y,int z)
 {
-    unsigned int v = ((x*967 + y)*337 + z);
+    unsigned int v = ((x*967 + y)*337 + 17*z);
     v ^= v >> 16;
     v ^= v >> 8;
     v ^= v >> 4;

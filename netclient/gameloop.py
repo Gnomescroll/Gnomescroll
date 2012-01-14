@@ -246,8 +246,8 @@ class App(object):
             if InputGlobal.hk:
                 cMapGen.Dragon.draw()
 
-            P.event("Draw skybox")
-            cCamera.render_skybox()
+            #P.event("Draw skybox")
+            #cCamera.render_skybox()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()

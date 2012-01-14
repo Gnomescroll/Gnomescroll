@@ -532,13 +532,6 @@ void Voxel_vertex_list::set_color(int i, unsigned char r, unsigned char g, unsig
 
 void Voxel_volume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
 {
-    if(voxel != NULL) { 
-        printf("not null\n");
-        } else
-        {
-            printf("null\n");
-        }
-
     _set(x,y,z, r,g,b,a);
     needs_vbo_update = true;
 }

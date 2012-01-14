@@ -1,5 +1,7 @@
 #include "./input.hpp"
 
+#include <c_lib/SDL/SDL_functions.h>
+
 char getUnicodeValue(SDL_keysym keysym );
 
 static SDL_Event Event;
@@ -81,6 +83,13 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
                 break;
 
             case SDL_KEYDOWN:
+
+                if(Event.key.keysym.sym == SDLK_HOME)
+                {
+                    printf("Saving Screenshot \n");
+                    save_screenshot();
+                    break;
+                }
                 t = getUnicodeValue(Event.key.keysym);
                 if(t==0) t= Event.key.keysym.sym;
                 event_state = 1;

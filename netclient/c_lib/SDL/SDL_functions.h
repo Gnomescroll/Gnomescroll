@@ -9,6 +9,8 @@ int _get_ticks();
 
 void close_SDL();
 
+void save_screenshot();
+
 extern int _xres;
 extern int _yres;
 extern float _xresf;
