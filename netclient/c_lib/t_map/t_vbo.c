@@ -854,14 +854,6 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         occ4 = calcAdj(CX[3], CX[5], CX[4]);
         occ2 = calcAdj(CX[5], CX[7], CX[6]);
 
-        //occ1 = 255;
-        //occ2 = 255;
-        //occ3 = 255;
-        //occ4 = 255;
-
-        //printf("occ1= %i \n", occ1);
-
-        //int value = occ1
         /*
             Performance: use union for AO copy
         */
@@ -877,27 +869,6 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+2].AO = _ao.AO;
         v_list[offset+3].AO = _ao.AO;
 
-/*
-        v_list[offset+0].ao[0] = occ1;
-        v_list[offset+0].ao[1] = occ2;
-        v_list[offset+0].ao[2] = occ3;
-        v_list[offset+0].ao[3] = occ4;
-
-        v_list[offset+1].ao[0] = occ1;
-        v_list[offset+1].ao[1] = occ2;
-        v_list[offset+1].ao[2] = occ3;
-        v_list[offset+1].ao[3] = occ4;
-
-        v_list[offset+2].ao[0] = occ1;
-        v_list[offset+2].ao[1] = occ2;
-        v_list[offset+2].ao[2] = occ3;
-        v_list[offset+2].ao[3] = occ4;
-
-        v_list[offset+3].ao[0] = occ1;
-        v_list[offset+3].ao[1] = occ2;
-        v_list[offset+3].ao[2] = occ3;
-        v_list[offset+3].ao[3] = occ4;
-*/
         //deprecate when done
 
         int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
@@ -916,23 +887,6 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+1].color = _ce.color;
         v_list[offset+2].color = _ce.color;
         v_list[offset+3].color = _ce.color;
-/*
-        v_list[offset+0].r = _pallet[index+0];
-        v_list[offset+0].g = _pallet[index+1];
-        v_list[offset+0].b = _pallet[index+2];
-
-        v_list[offset+1].r = _pallet[index+0];
-        v_list[offset+1].g = _pallet[index+1];
-        v_list[offset+1].b = _pallet[index+2];
-
-        v_list[offset+2].r = _pallet[index+0];
-        v_list[offset+2].g = _pallet[index+1];
-        v_list[offset+2].b = _pallet[index+2];
-
-        v_list[offset+3].r = _pallet[index+0];
-        v_list[offset+3].g = _pallet[index+1];
-        v_list[offset+3].b = _pallet[index+2];
-*/
     }
 }
 
