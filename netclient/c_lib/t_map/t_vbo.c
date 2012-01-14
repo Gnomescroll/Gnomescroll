@@ -865,6 +865,19 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         /*
             Performance: use union for AO copy
         */
+
+        AOElement _ao;
+        _ao.ao[0] = occ1;
+        _ao.ao[1] = occ2;
+        _ao.ao[2] = occ3;
+        _ao.ao[3] = occ4;
+
+        v_list[offset+0].AO = _ao.AO;
+        v_list[offset+1].AO = _ao.AO;
+        v_list[offset+2].AO = _ao.AO;
+        v_list[offset+3].AO = _ao.AO;
+
+/*
         v_list[offset+0].ao[0] = occ1;
         v_list[offset+0].ao[1] = occ2;
         v_list[offset+0].ao[2] = occ3;
@@ -884,7 +897,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+3].ao[1] = occ2;
         v_list[offset+3].ao[2] = occ3;
         v_list[offset+3].ao[3] = occ4;
-
+*/
         //deprecate when done
 
         int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
@@ -892,6 +905,18 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         /*
             Performance: use union for color copy
         */
+
+        struct ColorElement _ce;
+        _ce.r = _pallet[index+0];
+        _ce.g = _pallet[index+1];
+        _ce.b = _pallet[index+2];
+        _ce.a = 0;
+
+        v_list[offset+0].color = _ce.color;
+        v_list[offset+1].color = _ce.color;
+        v_list[offset+2].color = _ce.color;
+        v_list[offset+3].color = _ce.color;
+/*
         v_list[offset+0].r = _pallet[index+0];
         v_list[offset+0].g = _pallet[index+1];
         v_list[offset+0].b = _pallet[index+2];
@@ -907,6 +932,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+3].r = _pallet[index+0];
         v_list[offset+3].g = _pallet[index+1];
         v_list[offset+3].b = _pallet[index+2];
+*/
     }
 }
 

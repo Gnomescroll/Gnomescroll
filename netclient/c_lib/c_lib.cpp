@@ -26,6 +26,8 @@
 #include <c_lib/physics/vector4.cpp>
 #include <c_lib/physics/matrix.cpp>
 
+#include <c_lib/physics/color_matrix.cpp>
+
 #include <c_lib/ray_trace/ray_trace.c>
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.c>
@@ -82,6 +84,7 @@
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
 
+    #include <c_lib/SDL/IMG_savepng.c>
     /* HUD */
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>

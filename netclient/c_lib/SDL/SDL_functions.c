@@ -7,6 +7,7 @@
 #endif
 
 
+#include <c_lib/SDL/IMG_savepng.h>
 
 /*
     Example code from
@@ -377,7 +378,7 @@ void save_screenshot()
     int window_width = _xres;
     int window_height = _yres;
 
-    const char *FileName = "test.bmp";
+    const char *FileName = "screenshot.png";
 
     SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
                                                    32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
@@ -406,12 +407,13 @@ void save_screenshot()
         }
         free(temp_row); 
     }
-
     SDL_UnlockSurface(surface);
     //unsigned int *pixels = new unsigned int[window.width * window.height];
     //unsigned int *pixelsbuf = new unsigned int[window.width * window.height];
     
-    SDL_SaveBMP(surface, FileName);
+    IMG_SavePNG(FileName, surface, -1);
+
+    //SDL_SaveBMP(surface, FileName);
     SDL_FreeSurface(surface);
 
 }
