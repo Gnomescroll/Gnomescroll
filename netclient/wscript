@@ -30,6 +30,11 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 """
+PNG_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
 
 _OS = None
 os_libpth = ''
@@ -175,7 +180,7 @@ def build(bld):
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
-    noise_libraries = ['noise']
+    #noise_libraries = ['noise']
     png_libs=['png']
 
     time_lib = ['rt']
@@ -184,9 +189,11 @@ def build(bld):
 
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
+        #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs,
 
-        lib=sound_libraries+noise_libraries+png_libs,
+        #lib=sound_libraries+noise_libraries+png_libs,
+        lib=sound_libraries+png_libs,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -225,7 +232,8 @@ def build(bld):
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_hud.pyx'],
-        use=common_libraries + ['c_lib'] + noise_libraries,
+        #use=common_libraries + ['c_lib'] + noise_libraries,
+        use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_hud')
 
     bld(features='cxx cshlib pyext',
@@ -503,14 +511,14 @@ def exceptions(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
                
-    conf.check(header_name='libnoise/noise.h',
-               includes=['/usr/include'],
-               fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
-               mandatory=True)
+    #conf.check(header_name='libnoise/noise.h',
+               #includes=['/usr/include'],
+               #fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
+               #mandatory=True)
                
     conf.check(header_name='png.h',
                includes=['/usr/include'],
-               fragment='#include <png.h>' + NOISE_MAIN_TEST_CODE,
+               fragment='#include <png.h>' + PNG_MAIN_TEST_CODE,
                mandatory=True)
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
