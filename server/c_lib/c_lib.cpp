@@ -18,6 +18,7 @@
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
 #include <c_lib/voxel/voxel_hitscan.cpp>
+#include <c_lib/voxel/voxel_body.cpp>
 
 #include <c_lib/particles/particle_lib.cpp>
 
@@ -34,6 +35,10 @@
 #include <c_lib/weapons/weapons.cpp>
 #include <c_lib/weapons/packets.cpp>
 
+/* monsters */
+#include <c_lib/monsters/monsters.cpp>
+
+/* dungeon/L system/noise */
 #include <c_lib/map_gen/hopcroft-karp.cpp>
 #include <c_lib/map_gen/noise.c>
 
