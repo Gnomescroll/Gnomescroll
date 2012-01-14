@@ -12,14 +12,33 @@ a(a)
 void Agent_vox::init_parts() {
     // create each vox part from agent_vox_dat conf
     int i,j;
-    int p;
     unsigned char r,g,b,a;
     int x,y,z;
     int ix,iy,iz;
     VoxPart *vp;
     float size = agent_vox_dat.vox_size;
-    
-        ClientState::voxel_render_list.register_voxel_volume(&(this->vv[p]));
+    for (i=0; i<AGENT_PART_NUM; i++) {
+        vp = agent_vox_dat.vox_part[i];
+        x = vp->dimension.x;
+        y = vp->dimension.y;
+        z = vp->dimension.z;
+
+        this->vv[i].init(x,y,z,size);
+        this->vv[i].set_unit_axis();
+
+        for (j=0; j<vp->colors.n; j++) {
+            ix = vp->colors.index[j][0];
+            iy = vp->colors.index[j][1];
+            iz = vp->colors.index[j][2];
+            r = vp->colors.rgba[j][0];
+            g = vp->colors.rgba[j][1];
+            b = vp->colors.rgba[j][2];
+            a = vp->colors.rgba[j][3];
+
+            this->vv[i].set_color(ix, iy, iz, r,g,b,a);
+        }
+
+        ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
     }
     ClientState::voxel_render_list.update_vertex_buffer_object();
 }
