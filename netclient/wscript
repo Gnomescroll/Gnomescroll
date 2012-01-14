@@ -182,11 +182,10 @@ def build(bld):
     sound_libraries = ['fmodex']
     #noise_libraries = ['noise']
 
-    #if OS == "Darwin":
-        #png_libs = []
-    #else:
-        #png_libs=['png']
-    png_libs=['png']
+    if OS == "Darwin":
+        png_libs = ['png14']
+    else:
+        png_libs=['png']
 
     time_lib = ['rt']
     if OS == "Darwin":
@@ -484,9 +483,11 @@ def exceptions(conf):
         conf.env.append_value("LINKFLAGS", "-lws2_32")
 
     if OS == 'Darwin':
-        conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib'])
-        conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
-        
+        #conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
+        #conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib'])
+        conf.env.append_value('CFLAGS', ['-I/opt/local/include/libpng14'])
+        conf.env.append_value('LDFLAGS', ['-L/opt/local/lib'])
+
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':
