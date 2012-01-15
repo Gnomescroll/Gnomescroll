@@ -25,16 +25,6 @@ GPUPerfStudio is much better for performance analysis. It will do a frame break 
 
 Performance/profiling:  AMD CodeAnalyst
 
-GLSL Tricks:
-
--use for gamma
-
-(BTW, pow is expensive - since only one of the five ALU slots can run log and exp, raising each color channel to a non-constant power takes eight instruction groups! Ouch.)
-
-"X-Plane's physical shader is based on conditional compilation - that is, for any given state vector of "tricks" we want to use, we recompile the shader with some #defines at the front which turn features on and off. The result is a large number of shaders, none of which need conditional logic in-shader. Fill rate isn't consumed by features we don't use."
-
-http://hacksoflife.blogspot.com/2010/12/fun-with-glsl-compilers.html
-
 OpenGL Profiling:
 NVidia's PerfHUD and GLExpert 
 
@@ -96,8 +86,6 @@ float InvSqrt(float x){
    return x;
 }
 
-Lambert's cosine law says that the radiant intensity observed from an ideal diffusely reflecting surface (a Lambertian surface) is directly proportional to the cosine of the angle θ between the observer's line of sight and the surface normal.
-
 Terrain Generation:
 http://www.reddit.com/r/Minecraft/comments/g0my6/how_terrain_generation_works_in_minecraft/
 
@@ -120,15 +108,7 @@ Noise:
 http://mines.lumpylumpy.com/Electronics/Computers/Software/Cpp/Graphics/Bitmap/Textures/Noise/Voronoi.php
 
 Texture Generation:
-
 http://lithosphere.codeflow.org/download.html
-
-Gamma Correction:
-http://http.developer.nvidia.com/GPUGems3/gpugems3_ch24.html
-http://www.4p8.com/eric.brasseur/gamma.html
-
-
-Passing GL_SRGB_EXT instead of GL_RGB to glTexImage2D, for example, ensures that any shader accesses to the specified texture return linear pixel values.
 
 
 Occlusion Queries:

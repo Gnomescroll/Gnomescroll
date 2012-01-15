@@ -40,15 +40,16 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     this->hdy = ((float) ydim) / 2;
     this->hdz = ((float) zdim) / 2;
 
-    this->index1 = pow2_1(xdim);
-    this->index12 = pow2_1(xdim) + pow2_1(xdim);
-
-    //update radius if changing scale
-    this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
-
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);
     int powz = pow2_2(zdim);
+
+    this->index1 = pow2_1(xdim);
+    this->index12 = pow2_1(xdim) + pow2_1(xdim);
+    this->index_max = powx*powy*powz;
+
+    //update radius if changing scale
+    this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
     voxel = new Voxel[powx*powy*powz];
 
@@ -305,6 +306,7 @@ l = [
 ]
 */
 
+static unsigned char _gamma_correction[256];
 
 static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
         0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
@@ -331,6 +333,25 @@ static const struct Voxel_normal voxel_normal_array[6] = {
 {{{0,-1,0,0}}},
 };
 
+//cache line optimization; minimize size
+
+
+static inline int vCalcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
+
+/*
+    Sets AO strength values
+*/
+
+
+static inline int vCalcAdj(int side_1, int side_2, int corner) 
+{
+    static const int occ_array[3] = { 255, 128, 64 };
+
+    int occ = (side_1 | side_2 | corner) + (side_1 & side_2);
+    return occ_array[occ];
+}
+
+
 inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
 
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
@@ -343,12 +364,50 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
 
     //*(int*)&tmp.rgba 
 
-    //set rgba
-    unsigned int color = get_as_int(x,y,z);
-    scratch[*index + 0].color = color;
-    scratch[*index + 1].color = color;
-    scratch[*index + 2].color = color;
-    scratch[*index + 3].color = color;
+    //color
+    Voxel color;
+    color.color = get_as_int(x,y,z);
+
+    color.r = _gamma_correction[color.r];
+    color.g = _gamma_correction[color.g];
+    color.b = _gamma_correction[color.b];
+
+    scratch[*index + 0].color = color.color;
+    scratch[*index + 1].color = color.color;
+    scratch[*index + 2].color = color.color;
+    scratch[*index + 3].color = color.color;
+
+    //AO
+    {
+        int CX[8];
+        
+        for(int i=0; i<8; i++) 
+        {
+            static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
+            -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
+            1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
+            -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
+            1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
+            -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
+
+            int index = side*8*3+i*3;
+            CX[i] = _test_occludes_safe(x+CI[index+0],y+CI[index+1],z+CI[index+2]);
+        }
+
+        {
+            voxAOElement _ao;
+
+            _ao.ao[0] = vCalcAdj(CX[7], CX[1], CX[0]);
+            _ao.ao[1] = vCalcAdj(CX[5], CX[7], CX[6]);
+            _ao.ao[2] = vCalcAdj(CX[1], CX[3], CX[2]);
+            _ao.ao[3] = vCalcAdj(CX[3], CX[5], CX[4]);
+
+            scratch[*index + 0].AO = _ao.AO;
+            scratch[*index + 0].AO = _ao.AO;
+            scratch[*index + 0].AO = _ao.AO;
+            scratch[*index + 0].AO = _ao.AO;
+        }
+    }
 
 
     int _side = side*3;
@@ -356,14 +415,12 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     Voxel_normal normal;
     normal.n = voxel_normal_array[side].n;
 
-    //printf("normal: %i, %i, %i \n", normal.normal[0],normal.normal[1],normal.normal[2] );
-
     scratch[*index + 0].n = normal.n;
     scratch[*index + 1].n = normal.n;
     scratch[*index + 2].n = normal.n;
     scratch[*index + 3].n = normal.n;
 
-    //set x,y,z
+    //vertex
     _side = side*12;
 
     scratch[*index + 0].x = fx + vset[_side + 0 ];
@@ -407,8 +464,25 @@ l = [
 */
 
 
+#define VOXEL_RENDER_DEBUG 1
+
 void Voxel_volume::update_vertex_list()
 {   
+
+    static int compute_gamma_chart = 0;
+    if(compute_gamma_chart == 0) 
+    {
+        compute_gamma_chart = 1;
+
+        static const float gamma_correction = 2.2;
+        for(int i=0; i< 255; i++)
+        {
+            float intensity = (float) i;
+            intensity = pow(intensity/255, gamma_correction)*255;
+            _gamma_correction[i] = (unsigned char)((int) intensity);
+        }
+    }
+
     static Voxel_vertex* scratch = new Voxel_vertex[65536]; //64 k of memory
     int index = 0;
 
@@ -422,17 +496,16 @@ void Voxel_volume::update_vertex_list()
         if( get_as_int(x,y,z) == 0) continue;
 
 
-        //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
-        /*
+    #if VOXEL_RENDER_DEBUG
             push_voxel_quad(scratch, &index, x,y,z, 0);
             push_voxel_quad(scratch, &index, x,y,z, 1);
             push_voxel_quad(scratch, &index, x,y,z, 2);
             push_voxel_quad(scratch, &index, x,y,z, 3);
             push_voxel_quad(scratch, &index, x,y,z, 4);
             push_voxel_quad(scratch, &index, x,y,z, 5);
-             
-            continue;
-        */
+
+    #else
+
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
@@ -463,7 +536,7 @@ void Voxel_volume::update_vertex_list()
         {
             push_voxel_quad(scratch, &index, x,y,z, 5);
         }
-
+    #endif
     }}}
 
     //printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );

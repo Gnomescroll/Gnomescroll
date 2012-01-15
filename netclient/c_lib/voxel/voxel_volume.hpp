@@ -23,6 +23,17 @@ class Voxel_volume
     inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
     { return voxel[x+(y << index1)+(z << index12)].color; }
 
+/*
+    Tests whether a voxel is occupied, for AO
+*/
+    inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline)) 
+    { 
+        unsigned int index= x+(y << index1)+(z << index12);
+        if(index >= index_max) return 0;
+        if(voxel[x+(y << index1)+(z << index12)].color == 0) return 0;
+        return 1;
+    }
+
     inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
     { voxel[x+(y << index1)+(z << index12)] = *v; }
 
@@ -49,6 +60,7 @@ class Voxel_volume
     Voxel* voxel;
     int index1;
     int index12;
+    unsigned int index_max;
 
     float hdx,hdy,hdz;  //half of width, height, depth as floats
 
