@@ -6,9 +6,9 @@
     #include "windows.h"
 #endif
 
-
-#include <c_lib/SDL/IMG_savepng.h>
-
+#ifndef __APPLE__
+    #include <c_lib/SDL/IMG_savepng.h>
+#endif
 /*
     Example code from
     http://www.opengl.org/wiki/Tutorial2:_VAOs,_VBOs,_Vertex_and_Fragment_Shaders_(C_/_SDL)
@@ -375,6 +375,7 @@ void close_SDL()
 
 void save_screenshot()
 {
+#ifndef __APPLE__
     int window_width = _xres;
     int window_height = _yres;
 
@@ -415,5 +416,5 @@ void save_screenshot()
 
     //SDL_SaveBMP(surface, FileName);
     SDL_FreeSurface(surface);
-
+#endif
 }
