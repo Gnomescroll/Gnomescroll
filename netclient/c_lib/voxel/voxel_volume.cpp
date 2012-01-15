@@ -463,6 +463,9 @@ l = [
 ]
 */
 
+
+#define VOXEL_RENDER_DEBUG 1
+
 void Voxel_volume::update_vertex_list()
 {   
 
@@ -493,17 +496,16 @@ void Voxel_volume::update_vertex_list()
         if( get_as_int(x,y,z) == 0) continue;
 
 
-        //push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, int color)
-        /*
+    #if VOXEL_RENDER_DEBUG
             push_voxel_quad(scratch, &index, x,y,z, 0);
             push_voxel_quad(scratch, &index, x,y,z, 1);
             push_voxel_quad(scratch, &index, x,y,z, 2);
             push_voxel_quad(scratch, &index, x,y,z, 3);
             push_voxel_quad(scratch, &index, x,y,z, 4);
             push_voxel_quad(scratch, &index, x,y,z, 5);
-             
-            continue;
-        */
+
+    #else
+
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
@@ -534,7 +536,7 @@ void Voxel_volume::update_vertex_list()
         {
             push_voxel_quad(scratch, &index, x,y,z, 5);
         }
-
+    #endif
     }}}
 
     //printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );

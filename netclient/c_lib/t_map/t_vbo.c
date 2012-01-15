@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -767,51 +767,6 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     return isActive(tile_id);
 }
 
-//inline?
-//__attribute((always_inline))
-/*
-static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
-{
-    int i;
-    int index;
-    int occ;
-    int CX[8];
-    for(i=0; i<8; i++) 
-    {
-        index = side*8*3+i*3;
-        CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
-    }
-
-    if(1)
-    {
-        occ = calcAdj(CX[7], CX[1], CX[0]);
-        v_list[offset+0].r = occ;
-        v_list[offset+0].g = occ;
-        v_list[offset+0].b = occ;
-
-        occ = calcAdj(CX[1], CX[3], CX[2]);
-        v_list[offset+1].r = occ;
-        v_list[offset+1].g = occ;
-        v_list[offset+1].b = occ;
-
-        occ = calcAdj(CX[3], CX[5], CX[4]);
-        v_list[offset+2].r = occ;
-        v_list[offset+2].g = occ;
-        v_list[offset+2].b = occ;
-
-        occ = calcAdj(CX[5], CX[7], CX[6]);
-        v_list[offset+3].r = occ;
-        v_list[offset+3].g = occ;
-        v_list[offset+3].b = occ;
-    } else {
-        occ_debug(CX[7], CX[1], CX[0], &v_list[offset+0]);
-        occ_debug(CX[1], CX[3], CX[2], &v_list[offset+1]);
-        occ_debug(CX[3], CX[5], CX[4], &v_list[offset+2]);
-        occ_debug(CX[5], CX[7], CX[6], &v_list[offset+3]);
-    }
-}
-*/
-
 static inline int hash_function4(int x,int y,int z) __attribute((always_inline));
 
 static inline int hash_function4(int x,int y,int z)
@@ -826,8 +781,9 @@ static inline int hash_function4(int x,int y,int z)
 //#3D525E
 
 const int _pallet_num = 5;
-const char _pallet[3*_pallet_num] = 
+const char _pallet[3*(_pallet_num+1)] = 
 {
+    0xff, 0xff,0xff,
     0x3d, 0x52,0x5e,
     0x57, 0x6e,0x62,
     0x6d,0x8e, 0x86,
@@ -875,7 +831,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
         //deprecate when done
         
-        int index = 3*(hash_function4(x, y, z) % _pallet_num) ;
+        int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
         
         //float rot = -0.0125 + 0.050*(((float) (hash_function4(x, y, z) % 256)) / 256.0);
         //printf("rot= %f \n", rot);
@@ -889,7 +845,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         //rot = 0;
 
         struct ColorElement _ce;
-        //index = 0;
+        index = 0;
         _ce.r = _pallet[index+0];
         _ce.g = _pallet[index+1];
         _ce.b = _pallet[index+2];

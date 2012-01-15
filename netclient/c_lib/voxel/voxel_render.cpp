@@ -127,6 +127,8 @@ static GLenum voxel_shader_prog = 0;
 
 int InRotationMatrix;
 int InNormal;
+int InAO;
+
 //int InTranslation;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
@@ -135,7 +137,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     if (init) return;
     printf("init voxel shader\n");
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     voxel_shader_prog = glCreateProgramObjectARB();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -169,6 +171,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
 
+    InAO = glGetUniformLocationARB(voxel_shader_prog, "InAO");
 
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
     //InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
@@ -211,7 +214,6 @@ void Voxel_render_list::draw()
 
     //glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
-
     glDisable(GL_TEXTURE_2D);
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
@@ -220,7 +222,7 @@ void Voxel_render_list::draw()
     glEnableClientState(GL_COLOR_ARRAY);
     
     glEnableVertexAttribArray(InNormal);
-
+    glEnableVertexAttribArray(InAO);
     //glEnableClientState(GL_NORMAL_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
@@ -228,7 +230,7 @@ void Voxel_render_list::draw()
     
     //printf("innormal = %i \n", InNormal);
     glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
-
+    glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
     Voxel_volume* vv;
@@ -262,6 +264,7 @@ void Voxel_render_list::draw()
     //glDisableClientState(GL_NORMAL_ARRAY);
 
     glDisableVertexAttribArray(InNormal);
+    glDisableVertexAttribArray(InAO);
 
     glEnable (GL_DEPTH_TEST);
 

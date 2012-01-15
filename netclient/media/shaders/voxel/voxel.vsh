@@ -1,20 +1,10 @@
 
 uniform mat4 InRotationMatrix;
 
-//uniform vec3 InTranslation;
-//attribute vec3 InCood0;
-//attribute vec4 InRGBA;
-//varying vec4 _rgba;
-
 attribute vec3 InNormal;
-
-//varying float 
-
-//varying vec3 normal;
+attribute vec4 InAO;
 
 varying float diffuse;
-
-//varying vec3 lcolor;
 
 void main(void) 
 {
