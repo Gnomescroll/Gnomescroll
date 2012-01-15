@@ -7,6 +7,7 @@
 template <class Obj, int NUM_PARTS>
 class Object_vox {
     public:
+        int n_parts;
         void right(Vector *f, float theta);
         void forward(Vector *f, float theta);
         void look(Vector *f, float theta, float phi);

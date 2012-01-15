@@ -27,7 +27,7 @@ void Agent_list::draw()
         you = (agent->id == ClientState::playerAgent_state.agent_id);
         if (agent->vox == NULL) continue;
         
-        agent->vox->update();
+        agent->vox->update(&agent_vox_dat);
         if ((first_person && you) || agent->status.dead)
         {
             agent->vox->set_draw(false);
@@ -844,7 +844,7 @@ Agent_state::Agent_state(int id) : id (id), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    vox = new Agent_vox(this);
+    vox = new Agent_vox(this, &agent_vox_dat);
     #endif
 }
 
@@ -885,7 +885,7 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
     #endif
 
     #ifdef DC_CLIENT
-    vox = new Agent_vox(this);
+    vox = new Agent_vox(this, &agent_vox_dat);
     #endif
 }
 

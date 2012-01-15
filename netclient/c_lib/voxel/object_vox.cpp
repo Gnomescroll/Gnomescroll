@@ -102,6 +102,7 @@ Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a, VoxBody* vox_dat)
 :
 a(a)
 {
+    this->n_parts = NUM_PARTS;
     this->init_parts(vox_dat);
 }
 
