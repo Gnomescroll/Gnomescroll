@@ -47,15 +47,11 @@ def convert(infile, outfile):
                 j += 1
             y += 1
             
-    print voxels
-
     d = {
-        'dim'   :   (xdim+1, ydim+1, zdim+1),
+        'dim'   :   (xdim, ydim, zdim),
         'vosize':   0.2,
         'voxels':   voxels,
     }
-
-    print d
 
     with open(outfile, 'w') as f:
         print 'writing to %s' % (outfile,)

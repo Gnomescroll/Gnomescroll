@@ -28,6 +28,7 @@ namespace ClientState {
     extern BillboardText_list billboard_text_list;
     extern Animations::HitscanEffect_list hitscan_effect_list;
     extern Voxel_render_list voxel_render_list;
+    extern Voxel_hitscan_list voxel_hitscan_list;
     extern Monsters::Slime_list slime_list;
 
     extern CTF ctf;
