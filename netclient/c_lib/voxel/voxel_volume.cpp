@@ -45,7 +45,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     int powz = pow2_2(zdim);
 
     this->index1 = pow2_1(xdim);
-    this->index12 = pow2_1(xdim) + pow2_1(xdim);
+    this->index12 = pow2_1(xdim) + pow2_1(ydim);
     this->index_max = powx*powy*powz;
 
     //update radius if changing scale
@@ -464,7 +464,7 @@ l = [
 */
 
 
-#define VOXEL_RENDER_DEBUG 1
+#define VOXEL_RENDER_DEBUG_02 1
 
 void Voxel_volume::update_vertex_list()
 {   
@@ -495,22 +495,18 @@ void Voxel_volume::update_vertex_list()
     for(int z=0; z < zdim; z++){
         if( get_as_int(x,y,z) == 0) continue;
 
-
-    #if VOXEL_RENDER_DEBUG
-            push_voxel_quad(scratch, &index, x,y,z, 0);
-            push_voxel_quad(scratch, &index, x,y,z, 1);
-            push_voxel_quad(scratch, &index, x,y,z, 2);
-            push_voxel_quad(scratch, &index, x,y,z, 3);
-            push_voxel_quad(scratch, &index, x,y,z, 4);
-            push_voxel_quad(scratch, &index, x,y,z, 5);
-
+    #if VOXEL_RENDER_DEBUG_02
+        push_voxel_quad(scratch, &index, x,y,z, 0);
+        push_voxel_quad(scratch, &index, x,y,z, 1);
+        push_voxel_quad(scratch, &index, x,y,z, 2);
+        push_voxel_quad(scratch, &index, x,y,z, 3);
+        push_voxel_quad(scratch, &index, x,y,z, 4);
+        push_voxel_quad(scratch, &index, x,y,z, 5);
     #else
-
         if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
         {
             push_voxel_quad(scratch, &index, x,y,z, 0);
         }
-        
 
         if(z == 0 || get_as_int(x,y,z-1) == 0)
         {

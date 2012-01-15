@@ -181,32 +181,9 @@ GLuint terrain_map_glsl_1;
 
 void initTexture3()
 {
-/*
-    GLenum internalFormat = GL_RGBA;
-    GLenum format = GL_RGBA;
-    s32 w = 128;
-    s32 h = 128;
-    s32 d = numberOfTilesets * 16;
-    u8 * Pixels = new u8[w * h * d * 4];
-
-    glBindTexture(GL_TEXTURE_2D_ARRAY, textureID);
-
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
-
-    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
-*/
-
-//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
 
     terrain_map_glsl_surface_1=IMG_Load("media/texture/blocks_01.png");
     if(!terrain_map_glsl_surface_1) {printf("IMG_Load: %s \n", IMG_GetError());return;}
-
 
     GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
     
@@ -221,16 +198,11 @@ void initTexture3()
 
     SDL_LockSurface(terrain_map_glsl_surface_1);
 
-    //int px, py;
-    //unsigned char r,b,g,a;
     int index;
     Uint32 pix;
 
 for(int _i=0; _i < 16; _i++) {
 for(int _j=0; _j < 16; _j++) {
-
-    //px = 32*_i;
-    //py = 512*_j;
     index = _i + 16*_j;
 
     for(int i=0; i < 32; i++) {
@@ -241,24 +213,12 @@ for(int _j=0; _j < 16; _j++) {
     }
 }
 }
-
-/*
-    for(int i = 0; i < w*h*d; i++) 
-    {
-        ((Uint32*) terrain_map_glsl_surface_1->pixels)[i] = Pixels[i];
-    }
-*/
     SDL_UnlockSurface(terrain_map_glsl_surface_1);
                
-    //SDL_SaveBMP(terrain_map_glsl_surface_1, (const char*) "test.bmp");
-    
     glEnable(GL_TEXTURE_2D);
 
     glGenTextures( 1, &terrain_map_glsl_1 );
     glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1);
-
-    //glGenTextures( 1, &terrain_map_glsl_1 );
-    //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1 );
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -282,68 +242,22 @@ if(0)
 if(0)
 {
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, NULL);
-    
-    if(0) {
+    if(0) 
+    {
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, format, GL_UNSIGNED_BYTE, Pixels);
-    } else {
+    }
+     else 
+    {
         glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
     }
-
-    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 256, format, GL_UNSIGNED_BYTE, Pixels);
-    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 1, GL_RGBA, GL_UNSIGNED_BYTE, Pixels+1*32*32);
-    //glTexSubImage3D(GL_TEXTURE_2D_ARRAY_EXT, 0, 0, 0, 0, w, h, 2, GL_RGBA, GL_UNSIGNED_BYTE, Pixels+2*32*32);
-} else {
+} 
+else 
+{
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
-    }
-    //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, terrain_map_glsl_surface_1->pixels);
-
-    //possible texture problem
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-
-    //glGenTextures( 1, &terrain_map_glsl_1_no_gamma_correction );
-    //glBindTexture( GL_TEXTURE_2D, terrain_map_glsl_1_no_gamma_correction );
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-
+}
     glDisable(GL_TEXTURE_2D);
     
-
 }
-
-
-
-/*
-void glVertexAttribPointer( GLuint      index,
-    GLint   size,
-    GLenum      type,
-    GLboolean   normalized,
-    GLsizei     stride,
-    const GLvoid *      pointer);
-*/
-
-/*
-glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-//glNormalPointer(GL_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-*/
-
-//glBindAttribLocation(shaderprogram, 0, "vert_xyz");
-//glBindAttribLocation(shaderprogram, 1, "vert_uv");
-//glBindAttribLocation(shaderprogram, 2, "vert_rgba");
-//glBindAttribLocation(shaderprogram, 3, "vert_normal");
-
-//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0)
-//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12)
-//glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)24)
-//glVertexAttribPointer(3, 3, GL_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)24)
-
 
 GLuint block_texture = 0;
 GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
@@ -373,7 +287,11 @@ void _toggle_z_buffer() {
 
 }
 
+/*
+    Deprecate!
 
+
+*/
 //fulstrum culling globals
 struct _Camera {
 float x,y,z;
@@ -395,7 +313,6 @@ void glDepthMask(   GLboolean   flag);
 
 Specifies whether the depth buffer is enabled for writing. If flag is GL_FALSE, depth buffer writing is disabled. Otherwise, it is enabled. Initially, depth buffer writing is enabled.
 */
-
 
 ///advice
 /*
@@ -546,8 +463,6 @@ int _init_draw_terrain() {
     //quad_cache = _get_quad_cache();
     _init_quad_cache_normals();
 
-    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-    //glEnable(GL_POLYGON_SMOOTH);
     printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
 
     if(block_texture == 0) 
@@ -563,17 +478,6 @@ int _init_draw_terrain() {
     must_lock_block_surface = SDL_MUSTLOCK(block_surface);
     block_surface_width = (int)block_surface->w;
     block_surface_height = (int)block_surface->h;
-    //SDL_Surface *_surface = IMG_Load("media/block_texture/textures_03.png");
-    //if(!_surface) {printf("IMG_Load: %s \n", IMG_GetError());return 0;}
-
-    //SDL_FreeSurface(_surface);
-
-    //Uint32 GL_PIXEL_TYPE = GL_BGR;
-
-
-    //sdl_pixel_format = surface->format;
-    //block_surface_width = (int)surface->w;
-    //block_surface_height = (int)surface->h;
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &block_texture );
@@ -584,9 +488,6 @@ int _init_draw_terrain() {
 */
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-
 
     int texture_format;
     if (block_surface->format->Rmask == 0x000000ff)
@@ -604,19 +505,13 @@ int _init_draw_terrain() {
     //internal format, input format
     glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8_EXT, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
 
-    //possible texture problem
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-    //glTexImage2D(GL_TEXTURE_2D, 0, texture_format, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-
     glGenTextures( 1, &block_texture_no_gamma_correction );
     glBindTexture( GL_TEXTURE_2D, block_texture_no_gamma_correction );
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-
-    //glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w,block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
 
     glDisable(GL_TEXTURE_2D);
     }
@@ -625,26 +520,6 @@ int _init_draw_terrain() {
 
     return 0;
 }
-/*
-deprecated
-
-int create_vbo(struct VBO* q_VBO, struct Vertex* v_list, int v_num) {
-    GLuint VBO_id;
-    VBO_id = 0;
-    if (v_num == 0) { return 0; }
-    glEnable(GL_TEXTURE_2D);
-    q_VBO->v_list = (struct Vertex* )malloc(v_num*sizeof(struct Vertex)); ///dont forget to free this!!!
-    q_VBO->v_num = v_num;
-    memcpy(q_VBO->v_list, v_list, v_num*sizeof(struct Vertex));
-    glGenBuffers(1, &VBO_id);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, v_num*sizeof(struct Vertex), q_VBO->v_list, GL_STATIC_DRAW); // size, pointer to array, usecase
-    q_VBO->VBO_id = VBO_id;
-    glDisable(GL_TEXTURE_2D);
-    //printf("inside: VBO_id= %i \n", VBO_id);
-    return VBO_id;
-}
-*/
 
 void delete_vbo(struct VBO* vbo) {
 
@@ -668,12 +543,6 @@ printf("\n");
 return 0;
 }
 
-/// start VBO
-
-//buffers for VBO stuff
-//struct Vertex cs[(128*8*8)*4*6]; //chunk scratch
-//unsigned int cs_n; //number of vertices in chunk scratch
-
 //cache line optimization; minimize size
 static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
@@ -687,16 +556,6 @@ static inline int calcAdj(int side_1, int side_2, int corner)  __attribute((alwa
 static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((always_inline));
 static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
-
-/*
-will be 1 if is adjacent to any side
-will be 2 only if both sides are occluded
- */
-
-//const static int occ_array[3] = { 255, 177, 177 };
-
-
-//255, 177, 100 
 
 void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list) 
 {
@@ -725,6 +584,11 @@ void occ_debug(int side_1, int side_2, int corner, struct Vertex* v_list)
     v_list->g = g;
     v_list->b = b;
 }
+
+/*
+will be 1 if is adjacent to any side
+will be 2 only if both sides are occluded
+*/
 
 //const static int occ_array[3] = { 255, 177, 100 };
 
@@ -783,7 +647,7 @@ static inline int hash_function4(int x,int y,int z)
 const int _pallet_num = 5;
 const char _pallet[3*(_pallet_num+1)] = 
 {
-    0xff, 0xff,0xff,
+    0xa0, 0xa0,0xa0,
     0x3d, 0x52,0x5e,
     0x57, 0x6e,0x62,
     0x6d,0x8e, 0x86,
@@ -812,7 +676,6 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         occ2 = calcAdj(CX[5], CX[7], CX[6]);
         occ3 = calcAdj(CX[1], CX[3], CX[2]);
         occ4 = calcAdj(CX[3], CX[5], CX[4]);
-
 
         /*
             Performance: use union for AO copy
@@ -845,7 +708,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         //rot = 0;
 
         struct ColorElement _ce;
-        index = 0;
+        //index = 0;
         _ce.r = _pallet[index+0];
         _ce.g = _pallet[index+1];
         _ce.b = _pallet[index+2];

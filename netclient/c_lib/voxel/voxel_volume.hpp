@@ -18,7 +18,8 @@ class Voxel_volume
 #endif
 
     inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
-    { return &voxel[x+(y << index1)+(z << index12)]; }
+    {   return &voxel[x+(y << index1)+(z << index12)]; }
+
 
     inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
     { return voxel[x+(y << index1)+(z << index12)].color; }
