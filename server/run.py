@@ -194,24 +194,24 @@ def gen_map_simple():
     .size(128,128,128)\
     .group(0)\
     .tile(2)\
-    .interpolate(4,2,1)\
+    .interpolate(4,4,1)\
     .scale(4.0, 4.0, 1.0)\
-    .heightmap(baseline=40, maxheight=60)\
-    .p2(octaves=6, persistence=0.45)\
+    .heightmap(baseline=20, maxheight=30)\
+    .p2(octaves=6, persistence=0.35,frequency=0.1)\
     .start()\
     .reset()
 
      ###base heightmap, smooth shallowER hills
-    c_lib.map_gen.conf\
-    .size(128,128,128)\
-    .group(5)\
-    .scale(x=1.0, y=1.0, z=1.0)\
-    .tile(2)\
-    .interpolate(2,4,1)\
-    .heightmap(baseline=30, maxheight=45)\
-    .p2(octaves=6, persistence=0.4)\
-    .start()\
-    .reset()
+    #c_lib.map_gen.conf\
+    #.size(128,128,128)\
+    #.group(5)\
+    #.scale(x=4.0, y=4.0, z=1.0)\
+    #.tile(2)\
+    #.interpolate(2,4,1)\
+    #.heightmap(baseline=30, maxheight=45)\
+    #.p2(octaves=6, persistence=0.4)\
+    #.start()\
+    #.reset()
 
 
 def pallet_pillar(x,y,z):
@@ -309,7 +309,7 @@ class Main:
             #pass
         
         #_gen_map()
-        #gen_map_simple()
+        gen_map_simple()
 
         #terrain_map.load_from_disk("natural_terrain")
             
@@ -341,7 +341,7 @@ class Main:
 
         #c_lib.map_gen.conf.seed(opts.seed)
         
-        good_cave1()
+        #good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)
