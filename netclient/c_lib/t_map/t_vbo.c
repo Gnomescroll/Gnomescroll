@@ -879,8 +879,8 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         //float rot = -0.0125 + 0.050*(((float) (hash_function4(x, y, z) % 256)) / 256.0);
         //printf("rot= %f \n", rot);
 
-        static float rot = 0.0;
-        rot += 0.001;
+        //static float rot = 0.0;
+        //rot += 0.001;
         /*
             Performance: use union for color copy
         */
@@ -888,17 +888,17 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         //rot = 0;
 
         struct ColorElement _ce;
-        index = 0;
+        //index = 0;
         _ce.r = _pallet[index+0];
         _ce.g = _pallet[index+1];
         _ce.b = _pallet[index+2];
         _ce.a = 0;
 
-        float mat[4][4];
+        //float mat[4][4];
 
-        identmat(mat);
-        huerotatemat(mat, rot );
-        applymatrix(&_ce.color, mat, 1);
+        //identmat(mat);
+        //huerotatemat(mat, rot );
+        //applymatrix(&_ce.color, mat, 1);
 
         v_list[offset+0].color = _ce.color;
         v_list[offset+1].color = _ce.color;

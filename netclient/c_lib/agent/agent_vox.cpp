@@ -40,7 +40,7 @@ void Agent_vox::init_parts() {
 
         ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
     }
-    ClientState::voxel_render_list.update_vertex_buffer_object();
+    //ClientState::voxel_render_list.update_vertex_buffer_object();
 }
 
 void Agent_vox::set_draw(bool draw) {

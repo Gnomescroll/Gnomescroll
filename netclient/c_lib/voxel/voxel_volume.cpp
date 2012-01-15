@@ -82,12 +82,18 @@ draw(true)
 
 Voxel_volume::~Voxel_volume()
 {
-    printf("voxel volume deconstrutor \n");
+/*
+    //registration and deregistration are handled by voxel class
 
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) voxel_render_list->unregister_voxel_volume(this);
     #endif
     if(voxel_hitscan_list != NULL) voxel_hitscan_list->unregister_voxel_volume(this);
+*/
+
+    if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered \n");
+    if(voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
+
     delete[] voxel;
 }
 
