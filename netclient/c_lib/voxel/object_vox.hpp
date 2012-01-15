@@ -2,6 +2,8 @@
 
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
+#include <c_lib/voxel/voxel_render.hpp>
+#include <c_lib/voxel/voxel_hitscan.hpp>
 #include <c_lib/voxel/voxel_body.hpp>
 
 #ifdef DC_CLIENT
@@ -84,7 +86,7 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
     y = this->a->y;
     z = this->a->z;
     theta = this->a->theta;
-    
+
     struct Vector forward;
     this->forward(&forward, theta);
 
@@ -106,7 +108,7 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
 
 template <class Obj, int NUM_PARTS>
 void Object_vox<Obj,NUM_PARTS>::right(Vector* f, float theta) {
-    f->x = cos(theta * PI + PI/2); 
+    f->x = cos(theta * PI + PI/2);
     f->y = sin(theta * PI + PI/2);
     f->z = 0.0f;
     normalize_vector(f);
