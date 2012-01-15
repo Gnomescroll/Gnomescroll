@@ -19,6 +19,18 @@ struct Voxel_normal
     };
 };
 
+struct voxAOElement
+{
+    union
+    {
+        struct
+        {
+            unsigned char ao[4]; //32
+        };
+        unsigned int AO;
+    };
+};
+
 struct Voxel_vertex
 {
     float x,y,z;
@@ -32,7 +44,11 @@ struct Voxel_vertex
         char normal[4]; //16
         unsigned int n;
     };
-    //can compute normals from t
+    union
+    {
+        char ao[4]; //20
+        unsigned int AO;
+    };
 };
 
 #ifdef DC_CLIENT

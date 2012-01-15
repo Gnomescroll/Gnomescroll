@@ -183,15 +183,16 @@ def _gen_map():
 
 
 def gen_map_simple():
-    terrain_map.set_map_size(128,128,128) # TODO:: get this value from the map gen or saved map
+    size = 128
+    terrain_map.set_map_size(size,size,size) # TODO:: get this value from the map gen or saved map
 
-    c_lib.map_gen.init(128,128,128)
+    c_lib.map_gen.init(size,size,size)
     c_lib.map_gen.conf.seed(opts.seed)
     _n = time.time()
 
     ##base heightmap, smooth shallow hills
     c_lib.map_gen.conf\
-    .size(128,128,128)\
+    .size(size,size,size)\
     .group(0)\
     .tile(2)\
     .interpolate(4,4,1)\

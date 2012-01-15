@@ -675,7 +675,7 @@ return 0;
 //unsigned int cs_n; //number of vertices in chunk scratch
 
 //cache line optimization; minimize size
-static const int CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
+static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1, 1, 1, 1, 0, 1,
 -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1, -1, 1, -1, 0, 1,
@@ -853,9 +853,10 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         int occ1, occ2, occ3, occ4;
 
         occ1 = calcAdj(CX[7], CX[1], CX[0]);
+        occ2 = calcAdj(CX[5], CX[7], CX[6]);
         occ3 = calcAdj(CX[1], CX[3], CX[2]);
         occ4 = calcAdj(CX[3], CX[5], CX[4]);
-        occ2 = calcAdj(CX[5], CX[7], CX[6]);
+
 
         /*
             Performance: use union for AO copy
