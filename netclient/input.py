@@ -10,6 +10,7 @@ import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
 import c_lib.c_lib_map_gen as cMapGen
+import c_lib.c_lib_monsters as cMonsters
 
 from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
@@ -276,6 +277,7 @@ class Keyboard(object):
             ';' : self.voxel_aligner_mode_toggle,
             '[' : self.cycle_agent_camera_mode,
             #']': self.hk,
+            ']' : cMonsters.slime_test,
         }
 
         self.key_release_handlers = {

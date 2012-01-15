@@ -36,6 +36,7 @@
 #include <c_lib/voxel/voxel_volume.cpp>
 #include <c_lib/voxel/voxel_render.cpp>
 #include <c_lib/voxel/voxel_hitscan.cpp>
+#include <c_lib/voxel/voxel_body.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
@@ -51,6 +52,9 @@
 
 /* Agents */
 #include <c_lib/agent/agent_include.h>
+
+/* Monsters */
+#include <c_lib/monsters/monsters.cpp>
 
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>

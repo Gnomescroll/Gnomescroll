@@ -109,6 +109,19 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
     PlayerAgent_state playerAgent_state
 
+cdef extern from "./voxel/voxel_body.hpp":
+    cdef cppclass VoxBody:
+        float vox_size
+        void init(int n_parts)
+        void set_part(
+            float rot_x, float rot_y, float rot_z,
+            float rot_ax, float rot_ay, float rot_az,
+            float anc_len, float anc_x, float anc_y, float anc_z,
+            int dim_x, int dim_y, int dim_z,
+            int part_num
+        )
+        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+
 cdef extern from "./agent/agent_vox.hpp":
     int AGENT_PART_NUM
     cdef enum AGENT_BODY_PARTS:
@@ -118,17 +131,6 @@ cdef extern from "./agent/agent_vox.hpp":
         AGENT_PART_RARM
         AGENT_PART_LLEG
         AGENT_PART_RLEG
-
-    cdef cppclass VoxBody:
-        float vox_size
-        void set_part(
-            float rot_x, float rot_y, float rot_z,
-            float rot_ax, float rot_ay, float rot_az,
-            float anc_len, float anc_x, float anc_y, float anc_z,
-            int dim_x, int dim_y, int dim_z,
-            int part_num
-        )
-        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     VoxBody agent_vox_dat
 
 def draw_agents():
@@ -160,6 +162,9 @@ colors = {
 
 import dat.agent_dim as dat
 def load_agent_voxel_dat():
+
+    agent_vox_dat.init(AGENT_PART_NUM)
+    
     agent_vox_dat.vox_size = dat.vosize
 
     for part in range(AGENT_PART_NUM):

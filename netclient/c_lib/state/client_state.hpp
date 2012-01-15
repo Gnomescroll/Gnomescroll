@@ -8,6 +8,7 @@
 
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/voxel/voxel_render.hpp>
+#include <c_lib/monsters/monsters.hpp>
 
 class PlayerAgent_state; //forward declaration
 
@@ -27,6 +28,7 @@ namespace ClientState {
     extern BillboardText_list billboard_text_list;
     extern Animations::HitscanEffect_list hitscan_effect_list;
     extern Voxel_render_list voxel_render_list;
+    extern Monsters::Slime_list slime_list;
 
     extern CTF ctf;
         
@@ -35,7 +37,7 @@ namespace ClientState {
     void set_PlayerAgent_id(int id);
     
     void init();
-}
 
+}
 #endif
 
