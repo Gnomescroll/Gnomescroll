@@ -14,7 +14,8 @@ namespace ServerState {
     Cspray_list cspray_list;
     Grenade_list grenade_list;
     Neutron_list neutron_list;
-
+    Monsters::Slime_list slime_list;
+    
     CTF ctf;
 
     void init() {

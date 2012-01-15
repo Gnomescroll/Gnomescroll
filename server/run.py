@@ -309,7 +309,7 @@ class Main:
             #pass
         
         #_gen_map()
-        gen_map_simple()
+        #gen_map_simple()
 
         #terrain_map.load_from_disk("natural_terrain")
             
@@ -341,7 +341,7 @@ class Main:
 
         #c_lib.map_gen.conf.seed(opts.seed)
         
-        #good_cave1()
+        good_cave1()
 
         if opts.save_map:
             print 'Saving map as %s' % (opts.save_map,)

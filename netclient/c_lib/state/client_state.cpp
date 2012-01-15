@@ -8,7 +8,6 @@
 
 #include <c_lib/game/ctf.hpp>
 
-
 namespace ClientState {
 
     Agent_list agent_list;
@@ -21,7 +20,8 @@ namespace ClientState {
     BillboardText_list billboard_text_list;
     Animations::HitscanEffect_list hitscan_effect_list;
     Voxel_render_list voxel_render_list;
-
+    Monsters::Slime_list slime_list;
+    
     CTF ctf;
     
     PlayerAgent_state playerAgent_state;

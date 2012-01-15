@@ -248,13 +248,13 @@ VoxBody::VoxBody()
 :
 vox_part(NULL),
 inited(false)
-{where();}
+{}
 VoxBody::VoxBody(float vox_size)
 :
 vox_part(NULL),
 inited(false),
 vox_size(vox_size)
-{where();}
+{}
 
 VoxBody::~VoxBody()
 {
