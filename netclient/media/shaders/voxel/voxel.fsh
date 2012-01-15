@@ -8,9 +8,8 @@ varying vec3 normal;
 void main() 
 {
 
-	vec3 test = normalize(vec3(0.56, 0.68, 0.23)); 
-	float diffuse = dot(normal, test );
-
+	vec3 test = normalize(gl_NormalMatrix*vec3(0.56, 0.68, 0.23)); 
+	float diffuse = abs(dot(normal, test ));
 	
 	gl_FragColor = gl_Color * diffuse;
 

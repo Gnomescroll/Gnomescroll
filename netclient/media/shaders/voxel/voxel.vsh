@@ -19,7 +19,9 @@ void main(void)
 	vec4 pos = InRotationMatrix*gl_Vertex;
 	gl_Position = gl_ModelViewProjectionMatrix * pos;
 
-	normal = gl_NormalMatrix*InNormal;
+	//normal = gl_NormalMatrix*InNormal;
+	normal = InNormal;
+
 	//vec3 test = normalize(vec3(0.56, 0.68, 0.23));
  
 	//diffuse = dot(InNormal, test );
