@@ -192,11 +192,12 @@ void Voxel_render_list::draw()
     if( _vbo->vnum == 0 )
     {
         printf("Voxel_render_list::draw, vnum equals zero \n");
+        this->update_vertex_buffer_object();
         return;
     }
     if( _vbo->id == 0 )
     {
-        printf("Voxel_render_list::draw, vbo is zero \n");
+        printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
         return;
     }
 
@@ -250,10 +251,17 @@ void Voxel_render_list::draw()
 
     glUseProgramObjectARB(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+/*
+    Apply changes
+*/
+    this->update_vertex_buffer_object(); 
 }
 
 void voxel_renderer_draw_test()
 {   
+    return;
+
     printf("voxel test \n");
 
     static Voxel_volume vv (4,4,2, 2.0);
@@ -269,7 +277,9 @@ void voxel_renderer_draw_test()
         voxel_render_list.register_voxel_volume(&vv);
 
         //printf("voxel_render_list.update_vertex_buffer_object(); \n");
-        voxel_render_list.update_vertex_buffer_object();
+        
+        voxel_render_list.draw();
+        //voxel_render_list.update_vertex_buffer_object();
     }
     init = 1;
 
