@@ -61,6 +61,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         vv = render_list[i];
         if( vv->needs_vbo_update == true )
         {
+            vv->needs_vbo_update = false;
             needs_update = true;
             vv->update_vertex_list();
             //printf("%i vnum= %i \n", i, _vbo->vnum);
