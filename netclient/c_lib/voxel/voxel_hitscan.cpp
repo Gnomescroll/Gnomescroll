@@ -1,8 +1,14 @@
 #include "voxel_hitscan.hpp"
 
-void Voxel_hitscan_list::hitscan_test(const float _x0, const float _y0, const float _z0, 
-const float x1, const float y1, const float z1) {
+// TEMPORARY:
+#include <c_lib/ray_trace/hitscan.hpp>
 
+int Voxel_hitscan_list::hitscan
+(const float _x0, const float _y0, const float _z0, 
+const float x1, const float y1, const float z1,
+int skip_id, // skip player agent id
+float collision_point[3], float *distance, int *metadata)
+{
     float x0,y0,z0;
     float x2,y2,z2;
 
@@ -13,9 +19,14 @@ const float x1, const float y1, const float z1) {
     float radius;
     struct Voxel_hitscan_element* vhe;
 
+    float min_dist = 10000000.0f; // big #
+    int voxel_hit = -1;
+    int body_part = -1;
+    
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if(hitscan_list[i] == NULL) continue;
+        //if(i == skip_id) continue;
         vhe = hitscan_list[i];
 
         x2 = vhe->vv->center.x;
@@ -36,17 +47,25 @@ const float x1, const float y1, const float z1) {
         z = t*z2 - z0;
         r2 = x*x+y*y+z*z; //distance squared between v0 and closest point on line to v0
 
-        if( r2 < radius*radius ) printf("BAM! HIT %i!!\n", i);
-    /*
-        short entity_id;
-        short entity_type;
-        Voxel_volume* vv;
-    */
-        //x,y,z is closest point
-        x = t*x2 + x1;
-        y = t*y2 + y1;
-        z = t*z2 + z1;
+        if( r2 < radius*radius ) {
+            printf("BAM! HIT %i!!\n", i);
+            if (d > min_dist) continue;
+            min_dist = d;
+            voxel_hit = i;
+            body_part = 0;
+            //x,y,z is closest point
+            x = t*x2 + x1;
+            y = t*y2 + y1;
+            z = t*z2 + z1;
+        }
     }
+    metadata[0] = voxel_hit;
+    metadata[1] = body_part;
+    *distance = min_dist;
+    collision_point[0] = x;
+    collision_point[1] = y;
+    collision_point[2] = z;
+    return Hitscan::HITSCAN_TARGET_AGENT;   // TODO
 }
 
 void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type)

@@ -53,6 +53,31 @@ void PlayerAgent_action::hitscan() {
         p->agent_id
     );
 
+    /*********************************/
+    //THIS SHOULD THROW A COMPILER ERROR
+    //Files:
+        //-agent/player_agent_action
+        //-voxel/
+        //-voxel/voxel_*
+        //-ray_trace/hitscan
+        //-agent/agent_vox
+        //-monsters/monsters
+
+    //Baseclass/template for vox unit
+    //object type enum, attached to vox unit, or retrievable via reference to owner
+    //part num attached to vox unit
+    /*********************************/
+
+    //float collision_point[3];
+    //target = ClientState::voxel_hitscan_list.hitscan(
+        //p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
+        //vec[0], vec[1], vec[2],
+        //p->agent_id,
+        //collision_point,
+        //&distance,
+        //data
+    //);
+
     hitscan_agent_CtoS agent_msg;
     hitscan_block_CtoS block_msg;
 

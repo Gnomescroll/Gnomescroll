@@ -150,7 +150,8 @@ theta(0.0f), phi(0.0f)
 
 #ifdef DC_CLIENT
 void test() {
-    int n = 30;
+    //int n = 30;
+    int n = 1;
     int i;
     int x,y,z;
     for (i=0; i<n; i++) {

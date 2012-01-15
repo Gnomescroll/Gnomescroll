@@ -32,7 +32,7 @@ class Voxel_hitscan_list
     void unregister_voxel_volume(Voxel_volume* vv);
 
     //pass in x,y,z fire point and direction of projectile
-    void hitscan_test(const float _x0, const float _y0, const float _z0, const float x1, const float y1, const float z1);
+    int hitscan(const float _x0, const float _y0, const float _z0, const float x1, const float y1, const float z1, int skip_id, float collision_point[3], float *distance, int *metadata);
 
     Voxel_hitscan_list()
     :
