@@ -16,7 +16,7 @@ void main()
         
 	float att  = tmp / float(inColor.r + inColor.g + inColor.b);
 
-	float intensity = (inColor.r + inColor.g + inColor.b)
+	float intensity = (inColor.r + inColor.g + inColor.b);
 
 	//float intensity = (inColor.r + inColor.g + inColor.b) / att;
 	//intensity /= att;
