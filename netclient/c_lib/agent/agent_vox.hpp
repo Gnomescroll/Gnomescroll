@@ -49,5 +49,5 @@ class Agent_vox: public Object_vox<Agent_state, AGENT_PART_NUM>
 {
     public:
     void update(VoxBody* vox_dat);
-    explicit Agent_vox(Agent_state* a, VoxBody* vox_dat) : Object_vox(a, vox_dat) {}
+    Agent_vox(Agent_state* a, VoxBody* vox_dat) : Object_vox(a, vox_dat) {}
 };

@@ -20,6 +20,6 @@ class Object_vox {
         void update(VoxBody* vox_dat);
         void set_draw(bool draw);
 
-        explicit Object_vox(Obj* a, VoxBody* vox_dat);
+        Object_vox(Obj* a, VoxBody* vox_dat);
         ~Object_vox();
 };

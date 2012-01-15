@@ -21,7 +21,7 @@ class Slime;    // forward decl
 class Slime_vox: public Object_vox<Slime, SLIME_PART_NUM>
 {
     public:
-    explicit Slime_vox(Slime* a, VoxBody* vox_dat) : Object_vox(a, vox_dat) {}
+    Slime_vox(Slime* a, VoxBody* vox_dat) : Object_vox(a, vox_dat) {}
 };
 
 class Slime {
