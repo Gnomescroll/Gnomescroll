@@ -2,11 +2,11 @@
 
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
-#include <c_lib/voxel/voxel_render.hpp>
-#include <c_lib/voxel/voxel_hitscan.hpp>
 #include <c_lib/voxel/voxel_body.hpp>
 
 #ifdef DC_CLIENT
+#include <c_lib/voxel/voxel_render.hpp>
+#include <c_lib/voxel/voxel_hitscan.hpp>
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
