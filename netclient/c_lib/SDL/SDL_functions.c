@@ -376,8 +376,8 @@ void close_SDL()
 void save_screenshot()
 {
 #ifndef __APPLE__
-    int window_width = _xres;
-    int window_height = _yres;
+    //int window_width = _xres;
+    //int window_height = _yres;
 
     const char *FileName = "screenshot.png";
 

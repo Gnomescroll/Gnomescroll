@@ -356,6 +356,8 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     Voxel_normal normal;
     normal.n = voxel_normal_array[side].n;
 
+    //printf("normal: %i, %i, %i \n", normal.normal[0],normal.normal[1],normal.normal[2] );
+
     scratch[*index + 0].n = normal.n;
     scratch[*index + 1].n = normal.n;
     scratch[*index + 2].n = normal.n;

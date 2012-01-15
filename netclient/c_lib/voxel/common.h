@@ -1,7 +1,8 @@
 #pragma once
 
 
-union Voxel {
+union Voxel 
+{
     struct
     {
         unsigned char r,g,b,a;

@@ -126,6 +126,7 @@ static GLenum voxel_shader_prog = 0;
 //int InRGBA; 
 
 int InRotationMatrix;
+int InNormal;
 //int InTranslation;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
@@ -134,7 +135,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     if (init) return;
     printf("init voxel shader\n");
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     voxel_shader_prog = glCreateProgramObjectARB();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -167,6 +168,9 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     //uniforms
 
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
+
+
+    InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
     //InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
 
     //GLint glGetUniformLocationARB(GLhandleARB program, const GLcharARB * name)
@@ -206,7 +210,7 @@ void Voxel_render_list::draw()
     glColor3b(255,255,255);
 
     //glShadeModel(GL_FLAT);
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 
     glDisable(GL_TEXTURE_2D);
 
@@ -214,9 +218,18 @@ void Voxel_render_list::draw()
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+    
+    glEnableVertexAttribArray(InNormal);
+
+    //glEnableClientState(GL_NORMAL_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
+    
+    //printf("innormal = %i \n", InNormal);
+    glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
+
+    //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
     Voxel_volume* vv;
     Vector4 v[4];
@@ -246,6 +259,9 @@ void Voxel_render_list::draw()
     }
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
+    //glDisableClientState(GL_NORMAL_ARRAY);
+
+    glDisableVertexAttribArray(InNormal);
 
     glEnable (GL_DEPTH_TEST);
 

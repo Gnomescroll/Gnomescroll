@@ -1,10 +1,20 @@
 
 //varying vec4 _rgba;
 
+varying vec3 normal;
+
+//varying float diffuse;
+
 void main() 
 {
 
-	gl_FragColor = gl_Color;
+	vec3 test = normalize(vec3(0.56, 0.68, 0.23)); 
+	float diffuse = dot(normal, test );
+
+	
+	gl_FragColor = gl_Color * diffuse;
+
+	//gl_FragColor = gl_Color * 0.5;
 
 	//gl_FragColor.rgb = vec3(0.0, 0.0, 1.0);
 
