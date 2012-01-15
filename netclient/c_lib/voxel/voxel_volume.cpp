@@ -468,7 +468,7 @@ void Voxel_volume::update_vertex_list()
 
     }}}
 
-    printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );
+    //printf("Voxel_volume::update_vertex_list: created %i vertices, %i bytes \n", index, index*sizeof(Voxel_vertex) );
 
     if(index == 0)
     {
@@ -486,7 +486,7 @@ void Voxel_volume::update_vertex_list()
     vvl.size = index*sizeof(Voxel_vertex);  //wtf is size for
     vvl.vnum = index;
 
-    printf("Voxel_volume::update_vertex_list finished \n");
+    //printf("Voxel_volume::update_vertex_list finished \n");
 }
 
 #endif

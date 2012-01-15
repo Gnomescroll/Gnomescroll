@@ -88,3 +88,5 @@ server/content/maps/*
 .lock-wafbuild
 
 mapsave*
+
+core

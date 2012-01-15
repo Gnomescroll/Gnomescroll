@@ -35,6 +35,7 @@ import c_lib.c_lib_camera as cCamera
 import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
 import c_lib.c_lib_map_gen as cMapGen
+import c_lib.c_lib_monsters as cMonsters
 
 import c_lib.c_lib_animations as cAnimations
 
@@ -102,6 +103,7 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
         self.init_inputs()
+        cMonsters.load_slime_voxel_dat()
         cAgents.load_agent_voxel_dat()
         cCamera.load_skybox()
 
@@ -146,6 +148,7 @@ class App(object):
 
         last_tick = 0
 
+        #cMonsters.slime_test()
         while not GameStateGlobal.exit:
             P2.start_frame() #TEST
             #theta += -.005 #test

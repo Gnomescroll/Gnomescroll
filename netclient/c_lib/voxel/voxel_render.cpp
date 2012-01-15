@@ -19,7 +19,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             render_list[i] = vv;
             vv->id = i;
             vv->voxel_render_list = this;
-            printf("Added voxel volume %i \n", i);
+            //printf("Added voxel volume %i \n", i);
             break;
         }
     }
@@ -82,7 +82,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         return;
     }
 
-    printf("Voxel_render_list::update_vertex_buffer_object: total vnum= %i \n", _vbo->vnum);
+    //printf("Voxel_render_list::update_vertex_buffer_object: total vnum= %i \n", _vbo->vnum);
 
     if( v_num >= _vbo->max_size ) 
     {
@@ -184,7 +184,6 @@ void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transp
 void Voxel_render_list::draw()
 {
     glDisable(GL_TEXTURE_2D);
-    //    glEnable(GL_TEXTURE_2D);
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
 
