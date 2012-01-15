@@ -37,6 +37,7 @@
 #include <c_lib/voxel/voxel_render.cpp>
 #include <c_lib/voxel/voxel_hitscan.cpp>
 #include <c_lib/voxel/voxel_body.cpp>
+#include <c_lib/voxel/object_vox.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>

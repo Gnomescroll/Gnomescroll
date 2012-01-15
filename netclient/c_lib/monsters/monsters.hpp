@@ -5,6 +5,7 @@
 #include <c_lib/template/object_list.hpp>
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
+#include <c_lib/voxel/object_vox.hpp>
 
 namespace Monsters {
 
@@ -17,22 +18,31 @@ enum SLIME_BODY_PARTS {
 
 class Slime;    // forward decl
 
-class Slime_vox {
+//class Slime_vox {
+    //public:
+        //void right(Vector *f, float theta);
+        //void forward(Vector *f, float theta);
+        //void look(Vector *f, float theta, float phi);
+
+        //Slime* a;
+
+        //Voxel_volume vv[SLIME_PART_NUM];
+
+        //void init_parts();
+        //void update();
+        //void set_draw(bool draw);
+
+        //Slime_vox(Slime* a);
+        //~Slime_vox();
+//};
+
+//class Slime_vox: public Object_vox<Slime, SLIME_PART_NUM, slime_vox_dat>
+//{};
+
+class Slime_vox: public Object_vox<Slime, SLIME_PART_NUM>
+{
     public:
-        void right(Vector *f, float theta);
-        void forward(Vector *f, float theta);
-        void look(Vector *f, float theta, float phi);
-
-        Slime* a;
-
-        Voxel_volume vv[SLIME_PART_NUM];
-
-        void init_parts();
-        void update();
-        void set_draw(bool draw);
-
-        Slime_vox(Slime* a);
-        ~Slime_vox();
+    explicit Slime_vox(Slime* a, VoxBody* vox_dat) : Object_vox(a, vox_dat) {}
 };
 
 class Slime {

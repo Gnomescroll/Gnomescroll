@@ -20,6 +20,7 @@ namespace ClientState {
     BillboardText_list billboard_text_list;
     Animations::HitscanEffect_list hitscan_effect_list;
     Voxel_render_list voxel_render_list;
+    Voxel_hitscan_list voxel_hitscan_list;
     Monsters::Slime_list slime_list;
     
     CTF ctf;
