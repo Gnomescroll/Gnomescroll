@@ -181,12 +181,14 @@ VoxPart::VoxPart(
     float rot_nx, float rot_ny, float rot_nz,
     float anc_len, float anc_x, float anc_y, float anc_z,
     int dim_x, int dim_y, int dim_z,
-    int part_num
+    int part_num,
+    bool biaxial
 ):
 rotation(rot_fx, rot_fy, rot_fz, rot_nx, rot_ny, rot_nz),
 anchor(anc_len, anc_x, anc_y, anc_z),
 dimension(dim_x, dim_y, dim_z),
-part_num(part_num)
+part_num(part_num),
+biaxial(biaxial)
 {
     colors.init(dim_x, dim_y, dim_z);
 }
@@ -213,7 +215,8 @@ void VoxBody::set_part(
     float rot_nx, float rot_ny, float rot_nz,
     float anc_len, float anc_x, float anc_y, float anc_z,
     int dim_x, int dim_y, int dim_z,
-    int part_num
+    int part_num,
+    bool biaxial
 )
 {
     if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
@@ -224,7 +227,8 @@ void VoxBody::set_part(
                 rot_nx, rot_ny, rot_nz,
                 anc_len, anc_x, anc_y, anc_z,
                 dim_x, dim_y, dim_z,
-                part_num
+                part_num,
+                biaxial
             );
         vox_part[part_num] = p;
     } else {
@@ -233,6 +237,7 @@ void VoxBody::set_part(
         p->set_dimension(dim_x, dim_y, dim_z);
         p->colors.init(dim_x, dim_y, dim_z);
         p->part_num = part_num;
+        p->biaxial = biaxial;
     }
 }
 

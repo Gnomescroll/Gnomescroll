@@ -118,7 +118,8 @@ cdef extern from "./voxel/voxel_body.hpp":
             float rot_ax, float rot_ay, float rot_az,
             float anc_len, float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num
+            int part_num,
+            bool biaxial
         )
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 
@@ -168,7 +169,9 @@ def load_agent_voxel_dat():
     agent_vox_dat.vox_size = dat.vosize
 
     for part in range(AGENT_PART_NUM):
+        biaxial = False
         if part == AGENT_PART_HEAD:
+            biaxial = True
             xdim,ydim,zdim = head['dim']
         else:
             xdim,ydim,zdim = dat.lu1[part]
@@ -176,7 +179,7 @@ def load_agent_voxel_dat():
         length, ax,ay,az= dat.lu2[part]
         fx,fy,fz, nx,ny,nz = dat.lu3[part]
 
-        agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
+        agent_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part, biaxial)
         
         for color in colors[part]['voxels']:
             x,y,z, r,g,b,a = color

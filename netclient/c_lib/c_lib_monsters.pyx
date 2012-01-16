@@ -1,3 +1,5 @@
+from libcpp cimport bool
+
 cdef extern from "./voxel/voxel_body.hpp":
     cdef cppclass VoxBody:
         float vox_size
@@ -7,7 +9,8 @@ cdef extern from "./voxel/voxel_body.hpp":
             float rot_ax, float rot_ay, float rot_az,
             float anc_len, float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num
+            int part_num,
+            bool biaxial
         )
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 
@@ -47,8 +50,8 @@ def load_slime_voxel_dat():
         fx,fy,fz,nx,ny,nz,length,ax,ay,az = [0]*10
 
         xdim,ydim,zdim = vox['dim']
-
-        slime_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part)
+        biaxial = False
+        slime_vox_dat.set_part(fx,fy,fz,nx,ny,nz, length,ax,ay,az, xdim,ydim,zdim, part, biaxial)
         
         for color in vox['voxels']:
             x,y,z, r,g,b,a = color

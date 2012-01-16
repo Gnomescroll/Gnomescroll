@@ -63,7 +63,7 @@ void PlayerAgent_action::hitscan() {
         //-agent/agent_vox
         //-monsters/monsters
 
-    //Baseclass/template for vox unit
+    //Baseclass/template for vox object DONE
     //object type enum, attached to vox unit, or retrievable via reference to owner
     //part num attached to vox unit
     //if no voxels hit, switch to block

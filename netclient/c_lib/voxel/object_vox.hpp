@@ -7,6 +7,8 @@
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
+
+// forward decl.
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
@@ -81,11 +83,12 @@ void Object_vox<Obj,NUM_PARTS>::set_draw(bool draw) {
 template <class Obj, int NUM_PARTS>
 void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
 
-    float x,y,z,theta;
+    float x,y,z,theta,phi;
     x = this->a->x;
     y = this->a->y;
     z = this->a->z;
     theta = this->a->theta;
+    phi = this->a->phi;
 
     struct Vector forward;
     this->forward(&forward, theta);
@@ -102,7 +105,11 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
         az = vp->anchor.z;
         this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
 
-        this->vv[i].set_axis(&forward, &up);
+        if (vp->biaxial) {
+            this->vv[i].set_rotated_unit_axis(phi, 0.0f, theta);
+        } else {
+            this->vv[i].set_axis(&forward, &up);
+        }
     }
 }
 

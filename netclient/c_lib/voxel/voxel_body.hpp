@@ -56,6 +56,7 @@ struct VoxPart {
         VoxColors colors;
         
         int part_num;
+        bool biaxial; // true for horizontal+vertical (head). default=false
 
         void set_rotation(float fx, float fy, float fz, float nx, float ny, float nz);
         void set_anchor(float len, float x, float y, float z);
@@ -66,7 +67,8 @@ struct VoxPart {
             float rot_nx, float rot_ny, float rot_nz,
             float anc_len, float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num
+            int part_num,
+            bool biaxial=false
         );
 };
 
@@ -84,7 +86,8 @@ class VoxBody {
             float rot_nx, float rot_ny, float rot_nz,
             float anc_len, float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num
+            int part_num,
+            bool biaxial=false
         );
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);//
 
