@@ -4,11 +4,12 @@
 #include <physics/vector.hpp>
 #include <physics/matrix.hpp>
 
+#include <voxel/voxel_hitscan.hpp>
+
 #ifdef DC_CLIENT
 class Voxel_render_list; //forward declaration
 #endif
 class Voxel_hitscan_list; //forward declaration
-
 
 class Voxel_volume
 {
@@ -67,6 +68,8 @@ class Voxel_volume
 
     bool needs_vbo_update;
 
+    struct Voxel_hitscan_element vhe;
+
 #ifdef DC_CLIENT
     Voxel_render_list* voxel_render_list;
     void register_with_renderer(Voxel_render_list* vrl);
@@ -100,6 +103,7 @@ class Voxel_volume
     void draw_bounding_box();
 
     void init(int xdim, int ydim, int zdim, float scale);
+    void set_hitscan_properties(short entity_id, short entity_type, short part_id);
 
     Voxel_volume(int xdim, int ydim, int zdim, float scale);
     Voxel_volume();

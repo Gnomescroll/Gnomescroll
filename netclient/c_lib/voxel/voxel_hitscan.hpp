@@ -12,14 +12,15 @@
     list, add, remove, iterate
 */
 
+class Voxel_volume; // forward decl
+
 struct Voxel_hitscan_element
 {
     short entity_id;
     short entity_type;
+    short part_id;
     Voxel_volume* vv;
 };
-
-
 
 class Voxel_hitscan_list
 {

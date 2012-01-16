@@ -2,6 +2,7 @@
 
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
+#include <common/enum_types.hpp>
 
 const int AGENT_MAX = 128;
 #define AGENT_HEIGHT 1.8f
@@ -103,6 +104,8 @@ class Agent_state {
 
         int id;
         int client_id;
+
+        Object_types type;
         
         struct Agent_collision_box box;
 

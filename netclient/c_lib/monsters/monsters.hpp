@@ -7,6 +7,8 @@
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/object_vox.hpp>
 
+#include <common/enum_types.hpp>
+
 namespace Monsters {
 
 extern VoxBody slime_vox_dat;
@@ -32,6 +34,8 @@ class Slime {
     float theta,phi;
     
     Slime_vox* vox;
+
+    Object_types type;
 
     Slime();
     Slime(int id);

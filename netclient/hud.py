@@ -117,14 +117,15 @@ class Hud(object):
         if agent is None:
             s = 'No agent yet.'
         else:
-            if agent.team.viewers:
-                s = 'Viewer Mode'
-            if False:
-                pass
+            if agent.team is None:
+                s = 'No team yet.'
             else:
-                health = '%i/%i' % (agent.health, agent.health_max,)
-                w = 'Ammo %s' % (agent.weapon_hud_display(),)
-                s = 'HP %s::%s' % (health, w,)
+                if agent.team.viewers:
+                    s = 'Viewer Mode'
+                else:
+                    health = '%i/%i' % (agent.health, agent.health_max,)
+                    w = 'Ammo %s' % (agent.weapon_hud_display(),)
+                    s = 'HP %s::%s' % (health, w,)
         return s
 
     def draw_player_stats(self):

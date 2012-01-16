@@ -53,7 +53,7 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
 
         this->vv[i].init(x,y,z,size);
         this->vv[i].set_unit_axis();
-
+        this->vv[i].set_hitscan_properties(this->a->id, this->a->type, i);
         for (j=0; j<vp->colors.n; j++) {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];

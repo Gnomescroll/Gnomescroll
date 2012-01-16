@@ -807,7 +807,9 @@ void Agent_state::spawn_state() {
     teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
 }
 
-Agent_state::Agent_state(int id) : id (id), status(this), weapons(this)
+Agent_state::Agent_state(int id)
+:
+id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
@@ -849,7 +851,8 @@ Agent_state::Agent_state(int id) : id (id), status(this), weapons(this)
 }
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
-: id(id), status(this), weapons(this)
+:
+id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
