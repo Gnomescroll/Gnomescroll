@@ -214,9 +214,6 @@ void Voxel_volume::set_axis(Vector* f, Vector* u)
     update_center();
 }
 
-// these calculations are wrong.
-//     set_rotated_unit_axis(phi, 0.0f, theta); //works right
-//  ^^ variables moved around to get the correct effect
 void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
 {
     Vector vx = Vector_init(1.0f,0.0f,0.0f);
