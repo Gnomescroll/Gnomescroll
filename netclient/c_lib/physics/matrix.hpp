@@ -22,20 +22,39 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
     Vector m[3];
     Vector u;
 
-    m[0].x = (cy*cz); 
-    m[0].y = (cy*sz);
+    //m[0].x = (cy*cz); 
+    //m[0].y = (cy*sz);
+    //m[0].z = (-sy);
+
+    //double sxsy = sx*sy;
+    //double cxsy = cx*sy;
+    
+    //m[1].x = (sxsy*cz-cx*sz);
+    //m[1].y = (sxsy*sz+cx*cz);
+    //m[1].z = (sx*cy);
+
+    //m[2].x = (cxsy*cz+sx*sz);
+    //m[2].y = (cxsy*sz-sx*cz);
+    //m[2].z = (cx*cy);
+
+    //u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
+    //u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 
+    //u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
+    
+    m[0].x = (cy*cx); 
+    m[0].y = (cy*sx);
     m[0].z = (-sy);
 
-    double sxsy = sx*sy;
-    double cxsy = cx*sy;
+    double szsy = sz*sy;
+    double czsy = cz*sy;
     
-    m[1].x = (sxsy*cz-cx*sz);
-    m[1].y = (sxsy*sz+cx*cz);
-    m[1].z = (sx*cy);
+    m[1].x = (szsy*cx-cz*sx);
+    m[1].y = (szsy*sx+cz*cx);
+    m[1].z = (sz*cy);
 
-    m[2].x = (cxsy*cz+sx*sz);
-    m[2].y = (cxsy*sz-sx*cz);
-    m[2].z = (cx*cy);
+    m[2].x = (czsy*cx+sz*sx);
+    m[2].y = (czsy*sx-sz*cx);
+    m[2].z = (cz*cy);
 
     u.x = v.x*m[0].x + v.y*m[1].x + v.z*m[2].x, 
     u.y = v.x*m[0].y + v.y*m[1].y + v.z*m[2].y, 

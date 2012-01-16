@@ -106,7 +106,7 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
         this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
 
         if (vp->biaxial) {
-            this->vv[i].set_rotated_unit_axis(phi, 0.0f, theta);
+            this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
         } else {
             this->vv[i].set_axis(&forward, &up);
         }
