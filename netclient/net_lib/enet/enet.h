@@ -185,6 +185,10 @@ typedef enum _ENetPeerState
 #define ENET_BUFFER_MAXIMUM (1 + 2 * ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS)
 #endif
 
+
+//@param acceleration rate at which to increase the throttle probability as mean RTT declines
+//@param deceleration rate at which to decrease the throttle probability as mean RTT increases
+
 enum
 {
    ENET_HOST_RECEIVE_BUFFER_SIZE          = 512 * 1024,
@@ -196,8 +200,13 @@ enum
    ENET_PEER_DEFAULT_PACKET_THROTTLE      = 32,
    ENET_PEER_PACKET_THROTTLE_SCALE        = 32,
    ENET_PEER_PACKET_THROTTLE_COUNTER      = 7, 
+/*
    ENET_PEER_PACKET_THROTTLE_ACCELERATION = 2,
    ENET_PEER_PACKET_THROTTLE_DECELERATION = 0, //was 2
+*/
+   ENET_PEER_PACKET_THROTTLE_ACCELERATION = 0,
+   ENET_PEER_PACKET_THROTTLE_DECELERATION = 2, //was 2
+
    ENET_PEER_PACKET_THROTTLE_INTERVAL     = 5000,
    ENET_PEER_PACKET_LOSS_SCALE            = (1 << 16),
    ENET_PEER_PACKET_LOSS_INTERVAL         = 10000,

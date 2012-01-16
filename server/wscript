@@ -56,7 +56,7 @@ def configure(conf):
     #,'-D DC_CLIENT'
     #if OS != 'Windows':
     conf.env.append_value("LINKFLAGS", "-lz")
-
+    conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
     if OS == 'Windows':
         pass

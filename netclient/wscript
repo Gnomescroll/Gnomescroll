@@ -83,7 +83,8 @@ def configure(conf):
         conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
         conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
 
-
+    conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+    
     if OS == 'Windows':
         pass
         conf.env.append_value("LINKFLAGS", "-lwsock32")
@@ -97,13 +98,16 @@ def configure(conf):
     ''' 
     #conf.env.append_value("LINKFLAGS", "--incremental")
 
+
     conf.check(header_name='GL/glew.h', mandatory=True)
 
     if OS == 'Windows':
         glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
         conf.check(lib=['opengl32', 'glu32', 'glew32'], libpath=glew_lib_path, uselib_store='GL') 
     elif OS == 'Linux':
-        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
+        conf.check(lib=['GL',], uselib_store='GL')
+        conf.check(lib=['GLU'], uselib_store='GL')
+        conf.check(lib=['GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
         conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
