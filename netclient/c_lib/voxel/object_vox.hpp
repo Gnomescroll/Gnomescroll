@@ -44,6 +44,7 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     int x,y,z;
     int ix,iy,iz;
     VoxPart *vp;
+    Voxel_volume* vv;
     float size = vox_dat->vox_size;
     for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
@@ -51,9 +52,11 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
         y = vp->dimension.y;
         z = vp->dimension.z;
 
-        this->vv[i].init(x,y,z,size);
-        this->vv[i].set_unit_axis();
-        this->vv[i].set_hitscan_properties(this->a->id, this->a->type, i);
+        vv = &(this->vv[i]);
+
+        vv->init(x,y,z,size);
+        vv->set_unit_axis();
+        vv->set_hitscan_properties(this->a->id, this->a->type, i);
         for (j=0; j<vp->colors.n; j++) {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];
@@ -63,10 +66,11 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
             b = vp->colors.rgba[j][2];
             a = vp->colors.rgba[j][3];
 
-            this->vv[i].set_color(ix, iy, iz, r,g,b,a);
+            vv->set_color(ix, iy, iz, r,g,b,a);
         }
 
-        ClientState::voxel_render_list.register_voxel_volume(&(this->vv[i]));
+        ClientState::voxel_render_list.register_voxel_volume(vv);
+        ClientState::voxel_hitscan_list.register_voxel_volume(vv);
     }
     ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
@@ -152,6 +156,7 @@ Object_vox<Obj,NUM_PARTS>::~Object_vox() {
     int i;
     for (i=0; i<NUM_PARTS; i++) {
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
+        ClientState::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
     #endif
 }

@@ -7,30 +7,30 @@
 
 namespace Hitscan {
 
-static HitscanAgent dummy_hitscan_agent;
+//static HitscanAgent dummy_hitscan_agent;
 static HitscanBlock dummy_hitscan_block;
 
-HitscanAgent* ray_intersect_agent(float x, float y, float z, float vx, float vy, float vz, int ignore_agent) {
+//HitscanAgent* ray_intersect_agent(float x, float y, float z, float vx, float vy, float vz, int ignore_agent) {
 
-    float pos[3];
-    float _rad2=0.0f,*__rad2=&_rad2;
-    float _dist=0.0f,*dist=&_dist;
-    Agent_state* a = STATE::agent_list.hitscan_agents(x,y,z, vx,vy,vz, pos, __rad2, dist, ignore_agent);
-    if (a == NULL) {
-        dummy_hitscan_agent.hit = false;
-        return &dummy_hitscan_agent;
-    }
-    dummy_hitscan_agent.hit = true;
-    dummy_hitscan_agent.x = a->s.x;
-    dummy_hitscan_agent.y = a->s.y;
-    dummy_hitscan_agent.z = a->s.z;
-    dummy_hitscan_agent.distance = *dist;
-    dummy_hitscan_agent.id = a->id;
-    //dummy_hitscan_agent.body_part = body_part;
-    dummy_hitscan_agent.body_part = 0;
+    //float pos[3];
+    //float _rad2=0.0f,*__rad2=&_rad2;
+    //float _dist=0.0f,*dist=&_dist;
+    //Agent_state* a = STATE::agent_list.hitscan_agents(x,y,z, vx,vy,vz, pos, __rad2, dist, ignore_agent);
+    //if (a == NULL) {
+        //dummy_hitscan_agent.hit = false;
+        //return &dummy_hitscan_agent;
+    //}
+    //dummy_hitscan_agent.hit = true;
+    //dummy_hitscan_agent.x = a->s.x;
+    //dummy_hitscan_agent.y = a->s.y;
+    //dummy_hitscan_agent.z = a->s.z;
+    //dummy_hitscan_agent.distance = *dist;
+    //dummy_hitscan_agent.id = a->id;
+    ////dummy_hitscan_agent.body_part = body_part;
+    //dummy_hitscan_agent.body_part = 0;
     
-    return &dummy_hitscan_agent;
-}
+    //return &dummy_hitscan_agent;
+//}
 
 HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz) {
     const float max_dist = 500.0f;  // far
@@ -52,40 +52,20 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     return &dummy_hitscan_block;
 }
 
-int resolve_hitscan_target(float x, float y, float z, float vx, float vy, float vz, int data[3], int ignore_agent) {
-    // data will be filled with metadata for the target
-    // function returns hitscan target type
+int terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance) {
 
-    HitscanAgent* agent = ray_intersect_agent(x,y,z, vx,vy,vz, ignore_agent);
     HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
 
     int target = HITSCAN_TARGET_NONE;
 
-    if (agent->hit && block->hit) {
-        if (agent->distance < block->distance) {
-            target = HITSCAN_TARGET_AGENT;
-        } else {
-            target = HITSCAN_TARGET_BLOCK;
-        }
-    } else if (agent->hit) {
-        target = HITSCAN_TARGET_AGENT;
-    } else if (block->hit) {
+    if (block->hit) {
         target = HITSCAN_TARGET_BLOCK;
+        pos[0] = block->x;
+        pos[1] = block->y;
+        pos[2] = block->z;
+        *distance = block->distance;
     }
 
-    switch (target) {
-        case HITSCAN_TARGET_AGENT:
-            data[0] = agent->id;
-            data[1] = agent->body_part;
-            break;
-
-        case HITSCAN_TARGET_BLOCK:
-            data[0] = block->x;
-            data[1] = block->y;
-            data[2] = block->z;
-            break;
-    }
-        
     return target;
 }
 

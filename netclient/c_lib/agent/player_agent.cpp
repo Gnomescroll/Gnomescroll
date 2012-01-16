@@ -215,7 +215,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     //printf("0 index= %i \n", index);
     _cs = cs_local[index];
 
-    class AgentState s_tmp = s;
+    //class AgentState s_tmp = s;
 
     s = _agent_tick(_cs, A->box, s);
 

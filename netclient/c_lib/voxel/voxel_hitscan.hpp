@@ -1,5 +1,7 @@
 #pragma once
 
+#include <common/enum_types.hpp>
+
 #define VOXEL_HITSCAN_LIST_SIZE 1024
 
 /*
@@ -29,11 +31,18 @@ class Voxel_hitscan_list
     public:
     int num_elements;
 
-    void register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type);
+    //void register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type, int part_id);
+    void register_voxel_volume(Voxel_volume* vv);
     void unregister_voxel_volume(Voxel_volume* vv);
 
     //pass in x,y,z fire point and direction of projectile
-    int hitscan(const float _x0, const float _y0, const float _z0, const float x1, const float y1, const float z1, int skip_id, float collision_point[3], float *distance, int *metadata);
+    void hitscan(
+        const float _x0, const float _y0, const float _z0,
+        const float x1, const float y1, const float z1,
+        int skip_id, Object_types skip_type,
+        float collision_point[3], float *distance,
+        struct Voxel_hitscan_element* target
+    );
 
     Voxel_hitscan_list()
     :

@@ -271,6 +271,26 @@ class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
         inline void handle();
 };
 
+// hitscan: target = monster
+class hitscan_slime_CtoS: public FixedSizeNetPacketToServer<hitscan_slime_CtoS>
+{
+    public:
+        int id;
+        int monster_id;
+        int monster_type;
+        int monster_body_part;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&monster_id, buff, buff_n, pack);
+            pack_u8(&monster_type, buff, buff_n, pack);
+            pack_u8(&monster_body_part, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
+
 // hitscan: target = block
 class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 {

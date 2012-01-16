@@ -3,11 +3,12 @@
 // TEMPORARY:
 #include <c_lib/ray_trace/hitscan.hpp>
 
-int Voxel_hitscan_list::hitscan
+void Voxel_hitscan_list::hitscan
 (const float _x0, const float _y0, const float _z0, 
 const float x1, const float y1, const float z1,
-int skip_id, // skip player agent id
-float collision_point[3], float *distance, int *metadata)
+int skip_id, Object_types skip_type, // skip player agent id
+float collision_point[3], float *distance,
+struct Voxel_hitscan_element* target)
 {
     float x0,y0,z0;
     float x2,y2,z2;
@@ -18,16 +19,16 @@ float collision_point[3], float *distance, int *metadata)
 
     float radius;
     struct Voxel_hitscan_element* vhe;
-
+    target = NULL;
+    
     float min_dist = 10000000.0f; // big #
-    int voxel_hit = -1;
-    int body_part = -1;
     
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if(hitscan_list[i] == NULL) continue;
-        //if(i == skip_id) continue;
         vhe = hitscan_list[i];
+        printf("%d %d %d\n", vhe->entity_id, vhe->entity_type, vhe->part_id);
+        if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
         x2 = vhe->vv->center.x;
         y2 = vhe->vv->center.y;
@@ -51,24 +52,20 @@ float collision_point[3], float *distance, int *metadata)
             printf("BAM! HIT %i!!\n", i);
             if (d > min_dist) continue;
             min_dist = d;
-            voxel_hit = i;
-            body_part = 0;
             //x,y,z is closest point
             x = t*x2 + x1;
             y = t*y2 + y1;
             z = t*z2 + z1;
+            target = vhe;
         }
     }
-    metadata[0] = voxel_hit;
-    metadata[1] = body_part;
     *distance = min_dist;
     collision_point[0] = x;
     collision_point[1] = y;
     collision_point[2] = z;
-    return Hitscan::HITSCAN_TARGET_AGENT;   // TODO
 }
 
-void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type)
+void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
 {
     if(num_elements >= VOXEL_HITSCAN_LIST_SIZE)
     {
@@ -80,11 +77,13 @@ void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv, int entity_id, 
     {
         if(hitscan_list[i] == NULL)
         {
-            hitscan_list[i] = new Voxel_hitscan_element;
+            //hitscan_list[i] = new Voxel_hitscan_element;
+            hitscan_list[i] = &(vv->vhe);
             num_elements++;
-            hitscan_list[i]->vv = vv;
-            hitscan_list[i]->entity_id = entity_id;
-            hitscan_list[i]->entity_type = entity_type;
+            //hitscan_list[i]->vv = vv;
+            //hitscan_list[i]->entity_id = entity_id;
+            //hitscan_list[i]->entity_type = entity_type;
+            //hitscan_list[i]->part_id = part_id;
                       
             vv->voxel_hitscan_list = this;
             break;

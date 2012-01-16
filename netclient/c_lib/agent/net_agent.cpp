@@ -5,7 +5,7 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/defines.h>
 #include <c_lib/weapons/weapons.hpp>
-
+#include <monsters/monsters.hpp>
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
 #endif
@@ -144,6 +144,7 @@ inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void fire_weapon_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
+inline void hitscan_slime_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void AgentActiveWeapon_CtoS::handle() {}
@@ -258,6 +259,20 @@ inline void hitscan_agent_CtoS::handle() {
     // apply damage
     int dmg = 25;
     target->status.apply_damage(dmg, id);
+    // TODO: Use weapon dmg. Use body_part
+    //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+}
+
+// hitscan target:monster
+inline void hitscan_slime_CtoS::handle() {
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+    Monsters::Slime* slime = ServerState::slime_list.get(monster_id);
+    if (slime==NULL) return;
+    // apply damage
+    //int dmg = 25;
+    //slime->status.apply_damage(dmg, id);
+    ServerState::slime_list.destroy(monster_id);
     // TODO: Use weapon dmg. Use body_part
     //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }
