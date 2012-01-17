@@ -289,20 +289,6 @@ void Voxel_volume::set_center(float x, float y, float z)
 
 #include <stdio.h>
 
-
-/*
-#north/south is +/- x
-#west/east is +/- y
-l = [
-        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
-        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
-        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
-        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
-        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
-        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
-]
-*/
-
 static unsigned char _gamma_correction[256];
 
 static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
@@ -321,13 +307,36 @@ static const int vnset[18] = { 0,0,1,
 0,-1,0 
 };
  
-static const struct Voxel_normal voxel_normal_array[6] = { 
+static const struct Voxel_normal voxel_normal_array[6*4] = { 
 {{{0,0,1,0}}},
+{{{0,0,1,1}}},
+{{{0,0,1,2}}},
+{{{0,0,1,3}}},
+
 {{{0,0,-1,0}}},
+{{{0,0,-1,1}}},
+{{{0,0,-1,2}}},
+{{{0,0,-1,3}}},
+
 {{{1,0,0,0}}},
+{{{1,0,0,1}}},
+{{{1,0,0,2}}},
+{{{1,0,0,3}}},
+
 {{{-1,0,0,0}}},
+{{{-1,0,0,1}}},
+{{{-1,0,0,2}}},
+{{{-1,0,0,3}}},
+
 {{{0,1,0,0}}},
+{{{0,1,0,1}}},
+{{{0,1,0,2}}},
+{{{0,1,0,3}}},
+
 {{{0,-1,0,0}}},
+{{{0,-1,0,1}}},
+{{{0,-1,0,2}}},
+{{{0,-1,0,3}}},
 };
 
 //cache line optimization; minimize size

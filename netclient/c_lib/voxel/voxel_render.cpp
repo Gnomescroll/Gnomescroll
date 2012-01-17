@@ -129,6 +129,7 @@ static GLenum voxel_shader_prog = 0;
 int InRotationMatrix;
 int InNormal;
 int InAO;
+int InSide;
 
 //int InTranslation;
 
@@ -138,7 +139,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     if (init) return;
     printf("init voxel shader\n");
 
-    int DEBUG = 0;
+    int DEBUG = 1;
 
     voxel_shader_prog = glCreateProgramObjectARB();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
@@ -164,28 +165,15 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     glLinkProgramARB(voxel_shader_prog);
 
     if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
-    
-    //InCood0 = glGetAttribLocation(voxel_shader_prog, "InCood0");
-    //InRGBA = glGetAttribLocation(voxel_shader_prog, "InRGBA");
 
     //uniforms
-
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
 
-    InAO = glGetUniformLocationARB(voxel_shader_prog, "InAO");
-
+    //attributes
+    InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
-    //InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
+    InSide = glGetAttribLocation(voxel_shader_prog, "InNormal");
 
-    //GLint glGetUniformLocationARB(GLhandleARB program, const GLcharARB * name)
-    //voxel_vertex_index
-
-/*
-specifying uniforms
-void glUniform{1|2|3|4}{f|i}ARB(GLint location, TYPE val)
-void glUniform{1|2|3|4}{f|i}vARB(GLint location, GLuint count, const TYPE * vals)
-void glUniformMatrix{2|3|4|}fvARB(GLint location, GLuint count, GLboolean transpose, const GLfloat * vals)
-*/
     init=1;
 }
 
