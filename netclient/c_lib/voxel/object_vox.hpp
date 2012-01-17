@@ -155,8 +155,11 @@ Object_vox<Obj,NUM_PARTS>::~Object_vox() {
     #ifdef DC_CLIENT
     int i;
     for (i=0; i<NUM_PARTS; i++) {
+        printf("%d\n", i);
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
+        printf("~ unregistered render\n");
         ClientState::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+        printf("~ unregistered hitscan\n");
     }
     #endif
 }

@@ -40,6 +40,12 @@ type(OBJ_TYPE_SLIME)
     this->vox = new Slime_vox(this, &slime_vox_dat);
 }
 
+Slime::~Slime()
+{
+    if (this->vox != NULL) {
+        delete this->vox;
+    }
+}
 
 #ifdef DC_CLIENT
 void test() {

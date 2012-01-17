@@ -31,11 +31,12 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
+        if (render_list[i] == NULL) continue;
         if(render_list[i] == vv)
         {
             num_elements--;
             render_list[i] = NULL;
-            printf("Removed voxel volume %i \n", i);
+            printf("Removed voxel volume %i from render list\n", i);
             vv->id = -1;
             vv->voxel_render_list = NULL;
             return;

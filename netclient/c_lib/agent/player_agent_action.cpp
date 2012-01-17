@@ -36,29 +36,12 @@ void PlayerAgent_action::fire() {
 }
 
 void PlayerAgent_action::hitscan() {
-
-    // play sound
-    char soundfile[] = "laser_01.wav";
-    Sound::play_2d_sound(soundfile);
     
-    // do hitscan detection
+    // get camera vector
     float vec[3];
     p->camera_state.forward_vector(vec);
 
-    /*********************************/
-    //Files:
-        //-agent/player_agent_action
-        //-voxel/
-        //-voxel/voxel_*
-        //-ray_trace/hitscan
-        //-agent/agent_vox
-        //-monsters/monsters
-
-    //Baseclass/template for vox object DONE
-    //object type enum, attached to vox unit, or retrievable via reference to owner DONE
-    //part num attached to vox unit DONE
-    //if no voxels hit, switch to block
-    /*********************************/
+    // hitscan against voxels
     float vox_distance = 10000000.0f;
     float collision_point[3];
     struct Voxel_hitscan_element vhe;
@@ -69,8 +52,8 @@ void PlayerAgent_action::hitscan() {
         collision_point, &vox_distance,
         &vhe
     );
-    if (voxel_hit) printf("VHE: id %d, type %d, part %d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
 
+    // hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
     int target;
@@ -80,6 +63,7 @@ void PlayerAgent_action::hitscan() {
         block_pos, &block_distance
     );
 
+    // choose closer collision (or none)
     const int TARGET_NONE = 0;
     const int TARGET_VOXEL = 1;
     const int TARGET_BLOCK = 2;
@@ -102,6 +86,7 @@ void PlayerAgent_action::hitscan() {
         target = TARGET_NONE;
     }
 
+    // send packet
     hitscan_agent_CtoS agent_msg;
     hitscan_slime_CtoS monster_msg;
     hitscan_block_CtoS block_msg;
@@ -120,6 +105,7 @@ void PlayerAgent_action::hitscan() {
                     monster_msg.id = p->agent_id;
                     monster_msg.monster_id = vhe.entity_id;
                     monster_msg.monster_type = vhe.entity_type;
+                    monster_msg.monster_body_part = vhe.part_id;
                     monster_msg.send();
                     ClientState::slime_list.destroy(vhe.entity_id);
                     break;
@@ -143,12 +129,17 @@ void PlayerAgent_action::hitscan() {
             break;
     }
 
+    // play sound
+    char soundfile[] = "laser_01.wav";
+    Sound::play_2d_sound(soundfile);
+
     // play laser anim
     const float hitscan_speed = 120.0f;
     ClientState::hitscan_effect_list.create(
         p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
     );
+
 }
 
 void PlayerAgent_action::throw_grenade() {

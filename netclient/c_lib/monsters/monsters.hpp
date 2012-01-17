@@ -41,6 +41,7 @@ class Slime {
     Slime(int id);
     Slime(float x, float y, float z, float vx, float vy, float vz);
     Slime(int id, float x, float y, float z, float vx, float vy, float vz);
+    ~Slime();
 };
 
 #define SLIME_MAX 1024

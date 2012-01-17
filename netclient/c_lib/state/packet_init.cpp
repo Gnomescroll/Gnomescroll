@@ -64,6 +64,7 @@ void RegisterMessages() {
     // hitscans
     hitscan_agent_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
+    hitscan_slime_CtoS::register_server_packet();
 
     // game/teams stuff
     TeamColor_StoC::register_client_packet();
