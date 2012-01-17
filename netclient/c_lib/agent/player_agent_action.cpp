@@ -61,15 +61,16 @@ void PlayerAgent_action::hitscan() {
     /*********************************/
     float vox_distance = 10000000.0f;
     float collision_point[3];
-    struct Voxel_hitscan_element* vhe = NULL;
-    ClientState::voxel_hitscan_list.hitscan(
+    struct Voxel_hitscan_element vhe;
+    bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
         p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
         collision_point, &vox_distance,
-        vhe
+        &vhe
     );
-    if (vhe != NULL) printf("VHE: id %d, type %d, part %d\n", vhe->entity_id, vhe->entity_type, vhe->part_id);
+    if (voxel_hit) printf("VHE: id %d, type %d, part %d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
+
     float block_distance = 10000000.0f;
     int block_pos[3];
     int target;
@@ -83,7 +84,6 @@ void PlayerAgent_action::hitscan() {
     const int TARGET_VOXEL = 1;
     const int TARGET_BLOCK = 2;
     
-    bool voxel_hit = (vhe != NULL);
     bool block_hit = (target == Hitscan::HITSCAN_TARGET_BLOCK);
     bool voxel_closer = (vox_distance <= block_distance);
     //bool block_closer = (block_distance > vox_distance);
@@ -108,20 +108,20 @@ void PlayerAgent_action::hitscan() {
 
     switch (target) {
         case TARGET_VOXEL:
-            switch (vhe->entity_type) {
+            switch (vhe.entity_type) {
                 case OBJ_TYPE_AGENT:
                     agent_msg.id = p->agent_id;
-                    agent_msg.agent_id = vhe->entity_id;   // target
-                    agent_msg.body_part = vhe->part_id;
+                    agent_msg.agent_id = vhe.entity_id;   // target
+                    agent_msg.body_part = vhe.part_id;
                     agent_msg.send();
                     break;
 
                 case OBJ_TYPE_SLIME:
                     monster_msg.id = p->agent_id;
-                    monster_msg.monster_id = vhe->entity_id;
-                    monster_msg.monster_type = vhe->entity_type;
+                    monster_msg.monster_id = vhe.entity_id;
+                    monster_msg.monster_type = vhe.entity_type;
                     monster_msg.send();
-                    ClientState::slime_list.destroy(vhe->entity_id);
+                    ClientState::slime_list.destroy(vhe.entity_id);
                     break;
                     
                 default:

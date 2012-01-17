@@ -1,77 +1,66 @@
 #include "voxel_hitscan.hpp"
 
-// TEMPORARY:
 #include <c_lib/ray_trace/hitscan.hpp>
+#include <c_lib/ray_trace/ray_trace.h>
 
-void Voxel_hitscan_list::hitscan
-(const float _x0, const float _y0, const float _z0, 
+bool Voxel_hitscan_list::hitscan
+(const float x0, const float y0, const float z0, 
 const float x1, const float y1, const float z1,
 int skip_id, Object_types skip_type, // skip player agent id
 float collision_point[3], float *distance,
 struct Voxel_hitscan_element* target)
 {
-    printf("%0.2f %0.2f %0.2f\n", _x0, _y0, _z0);
-    printf("%0.2f %0.2f %0.2f\n", x1, y1, z1);
-    float x0,y0,z0;
     float x2,y2,z2;
 
-    float t, d;
     float r2;
     float x,y,z;
 
     float radius;
     struct Voxel_hitscan_element* vhe;
-    target = NULL;
-    
-    float min_dist = 10000000.0f; // big #
-    
+    struct Voxel_hitscan_element* target_hit;
+    target_hit = NULL;
+
+    float dist;
+    float min_dist = 1000000.0f;
+    float max_dist = 10000.0f;
+    float tpos[3];
+
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if(hitscan_list[i] == NULL) continue;
         vhe = hitscan_list[i];
-        //if (vhe->entity_type == skip_type)
-        //printf("%d %d %d\n", vhe->entity_id, vhe->entity_type, vhe->part_id);
+
+        // skip firing agent
         if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
         x2 = vhe->vv->center.x;
         y2 = vhe->vv->center.y;
         z2 = vhe->vv->center.z;
         radius = vhe->vv->radius;
-        //if (vhe->entity_type == skip_type)
-        //printf("%0.2f %0.2f %0.2f %0.2f\n", x2,y2,z2,radius);
 
-        //if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
+        dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
+        if (dist < 0.0f || dist > max_dist) continue;
 
-        // adjust position by velocity?
-        x0 = _x0 - x1;
-        y0 = _y0 - y1;
-        z0 = _z0 - z1;
-
-        t =  x0*x2 + y0*y2 + z0*z2; // <x0|x2>
-
-        d = t/(x2*x2+y2*y2+z2*z2); //distance to collision
-
-        x = t*x2 - x0;
-        y = t*y2 - y0;
-        z = t*z2 - z0;
-        r2 = x*x+y*y+z*z; //distance squared between v0 and closest point on line to v0
-        printf("%0.2f %0.2f %0.2f\n", x2,y2,z2);
-        printf(" %0.2f < %0.2f\n", r2, radius*radius);
         if( r2 < radius*radius ) {
-            printf("BAM! HIT %i!!\n", i);
-            if (d > min_dist) continue;
-            min_dist = d;
-            //x,y,z is closest point
-            x = t*x2 + x1;
-            y = t*y2 + y1;
-            z = t*z2 + z1;
-            target = vhe;
+            if (dist > min_dist) continue;
+            min_dist = dist;
+            x = tpos[0];
+            y = tpos[1];
+            z = tpos[2];
+            target_hit = vhe;
         }
     }
+
     *distance = min_dist;
     collision_point[0] = x;
     collision_point[1] = y;
     collision_point[2] = z;
+
+    if (target_hit != NULL) {
+        *target = *target_hit;
+        return true;
+    }
+    return false;
 }
 
 void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
