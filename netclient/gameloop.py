@@ -316,6 +316,7 @@ class App(object):
             P.finish_frame()
 
             cSound.Sound.update()
+            cMonsters.slime_tick()
 
         init_c_lib.close()
 

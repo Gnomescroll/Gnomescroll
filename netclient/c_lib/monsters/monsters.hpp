@@ -37,6 +37,8 @@ class Slime {
 
     Object_types type;
 
+    void tick();
+
     Slime();
     Slime(int id);
     Slime(float x, float y, float z, float vx, float vy, float vz);
@@ -51,10 +53,12 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
         const char* name() { return "Slime"; }
     public:
         void draw();
+        void update();
+        void tick();
 };
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void test();
-#endif
+//#endif
 
 }

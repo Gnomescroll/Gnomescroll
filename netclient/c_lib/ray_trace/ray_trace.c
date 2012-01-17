@@ -672,8 +672,8 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
     return NULL;
 }
 
-
-inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2) {
+inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2)
+{
     float t;
     float d;
     float x,y,z;

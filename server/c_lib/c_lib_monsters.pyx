@@ -32,7 +32,7 @@ cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
 
     void test()
 
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Slime_list slime_list
 
 slime_body=\

@@ -189,6 +189,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int ids_in_use[AGENT_MAX];
 
         Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
+        int n_filtered;
         int agents_within_sphere(float x, float y, float z, float radius) {
             int ct = 0;
             float dist;
@@ -203,6 +204,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
                     ct++;
                 }
             }
+            this->n_filtered = ct;
             return ct;
         }
 
