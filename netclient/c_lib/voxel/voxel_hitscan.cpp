@@ -95,7 +95,7 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
         {
             num_elements--;
             hitscan_list[i] = NULL;
-            printf("Removed voxel volume %i from hitscan list\n", i);
+            //printf("Removed voxel volume %i from hitscan list\n", i);
             vv->voxel_hitscan_list = NULL;
             return;
         }
