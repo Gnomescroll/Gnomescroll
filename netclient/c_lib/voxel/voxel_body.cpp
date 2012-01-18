@@ -198,9 +198,7 @@ biaxial(biaxial)
 
 void VoxBody::init(int n_parts) {
     if (inited) return;
-    printf("INITED WITH %d PARTS\n", n_parts);
     this->n_parts = n_parts;
-    printf("INITED WITH %d this->PARTS\n", this->n_parts);
     vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
     inited = true;
 
