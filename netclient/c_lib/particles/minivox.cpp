@@ -163,13 +163,10 @@ void Minivox_list::draw() {
 
     int i;
 
-
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->draw();
     }        
-  
-
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);

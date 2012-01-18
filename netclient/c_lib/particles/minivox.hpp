@@ -40,7 +40,9 @@ class Minivox {
         void set_ttl(int ttl) {
             particle.ttl = ttl;
         }
-
+        void set_size(float size) {
+            this->size = size;
+        }
 
         float pix_margin;
         float tx,ty;

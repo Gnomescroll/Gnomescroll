@@ -129,4 +129,37 @@ void grenade_explode(float x, float y, float z) {
     }
 }
 
+void slime_melt(float x, float y, float z) {
+
+    ClientState::minivox_list.set_size(0.7f);
+    
+     int n = randrange(50,100);
+     float vx,vy,vz;
+     vx=vy=vz=20.0f;
+    
+    float cx,cy,cz;
+    float cvx,cvy,cvz;
+
+    Minivox* minivox;
+    int ttl;
+    
+    int i;
+    for (i=0; i<n; i++) {
+        ttl = randrange(50,80);
+        cx = x + ((randf() - 0.5f) / 20.0f);
+        cy = y + ((randf() - 0.5f) / 20.0f);
+        cz = z + ((randf() - 0.5f) / 20.0f);
+        cvx = vx * (randf() - 0.5f);
+        cvy = vy * (randf() - 0.5f);
+        cvz = vz * (randf() - 0.5f);
+        
+        minivox = ClientState::minivox_list.create(cx,cy,cz, cvx,cvy,cvz);
+        minivox->set_color(128,223,31);
+        //minivox->set_size(0.7);
+        minivox->set_ttl(ttl);
+    }
+
+    ClientState::minivox_list.unset_size();
+}
+
 }

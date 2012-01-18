@@ -9,5 +9,5 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 void grenade_explode(float x, float y, float z);
 
-
+void slime_melt(float x, float y, float z);
 }

@@ -78,6 +78,10 @@ Slime::~Slime()
     if (this->vox != NULL) {
         delete this->vox;
     }
+    #ifdef DC_CLIENT
+    Animations::slime_melt(this->x, this->y, this->z);
+    #endif
+    
     #ifdef DC_SERVER
     DestroySlime_StoC msg = DestroySlime_StoC();
     msg.id = this->id;
@@ -106,7 +110,7 @@ void Slime::tick() {
         msg.broadcast();
     }
     tick_num++;
-    if (tick_num == 6) {
+    if (tick_num == 30) {
         changed = true;
     }
     tick_num %= 6;
