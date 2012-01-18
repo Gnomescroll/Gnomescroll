@@ -13,8 +13,8 @@
  *
  */
 
-int Agent_status::apply_damage(int dmg, int inflictor_id) {
-    if (dead) return health;
+int Agent_status::apply_damage(int dmg) {
+    if (dead) return this->health;
     
     // forward dmg indicator packet
     agent_damage_StoC dmg_msg;
@@ -23,19 +23,23 @@ int Agent_status::apply_damage(int dmg, int inflictor_id) {
     dmg_msg.dmg = dmg;
     dmg_msg.broadcast();
 
-    if (!dmg) return health;
+    if (!dmg) return this->health;
 
-    health -= dmg;
-    health = (health < 0) ? 0 : health;
+    this->health -= dmg;
+    this->health = (this->health < 0) ? 0 : this->health;
 
     agent_health_StoC health_msg;
     health_msg.id = a->id;
-    health_msg.health = health;
+    health_msg.health = this->health;
     health_msg.sendToClient(a->client_id);
 
-    if (!health) die(inflictor_id);
-    
-    return health;
+    return this->health;
+}
+
+int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type) {
+    int res = this->apply_damage(dmg);
+    if (!this->health) die(inflictor_id, inflictor_type);
+    return res;
 }
 
 int Agent_status::die() {
@@ -55,12 +59,24 @@ int Agent_status::die() {
     return 1;
 }
 
-int Agent_status::die(int inflictor_id) {
+int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
     int killed = die();
+    Agent_state* agent;
     if (killed) {
-        Agent_state* killer = STATE::agent_list.get(inflictor_id);
-        if (killer != NULL) {
-            killer->status.kill(a->id);
+        switch (inflictor_type) {
+            case OBJ_TYPE_AGENT:
+                agent = STATE::agent_list.get(inflictor_id);
+                if (agent != NULL) {
+                    agent->status.kill(a->id);
+                }
+                break;
+            case OBJ_TYPE_SLIME:
+                //Monsters::Slime* slime = STATE::slime_list.get(inflictor_id);
+                //if (slime != NULL) {}
+                break;
+            default:
+                printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);
+                break;
         }
     }
     return killed;

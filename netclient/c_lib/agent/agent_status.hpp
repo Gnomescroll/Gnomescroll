@@ -3,6 +3,8 @@
 #define AGENT_HEALTH 100
 #define RESPAWN_TICKS (2000 / 30)
 
+#include <common/enum_types.hpp>
+
 const int PLAYER_NAME_MAX_LENGTH = 24;
 
 class Agent_state;  // forward declaration
@@ -57,9 +59,10 @@ class Agent_status: public Base_status {
     public:
         Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
 
-        int apply_damage(int dmg, int inflictor_id);
+        int apply_damage(int dmg);
+        int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
         int die();
-        int die(int inflictor_id);
+        int die(int inflictor_id, Object_types inflictor_type);
         void kill(int victim_id);
         void respawn();
 

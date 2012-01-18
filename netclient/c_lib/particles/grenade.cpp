@@ -17,6 +17,7 @@ static float grenade_proj_mtrx[16];
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
 
+#include <common/enum_types.hpp>
 
 /*
  *  Networking; spawn packet from server to client
@@ -145,10 +146,13 @@ void Grenade::explode() {
     int i;
     // find all agents in radius, apply damage
     int num_agents;
-    num_agents = ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y ,particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
+    num_agents = ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
 
+    Agent_state* a;
     for (i=0; i<num_agents; i++) {
-        ServerState::agent_list.filtered_agents[i]->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner); // need to be able to pass owner & suicidal arguments to apply_damage
+        a = ServerState::agent_list.filtered_agents[i];
+        if (a == NULL) continue;
+        a->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT); // need to be able to pass owner & suicidal arguments to apply_damage
     }
     
     // find all blocks in radius, destroy/damage

@@ -189,63 +189,14 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int ids_in_use[AGENT_MAX];
 
         Agent_state* filtered_agents[AGENT_MAX]; // tmp array for filtering agents
+        float filtered_agent_distances[AGENT_MAX];
         int n_filtered;
-        int agents_within_sphere(float x, float y, float z, float radius) {
-            int ct = 0;
-            float dist;
-            
-            int i;
-            for (i=0; i<AGENT_MAX; i++) {
-                if (a[i] == NULL) continue;
-                dist = distance(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-                if (dist < radius) {
-                    // agent in sphere
-                    filtered_agents[ct] = a[i];
-                    ct++;
-                }
-            }
-            this->n_filtered = ct;
-            return ct;
-        }
-
-        Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id) {
-            int i;
-            
-            float _trad2=0.0f, *trad2=&_trad2;
-            float dist;
-            float min_dist = 100000.0f; // far away
-            Agent_state* agent = NULL;
-            float tpos[3];
-            for (i=0; i<AGENT_MAX; i++) {
-                if (a[i] == NULL) continue;
-                if (a[i]->id == ignore_id) continue;
-                dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x + a[i]->box.box_r, a[i]->s.y + a[i]->box.box_r, a[i]->s.z + 0.5*a[i]->box.b_height, tpos, trad2);
-                if (dist < 0.0f || dist > min_dist) continue;
-                if (*trad2 > 2.0f) continue;
-                min_dist = dist;
-                agent = a[i];
-                _rad2 = trad2;
-                pos = tpos;
-            }
-            *distance = min_dist;
-            return agent;
-        }
+        
+        int agents_within_sphere(float x, float y, float z, float radius);
+        Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id);
 
         void send_to_client(int client_id);
 
-        int get_ids(int* p) {
-            p = ids_in_use;
-            return get_ids();
-        }
-
-        int get_ids() {
-            int i,j=0;
-            for (i=0; i<AGENT_MAX;i++) {
-                if (a[i] == NULL) continue;
-                if (a[i]->id == 0) continue;// skip 0th agent
-                ids_in_use[j] = a[i]->id;
-                j++;
-            }
-            return j;            
-        }
+        int get_ids(int* p);
+        int get_ids();
 };
