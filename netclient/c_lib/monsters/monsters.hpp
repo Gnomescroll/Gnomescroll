@@ -31,7 +31,7 @@ class Slime {
     int id;
     float x,y,z;
     float vx,vy,vz;
-    float theta,phi;
+    double theta,phi;
     
     Slime_vox* vox;
 
