@@ -24,7 +24,7 @@ struct Mat4 {
             struct Vec4 c;
         };
     };
-};
+} __attribute__((aligned (16)));
 
 static struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
 
@@ -74,10 +74,11 @@ struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 {   
     struct Mat4 m;
 
+/*
     m.v[0].x = 
     m.v[0].y =
     m.v[0].z = 
-
+*/
 
 //    m.v[0].w = 0.0;
 //    m.v[1].w = 0.0;
