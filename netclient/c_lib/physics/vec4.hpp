@@ -33,7 +33,7 @@ struct Vec4 vec4_init(float x, float y, float z)
 }
 */
 
-static struct Vec4 vec4_init(float x, float y, float z, float w) __attribute((always_inline)); 
+struct Vec4 vec4_init(float x, float y, float z, float w) __attribute((always_inline)); 
 
 struct Vec4 vec4_init(float x, float y, float z, float w)
 {

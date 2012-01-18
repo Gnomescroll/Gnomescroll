@@ -32,8 +32,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     voxel_hitscan_list = NULL;
 
     v[0] = vec4_init(1.0f,0.0f,0.0f, 0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f, 0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f, 0.0f);
+    v[1] = vec4_init(0.0f,1.0f,0.0f, 0.0f);
+    v[2] = vec4_init(0.0f,0.0f,1.0f, 0.0f);
     this->set_center(0.0,0.0,0.0);
 
     this->hdx = ((float) xdim) / 2;
@@ -109,9 +109,9 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 
 void Voxel_volume::set_unit_axis()
 {
-    v[0] = Vector_init(1.0f,0.0f,0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f);
+    v[0].v3 = vec3_init(1.0f,0.0f,0.0f);
+    v[1].v3 = vec3_init(0.0f,1.0f,0.0f);
+    v[2].v3 = vec3_init(0.0f,0.0f,1.0f);
     update_center();
 }
 
@@ -120,9 +120,9 @@ void Voxel_volume::set_unit_axis()
 void Voxel_volume::set_axis(struct Vec3* f, struct Vec3* u)
 {
     //    vector_cross(u, f, &v[1]);
-    v.v[0].v3 = *f;
-    v.v[2].v3 = *u; 
-    v.v[1].v3 = vec3_cross(*u,*f);
+    v[0].v3 = *f;
+    v[2].v3 = *u; 
+    v[1].v3 = vec3_cross(*u,*f);
     update_center();
 }
 
@@ -140,7 +140,7 @@ void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_a
     v[2] = vz;
 */
 
-    mat4 rot = mat3_euler_rotation(x_angle, y_angle, z_angle);
+    struct Mat3 rot = mat3_euler_rotation(x_angle, y_angle, z_angle);
 
     v[0].v3 = vec3_apply_rotation(vec3_init(1.0f,0.0f,0.0f), rot);
     v[1].v3 = vec3_apply_rotation(vec3_init(0.0f,1.0f,0.0f), rot);
@@ -479,21 +479,21 @@ void Voxel_volume::draw_bounding_box()
     glBegin(GL_LINES);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
-    Vector vx;
-    Vector vy;
-    Vector vz;
+    struct Vec3 vx;
+    Vec3 vy;
+    Vec3 vz;
 
-    Vector u;
+    Vec3 u;
 
     for(i=0; i<12; i++) 
     {
             j = 3*vertex_index2[2*i+0];
             
-            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+            vx = vec3_scalar_mult(v[0].v3, 2.0*v_set[j+0]*hdx*scale);
+            vy = vec3_scalar_mult(v[1].v3, 2.0*v_set[j+1]*hdy*scale);
+            vz = vec3_scalar_mult(v[2].v3, 2.0*v_set[j+2]*hdz*scale);
 
-            u = vector_add4(&vx,&vy,&vz,&v[3]);
+            u = vec3_add4(vx,vy,vz,v[3].v3);
 
             _x = u.x;
             _y = u.y;
@@ -502,11 +502,11 @@ void Voxel_volume::draw_bounding_box()
             glVertex3f(_x,_y,_z);
             j = 3*vertex_index2[2*i+1];
 
-            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+            vx = vec3_scalar_mult(v[0].v3, 2.0*v_set[j+0]*hdx*scale);
+            vy = vec3_scalar_mult(v[1].v3, 2.0*v_set[j+1]*hdy*scale);
+            vz = vec3_scalar_mult(v[2].v3, 2.0*v_set[j+2]*hdz*scale);
             
-            u = vector_add4(&vx,&vy,&vz,&v[3]);
+            u = vec3_add4(vx,vy,vz,v[3].v3);
 
             _x = u.x;
             _y = u.y;

@@ -221,7 +221,7 @@ void Voxel_render_list::draw()
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
     Voxel_volume* vv;
-    struct Vec3 v[4];
+    struct Vec4 v[4];
 
     v[0].w = 0.0f;
     v[1].w = 0.0f;
@@ -238,9 +238,9 @@ void Voxel_render_list::draw()
         if(vv->vvl.vnum == 0) continue;
 
         //construct world view matrix
-        v[0].v3 = vector_scalar2(vv->v[0].v3, vv->scale);
-        v[1].v3 = vector_scalar2(vv->v[1].v3, vv->scale);
-        v[2].v3 = vector_scalar2(vv->v[2].v3, vv->scale);
+        v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
+        v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
+        v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
         v[3].v3 = vv->v[3].v3;
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);

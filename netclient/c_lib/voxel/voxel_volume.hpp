@@ -63,7 +63,7 @@ class Voxel_volume
     void set_unit_axis();
 
     //forward and up vector
-    void set_axis(struct Vector* f, struct Vector* u);
+    void set_axis(struct Vec3* f, struct Vec3* u);
 
     void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
 
