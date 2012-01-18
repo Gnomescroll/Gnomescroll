@@ -18,6 +18,17 @@ struct Vec3
     vector operations
 */
 
+inline static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
+
+struct Vec3 vec3_init(float x, float y, float z)
+{
+    struct Vec3 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return v;
+}
+
 inline static struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline)); 
 
 struct Vec3 vec3_normalize(struct Vec3 v) 

@@ -18,3 +18,15 @@ struct Vec4 {
         };
     };
 };
+
+inline static struct Vec4 Vec4_init(float x, float y, float z, float w) __attribute((always_inline)); 
+
+struct Vec4 vec4_init(float x, float y, float z, float w)
+{
+    struct Vec4 v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    v.w = w
+    return v;
+}
