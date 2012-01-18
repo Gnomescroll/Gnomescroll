@@ -202,15 +202,11 @@ static const int vnset[18] = { 0,0,1,
 };
 */
 
-//cache line optimization; minimize size
-
-
 static inline int vCalcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
 
 /*
     Sets AO strength values
 */
-
 
 static inline int vCalcAdj(int side_1, int side_2, int corner) 
 {
@@ -352,7 +348,6 @@ l = [
 
 void Voxel_volume::update_vertex_list()
 {   
-
     static int compute_gamma_chart = 0;
     if(compute_gamma_chart == 0) 
     {
@@ -456,9 +451,7 @@ void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, sh
 void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
-
     glDisable (GL_DEPTH_TEST);
-
     glDisable(GL_TEXTURE_2D);
     glLineWidth(5.0f);
 
