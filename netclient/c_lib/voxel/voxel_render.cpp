@@ -105,14 +105,10 @@ void Voxel_render_list::update_vertex_buffer_object()
         vv = render_list[i];
 
         if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
-        if(vv->vvl.voff == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 2: vv->vvl.voff == 0 \n");
-        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == 0 \n");
+        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
 
-        //printf("%i: memcpy: %i vertices, %i bytes at offset %i \n", i,vv->vvl.vnum, vv->vvl.vnum*sizeof(Voxel_vertex) , index);
-        //memcpy( _vbo->vertex_list+index*sizeof(Voxel_vertex), vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
-        render_list[i]->vvl.voff = index;
-        //index += vv->vvl.vnum*sizeof(Voxel_vertex);   // BUG
+        vv->vvl.voff = index;
         index += vv->vvl.vnum;
     }
     if( _vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
@@ -128,20 +124,19 @@ static GLenum voxel_shader_vert = 0;
 static GLenum voxel_shader_frag = 0;
 static GLenum voxel_shader_prog = 0;
 
-//int InCood0; 
-//int InRGBA; 
-
 int InRotationMatrix;
 int InNormal;
 int InAO;
 int InSide;
 
-//int InTranslation;
-
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
     static int init=0;
-    if (init) return;
+    if (init)
+    {
+        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init twice\n");
+        return;
+    }
     printf("init voxel shader\n");
 
     int DEBUG = 1;
@@ -206,7 +201,7 @@ void Voxel_render_list::draw()
 
     glColor3b(255,255,255);
 
-    //glShadeModel(GL_FLAT);
+    glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 
@@ -240,10 +235,9 @@ void Voxel_render_list::draw()
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
         vv = render_list[i];
 
-        //sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius);
         if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
         
-        //if(vv->vvl.vnum == 0) printf("no vertices \n");
+        if(vv->vvl.vnum == 0) continue;
 
         v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
         v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
@@ -273,26 +267,18 @@ void Voxel_render_list::draw()
 
 void voxel_renderer_draw_test()
 {   
-    return;
-
     printf("voxel test \n");
 
     static Voxel_volume vv (4,4,2, 2.0);
-
     static Voxel_render_list voxel_render_list;
 
     static int init = 0;
     if(init == 0)
     {
-
         voxel_render_list.init_voxel_render_list_shader1();
         printf("voxel_render_list.register(&voxel_volume); \n");
         voxel_render_list.register_voxel_volume(&vv);
-
-        //printf("voxel_render_list.update_vertex_buffer_object(); \n");
-        
         voxel_render_list.draw();
-        //voxel_render_list.update_vertex_buffer_object();
     }
     init = 1;
 
@@ -303,13 +289,9 @@ void voxel_renderer_draw_test()
     c0 += 0.0050 / (2*PI);
     c1 += 0.0025 / (2*PI);
     c2 += 0.0100 / (2*PI);
-
-    //printf("start\n");
-    //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
     
     vv.set_rotated_unit_axis(c0, c1, c2);
     
-    //vv.set_rotated_unit_axis(0.0f, 0.0f, c2);
     vv.set_center( 8.0, 8.0, 8.0);
 
     voxel_render_list.draw();
