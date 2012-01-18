@@ -51,6 +51,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     //update radius if changing scale
     this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
+    if(voxel != NULL) printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
     voxel = new Voxel[powx*powy*powz];
 
     int r,g,b,a;
@@ -71,13 +72,16 @@ Voxel_volume::Voxel_volume()
 :
 id(-1),
 draw(true)
-{}
+{
+    voxel = NULL;
+}
 
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
 draw(true)
 {
+    voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
 }
 
@@ -104,9 +108,7 @@ void Voxel_volume::set(int x, int y, int z, Voxel* v)
 
 inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-
     _set(x,y,z,r,g,b,a);
-
     needs_vbo_update = true;
 }
 
@@ -114,9 +116,6 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
-
-    //disable to draw over
-    //glEnable (GL_DEPTH_TEST);
 
     glDisable (GL_DEPTH_TEST);
 
@@ -135,7 +134,8 @@ void Voxel_volume::draw_bounding_box()
 
     Vector u;
 
-    for(i=0; i<12; i++) {
+    for(i=0; i<12; i++) 
+    {
             j = 3*vertex_index2[2*i+0];
             
             vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
@@ -258,12 +258,7 @@ void Voxel_volume::update_center()
     {
         printf("out_sum v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
     }
-/*
-    v[0].w = 0.0f;
-    v[1].w = 0.0f;
-    v[2].w = 0.0f;
-    v[3].w = 1.0f;
-*/
+
 }
 
 void Voxel_volume::set_center(float x, float y, float z)
@@ -277,12 +272,6 @@ void Voxel_volume::set_center(float x, float y, float z)
     Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
     v[3] = vector_add4(&vx,&vy,&vz,&center);
-/*
-    v[0].w = 0.0f;
-    v[1].w = 0.0f;
-    v[2].w = 0.0f;
-    v[3].w = 1.0f;
-*/
 }
 
 #ifdef DC_CLIENT
