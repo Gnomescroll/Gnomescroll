@@ -331,36 +331,20 @@ inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
 {
 
-    static const struct Voxel_normal voxel_normal_array[6*4] = { 
+    static const struct Voxel_normal ix[4] = { 
+        {{{0,0,0,0}}},
+        {{{0,0,0,1}}},
+        {{{0,0,0,2}}},
+        {{{0,0,0,3}}}
+    };
+
+    static const struct Voxel_normal voxel_normal_array[6] = { 
         {{{0,0,1,0}}},
-        {{{0,0,1,1}}},
-        {{{0,0,1,2}}},
-        {{{0,0,1,3}}},
-
         {{{0,0,-1,0}}},
-        {{{0,0,-1,1}}},
-        {{{0,0,-1,2}}},
-        {{{0,0,-1,3}}},
-
         {{{1,0,0,0}}},
-        {{{1,0,0,1}}},
-        {{{1,0,0,2}}},
-        {{{1,0,0,3}}},
-
         {{{-1,0,0,0}}},
-        {{{-1,0,0,1}}},
-        {{{-1,0,0,2}}},
-        {{{-1,0,0,3}}},
-
         {{{0,1,0,0}}},
-        {{{0,1,0,1}}},
-        {{{0,1,0,2}}},
-        {{{0,1,0,3}}},
-
-        {{{0,-1,0,0}}},
-        {{{0,-1,0,1}}},
-        {{{0,-1,0,2}}},
-        {{{0,-1,0,3}}},
+        {{{0,-1,0,0}}}
         };
 
     static const int_fast8_t CI[6*8*3] = {
@@ -371,8 +355,6 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
         1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
         -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 
         };
-
-    //*(int*)&tmp.rgba 
 
     //color
     {
@@ -414,12 +396,10 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     }
 
     {
-        int _side = 4*side;
-
-        scratch[*index + 0].n = voxel_normal_array[_side+0].n;
-        scratch[*index + 1].n = voxel_normal_array[_side+1].n;
-        scratch[*index + 2].n = voxel_normal_array[_side+2].n;
-        scratch[*index + 3].n = voxel_normal_array[_side+3].n;
+        scratch[*index + 0].n = voxel_normal_array[side+0].n | ix[0].n;
+        scratch[*index + 1].n = voxel_normal_array[side+1].n | ix[1].n;
+        scratch[*index + 2].n = voxel_normal_array[side+2].n | ix[2].n;
+        scratch[*index + 3].n = voxel_normal_array[side+3].n | ix[3].n;
     }
 
     {
@@ -445,13 +425,7 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
         scratch[*index + 3].y = fy + vset[_side + 10];
         scratch[*index + 3].z = fz + vset[_side + 11];
     }
-/*
-    printf("start side %i \n", side);
-    for(int j=0; j<4; j++)
-    {
-        printf("x,y,z= %f, %f, %f \n", scratch[*index + j].x, scratch[*index + j].y, scratch[*index + j].z);
-    }
-*/
+
     //if(*index >= 65536) printf("BUFFER OVERFLOW!!! \n");
     *index += 4;
 }
@@ -563,15 +537,8 @@ void Voxel_volume::update_vertex_list()
 #endif
 void voxel_test()
 {
-    //static Voxel_volume vv(1,1,1, 1.0);
+
     static Voxel_volume vv(4,4,4, 1.0);
-    //Voxel* v = vv.get(4,5,6);
-
-    //static float c = 0.0;
-    //c -= 0.02;
-    
-    //vv.set_center( -5.0, -5.0, 10.0);
-
 
     static float c0 = 0.0;
     static float c1 = 0.0;
@@ -579,15 +546,10 @@ void voxel_test()
     c0 += 0.0050 / (2*PI);
     c1 += 0.0025 / (2*PI);
     c2 += 0.0100 / (2*PI);
-
-    //printf("start\n");
-    //printf("1 v[3] x,y,z= %f, %f, %f \n", vv.v[3].x, vv.v[3].y, vv.v[3].z);
     
     vv.set_rotated_unit_axis(c0, c1, c2);
 
     vv.set_center( 2.0, 2.0, 2.0);
-
-    //vv.draw_bounding_box();
 }
 
 

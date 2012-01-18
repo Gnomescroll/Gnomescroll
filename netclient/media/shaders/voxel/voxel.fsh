@@ -18,8 +18,8 @@ void main()
 
 	const float light_p = .30; //percentage for light component mixing
 	
-	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb ;
-	vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
+	vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb ;
+	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
 
 	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 
