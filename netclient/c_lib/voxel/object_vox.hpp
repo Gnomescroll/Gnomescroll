@@ -96,11 +96,6 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
     theta = this->a->theta;
     phi = this->a->phi;
 
-    struct Vector forward;
-    this->forward(&forward, theta);
-
-    Vector up = {0.0f,0.0f,1.0f};
-
     VoxPart* vp;
     float ax,ay,az;
     int i;
@@ -114,7 +109,7 @@ void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
         if (vp->biaxial) {
             this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
         } else {
-            this->vv[i].set_axis(&forward, &up);
+            this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
         }
     }
 }

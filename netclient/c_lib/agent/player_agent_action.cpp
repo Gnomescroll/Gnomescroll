@@ -41,12 +41,18 @@ void PlayerAgent_action::hitscan() {
     float vec[3];
     p->camera_state.forward_vector(vec);
 
+    // get camera position
+    float x,y,z;
+    x = p->camera_state.x;
+    y = p->camera_state.y;
+    z = p->camera_state.z + p->camera_height();
+
     // hitscan against voxels
     float vox_distance = 10000000.0f;
     float collision_point[3];
     struct Voxel_hitscan_element vhe;
     bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
-        p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
+        x,y,z,
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
         collision_point, &vox_distance,
@@ -58,7 +64,7 @@ void PlayerAgent_action::hitscan() {
     int block_pos[3];
     int target;
     target = Hitscan::terrain(
-        p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
+        x,y,z,
         vec[0], vec[1], vec[2],
         block_pos, &block_distance
     );
@@ -135,7 +141,7 @@ void PlayerAgent_action::hitscan() {
     // play laser anim
     const float hitscan_speed = 120.0f;
     ClientState::hitscan_effect_list.create(
-        p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(),
+        x,y,z,
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
     );
 
