@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
@@ -6,7 +8,7 @@
 
 //note that c uses row major order
 //glsl uses column major order
-
+ 
 struct Mat4 {
     union
     {

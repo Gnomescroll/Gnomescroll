@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
