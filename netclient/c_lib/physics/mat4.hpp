@@ -25,9 +25,7 @@ struct Mat4 {
     };
 } __attribute__((aligned (16)));
 
-struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
-
-//rotation matrices are symmetric so there goes half of your multiplies
+static struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
 
 struct Mat4 mat4_euler_rotation(float x, float y, float z)
 {   
@@ -67,7 +65,7 @@ struct Mat4 mat4_euler_rotation(float x, float y, float z)
     return m;
 }
 
-struct Mat4 mat4_apply_rotation(struct Mat3 m)  __attribute((always_inline));
+static struct Mat4 mat4_apply_rotation(struct Mat3 m)  __attribute((always_inline));
 
 struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 {   
@@ -77,7 +75,7 @@ struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 }
 
 
-struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m) __attribute((always_inline));
+static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m) __attribute((always_inline));
 
 struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
 {   
@@ -90,7 +88,7 @@ struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
     return u;
 }
 
-struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m) __attribute((always_inline));
+static struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m) __attribute((always_inline));
 
 struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
 {   

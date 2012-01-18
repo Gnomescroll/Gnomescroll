@@ -18,7 +18,7 @@ struct Vec3
     vector operations
 */
 
-struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
+static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
 
 struct Vec3 vec3_init(float x, float y, float z)
 {
@@ -29,7 +29,7 @@ struct Vec3 vec3_init(float x, float y, float z)
     return v;
 }
 
-struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline)); 
+static struct Vec3 vec3_normalize(struct Vec3 v) __attribute((always_inline)); 
 
 struct Vec3 vec3_normalize(struct Vec3 v) 
 {
@@ -40,7 +40,7 @@ struct Vec3 vec3_normalize(struct Vec3 v)
     return v;
 }
 
-struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
+static struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
 {
@@ -51,7 +51,7 @@ struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
     return v;
 }
 
-struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
+static struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
 {
@@ -61,7 +61,7 @@ struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
     return v1;
 }
 
-struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar) __attribute((always_inline)); 
+static struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar) __attribute((always_inline)); 
 
 struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
 {
@@ -71,7 +71,7 @@ struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
     return v;
 }
 
-struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
+static struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
 
 struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
 {
@@ -82,7 +82,7 @@ struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec
     return v;
 }
 
-struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z) __attribute((always_inline));
+static struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z) __attribute((always_inline));
 
 struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z)
 {   
@@ -126,14 +126,14 @@ struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z)
 /*
     scalar return
 */
-float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
+static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
 }
 
-float vec3_length(struct Vec3 v) __attribute((always_inline)); 
+static float vec3_length(struct Vec3 v) __attribute((always_inline)); 
 
 float vec3_length(struct Vec3 v) 
 {
