@@ -192,14 +192,7 @@ void Voxel_volume::set_center(float x, float y, float z)
 
 static unsigned char _gamma_correction[256];
 
-static const float vset[72] = { 1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
-        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
-        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
-        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
-        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
-        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
-};
-
+/*
 static const int vnset[18] = { 0,0,1, 
 0,0,-1, 
 1,0,0 , 
@@ -207,7 +200,8 @@ static const int vnset[18] = { 0,0,1,
 0,1,0 , 
 0,-1,0 
 };
- 
+*/
+
 //cache line optimization; minimize size
 
 
@@ -231,6 +225,15 @@ inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int
 
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
 {
+
+    static const float vset[72] = { 
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+    };
 
     static const struct Voxel_normal ix[4] = { 
         {{{0,0,0,0}}},
@@ -364,7 +367,7 @@ void Voxel_volume::update_vertex_list()
         }
     }
 
-    static Voxel_vertex* scratch = new Voxel_vertex[65536]; //64 k of memory
+    static Voxel_vertex* scratch = new Voxel_vertex[65536]; //65536*20 bytes of memory
     int index = 0;
 
     for(int x=0; x < xdim; x++){
@@ -416,16 +419,24 @@ void Voxel_volume::update_vertex_list()
     {
         printf("Warning: generate vertex voxel list, 0 voxels\n");
         vvl.vnum = 0;
-        if(vvl.vertex_list != NULL) delete vvl.vertex_list;
+        if(vvl.vertex_list != NULL)
+        {
+            delete vvl.vertex_list;
+            vvl.vertex_list = NULL;
+
+        }
         return;
     }
 
-    if(vvl.vertex_list != NULL) delete vvl.vertex_list;
+    if(vvl.vertex_list != NULL)
+    {
+        delete vvl.vertex_list;
+        vvl.vertex_list = NULL;
+    }
     vvl.vertex_list = new Voxel_vertex[index];
 
     //void * memcpy ( void * destination, const void * source, size_t num );
-    memcpy((char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
-    vvl.size = index*sizeof(Voxel_vertex);  //wtf is size for
+    memcpy( (char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
     vvl.vnum = index;
 
     //printf("Voxel_volume::update_vertex_list finished \n");
@@ -434,7 +445,6 @@ void Voxel_volume::update_vertex_list()
 #endif
 void voxel_test()
 {
-
     static Voxel_volume vv(4,4,4, 1.0);
 
     static float c0 = 0.0;
@@ -541,9 +551,7 @@ void Voxel_volume::draw_bounding_box()
     glEnd();
     glPointSize(1.0);
 
-    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
-
-
+    glColor3ub(255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
 

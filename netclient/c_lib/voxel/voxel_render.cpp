@@ -66,6 +66,7 @@ void Voxel_render_list::update_vertex_buffer_object()
             needs_update = true;
             vv->update_vertex_list();
             //printf("%i vnum= %i \n", i, _vbo->vnum);
+            if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
         v_num +=  vv->vvl.vnum;
     }
@@ -102,6 +103,10 @@ void Voxel_render_list::update_vertex_buffer_object()
     {
         if(render_list[i] == NULL) continue;
         vv = render_list[i];
+
+        if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
+        if(vv->vvl.voff == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 2: vv->vvl.voff == 0 \n");
+        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == 0 \n");
 
         //printf("%i: memcpy: %i vertices, %i bytes at offset %i \n", i,vv->vvl.vnum, vv->vvl.vnum*sizeof(Voxel_vertex) , index);
         //memcpy( _vbo->vertex_list+index*sizeof(Voxel_vertex), vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );

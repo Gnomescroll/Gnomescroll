@@ -56,20 +56,18 @@ class Voxel_vertex_list
 {
     public:
     Voxel_vertex* vertex_list;   //number of vertices
-    int size;   //offset of vertices
 
     unsigned short vnum;   //number of vertices
     unsigned short voff;   //offset of vertices
 
     Voxel_vertex_list()
     :
-    vertex_list(NULL),
-    size(0), vnum(0), voff(0)
+    vertex_list(NULL), vnum(0), voff(0)
     {}
 
     ~Voxel_vertex_list()
     {
-        if(vertex_list != NULL) free(vertex_list);
+        if(vertex_list != NULL) delete[] vertex_list;
     }
 };
 #endif
