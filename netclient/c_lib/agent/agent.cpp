@@ -444,7 +444,9 @@ void Agent_state::_tick()
         _tc++;
     }
 
+    #ifdef DC_SERVER
     status.respawn();
+    #endif
 }
 
 

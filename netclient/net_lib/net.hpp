@@ -133,7 +133,7 @@ class FixedSizeNetPacketToClient {
         */     
             if(NetServer::pool[client_id] == NULL)
             {
-                printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
+                printf("FixedSizeNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
             }
             NetServer::pool[client_id]->push_unreliable_message(nm);
@@ -302,7 +302,7 @@ class FixedSizeReliableNetPacketToClient {
 
             if(NetServer::pool[client_id] == NULL)
             {
-                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null\n", client_id);
+                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
             }
             NetServer::pool[client_id]->push_reliable_message(nm);

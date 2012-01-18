@@ -179,11 +179,11 @@ a(a)
 
 template <class Obj, int NUM_PARTS>
 Object_vox<Obj,NUM_PARTS>::~Object_vox() {
-    #ifdef DC_CLIENT
     int i;
     for (i=0; i<NUM_PARTS; i++) {
+        #ifdef DC_CLIENT
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
-        ClientState::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+        #endif
+        STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
-    #endif
 }
