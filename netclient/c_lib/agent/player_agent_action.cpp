@@ -107,7 +107,6 @@ void PlayerAgent_action::hitscan() {
                     monster_msg.monster_type = vhe.entity_type;
                     monster_msg.monster_body_part = vhe.part_id;
                     monster_msg.send();
-                    ClientState::slime_list.destroy(vhe.entity_id);
                     break;
                     
                 default:

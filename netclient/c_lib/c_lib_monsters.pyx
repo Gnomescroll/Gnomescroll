@@ -68,5 +68,5 @@ def slime_test():
     test()
 
 def slime_tick():
-    slime_list.tick()
+#    slime_list.tick()
     slime_list.update()

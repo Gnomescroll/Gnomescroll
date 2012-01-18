@@ -10,6 +10,7 @@ import platform
 
 import init_c_lib
 import c_lib.c_lib_agents as cAgents
+import c_lib.c_lib_monsters as cMonsters
 
 class NetServer:
     connectionPool = None
@@ -80,11 +81,15 @@ class PyClient:
         self._register()
         self.send_map()
         self.send_agents()
+        self.send_monsters()
         self.send_name_to_clients()
 
     def send_agents(self):
         self.sendMessage.send_agents() # REQUIRED still, python creates python agents for this, and puts in agent_list. will be deprecated later
         cAgents.AgentListWrapper.send_to_client(self.client_id)
+
+    def send_monsters(self):
+        cMonsters.send_to_client(self.client_id)
 
     def send_name_to_clients(self):
         for client in NetServer.connectionPool.clients_by_id.values():

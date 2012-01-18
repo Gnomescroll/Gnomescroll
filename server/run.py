@@ -24,6 +24,7 @@ import init_c_lib
 import c_lib.c_lib_particles
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
+import c_lib.c_lib_monsters as cMonsters
 import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
@@ -381,6 +382,9 @@ class Main:
         #StartPhysicsTimer(33)
         START_CLOCK()
         NetServerInit()
+
+        for i in range(30):
+            cMonsters.slime_test()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections
             #NetServer.connectionPool.process_events() #check for new data
@@ -405,6 +409,9 @@ class Main:
             
             NetOut.event.process_events()
             self.intervals.process()
+
+            cMonsters.slime_tick()
+
             time.sleep(0.0001)
             #time.sleep(0.100)
 if __name__ == "__main__":

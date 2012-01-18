@@ -29,6 +29,7 @@ cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     cdef cppclass Slime_list:
         void tick()
         void update()
+        void send_to_client(int client_id)
 
     void test()
 
@@ -69,4 +70,7 @@ def slime_test():
 
 def slime_tick():
     slime_list.tick()
-    slime_list.update()
+#    slime_list.update()
+
+def send_to_client(int client_id):
+    slime_list.send_to_client(client_id)

@@ -67,9 +67,7 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         int seq;
         //int tick;
 
-        float x;
-        float y;
-        float z;
+        float x,y,z;
         float vx,vy,vz;
 
         float theta, phi;

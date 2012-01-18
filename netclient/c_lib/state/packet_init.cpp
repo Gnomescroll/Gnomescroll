@@ -90,5 +90,10 @@ void RegisterMessages() {
     Weapons::WeaponAmmo_StoC::register_client_packet();
     Weapons::WeaponClip_StoC::register_client_packet();
 
+    // monsters
+    CreateSlime_StoC::register_client_packet();
+    DestroySlime_StoC::register_client_packet();
+    SlimeState_StoC::register_client_packet();
+
 }
 }

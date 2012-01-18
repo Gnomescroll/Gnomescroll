@@ -15,6 +15,9 @@ Slime::Slime()
 :
 theta(0.0), phi(0.0),
 type(OBJ_TYPE_SLIME)
+#ifdef DC_SERVER
+, changed(true),tick_num(0)
+#endif
 {
     this->vox = new Slime_vox(this, &slime_vox_dat);
 }
@@ -23,24 +26,51 @@ Slime::Slime(int id)
 id(id),
 theta(0.0), phi(0.0),
 type(OBJ_TYPE_SLIME)
+#ifdef DC_SERVER
+, changed(true),tick_num(0)
+#endif
 {
+    #ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
+    #endif
+
+    #ifdef DC_SERVER
+    this->vox = NULL;
+    #endif
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
 x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
 theta(0.0), phi(0.0),
 type(OBJ_TYPE_SLIME)
+#ifdef DC_SERVER
+, changed(true),tick_num(0)
+#endif
 {
+    #ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
+    #endif
+
+    #ifdef DC_SERVER
+    this->vox = NULL;
+    #endif
 }
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
 theta(0.0), phi(0.0),
 type(OBJ_TYPE_SLIME)
+#ifdef DC_SERVER
+, changed(true),tick_num(0)
+#endif
 {
+    #ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
+    #endif
+
+    #ifdef DC_SERVER
+    this->vox = NULL;
+    #endif
 }
 
 Slime::~Slime()
@@ -48,9 +78,40 @@ Slime::~Slime()
     if (this->vox != NULL) {
         delete this->vox;
     }
+    #ifdef DC_SERVER
+    DestroySlime_StoC msg = DestroySlime_StoC();
+    msg.id = this->id;
+    msg.broadcast();
+    #endif
 }
 
 void Slime::tick() {
+    #ifdef DC_CLIENT
+    return;
+    #endif
+
+    #ifdef DC_SERVER
+    if (changed) {
+        SlimeState_StoC msg;
+        msg.id = this->id;
+        msg.seq = 0;
+        msg.x = this->x;
+        msg.y = this->y;
+        msg.z = this->z;
+        msg.vx = this->vx;
+        msg.vy = this->vy;
+        msg.vz = this->vz;
+        msg.theta = this->theta;
+        msg.phi = this->phi;
+        msg.broadcast();
+    }
+    tick_num++;
+    if (tick_num == 6) {
+        changed = true;
+    }
+    tick_num %= 6;
+    #endif
+    
     // find nearby players
     // if nearby, move toward it
 
@@ -87,10 +148,10 @@ void Slime::tick() {
 
     // calculate rotation deltas
     // THETA = acos( (A.B) / (|A|*|B|) )
-    double dtheta;
-    double dot, alen, blen;
+    float dtheta;
+    float dot, alen, blen;
 
-    double ftmp[2], vtmp[2];
+    float ftmp[2], vtmp[2];
     ftmp[0] = 1.0;
     ftmp[1] = 0.0;
     vtmp[0] = vec[0];
@@ -104,6 +165,23 @@ void Slime::tick() {
 
     // orient towards player
     this->theta = dtheta;
+
+    #ifdef DC_SERVER
+    changed = true;
+    #endif
+
+    //SlimeState_StoC msg;
+    //msg.id = this->id;
+    //msg.seq = 0;
+    //msg.x = this->x;
+    //msg.y = this->y;
+    //msg.z = this->z;
+    //msg.vx = this->vx;
+    //msg.vy = this->vy;
+    //msg.vz = this->vz;
+    //msg.theta = this->theta;
+    //msg.phi = this->phi;
+    //msg.broadcast();
 }
 
 void Slime_list::update() {
@@ -123,9 +201,41 @@ void Slime_list::tick() {
     }
 }
 
-//#ifdef DC_CLIENT
+void Slime::set_state(float x, float y, float z, float vx, float vy, float vz)
+{
+    this->x = x;
+    this->y = y;
+    this->z = z;
+    this->vx = vx;
+    this->vy = vy;
+    this->vz = vz;
+}
+
+void Slime::set_angles(float theta, float phi)
+{
+    this->theta = theta;
+    this->phi = phi;
+}
+
+void Slime::set_state(float x, float y, float z, float vx, float vy, float vz, float theta, float phi)
+{
+    this->set_state(x,y,z,vx,vy,vz);
+    this->set_angles(theta, phi);
+}
+
+void Slime_list::send_to_client(int client_id) {
+    int i;
+    Slime* s;
+    for (i=0; i<n_max; i++) {
+        s = this->a[i];
+        if (s==NULL) continue;
+        CreateSlime_StoC msg;
+        msg.id = s->id;
+        msg.sendToClient(client_id);
+    }
+}
+
 void test() {
-    //int n = 30;
     int n = 1;
     int i;
     int x,y,z;
@@ -134,11 +244,16 @@ void test() {
         y = randrange(0,127);
         z = _get_highest_open_block(x,y);
         Slime* s = STATE::slime_list.create(x,y,z+1, 0,0,0);
-        s->vox->set_draw(true);
-        s->vox->update(&slime_vox_dat);
+        //s->vox->set_draw(true);
+        //s->vox->update(&slime_vox_dat);
+
+        #ifdef DC_SERVER
+        CreateSlime_StoC msg = CreateSlime_StoC();
+        msg.id = s->id;
+        msg.broadcast();
+        #endif
+
     }
 }
-//#endif
-
 
 }

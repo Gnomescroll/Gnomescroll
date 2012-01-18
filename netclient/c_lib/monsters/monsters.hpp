@@ -31,13 +31,22 @@ class Slime {
     int id;
     float x,y,z;
     float vx,vy,vz;
-    double theta,phi;
+    float theta,phi;
     
     Slime_vox* vox;
 
     Object_types type;
 
+    #ifdef DC_SERVER
+    bool changed;
+    int tick_num;
+    #endif
+
     void tick();
+
+    void set_state(float x, float y, float z, float vx, float vy, float vz);
+    void set_state(float x, float y, float z, float vx, float vy, float vz, float theta, float phi);
+    void set_angles(float theta, float phi);
 
     Slime();
     Slime(int id);
@@ -55,6 +64,8 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
         void draw();
         void update();
         void tick();
+
+        void send_to_client(int client_id);
 };
 
 //#ifdef DC_CLIENT

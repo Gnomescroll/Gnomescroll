@@ -63,8 +63,8 @@ struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
 int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox);
 int _set_chunk_voxel(int xoff, int yoff, int zoff, unsigned short val, int i);
 
-int _get_highest_open_block(int x, int y, int n);
-int _get_lowest_open_block(int x, int y, int n);
+int _get_highest_open_block(int x, int y, int n=1);
+int _get_lowest_open_block(int x, int y, int n=1);
 
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);

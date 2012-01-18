@@ -907,9 +907,9 @@ Agent_state::~Agent_state() {
 
 void Agent_list::send_to_client(int client_id) {
     int i;
-    agent_create_StoC msg;
     for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
         if (a[i]==NULL) continue;
+        agent_create_StoC msg;
         msg.id = a[i]->id;
         msg.sendToClient(client_id);
     }

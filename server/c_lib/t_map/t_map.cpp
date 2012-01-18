@@ -255,13 +255,12 @@ int _clear() {
     }
     return 0;
 }
-
-int _get_highest_open_block(int x, int y, int n=1) {
+int _get_highest_open_block(int x, int y, int n) {
     if (n < 1) {
         printf("WARNING: _get_highest_open_block :: called with n < 1\n");
         return -1;
     }
-    if (n==1) return _get_highest_open_block(x,y);
+    if (n==1) return _get_highest_solid_block(x,y) + 1;
 
     int open=n;
     int block;
@@ -272,7 +271,9 @@ int _get_highest_open_block(int x, int y, int n=1) {
         if (!isSolid(block)) {
             open++;
         } else {
-            if (open >= n) return i+1;
+            if (open >= n) {
+                return i+1;
+            }
             open = 0;
         }
     }
@@ -291,7 +292,7 @@ int _get_highest_solid_block(int x, int y) {
     return  i;
 }
 
-int _get_lowest_open_block(int x, int y, int n=1) {
+int _get_lowest_open_block(int x, int y, int n) {
     if (n < 1) {
         printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
         return -1;
@@ -312,7 +313,6 @@ int _get_lowest_open_block(int x, int y, int n=1) {
 
     return i;
 }
-
 
 int _get_lowest_solid_block(int x, int y) {
 

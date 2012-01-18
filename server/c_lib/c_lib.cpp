@@ -38,6 +38,7 @@
 #include <c_lib/weapons/packets.cpp>
 
 /* monsters */
+#include <c_lib/monsters/packets.cpp>
 #include <c_lib/monsters/monsters.cpp>
 
 /* dungeon/L system/noise */
