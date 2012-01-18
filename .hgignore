@@ -10,6 +10,8 @@ syntax: glob
 
 dist
 
+screenshot.png
+
 __MACOSX
 ___MACOSX
 *.pyc.orig

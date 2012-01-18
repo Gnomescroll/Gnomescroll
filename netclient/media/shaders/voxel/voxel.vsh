@@ -11,7 +11,8 @@ varying mat2 AOMatrix;
 varying vec2 texCoord;
 
 //const float coordArray = ( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
-const vec2 coordArray = ( vec2(0.0,0.0) , vec2(1.0,0.0) , vec2(1.0,1.0) , vec2(0.0,1.0) );
+const vec2 coordArray = ( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
+
 
 void main(void) 
 {
