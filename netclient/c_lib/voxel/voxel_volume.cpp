@@ -81,20 +81,15 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 id(-1),
 draw(true)
 {
-    voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
 }
 
 Voxel_volume::~Voxel_volume()
 {
-/*
-    //registration and deregistration are handled by voxel class
-*/
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
     #endif
     if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered \n");
-
     delete[] voxel;
 }
 
@@ -110,89 +105,6 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 {
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
-}
-
-
-void Voxel_volume::draw_bounding_box()
-{
-#ifdef DC_CLIENT
-
-    glDisable (GL_DEPTH_TEST);
-
-    glDisable(GL_TEXTURE_2D);
-    glLineWidth(5.0f);
-
-    int i,j;
-    float _x,_y,_z;
-
-    glBegin(GL_LINES);
-    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-
-    Vector vx;
-    Vector vy;
-    Vector vz;
-
-    Vector u;
-
-    for(i=0; i<12; i++) 
-    {
-            j = 3*vertex_index2[2*i+0];
-            
-            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
-
-            u = vector_add4(&vx,&vy,&vz,&v[3]);
-
-            _x = u.x;
-            _y = u.y;
-            _z = u.z;
-
-            glVertex3f(_x,_y,_z);
-            j = 3*vertex_index2[2*i+1];
-
-            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
-            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
-            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
-            
-            u = vector_add4(&vx,&vy,&vz,&v[3]);
-
-            _x = u.x;
-            _y = u.y;
-            _z = u.z;
-
-            glVertex3f(_x,_y,_z);
-    }
-
-    glEnd();
-
-    glDisable (GL_DEPTH_TEST);
-
-    //offset
-    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(v[3].x, v[3].y, v[3].z);
-    glEnd();
-    glPointSize(1.0);
-
-    //center
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(center.x,center.y, center.z);
-    glEnd();
-    glPointSize(1.0);
-
-    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
-
-
-    glEnable(GL_TEXTURE_2D);
-    glLineWidth(1.0f);
-
-    glEnable (GL_DEPTH_TEST);
-
-#endif
 }
 
 void Voxel_volume::set_unit_axis()
@@ -455,10 +367,6 @@ void Voxel_volume::update_vertex_list()
     static Voxel_vertex* scratch = new Voxel_vertex[65536]; //64 k of memory
     int index = 0;
 
-
-    //push_voxel_quad(scratch, &index, -5,-5,10, 0);
-    //push_voxel_quad(scratch, &index, 5,5,10, 0);
-
     for(int x=0; x < xdim; x++){
     for(int y=0; y < ydim; y++){
     for(int z=0; z < zdim; z++){
@@ -560,4 +468,86 @@ void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, sh
     this->vhe.entity_type = entity_type;
     this->vhe.part_id = part_id;
     this->vhe.vv = this;
+}
+
+void Voxel_volume::draw_bounding_box()
+{
+#ifdef DC_CLIENT
+
+    glDisable (GL_DEPTH_TEST);
+
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(5.0f);
+
+    int i,j;
+    float _x,_y,_z;
+
+    glBegin(GL_LINES);
+    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+
+    Vector vx;
+    Vector vy;
+    Vector vz;
+
+    Vector u;
+
+    for(i=0; i<12; i++) 
+    {
+            j = 3*vertex_index2[2*i+0];
+            
+            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+
+            u = vector_add4(&vx,&vy,&vz,&v[3]);
+
+            _x = u.x;
+            _y = u.y;
+            _z = u.z;
+
+            glVertex3f(_x,_y,_z);
+            j = 3*vertex_index2[2*i+1];
+
+            vx = vector_scalar2(&v[0], 2.0*v_set[j+0]*hdx*scale);
+            vy = vector_scalar2(&v[1], 2.0*v_set[j+1]*hdy*scale);
+            vz = vector_scalar2(&v[2], 2.0*v_set[j+2]*hdz*scale);
+            
+            u = vector_add4(&vx,&vy,&vz,&v[3]);
+
+            _x = u.x;
+            _y = u.y;
+            _z = u.z;
+
+            glVertex3f(_x,_y,_z);
+    }
+
+    glEnd();
+
+    glDisable (GL_DEPTH_TEST);
+
+    //offset
+    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(v[3].x, v[3].y, v[3].z);
+    glEnd();
+    glPointSize(1.0);
+
+    //center
+    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
+    glPointSize(10.0);
+    glBegin(GL_POINTS);
+    glVertex3f(center.x,center.y, center.z);
+    glEnd();
+    glPointSize(1.0);
+
+    glColor3ub((unsigned char) 255,(unsigned char)255,(unsigned char)255);
+
+
+    glEnable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+
+    glEnable (GL_DEPTH_TEST);
+
+#endif
 }
