@@ -13,44 +13,16 @@ class Voxel_hitscan_list; //forward declaration
 
 class Voxel_volume
 {
-    private:
-#ifdef DC_CLIENT
-    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
-#endif
-
-    inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
-    {   return &voxel[x+(y << index1)+(z << index12)]; }
-
-
-    inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
-    { return voxel[x+(y << index1)+(z << index12)].color; }
-
-/*
-    Tests whether a voxel is occupied, for AO
-*/
-    inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline)) 
-    { 
-        unsigned int index= x+(y << index1)+(z << index12);
-        if(index >= index_max) return 0;
-        if(voxel[x+(y << index1)+(z << index12)].color == 0) return 0;
-        return 1;
-    }
-
-    inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
-    { voxel[x+(y << index1)+(z << index12)] = *v; }
-
-    inline void _set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
-    {  Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
-
     public:
 
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
 #endif
-    int id;
-    bool draw;
 
     Vector v[4]; // forward, up, right (x,y,z), offset
+
+    int id;
+    bool draw;
 
     float scale;    //size of voxels
     //bounding sphere
@@ -109,4 +81,31 @@ class Voxel_volume
     Voxel_volume();
 
     ~Voxel_volume();
+
+    private:
+#ifdef DC_CLIENT
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+#endif
+
+    inline Voxel* get(int x, int y, int z) __attribute((always_inline)) 
+    {   return &voxel[x+(y << index1)+(z << index12)]; }
+
+    inline unsigned int get_as_int(int x, int y, int z) __attribute((always_inline)) 
+    { return voxel[x+(y << index1)+(z << index12)].color; }
+
+/*
+    Tests whether a voxel is occupied, for AO
+*/
+    inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline)) 
+    { 
+        unsigned int index= x+(y << index1)+(z << index12);
+        if(index >= index_max) return 0;
+        if(voxel[x+(y << index1)+(z << index12)].color == 0) return 0;
+        return 1;
+    }
+    inline void _set(int x, int y, int z, Voxel* v) __attribute((always_inline))
+    { voxel[x+(y << index1)+(z << index12)] = *v; }
+    inline void _set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
+    {  Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+
 };

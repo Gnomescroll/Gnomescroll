@@ -1,5 +1,9 @@
+#pragma once
+
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
+
+#include <math.h>
 
 struct Mat4 {
     union
@@ -31,12 +35,14 @@ struct Mat3 {
         };
         struct 
         {
-            struct Vec4 vx;
-            struct Vec4 vy;
-            struct Vec4 vz;
+            struct Vec3 vx;
+            struct Vec3 vy;
+            struct Vec3 vz;
         };
     };
 };
+
+struct Mat3 mat3_euler_rotation(float x, float y, float z) __attribute((always_inline));
 
 struct Mat3 mat3_euler_rotation(float x, float y, float z)
 {   
@@ -71,6 +77,8 @@ struct Mat3 mat3_euler_rotation(float x, float y, float z)
     return m;
 }
 
+struct Mat4 mat3_euler_rotation(float x, float y, float z)  __attribute((always_inline));
+
 struct Mat4 mat3_euler_rotation(float x, float y, float z)
 {   
     x *= PI;
@@ -104,7 +112,7 @@ struct Mat4 mat3_euler_rotation(float x, float y, float z)
     m.v[0].w = 0.0;
     m.v[1].w = 0.0;
     m.v[2].w = 0.0;
-    m.v[3] = vec4_init(0.0, 0.0, 0.0, 0.0);
+    m.v[3] = vec4_init(0.0, 0.0, 0.0, 1.0);
 
     return m;
 }

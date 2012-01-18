@@ -1,3 +1,6 @@
+#pragma once
+
+#include <math.h>
 
 #include <c_lib/physics/vec3.hpp>
 
