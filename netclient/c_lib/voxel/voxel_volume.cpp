@@ -383,63 +383,36 @@ void Voxel_volume::update_vertex_list()
         push_voxel_quad(scratch, &index, x,y,z, 4);
         push_voxel_quad(scratch, &index, x,y,z, 5);
     #else
-        if(z+1 == zdim || get_as_int(x,y,z+1) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 0);
-        }
-
-        if(z == 0 || get_as_int(x,y,z-1) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 1);
-        }
-
-        if(x+1 == xdim || get_as_int(x+1,y,z) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 2);
-        }
-
-        if(x == 0 || get_as_int(x-1,y,z) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 3);
-        }
- 
-        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 4);
-        }
-
-        if(y == 0 || get_as_int(x,y-1,z) == 0)
-        {
-            push_voxel_quad(scratch, &index, x,y,z, 5);
-        }
+        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(scratch, &index, x,y,z, 0);
+        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(scratch, &index, x,y,z, 1);
+        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 2);
+        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 3);
+        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 4);
+        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 5);
     #endif
     }}}
 
     if(index == 0)
     {
-        printf("Warning: generate vertex voxel list, 0 voxels\n");
+        printf("Voxel_volume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
         vvl.vnum = 0;
         if(vvl.vertex_list != NULL)
         {
-            delete vvl.vertex_list;
+            delete[] vvl.vertex_list;
             vvl.vertex_list = NULL;
-
         }
         return;
     }
 
     if(vvl.vertex_list != NULL)
     {
-        delete vvl.vertex_list;
+        delete[] vvl.vertex_list;
         vvl.vertex_list = NULL;
     }
     vvl.vertex_list = new Voxel_vertex[index];
 
-    //void * memcpy ( void * destination, const void * source, size_t num );
     memcpy( (char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
     vvl.vnum = index;
-
-    //printf("Voxel_volume::update_vertex_list finished \n");
 }
 
 #endif

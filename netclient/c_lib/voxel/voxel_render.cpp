@@ -54,7 +54,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     VBOmeta* _vbo = &vbo_wrapper[0]; 
     int v_num = 0;
-    bool needs_update = false;
+    int volumes_updated = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL) continue;
@@ -63,9 +63,8 @@ void Voxel_render_list::update_vertex_buffer_object()
         if( vv->needs_vbo_update == true )
         {
             vv->needs_vbo_update = false;
-            needs_update = true;
-            vv->update_vertex_list();
-            //printf("%i vnum= %i \n", i, _vbo->vnum);
+            volumes_updated++;
+            vv->update_vertex_list(); //<-- look for bug here
             if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
         v_num +=  vv->vvl.vnum;
@@ -73,7 +72,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     _vbo->vnum = v_num;
 
-    if(needs_update == false)
+    if(volumes_updated == 0)
     {
         return;         //no voxel volumes were updated
     }
@@ -94,9 +93,6 @@ void Voxel_render_list::update_vertex_buffer_object()
         }
         _vbo->vertex_list = (Voxel_vertex*) realloc (_vbo->vertex_list, _vbo->max_size*sizeof(Voxel_vertex) );
     }
-    
-    //_vbo->vertex_list = (Voxel_vertex*) malloc(sizeof(Voxel_vertex) *v_num );
-    //printf("array size= %i \n", sizeof(Voxel_vertex) *v_num );
 
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -115,9 +111,6 @@ void Voxel_render_list::update_vertex_buffer_object()
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
-
-    //printf("Uploaded %i bytes to VBO \n", index);
-
 }
 
 static GLenum voxel_shader_vert = 0;
