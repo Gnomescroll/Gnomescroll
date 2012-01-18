@@ -119,7 +119,6 @@ void Voxel_volume::set_unit_axis()
 //forward and up Vector
 void Voxel_volume::set_axis(struct Vec3* f, struct Vec3* u)
 {
-    //    vector_cross(u, f, &v[1]);
     v[0].v3 = *f;
     v[2].v3 = *u; 
     v[1].v3 = vec3_cross(*u,*f);
@@ -128,23 +127,11 @@ void Voxel_volume::set_axis(struct Vec3* f, struct Vec3* u)
 
 void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
 {
-
-/*
-    Vector vx = Vector_init(1.0f,0.0f,0.0f);
-    vx = euler_rotation(vx, x_angle, y_angle, z_angle);
-
-    Vector vz = Vector_init(0.0f,0.0f,1.0f);
-    vz = euler_rotation(vz, x_angle, y_angle, z_angle);
-    vector_cross(&vz, &vx, &v[1]); //set v1
-    v[0] = vx;
-    v[2] = vz;
-*/
-
     struct Mat3 rot = mat3_euler_rotation(x_angle, y_angle, z_angle);
 
     v[0].v3 = vec3_apply_rotation(vec3_init(1.0f,0.0f,0.0f), rot);
     v[1].v3 = vec3_apply_rotation(vec3_init(0.0f,1.0f,0.0f), rot);
-    v[2].v3 = vec3_apply_rotation(vec3_init(0.0f,0.0f,0.0f), rot);
+    v[2].v3 = vec3_apply_rotation(vec3_init(0.0f,0.0f,1.0f), rot);
 
     update_center();
 }
@@ -152,7 +139,6 @@ void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_a
 
 void Voxel_volume::update_center()
 {
-
     const int DEBUG = 0;
 
     if(DEBUG)
@@ -162,10 +148,6 @@ void Voxel_volume::update_center()
         printf("v[2] x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
         printf("v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
     }
-
-    //Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    //Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    //Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
     struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
     struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
@@ -191,10 +173,6 @@ void Voxel_volume::set_center(float x, float y, float z)
     center.x = x;
     center.y = y;
     center.z = z;
-
-    //Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    //Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    //Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
     struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
     struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
