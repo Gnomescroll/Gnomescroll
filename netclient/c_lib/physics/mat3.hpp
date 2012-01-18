@@ -13,10 +13,9 @@ struct Mat3 {
     {
         float f[3][3];
         float _f[9];
-        struct 
-        {
-            struct Vec3 v[3];
-        };
+
+        struct Vec3 v[3];
+
         struct 
         {
             struct Vec3 vx;
@@ -24,7 +23,7 @@ struct Mat3 {
             struct Vec3 vz;
         };
     };
-};
+} __attribute__((aligned (16)));
 
 static struct Mat3 mat3_euler_rotation(float x, float y, float z) __attribute((always_inline));
 
@@ -60,3 +59,31 @@ struct Mat3 mat3_euler_rotation(float x, float y, float z)
 
     return m;
 }
+
+static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m) __attribute((always_inline));
+
+struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat3 m)
+{   
+    struct Vec3 u;
+
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
+
+    return u;
+}
+
+static struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m) __attribute((always_inline));
+
+struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat3 m)
+{   
+    struct Vec4 u;
+
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
+    u.w = 0;
+
+    return u;
+}
+

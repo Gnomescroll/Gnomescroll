@@ -11,11 +11,10 @@ struct Mat4 {
     union
     {
         float f[4][4];
-        float _f[16]; 
-        struct 
-        {
-            struct Vec4 v[4];
-        };
+        float _f[16];
+
+        struct Vec4 v[4];
+
         struct 
         {
             struct Vec4 vx;
@@ -73,16 +72,34 @@ static struct Mat4 mat4_apply_rotation(struct Mat3 m)  __attribute((always_inlin
 struct Mat4 mat4_apply_mat3_rotation_matrix(struct Mat3 m1, struct Mat3 m2)
 {   
     struct Mat4 m;
-
-/*
-    m.v[0].x = 
-    m.v[0].y =
-    m.v[0].z = 
-*/
-
-//    m.v[0].w = 0.0;
-//    m.v[1].w = 0.0;
-//    m.v[2].w = 0.0;
-//    m.v[3] = vec4_init(0.0, 0.0, 0.0, 1.0);
+    //not used/implemented yet
     return m;
+}
+
+
+static struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m) __attribute((always_inline));
+
+struct Vec3 vec3_apply_rotation(struct Vec3 v, struct Mat4 m)
+{   
+    struct Vec3 u;
+
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
+
+    return u;
+}
+
+static struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m) __attribute((always_inline));
+
+struct Vec4 vec4_apply_rotation(struct Vec4 v, struct Mat4 m)
+{   
+    struct Vec4 u;
+
+    u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
+    u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
+    u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
+    u.w = 0;
+
+    return u;
 }
