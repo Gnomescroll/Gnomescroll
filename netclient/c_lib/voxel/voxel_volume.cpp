@@ -31,9 +31,9 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 #endif
     voxel_hitscan_list = NULL;
 
-    v[0] = Vector_init(1.0f,0.0f,0.0f);
-    v[1] = Vector_init(0.0f,1.0f,0.0f);
-    v[2] = Vector_init(0.0f,0.0f,1.0f);
+    v[0] = vec4_init(1.0f,0.0f,0.0f, 0.0f);
+    v[1] = Vector_init(0.0f,1.0f,0.0f, 0.0f);
+    v[2] = Vector_init(0.0f,0.0f,1.0f, 0.0f);
     this->set_center(0.0,0.0,0.0);
 
     this->hdx = ((float) xdim) / 2;
@@ -117,17 +117,19 @@ void Voxel_volume::set_unit_axis()
 
 //vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
 //forward and up Vector
-void Voxel_volume::set_axis(Vector* f, Vector* u)
+void Voxel_volume::set_axis(struct Vec3* f, struct Vec3* u)
 {
-    v[0] = *f;
-    v[2] = *u; 
-    vector_cross(u, f, &v[1]);
-
+    //    vector_cross(u, f, &v[1]);
+    v.v[0].v3 = *f;
+    v.v[2].v3 = *u; 
+    v.v[1].v3 = vec3_cross(*u,*f);
     update_center();
 }
 
 void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
 {
+
+/*
     Vector vx = Vector_init(1.0f,0.0f,0.0f);
     vx = euler_rotation(vx, x_angle, y_angle, z_angle);
 
@@ -136,6 +138,13 @@ void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_a
     vector_cross(&vz, &vx, &v[1]); //set v1
     v[0] = vx;
     v[2] = vz;
+*/
+
+    mat4 rot = mat3_euler_rotation(x_angle, y_angle, z_angle);
+
+    v[0].v3 = vec3_apply_rotation(vec3_init(1.0f,0.0f,0.0f), rot);
+    v[1].v3 = vec3_apply_rotation(vec3_init(0.0f,1.0f,0.0f), rot);
+    v[2].v3 = vec3_apply_rotation(vec3_init(0.0f,0.0f,0.0f), rot);
 
     update_center();
 }
@@ -154,9 +163,13 @@ void Voxel_volume::update_center()
         printf("v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
     }
 
-    Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+    //Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+    //Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+    //Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+
+    struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
+    struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
+    struct Vec3 vz = vec3_scalar_mult(v[2].v3,-1.0*hdz*scale);
 
     if(DEBUG)
     {
@@ -164,7 +177,7 @@ void Voxel_volume::update_center()
         printf("vy x,y,z= %f, %f, %f \n", vy.x, vy.y, vy.z);
         printf("vz x,y,z= %f, %f, %f \n", vz.x, vz.y, vz.z);
     }
-    v[3] = vector_add4(&vx,&vy,&vz,&center);
+    v[3].v3 = vec3_add4(vx, vy, vz, center);
 
     if(DEBUG)
     {
@@ -179,11 +192,16 @@ void Voxel_volume::set_center(float x, float y, float z)
     center.y = y;
     center.z = z;
 
-    Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
-    Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
-    Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
+    //Vector vx = vector_scalar2(&v[0],-1.0*hdx*scale);
+    //Vector vy = vector_scalar2(&v[1],-1.0*hdy*scale);
+    //Vector vz = vector_scalar2(&v[2],-1.0*hdz*scale);
 
-    v[3] = vector_add4(&vx,&vy,&vz,&center);
+    struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
+    struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
+    struct Vec3 vz = vec3_scalar_mult(v[2].v3,-1.0*hdz*scale);
+
+    //v[3] = vector_add4(&vx,&vy,&vz,&center);
+    v[3].v3 = vec3_add4(vx, vy, vz, center);
 }
 
 #ifdef DC_CLIENT
