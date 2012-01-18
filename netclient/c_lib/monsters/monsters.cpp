@@ -19,7 +19,13 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
+    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
+    //#endif
+
+    //#ifdef DC_SERVER
+    //this->vox = NULL;
+    //#endif
 }
 Slime::Slime(int id)
 :
@@ -30,13 +36,13 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    #endif
+    //#endif
 
-    #ifdef DC_SERVER
-    this->vox = NULL;
-    #endif
+    //#ifdef DC_SERVER
+    //this->vox = NULL;
+    //#endif
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
@@ -47,13 +53,13 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    #endif
+    //#endif
 
-    #ifdef DC_SERVER
-    this->vox = NULL;
-    #endif
+    //#ifdef DC_SERVER
+    //this->vox = NULL;
+    //#endif
 }
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
@@ -64,13 +70,13 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    #endif
+    //#endif
 
-    #ifdef DC_SERVER
-    this->vox = NULL;
-    #endif
+    //#ifdef DC_SERVER
+    //this->vox = NULL;
+    //#endif
 }
 
 Slime::~Slime()
@@ -137,10 +143,10 @@ void Slime::tick() {
         }
     }
 
-    // slime sphere intersects agent sphere?
+    // slime sphere intersects agent sphere? apply damage, die
     const int slime_dmg = 20; // TODO
     Agent_state* agent;
-    if (min_dist < this->vox->vv->radius && closest >= 0) { // get real radius
+    if (this->vox != NULL && min_dist < this->vox->largest_radius() && closest >= 0) {
         // blow up, damage player
         agent = STATE::agent_list.get(closest);
         if (agent != NULL) {
@@ -288,6 +294,18 @@ void test() {
         #endif
 
     }
+}
+
+float Slime_vox::largest_radius() {
+    float largest = 0.0f;
+    if (this->vv == NULL) return largest;
+    int i;
+    Voxel_volume* vv;
+    for (i=0; i<this->n_parts; i++) {
+        vv = &this->vv[i];
+        if (vv->radius > largest) largest = vv->radius;
+    }
+    return largest;
 }
 
 }

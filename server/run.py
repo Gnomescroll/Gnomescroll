@@ -373,6 +373,8 @@ class Main:
         self.intervals = intervals.Intervals()
         self.intervals.register(self.file_monitor, self.file_monitor.interval)
 
+        cMonsters.load_slime_voxel_dat()
+
     def run2(self):
         print "Server Started"
         #physics_timer.start_physics_timer(33)

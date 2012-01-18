@@ -4,13 +4,20 @@
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/voxel_body.hpp>
 
-#ifdef DC_CLIENT
-#include <c_lib/voxel/voxel_render.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
 
+#ifdef DC_CLIENT
+#include <c_lib/voxel/voxel_render.hpp>
 // forward decl.
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
+    extern Voxel_hitscan_list voxel_hitscan_list;
+}
+#endif
+
+#ifdef DC_SERVER
+// forward decl.
+namespace ServerState {
     extern Voxel_hitscan_list voxel_hitscan_list;
 }
 #endif
@@ -39,12 +46,9 @@ class Object_vox {
 
 template <class Obj, int NUM_PARTS>
 void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
-    #ifdef DC_CLIENT
     // create each vox part from vox_dat conf
-    int i,j;
-    unsigned char r,g,b,a;
+    int i;
     int x,y,z;
-    int ix,iy,iz;
     VoxPart *vp;
     Voxel_volume* vv;
     float size = vox_dat->vox_size;
@@ -59,6 +63,11 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
         vv->init(x,y,z,size);
         vv->set_unit_axis();
         vv->set_hitscan_properties(this->a->id, this->a->type, i);
+
+        #ifdef DC_CLIENT
+        unsigned char r,g,b,a;
+        int j;
+        int ix,iy,iz;
         for (j=0; j<vp->colors.n; j++) {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];
@@ -72,8 +81,10 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
         }
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
-        ClientState::voxel_hitscan_list.register_voxel_volume(vv);
+        #endif
+        STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
+    #ifdef DC_CLIENT
     ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }

@@ -23,6 +23,8 @@ class Slime;    // forward decl
 class Slime_vox: public Object_vox<Slime, SLIME_PART_NUM>
 {
     public:
+    float largest_radius(); // temporary, until real body collision detection
+    
     Slime_vox(Slime* a, VoxBody* vox_dat) : Object_vox<Slime, SLIME_PART_NUM>(a, vox_dat) {}
 };
 

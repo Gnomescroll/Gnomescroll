@@ -15,6 +15,7 @@ namespace ServerState {
     Grenade_list grenade_list;
     Neutron_list neutron_list;
     Monsters::Slime_list slime_list;
+    Voxel_hitscan_list voxel_hitscan_list;
     
     CTF ctf;
 
