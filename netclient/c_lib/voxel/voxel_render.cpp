@@ -3,6 +3,11 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/camera/fulstrum_test.hpp>
 
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
+#include <physics/mat3.hpp>
+#include <physics/mat4.hpp>
+
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 {
     if(num_elements >= VOXEL_RENDER_LIST_SIZE)
@@ -216,7 +221,7 @@ void Voxel_render_list::draw()
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
     Voxel_volume* vv;
-    Vector4 v[4];
+    struct Vec4 v[4];
 
     v[0].w = 0.0f;
     v[1].w = 0.0f;
@@ -232,10 +237,11 @@ void Voxel_render_list::draw()
         
         if(vv->vvl.vnum == 0) continue;
 
-        v[0].v3 = vector_scalar2(&vv->v[0], vv->scale);
-        v[1].v3 = vector_scalar2(&vv->v[1], vv->scale);
-        v[2].v3 = vector_scalar2(&vv->v[2], vv->scale);
-        v[3].v3 = vv->v[3];
+        //construct world view matrix
+        v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
+        v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
+        v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
+        v[3].v3 = vv->v[3].v3;
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );

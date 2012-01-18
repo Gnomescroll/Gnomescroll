@@ -2,8 +2,8 @@
 
 #include <voxel/common.h>
 
-#include <physics/vector.hpp>
-#include <physics/matrix.hpp>
+//#include <physics/vector.hpp>
+//#include <physics/matrix.hpp>
 
 #include <physics/vec3.hpp>
 #include <physics/vec4.hpp>
@@ -22,14 +22,14 @@ class Voxel_volume
     Voxel_vertex_list vvl;
 #endif
 
-    Vector v[4]; // forward, up, right (x,y,z), offset
+    Vec4 v[4]; // forward, up, right (x,y,z), offset
 
     int id;
     bool draw;
 
     float scale;    //size of voxels
     //bounding sphere
-    Vector center;
+    Vec3 center;
     float radius;   //update when changing scale
 
     int xdim,ydim,zdim;
@@ -63,7 +63,7 @@ class Voxel_volume
     void set_unit_axis();
 
     //forward and up vector
-    void set_axis(struct Vector* f, struct Vector* u);
+    void set_axis(struct Vec3* f, struct Vec3* u);
 
     void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
 

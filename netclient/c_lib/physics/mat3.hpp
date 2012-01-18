@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
@@ -23,7 +25,7 @@ struct Mat3 {
             struct Vec3 vz;
         };
     };
-} __attribute__((aligned (16)));
+};
 
 static struct Mat3 mat3_euler_rotation(float x, float y, float z) __attribute((always_inline));
 

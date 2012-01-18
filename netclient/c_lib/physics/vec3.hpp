@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 
 #include <math.h>
 
@@ -71,6 +73,16 @@ struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
     return v;
 }
 
+static struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
+
+struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
+{
+    struct Vec3 v;
+    v.x = v1.x + v2.x + v3.x + v4.x;
+    v.y = v1.y + v2.y + v3.y + v4.y;
+    v.z = v1.z + v2.z + v3.z + v4.z;
+    return v;
+}
 
 static struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z) __attribute((always_inline));
 

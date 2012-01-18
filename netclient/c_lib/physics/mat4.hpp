@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
@@ -6,7 +8,7 @@
 
 //note that c uses row major order
 //glsl uses column major order
-
+ 
 struct Mat4 {
     union
     {
@@ -26,8 +28,6 @@ struct Mat4 {
 } __attribute__((aligned (16)));
 
 static struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
-
-//rotation matrices are symmetric so there goes half of your multiplies
 
 struct Mat4 mat4_euler_rotation(float x, float y, float z)
 {   
