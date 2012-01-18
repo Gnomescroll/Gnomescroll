@@ -1,4 +1,14 @@
+!!!
 
+Todo:
+
+1> Lighten outward facing edges of blocks like in Walley. enhances contrast between inner edges and outer edges
+
+AO:
+1> Ray cast from blocks
+-get "bent normals" through raycasting, use for lighting
+-try to use amplitude of bent normals (non-normalized), for diffuse lighitng calculation
+2> Bake in ray casted AO into terrain
 
 need 9 bits per channel for smooth lighting gradient for human eye (in non-linear encoding!)
 add a forth brightness channel, with normalized color channel?
