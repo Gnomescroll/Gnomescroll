@@ -247,11 +247,15 @@ void test() {
         x = randrange(0,127);
         y = randrange(0,127);
         z = _get_highest_open_block(x,y);
-        Slime* s = STATE::slime_list.create(x,y,z+1, 0,0,0);
+        
+        #ifdef DC_CLIENT
+        STATE::slime_list.create(x,y,z+1, 0,0,0);
+        #endif
         //s->vox->set_draw(true);
         //s->vox->update(&slime_vox_dat);
 
         #ifdef DC_SERVER
+        Slime* s = STATE::slime_list.create(x,y,z+1, 0,0,0);
         CreateSlime_StoC msg = CreateSlime_StoC();
         msg.id = s->id;
         msg.broadcast();

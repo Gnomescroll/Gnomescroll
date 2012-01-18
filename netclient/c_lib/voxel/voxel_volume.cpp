@@ -1,7 +1,7 @@
 #include "voxel_volume.hpp"
 
-#include <voxel/constants.hpp>
 
+#include <voxel/constants.hpp>
 
 #ifdef DC_CLIENT
     #include <voxel/voxel_render.hpp>

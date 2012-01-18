@@ -1,15 +1,18 @@
 #pragma once 
 
 #include <voxel/common.h>
+
 #include <physics/vector.hpp>
 #include <physics/matrix.hpp>
 
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
+#include <physics/mat3.hpp>
+#include <physics/mat4.hpp>
+
 #include <voxel/voxel_hitscan.hpp>
 
-#ifdef DC_CLIENT
-class Voxel_render_list; //forward declaration
-#endif
-class Voxel_hitscan_list; //forward declaration
+class Voxel_render_list; //forward declarations
 
 class Voxel_volume
 {
@@ -43,7 +46,7 @@ class Voxel_volume
     struct Voxel_hitscan_element vhe;
 
 #ifdef DC_CLIENT
-    Voxel_render_list* voxel_render_list;
+    class Voxel_render_list* voxel_render_list;
     void register_with_renderer(Voxel_render_list* vrl);
     void update_vertex_list();
 #endif
