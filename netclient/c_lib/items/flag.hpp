@@ -25,6 +25,7 @@ class Flag {
     public:
         float x,y,z;
         //float vx,vy,vz;
+        float theta,phi;
 
         int id;
         int team;

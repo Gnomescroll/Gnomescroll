@@ -81,7 +81,6 @@ void CTF::set_flag_position(int team, float x, float y, float z)
         default:
             break;
     }
-    printf("set team %d flag position to %0.2f %0.2f %0.2f\n", team,x,y,z);
 
     #ifdef DC_SERVER
     FlagState_StoC msg;
@@ -105,7 +104,6 @@ void CTF::set_base_position(int team, float x, float y, float z)
         default:
             break;
     }
-    printf("set team %d base position to %0.2f %0.2f %0.2f\n", team,x,y,z);
 
     #ifdef DC_SERVER
     BaseState_StoC msg;
@@ -115,7 +113,6 @@ void CTF::set_base_position(int team, float x, float y, float z)
     msg.z = z;
     msg.broadcast();
     #endif
-    printf("broadcast\n");
 }
 
 #ifdef DC_CLIENT

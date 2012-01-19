@@ -163,9 +163,11 @@ flag(NULL), base(NULL)
 
 void CTFTeam::init(int id)
 {
+    
     Team::init(id);
     this->flag = new Flag();
     this->flag->team = id;
+
     this->base = new Base();
     this->base->team = id;
 }

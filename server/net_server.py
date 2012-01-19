@@ -83,6 +83,7 @@ class PyClient:
         self.send_map()
         self.send_agents()
         self.send_monsters()
+        self.send_ctf()
         self.send_name_to_clients()
 
     def send_agents(self):
