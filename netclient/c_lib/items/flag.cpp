@@ -2,7 +2,11 @@
 
 VoxBody flag_vox_dat;
 
-void Flag::draw() {
+void Flag::set_position(float x, float y, float z) {
+    printf("Flag: %0.2f %0.2f %0.2f\n", x,y,z);
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
 
 Flag::Flag()

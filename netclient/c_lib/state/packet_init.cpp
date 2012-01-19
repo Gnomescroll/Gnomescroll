@@ -71,8 +71,10 @@ void RegisterMessages() {
     //TeamName_StoC::register_client_packet();
     AgentJoinTeam_StoC::register_client_packet();
     AgentJoinTeam_CtoS::register_server_packet();
-
     AgentAutoAssignTeam_CtoS::register_server_packet();
+
+    FlagState_StoC::register_client_packet();
+    BaseState_StoC::register_client_packet();
 
     PlayerAgent_id_StoC::register_client_packet();
 

@@ -36,7 +36,6 @@ class Flag {
 
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_position(float x, float y, float z);
-        void draw();
 
         Flag();
         ~Flag();

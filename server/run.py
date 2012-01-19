@@ -25,6 +25,7 @@ import c_lib.c_lib_particles
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
 import c_lib.c_lib_monsters as cMonsters
+import c_lib.c_lib_game_modes as cGameModes
 import c_lib.c_lib_items as cItems
 import dats.loader as dat_loader
 
@@ -387,8 +388,9 @@ class Main:
         START_CLOCK()
         NetServerInit()
 
-        #for i in range(30):
-            #cMonsters.slime_test()
+        for i in range(30):
+            cMonsters.slime_test()
+        cGameModes.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections
             #NetServer.connectionPool.process_events() #check for new data

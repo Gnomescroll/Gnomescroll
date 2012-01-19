@@ -16,6 +16,7 @@ class CTF {
         #ifdef DC_SERVER
         void on_client_connect(int client_id);
         void auto_assign_agent(int agent_id);
+        void send_to_client(int client_id);
         #endif
 
         NoTeam none;
@@ -23,8 +24,12 @@ class CTF {
         CTFTeam two;
 
         void init();
+        void start();
 
         void set_score(int team, int score);
+        void set_flag_position(int team, float x, float y, float z);
+        void set_base_position(int team, float x, float y, float z);
+
 
         bool add_agent_to_team(int team, int agent);
         void set_team_color(int team,

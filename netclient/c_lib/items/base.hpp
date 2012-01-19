@@ -36,7 +36,6 @@ class Base {
 
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_position(float x, float y, float z);
-        void draw();
 
         Base();
         ~Base();

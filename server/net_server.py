@@ -11,6 +11,7 @@ import platform
 import init_c_lib
 import c_lib.c_lib_agents as cAgents
 import c_lib.c_lib_monsters as cMonsters
+import c_lib.c_lib_game_modes as cGameModes
 
 class NetServer:
     connectionPool = None
@@ -90,6 +91,9 @@ class PyClient:
 
     def send_monsters(self):
         cMonsters.send_to_client(self.client_id)
+
+    def send_ctf(self):
+        cGameModes.send_ctf_to_client(self.client_id)
 
     def send_name_to_clients(self):
         for client in NetServer.connectionPool.clients_by_id.values():
