@@ -18,12 +18,13 @@ float minivox_size = 0.05f;
 #define MINIVOX_DRAW_MODE_TEXTURED 1
 
 class Minivox {
-    private:
-        float theta;
-        float phi;
-        void orient_vectors();
-
     public:
+        float theta, phi;
+        float dtheta, dphi;
+        void orient_vectors();
+        void set_spin(float dtheta, float dphi);
+        void spin();
+
         Particle2 particle;
 
         float size;
@@ -43,6 +44,7 @@ class Minivox {
         void set_size(float size) {
             this->size = size;
         }
+        void set_angles(float theta, float phi);
 
         float pix_margin;
         float tx,ty;
@@ -56,6 +58,7 @@ class Minivox {
         void draw() __attribute((always_inline));
         void draw_textured();
         void tick();
+        
         Minivox(int id);
         Minivox(int id, float x, float y, float z, float vx, float vy, float vz);
 };

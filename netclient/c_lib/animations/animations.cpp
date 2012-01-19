@@ -139,6 +139,8 @@ void slime_melt(float x, float y, float z) {
     
     float cx,cy,cz;
     float cvx,cvy,cvz;
+    float theta, phi;
+    float dtheta, dphi;
 
     Minivox* minivox;
     int ttl;
@@ -152,11 +154,18 @@ void slime_melt(float x, float y, float z) {
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
+
+        theta = randf() * PI * 2;
+        phi = randf() * PI * 2;
+        dtheta = randf() * 0.01f;
+        dphi = randf() * 0.01f;
         
         minivox = ClientState::minivox_list.create(cx,cy,cz, cvx,cvy,cvz);
         minivox->set_color(128,223,31);
         //minivox->set_size(0.7);
         minivox->set_ttl(ttl);
+        minivox->set_spin(dtheta, dphi);
+        minivox->set_angles(theta, phi);
     }
 
     ClientState::minivox_list.unset_size();

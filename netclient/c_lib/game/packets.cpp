@@ -36,8 +36,10 @@ inline void TeamScore_StoC::handle() {}
 inline void AgentJoinTeam_CtoS::handle() {
     bool added = ServerState::ctf.add_agent_to_team(team, agent);
     if (added) {
-        AgentJoinTeam_StoC* msg = new AgentJoinTeam_StoC(team, agent);
-        msg->broadcast();
+        AgentJoinTeam_StoC msg;
+        msg.team = team;
+        msg.agent = agent;
+        msg.broadcast();
     }
 }
 

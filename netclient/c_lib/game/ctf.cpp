@@ -41,14 +41,20 @@ void CTF::set_score(int team, int score) {
 #ifdef DC_CLIENT
 
 void CTF::join_team(int team) {
-    AgentJoinTeam_CtoS* msg = new AgentJoinTeam_CtoS(team, ClientState::playerAgent_state.agent_id);
-    msg->send();
+    AgentJoinTeam_CtoS msg;
+    msg.team = team;
+    msg.agent = ClientState::playerAgent_state.agent_id;
+    msg.send();
 }
 
 void CTF::on_ready() {
+    static int once = 0;
+    if (once) return;
     if (!auto_assign) return;
-    AgentAutoAssignTeam_CtoS* msg = new AgentAutoAssignTeam_CtoS(ClientState::playerAgent_state.agent_id);
-    msg->send();
+    AgentAutoAssignTeam_CtoS msg;
+    msg.agent = ClientState::playerAgent_state.agent_id;
+    msg.send();
+    once = 1;
 }
 
 #endif
@@ -69,8 +75,10 @@ void CTF::auto_assign_agent(int agent_id) {
         added = add_agent_to_team(team->id, agent_id);
     }
     if (added) {
-        AgentJoinTeam_StoC* msg = new AgentJoinTeam_StoC(team->id, agent_id);
-        msg->broadcast();
+        AgentJoinTeam_StoC msg;
+        msg.team = team->id;
+        msg.agent = agent_id;
+        msg.broadcast();
     }
     printf("Team one: %d, team two: %d\n", one.n, two.n);
 }

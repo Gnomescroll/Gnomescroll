@@ -17,7 +17,11 @@
 //#include <t_map/t_vbo.h>
 
 Minivox::Minivox(int id)
-: size(minivox_size), draw_mode(0), texture_pixel_width(2) {
+:
+theta(0.0f), phi(0.0f),
+dtheta(0.0f), dphi(0.0f),
+size(minivox_size), draw_mode(0), texture_pixel_width(2)
+{
     create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);
 
     vox.r = MINIVOX_R;
@@ -25,13 +29,15 @@ Minivox::Minivox(int id)
     vox.b = MINIVOX_B;
     vox.a = MINIVOX_A;
 
-    theta = 0.0f;
-    phi = 0.0f;
     orient_vectors();
 }
 
 Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz)
-: size(minivox_size), draw_mode(0), texture_pixel_width(2) {
+:
+theta(0.0f), phi(0.0f),
+dtheta(0.0f), dphi(0.0f),
+size(minivox_size), draw_mode(0), texture_pixel_width(2)
+{
     create_particle2(&particle, id, MINIVOX_TYPE, x,y,z,vx,vy,vz, 0, MINIVOX_TTL);
 
     vox.r = MINIVOX_R;
@@ -39,8 +45,6 @@ Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz
     vox.b = MINIVOX_B;
     vox.a = MINIVOX_A;
 
-    theta = 0.0f;
-    phi = 0.0f;
     orient_vectors();
 }
 
@@ -125,6 +129,22 @@ void Minivox::set_texture(int tex_id) {
     draw_mode = MINIVOX_DRAW_MODE_TEXTURED;
 }
 
+void Minivox::set_spin(float dtheta, float dphi) {
+    this->dtheta = dtheta;
+    this->dphi = dphi;
+}
+
+void Minivox::set_angles(float theta, float phi)
+{
+    this->theta = theta;
+    this->phi = phi;
+    this->orient_vectors();
+}
+
+void Minivox::spin() {
+    this->set_angles(this->theta + this->dtheta, this->phi + this->dphi);
+}
+
 void Minivox::set_texture(int tex_id, int pixels_wide) {
     int prev = this->texture_pixel_width;
     this->texture_pixel_width = pixels_wide;
@@ -134,6 +154,7 @@ void Minivox::set_texture(int tex_id, int pixels_wide) {
 
 void Minivox::tick() {
     bounce_simple_rk4(&particle, MINIVOX_DAMP);
+    this->spin();
     particle.ttl++;
 }
 

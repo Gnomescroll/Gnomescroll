@@ -327,8 +327,12 @@ class ChatCommand():
                     cGame.join_team(team_id)
 
         elif command == 'teams':
+            #_send = self._send_local({
+                #'content'   :   str(teams),
+                #'channel'   :   'system',
+            #})
             _send = self._send_local({
-                'content'   :   str(teams),
+                'content'   :   'Teams are unavailable. Integration with C teams is not implemented.',
                 'channel'   :   'system',
             })
 

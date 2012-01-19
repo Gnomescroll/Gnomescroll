@@ -31,8 +31,12 @@ void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
     this->g = g;
     this->b = b;
     #ifdef DC_SERVER
-    TeamColor_StoC* msg = new TeamColor_StoC(id, r,g,b);
-    msg->broadcast();
+    TeamColor_StoC msg;
+    msg.team = id;
+    msg.r = r;
+    msg.g = g;
+    msg.b = b;
+    msg.broadcast();
     #endif
 }
 
@@ -85,8 +89,12 @@ bool Team::remove_agent(int id) {
 
 void Team::update_client(int client_id) {
     // send color
-    TeamColor_StoC* msg = new TeamColor_StoC(id, r,g,b);
-    msg->sendToClient(client_id);
+    TeamColor_StoC msg;
+    msg.team = id;
+    msg.r = r;
+    msg.g = g;
+    msg.b = b;
+    msg.sendToClient(client_id);
     // team roster is sent via agent objects
 }
 

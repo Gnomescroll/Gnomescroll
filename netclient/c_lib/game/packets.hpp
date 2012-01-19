@@ -41,12 +41,6 @@ class TeamColor_StoC: public FixedSizeReliableNetPacketToClient<TeamColor_StoC>
             pack_u8(&b, buff, buff_n, pack);
         }
         inline void handle();
-
-        TeamColor_StoC(){}
-        TeamColor_StoC(int team,
-            unsigned char r, unsigned char g, unsigned char b)
-        : team(team), r(r), g(g), b(b)
-        {}
 };
 
 class AgentJoinTeam_StoC: public FixedSizeReliableNetPacketToClient<AgentJoinTeam_StoC>
@@ -61,11 +55,6 @@ class AgentJoinTeam_StoC: public FixedSizeReliableNetPacketToClient<AgentJoinTea
             pack_u8(&agent, buff, buff_n, pack);
         }
         inline void handle();
-
-        AgentJoinTeam_StoC(){}
-        AgentJoinTeam_StoC(int team, int agent)
-        : team(team), agent(agent)
-        {}
 };
 
 /* Client -> Server */
@@ -82,11 +71,6 @@ class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTea
             pack_u8(&agent, buff, buff_n, pack);
         }
         inline void handle();
-
-        AgentJoinTeam_CtoS(){}
-        AgentJoinTeam_CtoS(int team, int agent)
-        : team(team), agent(agent)
-        {}
 };
 
 class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentAutoAssignTeam_CtoS>
@@ -99,11 +83,6 @@ class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentA
             pack_u8(&agent, buff, buff_n, pack);
         }
         inline void handle();
-
-        AgentAutoAssignTeam_CtoS(){}
-        AgentAutoAssignTeam_CtoS(int agent)
-        : agent(agent)
-        {}
 };
 
 // Needs: string packing
@@ -146,10 +125,5 @@ class TeamScore_StoC: public FixedSizeReliableNetPacketToServer<TeamScore_StoC>
             pack_u8(&score, buff, buff_n, pack);
         }
         inline void handle();
-
-        TeamScore_StoC(){}
-        TeamScore_StoC(int team, int score)
-        : team(team), score(score)
-        {}
 };
             
