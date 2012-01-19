@@ -105,26 +105,19 @@ void Slime::tick() {
     const float speed = 0.1f;
 
     // choose a random agent in range
-    int n_nearby = STATE::agent_list.agents_within_sphere(this->x, this->y, this->z, r);
+    int closest = STATE::agent_list.agents_within_sphere(this->x, this->y, this->z, r);
+    int n_nearby = STATE::agent_list.n_filtered;
     if (n_nearby == 0) return;
 
-    // damage and die if within range
-    int i;
-    float min_dist = 10000.0f;
-    int closest = -1;
-    for (i=0; i<n_nearby; i++) {
-        if (STATE::agent_list.filtered_agent_distances[i] < min_dist) {
-            min_dist = STATE::agent_list.filtered_agent_distances[i];
-            closest = STATE::agent_list.filtered_agents[i]->id;
-        }
-    }
-
-    // slime sphere intersects agent sphere? apply damage, die
-    const int slime_dmg = 20; // TODO
+    float min_dist;
     Agent_state* agent;
-    if (this->vox != NULL && min_dist < this->vox->largest_radius() && closest >= 0) {
+    if (closest >= 0 && this->vox != NULL
+        && (min_dist = STATE::agent_list.filtered_agent_distances[closest]) < this->vox->largest_radius()) {
+
+        // damage and die if within range
+        const int slime_dmg = 20; // TODO
         // blow up, damage player
-        agent = STATE::agent_list.get(closest);
+        agent = STATE::agent_list.filtered_agents[closest];
         if (agent != NULL) {
             agent->status.apply_damage(slime_dmg, this->id, this->type);
             STATE::slime_list.destroy(this->id);    // die
@@ -133,7 +126,7 @@ void Slime::tick() {
     }
 
     // choose random player to target
-    i = randrange(0,n_nearby-1);
+    int i = randrange(0,n_nearby-1);
     agent = STATE::agent_list.filtered_agents[i];
     if (agent == NULL) return;
     

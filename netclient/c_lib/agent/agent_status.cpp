@@ -146,11 +146,7 @@ void Agent_status::respawn() {
     a->spawn_state();
     
     // restore health
-    health = AGENT_HEALTH;
-    agent_health_StoC health_msg;
-    health_msg.id = a->id;
-    health_msg.health = health;
-    health_msg.sendToClient(a->client_id);
+    this->restore_health();
 
     // revive
     dead = false;
@@ -161,3 +157,13 @@ void Agent_status::respawn() {
 
     respawn_countdown = RESPAWN_TICKS; // reset timer
 }
+
+void Agent_status::restore_health()
+{
+    this->health = AGENT_HEALTH;
+    agent_health_StoC health_msg;
+    health_msg.id = a->id;
+    health_msg.health = this->health;
+    health_msg.sendToClient(a->client_id);
+}
+

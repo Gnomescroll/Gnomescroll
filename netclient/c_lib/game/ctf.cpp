@@ -266,3 +266,66 @@ void CTF::set_team_color(int team,
             break;
     }
 }
+
+void CTF::check_agent_proximities() {
+    float r;
+    Flag* f;
+    Base* b;
+    Agent_state* a;
+    int i;
+        
+    f = one.flag;
+    r = f->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_agents_by_distance();
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team == 1) continue;
+        // pickup
+        printf("%d picking up flag!\n", a->id);
+        break;
+    }
+
+    b = one.base;
+    r = b->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team != 1) continue;
+        // heal
+        if (!a->status.dead) {
+            a->status.restore_health();
+            a->weapons.restore_ammo();
+        }
+    }
+
+    f = two.flag;
+    r = f->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_agents_by_distance();
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team == 2) continue;
+        // pickup
+        printf("%d picking up flag!\n", a->id);
+        break;
+    }
+
+    b = two.base;
+    r = b->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team != 2) continue;
+        // heal
+        if (!a->status.dead) {
+            a->status.restore_health();
+            a->weapons.restore_ammo();
+        }
+    }
+
+}

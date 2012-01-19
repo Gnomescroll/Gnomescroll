@@ -25,6 +25,7 @@ cdef extern from "./game/ctf.hpp":
         void add_agent_to_team(int team, int agent)
         void start()
         void send_to_client(int client_id)
+        void check_agent_proximities()
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     CTF ctf
@@ -107,3 +108,6 @@ def ctf_start():
     
 def send_ctf_to_client(int client_id):
     ctf.send_to_client(client_id)
+
+def check_agent_proximities():
+    ctf.check_agent_proximities()

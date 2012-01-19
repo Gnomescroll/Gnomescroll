@@ -277,5 +277,12 @@ bool Agent_weapons::can_zoom() {
             break;
     }
     return zoom;
+}
 
+void Agent_weapons::restore_ammo()
+{
+    this->blocks.restore_ammo();
+    this->laser.restore_ammo();
+    this->grenades.restore_ammo();
+    //this->pick.restore_ammo();
 }

@@ -36,6 +36,8 @@ class Agent_weapons {
         void reload();
         void reload(int type);
 
+        void restore_ammo();
+
         bool can_zoom();
 
         Agent_weapons(Agent_state* a);

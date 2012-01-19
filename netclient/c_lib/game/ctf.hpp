@@ -30,6 +30,7 @@ class CTF {
         void set_flag_position(int team, float x, float y, float z);
         void set_base_position(int team, float x, float y, float z);
 
+        void check_agent_proximities();
 
         bool add_agent_to_team(int team, int agent);
         void set_team_color(int team,

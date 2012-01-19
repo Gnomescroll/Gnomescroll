@@ -127,6 +127,9 @@ class TeamScore_StoC: public FixedSizeReliableNetPacketToServer<TeamScore_StoC>
         inline void handle();
 };
 
+
+/* Items */
+
 class FlagState_StoC: public FixedSizeReliableNetPacketToClient<FlagState_StoC>
 {
     public:
@@ -158,4 +161,15 @@ class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
         }
         inline void handle();
 };
-            
+
+class AgentPickupFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentPickupFlag_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};

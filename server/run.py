@@ -417,6 +417,7 @@ class Main:
             self.intervals.process()
 
             cMonsters.slime_tick()
+            cGameModes.check_agent_proximities()
 
             time.sleep(0.0001)
             #time.sleep(0.100)

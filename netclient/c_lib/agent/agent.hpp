@@ -157,6 +157,14 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
         const char* name() { return "Agent"; }
+        void quicksort_distance_asc(int beg, int end);
+        void quicksort_distance_desc(int beg, int end);
+
+        void swap_agent_state(Agent_state **a, Agent_state **b)
+        {Agent_state* t=*a; *a=*b; *b=t;}
+        void swap_float(float *a, float *b)
+        {float t=*a; *a=*b; *b=t;}
+        
     public:
         void draw();
 
@@ -168,7 +176,8 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         
         int agents_within_sphere(float x, float y, float z, float radius);
         Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id);
-
+        void sort_filtered_agents_by_distance(bool ascending=true);
+        
         void send_to_client(int client_id);
 
         int get_ids(int* p);

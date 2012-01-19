@@ -28,6 +28,8 @@ class Weapon {
 
         char hud_string[20+1];
 
+        void restore_ammo();
+
         Weapon(weapon_type type) :
         max_ammo(0), speed(1),
         id(0),
@@ -46,6 +48,8 @@ class HitscanLaser: public Weapon {
 
         bool fire();
         void reload();
+
+        void restore_ammo();
 
         char* hud_display() {
             char clip_str[4+1];

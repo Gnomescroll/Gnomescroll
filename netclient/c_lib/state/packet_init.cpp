@@ -76,6 +76,8 @@ void RegisterMessages() {
     FlagState_StoC::register_client_packet();
     BaseState_StoC::register_client_packet();
 
+    AgentPickupFlag_StoC::register_client_packet();
+
     PlayerAgent_id_StoC::register_client_packet();
 
     ThrowGrenade_CtoS::register_server_packet();

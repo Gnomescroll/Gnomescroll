@@ -970,7 +970,8 @@ void Agent_list::send_to_client(int client_id) {
 int Agent_list::agents_within_sphere(float x, float y, float z, float radius) {
     int ct = 0;
     float dist;
-    
+    float min_dist = 10000000.0f;
+    int closest = -1;
     int i;
     for (i=0; i<AGENT_MAX; i++) {
         if (a[i] == NULL) continue;
@@ -980,11 +981,68 @@ int Agent_list::agents_within_sphere(float x, float y, float z, float radius) {
             filtered_agents[ct] = a[i];
             filtered_agent_distances[ct] = dist;
             ct++;
+            if (dist < min_dist) {
+                min_dist = dist;
+                closest = i;
+            }
+            
         }
     }
     this->n_filtered = ct;
-    return ct;
+    return closest;
 }
+
+void Agent_list::quicksort_distance_asc(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        float dist = this->filtered_agent_distances[beg];
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            if (this->filtered_agent_distances[l] <= dist)
+                l++;
+            else {
+                swap_float(&this->filtered_agent_distances[l], &this->filtered_agent_distances[--r]);
+                swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[r]);
+            }
+        }
+        swap_float(&this->filtered_agent_distances[--l], &this->filtered_agent_distances[beg]);
+        swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[beg]);
+        quicksort_distance_asc(beg, l);
+        quicksort_distance_asc(r, end);
+    }
+}
+
+void Agent_list::quicksort_distance_desc(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        float dist = this->filtered_agent_distances[beg];
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            if (this->filtered_agent_distances[l] >= dist)
+                l++;
+            else {
+                swap_float(&this->filtered_agent_distances[l], &this->filtered_agent_distances[--r]);
+                swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[r]);
+            }
+        }
+        swap_float(&this->filtered_agent_distances[--l], &this->filtered_agent_distances[beg]);
+        swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[beg]);
+        quicksort_distance_desc(beg, l);
+        quicksort_distance_desc(r, end);
+    }
+}
+
+
+void Agent_list::sort_filtered_agents_by_distance(bool ascending)
+{
+    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
+    else this->quicksort_distance_desc(0, this->n_filtered);
+}
+
 
 Agent_state* Agent_list::hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id) {
     int i;

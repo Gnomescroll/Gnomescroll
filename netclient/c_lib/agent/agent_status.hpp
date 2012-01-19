@@ -65,6 +65,7 @@ class Agent_status: public Base_status {
         int die(int inflictor_id, Object_types inflictor_type);
         void kill(int victim_id);
         void respawn();
+        void restore_health();
 
         int score();
         void send_scores(int client_id);

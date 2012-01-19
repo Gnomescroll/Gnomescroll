@@ -28,6 +28,11 @@ inline void BaseState_StoC::handle()
     ClientState::ctf.set_base_position(team, x,y,z);
 }
 
+inline void AgentPickupFlag_StoC::handle()
+{
+    
+}
+
 // dummies
 inline void AgentJoinTeam_CtoS::handle(){}
 inline void AgentAutoAssignTeam_CtoS::handle(){}
@@ -43,6 +48,7 @@ inline void AgentJoinTeam_StoC::handle(){}
 inline void TeamScore_StoC::handle() {}
 inline void FlagState_StoC::handle() {}
 inline void BaseState_StoC::handle() {}
+inline void AgentPickupFlag_StoC::handle() {}
 
 inline void AgentJoinTeam_CtoS::handle() {
     bool added = ServerState::ctf.add_agent_to_team(team, agent);
