@@ -5,6 +5,7 @@
 #include <c_lib/voxel/voxel_body.hpp>
 
 #include <c_lib/voxel/voxel_hitscan.hpp>
+#include <defines.h>
 
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>

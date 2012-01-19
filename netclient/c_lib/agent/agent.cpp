@@ -47,6 +47,46 @@ void Agent_list::draw()
     #endif
 }
 
+AgentState::AgentState()
+:
+seq(-1),
+theta(0), phi(0),
+x(0), y(0), z(0),
+vx(0), vy(0), vz(0),
+jump_pow(0)
+{}
+
+void AgentState::forward_vector(float f[3]) {
+
+    float xa = theta;
+    float ya = phi;
+    if (theta > 1.0f) {
+        xa -= 2.0f;
+    } else if (theta < -1.0f) {
+        xa += 2.0f;
+    }
+
+    // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
+    // Camera behavior when looking straight up or down is fucked up otherwise
+    if (phi > 0.4999f) {
+        ya = 0.4999f;
+    } else if (phi < -0.4999f) {
+        ya = -0.4999f;
+    }
+    
+    f[0] = cos( xa * PI) * cos( ya * PI);
+    f[1] = sin( xa * PI) * cos( ya * PI);
+    f[2] = sin( ya * PI);
+
+    // normalize?
+    float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
+    f[0] /= len;
+    f[1] /= len;
+    f[2] /= len;
+}
+
+
+
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
 
@@ -496,13 +536,18 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float tr2 = tr*tr;
 
     const float xy_speed = 2.0f / tr;
-    const float z_gravity = -2.0f / tr2;
-    const float z_jetpack = (0.5f / tr2) - z_gravity;
+    //const float z_gravity = -2.0f / tr2;
+    const float z_gravity = -3.0f / tr2;
+    //const float z_jetpack = (0.5f / tr2) - z_gravity;
+    const float z_jetpack = (1.0f / tr2) - z_gravity;
 
-    const float jump_boost = 0.25f;
+    //const float jump_boost = 0.25f;
+    const float JUMP_POWINITIAL = 1 * 0.17;
+    const float JUMP_POWDEC = 0.2 * 0.24;
 
     //const float ground_distance = 0.02;   // unused
-    const float z_bounce = 0.20f;
+    //const float z_bounce = 0.20f;
+    const float z_bounce = 0.10f;
     const float z_bounce_v_threshold = 1.5f / tr;
 
     const float pi = 3.14159265f;
@@ -554,16 +599,20 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz += z_jetpack;
     }
 
-    /*
-    // jump
-    if (jump && as.jump_ready) {
-        as.vz += jump_boost;
+    //if (jump) {
+        //as.vz += jump_boost;
+    //}
+    
+    float new_jump_pow = as.jump_pow;
+    if (jump)
+    {
+        new_jump_pow = JUMP_POWINITIAL;
     }
-    */
-    if (jump) {
-        as.vz += jump_boost;
+    if (new_jump_pow >= 0) {
+        as.vz += new_jump_pow;
+        new_jump_pow -= JUMP_POWDEC;
     }
-     
+
     float new_x, new_y, new_z;
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
@@ -639,6 +688,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.x = new_x;
     as.y = new_y;
     as.z = new_z;
+    as.jump_pow = new_jump_pow;
 
     // allow jumping if on ground
     
