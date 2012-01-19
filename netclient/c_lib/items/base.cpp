@@ -7,7 +7,6 @@ void Base::set_position(float x, float y, float z) {
     this->y = y;
     this->z = z;
     this->vox->update(&base_vox_dat);
-    printf("Base: %0.2f %0.2f %0.2f\n", x,y,z);
 }
 
 void Base::set_color(unsigned char r, unsigned char g, unsigned char b) {

@@ -7,7 +7,6 @@ void Flag::set_position(float x, float y, float z) {
     this->y = y;
     this->z = z;
     this->vox->update(&flag_vox_dat);
-    printf("Flag: %0.2f %0.2f %0.2f\n", x,y,z);
 }
 
 Flag::Flag()

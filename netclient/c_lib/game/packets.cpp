@@ -20,13 +20,11 @@ inline void TeamScore_StoC::handle() {
 
 inline void FlagState_StoC::handle()
 {
-    printf("FLAG STATE %d %0.2f %0.2f %0.2f\n", team, x,y,z);
     ClientState::ctf.set_flag_position(team, x,y,z);
 }
 
 inline void BaseState_StoC::handle()
 {
-    printf("BASE STATE %d %0.2f %0.2f %0.2f\n", team, x,y,z);
     ClientState::ctf.set_base_position(team, x,y,z);
 }
 
