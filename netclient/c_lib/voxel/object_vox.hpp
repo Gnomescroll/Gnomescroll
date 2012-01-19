@@ -33,6 +33,8 @@ class Object_vox {
         void look(float f[3], float theta, float phi);
         void look(double f[3], double theta, double phi);
 
+        float largest_radius(); // temporary, until real body collision detection
+
         Obj* a;
 
         Voxel_volume vv[NUM_PARTS];
@@ -187,4 +189,17 @@ Object_vox<Obj,NUM_PARTS>::~Object_vox() {
         #endif
         STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
+}
+
+template <class Obj, int NUM_PARTS>
+float Object_vox<Obj,NUM_PARTS>::largest_radius() {
+    float largest = 0.0f;
+    if (this->vv == NULL) return largest;
+    int i;
+    Voxel_volume* vv;
+    for (i=0; i<this->n_parts; i++) {
+        vv = &this->vv[i];
+        if (vv->radius > largest) largest = vv->radius;
+    }
+    return largest;
 }

@@ -288,6 +288,11 @@ def build(bld):
         source=['c_lib/c_lib_monsters.pyx'],
         use=common_libraries+['c_lib'],
         target='c_lib.c_lib_monsters')
+        
+    bld(features='cxx cshlib pyext',      #cython
+        source=['c_lib/c_lib_items.pyx'],
+        use=common_libraries+['c_lib'],
+        target='c_lib.c_lib_items')
 
     # final
     bld(features='cxx cprogram pyembed',
@@ -335,6 +340,7 @@ def install_in_ext(ctx):
        'c_lib.c_lib_game_modes',
        'c_lib.c_lib_map_gen',
        'c_lib.c_lib_monsters',
+       'c_lib.c_lib_items',
     ]
 
     for target in targets:

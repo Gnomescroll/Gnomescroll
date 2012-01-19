@@ -36,6 +36,7 @@ import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
 import c_lib.c_lib_map_gen as cMapGen
 import c_lib.c_lib_monsters as cMonsters
+import c_lib.c_lib_items as cItems
 
 import c_lib.c_lib_animations as cAnimations
 
@@ -84,6 +85,11 @@ class App(object):
 
     def __init__(self):
         cOptions.load(opts)
+
+        cMonsters.load_slime_voxel_dat()
+        cAgents.load_agent_voxel_dat()
+        cItems.load_voxel_dats()
+
         self.init_globals()
         
         self.animations = animations
@@ -103,8 +109,6 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
         self.init_inputs()
-        cMonsters.load_slime_voxel_dat()
-        cAgents.load_agent_voxel_dat()
         cCamera.load_skybox()
 
         self.init_sound()

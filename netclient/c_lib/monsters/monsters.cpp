@@ -19,13 +19,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    //#endif
-
-    //#ifdef DC_SERVER
-    //this->vox = NULL;
-    //#endif
 }
 Slime::Slime(int id)
 :
@@ -36,13 +30,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    //#endif
-
-    //#ifdef DC_SERVER
-    //this->vox = NULL;
-    //#endif
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
@@ -53,13 +41,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    //#endif
-
-    //#ifdef DC_SERVER
-    //this->vox = NULL;
-    //#endif
 }
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
@@ -70,13 +52,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    //#ifdef DC_CLIENT
     this->vox = new Slime_vox(this, &slime_vox_dat);
-    //#endif
-
-    //#ifdef DC_SERVER
-    //this->vox = NULL;
-    //#endif
 }
 
 Slime::~Slime()
@@ -294,18 +270,6 @@ void test() {
         #endif
 
     }
-}
-
-float Slime_vox::largest_radius() {
-    float largest = 0.0f;
-    if (this->vv == NULL) return largest;
-    int i;
-    Voxel_volume* vv;
-    for (i=0; i<this->n_parts; i++) {
-        vv = &this->vv[i];
-        if (vv->radius > largest) largest = vv->radius;
-    }
-    return largest;
 }
 
 }

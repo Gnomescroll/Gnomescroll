@@ -156,9 +156,22 @@ bool NoTeam::remove_agent(int id) {
 
 /* CTF Team */
 
+CTFTeam::CTFTeam()
+:
+flag(NULL), base(NULL)
+{}
+
 void CTFTeam::init(int id)
 {
     Team::init(id);
-    flag.team = id;
-    base.team = id;
+    this->flag = new Flag();
+    this->flag->team = id;
+    this->base = new Base();
+    this->base->team = id;
+}
+
+CTFTeam::~CTFTeam()
+{
+    if (this->flag != NULL) free(this->flag);
+    if (this->base != NULL) free(this->base);
 }
