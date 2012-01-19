@@ -6,16 +6,19 @@ namespace Weapons {
 
 void Weapon::restore_ammo()
 {
-    this->ammo = max_ammo;
-
     #ifdef DC_SERVER
-    Agent_state* a = ServerState::agent_list.get(owner);
-    if (a==NULL) return;
-    WeaponAmmo_StoC ammo_msg;
-    ammo_msg.type = type;
-    ammo_msg.ammo = ammo;
-    ammo_msg.sendToClient(a->client_id);
+    if (this->ammo != max_ammo) {
+        Agent_state* a = ServerState::agent_list.get(owner);
+        if (a!=NULL) {
+            WeaponAmmo_StoC ammo_msg;
+            ammo_msg.type = type;
+            ammo_msg.ammo = max_ammo;
+            ammo_msg.sendToClient(a->client_id);
+        }
+    }
     #endif
+
+    this->ammo = max_ammo;
 }
 
 bool HitscanLaser::fire() {
@@ -67,22 +70,27 @@ void HitscanLaser::reload() {
 
 void HitscanLaser::restore_ammo()
 {
-    this->ammo = max_ammo;
-    this->clip = clip_size;
 
     #ifdef DC_SERVER
     Agent_state* a = ServerState::agent_list.get(owner);
-    if (a==NULL) return;
-    WeaponClip_StoC clip_msg;
-    clip_msg.type = type;
-    clip_msg.clip = clip;
-    clip_msg.sendToClient(a->client_id);
-
-    WeaponAmmo_StoC ammo_msg;
-    ammo_msg.type = type;
-    ammo_msg.ammo = ammo;
-    ammo_msg.sendToClient(a->client_id);
+    if (a!=NULL) {
+        if (this->clip != clip_size) {
+            WeaponClip_StoC clip_msg;
+            clip_msg.type = type;
+            clip_msg.clip = clip_size;
+            clip_msg.sendToClient(a->client_id);
+        }
+        if (this->ammo != max_ammo) {
+            WeaponAmmo_StoC ammo_msg;
+            ammo_msg.type = type;
+            ammo_msg.ammo = max_ammo;
+            ammo_msg.sendToClient(a->client_id);
+        }
+    }
     #endif
+
+    this->ammo = max_ammo;
+    this->clip = clip_size;
 }
 
 
