@@ -980,12 +980,11 @@ int Agent_list::agents_within_sphere(float x, float y, float z, float radius) {
             // agent in sphere
             filtered_agents[ct] = a[i];
             filtered_agent_distances[ct] = dist;
-            ct++;
             if (dist < min_dist) {
                 min_dist = dist;
-                closest = i;
+                closest = ct;
             }
-            
+            ct++;            
         }
     }
     this->n_filtered = ct;

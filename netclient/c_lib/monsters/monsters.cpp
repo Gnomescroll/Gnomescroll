@@ -109,19 +109,20 @@ void Slime::tick() {
     int n_nearby = STATE::agent_list.n_filtered;
     if (n_nearby == 0) return;
 
-    float min_dist;
     Agent_state* agent;
-    if (closest >= 0 && this->vox != NULL
-        && (min_dist = STATE::agent_list.filtered_agent_distances[closest]) < this->vox->largest_radius()) {
-
-        // damage and die if within range
-        const int slime_dmg = 20; // TODO
-        // blow up, damage player
-        agent = STATE::agent_list.filtered_agents[closest];
-        if (agent != NULL) {
-            agent->status.apply_damage(slime_dmg, this->id, this->type);
-            STATE::slime_list.destroy(this->id);    // die
-            return;
+    if (closest >= 0 && this->vox != NULL)
+    {
+        float min_dist = STATE::agent_list.filtered_agent_distances[closest];
+        if (min_dist < this->vox->largest_radius()) {
+            // damage and die if within range
+            const int slime_dmg = 20; // TODO
+            // blow up, damage player
+            agent = STATE::agent_list.filtered_agents[closest];
+            if (agent != NULL) {
+                agent->status.apply_damage(slime_dmg, this->id, this->type);
+                STATE::slime_list.destroy(this->id);    // die
+                return;
+            }
         }
     }
 
