@@ -81,7 +81,7 @@ class PyClient(object):
         self.connected = True
         NetOut.sendMessage.identify()
 
-    def on_disconnect(self):
+    def on_disconnect(self, client_id):
         print "NetClient disconnected"
         self.connected = False
 
