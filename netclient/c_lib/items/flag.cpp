@@ -39,9 +39,7 @@ void Flag_vox::init_parts(VoxBody* vox_dat) {
             && g == vp->colors.team_g
             && b == vp->colors.team_b)
             {
-                printf("Flag:: setting team color\n");
                 ClientState::get_team_color(this->a->team, &r, &g, &b);
-                printf("%d %d %d\n", r,g,b);
             }
 
             vv->set_color(ix, iy, iz, r,g,b,a);
