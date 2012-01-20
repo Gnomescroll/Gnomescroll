@@ -67,7 +67,6 @@ void CTF::set_score(int team, int score)
             printf("CTF::set_score, team %d invalid\n", team);
             return;
     }
-    printf("Set team %d score to %d\n", team, score);
 }
 
 void CTF::set_flag_position(int team, float x, float y, float z)
@@ -137,7 +136,6 @@ void CTF::on_ready() {
 
 void CTF::flag_picked_up(int team)
 {
-    printf("Flagged picked up by team %d\n", team);
     switch (team)
     {
         case 1:
@@ -201,7 +199,6 @@ void CTF::on_client_connect(int client_id) {
 
 void CTF::auto_assign_agent(int agent_id) {
     // choose the less populated team
-    printf("Attempt to auto assign agent %d to team\n", agent_id);
     CTFTeam* team = (one.n > two.n) ? &two : &one;
     bool added = false;
     if (!team->full()) {
@@ -213,7 +210,6 @@ void CTF::auto_assign_agent(int agent_id) {
         msg.agent = agent_id;
         msg.broadcast();
     }
-    printf("Team one: %d, team two: %d\n", one.n, two.n);
 }
 
 void CTF::send_to_client(int client_id)
@@ -426,12 +422,8 @@ bool CTF::add_agent_to_team(int team, int agent) {
 }
 
 void CTF::set_team_color(int team,
-    unsigned char r, unsigned char g, unsigned char b) {
-    if (team < 1 || team > 2) {
-        printf("CTF::set_team_color -- team id %d out of range\n", team);
-        return;
-    }
-
+    unsigned char r, unsigned char g, unsigned char b)
+{
     switch (team) {
         case 1:
             one.set_color(r,g,b);
@@ -440,7 +432,8 @@ void CTF::set_team_color(int team,
             two.set_color(r,g,b);
             break;
         default:
-            break;
+            printf("CTF::set_team_color -- invalid team %d\n", team);
+            return;
     }
 }
 

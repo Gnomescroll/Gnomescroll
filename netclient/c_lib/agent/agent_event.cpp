@@ -99,20 +99,17 @@ void Agent_event::reload_weapon(int type) {
 void Agent_event::picked_up_flag()
 {
     this->a->status.has_flag = true;
-    printf("Agent %d has the flag\n", this->a->id);
 }
 
 void Agent_event::dropped_flag()
 {
     this->a->status.has_flag = false;
-    printf("Agent %d has dropped the flag\n", this->a->id);
 }
 
 void Agent_event::scored_flag()
 {
     this->a->status.has_flag = false;
     this->a->status.flag_captures++;
-    printf("Agent %d has scored with the flag\n", this->a->id);
 }
 
 #endif
