@@ -6,7 +6,6 @@ void Base::set_position(float x, float y, float z) {
     this->x = x;
     this->y = y;
     this->z = z;
-    printf("Flag is at %0.2f %0.2f %0.2f\n", x,y,z);
     this->vox->update(&base_vox_dat);
 }
 
