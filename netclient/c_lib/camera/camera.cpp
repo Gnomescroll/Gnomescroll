@@ -108,14 +108,18 @@ void CCamera::move(float dx, float dy, float dz) {
     z += dz;
 }
 
-#include <voxel/voxel_volume.hpp>
-#include <voxel/voxel_render.hpp>
+//#include <voxel/voxel_volume.hpp>
+//#include <voxel/voxel_render.hpp>
+
+#include <voxel/voxel_skeleton.hpp>
 
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/physics/matrix.hpp>
 
 void CCamera::world_projection() {
 
+    test_voxel_skeleton();
+    
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);
