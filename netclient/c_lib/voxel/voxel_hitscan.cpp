@@ -28,6 +28,7 @@ struct Voxel_hitscan_element* target)
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if(hitscan_list[i] == NULL) continue;
+        if (!hitscan_list[i]->vv->draw) continue;
         vhe = hitscan_list[i];
 
         // skip firing agent
