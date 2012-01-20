@@ -23,5 +23,5 @@ type(OBJ_TYPE_BASE)
 
 Base::~Base()
 {
-    if (this->vox != NULL) free(this->vox);
+    if (this->vox != NULL) delete this->vox;
 }
