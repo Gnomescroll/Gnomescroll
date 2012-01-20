@@ -158,12 +158,13 @@ bool NoTeam::remove_agent(int id) {
 
 CTFTeam::CTFTeam()
 :
-flag(NULL), base(NULL)
+flag(NULL), base(NULL),
+base_score(0),
+flag_captures(0)
 {}
 
 void CTFTeam::init(int id)
 {
-    
     Team::init(id);
     this->flag = new Flag();
     this->flag->team = id;
@@ -172,8 +173,32 @@ void CTFTeam::init(int id)
     this->base->team = id;
 }
 
+int CTFTeam::score()
+{
+    #ifdef DC_SERVER
+    return this->flag_captures;
+    #endif
+
+    #ifdef DC_CLIENT
+    return this->base_score;
+    #endif
+}
+
+void CTFTeam::captured_flag()
+{
+    int s = this->score();
+    this->flag_captures++;
+    if (s != this->score())
+    {
+        TeamScore_StoC msg;
+        msg.team = this->id;
+        msg.score = this->score();
+        msg.broadcast();
+    }
+}
+
 CTFTeam::~CTFTeam()
 {
-    if (this->flag != NULL) free(this->flag);
-    if (this->base != NULL) free(this->base);
+    if (this->flag != NULL) delete this->flag;
+    if (this->base != NULL) delete this->base;
 }

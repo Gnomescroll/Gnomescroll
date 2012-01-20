@@ -6,6 +6,9 @@
 #include <c_lib/game/packets.hpp>
 #include <common/random.h>
 
+CTF::CTF()
+{}
+
 void CTF::init() {
     none.init(0);
     one.init(1);
@@ -51,20 +54,18 @@ void CTF::start() {
     this->set_flag_position(2,x,y,z);
 }
 
-void CTF::set_score(int team, int score) {
-    if (team != 1 && team != 2) {
-        printf("CTF::set_score, team %d invalid\n", team);
-    }
-
+void CTF::set_score(int team, int score)
+{
     switch (team) {
         case 1:
-            one.score = score;
+            one.base_score = score;
             break;
         case 2:
-            two.score = score;
+            two.base_score = score;
             break;
         default:
-            break;
+            printf("CTF::set_score, team %d invalid\n", team);
+            return;
     }
     printf("Set team %d score to %d\n", team, score);
 }
@@ -134,6 +135,61 @@ void CTF::on_ready() {
     once = 1;
 }
 
+void CTF::flag_picked_up(int team)
+{
+    printf("Flagged picked up by team %d\n", team);
+    switch (team)
+    {
+        case 1:
+            if (two.flag->vox != NULL)
+                two.flag->vox->set_draw(false);
+            break;
+        case 2:
+            if (one.flag->vox != NULL)
+                one.flag->vox->set_draw(false);
+            break;
+        default:
+            printf("CTF::flag_picked_up -- invalid team %d\n", team);
+            return;
+    }
+}
+
+void CTF::flag_dropped(int team)
+{
+    switch (team)
+    {
+        case 1:
+            if (two.flag->vox != NULL)
+                two.flag->vox->set_draw(true);
+            break;
+        case 2:
+            if (one.flag->vox != NULL)
+                one.flag->vox->set_draw(true);
+            break;
+        default:
+            printf("CTF::flag_dropped -- invalid team %d\n", team);
+            return;
+    }
+}
+
+void CTF::flag_scored(int team)
+{
+    switch (team)
+    {
+        case 1:
+            if (two.flag->vox != NULL)
+                two.flag->vox->set_draw(true);
+            break;
+        case 2:
+            if (one.flag->vox != NULL)
+                one.flag->vox->set_draw(true);
+            break;
+        default:
+            printf("CTF::flag_scored -- invalid team %d\n", team);
+            return;
+    }
+}
+
 #endif
 
 #ifdef DC_SERVER
@@ -195,6 +251,127 @@ void CTF::send_to_client(int client_id)
         base_msg.z = base->z;
         base_msg.sendToClient(client_id);
     }
+}
+
+void CTF::reset_flag(int team)
+{
+    float x,y,z;
+    int x_max = 128;
+    int y_max = 128;
+
+    x = randrange(0, x_max-1);
+    switch (team)
+    {
+        case 1:
+            y = randrange(0, (y_max-1)/2);
+            break;
+        case 2:
+            y = randrange((y_max-1)/2, y_max-1);
+            break;
+        default:
+            printf("CTF::reset_flag WARNING -- team %d invalid\n", team);
+            return;
+    }
+    z = _get_highest_open_block(x,y);
+    x += randf(); y += randf();
+    this->set_flag_position(team, x,y,z);
+}
+
+void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
+{
+    switch (agent_team)
+    {
+        case 1:
+            this->set_flag_position(2, x,y,z);
+            break;
+        case 2:
+            this->set_flag_position(1, x,y,z);
+            break;
+        default:
+            printf("CTF::agent_drop_flag -- agent_team %d invalid.\n", agent_team);
+            return;
+    }
+}
+
+void CTF::check_agent_proximities() {
+    float r;
+    Flag* f;
+    Base* b;
+    Agent_state* a;
+    int i;
+        
+    f = one.flag;
+    r = f->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_agents_by_distance();
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team == 1) continue;
+        // pickup
+        if (!a->status.dead)
+        {
+            a->status.pickup_flag();
+        }
+        break;
+    }
+
+    b = one.base;
+    r = b->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team != 1) continue;
+        // heal
+        if (!a->status.dead) {
+            if (a->status.has_flag) {
+                // scored
+                this->reset_flag(2);
+                one.captured_flag();
+                a->status.score_flag();
+            }
+            a->status.restore_health();
+            a->weapons.restore_ammo();
+        }
+    }
+
+    f = two.flag;
+    r = f->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_agents_by_distance();
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team == 2) continue;
+        // pickup
+        if (!a->status.dead)
+        {
+            a->status.pickup_flag();
+        }
+        break;
+    }
+
+    b = two.base;
+    r = b->vox->largest_radius();
+    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    for (i=0; i<STATE::agent_list.n_filtered; i++) {
+        a = STATE::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (!a->status.team || a->status.team != 2) continue;
+        // heal
+        if (!a->status.dead) {
+            if (a->status.has_flag) {
+                // scored
+                this->reset_flag(1);
+                two.captured_flag();
+                a->status.score_flag();
+            }
+            a->status.restore_health();
+            a->weapons.restore_ammo();
+        }
+    }
+
 }
 
 #endif
@@ -267,65 +444,3 @@ void CTF::set_team_color(int team,
     }
 }
 
-void CTF::check_agent_proximities() {
-    float r;
-    Flag* f;
-    Base* b;
-    Agent_state* a;
-    int i;
-        
-    f = one.flag;
-    r = f->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list.sort_filtered_agents_by_distance();
-    for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team == 1) continue;
-        // pickup
-        printf("%d picking up flag!\n", a->id);
-        break;
-    }
-
-    b = one.base;
-    r = b->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
-    for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team != 1) continue;
-        // heal
-        if (!a->status.dead) {
-            a->status.restore_health();
-            a->weapons.restore_ammo();
-        }
-    }
-
-    f = two.flag;
-    r = f->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list.sort_filtered_agents_by_distance();
-    for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team == 2) continue;
-        // pickup
-        printf("%d picking up flag!\n", a->id);
-        break;
-    }
-
-    b = two.base;
-    r = b->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
-    for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team != 2) continue;
-        // heal
-        if (!a->status.dead) {
-            a->status.restore_health();
-            a->weapons.restore_ammo();
-        }
-    }
-
-}

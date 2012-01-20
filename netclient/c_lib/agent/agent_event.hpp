@@ -17,6 +17,10 @@ class Agent_event {
         void life_changing(bool dead);
         void reload_weapon(int type);
 
+        void picked_up_flag();
+        void dropped_flag();
+        void scored_flag();
+
         Agent_event(Agent_state* owner) : a(owner) {}
 };
 

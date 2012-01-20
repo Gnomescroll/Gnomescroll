@@ -13,6 +13,29 @@
  *
  */
 
+Base_status::Base_status()
+:
+health(AGENT_HEALTH),
+dead(false),
+respawn_countdown(RESPAWN_TICKS),
+kills(0),
+deaths(0),
+suicides(0),
+health_max(AGENT_HEALTH),
+team(0),
+has_flag(false),
+flag_captures(0)
+{}
+
+void Base_status::set_name(char* n)
+{
+    int i;
+    for (i=0; i<PLAYER_NAME_MAX_LENGTH && n[i] != '\0'; i++) {
+        name[i] = n[i];
+    }
+    name[i] = '\0';
+}
+
 int Agent_status::apply_damage(int dmg) {
     if (dead) return this->health;
     
@@ -78,6 +101,14 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
                 printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);
                 break;
         }
+
+        #ifdef DC_SERVER
+        // drop any items (FLAG)
+        if (this->has_flag) {
+            this->drop_flag();
+            ServerState::ctf.agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
+        }
+        #endif
     }
     return killed;
 }
@@ -167,3 +198,31 @@ void Agent_status::restore_health()
     health_msg.sendToClient(a->client_id);
 }
 
+void Agent_status::pickup_flag() {
+    if (!this->has_flag) {
+        AgentPickupFlag_StoC msg;
+        msg.id = this->a->id;
+        msg.broadcast();
+    }
+    
+    this->has_flag = true;
+}
+void Agent_status::drop_flag() {
+    if (this->has_flag) {
+        AgentDropFlag_StoC msg;
+        msg.id = this->a->id;
+        msg.broadcast();
+    }
+
+    this->has_flag = false;
+}
+void Agent_status::score_flag() {
+    if (this->has_flag) {
+        AgentScoreFlag_StoC msg;
+        msg.id = this->a->id;
+        msg.broadcast();
+
+        this->flag_captures++;
+    }
+    this->has_flag = false;
+}

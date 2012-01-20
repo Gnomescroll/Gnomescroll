@@ -26,25 +26,12 @@ class Base_status {
         char name[PLAYER_NAME_MAX_LENGTH + 1];
 
         int team;
+        bool has_flag;
+        unsigned int flag_captures;
 
-        void set_name(char* n) {
-            int i;
-            for (i=0; i<PLAYER_NAME_MAX_LENGTH && n[i] != '\0'; i++) {
-                name[i] = n[i];
-            }
-            name[i] = '\0';
-        }
-        
-        Base_status() :
-            health(AGENT_HEALTH),
-            dead(false),
-            respawn_countdown(RESPAWN_TICKS),
-            kills(0),
-            deaths(0),
-            suicides(0),
-            health_max(AGENT_HEALTH),
-            team(0)
-        {}
+        void set_name(char* n);
+
+        Base_status();
 };
 
 // Use for:
@@ -66,6 +53,10 @@ class Agent_status: public Base_status {
         void kill(int victim_id);
         void respawn();
         void restore_health();
+        
+        void pickup_flag();
+        void drop_flag();
+        void score_flag();
 
         int score();
         void send_scores(int client_id);

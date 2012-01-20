@@ -113,7 +113,7 @@ class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentA
         //}
 //};
 
-class TeamScore_StoC: public FixedSizeReliableNetPacketToServer<TeamScore_StoC>
+class TeamScore_StoC: public FixedSizeReliableNetPacketToClient<TeamScore_StoC>
 {
     public:
         int team;
@@ -163,6 +163,30 @@ class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
 };
 
 class AgentPickupFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentPickupFlag_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentDropFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentDropFlag_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class AgentScoreFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentScoreFlag_StoC>
 {
     public:
         int id;

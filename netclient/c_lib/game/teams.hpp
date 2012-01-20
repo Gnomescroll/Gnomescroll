@@ -56,11 +56,17 @@ class NoTeam {
 class CTFTeam: public Team {
 
     public:
+
         Flag* flag;
         Base* base;
 
-        void init(int id);
+        unsigned int base_score;
+        unsigned int flag_captures;
 
+        void init(int id);
+        int score();
+        void captured_flag();
+        
         CTFTeam();
         ~CTFTeam();
 };
