@@ -15,13 +15,12 @@ enum BASE_PARTS {
 
 class Base;
 
-class Base_vox: public Object_vox<Base, BASE_PART_NUM>
+class Base_vox: public Team_vox<Base, BASE_PART_NUM>
 {
     public:
-    void init_parts(VoxBody* vox_dat);
-    Base_vox(Base* a, VoxBody* vox_dat)
+    Base_vox(Base* a)
     :
-    Object_vox<Base, BASE_PART_NUM>(a)
+    Team_vox<Base, BASE_PART_NUM>(a)
     {}
 };
 

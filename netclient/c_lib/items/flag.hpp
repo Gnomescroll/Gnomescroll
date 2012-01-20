@@ -15,13 +15,12 @@ enum FLAG_PARTS {
 
 class Flag;
 
-class Flag_vox: public Object_vox<Flag, FLAG_PART_NUM>
+class Flag_vox: public Team_vox<Flag, FLAG_PART_NUM>
 {
     public:
-    void init_parts(VoxBody* vox_dat);
-    Flag_vox(Flag* a, VoxBody* vox_dat)
+    Flag_vox(Flag* a)
     :
-    Object_vox<Flag, FLAG_PART_NUM>(a)
+    Team_vox<Flag, FLAG_PART_NUM>(a)
     {}
 };
 
