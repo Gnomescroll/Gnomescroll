@@ -190,7 +190,6 @@ void CTF::flag_scored(int team)
 
 void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
 {
-    printf("GET TEAM COLOR %d\n", team);
     switch (team)
     {
         case 1:
