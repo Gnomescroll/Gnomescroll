@@ -15,6 +15,8 @@ class CTF {
         void flag_picked_up(int team);
         void flag_dropped(int team);
         void flag_scored(int team);
+
+        void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         #endif
 
         #ifdef DC_SERVER
@@ -37,7 +39,7 @@ class CTF {
         void set_score(int team, int score);
         void set_flag_position(int team, float x, float y, float z);
         void set_base_position(int team, float x, float y, float z);
-        
+
         bool add_agent_to_team(int team, int agent);
         void set_team_color(int team,
             unsigned char r, unsigned char g, unsigned char b);

@@ -9,10 +9,12 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
+//#include <c_lib/game/ctf.hpp>
 // forward decl.
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
+    void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
 
@@ -44,6 +46,7 @@ class Object_vox {
         void set_draw(bool draw);
 
         Object_vox(Obj* a, VoxBody* vox_dat);
+        Object_vox(Obj* a);
         ~Object_vox();
 };
 
@@ -79,6 +82,14 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
             g = vp->colors.rgba[j][1];
             b = vp->colors.rgba[j][2];
             a = vp->colors.rgba[j][3];
+
+            //if (vp->colors.team
+            //&& r == vp->colors.team_r
+            //&& g == vp->colors.team_g
+            //&& b == vp->colors.team_b)
+            //{
+                //ClientState::get_team_color(this->a->team, &r, &g, &b);
+            //}
 
             vv->set_color(ix, iy, iz, r,g,b,a);
         }
@@ -178,6 +189,14 @@ a(a)
 {
     this->n_parts = NUM_PARTS;
     this->init_parts(vox_dat);
+}
+
+template <class Obj, int NUM_PARTS>
+Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a)
+:
+a(a)
+{
+    this->n_parts = NUM_PARTS;
 }
 
 template <class Obj, int NUM_PARTS>

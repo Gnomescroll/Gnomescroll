@@ -10,12 +10,12 @@ CTF::CTF()
 {}
 
 void CTF::init() {
+    one.set_color(10,10,200);    //black-ish
+    two.set_color(10,210,10);   // green-ish
+
     none.init(0);
     one.init(1);
     two.init(2);
-
-    one.set_color(10,10,10);    //black-ish
-    two.set_color(10,210,10);   // green-ish
 
     char team_name_one[] = "Raiders";
     one.set_name(team_name_one);
@@ -188,6 +188,26 @@ void CTF::flag_scored(int team)
     }
 }
 
+void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
+{
+    printf("GET TEAM COLOR %d\n", team);
+    switch (team)
+    {
+        case 1:
+            *r = one.r;
+            *g = one.g;
+            *b = one.b;
+            break;
+        case 2:
+            *r = two.r;
+            *g = two.g;
+            *b = two.b;
+            break;
+        default:
+            printf("CTF::get_team_color -- invalid team %d\n", team);
+            return;
+    }
+}
 #endif
 
 #ifdef DC_SERVER

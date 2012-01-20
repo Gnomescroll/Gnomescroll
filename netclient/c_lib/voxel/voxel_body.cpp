@@ -61,9 +61,23 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
     this->index[i][2] = z;
 }
 
+void VoxColors::set_team(bool team)
+{
+    this->team = team;
+    printf("VoxColors::set_team to %d\n", this->team);
+}
+
+void VoxColors::set_team_base(unsigned char r, unsigned char g, unsigned char b)
+{
+    this->team_r = r;
+    this->team_g = g;
+    this->team_b = b;
+}
+
 VoxColors::VoxColors()
 :
-rgba(NULL), index(NULL), n(0)
+rgba(NULL), index(NULL), n(0),
+team(false), team_r(0), team_g(0), team_b(0)
 {}
 
 VoxColors::~VoxColors()
@@ -245,6 +259,16 @@ void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned
     if (p==NULL) return;
     int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
     p->colors.set(i, x,y,z, r,g,b,a);
+}
+
+void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
+{
+    printf("VoxBody set_team attempt\n");
+    VoxPart* p = vox_part[part];
+    if (p==NULL) return;
+    printf("Not null, proceeding\n");
+    p->colors.set_team(team);
+    p->colors.set_team_base(r,g,b);
 }
 
 VoxBody::VoxBody()
