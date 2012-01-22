@@ -44,6 +44,7 @@ class Object_vox {
         void init_parts(VoxBody* vox_dat);
         void update(VoxBody* vox_dat);
         void set_draw(bool draw);
+        void set_hitscan(bool hitscan);
 
         Object_vox(Obj* a, VoxBody* vox_dat);
         Object_vox(Obj* a);
@@ -96,7 +97,8 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        STATE::voxel_hitscan_list.register_voxel_volume(vv);
+        if (vv->hitscan)
+            STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
     ClientState::voxel_render_list.update_vertex_buffer_object();
@@ -108,6 +110,14 @@ void Object_vox<Obj,NUM_PARTS>::set_draw(bool draw) {
     int i;
     for (i=0; i<NUM_PARTS; i++) {
         this->vv[i].draw = draw;
+    }
+}
+
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::set_hitscan(bool hitscan) {
+    int i;
+    for (i=0; i<NUM_PARTS; i++) {
+        this->vv[i].hitscan = hitscan;
     }
 }
 
@@ -206,7 +216,8 @@ Object_vox<Obj,NUM_PARTS>::~Object_vox() {
         #ifdef DC_CLIENT
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
         #endif
-        STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+        if (this->vv[i].hitscan)
+            STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
 }
 
@@ -283,7 +294,8 @@ void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        STATE::voxel_hitscan_list.register_voxel_volume(vv);
+        if (vv->hitscan)
+            STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
     ClientState::voxel_render_list.update_vertex_buffer_object();

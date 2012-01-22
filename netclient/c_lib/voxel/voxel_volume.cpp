@@ -71,7 +71,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 Voxel_volume::Voxel_volume()
 :
 id(-1),
-draw(true)
+draw(true),
+hitscan(true)
 {
     voxel = NULL;
 }
@@ -79,7 +80,8 @@ draw(true)
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
-draw(true)
+draw(true),
+hitscan(true)
 {
     this->init(xdim, ydim, zdim, scale);
 }
@@ -89,7 +91,8 @@ Voxel_volume::~Voxel_volume()
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered \n");
     #endif
-    if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
+    if (this->hitscan)
+        if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
     delete[] voxel;
 }
 

@@ -26,6 +26,7 @@ class Voxel_volume
 
     int id;
     bool draw;
+    bool hitscan;
 
     float scale;    //size of voxels
     //bounding sphere

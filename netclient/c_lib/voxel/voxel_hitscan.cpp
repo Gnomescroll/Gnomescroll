@@ -28,7 +28,7 @@ struct Voxel_hitscan_element* target)
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if(hitscan_list[i] == NULL) continue;
-        if (!hitscan_list[i]->vv->draw) continue;
+        if (!hitscan_list[i]->vv->hitscan) continue;    // shouldnt be registered anyway, but if bool hitscan wants to be toggled, leave it
         vhe = hitscan_list[i];
 
         // skip firing agent
