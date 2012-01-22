@@ -176,7 +176,7 @@ base_main=\
 [5,1,0,223,31,175,255],
 [1,1,0,223,31,175,255]],
 "vosize":0.2,"dim":[7,7,5],
-'team':True,'team_base':[223,31,175]}
+"team":True,"team_base":[223,31,175]}
 
 base_parts = {
     BASE_PART_MAIN: base_main,
