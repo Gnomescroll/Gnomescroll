@@ -188,8 +188,9 @@ def build(bld):
     #noise_libraries = ['noise']
 
     if OS == "Darwin":
-        png_libs = ['']
+        pass
         #png_libs = ['png14']
+        png_libs=[]
     else:
         png_libs=['png']
 
@@ -501,11 +502,11 @@ def exceptions(conf):
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
 
-    #if OS == 'Darwin':
-        ##conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
-        ##conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib'])
-        #conf.env.append_value('CFLAGS', ['-I/opt/local/include/libpng14'])
-        #conf.env.append_value('LDFLAGS', ['-L/opt/local/lib'])
+    if OS == 'Darwin':
+        #conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
+        #conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib'])
+        conf.env.append_value('CFLAGS', ['-I/opt/local/include/libpng14'])
+        conf.env.append_value('LDFLAGS', ['-L/opt/local/lib'])
 
     conf.check(header_name='GL/glew.h', mandatory=True)
 
@@ -540,12 +541,11 @@ def exceptions(conf):
                #includes=['/usr/include'],
                #fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
                #mandatory=True)
-
-    if OS != "Darwin":
-        conf.check(header_name='png.h',
-                   includes=['/usr/include'],
-                   fragment='#include <png.h>' + PNG_MAIN_TEST_CODE,
-                   mandatory=True)
+               
+    conf.check(header_name='png.h',
+               includes=['/usr/include'],
+               fragment='#include <png.h>' + PNG_MAIN_TEST_CODE,
+               mandatory=True)
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
