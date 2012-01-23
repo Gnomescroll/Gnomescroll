@@ -27,6 +27,7 @@ import c_lib.terrain_map as terrain_map
 import c_lib.c_lib_monsters as cMonsters
 import c_lib.c_lib_game_modes as cGameModes
 import c_lib.c_lib_items as cItems
+import c_lib.c_lib_options as cOptions
 import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
@@ -387,7 +388,15 @@ class Main:
         self.intervals.set()#ms per tick
         #StartPhysicsTimer(33)
         START_CLOCK()
-        NetServerInit()
+
+        try:
+            a,b,c,d = map(int, opts.ip_address.split('.'))
+        except ValueError, e:
+            print "Invalid ip address %s" % (opts.ip_address,)
+            print e
+            sys.exit(1)
+            
+        NetServerInit(a,b,c,d, opts.port)
 
         cMonsters.slime_test(30)
         cGameModes.ctf_start()

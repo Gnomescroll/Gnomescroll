@@ -17,8 +17,7 @@ version         Prints server version to STDOUT
 quiet           Suppress STDOUT (not implemented)
 
 ip-address      Server IP Address
-tcp-port        Server TCP Port
-udp-port        Server UDP Port
+port        Server Port
 
 game-mode       e.g. ctf, dm, tdm. ctf is the only valid option at the moment.
 n-teams         Number of teams.
@@ -49,8 +48,7 @@ DEFAULTS = {
 
     # Network
     'ip_address': settings.ip_address,
-    'tcp_port'  : settings.tcp_port,
-    'udp_port'  : settings.udp_port,
+    'port'      : settings.port,
     
     # Game Settings
     'game_mode' :   settings.game_mode,
@@ -72,8 +70,7 @@ def parse(cl_args=None):
 
     ''' Network '''
     parser.add_argument('-ip', '--ip-address', default=DEFAULTS['ip_address'])
-    parser.add_argument('-tcp', '--tcp-port', default=DEFAULTS['tcp_port'], type=int)
-    parser.add_argument('-udp', '--udp-port', default=DEFAULTS['udp_port'], type=int)
+    parser.add_argument('-p', '--port', default=DEFAULTS['port'], type=int)
 
     ''' Game Settings '''
     parser.add_argument('-gm', '--game-mode', default=DEFAULTS['game_mode'], choices=['ctf', 'dm', 'tdm'])

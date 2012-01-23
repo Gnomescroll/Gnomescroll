@@ -10,9 +10,9 @@ Edit your settings in settings.py
 server_name = 'dc_mmo_server'
 
 ''' Network '''
-ip_address = '127.0.0.1'
-tcp_port = 5055
-udp_port = 5056
+#ip_address = '127.0.0.1'
+ip_address = '0.0.0.0' # use internal default
+port = 0    # use internal default
 
 ''' Game Settings '''
 game_mode = 'ctf'

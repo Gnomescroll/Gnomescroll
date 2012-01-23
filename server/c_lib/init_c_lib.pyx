@@ -19,7 +19,7 @@ cdef extern from "./net_lib/host.hpp":
     void server_dispatch_network_events()
     void flush_to_net()
 
-def NetServerInit(int a, int b, int c, int d, int port):
+def NetServerInit(int a=0, int b=0, int c=0, int d=0, int port=0):
     init_net_server(a,b,c,d,port)
 
 def NetServerDispatchNetworkEvents():
