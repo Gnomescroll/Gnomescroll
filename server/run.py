@@ -391,6 +391,7 @@ class Main:
 
         try:
             a,b,c,d = map(int, opts.ip_address.split('.'))
+            print "Ip address: %s" % (opts.ip_address,)
         except ValueError, e:
             print "Invalid ip address %s" % (opts.ip_address,)
             print e
