@@ -10,6 +10,9 @@
 #include <c_lib/game/packets.hpp>
 #include <c_lib/state/packet_init.hpp>
 
+
+const int DEFAULT_PORT = 4096;
+
 //struct _ENetHost* enet_host; //the host
 struct _ENetHost* server_host;
 struct _ENetHost* client_host;
@@ -53,12 +56,12 @@ void init_net_server(int a, int b, int c, int d, int port)
 
     if(port == 0)
     {
-        address.port = 8080;
+        address.port = DEFAULT_PORT;
     }
     else
     {
-        address.port = port;
-    }
+    address.port = port;
+
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,
@@ -147,13 +150,13 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
     if(port == 0)
     {
-        address.port = 8080;
+        address.port = DEFAULT_PORT;
     }
     else
     {
         address.port = port;
     }
-    
+
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
