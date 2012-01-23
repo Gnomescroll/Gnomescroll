@@ -13,7 +13,6 @@
 
 const int DEFAULT_PORT = 4096;
 
-//struct _ENetHost* enet_host; //the host
 struct _ENetHost* server_host;
 struct _ENetHost* client_host;
 
@@ -30,10 +29,6 @@ void init_network()
 }
 
 ENetAddress address;
-//ENetHost * server_host = NULL;
-//ENetHost * client_host = NULL;
-
-//ENetHost * enet_host = NULL;
 
 void init_net_server(int a, int b, int c, int d, int port)
 {
