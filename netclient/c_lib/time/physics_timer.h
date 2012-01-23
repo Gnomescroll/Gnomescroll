@@ -1,28 +1,16 @@
 #pragma once
 
-#include <stdio.h>
-//#include <stdlib.h>
 
-#include <time.h>
+int _start_physics_timer(int frequency); //ms per frame
 
-#include <unistd.h>
+int _tick_check();
 
-#ifdef __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
+long _get_time();
+long _get_tick();
 
-//extern "C" {
-    int _start_physics_timer(int frequency); //ms per frame
+void _START_CLOCK();
+int _GET_TICK();
+int _GET_MS_TIME();
 
-    int _tick_check();
+int _LAST_TICK();
 
-    long _get_time();
-    long _get_tick();
-
-    void _START_CLOCK();
-    int _GET_TICK();
-    int _GET_MS_TIME();
-
-    int _LAST_TICK();
-//}
