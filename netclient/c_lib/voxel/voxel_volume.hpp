@@ -26,6 +26,7 @@ class Voxel_volume
 
     int id;
     bool draw;
+    bool hitscan;
 
     float scale;    //size of voxels
     //bounding sphere
@@ -53,11 +54,9 @@ class Voxel_volume
 
     void set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set_color(int x, int y, int z, unsigned char rgba[4]);
-    //void set_colors(int start, int end, unsigned char rgba[][4]);
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;
-    //void register_with_hitscan(Voxel_hitscan_list* vhl);
 
     //methods
     void set_unit_axis();

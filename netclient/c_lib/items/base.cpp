@@ -9,18 +9,14 @@ void Base::set_position(float x, float y, float z) {
     this->vox->update(&base_vox_dat);
 }
 
-void Base::set_color(unsigned char r, unsigned char g, unsigned char b) {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-}
-
 Base::Base()
 :
 theta(0), phi(0),
+team(0),
 type(OBJ_TYPE_BASE)
 {
-    this->vox = new Base_vox(this, &base_vox_dat);
+    this->vox = new Base_vox(this);
+    this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
@@ -28,5 +24,5 @@ type(OBJ_TYPE_BASE)
 
 Base::~Base()
 {
-    if (this->vox != NULL) free(this->vox);
+    if (this->vox != NULL) delete this->vox;
 }

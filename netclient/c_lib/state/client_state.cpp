@@ -35,6 +35,11 @@ namespace ClientState {
         voxel_render_list.init_voxel_render_list_shader1();
     }
 
+    void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
+    {
+        ctf.get_team_color(team, r,g,b);
+    }
+
     void set_PlayerAgent_id(int id) {
         playerAgent_state.set_PlayerAgent_id(id);
         ctf.on_ready();

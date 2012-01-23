@@ -71,7 +71,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 Voxel_volume::Voxel_volume()
 :
 id(-1),
-draw(true)
+draw(true),
+hitscan(true)
 {
     voxel = NULL;
 }
@@ -79,7 +80,8 @@ draw(true)
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
-draw(true)
+draw(true),
+hitscan(true)
 {
     this->init(xdim, ydim, zdim, scale);
 }
@@ -89,7 +91,8 @@ Voxel_volume::~Voxel_volume()
     #ifdef DC_CLIENT
     if(voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered \n");
     #endif
-    if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
+    if (this->hitscan)
+        if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
     delete[] voxel;
 }
 
@@ -284,10 +287,17 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
             _ao.ao[2] = vCalcAdj(CX[1], CX[3], CX[2]);
             _ao.ao[3] = vCalcAdj(CX[3], CX[5], CX[4]);
 
+            // bug? (all 4 calls were active)
             scratch[*index + 0].AO = _ao.AO;
-            scratch[*index + 0].AO = _ao.AO;
-            scratch[*index + 0].AO = _ao.AO;
-            scratch[*index + 0].AO = _ao.AO;
+            //scratch[*index + 0].AO = _ao.AO;
+            //scratch[*index + 0].AO = _ao.AO;
+            //scratch[*index + 0].AO = _ao.AO;
+
+            // these look bad
+            //scratch[*index + 0].AO = _ao.AO;
+            //scratch[*index + 1].AO = _ao.AO;
+            //scratch[*index + 2].AO = _ao.AO;
+            //scratch[*index + 3].AO = _ao.AO;
         }
     }
 
@@ -383,26 +393,24 @@ void Voxel_volume::update_vertex_list()
     #endif
     }}}
 
-    if(index == 0)
-    {
-        printf("Voxel_volume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
-        vvl.vnum = 0;
-        if(vvl.vertex_list != NULL)
-        {
-            delete[] vvl.vertex_list;
-            vvl.vertex_list = NULL;
-        }
-        return;
-    }
-
     if(vvl.vertex_list != NULL)
     {
         delete[] vvl.vertex_list;
         vvl.vertex_list = NULL;
     }
+
+    if(index == 0)
+    {
+        printf("Voxel_volume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
+        vvl.vnum = 0;
+        return;
+    }
+    
     vvl.vertex_list = new Voxel_vertex[index];
 
-    memcpy( (char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
+    if (index >= 65536) printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
+    //memcpy( (char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
+    memcpy( (Voxel_vertex*)vvl.vertex_list, (Voxel_vertex*) scratch, index*sizeof(Voxel_vertex));
     vvl.vnum = index;
 }
 

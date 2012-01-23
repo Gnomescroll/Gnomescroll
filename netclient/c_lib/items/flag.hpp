@@ -15,10 +15,13 @@ enum FLAG_PARTS {
 
 class Flag;
 
-class Flag_vox: public Object_vox<Flag, FLAG_PART_NUM>
+class Flag_vox: public Team_vox<Flag, FLAG_PART_NUM>
 {
     public:
-    Flag_vox(Flag* a, VoxBody* vox_dat) : Object_vox<Flag, FLAG_PART_NUM>(a, vox_dat) {}
+    Flag_vox(Flag* a)
+    :
+    Team_vox<Flag, FLAG_PART_NUM>(a)
+    {}
 };
 
 class Flag {
@@ -31,11 +34,8 @@ class Flag {
         int team;
         Object_types type;
 
-        unsigned char r,g,b;
-
         Flag_vox* vox;
 
-        void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_position(float x, float y, float z);
 
         Flag();

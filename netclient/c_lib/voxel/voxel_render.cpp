@@ -15,8 +15,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
         printf("Voxel_render_list Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
         return;
     }
-    int i;
-    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == NULL)
         {
@@ -28,15 +27,13 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             break;
         }
     }
-    if (i == VOXEL_RENDER_LIST_SIZE) printf("WARNING: register_voxel_volume - no space available\n");
-
 }
 
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
+    if (vv == NULL) return;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if (render_list[i] == NULL) continue;
         if(render_list[i] == vv)
         {
             num_elements--;

@@ -9,10 +9,12 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
+//#include <c_lib/game/ctf.hpp>
 // forward decl.
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
+    void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
 
@@ -42,8 +44,10 @@ class Object_vox {
         void init_parts(VoxBody* vox_dat);
         void update(VoxBody* vox_dat);
         void set_draw(bool draw);
+        void set_hitscan(bool hitscan);
 
         Object_vox(Obj* a, VoxBody* vox_dat);
+        Object_vox(Obj* a);
         ~Object_vox();
 };
 
@@ -80,12 +84,21 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
             b = vp->colors.rgba[j][2];
             a = vp->colors.rgba[j][3];
 
+            //if (vp->colors.team
+            //&& r == vp->colors.team_r
+            //&& g == vp->colors.team_g
+            //&& b == vp->colors.team_b)
+            //{
+                //ClientState::get_team_color(this->a->team, &r, &g, &b);
+            //}
+
             vv->set_color(ix, iy, iz, r,g,b,a);
         }
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        STATE::voxel_hitscan_list.register_voxel_volume(vv);
+        if (vv->hitscan)
+            STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
     ClientState::voxel_render_list.update_vertex_buffer_object();
@@ -97,6 +110,14 @@ void Object_vox<Obj,NUM_PARTS>::set_draw(bool draw) {
     int i;
     for (i=0; i<NUM_PARTS; i++) {
         this->vv[i].draw = draw;
+    }
+}
+
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::set_hitscan(bool hitscan) {
+    int i;
+    for (i=0; i<NUM_PARTS; i++) {
+        this->vv[i].hitscan = hitscan;
     }
 }
 
@@ -181,13 +202,22 @@ a(a)
 }
 
 template <class Obj, int NUM_PARTS>
+Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a)
+:
+a(a)
+{
+    this->n_parts = NUM_PARTS;
+}
+
+template <class Obj, int NUM_PARTS>
 Object_vox<Obj,NUM_PARTS>::~Object_vox() {
     int i;
     for (i=0; i<NUM_PARTS; i++) {
         #ifdef DC_CLIENT
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
         #endif
-        STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+        if (this->vv[i].hitscan)
+            STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
 }
 
@@ -203,3 +233,72 @@ float Object_vox<Obj,NUM_PARTS>::largest_radius() {
     }
     return largest;
 }
+
+
+/* Team based voxels (get colored) */
+
+template <class Obj, int NUM_PARTS>
+class Team_vox: public Object_vox<Obj,NUM_PARTS>
+{
+    public:
+    void init_parts(VoxBody* vox_dat);
+    Team_vox(Obj *a)
+    :
+    Object_vox<Obj,NUM_PARTS>(a)
+    {}
+};
+
+template <class Obj, int NUM_PARTS>
+void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
+    // create each vox part from vox_dat conf
+    int i;
+    int x,y,z;
+    VoxPart *vp;
+    Voxel_volume* vv;
+    float size = vox_dat->vox_size;
+    for (i=0; i<this->n_parts; i++) {
+        vp = vox_dat->vox_part[i];
+        x = vp->dimension.x;
+        y = vp->dimension.y;
+        z = vp->dimension.z;
+
+        vv = &(this->vv[i]);
+
+        vv->init(x,y,z,size);
+        vv->set_unit_axis();
+        vv->set_hitscan_properties(this->a->id, this->a->type, i);
+
+        #ifdef DC_CLIENT
+        unsigned char r,g,b,a;
+        int j;
+        int ix,iy,iz;
+        for (j=0; j<vp->colors.n; j++) {
+            ix = vp->colors.index[j][0];
+            iy = vp->colors.index[j][1];
+            iz = vp->colors.index[j][2];
+            r = vp->colors.rgba[j][0];
+            g = vp->colors.rgba[j][1];
+            b = vp->colors.rgba[j][2];
+            a = vp->colors.rgba[j][3];
+
+            if (vp->colors.team
+            && r == vp->colors.team_r
+            && g == vp->colors.team_g
+            && b == vp->colors.team_b)
+            {
+                ClientState::get_team_color(this->a->team, &r, &g, &b);
+            }
+
+            vv->set_color(ix, iy, iz, r,g,b,a);
+        }
+
+        ClientState::voxel_render_list.register_voxel_volume(vv);
+        #endif
+        if (vv->hitscan)
+            STATE::voxel_hitscan_list.register_voxel_volume(vv);
+    }
+    #ifdef DC_CLIENT
+    ClientState::voxel_render_list.update_vertex_buffer_object();
+    #endif
+}
+

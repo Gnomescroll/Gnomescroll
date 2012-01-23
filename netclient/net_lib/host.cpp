@@ -152,7 +152,8 @@ void client_dispatch_network_events()
 
     int index = 0;
 
-    while (enet_host_service (client_host, & event, 5) > 0)
+    int timeout = 5;
+    while (enet_host_service (client_host, & event, timeout) > 0)
     {
         switch (event.type)
         {
@@ -319,7 +320,8 @@ void server_dispatch_network_events()
     /* Wait up to 5 milliseconds for an event. */
 
     int index = 0;
-    while (enet_host_service (server_host, &event, 5) > 0)
+    int timeout = 5;
+    while (enet_host_service (server_host, &event, timeout) > 0)
     {
         switch (event.type)
         {

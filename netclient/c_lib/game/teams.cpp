@@ -2,16 +2,17 @@
 
 #include <c_lib/game/packets.hpp>
 
+Team::Team()
+:
+r(255), g(10), b(10),
+n(0),
+score(0),
+viewers(false)
+{}
+
 void Team::init(int id)
 {
-    viewers = false;
-    this->id = id;
-    n = 0;
-    score = 0;
-    r = 255;
-    g = 10;
-    b = 10;
-    
+    this->id = id;    
     int i;
     for(i=0; i<TEAM_MAX_PLAYERS; i++) {
         members[i] = -1;    // load default agent values
@@ -102,6 +103,12 @@ void Team::update_client(int client_id) {
 
 /* NoTeam */
 
+NoTeam::NoTeam()
+:
+n(0),
+viewers(false)
+{}
+
 void NoTeam::init(int id)
 {
     viewers = true;
@@ -158,22 +165,49 @@ bool NoTeam::remove_agent(int id) {
 
 CTFTeam::CTFTeam()
 :
-flag(NULL), base(NULL)
+flag(NULL), base(NULL),
+base_score(0),
+flag_captures(0)
 {}
 
 void CTFTeam::init(int id)
 {
-    
     Team::init(id);
     this->flag = new Flag();
     this->flag->team = id;
+    this->flag->vox->init_parts(&flag_vox_dat);
 
     this->base = new Base();
     this->base->team = id;
+    this->base->vox->init_parts(&base_vox_dat);
+}
+
+int CTFTeam::score()
+{
+    #ifdef DC_SERVER
+    return this->flag_captures;
+    #endif
+
+    #ifdef DC_CLIENT
+    return this->base_score;
+    #endif
+}
+
+void CTFTeam::captured_flag()
+{
+    int s = this->score();
+    this->flag_captures++;
+    if (s != this->score())
+    {
+        TeamScore_StoC msg;
+        msg.team = this->id;
+        msg.score = this->score();
+        msg.broadcast();
+    }
 }
 
 CTFTeam::~CTFTeam()
 {
-    if (this->flag != NULL) free(this->flag);
-    if (this->base != NULL) free(this->base);
+    if (this->flag != NULL) delete this->flag;
+    if (this->base != NULL) delete this->base;
 }

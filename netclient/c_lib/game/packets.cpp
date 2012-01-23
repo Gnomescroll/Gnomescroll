@@ -30,7 +30,26 @@ inline void BaseState_StoC::handle()
 
 inline void AgentPickupFlag_StoC::handle()
 {
-    
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->event.picked_up_flag();
+    ClientState::ctf.flag_picked_up(a->status.team);
+}
+
+inline void AgentDropFlag_StoC::handle()
+{
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;    
+    a->event.dropped_flag();
+    ClientState::ctf.flag_dropped(a->status.team);
+}
+
+inline void AgentScoreFlag_StoC::handle()
+{
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) return;
+    a->event.scored_flag();
+    ClientState::ctf.flag_scored(a->status.team);
 }
 
 // dummies
@@ -49,6 +68,8 @@ inline void TeamScore_StoC::handle() {}
 inline void FlagState_StoC::handle() {}
 inline void BaseState_StoC::handle() {}
 inline void AgentPickupFlag_StoC::handle() {}
+inline void AgentDropFlag_StoC::handle() {}
+inline void AgentScoreFlag_StoC::handle() {}
 
 inline void AgentJoinTeam_CtoS::handle() {
     bool added = ServerState::ctf.add_agent_to_team(team, agent);

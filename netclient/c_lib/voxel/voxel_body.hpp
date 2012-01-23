@@ -8,9 +8,13 @@ class VoxColors {
         int **index;
         int n;
 
+        bool team;
+        unsigned char team_r,team_g,team_b;
+        
         void init(int dx, int dy, int dz);
         void set(int i, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-
+        void set_team_base(unsigned char r, unsigned char g, unsigned char b);
+        void set_team(bool team);
         VoxColors();
         ~VoxColors();
 };
@@ -89,7 +93,8 @@ class VoxBody {
             int part_num,
             bool biaxial=false
         );
-        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);//
+        void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
 
         void where() {
             printf("VoxBody instantiated at: %p\n", this);

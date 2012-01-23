@@ -15,10 +15,13 @@ enum BASE_PARTS {
 
 class Base;
 
-class Base_vox: public Object_vox<Base, BASE_PART_NUM>
+class Base_vox: public Team_vox<Base, BASE_PART_NUM>
 {
     public:
-    Base_vox(Base* a, VoxBody* vox_dat) : Object_vox<Base, BASE_PART_NUM>(a, vox_dat) {}
+    Base_vox(Base* a)
+    :
+    Team_vox<Base, BASE_PART_NUM>(a)
+    {}
 };
 
 class Base {
@@ -31,11 +34,8 @@ class Base {
         int team;
         Object_types type;
         
-        unsigned char r,g,b;
-
         Base_vox* vox;
 
-        void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_position(float x, float y, float z);
 
         Base();

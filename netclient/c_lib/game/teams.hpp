@@ -34,6 +34,8 @@ class Team {
         #ifdef DC_SERVER
         void update_client(int client_id);
         #endif
+
+        Team();
 };
 
 class NoTeam {
@@ -51,16 +53,25 @@ class NoTeam {
         bool has_agent(int id);
 
         void init(int id);
+
+        NoTeam();
 };
 
 class CTFTeam: public Team {
 
     public:
+
         Flag* flag;
         Base* base;
 
-        void init(int id);
+        unsigned int base_score;
+        unsigned int flag_captures;
 
+        //void set_color(unsigned char r, unsigned char g, unsigned char b);
+        void init(int id);
+        int score();
+        void captured_flag();
+        
         CTFTeam();
         ~CTFTeam();
 };

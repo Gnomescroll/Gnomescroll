@@ -68,6 +68,7 @@ void RegisterMessages() {
 
     // game/teams stuff
     TeamColor_StoC::register_client_packet();
+    TeamScore_StoC::register_client_packet();
     //TeamName_StoC::register_client_packet();
     AgentJoinTeam_StoC::register_client_packet();
     AgentJoinTeam_CtoS::register_server_packet();
@@ -77,6 +78,8 @@ void RegisterMessages() {
     BaseState_StoC::register_client_packet();
 
     AgentPickupFlag_StoC::register_client_packet();
+    AgentDropFlag_StoC::register_client_packet();
+    AgentScoreFlag_StoC::register_client_packet();
 
     PlayerAgent_id_StoC::register_client_packet();
 

@@ -12,9 +12,11 @@ void Flag::set_position(float x, float y, float z) {
 Flag::Flag()
 :
 theta(0), phi(0),
+team(0),
 type(OBJ_TYPE_FLAG)
 {
-    this->vox = new Flag_vox(this, &flag_vox_dat);
+    this->vox = new Flag_vox(this);
+    this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
@@ -22,5 +24,5 @@ type(OBJ_TYPE_FLAG)
 
 Flag::~Flag()
 {
-    if (this->vox != NULL) free(this->vox);
+    if (this->vox != NULL) delete this->vox;
 }
