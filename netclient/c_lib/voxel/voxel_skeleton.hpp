@@ -7,10 +7,23 @@
 
 #include <stdio.h>
 
-static const char* test_string = "3 \n  4 5\n 6 5 \x00 \n";
+static const char* test_string = "3\n4 5\n #comment \n 6 5 \x00 \n";
 
 class Voxel_skeleton
 {
+    private:
+        void check_for_comments(char* s, int* index)
+        {   
+            while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n') (*index)++;
+            if(s[*index] != '#' || s[*index] == 0) return;
+            printf("Comment at: %i \n", *index);
+
+            while(s[*index] != '\n' && s[*index] != 0) (*index)++;
+            //if(s[*index] != 0) (*index)++; //scanf skips newlines anyways
+            //this function will always return on a new line or null
+            printf("skipped to: %i \n", *index);
+        }
+
     public:
 
     Voxel_volume** voxel_volume_list;
@@ -25,19 +38,27 @@ class Voxel_skeleton
 
     void init_from_string(char* s)
     {
+
         int index = 0;
         int read;
+     
+        check_for_comments(s, &index);
+             
         sscanf (s+index, "%d %n", &voxel_volume_num, &read);
         printf("voxel_volume_num= %i \n", voxel_volume_num);
         printf("read %i bytes\n", read);
         index += read;
+
+        check_for_comments(s, &index);
 
         int n1, n2;
         sscanf (s+index, "%d %d %n", &n1, &n2, &read);
         printf("num1= %i num2= %i \n", n1, n2);
         printf("read %i bytes\n", read);
         index += read;
-        
+
+        check_for_comments(s, &index);
+
         sscanf (s+index, "%d %d %n", &n1, &n2, &read);
         printf("num1= %i num2= %i \n", n1, n2);
         printf("read %i bytes\n", read);
