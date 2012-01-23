@@ -121,8 +121,14 @@ class App(object):
 
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
-        a,b,c,d = opts.server.split(".")
-        NetClientConnectTo(int(a),int(b),int(c),int(d), 8080)
+
+        try:
+            a,b,c,d = map(int, opts.server.split("."))
+        except ValueError, e:
+            print e
+            print "Invalid server ip address %s" % (opts.server,)
+            sys.exit(1)
+        NetClientConnectTo(a,b,c,d, opts.port)
 
     def mainLoop(self):
         global P, Phy

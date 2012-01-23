@@ -11,9 +11,8 @@ name = 'a_name'
 alt_name = '[%s]' % (name,)
 
 ''' Network '''
-server = '127.0.0.1'
-tcp_port = 5055
-udp_port = 5056
+server = '0.0.0.0'  # use internal default
+port = 0            # use internal default
 
 ''' Game Preferences '''
 auto_assign_team = True

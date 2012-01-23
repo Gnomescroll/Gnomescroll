@@ -20,8 +20,7 @@ name            Player name
 alt-name        Player name when 'name' in use
 
 server          Server IP Address
-tcp-port        Server TCP Port
-udp-port        Server UDP Port
+port            Server Port
 
 auto-assign     Automatically assign to team
 
@@ -74,8 +73,7 @@ DEFAULTS = {
 
     # Network
     'server'    :   settings.server,
-    'tcp'       :   settings.tcp_port,
-    'udp'       :   settings.udp_port,
+    'port'      :   settings.port,
 
     # Window / Camera
     'width'     :   settings.width,
@@ -110,8 +108,7 @@ def parse(cl_args=None):
 
     ''' Network '''
     parser.add_argument('-s', '--server', default=DEFAULTS['server'])
-    parser.add_argument('-tcp', '--tcp-port', default=DEFAULTS['tcp'], type=int)
-    parser.add_argument('-udp', '--udp-port', default=DEFAULTS['udp'], type=int)
+    parser.add_argument('-p', '--port', default=DEFAULTS['port'], type=int)
 
     ''' Game Preferences '''
     parser.add_argument('-aa', '--auto-assign', action='store_true', dest='auto_assign_team')
@@ -131,7 +128,7 @@ def parse(cl_args=None):
     ''' HUD/Info panels '''
     parser.add_argument('-nh', '--no-hud', action='store_true', dest='hud')
     parser.add_argument('-ddh', '--disable-diagnostic-hud', action='store_true', dest='diagnostic_hud')
-    parser.add_argument('-fps', '--display-fps', action='store_true', dest='fps')  # display frames per second in hudp
+    parser.add_argument('-fps', '--display-fps', action='store_true', dest='fps')  # display frames per second in hud
     parser.add_argument('-ping', '--display-ping', action='store_true', dest='ping')
     parser.add_argument('-pud', '--ping-update-interval', default=DEFAULTS['ping_update_interval'], type=int)
     parser.add_argument('--font', default=DEFAULTS['font'])
