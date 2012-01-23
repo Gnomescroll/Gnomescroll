@@ -9,7 +9,7 @@
 
 enum
 {
-   ENET_PROTOCOL_MINIMUM_MTU             = 1450,  //from 576 
+   ENET_PROTOCOL_MINIMUM_MTU             = 576,  //from 576 
    ENET_PROTOCOL_MAXIMUM_MTU             = 4096,
    ENET_PROTOCOL_MAXIMUM_PACKET_COMMANDS = 32,
    ENET_PROTOCOL_MINIMUM_WINDOW_SIZE     = 65536, //tweaking
