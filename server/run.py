@@ -299,6 +299,7 @@ class Main:
 
     def __init__(self):
         init_c_lib.set_seed(opts.seed)
+        cOptions.load(opts)
         
         #gen_map_simple()
 
