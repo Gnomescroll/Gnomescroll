@@ -32,16 +32,33 @@ ENetAddress address;
 
 //ENetHost * enet_host = NULL;
 
-void init_net_server()
+void init_net_server(int a, int b, int c, int d, int port)
 {
     
     /* Bind the server to the default localhost.     */
     /* A specific host address can be specified by   */
     /* enet_address_set_host (& address, "x.x.x.x"); */
 
-    address.host = ENET_HOST_ANY;
+    if(a==0 && b==0 && c==0 && d== 0)
+    {
+        address.host = ENET_HOST_ANY;
+    } 
+    else 
+    {
+        address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
+    }
+
+
     /* Bind the server to port 1234. */
-    address.port = 8080;
+
+    if(port == 0)
+    {
+        address.port = 8080;
+    }
+    else
+    {
+        address.port = port;
+    }
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,
@@ -128,7 +145,15 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         exit (EXIT_FAILURE);
     }
 
-    address.port = 8080;
+    if(port == 0)
+    {
+        address.port = 8080;
+    }
+    else
+    {
+        address.port = port;
+    }
+    
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
@@ -236,12 +261,6 @@ static int client_id_offset = 1;
 
 static void client_connect(ENetEvent* event)
 {
-    //NetClient::Server.enet_peer = event->peer;
-    //event->peer -> data = (void*) &NetClient::Server;
-    //NetClient::Server.connected = 1;
-
-
-
     class NetPeer* nc = NULL;
 
     if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)

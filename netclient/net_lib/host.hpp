@@ -10,7 +10,7 @@ struct _ENetHost;
 extern struct _ENetHost* server_host;
 extern struct _ENetHost* client_host;
 
-void init_net_server();
+void init_net_server(int a, int b, int c, int d, int port);
 void init_net_client();
 
 void shutdown_net_client();

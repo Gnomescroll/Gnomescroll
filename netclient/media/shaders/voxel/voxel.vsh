@@ -8,6 +8,7 @@ attribute int InSide;
 varying float diffuse;
 
 varying mat2 AOMatrix;
+
 varying vec2 texCoord;
 
 //const float coordArray = ( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
@@ -28,7 +29,7 @@ void main(void)
 	diffuse = abs(dot(normal, light_dir ));
 	
 	AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3] );
-	//texCoord = vec2( coordArray[InSide], coordArray[InSide+1] ) ;
+	texCoord = vec2( coordArray[InSide], coordArray[InSide+1] ) ;
 }
 
 /*

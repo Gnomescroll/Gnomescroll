@@ -53,6 +53,7 @@ class Voxel_loader
         if ( nbytes != size )
         {
             printf("load_skeleton_from_file: failed to write %zu bytes\n", nbytes);
+            fclose(fp);
             return;       
         }
         buffer[size] = NULL;
@@ -74,7 +75,7 @@ class Voxel_loader
 
         printf("num_volumes= %i \n", num_volumes);
 
-
+        fclose(fp);
     }
 
     void init_from_string(char* s)
