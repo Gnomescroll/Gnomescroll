@@ -124,6 +124,7 @@ class App(object):
 
         try:
             a,b,c,d = map(int, opts.server.split("."))
+            print "Ip address: %s" % (opts.server,)
         except ValueError, e:
             print e
             print "Invalid server ip address %s" % (opts.server,)
