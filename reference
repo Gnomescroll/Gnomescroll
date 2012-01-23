@@ -161,3 +161,25 @@ player types: http://www.gamasutra.com/view/feature/6474/personality_and_play_st
 
 GlBlend Techno Particle Effects
 http://www.ruudbijnen.nl/blog/2010/09/textures-and-opengl-blending/
+
+Ways of Creating Textures:
+	Much of the world texture detail in Team Fortress 2 comes from
+hand-painted albedo textures which intentionally contain loose de-
+tails with visible brush strokes that are intended to portray the tactile
+quality of a given surface, as shown in Figure 5. In the early stages
+of development, many of these 2D textures were physically painted
+on canvas with watercolors and scanned to make texture maps. As
+we refined the art style of the game, texture artists shifted to using
+photorealistic reference images with a series of filters and digital
+brush strokes applied to achieve the desired look of a physically
+painted texture.
+	Not only does this hand-painted source material create an illustra-
+tive NPR style in rendered images, but we have found that these
+abstract texture designs hold up under magnification better than
+textures created from photo reference due to their more intentional
+design and lack of photo artifacts. Furthermore, we believe that
+high frequency geometric and texture detail found in photorealis-
+tic games can often overpower the ability of designers to compose
+game environments and emphasize gameplay features visually us-
+ing intentional design choices such as changes in color value.
+
