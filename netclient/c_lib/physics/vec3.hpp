@@ -1,7 +1,7 @@
 #pragma once
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-
+#include <c_lib/physics/vector.hpp>
 #include <math.h>
 
 struct Vec3 

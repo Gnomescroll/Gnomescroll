@@ -92,8 +92,6 @@ class App(object):
 
         self.init_globals()
         
-        self.animations = animations
-
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='camera')
         self.camera.load()
@@ -152,7 +150,8 @@ class App(object):
 
         last_tick = 0
 
-        #cMonsters.slime_test()
+        cMonsters.slime_test(30)
+            
         while not GameStateGlobal.exit:
             P2.start_frame() #TEST
             #theta += -.005 #test
@@ -193,7 +192,7 @@ class App(object):
                 if agent:
                     agent.set_button_state()
                 #physics tick routine
-                self.animations.tick()
+                animations.tick()
                 if GameStateGlobal.agent is not None:
                     GameStateGlobal.agent.update_sound()
 
@@ -267,7 +266,7 @@ class App(object):
                 cAgents.draw_agents()
 
             P.event("Animations Draw")
-            self.animations.draw()
+            animations.draw()
 
             P.event("c_lib_particles.draw()")
             cParticles.draw() ## TESTING

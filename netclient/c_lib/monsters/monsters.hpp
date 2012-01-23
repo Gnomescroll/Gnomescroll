@@ -68,8 +68,6 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
         void send_to_client(int client_id);
 };
 
-//#ifdef DC_CLIENT
-void test();
-//#endif
+void test(int n);
 
 }

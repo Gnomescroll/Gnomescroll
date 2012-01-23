@@ -6,6 +6,7 @@ Client input
 import opts
 opts = opts.opts
 
+#import init_c_lib as cInit
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
@@ -277,11 +278,16 @@ class Keyboard(object):
             ';' : self.voxel_aligner_mode_toggle,
             '[' : self.cycle_agent_camera_mode,
             #']': self.hk,
-            ']' : cMonsters.slime_test,
+            ']' : self.slime_test,
+            #']' : cInit.update_vertex_buffer,
         }
 
         self.key_release_handlers = {
         }
+
+    def slime_test(self):
+        n = 30
+        cMonsters.slime_test(n)
 
     def hk(self):
         #camera.camera.world_projection()

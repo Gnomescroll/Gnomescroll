@@ -30,7 +30,7 @@ cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
         void tick()
         void update()
 
-    void test()
+    void test(int n)
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Slime_list slime_list
@@ -64,8 +64,8 @@ def load_slime_voxel_dat():
             x,y,z, r,g,b,a = color
             slime_vox_dat.set_color(part, x,y,z, r,g,b,a)
 
-def slime_test():
-    test()
+def slime_test(int n):
+    test(n)
 
 def slime_tick():
 #    slime_list.tick()

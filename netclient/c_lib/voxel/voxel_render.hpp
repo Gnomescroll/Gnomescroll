@@ -38,8 +38,6 @@ class Voxel_render_list
     Voxel_volume** render_list;
     struct VBOmeta vbo_wrapper[2];
 
-
-
     public:
 
     int num_elements;
@@ -52,25 +50,6 @@ class Voxel_render_list
     
     static void init_voxel_render_list_shader1();
 
-    Voxel_render_list()
-    :
-    num_elements(0)
-    {
-        const int starting_size = 1024;
-
-        vbo_wrapper[0].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
-        vbo_wrapper[1].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
-
-        vbo_wrapper[0].max_size = starting_size; //in voxel vertex
-        vbo_wrapper[1].max_size = starting_size;
-
-        vbo_wrapper[0].id = 0;
-        vbo_wrapper[1].id = 0;
-
-        vbo_wrapper[0].vnum = 0;
-        vbo_wrapper[1].vnum = 0;
-
-        render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
-        for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) render_list[i] = NULL;
-    }
+    Voxel_render_list();
+    ~Voxel_render_list();
 };

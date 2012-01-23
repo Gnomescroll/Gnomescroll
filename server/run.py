@@ -388,8 +388,7 @@ class Main:
         START_CLOCK()
         NetServerInit()
 
-        for i in range(30):
-            cMonsters.slime_test()
+        #cMonsters.slime_test(30)
         cGameModes.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections

@@ -8,6 +8,46 @@
 #include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 
+Voxel_render_list::Voxel_render_list()
+:
+render_list(NULL),
+num_elements(0)
+{
+    const int starting_size = 1024;
+
+    vbo_wrapper[0].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
+    vbo_wrapper[1].vertex_list = (Voxel_vertex*) malloc(starting_size*sizeof(Voxel_vertex));
+
+    vbo_wrapper[0].max_size = starting_size; //in voxel vertex
+    vbo_wrapper[1].max_size = starting_size;
+    
+    vbo_wrapper[0].id = 0;
+    vbo_wrapper[1].id = 0;
+
+    vbo_wrapper[0].vnum = 0;
+    vbo_wrapper[1].vnum = 0;
+
+    //this->render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
+    //for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) this->render_list[i] = NULL;
+
+    this->render_list = (Voxel_volume**)malloc(sizeof(Voxel_volume*) * VOXEL_RENDER_LIST_SIZE);
+    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    {
+        this->render_list[i] = NULL;
+    }
+}
+
+Voxel_render_list::~Voxel_render_list()
+{
+    //if (this->render_list)
+        //delete[] this->render_list;
+    if (this->render_list)
+        free(this->render_list);
+
+    free(vbo_wrapper[0].vertex_list);
+    free(vbo_wrapper[1].vertex_list);
+}
+
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 {
     if(num_elements >= VOXEL_RENDER_LIST_SIZE)
@@ -54,7 +94,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 {
     Voxel_volume* vv;
 
-    VBOmeta* _vbo = &vbo_wrapper[0]; 
+    struct VBOmeta* _vbo = &vbo_wrapper[0];
     int v_num = 0;
     int volumes_updated = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -69,7 +109,7 @@ void Voxel_render_list::update_vertex_buffer_object()
             vv->update_vertex_list(); //<-- look for bug here
             if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
-        v_num +=  vv->vvl.vnum;
+        v_num += vv->vvl.vnum;
     }
 
     _vbo->vnum = v_num;
@@ -176,7 +216,7 @@ void Voxel_render_list::draw()
 {
     glDisable(GL_TEXTURE_2D);
 
-    VBOmeta* _vbo = &vbo_wrapper[0]; 
+    struct VBOmeta* _vbo = &vbo_wrapper[0];
 
     //printf("buff= %i \n",  _vbo->id);
 
@@ -196,6 +236,9 @@ void Voxel_render_list::draw()
 
     glColor3b(255,255,255);
 
+    //GLint shade_model = 0;
+    //glGetIntegerv(GL_SHADE_MODEL, &shade_model);
+    
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
@@ -254,6 +297,11 @@ void Voxel_render_list::draw()
 
     glUseProgramObjectARB(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    //glEnd();
+    //glDisable(GL_CULL_FACE);
+    //glDisable(GL_DEPTH_TEST);
+    //glShadeModel(shade_model);
 
 /*
     Apply changes

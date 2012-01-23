@@ -241,8 +241,7 @@ void Slime_list::send_to_client(int client_id) {
     }
 }
 
-void test() {
-    int n = 1;
+void test(int n) {
     int i;
     int x,y,z;
     for (i=0; i<n; i++) {
@@ -253,8 +252,6 @@ void test() {
         #ifdef DC_CLIENT
         STATE::slime_list.create(x,y,z+1, 0,0,0);
         #endif
-        //s->vox->set_draw(true);
-        //s->vox->update(&slime_vox_dat);
 
         #ifdef DC_SERVER
         Slime* s = STATE::slime_list.create(x,y,z+1, 0,0,0);

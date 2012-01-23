@@ -9,7 +9,11 @@
 
 void VoxColors::init(int dx, int dy, int dz)
 {
-    if (this->rgba != NULL) return;
+    if (this->rgba != NULL)
+    {
+        printf("WARNING VoxColors::init -- rgba is not NULL (called twice?)\n");
+        return;
+    }
     this->n = dx*dy*dz;
     this->rgba = (unsigned char**)malloc(sizeof(unsigned char*)*this->n);
     this->index = (int**)malloc(sizeof(int*)*this->n);
@@ -48,8 +52,16 @@ void VoxColors::set(int i, int x, int y, int z, unsigned char r, unsigned char g
         return;
     }
 
-    if (this->rgba == NULL) return;
-    if (this->index == NULL) return;
+    if (this->rgba == NULL)
+    {
+        printf("WARNING VoxColors::set, rgba is NULL\n");
+        return;
+    }
+    if (this->index == NULL)
+    {
+        printf("WARNING VoxColors::set, index is NULL\n");
+        return;
+    }
     
     this->rgba[i][0] = r;
     this->rgba[i][1] = g;
@@ -210,7 +222,10 @@ biaxial(biaxial)
 /* Body (contains parts) */
 
 void VoxBody::init(int n_parts) {
-    if (inited) return;
+    if (inited) {
+        printf("WARNING VoxBody::init -- called more than once\n");
+        return;
+    }
     this->n_parts = n_parts;
     vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
     inited = true;
@@ -255,7 +270,10 @@ void VoxBody::set_part(
 void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
-    if (p==NULL) return;
+    if (p==NULL) {
+        printf("WARNING VoxBody::set_color -- part %d is NULL\n", part);
+        return;
+    }
     int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
     p->colors.set(i, x,y,z, r,g,b,a);
 }
@@ -263,7 +281,10 @@ void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned
 void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
 {
     VoxPart* p = vox_part[part];
-    if (p==NULL) return;
+    if (p==NULL) {
+        printf("WARNING VoxBody::set_color -- part %d is NULL\n", part);
+        return;
+    }
     p->colors.set_team(team);
     p->colors.set_team_base(r,g,b);
 }

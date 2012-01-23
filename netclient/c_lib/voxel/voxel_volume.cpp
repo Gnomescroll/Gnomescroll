@@ -24,7 +24,6 @@ void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale) {
 
 void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     this->set_parameters(xdim, ydim, zdim, scale);
-    needs_vbo_update = false;
 
 #ifdef DC_CLIENT
     voxel_render_list = NULL;
@@ -51,10 +50,12 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     //update radius if changing scale
     this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
-    if(voxel != NULL) printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
-    voxel = new Voxel[powx*powy*powz];
+    if(this->voxel != NULL) printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
+    //this->voxel = new Voxel[powx*powy*powz];
+    this->voxel = (union Voxel*)malloc(sizeof(union Voxel) * powx * powy * powz);
 
-    int r,g,b,a;
+    // fill model with gradient
+    unsigned char r,g,b,a;
     a = 255;
     for(int i=0; i < powx; i++){
     for(int j=0; j < powy; j++){
@@ -72,10 +73,9 @@ Voxel_volume::Voxel_volume()
 :
 id(-1),
 draw(true),
-hitscan(true)
-{
-    voxel = NULL;
-}
+hitscan(true),
+voxel(NULL)
+{}
 
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
@@ -93,7 +93,8 @@ Voxel_volume::~Voxel_volume()
     #endif
     if (this->hitscan)
         if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
-    delete[] voxel;
+    //delete[] voxel;
+    free(this->voxel);
 }
 
 
@@ -409,9 +410,14 @@ void Voxel_volume::update_vertex_list()
     vvl.vertex_list = new Voxel_vertex[index];
 
     if (index >= 65536) printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
-    //memcpy( (char*)vvl.vertex_list, (char*) scratch, index*sizeof(Voxel_vertex));
-    memcpy( (Voxel_vertex*)vvl.vertex_list, (Voxel_vertex*) scratch, index*sizeof(Voxel_vertex));
+    memcpy( vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
+
+    //for (int i=0; i < index; i++) {
+        //vvl.vertex_list[i] = scratch[i];
+    //}
     vvl.vnum = index;
+    //printf("xyz=%d index=%d\n",xdim*ydim*zdim, index);
+    //printf("x=%d y=%d z=%d\n", xdim,ydim,zdim);
 }
 
 #endif

@@ -41,6 +41,7 @@ class Object_vox {
 
         Voxel_volume vv[NUM_PARTS];
 
+        bool inited;
         void init_parts(VoxBody* vox_dat);
         void update(VoxBody* vox_dat);
         void set_draw(bool draw);
@@ -54,6 +55,8 @@ class Object_vox {
 template <class Obj, int NUM_PARTS>
 void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     // create each vox part from vox_dat conf
+    if (this->inited) return;
+    this->inited = true;
     int i;
     int x,y,z;
     VoxPart *vp;
@@ -75,23 +78,17 @@ void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
         unsigned char r,g,b,a;
         int j;
         int ix,iy,iz;
-        for (j=0; j<vp->colors.n; j++) {
+        if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
+        for (j=0; j < vp->colors.n; j++) {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];
             iz = vp->colors.index[j][2];
+            if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
+
             r = vp->colors.rgba[j][0];
             g = vp->colors.rgba[j][1];
             b = vp->colors.rgba[j][2];
             a = vp->colors.rgba[j][3];
-
-            //if (vp->colors.team
-            //&& r == vp->colors.team_r
-            //&& g == vp->colors.team_g
-            //&& b == vp->colors.team_b)
-            //{
-                //ClientState::get_team_color(this->a->team, &r, &g, &b);
-            //}
-
             vv->set_color(ix, iy, iz, r,g,b,a);
         }
 
@@ -123,7 +120,6 @@ void Object_vox<Obj,NUM_PARTS>::set_hitscan(bool hitscan) {
 
 template <class Obj, int NUM_PARTS>
 void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
-
     float x,y,z,theta,phi;
     x = this->a->x;
     y = this->a->y;
@@ -195,7 +191,8 @@ void Object_vox<Obj,NUM_PARTS>::look(double f[3], double theta, double phi) {
 template <class Obj, int NUM_PARTS>
 Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a, VoxBody* vox_dat)
 :
-a(a)
+a(a),
+inited(false)
 {
     this->n_parts = NUM_PARTS;
     this->init_parts(vox_dat);
@@ -204,7 +201,8 @@ a(a)
 template <class Obj, int NUM_PARTS>
 Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a)
 :
-a(a)
+a(a),
+inited(false)
 {
     this->n_parts = NUM_PARTS;
 }
@@ -216,8 +214,7 @@ Object_vox<Obj,NUM_PARTS>::~Object_vox() {
         #ifdef DC_CLIENT
         ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
         #endif
-        if (this->vv[i].hitscan)
-            STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+        STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
 }
 
