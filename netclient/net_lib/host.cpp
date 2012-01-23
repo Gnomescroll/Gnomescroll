@@ -75,8 +75,12 @@ void init_net_client()
 
 void shutdown_net_client()
 {
-    enet_peer_disconnect(NetClient::Server.enet_peer, 0);   //graceful shutdown
-    enet_host_flush(client_host);   //flush packets
+
+    if(NetClient::Server.enet_peer != NULL)
+    {
+        enet_peer_disconnect(NetClient::Server.enet_peer, 0);   //graceful shutdown
+        enet_host_flush(client_host);   //flush packets
+    }
 
     enet_host_destroy(client_host);
 }
