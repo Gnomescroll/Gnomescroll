@@ -152,6 +152,12 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
         address.port = port;
     }
 
+    //use local host if 0,0,0,0
+    if(a==0 && b==0 && c==0 && d== 0)
+    {
+        a=127;b=0;c=0;d=1;
+    }
+
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
