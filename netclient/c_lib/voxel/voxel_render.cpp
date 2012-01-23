@@ -269,8 +269,6 @@ void Voxel_render_list::draw()
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
-    int last_v_num = 0;
-    int last_v_off = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;

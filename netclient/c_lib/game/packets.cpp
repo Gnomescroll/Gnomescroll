@@ -20,13 +20,11 @@ inline void TeamScore_StoC::handle() {
 
 inline void FlagState_StoC::handle()
 {
-    return;//TEMP
     ClientState::ctf.set_flag_position(team, x,y,z);
 }
 
 inline void BaseState_StoC::handle()
 {
-    return;//TEMP
     ClientState::ctf.set_base_position(team, x,y,z);
 }
 

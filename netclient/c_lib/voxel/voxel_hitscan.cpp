@@ -102,7 +102,7 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
         }
     }
 
-    printf("Voxel_hitscan_list::unregister_voxel_hitscan error, volume was not on list \n");
+    //printf("Voxel_hitscan_list::unregister_voxel_hitscan error, volume was not on list \n");
     vv->id = -1;
     vv->voxel_hitscan_list = NULL;
 }

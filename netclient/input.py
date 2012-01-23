@@ -6,7 +6,6 @@ Client input
 import opts
 opts = opts.opts
 
-#import init_c_lib as cInit
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
@@ -279,7 +278,6 @@ class Keyboard(object):
             '[' : self.cycle_agent_camera_mode,
             #']': self.hk,
             ']' : self.slime_test,
-            #']' : cInit.update_vertex_buffer,
         }
 
         self.key_release_handlers = {

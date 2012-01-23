@@ -411,13 +411,8 @@ void Voxel_volume::update_vertex_list()
 
     if (index >= 65536) printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
     memcpy( vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
-
-    //for (int i=0; i < index; i++) {
-        //vvl.vertex_list[i] = scratch[i];
-    //}
+    
     vvl.vnum = index;
-    //printf("xyz=%d index=%d\n",xdim*ydim*zdim, index);
-    //printf("x=%d y=%d z=%d\n", xdim,ydim,zdim);
 }
 
 #endif

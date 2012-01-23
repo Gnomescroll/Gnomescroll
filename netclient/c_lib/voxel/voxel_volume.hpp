@@ -108,9 +108,6 @@ class Voxel_volume
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline))
     { voxel[x+(y << index1)+(z << index12)] = *v; }
     inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
-    {
-        //printf("%u,%u,%u\n", x,y,z);
-        //printf("%u\n", x+(y << index1)+(z << index12));
-        Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+    { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
 };

@@ -151,18 +151,3 @@ cpdef init_python_net():
     set_python_net_callback_function(py_net_message_callback)
     print "Python net callback set"
     set_python_net_event_callback_function(py_net_net_event_callback)
-
-
-#"""
-#Temporary, debugging vox render
-#Delete this if vox render is fixed
-#"""
-#cdef extern from "./voxel/voxel_render.hpp":
-#    cdef cppclass Voxel_render_list:
-#        void update_vertex_buffer_object()
-        
-#cdef extern from "./state/client_state.hpp" namespace "ClientState":
-#    Voxel_render_list voxel_render_list
-
-#def update_vertex_buffer():
-#    voxel_render_list.update_vertex_buffer_object()
