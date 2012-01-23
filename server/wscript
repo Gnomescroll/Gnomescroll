@@ -198,6 +198,11 @@ def build(bld):
         source=['c_lib/c_lib_game_modes.pyx'],
         use=common_libraries+['c_lib'],
         target='c_lib.c_lib_game_modes')
+        
+    bld(features='cxx cshlib pyext',      #cython
+        source=['c_lib/c_lib_options.pyx'],
+        use=common_libraries+['c_lib'],
+        target='c_lib.c_lib_options')
 
 
     # final
@@ -238,6 +243,7 @@ def install_in_ext(ctx):
         'c_lib.c_lib_monsters',
         'c_lib.c_lib_items',
         'c_lib.c_lib_game_modes',
+        'c_lib.c_lib_options',
     ]
 
     for target in targets:
