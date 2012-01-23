@@ -28,6 +28,7 @@ class Voxel_hitscan_list
 {
     private:
     Voxel_hitscan_element** hitscan_list;
+    
     public:
     int num_elements;
 

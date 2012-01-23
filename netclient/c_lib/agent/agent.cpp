@@ -14,10 +14,6 @@ void Agent_list::draw()
 {
     #ifdef DC_CLIENT
 
-    //glEnable(GL_DEPTH_TEST);
-    //glDisable(GL_TEXTURE_2D);
-    //glBegin(GL_QUADS);
-
     bool you;
     int i;
     Agent_state* agent;
@@ -39,11 +35,6 @@ void Agent_list::draw()
             agent->vox->set_hitscan(true);
         }
     }
-
-    //glEnd();
-    //glDisable(GL_DEPTH_TEST);
-    //glEnable(GL_TEXTURE_2D);
-    //glColor3ub(255,255,255);
 
     ClientState::voxel_render_list.draw();
     #endif

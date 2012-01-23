@@ -12,6 +12,7 @@ void Flag::set_position(float x, float y, float z) {
 Flag::Flag()
 :
 theta(0), phi(0),
+id(0),
 team(0),
 type(OBJ_TYPE_FLAG)
 {

@@ -150,7 +150,7 @@ class App(object):
 
         last_tick = 0
 
-        cMonsters.slime_test(30)
+        #cMonsters.slime_test(30)
             
         while not GameStateGlobal.exit:
             P2.start_frame() #TEST

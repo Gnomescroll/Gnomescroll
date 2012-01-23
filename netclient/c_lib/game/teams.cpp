@@ -172,14 +172,20 @@ flag_captures(0)
 
 void CTFTeam::init(int id)
 {
+    static int item_id = 0;
+    
     Team::init(id);
-    this->flag = new Flag();
-    this->flag->team = id;
-    this->flag->vox->init_parts(&flag_vox_dat);
+    //this->flag = new Flag();
+    //this->flag->team = id;
+    //this->flag->id = item_id;
+    //this->flag->vox->init_parts(&flag_vox_dat);
 
-    this->base = new Base();
-    this->base->team = id;
-    this->base->vox->init_parts(&base_vox_dat);
+    //this->base = new Base();
+    //this->base->team = id;
+    //this->base->id = item_id;
+    //this->base->vox->init_parts(&base_vox_dat);
+
+    item_id++;
 }
 
 int CTFTeam::score()

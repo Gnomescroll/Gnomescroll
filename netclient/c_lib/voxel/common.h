@@ -57,8 +57,10 @@ class Voxel_vertex_list
     public:
     Voxel_vertex* vertex_list;   //number of vertices
 
-    unsigned short vnum;   //number of vertices
-    unsigned short voff;   //offset of vertices
+    //unsigned short vnum;   //number of vertices
+    //unsigned short voff;   //offset of vertices
+    unsigned int vnum;   //number of vertices
+    unsigned int voff;   //offset of vertices
 
     Voxel_vertex_list()
     :

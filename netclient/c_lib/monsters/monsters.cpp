@@ -250,6 +250,7 @@ void test(int n) {
         z = _get_highest_open_block(x,y);
         
         #ifdef DC_CLIENT
+        z = 127;
         STATE::slime_list.create(x,y,z+1, 0,0,0);
         #endif
 

@@ -27,6 +27,7 @@ num_elements(0)
     vbo_wrapper[0].vnum = 0;
     vbo_wrapper[1].vnum = 0;
 
+    // i'm not sure how to delete[] this properly
     //this->render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
     //for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) this->render_list[i] = NULL;
 
@@ -268,6 +269,8 @@ void Voxel_render_list::draw()
     v[2].w = 0.0f;
     v[3].w = 1.0f;
 
+    int last_v_num = 0;
+    int last_v_off = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
@@ -276,7 +279,7 @@ void Voxel_render_list::draw()
         if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
         
         if(vv->vvl.vnum == 0) continue;
-
+        
         //construct world view matrix
         v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
         v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
@@ -284,8 +287,10 @@ void Voxel_render_list::draw()
         v[3].v3 = vv->v[3].v3;
     
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
+
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
     }
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     //glDisableClientState(GL_NORMAL_ARRAY);

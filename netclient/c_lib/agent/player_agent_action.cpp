@@ -58,7 +58,7 @@ void PlayerAgent_action::hitscan() {
         collision_point, &vox_distance,
         &vhe
     );
-
+    printf("Hit voxel id=%d\n", vhe.entity_id);
     // hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
