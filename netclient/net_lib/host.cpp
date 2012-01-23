@@ -55,8 +55,8 @@ void init_net_server(int a, int b, int c, int d, int port)
     }
     else
     {
-    address.port = port;
-
+        address.port = port;
+    }
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,
