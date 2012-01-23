@@ -189,7 +189,8 @@ def build(bld):
 
     if OS == "Darwin":
         pass
-        #png_libs = ['png14']
+        png_libs = ['png14']
+        #png_libs=[]
     else:
         png_libs=['png']
 
