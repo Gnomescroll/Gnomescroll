@@ -88,7 +88,10 @@ def configure(conf):
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
         conf.env.append_value("LINKFLAGS", "-lwinmm")
-    
+
+    if OS != 'Darwin' and OS == 'Windows':
+        conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+
     '''
     incremental linking
     may reduce recompile time
@@ -146,8 +149,6 @@ def configure(conf):
 
     conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
     conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
-
-    conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
     
     #'cube_lib',
     conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
