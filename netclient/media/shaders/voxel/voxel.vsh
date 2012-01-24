@@ -4,14 +4,14 @@ uniform mat4 InRotationMatrix;
 
 attribute vec3 InNormal;
 attribute vec4 InAO;
-attribute float InSide;
+//attribute float InSide;
 
 varying float diffuse;
 
 //varying mat2 AOMatrix;
 //varying vec2 texCoord;
 
-const float coordArray[8] =  float[8]( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
+//const float coordArray[8] =  float[8]( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
 //const float coordArray[8] =  float[8]( 0.0,0.0 , 0.0,1.0 , 1.0,1.0 , 1.0,0.0 );
 
 //const vec2 coordArray[4] = vec2[4]( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
