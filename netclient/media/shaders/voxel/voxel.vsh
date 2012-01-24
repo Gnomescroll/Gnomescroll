@@ -8,14 +8,13 @@ attribute int InSide;
 
 varying float diffuse;
 
-varying mat2 AOMatrix;
-
-varying vec2 texCoord;
+//varying mat2 AOMatrix;
+//varying vec2 texCoord;
 
 //const float coordArray[8] =  float[8]( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
 //const float coordArray[8] =  float[8]( 0.0,0.0 , 0.0,1.0 , 1.0,1.0 , 1.0,0.0 );
 
-const vec2 coordArray[4] = vec2[4]( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
+//const vec2 coordArray[4] = vec2[4]( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
 
 
 void main(void) 
@@ -29,8 +28,8 @@ void main(void)
 
 	diffuse = abs(dot(normal, light_dir ));
 	
-	AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3] );
-	texCoord = coordArray[InSide];
+	//AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3] );
+	//texCoord = coordArray[InSide];
 	//texCoord = vec2( coordArray[2*InSide], coordArray[2*InSide+1] ) ;
 }
 
