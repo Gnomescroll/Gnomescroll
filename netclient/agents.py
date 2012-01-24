@@ -11,6 +11,7 @@ import c_lib._ray_trace as ray_tracer
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_game_modes as cGame
+import c_lib.c_lib_animations as cAnimations
 
 from game_state import GameStateGlobal
 from net_out import NetOut
@@ -116,7 +117,7 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
         return InputGlobal.cube_selector.active_id
 
     def bleed(self):
-        pass
+        cAnimations.bleed(self.x, self.y, self.z)
 
     @noViewer
     def switch_weapons(self, weapon_index):

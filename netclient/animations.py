@@ -117,7 +117,7 @@ class GrenadeExplodeAnimation(C_Animation):
 import c_lib.c_lib_animations
 
 class BlockCrumbleAnimation(C_Animation):
-    anim = c_lib.c_lib_animations.block_crumble
+    anim = c_lib.c_lib_animations.block_crumbles
 
     def __init__(self, pos):
         C_Animation.__init__(self)

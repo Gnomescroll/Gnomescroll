@@ -171,4 +171,35 @@ void slime_melt(float x, float y, float z) {
     ClientState::minivox_list.unset_size();
 }
 
+void agent_bleed(float x, float y, float z)
+{
+    const float _vx = 10.0f,
+                  _vy = 10.0f,
+                  _vz = 10.0f;
+
+    //int ttl;
+    float nx,ny,nz;
+    float vx,vy,vz;
+
+    Blood* blood;
+
+    int n = randrange(50,70);
+    int i;
+    for (i=0; i < n; i++) {
+
+        nx = x + randf() -0.5f;
+        ny = y + randf() -0.5f;
+        nz = z + randf() -0.5f;
+
+        vx = _vx*(randf() -0.5f);
+        vy = _vy*(randf() -0.5f);
+        vz = _vz*(randf() -0.5f);
+
+        //ttl = randrange(10,25);
+
+        blood = ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
+        //blood->ttl = ttl;
+    }
+}
+
 }
