@@ -188,7 +188,7 @@ void CTF::flag_scored(int team)
     }
 }
 
-void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
+int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
 {
     switch (team)
     {
@@ -204,8 +204,9 @@ void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned 
             break;
         default:
             printf("CTF::get_team_color -- invalid team %d\n", team);
-            return;
+            return 1;
     }
+    return 0;
 }
 #endif
 

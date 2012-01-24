@@ -14,7 +14,7 @@
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
-    void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
+    int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
 
@@ -250,10 +250,12 @@ class Team_vox: public Object_vox<Obj,NUM_PARTS>
 template <class Obj, int NUM_PARTS>
 void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     // create each vox part from vox_dat conf
+
     int i;
     int x,y,z;
     VoxPart *vp;
     Voxel_volume* vv;
+
     float size = vox_dat->vox_size;
     for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
@@ -268,6 +270,9 @@ void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
         vv->set_hitscan_properties(this->a->id, this->a->type, i);
 
         #ifdef DC_CLIENT
+        unsigned char team_r, team_g, team_b;
+        int ret = STATE::get_team_color(this->a->team, &team_r, &team_g, &team_b);
+        if (ret) printf("WARNING:: get_team_color failed.\n");
         unsigned char r,g,b,a;
         int j;
         int ix,iy,iz;
@@ -285,7 +290,9 @@ void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
             && g == vp->colors.team_g
             && b == vp->colors.team_b)
             {
-                ClientState::get_team_color(this->a->team, &r, &g, &b);
+                r = team_r;
+                g = team_g;
+                b = team_b;
             }
 
             vv->set_color(ix, iy, iz, r,g,b,a);
@@ -305,6 +312,10 @@ template <class Obj, int NUM_PARTS>
 void Team_vox<Obj,NUM_PARTS>::update_team_color(VoxBody* vox_dat)
 {
     #ifdef DC_CLIENT
+    unsigned char team_r, team_g, team_b;
+    int ret = ClientState::get_team_color(this->a->team, &team_r, &team_g, &team_b);
+    if (ret) return;
+
     int i;
     VoxPart* vp;
     Voxel_volume* vv;
@@ -331,7 +342,9 @@ void Team_vox<Obj,NUM_PARTS>::update_team_color(VoxBody* vox_dat)
             && g == vp->colors.team_g
             && b == vp->colors.team_b)
             {
-                ClientState::get_team_color(this->a->team, &r, &g, &b);
+                r = team_r;
+                g = team_g;
+                b = team_b;
             }
 
             vv->set_color(ix, iy, iz, r,g,b,a);

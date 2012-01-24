@@ -16,7 +16,7 @@ class CTF {
         void flag_dropped(int team);
         void flag_scored(int team);
 
-        void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
+        int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         #endif
 
         #ifdef DC_SERVER
