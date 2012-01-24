@@ -27,6 +27,20 @@ struct Mat4 {
     };
 } __attribute__((aligned (16)));
 
+static struct Mat4 mat4_identity()  __attribute((always_inline));
+
+struct Mat4 mat4_identity()
+{   
+    struct Mat4 m;
+
+    m.v[0] = vec4_init(1.0, 0.0, 0.0, 0.0);
+    m.v[1] = vec4_init(0.0, 1.0, 0.0, 0.0);
+    m.v[2] = vec4_init(0.0, 0.0, 1.0, 0.0);
+    m.v[3] = vec4_init(0.0, 0.0, 0.0, 1.0);
+
+    return m;
+}
+
 static struct Mat4 mat4_euler_rotation(float x, float y, float z)  __attribute((always_inline));
 
 struct Mat4 mat4_euler_rotation(float x, float y, float z)

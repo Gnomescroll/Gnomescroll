@@ -122,7 +122,8 @@ static inline void pack_string(char* str, int len, char* buff, int* buff_n, bool
     else
     {
         memcpy(str, buff+*buff_n, len);
-        *buff_n += len;   
+        *buff_n += len;
+        str[len-1] = '\0';
     }
 }
 

@@ -2,6 +2,8 @@
 
 #include <c_lib/camera/fulstrum_test.hpp>
 
+#include <c_lib/physics/vector.hpp>
+#include <c_lib/physics/matrix.hpp>
 
 extern float _xresf;
 extern float _yresf;
@@ -111,10 +113,7 @@ void CCamera::move(float dx, float dy, float dz) {
 //#include <voxel/voxel_volume.hpp>
 //#include <voxel/voxel_render.hpp>
 
-#include <voxel/voxel_skeleton.hpp>
-
-#include <c_lib/physics/vector.hpp>
-#include <c_lib/physics/matrix.hpp>
+#include <c_lib/voxel/voxel_loader.hpp>
 
 void CCamera::world_projection() {
 

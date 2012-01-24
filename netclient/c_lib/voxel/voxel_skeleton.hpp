@@ -7,107 +7,42 @@
 
 #include <stdio.h>
 
-static const char* test_string = "3\n4 5\n #comment \n 6 5 \x00 \n";
+//row times column, column major order
 
+float row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inline));
 
-#include <sys/stat.h>
+float row_mult_column(float* r, int i, float *c, int j)
+{
+/*
+    r[4*0+i]
+    r[4*1+i]
+    r[4*2+i]
+    r[4*3+i]
 
-off_t fsize(const char *filename) {
-    struct stat st; 
-    if (stat(filename, &st) == 0)
-        return st.st_size;
-    return -1; 
+    c[4*j+0]
+    c[4*j+1]
+    c[4*j+2]
+    c[4*j+3]
+*/
+    return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
 }
 
-class Voxel_loader
+
+struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
+
+struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 {
-    private:
-
-        //this function will always return on a new line or null
-        void check_for_comments(char* s, int* index)
-        {   
-            jmp:
-            while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n') (*index)++;
-            if(s[*index] != '#' || s[*index] == '\0') return;
-            while(s[*index] != '\n' && s[*index] != '\0') (*index)++;
-            goto jmp;
-        }
-
-    public:
-    //Voxel_volume** voxel_volume_list;
-    //int voxel_volume_num;
-    //int* voxel_volume;
-
-    Voxel_loader() {}
-
-    void load_skeleton_from_file(char* file_name)
+    struct Mat4 c;
+    int i,j;
+    for(i=0; i<4; i++) //row
     {
-
-        int size = fsize(file_name);
-
-        char* buffer = new char[size+1];
-
-        FILE *fp = fopen(file_name, "r"); //open file for reading
-
-        int nbytes = fread(buffer, sizeof(char), size, fp);
-        if ( nbytes != size )
+        for(j=0; j<4; j++) 
         {
-            printf("load_skeleton_from_file: failed to write %i bytes\n", nbytes);
-            fclose(fp);
-            return;       
+            c._f[4*j+i] = row_mult_column( a._f, i, b._f, j );
         }
-        buffer[size] = NULL;
-
-        printf("skeleton file size= %i \n", size);
-
-        char* str_tmp = new char[512];
-
-
-        int num_volumes;
-
-        int index = 0;
-        int read;
-
-        //read in number of voxel volumes
-        check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %n", &num_volumes, &read);
-        index += read;
-
-        printf("num_volumes= %i \n", num_volumes);
-
-        fclose(fp);
     }
-
-    void init_from_string(char* s)
-    {
-        /*
-        int index = 0;
-        int read;
-     
-        check_for_comments(s, &index);
-             
-        sscanf (s+index, "%d %n", &voxel_volume_num, &read);
-        printf("voxel_volume_num= %i \n", voxel_volume_num);
-        printf("read %i bytes\n", read);
-        index += read;
-
-        check_for_comments(s, &index);
-
-        int n1, n2;
-        sscanf (s+index, "%d %d %n", &n1, &n2, &read);
-        printf("num1= %i num2= %i \n", n1, n2);
-        printf("read %i bytes\n", read);
-        index += read;
-
-        check_for_comments(s, &index);
-
-        sscanf (s+index, "%d %d %n", &n1, &n2, &read);
-        printf("num1= %i num2= %i \n", n1, n2);
-        printf("read %i bytes\n", read);
-        */
-    }
-
-};
+    return c;
+}
 
 class Voxel_skeleton
 {
@@ -115,26 +50,56 @@ class Voxel_skeleton
 
     public:
 
-    Voxel_volume** voxel_volume_list;
-    int voxel_volume_num;
-    int* voxel_volume;
+    struct Mat4 root_node; //parent world matrix for first volume
 
+    Voxel_volume* voxel_volume_list;
+    int num_volumes;
 
-    Voxel_skeleton(char* string)
+    int* skeleton_tree; //transversal order
+    //struct Mat4* world_matrices; // put world matrix in the volumes
+
+    //set offset and rotation
+    void set_root_node(float x, float y, float z, float theta)
     {
+        root_node = mat4_euler_rotation( 0.0,0.0,1.0);
+        root_node.v[3] = vec4_init(x,y,z, 1.0);
     }
 
-    void init_from_string(char* s)
+    void update_world_matrices()
     {
+        struct Mat4* local_mat;
+        struct Mat4* world_mat;
+        struct Mat4* parent_world_mat;
+
+        //root node
+        voxel_volume_list[0].world_matrix = mat4_mult( root_node, voxel_volume_list[0].local_matrix );
+
+        for(int i=1; i<num_volumes; i++)
+        {
+            local_mat =  &voxel_volume_list[ skeleton_tree[ i*2+0 ]].local_matrix;  //current node
+            world_mat = &voxel_volume_list[ skeleton_tree[ i*2+0 ]].world_matrix;
+            parent_world_mat = &voxel_volume_list[ skeleton_tree[ i*2+1 ]].world_matrix; //parent world matrix
+
+            *world_mat = mat4_mult( *parent_world_mat, *local_mat );
+        }    
+
     }
+
+    Voxel_skeleton(int volumes)
+    {
+        num_volumes = volumes;
+        skeleton_tree = new int[2*volumes];
+
+        voxel_volume_list = new Voxel_volume[volumes];
+    }
+
+    ~Voxel_skeleton()
+    {
+        delete[] voxel_volume_list;
+        delete[] skeleton_tree;
+    }
+
+
 
 };
 
-void test_voxel_skeleton()
-{
-    return;
-    class Voxel_loader vl;
-    vl.load_skeleton_from_file("./media/voxel/test_skeleton");
-
-    //class Voxel_skeleton a((char*) test_string);
-}

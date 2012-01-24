@@ -22,6 +22,9 @@ void main()
 	
 	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb ;
 
+	vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
+	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
+/*
 	if( gl_FragCoord.x < 640 )
 	{
 		vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
@@ -31,7 +34,7 @@ void main()
 	{
 		gl_FragColor.rgb = vec3(ao_factor, ao_factor, ao_factor);
 	}
-
+*/
 	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
 	//vec3 color = ao_factor*(light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb) ;
 

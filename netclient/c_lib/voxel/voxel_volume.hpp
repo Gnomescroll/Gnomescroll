@@ -18,11 +18,14 @@ class Voxel_volume
 {
     public:
 
+    struct Mat4 world_matrix;
+    struct Mat4 local_matrix; //
+    Vec4 v[4]; // forward, up, right, offset
+
+
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
 #endif
-
-    Vec4 v[4]; // forward, up, right (x,y,z), offset
 
     int id;
     bool draw;
