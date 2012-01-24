@@ -86,6 +86,17 @@ void Agent_vox::init_parts(VoxBody* vox_dat) {
 void Agent_vox::update_team_color(VoxBody* vox_dat)
 {
     #ifdef DC_CLIENT
+    printf("UPDATE TEAM COLOR\n");
+    printf("Team=%d\n", this->a->status.team);
+    unsigned char _r,_g,_b;
+    ClientState::get_team_color(this->a->status.team, &_r, &_g, &_b);
+    printf("%d,%d,%d\n", _r,_g,_b);
+
+    // investigate why team color is 200 on init
+    if (this->a->status.team != 1 && this->a->status.team != 2) return; // Have get_team_color return a status
+
+    unsigned char team_r, team_g, team_b;
+    ClientState::get_team_color(this->a->status.team, &team_r, &team_g, &team_b);
     int i;
     VoxPart* vp;
     Voxel_volume* vv;
@@ -112,12 +123,16 @@ void Agent_vox::update_team_color(VoxBody* vox_dat)
             && g == vp->colors.team_g
             && b == vp->colors.team_b)
             {
-                ClientState::get_team_color(this->a->status.team, &r, &g, &b);
+                r = team_r;
+                g = team_g;
+                b = team_b;
+                printf("Set team color\n");
             }
 
             vv->set_color(ix, iy, iz, r,g,b,a);
         }
     }
+    ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }
 
