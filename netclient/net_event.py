@@ -8,6 +8,7 @@ opts = opts.opts
 
 import json
 import zlib
+import random
 
 import c_lib.c_lib_sdl
 import stats
@@ -201,14 +202,24 @@ class ClientMessageHandler(GenericMessageHandler):
         return True
 
     used_alt = False
+    MAX_NAME_LENGTH = 15
     def _identify_fail(self, msg, **arg):
         # send system notification
         if self.used_alt:
-            ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
-            ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
-            # activate chat, insert /nick
-            InputGlobal.toggle_chat()
-            ChatClientGlobal.chatClient.insert_string('/nick ')
+
+            # add some numbers to the name
+            new_name = opts.name
+            ext = "%03d" % (random.randrange(0,1000),)
+            new_name = new_name[:self.MAX_NAME_LENGTH-len(ext)]
+            new_name += ext
+            NetOut.sendMessage.identify(name=new_name)
+
+            # alternate UI: REQUEST NEW NAME
+            #ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+            #ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+            ## activate chat, insert /nick
+            #InputGlobal.toggle_chat()
+            #ChatClientGlobal.chatClient.insert_string('/nick ')
         else:
             NetOut.sendMessage.identify(name=opts.alt_name)
             self.used_alt = True
