@@ -180,7 +180,7 @@ char* Agent_weapons::hud_display() {
             break;
         default:
             printf("Agent_weapons::hud_display unknown or invalid weapon type %d\n", type);
-            sprintf(str, "%s", "");
+            str = "";
             break;
     }
     return str;
