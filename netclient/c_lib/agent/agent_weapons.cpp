@@ -1,5 +1,7 @@
 #include "agent_weapons.hpp"
 
+static const int N_AGENT_WEAPONS = 4;
+
 Agent_weapons::Agent_weapons(Agent_state* a)
 : a(a), active(0)
 {
@@ -50,8 +52,7 @@ void Agent_weapons::set_clip(int type, int clip) {
 }
 
 void Agent_weapons::set_active(int slot) {
-    static const int n_weapons = 4;
-    if (slot < 0 || slot >= n_weapons) return;
+    if (slot < 0 || slot >= N_AGENT_WEAPONS) return;
     active = slot;
 
     #ifdef DC_CLIENT
@@ -66,12 +67,14 @@ void Agent_weapons::set_active(int slot) {
 }
 
 void Agent_weapons::switch_up() {
-    active = (active+1)%4;
+    active = (active+1)%N_AGENT_WEAPONS;
     weapon_change_message();
 }
 
 void Agent_weapons::switch_down() {
-    active = (active-1)%4;
+    active = (active-1)%N_AGENT_WEAPONS;
+    if (active < 0)
+        active += N_AGENT_WEAPONS;
     weapon_change_message();
 }
 

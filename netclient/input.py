@@ -435,7 +435,7 @@ class AgentInput:
         try:
             weapon_index = int(symbol)
         except (ValueError, TypeError):
-            pass
+            print "AgentInput.switch_weapons: invalid symbol " + symbol
         else:
             GameStateGlobal.agent.switch_weapons(weapon_index)
 

@@ -115,6 +115,9 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
     def active_block(self):
         return InputGlobal.cube_selector.active_id
 
+    def bleed(self):
+        pass
+
     @noViewer
     def switch_weapons(self, weapon_index):
         if weapon_index == 'up':
