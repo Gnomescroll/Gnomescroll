@@ -1,5 +1,5 @@
 ''' User '''
-name = 'stevestevestevestevesteve'
+name = 'steve'
 alt_name = '[%s]' % (name,)
 
 ''' Network '''

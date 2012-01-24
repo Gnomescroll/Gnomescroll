@@ -98,6 +98,7 @@ inline void agent_health_StoC::handle() {
 inline void agent_create_StoC::handle() {
     Agent_state* a = ClientState::agent_list.get_or_create(id);
     if (a==NULL) printf("agent_create_StoC:: get_or_create agent failed\n");
+    a->event.joined_team(team);
     //printf("C Agent created. id: %d\n", a->id);
 }
 

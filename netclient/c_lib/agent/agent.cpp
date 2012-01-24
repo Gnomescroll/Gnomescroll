@@ -891,7 +891,8 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    vox = new Agent_vox(this, &agent_vox_dat);
+    //vox = new Agent_vox(this, &agent_vox_dat);
+    this->vox = new Agent_vox(this);
     #endif
 }
 
@@ -920,7 +921,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     int i;
-    for(i=0; i<128;i++) cs[i].seq = -1;
+    for(i=0; i<128;cs[i++].seq=-1);
 
     client_id = -1;
 
@@ -933,8 +934,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    this->vox = new Agent_vox(this, &agent_vox_dat);
-
+    this->vox = new Agent_vox(this);
     #endif
 }
 

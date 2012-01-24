@@ -96,6 +96,12 @@ void Agent_event::reload_weapon(int type) {
     // play reload animation/sound for the weapon
 }
 
+void Agent_event::joined_team(int team)
+{
+    this->a->status.team = team;
+    this->a->vox->init_parts(&agent_vox_dat);
+}
+
 void Agent_event::picked_up_flag()
 {
     this->a->status.has_flag = true;

@@ -23,6 +23,12 @@ void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale) {
 }
 
 void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
+    if(this->voxel != NULL)
+    {
+        printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
+        return;
+    }
+
     this->set_parameters(xdim, ydim, zdim, scale);
 
 #ifdef DC_CLIENT
@@ -50,7 +56,6 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     //update radius if changing scale
     this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
-    if(this->voxel != NULL) printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
     //this->voxel = new Voxel[powx*powy*powz];
     this->voxel = (union Voxel*)malloc(sizeof(union Voxel) * powx * powy * powz);
 

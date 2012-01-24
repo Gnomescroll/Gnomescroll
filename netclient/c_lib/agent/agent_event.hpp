@@ -17,6 +17,8 @@ class Agent_event {
         void life_changing(bool dead);
         void reload_weapon(int type);
 
+        void joined_team(int team);
+
         void picked_up_flag();
         void dropped_flag();
         void scored_flag();

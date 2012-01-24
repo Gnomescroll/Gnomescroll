@@ -228,3 +228,8 @@ void Agent_status::score_flag() {
     }
     this->has_flag = false;
 }
+
+void Agent_status::set_team(int team)
+{
+    this->team = team;
+}

@@ -62,6 +62,7 @@ class Agent_status: public Base_status {
         void send_scores(int client_id);
         void send_scores();
 
+        void set_team(int team);
 };
 
 // Use for:

@@ -7,7 +7,12 @@ inline void TeamColor_StoC::handle(){
 }
 
 inline void AgentJoinTeam_StoC::handle() {
-    ClientState::ctf.add_agent_to_team(team, agent);
+    Agent_state* a = ClientState::agent_list.get(agent);
+    if (a==NULL) return;
+    if(ClientState::ctf.add_agent_to_team(team, agent))
+    {
+        a->event.joined_team(team);
+    }
 }
 
 //inline void TeamName_StoC::handle() {
