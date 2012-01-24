@@ -6,7 +6,7 @@
     #include "windows.h"
 #endif
 
-#ifndef __APPLE__
+#ifdef linux
     #include <c_lib/SDL/IMG_savepng.h>
 #endif
 /*
@@ -375,7 +375,7 @@ void close_SDL()
 
 void save_screenshot()
 {
-#ifndef __APPLE__
+#ifdef linux
     //int window_width = _xres;
     //int window_height = _yres;
 

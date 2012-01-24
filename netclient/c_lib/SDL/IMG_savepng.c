@@ -28,11 +28,9 @@
  * 11/08/2004 - Compr fix, levels -1,1-7 now work - Tyler Montbriand
  */
 #include <stdlib.h>
-//#include <SDL/SDL.h>
-//#include <SDL/SDL_byteorder.h>
 
-#include <SDL.h>
-#include <SDL_byteorder.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_byteorder.h>
 
 #include <png.h>
 #include "IMG_savepng.h"
