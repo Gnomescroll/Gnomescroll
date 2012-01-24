@@ -79,6 +79,11 @@ inline void agent_damage_StoC::handle() {
 inline void fire_weapon_StoC::handle() {
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
+    printf("TEST STR PACKET: %s\n", test_str);
+    for (int i=0; i<32; i++) {
+        printf("%c", test_str[i]);
+    }
+    printf("\n");
     a->event.fired_weapon(type);
 }
 
@@ -236,6 +241,16 @@ inline void hit_block_CtoS::handle() {
     _apply_damage_broadcast(x,y,z, dmg);
 }
 
+void randstr(char* s, int n)
+{
+    int i;
+    for (i=0; i<n-1; i++)
+    {
+        s[i] = (char)randrange(32,126);
+    }
+    s[i] = '\0';
+}
+
 // fire weapon action
 inline void fire_weapon_CtoS::handle() {
     // trigger weapon
@@ -247,6 +262,11 @@ inline void fire_weapon_CtoS::handle() {
         fire_weapon_StoC msg;
         msg.id = id;
         msg.type = type;
+        char test[32];
+        randstr(test, 32);
+        printf("TEST precopy: %s\n", test);
+        strcpy(msg.test_str, test);
+        printf("TEST postcopy: %s\n", msg.test_str);
         msg.broadcast();
     }
 }

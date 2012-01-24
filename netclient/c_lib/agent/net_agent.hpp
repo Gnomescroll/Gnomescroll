@@ -148,10 +148,13 @@ class fire_weapon_StoC: public FixedSizeNetPacketToClient<fire_weapon_StoC>
         int id;
         int type;
 
+        char test_str[32];
+
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
+            pack_n(test_str, 32, buff, buff_n, pack);
         }
 
         inline void handle();
