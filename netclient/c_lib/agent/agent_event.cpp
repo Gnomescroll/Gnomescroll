@@ -98,8 +98,9 @@ void Agent_event::reload_weapon(int type) {
 
 void Agent_event::joined_team(int team)
 {
+    printf("Event: joined_team %d\n", team);
     this->a->status.team = team;
-    this->a->vox->update_team_color(&agent_vox_dat);
+    this->a->vox->update_team_color(&agent_vox_dat, team);
 }
 
 void Agent_event::picked_up_flag()

@@ -33,7 +33,7 @@ namespace ClientState {
 
     extern CTF ctf;
 
-    void get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
+    int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         
     void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
 

@@ -181,7 +181,7 @@ void agent_bleed(float x, float y, float z)
     float nx,ny,nz;
     float vx,vy,vz;
 
-    Blood* blood;
+    //Blood* blood;
 
     int n = randrange(50,70);
     int i;
@@ -197,7 +197,8 @@ void agent_bleed(float x, float y, float z)
 
         //ttl = randrange(10,25);
 
-        blood = ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
+        //blood = ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
+        ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
         //blood->ttl = ttl;
     }
 }

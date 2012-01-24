@@ -15,15 +15,6 @@ enum FLAG_PARTS {
 
 class Flag;
 
-class Flag_vox: public Team_vox<Flag, FLAG_PART_NUM>
-{
-    public:
-    Flag_vox(Flag* a)
-    :
-    Team_vox<Flag, FLAG_PART_NUM>(a)
-    {}
-};
-
 class Flag {
     public:
         float x,y,z;
@@ -34,11 +25,12 @@ class Flag {
         int team;
         Object_types type;
 
-        Flag_vox* vox;
+        Object_vox* vox;
 
         void set_position(float x, float y, float z);
 
         Flag();
+        Flag(int id, int team);
         ~Flag();
 };
 

@@ -44,8 +44,6 @@ class Agent_status: public Base_status {
         Agent_state* a;
 
     public:
-        Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
-
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
         int die();
@@ -63,6 +61,8 @@ class Agent_status: public Base_status {
         void send_scores();
 
         void set_team(int team);
+
+        Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
 };
 
 // Use for:

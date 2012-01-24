@@ -25,6 +25,7 @@ namespace ServerState {
 }
 #endif
 
+template <class Obj, int NUM_PARTS>
 class Object_vox {
     public:
         int n_parts;
@@ -36,25 +37,23 @@ class Object_vox {
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Voxel_volume* vv;
+        Obj* a;
+
+        Voxel_volume vv[NUM_PARTS];
 
         bool inited;
-        void init_parts(VoxBody* vox_dat, int id, int type);
-        void init_parts(VoxBody* vox_dat, int id, int type, int team);
-        void update(VoxBody* vox_dat, float x, float y, float z, float theta, float phi);
+        void init_parts(VoxBody* vox_dat);
+        void update(VoxBody* vox_dat);
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
 
-        void update_team_color(VoxBody* vox_dat, int team);
-
-
-        Object_vox(int num_parts);
-        Object_vox(int num_parts, VoxBody* vox_dat, int id, int type);
-        Object_vox(int num_parts, VoxBody* vox_dat, int id, int type, int team);
+        Object_vox(Obj* a, VoxBody* vox_dat);
+        Object_vox(Obj* a);
         ~Object_vox();
 };
 
-void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj, NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     // create each vox part from vox_dat conf
     if (this->inited) return;
     this->inited = true;
@@ -63,7 +62,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
     VoxPart *vp;
     Voxel_volume* vv;
     float size = vox_dat->vox_size;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
@@ -73,7 +72,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
 
         vv->init(x,y,z,size);
         vv->set_unit_axis();
-        vv->set_hitscan_properties(id, type, i);
+        vv->set_hitscan_properties(this->a->id, this->a->type, i);
 
         #ifdef DC_CLIENT
         unsigned char r,g,b,a;
@@ -103,26 +102,35 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
     #endif
 }
 
-void Object_vox::set_draw(bool draw) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::set_draw(bool draw) {
     int i;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         this->vv[i].draw = draw;
     }
 }
 
-void Object_vox::set_hitscan(bool hitscan) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::set_hitscan(bool hitscan) {
     int i;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         this->vv[i].hitscan = hitscan;
     }
 }
 
-void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta, float phi) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::update(VoxBody* vox_dat) {
+    float x,y,z,theta,phi;
+    x = this->a->x;
+    y = this->a->y;
+    z = this->a->z;
+    theta = this->a->theta;
+    phi = this->a->phi;
 
     VoxPart* vp;
     float ax,ay,az;
     int i;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
         ax = vp->anchor.x;
         ay = vp->anchor.y;
@@ -137,35 +145,40 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
     }
 }
 
-void Object_vox::right(Vector* f, float theta) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::right(Vector* f, float theta) {
     f->x = cos(theta * PI + PI/2);
     f->y = sin(theta * PI + PI/2);
     f->z = 0.0f;
     normalize_vector(f);
 }
 
-void Object_vox::forward(Vector* f, float theta) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::forward(Vector* f, float theta) {
     f->x = cos(theta * PI);
     f->y = sin(theta * PI);
     f->z = 0.0f;
     normalize_vector(f);
 }
 
-void Object_vox::look(Vector* f, float theta, float phi) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::look(Vector* f, float theta, float phi) {
     f->x = cos(theta * PI) * cos(phi * PI);
     f->y = sin(theta * PI) * cos(phi * PI);
     f->z = sin(phi);
     normalize_vector(f);
 }
 
-void Object_vox::look(float f[3], float theta, float phi) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::look(float f[3], float theta, float phi) {
     f[0] = cos(theta * PI) * cos(phi * PI);
     f[1] = sin(theta * PI) * cos(phi * PI);
     f[2] = sin(phi);
     normalize_vector_f(&f[0], &f[1], &f[2]);
 }
 
-void Object_vox::look(double f[3], double theta, double phi) {
+template <class Obj, int NUM_PARTS>
+void Object_vox<Obj,NUM_PARTS>::look(double f[3], double theta, double phi) {
     f[0] = cos(theta * PI) * cos(phi * PI);
     f[1] = sin(theta * PI) * cos(phi * PI);
     f[2] = sin(phi);
@@ -175,46 +188,38 @@ void Object_vox::look(double f[3], double theta, double phi) {
     f[2] /= len;
 }
 
-Object_vox::Object_vox(int num_parts)
+template <class Obj, int NUM_PARTS>
+Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a, VoxBody* vox_dat)
 :
+a(a),
 inited(false)
 {
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
+    this->n_parts = NUM_PARTS;
+    this->init_parts(vox_dat);
 }
 
-Object_vox::Object_vox(int num_parts, VoxBody* vox_dat, int id, int type)
+template <class Obj, int NUM_PARTS>
+Object_vox<Obj,NUM_PARTS>::Object_vox(Obj* a)
 :
+a(a),
 inited(false)
 {
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
-    this->init_parts(vox_dat, id, type);
+    this->n_parts = NUM_PARTS;
 }
 
-Object_vox::Object_vox(int num_parts, VoxBody* vox_dat, int id, int type, int team)
-:
-inited(false)
-{
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
-    this->init_parts(vox_dat, id, type, team);
-}
-
-Object_vox::~Object_vox() {
-    if (this->vv != NULL)
-    {
-        for (int i=0; i<this->n_parts; i++) {
-            #ifdef DC_CLIENT
-            ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
-            #endif
-            STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
-        }
-        delete[] this->vv;
+template <class Obj, int NUM_PARTS>
+Object_vox<Obj,NUM_PARTS>::~Object_vox() {
+    int i;
+    for (i=0; i<NUM_PARTS; i++) {
+        #ifdef DC_CLIENT
+        ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
+        #endif
+        STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
     }
 }
 
-float Object_vox::largest_radius() {
+template <class Obj, int NUM_PARTS>
+float Object_vox<Obj,NUM_PARTS>::largest_radius() {
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
     int i;
@@ -226,7 +231,24 @@ float Object_vox::largest_radius() {
     return largest;
 }
 
-void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
+
+/* Team based voxels (get colored) */
+
+template <class Obj, int NUM_PARTS>
+class Team_vox: public Object_vox<Obj,NUM_PARTS>
+{
+    public:
+    void init_parts(VoxBody* vox_dat);
+    void update_team_color(VoxBody* vox_dat);
+    
+    Team_vox(Obj *a)
+    :
+    Object_vox<Obj,NUM_PARTS>(a)
+    {}
+};
+
+template <class Obj, int NUM_PARTS>
+void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     // create each vox part from vox_dat conf
 
     int i;
@@ -235,7 +257,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
     Voxel_volume* vv;
 
     float size = vox_dat->vox_size;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
@@ -245,11 +267,11 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
 
         vv->init(x,y,z,size);
         vv->set_unit_axis();
-        vv->set_hitscan_properties(id, type, i);
+        vv->set_hitscan_properties(this->a->id, this->a->type, i);
 
         #ifdef DC_CLIENT
         unsigned char team_r, team_g, team_b;
-        int ret = STATE::get_team_color(team, &team_r, &team_g, &team_b);
+        int ret = STATE::get_team_color(this->a->team, &team_r, &team_g, &team_b);
         if (ret) printf("WARNING:: get_team_color failed.\n");
         unsigned char r,g,b,a;
         int j;
@@ -286,17 +308,18 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
     #endif
 }
 
-void Object_vox::update_team_color(VoxBody* vox_dat, int team)
+template <class Obj, int NUM_PARTS>
+void Team_vox<Obj,NUM_PARTS>::update_team_color(VoxBody* vox_dat)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;
-    int ret = ClientState::get_team_color(team, &team_r, &team_g, &team_b);
+    int ret = ClientState::get_team_color(this->a->team, &team_r, &team_g, &team_b);
     if (ret) return;
 
     int i;
     VoxPart* vp;
     Voxel_volume* vv;
-    for (i=0; i<this->n_parts; i++)
+    for (i=0; i<NUM_PARTS; i++)
     {
         vp = vox_dat->vox_part[i];
         vv = &(this->vv[i]);

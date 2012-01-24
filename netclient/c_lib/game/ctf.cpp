@@ -188,7 +188,7 @@ void CTF::flag_scored(int team)
     }
 }
 
-void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
+int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
 {
     switch (team)
     {
@@ -203,9 +203,10 @@ void CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned 
             *b = two.b;
             break;
         default:
-            printf("CTF::get_team_color -- invalid team %d\n", team);
-            return;
+            //printf("CTF::get_team_color -- invalid team %d\n", team);
+            return 1;
     }
+    return 0;
 }
 #endif
 
@@ -435,7 +436,8 @@ bool CTF::add_agent_to_team(int team, int agent) {
             break;
     }
 
-    a->status.team = team;
+    //a->status.team = team;
+    a->status.set_team(team);
     printf("Added agent %d to team %d\n", agent, team);
     return success;
 }

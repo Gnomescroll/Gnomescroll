@@ -20,12 +20,6 @@ enum SLIME_BODY_PARTS {
 
 class Slime;    // forward decl
 
-class Slime_vox: public Object_vox<Slime, SLIME_PART_NUM>
-{
-    public:    
-    Slime_vox(Slime* a, VoxBody* vox_dat) : Object_vox<Slime, SLIME_PART_NUM>(a, vox_dat) {}
-};
-
 class Slime {
     public:
     int id;
@@ -33,7 +27,7 @@ class Slime {
     float vx,vy,vz;
     float theta,phi;
     
-    Slime_vox* vox;
+    Object_vox* vox;
 
     Object_types type;
 

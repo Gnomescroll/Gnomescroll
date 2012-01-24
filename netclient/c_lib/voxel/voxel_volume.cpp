@@ -86,8 +86,10 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
 draw(true),
-hitscan(true)
+hitscan(true)//,
+//voxel(NULL)
 {
+    this->voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
 }
 

@@ -15,15 +15,6 @@ enum BASE_PARTS {
 
 class Base;
 
-class Base_vox: public Team_vox<Base, BASE_PART_NUM>
-{
-    public:
-    Base_vox(Base* a)
-    :
-    Team_vox<Base, BASE_PART_NUM>(a)
-    {}
-};
-
 class Base {
     public:
         float x,y,z;
@@ -34,11 +25,12 @@ class Base {
         int team;
         Object_types type;
         
-        Base_vox* vox;
+        Object_vox* vox;
 
         void set_position(float x, float y, float z);
 
         Base();
+        Base(int id, int team);
         ~Base();
 };
 

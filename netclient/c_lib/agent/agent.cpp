@@ -23,7 +23,7 @@ void Agent_list::draw()
         you = (agent->id == ClientState::playerAgent_state.agent_id);
         if (agent->vox == NULL) continue;
         
-        agent->vox->update(&agent_vox_dat);
+        agent->vox->update(&agent_vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
         if ((first_person && you) || agent->status.dead)
         {
             agent->vox->set_draw(false);
@@ -885,15 +885,14 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
+    msg.team = this->status.team;
     msg.broadcast();
 
     spawn_state();
     #endif
 
     #ifdef DC_CLIENT
-    //vox = new Agent_vox(this, &agent_vox_dat);
-    this->vox = new Agent_vox(this);
-    this->vox->init_parts(&agent_vox_dat);
+    this->vox = new Object_vox(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
     #endif
 }
 
@@ -929,14 +928,14 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
+    msg.team = this->status.team;
     msg.broadcast();
 
     spawn_state();
     #endif
 
     #ifdef DC_CLIENT
-    this->vox = new Agent_vox(this);
-    this->vox->init_parts(&agent_vox_dat);
+    this->vox = new Object_vox(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
     #endif
 }
 
@@ -959,6 +958,7 @@ void Agent_list::send_to_client(int client_id) {
         if (a[i]==NULL) continue;
         agent_create_StoC msg;
         msg.id = a[i]->id;
+        msg.team = a[i]->status.team;
         msg.sendToClient(client_id);
     }
 }
