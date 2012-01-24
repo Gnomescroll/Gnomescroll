@@ -28,5 +28,6 @@ class Agent_vox: public Team_vox<Agent_state, AGENT_PART_NUM>
     public:
     void update(VoxBody* vox_dat);
     void init_parts(VoxBody* vox_dat);
+    void update_team_color(VoxBody* vox_dat);
     Agent_vox(Agent_state* a) : Team_vox<Agent_state, AGENT_PART_NUM>(a) {}
 };

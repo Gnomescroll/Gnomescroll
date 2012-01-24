@@ -893,6 +893,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #ifdef DC_CLIENT
     //vox = new Agent_vox(this, &agent_vox_dat);
     this->vox = new Agent_vox(this);
+    this->vox->init_parts(&agent_vox_dat);
     #endif
 }
 
@@ -935,6 +936,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 
     #ifdef DC_CLIENT
     this->vox = new Agent_vox(this);
+    this->vox->init_parts(&agent_vox_dat);
     #endif
 }
 

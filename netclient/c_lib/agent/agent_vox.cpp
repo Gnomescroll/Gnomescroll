@@ -81,3 +81,43 @@ void Agent_vox::init_parts(VoxBody* vox_dat) {
     ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }
+
+
+void Agent_vox::update_team_color(VoxBody* vox_dat)
+{
+    #ifdef DC_CLIENT
+    int i;
+    VoxPart* vp;
+    Voxel_volume* vv;
+    for (i=0; i<this->n_parts; i++)
+    {
+        vp = vox_dat->vox_part[i];
+        vv = &(this->vv[i]);
+
+        int j;
+        int ix,iy,iz;
+        unsigned char r,g,b,a;
+        for (j=0; j<vp->colors.n; j++)
+        {
+            ix = vp->colors.index[j][0];
+            iy = vp->colors.index[j][1];
+            iz = vp->colors.index[j][2];
+            r = vp->colors.rgba[j][0];
+            g = vp->colors.rgba[j][1];
+            b = vp->colors.rgba[j][2];
+            a = vp->colors.rgba[j][3];
+
+            if (vp->colors.team
+            && r == vp->colors.team_r
+            && g == vp->colors.team_g
+            && b == vp->colors.team_b)
+            {
+                ClientState::get_team_color(this->a->status.team, &r, &g, &b);
+            }
+
+            vv->set_color(ix, iy, iz, r,g,b,a);
+        }
+    }
+    #endif
+}
+

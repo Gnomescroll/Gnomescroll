@@ -239,6 +239,8 @@ class Team_vox: public Object_vox<Obj,NUM_PARTS>
 {
     public:
     void init_parts(VoxBody* vox_dat);
+    void update_team_color(VoxBody* vox_dat);
+    
     Team_vox(Obj *a)
     :
     Object_vox<Obj,NUM_PARTS>(a)
@@ -253,7 +255,7 @@ void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     VoxPart *vp;
     Voxel_volume* vv;
     float size = vox_dat->vox_size;
-    for (i=0; i<this->n_parts; i++) {
+    for (i=0; i<NUM_PARTS; i++) {
         vp = vox_dat->vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
@@ -299,3 +301,41 @@ void Team_vox<Obj,NUM_PARTS>::init_parts(VoxBody* vox_dat) {
     #endif
 }
 
+template <class Obj, int NUM_PARTS>
+void Team_vox<Obj,NUM_PARTS>::update_team_color(VoxBody* vox_dat)
+{
+    #ifdef DC_CLIENT
+    int i;
+    VoxPart* vp;
+    Voxel_volume* vv;
+    for (i=0; i<NUM_PARTS; i++)
+    {
+        vp = vox_dat->vox_part[i];
+        vv = &(this->vv[i]);
+
+        int j;
+        int ix,iy,iz;
+        unsigned char r,g,b,a;
+        for (j=0; j<vp->colors.n; j++)
+        {
+            ix = vp->colors.index[j][0];
+            iy = vp->colors.index[j][1];
+            iz = vp->colors.index[j][2];
+            r = vp->colors.rgba[j][0];
+            g = vp->colors.rgba[j][1];
+            b = vp->colors.rgba[j][2];
+            a = vp->colors.rgba[j][3];
+
+            if (vp->colors.team
+            && r == vp->colors.team_r
+            && g == vp->colors.team_g
+            && b == vp->colors.team_b)
+            {
+                ClientState::get_team_color(this->a->team, &r, &g, &b);
+            }
+
+            vv->set_color(ix, iy, iz, r,g,b,a);
+        }
+    }
+    #endif
+}

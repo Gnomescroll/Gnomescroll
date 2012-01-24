@@ -99,7 +99,7 @@ void Agent_event::reload_weapon(int type) {
 void Agent_event::joined_team(int team)
 {
     this->a->status.team = team;
-    this->a->vox->init_parts(&agent_vox_dat);
+    this->a->vox->update_team_color(&agent_vox_dat);
 }
 
 void Agent_event::picked_up_flag()
