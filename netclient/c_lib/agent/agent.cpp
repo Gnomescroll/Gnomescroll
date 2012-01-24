@@ -885,6 +885,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
+    msg.team = this->status.team;
     msg.broadcast();
 
     spawn_state();
@@ -929,6 +930,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
+    msg.team = this->status.team;
     msg.broadcast();
 
     spawn_state();
@@ -959,6 +961,7 @@ void Agent_list::send_to_client(int client_id) {
         if (a[i]==NULL) continue;
         agent_create_StoC msg;
         msg.id = a[i]->id;
+        msg.team = a[i]->status.team;
         msg.sendToClient(client_id);
     }
 }

@@ -436,7 +436,8 @@ bool CTF::add_agent_to_team(int team, int agent) {
             break;
     }
 
-    a->status.team = team;
+    //a->status.team = team;
+    a->status.set_team(team);
     printf("Added agent %d to team %d\n", agent, team);
     return success;
 }

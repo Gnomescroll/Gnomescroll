@@ -52,6 +52,10 @@ void Agent_vox::init_parts(VoxBody* vox_dat) {
         unsigned char r,g,b,a;
         int j;
         int ix,iy,iz;
+        unsigned char team_r, team_g, team_b;
+        ClientState::get_team_color(this->a->status.team, &team_r, &team_g, &team_b);
+        if (this->a->status.team != 1 && this->a->status.team != 2) printf("Team=%d, part=%d\n", this->a->status.team, i);
+
         for (j=0; j<vp->colors.n; j++) {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];
@@ -66,7 +70,9 @@ void Agent_vox::init_parts(VoxBody* vox_dat) {
             && g == vp->colors.team_g
             && b == vp->colors.team_b)
             {
-                ClientState::get_team_color(this->a->status.team, &r, &g, &b);
+                r = team_r;
+                g = team_g;
+                b = team_b;
             }
 
             vv->set_color(ix, iy, iz, r,g,b,a);
