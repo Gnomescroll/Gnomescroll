@@ -23,7 +23,9 @@ static inline void pack_8(int* x, char* buff, int* buff_n, bool pack) __attribut
 static inline void pack_u8(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 
-static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+//static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+static inline void pack_string(char* str, int len, char* buff, int* buff_n, bool pack) __attribute((always_inline));
+
 //combined pack/unpack
 
 
@@ -107,6 +109,8 @@ static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack)
     *buff_n += sizeof(uint8_t);
 }
 
+
+/*
 static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
 {
     int i;
@@ -139,6 +143,21 @@ static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
         }
     }
 
+}
+*/
+
+static inline void pack_string(char* str, int len, char* buff, int* buff_n, bool pack)
+{
+    if (pack == true)
+    {
+        memcpy(buff+*buff_n, str, len);
+        *buff_n += len;
+    }
+    else
+    {
+        memcpy(str, buff+*buff_n, len);
+        *buff_n += len;   
+    }
 }
 
 //pop variables into a new one
