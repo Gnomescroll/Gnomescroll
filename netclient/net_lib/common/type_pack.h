@@ -23,6 +23,7 @@ static inline void pack_8(int* x, char* buff, int* buff_n, bool pack) __attribut
 static inline void pack_u8(int* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 
+static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack) __attribute((always_inline));
 //combined pack/unpack
 
 
@@ -106,6 +107,34 @@ static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack)
     *buff_n += sizeof(uint8_t);
 }
 
+static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
+{
+    int i;
+    bool str_end = false;
+    if (pack == true)
+    {
+        char c;
+        for (i=0; i<n; i++)
+        {
+            if (str_end)    // end of string was reached, fill with null
+                c = '\0';
+            else
+                if ((c = x[i]) == '\0')
+                    str_end = true;   // reached end of string
+
+            *((char*)(buff+*buff_n + (i*sizeof(char)))) = c;
+        }
+        *buff_n += sizeof(char) * n;
+        *((char*)(buff+*buff_n - sizeof(char))) = '\0'; // guarantee null terminated string
+    }
+    else
+        if (pack == false)
+        {
+            for (i=0; i<n; i++)
+                *x = *((char*)(buff+*buff_n + (i*sizeof(char))));
+            *buff_n += sizeof(char)*n;
+        }
+}
 
 //pop variables into a new one
 static inline uint8_t UPACK_uint8_t(char* buffer, int*n) {
