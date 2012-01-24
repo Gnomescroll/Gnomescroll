@@ -203,7 +203,7 @@ int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned c
             *b = two.b;
             break;
         default:
-            printf("CTF::get_team_color -- invalid team %d\n", team);
+            //printf("CTF::get_team_color -- invalid team %d\n", team);
             return 1;
     }
     return 0;

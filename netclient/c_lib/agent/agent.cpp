@@ -23,7 +23,7 @@ void Agent_list::draw()
         you = (agent->id == ClientState::playerAgent_state.agent_id);
         if (agent->vox == NULL) continue;
         
-        agent->vox->update(&agent_vox_dat);
+        agent->vox->update(&agent_vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
         if ((first_person && you) || agent->status.dead)
         {
             agent->vox->set_draw(false);
@@ -892,9 +892,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    //vox = new Agent_vox(this, &agent_vox_dat);
-    this->vox = new Agent_vox(this);
-    this->vox->init_parts(&agent_vox_dat);
+    this->vox = new Object_vox(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
     #endif
 }
 
@@ -937,8 +935,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    this->vox = new Agent_vox(this);
-    this->vox->init_parts(&agent_vox_dat);
+    this->vox = new Object_vox(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
     #endif
 }
 

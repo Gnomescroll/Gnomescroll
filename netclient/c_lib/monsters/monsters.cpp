@@ -19,7 +19,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Slime_vox(this, &slime_vox_dat);
+    this->vox = new Object_vox(SLIME_PART_NUM);
 }
 Slime::Slime(int id)
 :
@@ -30,7 +30,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Slime_vox(this, &slime_vox_dat);
+    this->vox = new Object_vox(SLIME_PART_NUM, &slime_vox_dat, this->id, this->type);
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
@@ -41,7 +41,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Slime_vox(this, &slime_vox_dat);
+    this->vox = new Object_vox(SLIME_PART_NUM);
 }
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
@@ -52,7 +52,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Slime_vox(this, &slime_vox_dat);
+    this->vox = new Object_vox(SLIME_PART_NUM, &slime_vox_dat, this->id, this->type);
 }
 
 Slime::~Slime()
@@ -195,7 +195,7 @@ void Slime_list::update() {
     for (i=0; i<this->n_max; i++) {
         if (this->a[i] == NULL) continue;
         if (this->a[i]->vox == NULL) continue;
-        this->a[i]->vox->update(&slime_vox_dat);
+        this->a[i]->vox->update(&slime_vox_dat, this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
     }
 }
 

@@ -89,7 +89,7 @@ class Agent_state {
         class Agent_weapons weapons;
 
         #ifdef DC_CLIENT
-        class Agent_vox* vox;
+        class Object_vox* vox;
         class Agent_event event;
         #endif
 
