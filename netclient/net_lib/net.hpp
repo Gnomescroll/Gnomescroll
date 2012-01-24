@@ -102,7 +102,6 @@ class FixedSizeNetPacketToClient {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
-            printf("unserialize size: %d\n", *size);
         }
 
         /*
@@ -176,7 +175,6 @@ class FixedSizeNetPacketToClient {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
             x.size = x._size();
-            printf("size=%d\n", x.size);
             register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
         }
 }; 

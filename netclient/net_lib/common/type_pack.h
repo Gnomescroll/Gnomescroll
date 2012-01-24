@@ -109,7 +109,6 @@ static inline void pack_u8(uint8_t* x, char* buff, int* buff_n, bool pack)
 
 static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
 {
-    printf("PACK_N n=%d\n", n);
     int i;
     bool str_end = false;
     if (pack == true)
@@ -127,9 +126,9 @@ static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
         }
         *buff_n += sizeof(char) * n;
         *((char*)(buff+*buff_n - sizeof(char))) = '\0'; // guarantee null terminated string
-        printf("pack_n packed: %s\n", (char*)(buff+*buff_n - (sizeof(char)*n)));
     }
-    else{
+    else
+    {
         if (pack == false)
         {
             for (i=0; i<n; i++)
@@ -138,7 +137,7 @@ static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
                 *buff_n += sizeof(char);
             }
         }
-        printf("pack_n unpacked: %s\n", x);}
+    }
 
 }
 
