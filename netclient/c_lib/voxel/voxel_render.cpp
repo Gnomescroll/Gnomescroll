@@ -208,7 +208,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     //attributes
     InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
-    InSide = glGetAttribLocation(voxel_shader_prog, "InNormal");
+    InSide = glGetAttribLocation(voxel_shader_prog, "InSide");
 
     init=1;
 }
@@ -250,6 +250,7 @@ void Voxel_render_list::draw()
     glEnableClientState(GL_COLOR_ARRAY);
     
     glEnableVertexAttribArray(InNormal);
+    glEnableVertexAttribArray(InSide);
     glEnableVertexAttribArray(InAO);
     //glEnableClientState(GL_NORMAL_ARRAY);
 
@@ -258,6 +259,7 @@ void Voxel_render_list::draw()
     
     //printf("innormal = %i \n", InNormal);
     glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
+    glVertexAttribPointer(InSide, 1, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
     glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
@@ -294,6 +296,7 @@ void Voxel_render_list::draw()
     //glDisableClientState(GL_NORMAL_ARRAY);
 
     glDisableVertexAttribArray(InNormal);
+    glDisableVertexAttribArray(InSide);
     glDisableVertexAttribArray(InAO);
 
     glEnable (GL_DEPTH_TEST);

@@ -102,7 +102,7 @@ class Voxel_volume
     { 
         unsigned int index= x+(y << index1)+(z << index12);
         if(index >= index_max) return 0;
-        if(voxel[x+(y << index1)+(z << index12)].color == 0) return 0;
+        if(voxel[index].color == 0) return 0;
         return 1;
     }
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline))

@@ -140,7 +140,7 @@ int LightMatrix1Loc_4;
 void setShaders4() 
 {
 
-    int DEBUG = 1;
+    int DEBUG = 0;
 
     shader_prog4 = glCreateProgramObjectARB();
     shader_vert4 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);

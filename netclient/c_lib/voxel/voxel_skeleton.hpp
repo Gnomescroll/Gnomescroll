@@ -28,8 +28,8 @@ class Voxel_loader
         {   
             jmp:
             while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n') (*index)++;
-            if(s[*index] != '#' || s[*index] == 0) return;
-            while(s[*index] != '\n' && s[*index] != 0) (*index)++;
+            if(s[*index] != '#' || s[*index] == '\0') return;
+            while(s[*index] != '\n' && s[*index] != '\0') (*index)++;
             goto jmp;
         }
 
@@ -52,7 +52,7 @@ class Voxel_loader
         int nbytes = fread(buffer, sizeof(char), size, fp);
         if ( nbytes != size )
         {
-            printf("load_skeleton_from_file: failed to write %zu bytes\n", nbytes);
+            printf("load_skeleton_from_file: failed to write %i bytes\n", nbytes);
             fclose(fp);
             return;       
         }

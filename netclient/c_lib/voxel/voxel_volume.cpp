@@ -288,17 +288,10 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
             _ao.ao[2] = vCalcAdj(CX[1], CX[3], CX[2]);
             _ao.ao[3] = vCalcAdj(CX[3], CX[5], CX[4]);
 
-            // bug? (all 4 calls were active)
             scratch[*index + 0].AO = _ao.AO;
             scratch[*index + 1].AO = _ao.AO;
             scratch[*index + 2].AO = _ao.AO;
             scratch[*index + 3].AO = _ao.AO;
-
-            // these look bad
-            //scratch[*index + 0].AO = _ao.AO;
-            //scratch[*index + 1].AO = _ao.AO;
-            //scratch[*index + 2].AO = _ao.AO;
-            //scratch[*index + 3].AO = _ao.AO;
         }
     }
 

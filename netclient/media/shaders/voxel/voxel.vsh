@@ -1,3 +1,4 @@
+#version 120
 
 uniform mat4 InRotationMatrix;
 
@@ -11,14 +12,14 @@ varying mat2 AOMatrix;
 
 varying vec2 texCoord;
 
-//const float coordArray = ( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
-const vec2 coordArray = ( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
+const float coordArray[8] =  float[8]( 0.0,0.0 , 1.0,0.0 , 1.0,1.0 , 0.0,1.0 );
+//const float coordArray[8] =  float[8]( 0.0,0.0 , 0.0,1.0 , 1.0,1.0 , 1.0,0.0 );
+
+//const vec2 coordArray[4] = vec2[4]( vec2(0.0,0.0) , vec2(0.0,1.0) , vec2(1.0,1.0) , vec2(1.0,0.0) );
 
 
 void main(void) 
 {
-	
-
 	gl_FrontColor = gl_Color;
 	vec4 pos = InRotationMatrix*gl_Vertex;
 	gl_Position = gl_ModelViewProjectionMatrix * pos;
@@ -29,7 +30,8 @@ void main(void)
 	diffuse = abs(dot(normal, light_dir ));
 	
 	AOMatrix = mat2(InAO[0], InAO[1], InAO[2], InAO[3] );
-	texCoord = vec2( coordArray[InSide], coordArray[InSide+1] ) ;
+	//texCoord = vec2( coordArray[InSide], coordArray[InSide+1] ) ;
+	texCoord = vec2( coordArray[2*InSide], coordArray[2*InSide+1] ) ;
 }
 
 /*
