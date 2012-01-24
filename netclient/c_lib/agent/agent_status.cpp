@@ -178,7 +178,9 @@ void Agent_status::respawn() {
     
     // restore health
     this->restore_health();
-
+    // restore ammo
+    this->a->weapons.restore_ammo();
+    
     // revive
     dead = false;
     agent_dead_StoC dead_msg;
