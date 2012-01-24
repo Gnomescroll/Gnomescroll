@@ -133,8 +133,10 @@ static inline void pack_n(char* x, int n, char* buff, int* buff_n, bool pack)
         if (pack == false)
         {
             for (i=0; i<n; i++)
-                *x = *((char*)(buff+*buff_n + (i*sizeof(char))));
-            *buff_n += sizeof(char)*n;
+            {
+                x[i] = *((char*)(buff+*buff_n));
+                *buff_n += sizeof(char);
+            }
         }
         printf("pack_n unpacked: %s\n", x);}
 
