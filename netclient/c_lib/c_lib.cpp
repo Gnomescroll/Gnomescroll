@@ -89,7 +89,7 @@
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
 
-#ifndef __APPLE__
+#ifdef linux
     #include <c_lib/SDL/IMG_savepng.c>
 #endif
 
