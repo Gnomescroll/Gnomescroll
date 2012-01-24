@@ -2,9 +2,18 @@
 
 #include "physics_timer.h"
 
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
 
-//extern "C" {
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
 
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 
 int f;
 long start_time;
@@ -13,7 +22,6 @@ long tick_n;
 
 long delta;
 
-//long Cget_time() ;
 
 long Cget_time() {
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
