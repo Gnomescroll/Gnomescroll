@@ -18,7 +18,7 @@ fov = 85.
 
 ''' Controls '''
 sensitivity = 100
-camera_speed = 0.3
+camera_speed = 0.8
 invert_mouse = False
 agent_motion = 'normal'
 
