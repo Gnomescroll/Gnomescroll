@@ -208,6 +208,9 @@ class AgentList(GenericObjectListWrapper):
         self._object_type = Agent
         print "Created python player agent", player_agent,player_agent.id
         GameStateGlobal.agent = player_agent
+        # switch from camera to agent input
+        InputGlobal.toggle_input_mode()
+        InputGlobal.toggle_camera_mode()
         return player_agent
 
     def destroy(self, agent):
@@ -331,3 +334,4 @@ class GenericMultiObjectList(GenericObjectList):
     
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
+from input import InputGlobal
