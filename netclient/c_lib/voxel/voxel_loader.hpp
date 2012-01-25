@@ -96,8 +96,11 @@ class Voxel_loader
             sscanf (buffer+index, "%f %f %f  %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
 
             printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
-            vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
-            vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
+
+            mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+
+            //vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
+            //vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
 
             index += read;
         }
@@ -194,8 +197,7 @@ class Voxel_loader
 
 void test_voxel_skeleton()
 {
-    static int count = 0;
-
+    //static int count = 0;
     class Voxel_loader vl;
     vl.read_skeleton("./media/voxel/test_skeleton");
 
