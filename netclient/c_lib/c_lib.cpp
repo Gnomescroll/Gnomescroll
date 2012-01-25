@@ -38,6 +38,7 @@
 #include <c_lib/voxel/voxel_body.cpp>
 #include <c_lib/voxel/object_vox.cpp>
 #include <c_lib/voxel/voxel_skeleton.cpp>
+#include <c_lib/voxel/voxel_loader.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
