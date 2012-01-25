@@ -228,7 +228,7 @@ void VoxBody::init_skeleton(int n_skeleton)
     vox_skeleton_world_matrix = new Mat4[n_skeleton];
 }
 
-void VoxBody::init(int n_parts) {
+void VoxBody::init_part(int n_parts) {
     if (inited) {
         printf("WARNING VoxBody::init -- called more than once\n");
         return;
