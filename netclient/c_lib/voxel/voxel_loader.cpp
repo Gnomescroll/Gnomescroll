@@ -32,7 +32,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
         delete[] buffer;
         return;       
     }
-    buffer[size+1] = '\0';
+    buffer[size] = '\0';
 
     char* str_tmp = new char[512];
     int n_parts;
@@ -123,7 +123,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
         delete[] buffer;
         return;       
     }
-    buffer[size+1] = '\0';
+    buffer[size] = '\0';
 
     int index = 0;
     int read;
