@@ -64,6 +64,8 @@ class VoxPart {
         #endif
         
         int part_num;
+        int skeleton_parent_matrix;
+
         float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
@@ -73,6 +75,7 @@ class VoxPart {
 
         VoxPart(
             int part_num,
+            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             bool biaxial=false
@@ -80,6 +83,7 @@ class VoxPart {
         
         VoxPart(
             int part_num,
+            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             float anchor_x, float anchor_y, float anchor_z,
@@ -117,6 +121,7 @@ class VoxBody {
         
         void set_part_properties(
             int part_num,
+            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             bool biaxial=false

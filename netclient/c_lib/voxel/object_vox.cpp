@@ -125,6 +125,8 @@ void Object_vox::update_last_state(float x, float y, float z, float theta, float
 void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta, float phi) {
 
     // prevent wastful update
+
+/*
     if (this->last_update_state.x == x
     &&  this->last_update_state.y == y
     &&  this->last_update_state.z == z
@@ -161,7 +163,7 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
             this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
         }
     }
-
+*/
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
 

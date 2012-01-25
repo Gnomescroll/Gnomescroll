@@ -35,6 +35,8 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
     }
     buffer[size] = '\0';
 
+    printf("Loading skeleton: %s \n", file_name);
+
     char* str_tmp = new char[512];
     int n_parts;
     int num_skeleton_nodes;
@@ -82,7 +84,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
         sscanf (buffer+index, "%d %d %s %n", &part_num, &skeleton_parent_matrix, str_tmp, &read);
         //printf ("%d %d %s %d\n", part_num, skeleton_parent_matrix, str_tmp, read);
         index += read;
-        read_voxel_volume(str_tmp, part_num, vox_dat);
+        read_voxel_volume(str_tmp, part_num, skeleton_parent_matrix, vox_dat);
     }
 
     // voxel part rotation, anchor
@@ -108,7 +110,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
     delete[] buffer;
 }
 
-void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
+void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix, VoxBody* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
 
@@ -147,10 +149,13 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
     sscanf (buffer+index, "%d %n", &biaxial, &read);
     index += read;
 
-    vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, (bool)biaxial);
+    vox_dat->set_part_properties(part_num, skeleton_parent_matrix, vox_size, xdim, ydim, zdim, (bool)biaxial);
     //printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
 
-    #ifdef DC_CLIENT
+/*
+    OMFG.  Use same voxel files on client/server
+    Read them in same way, but do different things
+*/
     // team
     int team;
     check_for_comments(buffer, &index);
@@ -163,7 +168,9 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
 
+    #ifdef DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
+    #endif
     //printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
 
     int ret;
@@ -189,14 +196,14 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
             break;
         }
         index += read;
-
+        #ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
+        #endif
         //printf("set_color: %d - %d %d %d - %d %d %d %d\n", part_num, x,y,z, r,g,b,a);
         vox_num++;
     }
 
     //printf("voxels: %i \n", vox_num);
-    #endif
     
     fclose(fp); 
     delete[] buffer;
