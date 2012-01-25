@@ -142,6 +142,9 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
             this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
         }
     }
+
+    this->set_skeleton_root(x,y,z, theta);
+    this->update_skeleton();
 }
 
 void Object_vox::right(Vector* f, float theta) {
@@ -197,6 +200,7 @@ inited(false)
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
     this->init_parts(vox_dat, id, type);
+    this->init_skeleton(vox_dat);
 }
 
 Object_vox::Object_vox(int num_parts, VoxBody* vox_dat, int id, int type, int team)
@@ -206,6 +210,7 @@ inited(false)
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
     this->init_parts(vox_dat, id, type, team);
+    this->init_skeleton(vox_dat);
 }
 
 Object_vox::~Object_vox() {

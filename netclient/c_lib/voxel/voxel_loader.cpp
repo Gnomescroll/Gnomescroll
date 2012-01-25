@@ -1,6 +1,7 @@
 #include "voxel_loader.hpp"
 
 #include <c_lib/voxel/voxel_skeleton.hpp>
+#include <sys/stat.h>
 
 off_t fsize(const char *filename) {
     struct stat st; 
