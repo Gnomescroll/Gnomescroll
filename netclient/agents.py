@@ -17,6 +17,7 @@ from game_state import GameStateGlobal
 from net_out import NetOut
 from input import InputGlobal
 import camera
+from object_lists import GenericObjectList, GenericObjectListWrapper
 
 '''
 Data model for agent
@@ -141,3 +142,52 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
     def set_hud_icons(self):
         for i in range(4):
             cHUD.Equipment.set_equipment_icon(i, i+1)
+
+
+# datastore for agents
+class AgentList(GenericObjectListWrapper):
+
+    def __init__(self):
+        from agents import Agent
+        GenericObjectListWrapper.__init__(self)
+        GenericObjectList.__init__(self)
+        self._metaname = 'AgentList'
+        self._itemname = 'Agent'
+        self._object_type = Agent
+        self._wrapper = cAgents.AgentListWrapper
+
+    def create(self, *args, **agent):
+        a = self._add(*args, **agent)
+        #print "Create check against player agent: %d" % (cAgents.get_player_agent_id())
+        if a.id == cAgents.get_player_agent_id():
+            self._remove(a, remove_c=False)
+            a = self.create_player_agent(*args, **agent)
+        return a
+
+    def by_client(self, id):
+        print self.values()
+        for agent in self.values():
+            if id == agent.client_id:
+                return agent
+
+    def create_player_agent(self, *args, **agent):
+        from agents import Agent, PlayerAgent
+        self._object_type = PlayerAgent
+        player_agent = self._add(*args, **agent)
+        self._object_type = Agent
+        print "Created python player agent", player_agent,player_agent.id
+        GameStateGlobal.agent = player_agent
+        # switch from camera to agent input
+        InputGlobal.toggle_input_mode()
+        InputGlobal.toggle_camera_mode()
+        return player_agent
+
+    def destroy(self, agent):
+        self._remove(agent)
+        return agent
+
+    def load_list(self, objs):
+        _objs = []
+        for obj in objs:
+            _objs.append(self.create(**obj))
+        return _objs

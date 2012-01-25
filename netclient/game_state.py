@@ -41,8 +41,7 @@ class GameStateGlobal:
 
         return stats
 
-from object_lists import AgentList
-from agents import Agent, PlayerAgent
+from agents import Agent, PlayerAgent, AgentList
 from net_client import NetClientGlobal
 from net_out import NetOut
 
