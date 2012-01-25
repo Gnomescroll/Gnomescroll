@@ -46,8 +46,9 @@ class Agent(cAgents.AgentWrapper):
         return val
 
     def json(self, properties=None):
-        d = {
-            'id':   self.id,
-            'name': self.name
-            }
-        return d
+        #d = {
+            #'id':   self.id,
+            ##'name': self.name
+            #}
+        #return d
+        return {}

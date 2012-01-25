@@ -31,8 +31,9 @@ class Agent(cAgents.AgentWrapper):
         print 'Python Agent creation: id %s' % (self.id,)
 
     def update_info(self, **agent):
-        if 'name' in agent:
-            self.name = agent['name']
+        pass
+        #if 'name' in agent:
+            #self.name = agent['name']
 
     def __getattribute__(self, name):
         try:

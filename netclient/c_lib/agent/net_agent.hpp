@@ -343,13 +343,29 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
     public:
         int id;
         int team;
+        char name[PLAYER_NAME_MAX_LENGTH];
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&team, buff, buff_n, pack);
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
         }
 
+        inline void handle();
+};
+
+class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC>
+{
+    public:
+        int id;
+        char name[PLAYER_NAME_MAX_LENGTH];
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
         inline void handle();
 };
 

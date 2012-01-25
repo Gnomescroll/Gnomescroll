@@ -102,6 +102,15 @@ inline void agent_create_StoC::handle() {
     //printf("C Agent created. id: %d\n", a->id);
 }
 
+inline void agent_name_StoC::handle()
+{
+    printf("AGENT NAME PACKET RECEIVED\n");
+    printf("id=%d name=%s\n", id, name);
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a==NULL) printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);   
+    a->status.set_name(name);
+}
+
 inline void agent_destroy_StoC::handle() {
     ClientState::agent_list.destroy(id);
 }
@@ -173,6 +182,7 @@ inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
 inline void AgentActiveWeapon_StoC::handle() {}
 inline void AgentReloadWeapon_StoC::handle() {}
+inline void agent_name_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;

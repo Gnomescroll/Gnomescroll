@@ -5,7 +5,7 @@
 
 #include <common/enum_types.hpp>
 
-const int PLAYER_NAME_MAX_LENGTH = 24;
+const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 
 class Agent_state;  // forward declaration
 class PlayerAgent_state;
@@ -30,6 +30,7 @@ class Base_status {
         unsigned int flag_captures;
 
         void set_name(char* n);
+        void set_name(char* n, int id);
 
         Base_status();
 };
@@ -44,6 +45,7 @@ class Agent_status: public Base_status {
         Agent_state* a;
 
     public:
+        //void set_name(char* name);
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
         int die();

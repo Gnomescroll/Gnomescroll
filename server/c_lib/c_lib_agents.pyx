@@ -17,6 +17,7 @@ cdef extern from "./agent/agent.hpp":
         bool jump_ready
 
 cdef extern from "./agent/agent_status.hpp":
+    unsigned int PLAYER_NAME_MAX_LENGTH
     cdef cppclass Agent_status:
         int health
         bool dead
@@ -25,6 +26,8 @@ cdef extern from "./agent/agent_status.hpp":
         int kills
         int deaths
         int suicides
+        char* name
+        void set_name(char* name, int id)
         
 #Agent_state
 cdef extern from "./agent/agent.hpp":
@@ -69,6 +72,7 @@ class AgentWrapper(object):
         'kills',
         'deaths',
         'suicides',
+        'name',
     ]
 
     def __init__(self, int client_id):
@@ -135,11 +139,22 @@ class AgentWrapper(object):
         elif name == 'suicides':
             return a.status.suicides
 
+        elif name == 'name':
+            return a.status.name
+
         #elif name == 'crouching':
         #    return a.s.crouching
 
         raise AttributeError
 
+def set_agent_name(int id, name):
+    name = name[:PLAYER_NAME_MAX_LENGTH]
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a == NULL:
+        print "cAgents -- set_agent_name, agent %d unknown. Name=%s" % (id, name,)
+        return
+    a.status.set_name(name, id)
 
 #functions
 

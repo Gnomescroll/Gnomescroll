@@ -32,6 +32,7 @@ cdef extern from "./physics/vector.hpp":
 from libcpp cimport bool
 
 cdef extern from "./agent/agent_status.hpp":
+    unsigned int PLAYER_NAME_MAX_LENGTH
     cdef cppclass Agent_status:
         int health
         bool dead
@@ -41,6 +42,7 @@ cdef extern from "./agent/agent_status.hpp":
         unsigned int deaths
         unsigned int suicides
         unsigned int health_max
+        char* name
 
 cdef extern from "./agent/agent_weapons.hpp":
     cdef cppclass Agent_weapons:
@@ -307,6 +309,7 @@ class AgentWrapper(object):
         'deaths',
         'suicides',
         'active_weapon',
+        'name',
     ]
 
     def __init__(self, int id):
@@ -379,6 +382,9 @@ class AgentWrapper(object):
 
         elif name == 'active_weapon':
             return a.weapons.active
+
+        elif name == 'name':
+            return a.status.name
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError

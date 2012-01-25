@@ -27,13 +27,28 @@ has_flag(false),
 flag_captures(0)
 {}
 
-void Base_status::set_name(char* n)
+void Base_status::set_name(char* name)
 {
-    int i;
-    for (i=0; i<PLAYER_NAME_MAX_LENGTH && n[i] != '\0'; i++) {
-        name[i] = n[i];
-    }
-    name[i] = '\0';
+    if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+        name[PLAYER_NAME_MAX_LENGTH] = '\0';
+    strcpy(this->name, name);
+}
+
+// instead of reading this->a->id in Agent_status, I do this here
+// because the Base_status method was being called
+// instead of the overriding Agent_status set_name method
+// C++ thing
+void Base_status::set_name(char* name, int id)
+{
+    if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+        name[PLAYER_NAME_MAX_LENGTH] = '\0';
+    strcpy(this->name, name);
+    #ifdef DC_SERVER
+    agent_name_StoC msg;
+    msg.id = id;
+    strcpy(msg.name, this->name);
+    msg.broadcast();
+    #endif
 }
 
 int Agent_status::apply_damage(int dmg) {
