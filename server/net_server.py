@@ -84,7 +84,7 @@ class PyClient:
         self.send_agents()
         self.send_monsters()
         self.send_ctf()
-        self.send_name_to_clients()
+        #self.send_name_to_clients()
 
     def send_agents(self):
         cAgents.AgentListWrapper.send_to_client(self.client_id)
@@ -95,10 +95,10 @@ class PyClient:
     def send_ctf(self):
         cGameModes.send_ctf_to_client(self.client_id)
 
-    def send_name_to_clients(self):
-        for client in NetServer.connectionPool.clients_by_id.values():
-            if client.id == self.client_id: continue
-            client.sendMessage.send_agent_name(self.agent.id, self.name)
+    #def send_name_to_clients(self):
+        #for client in NetServer.connectionPool.clients_by_id.values():
+            #if client.id == self.client_id: continue
+            #client.sendMessage.send_agent_name(self.agent.id, self.name)
 
     def send_map(self):
         print "Sending map"
