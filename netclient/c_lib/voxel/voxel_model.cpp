@@ -59,16 +59,6 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i];
-        //nth voxel volume
-
-        //vp->skeleton_parent_matrix 
-        //struct Mat4* parent_world_matrix;
-    }
-
-    if (!this->vox_inited)
-    {
-        printf("Voxel_model::init_skeleton, ERROR, voxel volumes do not exist yet! wrong init order \n");
-        return;
     }
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for(int i=0; i<this->n_parts; i++)
