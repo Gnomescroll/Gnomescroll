@@ -33,14 +33,14 @@ class VoxPartRotation {
         VoxPartRotation(float x, float y, float z);
 };
 
-class VoxPartOrientation {
+class VoxPartAnchor {
     public:
         float x,y,z;
 
         void set(float x, float y, float z);
 
-        VoxPartOrientation();
-        VoxPartOrientation(float x, float y, float z);
+        VoxPartAnchor();
+        VoxPartAnchor(float x, float y, float z);
 };
 
 class VoxPartDimension {
@@ -57,7 +57,7 @@ class VoxPartDimension {
 class VoxPart {
     public:
         VoxPartRotation rotation;
-        VoxPartOrientation orientation;
+        VoxPartAnchor anchor;
         VoxPartDimension dimension;
         #ifdef DC_CLIENT
         VoxColors colors;
@@ -68,7 +68,7 @@ class VoxPart {
         bool biaxial; // true for horizontal+vertical (head). default=false
 
         void set_rotation(float x, float y, float z);
-        void set_orientation(float x, float y, float z);
+        void set_anchor(float x, float y, float z);
         void set_dimension(int x, int y, int z);
 
         VoxPart(
@@ -82,7 +82,7 @@ class VoxPart {
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
-            float orientation_x, float orientation_y, float orientation_z,
+            float anchor_x, float anchor_y, float anchor_z,
             float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
@@ -110,7 +110,7 @@ class VoxBody {
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
-            float orientation_x, float orientation_y, float orientation_z,
+            float anchor_x, float anchor_y, float anchor_z,
             float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
@@ -124,7 +124,7 @@ class VoxBody {
 
         void set_part_spatials(
             int part_num,
-            float orientation_x, float orientation_y, float orientation_z,
+            float anchor_x, float anchor_y, float anchor_z,
             float rotation_x, float rotation_y, float rotation_z
         );
 

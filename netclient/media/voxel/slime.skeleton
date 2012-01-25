@@ -2,9 +2,9 @@
 1 1
 #connection matrix
 0 0
-#skeleton_node: orientation, x,y,z rotatation x,y,z
+#skeleton_node: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
 #node number, skeleton parent matrix, voxel volume
 0 0 media/voxel/slime.dcvox
-#voxel: orientation, x,y,z rotatation x,y,z
+#voxel: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0

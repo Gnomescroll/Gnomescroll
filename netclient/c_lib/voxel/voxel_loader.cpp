@@ -84,7 +84,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
         read_voxel_volume(str_tmp, part_num, vox_dat);
     }
 
-    // voxel part rotation, orientation
+    // voxel part rotation, anchor
     for (int i=0; i<n_parts; i++)
     {
         int part_num;

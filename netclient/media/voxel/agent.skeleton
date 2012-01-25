@@ -7,7 +7,7 @@
 3 0
 4 0
 5 0
-#skeleton_node: orientation, x,y,z rotatation x,y,z
+#skeleton_node: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
 1 0.0 1.0 0.0  0.0 0.0 0.0
 2 0.0 -1.0 0.0  0.0 0.0 0.0
@@ -21,7 +21,7 @@
 3 3 media/voxel/agent_left_arm.dcvox
 4 4 media/voxel/agent_right_leg.dcvox
 5 5 media/voxel/agent_left_leg.dcvox
-#voxel: orientation, x,y,z rotatation x,y,z
+#voxel: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
 1 0.0 0.0 0.0  0.0 0.0 0.0
 2 0.0 0.0 0.0  0.0 0.0 0.0

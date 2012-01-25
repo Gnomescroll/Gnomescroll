@@ -10,7 +10,6 @@
 #ifdef DC_CLIENT
 void VoxColors::init(int dx, int dy, int dz)
 {
-    printf("VoxColors init'ing with x,y,z = %d,%d,%d\n", dx,dy,dz);
     if (this->rgba != NULL)
     {
         printf("WARNING VoxColors::init -- rgba is not NULL (called twice?)\n");
@@ -132,18 +131,18 @@ VoxPartRotation::VoxPartRotation(float x, float y, float z)
 x(x), y(y), z(z)
 {}
 
-/* Orientation */
+/* Anchor */
 
-void VoxPartOrientation::set(float x, float y, float z)
+void VoxPartAnchor::set(float x, float y, float z)
 {
     this->x = x;
     this->y = y;
     this->z = z;
 }
 
-VoxPartOrientation::VoxPartOrientation()
+VoxPartAnchor::VoxPartAnchor()
 {}
-VoxPartOrientation::VoxPartOrientation(float x, float y, float z)
+VoxPartAnchor::VoxPartAnchor(float x, float y, float z)
 :
 x(x), y(y), z(z)
 {}
@@ -177,9 +176,9 @@ void VoxPart::set_rotation(float x, float y, float z)
     rotation.set(x,y,z);
 }
 
-void VoxPart::set_orientation(float x, float y, float z)
+void VoxPart::set_anchor(float x, float y, float z)
 {
-    orientation.set(x,y,z);
+    anchor.set(x,y,z);
 }
 
 void VoxPart::set_dimension(int x, int y, int z)
@@ -191,12 +190,12 @@ VoxPart::VoxPart(
     int part_num,
     float vox_size,
     int dimension_x, int dimension_y, int dimension_z,
-    float orientation_x, float orientation_y, float orientation_z,
+    float anchor_x, float anchor_y, float anchor_z,
     float rotation_x, float rotation_y, float rotation_z,
     bool biaxial
 ):
 rotation(rotation_x, rotation_y, rotation_z),
-orientation(orientation_x, orientation_y, orientation_z),
+anchor(anchor_x, anchor_y, anchor_z),
 dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
 vox_size(vox_size),
@@ -261,7 +260,7 @@ void VoxBody::set_part(
     int part_num,
     float vox_size,
     int dimension_x, int dimension_y, int dimension_z,
-    float orientation_x, float orientation_y, float orientation_z,
+    float anchor_x, float anchor_y, float anchor_z,
     float rotation_x, float rotation_y, float rotation_z,
     bool biaxial
 )
@@ -273,7 +272,7 @@ void VoxBody::set_part(
                 part_num,
                 vox_size,
                 dimension_x, dimension_y, dimension_z,
-                orientation_x, orientation_y, orientation_z,
+                anchor_x, anchor_y, anchor_z,
                 rotation_x, rotation_y, rotation_z,
                 biaxial
             );
@@ -283,7 +282,7 @@ void VoxBody::set_part(
         p->vox_size = vox_size;
         p->set_dimension(dimension_x, dimension_y, dimension_z);
         p->set_rotation(rotation_x, rotation_y, rotation_z);
-        p->set_orientation(orientation_x, orientation_y, orientation_z);
+        p->set_anchor(anchor_x, anchor_y, anchor_z);
         #ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
         #endif
@@ -321,7 +320,7 @@ void VoxBody::set_part_properties(
 
 void VoxBody::set_part_spatials(
     int part_num,
-    float orientation_x, float orientation_y, float orientation_z,
+    float anchor_x, float anchor_y, float anchor_z,
     float rotation_x, float rotation_y, float rotation_z
 )
 {
@@ -333,7 +332,7 @@ void VoxBody::set_part_spatials(
         return;
     }
     p->set_rotation(rotation_x, rotation_y, rotation_z);
-    p->set_orientation(orientation_x, orientation_y, orientation_z);
+    p->set_anchor(anchor_x, anchor_y, anchor_z);
 }
 
 #ifdef DC_CLIENT
