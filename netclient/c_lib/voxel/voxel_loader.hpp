@@ -199,7 +199,7 @@ void test_voxel_skeleton()
 {
     //static int count = 0;
     class Voxel_loader vl;
-    vl.read_skeleton("./media/voxel/test_skeleton");
+    vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
 
     //class Voxel_skeleton a((char*) test_string);
 }
