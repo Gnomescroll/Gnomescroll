@@ -23,7 +23,6 @@ void CTF::init() {
     char team_name_two[] = "Ex-military";
     two.set_name(team_name_two);
 }
-
 void CTF::start() {
     float x,y,z;
 
@@ -52,6 +51,22 @@ void CTF::start() {
     z = _get_highest_open_block(x,y);
     x += randf();y += randf();
     this->set_flag_position(2,x,y,z);
+}
+
+void CTF::set_team_name(int team, char* name)
+{
+    switch (team)
+    {
+        case 1:
+            one.set_name(name);
+            break;
+        case 2:
+            two.set_name(name);
+            break;
+        default:
+            printf("CTF::set_team_name -- invalid team %d\n", team);
+            return;
+    }
 }
 
 void CTF::set_score(int team, int score)
@@ -239,16 +254,19 @@ void CTF::send_to_client(int client_id)
     // send flag/base states
     Flag* flag;
     Base* base;
+    char *name;
     int i;
     for (i=1; i<=2; i++) {
         switch (i) {
             case 1:
                 flag = one.flag;
                 base = one.base;
+                name = one.name;
                 break;
             case 2:
                 flag = two.flag;
                 base = two.base;
+                name = two.name;
                 break;
             default:
                 break;
@@ -266,6 +284,11 @@ void CTF::send_to_client(int client_id)
         base_msg.y = base->y;
         base_msg.z = base->z;
         base_msg.sendToClient(client_id);
+
+        TeamName_StoC name_msg;
+        name_msg.team = i;
+        strcpy(name_msg.name, name);
+        name_msg.sendToClient(client_id);
     }
 }
 

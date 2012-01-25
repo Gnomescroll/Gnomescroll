@@ -15,9 +15,9 @@ inline void AgentJoinTeam_StoC::handle() {
     }
 }
 
-//inline void TeamName_StoC::handle() {
-    //ClientState::CTF.set_team_name(team, name);
-//}
+inline void TeamName_StoC::handle() {
+    ClientState::ctf.set_team_name(team, name);
+}
 
 inline void TeamScore_StoC::handle() {
     ClientState::ctf.set_score(team, score);
@@ -68,7 +68,7 @@ inline void AgentAutoAssignTeam_CtoS::handle(){}
 // dummies
 inline void TeamColor_StoC::handle(){}
 inline void AgentJoinTeam_StoC::handle(){}
-//inline void TeamName_StoC::handle(){}
+inline void TeamName_StoC::handle(){}
 inline void TeamScore_StoC::handle() {}
 inline void FlagState_StoC::handle() {}
 inline void BaseState_StoC::handle() {}

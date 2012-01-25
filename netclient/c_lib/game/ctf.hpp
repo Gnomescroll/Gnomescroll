@@ -36,6 +36,8 @@ class CTF {
         void init();
         void start();
 
+        void set_team_name(int team, char* name);
+        
         void set_score(int team, int score);
         void set_flag_position(int team, float x, float y, float z);
         void set_base_position(int team, float x, float y, float z);

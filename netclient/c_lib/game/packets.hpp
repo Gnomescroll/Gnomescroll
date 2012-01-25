@@ -4,6 +4,8 @@
 #include <net_lib/global.hpp>
 #include <net_lib/export.hpp>
 
+#include <c_lib/game/teams.hpp>
+
 /*
     Packet that handles startup
 */
@@ -85,33 +87,19 @@ class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentA
         inline void handle();
 };
 
-// Needs: string packing
-//class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
-//{
-    //public:
-        //int team;
-        //char name[TEAM_NAME_MAX_LENGTH];
+class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
+{
+    public:
+        int team;
+        char name[TEAM_NAME_MAX_LENGTH];
 
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //int i;
-            //for (i=0; i<TEAM_NAME_MAX_LENGTH && name[i] != '\0'; i++)
-                //pack_u8(name[i], buff, buff_n, pack);
-            //// dont copy null terminator
-        //}
-        //inline void handle();
-
-        //TeamName_StoC(){}
-        //TeamName_StoC(int team, char* name)
-        //: team(team)
-        //{
-            //int i;
-            //for (i=0; i<TEAM_NAME_MAX_LENGTH && i != '\0'; i++) {
-                //this->name[i] = name[i];
-            //}
-            //// dont copy null terminator
-        //}
-//};
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&team, buff, buff_n, pack);
+            pack_string(name, TEAM_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 class TeamScore_StoC: public FixedSizeReliableNetPacketToClient<TeamScore_StoC>
 {

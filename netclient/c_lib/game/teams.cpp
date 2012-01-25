@@ -20,11 +20,9 @@ void Team::init(int id)
 }
 
 void Team::set_name(char* name) {
-    int i;
-    for (i=0; i<TEAM_NAME_MAX_LENGTH && name[i] != '\0'; i++) {
-        this->name[i] = name[i];
-    }
-    name[i] = '\0';
+    name[TEAM_NAME_MAX_LENGTH-1] = '\0';
+    strcpy(this->name, name);
+    printf("Team name is %s\n", name);
 }
 
 void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
