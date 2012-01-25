@@ -13,6 +13,7 @@ class Voxel_model
         void set_skeleton_root(float x, float y, float z, float theta);
         void update_skeleton();  //recalculate world view matrices
 
+        //skeleton
         bool skeleton_inited;
 
         bool skeleton_needs_update;
@@ -21,9 +22,10 @@ class Voxel_model
         struct Mat4* vox_skeleton_local_matrix;
         struct Mat4* vox_skeleton_world_matrix;
         
-        bool inited;
 
-        //parts list
+        //parts voxel volume parst
+        bool vox_inited;
+        
         int n_parts;
         void init_parts(VoxDat* vox_dat, int id, int type);
         void init_parts(VoxDat* vox_dat, int id, int type, int team);

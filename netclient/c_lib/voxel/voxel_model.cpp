@@ -64,8 +64,12 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
 
 void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
     // create each vox part from vox_dat conf
-    if (this->inited) return;
-    this->inited = true;
+    if (this->vox_inited)
+    { 
+        printf("Voxel_model::init_parts error!! inited twice \n");
+        return;
+    }
+    this->vox_inited = true;
     int i;
     int x,y,z;
     VoxPart *vp;
@@ -179,7 +183,8 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
 
 Voxel_model::Voxel_model(int num_parts)
 :
-inited(false)
+vox_inited(false)
+skeleton_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
@@ -187,7 +192,8 @@ inited(false)
 
 Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type)
 :
-inited(false)
+vox_inited(false),
+skeleton_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
@@ -197,7 +203,8 @@ inited(false)
 
 Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team)
 :
-inited(false)
+vox_inited(false),
+skeleton_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
