@@ -9,6 +9,7 @@
 
 void VoxColors::init(int dx, int dy, int dz)
 {
+    printf("VoxColors init'ing with x,y,z = %d,%d,%d\n", dx,dy,dz);
     if (this->rgba != NULL)
     {
         printf("WARNING VoxColors::init -- rgba is not NULL (called twice?)\n");

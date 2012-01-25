@@ -188,6 +188,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
         index += read;
 
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
+        //printf("set_color: %d - %d %d %d - %d %d %d %d\n", part_num, x,y,z, r,g,b,a);
         vox_num++;
     }
 
