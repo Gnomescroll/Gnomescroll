@@ -244,9 +244,7 @@ void CTF::auto_assign_agent(int agent_id) {
 
 void CTF::send_to_client(int client_id)
 {
-    // send scores TODO
-
-    // send flag/base states
+    // send flag/base states, scores, team names
     Flag* flag;
     Base* base;
     char *name;

@@ -62,9 +62,6 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
         if (vv->hitscan)
             STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
-    #ifdef DC_CLIENT
-    //ClientState::voxel_render_list.update_vertex_buffer_object();
-    #endif
 }
 
 void Object_vox::set_draw(bool draw) {
@@ -245,9 +242,6 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
         if (vv->hitscan)
             STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
-    #ifdef DC_CLIENT
-    //ClientState::voxel_render_list.update_vertex_buffer_object();
-    #endif
 }
 
 void Object_vox::update_team_color(VoxBody* vox_dat, int team)

@@ -103,7 +103,7 @@ inline int t_UNPACK_int(unsigned char* buffer, int*n) {
 // store a partially decompressed chunk here
 static const int t_chunk_buff_size = (int)(vm_chunk_voxel_size * sizeof(unsigned short)) + (3 * sizeof(int));
 /*@null@*/ unsigned char* t_chunk_buff = NULL;
-static int t_chunk_buff_index = 0;
+//static int t_chunk_buff_index = 0;
 
 int chunk_buffer_init() {
     if (t_chunk_buff == NULL) {
