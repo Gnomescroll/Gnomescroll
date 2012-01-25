@@ -260,4 +260,11 @@ void Agent_status::score_flag() {
 void Agent_status::set_team(int team)
 {
     this->team = team;
+
+    this->dead = true;
+    agent_dead_StoC dead_msg;
+    dead_msg.id = a->id;
+    dead_msg.dead = dead;
+    dead_msg.broadcast();
+
 }
