@@ -24,7 +24,6 @@ void Object_vox::set_skeleton_root(float x, float y, float z, float theta)
     vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(0.0,0.0,0.0, 0.0,0.0,theta);
 }
 
-
 void Object_vox::update_skeleton()
 {
     for(int i=1; i<n_skeleton_nodes; i++)
@@ -35,7 +34,6 @@ void Object_vox::update_skeleton()
         );
     }    
 }
-
 
 void Object_vox::init_skeleton(VoxBody* vox_dat)
 {
@@ -56,15 +54,6 @@ void Object_vox::init_skeleton(VoxBody* vox_dat)
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i];
     }
 }
-
-/*
-    bool skeleton_needs_update;
-    int n_skeleton_nodes;
-    int* vox_skeleton_transveral_list;
-    struct Mat4* vox_skeleton_local_matrix;
-    struct Mat4* vox_skeleton_world_matrix;
-*/        
-
 
 void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
     // create each vox part from vox_dat conf
@@ -124,7 +113,37 @@ void Object_vox::set_hitscan(bool hitscan) {
     }
 }
 
+void Object_vox::update_last_state(float x, float y, float z, float theta, float phi)
+{
+    this->last_update_state.x = x;
+    this->last_update_state.y = y;
+    this->last_update_state.z = z;
+    this->last_update_state.theta = theta;
+    this->last_update_state.phi = phi;
+}
+
 void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta, float phi) {
+
+    // prevent wastful update
+    if (this->last_update_state.x == x
+    &&  this->last_update_state.y == y
+    &&  this->last_update_state.z == z
+    &&  this->last_update_state.theta == theta
+    )
+    {
+        if (this->last_update_state.phi != phi)
+        {
+            for (int i=0; i<this->n_parts; i++)
+            {
+                if (vox_dat->vox_part[i]->biaxial)
+                {
+                    this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
+                }
+            }
+        }
+        this->update_last_state(x,y,z,theta,phi);
+        return;
+    }
 
     VoxPart* vp;
     float ax,ay,az;
@@ -145,44 +164,8 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
 
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-}
 
-void Object_vox::right(Vector* f, float theta) {
-    f->x = cos(theta * PI + PI/2);
-    f->y = sin(theta * PI + PI/2);
-    f->z = 0.0f;
-    normalize_vector(f);
-}
-
-void Object_vox::forward(Vector* f, float theta) {
-    f->x = cos(theta * PI);
-    f->y = sin(theta * PI);
-    f->z = 0.0f;
-    normalize_vector(f);
-}
-
-void Object_vox::look(Vector* f, float theta, float phi) {
-    f->x = cos(theta * PI) * cos(phi * PI);
-    f->y = sin(theta * PI) * cos(phi * PI);
-    f->z = sin(phi);
-    normalize_vector(f);
-}
-
-void Object_vox::look(float f[3], float theta, float phi) {
-    f[0] = cos(theta * PI) * cos(phi * PI);
-    f[1] = sin(theta * PI) * cos(phi * PI);
-    f[2] = sin(phi);
-    normalize_vector_f(&f[0], &f[1], &f[2]);
-}
-
-void Object_vox::look(double f[3], double theta, double phi) {
-    f[0] = cos(theta * PI) * cos(phi * PI);
-    f[1] = sin(theta * PI) * cos(phi * PI);
-    f[2] = sin(phi);
-    double len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
-    f[0] /= len;
-    f[1] /= len;
-    f[2] /= len;
+    this->update_last_state(x,y,z,theta,phi);
 }
 
 Object_vox::Object_vox(int num_parts)
