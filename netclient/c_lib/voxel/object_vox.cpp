@@ -131,7 +131,6 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
     &&  this->last_update_state.theta == theta
     )
     {
-        printf("Saved an update\n");
         if (this->last_update_state.phi != phi)
         {
             for (int i=0; i<this->n_parts; i++)
@@ -139,7 +138,6 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
                 if (vox_dat->vox_part[i]->biaxial)
                 {
                     this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
-                    printf("But updating head\n");
                 }
             }
         }
