@@ -158,7 +158,7 @@ void Agent_status::kill(int victim_id) {
 }
 
 int Agent_status::score() {
-    return kills - suicides;
+    return kills - suicides + (flag_captures * 3);
 }
 
 void Agent_status::send_scores(int client_id) {
