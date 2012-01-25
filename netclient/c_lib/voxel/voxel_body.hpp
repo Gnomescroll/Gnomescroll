@@ -1,8 +1,8 @@
 #pragma once
 
-#include <physics/vec3.hpp>
-#include <physics/vec4.hpp>
-#include <physics/mat3.hpp>
+//#include <physics/vec3.hpp>
+//#include <physics/vec4.hpp>
+//#include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 
 /* Dat storage */
