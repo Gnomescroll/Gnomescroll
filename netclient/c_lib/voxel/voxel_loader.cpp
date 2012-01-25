@@ -153,9 +153,11 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
     //printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
 
 /*
-    OMFG.  Use same voxel files on client/server
+    !!!OMFG.
+      Use same voxel files on client/server
     Read them in same way, but do different things
 */
+    //#ifdef DC_CLIENT
     // team
     int team;
     check_for_comments(buffer, &index);
@@ -168,9 +170,9 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
 
-    #ifdef DC_CLIENT
+#ifdef DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
-    #endif
+#endif
     //printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
 
     int ret;
@@ -196,13 +198,13 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
             break;
         }
         index += read;
-        #ifdef DC_CLIENT
+    #ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
-        #endif
+    #endif
         //printf("set_color: %d - %d %d %d - %d %d %d %d\n", part_num, x,y,z, r,g,b,a);
         vox_num++;
     }
-
+    //#endif
     //printf("voxels: %i \n", vox_num);
     
     fclose(fp); 
