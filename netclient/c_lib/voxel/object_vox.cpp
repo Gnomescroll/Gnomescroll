@@ -37,6 +37,13 @@ void Object_vox::update_skeleton()
 
 void Object_vox::init_skeleton(VoxBody* vox_dat)
 {
+    if( skeleton_inited == true )
+    {
+        printf("Object_vox::init_skeleton error!! inited twice \n");
+        return;
+    }
+    skeleton_inited = true;
+
     skeleton_needs_update = true;
     n_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
@@ -208,6 +215,17 @@ Object_vox::~Object_vox() {
             STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
         }
         delete[] this->vv;
+    }
+
+    if(skeleton_inited == true)
+    {
+        delete[] vox_skeleton_transveral_list;
+        delete[] vox_skeleton_local_matrix;
+        delete[] vox_skeleton_world_matrix;
+    }
+    else
+    {
+        printf("Object_vox::~Object_vox, error! skeleton not inited \n");
     }
 }
 

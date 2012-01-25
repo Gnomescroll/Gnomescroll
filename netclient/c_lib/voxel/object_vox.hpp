@@ -13,6 +13,8 @@ class Object_vox
         void set_skeleton_root(float x, float y, float z, float theta);
         void update_skeleton();  //recalculate world view matrices
 
+        bool skeleton_inited;
+        
         bool skeleton_needs_update;
         int n_skeleton_nodes;
         int* vox_skeleton_transveral_list;
