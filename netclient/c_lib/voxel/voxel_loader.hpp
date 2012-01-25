@@ -87,6 +87,16 @@ class Voxel_loader
             vox_skel->skeleton_tree[2*i+1] = x2;
         }
 
+        for(int i=0; i<num_volumes; i++)
+        {
+            float x,y,z;
+            float rx,ry,rz;
+
+            check_for_comments(buffer, &index);
+            sscanf (buffer+index, "%f %f %f  %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
+            index += read;
+        }
+
         if(index > size)
         {
             printf("voxel_skeleton_read: buffer overflow, index= %i, size= %i \n", index, size);

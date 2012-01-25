@@ -13,6 +13,9 @@ float row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inl
 
 float row_mult_column(float* r, int i, float *c, int j)
 {
+    return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
+}
+
 /*
     r[4*0+i]
     r[4*1+i]
@@ -24,9 +27,6 @@ float row_mult_column(float* r, int i, float *c, int j)
     c[4*j+2]
     c[4*j+3]
 */
-    return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
-}
-
 
 struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
 
