@@ -39,6 +39,7 @@
 #include <c_lib/voxel/object_vox.cpp>
 #include <c_lib/voxel/voxel_skeleton.cpp>
 #include <c_lib/voxel/voxel_loader.cpp>
+#include <c_lib/voxel/vox_dat_init.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
@@ -133,6 +134,8 @@ int init_c_lib() {
     printf("init c_lib\n");
 
     srand(time(NULL));   // seed the RNG
+
+    init_vox_dats();
 
     init_network();
     init_net_client();

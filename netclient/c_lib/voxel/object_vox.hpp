@@ -8,7 +8,6 @@ class Object_vox
 {
     public:
 
-
         //skeleton
         void init_skeleton(VoxBody* vox_dat);
         void set_skeleton_root(float x, float y, float z, float theta);

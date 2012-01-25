@@ -117,8 +117,6 @@ void CCamera::move(float dx, float dy, float dz) {
 
 void CCamera::world_projection() {
 
-    test_voxel_skeleton();
-    
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_PROJECTION);

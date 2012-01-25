@@ -94,3 +94,5 @@ netclient/media/maps/*
 mapsave*
 
 core
+
+voxtmp/*

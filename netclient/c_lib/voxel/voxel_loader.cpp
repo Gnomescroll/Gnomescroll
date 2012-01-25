@@ -10,7 +10,7 @@ off_t fsize(const char *filename) {
 }
 
 //this function will always return on a new line or null
-void Voxel_loader::check_for_comments(char* s, int* index)
+void check_for_comments(char* s, int* index)
 {   
     jmp:
     while(s[*index] == ' ' || s[*index] == '\t' || s[*index] == '\n') (*index)++;
@@ -19,7 +19,7 @@ void Voxel_loader::check_for_comments(char* s, int* index)
     goto jmp;
 }
 
-void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
+void read_skeleton(char* file_name, VoxBody* vox_dat)
 {
     int size = fsize(file_name);
     char* buffer = new char[size+1];
@@ -47,65 +47,34 @@ void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
 
     vox_dat->init_parts(n_parts);
 
-    //Voxel_skeleton *vox_skel = new Voxel_skeleton(n_parts);
-
+    // voxel parts
     int part_num;
-
     for(int i=0; i<n_parts; i++)
-        sscanf (buffer+index, "%d %s %n", &part_num, str_tmp, &read);
-        //read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[part_num] );
-        read_voxel_volume(str_tmp, part_num, vox_dat);
-
-    for(int i=0; i<num_skeleton_nodes; i++)
     {
-        int x1, x2;
-        check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %d %n", &x1, &x2, &read);
-        index += read;
-        
-        //vox_skel->skeleton_tree[2*i+0] = x1;
-        //vox_skel->skeleton_tree[2*i+1] = x2;
+        sscanf (buffer+index, "%d %s %n", &part_num, str_tmp, &read);
+        read_voxel_volume(str_tmp, part_num, vox_dat);
     }
 
+    // skeleton node matrixs
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         int index;
         float x,y,z;
         float rx,ry,rz;
-
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &index, &x,&y,&z, &rx,&ry,&rz, &read);
-
-        printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
-
-        //mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
-
+        vox_dat->set_skeleton_node_matrix(index, x,y,z, rx,ry,rz);
         index += read;
     }
 
+    // skeleton graph
     for(int i=0; i<n_parts; i++)
     {
         int volume_num, parent_skeleton_node;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %s %n", &volume_num, &parent_skeleton_node, str_tmp, &read);
         index += read;
-        //read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
-    }
-
-    for(int i=0; i<n_parts; i++)
-    {
-        int index;
-        float x,y,z;
-        float rx,ry,rz;
-
-        check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &index, &x,&y,&z, &rx,&ry,&rz, &read);
-
-        printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
-
-        //mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
-
-        index += read;
+        vox_dat->set_skeleton_node_parent(volume_num, parent_skeleton_node);
     }
 
     if(index > size)
@@ -114,12 +83,11 @@ void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
     }
 
     fclose(fp);
-    //delete vox_skel;
     delete[] str_tmp;
     delete[] buffer;
 }
 
-void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
+void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
 
@@ -208,11 +176,4 @@ void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox
 
     fclose(fp); 
     delete[] buffer;
-}
-
-void test_voxel_skeleton()
-{
-    return;
-    //class Voxel_loader vl;
-    //vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
 }

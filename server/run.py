@@ -26,7 +26,6 @@ import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
 import c_lib.c_lib_monsters as cMonsters
 import c_lib.c_lib_game_modes as cGameModes
-import c_lib.c_lib_items as cItems
 import c_lib.c_lib_options as cOptions
 import dats.loader as dat_loader
 
@@ -375,9 +374,6 @@ class Main:
         self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
         self.intervals = intervals.Intervals()
         self.intervals.register(self.file_monitor, self.file_monitor.interval)
-
-        cMonsters.load_slime_voxel_dat()
-        cItems.load_voxel_dats()
 
     def run2(self):
         print "Server Started"

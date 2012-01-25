@@ -1,8 +1,5 @@
 #pragma once
 
-//#include <physics/vec3.hpp>
-//#include <physics/vec4.hpp>
-//#include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 
 /* Dat storage */
@@ -74,10 +71,8 @@ class VoxBody {
         bool inited;
         int n_parts;
 
-        //skeleton node list
         int* vox_skeleton_transveral_list;
         struct Mat4* vox_skeleton_local_matrix;
-        //struct Mat4* vox_skeleton_world_matrix;
         int n_skeleton_nodes;
         
         void init_skeleton(int n_skeleton);
