@@ -104,8 +104,6 @@ inline void agent_create_StoC::handle() {
 
 inline void agent_name_StoC::handle()
 {
-    printf("AGENT NAME PACKET RECEIVED\n");
-    printf("id=%d name=%s\n", id, name);
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);   
     a->status.set_name(name);
