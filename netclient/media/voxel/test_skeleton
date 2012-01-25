@@ -1,11 +1,11 @@
 #number of voxel
 3
-#connection matrix
-0 0
-1 0
-2 0
 #files
 0 media/voxel/test_vox_0
 1 media/voxel/test_vox_1
 2 media/voxel/test_vox_2
+#connection matrix
+0 0
+1 0
+2 0
 
