@@ -124,9 +124,8 @@ void VoxPartAnchor::set(float x, float y, float z)
 
 VoxPartAnchor::VoxPartAnchor()
 {}
-VoxPartAnchor::VoxPartAnchor(float length, float x, float y, float z)
+VoxPartAnchor::VoxPartAnchor(float x, float y, float z)
 :
-length(length),
 x(x), y(y), z(z)
 {}
 
