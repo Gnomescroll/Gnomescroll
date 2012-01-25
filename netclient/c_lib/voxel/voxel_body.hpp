@@ -84,13 +84,17 @@ class VoxPart {
 class VoxBody {
     public:
         class VoxPart** vox_part;
-        class VoxSkeleton** vox_skeleton;
+
         bool inited;
         int n_parts;
-        int n_skeleton_nodes;
         float vox_size;
 
-        void init(int n_parts, int n_skeleton);
+        struct Mat4* vox_skeleton_local_matrix;
+        struct Mat4* vox_skeleton_world_matrix;
+        int n_skeleton_nodes;
+
+        void init_skeleton(int n_skeleton);
+        void init_parts(int n_parts);
 
         void set_part(
             float rot_fx, float rot_fy, float rot_fz,
