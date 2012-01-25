@@ -13,7 +13,7 @@ import c_lib.c_lib_map_gen as cMapGen
 import c_lib.c_lib_monsters as cMonsters
 
 from math import sin, cos, pi
-from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer
+from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer, save_to_disk
 from init_c_lib import _toggle_latency_unit
 
 import camera
@@ -232,8 +232,8 @@ class Keyboard(object):
 
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
-        #elif symbol == 'f1':
-            #terrain_map.save_to_disk()
+        elif symbol == 'f1':
+            save_to_disk()
 
         if InputGlobal.use_voxel_aligner:
             InputGlobal.voxel_aligner.keys(symbol)

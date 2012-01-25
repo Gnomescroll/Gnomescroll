@@ -701,3 +701,34 @@ Steve
 '''
 def clear():
     _clear()
+
+import os
+import time
+
+cdef extern from "./t_map/t_compress.h":
+    int map_save_to_disk(char* fn)
+#cdef extern from "./t_map/t_decompress.h":
+#    int map_load_from_disk(char* fn)
+
+map_file_location = './media/maps/%s'
+    
+def save_to_disk(fn=''):
+
+    if not fn:
+        fn = 'map_%0.2f' % (time.time())
+        fn = fn.replace('.', '_')
+    fn = fn.replace('/', '_')
+    fn = map_file_location % (fn,)
+
+    map_save_to_disk(fn);
+
+#def load_from_disk(fn=''):
+#    if not fn:
+#        fn = 'mapsave1'
+        
+#    fn = map_file_location % (fn,)
+#    if not os.path.exists(fn):
+#        print "Map %s does not exist. Abort map load." % (fn,)
+#        return 1
+        
+#    map_load_from_disk(fn)

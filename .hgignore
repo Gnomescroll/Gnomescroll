@@ -87,6 +87,7 @@ server/build
 server/ext
 
 server/content/maps/*
+netclient/media/maps/*
 
 .lock-wafbuild
 

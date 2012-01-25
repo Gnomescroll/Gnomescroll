@@ -70,6 +70,7 @@
 /* map */
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.c>
+#include <c_lib/t_map/t_serialize.c>
 
 #ifdef DC_CLIENT
     #include <c_lib/t_map/t_viz.c>
