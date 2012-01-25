@@ -138,6 +138,9 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
     // prevent wastful update
 
 /*
+    DEPRECATE
+*/
+
     if (this->last_update_state.x == x
     &&  this->last_update_state.y == y
     &&  this->last_update_state.z == z
@@ -174,6 +177,8 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
             this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
         }
     }
+/*
+    DEPRECATE
 */
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
