@@ -194,9 +194,6 @@ void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox
 void test_voxel_skeleton()
 {
     return;
-    //static int count = 0;
     class Voxel_loader vl;
     vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
-
-    //class Voxel_skeleton a((char*) test_string);
 }

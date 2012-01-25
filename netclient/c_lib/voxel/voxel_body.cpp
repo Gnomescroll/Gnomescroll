@@ -188,19 +188,23 @@ biaxial(biaxial)
 
 /* Body (contains parts) */
 
-void VoxBody::init(int n_parts) {
+void VoxBody::init_skeleton(int n_skeleton)
+{
+    this->n_skeleton_nodes = n_skeleton;
+    vox_skeleton_local_matrix = new Mat4[n_skeleton];
+    vox_skeleton_world_matrix = new Mat4[n_skeleton];
+}
+
+void VoxBody::init_parts(int n_parts) {
     if (inited) {
-        printf("WARNING VoxBody::init -- called more than once\n");
+        printf("WARNING VoxBody::init_part -- called more than once\n");
         return;
     }
+    inited = true;
+    
     this->n_parts = n_parts;
     vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
-    inited = true;
-
-    int i;
-    for (i=0; i<n_parts; i++) {
-        vox_part[i] = NULL;
-    }
+    for (int i=0; i<n_parts; i++) vox_part[i] = NULL;
 }
 
 void VoxBody::set_part(

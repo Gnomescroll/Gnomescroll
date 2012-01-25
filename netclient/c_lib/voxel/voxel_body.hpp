@@ -1,5 +1,10 @@
 #pragma once
 
+//#include <physics/vec3.hpp>
+//#include <physics/vec4.hpp>
+//#include <physics/mat3.hpp>
+#include <physics/mat4.hpp>
+
 /* Dat storage */
 
 class VoxColors {
@@ -40,7 +45,7 @@ class VoxPartDimension {
         VoxPartDimension(int x, int y, int z);
 };
 
-struct VoxPart {
+class VoxPart {
     public:
         VoxPartAnchor anchor;
         VoxPartDimension dimension;
@@ -64,10 +69,16 @@ struct VoxPart {
 class VoxBody {
     public:
         class VoxPart** vox_part;
+
         bool inited;
         int n_parts;
 
-        void init(int n_parts);
+        struct Mat4* vox_skeleton_local_matrix;
+        struct Mat4* vox_skeleton_world_matrix;
+        int n_skeleton_nodes;
+
+        void init_skeleton(int n_skeleton);
+        void init_parts(int n_parts);
 
         void set_part(
             int part_num,
