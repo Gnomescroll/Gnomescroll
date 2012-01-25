@@ -276,6 +276,7 @@ void VoxDat::set_part(
     if (p==NULL) {
         p = new VoxPart(
                 part_num,
+                skeleton_parent_matrix,
                 vox_size,
                 dimension_x, dimension_y, dimension_z,
                 anchor_x, anchor_y, anchor_z,
@@ -289,6 +290,7 @@ void VoxDat::set_part(
         p->set_dimension(dimension_x, dimension_y, dimension_z);
         p->set_rotation(rotation_x, rotation_y, rotation_z);
         p->set_anchor(anchor_x, anchor_y, anchor_z);
+        p->skeleton_parent_matrix = skeleton_parent_matrix;
         #ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
         #endif
@@ -309,6 +311,7 @@ void VoxDat::set_part_properties(
     if (p==NULL) {
         p = new VoxPart(
             part_num,
+            skeleton_parent_matrix,
             vox_size,
             dimension_x, dimension_y, dimension_z,
             biaxial
@@ -318,6 +321,7 @@ void VoxDat::set_part_properties(
         p->part_num = part_num;
         p->vox_size = vox_size;
         p->set_dimension(dimension_x, dimension_y, dimension_z);
+        p->skeleton_parent_matrix = skeleton_parent_matrix;
         #ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
         #endif

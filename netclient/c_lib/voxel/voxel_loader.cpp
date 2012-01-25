@@ -48,6 +48,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %d %n", &num_skeleton_nodes, &n_parts, &read);
     index += read;
 
+    printf("%d parts, %d skeleton nodes\n", n_parts, num_skeleton_nodes);
     vox_dat->init_skeleton(num_skeleton_nodes);
     vox_dat->init_parts(n_parts);
 
@@ -57,7 +58,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         int node, parent_skeleton_node;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %n", &node, &parent_skeleton_node, &read);
-        //printf("%d %d %d\n", node, parent_skeleton_node, read);
+        printf("%d %d %d\n", node, parent_skeleton_node, read);
         index += read;
         vox_dat->set_skeleton_node_parent(node, parent_skeleton_node);
     }
@@ -70,7 +71,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         float rx,ry,rz;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
-        //printf("%d %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
+        printf("%d %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
         index += read;
         vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
     }
@@ -82,9 +83,9 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         int skeleton_parent_matrix; // not used?
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %s %n", &part_num, &skeleton_parent_matrix, str_tmp, &read);
-        //printf ("%d %d %s %d\n", part_num, skeleton_parent_matrix, str_tmp, read);
+        printf ("%d %d %s %d\n", part_num, skeleton_parent_matrix, str_tmp, read);
         index += read;
-        read_voxel_volume(str_tmp, part_num, skeleton_parent_matrix, vox_dat);
+        read_voxel_volume(str_tmp, part_num, vox_dat);
     }
 
     // voxel part rotation, anchor
@@ -95,7 +96,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         float rx,ry,rz;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
-        //printf ("%d %f %f %f  %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
+        printf ("%d %f %f %f  %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
         index += read;
         vox_dat->set_part_spatials(part_num, ox,oy,oz, rx,ry,rz);
     }
@@ -110,7 +111,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     delete[] buffer;
 }
 
-void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix, VoxDat* vox_dat)
+void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
 
@@ -149,15 +150,9 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
     sscanf (buffer+index, "%d %n", &biaxial, &read);
     index += read;
 
-    vox_dat->set_part_properties(part_num, skeleton_parent_matrix, vox_size, xdim, ydim, zdim, (bool)biaxial);
-    //printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
+    vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, (bool)biaxial);
+    printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
 
-/*
-    !!!OMFG.
-      Use same voxel files on client/server
-    Read them in same way, but do different things
-*/
-    //#ifdef DC_CLIENT
     // team
     int team;
     check_for_comments(buffer, &index);
@@ -173,7 +168,7 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
 #ifdef DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
 #endif
-    //printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
+    printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
 
     int ret;
     int vox_num = 0;
