@@ -686,7 +686,7 @@ class ChatInputHistory:
 # returns data for rendering
 class ChatRender:
 
-    MESSAGE_RENDER_TIMEOUT = 3500 # 2.5 seconds display time
+    MESSAGE_RENDER_TIMEOUT = 5000 # 2.5 seconds display time
     MESSAGE_RENDER_COUNT_MAX = 8 # max msgs to display at once
 
     def __init__(self):

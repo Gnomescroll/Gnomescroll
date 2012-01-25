@@ -248,6 +248,7 @@ void CTF::send_to_client(int client_id)
     Flag* flag;
     Base* base;
     char *name;
+    int score;
     int i;
     for (i=1; i<=2; i++) {
         switch (i) {
@@ -255,11 +256,13 @@ void CTF::send_to_client(int client_id)
                 flag = one.flag;
                 base = one.base;
                 name = one.name;
+                score = two.score();
                 break;
             case 2:
                 flag = two.flag;
                 base = two.base;
                 name = two.name;
+                score = two.score();
                 break;
             default:
                 break;
@@ -281,8 +284,12 @@ void CTF::send_to_client(int client_id)
         TeamName_StoC name_msg;
         name_msg.team = i;
         strcpy(name_msg.name, name);
-        printf("sending team name %s\n", name_msg.name);
         name_msg.sendToClient(client_id);
+
+        TeamScore_StoC score_msg;
+        score_msg.team = i;
+        score_msg.score = score;
+        score_msg.sendToClient(client_id);
     }
 }
 
