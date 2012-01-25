@@ -8,7 +8,9 @@ r(255), g(10), b(10),
 n(0),
 score(0),
 viewers(false)
-{}
+{
+    strcpy(this->name, (char*)"default-team-name");
+}
 
 void Team::init(int id)
 {
@@ -20,7 +22,7 @@ void Team::init(int id)
 }
 
 void Team::set_name(char* name) {
-    name[TEAM_NAME_MAX_LENGTH-1] = '\0';
+    name[TEAM_NAME_MAX_LENGTH] = '\0';
     strcpy(this->name, name);
     printf("Team name is %s\n", name);
 }

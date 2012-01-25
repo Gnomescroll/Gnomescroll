@@ -23,6 +23,8 @@ game-mode       e.g. ctf, dm, tdm. ctf is the only valid option at the moment.
 n-teams         Number of teams.
 team-kills      Team killing allowed
 victory-points  Number of points for a team/player victory
+team-name-one   Name of first team
+team-name-two   Name of second team
 
 map             Name of map file in ./content/maps. If not provided, map will be generated
 seed            RNG seed to use for map generator
@@ -54,6 +56,8 @@ DEFAULTS = {
     'game_mode' :   settings.game_mode,
     'n_teams'   :   settings.number_of_teams,
     'victory_points':   settings.victory_points,
+    'team_name_one':    settings.team_name_one,
+    'team_name_two':    settings.team_name_two,
     
     # Map
     'map'       :   settings.map,
@@ -77,6 +81,8 @@ def parse(cl_args=None):
     parser.add_argument('-nt', '--n-teams', default=DEFAULTS['n_teams'], type=int)
     parser.add_argument('-tk', '--team-kills', action='store_true')
     parser.add_argument('-vp', '--victory-points', default=DEFAULTS['victory_points'], type=int)
+    parser.add_argument('-tn1', '--team-name-one', default=DEFAULTS['team_name_one'])
+    parser.add_argument('-tn2', '--team-name-two', default=DEFAULTS['team_name_two'])
 
     ''' Map '''
     parser.add_argument('-m', '--map', default=DEFAULTS['map'])

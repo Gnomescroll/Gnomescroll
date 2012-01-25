@@ -30,7 +30,7 @@ flag_captures(0)
 void Base_status::set_name(char* n)
 {
     int i;
-    for (i=0; i<PLAYER_NAME_MAX_LENGTH-1 && n[i] != '\0'; i++) {
+    for (i=0; i<PLAYER_NAME_MAX_LENGTH && n[i] != '\0'; i++) {
         name[i] = n[i];
     }
     name[i] = '\0';

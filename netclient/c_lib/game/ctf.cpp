@@ -17,11 +17,13 @@ void CTF::init() {
     one.init(1);
     two.init(2);
 
-    char team_name_one[] = "Raiders";
-    one.set_name(team_name_one);
+    //char team_name_one[TEAM_NAME_MAX_LENGTH];
+    //strcpy(team_name_one, (char*)"Raiders");
+    //one.set_name(team_name_one);
 
-    char team_name_two[] = "Ex-military";
-    two.set_name(team_name_two);
+    //char team_name_two[TEAM_NAME_MAX_LENGTH];
+    //strcpy(team_name_two, (char*)"Ex-military");
+    //two.set_name(team_name_two);
 }
 void CTF::start() {
     float x,y,z;
@@ -288,6 +290,7 @@ void CTF::send_to_client(int client_id)
         TeamName_StoC name_msg;
         name_msg.team = i;
         strcpy(name_msg.name, name);
+        printf("sending team name %s\n", name_msg.name);
         name_msg.sendToClient(client_id);
     }
 }
