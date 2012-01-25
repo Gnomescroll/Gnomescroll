@@ -64,6 +64,10 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             render_list[i] = vv;
             vv->id = i;
             vv->voxel_render_list = this;
+
+            //vv->vvl.vnum = 0;
+            //vv->vvl.vertex_list = NULL;
+            
             //printf("Added voxel volume %i \n", i);
             break;
         }
@@ -107,7 +111,7 @@ void Voxel_render_list::update_vertex_buffer_object()
         {
             vv->needs_vbo_update = false;
             volumes_updated++;
-            vv->update_vertex_list(); //<-- look for bug here
+            vv->update_vertex_list();
             if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
         v_num += vv->vvl.vnum;

@@ -63,7 +63,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
             STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
-    ClientState::voxel_render_list.update_vertex_buffer_object();
+    //ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }
 
@@ -246,7 +246,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
             STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
-    ClientState::voxel_render_list.update_vertex_buffer_object();
+    //ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }
 
