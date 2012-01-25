@@ -19,5 +19,3 @@ class Voxel_loader
 };
 
 void test_voxel_skeleton();
-
-    return;

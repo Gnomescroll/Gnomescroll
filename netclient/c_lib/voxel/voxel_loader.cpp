@@ -39,29 +39,22 @@ void Voxel_loader::read_skeleton(char* file_name)
     char* str_tmp = new char[512];
 
 
-    int num_volumes;
+    int num_skeleton_nodes;
+    int num_voxel_volumes;
 
     int index = 0;
     int read;
 
     //read in number of voxel volumes
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %n", &num_volumes, &read);
+    sscanf (buffer+index, "%d %d %n", &num_skeleton_nodes, &num_voxel_volumes, &read);
     index += read;
 
-    printf("num_volumes= %i \n", num_volumes);
+    printf("num_volumes= %i skeleton_nodes= %i \n", num_voxel_volumes, num_skeleton_nodes );
 
 
     Voxel_skeleton *vox_skel = new Voxel_skeleton(num_volumes);
 
-    for(int i=0; i<num_volumes; i++)
-    {
-        int volume_num;
-        check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %s %n", &volume_num, str_tmp, &read);
-        index += read;
-        read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
-    }
 
     for(int i=0; i<num_volumes; i++)
     {
@@ -73,6 +66,18 @@ void Voxel_loader::read_skeleton(char* file_name)
         vox_skel->skeleton_tree[2*i+0] = x1;
         vox_skel->skeleton_tree[2*i+1] = x2;
     }
+
+
+    for(int i=0; i<num_volumes; i++)
+    {
+        int volume_num;
+        check_for_comments(buffer, &index);
+        sscanf (buffer+index, "%d %s %n", &volume_num, str_tmp, &read);
+        index += read;
+        read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
+    }
+
+
 
     for(int i=0; i<num_volumes; i++)
     {
