@@ -886,7 +886,6 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
-    strcpy(msg.name, this->status.name);
     msg.broadcast();
 
     spawn_state();
@@ -930,7 +929,6 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
-    strcpy(msg.name, this->status.name);
     msg.broadcast();
 
     spawn_state();
@@ -961,8 +959,12 @@ void Agent_list::send_to_client(int client_id) {
         agent_create_StoC msg;
         msg.id = a[i]->id;
         msg.team = a[i]->status.team;
-        strcpy(msg.name, a[i]->status.name);
         msg.sendToClient(client_id);
+
+        agent_name_StoC name_msg;
+        name_msg.id = a[i]->id;
+        strcpy(name_msg.name, a[i]->status.name);
+        name_msg.sendToClient(client_id);
     }
 }
 
