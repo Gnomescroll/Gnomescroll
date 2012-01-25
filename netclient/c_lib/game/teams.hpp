@@ -4,8 +4,8 @@
 #include <c_lib/items/flag.hpp>
 #include <c_lib/items/base.hpp>
 
-const int TEAM_NAME_MAX_LENGTH = 31;
-const int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;
+const unsigned int TEAM_NAME_MAX_LENGTH = 31;
+const unsigned int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;
 
 class Team {
     public:
@@ -14,7 +14,7 @@ class Team {
         char name[TEAM_NAME_MAX_LENGTH + 1];
 
         int members[TEAM_MAX_PLAYERS];
-        int n;
+        unsigned int n;
 
         int score;
 
