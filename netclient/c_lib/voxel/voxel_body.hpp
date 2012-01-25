@@ -59,9 +59,10 @@ class VoxPart {
         void set_dimension(int x, int y, int z);
 
         VoxPart(
+            int part_num,
+            float vox_size,
             float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num,
             bool biaxial=false
         );
 };

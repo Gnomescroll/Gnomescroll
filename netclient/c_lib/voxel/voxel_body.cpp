@@ -153,14 +153,9 @@ x(x), y(y), z(z)
 
 /* Body Part (wraps properties) */
 
-void VoxPart::set_rotation(float fx, float fy, float fz, float nx, float ny, float nz)
+void VoxPart::set_anchor(float x, float y, float z)
 {
-    rotation.set(fx, fy, fz, nx, ny, nz);
-}
-
-void VoxPart::set_anchor(float len, float x, float y, float z)
-{
-    anchor.set(len, x, y, z);
+    anchor.set(x, y, z);
 }
 
 void VoxPart::set_dimension(int x, int y, int z)
@@ -275,7 +270,7 @@ VoxBody::VoxBody()
 :
 vox_part(NULL),
 inited(false),
-vox_skeleton_local_matrix(NULL),
+vox_skeleton_local_matrix(NULL)
 {}
 
 VoxBody::~VoxBody()

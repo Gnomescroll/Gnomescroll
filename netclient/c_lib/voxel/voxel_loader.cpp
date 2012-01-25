@@ -42,15 +42,16 @@ void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
 
     //read in number of voxel volumes
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %d %n", &num_skeleton_nodes, &num_parts, &read);
+    sscanf (buffer+index, "%d %d %n", &num_skeleton_nodes, &n_parts, &read);
     index += read;
 
-    vox_dat->init(n_parts);
+    vox_dat->init_parts(n_parts);
 
     //Voxel_skeleton *vox_skel = new Voxel_skeleton(n_parts);
 
+    int part_num;
+
     for(int i=0; i<n_parts; i++)
-        int part_num;
         sscanf (buffer+index, "%d %s %n", &part_num, str_tmp, &read);
         //read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[part_num] );
         read_voxel_volume(str_tmp, part_num, vox_dat);
@@ -82,16 +83,16 @@ void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
         index += read;
     }
 
-    for(int i=0; i<num_voxel_volumes; i++)
+    for(int i=0; i<n_parts; i++)
     {
         int volume_num, parent_skeleton_node;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %s %n", &volume_num, &parent_skeleton_node, str_tmp, &read);
         index += read;
-        read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
+        //read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
     }
 
-    for(int i=0; i<num_voxel_volumes; i++)
+    for(int i=0; i<n_parts; i++)
     {
         int index;
         float x,y,z;
@@ -118,7 +119,6 @@ void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
     delete[] buffer;
 }
 
-//void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
 void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
@@ -213,6 +213,6 @@ void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox
 void test_voxel_skeleton()
 {
     return;
-    class Voxel_loader vl;
-    vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
+    //class Voxel_loader vl;
+    //vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
 }
