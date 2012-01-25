@@ -78,12 +78,6 @@ class EventOut:
     def clear_map(self):
         return True
 
-    #@sendJSONevent('set_map')
-    #def set_map(self, list):
-        #return {
-            #'list' : list,
-        #}
-
     @sendJSONevent('hitscan')
     def hitscan(self, target, agent_id, weapon_type): # use projectile_id if we want multiple projectiles per weapon
         return {
@@ -234,21 +228,6 @@ class SendMessage: #each connection has one of these
             self.client.send(self.add_prefix(3, chunk_str))
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
-
-    @sendJSON('agent_list')
-    def send_agents(self):
-        return {
-            'agent_list':   GameStateGlobal.agentList.json()
-        }
-
-    @sendJSON('agent_update')
-    def send_agent_name(self, id, name):
-        return {
-        'agent': {
-                'id'    :   id,
-                'name'  : name,
-                }
-            }
 
     @sendJSON('you_died')
     def you_died(self, msg):

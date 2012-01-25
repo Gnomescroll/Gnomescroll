@@ -87,7 +87,6 @@ class PyClient:
         self.send_name_to_clients()
 
     def send_agents(self):
-        #self.sendMessage.send_agents() # REQUIRED still, python creates python agents for this, and puts in agent_list. will be deprecated later
         cAgents.AgentListWrapper.send_to_client(self.client_id)
 
     def send_monsters(self):
@@ -116,7 +115,6 @@ class PyClient:
             self.agent.update_info(name=self.name)
         else:
             self.agent = GameStateGlobal.agentList.create(self.client_id)
-            #self.agent.name = self.name
             cAgents.set_agent_name(self.agent.id, self.name)
             print 'Created new agent'
             # send player agent id

@@ -176,6 +176,8 @@ class App(object):
             if agent:
                 if agent.camera is None:
                     agent.camera = self.agent_camera
+            else:
+                GameStateGlobal.agentList.check_for_player_agent()
 
             P.event("Physics Loop")
             sl_c = 0

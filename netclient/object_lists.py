@@ -67,16 +67,13 @@ class GenericObjectList:
     def create(self, *args, **kwargs):
         return self._add(*args, **kwargs)
         
-    def _remove(self, obj, remove_c=True):
+    def _remove(self, obj):
         if hasattr(obj, 'id'):
             id = obj.id
         else:
             id = obj
         if id in self.objects:
             del self.objects[id]
-            #print '%s: %s removed; id= %s' % (self._metaname, self._itemname, id,)
-            if self._wrapper is not None and remove_c:
-                self._wrapper.remove(id)
             return True
         return False
 

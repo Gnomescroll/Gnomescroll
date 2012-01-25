@@ -24,17 +24,14 @@ Data model for agent
 '''
 class Agent(cAgents.AgentWrapper):
 
-    def __init__(self, id, name='undefined-default'):
+    def __init__(self, id):
         self.id = id
         self.client_id = id
         self.you = False
-        self.name = name
         print 'Python Agent creation: id %s' % (self.id,)
 
     def update_info(self, **agent):
         pass
-        #if 'name' in agent:
-            #self.name = agent['name']
 
     def __getattribute__(self, name):
         try:
@@ -67,8 +64,8 @@ Client's player's agent
 '''
 class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 
-    def __init__(self, id, name='playerAgent-undefined-default'):
-        Agent.__init__(self, id, name)
+    def __init__(self, id):
+        Agent.__init__(self, id)
         cAgents.PlayerAgentWrapper.__init__(self, id)
 
         self.button_state = [0 for i in range(11)]
@@ -148,7 +145,6 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 class AgentList(GenericObjectListWrapper):
 
     def __init__(self):
-        from agents import Agent
         GenericObjectListWrapper.__init__(self)
         GenericObjectList.__init__(self)
         self._metaname = 'AgentList'
@@ -158,10 +154,6 @@ class AgentList(GenericObjectListWrapper):
 
     def create(self, *args, **agent):
         a = self._add(*args, **agent)
-        #print "Create check against player agent: %d" % (cAgents.get_player_agent_id())
-        if a.id == cAgents.get_player_agent_id():
-            self._remove(a, remove_c=False)
-            a = self.create_player_agent(*args, **agent)
         return a
 
     def by_client(self, id):
@@ -171,7 +163,9 @@ class AgentList(GenericObjectListWrapper):
                 return agent
 
     def create_player_agent(self, *args, **agent):
-        from agents import Agent, PlayerAgent
+        if agent['id'] in self and not isinstance(self[agent['id']], PlayerAgent):
+            #remove Agent created during a C update, replace with a player agent
+            self._remove(agent['id'])
         self._object_type = PlayerAgent
         player_agent = self._add(*args, **agent)
         self._object_type = Agent
@@ -191,3 +185,25 @@ class AgentList(GenericObjectListWrapper):
         for obj in objs:
             _objs.append(self.create(**obj))
         return _objs
+
+    def update_from_c(self):
+        ids = self._wrapper.ids()
+        for id in ids:
+            if id not in self:
+                self.create(**{'id':id})
+                added.append(id)
+
+        for id in self:
+            if id not in ids:
+                self.destroy(id)
+                
+    def check_for_player_agent(self):
+        self.update_from_c()
+        for id in self._wrapper.ids():
+            if id == cAgents.get_player_agent_id():
+                return self.create_player_agent(**{'id':id})
+        
+    def values(self):
+        self.update_from_c()
+        return GenericObjectListWrapper.values(self)
+

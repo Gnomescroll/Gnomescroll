@@ -25,7 +25,9 @@ health_max(AGENT_HEALTH),
 team(0),
 has_flag(false),
 flag_captures(0)
-{}
+{
+    strcpy(this->name, (char*)"undefined-agent-name");
+}
 
 void Base_status::set_name(char* name)
 {

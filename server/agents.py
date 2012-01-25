@@ -32,7 +32,6 @@ class Agent(cAgents.AgentWrapper):
     def __init__(self, client_id):
         cAgents.AgentWrapper.__init__(self, client_id)
         cAgents.AgentWrapper.send_id_to_client(self, client_id)
-        self.name = 'undefined'
 
     def __getattribute__(self, name):
         try:
@@ -44,11 +43,3 @@ class Agent(cAgents.AgentWrapper):
             val = cGame.get_team(val)
 
         return val
-
-    def json(self, properties=None):
-        #d = {
-            #'id':   self.id,
-            ##'name': self.name
-            #}
-        #return d
-        return {}
