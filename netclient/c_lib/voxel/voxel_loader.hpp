@@ -42,6 +42,7 @@ class Voxel_loader
         {
             printf("read_skeleton: failed to write %i bytes\n", nbytes);
             fclose(fp);
+            delete[] buffer;
             return;       
         }
         buffer[size] = NULL;
@@ -88,6 +89,8 @@ class Voxel_loader
 
         fclose(fp);
         delete vox_skel;
+        delete[] str_tmp;
+        delete[] buffer;
     }
 
     void read_voxel_volume(char* file_name, class Voxel_volume* vox)
@@ -103,6 +106,7 @@ class Voxel_loader
         {
             printf("read_voxel_volume: failed to write %i bytes\n", nbytes);
             fclose(fp);
+            delete[] buffer;
             return;       
         }
         buffer[size] = NULL;
@@ -126,22 +130,35 @@ class Voxel_loader
 
         vox->init(xdim,ydim,zdim,vox_size);
 
+        int ret;
+        int vox_num = 0;
         int x,y,z,r,g,b;
 
         while(1)
         {
             check_for_comments(buffer, &index);
-            if( buffer[index] == '\0' )
+            if( buffer[index] == '\0' || index >= size)
             {
-                printf("Done processing voxel model \n");
-                return;
+                break;
             }
-            sscanf (buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
+            ret = sscanf (buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
+
+            if(ret == 0)
+            {
+                printf("read_voxel_volume: error ret==0 \n");
+                break;
+            }
             index += read;
 
             vox->set(x,y,z, r,g,b,0);
+            vox_num++;
             //set voxel model
         }
+
+        printf("voxels: %i \n", vox_num);
+
+        fclose(fp); 
+        delete[] buffer;
     }
 
 
