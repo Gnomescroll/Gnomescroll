@@ -18,6 +18,83 @@ namespace ServerState {
 }
 #endif
 
+/*
+float row_mult_column(float* r, int i, float *c, int j)
+{
+    return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
+}
+
+struct Mat4 mat4_mult(Mat4 a, Mat4 b)
+{
+    struct Mat4 c;
+    int i,j;
+    for(i=0; i<4; i++) //row
+    {
+        for(j=0; j<4; j++) 
+        {
+            c._f[4*j+i] = row_mult_column( a._f, i, b._f, j );
+        }
+    }
+    return c;
+}
+*/
+//set offset and rotation
+void Object_vox::set_skeleton_root(float x, float y, float z, float theta)
+{
+    vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(0.0,0.0,0.0, 0.0,0.0,theta);
+}
+
+//int n_skeleton_nodes;
+//int* vox_skeleton_transveral_list;
+//struct Mat4* vox_skeleton_local_matrix;
+//struct Mat4* vox_skeleton_world_matrix;
+
+void Object_vox::update_skeleton()
+{
+    for(int i=1; i<n_skeleton_nodes; i++)
+    {
+        vox_skeleton_world_matrix[i] = mat4_mult( 
+        vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
+        vox_skeleton_local_matrix[i]
+        );
+    }    
+}
+
+void Object_vox::update_skeleton()
+{
+    
+
+}
+
+void Object_vox::init_skeleton(VoxBody* vox_dat)
+{
+    skeleton_needs_update = true;
+    n_skeleton_nodes = vox_dat->n_skeleton_nodes;
+
+    n_skeleton_nodes = vox_dat->n_skeleton_nodes;
+
+    int num = vox_dat->n_skeleton_nodes;
+
+    vox_skeleton_transveral_list = new int[num];
+    vox_skeleton_local_matrix = new Mat4[num];
+    vox_skeleton_world_matrix = new Mat4[num];
+
+    for(int i=0; i<num; i++)
+    {
+        vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
+        vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i];
+    }
+}
+
+/*
+    bool skeleton_needs_update;
+    int n_skeleton_nodes;
+    int* vox_skeleton_transveral_list;
+    struct Mat4* vox_skeleton_local_matrix;
+    struct Mat4* vox_skeleton_world_matrix;
+*/        
+
+
 void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
     // create each vox part from vox_dat conf
     if (this->inited) return;
@@ -58,8 +135,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        if (vv->hitscan)
-            STATE::voxel_hitscan_list.register_voxel_volume(vv);
+        if (vv->hitscan) STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
 }
 

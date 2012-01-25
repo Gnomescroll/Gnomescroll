@@ -4,8 +4,23 @@
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/voxel_body.hpp>
 
-class Object_vox {
+class Object_vox 
+{
     public:
+
+
+        //skeleton
+        void init_skeleton(VoxBody* vox_dat);
+        void Object_vox::set_skeleton_root(float x, float y, float z, float theta);
+        void update_skeleton();  //recalculate world view matrices
+
+        bool skeleton_needs_update;
+        int n_skeleton_nodes;
+        int* vox_skeleton_transveral_list;
+        struct Mat4* vox_skeleton_local_matrix;
+        struct Mat4* vox_skeleton_world_matrix;
+        
+        //parts list
         int n_parts;
         void right(Vector *f, float theta);
         void forward(Vector *f, float theta);

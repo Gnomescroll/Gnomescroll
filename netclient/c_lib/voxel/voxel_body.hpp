@@ -73,11 +73,11 @@ class VoxBody {
         bool inited;
         int n_parts;
 
+        //skeleton node list
         int* vox_skeleton_transveral_list;
         struct Mat4* vox_skeleton_local_matrix;
-        int n_skeleton_nodes;
-
         //struct Mat4* vox_skeleton_world_matrix;
+        int n_skeleton_nodes;
         
         void init_skeleton(int n_skeleton);
         

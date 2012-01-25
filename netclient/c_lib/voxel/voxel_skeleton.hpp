@@ -7,8 +7,6 @@
 
 //row times column, column major order
 
-float row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inline));
-struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
 
 class Voxel_skeleton
 {
