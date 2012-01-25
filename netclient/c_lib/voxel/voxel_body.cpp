@@ -204,7 +204,7 @@ void VoxBody::init_parts(int n_parts) {
     
     this->n_parts = n_parts;
     vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
-    for (int i=0; i<n_parts; i++) vox_part[i] = NULL;
+    for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
 
 void VoxBody::set_part(
@@ -261,7 +261,9 @@ void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, un
 VoxBody::VoxBody()
 :
 vox_part(NULL),
-inited(false)
+inited(false),
+vox_skeleton_local_matrix(NULL),
+vox_skeleton_world_matrix(NULL)
 {}
 
 VoxBody::~VoxBody()
@@ -274,4 +276,9 @@ VoxBody::~VoxBody()
         }
         free(vox_part);
     }
+
+    if (this->vox_skeleton_local_matrix != NULL)
+        delete[] this->vox_skeleton_local_matrix;
+    if (this->vox_skeleton_world_matrix != NULL)
+        delete[] this->vox_skeleton_world_matrix;
 }
