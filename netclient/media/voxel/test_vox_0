@@ -1,5 +1,7 @@
 #dimensions, x,y,z
 2 2 2
+#vox size
+0.5
 #voxels x,y,z, r,g,b
 0 0 0 0 0 0
 0 0 1 0 0 255

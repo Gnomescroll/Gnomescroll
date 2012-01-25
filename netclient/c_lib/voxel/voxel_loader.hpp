@@ -87,7 +87,7 @@ class Voxel_loader
             vox_skel->skeleton_tree[2*i+1] = x2;
         }
 
-        if(index >= size)
+        if(index > size)
         {
             printf("voxel_skeleton_read: buffer overflow, index= %i, size= %i \n", index, size);
         }
@@ -133,6 +133,8 @@ class Voxel_loader
         sscanf (buffer+index, "%f %n", &vox_size, &read);
         index += read;
 
+        printf("vox: x,y,z= %i, %i, %i, size= %f \n", xdim,ydim,zdim, vox_size);
+
         vox->init(xdim,ydim,zdim,vox_size);
 
         int ret;
@@ -142,11 +144,11 @@ class Voxel_loader
         while(1)
         {
             check_for_comments(buffer, &index);
-            if( buffer[index] == '\0')
+            if( buffer[index] == '\0' || index == size)
             {
                 break;
             }
-            if(index >= size)
+            if(index > size)
             {
                 printf("voxel_volume_read: buffer overflow, index= %i, size= %i \n", index, size);
             }
@@ -177,7 +179,8 @@ class Voxel_loader
 
 void test_voxel_skeleton()
 {
-    return;
+    static int count = 0;
+
     class Voxel_loader vl;
     vl.read_skeleton("./media/voxel/test_skeleton");
 

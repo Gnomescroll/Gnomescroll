@@ -95,8 +95,8 @@ class Voxel_skeleton
 
     ~Voxel_skeleton()
     {
-        delete[] voxel_volume_list;
         delete[] skeleton_tree;
+        delete[] voxel_volume_list;
     }
 
 
