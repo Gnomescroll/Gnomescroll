@@ -37,7 +37,7 @@ class Voxel_render_list
     private:
     Voxel_volume** render_list;
     struct VBOmeta vbo_wrapper[2];
-
+    void update_vertex_buffer_object(); //gets called after draw
     public:
 
     int num_elements;
@@ -46,7 +46,6 @@ class Voxel_render_list
     void unregister_voxel_volume(Voxel_volume* vv);
 
     void draw();
-    void update_vertex_buffer_object(); //gets called after draw
     
     static void init_voxel_render_list_shader1();
 

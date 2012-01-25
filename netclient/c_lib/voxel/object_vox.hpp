@@ -99,7 +99,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
             STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
-    ClientState::voxel_render_list.update_vertex_buffer_object();
+    //ClientState::voxel_render_list.update_vertex_buffer_object();
     #endif
 }
 
@@ -254,7 +254,8 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
         unsigned char r,g,b,a;
         int j;
         int ix,iy,iz;
-        for (j=0; j<vp->colors.n; j++) {
+        for (j=0; j<vp->colors.n; j++) 
+        {
             ix = vp->colors.index[j][0];
             iy = vp->colors.index[j][1];
             iz = vp->colors.index[j][2];
@@ -272,17 +273,16 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
                 g = team_g;
                 b = team_b;
             }
-
             vv->set_color(ix, iy, iz, r,g,b,a);
         }
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        if (vv->hitscan)
-            STATE::voxel_hitscan_list.register_voxel_volume(vv);
+        if (vv->hitscan) STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
     #ifdef DC_CLIENT
-    ClientState::voxel_render_list.update_vertex_buffer_object();
+    //ClientState::voxel_render_list.update_vertex_buffer_object();
+
     #endif
 }
 
