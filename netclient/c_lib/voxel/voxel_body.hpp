@@ -97,8 +97,8 @@ class VoxBody {
         
         void init_skeleton(int n_skeleton);
         
-        void set_skeleton_node_matrix(int index, float x, float y, float z, float rx, float ry, float rz);
-        void set_skeleton_node_parent(int index, int parent);
+        void set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
+        void set_skeleton_node_parent(int node, int parent);
 
         void init_parts(int n_parts);
 

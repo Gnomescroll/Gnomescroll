@@ -30,8 +30,8 @@ void Object_vox::update_skeleton()
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         vox_skeleton_world_matrix[i] = mat4_mult( 
-        vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
-        vox_skeleton_local_matrix[i]
+            vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
+            vox_skeleton_local_matrix[i]
         );
     }    
 }

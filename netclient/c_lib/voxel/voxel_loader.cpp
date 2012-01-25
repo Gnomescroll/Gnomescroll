@@ -51,25 +51,25 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
     // skeleton graph
     for(int i=0; i<n_parts; i++)
     {
-        int volume_num, parent_skeleton_node;
+        int node, parent_skeleton_node;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %d %n", &volume_num, &parent_skeleton_node, &read);
-        printf("%d %d %d\n", volume_num, parent_skeleton_node, read);
+        sscanf (buffer+index, "%d %d %n", &node, &parent_skeleton_node, &read);
+        printf("%d %d %d\n", node, parent_skeleton_node, read);
         index += read;
-        vox_dat->set_skeleton_node_parent(volume_num, parent_skeleton_node);
+        vox_dat->set_skeleton_node_parent(node, parent_skeleton_node);
     }
 
     // skeleton node matrixs
     for(int i=0; i<num_skeleton_nodes; i++)
     {
-        int volume_num;
+        int node;
         float x,y,z;
         float rx,ry,rz;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &volume_num, &x,&y,&z, &rx,&ry,&rz, &read);
-        printf("%d %f %f %f  %f %f %f %d\n", volume_num, x,y,z, rx,ry,rz, read);
+        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        printf("%d %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
         index += read;
-        vox_dat->set_skeleton_node_matrix(index, x,y,z, rx,ry,rz);
+        vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
     }
 
     // voxel parts

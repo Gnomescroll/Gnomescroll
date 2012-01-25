@@ -227,14 +227,14 @@ void VoxBody::init_skeleton(int n_skeleton)
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
-void VoxBody::set_skeleton_node_matrix(int index, float x, float y, float z, float rx, float ry, float rz)
+void VoxBody::set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
-    vox_skeleton_local_matrix[index] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+    vox_skeleton_local_matrix[node] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
 }
 
-void VoxBody::set_skeleton_node_parent(int index, int parent)
+void VoxBody::set_skeleton_node_parent(int node, int parent)
 {
-    vox_skeleton_transveral_list[index] = parent;
+    vox_skeleton_transveral_list[node] = parent;
 }
 
 /* Body (contains parts) */
