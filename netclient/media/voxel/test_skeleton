@@ -4,12 +4,15 @@
 0 0
 1 0
 2 0
-#orientation, x,y,z rotatation x,y,z
+#skeleton_node: orientation, x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
 1 0.0 1.0 0.0  0.0 0.0 0.0
 2 0.0 -1.0 0.0  0.0 0.0 0.0
-
 #node number, skeleton parent matrix, voxel volume
 0 0 media/voxel/test_vox_0
 1 1 media/voxel/test_vox_1
 2 2 media/voxel/test_vox_2
+#voxel: orientation, x,y,z rotatation x,y,z
+0 0.0 0.0 0.0  0.0 0.0 0.0
+1 0.0 0.0 0.0  0.0 0.0 0.0
+2 0.0 0.0 0.0  0.0 0.0 0.0

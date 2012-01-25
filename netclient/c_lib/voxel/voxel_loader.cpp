@@ -95,7 +95,24 @@ void Voxel_loader::read_skeleton(char* file_name)
         read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
     }
 
+    for(int i=0; i<num_voxel_volumes; i++)
+    {
+        int index;
+        float x,y,z;
+        float rx,ry,rz;
 
+        check_for_comments(buffer, &index);
+        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &index, &x,&y,&z, &rx,&ry,&rz, &read);
+
+        printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
+
+        mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+
+        //vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
+        //vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
+
+        index += read;
+    }
 
     if(index > size)
     {
