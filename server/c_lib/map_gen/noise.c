@@ -403,5 +403,7 @@ void noise_destroy() {
 #include "perturb.c"
 #include "features.c"
 
+#ifdef DUNGEON
 #include "dragon.cpp"
 #include "dungeon.cpp"
+#endif

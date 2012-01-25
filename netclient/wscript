@@ -281,10 +281,10 @@ def build(bld):
         use=common_libraries+['c_lib'],
         target='c_lib.c_lib_game_modes')
         
-    bld(features='cxx cshlib pyext',      #cython
-        source=['c_lib/c_lib_map_gen.pyx'],
-        use=common_libraries+['c_lib'],
-        target='c_lib.c_lib_map_gen')
+    #bld(features='cxx cshlib pyext',      #cython
+        #source=['c_lib/c_lib_map_gen.pyx'],
+        #use=common_libraries+['c_lib'],
+        #target='c_lib.c_lib_map_gen')
 
     bld(features='cxx cshlib pyext',      #cython
         source=['c_lib/c_lib_monsters.pyx'],
@@ -442,10 +442,10 @@ def debug(ctx):
     ctx.env.CFLAGS.append('-fstack-protector-all')
     ctx.env.CXXFLAGS.append('-fstack-protector-all')
 
-#def exceptions(ctx):
-    #configure(ctx)
-    #ctx.env.CFLAGS.remove('-fno-exceptions')
-    #ctx.env.CXXFLAGS.remove('-fno-exceptions')
+def exceptions(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.remove('-fno-exceptions')
+    ctx.env.CXXFLAGS.remove('-fno-exceptions')
     #ctx.check(header_name='libnoise/noise.h',
                 #lib="noise",
                ##use='libnoise',
@@ -453,117 +453,6 @@ def debug(ctx):
                #fragment='#include <libnoise/noise.h>',
                #mandatory=True)
                
-def exceptions(conf):
-    global _OS
-    global os_libpth
-
-    conf.check_tool('gcc')
-    conf.check_tool('g++')
-    conf.check_tool('python')
-    conf.check_tool('cython')
-    #conf.load('compiler_c compiler_cxx python cython')
-
-    conf.check_python_version((2,6,0))
-    conf.check_python_headers()
-
-    conf.cc_add_flags()     #"-g" -ggdb
-    conf.link_add_flags()   #"-g" -ggdb
-
-    OS = platform.system()
-    _OS = OS
-    conf.env.os = OS
-    
-    '''
-    Using -Winline will warn when a function marked inline could not be substituted, and will give the reason for the failure.
-    '''
-
-    '''
-    GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
-    '''
-
-    extra_options = [ '-Winline', '-Wno-switch-enum', '-Wno-switch']
-    #extra_options = ['-Winline']
-    if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
-    else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
-
-    if OS == 'Windows':
-        conf.env.append_value("LINKFLAGS", "-lwsock32")
-        conf.env.append_value("LINKFLAGS", "-lws2_32")
-
-    #if OS == 'Darwin':
-        ##conf.env.append_value('CPPFLAGS', ['-I/usr/local/Cellar/libpng/1.2.46/include'])
-        ##conf.env.append_value('LDFLAGS', ['-L/usr/local/Cellar/libpng/1.2.46/lib'])
-        #conf.env.append_value('CFLAGS', ['-I/opt/local/include/libpng14'])
-        #conf.env.append_value('LDFLAGS', ['-L/opt/local/lib'])
-
-    conf.check(header_name='GL/glew.h', mandatory=True)
-
-    if OS == 'Windows':
-        glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
-        conf.check(lib=['opengl32', 'glu32', 'glew32'], libpath=glew_lib_path, uselib_store='GL') 
-    elif OS == 'Linux':
-        conf.check(lib=['GL', 'GLU', 'GLEW'], uselib_store='GL')
-    elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
-
-    if OS != 'Windows':
-        conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
-    if OS == 'Windows':
-        conf.check_cfg(path='bash.exe', args='/c/lib/SDL/bin/sdl-config --cflags --libs', package='', uselib_store='SDL')        
-
-    conf.env.INCLUDES = []
-
-    conf.check(header_name='SDL.h',
-               use='SDL',
-               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
-    
-    conf.check(header_name='SDL_image.h',
-               lib='SDL_image',
-               use='SDL',
-               uselib_store='SDL_image',
-               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
-               
-    #conf.check(header_name='libnoise/noise.h',
-               #includes=['/usr/include'],
-               #fragment='#include <libnoise/noise.h>' + NOISE_MAIN_TEST_CODE,
-               #mandatory=True)
-
-    if OS != "Darwin":
-        conf.check(header_name='png.h',
-                   includes=['/usr/include'],
-                   fragment='#include <png.h>' + PNG_MAIN_TEST_CODE,
-                   mandatory=True)
-
-    incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-    libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-
-    if OS == 'Windows':
-        os_libpth = './libraries/win'
-        incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
-        libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
-    elif OS == 'Linux':
-        os_libpth = './libraries/lin'
-        incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-        libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-    elif OS == 'Darwin':
-        os_libpth = './libraries/osx'
-        incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
-        libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
-
-    conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
-    conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
-    #conf.check(lib=['fmodex'], libpath=[libp],includes=[incp])
-
-    #'cube_lib', 'vox_lib',
-    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', 'net_lib', 'SDL', 'sound'] + ['libraries/lin/fmod/inc'] + ['/usr/include']
-    conf.env.RPATH = ['.', '..', './ext/'] + ['libraries/lin/fmod/lib', 'sound/api/lib/']
-
 # dont use this. it was an attempt to use GCC flags to lint the C/C++ code
 # just throws a shit ton of errors starting from the SDL libraries
 def lint(ctx):

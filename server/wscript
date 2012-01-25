@@ -276,14 +276,18 @@ e.g. ConfigurationContext, BuildContext
 cmd,fun = 'name_of_function'
 '''
 from waflib.Configure import ConfigurationContext
+
 class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
     fun = 'optimized'
 
-from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):
     cmd = 'debug'
     fun = 'debug'
+
+class map_gen_ctx(ConfigurationContext):
+    cmd = 'map_gen'
+    fun = 'map_gen'
 
 def optimized(ctx):
     configure(ctx)
@@ -293,3 +297,8 @@ def debug(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-fstack-protector-all')
     ctx.env.CXXFLAGS.append('-fstack-protector-all')
+
+def map_gen(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-DDUNGEON')
+    ctx.env.CXXFLAGS.append('-DDUNGEON')

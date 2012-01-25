@@ -34,7 +34,7 @@ import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_camera as cCamera
 import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
-import c_lib.c_lib_map_gen as cMapGen
+#import c_lib.c_lib_map_gen as cMapGen
 import c_lib.c_lib_monsters as cMonsters
 
 import c_lib.c_lib_animations as cAnimations
@@ -253,8 +253,8 @@ class App(object):
 
             camera.camera.world_projection()
 
-            if InputGlobal.hk:
-                cMapGen.Dragon.draw()
+            #if InputGlobal.hk:
+                #cMapGen.Dragon.draw()
 
             #P.event("Draw skybox")
             #cCamera.render_skybox()

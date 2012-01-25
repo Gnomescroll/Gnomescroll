@@ -44,7 +44,9 @@
 #include <c_lib/monsters/monsters.cpp>
 
 /* dungeon/L system/noise */
-#include <c_lib/map_gen/hopcroft-karp.cpp>
+#ifdef DUNGEON
+    #include <c_lib/map_gen/hopcroft-karp.cpp>
+#endif
 #include <c_lib/map_gen/noise.c>
 
 #include "./t_map/t_serialize.c"

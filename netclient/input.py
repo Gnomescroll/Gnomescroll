@@ -9,7 +9,7 @@ opts = opts.opts
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
-import c_lib.c_lib_map_gen as cMapGen
+#import c_lib.c_lib_map_gen as cMapGen
 import c_lib.c_lib_monsters as cMonsters
 
 from math import sin, cos, pi
@@ -98,7 +98,7 @@ class InputGlobal:
     agent_can_jump = True
     vn = False
 
-    hk = False
+    #hk = False
     
     input = 'camera'
     _inputs = ('camera', 'agent')
@@ -287,10 +287,10 @@ class Keyboard(object):
         n = 30
         cMonsters.slime_test(n)
 
-    def hk(self):
+    #def hk(self):
         #camera.camera.world_projection()
-        cMapGen.Dragon.generate()
-        InputGlobal.hk = not InputGlobal.hk
+        #cMapGen.Dragon.generate()
+        #InputGlobal.hk = not InputGlobal.hk
         
     def toggle_hud(self):
         opts.hud = not opts.hud

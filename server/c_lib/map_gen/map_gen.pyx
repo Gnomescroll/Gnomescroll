@@ -513,18 +513,18 @@ def ceiling(int x, int y, int z, int height=1,int tile=2):
 def floor(int x, int y, int z, int height, int tile):
     _floor(x,y,z,height,tile)
 
-cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
-    void generate_dragon()
+#cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
+#    void generate_dragon()
 
-class Dragon(object):
-    @classmethod
-    def generate(cls):
-        generate_dragon()
+#class Dragon(object):
+#    @classmethod
+#    def generate(cls):
+#        generate_dragon()
         
-cdef extern from "./map_gen/dungeon.hpp" namespace "Dungeon":
-    void generate_dungeon()
+#cdef extern from "./map_gen/dungeon.hpp" namespace "Dungeon":
+#    void generate_dungeon()
 
-class Dungeon(object):
-    @classmethod
-    def generate(cls):
-        generate_dungeon()
+#class Dungeon(object):
+#    @classmethod
+#    def generate(cls):
+#        generate_dungeon()
