@@ -159,11 +159,11 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
     int team_r, team_g, team_b;
 
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%i %n", &team, &read);
+    sscanf (buffer+index, "%d %n", &team, &read);
     index += read;
 
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%i %i %i %n", &team_r,&team_g,&team_b &read);
+    sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
 
     printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
