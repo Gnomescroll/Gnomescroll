@@ -26,7 +26,6 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
     int x,y,z;
     VoxPart *vp;
     Voxel_volume* vv;
-    float size = vox_dat->vox_size;
     for (i=0; i<this->n_parts; i++) {
         vp = vox_dat->vox_part[i];
         x = vp->dimension.x;
@@ -35,7 +34,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
 
         vv = &(this->vv[i]);
 
-        vv->init(x,y,z,size);
+        vv->init(x,y,z, vp->vox_size);
         vv->set_unit_axis();
         vv->set_hitscan_properties(id, type, i);
 

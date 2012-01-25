@@ -12,10 +12,10 @@ class Voxel_loader
 
     public:
 
-    Voxel_loader() {}
+        void read_skeleton(char* file_name);
+        void read_voxel_volume(char* file_name, class Voxel_volume* vox);
 
-    void read_skeleton(char* file_name);
-    void read_voxel_volume(char* file_name, class Voxel_volume* vox);
+        Voxel_loader() {}
 };
 
 void test_voxel_skeleton();
