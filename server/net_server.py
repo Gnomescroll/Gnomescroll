@@ -61,6 +61,8 @@ class PyClient:
             self.identified = True
             NetServer.connectionPool.name_client(self, name)
             self.name = name
+            if self.agent:
+                cAgents.set_agent_name(self.agent.id, name)
             self.check_ready()
         else:
             if you:

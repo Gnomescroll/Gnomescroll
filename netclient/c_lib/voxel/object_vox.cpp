@@ -3,18 +3,16 @@
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <defines.h>
 
+// forward declarations
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
-// forward decl.
 namespace ClientState {
     extern Voxel_render_list voxel_render_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
-
 #ifdef DC_SERVER
-// forward decl.
 namespace ServerState {
     extern Voxel_hitscan_list voxel_hitscan_list;
 }
