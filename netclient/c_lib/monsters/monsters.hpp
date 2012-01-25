@@ -27,7 +27,7 @@ class Slime {
     float vx,vy,vz;
     float theta,phi;
     
-    Object_vox* vox;
+    Voxel_model* vox;
 
     Object_types type;
 

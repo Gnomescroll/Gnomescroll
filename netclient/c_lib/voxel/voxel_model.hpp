@@ -4,7 +4,7 @@
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 
-class Object_vox 
+class Voxel_model 
 {
     public:
 
@@ -44,8 +44,8 @@ class Object_vox
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Object_vox(int num_parts);
-        Object_vox(int num_parts, VoxDat* vox_dat, int id, int type);
-        Object_vox(int num_parts, VoxDat* vox_dat, int id, int type, int team);
-        ~Object_vox();
+        Voxel_model(int num_parts);
+        Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type);
+        Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team);
+        ~Voxel_model();
 };

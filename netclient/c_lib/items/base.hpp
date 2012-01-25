@@ -25,7 +25,7 @@ class Base {
         int team;
         Object_types type;
         
-        Object_vox* vox;
+        Voxel_model* vox;
 
         void set_position(float x, float y, float z);
 

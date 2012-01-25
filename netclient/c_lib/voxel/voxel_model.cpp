@@ -19,12 +19,12 @@ namespace ServerState {
 #endif
 
 //set offset and rotation
-void Object_vox::set_skeleton_root(float x, float y, float z, float theta)
+void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
     vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(0.0,0.0,0.0, 0.0,0.0,theta);
 }
 
-void Object_vox::update_skeleton()
+void Voxel_model::update_skeleton()
 {
     for(int i=1; i<n_skeleton_nodes; i++)
     {
@@ -35,11 +35,11 @@ void Object_vox::update_skeleton()
     }    
 }
 
-void Object_vox::init_skeleton(VoxDat* vox_dat)
+void Voxel_model::init_skeleton(VoxDat* vox_dat)
 {
     if( skeleton_inited == true )
     {
-        printf("Object_vox::init_skeleton error!! inited twice \n");
+        printf("Voxel_model::init_skeleton error!! inited twice \n");
         return;
     }
     skeleton_inited = true;
@@ -62,7 +62,7 @@ void Object_vox::init_skeleton(VoxDat* vox_dat)
     }
 }
 
-void Object_vox::init_parts(VoxDat* vox_dat, int id, int type) {
+void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
     // create each vox part from vox_dat conf
     if (this->inited) return;
     this->inited = true;
@@ -106,21 +106,21 @@ void Object_vox::init_parts(VoxDat* vox_dat, int id, int type) {
     }
 }
 
-void Object_vox::set_draw(bool draw) {
+void Voxel_model::set_draw(bool draw) {
     int i;
     for (i=0; i<this->n_parts; i++) {
         this->vv[i].draw = draw;
     }
 }
 
-void Object_vox::set_hitscan(bool hitscan) {
+void Voxel_model::set_hitscan(bool hitscan) {
     int i;
     for (i=0; i<this->n_parts; i++) {
         this->vv[i].hitscan = hitscan;
     }
 }
 
-void Object_vox::update_last_state(float x, float y, float z, float theta, float phi)
+void Voxel_model::update_last_state(float x, float y, float z, float theta, float phi)
 {
     this->last_update_state.x = x;
     this->last_update_state.y = y;
@@ -129,7 +129,7 @@ void Object_vox::update_last_state(float x, float y, float z, float theta, float
     this->last_update_state.phi = phi;
 }
 
-void Object_vox::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
+void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
 
     // prevent wastful update
 
@@ -177,7 +177,7 @@ void Object_vox::update(VoxDat* vox_dat, float x, float y, float z, float theta,
     this->update_last_state(x,y,z,theta,phi);
 }
 
-Object_vox::Object_vox(int num_parts)
+Voxel_model::Voxel_model(int num_parts)
 :
 inited(false)
 {
@@ -185,7 +185,7 @@ inited(false)
     this->vv = new Voxel_volume[num_parts];
 }
 
-Object_vox::Object_vox(int num_parts, VoxDat* vox_dat, int id, int type)
+Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type)
 :
 inited(false)
 {
@@ -195,7 +195,7 @@ inited(false)
     this->init_skeleton(vox_dat);
 }
 
-Object_vox::Object_vox(int num_parts, VoxDat* vox_dat, int id, int type, int team)
+Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team)
 :
 inited(false)
 {
@@ -205,7 +205,7 @@ inited(false)
     this->init_skeleton(vox_dat);
 }
 
-Object_vox::~Object_vox() {
+Voxel_model::~Voxel_model() {
     if (this->vv != NULL)
     {
         for (int i=0; i<this->n_parts; i++) {
@@ -225,11 +225,11 @@ Object_vox::~Object_vox() {
     }
     else
     {
-        printf("Object_vox::~Object_vox, error! skeleton not inited \n");
+        printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
     }
 }
 
-float Object_vox::largest_radius() {
+float Voxel_model::largest_radius() {
     float largest = 0.0f;
     if (this->vv == NULL) return largest;
     int i;
@@ -241,7 +241,7 @@ float Object_vox::largest_radius() {
     return largest;
 }
 
-void Object_vox::init_parts(VoxDat* vox_dat, int id, int type, int team) {
+void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type, int team) {
     // create each vox part from vox_dat conf
 
     int i;
@@ -297,7 +297,7 @@ void Object_vox::init_parts(VoxDat* vox_dat, int id, int type, int team) {
     }
 }
 
-void Object_vox::update_team_color(VoxDat* vox_dat, int team)
+void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;

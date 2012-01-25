@@ -15,7 +15,7 @@ theta(0), phi(0),
 team(0),
 type(OBJ_TYPE_BASE)
 {
-    this->vox = new Object_vox(BASE_PART_NUM);
+    this->vox = new Voxel_model(BASE_PART_NUM);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
@@ -28,7 +28,7 @@ theta(0), phi(0),
 id(id), team(team),
 type(OBJ_TYPE_BASE)
 {
-    this->vox = new Object_vox(BASE_PART_NUM, &base_vox_dat, id, type, team);
+    this->vox = new Voxel_model(BASE_PART_NUM, &base_vox_dat, id, type, team);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
