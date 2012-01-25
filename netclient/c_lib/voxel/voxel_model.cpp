@@ -183,8 +183,8 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
 
 Voxel_model::Voxel_model(int num_parts)
 :
+skeleton_inited(false),
 vox_inited(false)
-skeleton_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
@@ -192,8 +192,8 @@ skeleton_inited(false)
 
 Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type)
 :
-vox_inited(false),
-skeleton_inited(false)
+skeleton_inited(false),
+vox_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
@@ -203,8 +203,8 @@ skeleton_inited(false)
 
 Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team)
 :
-vox_inited(false),
-skeleton_inited(false)
+skeleton_inited(false),
+vox_inited(false)
 {
     this->n_parts = num_parts;
     this->vv = new Voxel_volume[num_parts];
