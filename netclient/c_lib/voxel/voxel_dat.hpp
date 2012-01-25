@@ -75,7 +75,6 @@ class VoxPart {
 
         VoxPart(
             int part_num,
-            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             bool biaxial=false
@@ -83,7 +82,6 @@ class VoxPart {
         
         VoxPart(
             int part_num,
-            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             float anchor_x, float anchor_y, float anchor_z,
@@ -107,12 +105,12 @@ class VoxDat {
         
         void set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
         void set_skeleton_node_parent(int node, int parent);
+        void set_skeleton_parent_matrix(int part, int parent);
 
         void init_parts(int n_parts);
 
         void set_part(
             int part_num,
-            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             float anchor_x, float anchor_y, float anchor_z,
@@ -122,7 +120,6 @@ class VoxDat {
         
         void set_part_properties(
             int part_num,
-            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             bool biaxial=false

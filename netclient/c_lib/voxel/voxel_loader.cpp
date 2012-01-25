@@ -86,6 +86,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         printf ("%d %d %s %d\n", part_num, skeleton_parent_matrix, str_tmp, read);
         index += read;
         read_voxel_volume(str_tmp, part_num, vox_dat);
+        vox_dat->set_skeleton_parent_matrix(part_num, skeleton_parent_matrix);
     }
 
     // voxel part rotation, anchor
