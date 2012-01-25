@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/game/game.hpp>
-#include <voxel/object_vox.hpp>
+#include <voxel/voxel_model.hpp>
 #include <common/enum_types.hpp>
 
 const int N_FLAGS = N_TEAMS;

@@ -5,7 +5,7 @@
 #include <c_lib/template/object_list.hpp>
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
-#include <c_lib/voxel/object_vox.hpp>
+#include <c_lib/voxel/voxel_model.hpp>
 
 #include <common/enum_types.hpp>
 

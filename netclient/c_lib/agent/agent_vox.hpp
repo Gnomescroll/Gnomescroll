@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/voxel/object_vox.hpp>
+#include <c_lib/voxel/voxel_model.hpp>
 
 extern VoxDat agent_vox_dat;
 
