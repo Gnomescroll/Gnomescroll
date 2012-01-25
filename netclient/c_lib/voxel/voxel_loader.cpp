@@ -69,11 +69,12 @@ void Voxel_loader::read_skeleton(char* file_name)
 
     for(int i=0; i<num_skeleton_nodes; i++)
     {
+        int index;
         float x,y,z;
         float rx,ry,rz;
 
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%f %f %f  %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
+        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &index, &x,&y,&z, &rx,&ry,&rz, &read);
 
         printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
 
@@ -84,12 +85,12 @@ void Voxel_loader::read_skeleton(char* file_name)
 
         index += read;
     }
-    
+
     for(int i=0; i<num_voxel_volumes; i++)
     {
-        int volume_num;
+        int volume_num, parent_skeleton_node;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %s %n", &volume_num, str_tmp, &read);
+        sscanf (buffer+index, "%d %d %s %n", &volume_num, &parent_skeleton_node, str_tmp, &read);
         index += read;
         read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
     }
