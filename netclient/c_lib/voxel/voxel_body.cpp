@@ -113,42 +113,10 @@ VoxColors::~VoxColors()
     }
 }
 
-/* Rotation */
-
-//void VoxPartRotation::set(float fx, float fy, float fz, float nx, float ny, float nz)
-//{
-    //// normalize
-    //float len;
-    //len = sqrt(fx*fx + fy*fy + fz*fz);
-    //fx /= len;
-    //fy /= len;
-    //fz /= len;
-    //len = sqrt(nx*nx + ny*ny + nz*nz);
-    //nx /= len;
-    //ny /= len;
-    //nz /= len;
-    
-    //this->fx = fx;
-    //this->fy = fy;
-    //this->fz = fz;
-    //this->nx = nx;
-    //this->ny = ny;
-    //this->nz = nz;
-//}
-
-//VoxPartRotation::VoxPartRotation()
-//{}
-//VoxPartRotation::VoxPartRotation(float fx, float fy, float fz, float nx, float ny, float nz)
-//{
-    //this->set(fx,fy,fz,nx,ny,nz);
-//}
-
-
 /* Anchors */
 
-void VoxPartAnchor::set(float length, float x, float y, float z)
+void VoxPartAnchor::set(float x, float y, float z)
 {
-    this->length = length;
     this->x = x;
     this->y = y;
     this->z = z;
@@ -204,14 +172,11 @@ void VoxPart::set_dimension(int x, int y, int z)
 VoxPart::VoxPart(
     int part_num,
     float vox_size,
-    float rot_fx, float rot_fy, float rot_fz,
-    float rot_nx, float rot_ny, float rot_nz,
-    float anc_len, float anc_x, float anc_y, float anc_z,
+    float anc_x, float anc_y, float anc_z,
     int dim_x, int dim_y, int dim_z,
     bool biaxial
 ):
-rotation(rot_fx, rot_fy, rot_fz, rot_nx, rot_ny, rot_nz),
-anchor(anc_len, anc_x, anc_y, anc_z),
+anchor(anc_x, anc_y, anc_z),
 dimension(dim_x, dim_y, dim_z),
 part_num(part_num),
 vox_size(vox_size),
@@ -241,9 +206,7 @@ void VoxBody::init(int n_parts) {
 void VoxBody::set_part(
     int part_num,
     float vox_size,
-    float rot_fx, float rot_fy, float rot_fz,
-    float rot_nx, float rot_ny, float rot_nz,
-    float anc_len, float anc_x, float anc_y, float anc_z,
+    float anc_x, float anc_y, float anc_z,
     int dim_x, int dim_y, int dim_z,
     bool biaxial
 )
@@ -254,17 +217,14 @@ void VoxBody::set_part(
         p = new VoxPart(
                 part_num,
                 vox_size,
-                rot_fx, rot_fy, rot_fz,
-                rot_nx, rot_ny, rot_nz,
-                anc_len, anc_x, anc_y, anc_z,
+                anc_x, anc_y, anc_z,
                 dim_x, dim_y, dim_z,
                 biaxial
             );
         vox_part[part_num] = p;
     } else {
         p->vox_size = vox_size;
-        p->set_rotation(rot_fx, rot_fy, rot_fz, rot_nx, rot_ny, rot_nz);
-        p->set_anchor(anc_len, anc_x, anc_y, anc_z);
+        p->set_anchor(anc_x, anc_y, anc_z);
         p->set_dimension(dim_x, dim_y, dim_z);
         p->colors.init(dim_x, dim_y, dim_z);
         p->part_num = part_num;
