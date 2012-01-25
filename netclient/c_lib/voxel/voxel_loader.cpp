@@ -155,6 +155,21 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
 
     vox->init(xdim,ydim,zdim,vox_size);
 
+    int team;
+    int team_r, team_g, team_b;
+
+    check_for_comments(buffer, &index);
+    sscanf (buffer+index, "%i %n", &team, &read);
+    index += read;
+
+    check_for_comments(buffer, &index);
+    sscanf (buffer+index, "%i %i %i %n", &team_r,&team_g,&team_b &read);
+    index += read;
+
+    printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
+
+    printf("vox: x,y,z= %i, %i, %i, size= %f \n", xdim,ydim,zdim, vox_size);
+    
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;

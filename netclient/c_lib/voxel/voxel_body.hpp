@@ -89,10 +89,12 @@ class VoxBody {
         int n_parts;
         float vox_size;
 
+        int* vox_skeleton_transveral_list;
         struct Mat4* vox_skeleton_local_matrix;
-        struct Mat4* vox_skeleton_world_matrix;
         int n_skeleton_nodes;
 
+        //struct Mat4* vox_skeleton_world_matrix;
+        
         void init_skeleton(int n_skeleton);
         void init_parts(int n_parts);
 
