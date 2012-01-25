@@ -113,18 +113,34 @@ VoxColors::~VoxColors()
     }
 }
 
-/* Anchors */
+/* Rotation */
 
-void VoxPartAnchor::set(float x, float y, float z)
+void VoxPartRotation::set(float x, float y, float z)
 {
     this->x = x;
     this->y = y;
     this->z = z;
 }
 
-VoxPartAnchor::VoxPartAnchor()
+VoxPartRotation::VoxPartRotation()
 {}
-VoxPartAnchor::VoxPartAnchor(float x, float y, float z)
+VoxPartRotation::VoxPartRotation(float x, float y, float z)
+:
+x(x), y(y), z(z)
+{}
+
+/* Orientation */
+
+void VoxPartOrientation::set(float x, float y, float z)
+{
+    this->x = x;
+    this->y = y;
+    this->z = z;
+}
+
+VoxPartOrientation::VoxPartOrientation()
+{}
+VoxPartOrientation::VoxPartOrientation(float x, float y, float z)
 :
 x(x), y(y), z(z)
 {}
@@ -153,9 +169,14 @@ x(x), y(y), z(z)
 
 /* Body Part (wraps properties) */
 
-void VoxPart::set_anchor(float x, float y, float z)
+void VoxPart::set_rotation(float x, float y, float z)
 {
-    anchor.set(x, y, z);
+    rotation.set(x,y,z);
+}
+
+void VoxPart::set_orientation(float x, float y, float z)
+{
+    orientation.set(x,y,z);
 }
 
 void VoxPart::set_dimension(int x, int y, int z)
@@ -166,17 +187,33 @@ void VoxPart::set_dimension(int x, int y, int z)
 VoxPart::VoxPart(
     int part_num,
     float vox_size,
-    float anc_x, float anc_y, float anc_z,
-    int dim_x, int dim_y, int dim_z,
+    int dimension_x, int dimension_y, int dimension_z,
+    float orientation_x, float orientation_y, float orientation_z,
+    float rotation_x, float rotation_y, float rotation_z,
     bool biaxial
 ):
-anchor(anc_x, anc_y, anc_z),
-dimension(dim_x, dim_y, dim_z),
+rotation(rotation_x, rotation_y, rotation_z),
+orientation(orientation_x, orientation_y, orientation_z),
+dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
 vox_size(vox_size),
 biaxial(biaxial)
 {
-    colors.init(dim_x, dim_y, dim_z);
+    colors.init(dimension_x, dimension_y, dimension_z);
+}
+
+VoxPart::VoxPart(
+    int part_num,
+    float vox_size,
+    int dimension_x, int dimension_y, int dimension_z,
+    bool biaxial
+):
+dimension(dimension_x, dimension_y, dimension_z),
+part_num(part_num),
+vox_size(vox_size),
+biaxial(biaxial)
+{
+    colors.init(dimension_x, dimension_y, dimension_z);
 }
 
 
@@ -216,8 +253,9 @@ void VoxBody::init_parts(int n_parts) {
 void VoxBody::set_part(
     int part_num,
     float vox_size,
-    float anc_x, float anc_y, float anc_z,
-    int dim_x, int dim_y, int dim_z,
+    int dimension_x, int dimension_y, int dimension_z,
+    float orientation_x, float orientation_y, float orientation_z,
+    float rotation_x, float rotation_y, float rotation_z,
     bool biaxial
 )
 {
@@ -227,20 +265,66 @@ void VoxBody::set_part(
         p = new VoxPart(
                 part_num,
                 vox_size,
-                anc_x, anc_y, anc_z,
-                dim_x, dim_y, dim_z,
+                dimension_x, dimension_y, dimension_z,
+                orientation_x, orientation_y, orientation_z,
+                rotation_x, rotation_y, rotation_z,
                 biaxial
             );
         vox_part[part_num] = p;
     } else {
-        p->vox_size = vox_size;
-        p->set_anchor(anc_x, anc_y, anc_z);
-        p->set_dimension(dim_x, dim_y, dim_z);
-        p->colors.init(dim_x, dim_y, dim_z);
         p->part_num = part_num;
+        p->vox_size = vox_size;
+        p->set_dimension(dimension_x, dimension_y, dimension_z);
+        p->set_rotation(rotation_x, rotation_y, rotation_z);
+        p->set_orientation(orientation_x, orientation_y, orientation_z);
+        p->colors.init(dimension_x, dimension_y, dimension_z);
         p->biaxial = biaxial;
     }
 }
+
+void VoxBody::set_part_properties(
+    int part_num,
+    float vox_size,
+    int dimension_x, int dimension_y, int dimension_z,
+    bool biaxial
+)
+{
+    if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
+    VoxPart* p = vox_part[part_num];
+    if (p==NULL) {
+        p = new VoxPart(
+            part_num,
+            vox_size,
+            dimension_x, dimension_y, dimension_z,
+            biaxial
+        );
+        vox_part[part_num] = p;
+    } else {
+        p->part_num = part_num;
+        p->vox_size = vox_size;
+        p->set_dimension(dimension_x, dimension_y, dimension_z);
+        p->colors.init(dimension_x, dimension_y, dimension_z);
+        p->biaxial = biaxial;
+    }
+}
+
+void VoxBody::set_part_spatials(
+    int part_num,
+    float orientation_x, float orientation_y, float orientation_z,
+    float rotation_x, float rotation_y, float rotation_z
+)
+{
+    if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
+    VoxPart* p = vox_part[part_num];
+    if (p == NULL)
+    {
+        printf("ERROR VoxBody::set_part_spatials -- part %d is NULL. Abort\n", part_num);
+        return;
+    }
+    p->set_rotation(rotation_x, rotation_y, rotation_z);
+    p->set_orientation(orientation_x, orientation_y, orientation_z);
+}
+
 
 void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {

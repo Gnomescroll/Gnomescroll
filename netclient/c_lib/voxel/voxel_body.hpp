@@ -21,14 +21,24 @@ class VoxColors {
         ~VoxColors();
 };
 
-class VoxPartAnchor {
+class VoxPartRotation {
     public:
         float x,y,z;
 
         void set(float x, float y, float z);
 
-        VoxPartAnchor();
-        VoxPartAnchor(float x, float y, float z);
+        VoxPartRotation();
+        VoxPartRotation(float x, float y, float z);
+};
+
+class VoxPartOrientation {
+    public:
+        float x,y,z;
+
+        void set(float x, float y, float z);
+
+        VoxPartOrientation();
+        VoxPartOrientation(float x, float y, float z);
 };
 
 class VoxPartDimension {
@@ -44,7 +54,8 @@ class VoxPartDimension {
 
 class VoxPart {
     public:
-        VoxPartAnchor anchor;
+        VoxPartRotation rotation;
+        VoxPartOrientation orientation;
         VoxPartDimension dimension;
         VoxColors colors;
         
@@ -52,14 +63,23 @@ class VoxPart {
         float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
-        void set_anchor(float x, float y, float z);
+        void set_rotation(float x, float y, float z);
+        void set_orientation(float x, float y, float z);
         void set_dimension(int x, int y, int z);
 
         VoxPart(
             int part_num,
             float vox_size,
-            float anc_x, float anc_y, float anc_z,
-            int dim_x, int dim_y, int dim_z,
+            int dimension_x, int dimension_y, int dimension_z,
+            bool biaxial=false
+        );
+        
+        VoxPart(
+            int part_num,
+            float vox_size,
+            int dimension_x, int dimension_y, int dimension_z,
+            float orientation_x, float orientation_y, float orientation_z,
+            float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
 };
@@ -85,10 +105,25 @@ class VoxBody {
         void set_part(
             int part_num,
             float vox_size,
-            float anc_x, float anc_y, float anc_z,
-            int dim_x, int dim_y, int dim_z,
+            int dimension_x, int dimension_y, int dimension_z,
+            float orientation_x, float orientation_y, float orientation_z,
+            float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
+        
+        void set_part_properties(
+            int part_num,
+            float vox_size,
+            int dimension_x, int dimension_y, int dimension_z,
+            bool biaxial=false
+        );
+
+        void set_part_spatials(
+            int part_num,
+            float orientation_x, float orientation_y, float orientation_z,
+            float rotation_x, float rotation_y, float rotation_z
+        );
+        
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
 
