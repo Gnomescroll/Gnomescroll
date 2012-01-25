@@ -174,6 +174,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;
+
     while(1)
     {
         check_for_comments(buffer, &index);
@@ -193,6 +194,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
             break;
         }
         index += read;
+
     #ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
     #endif
