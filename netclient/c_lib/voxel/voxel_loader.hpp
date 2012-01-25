@@ -94,6 +94,11 @@ class Voxel_loader
 
             check_for_comments(buffer, &index);
             sscanf (buffer+index, "%f %f %f  %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
+
+            printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
+            vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
+            vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
+
             index += read;
         }
 
