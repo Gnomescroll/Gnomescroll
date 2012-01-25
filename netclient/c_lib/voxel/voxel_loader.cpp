@@ -152,24 +152,29 @@ void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox
     sscanf (buffer+index, "%f %n", &vox_size, &read);
     index += read;
 
-    printf("vox: x,y,z= %i, %i, %i, size= %f \n", xdim,ydim,zdim, vox_size);
+    // biaxial
+    int biaxial;
+    check_for_comments(buffer, &index);
+    sscanf (buffer+index, "%d %n", &biaxial, &read);
+    index += read;
 
-    //vox_dat->set_part(part_num, vox_size, theta, phi, xdim, ydim, zdim, biaxial);
+    vox_dat->set_part(part_num, vox_size, 0,0,0, xdim, ydim, zdim, (bool)biaxial);
+    printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
 
+    // team
     int team;
-    int team_r, team_g, team_b;
-
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %n", &team, &read);
     index += read;
 
+    // team base color
+    int team_r, team_g, team_b;
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
-
+    
+    vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
     printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
-
-    printf("vox: x,y,z= %i, %i, %i, size= %f \n", xdim,ydim,zdim, vox_size);
     
     int ret;
     int vox_num = 0;
@@ -197,7 +202,6 @@ void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox
 
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
         vox_num++;
-        //set voxel model
     }
 
     printf("voxels: %i \n", vox_num);
