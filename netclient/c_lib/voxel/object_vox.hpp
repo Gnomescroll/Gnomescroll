@@ -11,7 +11,7 @@ class Object_vox
 
         //skeleton
         void init_skeleton(VoxBody* vox_dat);
-        void Object_vox::set_skeleton_root(float x, float y, float z, float theta);
+        void set_skeleton_root(float x, float y, float z, float theta);
         void update_skeleton();  //recalculate world view matrices
 
         bool skeleton_needs_update;

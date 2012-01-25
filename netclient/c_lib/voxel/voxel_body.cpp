@@ -277,7 +277,6 @@ VoxBody::VoxBody()
 vox_part(NULL),
 inited(false),
 vox_skeleton_local_matrix(NULL),
-vox_skeleton_world_matrix(NULL)
 {}
 
 VoxBody::~VoxBody()
@@ -293,6 +292,4 @@ VoxBody::~VoxBody()
 
     if (this->vox_skeleton_local_matrix != NULL)
         delete[] this->vox_skeleton_local_matrix;
-    if (this->vox_skeleton_world_matrix != NULL)
-        delete[] this->vox_skeleton_world_matrix;
 }
