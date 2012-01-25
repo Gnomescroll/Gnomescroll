@@ -19,7 +19,7 @@ void Voxel_loader::check_for_comments(char* s, int* index)
     goto jmp;
 }
 
-void Voxel_loader::read_skeleton(char* file_name)
+void Voxel_loader::read_skeleton(char* file_name, VoxBody* vox_dat)
 {
     int size = fsize(file_name);
     char* buffer = new char[size+1];
@@ -34,47 +34,42 @@ void Voxel_loader::read_skeleton(char* file_name)
     }
     buffer[size+1] = '\0';
 
-    //printf("skeleton file size= %i \n", size);
-
     char* str_tmp = new char[512];
-
-
-    int num_volumes;
-
+    int n_parts;
     int index = 0;
     int read;
 
     //read in number of voxel volumes
     check_for_comments(buffer, &index);
-    sscanf (buffer+index, "%d %n", &num_volumes, &read);
+    sscanf (buffer+index, "%d %n", &n_parts, &read);
     index += read;
 
-    printf("num_volumes= %i \n", num_volumes);
+    vox_dat->init(n_parts);
 
+    //Voxel_skeleton *vox_skel = new Voxel_skeleton(n_parts);
 
-    Voxel_skeleton *vox_skel = new Voxel_skeleton(num_volumes);
-
-    for(int i=0; i<num_volumes; i++)
+    for(int i=0; i<n_parts; i++)
     {
-        int volume_num;
+        int part_num;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %s %n", &volume_num, str_tmp, &read);
+        sscanf (buffer+index, "%d %s %n", &part_num, str_tmp, &read);
         index += read;
-        read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[volume_num] );
+        //read_voxel_volume(str_tmp, &vox_skel->voxel_volume_list[part_num] );
+        read_voxel_volume(str_tmp, part_num, vox_dat);
     }
 
-    for(int i=0; i<num_volumes; i++)
+    for(int i=0; i<n_parts; i++)
     {
         int x1, x2;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %n", &x1, &x2, &read);
         index += read;
         
-        vox_skel->skeleton_tree[2*i+0] = x1;
-        vox_skel->skeleton_tree[2*i+1] = x2;
+        //vox_skel->skeleton_tree[2*i+0] = x1;
+        //vox_skel->skeleton_tree[2*i+1] = x2;
     }
 
-    for(int i=0; i<num_volumes; i++)
+    for(int i=0; i<n_parts; i++)
     {
         float x,y,z;
         float rx,ry,rz;
@@ -98,12 +93,13 @@ void Voxel_loader::read_skeleton(char* file_name)
     }
 
     fclose(fp);
-    delete vox_skel;
+    //delete vox_skel;
     delete[] str_tmp;
     delete[] buffer;
 }
 
-void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
+//void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
+void Voxel_loader::read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
 
@@ -124,28 +120,26 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
     int index = 0;
     int read;
 
-    //read in size
+    // dimension
     int xdim,ydim,zdim;
-
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %d %d %n", &xdim,&ydim,&zdim, &read);
     index += read;
 
-    //read in voxsize
+    //voxel size
     float vox_size;
-
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%f %n", &vox_size, &read);
     index += read;
 
     printf("vox: x,y,z= %i, %i, %i, size= %f \n", xdim,ydim,zdim, vox_size);
 
-    vox->init(xdim,ydim,zdim,vox_size);
+    //vox_dat->set_part(part_num, vox_size, theta, phi, xdim, ydim, zdim, biaxial);
 
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;
-
+    unsigned char a = 255;
     while(1)
     {
         check_for_comments(buffer, &index);
@@ -166,7 +160,7 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
         }
         index += read;
 
-        vox->set(x,y,z, r,g,b,0);
+        vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
         vox_num++;
         //set voxel model
     }
@@ -179,6 +173,7 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
 
 void test_voxel_skeleton()
 {
+    return;
     //static int count = 0;
     class Voxel_loader vl;
     vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
