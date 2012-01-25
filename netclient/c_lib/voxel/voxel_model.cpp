@@ -1,4 +1,4 @@
-#include "object_vox.hpp"
+#include "voxel_model.hpp"
 
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <defines.h>
