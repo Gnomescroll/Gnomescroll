@@ -34,10 +34,7 @@ void Voxel_loader::read_skeleton(char* file_name)
     }
     buffer[size+1] = '\0';
 
-    //printf("skeleton file size= %i \n", size);
-
     char* str_tmp = new char[512];
-
 
     int num_skeleton_nodes;
     int num_voxel_volumes;
@@ -195,9 +192,6 @@ void Voxel_loader::read_voxel_volume(char* file_name, class Voxel_volume* vox)
 
 void test_voxel_skeleton()
 {
-    //static int count = 0;
     class Voxel_loader vl;
     vl.read_skeleton( (char*)"./media/voxel/test_skeleton");
-
-    //class Voxel_skeleton a((char*) test_string);
 }
