@@ -226,7 +226,7 @@ biaxial(biaxial)
     #endif
 }
 
-
+ 
 /* Skeleton Nodes */
 
 void VoxDat::init_skeleton(int n_skeleton)
