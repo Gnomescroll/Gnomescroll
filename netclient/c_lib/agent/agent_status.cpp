@@ -60,9 +60,20 @@ int Agent_status::apply_damage(int dmg) {
 }
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type) {
-    int res = this->apply_damage(dmg);
+    printf("dmg=%d\n", dmg);
+    // dont allow team kills
+    if (inflictor_type == OBJ_TYPE_AGENT && inflictor_id != this->a->id)
+    {
+        printf("Agent doing damage\n");
+        printf("Agent=%d you=%d\n", inflictor_id, this->a->id);
+        Agent_state *inf = STATE::agent_list.get(inflictor_id);
+        if (inf == NULL) return this->health;
+        if (inf->status.team == this->team && (!team_kills)) return this->health;
+    }
+    
+    int health = this->apply_damage(dmg);
     if (!this->health) die(inflictor_id, inflictor_type);
-    return res;
+    return health;
 }
 
 int Agent_status::die() {

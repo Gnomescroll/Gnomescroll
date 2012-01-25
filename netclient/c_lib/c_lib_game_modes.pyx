@@ -52,7 +52,7 @@ class DummyCTFTeam(object):
         elif k == 'viewers':
             return t.viewers
         elif k == 'id':
-            return k.id
+            return t.id
         elif k.startswith('__'):
             return object.__getattribute__(self, k)
 
@@ -75,7 +75,7 @@ class DummyNoTeam(object):
         elif k == 'viewers':
             return t.viewers
         elif k == 'id':
-            return k.id
+            return t.id
         elif k.startswith('__'):
             return object.__getattribute__(self, k)
         raise AttributeError

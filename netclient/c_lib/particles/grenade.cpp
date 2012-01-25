@@ -145,11 +145,10 @@ void Grenade::explode() {
 #ifdef DC_SERVER
     int i;
     // find all agents in radius, apply damage
-    int num_agents;
-    num_agents = ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
+    ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
 
     Agent_state* a;
-    for (i=0; i<num_agents; i++) {
+    for (i=0; i<ServerState::agent_list.n_filtered; i++) {
         a = ServerState::agent_list.filtered_agents[i];
         if (a == NULL) continue;
         a->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT); // need to be able to pass owner & suicidal arguments to apply_damage
