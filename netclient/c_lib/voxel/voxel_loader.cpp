@@ -172,13 +172,14 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
 
 #ifdef DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
+    unsigned char a = 255;
 #endif
     //printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
 
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;
-    unsigned char a = 255;
+
     while(1)
     {
         check_for_comments(buffer, &index);
@@ -198,6 +199,7 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
             break;
         }
         index += read;
+
     #ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
     #endif
