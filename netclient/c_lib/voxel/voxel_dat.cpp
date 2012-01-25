@@ -195,12 +195,12 @@ VoxPart::VoxPart(
     float rotation_x, float rotation_y, float rotation_z,
     bool biaxial
 ):
-rotation(rotation_x, rotation_y, rotation_z),
-anchor(anchor_x, anchor_y, anchor_z),
-dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
 skeleton_parent_matrix(skeleton_parent_matrix),
 vox_size(vox_size),
+dimension(dimension_x, dimension_y, dimension_z),
+anchor(anchor_x, anchor_y, anchor_z),
+rotation(rotation_x, rotation_y, rotation_z),
 biaxial(biaxial)
 {
     #ifdef DC_CLIENT
@@ -215,10 +215,10 @@ VoxPart::VoxPart(
     int dimension_x, int dimension_y, int dimension_z,
     bool biaxial
 ):
-dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
 skeleton_parent_matrix(skeleton_parent_matrix),
 vox_size(vox_size),
+dimension(dimension_x, dimension_y, dimension_z),
 biaxial(biaxial)
 {
     #ifdef DC_CLIENT

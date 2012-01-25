@@ -112,6 +112,7 @@ class VoxDat {
 
         void set_part(
             int part_num,
+            int skeleton_parent_matrix,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
             float anchor_x, float anchor_y, float anchor_z,
