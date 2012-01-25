@@ -23,7 +23,7 @@ team_name_one = "Blue Team"
 team_name_two = "Green Team"
 
 ''' Map '''
-map = ''
+map = 'natural_terrain'
 seed = 8007513
 
 try:
