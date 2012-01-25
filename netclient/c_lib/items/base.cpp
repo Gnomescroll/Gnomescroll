@@ -1,6 +1,6 @@
 #include "base.hpp"
 
-VoxBody base_vox_dat;
+VoxDat base_vox_dat;
 
 void Base::set_position(float x, float y, float z) {
     this->x = x;

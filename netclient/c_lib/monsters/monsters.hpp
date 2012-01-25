@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/voxel/voxel_body.hpp>
+#include <c_lib/voxel/voxel_dat.hpp>
 
 #include <c_lib/template/object_list.hpp>
 #include <c_lib/physics/vector.hpp>
@@ -11,7 +11,7 @@
 
 namespace Monsters {
 
-extern VoxBody slime_vox_dat;
+extern VoxDat slime_vox_dat;
 
 const int SLIME_PART_NUM = 1;
 enum SLIME_BODY_PARTS {

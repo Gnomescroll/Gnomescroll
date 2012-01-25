@@ -35,9 +35,8 @@
 #include <c_lib/voxel/voxel_volume.cpp>
 #include <c_lib/voxel/voxel_render.cpp>
 #include <c_lib/voxel/voxel_hitscan.cpp>
-#include <c_lib/voxel/voxel_body.cpp>
+#include <c_lib/voxel/voxel_dat.cpp>
 #include <c_lib/voxel/object_vox.cpp>
-#include <c_lib/voxel/voxel_skeleton.cpp>
 #include <c_lib/voxel/voxel_loader.cpp>
 #include <c_lib/voxel/vox_dat_init.cpp>
 

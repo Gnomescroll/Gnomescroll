@@ -1,6 +1,6 @@
 #include "voxel_loader.hpp"
 
-#include <c_lib/voxel/voxel_skeleton.hpp>
+//#include <c_lib/voxel/voxel_skeleton.hpp>
 #include <sys/stat.h>
 
 off_t fsize(const char *filename) {
@@ -20,7 +20,7 @@ void check_for_comments(char* s, int* index)
     goto jmp;
 }
 
-void read_skeleton(char* file_name, VoxBody* vox_dat)
+void read_skeleton(char* file_name, VoxDat* vox_dat)
 {
     int size = fsize(file_name);
     char* buffer = new char[size+1];
@@ -110,7 +110,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
     delete[] buffer;
 }
 
-void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix, VoxBody* vox_dat)
+void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix, VoxDat* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
 

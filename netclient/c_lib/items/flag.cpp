@@ -1,6 +1,6 @@
 #include "flag.hpp"
 
-VoxBody flag_vox_dat;
+VoxDat flag_vox_dat;
 
 void Flag::set_position(float x, float y, float z) {
     this->x = x;

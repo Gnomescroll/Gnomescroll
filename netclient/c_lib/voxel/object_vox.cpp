@@ -35,7 +35,7 @@ void Object_vox::update_skeleton()
     }    
 }
 
-void Object_vox::init_skeleton(VoxBody* vox_dat)
+void Object_vox::init_skeleton(VoxDat* vox_dat)
 {
     if( skeleton_inited == true )
     {
@@ -62,7 +62,7 @@ void Object_vox::init_skeleton(VoxBody* vox_dat)
     }
 }
 
-void Object_vox::init_parts(VoxBody* vox_dat, int id, int type) {
+void Object_vox::init_parts(VoxDat* vox_dat, int id, int type) {
     // create each vox part from vox_dat conf
     if (this->inited) return;
     this->inited = true;
@@ -129,7 +129,7 @@ void Object_vox::update_last_state(float x, float y, float z, float theta, float
     this->last_update_state.phi = phi;
 }
 
-void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta, float phi) {
+void Object_vox::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
 
     // prevent wastful update
 
@@ -185,7 +185,7 @@ inited(false)
     this->vv = new Voxel_volume[num_parts];
 }
 
-Object_vox::Object_vox(int num_parts, VoxBody* vox_dat, int id, int type)
+Object_vox::Object_vox(int num_parts, VoxDat* vox_dat, int id, int type)
 :
 inited(false)
 {
@@ -195,7 +195,7 @@ inited(false)
     this->init_skeleton(vox_dat);
 }
 
-Object_vox::Object_vox(int num_parts, VoxBody* vox_dat, int id, int type, int team)
+Object_vox::Object_vox(int num_parts, VoxDat* vox_dat, int id, int type, int team)
 :
 inited(false)
 {
@@ -241,7 +241,7 @@ float Object_vox::largest_radius() {
     return largest;
 }
 
-void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
+void Object_vox::init_parts(VoxDat* vox_dat, int id, int type, int team) {
     // create each vox part from vox_dat conf
 
     int i;
@@ -297,7 +297,7 @@ void Object_vox::init_parts(VoxBody* vox_dat, int id, int type, int team) {
     }
 }
 
-void Object_vox::update_team_color(VoxBody* vox_dat, int team)
+void Object_vox::update_team_color(VoxDat* vox_dat, int team)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;

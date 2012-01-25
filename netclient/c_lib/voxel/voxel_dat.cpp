@@ -1,4 +1,4 @@
-#include "voxel_body.hpp"
+#include "voxel_dat.hpp"
 
 /* *
  * Dat storage
@@ -229,28 +229,28 @@ biaxial(biaxial)
 
 /* Skeleton Nodes */
 
-void VoxBody::init_skeleton(int n_skeleton)
+void VoxDat::init_skeleton(int n_skeleton)
 {
     this->n_skeleton_nodes = n_skeleton;
     vox_skeleton_local_matrix = new Mat4[n_skeleton];
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
-void VoxBody::set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
+void VoxDat::set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
     vox_skeleton_local_matrix[node] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
 }
 
-void VoxBody::set_skeleton_node_parent(int node, int parent)
+void VoxDat::set_skeleton_node_parent(int node, int parent)
 {
     vox_skeleton_transveral_list[node] = parent;
 }
 
 /* Body (contains parts) */
 
-void VoxBody::init_parts(int n_parts) {
+void VoxDat::init_parts(int n_parts) {
     if (inited) {
-        printf("WARNING VoxBody::init_part -- called more than once\n");
+        printf("WARNING VoxDat::init_part -- called more than once\n");
         return;
     }
     inited = true;
@@ -260,7 +260,7 @@ void VoxBody::init_parts(int n_parts) {
     for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
 
-void VoxBody::set_part(
+void VoxDat::set_part(
     int part_num,
     float vox_size,
     int dimension_x, int dimension_y, int dimension_z,
@@ -269,7 +269,7 @@ void VoxBody::set_part(
     bool biaxial
 )
 {
-    if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
+    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p==NULL) {
         p = new VoxPart(
@@ -294,7 +294,7 @@ void VoxBody::set_part(
     }
 }
 
-void VoxBody::set_part_properties(
+void VoxDat::set_part_properties(
     int part_num,
     int skeleton_parent_matrix,
     float vox_size,
@@ -302,7 +302,7 @@ void VoxBody::set_part_properties(
     bool biaxial
 )
 {
-    if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
+    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p==NULL) {
         p = new VoxPart(
@@ -323,17 +323,17 @@ void VoxBody::set_part_properties(
     }
 }
 
-void VoxBody::set_part_spatials(
+void VoxDat::set_part_spatials(
     int part_num,
     float anchor_x, float anchor_y, float anchor_z,
     float rotation_x, float rotation_y, float rotation_z
 )
 {
-    if (!inited) printf("ERROR WARNING: VoxBody not inited\n");
+    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p == NULL)
     {
-        printf("ERROR VoxBody::set_part_spatials -- part %d is NULL. Abort\n", part_num);
+        printf("ERROR VoxDat::set_part_spatials -- part %d is NULL. Abort\n", part_num);
         return;
     }
     p->set_rotation(rotation_x, rotation_y, rotation_z);
@@ -341,22 +341,22 @@ void VoxBody::set_part_spatials(
 }
 
 #ifdef DC_CLIENT
-void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
     if (p==NULL) {
-        printf("WARNING VoxBody::set_color -- part %d is NULL\n", part);
+        printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
         return;
     }
     int i = x + y*p->dimension.x + z*p->dimension.y*p->dimension.x;
     p->colors.set(i, x,y,z, r,g,b,a);
 }
 
-void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
+void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
 {
     VoxPart* p = vox_part[part];
     if (p==NULL) {
-        printf("WARNING VoxBody::set_color -- part %d is NULL\n", part);
+        printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
         return;
     }
     p->colors.set_team(team);
@@ -364,14 +364,14 @@ void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, un
 }
 #endif
 
-VoxBody::VoxBody()
+VoxDat::VoxDat()
 :
 vox_part(NULL),
 inited(false),
 vox_skeleton_local_matrix(NULL)
 {}
 
-VoxBody::~VoxBody()
+VoxDat::~VoxDat()
 {
     if (vox_part != NULL) {
         int i;

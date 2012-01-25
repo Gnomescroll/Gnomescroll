@@ -2,7 +2,7 @@
 
 #include <c_lib/voxel/object_vox.hpp>
 
-extern VoxBody agent_vox_dat;
+extern VoxDat agent_vox_dat;
 
 const int AGENT_PART_NUM = 6;
 enum AGENT_BODY_PARTS {

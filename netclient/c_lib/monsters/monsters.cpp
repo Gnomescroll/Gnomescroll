@@ -9,7 +9,7 @@
 
 namespace Monsters {
 
-VoxBody slime_vox_dat;
+VoxDat slime_vox_dat;
 
 Slime::Slime()
 :

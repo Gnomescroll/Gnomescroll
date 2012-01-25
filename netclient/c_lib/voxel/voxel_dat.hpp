@@ -92,7 +92,7 @@ class VoxPart {
         );
 };
 
-class VoxBody {
+class VoxDat {
     public:
         class VoxPart** vox_part;
 
@@ -139,9 +139,9 @@ class VoxBody {
         #endif
 
         void where() {
-            printf("VoxBody instantiated at: %p\n", this);
+            printf("VoxDat instantiated at: %p\n", this);
         }
 
-        VoxBody();
-        ~VoxBody();
+        VoxDat();
+        ~VoxDat();
 };
