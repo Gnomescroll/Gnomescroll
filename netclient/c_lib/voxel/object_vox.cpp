@@ -134,7 +134,9 @@ void Object_vox::update(VoxBody* vox_dat, float x, float y, float z, float theta
         //ax = vp->anchor.x;
         //ay = vp->anchor.y;
         //az = vp->anchor.z;
-        ax=ay=az=0.0f;
+        ax = vp->orientation.x;
+        ay = vp->orientation.y;
+        az = vp->orientation.z;
         this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
 
         if (vp->biaxial) {

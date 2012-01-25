@@ -3,11 +3,11 @@
 #vox_size
 0.20
 #biaxial
-0
+1
 #team
 1
 #team_base_color (r,g,b)
-0 0 0
+48 48 48
 #voxels x,y,z, r,g,b
 1 4 1 48 48 48
 4 4 1 48 48 48

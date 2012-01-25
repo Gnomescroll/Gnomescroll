@@ -7,6 +7,7 @@
 
 /* Color */
 
+#ifdef DC_CLIENT
 void VoxColors::init(int dx, int dy, int dz)
 {
     printf("VoxColors init'ing with x,y,z = %d,%d,%d\n", dx,dy,dz);
@@ -113,6 +114,7 @@ VoxColors::~VoxColors()
         free(this->index);
     }
 }
+#endif
 
 /* Rotation */
 
@@ -200,7 +202,9 @@ part_num(part_num),
 vox_size(vox_size),
 biaxial(biaxial)
 {
+    #ifdef DC_CLIENT
     colors.init(dimension_x, dimension_y, dimension_z);
+    #endif
 }
 
 VoxPart::VoxPart(
@@ -214,7 +218,9 @@ part_num(part_num),
 vox_size(vox_size),
 biaxial(biaxial)
 {
+    #ifdef DC_CLIENT
     colors.init(dimension_x, dimension_y, dimension_z);
+    #endif
 }
 
 
@@ -278,7 +284,9 @@ void VoxBody::set_part(
         p->set_dimension(dimension_x, dimension_y, dimension_z);
         p->set_rotation(rotation_x, rotation_y, rotation_z);
         p->set_orientation(orientation_x, orientation_y, orientation_z);
+        #ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
+        #endif
         p->biaxial = biaxial;
     }
 }
@@ -304,7 +312,9 @@ void VoxBody::set_part_properties(
         p->part_num = part_num;
         p->vox_size = vox_size;
         p->set_dimension(dimension_x, dimension_y, dimension_z);
+        #ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
+        #endif
         p->biaxial = biaxial;
     }
 }
@@ -326,7 +336,7 @@ void VoxBody::set_part_spatials(
     p->set_orientation(orientation_x, orientation_y, orientation_z);
 }
 
-
+#ifdef DC_CLIENT
 void VoxBody::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
@@ -348,6 +358,7 @@ void VoxBody::set_team(int part, bool team, unsigned char r, unsigned char g, un
     p->colors.set_team(team);
     p->colors.set_team_base(r,g,b);
 }
+#endif
 
 VoxBody::VoxBody()
 :

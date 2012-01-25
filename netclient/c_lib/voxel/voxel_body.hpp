@@ -4,6 +4,7 @@
 
 /* Dat storage */
 
+#ifdef DC_CLIENT
 class VoxColors {
     public:
         unsigned char** rgba;
@@ -20,6 +21,7 @@ class VoxColors {
         VoxColors();
         ~VoxColors();
 };
+#endif
 
 class VoxPartRotation {
     public:
@@ -57,7 +59,9 @@ class VoxPart {
         VoxPartRotation rotation;
         VoxPartOrientation orientation;
         VoxPartDimension dimension;
+        #ifdef DC_CLIENT
         VoxColors colors;
+        #endif
         
         int part_num;
         float vox_size;
@@ -123,9 +127,11 @@ class VoxBody {
             float orientation_x, float orientation_y, float orientation_z,
             float rotation_x, float rotation_y, float rotation_z
         );
-        
+
+        #ifdef DC_CLIENT
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
+        #endif
 
         void where() {
             printf("VoxBody instantiated at: %p\n", this);

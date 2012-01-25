@@ -72,7 +72,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
         vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
     }
 
-    // voxel parts
+    // voxel part size, dimension, color
     for(int i=0; i<n_parts; i++)
     {
         int part_num;
@@ -84,6 +84,7 @@ void read_skeleton(char* file_name, VoxBody* vox_dat)
         read_voxel_volume(str_tmp, part_num, vox_dat);
     }
 
+    // voxel part rotation, orientation
     for (int i=0; i<n_parts; i++)
     {
         int part_num;
@@ -148,6 +149,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
     vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, (bool)biaxial);
     printf("vox: x,y,z= %i, %i, %i, size= %f biaxial=%d\n", xdim,ydim,zdim, vox_size, biaxial);
 
+    #ifdef DC_CLIENT
     // team
     int team;
     check_for_comments(buffer, &index);
@@ -159,10 +161,10 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
     check_for_comments(buffer, &index);
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
-    
+
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
     printf("team= %i, team rgb= %i %i %i \n", team, team_r, team_g, team_b);
-    
+
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;
@@ -193,7 +195,8 @@ void read_voxel_volume(char* file_name, int part_num, VoxBody* vox_dat)
     }
 
     printf("voxels: %i \n", vox_num);
-
+    #endif
+    
     fclose(fp); 
     delete[] buffer;
 }

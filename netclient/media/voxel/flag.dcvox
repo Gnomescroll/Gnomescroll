@@ -7,7 +7,7 @@
 #team
 1
 #team_base_color (r,g,b)
-0 0 0
+223 31 31
 #voxels x,y,z, r,g,b
 0 0 0 223 31 31
 0 0 1 223 31 31
