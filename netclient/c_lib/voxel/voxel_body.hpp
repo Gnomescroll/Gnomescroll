@@ -19,16 +19,16 @@ class VoxColors {
         ~VoxColors();
 };
 
-class VoxPartRotation {
-    public:
-        float fx,fy,fz;     // internal orientation
-        float nx,ny,nz; // orientation vector relative to main anchor point ??
+//class VoxPartRotation {
+    //public:
+        //float fx,fy,fz;     // internal orientation
+        //float nx,ny,nz; // orientation vector relative to main anchor point ??
 
-        void set(float fx, float fy, float fz, float nx, float ny, float nz);
+        //void set(float fx, float fy, float fz, float nx, float ny, float nz);
 
-        VoxPartRotation();
-        VoxPartRotation(float fx, float fy, float fz, float nx, float ny, float nz);
-};
+        //VoxPartRotation();
+        //VoxPartRotation(float fx, float fy, float fz, float nx, float ny, float nz);
+//};
 
 class VoxPartAnchor {
     public:
@@ -54,12 +54,13 @@ class VoxPartDimension {
 
 struct VoxPart {
     public:
-        VoxPartRotation rotation;
+        //VoxPartRotation rotation;
         VoxPartAnchor anchor;
         VoxPartDimension dimension;
         VoxColors colors;
         
         int part_num;
+        float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
         void set_rotation(float fx, float fy, float fz, float nx, float ny, float nz);
@@ -81,16 +82,16 @@ class VoxBody {
         class VoxPart** vox_part;
         bool inited;
         int n_parts;
-        float vox_size;
 
         void init(int n_parts);
 
         void set_part(
+            int part_num,
+            float vox_size,
             float rot_fx, float rot_fy, float rot_fz,
             float rot_nx, float rot_ny, float rot_nz,
             float anc_len, float anc_x, float anc_y, float anc_z,
             int dim_x, int dim_y, int dim_z,
-            int part_num,
             bool biaxial=false
         );
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
@@ -101,7 +102,5 @@ class VoxBody {
         }
 
         VoxBody();
-        VoxBody(float vox_size);
-
         ~VoxBody();
 };
