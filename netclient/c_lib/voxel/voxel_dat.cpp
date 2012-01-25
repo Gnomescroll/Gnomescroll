@@ -199,9 +199,9 @@ rotation(rotation_x, rotation_y, rotation_z),
 anchor(anchor_x, anchor_y, anchor_z),
 dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
+skeleton_parent_matrix(skeleton_parent_matrix),
 vox_size(vox_size),
-biaxial(biaxial),
-skeleton_parent_matrix(skeleton_parent_matrix)
+biaxial(biaxial)
 {
     #ifdef DC_CLIENT
     colors.init(dimension_x, dimension_y, dimension_z);
@@ -216,10 +216,10 @@ VoxPart::VoxPart(
     int dimension_x, int dimension_y, int dimension_z,
     bool biaxial
 ):
+dimension(dimension_x, dimension_y, dimension_z),
 part_num(part_num),
 skeleton_parent_matrix(skeleton_parent_matrix),
 vox_size(vox_size),
-dimension(dimension_x, dimension_y, dimension_z),
 biaxial(biaxial)
 {
     #ifdef DC_CLIENT

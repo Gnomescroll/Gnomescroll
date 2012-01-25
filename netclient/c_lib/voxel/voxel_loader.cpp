@@ -178,7 +178,6 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
     int ret;
     int vox_num = 0;
     int x,y,z,r,g,b;
-    unsigned char a = 255;
     while(1)
     {
         check_for_comments(buffer, &index);
@@ -199,13 +198,11 @@ void read_voxel_volume(char* file_name, int part_num, int skeleton_parent_matrix
         }
         index += read;
     #ifdef DC_CLIENT
-        vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, a);
+        vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
     #endif
         //printf("set_color: %d - %d %d %d - %d %d %d %d\n", part_num, x,y,z, r,g,b,a);
         vox_num++;
     }
-    //#endif
-    //printf("voxels: %i \n", vox_num);
     
     fclose(fp); 
     delete[] buffer;
