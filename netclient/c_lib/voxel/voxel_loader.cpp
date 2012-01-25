@@ -78,10 +78,7 @@ void Voxel_loader::read_skeleton(char* file_name)
 
         printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
 
-        mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
-
-        //vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
-        //vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
+        //mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
 
         index += read;
     }
@@ -106,10 +103,7 @@ void Voxel_loader::read_skeleton(char* file_name)
 
         printf("x,y,z= %.2f %.2f %.2f rx,ry,rz= %.2f %.2f %.2f \n", x,y,z, rx,ry,rz );
 
-        mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
-
-        //vox_skel->voxel_volume_list[i].local_matrix = mat4_euler_rotation( rx,ry,rz );
-        //vox_skel->voxel_volume_list[i].local_matrix.v[4] = vec4_init(x,y,z,1.0);
+        //mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
 
         index += read;
     }
