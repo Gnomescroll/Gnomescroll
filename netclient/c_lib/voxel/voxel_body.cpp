@@ -186,14 +186,28 @@ biaxial(biaxial)
 }
 
 
-/* Body (contains parts) */
+/* Skeleton Nodes */
 
 void VoxBody::init_skeleton(int n_skeleton)
 {
     this->n_skeleton_nodes = n_skeleton;
     vox_skeleton_local_matrix = new Mat4[n_skeleton];
-    vox_skeleton_world_matrix = new Mat4[n_skeleton];
+    vox_skeleton_transveral_list = new int[n_skeleton];
+
+    //vox_skeleton_world_matrix = new Mat4[n_skeleton];
 }
+
+void VoxBody::set_skeleton_node_matrix(int index, float x, float y, float z, float rx, float ry, float rz)
+{
+    vox_skeleton_local_matrix[index] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+}
+
+void VoxBody::set_skeleton_node_parent(int index, int parent)
+{
+    vox_skeleton_transveral_list[index] = parent;
+}
+
+/* Body (contains parts) */
 
 void VoxBody::init_parts(int n_parts) {
     if (inited) {
