@@ -142,10 +142,7 @@ void Voxel_model::register_hitscan()
 }
 
 void Voxel_model::set_hitscan(bool hitscan) {
-    int i;
-    for (i=0; i<this->n_parts; i++) {
-        this->vv[i].hitscan = hitscan;
-    }
+    for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
 void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
