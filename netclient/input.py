@@ -130,10 +130,9 @@ class InputGlobal:
         current_mode = (current_mode + change) % len(modes)
         new_mode_name = modes[current_mode]
         if new_mode_name == 'agent' and GameStateGlobal.agent is None:
-            print "INput:: _toggle_mode -- GameStateGlobal.agent is None"
+            print "Cannot switch to agent camera - python player agent not assigned yet"
             return
         setattr(InputGlobal, type, new_mode_name)
-        #print "%s mode= %s" % (type, str(getattr(InputGlobal, type)),)
         return current_mode
 
     # toggles through modes.
@@ -142,9 +141,6 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
         if curr is not None:
             current_mode[0] = curr
-        print 'input mode is %s' % curr
-        #if cls._inputs[curr] == 'camera':
-            #cls.mouse.clear_mouse_deltas()
 
     @classmethod
     def toggle_chat(cls):
@@ -158,7 +154,6 @@ class InputGlobal:
         curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
         if curr is not None:
             current_mode[0] = curr
-        print 'camera mode is %s' % curr
 
 
 class Mouse(object):
