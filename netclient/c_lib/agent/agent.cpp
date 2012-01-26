@@ -836,9 +836,42 @@ void Agent_state::set_angles(float theta, float phi) {
 }
 
 void Agent_state::get_spawn_point(int* spawn) {
+    //TODO
+    const int XMAX = 128;
+    const int YMAX = 128;
+
+    // get spawn area based on team
+    int x_max, x_min, y_max, y_min;
+    printf("Team=%d\n", this->status.team);
+    switch (this->status.team)
+    {
+        case 0:
+            x_min = 0;
+            x_max = XMAX;
+            y_min = 0;
+            y_max = YMAX;
+            break;
+        case 1:
+            x_min = 0;
+            x_max = XMAX/2;
+            y_min = 0;
+            y_max = YMAX/2;
+            break;
+        case 2:
+            x_min = XMAX/2;
+            x_max = XMAX;
+            y_min = YMAX/2;
+            y_max = YMAX;
+            break;
+        default:
+            printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
+            return;
+    }
+    printf("x: %d->%d\n", x_min, x_max);
+    printf("y: %d->%d\n", y_min, y_max);
     do {
-        spawn[0] = randrange(0, xmax-1); // use actual map sizes!
-        spawn[1] = randrange(0, ymax-1);
+        spawn[0] = randrange(x_min, x_max-1); // use actual map sizes!
+        spawn[1] = randrange(y_min, y_max-1);
         spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
     } while (spawn[2] <= 0);
     printf("Spawning at z_level %d\n", spawn[2]);
