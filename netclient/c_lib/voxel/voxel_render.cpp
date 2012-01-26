@@ -268,12 +268,23 @@ void Voxel_render_list::draw()
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
 
     Voxel_volume* vv;
-    struct Vec4 v[4];
 
+    //vv->parent_world_matrix
+    //struct Vec4 v[4];
+
+    struct Mat4 m;
+
+    //still needed for some reason
+    /*
     v[0].w = 0.0f;
     v[1].w = 0.0f;
     v[2].w = 0.0f;
     v[3].w = 1.0f;
+    */
+    m.v[0].w = 0.0f;
+    m.v[1].w = 0.0f;
+    m.v[2].w = 0.0f;
+    m.v[3].w = 1.0f;
 
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
@@ -285,12 +296,18 @@ void Voxel_render_list::draw()
         if(vv->vvl.vnum == 0) continue;
         
         //construct world view matrix
+        /*
         v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
         v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
         v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
         v[3].v3 = vv->v[3].v3;
-    
-        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) &v);
+        */
+        m.v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
+        m.v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
+        m.v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
+        m.v[3].v3 = vv->v[3].v3;
+
+        glUniformMatrix4fv(InRotationMatrix, 1, false, m._f );
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
     }
