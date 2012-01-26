@@ -29,7 +29,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
         return;
     }
 
-    //this->local_matrix = mat4_identity();
+    this->local_matrix = mat4_identity();
 
     this->set_parameters(xdim, ydim, zdim, scale);
 
