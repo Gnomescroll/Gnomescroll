@@ -4,7 +4,6 @@
 
 extern VoxDat agent_vox_dat;
 
-const int AGENT_PART_NUM = 6;
 enum AGENT_BODY_PARTS {
     AGENT_PART_HEAD,
     AGENT_PART_TORSO,
@@ -13,5 +12,3 @@ enum AGENT_BODY_PARTS {
     AGENT_PART_LLEG,
     AGENT_PART_RLEG
 };
-
-class Agent_state; // forward declaration

@@ -11,19 +11,6 @@ namespace Monsters {
 
 VoxDat slime_vox_dat;
 
-Slime::Slime()
-:
-theta(0.0), phi(0.0),
-type(OBJ_TYPE_SLIME)
-#ifdef DC_SERVER
-, changed(true),tick_num(0)
-#endif
-{
-    printf("Slime::Slime() DEPRECATED\n");
-    /*
-    this->vox = new Voxel_model(SLIME_PART_NUM);
-    */
-}
 Slime::Slime(int id)
 :
 id(id),
@@ -33,7 +20,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Voxel_model(&slime_vox_dat, this->id, this->type);
+    this->init_vox();
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
@@ -56,7 +43,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Voxel_model(&slime_vox_dat, this->id, this->type);
+    this->init_vox();
 }
 
 Slime::~Slime()
@@ -73,6 +60,13 @@ Slime::~Slime()
     msg.id = this->id;
     msg.broadcast();
     #endif
+}
+
+void Slime::init_vox()
+{
+    this->vox = new Voxel_model(&slime_vox_dat, this->id, this->type);
+    this->vox->set_hitscan(true);
+    this->vox->register_hitscan();
 }
 
 void Slime::tick() {

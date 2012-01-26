@@ -13,7 +13,6 @@ namespace Monsters {
 
 extern VoxDat slime_vox_dat;
 
-const int SLIME_PART_NUM = 1;
 enum SLIME_BODY_PARTS {
     SLIME_PART_BODY
 };
@@ -42,7 +41,8 @@ class Slime {
     void set_state(float x, float y, float z, float vx, float vy, float vz, float theta, float phi);
     void set_angles(float theta, float phi);
 
-    Slime();
+    void init_vox();
+
     Slime(int id);
     Slime(float x, float y, float z, float vx, float vy, float vz);
     Slime(int id, float x, float y, float z, float vx, float vy, float vz);

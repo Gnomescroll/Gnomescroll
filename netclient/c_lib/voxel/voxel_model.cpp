@@ -120,7 +120,6 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        if (vv->hitscan) STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
 }
 
@@ -129,6 +128,17 @@ void Voxel_model::set_draw(bool draw) {
     for (i=0; i<this->n_parts; i++) {
         this->vv[i].draw = draw;
     }
+}
+
+void Voxel_model::register_hitscan()
+{
+    if (this->vv == NULL)
+    {
+        printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
+        return;
+    }
+    for (int i=0; i<this->n_parts;
+        STATE::voxel_hitscan_list.register_voxel_volume(&this->vv[i++]));
 }
 
 void Voxel_model::set_hitscan(bool hitscan) {
@@ -311,8 +321,6 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type, int team) {
 
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
-        if (vv->hitscan)
-            STATE::voxel_hitscan_list.register_voxel_volume(vv);
     }
 }
 

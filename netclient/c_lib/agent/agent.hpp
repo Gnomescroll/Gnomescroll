@@ -88,12 +88,9 @@ class Agent_state {
         class Agent_status status;
         class Agent_weapons weapons;
 
+        Voxel_model* vox;
         #ifdef DC_CLIENT
-        class Voxel_model* vox;
-        class Agent_event event;
-        #endif
-
-        #ifdef DC_SERVER
+        Agent_event event;
         #endif
 
         void _tick();
@@ -140,6 +137,8 @@ class Agent_state {
         float camera_height() {
             return box.b_height * CAMERA_HEIGHT_SCALE;
         }
+
+        void init_vox();
 
         Agent_state(int id); //default constructor
         Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);

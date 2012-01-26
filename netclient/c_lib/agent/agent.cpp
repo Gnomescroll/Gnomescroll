@@ -877,6 +877,13 @@ void Agent_state::spawn_state() {
     teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
 }
 
+void Agent_state::init_vox()
+{
+    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
+    this->vox->set_hitscan(true);
+    this->vox->register_hitscan();
+}
+
 Agent_state::Agent_state(int id)
 :
 id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
@@ -911,13 +918,9 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     msg.id = id;
     msg.team = this->status.team;
     msg.broadcast();
-
-    //spawn_state();
     #endif
 
-    #ifdef DC_CLIENT
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
-    #endif
+    this->init_vox();
 }
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
@@ -953,13 +956,9 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     msg.id = id;
     msg.team = this->status.team;
     msg.broadcast();
-
-    //spawn_state();
     #endif
 
-    #ifdef DC_CLIENT
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
-    #endif
+    this->init_vox();
 }
 
 Agent_state::~Agent_state() {

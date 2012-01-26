@@ -30,6 +30,7 @@ class Voxel_model
 
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
+        void register_hitscan();
         void update_team_color(VoxDat* vox_dat, int team);
 
         struct {
