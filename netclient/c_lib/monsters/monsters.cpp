@@ -30,7 +30,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Voxel_model(SLIME_PART_NUM, &slime_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&slime_vox_dat, this->id, this->type);
 }
 Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
 :
@@ -52,7 +52,7 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Voxel_model(SLIME_PART_NUM, &slime_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&slime_vox_dat, this->id, this->type);
 }
 
 Slime::~Slime()

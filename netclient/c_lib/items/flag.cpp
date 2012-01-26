@@ -16,11 +16,15 @@ id(0),
 team(0),
 type(OBJ_TYPE_FLAG)
 {
+
+    printf("Flag::Flag, DEPRECATED!! pass in vox_dat \n");
+/*
     this->vox = new Voxel_model(FLAG_PART_NUM);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+*/
 }
 
 Flag::Flag(int id, int team)
@@ -29,7 +33,7 @@ theta(0), phi(0),
 id(id), team(team),
 type(OBJ_TYPE_FLAG)
 {
-    this->vox = new Voxel_model(FLAG_PART_NUM, &flag_vox_dat, id, type, team);
+    this->vox = new Voxel_model(&flag_vox_dat, id, type, team);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
