@@ -256,48 +256,14 @@ void VoxDat::init_parts(int n_parts) {
     voxel_volume_inited = true;
     
     this->n_parts = n_parts;
-    vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
+    vox_part = new VoxPart*[n_parts]; //array of pointers
 
     this->vox_volume_local_matrix = new Mat4[n_parts];
 
     for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
 
-/*
-void VoxDat::set_part(
-    int part_num,
-    float vox_size,
-    int dimension_x, int dimension_y, int dimension_z,
-    float anchor_x, float anchor_y, float anchor_z,
-    float rotation_x, float rotation_y, float rotation_z,
-    bool biaxial
-)
-{
-    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
-    VoxPart* p = vox_part[part_num];
-    if (p==NULL) {
-        p = new VoxPart(
-                part_num,
-                vox_size,
-                dimension_x, dimension_y, dimension_z,
-                anchor_x, anchor_y, anchor_z,
-                rotation_x, rotation_y, rotation_z,
-                biaxial
-            );
-        vox_part[part_num] = p;
-    } else {
-        p->part_num = part_num;
-        p->vox_size = vox_size;
-        p->set_dimension(dimension_x, dimension_y, dimension_z);
-        p->set_rotation(rotation_x, rotation_y, rotation_z);
-        p->set_anchor(anchor_x, anchor_y, anchor_z);
-        #ifdef DC_CLIENT
-        p->colors.init(dimension_x, dimension_y, dimension_z);
-        #endif
-        p->biaxial = biaxial;
-    }
-}
-*/
+
 void VoxDat::set_part_properties(
     int part_num,
     float vox_size,
@@ -384,15 +350,8 @@ vox_skeleton_local_matrix(NULL)
 
 VoxDat::~VoxDat()
 {
-    if (vox_part != NULL) {
-        int i;
-        for (i=0; i<n_parts; i++) {
-            if (vox_part[i] == NULL) continue;
-            delete vox_part[i];
-        }
-        free(vox_part);
-    }
-
-    if (this->vox_skeleton_local_matrix != NULL)
-        delete[] this->vox_skeleton_local_matrix;
+    for (int i=0; i<n_parts; i++)  delete vox_part[i];
+    delete[] vox_part;
+    delete[] this->vox_skeleton_local_matrix;
+    delete [] this->vox_volume_local_matrix;
 }
