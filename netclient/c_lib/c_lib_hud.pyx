@@ -143,7 +143,7 @@ cdef extern from './hud/text.h':
         float xadvance
     )
     void set_missing_character(int cc)
-    void draw_text(char* t, int len, float x, float y, float depth)
+    void draw_text(char* t, int len, float x, float y, float depth, float line_height)
 
 class Text(object):
 
@@ -159,6 +159,7 @@ class Text(object):
         self.text_len = len(text)
         self.x = x
         self.y = y
+        self.line_height = 18.
 
     def __setattr__(self, k, v):
         if k == 'text':
@@ -168,7 +169,7 @@ class Text(object):
     def draw(self):
         r,g,b,a = self.color
         set_text_color(r,g,b,a)
-        draw_text(self.text, self.text_len, self.x, self.y, self.depth)
+        draw_text(self.text, self.text_len, self.x, self.y, self.depth, self.line_height)
         
 ''' Font '''
 import os.path
@@ -305,7 +306,7 @@ class Font:
         for s,x,y,color in self.stressers:
             r,g,b,a = color
             set_text_color(r,g,b,a)
-            draw_text(s, 1, x,y,0.1)
+            draw_text(s, 1, x,y,0.1, 10.)
 
     def start(self):
         start_text_draw()

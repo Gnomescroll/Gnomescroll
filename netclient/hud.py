@@ -164,6 +164,7 @@ class Hud(object):
 
     def draw_scoreboard(self):
         stats_txt = self._format_scoreboard_plain(self.scoreboard_stats())
+        print stats_txt
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text

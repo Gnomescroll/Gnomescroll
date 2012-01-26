@@ -12,7 +12,6 @@ import random
 
 import c_lib.c_lib_sdl
 import stats
-import animations
 
 from dat_loader import dat_loader
 
@@ -152,7 +151,6 @@ class MapMessageHandler(GenericMessageHandler):
     events = {
         'chunk_list' : '_chunk_list',
         'map_chunk' : '_map_chunk',
-        'clear_map': '_clear_map',
     }
 
     def _chunk_list(self, list, **msg):
@@ -163,10 +161,6 @@ class MapMessageHandler(GenericMessageHandler):
         #print "Map Chunk Received"
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         MapControllerGlobal.mapController.incoming_map_chunk(x,y,z)
-
-    def _clear_map(self, **msg):
-        terrainMap.clear()
-
 
 class ClientMessageHandler(GenericMessageHandler):
 
@@ -215,99 +209,6 @@ class ClientMessageHandler(GenericMessageHandler):
             NetOut.sendMessage.identify(name=opts.alt_name)
             self.used_alt = True
 
-# base class for datastore (*Lists) network interface
-class DatastoreMessageInterface(GenericMessageHandler):
-
-    event_extensions = ['list', 'update', 'destroy', 'create']
-    name = ''
-    store = None
-
-    # provide the NetOut request method for relevant object type
-    # will call this on object update failure (attempt to update unknown object)
-    def request_data(self, **data):
-        pass
-
-    def __init__(self):
-        self._load_default_events()
-        GenericMessageHandler.__init__(self)
-
-    def _load_default_events(self):
-        for evex in self.event_extensions:
-            event_name = '%s_%s' % (self.name, evex,)
-            method_name = '_' + event_name
-            method = getattr(self, method_name, None)
-            if method is None:
-                method_name = '_default_%s' % (evex,)
-                method = getattr(self, method_name)
-            self._bind_event(event_name, method)
-
-    def _bind_event(self, event_name, method):
-        self.events[event_name] = method
-
-    def _error_message(self, info_string, **msg):
-        return 'msg %s :: %s' % (msg['cmd'], info_string,)
-
-    def _default_update(self, **args):
-        err_msg = None
-        data = args.get(self.name, None)
-        full = args.get('full', 0)
-        if data is None:
-            err_msg = '%s key missing' % (self.name,)
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-
-        if full:
-            obj = self.store.update_or_create(**data)
-        else:
-            obj = self.store.load_info(**data)
-        #if obj is False:
-            #self.request_data(**data)
-        return obj
-
-    def _default_list(self, **args):
-        err_msg = None
-        list_key = '%s_list' % (self.name,)
-        try:
-            a_list = args[list_key]
-            assert type(a_list) == list
-        except KeyError:
-            err_msg = '%s key missing' % (list_key,)
-        except AssertionError:
-            err_msg = '%s is not a list' % (list_key,)
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-        objs = self.store.load_list(a_list)
-        return objs
-
-    def _default_create(self, **args):
-        err_msg = None
-        data = args.get(self.name, None)
-        if data is None:
-            err_msg =  '%s key missing' % (self.name,)
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-        obj = self.store.create(**data)
-        return obj
-
-    def _default_destroy(self, **args):
-        err_msg = None
-        try:
-            id = int(args.get('id', None))
-            self.store.destroy(id)
-        except TypeError:
-            err_msg = '%s id missing' % (self.name,)
-        except ValueError:
-            err_msg = '%s id invalid' % (self.name,)
-        except KeyError:
-            err_msg = '%s not found' % (self.name,)
-        if err_msg is not None:
-            print self._error_message(err_msg, **args)
-            return
-        return id
-
 class DatMessageHandler(GenericMessageHandler):
     events = {
         'dat'   :   '_load_dat',
@@ -354,7 +255,6 @@ class DatMessageHandler(GenericMessageHandler):
     def _load_type_key(self, name, type, key, val):
         dat_loader.set_property(name, type, key, val)
 
-from game_state import GameStateGlobal
 from net_client import NetClientGlobal
 from net_out import NetOut
 from chat_client import ChatClientGlobal
@@ -363,4 +263,3 @@ from input import InputGlobal
 
 import c_lib.terrain_map as terrainMap
 
-import animations

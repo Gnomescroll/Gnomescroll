@@ -7,7 +7,7 @@ int load_font(char* fontfile);
 void start_text_draw();
 void set_text_color(int r, int g, int b, int a);
 void end_text_draw();
-void draw_text(char *t, int len, float x, float y, float depth);
+void draw_text(char *t, int len, float x, float y, float depth, float line_height);
 void blit_glyph(
     float tex_x_min, float tex_x_max,
     float tex_y_min, float tex_y_max,

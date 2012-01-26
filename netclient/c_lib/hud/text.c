@@ -141,7 +141,7 @@ void add_glyph(
     glyphs[c].available = 1;
 }
 
-void draw_text(char* t, int len, float x, float y, float depth) {
+void draw_text(char* t, int len, float x, float y, float depth, float line_height) {
     int i;
     //char c;
     int c;
@@ -156,8 +156,8 @@ void draw_text(char* t, int len, float x, float y, float depth) {
         c = t[i];
 
         // newline
-        if (c == 10) {
-            cursor_y += 10.0f;
+        if (c == '\n') {
+            cursor_y += line_height;
             continue;
         }
         
