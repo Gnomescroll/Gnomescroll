@@ -22,9 +22,9 @@
 #define vm_column_max 16
 #define vm_chunk_voxel_size (vm_chunk_size * vm_chunk_size * vm_chunk_size)
 
-#define xmax (vm_map_dim    * vm_chunk_size)
-#define ymax (vm_map_dim    * vm_chunk_size)
-#define zmax (vm_column_max * vm_chunk_size)
+#define XMAX (vm_map_dim    * vm_chunk_size)
+#define YMAX (vm_map_dim    * vm_chunk_size)
+#define ZMAX (vm_column_max * vm_chunk_size)
 
 struct VBO {
         int v_num;

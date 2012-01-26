@@ -230,9 +230,9 @@ int _clear() {
     // iterate entire map
     // set to 0
     int i,j,k;
-    for (i=0; i<xmax; i++) {
-        for (j=0; j<ymax; j++) {
-            for (k=0; k<zmax; k++) {
+    for (i=0; i<XMAX; i++) {
+        for (j=0; j<YMAX; j++) {
+            for (k=0; k<ZMAX; k++) {
                 _set(i,j,k, 0);
             }
         }
@@ -251,7 +251,7 @@ int _get_highest_open_block(int x, int y, int n) {
     int block;
     int i;
 
-    for (i=zmax-1; i>=0; i--) {
+    for (i=ZMAX-1; i>=0; i--) {
         block = _get(x,y,i);
         if (!isSolid(block)) {
             open++;
@@ -269,7 +269,7 @@ int _get_highest_open_block(int x, int y, int n) {
 int _get_highest_solid_block(int x, int y) {
 
     int i;
-    for (i=zmax-1; i>=0; i--) {
+    for (i=ZMAX-1; i>=0; i--) {
         if (isSolid(_get(x,y,i))) {
             break;
         }
@@ -286,7 +286,7 @@ int _get_lowest_open_block(int x, int y, int n) {
     int i;
     int block;
     int open=0;
-    for (i=0; i<zmax; i++) {
+    for (i=0; i<ZMAX; i++) {
         block = _get(x,y,i);
         if (isSolid(block)) {
             open = 0;
@@ -302,19 +302,19 @@ int _get_lowest_open_block(int x, int y, int n) {
 int _get_lowest_solid_block(int x, int y) {
 
     int i;
-    for (i=0; i < zmax; i++) {
+    for (i=0; i < ZMAX; i++) {
         if (isSolid(_get(x,y,i))) {
             break;
         }
     }
-    if (i >= zmax) i = -1;  // failure
+    if (i >= ZMAX) i = -1;  // failure
     return i;
 }
 
 int get_height_at(int x, int y) {
     int i;
     int c;  // block val
-    for (i=zmax; i>0; i--) {
+    for (i=ZMAX; i>0; i--) {
         c = _get(x,y,i);
         if (c) return i;
     }

@@ -590,7 +590,7 @@ void _rmf_simplex_interp3(float final[], int x, int y, int z,
 /* 1D */
 void apply_interp1_perlin(int x, int x_interval,
                             int repeat, int base) {
-    if (x > xmax || x < 0) {
+    if (x > XMAX || x < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -599,7 +599,7 @@ void apply_interp1_perlin(int x, int x_interval,
 
 void apply_interp1_rmf_perlin(int x, int x_interval,
                             int repeat, int base) {
-    if (x > xmax || x < 0) {
+    if (x > XMAX || x < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -611,7 +611,7 @@ void apply_interp2_perlin(int x, int y,
                            int x_interval, int y_interval,
                            int rep_x, int rep_y,
                            int base) {
-    if (x > xmax || y > ymax || x < 0 || y < 0) {
+    if (x > XMAX || y > YMAX || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -621,7 +621,7 @@ void apply_interp2_perlin(int x, int y,
 void apply_interp2_rmf_perlin(int x, int y, int x_interval, int y_interval,
                             int rep_x, int rep_y,
                             int base) {
-    if (x > xmax || y > ymax || x < 0 || y < 0) {
+    if (x > XMAX || y > YMAX || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -629,7 +629,7 @@ void apply_interp2_rmf_perlin(int x, int y, int x_interval, int y_interval,
 }
 
 void apply_interp2_simplex(int x, int y, int x_interval, int y_interval) {
-    if (x > xmax || y > ymax || x < 0 || y < 0) {
+    if (x > XMAX || y > YMAX || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -637,7 +637,7 @@ void apply_interp2_simplex(int x, int y, int x_interval, int y_interval) {
 }
 
 void apply_interp2_rmf_simplex(int x, int y, int x_interval, int y_interval) {
-    if (x > xmax || y > ymax || x < 0 || y < 0) {
+    if (x > XMAX || y > YMAX || x < 0 || y < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -650,7 +650,7 @@ void apply_interp3_perlin(int x, int y, int z,
                             int x_interval, int y_interval, int z_interval,
                             int rep_x, int rep_y, int rep_z,
                             int base) {
-    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+    if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -662,7 +662,7 @@ void apply_interp3_rmf_perlin(int x, int y, int z,
                             int x_interval, int y_interval, int z_interval,
                             int rep_x, int rep_y, int rep_z,
                             int base) {
-    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+    if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -672,7 +672,7 @@ void apply_interp3_rmf_perlin(int x, int y, int z,
 
 void apply_interp3_simplex(int x, int y, int z,
                             int x_interval, int y_interval, int z_interval) {
-    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+    if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }
@@ -683,7 +683,7 @@ void apply_interp3_simplex(int x, int y, int z,
 void apply_interp3_rmf_simplex(int x, int y, int z,
                             int x_interval, int y_interval, int z_interval) {
                                 
-    if (x > xmax || y > ymax || z > zmax || x < 0 || y < 0 || z < 0) {
+    if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
         printf("interpolation error: dimensions out of map range\n");
         return;
     }

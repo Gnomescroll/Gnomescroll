@@ -53,7 +53,7 @@ void perturb_perlin2(int x, int y, int z, float turbulence) {
         a = transactions[i];
         b = transactions[++i];
         c = transactions[++i];
-        if (a < 0 || b < 0 || c < 0 || a > xmax || b > ymax || c > zmax) {
+        if (a < 0 || b < 0 || c < 0 || a > XMAX || b > YMAX || c > ZMAX) {
             continue;
         }
         _set(a,b,c, 3);
@@ -117,7 +117,7 @@ void perturb_perlin3a(int x, int y, int z, float turbulence) {
         a = transactions[i];
         b = transactions[++i];
         c = transactions[++i];
-        if (a < 0 || b < 0 || c < 0 || a > xmax || b > ymax || c > zmax) {
+        if (a < 0 || b < 0 || c < 0 || a > XMAX || b > YMAX || c > ZMAX) {
             continue;
         }
         _set(a,b,c, 3);
@@ -181,7 +181,7 @@ void perturb_perlin3(int x, int y, int z, float turbulence) {
         a = transactions[i];
         b = transactions[++i];
         c = transactions[++i];
-        if (a < 0 || b < 0 || c < 0 || a > xmax || b > ymax || c > zmax) {
+        if (a < 0 || b < 0 || c < 0 || a > XMAX || b > YMAX || c > ZMAX) {
             continue;
         }
         if (!isSolid(_get(a,b,c))) {
@@ -220,7 +220,7 @@ void perturb_heightmap(int x, int y, float turbulence, int tile, int clamp) {
             k = (int)((float)z + nz*turbulence);
             offset = k-z;
             if (offset > clamp) k = z+clamp;
-            if (k < 0 || k >= zmax) continue;
+            if (k < 0 || k >= ZMAX) continue;
             for (n=z; n <= k; n++) {
                 if (n==z) _set(i,j,z,5);
                 else _set(i,j,n, tile);
