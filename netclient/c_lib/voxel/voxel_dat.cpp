@@ -248,17 +248,22 @@ void VoxDat::set_skeleton_node_parent(int node, int parent)
 /* Body (contains parts) */
 
 void VoxDat::init_parts(int n_parts) {
-    if (inited) {
+    if (voxel_volume_inited) 
+    {
         printf("WARNING VoxDat::init_part -- called more than once\n");
         return;
     }
-    inited = true;
+    voxel_volume_inited = true;
     
     this->n_parts = n_parts;
     vox_part = (VoxPart**)malloc(sizeof(VoxPart*)*n_parts);
+
+    this->vox_volume_local_matrix = new Mat4[n_parts];
+
     for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
 
+/*
 void VoxDat::set_part(
     int part_num,
     float vox_size,
@@ -292,7 +297,7 @@ void VoxDat::set_part(
         p->biaxial = biaxial;
     }
 }
-
+*/
 void VoxDat::set_part_properties(
     int part_num,
     float vox_size,
@@ -300,7 +305,7 @@ void VoxDat::set_part_properties(
     bool biaxial
 )
 {
-    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
+    if (!voxel_volume_inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p==NULL) {
         p = new VoxPart(
@@ -321,21 +326,17 @@ void VoxDat::set_part_properties(
     }
 }
 
-void VoxDat::set_part_spatials(
-    int part_num,
-    float anchor_x, float anchor_y, float anchor_z,
-    float rotation_x, float rotation_y, float rotation_z
-)
+//anchor x,y,z then rotation x,y,z
+void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, float rx, float ry, float rz)
 {
-    if (!inited) printf("ERROR WARNING: VoxDat not inited\n");
+    if (!voxel_volume_inited) printf("ERROR WARNING: VoxDat not inited\n");
     VoxPart* p = vox_part[part_num];
     if (p == NULL)
     {
         printf("ERROR VoxDat::set_part_spatials -- part %d is NULL. Abort\n", part_num);
         return;
     }
-    p->set_rotation(rotation_x, rotation_y, rotation_z);
-    p->set_anchor(anchor_x, anchor_y, anchor_z);
+    this->vox_volume_local_matrix[part_num] =  mat4_euler_rotation_and_translation(x,y,x, rx,ry,rz);
 }
 
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)
@@ -377,7 +378,7 @@ void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, uns
 VoxDat::VoxDat()
 :
 vox_part(NULL),
-inited(false),
+voxel_volume_inited(false),
 vox_skeleton_local_matrix(NULL)
 {}
 

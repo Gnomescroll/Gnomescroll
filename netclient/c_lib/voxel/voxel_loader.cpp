@@ -100,7 +100,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
         //printf ("%d %f %f %f  %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
         index += read;
-        vox_dat->set_part_spatials(part_num, ox,oy,oz, rx,ry,rz);
+        vox_dat->set_part_local_matrix(part_num, ox,oy,oz, rx,ry,rz);
     }
 
     if(index > size+1)

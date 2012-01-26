@@ -29,7 +29,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
         return;
     }
 
-    this->local_matrix = mat4_identity();
+    //this->local_matrix = mat4_identity();
 
     this->set_parameters(xdim, ydim, zdim, scale);
 
@@ -58,9 +58,11 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     //update radius if changing scale
     this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
-    //this->voxel = new Voxel[powx*powy*powz];
     this->voxel = (union Voxel*)malloc(sizeof(union Voxel) * powx * powy * powz);
+    needs_vbo_update = true;
+}
 
+/*
     // fill model with gradient
     unsigned char r,g,b,a;
     a = 255;
@@ -73,8 +75,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
         _set(i,j,k,r,g,b,a);
     }}}
     needs_vbo_update = true;
-
-}
+*/
 
 Voxel_volume::Voxel_volume()
 :
@@ -88,8 +89,7 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
 draw(true),
-hitscan(true)//,
-//voxel(NULL)
+hitscan(true)
 {
     this->voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
@@ -102,7 +102,6 @@ Voxel_volume::~Voxel_volume()
     #endif
     if (this->hitscan)
         if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
-    //delete[] voxel;
     free(this->voxel);
 }
 
@@ -212,10 +211,7 @@ static const int vnset[18] = { 0,0,1,
 */
 
 static inline int vCalcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
-
-/*
-    Sets AO strength values
-*/
+// Sets AO strength values
 
 static inline int vCalcAdj(int side_1, int side_2, int corner) 
 {
@@ -225,18 +221,8 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
     return occ_array[occ];
 }
 
-
-//inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
-
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz)
 {
-
-    static const struct Voxel_normal ix[4] = { 
-        {{{0,0,0,0}}},
-        {{{0,0,0,1}}},
-        {{{0,0,0,2}}},
-        {{{0,0,0,3}}}
-    };
 
     static const struct Voxel_normal voxel_normal_array[6] = { 
         {{{0,0,1,0}}},
@@ -296,10 +282,10 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     }
 
     {
-        scratch[*index + 0].n = voxel_normal_array[side+0].n | ix[0].n;
-        scratch[*index + 1].n = voxel_normal_array[side+1].n | ix[1].n;
-        scratch[*index + 2].n = voxel_normal_array[side+2].n | ix[2].n;
-        scratch[*index + 3].n = voxel_normal_array[side+3].n | ix[3].n;
+        scratch[*index + 0].n = voxel_normal_array[side+0].n;
+        scratch[*index + 1].n = voxel_normal_array[side+1].n;
+        scratch[*index + 2].n = voxel_normal_array[side+2].n;
+        scratch[*index + 3].n = voxel_normal_array[side+3].n;
     }
 
     {

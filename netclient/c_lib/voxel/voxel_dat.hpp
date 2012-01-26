@@ -92,11 +92,15 @@ class VoxPart {
 
 class VoxDat {
     public:
-        class VoxPart** vox_part;
 
-        bool inited;
+
+        bool voxel_volume_inited;
+
         int n_parts;
+        class VoxPart** vox_part;
+        struct Mat4* vox_volume_local_matrix;
 
+        bool voxel_skeleton_inited;
         int* vox_skeleton_transveral_list;
         struct Mat4* vox_skeleton_local_matrix;
         int n_skeleton_nodes;
@@ -109,6 +113,7 @@ class VoxDat {
 
         void init_parts(int n_parts);
 
+/*
         void set_part(
             int part_num,
             float vox_size,
@@ -117,7 +122,7 @@ class VoxDat {
             float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
-        
+*/
         void set_part_properties(
             int part_num,
             float vox_size,
@@ -125,20 +130,15 @@ class VoxDat {
             bool biaxial=false
         );
 
-        void set_part_spatials(
-            int part_num,
-            float anchor_x, float anchor_y, float anchor_z,
-            float rotation_x, float rotation_y, float rotation_z
-        );
+        //anchor x,y,z then rotation x,y,z
+        void set_part_local_matrix( int part_num, float x, float y, float z, float rx, float ry, float rz);
 
         #ifdef DC_CLIENT
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
         #endif
 
-        void where() {
-            printf("VoxDat instantiated at: %p\n", this);
-        }
+        //void where() { printf("VoxDat instantiated at: %p\n", this); }
 
         VoxDat();
         ~VoxDat();
