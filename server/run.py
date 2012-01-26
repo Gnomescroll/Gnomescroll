@@ -312,11 +312,14 @@ class Main:
             print opts.map
             terrain_map.load_from_disk(opts.map)
         else:
-            terrain_map.load_from_disk("natural_terrain")
+            pass
+            map_gen.floor(terrain_map)
+            #terrain_map.load_from_disk("natural_terrain")
+
+        
         
         #_gen_map()
 
-            
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
             ##terrain_map.load_from_disk("savetest2")
