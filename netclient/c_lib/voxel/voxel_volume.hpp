@@ -17,6 +17,8 @@ class Voxel_render_list; //forward declarations
 class Voxel_volume
 {
     public:
+
+    struct Mat4 local_matrix;
     Vec4 v[4]; // forward, up, right, offset
 
     struct Mat4* parent_world_matrix;
@@ -87,7 +89,7 @@ class Voxel_volume
 
     private:
 #ifdef DC_CLIENT
-    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
 #endif
 
     inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline)) 

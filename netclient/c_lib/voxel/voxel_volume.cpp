@@ -29,6 +29,8 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
         return;
     }
 
+    //this->local_matrix = mat4_identity();
+
     this->set_parameters(xdim, ydim, zdim, scale);
 
 #ifdef DC_CLIENT
@@ -224,19 +226,10 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
 }
 
 
-inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side);
+//inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
 
-void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side)
+void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz)
 {
-
-    static const float vset[72] = { 
-        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
-        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
-        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
-        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
-        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
-        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
-    };
 
     static const struct Voxel_normal ix[4] = { 
         {{{0,0,0,0}}},
@@ -310,9 +303,9 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     }
 
     {
-        float fx = (float) x;
-        float fy = (float) y;
-        float fz = (float) z;
+        float fx = this->scale*((float) x) - ox;
+        float fy = this->scale*((float) y) - oy;
+        float fz = this->scale*((float) z) - oz;
         
         int _side = side*12;
 
@@ -370,6 +363,27 @@ void Voxel_volume::update_vertex_list()
     }
 
     static Voxel_vertex* scratch = new Voxel_vertex[65536]; //65536*20 bytes of memory
+
+    static const float vset[72] = { 
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+    };
+
+    float vset_dynamic[72];
+    for(int i=0; i<72; i++) vset_dynamic[i] = this->scale*vset[i];
+    
+    const float ox = this->hdx*this->scale;
+    const float oy = this->hdy*this->scale;
+    const float oz = this->hdz*this->scale;
+
+    //this->hdx = ((float) xdim) / 2;
+    //this->hdy = ((float) ydim) / 2;
+    //this->hdz = ((float) zdim) / 2;
+
     int index = 0;
 
     for(int x=0; x < xdim; x++){
@@ -378,19 +392,19 @@ void Voxel_volume::update_vertex_list()
         if( get_as_int(x,y,z) == 0) continue;
 
     #if VOXEL_RENDER_DEBUG_02
-        push_voxel_quad(scratch, &index, x,y,z, 0);
-        push_voxel_quad(scratch, &index, x,y,z, 1);
-        push_voxel_quad(scratch, &index, x,y,z, 2);
-        push_voxel_quad(scratch, &index, x,y,z, 3);
-        push_voxel_quad(scratch, &index, x,y,z, 4);
-        push_voxel_quad(scratch, &index, x,y,z, 5);
+        push_voxel_quad(scratch, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(scratch, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(scratch, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(scratch, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(scratch, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(scratch, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #else
-        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(scratch, &index, x,y,z, 0);
-        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(scratch, &index, x,y,z, 1);
-        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 2);
-        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 3);
-        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 4);
-        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 5);
+        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(scratch, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(scratch, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
     }}}
 
