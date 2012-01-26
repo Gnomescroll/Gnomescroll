@@ -17,11 +17,9 @@ class Voxel_render_list; //forward declarations
 class Voxel_volume
 {
     public:
-
-    struct Mat4 world_matrix;
-    struct Mat4 local_matrix; //
     Vec4 v[4]; // forward, up, right, offset
 
+    struct Mat4* parent_world_matrix;
 
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;

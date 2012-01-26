@@ -341,8 +341,12 @@ void VoxDat::set_part_spatials(
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)
 {
     VoxPart* vp = this->vox_part[part];
-    if (vp == NULL) return;
-    vp->skeleton_parent_matrix = parent;
+    if (vp == NULL)
+    {
+        printf("VoxDat::set_skeleton_parent_matrix ERROR!! vp is null, wrong init order \n");
+        return;  
+    } 
+    vp->skeleton_parent_matrix = parent;   
 }
 
 

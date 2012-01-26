@@ -49,16 +49,26 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
 
     n_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
-    int num = vox_dat->n_skeleton_nodes;
+    int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
-    vox_skeleton_transveral_list = new int[num];
-    vox_skeleton_local_matrix = new Mat4[num];
-    vox_skeleton_world_matrix = new Mat4[num];
+    vox_skeleton_transveral_list = new int[num_skeleton_nodes];
+    vox_skeleton_local_matrix = new Mat4[num_skeleton_nodes];
+    vox_skeleton_world_matrix = new Mat4[num_skeleton_nodes];
 
-    for(int i=0; i<num; i++)
+    for(int i=0; i<num_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i];
+    }
+    //set pointer in voxel volume back to the skeleton parent world matrix 
+    for(int i=0; i<this->n_parts; i++)
+    {
+        class Voxel_volume* vv = &this->vv[i];
+        class VoxPart *vp = vox_dat->vox_part[i];
+
+        vv->parent_world_matrix = &vox_skeleton_world_matrix[vp->skeleton_parent_matrix];
+        //vp->skeleton_parent_matrix 
+        //struct Mat4* parent_world_matrix;
     }
 }
 

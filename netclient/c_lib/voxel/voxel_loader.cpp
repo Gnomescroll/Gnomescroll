@@ -49,8 +49,9 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     index += read;
 
     //printf("%d parts, %d skeleton nodes\n", n_parts, num_skeleton_nodes);
-    vox_dat->init_skeleton(num_skeleton_nodes);
     vox_dat->init_parts(n_parts);
+    vox_dat->init_skeleton(num_skeleton_nodes);
+
 
     // skeleton graph
     for(int i=0; i<n_parts; i++)
