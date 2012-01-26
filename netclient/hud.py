@@ -78,6 +78,20 @@ class Hud(object):
             x = self.win_width - 330
         )
 
+    def scoreboard_stats(self):
+        props = ['name', 'kills', 'deaths', 'score', 'id']
+        defs =  [[] for i in range(len(props))]
+        stats = dict(zip(props, defs))
+
+        for agent in GameStateGlobal.agentList.values():
+            stats['name'].append(agent.name)
+            stats['kills'].append(agent.kills)
+            stats['deaths'].append(agent.deaths)
+            stats['score'].append(agent.score)
+            stats['id'].append(agent.id)
+
+        return stats
+
     def _init_scoreboard(self):
         self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
         self.scoreboard = {}
@@ -149,7 +163,7 @@ class Hud(object):
         self._draw_square(x, y, w, color=(255,10,10))
 
     def draw_scoreboard(self):
-        stats_txt = self._format_scoreboard_plain(GameStateGlobal.scoreboard())
+        stats_txt = self._format_scoreboard_plain(self.scoreboard_stats())
         for key, txt in stats_txt.items():
             curr_sb = self.scoreboard[key]
             old = curr_sb.text

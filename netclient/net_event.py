@@ -20,7 +20,6 @@ class NetEventGlobal:
     messageHandler = None
     clientMessageHandler = None
     mapMessageHandler = None
-    agentMessageHandler = None
     miscMessageHandler = None
     datMessageHandler = None
 
@@ -31,7 +30,6 @@ class NetEventGlobal:
         cls.chatMessageHandler = ChatMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
 
-        cls.agentMessageHandler = AgentMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
 
         cls.datMessageHandler = DatMessageHandler()
@@ -173,14 +171,9 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        'client_quit' : '_client_quit',
         'identified' : '_identified',
         'identify_fail' : '_identify_fail',
     }
-
-    def _client_quit(self, id, **msg):
-        #GameStateGlobal.client_quit(id)
-        pass
 
     def _identified(self, **msg):
         note = msg.get('msg', '')
@@ -196,8 +189,6 @@ class ClientMessageHandler(GenericMessageHandler):
 
         NetClientGlobal.name = name
         print 'Identified: name is %s' % (name,)
-        if GameStateGlobal.agent is not None:
-            GameStateGlobal.agent.name = name
         ChatClientGlobal.on_identify(note)
         return True
 
@@ -316,30 +307,6 @@ class DatastoreMessageInterface(GenericMessageHandler):
             print self._error_message(err_msg, **args)
             return
         return id
-
-# agent messages needs to be updated
-# there is no agent_create, and agent_destroy is called remove_agent
-class AgentMessageHandler(DatastoreMessageInterface):
-
-    def __init__(self):
-        self.name = 'agent'
-        self.store = GameStateGlobal.agentList
-        DatastoreMessageInterface.__init__(self)
-
-    def request_data(self, **data):
-        if 'id' in data:
-            NetOut.sendMessage.request_agent(data['id'])
-
-    def _agent_destroy(self, **args):
-        id = self._default_destroy(**args)
-        if id is not None:
-            GameStateGlobal.remove_agent(id)    # this method manages FK relationships
-
-    def _agent_list(self, **args):
-        self._default_list(**args)
-
-    #def _agent_update(self, **args):    # just for agent name
-        #self._default_update(**args)
 
 class DatMessageHandler(GenericMessageHandler):
     events = {
