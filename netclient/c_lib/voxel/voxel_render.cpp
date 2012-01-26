@@ -323,9 +323,9 @@ void Voxel_render_list::draw()
 
         r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
 
-        print_mat4(r);
-        printf("\n");
-        
+        //print_mat4(r);
+        //printf("\n");
+
         r.v[0].w = 0.0f;
         r.v[1].w = 0.0f;
         r.v[2].w = 0.0f;
