@@ -60,6 +60,9 @@ void set_cube_selector_property(int pos, int cube_id, int tex_id) { //set the cu
 }
 
 void draw_cube_selector(float x, float y, float size, int mode) {
+    x = _xresf - x;
+    //y = _yresf - y;
+    
     int i,j;
     float x0,y0,x1,y1;
 

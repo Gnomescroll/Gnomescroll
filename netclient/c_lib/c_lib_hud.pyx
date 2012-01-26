@@ -68,6 +68,7 @@ cdef extern from "./hud/cube_selector.hpp":
 
 cdef class CubeSelector:
 
+    # offset from bottom right corner
     cdef float x
     cdef float y
     cdef float size
