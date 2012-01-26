@@ -236,6 +236,7 @@ void Grenade_list::draw() {
     if(num == 0) { return; }
     glGetFloatv(GL_MODELVIEW_MATRIX, grenade_proj_mtrx);
 
+    glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
