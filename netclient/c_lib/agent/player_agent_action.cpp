@@ -59,8 +59,6 @@ void PlayerAgent_action::hitscan() {
         &vhe
     );
 
-    printf("hitscan results: %d %d %d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
-
     // hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
