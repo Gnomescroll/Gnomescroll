@@ -113,16 +113,6 @@ class VoxDat {
 
         void init_parts(int n_parts);
 
-/*
-        void set_part(
-            int part_num,
-            float vox_size,
-            int dimension_x, int dimension_y, int dimension_z,
-            float anchor_x, float anchor_y, float anchor_z,
-            float rotation_x, float rotation_y, float rotation_z,
-            bool biaxial=false
-        );
-*/
         void set_part_properties(
             int part_num,
             float vox_size,
@@ -137,8 +127,6 @@ class VoxDat {
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
         #endif
-
-        //void where() { printf("VoxDat instantiated at: %p\n", this); }
 
         VoxDat();
         ~VoxDat();
