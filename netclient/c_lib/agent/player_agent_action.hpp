@@ -19,7 +19,7 @@ class PlayerAgent_action {
         void fire();
         void hitscan();
         void hit_block();
-        void set_block();
+        int set_block();
         void throw_grenade();
 
         void switch_weapon(int i);

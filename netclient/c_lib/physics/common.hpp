@@ -25,3 +25,9 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
 
 /* integrator */
 void rk4(struct State* state, float dt);
+
+
+bool cube_intersects(
+    float x, float y, float z, float w, float h, float d,
+    float x2, float y2, float z2, float w2, float h2, float d2
+);

@@ -2,7 +2,7 @@
 
 
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 
 #define SHRAPNEL_MAX 4096

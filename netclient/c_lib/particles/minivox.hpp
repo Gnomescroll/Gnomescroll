@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 #include <c_lib/voxel/common.h>
 
 #define MINIVOX_MAX 4096

@@ -4,7 +4,7 @@ cdef extern from "./physics/vector.hpp":
         float y
         float z
 
-cdef extern from "./physics/common.h":
+cdef extern from "./physics/common.hpp":
     struct State:
         Vector p
         Vector v

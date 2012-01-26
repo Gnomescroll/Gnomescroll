@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 #define BLOOD_MAX 4096
 #define BLOOD_TTL 30

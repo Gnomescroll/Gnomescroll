@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 #define CSPRAY_MAX 4096
 #define CSPRAY_TTL 1200

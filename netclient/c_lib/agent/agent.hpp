@@ -14,9 +14,9 @@ const int AGENT_MAX = 128;
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
-#include <agent/agent_vox.hpp>
 #include <c_lib/agent/agent_event.hpp>
 #endif
+#include <agent/agent_vox.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 

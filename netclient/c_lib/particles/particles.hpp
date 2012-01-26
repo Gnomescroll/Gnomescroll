@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/physics/common.h>
+#include <c_lib/physics/common.hpp>
 
 struct Particle {
     int id; // WTF

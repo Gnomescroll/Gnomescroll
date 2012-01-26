@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 
 /* These should be pulled from a dat or something */

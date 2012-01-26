@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300

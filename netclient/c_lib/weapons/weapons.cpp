@@ -23,13 +23,31 @@ void Weapon::restore_ammo()
 
 bool HitscanLaser::fire() {
     if (clip == 0) return false;
+    #ifdef DC_SERVER
     clip--;
+    Agent_state* a = ServerState::agent_list.get(owner);
+    if (a!=NULL) {
+        WeaponClip_StoC ammo_msg;
+        ammo_msg.type = type;
+        ammo_msg.clip = clip;
+        ammo_msg.sendToClient(a->client_id);
+    }
+    #endif
     return true;
 }
 
 bool BlockApplier::fire() {
     if (ammo == 0) return false;
+    #ifdef DC_SERVER
     ammo--;
+    Agent_state* a = ServerState::agent_list.get(owner);
+    if (a!=NULL) {
+        WeaponAmmo_StoC ammo_msg;
+        ammo_msg.type = type;
+        ammo_msg.ammo = ammo;
+        ammo_msg.sendToClient(a->client_id);
+    }
+    #endif
     return true;
 }
 
@@ -39,21 +57,27 @@ bool BlockPick::fire() {
 
 bool GrenadeThrower::fire() {
     if (ammo == 0) return false;
+    #ifdef DC_SERVER
     ammo--;
+    Agent_state* a = ServerState::agent_list.get(owner);
+    if (a!=NULL) {
+        WeaponAmmo_StoC ammo_msg;
+        ammo_msg.type = type;
+        ammo_msg.ammo = ammo;
+        ammo_msg.sendToClient(a->client_id);
+    }
+    #endif
     return true;
 }
 
 void HitscanLaser::reload() {
-    //printf("clip_size=%d, clip=%d\n", clip_size, clip);
-    //printf("max_ammo=%d, ammo=%d\n", max_ammo, ammo);
+    #ifdef DC_SERVER
     int clip_used = clip_size - clip;
     // reload amt is lesser of the two: filling the clip or remaining ammo
     int amt = (ammo < clip_used) ? ammo : clip_used;
+    if (amt == 0) return;
     ammo -= amt;
     clip += amt;
-    //printf("reloaded, amt=%d\n", amt);
-    #ifdef DC_SERVER
-    if (amt == 0) return;
     Agent_state* a = ServerState::agent_list.get(owner);
     if (a==NULL) return;
     WeaponClip_StoC clip_msg;

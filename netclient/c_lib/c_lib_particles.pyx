@@ -4,7 +4,7 @@ cdef extern from "./physics/vector.hpp":
         float y
         float z
 
-cdef extern from "./physics/common.h":
+cdef extern from "./physics/common.hpp":
     struct State:
         Vector p
         Vector v
@@ -107,9 +107,8 @@ cdef extern from "./particles/billboard_text.hpp":
         Particle2 particle
         void set_color(unsigned char r, unsigned char g, unsigned char b)
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
-        void set_text(char* text, int text_len)
+        void set_text(char* text)
         char* text
-        int text_len
 
     cdef cppclass BillboardText_list:
         BillboardText* get(int id)
@@ -180,9 +179,8 @@ def _create_minivox_colored(float x, float y, float z, float vx, float vy, float
 
 def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz, text):
     cdef BillboardText* bb = billboard_text_list.create(x,y,z, vx,vy,vz)
-    cdef int tlen = len(text)
     cdef char* ctext = text
-    bb.set_text(ctext, tlen)
+    bb.set_text(ctext)
     #print "tlen = %i" % (tlen)
  
 '''

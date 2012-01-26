@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.h>
+#include <physics/common.hpp>
 
 #define NEUTRON_MAX 1024
 #define NEUTRON_TTL 600
