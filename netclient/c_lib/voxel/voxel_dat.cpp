@@ -343,8 +343,8 @@ void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, uns
 
 VoxDat::VoxDat()
 :
-vox_part(NULL),
 voxel_volume_inited(false),
+vox_part(NULL),
 vox_skeleton_local_matrix(NULL)
 {}
 

@@ -8,6 +8,10 @@
 
 #include <physics/vector4.hpp>
 
+/*
+    Double buffered drawing object template
+*/
+
 struct VBOmeta
 {
     GLuint id;
