@@ -23,7 +23,7 @@ class BillboardText {
         
         void set_text(char* t) {
             int i;
-            for (i=0; i<max_letters && t[i] != '\0'; i++)
+            for (i=0; t[i] != '\0' && i < max_letters; i++)
             {
                 text[i] = t[i];
             }

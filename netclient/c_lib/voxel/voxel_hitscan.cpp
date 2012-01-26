@@ -55,12 +55,11 @@ struct Voxel_hitscan_element* target
         }
     }
 
-    *distance = min_dist;
-    collision_point[0] = x;
-    collision_point[1] = y;
-    collision_point[2] = z;
-
     if (target_hit != NULL) {
+        *distance = min_dist;
+        collision_point[0] = x;
+        collision_point[1] = y;
+        collision_point[2] = z;
         *target = *target_hit;
         return true;
     }
