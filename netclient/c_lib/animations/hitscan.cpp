@@ -116,7 +116,10 @@ void HitscanEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
-    struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+    AgentState* state = &ClientState::playerAgent_state.camera_state;
+
+    //struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+    struct Vector camera = Vector_init(state->x, state->y, state->z + ClientState::playerAgent_state.camera_height());
 
     glColor3ub(255,255,255);
 
