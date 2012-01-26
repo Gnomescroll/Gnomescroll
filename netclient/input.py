@@ -9,7 +9,6 @@ opts = opts.opts
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
-#import c_lib.c_lib_map_gen as cMapGen
 import c_lib.c_lib_monsters as cMonsters
 
 from math import sin, cos, pi

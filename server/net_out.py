@@ -195,12 +195,6 @@ class SendMessage: #each connection has one of these
                     fin['key'] = key
         return fin
 
-    #@sendJSON('client_quit')
-    #def client_quit(self, client_id):
-        #return {
-            #'id'    : client_id,
-        #}
-
     @sendJSON('identify_fail')
     def identify_fail(self, connection, notes=''):
         return {

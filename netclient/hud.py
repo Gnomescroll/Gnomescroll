@@ -3,6 +3,7 @@ opts = opts.opts
 
 import c_lib.c_lib_sdl as cSDL
 import c_lib.c_lib_hud as cHUD
+import c_lib.c_lib_game_modes as cGameModes
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -90,8 +91,20 @@ class Hud(object):
         props = ['name', 'kills', 'deaths', 'score', 'id']
         defs =  [[] for i in range(len(props))]
         stats = dict(zip(props, defs))
+        stats['team'] = {}
 
-        for agent in GameStateGlobal.agentList.values():
+        agents = GameStateGlobal.agentList.values()
+
+        print [agent.team.id for agent in agents]
+        agents.sort(key=lambda a: a.team.id)
+        print [agent.team.id for agent in agents]
+
+        curr_team = 0
+        for i, agent in enumerate(agents):
+            print agent.team.id
+            if agent.team.id and agent.team.id != curr_team:
+                curr_team = agent.team.id
+                stats['team'][i] = agent.team
             stats['name'].append(agent.name)
             stats['kills'].append(agent.kills)
             stats['deaths'].append(agent.deaths)
@@ -110,10 +123,31 @@ class Hud(object):
             self.scoreboard[col_name.lower()] = self.text(
                 text = '',
                 x = start_x + (i * col_width),
-                offset = (self.win_height // 8),
+                #offset = (self.win_height // 8),
                 color = (150, 150, 255, 255)
             )
             i += 1
+
+        #self.team_names = {
+            #1: self.text(
+                #text = '',
+                #x = start_x,
+                #offset = (self.win_height // 8),
+                #color = (150, 150, 255, 255)
+            #),
+            #2: self.text(
+                #text = '',
+                #x = start_x,
+                #offset = (self.win_height // 8),
+                #color = (150, 150, 255, 255)
+            #),
+        #}
+        self.team_names = self.text(
+            text = '',
+            x = start_x,
+            offset = (self.win_height // 8),
+            color = (150, 150, 255, 255)
+        )
 
     def _format_scoreboard_plain(self, stats):
         for prop in self._scoreboard_properties:
@@ -121,9 +155,12 @@ class Hud(object):
             lines = []
             lines.append(prop + '\n')
             vals = stats[lprop]
-            for val in vals:
+            for i, val in enumerate(vals):
+                if i in stats['team']:
+                    lines.append('\n')
                 lines.append(str(val))
             stats[lprop] = '\n'.join(lines)
+
         return stats
 
     def draw_fps(self, fps_text):
@@ -173,11 +210,24 @@ class Hud(object):
     def draw_scoreboard(self):
         stats_txt = self._format_scoreboard_plain(self.scoreboard_stats())
         for key, txt in stats_txt.items():
+            if key == 'team': continue
             curr_sb = self.scoreboard[key]
             old = curr_sb.text
             if old != txt:
                 curr_sb.text = txt
             curr_sb.draw()
+
+        # draw team names
+        line_height = 18.
+        team_txt = '\n' * 3
+        print stats_txt['team']
+        for index, team in stats_txt['team'].items():
+            team_txt += '\n' * (index + 1)
+            team_txt += team.name
+            team_txt += '    '
+            team_txt += str(team.score)
+        self.team_names.text = team_txt
+        self.team_names.draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):
         if color is None:

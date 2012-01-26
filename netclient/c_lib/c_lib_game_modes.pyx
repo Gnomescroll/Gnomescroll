@@ -14,7 +14,7 @@ cdef extern from "./game/teams.hpp":
         bool viewers
 
     cdef cppclass CTFTeam:  # inherits Team
-        pass
+        int score()
 
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
@@ -44,7 +44,7 @@ class DummyCTFTeam(object):
             t = <Team>(ctf.two)
 
         if k == 'score':
-            return t.score
+            return t.score()
         elif k == 'name':
             return t.name
         elif k == 'n':
