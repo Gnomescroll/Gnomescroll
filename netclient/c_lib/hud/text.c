@@ -158,6 +158,7 @@ void draw_text(char* t, int len, float x, float y, float depth, float line_heigh
         // newline
         if (c == '\n') {
             cursor_y += line_height;
+            cursor_x = 0.0f;
             continue;
         }
         
