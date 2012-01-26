@@ -194,9 +194,8 @@ class Hud(object):
         for key, txt in stats_txt.items():
             if key == 'team': continue
             curr_sb = self.scoreboard[key]
-            old = curr_sb.text
-            if old != txt:
-                curr_sb.text = txt
+            curr_sb.text = txt
+            #curr_sb.color = list(agent.team.color) + [255]
             curr_sb.draw()
 
         # draw team names
