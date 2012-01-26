@@ -346,6 +346,31 @@ void PlayerAgent_state::update_camera_smoothing() {
 #endif
 }
 
+void PlayerAgent_state::display_agent_names()
+{
+    #ifdef DC_CLIENT
+    float threshold = (3.14159 / 180) * 20; //degrees->radians
+    AgentState *s = &this->camera_state;
+    float f[3];
+    this->camera_state.forward_vector(f);
+    ClientState::agent_list.agents_in_cone(
+        s->x, s->y, s->z + this->camera_height(),
+        f[0], f[1], f[2],
+        threshold
+    );
+
+    for (int i=0; i < ClientState::agent_list.n_filtered; i++)
+    {
+        Agent_state* a = ClientState::agent_list.filtered_agents[i];
+        if (a==NULL) continue;
+        if (a->id == this->agent_id) continue;
+        BillboardText* bb = ClientState::billboard_text_list.create(a->s.x, a->s.y, a->s.z + 2.0f, 0.0f, 0.0f, 0.0f);
+        bb->set_text(a->status.name);
+        bb->set_color(140,240,10, 255);
+    }
+    #endif
+}
+
 void PlayerAgent_state::update_sound() {
     AgentState s = camera_state;
 

@@ -19,19 +19,16 @@ class BillboardText {
         unsigned char b;
         unsigned char a;
         Particle2 particle;
-        char text[max_letters];
-        int text_len;
+        char text[max_letters+1];
 
-        void set_text(char* t, int length) {
-            if(length > max_letters) {
-                length = max_letters;
-            }
+        void set_text(char* t) {
             int i;
-            for (i=0; i<length; i++) {
+            for (i=0; i<max_letters && t[i] != '\0'; i++)
+            {
                 text[i] = t[i];
             }
-            //text[length] = NULL;  // cool segfault
-            text_len = length;
+            text[i] = '\0';
+            printf("bb text: %s\n", this->text);
         }
 
         void set_color(unsigned char r, unsigned char g, unsigned char b) {

@@ -195,10 +195,10 @@ class App(object):
                 cInput.get_key_state()
                 if agent:
                     agent.set_button_state()
-                #physics tick routine
+                    agent.update_sound()
+                    agent.display_agent_names()
+                    
                 animations.tick()
-                if GameStateGlobal.agent is not None:
-                    GameStateGlobal.agent.update_sound()
 
                 cParticles.tick() ## TESTING
 

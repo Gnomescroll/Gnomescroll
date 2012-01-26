@@ -174,6 +174,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int n_filtered;
         
         int agents_within_sphere(float x, float y, float z, float radius);
+        void agents_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
         Agent_state* hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id);
         void sort_filtered_agents_by_distance(bool ascending=true);
         

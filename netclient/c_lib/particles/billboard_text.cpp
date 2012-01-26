@@ -12,12 +12,10 @@ static float billboard_text_proj_mtrx[16];
 
 BillboardText::BillboardText(int id) {
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
-    text_len = 0;
 }
 
 BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz) {
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
-    text_len = 0;
 }
 
 void BillboardText::tick() {
@@ -34,9 +32,7 @@ void BillboardText::tick() {
 void BillboardText::draw() {
 
 #ifdef DC_CLIENT
-    if(!text_len || text == NULL || current_camera == NULL) {
-        return;
-    }
+    if(text == NULL || current_camera == NULL) return;
 
     float up[3] = {
         0.0f,
@@ -64,9 +60,6 @@ void BillboardText::draw() {
     right[1] /= norm;
     right[2] /= norm;
 
-    int i;
-    //char c;
-    int c;
     struct Glyph glyph;
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
@@ -83,10 +76,11 @@ void BillboardText::draw() {
     //text_len = 1;
     //printf("text_len = %i \n", text_len);
 
-    for (i=0; i<text_len; i++) {
-        c = text[i];
-        glyph = glyphs[c];
-        //glyph = glyphs[54];
+    int i = 0;
+    char c;
+    while ((c = text[i++]) != '\0')
+    {
+        glyph = glyphs[(unsigned int)c];
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;
         ty_min = glyph.y;

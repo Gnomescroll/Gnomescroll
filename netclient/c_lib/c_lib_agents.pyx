@@ -105,6 +105,8 @@ cdef extern from "./agent/player_agent.hpp":
         void pump_camera() #update camera
         PlayerAgent_action action
         void update_sound()
+        void display_agent_names()
+
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
@@ -288,6 +290,9 @@ class PlayerAgentWrapper(object):
 
     def update_sound(self):
         playerAgent_state.update_sound()
+
+    def display_agent_names(self):
+        playerAgent_state.display_agent_names()
 
     def weapon_hud_display(self):
         cdef Agent_state* a

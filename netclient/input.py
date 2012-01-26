@@ -167,7 +167,7 @@ class Mouse(object):
     def on_mouse_motion(self, x, y, dx, dy):
         pass
         
-    #buttonss:
+    #buttons:
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
     def on_mouse_press(self, x, y, button, state):

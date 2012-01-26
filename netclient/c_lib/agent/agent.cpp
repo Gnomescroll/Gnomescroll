@@ -480,6 +480,7 @@ void Agent_state::_tick()
     #ifdef DC_SERVER
     status.respawn();
     #endif
+
 }
 
 
@@ -1013,6 +1014,33 @@ int Agent_list::agents_within_sphere(float x, float y, float z, float radius) {
     this->n_filtered = ct;
     return closest;
 }
+
+// origin, direction, cone threshold
+void Agent_list::agents_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
+{
+    int ct = 0;
+    float ax,ay,az;
+    float ip;
+    float arc;
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        Agent_state* a = this->a[i];
+        if (a == NULL) continue;
+
+        ax = a->s.x - x;
+        ay = a->s.y - y;
+        az = a->s.z - z;
+
+        ip = ax*vx + ay*vy + az*vz;
+        arc = abs(acos(ip));
+
+        if (arc < theta)
+            filtered_agents[ct++] = a;
+    }
+
+    this->n_filtered = ct;
+}
+
 
 void Agent_list::quicksort_distance_asc(int beg, int end)
 {

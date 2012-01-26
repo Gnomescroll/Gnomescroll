@@ -100,6 +100,8 @@ class PlayerAgent_state {
             }
         }
 
+        void display_agent_names();
+
         //control state history buffer
         int cs_seq_local;   // client side cs
         int cs_seq_net;     // snapshot cs sequence
