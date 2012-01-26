@@ -317,6 +317,7 @@ class FixedSizeReliableNetPacketToClient {
             push_broadcast_message(buff, size);
             */
             Net_message* nm = Net_message::acquire(Derived::size);
+            if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 

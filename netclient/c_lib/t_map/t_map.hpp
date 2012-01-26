@@ -26,6 +26,13 @@
 #define YMAX (vm_map_dim    * vm_chunk_size)
 #define ZMAX (vm_column_max * vm_chunk_size)
 
+struct MapDimension
+{
+    int x,y,z;
+};
+
+extern struct MapDimension map_dim;
+
 struct VBO {
         int v_num;
         struct Vertex* v_list;

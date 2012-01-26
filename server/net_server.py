@@ -12,6 +12,7 @@ import init_c_lib
 import c_lib.c_lib_agents as cAgents
 import c_lib.c_lib_monsters as cMonsters
 import c_lib.c_lib_game_modes as cGameModes
+import c_lib.terrain_map as cMap
 
 class NetServer:
     connectionPool = None
@@ -86,7 +87,7 @@ class PyClient:
         self.send_agents()
         self.send_monsters()
         self.send_ctf()
-
+        
     def send_agents(self):
         cAgents.AgentListWrapper.send_to_client(self.client_id)
 
@@ -98,6 +99,7 @@ class PyClient:
 
     def send_map(self):
         print "Sending map"
+        cMap.send_map_metadata_to_client(self.client_id)
         self.sendMessage.send_chunk_list()
 
     def set_dat_loaded(self):

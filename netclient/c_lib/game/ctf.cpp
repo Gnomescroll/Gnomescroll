@@ -1,6 +1,6 @@
 #include "ctf.hpp"
 
-
+#include <c_lib/t_map/t_map.hpp>
 #include <c_lib/agent/player_agent.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/game/packets.hpp>
@@ -21,10 +21,9 @@ void CTF::init() {
 void CTF::start() {
     float x,y,z;
 
-    // TODO use real map widths
-    int x_max = 128;
-    int y_max = 128;
-
+    int x_max = map_dim.x;
+    int y_max = map_dim.y;
+    
     x = randrange(0, x_max-1);
     y = randrange(0, (y_max-1)/2);
     z = _get_highest_open_block(x,y);

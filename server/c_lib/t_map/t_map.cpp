@@ -332,7 +332,7 @@ int _get_lowest_solid_block(int x, int y) {
 }
 
 int _set_broadcast(int x, int y, int z, int value) {
-    static block_StoC msg;
+    block_StoC msg;
     int i,j=0;
     i = _get(x,y,z);
     if (i != value) {
@@ -347,7 +347,7 @@ int _set_broadcast(int x, int y, int z, int value) {
 }
 
 void _block_broadcast(int x, int y, int z, int value) {
-    static block_StoC msg;
+    block_StoC msg;
     msg.x = x;
     msg.y = y;
     msg.z = z;
@@ -355,24 +355,28 @@ void _block_broadcast(int x, int y, int z, int value) {
     msg.broadcast();
 }
 
-#ifdef DC_CLIENT
-#include <c_lib/animations/animations.hpp>
-#include <c_lib/common/random.h>
-inline void block_StoC::handle() {
-    if (val == 0) {
-        int cube_id = _get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
-    }
-    _set(x,y,z,val);
+void send_map_metadata(int client_id)
+{
+    map_metadata_StoC msg;
+    msg.x = map_dim.x;
+    msg.y = map_dim.y;
+    msg.z = map_dim.z;
+    msg.sendToClient(client_id);
 }
-inline void block_CtoS::handle(){}
-#endif
 
-#ifdef DC_SERVER
-inline void block_CtoS::handle() {
-    _set_broadcast(x,y,z, val);
+void send_map_metadata()
+{
+    map_metadata_StoC msg;
+    msg.x = map_dim.x;
+    msg.y = map_dim.y;
+    msg.z = map_dim.z;
+    msg.broadcast();
 }
-inline void block_StoC::handle() {}
-#endif
 
-
+void set_map_size(int x, int y, int z)
+{
+    map_dim.x = x;
+    map_dim.y = y;
+    map_dim.z = z;
+    send_map_metadata();
+}

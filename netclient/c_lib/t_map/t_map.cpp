@@ -28,6 +28,8 @@ int get_flag(struct vm_column* c, unsigned int flag) {
 
 struct vm_map map;
 
+struct MapDimension map_dim;
+
 int _init_t_map() {
 
     int i;
@@ -46,6 +48,9 @@ int _init_t_map() {
         set_flag(c, VBO_needs_update, 0);
         set_flag(c, VBO_has_blocks, 0);
     }
+    map_dim.x = XMAX;
+    map_dim.y = YMAX;
+    map_dim.z = ZMAX;
     return 0;
 }
 
