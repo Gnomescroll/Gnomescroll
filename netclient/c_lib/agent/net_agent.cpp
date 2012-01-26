@@ -159,6 +159,7 @@ inline void hitscan_block_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void AgentActiveWeapon_CtoS::handle() {}
 inline void AgentReloadWeapon_CtoS::handle(){}
+inline void agent_block_CtoS::handle() {}
 #endif
 
 
@@ -328,5 +329,14 @@ inline void AgentReloadWeapon_CtoS::handle() {
     msg.type = type;
     msg.broadcast();
 }
+
+inline void agent_block_CtoS::handle() {
+    Agent_state* a = ServerState::agent_list.get(id);
+    if (a==NULL) return;
+    // do block place checks here later
+    // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
+    _set_broadcast(x,y,z, val);    
+}
+
 
 #endif

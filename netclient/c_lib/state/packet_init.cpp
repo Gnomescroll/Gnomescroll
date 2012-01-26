@@ -45,6 +45,7 @@ void RegisterMessages() {
     agent_destroy_StoC::register_client_packet();
     agent_name_StoC::register_client_packet();
 
+    agent_block_CtoS::register_server_packet();
     // block value change
     block_StoC::register_client_packet();
     block_CtoS::register_server_packet();
