@@ -216,6 +216,7 @@ int PlayerAgent_action::set_block() {
     
     agent_block_CtoS msg;
     // UPDATE WITH FACING POSITION (why?)
+    msg.id = a->id;
     msg.x = b[0];
     msg.y = b[1];
     msg.z = b[2];
