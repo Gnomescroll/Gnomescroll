@@ -19,7 +19,10 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
+    printf("Slime::Slime() DEPRECATED\n");
+    /*
     this->vox = new Voxel_model(SLIME_PART_NUM);
+    */
 }
 Slime::Slime(int id)
 :

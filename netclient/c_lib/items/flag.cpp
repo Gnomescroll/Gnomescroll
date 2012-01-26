@@ -19,7 +19,7 @@ type(OBJ_TYPE_FLAG)
 
     printf("Flag::Flag, DEPRECATED!! pass in vox_dat \n");
 /*
-    this->vox = new Voxel_model(FLAG_PART_NUM);
+    this->vox = new Voxel_model(num_Stuff;
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
