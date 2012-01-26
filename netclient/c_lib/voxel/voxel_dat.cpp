@@ -302,7 +302,7 @@ void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, flo
         printf("ERROR VoxDat::set_part_spatials -- part %d is NULL. Abort\n", part_num);
         return;
     }
-    this->vox_volume_local_matrix[part_num] =  mat4_euler_rotation_and_translation(x,y,x, rx,ry,rz);
+    this->vox_volume_local_matrix[part_num] =  mat4_euler_rotation_and_translation(x,y,z, rx,ry,rz);
 }
 
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)

@@ -10,7 +10,6 @@
 
 enum active_camera_states {
     net_agent = 0 ,
-    net_agent_smoothed,
     client_side_prediction_interpolated,
     client_side_prediction,
     last_server_snapshot,
@@ -30,8 +29,6 @@ class PlayerAgent_state {
         class AgentState s1;
 
         //cameras
-        class AgentState smooth;
-        class AgentState c;                 //smoothed
         class AgentState s;                 //client side predicted from control state
         class AgentState state_snapshot;    //last snapshot from server
         //camera update functions   
@@ -48,9 +45,6 @@ class PlayerAgent_state {
             switch (camera_mode) {
                 case net_agent:
                     printf("Camera Mode: net_agent\n");
-                    break;
-                case net_agent_smoothed:
-                    printf("Camera Mode: net_agent_smoothed\n");
                     break;
                 case client_side_prediction_interpolated:
                     printf("Camera Mode: client_side_prediction_interpolated\n");
@@ -79,10 +73,6 @@ class PlayerAgent_state {
                         printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
                     }
                     #endif
-                    break;
-                case net_agent_smoothed:
-                    update_camera_smoothing();
-                    camera_state = smooth;
                     break;
                 case client_side_prediction_interpolated:
                     update_client_side_prediction_interpolated();
