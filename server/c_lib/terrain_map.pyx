@@ -15,14 +15,14 @@ cdef enum:
     vm_chunk_size = 8
     vm_column_max = 16
 
-cdef enum:
-    _xmax = vm_map_dim * vm_chunk_size
-    _ymax = vm_map_dim * vm_chunk_size
-    _zmax = vm_column_max * vm_chunk_size
+#cdef enum:
+#    _xmax = vm_map_dim * vm_chunk_size
+#    _ymax = vm_map_dim * vm_chunk_size
+#    _zmax = vm_column_max * vm_chunk_size
 
-xmax = _xmax
-ymax = _ymax
-zmax = _zmax
+#xmax = _xmax
+#ymax = _ymax
+#zmax = _zmax
 
 cdef extern from "./t_map/t_map.hpp":
 
@@ -57,6 +57,11 @@ cdef extern from "./t_map/t_map.hpp":
     int _get_highest_open_block(int x, int y, int n)
     int _get_lowest_open_block(int x, int y, int n)
 
+    int XMAX
+    int YMAX
+    int ZMAX
+    void set_map_size(int x, int y, int z)
+    void send_map_metadata(int client_id)
 
 cdef extern from "./t_map/t_compress.h":
     int map_save_to_disk(char* fn)
@@ -286,14 +291,11 @@ def get_highest_open_block(int x, int y, int n=1):
 def get_lowest_open_block(int x, int y, int n=1):
     return _get_lowest_open_block(x,y,n)
 
-map_x,map_y,map_z = 128,128,128
+def set_map_dimensions(int x, int y, int z):
+    set_map_size(x,y,z);
 
-def set_map_size(int x, int y, int z):
-    global map_x, map_y, map_z
-    map_x = x
-    map_y = y
-    map_z = z
-
+def send_map_metadata_to_client(int id):
+    send_map_metadata(id)
 
 '''
 Part 5: Serialization
@@ -326,3 +328,4 @@ def load_from_disk(fn=''):
 '''
 Part 6: Generation
 '''
+

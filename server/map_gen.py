@@ -257,3 +257,8 @@ def ground_plane(tm, xsize=64, ysize=64, tile=100):
     for x in range(0,xsize):
         for y in range(0,ysize):
             tm.set(x,y,0,tile)
+
+def floor(tm):
+    for x in range(128):
+        for y in range(128):
+            tm.set(x,y,0,2)

@@ -8,8 +8,10 @@
 #include <c_lib/time/physics_timer.c>
 
 //map
+#include <c_lib/t_map/t_map_net.cpp>
 #include "./t_map/t_map.cpp"
 #include "./t_map/t_properties.c"
+#include "./t_map/t_serialize.c"
 
 #include "./physics/vector.cpp"
 #include "./ray_trace/ray_trace.c"
@@ -48,8 +50,6 @@
     #include <c_lib/map_gen/hopcroft-karp.cpp>
 #endif
 #include <c_lib/map_gen/noise.c>
-
-#include "./t_map/t_serialize.c"
 
 #include <net_lib/net_lib.h>
 

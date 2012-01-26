@@ -7,10 +7,16 @@
 #define vm_column_max 16
 #define vm_chunk_voxel_size (vm_chunk_size * vm_chunk_size * vm_chunk_size)
 
-#define xmax (vm_map_dim    * vm_chunk_size)
-#define ymax (vm_map_dim    * vm_chunk_size)
-#define zmax (vm_column_max * vm_chunk_size)
+#define XMAX (vm_map_dim    * vm_chunk_size)
+#define YMAX (vm_map_dim    * vm_chunk_size)
+#define ZMAX (vm_column_max * vm_chunk_size)
 
+struct MapDimension
+{
+    int x,y,z;
+};
+
+extern struct MapDimension map_dim;
 
 struct VBO {
         int v_num;
@@ -100,3 +106,6 @@ void _block_broadcast(int x, int y, int z, int value);
 int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
 
+void send_map_metadata(int client_id);
+void send_map_metadata();
+void set_map_size(int x, int y, int z);

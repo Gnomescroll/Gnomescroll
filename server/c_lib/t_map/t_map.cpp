@@ -17,6 +17,8 @@
 */
 struct vm_map map;
 
+struct MapDimension map_dim;
+
 int _init_t_map() {
     printf("MAP SIZE %d\n", sizeof(map));
     int i;
@@ -34,6 +36,9 @@ int _init_t_map() {
         //set_flag(c, VBO_needs_update, 0);
         //set_flag(c, VBO_has_blocks, 0);
     }
+    map_dim.x = XMAX;
+    map_dim.y = YMAX;
+    map_dim.z = ZMAX;
     return 0;
 }
 
@@ -246,9 +251,9 @@ int _clear() {
     // iterate entire map
     // set to 0
     int i,j,k;
-    for (i=0; i<xmax; i++) {
-        for (j=0; j<ymax; j++) {
-            for (k=0; k<zmax; k++) {
+    for (i=0; i<XMAX; i++) {
+        for (j=0; j<YMAX; j++) {
+            for (k=0; k<ZMAX; k++) {
                 _set(i,j,k, 0);
             }
         }
@@ -266,7 +271,7 @@ int _get_highest_open_block(int x, int y, int n) {
     int block;
     int i;
 
-    for (i=zmax-1; i>=0; i--) {
+    for (i=ZMAX-1; i>=0; i--) {
         block = _get(x,y,i);
         if (!isSolid(block)) {
             open++;
@@ -284,7 +289,7 @@ int _get_highest_open_block(int x, int y, int n) {
 int _get_highest_solid_block(int x, int y) {
 
     int i;
-    for (i=zmax-1; i>=0; i--) {
+    for (i=ZMAX-1; i>=0; i--) {
         if (isSolid(_get(x,y,i))) {
             break;
         }
@@ -301,7 +306,7 @@ int _get_lowest_open_block(int x, int y, int n) {
     int i;
     int block;
     int open=0;
-    for (i=0; i<zmax; i++) {
+    for (i=0; i<ZMAX; i++) {
         block = _get(x,y,i);
         if (isSolid(block)) {
             open = 0;
@@ -317,17 +322,17 @@ int _get_lowest_open_block(int x, int y, int n) {
 int _get_lowest_solid_block(int x, int y) {
 
     int i;
-    for (i=0; i < zmax; i++) {
+    for (i=0; i < ZMAX; i++) {
         if (isSolid(_get(x,y,i))) {
             break;
         }
     }
-    if (i >= zmax) i = -1;  // failure
+    if (i >= ZMAX) i = -1;  // failure
     return i;
 }
 
 int _set_broadcast(int x, int y, int z, int value) {
-    static block_StoC msg;
+    block_StoC msg;
     int i,j=0;
     i = _get(x,y,z);
     if (i != value) {
@@ -342,7 +347,7 @@ int _set_broadcast(int x, int y, int z, int value) {
 }
 
 void _block_broadcast(int x, int y, int z, int value) {
-    static block_StoC msg;
+    block_StoC msg;
     msg.x = x;
     msg.y = y;
     msg.z = z;
@@ -350,24 +355,28 @@ void _block_broadcast(int x, int y, int z, int value) {
     msg.broadcast();
 }
 
-#ifdef DC_CLIENT
-#include <c_lib/animations/animations.hpp>
-#include <c_lib/common/random.h>
-inline void block_StoC::handle() {
-    if (val == 0) {
-        int cube_id = _get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
-    }
-    _set(x,y,z,val);
+void send_map_metadata(int client_id)
+{
+    map_metadata_StoC msg;
+    msg.x = map_dim.x;
+    msg.y = map_dim.y;
+    msg.z = map_dim.z;
+    msg.sendToClient(client_id);
 }
-inline void block_CtoS::handle(){}
-#endif
 
-#ifdef DC_SERVER
-inline void block_CtoS::handle() {
-    _set_broadcast(x,y,z, val);
+void send_map_metadata()
+{
+    map_metadata_StoC msg;
+    msg.x = map_dim.x;
+    msg.y = map_dim.y;
+    msg.z = map_dim.z;
+    msg.broadcast();
 }
-inline void block_StoC::handle() {}
-#endif
 
-
+void set_map_size(int x, int y, int z)
+{
+    map_dim.x = x;
+    map_dim.y = y;
+    map_dim.z = z;
+    send_map_metadata();
+}
