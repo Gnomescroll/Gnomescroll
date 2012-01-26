@@ -10,29 +10,65 @@ static float billboard_text_proj_mtrx[16];
 #include <t_map/t_properties.h>
 #include <hud/text.h>
 
-BillboardText::BillboardText(int id) {
+BillboardText::BillboardText(int id)
+:
+r(100), g(100), b(100), a(255),
+gravity(true),
+should_draw(true)
+{
+    text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
 }
 
-BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz) {
+BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz)
+:
+r(100), g(100), b(100), a(255),
+gravity(true),
+should_draw(true)
+{
+    text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
 }
 
-void BillboardText::tick() {
-    bounce_simple_rk4(&particle, BILLBOARD_TEXT_DAMP);
-    particle.ttl++;
+void BillboardText::tick()
+{
+    if (this->gravity)
+    {
+        bounce_simple_rk4(&this->particle, BILLBOARD_TEXT_DAMP);
+    }
+    if (this->particle.ttl >= 0)
+    {
+        this->particle.ttl++;
+    }
 }
 
-/*
-    Note: billboarded text is client side only, so whole file can be #ifdef DC_CLIENT
-
-*/
+void BillboardText::set_gravity(bool grav)
+{
+    this->gravity = grav;
+}
+void BillboardText::set_draw(bool draw)
+{
+    this->should_draw = draw;
+}
+void BillboardText::set_ttl(int ttl)
+{
+    // set to a negative number to never die
+    this->particle.ttl = ttl;
+}
+void BillboardText::set_state(float x, float y, float z, float vx, float vy, float vz)
+{
+    set_particle2_state(&this->particle, x,y,z,vx,vy,vz);
+}
 
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
 
 #ifdef DC_CLIENT
-    if(text == NULL || current_camera == NULL) return;
+printf("draw text is %s\n", this->text);
+printf("%0.2f %0.2f %0.2f\n", particle.state.p.x, particle.state.p.y, particle.state.p.z);
+    if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
+
+    glColor4ub(r,g,b,a);
 
     float up[3] = {
         0.0f,
@@ -73,8 +109,6 @@ void BillboardText::draw() {
     right[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
 
     const float magic_cursor_ratio = 1.8f / 9.0f;
-    //text_len = 1;
-    //printf("text_len = %i \n", text_len);
 
     int i = 0;
     char c;
@@ -139,12 +173,14 @@ void BillboardText_list::draw() {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glBegin( GL_QUADS );
-    //set_text_color(255,10,10,255);  // red
-    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+    //glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
+        printf("might draw\n");
+        if (!a[i]->should_draw) continue;
+        printf("will draw\n");
         a[i]->draw();
     }
 

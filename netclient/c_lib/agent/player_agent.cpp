@@ -359,14 +359,21 @@ void PlayerAgent_state::display_agent_names()
         threshold
     );
 
+    // hide all names
+    for (int i=0; i < ClientState::agent_list.n_max; i++)
+    {
+        Agent_state* a = ClientState::agent_list.a[i];
+        if (a==NULL) continue;
+        a->event.hide_name();
+    }
+
+    // choose names to display
     for (int i=0; i < ClientState::agent_list.n_filtered; i++)
     {
         Agent_state* a = ClientState::agent_list.filtered_agents[i];
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
-        BillboardText* bb = ClientState::billboard_text_list.create(a->s.x, a->s.y, a->s.z + 2.0f, 0.0f, 0.0f, 0.0f);
-        bb->set_text(a->status.name);
-        bb->set_color(140,240,10, 255);
+        a->event.display_name();
     }
     #endif
 }

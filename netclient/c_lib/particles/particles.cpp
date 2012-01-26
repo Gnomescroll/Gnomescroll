@@ -35,3 +35,13 @@ void create_event_particle2(struct EventParticle2* p, unsigned int id, int type,
     p->event_ttl = event_ttl;
     create_particle2(&(p->particle), id, type, x,y,z, vx,vy,vz, ttl, ttl_max);
 }
+
+void set_particle2_state(struct Particle2* p, float x, float y, float z, float vx, float vy, float vz)
+{
+    p->state.p.x=x;
+    p->state.p.y=y;
+    p->state.p.z=z;
+    p->state.v.x=vx;
+    p->state.v.y=vy;
+    p->state.v.z=vz;
+}

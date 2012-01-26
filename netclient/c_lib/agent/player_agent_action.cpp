@@ -198,6 +198,8 @@ void PlayerAgent_action::set_block() {
         max_dist, z_low, z_high
     );
     if (b==NULL) return;
+
+    // check block doesnt collide with agent box
     
     block_CtoS msg;
     // UPDATE WITH FACING POSITION

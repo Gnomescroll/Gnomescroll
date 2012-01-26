@@ -69,6 +69,36 @@ void Agent_event::fired_laser() {
     Animations::block_damage(x,y,z, f[0], f[1], f[2], _cube, side);
 }
 
+void Agent_event::name_changed()
+{
+    if (this->bb != NULL)
+    {
+        this->bb->set_text(this->a->status.name);
+    }
+}
+
+void Agent_event::hide_name()
+{
+    if (this->bb != NULL)
+    {
+        this->bb->set_draw(false);
+    }
+}
+
+void Agent_event::display_name()
+{
+    if (this->bb == NULL)
+    {
+        this->bb = ClientState::billboard_text_list.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        this->bb->set_gravity(false);   // stay put
+        this->bb->set_ttl(-1000);          // dont die
+        this->bb->set_text(this->a->status.name);
+        this->bb->set_color(140, 200, 10, 255);
+    }
+    this->bb->set_state(a->s.x, a->s.y, a->s.z + 5.0f, 0.0f, 0.0f, 0.0f);
+    this->bb->set_draw(true);
+}
+
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg) {
     BillboardText* b = ClientState::billboard_text_list.create(a->s.x, a->s.y, a->s.z, 0.0f,0.0f, 7.0f);
@@ -116,6 +146,14 @@ void Agent_event::scored_flag()
 {
     this->a->status.has_flag = false;
     this->a->status.flag_captures++;
+}
+
+Agent_event::~Agent_event()
+{
+    if (this->bb != NULL)
+    {
+        this->bb->set_ttl(10000);    // let billboard die
+    }
 }
 
 #endif

@@ -14,13 +14,13 @@ const static int max_letters = 12;
 class BillboardText {
 
     public:
-        unsigned char r;
-        unsigned char g;
-        unsigned char b;
-        unsigned char a;
+        unsigned char r,g,b,a;
         Particle2 particle;
         char text[max_letters+1];
 
+        bool gravity;
+        bool should_draw;
+        
         void set_text(char* t) {
             int i;
             for (i=0; i<max_letters && t[i] != '\0'; i++)
@@ -28,7 +28,6 @@ class BillboardText {
                 text[i] = t[i];
             }
             text[i] = '\0';
-            printf("bb text: %s\n", this->text);
         }
 
         void set_color(unsigned char r, unsigned char g, unsigned char b) {
@@ -44,6 +43,10 @@ class BillboardText {
             this->a = a;
         }
 
+        void set_gravity(bool grav);
+        void set_draw(bool draw);
+        void set_ttl(int ttl);
+        void set_state(float x, float y, float z, float vx, float vy, float vz);
         
         void draw();
         void tick();

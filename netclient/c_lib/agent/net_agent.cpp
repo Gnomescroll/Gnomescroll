@@ -107,6 +107,7 @@ inline void agent_name_StoC::handle()
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);   
     a->status.set_name(name);
+    a->event.name_changed();
 }
 
 inline void agent_destroy_StoC::handle() {
