@@ -272,23 +272,23 @@ void Voxel_render_list::draw()
     //vv->parent_world_matrix
     //struct Vec4 v[4];
 
-    struct Mat4 m;
+    //struct Mat4 m;
 
-    //still needed for some reason
-    /*
-    v[0].w = 0.0f;
-    v[1].w = 0.0f;
-    v[2].w = 0.0f;
-    v[3].w = 1.0f;
-    */
-    m.v[0].w = 0.0f;
-    m.v[1].w = 0.0f;
-    m.v[2].w = 0.0f;
-    m.v[3].w = 1.0f;
+    ////still needed for some reason
+    ///*
+    //v[0].w = 0.0f;
+    //v[1].w = 0.0f;
+    //v[2].w = 0.0f;
+    //v[3].w = 1.0f;
+    //*/
+    //m.v[0].w = 0.0f;
+    //m.v[1].w = 0.0f;
+    //m.v[2].w = 0.0f;
+    //m.v[3].w = 1.0f;
 
     struct Mat4 r;
 
-    struct Vec4 center;
+    //struct Vec4 center;
 
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
