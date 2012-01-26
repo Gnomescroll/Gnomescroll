@@ -56,7 +56,7 @@ void BillboardText::draw() {
     look[2] /= -norm;
 
     float right[3];
-    right[0] = up[1]*look[2] - look[2]*up[1];
+    right[0] = up[1]*look[2] - up[2]*look[1];
     right[1] = up[2]*look[0] - up[0]*look[2];
     right[2] = up[0]*look[1] - up[1]*look[0];
     norm = sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
