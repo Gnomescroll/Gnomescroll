@@ -375,7 +375,6 @@ void PlayerAgent_state::display_agent_names()
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
         if (a->status.team != you->status.team) continue;  // only show teammates
-        printf("%d %d\n", a->status.team, this->status.team);
         a->event.display_name();
     }
     #endif
