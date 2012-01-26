@@ -26,7 +26,6 @@ class Voxel_model
 
         int n_parts;
         void init_parts(VoxDat* vox_dat, int id, int type);
-        void init_parts(VoxDat* vox_dat, int id, int type, int team);
 
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);

@@ -3,12 +3,13 @@
 #include <c_lib/ray_trace/hitscan.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
 
-bool Voxel_hitscan_list::hitscan
-(const float x0, const float y0, const float z0, 
+bool Voxel_hitscan_list::hitscan(
+const float x0, const float y0, const float z0, 
 const float x1, const float y1, const float z1,
 int skip_id, Object_types skip_type, // skip player agent id
 float collision_point[3], float *distance,
-struct Voxel_hitscan_element* target)
+struct Voxel_hitscan_element* target
+)
 {
     float x2,y2,z2;
 
@@ -27,8 +28,10 @@ struct Voxel_hitscan_element* target)
 
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        if(hitscan_list[i] == NULL) continue;
-        if (!hitscan_list[i]->vv->hitscan) continue;    // shouldnt be registered anyway, but if bool hitscan wants to be toggled, leave it
+        if (hitscan_list[i] == NULL) continue;
+        if (!hitscan_list[i]->vv->hitscan) {
+            continue;
+        }
         vhe = hitscan_list[i];
 
         // skip firing agent
