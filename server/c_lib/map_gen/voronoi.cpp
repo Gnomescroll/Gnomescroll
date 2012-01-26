@@ -338,13 +338,13 @@ point v_points[V_SAMPLES];
 /* Random methods */
 
 inline int randx() {
-    return rand() % xmax;
+    return rand() % XMAX;
 }
 inline int randy() {
-    return rand() % ymax;
+    return rand() % YMAX;
 }
 inline int randz() {
-    return rand() % zmax;
+    return rand() % ZMAX;
 }
 
 // returns random double in range [0,1]
@@ -354,15 +354,15 @@ inline double randd() {
 }
 
 inline double randdx() {
-    double d = randd() * xmax;
+    double d = randd() * XMAX;
     return d;
 }
 inline double randdy() {
-    double d = randd() * ymax;
+    double d = randd() * YMAX;
     return d;
 }
 inline double randdz() {
-    double d = randd() * zmax;
+    double d = randd() * ZMAX;
     return d;
 }
 

@@ -58,7 +58,7 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 '''
 
 def _gen_map():
-    terrain_map.set_map_size(512,512,128) # TODO:: get this value from the map gen or saved map
+    terrain_map.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map
     if not opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
         c_lib.map_gen.init(512,512,128)
         c_lib.map_gen.conf.seed(opts.seed)
@@ -187,7 +187,7 @@ def _gen_map():
 
 def gen_map_simple():
     size = 128
-    terrain_map.set_map_size(size,size,size) # TODO:: get this value from the map gen or saved map
+    terrain_map.set_map_dimensions(size,size,size) # TODO:: get this value from the map gen or saved map
 
     c_lib.map_gen.init(size,size,size)
     c_lib.map_gen.conf.seed(opts.seed)
@@ -311,12 +311,16 @@ class Main:
         if opts.map and os.path.exists('./content/maps/%s'%opts.map):
             print opts.map
             terrain_map.load_from_disk(opts.map)
+            terrain_map.set_map_dimensions(128,128,128)
         else:
-            terrain_map.load_from_disk("natural_terrain")
+            terrain_map.set_map_dimensions(128,128,128)
+            map_gen.floor(terrain_map)
+            #terrain_map.load_from_disk("natural_terrain")
+
+        
         
         #_gen_map()
 
-            
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
             ##terrain_map.load_from_disk("savetest2")

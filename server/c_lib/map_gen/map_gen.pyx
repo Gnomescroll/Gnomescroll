@@ -57,7 +57,11 @@ from c_lib.noise import Simplex, Perlin, RMF, set_seed, set_next_seed, set_seed_
 
 import time
 
-xmax, ymax, zmax = 512, 512, 128 # cdef extern from tmap later [[have to de-#define]]
+cdef extern from "./t_map/t_map.hpp":
+    int XMAX
+    int YMAX
+    int ZMAX
+#xmax, ymax, ZMAX = 512, 512, 128 # cdef extern from tmap later [[have to de-#define]]
 
 
 '''
@@ -140,9 +144,9 @@ class Config:
         return self
 
     def max_size(self): # uses max size available
-        self.x = xmax
-        self.y = ymax
-        self.z = zmax
+        self.x = XMAX
+        self.y = YMAX
+        self.z = ZMAX
         return self
 
     def tile(self, t):
@@ -158,14 +162,14 @@ class Config:
 
     def heightmap(self, baseline=0, maxheight=0, tile=None):
         self.use_heightmap = True
-        if baseline + maxheight > zmax:
+        if baseline + maxheight > ZMAX:
             print "Map_gen heightmap settings: baseline + maxheight exceed map height. Scaling down"
-            scale = float(zmax) / float(baseline + maxheight)
+            scale = float(ZMAX) / float(baseline + maxheight)
             baseline = int(baseline * scale)
             maxheight = int(maxheight * scale)
             params = [baseline, maxheight]
             i = 0
-            while sum(params) < zmax:
+            while sum(params) < ZMAX:
                 params[i] += 1
                 i += 1
                 i %= 2
@@ -178,8 +182,8 @@ class Config:
 
     def reverse_heightmap(self, baseline, maxheight=0, minheight=0, tile=None):
         self.use_reverse_heightmap = True
-        if baseline + maxheight > zmax:
-            print "reverse heightmap settings: baseline+maxheight > zmax (%d + %d > %d)" % (baseline, maxheight, zmax)
+        if baseline + maxheight > ZMAX:
+            print "reverse heightmap settings: baseline+maxheight > ZMAX (%d + %d > %d)" % (baseline, maxheight, ZMAX)
         if baseline - maxheight < 0:
             print "reverse heightmap: will reach negative z_levels"
 
@@ -461,7 +465,7 @@ interpolates = {
 def generate():
     conf.start()
 
-def invert(x=xmax, y=ymax, z=zmax, tile=2):
+def invert(x=XMAX, y=YMAX, z=ZMAX, tile=2):
     invert_map(x,y,z,tile)
 
 def caves(x, y, z):

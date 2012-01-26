@@ -148,6 +148,7 @@ void inline Net_message::decrement()
 
 class Net_message* Net_message::acquire(int length)
 {
+    if (length <= 0) return NULL;
 #if PACKET_BUFFER_MALLOC_DEBUG
     Net_message* t = new Net_message;
     t->len = length;

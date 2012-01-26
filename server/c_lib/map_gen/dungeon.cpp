@@ -236,7 +236,7 @@ class Room {
         int i,j;
         for (i=x-w; i<x; i++) {
             for (j=y; j<y+h; j++) {
-                if (z>=zmax) printf("Room -- clique %d\n", clique);
+                if (z>=ZMAX) printf("Room -- clique %d\n", clique);
                 _set(i,j,z,tile);
             }
         }
@@ -1616,11 +1616,11 @@ if (i >= 0) {
     int end;
     cx = highest2.center_fx();
     cy = highest2.center_fy();
-    while(i < zmax) {
+    while(i < ZMAX) {
         i++;
         if (_get(cx,cy, i) == 0) break;
     }
-    if (i < zmax) {
+    if (i < ZMAX) {
         end = i;
         for (i=highest2.z+highest.d; i<end; i++) {
             _set(cx,cy, i, 0);
@@ -1634,7 +1634,7 @@ if (i >= 0) {
 //printf("make dungeon entrance\n");
 //printf("highest_room_z: %d\n", highest_room_z);
 //printf("si,sj %d,%d\n", si,sj);
-    if (si >= 0 && si < xmax && sj >= 0 && sj < ymax) {
+    if (si >= 0 && si < XMAX && sj >= 0 && sj < YMAX) {
         for (i=127; i>=highest_room_z-1; i--) {
             //printf("%d\n", i);
             _set(si,sj,i,0);

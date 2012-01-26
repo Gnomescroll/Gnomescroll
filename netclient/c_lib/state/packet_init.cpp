@@ -48,6 +48,7 @@ void RegisterMessages() {
     // block value change
     block_StoC::register_client_packet();
     block_CtoS::register_server_packet();
+    map_metadata_StoC::register_client_packet();
     
     // agent hit block action
     hit_block_CtoS::register_server_packet();

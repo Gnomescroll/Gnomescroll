@@ -836,31 +836,27 @@ void Agent_state::set_angles(float theta, float phi) {
 }
 
 void Agent_state::get_spawn_point(int* spawn) {
-    //TODO
-    const int XMAX = 128;
-    const int YMAX = 128;
-
     // get spawn area based on team
     int x_max, x_min, y_max, y_min;
     switch (this->status.team)
     {
         case 0:
             x_min = 0;
-            x_max = XMAX;
+            x_max = map_dim.x;
             y_min = 0;
-            y_max = YMAX;
+            y_max = map_dim.y;
             break;
         case 1:
             x_min = 0;
-            x_max = XMAX/2;
+            x_max = map_dim.x/2;
             y_min = 0;
-            y_max = YMAX/2;
+            y_max = map_dim.y/2;
             break;
         case 2:
-            x_min = XMAX/2;
-            x_max = XMAX;
-            y_min = YMAX/2;
-            y_max = YMAX;
+            x_min = map_dim.x/2;
+            x_max = map_dim.x;
+            y_min = map_dim.y/2;
+            y_max = map_dim.y;
             break;
         default:
             printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
