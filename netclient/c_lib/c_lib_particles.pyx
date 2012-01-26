@@ -140,12 +140,12 @@ def tick():
     billboard_text_list.tick()
     
 def draw():
+    minivox_list.draw()
     neutron_list.draw()
     blood_list.draw()
     shrapnel_list.draw()
     grenade_list.draw()
     cspray_list.draw()
-    minivox_list.draw()
     billboard_text_list.draw()
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
