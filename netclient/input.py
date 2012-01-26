@@ -89,6 +89,7 @@ class InputEventGlobal:
             self.mouse.on_mouse_motion(x,y,dx,dy)
 
 class InputGlobal:
+    help_menu = False
     keyboard = None
     mouse = None
     agentInput = None
@@ -261,13 +262,14 @@ class Keyboard(object):
 
     def _init_key_handlers(self):
         self.key_press_handlers = {
-            "e" : self.toggle_inventory,
-            "h" : InputGlobal.toggle_input_mode,
+            #"e" : self.toggle_inventory,
+            "t" : InputGlobal.toggle_input_mode,
             "g" : InputGlobal.toggle_camera_mode,
+            "h" : self.toggle_help_menu,
             "n" : toggle_t_viz_vbo_indicator_style,
             "o" : toggle_terrain_map_blend_mode,
             "m" : self.toggle_map,
-            'k' : self.toggle_vn,
+            #'k' : self.toggle_vn,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : _toggle_latency_unit,
@@ -282,6 +284,9 @@ class Keyboard(object):
 
         self.key_release_handlers = {
         }
+
+    def toggle_help_menu(self):
+        InputGlobal.help_menu = not InputGlobal.help_menu
 
     def slime_test(self):
         n = 30

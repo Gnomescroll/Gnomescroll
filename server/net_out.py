@@ -68,11 +68,11 @@ class EventOut:
     def add_json_compressed_event(self, data, level):
         self.event_packets.append(SendMessage.get_json_compressed(data, level))
 
-    @sendJSONevent('client_quit')
-    def client_quit(self, client_id):
-        return {
-            'id'    : client_id,
-        }
+    #@sendJSONevent('client_quit')
+    #def client_quit(self, client_id):
+        #return {
+            #'id'    : client_id,
+        #}
 
     @sendJSONevent('clear_map')
     def clear_map(self):
@@ -195,11 +195,11 @@ class SendMessage: #each connection has one of these
                     fin['key'] = key
         return fin
 
-    @sendJSON('client_quit')
-    def client_quit(self, client_id):
-        return {
-            'id'    : client_id,
-        }
+    #@sendJSON('client_quit')
+    #def client_quit(self, client_id):
+        #return {
+            #'id'    : client_id,
+        #}
 
     @sendJSON('identify_fail')
     def identify_fail(self, connection, notes=''):

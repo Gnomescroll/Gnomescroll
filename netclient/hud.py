@@ -31,6 +31,7 @@ class Hud(object):
         self._init_text_dict()
         self._init_scoreboard()
         self._init_player_stats()
+        self._init_help_menu()
 
         self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
         self.cube_selector = cHUD.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
@@ -76,6 +77,13 @@ class Hud(object):
             text = '',
             offset = self.win_height - self.font_height - self.height_margin,
             x = self.win_width - 330
+        )
+
+    def _init_help_menu(self):
+        self.help_menu = self.text(
+            text = self.help_menu_text,
+            offset = 0,
+            x = self.win_width/2
         )
 
     def scoreboard_stats(self):
@@ -330,12 +338,15 @@ class Hud(object):
 
         cHUD.Compass.draw()
 
-
-        self.draw_text_items(fps, ping)
-
-    def draw_text_items(self, fps, ping):
         # draw text
         cHUD.Font.font.start()
+        self.draw_text_items(fps, ping)
+        cHUD.Font.font.end()
+
+    def draw_text_items(self, fps, ping):
+        if InputGlobal.help_menu:
+            self.draw_help_menu()
+            return
 
         self.draw_player_stats()
 
@@ -351,4 +362,34 @@ class Hud(object):
         self.draw_chat_text()
         self.draw_network_status(NetClientGlobal.connection.connected)
 
-        cHUD.Font.font.end()
+    help_menu_text = """
+    Key:            Action:
+
+    Esc             Quit
+    WASD            Move
+    Space           Jump
+    Z               Jetpack (hold down)
+    
+    G               Toggle camera
+    T               Toggle keyboard
+
+    R               Reload
+    Num keys        Select weapon
+    Mouse scroll    Select weapon
+    Left click      Activate weapon
+    Right click     Zoom (if weapon has scope)
+    Arrow keys      Choose block type when block selector is active
+
+    Y               Chat
+    H               Display this menu
+    Tab             Display scoreboard
+    M               Minimap
+    
+    Weapons:
+    1               Laser
+    2               Pick
+    3               Block selector / applier
+    4               Grenades
+    """
+    def draw_help_menu(self):
+        self.help_menu.draw()

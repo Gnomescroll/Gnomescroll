@@ -236,7 +236,7 @@ class PyClientPool:
         # dispatch event
         ChatServer.chat.disconnect(client)
         GameStateGlobal.disconnect(client)
-        NetOut.event.client_quit(client.id)
+        #NetOut.event.client_quit(client.id)
 
         # recycle name
         if client.name in self.names:
