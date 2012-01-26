@@ -121,7 +121,6 @@ class Hud(object):
                 s = 'No team yet.'
             else:
                 if agent.team.viewers:
-                    print "Viewer, team=%d" % (agent.team.id,)
                     s = 'Viewer Mode'
                 else:
                     health = '%i/%i' % (agent.health, agent.health_max,)

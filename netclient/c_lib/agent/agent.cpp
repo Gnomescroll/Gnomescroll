@@ -916,7 +916,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     msg.team = this->status.team;
     msg.broadcast();
 
-    spawn_state();
+    //spawn_state();
     #endif
 
     #ifdef DC_CLIENT
@@ -958,7 +958,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     msg.team = this->status.team;
     msg.broadcast();
 
-    spawn_state();
+    //spawn_state();
     #endif
 
     #ifdef DC_CLIENT

@@ -259,6 +259,9 @@ void Agent_status::score_flag() {
 
 void Agent_status::set_team(int team)
 {
+    // respawn instantly if switching from viewer to team
+    if (this->team == 0 && team)
+        this->respawn_countdown = 0;
     this->team = team;
 
     #ifdef DC_SERVER
