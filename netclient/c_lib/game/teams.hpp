@@ -16,9 +16,9 @@ class Team {
         int members[TEAM_MAX_PLAYERS];
         unsigned int n;
 
-        int score;
-
         bool viewers;
+
+        unsigned int base_score;
 
         void set_name(char* name);
         void set_color(unsigned char r, unsigned char g, unsigned char b);
@@ -64,7 +64,6 @@ class CTFTeam: public Team {
         Flag* flag;
         Base* base;
 
-        unsigned int base_score;
         unsigned int flag_captures;
 
         //void set_color(unsigned char r, unsigned char g, unsigned char b);

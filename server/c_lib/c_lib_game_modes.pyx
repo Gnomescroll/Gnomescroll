@@ -2,7 +2,6 @@ from libcpp cimport bool
 cdef extern from "./game/teams.hpp":
     cdef cppclass Team:
         int id
-        int score
         char* name
         int n
         bool viewers
@@ -50,8 +49,6 @@ class DummyCTFTeam(object):
         elif id == 2:
             t = <Team>(ctf.two)
 
-        if k == 'score':
-            return t.score
         elif k == 'name':
             return t.name
         elif k == 'n':

@@ -6,8 +6,8 @@ Team::Team()
 :
 r(255), g(10), b(10),
 n(0),
-score(0),
-viewers(false)
+viewers(false),
+base_score(0)
 {
     strcpy(this->name, (char*)"default-team-name");
 }
@@ -163,7 +163,6 @@ bool NoTeam::remove_agent(int id) {
 CTFTeam::CTFTeam()
 :
 flag(NULL), base(NULL),
-base_score(0),
 flag_captures(0)
 {}
 

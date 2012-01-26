@@ -2,10 +2,11 @@ from libcpp cimport bool
 cdef extern from "./game/teams.hpp":
     cdef cppclass Team:
         int id
-        int score
+        unsigned int base_score
         char* name
         int n
         bool viewers
+        unsigned char r,g,b
 
     cdef cppclass NoTeam:
         int id
@@ -14,7 +15,7 @@ cdef extern from "./game/teams.hpp":
         bool viewers
 
     cdef cppclass CTFTeam:  # inherits Team
-        int score()
+        pass
 
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
@@ -44,7 +45,7 @@ class DummyCTFTeam(object):
             t = <Team>(ctf.two)
 
         if k == 'score':
-            return t.score()
+            return t.base_score #limitation
         elif k == 'name':
             return t.name
         elif k == 'n':
@@ -53,6 +54,8 @@ class DummyCTFTeam(object):
             return t.viewers
         elif k == 'id':
             return t.id
+        elif k == 'color':
+            return [t.r, t.g, t.b]
         elif k.startswith('__'):
             return object.__getattribute__(self, k)
 

@@ -95,13 +95,10 @@ class Hud(object):
 
         agents = GameStateGlobal.agentList.values()
 
-        print [agent.team.id for agent in agents]
         agents.sort(key=lambda a: a.team.id)
-        print [agent.team.id for agent in agents]
 
         curr_team = 0
         for i, agent in enumerate(agents):
-            print agent.team.id
             if agent.team.id and agent.team.id != curr_team:
                 curr_team = agent.team.id
                 stats['team'][i] = agent.team
@@ -123,25 +120,10 @@ class Hud(object):
             self.scoreboard[col_name.lower()] = self.text(
                 text = '',
                 x = start_x + (i * col_width),
-                #offset = (self.win_height // 8),
                 color = (150, 150, 255, 255)
             )
             i += 1
 
-        #self.team_names = {
-            #1: self.text(
-                #text = '',
-                #x = start_x,
-                #offset = (self.win_height // 8),
-                #color = (150, 150, 255, 255)
-            #),
-            #2: self.text(
-                #text = '',
-                #x = start_x,
-                #offset = (self.win_height // 8),
-                #color = (150, 150, 255, 255)
-            #),
-        #}
         self.team_names = self.text(
             text = '',
             x = start_x,
@@ -220,13 +202,13 @@ class Hud(object):
         # draw team names
         line_height = 18.
         team_txt = '\n' * 3
-        print stats_txt['team']
         for index, team in stats_txt['team'].items():
             team_txt += '\n' * (index + 1)
             team_txt += team.name
             team_txt += '    '
             team_txt += str(team.score)
         self.team_names.text = team_txt
+        self.team_names.color = list(team.color) + [255]
         self.team_names.draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):
