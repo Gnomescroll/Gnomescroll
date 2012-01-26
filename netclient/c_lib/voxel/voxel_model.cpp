@@ -69,7 +69,7 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
         class VoxPart *vp = vox_dat->vox_part[i];
 
         vv->parent_world_matrix = &vox_skeleton_world_matrix[vp->skeleton_parent_matrix];
-        //vv->local_matrix = // !?
+        vv->local_matrix = vox_dat->vox_volume_local_matrix[i];
 
         //vp->skeleton_parent_matrix 
         //struct Mat4* parent_world_matrix;

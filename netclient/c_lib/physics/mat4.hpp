@@ -33,6 +33,24 @@ void print_mat4(struct Mat4 m)
     printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[2].x,m.v[2].y,m.v[2].z,m.v[2].w );
     printf("%.2f %.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z,m.v[3].w );
+
+/*
+    printf("\n");
+
+    float *f = m._f;
+
+    printf("%.2f %.2f %.2f %.2f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3] );
+    printf("%.2f %.2f %.2f %.2f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3] );
+    printf("%.2f %.2f %.2f %.2f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3] );
+    printf("%.2f %.2f %.2f %.2f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3] );
+    
+    printf("\n");
+
+    printf("%f %f %f %f \n", f[0*4+0],f[0*4+1],f[0*4+2],f[0*4+3] );
+    printf("%f %f %f %f \n", f[1*4+0],f[1*4+1],f[1*4+2],f[1*4+3] );
+    printf("%f %f %f %f \n", f[2*4+0],f[2*4+1],f[2*4+2],f[2*4+3] );
+    printf("%f %f %f %f \n", f[3*4+0],f[3*4+1],f[3*4+2],f[3*4+3] );
+*/
 }
 
 static float mat4_row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inline));

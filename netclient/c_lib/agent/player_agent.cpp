@@ -290,62 +290,6 @@ float PlayerAgent_state::camera_height() {
     return a->camera_height();
 }
 
-#define INITIAL_AGENT_INTERPOLATION_WEIGHT 1.0f
-static inline float _agent_weight(float t) {
-    return INITIAL_AGENT_INTERPOLATION_WEIGHT * pow(AGENT_INTERPOLATION_DECAY, t/TICK_DURATION);
-}
-
-static inline float _agent_interp(float s0, float s1, float scale) {
-    return scale*(s1 - s0) + s0;
-}
-
-// assumes constant time between history states, until delta_t is defined on the states
-void PlayerAgent_state::update_camera_smoothing() {
-    smooth.x = 0.0f;
-    smooth.y = 0.0f;
-    smooth.z = 0.0f;
-    smooth.vx = 0.0f;
-    smooth.vy = 0.0f;
-    smooth.vz = 0.0f;
-
-    AgentState* a = &smooth;
-    float divisor = 0.0f;
-    float t = 0.0f;
-    float weight;
-    
-    int i, index;
-    for (i=0; i<AGENT_STATE_HISTORY_SIZE; i++) {
-        index = (AGENT_STATE_HISTORY_SIZE + state_history_index - i) % AGENT_STATE_HISTORY_SIZE;
-
-        weight = _agent_weight(t);
-        divisor += weight;
-
-        a->x += state_history[index].x * weight;
-        a->y += state_history[index].y * weight;
-        a->z += state_history[index].z * weight;
-        a->vx += state_history[index].vx * weight;
-        a->vy += state_history[index].vy * weight;
-        a->vz += state_history[index].vz * weight;
-
-        t += TICK_DURATION;
-        //t += state_history[index].dt;
-    }
-
-    a->x /= divisor;
-    a->y /= divisor;
-    a->z /= divisor;
-    a->vx /= divisor;
-    a->vy /= divisor;
-    a->vz /= divisor;
-
-#ifdef DC_CLIENT // whole file should be ifdef'd?
-    Agent_state* A = ClientState::agent_list.get(agent_id);
-    if (A==NULL) return;
-    c.theta = A->s.theta;
-    c.phi = A->s.phi;
-#endif
-}
-
 void PlayerAgent_state::update_sound() {
     AgentState s = camera_state;
 
