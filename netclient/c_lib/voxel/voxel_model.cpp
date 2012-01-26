@@ -148,68 +148,14 @@ void Voxel_model::set_hitscan(bool hitscan) {
     }
 }
 
-void Voxel_model::update_last_state(float x, float y, float z, float theta, float phi)
-{
-    this->last_update_state.x = x;
-    this->last_update_state.y = y;
-    this->last_update_state.z = z;
-    this->last_update_state.theta = theta;
-    this->last_update_state.phi = phi;
-}
-
 void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
-
-    // prevent wastful update
-
-/*
-    DEPRECATE
-*/
-/*
-    if (this->last_update_state.x == x
-    &&  this->last_update_state.y == y
-    &&  this->last_update_state.z == z
-    &&  this->last_update_state.theta == theta
-    )
-    {
-        if (this->last_update_state.phi != phi)
-        {
-            for (int i=0; i<this->n_parts; i++)
-            {
-                if (vox_dat->vox_part[i]->biaxial)
-                {
-                    this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
-                }
-            }
-        }
-        this->update_last_state(x,y,z,theta,phi);
-        return;
-    }
-
-    VoxPart* vp;
-    float ax,ay,az;
-    int i;
-    for (i=0; i<this->n_parts; i++) {
-        vp = vox_dat->vox_part[i];
-        ax = vp->anchor.x;
-        ay = vp->anchor.y;
-        az = vp->anchor.z;
-        this->vv[i].set_center(x+ax,y+ay,z+az); // add vox config offsets
-
-        if (vp->biaxial) {
-            this->vv[i].set_rotated_unit_axis(theta, phi, 0.0f);
-        } else {
-            this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
-        }
-    }
-*/
 
 /*
     DEPRECATE
 */
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-
-    this->update_last_state(x,y,z,theta,phi);
+    for (int i=0; i<this->n_parts; this->vv[i++].set_center(x,y,z));
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)

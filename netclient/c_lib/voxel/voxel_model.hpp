@@ -32,12 +32,6 @@ class Voxel_model
         void register_hitscan();
         void update_team_color(VoxDat* vox_dat, int team);
 
-        struct {
-            float x,y,z;
-            float theta,phi;
-        } last_update_state;
-        void update_last_state(float x, float y, float z, float theta, float phi);
-
         void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
 
         Voxel_volume* vv;

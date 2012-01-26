@@ -62,21 +62,6 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     needs_vbo_update = true;
 }
 
-/*
-    // fill model with gradient
-    unsigned char r,g,b,a;
-    a = 255;
-    for(int i=0; i < powx; i++){
-    for(int j=0; j < powy; j++){
-    for(int k=0; k < powz; k++){
-        r = i*(256/powx);
-        g = j*(256/powy);
-        b = k*(256/powz);
-        _set(i,j,k,r,g,b,a);
-    }}}
-    needs_vbo_update = true;
-*/
-
 Voxel_volume::Voxel_volume()
 :
 id(-1),
