@@ -21,17 +21,19 @@ namespace ServerState {
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
-    vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(0.0,0.0,0.0, 0.0,0.0,theta);
+    vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
 }
 
 void Voxel_model::update_skeleton()
 {
+    //printf("update skeleton: %i nodes \n", n_skeleton_nodes);
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         vox_skeleton_world_matrix[i] = mat4_mult( 
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
             vox_skeleton_local_matrix[i]
         );
+        //printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
     }    
 }
 
@@ -150,7 +152,7 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
 /*
     DEPRECATE
 */
-
+/*
     if (this->last_update_state.x == x
     &&  this->last_update_state.y == y
     &&  this->last_update_state.z == z
@@ -187,6 +189,8 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
             this->vv[i].set_rotated_unit_axis(theta, 0.0f, 0.0f);
         }
     }
+*/
+
 /*
     DEPRECATE
 */
@@ -196,33 +200,24 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
     this->update_last_state(x,y,z,theta,phi);
 }
 
-Voxel_model::Voxel_model(int num_parts)
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
 :
 skeleton_inited(false),
 vox_inited(false)
 {
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
-}
-
-Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type)
-:
-skeleton_inited(false),
-vox_inited(false)
-{
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
+    this->n_parts = vox_dat->n_parts;
+    this->vv = new Voxel_volume[vox_dat->n_parts];
     this->init_parts(vox_dat, id, type);
     this->init_skeleton(vox_dat);
 }
 
-Voxel_model::Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team)
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type, int team)
 :
 skeleton_inited(false),
 vox_inited(false)
 {
-    this->n_parts = num_parts;
-    this->vv = new Voxel_volume[num_parts];
+    this->n_parts = vox_dat->n_parts;
+    this->vv = new Voxel_volume[vox_dat->n_parts];
     this->init_parts(vox_dat, id, type, team);
     this->init_skeleton(vox_dat);
 }

@@ -44,8 +44,7 @@ class Voxel_model
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Voxel_model(int num_parts);
-        Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type);
-        Voxel_model(int num_parts, VoxDat* vox_dat, int id, int type, int team);
+        Voxel_model(VoxDat* vox_dat, int id, int type);
+        Voxel_model(VoxDat* vox_dat, int id, int type, int team);
         ~Voxel_model();
 };

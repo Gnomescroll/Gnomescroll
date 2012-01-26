@@ -27,6 +27,13 @@ struct Mat4 {
     };
 } __attribute__((aligned (16)));
 
+void print_mat4(struct Mat4 m)
+{
+    printf("%.2f %.2f %.2f %.2f \n", m.v[0].x,m.v[0].y,m.v[0].z,m.v[0].w );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[1].x,m.v[1].y,m.v[1].z,m.v[1].w );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[2].x,m.v[2].y,m.v[2].z,m.v[2].w );
+    printf("%.2f %.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z,m.v[3].w );
+}
 
 static float mat4_row_mult_column(float* r, int i, float *c, int j)  __attribute((always_inline));
 
@@ -34,7 +41,6 @@ float mat4_row_mult_column(float* r, int i, float *c, int j)
 {
     return r[4*0+i]*c[4*j+0] + r[4*1+i]*c[4*j+1] + r[4*2+i]*c[4*j+2] + r[4*3+i]*c[4*j+3];
 }
-
 
 static struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
 
