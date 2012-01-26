@@ -349,7 +349,7 @@ void PlayerAgent_state::update_camera_smoothing() {
 void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
-    float threshold = (3.14159 / 180) * 20; //degrees->radians
+    float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
     this->camera_state.forward_vector(f);
@@ -367,12 +367,15 @@ void PlayerAgent_state::display_agent_names()
         a->event.hide_name();
     }
 
+    Agent_state* you = ClientState::agent_list.get(this->agent_id);
     // choose names to display
     for (int i=0; i < ClientState::agent_list.n_filtered; i++)
     {
         Agent_state* a = ClientState::agent_list.filtered_agents[i];
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
+        if (a->status.team != you->status.team) continue;  // only show teammates
+        printf("%d %d\n", a->status.team, this->status.team);
         a->event.display_name();
     }
     #endif

@@ -1022,6 +1022,11 @@ void Agent_list::agents_in_cone(float x, float y, float z, float vx, float vy, f
     float ax,ay,az;
     float ip;
     float arc;
+
+    float len = sqrt(vx*vx + vy*vy + vz*vz);
+    vx /= len;
+    vy /= len;
+    vz /= len;
     for (int i=0; i<AGENT_MAX; i++)
     {
         Agent_state* a = this->a[i];
@@ -1030,6 +1035,11 @@ void Agent_list::agents_in_cone(float x, float y, float z, float vx, float vy, f
         ax = a->s.x - x;
         ay = a->s.y - y;
         az = a->s.z - z;
+
+        len = sqrt(ax*ax + ay*ay + az*az);
+        ax /= len;
+        ay /= len;
+        az /= len;
 
         ip = ax*vx + ay*vy + az*vz;
         arc = abs(acos(ip));

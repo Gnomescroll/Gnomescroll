@@ -64,8 +64,6 @@ void BillboardText::set_state(float x, float y, float z, float vx, float vy, flo
 void BillboardText::draw() {
 
 #ifdef DC_CLIENT
-printf("draw text is %s\n", this->text);
-printf("%0.2f %0.2f %0.2f\n", particle.state.p.x, particle.state.p.y, particle.state.p.z);
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
 
     glColor4ub(r,g,b,a);
@@ -178,9 +176,7 @@ void BillboardText_list::draw() {
     int i;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
-        printf("might draw\n");
         if (!a[i]->should_draw) continue;
-        printf("will draw\n");
         a[i]->draw();
     }
 

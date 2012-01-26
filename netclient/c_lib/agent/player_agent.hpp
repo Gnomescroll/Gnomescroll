@@ -136,7 +136,7 @@ class PlayerAgent_state {
 
         float camera_height();
 
-        PlayerAgent_status status;
+        PlayerAgent_status status;  // deprecate
         PlayerAgent_action action;
 
         PlayerAgent_state() : status(this), action(this) {
