@@ -44,7 +44,8 @@ type(OBJ_TYPE_SLIME)
 , changed(true),tick_num(0)
 #endif
 {
-    this->vox = new Voxel_model(SLIME_PART_NUM);
+    printf("Slime::Slime(float x, float y, float z, float vx, float vy, float vz), DEPRECATED, use vox_dat\n");
+    //this->vox = new Voxel_model(SLIME_PART_NUM);
 }
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :

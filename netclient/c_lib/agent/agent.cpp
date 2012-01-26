@@ -920,7 +920,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    this->vox = new Voxel_model(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
     #endif
 }
 
@@ -962,7 +962,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     #endif
 
     #ifdef DC_CLIENT
-    this->vox = new Voxel_model(AGENT_PART_NUM, &agent_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
     #endif
 }
 

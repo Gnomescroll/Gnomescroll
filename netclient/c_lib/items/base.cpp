@@ -15,11 +15,14 @@ theta(0), phi(0),
 team(0),
 type(OBJ_TYPE_BASE)
 {
+    printf("Base::Base(), DEPRECATED!!! omfg \n");
+/*
     this->vox = new Voxel_model(BASE_PART_NUM);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+*/
 }
 
 Base::Base(int id, int team)
