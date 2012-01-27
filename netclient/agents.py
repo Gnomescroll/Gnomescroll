@@ -137,8 +137,10 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
         return self.active_weapon
 
     def set_hud_icons(self):
-        for i in range(4):
-            cHUD.Equipment.set_equipment_icon(i, i+1)
+        cHUD.Equipment.set_equipment_icon(0, 3) #laser
+        cHUD.Equipment.set_equipment_icon(1, 1) # pick
+        cHUD.Equipment.set_equipment_icon(2, 2) # block applier
+        cHUD.Equipment.set_equipment_icon(3, 4) # grenades
 
 
 # datastore for agents

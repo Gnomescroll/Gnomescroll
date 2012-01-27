@@ -152,7 +152,7 @@ inline void AgentReloadWeapon_StoC::handle() {
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
-inline void fire_weapon_CtoS::handle() {}
+//inline void fire_weapon_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_slime_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
@@ -234,38 +234,45 @@ inline void Agent_cs_CtoS::handle() {
 // agent hit block action
 inline void hit_block_CtoS::handle() {
     Agent_state* a = STATE::agent_list.get(id);
-    if(a == NULL) {
-        return;
-    }
-    // check that agent has this weapon equipped
-    //if (! Weapons::isBlockPick(a->active_weapon.type)) {
-        //return;
-    //}
+    if (a == NULL) return;
+
+    if (!a->weapons.pick.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.pick.type;
+    msg.broadcast();
+    
     //int dmg = a->active_weapon.damage;
     int dmg = 32;
-    // apply damage to block & broadcast
     _apply_damage_broadcast(x,y,z, dmg);
 }
 
 // fire weapon action
-inline void fire_weapon_CtoS::handle() {
-    // trigger weapon
-    Agent_state* a = ServerState::agent_list.get(id);
-    if (a==NULL) return;
-    bool fired = a->weapons.fire(type);
-    // forward the packet
-    if (fired) {
-        fire_weapon_StoC msg;
-        msg.id = id;
-        msg.type = type;
-        msg.broadcast();
-    }
-}
+//inline void fire_weapon_CtoS::handle() {
+    //// trigger weapon
+    //Agent_state* a = ServerState::agent_list.get(id);
+    //if (a==NULL) return;
+    //bool fired = a->weapons.fire(type);
+    //// forward the packet
+    //if (fired) {
+        //fire_weapon_StoC msg;
+        //msg.id = id;
+        //msg.type = type;
+        //msg.broadcast();
+    //}
+//}
 
 // hitscan target:agent
 inline void hitscan_agent_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
+
+    if (!a->weapons.laser.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.laser.type;
+    msg.broadcast();
+
     Agent_state* target = ServerState::agent_list.get(agent_id);
     if (target==NULL) return;
     // apply damage
@@ -279,6 +286,13 @@ inline void hitscan_agent_CtoS::handle() {
 inline void hitscan_slime_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
+
+    if (!a->weapons.laser.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.laser.type;
+    msg.broadcast();
+
     Monsters::Slime* slime = ServerState::slime_list.get(monster_id);
     if (slime==NULL) return;
     // apply damage
@@ -293,6 +307,13 @@ inline void hitscan_slime_CtoS::handle() {
 inline void hitscan_block_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
+
+    if (!a->weapons.laser.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.laser.type;
+    msg.broadcast();
+
     // shoot block
     int weapon_block_damage = 12;
     _apply_damage_broadcast(x,y,z, weapon_block_damage);
@@ -303,6 +324,12 @@ inline void hitscan_block_CtoS::handle() {
 inline void ThrowGrenade_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
+
+    if (!a->weapons.grenades.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.grenades.type;
+    msg.broadcast();
 
     static const float grenade_vel = 22.0f; // load from dat later
     vx *= grenade_vel;
@@ -333,9 +360,35 @@ inline void AgentReloadWeapon_CtoS::handle() {
 inline void agent_block_CtoS::handle() {
     Agent_state* a = ServerState::agent_list.get(id);
     if (a==NULL) return;
+
+    // fire block applier
+    if (!a->weapons.blocks.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.blocks.type;
+    msg.broadcast();
+    
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
-    _set_broadcast(x,y,z, val);    
+
+    bool collides = false;
+    for (int i=0; i<ServerState::agent_list.n_max; i++)
+    {
+        Agent_state* agent = ServerState::agent_list.a[i];
+        if (agent == NULL) continue;
+        if (cube_intersects(
+            agent->s.x, agent->s.y, agent->s.z,
+            0.3, 0.3, agent->box.b_height,
+            x,y,z,
+            1, 1, 1))
+        {
+            collides = true;
+            break;
+        }
+    }
+
+    if (!collides)
+        _set_broadcast(x,y,z, val);    
 }
 
 

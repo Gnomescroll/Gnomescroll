@@ -325,3 +325,10 @@ int get_height_at(int x, int y) {
     }
     return 0;
 }
+
+inline bool point_in_map(int x, int y, int z)
+{
+    if (x<0 || x>=map_dim.x || y<0 || y>=map_dim.y || z<0 || z>map_dim.z)
+        return false;
+    return true;
+}

@@ -61,7 +61,7 @@ void RegisterMessages() {
     cspray_StoC::register_client_packet();
 
     // fire weapon
-    fire_weapon_CtoS::register_server_packet();
+    //fire_weapon_CtoS::register_server_packet();
     fire_weapon_StoC::register_client_packet();
 
     // hitscans
