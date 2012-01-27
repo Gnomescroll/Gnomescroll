@@ -16,26 +16,9 @@ class HitscanEffect
     inline void draw(float delta, Vector* camera) __attribute((always_inline));
     void tick();
 
-    HitscanEffect(int id)
-    :
-    id(id),
-    ttl(60)
-    {}
-    
-    HitscanEffect(int x, int y, int z, int vx, int vy, int vz)
-    :
-    x(x), y(y), z(z),
-    vx(vx), vy(vy), vz(vz),
-    ttl(60)
-    {}
-    
-    HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz)
-    :
-    id(id),
-    x(x), y(y), z(z),
-    vx(vx), vy(vy), vz(vz),
-    ttl(60)
-    {}
+    HitscanEffect(int id);
+    HitscanEffect(int x, int y, int z, int vx, int vy, int vz);
+    HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz);
 };
 
 class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
