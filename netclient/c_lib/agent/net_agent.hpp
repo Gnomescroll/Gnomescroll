@@ -2,6 +2,7 @@
 
 #include <net_lib/net.hpp>
 
+#include <c_lib/agent/agent_status.hpp>
 /*
  *  Player Agent Packets
 */
@@ -45,19 +46,18 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
  *  Server -> Client packets
  */
 
- class Client_ID: public FixedSizeReliableNetPacketToClient<Client_ID>
- {
-     public:
-        int id;
+class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_StoC>
+{
+    public:
+        int client_id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&client_id, buff, buff_n, pack);
         }
-
         inline void handle();
 };
- 
+
 //send at fixed interval, absolute position
 class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message>
 {
@@ -183,8 +183,6 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
 class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 {
     public:
-
-        int id;
         int seq;
         uint16_t cs;
         float theta;
@@ -192,7 +190,6 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u8(&seq, buff, buff_n, pack);
             pack_u16(&cs, buff, buff_n, pack);
             pack_float(&theta, buff, buff_n, pack);
@@ -206,13 +203,10 @@ class Agent_cs_CtoS: public FixedSizeNetPacketToServer<Agent_cs_CtoS>
 class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
 {
     public:
-
-        int id;
         int x,y,z;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
             pack_u16(&z, buff, buff_n, pack);
@@ -225,13 +219,11 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
 class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
 {
     public:
-        int id;
         int agent_id;
         int body_part;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u8(&agent_id, buff, buff_n, pack);
             pack_u8(&body_part, buff, buff_n, pack);
         }
@@ -243,14 +235,12 @@ class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
 class hitscan_slime_CtoS: public FixedSizeNetPacketToServer<hitscan_slime_CtoS>
 {
     public:
-        int id;
         int monster_id;
         int monster_type;
         int monster_body_part;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u16(&monster_id, buff, buff_n, pack);
             pack_u8(&monster_type, buff, buff_n, pack);
             pack_u8(&monster_body_part, buff, buff_n, pack);
@@ -263,12 +253,10 @@ class hitscan_slime_CtoS: public FixedSizeNetPacketToServer<hitscan_slime_CtoS>
 class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 {
     public:
-        int id;
         int x,y,z;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
             pack_u16(&z, buff, buff_n, pack);
@@ -313,11 +301,13 @@ class agent_create_StoC: public FixedSizeReliableNetPacketToClient<agent_create_
     public:
         int id;
         int team;
+        int client_id;
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&team, buff, buff_n, pack);
+            pack_u8(&client_id, buff, buff_n, pack);
         }
 
         inline void handle();
@@ -364,13 +354,11 @@ class PlayerAgent_id_StoC: public FixedSizeReliableNetPacketToClient<PlayerAgent
 class ThrowGrenade_CtoS: public FixedSizeReliableNetPacketToServer<ThrowGrenade_CtoS>
 {
     public:
-        int id;
         float x,y,z;
         float vx,vy,vz;    // direction
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
@@ -440,12 +428,10 @@ class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentAc
 class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
 {
     public:
-        int id;
         int slot;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
         }
         inline void handle();
@@ -468,12 +454,10 @@ class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentRel
 class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
 {
     public:
-        int id;
         int type;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
         }
         inline void handle();
@@ -482,13 +466,11 @@ class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentRel
 class agent_block_CtoS: public FixedSizeNetPacketToServer<agent_block_CtoS>
 {
     public:
-        int id;
         int x,y,z;
         int val;
         
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
             pack_u16(&x, buff, buff_n, pack);
             pack_u16(&y, buff, buff_n, pack);
             pack_u16(&z, buff, buff_n, pack);

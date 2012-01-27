@@ -129,7 +129,6 @@ void CTF::set_base_position(int team, float x, float y, float z)
 void CTF::join_team(int team) {
     AgentJoinTeam_CtoS msg;
     msg.team = team;
-    msg.agent = ClientState::playerAgent_state.agent_id;
     msg.send();
 }
 
@@ -138,7 +137,6 @@ void CTF::on_ready() {
     if (once) return;
     if (!auto_assign) return;
     AgentAutoAssignTeam_CtoS msg;
-    msg.agent = ClientState::playerAgent_state.agent_id;
     msg.send();
     once = 1;
 }

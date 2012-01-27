@@ -2,17 +2,6 @@
 
 #ifdef DC_CLIENT
 
-// find a better place for this
-inline void SendClientId_StoC::handle()
-{
-    inline void handle();
-    {
-        //printf("Client Received Client id = %i \n", client_id);
-        NetClient::Server.client_id = client_id;
-        client_connect_event(client_id);
-    }
-}
-
 inline void TeamColor_StoC::handle(){
     ClientState::ctf.set_team_color(team, r,g,b);
 }
@@ -77,7 +66,6 @@ inline void AgentAutoAssignTeam_CtoS::handle(){}
 #ifdef DC_SERVER
 
 // dummies
-inline void SendClientId_StoC::handle(){}
 inline void TeamColor_StoC::handle(){}
 inline void AgentJoinTeam_StoC::handle(){}
 inline void TeamName_StoC::handle(){}
@@ -89,17 +77,21 @@ inline void AgentDropFlag_StoC::handle() {}
 inline void AgentScoreFlag_StoC::handle() {}
 
 inline void AgentJoinTeam_CtoS::handle() {
-    bool added = ServerState::ctf.add_agent_to_team(team, agent);
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+    bool added = ServerState::ctf.add_agent_to_team(team, a->id);
     if (added) {
         AgentJoinTeam_StoC msg;
         msg.team = team;
-        msg.agent = agent;
+        msg.agent = a->id;
         msg.broadcast();
     }
 }
 
 inline void AgentAutoAssignTeam_CtoS::handle() {
-    ServerState::ctf.auto_assign_agent(agent);
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+    ServerState::ctf.auto_assign_agent(a->id);
 }
 
 #endif

@@ -27,9 +27,17 @@ inline void PlayerAgent_Snapshot::handle() {
 // Server -> Client handlers
 #ifdef DC_CLIENT
 
-inline void Client_ID::handle() {
-    // nothing, for now
+inline void SendClientId_StoC::handle()
+{
+    //printf("Client Received Client id = %i \n", client_id);
+    NetClient::Server.client_id = client_id;
+    client_connect_event(client_id);
+    if (ClientState::playerAgent_state.you != NULL)
+    {
+        ClientState::playerAgent_state.you->client_id = client_id;
+    }
 }
+
 
 inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
@@ -98,6 +106,7 @@ inline void agent_health_StoC::handle() {
 inline void agent_create_StoC::handle() {
     Agent_state* a = ClientState::agent_list.get_or_create(id);
     if (a==NULL) printf("agent_create_StoC:: get_or_create agent failed\n");
+    a->client_id = client_id;
     a->event.joined_team(team);
     //printf("C Agent created. id: %d\n", a->id);
 }
@@ -165,7 +174,7 @@ inline void agent_block_CtoS::handle() {}
 // Client -> Server handlers
 #ifdef DC_SERVER
 
-inline void Client_ID::handle() {}
+inline void SendClientId_StoC::handle() {}
 inline void AgentKills_StoC::handle() {}
 inline void AgentDeaths_StoC::handle() {}
 inline void AgentSuicides_StoC::handle() {}
@@ -200,20 +209,15 @@ inline void Agent_cs_CtoS::handle() {
     }
     */
 
-    Agent_state* A = STATE::agent_list.get(id);
-    if(A == NULL) {
-        //STATE::agent_list.create(id);
-        printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
-        return;
-    }
-
+    Agent_state* A = NetServer::agents[client_id];
+    if(A == NULL) return;
 
     //determine if message is new, if so send out
     /*
         Client should send last 2 control states each packet, must handle redundant control state properly
     */
     Agent_cs_StoC M;
-    M.id = id;
+    M.id = A->id;
     M.seq = seq;
     M.cs = cs;
     M.theta = theta;
@@ -226,13 +230,13 @@ inline void Agent_cs_CtoS::handle() {
         Warning: setting agent client id by the client the last control state was received for that agent
         This needs to be done properly, at agent creation
     */
-    A->client_id = client_id;
+    //A->client_id = client_id;
 
 }
 
 // agent hit block action
 inline void hit_block_CtoS::handle() {
-    Agent_state* a = STATE::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
     if (!a->weapons.pick.fire()) return;
@@ -248,7 +252,7 @@ inline void hit_block_CtoS::handle() {
 
 // hitscan target:agent
 inline void hitscan_agent_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
@@ -261,14 +265,14 @@ inline void hitscan_agent_CtoS::handle() {
     if (target==NULL) return;
     // apply damage
     int dmg = 25;
-    target->status.apply_damage(dmg, id, a->type);
+    target->status.apply_damage(dmg, target->id, a->type);
     // TODO: Use weapon dmg. Use body_part
     //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }
 
 // hitscan target:monster
 inline void hitscan_slime_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
@@ -289,7 +293,7 @@ inline void hitscan_slime_CtoS::handle() {
 
 // hitscan target:block
 inline void hitscan_block_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
@@ -306,7 +310,7 @@ inline void hitscan_block_CtoS::handle() {
 }
 
 inline void ThrowGrenade_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
     if (!a->weapons.grenades.fire()) return;
@@ -321,28 +325,28 @@ inline void ThrowGrenade_CtoS::handle() {
     vz *= grenade_vel;
     //create grenade
     Grenade* g = ServerState::grenade_list.create(x,y,z, vx,vy,vz);
-    g->owner = id;
+    g->owner = a->id;
 }
 
 inline void AgentActiveWeapon_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
     a->weapons.set_active(slot);
 }
 
 inline void AgentReloadWeapon_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
     a->weapons.reload(type);
     // forward action
     AgentReloadWeapon_StoC msg;
-    msg.id = id;
+    msg.id = a->id;
     msg.type = type;
     msg.broadcast();
 }
 
 inline void agent_block_CtoS::handle() {
-    Agent_state* a = ServerState::agent_list.get(id);
+    Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
     // fire block applier

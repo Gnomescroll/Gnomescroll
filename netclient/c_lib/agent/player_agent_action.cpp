@@ -96,14 +96,12 @@ void PlayerAgent_action::hitscan() {
         case TARGET_VOXEL:
             switch (vhe.entity_type) {
                 case OBJ_TYPE_AGENT:
-                    agent_msg.id = p->agent_id;
                     agent_msg.agent_id = vhe.entity_id;   // target
                     agent_msg.body_part = vhe.part_id;
                     agent_msg.send();
                     break;
 
                 case OBJ_TYPE_SLIME:
-                    monster_msg.id = p->agent_id;
                     monster_msg.monster_id = vhe.entity_id;
                     monster_msg.monster_type = vhe.entity_type;
                     monster_msg.monster_body_part = vhe.part_id;
@@ -116,7 +114,6 @@ void PlayerAgent_action::hitscan() {
             break;
 
         case TARGET_BLOCK:            
-            block_msg.id = p->agent_id;
             block_msg.x = block_pos[0];
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
@@ -144,7 +141,6 @@ void PlayerAgent_action::hitscan() {
 
 void PlayerAgent_action::throw_grenade() {
     ThrowGrenade_CtoS msg;
-    msg.id = p->agent_id;
 
     msg.x = p->camera_state.x;
     msg.y = p->camera_state.y;
@@ -168,7 +164,6 @@ void PlayerAgent_action::hit_block() {
     int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
     if (pos != NULL) {
         hit_block_CtoS msg;
-        msg.id = p->agent_id;
         msg.x = pos[0];
         msg.y = pos[1];
         msg.z = pos[2];
@@ -194,7 +189,6 @@ void PlayerAgent_action::set_block() {
     if (b==NULL) return;
 
     agent_block_CtoS msg;
-    msg.id = p->you->id;
     msg.x = b[0];
     msg.y = b[1];
     msg.z = b[2];
@@ -207,7 +201,6 @@ void PlayerAgent_action::reload() {
     if (p->you == NULL) return;
 
     AgentReloadWeapon_CtoS msg;
-    msg.id = p->agent_id;
     msg.type = p->you->weapons.active_type();
     msg.send();
 }

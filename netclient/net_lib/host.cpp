@@ -7,7 +7,7 @@
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/message_handler.h>
 
-#include <c_lib/game/packets.hpp>
+#include <c_lib/agent/net_agent.hpp>
 #include <c_lib/state/packet_init.hpp>
 
 
@@ -322,6 +322,7 @@ static void client_disconnect(ENetEvent* event)
     int client_id = nc->client_id;
 
     NetServer::pool[client_id] = NULL;
+    NetServer::agents[client_id] = NULL;
 
     client_disconnect_event(client_id);
     printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);

@@ -185,7 +185,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     Agent_cs_CtoS csp;
 
-    csp.id = agent_id;
     csp.seq = cs_seq_local;
     csp.cs = cs;
     csp.theta = theta;

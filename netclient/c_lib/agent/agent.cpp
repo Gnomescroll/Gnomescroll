@@ -1048,12 +1048,17 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);
 
-    client_id = -1;
+    //client_id = -1;
+    client_id = id;
+
+    // add to NetServer pool
+    NetServer::assign_agent_to_client(this->client_id, this);
 
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
+    msg.client_id = this->client_id;
     msg.broadcast();
     #endif
 
@@ -1086,12 +1091,14 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);
 
-    client_id = -1;
+    //client_id = -1;
+    client_id = id;
 
     #ifdef DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
+    msg.client_id = this->client_id;
     msg.broadcast();
     #endif
 
@@ -1136,6 +1143,7 @@ void Agent_list::send_to_client(int client_id) {
         agent_create_StoC msg;
         msg.id = a[i]->id;
         msg.team = a[i]->status.team;
+        msg.client_id = a[i]->client_id;
         msg.sendToClient(client_id);
 
         agent_name_StoC name_msg;

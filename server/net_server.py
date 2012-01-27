@@ -114,6 +114,10 @@ class PyClient:
         else:
             self.agent = GameStateGlobal.agentList.create(self.client_id)
             cAgents.set_agent_name(self.agent.id, self.name)
+
+            # add agent to netserver agent pool
+            # send client_id but not via the agent
+            
             print 'Created new agent'
             # send player agent id
             self.agent.send_id_to_client(self.client_id)

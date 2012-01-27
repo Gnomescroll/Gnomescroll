@@ -81,13 +81,11 @@ void Agent_weapons::switch_down() {
 void Agent_weapons::weapon_change_message() {
     #ifdef DC_CLIENT
     AgentActiveWeapon_CtoS msg;
-    msg.id = a->id;
     msg.slot = active;
     msg.send();
     #endif
     #ifdef DC_SERVER
     AgentActiveWeapon_StoC msg;
-    msg.id = a->id;
     msg.slot = active;
     msg.broadcast();
     #endif
