@@ -126,6 +126,7 @@ class PlayerAgent_state {
         //state variables
 
         int agent_id;   //agent_id for player agent
+        Agent_state* you;
         void set_PlayerAgent_id(int id);
         //set actually sends
         void set_control_state(uint16_t cs, float theta, float phi);
@@ -135,6 +136,7 @@ class PlayerAgent_state {
         PlayerAgent_action action;
 
         PlayerAgent_state();
+        ~PlayerAgent_state();
 
         void update_sound();
 

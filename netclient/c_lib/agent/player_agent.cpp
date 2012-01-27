@@ -7,7 +7,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/sound/sound.hpp>
-#endif
+//#endif
 
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/state/client_state.hpp>
@@ -24,7 +24,12 @@ Other Stuff
 */
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
-    agent_id = id;
+    this->you = ClientState::agent_list.get(id);
+    if (this->you == NULL)
+    {
+        printf("WARNING: set_PlayerAgent_id -- agent %d does not exist\n", id);
+    }
+    this->agent_id = id;
 }
 
 
@@ -53,10 +58,9 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
 #ifdef DC_CLIENT // whole file should be ifdef'd?
-    Agent_state* A = ClientState::agent_list.get(agent_id);
-    if (A==NULL) return;
-    c.theta = A->s.theta;
-    c.phi = A->s.phi;
+    if (you == NULL) return;
+    c.theta = you->s.theta;
+    c.phi = you->s.phi;
 #endif
 
 /*
@@ -109,7 +113,7 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
 }
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 //take outgoing control input and do client side prediction
 //seq for prediction will always exceed client side one
 void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
@@ -173,7 +177,7 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
 
 //set actually sends
 void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
-    if(agent_id == -1) return;  //player agent not set
+    if(agent_id == -1 || you == NULL) return;  //player agent not set
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
@@ -207,9 +211,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     //printf("0 _cs seq= %i \n", index);
 
-    Agent_state* A = ClientState::agent_list.get(agent_id);
-    if(A == NULL) return;
-
     //working version
     struct Agent_control_state _cs;
     //printf("0 index= %i \n", index);
@@ -217,7 +218,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     //class AgentState s_tmp = s;
 
-    s = _agent_tick(_cs, A->box, s);
+    s = _agent_tick(_cs, you->box, s);
 
     //experimental
     //tick from last received snapshot to current
@@ -245,7 +246,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
         _cs = cs_local[csindex%128]; //check seq number
 
-        tmp = _agent_tick(_cs, A->box, tmp);
+        tmp = _agent_tick(_cs, you->box, tmp);
         //printf("r  seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
         tmp.seq = (tmp.seq+1) % 256;
 
@@ -272,7 +273,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     //if( (cs_seq_local % 128) != ((csindex+1)%128) ) printf("SAGSDAGASG !!! \n");
      
     _cs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(cs_local[cs_seq_local % 128], A->box, tmp);
+    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
     
     //tmp.seq = (tmp.seq+1) % 256;
     //printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
@@ -285,9 +286,8 @@ float PlayerAgent_state::camera_height() {
     //if (active_camera_state->crouching) {
     //    return box.c_height * camera_height_scale;
     //}
-    Agent_state* a = ClientState::agent_list.get(agent_id);
-    if (a==NULL) return 0.0f;
-    return a->camera_height();
+    if (you == NULL) return 0.0f;
+    return you->camera_height();
 }
 
 #define INITIAL_AGENT_INTERPOLATION_WEIGHT 1.0f
@@ -339,16 +339,16 @@ void PlayerAgent_state::update_camera_smoothing() {
     a->vz /= divisor;
 
 #ifdef DC_CLIENT // whole file should be ifdef'd?
-    Agent_state* A = ClientState::agent_list.get(agent_id);
-    if (A==NULL) return;
-    c.theta = A->s.theta;
-    c.phi = A->s.phi;
+    if (you==NULL) return;
+    c.theta = you->s.theta;
+    c.phi = you->s.phi;
 #endif
 }
 
 void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
+    if (you == NULL) return;
     float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
@@ -367,7 +367,6 @@ void PlayerAgent_state::display_agent_names()
         a->event.hide_name();
     }
 
-    Agent_state* you = ClientState::agent_list.get(this->agent_id);
     // choose names to display
     for (int i=0; i < ClientState::agent_list.n_filtered; i++)
     {
@@ -393,13 +392,12 @@ PlayerAgent_state::PlayerAgent_state()
 :
 action(this)
 {
-
-    state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
-
     //init
     static int inited=0;
     if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
     inited++;
+
+    state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
 
     //client side state variables
     jump_ready = false;
@@ -408,17 +406,22 @@ action(this)
     camera_mode = client_side_prediction_interpolated;
 
     agent_id = -1;
-
+    you = NULL;
+    
     cs_seq_local = 0;
     cs_seq_net = -1;
 
     state_history_index = 0;
     state_history_seq = 0;
 
-    int i;
-    for(i=0; i<128; i++) cs_local[i].seq = -1;
-    for(i=0; i<128; i++) cs_net[i].seq = -1;
+    for(int i=0; i<128; cs_local[i++].seq = -1);
+    for(int i=0; i<128; cs_net[i++].seq = -1) ;
 }
 
+PlayerAgent_state::~PlayerAgent_state()
+{
+    if (this->state_history != NULL)
+        delete[] this->state_history;
+}
 
 #endif
