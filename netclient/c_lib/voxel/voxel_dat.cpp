@@ -230,18 +230,38 @@ biaxial(biaxial)
 
 void VoxDat::init_skeleton(int n_skeleton)
 {
+    if( voxel_skeleton_inited == true)
+    {
+        printf("VoxDat::init_skeleton ERROR!! skeletons inited twice!\n");
+        return;
+    }
+    voxel_skeleton_inited = true;
+
     this->n_skeleton_nodes = n_skeleton;
     vox_skeleton_local_matrix = new Mat4[n_skeleton];
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
-void VoxDat::set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
+void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
+    if( voxel_skeleton_inited != true)
+    {
+        printf("VoxDat::set_skeleton_local_matrix ERROR!! skeletons not inited!\n");
+        return;
+    }
+    printf("!!! VoxDat::set_skeleton_local_matrix i=%i \n", node);
     vox_skeleton_local_matrix[node] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+    print_mat4( vox_skeleton_local_matrix[node] );
+    printf("\n");
 }
 
 void VoxDat::set_skeleton_node_parent(int node, int parent)
 {
+    if( voxel_skeleton_inited != true)
+    {
+        printf("VoxDat::set_skeleton_node_parent ERROR!! skeletons not inited!\n");
+        return;
+    }
     vox_skeleton_transveral_list[node] = parent;
 }
 

@@ -321,13 +321,21 @@ void Voxel_render_list::draw()
 
         //r = mat4_mult(*vv->parent_world_matrix,m);
 
+    //short entity_id;
+    //short entity_type;
+    //short part_id;
+
+        int debug = 0;
+
+        if(debug) printf("entity= %i, entity_type= %i, part_id= %i \n", vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+
         r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
 
 
-        print_mat4(r);
-        printf("sizeof(Mat4)= %i \n", sizeof(Mat4) );
+        if(debug) print_mat4(r);
+        //printf("sizeof(Mat4)= %i \n", sizeof(Mat4) );
         
-        printf("wtf= %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
+        if(debug) printf("wtf= %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
 
         r.v[0].w = 0.0f;
         r.v[1].w = 0.0f;

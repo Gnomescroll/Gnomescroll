@@ -54,9 +54,12 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
 
     // skeleton graph
+    int node;
+
     for(int i=0; i<n_parts; i++)
     {
-        int node, parent_skeleton_node;
+        int node;
+        int parent_skeleton_node;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %n", &node, &parent_skeleton_node, &read);
         //printf("%d %d %d\n", node, parent_skeleton_node, read);
@@ -71,10 +74,27 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         float x,y,z;
         float rx,ry,rz;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
-        //printf("%d %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
+
+        int ret;
+        ret= sscanf (buffer+index, "%d %n", &node, &read);
+        read += index;
+        
+        printf("1 ret= %i \n", ret);
+        ret= sscanf (buffer+index, "%f %f %f %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
+        
+        printf("2 ret= %i \n", ret);
+        //sscanf (buffer+index, "%d %f %f %f %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        printf("%i %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
         index += read;
-        vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
+        //vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
+
+        if(node != i)
+        {
+            printf("!!! VOXEL SKELETON LOADER ERROR!!! i= %i, node= %i \n",i,node);
+        }
+
+        printf("set skeleton node matrix: %i \n", node);
+        vox_dat->set_skeleton_local_matrix(node, x,y,z, rx,ry,rz);
     }
 
     // voxel part size, dimension, color

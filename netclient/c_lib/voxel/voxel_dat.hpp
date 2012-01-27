@@ -106,7 +106,7 @@ class VoxDat {
         
         void init_skeleton(int n_skeleton);
         
-        void set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
+        void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
         void set_skeleton_node_parent(int node, int parent);
         void set_skeleton_parent_matrix(int part, int parent);
 

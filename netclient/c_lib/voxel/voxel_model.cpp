@@ -26,14 +26,20 @@ void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 
 void Voxel_model::update_skeleton()
 {
-    //printf("update skeleton: %i nodes \n", n_skeleton_nodes);
+    printf("update skeleton: %i nodes \n", n_skeleton_nodes);
     for(int i=1; i<n_skeleton_nodes; i++)
     {
+        printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
+
+        print_mat4( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
+
+        printf("\n");
+        print_mat4( vox_skeleton_local_matrix[i] );
+
         vox_skeleton_world_matrix[i] = mat4_mult( 
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
             vox_skeleton_local_matrix[i]
         );
-        //printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
     }    
 }
 
@@ -49,8 +55,6 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     skeleton_needs_update = true;
     n_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
-    n_skeleton_nodes = vox_dat->n_skeleton_nodes;
-
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
     vox_skeleton_transveral_list = new int[num_skeleton_nodes];
@@ -60,7 +64,12 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
-        vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i];
+        printf("vox_skeleton_local_matrix[%i]= \n", i);
+        print_mat4( vox_skeleton_local_matrix[i] );
+
+        vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
+        printf("vox_dat->vox_skeleton_local_matrix[%i]= \n", i);
+        print_mat4( vox_dat->vox_skeleton_local_matrix[i] );
     }
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for(int i=0; i<this->n_parts; i++)
