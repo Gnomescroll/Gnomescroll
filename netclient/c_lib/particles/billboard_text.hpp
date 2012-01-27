@@ -19,6 +19,8 @@ class BillboardText {
 
         bool gravity;
         bool should_draw;
+
+        float size;
         
         void set_text(char* t);
         void set_color(unsigned char r, unsigned char g, unsigned char b);
@@ -27,6 +29,7 @@ class BillboardText {
         void set_draw(bool draw);
         void set_ttl(int ttl);
         void set_state(float x, float y, float z, float vx, float vy, float vz);
+        void set_size(float size);
         
         void draw();
         void tick();

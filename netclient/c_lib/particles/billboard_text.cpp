@@ -24,7 +24,8 @@ BillboardText::BillboardText(int id, float x, float y, float z, float vx, float 
 :
 r(100), g(100), b(100), a(255),
 gravity(true),
-should_draw(true)
+should_draw(true),
+size(BILLBOARD_TEXT_TEXTURE_SCALE)
 {
     text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
@@ -82,7 +83,10 @@ void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,
     this->b = b;
     this->a = a;
 }
-
+void BillboardText::set_size(float size)
+{
+    this->size = size;
+}
 
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
@@ -123,12 +127,12 @@ void BillboardText::draw() {
     float x,y,z;
     float cursor = 0.0f;
 
-    up[0] *= BILLBOARD_TEXT_TEXTURE_SCALE;
-    up[1] *= BILLBOARD_TEXT_TEXTURE_SCALE;
-    up[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
-    right[0] *= BILLBOARD_TEXT_TEXTURE_SCALE;
-    right[1] *= BILLBOARD_TEXT_TEXTURE_SCALE;
-    right[2] *= BILLBOARD_TEXT_TEXTURE_SCALE;
+    up[0] *= this->size;
+    up[1] *= this->size;
+    up[2] *= this->size;
+    right[0] *= this->size;
+    right[1] *= this->size;
+    right[2] *= this->size;
 
     const float magic_cursor_ratio = 1.8f / 9.0f;
 
