@@ -9,9 +9,6 @@ typedef enum {
     TYPE_grenade_thrower
 } weapon_type;
 
-const char hud_undefined_string[] = "--";
-const char hud_display_format_string[] = "%s/%s::%s/%s";
-
 class Weapon {
 
     public:
@@ -30,14 +27,7 @@ class Weapon {
 
         void restore_ammo();
 
-        Weapon(weapon_type type) :
-        max_ammo(0), speed(1),
-        id(0),
-        owner(0),
-        type(type),
-        ammo(0),
-        scope(false)
-        {}
+        Weapon(weapon_type type);
 };
 
 class HitscanLaser: public Weapon {
@@ -48,34 +38,21 @@ class HitscanLaser: public Weapon {
 
         bool fire();
         void reload();
-
         void restore_ammo();
+        char* hud_display();
 
-        char* hud_display() {
-            char clip_str[4+1];
-            sprintf(clip_str, "%d", clip);
-            char clip_size_str[4+1];
-            sprintf(clip_size_str, "%d", clip_size);
-            char ammo_str[4+1];
-            sprintf(ammo_str, "%d", ammo);
-            char max_ammo_str[4+1];
-            sprintf(max_ammo_str, "%d", max_ammo);
-            
-            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
-            return hud_string;
-        }
+        HitscanLaser();
+};
 
+class BlockApplier: public Weapon {
 
-    HitscanLaser() :
-    Weapon(TYPE_hitscan_laser)
-    {
-        // load these from dat later
-        clip_size = 100;
-        clip = 100;
-        max_ammo = 100;
-        ammo = 100;
-        scope = true;
-    }
+    public:
+        int block;
+        
+        bool fire();
+        char* hud_display();
+
+        BlockApplier();
 };
 
 class BlockPick: public Weapon {
@@ -83,47 +60,8 @@ class BlockPick: public Weapon {
     public:
         bool fire();
 
-        char* hud_display() {
-            const char* clip_str = hud_undefined_string;
-            const char* clip_size_str = hud_undefined_string;
-            const char* ammo_str = hud_undefined_string;
-            const char* max_ammo_str = hud_undefined_string;
-            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
-            return hud_string;
-        }
-
-
-    BlockPick() :
-    Weapon(TYPE_block_pick)
-    {}
-};
-
-class BlockApplier: public Weapon {
-
-    public:
-        int block;
-        bool fire();
-
-        char* hud_display() {
-            const char* clip_str = hud_undefined_string;
-            const char* clip_size_str = hud_undefined_string;
-            char ammo_str[4+1];
-            sprintf(ammo_str, "%d", ammo);
-            char max_ammo_str[4+1];
-            sprintf(max_ammo_str, "%d", max_ammo);
-            
-            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
-            return hud_string;
-        }
-
-
-    BlockApplier() :
-    Weapon(TYPE_block_applier)
-    {
-        max_ammo = 9999;
-        ammo = 9999;
-        block = 2;
-    }
+        char* hud_display();
+        BlockPick();
 };
 
 class GrenadeThrower: public Weapon {
@@ -131,25 +69,8 @@ class GrenadeThrower: public Weapon {
     public:
         bool fire();
 
-        char* hud_display() {
-            const char* clip_str = hud_undefined_string;
-            const char* clip_size_str = hud_undefined_string;
-            char ammo_str[4+1];
-            sprintf(ammo_str, "%d", ammo);
-            char max_ammo_str[4+1];
-            sprintf(max_ammo_str, "%d", max_ammo);
-            
-            sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
-            return hud_string;
-        }
-
-
-    GrenadeThrower() :
-    Weapon(TYPE_grenade_thrower)
-    {
-        max_ammo = 9999;
-        ammo = 9999;
-    }
+        char* hud_display();
+        GrenadeThrower();
 };
 
 
