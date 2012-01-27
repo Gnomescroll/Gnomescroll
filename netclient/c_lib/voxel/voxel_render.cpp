@@ -325,7 +325,7 @@ void Voxel_render_list::draw()
     //short entity_type;
     //short part_id;
 
-        int debug = 0;
+        const int debug = 0;
 
         if(debug) printf("entity= %i, entity_type= %i, part_id= %i \n", vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
 

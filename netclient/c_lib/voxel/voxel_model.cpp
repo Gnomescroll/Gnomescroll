@@ -28,6 +28,7 @@ void Voxel_model::update_skeleton()
 {
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
+    
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         if(debug) printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
