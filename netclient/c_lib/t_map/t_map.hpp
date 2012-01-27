@@ -155,5 +155,4 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 //extern int get_flag(struct vm_column* c, unsigned int flag);
 /* Network */
 
-
-
+inline bool point_in_map(int x, int y, int z);

@@ -8,11 +8,19 @@
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 
 class Agent_state;  // forward declaration
-class PlayerAgent_state;
 
-class Base_status {
+// Use for:
+// All agents server side
+// All non-player agents client side.
+// In client side, ignore properties such as health
+//class Agent_status: public Base_status {
+class Agent_status {
+
     private:
+        Agent_state* a;
+
     public:
+
         int health;
         bool dead;
         int respawn_countdown;
@@ -31,21 +39,7 @@ class Base_status {
 
         void set_name(char* n);
         void set_name(char* n, int id);
-
-        Base_status();
-};
-
-// Use for:
-// All agents server side
-// All non-player agents client side.
-// In client side, ignore properties such as health
-class Agent_status: public Base_status {
-
-    private:
-        Agent_state* a;
-
-    public:
-        //void set_name(char* name);
+    
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
         int die();
@@ -64,16 +58,5 @@ class Agent_status: public Base_status {
 
         void set_team(int team);
 
-        Agent_status(Agent_state* agent) : Base_status(), a(agent) {}
-};
-
-// Use for:
-// Client side PlayerAgent
-class PlayerAgent_status: public Base_status {
-
-    private:
-        PlayerAgent_state* a;
-
-    public:
-        PlayerAgent_status(PlayerAgent_state* agent) : Base_status(), a(agent) {}
+        Agent_status(Agent_state* a);
 };

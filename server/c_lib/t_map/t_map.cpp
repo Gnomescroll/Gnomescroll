@@ -380,3 +380,10 @@ void set_map_size(int x, int y, int z)
     map_dim.z = z;
     send_map_metadata();
 }
+
+inline bool point_in_map(int x, int y, int z)
+{
+    if (x<0 || x>=map_dim.x || y<0 || y>=map_dim.y || z<0 || z>map_dim.z)
+        return false;
+    return true;
+}

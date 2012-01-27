@@ -347,6 +347,69 @@ static inline bool collision_check_short(float box_r, float box_h, float x, floa
     return false;
 }
 
+static inline bool collision_check4(float box_r, float box_h, float x, float y, float z, int *cx, int *cy, int *cz)
+// collision_check2 + fills in int pointers with colliding block
+{
+    //north +x
+    //south -x
+    //west +y
+    //east -y
+    //top +z
+    //bottom -z
+
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int z0 = z;
+    int z1 = z + 1.0f;
+    int z2 = z + box_h;
+
+    //int z_min = s.z;
+    //int z_max = s.z + b_height + 1.0;
+
+    //upper left
+    //upper right
+    //bottom right
+    //bottom left
+    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0) || isActive(_get(x_max,y_max,z2) != 0) ) {
+        //north, west
+        *cx = x_max;
+        *cy = y_max;
+        *cz = z0;
+        return true;
+    }
+
+
+    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0) || isActive(_get(x_max,y_min,z2) != 0) ) {
+        //north, east
+        *cx = x_max;
+        *cy = y_min;
+        *cz = z0;
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0) || isActive(_get(x_min,y_min,z2) != 0) ) {
+        //south, east
+        *cx = x_min;
+        *cy = y_min;
+        *cz = z0;
+        return true;
+    }
+
+    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0) || isActive(_get(x_min,y_max,z2) != 0) ) {
+        //south, west
+        *cx = x_min;
+        *cy = y_max;
+        *cz = z0;
+        return true;
+    }
+
+    return false;
+}
+
 #define GROUND_MARGIN 0.10f
 // checks the (agent bottom - margin) at 4 corners of the agent
 static inline bool on_ground(float box_r, float x, float y, float z) {
@@ -636,7 +699,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool (*collision_check)(float, float, float, float, float);
     collision_check = &collision_check2;
 
-    // collision
+    ////collision
     bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
@@ -647,6 +710,79 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         //printf("Agent Tick: warning current collision is true!\n");
         return as;
     }
+
+    // instead of nudging, teleport to nearest open block
+    // later, project back to the nearest open block from player bottom center
+    // as it stands, there are wall teleport exploits
+    //bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
+    //int cx,cy,cz;  // colliding block position
+    //bool current_collision = collision_check4(box.box_r, height, as.x,as.y,as.z, &cx, &cy, &cz);
+    //if(current_collision) {
+        //// get nearest open block in the 6 cub directions
+        //int min_x=-1, min_y=-1, min_z=-1;
+        //int i,j;
+
+        //// check in z,y,x one and then 2 blocks away
+        //for (j=1; j<3; j++)
+        //{
+            //for (i=1; i>-2; i-=2)
+            //{
+                //if (!isSolid(_get(cx, cy, cz+(i*j)))) {
+                    //min_x = cx;
+                    //min_y = cy;
+                    //min_z = cz+(i*j);
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+                //if (!isSolid(_get(cx, cy, cz+(i*j)))) {
+                    //min_x = cx;
+                    //min_y = cy;
+                    //min_z = cz+(i*j);
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+
+                //if (!isSolid(_get(cx, cy+(i*j), cz))) {
+                    //min_x = cx;
+                    //min_y = cy+(i*j);
+                    //min_z = cz;
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+                //if (!isSolid(_get(cx, cy+(i*j), cz))) {
+                    //min_x = cx;
+                    //min_y = cy+(i*j);
+                    //min_z = cz;
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+
+                //if (!isSolid(_get(cx+(i*j), cy, cz))) {
+                    //min_x = cx+(i*j);
+                    //min_y = cy;
+                    //min_z = cz;
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+                //if (!isSolid(_get(cx+(i*j), cy, cz))) {
+                    //min_x = cx+(i*j);
+                    //min_y = cy;
+                    //min_z = cz;
+                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
+                        //break;
+                //}
+            //}
+        //}
+
+        //as.x = min_x;
+        //as.y = min_y;
+        //if (point_in_map(min_x, min_y, min_z))
+            //as.z = min_z;
+        //else
+            //as.z += 0.02f; // nudge, nearest open block lookup failed
+        //if(as.vz < 0.0f) as.vz = 0.0f;
+        //return as;
+    //}
 
     /*
         Collision Order: as.x,as.y,as.z

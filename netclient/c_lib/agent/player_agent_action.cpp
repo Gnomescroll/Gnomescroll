@@ -7,15 +7,13 @@
 #include <c_lib/t_map/t_map_net.hpp>
 
 void PlayerAgent_action::fire() {
-    Agent_state* a = ClientState::agent_list.get(p->agent_id);
-    if (a==NULL) return;
+    if (p->you == NULL) return;
 
-    int type = a->weapons.active_type();
-    if (!a->weapons.fire()) return;
-    int fail = 0;
+    int type = p->you->weapons.active_type();
+    if (!p->you->weapons.fire()) return;
     switch (type) {
         case Weapons::TYPE_block_applier:
-            fail = set_block();
+            set_block();
             break;
         case Weapons::TYPE_hitscan_laser:
             hitscan();
@@ -30,11 +28,6 @@ void PlayerAgent_action::fire() {
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
             break;
     }
-    if (fail) return;
-    fire_weapon_CtoS msg;
-    msg.id = p->agent_id;
-    msg.type = a->weapons.active_type();   // just send type for now. weapons arent in a list
-    msg.send();
 }
 
 void PlayerAgent_action::hitscan() {
@@ -47,7 +40,7 @@ void PlayerAgent_action::hitscan() {
     float x,y,z;
     x = p->camera_state.x;
     y = p->camera_state.y;
-    z = p->camera_state.z + p->camera_height();
+    z = p->camera_state.z + p->you->camera_height();
 
     // hitscan against voxels
     float vox_distance = 10000000.0f;
@@ -155,7 +148,7 @@ void PlayerAgent_action::throw_grenade() {
 
     msg.x = p->camera_state.x;
     msg.y = p->camera_state.y;
-    msg.z = p->camera_state.z + p->camera_height();
+    msg.z = p->camera_state.z + p->you->camera_height();
 
     float f[3];
     p->camera_state.forward_vector(f);
@@ -172,7 +165,7 @@ void PlayerAgent_action::hit_block() {
     const int z_high = 3;
     float f[3];
     p->camera_state.forward_vector(f);
-    int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
+    int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
     if (pos != NULL) {
         hit_block_CtoS msg;
         msg.id = p->agent_id;
@@ -183,9 +176,8 @@ void PlayerAgent_action::hit_block() {
     }
 }
 
-int PlayerAgent_action::set_block() {
-    Agent_state* a = ClientState::agent_list.get(p->agent_id);
-    if (a==NULL) return 1;
+void PlayerAgent_action::set_block() {
+    if (p->you == NULL) return;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -193,45 +185,30 @@ int PlayerAgent_action::set_block() {
     const int z_high = 3;
 
     float f[3];
-    a->s.forward_vector(f);
+    p->you->s.forward_vector(f);
     int* b = _farthest_empty_block(
-        a->s.x, a->s.y, a->s.z + a->camera_height(),
+        p->you->s.x, p->you->s.y, p->you->s.z + p->you->camera_height(),
         f[0], f[1], f[2],
         max_dist, z_low, z_high
     );
-    if (b==NULL) return 1;
+    if (b==NULL) return;
 
-    // check block doesnt collide with agent box
-    // agent draw direction is likely different from cube draw direction
-    // so the cube width is lowered
-    // the player is still able to place a colliding block at certain angles
-    if (cube_intersects(
-        a->s.x, a->s.y, a->s.z,
-        0.3, 0.3, a->box.b_height,
-        b[0], b[1], b[2],
-        1, 1, 1))
-    {
-        return 1;
-    }
-    
     agent_block_CtoS msg;
-    // UPDATE WITH FACING POSITION (why?)
-    msg.id = a->id;
+    msg.id = p->you->id;
     msg.x = b[0];
     msg.y = b[1];
     msg.z = b[2];
-    msg.val = a->weapons.blocks.block;
+    msg.val = p->you->weapons.blocks.block;
     msg.send();
-    return 0;
+    return;
 }
 
 void PlayerAgent_action::reload() {
-    Agent_state* a = ClientState::agent_list.get(p->agent_id);
-    if (a==NULL) return;
+    if (p->you == NULL) return;
 
     AgentReloadWeapon_CtoS msg;
     msg.id = p->agent_id;
-    msg.type = a->weapons.active_type();
+    msg.type = p->you->weapons.active_type();
     msg.send();
 }
 
@@ -239,14 +216,13 @@ void PlayerAgent_action::switch_weapon(int i) {
     static const int UP = -1;
     static const int DOWN = -2;
 
-    Agent_state* a = ClientState::agent_list.get(p->agent_id);
-    if (a==NULL) return;
+    if (p->you == NULL) return;
 
     if (i == UP) {
-        a->weapons.switch_up();
+        p->you->weapons.switch_up();
     } else if (i == DOWN) {
-        a->weapons.switch_down();
+        p->you->weapons.switch_down();
     } else {
-        a->weapons.set_active(i);
+        p->you->weapons.set_active(i);
     }
 }

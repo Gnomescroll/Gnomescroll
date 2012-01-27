@@ -109,3 +109,4 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg);
 void send_map_metadata(int client_id);
 void send_map_metadata();
 void set_map_size(int x, int y, int z);
+inline bool point_in_map(int x, int y, int z);
