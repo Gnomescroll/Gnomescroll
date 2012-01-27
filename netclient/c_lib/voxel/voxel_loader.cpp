@@ -54,7 +54,6 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
 
     // skeleton graph
-
     for(int i=0; i<n_parts; i++)
     {
         int node;
