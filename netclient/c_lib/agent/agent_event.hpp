@@ -31,7 +31,7 @@ class Agent_event {
         void dropped_flag();
         void scored_flag();
 
-        Agent_event(Agent_state* owner) : a(owner), bb(NULL) {}
+        Agent_event(Agent_state* owner);
         ~Agent_event();
 };
 

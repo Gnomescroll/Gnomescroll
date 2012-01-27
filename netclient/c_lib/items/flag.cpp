@@ -9,24 +9,6 @@ void Flag::set_position(float x, float y, float z) {
     this->vox->update(&flag_vox_dat, x,y,z, this->theta, this->phi);
 }
 
-Flag::Flag()
-:
-theta(0), phi(0),
-id(0),
-team(0),
-type(OBJ_TYPE_FLAG)
-{
-
-    printf("Flag::Flag, DEPRECATED!! pass in vox_dat \n");
-/*
-    this->vox = new Voxel_model(num_Stuff;
-    this->vox->set_hitscan(false);
-    #ifdef DC_CLIENT
-    this->vox->set_draw(true);
-    #endif
-*/
-}
-
 Flag::Flag(int id, int team)
 :
 theta(0), phi(0),

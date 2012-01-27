@@ -89,28 +89,18 @@ class Voxel_volume
 
     private:
 #ifdef DC_CLIENT
-    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline)) ;
+    inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
 #endif
 
-    inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline)) 
-    {   return &voxel[x+(y << index1)+(z << index12)]; }
+    inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
 
-    inline unsigned int get_as_int(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline)) 
-    { return voxel[x+(y << index1)+(z << index12)].color; }
+    inline unsigned int get_as_int(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
 
 /*
     Tests whether a voxel is occupied, for AO
 */
-    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline)) 
-    { 
-        unsigned int index= x+(y << index1)+(z << index12);
-        if(index >= index_max) return 0;
-        if(voxel[index].color == 0) return 0;
-        return 1;
-    }
-    inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline))
-    { voxel[x+(y << index1)+(z << index12)] = *v; }
-    inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline))
-    { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
+    inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));
+    inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
 
 };

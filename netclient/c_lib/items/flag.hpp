@@ -29,7 +29,6 @@ class Flag {
 
         void set_position(float x, float y, float z);
 
-        Flag();
         Flag(int id, int team);
         ~Flag();
 };

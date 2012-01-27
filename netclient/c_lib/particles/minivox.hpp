@@ -38,12 +38,8 @@ class Minivox {
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_orientation(float theta, float phi);
-        void set_ttl(int ttl) {
-            particle.ttl = ttl;
-        }
-        void set_size(float size) {
-            this->size = size;
-        }
+        void set_ttl(int ttl);
+        void set_size(float size);
         void set_angles(float theta, float phi);
 
         float pix_margin;
@@ -74,14 +70,9 @@ class Minivox_list: public Object_list<Minivox, MINIVOX_MAX>
         void tick();
 
         float _s;
-        void set_size(float s) {
-            _s = minivox_size;
-            minivox_size = s;
-        }
-        void unset_size() {
-            minivox_size = _s;
-        }
+        void set_size(float s);
+        void unset_size();
 
-        Minivox_list() : _s(minivox_size) {}
+        Minivox_list();
 };
     

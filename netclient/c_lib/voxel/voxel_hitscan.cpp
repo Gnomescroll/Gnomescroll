@@ -108,3 +108,11 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
     vv->id = -1;
     vv->voxel_hitscan_list = NULL;
 }
+
+Voxel_hitscan_list::Voxel_hitscan_list()
+:
+num_elements(0)
+{
+    hitscan_list = new Voxel_hitscan_element*[VOXEL_HITSCAN_LIST_SIZE];
+    for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++) hitscan_list[i] = NULL;
+}

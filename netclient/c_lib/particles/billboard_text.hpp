@@ -8,7 +8,6 @@
 #define BILLBOARD_TEXT_DAMP 0.2f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.3f
 
-
 const static int max_letters = 12;
 
 class BillboardText {
@@ -21,28 +20,9 @@ class BillboardText {
         bool gravity;
         bool should_draw;
         
-        void set_text(char* t) {
-            int i;
-            for (i=0; t[i] != '\0' && i < max_letters; i++)
-            {
-                text[i] = t[i];
-            }
-            text[i] = '\0';
-        }
-
-        void set_color(unsigned char r, unsigned char g, unsigned char b) {
-            this->r = r;
-            this->g = g;
-            this->b = b;
-        }
-
-        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a) {
-            this->r = r;
-            this->g = g;
-            this->b = b;
-            this->a = a;
-        }
-
+        void set_text(char* t);
+        void set_color(unsigned char r, unsigned char g, unsigned char b);
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
         void set_gravity(bool grav);
         void set_draw(bool draw);
         void set_ttl(int ttl);

@@ -27,8 +27,6 @@ class CCamera {
 
         int type;
 
-        CCamera();
-
         void pan(float dx, float dy);
 
         void set_aspect(float fov, float z_near, float z_far);
@@ -42,6 +40,8 @@ class CCamera {
         void world_projection();
 
         int is_current();
+
+        CCamera();
 };
 
 CCamera* get_available_camera();

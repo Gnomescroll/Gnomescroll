@@ -156,4 +156,10 @@ Agent_event::~Agent_event()
     }
 }
 
+Agent_event::Agent_event(Agent_state* owner)
+:
+a(owner),
+bb(NULL)
+{}
+
 #endif

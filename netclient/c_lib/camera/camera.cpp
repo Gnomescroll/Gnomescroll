@@ -8,7 +8,7 @@
 extern float _xresf;
 extern float _yresf;
 
-static CCamera cameras[N_CAMERAS];
+static CCamera* cameras = NULL;
 
 CCamera* current_camera = NULL;
 float model_view_matrix[16];
@@ -33,17 +33,16 @@ CCamera* get_available_camera() {
     return cam;
 }
 
-void init_cameras() {
-    int i;
-    CCamera* cam;
-    for (i=0; i<N_CAMERAS; i++) {
-        cam = &cameras[i];
-        if (cam == NULL) {
-            cam = new CCamera();
-            cameras[i] = *cam;
-        }
-    }
+void init_cameras()
+{
+    cameras = new CCamera[N_CAMERAS];
     set_camera(0);
+}
+
+void teardown_cameras()
+{
+    if (cameras != NULL)
+        delete[] cameras;
 }
 
 CCamera::CCamera() {

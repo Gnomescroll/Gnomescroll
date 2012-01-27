@@ -12,7 +12,6 @@ class CreateSlime_StoC: public FixedSizeReliableNetPacketToClient<CreateSlime_St
         {
             pack_u8(&id, buff, buff_n, pack);
         }
-
         inline void handle();
 };
 
@@ -26,7 +25,6 @@ class DestroySlime_StoC: public FixedSizeReliableNetPacketToClient<DestroySlime_
         {
             pack_u8(&id, buff, buff_n, pack);
         }
-
         inline void handle();
 };
 
@@ -55,7 +53,6 @@ class SlimeState_StoC: public FixedSizeReliableNetPacketToClient<SlimeState_StoC
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
         }
-
         inline void handle();
 };
 

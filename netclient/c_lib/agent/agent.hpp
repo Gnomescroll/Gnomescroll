@@ -110,16 +110,8 @@ class Agent_state {
         //this is for client
         void handle_control_state(int _seq, int _cs, float _theta, float _phi);
 
-        void revert_to_snapshot() {
-            s = state_snapshot;
-            cs_seq = state_snapshot.seq;
-            //cs_window_min = state_snapshot.seq;
-        }
-
-        void revert_to_rollback() {
-            s = state_rollback;            
-            cs_seq = state_rollback.seq;
-        }
+        void revert_to_snapshot();
+        void revert_to_rollback();
 
         //deprecate
         int tick_n; //increment when ticking
@@ -134,9 +126,7 @@ class Agent_state {
 
         bool is_you();
 
-        float camera_height() {
-            return box.b_height * CAMERA_HEIGHT_SCALE;
-        }
+        float camera_height();
 
         void init_vox();
 
@@ -156,13 +146,12 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
         const char* name() { return "Agent"; }
+        
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
 
-        void swap_agent_state(Agent_state **a, Agent_state **b)
-        {Agent_state* t=*a; *a=*b; *b=t;}
-        void swap_float(float *a, float *b)
-        {float t=*a; *a=*b; *b=t;}
+        void swap_agent_state(Agent_state **a, Agent_state **b);
+        void swap_float(float *a, float *b);
         
     public:
         void draw();

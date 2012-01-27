@@ -2,6 +2,17 @@
 
 #ifdef DC_CLIENT
 
+// find a better place for this
+inline void SendClientId_StoC::handle()
+{
+    inline void handle();
+    {
+        //printf("Client Received Client id = %i \n", client_id);
+        NetClient::Server.client_id = client_id;
+        client_connect_event(client_id);
+    }
+}
+
 inline void TeamColor_StoC::handle(){
     ClientState::ctf.set_team_color(team, r,g,b);
 }
@@ -66,6 +77,7 @@ inline void AgentAutoAssignTeam_CtoS::handle(){}
 #ifdef DC_SERVER
 
 // dummies
+inline void SendClientId_StoC::handle(){}
 inline void TeamColor_StoC::handle(){}
 inline void AgentJoinTeam_StoC::handle(){}
 inline void TeamName_StoC::handle(){}

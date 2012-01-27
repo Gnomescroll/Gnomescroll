@@ -369,4 +369,56 @@ PlayerAgent_state::~PlayerAgent_state()
         delete[] this->state_history;
 }
 
+void PlayerAgent_state::toggle_camera_mode() {
+    camera_mode = (camera_mode + 1) % CameraStatesEnd;
+    switch (camera_mode) {
+        case net_agent:
+            printf("Camera Mode: net_agent\n");
+            break;
+        case client_side_prediction_interpolated:
+            printf("Camera Mode: client_side_prediction_interpolated\n");
+            break;
+        case client_side_prediction:
+            printf("Camera Mode: client_side_prediction\n");
+            break;
+        case last_server_snapshot:
+            printf("Camera Mode: last_server_snapshot\n");
+            break;
+        default:
+            printf("PlayerAgent toggle_camera_mode: error\n");
+            break;
+        //active_camera_state = &camera_state;
+    }
+}
+
+void PlayerAgent_state::pump_camera() {
+    switch (camera_mode) {
+        case net_agent:
+            #ifdef DC_CLIENT
+            if(agent_id != -1) {
+                Agent_state* A = ClientState::agent_list.get(agent_id);
+                camera_state = A->s;
+            } else {
+                printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
+            }
+            #endif
+            break;
+        case client_side_prediction_interpolated:
+            update_client_side_prediction_interpolated();
+            camera_state = c;
+            break;
+        case client_side_prediction:
+            camera_state = s;
+            break;
+        case last_server_snapshot:
+            camera_state = state_snapshot;
+            break;
+        default:
+            printf("PlayerAgent toggle_camera_mode: error\n");
+            break;
+    }
+}
+
+
+
 #endif

@@ -19,12 +19,7 @@ class SendClientId_StoC: public FixedSizeReliableNetPacketToClient<SendClientId_
         {
             pack_u8(&client_id, buff, buff_n, pack);
         }
-        inline void handle()
-        {
-            //printf("Client Received Client id = %i \n", client_id);
-            NetClient::Server.client_id = client_id;
-            client_connect_event(client_id);
-        }
+        inline void handle();
 };
 
 /* Server -> Client */

@@ -21,20 +21,20 @@ void init_hitscan()
     if (i) { printf("init_hitscan failed with code %d\n", i); }
 }
 
-HitscanEffect::(int id)
+HitscanEffect::HitscanEffect(int id)
 :
 id(id),
 ttl(60)
 {}
 
-HitscanEffect::(int x, int y, int z, int vx, int vy, int vz)
+HitscanEffect::HitscanEffect(int x, int y, int z, int vx, int vy, int vz)
 :
 x(x), y(y), z(z),
 vx(vx), vy(vy), vz(vz),
 ttl(60)
 {}
 
-HitscanEffect::(int id, int x, int y, int z, int vx, int vy, int vz)
+HitscanEffect::HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz)
 :
 id(id),
 x(x), y(y), z(z),

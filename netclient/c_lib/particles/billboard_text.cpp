@@ -42,6 +42,16 @@ void BillboardText::tick()
     }
 }
 
+
+void BillboardText::set_text(char* t) {
+    int i;
+    for (i=0; t[i] != '\0' && i < max_letters; i++)
+    {
+        text[i] = t[i];
+    }
+    text[i] = '\0';
+}
+
 void BillboardText::set_gravity(bool grav)
 {
     this->gravity = grav;
@@ -59,6 +69,20 @@ void BillboardText::set_state(float x, float y, float z, float vx, float vy, flo
 {
     set_particle2_state(&this->particle, x,y,z,vx,vy,vz);
 }
+
+void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b) {
+    this->r = r;
+    this->g = g;
+    this->b = b;
+}
+
+void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a) {
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    this->a = a;
+}
+
 
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {

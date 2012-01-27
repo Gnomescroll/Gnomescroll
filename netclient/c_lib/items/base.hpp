@@ -29,7 +29,6 @@ class Base {
 
         void set_position(float x, float y, float z);
 
-        Base();
         Base(int id, int team);
         ~Base();
 };

@@ -1111,6 +1111,24 @@ Agent_state::~Agent_state() {
     #endif
 }
 
+
+void Agent_state::revert_to_snapshot() {
+    s = state_snapshot;
+    cs_seq = state_snapshot.seq;
+    //cs_window_min = state_snapshot.seq;
+}
+
+void Agent_state::revert_to_rollback() {
+    s = state_rollback;            
+    cs_seq = state_rollback.seq;
+}
+
+float Agent_state::camera_height() {
+    return box.b_height * CAMERA_HEIGHT_SCALE;
+}
+
+/* Agent list */
+
 void Agent_list::send_to_client(int client_id) {
     int i;
     for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
@@ -1186,6 +1204,11 @@ void Agent_list::agents_in_cone(float x, float y, float z, float vx, float vy, f
 
     this->n_filtered = ct;
 }
+
+void Agent_list::swap_agent_state(Agent_state **a, Agent_state **b)
+{Agent_state* t=*a; *a=*b; *b=t;}
+void Agent_list::swap_float(float *a, float *b)
+{float t=*a; *a=*b; *b=t;}
 
 
 void Agent_list::quicksort_distance_asc(int beg, int end)

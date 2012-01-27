@@ -88,6 +88,13 @@ void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b, unsig
     vox.a = a;
 }
 
+void Minivox::set_ttl(int ttl) {
+    particle.ttl = ttl;
+}
+void Minivox::set_size(float size) {
+    this->size = size;
+}
+
 void Minivox::set_texture(int tex_id) {
     const int pix = this->texture_pixel_width;  // NxN random texture sample within cube identified by tex_id
     const int cube_w = 32;
@@ -289,7 +296,21 @@ void Minivox::draw_textured() {
         glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
     }
 
-
-#endif
+    #endif
 }
 
+void Minivox_list::set_size(float s)
+{
+    _s = minivox_size;
+    minivox_size = s;
+}
+void Minivox_list::unset_size()
+{
+    minivox_size = _s;
+}
+
+
+Minivox_list::Minivox_list()
+:
+_s(minivox_size)
+{}

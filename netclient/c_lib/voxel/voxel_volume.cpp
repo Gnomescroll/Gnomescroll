@@ -515,3 +515,24 @@ void Voxel_volume::draw_bounding_box()
 
 #endif
 }
+
+inline Voxel* Voxel_volume::get(unsigned int x, unsigned int y, unsigned int z) 
+{   return &voxel[x+(y << index1)+(z << index12)]; }
+
+inline unsigned int Voxel_volume::get_as_int(unsigned int x, unsigned int y, unsigned int z) 
+{ return voxel[x+(y << index1)+(z << index12)].color; }
+
+/*
+Tests whether a voxel is occupied, for AO
+*/
+inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
+{ 
+    unsigned int index= x+(y << index1)+(z << index12);
+    if(index >= index_max) return 0;
+    if(voxel[index].color == 0) return 0;
+    return 1;
+}
+inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, Voxel* v)
+{ voxel[x+(y << index1)+(z << index12)] = *v; }
+inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{ Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }

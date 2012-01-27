@@ -226,3 +226,9 @@ void PlayerAgent_action::switch_weapon(int i) {
         p->you->weapons.set_active(i);
     }
 }
+
+PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
+:
+p(player_agent)
+{}
+
