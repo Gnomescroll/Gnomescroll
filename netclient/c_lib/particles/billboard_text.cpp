@@ -127,6 +127,27 @@ void BillboardText::draw() {
     float x,y,z;
     float cursor = 0.0f;
 
+    const float magic_cursor_ratio = 1.8f / 9.0f;
+
+    int i = 0;
+    char c;
+
+    // get pixel length of string
+    int len = 0;
+    while ((c = text[i++]) != '\0')
+    {
+        glyph = glyphs[(unsigned int)c];
+        len += glyph.xadvance;
+    }
+    i=0;
+
+    cursor -= 0.5 * ((float)len) * magic_cursor_ratio;
+
+    // move particle pos back 1/2*center along orthogonal plane
+    //particle.state.p.x -= 0.5 * ((float)len) * right[0] * this->size;
+    //particle.state.p.y -= 0.5 * ((float)len) * right[1] * this->size;
+    //particle.state.p.z -= 0.5 * ((float)len) * right[2] * this->size;
+
     up[0] *= this->size;
     up[1] *= this->size;
     up[2] *= this->size;
@@ -134,10 +155,6 @@ void BillboardText::draw() {
     right[1] *= this->size;
     right[2] *= this->size;
 
-    const float magic_cursor_ratio = 1.8f / 9.0f;
-
-    int i = 0;
-    char c;
     while ((c = text[i++]) != '\0')
     {
         glyph = glyphs[(unsigned int)c];
@@ -145,7 +162,6 @@ void BillboardText::draw() {
         tx_min = glyph.x + glyph.tw;
         ty_min = glyph.y;
         ty_max = glyph.y + glyph.th;
-
 
         cursor += magic_cursor_ratio * glyph.xadvance; // use glyph.xadvance; once we figure how to scale properly
 
