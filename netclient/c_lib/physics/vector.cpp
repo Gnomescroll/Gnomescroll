@@ -104,3 +104,110 @@ void reflect(float inc[3], float nor[3], float ref[3]) {
     mult_vec_scalar(nor, 2.0f*vector_dot(nor, inc), inter);
     sub_vec(inc, inter, ref);
 }
+
+void vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
+{
+    dest->x = v1->y*v2->z - v1->z*v2->y;
+    dest->y = v1->z*v2->x - v1->x*v2->z;
+    dest->z = v1->x*v2->y - v1->y*v2->x;
+}
+
+void vector_scalar1(struct Vector* v, float scalar)
+{
+    v->x *= scalar;
+    v->y *= scalar;
+    v->z *= scalar;
+}
+
+inline Vector vector_add2(struct Vector* v1, struct Vector* v2)
+{
+    Vector vr;
+    vr.x = v1->x + v2->x;
+    vr.y = v1->y + v2->y;
+    vr.z = v1->z + v2->z;
+    return vr;
+}
+
+inline Vector vector_add3(struct Vector* v1, struct Vector* v2, struct Vector* v3)
+{
+    Vector vr;
+    vr.x = v1->x + v2->x + v3->x;
+    vr.y = v1->y + v2->y + v3->y;
+    vr.z = v1->z + v2->z + v3->z;
+    return vr;
+}
+
+struct Vector vector_scalar2(struct Vector* v1, float scalar)
+{
+    Vector vr;
+    vr.x = v1->x * scalar;
+    vr.y = v1->y * scalar;
+    vr.z = v1->z * scalar;
+    return vr;
+}
+
+inline Vector vector_add4(struct Vector* v1, struct Vector* v2, struct Vector* v3, struct Vector* v4)
+{
+    Vector vr;
+    vr.x = v1->x + v2->x + v3->x + v4->x;
+    vr.y = v1->y + v2->y + v3->y + v4->y;
+    vr.z = v1->z + v2->z + v3->z + v4->z;
+    return vr;
+}
+
+inline struct Vector Vector_init(float x, float y, float z) {
+    struct Vector v;
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    return v;
+}
+
+inline void normalize_vector(struct Vector* v) {
+    float l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+    v->x /= l; v->y /=l; v->z /=l;
+}
+
+inline void normalize_vector_f(float* x, float *y, float *z) {
+    float l = sqrt(*x**x + *y**y + *z**z);
+    *x = *x/l;
+    *y = *y/l;
+    *z = *z/l;
+}
+
+inline struct Vector vector_cross(struct Vector v1, struct Vector v2) {
+    struct Vector v0;
+    v0.x = v1.y*v2.z - v1.z*v2.y;
+    v0.y = v1.z*v2.x - v1.x*v2.z;
+    v0.z = v1.x*v2.y - v1.y*v2.x;
+    return v0;
+}
+
+inline void vector_cross_ptr(struct Vector* v0, struct Vector* v1, struct Vector* v2) {
+    v0->x = v1->y*v2->z - v1->z*v2->y;
+    v0->y = v1->z*v2->x - v1->x*v2->z;
+    v0->z = v1->x*v2->y - v1->y*v2->x;
+}
+
+inline void vector_rotate_origin(struct Vector* in, struct Vector* out, float theta) {
+    float cost = cos(theta);
+    float sint = sin(theta);
+    float x = in->x;
+    float y = in->y;
+    out->x = x*cost - y*sint;
+    out->y = x*sint + y*cost;
+}
+
+inline struct Vector sub_vec(struct Vector* a, struct Vector* b) {
+    struct Vector v;
+    v.x = a->x - b->x;
+    v.y = a->y - b->y;
+    v.z = a->z - b->z;
+    return v;
+}
+
+inline void sub_vec(float a[3], float b[3], float c[3]) {
+    c[0] = a[0] - b[0];
+    c[1] = a[1] - b[1];
+    c[2] = a[2] - b[2];
+}
