@@ -3,6 +3,9 @@
 #include <stdio.h>
 
 GLuint fontTextureId;
+float font_texture_width = 256.0f;
+float font_texture_height = 256.0f;
+
 static int tex_alpha = 1;
 static int font_loaded = 0;
 
@@ -129,10 +132,10 @@ void add_glyph(
     float w, float h,
     float xadvance
 ) {
-    glyphs[c].x = x / 256.0f;
-    glyphs[c].y = y / 256.0f;
-    glyphs[c].tw = w / 256.0f;
-    glyphs[c].th = h / 256.0f;
+    glyphs[c].x = x / font_texture_width;
+    glyphs[c].y = y / font_texture_height;
+    glyphs[c].tw = w / font_texture_width;
+    glyphs[c].th = h / font_texture_height;
     glyphs[c].w = w;
     glyphs[c].h = h;
     glyphs[c].xoff = xoff;

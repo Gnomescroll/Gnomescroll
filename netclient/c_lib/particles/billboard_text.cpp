@@ -14,7 +14,8 @@ BillboardText::BillboardText(int id)
 :
 r(100), g(100), b(100), a(255),
 gravity(true),
-should_draw(true)
+should_draw(true),
+projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
@@ -25,7 +26,8 @@ BillboardText::BillboardText(int id, float x, float y, float z, float vx, float 
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
-size(BILLBOARD_TEXT_TEXTURE_SCALE)
+size(BILLBOARD_TEXT_TEXTURE_SCALE),
+projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
@@ -90,7 +92,27 @@ void BillboardText::set_size(float size)
 
 #include <c_lib/camera/camera.hpp>
 void BillboardText::draw() {
+    switch (this->projection_type)
+    {
+        case Billboard::AXIS_ALIGNED:
+            this->draw_axis_aligned();
+            break;
+        case Billboard::AXIS:
+            printf("BillboardText::draw -- AXIS projection mode not implemented.\n");
+            //this->draw_axis();
+            break;
+        case Billboard::HUD:
+            printf("BillboardText::draw -- HUD projection mode not implemeneted.\n");
+            this->draw_hud();
+            break;
+        default:
+            printf("BillboardText::draw -- invalid projection mode %d\n", this->projection_type);
+            return;
+    }
+}
 
+void BillboardText::draw_axis_aligned()
+{
 #ifdef DC_CLIENT
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
 
@@ -114,76 +136,198 @@ void BillboardText::draw() {
     look[2] /= -norm;
 
     float right[3];
-    right[0] = up[1]*look[2] - up[2]*look[1];
-    right[1] = up[2]*look[0] - up[0]*look[2];
-    right[2] = up[0]*look[1] - up[1]*look[0];
-    norm = sqrt(right[0]*right[0] + right[1]*right[1] + right[2]*right[2]);
+    right[0] = -up[2]*look[1];
+    right[1] =  up[2]*look[0];
+    right[2] = 0.0f;
+    norm = sqrt(right[0]*right[0] + right[1]*right[1]);
     right[0] /= norm;
     right[1] /= norm;
-    right[2] /= norm;
 
     struct Glyph glyph;
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
-    float cursor = 0.0f;
 
-    const float magic_cursor_ratio = 1.8f / 9.0f;
+    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
 
-    int i = 0;
     char c;
+    int i = 0;
 
-    // get pixel length of string
-    int len = 0;
+    // get pixel length & height of string
+    float len = 0;
+    float height = 0;
     while ((c = text[i++]) != '\0')
     {
         glyph = glyphs[(unsigned int)c];
+        if (!glyph.available) glyph = glyphs[missing_character];
         len += glyph.xadvance;
+        if (i==1)
+            len += glyph.xoff;
+        if (glyph.h > height) height = glyph.h;
     }
+    //len += glyph.w + glyph.xoff;
     i=0;
 
-    cursor -= 0.5 * ((float)len) * magic_cursor_ratio;
-
-    // move particle pos back 1/2*center along orthogonal plane
-    //particle.state.p.x -= 0.5 * ((float)len) * right[0] * this->size;
-    //particle.state.p.y -= 0.5 * ((float)len) * right[1] * this->size;
-    //particle.state.p.z -= 0.5 * ((float)len) * right[2] * this->size;
-
-    up[0] *= this->size;
-    up[1] *= this->size;
-    up[2] *= this->size;
-    right[0] *= this->size;
-    right[1] *= this->size;
-    right[2] *= this->size;
+    // calcalute half length pixel offset to center the text
+    float start = -(0.5 * len * scale * this->size);
+    float cursor = 0.0f;
+    float xoff, xw;
+    float ax, ay, bx, by;
+    float az, bz;
 
     while ((c = text[i++]) != '\0')
     {
         glyph = glyphs[(unsigned int)c];
-        tx_max = glyph.x;
-        tx_min = glyph.x + glyph.tw;
+        if (!glyph.available) glyph = glyphs[missing_character];
+
+        tx_min = glyph.x;
+        tx_max = glyph.x + glyph.tw;
         ty_min = glyph.y;
         ty_max = glyph.y + glyph.th;
 
-        cursor += magic_cursor_ratio * glyph.xadvance; // use glyph.xadvance; once we figure how to scale properly
-
         x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
-        x -= right[0] * cursor;
-        y -= right[1] * cursor;
-        z -= glyph.yoff * magic_cursor_ratio;  // magic fraction
-        // also incorporate yoff/xoff
 
-        glTexCoord2f(tx_min,ty_max );
-        glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
+        // get char x offset and width, adjusted
+        xoff = (cursor + glyph.xoff) * scale * this->size;
+        xw = (cursor + glyph.xoff + glyph.w) * scale * this->size;
+        ax = x - (xw + start) * right[0];
+        ay = y - (xw + start) * right[1];
+        bx = x - (xoff  + start) * right[0];
+        by = y - (xoff  + start) * right[1];
 
-        glTexCoord2f(tx_min,ty_min );
-        glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
+        az = z + (height - glyph.yoff - glyph.h) * scale * this->size;
+        bz = z + (height - glyph.yoff)           * scale * this->size;
 
+        cursor += glyph.xadvance;
+
+        glTexCoord2f(tx_max,ty_max);
+        glVertex3f(ax, ay, az);
+        
         glTexCoord2f(tx_max,ty_min);
-        glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
+        glVertex3f(ax, ay, bz);
 
-        glTexCoord2f(tx_max,ty_max );
-        glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
+        glTexCoord2f(tx_min,ty_min);
+        glVertex3f(bx, by, bz);
+
+        glTexCoord2f(tx_min,ty_max);
+        glVertex3f(bx, by, az);
     }
+
 #endif    
+}
+
+void BillboardText::draw_hud()
+{
+#ifdef DC_CLIENT
+
+
+//////LocalSpace = viewproj * worldcoord (vertex by matrix multiply)
+
+//////screenX = ((LocalSpace.x / LocalSpace.z) * (screenWidth *0.5f)) + (screenwidth * 0.5f)
+//////screenY = -((LocalSpace.y / LocalSpace.z)* (screenHeight *0.5f)) + (screenHeight * 0.5f)
+
+
+    //if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
+
+    //glColor4ub(r,g,b,a);
+
+    //float up[3] = {
+        //0.0f,
+        //0.0f,
+        //1.0f
+    //};
+
+    //float norm;
+
+    //float look[3];
+    //look[0] = current_camera->x - particle.state.p.x;
+    //look[1] = current_camera->y - particle.state.p.y;
+    //look[2] = current_camera->z - particle.state.p.z;
+    //norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
+    //look[0] /= norm;
+    //look[1] /= norm;
+    //look[2] /= norm;
+
+    ////float right[3];
+    ////right[0] = -up[2]*look[1];
+    ////right[1] =  up[2]*look[0];
+    ////right[2] = 0.0f;
+    ////norm = sqrt(right[0]*right[0] + right[1]*right[1]);
+    ////right[0] /= norm;
+    ////right[1] /= norm;
+
+    //float x,y;
+    //x = ((
+
+    //struct Glyph glyph;
+    //float tx_min, tx_max, ty_min, ty_max;
+    //float x,y,z;
+
+    //const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
+
+    //char c;
+    //int i = 0;
+
+    //// get pixel length & height of string
+    //float len = 0;
+    //float height = 0;
+    //while ((c = text[i++]) != '\0')
+    //{
+        //glyph = glyphs[(unsigned int)c];
+        //if (!glyph.available) glyph = glyphs[missing_character];
+        //len += glyph.xadvance;
+        //if (i==1)
+            //len += glyph.xoff;
+        //if (glyph.h > height) height = glyph.h;
+    //}
+    ////len += glyph.w + glyph.xoff;
+    //i=0;
+
+    //// calcalute half length pixel offset to center the text
+    //float start = -(0.5 * len * scale * this->size);
+    //float cursor = 0.0f;
+    //float xoff, xw;
+    //float ax, ay, bx, by;
+    //float az, bz;
+
+    //while ((c = text[i++]) != '\0')
+    //{
+        //glyph = glyphs[(unsigned int)c];
+        //if (!glyph.available) glyph = glyphs[missing_character];
+
+        //tx_min = glyph.x;
+        //tx_max = glyph.x + glyph.tw;
+        //ty_min = glyph.y;
+        //ty_max = glyph.y + glyph.th;
+
+        //x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+
+        //// get char x offset and width, adjusted
+        //xoff = (cursor + glyph.xoff) * scale * this->size;
+        //xw = (cursor + glyph.xoff + glyph.w) * scale * this->size;
+        //ax = x - (xw + start) * right[0];
+        //ay = y - (xw + start) * right[1];
+        //bx = x - (xoff  + start) * right[0];
+        //by = y - (xoff  + start) * right[1];
+
+        //az = z + (height - glyph.yoff - glyph.h) * scale * this->size;
+        //bz = z + (height - glyph.yoff)           * scale * this->size;
+
+        //cursor += glyph.xadvance;
+
+        //glTexCoord2f(tx_max,ty_max);
+        //glVertex3f(ax, ay, az);
+        
+        //glTexCoord2f(tx_max,ty_min);
+        //glVertex3f(ax, ay, bz);
+
+        //glTexCoord2f(tx_min,ty_min);
+        //glVertex3f(bx, by, bz);
+
+        //glTexCoord2f(tx_min,ty_max);
+        //glVertex3f(bx, by, az);
+    //}
+
+#endif
 }
 
 

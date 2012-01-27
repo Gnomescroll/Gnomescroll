@@ -44,12 +44,10 @@ class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTea
 {
     public:
         int team;
-        //int agent; // needs to be inferred from connection object!!!!
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&team, buff, buff_n, pack);
-            //pack_u8(&agent, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -57,12 +55,8 @@ class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTea
 class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentAutoAssignTeam_CtoS>
 {
     public:
-        //int agent;
-
         inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            //pack_u8(&agent, buff, buff_n, pack);
-        }
+        {}
         inline void handle();
 };
 

@@ -46,3 +46,6 @@ extern struct Glyph glyphs[128];
 extern int missing_character; // "?"
 
 extern GLuint fontTextureId;
+extern float font_texture_width;
+extern float font_texture_height;
+
