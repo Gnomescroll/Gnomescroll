@@ -54,7 +54,6 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
 
     // skeleton graph
-    int node;
 
     for(int i=0; i<n_parts; i++)
     {
@@ -79,11 +78,12 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         ret= sscanf (buffer+index, "%d %n", &node, &read);
         read += index;
         
-        printf("1 ret= %i \n", ret);
-        ret= sscanf (buffer+index, "%f %f %f %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
+        //printf("1 ret= %i \n", ret);
+        //ret= sscanf (buffer+index, "%f %f %f %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
         
-        printf("2 ret= %i \n", ret);
-        //sscanf (buffer+index, "%d %f %f %f %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+
+        ret = sscanf (buffer+index, "%d %f %f %f %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        printf("ret= %i \n", ret);
         printf("%i %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
         index += read;
         //vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
