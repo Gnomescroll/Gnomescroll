@@ -321,17 +321,28 @@ void Voxel_render_list::draw()
 
         //r = mat4_mult(*vv->parent_world_matrix,m);
 
+    //short entity_id;
+    //short entity_type;
+    //short part_id;
+
+        int debug = 0;
+
+        if(debug) printf("entity= %i, entity_type= %i, part_id= %i \n", vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+
         r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
 
-        //print_mat4(r);
-        //printf("\n");
+
+        if(debug) print_mat4(r);
+        //printf("sizeof(Mat4)= %i \n", sizeof(Mat4) );
+        
+        if(debug) printf("wtf= %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
 
         r.v[0].w = 0.0f;
         r.v[1].w = 0.0f;
         r.v[2].w = 0.0f;
         r.v[3].w = 1.0f;
-        
-        glUniformMatrix4fv(InRotationMatrix, 1, false, r._f );
+
+        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) r._f );
         //glUniformMatrix4fv(InRotationMatrix, 1, false, m._f );
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
@@ -359,37 +370,4 @@ void Voxel_render_list::draw()
     Apply changes
 */
     this->update_vertex_buffer_object(); 
-}
-
-void voxel_renderer_draw_test()
-{   
-    printf("voxel test \n");
-
-    static Voxel_volume vv (4,4,2, 2.0);
-    static Voxel_render_list voxel_render_list;
-
-    static int init = 0;
-    if(init == 0)
-    {
-        voxel_render_list.init_voxel_render_list_shader1();
-        printf("voxel_render_list.register(&voxel_volume); \n");
-        voxel_render_list.register_voxel_volume(&vv);
-        voxel_render_list.draw();
-    }
-    init = 1;
-
-    static float c0 = 0.0;
-    static float c1 = 0.0;
-    static float c2 = 0.0;
-
-    c0 += 0.0050 / (2*PI);
-    c1 += 0.0025 / (2*PI);
-    c2 += 0.0100 / (2*PI);
-    
-    vv.set_rotated_unit_axis(c0, c1, c2);
-    
-    vv.set_center( 8.0, 8.0, 8.0);
-
-    voxel_render_list.draw();
-    vv.draw_bounding_box();
 }

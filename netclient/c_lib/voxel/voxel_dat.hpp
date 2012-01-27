@@ -93,13 +93,12 @@ class VoxPart {
 class VoxDat {
     public:
 
-
+        //voxel volume
         bool voxel_volume_inited;
-
         int n_parts;
         class VoxPart** vox_part;
         struct Mat4* vox_volume_local_matrix;
-
+        //skeleton node
         bool voxel_skeleton_inited;
         int* vox_skeleton_transveral_list;
         struct Mat4* vox_skeleton_local_matrix;
@@ -107,7 +106,7 @@ class VoxDat {
         
         void init_skeleton(int n_skeleton);
         
-        void set_skeleton_node_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
+        void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
         void set_skeleton_node_parent(int node, int parent);
         void set_skeleton_parent_matrix(int part, int parent);
 

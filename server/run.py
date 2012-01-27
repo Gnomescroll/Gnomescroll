@@ -398,7 +398,7 @@ class Main:
             
         NetServerInit(a,b,c,d, opts.port)
 
-        cMonsters.slime_test(30)
+        #cMonsters.slime_test(30)
         cGameModes.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections

@@ -20,7 +20,7 @@ const int AGENT_MAX = 128;
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 
-
+#include <c_lib/voxel/voxel_model.hpp>
 //store last network messsage
 
 class AgentState {
