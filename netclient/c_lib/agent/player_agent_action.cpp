@@ -11,10 +11,8 @@ void PlayerAgent_action::fire() {
 
     int type = p->you->weapons.active_type();
     if (!p->you->weapons.fire()) return;
-    //int fail = 0;
     switch (type) {
         case Weapons::TYPE_block_applier:
-            //fail = set_block();
             set_block();
             break;
         case Weapons::TYPE_hitscan_laser:
@@ -30,11 +28,6 @@ void PlayerAgent_action::fire() {
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
             break;
     }
-    //if (fail) return;
-    //fire_weapon_CtoS msg;
-    //msg.id = p->agent_id;
-    //msg.type = p->you->weapons.active_type();   // just send type for now. weapons arent in a list
-    //msg.send();
 }
 
 void PlayerAgent_action::hitscan() {
@@ -183,8 +176,8 @@ void PlayerAgent_action::hit_block() {
     }
 }
 
-int PlayerAgent_action::set_block() {
-    if (p->you == NULL) return 1;
+void PlayerAgent_action::set_block() {
+    if (p->you == NULL) return;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -198,21 +191,8 @@ int PlayerAgent_action::set_block() {
         f[0], f[1], f[2],
         max_dist, z_low, z_high
     );
-    if (b==NULL) return 1;
+    if (b==NULL) return;
 
-    // check block doesnt collide with agent box
-    // agent draw direction is likely different from cube draw direction
-    // so the cube width is lowered
-    // the player is still able to place a colliding block at certain angles
-    //if (cube_intersects(
-        //p->you->s.x, p->you->s.y, p->you->s.z,
-        //0.3, 0.3, p->you->box.b_height,
-        //b[0], b[1], b[2],
-        //1, 1, 1))
-    //{
-        //return 1;
-    //}
-    
     agent_block_CtoS msg;
     msg.id = p->you->id;
     msg.x = b[0];
@@ -220,7 +200,7 @@ int PlayerAgent_action::set_block() {
     msg.z = b[2];
     msg.val = p->you->weapons.blocks.block;
     msg.send();
-    return 0;
+    return;
 }
 
 void PlayerAgent_action::reload() {

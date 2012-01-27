@@ -221,28 +221,6 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
         inline void handle();
 };
 
-//// fire weapon action
-//class fire_weapon_CtoS: public FixedSizeNetPacketToServer<fire_weapon_CtoS>
-//{
-    //public:
-        //int id;
-        //int type;
-
-        //inline void packet(char* buff, int* buff_n, bool pack) 
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&type, buff, buff_n, pack);
-        //}
-
-        //inline void handle();
-        
-        //fire_weapon_CtoS() {}
-        //fire_weapon_CtoS(int id, int type) {
-            //this->id = id;
-            //this->type = type;
-        //}
-//};
-
 // hitscan: target = agent
 class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
 {

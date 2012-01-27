@@ -152,7 +152,6 @@ inline void AgentReloadWeapon_StoC::handle() {
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
-//inline void fire_weapon_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_slime_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
@@ -246,21 +245,6 @@ inline void hit_block_CtoS::handle() {
     int dmg = 32;
     _apply_damage_broadcast(x,y,z, dmg);
 }
-
-// fire weapon action
-//inline void fire_weapon_CtoS::handle() {
-    //// trigger weapon
-    //Agent_state* a = ServerState::agent_list.get(id);
-    //if (a==NULL) return;
-    //bool fired = a->weapons.fire(type);
-    //// forward the packet
-    //if (fired) {
-        //fire_weapon_StoC msg;
-        //msg.id = id;
-        //msg.type = type;
-        //msg.broadcast();
-    //}
-//}
 
 // hitscan target:agent
 inline void hitscan_agent_CtoS::handle() {
