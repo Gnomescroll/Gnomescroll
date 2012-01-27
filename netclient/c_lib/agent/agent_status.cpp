@@ -13,8 +13,9 @@
  *
  */
 
-Base_status::Base_status()
+Agent_status::Agent_status(Agent_state* a)
 :
+a(a),
 health(AGENT_HEALTH),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
@@ -29,7 +30,7 @@ flag_captures(0)
     strcpy(this->name, (char*)"undefined-agent-name");
 }
 
-void Base_status::set_name(char* name)
+void Agent_status::set_name(char* name)
 {
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
         name[PLAYER_NAME_MAX_LENGTH] = '\0';
@@ -37,10 +38,10 @@ void Base_status::set_name(char* name)
 }
 
 // instead of reading this->a->id in Agent_status, I do this here
-// because the Base_status method was being called
+// because the Agent_status:: method was being called
 // instead of the overriding Agent_status set_name method
 // C++ thing
-void Base_status::set_name(char* name, int id)
+void Agent_status::set_name(char* name, int id)
 {
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
         name[PLAYER_NAME_MAX_LENGTH] = '\0';

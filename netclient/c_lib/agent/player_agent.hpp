@@ -41,8 +41,6 @@ class PlayerAgent_state {
         int camera_mode;
         AgentState camera_state;    //USE THIS FOR CAMERA!!!
 
-        //class AgentState* active_camera_state;
-
         void toggle_camera_mode() {
             camera_mode = (camera_mode + 1) % CameraStatesEnd;
             switch (camera_mode) {
@@ -112,10 +110,8 @@ class PlayerAgent_state {
         class AgentState snapshot_local[128];
         //class AgentState snapshot_net[128];
 
-        //int most_recent_net_snapshot_seq;
         int state_history_seq;
 
-        //class AgentState state_history[AGENT_STATE_HISTORY_SIZE];
         class AgentState* state_history;
 
         int state_history_index;
@@ -136,49 +132,9 @@ class PlayerAgent_state {
 
         float camera_height();
 
-        PlayerAgent_status status;  // deprecate
         PlayerAgent_action action;
 
-        PlayerAgent_state() : status(this), action(this) {
-
-            state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
-
-            //init
-            static int inited=0;
-            if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
-            inited++;
-
-            //client side state variables
-            jump_ready = false;
-            crouching = false;
-            //camera
-            camera_mode = client_side_prediction_interpolated;
-
-            agent_id = -1;
-
-            cs_seq_local = 0;
-            cs_seq_net = -1;
-
-            state_history_index = 0;
-            state_history_seq = 0;
-            //most_recent_net_snapshot_seq = -1;
-
-            int i;
-            for(i=0; i<128; i++) cs_local[i].seq = -1;
-            for(i=0; i<128; i++) cs_net[i].seq = -1;
-
-            //these are net agent variables!! Get these from the net agent through agent_id!!
-            /*
-                ERROR: server sider variables in player agent class
-                do, 
-                    Agent_state* A = ClientState::agent_list.get(agent_id);
-                    Agent_collision_box box = A->box;
-                grab box from the net agent class instead of replicating it
-            */
-            //box.b_height = AGENT_HEIGHT;
-            //box.c_height = AGENT_HEIGHT_CROUCHED;
-            //box.box_r = AGENT_BOX_RADIUS;
-        }
+        PlayerAgent_state();
 
         void update_sound();
 

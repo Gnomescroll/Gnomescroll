@@ -389,4 +389,36 @@ void PlayerAgent_state::update_sound() {
     Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, f[0], f[1], f[2], 0,0,1);
 }
 
+PlayerAgent_state::PlayerAgent_state()
+:
+action(this)
+{
+
+    state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
+
+    //init
+    static int inited=0;
+    if (inited) printf("WARNING Only one PlayerAgent_state should exist\n");
+    inited++;
+
+    //client side state variables
+    jump_ready = false;
+    crouching = false;
+    //camera
+    camera_mode = client_side_prediction_interpolated;
+
+    agent_id = -1;
+
+    cs_seq_local = 0;
+    cs_seq_net = -1;
+
+    state_history_index = 0;
+    state_history_seq = 0;
+
+    int i;
+    for(i=0; i<128; i++) cs_local[i].seq = -1;
+    for(i=0; i<128; i++) cs_net[i].seq = -1;
+}
+
+
 #endif
