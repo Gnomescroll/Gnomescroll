@@ -58,13 +58,22 @@ void HitscanEffect::draw(float delta, Vector* camera)
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 
+    float _x = x + vx*delta;
+    float _y = y + vy*delta;
+    float _z = z + vz*delta;  
+
+    _x = x;
+    _y = y;
+    _z = z;
+
     struct Vector r = Vector_init(vx,vy,vz);
     normalize_vector( &r );
     //vector_scalar2(&r)
 
     //printf("r length= %f \n", vector_length( &r ) );
 
-    struct Vector x1 = Vector_init(x, y, z);
+    //struct Vector x1 = Vector_init(x, y, z);
+    struct Vector x1 = Vector_init(_x,_y,_z);
     struct Vector l1 = sub_vec(&x1, camera);
 
     struct Vector u1 = vector_cross( l1, r);
@@ -73,7 +82,9 @@ void HitscanEffect::draw(float delta, Vector* camera)
 
     // float norm = sqrt(vx*vx+vy*vy+vz*vz);
     // struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
-    struct Vector x2 = Vector_init(x- height*vx, y - height*vy, z - height*vz);
+    
+    //struct Vector x2 = Vector_init(x- height*vx, y - height*vy, z - height*vz);
+    struct Vector x2 = Vector_init(_x- height*vx, _y - height*vy, _z - height*vz);
 
     struct Vector l2 = sub_vec(&x2, camera);
 
@@ -129,8 +140,11 @@ void HitscanEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
-    AgentState* state = &ClientState::playerAgent_state.camera_state;
-    struct Vector camera = Vector_init(state->x, state->y, state->z + ClientState::playerAgent_state.camera_height());
+    //AgentState* state = &ClientState::playerAgent_state.camera_state;
+    //struct Vector camera = Vector_init(state->x, state->y, state->z + ClientState::playerAgent_state.camera_height());
+
+    struct CCamera* c = get_available_camera();
+    struct Vector camera = Vector_init(c->x, c->y, c->z);
 
     glColor3ub(255,255,255);
 
