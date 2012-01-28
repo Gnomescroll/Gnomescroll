@@ -28,15 +28,16 @@ void Voxel_model::update_skeleton()
 {
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
-    
+
     for(int i=1; i<n_skeleton_nodes; i++)
     {
-        if(debug) printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
-
-        if(debug) print_mat4( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
-
-        if(debug) printf("\n");
-        if(debug) print_mat4( vox_skeleton_local_matrix[i] );
+        if(debug) 
+        {   
+            printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
+            print_mat4( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
+            printf("\n");
+            print_mat4( vox_skeleton_local_matrix[i] );
+        }
 
         vox_skeleton_world_matrix[i] = mat4_mult( 
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
@@ -63,15 +64,24 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     vox_skeleton_local_matrix = new Mat4[num_skeleton_nodes];
     vox_skeleton_world_matrix = new Mat4[num_skeleton_nodes];
 
+    const int debug = 0;
+
+    if(debug) printf("Voxel_model::init_skeleton \n");
+
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
-        //printf("vox_skeleton_local_matrix[%i]= \n", i);
-        print_mat4( vox_skeleton_local_matrix[i] );
+
 
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
-        //printf("vox_dat->vox_skeleton_local_matrix[%i]= \n", i);
-        print_mat4( vox_dat->vox_skeleton_local_matrix[i] );
+
+        if( debug )
+        {
+            printf("vox_skeleton_local_matrix[%i]= \n", i);
+            print_mat4( vox_skeleton_local_matrix[i] );
+            printf("vox_dat->vox_skeleton_local_matrix[%i]= \n", i);
+            print_mat4( vox_dat->vox_skeleton_local_matrix[i] );
+        }
     }
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for(int i=0; i<this->n_parts; i++)

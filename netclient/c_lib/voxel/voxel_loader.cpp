@@ -66,24 +66,28 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     }
 
     // skeleton node matrixs
+
+    check_for_comments(buffer, &index);
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         int node;
         float x,y,z;
         float rx,ry,rz;
-        check_for_comments(buffer, &index);
 
         int ret;
-        ret= sscanf (buffer+index, "%d %n", &node, &read);
-        read += index;
+
+        //ret= sscanf (buffer+index, "%d %n", &node, &read);
+        //read += index;
         
         //printf("1 ret= %i \n", ret);
+        //printf("node= %i \n", node);
         //ret= sscanf (buffer+index, "%f %f %f %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
         
 
-        ret = sscanf (buffer+index, "%d %f %f %f %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        ret = sscanf (buffer+index, "%d  %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        printf("str= \n %25s \n", buffer+index);
         printf("ret= %i \n", ret);
-        printf("%i %f %f %f  %f %f %f %d\n", node, x,y,z, rx,ry,rz, read);
+        printf("values= %i %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
         index += read;
         //vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
 

@@ -249,10 +249,17 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
         printf("VoxDat::set_skeleton_local_matrix ERROR!! skeletons not inited!\n");
         return;
     }
-    printf("!!! VoxDat::set_skeleton_local_matrix i=%i \n", node);
+
+    const int debug = 0;
+
     vox_skeleton_local_matrix[node] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
-    print_mat4( vox_skeleton_local_matrix[node] );
-    printf("\n");
+    if(debug) 
+    {
+        printf("!!! VoxDat::set_skeleton_local_matrix i=%i \n", node);
+
+        print_mat4( vox_skeleton_local_matrix[node] );
+        printf("\n");
+    }
 }
 
 void VoxDat::set_skeleton_node_parent(int node, int parent)
