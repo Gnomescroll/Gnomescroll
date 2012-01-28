@@ -131,19 +131,19 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
                
-    conf.check(header_name='SDL_keyboard.h',
-               lib='SDL',
-               use='SDL',
-               uselib_store='SDL_keyboard',
-               fragment='#include <SDL_keyboard.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+    #conf.check(header_name='SDL_keyboard.h',
+               #lib='SDL',
+               #use='SDL',
+               #uselib_store='SDL_keyboard',
+               #fragment='#include <SDL_keyboard.h>' + SDL_MAIN_TEST_CODE,
+               #mandatory=True)
                
-    conf.check(header_name='SDL_keysym.h',
-               lib='SDL',
-               use='SDL',
-               uselib_store='SDL_keysym',
-               fragment='#include <SDL_keysym.h>' + SDL_MAIN_TEST_CODE,
-               mandatory=True)
+    #conf.check(header_name='SDL_keysym.h',
+               #lib='SDL',
+               #use='SDL',
+               #uselib_store='SDL_keysym',
+               #fragment='#include <SDL_keysym.h>' + SDL_MAIN_TEST_CODE,
+               #mandatory=True)
 
     incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
     libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
@@ -197,7 +197,8 @@ def build(bld):
     """"""
 
     common_libraries = []
-    SDL_libraries = ['GL', 'SDL', 'SDL_keyboard', 'SDL_keysym', 'SDL_image']
+    #SDL_libraries = ['GL', 'SDL', 'SDL_keyboard', 'SDL_keysym', 'SDL_image']
+    SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
     #noise_libraries = ['noise']
 
