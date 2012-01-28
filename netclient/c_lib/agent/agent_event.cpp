@@ -100,8 +100,7 @@ void Agent_event::display_name()
         this->bb->projection_type = Billboard::HUD;
         this->bb->set_size(0.7);
     }
-    //this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);
-    this->bb->set_state(a->s.x, a->s.y, a->s.z, 0.0f, 0.0f, 0.0f);
+    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);
     this->bb->set_draw(true);
 }
 
