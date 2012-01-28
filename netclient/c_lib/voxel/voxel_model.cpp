@@ -29,6 +29,27 @@ void Voxel_model::update_skeleton()
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
 
+
+    //*vv->parent_world_matrix = 
+    //mat4_euler_rotation_and_translation(0.0, -1.0, 5.0,  0.0, 0.0, 0.0);
+
+    if(n_skeleton_nodes == 3)
+    {
+        static float c1=0;
+
+
+        vox_skeleton_local_matrix[2] = 
+        mat4_euler_rotation_and_translation(0.0, -0.75, 5.0,  0.0, sin(c1)/3, 0.0);
+        c1 += 0.010;
+
+        vox_skeleton_local_matrix[1] = 
+        mat4_euler_rotation_and_translation(0.0, 0.75, 5.0,  0.0, sin(-1.0*c1)/3, 0.0);
+        c1 += 0.020;
+
+    }
+
+    //printf("%i\n", n_skeleton_nodes);
+
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         if(debug) 
