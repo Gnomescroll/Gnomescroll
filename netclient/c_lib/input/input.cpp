@@ -102,14 +102,14 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
                     break;
                 }
 
-                // for Dany0 (azerty testing)
-                // while holding n, will show key struct info
-                //if (keystate['n'] != 0)
-                //{
-                    //printf("scancode = %d\n"), Event.key.scancode);
-                    //printf("keysym = %d\n", Event.key.keysym);
-                    //printf("\n");
-                //}
+                 //for Dany0 (azerty testing)
+                 //while holding n, will show key struct info
+                if (keystate['r'] != 0)
+                {
+                    printf("scancode = %d\n", (int)Event.key.keysym.scancode);
+                    printf("keysym = %d\n", (int)Event.key.keysym.sym);
+                    printf("\n");
+                }
                 
                 t = getUnicodeValue(Event.key.keysym);
                 if(t==0) t= Event.key.keysym.sym;
