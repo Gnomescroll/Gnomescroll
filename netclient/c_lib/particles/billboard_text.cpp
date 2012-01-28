@@ -175,6 +175,13 @@ void BillboardText::draw_axis_aligned()
     float ax, ay, bx, by;
     float az, bz;
 
+    // letters draw a bit into the ground, this offset fixes that
+    const float ground_offset = 0.05;
+    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    x += ground_offset;
+    y += ground_offset;
+    z += ground_offset;
+
     while ((c = text[i++]) != '\0')
     {
         glyph = glyphs[(unsigned int)c];
@@ -184,9 +191,7 @@ void BillboardText::draw_axis_aligned()
         tx_max = glyph.x + glyph.tw;
         ty_min = glyph.y;
         ty_max = glyph.y + glyph.th;
-
-        x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
-
+        
         // get char x offset and width, adjusted
         xoff = (cursor + glyph.xoff) * scale * this->size;
         xw = (cursor + glyph.xoff + glyph.w) * scale * this->size;
