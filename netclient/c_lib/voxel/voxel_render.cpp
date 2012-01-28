@@ -320,10 +320,11 @@ void Voxel_render_list::draw()
 
         if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 2 )
         {
+            //debug = 1;
         }
         if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 3 )
         {
-            debug = 1;
+            //debug = 1;
         }
 
         if(debug)
