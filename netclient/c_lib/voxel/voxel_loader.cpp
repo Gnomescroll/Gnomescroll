@@ -85,7 +85,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         
 
         ret = sscanf (buffer+index, "%d  %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
-        printf("str= \n %25s \n", buffer+index);
+        printf("str= \n %*s \n", buffer+index, read);
         printf("ret= %i \n", ret);
         printf("values= %i %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
         index += read;
