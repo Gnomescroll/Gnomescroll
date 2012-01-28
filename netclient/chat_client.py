@@ -538,10 +538,7 @@ class ChatInput:
         else:
             self.buffer.insert(self.cursor, char)
 
-        increment = 1
-        if char == '\t':
-            increment = 4
-        self.cursor += increment
+        self.cursor += 1
         
         self.stringify()
 
@@ -558,6 +555,14 @@ class ChatInput:
 
     def cursor_left(self):
         self.cursor = max(0, self.cursor - 1)
+
+    def get_inc(self, i):
+        if i == '\t':
+            return 4
+        return 1
+
+    def get_cursor_render_position(self):
+        return sum(map(self.get_inc, self.buffer[:self.cursor]))
 
     def cursor_right(self):
         self.cursor = min(len(self.buffer), self.cursor + 1)
@@ -754,7 +759,8 @@ class ChatRender:
         return str(ChatClientGlobal.chatClient.input)
 
     def cursor_position(self):
-        return ChatClientGlobal.chatClient.input.cursor
+        #return ChatClientGlobal.chatClient.input.cursor
+        return ChatClientGlobal.chatClient.input.get_cursor_render_position()
 
 if __name__ == '__main__':
     ChatClientGlobal.init()
