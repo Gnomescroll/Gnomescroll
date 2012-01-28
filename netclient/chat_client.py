@@ -605,11 +605,11 @@ class ChatInputProcessor:
         if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
-                return lambda keyboard: keyboard.toggle_chat()
+                return lambda keyboard: InputGlobal.toggle_chat()
         elif symbol == 'ESCAPE':      # clear, cancel chat
             def callback(input):
                 input.clear()
-                return lambda keyboard: keyboard.toggle_chat()
+                return lambda keyboard: InputGlobal.toggle_chat()
         elif symbol == 'UP':            # up history
             callback = lambda input: input.history_older()
         elif symbol == 'DOWN':        # down history
@@ -751,3 +751,5 @@ class ChatRender:
 
 if __name__ == '__main__':
     ChatClientGlobal.init()
+
+from input import InputGlobal

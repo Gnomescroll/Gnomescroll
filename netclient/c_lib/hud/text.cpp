@@ -142,6 +142,30 @@ void add_glyph(
     glyphs[c].yoff = yoff;
     glyphs[c].xadvance = xadvance;
     glyphs[c].available = 1;
+
+    // tab is 4 spaces
+    const int TABS_IN_SPACES = 4;
+    if (c == (int)'\t')
+    {
+        glyphs[c].w *= TABS_IN_SPACES;
+        glyphs[c].xoff *= TABS_IN_SPACES;
+        glyphs[c].xadvance *= TABS_IN_SPACES;
+        glyphs[c].available = 1;
+    }
+}
+
+struct Glyph get_missing_glyph(unsigned char c)
+{
+    struct Glyph glyph;
+
+    switch (c)
+    {
+        default:
+            glyph = glyphs[missing_character];
+            break;
+    }
+
+    return glyph;
 }
 
 // deprecate
@@ -170,7 +194,7 @@ void draw_text(char* t, int len, float x, float y, float depth, float line_heigh
         // known glyph?
         if (! glyph.available) {
             printf("Character unknown: %c\n", c);
-            glyph = glyphs[missing_character];
+            glyph = get_missing_glyph(c);
         }
 
         tx_max = glyph.x;
@@ -212,7 +236,7 @@ void draw_text(char* t, float x, float y, float depth, float line_height) {
         // known glyph?
         if (! glyph.available) {
             printf("Character unknown: %c\n", c);
-            glyph = glyphs[missing_character];
+            glyph = get_missing_glyph(c);
         }
 
         tx_max = glyph.x;
@@ -254,7 +278,7 @@ void draw_text(char* t, float x, float y, float depth, float scale, float line_h
         // known glyph?
         if (! glyph.available) {
             printf("Character unknown: %c\n", c);
-            glyph = glyphs[missing_character];
+            glyph = get_missing_glyph(c);
         }
 
         tx_max = glyph.x;

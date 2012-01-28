@@ -121,7 +121,7 @@ cdef class Inventory:
 Text
 '''
 
-cdef extern from './hud/text.h':
+cdef extern from './hud/text.hpp':
     int load_font(char* fontfile)
 
     void start_text_draw()
@@ -267,6 +267,9 @@ class Font:
             h = float(glyph['height'])
             xadvance = float(glyph['xadvance'])
             add_glyph(char_code, x, y, xoff, yoff, w,h, xadvance)
+
+            if char_code == ord(' '):
+                add_glyph(ord('\t'), x,y, xoff, yoff, w,h, xadvance)
                 
     def clean_glyphs(self):
         for kc, glyph in self.glyphs.items():

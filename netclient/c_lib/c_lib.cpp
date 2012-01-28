@@ -14,7 +14,7 @@
 #include <net_lib/net_lib.h>
 
 
-/* Graphics */
+/* Graphics, SDL */
 #include "compat_gl.h"
 #include "defines.h"
 

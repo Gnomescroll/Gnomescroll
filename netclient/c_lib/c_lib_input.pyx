@@ -17,10 +17,7 @@ cdef extern from "./input/input.hpp":
         float x
         float y
 
-
 ### call backs
-cdef extern from "./input/input.hpp":
-
     ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
     int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
 
@@ -40,15 +37,14 @@ cdef extern from "./input/input.hpp":
     ctypedef int (*quit_event_func)()
     int _quit_event_callback(quit_event_func user_func)
 
-    int _init_input()
-
-cdef extern from "./input/input.hpp":
     cdef extern int _get_key_state(key_state_func key_state_cb)
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
     cdef extern int _set_text_entry_mode(int n)
 
     cdef MouseMotionAverage* get_mouse_render_state(int t)
     cdef int _toggle_mouse_bind()
+
+    int _init_input()
 
 def get_mouse_deltas(int t):
     cdef MouseMotionAverage* mm
@@ -99,6 +95,7 @@ cdef int key_state_callback(Uint8* keystate, int numkeys):
     pressed_keys = []
     for i in range(0, numkeys):
         if keystate[i] != 0:
+            print "Keystate[%d] = %d" % (i, keystate[i],)
             pressed_keys.append(i)
     input_callback.keyboard_state(pressed_keys)
 

@@ -12,6 +12,9 @@ static int text_entry_mode;
 static int numkeys;
 static Uint8* keystate;
 
+static int n_keys_pressed = 0;
+static unsigned char keys_pressed[10];
+
 int init_input() {
     keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
     SDL_EnableUNICODE( SDL_ENABLE );
@@ -41,16 +44,28 @@ int _toggle_mouse_bind() {
 int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
 
-    _key_state_callback(key_state_cb, keystate, numkeys);  ///this is only line that does anything
-    if(keystate[96] != 0){
+    if(keystate['`'] != 0)
+    {
         int x;
-        for(x=0; x<numkeys; x++) {
-            if(keystate[x] != 0) { printf("%i='%c' ", x, (char)x);}
-            }
+        for(x=0; x<numkeys; x++)
+        {
+            if(keystate[x] != 0) printf("%i='%c' ", x, (char)x);
+        }
         printf("\n");
     }
+
+    _key_state_callback(key_state_cb, keys_pressed, n_keys_pressed);
+
     return 0;
 }
+
+/*
+If you want to know what character the user entered (as opposed to what key), try SDL_EnableUNICODE(1). event.keysym.unicode will now contain the (Uint16) character. You can usually simply cast it to a char and you'll have what you want.
+One thing to keep in mind is that the unicode field will only be filled on keydown, not keyup.
+You should also disable the unicode translation as soon as you're finished with it because it caused extra overhead.
+
+--for coping w/ ? keys (shift + /)
+*/
 
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
     int t; //temp
@@ -65,7 +80,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 
         if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONUP)) {
-             MouseEvent me;
+            MouseEvent me;
             me.x = Event.motion.x;
             me.y = Event.motion.y;
             me.button = Event.button.button;
@@ -84,12 +99,23 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
             case SDL_KEYDOWN:
 
+                printf("scancode=%d\n", Event.key.keysym.scancode);
                 if(Event.key.keysym.sym == SDLK_HOME)
                 {
                     printf("Saving Screenshot \n");
                     save_screenshot();
                     break;
                 }
+
+                // for Dany0 (azerty testing)
+                // while holding n, will show key struct info
+                //if (keystate['n'] != 0)
+                //{
+                    //printf("scancode = %d\n"), Event.key.scancode);
+                    //printf("keysym = %d\n", Event.key.keysym);
+                    //printf("\n");
+                //}
+                
                 t = getUnicodeValue(Event.key.keysym);
                 if(t==0) t= Event.key.keysym.sym;
                 event_state = 1;

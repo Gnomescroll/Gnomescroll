@@ -59,6 +59,10 @@ class InputEventGlobal:
     def keyboard_state(self, pressed_keys):
         keyboard = []
         for keycode in pressed_keys:
+            try:
+                print keycode, chr(keycode)
+            except:
+                pass
             temp = Keystring.get(keycode, None)
             if temp != None:
                 keyboard.append(temp)
@@ -67,16 +71,23 @@ class InputEventGlobal:
     #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key, event_type):
         event_name = event_names[event_type]
-        #print "%s, keycode=%d key=%s" % (event_name, keycode, key,)
+
+        try:
+            unikey = unichr(keycode)
+        except:
+            print 'unichr(keycode) failed. keycode=%d' % (keycode,)
+            unikey = key
+
+        print "keycode=%d, key=%s, unicode_key=%s" % (keycode, key, unikey,)
 
         # set keystate map
         if event_name == 'SDL_KEYDOWN':
             keystate[keycode] = 1
-            self.keyboard.on_key_press(key)
+            self.keyboard.on_key_press(key, unikey)
 
         elif event_name == 'SDL_KEYUP':
             keystate[keycode] = 0
-            self.keyboard.on_key_release(key)
+            self.keyboard.on_key_release(key, unikey)
         
     def mouse_event(self, button,state,x,y,):
         self.mouse.on_mouse_press(x,y,button, state)
@@ -205,15 +216,6 @@ class Keyboard(object):
         if callable(callback):
             callback(self)
 
-    #deprecate
-    def on_text(self, text):
-        if InputGlobal.input == 'chat':
-            callback = ChatClientGlobal.chatClient.input.on_text(text)
-            self._input_callback(callback)
-        else:
-            if text == 'y':
-                self.toggle_chat()
-
     # continuous non-character key detection
     #e.g. back space, cursor movement
     def on_text_motion(self, motion):
@@ -223,7 +225,7 @@ class Keyboard(object):
 
     # one-time non character key detection
     # e.g. enter
-    def on_key_press(self, symbol):
+    def on_key_press(self, symbol, unicode_key):
 
         if symbol == 'QUIT':
             GameStateGlobal.exit = True
@@ -235,11 +237,12 @@ class Keyboard(object):
             return
             
         if InputGlobal.input == 'chat':
-            callback = ChatClientGlobal.chatClient.input.on_key_press(symbol)
-            self._input_callback(callback)
+            if unicode_key:
+                callback = ChatClientGlobal.chatClient.input.on_key_press(unicode_key)
+                self._input_callback(callback)
         else:
             if symbol == 'y':
-                self.toggle_chat()
+                InputGlobal.toggle_chat()
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
             if symbol == 'tab':
@@ -249,7 +252,7 @@ class Keyboard(object):
 
             self.key_press_handlers.get(symbol, lambda : None)()
 
-    def on_key_release(self, symbol):
+    def on_key_release(self, symbol, unicode_key):
         if InputGlobal.input == 'agent':
             InputGlobal.agentInput.on_key_release(symbol)
         self.key_release_handlers.get(symbol, lambda: None)()
@@ -305,9 +308,6 @@ class Keyboard(object):
 
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()
-
-    def toggle_chat(self):
-        InputGlobal.toggle_chat()
 
     def stateHandler(self, keyboard):
         if InputGlobal.use_voxel_aligner:

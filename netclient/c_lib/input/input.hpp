@@ -61,7 +61,6 @@ int _toggle_mouse_bind();
 
 int _set_text_entry_mode(int n);
 
-
 // mouse sampling
 struct MouseMotionAverage {
     float x,y;

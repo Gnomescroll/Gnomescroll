@@ -42,9 +42,10 @@ void add_glyph(
     float xadvance
 );
 
-void set_missing_character(int cc);
-
 extern struct Glyph glyphs[128];
+
+void set_missing_character(int cc);
+struct Glyph get_missing_glyph(unsigned char c);
 extern int missing_character; // "?"
 
 extern GLuint fontTextureId;
