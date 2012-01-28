@@ -64,18 +64,16 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     vox_skeleton_local_matrix = new Mat4[num_skeleton_nodes];
     vox_skeleton_world_matrix = new Mat4[num_skeleton_nodes];
 
-    const int debug = 0;
+    const int debug_0 = 0;
 
-    if(debug) printf("Voxel_model::init_skeleton \n");
+    if(debug_0) printf("Voxel_model::init_skeleton, number of nodes= %i \n", num_skeleton_nodes );
 
     for(int i=0; i<num_skeleton_nodes; i++)
     {
         vox_skeleton_transveral_list[i] = vox_dat->vox_skeleton_transveral_list[i];
-
-
         vox_skeleton_local_matrix[i] = vox_dat->vox_skeleton_local_matrix[i]; //this is zero
 
-        if( debug )
+        if( debug_0 )
         {
             printf("vox_skeleton_local_matrix[%i]= \n", i);
             print_mat4( vox_skeleton_local_matrix[i] );
@@ -83,6 +81,10 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
             print_mat4( vox_dat->vox_skeleton_local_matrix[i] );
         }
     }
+
+    const int debug_1 = 0;
+
+    if(debug_1) printf("Voxel_model::init_skeleton, number of volumes= %i \n", this->n_parts );
     //set pointer in voxel volume back to the skeleton parent world matrix 
     for(int i=0; i<this->n_parts; i++)
     {
@@ -92,8 +94,11 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
         vv->parent_world_matrix = &vox_skeleton_world_matrix[vp->skeleton_parent_matrix];
         vv->local_matrix = vox_dat->vox_volume_local_matrix[i];
 
-        //vp->skeleton_parent_matrix 
-        //struct Mat4* parent_world_matrix;
+        if( debug_1 )
+        {
+            printf("voxel volume %i local matrix= \n", i);
+            print_mat4( vv->local_matrix );
+        }
     }
 }
 

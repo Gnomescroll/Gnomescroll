@@ -8,6 +8,8 @@
 #include <physics/mat3.hpp>
 #include <physics/mat4.hpp>
 
+#include <c_lib/common/enum_types.hpp>
+
 Voxel_render_list::Voxel_render_list()
 :
 render_list(NULL),
@@ -295,47 +297,35 @@ void Voxel_render_list::draw()
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
         vv = render_list[i];
 
-        //center = vec4(*vv->parent_world_matrix
-        //if( sphere_fulstrum_test(vv->center.x, vv->center.y, vv->center.z, vv->radius) == false ) continue;
-        
         if(vv->vvl.vnum == 0) continue;
         
-        //construct world view matrix
-        /*
-        v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
-        v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
-        v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
-        v[3].v3 = vv->v[3].v3;
-        */
-        //m.v[0].v3 = vec3_scalar_mult(vv->v[0].v3, vv->scale);
-        //m.v[1].v3 = vec3_scalar_mult(vv->v[1].v3, vv->scale);
-        //m.v[2].v3 = vec3_scalar_mult(vv->v[2].v3, vv->scale);
-        
-        //m.v[3].v3 = vv->v[3].v3;
+        //short entity_id;
+        //short entity_type;
+        //short part_id;
 
-        //m.v[0].v3 = vv->v[0].v3;
-        //m.v[1].v3 = vv->v[1].v3;
-        //m.v[2].v3 = vv->v[2].v3;
-
-        //m.v[3].v3 = vec3_init(0.0, 0.0, 0.0);
-
-        //r = mat4_mult(*vv->parent_world_matrix,m);
-
-    //short entity_id;
-    //short entity_type;
-    //short part_id;
-
-        const int debug = 0;
-
-        if(debug) printf("entity= %i, entity_type= %i, part_id= %i \n", vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+        int debug = 0;
+        //if( vv->vhe.entity_type == OBJ_TYPE_AGENT ) debug = 1;
 
         r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
 
+        if(debug)
+        { 
+            printf("=== \n");
 
-        if(debug) print_mat4(r);
-        //printf("sizeof(Mat4)= %i \n", sizeof(Mat4) );
-        
-        if(debug) printf("wtf= %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
+            printf("entity= %i, entity_type= %i, part_id= %i \n", 
+            vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+
+            printf("parent_world_matrix= \n");
+            print_mat4( *vv->parent_world_matrix );
+
+            printf("local_matrix= \n");
+            print_mat4( vv->local_matrix );
+
+            printf("result= \n");
+            print_mat4(r);
+
+            printf("offset: %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
+        }
 
         r.v[0].w = 0.0f;
         r.v[1].w = 0.0f;

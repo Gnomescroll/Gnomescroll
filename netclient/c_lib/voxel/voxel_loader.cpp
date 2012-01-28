@@ -78,8 +78,8 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
         ret = sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
         //printf("str= \n%25s \n", buffer+index);
-        printf("ret= %i \n", ret);
-        printf("values= %d %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
+        //printf("ret= %i \n", ret);
+        //printf("values= %d %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
         index += read;
         //vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
 
@@ -88,7 +88,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
             printf("!!! VOXEL SKELETON LOADER ERROR!!! i= %i, node= %i \n",i,node);
         }
 
-        printf("set skeleton node matrix: %i \n", node);
+        //printf("set skeleton node matrix: %i \n", node);
         vox_dat->set_skeleton_local_matrix(node, x,y,z, rx,ry,rz);
     }
 
@@ -112,8 +112,8 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         float ox,oy,oz;
         float rx,ry,rz;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "part,rot,anchor %d %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
-        //printf ("%d %f %f %f  %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
+        sscanf (buffer+index, "%d  %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
+        printf ("part= %d anchor= %f %f %f  rot= %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
         index += read;
         vox_dat->set_part_local_matrix(part_num, ox,oy,oz, rx,ry,rz);
     }
