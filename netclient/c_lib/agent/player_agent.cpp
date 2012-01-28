@@ -293,7 +293,7 @@ void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
     if (you == NULL) return;
-    float threshold = (3.14159 / 180) * 18; //degrees->radians
+    float threshold = (3.14159 / 180) * 360; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
     this->camera_state.forward_vector(f);

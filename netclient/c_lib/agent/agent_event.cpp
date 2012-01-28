@@ -87,6 +87,7 @@ void Agent_event::hide_name()
 
 void Agent_event::display_name()
 {
+    if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
         this->bb = ClientState::billboard_text_list.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -95,7 +96,7 @@ void Agent_event::display_name()
         this->bb->set_text(this->a->status.name);
         this->bb->set_color(140, 200, 10, 255);
     }
-    this->bb->set_state(a->s.x, a->s.y, a->s.z + 5.0f, 0.0f, 0.0f, 0.0f);
+    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height + 0.5f, 0.0f, 0.0f, 0.0f);
     this->bb->set_draw(true);
 }
 
