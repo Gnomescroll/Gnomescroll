@@ -10,6 +10,8 @@ syntax: glob
 
 dist
 
+screenshot
+
 nohup.out
 screenshot.png
 

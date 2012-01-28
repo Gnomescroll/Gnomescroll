@@ -379,7 +379,11 @@ void save_screenshot()
     //int window_width = _xres;
     //int window_height = _yres;
 
-    const char *FileName = "screenshot.png";
+    char FileName[128];
+
+    sprintf(FileName,"./screenshot/%d.png",  (int) clock() );
+
+    printf("File= %s \n", FileName);
 
     SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
                                                    32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
