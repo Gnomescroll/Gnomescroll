@@ -5,7 +5,8 @@
 #include <common/enum_types.hpp>
 
 const int AGENT_MAX = 64;
-#define AGENT_HEIGHT 1.8f
+//#define AGENT_HEIGHT 1.8f
+#define AGENT_HEIGHT 2.6f
 #define AGENT_HEIGHT_CROUCHED 0.9f
 #define AGENT_BOX_RADIUS 0.4f
 #define CAMERA_HEIGHT_SCALE 0.83f

@@ -86,6 +86,7 @@ void Agent_weapons::weapon_change_message() {
     #endif
     #ifdef DC_SERVER
     AgentActiveWeapon_StoC msg;
+    msg.id = this->a->id;
     msg.slot = active;
     msg.broadcast();
     #endif
