@@ -144,6 +144,11 @@ void HitscanEffect_list::draw()
     //struct Vector camera = Vector_init(state->x, state->y, state->z + ClientState::playerAgent_state.camera_height());
 
     struct CCamera* c = get_available_camera();
+
+    if(c == NULL ) 
+    {
+        printf("HitscanEffect_list::draw WHY THE FUCK ISNT CAMERA INITED BEFORE DRAW IS CALLED!? \n");
+    }
     struct Vector camera = Vector_init(c->x, c->y, c->z);
 
     glColor3ub(255,255,255);
