@@ -59,10 +59,10 @@ class InputEventGlobal:
     def keyboard_state(self, pressed_keys):
         keyboard = []
         for keycode in pressed_keys:
-            try:
-                print keycode, chr(keycode)
-            except:
-                pass
+            #try:
+                #print keycode, chr(keycode)
+            #except:
+                #pass
             temp = Keystring.get(keycode, None)
             if temp != None:
                 keyboard.append(temp)
@@ -75,10 +75,10 @@ class InputEventGlobal:
         try:
             unikey = unichr(keycode)
         except:
-            print 'unichr(keycode) failed. keycode=%d' % (keycode,)
+            #print 'unichr(keycode) failed. keycode=%d' % (keycode,)
             unikey = key
 
-        print "keycode=%d, key=%s, unicode_key=%s" % (keycode, key, unikey,)
+        #print "keycode=%d, key=%s, unicode_key=%s" % (keycode, key, unikey,)
 
         # set keystate map
         if event_name == 'SDL_KEYDOWN':

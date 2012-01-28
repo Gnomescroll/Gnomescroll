@@ -537,7 +537,12 @@ class ChatInput:
             self.buffer.insert(index, char)
         else:
             self.buffer.insert(self.cursor, char)
-        self.cursor += 1
+
+        increment = 1
+        if char == '\t':
+            increment = 4
+        self.cursor += increment
+        
         self.stringify()
 
     def remove(self, index=None):
@@ -620,11 +625,13 @@ class ChatInputProcessor:
             callback = lambda input: input.cursor_right()
         elif symbol == 'BACKSPACE':   # delete
             callback = lambda input: input.remove()
-        elif symbol == 'SPACE':
-            callback = self.on_text(' ')
         else:
-            #if len(_symbol) == 1:
-            callback = self.on_text(unicode_key)
+            if len(symbol) == 1 or symbol in ['SPACE', 'TAB']:
+                try:
+                    code = ord(unicode_key)
+                    if 32 <= code <= 126 or code == 9:    # standard ascii printable chars + tab
+                        callback = self.on_text(unicode_key)
+                except: pass
         return callback
 
     def on_text(self, text):

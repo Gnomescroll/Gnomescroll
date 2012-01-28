@@ -87,6 +87,7 @@ Agents removed from teams on client disconnect
 =============
 
 Crouching
+
 Every 13 connect or so, fails with "no agent". investigate
 
 SDL input normalization

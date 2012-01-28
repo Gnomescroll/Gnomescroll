@@ -99,7 +99,6 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
             case SDL_KEYDOWN:
 
-                printf("scancode=%d\n", Event.key.keysym.scancode);
                 if(Event.key.keysym.sym == SDLK_HOME)
                 {
                     printf("Saving Screenshot \n");
