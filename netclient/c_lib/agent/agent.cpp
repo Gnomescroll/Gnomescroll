@@ -313,6 +313,53 @@ static inline bool collision_check2(float box_r, float box_h, float x, float y, 
     return false;
 }
 
+static inline bool collision_check5(float box_r, float box_h, float x, float y, float z) {
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int n_z = (int)ceil(box_h);
+
+    for (int i=0; i<n_z; i++)
+    {
+        int zz = (int)z + i;
+        if (i == n_z-1) zz = z + box_h;
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
+
+bool agent_collides_terrain(Agent_state* a)
+{
+    return collision_check5(a->box.box_r, a->box.b_height, a->s.x, a->s.y, a->s.z);
+}
+
 // for when box_h < 1
 static inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
     int x_min = x - box_r;
@@ -696,11 +743,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 */
     float height;
     height = box.b_height;
-    bool (*collision_check)(float, float, float, float, float);
-    collision_check = &collision_check2;
 
     ////collision
-    bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
+    bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
@@ -787,20 +832,20 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     /*
         Collision Order: as.x,as.y,as.z
     */
-    bool collision_x = collision_check(box.box_r, height, new_x,as.y,as.z);
+    bool collision_x = collision_check5(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
         new_x = as.x;
         as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check(box.box_r, height, new_x,new_y,as.z);
+    bool collision_y = collision_check5(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
         new_y = as.y;
         as.vy = 0.0f;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check(box.box_r, height, new_x,new_y,new_z);
+    bool collision_z = collision_check5(box.box_r, height, new_x,new_y,new_z);
     if(collision_z) {
 
         if(as.vz < -z_bounce_v_threshold)
