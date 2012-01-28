@@ -306,7 +306,25 @@ void Voxel_render_list::draw()
         int debug = 0;
         //if( vv->vhe.entity_type == OBJ_TYPE_AGENT ) debug = 1;
 
+ 
+
+        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 5 )
+        {
+            //*vv->parent_world_matrix = 
+            //mat4_euler_rotation_and_translation(0.0, -1.0, 5.0,  0.0, 0.0, 0.0);
+
+        }
+
         r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
+
+
+        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 2 )
+        {
+        }
+        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 3 )
+        {
+            debug = 1;
+        }
 
         if(debug)
         { 
