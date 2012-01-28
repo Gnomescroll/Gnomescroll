@@ -12,9 +12,6 @@ static int text_entry_mode;
 static int numkeys;
 static Uint8* keystate;
 
-static int n_keys_pressed = 0;
-static unsigned char keys_pressed[10];
-
 int init_input() {
     keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
     SDL_EnableUNICODE( SDL_ENABLE );
@@ -44,6 +41,7 @@ int _toggle_mouse_bind() {
 int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
 
+    _key_state_callback(key_state_cb, keystate, numkeys);
     if(keystate['`'] != 0)
     {
         int x;
@@ -53,8 +51,6 @@ int _get_key_state(key_state_func key_state_cb) {
         }
         printf("\n");
     }
-
-    _key_state_callback(key_state_cb, keys_pressed, n_keys_pressed);
 
     return 0;
 }

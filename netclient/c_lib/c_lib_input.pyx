@@ -95,7 +95,6 @@ cdef int key_state_callback(Uint8* keystate, int numkeys):
     pressed_keys = []
     for i in range(0, numkeys):
         if keystate[i] != 0:
-            print "Keystate[%d] = %d" % (i, keystate[i],)
             pressed_keys.append(i)
     input_callback.keyboard_state(pressed_keys)
 
