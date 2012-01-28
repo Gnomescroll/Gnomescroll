@@ -28,6 +28,9 @@ class Camera(object):
         self.loaded = False
         self.zoomed = False
 
+    def set_aspect(self, fov, z_near, z_far):
+        self.camera.set_aspect(fov, z_near, z_far)
+
     def __getattribute__(self, name):
         if name in Camera._local:
             val = object.__getattribute__(self, name)

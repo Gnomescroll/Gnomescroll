@@ -12,6 +12,10 @@ static CCamera* cameras = NULL;
 
 CCamera* current_camera = NULL;
 float model_view_matrix[16];
+
+double projection_matrix[16];
+GLint viewport[4];
+
 int first_person = 0;
 
 void set_camera(CCamera* cam) {
