@@ -65,6 +65,8 @@ static struct Mat4 mat4_mult(Mat4 a, Mat4 b) __attribute((always_inline));
 struct Mat4 mat4_mult(Mat4 a, Mat4 b)
 {
     struct Mat4 c;
+
+/*
     int i,j;
     for(i=0; i<4; i++) //row
     {
@@ -73,6 +75,34 @@ struct Mat4 mat4_mult(Mat4 a, Mat4 b)
             c._f[4*j+i] = mat4_row_mult_column( a._f, i, b._f, j );
         }
     }
+*/
+
+
+    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+        c._f[4*j+i] = a._f[4*0+i]*b._f[4*j+0] + a._f[4*1+i]*b._f[4*j+1] + a._f[4*2+i]*b._f[4*j+2] + a._f[4*3+i]*b._f[4*j+3];
+        //matC[i][j] += matA[i][x] * matB[x][j];
+    }
+    }
+
+
+/*
+    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+        c._f[4*i+j] = 0.0;
+    }}
+
+    for(int i = 0; i < 4; i++){
+    for(int j = 0; j < 4; j++){
+    for(int k = 0; k < 4; k++) {
+        //c._f[4*i+j] += a._f[4*i+k] * b._f[4*k+j];
+
+        c._f[4*i+j] += a._f[4*i+k] * b._f[4*k+j];
+
+    }
+    }
+    }
+*/
     return c;
 }
 
