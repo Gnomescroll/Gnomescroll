@@ -94,9 +94,14 @@ void Agent_event::display_name()
         this->bb->set_gravity(false);   // stay put
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
-        this->bb->set_color(140, 200, 10, 255);
+        unsigned char r,g,b,a=255;
+        ClientState::get_team_color(this->a->status.team, &r, &g, &b);
+        this->bb->set_color(r,g,b,a);
+        this->bb->projection_type = Billboard::HUD;
+        this->bb->set_size(0.7);
     }
-    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height + 0.5f, 0.0f, 0.0f, 0.0f);
+    //this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);
+    this->bb->set_state(a->s.x, a->s.y, a->s.z, 0.0f, 0.0f, 0.0f);
     this->bb->set_draw(true);
 }
 

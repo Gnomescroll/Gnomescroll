@@ -9,7 +9,7 @@ static double billboard_modelview_mtrx_dbl[16];
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
-#include <hud/text.h>
+#include <hud/text.hpp>
 #include <SDL/SDL_functions.h>
 #include <camera/camera.hpp>
 
@@ -18,8 +18,7 @@ BillboardText::BillboardText(int id)
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
-//projection_type(Billboard::DEFAULT)
-projection_type(Billboard::HUD)
+projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
@@ -31,8 +30,7 @@ r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
 size(BILLBOARD_TEXT_TEXTURE_SCALE),
-//projection_type(Billboard::DEFAULT)
-projection_type(Billboard::HUD)
+projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
     create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
@@ -239,7 +237,7 @@ void BillboardText::draw_hud()
     }
 
     const float line_height = 18.0f;
-    draw_text(this->text, strlen(this->text), sx, sy, sz, line_height);
+    draw_text(this->text, (float)sx, (float)sy, (float)sz, this->size, line_height);
 
 #endif
 }

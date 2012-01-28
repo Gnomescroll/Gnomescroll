@@ -1,4 +1,4 @@
-#include "text.h"
+#include "text.hpp"
 
 #include <stdio.h>
 
@@ -144,10 +144,10 @@ void add_glyph(
     glyphs[c].available = 1;
 }
 
+// deprecate
 void draw_text(char* t, int len, float x, float y, float depth, float line_height) {
     int i;
-    //char c;
-    int c;
+    char c;
     struct Glyph glyph;
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -165,7 +165,7 @@ void draw_text(char* t, int len, float x, float y, float depth, float line_heigh
             continue;
         }
         
-        glyph = glyphs[c];
+        glyph = glyphs[(unsigned int)c];
 
         // known glyph?
         if (! glyph.available) {
@@ -182,6 +182,90 @@ void draw_text(char* t, int len, float x, float y, float depth, float line_heigh
         sx_min = x + cursor_x + glyph.xoff + glyph.w;
         sy_min = y - (cursor_y + glyph.yoff);
         sy_max = y - (cursor_y + glyph.yoff + glyph.h);
+        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
+
+        cursor_x += glyph.xadvance;
+    }
+}
+
+void draw_text(char* t, float x, float y, float depth, float line_height) {
+    int i = 0;
+    char c;
+    struct Glyph glyph;
+
+    float tx_min, tx_max, ty_min, ty_max;
+    float sx_min, sx_max, sy_min, sy_max;
+    float cursor_x = 0.0f;
+    float cursor_y = 0.0f;
+
+    while ((c = t[i++]) != '\0')
+    {
+        // newline
+        if (c == '\n') {
+            cursor_y += line_height;
+            cursor_x = 0.0f;
+            continue;
+        }
+        
+        glyph = glyphs[(unsigned int)c];
+
+        // known glyph?
+        if (! glyph.available) {
+            printf("Character unknown: %c\n", c);
+            glyph = glyphs[missing_character];
+        }
+
+        tx_max = glyph.x;
+        tx_min = glyph.x + glyph.tw;
+        ty_min = glyph.y;
+        ty_max = glyph.y + glyph.th;
+
+        sx_max = x + cursor_x + glyph.xoff;
+        sx_min = x + cursor_x + glyph.xoff + glyph.w;
+        sy_min = y - (cursor_y + glyph.yoff);
+        sy_max = y - (cursor_y + glyph.yoff + glyph.h);
+        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
+
+        cursor_x += glyph.xadvance;
+    }
+}
+
+void draw_text(char* t, float x, float y, float depth, float scale, float line_height) {
+    int i = 0;
+    char c;
+    struct Glyph glyph;
+
+    float tx_min, tx_max, ty_min, ty_max;
+    float sx_min, sx_max, sy_min, sy_max;
+    float cursor_x = 0.0f;
+    float cursor_y = 0.0f;
+
+    while ((c = t[i++]) != '\0')
+    {
+        // newline
+        if (c == '\n') {
+            cursor_y += line_height;
+            cursor_x = 0.0f;
+            continue;
+        }
+        
+        glyph = glyphs[(unsigned int)c];
+
+        // known glyph?
+        if (! glyph.available) {
+            printf("Character unknown: %c\n", c);
+            glyph = glyphs[missing_character];
+        }
+
+        tx_max = glyph.x;
+        tx_min = glyph.x + glyph.tw;
+        ty_min = glyph.y;
+        ty_max = glyph.y + glyph.th;
+
+        sx_max = x + (cursor_x + glyph.xoff) * scale;
+        sx_min = x + (cursor_x + glyph.xoff + glyph.w) * scale;
+        sy_min = y - (cursor_y + glyph.yoff) * scale;
+        sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
         blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
 
         cursor_x += glyph.xadvance;
