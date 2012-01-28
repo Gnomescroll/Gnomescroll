@@ -239,8 +239,10 @@ class PyClientPool:
 
         # dispatch event
         ChatServer.chat.disconnect(client)
-        GameStateGlobal.disconnect(client)
-
+        if client.agent is not None:
+            cGameModes.leave_team(client.agent.id)
+            GameStateGlobal.agentList.destroy(client.agent) # make sure this is last
+            
         # recycle name
         if client.name in self.names:
             del self.names[client.name]

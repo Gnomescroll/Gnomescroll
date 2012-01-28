@@ -47,6 +47,7 @@ void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
 
 bool Team::full() {
     if (this->n == TEAM_MAX_PLAYERS) {
+        printf("TEAM IS FULL!\n");
         return true;
     }
     return false;

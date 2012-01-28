@@ -19,18 +19,13 @@ class Object_list {
         static const int n_max = max_n;
         int num;
 
-    #if OBJECT_LIST_DEBUG
         Object_state** a;
-    #else
-        Object_state* a[max_n];
-    #endif
 
         Object_list(); //default constructor
         ~Object_list(); //default deconstructor
 
         Object_state* get(int id);
         Object_state* create();         //object auto id
-        Object_state* create_imp_id();         //auto id, assigns to id field automaticly
 
         Object_state* create(int id);   //create object with id
         Object_state* create(float x, float y, float z, float vx, float vy, float vz);
@@ -53,14 +48,12 @@ class Object_list {
 
 template <class Object_state, int max_n> 
 Object_list<Object_state, max_n>::Object_list()
+:
+id_c(0),
+num(0)
 {
-    #if OBJECT_LIST_DEBUG
-        a = new Object_state* [max_n];
-    #endif
-    num = 0;
-    id_c = 0;
-    int i;
-    for(i=0;i<max_n;i++) a[i] = NULL;
+    this->a = (Object_state**)malloc(sizeof(Object_state*)*max_n);
+    for (int i=0;i<max_n; this->a[i++] = NULL);
     printf("%s list instantiated at %p\n", this->name(), this);
     //where();
 }
@@ -69,9 +62,8 @@ Object_list<Object_state, max_n>::Object_list()
 template <class Object_state, int max_n> 
 Object_list<Object_state, max_n>::~Object_list()
 {
-    #if OBJECT_LIST_DEBUG
-        delete[] a;
-    #endif
+    if (a != NULL)
+        free(this->a);
 }
 
 template <class Object_state, int max_n>
@@ -110,40 +102,18 @@ template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create() {
     //where();
     int i;
-    int id = id_c;
-    id_c++;
+    int id;
     for(i=0; i<n_max;i++) {
-        id = (i+id)%n_max;
+        id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
     if(i==n_max) {
         printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
         return NULL;
     }
-    num++;
     a[id] = new Object_state(id);
-    //printf("%s_list: Created object %i\n", name(), id);
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create_imp_id() {
-    //where();
-    int i;
-    int id = id_c;
-    id_c++;
-    for(i=0; i<n_max;i++) {
-        id = (i+id)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if(i==n_max) {
-        printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
-        return NULL;
-    }
     num++;
-    a[id] = new Object_state();
-    a[id]->id = id;
-    //printf("%s_list: Created object %i\n", name(), id);
+    id_c = id+1;
     return a[id];
 }
 
@@ -152,7 +122,6 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
     //where();
     if(a[id] == NULL) {
         a[id] = new Object_state(id);
-        //printf("%s_list: Created object from id: %i\n", name(), id);
         num++;
         return a[id];
     } else {
@@ -164,19 +133,14 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
 template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z, float vx, float vy, float vz) {
     int i;
-    int id = id_c;
-    id_c++;
+    int id;
     for(i=0; i<n_max;i++) {
-        id = (i+id)%n_max;
+        id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
-    if(i==1024) {
-        printf("%s_list Error: cannot create object, object limit exceeded\n", name() );
-        return NULL;
-    }
-    num++;
     a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-    //printf("%s_list: Created object %i\n", name(), id);
+    num++;
+    id_c = id+1;
     return a[id];
 }
 
@@ -186,7 +150,6 @@ Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y,
     if(a[id] == NULL) {
         a[id] = new Object_state(id, x,y,z, vx,vy,vz);
         num++;
-        //printf("%s_list: Created object from id: %i\n", name(), id);
         return a[id];
     } else {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);

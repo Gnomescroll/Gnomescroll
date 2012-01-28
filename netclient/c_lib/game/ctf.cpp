@@ -411,6 +411,30 @@ void CTF::check_agent_proximities() {
 
 }
 
+bool CTF::remove_agent_from_team(int agent) {
+    bool success = false;
+
+    Agent_state* a = ServerState::agent_list.get(agent);
+    if (a==NULL) return success;
+    
+    switch(a->status.team) {
+        case 0:
+            success = none.remove_agent(agent);
+            break;
+        case 1:
+            success = one.remove_agent(agent);
+            break;
+        case 2:
+            success = two.remove_agent(agent);
+            break;
+        default:
+            break;
+    }
+    
+    return success;
+}
+
+
 #endif
 
 bool CTF::add_agent_to_team(int team, int agent) {

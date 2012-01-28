@@ -43,16 +43,16 @@ class GenericObjectList:
         return repr(self.objects)
 
     def _add(self, *args, **kwargs):
+        if self._wrapper is not None:
+            self._wrapper.add(args[0])
         object = self._object_type(*args, **kwargs)
         self.objects[object.id] = object
-       # print '%s: %s created; id= %s' % (self.__class__.__name__, self._object_type.__name__, object.id,)
         return object
 
     def _remove(self, obj):
         id = obj.id
         if id in self.objects:
             del self.objects[id]
-        #    print '%s: %s removed; id= %s' % (self.__class__.__name__, self._object_type.__name__, id,)
             if self._wrapper is not None:
                 self._wrapper.remove(id)
             return True

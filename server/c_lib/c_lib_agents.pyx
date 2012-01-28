@@ -47,6 +47,7 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         Agent_state* get(int id)
+        Agent_state* get_or_create(int id)
         Agent_state* create()
         Agent_state* create(int id)
         void destroy(int _id)
@@ -77,7 +78,7 @@ class AgentWrapper(object):
 
     def __init__(self, int client_id):
         cdef Agent_state *a
-        a = agent_list.create(client_id)
+        a = agent_list.get_or_create(client_id)
         self.id = a.id
 
     def send_id_to_client(self, int client_id):
@@ -169,9 +170,9 @@ def teleport_Agent(int id, float x, float y, float z):
 class AgentListWrapper:
 
     @classmethod
-    def add(cls):
+    def add(cls, int id):
         cdef Agent_state* a
-        a = agent_list.create()
+        a = agent_list.get_or_create(id)
         return a.id
 
     @classmethod

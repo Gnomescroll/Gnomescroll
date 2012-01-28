@@ -27,6 +27,7 @@ class CTF {
         void reset_flag(int team);
         void check_agent_proximities();        
         void agent_drop_flag(int agent_team, float x, float y, float z);
+        bool remove_agent_from_team(int agent);
         #endif
 
         NoTeam none;
