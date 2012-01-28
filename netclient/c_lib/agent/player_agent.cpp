@@ -278,7 +278,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     //printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
 }
 
-
 float PlayerAgent_state::camera_height() {
     
     //Agent_state has not crouching parameter!!! Crouching must be in player agent
@@ -293,7 +292,7 @@ void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
     if (you == NULL) return;
-    float threshold = (3.14159 / 180) * 360; //degrees->radians
+    float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
     this->camera_state.forward_vector(f);

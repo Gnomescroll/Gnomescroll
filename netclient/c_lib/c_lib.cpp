@@ -100,7 +100,7 @@
     /* HUD */
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>
-    #include <c_lib/hud/text.c>
+    #include <c_lib/hud/text.cpp>
     #include <c_lib/hud/map.cpp>
     #include <c_lib/hud/equipment.cpp>
     #include <c_lib/hud/compass.cpp>

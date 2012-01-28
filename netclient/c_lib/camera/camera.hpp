@@ -53,3 +53,6 @@ extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
 extern float model_view_matrix[16];
+
+extern double projection_matrix[16];
+extern GLint viewport[4];
