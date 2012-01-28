@@ -579,8 +579,8 @@ class ChatInput:
         if callable(callback):
             return callback(self)
 
-    def on_key_press(self, symbol):
-        callback = self.processor.on_key_press(symbol)
+    def on_key_press(self, symbol, unicode_key):
+        callback = self.processor.on_key_press(symbol, unicode_key)
         return self._input_callback(callback)
 
     def on_text(self, text):
@@ -597,7 +597,7 @@ class ChatInputProcessor:
     def __init__(self):
         pass
 
-    def on_key_press(self, symbol):
+    def on_key_press(self, symbol, unicode_key):
         _symbol = symbol
         symbol = symbol.upper()
         #print 'CHAT ON_KEY_PRESS', symbol
@@ -623,8 +623,8 @@ class ChatInputProcessor:
         elif symbol == 'SPACE':
             callback = self.on_text(' ')
         else:
-            if len(_symbol) == 1:
-                callback = self.on_text(_symbol)
+            #if len(_symbol) == 1:
+            callback = self.on_text(unicode_key)
         return callback
 
     def on_text(self, text):

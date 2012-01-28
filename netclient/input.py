@@ -238,7 +238,7 @@ class Keyboard(object):
             
         if InputGlobal.input == 'chat':
             if unicode_key:
-                callback = ChatClientGlobal.chatClient.input.on_key_press(unicode_key)
+                callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, unicode_key)
                 self._input_callback(callback)
         else:
             if symbol == 'y':
