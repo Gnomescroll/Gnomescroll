@@ -7,9 +7,11 @@
 void animation_tick()
 {   
     ClientState::hitscan_effect_list.tick();
+    ClientState::hitscan_laser_effect_list.tick();
 }
 
 void animation_draw()
 {
     ClientState::hitscan_effect_list.draw();
+    ClientState::hitscan_laser_effect_list.draw();
 }

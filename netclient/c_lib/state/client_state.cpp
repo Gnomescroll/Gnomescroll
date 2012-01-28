@@ -18,11 +18,14 @@ namespace ClientState {
     Neutron_list neutron_list;
     Minivox_list minivox_list;
     BillboardText_list billboard_text_list;
-    Animations::HitscanEffect_list hitscan_effect_list;
+
     Voxel_render_list voxel_render_list;
     Voxel_hitscan_list voxel_hitscan_list;
     Monsters::Slime_list slime_list;
-    
+
+    Animations::HitscanEffect_list hitscan_effect_list;
+    Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
+     
     CTF ctf;
     
     PlayerAgent_state playerAgent_state;

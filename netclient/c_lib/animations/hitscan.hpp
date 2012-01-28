@@ -17,8 +17,8 @@ class HitscanEffect
     void tick();
 
     HitscanEffect(int id);
-    HitscanEffect(int x, int y, int z, int vx, int vy, int vz);
-    HitscanEffect(int id, int x, int y, int z, int vx, int vy, int vz);
+    HitscanEffect(float x, float y, float z, float vx, float vy, float vz);
+    HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz);
 };
 
 class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
