@@ -48,7 +48,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %d %n", &num_skeleton_nodes, &n_parts, &read);
     index += read;
 
-    //printf("%d parts, %d skeleton nodes\n", n_parts, num_skeleton_nodes);
+    printf("%d parts, %d skeleton nodes\n", n_parts, num_skeleton_nodes);
     vox_dat->init_parts(n_parts);
     vox_dat->init_skeleton(num_skeleton_nodes);
 
@@ -60,7 +60,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         int parent_skeleton_node;
         check_for_comments(buffer, &index);
         sscanf (buffer+index, "%d %d %n", &node, &parent_skeleton_node, &read);
-        //printf("%d %d %d\n", node, parent_skeleton_node, read);
+        printf("%d %d %d\n", node, parent_skeleton_node, read);
         index += read;
         vox_dat->set_skeleton_node_parent(node, parent_skeleton_node);
     }
