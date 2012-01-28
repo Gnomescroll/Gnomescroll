@@ -67,6 +67,7 @@
     /* animations */
     #include <c_lib/animations/animations.cpp>
     #include <c_lib/animations/hitscan.cpp>
+    #include <c_lib/animations/hitscan_laser.cpp>
 #endif
 
 /* map */
@@ -156,6 +157,7 @@ int init_c_lib() {
         //vn::init();
 
         Animations::init_hitscan();
+        Animations::init_hitscan_laser();
         
         Sound::init();
 
