@@ -28,7 +28,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     int nbytes = fread(buffer, sizeof(char), size, fp);
     if ( nbytes != size )
     {
-        printf("read_skeleton: failed to write %i bytes\n", nbytes);
+        printf("read_skeleton: failed to read %i bytes\n", nbytes);
         fclose(fp);
         delete[] buffer;
         return;       
@@ -54,7 +54,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
 
     // skeleton graph
-    for(int i=0; i<n_parts; i++)
+    for(int i=0; i<num_skeleton_nodes; i++)
     {
         int node;
         int parent_skeleton_node;
@@ -76,18 +76,10 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
         int ret;
 
-        //ret= sscanf (buffer+index, "%d %n", &node, &read);
-        //read += index;
-        
-        //printf("1 ret= %i \n", ret);
-        //printf("node= %i \n", node);
-        //ret= sscanf (buffer+index, "%f %f %f %f %f %f %n", &x,&y,&z, &rx,&ry,&rz, &read);
-        
-
-        ret = sscanf (buffer+index, "%d  %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
-        printf("str= \n %25s \n", buffer+index);
+        ret = sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
+        //printf("str= \n%25s \n", buffer+index);
         printf("ret= %i \n", ret);
-        printf("values= %i %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
+        printf("values= %d %f %f %f  %f %f %f %d \n", node, x,y,z, rx,ry,rz, read);
         index += read;
         //vox_dat->set_skeleton_node_matrix(node, x,y,z, rx,ry,rz);
 
@@ -120,7 +112,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         float ox,oy,oz;
         float rx,ry,rz;
         check_for_comments(buffer, &index);
-        sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
+        sscanf (buffer+index, "part,rot,anchor %d %f %f %f  %f %f %f %n", &part_num, &ox, &oy, &oz, &rx, &ry, &rz, &read);
         //printf ("%d %f %f %f  %f %f %f %d\n", part_num, ox, oy, oz, rx, ry, rz, read);
         index += read;
         vox_dat->set_part_local_matrix(part_num, ox,oy,oz, rx,ry,rz);
@@ -147,7 +139,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     int nbytes = fread(buffer, sizeof(char), size, fp);
     if ( nbytes != size )
     {
-        printf("read_voxel_volume: failed to write %i bytes\n", nbytes);
+        printf("read_voxel_volume: failed to read %i bytes\n", nbytes);
         fclose(fp);
         delete[] buffer;
         return;       
