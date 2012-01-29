@@ -288,7 +288,7 @@ void Voxel_render_list::draw()
     //m.v[2].w = 0.0f;
     //m.v[3].w = 1.0f;
 
-    struct Mat4 r;
+    //struct Mat4 r;
 
     //struct Vec4 center;
 
@@ -321,7 +321,7 @@ void Voxel_render_list::draw()
             //debug = 1;
         }
 
-        r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
+        //r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
 
 
         if(debug)
@@ -338,17 +338,13 @@ void Voxel_render_list::draw()
             print_mat4( vv->local_matrix );
 
             printf("result= \n");
-            print_mat4(r);
+            print_mat4( vv->world_matrix );
 
+            struct Mat4 r = vv->world_matrix;
             printf("offset: %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
         }
 
-        r.v[0].w = 0.0f;
-        r.v[1].w = 0.0f;
-        r.v[2].w = 0.0f;
-        r.v[3].w = 1.0f;
-
-        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) r._f );
+        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
         //glUniformMatrix4fv(InRotationMatrix, 1, false, m._f );
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
