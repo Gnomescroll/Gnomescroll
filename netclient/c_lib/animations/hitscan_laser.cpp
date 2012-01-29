@@ -1,4 +1,4 @@
-#include "hitscan.hpp"
+#include "hitscan_laser.hpp"
 
 #include <c_lib/state/client_state.hpp>
 #include <stdlib.h>
@@ -12,79 +12,76 @@
 namespace Animations
 {
 
-static int hitscan_texture_id;
+static int hitscan_laser_texture_00_id;
+static int hitscan_laser_texture_01_id;
 
-void init_hitscan()
+void init_hitscan_laser()
 {
     int i;
-    i = create_texture_from_file( (char*) "./media/texture/hitscan/hitscan_01.png", &hitscan_texture_id);
-    if (i) { printf("init_hitscan failed with code %d\n", i); }
+    i = create_texture_from_file( (char*) "./media/texture/hitscan/laser_beam_00.png", &hitscan_laser_texture_00_id);
+    if (i) { printf("init_hitscan_laser failed with code %d\n", i); }
+    i = create_texture_from_file( (char*) "./media/texture/hitscan/laser_beam_core_00.png", &hitscan_laser_texture_01_id);
+    if (i) { printf("init_hitscan_laser failed with code %d\n", i); }
 }
 
-HitscanEffect::HitscanEffect(int id)
+
+HitscanLaserEffect::HitscanLaserEffect(int id)
 :
 id(id),
 ttl(60)
 {}
 
-HitscanEffect::HitscanEffect(float x, float y, float z, float vx, float vy, float vz)
+HitscanLaserEffect::HitscanLaserEffect(float x, float y, float z, float fx, float fy, float fz)
 :
 x(x), y(y), z(z),
-vx(vx), vy(vy), vz(vz),
+fx(fx), fy(fy), fz(fz),
 ttl(60)
 {}
 
-HitscanEffect::HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz)
+HitscanLaserEffect::HitscanLaserEffect(int id, float x, float y, float z, float fx, float fy, float fz)
 :
 id(id),
 x(x), y(y), z(z),
-vx(vx), vy(vy), vz(vz),
+fx(fx), fy(fy), fz(fz),
 ttl(60)
 {}
 
 
-void HitscanEffect::tick()
+
+void HitscanLaserEffect::tick()
 {
-    x += vx /30.0;
-    y += vy /30.0;
-    z += vz /30.0;    
-
     //check for collision with terrain/players
     //play animations for terrain/player collision
 }
 
-void HitscanEffect::draw(float delta, Vector* camera)
+void HitscanLaserEffect::draw(float delta, Vector* camera)
 {
-    const float width = 0.50;
-    const float height = 1.0/4.0;   //length per velocity
+    const float width = 2.0;
+    //const float height = 1.0/4.0;   //length per velocity
 
-    float _x = x + vx*delta;
-    float _y = y + vy*delta;
-    float _z = z + vz*delta;  
-
-    _x = x;
-    _y = y;
-    _z = z;
-
-    struct Vector r = Vector_init(vx,vy,vz);
+    //axis
+    struct Vector r = Vector_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
+    
     //vector_scalar2(&r)
 
     //printf("r length= %f \n", vector_length( &r ) );
 
-    //struct Vector x1 = Vector_init(x, y, z);
-    struct Vector x1 = Vector_init(_x,_y,_z);
+    //struct Vector x1 = Vector_init(x,y,z);
+    struct Vector x1 = Vector_init(x,y,z);
     struct Vector l1 = sub_vec(&x1, camera);
 
     struct Vector u1 = vector_cross( l1, r);
     normalize_vector( &u1 );
     //printf("u1 length= %f \n", vector_length( &u1 ) );
 
-    // float norm = sqrt(vx*vx+vy*vy+vz*vz);
-    // struct Vector x2 = Vector_init(x- height*vx/norm, y - height*vy/norm, z - height*vz/norm);
-    
-    //struct Vector x2 = Vector_init(x- height*vx, y - height*vy, z - height*vz);
-    struct Vector x2 = Vector_init(_x- height*vx, _y - height*vy, _z - height*vz);
+    //float vx = x - fx;
+    //float vy = y - fy;
+    //float vz = z - fz;
+
+    //float norm = sqrt(vx*vx+vy*vy+vz*vz);
+    struct Vector x2 = Vector_init(fx, fy, fz);
+    //struct Vector x2 = Vector_init(_x- height*vx, _y - height*vy, _z - height*vz);
 
     struct Vector l2 = sub_vec(&x2, camera);
 
@@ -125,7 +122,7 @@ void HitscanEffect::draw(float delta, Vector* camera)
 
 /* list */
 
-void HitscanEffect_list::draw()
+void HitscanLaserEffect_list::draw()
 {
     //printf("draw \n");
 
@@ -141,14 +138,14 @@ void HitscanEffect_list::draw()
     //printf("delta= %f \n", delta);
 
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
-
+ 
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
+    glBindTexture( GL_TEXTURE_2D, hitscan_laser_texture_01_id );
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
@@ -170,7 +167,7 @@ void HitscanEffect_list::draw()
 
 }
 
-void HitscanEffect_list::tick()
+void HitscanLaserEffect_list::tick()
 {
     //printf("tick \n");
 
@@ -187,7 +184,7 @@ void HitscanEffect_list::tick()
         float vx = vm*(float)rand()/(float)RAND_MAX;
         float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
         float vz = vm*(float)rand()/(float)RAND_MAX;
-        ClientState::hitscan_effect_list.create(32.0, 32.0, 64.0, vx, vy, vz);
+        ClientState::hitscan_laser_effect_list.create(32.0, 32.0, 128.0, vx, vy, vz );
         }
 
     }
