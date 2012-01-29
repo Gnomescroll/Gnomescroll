@@ -144,7 +144,6 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
-        vv->set_unit_axis();
         vv->set_hitscan_properties(id, type, i);
 
         #ifdef DC_CLIENT
@@ -192,14 +191,10 @@ void Voxel_model::set_hitscan(bool hitscan) {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
-
-/*
-    DEPRECATE
-*/
+void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
+{
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-    for (int i=0; i<this->n_parts; this->vv[i++].set_center(x,y,z));
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
