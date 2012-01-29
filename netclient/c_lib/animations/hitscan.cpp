@@ -58,18 +58,28 @@ void HitscanEffect::add_plane_bias()
     struct Vector right = vector_cross(look, up);
     normalize_vector(&right);
 
-    float negxy = (rand()%2 == 0) ? -1 : 1;
-    float negz = (rand()%2 == 0) ? -1 : 1;
+    //float negxy = (rand()%2 == 0) ? -1 : 1;
+    //float negz = (rand()%2 == 0) ? -1 : 1;
 
-    const float floor_ = 0.15;
-    const float ceil_ = 0.15;
+    //const float floor_ = 0.15;
+    //const float ceil_ = 0.15;
 
-    float dxy = (randf() * (ceil_ - floor_)) + floor_;
-    float dz = (randf() * (ceil_ - floor_)) + floor_;
+    //float dxy = (randf() * (ceil_ - floor_)) + floor_;
+    //float dz = (randf() * (ceil_ - floor_)) + floor_;
     
-    this->x += dxy * negxy * right.x;
-    this->x += dxy * negxy * right.y;
-    this->z += dz * negz;
+    //this->x += dxy * negxy * right.x;
+    //this->y += dxy * negxy * right.y;
+    //this->z += dz * negz;
+
+    const float rot_speed = 1000.0f;
+    float theta = ((float)_get_ticks())/rot_speed;
+    const float r = 0.19f;
+
+    float dxy = r * cos(theta);
+    float dz = r * sin(theta);
+    this->x += dxy * right.x;
+    this->y += dxy * right.y;
+    this->z += dz;
 }
 
 void HitscanEffect::tick()

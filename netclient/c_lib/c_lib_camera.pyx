@@ -30,7 +30,7 @@ cdef extern from "./camera/camera.hpp":
         
     void set_camera(CCamera* c)
     void set_camera_first_person(int first_person)
-    CCamera* get_available_camera()
+    CCamera* CYTHON_get_available_camera()
 
     cdef enum CAMERA_TYPES:
         UNKNOWN_CAM
@@ -58,7 +58,7 @@ cdef class Camera(object):
     def __init__(self, int first_person, name="camera"):
         cdef CCamera* cam
 
-        cam = get_available_camera();
+        cam = CYTHON_get_available_camera();
         if cam == NULL:
             print "Cython camera init -- Camera is null"
             raise ValueError

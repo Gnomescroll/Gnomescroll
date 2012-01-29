@@ -44,7 +44,7 @@ class CCamera {
         CCamera();
 };
 
-CCamera* get_available_camera();
+CCamera* CYTHON_get_available_camera();
 void set_camera(CCamera* cam);
 void init_cameras();
 void set_camera_first_person(int fp);

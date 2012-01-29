@@ -26,7 +26,8 @@ void set_camera_first_person(int fp) {
     first_person = fp;
 }
 
-CCamera* get_available_camera() {
+// CYTHON ONLY. in C, refer to current_camera
+CCamera* CYTHON_get_available_camera() {
     static int ctr = 0;
     if (ctr >= N_CAMERAS) {
         printf("No more available cameras\n");
