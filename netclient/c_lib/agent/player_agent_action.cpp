@@ -161,7 +161,7 @@ void PlayerAgent_action::hitscan() {
             break;
             
         case TARGET_NONE:
-            // for no target, just translate animation origin
+            // for no target, leave translated animation origin
             break;
         default:
             break;

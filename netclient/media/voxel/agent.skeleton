@@ -6,8 +6,8 @@
 2 0
 #skeleton_node: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
-1 0.0 1.0 1.2  0.0 0.0 0.0
-2 0.0 -1.0 1.2  0.0 0.0 0.0
+1 0.0 -1.0 1.2  0.0 0.0 0.0
+2 0.0 1.0 1.2  0.0 0.0 0.0
 #node number, skeleton parent matrix, voxel volume
 0 0 media/voxel/agent_torso.dcvox
 1 0 media/voxel/agent_head.dcvox
@@ -17,8 +17,8 @@
 5 2 media/voxel/agent_left_leg.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 2.0  0.0 0.0 0.0
-1 0.0 0.0 3.0  0.0 0.0 0.0
-2 0.0 -2.0 1.0  0.0 0.0 0.0
-3 0.0 2.0 1.0  0.0 0.0 0.0
-4 0.0 0 -1.5  0.0 0.0 0.0
-5 0.0 0 -1.5  0.0 0.0 0.0
+1 -0.15 0.0 3.18  -1.0 0.0 0.0
+2 0.0 -1.42 2.25  -1.0 0.0 0.0
+3 0.0 1.42 2.25  0.0 0.0 0.0
+4 0.0 0.65 -0.5  0.0 0.0 0.0
+5 0.0 -0.65 -0.5  0.0 0.0 0.0
