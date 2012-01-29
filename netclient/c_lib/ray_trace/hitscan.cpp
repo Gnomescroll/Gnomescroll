@@ -46,22 +46,4 @@ int terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3],
     return target;
 }
 
-//int terrain2(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance) {
-
-    ////const float max_l = sqrt(map_dim.x*map_dim.x + map_dim.y*map_dim.y + map_dim.z*map_dim.z);
-    //const float max_l = 300.0f;
-
-    //int pre_collision[3];
-    //int cube;
-    //int side;
-    //collided = _ray_cast6(x,y,z, vx,vy,vz , max_l, distance, pos, pre_collision, &cube, &side);
-
-    //int target = HITSCAN_TARGET_NONE;
-    //if (collided) {
-        //target = HITSCAN_TARGET_BLOCK;
-    //}
-
-    //return target;
-//}
-
 }
