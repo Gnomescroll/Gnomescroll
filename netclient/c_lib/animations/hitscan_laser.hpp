@@ -5,6 +5,8 @@
 namespace Animations
 {
 
+const int hitscan_lader_ttl = 30;
+
 class HitscanLaserEffect
 {
     public:
@@ -13,7 +15,8 @@ class HitscanLaserEffect
     float fx,fy,fz;
     int ttl;
 
-    inline void draw(float delta, Vector* camera) __attribute((always_inline));
+    inline void draw1(float delta, Vector* camera) __attribute((always_inline));
+    inline void draw2(float delta, Vector* camera) __attribute((always_inline));
     void tick();
 
     HitscanLaserEffect(int id);
