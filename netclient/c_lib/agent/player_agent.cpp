@@ -181,8 +181,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
-    //printf("set cs= %i \n", cs_seq_local);
-
     Agent_cs_CtoS csp;
 
     csp.seq = cs_seq_local;
@@ -190,12 +188,7 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     csp.theta = theta;
     csp.phi = phi;
 
-    //printf("send cs= %i \n", cs_seq_local);
     csp.send();
-
-    //add control state to control buffer
-    
-    //handle_local_control_state(cs_seq_local, cs, theta, phi);
 
     //save control state
     int index = cs_seq_local%128;
@@ -208,82 +201,31 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     cs_local[(index+1)%128].seq = -1;
     //client side tick forward
 
-    //printf("0 _cs seq= %i \n", index);
+    struct Agent_control_state acs;
+    acs = cs_local[index];
 
-    //working version
-    struct Agent_control_state _cs;
-    //printf("0 index= %i \n", index);
-    _cs = cs_local[index];
+    s = _agent_tick(acs, you->box, s, this->you);
 
-    //class AgentState s_tmp = s;
-
-    s = _agent_tick(_cs, you->box, s);
-
-    //experimental
-    //tick from last received snapshot to current
-
-    // (state_history_index+1)%AGENT_STATE_HISTORY_SIZE
-
-/*
-    int csindex = (state_history_seq-3+256) % 256;
-    class AgentState tmp = state_history[ (state_history_seq-3+AGENT_STATE_HISTORY_SIZE) % AGENT_STATE_HISTORY_SIZE ];
-*/
-    int csindex = (state_history_seq) % 256;
+    int cs_index = (state_history_seq) % 256;
     class AgentState tmp = state_history[ state_history_index ];
-    //printf("l seq= %i, tseq= %i, z= %f \n", tmp.seq, tmp.seq, tmp.z);
 
-    //int stop_index = (cs_seq_local-1+256) % 256;
     int stop_index = cs_seq_local;
 
-
-    //printf("start index= %i, stop index= %i \n", csindex, stop_index);
-    int _i = 0;
-    while(1)
+    while (cs_index != stop_index)
     {
-        _i++;
-        if(csindex == stop_index) break;
+        acs = cs_local[cs_index%128]; //check seq number
 
-        _cs = cs_local[csindex%128]; //check seq number
-
-        tmp = _agent_tick(_cs, you->box, tmp);
-        //printf("r  seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
+        tmp = _agent_tick(acs, you->box, tmp, this->you);
         tmp.seq = (tmp.seq+1) % 256;
 
-        csindex = (csindex+1) % 256;
+        cs_index = (cs_index+1) % 256;
     }
-    //if(_i > 5) printf("i= %i \n", _i);
-
-    //printf("1 _cs seq= %i \n", _cs.seq % 128);
-
-    //_cs = cs_local[csindex%128];
-    //tmp = _agent_tick(_cs, A->box, tmp);
-    //tmp.seq = (tmp.seq+1) % 256;
-
-
     s0 = tmp;
-    //printf("f1 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, tmp.z);
-
-    //printf("2 _cs seq= %i \n", _cs.seq % 128);
-    //printf("2 index= %i \n", cs_seq_local % 128);
-
-    //printf("s x,y,z = %f, %f, %f \n", s.x,s.y,s.z);
-    //printf("t x,y,z = %f, %f, %f \n", tmp.x, tmp.y, tmp.z);
-
-    //if( (cs_seq_local % 128) != ((csindex+1)%128) ) printf("SAGSDAGASG !!! \n");
-     
-    _cs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
-    
-    //tmp.seq = (tmp.seq+1) % 256;
-    //printf("f2 seq= %i, tseq= %i, cs= %i, z= %f \n", _cs.seq, tmp.seq, _cs.cs, s1.z);
+    acs = cs_local[cs_seq_local % 128];
+    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp, this->you);
 }
 
 float PlayerAgent_state::camera_height() {
-    
-    //Agent_state has not crouching parameter!!! Crouching must be in player agent
-    //if (active_camera_state->crouching) {
-    //    return box.c_height * camera_height_scale;
-    //}
     if (you == NULL) return 0.0f;
     return you->camera_height();
 }

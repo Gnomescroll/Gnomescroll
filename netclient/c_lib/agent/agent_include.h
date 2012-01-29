@@ -9,6 +9,7 @@
 #include <c_lib/agent/agent_weapons.cpp>
 #include <c_lib/agent/player_agent.cpp>
 #include <c_lib/agent/agent_vox.cpp>
+#include <c_lib/agent/agent_physics.cpp>
 
 #ifdef DC_CLIENT
     #include <c_lib/agent/agent_draw.cpp>

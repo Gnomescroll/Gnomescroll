@@ -7,7 +7,7 @@
 const int AGENT_MAX = 64;
 //#define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT 2.6f
-#define AGENT_HEIGHT_CROUCHED 0.9f
+#define AGENT_HEIGHT_CROUCHED 1.7f
 #define AGENT_BOX_RADIUS 0.4f
 #define CAMERA_HEIGHT_SCALE 0.83f
 
@@ -96,8 +96,7 @@ class Agent_state {
 
         bool crouched;  // find a better place later
 
-        void _tick();
-        //inline void __tick(); //does the actual work
+        void tick();
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
         void set_angles(float theta, float phi);
@@ -137,22 +136,19 @@ class Agent_state {
         Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);
 
         ~Agent_state();
-
-        //void server_tick();
-        //set_control_state(int[8] _cs, float theta, float phi);
 };
 
-class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
+class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a);
 
 #include <c_lib/template/object_list.hpp>
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
         const char* name() { return "Agent"; }
-        
+
+        // quicksort helpers
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
-
         void swap_agent_state(Agent_state **a, Agent_state **b);
         void swap_float(float *a, float *b);
         

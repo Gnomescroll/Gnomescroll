@@ -63,9 +63,14 @@ Tuned hitscan laser animation to animate offset from player camera vector
 
 
 Crouching
-Every 13 connect or so, fails with "no agent". investigate
+Client side jump physics (server is snapping)
+Team colors in hud are fucked up
+Agent kills not being reported properly (deaths fine)
+Dont penalize for deaths
+
 Spawners
 Turrets
 
+Every 13 connect or so, fails with "no agent". investigate
 SDL input normalization
 --There is no real solution. Might be able to use scancodes to handle most cases. Keymapping feature is only real solution

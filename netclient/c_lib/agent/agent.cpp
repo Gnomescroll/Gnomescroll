@@ -4,6 +4,8 @@
 #include <c_lib/agent/agent_draw.hpp>
 #include <c_lib/agent/player_agent.hpp>
 
+#include <c_lib/agent/agent_physics.hpp>
+
 #include <c_lib/defines.h>
 #include <math.h>
 #include <c_lib/common/random.h>
@@ -156,467 +158,39 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     A.broadcast();
 }
 
-// assume box_r < 1
 
-#include <math.h>
-
-static inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6]) {
-    //north +x
-    //south -x
-    //west +y
-    //east -y
-    //top +z
-    //bottom -z
-    int i;
-    for(i=0; i<6; i++) collision[i] = 0;
-
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int z0 = z;
-    int z1 = z+1.0f;
-    int z2 = z+box_h;
-
-    //int z_min = s.z;
-    //int z_max = s.z + b_height + 1.0;
-
-    //upper left
-    //upper right
-    //bottom right
-    //bottom left
-    if(isActive(_get(x_max,y_max,z0) != 0)) {
-        //north, west, bottom
-        collision[0]++; //north 
-        collision[2]++; //west
-        collision[5]++; //bottom
-    }
-    if(isActive(_get(x_max,y_max,z1) != 0)) {
-        //north, west
-        collision[0]++; //north 
-        collision[2]++; //west
-    }
-    if(isActive(_get(x_max,y_max,z2) != 0)) {
-        //north, west, top
-        collision[0]++; //north 
-        collision[2]++; //west
-        collision[4]++; //top     
-    }
-
-
-    if(isActive(_get(x_max,y_min,z0) != 0)) {
-        //north, east, bottom
-        collision[0]++; //north 
-        collision[3]++; //east 
-        collision[5]++; //bottom
-    }
-    if(isActive(_get(x_max,y_min,z1) != 0)) {
-        //north, east
-        collision[0]++; //north 
-        collision[3]++; //east 
-    }
-    if(isActive(_get(x_max,y_min,z2) != 0)) {
-        //north, east, top
-        collision[0]++; //north 
-        collision[3]++; //east
-        collision[4]++; //top
-    }
-
-
-    if(isActive(_get(x_min,y_min,z0) != 0)) {
-        //south, east, bottom
-        collision[1]++; //south
-        collision[3]++; //east
-        collision[5]++; //bottom
-    }
-    if(isActive(_get(x_min,y_min,z1) != 0)) {
-        //south, east
-        collision[1]++; //south
-        collision[3]++; //east 
-    }
-    if(isActive(_get(x_min,y_min,z2) != 0)) {
-        //south, east, top
-        collision[1]++; //south
-        collision[3]++; //east 
-        collision[4]++; //top
-    }
-
-    if(isActive(_get(x_min,y_max,z0) != 0)) {
-        //south, west
-        collision[1]++; //south
-        collision[2]++; //west
-        collision[5]++; //bottom
-    }
-    if(isActive(_get(x_min,y_max,z1) != 0)) {
-        //south, west
-        collision[1]++; //south
-        collision[2]++; //west
-    }
-    if(isActive(_get(x_min,y_max,z2) != 0)) {
-        //south, west
-        collision[1]++; //south
-        collision[2]++; //west
-        collision[4]++; //top
-    }
-
-    //printf("collision: n=%i, s=%i, w=%i, e=%i, t=%i, b=%i \n", collision[0],collision[1],collision[2],collision[3],collision[4],collision[5] );
-}
-
-static inline bool collision_check2(float box_r, float box_h, float x, float y, float z) {
-    //north +x
-    //south -x
-    //west +y
-    //east -y
-    //top +z
-    //bottom -z
-
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int z0 = z;
-    int z1 = z + 1.0f;
-    int z2 = z + box_h;
-
-    //int z_min = s.z;
-    //int z_max = s.z + b_height + 1.0;
-
-    //upper left
-    //upper right
-    //bottom right
-    //bottom left
-    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0) || isActive(_get(x_max,y_max,z2) != 0) ) {
-        //north, west
-        return true;
-    }
-
-
-    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0) || isActive(_get(x_max,y_min,z2) != 0) ) {
-        //north, east
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0) || isActive(_get(x_min,y_min,z2) != 0) ) {
-        //south, east
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0) || isActive(_get(x_min,y_max,z2) != 0) ) {
-        //south, west
-        return true;
-    }
-
-    return false;
-}
-
-static inline bool collision_check5(float box_r, float box_h, float x, float y, float z) {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int n_z = (int)ceil(box_h);
-
-    for (int i=0; i<n_z; i++)
-    {
-        int zz = (int)z + i;
-        if (i == n_z-1) zz = z + box_h;
-
-        if(isActive(_get(x_max,y_max,zz) != 0))
-        {
-            //north, west
-            return true;
-        }
-
-        if(isActive(_get(x_max,y_min,zz) != 0))
-        {
-            //north, east
-            return true;
-        }
-
-        if(isActive(_get(x_min,y_min,zz) != 0))
-        {
-            //south, east
-            return true;
-        }
-
-        if(isActive(_get(x_min,y_max,zz) != 0))
-        {
-            //south, west
-            return true;
-        }        
-
-    }
-    return false;
-}
-
-bool agent_collides_terrain(Agent_state* a)
+void Agent_state::tick() 
 {
-    return collision_check5(a->box.box_r, a->box.b_height, a->s.x, a->s.y, a->s.z);
-}
-
-// for when box_h < 1
-static inline bool collision_check_short(float box_r, float box_h, float x, float y, float z) {
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int z0 = z;
-    int z1 = z + box_h;
-
-    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0)) {
-        //north, west
-        return true;
-    }
-
-    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0)) {
-        //north, east
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0)) {
-        //south, east
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0)) {
-        //south, west
-        return true;
-    }
-
-    return false;
-}
-
-static inline bool collision_check4(float box_r, float box_h, float x, float y, float z, int *cx, int *cy, int *cz)
-// collision_check2 + fills in int pointers with colliding block
-{
-    //north +x
-    //south -x
-    //west +y
-    //east -y
-    //top +z
-    //bottom -z
-
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int z0 = z;
-    int z1 = z + 1.0f;
-    int z2 = z + box_h;
-
-    //int z_min = s.z;
-    //int z_max = s.z + b_height + 1.0;
-
-    //upper left
-    //upper right
-    //bottom right
-    //bottom left
-    if(isActive(_get(x_max,y_max,z0) != 0) || isActive(_get(x_max,y_max,z1) != 0) || isActive(_get(x_max,y_max,z2) != 0) ) {
-        //north, west
-        *cx = x_max;
-        *cy = y_max;
-        *cz = z0;
-        return true;
-    }
-
-
-    if(isActive(_get(x_max,y_min,z0) != 0) || isActive(_get(x_max,y_min,z1) != 0) || isActive(_get(x_max,y_min,z2) != 0) ) {
-        //north, east
-        *cx = x_max;
-        *cy = y_min;
-        *cz = z0;
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_min,z0) != 0) || isActive(_get(x_min,y_min,z1) != 0) || isActive(_get(x_min,y_min,z2) != 0) ) {
-        //south, east
-        *cx = x_min;
-        *cy = y_min;
-        *cz = z0;
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_max,z0) != 0) || isActive(_get(x_min,y_max,z1) != 0) || isActive(_get(x_min,y_max,z2) != 0) ) {
-        //south, west
-        *cx = x_min;
-        *cy = y_max;
-        *cz = z0;
-        return true;
-    }
-
-    return false;
-}
-
-#define GROUND_MARGIN 0.10f
-// checks the (agent bottom - margin) at 4 corners of the agent
-static inline bool on_ground(float box_r, float x, float y, float z) {
-
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int z0 = z - GROUND_MARGIN;
-
-    //upper left
-    //upper right
-    //bottom right
-    //bottom left
-
-    //in future, check tile height if collision
-    if(isActive(_get(x_max,y_max,z0))) {
-        return true;
-    }
-
-    if(isActive(_get(x_max,y_min,z0))) {
-        return true; 
-    }
-
-    if(isActive(_get(x_min,y_min,z0))) {
-        return true;
-    }
-
-    if(isActive(_get(x_min,y_max,z0))) {
-        return true;
-    }
-
-    return false;
-}
-
-static inline bool on_solid_ground(float box_r, float x, float y, float z) {
-    int x_min = (int)(x - box_r);
-    int x_max = (int)(x + box_r);
-
-    int y_min = (int)(y - box_r);
-    int y_max = (int)(y + box_r);
-
-    int z0 = (int)(z - GROUND_MARGIN);
-
-    //upper left
-    //upper right
-    //bottom right
-    //bottom left
-
-    //in future, check tile height if collision
-    if(isSolid(_get(x_max,y_max,z0))) {
-        return true;
-    }
-
-    if(isSolid(_get(x_max,y_min,z0))) {
-        return true; 
-    }
-
-    if(isSolid(_get(x_min,y_min,z0))) {
-        return true;
-    }
-
-    if(isSolid(_get(x_min,y_max,z0))) {
-        return true;
-    }
-
-    return false;
-}
-
-inline bool can_stand_up_inner(int x_min, int x_max, int y_min, int y_max, float z) {
-    int z0 = (int)(z);
-
-    if (isActive(_get(x_min, y_min, z0)) ||
-        isActive(_get(x_max, y_min, z0)) ||
-        isActive(_get(x_min, y_max, z0)) ||
-        isActive(_get(x_max, y_max, z0))) {
-        return false;
-    }
-    return true;
-}
-
-// check if there will be a collision if standing up
-inline bool can_stand_up(float box_r, float x, float y, float z, float current_h, float new_h) {
-    if (new_h <= current_h) printf("can_stand_up:: new height <= current height. You're doing it wrong\n");
-    int x_min = (int)(x - box_r);
-    int x_max = (int)(x + box_r);
-
-    int y_min = (int)(y - box_r);
-    int y_max = (int)(y + box_r);    
-
-    new_h += z;
-
-    z += current_h;
-
-    bool yes = true;
-
-    yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
-    if (yes) {
-        do {
-            z += 1.0f;
-            z = (z > new_h) ? (new_h + 0.001f) : z;
-            yes = can_stand_up_inner(x_min, x_max, y_min, y_max, z);
-        } while (yes && z <= new_h);
-    }
-    return yes;
-}
-
-void Agent_state::_tick() 
-{
-    //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
-
     int _tc =0;
-    //int index = (cs_seq+1) % 128;
-
     struct Agent_control_state _cs;
 
     while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
-        //int index = (cs_seq+1) % 128;
         cs_seq = (cs_seq+1)%256;
         _cs = cs[cs_seq % 128];
 
-        s = _agent_tick(_cs, box, s);
-    //s.tick(_cs, box);
-
+        s = _agent_tick(_cs, box, s, this);
         _tc++;
     }
 
     #ifdef DC_SERVER
     status.respawn();
     #endif
-
 }
 
 
 //takes an agent state and control state and returns new agent state
-class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
-//void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
+class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a)
  {
-
-    /*    
-        int forward =0;
-        int backwards =0;
-        int left =0;
-        int right =0;
-        int jetpack =0;
-    */  
-
     int a_cs = _cs.cs;
     //set control state variables
-    //printf("cs= %i \n", a_cs);
     bool forward     = a_cs & 1? 1 :0;
     bool backwards   = a_cs & 2? 1 :0;
     bool left        = a_cs & 4? 1 :0;
     bool right       = a_cs & 8? 1 :0;
     bool jetpack     = a_cs & 16? 1 :0;
     bool jump        = a_cs & 32? 1 :0;
-    //bool crouch      = a_cs & 64? 1 :0;
+    bool crouch      = a_cs & 64? 1 :0;
     //implemented, but unused
     /*
     bool boost       = a_cs & 128? 1 :0;
@@ -624,52 +198,38 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool misc2       = a_cs & 512? 1 :0;
     bool misc3       = a_cs & 1024? 1 :0;     
     */
-/*
-    //local cordinates
-    int l_x = as.x;
-    int l_y = as.y;
-    int l_z = as.z;
 
-    //local float cordinates
-    float fl_x = as.x - floor(as.x);
-    float fl_y = as.y - floor(as.y);
-    float fl_z = as.z - floor(as.z);
-*/
+    //// uncrouch attempt
+    //if (a->crouched && !crouch)
+    //{
+        //if (collision_check5(box.box_r, box.b_height, as.x,as.y,as.z))
+        //{
+            //// cant stand up
+            //crouch = 1;
+        //}
+    //}
+    //a_new->crouched = (bool)crouch;
 
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
     float xy_speed;
     xy_speed = 2.0f / tr;
-    //if (crouched)
-    //{
-        //xy_speed = 0.7 / tr;
-    //}
+    if (crouch)
+    {
+        xy_speed = 0.7 / tr;
+    }
     
-    //const float z_gravity = -2.0f / tr2;
     const float z_gravity = -3.0f / tr2;
-    //const float z_jetpack = (0.5f / tr2) - z_gravity;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
-    //const float jump_boost = 0.25f;
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
 
-    //const float ground_distance = 0.02;   // unused
-    //const float z_bounce = 0.20f;
     const float z_bounce = 0.10f;
     const float z_bounce_v_threshold = 1.5f / tr;
 
     const float pi = 3.14159265f;
-
-    //int collision[6];
-    //north +as.x
-    //south -as.x
-    //west +as.y
-    //east -as.y
-    //top +as.z
-    //bottom -as.z
-    //collision_check1(box.box_r, box.b_height, as.x,as.y,as.z, collision);
 
     float cs_vx = 0;
     float cs_vy = 0;
@@ -700,7 +260,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     {
         as.vz += z_gravity;
     } 
-    else // under the floor, go back up
+    else // under the map, go back up
     {
         as.vz -= z_gravity;
     }    
@@ -709,10 +269,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz += z_jetpack;
     }
 
-    //if (jump) {
-        //as.vz += jump_boost;
-    //}
-    
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
@@ -728,29 +284,13 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
-    //using function pointer may throw off 
-
-    /*
-        Warning: using function pointer may throw off brach prediction and hurt performance, look this up
-    */
-/*
-    //crouching
-    float height;
-    bool (*collision_check)(float, float, float, float, float);
-    if (crouch || (as.crouching && !can_stand_up(box.box_r, as.x, as.y, as.z, box.c_height, box.b_height))) {
-        as.crouching = true;
+    float height = box.b_height;
+    if (crouch)
+    {
         height = box.c_height;
-        collision_check = &collision_check_short;
-    } else {
-        as.crouching = false;
-        height = box.b_height;
-        collision_check = &collision_check2;
     }
-*/
-    float height;
-    height = box.b_height;
 
-    ////collision
+    //collision
     bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
@@ -758,82 +298,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.z += 0.02f; //nudge factor
         if(as.vz < 0.0f) as.vz = 0.0f;
 
-        //printf("Agent Tick: warning current collision is true!\n");
         return as;
     }
-
-    // instead of nudging, teleport to nearest open block
-    // later, project back to the nearest open block from player bottom center
-    // as it stands, there are wall teleport exploits
-    //bool current_collision = collision_check(box.box_r, height, as.x,as.y,as.z);
-    //int cx,cy,cz;  // colliding block position
-    //bool current_collision = collision_check4(box.box_r, height, as.x,as.y,as.z, &cx, &cy, &cz);
-    //if(current_collision) {
-        //// get nearest open block in the 6 cub directions
-        //int min_x=-1, min_y=-1, min_z=-1;
-        //int i,j;
-
-        //// check in z,y,x one and then 2 blocks away
-        //for (j=1; j<3; j++)
-        //{
-            //for (i=1; i>-2; i-=2)
-            //{
-                //if (!isSolid(_get(cx, cy, cz+(i*j)))) {
-                    //min_x = cx;
-                    //min_y = cy;
-                    //min_z = cz+(i*j);
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-                //if (!isSolid(_get(cx, cy, cz+(i*j)))) {
-                    //min_x = cx;
-                    //min_y = cy;
-                    //min_z = cz+(i*j);
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-
-                //if (!isSolid(_get(cx, cy+(i*j), cz))) {
-                    //min_x = cx;
-                    //min_y = cy+(i*j);
-                    //min_z = cz;
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-                //if (!isSolid(_get(cx, cy+(i*j), cz))) {
-                    //min_x = cx;
-                    //min_y = cy+(i*j);
-                    //min_z = cz;
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-
-                //if (!isSolid(_get(cx+(i*j), cy, cz))) {
-                    //min_x = cx+(i*j);
-                    //min_y = cy;
-                    //min_z = cz;
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-                //if (!isSolid(_get(cx+(i*j), cy, cz))) {
-                    //min_x = cx+(i*j);
-                    //min_y = cy;
-                    //min_z = cz;
-                    //if (point_in_map(min_x, min_y, min_z) && !collision_check2(box.box_r, height, as.x,as.y,as.z))
-                        //break;
-                //}
-            //}
-        //}
-
-        //as.x = min_x;
-        //as.y = min_y;
-        //if (point_in_map(min_x, min_y, min_z))
-            //as.z = min_z;
-        //else
-            //as.z += 0.02f; // nudge, nearest open block lookup failed
-        //if(as.vz < 0.0f) as.vz = 0.0f;
-        //return as;
-    //}
 
     /*
         Collision Order: as.x,as.y,as.z
@@ -871,43 +337,13 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.z = new_z;
     as.jump_pow = new_jump_pow;
 
-    // allow jumping if on ground
-    
-    //bool is_on_ground = on_solid_ground(box.box_r, as.x, as.y, as.z);
-
-    /*
-    if (! is_on_ground) {
-        as.jump_ready = false;
-    } else {
-        as.jump_ready = true;
-    }
-
-    // or under the floor
-    if (as.z < 0.0f) {
-        as.jump_ready = true;
-    }
-    */
-
     as.theta = _cs.theta;
     as.phi = _cs.phi;
 
     return as;
 }
 
-    /*
-        int id;
-        int seq;
-        int tick;
-
-        float x;
-        float y;
-        float z;
-        float vx,vy,vz;
-        float theta, phi;
-    */
-
 void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-    //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
     int index = _seq%128;
 
     cs[index].seq = _seq;
@@ -915,9 +351,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
     cs[index].theta = _theta;
     cs[index].phi = _phi;
 
-    //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
-
-    _tick();
+    tick();
 
     #ifdef DC_SERVER
     if(_seq != cs_seq) {
@@ -994,8 +428,6 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     }
                 
     state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
-    //cs_window_min = seq;
-    //printf("handle_state_snapshot: seq= %i, cs_seq= %i \n", seq, cs_seq);
     cs_seq = seq;
 
     s = state_snapshot;
@@ -1004,9 +436,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     AgentDraw::add_snapshot_to_history(this);
     #endif
 
-    //if (tick_mode == use_jetpack) _tick_jetpack();
-    //else if (tick_mode == use_jump) _tick_jump();
-    _tick();
+    tick();
 }
 
 void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz) {
@@ -1175,7 +605,6 @@ Agent_state::~Agent_state() {
 void Agent_state::revert_to_snapshot() {
     s = state_snapshot;
     cs_seq = state_snapshot.seq;
-    //cs_window_min = state_snapshot.seq;
 }
 
 void Agent_state::revert_to_rollback() {
@@ -1184,7 +613,10 @@ void Agent_state::revert_to_rollback() {
 }
 
 float Agent_state::camera_height() {
-    return box.b_height * CAMERA_HEIGHT_SCALE;
+    float height = box.b_height;
+    if (this->crouched)
+        height = box.c_height;
+    return height * CAMERA_HEIGHT_SCALE;
 }
 
 /* Agent list */
