@@ -80,20 +80,6 @@ void AgentState::forward_vector(float f[3]) {
     f[2] /= len;
 }
 
-
-
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
-
-    /*
-        Collision check may be sped up by caching locally
-        May be sped up further by only updating when agent changes cells or terrain changes
-    */
-
-static inline int _collision_check(int x, int y, int z) {
-    return isActive(_get(x,y,z));
-}
-
 bool Agent_state::is_you() {
     bool is = false;
     #ifdef DC_CLIENT

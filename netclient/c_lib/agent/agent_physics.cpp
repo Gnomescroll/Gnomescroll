@@ -1,9 +1,10 @@
 #include "agent_physics.hpp"
 
-
+#include <t_map/t_map.hpp>
+#include <t_map/t_properties.h>
 #include <math.h>
-// assume box_r < 1
 
+// assume box_r < 1
 inline void collision_check1(float box_r, float box_h, float x, float y, float z, int collision[6])
 {
     //north +x
@@ -453,6 +454,11 @@ inline bool collision_check6(float box_r, float box_h, float x, float y, float z
 
     }
     return false;
+}
+
+inline int _collision_check(int x, int y, int z)
+{
+    return isActive(_get(x,y,z));
 }
 
 
