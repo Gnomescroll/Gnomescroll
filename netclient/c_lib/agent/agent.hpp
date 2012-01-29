@@ -64,10 +64,6 @@ class Agent_state {
         struct Agent_control_state cs[128];
 
         int snapshot_seq;
-        //int rollback_seq;
-
-        //int cs_window_min;
-        //int cs_window_max;
 
         int cs_seq; // <--current counter
 
@@ -114,11 +110,6 @@ class Agent_state {
 
         void revert_to_snapshot();
         void revert_to_rollback();
-
-        //deprecate
-        int tick_n; //increment when ticking
-        //deprecate
-        int ctick;  //increment when control state received
 
         //int last_direction_change;
         int last_control_state_update_message;  //acts like ghost for now

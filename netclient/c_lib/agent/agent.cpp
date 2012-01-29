@@ -523,9 +523,6 @@ crouched(false)
 
     _new_control_state = 0;
     
-    tick_n = 0; //increment when ticking
-    ctick = 0;  //increment when control state received
-
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);
@@ -567,9 +564,6 @@ crouched(false)
 
     _new_control_state = 0;
     
-    tick_n = 0; //increment when ticking
-    ctick = 0;  //increment when control state received
-
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);

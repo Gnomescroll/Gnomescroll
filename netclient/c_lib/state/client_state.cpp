@@ -53,8 +53,6 @@ namespace ClientState {
                 int id;
                 int seq;
                 uint32_t cs;
-                int tick;
-                int ctick;
                 float theta;
                 float phi;
         */
