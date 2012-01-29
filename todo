@@ -64,14 +64,11 @@ Crouching
 Jumping on ground
 camera heights
 fix agent kill scorekeeping bug
-
+Team name and colors in hud fixed
 
 =============
 
-Team colors in hud are fucked up
-Agent kills not being reported properly (deaths fine)
 Right click should only block select when block selector is active
-
 
 Spawners
 Turrets

@@ -187,7 +187,8 @@ class Mouse(object):
                 if button == 1:
                     GameStateGlobal.agent.fire()
                 elif button == 3: #right click
-                    GameStateGlobal.agent.set_active_block()
+                    if GameStateGlobal.agent.active_weapon == 2: # block applier
+                        GameStateGlobal.agent.set_active_block()
                 elif button == 4: #scroll up
                     direction = 'up'
                     GameStateGlobal.agent.switch_weapons(direction)

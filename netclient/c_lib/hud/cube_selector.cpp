@@ -38,8 +38,6 @@ int get_active_cube_pos(){ //get the position of cube selected by hud
 void set_active_cube_pos(int pos) {
     cube_select_x = pos % 8;
     cube_select_y = pos / 8;
-
-    printf("hud: block_id=%i, hud_tex=%i, hud_pos=  %i,  (%i,%i)\n", cube_select_array[pos].cube_id, cube_select_array[pos].tex_id, pos, cube_select_x, cube_select_y);
 }
 
 void set_active_cube_id(int id) {
