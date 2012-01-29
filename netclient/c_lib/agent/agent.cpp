@@ -566,36 +566,28 @@ inline bool can_stand_up(float box_r, float x, float y, float z, float current_h
     return yes;
 }
 
-void Agent_state::_tick() 
+void Agent_state::tick() 
 {
-    //printf("Agent_state._tick: processing cs_seq= %i, index== %i \n",cs_seq, index);
-
     int _tc =0;
-    //int index = (cs_seq+1) % 128;
-
     struct Agent_control_state _cs;
 
     while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
 
-        //int index = (cs_seq+1) % 128;
         cs_seq = (cs_seq+1)%256;
         _cs = cs[cs_seq % 128];
 
-        s = _agent_tick(_cs, box, s);
-    //s.tick(_cs, box);
-
+        s = _agent_tick(_cs, box, s, this);
         _tc++;
     }
 
     #ifdef DC_SERVER
     status.respawn();
     #endif
-
 }
 
 
 //takes an agent state and control state and returns new agent state
-class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
+class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a)
 //void AgentState::tick(const struct Agent_control_state _cs, const struct Agent_collision_box box)
  {
 
@@ -616,7 +608,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool right       = a_cs & 8? 1 :0;
     bool jetpack     = a_cs & 16? 1 :0;
     bool jump        = a_cs & 32? 1 :0;
-    //bool crouch      = a_cs & 64? 1 :0;
+    bool crouch      = a_cs & 64? 1 :0;
     //implemented, but unused
     /*
     bool boost       = a_cs & 128? 1 :0;
@@ -636,40 +628,39 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     float fl_z = as.z - floor(as.z);
 */
 
+    //// uncrouch attempt
+    //if (a->crouched && !crouch)
+    //{
+        //if (collision_check5(box.box_r, box.b_height, as.x,as.y,as.z))
+        //{
+            //// cant stand up
+            //crouch = 1;
+        //}
+    //}
+    //a_new->crouched = (bool)crouch;
+
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
     float xy_speed;
     xy_speed = 2.0f / tr;
-    //if (crouched)
-    //{
-        //xy_speed = 0.7 / tr;
-    //}
+    if (crouch)
+    {
+        xy_speed = 0.7 / tr;
+    }
     
     //const float z_gravity = -2.0f / tr2;
     const float z_gravity = -3.0f / tr2;
     //const float z_jetpack = (0.5f / tr2) - z_gravity;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
-    //const float jump_boost = 0.25f;
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
 
-    //const float ground_distance = 0.02;   // unused
-    //const float z_bounce = 0.20f;
     const float z_bounce = 0.10f;
     const float z_bounce_v_threshold = 1.5f / tr;
 
     const float pi = 3.14159265f;
-
-    //int collision[6];
-    //north +as.x
-    //south -as.x
-    //west +as.y
-    //east -as.y
-    //top +as.z
-    //bottom -as.z
-    //collision_check1(box.box_r, box.b_height, as.x,as.y,as.z, collision);
 
     float cs_vx = 0;
     float cs_vy = 0;
@@ -709,10 +700,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz += z_jetpack;
     }
 
-    //if (jump) {
-        //as.vz += jump_boost;
-    //}
-    
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
@@ -727,8 +714,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
-
-    //using function pointer may throw off 
 
     /*
         Warning: using function pointer may throw off brach prediction and hurt performance, look this up
@@ -747,8 +732,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         collision_check = &collision_check2;
     }
 */
-    float height;
-    height = box.b_height;
+    float height = box.b_height;
+    if (crouch)
+    {
+        height = box.c_height;
+    }
 
     ////collision
     bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
@@ -917,7 +905,7 @@ void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _p
 
     //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
 
-    _tick();
+    tick();
 
     #ifdef DC_SERVER
     if(_seq != cs_seq) {
@@ -1004,9 +992,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     AgentDraw::add_snapshot_to_history(this);
     #endif
 
-    //if (tick_mode == use_jetpack) _tick_jetpack();
-    //else if (tick_mode == use_jump) _tick_jump();
-    _tick();
+    tick();
 }
 
 void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz) {
