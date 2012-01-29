@@ -132,10 +132,11 @@ void PlayerAgent_action::hitscan() {
 
     // play laser anim
     const float hitscan_speed = 120.0f;
-    ClientState::hitscan_effect_list.create(
+    Animations::HitscanEffect* he = ClientState::hitscan_effect_list.create(
         x,y,z,
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
     );
+    he->add_plane_bias();
 
 }
 

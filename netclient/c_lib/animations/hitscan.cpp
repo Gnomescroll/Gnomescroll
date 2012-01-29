@@ -34,9 +34,7 @@ HitscanEffect::HitscanEffect(float x, float y, float z, float vx, float vy, floa
 x(x), y(y), z(z),
 vx(vx), vy(vy), vz(vz),
 ttl(hitscan_laser_ttl)
-{
-    this->add_xz_plane_bias();
-}
+{}
 
 HitscanEffect::HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz)
 :
@@ -44,12 +42,12 @@ id(id),
 x(x), y(y), z(z),
 vx(vx), vy(vy), vz(vz),
 ttl(hitscan_laser_ttl)
-{
-    this->add_xz_plane_bias();
-}
+{}
 
-void HitscanEffect::add_xz_plane_bias()
+void HitscanEffect::add_plane_bias()
 {
+
+    // biases the laser effect in a circle oriented along the normal plane
 
     // take cross product of up and look vectors
     // assume vx,vy,vz to be the look vector
