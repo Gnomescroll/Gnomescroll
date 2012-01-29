@@ -61,7 +61,13 @@ void HitscanLaserEffect::draw1(float delta, Vector* camera)
     struct Vector r = Vector_init(f-fx, y-fy, z-fz);
 
     normalize_vector( &r );
-    
+/*
+    float ratio = ((float) (hitscan_lader_ttl - ttl))/15.0;
+    if(ratio > 1.0) ratio = 1.0;
+    float _x = x + (fx-x)*ratio;
+    float _y = y + (fy-y)*ratio;
+    float _z = z + (fz-z)*ratio;
+*/
     struct Vector x1 = Vector_init(x,y,z);
     struct Vector l1 = sub_vec(&x1, camera);
 
