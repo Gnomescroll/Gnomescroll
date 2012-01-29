@@ -44,9 +44,10 @@ vx(vx), vy(vy), vz(vz),
 ttl(hitscan_laser_ttl)
 {}
 
+// DO NOT USE:: TESTING PURPOSES ONLY
 void HitscanEffect::add_plane_bias()
 {
-
+    return;
     // biases the laser effect in a circle oriented along the normal plane
 
     // take cross product of up and look vectors

@@ -8,6 +8,8 @@ namespace Animations
 class HitscanEffect
 {
     private:
+    // DO NOT USE:: TESTING PURPOSES ONLY
+    void add_plane_bias();   // for player agent, so laser isnt in the eyes
     
     public:
     int id;
@@ -17,8 +19,6 @@ class HitscanEffect
 
     inline void draw(float delta, Vector* camera) __attribute((always_inline));
     void tick();
-
-    void add_plane_bias();   // for player agent, so laser isnt in the eyes
 
     HitscanEffect(int id);
     HitscanEffect(float x, float y, float z, float vx, float vy, float vz);
