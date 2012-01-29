@@ -226,11 +226,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 }
 
 float PlayerAgent_state::camera_height() {
-    
-    //Agent_state has not crouching parameter!!! Crouching must be in player agent
-    //if (active_camera_state->crouching) {
-    //    return box.c_height * camera_height_scale;
-    //}
     if (you == NULL) return 0.0f;
     return you->camera_height();
 }

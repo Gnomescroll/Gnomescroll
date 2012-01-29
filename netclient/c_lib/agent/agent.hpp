@@ -136,9 +136,6 @@ class Agent_state {
         Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);
 
         ~Agent_state();
-
-        //void server_tick();
-        //set_control_state(int[8] _cs, float theta, float phi);
 };
 
 class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a);
@@ -148,10 +145,10 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
         const char* name() { return "Agent"; }
-        
+
+        // quicksort helpers
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
-
         void swap_agent_state(Agent_state **a, Agent_state **b);
         void swap_float(float *a, float *b);
         
