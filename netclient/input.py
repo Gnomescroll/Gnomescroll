@@ -106,7 +106,6 @@ class InputGlobal:
     voxel_aligner = None
     use_voxel_aligner = False
     inventory = False
-    agent_can_jump = True
     vn = False
 
     #hk = False
@@ -344,13 +343,12 @@ class Keyboard(object):
             boost = 1
         if 'z' in keyboard:
             jet = 1
-        if 'SPACE' in keyboard and InputGlobal.agentInput.can_jump:
+        if 'SPACE' in keyboard:
             jump = 1
-            InputGlobal.agentInput.toggle_jump_state(None)
         if 'LCTRL' in keyboard:
             crouch = 1
         #misc1=misc2=misc3=boost=0
-
+        print crouch
         button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
         GameStateGlobal.agent.button_state = button_state
 
@@ -380,8 +378,6 @@ def requireAgent(f):
 
 class AgentInput:
 
-    can_jump = True
-
     def __init__(self):
         self.key_press_handlers = {}
         self.key_release_handlers = {}
@@ -405,11 +401,9 @@ class AgentInput:
             'up':self.adjust_block,
             'down':self.adjust_block,
             'b'   : self.bleed,
-            #'space': self.toggle_jump_state    # toggle on in the agent button state handler
         }
 
         self.key_release_handlers = {
-            'space': self.toggle_jump_state
         }
 
     def on_key_press(self, symbol, modifiers=None):
@@ -449,9 +443,6 @@ class AgentInput:
             InputGlobal.cube_selector.up()
         elif symbol == 'down':
             InputGlobal.cube_selector.down()
-
-    def toggle_jump_state(self, symbol):
-        self.can_jump = not self.can_jump
 
 
 class CubeSelector(object):

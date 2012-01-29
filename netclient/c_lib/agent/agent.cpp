@@ -1076,8 +1076,9 @@ Agent_state::Agent_state(int id)
 :
 id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-, event(this)
+, event(this),
 #endif
+crouched(false)
 {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);
@@ -1120,8 +1121,9 @@ Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, 
 :
 id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-, event(this)
+, event(this),
 #endif
+crouched(false)
 {
     set_state(x, y, z, vx, vy, vz);
     set_angles(0.5f, 0.0f);
