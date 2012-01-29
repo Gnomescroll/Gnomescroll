@@ -12,6 +12,8 @@
 namespace Animations
 {
 
+const int hitscan_laser_ttl = 60;
+
 static int hitscan_texture_id;
 
 void init_hitscan()
@@ -24,30 +26,50 @@ void init_hitscan()
 HitscanEffect::HitscanEffect(int id)
 :
 id(id),
-ttl(60)
+ttl(hitscan_laser_ttl)
 {}
 
 HitscanEffect::HitscanEffect(float x, float y, float z, float vx, float vy, float vz)
 :
 x(x), y(y), z(z),
 vx(vx), vy(vy), vz(vz),
-ttl(60)
-{}
+ttl(hitscan_laser_ttl)
+{
+    this->add_xz_plane_bias();
+}
 
 HitscanEffect::HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id),
 x(x), y(y), z(z),
 vx(vx), vy(vy), vz(vz),
-ttl(60)
-{}
+ttl(hitscan_laser_ttl)
+{
+    this->add_xz_plane_bias();
+}
 
+void HitscanEffect::add_xz_plane_bias()
+{
+    float negx = (rand()%2 == 0) ? -1 : 1;
+    float negz = (rand()%2 == 0) ? -1 : 1;
+
+    const float floor_ = 0.15;
+    const float ceil_ = 0.15;
+
+    float dx = (randf() * (ceil_ - floor_)) + floor_;
+    float dz = (randf() * (ceil_ - floor_)) + floor_;
+    
+    this->x += dx * negx;
+    this->z += dz * negz;
+}
 
 void HitscanEffect::tick()
 {
-    x += vx /30.0;
-    y += vy /30.0;
-    z += vz /30.0;    
+    const float tick_rate = 30.0f;
+    
+    x += vx / tick_rate;
+    y += vy / tick_rate;
+    z += vz / tick_rate;    
 
     //check for collision with terrain/players
     //play animations for terrain/player collision
@@ -129,18 +151,23 @@ void HitscanEffect_list::draw()
 {
     //printf("draw \n");
 
+    const float tick_rate = 30.0f;
+
     int last_tick = _LAST_TICK();
     int _t = _GET_MS_TIME();
     //printf("ms since last update= %i \n", _t - last_tick);
-    float delta = ((float)(_t - last_tick)) / 33.3f;
+    float delta = ((float)(_t - last_tick)) / (100.0f*(1.0f / tick_rate));
     if(delta > 1.0f)
     {
         delta = 1.0f;
     }
-    delta /= 30.0f;
+    delta /= tick_rate;
     //printf("delta= %f \n", delta);
 
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+    struct CCamera* c = current_camera;
+        printf("HitscanEffect_list::draw() -- current_camera is NULL\n");
+        return;
 
     glColor3ub(255,255,255);
 

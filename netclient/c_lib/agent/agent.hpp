@@ -173,3 +173,5 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int get_ids(int* p);
         int get_ids();
 };
+
+bool agent_collides_terrain(Agent_state* a);

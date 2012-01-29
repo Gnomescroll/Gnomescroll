@@ -7,6 +7,9 @@ namespace Animations
 
 class HitscanEffect
 {
+    private:
+    void add_xz_plane_bias();
+    
     public:
     int id;
     float x,y,z;

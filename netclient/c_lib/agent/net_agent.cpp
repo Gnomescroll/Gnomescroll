@@ -359,21 +359,32 @@ inline void agent_block_CtoS::handle() {
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
 
+    // check this player first, most likely to be colliding
     bool collides = false;
-    for (int i=0; i<ServerState::agent_list.n_max; i++)
+    _set(x,y,z, val); // set temporarily to test against
+    if (agent_collides_terrain(a))
     {
-        Agent_state* agent = ServerState::agent_list.a[i];
-        if (agent == NULL) continue;
-        if (cube_intersects(
-            agent->s.x, agent->s.y, agent->s.z,
-            0.3, 0.3, agent->box.b_height,
-            x,y,z,
-            1, 1, 1))
+        collides = true;
+    }
+    else
+    {
+        for (int i=0; i<ServerState::agent_list.n_max; i++)
         {
-            collides = true;
-            break;
+            Agent_state* agent = ServerState::agent_list.a[i];
+            if (agent == NULL || agent == a) continue;
+            //if (cube_intersects(
+                //agent->s.x, agent->s.y, agent->s.z,
+                //0.3, 0.3, agent->box.b_height,
+                //x,y,z,
+                //1, 1, 1))
+            if (agent_collides_terrain(agent))
+            {
+                collides = true;
+                break;
+            }
         }
     }
+    _set(x,y,z,0);  // unset
 
     if (!collides)
         _set_broadcast(x,y,z, val);    
