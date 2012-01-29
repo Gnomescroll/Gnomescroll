@@ -21,5 +21,7 @@ class PlayerAgent_action {
         void reload();
         int select_block();
 
+        void place_spawner();
+
         PlayerAgent_action(PlayerAgent_state* player_agent);
 };

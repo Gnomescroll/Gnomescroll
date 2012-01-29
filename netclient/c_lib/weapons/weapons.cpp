@@ -220,4 +220,26 @@ Weapon(TYPE_grenade_thrower)
     this->ammo = 9999;
 }
 
+/* SpawnerPlacer (TEMPORARY) */
+
+bool SpawnerPlacer::fire()
+{
+    return true;
+}
+
+char* SpawnerPlacer::hud_display()
+{
+    sprintf(hud_string, hud_display_format_string, hud_undefined_string, hud_undefined_string, hud_undefined_string, hud_undefined_string);
+    return hud_string;
+}
+
+SpawnerPlacer::SpawnerPlacer()
+:
+Weapon(TYPE_spawner_placer)
+{
+    this->max_ammo = 9999;
+    this->ammo = 9999;
+}
+
+
 }

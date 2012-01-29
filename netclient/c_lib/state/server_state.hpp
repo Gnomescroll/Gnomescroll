@@ -6,6 +6,7 @@
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
+#include <c_lib/items/spawner.hpp>
 
 namespace ServerState {
 
@@ -15,6 +16,7 @@ namespace ServerState {
     extern Neutron_list neutron_list;
     extern Monsters::Slime_list slime_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
+    extern Spawner_list spawner_list;
     
     extern CTF ctf;
     

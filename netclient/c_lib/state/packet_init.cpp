@@ -11,6 +11,7 @@
 
 #include <c_lib/t_map/t_map_net.hpp>
 
+#include <c_lib/items/items.hpp>
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
@@ -67,6 +68,10 @@ void RegisterMessages() {
     hitscan_agent_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
     hitscan_slime_CtoS::register_server_packet();
+    hitscan_none_CtoS::register_server_packet();
+
+    // agent item actions
+    place_spawner_CtoS::register_server_packet();
 
     // game/teams stuff
     TeamColor_StoC::register_client_packet();
@@ -83,6 +88,9 @@ void RegisterMessages() {
     AgentDropFlag_StoC::register_client_packet();
     AgentScoreFlag_StoC::register_client_packet();
 
+    Spawner_create_StoC::register_client_packet();
+    Spawner_destroy_StoC::register_client_packet();
+    
     PlayerAgent_id_StoC::register_client_packet();
 
     ThrowGrenade_CtoS::register_server_packet();

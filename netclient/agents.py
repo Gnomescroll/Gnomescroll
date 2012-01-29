@@ -139,7 +139,7 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
         cHUD.Equipment.set_equipment_icon(1, 1) # pick
         cHUD.Equipment.set_equipment_icon(2, 2) # block applier
         cHUD.Equipment.set_equipment_icon(3, 4) # grenades
-
+        cHUD.Equipment.set_equipment_icon(4, 5) # spawner
 
 # datastore for agents
 class AgentList(GenericObjectListWrapper):

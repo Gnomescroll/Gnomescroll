@@ -169,7 +169,6 @@ class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
             pack_u8(&id, buff, buff_n, pack);
             pack_u16(&dmg, buff, buff_n, pack);
         }
-
         inline void handle();
 };
 
@@ -261,6 +260,16 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
             pack_u16(&z, buff, buff_n, pack);
         }
 
+        inline void handle();
+};
+
+// hitscan: target = none
+// server will convert this to a fire packet for clients
+class hitscan_none_CtoS: public FixedSizeNetPacketToServer<hitscan_none_CtoS>
+{
+    public:
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {}
         inline void handle();
 };
 
@@ -477,3 +486,52 @@ class agent_block_CtoS: public FixedSizeNetPacketToServer<agent_block_CtoS>
         }
         inline void handle();
 };
+
+class place_spawner_CtoS: public FixedSizeNetPacketToServer<place_spawner_CtoS> // reliable?
+{
+    public:
+        int x,y,z;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&x, buff, buff_n, pack);
+            pack_u8(&y, buff, buff_n, pack);
+            pack_u8(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
+/****************/
+class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
+{
+    public:
+        int id;
+        int team;
+        int owner;
+        float x,y,z;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&team, buff, buff_n, pack);
+            pack_u8(&owner, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_destroy_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+

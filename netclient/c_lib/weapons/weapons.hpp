@@ -6,7 +6,8 @@ typedef enum {
     TYPE_block_pick,
     TYPE_hitscan_laser,
     TYPE_block_applier,
-    TYPE_grenade_thrower
+    TYPE_grenade_thrower,
+    TYPE_spawner_placer
 } weapon_type;
 
 class Weapon {
@@ -73,5 +74,14 @@ class GrenadeThrower: public Weapon {
         GrenadeThrower();
 };
 
+
+class SpawnerPlacer: public Weapon
+{
+    public:
+        bool fire();
+
+        char* hud_display();
+        SpawnerPlacer();
+};
 
 }

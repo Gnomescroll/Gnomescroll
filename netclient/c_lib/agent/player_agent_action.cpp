@@ -3,7 +3,7 @@
 #include <c_lib/ray_trace/hitscan.hpp>
 #include <c_lib/animations/hitscan.hpp>
 #include <common/enum_types.hpp>
-
+#include <c_lib/agent/net_agent.hpp>
 #include <c_lib/t_map/t_map_net.hpp>
 
 void PlayerAgent_action::fire() {
@@ -23,6 +23,9 @@ void PlayerAgent_action::fire() {
             break;
         case Weapons::TYPE_grenade_thrower:
             throw_grenade();
+            break;
+        case Weapons::TYPE_spawner_placer:
+            place_spawner();
             break;
         default:
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
@@ -111,6 +114,7 @@ void PlayerAgent_action::hitscan() {
     hitscan_agent_CtoS agent_msg;
     hitscan_slime_CtoS monster_msg;
     hitscan_block_CtoS block_msg;
+    hitscan_none_CtoS none_msg;
 
     //normalize_vector(vec);
 
@@ -162,6 +166,7 @@ void PlayerAgent_action::hitscan() {
             
         case TARGET_NONE:
             // for no target, leave translated animation origin
+            none_msg.send();    // server will know to forward a fire weapon packet
             break;
         default:
             break;
@@ -261,6 +266,32 @@ void PlayerAgent_action::switch_weapon(int i) {
     } else {
         p->you->weapons.set_active(i);
     }
+}
+
+void PlayerAgent_action::place_spawner()
+{
+    if (this->p->you == NULL) return;
+    
+    AgentState* state = &this->p->s1;
+    float v[3];
+    state->forward_vector(v);
+
+    int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
+    const float max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* block = _farthest_empty_block(
+        state->x, state->y, state->z + this->p->you->camera_height(),
+        v[0], v[1], v[2],
+        max_dist, z_low, z_high
+    );
+    if (block == NULL) return;
+    
+    place_spawner_CtoS msg;
+    msg.x = block[0];
+    msg.y = block[1];
+    msg.z = block[2];
+    msg.send();
 }
 
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)

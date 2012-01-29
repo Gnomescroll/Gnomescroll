@@ -18,6 +18,7 @@ class Agent_weapons {
         Weapons::BlockPick pick;
         Weapons::BlockApplier blocks;
         Weapons::GrenadeThrower grenades;
+        Weapons::SpawnerPlacer spawner;
 
         void set_clip(int type, int clip);
         void set_ammo(int type, int ammo);

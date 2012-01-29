@@ -164,10 +164,12 @@ inline void hit_block_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_slime_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
+inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void AgentActiveWeapon_CtoS::handle() {}
 inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_block_CtoS::handle() {}
+inline void place_spawner_CtoS::handle(){}
 #endif
 
 
@@ -309,6 +311,18 @@ inline void hitscan_block_CtoS::handle() {
     // TODO: Use weapon block dmg
 }
 
+inline void hitscan_none_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+
+    if (!a->weapons.laser.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.laser.type;
+    msg.broadcast();
+}
+
 inline void ThrowGrenade_CtoS::handle() {
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
@@ -390,5 +404,40 @@ inline void agent_block_CtoS::handle() {
         _set_broadcast(x,y,z, val);    
 }
 
+inline void place_spawner_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+    if (a->status.team == 0) return;
+    
+    // check for points etc
 
+    Spawner* s = ServerState::spawner_list.create(x,y,z);
+    s->set_team(a->status.team);
+    s->set_owner(a->id);
+    s->init_vox();
+    Spawner_create_StoC msg;
+    s->create_message(&msg);
+    msg.broadcast();
+}
+#endif
+
+/***************************/
+#ifdef DC_CLIENT
+inline void Spawner_create_StoC::handle()
+{
+    Spawner* s = ClientState::spawner_list.create(id, x,y,z);
+    s->set_team(team);
+    s->set_owner(owner);
+    s->init_vox();
+}
+inline void Spawner_destroy_StoC::handle()
+{
+    ClientState::spawner_list.destroy(id);
+}
+#endif
+
+#ifdef DC_SERVER
+inline void Spawner_create_StoC::handle() {}
+inline void Spawner_destroy_StoC::handle() {}
 #endif

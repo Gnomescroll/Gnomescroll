@@ -16,12 +16,12 @@ namespace ServerState {
     Neutron_list neutron_list;
     Monsters::Slime_list slime_list;
     Voxel_hitscan_list voxel_hitscan_list;
-    
+    Spawner_list spawner_list;
+
     CTF ctf;
 
     void init() {
         ctf.init();
-        //agent_list.create(0); //create agent 0
     }
 
 }

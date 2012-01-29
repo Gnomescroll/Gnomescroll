@@ -22,6 +22,7 @@ namespace ClientState {
     Voxel_render_list voxel_render_list;
     Voxel_hitscan_list voxel_hitscan_list;
     Monsters::Slime_list slime_list;
+    Spawner_list spawner_list;
 
     Animations::HitscanEffect_list hitscan_effect_list;
     Animations::HitscanLaserEffect_list hitscan_laser_effect_list;

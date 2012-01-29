@@ -28,6 +28,8 @@ class Object_list {
         Object_state* create();         //object auto id
 
         Object_state* create(int id);   //create object with id
+        Object_state* create(float x, float y, float z);
+        Object_state* create(int id, float x, float y, float z);
         Object_state* create(float x, float y, float z, float vx, float vy, float vz);
         Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
         Object_state* get_or_create(int id);
@@ -126,6 +128,35 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
         return a[id];
     } else {
         printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
+        return NULL;
+    }
+}
+
+template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z) {
+    int i;
+    int id;
+    for(i=0; i<n_max;i++) {
+        id = (i+id_c)%n_max;
+        if(a[id] == NULL) break;
+    }
+    a[id] = new Object_state(id, x,y,z);
+    num++;
+    id_c = id+1;
+    return a[id];
+}
+
+template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y, float z) {
+    if (a[id] == NULL)
+    {
+        a[id] = new Object_state(id, x,y,z);
+        num++;
+        return a[id];
+    }
+    else
+    {
+        printf("%s_list: Cannot create object from id. id %d is in use\n", name(), id);
         return NULL;
     }
 }

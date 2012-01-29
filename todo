@@ -67,13 +67,21 @@ fix agent kill scorekeeping bug
 Team name and colors in hud fixed
 Right click should only block select when block selector is active
 aligned skeleton
+update collision detection to handle jumping/jetpack into the ceiling
+Started spawners (creation, networking, weapon for placing them)
 
 =============
 
-
 Spawners
-Turrets
+-- TODO:
 
+
+
+Turrets
+Points allocation
+
+Investigate if object lists w/ auto id are creating 1 past end of the array
+Fix collision detection
 Client side jump physics (server is snapping)
 
 Every 13 connect or so, fails with "no agent". investigate
