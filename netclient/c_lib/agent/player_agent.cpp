@@ -160,8 +160,7 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
     cs_net[index].phi = _phi;
 
     //clear out old cs
-    int i;
-    for(i=32;i<64;i++){
+    for(int i=32;i<64;i++){
         index = (_seq + i)%128;
         cs_net[index].seq = -1;
     }

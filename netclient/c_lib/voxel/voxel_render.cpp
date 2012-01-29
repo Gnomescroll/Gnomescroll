@@ -242,9 +242,6 @@ void Voxel_render_list::draw()
     glUseProgramObjectARB(voxel_shader_prog);
 
     glColor3b(255,255,255);
-
-    //GLint shade_model = 0;
-    //glGetIntegerv(GL_SHADE_MODEL, &shade_model);
     
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
@@ -256,62 +253,25 @@ void Voxel_render_list::draw()
     glEnableClientState(GL_COLOR_ARRAY);
     
     glEnableVertexAttribArray(InNormal);
-    //glEnableVertexAttribArray(InSide);
     glEnableVertexAttribArray(InAO);
-    //glEnableClientState(GL_NORMAL_ARRAY);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
     
-    //printf("innormal = %i \n", InNormal);
     glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
-    //glVertexAttribPointer(InSide, 1, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
     glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
     //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
-
-    Voxel_volume* vv;
-
-    //vv->parent_world_matrix
-    //struct Vec4 v[4];
-
-    //struct Mat4 m;
-
-    ////still needed for some reason
-    ///*
-    //v[0].w = 0.0f;
-    //v[1].w = 0.0f;
-    //v[2].w = 0.0f;
-    //v[3].w = 1.0f;
-    //*/
-    //m.v[0].w = 0.0f;
-    //m.v[1].w = 0.0f;
-    //m.v[2].w = 0.0f;
-    //m.v[3].w = 1.0f;
-
-    //struct Mat4 r;
-
-    //struct Vec4 center;
 
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
-        vv = render_list[i];
+        Voxel_volume* vv = render_list[i];
 
         if(vv->vvl.vnum == 0) continue;
-        
-        //short entity_id;
-        //short entity_type;
-        //short part_id;
+    
 
         int debug = 0;
-        //if( vv->vhe.entity_type == OBJ_TYPE_AGENT ) debug = 1;
 
-        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 5 )
-        {
-            //*vv->parent_world_matrix = 
-            //mat4_euler_rotation_and_translation(0.0, -1.0, 5.0,  0.0, 0.0, 0.0);
-
-        }
         if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 2 )
         {
             //debug = 1;
@@ -320,9 +280,6 @@ void Voxel_render_list::draw()
         {
             //debug = 1;
         }
-
-        //r = mat4_mult(*vv->parent_world_matrix, vv->local_matrix);
-
 
         if(debug)
         { 
@@ -345,7 +302,6 @@ void Voxel_render_list::draw()
         }
 
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
-        //glUniformMatrix4fv(InRotationMatrix, 1, false, m._f );
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
     }
