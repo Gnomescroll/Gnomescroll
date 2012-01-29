@@ -160,6 +160,7 @@ class Text(object):
         self.text_len = len(text)
         self.x = x
         self.y = y
+        self.offset = y
         self.line_height = 18.
 
     def __setattr__(self, k, v):

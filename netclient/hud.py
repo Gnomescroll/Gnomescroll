@@ -124,12 +124,20 @@ class Hud(object):
             )
             i += 1
 
-        self.team_names = self.text(
-            text = '',
-            x = start_x,
-            offset = (self.win_height // 8),
-            color = (150, 150, 255, 255)
-        )
+        self.team_names = {
+            1 : self.text(
+                text = '',
+                x = start_x,
+                offset = (self.win_height // 8),
+                color = (150, 150, 255, 255)
+            ),
+            2 : self.text(
+                text = '',
+                x = start_x,
+                offset = (self.win_height // 8),
+                color = (150, 150, 255, 255)
+            )
+        }
 
     def _format_scoreboard_plain(self, stats):
         for prop in self._scoreboard_properties:
@@ -195,20 +203,20 @@ class Hud(object):
             if key == 'team': continue
             curr_sb = self.scoreboard[key]
             curr_sb.text = txt
-            #curr_sb.color = list(agent.team.color) + [255]
             curr_sb.draw()
 
         # draw team names
         line_height = 18.
-        team_txt = '\n' * 3
-        for index, team in stats_txt['team'].items():
-            team_txt += '\n' * (index + 1)
-            team_txt += team.name
-            team_txt += '    '
+        y_offset = line_height * 3
+        for i, (index, team) in enumerate(stats_txt['team'].items()):
+            y_offset += line_height * (index + 1 + i)
+            team_txt = team.name
+            team_txt += ' ' * 4
             team_txt += str(team.score)
-        self.team_names.text = team_txt
-        self.team_names.color = list(team.color) + [255]
-        self.team_names.draw()
+            self.team_names[team.id].y = self.team_names[team.id].offset - y_offset
+            self.team_names[team.id].text = team_txt
+            self.team_names[team.id].color = list(team.color) + [255]
+            self.team_names[team.id].draw()
 
     def _draw_line(self, x, y, x1, y1, color=None):
         if color is None:
