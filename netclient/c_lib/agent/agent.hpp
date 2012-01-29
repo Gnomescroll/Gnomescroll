@@ -94,6 +94,8 @@ class Agent_state {
         Agent_event event;
         #endif
 
+        bool crouched;  // find a better place later
+
         void _tick();
         //inline void __tick(); //does the actual work
 

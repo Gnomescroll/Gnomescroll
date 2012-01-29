@@ -1,28 +1,3 @@
-'''
-DEPRECATE
-'''
-cdef extern from "./agent/agent_draw.hpp" namespace "AgentDraw":
-    void draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle)
-    void draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height)
-    void draw_agent_cube_selection(int x, int y, int z, int r, int g, int b)
-    void draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b)
-
-def _draw_agent_aiming_direction(float x, float y, float z, float xangle, float yangle):
-    draw_agent_aiming_direction(x, y, z, xangle, yangle)
-
-def _draw_agent_bounding_box(float x, float y, float z, float radius, float head_height, float height):
-    draw_agent_bounding_box(x, y, z, radius, head_height, height)
-
-def _draw_agent_cube_selection(int x, int y, int z, int r, int g, int b):
-    draw_agent_cube_selection(x,y,z, r,g,b)
-
-def _draw_agent_cube_side_selection(int x, int y, int z, int cx, int cy, int cz, int r, int g, int b):
-    draw_agent_cube_side_selection( x,  y,  z,  cx,  cy,  cz,  r,  g,  b)
-
-
-'''
-DONT DEPRECATE BELOW
-'''
 cdef extern from "./physics/vector.hpp":
     cdef struct Vector:
         float x
@@ -67,15 +42,15 @@ cdef extern from "./agent/agent.hpp":
         float x,y,z
         float vx,vy,vz
         float camera_height
-        bool crouching
         bool jump_ready
  
     cdef cppclass Agent_state:
         int id
         AgentState s
-        Agent_collision_box box   #why does python need this?  This is not a PlayerAgent attribute, but from net agent...
+        Agent_collision_box box
         Agent_status status
         Agent_weapons weapons
+        bool crouched
 
 cdef extern from "./agent/agent.hpp":
     int AGENT_MAX
@@ -128,7 +103,7 @@ class AgentWrapper(object):
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        #'crouching',
+        'crouched',
         'health',
         'health_max',
         'dead',
@@ -187,8 +162,8 @@ class AgentWrapper(object):
         elif name == 'box_r':
             return a.box.box_r
 
-        #elif name == 'crouching':
-        #    return a.s.crouching
+        elif name == 'crouched':
+            return a.crouched
 
         elif name == 'health':
             return a.status.health
@@ -217,7 +192,6 @@ class AgentWrapper(object):
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
-
 
         
 '''
@@ -279,15 +253,6 @@ class PlayerAgentWrapper(object):
     def fire(self):
         playerAgent_state.action.fire()
 
-#    def hit_block(self):
-#        playerAgent_state.action.hit_block()
-
-#    def fire_hitscan(self):
-#        playerAgent_state.action.fire()
-
-#    def throw_grenade(self):
-#        playerAgent_state.action.throw_grenade()
-
     def update_sound(self):
         playerAgent_state.update_sound()
 
@@ -317,10 +282,9 @@ class PlayerAgentWrapper(object):
         if a == NULL:
             return False
         return a.weapons.can_zoom()
-        
- 
+
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
-    set_control_state(f,b,l,r,jet,jump,crouch, boost, misc1, misc2, misc3, theta,phi)
+    set_control_state(f, b, l, r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
 def get_player_agent_id():
     return playerAgent_state.agent_id
