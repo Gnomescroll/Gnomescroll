@@ -189,12 +189,16 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float tr2 = tr*tr;
 
     float xy_speed;
+    float height;
     xy_speed = 2.0f / tr;
+    height = box.b_height;
     if (crouch)
     {
         xy_speed = 0.7 / tr;
+        height = box.c_height;
     }
-    
+
+
     const float z_gravity = -3.0f / tr2;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
@@ -258,12 +262,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
-
-    float height = box.b_height;
-    if (crouch)
-    {
-        height = box.c_height;
-    }
 
     //collision
     bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
@@ -604,10 +602,15 @@ void Agent_state::print_cs()
     printf("boost=%d\n", boost);
     printf("misc123= %d%d%d\n", misc1, misc2, misc3);
 }
+
+Agent_control_state Agent_state::get_current_control_state()
+{
+    return this->cs[(this->cs_seq-1)%128];
+}
+
 int Agent_state::crouched()
 {
-    this->print_cs();
-    return this->cs[cs_seq].cs & 64;
+    return this->get_current_control_state().cs & 64;
 }
 
 float Agent_state::camera_height() {
