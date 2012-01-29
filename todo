@@ -68,8 +68,9 @@ camera heights
 
 Team colors in hud are fucked up
 Agent kills not being reported properly (deaths fine)
-Dont penalize for deaths
+Fix hitscan properties
 Right click should only block select when block selector is active
+
 
 Spawners
 Turrets

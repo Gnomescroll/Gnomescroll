@@ -78,12 +78,9 @@ int Agent_status::apply_damage(int dmg) {
 }
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type) {
-    printf("dmg=%d\n", dmg);
     // dont allow team kills
     if (inflictor_type == OBJ_TYPE_AGENT && inflictor_id != this->a->id)
     {
-        printf("Agent doing damage\n");
-        printf("Agent=%d you=%d\n", inflictor_id, this->a->id);
         Agent_state *inf = STATE::agent_list.get(inflictor_id);
         if (inf == NULL) return this->health;
         if (inf->status.team == this->team && (!team_kills)) return this->health;
@@ -112,7 +109,8 @@ int Agent_status::die() {
 }
 
 int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
-    int killed = die();
+    printf("inflictor_id=%d, type=%d\n", inflictor_id, inflictor_type);
+    int killed = this->die();
     Agent_state* agent;
     if (killed) {
         switch (inflictor_type) {
@@ -143,16 +141,17 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
 }
 
 void Agent_status::kill(int victim_id) {
-    if (victim_id == a->id) {
+    if (victim_id == this->a->id) {
+        printf("SUICIDE\n");
         suicides++;
         AgentSuicides_StoC as;
-        as.id = a->id;
+        as.id = this->a->id;
         as.suicides = suicides;
         as.broadcast();
     } else {
         kills++;
         AgentKills_StoC ak;
-        ak.id = a->id;
+        ak.id = this->a->id;
         ak.kills = kills;
         ak.broadcast();
     }
