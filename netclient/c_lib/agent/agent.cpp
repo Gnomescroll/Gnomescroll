@@ -205,8 +205,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
 
-    const float z_bounce = 0.10f;
-    const float z_bounce_v_threshold = 1.5f / tr;
+    //const float z_bounce = 0.10f;
+    //const float z_bounce_v_threshold = 1.5f / tr;
 
     const float pi = 3.14159265f;
 
@@ -293,16 +293,19 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool collision_z = collision_check5(box.box_r, height, new_x,new_y,new_z);
     if(collision_z) {
 
-        if(as.vz < -z_bounce_v_threshold)
-        {
-            as.vz *= -1.0f *z_bounce;
-        }
-        else
-        {
-            as.vz = 0.0f;
-        }
+        //if(as.vz < -z_bounce_v_threshold)
+        //{
+            //as.vz *= -1.0f *z_bounce;
+        //}
+        //else
+        //{
+            //as.vz = 0.0f;
+        //}
 
-        new_z = as.z + as.vz;
+        //new_z = as.z + as.vz;
+        
+        as.vz = 0.0f;
+        new_z = as.z;
     }       
 
     as.x = new_x;
