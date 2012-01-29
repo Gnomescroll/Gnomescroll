@@ -153,49 +153,6 @@ inline bool collision_check2(float box_r, float box_h, float x, float y, float z
     return false;
 }
 
-inline bool collision_check5(float box_r, float box_h, float x, float y, float z)
-{
-    int x_min = x - box_r;
-    int x_max = x + box_r;
-
-    int y_min = y - box_r;
-    int y_max = y + box_r;
-
-    int n_z = (int)ceil(box_h);
-
-    for (int i=0; i<n_z; i++)
-    {
-        int zz = (int)z + i;
-        if (i == n_z-1) zz = z + box_h;
-
-        if(isActive(_get(x_max,y_max,zz) != 0))
-        {
-            //north, west
-            return true;
-        }
-
-        if(isActive(_get(x_max,y_min,zz) != 0))
-        {
-            //north, east
-            return true;
-        }
-
-        if(isActive(_get(x_min,y_min,zz) != 0))
-        {
-            //south, east
-            return true;
-        }
-
-        if(isActive(_get(x_min,y_max,zz) != 0))
-        {
-            //south, west
-            return true;
-        }        
-
-    }
-    return false;
-}
-
 bool agent_collides_terrain(Agent_state* a)
 {
     return collision_check5(a->box.box_r, a->box.b_height, a->s.x, a->s.y, a->s.z);
@@ -408,4 +365,94 @@ inline bool can_stand_up(float box_r, float x, float y, float z, float current_h
     }
     return yes;
 }
+
+// checks for collision along vertical bounding axes of agent box
+// stepping every 1 unit
+inline bool collision_check5(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int n_z = (int)ceil(box_h);
+
+    for (int i=0; i<n_z; i++)
+    {
+        int zz = (int)z + i;
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
+
+// like collision_check5, except uses float better step granularity
+inline bool collision_check6(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    const float step_size = 0.9f;
+    int steps = (int)ceil(box_h/step_size);
+
+    for (int i=0; i<steps; i++)
+    {
+        int zz = (int)(z + i*step_size);
+        if (i == steps-1) zz = (int)(z + box_h);
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
+
 

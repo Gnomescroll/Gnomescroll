@@ -343,74 +343,67 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     return as;
 }
 
-void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-    int index = _seq%128;
+void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) {
+    int index = seq%128;
 
-    cs[index].seq = _seq;
-    cs[index].cs = _cs;
-    cs[index].theta = _theta;
-    cs[index].phi = _phi;
+    this->cs[index].seq = seq;
+    this->cs[index].cs = cs;
+    this->cs[index].theta = theta;
+    this->cs[index].phi = phi;
 
     tick();
 
     #ifdef DC_SERVER
-    if(_seq != cs_seq) {
+    if(seq != cs_seq) printf("seq != cs_seq \n");
+    
+    if (client_id != -1) 
+    {
+        class PlayerAgent_Snapshot P;
         
-        printf("_seq != cs_seq \n");
+        P.id = id;
+        P.seq = (cs_seq+1) % 256;
+
+        P.x = s.x;
+        P.y = s.y;
+        P.z = s.z;
+        P.vx = s.vx;
+        P.vy = s.vy;
+        P.vz = s.vz;
+
+        P.theta = s.theta;
+        P.phi = s.phi;
+
+        P.sendToClient(client_id);
     }
-    
-    #endif
 
-    #ifdef DC_SERVER
-    
-        if(client_id != -1) 
-        {
-            class PlayerAgent_Snapshot P;
-            
-            P.id = id;
-            P.seq = (cs_seq+1) % 256;
+    if (seq % 32 == 0 )
+    {
+        class Agent_state_message A;
 
-            P.x = s.x;
-            P.y = s.y;
-            P.z = s.z;
-            P.vx = s.vx;
-            P.vy = s.vy;
-            P.vz = s.vz;
+        A.id = id;
+        A.seq = (cs_seq+1) % 256;
 
-            P.theta = s.theta;
-            P.phi = s.phi;
+        A.x = s.x;
+        A.y = s.y;
+        A.z = s.z;
+        A.vx = s.vx;
+        A.vy = s.vy;
+        A.vz = s.vz;
 
-            P.sendToClient(client_id);
+        A.theta = s.theta;
+        A.phi = s.phi;
+
+        A.broadcast();
+
+        //clean out old control state
+        int i;
+        int index;
+        for(i=16;i<96;i++){
+            index = (seq + i)%128;
+            this->cs[index].seq = -1;
         }
-
-        if( _seq % 32 == 0 ) {
-            class Agent_state_message A;
-
-            A.id = id;
-            A.seq = (cs_seq+1) % 256;
-
-            A.x = s.x;
-            A.y = s.y;
-            A.z = s.z;
-            A.vx = s.vx;
-            A.vy = s.vy;
-            A.vz = s.vz;
-
-            A.theta = s.theta;
-            A.phi = s.phi;
-
-            A.broadcast();
-
-            //clean out old control state
-            int i;
-            int index;
-            for(i=16;i<96;i++){
-                index = (_seq + i)%128;
-                cs[index].seq = -1;
-            }
-        }
+    }
     #endif
-    //printf("control state= %i\n", new_control_state);
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -439,13 +432,13 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     tick();
 }
 
-void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz) {
-    s.x = _x;
-    s.y = _y;
-    s.z = _z;
-    s.vx = _vx;
-    s.vy = _vy;
-    s.vz = _vz;
+void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz) {
+    s.x = x;
+    s.y = y;
+    s.z = z;
+    s.vx = vx;
+    s.vy = vy;
+    s.vz = vz;
 }
 
 void Agent_state::set_angles(float theta, float phi) {
@@ -478,10 +471,11 @@ void Agent_state::get_spawn_point(int* spawn) {
             break;
         default:
             printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
+            spawn[0]=spawn[1]=spawn[2]=0;
             return;
     }
     do {
-        spawn[0] = randrange(x_min, x_max-1); // use actual map sizes!
+        spawn[0] = randrange(x_min, x_max-1);
         spawn[1] = randrange(y_min, y_max-1);
         spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
     } while (spawn[2] <= 0);
@@ -520,14 +514,11 @@ crouched(false)
     cs_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
-
-    _new_control_state = 0;
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);
 
-    //client_id = -1;
     client_id = id;
 
     // add to NetServer pool
@@ -561,14 +552,11 @@ crouched(false)
     cs_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
-
-    _new_control_state = 0;
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
     for(int i=0; i<128;cs[i++].seq=-1);
 
-    //client_id = -1;
     client_id = id;
 
     #ifdef DC_SERVER

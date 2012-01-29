@@ -62,9 +62,7 @@ class Agent_state {
     private:
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
-
         int snapshot_seq;
-
         int cs_seq; // <--current counter
 
         void get_spawn_point(int* spawn);
@@ -79,8 +77,6 @@ class Agent_state {
         Object_types type;
         
         struct Agent_collision_box box;
-
-        int _new_control_state; //Deprecate
 
         class Agent_status status;
         class Agent_weapons weapons;
