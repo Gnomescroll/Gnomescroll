@@ -373,7 +373,8 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
         //clean out old control state
         int i;
         int index;
-        for(i=16;i<96;i++){
+        for(i=16;i<96;i++)
+        {
             index = (seq + i)%128;
             this->cs[index].seq = -1;
         }
@@ -491,7 +492,13 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128;cs[i++].seq=-1);
+    for(int i=0; i<128; i++)
+    {
+        cs[i].seq = -1;
+        cs[i].cs = 0;
+        cs[i].theta = 0;
+        cs[i].phi = 0;
+    }
 
     client_id = id;
 
@@ -529,7 +536,14 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128;cs[i++].seq=-1);
+    for(int i=0; i<128; i++)
+    {
+        cs[i].seq = -1;
+        cs[i].cs = 0;
+        cs[i].theta = 0;
+        cs[i].phi = 0;
+    }
+
 
     client_id = id;
 
@@ -568,8 +582,31 @@ void Agent_state::revert_to_rollback() {
     cs_seq = state_rollback.seq;
 }
 
+void Agent_state::print_cs()
+{
+    uint16_t cs = this->cs[this->cs_seq].cs;
+    int forward     = cs & 1? 1 :0;
+    int backwards   = cs & 2? 1 :0;
+    int left        = cs & 4? 1 :0;
+    int right       = cs & 8? 1 :0;
+    int jetpack     = cs & 16? 1 :0;
+    int jump        = cs & 32? 1 :0;
+    int crouch      = cs & 64? 1 :0;
+    int boost       = cs & 128? 1 :0;
+    int misc1       = cs & 256? 1 :0;
+    int misc2       = cs & 512? 1 :0;
+    int misc3       = cs & 1024? 1 :0;  
+
+    printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
+    printf("jet=%d\n", jetpack);
+    printf("jump=%d\n", jump);
+    printf("crouch=%d\n", crouch);
+    printf("boost=%d\n", boost);
+    printf("misc123= %d%d%d\n", misc1, misc2, misc3);
+}
 int Agent_state::crouched()
 {
+    this->print_cs();
     return this->cs[cs_seq].cs & 64;
 }
 

@@ -62,6 +62,7 @@ struct Agent_collision_box {
 
 class Agent_state {
     private:
+        void print_cs();
         class AgentState state_rollback;
         struct Agent_control_state cs[128];
         int snapshot_seq;
