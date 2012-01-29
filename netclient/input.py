@@ -348,7 +348,7 @@ class Keyboard(object):
         if 'LCTRL' in keyboard:
             crouch = 1
         #misc1=misc2=misc3=boost=0
-        print crouch
+
         button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
         GameStateGlobal.agent.button_state = button_state
 
