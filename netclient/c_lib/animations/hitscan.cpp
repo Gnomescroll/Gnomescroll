@@ -50,16 +50,27 @@ ttl(hitscan_laser_ttl)
 
 void HitscanEffect::add_xz_plane_bias()
 {
-    float negx = (rand()%2 == 0) ? -1 : 1;
+
+    // take cross product of up and look vectors
+    // assume vx,vy,vz to be the look vector
+
+    struct Vector look = Vector_init(vx,vy,vz);
+    normalize_vector(&look);
+    struct Vector up = Vector_init(0,0,1);
+    struct Vector right = vector_cross(look, up);
+    normalize_vector(&right);
+
+    float negxy = (rand()%2 == 0) ? -1 : 1;
     float negz = (rand()%2 == 0) ? -1 : 1;
 
     const float floor_ = 0.15;
     const float ceil_ = 0.15;
 
-    float dx = (randf() * (ceil_ - floor_)) + floor_;
+    float dxy = (randf() * (ceil_ - floor_)) + floor_;
     float dz = (randf() * (ceil_ - floor_)) + floor_;
     
-    this->x += dx * negx;
+    this->x += dxy * negxy * right.x;
+    this->x += dxy * negxy * right.y;
     this->z += dz * negz;
 }
 
@@ -166,8 +177,11 @@ void HitscanEffect_list::draw()
 
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
     struct CCamera* c = current_camera;
+    if (c == NULL)
+    {
         printf("HitscanEffect_list::draw() -- current_camera is NULL\n");
         return;
+    }
 
     glColor3ub(255,255,255);
 

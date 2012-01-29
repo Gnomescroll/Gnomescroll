@@ -24,7 +24,7 @@ namespace ClientState {
     Monsters::Slime_list slime_list;
 
     Animations::HitscanEffect_list hitscan_effect_list;
-    //Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
+    Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
      
     CTF ctf;
     

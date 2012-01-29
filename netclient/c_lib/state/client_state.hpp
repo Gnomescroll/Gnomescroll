@@ -11,7 +11,7 @@
 
 
 #include <c_lib/animations/hitscan.hpp>
-//#include <c_lib/animations/hitscan_laser.hpp>
+#include <c_lib/animations/hitscan_laser.hpp>
 
 class PlayerAgent_state; //forward declaration
 
@@ -34,7 +34,7 @@ namespace ClientState {
     extern Monsters::Slime_list slime_list;
 
     extern Animations::HitscanEffect_list hitscan_effect_list;
-    //extern Animations::HitscanLaserEffect_list hitscan_laser_effect_list;   
+    extern Animations::HitscanLaserEffect_list hitscan_laser_effect_list;   
      
     extern CTF ctf;
 
