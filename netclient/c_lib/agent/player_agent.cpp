@@ -58,23 +58,13 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
 #ifdef DC_CLIENT // whole file should be ifdef'd?
-    if (you == NULL) return;
-    c.theta = you->s.theta;
-    c.phi = you->s.phi;
+    if (this->you == NULL) return;
+    c.theta = this->you->s.theta;
+    c.phi = this->you->s.phi;
 #endif
-
-/*
-    c.x = s1.x*(1-delta) + s0.x*delta;
-    c.y = s1.y*(1-delta) + s0.y*delta;
-    c.z = s1.z*(1-delta) + s0.z*delta;  
-*/
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
-    //printf("should never be called");
-
-    //printf("snapshot cs= %i, z= %f \n", seq, z);
-    //printf("snapshot cs= %i \n", seq );
 
     class AgentState ss;
 
@@ -88,32 +78,14 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
     state_history[index] = ss;
 
-    //if(! ((state_history_index+1)%AGENT_STATE_HISTORY_SIZE == index) ) 
-    //{
-    //    printf("PlayerAgent_state::handle_state_snapshot: ERROR out of sequence agent state snapshot!! WTF!?!?! \n");
-    //}
-
-    //snapshot_net[seq%128] = ss; //snapshot net is for detecting prediction errors
-
     if( (state_history_seq - seq) > 30 || seq > state_history_seq) {
-
         state_history_index = index;
         state_history_seq = seq; //set index
-        
         state_snapshot = ss;    //set state snapsot
     }
 
-/*
-    int i;
-    for(i=48;i<64;i++){
-        index = (seq + i)%128;
-        state_history[index].seq = -1;
-    }
-*/
-
 }
 
-//#ifdef DC_CLIENT
 //take outgoing control input and do client side prediction
 //seq for prediction will always exceed client side one
 void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
@@ -174,9 +146,84 @@ void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta
     if(cs_net[index].phi != cs_local[index].phi) printf("player agent: e4\n");
 }
 
+uint16_t PlayerAgent_state::pack_control_state(
+    int f, int b, int l, int r,
+    int jet, int jump, int crouch, int boost,
+    int misc1, int misc2, int misc3
+)
+{
+    uint16_t cs = 0;
+    if(f) cs |= 1;
+    if(b) cs |= 2;
+    if(l) cs |= 4;
+    if(r) cs |= 8;
+    if(jet) cs |= 16;
+    if(jump) cs |= 32;
+    if(crouch) cs |= 64;
+    if(boost) cs |= 128;
+    if(misc1) cs |= 256;
+    if(misc2) cs |= 512;
+    if(misc3) cs |= 1024;
+    return cs;
+}
+
+uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
+{
+    //set control state variables
+    int forward     = cs & 1? 1 :0;
+    int backwards   = cs & 2? 1 :0;
+    int left        = cs & 4? 1 :0;
+    int right       = cs & 8? 1 :0;
+    int jetpack     = cs & 16? 1 :0;
+    int jump        = cs & 32? 1 :0;
+    int crouch      = cs & 64? 1 :0;
+    int boost       = cs & 128? 1 :0;
+    int misc1       = cs & 256? 1 :0;
+    int misc2       = cs & 512? 1 :0;
+    int misc3       = cs & 1024? 1 :0;     
+
+    AgentState* state;
+    //state = &this->you->s;
+    state = &this->s0;
+
+    // force staying crouched if cant stand up
+    if ((this->crouching && !crouch)
+    && collision_check5(
+        this->you->box.box_r, this->you->box.b_height,
+        state->x, state->y, state->z
+    ))
+    {
+        crouch = 1;
+    }
+    this->crouching = (bool)crouch;
+
+    // only jump if on ground
+    if (jump && !on_ground(this->you->box.box_r, state->x, state->y, state->z))
+    {
+        jump = 0;
+    }
+
+    cs = this->pack_control_state(
+        forward, backwards, left, right,
+        jetpack, jump, crouch, boost,
+        misc1, misc2, misc3
+    );
+    return cs;
+}
+
+void PlayerAgent_state::set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
+{
+    uint16_t cs;
+    cs = this->pack_control_state(f,b,l,r,jet,jump,crouch,boost,misc1,misc2,misc3);
+    cs = this->sanitize_control_state(cs);
+    this->set_control_state(cs, theta, phi);
+}
+
 //set actually sends
 void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
-    if(agent_id == -1 || you == NULL) return;  //player agent not set
+    if(this->you == NULL) return;  //player agent not set
+
+    cs = this->sanitize_control_state(cs);
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
@@ -225,14 +272,14 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 }
 
 float PlayerAgent_state::camera_height() {
-    if (you == NULL) return 0.0f;
-    return you->camera_height();
+    if (this->you == NULL) return 0.0f;
+    return this->you->camera_height();
 }
 
 void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
-    if (you == NULL) return;
+    if (this->you == NULL) return;
     float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
@@ -284,13 +331,12 @@ action(this)
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
 
     //client side state variables
-    jump_ready = false;
     crouching = false;
     //camera
     camera_mode = client_side_prediction_interpolated;
 
     agent_id = -1;
-    you = NULL;
+    this->you = NULL;
     
     cs_seq_local = 0;
     cs_seq_net = -1;

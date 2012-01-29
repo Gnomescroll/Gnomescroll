@@ -48,7 +48,7 @@ class Agent(cAgents.AgentWrapper):
 def noViewer(f):
     def outer(*args, **kwargs):
         self = args[0]
-        if not self.team.viewers:
+        if self.team is not None and not self.team.viewers:
             return f(*args, **kwargs)
     return outer
 

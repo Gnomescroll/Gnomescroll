@@ -80,20 +80,6 @@ void AgentState::forward_vector(float f[3]) {
     f[2] /= len;
 }
 
-
-
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
-
-    /*
-        Collision check may be sped up by caching locally
-        May be sped up further by only updating when agent changes cells or terrain changes
-    */
-
-static inline int _collision_check(int x, int y, int z) {
-    return isActive(_get(x,y,z));
-}
-
 bool Agent_state::is_you() {
     bool is = false;
     #ifdef DC_CLIENT
@@ -199,27 +185,20 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool misc3       = a_cs & 1024? 1 :0;     
     */
 
-    //// uncrouch attempt
-    //if (a->crouched && !crouch)
-    //{
-        //if (collision_check5(box.box_r, box.b_height, as.x,as.y,as.z))
-        //{
-            //// cant stand up
-            //crouch = 1;
-        //}
-    //}
-    //a_new->crouched = (bool)crouch;
-
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
     float xy_speed;
+    float height;
     xy_speed = 2.0f / tr;
+    height = box.b_height;
     if (crouch)
     {
         xy_speed = 0.7 / tr;
+        height = box.c_height;
     }
-    
+
+
     const float z_gravity = -3.0f / tr2;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
@@ -284,12 +263,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
-    float height = box.b_height;
-    if (crouch)
-    {
-        height = box.c_height;
-    }
-
     //collision
     bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
@@ -343,74 +316,68 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     return as;
 }
 
-void Agent_state::handle_control_state(int _seq, int _cs, float _theta, float _phi) {
-    int index = _seq%128;
+void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) {
+    int index = seq%128;
 
-    cs[index].seq = _seq;
-    cs[index].cs = _cs;
-    cs[index].theta = _theta;
-    cs[index].phi = _phi;
+    this->cs[index].seq = seq;
+    this->cs[index].cs = cs;
+    this->cs[index].theta = theta;
+    this->cs[index].phi = phi;
 
     tick();
 
     #ifdef DC_SERVER
-    if(_seq != cs_seq) {
+    if(seq != cs_seq) printf("seq != cs_seq \n");
+    
+    if (client_id != -1) 
+    {
+        class PlayerAgent_Snapshot P;
         
-        printf("_seq != cs_seq \n");
+        P.id = id;
+        P.seq = (cs_seq+1) % 256;
+
+        P.x = s.x;
+        P.y = s.y;
+        P.z = s.z;
+        P.vx = s.vx;
+        P.vy = s.vy;
+        P.vz = s.vz;
+
+        P.theta = s.theta;
+        P.phi = s.phi;
+
+        P.sendToClient(client_id);
     }
-    
-    #endif
 
-    #ifdef DC_SERVER
-    
-        if(client_id != -1) 
+    if (seq % 32 == 0 )
+    {
+        class Agent_state_message A;
+
+        A.id = id;
+        A.seq = (cs_seq+1) % 256;
+
+        A.x = s.x;
+        A.y = s.y;
+        A.z = s.z;
+        A.vx = s.vx;
+        A.vy = s.vy;
+        A.vz = s.vz;
+
+        A.theta = s.theta;
+        A.phi = s.phi;
+
+        A.broadcast();
+
+        //clean out old control state
+        int i;
+        int index;
+        for(i=16;i<96;i++)
         {
-            class PlayerAgent_Snapshot P;
-            
-            P.id = id;
-            P.seq = (cs_seq+1) % 256;
-
-            P.x = s.x;
-            P.y = s.y;
-            P.z = s.z;
-            P.vx = s.vx;
-            P.vy = s.vy;
-            P.vz = s.vz;
-
-            P.theta = s.theta;
-            P.phi = s.phi;
-
-            P.sendToClient(client_id);
+            index = (seq + i)%128;
+            this->cs[index].seq = -1;
         }
-
-        if( _seq % 32 == 0 ) {
-            class Agent_state_message A;
-
-            A.id = id;
-            A.seq = (cs_seq+1) % 256;
-
-            A.x = s.x;
-            A.y = s.y;
-            A.z = s.z;
-            A.vx = s.vx;
-            A.vy = s.vy;
-            A.vz = s.vz;
-
-            A.theta = s.theta;
-            A.phi = s.phi;
-
-            A.broadcast();
-
-            //clean out old control state
-            int i;
-            int index;
-            for(i=16;i<96;i++){
-                index = (_seq + i)%128;
-                cs[index].seq = -1;
-            }
-        }
+    }
     #endif
-    //printf("control state= %i\n", new_control_state);
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -439,13 +406,13 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     tick();
 }
 
-void Agent_state::set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz) {
-    s.x = _x;
-    s.y = _y;
-    s.z = _z;
-    s.vx = _vx;
-    s.vy = _vy;
-    s.vz = _vz;
+void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz) {
+    s.x = x;
+    s.y = y;
+    s.z = z;
+    s.vx = vx;
+    s.vy = vy;
+    s.vz = vz;
 }
 
 void Agent_state::set_angles(float theta, float phi) {
@@ -478,10 +445,11 @@ void Agent_state::get_spawn_point(int* spawn) {
             break;
         default:
             printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
+            spawn[0]=spawn[1]=spawn[2]=0;
             return;
     }
     do {
-        spawn[0] = randrange(x_min, x_max-1); // use actual map sizes!
+        spawn[0] = randrange(x_min, x_max-1);
         spawn[1] = randrange(y_min, y_max-1);
         spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
     } while (spawn[2] <= 0);
@@ -504,11 +472,10 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
-id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
+id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-event(this),
+, event(this)
 #endif
-crouched(false)
 {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);
@@ -520,17 +487,17 @@ crouched(false)
     cs_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
-
-    _new_control_state = 0;
     
-    tick_n = 0; //increment when ticking
-    ctick = 0;  //increment when control state received
-
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128;cs[i++].seq=-1);
+    for(int i=0; i<128; i++)
+    {
+        cs[i].seq = -1;
+        cs[i].cs = 0;
+        cs[i].theta = 0;
+        cs[i].phi = 0;
+    }
 
-    //client_id = -1;
     client_id = id;
 
     // add to NetServer pool
@@ -549,32 +516,33 @@ crouched(false)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
+id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-event(this),
+, event(this)
 #endif
-crouched(false)
 {
     set_state(x, y, z, vx, vy, vz);
     set_angles(0.5f, 0.0f);
     
     box.b_height = AGENT_HEIGHT;
+    box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
     cs_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
-
-    _new_control_state = 0;
     
-    tick_n = 0; //increment when ticking
-    ctick = 0;  //increment when control state received
-
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128;cs[i++].seq=-1);
+    for(int i=0; i<128; i++)
+    {
+        cs[i].seq = -1;
+        cs[i].cs = 0;
+        cs[i].theta = 0;
+        cs[i].phi = 0;
+    }
 
-    //client_id = -1;
+
     client_id = id;
 
     #ifdef DC_SERVER
@@ -612,187 +580,41 @@ void Agent_state::revert_to_rollback() {
     cs_seq = state_rollback.seq;
 }
 
+void Agent_state::print_cs()
+{
+    uint16_t cs = this->cs[this->cs_seq].cs;
+    int forward     = cs & 1? 1 :0;
+    int backwards   = cs & 2? 1 :0;
+    int left        = cs & 4? 1 :0;
+    int right       = cs & 8? 1 :0;
+    int jetpack     = cs & 16? 1 :0;
+    int jump        = cs & 32? 1 :0;
+    int crouch      = cs & 64? 1 :0;
+    int boost       = cs & 128? 1 :0;
+    int misc1       = cs & 256? 1 :0;
+    int misc2       = cs & 512? 1 :0;
+    int misc3       = cs & 1024? 1 :0;  
+
+    printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
+    printf("jet=%d\n", jetpack);
+    printf("jump=%d\n", jump);
+    printf("crouch=%d\n", crouch);
+    printf("boost=%d\n", boost);
+    printf("misc123= %d%d%d\n", misc1, misc2, misc3);
+}
+
+Agent_control_state Agent_state::get_current_control_state()
+{
+    return this->cs[(this->cs_seq-1)%128];
+}
+
+int Agent_state::crouched()
+{
+    return this->get_current_control_state().cs & 64;
+}
+
 float Agent_state::camera_height() {
-    float height = box.b_height;
-    if (this->crouched)
-        height = box.c_height;
-    return height * CAMERA_HEIGHT_SCALE;
+    if (this->crouched())
+        return CAMERA_HEIGHT_CROUCHED;
+    return CAMERA_HEIGHT;
 }
-
-/* Agent list */
-
-void Agent_list::send_to_client(int client_id) {
-    int i;
-    for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
-        if (a[i]==NULL) continue;
-        agent_create_StoC msg;
-        msg.id = a[i]->id;
-        msg.team = a[i]->status.team;
-        msg.client_id = a[i]->client_id;
-        msg.sendToClient(client_id);
-
-        agent_name_StoC name_msg;
-        name_msg.id = a[i]->id;
-        strcpy(name_msg.name, a[i]->status.name);
-        name_msg.sendToClient(client_id);
-    }
-}
-
-int Agent_list::agents_within_sphere(float x, float y, float z, float radius) {
-    int ct = 0;
-    float dist;
-    float min_dist = 10000000.0f;
-    int closest = -1;
-    int i;
-    for (i=0; i<AGENT_MAX; i++) {
-        if (a[i] == NULL) continue;
-        dist = distance(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-        if (dist < radius) {
-            // agent in sphere
-            filtered_agents[ct] = a[i];
-            filtered_agent_distances[ct] = dist;
-            if (dist < min_dist) {
-                min_dist = dist;
-                closest = ct;
-            }
-            ct++;            
-        }
-    }
-    this->n_filtered = ct;
-    return closest;
-}
-
-// origin, direction, cone threshold
-void Agent_list::agents_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
-{
-    int ct = 0;
-    float ax,ay,az;
-    float ip;
-    float arc;
-
-    float len = sqrt(vx*vx + vy*vy + vz*vz);
-    vx /= len;
-    vy /= len;
-    vz /= len;
-    for (int i=0; i<AGENT_MAX; i++)
-    {
-        Agent_state* a = this->a[i];
-        if (a == NULL) continue;
-
-        ax = a->s.x - x;
-        ay = a->s.y - y;
-        az = a->s.z - z;
-
-        len = sqrt(ax*ax + ay*ay + az*az);
-        ax /= len;
-        ay /= len;
-        az /= len;
-
-        ip = ax*vx + ay*vy + az*vz;
-        arc = abs(acos(ip));
-
-        if (arc < theta)
-            filtered_agents[ct++] = a;
-    }
-
-    this->n_filtered = ct;
-}
-
-void Agent_list::swap_agent_state(Agent_state **a, Agent_state **b)
-{Agent_state* t=*a; *a=*b; *b=t;}
-void Agent_list::swap_float(float *a, float *b)
-{float t=*a; *a=*b; *b=t;}
-
-
-void Agent_list::quicksort_distance_asc(int beg, int end)
-{
-    if (end > beg + 1)
-    {
-        float dist = this->filtered_agent_distances[beg];
-        int l = beg + 1, r = end;
-        while (l < r)
-        {
-            if (this->filtered_agent_distances[l] <= dist)
-                l++;
-            else {
-                swap_float(&this->filtered_agent_distances[l], &this->filtered_agent_distances[--r]);
-                swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[r]);
-            }
-        }
-        swap_float(&this->filtered_agent_distances[--l], &this->filtered_agent_distances[beg]);
-        swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[beg]);
-        quicksort_distance_asc(beg, l);
-        quicksort_distance_asc(r, end);
-    }
-}
-
-void Agent_list::quicksort_distance_desc(int beg, int end)
-{
-    if (end > beg + 1)
-    {
-        float dist = this->filtered_agent_distances[beg];
-        int l = beg + 1, r = end;
-        while (l < r)
-        {
-            if (this->filtered_agent_distances[l] >= dist)
-                l++;
-            else {
-                swap_float(&this->filtered_agent_distances[l], &this->filtered_agent_distances[--r]);
-                swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[r]);
-            }
-        }
-        swap_float(&this->filtered_agent_distances[--l], &this->filtered_agent_distances[beg]);
-        swap_agent_state(&this->filtered_agents[l], &this->filtered_agents[beg]);
-        quicksort_distance_desc(beg, l);
-        quicksort_distance_desc(r, end);
-    }
-}
-
-
-void Agent_list::sort_filtered_agents_by_distance(bool ascending)
-{
-    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
-    else this->quicksort_distance_desc(0, this->n_filtered);
-}
-
-
-Agent_state* Agent_list::hitscan_agents(float x, float y, float z, float vx, float vy, float vz, float pos[3], float* _rad2, float* distance, int ignore_id) {
-    int i;
-    
-    float _trad2=0.0f, *trad2=&_trad2;
-    float dist;
-    float min_dist = 100000.0f; // far away
-    Agent_state* agent = NULL;
-    float tpos[3];
-    for (i=0; i<AGENT_MAX; i++) {
-        if (a[i] == NULL) continue;
-        if (a[i]->id == ignore_id) continue;
-        dist = sphere_line_distance(x,y,z, vx,vy,vz, a[i]->s.x + a[i]->box.box_r, a[i]->s.y + a[i]->box.box_r, a[i]->s.z + 0.5*a[i]->box.b_height, tpos, trad2);
-        if (dist < 0.0f || dist > min_dist) continue;
-        if (*trad2 > 2.0f) continue;
-        min_dist = dist;
-        agent = a[i];
-        _rad2 = trad2;
-        pos = tpos;
-    }
-    *distance = min_dist;
-    return agent;
-}
-
-int Agent_list::get_ids(int* p) {
-    p = ids_in_use;
-    return get_ids();
-}
-
-int Agent_list::get_ids() {
-    int i,j=0;
-    for (i=0; i<AGENT_MAX;i++) {
-        if (a[i] == NULL) continue;
-        if (a[i]->id == 0) continue;// skip 0th agent
-        ids_in_use[j] = a[i]->id;
-        j++;
-    }
-    return j;            
-}
-
-

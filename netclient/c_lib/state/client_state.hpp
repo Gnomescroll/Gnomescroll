@@ -2,7 +2,8 @@
 
 #ifdef DC_CLIENT
 
-#include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/player_agent.hpp>
+#include <c_lib/agent/agent_list.hpp>
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/game/ctf.hpp>
 
@@ -40,8 +41,6 @@ namespace ClientState {
 
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
-
     void set_PlayerAgent_id(int id);
     
     void init();

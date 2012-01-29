@@ -56,20 +56,25 @@ Investigated input normalization
 
 =============
 
-Jan 28-29 (sleep shift)
+Jan 28-29 (sleep shifted)
 Tuned hitscan laser animation to animate offset from player camera vector
-
-
-
-
+move agent collision detections to agent physics
+Cleaned up agent control state code
 Crouching
-Client side jump physics (server is snapping)
+Jumping on ground
+camera heights
+
+=============
+
 Team colors in hud are fucked up
 Agent kills not being reported properly (deaths fine)
 Dont penalize for deaths
+Right click should only block select when block selector is active
 
 Spawners
 Turrets
+
+Client side jump physics (server is snapping)
 
 Every 13 connect or so, fails with "no agent". investigate
 SDL input normalization
