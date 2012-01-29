@@ -116,8 +116,8 @@ void HitscanLaserEffect::draw1(float delta, Vector* camera)
 
 void HitscanLaserEffect::draw2(float delta, Vector* camera)
 {
-    const float width = 0.7;
-
+    const float width = 0.5;
+    const float height = 12.0;
     //struct Vector r = Vector_init(x-fx, y-fy, z-fz);
     struct Vector r = Vector_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
@@ -129,8 +129,6 @@ void HitscanLaserEffect::draw2(float delta, Vector* camera)
     float _fy = y + (fy-y)*ratio;
     float _fz = z + (fz-z)*ratio;
     
-    
-        
     struct Vector x1 = Vector_init(_fx, _fy, _fz);
     struct Vector l1 = sub_vec(&x1, camera);
 
@@ -138,11 +136,8 @@ void HitscanLaserEffect::draw2(float delta, Vector* camera)
     normalize_vector( &u1 );
 
 
-    //float _fx = fx - (fx-x)*ratio;
-    //float _fy = fy - (fy-y)*ratio;
-    //float _fz = fz - (fz-z)*ratio;
-
-    struct Vector x2 = Vector_init(x,y,z);
+    struct Vector tmp = Vector_init(r.x*height, r.y*height, r.z*height);
+    struct Vector x2 = sub_vec( &x1, &tmp );
 
     struct Vector l2 = sub_vec(&x2, camera);
 
