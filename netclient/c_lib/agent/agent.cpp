@@ -185,17 +185,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool misc3       = a_cs & 1024? 1 :0;     
     */
 
-    //// uncrouch attempt
-    //if (a->crouched && !crouch)
-    //{
-        //if (collision_check5(box.box_r, box.b_height, as.x,as.y,as.z))
-        //{
-            //// cant stand up
-            //crouch = 1;
-        //}
-    //}
-    //a_new->crouched = (bool)crouch;
-
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
@@ -484,11 +473,10 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
-id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
+id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-event(this),
+, event(this)
 #endif
-crouched(false)
 {
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);
@@ -523,16 +511,16 @@ crouched(false)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
+id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
-event(this),
+, event(this)
 #endif
-crouched(false)
 {
     set_state(x, y, z, vx, vy, vz);
     set_angles(0.5f, 0.0f);
     
     box.b_height = AGENT_HEIGHT;
+    box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
     cs_seq = 0;
@@ -580,9 +568,13 @@ void Agent_state::revert_to_rollback() {
     cs_seq = state_rollback.seq;
 }
 
+int Agent_state::crouched()
+{
+    return this->cs[cs_seq].cs & 64;
+}
+
 float Agent_state::camera_height() {
-    float height = box.b_height;
-    if (this->crouched)
-        height = box.c_height;
-    return height * CAMERA_HEIGHT_SCALE;
+    if (this->crouched())
+        return CAMERA_HEIGHT_CROUCHED;
+    return CAMERA_HEIGHT;
 }

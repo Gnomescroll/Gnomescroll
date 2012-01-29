@@ -50,7 +50,6 @@ cdef extern from "./agent/agent.hpp":
         Agent_collision_box box
         Agent_status status
         Agent_weapons weapons
-        bool crouched
 
 cdef extern from "./agent/agent.hpp":
     int AGENT_MAX
@@ -103,7 +102,6 @@ class AgentWrapper(object):
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        'crouched',
         'health',
         'health_max',
         'dead',
@@ -161,9 +159,6 @@ class AgentWrapper(object):
             return a.box.b_height
         elif name == 'box_r':
             return a.box.box_r
-
-        elif name == 'crouched':
-            return a.crouched
 
         elif name == 'health':
             return a.status.health

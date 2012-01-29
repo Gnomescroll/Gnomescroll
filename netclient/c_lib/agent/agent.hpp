@@ -8,8 +8,10 @@ const int AGENT_MAX = 64;
 //#define AGENT_HEIGHT 1.8f
 #define AGENT_HEIGHT 2.6f
 #define AGENT_HEIGHT_CROUCHED 1.7f
+#define CAMERA_HEIGHT 2.4f
+#define CAMERA_HEIGHT_CROUCHED 1.5f;
+
 #define AGENT_BOX_RADIUS 0.4f
-#define CAMERA_HEIGHT_SCALE 0.83f
 
 #define AGENT_START_HEALTH 100
 
@@ -86,7 +88,7 @@ class Agent_state {
         Agent_event event;
         #endif
 
-        bool crouched;  // find a better place later
+        int crouched();
 
         void tick();
 
