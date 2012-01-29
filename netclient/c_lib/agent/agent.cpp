@@ -639,7 +639,13 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
-    const float xy_speed = 2.0f / tr;
+    float xy_speed;
+    xy_speed = 2.0f / tr;
+    //if (crouched)
+    //{
+        //xy_speed = 0.7 / tr;
+    //}
+    
     //const float z_gravity = -2.0f / tr2;
     const float z_gravity = -3.0f / tr2;
     //const float z_jetpack = (0.5f / tr2) - z_gravity;
