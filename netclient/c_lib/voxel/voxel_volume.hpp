@@ -19,9 +19,11 @@ class Voxel_volume
     public:
 
     struct Mat4 local_matrix;
-    Vec4 v[4]; // forward, up, right, offset
+    struct Mat4 world_matrix;
 
     struct Mat4* parent_world_matrix;
+
+    //Vec4 v[4]; // forward, up, right, offset
 
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
@@ -60,17 +62,6 @@ class Voxel_volume
 
     //hitscan registration
     Voxel_hitscan_list* voxel_hitscan_list;
-
-    //methods
-    void set_unit_axis();
-
-    //forward and up vector
-    void set_axis(struct Vec3* f, struct Vec3* u);
-
-    void set_rotated_unit_axis(float x_angle, float y_angle, float z_angle);
-
-    void update_center();
-    void set_center(float x, float y, float z);
 
     void set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set(int x, int y, int z, Voxel* v);
