@@ -211,3 +211,11 @@ inline void sub_vec(float a[3], float b[3], float c[3]) {
     c[1] = a[1] - b[1];
     c[2] = a[2] - b[2];
 }
+
+inline void normalize_vector(float v[3])
+{
+    float len = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    v[0] /= len;
+    v[1] /= len;
+    v[2] /= len;
+}

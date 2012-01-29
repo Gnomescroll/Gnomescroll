@@ -87,10 +87,32 @@ void PlayerAgent_action::hitscan() {
         target = TARGET_NONE;
     }
 
+    // for hitscan animation:
+    // readjust the vector so that the translated position points to target
+    // get the right vector for translating the hitscan laser anim
+    struct Vector look = Vector_init(vec[0], vec[1], vec[2]);
+    normalize_vector(&look);
+    struct Vector up = Vector_init(0,0,1);
+    struct Vector right = vector_cross(look, up);
+    normalize_vector(&right);
+
+    // magic offset numbers found by rotating the laser to the right spot
+    // fixed in the bottom right corner
+    const float dxy = 0.14;
+    const float dz = -0.13;
+
+    // animation origin
+    float origin[3];
+    origin[0] = x + dxy * right.x;
+    origin[1] = y + dxy * right.y;
+    origin[2] = z + dz;
+
     // send packet
     hitscan_agent_CtoS agent_msg;
     hitscan_slime_CtoS monster_msg;
     hitscan_block_CtoS block_msg;
+
+    //normalize_vector(vec);
 
     switch (target) {
         case TARGET_VOXEL:
@@ -111,6 +133,11 @@ void PlayerAgent_action::hitscan() {
                 default:
                     break;
             }
+
+            // subtract the collision point from the origin to get the new vector for animation
+            vec[0] = collision_point[0] - origin[0];
+            vec[1] = collision_point[1] - origin[1];
+            vec[2] = collision_point[2] - origin[2];
             break;
 
         case TARGET_BLOCK:            
@@ -118,25 +145,40 @@ void PlayerAgent_action::hitscan() {
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
             block_msg.send();
+
+            // multiply look vector by distance to collision
+            vec[0] *= block_distance;
+            vec[1] *= block_distance;
+            vec[2] *= block_distance;
+            // add agent position, now we have collision point
+            vec[0] += x;
+            vec[1] += y;
+            vec[2] += z;
+            // subtract translated animation origin from collision point (vec) to get new vector
+            vec[0] -= origin[0];
+            vec[1] -= origin[1];
+            vec[2] -= origin[2];
             break;
             
         case TARGET_NONE:
+            // for no target, just translate animation origin
             break;
         default:
             break;
     }
 
+    normalize_vector(vec);
+    
     // play sound
     char soundfile[] = "laser_01.wav";
     Sound::play_2d_sound(soundfile);
 
     // play laser anim
-    const float hitscan_speed = 120.0f;
-    Animations::HitscanEffect* he = ClientState::hitscan_effect_list.create(
-        x,y,z,
+    const float hitscan_speed = 200.0f;
+    ClientState::hitscan_effect_list.create(
+        origin[0], origin[1], origin[2],
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
     );
-    he->add_plane_bias();
 
 }
 

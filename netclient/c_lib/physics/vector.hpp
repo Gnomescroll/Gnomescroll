@@ -28,6 +28,7 @@ inline struct Vector Vector_init(float x, float y, float z);
 
 inline void normalize_vector(struct Vector* v);
 inline void normalize_vector_f(float* x, float *y, float *z);
+inline void normalize_vector(float v[3]);
 
 inline struct Vector vector_cross(struct Vector v1, struct Vector v2);
 inline void vector_cross_ptr(struct Vector* v0, struct Vector* v1, struct Vector* v2);
