@@ -58,6 +58,7 @@ void HitscanEffect::add_plane_bias()
     struct Vector right = vector_cross(look, up);
     normalize_vector(&right);
 
+    //// this method biases the laser to a random point in circle
     //float negxy = (rand()%2 == 0) ? -1 : 1;
     //float negz = (rand()%2 == 0) ? -1 : 1;
 
@@ -71,6 +72,8 @@ void HitscanEffect::add_plane_bias()
     //this->y += dxy * negxy * right.y;
     //this->z += dz * negz;
 
+
+    // this method uses time to move the bias in a circle
     const float rot_speed = 1000.0f;
     float theta = ((float)_get_ticks())/rot_speed;
     const float r = 0.19f;
