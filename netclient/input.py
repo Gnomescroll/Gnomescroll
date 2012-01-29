@@ -107,6 +107,7 @@ class InputGlobal:
     use_voxel_aligner = False
     inventory = False
     vn = False
+    can_jump = True
 
     #hk = False
     
@@ -343,8 +344,9 @@ class Keyboard(object):
             boost = 1
         if 'z' in keyboard:
             jet = 1
-        if 'SPACE' in keyboard:
+        if 'SPACE' in keyboard and InputGlobal.can_jump:
             jump = 1
+            InputGlobal.can_jump = False
         if 'LCTRL' in keyboard:
             crouch = 1
         #misc1=misc2=misc3=boost=0
@@ -404,7 +406,11 @@ class AgentInput:
         }
 
         self.key_release_handlers = {
+            'space': self.enable_jump,
         }
+
+    def enable_jump(self, symbol):
+        InputGlobal.can_jump = True
 
     def on_key_press(self, symbol, modifiers=None):
         self.key_press_handlers.get(symbol, lambda s: None)(symbol)
