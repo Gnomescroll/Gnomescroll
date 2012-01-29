@@ -73,13 +73,22 @@ void HitscanEffect::add_plane_bias()
     //this->z += dz * negz;
 
 
-    // this method uses time to move the bias in a circle
-    const float rot_speed = 1000.0f;
-    float theta = ((float)_get_ticks())/rot_speed;
-    const float r = 0.19f;
+    //// this method uses time to move the bias in a circle
+    //const float rot_speed = 3000.0f;
+    //float theta = ((float)_get_ticks())/rot_speed;
+    //const float r = 0.19f;
 
-    float dxy = r * cos(theta);
-    float dz = r * sin(theta);
+    //float dxy = r * cos(theta);
+    //float dz = r * sin(theta);
+    //this->x += dxy * right.x;
+    //this->y += dxy * right.y;
+    //this->z += dz;
+
+    //printf("dxy=%0.2f dz=%0.2f\n", dxy, dz);
+
+     //fixed in the bottom right corner
+    const float dxy = 0.14;
+    const float dz = -0.13;
     this->x += dxy * right.x;
     this->y += dxy * right.y;
     this->z += dz;
