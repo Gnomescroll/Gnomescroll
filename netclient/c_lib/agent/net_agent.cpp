@@ -412,7 +412,7 @@ inline void place_spawner_CtoS::handle()
     
     // check for points etc
 
-    Spawner* s = ServerState::spawner_list.create(x,y,z);
+    Spawner* s = ServerState::spawner_list.create(x+0.5f,y+0.5f,z);
     s->set_team(a->status.team);
     s->set_owner(a->id);
     s->init_vox();

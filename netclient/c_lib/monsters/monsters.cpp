@@ -249,11 +249,11 @@ void test(int n) {
         
         #ifdef DC_CLIENT
         z = 127;
-        STATE::slime_list.create(x,y,z+1, 0,0,0);
+        STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
         #endif
 
         #ifdef DC_SERVER
-        Slime* s = STATE::slime_list.create(x,y,z+1, 0,0,0);
+        Slime* s = STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
         CreateSlime_StoC msg = CreateSlime_StoC();
         msg.id = s->id;
         msg.broadcast();

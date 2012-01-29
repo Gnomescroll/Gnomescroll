@@ -27,23 +27,27 @@ void CTF::start() {
     x = randrange(0, x_max-1);
     y = randrange(0, (y_max-1)/2);
     z = _get_highest_open_block(x,y);
-    x += randf();y += randf();
+    //x += randf();y += randf();
+    x+=0.5f;y+=0.5f;
     this->set_base_position(1, x,y,z);
     x = randrange(0, x_max-1);
     y = randrange(0, (y_max-1)/2);
     z = _get_highest_open_block(x,y);
-    x += randf();y += randf();
+    //x += randf();y += randf();
+    x+=0.5f;y+=0.5f;
     this->set_flag_position(1, x,y,z);
 
     x = randrange(0, x_max-1);
     y = randrange((y_max-1)/2, y_max-1);
     z = _get_highest_open_block(x,y);
-    x += randf();y += randf();
+    //x += randf();y += randf();
+    x+=0.5f;y+=0.5f;
     this->set_base_position(2,x,y,z);
     x = randrange(0, x_max-1);
     y = randrange((y_max-1)/2, y_max-1);
     z = _get_highest_open_block(x,y);
-    x += randf();y += randf();
+    //x += randf();y += randf();
+    x+=0.5f;y+=0.5f;
     this->set_flag_position(2,x,y,z);
 }
 
