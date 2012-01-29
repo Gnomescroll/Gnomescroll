@@ -81,11 +81,11 @@ cdef extern from "./agent/player_agent.hpp":
         PlayerAgent_action action
         void update_sound()
         void display_agent_names()
+        void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
 
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
-    void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
     PlayerAgent_state playerAgent_state
 
 def draw_agents():
@@ -284,7 +284,7 @@ class PlayerAgentWrapper(object):
         return a.weapons.can_zoom()
 
 def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
-    set_control_state(f, b, l, r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
+    playerAgent_state.set_control_state(f, b, l, r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
 def get_player_agent_id():
     return playerAgent_state.agent_id

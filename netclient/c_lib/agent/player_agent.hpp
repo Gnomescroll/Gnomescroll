@@ -1,5 +1,6 @@
 #pragma once
 
+#include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/player_agent_action.hpp>
 
@@ -17,6 +18,16 @@ enum active_camera_states {
 };
 
 class PlayerAgent_state {
+    private:
+        uint16_t sanitize_control_state(uint16_t cs);
+        uint16_t pack_control_state(
+            int f, int b, int l, int r,
+            int jet, int jump, int crouch, int boost,
+            int misc1, int misc2, int misc3
+        );
+
+        void set_control_state(uint16_t cs, float theta, float phi);
+
     public:
 
         //client side state variables
@@ -69,8 +80,9 @@ class PlayerAgent_state {
         int agent_id;   //agent_id for player agent
         Agent_state* you;
         void set_PlayerAgent_id(int id);
-        //set actually sends
-        void set_control_state(uint16_t cs, float theta, float phi);
+
+        //set also sends
+        void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
 
         float camera_height();
 

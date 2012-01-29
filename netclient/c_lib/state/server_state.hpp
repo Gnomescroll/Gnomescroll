@@ -1,7 +1,7 @@
 #pragma once
 #ifdef DC_SERVER
 
-#include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/agent_list.hpp>
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/monsters/monsters.hpp>
