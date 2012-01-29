@@ -41,7 +41,6 @@ class PlayerAgent_Snapshot: public FixedSizeNetPacketToClient<PlayerAgent_Snapsh
         inline void handle();
 };
 
-
 /*
  *  Server -> Client packets
  */

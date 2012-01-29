@@ -28,11 +28,7 @@ void Voxel_model::update_skeleton()
 {
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
-
-
-    //*vv->parent_world_matrix = 
-    //mat4_euler_rotation_and_translation(0.0, -1.0, 5.0,  0.0, 0.0, 0.0);
-
+/*
     if(n_skeleton_nodes == 3)
     {
         static float c1=0;
@@ -47,9 +43,7 @@ void Voxel_model::update_skeleton()
         c1 += 0.020;
 
     }
-
-    //printf("%i\n", n_skeleton_nodes);
-
+*/
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         if(debug) 
@@ -64,7 +58,20 @@ void Voxel_model::update_skeleton()
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
             vox_skeleton_local_matrix[i]
         );
-    }    
+    }
+
+    for(int i=0; i<this->n_parts; i++)
+    {
+        class Voxel_volume* vv = &this->vv[i];
+
+        vv->world_matrix = mat4_mult( *vv->parent_world_matrix, vv->local_matrix );
+
+        vv->world_matrix.v[0].w = 0.0f;
+        vv->world_matrix.v[1].w = 0.0f;
+        vv->world_matrix.v[2].w = 0.0f;
+        vv->world_matrix.v[3].w = 1.0f;
+    }
+
 }
 
 void Voxel_model::init_skeleton(VoxDat* vox_dat)
@@ -144,7 +151,6 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
-        vv->set_unit_axis();
         vv->set_hitscan_properties(id, type, i);
 
         #ifdef DC_CLIENT
@@ -192,14 +198,10 @@ void Voxel_model::set_hitscan(bool hitscan) {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) {
-
-/*
-    DEPRECATE
-*/
+void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
+{
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-    for (int i=0; i<this->n_parts; this->vv[i++].set_center(x,y,z));
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)

@@ -236,7 +236,7 @@ void HitscanLaserEffect_list::tick()
 {
     //printf("tick \n");
 
-    const int debug = 1;
+    const int debug = 0;
 
     if(debug)
     {

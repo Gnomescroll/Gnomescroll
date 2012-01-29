@@ -38,11 +38,6 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 #endif
     voxel_hitscan_list = NULL;
 
-    v[0] = vec4_init(1.0f,0.0f,0.0f, 0.0f);
-    v[1] = vec4_init(0.0f,1.0f,0.0f, 0.0f);
-    v[2] = vec4_init(0.0f,0.0f,1.0f, 0.0f);
-    this->set_center(0.0,0.0,0.0);
-
     this->hdx = ((float) xdim) / 2;
     this->hdy = ((float) ydim) / 2;
     this->hdz = ((float) zdim) / 2;
@@ -102,81 +97,6 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
 {
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
-}
-
-void Voxel_volume::set_unit_axis()
-{
-    v[0].v3 = vec3_init(1.0f,0.0f,0.0f);
-    v[1].v3 = vec3_init(0.0f,1.0f,0.0f);
-    v[2].v3 = vec3_init(0.0f,0.0f,1.0f);
-    update_center();
-}
-
-//vector_cross(struct Vector* v1, struct Vector* v2, struct Vector* dest)
-//forward and up Vector
-void Voxel_volume::set_axis(struct Vec3* f, struct Vec3* u)
-{
-    v[0].v3 = *f;
-    v[2].v3 = *u; 
-    v[1].v3 = vec3_cross(*u,*f);
-    update_center();
-}
-
-void Voxel_volume::set_rotated_unit_axis(float x_angle, float y_angle, float z_angle)
-{
-    struct Mat3 rot = mat3_euler_rotation(x_angle, y_angle, z_angle);
-
-    v[0].v3 = vec3_apply_rotation(vec3_init(1.0f,0.0f,0.0f), rot);
-    v[1].v3 = vec3_apply_rotation(vec3_init(0.0f,1.0f,0.0f), rot);
-    v[2].v3 = vec3_apply_rotation(vec3_init(0.0f,0.0f,1.0f), rot);
-
-    update_center();
-}
-
-
-void Voxel_volume::update_center()
-{
-    const int DEBUG = 0;
-
-    if(DEBUG)
-    {
-        printf("v[0] x,y,z= %f, %f, %f \n", v[0].x, v[0].y, v[0].z);
-        printf("v[1] x,y,z= %f, %f, %f \n", v[1].x, v[1].y, v[1].z);
-        printf("v[2] x,y,z= %f, %f, %f \n", v[2].x, v[2].y, v[2].z);
-        printf("v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
-    }
-
-    struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
-    struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
-    struct Vec3 vz = vec3_scalar_mult(v[2].v3,-1.0*hdz*scale);
-
-    if(DEBUG)
-    {
-        printf("vx x,y,z= %f, %f, %f \n", vx.x, vx.y, vx.z);
-        printf("vy x,y,z= %f, %f, %f \n", vy.x, vy.y, vy.z);
-        printf("vz x,y,z= %f, %f, %f \n", vz.x, vz.y, vz.z);
-    }
-    v[3].v3 = vec3_add4(vx, vy, vz, center);
-
-    if(DEBUG)
-    {
-        printf("out_sum v[3] x,y,z= %f, %f, %f \n", v[3].x, v[3].y, v[3].z);
-    }
-
-}
-
-void Voxel_volume::set_center(float x, float y, float z)
-{
-    center.x = x;
-    center.y = y;
-    center.z = z;
-
-    struct Vec3 vx = vec3_scalar_mult(v[0].v3,-1.0*hdx*scale);
-    struct Vec3 vy = vec3_scalar_mult(v[1].v3,-1.0*hdy*scale);
-    struct Vec3 vz = vec3_scalar_mult(v[2].v3,-1.0*hdz*scale);
-
-    //v[3] = vector_add4(&vx,&vy,&vz,&center);
-    v[3].v3 = vec3_add4(vx, vy, vz, center);
 }
 
 #ifdef DC_CLIENT
@@ -399,24 +319,7 @@ void Voxel_volume::update_vertex_list()
     
     vvl.vnum = index;
 }
-
 #endif
-void voxel_test()
-{
-    static Voxel_volume vv(4,4,4, 1.0);
-
-    static float c0 = 0.0;
-    static float c1 = 0.0;
-    static float c2 = 0.0;
-    c0 += 0.0050 / (2*PI);
-    c1 += 0.0025 / (2*PI);
-    c2 += 0.0100 / (2*PI);
-    
-    vv.set_rotated_unit_axis(c0, c1, c2);
-
-    vv.set_center( 2.0, 2.0, 2.0);
-}
-
 
 void Voxel_volume::set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) 
 {
@@ -445,6 +348,7 @@ void Voxel_volume::draw_bounding_box()
     glDisable(GL_TEXTURE_2D);
     glLineWidth(5.0f);
 
+/*
     int i,j;
     float _x,_y,_z;
 
@@ -486,11 +390,11 @@ void Voxel_volume::draw_bounding_box()
 
             glVertex3f(_x,_y,_z);
     }
-
+*/
     glEnd();
 
     glDisable (GL_DEPTH_TEST);
-
+/*
     //offset
     glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
     glPointSize(10.0);
@@ -506,7 +410,7 @@ void Voxel_volume::draw_bounding_box()
     glVertex3f(center.x,center.y, center.z);
     glEnd();
     glPointSize(1.0);
-
+*/
     glColor3ub(255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
