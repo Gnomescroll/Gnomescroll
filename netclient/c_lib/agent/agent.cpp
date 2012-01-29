@@ -616,9 +616,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     bool right       = a_cs & 8? 1 :0;
     bool jetpack     = a_cs & 16? 1 :0;
     bool jump        = a_cs & 32? 1 :0;
+    //bool crouch      = a_cs & 64? 1 :0;
     //implemented, but unused
     /*
-    bool crouch      = a_cs & 64? 1 :0;
     bool boost       = a_cs & 128? 1 :0;
     bool misc1       = a_cs & 256? 1 :0;
     bool misc2       = a_cs & 512? 1 :0;
@@ -1074,9 +1074,9 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
-id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
+id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
 #ifdef DC_CLIENT
-, event(this),
+event(this),
 #endif
 crouched(false)
 {
@@ -1119,9 +1119,9 @@ crouched(false)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
+id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this),
 #ifdef DC_CLIENT
-, event(this),
+event(this),
 #endif
 crouched(false)
 {
