@@ -188,7 +188,7 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch)
-    && collision_check5(
+    && collision_check5_stand_up(
         this->you->box.box_r, this->you->box.b_height,
         state->x, state->y, state->z
     ))

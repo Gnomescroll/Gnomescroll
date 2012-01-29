@@ -243,7 +243,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     {
         as.vz -= z_gravity;
     }    
-    
+
     if (jetpack) {
         as.vz += z_jetpack;
     }
@@ -264,7 +264,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_z = as.z + as.vz;
 
     //collision
-    bool current_collision = collision_check5(box.box_r, height, as.x,as.y,as.z);
+    bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         as.x = new_x;
         as.y = new_y;
@@ -290,23 +290,20 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     }
 
     //top and bottom matter
-    bool collision_z = collision_check5(box.box_r, height, new_x,new_y,new_z);
+    bool collision_z = collision_check5_in_motion(box.box_r, height, new_x, new_y, new_z);
     if(collision_z) {
-
-        //if(as.vz < -z_bounce_v_threshold)
-        //{
-            //as.vz *= -1.0f *z_bounce;
-        //}
-        //else
-        //{
-            //as.vz = 0.0f;
-        //}
-
-        //new_z = as.z + as.vz;
-        
-        as.vz = 0.0f;
         new_z = as.z;
+        as.vz = 0.0f;
     }       
+
+    /*
+        Bug:
+        * Build ceiling
+        * Hold Jetpack to slide along ceiling
+        * Try to leave a 3 block vertical gap
+        * You cant
+        * Collision in x/y
+    */
 
     as.x = new_x;
     as.y = new_y;
@@ -330,7 +327,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     tick();
 
     #ifdef DC_SERVER
-    if(seq != cs_seq) printf("seq != cs_seq \n");
+    if (seq != cs_seq) printf("seq != cs_seq \n");
     
     if (client_id != -1) 
     {

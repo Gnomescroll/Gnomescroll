@@ -410,6 +410,90 @@ inline bool collision_check5(float box_r, float box_h, float x, float y, float z
     }
     return false;
 }
+inline bool collision_check5_stand_up(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int n_z = (int)ceil(box_h);
+
+    for (int i=0; i<n_z; i++)
+    {
+        int zz = (int)z + i;
+        if (i == n_z-1) zz = (int)(z + box_h);  // difference is this cap
+        
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
+
+inline bool collision_check5_in_motion(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    int n_z = (int)ceil(box_h) + 1;   // difference is +1
+
+    for (int i=0; i<n_z; i++)
+    {
+        int zz = (int)z + i;
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
 
 // like collision_check5, except uses float better step granularity
 inline bool collision_check6(float box_r, float box_h, float x, float y, float z)
@@ -450,7 +534,7 @@ inline bool collision_check6(float box_r, float box_h, float x, float y, float z
         {
             //south, west
             return true;
-        }        
+        }            
 
     }
     return false;
