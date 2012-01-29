@@ -183,18 +183,26 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
     int misc2       = cs & 512? 1 :0;
     int misc3       = cs & 1024? 1 :0;     
 
+    AgentState* state;
+    //state = &this->you->s;
+    state = &this->s0;
+
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch)
     && collision_check5(
         this->you->box.box_r, this->you->box.b_height,
-        // use this->s for state
-        //this->s.x, this->s.y, this->s.z   // ALWAYS REPORTS COLLISION!
-        this->you->s.x, this->you->s.y, this->you->s.z
+        state->x, state->y, state->z
     ))
     {
         crouch = 1;
     }
     this->crouching = (bool)crouch;
+
+    // only jump if on ground
+    if (jump && !on_ground(this->you->box.box_r, state->x, state->y, state->z))
+    {
+        jump = 0;
+    }
 
     cs = this->pack_control_state(
         forward, backwards, left, right,
@@ -324,7 +332,6 @@ action(this)
     state_history = new AgentState[AGENT_STATE_HISTORY_SIZE];
 
     //client side state variables
-    jump_ready = false;
     crouching = false;
     //camera
     camera_mode = client_side_prediction_interpolated;

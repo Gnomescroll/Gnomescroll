@@ -42,7 +42,6 @@ cdef extern from "./agent/agent.hpp":
         float x,y,z
         float vx,vy,vz
         float camera_height
-        bool jump_ready
  
     cdef cppclass Agent_state:
         int id

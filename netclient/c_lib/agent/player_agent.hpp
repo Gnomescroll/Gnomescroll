@@ -31,7 +31,6 @@ class PlayerAgent_state {
     public:
 
         //client side state variables
-        bool jump_ready;    //move client side
         bool crouching;     //move client side
 
         //use for interpolated client side prediction
