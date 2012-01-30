@@ -107,7 +107,7 @@ class PyClient:
         self.sendMessage.send_chunk_list()
 
     def set_dat_loaded(self):
-        print "Client loaded dat"
+        print "Client loaded dats"
         self.dat_loaded = True
         self.check_ready()
 

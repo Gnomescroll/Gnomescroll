@@ -75,31 +75,43 @@ Align simple voxel models (slime, base etc)
 
 Jan 29-30
 
+Coins:
 coins allocation
 get coins for flag capture
 added to hud $X
 
-spawners cost coins
-spawners team max
-spawners cant be placed on other spawners
-Send spawner list to new clients
-Use spawner to determine spawn point
-Spawner can't be placed where current spawner is
-Base acts as defacto spawner.
-Spawner Health/Destruction
-
 improved base and flag spawn boundaries
-
 increased agent speed
+
+Spawners:
+cost coins
+team maximum
+Cant be placed on other spawners
+Send list to new clients
+Use to determine agent spawn point
+Can't be placed where current spawner is
+Base acts as defacto spawner.
+Health/Destruction
 
 =============
 
-Spawners
--- TODO:
- 
+Grenades damage damagable models
+
 Add simple gravity to items
 
 merge hitscan object packets
+
+Double buffered map
+Icons on map
+Teammates on map
+
+Minimap
+
+Deprecate python packets
+-- Identify/fail
+-- Cube dat
+-- Chat messages
+-- Chunk list, chunk
 
 Investigate if object lists w/ auto id are creating 1 past end of the array
 Fix collision detection

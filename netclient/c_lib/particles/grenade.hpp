@@ -16,6 +16,8 @@
 #define GRENADE_SPLASH_DAMAGE 20
 #define GRENADE_BLOCK_DAMAGE 32
 
+class grenade_StoC;     // forward decl
+
 class Grenade {
     public:
         struct Particle2 particle;
@@ -28,7 +30,9 @@ class Grenade {
 
         int block_damage(int dist);
         void damage_blocks();
-        
+
+        void create_message(grenade_StoC* msg);
+
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
 };

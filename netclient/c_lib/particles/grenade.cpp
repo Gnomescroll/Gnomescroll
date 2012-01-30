@@ -49,26 +49,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
             pack_u16(&ttl_max, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
         }
-
         inline void handle();
-
-        grenade_StoC(Grenade* g);
-        grenade_StoC() {
-            //its faster to not set values
-            //only set default values, not required values in intializer
-        /*
-            x=0.0f;
-            y=0.0f;
-            z=0.0f;
-            vx=0.0f;
-            vy=0.0f;
-            vz=0.0f;
-        */
-            //this->id = id; //wtf does this mean, id=id?
-            ttl_max = GRENADE_TTL;
-            type = GRENADE_TYPE;
-
-        }
 };
 
 
@@ -76,8 +57,9 @@ Grenade::Grenade(int id) : owner(-1) {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
     #ifdef DC_SERVER
-    grenade_StoC g = grenade_StoC(this);
-    g.broadcast();
+    grenade_StoC msg;
+    this->create_message(&msg);
+    msg.broadcast();
     #endif
 }
 
@@ -85,10 +67,25 @@ Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz
     create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
                    // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
     #ifdef DC_SERVER
-    grenade_StoC g = grenade_StoC(this);
-    g.broadcast();
+    grenade_StoC msg;
+    this->create_message(&msg);
+    msg.broadcast();
     #endif
 }
+
+void Grenade::create_message(grenade_StoC* msg)
+{
+    msg->x = this->particle.state.p.x;
+    msg->y = this->particle.state.p.y;
+    msg->z = this->particle.state.p.z;
+    msg->vx = this->particle.state.v.x;
+    msg->vy = this->particle.state.v.y;
+    msg->vz = this->particle.state.v.z;
+    msg->ttl_max = this->particle.ttl_max;
+    msg->id = this->particle.id;
+    msg->type = this->particle.type;
+}
+
 
 void Grenade::tick() {
     bounce_simple_rk4(&particle, GRENADE_DAMP);
@@ -278,17 +275,4 @@ inline void grenade_StoC::handle() {
     g->particle.ttl_max = (int)ttl_max;
     g->particle.type = (int)type;
     #endif
-}
-
-grenade_StoC::grenade_StoC(Grenade *g) {
-
-    x = g->particle.state.p.x;
-    y = g->particle.state.p.y;
-    z = g->particle.state.p.z;
-    vx = g->particle.state.v.x;
-    vy = g->particle.state.v.y;
-    vz = g->particle.state.v.z;
-    ttl_max = g->particle.ttl_max - g->particle.ttl;
-    id = g->particle.id;
-    type = g->particle.type;
 }
