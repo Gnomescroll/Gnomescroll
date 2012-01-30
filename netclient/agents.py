@@ -7,7 +7,7 @@ import opts
 opts = opts.opts
 
 import c_lib.c_lib_agents as cAgents
-import c_lib._ray_trace as ray_tracer
+import init_c_lib
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_game_modes as cGame
@@ -103,7 +103,7 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
     @noViewer
     def set_active_block(self, block_type=None):
         if block_type is None:
-            block = ray_tracer.nearest_block(self.camera_position(), self.camera.forward())
+            block = init_c_lib.nearest_block(self.camera_position(), self.camera.forward())
             if block is None:
                 return
             block_type = terrainMap.get(*block)

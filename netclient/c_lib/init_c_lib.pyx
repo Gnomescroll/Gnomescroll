@@ -153,9 +153,15 @@ cpdef init_python_net():
     set_python_net_event_callback_function(py_net_net_event_callback)
 
 
-""" Put this here to save a pyx file """
+"""
+    
+    These are here to reduce pyx files
+
+"""
 from libcpp cimport bool
 
+
+""" Slimes"""
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
 
     cdef cppclass Slime_list:
@@ -171,3 +177,25 @@ def slime_test(int n):
 
 def slime_tick():
     slime_list.update()
+
+""" ray trace """
+cdef extern from "ray_trace/ray_trace.h":
+    int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
+
+def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3):
+    cdef int* i
+    cdef float x
+    cdef float y
+    cdef float z
+    cdef float vx
+    cdef float vy
+    cdef float vz
+
+    x,y,z = pos
+    vx,vy,vz = vector
+    
+    i = _nearest_block(x,y,z, vx,vy,vz, max_distance, z_low, z_high)
+    if i == NULL:
+        return
+    return [i[0], i[1], i[2]]
+

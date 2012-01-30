@@ -236,11 +236,6 @@ def build(bld):
         target='c_lib.terrain_map')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/_ray_trace.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib._ray_trace')
-
-    bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
@@ -333,7 +328,6 @@ def install_in_ext(ctx):
     targets = [
        'c_lib.terrain_map',
        'vox_lib',
-       'c_lib._ray_trace',
        'init_c_lib',
        'c_lib.c_lib_particles',
        'c_lib.c_lib_agents',
