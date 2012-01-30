@@ -9,6 +9,9 @@ varying float diffuse;
 //varying mat2 AOMatrix;
 //varying vec2 texCoord;
 
+#define gamma 2.2f
+#define diffuse_p .30f //diffuse lighting weight
+
 void main() 
 {
 
@@ -17,12 +20,9 @@ void main()
 	//vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 	//float ao_factor = dot(vx, AOMatrix * vy);
 
-	const float light_p = .30; //percentage for light component mixing
-	
-	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb ;
+	vec3 color = diffuse_p*(diffuse*gl_Color.rgb) + (1.0f - diffuse)*gl_Color.rgb;
 
-	vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb;
-	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
+	gl_FragColor.rgb = pow(color, vec3(1.0f / gamma) );
 
 /*
 	if( gl_FragCoord.x < 640 )
@@ -35,8 +35,5 @@ void main()
 		gl_FragColor.rgb = vec3(ao_factor, ao_factor, ao_factor);
 	}
 */
-	//vec3 color = light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb*ao_factor ;
-	//vec3 color = ao_factor*(light_p*(gl_Color.rgb * diffuse) + (1-light_p)*gl_Color.rgb) ;
 
-	//gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 }

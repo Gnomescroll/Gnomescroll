@@ -187,10 +187,10 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
     }
 
     {
-        scratch[*index + 0].n = voxel_normal_array[side+0].n;
-        scratch[*index + 1].n = voxel_normal_array[side+1].n;
-        scratch[*index + 2].n = voxel_normal_array[side+2].n;
-        scratch[*index + 3].n = voxel_normal_array[side+3].n;
+        scratch[*index + 0].n = voxel_normal_array[side].n;
+        scratch[*index + 1].n = voxel_normal_array[side].n;
+        scratch[*index + 2].n = voxel_normal_array[side].n;
+        scratch[*index + 3].n = voxel_normal_array[side].n;
     }
 
     {
