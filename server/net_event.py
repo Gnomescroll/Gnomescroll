@@ -10,20 +10,18 @@ class NetEvent:
     messageHandler = None
     adminMessageHandler = None
     miscMessageHandler = None
-    agentMessageHandler = None
     mapMessageHandler = None
     chatMessageHandler = None
-    datMessageHandler = None
+    #datMessageHandler = None
 
     @classmethod
     def init(cls):
         cls.messageHandler = MessageHandler()
         cls.adminMessageHandler = AdminMessageHandler()
-        cls.agentMessageHandler = AgentMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
-        cls.datMessageHandler = DatMessageHandler()
+        #cls.datMessageHandler = DatMessageHandler()
 
     @classmethod
     def register_json_events(cls, events, interface=None):
@@ -330,19 +328,6 @@ class AdminMessageHandler(GenericMessageHandler):
     def _save_map(self, msg, conn, name):
         terrain_map.save_to_disk(name)
 
-class AgentMessageHandler(GenericMessageHandler):
-
-    def events(self):
-        return {
-            'request_agent'     :   self.request_agent,
-        }
-
-    @logError('request_agent')
-    @requireKey('id')
-    def request_agent(self, msg, connection, aid):
-        connection.sendMessage.send_agent(aid)
-
-
 class MiscMessageHandler(GenericMessageHandler):
 
     def events(self):
@@ -368,7 +353,6 @@ class MapMessageHandler(GenericMessageHandler):
         return {
             'request_chunk' :   self.request_chunk,
             'request_chunk_list':  self.send_chunk_list,
-            #'set_block'     :   self.set_block,
         }
 
     @logError('request_chunk')
@@ -380,20 +364,6 @@ class MapMessageHandler(GenericMessageHandler):
     @logError('send_chunk_list')
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
-
-    #@logError('set_block')
-    #@processAgent('aid')
-    #@processIterable('pos', 3)
-    #@requireKeyType('type', int, err_key='type (block)')
-    #def set_block(self, msg, client, agent, pos, block_type):
-        #x,y,z = pos
-        #block = (x, y, z, block_type,)
-        #weapon = agent.active_weapon()
-        #if weapon.fire_command == 'set_block' and weapon.fire():
-            #print 'setting block'
-            #terrain_map.set(*block)
-            ##NetOut.event.set_map([block])
-            #client.sendMessage.send_weapon(weapon, properties='clip')
 
 
 class ChatMessageHandler(GenericMessageHandler):
@@ -415,12 +385,12 @@ class ChatMessageHandler(GenericMessageHandler):
         ChatServer.chat.client_unsubscribe(msg, conn)
 
 
-class DatMessageHandler(GenericMessageHandler):
+#class DatMessageHandler(GenericMessageHandler):
 
-    def events(self):
-        return {
-            'dat_loaded'    :   self.loaded,
-        }
+    #def events(self):
+        #return {
+            #'dat_loaded'    :   self.loaded,
+        #}
 
-    def loaded(self, msg, conn):
-        conn.set_dat_loaded()
+    #def loaded(self, msg, conn):
+        #conn.set_dat_loaded()

@@ -137,3 +137,7 @@ class Agent_state {
 class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a);
 
 bool agent_collides_terrain(Agent_state* a);
+
+// temporary location
+//void send_identify_message(char* name);
+

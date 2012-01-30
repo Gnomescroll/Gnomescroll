@@ -54,6 +54,7 @@ from map_controller import MapControllerGlobal
 from input import Mouse, Keyboard
 from hud import Hud
 from animations import animations
+from dat_loader import dat_loader
 
 #from init_c_lib import _pviz_draw
 
@@ -86,6 +87,11 @@ class App(object):
         cOptions.load(opts)
 
         self.init_globals()
+
+        def load_cube_dat():
+            import cube_dat
+            dat_loader.load('cubes', cube_dat.dat)
+        load_cube_dat()
         
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='camera')

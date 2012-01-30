@@ -46,7 +46,7 @@ class PyClient:
         self.admin = False
 
         self.identified = False
-        self.dat_loaded = False
+        #self.dat_loaded = False
         self.loaded_once = False
 
         self.sendMessage = SendMessage(self)
@@ -54,7 +54,7 @@ class PyClient:
         self.agent = None
         self.name = None
 
-        self.sendMessage.send_dat()
+        #self.sendMessage.send_dat()
 
     def identify(self, name):
         valid, name, you = self.valid_player_name(name)
@@ -72,7 +72,8 @@ class PyClient:
                 self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
 
     def check_ready(self):
-        if self.dat_loaded and self.identified:
+        #if self.dat_loaded and self.identified:
+        if self.identified:
             self.ready()
             return True
         return False
@@ -106,10 +107,10 @@ class PyClient:
         cMap.send_map_metadata_to_client(self.client_id)
         self.sendMessage.send_chunk_list()
 
-    def set_dat_loaded(self):
-        print "Client loaded dats"
-        self.dat_loaded = True
-        self.check_ready()
+    #def set_dat_loaded(self):
+        #print "Client loaded dats"
+        #self.dat_loaded = True
+        #self.check_ready()
 
     def _register(self):
         ChatServer.chat.connect(self) # join chat server

@@ -308,3 +308,11 @@ class AgentListWrapper:
         for k in range(n):
             ids.append(agent_list.ids_in_use[k])
         return ids
+
+#cdef extern from "./agent/agent.hpp":
+#    void send_identify_message(char* name)
+##    void send_identify_fail_message()
+
+#def identify(name):
+#    send_identify_message(name)
+    

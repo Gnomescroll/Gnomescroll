@@ -9,7 +9,7 @@ except ImportError:
 import struct
 import zlib
 
-import dats.loader as dl
+#import dats.loader as dl
 import c_lib.terrain_map as terrain_map
 
 class NetOut:
@@ -78,30 +78,22 @@ class EventOut:
     def clear_map(self):
         return True
 
-    @sendJSONevent('hitscan')
-    def hitscan(self, target, agent_id, weapon_type): # use projectile_id if we want multiple projectiles per weapon
-        return {
-            'target'    :   target,
-            'aid'       :   agent_id,
-            'wtype'     :   weapon_type,
-        }
-
-    @sendJSONevent('dat', zlib=6)
-    def send_dat(self, dat_name=None, type=None, key=None):
-        if dat_name is None:
-            d = dl.dat_loader.json()
-        else:
-            d = dl.dat_loader.get_json(dat_name, type, key)
-        fin = {
-            'dat'   :   d,
-        }
-        if dat_name is not None:
-            fin['name'] = dat_name
-            if type is not None:
-                fin['type'] = type
-                if key is not None:
-                    fin['key'] = key
-        return fin
+    #@sendJSONevent('dat', zlib=6)
+    #def send_dat(self, dat_name=None, type=None, key=None):
+        #if dat_name is None:
+            #d = dl.dat_loader.json()
+        #else:
+            #d = dl.dat_loader.get_json(dat_name, type, key)
+        #fin = {
+            #'dat'   :   d,
+        #}
+        #if dat_name is not None:
+            #fin['name'] = dat_name
+            #if type is not None:
+                #fin['type'] = type
+                #if key is not None:
+                    #fin['key'] = key
+        #return fin
 
 
 #this is global message out across the connection pool
@@ -178,22 +170,22 @@ class SendMessage: #each connection has one of these
         msg = self.get_json_compressed(d, zlib)
         self.client.send(msg)
 
-    @sendJSON('dat', zlib=6)
-    def send_dat(self, dat_name=None, type=None, key=None):
-        if dat_name is None:
-            d = dl.dat_loader.json()
-        else:
-            d = dl.dat_loader.get_json(dat_name, type, key)
-        fin = {
-            'dat'   :   d,
-        }
-        if dat_name is not None:
-            fin['name'] = dat_name
-            if type is not None:
-                fin['type'] = type
-                if key is not None:
-                    fin['key'] = key
-        return fin
+    #@sendJSON('dat', zlib=6)
+    #def send_dat(self, dat_name=None, type=None, key=None):
+        #if dat_name is None:
+            #d = dl.dat_loader.json()
+        #else:
+            #d = dl.dat_loader.get_json(dat_name, type, key)
+        #fin = {
+            #'dat'   :   d,
+        #}
+        #if dat_name is not None:
+            #fin['name'] = dat_name
+            #if type is not None:
+                #fin['type'] = type
+                #if key is not None:
+                    #fin['key'] = key
+        #return fin
 
     @sendJSON('identify_fail')
     def identify_fail(self, connection, notes=''):
@@ -222,18 +214,6 @@ class SendMessage: #each connection has one of these
             self.client.send(self.add_prefix(3, chunk_str))
         else:
             print "send chunk error: chunk id invalid, " + str((x,y,z))
-
-    @sendJSON('you_died')
-    def you_died(self, msg):
-        return {
-            'msg'   :   msg,
-        }
-
-    @sendJSON('you_killed')
-    def you_killed(self, msg):
-        return {
-            'msg'   :   msg,
-        }
 
     @sendJSON('ping')
     def ping(self, timestamp):

@@ -629,3 +629,13 @@ int Agent_state::current_height_int()
     float h = this->current_height();
     return (int)ceil(h);
 }
+
+//void send_identify_message(char* name)
+//{
+    //// truncate name
+    //for (int i=0; i<PLAYER_NAME_MAX_LENGTH; i++)
+        //if (name[i] == '\0') break;
+    //if (i == PLAYER_NAME_MAX_LENGTH) name[i-1] = '\0';
+
+    
+//}

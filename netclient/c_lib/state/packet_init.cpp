@@ -115,5 +115,10 @@ void RegisterMessages() {
     DestroySlime_StoC::register_client_packet();
     SlimeState_StoC::register_client_packet();
 
+    //// identification
+    //identify_CtoS::register_server_packet();
+    //identified_StoC::register_client_packet();
+    //identify_fail_StoC::register_client_packet();
+
 }
 }

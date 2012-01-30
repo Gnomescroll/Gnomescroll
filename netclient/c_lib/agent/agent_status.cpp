@@ -55,6 +55,7 @@ void Agent_status::set_name(char* name)
 // because the Agent_status:: method was being called
 // instead of the overriding Agent_status set_name method
 // C++ thing
+// (is this still relevant with Base_status removed?)
 void Agent_status::set_name(char* name, int id)
 {
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
@@ -62,7 +63,8 @@ void Agent_status::set_name(char* name, int id)
     strcpy(this->name, name);
     #ifdef DC_SERVER
     agent_name_StoC msg;
-    msg.id = id;
+    //msg.id = id;
+    msg.id = this->id;
     strcpy(msg.name, this->name);
     msg.broadcast();
     #endif
