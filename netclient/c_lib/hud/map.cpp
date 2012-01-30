@@ -124,15 +124,22 @@ Uint32 get_agent_pixel(int *x, int *y) {
 }
 
 void update_heightmap() {
+    static int strip = 0;
+    const int strips = 16;
+    int strip_width = map_dim.x / strips;
+    
     if (cells == NULL) return;
     int i,j;
     int h;
-    for (i=0; i < map_dim.x; i++) {
+    for (i=strip_width*strip; i < strip_width*(strip+1); i++) {
         for (j=0; j < map_dim.y; j++) {
             h = get_height_at(i,j);
             cells[i + map_dim.x*j] = (unsigned char)2*h;
         }
     }
+
+    strip++;
+    strip%=strips;
 }
 
 void update_map_surface() {
@@ -210,7 +217,7 @@ void draw() {
     static unsigned int update_counter = 0;
 
     update_counter++;
-    if(update_counter % 30 == 0)
+    if(update_counter % 6 == 0)
         update();
 
     if (update_counter % 2 == 0)
