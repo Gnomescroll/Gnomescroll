@@ -41,7 +41,6 @@ class Agent_status {
         unsigned int coins;
 
         void set_name(char* n);
-        void set_name(char* n, int id);
 
         void set_spawner(int pt);
         void set_spawner();

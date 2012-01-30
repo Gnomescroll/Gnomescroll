@@ -88,8 +88,6 @@ class PlayerAgent_state {
         ~PlayerAgent_state();
 
         void update_sound();
-
-
 };
 
 

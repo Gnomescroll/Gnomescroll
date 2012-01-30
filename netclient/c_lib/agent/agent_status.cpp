@@ -49,18 +49,6 @@ void Agent_status::set_name(char* name)
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
         name[PLAYER_NAME_MAX_LENGTH] = '\0';
     strcpy(this->name, name);
-}
-
-// instead of reading this->a->id in Agent_status, I do this here
-// because the Agent_status:: method was being called
-// instead of the overriding Agent_status set_name method
-// C++ thing
-// (is this still relevant with Base_status removed?)
-void Agent_status::set_name(char* name, int id)
-{
-    if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-        name[PLAYER_NAME_MAX_LENGTH] = '\0';
-    strcpy(this->name, name);
     #ifdef DC_SERVER
     agent_name_StoC msg;
     //msg.id = id;

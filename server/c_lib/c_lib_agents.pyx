@@ -27,7 +27,7 @@ cdef extern from "./agent/agent_status.hpp":
         int deaths
         int suicides
         char* name
-        void set_name(char* name, int id)
+        void set_name(char* name)
         
 #Agent_state
 cdef extern from "./agent/agent.hpp":
@@ -155,7 +155,7 @@ def set_agent_name(int id, name):
     if a == NULL:
         print "cAgents -- set_agent_name, agent %d unknown. Name=%s" % (id, name,)
         return
-    a.status.set_name(name, id)
+    a.status.set_name(name)
 
 #functions
 
