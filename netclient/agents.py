@@ -6,12 +6,10 @@ Agents:
 import opts
 opts = opts.opts
 
-import c_lib.c_lib_agents as cAgents
+
 import init_c_lib
 import c_lib.terrain_map as terrainMap
 import c_lib.c_lib_hud as cHUD
-import c_lib.c_lib_game_modes as cGame
-import c_lib.c_lib_animations as cAnimations
 
 from game_state import GameStateGlobal
 from net_out import NetOut
@@ -22,7 +20,7 @@ from object_lists import GenericObjectList, GenericObjectListWrapper
 '''
 Data model for agent
 '''
-class Agent(cAgents.AgentWrapper):
+class Agent(init_c_lib.AgentWrapper):
 
     def __init__(self, id):
         self.id = id
@@ -35,12 +33,12 @@ class Agent(cAgents.AgentWrapper):
 
     def __getattribute__(self, name):
         try:
-            val = cAgents.AgentWrapper.__getattribute__(self, name)
+            val = init_c_lib.AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             val = object.__getattribute__(self, name)
             
         if name == 'team':
-            val = cGame.get_team(val)
+            val = init_c_lib.get_team(val)
                     
         return val
 
@@ -62,11 +60,11 @@ def requireCamera(f):
 '''
 Client's player's agent
 '''
-class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
+class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
 
     def __init__(self, id):
         Agent.__init__(self, id)
-        cAgents.PlayerAgentWrapper.__init__(self, id)
+        init_c_lib.PlayerAgentWrapper.__init__(self, id)
 
         self.button_state = [0 for i in range(11)]
 
@@ -76,15 +74,15 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
 
     def __getattribute__(self, name):
         try:
-            val = cAgents.AgentWrapper.__getattribute__(self, name)
+            val = init_c_lib.AgentWrapper.__getattribute__(self, name)
         except AttributeError:
             try:
-                val = cAgents.PlayerAgentWrapper.__getattribute__(self, name)
+                val = init_c_lib.PlayerAgentWrapper.__getattribute__(self, name)
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
         if name == 'team':
-            val = cGame.get_team(val)
+            val = init_c_lib.get_team(val)
 
         return val
 
@@ -92,12 +90,12 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
     def set_button_state(self):
         f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = self.button_state
         theta, phi = self.camera.angles()
-        cAgents.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
+        init_c_lib.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
     @requireCamera
     @noViewer
     def fire(self):
-        cAgents.PlayerAgentWrapper.fire(self)
+        init_c_lib.PlayerAgentWrapper.fire(self)
 
     @requireCamera
     @noViewer
@@ -109,13 +107,13 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
             block_type = terrainMap.get(*block)
 
         InputGlobal.cube_selector.active_id = block_type
-        cAgents.PlayerAgentWrapper.set_active_block(self, block_type)
+        init_c_lib.PlayerAgentWrapper.set_active_block(self, block_type)
 
     def active_block(self):
         return InputGlobal.cube_selector.active_id
 
     def bleed(self):
-        cAnimations.bleed(self.x, self.y, self.z)
+        init_c_lib.bleed(self.x, self.y, self.z)
 
     @noViewer
     def switch_weapons(self, weapon_index):
@@ -127,7 +125,7 @@ class PlayerAgent(Agent, cAgents.PlayerAgentWrapper):
             i = weapon_index-1
 
         old = self.active_weapon
-        cAgents.PlayerAgentWrapper.switch_weapon(self, i)
+        init_c_lib.PlayerAgentWrapper.switch_weapon(self, i)
         if old != self.active_weapon:
             camera.camera.unzoom()
 
@@ -150,7 +148,7 @@ class AgentList(GenericObjectListWrapper):
         self._metaname = 'AgentList'
         self._itemname = 'Agent'
         self._object_type = Agent
-        self._wrapper = cAgents.AgentListWrapper
+        self._wrapper = init_c_lib.AgentListWrapper
 
     def create(self, *args, **agent):
         a = self._add(*args, **agent)
@@ -200,7 +198,7 @@ class AgentList(GenericObjectListWrapper):
     def check_for_player_agent(self):
         self.update_from_c()
         for id in self._wrapper.ids():
-            if id == cAgents.get_player_agent_id():
+            if id == init_c_lib.get_player_agent_id():
                 return self.create_player_agent(**{'id':id})
         
     def values(self):

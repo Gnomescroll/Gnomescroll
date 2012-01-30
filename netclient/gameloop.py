@@ -27,16 +27,8 @@ import camera
 import c_lib.terrain_map
 import init_c_lib
 import c_lib.c_lib_particles as cParticles
-import c_lib.c_lib_agents as cAgents
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_input as cInput
-import c_lib.c_lib_sdl as cSDL
-import c_lib.c_lib_camera as cCamera
-import c_lib.c_lib_sound as cSound
-import c_lib.c_lib_options as cOptions
-#import c_lib.c_lib_map_gen as cMapGen
-
-import c_lib.c_lib_animations as cAnimations
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -57,7 +49,7 @@ from dat_loader import dat_loader
 
 #from init_c_lib import _pviz_draw
 
-cSDL.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
+init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
 c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
 
@@ -80,10 +72,10 @@ class App(object):
     def init_sound(self):
         path = './media/sound/wav/'
         soundfiles = os.listdir(path)
-        cSound.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
+        init_c_lib.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
 
     def __init__(self):
-        cOptions.load(opts)
+        init_c_lib.load_options(opts)
 
         self.init_globals()
 
@@ -107,7 +99,7 @@ class App(object):
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
 
         self.init_inputs()
-        cCamera.load_skybox()
+        #init_c_lib.load_skybox()
 
         self.init_sound()
         
@@ -146,7 +138,7 @@ class App(object):
         ltick, ctick = 0,0
 
         if ping:
-            ping_n = cSDL.get_ticks()
+            ping_n = init_c_lib.get_ticks()
 
         self.intervals.set()
         _i = 30
@@ -187,7 +179,7 @@ class App(object):
                 if tc == 0 or sl_c > 0: #only run once
                     break
 
-                cAnimations.AnimationTick()
+                init_c_lib.AnimationTick()
                 #if sl_c == 0:
                 #    NetClientStartFrame() #physics tick
 
@@ -229,7 +221,7 @@ class App(object):
                 --mouse motion interpolation
             '''
             #start frame
-            current_tick = cSDL.get_ticks()
+            current_tick = init_c_lib.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
 
@@ -259,10 +251,10 @@ class App(object):
             camera.camera.world_projection()
 
             #if InputGlobal.hk:
-                #cMapGen.Dragon.draw()
+                #init_c_lib.Dragon.draw()
 
             #P.event("Draw skybox")
-            #cCamera.render_skybox()
+            #init_c_lib.render_skybox()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
@@ -272,7 +264,7 @@ class App(object):
             P.event("World.draw(), draw agents")
             
             if opts.draw_agents:
-                cAgents.draw_agents()
+                init_c_lib.draw_agents()
 
             P.event("Animations Draw")
             animations.draw()
@@ -280,7 +272,7 @@ class App(object):
             P.event("c_lib_particles.draw()")
             cParticles.draw() ## TESTING
 
-            cAnimations.AnimationDraw()
+            init_c_lib.AnimationDraw()
 
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
@@ -299,11 +291,11 @@ class App(object):
                     #_pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
 
             P.event("SDL flip")
-            cSDL.flip()
+            init_c_lib.flip()
             P.event("Misc")
             #FPS calculation
             if fps:
-                ctick = cSDL.get_ticks()
+                ctick = init_c_lib.get_ticks()
                 #print str(ctick - ltick)
                 average.append(ctick-ltick)
                 ltick = ctick
@@ -317,9 +309,9 @@ class App(object):
                     fps_text = "%.2f" % (sum)
 
             if False and ping:
-                if cSDL.get_ticks() - ping_n > opts.ping_update_interval:
+                if init_c_lib.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
-                    ping_n = cSDL.get_ticks()
+                    ping_n = init_c_lib.get_ticks()
                     NetOut.miscMessage.ping()
                     ping_text = stats.last_ping
 
@@ -327,7 +319,7 @@ class App(object):
 
             P.finish_frame()
 
-            cSound.Sound.update()
+            init_c_lib.Sound.update()
             init_c_lib.slime_tick()
 
         init_c_lib.close()

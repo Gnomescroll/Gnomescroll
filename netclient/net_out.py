@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import c_lib.c_lib_sdl #for time stamp function
+import init_c_lib
 
 '''
 Client network outgoing
@@ -98,7 +98,7 @@ class SendMessage(GenericMessage):
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
-        return { 'timestamp' : c_lib.c_lib_sdl.get_ticks() }
+        return { 'timestamp' : init_c_lib.get_ticks() }
 
 class DatMessage:
     @sendJSON('dat_loaded')

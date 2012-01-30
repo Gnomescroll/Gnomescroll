@@ -1,11 +1,10 @@
-
-import c_lib.c_lib_sdl
+import init_c_lib
 
 p_on = False
 verbrose = True #only print states that take more than 1 ms
 
 def get_ticks():
-    return c_lib.c_lib_sdl.get_ticks()
+    return init_c_lib.get_ticks()
 
 class Profiler:
 

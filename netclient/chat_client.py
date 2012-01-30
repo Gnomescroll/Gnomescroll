@@ -9,7 +9,7 @@ from json import loads as decode_json
 from os import mkdir
 from os.path import exists as path_exists
 
-import c_lib.c_lib_game_modes as cGame
+import init_c_lib
 
 from utils import now
 
@@ -324,7 +324,7 @@ class ChatCommand():
                         'channel'   :   'system',
                     })
                 else:
-                    cGame.join_team(team_id)
+                    init_c_lib.join_team(team_id)
 
         elif command == 'teams':
             #_send = self._send_local({

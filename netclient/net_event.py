@@ -10,7 +10,7 @@ import json
 import zlib
 import random
 
-import c_lib.c_lib_sdl
+import init_c_lib
 import stats
 
 from dat_loader import dat_loader
@@ -144,7 +144,7 @@ class MiscMessageHandler(GenericMessageHandler):
     }
 
     def _ping(self, timestamp, **msg):
-        stats.last_ping = c_lib.c_lib_sdl.get_ticks() - timestamp
+        stats.last_ping = init_c_lib.get_ticks() - timestamp
 
 class MapMessageHandler(GenericMessageHandler):
 

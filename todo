@@ -126,6 +126,9 @@ Minimap
 
 "You're dead" notification
 
+bleed from damage
+spray blood in proper direction
+
 Sounds
 OpenAL ?
 System notifications (you killed...)

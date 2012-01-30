@@ -9,7 +9,7 @@ opts = opts.opts
 import init_c_lib
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
-import c_lib.c_lib_agents as cAgents
+
 
 from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer, save_to_disk
@@ -292,7 +292,7 @@ class Keyboard(object):
 
     #def hk(self):
         #camera.camera.world_projection()
-        #cMapGen.Dragon.generate()
+        #init_c_lib.Dragon.generate()
         #InputGlobal.hk = not InputGlobal.hk
         
     def toggle_hud(self):

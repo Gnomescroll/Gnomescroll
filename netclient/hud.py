@@ -1,9 +1,8 @@
 import opts
 opts = opts.opts
 
-import c_lib.c_lib_sdl as cSDL
+import init_c_lib
 import c_lib.c_lib_hud as cHUD
-import c_lib.c_lib_game_modes as cGameModes
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -223,7 +222,7 @@ class Hud(object):
         if color is None:
             color = (255, 255, 0)
         r, g, b = color
-        cSDL.draw_line(r, g, b, x, y, 0, x1, y1, 0)
+        init_c_lib.draw_line(r, g, b, x, y, 0, x1, y1, 0)
 
     def _draw_square(self, x, y, w, color=None):
         self._draw_rect(x, y, w, w, color)
@@ -232,7 +231,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        cSDL.draw_rect(r,g,b, x,y, w,h)
+        init_c_lib.draw_rect(r,g,b, x,y, w,h)
 
     def _draw_border_square(self, x, y, w, color=None):
         self._draw_border_rect(x, y, w, w, color)
@@ -241,7 +240,7 @@ class Hud(object):
         if color is None:
             color = (255,255,255)
         r,g,b = color
-        cSDL.draw_border_rect(r,g,b, x,y, w,h)
+        init_c_lib.draw_border_rect(r,g,b, x,y, w,h)
 
     def _draw_horizontal_line(self, x, y, length=10):
         self._draw_line(x, y, x + length, y)

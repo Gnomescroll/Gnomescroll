@@ -246,56 +246,16 @@ def build(bld):
         target='c_lib.c_lib_particles')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_agents.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_agents')
-
-    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_hud.pyx'],
         #use=common_libraries + ['c_lib'] + noise_libraries,
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_hud')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_sdl.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_sdl')
-
-    bld(features='cxx cshlib pyext',
         source=['c_lib/c_lib_input.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.c_lib_input')
 
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_animations.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_animations')
-        
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_camera.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_camera')
-        
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_options.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_options')
-
-    bld(features='cxx cshlib pyext',      #cython
-        source=['c_lib/c_lib_sound.pyx'],
-        use=common_libraries+['c_lib'],
-        target='c_lib.c_lib_sound')
-        
-    bld(features='cxx cshlib pyext',      #cython
-        source=['c_lib/c_lib_game_modes.pyx'],
-        use=common_libraries+['c_lib'],
-        target='c_lib.c_lib_game_modes')
-        
-    #bld(features='cxx cshlib pyext',      #cython
-        #source=['c_lib/c_lib_map_gen.pyx'],
-        #use=common_libraries+['c_lib'],
-        #target='c_lib.c_lib_map_gen')
-        
     # final
     bld(features='cxx cprogram pyembed',
         use=SDL_libraries + ['c_lib'], #added clib
@@ -330,16 +290,8 @@ def install_in_ext(ctx):
        'vox_lib',
        'init_c_lib',
        'c_lib.c_lib_particles',
-       'c_lib.c_lib_agents',
        'c_lib.c_lib_hud',
        'c_lib.c_lib_input',
-       'c_lib.c_lib_animations',
-       'c_lib.c_lib_sdl',
-       'c_lib.c_lib_sound',
-       'c_lib.c_lib_camera',
-       'c_lib.c_lib_options',
-       'c_lib.c_lib_game_modes',
-       #'c_lib.c_lib_map_gen',
     ]
 
     for target in targets:
