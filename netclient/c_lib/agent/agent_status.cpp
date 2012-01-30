@@ -64,7 +64,7 @@ void Agent_status::set_name(char* name, int id)
     #ifdef DC_SERVER
     agent_name_StoC msg;
     //msg.id = id;
-    msg.id = this->id;
+    msg.id = this->a->id;
     strcpy(msg.name, this->name);
     msg.broadcast();
     #endif
