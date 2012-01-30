@@ -104,6 +104,7 @@ use map dimensions for minimap; raster for heightmap data to get rid of lag spik
 Teammates on hud map
 Move cube dat client side. not networked
 
+sphere fulstrum culling using radius
 =============
 
 Icons on map (angus)
