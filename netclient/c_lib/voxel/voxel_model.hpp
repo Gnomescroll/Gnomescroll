@@ -18,8 +18,8 @@ class Voxel_model
         bool skeleton_needs_update;
         int n_skeleton_nodes;
         int* vox_skeleton_transveral_list;
-        struct Mat4* vox_skeleton_local_matrix;
-        struct Mat4* vox_skeleton_world_matrix;
+        struct Affine* vox_skeleton_local_matrix;
+        struct Affine* vox_skeleton_world_matrix;
         
         //parts voxel volume parst
         bool vox_inited;

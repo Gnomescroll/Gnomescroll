@@ -1,5 +1,7 @@
 #include "voxel_model.hpp"
 
+#include <physics/affine.hpp>
+
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <defines.h>
 
@@ -21,7 +23,7 @@ namespace ServerState {
 //set offset and rotation
 void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
-    vox_skeleton_world_matrix[0] = mat4_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
+    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
 }
 
 void Voxel_model::update_skeleton()
@@ -35,11 +37,11 @@ void Voxel_model::update_skeleton()
 
 
         vox_skeleton_local_matrix[2] = 
-        mat4_euler_rotation_and_translation(0.0, -0.75, 5.0,  0.0, sin(c1)/3, 0.0);
+        affine_euler_rotation_and_translation(0.0, -0.75, 5.0,  0.0, sin(c1)/3, 0.0);
         c1 += 0.010;
 
         vox_skeleton_local_matrix[1] = 
-        mat4_euler_rotation_and_translation(0.0, 0.75, 5.0,  0.0, sin(-1.0*c1)/3, 0.0);
+        affine_euler_rotation_and_translation(0.0, 0.75, 5.0,  0.0, sin(-1.0*c1)/3, 0.0);
         c1 += 0.020;
 
     }
@@ -49,12 +51,12 @@ void Voxel_model::update_skeleton()
         if(debug) 
         {   
             printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
-            print_mat4( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
+            print_affine( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
             printf("\n");
-            print_mat4( vox_skeleton_local_matrix[i] );
+            print_affine( vox_skeleton_local_matrix[i] );
         }
 
-        vox_skeleton_world_matrix[i] = mat4_mult( 
+        vox_skeleton_world_matrix[i] = affine_mult( 
             vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]],  
             vox_skeleton_local_matrix[i]
         );
@@ -63,13 +65,7 @@ void Voxel_model::update_skeleton()
     for(int i=0; i<this->n_parts; i++)
     {
         class Voxel_volume* vv = &this->vv[i];
-
-        vv->world_matrix = mat4_mult( *vv->parent_world_matrix, vv->local_matrix );
-
-        vv->world_matrix.v[0].w = 0.0f;
-        vv->world_matrix.v[1].w = 0.0f;
-        vv->world_matrix.v[2].w = 0.0f;
-        vv->world_matrix.v[3].w = 1.0f;
+        vv->world_matrix = affine_mult( *vv->parent_world_matrix, vv->local_matrix );
     }
 
 }
@@ -89,8 +85,8 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
     vox_skeleton_transveral_list = new int[num_skeleton_nodes];
-    vox_skeleton_local_matrix = new Mat4[num_skeleton_nodes];
-    vox_skeleton_world_matrix = new Mat4[num_skeleton_nodes];
+    vox_skeleton_local_matrix = new Affine[num_skeleton_nodes];
+    vox_skeleton_world_matrix = new Affine[num_skeleton_nodes];
 
     const int debug_0 = 0;
 
@@ -104,9 +100,9 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
         if( debug_0 )
         {
             printf("vox_skeleton_local_matrix[%i]= \n", i);
-            print_mat4( vox_skeleton_local_matrix[i] );
+            print_affine( vox_skeleton_local_matrix[i] );
             printf("vox_dat->vox_skeleton_local_matrix[%i]= \n", i);
-            print_mat4( vox_dat->vox_skeleton_local_matrix[i] );
+            print_affine( vox_dat->vox_skeleton_local_matrix[i] );
         }
     }
 
@@ -125,7 +121,7 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
         if( debug_1 )
         {
             printf("voxel volume %i local matrix= \n", i);
-            print_mat4( vv->local_matrix );
+            print_affine( vv->local_matrix );
         }
     }
 }

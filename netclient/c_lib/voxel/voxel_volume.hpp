@@ -5,10 +5,11 @@
 //#include <physics/vector.hpp>
 //#include <physics/matrix.hpp>
 
-#include <physics/vec3.hpp>
-#include <physics/vec4.hpp>
-#include <physics/mat3.hpp>
-#include <physics/mat4.hpp>
+//#include <physics/vec3.hpp>
+//#include <physics/vec4.hpp>
+//#include <physics/mat3.hpp>
+//#include <physics/mat4.hpp>
+#include <physics/affine.hpp>
 
 #include <voxel/voxel_hitscan.hpp>
 
@@ -18,10 +19,10 @@ class Voxel_volume
 {
     public:
 
-    struct Mat4 local_matrix;
-    struct Mat4 world_matrix;
+    struct Affine local_matrix;
+    struct Affine world_matrix;
 
-    struct Mat4* parent_world_matrix;
+    struct Affine* parent_world_matrix;
 
     //Vec4 v[4]; // forward, up, right, offset
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <physics/mat4.hpp>
-
+//#include <physics/Affine.hpp>
+#include <physics/affine.hpp>
 /* Dat storage */
 
 #ifdef DC_CLIENT
@@ -97,11 +97,11 @@ class VoxDat {
         bool voxel_volume_inited;
         int n_parts;
         class VoxPart** vox_part;
-        struct Mat4* vox_volume_local_matrix;
+        struct Affine* vox_volume_local_matrix;
         //skeleton node
         bool voxel_skeleton_inited;
         int* vox_skeleton_transveral_list;
-        struct Mat4* vox_skeleton_local_matrix;
+        struct Affine* vox_skeleton_local_matrix;
         int n_skeleton_nodes;
         
         void init_skeleton(int n_skeleton);

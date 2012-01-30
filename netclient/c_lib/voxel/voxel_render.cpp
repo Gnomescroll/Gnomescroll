@@ -5,8 +5,9 @@
 
 #include <physics/vec3.hpp>
 #include <physics/vec4.hpp>
-#include <physics/mat3.hpp>
-#include <physics/mat4.hpp>
+//#include <physics/mat3.hpp>
+//#include <physics/mat4.hpp>
+#include <physics/affine.hpp>
 
 #include <c_lib/common/enum_types.hpp>
 
@@ -289,16 +290,13 @@ void Voxel_render_list::draw()
             vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
 
             printf("parent_world_matrix= \n");
-            print_mat4( *vv->parent_world_matrix );
+            print_affine( *vv->parent_world_matrix );
 
             printf("local_matrix= \n");
-            print_mat4( vv->local_matrix );
+            print_affine( vv->local_matrix );
 
             printf("result= \n");
-            print_mat4( vv->world_matrix );
-
-            struct Mat4 r = vv->world_matrix;
-            printf("offset: %f, %f, %f, %f \n", r.v[0].w, r.v[1].w, r.v[2].w, r.v[3].w );
+            print_affine( vv->world_matrix );
         }
 
         glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );

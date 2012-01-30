@@ -31,9 +31,9 @@ void print_affine(struct Affine m)
     printf("%.2f %.2f %.2f \n", m.v[3].x,m.v[3].y,m.v[3].z);
 }
 
-static struct Affine mat4_mult(Affine a, Affine b)  __attribute((always_inline));
+static struct Affine affine_mult(Affine a, Affine b)  __attribute((always_inline));
 
-struct Affine mat4_mult(Affine a, Affine b)
+struct Affine affine_mult(Affine a, Affine b)
 {
     struct Affine c;
 /*

@@ -6,7 +6,7 @@
 
 #include <c_lib/SDL/shader_loader.hpp>
 
-#include <physics/vector4.hpp>
+//#include <physics/vector4.hpp>
 
 /*
     Double buffered drawing object template
