@@ -87,12 +87,16 @@ class PyClient:
         self.send_agents()
         self.send_monsters()
         self.send_ctf()
+        self.send_items()
         
     def send_agents(self):
         cAgents.AgentListWrapper.send_to_client(self.client_id)
 
     def send_monsters(self):
         cMonsters.send_to_client(self.client_id)
+
+    def send_items(self):
+        cAgents.send_spawners_to_client(self.client_id)
 
     def send_ctf(self):
         cGameModes.send_ctf_to_client(self.client_id)

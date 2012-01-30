@@ -24,6 +24,7 @@ class Agent_status {
         int health;
         bool dead;
         int respawn_countdown;
+        int spawner;
 
         unsigned int kills;
         unsigned int deaths;
@@ -41,6 +42,9 @@ class Agent_status {
 
         void set_name(char* n);
         void set_name(char* n, int id);
+
+        void set_spawner(int pt);
+        void set_spawner();
     
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);

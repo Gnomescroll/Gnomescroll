@@ -35,7 +35,8 @@ class Object_list {
         Object_state* get_or_create(int id);
 
         bool contains(int id);
-
+        bool full();
+        
         void destroy(int _id);
 
         void draw();    //overide in template specilization on client
@@ -245,4 +246,11 @@ void Object_list<Object_state, max_n>::draw(int all) {
         a[i]->draw();
     }
     #endif
+}
+
+template <class Object_state, int max_n>
+bool Object_list<Object_state, max_n>::full()
+{
+    if (this->num > max_n) printf("Num %d exceed max_n %d !!\n", num, max_n);
+    return (this->num >= max_n);
 }

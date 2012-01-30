@@ -11,6 +11,9 @@ const int AGENT_MAX = 64;
 #define CAMERA_HEIGHT 2.4f
 #define CAMERA_HEIGHT_CROUCHED 1.5f;
 
+#define AGENT_SPEED 2.8f
+#define AGENT_SPEED_CROUCHED 0.8f
+
 #define AGENT_BOX_RADIUS 0.4f
 
 #define AGENT_START_HEALTH 100
@@ -120,6 +123,8 @@ class Agent_state {
         bool is_you();
 
         float camera_height();
+        float current_height();
+        int current_height_int();
 
         void init_vox();
 

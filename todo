@@ -73,20 +73,26 @@ Align simple voxel models (slime, base etc)
 
 =============
 
+Jan 29-30
+
+coins allocation
+get coins for flag capture
+added to hud $X
+
+spawners cost coins
+spawners team max
+spawners cant be placed on other spawners
+Send spawner list to new clients
+
+=============
+
 Spawners
 -- TODO:
-Make sure owner/team properties are set
 Use spawner to determine spawn point
 Spawner can't be placed where current spawner is
-Send spawner list to new clients
 Base acts as defacto spawner. Base should have some intelligent initial spawning (like not too close to a back corner)
 
-Points allocation
--- Status property, like other points
--- Give/take points for actions
-
-Once points are added,
-Integrate into spawners
+Add simple gravity to items
 
 Investigate if object lists w/ auto id are creating 1 past end of the array
 Fix collision detection
