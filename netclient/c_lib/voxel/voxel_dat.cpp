@@ -238,7 +238,7 @@ void VoxDat::init_skeleton(int n_skeleton)
     voxel_skeleton_inited = true;
 
     this->n_skeleton_nodes = n_skeleton;
-    vox_skeleton_local_matrix = new Mat4[n_skeleton];
+    vox_skeleton_local_matrix = new Affine[n_skeleton];
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
@@ -252,12 +252,12 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
 
     const int debug = 0;
 
-    vox_skeleton_local_matrix[node] = mat4_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation( x,y,z, rx,ry,rz);
     if(debug) 
     {
         printf("!!! VoxDat::set_skeleton_local_matrix i=%i \n", node);
 
-        print_mat4( vox_skeleton_local_matrix[node] );
+        print_affine( vox_skeleton_local_matrix[node] );
         printf("\n");
     }
 }
@@ -285,7 +285,7 @@ void VoxDat::init_parts(int n_parts) {
     this->n_parts = n_parts;
     vox_part = new VoxPart*[n_parts]; //array of pointers
 
-    this->vox_volume_local_matrix = new Mat4[n_parts];
+    this->vox_volume_local_matrix = new Affine[n_parts];
 
     for (int i=0; i<n_parts; vox_part[i++] = NULL);
 }
@@ -329,7 +329,7 @@ void VoxDat::set_part_local_matrix( int part_num, float x, float y, float z, flo
         printf("ERROR VoxDat::set_part_spatials -- part %d is NULL. Abort\n", part_num);
         return;
     }
-    this->vox_volume_local_matrix[part_num] =  mat4_euler_rotation_and_translation(x,y,z, rx,ry,rz);
+    this->vox_volume_local_matrix[part_num] =  affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
 }
 
 void VoxDat::set_skeleton_parent_matrix(int part, int parent)
