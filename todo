@@ -86,6 +86,7 @@ Send spawner list to new clients
 Use spawner to determine spawn point
 Spawner can't be placed where current spawner is
 Base acts as defacto spawner.
+Spawner Health/Destruction
 
 improved base and flag spawn boundaries
 
@@ -95,7 +96,6 @@ increased agent speed
 
 Spawners
 -- TODO:
-Health/Destruction
  
 Add simple gravity to items
 

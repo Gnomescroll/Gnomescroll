@@ -315,10 +315,18 @@ inline void hitscan_spawner_CtoS::handle()
 
     Spawner* s = ServerState::spawner_list.get(id);
     if (s == NULL) return;
+    int coins = 3;
+    if (s->team == a->status.team)
+    {
+        if (s->owner == a->id)
+            coins = 0;  // you can destroy your own spawner, but you dont get coins for it
+        else
+            return; // cant damage your teammates' spawners
+    }
+    
     // apply damage
     const int dmg = 25;
     int h = s->take_damage(dmg);
-    const int coins = 3;
     if (h <= 0)
         a->status.add_coins(coins);
 }

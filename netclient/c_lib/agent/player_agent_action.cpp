@@ -57,11 +57,11 @@ void PlayerAgent_action::hitscan() {
         &vhe
     );
 
-    if (voxel_hit)
-    {
-        printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
-        if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
-    }
+    //if (voxel_hit)
+    //{
+        //printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
+        //if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
+    //}
     
     // hitscan against terrain
     float block_distance = 10000000.0f;
