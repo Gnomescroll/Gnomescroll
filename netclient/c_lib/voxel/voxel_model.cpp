@@ -177,10 +177,7 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
 }
 
 void Voxel_model::set_draw(bool draw) {
-    int i;
-    for (i=0; i<this->n_parts; i++) {
-        this->vv[i].draw = draw;
-    }
+    for (int i=0; i<this->n_parts; this->vv[i++].draw = draw);
 }
 
 void Voxel_model::register_hitscan()
@@ -202,6 +199,7 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
 {
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
+    for (int i=0; i<this->n_parts; this->vv[i++].set_center(x,y,z));
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)

@@ -39,6 +39,7 @@ void Spawner::init_vox()
     if (this->team == 0) printf("WARNING Spawner::init_vox() -- team not set\n");
     this->vox = new Voxel_model(&spawner_vox_dat, this->id, this->type, this->team);
     this->vox->set_hitscan(true);
+    this->vox->register_hitscan();
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
@@ -61,6 +62,7 @@ Spawner::Spawner(int id, float x, float y, float z)
 id(id),
 team(0),
 owner(0),
+health(SPAWNER_HEALTH),
 type(OBJ_TYPE_SPAWNER),
 x(x), y(y), z(z),
 theta(0), phi(0),
@@ -80,11 +82,27 @@ void Spawner::create_message(Spawner_create_StoC* msg)
     #endif
 }
 
+int Spawner::take_damage(int dmg)
+{
+    this->health -= dmg;
+    if (this->health <= 0)
+    {
+        STATE::spawner_list.destroy(this->id);
+    }
+    this->health = (this->health < 0) ? 0 : this->health;
+    return this->health;
+}
 Spawner::~Spawner()
 {
+    #ifdef DC_SERVER
+    Spawner_destroy_StoC msg;
+    msg.id = this->id;
+    msg.broadcast();
+    #endif
     if (this->vox != NULL) delete this->vox;
 }
 
+/* Spawner list */
 
 bool Spawner_list::team_spawner_available(int team)
 {

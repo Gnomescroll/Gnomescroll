@@ -57,6 +57,12 @@ void PlayerAgent_action::hitscan() {
         &vhe
     );
 
+    if (voxel_hit)
+    {
+        printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
+        if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
+    }
+    
     // hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
@@ -115,9 +121,8 @@ void PlayerAgent_action::hitscan() {
     hitscan_slime_CtoS monster_msg;
     hitscan_block_CtoS block_msg;
     hitscan_none_CtoS none_msg;
-
-    //normalize_vector(vec);
-
+    hitscan_spawner_CtoS spawner_msg; // can probably be merged into slime/turret/etc hitscan msgs
+    
     switch (target) {
         case TARGET_VOXEL:
             switch (vhe.entity_type) {
@@ -132,6 +137,13 @@ void PlayerAgent_action::hitscan() {
                     monster_msg.monster_type = vhe.entity_type;
                     monster_msg.monster_body_part = vhe.part_id;
                     monster_msg.send();
+                    break;
+
+                case OBJ_TYPE_SPAWNER:
+                    spawner_msg.id = vhe.entity_id;
+                    spawner_msg.type = vhe.entity_type;
+                    spawner_msg.part = vhe.part_id;
+                    spawner_msg.send();
                     break;
                     
                 default:

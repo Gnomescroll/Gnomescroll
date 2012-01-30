@@ -169,6 +169,7 @@ inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_agent_CtoS::handle() {}
 inline void hitscan_slime_CtoS::handle() {}
+inline void hitscan_spawner_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
@@ -299,6 +300,29 @@ inline void hitscan_slime_CtoS::handle() {
     // TODO: Use weapon dmg. Use body_part
     //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
 }
+
+//hitscan target:spawner
+inline void hitscan_spawner_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+
+    if (!a->weapons.laser.fire()) return;
+    fire_weapon_StoC msg;
+    msg.id = a->id;
+    msg.type = a->weapons.laser.type;
+    msg.broadcast();
+
+    Spawner* s = ServerState::spawner_list.get(id);
+    if (s == NULL) return;
+    // apply damage
+    const int dmg = 25;
+    int h = s->take_damage(dmg);
+    const int coins = 3;
+    if (h <= 0)
+        a->status.add_coins(coins);
+}
+
 
 // hitscan target:block
 inline void hitscan_block_CtoS::handle() {

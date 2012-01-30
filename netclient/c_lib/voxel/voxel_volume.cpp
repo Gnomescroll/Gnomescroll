@@ -85,6 +85,13 @@ Voxel_volume::~Voxel_volume()
     free(this->voxel);
 }
 
+// temporary, for hitscan
+void Voxel_volume::set_center(float x, float y, float z)
+{
+    this->center.x = x;
+    this->center.y = y;
+    this->center.z = z;
+}
 
 //external methods
 void Voxel_volume::set(int x, int y, int z, Voxel* v)

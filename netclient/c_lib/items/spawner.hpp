@@ -9,6 +9,7 @@ extern VoxDat spawner_vox_dat;
 const int SPAWNER_RADIUS = 5;
 const int MAX_SPAWNERS = 18;
 const int SPAWNERS_PER_TEAM = 9;
+const int SPAWNER_HEALTH = 300;
 
 class Spawner_create_StoC; // forward decl
 
@@ -18,6 +19,7 @@ class Spawner
         int id;
         int team;
         int owner;
+        int health;
         Object_types type;
 
         float x,y,z;
@@ -32,6 +34,8 @@ class Spawner
         void set_owner(int owner);
         
         void get_spawn_point(int agent_height, int* spawn);
+
+        int take_damage(int dmg);
 
         void create_message(Spawner_create_StoC* msg);
         Spawner(int id);

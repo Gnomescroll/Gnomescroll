@@ -87,15 +87,19 @@ Use spawner to determine spawn point
 Spawner can't be placed where current spawner is
 Base acts as defacto spawner.
 
+improved base and flag spawn boundaries
+
 increased agent speed
 
 =============
 
 Spawners
 -- TODO:
-Base should have some intelligent initial spawning (like not too close to a back corner)
+Health/Destruction
  
 Add simple gravity to items
+
+merge hitscan object packets
 
 Investigate if object lists w/ auto id are creating 1 past end of the array
 Fix collision detection
@@ -112,5 +116,6 @@ Turrets
 
 Bundle object list transmission into one, for new agent connects
 
-Sound
+Sounds
+OpenAL ?
 System notifications (you killed...)

@@ -247,6 +247,24 @@ class hitscan_slime_CtoS: public FixedSizeNetPacketToServer<hitscan_slime_CtoS>
         inline void handle();
 };
 
+// hitscan: target = spawner
+class hitscan_spawner_CtoS: public FixedSizeNetPacketToServer<hitscan_spawner_CtoS>
+{
+    public:
+        int id;
+        int type;
+        int part;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_u8(&part, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
+
 // hitscan: target = block
 class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 {
