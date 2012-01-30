@@ -93,9 +93,10 @@ Can't be placed where current spawner is
 Base acts as defacto spawner.
 Health/Destruction
 
-=============
+List filters on Object_list template
+Grenades damage spawners (and turrets when ready)
 
-Grenades damage damagable models
+=============
 
 Add simple gravity to items
 
