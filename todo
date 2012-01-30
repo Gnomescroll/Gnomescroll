@@ -109,10 +109,10 @@ sphere fulstrum culling using radius
 fix object_list template index bug (last element overwrite)
 add null checks to *list.create where missing
 zero control state if dead (agent wont continue walking after death)
-Bundle object list transmission into one C method, for new agent connects (cut client compile time from ~28s to ~14s)
+Bundle object list transmission into one C method, for new agent connects (cut client compile by >10secs)
 remove c_lib_monsters
 only use constant server seed during map gen -- use time() for the rest (base/flag/etc spawning)
-
+merge cython files (compile time down to ~7secs both server and client)
 =============
 
 Icons on map (angus)
@@ -127,6 +127,7 @@ Minimap
 "You're dead" notification
 
 bleed from damage
+other agent bleed if think they took damage (got shot)
 spray blood in proper direction
 
 Find the glColor bug: minivox coloring
@@ -134,6 +135,14 @@ Find the glColor bug: minivox coloring
 Sounds
 OpenAL ?
 System notifications (you killed...)
+
+Voxel editor:
+Bucket fill
+Rewrite deserializer
+Color pallete
+Color wheel --contingent on js lib
+http://design.geckotribe.com/colorwheel/    (shows complementary colors)
+http://jscolor.com/ (has saturation slider)
 
 Deprecate python packets
 -- Identify/fail
