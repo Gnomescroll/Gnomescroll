@@ -50,11 +50,13 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
     float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
     //printf("dx= %f, theshhold= %f \n", dx, dz*fulstrum_hx);
-    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+    //if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+    if( dx < -dz*(fulstrum_hx+r) || dx > dz*(fulstrum_hx+r) ) return false;
 
     float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
     //printf("dy= %f, theshhold= %f \n", dy, dz*fulstrum_hy);
-    if( dy < -dz*fulstrum_hy || dy > dz*fulstrum_hy ) return false;
+    //if( dy < -dz*(fulstrum_hy+r/2) || dy > dz*(fulstrum_hy+r/2) ) return false;
+    if( dy < -dz*(fulstrum_hy+r) || dy > dz*(fulstrum_hy+r) ) return false;
 
     return true;
 }
