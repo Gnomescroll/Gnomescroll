@@ -24,8 +24,6 @@ class Voxel_volume
 
     struct Affine* parent_world_matrix;
 
-    //Vec4 v[4]; // forward, up, right, offset
-
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
 #endif

@@ -271,7 +271,7 @@ void Voxel_render_list::draw()
         Voxel_volume* vv = render_list[i];
 
         if(vv->vvl.vnum == 0) continue;
-    
+        if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
 
         int debug = 0;
 
