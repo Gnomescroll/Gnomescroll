@@ -38,7 +38,7 @@ class PlayerAgent_state {
         class AgentState s1;
 
         //cameras
-        class AgentState s;                 //client side predicted from control state
+        //class AgentState s;   use s1              //client side predicted from control state
         class AgentState c;                 //client side prediction with interpolation
         class AgentState state_snapshot;    //last snapshot from server
         //camera update functions   
@@ -60,7 +60,6 @@ class PlayerAgent_state {
         struct Agent_control_state cs_net[128];
 
         class AgentState snapshot_local[128];
-        //class AgentState snapshot_net[128];
 
         int state_history_seq;
 
@@ -70,9 +69,7 @@ class PlayerAgent_state {
         int last_snapshot_time;
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
-        void handle_local_control_state(int _seq, int _cs, float _theta, float _phi);
         void handle_net_control_state(int _seq, int _cs, float _theta, float _phi);
-        void client_side_prediction_tick();
 
         //state variables
 

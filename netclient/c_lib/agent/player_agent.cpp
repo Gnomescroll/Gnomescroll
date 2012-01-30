@@ -7,21 +7,10 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/sound/sound.hpp>
-//#endif
 
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/state/client_state.hpp>
 
-/*
-Net Messages
-*/
-
-//#include <net_lib/net.hpp>
-
-
-/*
-Other Stuff
-*/
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list.get(id);
@@ -86,41 +75,6 @@ void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, f
 
 }
 
-//take outgoing control input and do client side prediction
-//seq for prediction will always exceed client side one
-void PlayerAgent_state::handle_local_control_state(int _seq, int _cs, float _theta, float _phi) {
-    //printf("control state received: agent=%i, seq=%i, cs=%i \n", id, _seq, _cs);
-    
-/*
-    int index = _seq%128;
-
-    cs_local[index].seq = _seq;
-    cs_local[index].cs = _cs;
-    cs_local[index].theta = _theta;
-    cs_local[index].phi = _phi;
-
-    //printf("cs_seq= %i, _seq= %i \n", cs_seq, _seq);
-
-    client_side_prediction_tick();
-
-    //printf("control state= %i\n", new_control_state);
-*/
-}
-
-void client_side_prediction_tick()
-{
-/*
-    Agent_state* A = ClientState::agent_list.get(agent_id);
-    if(A == NULL) return;
-
-    struct Agent_control_state _cs;
-
-    _cs = cs[cs_seq_local % 128];
-
-    s = _agent_tick(_cs, box, s);
-*/
-}
-
 void PlayerAgent_state::handle_net_control_state(int _seq, int _cs, float _theta, float _phi) {
 
     int index = _seq%128;
@@ -183,7 +137,6 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
     int misc3       = cs & 1024? 1 :0;     
 
     AgentState* state;
-    //state = &this->you->s;
     state = &this->s1;
 
     // force staying crouched if cant stand up
@@ -249,8 +202,6 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     struct Agent_control_state acs;
     acs = cs_local[index];
-
-    s = _agent_tick(acs, you->box, s, this->you);
 
     int cs_index = (state_history_seq) % 256;
     class AgentState tmp = state_history[ state_history_index ];
@@ -393,7 +344,7 @@ void PlayerAgent_state::pump_camera() {
             camera_state = c;
             break;
         case client_side_prediction:
-            camera_state = s;
+            camera_state = s1;
             break;
         case last_server_snapshot:
             camera_state = state_snapshot;

@@ -13,10 +13,19 @@
 #include "./t_map/t_properties.c"
 #include "./t_map/t_serialize.c"
 
-#include "./physics/vector.cpp"
+
 #include "./ray_trace/ray_trace.c"
 #include "./ray_trace/hitscan.cpp"
 #include "./physics/common.cpp"
+
+//physics
+
+#include <c_lib/physics/vector.cpp>
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/physics/vec4.hpp>
+#include <c_lib/physics/mat3.hpp>
+#include <c_lib/physics/mat4.hpp>
+#include <c_lib/physics/affine.hpp>
 
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>

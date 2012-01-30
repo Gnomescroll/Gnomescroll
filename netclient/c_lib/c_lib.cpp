@@ -26,6 +26,10 @@
 #include <c_lib/physics/vector.cpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
+#include <c_lib/physics/mat3.hpp>
+#include <c_lib/physics/mat4.hpp>
+#include <c_lib/physics/affine.hpp>
+
 #include <c_lib/physics/color_matrix.cpp>
 #include <c_lib/ray_trace/ray_trace.c>
 #include <c_lib/ray_trace/hitscan.cpp>
