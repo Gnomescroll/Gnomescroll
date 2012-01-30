@@ -25,7 +25,7 @@ struct Mat4 {
             struct Vec4 c;
         };
     };
-} __attribute__((aligned (16)));
+};
 
 void print_mat4(struct Mat4 m)
 {

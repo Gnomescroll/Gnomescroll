@@ -16,6 +16,8 @@ struct Vec3
     };
 };
 
+//__attribute__((aligned (16)));
+
 /*
     vector operations
 */

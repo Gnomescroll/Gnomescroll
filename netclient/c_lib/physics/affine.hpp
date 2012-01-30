@@ -19,9 +19,9 @@ struct Affine {
             struct Vec3 c;
         };
     };
-} __attribute__((aligned (16)));
+};
 
-
+ //__attribute__((aligned (16)));
 
 void print_affine(struct Affine m)
 {
@@ -36,14 +36,6 @@ static struct Affine affine_mult(Affine a, Affine b)  __attribute((always_inline
 struct Affine affine_mult(Affine a, Affine b)
 {
     struct Affine c;
-/*
-    for(int i = 0; i < 3; i++){
-    for(int j = 0; j < 3; j++){
-        c._f[3*j+i] = a._f[3*0+i]*b._f[3*j+0] + a._f[3*1+i]*b._f[3*j+1] + a._f[3*2+i]*b._f[3*j+2];
-        //matC[i][j] += matA[i][x] * matB[x][j];
-    }
-    }
-*/
 
     for(int i = 0; i < 3; i++)
     {

@@ -172,6 +172,7 @@ int InTranslation;
 
 int InNormal;
 int InAO;
+int InTex;
 //int InSide;
 
 void Voxel_render_list::init_voxel_render_list_shader1()
@@ -215,9 +216,9 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
     InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
     //attributes
-    InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
-    //InSide = glGetAttribLocation(voxel_shader_prog, "InSide");
+    InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
+    InTex = glGetAttribLocation(voxel_shader_prog, "InTex");
 
     init=1;
 }
@@ -257,13 +258,14 @@ void Voxel_render_list::draw()
     
     glEnableVertexAttribArray(InNormal);
     glEnableVertexAttribArray(InAO);
+    glEnableVertexAttribArray(InTex);
 
     glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
     glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
     
     glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
     glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
-    //glNormalPointer(GL_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)16);
+    glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
@@ -271,7 +273,7 @@ void Voxel_render_list::draw()
         Voxel_volume* vv = render_list[i];
 
         if(vv->vvl.vnum == 0) continue;
-    
+        if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
 
         int debug = 0;
 
@@ -312,8 +314,8 @@ void Voxel_render_list::draw()
     //glDisableClientState(GL_NORMAL_ARRAY);
 
     glDisableVertexAttribArray(InNormal);
-    //glDisableVertexAttribArray(InSide);
     glDisableVertexAttribArray(InAO);
+    glDisableVertexAttribArray(InTex);
 
     glEnable (GL_DEPTH_TEST);
 

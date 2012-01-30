@@ -24,8 +24,6 @@ class Voxel_volume
 
     struct Affine* parent_world_matrix;
 
-    //Vec4 v[4]; // forward, up, right, offset
-
 #ifdef DC_CLIENT
     Voxel_vertex_list vvl;
 #endif
@@ -92,7 +90,7 @@ class Voxel_volume
 /*
     Tests whether a voxel is occupied, for AO
 */
-    inline unsigned int _test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
+    inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
 
