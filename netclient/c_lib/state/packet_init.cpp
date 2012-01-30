@@ -65,10 +65,8 @@ void RegisterMessages() {
     fire_weapon_StoC::register_client_packet();
 
     // hitscans
-    hitscan_agent_CtoS::register_server_packet();
+    hitscan_object_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
-    hitscan_slime_CtoS::register_server_packet();
-    hitscan_spawner_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
     
     // agent item actions

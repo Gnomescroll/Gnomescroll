@@ -167,9 +167,7 @@ inline void agent_coins_StoC::handle()
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
-inline void hitscan_agent_CtoS::handle() {}
-inline void hitscan_slime_CtoS::handle() {}
-inline void hitscan_spawner_CtoS::handle() {}
+inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
@@ -260,49 +258,7 @@ inline void hit_block_CtoS::handle() {
     _apply_damage_broadcast(x,y,z, dmg);
 }
 
-// hitscan target:agent
-inline void hitscan_agent_CtoS::handle() {
-    Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
-
-    if (!a->weapons.laser.fire()) return;
-    fire_weapon_StoC msg;
-    msg.id = a->id;
-    msg.type = a->weapons.laser.type;
-    msg.broadcast();
-
-    Agent_state* target = ServerState::agent_list.get(agent_id);
-    if (target==NULL) return;
-    // apply damage
-    int dmg = 25;
-    target->status.apply_damage(dmg, a->id, a->type);
-    // TODO: Use weapon dmg. Use body_part
-    //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
-}
-
-// hitscan target:monster
-inline void hitscan_slime_CtoS::handle() {
-    Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
-
-    if (!a->weapons.laser.fire()) return;
-    fire_weapon_StoC msg;
-    msg.id = a->id;
-    msg.type = a->weapons.laser.type;
-    msg.broadcast();
-
-    Monsters::Slime* slime = ServerState::slime_list.get(monster_id);
-    if (slime==NULL) return;
-    // apply damage
-    //int dmg = 25;
-    //slime->status.apply_damage(dmg, id);
-    ServerState::slime_list.destroy(monster_id);
-    // TODO: Use weapon dmg. Use body_part
-    //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
-}
-
-//hitscan target:spawner
-inline void hitscan_spawner_CtoS::handle()
+inline void hitscan_object_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
@@ -313,19 +269,60 @@ inline void hitscan_spawner_CtoS::handle()
     msg.type = a->weapons.laser.type;
     msg.broadcast();
 
-    Spawner* s = ServerState::spawner_list.get(id);
-    if (s == NULL) return;
-    if (s->team == a->status.team && s->owner != a->id) return; // teammates cant kill spawners
-    // apply damage
-    const int dmg = 25;
-    int h = s->take_damage(dmg);
-    if (h <= 0)
+    void *obj;
+
+    const int agent_dmg = 25;
+    const int spawner_dmg = 25;
+    int spawner_health;
+    
+    switch (type)
     {
-        int coins = s->get_coins_for_kill(a->status.team);
-        a->status.add_coins(coins);
+        case OBJ_TYPE_AGENT:
+            //Agent_state* target = ServerState::agent_list.get(agent_id);
+            obj = ServerState::agent_list.get(id);
+            if (obj==NULL) return;
+            // apply damage
+            ((Agent_state*)obj)->status.apply_damage(agent_dmg, ((Agent_state*)obj)->id, ((Agent_state*)obj)->type);
+            // TODO: Use weapon dmg. Use body_part
+            //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+            break;
+
+        case OBJ_TYPE_SLIME:
+            obj = ServerState::slime_list.get(id);
+            if (obj==NULL) return;
+            // apply damage
+            //int dmg = 25;
+            //slime->status.apply_damage(dmg, id);
+            ServerState::slime_list.destroy(id);
+            // TODO: Use weapon dmg. Use body_part
+            //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+            break;
+
+        case OBJ_TYPE_SPAWNER:
+            obj = ServerState::spawner_list.get(id);
+            if (obj == NULL) return;
+
+            if (((Spawner*)obj)->team == a->status.team
+            && ((Spawner*)obj)->owner != a->id)
+                return; // teammates cant kill spawners
+                
+            // apply damage
+            spawner_health = ((Spawner*)obj)->take_damage(spawner_dmg);
+            if (spawner_health <= 0)
+            {
+                int coins = ((Spawner*)obj)->get_coins_for_kill(a->status.team);
+                a->status.add_coins(coins);
+            }
+            break;
+
+        case OBJ_TYPE_TURRET:
+            printf("hitscan_object_CtoS::handle -- Turrets not implemented\n");
+            break;
+        default:
+            printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
+            return;
     }
 }
-
 
 // hitscan target:block
 inline void hitscan_block_CtoS::handle() {

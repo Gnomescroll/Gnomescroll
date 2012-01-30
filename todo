@@ -96,9 +96,9 @@ Health/Destruction
 List filters on Object_list template
 Grenades damage spawners (and turrets when ready)
 
-=============
-
 Add simple gravity to items
+
+=============
 
 merge hitscan object packets
 

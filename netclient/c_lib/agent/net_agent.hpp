@@ -213,55 +213,19 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
         inline void handle();
 };
 
-// hitscan: target = agent
-class hitscan_agent_CtoS: public FixedSizeNetPacketToServer<hitscan_agent_CtoS>
-{
-    public:
-        int agent_id;
-        int body_part;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&agent_id, buff, buff_n, pack);
-            pack_u8(&body_part, buff, buff_n, pack);
-        }
-
-        inline void handle();
-};
-
-// hitscan: target = monster
-class hitscan_slime_CtoS: public FixedSizeNetPacketToServer<hitscan_slime_CtoS>
-{
-    public:
-        int monster_id;
-        int monster_type;
-        int monster_body_part;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u16(&monster_id, buff, buff_n, pack);
-            pack_u8(&monster_type, buff, buff_n, pack);
-            pack_u8(&monster_body_part, buff, buff_n, pack);
-        }
-
-        inline void handle();
-};
-
-// hitscan: target = spawner
-class hitscan_spawner_CtoS: public FixedSizeNetPacketToServer<hitscan_spawner_CtoS>
+class hitscan_object_CtoS: public FixedSizeNetPacketToServer<hitscan_object_CtoS>
 {
     public:
         int id;
         int type;
         int part;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
+        inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u8(&part, buff, buff_n, pack);
         }
-
         inline void handle();
 };
 

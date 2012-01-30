@@ -117,39 +117,16 @@ void PlayerAgent_action::hitscan() {
     origin[2] = z + dz;
 
     // send packet
-    hitscan_agent_CtoS agent_msg;
-    hitscan_slime_CtoS monster_msg;
     hitscan_block_CtoS block_msg;
     hitscan_none_CtoS none_msg;
-    hitscan_spawner_CtoS spawner_msg; // can probably be merged into slime/turret/etc hitscan msgs
+    hitscan_object_CtoS obj_msg;
     
     switch (target) {
         case TARGET_VOXEL:
-            switch (vhe.entity_type) {
-                case OBJ_TYPE_AGENT:
-                    agent_msg.agent_id = vhe.entity_id;   // target
-                    agent_msg.body_part = vhe.part_id;
-                    agent_msg.send();
-                    break;
-
-                case OBJ_TYPE_SLIME:
-                    monster_msg.monster_id = vhe.entity_id;
-                    monster_msg.monster_type = vhe.entity_type;
-                    monster_msg.monster_body_part = vhe.part_id;
-                    monster_msg.send();
-                    break;
-
-                case OBJ_TYPE_SPAWNER:
-                    spawner_msg.id = vhe.entity_id;
-                    spawner_msg.type = vhe.entity_type;
-                    spawner_msg.part = vhe.part_id;
-                    spawner_msg.send();
-                    break;
-                    
-                default:
-                    break;
-            }
-
+            obj_msg.id = vhe.entity_id;
+            obj_msg.type = vhe.entity_type;
+            obj_msg.part = vhe.part_id;
+            obj_msg.send();
             // subtract the collision point from the origin to get the new vector for animation
             vec[0] = collision_point[0] - origin[0];
             vec[1] = collision_point[1] - origin[1];
