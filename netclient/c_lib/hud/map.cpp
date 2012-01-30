@@ -7,12 +7,12 @@
 
 namespace HudMap {
 
-// pull these from loaded map dimensions (not available yet)
-static const int width = 128;
-static const int height = 128;
+int num_cells = 0;
+unsigned char* cells = NULL;
 
-static const int num_cells = width*height;
-static unsigned char cells[num_cells];
+// for texture init
+const int width = 128;
+const int height = 128;
 
 static SDL_Surface* map_surface;
 static GLuint map_texture;
@@ -83,8 +83,32 @@ void init_surface() {
     glDisable(GL_TEXTURE_2D);
 }
 
+void init_cells()
+{
+    int n_cells = map_dim.x * map_dim.y;
+    if (n_cells == num_cells) return;   // size same, dont change
+
+    num_cells = n_cells;
+
+    if (!n_cells) { // no cells, free/null cells
+        free(cells);
+        cells = NULL;
+        return;
+    }
+
+    if (cells != NULL)
+    {
+        cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
+    }
+    else
+    {
+        cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
+    }
+}
+
 void init() {
     init_surface();
+    init_cells();
 }
 
 Uint32 get_agent_pixel(int *x, int *y) {
@@ -100,18 +124,20 @@ Uint32 get_agent_pixel(int *x, int *y) {
 }
 
 void update_heightmap() {
+    if (cells == NULL) return;
     int i,j;
     int h;
-    for (i=0; i < width; i++) {
-        for (j=0; j < height; j++) {
+    for (i=0; i < map_dim.x; i++) {
+        for (j=0; j < map_dim.y; j++) {
             h = get_height_at(i,j);
-            cells[i + width*j] = (unsigned char)2*h;
+            cells[i + map_dim.x*j] = (unsigned char)2*h;
         }
     }
 }
 
 void update_map_surface() {
     if (map_surface == NULL) return;
+    if (cells == NULL) return;
     SDL_LockSurface(map_surface);
     
     int i;
@@ -130,7 +156,7 @@ void update_texture(GLuint texture, SDL_Surface* surface) {
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, map_dim.x, map_dim.y, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
 
     glDisable(GL_TEXTURE_2D);
 }
@@ -150,9 +176,9 @@ void update_agents() {
     int x=0,*_x=&x;
     int y=0,*_y=&y;
     Uint32 pix = get_agent_pixel(_x,_y);
-    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in bounds (or could segfault)
+    if (x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y)    // only draw in bounds (or could segfault)
     {
-        ((Uint32*)overlay_surface->pixels)[x + width*y] = pix;
+        ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
     }
 }
 
@@ -173,6 +199,8 @@ void update_indicators() {
 }
 
 void update() {
+    init_cells();   // updates cells array if map size changed
+    if (cells == NULL) return;
     update_heightmap();
     update_map_surface();
     update_texture(map_texture, map_surface);

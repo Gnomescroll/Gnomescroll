@@ -97,12 +97,10 @@ List filters on Object_list template
 Grenades damage spawners (and turrets when ready)
 
 Add simple gravity to items
+merge hitscan object packets
 
 =============
 
-merge hitscan object packets
-
-Double buffered map
 Icons on map
 Teammates on map
 
