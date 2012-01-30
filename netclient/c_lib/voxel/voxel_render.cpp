@@ -168,6 +168,8 @@ static GLenum voxel_shader_frag = 0;
 static GLenum voxel_shader_prog = 0;
 
 int InRotationMatrix;
+int InTranslation;
+
 int InNormal;
 int InAO;
 //int InSide;
@@ -211,7 +213,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     //uniforms
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
-
+    InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
     //attributes
     InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
@@ -299,7 +301,8 @@ void Voxel_render_list::draw()
             print_affine( vv->world_matrix );
         }
 
-        glUniformMatrix4fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+        glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+        glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
     }
