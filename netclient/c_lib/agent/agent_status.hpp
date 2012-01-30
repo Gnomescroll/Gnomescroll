@@ -60,8 +60,14 @@ class Agent_status {
 
         void set_team(int team);
 
+        // coin stuff
+        bool can_afford(Object_types obj);
+        bool can_afford(unsigned int coins);
         void add_coins(unsigned int coins);
         void spend_coins(unsigned int coins);
+        void send_coin_packet();
+        bool purchase(Object_types obj);
+
 
 
         Agent_status(Agent_state* a);

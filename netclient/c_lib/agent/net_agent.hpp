@@ -507,15 +507,15 @@ class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_cre
 {
     public:
         int id;
-        int team;
         int owner;
+        int team;
         float x,y,z;
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
             pack_u8(&owner, buff, buff_n, pack);
+            pack_u8(&team, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);

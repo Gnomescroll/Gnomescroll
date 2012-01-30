@@ -255,6 +255,7 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
+    this->add_coins(9);
     this->has_flag = false;
 }
 
@@ -279,9 +280,7 @@ void Agent_status::add_coins(unsigned int coins)
     this->coins += coins;
     #ifdef DC_SERVER
     if (coins==0) return;
-    agent_coins_StoC msg;
-    msg.coins = this->coins;
-    msg.sendToClient(this->a->id);
+    this->send_coin_packet();
     #endif
 }
 
@@ -290,8 +289,35 @@ void Agent_status::spend_coins(unsigned int coins)
     this->coins -= coins;
     #ifdef DC_SERVER
     if (coins==0) return;
+    this->send_coin_packet();
+    #endif
+}
+
+void Agent_status::send_coin_packet()
+{
+    #ifdef DC_SERVER
     agent_coins_StoC msg;
     msg.coins = this->coins;
     msg.sendToClient(this->a->id);
     #endif
 }
+
+bool Agent_status::can_afford(Object_types obj)
+{
+    unsigned int cost = get_object_cost(obj);
+    return can_afford(cost);
+}
+
+bool Agent_status::can_afford(unsigned int coins)
+{
+    return (coins <= this->coins);
+}
+
+bool Agent_status::purchase(Object_types obj)
+{
+    unsigned int cost = get_object_cost(obj);
+    if (!this->can_afford(cost)) return false;
+    this->spend_coins(cost);
+    return true;
+}
+

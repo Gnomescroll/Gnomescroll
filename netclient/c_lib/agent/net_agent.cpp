@@ -416,8 +416,10 @@ inline void place_spawner_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
     if (a->status.team == 0) return;
-    
-    // check for points etc
+    if (!a->status.can_afford(OBJ_TYPE_SPAWNER)) return;
+    if (ServerState::spawner_list.num == ServerState::spawner_list.n_max) return;
+
+    a->status.purchase(OBJ_TYPE_SPAWNER);
 
     Spawner* s = ServerState::spawner_list.create(x+0.5f,y+0.5f,z);
     s->set_team(a->status.team);
