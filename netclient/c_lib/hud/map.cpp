@@ -111,18 +111,6 @@ void init() {
     init_cells();
 }
 
-Uint32 get_agent_pixel(int *x, int *y) {
-    *x = (int)ClientState::playerAgent_state.camera_state.x;
-    *y = (int)ClientState::playerAgent_state.camera_state.y;
-
-    static const Uint8
-        a(255),
-        r(255),
-        g(10),
-        b(10);
-    return SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
-}
-
 void update_heightmap() {
     static int strip = 0;
     const int strips = 16;
@@ -178,13 +166,42 @@ void update_overlay_surface() {
 }
 
 void update_agents() {
+    if (ClientState::playerAgent_state.you == NULL) return;
+    int team = ClientState::playerAgent_state.you->status.team;
+    if (team == 0) return;
 
+    int x,y;
+
+    x = (int)ClientState::playerAgent_state.camera_state.x;
+    y = (int)ClientState::playerAgent_state.camera_state.y;
+    
     // set agent pixel
-    int x=0,*_x=&x;
-    int y=0,*_y=&y;
-    Uint32 pix = get_agent_pixel(_x,_y);
-    if (x >= 0 && x < map_dim.x && y >= 0 && y < map_dim.y)    // only draw in bounds (or could segfault)
+    Uint8 r = 10,
+          g = 210,
+          b = 10,
+          a = 255;
+    Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
+
+    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in surface bounds (or could segfault)
     {
+        ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
+    }
+
+    ClientState::get_team_color(team, &r, &g, &b);
+    for (int i=0; i<ClientState::agent_list.n_max; i++)
+    {
+        Agent_state* agent = ClientState::agent_list.a[i];
+        if (agent == NULL) continue;
+        if (agent->status.team != team) continue;
+        if (agent->id == ClientState::playerAgent_state.agent_id) continue;
+
+        x = (int)agent->s.x;
+        y = (int)agent->s.y;
+
+        if (!(x >= 0 && x < width && y >= 0 && y < height))    // only draw in surface bounds (or could segfault)
+         continue;
+
+        pix = SDL_MapRGBA(overlay_surface->format, b, g, r, a);
         ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
     }
 }
