@@ -112,7 +112,6 @@ add null checks to *list.create where missing
 
 Icons on map (angus)
 
-Investigate if object lists w/ auto id are creating 1 past end of the array
 Fix collision detection
 Client side jump physics (server is snapping)
 

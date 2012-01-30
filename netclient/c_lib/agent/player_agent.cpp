@@ -123,18 +123,22 @@ uint16_t PlayerAgent_state::pack_control_state(
 
 uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 {
+    if (this->you == NULL) return 0;
+    if (this->you->status.dead) return 0;
+
+    int forward,backwards,left,right,jetpack,jump,crouch,boost,misc1,misc2,misc3;
     //set control state variables
-    int forward     = cs & 1? 1 :0;
-    int backwards   = cs & 2? 1 :0;
-    int left        = cs & 4? 1 :0;
-    int right       = cs & 8? 1 :0;
-    int jetpack     = cs & 16? 1 :0;
-    int jump        = cs & 32? 1 :0;
-    int crouch      = cs & 64? 1 :0;
-    int boost       = cs & 128? 1 :0;
-    int misc1       = cs & 256? 1 :0;
-    int misc2       = cs & 512? 1 :0;
-    int misc3       = cs & 1024? 1 :0;     
+    forward     = cs & 1? 1 :0;
+    backwards   = cs & 2? 1 :0;
+    left        = cs & 4? 1 :0;
+    right       = cs & 8? 1 :0;
+    jetpack     = cs & 16? 1 :0;
+    jump        = cs & 32? 1 :0;
+    crouch      = cs & 64? 1 :0;
+    boost       = cs & 128? 1 :0;
+    misc1       = cs & 256? 1 :0;
+    misc2       = cs & 512? 1 :0;
+    misc3       = cs & 1024? 1 :0;
 
     AgentState* state;
     state = &this->s1;
