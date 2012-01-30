@@ -184,3 +184,13 @@ class AgentListWrapper:
     def send_to_client(cls, int client_id):
         agent_list.send_to_client(client_id)
         
+
+""" spawners here so i dont create a new cython file """
+cdef extern from "./items/spawner.hpp":
+    cdef cppclass Spawner_list:
+        void send_to_client(int client_id)
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    Spawner_list spawner_list
+
+def send_spawners_to_client(int client_id):
+    spawner_list.send_to_client(client_id)

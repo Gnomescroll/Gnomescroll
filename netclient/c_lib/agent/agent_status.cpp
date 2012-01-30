@@ -255,7 +255,8 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
-    this->add_coins(9);
+    const unsigned int coins = 200;
+    this->add_coins(coins);
     this->has_flag = false;
 }
 

@@ -85,18 +85,47 @@ Spawner::~Spawner()
     if (this->vox != NULL) delete this->vox;
 }
 
-//#ifdef DC_CLIENT
-//inline void Spawner_create_StoC::handle()
-//{
-    //ClientState::spawner_list.create(id, x,y,z);
-//}
-//inline void Spawner_destroy_StoC::handle()
-//{
-    //ClientState::spawner_list.destroy(id);
-//}
-//#endif
 
-//#ifdef DC_SERVER
-//inline void Spawner_create_StoC::handle() {}
-//inline void Spawner_destroy_StoC::handle() {}
-//#endif
+bool Spawner_list::team_spawner_available(int team)
+{
+    int ct = 0;
+    for (int i=0; i<n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->team == team) ct++;
+    }
+    return (ct < SPAWNERS_PER_TEAM);
+}
+
+bool Spawner_list::point_occupied(int x, int y, int z)
+{
+    for (int i=0; i<n_max; i++)
+    {
+        Spawner *s = this->a[i];
+        if (s == NULL) continue;
+        if ((int)s->x == x && (int)s->y == y)
+        {
+            // spawner is 2 blocks tall
+            for (int j=0; j<2; j++)
+            {
+                if ((int)s->z+j == z) return true;
+            }
+        }
+    }
+    return false;
+}
+
+void Spawner_list::send_to_client(int client_id)
+{
+    #ifdef DC_SERVER
+    for (int i=0; i<n_max; i++)
+    {
+        Spawner *s = this->a[i];
+        if (s == NULL) continue;
+
+        Spawner_create_StoC msg;
+        s->create_message(&msg);
+        msg.sendToClient(client_id);
+    }
+    #endif
+}

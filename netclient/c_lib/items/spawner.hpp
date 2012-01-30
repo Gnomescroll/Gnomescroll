@@ -8,6 +8,7 @@ extern VoxDat spawner_vox_dat;
 
 const int SPAWNER_RADIUS = 5;
 const int MAX_SPAWNERS = 18;
+const int SPAWNERS_PER_TEAM = 9;
 
 class Spawner_create_StoC; // forward decl
 
@@ -44,36 +45,10 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
 {
     private:
         const char* name() { return "Spawner"; }
+
+    public:
+        bool team_spawner_available(int team);
+        bool point_occupied(int x, int y, int z);
+        void send_to_client(int client_id);
 };
-
-//#include <net_lib/net.hpp>
-////#include <net_lib/global.hpp>
-////#include <net_lib/export.hpp>
-//class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
-//{
-    //public:
-        //int id;
-        //float x,y,z;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_float(&x, buff, buff_n, pack);
-            //pack_float(&y, buff, buff_n, pack);
-            //pack_float(&z, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_destroy_StoC>
-//{
-    //public:
-        //int id;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
 

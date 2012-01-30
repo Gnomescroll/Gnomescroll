@@ -190,11 +190,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     float xy_speed;
     float height;
-    xy_speed = 2.0f / tr;
+    xy_speed = AGENT_SPEED / tr;
     height = box.b_height;
     if (crouch)
     {
-        xy_speed = 0.7 / tr;
+        xy_speed = AGENT_SPEED_CROUCHED / tr;
         height = box.c_height;
     }
 
