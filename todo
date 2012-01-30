@@ -101,12 +101,11 @@ merge hitscan object packets
 
 use map dimensions for minimap; raster for heightmap data to get rid of lag spike
 Teammates on hud map
+Move cube dat client side. not networked
 
 =============
 
-Move cube dat client side
-
-Icons on map
+Icons on map (angus)
 
 Investigate if object lists w/ auto id are creating 1 past end of the array
 Fix collision detection
@@ -126,12 +125,10 @@ System notifications (you killed...)
 
 Deprecate python packets
 -- Identify/fail
--- Cube dat
 -- Chat messages
 -- Chunk list, chunk
 ::Identifies rely on python client pool for name management; pointless to move
 until then. loss of name collision functionality not worht it::
-::Cube dat is being moved to client side disk::
 ::Chat messages outgoing can be in C but incoming would still need to be in python,
 without excess struggling::
 ::Chunk list, chunk are being moved to C with terrain map rewrite::
