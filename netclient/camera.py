@@ -2,7 +2,6 @@ import opts
 opts = opts.opts
 
 import init_c_lib
-import c_lib.c_lib_input as cInput
 from math import sin, cos, pi
 
 base_dir = "./"
@@ -52,7 +51,7 @@ class Camera(object):
                 object.__setattr__(self, k, v)
 
     def input_update(self, t):
-        dxa, dya = cInput.get_mouse_deltas(t)
+        dxa, dya = init_c_lib.get_mouse_deltas(t)
         self.pan(*self._convert_mouse_deltas(dxa,dya))
         
     def _convert_mouse_deltas(self, dx, dy):

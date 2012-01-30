@@ -672,12 +672,12 @@ def init(inited=[0]):
 
 def set_hud_cube_selector():
     global c_dat
-    import c_lib.c_lib_hud as cHUD
+    import init_c_lib
 
     def apply(id):
         hud_img = c_dat.get(id,'hud_img')
         hud_pos = c_dat.get(id,'hud_pos')
-        cHUD.CubeSelector.load_cube_properties(hud_pos, id, hud_img)
+        init_c_lib.CubeSelector.load_cube_properties(hud_pos, id, hud_img)
 
     for id in c_dat.dat:
         apply(id)

@@ -2,7 +2,6 @@ import opts
 opts = opts.opts
 
 import init_c_lib
-import c_lib.c_lib_hud as cHUD
 
 from chat_client import ChatClientGlobal
 from input import InputGlobal
@@ -19,7 +18,7 @@ class Hud(object):
 
     def __init__(self):
 
-        cHUD.Font.init()
+        init_c_lib.Font.init()
 
         self.win_width = opts.width
         self.win_height = opts.height
@@ -33,8 +32,8 @@ class Hud(object):
         self._init_player_stats()
         self._init_help_menu()
 
-        self.inventory = cHUD.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
-        self.cube_selector = cHUD.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
+        self.inventory = init_c_lib.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
+        self.cube_selector = init_c_lib.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
 
         self.disconnected_message = self.text(
             text = 'Server not connected',
@@ -57,9 +56,9 @@ class Hud(object):
 
     def _init_reticles(self):
         tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
+        self.reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
         tex_file = '%stexture/target-zoom.png' % (base_dir,)
-        self.scope_reticle = cHUD.Reticle(tex_file, self.win_width, self.win_height)
+        self.scope_reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
 
     def _init_text_dict(self):
         offset = 50
@@ -263,7 +262,7 @@ class Hud(object):
             self._draw_cursor()
 
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = cHUD.Text(
+        txt = init_c_lib.Text(
             text = text,
             x = x,
             y = self.win_height - offset,
@@ -354,7 +353,7 @@ class Hud(object):
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
         if InputGlobal.vn:
-            cHUD.VN.draw()
+            init_c_lib.VN.draw()
             return
         # draw non-text first
         if zoom:
@@ -368,19 +367,19 @@ class Hud(object):
         self.draw_chat_cursor()
 
         if InputGlobal.map:
-            cHUD.Map.draw()
+            init_c_lib.Map.draw()
 
         active_equipment_slot = -1
         if GameStateGlobal.agent:
             active_equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
-        cHUD.Equipment.draw(active_equipment_slot)
+        init_c_lib.Equipment.draw(active_equipment_slot)
 
-        cHUD.Compass.draw()
+        init_c_lib.Compass.draw()
 
         # draw text
-        cHUD.Font.font.start()
+        init_c_lib.Font.font.start()
         self.draw_text_items(fps, ping)
-        cHUD.Font.font.end()
+        init_c_lib.Font.font.end()
 
     def draw_text_items(self, fps, ping):
         if InputGlobal.help_menu:

@@ -26,9 +26,6 @@ import camera
 
 import c_lib.terrain_map
 import init_c_lib
-import c_lib.c_lib_particles as cParticles
-import c_lib.c_lib_hud as cHUD
-import c_lib.c_lib_input as cInput
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -143,7 +140,7 @@ class App(object):
         self.intervals.set()
         _i = 30
 
-        cParticles._generate_circuit_tree(0,0)
+        init_c_lib._generate_circuit_tree(0,0)
 
         _m = 0
 
@@ -189,8 +186,8 @@ class App(object):
                 _i+=1
 
                 #process input
-                cInput.process_events()
-                cInput.get_key_state()
+                init_c_lib.process_events()
+                init_c_lib.get_key_state()
                 if agent:
                     agent.set_button_state()
                     agent.update_sound()
@@ -198,7 +195,7 @@ class App(object):
                     
                 animations.tick()
 
-                cParticles.tick() ## TESTING
+                init_c_lib.tick() ## TESTING
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
@@ -270,7 +267,7 @@ class App(object):
             animations.draw()
 
             P.event("c_lib_particles.draw()")
-            cParticles.draw() ## TESTING
+            init_c_lib.draw() ## TESTING
 
             init_c_lib.AnimationDraw()
 
@@ -330,9 +327,9 @@ def ParticleTestSpawn(_i):
     #neutron_fountain()
     if _i % 30 == 0:
         pass
-        #cParticles._generate_circuit_tree(0,0)
+        #init_c_lib._generate_circuit_tree(0,0)
     if _i % 350 == 0:
-        #cParticles._create_grenade(5,5,2, 0, 0, 50, 0, 350)
+        #init_c_lib._create_grenade(5,5,2, 0, 0, 50, 0, 350)
         pass
     if False or _i % 15 == 0:
         v = 4
@@ -343,7 +340,7 @@ def ParticleTestSpawn(_i):
         x *= v / le
         y *= v / le
         z *= v / le
-        #cParticles._create_grenade(25,25,-4, x,y,z, 0, 350)
+        #init_c_lib._create_grenade(25,25,-4, x,y,z, 0, 350)
     if _i % 150 == 0:
         v = 2
         x = v*(random.random() -0.5)
@@ -355,7 +352,7 @@ def ParticleTestSpawn(_i):
         z *= v / le
         #_type = random.randint(0,9*3)
         _type=0
-        #cParticles._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
+        #init_c_lib._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
     #if True or _i % 15 == 0:
     for _j_ in range(0,1):
         v = 3
@@ -366,7 +363,7 @@ def ParticleTestSpawn(_i):
         vx = v*(random.random() -0.5)
         vy = v*(random.random() -0.5)
         vz = -3.5 #v*(random.random() -0.5)
-        #cParticles._create_cspray(x,y,z, vx,vy,vz)
+        #init_c_lib._create_cspray(x,y,z, vx,vy,vz)
 
     for _j_ in range(0,5):
         x = 32+ 16*random.random()
@@ -375,7 +372,7 @@ def ParticleTestSpawn(_i):
         vx = v*(random.random() -0.5)
         vy = v*(random.random() -0.5)
         vz = -1. #v*(random.random() -0.5)
-        #cParticles._create_minivox(x,y,z, vx,vy,vz)
+        #init_c_lib._create_minivox(x,y,z, vx,vy,vz)
 
 
 def neutron_fountain():
@@ -387,7 +384,7 @@ def neutron_fountain():
     x *= v / le
     y *= v / le
     z *= v / le
-    cParticles._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
+    init_c_lib._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
 
 def billboard_text_fountain():
     v = 6
@@ -402,7 +399,7 @@ def billboard_text_fountain():
     _x = (random.random() -0.5) * 1
     _y = (random.random() -0.5) * 1
     num = random.randint(0,25)
-    cParticles._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
+    init_c_lib._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
 
 
 def gif_maker():
@@ -416,13 +413,13 @@ def gif_maker():
     turb_enable = False
     turb_f = 1
     turb_pow = 1
-    cHUD.VN.configure(z_step, freq, seed, distance_enabled, turb_enable, turb_f, turb_pow)
-    #cHUD.VN.configure(z_step, freq, seed, distance_enabled, turb_f, turb_pow)
-    cHUD.VN.init(width=w, height=h, gradient=gradient)
+    init_c_lib.VN.configure(z_step, freq, seed, distance_enabled, turb_enable, turb_f, turb_pow)
+    #init_c_lib.VN.configure(z_step, freq, seed, distance_enabled, turb_f, turb_pow)
+    init_c_lib.VN.init(width=w, height=h, gradient=gradient)
     print 'preparing to generate frames'
     secs = 1./30.
     #secs = 1.
-    cHUD.VN.frames(secs)
+    init_c_lib.VN.frames(secs)
     print 'frames generated'
     sys.exit()
 

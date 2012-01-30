@@ -930,3 +930,721 @@ class AgentListWrapper:
 #def identify(name):
 #    send_identify_message(name)
     
+""" Particles """
+cdef extern from "./physics/vector.hpp":
+    struct Vector:
+        float x
+        float y
+        float z
+
+cdef extern from "./physics/common.hpp":
+    struct State:
+        Vector p
+        Vector v
+
+cdef extern from "./particles/particles.hpp":
+    cdef struct Particle2:
+        State state
+        unsigned int id
+
+cdef extern from "./particles/grenade.hpp":
+    cdef cppclass Grenade:
+        Particle2 particle
+        void set_ttl(int ttl)
+
+    cdef cppclass Grenade_list:
+        Grenade* get(int id)
+        Grenade* create()
+        Grenade* create(int id)
+        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
+        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+        
+cdef extern from "./particles/cspray.hpp":
+    cdef cppclass Cspray:
+        Particle2 particle
+
+    cdef cppclass Cspray_list:
+        Cspray* get(int id)
+        Cspray* create()
+        Cspray* create(int id)
+        Cspray* create(float x, float y, float z, float vx, float vy, float vz)
+        Cspray* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
+cdef extern from "./particles/shrapnel.hpp":
+    cdef cppclass Shrapnel:
+        Particle2 particle
+
+    cdef cppclass Shrapnel_list:
+        Shrapnel* get(int id)
+        Shrapnel* create()
+        Shrapnel* create(int id)
+        Shrapnel* create(float x, float y, float z, float vx, float vy, float vz)
+        Shrapnel* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+        
+cdef extern from "./particles/neutron.hpp":
+    cdef cppclass Neutron:
+        Particle2 particle
+        void set_energy(int energy)
+
+    cdef cppclass Neutron_list:
+        Neutron* get(int id)
+        Neutron* create()
+        Neutron* create(int id)
+        Neutron* create(float x, float y, float z, float vx, float vy, float vz)
+        Neutron* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
+cdef extern from "./particles/blood.hpp":
+    cdef cppclass Blood:
+        Particle2 particle
+
+    cdef cppclass Blood_list:
+        Blood* get(int id)
+        Blood* create()
+        Blood* create(int id)
+        Blood* create(float x, float y, float z, float vx, float vy, float vz)
+        Blood* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
+cdef extern from "./particles/minivox.hpp":
+    cdef cppclass Minivox:
+        Particle2 particle
+        void set_color(unsigned char r, unsigned char g, unsigned char b)
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+
+    cdef cppclass Minivox_list:
+        Minivox* get(int id)
+        Minivox* create()
+        Minivox* create(int id)
+        Minivox* create(float x, float y, float z, float vx, float vy, float vz)
+        Minivox* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+        
+cdef extern from "./particles/billboard_text.hpp":
+    cdef cppclass BillboardText:
+        Particle2 particle
+        void set_color(unsigned char r, unsigned char g, unsigned char b)
+        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+        void set_text(char* text)
+        char* text
+
+    cdef cppclass BillboardText_list:
+        BillboardText* get(int id)
+        BillboardText* create()
+        BillboardText* create(int id)
+        BillboardText* create(float x, float y, float z, float vx, float vy, float vz)
+        BillboardText* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Cspray_list cspray_list
+    Grenade_list grenade_list
+    Shrapnel_list shrapnel_list
+    Blood_list blood_list
+    Neutron_list neutron_list
+    Minivox_list minivox_list
+    BillboardText_list billboard_text_list
+
+def tick():
+    neutron_list.tick()
+    blood_list.tick()
+    shrapnel_list.tick()
+    grenade_list.tick()
+    cspray_list.tick()
+    minivox_list.tick()
+    billboard_text_list.tick()
+    
+def draw():
+    minivox_list.draw()
+    neutron_list.draw()
+    blood_list.draw()
+    shrapnel_list.draw()
+    grenade_list.draw()
+    cspray_list.draw()
+    billboard_text_list.draw()
+
+def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
+    cdef Neutron* neutron
+    neutron = neutron_list.create(x,y,z, vx,vy,vz)
+    if neutron is not NULL:
+        neutron.set_energy(energy)
+
+def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
+    cspray_list.create(x,y,z, vx,vy,vz)
+
+def _create_blood(float x, float y, float z, float vx, float vy, float vz):
+    blood_list.create(x,y,z, vx,vy,vz)
+
+def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
+    shrapnel_list.create(x,y,z, vx,vy,vz)
+    
+def _create_minivox(float x, float y, float z, float vx, float vy, float vz):
+    minivox_list.create(x,y,z, vx,vy,vz)
+    
+def _create_minivox_colored(float x, float y, float z, float vx, float vy, float vz, int r, int g, int b):
+    if r > 255: r = 255
+    if g > 255: g = 255
+    if b > 255: b = 255
+    if r < 0: r = 0
+    if g < 0: g = 0
+    if b < 0: b = 0
+
+    cdef Minivox* minivox
+    minivox = minivox_list.create(x,y,z, vx,vy,vz)
+    if minivox is NULL: return
+    minivox.set_color(r,g,b)
+
+def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz, text):
+    cdef BillboardText* bb = billboard_text_list.create(x,y,z, vx,vy,vz)
+    if bb is NULL: return
+    cdef char* ctext = text
+    bb.set_text(ctext)
+    #print "tlen = %i" % (tlen)
+ 
+'''
+Circuit Tree
+'''
+cdef extern from "./particles/circuit_tree.hpp":
+    void circuit_tree_generate(int type, int seed)
+    void circuit_tree_draw()
+
+def _generate_circuit_tree(int type, int seed):
+    circuit_tree_generate(type, seed)
+
+def _draw_circuit_tree():
+    circuit_tree_draw()
+
+
+""" Input """
+ctypedef unsigned char Uint8
+
+cdef extern from "./input/input.hpp":
+    ctypedef struct MouseMotion:
+        int x
+        int y
+        int dx
+        int dy
+        int button
+    ctypedef struct MouseEvent:
+        int x
+        int y
+        int button
+        int state
+
+    ctypedef struct MouseMotionAverage:
+        float x
+        float y
+
+### call backs
+    ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
+    int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
+
+    #deprecate
+    ctypedef int (*key_event_func)(char key)
+    int _key_event_callback(key_event_func user_func, char key)
+
+    ctypedef int (*mouse_motion_func)(MouseMotion ms)
+    int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion)
+
+    ctypedef int (*mouse_event_func)(MouseEvent me)
+    int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
+
+    ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
+    int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
+
+    ctypedef int (*quit_event_func)()
+    int _quit_event_callback(quit_event_func user_func)
+
+    cdef extern int _get_key_state(key_state_func key_state_cb)
+    cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
+    cdef extern int _set_text_entry_mode(int n)
+
+    cdef MouseMotionAverage* get_mouse_render_state(int t)
+    cdef int _toggle_mouse_bind()
+
+    int _init_input()
+
+def get_mouse_deltas(int t):
+    cdef MouseMotionAverage* mm
+    mm = get_mouse_render_state(t)
+    return [mm.x, mm.y]
+
+def get_key_state():
+    _get_key_state(&key_state_callback)
+
+key_text_event_callback_stack = []
+mouse_event_callback_stack = []
+
+def process_events():
+    global key_text_event_callback_stack, mouse_event_callback_stack
+    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
+    while len(key_text_event_callback_stack) != 0:
+        (key, key_string, event_state) = key_text_event_callback_stack.pop(0)
+        input_callback.keyboard_text_event(key, key_string, event_state)
+
+    while len(mouse_event_callback_stack) != 0:
+        me = mouse_event_callback_stack.pop(0)
+        input_callback.mouse_event(*me)
+
+def set_text_entry_mode(int n):
+    temp = _set_text_entry_mode(n)
+
+class Callback_dummy:
+    def keyboard_state(self, pressed_keys):
+        pass
+    def keyboard_event(self, key):
+        pass
+    def keyboard_text_event(self, key, key_string, event_type):
+        pass
+    def mouse_event(self, button, state, x, y):
+        pass
+    def mouse_motion(self, x,y,dx,dy,button):
+        pass
+
+input_callback = Callback_dummy()
+
+def set_input_callback(callback):
+    global input_callback
+    input_callback = callback
+    print "Input Callback Set"
+
+cdef int key_state_callback(Uint8* keystate, int numkeys):
+    global input_callback
+    pressed_keys = []
+    for i in range(0, numkeys):
+        if keystate[i] != 0:
+            pressed_keys.append(i)
+    input_callback.keyboard_state(pressed_keys)
+
+cdef int key_event_callback(char key):
+    global input_callback
+    input_callback.keyboard_event(key)
+
+cdef int key_text_event_callback(char key, char* key_name, int event_state):
+    global input_callback, key_text_event_callback_stack
+    key_string = key_name
+    cdef bytes py_string
+    py_string = key_name
+    key_text_event_callback_stack.append((key, key_string, event_state))
+
+cdef int mouse_motion_callback(MouseMotion ms):
+    global input_callback
+    input_callback.mouse_motion(ms.x,ms.y, ms.dx,-1*ms.dy, ms.button)
+
+cdef int mouse_event_callback(MouseEvent me):
+    global input_callback, mouse_event_callback_stack
+    mouse_event_callback_stack.append((me.button, me.state, me.x, -1*me.y))
+
+cdef int quit_event_callback():
+    global input_callback, key_text_event_callback_stack
+    key_text_event_callback_stack.append((9999, 'QUIT', 1))
+
+def toggle_mouse_bind():
+    return _toggle_mouse_bind()
+
+""" HUD """
+'''
+HUD textures
+'''
+
+cdef extern from "./SDL/texture_loader.h":
+    struct Texture:
+        int w
+        int h
+        int tex
+
+    Texture _load_image_create_texture(char *file)
+
+cdef extern from "./SDL/draw_functions.h":
+    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
+
+cdef class CyTexture:
+    cdef int texture
+    cdef int w
+    cdef int h
+
+    def __init__(Texture self, char * file):
+        cdef Texture tex
+        tex = _load_image_create_texture(file)
+        self.w = tex.w
+        self.h = tex.h
+        self.texture = tex.tex
+
+    def draw(self, x0, y0, x1, y1, z=-0.5):
+        _blit_sprite(self.texture, x0, y0, x1, y1, z)
+
+
+'''
+Reticle
+'''
+cdef class Reticle(CyTexture):
+    cdef float x0
+    cdef float y0
+    cdef float x1
+    cdef float y1
+
+    def __init__(Reticle self, char* file, int window_width, int window_height):
+        CyTexture.__init__(self, file)
+
+        center_x = window_width / 2.
+        center_y = window_height / 2.
+
+        self.x0 = center_x - (self.w / 2.)
+        self.y0 = center_y - (self.h / 2.)
+        self.x1 = self.x0 + self.w
+        self.y1 = self.y0 + self.h
+
+    def draw(self):
+        _blit_sprite(self.texture, self.x0, self.y0, self.x1, self.y1, 0.)
+
+
+'''
+HUD Cube Selector
+'''
+
+cdef extern from "./hud/cube_selector.hpp":
+    void set_cube_selector_property(int pos, int cube_id, int tex_id)
+    void draw_cube_selector(float x, float y, float size, int mode)
+    void set_active_cube_id(int id)
+    void set_active_cube_pos(int pos)
+    int get_active_cube_id()
+    int get_active_cube_pos()
+
+
+cdef class CubeSelector:
+
+    # offset from bottom right corner
+    cdef float x
+    cdef float y
+    cdef float size
+    cdef int mode
+
+    @classmethod
+    def load_cube_properties(cls, int pos, int cube_id, int tex_id):
+        set_cube_selector_property(pos, cube_id, tex_id)
+
+    def __init__(self, float x, float y, int active_pos=0):
+        self.x = x
+        self.y = y
+        
+    def draw(self):
+        draw_cube_selector(self.x, self.y, 1., 0)
+
+    def set(self, int pos):
+        set_active_cube_pos(pos)
+
+    def set_id(self, int id):
+        set_active_cube_id(id)
+
+    def active(self):
+        return get_active_cube_pos()
+
+    def active_id(self):
+        return get_active_cube_id()
+
+
+'''
+Inventory
+'''
+
+cdef extern from "./hud/inventory.hpp":
+    int draw_inventory(float x, float y)
+
+cdef class Inventory:
+    cdef float x
+    cdef float y
+
+    def __init__(self, float x, float y):
+        self.x = x
+        self.y = y
+
+    def draw(self):
+        draw_inventory(self.x, self.y)
+
+
+'''
+Text
+'''
+
+cdef extern from './hud/text.hpp':
+    int load_font(char* fontfile)
+
+    void start_text_draw()
+    void set_text_color(int r, int g, int b, int a)
+    void end_text_draw()
+
+    void blit_glyph(
+        float tex_x_min, float tex_x_max,
+        float tex_y_min, float tex_y_max,
+        float screen_x_min, float screen_x_max,
+        float screen_y_min, float screen_y_max,
+        float depth
+    )
+
+    void add_glyph(
+        int c,
+        float x, float y,
+        float xoff, float yoff,
+        float w, float h,
+        float xadvance
+    )
+    void set_missing_character(int cc)
+    void draw_text(char* t, int len, float x, float y, float depth, float line_height)
+
+class Text(object):
+
+    def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
+        self.height = 10
+        self.width = 10
+        self.depth = -0.1
+        self.color = list(color)
+        if len(self.color) == 3:
+            self.color.append(255) # default alpha
+
+        self.text = text
+        self.text_len = len(text)
+        self.x = x
+        self.y = y
+        self.offset = y
+        self.line_height = 18.
+
+    def __setattr__(self, k, v):
+        if k == 'text':
+            object.__setattr__(self, "text_len", len(v))
+        object.__setattr__(self, k, v)
+
+    def draw(self):
+        r,g,b,a = self.color
+        set_text_color(r,g,b,a)
+        draw_text(self.text, self.text_len, self.x, self.y, self.depth, self.line_height)
+        
+''' Font '''
+import os.path
+import random
+import string
+
+class Font:
+
+    font_path = "./media/fonts/"
+    font_ext = ".fnt"
+    png_ext = "_0.png"
+    missing_character = '?'
+    glyphs = {}
+    info = {}
+    font = None
+
+    ready = False
+    
+    @classmethod
+    def init(cls):
+        if not os.path.exists(cls.font_path):
+            print "ERROR c_lib_fonts.pyx :: cannot find font path %s" % (cls.font_path,)
+            cls.ready = False
+            return
+
+        import opts
+        cls.font = cls(opts.opts.font)
+        cls.font.parse()
+        cls.font.load()
+
+    def __init__(self, fn):
+        self.fontfile = fn
+        self.pngfile = ''
+        self.process_font_filename()
+#        self._gen_stress()
+        
+    def process_font_filename(self):
+        fn = self.fontfile
+        fn = fn.split('.')[0]
+        fn += self.font_ext
+        fn = self.font_path + fn
+        self.fontfile = fn
+        if not os.path.exists(self.fontfile):
+            print "ERROR c_lib_fonts.pyx :: cannot find font file %s in %s" % (fn, self.font_path,)
+            self.ready = False
+            return
+        self.ready = True
+            
+    def parse(self):
+        png = ""
+        
+        # parse .fnt
+        with open(self.fontfile) as f:
+            lines = f.readlines()
+            for line in lines:
+                line = line.strip()
+                tags = line.split()
+                name = tags[0]
+                tags = dict(map(lambda a: a.split('='), tags[1:]))
+
+                if name == 'page':
+                    png = tags['file'].strip('"')
+                elif name == 'info':
+                    self.info.update(tags)
+                    print "Font: %s" % (line,)
+                elif name == 'common':
+                    self.info.update(tags)
+                    print "Font: %s" % (line,)
+                elif name == 'chars':
+                    print '%s characters in font set' % (tags['count'],)
+                elif name == 'char':
+                    self.glyphs[int(tags['id'])] = tags
+
+        # process png filename
+        if not png:
+            png = self.fontfile + self.png_ext
+        fp_png = self.font_path + png
+        if not os.path.exists(fp_png):
+            print "ERROR c_lib_fonts.pyx :: cannot find font png file %s in %s" % (fp_png, self.font_path,)
+            self.ready = False
+            return
+        self.pngfile = fp_png
+
+        self.clean_glyphs()
+        self.missing_character_available()
+
+    def add_glyphs_to_c(self):
+        for char_code, glyph in self.glyphs.items():
+            x = float(glyph['x'])
+            y = float(glyph['y'])
+            xoff = float(glyph['xoffset'])
+            yoff = float(glyph['yoffset'])
+            w = float(glyph['width'])
+            h = float(glyph['height'])
+            xadvance = float(glyph['xadvance'])
+            add_glyph(char_code, x, y, xoff, yoff, w,h, xadvance)
+
+            if char_code == ord(' '):
+                add_glyph(ord('\t'), x,y, xoff, yoff, w,h, xadvance)
+                
+    def clean_glyphs(self):
+        for kc, glyph in self.glyphs.items():
+            for k,v in glyph.items():
+                try:
+                    glyph[k] = int(glyph[k])
+                except ValueError:
+                    pass
+
+    def missing_character_available(self):
+        cc = ord(self.missing_character)
+        if cc not in self.glyphs:
+            print "ERROR Missing character placeholder %s is not a known glyph" % (self.missing_character,)
+            self.ready = False
+            return False
+        set_missing_character(cc)
+        return True
+        
+    def load(self):
+        if not load_font(self.pngfile):
+            self.ready = False
+            return
+        self.add_glyphs_to_c()
+        self.ready = True
+
+    def _gen_stress(self):
+        num = 4096
+        self.stressers = []
+        for i in range(num):
+            s = random.choice(string.letters)
+            x = float(random.randrange(0, 1280))
+            y = float(random.randrange(0, 800))
+            color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
+            self.stressers.append((s, x,y,color))
+      
+    def stress_test(self):
+        set_text_color(100,100,100,255)
+        for s,x,y,color in self.stressers:
+            r,g,b,a = color
+            set_text_color(r,g,b,a)
+            draw_text(s, 1, x,y,0.1, 10.)
+
+    def start(self):
+        start_text_draw()
+        
+    def end(self):
+        end_text_draw()
+
+    def set_color(self, color):
+        r,g,b,a = color
+        set_text_color(r,g,b,a)
+
+"""Map"""
+cdef extern from "hud/map.hpp" namespace "HudMap":
+    void update_map()
+    void draw_map()
+
+class Map:
+    @classmethod
+    def update(cls):
+        update_map()
+    @classmethod
+    def draw(cls):
+        draw_map()
+
+"""Equipment Panel"""
+cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
+    void draw_equipment(int slot)
+    void set_slot_icon(int slot, int icon_id)
+
+class Equipment:
+    @classmethod
+    def draw(cls, int slot):
+        draw_equipment(slot)
+
+    @classmethod
+    def set_equipment_icon(cls, int slot, int icon_id):
+        set_slot_icon(slot, icon_id)
+
+"""Compass"""
+cdef extern from "hud/compass.hpp" namespace "Compass":
+    void draw_compass()
+
+class Compass:
+    @classmethod
+    def draw(cls):
+        draw_compass()
+
+
+"""
+Voronoi texture surface
+"""
+#from libcpp cimport bool
+#cdef extern from "SDL/v.hpp" namespace "vn":
+#    void draw_vn()
+#    void generate_frames(float seconds)
+#    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
+##    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
+#    void init_vn(int width, int height, int gradient)
+
+#class VN(object):
+#    @classmethod
+#    def draw(cls):
+#        draw_vn()
+#    @classmethod
+#    def frames(cls, float seconds):
+#        generate_frames(seconds)
+#    @classmethod
+#    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
+##    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
+#        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
+##        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
+#    @classmethod
+#    def init(cls, int width, int height, int gradient):
+#        init_vn(width, height, gradient)
