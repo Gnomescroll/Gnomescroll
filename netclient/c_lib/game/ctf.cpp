@@ -346,10 +346,10 @@ void CTF::check_agent_proximities() {
         
     f = one.flag;
     r = f->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list.sort_filtered_agents_by_distance();
+    STATE::agent_list.objects_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_objects_by_distance();
     for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
+        a = STATE::agent_list.filtered_objects[i];
         if (a==NULL) continue;
         if (!a->status.team || a->status.team == 1) continue;
         // pickup
@@ -362,9 +362,9 @@ void CTF::check_agent_proximities() {
 
     b = one.base;
     r = b->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    STATE::agent_list.objects_within_sphere(b->x, b->y, b->z, r);
     for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
+        a = STATE::agent_list.filtered_objects[i];
         if (a==NULL) continue;
         if (!a->status.team || a->status.team != 1) continue;
         // heal
@@ -382,10 +382,10 @@ void CTF::check_agent_proximities() {
 
     f = two.flag;
     r = f->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list.sort_filtered_agents_by_distance();
+    STATE::agent_list.objects_within_sphere(f->x, f->y, f->z, r);
+    STATE::agent_list.sort_filtered_objects_by_distance();
     for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
+        a = STATE::agent_list.filtered_objects[i];
         if (a==NULL) continue;
         if (!a->status.team || a->status.team == 2) continue;
         // pickup
@@ -398,9 +398,9 @@ void CTF::check_agent_proximities() {
 
     b = two.base;
     r = b->vox->largest_radius();
-    STATE::agent_list.agents_within_sphere(b->x, b->y, b->z, r);
+    STATE::agent_list.objects_within_sphere(b->x, b->y, b->z, r);
     for (i=0; i<STATE::agent_list.n_filtered; i++) {
-        a = STATE::agent_list.filtered_agents[i];
+        a = STATE::agent_list.filtered_objects[i];
         if (a==NULL) continue;
         if (!a->status.team || a->status.team != 2) continue;
         // heal

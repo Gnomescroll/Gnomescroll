@@ -82,6 +82,13 @@ void Spawner::create_message(Spawner_create_StoC* msg)
     #endif
 }
 
+int Spawner::get_coins_for_kill(int team)
+{
+    if (this->team != team)
+        return 3;
+    return 0;
+}
+
 int Spawner::take_damage(int dmg)
 {
     this->health -= dmg;

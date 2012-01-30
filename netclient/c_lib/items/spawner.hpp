@@ -35,6 +35,7 @@ class Spawner
         
         void get_spawn_point(int agent_height, int* spawn);
 
+        int get_coins_for_kill(int team);
         int take_damage(int dmg);
 
         void create_message(Spawner_create_StoC* msg);

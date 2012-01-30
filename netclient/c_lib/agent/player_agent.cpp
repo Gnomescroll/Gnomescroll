@@ -235,7 +235,7 @@ void PlayerAgent_state::display_agent_names()
     AgentState *s = &this->camera_state;
     float f[3];
     this->camera_state.forward_vector(f);
-    ClientState::agent_list.agents_in_cone(
+    ClientState::agent_list.objects_in_cone(
         s->x, s->y, s->z + this->camera_height(),
         f[0], f[1], f[2],
         threshold
@@ -252,7 +252,7 @@ void PlayerAgent_state::display_agent_names()
     // choose names to display
     for (int i=0; i < ClientState::agent_list.n_filtered; i++)
     {
-        Agent_state* a = ClientState::agent_list.filtered_agents[i];
+        Agent_state* a = ClientState::agent_list.filtered_objects[i];
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
         if (a->status.team != you->status.team) continue;  // only show teammates

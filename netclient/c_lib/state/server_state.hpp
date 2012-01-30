@@ -8,8 +8,8 @@
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <c_lib/items/spawner.hpp>
 
-namespace ServerState {
-
+namespace ServerState
+{
     extern Agent_list agent_list;
     extern Cspray_list cspray_list;
     extern Grenade_list grenade_list;
@@ -21,6 +21,11 @@ namespace ServerState {
     extern CTF ctf;
     
     void init();
+
+    void damage_objects_within_sphere(
+        float x, float y, float z, float radius,
+        int dmg, int owner, Object_types inflictor_type
+    );
 
 }
 #endif

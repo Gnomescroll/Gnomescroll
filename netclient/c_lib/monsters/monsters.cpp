@@ -103,19 +103,19 @@ void Slime::tick() {
     const float speed = 0.1f;
 
     // choose a random agent in range
-    int closest = STATE::agent_list.agents_within_sphere(this->x, this->y, this->z, r);
+    int closest = STATE::agent_list.objects_within_sphere(this->x, this->y, this->z, r);
     int n_nearby = STATE::agent_list.n_filtered;
     if (n_nearby == 0) return;
 
     Agent_state* agent;
     if (closest >= 0 && this->vox != NULL)
     {
-        float min_dist = STATE::agent_list.filtered_agent_distances[closest];
+        float min_dist = STATE::agent_list.filtered_object_distances[closest];
         if (min_dist < this->vox->largest_radius()) {
             // damage and die if within range
             const int slime_dmg = 20; // TODO
             // blow up, damage player
-            agent = STATE::agent_list.filtered_agents[closest];
+            agent = STATE::agent_list.filtered_objects[closest];
             if (agent != NULL) {
                 agent->status.apply_damage(slime_dmg, this->id, this->type);
                 STATE::slime_list.destroy(this->id);    // die
@@ -126,7 +126,7 @@ void Slime::tick() {
 
     // choose random player to target
     int i = randrange(0,n_nearby-1);
-    agent = STATE::agent_list.filtered_agents[i];
+    agent = STATE::agent_list.filtered_objects[i];
     if (agent == NULL) return;
     
     // determine velocity tick

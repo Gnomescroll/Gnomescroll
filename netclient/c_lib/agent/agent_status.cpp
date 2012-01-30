@@ -293,18 +293,18 @@ void Agent_status::set_team(int team)
 
 void Agent_status::add_coins(unsigned int coins)
 {
+    if (coins==0) return;
     this->coins += coins;
     #ifdef DC_SERVER
-    if (coins==0) return;
     this->send_coin_packet();
     #endif
 }
 
 void Agent_status::spend_coins(unsigned int coins)
 {
+    if (coins==0) return;
     this->coins -= coins;
     #ifdef DC_SERVER
-    if (coins==0) return;
     this->send_coin_packet();
     #endif
 }

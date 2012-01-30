@@ -6,10 +6,10 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/game/ctf.hpp>
+#include <c_lib/items/items.hpp>
 
-
-namespace ServerState {
-
+namespace ServerState
+{
     Agent_list agent_list;
     Cspray_list cspray_list;
     Grenade_list grenade_list;
@@ -20,9 +20,61 @@ namespace ServerState {
 
     CTF ctf;
 
-    void init() {
+    void init()
+    {
         ctf.init();
     }
+
+    void damage_objects_within_sphere(
+        float x, float y, float z, float radius,
+        int dmg, int owner, Object_types inflictor_type
+    )
+    {
+        Agent_state* agent = agent_list.get(owner);
+        // dont check null here, its not required.
+        // agent could have disconnected, we'll let his grenades stay effective
+        int i;                
+        int coins = 0;
+
+        // agents
+        agent_list.objects_within_sphere(x,y,z,radius);
+        Agent_state* a;
+        for (i=0; i<agent_list.n_filtered; i++) {
+            a = agent_list.filtered_objects[i];
+            if (a == NULL) continue;
+            a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
+        }
+
+        // spawners
+        spawner_list.objects_within_sphere(x,y,z,radius);
+        Spawner* s;
+        for (i=0; i<spawner_list.n_filtered; i++)
+        {
+            s = spawner_list.filtered_objects[i];
+            if (s==NULL) continue;
+            int h = s->take_damage(dmg);
+            if (h <= 0 && agent != NULL)
+                coins += s->get_coins_for_kill(agent->status.team);
+        }
+
+        // turrets
+        //turrent_list.objects_within_sphere(x,y,z,radius);
+        //Turrent* t;
+        //for (i=0; i<turrent_list.n_filtered; i++)
+        //{
+            //t = turrent_list.filtered[i];
+            //if (t==NULL) continue;
+            //t->take_damage(dmg);
+            //if (h <= 0 && agent != NULL)
+                //coins += s->get_coins_for_kill(agent->status.team);
+        //}
+
+    // add all the coins
+    if (agent != NULL)
+        agent->status.add_coins(coins);
+
+    }
+
 
 }
 #endif

@@ -53,7 +53,18 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 };
 
 
-Grenade::Grenade(int id) : owner(-1) {
+inline void grenade_StoC::handle() {
+    #ifdef DC_CLIENT
+    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, vx, vy, vz);
+    g->particle.ttl_max = (int)ttl_max;
+    g->particle.type = (int)type;
+    #endif
+}
+
+Grenade::Grenade(int id)
+:
+owner(-1)
+{
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
                    // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
     #ifdef DC_SERVER
@@ -63,7 +74,10 @@ Grenade::Grenade(int id) : owner(-1) {
     #endif
 }
 
-Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz) : owner(-1) {
+Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz)
+:
+owner(-1)
+{
     create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
                    // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
     #ifdef DC_SERVER
@@ -85,7 +99,6 @@ void Grenade::create_message(grenade_StoC* msg)
     msg->id = this->particle.id;
     msg->type = this->particle.type;
 }
-
 
 void Grenade::tick() {
     bounce_simple_rk4(&particle, GRENADE_DAMP);
@@ -140,16 +153,28 @@ void Grenade::explode() {
 #endif
 
 #ifdef DC_SERVER
-    int i;
+    ServerState::damage_objects_within_sphere(
+        particle.state.p.x, particle.state.p.y, particle.state.p.z,
+        GRENADE_DAMAGE_RADIUS,
+        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_AGENT // inflictor (agent is inflictor for now, only they can create grenades
+    );
+    
+    //int i;
     // find all agents in radius, apply damage
-    ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_AGENT_DAMAGE_RADIUS);
+    //ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_DAMAGE_RADIUS);
 
-    Agent_state* a;
-    for (i=0; i<ServerState::agent_list.n_filtered; i++) {
-        a = ServerState::agent_list.filtered_agents[i];
-        if (a == NULL) continue;
-        a->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT); // need to be able to pass owner & suicidal arguments to apply_damage
-    }
+    //ServerState::damage_objects_within_sphere(
+        //particle.state.p.x, particle.state.p.y, particle.state.p.z,
+        //GRENADE_DAMAGE_RADIUS,
+        //GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT
+    //);
+
+    //Agent_state* a;
+    //for (i=0; i<ServerState::agent_list.n_filtered; i++) {
+        //a = ServerState::agent_list.filtered_agents[i];
+        //if (a == NULL) continue;
+        //a->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT); // need to be able to pass owner & suicidal arguments to apply_damage
+    //}
     
     // find all blocks in radius, destroy/damage
     damage_blocks();
@@ -266,13 +291,4 @@ inline void print_grenade(Grenade *g) {
     printf("Vel: %0.2f %0.2f %0.2f\n", g->particle.state.v.x, g->particle.state.v.y, g->particle.state.v.z);
     printf("TTL max: %d\n", g->particle.ttl_max);
     printf("Type: %d\n", g->particle.type);
-}
-
-inline void grenade_StoC::handle() {
-    #ifdef DC_CLIENT
-    //printf("Spawn grenade particle: %i \n", id);
-    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, vx, vy, vz);
-    g->particle.ttl_max = (int)ttl_max;
-    g->particle.type = (int)type;
-    #endif
 }
