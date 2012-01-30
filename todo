@@ -108,6 +108,8 @@ sphere fulstrum culling using radius
 
 fix object_list template index bug (last element overwrite)
 add null checks to *list.create where missing
+zero control state if dead (agent wont continue walking after death)
+Bundle object list transmission into one C method, for new agent connects
 =============
 
 Icons on map (angus)
@@ -119,9 +121,9 @@ Turrets
 
 Minimap
 
-"You're dead" notification. Halt all motion
+"You're dead" notification
 
-Bundle object list transmission into one, for new agent connects
+only set seed during map gen. revert to time based seed after
 
 Sounds
 OpenAL ?

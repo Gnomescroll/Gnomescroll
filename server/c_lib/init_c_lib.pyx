@@ -156,6 +156,27 @@ def set_seed(int seed):
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     void tick()
+    void send_game_state_to_client(int client_id)
 
 def tick_server_state():
     tick();
+
+def send_game_state(int client_id):
+    send_game_state_to_client(client_id)
+
+
+""" Put it here so we dont make another cython file """
+cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
+    cdef cppclass Slime_list:
+        void tick()
+    void test(int n)
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    Slime_list slime_list
+
+def slime_test(int n):
+    test(n)
+
+def slime_tick():
+    slime_list.tick()
+

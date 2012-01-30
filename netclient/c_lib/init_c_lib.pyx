@@ -151,3 +151,23 @@ cpdef init_python_net():
     set_python_net_callback_function(py_net_message_callback)
     print "Python net callback set"
     set_python_net_event_callback_function(py_net_net_event_callback)
+
+
+""" Put this here to save a pyx file """
+from libcpp cimport bool
+
+cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
+
+    cdef cppclass Slime_list:
+        void update()
+
+    void test(int n)
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Slime_list slime_list
+
+def slime_test(int n):
+    test(n)
+
+def slime_tick():
+    slime_list.update()

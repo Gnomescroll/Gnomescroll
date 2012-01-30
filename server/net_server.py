@@ -10,7 +10,6 @@ import platform
 
 import init_c_lib
 import c_lib.c_lib_agents as cAgents
-import c_lib.c_lib_monsters as cMonsters
 import c_lib.c_lib_game_modes as cGameModes
 import c_lib.terrain_map as cMap
 
@@ -81,23 +80,8 @@ class PyClient:
         self.loaded_once = True
         self._register()
         self.send_map()
-        self.send_agents()
-        self.send_monsters()
-        self.send_ctf()
-        self.send_items()
+        init_c_lib.send_game_state(self.client_id)
         
-    def send_agents(self):
-        cAgents.AgentListWrapper.send_to_client(self.client_id)
-
-    def send_monsters(self):
-        cMonsters.send_to_client(self.client_id)
-
-    def send_items(self):
-        cAgents.send_spawners_to_client(self.client_id)
-
-    def send_ctf(self):
-        cGameModes.send_ctf_to_client(self.client_id)
-
     def send_map(self):
         print "Sending map"
         cMap.send_map_metadata_to_client(self.client_id)

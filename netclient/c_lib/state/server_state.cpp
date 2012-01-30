@@ -81,5 +81,19 @@ namespace ServerState
         ctf.tick();
     }
 
+    void send_game_state_to_client(int client_id)
+    {
+        // agents
+        // mobs
+        // "game" (ctf)
+        // items
+
+        agent_list.send_to_client(client_id);
+        slime_list.send_to_client(client_id);
+        ctf.send_to_client(client_id);
+        spawner_list.send_to_client(client_id);
+    }
+
+
 }
 #endif

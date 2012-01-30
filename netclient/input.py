@@ -6,10 +6,10 @@ Client input
 import opts
 opts = opts.opts
 
+import init_c_lib
 import c_lib.c_lib_input as cInput
 import c_lib.c_lib_hud as cHUD
 import c_lib.c_lib_agents as cAgents
-import c_lib.c_lib_monsters as cMonsters
 
 from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer, save_to_disk
@@ -288,7 +288,7 @@ class Keyboard(object):
 
     def slime_test(self):
         n = 30
-        cMonsters.slime_test(n)
+        init_c_lib.slime_test(n)
 
     #def hk(self):
         #camera.camera.world_projection()

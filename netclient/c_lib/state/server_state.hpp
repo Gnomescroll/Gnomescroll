@@ -29,5 +29,7 @@ namespace ServerState
 
     void tick();
 
+    void send_game_state_to_client(int client_id);
+
 }
 #endif

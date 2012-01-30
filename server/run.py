@@ -17,14 +17,11 @@ opts = opts.opts
 import random
 import time
 
-import intervals
 import map_gen
-import file_monitor
 import init_c_lib
 import c_lib.c_lib_particles
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
-import c_lib.c_lib_monsters as cMonsters
 import c_lib.c_lib_game_modes as cGameModes
 import c_lib.c_lib_options as cOptions
 import dats.loader as dat_loader
@@ -298,7 +295,7 @@ def good_cave1():
 class Main:
 
     def __init__(self):
-        init_c_lib.set_seed(opts.seed)
+        init_c_lib.set_seed(opts.seed)  # only use seed for map gen
         cOptions.load(opts)
         
         #gen_map_simple()
@@ -354,36 +351,19 @@ class Main:
             print 'Saving map as %s' % (opts.save_map,)
             terrain_map.save_to_disk(opts.save_map)
 
+        init_c_lib.set_seed(int(time.time()))
+
         NetServer.init()
         NetOut.init()
         NetEvent.init()
         GameStateGlobal()
         ChatServer()
 
-         #detect dat changes
-        def _dat_change_reload(f):
-            dat_loader._reload()
-            NetOut.event.send_dat()
-
-        files = [
-            'dats/projectile.py',
-            'dats/item.py',
-            'dats/cube.py',
-            'dats/weapon.py',
-            'dats/cube_dat.py',
-        ]
-        callbacks = [_dat_change_reload] * len(files)
-
-        self.file_monitor = file_monitor.FileMonitor(files=files, callbacks=callbacks)
-        self.intervals = intervals.Intervals()
-        self.intervals.register(self.file_monitor, self.file_monitor.interval)
-
     def run2(self):
         print "Server Started"
         #physics_timer.start_physics_timer(33)
         init_c_lib.init()
         tick = 0
-        self.intervals.set()#ms per tick
         #StartPhysicsTimer(33)
         START_CLOCK()
 
@@ -397,7 +377,7 @@ class Main:
             
         NetServerInit(a,b,c,d, opts.port)
 
-        #cMonsters.slime_test(30)
+        init_c_lib.slime_test(30)
         cGameModes.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections
@@ -423,9 +403,8 @@ class Main:
             NetServerDispatchNetworkEvents()
             
             NetOut.event.process_events()
-            self.intervals.process()
 
-            cMonsters.slime_tick()
+            init_c_lib.slime_tick()
             cGameModes.check_agent_proximities()
 
             time.sleep(0.0001)

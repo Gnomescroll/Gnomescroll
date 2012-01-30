@@ -35,7 +35,6 @@ import c_lib.c_lib_camera as cCamera
 import c_lib.c_lib_sound as cSound
 import c_lib.c_lib_options as cOptions
 #import c_lib.c_lib_map_gen as cMapGen
-import c_lib.c_lib_monsters as cMonsters
 
 import c_lib.c_lib_animations as cAnimations
 
@@ -158,7 +157,7 @@ class App(object):
 
         last_tick = 0
 
-        #cMonsters.slime_test(30)
+        #init_c_lib.slime_test(30)
             
         while not GameStateGlobal.exit:
             P2.start_frame() #TEST
@@ -329,7 +328,7 @@ class App(object):
             P.finish_frame()
 
             cSound.Sound.update()
-            cMonsters.slime_tick()
+            init_c_lib.slime_tick()
 
         init_c_lib.close()
 
