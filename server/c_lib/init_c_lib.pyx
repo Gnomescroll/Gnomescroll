@@ -153,3 +153,9 @@ cdef extern from "c_lib.hpp":
     
 def set_seed(int seed):
     _set_seed(seed)
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    void tick()
+
+def tick_server_state():
+    tick();

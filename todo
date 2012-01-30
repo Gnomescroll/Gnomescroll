@@ -106,8 +106,6 @@ Double buffered map
 Icons on map
 Teammates on map
 
-Minimap
-
 Deprecate python packets
 -- Identify/fail
 -- Cube dat
@@ -124,6 +122,7 @@ SDL input normalization
 
 Turrets
 
+Minimap
 
 "You're dead" notification. Halt all motion
 

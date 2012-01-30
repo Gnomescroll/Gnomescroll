@@ -203,6 +203,14 @@ void CTFTeam::captured_flag()
     }
 }
 
+void CTFTeam::tick()
+{
+    if (this->flag != NULL)
+        this->flag->tick();
+    if (this->base != NULL)
+        this->base->tick();
+}
+
 CTFTeam::~CTFTeam()
 {
     if (this->flag != NULL) delete this->flag;

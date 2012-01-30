@@ -75,6 +75,11 @@ namespace ServerState
 
     }
 
+    void tick()
+    {
+        spawner_list.tick();
+        ctf.tick();
+    }
 
 }
 #endif

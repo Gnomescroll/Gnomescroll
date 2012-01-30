@@ -404,6 +404,7 @@ class Main:
             #NetServer.connectionPool.process_events() #check for new data
             NetServer.connectionPool.dispatch_buffer()
             sl_c =0
+            init_c_lib.tick_server_state()
             while True: #physics loop
                 tc = GET_TICK()
                 #print "tc=%i" % (tc)

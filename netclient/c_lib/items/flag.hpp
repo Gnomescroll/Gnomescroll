@@ -13,6 +13,8 @@ enum FLAG_PARTS {
     FLAG_PART_CLOTH
 };
 
+const float FLAG_HEIGHT = 1.0f;
+
 class Flag;
 
 class Flag {
@@ -28,7 +30,8 @@ class Flag {
         Voxel_model* vox;
 
         void set_position(float x, float y, float z);
-
+        void tick();
+        
         Flag(int id, int team);
         ~Flag();
 };

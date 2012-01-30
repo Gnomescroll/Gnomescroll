@@ -27,5 +27,7 @@ namespace ServerState
         int dmg, int owner, Object_types inflictor_type
     );
 
+    void tick();
+
 }
 #endif

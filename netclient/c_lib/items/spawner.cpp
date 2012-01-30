@@ -7,6 +7,60 @@
 
 VoxDat spawner_vox_dat;
 
+#include <net_lib/net.hpp>
+
+class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
+{
+    public:
+        int id;
+        float x,y,z;
+        //float vx,vy,vz;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
+#ifdef DC_CLIENT
+inline void spawner_state_StoC::handle()
+{
+    
+    Spawner* s = ClientState::spawner_list.get(id);
+    if (s==NULL) return;
+    s->set_position(x,y,z);
+}
+#endif
+
+#ifdef DC_SERVER
+inline void spawner_state_StoC::handle(){}
+#endif
+
+
+void Spawner::set_position(float x, float y, float z)
+{
+    if (this->x == x && this->y == y && this->z == z) return;
+
+    this->x = x;
+    this->y = y;
+    this->z = z;
+    this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+
+    #ifdef DC_SERVER
+    spawner_state_StoC msg;
+    msg.x = this->x;
+    msg.y = this->y;
+    msg.z = this->z;
+    msg.id = this->id;
+    msg.broadcast();
+    #endif
+}
+
 void Spawner::get_spawn_point(int agent_height, int* spawn)
 {
     int x,y;
@@ -99,6 +153,44 @@ int Spawner::take_damage(int dmg)
     this->health = (this->health < 0) ? 0 : this->health;
     return this->health;
 }
+
+void Spawner::tick()
+{
+#ifdef DC_SERVER
+    int x,y,z;
+    x = (int)this->x;
+    y = (int)this->y;
+    z = (int)this->z;
+    if (isSolid(_get(x,y,z)))
+    {
+        // move up
+        while (isSolid(_get(x,y,++z)))
+        {
+            if (z >= map_dim.z)
+            {
+                z = map_dim.z;
+                break;
+            }
+        }
+    }
+    else
+    {
+        // fall down
+        while (!isSolid(_get(x,y,--z)))
+        {
+            if (z<=0)
+            {
+                z = 0;
+                break;
+            }
+        }
+        z++;
+    }
+    this->set_position(this->x, this->y, (float)z);
+#endif
+}
+
+
 Spawner::~Spawner()
 {
     #ifdef DC_SERVER
@@ -131,7 +223,7 @@ bool Spawner_list::point_occupied(int x, int y, int z)
         if ((int)s->x == x && (int)s->y == y)
         {
             // spawner is 2 blocks tall
-            for (int j=0; j<2; j++)
+            for (int j=0; j<(int)ceil(SPAWNER_HEIGHT); j++)
             {
                 if ((int)s->z+j == z) return true;
             }
@@ -169,4 +261,13 @@ void Spawner_list::send_to_client(int client_id)
         msg.sendToClient(client_id);
     }
     #endif
+}
+
+void Spawner_list::tick()
+{
+    for (int i=0; i<n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->tick();
+    }
 }

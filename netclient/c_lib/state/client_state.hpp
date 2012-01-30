@@ -48,7 +48,6 @@ namespace ClientState {
     void set_PlayerAgent_id(int id);
     
     void init();
-
 }
 #endif
 

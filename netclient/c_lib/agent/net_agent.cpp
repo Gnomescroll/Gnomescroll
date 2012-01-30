@@ -332,6 +332,10 @@ inline void hitscan_block_CtoS::handle() {
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
+    //TEMP TODO REMOVE
+    a->status.add_coins(100);
+    //TEMP TODO REMOVE
+
     if (!a->weapons.laser.fire()) return;
     fire_weapon_StoC msg;
     msg.id = a->id;

@@ -70,6 +70,8 @@ class CTFTeam: public Team {
         void init(int id);
         int score();
         void captured_flag();
+
+        void tick();
         
         CTFTeam();
         ~CTFTeam();

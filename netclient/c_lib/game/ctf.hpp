@@ -36,6 +36,7 @@ class CTF {
 
         void init();
         void start();
+        void tick();
 
         void set_team_name(int team, char* name);
         

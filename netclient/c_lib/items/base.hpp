@@ -14,6 +14,7 @@ enum BASE_PARTS {
 };
 
 const int BASE_SPAWN_RADIUS = 10;
+const float BASE_HEIGHT = 1.0f;
 
 class Base {
     public:
@@ -31,6 +32,8 @@ class Base {
 
         void set_position(float x, float y, float z);
         void get_spawn_point(int *spawn, int agent_height);
+
+        void tick();
         
         Base(int id, int team);
         ~Base();

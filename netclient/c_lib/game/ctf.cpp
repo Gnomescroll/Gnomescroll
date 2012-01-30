@@ -54,6 +54,12 @@ void CTF::start() {
     this->set_flag_position(2,x,y,z);
 }
 
+void CTF::tick()
+{
+    one.tick();
+    two.tick();
+}
+
 void CTF::set_team_name(int team, char* name)
 {
     switch (team)

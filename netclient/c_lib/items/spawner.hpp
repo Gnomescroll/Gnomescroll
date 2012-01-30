@@ -10,6 +10,7 @@ const int SPAWNER_RADIUS = 5;
 const int MAX_SPAWNERS = 18;
 const int SPAWNERS_PER_TEAM = 9;
 const int SPAWNER_HEALTH = 300;
+const float SPAWNER_HEIGHT = 1.9f;
 
 class Spawner_create_StoC; // forward decl
 
@@ -32,11 +33,15 @@ class Spawner
         void init_vox();
         void set_team(int team);
         void set_owner(int owner);
+
+        void set_position(float x, float y, float z);
         
         void get_spawn_point(int agent_height, int* spawn);
 
         int get_coins_for_kill(int team);
         int take_damage(int dmg);
+
+        void tick();
 
         void create_message(Spawner_create_StoC* msg);
         Spawner(int id);
@@ -55,5 +60,7 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
         bool point_occupied(int x, int y, int z);
         void send_to_client(int client_id);
         int get_random_spawner(int team);
+
+        void tick();
 };
 

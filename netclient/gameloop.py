@@ -176,6 +176,7 @@ class App(object):
 
             P.event("Physics Loop")
             sl_c = 0
+
             while True: #physics loop
                 tc = GET_TICK()
                 if tc == 0 or sl_c > 0: #only run once
