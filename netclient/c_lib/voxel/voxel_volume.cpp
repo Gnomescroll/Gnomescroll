@@ -15,7 +15,8 @@
 
     #include <voxel/voxel_hitscan.hpp>
 
-void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale) {
+void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
+{
     this->xdim = xdim;
     this->ydim = ydim;
     this->zdim = zdim;
@@ -191,7 +192,7 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
         scratch[*index + 1].t = voxel_tex_array[1].t;
         scratch[*index + 2].t = voxel_tex_array[2].t;
         scratch[*index + 3].t = voxel_tex_array[3].t;
-        
+
     //AO
     {
         int CX[8];
@@ -460,10 +461,12 @@ inline unsigned int Voxel_volume::get_as_int(unsigned int x, unsigned int y, uns
 /*
 Tests whether a voxel is occupied, for AO
 */
-inline unsigned int Voxel_volume::_test_occludes_safe(unsigned int x, unsigned int y, unsigned int z) 
+inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z) 
 { 
+    if( x < 0 || y < 0 || z < 0 ) return 0;
+    if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
-    if(index >= index_max) return 0;
+    if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
     if(voxel[index].color == 0) return 0;
     return 1;
 }
