@@ -18,7 +18,9 @@ struct Vec4 {
             Vec3 v3;    
         };
     };
-} __attribute__((aligned (16)));
+};
+
+ //__attribute__((aligned (16)));
 
 /*
 static struct Vec4 vec4_init(float x, float y, float z) __attribute((always_inline)); 

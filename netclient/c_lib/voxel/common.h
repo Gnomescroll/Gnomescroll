@@ -31,6 +31,15 @@ struct voxAOElement
     };
 };
 
+struct Voxel_tex
+{
+    union
+    {
+        unsigned char tex[4]; //32
+        unsigned int t;
+    };
+};
+
 struct Voxel_vertex
 {
     float x,y,z;
@@ -48,6 +57,11 @@ struct Voxel_vertex
     {
         char ao[4]; //20
         unsigned int AO;
+    };
+    union
+    {
+        char tex[4]; //24
+        unsigned int t;
     };
 };
 

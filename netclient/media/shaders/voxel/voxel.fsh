@@ -11,6 +11,7 @@ varying float diffuse;
 
 #define gamma 2.2f
 #define diffuse_p .30f //diffuse lighting weight
+#define ambient_p .70f //ambient lighting weight
 
 void main() 
 {
@@ -20,7 +21,7 @@ void main()
 	//vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 	//float ao_factor = dot(vx, AOMatrix * vy);
 
-	vec3 color = diffuse_p*(diffuse*gl_Color.rgb) + (1.0f - diffuse)*gl_Color.rgb;
+	vec3 color = diffuse_p*(diffuse*gl_Color.rgb) + ambient_p*gl_Color.rgb;
 
 	gl_FragColor.rgb = pow(color, vec3(1.0f / gamma) );
 

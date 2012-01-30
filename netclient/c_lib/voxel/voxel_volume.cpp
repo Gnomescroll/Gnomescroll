@@ -126,6 +126,21 @@ static inline int vCalcAdj(int side_1, int side_2, int corner)
     return occ_array[occ];
 }
 
+/*
+    if vert_num == 0:
+        tx = 0.0
+        ty = 0.0
+    elif vert_num == 1:
+        tx = 0.0
+        ty = 1.0
+    elif vert_num == 2:
+        tx = 1.0
+        ty = 1.0
+    elif vert_num == 3:
+        tx = 1.0
+        ty = 0.0
+*/
+
 void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz)
 {
 
@@ -137,6 +152,15 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
         {{{0,1,0,0}}},
         {{{0,-1,0,0}}}
         };
+
+    static const struct Voxel_tex voxel_tex_array[4] = {
+        {{{0,0,0,0}}},
+        {{{0,1,0,0}}},
+        {{{1,1,0,0}}},
+        {{{1,0,0,0}}}
+        };
+
+    //struct voxTexElement
 
     static const int_fast8_t CI[6*8*3] = {
         1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
@@ -161,6 +185,13 @@ void Voxel_volume::push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int
         scratch[*index + 2].color = color.color;
         scratch[*index + 3].color = color.color;
     }
+
+    //texture cordinates
+        scratch[*index + 0].t = voxel_tex_array[0].t;
+        scratch[*index + 1].t = voxel_tex_array[1].t;
+        scratch[*index + 2].t = voxel_tex_array[2].t;
+        scratch[*index + 3].t = voxel_tex_array[3].t;
+        
     //AO
     {
         int CX[8];
