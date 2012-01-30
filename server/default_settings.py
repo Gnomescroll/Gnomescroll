@@ -21,6 +21,8 @@ team_kills = False
 victory_points = 3
 team_name_one = "Blue Team"
 team_name_two = "Green Team"
+#team_color_one = [200,0,200]
+#team_color_two = [200,200,0]
 
 ''' Map '''
 map = 'natural_terrain'

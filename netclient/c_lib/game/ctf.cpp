@@ -10,8 +10,8 @@ CTF::CTF()
 {}
 
 void CTF::init() {
-    one.set_color(10,10,200);    //black-ish
-    two.set_color(10,210,10);   // green-ish
+    one.set_color(34, 144, 191);    //dark teal
+    two.set_color(158, 24, 93);   // green-ish
 
     none.init(0);
     one.init(1);
