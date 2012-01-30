@@ -172,11 +172,10 @@ class Hud(object):
                 if agent.team.viewers:
                     s = 'Viewer Mode'
                 else:
-                    health = '%i/%i' % (agent.health, agent.health_max,)
                     w = 'Ammo %s' % (agent.weapon_hud_display(),)
-                    hp = 'HP %s' % (health,)
+                    hp = 'HP %i' % (agent.health,)
                     coins = '$%d' % (agent.coins,)
-                    s = '%s :: %s :: %s' % (coins, health, w,)
+                    s = '%s :: %s :: %s' % (coins, hp, w,)
         return s
 
     def draw_player_stats(self):
