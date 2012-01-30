@@ -426,10 +426,13 @@ void Agent_state::get_spawn_point(int* spawn) {
 
     // check that assigned spawner still exists, reassign if not
     Spawner *s;
-    while ((s = STATE::spawner_list.get(this->status.spawner)) == NULL)
+    if (this->status.spawner != -1)
     {
-        this->status.set_spawner();
-        if (this->status.spawner == -1) break;  // no spawners available
+        while ((s = STATE::spawner_list.get(this->status.spawner)) == NULL)
+        {
+            this->status.set_spawner();
+            if (this->status.spawner == -1) break;  // no spawners available
+        }
     }
     
     if (this->status.spawner != -1)

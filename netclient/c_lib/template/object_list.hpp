@@ -157,6 +157,7 @@ Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z
         id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
+    if (i == n_max) return NULL;    // full
     a[id] = new Object_state(id, x,y,z);
     num++;
     id_c = id+1;
@@ -186,6 +187,7 @@ Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z
         id = (i+id_c)%n_max;
         if(a[id] == NULL) break;
     }
+    if (i == n_max) return NULL;    // full
     a[id] = new Object_state(id, x,y,z, vx,vy,vz);
     num++;
     id_c = id+1;

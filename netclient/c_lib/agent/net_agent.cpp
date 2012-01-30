@@ -450,6 +450,7 @@ inline void place_spawner_CtoS::handle()
     if (a==NULL) return;
     if (a->status.team == 0) return;
     if (!a->status.can_afford(OBJ_TYPE_SPAWNER)) return;
+    if (ServerState::spawner_list.full()) return;
     if (!ServerState::spawner_list.team_spawner_available(a->status.team)) return;
     if (ServerState::spawner_list.point_occupied((int)x, (int)y, (int)z)) return;
 
