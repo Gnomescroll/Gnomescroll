@@ -9,7 +9,6 @@ except ImportError:
 import struct
 import zlib
 
-#import dats.loader as dl
 import c_lib.terrain_map as terrain_map
 
 class NetOut:
@@ -55,7 +54,6 @@ class EventOut:
         self.event_packets = []
 
     def process_events(self):
-        #print "Process Events.num_events = %i" % len(self.event_packets)
         for event_packet in self.event_packets:
             for client in NetServer.connectionPool.clients_by_id.values():
                 if not client.admin:
@@ -68,33 +66,9 @@ class EventOut:
     def add_json_compressed_event(self, data, level):
         self.event_packets.append(SendMessage.get_json_compressed(data, level))
 
-    #@sendJSONevent('client_quit')
-    #def client_quit(self, client_id):
-        #return {
-            #'id'    : client_id,
-        #}
-
     @sendJSONevent('clear_map')
     def clear_map(self):
         return True
-
-    #@sendJSONevent('dat', zlib=6)
-    #def send_dat(self, dat_name=None, type=None, key=None):
-        #if dat_name is None:
-            #d = dl.dat_loader.json()
-        #else:
-            #d = dl.dat_loader.get_json(dat_name, type, key)
-        #fin = {
-            #'dat'   :   d,
-        #}
-        #if dat_name is not None:
-            #fin['name'] = dat_name
-            #if type is not None:
-                #fin['type'] = type
-                #if key is not None:
-                    #fin['key'] = key
-        #return fin
-
 
 #this is global message out across the connection pool
 class MessageOut:
@@ -169,23 +143,6 @@ class SendMessage: #each connection has one of these
     def send_json_compressed(self, d, zlib=6):
         msg = self.get_json_compressed(d, zlib)
         self.client.send(msg)
-
-    #@sendJSON('dat', zlib=6)
-    #def send_dat(self, dat_name=None, type=None, key=None):
-        #if dat_name is None:
-            #d = dl.dat_loader.json()
-        #else:
-            #d = dl.dat_loader.get_json(dat_name, type, key)
-        #fin = {
-            #'dat'   :   d,
-        #}
-        #if dat_name is not None:
-            #fin['name'] = dat_name
-            #if type is not None:
-                #fin['type'] = type
-                #if key is not None:
-                    #fin['key'] = key
-        #return fin
 
     @sendJSON('identify_fail')
     def identify_fail(self, connection, notes=''):

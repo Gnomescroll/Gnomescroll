@@ -12,7 +12,6 @@ class NetEvent:
     miscMessageHandler = None
     mapMessageHandler = None
     chatMessageHandler = None
-    #datMessageHandler = None
 
     @classmethod
     def init(cls):
@@ -21,7 +20,6 @@ class NetEvent:
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
         cls.chatMessageHandler = ChatMessageHandler()
-        #cls.datMessageHandler = DatMessageHandler()
 
     @classmethod
     def register_json_events(cls, events, interface=None):
@@ -305,24 +303,8 @@ class AdminMessageHandler(GenericMessageHandler):
 
     def events(self):
         return {
-            'admin'     : self.is_admin,
-            #'set_map' : self._set_map,
-            'clear_map': self._clear_map,
             'save_map': self._save_map,
         }
-
-    def is_admin(self, msg, conn):
-        conn.admin = True
-
-    #@requireKey('list')
-    #def _set_map(self, msg, conn, blocks):
-        #for x,y,z,value in blocks:
-            #terrain_map.set(x,y,z,value)
-        #NetOut.event.set_map(blocks)
-
-    def _clear_map(self, msg, conn):
-        terrain_map.clear()
-        NetOut.event.clear_map()
 
     @requireKey('name')
     def _save_map(self, msg, conn, name):
@@ -383,14 +365,3 @@ class ChatMessageHandler(GenericMessageHandler):
 
     def unsubscribe(self, msg, conn):
         ChatServer.chat.client_unsubscribe(msg, conn)
-
-
-#class DatMessageHandler(GenericMessageHandler):
-
-    #def events(self):
-        #return {
-            #'dat_loaded'    :   self.loaded,
-        #}
-
-    #def loaded(self, msg, conn):
-        #conn.set_dat_loaded()
