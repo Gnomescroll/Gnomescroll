@@ -31,6 +31,8 @@ class Agent_event {
         void dropped_flag();
         void scored_flag();
 
+        void coins_changed(unsigned int coins);
+
         Agent_event(Agent_state* owner);
         ~Agent_event();
 };

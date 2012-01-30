@@ -88,6 +88,9 @@ void RegisterMessages() {
     AgentDropFlag_StoC::register_client_packet();
     AgentScoreFlag_StoC::register_client_packet();
 
+    // coins
+    agent_coins_StoC::register_client_packet();
+
     Spawner_create_StoC::register_client_packet();
     Spawner_destroy_StoC::register_client_packet();
     

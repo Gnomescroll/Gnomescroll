@@ -158,6 +158,12 @@ inline void AgentReloadWeapon_StoC::handle() {
     a->event.reload_weapon(type);
 }
 
+inline void agent_coins_StoC::handle()
+{
+    Agent_state* a = ClientState::playerAgent_state.you;
+    if (a == NULL) return;
+    a->event.coins_changed(coins);
+}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -193,6 +199,7 @@ inline void PlayerAgent_id_StoC::handle() {}
 inline void AgentActiveWeapon_StoC::handle() {}
 inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
+inline void agent_coins_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;

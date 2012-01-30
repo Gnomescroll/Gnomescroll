@@ -153,6 +153,13 @@ void Agent_event::scored_flag()
     this->a->status.flag_captures++;
 }
 
+void Agent_event::coins_changed(unsigned int coins)
+{
+    if (coins == this->a->status.coins) return;
+    printf("You now have %d coins\n", coins);
+    this->a->status.coins = coins;
+}
+
 Agent_event::~Agent_event()
 {
     if (this->bb != NULL)

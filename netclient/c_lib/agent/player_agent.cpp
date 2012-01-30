@@ -184,7 +184,7 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 
     AgentState* state;
     //state = &this->you->s;
-    state = &this->s0;
+    state = &this->s1;
 
     // force staying crouched if cant stand up
     if ((this->crouching && !crouch)

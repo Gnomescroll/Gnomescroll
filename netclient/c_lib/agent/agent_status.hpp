@@ -37,6 +37,8 @@ class Agent_status {
         bool has_flag;
         unsigned int flag_captures;
 
+        unsigned int coins;
+
         void set_name(char* n);
         void set_name(char* n, int id);
     
@@ -57,6 +59,10 @@ class Agent_status {
         void send_scores();
 
         void set_team(int team);
+
+        void add_coins(unsigned int coins);
+        void spend_coins(unsigned int coins);
+
 
         Agent_status(Agent_state* a);
 };

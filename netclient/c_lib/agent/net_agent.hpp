@@ -535,3 +535,13 @@ class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_de
         inline void handle();
 };
 
+class agent_coins_StoC: public FixedSizeReliableNetPacketToClient<agent_coins_StoC>
+{
+    public:
+        int coins;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&coins, buff, buff_n, pack);
+        }
+        inline void handle();
+};

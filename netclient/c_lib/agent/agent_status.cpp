@@ -25,7 +25,8 @@ suicides(0),
 health_max(AGENT_HEALTH),
 team(0),
 has_flag(false),
-flag_captures(0)
+flag_captures(0),
+coins(0)
 {
     strcpy(this->name, (char*)"undefined-agent-name");
 }
@@ -270,5 +271,27 @@ void Agent_status::set_team(int team)
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
+    #endif
+}
+
+void Agent_status::add_coins(unsigned int coins)
+{
+    this->coins += coins;
+    #ifdef DC_SERVER
+    if (coins==0) return;
+    agent_coins_StoC msg;
+    msg.coins = this->coins;
+    msg.sendToClient(this->a->id);
+    #endif
+}
+
+void Agent_status::spend_coins(unsigned int coins)
+{
+    this->coins -= coins;
+    #ifdef DC_SERVER
+    if (coins==0) return;
+    agent_coins_StoC msg;
+    msg.coins = this->coins;
+    msg.sendToClient(this->a->id);
     #endif
 }
