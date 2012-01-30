@@ -69,6 +69,7 @@ def tick():
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron
     neutron = neutron_list.create(x,y,z, vx,vy,vz)
+    if neutron == NULL: return
     neutron.set_energy(energy)
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):

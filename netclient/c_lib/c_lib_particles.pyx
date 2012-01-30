@@ -175,10 +175,12 @@ def _create_minivox_colored(float x, float y, float z, float vx, float vy, float
 
     cdef Minivox* minivox
     minivox = minivox_list.create(x,y,z, vx,vy,vz)
+    if minivox is NULL: return
     minivox.set_color(r,g,b)
 
 def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz, text):
     cdef BillboardText* bb = billboard_text_list.create(x,y,z, vx,vy,vz)
+    if bb is NULL: return
     cdef char* ctext = text
     bb.set_text(ctext)
     #print "tlen = %i" % (tlen)

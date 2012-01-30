@@ -379,6 +379,7 @@ inline void ThrowGrenade_CtoS::handle() {
     vz *= grenade_vel;
     //create grenade
     Grenade* g = ServerState::grenade_list.create(x,y,z, vx,vy,vz);
+    if (g==NULL) return;
     g->owner = a->id;
 }
 
@@ -457,6 +458,7 @@ inline void place_spawner_CtoS::handle()
     a->status.purchase(OBJ_TYPE_SPAWNER);
 
     Spawner* s = ServerState::spawner_list.create(x+0.5f,y+0.5f,z);
+    if (s==NULL) return;
     s->set_team(a->status.team);
     s->set_owner(a->id);
     s->init_vox();
@@ -471,6 +473,11 @@ inline void place_spawner_CtoS::handle()
 inline void Spawner_create_StoC::handle()
 {
     Spawner* s = ClientState::spawner_list.create(id, x,y,z);
+    if (s==NULL)
+    {
+        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        return;
+    }
     s->set_team(team);
     s->set_owner(owner);
     s->init_vox();

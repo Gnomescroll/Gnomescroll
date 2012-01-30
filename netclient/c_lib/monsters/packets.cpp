@@ -5,10 +5,9 @@
 inline void CreateSlime_StoC::handle()
 {
     Monsters::Slime* s = ClientState::slime_list.create(id);
-    if (s->vox != NULL) {
-        s->vox->set_draw(true);
-        s->vox->update(&Monsters::slime_vox_dat, s->x, s->y, s->z, s->theta, s->phi);
-    }
+    if (s->vox == NULL) return;
+    s->vox->set_draw(true);
+    s->vox->update(&Monsters::slime_vox_dat, s->x, s->y, s->z, s->theta, s->phi);
 }
 
 inline void DestroySlime_StoC::handle()

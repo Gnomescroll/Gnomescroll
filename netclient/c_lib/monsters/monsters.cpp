@@ -254,6 +254,7 @@ void test(int n) {
 
         #ifdef DC_SERVER
         Slime* s = STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
+        if (s==NULL) return;
         CreateSlime_StoC msg = CreateSlime_StoC();
         msg.id = s->id;
         msg.broadcast();

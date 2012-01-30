@@ -49,7 +49,7 @@ void Agent_event::fired_laser() {
         Sound::play_3d_sound(soundfile, x,y,z, a->s.vx, a->s.vy, a->s.vz);
 
         // play laser anim
-        const float hitscan_speed = 120.0f;
+        const float hitscan_speed = 200.0f;
         ClientState::hitscan_effect_list.create(
             x,y,z,
             f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
@@ -91,6 +91,7 @@ void Agent_event::display_name()
     if (this->bb == NULL)
     {
         this->bb = ClientState::billboard_text_list.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        if (this->bb == NULL) return;
         this->bb->set_gravity(false);   // stay put
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
@@ -107,6 +108,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg) {
     BillboardText* b = ClientState::billboard_text_list.create(a->s.x, a->s.y, a->s.z, 0.0f,0.0f, 7.0f);
+    if (b==NULL) return;
     b->set_color(255,10,10, 255);   // red
     char txt[10+1];
     sprintf(txt, "%d", dmg);

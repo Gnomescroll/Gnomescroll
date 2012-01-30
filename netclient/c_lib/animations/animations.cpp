@@ -40,6 +40,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
 
         tex_id = _get_cube_side_texture(cube_id, side);
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
+        if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
@@ -102,6 +103,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         nz = z + ((randf() -0.5f)*0.4f*side[2]);
         
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
+        if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
         minivox->set_ttl(ttl);
     }
@@ -125,7 +127,7 @@ void grenade_explode(float x, float y, float z) {
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        ClientState::shrapnel_list.create(cx, cy, cz, cvx, cvy, cvz);
+        if (ClientState::shrapnel_list.create(cx, cy, cz, cvx, cvy, cvz) == NULL) return;
     }
 }
 
@@ -161,6 +163,7 @@ void slime_melt(float x, float y, float z) {
         dphi = randf() * 0.01f;
         
         minivox = ClientState::minivox_list.create(cx,cy,cz, cvx,cvy,cvz);
+        if (minivox == NULL) return;
         minivox->set_color(128,223,31);
         //minivox->set_size(0.7);
         minivox->set_ttl(ttl);
@@ -198,7 +201,8 @@ void agent_bleed(float x, float y, float z)
         //ttl = randrange(10,25);
 
         //blood = ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
-        ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
+        //if (blood == NULL) return;
+        if (ClientState::blood_list.create(nx,ny,nz, vx,vy,vz) == NULL) return;
         //blood->ttl = ttl;
     }
 }

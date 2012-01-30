@@ -245,11 +245,11 @@ void HitscanLaserEffect_list::tick()
 
         if(frame % 8 == 0 )
         {
-        const float vm = 16.0;
-        float vx = vm*(float)rand()/(float)RAND_MAX;
-        float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
-        float vz = vm*(float)rand()/(float)RAND_MAX;
-        ClientState::hitscan_laser_effect_list.create(32.0, 32.0, 128.0, vx, vy, vz );
+            const float vm = 16.0;
+            float vx = vm*(float)rand()/(float)RAND_MAX;
+            float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
+            float vz = vm*(float)rand()/(float)RAND_MAX;
+            ClientState::hitscan_laser_effect_list.create(32.0, 32.0, 128.0, vx, vy, vz );
         }
 
     }
