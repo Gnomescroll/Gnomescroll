@@ -123,6 +123,8 @@ class Agent_state {
         bool is_you();
 
         float camera_height();
+        float current_height();
+        int current_height_int();
 
         void init_vox();
 

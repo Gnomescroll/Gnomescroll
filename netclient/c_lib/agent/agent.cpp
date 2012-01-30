@@ -421,39 +421,68 @@ void Agent_state::set_angles(float theta, float phi) {
 }
 
 void Agent_state::get_spawn_point(int* spawn) {
-    // get spawn area based on team
-    int x_max, x_min, y_max, y_min;
-    switch (this->status.team)
+
+    int h = this->current_height_int();
+    
+    if (this->status.spawner != -1)
     {
-        case 0:
-            x_min = 0;
-            x_max = map_dim.x;
-            y_min = 0;
-            y_max = map_dim.y;
-            break;
-        case 1:
-            x_min = 0;
-            x_max = map_dim.x/2;
-            y_min = 0;
-            y_max = map_dim.y/2;
-            break;
-        case 2:
-            x_min = map_dim.x/2;
-            x_max = map_dim.x;
-            y_min = map_dim.y/2;
-            y_max = map_dim.y;
-            break;
-        default:
-            printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
-            spawn[0]=spawn[1]=spawn[2]=0;
-            return;
+        Spawner *s = STATE::spawner_list.get(this->status.spawner);
+        if (s==NULL) printf("WARNING: Agent_state::get_spawn_point -- spawner %d is NULL\n", this->status.spawner);
+        else
+        {
+            s->get_spawn_point(h, spawn);
+        }
     }
-    do {
-        spawn[0] = randrange(x_min, x_max-1);
-        spawn[1] = randrange(y_min, y_max-1);
-        spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
-    } while (spawn[2] <= 0);
-    printf("Spawning at z_level %d\n", spawn[2]);
+    else
+    {
+        // spawner did not exist, or spawner is base
+        STATE::ctf.get_base_spawn_point(this->status.team, h, spawn);
+
+        // team is 0, or spawn get failed for some reason. spawn anywhere
+        if (spawn == NULL)
+        {
+            int x,y,z;
+            x = randrange(0, map_dim.x-1);
+            y = randrange(0, map_dim.y-1);
+            z = _get_highest_open_block(x,y, h);
+            spawn[0]=x;
+            spawn[1]=y;
+            spawn[2]=z;
+        }
+    }
+    printf("%d %d %d\n", spawn[0], spawn[1], spawn[2]);
+    //// get spawn area based on team
+    //int x_max, x_min, y_max, y_min;
+    //switch (this->status.team)
+    //{
+        //case 0:
+            //x_min = 0;
+            //x_max = map_dim.x;
+            //y_min = 0;
+            //y_max = map_dim.y;
+            //break;
+        //case 1:
+            //x_min = 0;
+            //x_max = map_dim.x/2;
+            //y_min = 0;
+            //y_max = map_dim.y/2;
+            //break;
+        //case 2:
+            //x_min = map_dim.x/2;
+            //x_max = map_dim.x;
+            //y_min = map_dim.y/2;
+            //y_max = map_dim.y;
+            //break;
+        //default:
+            //printf("Agent_state::get_spawn_point, invalid team %d\n", this->status.team);
+            //spawn[0]=spawn[1]=spawn[2]=0;
+            //return;
+    //}
+    //do {
+        //spawn[0] = randrange(x_min, x_max-1);
+        //spawn[1] = randrange(y_min, y_max-1);
+        //spawn[2] = _get_highest_open_block(spawn[0], spawn[1], (int)(ceil(box.b_height)));
+    //} while (spawn[2] <= 0);
 }
 
 void Agent_state::spawn_state() {
@@ -617,4 +646,18 @@ float Agent_state::camera_height() {
     if (this->crouched())
         return CAMERA_HEIGHT_CROUCHED;
     return CAMERA_HEIGHT;
+}
+
+float Agent_state::current_height()
+{
+    if (this->crouched())
+        return this->box.c_height;
+    else
+        return this->box.b_height;
+}
+
+int Agent_state::current_height_int()
+{
+    float h = this->current_height();
+    return (int)ceil(h);
 }

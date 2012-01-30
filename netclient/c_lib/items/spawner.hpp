@@ -31,8 +31,7 @@ class Spawner
         void set_team(int team);
         void set_owner(int owner);
         
-        void get_spawn_point(int spawn[3], int agent_height=1);
-
+        void get_spawn_point(int agent_height, int* spawn);
 
         void create_message(Spawner_create_StoC* msg);
         Spawner(int id);
@@ -50,5 +49,6 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
         bool team_spawner_available(int team);
         bool point_occupied(int x, int y, int z);
         void send_to_client(int client_id);
+        int get_random_spawner(int team);
 };
 

@@ -19,6 +19,7 @@ a(a),
 health(AGENT_HEALTH),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
+spawner(-1),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),
@@ -29,6 +30,18 @@ flag_captures(0),
 coins(0)
 {
     strcpy(this->name, (char*)"undefined-agent-name");
+}
+
+void Agent_status::set_spawner(int pt)
+{
+    this->spawner = pt;
+}
+
+void Agent_status::set_spawner()
+{
+    int pt = STATE::spawner_list.get_random_spawner(this->team);
+    if (pt < 0) pt = -1;
+    this->spawner = pt;
 }
 
 void Agent_status::set_name(char* name)
@@ -268,6 +281,8 @@ void Agent_status::set_team(int team)
     this->team = team;
 
     #ifdef DC_SERVER
+    this->set_spawner();    // choose new spawn point
+
     this->dead = true;
     agent_dead_StoC dead_msg;
     dead_msg.id = a->id;

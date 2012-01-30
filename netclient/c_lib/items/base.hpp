@@ -13,7 +13,7 @@ enum BASE_PARTS {
     BASE_PART_MAIN
 };
 
-class Base;
+const int BASE_SPAWN_RADIUS = 10;
 
 class Base {
     public:
@@ -24,11 +24,14 @@ class Base {
         int id;
         int team;
         Object_types type;
+
+        unsigned int spawn_radius;
         
         Voxel_model* vox;
 
         void set_position(float x, float y, float z);
-
+        void get_spawn_point(int *spawn, int agent_height);
+        
         Base(int id, int team);
         ~Base();
 };

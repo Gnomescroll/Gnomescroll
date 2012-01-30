@@ -7,7 +7,7 @@
 
 VoxDat spawner_vox_dat;
 
-void Spawner::get_spawn_point(int spawn[3], int agent_height)
+void Spawner::get_spawn_point(int agent_height, int* spawn)
 {
     int x,y;
     x = (int)this->x;
@@ -113,6 +113,22 @@ bool Spawner_list::point_occupied(int x, int y, int z)
         }
     }
     return false;
+}
+
+int Spawner_list::get_random_spawner(int team)
+{
+    int spawners[SPAWNERS_PER_TEAM];
+    int j=0;
+    for (int i=0; i<n_max; i++)
+    {
+        Spawner *s = this->a[i];
+        if (s == NULL) continue;
+        if (s->team == team) spawners[j++] = i;
+    }
+    if (j==0)
+        return -1;
+    else
+        return spawners[randrange(0,j-1)];
 }
 
 void Spawner_list::send_to_client(int client_id)

@@ -78,9 +78,11 @@ Jan 29-30
 coins allocation
 get coins for flag capture
 added to hud $X
+
 spawners cost coins
 spawners team max
 spawners cant be placed on other spawners
+Send spawner list to new clients
 
 =============
 
@@ -88,7 +90,6 @@ Spawners
 -- TODO:
 Use spawner to determine spawn point
 Spawner can't be placed where current spawner is
-Send spawner list to new clients
 Base acts as defacto spawner. Base should have some intelligent initial spawning (like not too close to a back corner)
 
 Add simple gravity to items
