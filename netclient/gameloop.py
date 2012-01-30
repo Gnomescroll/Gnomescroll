@@ -20,8 +20,6 @@ import random
 
 import stats
 import intervals
-import vox_lib
-
 import camera
 
 import c_lib.terrain_map

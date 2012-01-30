@@ -9,8 +9,6 @@ import struct
 import platform
 
 import init_c_lib
-import c_lib.c_lib_agents as cAgents
-import c_lib.c_lib_game_modes as cGameModes
 import c_lib.terrain_map as cMap
 
 class NetServer:
@@ -59,7 +57,7 @@ class PyClient:
             NetServer.connectionPool.name_client(self, name)
             self.name = name
             if self.agent:
-                cAgents.set_agent_name(self.agent.id, name)
+                init_c_lib.set_agent_name(self.agent.id, name)
             self.check_ready()
         else:
             if you:
@@ -93,7 +91,7 @@ class PyClient:
             self.agent.update_info(name=self.name)
         else:
             self.agent = GameStateGlobal.agentList.create(self.client_id)
-            cAgents.set_agent_name(self.agent.id, self.name)
+            init_c_lib.set_agent_name(self.agent.id, self.name)
 
             # add agent to netserver agent pool
             # send client_id but not via the agent
@@ -217,7 +215,7 @@ class PyClientPool:
         # dispatch event
         ChatServer.chat.disconnect(client)
         if client.agent is not None:
-            cGameModes.leave_team(client.agent.id)
+            init_c_lib.leave_team(client.agent.id)
             GameStateGlobal.agentList.destroy(client.agent) # make sure this is last
             
         # recycle name

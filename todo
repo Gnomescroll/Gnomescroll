@@ -129,6 +129,8 @@ Minimap
 bleed from damage
 spray blood in proper direction
 
+Find the glColor bug: minivox coloring
+
 Sounds
 OpenAL ?
 System notifications (you killed...)

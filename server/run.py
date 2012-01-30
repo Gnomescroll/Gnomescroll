@@ -19,11 +19,8 @@ import time
 
 import map_gen
 import init_c_lib
-import c_lib.c_lib_particles
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
-import c_lib.c_lib_game_modes as cGameModes
-import c_lib.c_lib_options as cOptions
 import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
@@ -296,7 +293,7 @@ class Main:
 
     def __init__(self):
         init_c_lib.set_seed(opts.seed)  # only use seed for map gen
-        cOptions.load(opts)
+        init_c_lib.load(opts)
         
         #gen_map_simple()
 
@@ -377,8 +374,8 @@ class Main:
             
         NetServerInit(a,b,c,d, opts.port)
 
-        init_c_lib.slime_test(30)
-        cGameModes.ctf_start()
+        #init_c_lib.slime_test(30)
+        init_c_lib.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections
             #NetServer.connectionPool.process_events() #check for new data
@@ -391,7 +388,7 @@ class Main:
                 #tc = PhysicsTimerTickCheck() #get number of ticks server is behind
                 if tc == 0 or sl_c > 3: #net out
                     break
-                c_lib.c_lib_particles.tick()
+                init_c_lib.tick()
                 sl_c+=1
                 tick+=1
             #if sl_c != 0:
@@ -405,7 +402,7 @@ class Main:
             NetOut.event.process_events()
 
             init_c_lib.slime_tick()
-            cGameModes.check_agent_proximities()
+            init_c_lib.check_agent_proximities()
 
             time.sleep(0.0001)
             #time.sleep(0.100)

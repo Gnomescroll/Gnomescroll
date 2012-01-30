@@ -2,7 +2,6 @@
 Incoming net events
 '''
 
-import c_lib.c_lib_game_modes as cGame
 import c_lib.terrain_map as terrain_map
 
 class NetEvent:

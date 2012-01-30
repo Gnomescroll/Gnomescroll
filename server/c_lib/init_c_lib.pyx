@@ -164,8 +164,11 @@ def tick_server_state():
 def send_game_state(int client_id):
     send_game_state_to_client(client_id)
 
+"""
+    Condensed cython files here
+"""
 
-""" Put it here so we dont make another cython file """
+""" Monsters """
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     cdef cppclass Slime_list:
         void tick()
@@ -180,3 +183,391 @@ def slime_test(int n):
 def slime_tick():
     slime_list.tick()
 
+""" Agents """
+'''
+Wrapper
+'''
+
+#agent class wrapper
+
+from libcpp cimport bool
+#AgentState
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass AgentState:
+        int seq
+        float theta
+        float phi
+        float x,y,z
+        float vx,vy,vz
+        #bool crouching
+        bool jump_ready
+
+cdef extern from "./agent/agent_status.hpp":
+    unsigned int PLAYER_NAME_MAX_LENGTH
+    cdef cppclass Agent_status:
+        int health
+        bool dead
+        int team
+        int score()
+        int kills
+        int deaths
+        int suicides
+        char* name
+        void set_name(char* name)
+        
+#Agent_state
+cdef extern from "./agent/agent.hpp":
+    cdef struct Agent_collision_box:
+        float b_height
+        float c_height
+        float box_r
+
+    cdef cppclass Agent_state:
+        int id
+        AgentState s
+        Agent_collision_box box
+        Agent_status status
+        void teleport(float x,float y,float z)
+        void send_id_to_client(int client_id)
+
+cdef extern from "./agent/agent.hpp":
+    cdef cppclass Agent_list:
+        Agent_state* get(int id)
+        Agent_state* get_or_create(int id)
+        Agent_state* create()
+        Agent_state* create(int id)
+        void destroy(int _id)
+        void draw()
+        void draw(int all)
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    Agent_list agent_list
+
+class AgentWrapper(object):
+    properties = [
+        'x', 'y', 'z',
+        'vx', 'vy', 'vz',
+        'theta', 'phi',
+        'x_angle', 'y_angle',
+        'crouch_height','c_height',
+        'box_height', 'b_height',
+        'box_r',
+        #'crouching',
+        'team',
+        'score',
+        'kills',
+        'deaths',
+        'suicides',
+        'name',
+    ]
+
+    def __init__(self, int client_id):
+        cdef Agent_state *a
+        a = agent_list.get_or_create(client_id)
+        self.id = a.id
+
+    def send_id_to_client(self, int client_id):
+        cdef Agent_state* a
+        a = agent_list.get(self.id)
+        a.send_id_to_client(client_id)
+        
+    def __getattribute__(self, name):
+        if name not in AgentWrapper.properties:
+            raise AttributeError
+
+        cdef Agent_state* a
+        cdef int i
+        i = object.__getattribute__(self,'id')
+        a = agent_list.get(i)
+
+        if a == NULL:
+            print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
+            raise AttributeError
+
+        if name == 'x':
+            return a.s.x
+        elif name == 'y':
+            return a.s.y
+        elif name == 'z':
+            return a.s.z
+        elif name == 'vx':
+            return a.s.vx
+        elif name == 'vy':
+            return a.s.vy
+        elif name == 'vz':
+            return a.s.vz
+        elif name == 'theta':
+            return a.s.theta
+        elif name == 'phi':
+            return a.s.phi
+
+        elif name == 'x_angle': # legacy reasons
+            return a.s.theta
+        elif name == 'y_angle':
+            return a.s.phi
+            
+        elif name == 'crouch_height' or name == 'c_height':
+            return a.box.c_height
+        elif name == 'box_height' or name == 'b_height':
+            return a.box.b_height
+        elif name == 'box_r':
+            return a.box.box_r
+
+        elif name == 'team':
+            return a.status.team
+
+        elif name == 'score':
+            return a.status.score()
+        elif name == 'kills':
+            return a.status.kills
+        elif name == 'deaths':
+            return a.status.deaths
+        elif name == 'suicides':
+            return a.status.suicides
+
+        elif name == 'name':
+            return a.status.name
+
+        #elif name == 'crouching':
+        #    return a.s.crouching
+
+        raise AttributeError
+
+def set_agent_name(int id, name):
+    name = name[:PLAYER_NAME_MAX_LENGTH]
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a == NULL:
+        print "cAgents -- set_agent_name, agent %d unknown. Name=%s" % (id, name,)
+        return
+    a.status.set_name(name)
+
+#functions
+
+def teleport_Agent(int id, float x, float y, float z):
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a != NULL:
+        a.teleport(x,y,z)
+    else:
+        print "Cannot teleport agent: agent %i does not exist" %(id)
+
+class AgentListWrapper:
+
+    @classmethod
+    def add(cls, int id):
+        cdef Agent_state* a
+        a = agent_list.get_or_create(id)
+        return a.id
+
+    @classmethod
+    def remove(cls, int id):
+        agent_list.destroy(id)
+        return id
+
+
+""" Game Modes (CTF) """
+
+from libcpp cimport bool
+cdef extern from "./game/teams.hpp":
+    cdef cppclass Team:
+        int id
+        char* name
+        int n
+        bool viewers
+
+    cdef cppclass NoTeam:
+        int id
+        char* name
+        int n
+        bool viewers
+
+    cdef cppclass CTFTeam:  #inherits Team
+        pass
+
+cdef extern from "./game/ctf.hpp":
+    cdef cppclass CTF:
+        NoTeam none
+        CTFTeam one
+        CTFTeam two
+        void set_team_color(int team, unsigned char r, unsigned char g, unsigned char b)
+        void add_agent_to_team(int team, int agent)
+        void remove_agent_from_team(int agent)
+        void start()
+        void check_agent_proximities()
+        void set_team_name(int team, char* name)
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    CTF ctf
+
+def set_team_color(int team, unsigned char r, unsigned char g, unsigned char b):
+    ctf.set_team_color(team, r,g,b)
+
+class DummyCTFTeam(object):
+
+    def __init__(self, id):
+        if id not in [1,2]:
+            print "DummyCTFTeam object -- id invalid %d" % (id,)
+            raise ValueError
+        self.id = id
+
+    def __getattribute__(self, k):
+
+        id = object.__getattribute__(self, 'id')
+        cdef Team t
+        if id == 1:
+            t = <Team>(ctf.one)
+        elif id == 2:
+            t = <Team>(ctf.two)
+
+        elif k == 'name':
+            return t.name
+        elif k == 'n':
+            return t.n
+        elif k == 'viewers':
+            return t.viewers
+        elif k == 'id':
+            return k.id
+        elif k.startswith('__'):
+            return object.__getattribute__(self, k)
+
+        raise AttributeError
+
+ctf_one = DummyCTFTeam(1)
+ctf_two = DummyCTFTeam(2)
+
+class DummyNoTeam(object):
+
+    def __getattribute__(self, k):
+
+        cdef NoTeam t
+        t = ctf.none
+
+        if k == 'name':
+            return t.name
+        elif k == 'n':
+            return t.n
+        elif k == 'viewers':
+            return t.viewers
+        elif k == 'id':
+            return k.id
+        elif k.startswith('__'):
+            return object.__getattribute__(self, k)
+        raise AttributeError
+
+ctf_none = DummyNoTeam()
+
+def get_team(int id):
+    if id == 0:
+        return ctf_none
+    elif id == 1:
+        return ctf_one
+    elif id == 2:
+        return ctf_two
+    else:
+        print "c_lib_game_modes.get_team :: invalid team id %d" % (id,)
+
+
+def join_team(int agent_id, int team_id):
+    ctf.add_agent_to_team(team_id, agent_id)
+
+def leave_team(int agent_id):
+    ctf.remove_agent_from_team(agent_id)
+
+def ctf_start():
+    ctf.start()
+    
+def check_agent_proximities():
+    ctf.check_agent_proximities()
+
+""" Particles """
+
+cdef extern from "./physics/vector.hpp":
+    struct Vector:
+        float x
+        float y
+        float z
+
+cdef extern from "./physics/common.hpp":
+    struct State:
+        Vector p
+        Vector v
+
+cdef extern from "./particles/particles.hpp":
+    cdef struct Particle2:
+        State state
+        unsigned int id
+
+cdef extern from "./particles/grenade.hpp":
+    cdef cppclass Grenade:
+        Particle2 particle
+
+    cdef cppclass Grenade_list:
+        Grenade* get(int id)
+        Grenade* create()
+        Grenade* create(int id)
+        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
+        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void tick()
+
+cdef extern from "./particles/cspray.hpp":
+    cdef cppclass Cspray:
+        Particle2 particle
+
+    cdef cppclass Cspray_list:
+        Cspray* get(int id)
+        Cspray* create()
+        Cspray* create(int id)
+        Cspray* create(float x, float y, float z, float vx, float vy, float vz)
+        Cspray* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void tick()
+
+cdef extern from "./particles/neutron.hpp":
+    cdef cppclass Neutron:
+        Particle2 particle
+        void set_energy(int energy)
+
+    cdef cppclass Neutron_list:
+        Neutron* get(int id)
+        Neutron* create()
+        Neutron* create(int id)
+        Neutron* create(float x, float y, float z, float vx, float vy, float vz)
+        Neutron* create(int id, float x, float y, float z, float vx, float vy, float vz)
+        void destroy(int id)
+        void draw()
+        void tick()
+
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    Grenade_list grenade_list
+    Cspray_list cspray_list
+    Neutron_list neutron_list
+
+def tick():
+    grenade_list.tick()
+    cspray_list.tick()
+    neutron_list.tick()
+    
+def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
+    cdef Neutron* neutron
+    neutron = neutron_list.create(x,y,z, vx,vy,vz)
+    if neutron == NULL: return
+    neutron.set_energy(energy)
+
+def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
+    cspray_list.create(x,y,z, vx,vy,vz)
+
+""" Options & Settings """
+
+from libcpp cimport bool
+
+cdef extern from "./game/game.hpp":
+    void set_team_kills(bool team_kills)
+
+def load(opts):
+    set_team_kills(opts.team_kills)
+
+    ctf.set_team_name(1, opts.team_name_one)
+    ctf.set_team_name(2, opts.team_name_two)

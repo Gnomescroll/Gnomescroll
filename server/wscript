@@ -153,30 +153,9 @@ def build(bld):
     # c_lib
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/_ray_trace.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.ray_trace')
-
-    bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
-
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_particles.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_particles')
-
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/c_lib_agents.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.c_lib_agents')
-
-    #bld(features='cxx cshlib pyext',
-        #source=['c_lib/c_lib_agent_wrapper.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='c_lib.c_lib_agent_wrapper')
-
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/map_gen/noise.pyx'],
@@ -187,17 +166,6 @@ def build(bld):
         source=['c_lib/map_gen/map_gen.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.map_gen')
-
-    bld(features='cxx cshlib pyext',      #cython
-        source=['c_lib/c_lib_game_modes.pyx'],
-        use=common_libraries+['c_lib'],
-        target='c_lib.c_lib_game_modes')
-        
-    bld(features='cxx cshlib pyext',      #cython
-        source=['c_lib/c_lib_options.pyx'],
-        use=common_libraries+['c_lib'],
-        target='c_lib.c_lib_options')
-
 
     # final
     bld(features='c cprogram pyembed',
@@ -227,15 +195,10 @@ def install_in_ext(ctx):
         print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
-        'c_lib.ray_trace',
         'init_c_lib',
-        'c_lib.c_lib_particles',
-        'c_lib.c_lib_agents',
         'c_lib.terrain_map',
         'c_lib.noise',
         'c_lib.map_gen',
-        'c_lib.c_lib_game_modes',
-        'c_lib.c_lib_options',
     ]
 
     for target in targets:
