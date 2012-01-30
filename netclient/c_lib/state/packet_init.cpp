@@ -68,8 +68,9 @@ void RegisterMessages() {
     hitscan_agent_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
     hitscan_slime_CtoS::register_server_packet();
+    hitscan_spawner_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
-
+    
     // agent item actions
     place_spawner_CtoS::register_server_packet();
 

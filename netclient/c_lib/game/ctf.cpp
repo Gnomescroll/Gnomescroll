@@ -24,29 +24,32 @@ void CTF::start() {
     int x_max = map_dim.x;
     int y_max = map_dim.y;
     
-    x = randrange(0, x_max-1);
-    y = randrange(0, (y_max-1)/2);
+    // bases
+    // base should spawn in the back 2/16 or 7/16 strip of the side it belongs on
+    // also shouldnt spawn within 1/8 of edge
+    x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
+    y = randrange((map_dim.y * 1)/16, (map_dim.y * 5)/16 - 1); // 2/16 - 5/16
     z = _get_highest_open_block(x,y);
-    //x += randf();y += randf();
     x+=0.5f;y+=0.5f;
     this->set_base_position(1, x,y,z);
-    x = randrange(0, x_max-1);
-    y = randrange(0, (y_max-1)/2);
+
+    x = randrange(map_dim.x / 8, (map_dim.x * 7)/8 - 1); // dont spawn within 1/8 of edge, in x
+    //y = randrange((map_dim.y * 11)/16, (map_dim.y * 15)/16 - 1);  // 11/16 - 15/16
+    y = map_dim.y - y;  // keep y distance equal, for balance
     z = _get_highest_open_block(x,y);
-    //x += randf();y += randf();
+    x+=0.5f;y+=0.5f;
+    this->set_base_position(2,x,y,z);
+
+    // flags
+    x = randrange(0, x_max-1);
+    y = randrange(0, (y_max * 3) / 8 - 1);
+    z = _get_highest_open_block(x,y);
     x+=0.5f;y+=0.5f;
     this->set_flag_position(1, x,y,z);
 
     x = randrange(0, x_max-1);
-    y = randrange((y_max-1)/2, y_max-1);
+    y = randrange((y_max * 5)/8, y_max-1);
     z = _get_highest_open_block(x,y);
-    //x += randf();y += randf();
-    x+=0.5f;y+=0.5f;
-    this->set_base_position(2,x,y,z);
-    x = randrange(0, x_max-1);
-    y = randrange((y_max-1)/2, y_max-1);
-    z = _get_highest_open_block(x,y);
-    //x += randf();y += randf();
     x+=0.5f;y+=0.5f;
     this->set_flag_position(2,x,y,z);
 }

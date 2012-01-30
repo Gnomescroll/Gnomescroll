@@ -36,6 +36,7 @@ class Voxel_volume
     float scale;    //size of voxels
     //bounding sphere
     Vec3 center;
+    void set_center(float x, float y, float z); // temporary, for hitscan
     float radius;   //update when changing scale
 
     int xdim,ydim,zdim;
