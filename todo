@@ -106,6 +106,8 @@ Move cube dat client side. not networked
 
 sphere fulstrum culling using radius
 
+fix object_list template index bug (last element overwrite)
+add null checks to *list.create where missing
 =============
 
 Icons on map (angus)
