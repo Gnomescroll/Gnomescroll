@@ -77,7 +77,7 @@ class Hud(object):
         self.player_stats = self.text(
             text = '',
             offset = self.win_height - self.font_height - self.height_margin,
-            x = self.win_width - 330
+            x = self.win_width - 360
         )
 
     def _init_help_menu(self):
@@ -174,7 +174,9 @@ class Hud(object):
                 else:
                     health = '%i/%i' % (agent.health, agent.health_max,)
                     w = 'Ammo %s' % (agent.weapon_hud_display(),)
-                    s = 'HP %s::%s' % (health, w,)
+                    hp = 'HP %s' % (health,)
+                    coins = '$%d' % (agent.coins,)
+                    s = '%s :: %s :: %s' % (coins, health, w,)
         return s
 
     def draw_player_stats(self):

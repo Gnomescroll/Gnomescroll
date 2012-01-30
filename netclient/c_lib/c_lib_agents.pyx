@@ -18,6 +18,7 @@ cdef extern from "./agent/agent_status.hpp":
         unsigned int suicides
         unsigned int health_max
         char* name
+        unsigned int coins
 
 cdef extern from "./agent/agent_weapons.hpp":
     cdef cppclass Agent_weapons:
@@ -111,6 +112,7 @@ class AgentWrapper(object):
         'suicides',
         'active_weapon',
         'name',
+        'coins',
     ]
 
     def __init__(self, int id):
@@ -183,6 +185,9 @@ class AgentWrapper(object):
 
         elif name == 'name':
             return a.status.name
+
+        elif name == 'coins':
+            return a.status.coins
             
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
