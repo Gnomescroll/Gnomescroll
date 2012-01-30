@@ -83,15 +83,18 @@ spawners cost coins
 spawners team max
 spawners cant be placed on other spawners
 Send spawner list to new clients
+Use spawner to determine spawn point
+Spawner can't be placed where current spawner is
+Base acts as defacto spawner.
+
+increased agent speed
 
 =============
 
 Spawners
 -- TODO:
-Use spawner to determine spawn point
-Spawner can't be placed where current spawner is
-Base acts as defacto spawner. Base should have some intelligent initial spawning (like not too close to a back corner)
-
+Base should have some intelligent initial spawning (like not too close to a back corner)
+ 
 Add simple gravity to items
 
 Investigate if object lists w/ auto id are creating 1 past end of the array
