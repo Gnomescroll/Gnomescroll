@@ -1049,6 +1049,7 @@ cdef extern from "./particles/billboard_text.hpp":
         BillboardText* create(int id, float x, float y, float z, float vx, float vy, float vz)
         void destroy(int id)
         void draw()
+        void draw_hud()
         void tick()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
@@ -1077,6 +1078,9 @@ def draw():
     grenade_list.draw()
     cspray_list.draw()
     billboard_text_list.draw()
+
+def draw_hud_billboard_text():
+    billboard_text_list.draw_hud()
 
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron

@@ -389,6 +389,8 @@ class Hud(object):
         init_c_lib.Font.font.end()
 
     def draw_text_items(self, fps, ping):
+        init_c_lib.draw_hud_billboard_text()
+        
         if InputGlobal.help_menu:
             self.draw_help_menu()
             return

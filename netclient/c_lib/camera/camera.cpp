@@ -119,7 +119,8 @@ void CCamera::move(float dx, float dy, float dz) {
 
 #include <c_lib/voxel/voxel_loader.hpp>
 
-void CCamera::world_projection() {
+void CCamera::world_projection()
+{
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 

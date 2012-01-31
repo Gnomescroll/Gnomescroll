@@ -58,6 +58,7 @@ class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
         const char* name() { return "BillboardText"; }
     public:
         void draw();
+        void draw_hud();
         void tick();
 };
 

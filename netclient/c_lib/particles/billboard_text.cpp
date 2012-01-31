@@ -268,7 +268,11 @@ void BillboardText_list::draw() {
     if(num == 0) { return; }
     int i;
 
+    // load matrices
     glGetFloatv(GL_MODELVIEW_MATRIX, billboard_text_proj_mtrx);
+    glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
+    glGetIntegerv(GL_VIEWPORT, viewport);
     
 // draw world space billboards
 
@@ -283,12 +287,12 @@ void BillboardText_list::draw() {
     glBegin( GL_QUADS );
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
-    bool draw_hud_projection = false;
+    //bool draw_hud_projection = false;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
         if (a[i]->projection_type == Billboard::HUD) {
-            draw_hud_projection = true;
+            //draw_hud_projection = true;
             continue;
         }
         a[i]->draw();
@@ -300,26 +304,49 @@ void BillboardText_list::draw() {
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-    if (!draw_hud_projection) return;
+    //if (!draw_hud_projection) return;
 
-// draw hud projected billboards
-    glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
-    glGetIntegerv(GL_VIEWPORT, viewport);
+//// draw hud projected billboards
+    //glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
+    //glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
+    //glGetIntegerv(GL_VIEWPORT, viewport);
 
-// the order of camera projection switching and text draw start/end matters
-// dont change it
-    current_camera->hud_projection();
-    start_text_draw();
+//// the order of camera projection switching and text draw start/end matters
+//// dont change it
+    //current_camera->hud_projection();
+    //start_text_draw();
+    //for(i=0; i<n_max; i++) {
+        //if (a[i] == NULL) continue;
+        //if (!a[i]->should_draw) continue;
+        //if (a[i]->projection_type != Billboard::HUD) continue;
+        //a[i]->draw_hud();
+    //}
+    //current_camera->world_projection();
+    //end_text_draw();
+
+#endif
+}
+
+void BillboardText_list::draw_hud() {
+#ifdef DC_CLIENT
+    if (current_camera == NULL) return;
+
+    if(num == 0) { return; }
+    int i;
+
+    //glGetFloatv(GL_MODELVIEW_MATRIX, billboard_text_proj_mtrx);
+    
+//// draw hud projected billboards
+    //glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
+    //glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
+    //glGetIntegerv(GL_VIEWPORT, viewport);
+
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
         if (a[i]->projection_type != Billboard::HUD) continue;
         a[i]->draw_hud();
     }
-    current_camera->world_projection();
-    end_text_draw();
-
 #endif
 }
 
