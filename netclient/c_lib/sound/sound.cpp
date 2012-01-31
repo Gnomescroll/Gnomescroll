@@ -91,7 +91,10 @@ void init() {
     printf("sound init\n");
     init_sound_system();
     init_channel_group();
-    //set_3D_settings(1.0, 1.0, 10.0);
+    const float doppler_scale = 1.0f;   //default "The doppler scale is a general scaling factor for how much the pitch varies due to doppler shifting in 3D sound."
+    const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
+    const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
+    set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
 }
 
 void update_sound_system() {
@@ -229,7 +232,8 @@ FMOD_SOUND* _load_3d_sound(char *soundfile, float mindistance) { // use lower mi
 
     result = FMOD_System_CreateSound(sound_sys, soundfile, FMOD_3D, 0, &sound);
     ERRCHECK(result);
-    result = FMOD_Sound_Set3DMinMaxDistance(sound, mindistance, 10000.0f);
+    const float max_distance = 10000.0f;    // distance where attenuation stops (volume will stay constant at attenuated value)
+    result = FMOD_Sound_Set3DMinMaxDistance(sound, mindistance, max_distance);
     ERRCHECK(result);
 
     return sound;
@@ -266,7 +270,7 @@ void load_sound(char *file) {
     char fullpath[strlen(sound_path) + max_filename_length + 1u];
     sprintf(fullpath, "%s%s", sound_path, file);
 
-    static const float mindistance = 100.0f;
+    static const float mindistance = 20.0f; // distance at which attenuation begins
     Soundfile* s;
     s = &soundfiles[soundfile_index];
     s->hash = hash(file);
@@ -366,7 +370,6 @@ int play_2d_sound(char* file) {
     bool three_d = false;
     int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
-    printf("should play 2d sound\n");
     return play_2d_sound(snd_id);
 }
 
@@ -376,7 +379,6 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
     bool three_d = true;
     int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
-    printf("should play 3d sound\n");
     return play_3d_sound(snd_id, x,y,z,vx,vy,vz);
 }
 
