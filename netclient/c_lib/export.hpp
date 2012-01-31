@@ -1,5 +1,5 @@
 #pragma once
 
-void animation_tick();
+//void animation_tick();
 
-void animation_draw();
+//void animation_draw();

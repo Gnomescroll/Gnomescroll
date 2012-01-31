@@ -207,4 +207,18 @@ void agent_bleed(float x, float y, float z)
     }
 }
 
+
+void animations_tick()
+{
+    ClientState::ctf.animate_flags();
+    ClientState::hitscan_effect_list.tick();
+    ClientState::hitscan_laser_effect_list.tick();
+}
+
+void animations_draw()
+{
+    ClientState::hitscan_effect_list.draw();
+    ClientState::hitscan_laser_effect_list.draw();
+}
+
 }

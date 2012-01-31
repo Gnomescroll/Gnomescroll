@@ -597,16 +597,14 @@ Animations
 
 cdef extern from "./animations/animations.hpp" namespace "Animations":
     void agent_bleed(float x, float y, float z)
-
-cdef extern from "./export.hpp":
-    void animation_tick()
-    void animation_draw()
+    void animations_tick()
+    void animations_draw()
 
 def AnimationTick():
-    animation_tick()
+    animations_tick()
 
 def AnimationDraw():
-    animation_draw()
+    animations_draw()
 
 def bleed(float x, float y, float z):
     agent_bleed(x,y,z)

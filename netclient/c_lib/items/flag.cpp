@@ -64,35 +64,12 @@ void Flag::tick()
 #endif
 }
 
+void Flag::animate()
+{
+    if (this->vox == NULL) return;
 
-//#include <net_lib/net.hpp>
-
-//class flag_state_StoC: public FixedSizeReliableNetPacketToClient<flag_state_StoC>
-//{
-    //public:
-        //int team;
-        //float x,y,z;
-        ////float vx,vy,vz;
-
-        //inline void packet(char* buff, int* buff_n, bool pack) 
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_float(&x, buff, buff_n, pack);
-            //pack_float(&y, buff, buff_n, pack);
-            //pack_float(&z, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-
-//#ifdef DC_CLIENT
-//inline void flag_state_StoC::handle()
-//{
-    //ClientState::ctf.set_flag_position(team,x,y,z);
-//}
-//#endif
-
-//#ifdef DC_SERVER
-//inline void flag_state_StoC::handle(){}
-//#endif
+    float dtheta = 0.02f;
+    this->theta += dtheta;
+    this->vox->update(&flag_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+}
 

@@ -195,11 +195,11 @@ void CTF::flag_scored(int team)
     switch (team)
     {
         case 1:
-            if (two.flag->vox != NULL)
+            if (two.flag != NULL && two.flag->vox != NULL)
                 two.flag->vox->set_draw(true);
             break;
         case 2:
-            if (one.flag->vox != NULL)
+            if (two.flag != NULL && one.flag->vox != NULL)
                 one.flag->vox->set_draw(true);
             break;
         default:
@@ -227,6 +227,14 @@ int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned c
             return 1;
     }
     return 0;
+}
+
+void CTF::animate_flags()
+{
+    if (one.flag != NULL && one.flag->vox != NULL)
+        one.flag->animate();
+    if (two.flag != NULL && two.flag->vox != NULL)
+        two.flag->animate();
 }
 #endif
 

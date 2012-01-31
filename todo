@@ -116,7 +116,14 @@ merge cython files (compile time down to ~7secs both server and client)
 
 =============
 
+Jan 30-31
+
+Add deucbag flag vox
 "You're dead" notification
+
+
+
+=============
 
 bleed from damage
 other agent bleed if think they took damage (got shot)
@@ -125,6 +132,8 @@ spray blood in proper direction
 Find the glColor bug: minivox coloring
 
 make the flag spin
+
+Chat cursor in C
 
 Fix collision detection
 

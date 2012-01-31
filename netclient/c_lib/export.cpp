@@ -2,16 +2,16 @@
 
 
 //#include <c_lib/animations/hitscan.hpp>
-#include <c_lib/state/client_state.hpp>
+//#include <c_lib/state/client_state.hpp>
 
-void animation_tick()
-{   
-    ClientState::hitscan_effect_list.tick();
-    ClientState::hitscan_laser_effect_list.tick();
-}
+//void animation_tick()
+//{   
+    //ClientState::hitscan_effect_list.tick();
+    //ClientState::hitscan_laser_effect_list.tick();
+//}
 
-void animation_draw()
-{
-    ClientState::hitscan_effect_list.draw();
-    ClientState::hitscan_laser_effect_list.draw();
-}
+//void animation_draw()
+//{
+    //ClientState::hitscan_effect_list.draw();
+    //ClientState::hitscan_laser_effect_list.draw();
+//}

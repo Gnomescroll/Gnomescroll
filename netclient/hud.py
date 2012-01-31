@@ -41,6 +41,13 @@ class Hud(object):
             offset = self.win_height/2 + self.font_height*2,
             color = (255,10,10,255),
         )
+        
+        self.dead_message = self.text(
+            text = 'You died',
+            x = self.win_width/2 - 80,
+            offset = self.win_height/2 + self.font_height*2,
+            color = (255,10,10,255),
+        )
 
         self.fps = self.text(
             text = '',
@@ -347,9 +354,9 @@ class Hud(object):
                 #x += dummy.width
         self._draw_vertical_lines(x, y, length, 2)
 
-    def draw_network_status(self, connected):
-        if not connected:
-            self.disconnected_message.draw()
+    def draw_life_status(self):
+        if GameStateGlobal.agent is not None and GameStateGlobal.agent.dead:
+            self.dead_message.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
         if InputGlobal.vn:
@@ -398,8 +405,11 @@ class Hud(object):
             self.draw_ping(ping)
             
         self.draw_chat_text()
-        self.draw_network_status(NetClientGlobal.connection.connected)
-
+        if not NetClientGlobal.connection.connected:
+            self.disconnected_message.draw()
+        else:
+            self.draw_life_status()
+        
     help_menu_text = """
     Key:            Action:
 

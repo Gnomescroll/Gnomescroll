@@ -12,4 +12,7 @@ void grenade_explode(float x, float y, float z);
 void slime_melt(float x, float y, float z);
 
 void agent_bleed(float x, float y, float z);
+
+void animations_tick();
+void animations_draw();
 }
