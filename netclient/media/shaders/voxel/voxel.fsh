@@ -21,7 +21,8 @@ void main()
 	vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 	float ao = dot(vx, AOMatrix * vy);
 
-	vec3 color = ao*(diffuse_p*(diffuse*gl_Color.rgb) + ambient_p*gl_Color.rgb);
+	//vec3 color = ao*(diffuse_p*(diffuse*gl_Color.rgb) + ambient_p*gl_Color.rgb);
+	vec3 color = diffuse_p*(diffuse*gl_Color.rgb) + ao*ambient_p*gl_Color.rgb;  //this one looks better
 
 	gl_FragColor.rgb = pow(color, vec3(1.0f / gamma) );
 
