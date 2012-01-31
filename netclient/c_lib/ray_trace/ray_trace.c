@@ -702,3 +702,44 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
 
     return d;
 }
+
+int get_cube_side_from_side_array(int* side)
+{
+    int cube_side = 0;
+          if (side[0] ==  1) cube_side = 2;
+    else if (side[0] == -1) cube_side = 3;
+    else if (side[1] ==  1) cube_side = 4;
+    else if (side[1] == -1) cube_side = 5;
+    else if (side[2] ==  1) cube_side = 0;
+    else if (side[2] == -1) cube_side = 1;
+    return cube_side;
+}
+
+void get_side_array_from_cube_side(int cube_id, int *side)
+{
+    side[0]=side[1]=side[2]=0;
+    switch (cube_id)
+    {
+        case 2:
+            side[0] = 1;
+            break;
+        case 3:
+            side[0] = -1;
+            break;
+        case 4:
+            side[1] = 1;
+            break;
+        case 5:
+            side[1] = -1;
+            break;
+        case 0:
+            side[2] = 1;
+            break;
+        case 1:
+            side[2] = -1;
+            break;
+        default:
+            printf("ERROR get_side_array_from_cube_id -- invalid cube_id %d\n", cube_id);
+            return;
+    }
+}

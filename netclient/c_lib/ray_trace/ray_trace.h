@@ -25,3 +25,7 @@ int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, flo
 int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
 
 inline float sphere_line_distance(float px, float py, float pz, float ox, float oy, float oz, float tx, float ty, float tz, float* pos, float* _rad2);
+
+// converts int[3] filled by ray_trace6 to a cube_side id
+int get_cube_side_from_side_array(int* side);
+void get_side_array_from_cube_side(int cube_id);

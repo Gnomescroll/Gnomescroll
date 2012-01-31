@@ -8,6 +8,7 @@
 #include <monsters/monsters.hpp>
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
+#include <c_lib/ray_trace/ray_trace.h>
 #endif
 
 
@@ -83,11 +84,52 @@ inline void agent_damage_StoC::handle() {
     a->event.took_damage(dmg);
 }
 
-// fire weapon action
-inline void fire_weapon_StoC::handle() {
+inline void agent_shot_object_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
-    a->event.fired_weapon(type);
+    a->event.fired_weapon_at_object(target_id, target_type, target_part, x,y,z);
+}
+
+inline void agent_shot_block_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.fired_weapon_at_block(x,y,z, cube, side);
+}
+
+inline void agent_shot_nothing_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.fired_weapon_at_nothing();
+}
+
+inline void agent_hit_block_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.hit_block();
+}
+
+inline void agent_threw_grenade_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.threw_grenade();
+}
+
+inline void agent_placed_block_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.placed_block();
 }
 
 inline void agent_dead_StoC::handle() {
@@ -192,7 +234,12 @@ inline void Agent_state_message::handle() {}
 inline void Agent_teleport_message::handle() {}
 inline void Agent_cs_StoC::handle() {}
 inline void agent_damage_StoC::handle() {}
-inline void fire_weapon_StoC::handle() {}
+inline void agent_shot_object_StoC::handle(){}
+inline void agent_shot_block_StoC::handle(){}
+inline void agent_shot_nothing_StoC::handle(){}
+inline void agent_hit_block_StoC::handle(){}
+inline void agent_threw_grenade_StoC::handle(){}
+inline void agent_placed_block_StoC::handle(){}
 inline void agent_health_StoC::handle() {}
 inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
@@ -253,12 +300,14 @@ inline void hit_block_CtoS::handle() {
     if (a == NULL) return;
 
     if (!a->weapons.pick.fire()) return;
-    fire_weapon_StoC msg;
+    agent_hit_block_StoC msg;
     msg.id = a->id;
-    msg.type = a->weapons.pick.type;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
     msg.broadcast();
     
-    //int dmg = a->active_weapon.damage;
+    //int dmg = a->weapons.pick.damage;
     int dmg = 32;
     _apply_damage_broadcast(x,y,z, dmg);
 }
@@ -269,17 +318,14 @@ inline void hitscan_object_CtoS::handle()
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
-    fire_weapon_StoC msg;
-    msg.id = a->id;
-    msg.type = a->weapons.laser.type;
-    msg.broadcast();
-
+    
     void *obj;
 
     const int agent_dmg = 25;
     const int spawner_dmg = 25;
     int spawner_health;
-    
+
+    float x,y,z;
     switch (type)
     {
         case OBJ_TYPE_AGENT:
@@ -288,6 +334,9 @@ inline void hitscan_object_CtoS::handle()
             if (obj==NULL) return;
             // apply damage
             ((Agent_state*)obj)->status.apply_damage(agent_dmg, ((Agent_state*)obj)->id, ((Agent_state*)obj)->type);
+            x = ((Agent_state*)obj)->s.x;
+            y = ((Agent_state*)obj)->s.y;
+            z = ((Agent_state*)obj)->s.z;
             // TODO: Use weapon dmg. Use body_part
             //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
             break;
@@ -299,6 +348,9 @@ inline void hitscan_object_CtoS::handle()
             //int dmg = 25;
             //slime->status.apply_damage(dmg, id);
             ServerState::slime_list.destroy(id);
+            x = ((Monsters::Slime*)obj)->x;
+            y = ((Monsters::Slime*)obj)->y;
+            z = ((Monsters::Slime*)obj)->z;
             // TODO: Use weapon dmg. Use body_part
             //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
             break;
@@ -318,6 +370,9 @@ inline void hitscan_object_CtoS::handle()
                 int coins = ((Spawner*)obj)->get_coins_for_kill(a->status.team);
                 a->status.add_coins(coins);
             }
+            x = ((Spawner*)obj)->x;
+            y = ((Spawner*)obj)->y;
+            z = ((Spawner*)obj)->z;
             break;
 
         case OBJ_TYPE_TURRET:
@@ -327,6 +382,17 @@ inline void hitscan_object_CtoS::handle()
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
     }
+
+    agent_shot_object_StoC msg;
+    msg.id = a->id;
+    msg.target_id = this->id;
+    msg.target_type = this->type;
+    msg.target_part = this->part;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
+    msg.broadcast();
+
 }
 
 // hitscan target:block
@@ -339,16 +405,51 @@ inline void hitscan_block_CtoS::handle() {
     //TEMP TODO REMOVE
 
     if (!a->weapons.laser.fire()) return;
-    fire_weapon_StoC msg;
-    msg.id = a->id;
-    msg.type = a->weapons.laser.type;
-    msg.broadcast();
 
-    // shoot block
+    // damage block
     int weapon_block_damage = 12;
     _apply_damage_broadcast(x,y,z, weapon_block_damage);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
+
+    // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
+    // send to clients
+    int collision[3];
+    int pre_collision[3];
+    int side[3];
+    int cube;
+    const float max_l = 500.0f;
+    float _distance=0.0f,*distance=&_distance;
+
+    float f[3];
+    a->s.forward_vector(f);
+
+    float
+        fx = a->s.x,
+        fy = a->s.y,
+        fz = a->s.z + a->camera_height();
+
+    int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, distance, collision, pre_collision, &cube, side);
+    if (!collided) {
+        return;
+    }
+
+    // pt of collision
+    fx += f[0] * _distance;
+    fy += f[1] * _distance;
+    fz += f[2] * _distance;
+
+    int cube_side = get_cube_side_from_side_array(side);
+
+    agent_shot_block_StoC msg;
+    msg.id = a->id;
+    msg.x = fx;
+    msg.y = fy;
+    msg.z = fz;
+    msg.cube = cube;
+    msg.side = cube_side;
+    msg.broadcast();
+
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -357,9 +458,8 @@ inline void hitscan_none_CtoS::handle()
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
-    fire_weapon_StoC msg;
+    agent_shot_nothing_StoC msg;
     msg.id = a->id;
-    msg.type = a->weapons.laser.type;
     msg.broadcast();
 }
 
@@ -368,9 +468,8 @@ inline void ThrowGrenade_CtoS::handle() {
     if (a==NULL) return;
 
     if (!a->weapons.grenades.fire()) return;
-    fire_weapon_StoC msg;
+    agent_threw_grenade_StoC msg;
     msg.id = a->id;
-    msg.type = a->weapons.grenades.type;
     msg.broadcast();
 
     static const float grenade_vel = 22.0f; // load from dat later
@@ -406,9 +505,8 @@ inline void agent_block_CtoS::handle() {
 
     // fire block applier
     if (!a->weapons.blocks.fire()) return;
-    fire_weapon_StoC msg;
+    agent_placed_block_StoC msg;
     msg.id = a->id;
-    msg.type = a->weapons.blocks.type;
     msg.broadcast();
     
     // do block place checks here later

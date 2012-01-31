@@ -50,16 +50,20 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
 }
 
 // surface block dmg
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side) {
+// takes encoded side int and translates to side[3];
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side) {
+    int side[3];
+    get_side_array_from_cube_side(cube_side, side);
+    block_damage(x,y,z,ix,iy,iz,cube_id,side, cube_side);
+}
 
-    // determine which side was hit
-    int cube_side = 0;
-          if (side[0] ==  1) cube_side = 2;
-    else if (side[0] == -1) cube_side = 3;
-    else if (side[1] ==  1) cube_side = 4;
-    else if (side[1] == -1) cube_side = 5;
-    else if (side[2] ==  1) cube_side = 0;
-    else if (side[2] == -1) cube_side = 1;
+// surface block dmg    
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side) {
+    int cube_side = get_cube_side_from_side_array(side);
+    block_damage(x,y,z,ix,iy,iz,cube_id, side, cube_side);
+}
+
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
 
     int tex_id = _get_cube_side_texture(cube_id, cube_side);
 

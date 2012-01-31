@@ -161,11 +161,132 @@ void Agent_event::coins_changed(unsigned int coins)
     this->a->status.coins = coins;
 }
 
+void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, float y, float z)
+{
+    // animate laser to target
+
+    // get vector from player to target's part
+    // pick random piece of the part
+    // animate to that
+
+    // TODO:
+    // need function get part position
+    // currently goes straight to the target point, which is usually the feet
+
+//// Gets x,y,z from packet;
+//// reasons for this stated in agent_hit_object_StoC class declaration
+
+    //void *obj;
+    //float x,y,z;
+    //switch (type)
+    //{
+        //case OBJ_TYPE_AGENT:
+            //obj = ClientState::agent_list.get(id);
+            //if (obj == NULL) return;
+            //x = ((Agent_state*)obj)->s.x;
+            //y = ((Agent_state*)obj)->s.y;
+            //z = ((Agent_state*)obj)->s.z;
+            //break;
+
+        //case OBJ_TYPE_SLIME:
+            //obj = ClientState::slime_list.get(id);
+            //if (obj==NULL) return;
+            //printf("Slime not null\n");
+            //x = ((Monsters::Slime*)obj)->x;
+            //y = ((Monsters::Slime*)obj)->y;
+            //z = ((Monsters::Slime*)obj)->z;
+            //break;
+            
+        //case OBJ_TYPE_SPAWNER:
+            //obj = ClientState::spawner_list.get(id);
+            //if (obj==NULL) return;
+            //x = ((Spawner*)obj)->x;
+            //y = ((Spawner*)obj)->y;
+            //z = ((Spawner*)obj)->z;
+            //break;
+
+        //case OBJ_TYPE_TURRET:
+            ////obj = ClientState::turret_list.get(id);
+            ////if (obj==NULL) return;
+            ////x = ((Turret*)obj)->x;
+            ////y = ((Turret*)obj)->y;
+            ////z = ((Turret*)obj)->z;
+            ////break;
+            //printf("Agent_event::fired_weapon_at_object -- turret type not implemented\n");
+            //return;
+
+        //default:
+            //printf("Hitscan against invalid or non-hitscanned type %d\n", type);
+            //return;
+    //}
+
+    float f[3];
+    f[0] = x - this->a->s.x;
+    f[1] = y - this->a->s.y;
+    f[2] = z - (this->a->s.z + this->a->camera_height());
+
+    const float hitscan_speed = 200.0f;
+    ClientState::hitscan_effect_list.create(
+        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+    );
+
+
+}
+
+void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
+{
+    // animate laser to target
+    float f[3];
+    f[0] = x - this->a->s.x;
+    f[1] = y - this->a->s.y;
+    f[2] = z - (this->a->s.z + this->a->camera_height());
+
+    const float hitscan_speed = 200.0f;
+    ClientState::hitscan_effect_list.create(
+        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+    );
+
+    // play block surface crumble
+    Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
+}
+
+void Agent_event::fired_weapon_at_nothing()
+{
+    float f[3];
+    this->a->s.forward_vector(f);
+    
+    const float hitscan_speed = 200.0f;
+    ClientState::hitscan_effect_list.create(
+        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+    );
+}
+
+void Agent_event::hit_block()
+{
+    // play pick swing
+    // play block damage animation
+}
+
+void Agent_event::threw_grenade()
+{
+    // play throw grenade animation
+    // might need to sync grenades with this?
+}
+
+void Agent_event::placed_block()
+{
+    // player agent block placement animation
+}
+
+
 Agent_event::~Agent_event()
 {
     if (this->bb != NULL)
     {
-        this->bb->set_ttl(10000);    // let billboard die
+        this->bb->set_ttl(10000);   // let it die (will be culled next tick)
     }
 }
 

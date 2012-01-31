@@ -127,6 +127,7 @@ void PlayerAgent_action::hitscan() {
             obj_msg.type = vhe.entity_type;
             obj_msg.part = vhe.part_id;
             obj_msg.send();
+            //printf("msg: id=%d type=%d part=%d\n", obj_msg.id, obj_msg.type, obj_msg.part);
             // subtract the collision point from the origin to get the new vector for animation
             vec[0] = collision_point[0] - origin[0];
             vec[1] = collision_point[1] - origin[1];

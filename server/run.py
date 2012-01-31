@@ -374,7 +374,7 @@ class Main:
             
         NetServerInit(a,b,c,d, opts.port)
 
-        #init_c_lib.slime_test(30)
+        init_c_lib.slime_test(30)
         init_c_lib.ctf_start()
         while True:
             #NetServer.serverListener.accept() #accept incoming connections

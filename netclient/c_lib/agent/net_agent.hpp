@@ -140,21 +140,109 @@ class Agent_cs_StoC: public FixedSizeNetPacketToClient<Agent_cs_StoC>
         inline void handle();
 };
 
-// fire weapon action
-class fire_weapon_StoC: public FixedSizeNetPacketToClient<fire_weapon_StoC>
+
+// hitscan StoC actions (for client to animate)
+class agent_shot_nothing_StoC: public FixedSizeNetPacketToClient<agent_shot_nothing_StoC>
 {
     public:
         int id;
-        int type;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
         }
-
         inline void handle();
 };
+
+class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_object_StoC>
+{
+    public:
+        int id;
+        int target_id;
+        int target_type;
+        int target_part;
+        float x,y,z;    // need this, because the target can be destroyed by the hitscan action
+        // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
+        // and then player cannot animate
+        // OR
+        // animate from aiming direction
+        // can also make a second array in each *list, that holds decayed state info
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&target_id, buff, buff_n, pack);
+            pack_u8(&target_type, buff, buff_n, pack);
+            pack_u8(&target_part, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class agent_shot_block_StoC: public FixedSizeNetPacketToClient<agent_shot_block_StoC>
+{
+    public:
+        int id;
+        int cube;   // might not need this (infer from x,y,z)
+        int side;
+        float x,y,z;    // send the actual collision point
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&cube, buff, buff_n, pack);
+            pack_u8(&side, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+// for pick
+class agent_hit_block_StoC: public FixedSizeNetPacketToClient<agent_hit_block_StoC>
+{
+    public:
+        int id;
+        int x,y,z;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+// for pick
+class agent_threw_grenade_StoC: public FixedSizeNetPacketToClient<agent_threw_grenade_StoC>
+{
+    public:
+        int id;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+// for pick
+class agent_placed_block_StoC: public FixedSizeNetPacketToClient<agent_placed_block_StoC>
+{
+    public:
+        int id;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
 
 // damage indicator packet
 class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>

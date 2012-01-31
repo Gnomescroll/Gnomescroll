@@ -61,13 +61,19 @@ void RegisterMessages() {
     //object packets
     cspray_StoC::register_client_packet();
 
-    // fire weapon
-    fire_weapon_StoC::register_client_packet();
-
     // hitscans
     hitscan_object_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
+
+    // hitscan StoC action (for animations etc)
+    agent_shot_object_StoC::register_client_packet();
+    agent_shot_block_StoC::register_client_packet();
+    agent_shot_nothing_StoC::register_client_packet();
+
+    agent_hit_block_StoC::register_client_packet();
+    agent_threw_grenade_StoC::register_client_packet();
+    agent_placed_block_StoC::register_client_packet();
     
     // agent item actions
     place_spawner_CtoS::register_server_packet();

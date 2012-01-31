@@ -120,8 +120,8 @@ Jan 30-31
 
 Add deucbag flag vox
 "You're dead" notification
-
-
+make the flag spin
+Fixed the glColor bug: colored minivox affecting textured minivox
 
 =============
 
@@ -129,9 +129,10 @@ bleed from damage
 other agent bleed if think they took damage (got shot)
 spray blood in proper direction
 
-Find the glColor bug: minivox coloring
+"X shot Y" packet
+"X shot nothing" (fire weapon, currently)
 
-make the flag spin
+scoring STILL wrong (might be hitscan)
 
 Chat cursor in C
 
@@ -173,8 +174,11 @@ without excess struggling::
 SDL input normalization
 --There is no real solution. Might be able to use scancodes to handle most cases. Keymapping feature is only real solution
 
-
-
+Figure out the long term server crash
+"""
+terminate called after throwing an instance of 'St9bad_alloc'
+  what():  std::bad_alloc
+"""
 
 PYTHON DEPRECATION:
 Chat

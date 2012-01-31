@@ -183,7 +183,7 @@ void Minivox_list::draw() {
 
     if(num == 0) { return; }
 
-    glColor3ub(255,255,255);
+    //glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);
@@ -257,6 +257,8 @@ void Minivox::draw() {
 void Minivox::draw_textured() {
 #ifdef DC_CLIENT
     if(vox.a == 0) return;
+
+    glColor3ub(255,255,255);
 
     float tx_min = tx;
     float tx_max = tx + pix_margin;
