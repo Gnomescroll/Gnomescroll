@@ -44,12 +44,19 @@ float vector_length1(float x, float y, float z) {
     return l;
 }
 
-void print_vector_length(struct Vector *v) {
+void print_vector_length(struct Vector *v)
+{
     float l;
     l = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
-    v->x /= l; v->y /=l; v->z /=l;
-    printf("l= %fs \n", l);
-    }
+    printf("l= %f \n", l);
+}
+
+void print_vector_length(float v[3])
+{
+    float l;
+    l = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+    printf("l= %f \n", l);
+}
 
 //moved
 static struct Vector _mult_vec_scalar_tmp = {0.0f,0.0f,0.0f};

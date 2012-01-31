@@ -22,6 +22,7 @@ float vector_dot(struct Vector* v1, struct Vector* v2);
 void print_vector_dot(struct Vector v1, struct Vector v2);
 float vector_length(struct Vector *v);
 void print_vector_length(struct Vector *v);
+void print_vector_length(float v[3]);
 void print_vector(struct Vector * v);
 
 inline struct Vector Vector_init(float x, float y, float z);

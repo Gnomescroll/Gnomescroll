@@ -12,7 +12,7 @@
 namespace Animations
 {
 
-const int hitscan_laser_ttl = 60;
+const int hitscan_laser_ttl = 10;
 
 static int hitscan_texture_id;
 
@@ -109,6 +109,8 @@ void HitscanEffect::tick()
 
 void HitscanEffect::draw(float delta, Vector* camera)
 {
+//printf("drawing\n");
+    
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 
@@ -156,10 +158,10 @@ void HitscanEffect::draw(float delta, Vector* camera)
     Vector bottom_right = Vector_init(x2.x - width*u2.x, x2.y - width*u2.y, x2.z - width*u2.z);
     Vector bottom_left = Vector_init(x2.x + width*u2.x, x2.y + width*u2.y, x2.z + width*u2.z);
 */
-    const float tx_min = 0.0;
-    const float tx_max = 1.0;
-    const float ty_min = 0.0;
-    const float ty_max = 1.0;
+    static const float tx_min = 0.0;
+    static const float tx_max = 1.0;
+    static const float ty_min = 0.0;
+    static const float ty_max = 1.0;
 
 
     glTexCoord2f(tx_max,ty_max );
@@ -183,6 +185,12 @@ void HitscanEffect_list::draw()
 {
     //printf("draw \n");
 
+    if (current_camera == NULL)
+    {
+        printf("HitscanEffect_list::draw() -- current_camera is NULL\n");
+        return;
+    }
+
     const float tick_rate = 30.0f;
 
     int last_tick = _LAST_TICK();
@@ -197,12 +205,6 @@ void HitscanEffect_list::draw()
     //printf("delta= %f \n", delta);
 
     struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
-    struct CCamera* c = current_camera;
-    if (c == NULL)
-    {
-        printf("HitscanEffect_list::draw() -- current_camera is NULL\n");
-        return;
-    }
 
     glColor3ub(255,255,255);
 
@@ -236,7 +238,8 @@ void HitscanEffect_list::tick()
 {
     //printf("tick \n");
 
-    const int debug = 1;
+    //const int debug = 1;
+    const int debug = 0;
 
     if(debug)
     {
@@ -262,7 +265,8 @@ void HitscanEffect_list::tick()
         if (a[i] == NULL) continue;
         a[i]->tick();
         a[i]->ttl--;
-        if(a[i]->ttl == 0) destroy(a[i]->id);
+        if(a[i]->ttl <= 0)
+            destroy(a[i]->id);
         //count++;
     }
     //printf("count= %i \n", count);

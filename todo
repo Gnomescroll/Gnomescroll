@@ -125,13 +125,15 @@ Fixed colored minivox affecting textured minivox
 
 removed fire_weapon_StoC, replaced with target (object, block, nothing) dependent packets
 thus multiplayer gun animations
+
+proper sound failure handling
+fix sound positions
+better attenuation settings
 =============
 
 bleed from damage
 other agent bleed if think they took damage (got shot)
 spray blood in proper direction
-
-sound attenuation
 
 scoring STILL wrong (might be hitscan)
 

@@ -6,69 +6,6 @@
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/sound/sound.hpp>
 
-void Agent_event::fired_weapon(int type) {
-    switch (type) {
-        case Weapons::TYPE_block_applier:
-            break;
-        case Weapons::TYPE_block_pick:
-            break;
-        case Weapons::TYPE_grenade_thrower:
-            break;
-        case Weapons::TYPE_hitscan_laser:
-            fired_laser();
-            break;
-        default:
-            break;
-    }
-}
-
-void Agent_event::fired_laser() {
-    // raycast from current aiming direction to nearest block
-    // get side of block hit, point of collision
-    // send to animations
-
-    int collision[3];
-    int pre_collision[3];
-    int side[3];
-    int _cube=0,*cube=&_cube;
-    const float max_l = 500.0f;
-    float _distance=0.0f,*distance=&_distance;
-
-    float f[3];
-    a->s.forward_vector(f);
-
-    float
-        x = a->s.x,
-        y = a->s.y,
-        z = a->s.z + a->camera_height();
-
-    // if not player agent
-    if (a->id != ClientState::playerAgent_state.agent_id) { // only play for other agents
-        // play sound
-        char soundfile[] = "laser_01.wav";
-        Sound::play_3d_sound(soundfile, x,y,z, a->s.vx, a->s.vy, a->s.vz);
-
-        // play laser anim
-        const float hitscan_speed = 200.0f;
-        ClientState::hitscan_effect_list.create(
-            x,y,z,
-            f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
-        );
-    }
-
-    int collided = _ray_cast6(x,y,z, f[0], f[1], f[2], max_l, distance, collision, pre_collision, cube, side);
-    if (!collided) {
-        return;
-    }
-
-    // pt of collision
-    x += f[0] * _distance;
-    y += f[1] * _distance;
-    z += f[2] * _distance;
-
-    Animations::block_damage(x,y,z, f[0], f[1], f[2], _cube, side);
-}
-
 void Agent_event::name_changed()
 {
     if (this->bb != NULL)

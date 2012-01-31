@@ -163,7 +163,7 @@ void PlayerAgent_action::hitscan() {
     }
 
     normalize_vector(vec);
-    
+
     // play sound
     char soundfile[] = "laser_01.wav";
     Sound::play_2d_sound(soundfile);
