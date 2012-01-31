@@ -132,13 +132,14 @@ better attenuation settings
 
 fix hitscan laser bug when teammates in view
 fix team killing /suicides bug
-=============
 
 bleed from damage
 other agent bleed if think they took damage (got shot)
+=============
+
 spray blood in proper direction
 
-load projection matrixes in one spot
+load projection matrices in one spot
 
 Chat cursor in C
 

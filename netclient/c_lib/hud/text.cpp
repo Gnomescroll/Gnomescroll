@@ -277,7 +277,7 @@ void draw_text(char* t, float x, float y, float depth, float scale, float line_h
 
         // known glyph?
         if (! glyph.available) {
-            printf("Character unknown: %c\n", c);
+            //printf("Character unknown: %c\n", c);
             glyph = get_missing_glyph(c);
         }
 
@@ -294,4 +294,54 @@ void draw_text(char* t, float x, float y, float depth, float scale, float line_h
 
         cursor_x += glyph.xadvance;
     }
+}
+
+void get_string_pixel_dimension(char* str, int *length, int *height)
+{
+    char c;
+    int i = 0;
+    int len = 0;
+    int miny = 0;
+    int maxy = 0;
+    Glyph g;
+    while ((c = str[i++]) != '\0')
+    {
+        g = glyphs[(unsigned int)c];
+        if (!g.available)
+        {
+            g = get_missing_glyph(c);
+        }
+
+        len += g.xadvance;
+
+        if (i==1)
+        {
+            len += g.xoff;
+        }
+        if (g.yoff + g.h > maxy) maxy = g.yoff + g.h;
+        if (g.yoff < miny) miny = g.yoff;
+    }
+    if (i > 1)
+    {
+        len -= g.xadvance;
+        len += g.w + g.xoff;
+    }
+    *length = len;
+    *height = maxy - miny;
+}
+
+void draw_cursor(char* buff, int x, int y)
+{
+    int len = 0;
+    int h = 0;
+    get_string_pixel_dimension(buff, &len, &h);
+    int _draw_rect(int r, int g, int b, float x, float y, float w, float h);
+
+    int r,g,b;
+    r = 100;
+    g = 150;
+    b = 100;
+    const int w = 8;
+    h = 18; // magic number precalculated;
+    _draw_rect(r,g,b, x + len + 4, y - h, w, h);
 }

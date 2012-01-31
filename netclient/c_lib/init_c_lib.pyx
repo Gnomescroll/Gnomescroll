@@ -1277,6 +1277,7 @@ cdef extern from "./SDL/texture_loader.h":
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
+
 cdef class CyTexture:
     cdef int texture
     cdef int w
@@ -1409,6 +1410,11 @@ cdef extern from './hud/text.hpp':
     )
     void set_missing_character(int cc)
     void draw_text(char* t, int len, float x, float y, float depth, float line_height)
+
+    void draw_cursor(char* buff, int x, int y)
+
+def draw_chat_cursor(buff, int x, int y):
+    draw_cursor(buff, x, y)
 
 class Text(object):
 
