@@ -223,6 +223,19 @@ void Agent_status::respawn() {
     respawn_countdown = RESPAWN_TICKS; // reset timer
 }
 
+float Agent_status::get_spawn_angle()
+{
+    switch (this->team)
+    {
+        case 1:
+            return 0.5f;
+        case 2:
+            return -0.5f;
+        default:
+            return 0.0f;
+    }
+}
+
 void Agent_status::restore_health()
 {
     this->health = AGENT_HEALTH;
