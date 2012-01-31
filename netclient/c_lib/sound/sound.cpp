@@ -74,16 +74,17 @@ void init_sound_system() {
 
     result = FMOD_System_Create(&sound_sys);   // create system
     ERRCHECK(result);
-
+    if (result) enabled = 0;
     result = FMOD_System_Init(sound_sys, MAX_CHANNELS, FMOD_INIT_NORMAL, NULL);
     ERRCHECK(result);
+    if (result) enabled = 0;
 }
 
 void init_channel_group() {
     FMOD_RESULT r;
     r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
     ERRCHECK(r);
-    
+    if (r) enabled = 0;
     //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
@@ -91,6 +92,7 @@ void init() {
     printf("sound init\n");
     init_sound_system();
     init_channel_group();
+    if (!enabled) return;
     const float doppler_scale = 1.0f;   //default "The doppler scale is a general scaling factor for how much the pitch varies due to doppler shifting in 3D sound."
     const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
     const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
@@ -202,6 +204,7 @@ unsigned int hash(char* s) {
 /* Loading */
 
 int _add_sound(FMOD_SOUND* snd) {   // to sounds array
+    if (snd == NULL) return -1;
     int i;
     for (i=0; i<MAX_SOUNDS; i++) {
         if (sounds[i] == NULL) {
@@ -222,7 +225,7 @@ FMOD_SOUND* _load_2d_sound(char *soundfile) {
     FMOD_RESULT result;
     result = FMOD_System_CreateSound(sound_sys, soundfile, FMOD_2D, 0, &sound);
     ERRCHECK(result);
-
+    if (result) return NULL;
     return sound;
 }
 
@@ -232,10 +235,11 @@ FMOD_SOUND* _load_3d_sound(char *soundfile, float mindistance) { // use lower mi
 
     result = FMOD_System_CreateSound(sound_sys, soundfile, FMOD_3D, 0, &sound);
     ERRCHECK(result);
+    if (result) return NULL;
     const float max_distance = 10000.0f;    // distance where attenuation stops (volume will stay constant at attenuated value)
     result = FMOD_Sound_Set3DMinMaxDistance(sound, mindistance, max_distance);
     ERRCHECK(result);
-
+    if (result) return NULL;
     return sound;
 }
 
@@ -304,7 +308,7 @@ int get_sound_id(char* file, bool three_d) {
 /* Playback */
 
 FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
-    FMOD_CHANNEL* channel = 0;
+    FMOD_CHANNEL* channel = NULL;
     FMOD_RESULT result;
 
     result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
@@ -317,7 +321,7 @@ FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
 }
 
 FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
-    FMOD_CHANNEL* channel = 0;
+    FMOD_CHANNEL* channel = NULL;
     FMOD_RESULT result;
 
     result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
@@ -341,7 +345,8 @@ int play_2d_sound(int snd_id) {
     FMOD_SOUND* snd = sounds[snd_id];
     if (snd != NULL) {
         ch =_play_2d_sound(snd);
-        i = _add_channel(ch);
+        if (ch != NULL)
+            i = _add_channel(ch);
     }
     return i;
 }
@@ -358,7 +363,8 @@ int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, flo
         const FMOD_VECTOR pos = create_vector(x,y,z);
         const FMOD_VECTOR vel = create_vector(vx*tick,vy*tick,vz*tick);
         ch = _play_3d_sound(snd, pos, vel);
-        i = _add_channel(ch);
+        if (ch != NULL)
+            i = _add_channel(ch);
     }
     return i;
 }
