@@ -49,6 +49,8 @@ class Voxel_volume
 
     struct Voxel_hitscan_element vhe;
 
+    inline void get_center(float v[3]) __attribute((always_inline));
+
     int hitscan_test(float x, float y, float z, float vx, float vy, float vz);
 
 #ifdef DC_CLIENT
