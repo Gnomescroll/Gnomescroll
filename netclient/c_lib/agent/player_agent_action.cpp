@@ -132,6 +132,10 @@ void PlayerAgent_action::hitscan() {
             vec[0] = collision_point[0] - origin[0];
             vec[1] = collision_point[1] - origin[1];
             vec[2] = collision_point[2] - origin[2];
+            if (vhe.entity_type == OBJ_TYPE_AGENT)
+            {
+                Animations::agent_bleed(collision_point[0], collision_point[1], collision_point[2]);
+            }
             break;
 
         case TARGET_BLOCK:            

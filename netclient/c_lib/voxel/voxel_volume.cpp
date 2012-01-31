@@ -15,7 +15,12 @@
 
 //#include <voxel/voxel_hitscan.hpp>
 
-void Voxel_volume::get_center(float *v) { v = world_matrix.v[3].f;}
+void Voxel_volume::get_center(float *v)
+{
+    v[0] = world_matrix.v[3].f[0];
+    v[1] = world_matrix.v[3].f[1];
+    v[2] = world_matrix.v[3].f[2];
+}
 struct Vec3 Voxel_volume::get_center(){ return world_matrix.v[3]; }
 
 void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)

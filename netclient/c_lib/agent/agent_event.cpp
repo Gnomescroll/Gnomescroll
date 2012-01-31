@@ -159,19 +159,14 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, fl
 
     if (type == OBJ_TYPE_AGENT)
     {
-        printf("agent bleed\n");
         Agent_state* agent = ClientState::agent_list.get(id);
         if (agent != NULL && agent->vox != NULL)
         {
-            printf("not null\n");
             Voxel_volume* vv = agent->vox->get_part(part);
             if (vv != NULL)
             {
-                printf("really bleed\n");
                 float c[3];
-                printf("%0.2f %0.2f %0.2f\n", c[0], c[1], c[2]);
                 vv->get_center(c);
-                printf("%0.2f %0.2f %0.2f\n", c[0], c[1], c[2]);
                 Animations::agent_bleed(c[0], c[1], c[2]);
             }
         }
