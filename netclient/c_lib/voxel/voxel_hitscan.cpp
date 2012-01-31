@@ -37,9 +37,10 @@ struct Voxel_hitscan_element* target
         // skip firing agent
         if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
-        x2 = vhe->vv->center.x;
-        y2 = vhe->vv->center.y;
-        z2 = vhe->vv->center.z;
+        float* _tmp = vhe->vv->world_matrix.v[3].f;
+        x2 = _tmp[0];
+        y2 = _tmp[1];
+        z2 = _tmp[2];
         radius = vhe->vv->radius;
 
         dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
