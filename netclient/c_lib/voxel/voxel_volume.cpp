@@ -20,6 +20,11 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
     return 0;   
 }
 
+void Voxel_volume::get_center(float v[3])
+{
+    v = world_matrix.v[3].f;
+}
+
 void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
 {
     this->xdim = xdim;
