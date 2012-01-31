@@ -149,6 +149,8 @@ Color wheel --contingent on js lib
 http://design.geckotribe.com/colorwheel/    (shows complementary colors)
 http://jscolor.com/ (has saturation slider)
 
+Sort out converter pipeline. Fix off by one dimension bug translating from slab6vox ->v3a->json->dcvox
+
 Deprecate python packets
 -- Identify/fail
 -- Chat messages

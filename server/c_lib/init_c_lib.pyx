@@ -155,11 +155,11 @@ def set_seed(int seed):
     _set_seed(seed)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    void tick()
+    void server_tick()
     void send_game_state_to_client(int client_id)
 
 def tick_server_state():
-    tick();
+    server_tick();
 
 def send_game_state(int client_id):
     send_game_state_to_client(client_id)

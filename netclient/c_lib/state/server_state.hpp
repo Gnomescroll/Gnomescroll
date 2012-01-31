@@ -27,7 +27,7 @@ namespace ServerState
         int dmg, int owner, Object_types inflictor_type
     );
 
-    void tick();
+    void server_tick();
 
     void send_game_state_to_client(int client_id);
 
