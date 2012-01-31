@@ -3,6 +3,7 @@
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/physics/matrix.hpp>
 
 namespace Animations {
 
@@ -191,8 +192,7 @@ void agent_bleed(float x, float y, float z)
     //Blood* blood;
 
     int n = randrange(50,70);
-    int i;
-    for (i=0; i < n; i++) {
+    for (int i=0; i<n; i++) {
 
         nx = x + randf() -0.5f;
         ny = y + randf() -0.5f;
@@ -211,6 +211,34 @@ void agent_bleed(float x, float y, float z)
     }
 }
 
+void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // pos, incident vector
+{
+
+    float len = sqrt(ix*ix + iy*iy + iz*iz);
+    ix /= len;
+    iy /= len;
+    iz /= len;
+
+    float theta,phi,gamma;
+
+    struct Vector iv = Vector_init(ix,iy,iz);
+    struct Vector v;
+    int n = randrange(200,250);
+    const float base_speed = 10.0f;
+    float speed;
+    const float arc = 48.0f;
+    for (int i=0; i<n; i++)
+    {
+        theta = randf() * 3.14159 * 2;
+        phi = randf() * 3.14159 * 2;
+        gamma = randf() * 3.14159 * 2;
+        v = euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
+
+        speed = (randf() + 0.5) * randrange(0,2);
+        speed *= base_speed;
+        if (ClientState::blood_list.create(x,y,z, v.x*speed, v.y*speed, v.z*speed) == NULL) return;
+    }
+}
 
 void animations_tick()
 {

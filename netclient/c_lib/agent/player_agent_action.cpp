@@ -134,7 +134,9 @@ void PlayerAgent_action::hitscan() {
             vec[2] = collision_point[2] - origin[2];
             if (vhe.entity_type == OBJ_TYPE_AGENT)
             {
-                Animations::agent_bleed(collision_point[0], collision_point[1], collision_point[2]);
+                //Animations::agent_bleed(collision_point[0], collision_point[1], collision_point[2]);
+                Animations::blood_spray(collision_point[0], collision_point[1], collision_point[2],
+                    look.x, look.y, look.z);
             }
             break;
 

@@ -142,14 +142,13 @@ scoreboard zoom handling
 grenades kill slimes
 load all projection matrices in camera, once
 agent respawn with correct orientation (team based)
+fixed minivox coloring
 
 =============
 
 spray blood in proper direction
 
 Fix collision detection
-
-Colored minivox color flicker
 
 OpenAL ?
 
