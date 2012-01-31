@@ -113,6 +113,7 @@ Bundle object list transmission into one C method, for new agent connects (cut c
 remove c_lib_monsters
 only use constant server seed during map gen -- use time() for the rest (base/flag/etc spawning)
 merge cython files (compile time down to ~7secs both server and client)
+
 =============
 
 Icons on map (angus)
