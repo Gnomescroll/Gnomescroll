@@ -304,26 +304,6 @@ void BillboardText_list::draw() {
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-    //if (!draw_hud_projection) return;
-
-//// draw hud projected billboards
-    //glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
-    //glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
-    //glGetIntegerv(GL_VIEWPORT, viewport);
-
-//// the order of camera projection switching and text draw start/end matters
-//// dont change it
-    //current_camera->hud_projection();
-    //start_text_draw();
-    //for(i=0; i<n_max; i++) {
-        //if (a[i] == NULL) continue;
-        //if (!a[i]->should_draw) continue;
-        //if (a[i]->projection_type != Billboard::HUD) continue;
-        //a[i]->draw_hud();
-    //}
-    //current_camera->world_projection();
-    //end_text_draw();
-
 #endif
 }
 
@@ -333,13 +313,6 @@ void BillboardText_list::draw_hud() {
 
     if(num == 0) { return; }
     int i;
-
-    //glGetFloatv(GL_MODELVIEW_MATRIX, billboard_text_proj_mtrx);
-    
-//// draw hud projected billboards
-    //glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
-    //glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
-    //glGetIntegerv(GL_VIEWPORT, viewport);
 
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
