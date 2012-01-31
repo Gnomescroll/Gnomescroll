@@ -34,8 +34,6 @@ class Voxel_volume
 
     float scale;    //size of voxels
     //bounding sphere
-    Vec3 center;
-    void set_center(float x, float y, float z); // temporary, for hitscan
     float radius;   //update when changing scale
 
     int xdim,ydim,zdim;
@@ -50,6 +48,8 @@ class Voxel_volume
     bool needs_vbo_update;
 
     struct Voxel_hitscan_element vhe;
+
+    int hitscan_test(float x, float y, float z, float vx, float vy, float vz);
 
 #ifdef DC_CLIENT
     class Voxel_render_list* voxel_render_list;

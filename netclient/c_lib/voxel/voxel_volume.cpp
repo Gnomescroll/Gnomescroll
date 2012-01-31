@@ -15,6 +15,11 @@
 
     #include <voxel/voxel_hitscan.hpp>
 
+int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz)
+{
+    return 0;   
+}
+
 void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
 {
     this->xdim = xdim;
@@ -84,14 +89,6 @@ Voxel_volume::~Voxel_volume()
     if (this->hitscan)
         if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
     free(this->voxel);
-}
-
-// temporary, for hitscan
-void Voxel_volume::set_center(float x, float y, float z)
-{
-    this->center.x = x;
-    this->center.y = y;
-    this->center.z = z;
 }
 
 //external methods
