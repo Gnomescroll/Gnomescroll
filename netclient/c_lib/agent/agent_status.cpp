@@ -115,13 +115,13 @@ int Agent_status::die() {
 int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
     printf("inflictor_id=%d, type=%d\n", inflictor_id, inflictor_type);
     int killed = this->die();
-    Agent_state* agent;
+    Agent_state* attacker;
     if (killed) {
         switch (inflictor_type) {
             case OBJ_TYPE_AGENT:
-                agent = STATE::agent_list.get(inflictor_id);
-                if (agent != NULL) {
-                    agent->status.kill(a->id);
+                attacker = STATE::agent_list.get(inflictor_id);
+                if (attacker != NULL) {
+                    attacker->status.kill(this->a->id);
                 }
                 break;
             case OBJ_TYPE_SLIME:

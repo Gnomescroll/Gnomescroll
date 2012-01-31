@@ -333,7 +333,7 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::agent_list.get(id);
             if (obj==NULL) return;
             // apply damage
-            ((Agent_state*)obj)->status.apply_damage(agent_dmg, ((Agent_state*)obj)->id, ((Agent_state*)obj)->type);
+            ((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
             x = ((Agent_state*)obj)->s.x;
             y = ((Agent_state*)obj)->s.y;
             z = ((Agent_state*)obj)->s.z;
