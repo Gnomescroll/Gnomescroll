@@ -26,14 +26,46 @@ class Hud(object):
         self.height_margin = 5
         self.width_margin = 3
 
-        self._init_reticles()
-        self._init_text_dict()
-        self._init_scoreboard()
-        self._init_player_stats()
-        self._init_help_menu()
+        self.init_reticles()
+        self.init_text_objects()
+        self.init_scoreboard()
 
         self.inventory = init_c_lib.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
         self.cube_selector = init_c_lib.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
+
+    def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
+        txt = init_c_lib.Text(
+            text = text,
+            x = x,
+            y = self.win_height - offset,
+            color = color
+        )
+        return txt
+
+    def init_chat_text_objects(self):
+        offset = 50
+        msg_height = 0
+        line_height = 20
+        msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
+
+        blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
+        self.text_dict = dict(zip(msg_count, blanks))
+        self.text_dict['input'] = self.text(text='', offset=200, x=50)
+
+    def init_text_objects(self):
+        self.init_chat_text_objects()
+        
+        self.player_stats = self.text(
+            text = '',
+            offset = self.win_height - self.font_height - self.height_margin,
+            x = self.win_width - 360
+        )
+
+        self.help_menu = self.text(
+            text = self.help_menu_text,
+            offset = 0,
+            x = self.win_width/2
+        )
 
         self.disconnected_message = self.text(
             text = 'Server not connected',
@@ -61,35 +93,48 @@ class Hud(object):
             offset = self.win_height - (self.font_height * 2) - self.height_margin
         )
 
-    def _init_reticles(self):
-        tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
-        tex_file = '%stexture/target-zoom.png' % (base_dir,)
-        self.scope_reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
+    def init_scoreboard(self):
+        self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
+        self.scoreboard = {}
+        col_width = (self.win_width * 0.75) // len(self.scoreboard_properties)
+        start_x = self.win_width // 8
+        i = 0
+        for col_name in self.scoreboard_properties:
+            self.scoreboard[col_name.lower()] = self.text(
+                text = '',
+                x = start_x + (i * col_width),
+                color = (150, 150, 255, 255)
+            )
+            i += 1
 
-    def _init_text_dict(self):
-        offset = 50
-        msg_height = 0
-        line_height = 20
-        msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
+        self.team_names = {
+            1 : self.text(
+                text = '',
+                x = start_x,
+                offset = (self.win_height // 8),
+                color = (150, 150, 255, 255)
+            ),
+            2 : self.text(
+                text = '',
+                x = start_x,
+                offset = (self.win_height // 8),
+                color = (150, 150, 255, 255)
+            )
+        }
 
-        blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
-        self.text_dict = dict(zip(msg_count, blanks))
-        self.text_dict['input'] = self.text(text='', offset=200, x=50)
+    def format_scoreboard(self, stats):
+        for prop in self.scoreboard_properties:
+            lprop = prop.lower()
+            lines = []
+            lines.append(prop + '\n')
+            vals = stats[lprop]
+            for i, val in enumerate(vals):
+                if i in stats['team']:
+                    lines.append('\n')
+                lines.append(str(val))
+            stats[lprop] = '\n'.join(lines)
 
-    def _init_player_stats(self):
-        self.player_stats = self.text(
-            text = '',
-            offset = self.win_height - self.font_height - self.height_margin,
-            x = self.win_width - 360
-        )
-
-    def _init_help_menu(self):
-        self.help_menu = self.text(
-            text = self.help_menu_text,
-            offset = 0,
-            x = self.win_width/2
-        )
+        return stats
 
     def scoreboard_stats(self):
         props = ['name', 'kills', 'deaths', 'score', 'id']
@@ -114,49 +159,6 @@ class Hud(object):
 
         return stats
 
-    def _init_scoreboard(self):
-        self._scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
-        self.scoreboard = {}
-        col_width = (self.win_width * 0.75) // len(self._scoreboard_properties)
-        start_x = self.win_width // 8
-        i = 0
-        for col_name in self._scoreboard_properties:
-            self.scoreboard[col_name.lower()] = self.text(
-                text = '',
-                x = start_x + (i * col_width),
-                color = (150, 150, 255, 255)
-            )
-            i += 1
-
-        self.team_names = {
-            1 : self.text(
-                text = '',
-                x = start_x,
-                offset = (self.win_height // 8),
-                color = (150, 150, 255, 255)
-            ),
-            2 : self.text(
-                text = '',
-                x = start_x,
-                offset = (self.win_height // 8),
-                color = (150, 150, 255, 255)
-            )
-        }
-
-    def _format_scoreboard_plain(self, stats):
-        for prop in self._scoreboard_properties:
-            lprop = prop.lower()
-            lines = []
-            lines.append(prop + '\n')
-            vals = stats[lprop]
-            for i, val in enumerate(vals):
-                if i in stats['team']:
-                    lines.append('\n')
-                lines.append(str(val))
-            stats[lprop] = '\n'.join(lines)
-
-        return stats
-
     def draw_fps(self, fps_text):
         self.fps.text = str(fps_text)
         self.fps.draw()
@@ -165,7 +167,7 @@ class Hud(object):
         self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
-    def _format_player_stats_plain(self):
+    def format_player_stats(self):
         agent = GameStateGlobal.agent
         if agent is None:
             s = 'No agent yet.'
@@ -183,11 +185,17 @@ class Hud(object):
         return s
 
     def draw_player_stats(self):
-        stats = self._format_player_stats_plain()
+        stats = self.format_player_stats()
         old = self.player_stats.text
         if old != stats:
             self.player_stats.text = stats
         self.player_stats.draw()
+
+    def init_reticles(self):
+        tex_file = '%stexture/target.png' % (base_dir,)
+        self.reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
+        tex_file = '%stexture/target-zoom.png' % (base_dir,)
+        self.scope_reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
 
     def draw_reticle(self):
         self.reticle.draw()
@@ -203,7 +211,7 @@ class Hud(object):
         self._draw_square(x, y, w, color=(255,10,10))
 
     def draw_scoreboard(self):
-        stats_txt = self._format_scoreboard_plain(self.scoreboard_stats())
+        stats_txt = self.format_scoreboard(self.scoreboard_stats())
         for key, txt in stats_txt.items():
             if key == 'team': continue
             curr_sb = self.scoreboard[key]
@@ -222,15 +230,6 @@ class Hud(object):
             self.team_names[team.id].text = team_txt
             self.team_names[team.id].color = list(team.color) + [255]
             self.team_names[team.id].draw()
-
-    def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = init_c_lib.Text(
-            text = text,
-            x = x,
-            y = self.win_height - offset,
-            color = color
-        )
-        return txt
 
     def draw_chat_input(self):
         text = self.text_dict['input']
@@ -274,68 +273,6 @@ class Hud(object):
         y = self.text_dict['input'].y
         init_c_lib.draw_chat_cursor(''.join(buff), x, y)
 
-    def draw_life_status(self):
-        if GameStateGlobal.agent is not None and GameStateGlobal.agent.dead:
-            self.dead_message.draw()
-
-    def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
-        if InputGlobal.vn:
-            init_c_lib.VN.draw()
-            return
-        # draw non-text first
-        if zoom:
-            self.draw_scope_reticle()
-            return
-        self.draw_reticle()
-        if cube_selector:
-            self.cube_selector.draw()
-        if InputGlobal.inventory:
-            self.inventory.draw()
-
-        if InputGlobal.input == 'chat':
-            self.draw_cursor()
-
-        if InputGlobal.map:
-            init_c_lib.Map.draw()
-
-        active_equipment_slot = -1
-        if GameStateGlobal.agent:
-            active_equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
-        init_c_lib.Equipment.draw(active_equipment_slot)
-
-        init_c_lib.Compass.draw()
-
-        # draw text
-        init_c_lib.Font.font.start()
-        self.draw_text_items(fps, ping)
-        init_c_lib.Font.font.end()
-
-    def draw_text_items(self, fps, ping):
-        init_c_lib.draw_hud_billboard_text()
-        
-        if InputGlobal.help_menu:
-            self.draw_help_menu()
-            return
-
-        self.draw_player_stats()
-
-        if InputGlobal.scoreboard:
-            self.draw_scoreboard()
-
-        if fps is not None:
-            self.draw_fps(fps)
-
-        if ping is not None:
-            self.draw_ping(ping)
-            
-        self.draw_chat_messages()
-        if InputGlobal.input == 'chat':
-            self.draw_chat_input()
-        if not NetClientGlobal.connection.connected:
-            self.disconnected_message.draw()
-        else:
-            self.draw_life_status()
-        
     help_menu_text = """
     Key:            Action:
 
@@ -367,3 +304,69 @@ class Hud(object):
     """
     def draw_help_menu(self):
         self.help_menu.draw()
+
+    def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+        if InputGlobal.vn:
+            init_c_lib.VN.draw()
+            return
+        # draw non-text first
+        if zoom:
+            self.draw_scope_reticle()
+            self.draw_text_items(fps, ping, zoom)
+            return
+            
+        self.draw_reticle()
+        if cube_selector:
+            self.cube_selector.draw()
+        if InputGlobal.inventory:
+            self.inventory.draw()
+
+        if InputGlobal.input == 'chat':
+            self.draw_cursor()
+
+        if InputGlobal.map:
+            init_c_lib.Map.draw()
+
+        active_equipment_slot = -1
+        if GameStateGlobal.agent:
+            active_equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
+        init_c_lib.Equipment.draw(active_equipment_slot)
+
+        init_c_lib.Compass.draw()
+
+        # draw text
+        self.draw_text_items(fps, ping, zoom)
+
+    def draw_text_items(self, fps, ping, zoom):
+        init_c_lib.Font.font.start()
+
+        init_c_lib.draw_hud_billboard_text()
+        if InputGlobal.scoreboard:
+            self.draw_scoreboard()
+
+        if zoom:
+            init_c_lib.Font.font.end()
+            return
+        
+        if InputGlobal.help_menu:
+            self.draw_help_menu()
+            return
+
+        self.draw_player_stats()
+
+        if fps is not None:
+            self.draw_fps(fps)
+
+        if ping is not None:
+            self.draw_ping(ping)
+            
+        self.draw_chat_messages()
+        if InputGlobal.input == 'chat':
+            self.draw_chat_input()
+        if NetClientGlobal.connection.connected:
+            if GameStateGlobal.agent is not None and GameStateGlobal.agent.dead:
+                self.dead_message.draw()
+        else:
+            self.disconnected_message.draw()
+            
+        init_c_lib.Font.font.end()

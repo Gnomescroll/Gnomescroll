@@ -39,10 +39,21 @@ namespace ServerState
         // agents
         agent_list.objects_within_sphere(x,y,z,radius);
         Agent_state* a;
-        for (i=0; i<agent_list.n_filtered; i++) {
+        for (i=0; i<agent_list.n_filtered; i++)
+        {
             a = agent_list.filtered_objects[i];
             if (a == NULL) continue;
             a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
+        }
+
+        // slimes
+        slime_list.objects_within_sphere(x,y,z,radius);
+        Monsters::Slime* slime;
+        for (i=0; i<slime_list.n_filtered; i++)
+        {
+            slime = slime_list.filtered_objects[i];
+            if (slime == NULL) continue;
+            slime_list.destroy(slime->id);
         }
 
         // spawners

@@ -1,10 +1,4 @@
 #include "billboard_text.hpp"
-#pragma once
-
-#ifdef DC_CLIENT
-static float billboard_text_proj_mtrx[16];
-static double billboard_modelview_mtrx_dbl[16];
-#endif
 
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
@@ -235,7 +229,8 @@ void BillboardText::draw_hud()
     z = particle.state.p.z;
 
     GLdouble sx,sy,sz;
-    GLint res = gluProject(x,y,z, billboard_modelview_mtrx_dbl, projection_matrix, viewport, &sx, &sy, &sz);
+    //GLint res = gluProject(x,y,z, billboard_modelview_mtrx_dbl, projection_matrix, viewport, &sx, &sy, &sz);
+    GLint res = gluProject(x,y,z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
     if (res == GLU_FALSE) {
         printf("BillboardText hud projection -- gluProject failed\n");
         return;
@@ -268,14 +263,6 @@ void BillboardText_list::draw() {
     if(num == 0) { return; }
     int i;
 
-    // load matrices
-    glGetFloatv(GL_MODELVIEW_MATRIX, billboard_text_proj_mtrx);
-    glGetDoublev(GL_MODELVIEW_MATRIX, billboard_modelview_mtrx_dbl);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    
-// draw world space billboards
-
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
@@ -287,14 +274,10 @@ void BillboardText_list::draw() {
     glBegin( GL_QUADS );
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
-    //bool draw_hud_projection = false;
     for(i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
-        if (a[i]->projection_type == Billboard::HUD) {
-            //draw_hud_projection = true;
-            continue;
-        }
+        if (a[i]->projection_type == Billboard::HUD) continue;  // draw these during hud mode
         a[i]->draw();
     }
 

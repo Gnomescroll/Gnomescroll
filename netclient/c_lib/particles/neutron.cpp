@@ -1,7 +1,7 @@
 #include "neutron.hpp"
 
 #ifdef DC_CLIENT
-    #include <compat_gl.h>
+#include <compat_gl.h>
 #endif
 
 #include <ray_trace/ray_trace.h>
@@ -11,10 +11,6 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/defines.h>
-
-#ifdef DC_CLIENT
-static float neutron_proj_mtrx[16];
-#endif
 
 Neutron::Neutron(int id) {
     create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);
@@ -105,14 +101,14 @@ void Neutron::draw() {
 #ifdef DC_CLIENT
 
     float up[3] = {
-        neutron_proj_mtrx[0]*NEUTRON_TEXTURE_SCALE,
-        neutron_proj_mtrx[4]*NEUTRON_TEXTURE_SCALE,
-        neutron_proj_mtrx[8]*NEUTRON_TEXTURE_SCALE
+        model_view_matrix[0]*NEUTRON_TEXTURE_SCALE,
+        model_view_matrix[4]*NEUTRON_TEXTURE_SCALE,
+        model_view_matrix[8]*NEUTRON_TEXTURE_SCALE
     };
     float right[3] = {
-        neutron_proj_mtrx[1]*NEUTRON_TEXTURE_SCALE,
-        neutron_proj_mtrx[5]*NEUTRON_TEXTURE_SCALE,
-        neutron_proj_mtrx[9]*NEUTRON_TEXTURE_SCALE
+        model_view_matrix[1]*NEUTRON_TEXTURE_SCALE,
+        model_view_matrix[5]*NEUTRON_TEXTURE_SCALE,
+        model_view_matrix[9]*NEUTRON_TEXTURE_SCALE
     };
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -159,7 +155,6 @@ void Neutron_list::draw() {
 #ifdef DC_CLIENT
 
     if(num == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, neutron_proj_mtrx);
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);

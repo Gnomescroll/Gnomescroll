@@ -1,13 +1,8 @@
 #include "grenade.hpp"
-#pragma once
 
 #ifdef DC_CLIENT
+#include <compat_gl.h>
 #include <c_lib/animations/animations.hpp>
-static float grenade_proj_mtrx[16];
-#endif
-
-#ifdef DC_CLIENT
-    #include <compat_gl.h>
 #endif
 
 #include <ray_trace/ray_trace.h>
@@ -113,14 +108,14 @@ void Grenade::draw() {
 #ifdef DC_CLIENT
 
     float up[3] = {
-        grenade_proj_mtrx[0]*GRENADE_TEXTURE_SCALE,
-        grenade_proj_mtrx[4]*GRENADE_TEXTURE_SCALE,
-        grenade_proj_mtrx[8]*GRENADE_TEXTURE_SCALE
+        model_view_matrix[0]*GRENADE_TEXTURE_SCALE,
+        model_view_matrix[4]*GRENADE_TEXTURE_SCALE,
+        model_view_matrix[8]*GRENADE_TEXTURE_SCALE
     };
     float right[3] = {
-        grenade_proj_mtrx[1]*GRENADE_TEXTURE_SCALE,
-        grenade_proj_mtrx[5]*GRENADE_TEXTURE_SCALE,
-        grenade_proj_mtrx[9]*GRENADE_TEXTURE_SCALE
+        model_view_matrix[1]*GRENADE_TEXTURE_SCALE,
+        model_view_matrix[5]*GRENADE_TEXTURE_SCALE,
+        model_view_matrix[9]*GRENADE_TEXTURE_SCALE
     };
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -159,24 +154,6 @@ void Grenade::explode() {
         GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_AGENT // inflictor (agent is inflictor for now, only they can create grenades
     );
     
-    //int i;
-    // find all agents in radius, apply damage
-    //ServerState::agent_list.agents_within_sphere(particle.state.p.x, particle.state.p.y, particle.state.p.z, GRENADE_DAMAGE_RADIUS);
-
-    //ServerState::damage_objects_within_sphere(
-        //particle.state.p.x, particle.state.p.y, particle.state.p.z,
-        //GRENADE_DAMAGE_RADIUS,
-        //GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT
-    //);
-
-    //Agent_state* a;
-    //for (i=0; i<ServerState::agent_list.n_filtered; i++) {
-        //a = ServerState::agent_list.filtered_agents[i];
-        //if (a == NULL) continue;
-        //a->status.apply_damage(GRENADE_SPLASH_DAMAGE, owner, OBJ_TYPE_AGENT); // need to be able to pass owner & suicidal arguments to apply_damage
-    //}
-    
-    // find all blocks in radius, destroy/damage
     damage_blocks();
 #endif
 }
@@ -256,7 +233,6 @@ void Grenade_list::tick() {
 void Grenade_list::draw() {
 #ifdef DC_CLIENT
     if(num == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, grenade_proj_mtrx);
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);

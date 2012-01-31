@@ -247,12 +247,6 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-cdef extern from "./SDL/draw_functions.h":
-    int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
-
-def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float y1, float z1):
-    return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
-
 """ Map gen """
 #cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
 #    void generate_dragon()
