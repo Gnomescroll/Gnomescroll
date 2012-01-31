@@ -25,6 +25,8 @@ class Minivox {
         void set_spin(float dtheta, float dphi);
         void spin();
 
+        unsigned char r,g,b,a;
+
         Particle2 particle;
 
         float size;
@@ -33,8 +35,6 @@ class Minivox {
         Vector vec_y;
         Vector vec_z;
         
-        Voxel vox;
-
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_orientation(float theta, float phi);
@@ -51,8 +51,8 @@ class Minivox {
         void set_texture(int tex_id);
         void set_texture(int tex_id, int pixels_wide);
         
-        void draw() __attribute((always_inline));
-        void draw_textured();
+        void draw_colored() __attribute((always_inline));
+        void draw_textured(); __attribute((always_inline));
         void tick();
         
         Minivox(int id);
