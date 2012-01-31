@@ -167,7 +167,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
         // OR
         // animate from aiming direction
         // can also make a second array in each *list, that holds decayed state info
-
+        // i.e. when destroy object, cache its last x,y,z,vx,vy,vz
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
