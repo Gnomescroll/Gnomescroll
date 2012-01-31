@@ -220,48 +220,74 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, fl
             //return;
     //}
 
-    float f[3];
-    f[0] = x - this->a->s.x;
-    f[1] = y - this->a->s.y;
-    f[2] = z - (this->a->s.z + this->a->camera_height());
+    float sx,sy,sz;
+    sx = this->a->s.x;
+    sy = this->a->s.y;
+    sz = this->a->s.z + this->a->camera_height();
 
+    float f[3];
+    f[0] = x - sx;
+    f[1] = y - sy;
+    f[2] = z - sz;
+
+    // animate
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(
-        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
-
+    // play sound
+    char soundfile[] = "laser_01.wav";
+    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
 {
+    float sx,sy,sz;
+    sx = this->a->s.x;
+    sy = this->a->s.y;
+    sz = this->a->s.z + this->a->camera_height();
+
     // animate laser to target
     float f[3];
-    f[0] = x - this->a->s.x;
-    f[1] = y - this->a->s.y;
-    f[2] = z - (this->a->s.z + this->a->camera_height());
+    f[0] = x - sx;
+    f[1] = y - sy;
+    f[2] = z - sz;
 
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(
-        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
     // play block surface crumble
     Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
+
+    // play sound
+    char soundfile[] = "laser_01.wav";
+    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_nothing()
 {
+    float sx,sy,sz;
+    sx = this->a->s.x;
+    sy = this->a->s.y;
+    sz = this->a->s.z + this->a->camera_height();
+
     float f[3];
     this->a->s.forward_vector(f);
     
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(
-        this->a->s.x, this->a->s.y, this->a->s.z + this->a->camera_height(),
+        sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
+
+    // play sound
+    char soundfile[] = "laser_01.wav";
+    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::hit_block()

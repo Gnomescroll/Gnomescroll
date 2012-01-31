@@ -121,16 +121,17 @@ Jan 30-31
 Add deucbag flag vox
 "You're dead" notification
 make the flag spin
-Fixed the glColor bug: colored minivox affecting textured minivox
+Fixed colored minivox affecting textured minivox
 
+removed fire_weapon_StoC, replaced with target (object, block, nothing) dependent packets
+thus multiplayer gun animations
 =============
 
 bleed from damage
 other agent bleed if think they took damage (got shot)
 spray blood in proper direction
 
-"X shot Y" packet
-"X shot nothing" (fire weapon, currently)
+sound attenuation
 
 scoring STILL wrong (might be hitscan)
 
