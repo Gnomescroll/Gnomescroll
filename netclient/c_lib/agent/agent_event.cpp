@@ -157,6 +157,19 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, fl
             //return;
     //}
 
+    if (type == OBJ_TYPE_AGENT)
+    {
+        Agent_state* agent = ClientState::agent_list.get(id);
+        if (agent != NULL && agent->vox != NULL)
+        {
+            Voxel_volume* vv = agent->vox->get_part(part);
+            float c[3];
+            vv->get_center(c);
+            if (vv != NULL)
+                Animations::agent_bleed(c[0], c[1], c[2]);
+        }
+    }
+
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;

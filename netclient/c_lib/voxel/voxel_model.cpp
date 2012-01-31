@@ -299,3 +299,14 @@ void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
     }
     #endif
 }
+
+Voxel_volume* Voxel_model::get_part(int part)
+{
+    if (part >= this->num_parts)
+    {
+        printf("Voxel_model::get_part -- part %d invalid\n", part);
+        return NULL;
+    }
+
+    return this->vv[part];
+}
