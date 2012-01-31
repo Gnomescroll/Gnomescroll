@@ -55,21 +55,14 @@ int ERRCHECK(FMOD_RESULT result)
 }
 
 /* FMOD Vectors */
-static const float _tick = 30.0f; // ticks per second
 void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
     // convert velocity units to m/s (comes in at m/tick, tick=33ms)
-    x *= _tick;
-    y *= _tick;
-    z *= _tick;
     vec->x = x;
     vec->y = z; // flip y and z for our coordinate system
     vec->z = y;
 }
 
 const FMOD_VECTOR create_vector(float x, float y, float z) {
-    x *= _tick;
-    y *= _tick;
-    z *= _tick;
     const FMOD_VECTOR vec = {x, z, y};  // y and z must be flipped to match our coordinate system
     return vec;
 }
@@ -135,8 +128,9 @@ void set_3D_settings(float doppler_scale, float distance_factor, float rolloff_s
 /* Listener (player) */
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz) {
+    static const float tick = 30.0f;
     set_vector(&lis_pos, x, y, z);
-    set_vector(&lis_vel, vx, vy, vz);
+    set_vector(&lis_vel, vx*tick, vy*tick, vz*tick);
     set_vector(&lis_for, fx, fy, fz);
     set_vector(&lis_up, ux, uy, uz);
     
@@ -168,6 +162,7 @@ int _update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR v
 }
 
 int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz) {
+    static const float tick = 30.0f;
     int i = -1;
     if (ch_id < 0 || ch_id >= MAX_CHANNELS) {
         return i;
@@ -175,7 +170,7 @@ int update_channel(int ch_id, float x, float y, float z, float vx, float vy, flo
     FMOD_CHANNEL* ch = channels[ch_id];
     if (ch == NULL) {
         const FMOD_VECTOR pos = create_vector(x,y,z);
-        const FMOD_VECTOR vel = create_vector(vx,vy,vz);
+        const FMOD_VECTOR vel = create_vector(vx*tick,vy*tick,vz*tick);
         i = _update_channel(ch, pos, vel);
     }
     return i;
@@ -348,6 +343,7 @@ int play_2d_sound(int snd_id) {
 }
 
 int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz) {
+    static const float tick = 30.0f;
     int i = -1;
     if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
         return i;
@@ -356,7 +352,7 @@ int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, flo
     FMOD_CHANNEL* ch = NULL;
     if (snd != NULL) {
         const FMOD_VECTOR pos = create_vector(x,y,z);
-        const FMOD_VECTOR vel = create_vector(vx,vy,vz);
+        const FMOD_VECTOR vel = create_vector(vx*tick,vy*tick,vz*tick);
         ch = _play_3d_sound(snd, pos, vel);
         i = _add_channel(ch);
     }
@@ -370,6 +366,7 @@ int play_2d_sound(char* file) {
     bool three_d = false;
     int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
+    printf("should play 2d sound\n");
     return play_2d_sound(snd_id);
 }
 
@@ -379,6 +376,7 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
     bool three_d = true;
     int snd_id = get_sound_id(file, three_d);
     if (snd_id < 0) return snd_id;
+    printf("should play 3d sound\n");
     return play_3d_sound(snd_id, x,y,z,vx,vy,vz);
 }
 
@@ -427,7 +425,7 @@ void release_all() {
 }
 
 void close() {
-	printf("Sound.cpp: release all\n");
+    printf("Sound.cpp: release all\n");
     release_all();
 }
 
