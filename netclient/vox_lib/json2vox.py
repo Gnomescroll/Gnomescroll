@@ -35,7 +35,10 @@ def convert(data):
     args = []
 
     args += map(int, data['dim'])
-    args += [float(data['vox_size'])]
+    try:
+    	args += [float(data['vox_size'])]
+    except KeyError:
+        args += [float(data['vosize'])]
     args += [int(data.get('biaxial', False))]
     args += [int(data.get('team', False))]
     args += map(int, data.get('team_base_color', [0,0,0]))

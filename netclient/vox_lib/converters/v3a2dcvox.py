@@ -49,7 +49,7 @@ def convert(infile, outfile):
             
     d = {
         'dim'   :   (xdim, ydim, zdim),
-        'vosize':   0.2,
+        'vox_size':   0.2,
         'voxels':   voxels,
     }
 

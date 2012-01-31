@@ -116,15 +116,6 @@ merge cython files (compile time down to ~7secs both server and client)
 
 =============
 
-Icons on map (angus)
-
-Fix collision detection
-Client side jump physics (server is snapping)
-
-Turrets
-
-Minimap
-
 "You're dead" notification
 
 bleed from damage
@@ -133,8 +124,21 @@ spray blood in proper direction
 
 Find the glColor bug: minivox coloring
 
-Sounds
+make the flag spin
+
+Fix collision detection
+
 OpenAL ?
+
+Icons on map (angus)
+
+Client side jump physics (server is snapping)
+
+Turrets
+
+Minimap
+
+Sounds
 System notifications (you killed...)
 
 Voxel editor:
