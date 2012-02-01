@@ -154,6 +154,9 @@ Double buffered map textures
 Synchronize PLAYERS_MAX across agent_list, netlib, game/teams (#define PLAYERS_MAX 64 in c_lib/defines.h)
 Fix collision detection
 
+reticle in C
+cube selector in C
+fix cube selector input
 =============
 
 OpenAL ?

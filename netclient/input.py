@@ -434,6 +434,8 @@ class AgentInput:
     @classmethod
     @requireAgent
     def adjust_block(cls, symbol=None, modifiers=None):
+        if GameStateGlobal.agent.active_weapon != 2: # block applier
+            return
         if symbol == 'left':
             InputGlobal.cube_selector.left()
         elif symbol == 'right':
