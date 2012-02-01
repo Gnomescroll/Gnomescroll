@@ -1252,6 +1252,8 @@ Text
 """
 
 cdef extern from "./hud/text.hpp" namespace "HudText":
+    void start_text_draw()
+    void end_text_draw()
 
     cdef cppclass Text:
         int id
@@ -1352,14 +1354,19 @@ class CyText(object):
         if t == NULL: return
         t.set_position(x,y)
 
+    @classmethod
+    def start(cls):
+        start_text_draw()
+    @classmethod    
+    def end(cls):
+        end_text_draw()
+
+
 """
 Font
 -- this is here because it parses the font configuration file
 """
 cdef extern from "./hud/font.hpp" namespace "HudFont":
-    void start_text_draw()
-    void end_text_draw()
-
     int load_font(char* filename)
 
     void add_glyph(
@@ -1493,9 +1500,3 @@ class Font:
             return
         self.add_glyphs_to_c()
         self.ready = True
-
-    def start(self):
-        start_text_draw()
-        
-    def end(self):
-        end_text_draw()

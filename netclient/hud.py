@@ -325,7 +325,7 @@ class Hud(object):
         self.draw_text_items(fps, ping, zoom)
 
     def draw_text_items(self, fps, ping, zoom):
-        init_c_lib.Font.font.start()
+        init_c_lib.CyText.start()
 
         init_c_lib.draw_hud_billboard_text()
         if InputGlobal.scoreboard:
@@ -358,4 +358,4 @@ class Hud(object):
         else:
             self.disconnected_message.draw()
             
-        init_c_lib.Font.font.end()
+        init_c_lib.CyText.end()

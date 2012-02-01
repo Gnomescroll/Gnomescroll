@@ -4,6 +4,9 @@
 
 namespace HudText
 {
+    
+void start_text_draw();
+void end_text_draw();
 
 void draw_string(char* text, float x, float y, float depth, float scale, float line_height);
 

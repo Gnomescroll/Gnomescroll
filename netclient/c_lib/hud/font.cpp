@@ -51,47 +51,6 @@ int load_font(char* fontfile) {
     return 1;
 }
 
-void start_text_draw() {
-    
-    if (!font_loaded) {
-        printf("No font loaded\n");
-        return;
-    }
-
-    if (tex_alpha) {
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-    }
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, fontTextureId);
-    glBegin(GL_QUADS);
-}
-
-void blit_glyph(
-    float tex_x_min, float tex_x_max,
-    float tex_y_min, float tex_y_max,
-    float screen_x_min, float screen_x_max,
-    float screen_y_min, float screen_y_max,
-    float depth)
-{
-    glTexCoord2f(tex_x_min, tex_y_max);
-    glVertex3f(screen_x_min, screen_y_max, depth);
-    glTexCoord2f(tex_x_min, tex_y_min);
-    glVertex3f(screen_x_min, screen_y_min, depth);
-    glTexCoord2f(tex_x_max, tex_y_min);
-    glVertex3f(screen_x_max, screen_y_min, depth);
-    glTexCoord2f(tex_x_max, tex_y_max);
-    glVertex3f(screen_x_max, screen_y_max, depth);
-}
-
-void end_text_draw() {
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    if (tex_alpha) {
-        glDisable(GL_BLEND);
-    }
-}
 
 
 /* Glyph store */

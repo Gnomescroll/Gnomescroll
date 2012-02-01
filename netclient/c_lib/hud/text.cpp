@@ -5,6 +5,50 @@
 
 namespace HudText
 {
+    
+void start_text_draw() {
+    
+    if (!HudFont::font_loaded) {
+        printf("No font loaded\n");
+        return;
+    }
+
+    if (HudFont::tex_alpha) {
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, HudFont::fontTextureId);
+    glBegin(GL_QUADS);
+}
+
+void end_text_draw() {
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+    if (HudFont::tex_alpha) {
+        glDisable(GL_BLEND);
+    }
+}
+
+void blit_character(
+    float tex_x_min, float tex_x_max,
+    float tex_y_min, float tex_y_max,
+    float screen_x_min, float screen_x_max,
+    float screen_y_min, float screen_y_max,
+    float depth)
+{
+    glTexCoord2f(tex_x_min, tex_y_max);
+    glVertex3f(screen_x_min, screen_y_max, depth);
+    glTexCoord2f(tex_x_min, tex_y_min);
+    glVertex3f(screen_x_min, screen_y_min, depth);
+    glTexCoord2f(tex_x_max, tex_y_min);
+    glVertex3f(screen_x_max, screen_y_min, depth);
+    glTexCoord2f(tex_x_max, tex_y_max);
+    glVertex3f(screen_x_max, screen_y_max, depth);
+}
+
+
 
 void draw_string(char* text, float x, float y, float depth, float scale, float line_height)
 {
@@ -40,7 +84,7 @@ void draw_string(char* text, float x, float y, float depth, float scale, float l
         sx_min = x + (cursor_x + glyph.xoff + glyph.w) * scale;
         sy_min = y - (cursor_y + glyph.yoff) * scale;
         sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
-        HudFont::blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
+        blit_character(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
 
         cursor_x += glyph.xadvance;
     }
