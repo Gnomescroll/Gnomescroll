@@ -214,7 +214,7 @@ class Hud(object):
 
     def draw_chat_input(self):
         text = self.text_dict['input']
-        text.text = ChatClientGlobal.chatRender.user_input()
+        text.set_text(ChatClientGlobal.chatRender.user_input())
         text.draw()
 
     def draw_chat_messages(self):
@@ -247,11 +247,11 @@ class Hud(object):
         for t in to_draw:
             t.draw()
 
-    def draw_cursor(self):
+    def set_chat_cursor(self):
         buff = ChatClientGlobal.chatRender.input_buffer()
-        x = self.text_dict['input'].x
-        y = self.text_dict['input'].y
-        init_c_lib.draw_chat_cursor(''.join(buff), x, y)
+        x = self.text_dict['input'].get_x()
+        y = self.text_dict['input'].get_y()
+        init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
 
     help_menu_text = """
     Key:            Action:
@@ -286,10 +286,15 @@ class Hud(object):
         self.help_menu.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+        draw_chat_cursor = (InputGlobal.input == 'chat')
+        if draw_chat_cursor:
+            self.set_chat_cursor()
+            
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
-            InputGlobal.inventory
+            InputGlobal.inventory,
+            draw_chat_cursor
         )
         
         if InputGlobal.vn:
@@ -302,8 +307,8 @@ class Hud(object):
             self.draw_text_items(fps, ping, zoom)
             return
             
-        if InputGlobal.input == 'chat':
-            self.draw_cursor()
+        #if InputGlobal.input == 'chat':
+            #self.draw_cursor()
 
         if InputGlobal.map:
             init_c_lib.Map.draw()

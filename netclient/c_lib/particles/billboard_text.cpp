@@ -6,6 +6,7 @@
 #include <hud/text.hpp>
 #include <SDL/SDL_functions.h>
 #include <camera/camera.hpp>
+#include <c_lib/hud/font.hpp>
 
 BillboardText::BillboardText(int id)
 :
@@ -139,7 +140,7 @@ void BillboardText::draw_axis_aligned()
     right[0] /= norm;
     right[1] /= norm;
 
-    struct Glyph glyph;
+    struct HudFont::Glyph glyph;
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
 
@@ -153,8 +154,8 @@ void BillboardText::draw_axis_aligned()
     float height = 0;
     while ((c = text[i++]) != '\0')
     {
-        glyph = glyphs[(unsigned int)c];
-        if (!glyph.available) glyph = glyphs[missing_character];
+        glyph = HudFont::glyphs[(unsigned int)c];
+        if (!glyph.available) glyph = HudFont::get_missing_glyph(c);
         len += glyph.xadvance;
         if (i==1)
             len += glyph.xoff;
@@ -178,8 +179,8 @@ void BillboardText::draw_axis_aligned()
 
     while ((c = text[i++]) != '\0')
     {
-        glyph = glyphs[(unsigned int)c];
-        if (!glyph.available) glyph = glyphs[missing_character];
+        glyph = HudFont::glyphs[(unsigned int)c];
+        if (!glyph.available) glyph = HudFont::get_missing_glyph(c);
 
         tx_min = glyph.x;
         tx_max = glyph.x + glyph.tw;
@@ -237,7 +238,7 @@ void BillboardText::draw_hud()
     }
 
     const float line_height = 18.0f;
-    draw_text(this->text, (float)sx, (float)sy, (float)sz, this->size, line_height);
+    HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size, line_height);
 
 #endif
 }
@@ -267,7 +268,7 @@ void BillboardText_list::draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, fontTextureId );
+    glBindTexture(GL_TEXTURE_2D, HudFont::fontTextureId);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 

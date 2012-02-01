@@ -1323,9 +1323,15 @@ Voronoi texture surface
 """ HUD """
 
 cdef extern from "./hud/hud.hpp":
-    void set_hud_draw_settings(bool zoom, bool cube_selector, bool inventory)
+    void set_hud_draw_settings(
+        bool zoom,
+        bool cube_selector,
+        bool inventory,
+        bool chat_cursor
+    )
     void draw_hud_textures()
     void draw_hud_text()
+    void set_chat_cursor(char* text, float x, float y)
 
 cdef class HUD:
     @classmethod
@@ -1335,8 +1341,21 @@ cdef class HUD:
     def draw_text(cls):
         draw_hud_text()
     @classmethod
-    def set_draw_settings(cls, bool zoom, bool cube_selector, bool inventory):
-        set_hud_draw_settings(zoom, cube_selector, inventory)
+    def set_draw_settings(cls,
+        bool zoom,
+        bool cube_selector,
+        bool inventory,
+        bool chat_cursor
+    ):
+        set_hud_draw_settings(
+            zoom,
+            cube_selector,
+            inventory,
+            chat_cursor
+        )
+    @classmethod
+    def set_chat_cursor(self, text, float x, float y):
+        set_chat_cursor(text, x,y)
 
 cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
     cdef cppclass CubeSelector:
@@ -1365,7 +1384,7 @@ class HudCubeSelector:
 Text
 '''
 
-cdef extern from './hud/text.hpp':
+cdef extern from './hud/font.hpp' namespace "HudFont":
     int load_font(char* fontfile)
 
     void start_text_draw()
@@ -1388,7 +1407,7 @@ cdef extern from './hud/text.hpp':
     )
     void set_missing_character(int cc)
 
-    void draw_cursor(char* buff, int x, int y)
+cdef extern from "./hud/text.hpp" namespace "HudText":
 
     cdef cppclass Text:
         int id
@@ -1404,10 +1423,9 @@ cdef extern from './hud/text.hpp':
     void set_color(int text_id, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_y(int text_id, float y)
     float get_yoffset(int text_id)
+    float get_x(int text_id)
+    float get_y(int text_id)
     
-def draw_chat_cursor(buff, int x, int y):
-    draw_cursor(buff, x, y)
-
 cdef class CyText(object):
     cdef int text_id
     def __init__(self,
@@ -1447,6 +1465,10 @@ cdef class CyText(object):
         set_y(self.text_id, y)
     def get_yoffset(self):
         return get_yoffset(self.text_id)
+    def get_x(self):
+        return get_x(self.text_id)
+    def get_y(self):
+        return get_y(self.text_id)
     
 
 ''' Font '''
