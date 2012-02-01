@@ -4,8 +4,6 @@ cdef extern from "c_lib.hpp":
     int init_c_lib()
     void close_c_lib()
 
-#print "Initing c_lib"
-
 _init = 0
 def init():
     global _init
@@ -35,41 +33,26 @@ def NetClientFlushToNet():
 
 ##timer
 
-#old functions: deprecate
-'''
-cdef extern from "../c_lib/time/physics_timer.h":
-    int _start_physics_timer(int frequency)
-    int _tick_check()
-    long _get_time()
-    long _get_tick()
-'''
-
-#new functions
 cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
     int _GET_TICK()
     int _GET_MS_TIME()
 
-
- #DEPRECATE
-def StartPhysicsTimer(frequency):
-    #_start_physics_timer(frequency)
+#DEPRECATE
+def StartPhysicsTimer():
     _START_CLOCK()
 
 #DEPRECATE
 def PhysicsTimerTickCheck():
     return _GET_TICK()
-    #return _tick_check()
 
- #DEPRECATE
+#DEPRECATE
 def get_time():
     return _GET_MS_TIME();
-    #return _get_time()
 
- #DEPRECATE
+#DEPRECATE
 def get_tick():
     return _GET_TICK()
-#    return _get_tick()
 
 def START_CLOCK():
     _START_CLOCK()
@@ -923,125 +906,38 @@ class AgentListWrapper:
 #    send_identify_message(name)
     
 """ Particles """
-cdef extern from "./physics/vector.hpp":
-    struct Vector:
-        float x
-        float y
-        float z
-
-cdef extern from "./physics/common.hpp":
-    struct State:
-        Vector p
-        Vector v
-
-cdef extern from "./particles/particles.hpp":
-    cdef struct Particle2:
-        State state
-        unsigned int id
-
 cdef extern from "./particles/grenade.hpp":
-    cdef cppclass Grenade:
-        Particle2 particle
-        void set_ttl(int ttl)
-
     cdef cppclass Grenade_list:
-        Grenade* get(int id)
-        Grenade* create()
-        Grenade* create(int id)
-        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
-        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
         
 cdef extern from "./particles/cspray.hpp":
-    cdef cppclass Cspray:
-        Particle2 particle
-
     cdef cppclass Cspray_list:
-        Cspray* get(int id)
-        Cspray* create()
-        Cspray* create(int id)
-        Cspray* create(float x, float y, float z, float vx, float vy, float vz)
-        Cspray* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
 
 cdef extern from "./particles/shrapnel.hpp":
-    cdef cppclass Shrapnel:
-        Particle2 particle
-
     cdef cppclass Shrapnel_list:
-        Shrapnel* get(int id)
-        Shrapnel* create()
-        Shrapnel* create(int id)
-        Shrapnel* create(float x, float y, float z, float vx, float vy, float vz)
-        Shrapnel* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
         
 cdef extern from "./particles/neutron.hpp":
-    cdef cppclass Neutron:
-        Particle2 particle
-        void set_energy(int energy)
-
     cdef cppclass Neutron_list:
-        Neutron* get(int id)
-        Neutron* create()
-        Neutron* create(int id)
-        Neutron* create(float x, float y, float z, float vx, float vy, float vz)
-        Neutron* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
 
 cdef extern from "./particles/blood.hpp":
-    cdef cppclass Blood:
-        Particle2 particle
-
     cdef cppclass Blood_list:
-        Blood* get(int id)
-        Blood* create()
-        Blood* create(int id)
-        Blood* create(float x, float y, float z, float vx, float vy, float vz)
-        Blood* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
 
 cdef extern from "./particles/minivox.hpp":
-    cdef cppclass Minivox:
-        Particle2 particle
-        void set_color(unsigned char r, unsigned char g, unsigned char b)
-        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
-
     cdef cppclass Minivox_list:
-        Minivox* get(int id)
-        Minivox* create()
-        Minivox* create(int id)
-        Minivox* create(float x, float y, float z, float vx, float vy, float vz)
-        Minivox* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void tick()
         
 cdef extern from "./particles/billboard_text.hpp":
-    cdef cppclass BillboardText:
-        Particle2 particle
-        void set_color(unsigned char r, unsigned char g, unsigned char b)
-        void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
-        void set_text(char* text)
-        char* text
-
     cdef cppclass BillboardText_list:
-        BillboardText* get(int id)
-        BillboardText* create()
-        BillboardText* create(int id)
-        BillboardText* create(float x, float y, float z, float vx, float vy, float vz)
-        BillboardText* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void draw()
         void draw_hud()
         void tick()
@@ -1076,43 +972,6 @@ def draw():
 def draw_hud_billboard_text():
     billboard_text_list.draw_hud()
 
-def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
-    cdef Neutron* neutron
-    neutron = neutron_list.create(x,y,z, vx,vy,vz)
-    if neutron is not NULL:
-        neutron.set_energy(energy)
-
-def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
-    cspray_list.create(x,y,z, vx,vy,vz)
-
-def _create_blood(float x, float y, float z, float vx, float vy, float vz):
-    blood_list.create(x,y,z, vx,vy,vz)
-
-def _create_shrapnel(float x, float y, float z, float vx, float vy, float vz):
-    shrapnel_list.create(x,y,z, vx,vy,vz)
-    
-def _create_minivox(float x, float y, float z, float vx, float vy, float vz):
-    minivox_list.create(x,y,z, vx,vy,vz)
-    
-def _create_minivox_colored(float x, float y, float z, float vx, float vy, float vz, int r, int g, int b):
-    if r > 255: r = 255
-    if g > 255: g = 255
-    if b > 255: b = 255
-    if r < 0: r = 0
-    if g < 0: g = 0
-    if b < 0: b = 0
-
-    cdef Minivox* minivox
-    minivox = minivox_list.create(x,y,z, vx,vy,vz)
-    if minivox is NULL: return
-    minivox.set_color(r,g,b)
-
-def _create_billboard_text(float x, float y, float z, float vx, float vy, float vz, text):
-    cdef BillboardText* bb = billboard_text_list.create(x,y,z, vx,vy,vz)
-    if bb is NULL: return
-    cdef char* ctext = text
-    bb.set_text(ctext)
-    #print "tlen = %i" % (tlen)
  
 '''
 Circuit Tree
@@ -1320,7 +1179,10 @@ Voronoi texture surface
 
 
 
-""" HUD """
+"""
+HUD
+-- this is here because hud.py needs to tell it to render certain things
+"""
 
 cdef extern from "./hud/hud.hpp":
     void set_hud_draw_settings(
@@ -1357,6 +1219,10 @@ cdef class HUD:
     def set_chat_cursor(self, text, float x, float y):
         set_chat_cursor(text, x,y)
 
+"""
+Cube Selector
+-- this is here because input.py needs to communicate with it
+"""
 cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
     cdef cppclass CubeSelector:
         int get_active_id()
@@ -1380,23 +1246,121 @@ class HudCubeSelector:
     def set_active_pos(cls, int pos):
         cube_selector.set_active_pos(pos)
 
-'''
+"""
 Text
-'''
+-- this is here because hud.py needs to set lots of text to render
+"""
 
-cdef extern from './hud/font.hpp' namespace "HudFont":
-    int load_font(char* fontfile)
+cdef extern from "./hud/text.hpp" namespace "HudText":
 
+    cdef cppclass Text:
+        int id
+        float x
+        float y
+        float xoff
+        float yoff
+        void set_text(char* text)
+        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        void set_position(float x, float y)
+        void set_scale(float scale)
+        void set_depth(float depth)
+        void draw()
+
+    cdef cppclass Text_list:
+        Text* create()
+        Text* get(int id)
+        
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    Text_list text_list
+
+class CyText(object):
+    def __init__(self,
+        text='',
+        x=0, y=0,
+        xoff=0, yoff=0,
+        color=(255,255,255,255),
+        depth=-0.1,
+        scale=1.0
+    ):
+        cdef Text* t
+        t = text_list.create()
+        if t == NULL:
+            self.id = -1
+            return
+        self.id = t.id
+        self.text = text
+        self.color = color
+        self.scale = scale
+        self.depth = depth
+        t.set_position(x,y)
+
+    def __getattribute__(self, name):
+        cdef int i
+        i = object.__getattribute__(self, 'id')
+        if name == 'id':
+            return i
+        cdef Text* t
+        t = text_list.get(i)
+        if t == NULL: raise AttributeError
+
+        if name == 'x':
+            return t.x
+        elif name == 'y':
+            return t.y
+        elif name == 'xoff':
+            return t.xoff
+        elif name == 'yoff':
+            return t.yoff
+        else:
+            return object.__getattribute__(self, name)
+
+    def __setattr__(self, k,v):
+        if k == 'id':
+            object.__setattr__(self, k, v)
+            return
+
+        cdef Text* t
+        t = text_list.get(self.id)
+        if t == NULL: raise AttributeError
+
+        cdef unsigned char r
+        cdef unsigned char g
+        cdef unsigned char b
+        cdef unsigned char a
+        
+        if k == 'text':
+            t.set_text(v)
+        elif k == 'color':
+            r,g,b,a = v
+            t.set_color(r,g,b,a)
+        elif k == 'scale':
+            t.set_scale(v)
+        elif k == 'depth':
+            t.set_depth(v)
+        else:
+            object.__setattr__(self, k,v)
+
+    def draw(self):
+        cdef Text* t
+        t = text_list.get(self.id)
+        if t == NULL: return
+        t.draw()
+
+    def set_position(self, float x, float y):
+        cdef Text* t
+        t = text_list.get(self.id)
+        if t == NULL: return
+        t.set_position(x,y)
+
+"""
+Font
+-- this is here because it parses the font configuration file
+"""
+cdef extern from "./hud/font.hpp" namespace "HudFont":
     void start_text_draw()
     void end_text_draw()
 
-    void blit_glyph(
-        float tex_x_min, float tex_x_max,
-        float tex_y_min, float tex_y_max,
-        float screen_x_min, float screen_x_max,
-        float screen_y_min, float screen_y_max,
-        float depth
-    )
+    int load_font(char* filename)
 
     void add_glyph(
         int c,
@@ -1407,73 +1371,9 @@ cdef extern from './hud/font.hpp' namespace "HudFont":
     )
     void set_missing_character(int cc)
 
-cdef extern from "./hud/text.hpp" namespace "HudText":
-
-    cdef cppclass Text:
-        int id
-        void set_text(char* text)
-        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-        void set_position(float x, float y)
-        void set_scale(float scale)
-        void set_depth(float depth)
-        
-    Text* create_text()
-    void draw_text(int text_id)
-    void set_text(int text_id, char* text)
-    void set_color(int text_id, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-    void set_y(int text_id, float y)
-    float get_yoffset(int text_id)
-    float get_x(int text_id)
-    float get_y(int text_id)
-    
-cdef class CyText(object):
-    cdef int text_id
-    def __init__(self,
-        text='',
-        x=0, y=0,
-        xoff=0, yoff=0,
-        color=(255,255,255,255),
-        depth=-0.1,
-        scale=1.0,
-    ):
-        cdef Text* t
-        t = create_text()
-        if t == NULL:
-            self.text_id = -1
-            return
-        self.text_id = t.id
-        t.set_text(text)
-        r,g,b,a = color
-        t.set_color(r,g,b,a)
-        t.set_position(x,y)
-        t.set_scale(scale)
-        t.set_depth(depth)
-
-    def draw(self):
-        draw_text(self.text_id)
-
-    def set_text(self, text):
-        set_text(self.text_id, text)
-    def set_color(self, color):
-        cdef unsigned char r
-        cdef unsigned char g
-        cdef unsigned char b
-        cdef unsigned char a
-        r,g,b,a = color
-        set_color(self.text_id, r,g,b,a)
-    def set_y(self, float y):
-        set_y(self.text_id, y)
-    def get_yoffset(self):
-        return get_yoffset(self.text_id)
-    def get_x(self):
-        return get_x(self.text_id)
-    def get_y(self):
-        return get_y(self.text_id)
     
 
-''' Font '''
 import os.path
-import random
 import string
 
 class Font:
@@ -1594,30 +1494,8 @@ class Font:
         self.add_glyphs_to_c()
         self.ready = True
 
-#    def _gen_stress(self):
-#        num = 4096
-#        self.stressers = []
-#        for i in range(num):
-#            s = random.choice(string.letters)
-#            x = float(random.randrange(0, 1280))
-#            y = float(random.randrange(0, 800))
-#            color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
-#            self.stressers.append((s, x,y,color))
-      
-#    def stress_test(self):
-#        set_text_color(100,100,100,255)
-#        for s,x,y,color in self.stressers:
-#            r,g,b,a = color
-#            set_text_color(r,g,b,a)
-#            draw_text(s, 1, x,y,0.1, 10.)
-
     def start(self):
         start_text_draw()
         
     def end(self):
         end_text_draw()
-
-#    def set_color(self, color):
-#        r,g,b,a = color
-#        set_text_color(r,g,b,a)
-

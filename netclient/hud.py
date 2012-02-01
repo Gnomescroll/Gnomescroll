@@ -156,11 +156,11 @@ class Hud(object):
         return stats
 
     def draw_fps(self, fps_text):
-        self.fps.set_text(fps_text)
+        self.fps.text = fps_text
         self.fps.draw()
 
     def draw_ping(self, ping_text):
-        self.ping.set_text('%sms' % (str(ping_text),))
+        self.ping.text = '%sms' % (str(ping_text),)
         self.ping.draw()
 
     def format_player_stats(self):
@@ -182,7 +182,7 @@ class Hud(object):
 
     def draw_player_stats(self):
         stats = self.format_player_stats()
-        self.player_stats.set_text(stats)
+        self.player_stats.text = stats
         self.player_stats.draw()
 
     def draw_reference_center(self):
@@ -196,7 +196,7 @@ class Hud(object):
         for key, txt in stats_txt.items():
             if key == 'team': continue
             curr_sb = self.scoreboard[key]
-            curr_sb.set_text(txt)
+            curr_sb.text = txt
             curr_sb.draw()
 
         # draw team names
@@ -207,14 +207,15 @@ class Hud(object):
             team_txt = team.name
             team_txt += ' ' * 4
             team_txt += str(team.score)
-            self.team_names[team.id].set_y(self.team_names[team.id].get_yoffset() - y_offset)
-            self.team_names[team.id].set_text(team_txt)
-            self.team_names[team.id].set_color(list(team.color) + [255])
-            self.team_names[team.id].draw()
+            txt = self.team_names[team.id]
+            txt.set_position(txt.x, txt.yoff - y_offset)
+            txt.text = team_txt
+            txt.color = list(team.color) + [255]
+            txt.draw()
 
     def draw_chat_input(self):
         text = self.text_dict['input']
-        text.set_text(ChatClientGlobal.chatRender.user_input())
+        text.text = ChatClientGlobal.chatRender.user_input()
         text.draw()
 
     def draw_chat_messages(self):
@@ -239,8 +240,8 @@ class Hud(object):
             else:
                 color = (255, 40, 0, 255)
             txt = self.text_dict[i]
-            txt.set_text(content)
-            txt.set_color(color)
+            txt.text = content
+            txt.color = color
             to_draw.append(txt)
             i += 1
 
@@ -249,8 +250,8 @@ class Hud(object):
 
     def set_chat_cursor(self):
         buff = ChatClientGlobal.chatRender.input_buffer()
-        x = self.text_dict['input'].get_x()
-        y = self.text_dict['input'].get_y()
+        x = self.text_dict['input'].x
+        y = self.text_dict['input'].y
         init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
 
     help_menu_text = """

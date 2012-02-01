@@ -15,6 +15,8 @@
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/animations/hitscan_laser.hpp>
 
+#include <c_lib/hud/text.hpp>
+
 class PlayerAgent_state; //forward declaration
 
 namespace ClientState {
@@ -39,7 +41,7 @@ namespace ClientState {
     extern Animations::HitscanEffect_list hitscan_effect_list;
     extern Animations::HitscanLaserEffect_list hitscan_laser_effect_list;   
 
-
+    extern HudText::Text_list text_list;
      
     extern CTF ctf;
 

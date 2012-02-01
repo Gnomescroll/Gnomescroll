@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/template/object_list.hpp>
+
 namespace HudText
 {
 
@@ -32,7 +34,7 @@ class Text
         
         void draw();
 
-        Text();
+        Text(int id);
         ~Text();
 };
 
@@ -40,12 +42,20 @@ void init();
 
 
 //CYTHON
-Text* create_text();
-void draw_text(int id);
-void set_text(int id, char* text);
-void set_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-void set_y(int id, float y);
-float get_yoffset(int id);
-float get_x(int id);
-float get_y(int id);
+//Text* create_text();
+//void draw_text(int id);
+//void set_text(int id, char* text);
+//void set_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+//void set_y(int id, float y);
+//float get_yoffset(int id);
+//float get_x(int id);
+//float get_y(int id);
+
+const int TEXT_MAX = 256;
+class Text_list: public Object_list<Text,TEXT_MAX>
+{
+    private:
+        const char* name() { return "Text"; }
+};
+
 }

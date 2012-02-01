@@ -39,7 +39,6 @@ from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from input import Mouse, Keyboard
 from hud import Hud
-from animations import animations
 from dat_loader import dat_loader
 
 #from init_c_lib import _pviz_draw
@@ -191,8 +190,6 @@ class App(object):
                     agent.update_sound()
                     agent.display_agent_names()
                     
-                animations.tick()
-
                 init_c_lib.tick() ## TESTING
 
             #this gets triggered if longer than 30ms between render frames
@@ -262,7 +259,6 @@ class App(object):
                 init_c_lib.draw_agents()
 
             P.event("Animations Draw")
-            animations.draw()
 
             P.event("c_lib_particles.draw()")
             init_c_lib.draw() ## TESTING
