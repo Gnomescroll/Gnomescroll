@@ -93,7 +93,7 @@
 
     /* SDL */
     #include <c_lib/SDL/shader_loader.cpp>
-    #include <c_lib/SDL/texture_loader.c>
+    #include <c_lib/SDL/texture_loader.cpp>
     #include <c_lib/SDL/draw_functions.c>
     #include <c_lib/SDL/particle_functions.c>
     #include <c_lib/SDL/SDL_functions.c>
@@ -103,12 +103,14 @@
 #endif
 
     /* HUD */
+    #include <c_lib/hud/reticle.cpp>
     #include <c_lib/hud/cube_selector.cpp>
     #include <c_lib/hud/inventory.cpp>
     #include <c_lib/hud/text.cpp>
     #include <c_lib/hud/map.cpp>
     #include <c_lib/hud/equipment.cpp>
     #include <c_lib/hud/compass.cpp>
+    #include <c_lib/hud/hud.cpp>
 
     /* input */
     #include <c_lib/input/input.cpp>
@@ -155,6 +157,7 @@ int init_c_lib() {
         init_inventory();
         HudMap::init();
         HudEquipment::init();
+        HudReticle::init();
         Compass::init();
         //vn::init();
 

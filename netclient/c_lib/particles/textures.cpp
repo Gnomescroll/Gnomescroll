@@ -4,7 +4,7 @@
 
 #include <compat_gl.h>
 
-#include <c_lib/SDL/texture_loader.h>
+#include <c_lib/SDL/texture_loader.hpp>
 
 static int particle_texture_id;
 

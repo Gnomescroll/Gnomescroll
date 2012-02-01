@@ -2,7 +2,7 @@
 
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/SDL/texture_loader.h>
+#include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/SDL/draw_functions.h>
 
 namespace HudMap {

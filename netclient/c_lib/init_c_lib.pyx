@@ -1255,61 +1255,87 @@ cdef int quit_event_callback():
 def toggle_mouse_bind():
     return _toggle_mouse_bind()
 
+"""Map"""
+cdef extern from "hud/map.hpp" namespace "HudMap":
+    void draw_map()
+
+class Map:
+    @classmethod
+    def draw(cls):
+        draw_map()
+
+"""Equipment Panel"""
+cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
+    void draw_equipment(int slot)
+    void set_slot_icon(int slot, int icon_id)
+
+class Equipment:
+    @classmethod
+    def draw(cls, int slot):
+        draw_equipment(slot)
+
+    @classmethod
+    def set_equipment_icon(cls, int slot, int icon_id):
+        set_slot_icon(slot, icon_id)
+
+"""Compass"""
+cdef extern from "hud/compass.hpp" namespace "Compass":
+    void draw_compass()
+
+class Compass:
+    @classmethod
+    def draw(cls):
+        draw_compass()
+
+
+"""
+Voronoi texture surface
+"""
+#from libcpp cimport bool
+#cdef extern from "SDL/v.hpp" namespace "vn":
+#    void draw_vn()
+#    void generate_frames(float seconds)
+#    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
+##    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
+#    void init_vn(int width, int height, int gradient)
+
+#class VN(object):
+#    @classmethod
+#    def draw(cls):
+#        draw_vn()
+#    @classmethod
+#    def frames(cls, float seconds):
+#        generate_frames(seconds)
+#    @classmethod
+#    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
+##    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
+#        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
+##        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
+#    @classmethod
+#    def init(cls, int width, int height, int gradient):
+#        init_vn(width, height, gradient)
+
+
+
+
+
+
 """ HUD """
 '''
 HUD textures
 '''
 
-cdef extern from "./SDL/texture_loader.h":
-    struct Texture:
-        int w
-        int h
-        int tex
+cdef extern from "./hud/hud.hpp":
+    void draw_hud_textures(bool zoom)
+    void draw_hud_text(bool zoom)
 
-    Texture _load_image_create_texture(char *file)
-
-cdef extern from "./SDL/draw_functions.h":
-    int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
-
-
-cdef class CyTexture:
-    cdef int texture
-    cdef int w
-    cdef int h
-
-    def __init__(Texture self, char * file):
-        cdef Texture tex
-        tex = _load_image_create_texture(file)
-        self.w = tex.w
-        self.h = tex.h
-        self.texture = tex.tex
-
-    def draw(self, x0, y0, x1, y1, z=-0.5):
-        _blit_sprite(self.texture, x0, y0, x1, y1, z)
-
-
-'''
-Reticle
-'''
-cdef class Reticle(CyTexture):
-    cdef float x0
-    cdef float y0
-    cdef float x1
-    cdef float y1
-
-    def __init__(Reticle self, char* file, int window_width, int window_height):
-        CyTexture.__init__(self, file)
-
-        center_x = window_width / 2.
-        center_y = window_height / 2.
-
-        self.x0 = center_x - (self.w / 2.)
-        self.y0 = center_y - (self.h / 2.)
-        self.x1 = self.x0 + self.w
-        self.y1 = self.y0 + self.h
-
-    def draw(self):
-        _blit_sprite(self.texture, self.x0, self.y0, self.x1, self.y1, 0.)
+cdef class HUD:
+    @classmethod
+    def draw_textures(cls, bool zoom):
+        draw_hud_textures(zoom)
+    @classmethod
+    def draw_text(cls, bool zoom):
+        draw_hud_text(zoom)
 
 
 '''
@@ -1587,62 +1613,3 @@ class Font:
         r,g,b,a = color
         set_text_color(r,g,b,a)
 
-"""Map"""
-cdef extern from "hud/map.hpp" namespace "HudMap":
-    void draw_map()
-
-class Map:
-    @classmethod
-    def draw(cls):
-        draw_map()
-
-"""Equipment Panel"""
-cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-    void draw_equipment(int slot)
-    void set_slot_icon(int slot, int icon_id)
-
-class Equipment:
-    @classmethod
-    def draw(cls, int slot):
-        draw_equipment(slot)
-
-    @classmethod
-    def set_equipment_icon(cls, int slot, int icon_id):
-        set_slot_icon(slot, icon_id)
-
-"""Compass"""
-cdef extern from "hud/compass.hpp" namespace "Compass":
-    void draw_compass()
-
-class Compass:
-    @classmethod
-    def draw(cls):
-        draw_compass()
-
-
-"""
-Voronoi texture surface
-"""
-#from libcpp cimport bool
-#cdef extern from "SDL/v.hpp" namespace "vn":
-#    void draw_vn()
-#    void generate_frames(float seconds)
-#    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
-##    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
-#    void init_vn(int width, int height, int gradient)
-
-#class VN(object):
-#    @classmethod
-#    def draw(cls):
-#        draw_vn()
-#    @classmethod
-#    def frames(cls, float seconds):
-#        generate_frames(seconds)
-#    @classmethod
-#    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
-##    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
-#        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
-##        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
-#    @classmethod
-#    def init(cls, int width, int height, int gradient):
-#        init_vn(width, height, gradient)

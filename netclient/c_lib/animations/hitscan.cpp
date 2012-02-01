@@ -6,7 +6,7 @@
 #include <c_lib/camera/camera.hpp>
 
 #include <compat_gl.h>
-#include <c_lib/SDL/texture_loader.h>
+#include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/physics/vector.hpp>
 
 namespace Animations

@@ -152,9 +152,9 @@ Feb 1
 Melee attack w/ pick
 Double buffered map textures
 Synchronize PLAYERS_MAX across agent_list, netlib, game/teams (#define PLAYERS_MAX 64 in c_lib/defines.h)
-=============
-
 Fix collision detection
+
+=============
 
 OpenAL ?
 

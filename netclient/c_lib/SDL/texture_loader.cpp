@@ -1,4 +1,4 @@
-#include "./texture_loader.h"
+#include "./texture_loader.hpp"
 
 
 #include <c_lib/camera/camera.hpp>
@@ -51,6 +51,18 @@ struct Texture _load_image_create_texture(char *file) {
         printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
     }
     return texture;
+}
+
+void _load_image_create_texture(char *file, struct Texture *tex) {
+    SDL_Surface *image = _load_image(file);
+
+    tex->w = image->w;
+    tex->h = image->h;
+    tex->tex = 0;
+    int err = create_texture_from_surface(image, &tex->tex);
+    if (err) {
+        printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
+    }
 }
 
 int create_texture_from_surface(SDL_Surface *surface, int *tex) {

@@ -26,7 +26,6 @@ class Hud(object):
         self.height_margin = 5
         self.width_margin = 3
 
-        self.init_reticles()
         self.init_text_objects()
         self.init_scoreboard()
 
@@ -191,19 +190,6 @@ class Hud(object):
             self.player_stats.text = stats
         self.player_stats.draw()
 
-    def init_reticles(self):
-        tex_file = '%stexture/target.png' % (base_dir,)
-        self.reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
-        tex_file = '%stexture/target-zoom.png' % (base_dir,)
-        self.scope_reticle = init_c_lib.Reticle(tex_file, self.win_width, self.win_height)
-
-    def draw_reticle(self):
-        self.reticle.draw()
-        #self.draw_reference_center()
-
-    def draw_scope_reticle(self):
-        self.scope_reticle.draw()
-
     def draw_reference_center(self):
         w = 2
         x = (self.win_width/2) - w/2
@@ -310,12 +296,12 @@ class Hud(object):
             init_c_lib.VN.draw()
             return
         # draw non-text first
+        init_c_lib.HUD.draw_textures(zoom)
+        
         if zoom:
-            self.draw_scope_reticle()
             self.draw_text_items(fps, ping, zoom)
             return
             
-        self.draw_reticle()
         if cube_selector:
             self.cube_selector.draw()
         if InputGlobal.inventory:
@@ -344,10 +330,12 @@ class Hud(object):
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
 
+        init_c_lib.HUD.draw_text(zoom)
+
         if zoom:
             init_c_lib.Font.font.end()
             return
-        
+
         if InputGlobal.help_menu:
             self.draw_help_menu()
             return
