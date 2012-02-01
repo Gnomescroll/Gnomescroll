@@ -153,7 +153,7 @@ int init_c_lib() {
         init_cameras();
 
         init_particles();
-        init_inventory();
+        HudInventory::init();
         HudMap::init();
         HudEquipment::init();
         HudReticle::init();

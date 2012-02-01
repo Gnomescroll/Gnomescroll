@@ -1321,22 +1321,22 @@ Voronoi texture surface
 
 
 """ HUD """
-'''
-HUD textures
-'''
 
 cdef extern from "./hud/hud.hpp":
-    void draw_hud_textures(bool zoom, bool cube_selector)
-    void draw_hud_text(bool zoom)
+    void set_hud_draw_settings(bool zoom, bool cube_selector, bool inventory)
+    void draw_hud_textures()
+    void draw_hud_text()
 
 cdef class HUD:
     @classmethod
-    def draw_textures(cls, bool zoom, bool cube_selector):
-        draw_hud_textures(zoom, cube_selector)
+    def draw_textures(cls):
+        draw_hud_textures()
     @classmethod
-    def draw_text(cls, bool zoom):
-        draw_hud_text(zoom)
-
+    def draw_text(cls):
+        draw_hud_text()
+    @classmethod
+    def set_draw_settings(cls, bool zoom, bool cube_selector, bool inventory):
+        set_hud_draw_settings(zoom, cube_selector, inventory)
 
 cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
     cdef cppclass CubeSelector:
@@ -1360,70 +1360,6 @@ class HudCubeSelector:
     @classmethod
     def set_active_pos(cls, int pos):
         cube_selector.set_active_pos(pos)
-
-'''
-HUD Cube Selector
-'''
-
-#cdef extern from "./hud/cube_selector.hpp":
-#    void set_cube_selector_property(int pos, int cube_id, int tex_id)
-#    void draw_cube_selector(float x, float y, float size, int mode)
-#    void set_active_cube_id(int id)
-#    void set_active_cube_pos(int pos)
-#    int get_active_cube_id()
-#    int get_active_cube_pos()
-
-
-#cdef class CubeSelector:
-
-#    # offset from bottom right corner
-#    cdef float x
-#    cdef float y
-#    cdef float size
-#    cdef int mode
-
-#    @classmethod
-#    def load_cube_properties(cls, int pos, int cube_id, int tex_id):
-#        set_cube_selector_property(pos, cube_id, tex_id)
-
-#    def __init__(self, float x, float y, int active_pos=0):
-#        self.x = x
-#        self.y = y
-        
-#    def draw(self):
-#        draw_cube_selector(self.x, self.y, 1., 0)
-
-#    def set(self, int pos):
-#        set_active_cube_pos(pos)
-
-#    def set_id(self, int id):
-#        set_active_cube_id(id)
-
-#    def active(self):
-#        return get_active_cube_pos()
-
-#    def active_id(self):
-#        return get_active_cube_id()
-
-
-'''
-Inventory
-'''
-
-cdef extern from "./hud/inventory.hpp":
-    int draw_inventory(float x, float y)
-
-cdef class Inventory:
-    cdef float x
-    cdef float y
-
-    def __init__(self, float x, float y):
-        self.x = x
-        self.y = y
-
-    def draw(self):
-        draw_inventory(self.x, self.y)
-
 
 '''
 Text

@@ -1,24 +1,13 @@
 #include "inventory.hpp"
 
 #include <compat_gl.h>
-
-#ifdef DC_CLIENT
-
-static int item_sheet_texture;
-static int item_slot_texture;
-static int inventory_background_texture;
-
-int init_inventory() {
-    int a,b,c;
-    a = create_texture_from_file((char*) "./media/texture/hud/item_sheet_01.png", &item_sheet_texture);
-    b = create_texture_from_file((char*)"./media/texture/hud/item_slot_41x41.png", &item_slot_texture);
-    c = create_texture_from_file((char*)"./media/texture/hud/inventory_background_461x352.png", &inventory_background_texture);
-    printf("%d %d %d -HUD Texture Loader Results\n", a,b,c);
-    return a||b||c;
-}
-
-int draw_inventory(float x, float y) {
-    float z = -0.5;
+namespace HudInventory
+{
+    
+void Inventory::draw()
+{
+    if (!this->inited) return;
+    const float z = -0.5;
 
     glColor3ub(255,255,255);
 
@@ -53,7 +42,7 @@ int draw_inventory(float x, float y) {
 
     {
         int i, j;
-        float _x,_y;
+        float x,y;
 
         const int x_size = 64;
         const int y_size = 64;
@@ -63,25 +52,24 @@ int draw_inventory(float x, float y) {
         const int x_inc = 50;
         const int y_inc = 50;
 
-        for(i=0;i<9; i++) {
-        for(j=0;j<6; j++) {
-            
-            _x = x + x_off + i*x_inc;
-            _y = y - y_off - j*y_inc;
+        for(i=0;i<9; i++)
+        for(j=0;j<6; j++)
+        {
+            x = this->x + x_off + i*x_inc;
+            y = this->y - y_off - j*y_inc;
 
             glTexCoord2f(0.0,0.0);
-            glVertex3f(_x, _y, z);  // Top left
+            glVertex3f(x, y, z);  // Top left
 
             glTexCoord2f(1.0,0.0);
-            glVertex3f(_x+x_size, _y, z);  // Top right
+            glVertex3f(x+x_size, y, z);  // Top right
 
             glTexCoord2f(1.0,1.0);
-            glVertex3i(_x+x_size, _y-y_size, z);  // Bottom right
+            glVertex3i(x+x_size, y-y_size, z);  // Bottom right
 
             glTexCoord2f(0.0,1.0);
-            glVertex3i(_x, _y-y_size, z);  // Bottom left
-
-        }}
+            glVertex3i(x, y-y_size, z);  // Bottom left
+        }
     }
     glEnd();
 
@@ -90,8 +78,8 @@ int draw_inventory(float x, float y) {
     glBegin(GL_QUADS);
     {
         int i, j;
-        float _x,_y;
-        int _ti, _tj;
+        float x,y;
+        int ti, tj;
         float tx, ty;
         int index;
 
@@ -109,30 +97,30 @@ int draw_inventory(float x, float y) {
         for(i=0;i<9; i++) {
         for(j=0;j<6; j++) {
             
-            _x = x + x_off + i*x_inc;
-            _y = y - y_off - j*y_inc;
+            x = this->x + x_off + i*x_inc;
+            y = this->y - y_off - j*y_inc;
 
 
             if(i<=j) index = 0;
             if(i>j) index = 1;
 
-            _ti = index % 16;
-            _tj = index / 16;
+            ti = index % 16;
+            tj = index / 16;
             
-            tx = _ti*tx_inc;
-            ty = _tj*ty_inc;
+            tx = ti*tx_inc;
+            ty = tj*ty_inc;
             
             glTexCoord2f(tx, ty);
-            glVertex3f(_x, _y, z);  // Top left
+            glVertex3f(x, y, z);  // Top left
 
             glTexCoord2f(tx+tx_inc, ty);
-            glVertex3f(_x+x_size, _y, z);  // Top right
+            glVertex3f(x+x_size, y, z);  // Top right
 
             glTexCoord2f(tx+tx_inc, ty+ty_inc);
-            glVertex3i(_x+x_size, _y-y_size, z);  // Bottom right
+            glVertex3i(x+x_size, y-y_size, z);  // Bottom right
 
             glTexCoord2f(tx, ty+tx_inc);
-            glVertex3i(_x, _y-y_size, z);  // Bottom left
+            glVertex3i(x, y-y_size, z);  // Bottom left
 
         }}
     }
@@ -140,8 +128,44 @@ int draw_inventory(float x, float y) {
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-
-    return 0;
 }
 
-#endif
+void Inventory::set_position(float x, float y)
+{
+    this->x = x;
+    this->y = y;
+}
+
+void Inventory::init()
+{
+    if (this->inited) return;
+
+    int a,b,c;
+    a = create_texture_from_file((char*) "./media/texture/hud/item_sheet_01.png", &this->item_sheet_texture);
+    b = create_texture_from_file((char*)"./media/texture/hud/item_slot_41x41.png", &this->item_slot_texture);
+    c = create_texture_from_file((char*)"./media/texture/hud/inventory_background_461x352.png", &this->inventory_background_texture);
+    printf("%d %d %d -Inventory Texture Loader Results (any nonzero is failure)\n", a,b,c);
+    if (a||b||c) return;
+
+    this->inited = true;
+}
+
+Inventory::Inventory()
+:
+inited(false),
+x(0),y(0),
+item_sheet_texture(0),
+item_slot_texture(0),
+inventory_background_texture(0)
+{}
+
+
+Inventory inventory;
+
+void init()
+{
+    inventory.init();
+    inventory.set_position(250, 500);
+}
+
+}

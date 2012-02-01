@@ -29,8 +29,6 @@ class Hud(object):
         self.init_text_objects()
         self.init_scoreboard()
 
-        self.inventory = init_c_lib.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
-
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
         txt = init_c_lib.Text(
             text = text,
@@ -291,19 +289,22 @@ class Hud(object):
         self.help_menu.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+        init_c_lib.HUD.set_draw_settings(
+            zoom,
+            cube_selector,
+            InputGlobal.inventory
+        )
+        
         if InputGlobal.vn:
             init_c_lib.VN.draw()
             return
         # draw non-text first
-        init_c_lib.HUD.draw_textures(zoom, cube_selector)
+        init_c_lib.HUD.draw_textures()
         
         if zoom:
             self.draw_text_items(fps, ping, zoom)
             return
             
-        if InputGlobal.inventory:
-            self.inventory.draw()
-
         if InputGlobal.input == 'chat':
             self.draw_cursor()
 
@@ -327,7 +328,7 @@ class Hud(object):
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
 
-        init_c_lib.HUD.draw_text(zoom)
+        init_c_lib.HUD.draw_text()
 
         if zoom:
             init_c_lib.Font.font.end()
