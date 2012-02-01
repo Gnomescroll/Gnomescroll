@@ -30,7 +30,7 @@ class Hud(object):
         self.init_scoreboard()
 
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = init_c_lib.Text(
+        txt = init_c_lib.CyText(
             text = text,
             x = x,
             y = self.win_height - offset,
@@ -182,9 +182,7 @@ class Hud(object):
 
     def draw_player_stats(self):
         stats = self.format_player_stats()
-        old = self.player_stats.text
-        if old != stats:
-            self.player_stats.text = stats
+        self.player_stats.set_text(stats)
         self.player_stats.draw()
 
     def draw_reference_center(self):

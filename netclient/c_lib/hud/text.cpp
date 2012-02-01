@@ -48,13 +48,13 @@ int load_font(char* fontfile) {
     return 1;
 }
 
-void set_text_color(int r, int g, int b, int a) {
-    if (tex_alpha) {
-        glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
-    } else {
-        glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
-    }
-}
+//void set_text_color(int r, int g, int b, int a) {
+    //if (tex_alpha) {
+        //glColor4ub((unsigned char)r,(unsigned char)g,(unsigned char)b,(unsigned char)a); //replace with color cordinates on texture
+    //} else {
+        //glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b); //replace with color cordinates on texture
+    //}
+//}
     
 void start_text_draw() {
     
@@ -168,93 +168,8 @@ struct Glyph get_missing_glyph(unsigned char c)
     return glyph;
 }
 
-// deprecate
-void draw_text(char* t, int len, float x, float y, float depth, float line_height) {
-    int i;
-    char c;
-    struct Glyph glyph;
-
-    float tx_min, tx_max, ty_min, ty_max;
-    float sx_min, sx_max, sy_min, sy_max;
-    float cursor_x = 0.0f;
-    float cursor_y = 0.0f;
-
-    for (i=0; i<len; i++) {
-        c = t[i];
-
-        // newline
-        if (c == '\n') {
-            cursor_y += line_height;
-            cursor_x = 0.0f;
-            continue;
-        }
-        
-        glyph = glyphs[(unsigned int)c];
-
-        // known glyph?
-        if (! glyph.available) {
-            printf("Character unknown: %c\n", c);
-            glyph = get_missing_glyph(c);
-        }
-
-        tx_max = glyph.x;
-        tx_min = glyph.x + glyph.tw;
-        ty_min = glyph.y;
-        ty_max = glyph.y + glyph.th;
-
-        sx_max = x + cursor_x + glyph.xoff;
-        sx_min = x + cursor_x + glyph.xoff + glyph.w;
-        sy_min = y - (cursor_y + glyph.yoff);
-        sy_max = y - (cursor_y + glyph.yoff + glyph.h);
-        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
-
-        cursor_x += glyph.xadvance;
-    }
-}
-
-void draw_text(char* t, float x, float y, float depth, float line_height) {
-    int i = 0;
-    char c;
-    struct Glyph glyph;
-
-    float tx_min, tx_max, ty_min, ty_max;
-    float sx_min, sx_max, sy_min, sy_max;
-    float cursor_x = 0.0f;
-    float cursor_y = 0.0f;
-
-    while ((c = t[i++]) != '\0')
-    {
-        // newline
-        if (c == '\n') {
-            cursor_y += line_height;
-            cursor_x = 0.0f;
-            continue;
-        }
-        
-        glyph = glyphs[(unsigned int)c];
-
-        // known glyph?
-        if (! glyph.available) {
-            printf("Character unknown: %c\n", c);
-            glyph = get_missing_glyph(c);
-        }
-
-        tx_max = glyph.x;
-        tx_min = glyph.x + glyph.tw;
-        ty_min = glyph.y;
-        ty_max = glyph.y + glyph.th;
-
-        sx_max = x + cursor_x + glyph.xoff;
-        sx_min = x + cursor_x + glyph.xoff + glyph.w;
-        sy_min = y - (cursor_y + glyph.yoff);
-        sy_max = y - (cursor_y + glyph.yoff + glyph.h);
-        blit_glyph(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
-
-        cursor_x += glyph.xadvance;
-    }
-}
-
-void draw_text(char* t, float x, float y, float depth, float scale, float line_height) {
+void draw_text(char* t, float x, float y, float depth, float scale, float line_height)
+{
     int i = 0;
     char c;
     struct Glyph glyph;
@@ -344,4 +259,159 @@ void draw_cursor(char* buff, int x, int y)
     const int w = 8;
     h = 18; // magic number precalculated;
     _draw_rect(r,g,b, x + len + 4, y - h, w, h);
+}
+
+void Text::set_text(char* text)
+{
+    int len = strlen(text);
+    if (len == 0) {
+        this->str_len = 0;
+        return;
+    }
+printf("Text::set_text to %s\n", text);
+printf("len=%d\n", len);
+    if (this->text != NULL)
+    {
+        printf("text not null, might replace text\n");
+        if (strcmp(text, this->text))
+        {
+            // string is different
+            if (this->str_len == 0)
+            {
+                // recalculate str_len
+                this->str_len = strlen(this->text);
+            }
+            if (len != this->str_len)
+            {
+                // string is different size
+                this->text = (char*)realloc(this->text, sizeof(char)*(len+1));
+                this->str_len = len;
+            }
+            
+            strcpy(this->text, text);
+        }
+    }
+    else
+    {
+        printf("new text\n");
+        // new
+        this->text = (char*)malloc(sizeof(char) * (len+1));
+        strcpy(this->text, text);
+        this->str_len = len;
+    }
+}
+
+void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    this->a = a;
+}
+
+void Text::set_position(float x, float y)
+{
+    static int first = 0;
+    this->x = x;
+    this->y = y;
+    if (!first)
+    {
+        this->xoff = x;
+        this->yoff = y;
+    }
+    first++;
+}
+
+void Text::set_scale(float scale)
+{
+    this->scale = scale;
+}
+
+void Text::set_depth(float depth)
+{
+    this->depth = depth;
+}
+
+void Text::draw()
+{
+    if (this->text == NULL || this->str_len == 0) return;
+    glColor4ub(r,g,b,a);
+    draw_text(this->text, this->x, this->y, this->depth, this->scale, this->line_height);
+}
+
+Text::Text()
+:
+width(10),height(10),
+line_height(18),
+str_len(0),
+id(-1),
+inited(false),
+depth(-0.1),
+scale(1.0),
+r(255),g(255),b(255),a(255),
+text(NULL),
+x(0), y(0),
+xoff(0),yoff(0)
+{}
+
+Text::~Text()
+{
+    if (this->text != NULL)
+        free(this->text);
+}
+
+static const int HUD_TEXT_MAX = 256;
+static int text_index = 0;
+static Text hud_text[HUD_TEXT_MAX];
+
+// CYTHON
+Text* create_text()
+{
+    if (text_index >= HUD_TEXT_MAX)
+    {
+        printf("HUD_TEXT MAX %d exceeded\n", HUD_TEXT_MAX);
+        return NULL;
+    }
+    
+    Text* t = &hud_text[text_index];
+    t->id = text_index++;
+    t->inited = true;
+    return t;
+}
+
+void draw_text(int id)
+{
+    if (id < 0 || id >= HUD_TEXT_MAX)
+    {
+        printf("draw_text -- invalid text id %d\n", id);
+        return;
+    }
+
+    Text t = hud_text[id];
+    if (!t.inited)
+    {
+        printf("text %d not inited\n", id);
+        return;
+    }
+
+    t.draw();
+}
+
+void set_text(int id, char* text)
+{
+    if (id < 0 || id >= HUD_TEXT_MAX)
+    {
+        printf("draw_text -- invalid text id %d\n", id);
+        return;
+    }
+
+
+    Text t = hud_text[id];
+    if (!t.inited)
+    {
+        printf("text %d not inited\n", id);
+        return;
+    }
+
+    t.set_text(text);
 }

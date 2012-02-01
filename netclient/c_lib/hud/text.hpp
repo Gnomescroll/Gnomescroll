@@ -54,3 +54,39 @@ extern float font_texture_height;
 
 // chat cursor
 void draw_cursor(char* buff, int x, int y);
+
+class Text
+{
+    private:
+        float width,height;
+        float line_height;
+        int str_len;
+    public:
+        int id;
+        bool inited;
+        float depth;
+        float scale;
+        
+        unsigned char r,g,b,a;
+
+        char* text;
+
+        float x,y;  // active x,y
+        float xoff,yoff; // reference x,y
+
+        void set_text(char* text);
+        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        void set_position(float x, float y);
+        void set_scale(float scale);
+        void set_depth(float depth);
+        
+        void draw();
+
+        Text();
+        ~Text();
+};
+
+//CYTHON
+Text* create_text();
+void draw_text(int text_id);
+void set_text(int text_id, char* text);

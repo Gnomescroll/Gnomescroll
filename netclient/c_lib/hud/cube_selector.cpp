@@ -12,6 +12,7 @@ namespace HudCubeSelector
 
 void CubeSelector::init()
 {
+    if (this->inited) return;
     int i;
     for(i=0;i<256;i++)
     {

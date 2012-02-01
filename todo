@@ -157,6 +157,8 @@ Fix collision detection
 reticle in C
 cube selector in C
 fix cube selector input
+inventory in C
+hud draw settings in C
 =============
 
 OpenAL ?

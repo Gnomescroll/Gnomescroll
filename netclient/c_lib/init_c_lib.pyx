@@ -1369,7 +1369,6 @@ cdef extern from './hud/text.hpp':
     int load_font(char* fontfile)
 
     void start_text_draw()
-    void set_text_color(int r, int g, int b, int a)
     void end_text_draw()
 
     void blit_glyph(
@@ -1388,40 +1387,81 @@ cdef extern from './hud/text.hpp':
         float xadvance
     )
     void set_missing_character(int cc)
-    void draw_text(char* t, int len, float x, float y, float depth, float line_height)
 
     void draw_cursor(char* buff, int x, int y)
 
+    cdef cppclass Text:
+        int id
+        void set_text(char* text)
+        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+        void set_position(float x, float y)
+        void set_scale(float scale)
+        void set_depth(float depth)
+        
+    Text* create_text()
+    void draw_text(int text_id)
+    void set_text(int text_id, char* text)
+    
 def draw_chat_cursor(buff, int x, int y):
     draw_cursor(buff, x, y)
 
-class Text(object):
-
-    def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
-        self.height = 10
-        self.width = 10
-        self.depth = -0.1
-        self.color = list(color)
-        if len(self.color) == 3:
-            self.color.append(255) # default alpha
-
-        self.text = text
-        self.text_len = len(text)
-        self.x = x
-        self.y = y
-        self.offset = y
-        self.line_height = 18.
-
-    def __setattr__(self, k, v):
-        if k == 'text':
-            object.__setattr__(self, "text_len", len(v))
-        object.__setattr__(self, k, v)
+cdef class CyText(object):
+    cdef int text_id
+    def __init__(self,
+        text='',
+        x=0, y=0,
+        xoff=0, yoff=0,
+        color=(255,255,255,255),
+        depth=-0.1,
+        scale=1.0,
+    ):
+        cdef Text* t
+        t = create_text()
+        if t == NULL:
+            self.text_id = -1
+            return
+        self.text_id = t.id
+        t.set_text(text)
+        r,g,b,a = color
+        t.set_color(r,g,b,a)
+        t.set_position(x,y)
+        t.set_scale(scale)
+        t.set_depth(depth)
 
     def draw(self):
-        r,g,b,a = self.color
-        set_text_color(r,g,b,a)
-        draw_text(self.text, self.text_len, self.x, self.y, self.depth, self.line_height)
-        
+        draw_text(self.text_id)
+
+    def set_text(self, text):
+        set_text(self.text_id, text)
+
+#class Text(object):
+
+#    def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
+#        self.height = 10
+#        self.width = 10
+#        self.depth = -0.1
+#        self.color = list(color)
+#        if len(self.color) == 3:
+#            self.color.append(255) # default alpha
+
+#        self.text = text
+#        self.text_len = len(text)
+#        self.x = x
+#        self.y = y
+#        self.offset = y
+#        self.line_height = 18.
+
+#    def __setattr__(self, k, v):
+#        if k == 'text':
+#            object.__setattr__(self, "text_len", len(v))
+#        object.__setattr__(self, k, v)
+
+#    def draw(self):
+#        r,g,b,a = self.color
+#        set_text_color(r,g,b,a)
+#        draw_text(self.text, self.text_len, self.x, self.y, self.depth, self.line_height)
+
+
 ''' Font '''
 import os.path
 import random
@@ -1545,22 +1585,22 @@ class Font:
         self.add_glyphs_to_c()
         self.ready = True
 
-    def _gen_stress(self):
-        num = 4096
-        self.stressers = []
-        for i in range(num):
-            s = random.choice(string.letters)
-            x = float(random.randrange(0, 1280))
-            y = float(random.randrange(0, 800))
-            color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
-            self.stressers.append((s, x,y,color))
+#    def _gen_stress(self):
+#        num = 4096
+#        self.stressers = []
+#        for i in range(num):
+#            s = random.choice(string.letters)
+#            x = float(random.randrange(0, 1280))
+#            y = float(random.randrange(0, 800))
+#            color = (random.randrange(0,256),random.randrange(0,256),random.randrange(0,256),random.randrange(0,256))
+#            self.stressers.append((s, x,y,color))
       
-    def stress_test(self):
-        set_text_color(100,100,100,255)
-        for s,x,y,color in self.stressers:
-            r,g,b,a = color
-            set_text_color(r,g,b,a)
-            draw_text(s, 1, x,y,0.1, 10.)
+#    def stress_test(self):
+#        set_text_color(100,100,100,255)
+#        for s,x,y,color in self.stressers:
+#            r,g,b,a = color
+#            set_text_color(r,g,b,a)
+#            draw_text(s, 1, x,y,0.1, 10.)
 
     def start(self):
         start_text_draw()
@@ -1568,7 +1608,7 @@ class Font:
     def end(self):
         end_text_draw()
 
-    def set_color(self, color):
-        r,g,b,a = color
-        set_text_color(r,g,b,a)
+#    def set_color(self, color):
+#        r,g,b,a = color
+#        set_text_color(r,g,b,a)
 
