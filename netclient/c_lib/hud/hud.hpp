@@ -25,7 +25,7 @@ class HUD
     
     // text objects
     Text* player_stats;
-    Text* help_menu;
+    Text* help;
     Text* disconnected;
     Text* dead;
     Text* fps;
@@ -38,21 +38,26 @@ class HUD
     // chat queue
     ChatMessageQueue* chat_queue;    // contains text objects
 
+    void init();
     HUD();
     ~HUD();
 };
 
+extern HUD* hud;
 
-    
+void init();
+
 void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
     bool inventory,
-    bool chat_cursor
+    bool chat_cursor,
+    bool help
 );
 void set_chat_cursor(char* text, float x, float y);
 
 void draw_hud_textures();
 void draw_hud_text();
+
 
 }

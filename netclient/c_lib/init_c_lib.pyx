@@ -1189,7 +1189,8 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool zoom,
         bool cube_selector,
         bool inventory,
-        bool chat_cursor
+        bool chat_cursor,
+        bool help
     )
     void draw_hud_textures()
     void draw_hud_text()
@@ -1207,13 +1208,15 @@ cdef class HUD:
         bool zoom,
         bool cube_selector,
         bool inventory,
-        bool chat_cursor
+        bool chat_cursor,
+        bool help
     ):
         set_hud_draw_settings(
             zoom,
             cube_selector,
             inventory,
-            chat_cursor
+            chat_cursor,
+            help
         )
     @classmethod
     def set_chat_cursor(self, text, float x, float y):
@@ -1272,7 +1275,6 @@ cdef extern from "./hud/text.hpp" namespace "HudText":
         Text* create()
         Text* get(int id)
         
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Text_list text_list
 
 class CyText(object):

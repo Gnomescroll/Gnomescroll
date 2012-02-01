@@ -8,26 +8,29 @@
 /* Configuration */
 namespace Hud
 {
-    
+
 static struct HudDrawSettings
 {
     bool zoom;
     bool cube_selector;
     bool inventory;
     bool chat_cursor;
+    bool help;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
     bool inventory,
-    bool chat_cursor
+    bool chat_cursor,
+    bool help
 )
 {
     hud_draw_settings.zoom = zoom;
     hud_draw_settings.cube_selector = cube_selector;
     hud_draw_settings.inventory = inventory;
     hud_draw_settings.chat_cursor = chat_cursor;
+    hud_draw_settings.help = help;
 }
 
 static struct ChatCursor
@@ -89,31 +92,64 @@ void draw_hud_textures()
 }
 
 void draw_hud_text()
-{}
+{
+    if (hud_draw_settings.help)
+        hud->help->draw();
+}
 
 
 /* HUD */
 
-HUD::HUD()
-:
-inited(false)
+const char help_text[] =
+"\n"
+"    Key:            Action:\n"
+"\n"
+"    Esc             Quit\n"
+"    WASD            Move\n"
+"    Space           Jump\n"
+"    Z               Jetpack (hold down)\n"
+"    \n"
+"    G               Toggle camera\n"
+"    T               Toggle keyboard\n"
+"\n"
+"    R               Reload\n"
+"    Num keys        Select weapon\n"
+"    Mouse scroll    Select weapon\n"
+"    Left click      Activate weapon\n"
+"    Right click     Zoom (if weapon has scope)\n"
+"    Arrow keys      Choose block type when block selector is active\n"
+"\n"
+"    Y               Chat\n"
+"    H               Display this menu\n"
+"    Tab             Display scoreboard\n"
+"    M               Minimap\n"
+"    \n"
+"    Weapons:\n"
+"    1               Laser\n"
+"    2               Pick\n"
+"    3               Block selector / applier\n"
+"    4               Grenades\n"
+;
+
+void HUD::init()
 {
-    player_stats = ClientState::text_list.create();
+    player_stats = HudText::text_list.create();
     player_stats->set_text((char*) "");
 
-    help_menu = ClientState::text_list.create();
-    help_menu->set_text((char*) "");
+    help = HudText::text_list.create();
+    help->set_text((char*) help_text);
+    help->set_position(_xresf/2, _yresf);
 
-    disconnected = ClientState::text_list.create();
+    disconnected = HudText::text_list.create();
     disconnected->set_text((char*) "Server not connected.");
 
-    dead = ClientState::text_list.create();
+    dead = HudText::text_list.create();
     dead->set_text((char*) "You're dead.");
 
-    fps = ClientState::text_list.create();
+    fps = HudText::text_list.create();
     fps->set_text((char*) "");
 
-    ping = ClientState::text_list.create();
+    ping = HudText::text_list.create();
     ping->set_text((char*) "");
 
     scoreboard = new Scoreboard();
@@ -121,12 +157,25 @@ inited(false)
     chat_queue = new ChatMessageQueue();
 }
 
+HUD::HUD()
+:
+inited(false),
+player_stats(NULL),
+help(NULL),
+disconnected(NULL),
+dead(NULL),
+fps(NULL),
+ping(NULL),
+scoreboard(NULL),
+chat_queue(NULL)
+{}
+
 HUD::~HUD()
 {
     if (player_stats != NULL)
         delete player_stats;
-    if (help_menu != NULL)
-        delete help_menu;
+    if (help != NULL)
+        delete help;
     if (disconnected != NULL)
         delete disconnected;
     if (dead != NULL)
@@ -141,5 +190,11 @@ HUD::~HUD()
         delete chat_queue;
 }
 
+HUD* hud;
 
+void init()
+{
+    hud = new HUD();
+    hud->init();
+}
 }

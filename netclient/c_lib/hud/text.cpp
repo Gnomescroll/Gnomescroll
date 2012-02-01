@@ -163,7 +163,8 @@ void Text::set_depth(float depth)
 
 void Text::draw()
 {
-    if (this->text == NULL || this->str_len == 0) return;
+    if (this->text == NULL || this->str_len == 0)
+        return;
     glColor4ub(r,g,b,a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale, this->line_height);
 }
@@ -189,5 +190,7 @@ Text::~Text()
     if (this->text != NULL)
         free(this->text);
 }
+
+Text_list text_list;
 
 }

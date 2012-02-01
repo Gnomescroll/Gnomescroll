@@ -57,11 +57,11 @@ class Hud(object):
             x = self.win_width - 360
         )
 
-        self.help_menu = self.text(
-            text = self.help_menu_text,
-            offset = 0,
-            x = self.win_width/2
-        )
+        #self.help_menu = self.text(
+            #text = self.help_menu_text,
+            #offset = 0,
+            #x = self.win_width/2
+        #)
 
         self.disconnected_message = self.text(
             text = 'Server not connected',
@@ -254,39 +254,40 @@ class Hud(object):
         y = self.text_dict['input'].y
         init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
 
-    help_menu_text = """
-    Key:            Action:
+    #help_menu_text = """
+    #Key:            Action:
 
-    Esc             Quit
-    WASD            Move
-    Space           Jump
-    Z               Jetpack (hold down)
+    #Esc             Quit
+    #WASD            Move
+    #Space           Jump
+    #Z               Jetpack (hold down)
     
-    G               Toggle camera
-    T               Toggle keyboard
+    #G               Toggle camera
+    #T               Toggle keyboard
 
-    R               Reload
-    Num keys        Select weapon
-    Mouse scroll    Select weapon
-    Left click      Activate weapon
-    Right click     Zoom (if weapon has scope)
-    Arrow keys      Choose block type when block selector is active
+    #R               Reload
+    #Num keys        Select weapon
+    #Mouse scroll    Select weapon
+    #Left click      Activate weapon
+    #Right click     Zoom (if weapon has scope)
+    #Arrow keys      Choose block type when block selector is active
 
-    Y               Chat
-    H               Display this menu
-    Tab             Display scoreboard
-    M               Minimap
+    #Y               Chat
+    #H               Display this menu
+    #Tab             Display scoreboard
+    #M               Minimap
     
-    Weapons:
-    1               Laser
-    2               Pick
-    3               Block selector / applier
-    4               Grenades
-    """
-    def draw_help_menu(self):
-        self.help_menu.draw()
+    #Weapons:
+    #1               Laser
+    #2               Pick
+    #3               Block selector / applier
+    #4               Grenades
+    #"""
+    #def draw_help_menu(self):
+        #self.help_menu.draw()
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+
         draw_chat_cursor = (InputGlobal.input == 'chat')
         if draw_chat_cursor:
             self.set_chat_cursor()
@@ -295,7 +296,8 @@ class Hud(object):
             zoom,
             cube_selector,
             InputGlobal.inventory,
-            draw_chat_cursor
+            draw_chat_cursor,
+            InputGlobal.help_menu
         )
         
         if InputGlobal.vn:
@@ -334,9 +336,9 @@ class Hud(object):
             init_c_lib.Font.font.end()
             return
 
-        if InputGlobal.help_menu:
-            self.draw_help_menu()
-            return
+        #if InputGlobal.help_menu:
+            #self.draw_help_menu()
+            #return
 
         self.draw_player_stats()
 

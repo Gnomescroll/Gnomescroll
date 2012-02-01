@@ -40,8 +40,6 @@ namespace ClientState {
 
     extern Animations::HitscanEffect_list hitscan_effect_list;
     extern Animations::HitscanLaserEffect_list hitscan_laser_effect_list;   
-
-    extern HudText::Text_list text_list;
      
     extern CTF ctf;
 
