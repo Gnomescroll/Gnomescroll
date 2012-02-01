@@ -108,6 +108,22 @@ inline void agent_shot_nothing_StoC::handle()
     a->event.fired_weapon_at_nothing();
 }
 
+inline void agent_melee_object_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.melee_attack_object(target_id, target_type, target_part, x,y,z);
+}
+
+inline void agent_melee_nothing_StoC::handle()
+{
+    if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
+    Agent_state* a = ClientState::agent_list.get(id);
+    if (a == NULL) return;
+    a->event.melee_attack_nothing();
+}
+
 inline void agent_hit_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
@@ -220,6 +236,8 @@ inline void AgentActiveWeapon_CtoS::handle() {}
 inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
+inline void melee_object_CtoS::handle(){}
+inline void melee_none_CtoS::handle(){}
 //inline void identify_CtoS::handle(){}
 #endif
 
@@ -237,6 +255,8 @@ inline void agent_damage_StoC::handle() {}
 inline void agent_shot_object_StoC::handle(){}
 inline void agent_shot_block_StoC::handle(){}
 inline void agent_shot_nothing_StoC::handle(){}
+inline void agent_melee_object_StoC::handle(){}
+inline void agent_melee_nothing_StoC::handle(){}
 inline void agent_hit_block_StoC::handle(){}
 inline void agent_threw_grenade_StoC::handle(){}
 inline void agent_placed_block_StoC::handle(){}
@@ -459,6 +479,94 @@ inline void hitscan_none_CtoS::handle()
 
     if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
+    msg.id = a->id;
+    msg.broadcast();
+}
+
+inline void melee_object_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+
+    if (!a->weapons.pick.fire()) return;
+
+    const int agent_dmg = 50;
+    const int spawner_dmg = 50;
+    int spawner_health;
+    
+    void *obj;
+    float x,y,z;
+    switch (type)
+    {
+        case OBJ_TYPE_AGENT:
+            obj = ServerState::agent_list.get(id);
+            if (obj == NULL) return;
+            ((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
+            x = ((Agent_state*)obj)->s.x;
+            y = ((Agent_state*)obj)->s.y;
+            z = ((Agent_state*)obj)->s.z;
+            break;
+
+        case OBJ_TYPE_SLIME:
+            obj = ServerState::slime_list.get(id);
+            if (obj == NULL) return;
+            ServerState::slime_list.destroy(id);
+            x = ((Monsters::Slime*)obj)->x;
+            y = ((Monsters::Slime*)obj)->y;
+            z = ((Monsters::Slime*)obj)->z;
+            break;
+        
+        case OBJ_TYPE_SPAWNER:
+            obj = ServerState::spawner_list.get(id);
+            if (obj==NULL) return;
+
+            if (((Spawner*)obj)->team == a->status.team
+            && ((Spawner*)obj)->owner != a->id)
+                return; // teammates cant kill spawners
+                
+            // apply damage
+            spawner_health = ((Spawner*)obj)->take_damage(spawner_dmg);
+            if (spawner_health <= 0)
+            {
+                int coins = ((Spawner*)obj)->get_coins_for_kill(a->status.team);
+                a->status.add_coins(coins);
+            }
+            x = ((Spawner*)obj)->x;
+            y = ((Spawner*)obj)->y;
+            z = ((Spawner*)obj)->z;
+            break;
+            
+        //case OBJ_TYPE_TURRET:
+            //obj = ServerState::turret_list.get(id);
+            //if (obj==NULL) return;
+            //((Turrent*)obj)->take_damage();
+            //x = ((Turrent*)obj)->x;
+            //y = ((Turrent*)obj)->y;
+            //z = ((Turrent*)obj)->z;
+            //break;
+
+        default:
+            return;
+    }
+
+    agent_melee_object_StoC msg;
+    msg.id = a->id;
+    msg.target_id = this->id;
+    msg.target_type = this->type;
+    msg.target_part = this->part;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
+    msg.broadcast();
+}
+
+inline void melee_none_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+
+    if (!a->weapons.pick.fire()) return;
+    agent_melee_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
 }

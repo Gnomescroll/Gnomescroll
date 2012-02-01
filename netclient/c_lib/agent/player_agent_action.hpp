@@ -12,8 +12,9 @@ class PlayerAgent_action {
         
     public:
         void fire();
-        void hitscan();
-        void hit_block();
+        void hitscan_laser();
+        void hitscan_pick();
+        //void hit_block();
         void set_block();
         void throw_grenade();
 

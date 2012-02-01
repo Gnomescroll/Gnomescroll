@@ -66,10 +66,16 @@ void RegisterMessages() {
     hitscan_block_CtoS::register_server_packet();
     hitscan_none_CtoS::register_server_packet();
 
+    // melees
+    melee_object_CtoS::register_server_packet();
+    melee_none_CtoS::register_server_packet();
+
     // hitscan StoC action (for animations etc)
     agent_shot_object_StoC::register_client_packet();
     agent_shot_block_StoC::register_client_packet();
     agent_shot_nothing_StoC::register_client_packet();
+    agent_melee_object_StoC::register_client_packet();
+    agent_melee_nothing_StoC::register_client_packet();
 
     agent_hit_block_StoC::register_client_packet();
     agent_threw_grenade_StoC::register_client_packet();

@@ -277,6 +277,19 @@ void Agent_event::placed_block()
     // player agent block placement animation
 }
 
+void Agent_event::melee_attack_object(int id, int type, int part, float x, float y, float z)
+{
+    // play pick swing animation
+    // play blood animation
+    // play swing sound
+    // play object's hurt sound
+}
+
+void Agent_event::melee_attack_nothing()
+{
+    // play pick swing animation
+}
+
 
 Agent_event::~Agent_event()
 {
