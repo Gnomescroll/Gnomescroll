@@ -30,7 +30,6 @@ class Hud(object):
         self.init_scoreboard()
 
         self.inventory = init_c_lib.Inventory(opts.inventory_hud_x_offset, opts.inventory_hud_y_offset)
-        self.cube_selector = init_c_lib.CubeSelector(opts.cube_selector_x_offset, opts.cube_selector_y_offset)
 
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
         txt = init_c_lib.Text(
@@ -296,14 +295,12 @@ class Hud(object):
             init_c_lib.VN.draw()
             return
         # draw non-text first
-        init_c_lib.HUD.draw_textures(zoom)
+        init_c_lib.HUD.draw_textures(zoom, cube_selector)
         
         if zoom:
             self.draw_text_items(fps, ping, zoom)
             return
             
-        if cube_selector:
-            self.cube_selector.draw()
         if InputGlobal.inventory:
             self.inventory.draw()
 

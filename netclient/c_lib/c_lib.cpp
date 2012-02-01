@@ -153,11 +153,11 @@ int init_c_lib() {
         init_cameras();
 
         init_particles();
-        init_cube_selector();
         init_inventory();
         HudMap::init();
         HudEquipment::init();
         HudReticle::init();
+        HudCubeSelector::init();
         Compass::init();
         //vn::init();
 

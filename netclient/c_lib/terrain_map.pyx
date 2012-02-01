@@ -16,10 +16,6 @@ Part 1: State
 import zlib
 import struct
 
-#define vm_map_dim 64 //number of map chunks in x/y
-#define vm_chunk_size = 8
-#define vm_column_max = 16
-
 cdef enum:
     vm_map_dim = 64
     vm_chunk_size = 8
@@ -670,17 +666,19 @@ def init(inited=[0]):
     
     #_init_t_map_draw()
 
+cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
+    cdef cppclass CubeSelector:
+        void load_cube_property(int pos, int cube_id, int tex_id)
+
+    CubeSelector cube_selector
+
 def set_hud_cube_selector():
     global c_dat
-    import init_c_lib
-
-    def apply(id):
-        hud_img = c_dat.get(id,'hud_img')
-        hud_pos = c_dat.get(id,'hud_pos')
-        init_c_lib.CubeSelector.load_cube_properties(hud_pos, id, hud_img)
 
     for id in c_dat.dat:
-        apply(id)
+        hud_img = c_dat.get(id,'hud_img')
+        hud_pos = c_dat.get(id,'hud_pos')
+        cube_selector.load_cube_property(hud_pos, id, hud_img)
 
 
 '''

@@ -1326,61 +1326,84 @@ HUD textures
 '''
 
 cdef extern from "./hud/hud.hpp":
-    void draw_hud_textures(bool zoom)
+    void draw_hud_textures(bool zoom, bool cube_selector)
     void draw_hud_text(bool zoom)
 
 cdef class HUD:
     @classmethod
-    def draw_textures(cls, bool zoom):
-        draw_hud_textures(zoom)
+    def draw_textures(cls, bool zoom, bool cube_selector):
+        draw_hud_textures(zoom, cube_selector)
     @classmethod
     def draw_text(cls, bool zoom):
         draw_hud_text(zoom)
 
 
+cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
+    cdef cppclass CubeSelector:
+        int get_active_id()
+        int get_active_pos()
+        void set_active_id(int id)
+        void set_active_pos(int pos)
+        
+    CubeSelector cube_selector
+
+class HudCubeSelector:
+    @classmethod
+    def get_active_id(cls):
+        return cube_selector.get_active_id()
+    @classmethod
+    def get_active_pos(cls):
+        return cube_selector.get_active_pos()
+    @classmethod
+    def set_active_id(cls, int id):
+        cube_selector.set_active_id(id)
+    @classmethod
+    def set_active_pos(cls, int pos):
+        cube_selector.set_active_pos(pos)
+
 '''
 HUD Cube Selector
 '''
 
-cdef extern from "./hud/cube_selector.hpp":
-    void set_cube_selector_property(int pos, int cube_id, int tex_id)
-    void draw_cube_selector(float x, float y, float size, int mode)
-    void set_active_cube_id(int id)
-    void set_active_cube_pos(int pos)
-    int get_active_cube_id()
-    int get_active_cube_pos()
+#cdef extern from "./hud/cube_selector.hpp":
+#    void set_cube_selector_property(int pos, int cube_id, int tex_id)
+#    void draw_cube_selector(float x, float y, float size, int mode)
+#    void set_active_cube_id(int id)
+#    void set_active_cube_pos(int pos)
+#    int get_active_cube_id()
+#    int get_active_cube_pos()
 
 
-cdef class CubeSelector:
+#cdef class CubeSelector:
 
-    # offset from bottom right corner
-    cdef float x
-    cdef float y
-    cdef float size
-    cdef int mode
+#    # offset from bottom right corner
+#    cdef float x
+#    cdef float y
+#    cdef float size
+#    cdef int mode
 
-    @classmethod
-    def load_cube_properties(cls, int pos, int cube_id, int tex_id):
-        set_cube_selector_property(pos, cube_id, tex_id)
+#    @classmethod
+#    def load_cube_properties(cls, int pos, int cube_id, int tex_id):
+#        set_cube_selector_property(pos, cube_id, tex_id)
 
-    def __init__(self, float x, float y, int active_pos=0):
-        self.x = x
-        self.y = y
+#    def __init__(self, float x, float y, int active_pos=0):
+#        self.x = x
+#        self.y = y
         
-    def draw(self):
-        draw_cube_selector(self.x, self.y, 1., 0)
+#    def draw(self):
+#        draw_cube_selector(self.x, self.y, 1., 0)
 
-    def set(self, int pos):
-        set_active_cube_pos(pos)
+#    def set(self, int pos):
+#        set_active_cube_pos(pos)
 
-    def set_id(self, int id):
-        set_active_cube_id(id)
+#    def set_id(self, int id):
+#        set_active_cube_id(id)
 
-    def active(self):
-        return get_active_cube_pos()
+#    def active(self):
+#        return get_active_cube_pos()
 
-    def active_id(self):
-        return get_active_cube_id()
+#    def active_id(self):
+#        return get_active_cube_id()
 
 
 '''

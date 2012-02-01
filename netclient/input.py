@@ -10,7 +10,6 @@ import init_c_lib
 
 from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer, save_to_disk
-from init_c_lib import _toggle_latency_unit
 
 import camera
 
@@ -119,14 +118,10 @@ class InputGlobal:
 
     @classmethod
     def init(cls, main):
-        #InputEventGlobal.inputGlobal = cls
-
-        InputGlobal.app = main
-
         InputGlobal.mouse = Mouse()
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
-        cls.cube_selector = CubeSelector(8,8,range(8*8))
+        cls.cube_selector = CubeSelector(8,8)
         cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
@@ -267,7 +262,7 @@ class Keyboard(object):
             #'k' : self.toggle_vn,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
-            "p" : _toggle_latency_unit,
+            "p" : init_c_lib._toggle_latency_unit,
             ',' : self.toggle_agent_gravity,
             'u' : init_c_lib.toggle_mouse_bind,
             '/' : self.toggle_hud,
@@ -451,27 +446,27 @@ class AgentInput:
 
 class CubeSelector(object):
 
-    def __init__(self, x, y, block_ids):
+    def __init__(self, x, y):
         self.x = x
         self.y = y
         self.n = x*y
-        assert len(block_ids) == self.n
         self.active = 0
 
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            InputGlobal.app.hud.cube_selector.set(v)
+            print v
+            init_c_lib.HudCubeSelector.set_active_pos(v)
             if GameStateGlobal.agent is not None:
                 GameStateGlobal.agent.set_active_block(self.active_id)
         elif k == 'active_id':
-            InputGlobal.app.hud.cube_selector.set_id(v)
+            init_c_lib.HudCubeSelector.set_active_id(v)
 
     def __getattribute__(self, k):
         if k == 'active_id':
-            return InputGlobal.app.hud.cube_selector.active_id()
+            return init_c_lib.HudCubeSelector.get_active_id()
         if k == 'active':
-            return InputGlobal.app.hud.cube_selector.active()
+            return init_c_lib.HudCubeSelector.get_active_pos()
         return object.__getattribute__(self, k)
 
     def vertical(self, up=True):
