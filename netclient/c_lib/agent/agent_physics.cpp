@@ -379,31 +379,38 @@ inline bool collision_check5(float box_r, float box_h, float x, float y, float z
 
     int n_z = (int)ceil(box_h);
 
+    //z = ceil(z);
+
     for (int i=0; i<n_z; i++)
     {
+        //i = (((float)i) > box_h) ? (int)box_h : i;
         int zz = (int)z + i;
-
+        //printf("i %d\n", i);
         if(isActive(_get(x_max,y_max,zz) != 0))
         {
             //north, west
+            //printf("xmax,ymax,z %d %d %d\n", x_max, y_max, zz);
             return true;
         }
 
         if(isActive(_get(x_max,y_min,zz) != 0))
         {
             //north, east
+            //printf("xmax,ymin,z %d %d %d\n", x_max, y_min, zz);
             return true;
         }
 
         if(isActive(_get(x_min,y_min,zz) != 0))
         {
             //south, east
+            //printf("xmin,ymin,z %d %d %d\n", x_min, y_min, zz);
             return true;
         }
 
         if(isActive(_get(x_min,y_max,zz) != 0))
         {
             //south, west
+            //printf("xmin,ymax,z %d %d %d\n", x_min, y_max, zz);
             return true;
         }        
 
@@ -453,7 +460,7 @@ inline bool collision_check5_stand_up(float box_r, float box_h, float x, float y
     return false;
 }
 
-inline bool collision_check5_in_motion(float box_r, float box_h, float x, float y, float z)
+inline bool collision_check5_z(float box_r, float box_h, float x, float y, float z)
 {
     int x_min = x - box_r;
     int x_max = x + box_r;
@@ -510,7 +517,7 @@ inline bool collision_check6(float box_r, float box_h, float x, float y, float z
     for (int i=0; i<steps; i++)
     {
         int zz = (int)(z + i*step_size);
-        if (i == steps-1) zz = (int)(z + box_h);
+        //if (i == steps-1) zz = (int)(z + box_h);
 
         if(isActive(_get(x_max,y_max,zz) != 0))
         {
@@ -535,6 +542,94 @@ inline bool collision_check6(float box_r, float box_h, float x, float y, float z
             //south, west
             return true;
         }            
+
+    }
+    return false;
+}
+
+inline bool collision_check6_z(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    const float step_size = 0.9f;
+    int steps = (int)ceil(box_h/step_size);
+
+    for (int i=0; i<steps; i++)
+    {
+        int zz = (int)(z + i*step_size);
+        if (i == steps-1) zz = (int)(z + box_h);
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
+
+    }
+    return false;
+}
+
+inline bool collision_check6_xy(float box_r, float box_h, float x, float y, float z)
+{
+    int x_min = x - box_r;
+    int x_max = x + box_r;
+
+    int y_min = y - box_r;
+    int y_max = y + box_r;
+
+    const float step_size = 0.9f;
+    int steps = (int)ceil(box_h/step_size)+1;
+
+    for (int i=0; i<steps; i++)
+    {
+        int zz = (int)(z + i*step_size);
+        //if (i == steps-1) zz = (int)(z + box_h);
+
+        if(isActive(_get(x_max,y_max,zz) != 0))
+        {
+            //north, west
+            return true;
+        }
+
+        if(isActive(_get(x_max,y_min,zz) != 0))
+        {
+            //north, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_min,zz) != 0))
+        {
+            //south, east
+            return true;
+        }
+
+        if(isActive(_get(x_min,y_max,zz) != 0))
+        {
+            //south, west
+            return true;
+        }        
 
     }
     return false;

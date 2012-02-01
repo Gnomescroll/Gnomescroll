@@ -17,9 +17,8 @@ void Agent_list::draw()
     #ifdef DC_CLIENT
 
     bool you;
-    int i;
     Agent_state* agent;
-    for(i=0; i<n_max; i++) {
+    for(int i=0; i<n_max; i++) {
         agent = a[i];
         if (agent == NULL) continue;
         you = (agent->id == ClientState::playerAgent_state.agent_id);
@@ -265,7 +264,9 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     //collision
     bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
+    //bool current_collision = collision_check6_z(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
+        //printf("current\n");
         as.x = new_x;
         as.y = new_y;
         as.z += 0.02f; //nudge factor
@@ -277,21 +278,24 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     /*
         Collision Order: as.x,as.y,as.z
     */
-    bool collision_x = collision_check5(box.box_r, height, new_x,as.y,as.z);
+    bool collision_x = collision_check6_xy(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
+        //printf("x\n");
         new_x = as.x;
         as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check5(box.box_r, height, new_x,new_y,as.z);
+    bool collision_y = collision_check6_xy(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
+        //printf("y\n");
         new_y = as.y;
         as.vy = 0.0f;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check5_in_motion(box.box_r, height, new_x, new_y, new_z);
+    bool collision_z = collision_check6_z(box.box_r, height, new_x, new_y, new_z);
     if(collision_z) {
+        //printf("z\n");
         new_z = as.z;
         as.vz = 0.0f;
     }       
