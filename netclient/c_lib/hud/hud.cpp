@@ -6,7 +6,9 @@
 #include <c_lib/hud/font.hpp>
 
 /* Configuration */
-
+namespace Hud
+{
+    
 static struct HudDrawSettings
 {
     bool zoom;
@@ -88,3 +90,56 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {}
+
+
+/* HUD */
+
+HUD::HUD()
+:
+inited(false)
+{
+    player_stats = ClientState::text_list.create();
+    player_stats->set_text((char*) "");
+
+    help_menu = ClientState::text_list.create();
+    help_menu->set_text((char*) "");
+
+    disconnected = ClientState::text_list.create();
+    disconnected->set_text((char*) "Server not connected.");
+
+    dead = ClientState::text_list.create();
+    dead->set_text((char*) "You're dead.");
+
+    fps = ClientState::text_list.create();
+    fps->set_text((char*) "");
+
+    ping = ClientState::text_list.create();
+    ping->set_text((char*) "");
+
+    scoreboard = new Scoreboard();
+
+    chat_queue = new ChatMessageQueue();
+}
+
+HUD::~HUD()
+{
+    if (player_stats != NULL)
+        delete player_stats;
+    if (help_menu != NULL)
+        delete help_menu;
+    if (disconnected != NULL)
+        delete disconnected;
+    if (dead != NULL)
+        delete dead;
+    if (fps != NULL)
+        delete fps;
+    if (ping != NULL)
+        delete ping;
+    if (scoreboard != NULL)
+        delete scoreboard;
+    if (chat_queue != NULL)
+        delete chat_queue;
+}
+
+
+}

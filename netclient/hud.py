@@ -308,9 +308,6 @@ class Hud(object):
             self.draw_text_items(fps, ping, zoom)
             return
             
-        #if InputGlobal.input == 'chat':
-            #self.draw_cursor()
-
         if InputGlobal.map:
             init_c_lib.Map.draw()
 

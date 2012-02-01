@@ -1184,7 +1184,7 @@ HUD
 -- this is here because hud.py needs to tell it to render certain things
 """
 
-cdef extern from "./hud/hud.hpp":
+cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
         bool zoom,
         bool cube_selector,
@@ -1378,10 +1378,7 @@ cdef extern from "./hud/font.hpp" namespace "HudFont":
     )
     void set_missing_character(int cc)
 
-    
-
 import os.path
-import string
 
 class Font:
 
