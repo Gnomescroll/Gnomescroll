@@ -13,3 +13,4 @@
 #endif
 
 #define TICK_DURATION 30.0f
+#define PLAYERS_MAX 64

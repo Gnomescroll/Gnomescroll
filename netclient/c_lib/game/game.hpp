@@ -1,6 +1,8 @@
 #pragma once
 
-const unsigned int GAME_MAX_PLAYERS = 64;
+#include <c_lib/defines.h>
+
+const unsigned int GAME_MAX_PLAYERS = PLAYERS_MAX;
 const unsigned int N_TEAMS = 2;
 extern bool team_kills;
 
