@@ -13,7 +13,12 @@
     }
 #endif
 
-//#include <voxel/voxel_hitscan.hpp>
+
+void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz)
+{
+    return;
+}
+
 
 void Voxel_volume::get_center(float *v)
 {
