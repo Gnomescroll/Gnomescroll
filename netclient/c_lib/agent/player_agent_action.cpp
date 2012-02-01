@@ -6,6 +6,9 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/t_map/t_map_net.hpp>
 
+#define BLOCK_PICK_MAX_DISTANCE 4.0f
+#define MELEE_PICK_MAX_DISTANCE 2.7f
+
 void PlayerAgent_action::fire() {
     if (p->you == NULL) return;
 
@@ -16,10 +19,10 @@ void PlayerAgent_action::fire() {
             set_block();
             break;
         case Weapons::TYPE_hitscan_laser:
-            hitscan();
+            hitscan_laser();
             break;
         case Weapons::TYPE_block_pick:
-            hit_block();
+            hitscan_pick();
             break;
         case Weapons::TYPE_grenade_thrower:
             throw_grenade();
@@ -33,7 +36,7 @@ void PlayerAgent_action::fire() {
     }
 }
 
-void PlayerAgent_action::hitscan() {
+void PlayerAgent_action::hitscan_laser() {
     
     // get camera vector
     float vec[3];
@@ -132,6 +135,12 @@ void PlayerAgent_action::hitscan() {
             vec[0] = collision_point[0] - origin[0];
             vec[1] = collision_point[1] - origin[1];
             vec[2] = collision_point[2] - origin[2];
+            if (vhe.entity_type == OBJ_TYPE_AGENT)
+            {
+                //Animations::agent_bleed(collision_point[0], collision_point[1], collision_point[2]);
+                Animations::blood_spray(collision_point[0], collision_point[1], collision_point[2],
+                    look.x, look.y, look.z);
+            }
             break;
 
         case TARGET_BLOCK:            
@@ -174,7 +183,114 @@ void PlayerAgent_action::hitscan() {
         origin[0], origin[1], origin[2],
         vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
     );
+}
 
+void PlayerAgent_action::hitscan_pick() {
+
+    // TODO: implement hitscan methods that take in a max distance
+
+    // get camera vector
+    float vec[3];
+    p->camera_state.forward_vector(vec);
+
+    // get camera position
+    float x,y,z;
+    x = p->camera_state.x;
+    y = p->camera_state.y;
+    z = p->camera_state.z + p->you->camera_height();
+
+    // hitscan against voxels
+    float vox_distance = 10000000.0f;
+    float collision_point[3];
+    struct Voxel_hitscan_element vhe;
+    bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
+        x,y,z,
+        vec[0], vec[1], vec[2],
+        p->agent_id, OBJ_TYPE_AGENT,
+        collision_point, &vox_distance,
+        &vhe
+    );
+
+    //if (voxel_hit)
+    //{
+        //printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
+        //if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
+    //}
+    
+     //hitscan against terrain
+    float block_distance = 10000000.0f;
+    int block_pos[3];
+    int target;
+    target = Hitscan::terrain(
+        x,y,z,
+        vec[0], vec[1], vec[2],
+        block_pos, &block_distance
+    );
+
+    // choose closer collision (or none)
+    const int TARGET_NONE = 0;
+    const int TARGET_VOXEL = 1;
+    const int TARGET_BLOCK = 2;
+    
+    bool block_hit = (target == Hitscan::HITSCAN_TARGET_BLOCK);
+    bool voxel_closer = (vox_distance <= block_distance);
+    //bool block_closer = (block_distance > vox_distance);
+
+    if (voxel_hit && block_hit)
+        if (voxel_closer)
+            target = TARGET_VOXEL;
+        else
+            target = TARGET_BLOCK;
+    else if (voxel_hit)
+        target = TARGET_VOXEL;
+    else if (block_hit)
+        target = TARGET_BLOCK;
+    else
+        target = TARGET_NONE;
+
+    // send packet
+    hit_block_CtoS block_msg;
+    melee_object_CtoS obj_msg;
+    
+    switch (target) {
+        case TARGET_VOXEL:
+            if (vox_distance > MELEE_PICK_MAX_DISTANCE)
+            {
+                target = TARGET_NONE;
+                break;
+            }
+        
+            obj_msg.id = vhe.entity_id;
+            obj_msg.type = vhe.entity_type;
+            obj_msg.part = vhe.part_id;
+            obj_msg.send();
+            break;
+
+        case TARGET_BLOCK:
+            if (block_distance > BLOCK_PICK_MAX_DISTANCE)
+            {
+                target = TARGET_NONE;
+                break;
+            }
+            block_msg.x = block_pos[0];
+            block_msg.y = block_pos[1];
+            block_msg.z = block_pos[2];
+            block_msg.send();
+            break;
+            
+        default:
+            break;
+    }
+
+    if (target == TARGET_NONE)
+    {
+        melee_none_CtoS none_msg;
+        none_msg.send();
+    }
+
+    //// play sound
+    //char soundfile[] = "pick_swing.wav";
+    //Sound::play_2d_sound(soundfile);
 }
 
 void PlayerAgent_action::throw_grenade() {
@@ -193,21 +309,20 @@ void PlayerAgent_action::throw_grenade() {
     msg.send();
 }
 
-#define BLOCK_PICK_MAX_DISTANCE 4.0f
-void PlayerAgent_action::hit_block() {
-    const int z_low = 4;
-    const int z_high = 3;
-    float f[3];
-    p->camera_state.forward_vector(f);
-    int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
-    if (pos != NULL) {
-        hit_block_CtoS msg;
-        msg.x = pos[0];
-        msg.y = pos[1];
-        msg.z = pos[2];
-        msg.send();
-    }
-}
+//void PlayerAgent_action::hit_block() {
+    //const int z_low = 4;
+    //const int z_high = 3;
+    //float f[3];
+    //p->camera_state.forward_vector(f);
+    //int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
+    //if (pos != NULL) {
+        //hit_block_CtoS msg;
+        //msg.x = pos[0];
+        //msg.y = pos[1];
+        //msg.z = pos[2];
+        //msg.send();
+    //}
+//}
 
 void PlayerAgent_action::set_block() {
     if (p->you == NULL) return;

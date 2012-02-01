@@ -761,6 +761,9 @@ class ChatRender:
     def cursor_position(self):
         return ChatClientGlobal.chatClient.input.get_cursor_render_position()
 
+    def input_buffer(self):
+        return ChatClientGlobal.chatClient.input.buffer
+
 if __name__ == '__main__':
     ChatClientGlobal.init()
 

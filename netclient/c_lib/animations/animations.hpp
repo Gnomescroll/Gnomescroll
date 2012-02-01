@@ -17,6 +17,7 @@ void grenade_explode(float x, float y, float z);
 void slime_melt(float x, float y, float z);
 
 void agent_bleed(float x, float y, float z);
+void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector
 
 void animations_tick();
 void animations_draw();

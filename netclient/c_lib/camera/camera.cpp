@@ -11,8 +11,9 @@ extern float _yresf;
 static CCamera* cameras = NULL;
 
 CCamera* current_camera = NULL;
-float model_view_matrix[16];
 
+float model_view_matrix[16];
+double model_view_matrix_dbl[16];
 double projection_matrix[16];
 GLint viewport[4];
 
@@ -157,12 +158,8 @@ void CCamera::world_projection()
                x+xl, y+yl, z+zl,
                xu, yu, zu);
 
-    if(model_view_matrix != NULL) {
-        glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
-    } else {
-        printf("camera world_projection :: model_view_matrix is null\n");
-    }
-
+    update_camera_matrices();
+    
     //set fulstrum camera up
     {
 
@@ -198,4 +195,12 @@ void CCamera::hud_projection() {
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
+}
+
+void update_camera_matrices()
+{
+    glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
+    glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
+    glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
+    glGetIntegerv(GL_VIEWPORT, viewport);
 }

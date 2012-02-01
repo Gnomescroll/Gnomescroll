@@ -63,6 +63,8 @@ class Agent_status {
 
         void set_team(int team);
 
+        float get_spawn_angle();
+
         // coin stuff
         bool can_afford(Object_types obj);
         bool can_afford(unsigned int coins);

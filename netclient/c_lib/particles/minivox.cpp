@@ -20,15 +20,10 @@ Minivox::Minivox(int id)
 :
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
+r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(minivox_size), draw_mode(0), texture_pixel_width(2)
 {
     create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);
-
-    vox.r = MINIVOX_R;
-    vox.g = MINIVOX_G;
-    vox.b = MINIVOX_B;
-    vox.a = MINIVOX_A;
-
     orient_vectors();
 }
 
@@ -36,15 +31,10 @@ Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz
 :
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
+r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(minivox_size), draw_mode(0), texture_pixel_width(2)
 {
     create_particle2(&particle, id, MINIVOX_TYPE, x,y,z,vx,vy,vz, 0, MINIVOX_TTL);
-
-    vox.r = MINIVOX_R;
-    vox.g = MINIVOX_G;
-    vox.b = MINIVOX_B;
-    vox.a = MINIVOX_A;
-
     orient_vectors();
 }
 
@@ -76,16 +66,16 @@ void Minivox::set_orientation(float t, float p) {
 }
 
 void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b) {
-    vox.r = r;
-    vox.g = g;
-    vox.b = b;
+    this->r = r;
+    this->g = g;
+    this->b = b;
 }
 
 void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
-    vox.r = r;
-    vox.g = g;
-    vox.b = b;
-    vox.a = a;
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    this->a = a;
 }
 
 void Minivox::set_ttl(int ttl) {
@@ -181,51 +171,50 @@ void Minivox_list::tick() {
 void Minivox_list::draw() {
 #ifdef DC_CLIENT
 
-    if(num == 0) { return; }
+    if(num == 0) return;
 
-    //glColor3ub(255,255,255);
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
+    glBegin(GL_QUADS);
+
+    for (int i=0; i<n_max; i++) {
+        if (a[i] == NULL) continue;
+        if (a[i]->draw_mode != MINIVOX_DRAW_MODE_TEXTURED)
+            a[i]->draw_colored();
+    }
+
+    glEnd();
+
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);
     glBegin(GL_QUADS);
 
-    int i;
-
-    for(i=0; i<n_max; i++) {
+    for (int i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
-        a[i]->draw();
+        if (a[i]->draw_mode == MINIVOX_DRAW_MODE_TEXTURED)
+            a[i]->draw_textured();
     }        
 
+    glEnd();
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
-    glEnd();
-
+    
 #endif
 }
 
-void Minivox::draw() {
+void Minivox::draw_colored() {
 #ifdef DC_CLIENT
 
     // Quit if voxel is completely transparent
-    //if(vox.a == 0) return;
+    if(this->a == 0) return;
 
-    // copy the particle position for cleaner code
     const float
         x0 = particle.state.p.x,
         y0 = particle.state.p.y,
         z0 = particle.state.p.z;
 
-        
     if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 
-    if (draw_mode == MINIVOX_DRAW_MODE_TEXTURED) 
-    {
-        draw_textured();
-        return;
-    }
-
-    // set color mode
-    glColor3ub(vox.r, vox.g, vox.b);
+    glColor3ub(this->r, this->g, this->b);
 
     // fill vertex buffer
     int i,j;
@@ -242,7 +231,6 @@ void Minivox::draw() {
         }
     }
 
-
     // draw voxel
     for(i=0; i<6; i++) {
         glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
@@ -256,7 +244,14 @@ void Minivox::draw() {
 
 void Minivox::draw_textured() {
 #ifdef DC_CLIENT
-    if(vox.a == 0) return;
+    if(this->a == 0) return;
+
+    const float
+        x0 = particle.state.p.x,
+        y0 = particle.state.p.y,
+        z0 = particle.state.p.z;
+
+    if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 
     glColor3ub(255,255,255);
 
@@ -279,13 +274,6 @@ void Minivox::draw_textured() {
             s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
         }
     }
-
-    // copy the particle position for cleaner code
-    const float
-        x0 = particle.state.p.x,
-        y0 = particle.state.p.y,
-        z0 = particle.state.p.z;
-
     // draw voxel
     for(i=0; i<6; i++) {
         glTexCoord2f(tx_min, ty_min);

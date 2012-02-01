@@ -157,6 +157,21 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, fl
             //return;
     //}
 
+    //if (type == OBJ_TYPE_AGENT)
+    //{
+        //Agent_state* agent = ClientState::agent_list.get(id);
+        //if (agent != NULL && agent->vox != NULL)
+        //{
+            //Voxel_volume* vv = agent->vox->get_part(part);
+            //if (vv != NULL)
+            //{
+                //float c[3];
+                //vv->get_center(c);
+                //Animations::agent_bleed(c[0], c[1], c[2]);
+            //}
+        //}
+    //}
+
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;
@@ -167,12 +182,30 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, fl
     f[1] = y - sy;
     f[2] = z - sz;
 
+    normalize_vector(f);
+
     // animate
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(
         sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
+
+
+    if (type == OBJ_TYPE_AGENT)
+    {
+        Agent_state* agent = ClientState::agent_list.get(id);
+        if (agent != NULL && agent->vox != NULL)
+        {
+            Voxel_volume* vv = agent->vox->get_part(part);
+            if (vv != NULL)
+            {
+                float c[3];
+                vv->get_center(c);
+                Animations::blood_spray(c[0], c[1], c[2], f[0], f[1], f[2]);
+            }
+        }
+    }
 
     // play sound
     char soundfile[] = "laser_01.wav";
@@ -242,6 +275,19 @@ void Agent_event::threw_grenade()
 void Agent_event::placed_block()
 {
     // player agent block placement animation
+}
+
+void Agent_event::melee_attack_object(int id, int type, int part, float x, float y, float z)
+{
+    // play pick swing animation
+    // play blood animation
+    // play swing sound
+    // play object's hurt sound
+}
+
+void Agent_event::melee_attack_nothing()
+{
+    // play pick swing animation
 }
 
 

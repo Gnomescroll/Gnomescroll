@@ -48,11 +48,13 @@ CCamera* CYTHON_get_available_camera();
 void set_camera(CCamera* cam);
 void init_cameras();
 void set_camera_first_person(int fp);
+void update_camera_matrices();
 
 extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
-extern float model_view_matrix[16];
 
+extern float model_view_matrix[16];
+extern double model_view_matrix_dbl[16];
 extern double projection_matrix[16];
 extern GLint viewport[4];

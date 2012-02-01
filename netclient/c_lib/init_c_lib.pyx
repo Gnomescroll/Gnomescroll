@@ -247,12 +247,6 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-cdef extern from "./SDL/draw_functions.h":
-    int _draw_line(int r, int g,int b, float x0, float y0, float z0, float x1, float y1, float z1)
-
-def draw_line(int r, int g, int b, float x0, float y0, float z0, float x1, float y1, float z1):
-    return _draw_line(r,g,b,x0,y0,z0,x1,y1,z1)
-
 """ Map gen """
 #cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
 #    void generate_dragon()
@@ -1277,6 +1271,7 @@ cdef extern from "./SDL/texture_loader.h":
 cdef extern from "./SDL/draw_functions.h":
     int _blit_sprite(int tex, float x0, float y0, float x1, float y1, float z)
 
+
 cdef class CyTexture:
     cdef int texture
     cdef int w
@@ -1409,6 +1404,11 @@ cdef extern from './hud/text.hpp':
     )
     void set_missing_character(int cc)
     void draw_text(char* t, int len, float x, float y, float depth, float line_height)
+
+    void draw_cursor(char* buff, int x, int y)
+
+def draw_chat_cursor(buff, int x, int y):
+    draw_cursor(buff, x, y)
 
 class Text(object):
 

@@ -1,17 +1,13 @@
 #include "shrapnel.hpp"
-#pragma once
 
 #ifdef DC_CLIENT
-    #include <compat_gl.h>
+#include <compat_gl.h>
+#include <c_lib/camera/camera.hpp>
 #endif
 
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.h>
-
-#ifdef DC_CLIENT
-static float shrapnel_proj_mtrx[16];
-#endif
 
 Shrapnel::Shrapnel(int id) {
     create_particle2(&particle, id, SHRAPNEL_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, SHRAPNEL_TTL);
@@ -31,14 +27,14 @@ void Shrapnel::draw() {
 #ifdef DC_CLIENT
 
     float up[3] = {
-        shrapnel_proj_mtrx[0]*SHRAPNEL_TEXTURE_SCALE,
-        shrapnel_proj_mtrx[4]*SHRAPNEL_TEXTURE_SCALE,
-        shrapnel_proj_mtrx[8]*SHRAPNEL_TEXTURE_SCALE
+        model_view_matrix[0]*SHRAPNEL_TEXTURE_SCALE,
+        model_view_matrix[4]*SHRAPNEL_TEXTURE_SCALE,
+        model_view_matrix[8]*SHRAPNEL_TEXTURE_SCALE
     };
     float right[3] = {
-        shrapnel_proj_mtrx[1]*SHRAPNEL_TEXTURE_SCALE,
-        shrapnel_proj_mtrx[5]*SHRAPNEL_TEXTURE_SCALE,
-        shrapnel_proj_mtrx[9]*SHRAPNEL_TEXTURE_SCALE
+        model_view_matrix[1]*SHRAPNEL_TEXTURE_SCALE,
+        model_view_matrix[5]*SHRAPNEL_TEXTURE_SCALE,
+        model_view_matrix[9]*SHRAPNEL_TEXTURE_SCALE
     };
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -84,7 +80,6 @@ void Shrapnel_list::draw() {
 #ifdef DC_CLIENT
 
     if(num == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, shrapnel_proj_mtrx);
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);

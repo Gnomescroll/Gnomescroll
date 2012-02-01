@@ -459,8 +459,9 @@ void Agent_state::get_spawn_point(int* spawn) {
 void Agent_state::spawn_state() {
     // update position
     int spawn[3];
-    get_spawn_point(spawn);
-    teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, 0.5f, 0.0f);
+    this->get_spawn_point(spawn);
+    float theta = this->status.get_spawn_angle();
+    teleport(spawn[0], spawn[1], spawn[2], 0, 0, 0, theta, 0.0f);
 }
 
 void Agent_state::init_vox()

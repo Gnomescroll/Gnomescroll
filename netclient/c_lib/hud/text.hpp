@@ -52,3 +52,5 @@ extern GLuint fontTextureId;
 extern float font_texture_width;
 extern float font_texture_height;
 
+// chat cursor
+void draw_cursor(char* buff, int x, int y);

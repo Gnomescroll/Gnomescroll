@@ -1,12 +1,8 @@
 #include "blood.hpp"
-#pragma once
 
 #ifdef DC_CLIENT
-static float blood_proj_mtrx[16];
-#endif
-
-#ifdef DC_CLIENT
-    #include <compat_gl.h>
+#include <compat_gl.h>
+#include <c_lib/camera/camera.hpp>
 #endif
 
 #include <ray_trace/ray_trace.h>
@@ -31,14 +27,14 @@ void Blood::draw() {
 #ifdef DC_CLIENT
 
     float up[3] = {
-        blood_proj_mtrx[0]*BLOOD_TEXTURE_SCALE,
-        blood_proj_mtrx[4]*BLOOD_TEXTURE_SCALE,
-        blood_proj_mtrx[8]*BLOOD_TEXTURE_SCALE
+        model_view_matrix[0]*BLOOD_TEXTURE_SCALE,
+        model_view_matrix[4]*BLOOD_TEXTURE_SCALE,
+        model_view_matrix[8]*BLOOD_TEXTURE_SCALE
     };
     float right[3] = {
-        blood_proj_mtrx[1]*BLOOD_TEXTURE_SCALE,
-        blood_proj_mtrx[5]*BLOOD_TEXTURE_SCALE,
-        blood_proj_mtrx[9]*BLOOD_TEXTURE_SCALE
+        model_view_matrix[1]*BLOOD_TEXTURE_SCALE,
+        model_view_matrix[5]*BLOOD_TEXTURE_SCALE,
+        model_view_matrix[9]*BLOOD_TEXTURE_SCALE
     };
 
     float tx_min, tx_max, ty_min, ty_max;
@@ -84,7 +80,6 @@ void Blood_list::draw() {
 #ifdef DC_CLIENT
 
     if(num == 0) { return; }
-    glGetFloatv(GL_MODELVIEW_MATRIX, blood_proj_mtrx);
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);

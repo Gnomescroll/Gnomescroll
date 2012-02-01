@@ -218,7 +218,46 @@ class agent_hit_block_StoC: public FixedSizeNetPacketToClient<agent_hit_block_St
         inline void handle();
 };
 
-// for pick
+// hitscan StoC actions (for client to animate)
+class agent_melee_nothing_StoC: public FixedSizeNetPacketToClient<agent_melee_nothing_StoC>
+{
+    public:
+        int id;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_object_StoC>
+{
+    public:
+        int id;
+        int target_id;
+        int target_type;
+        int target_part;
+        float x,y,z;    // need this, because the target can be destroyed by the hitscan action
+        // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
+        // and then player cannot animate
+        // OR
+        // animate from aiming direction
+        // can also make a second array in each *list, that holds decayed state info
+        // i.e. when destroy object, cache its last x,y,z,vx,vy,vz
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&target_id, buff, buff_n, pack);
+            pack_u8(&target_type, buff, buff_n, pack);
+            pack_u8(&target_part, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 class agent_threw_grenade_StoC: public FixedSizeNetPacketToClient<agent_threw_grenade_StoC>
 {
     public:
@@ -230,7 +269,6 @@ class agent_threw_grenade_StoC: public FixedSizeNetPacketToClient<agent_threw_gr
         inline void handle();
 };
 
-// for pick
 class agent_placed_block_StoC: public FixedSizeNetPacketToClient<agent_placed_block_StoC>
 {
     public:
@@ -242,9 +280,7 @@ class agent_placed_block_StoC: public FixedSizeNetPacketToClient<agent_placed_bl
         inline void handle();
 };
 
-
-
-// damage indicator packet
+// damage indicator packet (USE THIS FOR BLOOD!)
 class agent_damage_StoC: public FixedSizeNetPacketToClient<agent_damage_StoC>
 {
     public:
@@ -336,6 +372,33 @@ class hitscan_block_CtoS: public FixedSizeNetPacketToServer<hitscan_block_CtoS>
 // hitscan: target = none
 // server will convert this to a fire packet for clients
 class hitscan_none_CtoS: public FixedSizeNetPacketToServer<hitscan_none_CtoS>
+{
+    public:
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {}
+        inline void handle();
+};
+
+// melee: target = voxel object
+class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
+{
+    public:
+        int id;
+        int type;
+        int part;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_u8(&part, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+// melee: target = none
+// server will convert this to a fire packet for clients
+class melee_none_CtoS: public FixedSizeNetPacketToServer<melee_none_CtoS>
 {
     public:
         inline void packet(char* buff, int* buff_n, bool pack) 
