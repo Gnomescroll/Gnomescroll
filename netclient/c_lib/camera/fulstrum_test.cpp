@@ -48,6 +48,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vector camera, Vector*
     fulstrum_u = *up;
 }
 
+#define SPHERE_FULSTRUM_DEBUG 0
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
@@ -55,33 +56,34 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
     y -= fulstrum_c.y;
     z -= fulstrum_c.z;
 
+#if SPHERE_FULSTRUM_DEBUG
     float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
     //printf("dz= %f, radius= %f \n", dz,r);
-    //if( dz < 0 || dz > fulstrum_zfar ) return false;
-    if( dz + r < 0 || dz > fulstrum_zfar - r ) return false;
+    if( dz < 0 || dz > fulstrum_zfar ) return false;
 
     float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
     //printf("dx= %f, theshhold= %f \n", dx, dz*fulstrum_hx);
-    //if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
-    
-    //if( dx < -dz*(fulstrum_hx+r) || dx > dz*(fulstrum_hx+r) ) return false; //bugged?
+    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
 
-    {
-        float rx = fulstrum_hx_sphere*r;
-        if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
-    }
-    
     float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
     //printf("dy= %f, theshhold= %f \n", dy, dz*fulstrum_hy);
-    //if( dy < -dz*(fulstrum_hy+r/2) || dy > dz*(fulstrum_hy+r/2) ) return false;
+    if( dy < -dz*(fulstrum_hy+r/2) || dy > dz*(fulstrum_hy+r/2) ) return false;
 
-    //if( dy < -dz*(fulstrum_hy+r) || dy > dz*(fulstrum_hy+r) ) return false; //bugged?
-
-    {
-        float ry = fulstrum_hx_sphere*r;
-        if( dy < -dz*(fulstrum_hy + r) || dy > dz*(fulstrum_hy+r) ) return false;
-    }
     return true;
+#else
+    float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
+    if( dz + r < 0 || dz > fulstrum_zfar - r ) return false;
+    
+    float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
+    float rx = fulstrum_hx_sphere*r;
+    if( dx < -dz*fulstrum_hx - rx|| dx > dz*fulstrum_hx + rx ) return false;
+    
+    float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
+    float ry = fulstrum_hx_sphere*r;
+    if( dy < -dz*fulstrum_hy - ry || dy > dz*fulstrum_hy + ry ) return false;
+
+    return true;
+#endif
 }
 
 bool point_fulstrum_test(float x, float y, float  z)

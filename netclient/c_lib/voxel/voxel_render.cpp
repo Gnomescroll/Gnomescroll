@@ -267,6 +267,7 @@ void Voxel_render_list::draw()
     glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
     glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
+    //int drawn = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
@@ -274,6 +275,8 @@ void Voxel_render_list::draw()
 
         if(vv->vvl.vnum == 0) continue;
         if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
+
+        //drawn++;
 
         int debug = 0;
 
@@ -308,6 +311,7 @@ void Voxel_render_list::draw()
 
         glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
     }
+    //printf("%i drawn \n", drawn);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
