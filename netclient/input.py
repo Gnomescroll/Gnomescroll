@@ -455,7 +455,6 @@ class CubeSelector(object):
     def __setattr__(self, k, v):
         self.__dict__[k] = v
         if k == 'active':
-            print v
             init_c_lib.HudCubeSelector.set_active_pos(v)
             if GameStateGlobal.agent is not None:
                 GameStateGlobal.agent.set_active_block(self.active_id)
@@ -491,10 +490,8 @@ class CubeSelector(object):
         shift = -1 if left else 1
         row = self.active // self.x
         col = self.active % self.x
-
         new = (col + shift) % self.x
         new += row * self.x
-
         if new < 0 or new > self.n - 1:
             return
         self.active = new

@@ -60,14 +60,13 @@ void CubeSelector::set_active_pos(int pos)
 
 void CubeSelector::set_active_id(int id)
 {
-    for (int i=0; i<256; i++)
-    {
-        if (cubes[i].cube_id == id)
-        {
-            this->set_active_pos(i);
-            break;
-        }
-    }
+    if (id != 255)
+        for (int i=0; i<256; i++)
+            if (cubes[i].cube_id == id)
+            {
+                this->set_active_pos(i);
+                break;
+            }
 }
 
 void CubeSelector::draw()
