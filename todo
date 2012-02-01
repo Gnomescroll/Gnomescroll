@@ -159,6 +159,7 @@ cube selector in C
 fix cube selector input
 inventory in C
 hud draw settings in C
+hud text in object_list, acts as wrapper
 =============
 
 OpenAL ?
