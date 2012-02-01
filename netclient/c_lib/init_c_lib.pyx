@@ -1401,6 +1401,9 @@ cdef extern from './hud/text.hpp':
     Text* create_text()
     void draw_text(int text_id)
     void set_text(int text_id, char* text)
+    void set_color(int text_id, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+    void set_y(int text_id, float y)
+    float get_yoffset(int text_id)
     
 def draw_chat_cursor(buff, int x, int y):
     draw_cursor(buff, x, y)
@@ -1433,34 +1436,18 @@ cdef class CyText(object):
 
     def set_text(self, text):
         set_text(self.text_id, text)
-
-#class Text(object):
-
-#    def __init__(self, text='', x=0, y=0, color=(255,255,255,255)):
-#        self.height = 10
-#        self.width = 10
-#        self.depth = -0.1
-#        self.color = list(color)
-#        if len(self.color) == 3:
-#            self.color.append(255) # default alpha
-
-#        self.text = text
-#        self.text_len = len(text)
-#        self.x = x
-#        self.y = y
-#        self.offset = y
-#        self.line_height = 18.
-
-#    def __setattr__(self, k, v):
-#        if k == 'text':
-#            object.__setattr__(self, "text_len", len(v))
-#        object.__setattr__(self, k, v)
-
-#    def draw(self):
-#        r,g,b,a = self.color
-#        set_text_color(r,g,b,a)
-#        draw_text(self.text, self.text_len, self.x, self.y, self.depth, self.line_height)
-
+    def set_color(self, color):
+        cdef unsigned char r
+        cdef unsigned char g
+        cdef unsigned char b
+        cdef unsigned char a
+        r,g,b,a = color
+        set_color(self.text_id, r,g,b,a)
+    def set_y(self, float y):
+        set_y(self.text_id, y)
+    def get_yoffset(self):
+        return get_yoffset(self.text_id)
+    
 
 ''' Font '''
 import os.path

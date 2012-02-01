@@ -156,11 +156,11 @@ class Hud(object):
         return stats
 
     def draw_fps(self, fps_text):
-        self.fps.text = str(fps_text)
+        self.fps.set_text(fps_text)
         self.fps.draw()
 
     def draw_ping(self, ping_text):
-        self.ping.text = '%sms' % (str(ping_text),)
+        self.ping.set_text('%sms' % (str(ping_text),))
         self.ping.draw()
 
     def format_player_stats(self):
@@ -196,7 +196,7 @@ class Hud(object):
         for key, txt in stats_txt.items():
             if key == 'team': continue
             curr_sb = self.scoreboard[key]
-            curr_sb.text = txt
+            curr_sb.set_text(txt)
             curr_sb.draw()
 
         # draw team names
@@ -207,9 +207,9 @@ class Hud(object):
             team_txt = team.name
             team_txt += ' ' * 4
             team_txt += str(team.score)
-            self.team_names[team.id].y = self.team_names[team.id].offset - y_offset
-            self.team_names[team.id].text = team_txt
-            self.team_names[team.id].color = list(team.color) + [255]
+            self.team_names[team.id].set_y(self.team_names[team.id].get_yoffset() - y_offset)
+            self.team_names[team.id].set_text(team_txt)
+            self.team_names[team.id].set_color(list(team.color) + [255])
             self.team_names[team.id].draw()
 
     def draw_chat_input(self):
@@ -239,9 +239,8 @@ class Hud(object):
             else:
                 color = (255, 40, 0, 255)
             txt = self.text_dict[i]
-            if txt.text != content:
-                txt.text = content
-            txt.color = color
+            txt.set_text(content)
+            txt.set_color(color)
             to_draw.append(txt)
             i += 1
 

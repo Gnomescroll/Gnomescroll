@@ -266,13 +266,14 @@ void Text::set_text(char* text)
     int len = strlen(text);
     if (len == 0) {
         this->str_len = 0;
+        if (this->text != NULL)
+        {
+            this->text[0] = '\0';
+        }
         return;
     }
-printf("Text::set_text to %s\n", text);
-printf("len=%d\n", len);
     if (this->text != NULL)
     {
-        printf("text not null, might replace text\n");
         if (strcmp(text, this->text))
         {
             // string is different
@@ -293,7 +294,6 @@ printf("len=%d\n", len);
     }
     else
     {
-        printf("new text\n");
         // new
         this->text = (char*)malloc(sizeof(char) * (len+1));
         strcpy(this->text, text);
@@ -360,20 +360,33 @@ Text::~Text()
         free(this->text);
 }
 
+static int hud_text_inited = 0;
 static const int HUD_TEXT_MAX = 256;
 static int text_index = 0;
-static Text hud_text[HUD_TEXT_MAX];
+static Text* hud_text[HUD_TEXT_MAX];
+
+void init_text()
+{
+    if (hud_text_inited) return;
+    for (int i=0; i<HUD_TEXT_MAX; hud_text[i++] = new Text());
+    hud_text_inited++;
+}
 
 // CYTHON
 Text* create_text()
 {
+    if (!hud_text_inited)
+    {
+        printf("ERROR create_text -- text not inited.\n");
+        return NULL;
+    }
     if (text_index >= HUD_TEXT_MAX)
     {
         printf("HUD_TEXT MAX %d exceeded\n", HUD_TEXT_MAX);
         return NULL;
     }
     
-    Text* t = &hud_text[text_index];
+    Text* t = hud_text[text_index];
     t->id = text_index++;
     t->inited = true;
     return t;
@@ -381,37 +394,115 @@ Text* create_text()
 
 void draw_text(int id)
 {
+    if (!hud_text_inited)
+    {
+        printf("ERROR draw_text -- text not inited.\n");
+        return;
+    }
     if (id < 0 || id >= HUD_TEXT_MAX)
     {
         printf("draw_text -- invalid text id %d\n", id);
         return;
     }
 
-    Text t = hud_text[id];
-    if (!t.inited)
+    Text* t = hud_text[id];
+    if (!t->inited)
     {
         printf("text %d not inited\n", id);
         return;
     }
 
-    t.draw();
+    t->draw();
 }
 
 void set_text(int id, char* text)
 {
+    if (!hud_text_inited)
+    {
+        printf("ERROR set_text -- text not inited.\n");
+        return;
+    }
     if (id < 0 || id >= HUD_TEXT_MAX)
     {
-        printf("draw_text -- invalid text id %d\n", id);
+        printf("set_text -- invalid text id %d\n", id);
         return;
     }
 
-
-    Text t = hud_text[id];
-    if (!t.inited)
+    Text* t = hud_text[id];
+    if (!t->inited)
     {
         printf("text %d not inited\n", id);
         return;
     }
 
-    t.set_text(text);
+    t->set_text(text);
+}
+
+void set_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    if (!hud_text_inited)
+    {
+        printf("ERROR set_color -- text not inited.\n");
+        return;
+    }
+    if (id < 0 || id >= HUD_TEXT_MAX)
+    {
+        printf("set_color -- invalid text id %d\n", id);
+        return;
+    }
+
+    Text* t = hud_text[id];
+    if (!t->inited)
+    {
+        printf("text %d not inited\n", id);
+        return;
+    }
+
+    t->set_color(r,g,b,a);
+}
+
+void set_y(int id, float y)
+{
+    if (!hud_text_inited)
+    {
+        printf("ERROR set_y -- text not inited.\n");
+        return;
+    }
+    if (id < 0 || id >= HUD_TEXT_MAX)
+    {
+        printf("set_y -- invalid text id %d\n", id);
+        return;
+    }
+
+    Text* t = hud_text[id];
+    if (!t->inited)
+    {
+        printf("text %d not inited\n", id);
+        return;
+    }
+
+    t->y = y;
+}
+
+float get_yoffset(int id)
+{
+    if (!hud_text_inited)
+    {
+        printf("ERROR get_yoffset -- text not inited.\n");
+        return 0.0f;
+    }
+    if (id < 0 || id >= HUD_TEXT_MAX)
+    {
+        printf("get_yoffset -- invalid text id %d\n", id);
+        return 0.0f;
+    }
+
+    Text* t = hud_text[id];
+    if (!t->inited)
+    {
+        printf("text %d not inited\n", id);
+        return 0.0f;
+    }
+
+    return t->yoff;
 }

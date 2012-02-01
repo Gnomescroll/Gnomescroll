@@ -160,7 +160,8 @@ int init_c_lib() {
         HudCubeSelector::init();
         Compass::init();
         //vn::init();
-
+        init_text();
+        
         Animations::init_hitscan();
         Animations::init_hitscan_laser();
         

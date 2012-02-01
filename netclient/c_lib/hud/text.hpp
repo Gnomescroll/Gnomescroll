@@ -86,7 +86,13 @@ class Text
         ~Text();
 };
 
+void init_text();
+
+
 //CYTHON
 Text* create_text();
-void draw_text(int text_id);
-void set_text(int text_id, char* text);
+void draw_text(int id);
+void set_text(int id, char* text);
+void set_color(int id, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+void set_y(int id, float y);
+float get_yoffset(int id);
