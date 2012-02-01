@@ -1589,13 +1589,9 @@ class Font:
 
 """Map"""
 cdef extern from "hud/map.hpp" namespace "HudMap":
-    void update_map()
     void draw_map()
 
 class Map:
-    @classmethod
-    def update(cls):
-        update_map()
     @classmethod
     def draw(cls):
         draw_map()

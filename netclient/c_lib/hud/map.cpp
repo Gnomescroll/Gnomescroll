@@ -15,10 +15,10 @@ const int width = 128;
 const int height = 128;
 
 static SDL_Surface* map_surface;
-static GLuint map_texture;
+static GLuint map_textures[2];
 
 static SDL_Surface* overlay_surface;
-static GLuint overlay_texture;
+static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface;
 
@@ -51,13 +51,15 @@ void init_surface() {
     
     // texture
     glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &map_texture);
-    glBindTexture(GL_TEXTURE_2D, map_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    //GL_BGRA
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels );
+    for (int i=0; i<2; i++)
+    {
+        glGenTextures(1, &map_textures[i]);
+        glBindTexture(GL_TEXTURE_2D, map_textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //GL_BGRA
+        glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels );
+    }
     glDisable(GL_TEXTURE_2D);
 
     /* Init blank indicator overlay surface */
@@ -70,16 +72,18 @@ void init_surface() {
     tex_format = GL_BGRA;
     if (overlay_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
-    
+
     // texture
     glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &overlay_texture);
-    glBindTexture(GL_TEXTURE_2D, overlay_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    //GL_BGRA
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
+    for (int i=0; i<2; i++)
+    {
+        glGenTextures(1, &overlay_textures[i]);
+        glBindTexture(GL_TEXTURE_2D, overlay_textures[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //GL_BGRA
+        glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
+    }
     glDisable(GL_TEXTURE_2D);
 }
 
@@ -208,7 +212,7 @@ void update_agents() {
 
 void update_items(){};
 
-void update_indicators() {
+void update_indicators(int tex_id) {
 
     if (overlay_surface == NULL) return;
     SDL_LockSurface(overlay_surface);
@@ -219,26 +223,45 @@ void update_indicators() {
 
     SDL_UnlockSurface(overlay_surface);
     
-    update_texture(overlay_texture, overlay_surface);
+    update_texture(overlay_textures[tex_id], overlay_surface);
 }
 
-void update() {
+void update_terrain_map(int tex_id) {
     init_cells();   // updates cells array if map size changed
     if (cells == NULL) return;
     update_heightmap();
     update_map_surface();
-    update_texture(map_texture, map_surface);
+    update_texture(map_textures[tex_id], map_surface);
 }
 
 void draw() {
+    //  double buffered texture swap indices
+    static int draw_map_texture_index = 0;
+    static int update_map_texture_index = 1;
+    static int draw_overlay_texture_index = 0;
+    static int update_overlay_texture_index = 1;
+    
     static unsigned int update_counter = 0;
 
-    update_counter++;
     if(update_counter % 6 == 0)
-        update();
+    {
+        update_terrain_map(update_map_texture_index);
+        draw_map_texture_index++;
+        draw_map_texture_index%=2;
+        update_map_texture_index++;
+        update_map_texture_index%=2;
+    }
 
     if (update_counter % 2 == 0)
-        update_indicators();
+    {
+        update_indicators(update_overlay_texture_index);
+        draw_overlay_texture_index++;
+        draw_overlay_texture_index%=2;
+        update_overlay_texture_index++;
+        update_overlay_texture_index%=2;
+    }
+
+    update_counter++;
 
     static const float z = -0.5f;
     static const int x = 50;
@@ -252,10 +275,10 @@ void draw() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glBindTexture(GL_TEXTURE_2D, map_texture);
+    glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
     draw_bound_texture(x, y, w, h, z*2);
 
-    glBindTexture(GL_TEXTURE_2D, overlay_texture);
+    glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
     draw_bound_texture(x,y,w,h,z);
 
     glDisable(GL_TEXTURE_2D);
@@ -263,7 +286,7 @@ void draw() {
 }
 
 // for cython
-void update_map() {update();}
+//void update_map() {update();}
 void draw_map() {draw();}
 
 }
