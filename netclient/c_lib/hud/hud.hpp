@@ -56,7 +56,9 @@ void set_hud_draw_settings(
     bool disconnected,
     bool dead,
     bool fps,
-    float fps_val
+    float fps_val,
+    bool ping,
+    int ping_val
 );
 void set_chat_cursor(char* text, float x, float y);
 

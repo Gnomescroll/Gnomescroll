@@ -57,17 +57,11 @@ class Hud(object):
             x = self.win_width - 360
         )
 
-        #self.fps = self.text(
+        #self.ping = self.text(
             #text = '',
             #x = 0 + self.width_margin,
-            #offset = self.win_height - self.font_height - self.height_margin
+            #offset = self.win_height - (self.font_height * 2) - self.height_margin
         #)
-
-        self.ping = self.text(
-            text = '',
-            x = 0 + self.width_margin,
-            offset = self.win_height - (self.font_height * 2) - self.height_margin
-        )
 
     def init_scoreboard(self):
         self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -134,14 +128,6 @@ class Hud(object):
             stats['id'].append(agent.id)
 
         return stats
-
-    #def draw_fps(self, fps_text):
-        #self.fps.text = fps_text
-        #self.fps.draw()
-
-    def draw_ping(self, ping_text):
-        self.ping.text = '%sms' % (str(ping_text),)
-        self.ping.draw()
 
     def format_player_stats(self):
         agent = GameStateGlobal.agent
@@ -251,6 +237,12 @@ class Hud(object):
         except (TypeError, ValueError):
             fps = 0.
 
+        draw_ping = ping is not None
+        try:
+            ping = int(ping)
+        except (TypeError, ValueError):
+            ping = 0
+
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
@@ -260,7 +252,9 @@ class Hud(object):
             draw_disconnected,
             draw_dead,
             draw_fps,
-            fps
+            fps,
+            draw_ping,
+            ping
         )
         
         if InputGlobal.vn:
@@ -270,7 +264,7 @@ class Hud(object):
         init_c_lib.HUD.draw_textures()
         
         if zoom:
-            self.draw_text_items(fps, ping, zoom)
+            self.draw_text_items(zoom)
             return
             
         if InputGlobal.map:
@@ -284,9 +278,9 @@ class Hud(object):
         init_c_lib.Compass.draw()
 
         # draw text
-        self.draw_text_items(ping, zoom)
+        self.draw_text_items(zoom)
 
-    def draw_text_items(self, ping, zoom):
+    def draw_text_items(self, zoom):
         init_c_lib.CyText.start()
 
         init_c_lib.draw_hud_billboard_text()
@@ -301,12 +295,6 @@ class Hud(object):
 
         self.draw_player_stats()
 
-        #if fps is not None:
-            #self.draw_fps(fps)
-
-        if ping is not None:
-            self.draw_ping(ping)
-            
         self.draw_chat_messages()
         if InputGlobal.input == 'chat':
             self.draw_chat_input()

@@ -196,10 +196,8 @@ void Text::set_depth(float depth)
 
 void Text::draw()
 {
-    //printf("%s\n", text);
     if (this->text == NULL || this->text_len == 0)
         return;
-    //printf("YES\n");
     glColor4ub(r,g,b,a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale, this->line_height);
 }

@@ -1194,7 +1194,9 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool disconnected,
         bool dead,
         bool fps,
-        float fps_val
+        float fps_val,
+        bool ping,
+        int ping_val
     )
     void draw_hud_textures()
     void draw_hud_text()
@@ -1217,7 +1219,9 @@ cdef class HUD:
         bool disconnected,
         bool dead,
         bool fps,
-        float fps_val
+        float fps_val,
+        bool ping,
+        int ping_val
     ):
         set_hud_draw_settings(
             zoom,
@@ -1228,7 +1232,9 @@ cdef class HUD:
             disconnected,
             dead,
             fps,
-            fps_val
+            fps_val,
+            ping,
+            ping_val
         )
     @classmethod
     def set_chat_cursor(self, text, float x, float y):

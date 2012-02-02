@@ -160,6 +160,10 @@ fix cube selector input
 inventory in C
 hud draw settings in C
 hud text in object_list, acts as wrapper
+HUD class
+formatted text
+const hud text in C
+fps text in C
 =============
 
 OpenAL ?

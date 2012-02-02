@@ -125,8 +125,8 @@ class App(object):
         #NetOut.mapMessage.request_chunk_list()
 
         average = []
-        fps_text = None
-        ping_text = None
+        fps_val = None
+        ping_val = None
         fps = opts.fps
         ping = opts.fps
         ltick, ctick = 0,0
@@ -274,7 +274,7 @@ class App(object):
                 draw_cube_selector = False
                 if agent:
                     draw_cube_selector = (agent.active_weapon == 2)
-                self.hud.draw(fps=fps_text, ping=ping_text, cube_selector=draw_cube_selector, zoom=camera.camera.zoomed)
+                self.hud.draw(fps=fps_val, ping=ping_val, cube_selector=draw_cube_selector, zoom=camera.camera.zoomed)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
@@ -294,17 +294,16 @@ class App(object):
                     sum = 0.
                     for x in average:
                         sum += float(x)
-                    sum = sum / float(len(average))
+                    fps_val = sum / float(len(average))
                     average = []
                     #print "mean render time= %f" % (sum)
-                    fps_text = "%.2f" % (sum)
 
-            if False and ping:
+            if ping:
                 if init_c_lib.get_ticks() - ping_n > opts.ping_update_interval:
                     # do ping stuff here
                     ping_n = init_c_lib.get_ticks()
                     NetOut.miscMessage.ping()
-                    ping_text = stats.last_ping
+                    ping_val = stats.last_ping
 
             self.intervals.process()
 

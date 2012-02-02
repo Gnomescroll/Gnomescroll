@@ -20,6 +20,8 @@ static struct HudDrawSettings
     bool dead;
     bool fps;
     float fps_val;
+    bool ping;
+    int ping_val;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
@@ -31,7 +33,9 @@ void set_hud_draw_settings(
     bool disconnected,
     bool dead,
     bool fps,
-    float fps_val
+    float fps_val,
+    bool ping,
+    int ping_val
 )
 {
     hud_draw_settings.zoom = zoom;
@@ -41,12 +45,18 @@ void set_hud_draw_settings(
     hud_draw_settings.help = help;
     hud_draw_settings.disconnected = disconnected;
     hud_draw_settings.dead = dead;
+    
     hud_draw_settings.fps = fps;
-
     // sanitize
     fps_val = (fps_val >= 1000.0f) ? 999.99 : fps_val;
     fps_val = (fps_val < 0.0f) ? 0.0f : fps_val;
     hud_draw_settings.fps_val = fps_val;
+
+    hud_draw_settings.ping = ping;
+    // sanitize
+    ping_val = (ping_val >= 1000) ? 999 : ping_val;
+    ping_val = (ping_val < 0) ? 0 : ping_val;
+    hud_draw_settings.ping_val = ping_val;
 }
 
 static struct ChatCursor
@@ -128,6 +138,12 @@ void draw_hud_text()
         hud->fps->update_formatted_string(1, hud_draw_settings.fps_val);
         hud->fps->draw();
     }
+
+    if (hud_draw_settings.ping)
+    {
+        hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
+        hud->ping->draw();
+    }
 }
 
 
@@ -165,10 +181,9 @@ const char help_text[] =
 ;
 
 const char disconnected_text[] = "Server not connected.";
-
 const char dead_text[] = "You died.";
-
-const char fps_text[] = "%3.2fms";
+const char fps_format[] = "%3.2f";
+const char ping_format[] = "%dms";
 
 void HUD::init()
 {
@@ -190,13 +205,16 @@ void HUD::init()
     dead->set_position(_xresf/2 - 80, _yresf/2);
     
     fps = HudText::text_list.create();
-    fps->set_format((char*) fps_text);
+    fps->set_format((char*) fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(255,10,10,255);
-    fps->set_position(5, 18);
+    fps->set_position(3, 18+3);
     
     ping = HudText::text_list.create();
-    ping->set_text((char*) "");
+    ping->set_format((char*) ping_format);
+    ping->set_format_extra_length(3 - 2);
+    ping->set_color(255,10,10,255);
+    ping->set_position(3, (18*2)+3);
 
     scoreboard = new Scoreboard();
 
