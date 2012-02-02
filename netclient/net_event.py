@@ -78,7 +78,7 @@ class MessageHandler:
             return
         #use json_events when possible
         cmd = str(cmd)
-        print "Received python message: %s" % (cmd,)
+        #print "Received python message: %s" % (cmd,)
         if cmd in self.json_events:
             #print msg
             self.json_events[cmd](**msg)
