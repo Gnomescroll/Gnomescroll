@@ -50,18 +50,6 @@ class Hud(object):
 
     def init_text_objects(self):
         self.init_chat_text_objects()
-        
-        self.player_stats = self.text(
-            text = '',
-            offset = self.win_height - self.font_height - self.height_margin,
-            x = self.win_width - 360
-        )
-
-        #self.ping = self.text(
-            #text = '',
-            #x = 0 + self.width_margin,
-            #offset = self.win_height - (self.font_height * 2) - self.height_margin
-        #)
 
     def init_scoreboard(self):
         self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -128,28 +116,6 @@ class Hud(object):
             stats['id'].append(agent.id)
 
         return stats
-
-    def format_player_stats(self):
-        agent = GameStateGlobal.agent
-        if agent is None:
-            s = 'No agent yet.'
-        else:
-            if agent.team is None:
-                s = 'No team yet.'
-            else:
-                if agent.team.viewers:
-                    s = 'Viewer Mode'
-                else:
-                    w = 'Ammo %s' % (agent.weapon_hud_display(),)
-                    hp = 'HP %i' % (agent.health,)
-                    coins = '$%d' % (agent.coins,)
-                    s = '%s :: %s :: %s' % (coins, hp, w,)
-        return s
-
-    def draw_player_stats(self):
-        stats = self.format_player_stats()
-        self.player_stats.text = stats
-        self.player_stats.draw()
 
     def draw_reference_center(self):
         w = 2
@@ -243,6 +209,8 @@ class Hud(object):
         except (TypeError, ValueError):
             ping = 0
 
+        draw_player_stats = True
+
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
@@ -254,7 +222,8 @@ class Hud(object):
             draw_fps,
             fps,
             draw_ping,
-            ping
+            ping,
+            draw_player_stats
         )
         
         if InputGlobal.vn:
@@ -292,8 +261,6 @@ class Hud(object):
         if zoom:
             init_c_lib.Font.font.end()
             return
-
-        self.draw_player_stats()
 
         self.draw_chat_messages()
         if InputGlobal.input == 'chat':

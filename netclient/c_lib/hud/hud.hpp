@@ -24,12 +24,12 @@ class HUD
     public:
     
     // text objects
-    Text* player_stats;
     Text* help;
     Text* disconnected;
     Text* dead;
     Text* fps;
     Text* ping;
+    Text* player_stats;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects
@@ -58,7 +58,8 @@ void set_hud_draw_settings(
     bool fps,
     float fps_val,
     bool ping,
-    int ping_val
+    int ping_val,
+    bool player_stats
 );
 void set_chat_cursor(char* text, float x, float y);
 

@@ -10,6 +10,8 @@ typedef enum {
     TYPE_spawner_placer
 } weapon_type;
 
+const int WEAPON_HUD_STRING_MAX = 20+1;
+
 class Weapon {
 
     public:
@@ -24,7 +26,7 @@ class Weapon {
 
         bool scope;
 
-        char hud_string[20+1];
+        char hud_string[WEAPON_HUD_STRING_MAX];
 
         void restore_ammo();
 

@@ -164,6 +164,7 @@ HUD class
 formatted text
 const hud text in C
 fps text in C
+ping text in C
 =============
 
 OpenAL ?

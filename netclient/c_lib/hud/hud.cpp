@@ -9,6 +9,48 @@
 namespace Hud
 {
 
+/* Strings */
+
+const char help_text[] =
+"\n"
+"    Key:            Action:\n"
+"\n"
+"    Esc             Quit\n"
+"    WASD            Move\n"
+"    Space           Jump\n"
+"    Z               Jetpack (hold down)\n"
+"    \n"
+"    G               Toggle camera\n"
+"    T               Toggle keyboard\n"
+"\n"
+"    R               Reload\n"
+"    Num keys        Select weapon\n"
+"    Mouse scroll    Select weapon\n"
+"    Left click      Activate weapon\n"
+"    Right click     Zoom (if weapon has scope)\n"
+"    Arrow keys      Choose block type when block selector is active\n"
+"\n"
+"    Y               Chat\n"
+"    H               Display this menu\n"
+"    Tab             Display scoreboard\n"
+"    M               Minimap\n"
+"    \n"
+"    Weapons:\n"
+"    1               Laser\n"
+"    2               Pick\n"
+"    3               Block selector / applier\n"
+"    4               Grenades\n"
+;
+
+const char disconnected_text[] = "Server not connected.";
+const char dead_text[] = "You died.";
+const char fps_format[] = "%3.2f";
+const char ping_format[] = "%dms";
+
+const char player_stats_text_no_agent[] = "No Agent Assigned";
+const char player_stats_text_viewer[] = "Viewer Mode";
+const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
+
 static struct HudDrawSettings
 {
     bool zoom;
@@ -22,6 +64,7 @@ static struct HudDrawSettings
     float fps_val;
     bool ping;
     int ping_val;
+    bool player_stats;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
@@ -35,7 +78,8 @@ void set_hud_draw_settings(
     bool fps,
     float fps_val,
     bool ping,
-    int ping_val
+    int ping_val,
+    bool player_stats
 )
 {
     hud_draw_settings.zoom = zoom;
@@ -57,6 +101,8 @@ void set_hud_draw_settings(
     ping_val = (ping_val >= 1000) ? 999 : ping_val;
     ping_val = (ping_val < 0) ? 0 : ping_val;
     hud_draw_settings.ping_val = ping_val;
+
+    hud_draw_settings.player_stats = player_stats;
 }
 
 static struct ChatCursor
@@ -144,51 +190,42 @@ void draw_hud_text()
         hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
         hud->ping->draw();
     }
+
+    if (hud_draw_settings.player_stats)
+    {
+        Agent_state* a = ClientState::playerAgent_state.you;
+        if (a != NULL)
+        {
+            if (a->status.team == 0)
+                hud->player_stats->set_text((char*)player_stats_text_viewer);
+            else
+            {
+                int coins = a->status.coins;
+                coins = (coins > 100000) ? 99999 : coins;
+                coins = (coins < 0) ? 0 : coins;
+                int health = a->status.health;
+                health = (health >= 1000) ? 999 : health;
+                health = (health < 0) ? 0 : health;
+                int max_health = AGENT_HEALTH;
+                max_health = (max_health >= 1000) ? 999 : max_health;
+                max_health = (max_health < 0) ? 0 : max_health;
+                char* weapon_string = a->weapons.hud_display();
+                hud->player_stats->update_formatted_string(4, coins, health, max_health, weapon_string);
+            }
+        }
+        else
+        {
+            hud->player_stats->set_text((char*)player_stats_text_no_agent);
+        }
+        hud->player_stats->draw();
+    }
 }
 
 
 /* HUD */
 
-const char help_text[] =
-"\n"
-"    Key:            Action:\n"
-"\n"
-"    Esc             Quit\n"
-"    WASD            Move\n"
-"    Space           Jump\n"
-"    Z               Jetpack (hold down)\n"
-"    \n"
-"    G               Toggle camera\n"
-"    T               Toggle keyboard\n"
-"\n"
-"    R               Reload\n"
-"    Num keys        Select weapon\n"
-"    Mouse scroll    Select weapon\n"
-"    Left click      Activate weapon\n"
-"    Right click     Zoom (if weapon has scope)\n"
-"    Arrow keys      Choose block type when block selector is active\n"
-"\n"
-"    Y               Chat\n"
-"    H               Display this menu\n"
-"    Tab             Display scoreboard\n"
-"    M               Minimap\n"
-"    \n"
-"    Weapons:\n"
-"    1               Laser\n"
-"    2               Pick\n"
-"    3               Block selector / applier\n"
-"    4               Grenades\n"
-;
-
-const char disconnected_text[] = "Server not connected.";
-const char dead_text[] = "You died.";
-const char fps_format[] = "%3.2f";
-const char ping_format[] = "%dms";
-
 void HUD::init()
 {
-    player_stats = HudText::text_list.create();
-    player_stats->set_text((char*) "");
 
     help = HudText::text_list.create();
     help->set_text((char*) help_text);
@@ -216,6 +253,17 @@ void HUD::init()
     ping->set_color(255,10,10,255);
     ping->set_position(3, (18*2)+3);
 
+    player_stats = HudText::text_list.create();
+    player_stats->set_text((char*) player_stats_text_no_agent);
+    player_stats->set_format((char*) player_stats_format);
+    player_stats->set_format_extra_length(
+        (5 - 2)   /*coins*/
+      + (3 - 2)*2 /*health/max_health*/
+      + (Weapons::WEAPON_HUD_STRING_MAX - 2)
+    );
+    player_stats->set_color(255,10,10,255);
+    player_stats->set_position(_xresf - 360, 18 + 3);
+
     scoreboard = new Scoreboard();
 
     chat_queue = new ChatMessageQueue();
@@ -224,20 +272,18 @@ void HUD::init()
 HUD::HUD()
 :
 inited(false),
-player_stats(NULL),
 help(NULL),
 disconnected(NULL),
 dead(NULL),
 fps(NULL),
 ping(NULL),
+player_stats(NULL),
 scoreboard(NULL),
 chat_queue(NULL)
 {}
 
 HUD::~HUD()
 {
-    if (player_stats != NULL)
-        delete player_stats;
     if (help != NULL)
         delete help;
     if (disconnected != NULL)
@@ -248,6 +294,8 @@ HUD::~HUD()
         delete fps;
     if (ping != NULL)
         delete ping;
+    if (player_stats != NULL)
+        delete player_stats;
     if (scoreboard != NULL)
         delete scoreboard;
     if (chat_queue != NULL)
