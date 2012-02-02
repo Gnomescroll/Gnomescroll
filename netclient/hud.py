@@ -57,31 +57,11 @@ class Hud(object):
             x = self.win_width - 360
         )
 
-        #self.help_menu = self.text(
-            #text = self.help_menu_text,
-            #offset = 0,
-            #x = self.win_width/2
+        #self.fps = self.text(
+            #text = '',
+            #x = 0 + self.width_margin,
+            #offset = self.win_height - self.font_height - self.height_margin
         #)
-
-        self.disconnected_message = self.text(
-            text = 'Server not connected',
-            x = self.win_width/2 - 80,
-            offset = self.win_height/2 + self.font_height*2,
-            color = (255,10,10,255),
-        )
-        
-        self.dead_message = self.text(
-            text = 'You died',
-            x = self.win_width/2 - 80,
-            offset = self.win_height/2 + self.font_height*2,
-            color = (255,10,10,255),
-        )
-
-        self.fps = self.text(
-            text = '',
-            x = 0 + self.width_margin,
-            offset = self.win_height - self.font_height - self.height_margin
-        )
 
         self.ping = self.text(
             text = '',
@@ -155,9 +135,9 @@ class Hud(object):
 
         return stats
 
-    def draw_fps(self, fps_text):
-        self.fps.text = fps_text
-        self.fps.draw()
+    #def draw_fps(self, fps_text):
+        #self.fps.text = fps_text
+        #self.fps.draw()
 
     def draw_ping(self, ping_text):
         self.ping.text = '%sms' % (str(ping_text),)
@@ -254,50 +234,33 @@ class Hud(object):
         y = self.text_dict['input'].y
         init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
 
-    #help_menu_text = """
-    #Key:            Action:
-
-    #Esc             Quit
-    #WASD            Move
-    #Space           Jump
-    #Z               Jetpack (hold down)
-    
-    #G               Toggle camera
-    #T               Toggle keyboard
-
-    #R               Reload
-    #Num keys        Select weapon
-    #Mouse scroll    Select weapon
-    #Left click      Activate weapon
-    #Right click     Zoom (if weapon has scope)
-    #Arrow keys      Choose block type when block selector is active
-
-    #Y               Chat
-    #H               Display this menu
-    #Tab             Display scoreboard
-    #M               Minimap
-    
-    #Weapons:
-    #1               Laser
-    #2               Pick
-    #3               Block selector / applier
-    #4               Grenades
-    #"""
-    #def draw_help_menu(self):
-        #self.help_menu.draw()
-
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
 
         draw_chat_cursor = (InputGlobal.input == 'chat')
         if draw_chat_cursor:
             self.set_chat_cursor()
-            
+
+        draw_dead = NetClientGlobal.connection.connected\
+                    and GameStateGlobal.agent is not None\
+                    and GameStateGlobal.agent.dead
+        draw_disconnected = not NetClientGlobal.connection.connected
+
+        draw_fps = fps is not None
+        try:
+            fps = float(fps)
+        except (TypeError, ValueError):
+            fps = 0.
+
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
             InputGlobal.inventory,
             draw_chat_cursor,
-            InputGlobal.help_menu
+            InputGlobal.help_menu,
+            draw_disconnected,
+            draw_dead,
+            draw_fps,
+            fps
         )
         
         if InputGlobal.vn:
@@ -321,9 +284,9 @@ class Hud(object):
         init_c_lib.Compass.draw()
 
         # draw text
-        self.draw_text_items(fps, ping, zoom)
+        self.draw_text_items(ping, zoom)
 
-    def draw_text_items(self, fps, ping, zoom):
+    def draw_text_items(self, ping, zoom):
         init_c_lib.CyText.start()
 
         init_c_lib.draw_hud_billboard_text()
@@ -336,14 +299,10 @@ class Hud(object):
             init_c_lib.Font.font.end()
             return
 
-        #if InputGlobal.help_menu:
-            #self.draw_help_menu()
-            #return
-
         self.draw_player_stats()
 
-        if fps is not None:
-            self.draw_fps(fps)
+        #if fps is not None:
+            #self.draw_fps(fps)
 
         if ping is not None:
             self.draw_ping(ping)
@@ -351,10 +310,5 @@ class Hud(object):
         self.draw_chat_messages()
         if InputGlobal.input == 'chat':
             self.draw_chat_input()
-        if NetClientGlobal.connection.connected:
-            if GameStateGlobal.agent is not None and GameStateGlobal.agent.dead:
-                self.dead_message.draw()
-        else:
-            self.disconnected_message.draw()
             
         init_c_lib.CyText.end()

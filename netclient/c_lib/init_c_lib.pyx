@@ -1190,7 +1190,11 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool cube_selector,
         bool inventory,
         bool chat_cursor,
-        bool help
+        bool help,
+        bool disconnected,
+        bool dead,
+        bool fps,
+        float fps_val
     )
     void draw_hud_textures()
     void draw_hud_text()
@@ -1209,14 +1213,22 @@ cdef class HUD:
         bool cube_selector,
         bool inventory,
         bool chat_cursor,
-        bool help
+        bool help,
+        bool disconnected,
+        bool dead,
+        bool fps,
+        float fps_val
     ):
         set_hud_draw_settings(
             zoom,
             cube_selector,
             inventory,
             chat_cursor,
-            help
+            help,
+            disconnected,
+            dead,
+            fps,
+            fps_val
         )
     @classmethod
     def set_chat_cursor(self, text, float x, float y):

@@ -1,7 +1,7 @@
 #include "text.hpp"
 
 #include <stdio.h>
-
+#include <stdarg.h>
 
 namespace HudText
 {
@@ -90,44 +90,77 @@ void draw_string(char* text, float x, float y, float depth, float scale, float l
     }
 }
 
-void Text::set_text(char* text)
+// internal string copy
+void Text::set_string(char* text, char** this_text, int* this_len)
 {
     int len = strlen(text);
-    if (len == 0) {
-        this->str_len = 0;
-        if (this->text != NULL)
-        {
-            this->text[0] = '\0';
-        }
-        return;
-    }
-    if (this->text != NULL)
+    if (*this_text != NULL)
     {
-        if (strcmp(text, this->text))
+        if (strcmp(text, *this_text))
         {
             // string is different
-            if (this->str_len == 0)
+            if (*this_len == 0)
             {
                 // recalculate str_len
-                this->str_len = strlen(this->text);
+                *this_len = strlen(*this_text);
             }
-            if (len != this->str_len)
+            if (len != *this_len)
             {
                 // string is different size
-                this->text = (char*)realloc(this->text, sizeof(char)*(len+1));
-                this->str_len = len;
+                *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
+                *this_len = len;
             }
             
-            strcpy(this->text, text);
+            strcpy(*this_text, text);
         }
     }
     else
     {
         // new
-        this->text = (char*)malloc(sizeof(char) * (len+1));
-        strcpy(this->text, text);
-        this->str_len = len;
+        *this_text = (char*)malloc(sizeof(char) * (len+1));
+        strcpy(*this_text, text);
+        *this_len = len;
     }
+}
+
+void Text::resize_string(int n, char** str, int* str_len)
+{
+    if (*str_len == n) return;
+    if (*str == NULL)
+        *str = (char*)malloc(sizeof(char) * (n+1));
+    else
+        *str = (char*)realloc(*str, sizeof(char) * (n+1));
+    *str_len = n;
+}
+
+void Text::set_text(char* text)
+{
+    this->set_string(text, &this->text, &this->text_len);
+}
+
+void Text::set_format(char* format)
+{
+    this->set_string(format, &this->format, &this->format_len);
+    this->formatted = true;
+}
+
+void Text::set_format_extra_length(int size)
+{
+    // size large enough to fit formatted data
+    // subtract format string sizes
+    // eg "id=%d" -- size would be 8 (+10 for int, -2 for %d), 
+    this->formatted_extra_len = size;
+}
+
+void Text::update_formatted_string(int n_args, ...)
+{
+    int len = this->format_len + this->formatted_extra_len + 1;
+    if (len > this->text_len)
+        resize_string(len, &this->text, &this->text_len);
+    va_list args;
+    va_start(args, n_args);
+    vsprintf(this->text, this->format, args);
+    va_end(args);
 }
 
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -163,8 +196,10 @@ void Text::set_depth(float depth)
 
 void Text::draw()
 {
-    if (this->text == NULL || this->str_len == 0)
+    //printf("%s\n", text);
+    if (this->text == NULL || this->text_len == 0)
         return;
+    //printf("YES\n");
     glColor4ub(r,g,b,a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale, this->line_height);
 }
@@ -174,13 +209,17 @@ Text::Text(int id)
 :
 width(10),height(10),
 line_height(18),
-str_len(0),
+text_len(0),
+format_len(0),
+formatted_extra_len(0),
 id(id),
 inited(false),
 depth(-0.1),
 scale(1.0),
+formatted(false),
 r(255),g(255),b(255),a(255),
 text(NULL),
+format(NULL),
 x(0), y(0),
 xoff(0),yoff(0)
 {}
@@ -189,6 +228,8 @@ Text::~Text()
 {
     if (this->text != NULL)
         free(this->text);
+    if (this->format != NULL)
+        free(this->format);
 }
 
 Text_list text_list;

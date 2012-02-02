@@ -52,7 +52,11 @@ void set_hud_draw_settings(
     bool cube_selector,
     bool inventory,
     bool chat_cursor,
-    bool help
+    bool help,
+    bool disconnected,
+    bool dead,
+    bool fps,
+    float fps_val
 );
 void set_chat_cursor(char* text, float x, float y);
 
