@@ -208,7 +208,7 @@ def requireKey(key, err_key=None):
             except KeyError:
                 return err.key_missing(err_key)
             args = _add_arg(args, thing)
-            print msg, args, kwargs
+            #print msg, args, kwargs
             return f(self, msg, *args, **kwargs)
         return wrapped
     return outer
