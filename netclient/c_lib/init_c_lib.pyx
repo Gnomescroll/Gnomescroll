@@ -143,23 +143,11 @@ cpdef init_python_net():
 """
 from libcpp cimport bool
 
-
-""" Slimes"""
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
-
-    cdef cppclass Slime_list:
-        void update()
-
     void test(int n)
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    Slime_list slime_list
 
 def slime_test(int n):
     test(n)
-
-def slime_tick():
-    slime_list.update()
 
 """ ray trace """
 cdef extern from "ray_trace/ray_trace.h":
@@ -189,7 +177,7 @@ cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_sound_path(char* path)
 
     void load_sound(char* file)
-    void update()
+    void update_sound()
     
 
 class Sound(object):
@@ -210,7 +198,7 @@ class Sound(object):
 
     @classmethod
     def update(cls):
-        update()
+        update_sound()
 
 """ SDL """
 
@@ -675,6 +663,12 @@ cdef extern from "./agent/player_agent.hpp":
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
+    void update_client_state()
+
+class ClientState(object):
+    @classmethod
+    def update(cls):
+        update_client_state()
 
 def draw_agents():
     agent_list.draw()

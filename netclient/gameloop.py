@@ -19,7 +19,6 @@ import time
 import random
 
 import stats
-import intervals
 import camera
 
 import c_lib.terrain_map
@@ -87,7 +86,6 @@ class App(object):
 
         #gif_maker()
         
-        self.intervals = intervals.Intervals()
         def send_agent_pos():
             if GameStateGlobal.agent is not None:
                 NetOut.sendMessage.agent_position(GameStateGlobal.agent)
@@ -134,9 +132,6 @@ class App(object):
         if ping:
             ping_n = init_c_lib.get_ticks()
 
-        self.intervals.set()
-        _i = 30
-
         init_c_lib._generate_circuit_tree(0,0)
 
         _m = 0
@@ -178,9 +173,6 @@ class App(object):
                 #    NetClientStartFrame() #physics tick
 
                 sl_c += 1
-
-                ParticleTestSpawn(_i)
-                _i+=1
 
                 #process input
                 init_c_lib.process_events()
@@ -260,7 +252,6 @@ class App(object):
 
             P.event("Animations Draw")
 
-            P.event("c_lib_particles.draw()")
             init_c_lib.draw() ## TESTING
 
             init_c_lib.AnimationDraw()
@@ -305,116 +296,12 @@ class App(object):
                     NetOut.miscMessage.ping()
                     ping_val = stats.last_ping
 
-            self.intervals.process()
-
             P.finish_frame()
 
             init_c_lib.Sound.update()
-            init_c_lib.slime_tick()
+            init_c_lib.ClientState.update()
 
         init_c_lib.close()
-
-
-def ParticleTestSpawn(_i):
-    return
-    #neutron_fountain()
-    if _i % 30 == 0:
-        pass
-        #init_c_lib._generate_circuit_tree(0,0)
-    if _i % 350 == 0:
-        #init_c_lib._create_grenade(5,5,2, 0, 0, 50, 0, 350)
-        pass
-    if False or _i % 15 == 0:
-        v = 4
-        x = v*random.random() -0.5
-        y = v*random.random() -0.5
-        z = v*random.random() -0.5
-        le = math.sqrt(x**2+y**2+z**2)
-        x *= v / le
-        y *= v / le
-        z *= v / le
-        #init_c_lib._create_grenade(25,25,-4, x,y,z, 0, 350)
-    if _i % 150 == 0:
-        v = 2
-        x = v*(random.random() -0.5)
-        y = v*(random.random() -0.5)
-        z = v*(random.random() -0.5)
-        le = math.sqrt(x**2+y**2+z**2)
-        x *= v / le
-        y *= v / le
-        z *= v / le
-        #_type = random.randint(0,9*3)
-        _type=0
-        #init_c_lib._create_neutron(_type,1,35.5,35.5,5.5, x,y,z)
-    #if True or _i % 15 == 0:
-    for _j_ in range(0,1):
-        v = 3
-        x = 32+ 16*random.random()
-        y = 32+ 16*random.random()
-        z = 40
-
-        vx = v*(random.random() -0.5)
-        vy = v*(random.random() -0.5)
-        vz = -3.5 #v*(random.random() -0.5)
-        #init_c_lib._create_cspray(x,y,z, vx,vy,vz)
-
-    for _j_ in range(0,5):
-        x = 32+ 16*random.random()
-        y = 32+ 16*random.random()
-        z = 40.
-        vx = v*(random.random() -0.5)
-        vy = v*(random.random() -0.5)
-        vz = -1. #v*(random.random() -0.5)
-        #init_c_lib._create_minivox(x,y,z, vx,vy,vz)
-
-
-def neutron_fountain():
-    v = 2
-    x = v*(random.random() -0.5)
-    y = v*(random.random() -0.5)
-    z = v*(random.random() -0.5)
-    le = math.sqrt(x**2+y**2+z**2)
-    x *= v / le
-    y *= v / le
-    z *= v / le
-    init_c_lib._create_neutron(0,1,35.5,35.5,5.5, x,y,z)
-
-def billboard_text_fountain():
-    v = 6
-    vx = v*(random.random() -0.5)
-    vy = v*(random.random() -0.5)
-    vz = v*(random.random() -0.5)
-    le = math.sqrt(vx**2+vy**2+vz**2)
-    vx *= v / le
-    vy *= v / le
-    vz *= v / le
-    vz = 0
-    _x = (random.random() -0.5) * 1
-    _y = (random.random() -0.5) * 1
-    num = random.randint(0,25)
-    init_c_lib._create_billboard_text(16.0+_x,16.0+_y,125.0, vx, vy,vz, str(num))
-
-
-def gif_maker():
-    z_step = 0.0013
-    freq = 9
-    seed = 9090
-    distance_enabled = True
-    w = 256
-    h = 256
-    gradient = 6
-    turb_enable = False
-    turb_f = 1
-    turb_pow = 1
-    init_c_lib.VN.configure(z_step, freq, seed, distance_enabled, turb_enable, turb_f, turb_pow)
-    #init_c_lib.VN.configure(z_step, freq, seed, distance_enabled, turb_f, turb_pow)
-    init_c_lib.VN.init(width=w, height=h, gradient=gradient)
-    print 'preparing to generate frames'
-    secs = 1./30.
-    #secs = 1.
-    init_c_lib.VN.frames(secs)
-    print 'frames generated'
-    sys.exit()
 
 if __name__ == '__main__':
     app = App()

@@ -452,4 +452,7 @@ int test() {
     return 0;
 }
 
+
+//CYTHON
+void update_sound(){update();}
 }

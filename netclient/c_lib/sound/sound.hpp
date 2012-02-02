@@ -31,4 +31,7 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 // Debug
 int test();
 
+//CYTHON
+void update_sound();
+
 }

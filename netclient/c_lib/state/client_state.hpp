@@ -46,8 +46,13 @@ namespace ClientState {
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         
     void set_PlayerAgent_id(int id);
+
+    void update();
     
     void init();
+
+    //CYTHON
+    void update_client_state();
 }
 #endif
 

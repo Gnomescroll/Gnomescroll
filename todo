@@ -165,7 +165,10 @@ formatted text
 const hud text in C
 fps text in C
 ping text in C
+player stats indicator in C
 =============
+
+Bundle voxel list draw calls properly (currently in agent_list)
 
 OpenAL ?
 
@@ -213,9 +216,9 @@ PYTHON DEPRECATION:
 ORDER:
 HUD
 Input
+Camera
 NetServer pool
 Chat
-Camera
 Font
 Main loop
 

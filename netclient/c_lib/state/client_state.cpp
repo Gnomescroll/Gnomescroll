@@ -36,10 +36,17 @@ namespace ClientState {
     int active_agent = 0;
     int agent_control_state[16];
         
-    void init() {
+    void init()
+    {
         ctf.init();
         voxel_render_list.init_voxel_render_list_shader1();
     }
+
+    void update()
+    {
+        slime_list.update();
+    }
+
 
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
     {
@@ -50,4 +57,9 @@ namespace ClientState {
         playerAgent_state.set_PlayerAgent_id(id);
         ctf.on_ready();
     }
+
+
+    //CYTHON
+    void update_client_state(){update();}
+
 }
