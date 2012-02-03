@@ -1155,18 +1155,14 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool compass,
         bool map
     )
-    void draw_hud_textures()
-    void draw_hud_text()
+    void draw_hud()
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_chat_input_string(char* text)
 
 cdef class HUD:
     @classmethod
-    def draw_textures(cls):
-        draw_hud_textures()
-    @classmethod
-    def draw_text(cls):
-        draw_hud_text()
+    def draw(cls):
+        draw_hud()
     @classmethod
     def set_draw_settings(cls,
         bool zoom,

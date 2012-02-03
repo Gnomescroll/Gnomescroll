@@ -12,19 +12,10 @@ from game_state import GameStateGlobal
 HUD overlay
 '''
 
-base_dir = "./media/"
-
 class Hud(object):
 
     def __init__(self):
-
         init_c_lib.Font.init()
-
-    def draw_reference_center(self):
-        w = 2
-        x = (self.win_width/2) - w/2
-        y = (self.win_height/2) - w/2
-        self._draw_square(x, y, w, color=(255,10,10))
 
     def set_chat_messages(self):
         blanks = 0
@@ -103,6 +94,5 @@ class Hud(object):
             draw_map
         )
 
-        init_c_lib.HUD.draw_textures()
         self.set_chat_messages()
-        init_c_lib.HUD.draw_text()
+        init_c_lib.HUD.draw()

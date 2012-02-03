@@ -298,7 +298,11 @@ void draw_hud_text()
     end_text_draw();
 }
 
-
+void draw_hud()
+{
+    draw_hud_textures();
+    draw_hud_text();
+}
 /* HUD */
 
 void HUD::init()
