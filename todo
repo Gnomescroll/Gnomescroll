@@ -178,6 +178,14 @@ CyText removed from init_c_lib -- all text creation and draw in C (chat message 
 Draw/Tick calls managed by client state
 =============
 
+Feb 03
+
+
+=============
+
+Client's agent's hitscan on terrain doesnt play local block damage effect
+
+Reintegrate new hitscan
 
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 
@@ -240,25 +248,3 @@ map gen scripts (can be removed easy, not integrated)
 
 delete the rest
 
-
-====================
-
-HUD migration to C
-
-init all text objects
-
-rewrite scoreboard formatter
--- scoreboard data is all available in C now, this wont be that bad
-
-rewrite scoreboard layout render
--- will be annoying, but easier this time
-
-rewrite player stats formatter
--- again, should be easy
-
-draw chat messages
--- need to write a payload class that mirrors chat client's current Payload object
--- will need to fill an array of chat messages to render in C, from python
--- then render from that
-
-Then can delete CyText!
