@@ -51,8 +51,45 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 
 '''
 
+def feb3_test_map():
+    #setup
+    terrain_map.set_map_dimensions(128,128,128) # TODO:: get this value from the map gen or saved map    
+    m = c_lib.map_gen
+    m.init(128,128, 128)
+    m.conf.seed(opts.seed)
+
+    #1
+    m.conf\
+    .size(128,128,128)\
+    .tile(101)\
+    .interpolate(4,4,2)\
+    .scale(3.0, 3.0, 1.0)\
+    .heightmap(baseline=20, maxheight=40)\
+    .p2(octaves=9, persistence=20, frequency=0.01)\
+    .start()\
+    .reset()
+
+    #2
+    c_lib.map_gen.conf\
+    .size(128,128,128)\
+    .tile(102)\
+    .scale(x=4.0, y=4.0, z=1.0)\
+    .group(1)\
+    .gradient(z0=0.0, z1=-0.3)\
+    .interpolate(4,4,2)\
+    .density(threshold=0.75)\
+    .p3(octaves=6, persistence=0.7)\
+    .start()\
+    .reset()
+    
+    m.destroy()
+
+
 def _gen_map():
-    terrain_map.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map
+
+    feb3_test_map()
+    return
+    terrain_map.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
     if not opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
         c_lib.map_gen.init(512,512,128)
         c_lib.map_gen.conf.seed(opts.seed)
@@ -312,8 +349,8 @@ class Main:
                 terrain_map.set_map_dimensions(128,128,128)
                 map_gen.floor(terrain_map)
                 #terrain_map.load_from_disk("natural_terrain")
-        #_gen_map()
-        gen_map_simple()
+        _gen_map()
+        #gen_map_simple()
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
             ##terrain_map.load_from_disk("savetest2")
