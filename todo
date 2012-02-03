@@ -170,8 +170,11 @@ player stats indicator in C
 
 Feb 2
 
+misc draw in C (compass, map,)
 chat render in C
 scoreboard in C
+hud equipment icons in C
+CyText removed from init_c_lib -- all text creation and draw in C (chat message text still sets some text, but its a setter wrapper only)
 =============
 
 Bundle voxel list draw calls properly (currently in agent_list)
