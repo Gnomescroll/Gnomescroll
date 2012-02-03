@@ -1,3 +1,119 @@
-Voxel Butterflies
-LSD shader
-slimes
+Rename Game: GnomeSpace
+
+<Triplefox> like I keep saying - make the pieces, the elemental parts...
+<Triplefox> the only thing aos has is that - a bunch of weapons to use
+<Triplefox> and players to shoot
+
+<Triplefox> well the game is still sci-fi right
+<Triplefox> do you have your resource system figured out?
+<HaltingState> nope
+<HaltingState> i have to get some type of crafting system
+<HaltingState> and stuff for player to hoard
+<Triplefox> one avenue is to develop resource blocks in tandem with the crafting
+<Triplefox> minecraft went very far on just that
+<Triplefox> on the other hand you have aos which has only added weapons
+<Triplefox> and done little with resources
+<Triplefox> on the other hand you have aos which has only added weapons
+<Triplefox> and done little with resources
+<Triplefox> now that you are actually getting into gameplay you have to decide what elements of your game are really key to the experience...not on the abstract level, but like "this is the gun i am shooting, this is the stuff I'm collecting"
+
+<TkTech> Why does it feel like with 1.9 Minecraft is turning into the old Runescape, with the addition of blocks?
+<Jckf> That sounds scary
+<Zaneo> TkTech: It couldn't... oh my god, you're right.
+<TkTech> The new music even sounds like it was swapped out from runescape, circa 2001
+
+Graphics Engine:
+
+:using index array to reduce bytes per quad from 48 to 8
+-decrease map chunk graphics memory usage by 5x
+-increased map chunk update speed
+-decreased bandwidth between graphics card and memory
+-decrease client side memory usage for storing vertex data
+-does not require geometry shaders
+
+:fulstrum culling in x/y
+-reduce draw calls
+
+!!! Lighting bug: corner vertices are lit even if they are not adjacent to blocks
+
+Minor:
+
+:draw chunks front to back
+-early z-buffer culling
+-can transverse in reverse order for transparency effects
+
+:sort and index map chunk vertices by z-level
+-allows fulstrum culling in z
+-draw range of vertices in VBO buffer, reduces polygons
+
+:sort vertex lists
+
+Networking:
+
+Halo uses 20 bits per player for control state
+
+
+Performance Indicator:
+
+:add more colors indcators to hud map loading
+-indicate whether map chunk is loaded from network
+-indicate whether map chunk is in memory
+-indicate whether map chunk is in graphics memory
+-indicate whether map chunk was drawn last frame
+
+
+Minecraft vs Dwarf Fortress
+<pipeline> that is pretty awesome but I'm with hybridfusion on this
+<pipeline> there's so little to interact with in minecraft
+* Kallikrates (~Adium@synIRC-323E4CB4.dc.dc.cox.net) has joined #cobol
+<pipeline> building something beautiful, ok it's bult now welp
+<AionicDuck> yeah
+<AionicDuck> once you get past the initial digging/building phase
+<AionicDuck> you have nothing else to do
+<AionicDuck> you don't amass power or obtain greater and greater equipment
+<AionicDuck> you just stagnate
+<AionicDuck> or download mods which completely obliterate Minecraft in quality
+<pipeline> one of the things I liked about dwarf fortress
+<AionicDuck> ^
+<AionicDuck> never had identical forts
+<AionicDuck> or experiences
+<pipeline> I always built elaborate tomb complexes
+<pipeline> which is pretty much the same level of sperg wanking
+<pipeline> but just getting those things built, and watching dwarves die and be buried, is somewhat entertaining
+<AionicDuck> no
+<pipeline> there's gameplay just in the struggle to accomplish modest goals
+<AionicDuck> building a calculator in DF is sperg wanking
+<AionicDuck> the fact that DF requires constant attention and effort makes it much more fulfilling than MC
+
+===
+Communication:
+SocialibilitY: "Synchronous worlds need asynchronous communication features."
+
+1) Game play facilitates sociability. 2) User interface design is always also social interaction design. 3) Synchronous worlds need asynchronous communication features.
+
+Status, competition, reward and achievement are concepts that the game industry has used for years to increase engagement and drive behavior in games
+
+===
+
+1>
+
+<HaltingState> Triplefox, what do you want in terms of game play, or why do you think AoS or minecraft is engaging?
+<Triplefox> for me it's the accessibility of the low-res voxel world that makes these games different
+<Triplefox> it's easy to create interesting things
+
+Add explosives/tripwires
+Add bots/mobs for building
+
+1> multiple player agents 17:09
+2> player agent models (visualization of agents) 17:09
+3> collision detection on server 17:09
+4> steaming map from server to client (working on right now) 17:10
+5> creation of projectiles 17:10
+6> add/remove blocks in FPS mode by client
+
+
+Optimization (LATER):
+-fulstrum culling for map chunks
+-storing pointers to map tile structs, instead of tile_ids
+-computation of vertex buffers in C?
+-openGL C rendering

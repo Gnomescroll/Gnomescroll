@@ -8,6 +8,8 @@ syntax: glob
 *.so
 *.o
 
+*.glc
+
 dist
 
 screenshot
