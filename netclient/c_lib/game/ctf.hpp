@@ -40,8 +40,10 @@ class CTF {
         void tick();
 
         void set_team_name(int team, char* name);
+        char* get_team_name(int team);
         
         void set_score(int team, int score);
+        int get_score(int team);
         void set_flag_position(int team, float x, float y, float z);
         void set_base_position(int team, float x, float y, float z);
 

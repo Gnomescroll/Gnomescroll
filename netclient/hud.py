@@ -23,85 +23,83 @@ class Hud(object):
         self.win_width = opts.width
         self.win_height = opts.height
         self.font_height = opts.font_size
-        self.height_margin = 5
-        self.width_margin = 3
 
-        self.init_scoreboard()
+        #self.init_scoreboard()
 
-    def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
-        txt = init_c_lib.CyText(
-            text = text,
-            x = x,
-            y = self.win_height - offset,
-            color = color
-        )
-        return txt
+    #def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
+        #txt = init_c_lib.CyText(
+            #text = text,
+            #x = x,
+            #y = self.win_height - offset,
+            #color = color
+        #)
+        #return txt
 
-    def init_scoreboard(self):
-        self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
-        self.scoreboard = {}
-        col_width = (self.win_width * 0.75) // len(self.scoreboard_properties)
-        start_x = self.win_width // 8
-        i = 0
-        for col_name in self.scoreboard_properties:
-            self.scoreboard[col_name.lower()] = self.text(
-                text = '',
-                x = start_x + (i * col_width),
-                color = (150, 150, 255, 255)
-            )
-            i += 1
+    #def init_scoreboard(self):
+        #self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
+        #self.scoreboard = {}
+        #col_width = (self.win_width * 0.75) // len(self.scoreboard_properties)
+        #start_x = self.win_width // 8
+        #i = 0
+        #for col_name in self.scoreboard_properties:
+            #self.scoreboard[col_name.lower()] = self.text(
+                #text = '',
+                #x = start_x + (i * col_width),
+                #color = (150, 150, 255, 255)
+            #)
+            #i += 1
 
-        self.team_names = {
-            1 : self.text(
-                text = '',
-                x = start_x,
-                offset = (self.win_height // 8),
-                color = (150, 150, 255, 255)
-            ),
-            2 : self.text(
-                text = '',
-                x = start_x,
-                offset = (self.win_height // 8),
-                color = (150, 150, 255, 255)
-            )
-        }
+        #self.team_names = {
+            #1 : self.text(
+                #text = '',
+                #x = start_x,
+                #offset = (self.win_height // 8),
+                #color = (150, 150, 255, 255)
+            #),
+            #2 : self.text(
+                #text = '',
+                #x = start_x,
+                #offset = (self.win_height // 8),
+                #color = (150, 150, 255, 255)
+            #)
+        #}
 
-    def format_scoreboard(self, stats):
-        for prop in self.scoreboard_properties:
-            lprop = prop.lower()
-            lines = []
-            lines.append(prop + '\n')
-            vals = stats[lprop]
-            for i, val in enumerate(vals):
-                if i in stats['team']:
-                    lines.append('\n')
-                lines.append(str(val))
-            stats[lprop] = '\n'.join(lines)
+    #def format_scoreboard(self, stats):
+        #for prop in self.scoreboard_properties:
+            #lprop = prop.lower()
+            #lines = []
+            #lines.append(prop + '\n')
+            #vals = stats[lprop]
+            #for i, val in enumerate(vals):
+                #if i in stats['team']:
+                    #lines.append('\n')
+                #lines.append(str(val))
+            #stats[lprop] = '\n'.join(lines)
 
-        return stats
+        #return stats
 
-    def scoreboard_stats(self):
-        props = ['name', 'kills', 'deaths', 'score', 'id']
-        defs =  [[] for i in range(len(props))]
-        stats = dict(zip(props, defs))
-        stats['team'] = {}
+    #def scoreboard_stats(self):
+        #props = ['name', 'kills', 'deaths', 'score', 'id']
+        #defs =  [[] for i in range(len(props))]
+        #stats = dict(zip(props, defs))
+        #stats['team'] = {}
 
-        agents = GameStateGlobal.agentList.values()
+        #agents = GameStateGlobal.agentList.values()
 
-        agents.sort(key=lambda a: a.team.id)
+        #agents.sort(key=lambda a: a.team.id)
 
-        curr_team = 0
-        for i, agent in enumerate(agents):
-            if agent.team.id and agent.team.id != curr_team:
-                curr_team = agent.team.id
-                stats['team'][i] = agent.team
-            stats['name'].append(agent.name)
-            stats['kills'].append(agent.kills)
-            stats['deaths'].append(agent.deaths)
-            stats['score'].append(agent.score)
-            stats['id'].append(agent.id)
+        #curr_team = 0
+        #for i, agent in enumerate(agents):
+            #if agent.team.id and agent.team.id != curr_team:
+                #curr_team = agent.team.id
+                #stats['team'][i] = agent.team
+            #stats['name'].append(agent.name)
+            #stats['kills'].append(agent.kills)
+            #stats['deaths'].append(agent.deaths)
+            #stats['score'].append(agent.score)
+            #stats['id'].append(agent.id)
 
-        return stats
+        #return stats
 
     def draw_reference_center(self):
         w = 2
@@ -109,27 +107,27 @@ class Hud(object):
         y = (self.win_height/2) - w/2
         self._draw_square(x, y, w, color=(255,10,10))
 
-    def draw_scoreboard(self):
-        stats_txt = self.format_scoreboard(self.scoreboard_stats())
-        for key, txt in stats_txt.items():
-            if key == 'team': continue
-            curr_sb = self.scoreboard[key]
-            curr_sb.text = txt
-            curr_sb.draw()
+    #def draw_scoreboard(self):
+        #stats_txt = self.format_scoreboard(self.scoreboard_stats())
+        #for key, txt in stats_txt.items():
+            #if key == 'team': continue
+            #curr_sb = self.scoreboard[key]
+            #curr_sb.text = txt
+            #curr_sb.draw()
 
-        # draw team names
-        line_height = 18.
-        y_offset = line_height * 3
-        for i, (index, team) in enumerate(stats_txt['team'].items()):
-            y_offset += line_height * (index + 1 + i)
-            team_txt = team.name
-            team_txt += ' ' * 4
-            team_txt += str(team.score)
-            txt = self.team_names[team.id]
-            txt.set_position(txt.x, txt.yoff - y_offset)
-            txt.text = team_txt
-            txt.color = list(team.color) + [255]
-            txt.draw()
+        ## draw team names
+        #line_height = 18.
+        #y_offset = line_height * 3
+        #for i, (index, team) in enumerate(stats_txt['team'].items()):
+            #y_offset += line_height * (index + 1 + i)
+            #team_txt = team.name
+            #team_txt += ' ' * 4
+            #team_txt += str(team.score)
+            #txt = self.team_names[team.id]
+            #txt.set_position(txt.x, txt.yoff - y_offset)
+            #txt.text = team_txt
+            #txt.color = list(team.color) + [255]
+            #txt.draw()
 
     def set_chat_messages(self):
         blanks = 0

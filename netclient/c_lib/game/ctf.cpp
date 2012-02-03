@@ -76,6 +76,26 @@ void CTF::set_team_name(int team, char* name)
     }
 }
 
+char* CTF::get_team_name(int team)
+{
+    static const char dummy[] = "";
+    char* name = NULL;
+    switch (team)
+    {
+        case 1:
+            name = one.name;
+            break;
+        case 2:
+            name = two.name;
+            break;
+        default:
+            printf("CTF::get_team_name -- invalid team %d\n", team);
+            break;
+    }
+    if (name == NULL) return ((char*)dummy);
+    return name;
+}
+
 void CTF::set_score(int team, int score)
 {
     switch (team) {
@@ -89,6 +109,23 @@ void CTF::set_score(int team, int score)
             printf("CTF::set_score, team %d invalid\n", team);
             return;
     }
+}
+
+int CTF::get_score(int team)
+{
+    switch (team)
+    {
+        case 1:
+            return one.score();
+            break;
+        case 2:
+            return two.score();
+            break;
+        default:
+            printf("CTF::get_team_score -- invalied team %d\n", team);
+            break;
+    }
+    return 0;
 }
 
 void CTF::set_flag_position(int team, float x, float y, float z)

@@ -2,9 +2,34 @@
 
 /* Agent list */
 
+void Agent_list::quicksort_team(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        int team;
+        if (this->filtered_objects[beg] == NULL)
+            team = 10000;   //arbitrarily high, so it will be placed at the end
+        else
+            team = this->filtered_objects[beg]->status.team;
+        int l = beg, r = end;
+        while (l < r)
+        {
+            if (this->filtered_objects[l]->status.team < team)
+                l++;
+            else
+            {
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
+            }
+        }
+        swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);
+        quicksort_team(beg, l);
+        quicksort_team(r, end);
+    }
+}
+
 void Agent_list::send_to_client(int client_id) {
     int i;
-    for (i=1; i<AGENT_MAX; i++) {   // start at 1, 0-agent shouldnt be sent
+    for (i=0; i<AGENT_MAX; i++) {
         if (a[i]==NULL) continue;
         agent_create_StoC msg;
         msg.id = a[i]->id;
@@ -96,3 +121,8 @@ int Agent_list::get_ids() {
     return j;            
 }
 
+void Agent_list::sort_by_team()
+{
+    this->filter_none();    // copies all non null
+    this->quicksort_team(0, this->n_filtered-1);
+}

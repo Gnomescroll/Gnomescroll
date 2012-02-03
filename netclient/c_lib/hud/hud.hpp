@@ -9,7 +9,7 @@ namespace Hud
 using namespace HudText;
 
 const int CHAT_MESSAGE_RENDER_MAX = 8;
-class ChatMessageQueue
+class ChatRender
 {
     //private:
 
@@ -22,18 +22,47 @@ class ChatMessageQueue
         void draw_messages();
         void draw_input();
     
-    ChatMessageQueue();
-    ~ChatMessageQueue();
+    ChatRender();
+    ~ChatRender();
 };
 
+const int N_STATS = 5;
 class Scoreboard
 {
+
+    public:
+        bool inited;
+
+        // id, name, kills, deaths, score
+        // text object per cell?    -- most flexible alignment
+        //             per row?     -- easy vertical alignment; requires use of ' ' to align horizontally; less flexible
+        //             per col?     -- easy horizontal alignment; easy to align certain things vertically ('\n') although less flexible; more difficult to insert team line breaks
+        // # of cells required:
+        // cell: N_teams + N_stats * (N_players + 1)    // 2+5*(33) = 167
+        //  row: N_teams + N_players + 1                // 2+33+1   = 36
+        //  col: N_teams + N_stats                      // 2+5      = 7
+        Text* tags[N_STATS];
+
+        Text* team_names[N_TEAMS];
+        Text* team_scores[N_TEAMS];
+        
+        Text* ids[PLAYERS_MAX];
+        Text* names[PLAYERS_MAX];
+        Text* kills[PLAYERS_MAX];
+        Text* deaths[PLAYERS_MAX];
+        Text* scores[PLAYERS_MAX];
+
+        void update();
+        void init();
+        void draw();
+
+    Scoreboard();
+    ~Scoreboard();
+    
 };
 
 class HUD
 {
-    //private:
-    
     public:
     bool inited;
     
@@ -50,7 +79,7 @@ class HUD
     Scoreboard* scoreboard;
     
     // chat queue
-    ChatMessageQueue* chat;    // contains text objects
+    ChatRender* chat;    // contains text objects
 
     void init();
     HUD();
