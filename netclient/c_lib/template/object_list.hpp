@@ -16,6 +16,8 @@ class Object_list {
         int id_c;
         virtual const char* name() { return "Object"; }
 
+
+    protected:
         // quicksort helpers
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
@@ -56,7 +58,8 @@ class Object_list {
         Object_state* filtered_objects[max_n]; // tmp array for filtering objects
         float filtered_object_distances[max_n];
         int n_filtered;
-        
+
+        void filter_none(); // copies pointers/null into filtered list, unchanged
         int objects_within_sphere(float x, float y, float z, float radius);
         void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
         void sort_filtered_objects_by_distance(bool ascending=true);
@@ -402,4 +405,16 @@ void Object_list<Object_state, max_n>::objects_in_cone(
     }
 
     this->n_filtered = ct;
+}
+
+template <class Object_state, int max_n>
+void Object_list<Object_state, max_n>::filter_none()
+{
+    int c = 0;
+    for (int i=0; i<max_n; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->filtered_objects[c++] = this->a[i];
+    }
+    this->n_filtered = c;
 }

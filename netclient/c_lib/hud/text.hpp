@@ -54,7 +54,7 @@ class Text
 
 void init();
 
-const int TEXT_MAX = 256;
+const int TEXT_MAX = 512;
 class Text_list: public Object_list<Text,TEXT_MAX>
 {
     private:

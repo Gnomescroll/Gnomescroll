@@ -175,6 +175,8 @@ chat render in C
 
 Bundle voxel list draw calls properly (currently in agent_list)
 
+Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
+
 OpenAL ?
 
 Icons on map (angus)
