@@ -449,7 +449,7 @@ static const bool GL_PERF = 0;
 GLuint gl_perf_queries[64];
 int gl_per_queries_index = 0;
 
-SDL_Surface *px_surface;
+//SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
 
