@@ -60,7 +60,7 @@ def feb3_test_map():
 
     #1
     m.conf\
-    .size(512,512,128)\
+    .size(128,128,128)\
     .tile(101)\
     .interpolate(2,2,2)\
     .scale(1.0, 3.0, 1.0)\
