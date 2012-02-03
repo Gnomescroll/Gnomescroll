@@ -545,7 +545,7 @@ void Scoreboard::update()
     for (i=0; i<ClientState::agent_list.n_filtered; i++)
     {
         Agent_state* agent = ClientState::agent_list.filtered_objects[i];
-        if (agent==NULL) break;
+        if (agent==NULL) break; // null agents are sorted to the end, so we can break
         if (agent->status.team == 0) continue;
         float y = start_y + 18*(j+2);
         if (agent->status.team != team) {

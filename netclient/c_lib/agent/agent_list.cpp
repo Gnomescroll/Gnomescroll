@@ -126,5 +126,5 @@ int Agent_list::get_ids() {
 void Agent_list::sort_by_team()
 {
     this->filter_none();    // copies all non null
-    this->quicksort_team(0, this->n_filtered-1);
+    this->quicksort_team(0, this->n_filtered);
 }
