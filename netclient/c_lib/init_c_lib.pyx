@@ -1090,14 +1090,14 @@ cdef int quit_event_callback():
 def toggle_mouse_bind():
     return _toggle_mouse_bind()
 
-"""Equipment Panel"""
-cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-    void set_slot_icon(int slot, int icon_id)
+#"""Equipment Panel"""
+#cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
+#    void set_slot_icon(int slot, int icon_id)
 
-class Equipment:
-    @classmethod
-    def set_equipment_icon(cls, int slot, int icon_id):
-        set_slot_icon(slot, icon_id)
+#class Equipment:
+#    @classmethod
+#    def set_equipment_icon(cls, int slot, int icon_id):
+#        set_slot_icon(slot, icon_id)
 
 
 """

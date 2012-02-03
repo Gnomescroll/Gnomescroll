@@ -70,11 +70,6 @@ void init_surface() {
 
 }
 
-void init() {
-    init_surface();
-}
-
-
 void set_slot(int s) {
     if (s >= n_items) { // allow negative slot number for "no slot"
         printf("WARNING: set_slot, slot=%d out of bounds\n", s);
@@ -93,6 +88,17 @@ void set_slot_icon(int slot, int icon_id) {
         return;
     }
     slot_icons[slot] = icon_id;
+}
+
+
+void init() {
+    init_surface();
+
+    set_slot_icon(0, 3); //laser
+    set_slot_icon(1, 1); // pick
+    set_slot_icon(2, 2); // block applier
+    set_slot_icon(3, 4); // grenades
+    set_slot_icon(4, 5); // spawner
 }
 
 int get_equipment_slot_icon(int slot) {

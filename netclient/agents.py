@@ -67,7 +67,6 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
 
         self.button_state = [0 for i in range(11)]
 
-        self.set_hud_icons()
         self.you = True
         self.camera = None
 
@@ -130,16 +129,6 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
 
     def hud_equipment_slot(self):
         return self.active_weapon
-        
-    def hud_equipment_icon(self):
-        return self.active_weapon
-
-    def set_hud_icons(self):
-        init_c_lib.Equipment.set_equipment_icon(0, 3) #laser
-        init_c_lib.Equipment.set_equipment_icon(1, 1) # pick
-        init_c_lib.Equipment.set_equipment_icon(2, 2) # block applier
-        init_c_lib.Equipment.set_equipment_icon(3, 4) # grenades
-        init_c_lib.Equipment.set_equipment_icon(4, 5) # spawner
 
 # datastore for agents
 class AgentList(GenericObjectListWrapper):
