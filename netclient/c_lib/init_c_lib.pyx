@@ -143,13 +143,22 @@ cpdef init_python_net():
 """
 from libcpp cimport bool
 
+"""
+slimes
+[input]
+--
+"""
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     void test(int n)
 
 def slime_test(int n):
     test(n)
 
-""" ray trace """
+"""
+ray trace
+[input]
+-- Get rid of "set_active_block" logic in agent, wrap directly down to C agent method
+ """
 cdef extern from "ray_trace/ray_trace.h":
     int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
 
@@ -170,7 +179,11 @@ def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3)
         return
     return [i[0], i[1], i[2]]
 
-""" sound """
+"""
+sound
+[sound]
+-- move the init logic into C
+"""
 cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_volume(float vol)
     void set_enabled(int y)
@@ -218,117 +231,23 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-""" Map gen """
-#cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
-#    void generate_dragon()
-#    void draw_dragon()
-#class Dragon(object):
-#    @classmethod
-#    def generate(cls):
-#        generate_dragon()
-#    @classmethod
-#    def draw(cls):
-#        draw_dragon()
-
-
-""" Game modes (CTF) """
+"""
+Game modes (CTF)
+[?]
+-- this code is overkill. pretty sure python needs team id at most
+"""
 
 cdef extern from "./game/teams.hpp":
-    cdef cppclass Team:
-        int id
-        unsigned int base_score
-        char* name
-        int n
-        bool viewers
-        unsigned char r,g,b
-
-    cdef cppclass NoTeam:
-        int id
-        char* name
-        int n
-        bool viewers
-
     cdef cppclass CTFTeam:  # inherits Team
         pass
 
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
-        NoTeam none
-        CTFTeam one
-        CTFTeam two
         void join_team(int team)
         bool auto_assign
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
-
-class DummyCTFTeam(object):
-
-    def __init__(self, id):
-        if id not in [1,2]:
-            print "DummyCTFTeam object -- id invalid %d" % (id,)
-            raise ValueError
-        self.id = id
-
-    def __getattribute__(self, k):
-
-        id = object.__getattribute__(self, 'id')
-        cdef Team t
-        if id == 1:
-            t = <Team>(ctf.one)
-        elif id == 2:
-            t = <Team>(ctf.two)
-
-        if k == 'score':
-            return t.base_score #limitation
-        elif k == 'name':
-            return t.name
-        elif k == 'n':
-            return t.n
-        elif k == 'viewers':
-            return t.viewers
-        elif k == 'id':
-            return t.id
-        elif k == 'color':
-            return [t.r, t.g, t.b]
-        elif k.startswith('__'):
-            return object.__getattribute__(self, k)
-
-        raise AttributeError
-
-ctf_one = DummyCTFTeam(1)
-ctf_two = DummyCTFTeam(2)
-
-class DummyNoTeam(object):
-
-    def __getattribute__(self, k):
-
-        cdef NoTeam t
-        t = ctf.none
-
-        if k == 'name':
-            return t.name
-        elif k == 'n':
-            return t.n
-        elif k == 'viewers':
-            return t.viewers
-        elif k == 'id':
-            return t.id
-        elif k.startswith('__'):
-            return object.__getattribute__(self, k)
-        raise AttributeError
-
-ctf_none = DummyNoTeam()
-
-def get_team(int id):
-    if id == 0:
-        return ctf_none
-    elif id == 1:
-        return ctf_one
-    elif id == 2:
-        return ctf_two
-    else:
-        print "c_lib_game_modes.get_team :: invalid team id %d" % (id,)
 
 def join_team(int team):
     ctf.join_team(team)

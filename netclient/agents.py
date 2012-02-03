@@ -36,16 +36,13 @@ class Agent(init_c_lib.AgentWrapper):
         except AttributeError:
             val = object.__getattribute__(self, name)
             
-        if name == 'team':
-            val = init_c_lib.get_team(val)
-                    
         return val
 
 # decorators
 def noViewer(f):
     def outer(*args, **kwargs):
         self = args[0]
-        if self.team is not None and not self.team.viewers:
+        if self.team is not None and not self.is_viewer():
             return f(*args, **kwargs)
     return outer
 
@@ -79,10 +76,10 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
             except AttributeError:
                 val = object.__getattribute__(self, name)
 
-        if name == 'team':
-            val = init_c_lib.get_team(val)
-
         return val
+
+    def is_viewer(self):
+        return self.team == 0
 
     @requireCamera
     def set_button_state(self):

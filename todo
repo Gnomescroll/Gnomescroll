@@ -175,9 +175,9 @@ chat render in C
 scoreboard in C
 hud equipment icons in C
 CyText removed from init_c_lib -- all text creation and draw in C (chat message text still sets some text, but its a setter wrapper only)
+Draw/Tick calls managed by client state
 =============
 
-Bundle voxel list draw calls properly (currently in agent_list)
 
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 
