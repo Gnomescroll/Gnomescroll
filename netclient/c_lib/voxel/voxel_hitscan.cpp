@@ -36,8 +36,6 @@ struct Voxel_hitscan_element* target
 
         // skip firing agent
         if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
-
-        //vhe->vv->hitscan_test(float x, float y, float z, float vx, float vy, float vz)
         
         float* _tmp = vhe->vv->world_matrix.v[3].f;
         x2 = _tmp[0];
@@ -46,10 +44,12 @@ struct Voxel_hitscan_element* target
         radius = vhe->vv->radius;
 
         dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
-        if (dist < 0.0f || dist > max_dist) continue;
+        if (dist < 0.0f || dist > max_dist) continue; //check this
 
         if( r2 < radius*radius ) {
-            if (dist > min_dist) continue;
+            //vhe->vv->hitscan_test(x0,y0,z0, x1,y1,z1);
+            vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1);
+            if (dist > min_dist) continue;  //check this
             min_dist = dist;
             x = tpos[0];
             y = tpos[1];
@@ -64,7 +64,8 @@ struct Voxel_hitscan_element* target
         collision_point[1] = y;
         collision_point[2] = z;
         *target = *target_hit;
-        return true;
+        //return true;
+        return false;
     }
     return false;
 }

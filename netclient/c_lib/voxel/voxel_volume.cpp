@@ -14,10 +14,11 @@
 #endif
 
 
-int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance)
+int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
-    static const int ssize 256;
-    static const int bsize 65536;
+
+    const static int _ssize = 256;
+    const static int _bsize = 65536;
 
    //int _ray_cast6(   //float _dfx,float _dfy,float _dfz, 
    //float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) 
@@ -35,7 +36,7 @@ int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz,
     z1 = z0 + _dfz*max_l;
     // redundant len calculation, will always be max_l
     //float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
-    float len = max_l;
+    const float len = max_l;
 
     //int lx,ly,lz; //may or may not be used
     int x,y,z;
@@ -49,9 +50,9 @@ int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz,
     _z=z;
 
     int _dx,_dy,_dz;
-    _dx = ((x1-x0)/len) *ssize;
-    _dy = ((y1-y0)/len) *ssize;
-    _dz = ((z1-z0)/len) *ssize;
+    _dx = ((x1-x0)/len) *_ssize;
+    _dy = ((y1-y0)/len) *_ssize;
+    _dz = ((z1-z0)/len) *_ssize;
 
     int cdx, cdy, cdz;
     cdx = _dx >= 0 ? 1 : -1;
@@ -64,80 +65,88 @@ int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz,
     dz = _dz*cdz;
 
     int cx,cy,cz;
-    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
-    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
-    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
-
-    //printf("_dx,_dy,_dz= %i, %i, %i \n", _dx, _dy, _dz);
-    //double xf, yf, zf;
+    cx = cdx >=0 ? modff(x0, &dummy)*_bsize : _bsize - modff(x0, &dummy)*_bsize; //convert fractional part
+    cy = cdy >=0 ? modff(y0, &dummy)*_bsize : _bsize - modff(y0, &dummy)*_bsize;
+    cz = cdz >=0 ? modff(z0, &dummy)*_bsize : _bsize - modff(z0, &dummy)*_bsize;
 
     int i;
-    int max_i = (bsize / ssize)*len + 1; //over project
+    int max_i = (_bsize / _ssize)*len + 1; //over project
 
-    //printf("max_l= %f \n", len);
-    //printf("max_i= %i \n", max_i);
-    side[0]=0; side[1]=0; side[2]=0;
     int col=0;
+    //printf("--hitscan-- \n");
+    //printf("_s x,y,z= %i %i %i \n", x,y,z);
 
     for(i =0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
-        if(cx >= bsize || cy >= bsize || cz >= bsize) {
-            if(cx >= bsize) {
-                cx -= bsize;
+        if(cx >= _bsize || cy >= _bsize || cz >= _bsize) {
+            if(cx >= _bsize) {
+                cx -= _bsize;
                 _x = x;
                 x += cdx;
-                if(collision_check2(x,y,z)) {
-                    side[0] = cdx;
+                //printf("_x x,y,z= %i %i %i \n", x,y,z);
+                if(_test_occludes_safe(x,y,z) != 0) 
+                {
                     col =1;
                     break;
                 }
             }
-            if(cy >= bsize) {
-                cy -= bsize;
+            if(cy >= _bsize) {
+                cy -= _bsize;
                 _y = y;
                 y += cdy;
-                if(collision_check2(x,y,z)) {
-                    side[1] = cdy;
+                //printf("_y x,y,z= %i %i %i \n", x,y,z);
+                if(_test_occludes_safe(x,y,z) != 0) 
+                {
                     col=1;
                     break;
                 }
             }
-            if(cz >= bsize) {
-                //printf("z decrease\n");
-                cz -= bsize;
+            if(cz >= _bsize) {
+                cz -= _bsize;
                 _z = z;
                 z += cdz;
-                if(collision_check2(x,y,z)) {
-                    side[2] = cdz;
+                //printf("_z x,y,z= %i %i %i \n", x,y,z);
+                if(_test_occludes_safe(x,y,z) != 0) 
+                {
                     col=1;
                     break;
                 }
             }
         }
     }
-    if(col == 1) {
-        collision[0]=x;
-        collision[1]=y;
-        collision[2]=z;
+    if(col == 1) 
+    {
         *distance = len * (((float)i) / ((float)max_i));
+        collision[0]=x; collision[1]=y; collision[2]=z; 
         return 1;
-    } else {
-        *tile = 0;
-        *distance = 0;
+    } else 
+    {
+        //*distance = 0;
         return 0; //no collision
     }
-
 
 }
 
 void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz)
 {
     //zero position
+
+    printf("hitscan test\n");
+
+
+
+    //translate to zero
     x -= world_matrix.v[3].x;
     y -= world_matrix.v[3].y;
     z -= world_matrix.v[3].z;
+
+    printf("1 x,y,z= %.2f %.2f %.2f \n", x,y,z);
+    printf("1 vx,vy,vz= %.2f %.2f %.2f \n", vx,vy,vz);
+    printf("radius = %f \n", radius);
+
+    //printf("1 x',y',z'= %.2f %.2f %.2f \n", x,y,z);
 
     //u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
     //u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
@@ -145,14 +154,48 @@ void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, f
 
     //transpose
     struct Vec3 u;
+    //convert direction into cordinate system
+    
+    //u.x = vx*world_matrix.v[0].x + vy*world_matrix.v[0].y + vz*world_matrix.v[0].z, 
+    //u.y = vx*world_matrix.v[1].x + vy*world_matrix.v[1].y + vz*world_matrix.v[1].z, 
+    //u.z = vx*world_matrix.v[2].x + vy*world_matrix.v[2].y + vz*world_matrix.v[2].z;
 
-    u.x = vx*world_matrix.v[0].x + vy*world_matrix.v[0].y + vz*world_matrix.v[0].z, 
-    u.y = vx*world_matrix.v[1].x + vy*world_matrix.v[1].y + vz*world_matrix.v[1].z, 
-    u.z = vx*world_matrix.v[2].x + vy*world_matrix.v[2].y + vz*world_matrix.v[2].z;
+    struct Vec3 v;
+    //convert raycast starting position to cordinate system
+    
+    //v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z, 
+    //v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z, 
+    //v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
 
-    x -= radius*u.x;
-    y -= radius*u.y;
-    z -= radius*u.z;
+    //printf("2 x,y,z= %.2f %.2f %.2f \n", v.x,v.y,v.z);
+    //printf("2 vx,vy,vz= %.2f %.2f %.2f \n", u.x,u.y,u.z);
+
+
+    u.x = vx;
+    u.y = vy;
+    u.z = vz;
+
+    v.x = ((x - radius*u.x) / scale) + xdim/2;
+    v.y = ((y - radius*u.y) / scale) + ydim/2;
+    v.z = ((z - radius*u.z) / scale) + zdim/2;
+
+    //printf("3 x,y,z= %.2f %.2f %.2f \n", v.x,v.y,v.z);
+
+    float distance;
+    int collision[3];
+
+    //if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius, &distance)) printf("collision distance= %f \n", distance);
+    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, collision))
+    {   
+        distance *= scale;
+        printf("collision distance= %f \n", distance);
+        printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
+
+        set(collision[0], collision[1], collision[2], 254,0,0, 0);
+        needs_vbo_update = true;
+
+
+    }
 
     //ray cast 2r
 
