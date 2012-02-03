@@ -12,6 +12,8 @@ varying float diffuse;
 varying mat2 AOMatrix;
 varying vec2 texCoord;
 
+const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
+
 void main(void) 
 {
 	gl_FrontColor = gl_Color;
@@ -20,11 +22,11 @@ void main(void)
 
 	/* apply rotation matrix to normal */
 	vec3 normal = gl_NormalMatrix*(InRotationMatrix*InNormal);
-	const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
+	
+	//const vec3 light_dir = normalize(vec3(1.00, 1.00, 2.00));
 
 	diffuse = abs(dot(normal, light_dir ));
 	texCoord = InTex;
 	AOMatrix = mat2( InAO[0], InAO[1], InAO[2], InAO[3] );
-
 }
 

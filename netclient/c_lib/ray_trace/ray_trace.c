@@ -574,7 +574,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
         return 1;
     } else {
         *tile = 0;
-        distance = 0;
+        *distance = 0;
         return 0; //no collision
     }
 }

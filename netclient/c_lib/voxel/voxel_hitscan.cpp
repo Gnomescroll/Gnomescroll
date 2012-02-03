@@ -37,6 +37,8 @@ struct Voxel_hitscan_element* target
         // skip firing agent
         if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
 
+        //vhe->vv->hitscan_test(float x, float y, float z, float vx, float vy, float vz)
+        
         float* _tmp = vhe->vv->world_matrix.v[3].f;
         x2 = _tmp[0];
         y2 = _tmp[1];
