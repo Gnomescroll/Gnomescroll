@@ -16,13 +16,8 @@
 
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
-
     const static int _ssize = 256;
     const static int _bsize = 65536;
-
-   //int _ray_cast6(   //float _dfx,float _dfy,float _dfz, 
-   //float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) 
-
     // normalize direction
     float len2 = sqrt( _dfx*_dfx+_dfy*_dfy+_dfz*_dfz );
     _dfx /= len2;
@@ -34,11 +29,9 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     x1 = x0 + _dfx*max_l;
     y1 = y0 + _dfy*max_l;
     z1 = z0 + _dfz*max_l;
-    // redundant len calculation, will always be max_l
-    //float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+
     const float len = max_l;
 
-    //int lx,ly,lz; //may or may not be used
     int x,y,z;
     x = x0; //truncating conversion
     y = y0;
@@ -85,7 +78,6 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
                 cx -= _bsize;
                 _x = x;
                 x += cdx;
-                //printf("_x x,y,z= %i %i %i \n", x,y,z);
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
                     col =1;
@@ -96,7 +88,6 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
                 cy -= _bsize;
                 _y = y;
                 y += cdy;
-                //printf("_y x,y,z= %i %i %i \n", x,y,z);
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
                     col=1;
@@ -107,7 +98,6 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
                 cz -= _bsize;
                 _z = z;
                 z += cdz;
-                //printf("_z x,y,z= %i %i %i \n", x,y,z);
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
                     col=1;
@@ -131,75 +121,40 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
 
 void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz)
 {
-    //zero position
 
-    printf("hitscan test\n");
-
-
-
-    //translate to zero
     x -= world_matrix.v[3].x;
     y -= world_matrix.v[3].y;
     z -= world_matrix.v[3].z;
 
-    printf("1 x,y,z= %.2f %.2f %.2f \n", x,y,z);
-    printf("1 vx,vy,vz= %.2f %.2f %.2f \n", vx,vy,vz);
-    printf("radius = %f \n", radius);
-
-    //printf("1 x',y',z'= %.2f %.2f %.2f \n", x,y,z);
-
-    //u.x = v.x*m.v[0].x + v.y*m.v[1].x + v.z*m.v[2].x, 
-    //u.y = v.x*m.v[0].y + v.y*m.v[1].y + v.z*m.v[2].y, 
-    //u.z = v.x*m.v[0].z + v.y*m.v[1].z + v.z*m.v[2].z;
-
-    //transpose
     struct Vec3 u;
-    //convert direction into cordinate system
     
-    //u.x = vx*world_matrix.v[0].x + vy*world_matrix.v[0].y + vz*world_matrix.v[0].z, 
-    //u.y = vx*world_matrix.v[1].x + vy*world_matrix.v[1].y + vz*world_matrix.v[1].z, 
-    //u.z = vx*world_matrix.v[2].x + vy*world_matrix.v[2].y + vz*world_matrix.v[2].z;
+    u.x = vx*world_matrix.v[0].x + vy*world_matrix.v[0].y + vz*world_matrix.v[0].z, 
+    u.y = vx*world_matrix.v[1].x + vy*world_matrix.v[1].y + vz*world_matrix.v[1].z, 
+    u.z = vx*world_matrix.v[2].x + vy*world_matrix.v[2].y + vz*world_matrix.v[2].z;
 
     struct Vec3 v;
-    //convert raycast starting position to cordinate system
-    
-    //v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z, 
-    //v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z, 
-    //v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
 
-    //printf("2 x,y,z= %.2f %.2f %.2f \n", v.x,v.y,v.z);
-    //printf("2 vx,vy,vz= %.2f %.2f %.2f \n", u.x,u.y,u.z);
+    v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z, 
+    v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z, 
+    v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
 
-
-    u.x = vx;
-    u.y = vy;
-    u.z = vz;
-
-    v.x = ((x - radius*u.x) / scale) + xdim/2;
-    v.y = ((y - radius*u.y) / scale) + ydim/2;
-    v.z = ((z - radius*u.z) / scale) + zdim/2;
-
-    //printf("3 x,y,z= %.2f %.2f %.2f \n", v.x,v.y,v.z);
+    v.x = ((v.x - radius*u.x) / scale) + xdim/2;
+    v.y = ((v.y - radius*u.y) / scale) + ydim/2;
+    v.z = ((v.z - radius*u.z) / scale) + zdim/2;
 
     float distance;
     int collision[3];
 
-    //if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius, &distance)) printf("collision distance= %f \n", distance);
     if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, collision))
     {   
         distance *= scale;
-        printf("collision distance= %f \n", distance);
-        printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
+        //printf("collision distance= %f \n", distance);
+        //printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
 
-        set(collision[0], collision[1], collision[2], 254,0,0, 0);
+        set(collision[0], collision[1], collision[2], 0,0,0, 0);
         needs_vbo_update = true;
 
-
     }
-
-    //ray cast 2r
-
-
     return;
 }
 
