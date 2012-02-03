@@ -180,7 +180,7 @@ class App(object):
                     agent.update_sound()
                     agent.display_agent_names()
                     
-                init_c_lib.tick() ## TESTING
+                init_c_lib.ClientState.tick()
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
@@ -250,7 +250,7 @@ class App(object):
 
             P.event("Animations Draw")
 
-            init_c_lib.draw() ## TESTING
+            init_c_lib.ClientState.draw()
 
             init_c_lib.AnimationDraw()
 

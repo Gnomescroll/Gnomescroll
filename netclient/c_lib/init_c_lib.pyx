@@ -664,11 +664,20 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
     void update_client_state()
+    void draw_client_state()
+    void tick_client_state()
 
 class ClientState(object):
     @classmethod
     def update(cls):
         update_client_state()
+    @classmethod
+    def draw(cls):
+        draw_client_state()
+    @classmethod
+    def tick(cls):
+        tick_client_state()
+
 
 def draw_agents():
     agent_list.draw()
@@ -892,76 +901,6 @@ class AgentListWrapper:
             ids.append(agent_list.ids_in_use[k])
         return ids
 
-#cdef extern from "./agent/agent.hpp":
-#    void send_identify_message(char* name)
-##    void send_identify_fail_message()
-
-#def identify(name):
-#    send_identify_message(name)
-    
-""" Particles """
-cdef extern from "./particles/grenade.hpp":
-    cdef cppclass Grenade_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/cspray.hpp":
-    cdef cppclass Cspray_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/shrapnel.hpp":
-    cdef cppclass Shrapnel_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/neutron.hpp":
-    cdef cppclass Neutron_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/blood.hpp":
-    cdef cppclass Blood_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/minivox.hpp":
-    cdef cppclass Minivox_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/billboard_text.hpp":
-    cdef cppclass BillboardText_list:
-        void draw()
-        void tick()
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    Cspray_list cspray_list
-    Grenade_list grenade_list
-    Shrapnel_list shrapnel_list
-    Blood_list blood_list
-    Neutron_list neutron_list
-    Minivox_list minivox_list
-    BillboardText_list billboard_text_list
-
-def tick():
-    neutron_list.tick()
-    blood_list.tick()
-    shrapnel_list.tick()
-    grenade_list.tick()
-    cspray_list.tick()
-    minivox_list.tick()
-    billboard_text_list.tick()
-    
-def draw():
-    minivox_list.draw()
-    neutron_list.draw()
-    blood_list.draw()
-    shrapnel_list.draw()
-    grenade_list.draw()
-    cspray_list.draw()
-    billboard_text_list.draw()
-
 
 """ Input """
 ctypedef unsigned char Uint8
@@ -1089,44 +1028,6 @@ cdef int quit_event_callback():
 
 def toggle_mouse_bind():
     return _toggle_mouse_bind()
-
-#"""Equipment Panel"""
-#cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-#    void set_slot_icon(int slot, int icon_id)
-
-#class Equipment:
-#    @classmethod
-#    def set_equipment_icon(cls, int slot, int icon_id):
-#        set_slot_icon(slot, icon_id)
-
-
-"""
-Voronoi texture surface
-"""
-#from libcpp cimport bool
-#cdef extern from "SDL/v.hpp" namespace "vn":
-#    void draw_vn()
-#    void generate_frames(float seconds)
-#    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
-##    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
-#    void init_vn(int width, int height, int gradient)
-
-#class VN(object):
-#    @classmethod
-#    def draw(cls):
-#        draw_vn()
-#    @classmethod
-#    def frames(cls, float seconds):
-#        generate_frames(seconds)
-#    @classmethod
-#    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
-##    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
-#        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
-##        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
-#    @classmethod
-#    def init(cls, int width, int height, int gradient):
-#        init_vn(width, height, gradient)
-
 
 """
 HUD

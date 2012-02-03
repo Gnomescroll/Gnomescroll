@@ -94,7 +94,7 @@ void set_slot_icon(int slot, int icon_id) {
 void init() {
     init_surface();
 
-    set_slot_icon(0, 3); //laser
+    set_slot_icon(0, 3); // laser
     set_slot_icon(1, 1); // pick
     set_slot_icon(2, 2); // block applier
     set_slot_icon(3, 4); // grenades
