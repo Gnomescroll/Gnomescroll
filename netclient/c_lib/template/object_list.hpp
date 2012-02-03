@@ -336,8 +336,8 @@ void Object_list<Object_state, max_n>::quicksort_distance_desc(int beg, int end)
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::sort_filtered_objects_by_distance(bool ascending)
 {
-    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
-    else this->quicksort_distance_desc(0, this->n_filtered);
+    if (ascending) this->quicksort_distance_asc(0, this->n_filtered-1);
+    else this->quicksort_distance_desc(0, this->n_filtered-1);
 }
 
 template <class Object_state, int max_n>

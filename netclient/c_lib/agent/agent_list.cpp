@@ -14,11 +14,13 @@ void Agent_list::quicksort_team(int beg, int end)
         int l = beg, r = end;
         while (l < r)
         {
-            if (this->filtered_objects[l]->status.team < team)
+            int t;
+            t = (this->filtered_objects[l] == NULL) ? 10000 : this->filtered_objects[l]->status.team;
+            if (t <= team)
                 l++;
             else
             {
-                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[--r]);
             }
         }
         swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);

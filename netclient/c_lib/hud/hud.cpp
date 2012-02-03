@@ -528,12 +528,12 @@ void Scoreboard::update()
     };
     struct POS team_name_pos[N_TEAMS];
     team_name_pos[0].x = start_x;
-    team_name_pos[0].y = start_y + 18;
+    team_name_pos[0].y = start_y;
     team_name_pos[1].x = start_x;
     team_name_pos[1].y = start_y;
     struct POS team_score_pos[N_TEAMS];
     team_score_pos[0].x = start_x + col_width;
-    team_score_pos[0].y = start_y + 18;
+    team_score_pos[0].y = start_y;
     team_score_pos[1].x = start_x + col_width;
     team_score_pos[1].y = start_y;
     bool team_draw[2] = {false, false};
@@ -542,24 +542,24 @@ void Scoreboard::update()
     unsigned char r,g,b,a=255;
     int team = -1;
     ClientState::agent_list.sort_by_team(); // sorts ascending
-    for (i=0; i<ClientState::agent_list.n_max; i++)
+    for (i=0; i<ClientState::agent_list.n_filtered; i++)
     {
-        Agent_state* agent = ClientState::agent_list.get(i);
-        if (agent==NULL) continue;
+        Agent_state* agent = ClientState::agent_list.filtered_objects[i];
+        if (agent==NULL) break;
         if (agent->status.team == 0) continue;
         float y = start_y + 18*(j+2);
         if (agent->status.team != team) {
             team = agent->status.team;
             team_draw[team-1] = true;
-            float dy = (team)*18;
-            team_name_pos[team-1].y = y + dy;
-            team_score_pos[team-1].y = y + dy;
-            j += team;
-            y += dy + 18;
+            y += 18;    // newline
+            team_name_pos[team-1].y = y;
+            team_score_pos[team-1].y = y;
+            y += 18;    // team name line
+            j += 2; // newline + team name line
         }
+        j++;
 
         ClientState::get_team_color(agent->status.team, &r, &g, &b);
-        j++;
         
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
