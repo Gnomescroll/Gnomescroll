@@ -48,7 +48,7 @@ struct Voxel_hitscan_element* target
 
         if( r2 < radius*radius ) {
             //vhe->vv->hitscan_test(x0,y0,z0, x1,y1,z1);
-            vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2 );
+            if(vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2 ) == 0) continue; //test for voxel hit
             if (dist > min_dist) continue;  //check this
             min_dist = dist;
             x = tpos[0];
@@ -64,8 +64,8 @@ struct Voxel_hitscan_element* target
         collision_point[1] = y;
         collision_point[2] = z;
         *target = *target_hit;
-        //return true;
-        return false;
+        return true;
+        //return false;
     }
     return false;
 }
