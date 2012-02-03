@@ -168,6 +168,11 @@ ping text in C
 player stats indicator in C
 =============
 
+Feb 2
+
+
+=============
+
 Bundle voxel list draw calls properly (currently in agent_list)
 
 OpenAL ?

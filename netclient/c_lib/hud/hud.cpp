@@ -65,6 +65,9 @@ static struct HudDrawSettings
     bool ping;
     int ping_val;
     bool player_stats;
+    bool chat;
+    bool chat_input;
+    bool scoreboard;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
@@ -79,7 +82,10 @@ void set_hud_draw_settings(
     float fps_val,
     bool ping,
     int ping_val,
-    bool player_stats
+    bool player_stats,
+    bool chat,
+    bool chat_input,
+    bool scoreboard
 )
 {
     hud_draw_settings.zoom = zoom;
@@ -103,6 +109,9 @@ void set_hud_draw_settings(
     hud_draw_settings.ping_val = ping_val;
 
     hud_draw_settings.player_stats = player_stats;
+    hud_draw_settings.chat = chat;
+    hud_draw_settings.chat_input = chat_input;
+    hud_draw_settings.scoreboard = scoreboard;
 }
 
 static struct ChatCursor
@@ -167,6 +176,7 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {
+    if (!hud->inited) return;
     if (hud_draw_settings.disconnected)
     {
         hud->disconnected->draw();
@@ -219,6 +229,27 @@ void draw_hud_text()
         }
         hud->player_stats->draw();
     }
+
+    if (hud->chat->inited)
+    {
+        if (hud_draw_settings.chat)
+        {
+            hud->chat->draw_messages();
+        }
+        
+        if (hud_draw_settings.chat_input)
+        {
+            hud->chat->draw_input();
+        }
+    }
+
+    //if (hud->scoreboard->inited)
+    //{
+        //if (hud_draw_settings.scoreboard)
+        //{
+            //hud->scoreboard->draw();
+        //}
+    //}
 }
 
 
@@ -226,7 +257,8 @@ void draw_hud_text()
 
 void HUD::init()
 {
-
+    if (this->inited) return;
+    
     help = HudText::text_list.create();
     help->set_text((char*) help_text);
     help->set_position(_xresf/2, _yresf);
@@ -265,8 +297,12 @@ void HUD::init()
     player_stats->set_position(_xresf - 360, 18 + 3);
 
     scoreboard = new Scoreboard();
+    //scoreboard->init();
 
-    chat_queue = new ChatMessageQueue();
+    chat = new ChatMessageQueue();
+    chat->init();
+
+    this->inited = true;
 }
 
 HUD::HUD()
@@ -279,27 +315,27 @@ fps(NULL),
 ping(NULL),
 player_stats(NULL),
 scoreboard(NULL),
-chat_queue(NULL)
+chat(NULL)
 {}
 
 HUD::~HUD()
 {
     if (help != NULL)
-        delete help;
+        HudText::text_list.destroy(help->id);
     if (disconnected != NULL)
-        delete disconnected;
+        HudText::text_list.destroy(disconnected->id);
     if (dead != NULL)
-        delete dead;
+        HudText::text_list.destroy(dead->id);
     if (fps != NULL)
-        delete fps;
+        HudText::text_list.destroy(fps->id);
     if (ping != NULL)
-        delete ping;
+        HudText::text_list.destroy(ping->id);
     if (player_stats != NULL)
-        delete player_stats;
+        HudText::text_list.destroy(player_stats->id);
     if (scoreboard != NULL)
         delete scoreboard;
-    if (chat_queue != NULL)
-        delete chat_queue;
+    if (chat != NULL)
+        delete chat;
 }
 
 HUD* hud;
@@ -309,4 +345,78 @@ void init()
     hud = new HUD();
     hud->init();
 }
+
+
+/* ChatMessageQueue */
+
+void ChatMessageQueue::init()
+{
+    if (this->inited) return;
+    int i=0;
+    for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
+    {
+        HudText::Text* t = HudText::text_list.create();
+        t->set_position(50, _yresf - (50 + (18 + 2)*i));
+        t->set_text((char*) "");
+        t->set_color(255,255,255,255);
+        messages[i] = t;
+    }
+
+    input = HudText::text_list.create();
+    input->set_text((char*) "");
+    input->set_color(255,10,10,255);
+    input->set_position(50, _yresf - (50 + (18 + 2)*i));
+    
+    this->inited = true;
+}
+
+void ChatMessageQueue::draw_messages()
+{
+    if (!this->inited) return;
+    for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++]->draw());
+}
+
+void ChatMessageQueue::draw_input()
+{
+    if (!this->inited) return;
+    this->input->draw();
+}
+
+ChatMessageQueue::ChatMessageQueue()
+:
+inited(false),
+input(NULL)
+{
+    for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
+}
+
+ChatMessageQueue::~ChatMessageQueue()
+{
+    for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; i++)
+    {
+        if (messages[i] != NULL) HudText::text_list.destroy(messages[i]->id);
+    }
+    if (input != NULL) HudText::text_list.destroy(input->id);
+}
+
+// CYTHON
+void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    if (i < 0 || i >= CHAT_MESSAGE_RENDER_MAX) return;
+    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
+    HudText::Text* t = hud->chat->messages[i];
+    if (t == NULL) return;
+    t->set_text(txt);
+    t->set_color(r,g,b,a);
+}
+
+void set_chat_input_string(char* text)
+{
+    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
+    HudText::Text* t = hud->chat->input;
+    if (t == NULL) return;
+    t->set_text(text);
+    set_chat_cursor(t->text, t->x, t->y);
+}
+
 }

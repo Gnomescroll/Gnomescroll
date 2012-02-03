@@ -104,9 +104,9 @@ void Text::set_string(char* text, char** this_text, int* this_len)
                 // recalculate str_len
                 *this_len = strlen(*this_text);
             }
-            if (len != *this_len)
+            if (len > *this_len)
             {
-                // string is different size
+                // string is greater size
                 *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
                 *this_len = len;
             }

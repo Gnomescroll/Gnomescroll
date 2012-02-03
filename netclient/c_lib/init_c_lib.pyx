@@ -1191,11 +1191,16 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats
+        bool player_stats,
+        bool chat,
+        bool chat_input,
+        bool scoreboard
     )
     void draw_hud_textures()
     void draw_hud_text()
     void set_chat_cursor(char* text, float x, float y)
+    void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+    void set_chat_input_string(char* text)
 
 cdef class HUD:
     @classmethod
@@ -1217,7 +1222,10 @@ cdef class HUD:
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats
+        bool player_stats,
+        bool chat,
+        bool chat_input,
+        bool scoreboard
     ):
         set_hud_draw_settings(
             zoom,
@@ -1231,11 +1239,25 @@ cdef class HUD:
             fps_val,
             ping,
             ping_val,
-            player_stats
+            player_stats,
+            chat,
+            chat_input,
+            scoreboard
         )
     @classmethod
-    def set_chat_cursor(self, text, float x, float y):
+    def set_chat_cursor(cls, text, float x, float y):
         set_chat_cursor(text, x,y)
+    @classmethod
+    def set_chat_message(cls, i, text, color):
+        cdef unsigned char r
+        cdef unsigned char g
+        cdef unsigned char b
+        cdef unsigned char a
+        r,g,b,a = color
+        set_chat_message(i, text, r,g,b,a)
+    @classmethod
+    def set_chat_input_string(cls, text):
+        set_chat_input_string(text)
 
 """
 Cube Selector

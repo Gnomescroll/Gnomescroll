@@ -26,7 +26,7 @@ class Hud(object):
         self.height_margin = 5
         self.width_margin = 3
 
-        self.init_text_objects()
+        #self.init_text_objects()
         self.init_scoreboard()
 
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
@@ -38,18 +38,18 @@ class Hud(object):
         )
         return txt
 
-    def init_chat_text_objects(self):
-        offset = 50
-        msg_height = 0
-        line_height = 20
-        msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
+    #def init_chat_text_objects(self):
+        #offset = 50
+        #msg_height = 0
+        #line_height = 20
+        #msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
 
-        blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
-        self.text_dict = dict(zip(msg_count, blanks))
-        self.text_dict['input'] = self.text(text='', offset=200, x=50)
+        #blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
+        #self.text_dict = dict(zip(msg_count, blanks))
+        #self.text_dict['input'] = self.text(text='', offset=200, x=50)
 
-    def init_text_objects(self):
-        self.init_chat_text_objects()
+    #def init_text_objects(self):
+        #self.init_chat_text_objects()
 
     def init_scoreboard(self):
         self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -145,52 +145,41 @@ class Hud(object):
             txt.color = list(team.color) + [255]
             txt.draw()
 
-    def draw_chat_input(self):
-        text = self.text_dict['input']
-        text.text = ChatClientGlobal.chatRender.user_input()
-        text.draw()
+    #def draw_chat_input(self):
+        #text = self.text_dict['input']
+        #text.text = ChatClientGlobal.chatRender.user_input()
+        #text.draw()
 
-    def draw_chat_messages(self):
-        to_draw = []
-        offset = 20
-        msg_height = 0
-        line_height = 20
-        i = 0
-        msgs = ChatClientGlobal.chatRender.messages()
-        pm_channel = 'pm_' + str(NetClientGlobal.connection.client_id)
-        for msg in msgs:
-            if not msg.payload.content.strip(): continue
-            content = msg.name
-            if content:
-                content += ': '
-            content += msg.payload.content
-            channel = msg.payload.channel
-            if channel == 'system':
-                color = (40, 255, 0, 255)
-            elif channel == pm_channel:
-                color = (120, 200, 200, 255)
+    def set_chat_messages(self):
+        blanks = 0
+        for i, msg in enumerate(ChatClientGlobal.chatRender.messages()):
+            if not msg.payload.content.strip():
+                blanks += 1
+                continue
+            txt = '%s: %s' % (msg.name, msg.payload.content,)
+            if msg.payload.channel == 'system':
+                color = (40, 255, 0, 255,)
+            elif msg.payload.channel == 'pm_%d' % (NetClientGlobal.connection.client_id,):
+                color = (120, 200, 200, 255,)
             else:
-                color = (255, 40, 0, 255)
-            txt = self.text_dict[i]
-            txt.text = content
-            txt.color = color
-            to_draw.append(txt)
-            i += 1
+                color = (255, 40, 0, 255,)
+            
+            init_c_lib.HUD.set_chat_message(i, txt, color)
 
-        for t in to_draw:
-            t.draw()
+        for n in range(i-blanks+1,i):
+            init_c_lib.HUD.set_chat_message(n, '', (255,255,255,255,))
 
-    def set_chat_cursor(self):
-        buff = ChatClientGlobal.chatRender.input_buffer()
-        x = self.text_dict['input'].x
-        y = self.text_dict['input'].y
-        init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
+        init_c_lib.HUD.set_chat_input_string(ChatClientGlobal.chatRender.user_input())
+
+    #def set_chat_cursor(self):
+        #buff = ChatClientGlobal.chatRender.input_buffer()
+        #x = self.text_dict['input'].x
+        #y = self.text_dict['input'].y
+        #init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
 
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
 
         draw_chat_cursor = (InputGlobal.input == 'chat')
-        if draw_chat_cursor:
-            self.set_chat_cursor()
 
         draw_dead = NetClientGlobal.connection.connected\
                     and GameStateGlobal.agent is not None\
@@ -211,6 +200,9 @@ class Hud(object):
 
         draw_player_stats = True
 
+        draw_chat = True
+        draw_chat_input = InputGlobal.input == 'chat'
+
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
@@ -223,7 +215,10 @@ class Hud(object):
             fps,
             draw_ping,
             ping,
-            draw_player_stats
+            draw_player_stats,
+            draw_chat,
+            draw_chat_input,
+            InputGlobal.scoreboard
         )
         
         if InputGlobal.vn:
@@ -252,6 +247,8 @@ class Hud(object):
     def draw_text_items(self, zoom):
         init_c_lib.CyText.start()
 
+        self.set_chat_messages()
+
         init_c_lib.draw_hud_billboard_text()
         if InputGlobal.scoreboard:
             self.draw_scoreboard()
@@ -262,8 +259,4 @@ class Hud(object):
             init_c_lib.Font.font.end()
             return
 
-        self.draw_chat_messages()
-        if InputGlobal.input == 'chat':
-            self.draw_chat_input()
-            
         init_c_lib.CyText.end()
