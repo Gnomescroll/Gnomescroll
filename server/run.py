@@ -53,19 +53,32 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 
 def feb3_test_map():
     #setup
-    terrain_map.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
+    terrain_map.set_map_dimensions(128,128,128) # TODO:: get this value from the map gen or saved map    
     m = c_lib.map_gen
-    m.init(512, 512, 128)
+    m.init(128,128, 128)
     m.conf.seed(opts.seed)
 
     #1
     m.conf\
     .size(128,128,128)\
     .tile(101)\
-    .interpolate(2,2,2)\
-    .scale(1.0, 3.0, 1.0)\
-    .heightmap(baseline=40, maxheight=80)\
-    .p2(octaves=9, persistence=0.8, frequency=0.8)\
+    .interpolate(4,4,2)\
+    .scale(3.0, 3.0, 1.0)\
+    .heightmap(baseline=20, maxheight=40)\
+    .p2(octaves=9, persistence=20, frequency=0.01)\
+    .start()\
+    .reset()
+
+    #2
+    c_lib.map_gen.conf\
+    .size(128,128,128)\
+    .tile(102)\
+    .scale(x=4.0, y=4.0, z=1.0)\
+    .group(1)\
+    .gradient(z0=0.0, z1=-0.3)\
+    .interpolate(4,4,2)\
+    .density(threshold=0.75)\
+    .p3(octaves=6, persistence=0.7)\
     .start()\
     .reset()
     
