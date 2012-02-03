@@ -119,7 +119,12 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
 
 }
 
-void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz)
+#define HITSCAN_TEST_FAST 1
+/*
+    Enables using faster, Sagitta ray cast
+
+*/
+void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2)
 {
 
     x -= world_matrix.v[3].x;
@@ -138,14 +143,32 @@ void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, f
     v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z, 
     v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
 
+
+#if HITSCAN_TEST_FAST
+    const float s = this->radius - sqrt(r2); // Sagitta
+    const float l = 0.01 + sqrt( s*(this->radius*2 - s) ) ;
+
+    v.x = ((v.x - l*u.x) / scale) + xdim/2;
+    v.y = ((v.y - l*u.y) / scale) + ydim/2;
+    v.z = ((v.z - l*u.z) / scale) + zdim/2;
+
+    //printf("radius= %f, l= %f \n", radius, l);
+#else
     v.x = ((v.x - radius*u.x) / scale) + xdim/2;
     v.y = ((v.y - radius*u.y) / scale) + ydim/2;
     v.z = ((v.z - radius*u.z) / scale) + zdim/2;
+#endif
+
+
 
     float distance;
     int collision[3];
 
+#if HITSCAN_TEST_FAST
     if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, collision))
+#else
+    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, collision))
+#endif 
     {   
         distance *= scale;
         //printf("collision distance= %f \n", distance);

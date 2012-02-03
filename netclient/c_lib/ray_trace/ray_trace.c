@@ -689,7 +689,7 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
     x = t*ox - tx;
     y = t*oy - ty;
     z = t*oz - tz;
-    *_rad2 = x*x+y*y+z*z; // minimum distance between target and line
+    *_rad2 = x*x+y*y+z*z; // minimum distance squared between target and line
 
     //x,y,z is closest point
     x = t*ox + px;
