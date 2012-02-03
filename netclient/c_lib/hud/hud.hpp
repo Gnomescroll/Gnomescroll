@@ -65,7 +65,6 @@ void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
     bool inventory,
-    bool chat_cursor,
     bool help,
     bool disconnected,
     bool dead,
@@ -76,7 +75,12 @@ void set_hud_draw_settings(
     bool player_stats,
     bool chat,
     bool chat_input,
-    bool scoreboard
+    bool chat_cursor,
+    bool scoreboard,
+    bool equipment,
+    int equipment_slot,
+    bool compass,
+    bool map
 );
 void set_chat_cursor(char* text, float x, float y);
 

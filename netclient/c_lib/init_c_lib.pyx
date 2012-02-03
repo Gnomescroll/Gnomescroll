@@ -933,7 +933,6 @@ cdef extern from "./particles/minivox.hpp":
 cdef extern from "./particles/billboard_text.hpp":
     cdef cppclass BillboardText_list:
         void draw()
-        void draw_hud()
         void tick()
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
@@ -962,23 +961,6 @@ def draw():
     grenade_list.draw()
     cspray_list.draw()
     billboard_text_list.draw()
-
-def draw_hud_billboard_text():
-    billboard_text_list.draw_hud()
-
- 
-'''
-Circuit Tree
-'''
-cdef extern from "./particles/circuit_tree.hpp":
-    void circuit_tree_generate(int type, int seed)
-    void circuit_tree_draw()
-
-def _generate_circuit_tree(int type, int seed):
-    circuit_tree_generate(type, seed)
-
-def _draw_circuit_tree():
-    circuit_tree_draw()
 
 
 """ Input """
@@ -1108,37 +1090,14 @@ cdef int quit_event_callback():
 def toggle_mouse_bind():
     return _toggle_mouse_bind()
 
-"""Map"""
-cdef extern from "hud/map.hpp" namespace "HudMap":
-    void draw_map()
-
-class Map:
-    @classmethod
-    def draw(cls):
-        draw_map()
-
 """Equipment Panel"""
 cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-    void draw_equipment(int slot)
     void set_slot_icon(int slot, int icon_id)
 
 class Equipment:
     @classmethod
-    def draw(cls, int slot):
-        draw_equipment(slot)
-
-    @classmethod
     def set_equipment_icon(cls, int slot, int icon_id):
         set_slot_icon(slot, icon_id)
-
-"""Compass"""
-cdef extern from "hud/compass.hpp" namespace "Compass":
-    void draw_compass()
-
-class Compass:
-    @classmethod
-    def draw(cls):
-        draw_compass()
 
 
 """
@@ -1169,10 +1128,6 @@ Voronoi texture surface
 #        init_vn(width, height, gradient)
 
 
-
-
-
-
 """
 HUD
 -- this is here because hud.py needs to tell it to render certain things
@@ -1183,7 +1138,6 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool zoom,
         bool cube_selector,
         bool inventory,
-        bool chat_cursor,
         bool help,
         bool disconnected,
         bool dead,
@@ -1194,11 +1148,15 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool player_stats,
         bool chat,
         bool chat_input,
-        bool scoreboard
+        bool chat_cursor,
+        bool scoreboard,
+        bool equipment,
+        int equipment_slot,
+        bool compass,
+        bool map
     )
     void draw_hud_textures()
     void draw_hud_text()
-    void set_chat_cursor(char* text, float x, float y)
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_chat_input_string(char* text)
 
@@ -1214,7 +1172,6 @@ cdef class HUD:
         bool zoom,
         bool cube_selector,
         bool inventory,
-        bool chat_cursor,
         bool help,
         bool disconnected,
         bool dead,
@@ -1225,13 +1182,17 @@ cdef class HUD:
         bool player_stats,
         bool chat,
         bool chat_input,
-        bool scoreboard
+        bool chat_cursor,
+        bool scoreboard,
+        bool equipment,
+        int equipment_slot,
+        bool compass,
+        bool map
     ):
         set_hud_draw_settings(
             zoom,
             cube_selector,
             inventory,
-            chat_cursor,
             help,
             disconnected,
             dead,
@@ -1242,11 +1203,13 @@ cdef class HUD:
             player_stats,
             chat,
             chat_input,
-            scoreboard
+            chat_cursor,
+            scoreboard,
+            equipment,
+            equipment_slot,
+            compass,
+            map
         )
-    @classmethod
-    def set_chat_cursor(cls, text, float x, float y):
-        set_chat_cursor(text, x,y)
     @classmethod
     def set_chat_message(cls, i, text, color):
         cdef unsigned char r

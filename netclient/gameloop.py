@@ -132,8 +132,6 @@ class App(object):
         if ping:
             ping_n = init_c_lib.get_ticks()
 
-        init_c_lib._generate_circuit_tree(0,0)
-
         _m = 0
 
         last_tick = 0

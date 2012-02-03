@@ -26,7 +26,6 @@ class Hud(object):
         self.height_margin = 5
         self.width_margin = 3
 
-        #self.init_text_objects()
         self.init_scoreboard()
 
     def text(self, text='', offset=120, x=20, color=(255,40,0,255)):
@@ -37,19 +36,6 @@ class Hud(object):
             color = color
         )
         return txt
-
-    #def init_chat_text_objects(self):
-        #offset = 50
-        #msg_height = 0
-        #line_height = 20
-        #msg_count = range(ChatClientGlobal.chatRender.MESSAGE_RENDER_COUNT_MAX)
-
-        #blanks = [self.text(text='', x=50, offset=(offset + (line_height * i) + msg_height)) for i in msg_count]
-        #self.text_dict = dict(zip(msg_count, blanks))
-        #self.text_dict['input'] = self.text(text='', offset=200, x=50)
-
-    #def init_text_objects(self):
-        #self.init_chat_text_objects()
 
     def init_scoreboard(self):
         self.scoreboard_properties = ['ID', 'Name', 'Kills', 'Deaths', 'Score']
@@ -145,11 +131,6 @@ class Hud(object):
             txt.color = list(team.color) + [255]
             txt.draw()
 
-    #def draw_chat_input(self):
-        #text = self.text_dict['input']
-        #text.text = ChatClientGlobal.chatRender.user_input()
-        #text.draw()
-
     def set_chat_messages(self):
         blanks = 0
         for i, msg in enumerate(ChatClientGlobal.chatRender.messages()):
@@ -171,15 +152,8 @@ class Hud(object):
 
         init_c_lib.HUD.set_chat_input_string(ChatClientGlobal.chatRender.user_input())
 
-    #def set_chat_cursor(self):
-        #buff = ChatClientGlobal.chatRender.input_buffer()
-        #x = self.text_dict['input'].x
-        #y = self.text_dict['input'].y
-        #init_c_lib.HUD.set_chat_cursor(''.join(buff), x, y)
-
     def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
 
-        draw_chat_cursor = (InputGlobal.input == 'chat')
 
         draw_dead = NetClientGlobal.connection.connected\
                     and GameStateGlobal.agent is not None\
@@ -202,12 +176,20 @@ class Hud(object):
 
         draw_chat = True
         draw_chat_input = InputGlobal.input == 'chat'
+        draw_chat_cursor = InputGlobal.input == 'chat'
+
+        equipment_slot = -1
+        if GameStateGlobal.agent:
+            equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
+        draw_equipment = True
+
+        draw_compass = True
+        draw_map = InputGlobal.map
 
         init_c_lib.HUD.set_draw_settings(
             zoom,
             cube_selector,
             InputGlobal.inventory,
-            draw_chat_cursor,
             InputGlobal.help_menu,
             draw_disconnected,
             draw_dead,
@@ -218,12 +200,18 @@ class Hud(object):
             draw_player_stats,
             draw_chat,
             draw_chat_input,
-            InputGlobal.scoreboard
+            draw_chat_cursor,
+            InputGlobal.scoreboard,
+            draw_equipment,
+            equipment_slot,
+            draw_compass,
+            draw_map
         )
         
-        if InputGlobal.vn:
-            init_c_lib.VN.draw()
-            return
+        #if InputGlobal.vn:
+            #init_c_lib.VN.draw()
+            #return
+            
         # draw non-text first
         init_c_lib.HUD.draw_textures()
         
@@ -231,16 +219,6 @@ class Hud(object):
             self.draw_text_items(zoom)
             return
             
-        if InputGlobal.map:
-            init_c_lib.Map.draw()
-
-        active_equipment_slot = -1
-        if GameStateGlobal.agent:
-            active_equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
-        init_c_lib.Equipment.draw(active_equipment_slot)
-
-        init_c_lib.Compass.draw()
-
         # draw text
         self.draw_text_items(zoom)
 
@@ -249,14 +227,9 @@ class Hud(object):
 
         self.set_chat_messages()
 
-        init_c_lib.draw_hud_billboard_text()
-        if InputGlobal.scoreboard:
-            self.draw_scoreboard()
+        #if InputGlobal.scoreboard:
+            #self.draw_scoreboard()
 
         init_c_lib.HUD.draw_text()
-
-        if zoom:
-            init_c_lib.Font.font.end()
-            return
 
         init_c_lib.CyText.end()

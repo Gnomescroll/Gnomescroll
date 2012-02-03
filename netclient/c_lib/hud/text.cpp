@@ -91,35 +91,27 @@ void draw_string(char* text, float x, float y, float depth, float scale, float l
 }
 
 // internal string copy
+// if string is changed, char buffer will expand
+// however, char buffer will never contract
 void Text::set_string(char* text, char** this_text, int* this_len)
 {
     int len = strlen(text);
-    if (*this_text != NULL)
+    if (*this_text == NULL)
     {
-        if (strcmp(text, *this_text))
-        {
-            // string is different
-            if (*this_len == 0)
-            {
-                // recalculate str_len
-                *this_len = strlen(*this_text);
-            }
-            if (len > *this_len)
-            {
-                // string is greater size
-                *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
-                *this_len = len;
-            }
-            
-            strcpy(*this_text, text);
-        }
-    }
-    else
-    {
-        // new
+        // first time adding
         *this_text = (char*)malloc(sizeof(char) * (len+1));
         strcpy(*this_text, text);
         *this_len = len;
+    }
+    else
+    {
+        if (len > *this_len)
+        {
+            // string is greater size
+            *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
+            *this_len = len;
+        }
+        strcpy(*this_text, text);
     }
 }
 

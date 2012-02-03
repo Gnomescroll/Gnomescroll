@@ -130,6 +130,9 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
 
     def hud_equipment_slot(self):
         return self.active_weapon
+        
+    def hud_equipment_icon(self):
+        return self.active_weapon
 
     def set_hud_icons(self):
         init_c_lib.Equipment.set_equipment_icon(0, 3) #laser

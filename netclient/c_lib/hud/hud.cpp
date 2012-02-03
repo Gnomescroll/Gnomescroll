@@ -56,7 +56,6 @@ static struct HudDrawSettings
     bool zoom;
     bool cube_selector;
     bool inventory;
-    bool chat_cursor;
     bool help;
     bool disconnected;
     bool dead;
@@ -67,14 +66,18 @@ static struct HudDrawSettings
     bool player_stats;
     bool chat;
     bool chat_input;
+    bool chat_cursor;
     bool scoreboard;
+    bool equipment;
+    int equipment_slot;
+    bool compass;
+    bool map;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
     bool inventory,
-    bool chat_cursor,
     bool help,
     bool disconnected,
     bool dead,
@@ -85,13 +88,17 @@ void set_hud_draw_settings(
     bool player_stats,
     bool chat,
     bool chat_input,
-    bool scoreboard
+    bool chat_cursor,
+    bool scoreboard,
+    bool equipment,
+    int equipment_slot,
+    bool compass,
+    bool map
 )
 {
     hud_draw_settings.zoom = zoom;
     hud_draw_settings.cube_selector = cube_selector;
     hud_draw_settings.inventory = inventory;
-    hud_draw_settings.chat_cursor = chat_cursor;
     hud_draw_settings.help = help;
     hud_draw_settings.disconnected = disconnected;
     hud_draw_settings.dead = dead;
@@ -109,9 +116,18 @@ void set_hud_draw_settings(
     hud_draw_settings.ping_val = ping_val;
 
     hud_draw_settings.player_stats = player_stats;
+
     hud_draw_settings.chat = chat;
     hud_draw_settings.chat_input = chat_input;
+    hud_draw_settings.chat_cursor = chat_cursor;
+
     hud_draw_settings.scoreboard = scoreboard;
+
+    hud_draw_settings.equipment = equipment;
+    hud_draw_settings.equipment_slot = equipment_slot;
+
+    hud_draw_settings.compass = compass;
+    hud_draw_settings.map = map;
 }
 
 static struct ChatCursor
@@ -155,7 +171,7 @@ void draw_cursor()
 void draw_hud_textures()
 {
     if (hud_draw_settings.disconnected) return;
-    
+
     if (hud_draw_settings.zoom)
     {
         HudReticle::scope_reticle.draw();
@@ -170,12 +186,30 @@ void draw_hud_textures()
     if (hud_draw_settings.inventory)
         HudInventory::inventory.draw();
 
+    if (hud_draw_settings.equipment)
+    {
+        HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
+    }
+
+    if (hud_draw_settings.compass)
+    {
+        Compass::draw_compass();
+    }
+
+    if (hud_draw_settings.map)
+    {
+        HudMap::draw_map();
+    }
+
     if (hud_draw_settings.chat_cursor)
         draw_cursor();
 }
 
 void draw_hud_text()
 {
+
+    ClientState::billboard_text_list.draw_hud();
+    
     if (!hud->inited) return;
     if (hud_draw_settings.disconnected)
     {
