@@ -629,15 +629,11 @@ cdef extern from "./agent/agent.hpp":
         Agent_weapons weapons
 
 cdef extern from "./agent/agent.hpp":
-    int AGENT_MAX
     cdef cppclass Agent_list:
-        void draw()
         Agent_state* get(int id)
-        Agent_state* create()
         Agent_state* create(int id)
         Agent_state* get_or_create(int id)
         void destroy(int _id)
-        void where()
         int get_ids()
         int* ids_in_use
 
@@ -677,10 +673,6 @@ class ClientState(object):
     @classmethod
     def tick(cls):
         tick_client_state()
-
-
-def draw_agents():
-    agent_list.draw()
 
 '''
 WRAPPER

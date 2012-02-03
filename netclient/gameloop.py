@@ -243,15 +243,10 @@ class App(object):
 
             #import pdb; pdb.set_trace()
 
-            P.event("World.draw(), draw agents")
-            
-            if opts.draw_agents:
-                init_c_lib.draw_agents()
-
-            P.event("Animations Draw")
-
+            P.event("Draw voxels and particles")
             init_c_lib.ClientState.draw()
 
+            P.event("Draw animations")
             init_c_lib.AnimationDraw()
 
             P.event("terrain_map.update_chunks")

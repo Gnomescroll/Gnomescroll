@@ -60,7 +60,9 @@ namespace ClientState {
 
     void draw()
     {
-        //agent_list.draw();    // trigger ALL voxel draws
+        agent_list.draw();
+        voxel_render_list.draw();
+        
         cspray_list.draw();
         grenade_list.draw();
         shrapnel_list.draw();
