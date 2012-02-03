@@ -124,7 +124,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     Enables using faster, Sagitta ray cast
 
 */
-void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2)
+int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2)
 {
 
     x -= world_matrix.v[3].x;
@@ -174,11 +174,11 @@ void Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, f
         //printf("collision distance= %f \n", distance);
         //printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
 
-        set(collision[0], collision[1], collision[2], 0,0,0, 0);
+        set(collision[0], collision[1], collision[2], 254,0,0, 0);
         needs_vbo_update = true;
-
+        return 1;
     }
-    return;
+    return 0;
 }
 
 
