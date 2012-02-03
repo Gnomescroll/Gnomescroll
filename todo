@@ -225,7 +225,7 @@ without excess struggling::
 
 PYTHON DEPRECATION:
 ORDER:
-HUD
+HUD --done
 Input
 Camera
 NetServer pool
