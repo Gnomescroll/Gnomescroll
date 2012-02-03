@@ -1,5 +1,9 @@
+from libcpp cimport bool
 
-
+"""
+Init
+[gameloop]
+"""
 cdef extern from "c_lib.hpp":
     int init_c_lib()
     void close_c_lib()
@@ -14,25 +18,10 @@ def init():
 def close():
     close_c_lib()
 
-#network stuff
-
-cdef extern from "./net_lib/host.hpp":
-    void client_dispatch_network_events()
-    void client_connect_to(int a, int b, int c, int d, unsigned short port)
-    void flush_to_net()
-
-def NetClientDispatchNetworkEvents():
-    client_dispatch_network_events()
-
-def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
-    client_connect_to(a, b, c, d, _port)
-
-def NetClientFlushToNet():
-    flush_to_net()
-
-
-##timer
-
+"""
+Timer
+[gameloopm netout]
+"""
 cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
     int _GET_TICK()
@@ -63,8 +52,10 @@ def GET_TICK():
 def GET_MS_TIME():
     return _GET_MS_TIME();
 
-### pviz
-
+"""
+pviz
+[gameloop, input]
+"""
 cdef extern from "../net_lib/common/pviz.h":
     void pviz_draw(float x, float y, float z)
     void toggle_latency_unit()
@@ -76,8 +67,28 @@ def _toggle_latency_unit():
     toggle_latency_unit()
 
 
-### python network
+"""
+Network
+[gameloop, netclient]
+"""
+cdef extern from "./net_lib/host.hpp":
+    void client_dispatch_network_events()
+    void client_connect_to(int a, int b, int c, int d, unsigned short port)
+    void flush_to_net()
 
+def NetClientDispatchNetworkEvents():
+    client_dispatch_network_events()
+
+def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
+    client_connect_to(a, b, c, d, _port)
+
+def NetClientFlushToNet():
+    flush_to_net()
+
+"""
+Python specific network
+[net_*]
+"""
 cdef extern from "./net_lib/export.hpp":
     ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
     ctypedef void (*PY_CLIENT_EVENT_CALLBACK)(int client_id, int event_type)
@@ -134,14 +145,6 @@ cpdef init_python_net():
     set_python_net_callback_function(py_net_message_callback)
     print "Python net callback set"
     set_python_net_event_callback_function(py_net_net_event_callback)
-
-
-"""
-    
-    These are here to reduce pyx files
-
-"""
-from libcpp cimport bool
 
 """
 slimes
@@ -213,7 +216,10 @@ class Sound(object):
     def update(cls):
         update_sound()
 
-""" SDL """
+"""
+SDL
+[gameloop]
+"""
 
 cdef extern from "./SDL/SDL_functions.h":
     int _set_resolution(int xres, int yres, int fullscreen)
@@ -233,8 +239,7 @@ def set_resolution(xres, yres, fullscreen = 0):
 
 """
 Game modes (CTF)
-[?]
--- this code is overkill. pretty sure python needs team id at most
+[chat client (sends "join team" cmd)]
 """
 
 cdef extern from "./game/teams.hpp":
@@ -252,12 +257,19 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
 def join_team(int team):
     ctf.join_team(team)
 
-""" Options & Settings """
+"""
+Options & Settings
+[options]
+-- this is one of the few things to keep in cython until the end
+"""
 
 def load_options(opts):
     ctf.auto_assign = opts.auto_assign_team
 
-""" Camera """
+"""
+Camera
+[input, gameloop]
+"""
 cdef extern from "./camera/camera.hpp":
     cdef cppclass CCamera:
         float fov
@@ -464,6 +476,7 @@ cdef class Camera(object):
 
 """
 Skybox
+[gameloop]
 """
 cdef extern from "./skybox/skybox.hpp" namespace "Skybox":
     void render()
@@ -477,8 +490,8 @@ def render_skybox():
 
 """
 Animations
+[gameloop, input]
 """
-
 cdef extern from "./animations/animations.hpp" namespace "Animations":
     void agent_bleed(float x, float y, float z)
     void animations_tick()
@@ -494,7 +507,10 @@ def bleed(float x, float y, float z):
     agent_bleed(x,y,z)
 
 
-""" Agents """
+"""
+Agents
+[chat, gameloop, netclient, netout, hud, input]
+"""
 
 cdef extern from "./physics/vector.hpp":
     cdef struct Vector:
@@ -578,21 +594,6 @@ cdef extern from "./agent/player_agent.hpp":
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
-    void update_client_state()
-    void draw_client_state()
-    void tick_client_state()
-
-class ClientState(object):
-    @classmethod
-    def update(cls):
-        update_client_state()
-    @classmethod
-    def draw(cls):
-        draw_client_state()
-    @classmethod
-    def tick(cls):
-        tick_client_state()
-
 '''
 WRAPPER
 '''
@@ -1060,7 +1061,10 @@ class HudCubeSelector:
 
 """
 Font
--- this is here because it parses the font configuration file
+[hud]
+-- The hud depdnency is only the calling of the init() method
+-- No python is dependent on this code here; its mostly doing parsing
+-- It does need to add font set metadata, however
 """
 cdef extern from "./hud/font.hpp" namespace "HudFont":
     int load_font(char* filename)
@@ -1193,3 +1197,27 @@ class Font:
             return
         self.add_glyphs_to_c()
         self.ready = True
+
+
+"""
+Client State
+[gameloop]
+"""
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void update_client_state()
+    void draw_client_state()
+    void tick_client_state()
+
+class ClientState(object):
+    @classmethod
+    def update(cls):
+        update_client_state()
+    @classmethod
+    def draw(cls):
+        draw_client_state()
+    @classmethod
+    def tick(cls):
+        tick_client_state()
+
+
