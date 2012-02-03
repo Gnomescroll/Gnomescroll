@@ -165,6 +165,15 @@ void draw_cursor()
     _draw_rect(r,g,b, chat_cursor.x + len + 4, chat_cursor.y - h, w, h);
 }
 
+void draw_reference_center()
+{
+    int w = 2;
+    float x = (_xresf/2.0f) - w/2;
+    float y = (_yresf/2.0f) - w/2;
+    _draw_rect(10, 255, 255, x, y, w, w);
+}
+
+
 /* Display logic */
 
 void draw_hud_textures()
@@ -206,6 +215,8 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {
+
+    start_text_draw();
 
     ClientState::billboard_text_list.draw_hud();
     
@@ -283,9 +294,15 @@ void draw_hud_text()
             hud->scoreboard->draw();
         }
     }
+
+    end_text_draw();
 }
 
-
+void draw_hud()
+{
+    draw_hud_textures();
+    draw_hud_text();
+}
 /* HUD */
 
 void HUD::init()

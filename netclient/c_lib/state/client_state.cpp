@@ -58,8 +58,36 @@ namespace ClientState {
         ctf.on_ready();
     }
 
+    void draw()
+    {
+        agent_list.draw();
+        voxel_render_list.draw();
+        
+        cspray_list.draw();
+        grenade_list.draw();
+        shrapnel_list.draw();
+        blood_list.draw();
+        neutron_list.draw();
+        minivox_list.draw();
+        billboard_text_list.draw();
+    }
+
+    void tick()
+    {
+        //agent_list.tick();
+        cspray_list.tick();
+        grenade_list.tick();
+        shrapnel_list.tick();
+        blood_list.tick();
+        neutron_list.tick();
+        minivox_list.tick();
+        billboard_text_list.tick();
+    }
+
 
     //CYTHON
     void update_client_state(){update();}
+    void draw_client_state(){draw();}
+    void tick_client_state(){tick();}
 
 }

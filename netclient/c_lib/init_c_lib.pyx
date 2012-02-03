@@ -1,5 +1,9 @@
+from libcpp cimport bool
 
-
+"""
+Init
+[gameloop]
+"""
 cdef extern from "c_lib.hpp":
     int init_c_lib()
     void close_c_lib()
@@ -14,25 +18,10 @@ def init():
 def close():
     close_c_lib()
 
-#network stuff
-
-cdef extern from "./net_lib/host.hpp":
-    void client_dispatch_network_events()
-    void client_connect_to(int a, int b, int c, int d, unsigned short port)
-    void flush_to_net()
-
-def NetClientDispatchNetworkEvents():
-    client_dispatch_network_events()
-
-def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
-    client_connect_to(a, b, c, d, _port)
-
-def NetClientFlushToNet():
-    flush_to_net()
-
-
-##timer
-
+"""
+Timer
+[gameloopm netout]
+"""
 cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
     int _GET_TICK()
@@ -63,8 +52,10 @@ def GET_TICK():
 def GET_MS_TIME():
     return _GET_MS_TIME();
 
-### pviz
-
+"""
+pviz
+[gameloop, input]
+"""
 cdef extern from "../net_lib/common/pviz.h":
     void pviz_draw(float x, float y, float z)
     void toggle_latency_unit()
@@ -76,8 +67,28 @@ def _toggle_latency_unit():
     toggle_latency_unit()
 
 
-### python network
+"""
+Network
+[gameloop, netclient]
+"""
+cdef extern from "./net_lib/host.hpp":
+    void client_dispatch_network_events()
+    void client_connect_to(int a, int b, int c, int d, unsigned short port)
+    void flush_to_net()
 
+def NetClientDispatchNetworkEvents():
+    client_dispatch_network_events()
+
+def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
+    client_connect_to(a, b, c, d, _port)
+
+def NetClientFlushToNet():
+    flush_to_net()
+
+"""
+Python specific network
+[net_*]
+"""
 cdef extern from "./net_lib/export.hpp":
     ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
     ctypedef void (*PY_CLIENT_EVENT_CALLBACK)(int client_id, int event_type)
@@ -135,21 +146,22 @@ cpdef init_python_net():
     print "Python net callback set"
     set_python_net_event_callback_function(py_net_net_event_callback)
 
-
 """
-    
-    These are here to reduce pyx files
-
+slimes
+[input]
+--
 """
-from libcpp cimport bool
-
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     void test(int n)
 
 def slime_test(int n):
     test(n)
 
-""" ray trace """
+"""
+ray trace
+[input]
+-- Get rid of "set_active_block" logic in agent, wrap directly down to C agent method
+ """
 cdef extern from "ray_trace/ray_trace.h":
     int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
 
@@ -170,7 +182,11 @@ def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3)
         return
     return [i[0], i[1], i[2]]
 
-""" sound """
+"""
+sound
+[sound]
+-- move the init logic into C
+"""
 cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_volume(float vol)
     void set_enabled(int y)
@@ -200,7 +216,10 @@ class Sound(object):
     def update(cls):
         update_sound()
 
-""" SDL """
+"""
+SDL
+[gameloop]
+"""
 
 cdef extern from "./SDL/SDL_functions.h":
     int _set_resolution(int xres, int yres, int fullscreen)
@@ -218,127 +237,39 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-""" Map gen """
-#cdef extern from "./map_gen/dragon.hpp" namespace "Dragon":
-#    void generate_dragon()
-#    void draw_dragon()
-#class Dragon(object):
-#    @classmethod
-#    def generate(cls):
-#        generate_dragon()
-#    @classmethod
-#    def draw(cls):
-#        draw_dragon()
-
-
-""" Game modes (CTF) """
+"""
+Game modes (CTF)
+[chat client (sends "join team" cmd)]
+"""
 
 cdef extern from "./game/teams.hpp":
-    cdef cppclass Team:
-        int id
-        unsigned int base_score
-        char* name
-        int n
-        bool viewers
-        unsigned char r,g,b
-
-    cdef cppclass NoTeam:
-        int id
-        char* name
-        int n
-        bool viewers
-
     cdef cppclass CTFTeam:  # inherits Team
         pass
 
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
-        NoTeam none
-        CTFTeam one
-        CTFTeam two
         void join_team(int team)
         bool auto_assign
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
 
-class DummyCTFTeam(object):
-
-    def __init__(self, id):
-        if id not in [1,2]:
-            print "DummyCTFTeam object -- id invalid %d" % (id,)
-            raise ValueError
-        self.id = id
-
-    def __getattribute__(self, k):
-
-        id = object.__getattribute__(self, 'id')
-        cdef Team t
-        if id == 1:
-            t = <Team>(ctf.one)
-        elif id == 2:
-            t = <Team>(ctf.two)
-
-        if k == 'score':
-            return t.base_score #limitation
-        elif k == 'name':
-            return t.name
-        elif k == 'n':
-            return t.n
-        elif k == 'viewers':
-            return t.viewers
-        elif k == 'id':
-            return t.id
-        elif k == 'color':
-            return [t.r, t.g, t.b]
-        elif k.startswith('__'):
-            return object.__getattribute__(self, k)
-
-        raise AttributeError
-
-ctf_one = DummyCTFTeam(1)
-ctf_two = DummyCTFTeam(2)
-
-class DummyNoTeam(object):
-
-    def __getattribute__(self, k):
-
-        cdef NoTeam t
-        t = ctf.none
-
-        if k == 'name':
-            return t.name
-        elif k == 'n':
-            return t.n
-        elif k == 'viewers':
-            return t.viewers
-        elif k == 'id':
-            return t.id
-        elif k.startswith('__'):
-            return object.__getattribute__(self, k)
-        raise AttributeError
-
-ctf_none = DummyNoTeam()
-
-def get_team(int id):
-    if id == 0:
-        return ctf_none
-    elif id == 1:
-        return ctf_one
-    elif id == 2:
-        return ctf_two
-    else:
-        print "c_lib_game_modes.get_team :: invalid team id %d" % (id,)
-
 def join_team(int team):
     ctf.join_team(team)
 
-""" Options & Settings """
+"""
+Options & Settings
+[options]
+-- this is one of the few things to keep in cython until the end
+"""
 
 def load_options(opts):
     ctf.auto_assign = opts.auto_assign_team
 
-""" Camera """
+"""
+Camera
+[input, gameloop]
+"""
 cdef extern from "./camera/camera.hpp":
     cdef cppclass CCamera:
         float fov
@@ -545,6 +476,7 @@ cdef class Camera(object):
 
 """
 Skybox
+[gameloop]
 """
 cdef extern from "./skybox/skybox.hpp" namespace "Skybox":
     void render()
@@ -558,8 +490,8 @@ def render_skybox():
 
 """
 Animations
+[gameloop, input]
 """
-
 cdef extern from "./animations/animations.hpp" namespace "Animations":
     void agent_bleed(float x, float y, float z)
     void animations_tick()
@@ -575,7 +507,10 @@ def bleed(float x, float y, float z):
     agent_bleed(x,y,z)
 
 
-""" Agents """
+"""
+Agents
+[chat, gameloop, netclient, netout, hud, input]
+"""
 
 cdef extern from "./physics/vector.hpp":
     cdef struct Vector:
@@ -629,15 +564,11 @@ cdef extern from "./agent/agent.hpp":
         Agent_weapons weapons
 
 cdef extern from "./agent/agent.hpp":
-    int AGENT_MAX
     cdef cppclass Agent_list:
-        void draw()
         Agent_state* get(int id)
-        Agent_state* create()
         Agent_state* create(int id)
         Agent_state* get_or_create(int id)
         void destroy(int _id)
-        void where()
         int get_ids()
         int* ids_in_use
 
@@ -663,16 +594,6 @@ cdef extern from "./agent/player_agent.hpp":
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
-    void update_client_state()
-
-class ClientState(object):
-    @classmethod
-    def update(cls):
-        update_client_state()
-
-def draw_agents():
-    agent_list.draw()
-
 '''
 WRAPPER
 '''
@@ -892,76 +813,6 @@ class AgentListWrapper:
             ids.append(agent_list.ids_in_use[k])
         return ids
 
-#cdef extern from "./agent/agent.hpp":
-#    void send_identify_message(char* name)
-##    void send_identify_fail_message()
-
-#def identify(name):
-#    send_identify_message(name)
-    
-""" Particles """
-cdef extern from "./particles/grenade.hpp":
-    cdef cppclass Grenade_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/cspray.hpp":
-    cdef cppclass Cspray_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/shrapnel.hpp":
-    cdef cppclass Shrapnel_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/neutron.hpp":
-    cdef cppclass Neutron_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/blood.hpp":
-    cdef cppclass Blood_list:
-        void draw()
-        void tick()
-
-cdef extern from "./particles/minivox.hpp":
-    cdef cppclass Minivox_list:
-        void draw()
-        void tick()
-        
-cdef extern from "./particles/billboard_text.hpp":
-    cdef cppclass BillboardText_list:
-        void draw()
-        void tick()
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    Cspray_list cspray_list
-    Grenade_list grenade_list
-    Shrapnel_list shrapnel_list
-    Blood_list blood_list
-    Neutron_list neutron_list
-    Minivox_list minivox_list
-    BillboardText_list billboard_text_list
-
-def tick():
-    neutron_list.tick()
-    blood_list.tick()
-    shrapnel_list.tick()
-    grenade_list.tick()
-    cspray_list.tick()
-    minivox_list.tick()
-    billboard_text_list.tick()
-    
-def draw():
-    minivox_list.draw()
-    neutron_list.draw()
-    blood_list.draw()
-    shrapnel_list.draw()
-    grenade_list.draw()
-    cspray_list.draw()
-    billboard_text_list.draw()
-
 
 """ Input """
 ctypedef unsigned char Uint8
@@ -1090,44 +941,6 @@ cdef int quit_event_callback():
 def toggle_mouse_bind():
     return _toggle_mouse_bind()
 
-"""Equipment Panel"""
-cdef extern from "hud/equipment.hpp" namespace "HudEquipment":
-    void set_slot_icon(int slot, int icon_id)
-
-class Equipment:
-    @classmethod
-    def set_equipment_icon(cls, int slot, int icon_id):
-        set_slot_icon(slot, icon_id)
-
-
-"""
-Voronoi texture surface
-"""
-#from libcpp cimport bool
-#cdef extern from "SDL/v.hpp" namespace "vn":
-#    void draw_vn()
-#    void generate_frames(float seconds)
-#    void set_params(double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power)
-##    void set_params(double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power)
-#    void init_vn(int width, int height, int gradient)
-
-#class VN(object):
-#    @classmethod
-#    def draw(cls):
-#        draw_vn()
-#    @classmethod
-#    def frames(cls, float seconds):
-#        generate_frames(seconds)
-#    @classmethod
-#    def configure(cls, double dz, double frequency, int seed, bool distance, bool turbulence_enabled, double turbulence_frequency, double turbulence_power):
-##    def configure(cls, double dz, double frequency, int seed, bool distance, double turbulence_frequency, double turbulence_power):
-#        set_params(dz, frequency, seed, distance, turbulence_enabled, turbulence_frequency, turbulence_power)
-##        set_params(dz, frequency, seed, distance, turbulence_frequency, turbulence_power)
-#    @classmethod
-#    def init(cls, int width, int height, int gradient):
-#        init_vn(width, height, gradient)
-
-
 """
 HUD
 -- this is here because hud.py needs to tell it to render certain things
@@ -1155,18 +968,14 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         bool compass,
         bool map
     )
-    void draw_hud_textures()
-    void draw_hud_text()
+    void draw_hud()
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_chat_input_string(char* text)
 
 cdef class HUD:
     @classmethod
-    def draw_textures(cls):
-        draw_hud_textures()
-    @classmethod
-    def draw_text(cls):
-        draw_hud_text()
+    def draw(cls):
+        draw_hud()
     @classmethod
     def set_draw_settings(cls,
         bool zoom,
@@ -1249,124 +1058,13 @@ class HudCubeSelector:
     def set_active_pos(cls, int pos):
         cube_selector.set_active_pos(pos)
 
-"""
-Text
--- this is here because hud.py needs to set lots of text to render
-"""
-
-cdef extern from "./hud/text.hpp" namespace "HudText":
-    void start_text_draw()
-    void end_text_draw()
-
-    cdef cppclass Text:
-        int id
-        float x
-        float y
-        float xoff
-        float yoff
-        void set_text(char* text)
-        void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-        void set_position(float x, float y)
-        void set_scale(float scale)
-        void set_depth(float depth)
-        void draw()
-
-    cdef cppclass Text_list:
-        Text* create()
-        Text* get(int id)
-        
-    Text_list text_list
-
-class CyText(object):
-    def __init__(self,
-        text='',
-        x=0, y=0,
-        xoff=0, yoff=0,
-        color=(255,255,255,255),
-        depth=-0.1,
-        scale=1.0
-    ):
-        cdef Text* t
-        t = text_list.create()
-        if t == NULL:
-            self.id = -1
-            return
-        self.id = t.id
-        self.text = text
-        self.color = color
-        self.scale = scale
-        self.depth = depth
-        t.set_position(x,y)
-
-    def __getattribute__(self, name):
-        cdef int i
-        i = object.__getattribute__(self, 'id')
-        if name == 'id':
-            return i
-        cdef Text* t
-        t = text_list.get(i)
-        if t == NULL: raise AttributeError
-
-        if name == 'x':
-            return t.x
-        elif name == 'y':
-            return t.y
-        elif name == 'xoff':
-            return t.xoff
-        elif name == 'yoff':
-            return t.yoff
-        else:
-            return object.__getattribute__(self, name)
-
-    def __setattr__(self, k,v):
-        if k == 'id':
-            object.__setattr__(self, k, v)
-            return
-
-        cdef Text* t
-        t = text_list.get(self.id)
-        if t == NULL: raise AttributeError
-
-        cdef unsigned char r
-        cdef unsigned char g
-        cdef unsigned char b
-        cdef unsigned char a
-        
-        if k == 'text':
-            t.set_text(v)
-        elif k == 'color':
-            r,g,b,a = v
-            t.set_color(r,g,b,a)
-        elif k == 'scale':
-            t.set_scale(v)
-        elif k == 'depth':
-            t.set_depth(v)
-        else:
-            object.__setattr__(self, k,v)
-
-    def draw(self):
-        cdef Text* t
-        t = text_list.get(self.id)
-        if t == NULL: return
-        t.draw()
-
-    def set_position(self, float x, float y):
-        cdef Text* t
-        t = text_list.get(self.id)
-        if t == NULL: return
-        t.set_position(x,y)
-
-    @classmethod
-    def start(cls):
-        start_text_draw()
-    @classmethod    
-    def end(cls):
-        end_text_draw()
-
 
 """
 Font
--- this is here because it parses the font configuration file
+[hud]
+-- The hud depdnency is only the calling of the init() method
+-- No python is dependent on this code here; its mostly doing parsing
+-- It does need to add font set metadata, however
 """
 cdef extern from "./hud/font.hpp" namespace "HudFont":
     int load_font(char* filename)
@@ -1499,3 +1197,27 @@ class Font:
             return
         self.add_glyphs_to_c()
         self.ready = True
+
+
+"""
+Client State
+[gameloop]
+"""
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void update_client_state()
+    void draw_client_state()
+    void tick_client_state()
+
+class ClientState(object):
+    @classmethod
+    def update(cls):
+        update_client_state()
+    @classmethod
+    def draw(cls):
+        draw_client_state()
+    @classmethod
+    def tick(cls):
+        tick_client_state()
+
+

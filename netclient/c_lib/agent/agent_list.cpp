@@ -2,6 +2,32 @@
 
 /* Agent list */
 
+void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan properties
+{
+    #ifdef DC_CLIENT
+    bool you;
+    Agent_state* agent;
+    for(int i=0; i<n_max; i++) {
+        agent = a[i];
+        if (agent == NULL) continue;
+        you = (agent->id == ClientState::playerAgent_state.agent_id);
+        if (agent->vox == NULL) continue;
+        
+        agent->vox->update(&agent_vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+        if ((first_person && you) || agent->status.dead)
+        {
+            agent->vox->set_draw(false);
+            agent->vox->set_hitscan(false);
+        }
+        else
+        {
+            agent->vox->set_draw(true);
+            agent->vox->set_hitscan(true);
+        }
+    }
+    #endif
+}
+
 void Agent_list::quicksort_team(int beg, int end)
 {
     if (end > beg + 1)

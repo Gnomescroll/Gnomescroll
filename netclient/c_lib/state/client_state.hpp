@@ -48,11 +48,13 @@ namespace ClientState {
     void set_PlayerAgent_id(int id);
 
     void update();
-    
+    void draw();
     void init();
 
     //CYTHON
     void update_client_state();
+    void draw_client_state();
+    void tick_client_state();
 }
 #endif
 

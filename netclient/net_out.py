@@ -67,7 +67,7 @@ def idRequired(f):
 
 def noViewer(f):
     def wrapped(*args, **kwargs):
-        if not GameStateGlobal.agent.team.viewers:
+        if not GameStateGlobal.agent.is_viewer():
             f(*args, **kwargs)
     return wrapped
 
