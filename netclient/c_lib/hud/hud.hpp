@@ -90,6 +90,9 @@ extern HUD* hud;
 
 void init();
 
+//void set_chat_cursor(char* text, float x, float y);
+
+// CYTHON
 void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
@@ -111,12 +114,10 @@ void set_hud_draw_settings(
     bool compass,
     bool map
 );
-void set_chat_cursor(char* text, float x, float y);
 
 void draw_hud_textures();
 void draw_hud_text();
 
-// CYTHON
 void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 void set_chat_input_string(char* text);
 

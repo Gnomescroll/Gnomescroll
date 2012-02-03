@@ -171,6 +171,7 @@ player stats indicator in C
 Feb 2
 
 chat render in C
+scoreboard in C
 =============
 
 Bundle voxel list draw calls properly (currently in agent_list)
