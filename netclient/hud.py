@@ -207,7 +207,8 @@ class Hud(object):
             draw_compass,
             draw_map
         )
-        
+
+        # save the vn code somewhere else. dont delete it yet
         #if InputGlobal.vn:
             #init_c_lib.VN.draw()
             #return
@@ -223,9 +224,9 @@ class Hud(object):
         self.draw_text_items(zoom)
 
     def draw_text_items(self, zoom):
-        init_c_lib.CyText.start()
-
         self.set_chat_messages()
+
+        init_c_lib.CyText.start()
 
         #if InputGlobal.scoreboard:
             #self.draw_scoreboard()
