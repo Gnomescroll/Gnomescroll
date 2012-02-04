@@ -51,13 +51,13 @@ void PlayerAgent_action::hitscan_laser() {
     // hitscan against voxels
     float vox_distance = 10000000.0f;
     float collision_point[3];
-    struct Voxel_hitscan_element vhe;
+    Voxel_hitscan_target target;
     bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
         collision_point, &vox_distance,
-        &vhe
+        &target
     );
 
     //if (voxel_hit)
@@ -71,8 +71,8 @@ void PlayerAgent_action::hitscan_laser() {
     int block_pos[3];
     int side[3];
     int tile;
-    int target;
-    target = Hitscan::terrain(
+    int target_type;
+    target_type = Hitscan::terrain(
         x,y,z,
         vec[0], vec[1], vec[2],
         block_pos, &block_distance,
@@ -84,22 +84,22 @@ void PlayerAgent_action::hitscan_laser() {
     const int TARGET_VOXEL = 1;
     const int TARGET_BLOCK = 2;
     
-    bool block_hit = (target == Hitscan::HITSCAN_TARGET_BLOCK);
+    bool block_hit = (target_type == Hitscan::HITSCAN_TARGET_BLOCK);
     bool voxel_closer = (vox_distance <= block_distance);
     //bool block_closer = (block_distance > vox_distance);
 
     if (voxel_hit && block_hit) {
         if (voxel_closer) {
-            target = TARGET_VOXEL;
+            target_type = TARGET_VOXEL;
         } else {
-            target = TARGET_BLOCK;
+            target_type = TARGET_BLOCK;
         }
     } else if (voxel_hit) {
-        target = TARGET_VOXEL;
+        target_type = TARGET_VOXEL;
     } else if (block_hit) {
-        target = TARGET_BLOCK;
+        target_type = TARGET_BLOCK;
     } else {
-        target = TARGET_NONE;
+        target_type = TARGET_NONE;
     }
 
     // for hitscan animation:
@@ -127,11 +127,14 @@ void PlayerAgent_action::hitscan_laser() {
     hitscan_none_CtoS none_msg;
     hitscan_object_CtoS obj_msg;
     
-    switch (target) {
+    switch (target_type) {
         case TARGET_VOXEL:
-            obj_msg.id = vhe.entity_id;
-            obj_msg.type = vhe.entity_type;
-            obj_msg.part = vhe.part_id;
+            obj_msg.id = target.entity_id;
+            obj_msg.type = target.entity_type;
+            obj_msg.part = target.part_id;
+            obj_msg.voxel[0] = target.voxel[0];
+            obj_msg.voxel[1] = target.voxel[1];
+            obj_msg.voxel[2] = target.voxel[2];
             obj_msg.send();
             //printf("msg: id=%d type=%d part=%d\n", obj_msg.id, obj_msg.type, obj_msg.part);
             // subtract the collision point from the origin to get the new vector for animation
@@ -140,13 +143,14 @@ void PlayerAgent_action::hitscan_laser() {
             look.z = collision_point[2] - origin[2];
             normalize_vector(&look);
 
-            if (vhe.entity_type == OBJ_TYPE_AGENT)
+            if (target.entity_type == OBJ_TYPE_AGENT)
             {
                 Animations::blood_spray(
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
             }
+            target.vv->set(target.voxel[0], target.voxel[1], target.voxel[2],0,0,0,0);  // delete voxel in model
             break;
 
         case TARGET_BLOCK:            
@@ -218,13 +222,13 @@ void PlayerAgent_action::hitscan_pick() {
     // hitscan against voxels
     float vox_distance = 10000000.0f;
     float collision_point[3];
-    struct Voxel_hitscan_element vhe;
+    struct Voxel_hitscan_target target;
     bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
         collision_point, &vox_distance,
-        &vhe
+        &target
     );
 
      //hitscan against terrain
@@ -232,8 +236,8 @@ void PlayerAgent_action::hitscan_pick() {
     int block_pos[3];
     int side[3];
     int tile;
-    int target;
-    target = Hitscan::terrain(
+    int target_type;
+    target_type = Hitscan::terrain(
         x,y,z,
         vec[0], vec[1], vec[2],
         block_pos, &block_distance,
@@ -245,44 +249,57 @@ void PlayerAgent_action::hitscan_pick() {
     const int TARGET_VOXEL = 1;
     const int TARGET_BLOCK = 2;
     
-    bool block_hit = (target == Hitscan::HITSCAN_TARGET_BLOCK);
+    bool block_hit = (target_type == Hitscan::HITSCAN_TARGET_BLOCK);
     bool voxel_closer = (vox_distance <= block_distance);
     //bool block_closer = (block_distance > vox_distance);
 
     if (voxel_hit && block_hit)
         if (voxel_closer)
-            target = TARGET_VOXEL;
+            target_type = TARGET_VOXEL;
         else
-            target = TARGET_BLOCK;
+            target_type = TARGET_BLOCK;
     else if (voxel_hit)
-        target = TARGET_VOXEL;
+        target_type = TARGET_VOXEL;
     else if (block_hit)
-        target = TARGET_BLOCK;
+        target_type = TARGET_BLOCK;
     else
-        target = TARGET_NONE;
+        target_type = TARGET_NONE;
 
     // send packet
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
     
-    switch (target) {
+    switch (target_type) {
         case TARGET_VOXEL:
             if (vox_distance > MELEE_PICK_MAX_DISTANCE)
             {
-                target = TARGET_NONE;
+                target_type = TARGET_NONE;
                 break;
             }
         
-            obj_msg.id = vhe.entity_id;
-            obj_msg.type = vhe.entity_type;
-            obj_msg.part = vhe.part_id;
+            obj_msg.id = target.entity_id;
+            obj_msg.type = target.entity_type;
+            obj_msg.part = target.part_id;
+            obj_msg.voxel[0] = target.voxel[0];
+            obj_msg.voxel[1] = target.voxel[1];
+            obj_msg.voxel[2] = target.voxel[2];
             obj_msg.send();
+
+            if (target.entity_type == OBJ_TYPE_AGENT)
+            {
+                Animations::blood_spray(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    vec[0], vec[1], vec[2]
+                );
+            }
+            target.vv->set(target.voxel[0], target.voxel[1], target.voxel[2],0,0,0,0);  // delete voxel in model
+            
             break;
 
         case TARGET_BLOCK:
             if (block_distance > BLOCK_PICK_MAX_DISTANCE)
             {
-                target = TARGET_NONE;
+                target_type = TARGET_NONE;
                 break;
             }
             block_msg.x = block_pos[0];
@@ -306,7 +323,7 @@ void PlayerAgent_action::hitscan_pick() {
             break;
     }
 
-    if (target == TARGET_NONE)
+    if (target_type == TARGET_NONE)
     {
         melee_none_CtoS none_msg;
         none_msg.send();

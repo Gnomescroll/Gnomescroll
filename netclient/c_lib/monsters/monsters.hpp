@@ -17,6 +17,8 @@ enum SLIME_BODY_PARTS {
     SLIME_PART_BODY
 };
 
+const int SLIME_HEALTH = 50;
+
 class Slime;    // forward decl
 
 class Slime {
@@ -25,6 +27,7 @@ class Slime {
     float x,y,z;
     float vx,vy,vz;
     float theta,phi;
+    int health;
     
     Voxel_model* vox;
 
@@ -42,6 +45,8 @@ class Slime {
     void set_angles(float theta, float phi);
 
     void init_vox();
+
+    int take_damage(int dmg);
 
     Slime(int id);
     Slime(float x, float y, float z, float vx, float vy, float vz);

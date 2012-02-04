@@ -49,7 +49,7 @@ class Voxel_volume
 
     struct Voxel_hitscan_element vhe;
 
-    int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2);
+    int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2,  int voxel[3]);
     int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision) __attribute((always_inline));
 
     inline void get_center(float* v) __attribute((always_inline));
@@ -99,3 +99,5 @@ class Voxel_volume
     inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
 
 };
+
+void destroy_object_voxel(int id, int type, int part, int voxel[3]);

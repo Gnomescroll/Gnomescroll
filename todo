@@ -180,12 +180,10 @@ Draw/Tick calls managed by client state
 
 Feb 03
 
-
+Fix client's player block damage animation for hitscan laser; add to pick
 =============
 
-Client's agent's hitscan on terrain doesnt play local block damage effect
-
-Reintegrate new hitscan
+Reintegrate new hitscan(?)
 
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 

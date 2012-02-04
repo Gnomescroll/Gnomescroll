@@ -38,6 +38,7 @@ Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
 theta(0.0), phi(0.0),
+health(SLIME_HEALTH),
 type(OBJ_TYPE_SLIME)
 #ifdef DC_SERVER
 , changed(true),tick_num(0)
@@ -68,6 +69,18 @@ void Slime::init_vox()
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
+
+int Slime::take_damage(int dmg)
+{
+    this->health -= dmg;
+    if (this->health <= 0)
+    {
+        STATE::slime_list.destroy(this->id);
+    }
+    this->health = (this->health < 0) ? 0 : this->health;
+    return this->health;
+}
+
 
 void Slime::tick() {
     #ifdef DC_CLIENT

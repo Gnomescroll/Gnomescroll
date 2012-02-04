@@ -37,10 +37,10 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     y = y0;
     z = z0;
 
-    int _x,_y,_z;
-    _x=x;
-    _y=y;
-    _z=z;
+    //int _x,_y,_z;
+    //_x=x;
+    //_y=y;
+    //_z=z;
 
     int _dx,_dy,_dz;
     _dx = ((x1-x0)/len) *_ssize;
@@ -76,7 +76,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
         if(cx >= _bsize || cy >= _bsize || cz >= _bsize) {
             if(cx >= _bsize) {
                 cx -= _bsize;
-                _x = x;
+                //_x = x;
                 x += cdx;
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
@@ -86,7 +86,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
             }
             if(cy >= _bsize) {
                 cy -= _bsize;
-                _y = y;
+                //_y = y;
                 y += cdy;
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
@@ -96,7 +96,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
             }
             if(cz >= _bsize) {
                 cz -= _bsize;
-                _z = z;
+                //_z = z;
                 z += cdz;
                 if(_test_occludes_safe(x,y,z) != 0) 
                 {
@@ -124,7 +124,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     Enables using faster, Sagitta ray cast
 
 */
-int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2)
+int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2, int voxel[3])
 {
 
     x -= world_matrix.v[3].x;
@@ -162,19 +162,20 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
 
 
     float distance;
-    int collision[3];
+    //int collision[3];
 
 #if HITSCAN_TEST_FAST
-    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, collision))
+    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*radius/scale, &distance, voxel))
 #else
-    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, collision))
+    if(voxel_ray_cast(v.x,v.y,v.z, u.x,u.y,u.z, 2*l/scale, &distance, voxel))
 #endif 
     {   
         distance *= scale;
         //printf("collision distance= %f \n", distance);
         //printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
 
-        set(collision[0], collision[1], collision[2], 254,0,0, 0);
+        //set(voxel[0], voxel[1], voxel[2], 0,0,0, 0);  // dont set here; terrain may have blocked the hitscan
+        
         needs_vbo_update = true;
         return 1;
     }
@@ -648,3 +649,37 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, V
 { voxel[x+(y << index1)+(z << index12)] = *v; }
 inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
+
+
+void destroy_object_voxel(int id, int type, int part, int voxel[3])
+{
+    #ifdef DC_CLIENT
+    void* obj;
+    Voxel_volume* vv;
+    switch (type)
+    {
+        case OBJ_TYPE_AGENT:
+            obj = STATE::agent_list.get(id);
+            if (obj == NULL || ((Agent_state*)obj)->vox == NULL) return;
+            vv = ((Agent_state*)obj)->vox->get_part(part);
+            if (vv == NULL) return;
+            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            break;
+        case OBJ_TYPE_SLIME:
+            obj = STATE::slime_list.get(id);
+            if (obj == NULL || ((Monsters::Slime*)obj)->vox == NULL) return;
+            vv = ((Monsters::Slime*)obj)->vox->get_part(part);
+            if (vv == NULL) return;
+            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            break;
+        //case OBJ_TYPE_SPAWNER:
+            //obj = STATE::spawner_list.get(id);
+            //if (obj == NULL || ((Spawner*)obj)->vox == NULL) return;
+            //vv = ((Spawner*)obj)->vox->get_part(part);
+            //if (vv == NULL) return;
+            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            //break;
+        default: break;
+    }
+    #endif
+}

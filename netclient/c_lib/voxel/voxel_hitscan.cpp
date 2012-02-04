@@ -8,7 +8,7 @@ const float x0, const float y0, const float z0,
 const float x1, const float y1, const float z1,
 int skip_id, Object_types skip_type, // skip player agent id
 float collision_point[3], float *distance,
-struct Voxel_hitscan_element* target
+Voxel_hitscan_target* target
 )
 {
     float x2,y2,z2;
@@ -20,6 +20,9 @@ struct Voxel_hitscan_element* target
     struct Voxel_hitscan_element* vhe;
     struct Voxel_hitscan_element* target_hit;
     target_hit = NULL;
+
+    int voxel[3];
+    int* voxel_hit;
 
     float dist;
     float min_dist = 1000000.0f;
@@ -47,13 +50,13 @@ struct Voxel_hitscan_element* target
         if (dist < 0.0f || dist > max_dist) continue; //check this
 
         if( r2 < radius*radius ) {
-            //vhe->vv->hitscan_test(x0,y0,z0, x1,y1,z1);
-            if(vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2 ) == 0) continue; //test for voxel hit
             if (dist > min_dist) continue;  //check this
+            if (!vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
             min_dist = dist;
             x = tpos[0];
             y = tpos[1];
             z = tpos[2];
+            voxel_hit = voxel;
             target_hit = vhe;
         }
     }
@@ -63,11 +66,27 @@ struct Voxel_hitscan_element* target
         collision_point[0] = x;
         collision_point[1] = y;
         collision_point[2] = z;
-        *target = *target_hit;
+        target->copy_vhe(target_hit);
+        target->copy_voxel(voxel_hit);
         return true;
-        //return false;
     }
     return false;
+}
+
+void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
+{
+    this->entity_id = vhe->entity_id;
+    this->entity_type = vhe->entity_type;
+    this->part_id = vhe->part_id;
+    this->vv = vhe->vv;
+}
+
+void Voxel_hitscan_target::copy_voxel(int voxel[3])
+{
+    for (int i=0; i<3; i++)
+    {
+        this->voxel[i] = voxel[i];
+    }
 }
 
 void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
