@@ -65,6 +65,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 }
 
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
+    printf("block damage: %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f cube_id=%d, cube_side=%d\n", x,y,z,ix,iy,iz, cube_id, cube_side);
 
     int tex_id = _get_cube_side_texture(cube_id, cube_side);
 

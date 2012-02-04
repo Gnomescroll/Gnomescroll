@@ -69,11 +69,14 @@ void PlayerAgent_action::hitscan_laser() {
     // hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
+    int side[3];
+    int tile;
     int target;
     target = Hitscan::terrain(
         x,y,z,
         vec[0], vec[1], vec[2],
-        block_pos, &block_distance
+        block_pos, &block_distance,
+        side, &tile
     );
 
     // choose closer collision (or none)
@@ -132,14 +135,17 @@ void PlayerAgent_action::hitscan_laser() {
             obj_msg.send();
             //printf("msg: id=%d type=%d part=%d\n", obj_msg.id, obj_msg.type, obj_msg.part);
             // subtract the collision point from the origin to get the new vector for animation
-            vec[0] = collision_point[0] - origin[0];
-            vec[1] = collision_point[1] - origin[1];
-            vec[2] = collision_point[2] - origin[2];
+            look.x = collision_point[0] - origin[0];
+            look.y = collision_point[1] - origin[1];
+            look.z = collision_point[2] - origin[2];
+            normalize_vector(&look);
+
             if (vhe.entity_type == OBJ_TYPE_AGENT)
             {
-                //Animations::agent_bleed(collision_point[0], collision_point[1], collision_point[2]);
-                Animations::blood_spray(collision_point[0], collision_point[1], collision_point[2],
-                    look.x, look.y, look.z);
+                Animations::blood_spray(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    look.x, look.y, look.z
+                );
             }
             break;
 
@@ -150,17 +156,29 @@ void PlayerAgent_action::hitscan_laser() {
             block_msg.send();
 
             // multiply look vector by distance to collision
-            vec[0] *= block_distance;
-            vec[1] *= block_distance;
-            vec[2] *= block_distance;
+            look.x *= block_distance;
+            look.y *= block_distance;
+            look.z *= block_distance;
             // add agent position, now we have collision point
-            vec[0] += x;
-            vec[1] += y;
-            vec[2] += z;
+            look.x += x;
+            look.y += y;
+            look.z += z;
+            // copy this to collision_point, for block damage animation
+            collision_point[0] = look.x;
+            collision_point[1] = look.y;
+            collision_point[2] = look.z;
             // subtract translated animation origin from collision point (vec) to get new vector
-            vec[0] -= origin[0];
-            vec[1] -= origin[1];
-            vec[2] -= origin[2];
+            look.x -= origin[0];
+            look.y -= origin[1];
+            look.z -= origin[2];
+            normalize_vector(&look);
+
+            Animations::block_damage(
+                collision_point[0], collision_point[1], collision_point[2],
+                look.x, look.y, look.z,
+                tile, side
+            );
+            
             break;
             
         case TARGET_NONE:
@@ -171,8 +189,6 @@ void PlayerAgent_action::hitscan_laser() {
             break;
     }
 
-    normalize_vector(vec);
-
     // play sound
     char soundfile[] = "laser_01.wav";
     Sound::play_2d_sound(soundfile);
@@ -181,7 +197,7 @@ void PlayerAgent_action::hitscan_laser() {
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(
         origin[0], origin[1], origin[2],
-        vec[0]*hitscan_speed, vec[1]*hitscan_speed, vec[2]*hitscan_speed
+        look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
     );
 }
 
@@ -211,20 +227,17 @@ void PlayerAgent_action::hitscan_pick() {
         &vhe
     );
 
-    //if (voxel_hit)
-    //{
-        //printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
-        //if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
-    //}
-    
      //hitscan against terrain
     float block_distance = 10000000.0f;
     int block_pos[3];
+    int side[3];
+    int tile;
     int target;
     target = Hitscan::terrain(
         x,y,z,
         vec[0], vec[1], vec[2],
-        block_pos, &block_distance
+        block_pos, &block_distance,
+        side, &tile
     );
 
     // choose closer collision (or none)
@@ -276,6 +289,17 @@ void PlayerAgent_action::hitscan_pick() {
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
             block_msg.send();
+
+            collision_point[0] = x + vec[0] * block_distance;
+            collision_point[1] = y + vec[1] * block_distance;
+            collision_point[2] = z + vec[2] * block_distance;
+
+            Animations::block_damage(
+                collision_point[0], collision_point[1], collision_point[2],
+                vec[0], vec[1], vec[2],
+                tile, side
+            );
+            
             break;
             
         default:

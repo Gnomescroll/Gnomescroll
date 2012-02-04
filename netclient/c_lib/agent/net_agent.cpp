@@ -439,7 +439,7 @@ inline void hitscan_block_CtoS::handle() {
     int side[3];
     int cube;
     const float max_l = 500.0f;
-    float _distance=0.0f,*distance=&_distance;
+    float distance=0.0f;
 
     float f[3];
     a->s.forward_vector(f);
@@ -449,15 +449,15 @@ inline void hitscan_block_CtoS::handle() {
         fy = a->s.y,
         fz = a->s.z + a->camera_height();
 
-    int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, distance, collision, pre_collision, &cube, side);
+    int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
     if (!collided) {
         return;
     }
 
     // pt of collision
-    fx += f[0] * _distance;
-    fy += f[1] * _distance;
-    fz += f[2] * _distance;
+    fx += f[0] * distance;
+    fy += f[1] * distance;
+    fz += f[2] * distance;
 
     int cube_side = get_cube_side_from_side_array(side);
 

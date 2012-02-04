@@ -525,7 +525,7 @@ int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, flo
     side[0]=0; side[1]=0; side[2]=0;
     int col=0;
 
-    for(i =0; i < max_i; i++) {
+    for(i=0; i < max_i; i++) {
         cx += dx;
         cy += dy;
         cz += dz;
