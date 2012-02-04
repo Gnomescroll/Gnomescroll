@@ -3,6 +3,9 @@
 //#include <c_lib/voxel/voxel_skeleton.hpp>
 #include <sys/stat.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 off_t fsize(const char *filename) {
     struct stat st; 
     if (stat(filename, &st) == 0)
@@ -20,41 +23,48 @@ void check_for_comments(char* s, int* index)
     goto jmp;
 }
 
-void read_skeleton(char* file_name, VoxDat* vox_dat)
+char* read_file_to_buffer(char* file_name, int* size)
 {
-    int size = fsize(file_name);
-    char* buffer = new char[size+2];
-    FILE *fp = fopen(file_name, "r"); //open file for reading
-    if(fp == NULL)
+    char *source = NULL;
+    FILE *fp = fopen(file_name, "r");
+    if (fp != NULL) 
     {
-        printf("read_skeleton: error could not open fil file %s \n", file_name);
-        delete[] buffer;
-        return;     
-    }
-    {
-        int index = 0;
-
-        while(index < size)
+        /* Go to the end of the file. */
+        if (fseek(fp, 0L, SEEK_END) == 0) 
         {
-            int nbytes = fread(buffer+index, sizeof(char), size - index, fp);
-            index += nbytes;
-
-            if(nbytes == 0) break;
-            if(nbytes <= 0)
+            /* Get the size of the file. */
+            long bufsize = ftell(fp); *size = (int)bufsize;
+            if (bufsize == -1) { /* Error */ }
+            /* Allocate our buffer to that size. */
+            source = (char*) malloc(sizeof(char) * (bufsize + 2));
+            /* Go back to the start of the file. */
+            if (fseek(fp, 0L, SEEK_SET) == 0) { /* Error */ }
+            /* Read the entire file into memory. */
+            size_t newLen = fread(source, sizeof(char), bufsize, fp);
+            if (newLen == 0) 
             {
-                printf("read_skeleton: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
-                fclose(fp);
-                delete[] buffer;
-                return;    
+                fputs("read_file_to_buffer: error reading file", stderr);
+                return NULL;
+            } 
+            else 
+            {
+                source[++newLen] = '\0'; /* Just to be safe. */
             }
         }
-        if(index != size) printf("read_skeleton: warning, from %s read only %i of %i \n", file_name, index, size);
-        buffer[index+1] = '\0';
-        buffer[size] = '\0';
+        if(fp == NULL) printf("WTF\n");
+        fclose(fp);
     }
-    buffer[size] = '\0';
+    //free(source); /* Don't forget to call free() later! */
+    return source;
+}
 
-    printf("Loading skeleton: %s\n", file_name);
+
+void read_skeleton(char* file_name, VoxDat* vox_dat)
+{
+    printf("Loading skeleton: %s \n", file_name);
+    int size;
+    char* buffer = read_file_to_buffer(file_name, &size);
+    if(buffer == NULL) printf("error reading %s \n", file_name);
 
     char* str_tmp = new char[512];
     int n_parts;
@@ -121,51 +131,16 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
         vox_dat->set_part_local_matrix(part_num, ox,oy,oz, rx,ry,rz);
     }
 
-    if(index > size+1)
-    {
-        printf("voxel_skeleton_read: buffer overflow, index= %i, size= %i \n", index, size);
-    }
-
-    fclose(fp);
     delete[] str_tmp;
-    delete[] buffer;
+    free(buffer);
 }
 
 void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 {
     printf("Loading voxel model: %s \n", file_name);
-
-    int size = fsize(file_name);
-    char* buffer = new char[size+2];
-    FILE *fp = fopen(file_name, "r"); //open file for reading
-    if(fp == NULL)
-    {
-        printf("read_voxel_volume: error could not open fil file %s \n", file_name);
-        delete[] buffer;
-        return;     
-    }
-
-    {
-        int index = 0;
-        while(index < size)
-        {
-            int nbytes = fread(buffer+index, sizeof(char), size - index, fp);
-            index += nbytes;
-
-            if(nbytes == 0) break;
-            if(nbytes <= 0)
-            {
-                printf("read_voxel_volume: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
-                fclose(fp);
-                delete[] buffer;
-                return;    
-            }
-        }
-        if(index != size) printf("read_voxel_volume: warning, from %s only read %i of %i \n", file_name, index, size);
-        buffer[index+1] = '\0';
-        buffer[size] = '\0';
-    }
-
+    int size;
+    char* buffer = read_file_to_buffer(file_name, &size);
+    if(buffer == NULL) printf("error reading %s \n", file_name);
 
     int index = 0;
     int read;
@@ -235,7 +210,6 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     #endif
         vox_num++;
     }
-    
-    fclose(fp); 
-    delete[] buffer;
+
+    free(buffer);
 }
