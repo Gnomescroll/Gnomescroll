@@ -28,7 +28,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     int nbytes = fread(buffer, sizeof(char), size, fp);
     if ( nbytes != size )
     {
-        printf("read_skeleton: failed to read %i bytes\n", nbytes);
+        printf("read_skeleton: failed to read %i bytes in file %s \n", nbytes, file_name);
         fclose(fp);
         delete[] buffer;
         return;       
