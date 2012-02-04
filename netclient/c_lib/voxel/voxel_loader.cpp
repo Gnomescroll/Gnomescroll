@@ -41,7 +41,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
             if(nbytes <= 0)
             {
-                printf("read_skeleton: failed to read file %s, %i bytes of %i \n", file_name, nbytes, size);
+                printf("read_skeleton: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
                 fclose(fp);
                 delete[] buffer;
                 return;    
@@ -150,7 +150,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 
             if(nbytes <= 0)
             {
-                printf("read_voxel_volume: failed to read file %s, %i bytes of %i \n", file_name, nbytes, size);
+                printf("read_voxel_volume: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
                 fclose(fp);
                 delete[] buffer;
                 return;    
