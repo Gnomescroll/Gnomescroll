@@ -5,9 +5,9 @@ const int max_cubes = 256;
 struct cubeProperties 
 {
     bool active;
+    bool solid;
     bool occludes;
     bool transparent;
-    bool reserved4;
     bool reserved5;
     bool reserved6;
     bool reserved7;

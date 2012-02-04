@@ -13,9 +13,9 @@ PART 2: Properties
 cdef extern from "./t_map/t_properties.h" namespace "t_map":
     struct cubeProperties:
         bool active
+        bool solid
         bool occludes
         bool transparent
-        bool reserved4
         bool reserved5
         bool reserved6
         bool reserved7
@@ -33,30 +33,34 @@ def init_cube_properties(id=None):
         cdef cubeProperties* cp
         cp = _get_cube(id)
         cp.active = int(c_dat.get(id,'active'))
-        cp.occludes = int(c_dat.get(id,'occludes'))
         cp.solid = int(c_dat.get(id,'solid'))
-        cp.gravity = int(c_dat.get(id,'gravity'))
+        cp.occludes = int(c_dat.get(id,'occludes'))
         cp.transparent = int(c_dat.get(id,'transparent'))
         cp.max_damage = int(c_dat.get(id,'max_damage'))
-        cp.neutron_tolerance = int(c_dat.get(id,'neutron_tolerance'))
-        cp.nuclear = int(c_dat.get(id,'nuclear'))
 
     if id is None:
         for id in c_dat.dat:
             apply(id)
     else:
         apply(id)
+
+'''
+    Set the textures on sides of cube
+'''
+
+cdef extern from "./t_map/t_properties.h" namespace "t_map":
+    void set_cube_side_texture(int id, int side, int tex_id)
+
+def init_cube_side_texture():
+    global c_dat
+    for id in range(max_cubes):
+        for side in range(6):
+            texture_id = c_dat.get(id, 'texture_id')[side]
+            set_cube_side_texture(id, side, texture_id)
+
 '''
 Part 3: Quad Cache
 '''
-
-
-#cdef extern from 't_vbo.h':
-cdef extern from './t_map/t_vbo.h':
-    Vertex* _get_quad_cache()
-
-cdef float * v_index
-v_index = <float*> malloc(72*sizeof(float))
 
 #north/south is +/- x
 #west/east is +/- y
@@ -77,23 +81,6 @@ l = [
  0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #west
  0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
 '''
-
-for i in range(0,72):
-    v_index[i]=l[i]
-
-
-'''
-    Set the textures on sides of cube
-'''
-cdef extern from "./t_map/t_properties.h":
-    void _set_cube_side_texture(int id, int side, int tex_id)
-
-def init_cube_side_texture():
-    global c_dat
-    for id in range(max_cubes):
-        for side in range(6):
-            texture_id = c_dat.get(id, 'texture_id')[side]
-            _set_cube_side_texture(id, side, texture_id)
 
 
 GLSL_TEXTURE_ARRAY = True
