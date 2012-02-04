@@ -703,8 +703,8 @@ def clear():
 import os
 import time
 
-cdef extern from "./t_map/t_compress.h":
-    int map_save_to_disk(char* fn)
+#cdef extern from "./t_map/t_compress.h":
+#    int map_save_to_disk(char* fn)
 #cdef extern from "./t_map/t_decompress.h":
 #    int map_load_from_disk(char* fn)
 
@@ -717,8 +717,8 @@ def save_to_disk(fn=''):
         fn = fn.replace('.', '_')
     fn = fn.replace('/', '_')
     fn = map_file_location % (fn,)
-
-    map_save_to_disk(fn);
+    print "SAVE TO DISC DEPRECATED"
+    #map_save_to_disk(fn);
 
 #def load_from_disk(fn=''):
 #    if not fn:
