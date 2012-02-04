@@ -23,7 +23,7 @@ void check_for_comments(char* s, int* index)
 void read_skeleton(char* file_name, VoxDat* vox_dat)
 {
     int size = fsize(file_name);
-    char* buffer = new char[size+1];
+    char* buffer = new char[size+2];
     FILE *fp = fopen(file_name, "r"); //open file for reading
     if(fp == NULL)
     {
@@ -39,6 +39,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
             int nbytes = fread(buffer+index, sizeof(char), size - index, fp);
             index += nbytes;
 
+            if(nbytes == 0) break;
             if(nbytes <= 0)
             {
                 printf("read_skeleton: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
@@ -47,6 +48,9 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
                 return;    
             }
         }
+        if(index != size) printf("read_skeleton: warning, from %s read only %i of %i \n", file_name, index, size);
+        buffer[index+1] = '\0';
+        buffer[size] = '\0';
     }
     buffer[size] = '\0';
 
@@ -132,7 +136,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     printf("Loading voxel model: %s \n", file_name);
 
     int size = fsize(file_name);
-    char* buffer = new char[size+1];
+    char* buffer = new char[size+2];
     FILE *fp = fopen(file_name, "r"); //open file for reading
     if(fp == NULL)
     {
@@ -148,6 +152,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
             int nbytes = fread(buffer+index, sizeof(char), size - index, fp);
             index += nbytes;
 
+            if(nbytes == 0) break;
             if(nbytes <= 0)
             {
                 printf("read_voxel_volume: failed to read file %s, %i bytes of %i, index= %i \n", file_name, nbytes, size, index);
@@ -156,8 +161,11 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
                 return;    
             }
         }
+        if(index != size) printf("read_voxel_volume: warning, from %s only read %i of %i \n", file_name, index, size);
+        buffer[index+1] = '\0';
+        buffer[size] = '\0';
     }
-    buffer[size] = '\0';
+
 
     int index = 0;
     int read;
