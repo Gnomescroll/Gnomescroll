@@ -24,6 +24,19 @@ struct Voxel_hitscan_element
     Voxel_volume* vv;
 };
 
+class Voxel_hitscan_target
+{
+    public:
+        short entity_id;
+        short entity_type;
+        short part_id;
+        Voxel_volume* vv;
+        int voxel[3];
+
+        void copy_vhe(Voxel_hitscan_element* vhe);
+        void copy_voxel(int voxel[3]);
+};
+
 class Voxel_hitscan_list
 {
     private:
@@ -42,7 +55,7 @@ class Voxel_hitscan_list
         const float x1, const float y1, const float z1,
         int skip_id, Object_types skip_type,
         float collision_point[3], float *distance,
-        struct Voxel_hitscan_element* target
+        Voxel_hitscan_target* target
     );
 
     Voxel_hitscan_list();

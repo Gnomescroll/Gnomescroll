@@ -90,6 +90,8 @@ inline void agent_shot_object_StoC::handle()
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->event.fired_weapon_at_object(target_id, target_type, target_part, x,y,z);
+    // get obj from metadata, set voxel
+    destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -114,6 +116,8 @@ inline void agent_melee_object_StoC::handle()
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->event.melee_attack_object(target_id, target_type, target_part, x,y,z);
+    // get obj from metadata, set voxel
+    destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
 inline void agent_melee_nothing_StoC::handle()
@@ -342,6 +346,7 @@ inline void hitscan_object_CtoS::handle()
     void *obj;
 
     const int agent_dmg = 25;
+    const int slime_dmg = 25;
     const int spawner_dmg = 25;
     int spawner_health;
 
@@ -365,9 +370,7 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::slime_list.get(id);
             if (obj==NULL) return;
             // apply damage
-            //int dmg = 25;
-            //slime->status.apply_damage(dmg, id);
-            ServerState::slime_list.destroy(id);
+            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
             x = ((Monsters::Slime*)obj)->x;
             y = ((Monsters::Slime*)obj)->y;
             z = ((Monsters::Slime*)obj)->z;
@@ -411,6 +414,9 @@ inline void hitscan_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
+    msg.voxel[0] = voxel[0];
+    msg.voxel[1] = voxel[1];
+    msg.voxel[2] = voxel[2];
     msg.broadcast();
 
 }
@@ -491,6 +497,7 @@ inline void melee_object_CtoS::handle()
     if (!a->weapons.pick.fire()) return;
 
     const int agent_dmg = 50;
+    const int slime_dmg = 50;
     const int spawner_dmg = 50;
     int spawner_health;
     
@@ -510,7 +517,7 @@ inline void melee_object_CtoS::handle()
         case OBJ_TYPE_SLIME:
             obj = ServerState::slime_list.get(id);
             if (obj == NULL) return;
-            ServerState::slime_list.destroy(id);
+            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
             x = ((Monsters::Slime*)obj)->x;
             y = ((Monsters::Slime*)obj)->y;
             z = ((Monsters::Slime*)obj)->z;
@@ -557,6 +564,9 @@ inline void melee_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
+    msg.voxel[0] = voxel[0];
+    msg.voxel[1] = voxel[1];
+    msg.voxel[2] = voxel[2];
     msg.broadcast();
 }
 
