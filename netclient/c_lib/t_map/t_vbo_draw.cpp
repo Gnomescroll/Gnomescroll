@@ -3,6 +3,12 @@
 namespace t_map
 {
 
+static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
+
+static int draw_vbo_n;
+static struct VBO* draw_vbo_array[MAX_DRAWN_VBO];
+
+
 void prep_draw()
 {
     struct vm_map* m;
@@ -38,16 +44,15 @@ void prep_draw()
     return 0;
 }
 
+
 void draw_map() 
 {
     prep_draw();
 
-    const int index = 0;
-    
-    glUseProgramObjectARB(shader_prog4);
+    glUseProgramObjectARB(map_shader[0]);
 
-    glEnableVertexAttribArray(texCoord0Loc_4);
-    glEnableVertexAttribArray(LightMatrix0Loc_4);
+    glEnableVertexAttribArray(map_TexCoord);
+    glEnableVertexAttribArray(map_LightMatrix);
 
     glColor3b(255,255,255);
 
@@ -55,7 +60,6 @@ void draw_map()
     glEnable (GL_DEPTH_TEST);
     
     glShadeModel(GL_SMOOTH);
-    //glShadeModel(GL_FLAT);
 
     glEnable (GL_DEPTH_TEST);
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
@@ -69,7 +73,8 @@ void draw_map()
     struct VBO* vbo;
 
     glEnable(GL_CULL_FACE);
-    for(i=0;i<draw_vbo_n;i++) {
+    for(i=0;i<draw_vbo_n;i++)
+    {
         vbo = draw_vbo_array[i];
         if(vbo->_v_num[0] == 0) continue; 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
@@ -77,14 +82,14 @@ void draw_map()
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
-        glVertexAttribPointer(texCoord0Loc_4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(LightMatrix0Loc_4, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
+        glVertexAttribPointer(map_TexCoord, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
 
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
     }
 
-    glDisableVertexAttribArray(texCoord0Loc_4);
-    glDisableVertexAttribArray(LightMatrix0Loc_4);
+    glDisableVertexAttribArray(map_TexCoord);
+    glDisableVertexAttribArray(map_LightMatrix);
 
     glUseProgramObjectARB(0);
     glActiveTexture(GL_TEXTURE0);
