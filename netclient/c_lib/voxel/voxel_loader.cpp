@@ -136,7 +136,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     FILE *fp = fopen(file_name, "r"); //open file for reading
     if(fp == NULL)
     {
-        printf("read_skeleton: error could not open fil file %s \n", file_name);
+        printf("read_voxel_volume: error could not open fil file %s \n", file_name);
         delete[] buffer;
         return;     
     }
