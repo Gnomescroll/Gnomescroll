@@ -1,8 +1,5 @@
 
 
-cdef extern from "./t_map/t_properties.h":
-    int max_cubes
-
 cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
     int get(int x, int y, int z)
 
@@ -10,7 +7,7 @@ cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
 PART 2: Properties
 '''
 
-cdef extern from "./t_map/t_properties.h" namespace "t_map":
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
     struct cubeProperties:
         bool active
         bool solid
@@ -48,7 +45,7 @@ def init_cube_properties(id=None):
     Set the textures on sides of cube
 '''
 
-cdef extern from "./t_map/t_properties.h" namespace "t_map":
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
     void set_cube_side_texture(int id, int side, int tex_id)
 
 def init_cube_side_texture():
@@ -188,7 +185,7 @@ PART 3: Drawing Functions
 cdef extern from "./t_map/t_vbo_update.hpp" namespace "t_map":
     int update_chunks()
 
-cdef extern from "./t_map/t_vbo.h" namespace "t_map":
+cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
     int draw_map()
 
 cpdef update_chunks():

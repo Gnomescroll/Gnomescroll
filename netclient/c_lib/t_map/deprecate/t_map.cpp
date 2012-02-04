@@ -1,12 +1,11 @@
 
 #include "t_map.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 
-#include <compat_gl.h>
 
-#include <c_lib/t_map/t_map_net.hpp>
+#include <c_lib/t_map/cache.hpp>
 
 namespace t_map
 {
@@ -15,6 +14,7 @@ int init_t_map()
 {
 #ifdef DC_CLIENT
     init_for_draw();
+    init_cache();
 #endif
 
 /*
