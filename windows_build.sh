@@ -6,6 +6,8 @@ mkdir ./dist
 mkdir ./dist/netclient
 mkdir ./dist/server
 
+cp -f ./server/dats/cube_dat.py ./netclient/cube_dat.py
+
 cd netclient
 ./win_package.sh
 cd ..
