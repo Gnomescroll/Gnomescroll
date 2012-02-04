@@ -8,23 +8,36 @@
 
 #include <c_lib/t_map/t_map_net.hpp>
 
-//#include "./t_inline.c"
-//globals
+namespace t_map
+{
+
+int init_t_map()
+{
+#ifdef DC_CLIENT
+    init_for_draw();
+#endif
 
 /*
-void set_flag(struct vm_column* c, unsigned int flag, int value) {
-    if(value) {
-        c->flag = c->flag | flag;
-    } else {
-        c->flag = c->flag & ~flag;
-    }
+    Data init here
+*/
 }
 
-int get_flag(struct vm_column* c, unsigned int flag) {
-    return c->flag & flag;
+int init_for_draw() {
+
+    //init shaders
+
+    //init textures
+    init_textures();
+    //init cache
+    init_cache();
+
+    //_init_quad_cache_normals();
+
+    printf("Terrain map: vertex size is %i bytes \n", sizeof(struct Vertex));
+
+
+    return 0;
 }
- //end
-*/
 
 struct vm_map map;
 
@@ -67,42 +80,6 @@ inline void set_map_chunk_for_update(int xoff, int yoff, int zoff, int dx, int d
 
 struct vm_map* _get_map() { return &map; }
 
-/*
-static inline int hash_function2(vm_chunk* c, int x,int y,int z) {
-    x += c->x_off;
-    y += c->y_off;
-    z += c->z_off;
-    unsigned int v = ((x*967 + y)*337 + z);
-    v ^= v >> 16;
-    v ^= v >> 8;
-    v ^= v >> 4;
-    v &= 0xf;
-    return (0x6996 >> v) & 1;
-}
-
-static inline int hash_function3(vm_chunk* c, int x,int y,int z) {
-    x += c->x_off;
-    y += c->y_off;
-    z += c->z_off;
-    unsigned int v = ((x*967 + y)*337 + z);
-    v ^= v >> 16;
-    v ^= v >> 8;
-    v ^= v >> 4;
-    return v % 3;
-    //take modulos of the last byte
-}
-*/
-
-/*
-fast parity
-unsigned int v;  // word value to compute the parity of
-v ^= v >> 16;
-v ^= v >> 8;
-v ^= v >> 4;
-v &= 0xf;
-return (0x6996 >> v) & 1;
-*/
-
 struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     int i;
     struct vm_chunk* chunk;
@@ -113,27 +90,6 @@ struct vm_chunk* new_chunk(int xoff,int yoff,int zoff) {
     for(i=0; i<512;i++){
         chunk->voxel[i] = 0;
     }
-
-/*
-    //compute hash
-    int _x,_y,_z;
-    int x,y,z;
-    int ul, ur, bl, br;
-
-
-    for(_x=0;_x<8;_x++) {
-    for(_y=0;_y<8;_y++) {
-    for(_z=0;_z<8;_z++) {
-
-        ul = hash_function2(chunk, _x+1,_y+1,_z);
-        ur = hash_function2(chunk, _x,_y+1,_z);
-        bl = hash_function2(chunk, _x,_y,_z);
-        br = hash_function2(chunk, _x+1,_y,_z);
-        chunk->hash2[64*z + 8*y + z] = 8*ul + 4*ur + 2*bl + br;
-
-    }}}
-*/
-    //chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
 
     return chunk;
 }
@@ -230,21 +186,10 @@ int _set_server_version(int x,int y,int z, int server_version) {
     return 0;
 }
 
+/*
 
-int _clear() {
-    // iterate entire map
-    // set to 0
-    int i,j,k;
-    for (i=0; i<XMAX; i++) {
-        for (j=0; j<YMAX; j++) {
-            for (k=0; k<ZMAX; k++) {
-                _set(i,j,k, 0);
-            }
-        }
-    }
-    return 0;
-}
 
+*/
 int _get_highest_open_block(int x, int y, int n) {
     if (n < 1) {
         printf("WARNING: _get_highest_open_block :: called with n < 1\n");
@@ -331,4 +276,6 @@ inline bool point_in_map(int x, int y, int z)
     if (x<0 || x>=map_dim.x || y<0 || y>=map_dim.y || z<0 || z>map_dim.z)
         return false;
     return true;
+}
+
 }

@@ -28,7 +28,7 @@ char* read_file_to_buffer(char* file_name, int* size)
     int expected_size = fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
-    if (fp != NULL) 
+    if (fp != NULL)
     {
         /* Go to the end of the file. */
         if (fseek(fp, 0L, SEEK_END) == 0) 
