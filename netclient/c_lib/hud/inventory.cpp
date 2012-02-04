@@ -144,7 +144,7 @@ void Inventory::init()
     a = create_texture_from_file((char*) "./media/texture/hud/item_sheet_01.png", &this->item_sheet_texture);
     b = create_texture_from_file((char*)"./media/texture/hud/item_slot_41x41.png", &this->item_slot_texture);
     c = create_texture_from_file((char*)"./media/texture/hud/inventory_background_461x352.png", &this->inventory_background_texture);
-    printf("%d %d %d -Inventory Texture Loader Results (any nonzero is failure)\n", a,b,c);
+    if(a!=0 || b!=0 || c!=0) printf("%d %d %d -Inventory Texture Loader Error (any nonzero is failure)\n", a,b,c);
     if (a||b||c) return;
 
     this->inited = true;

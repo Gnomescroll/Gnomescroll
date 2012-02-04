@@ -25,6 +25,7 @@ void check_for_comments(char* s, int* index)
 
 char* read_file_to_buffer(char* file_name, int* size)
 {
+    int expected_size = fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
     if (fp != NULL) 
@@ -34,6 +35,7 @@ char* read_file_to_buffer(char* file_name, int* size)
         {
             /* Get the size of the file. */
             long bufsize = ftell(fp); *size = (int)bufsize;
+            if( (int) bufsize != expected_size) printf("Warning: size of %s differs from expected\n", file_name);
             if (bufsize == -1) { /* Error */ }
             /* Allocate our buffer to that size. */
             source = (char*) malloc(sizeof(char) * (bufsize + 2));
