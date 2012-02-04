@@ -1,7 +1,5 @@
 #include "t_compress.h"
 
-#include <zlib.h>
-
 /* Map serializer using zlib
  * Fails under some conditions:
  *  Tiny map (only a few chunks)
@@ -47,6 +45,7 @@ int t_zlib_compress()    // level -1 to 9. -1 is 6; 9 is most compression, 0 is 
 
 
 int t_zlib_compress_init(char* fn, int level) {
+
     t_zlib_dest = fn;
     t_zlib_dest_file = fopen(t_zlib_dest, "wb");
 
@@ -68,7 +67,6 @@ int t_zlib_compress_init(char* fn, int level) {
 
     printf("Could not open %s for writing\n", t_zlib_dest);
     return 1;
-
 }
 
 int t_zlib_compress_final() {
