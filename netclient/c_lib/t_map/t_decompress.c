@@ -1,5 +1,7 @@
 #include "t_decompress.h"
 
+#include <zlib.h>
+
 char* t_zlib_src;
 FILE* t_zlib_src_file;
 

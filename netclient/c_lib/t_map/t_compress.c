@@ -1,5 +1,7 @@
 #include "t_compress.h"
 
+#include <zlib.h>
+
 /* Map serializer using zlib
  * Fails under some conditions:
  *  Tiny map (only a few chunks)
