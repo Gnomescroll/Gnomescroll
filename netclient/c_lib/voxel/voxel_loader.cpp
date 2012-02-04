@@ -25,13 +25,23 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     int size = fsize(file_name);
     char* buffer = new char[size+1];
     FILE *fp = fopen(file_name, "r"); //open file for reading
-    int nbytes = fread(buffer, sizeof(char), size, fp);
-    if ( nbytes != size )
+
     {
-        printf("read_skeleton: failed to read file %s, %i bytes of %i \n", file_name, nbytes, size);
-        fclose(fp);
-        delete[] buffer;
-        return;       
+        int index = 0;
+
+        while(index < size)
+        {
+            int nbytes = fread(buffer+index, sizeof(char), size - index, fp);
+            index += nbytes;
+
+            if(nbytes <= 0)
+            {
+                printf("read_skeleton: failed to read file %s, %i bytes of %i \n", file_name, nbytes, size);
+                fclose(fp);
+                delete[] buffer;
+                return;    
+            }
+        }
     }
     buffer[size] = '\0';
 
