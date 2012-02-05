@@ -201,6 +201,7 @@ cube selector in C
 agent key down/up events in C
 chat text entry buffer in C (chat reads this)
 input.py fully deprecated
+Alt-tab restored
 =============
 
 Spreadsheet to document interactions
@@ -214,7 +215,6 @@ clients play anims/sound
 
 OpenAL ? (wav easy, but others hard?)
 
-Alt-tab
 
 Icons on map (angus)
 
