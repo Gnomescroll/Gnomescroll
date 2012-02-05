@@ -277,7 +277,3 @@ class GenericMultiObjectList(GenericObjectList):
         o = self[obj_id]
         o.update_info(**obj)
         return o
-    
-from net_client import NetClientGlobal
-from game_state import GameStateGlobal
-from input import InputGlobal

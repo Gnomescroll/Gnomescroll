@@ -203,7 +203,7 @@ class ClientMessageHandler(GenericMessageHandler):
             #ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
             #ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
             ## activate chat, insert /nick
-            #InputGlobal.toggle_chat()
+            #init_c_lib.cy_input_state.chat = True
             #ChatClientGlobal.chatClient.insert_string('/nick ')
         else:
             NetOut.sendMessage.identify(name=opts.alt_name)
@@ -259,7 +259,6 @@ from net_client import NetClientGlobal
 from net_out import NetOut
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
-from input import InputGlobal
 
 import c_lib.terrain_map as terrainMap
 

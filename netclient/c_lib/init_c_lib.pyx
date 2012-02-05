@@ -53,21 +53,6 @@ def GET_MS_TIME():
     return _GET_MS_TIME();
 
 """
-pviz
-[gameloop, input]
-"""
-cdef extern from "../net_lib/common/pviz.h":
-    void pviz_draw(float x, float y, float z)
-    void toggle_latency_unit()
-
-def _pviz_draw(float x, float y, float z):
-    pviz_draw(x,y,z)
-
-def _toggle_latency_unit():
-    toggle_latency_unit()
-
-
-"""
 Network
 [gameloop, netclient]
 """
@@ -232,7 +217,7 @@ def load_options(opts):
 
 """
 Camera
-[input, gameloop]
+[gameloop]
 """
 cdef extern from "./camera/camera.hpp":
     cdef cppclass CCamera:
@@ -285,9 +270,7 @@ camera_callback = None
 
 cdef class Camera(object):
     cdef CCamera* camera
-#    cdef int first_person
 
-#    def __init__(self, int first_person, name="free"):
     def __init__(self, name="free"):
         cdef CCamera* cam
 
@@ -428,7 +411,7 @@ class CyCamera(object):
     
 """
 Animations
-[gameloop, input]
+[gameloop]
 """
 cdef extern from "./animations/animations.hpp" namespace "Animations":
     void animations_tick()
@@ -442,14 +425,8 @@ def AnimationDraw():
 
 """
 Agents
-[chat, gameloop, netclient, netout, hud, input]
+[chat, gameloop, netclient, netout, hud]
 """
-
-cdef extern from "./physics/vector.hpp":
-    cdef struct Vector:
-        float x
-        float y
-        float z
 
 cdef extern from "./agent/agent_status.hpp":
     unsigned int PLAYER_NAME_MAX_LENGTH
@@ -567,17 +544,6 @@ class AgentWrapper(object):
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
 
-        
-'''
-
-Player Agent Stuff
-
-'''
-
-'''
-    Python should not need collision box for agent
-'''
-
 class PlayerAgentWrapper(object):
 
     properties = ['camera_height',]
@@ -620,60 +586,42 @@ class AgentListWrapper:
             ids.append(agent_list.ids_in_use[k])
         return ids
 
+""" Chat """
 
+cdef extern from "./input/handlers.hpp":
+    int CHAT_BUFFER_SIZE
+    int* chat_input_buffer_unicode
+    char** chat_input_buffer_sym
+    int chat_cursor_index
+    void clear_chat_buffer()
+
+def get_chat_input_buffer():
+    sym_buff = []
+    uni_buff = []
+    for i in range(chat_cursor_index):
+        sym = chat_input_buffer_sym[i]
+        try:
+            uni = unichr(chat_input_buffer_unicode[i])
+        except:
+            uni = sym
+        sym_buff.append(sym)
+        uni_buff.append(uni)
+    return sym_buff, uni_buff
+
+def clear_chat_input_buffer():
+    clear_chat_buffer()
+    
 """ Input """
+
 cdef extern from "./input/input.hpp":
-
-    ctypedef int (*key_event_func)(char key)
-    int _key_event_callback(key_event_func user_func, char key)
-
-    ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
-    int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
-
-    cdef extern int _get_key_state()
-    cdef extern int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
-
-    int _init_input()
-
+    int _get_key_state()
+    int _process_events()
+    
 def get_key_state():
     _get_key_state()
-
-key_text_event_callback_stack = []
-
 def process_events():
-    global key_text_event_callback_stack
-    temp = _process_events(&key_event_callback, &key_text_event_callback)
-    while len(key_text_event_callback_stack) != 0:
-        (key, key_string, event_state) = key_text_event_callback_stack.pop(0)
-        input_callback.keyboard_text_event(key, key_string, event_state)
+    _process_events()
 
-class Callback_dummy:
-    def keyboard_state(self, pressed_keys):
-        pass
-    def keyboard_event(self, key):
-        pass
-    def keyboard_text_event(self, key, key_string, event_type):
-        pass
-
-input_callback = Callback_dummy()
-
-def set_input_callback(callback):
-    global input_callback
-    input_callback = callback
-    print "Input Callback Set"
-
-cdef int key_event_callback(char key):
-    global input_callback
-    input_callback.keyboard_event(key)
-
-cdef int key_text_event_callback(char key, char* key_name, int event_state):
-    global input_callback, key_text_event_callback_stack
-    key_string = key_name
-    cdef bytes py_string
-    py_string = key_name
-    key_text_event_callback_stack.append((key, key_string, event_state))
-
-# config
 cdef extern from "./input/handlers.hpp":
 
     cdef enum InputStateMode:

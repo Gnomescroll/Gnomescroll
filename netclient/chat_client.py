@@ -26,7 +26,10 @@ class ChatClientGlobal:
         ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
         ChatClientGlobal.chatClient.on_identify()
         
-
+    @classmethod
+    def load_buffer_from_c(cls):
+        sym_buff, uni_buff = init_c_lib.get_chat_input_buffer()
+        cls.chatClient.input.load_buffer(sym_buff, uni_buff)
 
 from net_client import NetClientGlobal
 from net_out import NetOut
@@ -582,7 +585,6 @@ class ChatInput:
         self.clear()
         self.history.reset_index()
         self.history.add(text)
-        #print 'submitting ', text
         return text
 
     def _input_callback(self, callback):
@@ -601,27 +603,29 @@ class ChatInput:
         callback = self.processor.on_text_motion(motion)
         return self._input_callback(callback)
 
+    def load_buffer(self, sym_buff, uni_buff):
+        self.clear()
+        for sym,uni in zip(sym_buff, uni_buff):
+            cb = self.processor.on_key_press(sym, uni)
+            if callable(cb):
+                cb(self)
+
 # key input is routed to here
 class ChatInputProcessor:
 
     def __init__(self):
-        pass
+        pass        
 
     def on_key_press(self, symbol, unicode_key):
-        _symbol = symbol
         symbol = symbol.upper()
-        #print 'CHAT ON_KEY_PRESS', symbol
         callback = None
-        def _disable_chat_input():
-            init_c_lib.cy_input_state.chat = False
+
         if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
-                return lambda keyboard: _disable_chat_input()
-        elif symbol == 'ESCAPE':      # clear, cancel chat
-            def callback(input):
-                input.clear()
-                return lambda keyboard: _disable_chat_input()
+                init_c_lib.cy_input_state.chat = False
+                init_c_lib.clear_chat_input_buffer()
+
         elif symbol == 'UP':            # up history
             callback = lambda input: input.history_older()
         elif symbol == 'DOWN':        # down history
@@ -630,8 +634,7 @@ class ChatInputProcessor:
             callback = lambda input: input.cursor_left()
         elif symbol == 'RIGHT':       # move cursor
             callback = lambda input: input.cursor_right()
-        elif symbol == 'BACKSPACE':   # delete
-            callback = lambda input: input.remove()
+
         else:
             if len(symbol) == 1 or symbol in ['SPACE', 'TAB']:
                 try:
@@ -643,22 +646,6 @@ class ChatInputProcessor:
 
     def on_text(self, text):
         return lambda input: input.add(text)
-
-    def on_text_motion(self, motion):
-        print 'ChatClient.on_text_motion not implemented'
-        #motion = key.motion_string(motion)
-        #callback = None
-        #if motion == 'MOTION_UP':            # up history
-            #callback = lambda input: input.history_older()
-        #elif motion == 'MOTION_DOWN':        # down history
-            #callback = lambda input: input.history_newer()
-        #elif motion == 'MOTION_LEFT':        # move cursor
-            #callback = lambda input: input.cursor_left()
-        #elif motion == 'MOTION_RIGHT':       # move cursor
-            #callback = lambda input: input.cursor_right()
-        #elif motion == 'MOTION_BACKSPACE':   # delete
-            #callback = lambda input: input.remove()
-        #return callback
 
 # history of submitted messages
 class ChatInputHistory:

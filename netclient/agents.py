@@ -12,7 +12,6 @@ import c_lib.terrain_map as terrainMap
 
 from game_state import GameStateGlobal
 from net_out import NetOut
-from input import InputGlobal
 import camera
 from object_lists import GenericObjectList, GenericObjectListWrapper
 

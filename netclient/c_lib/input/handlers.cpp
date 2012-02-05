@@ -102,6 +102,68 @@ void init_handlers()
  * http://wiki.libsdl.org/moin.cgi/SDLKeycodeLookup
  */
 
+const int LARGEST_SDL_KEYNAME = 15;  //guess
+const int CHAT_BUFFER_SIZE = 90;
+int* chat_input_buffer_unicode = NULL;
+char** chat_input_buffer_sym = NULL;
+int chat_cursor_index = 0;
+
+void init_chat_buffer()
+{
+    if (chat_input_buffer_sym == NULL)
+    {
+        chat_input_buffer_sym = (char**)malloc(sizeof(char*) * CHAT_BUFFER_SIZE);
+        for (int i=0; i<CHAT_BUFFER_SIZE; i++)
+            chat_input_buffer_sym[i] = (char*)malloc(sizeof(char) * LARGEST_SDL_KEYNAME);
+    }
+        
+    if (chat_input_buffer_unicode == NULL)
+        chat_input_buffer_unicode = (int*)malloc(sizeof(int) * CHAT_BUFFER_SIZE);
+}
+
+void teardown_chat_buffer()
+{
+    if (chat_input_buffer_sym != NULL)
+    {
+        for (int i=0; i<CHAT_BUFFER_SIZE; i++)
+            free(chat_input_buffer_sym[i]);
+        free(chat_input_buffer_sym);
+    }
+
+    if (chat_input_buffer_unicode != NULL)
+        free(chat_input_buffer_unicode);
+}
+
+void chat_input_handler(SDL_Event* event)
+{
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_ESCAPE:
+            clear_chat_buffer();
+            toggle_chat();
+            return;
+        case SDLK_BACKSPACE:
+            chat_cursor_index--;
+            chat_cursor_index = (chat_cursor_index < 0) ? 0 : chat_cursor_index;
+            return;
+    }
+    
+    if (chat_cursor_index == CHAT_BUFFER_SIZE) return;
+
+    int t = getUnicodeValue(event->key.keysym);
+    t = (t) ? t : event->key.keysym.sym;
+    char* key_name = SDL_GetKeyName(event->key.keysym.sym);
+
+    chat_input_buffer_unicode[chat_cursor_index] = t;
+    strcpy(chat_input_buffer_sym[chat_cursor_index], key_name);
+    chat_cursor_index++;
+}
+
+void clear_chat_buffer()
+{
+    chat_cursor_index = 0;
+}
+
 // key down
 void key_down_handler(SDL_Event* event)
 {
@@ -113,6 +175,12 @@ void key_down_handler(SDL_Event* event)
         printf("scancode = %d\n", (int)event->key.keysym.scancode);
         printf("keysym = %d\n", (int)event->key.keysym.sym);
         printf("\n");
+    }
+
+    if (input_state.chat)
+    {
+        chat_input_handler(event);
+        return;
     }
 
     switch (event->key.keysym.sym)

@@ -49,3 +49,10 @@ void enable_quit();
 
 void toggle_input_mode();
 void toggle_camera_mode();
+
+//chat
+extern const int CHAT_BUFFER_SIZE;
+extern int* chat_input_buffer_unicode;
+extern char** chat_input_buffer_sym;
+extern int chat_cursor_index;
+void clear_chat_buffer();

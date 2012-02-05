@@ -33,7 +33,6 @@ from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
 from game_state import GameStateGlobal
-from input import InputGlobal
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from hud import Hud
@@ -80,8 +79,6 @@ class App(object):
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent')
 
         self.hud = Hud()
-        
-        InputGlobal.init()
 
         self.init_sound()
         
@@ -173,6 +170,8 @@ class App(object):
 
             if agent:
                 agent.display_agent_names()
+
+            ChatClientGlobal.load_buffer_from_c()
 
             '''
                 May only want to send output every 30 ms

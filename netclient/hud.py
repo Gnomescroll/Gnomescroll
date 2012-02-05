@@ -4,7 +4,6 @@ opts = opts.opts
 import init_c_lib
 
 from chat_client import ChatClientGlobal
-from input import InputGlobal
 from net_client import NetClientGlobal
 from game_state import GameStateGlobal
 

@@ -3,8 +3,6 @@
 #include <c_lib/SDL/SDL_functions.h>
 #include <c_lib/input/handlers.hpp>
 
-char getUnicodeValue(SDL_keysym keysym);
-
 static SDL_Event Event;
 
 static int numkeys;
@@ -33,18 +31,8 @@ int _get_key_state() {
     return 0;
 }
 
-/*
-If you want to know what character the user entered (as opposed to what key), try SDL_EnableUNICODE(1). event.keysym.unicode will now contain the (Uint16) character. You can usually simply cast it to a char and you'll have what you want.
-One thing to keep in mind is that the unicode field will only be filled on keydown, not keyup.
-You should also disable the unicode translation as soon as you're finished with it because it caused extra overhead.
-
---for coping with shifted keys (e.g, ? = shift + /)
-*/
-
-int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
+int _process_events()
 {
-    int t; //temp
-
     if (input_state.mouse_bound) {
         SDL_ShowCursor(0);
         SDL_WM_GrabInput(SDL_GRAB_ON);
@@ -55,9 +43,6 @@ int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboa
     
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 
-        int event_state = 0;
-        char* key_name;
-
         switch( Event.type )
         {
             case SDL_QUIT:
@@ -65,25 +50,11 @@ int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboa
                 break;
 
             case SDL_KEYDOWN:
-
                 key_down_handler(&Event);
-                
-                t = getUnicodeValue(Event.key.keysym);
-                if(t==0) t= Event.key.keysym.sym;
-                event_state = 1;
-                key_name = SDL_GetKeyName(Event.key.keysym.sym);
-                _key_text_event_callback(keyboard_text_event_cb, t, key_name, event_state);
                 break;
 
             case SDL_KEYUP:
-
                 key_up_handler(&Event);
-
-                t = getUnicodeValue(Event.key.keysym);
-                if(t==0) t= Event.key.keysym.sym;
-                event_state = 0;
-                key_name = SDL_GetKeyName(Event.key.keysym.sym);
-                _key_text_event_callback(keyboard_text_event_cb, t, SDL_GetKeyName(Event.key.keysym.sym), event_state);
                 break;
 
             case SDL_MOUSEMOTION:
@@ -104,21 +75,6 @@ int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboa
 
     return 0;
 }
-
-/* Call Backs */
-
-int _key_event_callback(key_event_func user_func, char key) {
-    user_func(key);
-    return 0;
-}
-
-int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name, int event_state) {
-    user_func(key, key_name, event_state);
-    return 0;
-}
-
-/* End Call Backs */
-
 
 char getUnicodeValue(SDL_keysym keysym ) {
     // magic numbers courtesy of SDL docs :)
@@ -144,7 +100,6 @@ char getUnicodeValue(SDL_keysym keysym ) {
     return '?';
     }
 }
-
 
 /* Separate Mouse querying for physics-independent camera */
 static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];

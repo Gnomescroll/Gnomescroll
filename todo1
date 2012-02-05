@@ -199,6 +199,7 @@ simple handlers in C
 mouse, quit in C
 cube selector in C
 agent key down/up events in C
+input.py almost fully deprecated; text entry to chat remains (replace with a buffer)
 =============
 
 Spreadsheet to document interactions
@@ -259,7 +260,7 @@ without excess struggling::
 PYTHON DEPRECATION:
 ORDER:
 HUD --done
-Input
+Input   --done
 Camera
 NetServer pool
 Chat
@@ -288,6 +289,6 @@ Chat:
 -enable chat log when when tab or typing
  
 Other
--placing block does not place where aimed (not using correct camera?)
+-placing block does not place where aimed (not using correct camera?)   --cant replicate
 -fix client side prediction bug (movement is slugish, glitch)
--if player disconnects, their name turns into different player and switches teams
+-if player disconnects, their name turns into different player and switches teams   --probably fixed
