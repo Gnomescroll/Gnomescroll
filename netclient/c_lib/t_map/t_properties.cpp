@@ -1,4 +1,4 @@
-#include "t_properties.cpp"
+#include "t_properties.hpp"
 
 namespace t_map
 {

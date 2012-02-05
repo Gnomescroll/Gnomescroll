@@ -1,4 +1,4 @@
-#include "shader.cpp"
+#include "shader.hpp"
 
 
 namespace t_map
@@ -15,9 +15,9 @@ namespace t_map
         const int index = 0;    //shader index
         const int DEBUG = 0;
 
-        shader_prog4 = glCreateProgramObjectARB();
-        map_vert_shader_0 = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-        map_frag_shader_0 = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+        map_shader[index] = glCreateProgramObjectARB();
+        map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+        map_frag_shader[index] = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
         char *vs, *fs;
 
