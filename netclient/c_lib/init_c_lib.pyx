@@ -147,42 +147,6 @@ cpdef init_python_net():
     set_python_net_event_callback_function(py_net_net_event_callback)
 
 """
-slimes
-[input]
---
-"""
-cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
-    void test(int n)
-
-def slime_test(int n):
-    test(n)
-
-"""
-ray trace
-[input]
--- Get rid of "set_active_block" logic in agent, wrap directly down to C agent method
- """
-cdef extern from "ray_trace/ray_trace.h":
-    int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
-
-def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3):
-    cdef int* i
-    cdef float x
-    cdef float y
-    cdef float z
-    cdef float vx
-    cdef float vy
-    cdef float vz
-
-    x,y,z = pos
-    vx,vy,vz = vector
-    
-    i = _nearest_block(x,y,z, vx,vy,vz, max_distance, z_low, z_high)
-    if i == NULL:
-        return
-    return [i[0], i[1], i[2]]
-
-"""
 sound
 [sound]
 -- move the init logic into C
@@ -562,7 +526,6 @@ cdef extern from "./agent/agent.hpp":
 
 cdef extern from "./agent/player_agent_action.hpp":
     cdef cppclass PlayerAgent_action:
-        void fire()
         void reload()
         void switch_weapon(int i)
 
@@ -723,10 +686,6 @@ class PlayerAgentWrapper(object):
 
         return [x,y,z]
 
-    #toggle camera toggle_camera_mode
-    def toggle_agent_camera_mode(self):
-        playerAgent_state.toggle_camera_mode()
-
     def camera_position(self):
         z_off = playerAgent_state.camera_height()
         x = playerAgent_state.camera_state.x
@@ -736,9 +695,6 @@ class PlayerAgentWrapper(object):
 
     def switch_weapon(self, int i):
         playerAgent_state.action.switch_weapon(i)
-
-    def fire(self):
-        playerAgent_state.action.fire()
 
     def update_sound(self):
         playerAgent_state.update_sound()
@@ -755,13 +711,6 @@ class PlayerAgentWrapper(object):
 
     def reload(self):
         playerAgent_state.action.reload()
-
-    def set_active_block(self, int block_id):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return
-        a.weapons.set_active_block(block_id)
 
     def can_zoom(self):
         cdef Agent_state* a

@@ -87,22 +87,22 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
         theta, phi = self.camera.angles()
         init_c_lib.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
-    @requireCamera
-    @noViewer
-    def fire(self):
-        init_c_lib.PlayerAgentWrapper.fire(self)
+    #@requireCamera
+    #@noViewer
+    #def fire(self):
+        #init_c_lib.PlayerAgentWrapper.fire(self)
 
-    @requireCamera
-    @noViewer
-    def set_active_block(self, block_type=None):
-        if block_type is None:
-            block = init_c_lib.nearest_block(self.camera.pos(), self.camera.forward())
-            if block is None:
-                return
-            block_type = terrainMap.get(*block)
+    #@requireCamera
+    #@noViewer
+    #def set_active_block(self, block_type=None):
+        #if block_type is None:
+            #block = init_c_lib.nearest_block(self.camera.pos(), self.camera.forward())
+            #if block is None:
+                #return
+            #block_type = terrainMap.get(*block)
 
-        InputGlobal.cube_selector.active_id = block_type
-        init_c_lib.PlayerAgentWrapper.set_active_block(self, block_type)
+        #InputGlobal.cube_selector.active_id = block_type
+        #init_c_lib.PlayerAgentWrapper.set_active_block(self, block_type)
 
     def active_block(self):
         return InputGlobal.cube_selector.active_id

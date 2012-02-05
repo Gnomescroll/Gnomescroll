@@ -14,14 +14,13 @@ class PlayerAgent_action {
         void fire();
         void hitscan_laser();
         void hitscan_pick();
-        //void hit_block();
         void set_block();
         void throw_grenade();
 
         void switch_weapon(int i);
         void reload();
-        int select_block();
-
+        void select_block();
+        
         void place_spawner();
 
         PlayerAgent_action(PlayerAgent_state* player_agent);

@@ -139,19 +139,12 @@ class Mouse(object):
     def on_mouse_press(self, x, y, button, state):
         if init_c_lib.cy_input_state.input_mode == 0:
             if state == 1: #pressed down
-                if button == 1:
-                    GameStateGlobal.agent.fire()
-                elif button == 3: #right click
-                    if GameStateGlobal.agent.active_weapon == 2: # block applier
-                        GameStateGlobal.agent.set_active_block()
-                elif button == 4: #scroll up
+                if button == 4: #scroll up
                     direction = 'up'
                     GameStateGlobal.agent.switch_weapons(direction)
                 elif button == 5: #scroll down
                     direction = 'down'
                     GameStateGlobal.agent.switch_weapons(direction)
-            elif state == 0: #mouse button released
-                pass
 
         if button == 3 and state == 1:  # right click down
             if init_c_lib.cy_input_state.input_mode == 1:
@@ -185,11 +178,6 @@ class Keyboard(object):
     # e.g. enter
     def on_key_press(self, symbol, unicode_key):
 
-        #if symbol == 'QUIT':
-            #GameStateGlobal.exit = True
-        #elif symbol == 'f1':
-            #save_to_disk()
-
         if init_c_lib.cy_input_state.chat:
             if unicode_key:
                 callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, unicode_key)
@@ -212,14 +200,10 @@ class Keyboard(object):
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : init_c_lib._toggle_latency_unit,
-            '[' : self.cycle_agent_camera_mode,
         }
 
         self.key_release_handlers = {
         }
-
-    def cycle_agent_camera_mode(self):
-        GameStateGlobal.agent.toggle_agent_camera_mode()
 
     def stateHandler(self, keyboard):
         if init_c_lib.cy_input_state.chat:
@@ -365,8 +349,8 @@ class CubeSelector(object):
         self.__dict__[k] = v
         if k == 'active':
             init_c_lib.HudCubeSelector.set_active_pos(v)
-            if GameStateGlobal.agent is not None:
-                GameStateGlobal.agent.set_active_block(self.active_id)
+            #if GameStateGlobal.agent is not None:
+                #GameStateGlobal.agent.set_active_block(self.active_id)
         elif k == 'active_id':
             init_c_lib.HudCubeSelector.set_active_id(v)
 

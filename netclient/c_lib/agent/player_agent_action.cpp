@@ -440,6 +440,14 @@ void PlayerAgent_action::place_spawner()
     msg.send();
 }
 
+void PlayerAgent_action::select_block()
+{
+    if (this->p->you == NULL) return;
+    int block_type = this->p->you->get_facing_block_type();
+    if (block_type)
+        this->p->you->weapons.set_active_block(block_type);
+}
+
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
 :
 p(player_agent)

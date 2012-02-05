@@ -126,6 +126,7 @@ class Agent_state {
         float camera_height();
         float current_height();
         int current_height_int();
+        int get_facing_block_type();
 
         void init_vox();
 

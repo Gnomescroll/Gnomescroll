@@ -153,12 +153,17 @@ void key_down_handler(SDL_Event* event)
             toggle_hud();
             break;
 
+        case SDLK_LEFTBRACKET:
+            ClientState::playerAgent_state.toggle_camera_mode();
+            break;
+
         case SDLK_RIGHTBRACKET:
             Monsters::test(30);
             break;
 
         case SDLK_ESCAPE:
             enable_quit();
+            break;
             
         default: break;
     }
@@ -182,16 +187,48 @@ void key_up_handler(SDL_Event* event)
 // mouse down
 void mouse_button_down_handler(SDL_Event* event)
 {
+    PlayerAgent_state* p;
+
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            p = &ClientState::playerAgent_state;
+            if (p->you == NULL) break;
+            p->action.fire();
+            break;
+
+        case SDL_BUTTON_RIGHT:
+            p = &ClientState::playerAgent_state;
+            if (p->you == NULL) break;
+            if (p->you->weapons.active == Weapons::TYPE_block_applier)
+            {
+                p->action.select_block();
+            }
+            break;
+
+        case SDL_BUTTON_MIDDLE:
+            // nothing
+            break;
+
+        case 4: // scroll up
+            // switch weapon
+            break;
+
+        case 5: // scroll down
+            // switch weapon
+            break;
+
+        default: break;
+    }
+    
 }
 
 // mouse up
 void mouse_button_up_handler(SDL_Event* event)
 {
-
 }
 
 // mouse motion
 void mouse_motion_handler(SDL_Event* event)
 {
-
 }
