@@ -189,6 +189,7 @@ Feb 04
 
 Fixing up camera
 Camera uses proper selected camera_state from player agent
+player agent uses agent_camera angles
 =============
 
 Scoreboard reporting messed up

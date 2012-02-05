@@ -238,7 +238,7 @@ void PlayerAgent_state::display_agent_names()
     float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
-    this->camera_state.forward_vector(f);
+    agent_camera->forward_vector(f);
     ClientState::agent_list.objects_in_cone(
         s->x, s->y, s->z + this->camera_height(),
         f[0], f[1], f[2],
@@ -269,7 +269,7 @@ void PlayerAgent_state::update_sound() {
     AgentState s = camera_state;
 
     float f[3];
-    s.forward_vector(f);
+    agent_camera->forward_vector(f);
 
     Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, f[0], f[1], f[2], 0,0,1);
 }

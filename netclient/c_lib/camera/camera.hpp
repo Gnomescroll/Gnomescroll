@@ -55,6 +55,8 @@ void update_camera_matrices();
 extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
+extern CCamera* agent_camera;
+extern CCamera* free_camera;
 
 extern float model_view_matrix[16];
 extern double model_view_matrix_dbl[16];

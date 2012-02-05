@@ -11,9 +11,8 @@
 extern float _xresf;
 extern float _yresf;
 
-static CCamera* agent_camera = NULL;
-static CCamera* free_camera = NULL;
-
+CCamera* agent_camera = NULL;
+CCamera* free_camera = NULL;
 CCamera* current_camera = NULL;
 
 float model_view_matrix[16];

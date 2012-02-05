@@ -40,7 +40,7 @@ void PlayerAgent_action::hitscan_laser() {
     
     // get camera vector
     float vec[3];
-    current_camera->forward_vector(vec);
+    agent_camera->forward_vector(vec);
 
     // get camera position
     float x,y,z;
@@ -211,7 +211,7 @@ void PlayerAgent_action::hitscan_pick() {
 
     // get camera vector
     float vec[3];
-    p->camera_state.forward_vector(vec);
+    agent_camera->forward_vector(vec);
 
     // get camera position
     float x,y,z;
@@ -342,7 +342,7 @@ void PlayerAgent_action::throw_grenade() {
     msg.z = p->camera_state.z + p->you->camera_height();
 
     float f[3];
-    p->camera_state.forward_vector(f);
+    agent_camera->forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];
@@ -354,7 +354,7 @@ void PlayerAgent_action::throw_grenade() {
     //const int z_low = 4;
     //const int z_high = 3;
     //float f[3];
-    //p->camera_state.forward_vector(f);
+    //agent_camera->forward_vector(f);
     //int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
     //if (pos != NULL) {
         //hit_block_CtoS msg;
@@ -374,7 +374,7 @@ void PlayerAgent_action::set_block() {
     const int z_high = 3;
 
     float f[3];
-    p->you->s.forward_vector(f);
+    agent_camera->forward_vector(f);
     int* b = _farthest_empty_block(
         p->you->s.x, p->you->s.y, p->you->s.z + p->you->camera_height(),
         f[0], f[1], f[2],
@@ -420,7 +420,7 @@ void PlayerAgent_action::place_spawner()
     
     AgentState* state = &this->p->s1;
     float v[3];
-    state->forward_vector(v);
+    agent_camera->forward_vector(v);
 
     int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
     const float max_dist = 4.0f;
