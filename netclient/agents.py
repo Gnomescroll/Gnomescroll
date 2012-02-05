@@ -62,8 +62,6 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
         Agent.__init__(self, id)
         init_c_lib.PlayerAgentWrapper.__init__(self, id)
 
-        self.button_state = [0 for i in range(11)]
-
         self.you = True
         self.camera = None
 
@@ -80,18 +78,6 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
 
     def is_viewer(self):
         return self.team == 0
-
-    @requireCamera
-    def set_button_state(self):
-        f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = self.button_state
-        theta, phi = self.camera.angles()
-        init_c_lib.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
-
-    def active_block(self):
-        return InputGlobal.cube_selector.active_id
-
-    def hud_equipment_slot(self):
-        return self.active_weapon
 
 # datastore for agents
 class AgentList(GenericObjectListWrapper):

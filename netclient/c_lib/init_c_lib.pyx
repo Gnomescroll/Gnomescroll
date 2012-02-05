@@ -426,21 +426,6 @@ class CyCamera(object):
     def update_agent_camera(cls):
         update_agent_camera()
     
-
-"""
-Skybox
-[gameloop]
-"""
-cdef extern from "./skybox/skybox.hpp" namespace "Skybox":
-    void render()
-    void load()
-
-def load_skybox():
-    load()
-
-def render_skybox():
-    render()
-
 """
 Animations
 [gameloop, input]
@@ -469,24 +454,9 @@ cdef extern from "./physics/vector.hpp":
 cdef extern from "./agent/agent_status.hpp":
     unsigned int PLAYER_NAME_MAX_LENGTH
     cdef cppclass Agent_status:
-        int health
         bool dead
         int team
-        int score()
-        unsigned int kills
-        unsigned int deaths
-        unsigned int suicides
-        unsigned int health_max
-        char* name
-        unsigned int coins
 
-cdef extern from "./agent/agent_weapons.hpp":
-    cdef cppclass Agent_weapons:
-        int active
-        char* hud_display()
-        void set_active_block(int block)
-        bool can_zoom()
-        
 #collision box
 cdef extern from "./agent/agent.hpp":
     cdef struct Agent_collision_box:
@@ -514,27 +484,16 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         Agent_state* get(int id)
-        Agent_state* create(int id)
         Agent_state* get_or_create(int id)
-        void destroy(int _id)
         int get_ids()
         int* ids_in_use
-
-#cdef extern from "./agent/player_agent_action.hpp":
-#    cdef cppclass PlayerAgent_action:
-#        void switch_weapon(int i)
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
         float camera_height()
-        AgentState camera_state
-#        void toggle_camera_mode()
-#        void pump_camera() #update camera
-#        PlayerAgent_action action
         void update_sound()
         void display_agent_names()
-        void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
 
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
@@ -560,7 +519,6 @@ class AgentWrapper(object):
         'kills',
         'deaths',
         'suicides',
-        'active_weapon',
         'name',
         'coins',
     ]
@@ -630,9 +588,6 @@ class AgentWrapper(object):
         elif name == 'suicides':
             return a.status.suicides
 
-        elif name == 'active_weapon':
-            return a.weapons.active
-
         elif name == 'name':
             return a.status.name
 
@@ -670,50 +625,11 @@ class PlayerAgentWrapper(object):
         print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
         raise AttributeError
 
-    def _pos(self):
-        cdef float x
-        cdef float y
-        cdef float z
-
-        x = playerAgent_state.camera_state.x
-        y = playerAgent_state.camera_state.y
-        z = playerAgent_state.camera_state.z
-
-        return [x,y,z]
-
-    def camera_position(self):
-        z_off = playerAgent_state.camera_height()
-        x = playerAgent_state.camera_state.x
-        y = playerAgent_state.camera_state.y
-        z = playerAgent_state.camera_state.z
-        return [x, y, z+z_off]
-
-#    def switch_weapon(self, int i):
-#        playerAgent_state.action.switch_weapon(i)
-
     def update_sound(self):
         playerAgent_state.update_sound()
 
     def display_agent_names(self):
         playerAgent_state.display_agent_names()
-
-    def weapon_hud_display(self):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return "No agent yet"
-        return a.weapons.hud_display()
-
-
-    def can_zoom(self):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return False
-        return a.weapons.can_zoom()
-
-def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
-    playerAgent_state.set_control_state(f, b, l, r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
 def get_player_agent_id():
     return playerAgent_state.agent_id
@@ -892,15 +808,12 @@ HUD
 
 cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
-        bool cube_selector,
         bool disconnected,
         bool dead,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool equipment,
-        int equipment_slot,
     )
     void draw_hud()
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -913,26 +826,20 @@ cdef class HUD:
         draw_hud()
     @classmethod
     def set_draw_settings(cls,
-        bool cube_selector,
         bool disconnected,
         bool dead,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool equipment,
-        int equipment_slot,
     ):
         set_hud_draw_settings(
-            cube_selector,
             disconnected,
             dead,
             fps,
             fps_val,
             ping,
             ping_val,
-            equipment,
-            equipment_slot,
         )
     @classmethod
     def set_chat_message(cls, i, text, color):
@@ -948,34 +855,6 @@ cdef class HUD:
     @classmethod
     def update_hud_draw_settings(cls):
         update_hud_draw_settings()
-
-"""
-Cube Selector
--- this is here because input.py needs to communicate with it
-"""
-cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
-    cdef cppclass CubeSelector:
-        int get_active_id()
-        int get_active_pos()
-        void set_active_id(int id)
-        void set_active_pos(int pos)
-        
-    CubeSelector cube_selector
-
-class HudCubeSelector:
-    @classmethod
-    def get_active_id(cls):
-        return cube_selector.get_active_id()
-    @classmethod
-    def get_active_pos(cls):
-        return cube_selector.get_active_pos()
-    @classmethod
-    def set_active_id(cls, int id):
-        cube_selector.set_active_id(id)
-    @classmethod
-    def set_active_pos(cls, int pos):
-        cube_selector.set_active_pos(pos)
-
 
 """
 Font

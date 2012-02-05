@@ -318,3 +318,31 @@ void quit_event_handler(SDL_Event* event)
 {
     input_state.quit = true;
 }
+
+void agent_button_state_handler(Uint8 *keystate, int numkeys)
+{
+    char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
+    f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
+
+    if (keystate['w'])
+        f = 1;
+    if (keystate['s'])
+        b = 1;
+    if (keystate['a'])
+        l = 1;
+    if (keystate['d'])
+        r = 1;
+    if (keystate['z'])
+        jet = 1;
+    if (keystate[' '])
+        jump = 1;
+    if (keystate[306])  // LCTRL
+        crouch = 1;
+    ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
+}
+
+// keyboard state
+void key_state_handler(Uint8 *keystate, int numkeys)
+{
+    agent_button_state_handler(keystate, numkeys);
+}

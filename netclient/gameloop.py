@@ -167,7 +167,7 @@ class App(object):
                 init_c_lib.process_events()
                 init_c_lib.get_key_state()
                 if agent:
-                    agent.set_button_state()
+                    #agent.set_button_state()
                     agent.update_sound()
                     agent.display_agent_names() # out of physics loop
                     

@@ -19,6 +19,7 @@ int init_input() {
 int _get_key_state(key_state_func key_state_cb) {
     SDL_PumpEvents();
 
+    key_state_handler(keystate, numkeys);
     _key_state_callback(key_state_cb, keystate, numkeys);
     if(keystate['`'] != 0)
     {
@@ -40,16 +41,6 @@ You should also disable the unicode translation as soon as you're finished with 
 
 --for coping with shifted keys (e.g, ? = shift + /)
 */
-
-MouseEvent _mouse_click_event()
-{
-    MouseEvent me;
-    me.x = Event.motion.x;
-    me.y = Event.motion.y;
-    me.button = Event.button.button;
-    me.state = Event.button.state; //up or down
-    return me;
-}
 
 int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 {

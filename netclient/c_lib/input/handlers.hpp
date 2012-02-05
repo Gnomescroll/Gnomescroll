@@ -34,7 +34,7 @@ void mouse_button_down_handler(SDL_Event* event);
 void mouse_button_up_handler(SDL_Event* event);
 void mouse_motion_handler(SDL_Event* event);
 void quit_event_handler(SDL_Event* event);
-
+void key_state_handler(Uint8 *keystate, int numkeys);
 // triggers
 void toggle_mouse_bind();
 void toggle_help_menu();

@@ -107,36 +107,6 @@ class Keyboard(object):
             return
         if init_c_lib.cy_input_state.input_mode == 1:
             self.camera_input_mode(keyboard)
-        elif init_c_lib.cy_input_state.input_mode == 0:
-            self.agent_input_mode(keyboard)
-
-    def agent_input_mode(self, keyboard):
-        if GameStateGlobal.agent.dead:
-            return
-
-        f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3 = [0]*11
-
-        if 'w' in keyboard:
-            f = 1
-        if 's' in keyboard:
-            b = 1
-        if 'a' in keyboard:
-            l = 1
-        if 'd' in keyboard:
-            r=1
-        if 'c' in keyboard:
-            boost = 1
-        if 'z' in keyboard:
-            jet = 1
-        if 'SPACE' in keyboard and init_c_lib.cy_input_state.can_jump:
-            jump = 1
-            init_c_lib.cy_input_state.can_jump = False
-        if 'LCTRL' in keyboard:
-            crouch = 1
-        #misc1=misc2=misc3=boost=0
-
-        button_state = [f,b,l,r, jump, jet, crouch, boost, misc1, misc2, misc3]
-        GameStateGlobal.agent.button_state = button_state
 
     def camera_input_mode(self, keyboard):
         v = opts.camera_speed

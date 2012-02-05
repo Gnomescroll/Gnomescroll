@@ -94,15 +94,12 @@ void init();
 
 // CYTHON
 void set_hud_draw_settings(
-    bool cube_selector,
     bool disconnected,
     bool dead,
     bool fps,
     float fps_val,
     bool ping,
-    int ping_val,
-    bool equipment,
-    int equipment_slot
+    int ping_val
 );
 void update_hud_draw_settings();
 void draw_hud();

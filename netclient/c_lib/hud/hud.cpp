@@ -75,18 +75,14 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_draw_settings(
-    bool cube_selector,
     bool disconnected,
     bool dead,
     bool fps,
     float fps_val,
     bool ping,
-    int ping_val,
-    bool equipment,
-    int equipment_slot
+    int ping_val
 )
 {
-    hud_draw_settings.cube_selector = cube_selector;
     hud_draw_settings.disconnected = disconnected;
     hud_draw_settings.dead = dead;
     
@@ -101,15 +97,15 @@ void set_hud_draw_settings(
     ping_val = (ping_val >= 1000) ? 999 : ping_val;
     ping_val = (ping_val < 0) ? 0 : ping_val;
     hud_draw_settings.ping_val = ping_val;
-
-    hud_draw_settings.equipment = equipment;
-    hud_draw_settings.equipment_slot = equipment_slot;
 }
 
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
     hud_draw_settings.zoom = current_camera->zoomed;
+    hud_draw_settings.cube_selector =
+        (ClientState::playerAgent_state.you != NULL
+      && ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
     hud_draw_settings.inventory = input_state.inventory;
     hud_draw_settings.help = input_state.help_menu;
@@ -120,8 +116,18 @@ void update_hud_draw_settings()
     hud_draw_settings.chat_input = input_state.chat;
     hud_draw_settings.chat_cursor = input_state.chat;
 
-    hud_draw_settings.compass = true;
     hud_draw_settings.scoreboard = input_state.scoreboard;
+
+    hud_draw_settings.equipment = false;
+    hud_draw_settings.equipment_slot = -1;
+    if (ClientState::playerAgent_state.you != NULL)
+    {
+        hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
+        if (hud_draw_settings.equipment)
+            hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
+    }
+
+    hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
 }
 

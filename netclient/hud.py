@@ -40,8 +40,6 @@ class Hud(object):
 
     def draw(self, fps=None, ping=None):
 
-        draw_cube_selector = GameStateGlobal.agent and GameStateGlobal.agent.active_weapon == 2
-
         draw_dead = NetClientGlobal.connection.connected\
                     and GameStateGlobal.agent is not None\
                     and GameStateGlobal.agent.dead
@@ -59,21 +57,13 @@ class Hud(object):
         except (TypeError, ValueError):
             ping = 0
 
-        equipment_slot = -1
-        if GameStateGlobal.agent:
-            equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
-        draw_equipment = True
-
         init_c_lib.HUD.set_draw_settings(
-            draw_cube_selector,
             draw_disconnected,
             draw_dead,
             draw_fps,
             fps,
             draw_ping,
             ping,
-            draw_equipment,
-            equipment_slot,
         )
         init_c_lib.HUD.update_hud_draw_settings()
         

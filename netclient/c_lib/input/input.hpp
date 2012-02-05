@@ -2,22 +2,6 @@
 
 #include <compat_gl.h>
 
-// mouse sampling
-typedef struct {
-  int x;
-  int y;
-  int dx;
-  int dy;
-  int button;
-} MouseMotion;
-
-typedef struct {
-  int x;
-  int y;
-  int button;
-  int state;
-} MouseEvent;
-
 struct MouseMotionAverage {
     float x,y;
 };
