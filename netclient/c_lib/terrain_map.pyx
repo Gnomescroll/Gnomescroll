@@ -7,7 +7,7 @@ cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
 PART 2: Properties
 '''
 
-cdef extern from "./t_map/properties.hpp" namespace "t_map":
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
     struct cubeProperties:
         bint active
         bint solid
@@ -19,7 +19,7 @@ cdef extern from "./t_map/properties.hpp" namespace "t_map":
         bint reserved8
         unsigned char max_damage
 
-cdef extern from "./t_map/properties.hpp" namespace "t_map":
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
     cubeProperties* get_cube(int id)
 
 ## Setup ##
@@ -48,7 +48,7 @@ def init_cube_properties(id=None):
     Set the textures on sides of cube
 '''
 
-cdef extern from "./t_map/properties.hpp" namespace "t_map":
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
     void set_cube_side_texture(int id, int side, int tex_id)
 
 def init_cube_side_texture():
