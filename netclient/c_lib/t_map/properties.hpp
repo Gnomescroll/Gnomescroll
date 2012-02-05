@@ -25,10 +25,14 @@ extern struct cubeProperties cube_list[max_cubes];
 extern short cube_side_texture_array[max_cubes*6];
 
 
-
-
 void init_t_properties();
 
+struct cubeProperties* get_cube(int id)
+{
+    if(id < 0) printf("get_cube: error id less than zero \n");
+    if(id >= max_cubes ) printf("get_cube: error id exceeds max_cubes \n");
+    return &cube_list[id];
+}
 /*
     cube side texture array
 */

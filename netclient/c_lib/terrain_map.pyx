@@ -7,17 +7,20 @@ cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
 PART 2: Properties
 '''
 
-cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
+cdef extern from "./t_map/properties.hpp" namespace "t_map":
     struct cubeProperties:
-        bool active
-        bool solid
-        bool occludes
-        bool transparent
-        bool reserved5
-        bool reserved6
-        bool reserved7
-        bool reserved8
-        unsigned char max_damage;
+        bint active
+        bint solid
+        bint occludes
+        bint transparent
+        bint reserved5
+        bint reserved6
+        bint reserved7
+        bint reserved8
+        unsigned char max_damage
+
+cdef extern from "./t_map/properties.hpp" namespace "t_map":
+    cubeProperties* get_cube(int id)
 
 ## Setup ##
 from dat_loader import c_dat
@@ -28,7 +31,7 @@ def init_cube_properties(id=None):
     def apply(id):
         global infinite_texture_counter
         cdef cubeProperties* cp
-        cp = _get_cube(id)
+        cp = get_cube(id)
         cp.active = int(c_dat.get(id,'active'))
         cp.solid = int(c_dat.get(id,'solid'))
         cp.occludes = int(c_dat.get(id,'occludes'))
@@ -45,14 +48,14 @@ def init_cube_properties(id=None):
     Set the textures on sides of cube
 '''
 
-cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
+cdef extern from "./t_map/properties.hpp" namespace "t_map":
     void set_cube_side_texture(int id, int side, int tex_id)
 
 def init_cube_side_texture():
     global c_dat
-    for id in range(max_cubes):
+    for id, cube in c_dat:
         for side in range(6):
-            texture_id = c_dat.get(id, 'texture_id')[side]
+            texture_id = cube['texture_id'][side]
             set_cube_side_texture(id, side, texture_id)
 
 '''
@@ -79,7 +82,7 @@ l = [
  0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
 '''
 
-
+'''
 GLSL_TEXTURE_ARRAY = True
 
 def init_quad_cache():
@@ -174,7 +177,7 @@ def get_tex_texture(int tile_id, int side, int vert_num):
         tx = 1.0
         ty = 0.0
     return (tx,ty,texture_id)
-
+'''
 
 ## functions ##
 '''
@@ -188,10 +191,10 @@ cdef extern from "./t_map/t_vbo_update.hpp" namespace "t_map":
 cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
     int draw_map()
 
-cpdef update_chunks():
+cpdef _update_chunks():
     update_chunks()
 
-cpdef draw_terrain():
+cpdef _draw_terrain():
     draw_map()
 
 
