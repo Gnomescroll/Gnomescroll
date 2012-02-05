@@ -290,24 +290,25 @@ cdef extern from "./camera/camera.hpp":
 
         int is_current()
 
-        int world_projection()
-        int hud_projection()
-
-        void pan(float dx, float dy)
         void move(float dx, float dy, float dz)
         void set_aspect(float fov, float z_near, float z_far)
         void set_projection(float x, float y, float z, float x_angle, float y_angle)
         void set_dimensions()   # uses SDL_functions' xres & yres properties
         void set_fov(float fov)
         
-    void set_camera(CCamera* c)
-    void set_camera_first_person(int first_person)
-    CCamera* CYTHON_get_available_camera()
-
     cdef enum CAMERA_TYPES:
         UNKNOWN_CAM
         AGENT_CAM
         CAMERA_CAM
+
+    CCamera* get_agent_camera()
+    CCamera* get_free_camera()
+    void use_agent_camera()
+    void use_free_camera()
+    void update_agent_camera()
+    void camera_input_update(int delta_tick, bool invert, float sensitivity)
+    void world_projection()
+    void hud_projection()
 
 camera_properties = [
     'fov',
@@ -327,10 +328,17 @@ cdef class Camera(object):
     cdef int active
     cdef int first_person
 
-    def __init__(self, int first_person, name="camera"):
+    def __init__(self, int first_person, name="free"):
         cdef CCamera* cam
 
-        cam = CYTHON_get_available_camera();
+        if name == 'free':
+            cam = get_free_camera()
+        elif name == 'agent':
+            cam = get_agent_camera()
+        else:
+            print "Unknown camera name %s." % (name,)
+            raise ValueError
+            
         if cam == NULL:
             print "Cython camera init -- Camera is null"
             raise ValueError
@@ -343,24 +351,13 @@ cdef class Camera(object):
 
         self.camera.set_dimensions()
 
-        self.first_person = int(first_person)
-
-        if name.lower() == 'camera':
+        if name.lower() == 'free':
             cam.type = CAMERA_CAM
         elif name.lower() == 'agent':
             cam.type = AGENT_CAM
         else:
             print "Warning: Creating camera with unknown name/type %s" % (name,)
             cam.type = UNKNOWN_CAM
-
-    def load(self):
-        if self.active == 0:
-            set_camera(self.camera)
-            set_camera_first_person(self.first_person)
-            self.active = 1
-
-    def unload(self):
-        self.active = 0
 
     def set_fov(self, float fov):
         self.camera.set_fov(fov)
@@ -371,9 +368,6 @@ cdef class Camera(object):
     def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
         self.camera.set_projection(x,y,z, x_angle, y_angle)
 
-    def pan(self, float dx, float dy):
-        self.camera.pan(dx,dy)
-
     def move(self, float dx, float dy, float dz):
         self.camera.move(dx, dy, dz)
 
@@ -383,16 +377,6 @@ cdef class Camera(object):
     def normal(self):
         return [self.camera.xu, self.camera.yu, self.camera.zu]
         
-    def world_projection(self):
-        cdef CCamera* c
-        self.camera.world_projection()
-        if camera_callback is not None:
-            c = self.camera
-            camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
-
-    def hud_projection(self):
-        self.camera.hud_projection()
-
     def _getattribute__py(self, name):
         if name == 'x':
             return self.camera.x
@@ -473,6 +457,27 @@ cdef class Camera(object):
             self.camera.z_far = v
 
         raise AttributeError
+
+class CyCamera(object):
+    @classmethod
+    def use_agent_camera(cls):
+        use_agent_camera()
+    @classmethod
+    def use_free_camera(cls):
+        use_free_camera()
+    @classmethod
+    def camera_input_update(cls, int delta_tick, bool invert, float sensitivity):
+        camera_input_update(delta_tick, invert, sensitivity)
+    @classmethod
+    def world_projection(cls):
+        world_projection()
+    @classmethod
+    def hud_projection(cls):
+        hud_projection()
+    @classmethod
+    def update_agent_camera(cls):
+        update_agent_camera()
+    
 
 """
 Skybox
@@ -734,10 +739,6 @@ class PlayerAgentWrapper(object):
         z = playerAgent_state.camera_state.z
 
         return [x,y,z]
-
-    #call before rendering to have camera state updated
-    def update_camera(self):
-        playerAgent_state.pump_camera()
 
     #toggle camera toggle_camera_mode
     def toggle_agent_camera_mode(self):

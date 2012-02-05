@@ -5,10 +5,14 @@
 #include <c_lib/physics/vector.hpp>
 #include <c_lib/physics/matrix.hpp>
 
+#include <c_lib/input/input.hpp>
+#include <c_lib/voxel/voxel_loader.hpp>
+
 extern float _xresf;
 extern float _yresf;
 
-static CCamera* cameras = NULL;
+static CCamera* agent_camera = NULL;
+static CCamera* free_camera = NULL;
 
 CCamera* current_camera = NULL;
 
@@ -27,28 +31,23 @@ void set_camera_first_person(int fp) {
     first_person = fp;
 }
 
-// CYTHON ONLY. in C, refer to current_camera
-CCamera* CYTHON_get_available_camera() {
-    static int ctr = 0;
-    if (ctr >= N_CAMERAS) {
-        printf("No more available cameras\n");
-        return NULL;
-    }
-    CCamera* cam = &cameras[ctr];
-    ctr++;
-    return cam;
-}
-
 void init_cameras()
 {
-    cameras = new CCamera[N_CAMERAS];
-    set_camera(0);
+    agent_camera = new CCamera();
+    agent_camera->first_person = true;
+
+    free_camera = new CCamera();
+    free_camera->first_person = false;
+
+    current_camera = free_camera;
 }
 
 void teardown_cameras()
 {
-    if (cameras != NULL)
-        delete[] cameras;
+    if (agent_camera != NULL)
+        delete agent_camera;
+    if (free_camera != NULL)
+        delete free_camera;
 }
 
 CCamera::CCamera() {
@@ -115,11 +114,6 @@ void CCamera::move(float dx, float dy, float dz) {
     z += dz;
 }
 
-//#include <voxel/voxel_volume.hpp>
-//#include <voxel/voxel_render.hpp>
-
-#include <c_lib/voxel/voxel_loader.hpp>
-
 void CCamera::world_projection()
 {
 
@@ -131,16 +125,6 @@ void CCamera::world_projection()
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
-
-
-/*
-    double _x_angle = x_angle * PI; 
-    double _y_angle = y_angle * PI;
-
-    xl = cos( _x_angle ) * cos( _y_angle );
-    yl = sin( _x_angle ) * cos( _y_angle );
-    zl = sin( _y_angle );
-*/
 
     Vector f = Vector_init(1.0, 0.0, 0.0);
     Vector r = Vector_init(0.0, 1.0, 0.0);
@@ -203,4 +187,59 @@ void update_camera_matrices()
     glGetDoublev(GL_MODELVIEW_MATRIX, model_view_matrix_dbl);
     glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
     glGetIntegerv(GL_VIEWPORT, viewport);
+}
+
+
+CCamera* get_agent_camera()
+{
+    return agent_camera;
+}
+
+CCamera* get_free_camera()
+{
+    return free_camera;
+}
+
+void use_agent_camera()
+{
+    current_camera = agent_camera;
+    set_camera_first_person(current_camera->first_person);
+}
+
+void use_free_camera()
+{
+    current_camera = free_camera;
+    set_camera_first_person(current_camera->first_person);
+}
+
+void camera_input_update(int delta_tick, bool invert, float sensitivity)
+{
+    struct MouseMotionAverage* mm;
+    mm = get_mouse_render_state(delta_tick);
+
+    int inv = (invert) ? 1 : -1;
+    float dx,dy;
+    dx = ((float)(-mm->x) * sensitivity) / 40000.0f; // magic #
+    dy = ((float)(inv * mm->y) * sensitivity) / 40000.0f; // magic #
+
+    current_camera->pan(dx,dy);
+}
+
+void world_projection()
+{
+    current_camera->world_projection();
+}
+
+void hud_projection()
+{
+    current_camera->hud_projection();
+}
+
+void update_agent_camera()
+{
+    if (ClientState::playerAgent_state.you == NULL) return;
+    ClientState::playerAgent_state.pump_camera();
+    agent_camera->x = ClientState::playerAgent_state.camera_state.x;
+    agent_camera->y = ClientState::playerAgent_state.camera_state.y;
+    agent_camera->z = ClientState::playerAgent_state.camera_state.z + ClientState::playerAgent_state.you->camera_height();
 }

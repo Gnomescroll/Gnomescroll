@@ -6,8 +6,6 @@ from math import sin, cos, pi
 
 base_dir = "./"
 
-camera = None   # current active camera. Camera.load() will set this
-
 def set_callback(callback):
     init_c_lib.camera_callback = callback
 
@@ -15,7 +13,7 @@ class Camera(object):
 
     _local = ['camera', 'name', 'loaded']
 
-    def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., first_person=False, name="camera"):
+    def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., first_person=False, name="free"):
         self.camera = init_c_lib.Camera(first_person=first_person, name=name)
         self.base_fov = fov
         self.zoom_factor = 2.
@@ -50,21 +48,8 @@ class Camera(object):
             except AttributeError, e:
                 object.__setattr__(self, k, v)
 
-    def input_update(self, t):
-        dxa, dya = init_c_lib.get_mouse_deltas(t)
-        self.pan(*self._convert_mouse_deltas(dxa,dya))
-        
-    def _convert_mouse_deltas(self, dx, dy):
-        invert = 1 if opts.invert_mouse else -1
-        dx = (float(-dx) * opts.sensitivity) / 40000. # calibrated to sensitivity=100
-        dy = (float(invert*dy) * opts.sensitivity) / 40000.
-        return dx,dy
-
     def move_camera(self, dx, dy, dz):
         self.camera.move(dx,dy,dz)
-
-    def pan(self, dx_angle, dy_angle):
-        self.camera.pan(dx_angle, dy_angle)
 
     def pos(self, p=None):
         if p is None:
@@ -81,31 +66,11 @@ class Camera(object):
             self.x_angle = a[0]
             self.y_angle = a[1]
 
-    def load(self):
-        if self.loaded:
-            return
-        global camera
-        camera = self
-        self.loaded = True
-        self.camera.load()
-
-    def unload(self):
-        if not self.loaded:
-            return
-        self.loaded = False
-        self.camera.unload()
-
     def forward(self):
         return self.camera.forward()
         
     def normal(self):
         return self.camera.normal()
-
-    def world_projection(self):
-        self.camera.world_projection()
-
-    def hud_projection(self):
-        self.camera.hud_projection()
 
     def toggle_zoom(self):
         zoom = not self.zoomed

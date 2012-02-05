@@ -178,10 +178,35 @@ CyText removed from init_c_lib -- all text creation and draw in C (chat message 
 Draw/Tick calls managed by client state
 =============
 
+Feb 03
 
+Fix client's player block damage animation for hitscan laser; add to pick
+Slimes take 2 hits
+Networked subvoxel destruction
+=============
+
+Feb 04
+
+
+=============
+
+Scoreboard reporting messed up
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 
+Angles are wrong / lag
+
+Spreadsheet to document interactions
+e.g.
+Client fires weapon:
+play anims/sound client side, (based on expected server filtering. i.e, if server will not apply damage because same team, then dont destroy voxel)
+send packet to server,
+server responds,
+send packet to clients,
+clients play anims/sound
+
 OpenAL ?
+
+Alt-tab
 
 Icons on map (angus)
 
@@ -240,25 +265,3 @@ map gen scripts (can be removed easy, not integrated)
 
 delete the rest
 
-
-====================
-
-HUD migration to C
-
-init all text objects
-
-rewrite scoreboard formatter
--- scoreboard data is all available in C now, this wont be that bad
-
-rewrite scoreboard layout render
--- will be annoying, but easier this time
-
-rewrite player stats formatter
--- again, should be easy
-
-draw chat messages
--- need to write a payload class that mirrors chat client's current Payload object
--- will need to fill an array of chat messages to render in C, from python
--- then render from that
-
-Then can delete CyText!

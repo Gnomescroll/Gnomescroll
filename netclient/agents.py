@@ -96,7 +96,7 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
     @noViewer
     def set_active_block(self, block_type=None):
         if block_type is None:
-            block = init_c_lib.nearest_block(self.camera_position(), self.camera.forward())
+            block = init_c_lib.nearest_block(self.camera.pos(), self.camera.forward())
             if block is None:
                 return
             block_type = terrainMap.get(*block)
@@ -122,7 +122,7 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
         old = self.active_weapon
         init_c_lib.PlayerAgentWrapper.switch_weapon(self, i)
         if old != self.active_weapon:
-            camera.camera.unzoom()
+            self.camera.unzoom()
 
     def hud_equipment_slot(self):
         return self.active_weapon

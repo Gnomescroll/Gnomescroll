@@ -118,7 +118,7 @@ class InputGlobal:
 
     @classmethod
     def init(cls, main):
-        InputGlobal.mouse = Mouse()
+        InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.cube_selector = CubeSelector(8,8)
@@ -161,8 +161,8 @@ class InputGlobal:
 
 class Mouse(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, main):
+        self.main = main
         
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
         pass
@@ -191,8 +191,10 @@ class Mouse(object):
                 pass
 
         if button == 3 and state == 1:  # right click down
-            if not InputGlobal.input == 'agent' or GameStateGlobal.agent.can_zoom():
-                camera.camera.toggle_zoom()
+            if InputGlobal.input == 'camera':
+                self.main.camera.toggle_zoom()
+            elif GameStateGlobal.agent.can_zoom():
+                self.main.agent_camera.toggle_zoom()
 
 
 class Keyboard(object):

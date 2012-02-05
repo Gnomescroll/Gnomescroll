@@ -78,8 +78,8 @@ class App(object):
         load_cube_dat()
         
         camera.set_callback(c_lib.terrain_map.camera_callback)
-        self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='camera')
-        self.camera.load()
+        self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='free')
+        init_c_lib.CyCamera.use_free_camera()
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
 
         self.hud = Hud()
@@ -153,8 +153,7 @@ class App(object):
 
             agent = GameStateGlobal.agent
             if agent:
-                if agent.camera is None:
-                    agent.camera = self.agent_camera
+                agent.camera = self.agent_camera
             else:
                 GameStateGlobal.agentList.check_for_player_agent()
 
@@ -212,36 +211,20 @@ class App(object):
             P.event("Camera Setup")
 
             if InputGlobal.camera == 'agent':
-                self.camera.unload()
-                self.agent_camera.load()
+                init_c_lib.CyCamera.use_agent_camera()
+                zoomed = self.agent_camera.zoomed
                 if agent:
-                    self.agent_camera.pos(agent.camera_position())
-            elif InputGlobal.camera == 'camera':
-                self.agent_camera.unload()
-                self.camera.load()
+                    init_c_lib.CyCamera.update_agent_camera()
+            else:
+                init_c_lib.CyCamera.use_free_camera()
+                zoomed = self.camera.zoomed
 
-
-            #update camera before drawing
-            if InputGlobal.input == 'agent':
-                self.agent_camera.input_update(delta_tick)
-            elif InputGlobal.input == 'camera':
-                self.camera.input_update(delta_tick)
-
-            if agent:
-                agent.update_camera()
-
-            camera.camera.world_projection()
-
-            #if InputGlobal.hk:
-                #init_c_lib.Dragon.draw()
-
-            #P.event("Draw skybox")
-            #init_c_lib.render_skybox()
+            init_c_lib.CyCamera.camera_input_update(delta_tick, opts.invert_mouse, opts.sensitivity)
+            
+            init_c_lib.CyCamera.world_projection()
 
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
-
-            #import pdb; pdb.set_trace()
 
             P.event("Draw voxels and particles")
             init_c_lib.ClientState.draw()
@@ -251,14 +234,13 @@ class App(object):
 
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
-            #camera prospective
+
+            #camera perspective
             P.event("draw hud")
             if opts.hud:
-                camera.camera.hud_projection()
-                draw_cube_selector = False
-                if agent:
-                    draw_cube_selector = (agent.active_weapon == 2)
-                self.hud.draw(fps=fps_val, ping=ping_val, cube_selector=draw_cube_selector, zoom=camera.camera.zoomed)
+                init_c_lib.CyCamera.hud_projection()
+                
+                self.hud.draw(fps=fps_val, ping=ping_val, zoom=zoomed)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
