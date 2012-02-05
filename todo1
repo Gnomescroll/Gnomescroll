@@ -190,9 +190,10 @@ Feb 04
 Fixing up camera
 Camera uses proper selected camera_state from player agent
 player agent uses agent_camera angles
+
+fix scoreboard failure to reset text
 =============
 
-Scoreboard reporting messed up
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 
 Spreadsheet to document interactions
@@ -218,6 +219,8 @@ Minimap
 
 Sounds
 System notifications (you killed...)
+
+better base/spawner spawn logic (i.e. if the spawner is buried in a room underground, spawn there, not on top)
 
 Voxel editor:
 Bucket fill

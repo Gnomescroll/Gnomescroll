@@ -559,12 +559,18 @@ void Scoreboard::update()
     unsigned char r,g,b,a=255;
     int team = -1;
     ClientState::agent_list.sort_by_team(); // sorts ascending
-    int n_text_set = 0;
-    for (i=0; i<ClientState::agent_list.n_filtered; i++)
+    for (i=0; i<ClientState::agent_list.n_max; i++)
     {
         Agent_state* agent = ClientState::agent_list.filtered_objects[i];
-        if (agent==NULL) break; // null agents are sorted to the end, so we can break
-        if (agent->status.team == 0) continue;
+        if (i >= ClientState::agent_list.n_filtered || agent==NULL || agent->status.team == 0)
+        {
+            ids[i]->set_text((char*)"");
+            names[i]->set_text((char*)"");
+            kills[i]->set_text((char*)"");
+            deaths[i]->set_text((char*)"");
+            scores[i]->set_text((char*)"");
+            continue;
+        }
         float y = start_y + 18*(j+2);
         if (agent->status.team != team) {
             team = agent->status.team;
@@ -607,17 +613,6 @@ void Scoreboard::update()
         s = (s < -999) ? -999 : s;
         scores[i]->update_formatted_string(1, s);
         scores[i]->set_color(r,g,b,a);
-
-        n_text_set++;
-    }
-
-    for (i=n_text_set; i<PLAYERS_MAX; i++)
-    {
-        ids[i]->set_text((char*)"");
-        names[i]->set_text((char*)"");
-        kills[i]->set_text((char*)"");
-        deaths[i]->set_text((char*)"");
-        scores[i]->set_text((char*)"");
     }
 
     for (i=0; i<(int)N_TEAMS; i++)
