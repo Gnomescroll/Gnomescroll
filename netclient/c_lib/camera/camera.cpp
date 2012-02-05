@@ -73,12 +73,12 @@ void CCamera::set_fov(float fov) {
     this->fov = fov;
 }
 
-void CCamera::set_projection(float x, float y, float z, float x_angle, float y_angle) {
+void CCamera::set_projection(float x, float y, float z, float theta, float phi) {
     this->x = x;
     this->y = y;
     this->z = z;
-    this->x_angle = x_angle;
-    this->y_angle = y_angle;
+    this->theta = theta;
+    this->phi = phi;
 }
 
 void CCamera::set_dimensions() {
@@ -88,29 +88,29 @@ void CCamera::set_dimensions() {
 }
 
 void CCamera::pan(float dx, float dy) {    // args are deltas
-    x_angle += dx;
-    y_angle += dy;
+    theta += dx;
+    phi += dy;
 
-    if (x_angle > 1.0f) {
-        x_angle -= 2.0f;
-    } else if (x_angle < -1.0f) {
-        x_angle += 2.0f;
+    if (theta > 1.0f) {
+        theta -= 2.0f;
+    } else if (theta < -1.0f) {
+        theta += 2.0f;
     }
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (y_angle > 0.4999f) {
-        y_angle = 0.4999f;
-    } else if (y_angle < -0.4999f) {
-        y_angle = -0.4999f;
+    if (phi > 0.4999f) {
+        phi = 0.4999f;
+    } else if (phi < -0.4999f) {
+        phi = -0.4999f;
     }
 }
 
 void CCamera::move(float dx, float dy, float dz) {
-    x += dx*cos(x_angle * PI);
-    x += dy*cos(x_angle * PI + PI/2.0f);
-    y += dx*sin(x_angle * PI);
-    y += dy*sin(x_angle * PI + PI/2.0f);
+    x += dx*cos(theta * PI);
+    x += dy*cos(theta * PI + PI/2.0f);
+    y += dx*sin(theta * PI);
+    y += dy*sin(theta * PI + PI/2.0f);
     z += dz;
 }
 
@@ -130,7 +130,7 @@ void CCamera::world_projection()
     Vector r = Vector_init(0.0, 1.0, 0.0);
     Vector u = Vector_init(0.0, 0.0, 1.0);
     
-    Vector _l  = euler_rotation(f, x_angle + 1.00, y_angle - 1.00, 0.0 );
+    Vector _l  = euler_rotation(f, theta + 1.00, phi - 1.00, 0.0 );
 
     xl = _l.x; yl = _l.y; zl = _l.z;
 
@@ -147,9 +147,9 @@ void CCamera::world_projection()
     //set fulstrum camera up
     {
 
-        f = euler_rotation(f, x_angle+1.00, y_angle - 1.00, 0.0 );
-        r = euler_rotation(r, x_angle+1.00, y_angle - 1.00, 0.0 );
-        u = euler_rotation(u, x_angle+1.00, y_angle - 1.00, 0.0 );
+        f = euler_rotation(f, theta+1.00, phi - 1.00, 0.0 );
+        r = euler_rotation(r, theta+1.00, phi - 1.00, 0.0 );
+        u = euler_rotation(u, theta+1.00, phi - 1.00, 0.0 );
 
         setup_fulstrum(fov, ratio, z_far, Vector_init(x,y,z), &f,&r,&u );
          //fulstrum test
@@ -162,8 +162,8 @@ void CCamera::world_projection()
 }
 
 void CCamera::set_angles(float theta, float phi) {
-    this->x_angle = theta;
-    this->y_angle = phi;
+    this->theta = theta;
+    this->phi = phi;
 }
 
 void CCamera::hud_projection() {
@@ -179,6 +179,36 @@ void CCamera::hud_projection() {
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_TEXTURE_2D);
+}
+
+void CCamera::forward_vector(float f[3])
+{
+
+    float xa = theta;
+    float ya = phi;
+    if (theta > 1.0f) {
+        xa -= 2.0f;
+    } else if (theta < -1.0f) {
+        xa += 2.0f;
+    }
+
+    // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
+    // Camera behavior when looking straight up or down is fucked up otherwise
+    if (phi > 0.4999f) {
+        ya = 0.4999f;
+    } else if (phi < -0.4999f) {
+        ya = -0.4999f;
+    }
+    
+    f[0] = cos( xa * PI) * cos( ya * PI);
+    f[1] = sin( xa * PI) * cos( ya * PI);
+    f[2] = sin( ya * PI);
+
+    // normalize
+    float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
+    f[0] /= len;
+    f[1] /= len;
+    f[2] /= len;
 }
 
 void update_camera_matrices()
@@ -238,8 +268,15 @@ void hud_projection()
 void update_agent_camera()
 {
     if (ClientState::playerAgent_state.you == NULL) return;
+    // update camera_state
     ClientState::playerAgent_state.pump_camera();
+
+    // set agent_camera from state
     agent_camera->x = ClientState::playerAgent_state.camera_state.x;
     agent_camera->y = ClientState::playerAgent_state.camera_state.y;
     agent_camera->z = ClientState::playerAgent_state.camera_state.z + ClientState::playerAgent_state.you->camera_height();
+
+    // set camera_state's angle from agent_camera
+    //ClientState::playerAgent_state.camera_state.theta = agent_camera->theta;
+    //ClientState::playerAgent_state.camera_state.phi = agent_camera->phi;
 }

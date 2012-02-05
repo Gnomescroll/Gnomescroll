@@ -61,10 +61,10 @@ class Camera(object):
         
     def angles(self, a=None):
         if a is None:
-            return [self.x_angle, self.y_angle]
+            return [self.theta, self.phi]
         else:
-            self.x_angle = a[0]
-            self.y_angle = a[1]
+            self.theta = a[0]
+            self.phi = a[1]
 
     def forward(self):
         return self.camera.forward()

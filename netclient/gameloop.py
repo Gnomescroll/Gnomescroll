@@ -185,10 +185,6 @@ class App(object):
             if sl_c >= 2:
                 print "Physics: %i ticks this frame" % (sl_c)
 
-            #if there has been at least one physics tick
-            if sl_c > 0:
-                pass
-
             '''
                 May only want to send output every 30 ms
             '''
@@ -196,20 +192,19 @@ class App(object):
             NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
             
-            '''
-            !?
-                What is delta tick used for?
-                --mouse motion interpolation
-            '''
-            #start frame
+
+            # start frame
+
+            # get ticks for mouse interpolation
             current_tick = init_c_lib.get_ticks()
             delta_tick = current_tick - last_tick
             last_tick = current_tick
 
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()
-            P.event("Camera Setup")
 
+            # camera input
+            P.event("Camera Setup")
             if InputGlobal.camera == 'agent':
                 init_c_lib.CyCamera.use_agent_camera()
                 zoomed = self.agent_camera.zoomed
@@ -220,22 +215,27 @@ class App(object):
                 zoomed = self.camera.zoomed
 
             init_c_lib.CyCamera.camera_input_update(delta_tick, opts.invert_mouse, opts.sensitivity)
-            
+
+            # world projection
             init_c_lib.CyCamera.world_projection()
 
+            # terrain
             P.event("Draw Terrain")
             c_lib.terrain_map.draw_terrain()
 
+            # particles
             P.event("Draw voxels and particles")
             init_c_lib.ClientState.draw()
 
+            # animations
             P.event("Draw animations")
             init_c_lib.AnimationDraw()
 
+            # update map chunks
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
 
-            #camera perspective
+            # hud projection
             P.event("draw hud")
             if opts.hud:
                 init_c_lib.CyCamera.hud_projection()

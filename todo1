@@ -187,7 +187,8 @@ Networked subvoxel destruction
 
 Feb 04
 
-
+Fixing up camera
+Camera uses proper selected camera_state from player agent
 =============
 
 Scoreboard reporting messed up

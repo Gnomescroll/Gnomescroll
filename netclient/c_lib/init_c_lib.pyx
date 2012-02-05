@@ -280,8 +280,8 @@ cdef extern from "./camera/camera.hpp":
         float x
         float y
         float z
-        float x_angle
-        float y_angle
+        float theta
+        float phi
         float xl, yl, zl
         float xu, yu, zu
         float ratio
@@ -292,7 +292,7 @@ cdef extern from "./camera/camera.hpp":
 
         void move(float dx, float dy, float dz)
         void set_aspect(float fov, float z_near, float z_far)
-        void set_projection(float x, float y, float z, float x_angle, float y_angle)
+        void set_projection(float x, float y, float z, float theta, float phi)
         void set_dimensions()   # uses SDL_functions' xres & yres properties
         void set_fov(float fov)
         
@@ -315,7 +315,7 @@ camera_properties = [
     'x_size', 'y_size',
     'z_near', 'z_far',
     'x', 'y', 'z',
-    'x_angle', 'y_angle',
+    'theta', 'phi',
     'xl', 'yl', 'zl',
     'xu', 'yu', 'zu',
     'ratio'
@@ -365,8 +365,8 @@ cdef class Camera(object):
     def set_aspect(self, float fov, float z_near, float z_far):
         self.camera.set_aspect(fov, z_near, z_far)
 
-    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
-        self.camera.set_projection(x,y,z, x_angle, y_angle)
+    def set_projection(self, float x, float y, float z, float theta, float phi):
+        self.camera.set_projection(x,y,z, theta, phi)
 
     def move(self, float dx, float dy, float dz):
         self.camera.move(dx, dy, dz)
@@ -397,10 +397,10 @@ cdef class Camera(object):
         elif name == 'zu':
             return self.camera.zu
             
-        elif name == 'x_angle':
-            return self.camera.x_angle
-        elif name == 'y_angle':
-            return self.camera.y_angle
+        elif name == 'theta':
+            return self.camera.theta
+        elif name == 'phi':
+            return self.camera.phi
 
         elif name == 'ratio':
             return self.camera.ratio
@@ -437,10 +437,10 @@ cdef class Camera(object):
             self.camera.yu = v
         elif k == 'zu':
             self.camera.zu = v
-        elif k == 'x_angle':
-            self.camera.x_angle = v
-        elif k == 'y_angle':
-            self.camera.y_angle = v
+        elif k == 'theta':
+            self.camera.theta = v
+        elif k == 'phi':
+            self.camera.phi = v
 
         elif k == 'ratio':
             self.camera.ratio = v

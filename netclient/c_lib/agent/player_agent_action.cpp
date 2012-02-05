@@ -40,7 +40,7 @@ void PlayerAgent_action::hitscan_laser() {
     
     // get camera vector
     float vec[3];
-    p->camera_state.forward_vector(vec);
+    current_camera->forward_vector(vec);
 
     // get camera position
     float x,y,z;

@@ -43,7 +43,7 @@ void AgentState::forward_vector(float f[3]) {
     f[1] = sin( xa * PI) * cos( ya * PI);
     f[2] = sin( ya * PI);
 
-    // normalize?
+    // normalize
     float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
     f[0] /= len;
     f[1] /= len;
