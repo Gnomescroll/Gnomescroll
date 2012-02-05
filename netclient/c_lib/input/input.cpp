@@ -1,13 +1,11 @@
 #include "./input.hpp"
 
 #include <c_lib/SDL/SDL_functions.h>
+#include <c_lib/input/handlers.hpp>
 
 char getUnicodeValue(SDL_keysym keysym );
 
 static SDL_Event Event;
-
-//input modes
-static int text_entry_mode;
 
 static int numkeys;
 static Uint8* keystate;
@@ -16,26 +14,6 @@ int init_input() {
     keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
     SDL_EnableUNICODE( SDL_ENABLE );
     return 0;
-}
-
-//deprecate
-int _set_text_entry_mode(int n) {
-    if((n != 0) || (n != 1)) {
-        text_entry_mode = n;
-    } else {
-        printf("input.c, _set_text_entry_mode error: mode invalid \n");
-    }
-    return 0;
-}
-
-/*
-    mouse bound at startup?
-*/
-static int MOUSE_BOUND = 0;
-
-int _toggle_mouse_bind() {
-    MOUSE_BOUND = (MOUSE_BOUND + 1) %2;
-    return MOUSE_BOUND;
 }
 
 int _get_key_state(key_state_func key_state_cb) {
@@ -63,29 +41,33 @@ You should also disable the unicode translation as soon as you're finished with 
 --for coping w/ ? keys (shift + /)
 */
 
+MouseEvent _mouse_click_event()
+{
+    MouseEvent me;
+    me.x = Event.motion.x;
+    me.y = Event.motion.y;
+    me.button = Event.button.button;
+    me.state = Event.button.state; //up or down
+    return me;
+}
+
 int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
     int t; //temp
 
-    if(MOUSE_BOUND) {
+    if(input_state.mouse_bound) {
         SDL_ShowCursor(0);
         SDL_WM_GrabInput(SDL_GRAB_ON);
     } else {
         SDL_ShowCursor(1);
         SDL_WM_GrabInput(SDL_GRAB_OFF);       
     }
+    
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
-
-        if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONUP)) {
-            MouseEvent me;
-            me.x = Event.motion.x;
-            me.y = Event.motion.y;
-            me.button = Event.button.button;
-            me.state = Event.button.state; //up or down
-            _mouse_event_callback(mouse_event_cb, me);
-        }
 
         int event_state = 0;
         char* key_name;
+        MouseEvent me;
+        MouseMotion ms;
 
         switch( Event.type )
         {
@@ -95,21 +77,7 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
             case SDL_KEYDOWN:
 
-                if(Event.key.keysym.sym == SDLK_HOME)
-                {
-                    printf("Saving Screenshot \n");
-                    save_screenshot();
-                    break;
-                }
-
-                 //for Dany0 (azerty testing)
-                 //while holding n, will show key struct info
-                if (keystate['r'] != 0)
-                {
-                    printf("scancode = %d\n", (int)Event.key.keysym.scancode);
-                    printf("keysym = %d\n", (int)Event.key.keysym.sym);
-                    printf("\n");
-                }
+                key_down_handler(&Event);
                 
                 t = getUnicodeValue(Event.key.keysym);
                 if(t==0) t= Event.key.keysym.sym;
@@ -119,6 +87,9 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
                 break;
 
             case SDL_KEYUP:
+
+                key_up_handler(&Event);
+
                 t = getUnicodeValue(Event.key.keysym);
                 if(t==0) t= Event.key.keysym.sym;
                 event_state = 0;
@@ -127,13 +98,26 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
                 break;
 
             case SDL_MOUSEMOTION:
-                MouseMotion ms;
+                mouse_motion_handler(&Event);
+                
                 ms.x = Event.motion.x;
                 ms.y = Event.motion.y;
                 ms.dx = Event.motion.xrel;
                 ms.dy = Event.motion.yrel;
                 ms.button = Event.motion.state;
                 _mouse_motion_callback(mouse_motion_cb, ms);
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mouse_button_down_handler(&Event);
+                me = _mouse_click_event();
+                _mouse_event_callback(mouse_event_cb, me);
+                break;
+                
+            case SDL_MOUSEBUTTONUP:
+                mouse_button_up_handler(&Event);
+                me = _mouse_click_event();
+                _mouse_event_callback(mouse_event_cb, me);
                 break;
 
             default: break;

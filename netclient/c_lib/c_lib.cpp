@@ -115,6 +115,7 @@
 
     /* input */
     #include <c_lib/input/input.cpp>
+    #include <c_lib/input/handlers.cpp>
 
     /* sound */
     #include <c_lib/sound/sound.cpp>
@@ -150,6 +151,7 @@ int init_c_lib() {
         init_video();
         init_image_loader();
         init_input();
+        init_handlers();
         init_particle_functions();
         init_cameras();
 

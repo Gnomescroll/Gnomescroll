@@ -840,10 +840,10 @@ cdef extern from "./input/input.hpp":
 
     cdef extern int _get_key_state(key_state_func key_state_cb)
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-    cdef extern int _set_text_entry_mode(int n)
+#    cdef extern int _set_text_entry_mode(int n)
 
     cdef MouseMotionAverage* get_mouse_render_state(int t)
-    cdef int _toggle_mouse_bind()
+#    cdef int _toggle_mouse_bind()
 
     int _init_input()
 
@@ -869,8 +869,8 @@ def process_events():
         me = mouse_event_callback_stack.pop(0)
         input_callback.mouse_event(*me)
 
-def set_text_entry_mode(int n):
-    temp = _set_text_entry_mode(n)
+#def set_text_entry_mode(int n):
+#    temp = _set_text_entry_mode(n)
 
 class Callback_dummy:
     def keyboard_state(self, pressed_keys):
@@ -922,8 +922,8 @@ cdef int quit_event_callback():
     global input_callback, key_text_event_callback_stack
     key_text_event_callback_stack.append((9999, 'QUIT', 1))
 
-def toggle_mouse_bind():
-    return _toggle_mouse_bind()
+#def toggle_mouse_bind():
+#    return _toggle_mouse_bind()
 
 """
 HUD

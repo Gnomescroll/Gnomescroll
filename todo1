@@ -194,8 +194,6 @@ player agent uses agent_camera angles
 fix scoreboard failure to reset text
 =============
 
-Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
-
 Spreadsheet to document interactions
 e.g.
 Client fires weapon:

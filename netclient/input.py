@@ -122,7 +122,7 @@ class InputGlobal:
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.cube_selector = CubeSelector(8,8)
-        cls.voxel_aligner = VoxelAligner()
+        #cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
@@ -266,7 +266,7 @@ class Keyboard(object):
             "v" : toggle_z_buffer,
             "p" : init_c_lib._toggle_latency_unit,
             ',' : self.toggle_agent_gravity,
-            'u' : init_c_lib.toggle_mouse_bind,
+            #'u' : init_c_lib.toggle_mouse_bind,
             '/' : self.toggle_hud,
             ';' : self.voxel_aligner_mode_toggle,
             '[' : self.cycle_agent_camera_mode,
@@ -284,11 +284,6 @@ class Keyboard(object):
         n = 30
         init_c_lib.slime_test(n)
 
-    #def hk(self):
-        #camera.camera.world_projection()
-        #init_c_lib.Dragon.generate()
-        #InputGlobal.hk = not InputGlobal.hk
-        
     def toggle_hud(self):
         opts.hud = not opts.hud
 
@@ -507,83 +502,83 @@ class CubeSelector(object):
         self.horizontal(left=False)
 
 
-class VoxelAligner:
+#class VoxelAligner:
 
-    def __init__(self):
-        self.num_parts = 6
-        self.current_part = 0
-        self.increment = 0.1
-        self.rot_increment = 0.1 * 360 * 4
-        import dat.agent_dim as dat
-        self.dat = dat
+    #def __init__(self):
+        #self.num_parts = 6
+        #self.current_part = 0
+        #self.increment = 0.1
+        #self.rot_increment = 0.1 * 360 * 4
+        #import dat.agent_dim as dat
+        #self.dat = dat
 
-    def keys(self, symbol):
-        print 'aligner:: ', symbol
-        if symbol == 'l':
-            self.switch_part()
-        elif symbol == 'w':
-            self.move_part_forward()
-        elif symbol == 'a':
-            self.move_part_left()
-        elif symbol == 's':
-            self.move_part_backward()
-        elif symbol == 'd':
-            self.move_part_right()
-        elif symbol == 'r':
-            self.move_part_up()
-        elif symbol == 'f':
-            self.move_part_down()
+    #def keys(self, symbol):
+        #print 'aligner:: ', symbol
+        #if symbol == 'l':
+            #self.switch_part()
+        #elif symbol == 'w':
+            #self.move_part_forward()
+        #elif symbol == 'a':
+            #self.move_part_left()
+        #elif symbol == 's':
+            #self.move_part_backward()
+        #elif symbol == 'd':
+            #self.move_part_right()
+        #elif symbol == 'r':
+            #self.move_part_up()
+        #elif symbol == 'f':
+            #self.move_part_down()
 
-        elif symbol == 'u':
-            self.rot1()
-        elif symbol == 'i':
-            self.rot2()
-        elif symbol == 'o':
-            self.rot3()
+        #elif symbol == 'u':
+            #self.rot1()
+        #elif symbol == 'i':
+            #self.rot2()
+        #elif symbol == 'o':
+            #self.rot3()
 
-        elif symbol == 'm':
-            self.save()
+        #elif symbol == 'm':
+            #self.save()
 
-        elif symbol == ';':
-            InputGlobal.use_voxel_aligner = False
+        #elif symbol == ';':
+            #InputGlobal.use_voxel_aligner = False
 
-        elif symbol == 'h':
-            self.change_speed()
+        #elif symbol == 'h':
+            #self.change_speed()
 
-    def switch_part(self):
-        self.current_part = (self.current_part + 1) % self.num_parts
+    #def switch_part(self):
+        #self.current_part = (self.current_part + 1) % self.num_parts
 
-    def move_part_forward(self):
-        print 'moving part forward'
-        self.dat.lu2[self.current_part][1] += self.increment
+    #def move_part_forward(self):
+        #print 'moving part forward'
+        #self.dat.lu2[self.current_part][1] += self.increment
 
-    def move_part_backward(self):
-        self.dat.lu2[self.current_part][1] -= self.increment
+    #def move_part_backward(self):
+        #self.dat.lu2[self.current_part][1] -= self.increment
 
-    def move_part_left(self):
-        self.dat.lu2[self.current_part][2] += self.increment
+    #def move_part_left(self):
+        #self.dat.lu2[self.current_part][2] += self.increment
 
-    def move_part_right(self):
-        self.dat.lu2[self.current_part][2] -= self.increment
+    #def move_part_right(self):
+        #self.dat.lu2[self.current_part][2] -= self.increment
 
-    def move_part_up(self):
-        self.dat.lu2[self.current_part][3] += self.increment
+    #def move_part_up(self):
+        #self.dat.lu2[self.current_part][3] += self.increment
         
-    def move_part_down(self):
-        self.dat.lu2[self.current_part][3] -= self.increment
+    #def move_part_down(self):
+        #self.dat.lu2[self.current_part][3] -= self.increment
         
-    def rot1(self):
-        self.dat.lu3[self.current_part][0] += self.rot_increment
-    def rot2(self):
-        self.dat.lu3[self.current_part][1] += self.rot_increment
-    def rot3(self):
-        self.dat.lu3[self.current_part][2] += self.rot_increment
+    #def rot1(self):
+        #self.dat.lu3[self.current_part][0] += self.rot_increment
+    #def rot2(self):
+        #self.dat.lu3[self.current_part][1] += self.rot_increment
+    #def rot3(self):
+        #self.dat.lu3[self.current_part][2] += self.rot_increment
 
-    def change_speed(self):
-        self.increment = 0.01 if self.increment == 0.1 else 0.1
+    #def change_speed(self):
+        #self.increment = 0.01 if self.increment == 0.1 else 0.1
 
-    def save(self):
-        self.dat.save()
+    #def save(self):
+        #self.dat.save()
     
 
 from game_state import GameStateGlobal
