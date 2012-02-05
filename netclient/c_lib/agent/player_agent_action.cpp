@@ -399,11 +399,14 @@ void PlayerAgent_action::reload() {
     msg.send();
 }
 
-void PlayerAgent_action::switch_weapon(int i) {
+bool PlayerAgent_action::switch_weapon(int i) {
     static const int UP = -1;
     static const int DOWN = -2;
 
-    if (p->you == NULL) return;
+    if (p->you == NULL) return false;
+
+    bool switched = false;
+    int old_active = p->you->weapons.active;
 
     if (i == UP) {
         p->you->weapons.switch_up();
@@ -412,6 +415,11 @@ void PlayerAgent_action::switch_weapon(int i) {
     } else {
         p->you->weapons.set_active(i);
     }
+
+    if (p->you->weapons.active != old_active)
+        switched = true;
+
+    return switched;
 }
 
 void PlayerAgent_action::place_spawner()

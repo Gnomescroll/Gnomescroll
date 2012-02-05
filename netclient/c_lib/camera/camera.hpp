@@ -48,6 +48,8 @@ class CCamera {
         int is_current();
 
         void toggle_zoom();
+        void zoom();
+        void unzoom();
 
         CCamera();
 };

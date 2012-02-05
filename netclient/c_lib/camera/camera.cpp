@@ -61,15 +61,24 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
 
 void CCamera::toggle_zoom()
 {
-    zoomed = (!zoomed);
     if (zoomed)
-    {
-        this->fov /= zoom_factor;
-    }
+        this->unzoom();
     else
-    {
-        this->fov *= zoom_factor;
-    }
+        this->zoom();
+}
+
+void CCamera::zoom()
+{
+    if (this->zoomed) return;
+    this->zoomed = true;
+    this->fov /= this->zoom_factor;
+}
+
+void CCamera::unzoom()
+{
+    if (!this->zoomed) return;
+    this->zoomed = false;
+    this->fov *= this->zoom_factor;
 }
 
 int CCamera::is_current() {

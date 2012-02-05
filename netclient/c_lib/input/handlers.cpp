@@ -177,34 +177,34 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_1:
-            ClientState::playerAgent_state.action.switch_weapon(1-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
             break;
         case SDLK_2:
-            ClientState::playerAgent_state.action.switch_weapon(2-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(2-1)) agent_camera->unzoom();
             break;
         case SDLK_3:
-            ClientState::playerAgent_state.action.switch_weapon(3-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(3-1)) agent_camera->unzoom();
             break;
         case SDLK_4:
-            ClientState::playerAgent_state.action.switch_weapon(4-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(4-1)) agent_camera->unzoom();
             break;
         case SDLK_5:
-            ClientState::playerAgent_state.action.switch_weapon(5-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(5-1)) agent_camera->unzoom();
             break;
         case SDLK_6:
-            ClientState::playerAgent_state.action.switch_weapon(6-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(6-1)) agent_camera->unzoom();
             break;
         case SDLK_7:
-            ClientState::playerAgent_state.action.switch_weapon(7-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(7-1)) agent_camera->unzoom();
             break;
         case SDLK_8:
-            ClientState::playerAgent_state.action.switch_weapon(8-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(8-1)) agent_camera->unzoom();
             break;
         case SDLK_9:
-            ClientState::playerAgent_state.action.switch_weapon(9-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(9-1)) agent_camera->unzoom();
             break;
         case SDLK_0:
-            ClientState::playerAgent_state.action.switch_weapon(10-1);
+            if (ClientState::playerAgent_state.action.switch_weapon(10-1)) agent_camera->unzoom();
             break;
 
         default: break;
@@ -267,12 +267,12 @@ void mouse_button_down_handler(SDL_Event* event)
 
         case 4: // scroll up
             p = &ClientState::playerAgent_state;
-            p->action.switch_weapon(-1);
+            if (p->action.switch_weapon(-1)) agent_camera->unzoom();
             break;
 
         case 5: // scroll down
             p = &ClientState::playerAgent_state;
-            p->action.switch_weapon(-2);
+            if (p->action.switch_weapon(-2)) agent_camera->unzoom();
             break;
 
         default: break;

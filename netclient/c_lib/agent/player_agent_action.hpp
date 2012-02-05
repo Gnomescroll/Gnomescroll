@@ -17,7 +17,7 @@ class PlayerAgent_action {
         void set_block();
         void throw_grenade();
 
-        void switch_weapon(int i);
+        bool switch_weapon(int i);
         void reload();
         void select_block();
         
