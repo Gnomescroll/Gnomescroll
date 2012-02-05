@@ -339,17 +339,16 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
-        if None:
-            if opts.map and os.path.exists('./content/maps/%s'%opts.map):
-                print opts.map
-                terrain_map.load_from_disk(opts.map)
-                terrain_map.set_map_dimensions(128,128,128)
-            else:
-                pass
-                terrain_map.set_map_dimensions(128,128,128)
-                map_gen.floor(terrain_map)
-                #terrain_map.load_from_disk("natural_terrain")
-        _gen_map()
+        if opts.map and os.path.exists('./content/maps/%s'%opts.map):
+            print opts.map
+            terrain_map.load_from_disk(opts.map)
+            terrain_map.set_map_dimensions(128,128,128)
+        else:
+            terrain_map.set_map_dimensions(128,128,128)
+            map_gen.floor(terrain_map)
+            #terrain_map.load_from_disk("natural_terrain")
+
+        #_gen_map()
         #gen_map_simple()
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
