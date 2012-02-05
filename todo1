@@ -195,8 +195,6 @@ player agent uses agent_camera angles
 Scoreboard reporting messed up
 Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
 
-Angles are wrong / lag
-
 Spreadsheet to document interactions
 e.g.
 Client fires weapon:
@@ -206,7 +204,7 @@ server responds,
 send packet to clients,
 clients play anims/sound
 
-OpenAL ?
+OpenAL ? (wav easy, but others hard?)
 
 Alt-tab
 
@@ -267,3 +265,21 @@ map gen scripts (can be removed easy, not integrated)
 
 delete the rest
 
+-----------
+TODO LIST FROM FEB4 NET TEST RESULTS:
+
+Disable Debug Controls:
+-disable t button (chat with t key?)
+-get rid of debug controls (activate with f12)
+ 
+Chat:
+-chat with t key (and enter)
+-team chat with y
+-increase time chat is displayed for
+-chat log bool
+-enable chat log when when tab or typing
+ 
+Other
+-placing block does not place where aimed (not using correct camera?)
+-fix client side prediction bug (movement is slugish, glitch)
+-if player disconnects, their name turns into different player and switches teams

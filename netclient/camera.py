@@ -11,7 +11,7 @@ def set_callback(callback):
 
 class Camera(object):
 
-    _local = ['camera', 'name', 'loaded']
+    _local = ['camera', 'name']
 
     def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., first_person=False, name="free"):
         self.camera = init_c_lib.Camera(first_person=first_person, name=name)
@@ -22,7 +22,6 @@ class Camera(object):
         self.x = x
         self.y = y
         self.z = z
-        self.loaded = False
         self.zoomed = False
 
     def set_aspect(self, fov, z_near, z_far):
