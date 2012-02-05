@@ -137,20 +137,12 @@ class Mouse(object):
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
     def on_mouse_press(self, x, y, button, state):
-        if init_c_lib.cy_input_state.input_mode == 0:
-            if state == 1: #pressed down
-                if button == 4: #scroll up
-                    direction = 'up'
-                    GameStateGlobal.agent.switch_weapons(direction)
-                elif button == 5: #scroll down
-                    direction = 'down'
-                    GameStateGlobal.agent.switch_weapons(direction)
-
-        if button == 3 and state == 1:  # right click down
-            if init_c_lib.cy_input_state.input_mode == 1:
-                self.main.camera.toggle_zoom()
-            elif GameStateGlobal.agent.can_zoom():
-                self.main.agent_camera.toggle_zoom()
+        pass
+        #if button == 3 and state == 1:  # right click down
+            #if init_c_lib.cy_input_state.input_mode == 1:
+                #self.main.camera.toggle_zoom()
+            #elif GameStateGlobal.agent.can_zoom():
+                #self.main.agent_camera.toggle_zoom()
 
 
 class Keyboard(object):
@@ -274,53 +266,20 @@ class AgentInput:
 
     def _init_key_handlers(self):
         self.key_press_handlers = {
-            "r" : self.reload,
-            "1": self.switch_weapon,
-            "2": self.switch_weapon,
-            "3": self.switch_weapon,
-            "4": self.switch_weapon,
-            "5": self.switch_weapon,
-            "6": self.switch_weapon,
-            "7": self.switch_weapon,
-            "8": self.switch_weapon,
-            "9": self.switch_weapon,
-            "0": self.switch_weapon,
             'left':self.adjust_block,
             'right':self.adjust_block,
             'up':self.adjust_block,
             'down':self.adjust_block,
-            'b'   : self.bleed,
         }
 
         self.key_release_handlers = {
         }
-
 
     def on_key_press(self, symbol, modifiers=None):
         self.key_press_handlers.get(symbol, lambda s: None)(symbol)
 
     def on_key_release(self, symbol):
         self.key_release_handlers.get(symbol, lambda s: None)(symbol)
-
-    @classmethod
-    @requireAgent
-    def reload(cls, symbol=None, modifiers=None):
-        GameStateGlobal.agent.reload()
-
-    @classmethod
-    @requireAgent
-    def bleed(cls, *args, **kwargs):
-        GameStateGlobal.agent.bleed()
-
-    @classmethod
-    @requireAgent
-    def switch_weapon(cls, symbol=None, modifiers=None):
-        try:
-            weapon_index = int(symbol)
-        except (ValueError, TypeError):
-            print "AgentInput.switch_weapons: invalid symbol " + symbol
-        else:
-            GameStateGlobal.agent.switch_weapons(weapon_index)
 
     @classmethod
     @requireAgent

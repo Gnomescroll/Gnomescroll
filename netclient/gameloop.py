@@ -80,7 +80,8 @@ class App(object):
         camera.set_callback(c_lib.terrain_map.camera_callback)
         self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='free')
         init_c_lib.CyCamera.use_free_camera()
-        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
+        #self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
+        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent')
 
         self.hud = Hud()
         

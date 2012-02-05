@@ -20,15 +20,14 @@ double model_view_matrix_dbl[16];
 double projection_matrix[16];
 GLint viewport[4];
 
-int first_person = 0;
-
 void set_camera(CCamera* cam) {
     current_camera = cam;
 }
 
-void set_camera_first_person(int fp) {
-    first_person = fp;
-}
+//int first_person = 0;
+//void set_camera_first_person(int fp) {
+    //first_person = fp;
+//}
 
 void init_cameras()
 {
@@ -49,10 +48,28 @@ void teardown_cameras()
         delete free_camera;
 }
 
-CCamera::CCamera() {
+#define CAMERA_ZOOM_FACTOR 2.0f
+CCamera::CCamera()
+:
+zoomed(false),
+zoom_factor(CAMERA_ZOOM_FACTOR)
+{
     set_aspect(85.0f, 0.1f, 1000.0f);
     set_dimensions();
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
+}
+
+void CCamera::toggle_zoom()
+{
+    zoomed = (!zoomed);
+    if (zoomed)
+    {
+        this->fov /= zoom_factor;
+    }
+    else
+    {
+        this->fov *= zoom_factor;
+    }
 }
 
 int CCamera::is_current() {
@@ -232,13 +249,11 @@ CCamera* get_free_camera()
 void use_agent_camera()
 {
     current_camera = agent_camera;
-    set_camera_first_person(current_camera->first_person);
 }
 
 void use_free_camera()
 {
     current_camera = free_camera;
-    set_camera_first_person(current_camera->first_person);
 }
 
 void camera_input_update(int delta_tick, bool invert, float sensitivity)

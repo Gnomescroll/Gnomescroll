@@ -250,6 +250,9 @@ cdef extern from "./camera/camera.hpp":
         float xu, yu, zu
         float ratio
 
+        bool first_person
+        bool zoomed
+
         void move(float dx, float dy, float dz)
         void set_aspect(float fov, float z_near, float z_far)
         void set_projection(float x, float y, float z, float theta, float phi)
@@ -278,16 +281,19 @@ camera_properties = [
     'theta', 'phi',
     'xl', 'yl', 'zl',
     'xu', 'yu', 'zu',
-    'ratio'
+    'ratio',
+    'zoomed',
+    'first_person',
 ]
 
 camera_callback = None
 
 cdef class Camera(object):
     cdef CCamera* camera
-    cdef int first_person
+#    cdef int first_person
 
-    def __init__(self, int first_person, name="free"):
+#    def __init__(self, int first_person, name="free"):
+    def __init__(self, name="free"):
         cdef CCamera* cam
 
         if name == 'free':
@@ -362,6 +368,11 @@ cdef class Camera(object):
             return self.camera.z_near
         elif name == 'z_far':
             return self.camera.z_far
+
+        elif name == 'zoomed':
+            return self.camera.zoomed
+        elif name == 'first_person':
+            return self.camera.first_person
 
         raise AttributeError
 
@@ -445,7 +456,6 @@ Animations
 [gameloop, input]
 """
 cdef extern from "./animations/animations.hpp" namespace "Animations":
-    void agent_bleed(float x, float y, float z)
     void animations_tick()
     void animations_draw()
 
@@ -454,10 +464,6 @@ def AnimationTick():
 
 def AnimationDraw():
     animations_draw()
-
-def bleed(float x, float y, float z):
-    agent_bleed(x,y,z)
-
 
 """
 Agents
@@ -524,19 +530,18 @@ cdef extern from "./agent/agent.hpp":
         int get_ids()
         int* ids_in_use
 
-cdef extern from "./agent/player_agent_action.hpp":
-    cdef cppclass PlayerAgent_action:
-        void reload()
-        void switch_weapon(int i)
+#cdef extern from "./agent/player_agent_action.hpp":
+#    cdef cppclass PlayerAgent_action:
+#        void switch_weapon(int i)
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
         float camera_height()
         AgentState camera_state
-        void toggle_camera_mode()
-        void pump_camera() #update camera
-        PlayerAgent_action action
+#        void toggle_camera_mode()
+#        void pump_camera() #update camera
+#        PlayerAgent_action action
         void update_sound()
         void display_agent_names()
         void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
@@ -693,8 +698,8 @@ class PlayerAgentWrapper(object):
         z = playerAgent_state.camera_state.z
         return [x, y, z+z_off]
 
-    def switch_weapon(self, int i):
-        playerAgent_state.action.switch_weapon(i)
+#    def switch_weapon(self, int i):
+#        playerAgent_state.action.switch_weapon(i)
 
     def update_sound(self):
         playerAgent_state.update_sound()
@@ -709,8 +714,6 @@ class PlayerAgentWrapper(object):
             return "No agent yet"
         return a.weapons.hud_display()
 
-    def reload(self):
-        playerAgent_state.action.reload()
 
     def can_zoom(self):
         cdef Agent_state* a

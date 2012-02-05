@@ -87,42 +87,22 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
         theta, phi = self.camera.angles()
         init_c_lib.set_agent_control_state(f,b,l,r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
 
-    #@requireCamera
-    #@noViewer
-    #def fire(self):
-        #init_c_lib.PlayerAgentWrapper.fire(self)
-
-    #@requireCamera
-    #@noViewer
-    #def set_active_block(self, block_type=None):
-        #if block_type is None:
-            #block = init_c_lib.nearest_block(self.camera.pos(), self.camera.forward())
-            #if block is None:
-                #return
-            #block_type = terrainMap.get(*block)
-
-        #InputGlobal.cube_selector.active_id = block_type
-        #init_c_lib.PlayerAgentWrapper.set_active_block(self, block_type)
-
     def active_block(self):
         return InputGlobal.cube_selector.active_id
 
-    def bleed(self):
-        init_c_lib.bleed(self.x, self.y, self.z)
+    #@noViewer
+    #def switch_weapons(self, weapon_index):
+        #if weapon_index == 'up':
+            #i = -1
+        #elif weapon_index == 'down':
+            #i = -2
+        #else:
+            #i = weapon_index-1
 
-    @noViewer
-    def switch_weapons(self, weapon_index):
-        if weapon_index == 'up':
-            i = -1
-        elif weapon_index == 'down':
-            i = -2
-        else:
-            i = weapon_index-1
-
-        old = self.active_weapon
-        init_c_lib.PlayerAgentWrapper.switch_weapon(self, i)
-        if old != self.active_weapon:
-            self.camera.unzoom()
+        #old = self.active_weapon
+        #init_c_lib.PlayerAgentWrapper.switch_weapon(self, i)
+        #if old != self.active_weapon:
+            #self.camera.unzoom()
 
     def hud_equipment_slot(self):
         return self.active_weapon

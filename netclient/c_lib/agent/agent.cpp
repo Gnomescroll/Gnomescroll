@@ -646,5 +646,6 @@ int Agent_state::get_facing_block_type()
         CUBE_SELECT_MAX_DISTANCE,
         z_low, z_high
     );
+    if (pos == NULL) return 0;
     return _get(pos[0], pos[1], pos[2]);
 }

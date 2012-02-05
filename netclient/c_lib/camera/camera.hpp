@@ -28,7 +28,9 @@ class CCamera {
         int type;
 
         bool first_person;
-
+        bool zoomed;
+        float zoom_factor;
+        
         void pan(float dx, float dy);
 
         void set_aspect(float fov, float z_near, float z_far);
@@ -45,6 +47,8 @@ class CCamera {
 
         int is_current();
 
+        void toggle_zoom();
+
         CCamera();
 };
 
@@ -52,7 +56,7 @@ void set_camera(CCamera* cam);
 void init_cameras();
 void update_camera_matrices();
 
-extern int first_person;
+//extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
 extern CCamera* agent_camera;

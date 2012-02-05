@@ -13,16 +13,14 @@ class Camera(object):
 
     _local = ['camera', 'name']
 
-    def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., first_person=False, name="free"):
-        self.camera = init_c_lib.Camera(first_person=first_person, name=name)
+    def __init__(self, x=0.0, y=0.0, z=0.0, fov=85., name="free"):
+        self.camera = init_c_lib.Camera(name=name)
         self.base_fov = fov
-        self.zoom_factor = 2.
         self.camera.set_fov(fov)
         self.name = name
         self.x = x
         self.y = y
         self.z = z
-        self.zoomed = False
 
     def set_aspect(self, fov, z_near, z_far):
         self.camera.set_aspect(fov, z_near, z_far)
@@ -71,17 +69,17 @@ class Camera(object):
     def normal(self):
         return self.camera.normal()
 
-    def toggle_zoom(self):
-        zoom = not self.zoomed
-        if zoom:
-            self.zoom()
-        else:
-            self.unzoom()
+    #def toggle_zoom(self):
+        #zoom = not self.zoomed
+        #if zoom:
+            #self.zoom()
+        #else:
+            #self.unzoom()
             
-    def zoom(self):
-        self.zoomed = True
-        self.camera.set_fov(self.fov / self.zoom_factor)
+    #def zoom(self):
+        #self.zoomed = True
+        #self.camera.set_fov(self.fov / self.zoom_factor)
 
-    def unzoom(self):
-        self.zoomed = False
-        self.camera.set_fov(self.base_fov)
+    #def unzoom(self):
+        #self.zoomed = False
+        #self.camera.set_fov(self.base_fov)

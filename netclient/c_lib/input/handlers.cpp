@@ -117,10 +117,14 @@ void key_down_handler(SDL_Event* event)
 
     switch (event->key.keysym.sym)
     {
-        case SDLK_HOME:
-            save_screenshot();
+        case SDLK_b:
+            Animations::agent_bleed(
+                ClientState::playerAgent_state.camera_state.x,
+                ClientState::playerAgent_state.camera_state.y,
+                ClientState::playerAgent_state.camera_state.z
+            );
             break;
-
+            
         case SDLK_g:
             toggle_camera_mode();
             break;
@@ -132,6 +136,9 @@ void key_down_handler(SDL_Event* event)
         case SDLK_m:
             toggle_map();
             break;
+
+        case SDLK_r:
+            ClientState::playerAgent_state.action.reload();
 
         case SDLK_t:
             toggle_input_mode();
@@ -164,7 +171,42 @@ void key_down_handler(SDL_Event* event)
         case SDLK_ESCAPE:
             enable_quit();
             break;
-            
+
+        case SDLK_HOME:
+            save_screenshot();
+            break;
+
+        case SDLK_1:
+            ClientState::playerAgent_state.action.switch_weapon(1-1);
+            break;
+        case SDLK_2:
+            ClientState::playerAgent_state.action.switch_weapon(2-1);
+            break;
+        case SDLK_3:
+            ClientState::playerAgent_state.action.switch_weapon(3-1);
+            break;
+        case SDLK_4:
+            ClientState::playerAgent_state.action.switch_weapon(4-1);
+            break;
+        case SDLK_5:
+            ClientState::playerAgent_state.action.switch_weapon(5-1);
+            break;
+        case SDLK_6:
+            ClientState::playerAgent_state.action.switch_weapon(6-1);
+            break;
+        case SDLK_7:
+            ClientState::playerAgent_state.action.switch_weapon(7-1);
+            break;
+        case SDLK_8:
+            ClientState::playerAgent_state.action.switch_weapon(8-1);
+            break;
+        case SDLK_9:
+            ClientState::playerAgent_state.action.switch_weapon(9-1);
+            break;
+        case SDLK_0:
+            ClientState::playerAgent_state.action.switch_weapon(10-1);
+            break;
+
         default: break;
     }
 }
@@ -199,11 +241,24 @@ void mouse_button_down_handler(SDL_Event* event)
 
         case SDL_BUTTON_RIGHT:
             p = &ClientState::playerAgent_state;
-            if (p->you == NULL) break;
-            if (p->you->weapons.active == Weapons::TYPE_block_applier)
+
+            switch (input_state.input_mode)
             {
-                p->action.select_block();
+                case INPUT_STATE_AGENT:
+                    if (p->you == NULL) break;
+                    if (p->you->weapons.can_zoom())
+                        agent_camera->toggle_zoom();
+                    if (p->you->weapons.active == Weapons::TYPE_block_applier)
+                        p->action.select_block();
+                    break;
+
+                case INPUT_STATE_CAMERA:
+                    free_camera->toggle_zoom();
+                    break;
+
+                default: break;
             }
+
             break;
 
         case SDL_BUTTON_MIDDLE:
@@ -211,11 +266,13 @@ void mouse_button_down_handler(SDL_Event* event)
             break;
 
         case 4: // scroll up
-            // switch weapon
+            p = &ClientState::playerAgent_state;
+            p->action.switch_weapon(-1);
             break;
 
         case 5: // scroll down
-            // switch weapon
+            p = &ClientState::playerAgent_state;
+            p->action.switch_weapon(-2);
             break;
 
         default: break;
