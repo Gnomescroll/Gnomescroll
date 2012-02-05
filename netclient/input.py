@@ -100,16 +100,16 @@ class InputGlobal:
     mouse = None
     agentInput = None
 
-    help_menu = False
-    inventory = False
-    can_jump = True
-    scoreboard = False
-    map = False
+    #help_menu = False
+    #inventory = False
+    #can_jump = True
+    #scoreboard = False
+    #map = False
     
-    input = 'camera'
-    _inputs = ('camera', 'agent')
-    camera = 'camera'
-    _cameras = ('camera', 'agent')
+    #input = 'camera'
+    #_inputs = ('camera', 'agent')
+    #camera = 'camera'
+    #_cameras = ('camera', 'agent')
 
 
     @classmethod
@@ -121,38 +121,6 @@ class InputGlobal:
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
-
-    #@classmethod
-    #def _toggle_mode(cls, change, current_mode, type):
-        #modes = getattr(InputGlobal, '_'+type+'s')
-        #current_mode = (current_mode + change) % len(modes)
-        #new_mode_name = modes[current_mode]
-        #if new_mode_name == 'agent' and GameStateGlobal.agent is None:
-            #print "Cannot switch to agent camera - python player agent not assigned yet"
-            #return
-        #setattr(InputGlobal, type, new_mode_name)
-        #return current_mode
-
-    ## toggles through modes.
-    #@classmethod
-    #def toggle_input_mode(cls, change=1, current_mode=[0]):
-        #curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
-        #if curr is not None:
-            #current_mode[0] = curr
-
-    #@classmethod
-    #def toggle_chat(cls):
-        #if cls.input == 'chat':
-            #cls.toggle_input_mode(0)
-        #else:
-            #cls.input = 'chat'
-
-    #@classmethod
-    #def toggle_camera_mode(cls, change=1, current_mode=[0]):
-        #curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
-        #if curr is not None:
-            #current_mode[0] = curr
-
 
 class Mouse(object):
 
@@ -169,7 +137,7 @@ class Mouse(object):
     #1 left, 2 right, 4 scroll up, 5 scroll down
     #state is 0 or 1, 1 if mouse was click, 0 if it was released
     def on_mouse_press(self, x, y, button, state):
-        if InputGlobal.input == 'agent':
+        if init_c_lib.cy_input_state.input_mode == 0:
             if state == 1: #pressed down
                 if button == 1:
                     GameStateGlobal.agent.fire()
@@ -186,7 +154,7 @@ class Mouse(object):
                 pass
 
         if button == 3 and state == 1:  # right click down
-            if InputGlobal.input == 'camera':
+            if init_c_lib.cy_input_state.input_mode == 1:
                 self.main.camera.toggle_zoom()
             elif GameStateGlobal.agent.can_zoom():
                 self.main.agent_camera.toggle_zoom()
@@ -209,7 +177,7 @@ class Keyboard(object):
     # continuous non-character key detection
     #e.g. back space, cursor movement
     def on_text_motion(self, motion):
-        if InputGlobal.input == 'chat':
+        if init_c_lib.cy_input_state.chat:
             callback = ChatClientGlobal.chatClient.input.on_text_motion(motion)
             self._input_callback(callback)
 
@@ -217,76 +185,48 @@ class Keyboard(object):
     # e.g. enter
     def on_key_press(self, symbol, unicode_key):
 
-        if symbol == 'QUIT':
-            GameStateGlobal.exit = True
-        elif symbol == 'f1':
-            save_to_disk()
+        #if symbol == 'QUIT':
+            #GameStateGlobal.exit = True
+        #elif symbol == 'f1':
+            #save_to_disk()
 
-        if InputGlobal.input == 'chat':
+        if init_c_lib.cy_input_state.chat:
             if unicode_key:
                 callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, unicode_key)
                 self._input_callback(callback)
         else:
-            #if symbol == 'y':
-                #InputGlobal.toggle_chat()
-            if InputGlobal.input == 'agent':
+            if init_c_lib.cy_input_state.input_mode == 0:
                 InputGlobal.agentInput.on_key_press(symbol)
-            #if symbol == 'tab':
-                #InputGlobal.scoreboard = not InputGlobal.scoreboard
-            #if symbol == 'escape':
-                #GameStateGlobal.exit = True
 
             self.key_press_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol, unicode_key):
-        if InputGlobal.input == 'agent':
+        if init_c_lib.cy_input_state.input_mode == 0:
             InputGlobal.agentInput.on_key_release(symbol)
         self.key_release_handlers.get(symbol, lambda: None)()
 
     def _init_key_handlers(self):
         self.key_press_handlers = {
-            #"t" : InputGlobal.toggle_input_mode,
-            #"g" : InputGlobal.toggle_camera_mode,
-            #"h" : self.toggle_help_menu,
             "n" : toggle_t_viz_vbo_indicator_style,
             "o" : toggle_terrain_map_blend_mode,
-            #"m" : self.toggle_map,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : init_c_lib._toggle_latency_unit,
-            #'/' : self.toggle_hud,
             '[' : self.cycle_agent_camera_mode,
-            #']' : self.slime_test,
         }
 
         self.key_release_handlers = {
         }
 
-    #def toggle_help_menu(self):
-        #InputGlobal.help_menu = not InputGlobal.help_menu
-
-    #def slime_test(self):
-        #n = 30
-        #init_c_lib.slime_test(n)
-
-    #def toggle_hud(self):
-        #opts.hud = not opts.hud
-
-    #def toggle_inventory(self):
-        #InputGlobal.inventory = not InputGlobal.inventory
-
-    #def toggle_map(self):
-        #InputGlobal.map = not InputGlobal.map
-
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()
 
     def stateHandler(self, keyboard):
-        if InputGlobal.input == 'chat':
+        if init_c_lib.cy_input_state.chat:
             return
-        if InputGlobal.input == 'camera':
+        if init_c_lib.cy_input_state.input_mode == 1:
             self.camera_input_mode(keyboard)
-        elif InputGlobal.input == 'agent':
+        elif init_c_lib.cy_input_state.input_mode == 0:
             self.agent_input_mode(keyboard)
 
     def agent_input_mode(self, keyboard):
@@ -307,9 +247,9 @@ class Keyboard(object):
             boost = 1
         if 'z' in keyboard:
             jet = 1
-        if 'SPACE' in keyboard and InputGlobal.can_jump:
+        if 'SPACE' in keyboard and init_c_lib.cy_input_state.can_jump:
             jump = 1
-            InputGlobal.can_jump = False
+            init_c_lib.cy_input_state.can_jump = False
         if 'LCTRL' in keyboard:
             crouch = 1
         #misc1=misc2=misc3=boost=0
@@ -369,11 +309,8 @@ class AgentInput:
         }
 
         self.key_release_handlers = {
-            #'space': self.enable_jump,
         }
 
-    #def enable_jump(self, symbol):
-        #InputGlobal.can_jump = True
 
     def on_key_press(self, symbol, modifiers=None):
         self.key_press_handlers.get(symbol, lambda s: None)(symbol)
