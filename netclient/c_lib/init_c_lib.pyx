@@ -250,9 +250,6 @@ cdef extern from "./camera/camera.hpp":
         float xu, yu, zu
         float ratio
 
-        bool first_person
-        bool zoomed
-
         void move(float dx, float dy, float dz)
         void set_aspect(float fov, float z_near, float z_far)
         void set_projection(float x, float y, float z, float theta, float phi)
@@ -282,8 +279,6 @@ camera_properties = [
     'xl', 'yl', 'zl',
     'xu', 'yu', 'zu',
     'ratio',
-    'zoomed',
-    'first_person',
 ]
 
 camera_callback = None
@@ -368,11 +363,6 @@ cdef class Camera(object):
             return self.camera.z_near
         elif name == 'z_far':
             return self.camera.z_far
-
-        elif name == 'zoomed':
-            return self.camera.zoomed
-        elif name == 'first_person':
-            return self.camera.first_person
 
         raise AttributeError
 
@@ -754,21 +744,6 @@ class AgentListWrapper:
 ctypedef unsigned char Uint8
 
 cdef extern from "./input/input.hpp":
-    ctypedef struct MouseMotion:
-        int x
-        int y
-        int dx
-        int dy
-        int button
-    ctypedef struct MouseEvent:
-        int x
-        int y
-        int button
-        int state
-
-    ctypedef struct MouseMotionAverage:
-        float x
-        float y
 
 ### call backs
     ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
@@ -778,46 +753,25 @@ cdef extern from "./input/input.hpp":
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
 
-    ctypedef int (*mouse_motion_func)(MouseMotion ms)
-    int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion)
-
-    ctypedef int (*mouse_event_func)(MouseEvent me)
-    int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
-
     ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
     int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
 
-    ctypedef int (*quit_event_func)()
-    int _quit_event_callback(quit_event_func user_func)
-
     cdef extern int _get_key_state(key_state_func key_state_cb)
-    cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-
-    cdef MouseMotionAverage* get_mouse_render_state(int t)
+    cdef extern int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 
     int _init_input()
-
-def get_mouse_deltas(int t):
-    cdef MouseMotionAverage* mm
-    mm = get_mouse_render_state(t)
-    return [mm.x, mm.y]
 
 def get_key_state():
     _get_key_state(&key_state_callback)
 
 key_text_event_callback_stack = []
-mouse_event_callback_stack = []
 
 def process_events():
-    global key_text_event_callback_stack, mouse_event_callback_stack
-    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
+    global key_text_event_callback_stack
+    temp = _process_events(&key_event_callback, &key_text_event_callback)
     while len(key_text_event_callback_stack) != 0:
         (key, key_string, event_state) = key_text_event_callback_stack.pop(0)
         input_callback.keyboard_text_event(key, key_string, event_state)
-
-    while len(mouse_event_callback_stack) != 0:
-        me = mouse_event_callback_stack.pop(0)
-        input_callback.mouse_event(*me)
 
 class Callback_dummy:
     def keyboard_state(self, pressed_keys):
@@ -825,10 +779,6 @@ class Callback_dummy:
     def keyboard_event(self, key):
         pass
     def keyboard_text_event(self, key, key_string, event_type):
-        pass
-    def mouse_event(self, button, state, x, y):
-        pass
-    def mouse_motion(self, x,y,dx,dy,button):
         pass
 
 input_callback = Callback_dummy()
@@ -856,18 +806,6 @@ cdef int key_text_event_callback(char key, char* key_name, int event_state):
     cdef bytes py_string
     py_string = key_name
     key_text_event_callback_stack.append((key, key_string, event_state))
-
-cdef int mouse_motion_callback(MouseMotion ms):
-    global input_callback
-    input_callback.mouse_motion(ms.x,ms.y, ms.dx,-1*ms.dy, ms.button)
-
-cdef int mouse_event_callback(MouseEvent me):
-    global input_callback, mouse_event_callback_stack
-    mouse_event_callback_stack.append((me.button, me.state, me.x, -1*me.y))
-
-cdef int quit_event_callback():
-    global input_callback, key_text_event_callback_stack
-    key_text_event_callback_stack.append((9999, 'QUIT', 1))
 
 # config
 cdef extern from "./input/handlers.hpp":
@@ -954,7 +892,6 @@ HUD
 
 cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
-        bool zoom,
         bool cube_selector,
         bool disconnected,
         bool dead,
@@ -976,7 +913,6 @@ cdef class HUD:
         draw_hud()
     @classmethod
     def set_draw_settings(cls,
-        bool zoom,
         bool cube_selector,
         bool disconnected,
         bool dead,
@@ -988,7 +924,6 @@ cdef class HUD:
         int equipment_slot,
     ):
         set_hud_draw_settings(
-            zoom,
             cube_selector,
             disconnected,
             dead,

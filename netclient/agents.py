@@ -90,20 +90,6 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
     def active_block(self):
         return InputGlobal.cube_selector.active_id
 
-    #@noViewer
-    #def switch_weapons(self, weapon_index):
-        #if weapon_index == 'up':
-            #i = -1
-        #elif weapon_index == 'down':
-            #i = -2
-        #else:
-            #i = weapon_index-1
-
-        #old = self.active_weapon
-        #init_c_lib.PlayerAgentWrapper.switch_weapon(self, i)
-        #if old != self.active_weapon:
-            #self.camera.unzoom()
-
     def hud_equipment_slot(self):
         return self.active_weapon
 

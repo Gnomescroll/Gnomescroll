@@ -49,7 +49,6 @@ event_names = {
 keystate = {}
 
 class InputEventGlobal:
-    mouse = None
     keyboard = None
 
     def keyboard_state(self, pressed_keys):
@@ -85,65 +84,18 @@ class InputEventGlobal:
             keystate[keycode] = 0
             self.keyboard.on_key_release(key, unikey)
         
-    def mouse_event(self, button,state,x,y,):
-        self.mouse.on_mouse_press(x,y,button, state)
-
-    def mouse_motion(self, x,y,dx,dy,button):
-        if button != 0:
-            self.mouse.on_mouse_drag(x,y,dx,dy,button)
-        else:
-            self.mouse.on_mouse_motion(x,y,dx,dy)
-
 class InputGlobal:
     cube_selector = None
     keyboard = None
-    mouse = None
     agentInput = None
-
-    #help_menu = False
-    #inventory = False
-    #can_jump = True
-    #scoreboard = False
-    #map = False
-    
-    #input = 'camera'
-    #_inputs = ('camera', 'agent')
-    #camera = 'camera'
-    #_cameras = ('camera', 'agent')
-
 
     @classmethod
     def init(cls, main):
-        InputGlobal.mouse = Mouse(main)
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.cube_selector = CubeSelector(8,8)
 
-        InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
-
-class Mouse(object):
-
-    def __init__(self, main):
-        self.main = main
-        
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers=None):
-        pass
-
-    def on_mouse_motion(self, x, y, dx, dy):
-        pass
-        
-    #buttons:
-    #1 left, 2 right, 4 scroll up, 5 scroll down
-    #state is 0 or 1, 1 if mouse was click, 0 if it was released
-    def on_mouse_press(self, x, y, button, state):
-        pass
-        #if button == 3 and state == 1:  # right click down
-            #if init_c_lib.cy_input_state.input_mode == 1:
-                #self.main.camera.toggle_zoom()
-            #elif GameStateGlobal.agent.can_zoom():
-                #self.main.agent_camera.toggle_zoom()
-
 
 class Keyboard(object):
 

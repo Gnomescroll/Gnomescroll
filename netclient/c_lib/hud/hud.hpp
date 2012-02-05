@@ -94,7 +94,6 @@ void init();
 
 // CYTHON
 void set_hud_draw_settings(
-    bool zoom,
     bool cube_selector,
     bool disconnected,
     bool dead,

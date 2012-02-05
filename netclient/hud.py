@@ -38,7 +38,7 @@ class Hud(object):
 
         init_c_lib.HUD.set_chat_input_string(ChatClientGlobal.chatRender.user_input())
 
-    def draw(self, fps=None, ping=None, zoom=False):
+    def draw(self, fps=None, ping=None):
 
         draw_cube_selector = GameStateGlobal.agent and GameStateGlobal.agent.active_weapon == 2
 
@@ -65,7 +65,6 @@ class Hud(object):
         draw_equipment = True
 
         init_c_lib.HUD.set_draw_settings(
-            zoom,
             draw_cube_selector,
             draw_disconnected,
             draw_dead,

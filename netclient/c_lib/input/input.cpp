@@ -51,10 +51,11 @@ MouseEvent _mouse_click_event()
     return me;
 }
 
-int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
+int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
+{
     int t; //temp
 
-    if(input_state.mouse_bound) {
+    if (input_state.mouse_bound) {
         SDL_ShowCursor(0);
         SDL_WM_GrabInput(SDL_GRAB_ON);
     } else {
@@ -66,13 +67,11 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
         int event_state = 0;
         char* key_name;
-        MouseEvent me;
-        MouseMotion ms;
 
         switch( Event.type )
         {
             case SDL_QUIT:
-                _quit_event_callback(quit_event_cb);
+                quit_event_handler(&Event);
                 break;
 
             case SDL_KEYDOWN:
@@ -99,25 +98,14 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
             case SDL_MOUSEMOTION:
                 mouse_motion_handler(&Event);
-                
-                ms.x = Event.motion.x;
-                ms.y = Event.motion.y;
-                ms.dx = Event.motion.xrel;
-                ms.dy = Event.motion.yrel;
-                ms.button = Event.motion.state;
-                _mouse_motion_callback(mouse_motion_cb, ms);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
                 mouse_button_down_handler(&Event);
-                me = _mouse_click_event();
-                _mouse_event_callback(mouse_event_cb, me);
                 break;
                 
             case SDL_MOUSEBUTTONUP:
                 mouse_button_up_handler(&Event);
-                me = _mouse_click_event();
-                _mouse_event_callback(mouse_event_cb, me);
                 break;
 
             default: break;
@@ -141,21 +129,6 @@ int _key_event_callback(key_event_func user_func, char key) {
 
 int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name, int event_state) {
     user_func(key, key_name, event_state);
-    return 0;
-}
-
-int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms) {
-    user_func(ms);
-    return 0;
-}
-
-int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
-    user_func(me);
-    return 0;
-}
-
-int _quit_event_callback(quit_event_func user_func) {
-    user_func();
     return 0;
 }
 

@@ -149,7 +149,8 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_y:
-            toggle_chat();
+            if (!input_state.chat)
+                toggle_chat();
             break;
 
         case SDLK_TAB:
@@ -288,4 +289,10 @@ void mouse_button_up_handler(SDL_Event* event)
 // mouse motion
 void mouse_motion_handler(SDL_Event* event)
 {
+}
+
+// quit
+void quit_event_handler(SDL_Event* event)
+{
+    input_state.quit = true;
 }

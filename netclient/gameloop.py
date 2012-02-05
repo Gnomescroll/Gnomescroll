@@ -36,7 +36,7 @@ from game_state import GameStateGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
-from input import Mouse, Keyboard
+from input import Keyboard
 from hud import Hud
 from dat_loader import dat_loader
 
@@ -198,12 +198,10 @@ class App(object):
             P.event("Camera Setup")
             if init_c_lib.cy_input_state.camera_mode == 0:
                 init_c_lib.CyCamera.use_agent_camera()
-                zoomed = self.agent_camera.zoomed
                 if agent:
                     init_c_lib.CyCamera.update_agent_camera()
             else:
                 init_c_lib.CyCamera.use_free_camera()
-                zoomed = self.camera.zoomed
 
             init_c_lib.CyCamera.camera_input_update(delta_tick, opts.invert_mouse, opts.sensitivity)
 
@@ -231,7 +229,7 @@ class App(object):
             if opts.hud:
                 init_c_lib.CyCamera.hud_projection()
                 
-                self.hud.draw(fps=fps_val, ping=ping_val, zoom=zoomed)
+                self.hud.draw(fps=fps_val, ping=ping_val)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)

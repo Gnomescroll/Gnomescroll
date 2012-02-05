@@ -196,6 +196,8 @@ fix scoreboard failure to reset text
 C input framework
 InputGlobal state variables in C
 simple handlers in C
+mouse, quit in C
+
 =============
 
 Spreadsheet to document interactions

@@ -68,18 +68,3 @@ class Camera(object):
         
     def normal(self):
         return self.camera.normal()
-
-    #def toggle_zoom(self):
-        #zoom = not self.zoomed
-        #if zoom:
-            #self.zoom()
-        #else:
-            #self.unzoom()
-            
-    #def zoom(self):
-        #self.zoomed = True
-        #self.camera.set_fov(self.fov / self.zoom_factor)
-
-    #def unzoom(self):
-        #self.zoomed = False
-        #self.camera.set_fov(self.base_fov)

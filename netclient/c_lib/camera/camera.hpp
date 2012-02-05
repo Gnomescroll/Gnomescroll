@@ -58,7 +58,6 @@ void set_camera(CCamera* cam);
 void init_cameras();
 void update_camera_matrices();
 
-//extern int first_person;
 extern int current_camera_id;
 extern CCamera* current_camera;
 extern CCamera* agent_camera;

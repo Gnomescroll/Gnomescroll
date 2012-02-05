@@ -75,7 +75,6 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_draw_settings(
-    bool zoom,
     bool cube_selector,
     bool disconnected,
     bool dead,
@@ -87,7 +86,6 @@ void set_hud_draw_settings(
     int equipment_slot
 )
 {
-    hud_draw_settings.zoom = zoom;
     hud_draw_settings.cube_selector = cube_selector;
     hud_draw_settings.disconnected = disconnected;
     hud_draw_settings.dead = dead;
@@ -111,6 +109,8 @@ void set_hud_draw_settings(
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
+    hud_draw_settings.zoom = current_camera->zoomed;
+
     hud_draw_settings.inventory = input_state.inventory;
     hud_draw_settings.help = input_state.help_menu;
 

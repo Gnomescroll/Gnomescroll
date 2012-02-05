@@ -24,11 +24,6 @@ void set_camera(CCamera* cam) {
     current_camera = cam;
 }
 
-//int first_person = 0;
-//void set_camera_first_person(int fp) {
-    //first_person = fp;
-//}
-
 void init_cameras()
 {
     agent_camera = new CCamera();
