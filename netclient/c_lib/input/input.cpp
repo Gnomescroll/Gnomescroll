@@ -9,8 +9,11 @@ static int numkeys;
 static Uint8* keystate;
 
 int init_input() {
-    keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
+    static int inited = 0;
+    if (inited) return 1;
+    keystate = SDL_GetKeyState(&numkeys);
     SDL_EnableUNICODE( SDL_ENABLE );
+    inited++;
     return 0;
 }
 
@@ -33,13 +36,10 @@ int _get_key_state() {
 
 int _process_events()
 {
-    if (input_state.mouse_bound) {
+    if (input_state.mouse_bound)
         SDL_ShowCursor(0);
-        SDL_WM_GrabInput(SDL_GRAB_ON);
-    } else {
+    else
         SDL_ShowCursor(1);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);       
-    }
     
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 

@@ -199,7 +199,8 @@ simple handlers in C
 mouse, quit in C
 cube selector in C
 agent key down/up events in C
-input.py almost fully deprecated; text entry to chat remains (replace with a buffer)
+chat text entry buffer in C (chat reads this)
+input.py fully deprecated
 =============
 
 Spreadsheet to document interactions
@@ -262,7 +263,7 @@ ORDER:
 HUD --done
 Input   --done
 Camera
-NetServer pool
+NetClient (chat, identity messages need to be moved)
 Chat
 Font
 Main loop
