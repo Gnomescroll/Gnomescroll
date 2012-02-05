@@ -39,15 +39,20 @@ struct cubeProperties* get_cube(int id)
 void set_cube_side_texture(int id, int side, int tex_id);
 int get_cube_side_texture(int id, int side);
 
-inline struct cubeProperties* _get_cube(int id) __attribute((always_inline);
+inline struct cubeProperties* _get_cube(int id) __attribute((always_inline));
 
-inline bool isActive(int id) __attribute((always_inline);
-inline bool isSolid(int id) __attribute((always_inline);
-inline bool isOccludes(int id) __attribute((always_inline);
+inline bool isActive(int id) __attribute((always_inline));
+inline bool isSolid(int id) __attribute((always_inline));
+inline bool isOccludes(int id) __attribute((always_inline));
 
 /*
 Cube Properties
 */
+
+struct cubeProperties* _get_cube(int id)
+{
+    return cube_list + id;
+}
 
 bool isActive(int id) 
 {

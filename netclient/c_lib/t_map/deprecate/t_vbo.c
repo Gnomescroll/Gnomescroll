@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+#include <t_map/t_properties.hpp>
 
 #include <c_lib/SDL/shader_loader.hpp>
 

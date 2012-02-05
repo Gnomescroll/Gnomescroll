@@ -7,7 +7,7 @@
 
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+#include <t_map/t_properties.hpp>
 
 Blood::Blood(int id) {
     create_particle2(&particle, id, BLOOD_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BLOOD_TTL);

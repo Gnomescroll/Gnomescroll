@@ -188,7 +188,7 @@ PART 3: Drawing Functions
 cdef extern from "./t_map/t_vbo_update.hpp" namespace "t_map":
     int update_chunks()
 
-cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
+cdef extern from "./t_map/t_vbo_draw.hpp" namespace "t_map":
     int draw_map()
 
 cpdef _update_chunks():

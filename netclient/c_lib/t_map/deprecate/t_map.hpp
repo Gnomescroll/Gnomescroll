@@ -4,12 +4,12 @@
 
 /*
 #include "t_vbo.h"
-#include "t_properties.h"
+#include "t_properties.hpp"
 */
 
 /*
 #ifndef  t_properties
-#include "t_properties.h"
+#include "t_properties.hpp"
 #endif
 
 #ifndef  t_vbo
