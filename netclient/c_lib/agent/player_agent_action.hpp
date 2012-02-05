@@ -19,7 +19,7 @@ class PlayerAgent_action {
 
         bool switch_weapon(int i);
         void reload();
-        void select_block();
+        int select_block();
         
         void place_spawner();
 

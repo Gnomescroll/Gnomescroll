@@ -157,6 +157,11 @@ void key_down_handler(SDL_Event* event)
             toggle_scoreboard();
             break;
 
+        case SDLK_RETURN:
+            if (!input_state.chat)
+                toggle_chat();
+            break;
+
         case SDLK_SLASH:
             toggle_hud();
             break;
@@ -175,6 +180,19 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_HOME:
             save_screenshot();
+            break;
+
+        case SDLK_LEFT:
+            HudCubeSelector::cube_selector.left();
+            break;
+        case SDLK_RIGHT:
+            HudCubeSelector::cube_selector.right();
+            break;
+        case SDLK_UP:
+            HudCubeSelector::cube_selector.up();
+            break;
+        case SDLK_DOWN:
+            HudCubeSelector::cube_selector.down();
             break;
 
         case SDLK_1:
@@ -250,7 +268,11 @@ void mouse_button_down_handler(SDL_Event* event)
                     if (p->you->weapons.can_zoom())
                         agent_camera->toggle_zoom();
                     if (p->you->weapons.active == Weapons::TYPE_block_applier)
-                        p->action.select_block();
+                    {
+                        int block = p->action.select_block();
+                        if (block)
+                            HudCubeSelector::cube_selector.set_active_id(block);
+                    }
                     break;
 
                 case INPUT_STATE_CAMERA:

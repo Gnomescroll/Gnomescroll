@@ -12,6 +12,7 @@ from math import sin, cos, pi
 from c_lib.terrain_map import toggle_t_viz_vbo_indicator_style, toggle_terrain_map_blend_mode, refresh_map_vbo, toggle_z_buffer, save_to_disk
 
 import camera
+from game_state import GameStateGlobal
 
 #handles special characters
 Keystring = {}
@@ -47,54 +48,12 @@ event_names = {
 }
 
 keystate = {}
-
-class InputEventGlobal:
-    keyboard = None
-
-    def keyboard_state(self, pressed_keys):
-        keyboard = []
-        for keycode in pressed_keys:
-            #try:
-                #print keycode, chr(keycode)
-            #except:
-                #pass
-            temp = Keystring.get(keycode, None)
-            if temp != None:
-                keyboard.append(temp)
-        self.keyboard.stateHandler(keyboard)
-
-    #add support for key pressed/key released
-    def keyboard_text_event(self, keycode, key, event_type):
-        event_name = event_names[event_type]
-
-        try:
-            unikey = unichr(keycode)
-        except:
-            #print 'unichr(keycode) failed. keycode=%d' % (keycode,)
-            unikey = key
-
-        #print "keycode=%d, key=%s, unicode_key=%s" % (keycode, key, unikey,)
-
-        # set keystate map
-        if event_name == 'SDL_KEYDOWN':
-            keystate[keycode] = 1
-            self.keyboard.on_key_press(key, unikey)
-
-        elif event_name == 'SDL_KEYUP':
-            keystate[keycode] = 0
-            self.keyboard.on_key_release(key, unikey)
         
 class InputGlobal:
-    cube_selector = None
     keyboard = None
-    agentInput = None
-
     @classmethod
     def init(cls, main):
         InputGlobal.keyboard = Keyboard(main)
-        InputGlobal.agentInput = AgentInput()
-        cls.cube_selector = CubeSelector(8,8)
-
         InputEventGlobal.keyboard = cls.keyboard
 
 class Keyboard(object):
@@ -102,7 +61,6 @@ class Keyboard(object):
     def __init__(self, main):
         self.main = main
         self.camera = main.camera
-        self.agent_camera = main.agent_camera
         self.key_handlers = {}
 
         self._init_key_handlers()
@@ -127,14 +85,9 @@ class Keyboard(object):
                 callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, unicode_key)
                 self._input_callback(callback)
         else:
-            if init_c_lib.cy_input_state.input_mode == 0:
-                InputGlobal.agentInput.on_key_press(symbol)
-
             self.key_press_handlers.get(symbol, lambda : None)()
 
     def on_key_release(self, symbol, unicode_key):
-        if init_c_lib.cy_input_state.input_mode == 0:
-            InputGlobal.agentInput.on_key_release(symbol)
         self.key_release_handlers.get(symbol, lambda: None)()
 
     def _init_key_handlers(self):
@@ -201,114 +154,43 @@ class Keyboard(object):
         if 'f' in keyboard:
             self.camera.move_camera(0,0,-v)
 
+class InputEventGlobal:
+    keyboard = None
 
-# only calls method if GameStateGlobal.agent is not None
-def requireAgent(f):
-    def requireAgent_wrap(*args, **kwargs):
-        if GameStateGlobal.agent is not None:
-            f(*args, **kwargs)
-    return requireAgent_wrap
+    def keyboard_state(self, pressed_keys):
+        keyboard = []
+        for keycode in pressed_keys:
+            #try:
+                #print keycode, chr(keycode)
+            #except:
+                #pass
+            temp = Keystring.get(keycode, None)
+            if temp != None:
+                keyboard.append(temp)
+        self.keyboard.stateHandler(keyboard)
 
-class AgentInput:
+    #add support for key pressed/key released
+    def keyboard_text_event(self, keycode, key, event_type):
+        event_name = event_names[event_type]
 
-    def __init__(self):
-        self.key_press_handlers = {}
-        self.key_release_handlers = {}
-        self._init_key_handlers()
+        try:
+            unikey = unichr(keycode)
+        except:
+            #print 'unichr(keycode) failed. keycode=%d' % (keycode,)
+            unikey = key
 
-    def _init_key_handlers(self):
-        self.key_press_handlers = {
-            'left':self.adjust_block,
-            'right':self.adjust_block,
-            'up':self.adjust_block,
-            'down':self.adjust_block,
-        }
+        #print "keycode=%d, key=%s, unicode_key=%s" % (keycode, key, unikey,)
 
-        self.key_release_handlers = {
-        }
+        # set keystate map
+        if event_name == 'SDL_KEYDOWN':
+            keystate[keycode] = 1
+            self.keyboard.on_key_press(key, unikey)
 
-    def on_key_press(self, symbol, modifiers=None):
-        self.key_press_handlers.get(symbol, lambda s: None)(symbol)
-
-    def on_key_release(self, symbol):
-        self.key_release_handlers.get(symbol, lambda s: None)(symbol)
-
-    @classmethod
-    @requireAgent
-    def adjust_block(cls, symbol=None, modifiers=None):
-        if GameStateGlobal.agent.active_weapon != 2: # block applier
-            return
-        if symbol == 'left':
-            InputGlobal.cube_selector.left()
-        elif symbol == 'right':
-            InputGlobal.cube_selector.right()
-        elif symbol == 'up':
-            InputGlobal.cube_selector.up()
-        elif symbol == 'down':
-            InputGlobal.cube_selector.down()
-
-
-class CubeSelector(object):
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.n = x*y
-        self.active = 0
-
-    def __setattr__(self, k, v):
-        self.__dict__[k] = v
-        if k == 'active':
-            init_c_lib.HudCubeSelector.set_active_pos(v)
-            #if GameStateGlobal.agent is not None:
-                #GameStateGlobal.agent.set_active_block(self.active_id)
-        elif k == 'active_id':
-            init_c_lib.HudCubeSelector.set_active_id(v)
-
-    def __getattribute__(self, k):
-        if k == 'active_id':
-            return init_c_lib.HudCubeSelector.get_active_id()
-        if k == 'active':
-            return init_c_lib.HudCubeSelector.get_active_pos()
-        return object.__getattribute__(self, k)
-
-    def vertical(self, up=True):
-        shift = -1 if up else 1
-        row = self.active // self.x
-        col = self.active % self.x
-
-        row = (row + shift) % self.y
-        new = (row * self.x) + col
-
-        if new < 0 or new > self.n - 1:
-            return
-        self.active = new
-
-    def up(self):
-        self.vertical(up=True)
-
-    def down(self):
-        self.vertical(up=False)
-
-    def horizontal(self, left=True):
-        shift = -1 if left else 1
-        row = self.active // self.x
-        col = self.active % self.x
-        new = (col + shift) % self.x
-        new += row * self.x
-        if new < 0 or new > self.n - 1:
-            return
-        self.active = new
-
-    def left(self):
-        self.horizontal(left=True)
-
-    def right(self):
-        self.horizontal(left=False)
-
-from game_state import GameStateGlobal
-from chat_client import ChatClientGlobal
-from net_out import NetOut
+        elif event_name == 'SDL_KEYUP':
+            keystate[keycode] = 0
+            self.keyboard.on_key_release(key, unikey)
 
 inputEventGlobal = InputEventGlobal()
 init_c_lib.set_input_callback(inputEventGlobal)
+
+from chat_client import ChatClientGlobal

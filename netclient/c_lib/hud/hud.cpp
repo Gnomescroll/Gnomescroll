@@ -150,7 +150,6 @@ void draw_cursor()
     int len = 0;
     int h = 0;
     HudFont::get_string_pixel_dimension(chat_cursor.text, &len, &h);
-
     int r,g,b;
     r = 100;
     g = 150;
