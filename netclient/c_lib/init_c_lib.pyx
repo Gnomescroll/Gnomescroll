@@ -622,28 +622,21 @@ class AgentListWrapper:
 
 
 """ Input """
-ctypedef unsigned char Uint8
-
 cdef extern from "./input/input.hpp":
 
-### call backs
-    ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
-    int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
-
-    #deprecate
     ctypedef int (*key_event_func)(char key)
     int _key_event_callback(key_event_func user_func, char key)
 
     ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
     int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
 
-    cdef extern int _get_key_state(key_state_func key_state_cb)
+    cdef extern int _get_key_state()
     cdef extern int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb)
 
     int _init_input()
 
 def get_key_state():
-    _get_key_state(&key_state_callback)
+    _get_key_state()
 
 key_text_event_callback_stack = []
 
@@ -668,14 +661,6 @@ def set_input_callback(callback):
     global input_callback
     input_callback = callback
     print "Input Callback Set"
-
-cdef int key_state_callback(Uint8* keystate, int numkeys):
-    global input_callback
-    pressed_keys = []
-    for i in range(0, numkeys):
-        if keystate[i] != 0:
-            pressed_keys.append(i)
-    input_callback.keyboard_state(pressed_keys)
 
 cdef int key_event_callback(char key):
     global input_callback

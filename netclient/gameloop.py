@@ -36,7 +36,6 @@ from game_state import GameStateGlobal
 from input import InputGlobal
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
-from input import Keyboard
 from hud import Hud
 from dat_loader import dat_loader
 
@@ -58,9 +57,6 @@ class App(object):
         ChatClientGlobal.init()
         MapControllerGlobal.init()
         init_c_lib.init()
-
-    def init_inputs(self):
-        InputGlobal.init(self)
 
     def init_sound(self):
         path = './media/sound/wav/'
@@ -85,7 +81,7 @@ class App(object):
 
         self.hud = Hud()
         
-        self.init_inputs()
+        InputGlobal.init()
 
         self.init_sound()
         

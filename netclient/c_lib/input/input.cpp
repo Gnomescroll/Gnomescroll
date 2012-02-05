@@ -16,11 +16,10 @@ int init_input() {
     return 0;
 }
 
-int _get_key_state(key_state_func key_state_cb) {
+int _get_key_state() {
     SDL_PumpEvents();
 
     key_state_handler(keystate, numkeys);
-    _key_state_callback(key_state_cb, keystate, numkeys);
     if(keystate['`'] != 0)
     {
         int x;
@@ -107,11 +106,6 @@ int _process_events(key_event_func keyboard_event_cb, key_text_event_func keyboa
 }
 
 /* Call Backs */
-
-int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys) {
-    user_func(keystate, numkeys);
-    return 0;
-}
 
 int _key_event_callback(key_event_func user_func, char key) {
     user_func(key);
