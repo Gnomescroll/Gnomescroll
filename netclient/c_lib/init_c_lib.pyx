@@ -456,6 +456,7 @@ cdef extern from "./agent/agent_status.hpp":
     cdef cppclass Agent_status:
         bool dead
         int team
+        char* name
 
 #collision box
 cdef extern from "./agent/agent.hpp":
@@ -479,7 +480,6 @@ cdef extern from "./agent/agent.hpp":
         AgentState s
         Agent_collision_box box
         Agent_status status
-        Agent_weapons weapons
 
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
@@ -507,20 +507,12 @@ class AgentWrapper(object):
         'x', 'y', 'z',
         'vx', 'vy', 'vz',
         'theta', 'phi',
-        'x_angle', 'y_angle',
         'crouch_height','c_height',
         'box_height', 'b_height',
         'box_r',
-        'health',
-        'health_max',
         'dead',
         'team',
-        'score',
-        'kills',
-        'deaths',
-        'suicides',
         'name',
-        'coins',
     ]
 
     def __init__(self, int id):
@@ -556,12 +548,6 @@ class AgentWrapper(object):
         elif name == 'phi':
             return a.s.phi
 
-        elif name == 'x_angle': # legacy reasons
-            return a.s.theta
-        elif name == 'y_angle':
-            return a.s.phi
-
-        
         elif name == 'crouch_height' or name == 'c_height':
             return a.box.c_height
         elif name == 'box_height' or name == 'b_height':
@@ -569,31 +555,15 @@ class AgentWrapper(object):
         elif name == 'box_r':
             return a.box.box_r
 
-        elif name == 'health':
-            return a.status.health
-        elif name == 'health_max':
-            return a.status.health_max
         elif name == 'dead':
             return a.status.dead
 
         elif name == 'team':
             return a.status.team
 
-        elif name == 'score':
-            return a.status.score()
-        elif name == 'kills':
-            return a.status.kills
-        elif name == 'deaths':
-            return a.status.deaths
-        elif name == 'suicides':
-            return a.status.suicides
-
         elif name == 'name':
             return a.status.name
 
-        elif name == 'coins':
-            return a.status.coins
-            
         print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
         raise AttributeError
 
@@ -639,11 +609,6 @@ class AgentListWrapper:
     @classmethod
     def add(cls, int id):
         agent_list.get_or_create(id)
-        return id
-
-    @classmethod
-    def remove(cls, int id):
-        agent_list.destroy(id)
         return id
 
     @classmethod

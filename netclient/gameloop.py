@@ -166,16 +166,17 @@ class App(object):
                 #process input
                 init_c_lib.process_events()
                 init_c_lib.get_key_state()
-                if agent:
-                    #agent.set_button_state()
-                    agent.update_sound()
-                    agent.display_agent_names() # out of physics loop
                     
                 init_c_lib.ClientState.tick()
+                if agent:
+                    agent.update_sound()
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
                 print "Physics: %i ticks this frame" % (sl_c)
+
+            if agent:
+                agent.display_agent_names()
 
             '''
                 May only want to send output every 30 ms
