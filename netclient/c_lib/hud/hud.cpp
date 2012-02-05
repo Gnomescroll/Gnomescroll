@@ -4,7 +4,7 @@
 #include <c_lib/hud/cube_selector.hpp>
 #include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
-
+#include <c_lib/input/handlers.hpp>
 /* Configuration */
 namespace Hud
 {
@@ -77,29 +77,18 @@ static struct HudDrawSettings
 void set_hud_draw_settings(
     bool zoom,
     bool cube_selector,
-    bool inventory,
-    bool help,
     bool disconnected,
     bool dead,
     bool fps,
     float fps_val,
     bool ping,
     int ping_val,
-    bool player_stats,
-    bool chat,
-    bool chat_input,
-    bool chat_cursor,
-    bool scoreboard,
     bool equipment,
-    int equipment_slot,
-    bool compass,
-    bool map
+    int equipment_slot
 )
 {
     hud_draw_settings.zoom = zoom;
     hud_draw_settings.cube_selector = cube_selector;
-    hud_draw_settings.inventory = inventory;
-    hud_draw_settings.help = help;
     hud_draw_settings.disconnected = disconnected;
     hud_draw_settings.dead = dead;
     
@@ -115,19 +104,25 @@ void set_hud_draw_settings(
     ping_val = (ping_val < 0) ? 0 : ping_val;
     hud_draw_settings.ping_val = ping_val;
 
-    hud_draw_settings.player_stats = player_stats;
-
-    hud_draw_settings.chat = chat;
-    hud_draw_settings.chat_input = chat_input;
-    hud_draw_settings.chat_cursor = chat_cursor;
-
-    hud_draw_settings.scoreboard = scoreboard;
-
     hud_draw_settings.equipment = equipment;
     hud_draw_settings.equipment_slot = equipment_slot;
+}
 
-    hud_draw_settings.compass = compass;
-    hud_draw_settings.map = map;
+// read game state to decide what to draw
+void update_hud_draw_settings()
+{
+    hud_draw_settings.inventory = input_state.inventory;
+    hud_draw_settings.help = input_state.help_menu;
+
+    hud_draw_settings.player_stats = true;
+
+    hud_draw_settings.chat = true;
+    hud_draw_settings.chat_input = input_state.chat;
+    hud_draw_settings.chat_cursor = input_state.chat;
+
+    hud_draw_settings.compass = true;
+    hud_draw_settings.scoreboard = input_state.scoreboard;
+    hud_draw_settings.map = input_state.map;
 }
 
 static struct ChatCursor

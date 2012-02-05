@@ -192,6 +192,8 @@ Camera uses proper selected camera_state from player agent
 player agent uses agent_camera angles
 
 fix scoreboard failure to reset text
+
+C input framework
 =============
 
 Spreadsheet to document interactions

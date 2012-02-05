@@ -612,14 +612,16 @@ class ChatInputProcessor:
         symbol = symbol.upper()
         #print 'CHAT ON_KEY_PRESS', symbol
         callback = None
+        def _disable_chat_input():
+            init_c_lib.cy_input_state.chat = False
         if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
-                return lambda keyboard: InputGlobal.toggle_chat()
+                return lambda keyboard: _disable_chat_input()
         elif symbol == 'ESCAPE':      # clear, cancel chat
             def callback(input):
                 input.clear()
-                return lambda keyboard: InputGlobal.toggle_chat()
+                return lambda keyboard: _disable_chat_input()
         elif symbol == 'UP':            # up history
             callback = lambda input: input.history_older()
         elif symbol == 'DOWN':        # down history
@@ -766,5 +768,3 @@ class ChatRender:
 
 if __name__ == '__main__':
     ChatClientGlobal.init()
-
-from input import InputGlobal

@@ -83,15 +83,8 @@ class App(object):
         self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
 
         self.hud = Hud()
-
-        #gif_maker()
         
-        def send_agent_pos():
-            if GameStateGlobal.agent is not None:
-                NetOut.sendMessage.agent_position(GameStateGlobal.agent)
-
         self.init_inputs()
-        #init_c_lib.load_skybox()
 
         self.init_sound()
         
@@ -138,7 +131,7 @@ class App(object):
 
         #init_c_lib.slime_test(30)
             
-        while not GameStateGlobal.exit:
+        while not init_c_lib.cy_input_state.quit:
             P2.start_frame() #TEST
             #theta += -.005 #test
             P.start_frame()
@@ -166,8 +159,6 @@ class App(object):
                     break
 
                 init_c_lib.AnimationTick()
-                #if sl_c == 0:
-                #    NetClientStartFrame() #physics tick
 
                 sl_c += 1
 
@@ -177,7 +168,7 @@ class App(object):
                 if agent:
                     agent.set_button_state()
                     agent.update_sound()
-                    agent.display_agent_names()
+                    agent.display_agent_names() # out of physics loop
                     
                 init_c_lib.ClientState.tick()
 
@@ -192,7 +183,6 @@ class App(object):
             NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
             
-
             # start frame
 
             # get ticks for mouse interpolation
@@ -205,7 +195,7 @@ class App(object):
 
             # camera input
             P.event("Camera Setup")
-            if InputGlobal.camera == 'agent':
+            if init_c_lib.cy_input_state.camera_mode == 0:
                 init_c_lib.CyCamera.use_agent_camera()
                 zoomed = self.agent_camera.zoomed
                 if agent:

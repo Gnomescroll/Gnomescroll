@@ -840,10 +840,8 @@ cdef extern from "./input/input.hpp":
 
     cdef extern int _get_key_state(key_state_func key_state_cb)
     cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-#    cdef extern int _set_text_entry_mode(int n)
 
     cdef MouseMotionAverage* get_mouse_render_state(int t)
-#    cdef int _toggle_mouse_bind()
 
     int _init_input()
 
@@ -868,9 +866,6 @@ def process_events():
     while len(mouse_event_callback_stack) != 0:
         me = mouse_event_callback_stack.pop(0)
         input_callback.mouse_event(*me)
-
-#def set_text_entry_mode(int n):
-#    temp = _set_text_entry_mode(n)
 
 class Callback_dummy:
     def keyboard_state(self, pressed_keys):
@@ -922,8 +917,83 @@ cdef int quit_event_callback():
     global input_callback, key_text_event_callback_stack
     key_text_event_callback_stack.append((9999, 'QUIT', 1))
 
-#def toggle_mouse_bind():
-#    return _toggle_mouse_bind()
+# config
+cdef extern from "./input/handlers.hpp":
+
+    cdef enum InputStateMode:
+        INPUT_STATE_AGENT
+        INPUT_STATE_CAMERA
+
+    cdef struct InputState:
+        bool mouse_bound
+        bool help_menu
+        bool inventory
+        bool scoreboard
+        bool map
+        bool chat
+        bool hud
+
+        bool can_jump
+        bool quit
+
+        InputStateMode input_mode
+        InputStateMode camera_mode
+
+    InputState input_state
+
+class CyInputState(object):
+    def __setattr__(self,k,v):
+        if k == 'mouse_bound':
+            input_state.mouse_bound = v
+        elif k == 'help_menu':
+            input_state.help_menu = v
+        elif k == 'inventory':
+            input_state.inventory = v
+        elif k == 'scoreboard':
+            input_state.scoreboard = v
+        elif k == 'map':
+            input_state.map = v
+        elif k == 'chat':
+            input_state.chat = v
+        elif k == 'hud':
+            input_state.hud = v
+        elif k == 'can_jump':
+            input_state.can_jump = v
+        elif k == 'quit':
+            input_state.quit = v
+        elif k == 'input_mode':
+            input_state.input_mode = v
+        elif k == 'camera_mode':
+            input_state.camera_mode = v
+        else:
+            raise AttributeError
+    def __getattribute__(self, k):
+        if k == 'mouse_bound':
+            return input_state.mouse_bound
+        elif k == 'help_menu':
+            return input_state.help_menu
+        elif k == 'inventory':
+            return input_state.inventory
+        elif k == 'scoreboard':
+            return input_state.scoreboard
+        elif k == 'map':
+            return input_state.map
+        elif k == 'chat':
+            return input_state.chat
+        elif k == 'hud':
+            return input_state.hud
+        elif k == 'can_jump':
+            return input_state.can_jump
+        elif k == 'quit':
+            return input_state.quit
+        elif k == 'input_mode':
+            return input_state.input_mode
+        elif k == 'camera_mode':
+            return input_state.camera_mode
+        else:
+            raise AttributeError    
+    
+cy_input_state = CyInputState()
 
 """
 HUD
@@ -934,27 +1004,19 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
         bool zoom,
         bool cube_selector,
-        bool inventory,
-        bool help,
         bool disconnected,
         bool dead,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats,
-        bool chat,
-        bool chat_input,
-        bool chat_cursor,
-        bool scoreboard,
         bool equipment,
         int equipment_slot,
-        bool compass,
-        bool map
     )
     void draw_hud()
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_chat_input_string(char* text)
+    void update_hud_draw_settings()
 
 cdef class HUD:
     @classmethod
@@ -964,44 +1026,26 @@ cdef class HUD:
     def set_draw_settings(cls,
         bool zoom,
         bool cube_selector,
-        bool inventory,
-        bool help,
         bool disconnected,
         bool dead,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats,
-        bool chat,
-        bool chat_input,
-        bool chat_cursor,
-        bool scoreboard,
         bool equipment,
         int equipment_slot,
-        bool compass,
-        bool map
     ):
         set_hud_draw_settings(
             zoom,
             cube_selector,
-            inventory,
-            help,
             disconnected,
             dead,
             fps,
             fps_val,
             ping,
             ping_val,
-            player_stats,
-            chat,
-            chat_input,
-            chat_cursor,
-            scoreboard,
             equipment,
             equipment_slot,
-            compass,
-            map
         )
     @classmethod
     def set_chat_message(cls, i, text, color):
@@ -1014,6 +1058,9 @@ cdef class HUD:
     @classmethod
     def set_chat_input_string(cls, text):
         set_chat_input_string(text)
+    @classmethod
+    def update_hud_draw_settings(cls):
+        update_hud_draw_settings()
 
 """
 Cube Selector

@@ -1,6 +1,3 @@
-import opts
-opts = opts.opts
-
 class GameStateGlobal:
 
     agentList = None
@@ -9,6 +6,5 @@ class GameStateGlobal:
     @classmethod
     def init(cls):
         cls.agentList = AgentList()
-        cls.exit = False
 
 from agents import AgentList

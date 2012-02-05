@@ -95,26 +95,22 @@ class InputEventGlobal:
             self.mouse.on_mouse_motion(x,y,dx,dy)
 
 class InputGlobal:
-    help_menu = False
+    cube_selector = None
     keyboard = None
     mouse = None
     agentInput = None
-    voxel_aligner = None
-    use_voxel_aligner = False
-    inventory = False
-    vn = False
-    can_jump = True
 
-    #hk = False
+    help_menu = False
+    inventory = False
+    can_jump = True
+    scoreboard = False
+    map = False
     
     input = 'camera'
     _inputs = ('camera', 'agent')
     camera = 'camera'
     _cameras = ('camera', 'agent')
 
-    scoreboard = False
-    cube_selector = None
-    map = False
 
     @classmethod
     def init(cls, main):
@@ -122,41 +118,40 @@ class InputGlobal:
         InputGlobal.keyboard = Keyboard(main)
         InputGlobal.agentInput = AgentInput()
         cls.cube_selector = CubeSelector(8,8)
-        #cls.voxel_aligner = VoxelAligner()
 
         InputEventGlobal.mouse = cls.mouse
         InputEventGlobal.keyboard = cls.keyboard
 
-    @classmethod
-    def _toggle_mode(cls, change, current_mode, type):
-        modes = getattr(InputGlobal, '_'+type+'s')
-        current_mode = (current_mode + change) % len(modes)
-        new_mode_name = modes[current_mode]
-        if new_mode_name == 'agent' and GameStateGlobal.agent is None:
-            print "Cannot switch to agent camera - python player agent not assigned yet"
-            return
-        setattr(InputGlobal, type, new_mode_name)
-        return current_mode
+    #@classmethod
+    #def _toggle_mode(cls, change, current_mode, type):
+        #modes = getattr(InputGlobal, '_'+type+'s')
+        #current_mode = (current_mode + change) % len(modes)
+        #new_mode_name = modes[current_mode]
+        #if new_mode_name == 'agent' and GameStateGlobal.agent is None:
+            #print "Cannot switch to agent camera - python player agent not assigned yet"
+            #return
+        #setattr(InputGlobal, type, new_mode_name)
+        #return current_mode
 
-    # toggles through modes.
-    @classmethod
-    def toggle_input_mode(cls, change=1, current_mode=[0]):
-        curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
-        if curr is not None:
-            current_mode[0] = curr
+    ## toggles through modes.
+    #@classmethod
+    #def toggle_input_mode(cls, change=1, current_mode=[0]):
+        #curr = InputGlobal._toggle_mode(change, current_mode[0], 'input')
+        #if curr is not None:
+            #current_mode[0] = curr
 
-    @classmethod
-    def toggle_chat(cls):
-        if cls.input == 'chat':
-            cls.toggle_input_mode(0)
-        else:
-            cls.input = 'chat'
+    #@classmethod
+    #def toggle_chat(cls):
+        #if cls.input == 'chat':
+            #cls.toggle_input_mode(0)
+        #else:
+            #cls.input = 'chat'
 
-    @classmethod
-    def toggle_camera_mode(cls, change=1, current_mode=[0]):
-        curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
-        if curr is not None:
-            current_mode[0] = curr
+    #@classmethod
+    #def toggle_camera_mode(cls, change=1, current_mode=[0]):
+        #curr = InputGlobal._toggle_mode(change, current_mode[0], 'camera')
+        #if curr is not None:
+            #current_mode[0] = curr
 
 
 class Mouse(object):
@@ -227,23 +222,19 @@ class Keyboard(object):
         elif symbol == 'f1':
             save_to_disk()
 
-        if InputGlobal.use_voxel_aligner:
-            InputGlobal.voxel_aligner.keys(symbol)
-            return
-            
         if InputGlobal.input == 'chat':
             if unicode_key:
                 callback = ChatClientGlobal.chatClient.input.on_key_press(symbol, unicode_key)
                 self._input_callback(callback)
         else:
-            if symbol == 'y':
-                InputGlobal.toggle_chat()
+            #if symbol == 'y':
+                #InputGlobal.toggle_chat()
             if InputGlobal.input == 'agent':
                 InputGlobal.agentInput.on_key_press(symbol)
-            if symbol == 'tab':
-                InputGlobal.scoreboard = not InputGlobal.scoreboard
-            if symbol == 'escape':
-                GameStateGlobal.exit = True
+            #if symbol == 'tab':
+                #InputGlobal.scoreboard = not InputGlobal.scoreboard
+            #if symbol == 'escape':
+                #GameStateGlobal.exit = True
 
             self.key_press_handlers.get(symbol, lambda : None)()
 
@@ -254,67 +245,49 @@ class Keyboard(object):
 
     def _init_key_handlers(self):
         self.key_press_handlers = {
-            #"e" : self.toggle_inventory,
-            "t" : InputGlobal.toggle_input_mode,
-            "g" : InputGlobal.toggle_camera_mode,
-            "h" : self.toggle_help_menu,
+            #"t" : InputGlobal.toggle_input_mode,
+            #"g" : InputGlobal.toggle_camera_mode,
+            #"h" : self.toggle_help_menu,
             "n" : toggle_t_viz_vbo_indicator_style,
             "o" : toggle_terrain_map_blend_mode,
-            "m" : self.toggle_map,
-            #'k' : self.toggle_vn,
+            #"m" : self.toggle_map,
             "l" : refresh_map_vbo,
             "v" : toggle_z_buffer,
             "p" : init_c_lib._toggle_latency_unit,
-            ',' : self.toggle_agent_gravity,
-            #'u' : init_c_lib.toggle_mouse_bind,
-            '/' : self.toggle_hud,
-            ';' : self.voxel_aligner_mode_toggle,
+            #'/' : self.toggle_hud,
             '[' : self.cycle_agent_camera_mode,
-            #']': self.hk,
-            ']' : self.slime_test,
+            #']' : self.slime_test,
         }
 
         self.key_release_handlers = {
         }
 
-    def toggle_help_menu(self):
-        InputGlobal.help_menu = not InputGlobal.help_menu
+    #def toggle_help_menu(self):
+        #InputGlobal.help_menu = not InputGlobal.help_menu
 
-    def slime_test(self):
-        n = 30
-        init_c_lib.slime_test(n)
+    #def slime_test(self):
+        #n = 30
+        #init_c_lib.slime_test(n)
 
-    def toggle_hud(self):
-        opts.hud = not opts.hud
+    #def toggle_hud(self):
+        #opts.hud = not opts.hud
 
-    def toggle_inventory(self):
-        InputGlobal.inventory = not InputGlobal.inventory
+    #def toggle_inventory(self):
+        #InputGlobal.inventory = not InputGlobal.inventory
 
-    def toggle_map(self):
-        InputGlobal.map = not InputGlobal.map
-
-    def toggle_vn(self):
-        InputGlobal.vn = not InputGlobal.vn
+    #def toggle_map(self):
+        #InputGlobal.map = not InputGlobal.map
 
     def cycle_agent_camera_mode(self):
         GameStateGlobal.agent.toggle_agent_camera_mode()
 
     def stateHandler(self, keyboard):
-        if InputGlobal.use_voxel_aligner:
-            return
         if InputGlobal.input == 'chat':
             return
         if InputGlobal.input == 'camera':
             self.camera_input_mode(keyboard)
         elif InputGlobal.input == 'agent':
             self.agent_input_mode(keyboard)
-
-    def voxel_aligner_mode_toggle(self):
-        InputGlobal.use_voxel_aligner = not InputGlobal.use_voxel_aligner
-
-    def toggle_agent_gravity(self):
-        print 'toggle agent g'
-        GameStateGlobal.apply_gravity = not GameStateGlobal.apply_gravity
 
     def agent_input_mode(self, keyboard):
         if GameStateGlobal.agent.dead:
@@ -396,11 +369,11 @@ class AgentInput:
         }
 
         self.key_release_handlers = {
-            'space': self.enable_jump,
+            #'space': self.enable_jump,
         }
 
-    def enable_jump(self, symbol):
-        InputGlobal.can_jump = True
+    #def enable_jump(self, symbol):
+        #InputGlobal.can_jump = True
 
     def on_key_press(self, symbol, modifiers=None):
         self.key_press_handlers.get(symbol, lambda s: None)(symbol)
@@ -500,86 +473,6 @@ class CubeSelector(object):
 
     def right(self):
         self.horizontal(left=False)
-
-
-#class VoxelAligner:
-
-    #def __init__(self):
-        #self.num_parts = 6
-        #self.current_part = 0
-        #self.increment = 0.1
-        #self.rot_increment = 0.1 * 360 * 4
-        #import dat.agent_dim as dat
-        #self.dat = dat
-
-    #def keys(self, symbol):
-        #print 'aligner:: ', symbol
-        #if symbol == 'l':
-            #self.switch_part()
-        #elif symbol == 'w':
-            #self.move_part_forward()
-        #elif symbol == 'a':
-            #self.move_part_left()
-        #elif symbol == 's':
-            #self.move_part_backward()
-        #elif symbol == 'd':
-            #self.move_part_right()
-        #elif symbol == 'r':
-            #self.move_part_up()
-        #elif symbol == 'f':
-            #self.move_part_down()
-
-        #elif symbol == 'u':
-            #self.rot1()
-        #elif symbol == 'i':
-            #self.rot2()
-        #elif symbol == 'o':
-            #self.rot3()
-
-        #elif symbol == 'm':
-            #self.save()
-
-        #elif symbol == ';':
-            #InputGlobal.use_voxel_aligner = False
-
-        #elif symbol == 'h':
-            #self.change_speed()
-
-    #def switch_part(self):
-        #self.current_part = (self.current_part + 1) % self.num_parts
-
-    #def move_part_forward(self):
-        #print 'moving part forward'
-        #self.dat.lu2[self.current_part][1] += self.increment
-
-    #def move_part_backward(self):
-        #self.dat.lu2[self.current_part][1] -= self.increment
-
-    #def move_part_left(self):
-        #self.dat.lu2[self.current_part][2] += self.increment
-
-    #def move_part_right(self):
-        #self.dat.lu2[self.current_part][2] -= self.increment
-
-    #def move_part_up(self):
-        #self.dat.lu2[self.current_part][3] += self.increment
-        
-    #def move_part_down(self):
-        #self.dat.lu2[self.current_part][3] -= self.increment
-        
-    #def rot1(self):
-        #self.dat.lu3[self.current_part][0] += self.rot_increment
-    #def rot2(self):
-        #self.dat.lu3[self.current_part][1] += self.rot_increment
-    #def rot3(self):
-        #self.dat.lu3[self.current_part][2] += self.rot_increment
-
-    #def change_speed(self):
-        #self.increment = 0.01 if self.increment == 0.1 else 0.1
-
-    #def save(self):
-        #self.dat.save()
-    
 
 from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal

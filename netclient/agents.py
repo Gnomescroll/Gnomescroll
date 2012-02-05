@@ -158,8 +158,8 @@ class AgentList(GenericObjectListWrapper):
         print "Created python player agent", player_agent,player_agent.id
         GameStateGlobal.agent = player_agent
         # switch from camera to agent input
-        InputGlobal.toggle_input_mode()
-        InputGlobal.toggle_camera_mode()
+        init_c_lib.cy_input_state.input_mode = 0
+        init_c_lib.cy_input_state.camera_mode = 0
         return player_agent
 
     def destroy(self, agent):

@@ -3,7 +3,7 @@
 #include <c_lib/SDL/SDL_functions.h>
 #include <c_lib/input/handlers.hpp>
 
-char getUnicodeValue(SDL_keysym keysym );
+char getUnicodeValue(SDL_keysym keysym);
 
 static SDL_Event Event;
 
@@ -38,7 +38,7 @@ If you want to know what character the user entered (as opposed to what key), tr
 One thing to keep in mind is that the unicode field will only be filled on keydown, not keyup.
 You should also disable the unicode translation as soon as you're finished with it because it caused extra overhead.
 
---for coping w/ ? keys (shift + /)
+--for coping with shifted keys (e.g, ? = shift + /)
 */
 
 MouseEvent _mouse_click_event()
@@ -124,10 +124,6 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
         }
     }
 
-    return 0;
-}
-
-int poll_events(void) {
     return 0;
 }
 
