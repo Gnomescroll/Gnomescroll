@@ -319,7 +319,7 @@ void quit_event_handler(SDL_Event* event)
     input_state.quit = true;
 }
 
-void agent_button_state_handler(Uint8 *keystate, int numkeys)
+void agent_key_state_handler(Uint8 *keystate, int numkeys)
 {
     char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
     f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
@@ -341,8 +341,37 @@ void agent_button_state_handler(Uint8 *keystate, int numkeys)
     ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
 }
 
+void camera_key_state_handler(Uint8 *keystate, int numkeys)
+{
+    const float speed = 0.8f;
+    
+    if (keystate['w'])
+        free_camera->move(speed, 0,0);
+    if (keystate['s'])
+        free_camera->move(-speed,0,0);
+    if (keystate['a'])
+        free_camera->move(0, speed, 0);
+    if (keystate['d'])
+        free_camera->move(0,-speed,0);
+    if (keystate['r'])
+        free_camera->move(0,0,speed);
+    if (keystate['f'])
+        free_camera->move(0,0,-speed);
+}
+
 // keyboard state
 void key_state_handler(Uint8 *keystate, int numkeys)
 {
-    agent_button_state_handler(keystate, numkeys);
+    if (input_state.chat) return;
+    
+    switch (input_state.input_mode)
+    {
+        case INPUT_STATE_AGENT:
+            agent_key_state_handler(keystate, numkeys);
+            break;
+        case INPUT_STATE_CAMERA:
+            camera_key_state_handler(keystate, numkeys);
+            break;
+        default: break;
+    }
 }

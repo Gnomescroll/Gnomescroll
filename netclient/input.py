@@ -102,42 +102,42 @@ class Keyboard(object):
         self.key_release_handlers = {
         }
 
-    def stateHandler(self, keyboard):
-        if init_c_lib.cy_input_state.chat:
-            return
-        if init_c_lib.cy_input_state.input_mode == 1:
-            self.camera_input_mode(keyboard)
+    #def stateHandler(self, keyboard):
+        #if init_c_lib.cy_input_state.chat:
+            #return
+        #if init_c_lib.cy_input_state.input_mode == 1:
+            #self.camera_input_mode(keyboard)
 
-    def camera_input_mode(self, keyboard):
-        v = opts.camera_speed
+    #def camera_input_mode(self, keyboard):
+        #v = opts.camera_speed
 
-        if 'w' in keyboard:
-            self.camera.move_camera(v,0,0)
-        if 's' in keyboard:
-            self.camera.move_camera(-v,0,0)
-        if 'a' in keyboard:
-            self.camera.move_camera(0,v,0)
-        if 'd' in keyboard:
-            self.camera.move_camera(0,-v,0)
-        if 'r' in keyboard:
-            self.camera.move_camera(0,0,v)
-        if 'f' in keyboard:
-            self.camera.move_camera(0,0,-v)
+        #if 'w' in keyboard:
+            #self.camera.move_camera(v,0,0)
+        #if 's' in keyboard:
+            #self.camera.move_camera(-v,0,0)
+        #if 'a' in keyboard:
+            #self.camera.move_camera(0,v,0)
+        #if 'd' in keyboard:
+            #self.camera.move_camera(0,-v,0)
+        #if 'r' in keyboard:
+            #self.camera.move_camera(0,0,v)
+        #if 'f' in keyboard:
+            #self.camera.move_camera(0,0,-v)
 
 class InputEventGlobal:
     keyboard = None
 
     def keyboard_state(self, pressed_keys):
         keyboard = []
-        for keycode in pressed_keys:
-            #try:
-                #print keycode, chr(keycode)
-            #except:
-                #pass
-            temp = Keystring.get(keycode, None)
-            if temp != None:
-                keyboard.append(temp)
-        self.keyboard.stateHandler(keyboard)
+        #for keycode in pressed_keys:
+            ##try:
+                ##print keycode, chr(keycode)
+            ##except:
+                ##pass
+            #temp = Keystring.get(keycode, None)
+            #if temp != None:
+                #keyboard.append(temp)
+        #self.keyboard.stateHandler(keyboard)
 
     #add support for key pressed/key released
     def keyboard_text_event(self, keycode, key, event_type):
