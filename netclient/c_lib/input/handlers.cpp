@@ -38,6 +38,11 @@ void toggle_hud()
     input_state.hud = (!input_state.hud);
 }
 
+void toggle_debug()
+{
+    input_state.debug = (!input_state.debug);
+}
+
 void enable_jump()
 {
     input_state.can_jump = true;
@@ -78,23 +83,30 @@ void toggle_camera_mode()
     }
 }
 
-
 void init_handlers()
 {
     // set input_state defaults
+#ifdef PRODUCTION
+    input_state.mouse_bound = true;
+    input_state.debug = false;
+    input_state.input_mode = INPUT_STATE_AGENT;
+    input_state.camera_mode = INPUT_STATE_AGENT;
+#else
     input_state.mouse_bound = false;
+    input_state.debug = true;
+    input_state.input_mode = INPUT_STATE_CAMERA;
+    input_state.camera_mode = INPUT_STATE_CAMERA;
+#endif
+
     input_state.help_menu = false;
     input_state.inventory = false;
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
     input_state.hud = true;
-    
+
     input_state.can_jump = true;
     input_state.quit = false;
-
-    input_state.input_mode = INPUT_STATE_CAMERA;
-    input_state.camera_mode = INPUT_STATE_CAMERA;
 
     // options
     input_state.invert_mouse = false;
@@ -136,8 +148,7 @@ void teardown_chat_buffer()
 {
     if (chat_input_buffer_sym != NULL)
     {
-        for (int i=0; i<CHAT_BUFFER_SIZE; i++)
-            free(chat_input_buffer_sym[i]);
+        for (int i=0; i<CHAT_BUFFER_SIZE; free(chat_input_buffer_sym[i++]));
         free(chat_input_buffer_sym);
     }
 
@@ -373,19 +384,21 @@ void key_down_handler(SDL_Event* event)
             agent_key_down_handler(event);
         else
             camera_key_down_handler(event);
-    
+
         switch (event->key.keysym.sym)
         {
             case SDLK_b:
-                Animations::agent_bleed(
-                    ClientState::playerAgent_state.camera_state.x,
-                    ClientState::playerAgent_state.camera_state.y,
-                    ClientState::playerAgent_state.camera_state.z
-                );
+                if (input_state.debug)
+                    Animations::agent_bleed(
+                        ClientState::playerAgent_state.camera_state.x,
+                        ClientState::playerAgent_state.camera_state.y,
+                        ClientState::playerAgent_state.camera_state.z
+                    );
                 break;
                 
             case SDLK_g:
-                toggle_camera_mode();
+                if (input_state.debug)
+                    toggle_camera_mode();
                 break;
                 
             case SDLK_h:
@@ -397,7 +410,10 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_t:
-                toggle_input_mode();
+                if (input_state.debug)
+                    toggle_input_mode();
+                else
+                    toggle_chat();
                 break;
                 
             case SDLK_u:
@@ -421,11 +437,13 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_LEFTBRACKET:
-                ClientState::playerAgent_state.toggle_camera_mode();
+                if (input_state.debug)
+                    ClientState::playerAgent_state.toggle_camera_mode();
                 break;
 
             case SDLK_RIGHTBRACKET:
-                Monsters::test(30);
+                if (input_state.debug)
+                    Monsters::test(30);
                 break;
 
             case SDLK_ESCAPE:
@@ -441,6 +459,10 @@ void key_down_handler(SDL_Event* event)
     {
         case SDLK_HOME:
             save_screenshot();
+            break;
+
+        case SDLK_F12:
+            toggle_debug();
             break;
 
         default: break;

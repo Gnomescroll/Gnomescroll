@@ -15,7 +15,8 @@ struct InputState
     bool map;
     bool chat;
     bool hud;
-
+    bool debug;
+    
     bool can_jump;
     bool quit;
 

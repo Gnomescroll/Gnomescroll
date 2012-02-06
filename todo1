@@ -211,6 +211,10 @@ gut dead python network pieces (identify, dat, a few others)
 removed agents.py, game_state.py from server
 removed agents.py, game_state.py from client
 removed last of camera.py
+
+Finish organizing input.cpp
+debug input mode
+#ifdef PRODUCTION for different input state defaults
 =============
 
 Spreadsheet to document interactions
