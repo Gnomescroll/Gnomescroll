@@ -245,40 +245,25 @@ void agent_key_up_handler(SDL_Event* event)
 
 void agent_mouse_down_handler(SDL_Event* event)
 {
-    PlayerAgent_state* p;
-
+    PlayerAgent_state* p = &ClientState::playerAgent_state;
+    if (p->you == NULL) return;
+    
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            p = &ClientState::playerAgent_state;
-            if (p->you == NULL) break;
             p->action.fire();
             break;
 
         case SDL_BUTTON_RIGHT:
-            p = &ClientState::playerAgent_state;
 
-            switch (input_state.input_mode)
+            if (p->you->weapons.can_zoom())
+                agent_camera->toggle_zoom();
+            if (p->you->weapons.active == Weapons::TYPE_block_applier)
             {
-                case INPUT_STATE_AGENT:
-                    if (p->you == NULL) break;
-                    if (p->you->weapons.can_zoom())
-                        agent_camera->toggle_zoom();
-                    if (p->you->weapons.active == Weapons::TYPE_block_applier)
-                    {
-                        int block = p->action.select_block();
-                        if (block)
-                            HudCubeSelector::cube_selector.set_active_id(block);
-                    }
-                    break;
-
-                case INPUT_STATE_CAMERA:
-                    free_camera->toggle_zoom();
-                    break;
-
-                default: break;
+                int block = p->action.select_block();
+                if (block)
+                    HudCubeSelector::cube_selector.set_active_id(block);
             }
-
             break;
 
         case SDL_BUTTON_MIDDLE:
@@ -286,12 +271,10 @@ void agent_mouse_down_handler(SDL_Event* event)
             break;
 
         case 4: // scroll up
-            p = &ClientState::playerAgent_state;
             if (p->action.switch_weapon(-1)) agent_camera->unzoom();
             break;
 
         case 5: // scroll down
-            p = &ClientState::playerAgent_state;
             if (p->action.switch_weapon(-2)) agent_camera->unzoom();
             break;
 
@@ -302,26 +285,26 @@ void agent_mouse_down_handler(SDL_Event* event)
 void agent_mouse_up_handler(SDL_Event* event){}
 void agent_mouse_motion_handler(SDL_Event* event){}
 
-void agent_key_state_handler(Uint8 *keystate, int numkeys)
+void agent_key_state_handler(Uint8 *keystate, int numkeys,
+    char *f, char *b, char *l, char *r,
+    char *jet, char *jump, char *crouch, char *boost,
+    char *m1, char *m2, char *m3
+)
 {
-    char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
-    f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
-
     if (keystate['w'])
-        f = 1;
+        *f = 1;
     if (keystate['s'])
-        b = 1;
+        *b = 1;
     if (keystate['a'])
-        l = 1;
+        *l = 1;
     if (keystate['d'])
-        r = 1;
+        *r = 1;
     if (keystate['z'])
-        jet = 1;
+        *jet = 1;
     if (keystate[' '])
-        jump = 1;
+        *jump = 1;
     if (keystate[306])  // LCTRL
-        crouch = 1;
-    ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
+        *crouch = 1;
 }
 
 
@@ -329,7 +312,18 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys)
 
 void camera_key_down_handler(SDL_Event* event){}
 void camera_key_up_handler(SDL_Event* event){}
-void camera_mouse_down_handler(SDL_Event* event){}
+void camera_mouse_down_handler(SDL_Event* event)
+{
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_RIGHT:
+            free_camera->toggle_zoom();
+            break;
+
+        default: break;
+    }
+}
+
 void camera_mouse_up_handler(SDL_Event* event){}
 void camera_mouse_motion_handler(SDL_Event* event){}
 
@@ -539,12 +533,19 @@ void quit_event_handler(SDL_Event* event)
 // keyboard state
 void key_state_handler(Uint8 *keystate, int numkeys)
 {
-    if (input_state.chat) return;
+    char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
+    f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
+    
+    if (!input_state.chat)
+    {
+        if (input_state.input_mode == INPUT_STATE_AGENT)
+            agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet, &jump, &crouch, &boost, &m1, &m2, &m3);
+        else
+            camera_key_state_handler(keystate, numkeys);
+    }
 
-    if (input_state.input_mode == INPUT_STATE_AGENT)
-        agent_key_state_handler(keystate, numkeys);
-    else
-        camera_key_state_handler(keystate, numkeys);
+    // always set control state
+    ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
 }
 
 
