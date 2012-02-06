@@ -49,7 +49,6 @@ class App(object):
         GameStateGlobal.init()
         NetEventGlobal.init()
         NetOut.init()
-        ChatClientGlobal.init()
         MapControllerGlobal.init()
         init_c_lib.init()
 
@@ -130,6 +129,9 @@ class App(object):
             agent = GameStateGlobal.agent
             if agent is None:
                 GameStateGlobal.agentList.check_for_player_agent()
+
+            if init_c_lib.identified():
+                ChatClientGlobal.init()
 
             P.event("Physics Loop")
             sl_c = 0

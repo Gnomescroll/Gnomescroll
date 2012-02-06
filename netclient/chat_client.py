@@ -15,19 +15,21 @@ from utils import now
 
 class ChatClientGlobal:
     chatClient = None
-
+    chatRender = None
+    _init=False
+    
     @classmethod
-    def init(cls): #first pass is declaring
-        ChatClientGlobal.chatClient = ChatClient()
-        ChatClientGlobal.chatRender = ChatRender()
+    def init(cls):
+        if cls._init: return
+        cls.chatClient = ChatClient()
+        cls.chatRender = ChatRender()
+        cls.chatClient.on_identify()
 
-    @classmethod
-    def on_identify(cls, note=''): # called after client connects
-        ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
-        ChatClientGlobal.chatClient.on_identify()
+        cls._init = True
         
     @classmethod
     def load_buffer_from_c(cls):
+        if cls.chatClient is None: return
         sym_buff, uni_buff = init_c_lib.get_chat_input_buffer()
         cls.chatClient.input.load_buffer(sym_buff, uni_buff)
 

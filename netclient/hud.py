@@ -17,6 +17,8 @@ class Hud(object):
         init_c_lib.Font.init()
 
     def set_chat_messages(self):
+        if ChatClientGlobal.chatRender is None: return
+
         blanks = 0
         for i, msg in enumerate(ChatClientGlobal.chatRender.messages()):
             if not msg.payload.content.strip():

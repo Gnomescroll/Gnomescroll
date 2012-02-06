@@ -176,7 +176,11 @@ inline void agent_create_StoC::handle() {
 inline void agent_name_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);   
+    if (a==NULL)
+    {
+        printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
+        return;
+    }
     a->status.set_name(name);
     a->event.name_changed();
 }
@@ -739,5 +743,9 @@ inline void identify_CtoS::handle()
 
     a->status.set_name(name);
     a->status.identified = true;
+
+    identified_StoC msg;
+    strcpy(msg.name, name);
+    msg.sendToClient(client_id);
 }
 #endif

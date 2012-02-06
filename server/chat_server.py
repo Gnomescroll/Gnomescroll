@@ -33,7 +33,7 @@ class Chat:
     def received(self, msg, connection):
         print 'chatServer received msg:'
         print msg
-        if connection.name is None:
+        if connection.get_name() is None:
             print 'Client %s unidentified, discarding msg' % (connection.id,)
             return
         msg = ChatMessage(msg, connection)
@@ -43,22 +43,24 @@ class Chat:
     def broadcast(self, msg, private=None):
         if msg.payload is None:
             return
-        print 'ChatMessage broadcast'
-        print msg.payload
+        #print 'ChatMessage broadcast'
+        #print msg.payload
         if 'channel' not in msg.payload:
+            print 'channel missing, abort'
             return
-        print self.channels[msg.payload['channel']]
+        #print 'Channel: ', self.channels[msg.payload['channel']]
+        
         for client_id in self.channels[msg.payload['channel']]:
-            print "Broadcasting %s on channel %s to client %d" % (msg.payload['content'], msg.payload['channel'], client_id,)
+            #print "Broadcasting %s on channel %s to client %d" % (msg.payload['content'], msg.payload['channel'], client_id,)
             self.clients[client_id].send(msg)
 
     # connect client
     def connect(self, connection):
         client = ChatClient(connection)
         self.clients[client.id] = client
-        print self.clients
         self.add_channel('pm_'+str(client.id))
         print "client %d connected to chat" % (client.id,)
+        #print 'Clients: ', self.clients
 
     # disconnect client
     def disconnect(self, connection):
@@ -67,7 +69,7 @@ class Chat:
         client = self.clients[connection.id]
         self.remove(client) 
         self.remove_channel('pm_' + str(client.id))
-        print 'chat disconnected client'
+        #print 'chat disconnected client'
 
     # remove client
     def remove(self, client):
@@ -75,7 +77,7 @@ class Chat:
             if channel in self.channels and client.id in self.channels[channel]:
                 self.channels[channel].remove(client.id)
         del self.clients[client.id]
-        print 'chat removed client'
+        #print 'chat removed client'
 
     def client_listen(self, connection, channel=None):
 
@@ -94,7 +96,7 @@ class Chat:
 
         client = self.clients.get(connection.id, None)
         if client is None:
-            print 'client_listen: client unknown'
+            print 'client_listen: client %d unknown' % connection.id
             return
 
         if channel is None:

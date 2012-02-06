@@ -473,6 +473,7 @@ cdef extern from "./agent/player_agent.hpp":
         float camera_height()
         void update_sound()
         void display_agent_names()
+        bool identified
 
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
@@ -921,5 +922,6 @@ class ClientState(object):
 
 def identify(name):
     send_identify_packet(name)
-
+def identified():
+    return playerAgent_state.identified
 

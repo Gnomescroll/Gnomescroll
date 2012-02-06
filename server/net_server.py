@@ -30,9 +30,14 @@ class PyClient:
         self.sendMessage = SendMessage(self)
 
         self.loaded_once = False
-        self.name = None #leave this
         self.agent = GameStateGlobal.agentList.create(self.client_id)
         self.agent.send_id_to_client(self.client_id)
+
+    def get_name(self):
+        if not init_c_lib.client_identified(self.client_id):
+            return None
+        return self.agent.name
+        
 
     def ready(self):
         if not init_c_lib.client_identified(self.client_id) or self.loaded_once:
