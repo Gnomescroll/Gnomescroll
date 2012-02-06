@@ -1,12 +1,6 @@
-import opts
-opts = opts.opts
-
 import atexit
-import select
-import socket
 import json
 import struct
-import platform
 
 import init_c_lib
 import c_lib.terrain_map as cMap
@@ -23,16 +17,9 @@ from net_out import SendMessage
 from net_event import NetEvent
 from game_state import GameStateGlobal
 
-#for creation of client
-#NetServer.connectionPool.add_client(connection, address) #hand off connection to connection pool
-
-# manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
-
 from init_c_lib import connected, _send_python_net_message
 
 class PyClient:
-
-    #MAX_NAME_LENGTH = 15
 
     def __init__(self, client_id):
 

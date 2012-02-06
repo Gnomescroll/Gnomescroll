@@ -314,19 +314,12 @@ class MiscMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'ping'  :   self.ping,
-            #'identify': self.identify,
         }
 
     @logError('ping')
     @requireKey('timestamp')
     def ping(self, msg, connection, ts):
         connection.sendMessage.ping(ts)
-
-    #@logError('identify')
-    #@requireKey('name')
-    #def identify(self, msg, conn, name):
-        #conn.identify(name)
-
 
 class MapMessageHandler(GenericMessageHandler):
 

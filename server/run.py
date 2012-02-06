@@ -21,7 +21,6 @@ import map_gen
 import init_c_lib
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
-import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck

@@ -9,22 +9,18 @@ Client network outgoing
 class NetOut:
     sendPacket = None
 
-    sendMessage = None
     mapMessage = None
     adminMessage = None
     chatMessage = None
     miscMessage = None
-    datMessage = None
 
     @classmethod
     def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
-        cls.sendMessage = SendMessage()
         cls.mapMessage = MapMessage()
         cls.adminMessage = AdminMessage()
         cls.chatMessage = ChatMessage()
         cls.miscMessage = MiscMessage()
-        cls.datMessage = DatMessage()
         
     @classmethod
     def send_json(cls, dict):
@@ -81,29 +77,10 @@ class GenericMessage:
         self.__class__.__dict__[cmd](self, *args, **kwargs)
 
 
-class SendMessage(GenericMessage):
-
-    @idRequired
-    @sendJSON('received_client_id')
-    def received_client_id(self):
-        return True
-    #@sendJSON('identify')
-    #def identify(self, name=None):
-        #if name is None:
-            #name = NetClientGlobal.name
-        #return {
-            #'name': name,
-        #}
-
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
         return { 'timestamp' : init_c_lib.get_ticks() }
-
-class DatMessage:
-    @sendJSON('dat_loaded')
-    def loaded(self):
-        return True
 
 class MapMessage:
 
