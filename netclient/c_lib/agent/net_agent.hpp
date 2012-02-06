@@ -698,37 +698,24 @@ class agent_coins_StoC: public FixedSizeReliableNetPacketToClient<agent_coins_St
 
 /* Identification */
 
-//class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
+class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
+{
+    public:
+        char name[PLAYER_NAME_MAX_LENGTH];
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
-//class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//const int IDENTIFY_FAIL_NOTES_MAX_LENGTH = 63;
-//class identify_fail_StoC: public FixedSizeReliableNetPacketToClient<identify_fail_StoC>
-//{
-    //public:
-        //char note[IDENTIFY_FAIL_NOTES_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(note, IDENTIFY_FAIL_NOTES_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
+class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
+{
+    public:
+        char name[PLAYER_NAME_MAX_LENGTH];
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
+        inline void handle();
+};

@@ -3,16 +3,9 @@ Agents:
     Objects through which a Player experiences the game world
 '''
 
-import opts
-opts = opts.opts
-
-
 import init_c_lib
-import c_lib.terrain_map as terrainMap
 
 from game_state import GameStateGlobal
-from net_out import NetOut
-import camera
 from object_lists import GenericObjectList, GenericObjectListWrapper
 
 '''
@@ -26,9 +19,6 @@ class Agent(init_c_lib.AgentWrapper):
         self.you = False
         print 'Python Agent creation: id %s' % (self.id,)
 
-    def update_info(self, **agent):
-        pass
-
     def __getattribute__(self, name):
         try:
             val = init_c_lib.AgentWrapper.__getattribute__(self, name)
@@ -36,21 +26,6 @@ class Agent(init_c_lib.AgentWrapper):
             val = object.__getattribute__(self, name)
             
         return val
-
-# decorators
-def noViewer(f):
-    def outer(*args, **kwargs):
-        self = args[0]
-        if self.team is not None and not self.is_viewer():
-            return f(*args, **kwargs)
-    return outer
-
-def requireCamera(f):
-    def outer(*args, **kwargs):
-        self = args[0]
-        if self.camera is not None:
-            return f(*args, **kwargs)
-    return outer
 
 '''
 Client's player's agent
@@ -60,9 +35,7 @@ class PlayerAgent(Agent, init_c_lib.PlayerAgentWrapper):
     def __init__(self, id):
         Agent.__init__(self, id)
         init_c_lib.PlayerAgentWrapper.__init__(self, id)
-
         self.you = True
-        self.camera = None
 
     def __getattribute__(self, name):
         try:

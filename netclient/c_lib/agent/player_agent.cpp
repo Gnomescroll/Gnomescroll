@@ -276,7 +276,8 @@ void PlayerAgent_state::update_sound() {
 
 PlayerAgent_state::PlayerAgent_state()
 :
-action(this)
+action(this),
+identified(false)
 {
     //init
     static int inited=0;

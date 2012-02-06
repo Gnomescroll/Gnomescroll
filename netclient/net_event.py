@@ -166,7 +166,7 @@ class ClientMessageHandler(GenericMessageHandler):
 
     events = {
         'identified' : '_identified',
-        'identify_fail' : '_identify_fail',
+        #'identify_fail' : '_identify_fail',
     }
 
     def _identified(self, **msg):
@@ -186,28 +186,28 @@ class ClientMessageHandler(GenericMessageHandler):
         ChatClientGlobal.on_identify(note)
         return True
 
-    used_alt = False
-    MAX_NAME_LENGTH = 15
-    def _identify_fail(self, msg, **arg):
-        # send system notification
-        if self.used_alt:
+    #used_alt = False
+    #MAX_NAME_LENGTH = 15
+    #def _identify_fail(self, msg, **arg):
+        ## send system notification
+        #if self.used_alt:
 
-            # add some numbers to the name
-            new_name = opts.name
-            ext = "%03d" % (random.randrange(0,1000),)
-            new_name = new_name[:self.MAX_NAME_LENGTH-len(ext)]
-            new_name += ext
-            NetOut.sendMessage.identify(name=new_name)
+            ## add some numbers to the name
+            #new_name = opts.name
+            #ext = "%03d" % (random.randrange(0,1000),)
+            #new_name = new_name[:self.MAX_NAME_LENGTH-len(ext)]
+            #new_name += ext
+            #NetOut.sendMessage.identify(name=new_name)
 
-            # alternate UI: REQUEST NEW NAME
-            #ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
-            #ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
-            ## activate chat, insert /nick
-            #init_c_lib.cy_input_state.chat = True
-            #ChatClientGlobal.chatClient.insert_string('/nick ')
-        else:
-            NetOut.sendMessage.identify(name=opts.alt_name)
-            self.used_alt = True
+            ## alternate UI: REQUEST NEW NAME
+            ##ChatClientGlobal.chatClient.system_notify('/identify_fail '+msg)
+            ##ChatClientGlobal.chatClient.system_notify('/identify_fail Use /nick to set name.')
+            ### activate chat, insert /nick
+            ##init_c_lib.cy_input_state.chat = True
+            ##ChatClientGlobal.chatClient.insert_string('/nick ')
+        #else:
+            #NetOut.sendMessage.identify(name=opts.alt_name)
+            #self.used_alt = True
 
 class DatMessageHandler(GenericMessageHandler):
     events = {

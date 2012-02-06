@@ -204,6 +204,12 @@ input.py fully deprecated
 Alt-tab restored
 =============
 
+Feb 05
+
+Camera.py gutted
+
+=============
+
 Spreadsheet to document interactions
 e.g.
 Client fires weapon:
@@ -218,7 +224,7 @@ OpenAL ? (wav easy, but others hard?)
 
 Icons on map (angus)
 
-Client side jump physics (server is snapping)
+When head in ceiling, cant move laterally
 
 Turrets
 

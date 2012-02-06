@@ -227,8 +227,18 @@ inline void agent_coins_StoC::handle()
     a->event.coins_changed(coins);
 }
 
-//inline void identified_StoC::handle(){}
-//inline void identify_fail_StoC::handle(){}
+inline void identified_StoC::handle()
+{
+    Agent_state* a = ClientState::playerAgent_state.you;
+    if (a == NULL)
+    {
+        printf("identified_StoC -- identified as %s but player agent not assigned\n", name);
+        return;
+    }
+    printf("Identified as %s\n", name);
+    ClientState::playerAgent_state.identified = true;
+    a->status.set_name(name);
+}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -242,7 +252,7 @@ inline void agent_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
-//inline void identify_CtoS::handle(){}
+inline void identify_CtoS::handle(){}
 #endif
 
 // Client -> Server handlers
@@ -273,8 +283,7 @@ inline void AgentActiveWeapon_StoC::handle() {}
 inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void agent_coins_StoC::handle() {}
-//inline void identified_StoC::handle(){}
-//inline void identify_fail_StoC::handle(){}
+inline void identified_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -643,11 +652,6 @@ inline void agent_block_CtoS::handle() {
         {
             Agent_state* agent = ServerState::agent_list.a[i];
             if (agent == NULL || agent == a) continue;
-            //if (cube_intersects(
-                //agent->s.x, agent->s.y, agent->s.z,
-                //0.3, 0.3, agent->box.b_height,
-                //x,y,z,
-                //1, 1, 1))
             if (agent_collides_terrain(agent))
             {
                 collides = true;
@@ -682,6 +686,18 @@ inline void place_spawner_CtoS::handle()
     s->create_message(&msg);
     msg.broadcast();
 }
+
+inline void identify_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL)
+    {
+        printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
+        return;
+    }
+    a->status.set_name(name);
+}
+
 #endif
 
 /***************************/
@@ -708,14 +724,3 @@ inline void Spawner_destroy_StoC::handle()
 inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
 #endif
-
-//inline void identify_CtoS::handle()
-//{
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a==NULL)
-    //{
-        //printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
-        //return;
-    //}
-    //a->status.set_name(name, a->id);
-//}

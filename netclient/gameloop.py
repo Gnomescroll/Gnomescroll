@@ -14,10 +14,6 @@ import opts
 opts.opts = args_client.get_args()
 opts = opts.opts
 
-import math
-import time
-import random
-
 import stats
 import camera
 
@@ -42,7 +38,7 @@ from dat_loader import dat_loader
 
 init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
-c_lib.terrain_map.set_view_distance(128) #set view distance for terrain map
+c_lib.terrain_map.set_view_distance(256) #set view distance for terrain map
 
 P2 = c_lib.terrain_map.Profiler()
 
@@ -72,23 +68,16 @@ class App(object):
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
         
-        camera.set_callback(c_lib.terrain_map.camera_callback)
+        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent')
         self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='free')
         init_c_lib.CyCamera.use_free_camera()
-        #self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent', first_person=True)
-        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent')
+        camera.set_callback(c_lib.terrain_map.camera_callback)
 
         self.hud = Hud()
 
         self.init_sound()
         
         print "App init finished"
-
-    def _exit(self):
-        GameStateGlobal.exit = True
-
-    def _on_close(self):
-        ChatClientGlobal.chatClient.save()
 
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
@@ -139,9 +128,7 @@ class App(object):
             _max = 0.9
 
             agent = GameStateGlobal.agent
-            if agent:
-                agent.camera = self.agent_camera
-            else:
+            if agent is None:
                 GameStateGlobal.agentList.check_for_player_agent()
 
             P.event("Physics Loop")
@@ -268,6 +255,5 @@ if __name__ == '__main__':
     app.mainLoop()
 else:
     print "Not Run as Main!"
-#app.mainLoop()
 
 sys.exit()

@@ -207,6 +207,7 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_r:
             ClientState::playerAgent_state.action.reload();
+            break;
 
         case SDLK_t:
             toggle_input_mode();
