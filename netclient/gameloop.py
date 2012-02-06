@@ -15,7 +15,6 @@ opts.opts = args_client.get_args()
 opts = opts.opts
 
 import stats
-import camera
 
 import c_lib.terrain_map
 import init_c_lib
@@ -65,10 +64,7 @@ class App(object):
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
         
-        self.agent_camera = camera.Camera(x=0., z=50., fov=opts.fov, name='agent')
-        self.camera = camera.Camera(x=64., y=64., z=128., fov=opts.fov, name='free')
-        init_c_lib.CyCamera.use_free_camera()
-        camera.set_callback(c_lib.terrain_map.camera_callback)
+        init_c_lib.camera_callback = c_lib.terrain_map.camera_callback
 
         self.hud = Hud()
 

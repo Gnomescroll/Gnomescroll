@@ -210,6 +210,7 @@ Camera.py gutted
 Identification in C
 gut dead python network pieces (identify, dat, a few others)
 removed agents.py, game_state.py from server
+removed agents.py, game_state.py from client
 =============
 
 Spreadsheet to document interactions
@@ -270,11 +271,17 @@ PYTHON DEPRECATION:
 ORDER:
 HUD --done
 Input   --done
-Camera
+Camera  -- mostly done
+Agents --dont
 NetClient (chat, identity messages need to be moved)
 Chat
 Font
 Main loop
+
+Remaining:
+chat (messages, logic)
+python map (waiting for brandon)
+--Then can get rid of python network
 
 Leave:
 settings.py

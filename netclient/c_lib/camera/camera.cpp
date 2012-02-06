@@ -28,9 +28,13 @@ void init_cameras()
 {
     agent_camera = new CCamera();
     agent_camera->first_person = true;
-
+    agent_camera->set_state(0,0,50.0f);
+    agent_camera->set_fov(85.0f);
+    
     free_camera = new CCamera();
     free_camera->first_person = false;
+    free_camera->set_state(64,64,128);
+    free_camera->set_fov(85.0f);
 
     current_camera = free_camera;
 }
@@ -105,6 +109,13 @@ void CCamera::set_dimensions() {
     x_size = _xresf;
     y_size = _yresf;
     ratio = x_size / y_size;
+}
+
+void CCamera::set_state(float x, float y, float z)
+{
+    this->x = x;
+    this->y = y;
+    this->z = z;
 }
 
 void CCamera::pan(float dx, float dy) {    // args are deltas

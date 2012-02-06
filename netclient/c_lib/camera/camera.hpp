@@ -39,7 +39,8 @@ class CCamera {
         void set_fov(float fov);
         void move(float dx, float dy, float dz);
         void set_angles(float theta, float phi);
-
+        void set_state(float x, float y, float z);
+        
         void forward_vector(float f[3]);
         
         void hud_projection();
