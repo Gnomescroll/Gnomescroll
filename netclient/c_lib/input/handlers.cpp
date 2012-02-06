@@ -101,6 +101,15 @@ void init_handlers()
     input_state.sensitivity = 100.0f;
 }
 
+// options
+void set_input_options(
+    bool invert_mouse,
+    float sensitivity
+)
+{
+    input_state.invert_mouse = invert_mouse;
+    input_state.sensitivity = sensitivity;
+}
 
 /* Chat buffer */
 
@@ -546,15 +555,4 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 
     // always set control state
     ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
-}
-
-
-// options
-void set_input_options(
-    bool invert_mouse,
-    float sensitivity
-)
-{
-    input_state.invert_mouse = invert_mouse;
-    input_state.sensitivity = sensitivity;
 }

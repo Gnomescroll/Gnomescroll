@@ -12,7 +12,7 @@ int init_input() {
     static int inited = 0;
     if (inited) return 1;
     keystate = SDL_GetKeyState(&numkeys);
-    SDL_EnableUNICODE( SDL_ENABLE );
+    SDL_EnableUNICODE(SDL_ENABLE);
     inited++;
     return 0;
 }
@@ -23,11 +23,9 @@ int get_key_state() {
     key_state_handler(keystate, numkeys);
     if(keystate['`'] != 0)
     {
-        int x;
-        for(x=0; x<numkeys; x++)
-        {
+        for(int x=0; x<numkeys; x++)
             if(keystate[x] != 0) printf("%i='%c' ", x, (char)x);
-        }
+
         printf("\n");
     }
 
@@ -83,29 +81,23 @@ int process_events()
     return 0;
 }
 
-char getUnicodeValue(SDL_keysym keysym ) {
+// Taken from somewhere on the internet:
+char getUnicodeValue(SDL_keysym keysym) {
     // magic numbers courtesy of SDL docs :)
     const int INTERNATIONAL_MASK = 0xFF80, UNICODE_MASK = 0x7F;
     int uni = keysym.unicode;
-    if( uni == 0 ) // not translatable key (like up or down arrows)
-    {
+    if (uni == 0) // not translatable key (like up or down arrows)
         return 0;
-    }
-    if( ( uni & INTERNATIONAL_MASK ) == 0 )
+
+    if ((uni & INTERNATIONAL_MASK) == 0)
     {
-        if( SDL_GetModState() & KMOD_SHIFT )
-        {
+        if (SDL_GetModState() & KMOD_SHIFT)
             return (char)(toupper(uni & UNICODE_MASK));
-        }
         else
-        {
             return (char)(uni & UNICODE_MASK);
-        }
     }
     else // we have a funky international character. one we can't read :(
-    {        // we could do nothing, or we can just show some sign of input, like so:
-    return '?';
-    }
+        return '?';
 }
 
 /* Separate Mouse querying for physics-independent camera */
@@ -117,51 +109,50 @@ static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
 #define INITIAL_MOUSE_WEIGHT 1.0f
 
-static inline float _mouse_weight(float t) {
+static inline float _mouse_weight(float t)
+{
     return INITIAL_MOUSE_WEIGHT * pow(MOUSE_BUFFER_DECAY, t/TICK_DURATION);
 }
 
-#define MOUSE_AXIS_AVERAGE(AXIS) \
-static inline float mouse_axis_average_##AXIS() { \
-    float total = 0.0f; \
-    float divisor = 0.0f; \
-    float t = 0.0f;\
-\
-    int i, index; \
-    float weight;\
-\
-    for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { \
-        index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; \
-\
-        weight = _mouse_weight(t);\
-        divisor += weight; \
-\
-        total += mouse_input_buffer_##AXIS[index] * weight; \
-\
-        t += mouse_input_buffer_timestamps[index];\
-    } \
-\
-    total /= divisor; \
-\
-    return total; \
+static inline float mouse_axis_average(int* buffer)
+{ 
+    float total = 0.0f; 
+    float divisor = 0.0f; 
+    float t = 0.0f;
+
+    int i, index; 
+    float weight;
+
+    for (i=0; i<MOUSE_INPUT_BUFFER_SIZE; i++) { 
+        index = (MOUSE_INPUT_BUFFER_SIZE + mouse_buffer_index - i) % MOUSE_INPUT_BUFFER_SIZE; 
+
+        weight = _mouse_weight(t);
+        divisor += weight; 
+
+        total += buffer[index] * weight; 
+
+        t += mouse_input_buffer_timestamps[index];
+    } 
+
+    total /= divisor; 
+
+    return total; 
 }
 
-MOUSE_AXIS_AVERAGE(x)
-MOUSE_AXIS_AVERAGE(y)
-
-static inline void calculate_mouse_state(int t) { // t is time since last tick
-
+static inline void calculate_mouse_state(int t) // t is time since last tick
+{
     SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
 
     mouse_input_buffer_timestamps[mouse_buffer_index] = (float)t;
-    mm.x = mouse_axis_average_x();
-    mm.y = mouse_axis_average_y();
+    mm.x = mouse_axis_average(mouse_input_buffer_x);
+    mm.y = mouse_axis_average(mouse_input_buffer_y);
 
     mouse_buffer_index++;
     mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
 }
 
-struct MouseMotionAverage* get_mouse_render_state(int t) {
+struct MouseMotionAverage* get_mouse_render_state(int t)
+{
     calculate_mouse_state(t);
     return &mm;
 }
