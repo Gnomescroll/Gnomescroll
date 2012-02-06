@@ -587,7 +587,7 @@ void Scoreboard::update()
         }
         j++;
 
-        ClientState::get_team_color(agent->status.team, &r, &g, &b);
+        ClientState::ctf.get_team_color(agent->status.team, &r, &g, &b);
         
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
@@ -626,7 +626,7 @@ void Scoreboard::update()
             team_scores[i]->set_text((char*)"");
             continue;
         }
-        ClientState::get_team_color(i+1, &r, &g, &b);
+        ClientState::ctf.get_team_color(i+1, &r, &g, &b);
         team_names[i]->set_position(team_name_pos[i].x, _yresf - team_name_pos[i].y);
         team_names[i]->update_formatted_string(1, ClientState::ctf.get_team_name(i+1));
         team_names[i]->set_color(r,g,b,a);

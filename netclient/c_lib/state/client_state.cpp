@@ -47,12 +47,6 @@ namespace ClientState {
         slime_list.update();
     }
 
-
-    int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
-    {
-        return ctf.get_team_color(team, r,g,b);
-    }
-
     void set_PlayerAgent_id(int id) {
         playerAgent_state.set_PlayerAgent_id(id);
         ctf.on_ready();
