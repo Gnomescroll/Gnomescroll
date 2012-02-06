@@ -240,6 +240,23 @@ inline void identified_StoC::handle()
     a->status.set_name(name);
 }
 
+inline void Spawner_create_StoC::handle()
+{
+    Spawner* s = ClientState::spawner_list.create(id, x,y,z);
+    if (s==NULL)
+    {
+        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        return;
+    }
+    s->set_team(team);
+    s->set_owner(owner);
+    s->init_vox();
+}
+inline void Spawner_destroy_StoC::handle()
+{
+    ClientState::spawner_list.destroy(id);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -284,6 +301,8 @@ inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
+inline void Spawner_create_StoC::handle() {}
+inline void Spawner_destroy_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
@@ -687,6 +706,17 @@ inline void place_spawner_CtoS::handle()
     msg.broadcast();
 }
 
+const char DEFAULT_PLAYER_NAME[] = "Clunker";
+
+void adjust_name(char* name, unsigned int len)
+{
+    if (len >= (int)(PLAYER_NAME_MAX_LENGTH - 4))
+    {
+        name[PLAYER_NAME_MAX_LENGTH-4-1] = '\0';
+    }
+    sprintf(name, "%s%04d", name, randrange(0,9999));
+}
+
 inline void identify_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
@@ -695,32 +725,19 @@ inline void identify_CtoS::handle()
         printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
         return;
     }
+    printf("Rceived name %s\n", name);
+    unsigned int len = strlen(name);
+
+    if (len == 0)
+        strcpy(name, DEFAULT_PLAYER_NAME);
+
+    if (len >= PLAYER_NAME_MAX_LENGTH)
+        name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
+
+    while (!ServerState::agent_list.name_available(name))
+        adjust_name(name, len);
+
     a->status.set_name(name);
+    a->status.identified = true;
 }
-
-#endif
-
-/***************************/
-#ifdef DC_CLIENT
-inline void Spawner_create_StoC::handle()
-{
-    Spawner* s = ClientState::spawner_list.create(id, x,y,z);
-    if (s==NULL)
-    {
-        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
-        return;
-    }
-    s->set_team(team);
-    s->set_owner(owner);
-    s->init_vox();
-}
-inline void Spawner_destroy_StoC::handle()
-{
-    ClientState::spawner_list.destroy(id);
-}
-#endif
-
-#ifdef DC_SERVER
-inline void Spawner_create_StoC::handle() {}
-inline void Spawner_destroy_StoC::handle() {}
 #endif

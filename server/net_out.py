@@ -144,19 +144,19 @@ class SendMessage: #each connection has one of these
         msg = self.get_json_compressed(d, zlib)
         self.client.send(msg)
 
-    @sendJSON('identify_fail')
-    def identify_fail(self, connection, notes=''):
-        return {
-            'msg'   : notes,
-        }
+    #@sendJSON('identify_fail')
+    #def identify_fail(self, connection, notes=''):
+        #return {
+            #'msg'   : notes,
+        #}
 
-    @sendJSON('identified')
-    def identified(self, connection, msg=''):
-        print 'Identified'
-        return {
-            'msg'   : msg,
-            'name'  :   connection.name,
-        }
+    #@sendJSON('identified')
+    #def identified(self, connection, msg=''):
+        #print 'Identified'
+        #return {
+            #'msg'   : msg,
+            #'name'  :   connection.name,
+        #}
 
     @sendJSON('chunk_list', zlib=6)
     def send_chunk_list(self):

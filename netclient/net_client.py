@@ -79,7 +79,8 @@ class PyClient(object):
     def on_connect(self, client_id):
         print "NetClient connected: client id = %i" % (client_id)
         self.connected = True
-        NetOut.sendMessage.identify()
+        #NetOut.sendMessage.identify()
+        init_c_lib.identify(NetClientGlobal.name)
 
     def on_disconnect(self, client_id):
         print "NetClient disconnected"

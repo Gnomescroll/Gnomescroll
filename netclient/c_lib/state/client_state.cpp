@@ -89,5 +89,15 @@ namespace ClientState {
     void update_client_state(){update();}
     void draw_client_state(){draw();}
     void tick_client_state(){tick();}
+    void send_identify_packet(char* name)
+    {
+        printf("sending identify packet to server; name=%s\n", name);
+        unsigned int len = strlen(name);
+        if (len >= PLAYER_NAME_MAX_LENGTH)
+            name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
+        identify_CtoS msg;
+        strcpy(msg.name, name);
+        msg.send();
+    }
 }

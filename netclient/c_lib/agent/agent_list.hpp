@@ -22,5 +22,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 
         int get_ids(int* p);
         int get_ids();
+
+        bool name_available(char* name);
 };
 

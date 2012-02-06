@@ -165,26 +165,26 @@ class MapMessageHandler(GenericMessageHandler):
 class ClientMessageHandler(GenericMessageHandler):
 
     events = {
-        'identified' : '_identified',
+        #'identified' : '_identified',
         #'identify_fail' : '_identify_fail',
     }
 
-    def _identified(self, **msg):
-        note = msg.get('msg', '')
+    #def _identified(self, **msg):
+        #note = msg.get('msg', '')
 
-        name = msg.get('name', None)
-        if name is None:
-            print 'msg::identified - player missing name'
-            return False
-        name = str(name)
-        if not name:
-            print 'msg identified :: name is empty'
-            return False
+        #name = msg.get('name', None)
+        #if name is None:
+            #print 'msg::identified - player missing name'
+            #return False
+        #name = str(name)
+        #if not name:
+            #print 'msg identified :: name is empty'
+            #return False
 
-        NetClientGlobal.name = name
-        print 'Identified: name is %s' % (name,)
-        ChatClientGlobal.on_identify(note)
-        return True
+        #NetClientGlobal.name = name
+        #print 'Identified: name is %s' % (name,)
+        #ChatClientGlobal.on_identify(note)
+        #return True
 
     #used_alt = False
     #MAX_NAME_LENGTH = 15

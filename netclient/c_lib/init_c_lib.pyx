@@ -906,6 +906,8 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void draw_client_state()
     void tick_client_state()
 
+    void send_identify_packet(char* name)
+
 class ClientState(object):
     @classmethod
     def update(cls):
@@ -916,5 +918,8 @@ class ClientState(object):
     @classmethod
     def tick(cls):
         tick_client_state()
+
+def identify(name):
+    send_identify_packet(name)
 
 

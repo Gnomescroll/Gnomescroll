@@ -87,13 +87,13 @@ class SendMessage(GenericMessage):
     @sendJSON('received_client_id')
     def received_client_id(self):
         return True
-    @sendJSON('identify')
-    def identify(self, name=None):
-        if name is None:
-            name = NetClientGlobal.name
-        return {
-            'name': name,
-        }
+    #@sendJSON('identify')
+    #def identify(self, name=None):
+        #if name is None:
+            #name = NetClientGlobal.name
+        #return {
+            #'name': name,
+        #}
 
 class MiscMessage:
     @sendJSON('ping')

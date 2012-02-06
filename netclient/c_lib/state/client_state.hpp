@@ -55,6 +55,7 @@ namespace ClientState {
     void update_client_state();
     void draw_client_state();
     void tick_client_state();
+    void send_identify_packet(char* name);
 }
 #endif
 

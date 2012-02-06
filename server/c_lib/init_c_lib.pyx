@@ -213,7 +213,8 @@ cdef extern from "./agent/agent_status.hpp":
         int deaths
         int suicides
         char* name
-        void set_name(char* name)
+        bool identified
+#        void set_name(char* name)
         
 #Agent_state
 cdef extern from "./agent/agent.hpp":
@@ -333,14 +334,22 @@ class AgentWrapper(object):
 
         raise AttributeError
 
-def set_agent_name(int id, name):
-    name = name[:PLAYER_NAME_MAX_LENGTH]
+#def set_agent_name(int id, name):
+#    name = name[:PLAYER_NAME_MAX_LENGTH]
+#    cdef Agent_state* a
+#    a = agent_list.get(id)
+#    if a == NULL:
+#        print "cAgents -- set_agent_name, agent %d unknown. Name=%s" % (id, name,)
+#        return
+#    a.status.set_name(name)
+
+def client_identified(int client_id):
     cdef Agent_state* a
-    a = agent_list.get(id)
+    a = agent_list.get(client_id)
     if a == NULL:
-        print "cAgents -- set_agent_name, agent %d unknown. Name=%s" % (id, name,)
-        return
-    a.status.set_name(name)
+        return False
+    return a.status.identified
+    
 
 #functions
 

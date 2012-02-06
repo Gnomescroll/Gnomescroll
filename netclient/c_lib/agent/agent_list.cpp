@@ -154,3 +154,15 @@ void Agent_list::sort_by_team()
     this->filter_none();    // copies all non null
     this->quicksort_team(0, this->n_filtered);
 }
+
+bool Agent_list::name_available(char* name)
+{
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->status.name == NULL) continue;
+        if (!this->a[i]->status.identified) continue;
+        if (!strcmp(this->a[i]->status.name, name)) return false;
+    }
+    return true;
+}

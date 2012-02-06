@@ -416,6 +416,8 @@ class Main:
             #NetServer.serverListener.accept() #accept incoming connections
             #NetServer.connectionPool.process_events() #check for new data
             NetServer.connectionPool.dispatch_buffer()
+            NetServer.connectionPool.check_clients_ready()
+
             sl_c =0
             init_c_lib.tick_server_state()
             while True: #physics loop
