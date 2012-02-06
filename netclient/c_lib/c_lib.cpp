@@ -87,9 +87,7 @@
     /* camera */
     #include <c_lib/camera/camera.cpp>
     #include <c_lib/camera/fulstrum_test.cpp>
-
-    /* skybox */
-    #include <c_lib/skybox/skybox.cpp>
+    #include <c_lib/camera/skybox.cpp>
 
     /* SDL */
     #include <c_lib/SDL/shader_loader.cpp>

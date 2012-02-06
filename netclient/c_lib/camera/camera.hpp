@@ -13,7 +13,7 @@ enum CAMERA_TYPES {
     CAMERA_CAM
 };
 
-class CCamera {
+class Camera {
     public:
         float fov;
         float x_size,y_size;
@@ -52,25 +52,25 @@ class CCamera {
         void zoom();
         void unzoom();
 
-        CCamera();
+        Camera();
 };
 
-void set_camera(CCamera* cam);
+void set_camera(Camera* cam);
 void init_cameras();
 void update_camera_matrices();
 
 extern int current_camera_id;
-extern CCamera* current_camera;
-extern CCamera* agent_camera;
-extern CCamera* free_camera;
+extern Camera* current_camera;
+extern Camera* agent_camera;
+extern Camera* free_camera;
 
 extern float model_view_matrix[16];
 extern double model_view_matrix_dbl[16];
 extern double projection_matrix[16];
 extern GLint viewport[4];
 
-CCamera* get_agent_camera();
-CCamera* get_free_camera();
+Camera* get_agent_camera();
+Camera* get_free_camera();
 void use_agent_camera();
 void use_free_camera();
 void update_agent_camera();

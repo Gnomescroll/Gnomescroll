@@ -11,27 +11,27 @@
 extern float _xresf;
 extern float _yresf;
 
-CCamera* agent_camera = NULL;
-CCamera* free_camera = NULL;
-CCamera* current_camera = NULL;
+Camera* agent_camera = NULL;
+Camera* free_camera = NULL;
+Camera* current_camera = NULL;
 
 float model_view_matrix[16];
 double model_view_matrix_dbl[16];
 double projection_matrix[16];
 GLint viewport[4];
 
-void set_camera(CCamera* cam) {
+void set_camera(Camera* cam) {
     current_camera = cam;
 }
 
 void init_cameras()
 {
-    agent_camera = new CCamera();
+    agent_camera = new Camera();
     agent_camera->first_person = true;
     agent_camera->set_state(0,0,50.0f);
     agent_camera->set_fov(85.0f);
     
-    free_camera = new CCamera();
+    free_camera = new Camera();
     free_camera->first_person = false;
     free_camera->set_state(64,64,128);
     free_camera->set_fov(85.0f);
@@ -48,7 +48,7 @@ void teardown_cameras()
 }
 
 #define CAMERA_ZOOM_FACTOR 2.0f
-CCamera::CCamera()
+Camera::Camera()
 :
 zoomed(false),
 zoom_factor(CAMERA_ZOOM_FACTOR)
@@ -58,7 +58,7 @@ zoom_factor(CAMERA_ZOOM_FACTOR)
     set_projection(0.0f, 0.0f, 0.0f, 0.5f, 0.0f);
 }
 
-void CCamera::toggle_zoom()
+void Camera::toggle_zoom()
 {
     if (zoomed)
         this->unzoom();
@@ -66,38 +66,38 @@ void CCamera::toggle_zoom()
         this->zoom();
 }
 
-void CCamera::zoom()
+void Camera::zoom()
 {
     if (this->zoomed) return;
     this->zoomed = true;
     this->fov /= this->zoom_factor;
 }
 
-void CCamera::unzoom()
+void Camera::unzoom()
 {
     if (!this->zoomed) return;
     this->zoomed = false;
     this->fov *= this->zoom_factor;
 }
 
-int CCamera::is_current() {
+int Camera::is_current() {
     if (this == current_camera) {
         return 1;
     }
     return 0;
 }
 
-void CCamera::set_aspect(float fov, float z_near, float z_far) {
+void Camera::set_aspect(float fov, float z_near, float z_far) {
     this->fov = fov;
     this->z_near = z_near;
     this->z_far = z_far;
 }
 
-void CCamera::set_fov(float fov) {
+void Camera::set_fov(float fov) {
     this->fov = fov;
 }
 
-void CCamera::set_projection(float x, float y, float z, float theta, float phi) {
+void Camera::set_projection(float x, float y, float z, float theta, float phi) {
     this->x = x;
     this->y = y;
     this->z = z;
@@ -105,20 +105,20 @@ void CCamera::set_projection(float x, float y, float z, float theta, float phi) 
     this->phi = phi;
 }
 
-void CCamera::set_dimensions() {
+void Camera::set_dimensions() {
     x_size = _xresf;
     y_size = _yresf;
     ratio = x_size / y_size;
 }
 
-void CCamera::set_state(float x, float y, float z)
+void Camera::set_state(float x, float y, float z)
 {
     this->x = x;
     this->y = y;
     this->z = z;
 }
 
-void CCamera::pan(float dx, float dy) {    // args are deltas
+void Camera::pan(float dx, float dy) {    // args are deltas
     theta += dx;
     phi += dy;
 
@@ -137,7 +137,7 @@ void CCamera::pan(float dx, float dy) {    // args are deltas
     }
 }
 
-void CCamera::move(float dx, float dy, float dz) {
+void Camera::move(float dx, float dy, float dz) {
     x += dx*cos(theta * PI);
     x += dy*cos(theta * PI + PI/2.0f);
     y += dx*sin(theta * PI);
@@ -145,7 +145,7 @@ void CCamera::move(float dx, float dy, float dz) {
     z += dz;
 }
 
-void CCamera::world_projection()
+void Camera::world_projection()
 {
 
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -192,12 +192,12 @@ void CCamera::world_projection()
 
 }
 
-void CCamera::set_angles(float theta, float phi) {
+void Camera::set_angles(float theta, float phi) {
     this->theta = theta;
     this->phi = phi;
 }
 
-void CCamera::hud_projection() {
+void Camera::hud_projection() {
 
     glDisable (GL_DEPTH_TEST);   // end world projection
 
@@ -212,7 +212,7 @@ void CCamera::hud_projection() {
     glEnable(GL_TEXTURE_2D);
 }
 
-void CCamera::forward_vector(float f[3])
+void Camera::forward_vector(float f[3])
 {
 
     float xa = theta;
@@ -251,12 +251,12 @@ void update_camera_matrices()
 }
 
 
-CCamera* get_agent_camera()
+Camera* get_agent_camera()
 {
     return agent_camera;
 }
 
-CCamera* get_free_camera()
+Camera* get_free_camera()
 {
     return free_camera;
 }
