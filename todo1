@@ -310,3 +310,5 @@ Other
 --- placing block when crouched in or near 2block tall spot prevents block placement
 -fix client side prediction bug (movement is slugish, glitch)
 -if player disconnects, their name turns into different player and switches teams   --probably fixed
+
+Ratelimit jetpack / cap height
