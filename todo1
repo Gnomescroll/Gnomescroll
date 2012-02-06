@@ -201,7 +201,6 @@ cube selector in C
 agent key down/up events in C
 chat text entry buffer in C (chat reads this)
 input.py fully deprecated
-Alt-tab restored
 =============
 
 Feb 05
@@ -225,6 +224,7 @@ clients play anims/sound
 
 OpenAL ? (wav easy, but others hard?)
 
+Alt-tab while mouse captured not possible?
 
 Icons on map (angus)
 
@@ -307,5 +307,6 @@ Chat:
  
 Other
 -placing block does not place where aimed (not using correct camera?)   --cant replicate
+--- placing block when crouched in or near 2block tall spot prevents block placement
 -fix client side prediction bug (movement is slugish, glitch)
 -if player disconnects, their name turns into different player and switches teams   --probably fixed

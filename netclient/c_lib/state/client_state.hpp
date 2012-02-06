@@ -57,7 +57,7 @@ namespace ClientState {
     void tick_client_state();
     void send_identify_packet(char* name);
     int get_client_id_from_name(char* name);
-    void update_camera(int delta_tick);
+    void update_camera();
 }
 #endif
 

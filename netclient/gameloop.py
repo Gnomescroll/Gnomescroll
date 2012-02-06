@@ -118,12 +118,12 @@ class App(object):
 
             P.event("Physics Loop")
             phy_ticks = 0
-            while True: 
+            while True:
                 tick_count = GET_TICK()
                 if tick_count == 0 or phy_ticks > 0: #only run once
                     break
                 phy_ticks += 1
-
+            
                 init_c_lib.process_input()
                 init_c_lib.AnimationTick()                    
                 init_c_lib.ClientState.tick()
@@ -133,6 +133,14 @@ class App(object):
             #this gets triggered if longer than 30ms between render frames
             if phy_ticks >= 2:
                 print "Physics: %i ticks this frame" % (phy_ticks)
+
+            # get ticks for mouse interpolation
+            current_tick = init_c_lib.get_ticks()
+            delta_tick = current_tick - last_tick
+            last_tick = current_tick
+
+            # update mouse
+            init_c_lib.update_mouse(delta_tick)
 
             # updates hud projected display names (doesnt draw them)
             if agent:
@@ -144,11 +152,6 @@ class App(object):
             P.event("Networking 1")
             NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
-
-            # get ticks for mouse interpolation
-            current_tick = init_c_lib.get_ticks()
-            delta_tick = current_tick - last_tick
-            last_tick = current_tick
 
             P.event("MapControllerGlobal.mapController.tick()")
             MapControllerGlobal.mapController.tick()
@@ -163,7 +166,7 @@ class App(object):
             )
 
             # update current camera
-            init_c_lib.update_camera_state(delta_tick)
+            init_c_lib.update_camera_state()
 
             # world projection
             init_c_lib.camera_world_projection()

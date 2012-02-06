@@ -197,7 +197,7 @@ cdef extern from "./game/ctf.hpp":
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
-    void update_camera(int delta_tick)
+    void update_camera()
 
 def join_team(int team):
     ctf.join_team(team)
@@ -224,8 +224,8 @@ def camera_world_projection():
     world_projection()
 def camera_hud_projection():
     hud_projection()
-def update_camera_state(int delta_tick):
-    update_camera(delta_tick)
+def update_camera_state():
+    update_camera()
     
 """
 Animations
@@ -331,10 +331,14 @@ def clear_chat_input_buffer():
 cdef extern from "./input/input.hpp":
     int get_key_state()
     int process_events()
-
+    void pan_camera(int delta_tick)
+    
 def process_input():
     process_events()
     get_key_state()
+
+def update_mouse(int delta_tick):
+    pan_camera(delta_tick)
 
 cdef extern from "./input/handlers.hpp":
 

@@ -271,19 +271,6 @@ void use_free_camera()
     current_camera = free_camera;
 }
 
-void camera_input_update(int delta_tick, bool invert, float sensitivity)
-{
-    struct MouseMotionAverage* mm;
-    mm = get_mouse_render_state(delta_tick);
-
-    int inv = (invert) ? 1 : -1;
-    float dx,dy;
-    dx = ((float)(-mm->x) * sensitivity) / 40000.0f; // magic #
-    dy = ((float)(inv * mm->y) * sensitivity) / 40000.0f; // magic #
-
-    current_camera->pan(dx,dy);
-}
-
 void world_projection()
 {
     current_camera->world_projection();

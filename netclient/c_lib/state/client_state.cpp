@@ -103,7 +103,7 @@ namespace ClientState {
         return -1;
     }
 
-    void update_camera(int delta_tick)
+    void update_camera()
     {
         if (input_state.camera_mode == INPUT_STATE_AGENT)
         {
@@ -113,8 +113,6 @@ namespace ClientState {
         }
         else
             use_free_camera();
-
-        camera_input_update(delta_tick, input_state.invert_mouse, input_state.sensitivity);
     }
 
 }

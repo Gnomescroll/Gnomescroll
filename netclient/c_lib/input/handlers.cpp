@@ -101,10 +101,8 @@ void init_handlers()
     input_state.sensitivity = 100.0f;
 }
 
-/*
- * Reference:
- * http://wiki.libsdl.org/moin.cgi/SDLKeycodeLookup
- */
+
+/* Chat buffer */
 
 const int LARGEST_SDL_KEYNAME = 15;  //guess
 const int CHAT_BUFFER_SIZE = 90;
@@ -138,7 +136,12 @@ void teardown_chat_buffer()
         free(chat_input_buffer_unicode);
 }
 
-void chat_input_handler(SDL_Event* event)
+void clear_chat_buffer()
+{
+    chat_cursor_index = 0;
+}
+
+void chat_key_down_handler(SDL_Event* event)
 {
     switch (event->key.keysym.sym)
     {
@@ -163,98 +166,22 @@ void chat_input_handler(SDL_Event* event)
     chat_cursor_index++;
 }
 
-void clear_chat_buffer()
+void chat_key_up_handler(SDL_Event* event){}
+void chat_mouse_down_handler(SDL_Event* event){}
+void chat_mouse_up_handler(SDL_Event* event){}
+void chat_mouse_motion_handler(SDL_Event* event){}
+
+/* Agent */
+
+void agent_key_down_handler(SDL_Event* event)
 {
-    chat_cursor_index = 0;
-}
-
-// key down
-void key_down_handler(SDL_Event* event)
-{
-
-    //for Dany0 (azerty testing)
-    //while holding n, will show key struct info
-    if (keystate['r'] != 0)
-    {
-        printf("scancode = %d\n", (int)event->key.keysym.scancode);
-        printf("keysym = %d\n", (int)event->key.keysym.sym);
-        printf("\n");
-    }
-
-    if (input_state.chat)
-    {
-        chat_input_handler(event);
-        return;
-    }
 
     switch (event->key.keysym.sym)
     {
-        case SDLK_b:
-            Animations::agent_bleed(
-                ClientState::playerAgent_state.camera_state.x,
-                ClientState::playerAgent_state.camera_state.y,
-                ClientState::playerAgent_state.camera_state.z
-            );
-            break;
-            
-        case SDLK_g:
-            toggle_camera_mode();
-            break;
-            
-        case SDLK_h:
-            toggle_help_menu();
-            break;
-
-        case SDLK_m:
-            toggle_map();
-            break;
-
         case SDLK_r:
             ClientState::playerAgent_state.action.reload();
             break;
-
-        case SDLK_t:
-            toggle_input_mode();
-            break;
-            
-        case SDLK_u:
-            toggle_mouse_bind();
-            break;
-
-        case SDLK_y:
-            if (!input_state.chat)
-                toggle_chat();
-            break;
-
-        case SDLK_TAB:
-            toggle_scoreboard();
-            break;
-
-        case SDLK_RETURN:
-            if (!input_state.chat)
-                toggle_chat();
-            break;
-
-        case SDLK_SLASH:
-            toggle_hud();
-            break;
-
-        case SDLK_LEFTBRACKET:
-            ClientState::playerAgent_state.toggle_camera_mode();
-            break;
-
-        case SDLK_RIGHTBRACKET:
-            Monsters::test(30);
-            break;
-
-        case SDLK_ESCAPE:
-            enable_quit();
-            break;
-
-        case SDLK_HOME:
-            save_screenshot();
-            break;
-
+        
         case SDLK_LEFT:
             HudCubeSelector::cube_selector.left();
             break;
@@ -301,12 +228,11 @@ void key_down_handler(SDL_Event* event)
 
         default: break;
     }
+
 }
 
-// key up
-void key_up_handler(SDL_Event* event)
+void agent_key_up_handler(SDL_Event* event)
 {
-
     switch (event->key.keysym.sym)
     {
         case SDLK_SPACE:
@@ -315,11 +241,9 @@ void key_up_handler(SDL_Event* event)
             
         default: break;
     }
-
 }
 
-// mouse down
-void mouse_button_down_handler(SDL_Event* event)
+void agent_mouse_down_handler(SDL_Event* event)
 {
     PlayerAgent_state* p;
 
@@ -373,24 +297,10 @@ void mouse_button_down_handler(SDL_Event* event)
 
         default: break;
     }
-    
 }
 
-// mouse up
-void mouse_button_up_handler(SDL_Event* event)
-{
-}
-
-// mouse motion
-void mouse_motion_handler(SDL_Event* event)
-{
-}
-
-// quit
-void quit_event_handler(SDL_Event* event)
-{
-    input_state.quit = true;
-}
+void agent_mouse_up_handler(SDL_Event* event){}
+void agent_mouse_motion_handler(SDL_Event* event){}
 
 void agent_key_state_handler(Uint8 *keystate, int numkeys)
 {
@@ -414,6 +324,15 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys)
     ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
 }
 
+
+/* Camera */
+
+void camera_key_down_handler(SDL_Event* event){}
+void camera_key_up_handler(SDL_Event* event){}
+void camera_mouse_down_handler(SDL_Event* event){}
+void camera_mouse_up_handler(SDL_Event* event){}
+void camera_mouse_motion_handler(SDL_Event* event){}
+
 void camera_key_state_handler(Uint8 *keystate, int numkeys)
 {
     const float speed = 0.8f;
@@ -432,21 +351,200 @@ void camera_key_state_handler(Uint8 *keystate, int numkeys)
         free_camera->move(0,0,-speed);
 }
 
+/*
+ * Reference:
+ * http://wiki.libsdl.org/moin.cgi/SDLKeycodeLookup
+ */
+
+// Handlers
+
+// key down
+void key_down_handler(SDL_Event* event)
+{
+
+    if (input_state.chat)
+        chat_key_down_handler(event);
+    else
+    {
+        if (input_state.input_mode == INPUT_STATE_AGENT)
+            agent_key_down_handler(event);
+        else
+            camera_key_down_handler(event);
+    
+        switch (event->key.keysym.sym)
+        {
+            case SDLK_b:
+                Animations::agent_bleed(
+                    ClientState::playerAgent_state.camera_state.x,
+                    ClientState::playerAgent_state.camera_state.y,
+                    ClientState::playerAgent_state.camera_state.z
+                );
+                break;
+                
+            case SDLK_g:
+                toggle_camera_mode();
+                break;
+                
+            case SDLK_h:
+                toggle_help_menu();
+                break;
+
+            case SDLK_m:
+                toggle_map();
+                break;
+
+            case SDLK_t:
+                toggle_input_mode();
+                break;
+                
+            case SDLK_u:
+                toggle_mouse_bind();
+                break;
+
+            case SDLK_y:
+                toggle_chat();
+                break;
+
+            case SDLK_TAB:
+                toggle_scoreboard();
+                break;
+
+            case SDLK_RETURN:
+                toggle_chat();
+                break;
+
+            case SDLK_SLASH:
+                toggle_hud();
+                break;
+
+            case SDLK_LEFTBRACKET:
+                ClientState::playerAgent_state.toggle_camera_mode();
+                break;
+
+            case SDLK_RIGHTBRACKET:
+                Monsters::test(30);
+                break;
+
+            case SDLK_ESCAPE:
+                enable_quit();
+                break;
+
+            default: break;
+        }
+    }
+
+    // these should occur regardless of chat/camera/agent
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_HOME:
+            save_screenshot();
+            break;
+
+        default: break;
+    }
+
+
+    //for Dany0 (azerty testing)
+    //while holding n, will show key struct info
+    if (keystate['r'] != 0)
+    {
+        printf("scancode = %d\n", (int)event->key.keysym.scancode);
+        printf("keysym = %d\n", (int)event->key.keysym.sym);
+        printf("\n");
+    }
+}
+
+// key up
+void key_up_handler(SDL_Event* event)
+{
+
+    if (input_state.chat)
+        chat_key_up_handler(event);
+    else
+    {
+        if (input_state.input_mode == INPUT_STATE_AGENT)
+            agent_key_up_handler(event);
+        else
+            camera_key_up_handler(event);
+
+        switch (event->key.keysym.sym)
+        {
+            default: break;
+        }
+    }
+
+    switch (event->key.keysym.sym)
+    {
+        default: break;
+    }
+
+}
+
+// mouse down
+void mouse_button_down_handler(SDL_Event* event)
+{
+
+    // chat doesnt affect mouse
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_mouse_down_handler(event);
+    else
+        camera_mouse_down_handler(event);
+
+    switch (event->button.button)
+    {
+        default: break;
+    }
+    
+}
+
+// mouse up
+void mouse_button_up_handler(SDL_Event* event)
+{
+    // chat doesnt affect mouse
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_mouse_up_handler(event);
+    else
+        camera_mouse_up_handler(event);
+
+    switch (event->button.button)
+    {
+        default: break;
+    }
+}
+
+// mouse motion
+void mouse_motion_handler(SDL_Event* event)
+{
+    // chat doesnt affect mouse
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_mouse_motion_handler(event);
+    else
+        camera_mouse_motion_handler(event);
+
+    switch (event->button.button)
+    {
+        default: break;
+    }
+}
+
+// quit
+void quit_event_handler(SDL_Event* event)
+{
+    input_state.quit = true;
+}
+
 // keyboard state
 void key_state_handler(Uint8 *keystate, int numkeys)
 {
     if (input_state.chat) return;
-    
-    switch (input_state.input_mode)
-    {
-        case INPUT_STATE_AGENT:
-            agent_key_state_handler(keystate, numkeys);
-            break;
-        case INPUT_STATE_CAMERA:
-            camera_key_state_handler(keystate, numkeys);
-            break;
-        default: break;
-    }
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_key_state_handler(keystate, numkeys);
+    else
+        camera_key_state_handler(keystate, numkeys);
 }
 
 

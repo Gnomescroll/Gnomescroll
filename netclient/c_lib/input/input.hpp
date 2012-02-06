@@ -14,5 +14,6 @@ int init_input();
 
 int get_key_state();
 int process_events();
+void pan_camera(int delta_tick);
 
 char getUnicodeValue(SDL_keysym keysym);

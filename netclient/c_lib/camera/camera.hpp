@@ -74,6 +74,5 @@ Camera* get_free_camera();
 void use_agent_camera();
 void use_free_camera();
 void update_agent_camera();
-void camera_input_update(int delta_tick, bool invert, float sensitivity);
 void world_projection();
 void hud_projection();

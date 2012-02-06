@@ -37,9 +37,16 @@ int get_key_state() {
 int process_events()
 {
     if (input_state.mouse_bound)
+    {
         SDL_ShowCursor(0);
+        SDL_WM_GrabInput(SDL_GRAB_ON);
+    }
     else
+    {
         SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
+    }
+
     
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 
@@ -159,4 +166,18 @@ struct MouseMotionAverage* get_mouse_render_state(int t) {
     return &mm;
 }
 
+void pan_camera(int delta_tick)
+{
+    struct MouseMotionAverage* mm;
+    mm = get_mouse_render_state(delta_tick);
 
+    int inv = (input_state.invert_mouse) ? 1 : -1;
+    float dx,dy;
+    dx = ((float)(-mm->x) * input_state.sensitivity) / 40000.0f; // magic #
+    dy = ((float)(inv * mm->y) * input_state.sensitivity) / 40000.0f; // magic #
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_camera->pan(dx,dy);
+    else
+        free_camera->pan(dx,dy);
+}
