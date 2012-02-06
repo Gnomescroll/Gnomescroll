@@ -100,4 +100,16 @@ namespace ClientState {
         strcpy(msg.name, name);
         msg.send();
     }
+    int get_client_id_from_name(char* name)
+    {
+        for (int i=0; i<agent_list.n_max; i++)
+        {
+            if (agent_list.a[i] == NULL) continue;
+            if (agent_list.a[i]->status.name == NULL) continue;
+            if (!agent_list.a[i]->status.identified) continue;
+            if (!strcmp(agent_list.a[i]->status.name, name)) return agent_list.a[i]->id;
+        }
+        return -1;
+    }
+
 }

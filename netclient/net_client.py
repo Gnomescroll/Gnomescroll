@@ -24,12 +24,6 @@ class NetClientGlobal:
         NetClientGlobal.connection = PyClient()
         NetClientGlobal.sendPacket = SendPacket()
 
-    @classmethod
-    def client_id_from_name(cls, name):
-        for agent in GameStateGlobal.agentList.values():
-            if agent.name == name:
-                return agent.client_id
-
 import init_c_lib
 from init_c_lib import get_client_id, connected, _send_python_net_message
 from init_c_lib import register_client_creation, register_client_deletion, register_client_message_handling
@@ -101,6 +95,5 @@ class PyClient(object):
     def close(self):
         pass
 
-from game_state import GameStateGlobal
 from net_event import NetEventGlobal
 from net_out import NetOut

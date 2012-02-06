@@ -10,6 +10,7 @@
 
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/input/handlers.hpp>
 
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
@@ -19,6 +20,8 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
         printf("WARNING: set_PlayerAgent_id -- agent %d does not exist\n", id);
     }
     this->agent_id = id;
+    input_state.input_mode = INPUT_STATE_AGENT;
+    input_state.camera_mode = INPUT_STATE_AGENT;
 }
 
 

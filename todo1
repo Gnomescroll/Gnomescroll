@@ -209,6 +209,7 @@ Feb 05
 Camera.py gutted
 Identification in C
 gut dead python network pieces (identify, dat, a few others)
+removed agents.py, game_state.py from server
 =============
 
 Spreadsheet to document interactions

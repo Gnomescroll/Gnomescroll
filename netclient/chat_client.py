@@ -36,7 +36,6 @@ class ChatClientGlobal:
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from game_state import GameStateGlobal
 
 
 '''
@@ -296,8 +295,8 @@ class ChatCommand():
         elif command == 'pm':
             if len(args) < 1:
                 return
-            client_id = NetClientGlobal.client_id_from_name(args[0])
-            if not client_id:
+            client_id = init_c_lib.client_id_from_name(args[0])
+            if client_id < 0:
                 _send = self._send_local({
                     'content'   :   'Cannot msg unknown player: %s' % (args[0],),
                     'channel'   :   'system',
@@ -332,24 +331,10 @@ class ChatCommand():
                     init_c_lib.join_team(team_id)
 
         elif command == 'teams':
-            #_send = self._send_local({
-                #'content'   :   str(teams),
-                #'channel'   :   'system',
-            #})
             _send = self._send_local({
                 'content'   :   'Teams are unavailable. Integration with C teams is not implemented.',
                 'channel'   :   'system',
             })
-
-        elif command == 'inventory':
-            _send = self._send_local({
-                'content'   :   str(GameStateGlobal.agent.inventory),
-                'channel'   :   'system',
-            })
-
-        elif command == 'exit' or command == 'quit':
-            #print 'exiting'
-            GameStateGlobal.exit = True
 
         else:
             _send = self._unimplemented(command)
@@ -447,11 +432,14 @@ class ChatMessageIn():
         else:
             sender = None
             if self.payload is not None:
-                sender = GameStateGlobal.agentList.by_client(self.payload.cid)
-            if sender is None:
+                try:
+                    sender = init_c_lib.get_agent_name(int(self.payload.cid))
+                except:
+                    pass
+            if not sender:
                 self.name = 'System'
             else:
-                self.name = sender.name
+                self.name = sender
 
 
     def filter(self):

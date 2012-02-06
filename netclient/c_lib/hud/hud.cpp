@@ -57,7 +57,7 @@ static struct HudDrawSettings
     bool cube_selector;
     bool inventory;
     bool help;
-    bool disconnected;
+    bool connected;
     bool dead;
     bool fps;
     float fps_val;
@@ -75,16 +75,14 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_draw_settings(
-    bool disconnected,
-    bool dead,
+    bool connected,
     bool fps,
     float fps_val,
     bool ping,
     int ping_val
 )
 {
-    hud_draw_settings.disconnected = disconnected;
-    hud_draw_settings.dead = dead;
+    hud_draw_settings.connected = connected;
     
     hud_draw_settings.fps = fps;
     // sanitize
@@ -109,6 +107,12 @@ void update_hud_draw_settings()
 
     hud_draw_settings.inventory = input_state.inventory;
     hud_draw_settings.help = input_state.help_menu;
+
+    hud_draw_settings.dead = (
+           hud_draw_settings.connected
+        && ClientState::playerAgent_state.you != NULL
+        && ClientState::playerAgent_state.you->status.dead
+     );
 
     hud_draw_settings.player_stats = true;
 
@@ -178,7 +182,7 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
-    if (hud_draw_settings.disconnected) return;
+    if (!hud_draw_settings.connected) return;
 
     if (hud_draw_settings.zoom)
     {
@@ -221,7 +225,7 @@ void draw_hud_text()
     ClientState::billboard_text_list.draw_hud();
     
     if (!hud->inited) return;
-    if (hud_draw_settings.disconnected)
+    if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw();
         return;

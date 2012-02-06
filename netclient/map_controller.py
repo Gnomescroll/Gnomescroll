@@ -7,7 +7,6 @@ class MapControllerGlobal:
     def init(cls):
         MapControllerGlobal.mapController = MapController()
 
-from game_state import GameStateGlobal
 from net_out import NetOut
 
 class MapController:

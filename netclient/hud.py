@@ -5,7 +5,6 @@ import init_c_lib
 
 from chat_client import ChatClientGlobal
 from net_client import NetClientGlobal
-from game_state import GameStateGlobal
 
 '''
 HUD overlay
@@ -41,10 +40,7 @@ class Hud(object):
 
     def draw(self, fps=None, ping=None):
 
-        draw_dead = NetClientGlobal.connection.connected\
-                    and GameStateGlobal.agent is not None\
-                    and GameStateGlobal.agent.dead
-        draw_disconnected = not NetClientGlobal.connection.connected
+        connected = NetClientGlobal.connection.connected
 
         draw_fps = fps is not None
         try:
@@ -59,8 +55,7 @@ class Hud(object):
             ping = 0
 
         init_c_lib.HUD.set_draw_settings(
-            draw_disconnected,
-            draw_dead,
+            connected,
             draw_fps,
             fps,
             draw_ping,

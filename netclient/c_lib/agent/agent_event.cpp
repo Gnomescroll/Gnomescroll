@@ -12,6 +12,7 @@ void Agent_event::name_changed()
     {
         this->bb->set_text(this->a->status.name);
     }
+    this->a->status.identified = true;
 }
 
 void Agent_event::hide_name()

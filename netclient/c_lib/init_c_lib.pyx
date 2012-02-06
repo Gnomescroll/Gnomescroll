@@ -433,31 +433,11 @@ Agents
 cdef extern from "./agent/agent_status.hpp":
     unsigned int PLAYER_NAME_MAX_LENGTH
     cdef cppclass Agent_status:
-        bool dead
-        int team
         char* name
 
-#collision box
 cdef extern from "./agent/agent.hpp":
-    cdef struct Agent_collision_box:
-        float b_height
-        float c_height
-        float box_r
-
-#AgentState
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass AgentState:
-        int seq
-        float theta
-        float phi
-        float x,y,z
-        float vx,vy,vz
-        float camera_height
- 
     cdef cppclass Agent_state:
         int id
-        AgentState s
-        Agent_collision_box box
         Agent_status status
 
 cdef extern from "./agent/agent.hpp":
@@ -470,124 +450,40 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
-        float camera_height()
         void update_sound()
         void display_agent_names()
         bool identified
+        Agent_state* you
 
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
-'''
-WRAPPER
-'''
-class AgentWrapper(object):
-    properties = [
-        'x', 'y', 'z',
-        'vx', 'vy', 'vz',
-        'theta', 'phi',
-        'crouch_height','c_height',
-        'box_height', 'b_height',
-        'box_r',
-        'dead',
-        'team',
-        'name',
-    ]
+    int get_client_id_from_name(char* name)
 
-    def __init__(self, int id):
-        self.id = id
-        
-    def __getattribute__(self, name):
-        if name not in AgentWrapper.properties:
-            raise AttributeError
+def update_sound_listener():
+    playerAgent_state.update_sound()
 
-        cdef Agent_state* a
-        cdef int i
-        i = object.__getattribute__(self,'id')
-        a = agent_list.get(i)
-
-        if a == NULL:
-            print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
-            raise ValueError, "C Agent %d not found" % (i,)
-
-        if name == 'x':
-            return a.s.x
-        elif name == 'y':
-            return a.s.y
-        elif name == 'z':
-            return a.s.z
-        elif name == 'vx':
-            return a.s.vx
-        elif name == 'vy':
-            return a.s.vy
-        elif name == 'vz':
-            return a.s.vz
-        elif name == 'theta':
-            return a.s.theta
-        elif name == 'phi':
-            return a.s.phi
-
-        elif name == 'crouch_height' or name == 'c_height':
-            return a.box.c_height
-        elif name == 'box_height' or name == 'b_height':
-            return a.box.b_height
-        elif name == 'box_r':
-            return a.box.box_r
-
-        elif name == 'dead':
-            return a.status.dead
-
-        elif name == 'team':
-            return a.status.team
-
-        elif name == 'name':
-            return a.status.name
-
-        print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
-        raise AttributeError
-
-class PlayerAgentWrapper(object):
-
-    properties = ['camera_height',]
-
-    def __init__(self, int id):
-        self.id = id
-
-    def __getattribute__(self, name):
-        if name not in PlayerAgentWrapper.properties:
-            raise AttributeError
-
-        if name == 'camera_height':
-            return playerAgent_state.camera_height()
-
-        print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
-        raise AttributeError
-
-    def update_sound(self):
-        playerAgent_state.update_sound()
-
-    def display_agent_names(self):
-        playerAgent_state.display_agent_names()
+def display_agent_names():
+    playerAgent_state.display_agent_names()
 
 def get_player_agent_id():
     return playerAgent_state.agent_id
 
-class AgentListWrapper:
+def client_id_from_name(name):
+    get_client_id_from_name(name)
 
-    @classmethod
-    def add(cls, int id):
-        agent_list.get_or_create(id)
-        return id
+def player_agent_assigned():
+    if playerAgent_state.you != NULL:
+        return True
+    return False
 
-    @classmethod
-    def ids(cls):
-        cdef int n
-        n = agent_list.get_ids()
-        ids = []
-        for k in range(n):
-            ids.append(agent_list.ids_in_use[k])
-        return ids
+def get_agent_name(int id):
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a == NULL: return ''
+    return a.status.name
+
 
 """ Chat """
 
@@ -632,17 +528,8 @@ cdef extern from "./input/handlers.hpp":
         INPUT_STATE_CAMERA
 
     cdef struct InputState:
-        bool mouse_bound
-        bool help_menu
-        bool inventory
-        bool scoreboard
-        bool map
         bool chat
-        bool hud
-
-        bool can_jump
         bool quit
-
         InputStateMode input_mode
         InputStateMode camera_mode
 
@@ -650,22 +537,8 @@ cdef extern from "./input/handlers.hpp":
 
 class CyInputState(object):
     def __setattr__(self,k,v):
-        if k == 'mouse_bound':
-            input_state.mouse_bound = v
-        elif k == 'help_menu':
-            input_state.help_menu = v
-        elif k == 'inventory':
-            input_state.inventory = v
-        elif k == 'scoreboard':
-            input_state.scoreboard = v
-        elif k == 'map':
-            input_state.map = v
-        elif k == 'chat':
+        if k == 'chat':
             input_state.chat = v
-        elif k == 'hud':
-            input_state.hud = v
-        elif k == 'can_jump':
-            input_state.can_jump = v
         elif k == 'quit':
             input_state.quit = v
         elif k == 'input_mode':
@@ -675,22 +548,8 @@ class CyInputState(object):
         else:
             raise AttributeError
     def __getattribute__(self, k):
-        if k == 'mouse_bound':
-            return input_state.mouse_bound
-        elif k == 'help_menu':
-            return input_state.help_menu
-        elif k == 'inventory':
-            return input_state.inventory
-        elif k == 'scoreboard':
-            return input_state.scoreboard
-        elif k == 'map':
-            return input_state.map
-        elif k == 'chat':
+        if k == 'chat':
             return input_state.chat
-        elif k == 'hud':
-            return input_state.hud
-        elif k == 'can_jump':
-            return input_state.can_jump
         elif k == 'quit':
             return input_state.quit
         elif k == 'input_mode':
@@ -709,8 +568,7 @@ HUD
 
 cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
-        bool disconnected,
-        bool dead,
+        bool connected,
         bool fps,
         float fps_val,
         bool ping,
@@ -727,16 +585,14 @@ cdef class HUD:
         draw_hud()
     @classmethod
     def set_draw_settings(cls,
-        bool disconnected,
-        bool dead,
+        bool connected,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
     ):
         set_hud_draw_settings(
-            disconnected,
-            dead,
+            connected,
             fps,
             fps_val,
             ping,
@@ -806,7 +662,6 @@ class Font:
         self.fontfile = fn
         self.pngfile = ''
         self.process_font_filename()
-#        self._gen_stress()
         
     def process_font_filename(self):
         fn = self.fontfile

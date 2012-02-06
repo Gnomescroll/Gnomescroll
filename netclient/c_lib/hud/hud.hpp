@@ -90,12 +90,9 @@ extern HUD* hud;
 
 void init();
 
-//void set_chat_cursor(char* text, float x, float y);
-
 // CYTHON
 void set_hud_draw_settings(
-    bool disconnected,
-    bool dead,
+    bool connected,
     bool fps,
     float fps_val,
     bool ping,

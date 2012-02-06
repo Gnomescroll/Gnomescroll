@@ -410,8 +410,6 @@ class Main:
         init_c_lib.slime_test(30)
         init_c_lib.ctf_start()
         while True:
-            #NetServer.serverListener.accept() #accept incoming connections
-            #NetServer.connectionPool.process_events() #check for new data
             NetServer.connectionPool.dispatch_buffer()
             NetServer.connectionPool.check_clients_ready()
 

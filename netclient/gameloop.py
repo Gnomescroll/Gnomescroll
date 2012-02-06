@@ -28,7 +28,6 @@ from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from game_state import GameStateGlobal
 from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from hud import Hud
@@ -46,7 +45,6 @@ class App(object):
 
     def init_globals(self):
         NetClientGlobal.init()
-        GameStateGlobal.init()
         NetEventGlobal.init()
         NetOut.init()
         MapControllerGlobal.init()
@@ -126,10 +124,7 @@ class App(object):
             _min = 0.025
             _max = 0.9
 
-            agent = GameStateGlobal.agent
-            if agent is None:
-                GameStateGlobal.agentList.check_for_player_agent()
-
+            agent = init_c_lib.player_agent_assigned()
             if init_c_lib.identified():
                 ChatClientGlobal.init()
 
@@ -151,14 +146,15 @@ class App(object):
                     
                 init_c_lib.ClientState.tick()
                 if agent:
-                    agent.update_sound()
+                    init_c_lib.update_sound_listener()
+                
 
             #this gets triggered if longer than 30ms between render frames
             if sl_c >= 2:
                 print "Physics: %i ticks this frame" % (sl_c)
 
             if agent:
-                agent.display_agent_names()
+                init_c_lib.display_agent_names()
 
             ChatClientGlobal.load_buffer_from_c()
 
