@@ -329,13 +329,12 @@ def clear_chat_input_buffer():
 """ Input """
 
 cdef extern from "./input/input.hpp":
-    int _get_key_state()
-    int _process_events()
-    
-def get_key_state():
-    _get_key_state()
-def process_events():
-    _process_events()
+    int get_key_state()
+    int process_events()
+
+def process_input():
+    process_events()
+    get_key_state()
 
 cdef extern from "./input/handlers.hpp":
 

@@ -17,7 +17,7 @@ int init_input() {
     return 0;
 }
 
-int _get_key_state() {
+int get_key_state() {
     SDL_PumpEvents();
 
     key_state_handler(keystate, numkeys);
@@ -34,7 +34,7 @@ int _get_key_state() {
     return 0;
 }
 
-int _process_events()
+int process_events()
 {
     if (input_state.mouse_bound)
         SDL_ShowCursor(0);

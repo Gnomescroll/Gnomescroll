@@ -96,26 +96,18 @@ class App(object):
         ping_val = None
         fps = opts.fps
         ping = opts.fps
+        ping_n = init_c_lib.get_ticks()
         ltick, ctick = 0,0
-
-        if ping:
-            ping_n = init_c_lib.get_ticks()
-
-        _m = 0
 
         last_tick = 0
 
-        #init_c_lib.slime_test(30)
-            
         while not init_c_lib.cy_input_state.quit:
-            P2.start_frame() #TEST
-            #theta += -.005 #test
+            P2.start_frame()
             P.start_frame()
-
 
             NetClientGlobal.connection.dispatch_buffer()
 
-            tc = 0
+            tick_count = 0
             _density = 1
             _min = 0.025
             _max = 0.9
@@ -125,43 +117,33 @@ class App(object):
                 ChatClientGlobal.init()
 
             P.event("Physics Loop")
-            sl_c = 0
-
-            while True: #physics loop
-                tc = GET_TICK()
-                if tc == 0 or sl_c > 0: #only run once
+            phy_ticks = 0
+            while True: 
+                tick_count = GET_TICK()
+                if tick_count == 0 or phy_ticks > 0: #only run once
                     break
+                phy_ticks += 1
 
-                init_c_lib.AnimationTick()
-
-                sl_c += 1
-
-                #process input
-                init_c_lib.process_events()
-                init_c_lib.get_key_state()
-                    
+                init_c_lib.process_input()
+                init_c_lib.AnimationTick()                    
                 init_c_lib.ClientState.tick()
                 if agent:
                     init_c_lib.update_sound_listener()
-                
-
+                                    
             #this gets triggered if longer than 30ms between render frames
-            if sl_c >= 2:
-                print "Physics: %i ticks this frame" % (sl_c)
+            if phy_ticks >= 2:
+                print "Physics: %i ticks this frame" % (phy_ticks)
 
+            # updates hud projected display names (doesnt draw them)
             if agent:
                 init_c_lib.display_agent_names()
 
+            # update chat client input buffer
             ChatClientGlobal.load_buffer_from_c()
 
-            '''
-                May only want to send output every 30 ms
-            '''
             P.event("Networking 1")
             NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
-            
-            # start frame
 
             # get ticks for mouse interpolation
             current_tick = init_c_lib.get_ticks()

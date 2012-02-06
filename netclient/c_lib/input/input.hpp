@@ -12,7 +12,7 @@ struct MouseMotionAverage* get_mouse_render_state(int t);
 
 int init_input();
 
-int _get_key_state();
-int _process_events();
+int get_key_state();
+int process_events();
 
 char getUnicodeValue(SDL_keysym keysym);
