@@ -308,7 +308,7 @@ cdef class Camera(object):
     def normal(self):
         return [self.camera.xu, self.camera.yu, self.camera.zu]
         
-    def _getattribute__py(self, name):
+    def _getattribute__(self, name):
         if name == 'x':
             return self.camera.x
         elif name == 'y':
@@ -349,7 +349,7 @@ cdef class Camera(object):
 
         raise AttributeError
 
-    def _setattr__py(self, k, float v):
+    def _setattr__(self, k, v):
         if k == 'x':
             self.camera.x = v
         elif k == 'y':
