@@ -27,13 +27,10 @@ namespace ClientState {
     Animations::HitscanEffect_list hitscan_effect_list;
     Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
 
-    HudText::Text_list text_list;
-     
     CTF ctf;
     
     PlayerAgent_state playerAgent_state;
 
-    int active_agent = 0;
     int agent_control_state[16];
         
     void init()
