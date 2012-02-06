@@ -173,17 +173,18 @@ class App(object):
 
             # camera input
             P.event("Camera Setup")
-            if init_c_lib.cy_input_state.camera_mode == 0:
-                init_c_lib.CyCamera.use_agent_camera()
-                if agent:
-                    init_c_lib.CyCamera.update_agent_camera()
-            else:
-                init_c_lib.CyCamera.use_free_camera()
 
-            init_c_lib.CyCamera.camera_input_update(delta_tick, opts.invert_mouse, opts.sensitivity)
+            # set input options
+            init_c_lib.cy_input_state.set_options(
+                opts.invert_mouse,
+                opts.sensitivity
+            )
+
+            # update current camera
+            init_c_lib.update_camera_state(delta_tick)
 
             # world projection
-            init_c_lib.CyCamera.world_projection()
+            init_c_lib.camera_world_projection()
 
             # terrain
             P.event("Draw Terrain")
@@ -204,7 +205,7 @@ class App(object):
             # hud projection
             P.event("draw hud")
             if opts.hud:
-                init_c_lib.CyCamera.hud_projection()
+                init_c_lib.camera_hud_projection()
                 
                 self.hud.draw(fps=fps_val, ping=ping_val)
 

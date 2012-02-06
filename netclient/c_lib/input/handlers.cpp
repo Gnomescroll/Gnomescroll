@@ -95,6 +95,10 @@ void init_handlers()
 
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
+
+    // options
+    input_state.invert_mouse = false;
+    input_state.sensitivity = 100.0f;
 }
 
 /*
@@ -443,4 +447,15 @@ void key_state_handler(Uint8 *keystate, int numkeys)
             break;
         default: break;
     }
+}
+
+
+// options
+void set_input_options(
+    bool invert_mouse,
+    float sensitivity
+)
+{
+    input_state.invert_mouse = invert_mouse;
+    input_state.sensitivity = sensitivity;
 }

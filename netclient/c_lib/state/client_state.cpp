@@ -103,4 +103,18 @@ namespace ClientState {
         return -1;
     }
 
+    void update_camera(int delta_tick)
+    {
+        if (input_state.camera_mode == INPUT_STATE_AGENT)
+        {
+            use_agent_camera();
+            if (playerAgent_state.you != NULL)
+                update_agent_camera();
+        }
+        else
+            use_free_camera();
+
+        camera_input_update(delta_tick, input_state.invert_mouse, input_state.sensitivity);
+    }
+
 }

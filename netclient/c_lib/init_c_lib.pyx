@@ -134,7 +134,8 @@ cpdef init_python_net():
 """
 sound
 [sound]
--- move the init logic into C
+-- needs a listdir (or hardcode each soundfile [no]) to move into C
+-- dirent is probably cross platform
 """
 cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_volume(float vol)
@@ -143,7 +144,6 @@ cdef extern from "./sound/sound.hpp" namespace "Sound":
 
     void load_sound(char* file)
     void update_sound()
-    
 
 class Sound(object):
 
@@ -190,11 +190,6 @@ def set_resolution(xres, yres, fullscreen = 0):
 Game modes (CTF)
 [chat client (sends "join team" cmd)]
 """
-
-cdef extern from "./game/teams.hpp":
-    cdef cppclass CTFTeam:  # inherits Team
-        pass
-
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
         void join_team(int team)
@@ -202,6 +197,7 @@ cdef extern from "./game/ctf.hpp":
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
+    void update_camera(int delta_tick)
 
 def join_team(int team):
     ctf.join_team(team)
@@ -220,34 +216,16 @@ Camera
 [gameloop]
 """
 cdef extern from "./camera/camera.hpp":
-    void use_agent_camera()
-    void use_free_camera()
-    void update_agent_camera()
-    void camera_input_update(int delta_tick, bool invert, float sensitivity)
     void world_projection()
     void hud_projection()
 
 camera_callback = None
-
-class CyCamera(object):
-    @classmethod
-    def use_agent_camera(cls):
-        use_agent_camera()
-    @classmethod
-    def use_free_camera(cls):
-        use_free_camera()
-    @classmethod
-    def camera_input_update(cls, int delta_tick, bool invert, float sensitivity):
-        camera_input_update(delta_tick, invert, sensitivity)
-    @classmethod
-    def world_projection(cls):
-        world_projection()
-    @classmethod
-    def hud_projection(cls):
-        hud_projection()
-    @classmethod
-    def update_agent_camera(cls):
-        update_agent_camera()
+def camera_world_projection():
+    world_projection()
+def camera_hud_projection():
+    hud_projection()
+def update_camera_state(int delta_tick):
+    update_camera(delta_tick)
     
 """
 Animations
@@ -373,6 +351,11 @@ cdef extern from "./input/handlers.hpp":
 
     InputState input_state
 
+    void set_input_options(
+        bool invert_mouse,
+        float sensitivity
+    )
+
 class CyInputState(object):
     def __setattr__(self,k,v):
         if k == 'chat':
@@ -395,7 +378,12 @@ class CyInputState(object):
         elif k == 'camera_mode':
             return input_state.camera_mode
         else:
-            raise AttributeError    
+            return object.__getattribute__(self, k)
+    def set_options(self,
+        bool invert_mouse,
+        float sensitivity
+    ):
+        set_input_options(invert_mouse, sensitivity)
     
 cy_input_state = CyInputState()
 
