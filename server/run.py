@@ -29,7 +29,6 @@ from init_c_lib import START_CLOCK, GET_TICK
 from net_server import NetServer
 from net_out import NetOut
 from net_event import NetEvent
-from game_state import GameStateGlobal
 from chat_server import ChatServer
 
 '''
@@ -388,7 +387,6 @@ class Main:
         NetServer.init()
         NetOut.init()
         NetEvent.init()
-        GameStateGlobal()
         ChatServer()
 
     def run2(self):

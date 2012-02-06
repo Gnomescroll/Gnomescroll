@@ -21,7 +21,6 @@ class NetOut:
         cls.event = EventOut()
         cls.message = MessageOut()
 
-from game_state import GameStateGlobal
 from net_server import NetServer
 
 def sendJSONevent(cmd=None, zlib=0):

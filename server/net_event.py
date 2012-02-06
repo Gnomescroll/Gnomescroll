@@ -29,7 +29,6 @@ class NetEvent:
 
 from net_server import NetServer
 from net_out import NetOut
-from game_state import GameStateGlobal
 from chat_server import ChatServer
 
 # routes messages by msg.cmd

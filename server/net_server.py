@@ -15,7 +15,6 @@ class NetServer:
 from chat_server import ChatServer
 from net_out import SendMessage
 from net_event import NetEvent
-from game_state import GameStateGlobal
 
 from init_c_lib import connected, _send_python_net_message
 
@@ -30,14 +29,13 @@ class PyClient:
         self.sendMessage = SendMessage(self)
 
         self.loaded_once = False
-        self.agent = GameStateGlobal.agentList.create(self.client_id)
-        self.agent.send_id_to_client(self.client_id)
+        init_c_lib.create_agent(self.client_id)
+        init_c_lib.send_id_to_client(self.client_id)
 
     def get_name(self):
         if not init_c_lib.client_identified(self.client_id):
             return None
-        return self.agent.name
-        
+        return init_c_lib.get_agent_name(self.client_id)
 
     def ready(self):
         if not init_c_lib.client_identified(self.client_id) or self.loaded_once:
@@ -64,7 +62,6 @@ class PyClientPool:
 
     def __init__(self):
         self.clients_by_id = {}
-        #self.names = {}
         atexit.register(lambda: None)
         
         global _msg_buffer     
@@ -146,10 +143,9 @@ class PyClientPool:
 
         # dispatch event
         ChatServer.chat.disconnect(client)
-        if client.agent is not None:
-            init_c_lib.leave_team(client.agent.id)
-            GameStateGlobal.agentList.destroy(client.agent) # make sure this is last
-            
+        init_c_lib.leave_team(client_id)
+        init_c_lib.destroy_agent(client_id)
+        
         # remove from registry
         del self.clients_by_id[client.id]
         print "PyClientPool: remove_client, id= %i" % (client_id)
@@ -194,8 +190,6 @@ class DatagramDecoder:
                 print "JSON DECODING ERROR: %s" % (str(datagram),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
-
-from net_out import NetOut
 
 if __name__ == "__main__":
     print "Run run.py to start server"
