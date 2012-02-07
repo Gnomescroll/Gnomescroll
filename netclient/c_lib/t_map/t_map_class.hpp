@@ -29,17 +29,15 @@ class MAP_CHUNK
 
     int xpos;
     int ypos;
-    int zpos;
 
     unsigned char top_block[16*16];
 
     struct MAP_ELEMENT e[16*16*TERRAIN_MAP_HEIGHT];
 
-    MAP_CHUNK(int _xpos, int _ypos, int _zpos)
+    MAP_CHUNK(int _xpos, int _ypos)
     {
         xpos = _xpos;
         ypos = _ypos;
-        zpos = _zpos;
         for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
         for(int i=0; i<16*16;i++) top_block[i] = 0;
     }
