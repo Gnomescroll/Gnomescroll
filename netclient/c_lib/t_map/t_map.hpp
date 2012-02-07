@@ -19,15 +19,9 @@ inline void set(int x, int y, int z, int value);
 
 }
 
-static inline int _get(int x, int y, int z)
-{
-    return t_map::get(x,y,z);
-}
+int _get(int x, int y, int z);
+void _set(int x, int y, int z, int value);
 
-static inline void _set(int x, int y, int z, int value)
-{
-    t_map::set(x,y,z, value);
-}
 
 int _get_highest_open_block(int x, int y, int agent_height);
 int _get_highest_open_block(int x, int y);

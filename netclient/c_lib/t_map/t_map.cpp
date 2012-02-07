@@ -33,6 +33,18 @@ void set(int x, int y, int z, int value)
 
 }
 
+
+int _get(int x, int y, int z)
+{
+    return t_map::main_map->get_block(x,y,z);
+}
+
+void _set(int x, int y, int z, int value)
+{
+    t_map::main_map->set_block(x,y,z,value);
+}
+
+
 /*
     Move to utility functions
 */
