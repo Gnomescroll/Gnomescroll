@@ -10,7 +10,6 @@ class NetEvent:
     adminMessageHandler = None
     miscMessageHandler = None
     mapMessageHandler = None
-    chatMessageHandler = None
 
     @classmethod
     def init(cls):
@@ -18,7 +17,6 @@ class NetEvent:
         cls.adminMessageHandler = AdminMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
         cls.mapMessageHandler = MapMessageHandler()
-        cls.chatMessageHandler = ChatMessageHandler()
 
     @classmethod
     def register_json_events(cls, events, interface=None):
@@ -29,7 +27,6 @@ class NetEvent:
 
 from net_server import NetServer
 from net_out import NetOut
-from chat_server import ChatServer
 
 # routes messages by msg.cmd
 class MessageHandler:
@@ -214,22 +211,3 @@ class MapMessageHandler(GenericMessageHandler):
     @logError('send_chunk_list')
     def send_chunk_list(self, msg, connection):
         connection.sendMessage.send_chunk_list()
-
-
-class ChatMessageHandler(GenericMessageHandler):
-
-    def events(self):
-        return {
-            'chat'      :   self.received,
-            'subscribe' :   self.subscribe,
-            'unsubscribe':  self.unsubscribe,
-        }
-
-    def received(self, msg, conn):
-        ChatServer.chat.received(msg, conn)
-
-    def subscribe(self, msg, conn):
-        ChatServer.chat.client_subscribe(msg, conn)
-
-    def unsubscribe(self, msg, conn):
-        ChatServer.chat.client_unsubscribe(msg, conn)

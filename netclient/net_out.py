@@ -10,14 +10,12 @@ class NetOut:
     sendPacket = None
 
     mapMessage = None
-    chatMessage = None
     miscMessage = None
 
     @classmethod
     def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
         cls.mapMessage = MapMessage()
-        cls.chatMessage = ChatMessage()
         cls.miscMessage = MiscMessage()
         
     @classmethod
@@ -82,28 +80,4 @@ class MapMessage:
     def request_chunk(self, x,y,z):
         return {
             'value' : (x,y,z),
-        }
-
-class ChatMessage:
-
-    @idRequired
-    @sendJSON('chat')
-    def send_chat(self, d):
-        d['cid'] = str(NetClientGlobal.connection.client_id)
-        return d
-
-    @idRequired
-    @sendJSON('subscribe')
-    def subscribe(self, channel):
-        return {
-            'channel'   : channel,
-            'cid' : str(NetClientGlobal.connection.client_id),
-        }
-
-    @idRequired
-    @sendJSON('unsubscribe')
-    def unsubscribe(self, channel):
-        return {
-            'channel'   : channel,
-            'cid' : str(NetClientGlobal.connection.client_id),
         }

@@ -12,7 +12,6 @@ class NetServer:
     def init(cls):
         cls.connectionPool = PyClientPool()
 
-from chat_server import ChatServer
 from net_out import SendMessage
 from net_event import NetEvent
 
@@ -43,7 +42,6 @@ class PyClient:
             return
         print "Client is ready"
         self.loaded_once = True
-        ChatServer.chat.connect(self)
         self.send_map()
         init_c_lib.send_game_state(self.client_id)
         
@@ -143,7 +141,6 @@ class PyClientPool:
         client = self.clients_by_id[client_id]
 
         # dispatch event
-        ChatServer.chat.disconnect(client)
         init_c_lib.leave_chat(client_id)
         init_c_lib.leave_team(client_id)
         init_c_lib.destroy_agent(client_id)

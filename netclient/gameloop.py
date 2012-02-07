@@ -27,7 +27,6 @@ from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from hud import Hud
 from dat_loader import dat_loader
@@ -113,8 +112,6 @@ class App(object):
             _max = 0.9
 
             agent = init_c_lib.player_agent_assigned()
-            if init_c_lib.identified():
-                ChatClientGlobal.init()
 
             P.event("Physics Loop")
             phy_ticks = 0
@@ -145,9 +142,6 @@ class App(object):
             # updates hud projected display names (doesnt draw them)
             if agent:
                 init_c_lib.display_agent_names()
-
-            # update chat client input buffer
-            ChatClientGlobal.load_buffer_from_c()
 
             P.event("Networking 1")
             NetClientFlushToNet()

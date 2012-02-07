@@ -29,7 +29,6 @@ from init_c_lib import START_CLOCK, GET_TICK
 from net_server import NetServer
 from net_out import NetOut
 from net_event import NetEvent
-from chat_server import ChatServer
 
 '''
 Noise notes:
@@ -387,7 +386,6 @@ class Main:
         NetServer.init()
         NetOut.init()
         NetEvent.init()
-        ChatServer()
 
     def run2(self):
         print "Server Started"

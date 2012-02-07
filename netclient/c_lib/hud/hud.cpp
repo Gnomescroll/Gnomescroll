@@ -500,17 +500,6 @@ ChatRender::~ChatRender()
     if (input != NULL) HudText::text_list.destroy(input->id);
 }
 
-// CYTHON
-void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-    if (i < 0 || i >= CHAT_MESSAGE_RENDER_MAX) return;
-    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
-    HudText::Text* t = hud->chat->messages[i];
-    if (t == NULL) return;
-    t->set_text(txt);
-    t->set_color(r,g,b,a);
-}
-
 /* Scoreboard */
 void Scoreboard::init()
 {
