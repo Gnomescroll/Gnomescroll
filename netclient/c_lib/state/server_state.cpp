@@ -105,6 +105,11 @@ namespace ServerState
         spawner_list.send_to_client(client_id);
     }
 
+    void add_player_to_chat(int client_id)
+    {
+        chat_server.player_join(client_id);
+    }
+
 
 }
 #endif

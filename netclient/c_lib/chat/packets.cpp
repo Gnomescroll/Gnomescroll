@@ -4,6 +4,7 @@
 inline void ChatMessage_StoC::handle()
 {
     printf("Client received: %s\n", msg);
+    printf("from: %d, channel=%d\n", sender, channel);
 
     if (sender != CHAT_SENDER_SYSTEM)
     {

@@ -2,6 +2,10 @@
 
 #include <math.h>
 
+#ifdef DC_SERVER
+#include <chat/server.hpp>
+#endif
+
 /*
  * Agent_status has miscellaneous status properties (health, dead, ...)
  * Its methods are to be used by the server ONLY
@@ -279,6 +283,12 @@ void Agent_status::score_flag() {
 
 void Agent_status::set_team(int team)
 {
+    if (team == this->team) return;
+
+    #ifdef DC_SERVER
+    chat_server.player_join_team(this->a->id, this->team, team);
+    #endif
+    
     //printf("Agent_Status:: set_team.  agent=%d team=%d\n", this->a->id, team);
     // respawn instantly if switching from viewer to team
     if (this->team == 0 && team)

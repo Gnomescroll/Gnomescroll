@@ -51,6 +51,7 @@ class ChatServerChannel
             if (listeners[i] != -1) continue;
             listeners[i] = id;
             n++;
+            break;
         }
         return true;
     }

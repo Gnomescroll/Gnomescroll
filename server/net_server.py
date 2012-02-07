@@ -31,6 +31,7 @@ class PyClient:
         self.loaded_once = False
         init_c_lib.create_agent(self.client_id)
         init_c_lib.send_id_to_client(self.client_id)
+        init_c_lib.join_chat(self.client_id)
 
     def get_name(self):
         if not init_c_lib.client_identified(self.client_id):
