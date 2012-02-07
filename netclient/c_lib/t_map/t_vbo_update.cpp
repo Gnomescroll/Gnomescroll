@@ -1,5 +1,9 @@
 #include "t_vbo_update.hpp"
 
+#include "common_data.hpp"
+#include "common_function.hpp"
+#include "cache.hpp"
+
 namespace t_map
 {
 
@@ -146,6 +150,7 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 static const int VERTEX_SLACK = 128;
 
 int update_column_VBO(struct vm_column* column) {
+#if 0
     int tile_id, side_num;
     int _x, _y, _z;
 
@@ -298,6 +303,7 @@ int update_column_VBO(struct vm_column* column) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
     glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+#endif
 
     return 0;
 }

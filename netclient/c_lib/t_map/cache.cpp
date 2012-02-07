@@ -1,5 +1,8 @@
 #include "cache.hpp"
 
+namespace t_map
+{
+
 void init_cache()
 {
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
@@ -69,4 +72,6 @@ int _init_quad_cache_normals()
         }
     }
     return 0;
+}
+
 }

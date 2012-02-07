@@ -1,4 +1,4 @@
-#include once
+#pragma once
 
 static inline int hash_function2(int x,int y,int z) __attribute((always_inline));
 static inline int hash_function3(int x,int y,int z) __attribute((always_inline));

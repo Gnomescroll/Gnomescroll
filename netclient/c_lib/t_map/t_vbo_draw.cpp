@@ -11,6 +11,7 @@ static struct VBO* draw_vbo_array[MAX_DRAWN_VBO];
 
 void prep_draw()
 {
+#if 0
     struct vm_map* m;
     struct vm_column* col;
     int i,j;
@@ -42,11 +43,13 @@ void prep_draw()
         }
     }}
     return 0;
+#endif
 }
 
 
 void draw_map() 
 {
+#if 0
     prep_draw();
 
     glUseProgramObjectARB(map_shader[0]);
@@ -140,7 +143,7 @@ void draw_map()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glDisable(GL_TEXTURE_2D);
-
+#endif
 }
 
 

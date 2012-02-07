@@ -3,6 +3,8 @@
 namespace t_map
 {
 
+const int MAX_TEXTURES = 256;
+
 struct cubeProperties cube_list[max_cubes];
 short cube_side_texture_array[max_cubes*6];
 
@@ -23,6 +25,6 @@ void set_cube_side_texture(int id, int side, int tex_id)
 }
 
 int _get_cube_side_texture(int id, int side) { return cube_side_texture_array[6*id +side]; }
-struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
+//struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
 
 }
