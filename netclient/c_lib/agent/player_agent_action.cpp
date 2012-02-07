@@ -382,7 +382,6 @@ void PlayerAgent_action::set_block() {
         max_dist, z_low, z_high
     );
     if (b==NULL) return;
-    printf("gonna set x,y,z %d,%d,%d to %d\n", b[0], b[1], b[2], p->you->weapons.blocks.block);
 
     agent_block_CtoS msg;
     msg.x = b[0];
