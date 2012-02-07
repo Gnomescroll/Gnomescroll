@@ -233,6 +233,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
 
+    const float CEIL_BUFF = 0.10;
+
     //collision
     bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
     //bool current_collision = collision_check6_z(box.box_r, height, as.x,as.y,as.z);
@@ -245,6 +247,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
         return as;
     }
+
 
     /*
         Collision Order: as.x,as.y,as.z
@@ -268,17 +271,11 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     if(collision_z) {
         //printf("z\n");
         new_z = as.z;
+        //if (! (new_z >= floor(new_z) && new_z < floor(new_z)+0.05))
+            //new_z -= CEIL_BUFF; 
         as.vz = 0.0f;
     }       
 
-    /*
-        Bug:
-        * Build ceiling
-        * Hold Jetpack to slide along ceiling
-        * Try to leave a 3 block vertical gap
-        * You cant
-        * Collision in x/y
-    */
 
     as.x = new_x;
     as.y = new_y;

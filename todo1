@@ -226,6 +226,14 @@ C chat implemented
 ./waf production
 ====================
 
+
+//COLLISION DETECTION
+When head in ceiling, cant move laterally
+-placing block does not place where aimed (not using correct camera?) 
+--- placing block when crouched in or near 2block tall spot prevents block placement
+Ratelimit jetpack / cap height
+
+
 Spreadsheet to document interactions
 e.g.
 Client fires weapon:
@@ -241,13 +249,15 @@ Alt-tab while mouse captured not possible?
 
 Icons on map (angus)
 
-When head in ceiling, cant move laterally
+
+Team switch UI
 
 Turrets
 
 Minimap
 
 Sounds
+
 System notifications (you killed...)
 
 better base/spawner spawn logic (i.e. if the spawner is buried in a room underground, spawn there, not on top)
@@ -299,10 +309,7 @@ Chat:
     DONE
  
 Other
--placing block does not place where aimed (not using correct camera?) 
---- placing block when crouched in or near 2block tall spot prevents block placement
--fix client side prediction bug (movement is slugish, glitch)
+-fix client side prediction bug (movement is slugish, glitch)   BRANDON
 -if player disconnects, their name turns into different player and switches teams
     DONE
 
-Ratelimit jetpack / cap height

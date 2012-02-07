@@ -600,7 +600,7 @@ inline bool collision_check6_xy(float box_r, float box_h, float x, float y, floa
     int y_max = y + box_r;
 
     const float step_size = 0.9f;
-    int steps = (int)ceil(box_h/step_size)+1;
+    int steps = (int)ceil(box_h/step_size);
 
     for (int i=0; i<steps; i++)
     {
