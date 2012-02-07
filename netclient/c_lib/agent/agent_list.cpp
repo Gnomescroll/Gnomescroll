@@ -37,7 +37,7 @@ void Agent_list::quicksort_team(int beg, int end)
             team = 10000;   //arbitrarily high, so it will be placed at the end
         else
             team = this->filtered_objects[beg]->status.team;
-        int l = beg, r = end;
+        int l = beg + 1, r = end;
         while (l < r)
         {
             int t;

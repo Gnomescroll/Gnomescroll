@@ -18,3 +18,6 @@ inline bool collision_check6_xy(float box_r, float box_h, float x, float y, floa
 inline bool on_ground(float box_r, float x, float y, float z);
 inline bool on_solid_ground(float box_r, float x, float y, float z);
 inline int _collision_check(int x, int y, int z);
+
+inline bool collision_check_final(float box_r, float box_h, float x, float y, float z);
+inline bool collision_check_final_z(float box_r, float box_h, float x, float y, float z, bool *top);

@@ -142,7 +142,11 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     printf("Loading voxel model: %s \n", file_name);
     int size;
     char* buffer = read_file_to_buffer(file_name, &size);
-    if(buffer == NULL) printf("error reading %s \n", file_name);
+    if(buffer == NULL)
+    {
+        printf("error reading %s \n", file_name);
+        return;
+    }
 
     int index = 0;
     int read;
@@ -179,9 +183,9 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
 
-#ifdef DC_CLIENT
+    #ifdef DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
-#endif
+    #endif
 
     int ret;
     int vox_num = 0;
@@ -190,26 +194,24 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     while(1)
     {
         check_for_comments(buffer, &index);
-        if( buffer[index] == '\0' || index == size)
-        {
+        if (buffer[index] == '\0' || index == size)
             break;
-        }
-        if(index > size)
-        {
+
+        if (index > size)
             printf("voxel_volume_read: buffer overflow, index= %i, size= %i \n", index, size);
-        }
+
         ret = sscanf (buffer+index, "%d %d %d  %d %d %d  %n", &x,&y,&z,&r,&g,&b, &read);
 
-        if(ret == 0)
+        if (ret == 0)
         {
             printf("read_voxel_volume: error ret==0 \n");
             break;
         }
         index += read;
 
-    #ifdef DC_CLIENT
+        #ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
-    #endif
+        #endif
         vox_num++;
     }
 

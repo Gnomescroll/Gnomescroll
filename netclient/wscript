@@ -342,6 +342,16 @@ class exceptions_ctx(ConfigurationContext):
     cmd = 'exceptions'
     fun = 'exceptions'
 
+class production_ctx(ConfigurationContext):
+    cmd = 'production'
+    fun = 'production'
+
+def production(ctx):
+    configure(ctx)
+    optimized(ctx)
+    ctx.env.CFLAGS.append('-DPRODUCTION')
+    ctx.env.CXXFLAGS.append('-DPRODUCTION')
+
 def profile(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')

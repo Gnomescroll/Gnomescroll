@@ -438,3 +438,13 @@ def load(opts):
 
     ctf.set_team_name(1, opts.team_name_one)
     ctf.set_team_name(2, opts.team_name_two)
+
+""" Chat """
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    void add_player_to_chat(int client_id)
+    void remove_player_from_chat(int client_id)
+
+def join_chat(int id):
+    add_player_to_chat(id)
+def leave_chat(int id):
+    remove_player_from_chat(id)

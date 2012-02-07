@@ -16,7 +16,6 @@ class NetEventGlobal:
     @classmethod
     def init(cls):
         cls.messageHandler = MessageHandler()
-        cls.chatMessageHandler = ChatMessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
 
         cls.mapMessageHandler = MapMessageHandler()
@@ -107,16 +106,6 @@ class GenericMessageHandler:
         self._assign_events_to_methods()
         self.register_events()
 
-
-class ChatMessageHandler(GenericMessageHandler):
-
-    events = {
-        'chat' : '_chat',
-    }
-
-    def _chat(self, **msg):
-        ChatClientGlobal.chatClient.receive(msg)
-
 class MiscMessageHandler(GenericMessageHandler):
     events = {
         'ping' : '_ping',
@@ -142,7 +131,6 @@ class MapMessageHandler(GenericMessageHandler):
 
 from net_client import NetClientGlobal
 from net_out import NetOut
-from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 
 import c_lib.terrain_map as terrainMap

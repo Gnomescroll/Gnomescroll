@@ -232,10 +232,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
-
     //collision
-    bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
-    //bool current_collision = collision_check6_z(box.box_r, height, as.x,as.y,as.z);
+    bool current_collision = collision_check_final(box.box_r, height, as.x,as.y,as.z);
     if(current_collision) {
         //printf("current\n");
         as.x = new_x;
@@ -246,17 +244,18 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         return as;
     }
 
+
     /*
         Collision Order: as.x,as.y,as.z
     */
-    bool collision_x = collision_check6_xy(box.box_r, height, new_x,as.y,as.z);
+    bool collision_x = collision_check_final(box.box_r, height, new_x,as.y,as.z);
     if(collision_x) {
         //printf("x\n");
         new_x = as.x;
         as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check6_xy(box.box_r, height, new_x,new_y,as.z);
+    bool collision_y = collision_check_final(box.box_r, height, new_x,new_y,as.z);
     if(collision_y) {
         //printf("y\n");
         new_y = as.y;
@@ -264,21 +263,16 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     }
 
     //top and bottom matter
-    bool collision_z = collision_check6_z(box.box_r, height, new_x, new_y, new_z);
+    bool top=false;
+    bool collision_z = collision_check_final_z(box.box_r, height, new_x, new_y, new_z, &top);
     if(collision_z) {
         //printf("z\n");
         new_z = as.z;
+        if (top)
+            new_z = floor(as.z) + ceil(height) - height;
         as.vz = 0.0f;
     }       
 
-    /*
-        Bug:
-        * Build ceiling
-        * Hold Jetpack to slide along ceiling
-        * Try to leave a 3 block vertical gap
-        * You cant
-        * Collision in x/y
-    */
 
     as.x = new_x;
     as.y = new_y;

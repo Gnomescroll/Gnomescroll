@@ -17,11 +17,18 @@ class ChatRender
         bool inited;
         Text* messages[CHAT_MESSAGE_RENDER_MAX];
         Text* input;
-        
+        int paging_offset;
         void init();
         void draw_messages();
         void draw_input();
-    
+        void draw_cursor();
+
+        float cursor_x, cursor_y, cursor_w, cursor_h;
+        void set_cursor(char* text, float x, float y);
+        void update(bool timeout=true);
+        //void page_up();
+        //void page_down();
+
     ChatRender();
     ~ChatRender();
 };
@@ -38,8 +45,8 @@ class Scoreboard
         //             per row?     -- easy vertical alignment; requires use of ' ' to align horizontally; less flexible
         //             per col?     -- easy horizontal alignment; easy to align certain things vertically ('\n') although less flexible; more difficult to insert team line breaks
         // # of cells required:
-        // cell: N_teams + N_stats * (N_players + 1)    // 2+5*(33) = 167
-        //  row: N_teams + N_players + 1                // 2+33+1   = 36
+        // cell: N_teams + N_stats * (PLAYERS_MAX + 1)    // 2+5*(33) = 167
+        //  row: N_teams + PLAYERS_MAX + 1                // 2+33+1   = 36
         //  col: N_teams + N_stats                      // 2+5      = 7
         Text* tags[N_STATS];
 
@@ -100,7 +107,5 @@ void set_hud_draw_settings(
 );
 void update_hud_draw_settings();
 void draw_hud();
-void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-void set_chat_input_string(char* text);
 
 }

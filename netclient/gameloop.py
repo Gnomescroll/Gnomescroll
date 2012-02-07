@@ -27,7 +27,6 @@ from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from chat_client import ChatClientGlobal
 from map_controller import MapControllerGlobal
 from hud import Hud
 from dat_loader import dat_loader
@@ -84,6 +83,15 @@ class App(object):
             sys.exit(1)
         NetClientConnectTo(a,b,c,d, opts.port)
 
+    last_tick = 0
+    def get_tick(self):
+        # get ticks for mouse interpolation
+        current_tick = init_c_lib.get_ticks()
+        delta_tick = current_tick - self.last_tick
+        self.last_tick = current_tick
+        return delta_tick
+
+
     def mainLoop(self):
         global P, Phy
 
@@ -101,6 +109,9 @@ class App(object):
 
         last_tick = 0
 
+        # update mouse
+        init_c_lib.update_mouse(self.get_tick())
+
         while not init_c_lib.cy_input_state.quit:
             P2.start_frame()
             P.start_frame()
@@ -113,8 +124,9 @@ class App(object):
             _max = 0.9
 
             agent = init_c_lib.player_agent_assigned()
-            if init_c_lib.identified():
-                ChatClientGlobal.init()
+
+            # update mouse
+            init_c_lib.update_mouse(self.get_tick())
 
             P.event("Physics Loop")
             phy_ticks = 0
@@ -129,25 +141,21 @@ class App(object):
                 init_c_lib.ClientState.tick()
                 if agent:
                     init_c_lib.update_sound_listener()
+
+                # update mouse
+                init_c_lib.update_mouse(self.get_tick())
+
                                     
             #this gets triggered if longer than 30ms between render frames
             if phy_ticks >= 2:
                 print "Physics: %i ticks this frame" % (phy_ticks)
 
-            # get ticks for mouse interpolation
-            current_tick = init_c_lib.get_ticks()
-            delta_tick = current_tick - last_tick
-            last_tick = current_tick
-
             # update mouse
-            init_c_lib.update_mouse(delta_tick)
+            init_c_lib.update_mouse(self.get_tick())
 
             # updates hud projected display names (doesnt draw them)
             if agent:
                 init_c_lib.display_agent_names()
-
-            # update chat client input buffer
-            ChatClientGlobal.load_buffer_from_c()
 
             P.event("Networking 1")
             NetClientFlushToNet()
@@ -164,6 +172,9 @@ class App(object):
                 opts.invert_mouse,
                 opts.sensitivity
             )
+
+            # update mouse
+            init_c_lib.update_mouse(self.get_tick())
 
             # update current camera
             init_c_lib.update_camera_state()
@@ -186,6 +197,10 @@ class App(object):
             # update map chunks
             P.event("terrain_map.update_chunks")
             c_lib.terrain_map.update_chunks()
+
+
+            # update mouse
+            init_c_lib.update_mouse(self.get_tick())
 
             # hud projection
             P.event("draw hud")
@@ -224,6 +239,9 @@ class App(object):
                     ping_val = stats.last_ping
 
             P.finish_frame()
+
+            # update mouse
+            init_c_lib.update_mouse(self.get_tick())
 
             init_c_lib.Sound.update()
             init_c_lib.ClientState.update()

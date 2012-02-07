@@ -5,6 +5,7 @@
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/sound/sound.hpp>
+#include <chat/client.hpp>
 
 void Agent_event::name_changed()
 {
@@ -75,6 +76,7 @@ void Agent_event::joined_team(int team)
 {
     this->a->status.team = team;
     this->a->vox->update_team_color(&agent_vox_dat, team);
+    chat_client.subscribe_channels();
 }
 
 void Agent_event::picked_up_flag()

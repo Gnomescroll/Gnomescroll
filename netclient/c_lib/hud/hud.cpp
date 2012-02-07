@@ -66,7 +66,6 @@ static struct HudDrawSettings
     bool player_stats;
     bool chat;
     bool chat_input;
-    bool chat_cursor;
     bool scoreboard;
     bool equipment;
     int equipment_slot;
@@ -118,7 +117,6 @@ void update_hud_draw_settings()
 
     hud_draw_settings.chat = true;
     hud_draw_settings.chat_input = input_state.chat;
-    hud_draw_settings.chat_cursor = input_state.chat;
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
@@ -133,41 +131,22 @@ void update_hud_draw_settings()
 
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
-}
 
-static struct ChatCursor
-{
-    char text[256];
-    float x,y;
-} chat_cursor;
-
-void set_chat_cursor(char* text, float x, float y)
-{
-    int len = strlen(text);
-    if (len >= 256)
+    // update chat rendering
+    if (hud->inited && hud->chat != NULL && hud->chat->inited)
     {
-        text[255] = '\0';
+        HudText::Text *t = hud->chat->input;
+        if (t != NULL)
+        {
+            t->set_text(chat_client.input.buffer);
+            hud->chat->set_cursor(t->text, t->x, t->y);
+        }
+
+        hud->chat->update(!hud_draw_settings.chat_input);
     }
-    strcpy(chat_cursor.text, text);
-    chat_cursor.x = x;
-    chat_cursor.y = y;
 }
 
 /* Draw routines */
-
-void draw_cursor()
-{
-    int len = 0;
-    int h = 0;
-    HudFont::get_string_pixel_dimension(chat_cursor.text, &len, &h);
-    int r,g,b;
-    r = 100;
-    g = 150;
-    b = 100;
-    const int w = 8;
-    h = 18; // magic number precalculated;
-    _draw_rect(r,g,b, chat_cursor.x + len + 4, chat_cursor.y - h, w, h);
-}
 
 void draw_reference_center()
 {
@@ -213,8 +192,9 @@ void draw_hud_textures()
         HudMap::draw_map();
     }
 
-    if (hud_draw_settings.chat_cursor)  //not actually a texture
-        draw_cursor();
+    if (hud_draw_settings.chat_input      //not actually a texture
+     && hud->inited && hud->chat != NULL && hud->chat->inited)
+        hud->chat->draw_cursor();
 }
 
 void draw_hud_text()
@@ -307,6 +287,7 @@ void draw_hud()
     draw_hud_textures();
     draw_hud_text();
 }
+
 /* HUD */
 
 void HUD::init()
@@ -412,16 +393,40 @@ void ChatRender::init()
         HudText::Text* t = HudText::text_list.create();
         t->set_position(50, _yresf - (50 + (18 + 2)*i));
         t->set_text((char*) "");
+        t->set_format((char*) "%s: %s");
+        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX - 4);
         t->set_color(255,255,255,255);
         messages[i] = t;
     }
 
     input = HudText::text_list.create();
-    input->set_text((char*) "");
+    input->set_text((char*)"");
     input->set_color(255,10,10,255);
     input->set_position(50, _yresf - (50 + (18 + 2)*i));
     
     this->inited = true;
+}
+
+void ChatRender::set_cursor(char* text, float x, float y)
+{
+    int len = 0;
+    int h = 0;
+    const int w = 8;
+    HudFont::get_string_pixel_dimension(text, &len, &h);
+    h = 18; // line height
+    cursor_x = x + len + 4;
+    cursor_y = y - h;
+    cursor_w = w;
+    cursor_h = h;
+}
+
+void ChatRender::draw_cursor()
+{
+    int r,g,b;
+    r = 100;
+    g = 150;
+    b = 100;
+    _draw_rect(r,g,b, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
 void ChatRender::draw_messages()
@@ -436,10 +441,57 @@ void ChatRender::draw_input()
     this->input->draw();
 }
 
+void ChatRender::update(bool timeout)
+{   // read chat client messages and format for display
+    if (!this->inited) return;
+
+    int now = _GET_MS_TIME();
+    chat_message_list.sort_by_most_recent();
+    int i=paging_offset;
+    int j=CHAT_MESSAGE_RENDER_MAX-1;
+    int n_draw = 0;
+    for (; i<chat_message_list.n_filtered; i++)
+    {
+        if (n_draw == CHAT_MESSAGE_RENDER_MAX) break;
+        ChatMessage* m = chat_message_list.filtered_objects[i];
+        if (m == NULL) break;
+        if (timeout && now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
+        n_draw++;
+    }
+
+    j = n_draw;
+    i = 0;
+    for (;j>0;)
+    {
+        ChatMessage* m = chat_message_list.filtered_objects[--j];
+        HudText::Text* t = this->messages[i++];
+        t->update_formatted_string(2, m->name, m->payload);
+        t->set_color(m->r, m->g, m->b, 255);
+    }
+
+    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text((char*)""));
+}
+
+//void ChatRender::page_up()
+//{
+    //paging_offset += 4;
+    //if (paging_offset > chat_message_list.num-8)
+        //paging_offset = chat_message_list.num-8;
+//}
+
+//void ChatRender::page_down()
+//{
+    //paging_offset -= 4;
+    //if (paging_offset < 0)
+        //paging_offset = 0;
+//}
+
+
 ChatRender::ChatRender()
 :
 inited(false),
-input(NULL)
+input(NULL),
+paging_offset(0)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }
@@ -447,30 +499,10 @@ input(NULL)
 ChatRender::~ChatRender()
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; i++)
-    {
-        if (messages[i] != NULL) HudText::text_list.destroy(messages[i]->id);
-    }
+        if (messages[i] != NULL)
+            HudText::text_list.destroy(messages[i]->id);
+
     if (input != NULL) HudText::text_list.destroy(input->id);
-}
-
-// CYTHON
-void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-{
-    if (i < 0 || i >= CHAT_MESSAGE_RENDER_MAX) return;
-    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
-    HudText::Text* t = hud->chat->messages[i];
-    if (t == NULL) return;
-    t->set_text(txt);
-    t->set_color(r,g,b,a);
-}
-
-void set_chat_input_string(char* text)
-{
-    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
-    HudText::Text* t = hud->chat->input;
-    if (t == NULL) return;
-    t->set_text(text);
-    set_chat_cursor(t->text, t->x, t->y);
 }
 
 /* Scoreboard */

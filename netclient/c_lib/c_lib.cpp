@@ -67,12 +67,10 @@
 #include <c_lib/weapons/weapons.cpp>
 #include <c_lib/weapons/packets.cpp>
 
-#ifdef DC_CLIENT
-    /* animations */
-    #include <c_lib/animations/animations.cpp>
-    #include <c_lib/animations/hitscan.cpp>
-    #include <c_lib/animations/hitscan_laser.cpp>
-#endif
+/* animations */
+#include <c_lib/animations/animations.cpp>
+#include <c_lib/animations/hitscan.cpp>
+#include <c_lib/animations/hitscan_laser.cpp>
 
 /* map */
 
@@ -92,43 +90,45 @@
 //#include <c_lib/t_map/t_viz.c>
 //#include <c_lib/t_map/t_vbo.c>
 
-#ifdef DC_CLIENT
 
-    /* camera */
-    #include <c_lib/camera/camera.cpp>
-    #include <c_lib/camera/fulstrum_test.cpp>
-    #include <c_lib/camera/skybox.cpp>
+/* camera */
+#include <c_lib/camera/camera.cpp>
+#include <c_lib/camera/fulstrum_test.cpp>
+#include <c_lib/camera/skybox.cpp>
 
-    /* SDL */
-    #include <c_lib/SDL/shader_loader.cpp>
-    #include <c_lib/SDL/texture_loader.cpp>
-    #include <c_lib/SDL/draw_functions.c>
-    #include <c_lib/SDL/particle_functions.c>
-    #include <c_lib/SDL/SDL_functions.c>
+/* SDL */
+#include <c_lib/SDL/shader_loader.cpp>
+#include <c_lib/SDL/texture_loader.cpp>
+#include <c_lib/SDL/draw_functions.c>
+#include <c_lib/SDL/particle_functions.c>
+#include <c_lib/SDL/SDL_functions.c>
 
 #ifdef linux
-    #include <c_lib/SDL/IMG_savepng.c>
+#include <c_lib/SDL/IMG_savepng.c>
 #endif
 
-    /* HUD */
-    #include <c_lib/hud/reticle.cpp>
-    #include <c_lib/hud/cube_selector.cpp>
-    #include <c_lib/hud/inventory.cpp>
-    #include <c_lib/hud/font.cpp>
-    #include <c_lib/hud/text.cpp>
-    #include <c_lib/hud/map.cpp>
-    #include <c_lib/hud/equipment.cpp>
-    #include <c_lib/hud/compass.cpp>
-    #include <c_lib/hud/hud.cpp>
+/* HUD */
+#include <c_lib/hud/reticle.cpp>
+#include <c_lib/hud/cube_selector.cpp>
+#include <c_lib/hud/inventory.cpp>
+#include <c_lib/hud/font.cpp>
+#include <c_lib/hud/text.cpp>
+#include <c_lib/hud/map.cpp>
+#include <c_lib/hud/equipment.cpp>
+#include <c_lib/hud/compass.cpp>
+#include <c_lib/hud/hud.cpp>
 
-    /* input */
-    #include <c_lib/input/input.cpp>
-    #include <c_lib/input/handlers.cpp>
+/* input */
+#include <c_lib/input/input.cpp>
+#include <c_lib/input/handlers.cpp>
 
-    /* sound */
-    #include <c_lib/sound/sound.cpp>
+/* sound */
+#include <c_lib/sound/sound.cpp>
 
-#endif
+/* chat */
+#include <c_lib/chat/globals.hpp>
+#include <c_lib/chat/packets.cpp>
+#include <c_lib/chat/client.cpp>
 
 /* client side map gen / utils */
 //#include <c_lib/map_gen/hopcroft-karp.cpp>
@@ -160,7 +160,6 @@ int init_c_lib() {
         init_image_loader();
         init_input();
         init_handlers();
-        init_chat_buffer();
         init_particle_functions();
         init_cameras();
 
@@ -190,7 +189,7 @@ void close_c_lib() {
     printf("close c_lib() \n");
     shutdown_net_client();
     teardown_cameras();
-    teardown_chat_buffer();
+    chat_client.teardown();
     #ifdef DC_CLIENT
         Sound::close();
         //close_SDL();  //would be called twice, already scheduled for at exit

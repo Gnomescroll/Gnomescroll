@@ -54,6 +54,11 @@
 #include <c_lib/monsters/packets.cpp>
 #include <c_lib/monsters/monsters.cpp>
 
+/* chat */
+#include <c_lib/chat/globals.hpp>
+#include <c_lib/chat/packets.cpp>
+#include <c_lib/chat/server.cpp>
+
 /* dungeon/L system/noise */
 #ifdef DUNGEON
     #include <c_lib/map_gen/hopcroft-karp.cpp>
@@ -64,7 +69,6 @@
 
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/server_state.cpp>
-
 
 //page size
 #include <unistd.h>

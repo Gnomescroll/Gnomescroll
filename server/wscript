@@ -259,3 +259,14 @@ def map_gen(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-DDUNGEON')
     ctx.env.CXXFLAGS.append('-DDUNGEON')
+
+class production_ctx(ConfigurationContext):
+    cmd = 'production'
+    fun = 'production'
+
+def production(ctx):
+    configure(ctx)
+    optimized(ctx)
+    ctx.env.CFLAGS.append('-DPRODUCTION')
+    ctx.env.CXXFLAGS.append('-DPRODUCTION')
+

@@ -132,5 +132,9 @@ void RegisterMessages() {
     identify_CtoS::register_server_packet();
     identified_StoC::register_client_packet();
 
+    // chat
+    ChatMessage_CtoS::register_server_packet();
+    ChatMessage_StoC::register_client_packet();
+
 }
 }

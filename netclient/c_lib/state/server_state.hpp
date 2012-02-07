@@ -31,5 +31,8 @@ namespace ServerState
 
     void send_game_state_to_client(int client_id);
 
+    void add_player_to_chat(int client_id);
+    void remove_player_from_chat(int client_id);
+
 }
 #endif

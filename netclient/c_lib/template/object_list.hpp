@@ -231,7 +231,8 @@ Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
 }
 
 template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::destroy(int id) {
+void Object_list<Object_state, max_n>::destroy(int id)
+{
     //where();
     if(a[id]==NULL) {
         printf("%s_list: Cannot delete object: object is null\n", name() );
@@ -409,7 +410,7 @@ void Object_list<Object_state, max_n>::objects_in_cone(
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::filter_none()
-{
+{   // moves all non null objects to the filtered list
     int c = 0;
     for (int i=0; i<max_n; i++)
     {

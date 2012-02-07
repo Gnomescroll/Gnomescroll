@@ -186,27 +186,19 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-"""
-Game modes (CTF)
-[chat client (sends "join team" cmd)]
-"""
-cdef extern from "./game/ctf.hpp":
-    cdef cppclass CTF:
-        void join_team(int team)
-        bool auto_assign
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    CTF ctf
-    void update_camera()
-
-def join_team(int team):
-    ctf.join_team(team)
 
 """
 Options & Settings
 [options]
 -- this is one of the few things to keep in cython until the end
 """
+
+cdef extern from "./game/ctf.hpp":
+    cdef cppclass CTF:
+        bool auto_assign
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    CTF ctf
 
 def load_options(opts):
     ctf.auto_assign = opts.auto_assign_team
@@ -215,6 +207,9 @@ def load_options(opts):
 Camera
 [gameloop]
 """
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void update_camera()
+
 cdef extern from "./camera/camera.hpp":
     void world_projection()
     void hud_projection()
@@ -301,31 +296,6 @@ def get_agent_name(int id):
     return a.status.name
 
 
-""" Chat """
-
-cdef extern from "./input/handlers.hpp":
-    int CHAT_BUFFER_SIZE
-    int* chat_input_buffer_unicode
-    char** chat_input_buffer_sym
-    int chat_cursor_index
-    void clear_chat_buffer()
-
-def get_chat_input_buffer():
-    sym_buff = []
-    uni_buff = []
-    for i in range(chat_cursor_index):
-        sym = chat_input_buffer_sym[i]
-        try:
-            uni = unichr(chat_input_buffer_unicode[i])
-        except:
-            uni = sym
-        sym_buff.append(sym)
-        uni_buff.append(uni)
-    return sym_buff, uni_buff
-
-def clear_chat_input_buffer():
-    clear_chat_buffer()
-    
 """ Input """
 
 cdef extern from "./input/input.hpp":
@@ -404,8 +374,6 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         int ping_val,
     )
     void draw_hud()
-    void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
-    void set_chat_input_string(char* text)
     void update_hud_draw_settings()
 
 cdef class HUD:
@@ -427,17 +395,6 @@ cdef class HUD:
             ping,
             ping_val,
         )
-    @classmethod
-    def set_chat_message(cls, i, text, color):
-        cdef unsigned char r
-        cdef unsigned char g
-        cdef unsigned char b
-        cdef unsigned char a
-        r,g,b,a = color
-        set_chat_message(i, text, r,g,b,a)
-    @classmethod
-    def set_chat_input_string(cls, text):
-        set_chat_input_string(text)
     @classmethod
     def update_hud_draw_settings(cls):
         update_hud_draw_settings()
