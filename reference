@@ -1,8 +1,19 @@
 The Laws of Online World Design
 http://www.raphkoster.com/gaming/laws.shtml
 
+Server Log Visualization:
+http://code.google.com/p/logstalgia/
+
+Remote Crash Reporting:
+google-breakpad
+http://code.google.com/p/google-breakpad/wiki/GettingStartedWithBreakpad
+
 Sound:
 http://www.soundsnap.com/
+
+Repo Visualization:
+http://code.google.com/p/gource/
+sudo apt-get install gource
 
 Minecraft GLSL
 http://www.youtube.com/watch?feature=player_detailpage&v=C4XcJff2b_I

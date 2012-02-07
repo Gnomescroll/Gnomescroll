@@ -45,7 +45,7 @@ char* read_file_to_buffer(char* file_name, int* size)
             size_t newLen = fread(source, sizeof(char), bufsize, fp);
             if (newLen == 0) 
             {
-                printf("read_file_to_buffer: error reading file", stderr);
+                printf("read_file_to_buffer: error reading file %s", file_name);
                 return NULL;
             } 
             else 

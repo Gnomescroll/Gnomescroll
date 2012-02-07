@@ -33,6 +33,7 @@ struct cubeProperties* get_cube(int id)
     if(id >= max_cubes ) printf("get_cube: error id exceeds max_cubes \n");
     return &cube_list[id];
 }
+
 /*
     cube side texture array
 */
@@ -51,22 +52,24 @@ Cube Properties
 
 struct cubeProperties* _get_cube(int id)
 {
-    return cube_list + id;
+    return t_map::cube_list + id;
 }
 
 bool isActive(int id) 
 {
-    return cube_list[id].active;
+    return t_map::cube_list[id].active;
 }
 
 bool isSolid(int id) 
 {
-    return cube_list[id].solid;
+    return t_map::cube_list[id].solid;
 }
 
 bool isOccludes(int id) 
 {
-    return cube_list[id].occludes;
+    return t_map::cube_list[id].occludes;
 }
 
 }
+
+

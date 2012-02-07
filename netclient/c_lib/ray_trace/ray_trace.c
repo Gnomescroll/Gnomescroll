@@ -17,18 +17,18 @@ float dummy;
 
 static inline int collision_check(int x, int y, int z) {
     //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
-    return isActive(_get(x,y,z));
+    return t_map::isActive(t_map::get(x,y,z));
 }
 
 static inline int collision_check2(int x, int y, int z) {
     //printf("collision check: %i, %i, %i, %i \n", x,y,z,_get(x,y,z));
     //int tile = _get(x,y,z);
     //return isActive(tile);
-    return isActive(_get(x,y,z));
+    return t_map::isActive(t_map::get(x,y,z));
 }
 
 static inline int collision_check3(int x, int y, int z) {
-    return isActive(_get(x,y,z));
+    return t_map::isActive(t_map::get(x,y,z));
 }
 
 static inline float dist(float x0,float y0,float z0, float x1,float y1,float z1) {
