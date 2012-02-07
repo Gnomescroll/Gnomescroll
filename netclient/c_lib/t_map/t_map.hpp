@@ -14,12 +14,10 @@ namespace t_map
 void init_t_map();
 void init_for_draw();
 
-int get(int x, int y, int z);
-
-void set(int x, int y, int z, int value);
+inline int get(int x, int y, int z);
+inline void set(int x, int y, int z, int value);
 
 }
-
 
 static inline int _get(int x, int y, int z)
 {

@@ -3,14 +3,17 @@
 
 struct MapDimension map_dim;
 
-
+#include "t_map_class.hpp"
 
 namespace t_map
 {
 
+
+Terrain_map* main_map;
+
 void init_t_map()
 {
-    
+    main_map = new Terrain_map(512, 512); //512 by 512 map
 }
 
 void init_for_draw()
@@ -20,12 +23,12 @@ void init_for_draw()
 
 int get(int x, int y, int z)
 {
-    return 0;
+    return main_map->get_block(x,y,z);
 }
 
 void set(int x, int y, int z, int value)
 {
-    
+    main_map->set_block(x,y,z,value);
 }
 
 }
