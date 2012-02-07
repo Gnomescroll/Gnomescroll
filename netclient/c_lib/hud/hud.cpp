@@ -447,7 +447,7 @@ void ChatRender::update(bool timeout)
 
     int now = _GET_MS_TIME();
     chat_message_list.sort_by_most_recent();
-    int i=0;
+    int i=paging_offset;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
     for (; i<chat_message_list.n_filtered; i++)
@@ -472,10 +472,26 @@ void ChatRender::update(bool timeout)
     for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text((char*)""));
 }
 
+//void ChatRender::page_up()
+//{
+    //paging_offset += 4;
+    //if (paging_offset > chat_message_list.num-8)
+        //paging_offset = chat_message_list.num-8;
+//}
+
+//void ChatRender::page_down()
+//{
+    //paging_offset -= 4;
+    //if (paging_offset < 0)
+        //paging_offset = 0;
+//}
+
+
 ChatRender::ChatRender()
 :
 inited(false),
-input(NULL)
+input(NULL),
+paging_offset(0)
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; messages[i++] = NULL);
 }

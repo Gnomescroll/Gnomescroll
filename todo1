@@ -271,33 +271,21 @@ terminate called after throwing an instance of 'St9bad_alloc'
   what():  std::bad_alloc
 """
 
-Deprecate python packets
--- Identify/fail
--- Chat messages
--- Chunk list, chunk
-::Identifies rely on python client pool for name management; pointless to move
-until then. loss of name collision functionality not worht it::
-::Chat messages outgoing can be in C but incoming would still need to be in python,
-without excess struggling::
-::Chunk list, chunk are being moved to C with terrain map rewrite::
-
 PYTHON DEPRECATION:
 Font
 Main loop
-
-Leave:
 settings.py
 Parsers
 map gen scripts (can be removed easy, not integrated)
-
-delete the rest
 
 -----------
 TODO LIST FROM FEB4 NET TEST RESULTS:
 
 Disable Debug Controls:
 -disable t button (chat with t key?)
+    DONE
 -get rid of debug controls (activate with f12)
+    DONE
  
 Chat:
 -chat with t key (and enter)
@@ -311,9 +299,10 @@ Chat:
     DONE
  
 Other
--placing block does not place where aimed (not using correct camera?)   --cant replicate
+-placing block does not place where aimed (not using correct camera?) 
 --- placing block when crouched in or near 2block tall spot prevents block placement
 -fix client side prediction bug (movement is slugish, glitch)
--if player disconnects, their name turns into different player and switches teams   --probably fixed
+-if player disconnects, their name turns into different player and switches teams
+    DONE
 
 Ratelimit jetpack / cap height

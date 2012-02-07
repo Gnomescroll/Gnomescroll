@@ -1,5 +1,8 @@
 #include "handlers.hpp"
 
+#include <chat/client.hpp>
+#include <hud/hud.hpp>
+
 InputState input_state;
 
 // triggers
@@ -127,6 +130,8 @@ void set_input_options(
 
 void chat_key_down_handler(SDL_Event* event)
 {
+    using namespace Hud;
+    
     switch (event->key.keysym.sym)
     {
         case SDLK_ESCAPE:
@@ -152,6 +157,14 @@ void chat_key_down_handler(SDL_Event* event)
         case SDLK_DOWN:
             chat_client.input.history_newer();
             return;
+        //case SDLK_PAGEUP:
+            //if (hud->inited && hud->chat != NULL && hud->chat->inited)
+                //hud->chat->page_up();
+            //return;
+        //case SDLK_PAGEDOWN:
+            //if (hud->inited && hud->chat != NULL && hud->chat->inited)
+                //hud->chat->page_down();
+            //return;
         default: break;
     }
     
