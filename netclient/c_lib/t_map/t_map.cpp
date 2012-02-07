@@ -3,6 +3,8 @@
 
 struct MapDimension map_dim;
 
+
+
 namespace t_map
 {
 

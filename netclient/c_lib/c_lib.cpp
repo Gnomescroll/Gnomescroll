@@ -77,6 +77,7 @@
 /* map */
 
 #include <c_lib/t_map/t_map.cpp>
+#include <c_lib/t_map/t_map_class.cpp>
 #include <c_lib/t_map/t_properties.cpp>
 #include <c_lib/t_map/t_vbo.cpp>
 #include <c_lib/t_map/t_vbo_draw.cpp>
