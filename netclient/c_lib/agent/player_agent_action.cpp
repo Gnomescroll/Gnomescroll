@@ -351,21 +351,6 @@ void PlayerAgent_action::throw_grenade() {
     msg.send();
 }
 
-//void PlayerAgent_action::hit_block() {
-    //const int z_low = 4;
-    //const int z_high = 3;
-    //float f[3];
-    //agent_camera->forward_vector(f);
-    //int *pos = _nearest_block(p->camera_state.x, p->camera_state.y, p->camera_state.z + p->you->camera_height(), f[0], f[1], f[2], BLOCK_PICK_MAX_DISTANCE, z_low, z_high);
-    //if (pos != NULL) {
-        //hit_block_CtoS msg;
-        //msg.x = pos[0];
-        //msg.y = pos[1];
-        //msg.z = pos[2];
-        //msg.send();
-    //}
-//}
-
 void PlayerAgent_action::set_block() {
     if (p->you == NULL) return;
 

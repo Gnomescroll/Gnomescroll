@@ -225,17 +225,18 @@ C chat implemented
 
 ./waf production
 
-fix lateral motion when head against ceiling
+fix collision detection
+fix place block when crouch (collision detection issue)
 ====================
 
 
-//COLLISION DETECTION
-body can still pass through single row blocks
--placing block does not place where aimed (not using correct camera?) 
---- placing block when crouched in or near 2block tall spot prevents block placement
--- the test is: set terrain mod, check against terrain, unset if collides.
--- the check against terrain is failing whenever you are crouched
 Ratelimit jetpack / cap height
+
+Increase mouse sampling
+
+Try:
+    applying pan every sample
+    Reconstructing pan once, from samples
 
 
 Spreadsheet to document interactions
