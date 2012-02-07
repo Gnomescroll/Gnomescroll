@@ -56,7 +56,7 @@ class Terrain_map
     int xchunk_dim;
     int ychunk_dim;
     
-    struct MAP_CHUNK* chunk;
+    struct MAP_CHUNK** chunk;
 
     Terrain_map(int _xdim, int _ydim)
     {
@@ -65,16 +65,20 @@ class Terrain_map
         xchunk_dim = _xdim/16; 
         ychunk_dim = _ydim/16;
 
-        chunk = new MAP_CHUNK[xchunk_dim*ychunk_dim];
+        chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
     }
 
     ~Terrain_map()
     {
+        for(int i=0; i < xchunk_dim*ychunk_dim; i++)
+        {
+            if(chunk[i] != NULL) delete chunk[i];
+        }
         delete[] chunk;
     }
     
-    struct MAP_ELEMENT get_element(int x, int y, int z);
-    void set_element(int x, int y, int z, int value);
+    struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
+    void set_element(int x, int y, int z, int value) __attribute((always_inline));
 
     int get_block(int x, int y, int z) __attribute((always_inline));
     void set_block(int x, int y, int z, int value) __attribute((always_inline));
