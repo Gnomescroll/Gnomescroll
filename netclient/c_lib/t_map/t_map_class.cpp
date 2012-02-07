@@ -52,6 +52,7 @@ namespace t_map
         if( c != NULL ) c = new MAP_CHUNK( y & ~15, x & ~15);
 
         c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
+        this->needs_update = true;
     #else
         struct MAP_CHUNK* c;
         {
@@ -64,6 +65,7 @@ namespace t_map
         int xi = x | 15; //bit mask
         int yi = y | 15; //bit mask
         c->e[16*16*z+ 16*yi + xi] = element;
+        this->needs_update = true;
     #endif
     }
 

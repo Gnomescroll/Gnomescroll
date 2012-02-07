@@ -8,7 +8,6 @@ struct MapDimension map_dim;
 namespace t_map
 {
 
-
 Terrain_map* main_map;
 
 void init_t_map()

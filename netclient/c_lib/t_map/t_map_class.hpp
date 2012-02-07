@@ -30,6 +30,8 @@ class MAP_CHUNK
     int xpos;
     int ypos;
 
+    bool needs_update;
+
     unsigned char top_block[16*16];
 
     struct MAP_ELEMENT e[16*16*TERRAIN_MAP_HEIGHT];
