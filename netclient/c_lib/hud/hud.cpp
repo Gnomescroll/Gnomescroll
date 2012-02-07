@@ -96,24 +96,6 @@ void set_hud_draw_settings(
     hud_draw_settings.ping_val = ping_val;
 }
 
-static struct ChatCursor
-{
-    char text[256];
-    float x,y;
-} chat_cursor;
-
-void set_chat_cursor(char* text, float x, float y)
-{
-    int len = strlen(text);
-    if (len >= 256)
-    {
-        text[255] = '\0';
-    }
-    strcpy(chat_cursor.text, text);
-    chat_cursor.x = x;
-    chat_cursor.y = y;
-}
-
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
@@ -157,7 +139,7 @@ void update_hud_draw_settings()
         if (t != NULL)
         {
             t->set_text(chat_client.input.buffer);
-            set_chat_cursor(t->text, t->x, t->y);
+            hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
         hud->chat->update(!hud_draw_settings.chat_input);
@@ -165,20 +147,6 @@ void update_hud_draw_settings()
 }
 
 /* Draw routines */
-
-void draw_cursor()
-{
-    int len = 0;
-    int h = 0;
-    HudFont::get_string_pixel_dimension(chat_cursor.text, &len, &h);
-    int r,g,b;
-    r = 100;
-    g = 150;
-    b = 100;
-    const int w = 8;
-    h = 18; // magic number precalculated;
-    _draw_rect(r,g,b, chat_cursor.x + len + 4, chat_cursor.y - h, w, h);
-}
 
 void draw_reference_center()
 {
@@ -224,8 +192,9 @@ void draw_hud_textures()
         HudMap::draw_map();
     }
 
-    if (hud_draw_settings.chat_input)  //not actually a texture
-        draw_cursor();
+    if (hud_draw_settings.chat_input      //not actually a texture
+     && hud->inited && hud->chat != NULL && hud->chat->inited)
+        hud->chat->draw_cursor();
 }
 
 void draw_hud_text()
@@ -436,6 +405,28 @@ void ChatRender::init()
     input->set_position(50, _yresf - (50 + (18 + 2)*i));
     
     this->inited = true;
+}
+
+void ChatRender::set_cursor(char* text, float x, float y)
+{
+    int len = 0;
+    int h = 0;
+    const int w = 8;
+    HudFont::get_string_pixel_dimension(text, &len, &h);
+    h = 18; // line height
+    cursor_x = x + len + 4;
+    cursor_y = y - h;
+    cursor_w = w;
+    cursor_h = h;
+}
+
+void ChatRender::draw_cursor()
+{
+    int r,g,b;
+    r = 100;
+    g = 150;
+    b = 100;
+    _draw_rect(r,g,b, cursor_x, cursor_y, cursor_w, cursor_h);
 }
 
 void ChatRender::draw_messages()

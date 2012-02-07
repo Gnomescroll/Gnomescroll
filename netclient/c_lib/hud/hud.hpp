@@ -21,6 +21,10 @@ class ChatRender
         void init();
         void draw_messages();
         void draw_input();
+        void draw_cursor();
+
+        float cursor_x, cursor_y, cursor_w, cursor_h;
+        void set_cursor(char* text, float x, float y);
         void update(bool timeout=true);
 
     ChatRender();

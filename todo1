@@ -308,6 +308,7 @@ Chat:
     DONE
 -chat log bool
 -enable chat log when when tab or typing
+    DONE
  
 Other
 -placing block does not place where aimed (not using correct camera?)   --cant replicate

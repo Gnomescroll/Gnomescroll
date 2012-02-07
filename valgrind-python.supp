@@ -389,3 +389,38 @@
 }
 
 
+### fglrx
+
+{
+   f1
+   Memcheck:Param
+   ioctl(generic)
+   fun:ioctl
+   obj:/usr/lib/fglrx/dri/fglrx_dri.so
+}
+
+{
+   f2
+   Memcheck:Cond
+   obj:/usr/lib/fglrx/dri/fglrx_dri.so
+}
+
+{
+   f3
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   obj:*
+}
+
+{
+   f4
+   Memcheck:Addr4
+   obj:/usr/lib/fglrx/dri/fglrx_dri.so
+}
+
+{
+   f5
+   Memcheck:Addr8
+   obj:/usr/lib/fglrx/dri/fglrx_dri.so
+}
