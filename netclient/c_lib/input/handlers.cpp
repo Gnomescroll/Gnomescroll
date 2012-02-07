@@ -389,7 +389,10 @@ void key_down_handler(SDL_Event* event)
                 if (input_state.debug)
                     toggle_input_mode();
                 else
+                {
                     toggle_chat();
+                    chat_client.use_global_channel();
+                }
                 break;
                 
             case SDLK_u:
@@ -398,6 +401,8 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_y:
                 toggle_chat();
+                if (!input_state.debug)
+                    chat_client.use_team_channel();
                 break;
 
             case SDLK_TAB:
@@ -406,6 +411,7 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_RETURN:
                 toggle_chat();
+                chat_client.use_global_channel();
                 break;
 
             case SDLK_SLASH:

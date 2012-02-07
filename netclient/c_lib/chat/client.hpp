@@ -116,6 +116,9 @@ class ChatClient
     void received_message(int channel, int sender, char* payload);
     void submit();
 
+    void use_team_channel();
+    void use_global_channel();
+
     ChatInput input;
 
     ChatClient();

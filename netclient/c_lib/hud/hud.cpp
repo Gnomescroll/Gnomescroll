@@ -476,7 +476,6 @@ void ChatRender::update()
     {
         ChatMessage* m = chat_message_list.filtered_objects[--j];
         HudText::Text* t = this->messages[i++];
-        //if (t==NULL) continue;
         t->update_formatted_string(2, m->name, m->payload);
         t->set_color(m->r, m->g, m->b, 255);
     }

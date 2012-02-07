@@ -39,7 +39,7 @@ void ChatMessage::set_color()
     }
     else if (channel >= CHANNEL_ID_TEAM_OFFSET && channel < (int)(CHANNEL_ID_TEAM_OFFSET+N_TEAMS))
     {   // team
-        ClientState::ctf.get_team_color(channel - CHANNEL_ID_TEAM_OFFSET, &r, &g, &b);
+        ClientState::ctf.get_team_color(channel - CHANNEL_ID_TEAM_OFFSET + 1, &r, &g, &b);
         return;
     }
     else
@@ -53,12 +53,14 @@ void ChatMessage::set_color()
     r = CHAT_UNKNOWN_COLOR_R;
     g = CHAT_UNKNOWN_COLOR_G;
     b = CHAT_UNKNOWN_COLOR_B;
+
 }
 
 ChatMessage::ChatMessage(int id)
 :
 id(id),
-timestamp(0)
+timestamp(0),
+r(255),g(255),b(255)
 {}
 
 /* ChatMessageHistoryObject */
@@ -354,9 +356,13 @@ void ChatClient::subscribe_channels()
         printf("ChatClient::init -- playerAgent_state.you is NULL, abort\n");
         return;
     }
+    ChatClientChannel* chan;
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
-        ChatClientChannel* chan = new ChatClientChannel();
+        if (this->channels[i] == NULL)
+            this->channels[i] = new ChatClientChannel();
+
+        chan = this->channels[i];
         chan->type = (ChannelTypes)i;
         switch (chan->type)
         {
@@ -370,11 +376,10 @@ void ChatClient::subscribe_channels()
                 chan->id = ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET;
                 break;
             case CHANNEL_TEAM:
-                chan->id = ClientState::playerAgent_state.you->status.team + CHANNEL_ID_TEAM_OFFSET;
+                chan->id = ClientState::playerAgent_state.you->status.team + CHANNEL_ID_TEAM_OFFSET - 1;
                 break;
             default: break;
         }
-        this->channels[i] = chan;
     }
 }
 
@@ -389,6 +394,20 @@ void ChatClient::teardown()
     this->input.clear_history();
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; this->channels[i++]->clear_history());
 }
+
+void ChatClient::use_team_channel()
+{
+    this->channel = 1;
+    if (ClientState::playerAgent_state.you == NULL) return;
+    if (ClientState::playerAgent_state.you->status.team == 0) return;
+    this->channel = ClientState::playerAgent_state.you->status.team + CHANNEL_ID_TEAM_OFFSET - 1;
+}
+
+void ChatClient::use_global_channel()
+{
+    this->channel = 1;
+}
+
 
 ChatClient::ChatClient()
 :
