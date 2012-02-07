@@ -27,13 +27,10 @@ namespace ClientState {
     Animations::HitscanEffect_list hitscan_effect_list;
     Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
 
-    HudText::Text_list text_list;
-     
     CTF ctf;
     
     PlayerAgent_state playerAgent_state;
 
-    int active_agent = 0;
     int agent_control_state[16];
         
     void init()
@@ -45,12 +42,6 @@ namespace ClientState {
     void update()
     {
         slime_list.update();
-    }
-
-
-    int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
-    {
-        return ctf.get_team_color(team, r,g,b);
     }
 
     void set_PlayerAgent_id(int id) {
@@ -89,5 +80,39 @@ namespace ClientState {
     void update_client_state(){update();}
     void draw_client_state(){draw();}
     void tick_client_state(){tick();}
+    void send_identify_packet(char* name)
+    {
+        printf("sending identify packet to server; name=%s\n", name);
+        unsigned int len = strlen(name);
+        if (len >= PLAYER_NAME_MAX_LENGTH)
+            name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
+
+        identify_CtoS msg;
+        strcpy(msg.name, name);
+        msg.send();
+    }
+    int get_client_id_from_name(char* name)
+    {
+        for (int i=0; i<agent_list.n_max; i++)
+        {
+            if (agent_list.a[i] == NULL) continue;
+            if (agent_list.a[i]->status.name == NULL) continue;
+            if (!agent_list.a[i]->status.identified) continue;
+            if (!strcmp(agent_list.a[i]->status.name, name)) return agent_list.a[i]->id;
+        }
+        return -1;
+    }
+
+    void update_camera()
+    {
+        if (input_state.camera_mode == INPUT_STATE_AGENT)
+        {
+            use_agent_camera();
+            if (playerAgent_state.you != NULL)
+                update_agent_camera();
+        }
+        else
+            use_free_camera();
+    }
 
 }

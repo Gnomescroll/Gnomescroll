@@ -12,6 +12,7 @@ void Agent_event::name_changed()
     {
         this->bb->set_text(this->a->status.name);
     }
+    this->a->status.identified = true;
 }
 
 void Agent_event::hide_name()
@@ -33,7 +34,7 @@ void Agent_event::display_name()
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
         unsigned char r,g,b,a=255;
-        ClientState::get_team_color(this->a->status.team, &r, &g, &b);
+        ClientState::ctf.get_team_color(this->a->status.team, &r, &g, &b);
         this->bb->set_color(r,g,b,a);
         this->bb->projection_type = Billboard::HUD;
         this->bb->set_size(0.7);

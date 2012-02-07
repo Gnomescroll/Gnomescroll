@@ -178,14 +178,57 @@ CyText removed from init_c_lib -- all text creation and draw in C (chat message 
 Draw/Tick calls managed by client state
 =============
 
+Feb 03
 
-Client is reports agent in scoreboard when team *should* be 0. more likely that the team is not being changed in other clients
+Fix client's player block damage animation for hitscan laser; add to pick
+Slimes take 2 hits
+Networked subvoxel destruction
+=============
 
-OpenAL ?
+Feb 04
+
+Fixing up camera
+Camera uses proper selected camera_state from player agent
+player agent uses agent_camera angles
+
+fix scoreboard failure to reset text
+
+C input framework
+InputGlobal state variables in C
+simple handlers in C
+mouse, quit in C
+cube selector in C
+agent key down/up events in C
+chat text entry buffer in C (chat reads this)
+input.py fully deprecated
+=============
+
+Feb 05
+
+Camera.py gutted
+Identification in C
+gut dead python network pieces (identify, dat, a few others)
+removed agents.py, game_state.py from server
+removed agents.py, game_state.py from client
+removed last of camera.py
+=============
+
+Spreadsheet to document interactions
+e.g.
+Client fires weapon:
+play anims/sound client side, (based on expected server filtering. i.e, if server will not apply damage because same team, then dont destroy voxel)
+send packet to server,
+server responds,
+send packet to clients,
+clients play anims/sound
+
+OpenAL ? (wav easy, but others hard?)
+
+Alt-tab while mouse captured not possible?
 
 Icons on map (angus)
 
-Client side jump physics (server is snapping)
+When head in ceiling, cant move laterally
 
 Turrets
 
@@ -193,6 +236,8 @@ Minimap
 
 Sounds
 System notifications (you killed...)
+
+better base/spawner spawn logic (i.e. if the spawner is buried in a room underground, spawn there, not on top)
 
 Voxel editor:
 Bucket fill
@@ -225,13 +270,19 @@ without excess struggling::
 
 PYTHON DEPRECATION:
 ORDER:
-HUD --done
-Input
-Camera
-NetServer pool
+HUD     --done
+Input   --done
+Camera  --done
+Agents  --done
+NetClient (chat, identity messages need to be moved)
 Chat
 Font
 Main loop
+
+Remaining:
+chat (messages, logic)
+python map (waiting for brandon)
+--Then can get rid of python network
 
 Leave:
 settings.py
@@ -240,25 +291,22 @@ map gen scripts (can be removed easy, not integrated)
 
 delete the rest
 
+-----------
+TODO LIST FROM FEB4 NET TEST RESULTS:
 
-====================
-
-HUD migration to C
-
-init all text objects
-
-rewrite scoreboard formatter
--- scoreboard data is all available in C now, this wont be that bad
-
-rewrite scoreboard layout render
--- will be annoying, but easier this time
-
-rewrite player stats formatter
--- again, should be easy
-
-draw chat messages
--- need to write a payload class that mirrors chat client's current Payload object
--- will need to fill an array of chat messages to render in C, from python
--- then render from that
-
-Then can delete CyText!
+Disable Debug Controls:
+-disable t button (chat with t key?)
+-get rid of debug controls (activate with f12)
+ 
+Chat:
+-chat with t key (and enter)
+-team chat with y
+-increase time chat is displayed for
+-chat log bool
+-enable chat log when when tab or typing
+ 
+Other
+-placing block does not place where aimed (not using correct camera?)   --cant replicate
+--- placing block when crouched in or near 2block tall spot prevents block placement
+-fix client side prediction bug (movement is slugish, glitch)
+-if player disconnects, their name turns into different player and switches teams   --probably fixed

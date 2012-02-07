@@ -191,7 +191,7 @@ void update_agents() {
         ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
     }
 
-    ClientState::get_team_color(team, &r, &g, &b);
+    ClientState::ctf.get_team_color(team, &r, &g, &b);
     for (int i=0; i<ClientState::agent_list.n_max; i++)
     {
         Agent_state* agent = ClientState::agent_list.a[i];

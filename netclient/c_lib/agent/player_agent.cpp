@@ -10,6 +10,7 @@
 
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/state/client_state.hpp>
+#include <c_lib/input/handlers.hpp>
 
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
@@ -19,6 +20,8 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
         printf("WARNING: set_PlayerAgent_id -- agent %d does not exist\n", id);
     }
     this->agent_id = id;
+    input_state.input_mode = INPUT_STATE_AGENT;
+    input_state.camera_mode = INPUT_STATE_AGENT;
 }
 
 
@@ -238,7 +241,7 @@ void PlayerAgent_state::display_agent_names()
     float threshold = (3.14159 / 180) * 18; //degrees->radians
     AgentState *s = &this->camera_state;
     float f[3];
-    this->camera_state.forward_vector(f);
+    agent_camera->forward_vector(f);
     ClientState::agent_list.objects_in_cone(
         s->x, s->y, s->z + this->camera_height(),
         f[0], f[1], f[2],
@@ -269,14 +272,15 @@ void PlayerAgent_state::update_sound() {
     AgentState s = camera_state;
 
     float f[3];
-    s.forward_vector(f);
+    agent_camera->forward_vector(f);
 
     Sound::update_listener(s.x, s.y, s.z, s.vx, s.vy, s.vz, f[0], f[1], f[2], 0,0,1);
 }
 
 PlayerAgent_state::PlayerAgent_state()
 :
-action(this)
+action(this),
+identified(false)
 {
     //init
     static int inited=0;

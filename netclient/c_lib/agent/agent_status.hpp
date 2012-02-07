@@ -33,6 +33,7 @@ class Agent_status {
         unsigned int health_max;
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
+        bool identified;
 
         int team;
         bool has_flag;
@@ -72,8 +73,6 @@ class Agent_status {
         void spend_coins(unsigned int coins);
         void send_coin_packet();
         bool purchase(Object_types obj);
-
-
 
         Agent_status(Agent_state* a);
 };

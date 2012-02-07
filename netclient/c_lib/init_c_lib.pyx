@@ -53,21 +53,6 @@ def GET_MS_TIME():
     return _GET_MS_TIME();
 
 """
-pviz
-[gameloop, input]
-"""
-cdef extern from "../net_lib/common/pviz.h":
-    void pviz_draw(float x, float y, float z)
-    void toggle_latency_unit()
-
-def _pviz_draw(float x, float y, float z):
-    pviz_draw(x,y,z)
-
-def _toggle_latency_unit():
-    toggle_latency_unit()
-
-
-"""
 Network
 [gameloop, netclient]
 """
@@ -147,45 +132,10 @@ cpdef init_python_net():
     set_python_net_event_callback_function(py_net_net_event_callback)
 
 """
-slimes
-[input]
---
-"""
-cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
-    void test(int n)
-
-def slime_test(int n):
-    test(n)
-
-"""
-ray trace
-[input]
--- Get rid of "set_active_block" logic in agent, wrap directly down to C agent method
- """
-cdef extern from "ray_trace/ray_trace.h":
-    int* _nearest_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high)
-
-def nearest_block(pos, vector, float max_distance=4., int z_low=4, int z_high=3):
-    cdef int* i
-    cdef float x
-    cdef float y
-    cdef float z
-    cdef float vx
-    cdef float vy
-    cdef float vz
-
-    x,y,z = pos
-    vx,vy,vz = vector
-    
-    i = _nearest_block(x,y,z, vx,vy,vz, max_distance, z_low, z_high)
-    if i == NULL:
-        return
-    return [i[0], i[1], i[2]]
-
-"""
 sound
 [sound]
--- move the init logic into C
+-- needs a listdir (or hardcode each soundfile [no]) to move into C
+-- dirent is probably cross platform
 """
 cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_volume(float vol)
@@ -194,7 +144,6 @@ cdef extern from "./sound/sound.hpp" namespace "Sound":
 
     void load_sound(char* file)
     void update_sound()
-    
 
 class Sound(object):
 
@@ -241,11 +190,6 @@ def set_resolution(xres, yres, fullscreen = 0):
 Game modes (CTF)
 [chat client (sends "join team" cmd)]
 """
-
-cdef extern from "./game/teams.hpp":
-    cdef cppclass CTFTeam:  # inherits Team
-        pass
-
 cdef extern from "./game/ctf.hpp":
     cdef cppclass CTF:
         void join_team(int team)
@@ -253,6 +197,7 @@ cdef extern from "./game/ctf.hpp":
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
+    void update_camera()
 
 def join_team(int team):
     ctf.join_team(team)
@@ -268,232 +213,25 @@ def load_options(opts):
 
 """
 Camera
-[input, gameloop]
-"""
-cdef extern from "./camera/camera.hpp":
-    cdef cppclass CCamera:
-        float fov
-        float x_size
-        float y_size
-        float z_near
-        float z_far
-        float x
-        float y
-        float z
-        float x_angle
-        float y_angle
-        float xl, yl, zl
-        float xu, yu, zu
-        float ratio
-
-        int type
-
-        int is_current()
-
-        int world_projection()
-        int hud_projection()
-
-        void pan(float dx, float dy)
-        void move(float dx, float dy, float dz)
-        void set_aspect(float fov, float z_near, float z_far)
-        void set_projection(float x, float y, float z, float x_angle, float y_angle)
-        void set_dimensions()   # uses SDL_functions' xres & yres properties
-        void set_fov(float fov)
-        
-    void set_camera(CCamera* c)
-    void set_camera_first_person(int first_person)
-    CCamera* CYTHON_get_available_camera()
-
-    cdef enum CAMERA_TYPES:
-        UNKNOWN_CAM
-        AGENT_CAM
-        CAMERA_CAM
-
-camera_properties = [
-    'fov',
-    'x_size', 'y_size',
-    'z_near', 'z_far',
-    'x', 'y', 'z',
-    'x_angle', 'y_angle',
-    'xl', 'yl', 'zl',
-    'xu', 'yu', 'zu',
-    'ratio'
-]
-
-camera_callback = None
-
-cdef class Camera(object):
-    cdef CCamera* camera
-    cdef int active
-    cdef int first_person
-
-    def __init__(self, int first_person, name="camera"):
-        cdef CCamera* cam
-
-        cam = CYTHON_get_available_camera();
-        if cam == NULL:
-            print "Cython camera init -- Camera is null"
-            raise ValueError
-
-        self.camera = cam
-        self.active = 0
-        if self.camera.is_current():
-            print 'Cython camera is current camera'
-            self.active = 1
-
-        self.camera.set_dimensions()
-
-        self.first_person = int(first_person)
-
-        if name.lower() == 'camera':
-            cam.type = CAMERA_CAM
-        elif name.lower() == 'agent':
-            cam.type = AGENT_CAM
-        else:
-            print "Warning: Creating camera with unknown name/type %s" % (name,)
-            cam.type = UNKNOWN_CAM
-
-    def load(self):
-        if self.active == 0:
-            set_camera(self.camera)
-            set_camera_first_person(self.first_person)
-            self.active = 1
-
-    def unload(self):
-        self.active = 0
-
-    def set_fov(self, float fov):
-        self.camera.set_fov(fov)
-            
-    def set_aspect(self, float fov, float z_near, float z_far):
-        self.camera.set_aspect(fov, z_near, z_far)
-
-    def set_projection(self, float x, float y, float z, float x_angle, float y_angle):
-        self.camera.set_projection(x,y,z, x_angle, y_angle)
-
-    def pan(self, float dx, float dy):
-        self.camera.pan(dx,dy)
-
-    def move(self, float dx, float dy, float dz):
-        self.camera.move(dx, dy, dz)
-
-    def forward(self):
-        return [self.camera.xl, self.camera.yl, self.camera.zl]
-        
-    def normal(self):
-        return [self.camera.xu, self.camera.yu, self.camera.zu]
-        
-    def world_projection(self):
-        cdef CCamera* c
-        self.camera.world_projection()
-        if camera_callback is not None:
-            c = self.camera
-            camera_callback(c.x, c.y, c.z, c.xl, c.yl, c.zl, c.xu,c.yu, c.zu, c.ratio, c.fov)
-
-    def hud_projection(self):
-        self.camera.hud_projection()
-
-    def _getattribute__py(self, name):
-        if name == 'x':
-            return self.camera.x
-        elif name == 'y':
-            return self.camera.y
-        elif name == 'z':
-            return self.camera.z
-        elif name == 'xl':
-            return self.camera.xl
-        elif name == 'yl':
-            return self.camera.yl
-        elif name == 'zl':
-            return self.camera.zl
-        elif name == 'xu':
-            return self.camera.xu
-        elif name == 'yu':
-            return self.camera.yu
-        elif name == 'zu':
-            return self.camera.zu
-            
-        elif name == 'x_angle':
-            return self.camera.x_angle
-        elif name == 'y_angle':
-            return self.camera.y_angle
-
-        elif name == 'ratio':
-            return self.camera.ratio
-        elif name == 'fov':
-            return self.camera.fov
-        elif name == 'x_size':
-            return self.camera.x_size
-        elif name == 'y_size':
-            return self.camera.y_size
-
-        elif name == 'z_near':
-            return self.camera.z_near
-        elif name == 'z_far':
-            return self.camera.z_far
-
-        raise AttributeError
-
-    def _setattr__py(self, k, float v):
-        if k == 'x':
-            self.camera.x = v
-        elif k == 'y':
-            self.camera.y = v
-        elif k == 'z':
-            self.camera.z = v
-        elif k == 'xl':
-            self.camera.xl = v
-        elif k == 'yl':
-            self.camera.yl = v
-        elif k == 'zl':
-            self.camera.zl = v
-        elif k == 'xu':
-            self.camera.xu = v
-        elif k == 'yu':
-            self.camera.yu = v
-        elif k == 'zu':
-            self.camera.zu = v
-        elif k == 'x_angle':
-            self.camera.x_angle = v
-        elif k == 'y_angle':
-            self.camera.y_angle = v
-
-        elif k == 'ratio':
-            self.camera.ratio = v
-        elif k == 'fov':
-            self.camera.fov = v
-        elif k == 'x_size':
-            self.camera.x_size = v
-        elif k == 'y_size':
-            self.camera.y_size = v
-
-        elif k == 'z_near':
-            self.camera.z_near = v
-        elif k == 'z_far':
-            self.camera.z_far = v
-
-        raise AttributeError
-
-"""
-Skybox
 [gameloop]
 """
-cdef extern from "./skybox/skybox.hpp" namespace "Skybox":
-    void render()
-    void load()
+cdef extern from "./camera/camera.hpp":
+    void world_projection()
+    void hud_projection()
 
-def load_skybox():
-    load()
-
-def render_skybox():
-    render()
-
+camera_callback = None
+def camera_world_projection():
+    world_projection()
+def camera_hud_projection():
+    hud_projection()
+def update_camera_state():
+    update_camera()
+    
 """
 Animations
-[gameloop, input]
+[gameloop]
 """
 cdef extern from "./animations/animations.hpp" namespace "Animations":
-    void agent_bleed(float x, float y, float z)
     void animations_tick()
     void animations_draw()
 
@@ -503,443 +241,154 @@ def AnimationTick():
 def AnimationDraw():
     animations_draw()
 
-def bleed(float x, float y, float z):
-    agent_bleed(x,y,z)
-
-
 """
 Agents
-[chat, gameloop, netclient, netout, hud, input]
+[chat, gameloop, netclient, netout, hud]
 """
-
-cdef extern from "./physics/vector.hpp":
-    cdef struct Vector:
-        float x
-        float y
-        float z
 
 cdef extern from "./agent/agent_status.hpp":
     unsigned int PLAYER_NAME_MAX_LENGTH
     cdef cppclass Agent_status:
-        int health
-        bool dead
-        int team
-        int score()
-        unsigned int kills
-        unsigned int deaths
-        unsigned int suicides
-        unsigned int health_max
         char* name
-        unsigned int coins
 
-cdef extern from "./agent/agent_weapons.hpp":
-    cdef cppclass Agent_weapons:
-        int active
-        char* hud_display()
-        void set_active_block(int block)
-        bool can_zoom()
-        
-#collision box
 cdef extern from "./agent/agent.hpp":
-    cdef struct Agent_collision_box:
-        float b_height
-        float c_height
-        float box_r
-
-#AgentState
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass AgentState:
-        int seq
-        float theta
-        float phi
-        float x,y,z
-        float vx,vy,vz
-        float camera_height
- 
     cdef cppclass Agent_state:
         int id
-        AgentState s
-        Agent_collision_box box
         Agent_status status
-        Agent_weapons weapons
 
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
         Agent_state* get(int id)
-        Agent_state* create(int id)
         Agent_state* get_or_create(int id)
-        void destroy(int _id)
         int get_ids()
         int* ids_in_use
-
-cdef extern from "./agent/player_agent_action.hpp":
-    cdef cppclass PlayerAgent_action:
-        void fire()
-        void reload()
-        void switch_weapon(int i)
 
 cdef extern from "./agent/player_agent.hpp":
     cdef cppclass PlayerAgent_state:
         int agent_id
-        float camera_height()
-        AgentState camera_state
-        void toggle_camera_mode()
-        void pump_camera() #update camera
-        PlayerAgent_action action
         void update_sound()
         void display_agent_names()
-        void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi)
+        bool identified
+        Agent_state* you
 
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     Agent_list agent_list
     PlayerAgent_state playerAgent_state
-'''
-WRAPPER
-'''
-class AgentWrapper(object):
-    properties = [
-        'x', 'y', 'z',
-        'vx', 'vy', 'vz',
-        'theta', 'phi',
-        'x_angle', 'y_angle',
-        'crouch_height','c_height',
-        'box_height', 'b_height',
-        'box_r',
-        'health',
-        'health_max',
-        'dead',
-        'team',
-        'score',
-        'kills',
-        'deaths',
-        'suicides',
-        'active_weapon',
-        'name',
-        'coins',
-    ]
+    int get_client_id_from_name(char* name)
 
-    def __init__(self, int id):
-        self.id = id
-        
-    def __getattribute__(self, name):
-        if name not in AgentWrapper.properties:
-            raise AttributeError
+def update_sound_listener():
+    playerAgent_state.update_sound()
 
-        cdef Agent_state* a
-        cdef int i
-        i = object.__getattribute__(self,'id')
-        a = agent_list.get(i)
-
-        if a == NULL:
-            print "AgentWrapper.__getattribute__ :: agent %d not found" % (i,)
-            raise ValueError, "C Agent %d not found" % (i,)
-
-        if name == 'x':
-            return a.s.x
-        elif name == 'y':
-            return a.s.y
-        elif name == 'z':
-            return a.s.z
-        elif name == 'vx':
-            return a.s.vx
-        elif name == 'vy':
-            return a.s.vy
-        elif name == 'vz':
-            return a.s.vz
-        elif name == 'theta':
-            return a.s.theta
-        elif name == 'phi':
-            return a.s.phi
-
-        elif name == 'x_angle': # legacy reasons
-            return a.s.theta
-        elif name == 'y_angle':
-            return a.s.phi
-
-        
-        elif name == 'crouch_height' or name == 'c_height':
-            return a.box.c_height
-        elif name == 'box_height' or name == 'b_height':
-            return a.box.b_height
-        elif name == 'box_r':
-            return a.box.box_r
-
-        elif name == 'health':
-            return a.status.health
-        elif name == 'health_max':
-            return a.status.health_max
-        elif name == 'dead':
-            return a.status.dead
-
-        elif name == 'team':
-            return a.status.team
-
-        elif name == 'score':
-            return a.status.score()
-        elif name == 'kills':
-            return a.status.kills
-        elif name == 'deaths':
-            return a.status.deaths
-        elif name == 'suicides':
-            return a.status.suicides
-
-        elif name == 'active_weapon':
-            return a.weapons.active
-
-        elif name == 'name':
-            return a.status.name
-
-        elif name == 'coins':
-            return a.status.coins
-            
-        print 'AgentWrapper :: Couldnt find %s. There is a problem' % name
-        raise AttributeError
-
-        
-'''
-
-Player Agent Stuff
-
-'''
-
-'''
-    Python should not need collision box for agent
-'''
-
-class PlayerAgentWrapper(object):
-
-    properties = ['camera_height',]
-
-    def __init__(self, int id):
-        self.id = id
-
-    def __getattribute__(self, name):
-        if name not in PlayerAgentWrapper.properties:
-            raise AttributeError
-
-        if name == 'camera_height':
-            return playerAgent_state.camera_height()
-
-        print "PlayerAgentWrapper :: couldnt find %s. There is a problem" % name
-        raise AttributeError
-
-    def _pos(self):
-        cdef float x
-        cdef float y
-        cdef float z
-
-        x = playerAgent_state.camera_state.x
-        y = playerAgent_state.camera_state.y
-        z = playerAgent_state.camera_state.z
-
-        return [x,y,z]
-
-    #call before rendering to have camera state updated
-    def update_camera(self):
-        playerAgent_state.pump_camera()
-
-    #toggle camera toggle_camera_mode
-    def toggle_agent_camera_mode(self):
-        playerAgent_state.toggle_camera_mode()
-
-    def camera_position(self):
-        z_off = playerAgent_state.camera_height()
-        x = playerAgent_state.camera_state.x
-        y = playerAgent_state.camera_state.y
-        z = playerAgent_state.camera_state.z
-        return [x, y, z+z_off]
-
-    def switch_weapon(self, int i):
-        playerAgent_state.action.switch_weapon(i)
-
-    def fire(self):
-        playerAgent_state.action.fire()
-
-    def update_sound(self):
-        playerAgent_state.update_sound()
-
-    def display_agent_names(self):
-        playerAgent_state.display_agent_names()
-
-    def weapon_hud_display(self):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return "No agent yet"
-        return a.weapons.hud_display()
-
-    def reload(self):
-        playerAgent_state.action.reload()
-
-    def set_active_block(self, int block_id):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return
-        a.weapons.set_active_block(block_id)
-
-    def can_zoom(self):
-        cdef Agent_state* a
-        a = agent_list.get(playerAgent_state.agent_id)
-        if a == NULL:
-            return False
-        return a.weapons.can_zoom()
-
-def set_agent_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi):
-    playerAgent_state.set_control_state(f, b, l, r, jet, jump, crouch, boost, misc1, misc2, misc3, theta, phi)
+def display_agent_names():
+    playerAgent_state.display_agent_names()
 
 def get_player_agent_id():
     return playerAgent_state.agent_id
 
-class AgentListWrapper:
+def client_id_from_name(name):
+    get_client_id_from_name(name)
 
-    @classmethod
-    def add(cls, int id):
-        agent_list.get_or_create(id)
-        return id
+def player_agent_assigned():
+    if playerAgent_state.you != NULL:
+        return True
+    return False
 
-    @classmethod
-    def remove(cls, int id):
-        agent_list.destroy(id)
-        return id
-
-    @classmethod
-    def ids(cls):
-        cdef int n
-        n = agent_list.get_ids()
-        ids = []
-        for k in range(n):
-            ids.append(agent_list.ids_in_use[k])
-        return ids
+def get_agent_name(int id):
+    cdef Agent_state* a
+    a = agent_list.get(id)
+    if a == NULL: return ''
+    return a.status.name
 
 
+""" Chat """
+
+cdef extern from "./input/handlers.hpp":
+    int CHAT_BUFFER_SIZE
+    int* chat_input_buffer_unicode
+    char** chat_input_buffer_sym
+    int chat_cursor_index
+    void clear_chat_buffer()
+
+def get_chat_input_buffer():
+    sym_buff = []
+    uni_buff = []
+    for i in range(chat_cursor_index):
+        sym = chat_input_buffer_sym[i]
+        try:
+            uni = unichr(chat_input_buffer_unicode[i])
+        except:
+            uni = sym
+        sym_buff.append(sym)
+        uni_buff.append(uni)
+    return sym_buff, uni_buff
+
+def clear_chat_input_buffer():
+    clear_chat_buffer()
+    
 """ Input """
-ctypedef unsigned char Uint8
 
 cdef extern from "./input/input.hpp":
-    ctypedef struct MouseMotion:
-        int x
-        int y
-        int dx
-        int dy
-        int button
-    ctypedef struct MouseEvent:
-        int x
-        int y
-        int button
-        int state
+    int get_key_state()
+    int process_events()
+    void pan_camera(int delta_tick)
+    
+def process_input():
+    process_events()
+    get_key_state()
 
-    ctypedef struct MouseMotionAverage:
-        float x
-        float y
+def update_mouse(int delta_tick):
+    pan_camera(delta_tick)
 
-### call backs
-    ctypedef int (*key_state_func)(Uint8* keystate, int numkeys)
-    int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys)
+cdef extern from "./input/handlers.hpp":
 
-    #deprecate
-    ctypedef int (*key_event_func)(char key)
-    int _key_event_callback(key_event_func user_func, char key)
+    cdef enum InputStateMode:
+        INPUT_STATE_AGENT
+        INPUT_STATE_CAMERA
 
-    ctypedef int (*mouse_motion_func)(MouseMotion ms)
-    int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion)
+    cdef struct InputState:
+        bool chat
+        bool quit
+        InputStateMode input_mode
+        InputStateMode camera_mode
 
-    ctypedef int (*mouse_event_func)(MouseEvent me)
-    int _mouse_event_callback(mouse_event_func user_func, MouseEvent me)
+    InputState input_state
 
-    ctypedef int (*key_text_event_func)(char key, char* key_name, int event_state)
-    int _key_text_event(key_text_event_func user_func, char key, char* key_name, int event_state)
+    void set_input_options(
+        bool invert_mouse,
+        float sensitivity
+    )
 
-    ctypedef int (*quit_event_func)()
-    int _quit_event_callback(quit_event_func user_func)
-
-    cdef extern int _get_key_state(key_state_func key_state_cb)
-    cdef extern int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb)
-    cdef extern int _set_text_entry_mode(int n)
-
-    cdef MouseMotionAverage* get_mouse_render_state(int t)
-    cdef int _toggle_mouse_bind()
-
-    int _init_input()
-
-def get_mouse_deltas(int t):
-    cdef MouseMotionAverage* mm
-    mm = get_mouse_render_state(t)
-    return [mm.x, mm.y]
-
-def get_key_state():
-    _get_key_state(&key_state_callback)
-
-key_text_event_callback_stack = []
-mouse_event_callback_stack = []
-
-def process_events():
-    global key_text_event_callback_stack, mouse_event_callback_stack
-    temp = _process_events(&mouse_event_callback, &mouse_motion_callback, &key_event_callback, &key_text_event_callback, &quit_event_callback)
-    while len(key_text_event_callback_stack) != 0:
-        (key, key_string, event_state) = key_text_event_callback_stack.pop(0)
-        input_callback.keyboard_text_event(key, key_string, event_state)
-
-    while len(mouse_event_callback_stack) != 0:
-        me = mouse_event_callback_stack.pop(0)
-        input_callback.mouse_event(*me)
-
-def set_text_entry_mode(int n):
-    temp = _set_text_entry_mode(n)
-
-class Callback_dummy:
-    def keyboard_state(self, pressed_keys):
-        pass
-    def keyboard_event(self, key):
-        pass
-    def keyboard_text_event(self, key, key_string, event_type):
-        pass
-    def mouse_event(self, button, state, x, y):
-        pass
-    def mouse_motion(self, x,y,dx,dy,button):
-        pass
-
-input_callback = Callback_dummy()
-
-def set_input_callback(callback):
-    global input_callback
-    input_callback = callback
-    print "Input Callback Set"
-
-cdef int key_state_callback(Uint8* keystate, int numkeys):
-    global input_callback
-    pressed_keys = []
-    for i in range(0, numkeys):
-        if keystate[i] != 0:
-            pressed_keys.append(i)
-    input_callback.keyboard_state(pressed_keys)
-
-cdef int key_event_callback(char key):
-    global input_callback
-    input_callback.keyboard_event(key)
-
-cdef int key_text_event_callback(char key, char* key_name, int event_state):
-    global input_callback, key_text_event_callback_stack
-    key_string = key_name
-    cdef bytes py_string
-    py_string = key_name
-    key_text_event_callback_stack.append((key, key_string, event_state))
-
-cdef int mouse_motion_callback(MouseMotion ms):
-    global input_callback
-    input_callback.mouse_motion(ms.x,ms.y, ms.dx,-1*ms.dy, ms.button)
-
-cdef int mouse_event_callback(MouseEvent me):
-    global input_callback, mouse_event_callback_stack
-    mouse_event_callback_stack.append((me.button, me.state, me.x, -1*me.y))
-
-cdef int quit_event_callback():
-    global input_callback, key_text_event_callback_stack
-    key_text_event_callback_stack.append((9999, 'QUIT', 1))
-
-def toggle_mouse_bind():
-    return _toggle_mouse_bind()
+class CyInputState(object):
+    def __setattr__(self,k,v):
+        if k == 'chat':
+            input_state.chat = v
+        elif k == 'quit':
+            input_state.quit = v
+        elif k == 'input_mode':
+            input_state.input_mode = v
+        elif k == 'camera_mode':
+            input_state.camera_mode = v
+        else:
+            raise AttributeError
+    def __getattribute__(self, k):
+        if k == 'chat':
+            return input_state.chat
+        elif k == 'quit':
+            return input_state.quit
+        elif k == 'input_mode':
+            return input_state.input_mode
+        elif k == 'camera_mode':
+            return input_state.camera_mode
+        else:
+            return object.__getattribute__(self, k)
+    def set_options(self,
+        bool invert_mouse,
+        float sensitivity
+    ):
+        set_input_options(invert_mouse, sensitivity)
+    
+cy_input_state = CyInputState()
 
 """
 HUD
@@ -948,29 +397,16 @@ HUD
 
 cdef extern from "./hud/hud.hpp" namespace "Hud":
     void set_hud_draw_settings(
-        bool zoom,
-        bool cube_selector,
-        bool inventory,
-        bool help,
-        bool disconnected,
-        bool dead,
+        bool connected,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats,
-        bool chat,
-        bool chat_input,
-        bool chat_cursor,
-        bool scoreboard,
-        bool equipment,
-        int equipment_slot,
-        bool compass,
-        bool map
     )
     void draw_hud()
     void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     void set_chat_input_string(char* text)
+    void update_hud_draw_settings()
 
 cdef class HUD:
     @classmethod
@@ -978,46 +414,18 @@ cdef class HUD:
         draw_hud()
     @classmethod
     def set_draw_settings(cls,
-        bool zoom,
-        bool cube_selector,
-        bool inventory,
-        bool help,
-        bool disconnected,
-        bool dead,
+        bool connected,
         bool fps,
         float fps_val,
         bool ping,
         int ping_val,
-        bool player_stats,
-        bool chat,
-        bool chat_input,
-        bool chat_cursor,
-        bool scoreboard,
-        bool equipment,
-        int equipment_slot,
-        bool compass,
-        bool map
     ):
         set_hud_draw_settings(
-            zoom,
-            cube_selector,
-            inventory,
-            help,
-            disconnected,
-            dead,
+            connected,
             fps,
             fps_val,
             ping,
             ping_val,
-            player_stats,
-            chat,
-            chat_input,
-            chat_cursor,
-            scoreboard,
-            equipment,
-            equipment_slot,
-            compass,
-            map
         )
     @classmethod
     def set_chat_message(cls, i, text, color):
@@ -1030,34 +438,9 @@ cdef class HUD:
     @classmethod
     def set_chat_input_string(cls, text):
         set_chat_input_string(text)
-
-"""
-Cube Selector
--- this is here because input.py needs to communicate with it
-"""
-cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
-    cdef cppclass CubeSelector:
-        int get_active_id()
-        int get_active_pos()
-        void set_active_id(int id)
-        void set_active_pos(int pos)
-        
-    CubeSelector cube_selector
-
-class HudCubeSelector:
     @classmethod
-    def get_active_id(cls):
-        return cube_selector.get_active_id()
-    @classmethod
-    def get_active_pos(cls):
-        return cube_selector.get_active_pos()
-    @classmethod
-    def set_active_id(cls, int id):
-        cube_selector.set_active_id(id)
-    @classmethod
-    def set_active_pos(cls, int pos):
-        cube_selector.set_active_pos(pos)
-
+    def update_hud_draw_settings(cls):
+        update_hud_draw_settings()
 
 """
 Font
@@ -1108,7 +491,6 @@ class Font:
         self.fontfile = fn
         self.pngfile = ''
         self.process_font_filename()
-#        self._gen_stress()
         
     def process_font_filename(self):
         fn = self.fontfile
@@ -1209,6 +591,8 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void draw_client_state()
     void tick_client_state()
 
+    void send_identify_packet(char* name)
+
 class ClientState(object):
     @classmethod
     def update(cls):
@@ -1220,4 +604,8 @@ class ClientState(object):
     def tick(cls):
         tick_client_state()
 
+def identify(name):
+    send_identify_packet(name)
+def identified():
+    return playerAgent_state.identified
 

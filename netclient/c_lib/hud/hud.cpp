@@ -4,7 +4,7 @@
 #include <c_lib/hud/cube_selector.hpp>
 #include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
-
+#include <c_lib/input/handlers.hpp>
 /* Configuration */
 namespace Hud
 {
@@ -57,7 +57,7 @@ static struct HudDrawSettings
     bool cube_selector;
     bool inventory;
     bool help;
-    bool disconnected;
+    bool connected;
     bool dead;
     bool fps;
     float fps_val;
@@ -75,33 +75,14 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_draw_settings(
-    bool zoom,
-    bool cube_selector,
-    bool inventory,
-    bool help,
-    bool disconnected,
-    bool dead,
+    bool connected,
     bool fps,
     float fps_val,
     bool ping,
-    int ping_val,
-    bool player_stats,
-    bool chat,
-    bool chat_input,
-    bool chat_cursor,
-    bool scoreboard,
-    bool equipment,
-    int equipment_slot,
-    bool compass,
-    bool map
+    int ping_val
 )
 {
-    hud_draw_settings.zoom = zoom;
-    hud_draw_settings.cube_selector = cube_selector;
-    hud_draw_settings.inventory = inventory;
-    hud_draw_settings.help = help;
-    hud_draw_settings.disconnected = disconnected;
-    hud_draw_settings.dead = dead;
+    hud_draw_settings.connected = connected;
     
     hud_draw_settings.fps = fps;
     // sanitize
@@ -114,20 +95,44 @@ void set_hud_draw_settings(
     ping_val = (ping_val >= 1000) ? 999 : ping_val;
     ping_val = (ping_val < 0) ? 0 : ping_val;
     hud_draw_settings.ping_val = ping_val;
+}
 
-    hud_draw_settings.player_stats = player_stats;
+// read game state to decide what to draw
+void update_hud_draw_settings()
+{
+    hud_draw_settings.zoom = current_camera->zoomed;
+    hud_draw_settings.cube_selector =
+        (ClientState::playerAgent_state.you != NULL
+      && ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
-    hud_draw_settings.chat = chat;
-    hud_draw_settings.chat_input = chat_input;
-    hud_draw_settings.chat_cursor = chat_cursor;
+    hud_draw_settings.inventory = input_state.inventory;
+    hud_draw_settings.help = input_state.help_menu;
 
-    hud_draw_settings.scoreboard = scoreboard;
+    hud_draw_settings.dead = (
+           hud_draw_settings.connected
+        && ClientState::playerAgent_state.you != NULL
+        && ClientState::playerAgent_state.you->status.dead
+     );
 
-    hud_draw_settings.equipment = equipment;
-    hud_draw_settings.equipment_slot = equipment_slot;
+    hud_draw_settings.player_stats = true;
 
-    hud_draw_settings.compass = compass;
-    hud_draw_settings.map = map;
+    hud_draw_settings.chat = true;
+    hud_draw_settings.chat_input = input_state.chat;
+    hud_draw_settings.chat_cursor = input_state.chat;
+
+    hud_draw_settings.scoreboard = input_state.scoreboard;
+
+    hud_draw_settings.equipment = false;
+    hud_draw_settings.equipment_slot = -1;
+    if (ClientState::playerAgent_state.you != NULL)
+    {
+        hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
+        if (hud_draw_settings.equipment)
+            hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
+    }
+
+    hud_draw_settings.compass = true;
+    hud_draw_settings.map = input_state.map;
 }
 
 static struct ChatCursor
@@ -155,7 +160,6 @@ void draw_cursor()
     int len = 0;
     int h = 0;
     HudFont::get_string_pixel_dimension(chat_cursor.text, &len, &h);
-
     int r,g,b;
     r = 100;
     g = 150;
@@ -178,7 +182,7 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
-    if (hud_draw_settings.disconnected) return;
+    if (!hud_draw_settings.connected) return;
 
     if (hud_draw_settings.zoom)
     {
@@ -221,7 +225,7 @@ void draw_hud_text()
     ClientState::billboard_text_list.draw_hud();
     
     if (!hud->inited) return;
-    if (hud_draw_settings.disconnected)
+    if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw();
         return;
@@ -559,11 +563,18 @@ void Scoreboard::update()
     unsigned char r,g,b,a=255;
     int team = -1;
     ClientState::agent_list.sort_by_team(); // sorts ascending
-    for (i=0; i<ClientState::agent_list.n_filtered; i++)
+    for (i=0; i<ClientState::agent_list.n_max; i++)
     {
         Agent_state* agent = ClientState::agent_list.filtered_objects[i];
-        if (agent==NULL) break; // null agents are sorted to the end, so we can break
-        if (agent->status.team == 0) continue;
+        if (i >= ClientState::agent_list.n_filtered || agent==NULL || agent->status.team == 0)
+        {
+            ids[i]->set_text((char*)"");
+            names[i]->set_text((char*)"");
+            kills[i]->set_text((char*)"");
+            deaths[i]->set_text((char*)"");
+            scores[i]->set_text((char*)"");
+            continue;
+        }
         float y = start_y + 18*(j+2);
         if (agent->status.team != team) {
             team = agent->status.team;
@@ -576,7 +587,7 @@ void Scoreboard::update()
         }
         j++;
 
-        ClientState::get_team_color(agent->status.team, &r, &g, &b);
+        ClientState::ctf.get_team_color(agent->status.team, &r, &g, &b);
         
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
@@ -610,8 +621,12 @@ void Scoreboard::update()
 
     for (i=0; i<(int)N_TEAMS; i++)
     {
-        if (!team_draw[i]) continue;
-        ClientState::get_team_color(i+1, &r, &g, &b);
+        if (!team_draw[i]) {
+            team_names[i]->set_text((char*)"");
+            team_scores[i]->set_text((char*)"");
+            continue;
+        }
+        ClientState::ctf.get_team_color(i+1, &r, &g, &b);
         team_names[i]->set_position(team_name_pos[i].x, _yresf - team_name_pos[i].y);
         team_names[i]->update_formatted_string(1, ClientState::ctf.get_team_name(i+1));
         team_names[i]->set_color(r,g,b,a);

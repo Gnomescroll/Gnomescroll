@@ -21,7 +21,6 @@ class NetOut:
         cls.event = EventOut()
         cls.message = MessageOut()
 
-from game_state import GameStateGlobal
 from net_server import NetServer
 
 def sendJSONevent(cmd=None, zlib=0):
@@ -143,20 +142,6 @@ class SendMessage: #each connection has one of these
     def send_json_compressed(self, d, zlib=6):
         msg = self.get_json_compressed(d, zlib)
         self.client.send(msg)
-
-    @sendJSON('identify_fail')
-    def identify_fail(self, connection, notes=''):
-        return {
-            'msg'   : notes,
-        }
-
-    @sendJSON('identified')
-    def identified(self, connection, msg=''):
-        print 'Identified'
-        return {
-            'msg'   : msg,
-            'name'  :   connection.name,
-        }
 
     @sendJSON('chunk_list', zlib=6)
     def send_chunk_list(self):

@@ -43,7 +43,7 @@ void AgentState::forward_vector(float f[3]) {
     f[1] = sin( xa * PI) * cos( ya * PI);
     f[2] = sin( ya * PI);
 
-    // normalize?
+    // normalize
     float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);
     f[0] /= len;
     f[1] /= len;
@@ -618,3 +618,34 @@ int Agent_state::current_height_int()
 
     
 //}
+
+#define CUBE_SELECT_MAX_DISTANCE 12.0f
+int Agent_state::get_facing_block_type()
+{
+    const int z_low = 8;
+    const int z_high = 8;
+    float f[3];
+
+    AgentState *s;
+#ifdef DC_CLIENT
+    if (ClientState::playerAgent_state.you == this)
+    {   // use camera / player agent state instead.
+        s = &ClientState::playerAgent_state.camera_state;
+        agent_camera->forward_vector(f);
+    }
+    else
+#endif
+    {
+        s = &this->s;
+        s->forward_vector(f);
+    }
+        
+    int *pos = _nearest_block(
+        s->x, s->y, s->z + this->camera_height(),
+        f[0], f[1], f[2],
+        CUBE_SELECT_MAX_DISTANCE,
+        z_low, z_high
+    );
+    if (pos == NULL) return 0;
+    return _get(pos[0], pos[1], pos[2]);
+}

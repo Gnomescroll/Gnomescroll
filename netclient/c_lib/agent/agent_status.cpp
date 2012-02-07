@@ -24,6 +24,7 @@ kills(0),
 deaths(0),
 suicides(0),
 health_max(AGENT_HEALTH),
+identified(false),
 team(0),
 has_flag(false),
 flag_captures(0),
@@ -278,6 +279,7 @@ void Agent_status::score_flag() {
 
 void Agent_status::set_team(int team)
 {
+    //printf("Agent_Status:: set_team.  agent=%d team=%d\n", this->a->id, team);
     // respawn instantly if switching from viewer to team
     if (this->team == 0 && team)
         this->respawn_countdown = 0;

@@ -14,7 +14,7 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         if (agent->vox == NULL) continue;
         
         agent->vox->update(&agent_vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
-        if ((first_person && you) || agent->status.dead)
+        if ((current_camera->first_person && you) || agent->status.dead)
         {
             agent->vox->set_draw(false);
             agent->vox->set_hitscan(false);
@@ -153,4 +153,16 @@ void Agent_list::sort_by_team()
 {
     this->filter_none();    // copies all non null
     this->quicksort_team(0, this->n_filtered);
+}
+
+bool Agent_list::name_available(char* name)
+{
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->status.name == NULL) continue;
+        if (!this->a[i]->status.identified) continue;
+        if (!strcmp(this->a[i]->status.name, name)) return false;
+    }
+    return true;
 }

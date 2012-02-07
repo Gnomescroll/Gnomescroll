@@ -18,12 +18,18 @@ struct cube_select_element {
 
 class CubeSelector
 {
+    private:
+        void horizontal(bool left);
+        void vertical(bool up);
+
     public:
         bool inited;
         float x,y;
         float size;
         int mode;
-        
+
+        int n_x, n_y;
+        int pos;
         int pos_x,pos_y;
         int cube_id;
 
@@ -39,6 +45,11 @@ class CubeSelector
         int get_active_pos();
         int get_active_id();
         void draw();
+
+        void up();
+        void down();
+        void left();
+        void right();
 
         CubeSelector();
 };

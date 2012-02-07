@@ -15,23 +15,27 @@ from utils import now
 
 class ChatClientGlobal:
     chatClient = None
-
+    chatRender = None
+    _init=False
+    
     @classmethod
-    def init(cls): #first pass is declaring
-        ChatClientGlobal.chatClient = ChatClient()
-        ChatClientGlobal.chatRender = ChatRender()
+    def init(cls):
+        if cls._init: return
+        cls.chatClient = ChatClient()
+        cls.chatRender = ChatRender()
+        cls.chatClient.on_identify()
 
-    @classmethod
-    def on_identify(cls, note=''): # called after client connects
-        ChatClientGlobal.chatClient.system_notify('/identify_note ' + note)
-        ChatClientGlobal.chatClient.on_identify()
+        cls._init = True
         
-
+    @classmethod
+    def load_buffer_from_c(cls):
+        if cls.chatClient is None: return
+        sym_buff, uni_buff = init_c_lib.get_chat_input_buffer()
+        cls.chatClient.input.load_buffer(sym_buff, uni_buff)
 
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from game_state import GameStateGlobal
 
 
 '''
@@ -291,8 +295,8 @@ class ChatCommand():
         elif command == 'pm':
             if len(args) < 1:
                 return
-            client_id = NetClientGlobal.client_id_from_name(args[0])
-            if not client_id:
+            client_id = init_c_lib.client_id_from_name(args[0])
+            if client_id < 0:
                 _send = self._send_local({
                     'content'   :   'Cannot msg unknown player: %s' % (args[0],),
                     'channel'   :   'system',
@@ -327,24 +331,10 @@ class ChatCommand():
                     init_c_lib.join_team(team_id)
 
         elif command == 'teams':
-            #_send = self._send_local({
-                #'content'   :   str(teams),
-                #'channel'   :   'system',
-            #})
             _send = self._send_local({
                 'content'   :   'Teams are unavailable. Integration with C teams is not implemented.',
                 'channel'   :   'system',
             })
-
-        elif command == 'inventory':
-            _send = self._send_local({
-                'content'   :   str(GameStateGlobal.agent.inventory),
-                'channel'   :   'system',
-            })
-
-        elif command == 'exit' or command == 'quit':
-            #print 'exiting'
-            GameStateGlobal.exit = True
 
         else:
             _send = self._unimplemented(command)
@@ -442,11 +432,14 @@ class ChatMessageIn():
         else:
             sender = None
             if self.payload is not None:
-                sender = GameStateGlobal.agentList.by_client(self.payload.cid)
-            if sender is None:
+                try:
+                    sender = init_c_lib.get_agent_name(int(self.payload.cid))
+                except:
+                    pass
+            if not sender:
                 self.name = 'System'
             else:
-                self.name = sender.name
+                self.name = sender
 
 
     def filter(self):
@@ -582,7 +575,6 @@ class ChatInput:
         self.clear()
         self.history.reset_index()
         self.history.add(text)
-        #print 'submitting ', text
         return text
 
     def _input_callback(self, callback):
@@ -601,25 +593,29 @@ class ChatInput:
         callback = self.processor.on_text_motion(motion)
         return self._input_callback(callback)
 
+    def load_buffer(self, sym_buff, uni_buff):
+        self.clear()
+        for sym,uni in zip(sym_buff, uni_buff):
+            cb = self.processor.on_key_press(sym, uni)
+            if callable(cb):
+                cb(self)
+
 # key input is routed to here
 class ChatInputProcessor:
 
     def __init__(self):
-        pass
+        pass        
 
     def on_key_press(self, symbol, unicode_key):
-        _symbol = symbol
         symbol = symbol.upper()
-        #print 'CHAT ON_KEY_PRESS', symbol
         callback = None
+
         if symbol == 'RETURN':         # submit
             def callback(input):
                 ChatClientGlobal.chatClient.send()
-                return lambda keyboard: InputGlobal.toggle_chat()
-        elif symbol == 'ESCAPE':      # clear, cancel chat
-            def callback(input):
-                input.clear()
-                return lambda keyboard: InputGlobal.toggle_chat()
+                init_c_lib.cy_input_state.chat = False
+                init_c_lib.clear_chat_input_buffer()
+
         elif symbol == 'UP':            # up history
             callback = lambda input: input.history_older()
         elif symbol == 'DOWN':        # down history
@@ -628,8 +624,7 @@ class ChatInputProcessor:
             callback = lambda input: input.cursor_left()
         elif symbol == 'RIGHT':       # move cursor
             callback = lambda input: input.cursor_right()
-        elif symbol == 'BACKSPACE':   # delete
-            callback = lambda input: input.remove()
+
         else:
             if len(symbol) == 1 or symbol in ['SPACE', 'TAB']:
                 try:
@@ -641,22 +636,6 @@ class ChatInputProcessor:
 
     def on_text(self, text):
         return lambda input: input.add(text)
-
-    def on_text_motion(self, motion):
-        print 'ChatClient.on_text_motion not implemented'
-        #motion = key.motion_string(motion)
-        #callback = None
-        #if motion == 'MOTION_UP':            # up history
-            #callback = lambda input: input.history_older()
-        #elif motion == 'MOTION_DOWN':        # down history
-            #callback = lambda input: input.history_newer()
-        #elif motion == 'MOTION_LEFT':        # move cursor
-            #callback = lambda input: input.cursor_left()
-        #elif motion == 'MOTION_RIGHT':       # move cursor
-            #callback = lambda input: input.cursor_right()
-        #elif motion == 'MOTION_BACKSPACE':   # delete
-            #callback = lambda input: input.remove()
-        #return callback
 
 # history of submitted messages
 class ChatInputHistory:
@@ -766,5 +745,3 @@ class ChatRender:
 
 if __name__ == '__main__':
     ChatClientGlobal.init()
-
-from input import InputGlobal

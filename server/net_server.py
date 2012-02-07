@@ -1,12 +1,6 @@
-import opts
-opts = opts.opts
-
 import atexit
-import select
-import socket
 import json
 import struct
-import platform
 
 import init_c_lib
 import c_lib.terrain_map as cMap
@@ -21,18 +15,10 @@ class NetServer:
 from chat_server import ChatServer
 from net_out import SendMessage
 from net_event import NetEvent
-from game_state import GameStateGlobal
-
-#for creation of client
-#NetServer.connectionPool.add_client(connection, address) #hand off connection to connection pool
-
-# manages TCP stuff and is somehow different from ServerListener and TcpPacketDecoder
 
 from init_c_lib import connected, _send_python_net_message
 
 class PyClient:
-
-    MAX_NAME_LENGTH = 15
 
     def __init__(self, client_id):
 
@@ -40,43 +26,23 @@ class PyClient:
         self.id = client_id
         print "PyClient initialized with client_id %d" % (client_id,)
 
-        self.admin = False
-
-        self.identified = False
-        self.loaded_once = False
-
         self.sendMessage = SendMessage(self)
 
-        self.agent = None
-        self.name = None
+        self.loaded_once = False
+        init_c_lib.create_agent(self.client_id)
+        init_c_lib.send_id_to_client(self.client_id)
 
-    def identify(self, name):
-        valid, name, you = self.valid_player_name(name)
-        if valid:
-            self.identified = True
-            NetServer.connectionPool.name_client(self, name)
-            self.name = name
-            if self.agent:
-                init_c_lib.set_agent_name(self.agent.id, name)
-            self.check_ready()
-        else:
-            if you:
-                self.sendMessage.identified(self, 'You were already identified as %s' % (name,))
-            else:
-                self.sendMessage.identify_fail(self, 'Invalid username. %s' % (name,))
-
-    def check_ready(self):
-        if self.identified:
-            self.ready()
-            return True
-        return False
+    def get_name(self):
+        if not init_c_lib.client_identified(self.client_id):
+            return None
+        return init_c_lib.get_agent_name(self.client_id)
 
     def ready(self):
-        if self.loaded_once:
+        if not init_c_lib.client_identified(self.client_id) or self.loaded_once:
             return
         print "Client is ready"
         self.loaded_once = True
-        self._register()
+        ChatServer.chat.connect(self)
         self.send_map()
         init_c_lib.send_game_state(self.client_id)
         
@@ -85,42 +51,6 @@ class PyClient:
         cMap.send_map_metadata_to_client(self.client_id)
         self.sendMessage.send_chunk_list()
 
-    def _register(self):
-        ChatServer.chat.connect(self) # join chat server
-        if self.agent is not None and self.agent.id in GameStateGlobal.agentList:
-            self.agent.update_info(name=self.name)
-        else:
-            self.agent = GameStateGlobal.agentList.create(self.client_id)
-            init_c_lib.set_agent_name(self.agent.id, self.name)
-
-            # add agent to netserver agent pool
-            # send client_id but not via the agent
-            
-            print 'Created new agent'
-            # send player agent id
-            self.agent.send_id_to_client(self.client_id)
-            print "Send playerAgent id"
-        self.sendMessage.identified(self, 'Identified name: %s' % (self.name,))
-
-    def valid_player_name(self, name):
-        valid = True
-        try:                                    # must be string
-            name = str(name)
-        except ValueError:
-            name = 'Invalid client name'
-            valid = False
-        if not name:                           # must not be empty
-            name = 'Name was empty.'
-            valid = False
-        name = name[:self.MAX_NAME_LENGTH] #truncate
-        avail, you = NetServer.connectionPool.name_available(name, self)
-        if not avail:
-            if not you:
-                name = 'Name is in use.'
-            valid = False
-        return (valid, name, you,)
-
-    _i = 0
     def send(self, MESSAGE):
         _send_python_net_message(MESSAGE, self.client_id)
 
@@ -132,7 +62,6 @@ class PyClientPool:
 
     def __init__(self):
         self.clients_by_id = {}
-        self.names = {}
         atexit.register(lambda: None)
         
         global _msg_buffer     
@@ -214,14 +143,9 @@ class PyClientPool:
 
         # dispatch event
         ChatServer.chat.disconnect(client)
-        if client.agent is not None:
-            init_c_lib.leave_team(client.agent.id)
-            GameStateGlobal.agentList.destroy(client.agent) # make sure this is last
-            
-        # recycle name
-        if client.name in self.names:
-            del self.names[client.name]
-
+        init_c_lib.leave_team(client_id)
+        init_c_lib.destroy_agent(client_id)
+        
         # remove from registry
         del self.clients_by_id[client.id]
         print "PyClientPool: remove_client, id= %i" % (client_id)
@@ -231,26 +155,9 @@ class PyClientPool:
             return self.clients_by_id[client_id]
         raise ValueError, "Unknown client_id %d", client_id
 
-    def name_client(self, connection, name):
-        avail, you = self.name_available(name, connection)
-        if not you:
-            if avail:
-                if connection.name in self.names:
-                    del self.names[connection.name]
-            else:
-                return
-        self.names[name] = connection.id
-        return name
-
-    def name_available(self, name, connection):
-        you = False
-        avail = True
-        if name in self.names:
-            if self.names[name] == connection.id:
-                you = True
-            else:
-                avail = False
-        return (avail, you,)
+    def check_clients_ready(self):
+        for client in self.clients_by_id.values():
+            client.ready()
 
 '''
 Decoders
@@ -283,8 +190,6 @@ class DatagramDecoder:
                 print "JSON DECODING ERROR: %s" % (str(datagram),)
                 return
             NetEvent.adminMessageHandler.process_json(msg, connection)
-
-from net_out import NetOut
 
 if __name__ == "__main__":
     print "Run run.py to start server"

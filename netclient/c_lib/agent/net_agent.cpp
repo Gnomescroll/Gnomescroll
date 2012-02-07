@@ -90,6 +90,8 @@ inline void agent_shot_object_StoC::handle()
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->event.fired_weapon_at_object(target_id, target_type, target_part, x,y,z);
+    // get obj from metadata, set voxel
+    destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -114,6 +116,8 @@ inline void agent_melee_object_StoC::handle()
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->event.melee_attack_object(target_id, target_type, target_part, x,y,z);
+    // get obj from metadata, set voxel
+    destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
 inline void agent_melee_nothing_StoC::handle()
@@ -172,7 +176,11 @@ inline void agent_create_StoC::handle() {
 inline void agent_name_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);   
+    if (a==NULL)
+    {
+        printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
+        return;
+    }
     a->status.set_name(name);
     a->event.name_changed();
 }
@@ -223,8 +231,35 @@ inline void agent_coins_StoC::handle()
     a->event.coins_changed(coins);
 }
 
-//inline void identified_StoC::handle(){}
-//inline void identify_fail_StoC::handle(){}
+inline void identified_StoC::handle()
+{
+    Agent_state* a = ClientState::playerAgent_state.you;
+    if (a == NULL)
+    {
+        printf("identified_StoC -- identified as %s but player agent not assigned\n", name);
+        return;
+    }
+    printf("Identified as %s\n", name);
+    ClientState::playerAgent_state.identified = true;
+    a->status.set_name(name);
+}
+
+inline void Spawner_create_StoC::handle()
+{
+    Spawner* s = ClientState::spawner_list.create(id, x,y,z);
+    if (s==NULL)
+    {
+        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        return;
+    }
+    s->set_team(team);
+    s->set_owner(owner);
+    s->init_vox();
+}
+inline void Spawner_destroy_StoC::handle()
+{
+    ClientState::spawner_list.destroy(id);
+}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -238,7 +273,7 @@ inline void agent_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
-//inline void identify_CtoS::handle(){}
+inline void identify_CtoS::handle(){}
 #endif
 
 // Client -> Server handlers
@@ -269,8 +304,9 @@ inline void AgentActiveWeapon_StoC::handle() {}
 inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void agent_coins_StoC::handle() {}
-//inline void identified_StoC::handle(){}
-//inline void identify_fail_StoC::handle(){}
+inline void identified_StoC::handle(){}
+inline void Spawner_create_StoC::handle() {}
+inline void Spawner_destroy_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;
@@ -342,6 +378,7 @@ inline void hitscan_object_CtoS::handle()
     void *obj;
 
     const int agent_dmg = 25;
+    const int slime_dmg = 25;
     const int spawner_dmg = 25;
     int spawner_health;
 
@@ -365,9 +402,7 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::slime_list.get(id);
             if (obj==NULL) return;
             // apply damage
-            //int dmg = 25;
-            //slime->status.apply_damage(dmg, id);
-            ServerState::slime_list.destroy(id);
+            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
             x = ((Monsters::Slime*)obj)->x;
             y = ((Monsters::Slime*)obj)->y;
             z = ((Monsters::Slime*)obj)->z;
@@ -411,6 +446,9 @@ inline void hitscan_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
+    msg.voxel[0] = voxel[0];
+    msg.voxel[1] = voxel[1];
+    msg.voxel[2] = voxel[2];
     msg.broadcast();
 
 }
@@ -491,6 +529,7 @@ inline void melee_object_CtoS::handle()
     if (!a->weapons.pick.fire()) return;
 
     const int agent_dmg = 50;
+    const int slime_dmg = 50;
     const int spawner_dmg = 50;
     int spawner_health;
     
@@ -510,7 +549,7 @@ inline void melee_object_CtoS::handle()
         case OBJ_TYPE_SLIME:
             obj = ServerState::slime_list.get(id);
             if (obj == NULL) return;
-            ServerState::slime_list.destroy(id);
+            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
             x = ((Monsters::Slime*)obj)->x;
             y = ((Monsters::Slime*)obj)->y;
             z = ((Monsters::Slime*)obj)->z;
@@ -557,6 +596,9 @@ inline void melee_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
+    msg.voxel[0] = voxel[0];
+    msg.voxel[1] = voxel[1];
+    msg.voxel[2] = voxel[2];
     msg.broadcast();
 }
 
@@ -633,11 +675,6 @@ inline void agent_block_CtoS::handle() {
         {
             Agent_state* agent = ServerState::agent_list.a[i];
             if (agent == NULL || agent == a) continue;
-            //if (cube_intersects(
-                //agent->s.x, agent->s.y, agent->s.z,
-                //0.3, 0.3, agent->box.b_height,
-                //x,y,z,
-                //1, 1, 1))
             if (agent_collides_terrain(agent))
             {
                 collides = true;
@@ -672,40 +709,43 @@ inline void place_spawner_CtoS::handle()
     s->create_message(&msg);
     msg.broadcast();
 }
-#endif
 
-/***************************/
-#ifdef DC_CLIENT
-inline void Spawner_create_StoC::handle()
+const char DEFAULT_PLAYER_NAME[] = "Clunker";
+
+void adjust_name(char* name, unsigned int len)
 {
-    Spawner* s = ClientState::spawner_list.create(id, x,y,z);
-    if (s==NULL)
+    if (len >= (int)(PLAYER_NAME_MAX_LENGTH - 4))
     {
-        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        name[PLAYER_NAME_MAX_LENGTH-4-1] = '\0';
+    }
+    sprintf(name, "%s%04d", name, randrange(0,9999));
+}
+
+inline void identify_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL)
+    {
+        printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
         return;
     }
-    s->set_team(team);
-    s->set_owner(owner);
-    s->init_vox();
-}
-inline void Spawner_destroy_StoC::handle()
-{
-    ClientState::spawner_list.destroy(id);
+    printf("Rceived name %s\n", name);
+    unsigned int len = strlen(name);
+
+    if (len == 0)
+        strcpy(name, DEFAULT_PLAYER_NAME);
+
+    if (len >= PLAYER_NAME_MAX_LENGTH)
+        name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
+
+    while (!ServerState::agent_list.name_available(name))
+        adjust_name(name, len);
+
+    a->status.set_name(name);
+    a->status.identified = true;
+
+    identified_StoC msg;
+    strcpy(msg.name, name);
+    msg.sendToClient(client_id);
 }
 #endif
-
-#ifdef DC_SERVER
-inline void Spawner_create_StoC::handle() {}
-inline void Spawner_destroy_StoC::handle() {}
-#endif
-
-//inline void identify_CtoS::handle()
-//{
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a==NULL)
-    //{
-        //printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
-        //return;
-    //}
-    //a->status.set_name(name, a->id);
-//}

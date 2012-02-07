@@ -1,47 +1,26 @@
 #include "./input.hpp"
 
 #include <c_lib/SDL/SDL_functions.h>
-
-char getUnicodeValue(SDL_keysym keysym );
+#include <c_lib/input/handlers.hpp>
 
 static SDL_Event Event;
-
-//input modes
-static int text_entry_mode;
 
 static int numkeys;
 static Uint8* keystate;
 
 int init_input() {
-    keystate = SDL_GetKeyState(&numkeys); ///returns pointer; only needs to be done once
+    static int inited = 0;
+    if (inited) return 1;
+    keystate = SDL_GetKeyState(&numkeys);
     SDL_EnableUNICODE( SDL_ENABLE );
+    inited++;
     return 0;
 }
 
-//deprecate
-int _set_text_entry_mode(int n) {
-    if((n != 0) || (n != 1)) {
-        text_entry_mode = n;
-    } else {
-        printf("input.c, _set_text_entry_mode error: mode invalid \n");
-    }
-    return 0;
-}
-
-/*
-    mouse bound at startup?
-*/
-static int MOUSE_BOUND = 0;
-
-int _toggle_mouse_bind() {
-    MOUSE_BOUND = (MOUSE_BOUND + 1) %2;
-    return MOUSE_BOUND;
-}
-
-int _get_key_state(key_state_func key_state_cb) {
+int get_key_state() {
     SDL_PumpEvents();
 
-    _key_state_callback(key_state_cb, keystate, numkeys);
+    key_state_handler(keystate, numkeys);
     if(keystate['`'] != 0)
     {
         int x;
@@ -55,85 +34,46 @@ int _get_key_state(key_state_func key_state_cb) {
     return 0;
 }
 
-/*
-If you want to know what character the user entered (as opposed to what key), try SDL_EnableUNICODE(1). event.keysym.unicode will now contain the (Uint16) character. You can usually simply cast it to a char and you'll have what you want.
-One thing to keep in mind is that the unicode field will only be filled on keydown, not keyup.
-You should also disable the unicode translation as soon as you're finished with it because it caused extra overhead.
-
---for coping w/ ? keys (shift + /)
-*/
-
-int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_motion_cb, key_event_func keyboard_event_cb, key_text_event_func keyboard_text_event_cb, quit_event_func quit_event_cb) {
-    int t; //temp
-
-    if(MOUSE_BOUND) {
+int process_events()
+{
+    if (input_state.mouse_bound)
+    {
         SDL_ShowCursor(0);
         SDL_WM_GrabInput(SDL_GRAB_ON);
-    } else {
-        SDL_ShowCursor(1);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);       
     }
+    else
+    {
+        SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
+    }
+
+    
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
-
-        if( (Event.type == SDL_MOUSEBUTTONDOWN) || (Event.type == SDL_MOUSEBUTTONUP)) {
-            MouseEvent me;
-            me.x = Event.motion.x;
-            me.y = Event.motion.y;
-            me.button = Event.button.button;
-            me.state = Event.button.state; //up or down
-            _mouse_event_callback(mouse_event_cb, me);
-        }
-
-        int event_state = 0;
-        char* key_name;
 
         switch( Event.type )
         {
             case SDL_QUIT:
-                _quit_event_callback(quit_event_cb);
+                quit_event_handler(&Event);
                 break;
 
             case SDL_KEYDOWN:
-
-                if(Event.key.keysym.sym == SDLK_HOME)
-                {
-                    printf("Saving Screenshot \n");
-                    save_screenshot();
-                    break;
-                }
-
-                 //for Dany0 (azerty testing)
-                 //while holding n, will show key struct info
-                if (keystate['r'] != 0)
-                {
-                    printf("scancode = %d\n", (int)Event.key.keysym.scancode);
-                    printf("keysym = %d\n", (int)Event.key.keysym.sym);
-                    printf("\n");
-                }
-                
-                t = getUnicodeValue(Event.key.keysym);
-                if(t==0) t= Event.key.keysym.sym;
-                event_state = 1;
-                key_name = SDL_GetKeyName(Event.key.keysym.sym);
-                _key_text_event_callback(keyboard_text_event_cb, t, key_name, event_state);
+                key_down_handler(&Event);
                 break;
 
             case SDL_KEYUP:
-                t = getUnicodeValue(Event.key.keysym);
-                if(t==0) t= Event.key.keysym.sym;
-                event_state = 0;
-                key_name = SDL_GetKeyName(Event.key.keysym.sym);
-                _key_text_event_callback(keyboard_text_event_cb, t, SDL_GetKeyName(Event.key.keysym.sym), event_state);
+                key_up_handler(&Event);
                 break;
 
             case SDL_MOUSEMOTION:
-                MouseMotion ms;
-                ms.x = Event.motion.x;
-                ms.y = Event.motion.y;
-                ms.dx = Event.motion.xrel;
-                ms.dy = Event.motion.yrel;
-                ms.button = Event.motion.state;
-                _mouse_motion_callback(mouse_motion_cb, ms);
+                mouse_motion_handler(&Event);
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                mouse_button_down_handler(&Event);
+                break;
+                
+            case SDL_MOUSEBUTTONUP:
+                mouse_button_up_handler(&Event);
                 break;
 
             default: break;
@@ -142,45 +82,6 @@ int _process_events(mouse_event_func mouse_event_cb, mouse_motion_func mouse_mot
 
     return 0;
 }
-
-int poll_events(void) {
-    return 0;
-}
-
-/* Call Backs */
-
-int _key_state_callback(key_state_func user_func, Uint8* keystate, int numkeys) {
-    user_func(keystate, numkeys);
-    return 0;
-}
-
-int _key_event_callback(key_event_func user_func, char key) {
-    user_func(key);
-    return 0;
-}
-
-int _key_text_event_callback(key_text_event_func user_func, char key, char* key_name, int event_state) {
-    user_func(key, key_name, event_state);
-    return 0;
-}
-
-int _mouse_motion_callback(mouse_motion_func user_func, MouseMotion ms) {
-    user_func(ms);
-    return 0;
-}
-
-int _mouse_event_callback(mouse_event_func user_func, MouseEvent me) {
-    user_func(me);
-    return 0;
-}
-
-int _quit_event_callback(quit_event_func user_func) {
-    user_func();
-    return 0;
-}
-
-/* End Call Backs */
-
 
 char getUnicodeValue(SDL_keysym keysym ) {
     // magic numbers courtesy of SDL docs :)
@@ -206,7 +107,6 @@ char getUnicodeValue(SDL_keysym keysym ) {
     return '?';
     }
 }
-
 
 /* Separate Mouse querying for physics-independent camera */
 static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
@@ -266,4 +166,18 @@ struct MouseMotionAverage* get_mouse_render_state(int t) {
     return &mm;
 }
 
+void pan_camera(int delta_tick)
+{
+    struct MouseMotionAverage* mm;
+    mm = get_mouse_render_state(delta_tick);
 
+    int inv = (input_state.invert_mouse) ? 1 : -1;
+    float dx,dy;
+    dx = ((float)(-mm->x) * input_state.sensitivity) / 40000.0f; // magic #
+    dy = ((float)(inv * mm->y) * input_state.sensitivity) / 40000.0f; // magic #
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_camera->pan(dx,dy);
+    else
+        free_camera->pan(dx,dy);
+}

@@ -21,7 +21,6 @@ import map_gen
 import init_c_lib
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
-import dats.loader as dat_loader
 
 init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
@@ -30,7 +29,6 @@ from init_c_lib import START_CLOCK, GET_TICK
 from net_server import NetServer
 from net_out import NetOut
 from net_event import NetEvent
-from game_state import GameStateGlobal
 from chat_server import ChatServer
 
 '''
@@ -339,17 +337,16 @@ class Main:
         '''
         loading map from file by default because angus gets segfault
         '''
-        if None:
-            if opts.map and os.path.exists('./content/maps/%s'%opts.map):
-                print opts.map
-                terrain_map.load_from_disk(opts.map)
-                terrain_map.set_map_dimensions(128,128,128)
-            else:
-                pass
-                terrain_map.set_map_dimensions(128,128,128)
-                map_gen.floor(terrain_map)
-                #terrain_map.load_from_disk("natural_terrain")
-        _gen_map()
+        if opts.map and os.path.exists('./content/maps/%s'%opts.map):
+            print opts.map
+            terrain_map.load_from_disk(opts.map)
+            terrain_map.set_map_dimensions(128,128,128)
+        else:
+            terrain_map.set_map_dimensions(128,128,128)
+            map_gen.floor(terrain_map)
+            #terrain_map.load_from_disk("natural_terrain")
+
+        #_gen_map()
         #gen_map_simple()
         #terrain_map.load_from_disk("natural2_max")
         #terrain_map.load_from_disk("natural4")
@@ -390,7 +387,6 @@ class Main:
         NetServer.init()
         NetOut.init()
         NetEvent.init()
-        GameStateGlobal()
         ChatServer()
 
     def run2(self):
@@ -414,9 +410,9 @@ class Main:
         init_c_lib.slime_test(30)
         init_c_lib.ctf_start()
         while True:
-            #NetServer.serverListener.accept() #accept incoming connections
-            #NetServer.connectionPool.process_events() #check for new data
             NetServer.connectionPool.dispatch_buffer()
+            NetServer.connectionPool.check_clients_ready()
+
             sl_c =0
             init_c_lib.tick_server_state()
             while True: #physics loop

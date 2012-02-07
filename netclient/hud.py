@@ -4,9 +4,7 @@ opts = opts.opts
 import init_c_lib
 
 from chat_client import ChatClientGlobal
-from input import InputGlobal
 from net_client import NetClientGlobal
-from game_state import GameStateGlobal
 
 '''
 HUD overlay
@@ -18,6 +16,8 @@ class Hud(object):
         init_c_lib.Font.init()
 
     def set_chat_messages(self):
+        if ChatClientGlobal.chatRender is None: return
+
         blanks = 0
         for i, msg in enumerate(ChatClientGlobal.chatRender.messages()):
             if not msg.payload.content.strip():
@@ -38,13 +38,9 @@ class Hud(object):
 
         init_c_lib.HUD.set_chat_input_string(ChatClientGlobal.chatRender.user_input())
 
-    def draw(self, fps=None, ping=None, cube_selector=False, zoom=False):
+    def draw(self, fps=None, ping=None):
 
-
-        draw_dead = NetClientGlobal.connection.connected\
-                    and GameStateGlobal.agent is not None\
-                    and GameStateGlobal.agent.dead
-        draw_disconnected = not NetClientGlobal.connection.connected
+        connected = NetClientGlobal.connection.connected
 
         draw_fps = fps is not None
         try:
@@ -58,41 +54,14 @@ class Hud(object):
         except (TypeError, ValueError):
             ping = 0
 
-        draw_player_stats = True
-
-        draw_chat = True
-        draw_chat_input = InputGlobal.input == 'chat'
-        draw_chat_cursor = InputGlobal.input == 'chat'
-
-        equipment_slot = -1
-        if GameStateGlobal.agent:
-            equipment_slot = GameStateGlobal.agent.hud_equipment_slot()
-        draw_equipment = True
-
-        draw_compass = True
-        draw_map = InputGlobal.map
-
         init_c_lib.HUD.set_draw_settings(
-            zoom,
-            cube_selector,
-            InputGlobal.inventory,
-            InputGlobal.help_menu,
-            draw_disconnected,
-            draw_dead,
+            connected,
             draw_fps,
             fps,
             draw_ping,
             ping,
-            draw_player_stats,
-            draw_chat,
-            draw_chat_input,
-            draw_chat_cursor,
-            InputGlobal.scoreboard,
-            draw_equipment,
-            equipment_slot,
-            draw_compass,
-            draw_map
         )
-
+        init_c_lib.HUD.update_hud_draw_settings()
+        
         self.set_chat_messages()
         init_c_lib.HUD.draw()

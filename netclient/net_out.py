@@ -9,22 +9,16 @@ Client network outgoing
 class NetOut:
     sendPacket = None
 
-    sendMessage = None
     mapMessage = None
-    adminMessage = None
     chatMessage = None
     miscMessage = None
-    datMessage = None
 
     @classmethod
     def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
-        cls.sendMessage = SendMessage()
         cls.mapMessage = MapMessage()
-        cls.adminMessage = AdminMessage()
         cls.chatMessage = ChatMessage()
         cls.miscMessage = MiscMessage()
-        cls.datMessage = DatMessage()
         
     @classmethod
     def send_json(cls, dict):
@@ -35,7 +29,6 @@ class NetOut:
         cls.sendPacket.send_binary(msg_id, bin_string)
 
 from net_client import NetClientGlobal
-from game_state import GameStateGlobal
 
 def sendJSON(cmd=None):
     def outer(f, *args):
@@ -58,16 +51,9 @@ def sendJSON(cmd=None):
     return outer
 
 """ Decorators """
-# if client_id is required
 def idRequired(f):
     def wrapped(*args, **kwargs):
         if NetClientGlobal.connection.client_id:
-            f(*args, **kwargs)
-    return wrapped
-
-def noViewer(f):
-    def wrapped(*args, **kwargs):
-        if not GameStateGlobal.agent.is_viewer():
             f(*args, **kwargs)
     return wrapped
 
@@ -81,29 +67,10 @@ class GenericMessage:
         self.__class__.__dict__[cmd](self, *args, **kwargs)
 
 
-class SendMessage(GenericMessage):
-
-    @idRequired
-    @sendJSON('received_client_id')
-    def received_client_id(self):
-        return True
-    @sendJSON('identify')
-    def identify(self, name=None):
-        if name is None:
-            name = NetClientGlobal.name
-        return {
-            'name': name,
-        }
-
 class MiscMessage:
     @sendJSON('ping')
     def ping(self):
         return { 'timestamp' : init_c_lib.get_ticks() }
-
-class DatMessage:
-    @sendJSON('dat_loaded')
-    def loaded(self):
-        return True
 
 class MapMessage:
 
@@ -139,18 +106,4 @@ class ChatMessage:
         return {
             'channel'   : channel,
             'cid' : str(NetClientGlobal.connection.client_id),
-        }
-
-class AdminMessage:
-
-    @sendJSON('set_map')
-    def set_map(self,x,y,z,value):
-        return {
-            'list' : [(x,y,z,value)],
-        }
-
-    @sendJSON('set_map_bulk')
-    def set_map_bulk(self, list): #takes a list of 4 tuples of (x,y,z,value)
-        return {
-            'list' : list,
         }

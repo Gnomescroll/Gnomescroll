@@ -50,11 +50,12 @@ int CubeSelector::get_active_id()    //get the cube selected by hud
 
 int CubeSelector::get_active_pos()
 {
-    return this->pos_x + (8 * this->pos_y);
+    return this->pos;
 }
 
 void CubeSelector::set_active_pos(int pos)
 {
+    this->pos = pos;
     this->pos_x = pos % 8;
     this->pos_y = pos / 8;
 }
@@ -159,12 +160,60 @@ void CubeSelector::draw()
     glColor3ub(255,255,255);
 }
 
+/* Controls */
+void CubeSelector::up()
+{
+    this->vertical(true);
+}
+void CubeSelector::down()
+{
+    this->vertical(false);
+}
+void CubeSelector::left()
+{
+    this->horizontal(true);
+}
+void CubeSelector::right()
+{
+    this->horizontal(false);
+}
+
+void CubeSelector::horizontal(bool left)
+{
+    int shift = (left) ? -1 : 1;
+    int row = this->pos / this->n_x;
+    int col = this->pos % this->n_x;
+
+    int n = (col + shift) % this->n_x;
+    n += row * this->n_x;
+
+    if (n < 0 || n > (this->n_x*this->n_y-1)) return;
+
+    this->set_active_pos(n);
+}
+
+void CubeSelector::vertical(bool up)
+{
+    int shift = (up) ? -1 : 1;
+    int row = this->pos / this->n_x;
+    int col = this->pos % this->n_x;
+
+    row = (row + shift) % this->n_y;
+    int n = (row * this->n_x) + col;
+
+    if (n < 0 || n > (this->n_x*this->n_y-1)) return;
+
+    this->set_active_pos(n);
+}
+
 CubeSelector::CubeSelector()
 :
 inited(false),
 x(0),y(0),
 size(0),
 mode(0),
+n_x(8), n_y(8),
+pos(0),
 pos_x(0), pos_y(0),
 cube_id(0),
 texture(0)

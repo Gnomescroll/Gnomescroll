@@ -1,7 +1,7 @@
 #include "skybox.hpp"
 
 #include <c_lib/camera/camera.hpp>
-#include <c_lib/t_map/t_vbo.hpp>
+#include <c_lib/t_map/t_vbo.h>
 
 #include <string.h>
 

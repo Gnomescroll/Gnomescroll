@@ -260,7 +260,7 @@ void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;
-    int ret = ClientState::get_team_color(team, &team_r, &team_g, &team_b);
+    int ret = ClientState::ctf.get_team_color(team, &team_r, &team_g, &team_b);
     if (ret) return;
 
     int i;

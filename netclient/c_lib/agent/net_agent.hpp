@@ -161,6 +161,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
         int target_id;
         int target_type;
         int target_part;
+        int voxel[3];
         float x,y,z;    // need this, because the target can be destroyed by the hitscan action
         // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
         // and then player cannot animate
@@ -177,6 +178,10 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
+            pack_u8(&voxel[0], buff, buff_n, pack);
+            pack_u8(&voxel[1], buff, buff_n, pack);
+            pack_u8(&voxel[2], buff, buff_n, pack);
+
         }
         inline void handle();
 };
@@ -238,6 +243,7 @@ class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_obj
         int target_id;
         int target_type;
         int target_part;
+        int voxel[3];
         float x,y,z;    // need this, because the target can be destroyed by the hitscan action
         // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
         // and then player cannot animate
@@ -254,6 +260,9 @@ class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_obj
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
+            pack_u8(&voxel[0], buff, buff_n, pack);
+            pack_u8(&voxel[1], buff, buff_n, pack);
+            pack_u8(&voxel[2], buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -343,12 +352,16 @@ class hitscan_object_CtoS: public FixedSizeNetPacketToServer<hitscan_object_CtoS
         int id;
         int type;
         int part;
-
+        int voxel[3];
+        
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u8(&part, buff, buff_n, pack);
+            pack_u8(&voxel[0], buff, buff_n, pack);
+            pack_u8(&voxel[1], buff, buff_n, pack);
+            pack_u8(&voxel[2], buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -386,12 +399,16 @@ class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
         int id;
         int type;
         int part;
+        int voxel[3];
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u8(&part, buff, buff_n, pack);
+            pack_u8(&voxel[0], buff, buff_n, pack);
+            pack_u8(&voxel[1], buff, buff_n, pack);
+            pack_u8(&voxel[2], buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -681,37 +698,24 @@ class agent_coins_StoC: public FixedSizeReliableNetPacketToClient<agent_coins_St
 
 /* Identification */
 
-//class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
+class identify_CtoS: public FixedSizeReliableNetPacketToServer<identify_CtoS>
+{
+    public:
+        char name[PLAYER_NAME_MAX_LENGTH];
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
-//class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
-//{
-    //public:
-        //char name[PLAYER_NAME_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//const int IDENTIFY_FAIL_NOTES_MAX_LENGTH = 63;
-//class identify_fail_StoC: public FixedSizeReliableNetPacketToClient<identify_fail_StoC>
-//{
-    //public:
-        //char note[IDENTIFY_FAIL_NOTES_MAX_LENGTH];
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_string(note, IDENTIFY_FAIL_NOTES_MAX_LENGTH, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
+class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC>
+{
+    public:
+        char name[PLAYER_NAME_MAX_LENGTH];
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
+        }
+        inline void handle();
+};

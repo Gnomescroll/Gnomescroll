@@ -84,6 +84,8 @@ class PlayerAgent_state {
 
         PlayerAgent_action action;
 
+        bool identified;
+
         PlayerAgent_state();
         ~PlayerAgent_state();
 

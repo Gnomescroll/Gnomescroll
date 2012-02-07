@@ -29,7 +29,6 @@ class NetEvent:
 
 from net_server import NetServer
 from net_out import NetOut
-from game_state import GameStateGlobal
 from chat_server import ChatServer
 
 # routes messages by msg.cmd
@@ -56,20 +55,8 @@ Common Errors
 
 class ErrorNames:
 
-    def agent_ownership(self, client, a):
-        return 'client %d does not own agent %d' % (client.id, a.id,)
-
-    def is_viewer(self, msg):
-        return 'ignoring viewing agent; cmd %s' % (msg['cmd'],)
-
     def key_missing(self, key):
         return '%s missing' % (key,)
-
-    def key_invalid(self, key):
-        return '%s invalid' % (key,)
-
-    def key_invalid_or_missing(self, key):
-        return '%s invalid or missing' % (key,)
 
     def wrong_size(self, key, size=None, actual_size=None):
         msg = '%s of wrong size' % (key,)
@@ -80,12 +67,6 @@ class ErrorNames:
     def not_iterable(self, key):
         return '%s is not iterable' % (key,)
 
-    def thing_unknown(self, name, thing_id):
-        return '%s %d unknown' % (name, thing_id,)
-
-    def client_has_no_agent(self, client):
-        return 'client %d has no agent' % (client.id,)
-
 err = ErrorNames()
 
 
@@ -93,61 +74,13 @@ err = ErrorNames()
 Processors, for common message items/keys
 '''
 
-class ProcessedAgentMessage:
-    __slots__ = ['error', 'agent']
-    def __init__(self, error, agent):
-        self.error = error
-        self.agent = agent
-
 class ProcessedIterableMessage:
     __slots__ = ['error', 'iterable']
     def __init__(self, error, iterable):
         self.error = error
         self.iterable = iterable
 
-class ProcessedItemMessage:
-    __slots__ = ['error', 'item']
-    def __init__(self, error, item):
-        self.error = error
-        self.item = item
-
 class Processors:
-
-    def _default_thing(self, thing_name, processed_msg_obj, msg, key, err_key=None, datastore=None):
-        if datastore is None:
-            datastore = '%sList' % (thing_name,)
-        err_msg, thing = None, None
-        if err_key is None:
-            err_key = key
-
-        try:
-            thing_id = int(msg.get(key, None))
-            thing = getattr(GameStateGlobal, datastore)[thing_id]
-        except TypeError:
-            err_msg = err.key_missing(err_key)
-        except ValueError:
-            err_msg = err.key_invalid(err_key)
-        except KeyError:
-            err_msg = err.thing_unknown(thing_name, thing_id)
-
-        return processed_msg_obj(err_msg, thing)
-
-# for msgs that send agent id and want it extracted and checked against player
-    def agent(self, client, msg, key='id', err_key=None):
-        m = self._default_thing('agent', ProcessedAgentMessage, msg, key, err_key)
-        if m.error:
-            return m
-
-        if m.agent.team.viewers:
-            m.error = err.is_viewer(msg)
-        if client.agent != m.agent:
-            m.error = err.agent_ownership(NetClientGlobal.connection, m.agent)
-
-        return m
-
-    def item(self, msg, key='iid', err_key=None):
-        m = self._default_thing('item', ProcessedItemMessage, msg, key, err_key)
-        return m
 
 # for iterable items
     def iterable(self, msg, key, size, err_key=None):
@@ -213,52 +146,6 @@ def requireKey(key, err_key=None):
         return wrapped
     return outer
 
-# like requireKey, but also require key to have a certain type
-def requireKeyType(key, _type, err_key=None):
-    if err_key is None:
-        err_key = key
-    def outer(f, *args, **kwargs):
-        def wrapped(self, msg, *args, **kwargs):
-            try:
-                thing = _type(msg.get(key, None))
-            except TypeError:
-                return err.key_missing(err_key)
-            except ValueError:
-                return err.key_invalid(err_key)
-            args = _add_arg(args, thing)
-            return f(self, msg, *args, **kwargs)
-        return wrapped
-    return outer
-
-# require a msg item to have a certain type, if key is present
-def requireTypeIfPresent(key, _type, err_key=None):
-    if err_key is None:
-        err_key = key
-    def outer(f, *args, **kwargs):
-        def wrapped(self, msg, *args, **kwargs):
-            thing = None
-            try:
-                thing = _type(msg[key])
-            except ValueError:
-                return err.key_invalid(err_key)
-            except KeyError:
-                pass
-            args = _add_arg(args, thing)
-            return f(self, msg, *args, **kwargs)
-        return wrapped
-    return outer
-
-def processAgent(key='id', err_key=None):
-    def outer(f, *args, **kwargs):
-        def wrapped(self, msg, client, *args, **kwargs):
-            a = processor.agent(client, msg, key, err_key)
-            if a.error:
-                return a.error
-            args = _add_arg(args, a.agent)
-            return f(self, msg, client, *args, **kwargs)
-        return wrapped
-    return outer
-
 def processIterable(key, size, err_key=None):
     def outer(f, *args, **kwargs):
         def wrapped(self, msg, *args, **kwargs):
@@ -266,17 +153,6 @@ def processIterable(key, size, err_key=None):
             if p.error:
                 return p.error
             args = _add_arg(args, p.iterable)
-            return f(self, msg, *args, **kwargs)
-        return wrapped
-    return outer
-
-def processItem(key='iid', err_key=None):
-    def outer(f, *args, **kwargs):
-        def wrapped(self, msg, *args, **kwargs):
-            a = processor.item(msg, key, err_key)
-            if a.error:
-                return a.error
-            args = _add_arg(args, a.item)
             return f(self, msg, *args, **kwargs)
         return wrapped
     return outer
@@ -314,19 +190,12 @@ class MiscMessageHandler(GenericMessageHandler):
     def events(self):
         return {
             'ping'  :   self.ping,
-            'identify': self.identify,
         }
 
     @logError('ping')
     @requireKey('timestamp')
     def ping(self, msg, connection, ts):
         connection.sendMessage.ping(ts)
-
-    @logError('identify')
-    @requireKey('name')
-    def identify(self, msg, conn, name):
-        conn.identify(name)
-
 
 class MapMessageHandler(GenericMessageHandler):
 
