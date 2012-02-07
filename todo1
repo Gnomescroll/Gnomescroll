@@ -224,13 +224,17 @@ python chat removed
 C chat implemented
 
 ./waf production
+
+fix lateral motion when head against ceiling
 ====================
 
 
 //COLLISION DETECTION
-When head in ceiling, cant move laterally
+body can still pass through single row blocks
 -placing block does not place where aimed (not using correct camera?) 
 --- placing block when crouched in or near 2block tall spot prevents block placement
+-- the test is: set terrain mod, check against terrain, unset if collides.
+-- the check against terrain is failing whenever you are crouched
 Ratelimit jetpack / cap height
 
 

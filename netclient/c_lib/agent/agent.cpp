@@ -232,12 +232,10 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     new_x = as.x + as.vx + cs_vx;
     new_y = as.y + as.vy + cs_vy;
     new_z = as.z + as.vz;
-
-    const float CEIL_BUFF = 0.10;
-
+bool top=false;
     //collision
-    bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
-    //bool current_collision = collision_check6_z(box.box_r, height, as.x,as.y,as.z);
+    //bool current_collision = collision_check5_stand_up(box.box_r, height, as.x,as.y,as.z);
+    bool current_collision = collision_check6_waste(box.box_r, height, as.x,as.y,as.z, &top);
     if(current_collision) {
         //printf("current\n");
         as.x = new_x;
@@ -252,25 +250,33 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     /*
         Collision Order: as.x,as.y,as.z
     */
-    bool collision_x = collision_check6_xy(box.box_r, height, new_x,as.y,as.z);
+    //bool collision_x = collision_check6_xy(box.box_r, height, new_x,as.y,as.z);
+    bool collision_x = collision_check6_waste(box.box_r, height, new_x,as.y,as.z, &top);
     if(collision_x) {
-        //printf("x\n");
+        printf("x\n");
         new_x = as.x;
         as.vx = 0.0f;
     }
 
-    bool collision_y = collision_check6_xy(box.box_r, height, new_x,new_y,as.z);
+    //bool collision_y = collision_check6_xy(box.box_r, height, new_x,new_y,as.z);
+    bool collision_y = collision_check6_waste(box.box_r, height, new_x,new_y,as.z, &top);
     if(collision_y) {
-        //printf("y\n");
+        printf("y\n");
         new_y = as.y;
         as.vy = 0.0f;
     }
 
     //top and bottom matter
-    bool collision_z = collision_check6_z(box.box_r, height, new_x, new_y, new_z);
+    //bool collision_z = collision_check6_z(box.box_r, height, new_x, new_y, new_z);
+    bool collision_z = collision_check6_waste(box.box_r, height, new_x, new_y, new_z, &top);
     if(collision_z) {
-        //printf("z\n");
-        new_z = as.z;
+        printf("z\n");
+        //if (top)
+            //new_z = floor(new_z+height)-height;
+        //else
+            new_z = as.z;
+        if (top)
+            new_z -= 1.5;
         //if (! (new_z >= floor(new_z) && new_z < floor(new_z)+0.05))
             //new_z -= CEIL_BUFF; 
         as.vz = 0.0f;
