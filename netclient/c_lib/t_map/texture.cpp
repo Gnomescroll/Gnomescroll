@@ -123,3 +123,5 @@ void init_textures()
     glDisable(GL_TEXTURE_2D);
     }
 }
+
+}
