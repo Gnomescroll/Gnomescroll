@@ -3,8 +3,8 @@
 #ifdef DC_CLIENT
 inline void ChatMessage_StoC::handle()
 {
-    printf("Client received: %s\n", msg);
-    printf("from: %d, channel=%d\n", sender, channel);
+    //printf("Client received: %s\n", msg);
+    //printf("from: %d, channel=%d\n", sender, channel);
 
     if (sender != CHAT_SENDER_SYSTEM)
     {
@@ -24,8 +24,8 @@ inline void ChatMessage_CtoS::handle(){}
 
 inline void ChatMessage_CtoS::handle()
 {
-    printf("Server received: %s\n", msg);
-    printf("from: %d, channel=%d\n", client_id, channel);
+    //printf("Server received: %s\n", msg);
+    //printf("from: %d, channel=%d\n", client_id, channel);
 
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
