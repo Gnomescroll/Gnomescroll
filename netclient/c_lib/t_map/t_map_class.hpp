@@ -1,5 +1,8 @@
 #pragma once
 
+
+#include <stdio.h>
+
 namespace t_map
 {
 
@@ -9,7 +12,7 @@ struct MAP_ELEMENT
     {
         struct
         {
-            unsigned char block_type;
+            unsigned char block;
             unsigned char palette;
             unsigned char damage;
             unsigned char lighting;
@@ -61,13 +64,20 @@ class Terrain_map
         ydim = (_ydim/16)*16;
         xchunk_dim = _xdim/16; 
         ychunk_dim = _ydim/16;
+
+        chunk = new MAP_CHUNK[xchunk_dim*ychunk_dim];
+    }
+
+    ~Terrain_map()
+    {
+        delete[] chunk;
     }
     
     struct MAP_ELEMENT get_element(int x, int y, int z);
-    struct MAP_ELEMENT set_element(int x, int y, int z, value);
+    void set_element(int x, int y, int z, int value);
 
-    
-
+    int get_block(int x, int y, int z) __attribute((always_inline));
+    void set_block(int x, int y, int z, int value) __attribute((always_inline));
 };
 
 } //
