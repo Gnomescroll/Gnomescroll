@@ -1,4 +1,4 @@
-#include "chat.hpp"
+#include "client.hpp"
 
 /* ChatMessage */
 
