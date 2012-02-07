@@ -186,27 +186,19 @@ def get_ticks():
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
 
-"""
-Game modes (CTF)
-[chat client (sends "join team" cmd)]
-"""
-cdef extern from "./game/ctf.hpp":
-    cdef cppclass CTF:
-        void join_team(int team)
-        bool auto_assign
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    CTF ctf
-    void update_camera()
-
-def join_team(int team):
-    ctf.join_team(team)
 
 """
 Options & Settings
 [options]
 -- this is one of the few things to keep in cython until the end
 """
+
+cdef extern from "./game/ctf.hpp":
+    cdef cppclass CTF:
+        bool auto_assign
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    CTF ctf
 
 def load_options(opts):
     ctf.auto_assign = opts.auto_assign_team
@@ -215,6 +207,9 @@ def load_options(opts):
 Camera
 [gameloop]
 """
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void update_camera()
+
 cdef extern from "./camera/camera.hpp":
     void world_projection()
     void hud_projection()

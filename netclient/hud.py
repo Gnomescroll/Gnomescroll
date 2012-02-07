@@ -38,5 +38,4 @@ class Hud(object):
             ping,
         )
         init_c_lib.HUD.update_hud_draw_settings()
-        
         init_c_lib.HUD.draw()

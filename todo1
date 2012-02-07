@@ -215,7 +215,16 @@ removed last of camera.py
 Finish organizing input.cpp
 debug input mode
 #ifdef PRODUCTION for different input state defaults
+layout of C chat client
 =============
+
+Feb 06
+
+python chat removed
+C chat implemented
+
+./waf production
+====================
 
 Spreadsheet to document interactions
 e.g.
@@ -273,20 +282,8 @@ without excess struggling::
 ::Chunk list, chunk are being moved to C with terrain map rewrite::
 
 PYTHON DEPRECATION:
-ORDER:
-HUD     --done
-Input   --done
-Camera  --done
-Agents  --done
-NetClient (chat, identity messages need to be moved)
-Chat
 Font
 Main loop
-
-Remaining:
-chat (messages, logic)
-python map (waiting for brandon)
---Then can get rid of python network
 
 Leave:
 settings.py
@@ -304,8 +301,11 @@ Disable Debug Controls:
  
 Chat:
 -chat with t key (and enter)
+    DONE
 -team chat with y
+    DONE
 -increase time chat is displayed for
+    DONE
 -chat log bool
 -enable chat log when when tab or typing
  

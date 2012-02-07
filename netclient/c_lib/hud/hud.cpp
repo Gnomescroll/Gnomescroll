@@ -66,7 +66,6 @@ static struct HudDrawSettings
     bool player_stats;
     bool chat;
     bool chat_input;
-    bool chat_cursor;
     bool scoreboard;
     bool equipment;
     int equipment_slot;
@@ -136,7 +135,6 @@ void update_hud_draw_settings()
 
     hud_draw_settings.chat = true;
     hud_draw_settings.chat_input = input_state.chat;
-    hud_draw_settings.chat_cursor = input_state.chat;
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
@@ -162,7 +160,7 @@ void update_hud_draw_settings()
             set_chat_cursor(t->text, t->x, t->y);
         }
 
-        hud->chat->update();
+        hud->chat->update(!hud_draw_settings.chat_input);
     }
 }
 
@@ -226,7 +224,7 @@ void draw_hud_textures()
         HudMap::draw_map();
     }
 
-    if (hud_draw_settings.chat_cursor)  //not actually a texture
+    if (hud_draw_settings.chat_input)  //not actually a texture
         draw_cursor();
 }
 
@@ -452,7 +450,7 @@ void ChatRender::draw_input()
     this->input->draw();
 }
 
-void ChatRender::update()
+void ChatRender::update(bool timeout)
 {   // read chat client messages and format for display
     if (!this->inited) return;
 
@@ -466,7 +464,7 @@ void ChatRender::update()
         if (n_draw == CHAT_MESSAGE_RENDER_MAX) break;
         ChatMessage* m = chat_message_list.filtered_objects[i];
         if (m == NULL) break;
-        if (now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
+        if (timeout && now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
         n_draw++;
     }
 

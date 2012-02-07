@@ -21,7 +21,7 @@ class ChatRender
         void init();
         void draw_messages();
         void draw_input();
-        void update();
+        void update(bool timeout=true);
 
     ChatRender();
     ~ChatRender();
