@@ -40,20 +40,26 @@ struct cubeProperties* get_cube(int id)
 void set_cube_side_texture(int id, int side, int tex_id);
 int get_cube_side_texture(int id, int side);
 
+
+
+using namespace t_map;
+
 inline struct cubeProperties* _get_cube(int id) __attribute((always_inline));
 
-inline bool isActive(int id) __attribute((always_inline));
-inline bool isSolid(int id) __attribute((always_inline));
-inline bool isOccludes(int id) __attribute((always_inline));
+struct cubeProperties* _get_cube(int id)
+{
+    return cube_list + id;
+}
+
+}
 
 /*
 Cube Properties
 */
 
-struct cubeProperties* _get_cube(int id)
-{
-    return t_map::cube_list + id;
-}
+inline bool isActive(int id) __attribute((always_inline));
+inline bool isSolid(int id) __attribute((always_inline));
+inline bool isOccludes(int id) __attribute((always_inline));
 
 bool isActive(int id) 
 {
@@ -70,6 +76,21 @@ bool isOccludes(int id)
     return t_map::cube_list[id].occludes;
 }
 
+inline bool isActive(int x, int y, int z) __attribute((always_inline));
+inline bool isSolid(int x, int y, int z) __attribute((always_inline));
+inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
+
+bool isActive(int x, int y, int z)
+{
+    return isActive(t_map::get(x,y,z));
 }
 
+bool isSolid(int x, int y, int z)
+{
+    return isSolid(t_map::get(x,y,z));
+}
 
+bool isOccludes(int x, int y, int z)
+{
+    return isOccludes(t_map::get(x,y,z));
+}
