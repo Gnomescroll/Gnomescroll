@@ -30,7 +30,7 @@ namespace ClientState {
     extern Grenade_list grenade_list;
     extern Shrapnel_list shrapnel_list;
     extern Blood_list blood_list;
-    extern Neutron_list neutron_list;
+    //extern Neutron_list neutron_list;
     extern Minivox_list minivox_list;
     extern BillboardText_list billboard_text_list;
     extern Voxel_render_list voxel_render_list;

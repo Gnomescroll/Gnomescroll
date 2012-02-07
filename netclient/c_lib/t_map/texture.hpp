@@ -1,5 +1,13 @@
 #pragma once
 
+
+#ifndef GLuint
+    typedef unsigned int GLuint;
+#endif
+
+struct SDL_Surface;
+struct SDL_PixelFormat;
+
 GLuint block_texture = 0;
 GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
 
