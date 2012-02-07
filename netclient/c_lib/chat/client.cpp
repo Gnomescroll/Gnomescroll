@@ -1,5 +1,66 @@
 #include "client.hpp"
 
+#include <limits.h>
+
+/* ChatMessage */
+
+void ChatMessage::set_name()
+{
+    if (sender == CHAT_SENDER_SYSTEM)
+        strcpy(name, (char*)"System");
+    else
+    {
+        Agent_state* a = ClientState::agent_list.get(sender);
+        if (a==NULL || !a->status.identified)
+            strcpy(name, (char*)"UNKNOWN");
+        else
+            strcpy(name, a->status.name);
+    }
+}
+
+void ChatMessage::set_color()
+{
+    if (sender == CHAT_SENDER_SYSTEM)
+    {   // system msg
+        r = CHAT_SYSTEM_COLOR_R;
+        g = CHAT_SYSTEM_COLOR_G;
+        b = CHAT_SYSTEM_COLOR_B;
+        return;
+    }
+    else if (
+        ClientState::playerAgent_state.you != NULL
+     && ClientState::playerAgent_state.agent_id + CHANNEL_ID_AGENT_OFFSET == channel
+    )
+    {   // PM
+        r = CHAT_PM_COLOR_R;
+        g = CHAT_PM_COLOR_G;
+        b = CHAT_PM_COLOR_B;
+        return;
+    }
+    else if (channel >= CHANNEL_ID_TEAM_OFFSET && channel < (int)(CHANNEL_ID_TEAM_OFFSET+N_TEAMS))
+    {   // team
+        ClientState::ctf.get_team_color(channel - CHANNEL_ID_TEAM_OFFSET, &r, &g, &b);
+        return;
+    }
+    else
+    {   // global
+        r = CHAT_GLOBAL_COLOR_R;
+        g = CHAT_GLOBAL_COLOR_G;
+        b = CHAT_GLOBAL_COLOR_B;
+        return;
+    }
+
+    r = CHAT_UNKNOWN_COLOR_R;
+    g = CHAT_UNKNOWN_COLOR_G;
+    b = CHAT_UNKNOWN_COLOR_B;
+}
+
+ChatMessage::ChatMessage(int id)
+:
+id(id),
+timestamp(0)
+{}
+
 /* ChatMessageHistoryObject */
 
 ChatMessageHistoryObject::ChatMessageHistoryObject(ChatMessage* m)
@@ -282,6 +343,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     strcpy(m->payload, payload);
     m->set_color();
     m->set_name();
+    m->timestamp = _GET_MS_TIME();
     chan->add_message(m);
 }
 
@@ -351,35 +413,60 @@ ChatClient::~ChatClient()
 
 /* ChatMessageList */
 
-void ChatMessageList::quicksort_timestamp(int beg, int end)
-{   // sort timestamp, descending
+void ChatMessageList::quicksort_timestamp_desc(int beg, int end)
+{
     if (end > beg + 1)
     {
         int timestamp;
         if (this->filtered_objects[beg] == NULL)
-            timestamp = -1;
+            timestamp = INT_MIN;
         else
             timestamp = this->filtered_objects[beg]->timestamp;
         int l = beg + 1, r = end;
         while (l < r)
         {
             int t;
-            t = (this->filtered_objects[l] == NULL) ? -1 : this->filtered_objects[l]->timestamp;
+            t = (this->filtered_objects[l] == NULL) ? INT_MIN : this->filtered_objects[l]->timestamp;
             if (t >= timestamp)
                 l++;
             else
                 swap_object_state(&this->filtered_objects[l], &this->filtered_objects[--r]);
         }
         swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);
-        quicksort_timestamp(beg, l);
-        quicksort_timestamp(r, end);
+        quicksort_timestamp_desc(beg, l);
+        quicksort_timestamp_desc(r, end);
+    }
+}
+
+void ChatMessageList::quicksort_timestamp_asc(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        int timestamp;
+        if (this->filtered_objects[beg] == NULL)
+            timestamp = INT_MAX;
+        else
+            timestamp = this->filtered_objects[beg]->timestamp;
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            int t;
+            t = (this->filtered_objects[l] == NULL) ? INT_MAX : this->filtered_objects[l]->timestamp;
+            if (t <= timestamp)
+                l++;
+            else
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[--r]);
+        }
+        swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);
+        quicksort_timestamp_asc(beg, l);
+        quicksort_timestamp_asc(r, end);
     }
 }
 
 void ChatMessageList::sort_by_most_recent()
 {
     this->filter_none();
-    this->quicksort_timestamp(0, this->n_filtered);
+    this->quicksort_timestamp_desc(0, this->n_filtered);
 }
 
 ChatClient chat_client;

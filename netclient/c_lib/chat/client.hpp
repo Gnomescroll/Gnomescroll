@@ -8,6 +8,27 @@ const int CHAT_CLIENT_INPUT_HISTORY_MAX = 10;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
 const int CHAT_CLIENT_CHANNELS_MAX = 4; // pm, global, team, system
 
+
+class ChatMessage
+{
+    public:
+    int id; // only used by object list
+
+    char payload[CHAT_MESSAGE_SIZE_MAX];
+    int sender;
+    int channel;
+
+    int timestamp;
+
+    unsigned char r,g,b;
+    char name[PLAYER_NAME_MAX_LENGTH];
+
+    void set_color();
+    void set_name();
+    
+    ChatMessage(int id);
+};
+
 class ChatMessageHistoryObject
 {
     public:
@@ -105,7 +126,8 @@ class ChatClient
 class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HISTORY_MAX+1)*CHAT_CLIENT_CHANNELS_MAX>
 {
     private:
-        void quicksort_timestamp(int beg, int end);
+        void quicksort_timestamp_asc(int beg, int end);
+        void quicksort_timestamp_desc(int beg, int end);
     public:
         void sort_by_most_recent();
 };

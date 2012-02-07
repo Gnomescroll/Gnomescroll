@@ -456,20 +456,23 @@ void ChatRender::update()
 {   // read chat client messages and format for display
     if (!this->inited) return;
 
-    // quicksort messages by timestamp (descending)
+    int now = _GET_MS_TIME();
     chat_message_list.sort_by_most_recent();
-    int j=0;
+    int j=CHAT_MESSAGE_RENDER_MAX-1;
     for (int i=0; i<chat_message_list.n_filtered; i++)
     {
-        if (j==CHAT_MESSAGE_RENDER_MAX) break;
+        if (j < 0) break;
         ChatMessage* m = chat_message_list.filtered_objects[i];
         if (m == NULL) continue;
-        HudText::Text* t = this->messages[i];
+        if (now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
+        HudText::Text* t = this->messages[j];
         if (t==NULL) continue;
         t->update_formatted_string(2, m->name, m->payload);
         t->set_color(m->r, m->g, m->b, 255);
-        j++;
+        j--;
     }
+
+    for (int i=j; i>=0; this->messages[i--]->set_text((char*)""));
 }
 
 ChatRender::ChatRender()

@@ -123,7 +123,6 @@ void Text::resize_string(int n, char** str, int* str_len)
     else
         *str = (char*)realloc(*str, sizeof(char) * (n+1));
     *str_len = n;
-    printf("resized to %d\n", *str_len);
 }
 
 void Text::set_text(char* text)
