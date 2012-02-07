@@ -229,18 +229,23 @@ void ChatInput::add(char x)
 {
     if (cursor == CHAT_BUFFER_SIZE) return;
     if (buffer_len == CHAT_BUFFER_SIZE) return;
-    for (int i=cursor; i<CHAT_BUFFER_SIZE-1; i++)
+
+    for (int i=buffer_len; i>=cursor; i--)
         buffer[i+1] = buffer[i];
+
     buffer[cursor++] = x;
-    buffer_len++;
+    buffer[++buffer_len] = '\0';
 }
 
 void ChatInput::remove()
 {
     if (!buffer_len || !cursor) return;
-    int i;
-    for (i=cursor; i<CHAT_BUFFER_SIZE; i++)
-        buffer[i] = buffer[i+1];
+
+    int i=cursor;
+    char c;
+    while ((c = buffer[i++]) != '\0')
+        buffer[i-2] = c;
+        
     buffer[--buffer_len] = '\0';
     cursor--;
 }
@@ -259,10 +264,10 @@ void ChatInput::cursor_right()
 
 void ChatInput::history_newer()
 {
-    if (history < 0) return;
+    if (history < 0 || history_index < 0) return;
+
     history_index--;
     history_index = (history_index < -1) ? -1 : history_index;
-
     if (history_index < 0)
     {
         clear_buffer();

@@ -56,8 +56,8 @@ inline void Agent_teleport_message::handle() {
         return;
     }
     // reset camera angle
-    if (A->is_you() && current_camera->type == AGENT_CAM)
-        current_camera->set_angles(theta, phi);
+    if (A->is_you() && agent_camera != NULL)
+        agent_camera->set_angles(theta, phi);
     A->set_state(x,y,z, vx,vy,vz);
     A->set_angles(theta, phi);
 }
