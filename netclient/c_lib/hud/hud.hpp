@@ -38,8 +38,8 @@ class Scoreboard
         //             per row?     -- easy vertical alignment; requires use of ' ' to align horizontally; less flexible
         //             per col?     -- easy horizontal alignment; easy to align certain things vertically ('\n') although less flexible; more difficult to insert team line breaks
         // # of cells required:
-        // cell: N_teams + N_stats * (N_players + 1)    // 2+5*(33) = 167
-        //  row: N_teams + N_players + 1                // 2+33+1   = 36
+        // cell: N_teams + N_stats * (PLAYERS_MAX + 1)    // 2+5*(33) = 167
+        //  row: N_teams + PLAYERS_MAX + 1                // 2+33+1   = 36
         //  col: N_teams + N_stats                      // 2+5      = 7
         Text* tags[N_STATS];
 

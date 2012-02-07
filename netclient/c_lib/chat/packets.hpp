@@ -20,11 +20,13 @@ class ChatMessage_StoC: public FixedSizeReliableNetPacketToClient<ChatMessage_St
 {
     public:
         int channel;
+        int sender;
         char msg[CHAT_MESSAGE_SIZE_MAX];
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&channel, buff, buff_n, pack);
+            pack_u8(&sender, buff, buff_n, pack);
             pack_string(msg, CHAT_MESSAGE_SIZE_MAX, buff, buff_n, pack);
         }
         inline void handle();

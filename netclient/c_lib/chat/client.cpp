@@ -1,12 +1,5 @@
 #include "client.hpp"
 
-/* ChatMessage */
-
-ChatMessage::ChatMessage(int id)
-:
-id(id)
-{}
-
 /* ChatMessageHistoryObject */
 
 ChatMessageHistoryObject::ChatMessageHistoryObject(ChatMessage* m)
@@ -16,9 +9,9 @@ next(NULL),
 prev(NULL)
 {}
 
-/* ChatChannel */
+/* ChatClientChannel */
 
-void ChatChannel::add_message(ChatMessage* m)
+void ChatClientChannel::add_message(ChatMessage* m)
 {
     ChatMessageHistoryObject* in = new ChatMessageHistoryObject(m);
         
@@ -49,7 +42,7 @@ void ChatChannel::add_message(ChatMessage* m)
     history_size++;
 }
 
-ChatChannel::ChatChannel()
+ChatClientChannel::ChatClientChannel()
 :
 id(-1),
 history_size(0),
@@ -57,7 +50,7 @@ history(NULL),
 tail(NULL)
 {}
 
-ChatChannel::~ChatChannel()
+ChatClientChannel::~ChatClientChannel()
 {
     if (history == NULL) return;
     int freed = 0;
@@ -70,7 +63,7 @@ ChatChannel::~ChatChannel()
         freed++;
     }
     if (freed != history_size)
-        printf("WARNING ~ChatChannel -- freed %d but history_size=%d\n", freed, history_size);
+        printf("WARNING ~ChatClientChannel -- freed %d but history_size=%d\n", freed, history_size);
 }
 
 
@@ -256,7 +249,7 @@ ChatInput::~ChatInput()
 
 void ChatClient::add_message(ChatMessage* m)
 {
-    ChatChannel* chan = NULL;
+    ChatClientChannel* chan = NULL;
 
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
@@ -284,7 +277,7 @@ void ChatClient::subscribe_channels()
     }
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
-        ChatChannel* chan = new ChatChannel();
+        ChatClientChannel* chan = new ChatClientChannel();
         chan->type = (ChannelTypes)i;
         switch (chan->type)
         {
@@ -313,9 +306,9 @@ void ChatClient::submit()
 
 ChatClient::ChatClient()
 :
-channel(0)
+channel(1)
 {
-    this->channels = (ChatChannel**)malloc(sizeof(ChatChannel*)*CHAT_CLIENT_CHANNELS_MAX);
+    this->channels = (ChatClientChannel**)malloc(sizeof(ChatClientChannel*)*CHAT_CLIENT_CHANNELS_MAX);
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; channels[i++] = NULL);
 }
 

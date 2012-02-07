@@ -8,23 +8,6 @@ const int CHAT_CLIENT_INPUT_HISTORY_MAX = 10;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
 const int CHAT_CLIENT_CHANNELS_MAX = 4; // pm, global, team, system
 
-class ChatMessage
-{
-    public:
-    int id; // only used by object list
-
-    // payload
-    // sender id, name
-    // color
-    // channel
-
-    char payload[CHAT_MESSAGE_SIZE_MAX];
-    int sender_id;
-    int channel;
-
-    ChatMessage(int id);
-};
-
 class ChatMessageHistoryObject
 {
     public:
@@ -43,7 +26,7 @@ typedef enum ChannelTypes
     CHANNEL_TEAM
 } ChannelTypes;
 
-class ChatChannel
+class ChatClientChannel
 {
     public:
     int id;
@@ -56,8 +39,8 @@ class ChatChannel
 
     void add_message(ChatMessage* m);
 
-    ChatChannel();
-    ~ChatChannel();
+    ChatClientChannel();
+    ~ChatClientChannel();
 };
 
 class ChatInputHistoryObject
@@ -99,17 +82,11 @@ class ChatInput
     ~ChatInput();
 };
 
-// first 16 are reserved
-// next 16 are for teams
-// next [32,PLAYERS_MAX] are for pm channels 
-const int CHANNEL_ID_TEAM_OFFSET = 16;
-const int CHANNEL_ID_AGENT_OFFSET = 32;
-
 class ChatClient
 {
     public:
     int channel;
-    ChatChannel** channels;
+    ChatClientChannel** channels;
 
     void subscribe_channels();
     void add_message(ChatMessage* m);
