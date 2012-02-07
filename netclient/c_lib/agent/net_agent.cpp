@@ -261,6 +261,11 @@ inline void Spawner_destroy_StoC::handle()
     ClientState::spawner_list.destroy(id);
 }
 
+inline void ChatMessage_StoC::handle()
+{
+    printf("Client received: %s\n", msg);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -274,6 +279,7 @@ inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
+inline void ChatMessage_CtoS::handle(){}
 #endif
 
 // Client -> Server handlers
@@ -307,6 +313,7 @@ inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
 inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
+inline void ChatMessage_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -748,4 +755,11 @@ inline void identify_CtoS::handle()
     strcpy(msg.name, name);
     msg.sendToClient(client_id);
 }
+
+/* Chat */
+inline void ChatMessage_CtoS::handle()
+{
+    printf("Server received: %s\n", msg);
+}
+
 #endif

@@ -97,6 +97,24 @@ void set_hud_draw_settings(
     hud_draw_settings.ping_val = ping_val;
 }
 
+static struct ChatCursor
+{
+    char text[256];
+    float x,y;
+} chat_cursor;
+
+void set_chat_cursor(char* text, float x, float y)
+{
+    int len = strlen(text);
+    if (len >= 256)
+    {
+        text[255] = '\0';
+    }
+    strcpy(chat_cursor.text, text);
+    chat_cursor.x = x;
+    chat_cursor.y = y;
+}
+
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
@@ -133,24 +151,13 @@ void update_hud_draw_settings()
 
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
-}
 
-static struct ChatCursor
-{
-    char text[256];
-    float x,y;
-} chat_cursor;
-
-void set_chat_cursor(char* text, float x, float y)
-{
-    int len = strlen(text);
-    if (len >= 256)
+    HudText::Text *t = hud->chat->input;
+    if (t != NULL)
     {
-        text[255] = '\0';
+        t->set_text(chat_client.input.buffer);
+        set_chat_cursor(t->text, t->x, t->y);
     }
-    strcpy(chat_cursor.text, text);
-    chat_cursor.x = x;
-    chat_cursor.y = y;
 }
 
 /* Draw routines */
@@ -307,6 +314,7 @@ void draw_hud()
     draw_hud_textures();
     draw_hud_text();
 }
+
 /* HUD */
 
 void HUD::init()
@@ -464,14 +472,14 @@ void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsign
     t->set_color(r,g,b,a);
 }
 
-void set_chat_input_string(char* text)
-{
-    if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
-    HudText::Text* t = hud->chat->input;
-    if (t == NULL) return;
-    t->set_text(text);
-    set_chat_cursor(t->text, t->x, t->y);
-}
+//void set_chat_input_string(char* text)
+//{
+    //if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
+    //HudText::Text* t = hud->chat->input;
+    //if (t == NULL) return;
+    //t->set_text(text);
+    //set_chat_cursor(t->text, t->x, t->y);
+//}
 
 /* Scoreboard */
 void Scoreboard::init()

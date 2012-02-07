@@ -114,7 +114,8 @@
     /* input */
     #include <c_lib/input/input.cpp>
     #include <c_lib/input/handlers.cpp>
-
+    #include <c_lib/input/chat.cpp>
+    
     /* sound */
     #include <c_lib/sound/sound.cpp>
 
@@ -150,7 +151,6 @@ int init_c_lib() {
         init_image_loader();
         init_input();
         init_handlers();
-        init_chat_buffer();
         init_particle_functions();
         init_cameras();
 
@@ -180,7 +180,6 @@ void close_c_lib() {
     printf("close c_lib() \n");
     shutdown_net_client();
     teardown_cameras();
-    teardown_chat_buffer();
     #ifdef DC_CLIENT
         Sound::close();
         //close_SDL();  //would be called twice, already scheduled for at exit

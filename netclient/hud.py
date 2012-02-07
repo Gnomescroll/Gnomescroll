@@ -36,8 +36,6 @@ class Hud(object):
         for n in range(i-blanks+1,i):
             init_c_lib.HUD.set_chat_message(n, '', (255,255,255,255,))
 
-        init_c_lib.HUD.set_chat_input_string(ChatClientGlobal.chatRender.user_input())
-
     def draw(self, fps=None, ping=None):
 
         connected = NetClientGlobal.connection.connected

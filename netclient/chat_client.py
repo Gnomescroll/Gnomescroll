@@ -29,9 +29,10 @@ class ChatClientGlobal:
         
     @classmethod
     def load_buffer_from_c(cls):
-        if cls.chatClient is None: return
-        sym_buff, uni_buff = init_c_lib.get_chat_input_buffer()
-        cls.chatClient.input.load_buffer(sym_buff, uni_buff)
+        pass
+        #if cls.chatClient is None: return
+        #sym_buff, uni_buff = init_c_lib.get_chat_input_buffer()
+        #cls.chatClient.input.load_buffer(sym_buff, uni_buff)
 
 from net_client import NetClientGlobal
 from net_out import NetOut

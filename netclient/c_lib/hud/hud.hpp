@@ -101,6 +101,6 @@ void set_hud_draw_settings(
 void update_hud_draw_settings();
 void draw_hud();
 void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
-void set_chat_input_string(char* text);
+//void set_chat_input_string(char* text);
 
 }

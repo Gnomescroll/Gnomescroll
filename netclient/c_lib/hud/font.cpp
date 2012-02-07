@@ -147,11 +147,6 @@ void get_string_pixel_dimension(char* str, int *length, int *height)
         if (g.yoff + g.h > maxy) maxy = g.yoff + g.h;
         if (g.yoff < miny) miny = g.yoff;
     }
-    if (i > 1)
-    {
-        len -= g.xadvance;
-        len += g.w + g.xoff;
-    }
     *length = len;
     *height = maxy - miny;
 }
