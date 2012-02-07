@@ -16,6 +16,7 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
             pack_u16(&z, buff, buff_n, pack);
             pack_u16(&val, buff, buff_n, pack);
         }
+        
         inline void handle();
 };
 
@@ -30,4 +31,7 @@ class map_metadata_StoC: public FixedSizeReliableNetPacketToClient<map_metadata_
         pack_u16(&y, buff, buff_n, pack);
         pack_u16(&z, buff, buff_n, pack);
     }
+    
+    inline void handle();
+
 };

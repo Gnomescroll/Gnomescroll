@@ -22,7 +22,6 @@ struct cubeProperties
 
 const int max_cubes = 256;
 extern struct cubeProperties cube_list[max_cubes];
-extern short cube_side_texture_array[max_cubes*6];
 
 
 void init_t_properties();
@@ -34,11 +33,6 @@ struct cubeProperties* get_cube(int id)
     return &cube_list[id];
 }
 
-/*
-    cube side texture array
-*/
-void set_cube_side_texture(int id, int side, int tex_id);
-int get_cube_side_texture(int id, int side);
 
 
 

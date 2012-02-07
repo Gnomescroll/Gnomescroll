@@ -310,6 +310,7 @@ int update_column_VBO(struct vm_column* column) {
 
 
 int update_chunks() {
+#if 0 
     struct vm_map* m;
     struct vm_column* c;
     int i,j;
@@ -345,6 +346,7 @@ int update_chunks() {
             }
         }
     }
+#endif
     return 0;
 }
 

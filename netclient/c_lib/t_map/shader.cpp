@@ -1,5 +1,7 @@
 #include "shader.hpp"
 
+#include "settings.hpp"
+#include "texture.hpp"
 
 namespace t_map
 { 

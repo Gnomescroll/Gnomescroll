@@ -10,9 +10,9 @@ namespace t_map
 
     const int num_map_shaders = 1;
 
-    GLenum map_vert_shader[num_map_shaders] = 0;
-    GLenum map_frag_shader[num_map_shaders] = 0;
-    GLenum map_shader[num_map_shaders] = 0;
+    GLenum map_vert_shader[num_map_shaders] = {0};
+    GLenum map_frag_shader[num_map_shaders] = {0};
+    GLenum map_shader[num_map_shaders] = {0};
 
     //shader 0
     int map_TexCoord;
