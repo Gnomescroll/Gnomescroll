@@ -458,21 +458,30 @@ void ChatRender::update()
 
     int now = _GET_MS_TIME();
     chat_message_list.sort_by_most_recent();
+    int i=0;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
-    for (int i=0; i<chat_message_list.n_filtered; i++)
+    int n_draw = 0;
+    for (; i<chat_message_list.n_filtered; i++)
     {
-        if (j < 0) break;
+        if (n_draw == CHAT_MESSAGE_RENDER_MAX) break;
         ChatMessage* m = chat_message_list.filtered_objects[i];
-        if (m == NULL) continue;
+        if (m == NULL) break;
         if (now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
-        HudText::Text* t = this->messages[j];
-        if (t==NULL) continue;
-        t->update_formatted_string(2, m->name, m->payload);
-        t->set_color(m->r, m->g, m->b, 255);
-        j--;
+        n_draw++;
     }
 
-    for (int i=j; i>=0; this->messages[i--]->set_text((char*)""));
+    j = n_draw;
+    i = 0;
+    for (;j>0;)
+    {
+        ChatMessage* m = chat_message_list.filtered_objects[--j];
+        HudText::Text* t = this->messages[i++];
+        //if (t==NULL) continue;
+        t->update_formatted_string(2, m->name, m->payload);
+        t->set_color(m->r, m->g, m->b, 255);
+    }
+
+    for (i=n_draw; i<CHAT_MESSAGE_RENDER_MAX; this->messages[i++]->set_text((char*)""));
 }
 
 ChatRender::ChatRender()
@@ -486,9 +495,9 @@ input(NULL)
 ChatRender::~ChatRender()
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; i++)
-    {
-        if (messages[i] != NULL) HudText::text_list.destroy(messages[i]->id);
-    }
+        if (messages[i] != NULL)
+            HudText::text_list.destroy(messages[i]->id);
+
     if (input != NULL) HudText::text_list.destroy(input->id);
 }
 
