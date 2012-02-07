@@ -152,11 +152,17 @@ void update_hud_draw_settings()
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
 
-    HudText::Text *t = hud->chat->input;
-    if (t != NULL)
+    // update chat rendering
+    if (hud->inited && hud->chat != NULL && hud->chat->inited)
     {
-        t->set_text(chat_client.input.buffer);
-        set_chat_cursor(t->text, t->x, t->y);
+        HudText::Text *t = hud->chat->input;
+        if (t != NULL)
+        {
+            t->set_text(chat_client.input.buffer);
+            set_chat_cursor(t->text, t->x, t->y);
+        }
+
+        hud->chat->update();
     }
 }
 
@@ -420,12 +426,14 @@ void ChatRender::init()
         HudText::Text* t = HudText::text_list.create();
         t->set_position(50, _yresf - (50 + (18 + 2)*i));
         t->set_text((char*) "");
+        t->set_format((char*) "%s: %s");
+        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX - 4);
         t->set_color(255,255,255,255);
         messages[i] = t;
     }
 
     input = HudText::text_list.create();
-    input->set_text((char*) "");
+    input->set_text((char*)"");
     input->set_color(255,10,10,255);
     input->set_position(50, _yresf - (50 + (18 + 2)*i));
     
@@ -442,6 +450,26 @@ void ChatRender::draw_input()
 {
     if (!this->inited) return;
     this->input->draw();
+}
+
+void ChatRender::update()
+{   // read chat client messages and format for display
+    if (!this->inited) return;
+
+    // quicksort messages by timestamp (descending)
+    chat_message_list.sort_by_most_recent();
+    int j=0;
+    for (int i=0; i<chat_message_list.n_filtered; i++)
+    {
+        if (j==CHAT_MESSAGE_RENDER_MAX) break;
+        ChatMessage* m = chat_message_list.filtered_objects[i];
+        if (m == NULL) continue;
+        HudText::Text* t = this->messages[i];
+        if (t==NULL) continue;
+        t->update_formatted_string(2, m->name, m->payload);
+        t->set_color(m->r, m->g, m->b, 255);
+        j++;
+    }
 }
 
 ChatRender::ChatRender()
@@ -471,15 +499,6 @@ void set_chat_message(int i, char* txt, unsigned char r, unsigned char g, unsign
     t->set_text(txt);
     t->set_color(r,g,b,a);
 }
-
-//void set_chat_input_string(char* text)
-//{
-    //if (!hud->inited || hud->chat == NULL || !hud->chat->inited) return;
-    //HudText::Text* t = hud->chat->input;
-    //if (t == NULL) return;
-    //t->set_text(text);
-    //set_chat_cursor(t->text, t->x, t->y);
-//}
 
 /* Scoreboard */
 void Scoreboard::init()

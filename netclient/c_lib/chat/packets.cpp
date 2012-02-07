@@ -12,6 +12,7 @@ inline void ChatMessage_StoC::handle()
         if (a==NULL) return;
     }
 
+    chat_client.received_message(channel, sender, msg);
 }
 
 inline void ChatMessage_CtoS::handle(){}

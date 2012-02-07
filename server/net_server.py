@@ -144,6 +144,7 @@ class PyClientPool:
 
         # dispatch event
         ChatServer.chat.disconnect(client)
+        init_c_lib.leave_chat(client_id)
         init_c_lib.leave_team(client_id)
         init_c_lib.destroy_agent(client_id)
         

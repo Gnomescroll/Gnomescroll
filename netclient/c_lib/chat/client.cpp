@@ -9,6 +9,11 @@ next(NULL),
 prev(NULL)
 {}
 
+ChatMessageHistoryObject::~ChatMessageHistoryObject()
+{
+    chat_message_list.destroy(m->id);
+}
+
 /* ChatClientChannel */
 
 void ChatClientChannel::add_message(ChatMessage* m)
@@ -42,15 +47,7 @@ void ChatClientChannel::add_message(ChatMessage* m)
     history_size++;
 }
 
-ChatClientChannel::ChatClientChannel()
-:
-id(-1),
-history_size(0),
-history(NULL),
-tail(NULL)
-{}
-
-ChatClientChannel::~ChatClientChannel()
+void ChatClientChannel::clear_history()
 {
     if (history == NULL) return;
     int freed = 0;
@@ -64,6 +61,20 @@ ChatClientChannel::~ChatClientChannel()
     }
     if (freed != history_size)
         printf("WARNING ~ChatClientChannel -- freed %d but history_size=%d\n", freed, history_size);
+    this->history = NULL;
+}
+
+ChatClientChannel::ChatClientChannel()
+:
+id(-1),
+history_size(0),
+history(NULL),
+tail(NULL)
+{}
+
+ChatClientChannel::~ChatClientChannel()
+{
+    this->clear_history();
 }
 
 
@@ -82,7 +93,6 @@ ChatInputHistoryObject::~ChatInputHistoryObject()
 {
     free(this->m);
 }
-
 
 void ChatInput::clear_history()
 {
@@ -247,13 +257,13 @@ ChatInput::~ChatInput()
 
 /* ChatClient */
 
-void ChatClient::add_message(ChatMessage* m)
+void ChatClient::received_message(int channel, int sender, char* payload)
 {
     ChatClientChannel* chan = NULL;
 
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
-        if (this->channels[i]->id == m->channel)
+        if (this->channels[i]->id == channel)
         {
             chan  = this->channels[i];
             break;
@@ -262,9 +272,16 @@ void ChatClient::add_message(ChatMessage* m)
 
     if (chan == NULL)
     {
-        printf("ChatClient::add_message -- unknown message channel %d\n", m->channel);
+        printf("ChatClient::add_message -- unknown message channel %d\n", channel);
+        return;
     }
 
+    ChatMessage* m = chat_message_list.create();
+    m->sender = sender;
+    m->channel = channel;
+    strcpy(m->payload, payload);
+    m->set_color();
+    m->set_name();
     chan->add_message(m);
 }
 
@@ -304,6 +321,13 @@ void ChatClient::submit()
     this->input.submit(this->channel);
 }
 
+void ChatClient::teardown()
+{
+    this->input.clear_buffer();
+    this->input.clear_history();
+    for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; this->channels[i++]->clear_history());
+}
+
 ChatClient::ChatClient()
 :
 channel(1)
@@ -325,6 +349,38 @@ ChatClient::~ChatClient()
     }
 }
 
-ChatClient chat_client;
+/* ChatMessageList */
 
+void ChatMessageList::quicksort_timestamp(int beg, int end)
+{   // sort timestamp, descending
+    if (end > beg + 1)
+    {
+        int timestamp;
+        if (this->filtered_objects[beg] == NULL)
+            timestamp = -1;
+        else
+            timestamp = this->filtered_objects[beg]->timestamp;
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            int t;
+            t = (this->filtered_objects[l] == NULL) ? -1 : this->filtered_objects[l]->timestamp;
+            if (t >= timestamp)
+                l++;
+            else
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[--r]);
+        }
+        swap_object_state(&this->filtered_objects[--l], &this->filtered_objects[beg]);
+        quicksort_timestamp(beg, l);
+        quicksort_timestamp(r, end);
+    }
+}
+
+void ChatMessageList::sort_by_most_recent()
+{
+    this->filter_none();
+    this->quicksort_timestamp(0, this->n_filtered);
+}
+
+ChatClient chat_client;
 ChatMessageList chat_message_list;

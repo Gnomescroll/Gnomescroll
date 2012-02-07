@@ -179,6 +179,7 @@ void close_c_lib() {
     printf("close c_lib() \n");
     shutdown_net_client();
     teardown_cameras();
+    chat_client.teardown();
     #ifdef DC_CLIENT
         Sound::close();
         //close_SDL();  //would be called twice, already scheduled for at exit

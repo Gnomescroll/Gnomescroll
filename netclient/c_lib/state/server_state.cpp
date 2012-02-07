@@ -94,15 +94,11 @@ namespace ServerState
 
     void send_game_state_to_client(int client_id)
     {
-        // agents
-        // mobs
-        // "game" (ctf)
-        // items
-
         agent_list.send_to_client(client_id);
         slime_list.send_to_client(client_id);
         ctf.send_to_client(client_id);
         spawner_list.send_to_client(client_id);
+        //turret_list.send_to_client(client_id);
     }
 
     void add_player_to_chat(int client_id)
@@ -110,6 +106,14 @@ namespace ServerState
         chat_server.player_join(client_id);
     }
 
-
+    void remove_player_from_chat(int client_id)
+    {
+        Agent_state* a = agent_list.get(client_id);
+        if (a==NULL) {
+            printf("WARNING ServerState::remove_player_from_chat -- id %d does not have an agent\n", client_id);
+            return;
+        }
+        chat_server.player_quit(client_id, a->status.team);
+    }
 }
 #endif

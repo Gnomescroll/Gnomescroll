@@ -14,7 +14,8 @@ void PlayerAgent_action::fire() {
 
     int type = p->you->weapons.active_type();
     if (!p->you->weapons.fire()) return;
-    switch (type) {
+    switch (type)
+    {
         case Weapons::TYPE_block_applier:
             set_block();
             break;

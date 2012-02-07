@@ -16,6 +16,7 @@ class ChatMessageHistoryObject
     ChatMessageHistoryObject* prev;
 
     ChatMessageHistoryObject(ChatMessage* m);
+    ~ChatMessageHistoryObject();
 };
 
 typedef enum ChannelTypes
@@ -38,7 +39,8 @@ class ChatClientChannel
     ChatMessageHistoryObject* tail;
 
     void add_message(ChatMessage* m);
-
+    void clear_history();
+    
     ChatClientChannel();
     ~ChatClientChannel();
 };
@@ -88,8 +90,9 @@ class ChatClient
     int channel;
     ChatClientChannel** channels;
 
+    void teardown();
     void subscribe_channels();
-    void add_message(ChatMessage* m);
+    void received_message(int channel, int sender, char* payload);
     void submit();
 
     ChatInput input;
@@ -99,15 +102,15 @@ class ChatClient
 
 };
 
-class ChatMessageList: public Object_list<ChatMessage, CHAT_CLIENT_MESSAGE_HISTORY_MAX*CHAT_CLIENT_CHANNELS_MAX>
+class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HISTORY_MAX+1)*CHAT_CLIENT_CHANNELS_MAX>
 {
+    private:
+        void quicksort_timestamp(int beg, int end);
+    public:
+        void sort_by_most_recent();
 };
+
+void teardown_chat_client();
 
 extern ChatMessageList chat_message_list;
 extern ChatClient chat_client;
-
-
-// packets i will need:
-// message
-// dont need subscribe, client and server will autosubscribe to same thing
-// channels are: system(0), global(1), pm(2), team(3)

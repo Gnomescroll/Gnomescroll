@@ -379,7 +379,7 @@ cdef extern from "./hud/hud.hpp" namespace "Hud":
         int ping_val,
     )
     void draw_hud()
-    void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+#    void set_chat_message(int i, char* text, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 #    void set_chat_input_string(char* text)
     void update_hud_draw_settings()
 
@@ -402,14 +402,14 @@ cdef class HUD:
             ping,
             ping_val,
         )
-    @classmethod
-    def set_chat_message(cls, i, text, color):
-        cdef unsigned char r
-        cdef unsigned char g
-        cdef unsigned char b
-        cdef unsigned char a
-        r,g,b,a = color
-        set_chat_message(i, text, r,g,b,a)
+#    @classmethod
+#    def set_chat_message(cls, i, text, color):
+#        cdef unsigned char r
+#        cdef unsigned char g
+#        cdef unsigned char b
+#        cdef unsigned char a
+#        r,g,b,a = color
+#        set_chat_message(i, text, r,g,b,a)
 #    @classmethod
 #    def set_chat_input_string(cls, text):
 #        set_chat_input_string(text)
