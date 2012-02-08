@@ -76,8 +76,7 @@ void Vbo_map::draw_map()
     
     glShadeModel(GL_SMOOTH);
 
-    glEnable (GL_DEPTH_TEST);
-    glAlphaFunc ( GL_GREATER, 0.1 ) ;
+    glEnable (GL_DEPTH_TEST);   //needed?
 
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
@@ -111,6 +110,8 @@ void Vbo_map::draw_map()
 
     //transparency, backface culling
 /*
+    glAlphaFunc ( GL_GREATER, 0.1 ) ;
+
     glActiveTexture(GL_TEXTURE0);
 
     glEnable(GL_BLEND);

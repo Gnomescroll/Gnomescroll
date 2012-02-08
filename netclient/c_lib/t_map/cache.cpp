@@ -1,5 +1,7 @@
 #include "cache.hpp"
 
+#include "t_properties.hpp"
+
 namespace t_map
 {
 
@@ -16,58 +18,23 @@ void init_cache()
 
 int _init_quad_cache_normals() 
 {
-    int cube_id, side, i;
+    static const struct NormalElement normal_array[6] = { 
+        {{{0,0,1,0}}},
+        {{{0,0,-1,0}}},
+        {{{1,0,0,0}}},
+        {{{-1,0,0,0}}},
+        {{{0,1,0,0}}},
+        {{{0,-1,0,0}}}
+        };
 
-    int n[3];
-    for(cube_id=0;cube_id<max_cubes;cube_id++) {
-        for(side=0;side<6;side++) {
-
-        /*
-            if(side == 1) n = {{0,0,-1}};
-            if(side == 2) n = {{1,0,0}};
-            if(side == 3) n = {{-1,0,0}};
-            if(side == 4) n = {{0,1,0}};
-            if(side == 5) n = {{0,-1,0}};
-        */      
-            if(side == 0) {
-                n[0]= 0;
-                n[1]= 0;
-                n[2]= 1;
-            }
-            if(side == 1) {
-                n[0]= 0;
-                n[1]= 0;
-                n[2]= -1;
-            }
-            if(side == 2) {
-                n[0]= 1;
-                n[1]= 0;
-                n[2]= 0;
-            }
-
-            if(side == 3) {
-                n[0]= -1;
-                n[1]= 0;
-                n[2]= 0;
-            }
-            if(side == 4) {
-                n[0]= 0;
-                n[1]= 1;
-                n[2]= 0;
-            }
-            if(side == 5) {
-                n[0]= 0;
-                n[1]= -1;
-                n[2]= 0;
-            }
-
-            int index; 
-            for(i=0;i<4;i++) {
-                index = cube_id*6*4+ 4*side+ i;
-                quad_cache[index].normal[0] = n[0];
-                quad_cache[index].normal[1] = n[1];
-                quad_cache[index].normal[2] = n[2];
-                quad_cache[index].normal[3] = 0;
+    for(int cube_id=0;cube_id<max_cubes;cube_id++) 
+    {
+        for(int side=0;side<6;side++) 
+        {
+            for(int i=0;i<4;i++) 
+            {
+                int index = cube_id*6*4 +4*side +i;
+                quad_cache[index].n = normal_array[side].n;
             }
         }
     }
