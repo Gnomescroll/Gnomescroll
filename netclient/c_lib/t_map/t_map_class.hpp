@@ -77,11 +77,11 @@ class Terrain_map
         delete[] chunk;
     }
     
-    struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
-    void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
+    inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
+    inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
-    int get_block(int x, int y, int z) __attribute((always_inline));
-    void set_block(int x, int y, int z, int value) __attribute((always_inline));
+    inline int get_block(int x, int y, int z) __attribute((always_inline));
+    inline void set_block(int x, int y, int z, int value) __attribute((always_inline));
 };
 
 } //

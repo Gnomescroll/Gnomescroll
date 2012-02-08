@@ -54,6 +54,7 @@ Cube Properties
 inline bool isActive(int id) __attribute((always_inline));
 inline bool isSolid(int id) __attribute((always_inline));
 inline bool isOccludes(int id) __attribute((always_inline));
+inline bool isTransparent(int id) __attribute((always_inline));
 
 bool isActive(int id) 
 {
@@ -68,6 +69,11 @@ bool isSolid(int id)
 bool isOccludes(int id) 
 {
     return t_map::cube_list[id].occludes;
+}
+
+bool isTransparent(int id)
+{
+    return t_map::cube_list[id].transparent;
 }
 
 inline bool isActive(int x, int y, int z) __attribute((always_inline));

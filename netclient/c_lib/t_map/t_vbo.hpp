@@ -32,7 +32,10 @@ class Map_vbo
     int vnum_max;
     struct Vertex* v_list;
 
-    int vbo_id;
+    int _v_num[4];
+    int _v_offset[4];
+
+    GLuint vbo_id;
 
     Map_vbo()
     {
@@ -78,7 +81,6 @@ class Vbo_map
     int ychunk_dim;
 
     class Map_vbo** vbo_array;
-
     class Terrain_map* map;
 
     Vbo_map(class Terrain_map* _map)
@@ -91,7 +93,7 @@ class Vbo_map
 
     ~Vbo_map()
     {
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) delete Map_vbo[i];
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) delete vbo_array[i];
         delete[] vbo_array;
     }
 

@@ -4,8 +4,10 @@
 #include "common_function.hpp"
 #include "cache.hpp"
 
-#include "t_map_class.cpp"
-#include "t_vbo_update.cpp"
+#include "t_map_class.hpp"
+#include "t_vbo_update.hpp"
+
+#include "t_properties.hpp"
 
 namespace t_map
 {
@@ -54,7 +56,7 @@ static inline int _is_occluded(int x,int y,int z, int side_num)
     y += s_array[i+1];
     z += s_array[i+2];
 
-    return isOccludes(_get(x,y,z));
+    return isOccludes( t_map::get(x,y,z) );
 }
 
 static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
@@ -64,7 +66,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     y += s_array[i+1];
     z += s_array[i+2];
 
-    int tile_id = _get(x,y,z);
+    int tile_id =  t_map::get(x,y,z) ;
     if(tile_id == _tile_id) return 1;
     return isActive(tile_id);
 }
@@ -93,7 +95,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
     for(i=0; i<8; i++) 
     {
         index = side*8*3+i*3;
-        CX[i] = isOccludes(_get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
+        CX[i] = isOccludes( t_map::get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
 
     {
@@ -169,45 +171,39 @@ void Vbo_map::update_vbo(int i, int j)
     int vertex_count = 0; //clear counter
 
     //first pass, count quads
-    int active;
-    int transparency;
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
         for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
         for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
-            
-            tile_id = _get(_x,_y,_z);
-            active = isActive(tile_id);
-            if(active == false) continue;
 
-            transparency = isTransparent(tile_id);
-            if(active == true)  
-            {
-                if(transparency == false)
-                { 
-                    for(side_num=0; side_num<6; side_num++) 
-                    {
-                        if(! _is_occluded(_x,_y,_z,side_num)) {
-                            vertex_count += 4;
-                            cube_vertex_count[0] += 4;
-                        }
-                    }
-                } 
-                else
+            tile_id = map->get_block(_x,_y,_z);
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            { 
+                for(side_num=0; side_num<6; side_num++) 
                 {
-                    //active block that does not occlude
-                    for(side_num=0; side_num<6; side_num++) 
-                    {
-                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                        {
-                            vertex_count += 4;
-                            cube_vertex_count[1] += 4;
-                        }
+                    if(! _is_occluded(_x,_y,_z,side_num)) {
+                        vertex_count += 4;
+                        cube_vertex_count[0] += 4;
                     }
                 }
-                continue;    
-            }
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                    {
+                        vertex_count += 4;
+                        cube_vertex_count[1] += 4;
+                    }
+                }
+            }  
+
 
         }}
     }
@@ -231,8 +227,7 @@ void Vbo_map::update_vbo(int i, int j)
     if(vertex_count == 0) 
     {
         vbo->vnum = 0;
-
-        return 0;
+        return ;
     } 
     else 
     {
@@ -246,53 +241,45 @@ void Vbo_map::update_vbo(int i, int j)
     _cube_vertex_count[2] = vbo->_v_offset[2];
     _cube_vertex_count[3] = vbo->_v_offset[3];
 
-    struct Vertex* v_list2 = vbo->v_list;
-
-    int infinite_texture;
-
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
         for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
         for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
 
-            tile_id = _get(_x,_y,_z);
-            active = isActive(tile_id);
-            infinite_texture = getInfiniteTexture(tile_id);
-            if(active == false) continue;
-            transparency = isTransparent(tile_id);
-            if(active == true)
-            {
-                if(transparency == false)
-                { 
-                    for(side_num=0; side_num<6; side_num++) {
-                        if(! _is_occluded(_x,_y,_z,side_num)) 
-                        {
-                            add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
-                            _cube_vertex_count[0] += 4;
-                        }
-                    }
-                } 
-                else
-                {
-                    //active block that does not occlude
-                    for(side_num=0; side_num<6; side_num++) 
+            tile_id = map->get_block(_x,_y,_z);
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            { 
+                for(side_num=0; side_num<6; side_num++) {
+                    if(! _is_occluded(_x,_y,_z,side_num)) 
                     {
-                        if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
-                        {
-                            add_quad2(v_list2, _cube_vertex_count[1],_x,_y,_z,side_num,tile_id);
-                            _cube_vertex_count[1] += 4;
-                        }
+                        add_quad2( vbo->v_list, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        _cube_vertex_count[0] += 4;
                     }
                 }
-                continue;
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                    {
+                        add_quad2( vbo->v_list, _cube_vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        _cube_vertex_count[1] += 4;
+                    }
+                }
             }
+
         }}
     }
     //push to graphics card
     if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vbo->vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 
 }
 
