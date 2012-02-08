@@ -1,6 +1,7 @@
 #include "client.hpp"
 
 #include <limits.h>
+#include <ctype.h>
 
 /* ChatMessage */
 
@@ -204,11 +205,13 @@ void ChatInput::submit(int channel)
 {
     if (!buffer_len) return;
 
-    // create, send packet
-    ChatMessage_CtoS msg;
-    strcpy(msg.msg, buffer);
-    msg.channel = channel;
-    msg.send();
+    if (!route_command())
+    {   // create, send packet
+        ChatMessage_CtoS msg;
+        strcpy(msg.msg, buffer);
+        msg.channel = channel;
+        msg.send();
+    }
     
     // add to history
     this->add_to_history(buffer);
@@ -300,6 +303,39 @@ void ChatInput::history_older()
     strcpy(buffer, o->m);
     buffer_len = strlen(buffer);
     cursor = buffer_len;
+}
+
+bool ChatInput::route_command()
+{
+    if (!buffer_len) return false;
+    
+    if (this->buffer[0] != '/' || this->buffer[1] == '\0' || isspace(this->buffer[1]))
+        return false;
+
+    char cmd[CHAT_BUFFER_SIZE];
+    char c;
+    int i=1;
+    while((c = this->buffer[i++]) != '\0' && !isspace(c))
+        cmd[i-2] = c;
+
+    if (!strcmp(cmd, (char*)"team"))
+    {
+        if (buffer_len <= (strlen((char*)"/team "))) return true;
+        char team_str[2];
+        team_str[1] = '\0';
+        team_str[0] = buffer[i];
+        int team;
+        if (team_str[0] == '0') //atoi returns 0 for failure, so check this case
+            team = 0;
+        else
+        {
+            team = atoi(team_str);
+            if (!team) return true; // failure
+        }
+        ClientState::ctf.join_team(team);
+    }
+
+    return true;
 }
 
 ChatInput::ChatInput()

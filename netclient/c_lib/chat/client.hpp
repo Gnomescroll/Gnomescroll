@@ -101,6 +101,8 @@ class ChatInput
     void history_newer();
     void history_older();
 
+    bool route_command();
+
     ChatInput();
     ~ChatInput();
 };
