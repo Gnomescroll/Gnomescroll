@@ -146,16 +146,18 @@ int Spawner::get_coins_for_kill(int team)
 int Spawner::take_damage(int dmg)
 {
     this->health -= dmg;
-    if (this->health <= 0)
-    {
-        STATE::spawner_list.destroy(this->id);
-    }
     this->health = (this->health < 0) ? 0 : this->health;
     return this->health;
 }
 
 void Spawner::tick()
 {
+    if (this->health <= 0)
+    {
+        STATE::spawner_list.destroy(this->id);
+        return;
+    }
+    
 #ifdef DC_SERVER
     int x,y,z;
     x = (int)this->x;

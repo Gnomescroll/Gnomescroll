@@ -91,6 +91,10 @@ inline void agent_shot_object_StoC::handle()
     if (a == NULL) return;
     a->event.fired_weapon_at_object(target_id, target_type, target_part, x,y,z);
     // get obj from metadata, set voxel
+    int voxel[3];
+    voxel[0] = vx;
+    voxel[1] = vy;
+    voxel[2] = vz;
     destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
@@ -117,6 +121,10 @@ inline void agent_melee_object_StoC::handle()
     if (a == NULL) return;
     a->event.melee_attack_object(target_id, target_type, target_part, x,y,z);
     // get obj from metadata, set voxel
+    int voxel[3];
+    voxel[0] = vx;
+    voxel[1] = vy;
+    voxel[2] = vz;
     destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
@@ -374,8 +382,6 @@ inline void hitscan_object_CtoS::handle()
     if (a==NULL) return;
 
     if (!a->weapons.laser.fire()) return;
-    
-    void *obj;
 
     //const int agent_dmg = 25;
     const int slime_dmg = 25;
@@ -383,52 +389,50 @@ inline void hitscan_object_CtoS::handle()
     int spawner_health;
 
     float x,y,z;
+    Agent_state* agent = NULL;
+    Monsters::Slime* slime = NULL;
+    Spawner* spawner = NULL;
+
     switch (type)
     {
         case OBJ_TYPE_AGENT:
-            //Agent_state* target = ServerState::agent_list.get(agent_id);
-            obj = ServerState::agent_list.get(id);
-            if (obj==NULL) return;
+            agent = ServerState::agent_list.get(id);
+            if (agent==NULL) return;
             // apply damage
-            //((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
-            ((Agent_state*)obj)->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            x = ((Agent_state*)obj)->s.x;
-            y = ((Agent_state*)obj)->s.y;
-            z = ((Agent_state*)obj)->s.z;
-            // TODO: Use weapon dmg. Use body_part
-            //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+            x = agent->s.x;
+            y = agent->s.y;
+            z = agent->s.z;
             break;
 
         case OBJ_TYPE_SLIME:
-            obj = ServerState::slime_list.get(id);
-            if (obj==NULL) return;
+            slime = ServerState::slime_list.get(id);
+            if (slime==NULL) return;
             // apply damage
-            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
-            x = ((Monsters::Slime*)obj)->x;
-            y = ((Monsters::Slime*)obj)->y;
-            z = ((Monsters::Slime*)obj)->z;
-            // TODO: Use weapon dmg. Use body_part
-            //printf("hitscan agent %d:: %d-%d\n", id, agent_id, body_part);
+            slime->take_damage(slime_dmg);
+            x = slime->x;
+            y = slime->y;
+            z = slime->z;
             break;
 
         case OBJ_TYPE_SPAWNER:
-            obj = ServerState::spawner_list.get(id);
-            if (obj == NULL) return;
+            spawner = ServerState::spawner_list.get(id);
+            if (spawner == NULL) return;
 
-            if (((Spawner*)obj)->team == a->status.team
-            && ((Spawner*)obj)->owner != a->id)
+            if (spawner->team == a->status.team
+            && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
             // apply damage
-            spawner_health = ((Spawner*)obj)->take_damage(spawner_dmg);
+            spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = ((Spawner*)obj)->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->status.team);
                 a->status.add_coins(coins);
             }
-            x = ((Spawner*)obj)->x;
-            y = ((Spawner*)obj)->y;
-            z = ((Spawner*)obj)->z;
+            x = spawner->x;
+            y = spawner->y;
+            z = spawner->z;
             break;
 
         case OBJ_TYPE_TURRET:
@@ -447,9 +451,9 @@ inline void hitscan_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
-    msg.voxel[0] = voxel[0];
-    msg.voxel[1] = voxel[1];
-    msg.voxel[2] = voxel[2];
+    msg.vx = vx;
+    msg.vy = vy;
+    msg.vz = vz;
     msg.broadcast();
 
 }
@@ -529,63 +533,63 @@ inline void melee_object_CtoS::handle()
 
     if (!a->weapons.pick.fire()) return;
 
+    Agent_state* agent = NULL;
+    Monsters::Slime* slime = NULL;
+    Spawner* spawner = NULL;
+
     const int agent_dmg = 50;
     const int slime_dmg = 50;
     const int spawner_dmg = 50;
     int spawner_health;
     
-    void *obj;
     float x,y,z;
     switch (type)
     {
         case OBJ_TYPE_AGENT:
-            obj = ServerState::agent_list.get(id);
-            if (obj == NULL) return;
-            ((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
-            x = ((Agent_state*)obj)->s.x;
-            y = ((Agent_state*)obj)->s.y;
-            z = ((Agent_state*)obj)->s.z;
+            agent = ServerState::agent_list.get(id);
+            if (agent==NULL) return;
+            // apply damage
+            agent->status.apply_hitscan_laser_damage_to_part(agent_dmg, a->id, a->type);
+            x = agent->s.x;
+            y = agent->s.y;
+            z = agent->s.z;
             break;
 
         case OBJ_TYPE_SLIME:
-            obj = ServerState::slime_list.get(id);
-            if (obj == NULL) return;
-            ((Monsters::Slime*)obj)->take_damage(slime_dmg);
-            x = ((Monsters::Slime*)obj)->x;
-            y = ((Monsters::Slime*)obj)->y;
-            z = ((Monsters::Slime*)obj)->z;
+            slime = ServerState::slime_list.get(id);
+            if (slime==NULL) return;
+            // apply damage
+            slime->take_damage(slime_dmg);
+            x = slime->x;
+            y = slime->y;
+            z = slime->z;
             break;
-        
-        case OBJ_TYPE_SPAWNER:
-            obj = ServerState::spawner_list.get(id);
-            if (obj==NULL) return;
 
-            if (((Spawner*)obj)->team == a->status.team
-            && ((Spawner*)obj)->owner != a->id)
+        case OBJ_TYPE_SPAWNER:
+            spawner = ServerState::spawner_list.get(id);
+            if (spawner == NULL) return;
+
+            if (spawner->team == a->status.team
+            && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
             // apply damage
-            spawner_health = ((Spawner*)obj)->take_damage(spawner_dmg);
+            spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = ((Spawner*)obj)->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->status.team);
                 a->status.add_coins(coins);
             }
-            x = ((Spawner*)obj)->x;
-            y = ((Spawner*)obj)->y;
-            z = ((Spawner*)obj)->z;
+            x = spawner->x;
+            y = spawner->y;
+            z = spawner->z;
             break;
-            
-        //case OBJ_TYPE_TURRET:
-            //obj = ServerState::turret_list.get(id);
-            //if (obj==NULL) return;
-            //((Turrent*)obj)->take_damage();
-            //x = ((Turrent*)obj)->x;
-            //y = ((Turrent*)obj)->y;
-            //z = ((Turrent*)obj)->z;
-            //break;
 
+        case OBJ_TYPE_TURRET:
+            printf("hitscan_object_CtoS::handle -- Turrets not implemented\n");
+            break;
         default:
+            printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
     }
 
@@ -597,9 +601,9 @@ inline void melee_object_CtoS::handle()
     msg.x = x;
     msg.y = y;
     msg.z = z;
-    msg.voxel[0] = voxel[0];
-    msg.voxel[1] = voxel[1];
-    msg.voxel[2] = voxel[2];
+    msg.vx = vx;
+    msg.vy = vy;
+    msg.vz = vz;
     msg.broadcast();
 }
 

@@ -136,9 +136,9 @@ void PlayerAgent_action::hitscan_laser() {
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
             obj_msg.part = target.part_id;
-            obj_msg.voxel[0] = target.voxel[0];
-            obj_msg.voxel[1] = target.voxel[1];
-            obj_msg.voxel[2] = target.voxel[2];
+            obj_msg.vx = target.voxel[0];
+            obj_msg.vy = target.voxel[1];
+            obj_msg.vz = target.voxel[2];
             obj_msg.send();
             //printf("msg: id=%d type=%d part=%d\n", obj_msg.id, obj_msg.type, obj_msg.part);
             // subtract the collision point from the origin to get the new vector for animation
@@ -286,9 +286,9 @@ void PlayerAgent_action::hitscan_pick() {
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
             obj_msg.part = target.part_id;
-            obj_msg.voxel[0] = target.voxel[0];
-            obj_msg.voxel[1] = target.voxel[1];
-            obj_msg.voxel[2] = target.voxel[2];
+            obj_msg.vx = target.voxel[0];
+            obj_msg.vy = target.voxel[1];
+            obj_msg.vz = target.voxel[2];
             obj_msg.send();
 
             if (target.entity_type == OBJ_TYPE_AGENT)

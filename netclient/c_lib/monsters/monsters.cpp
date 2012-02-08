@@ -73,19 +73,18 @@ void Slime::init_vox()
 int Slime::take_damage(int dmg)
 {
     this->health -= dmg;
-    if (this->health <= 0)
-    {
-        STATE::slime_list.destroy(this->id);
-    }
     this->health = (this->health < 0) ? 0 : this->health;
     return this->health;
 }
 
 
 void Slime::tick() {
-    #ifdef DC_CLIENT
-    return;
-    #endif
+
+    if (health <= 0)
+    {
+        STATE::slime_list.destroy(this->id);
+        return;
+    }
 
     #ifdef DC_SERVER
     if (changed) {
