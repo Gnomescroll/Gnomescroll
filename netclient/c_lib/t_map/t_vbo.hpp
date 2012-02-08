@@ -32,13 +32,19 @@ class Map_vbo
     int vnum_max;
     struct Vertex* v_list;
 
+    float xpos;
+    float ypos;
+
     int _v_num[4];
     int _v_offset[4];
 
     GLuint vbo_id;
 
-    Map_vbo()
+    Map_vbo( class MAP_CHUNK* m )
     {
+        xpos = m->xpos + 8.0;
+        ypos = m->ypos + 8.0;
+
         v_list = new Vertex[MAP_VBO_STARTING_SIZE];
         vnum_max = MAP_VBO_STARTING_SIZE;
         vnum = 0;
@@ -100,20 +106,26 @@ class Vbo_map
     //update all VBOs that need updating
     void update()
     {
+        class MAP_CHUNK* m;
         for(int i=0; i<xchunk_dim; i++)
         for(int j=0; j<xchunk_dim; j++)
         {
-            if( map->chunk[j*xchunk_dim + i] == NULL ) continue; //can speed up by maintain list of chunks
-            if( map->chunk[j*xchunk_dim + i]->needs_update == false ) continue;
-            map->chunk[j*xchunk_dim + i]->needs_update = false; //reset flag
+            m = map->chunk[j*xchunk_dim + i];
+            if( m == NULL ) continue; //can speed up by maintain list of chunks
+            if( m->needs_update == false ) continue;
+            m->needs_update = false; //reset flag
 
-            if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo();
+            if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             update_vbo(i, j);
 
         }
     }
 
     void update_vbo(int i, int j);
+    
+    void prep_draw();
+    void draw_map();
+
 };
 
 }

@@ -1,32 +1,43 @@
 #include "t_vbo_draw.hpp"
 
+#include "shader.hpp"
+#include "texture.hpp"
+
 namespace t_map
 {
+
+
+/*
+    Do distance check
+*/
+bool chunk_render_check( float x, float y)
+{
+    return true;
+}
 
 static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
 
 static int draw_vbo_n;
-static struct VBO* draw_vbo_array[MAX_DRAWN_VBO];
+static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
 
 
-void prep_draw()
+void Vbo_map::prep_draw()
 {
-#if 0
-    struct vm_map* m;
-    struct vm_column* col;
-    int i,j;
+    struct Map_vbo* col;
+
     int c_drawn, c_pruned;
     c_drawn=0; c_pruned=0;
     //start_vbo_draw();
     draw_vbo_n = 0;
-    m = _get_map();
     //printf("Start Map Draw\n");
-    for(i=0; i<vm_map_dim; i++) {
-    for(j=0; j<vm_map_dim; j++) {
-        col = &m->column[j*vm_map_dim+i];
-        if(flag_is_true(col, VBO_loaded) && chunk_render_check(col->x_off, col->y_off, 0)) {
+    for(int i=0; i<map->xchunk_dim; i++) {
+    for(int j=0; j<map->ychunk_dim; j++) {
+        col = vbo_array[j*xchunk_dim + i ];
+
+        if( col == NULL ) continue;
+        if( chunk_render_check( col->xpos, col->ypos) ) 
+        {
             c_drawn++;
-            set_flag(col,VBO_drawn,1);
             /*
                 Que up map VBOs to be drawn
                 !!! May want to sort VBOs in front to back order
@@ -35,21 +46,22 @@ void prep_draw()
             /*
                 Fulstrum culling
             */
-            draw_vbo_array[draw_vbo_n] = &col->vbo;
+            draw_vbo_array[draw_vbo_n] = col;
             draw_vbo_n++;
-        } else {
-            set_flag(col,VBO_drawn,0);
+        }
+        else
+        {
             c_pruned++;
+            //set_flag(col,VBO_drawn,0);
         }
     }}
-    return 0;
-#endif
+    //sort VBOs by distance to player
 }
 
 
-void draw_map() 
+void Vbo_map::draw_map() 
 {
-#if 0
+
     prep_draw();
 
     glUseProgramObjectARB(map_shader[0]);
@@ -67,20 +79,20 @@ void draw_map()
     glEnable (GL_DEPTH_TEST);
     glAlphaFunc ( GL_GREATER, 0.1 ) ;
 
-    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1 );
+    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
-    int i;
-    struct VBO* vbo;
+    struct Map_vbo* vbo;
 
     glEnable(GL_CULL_FACE);
-    for(i=0;i<draw_vbo_n;i++)
+
+    for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i];
         if(vbo->_v_num[0] == 0) continue; 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
         
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
@@ -95,6 +107,10 @@ void draw_map()
     glDisableVertexAttribArray(map_LightMatrix);
 
     glUseProgramObjectARB(0);
+
+
+    //transparency, backface culling
+/*
     glActiveTexture(GL_TEXTURE0);
 
     glEnable(GL_BLEND);
@@ -123,7 +139,9 @@ void draw_map()
     }
     
     glDisable(GL_ALPHA_TEST);   
+*/
 
+/*
     glDepthMask(false);
     for(i=0;i<draw_vbo_n;i++) {
         vbo = draw_vbo_array[i];
@@ -135,6 +153,7 @@ void draw_map()
         glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
     }
     glDepthMask(true); 
+*/
     glDisable(GL_BLEND);
         
     //end draw
@@ -143,7 +162,7 @@ void draw_map()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glDisable(GL_TEXTURE_2D);
-#endif
+
 }
 
 

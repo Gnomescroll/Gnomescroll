@@ -26,8 +26,8 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id)  __attribute((always_inline));
 
 /*
-will be 1 if is adjacent to any side
-will be 2 only if both sides are occluded
+    will be 1 if is adjacent to any side
+    will be 2 only if both sides are occluded
 */
 
 //const static int occ_array[3] = { 255, 177, 100 };
@@ -59,7 +59,8 @@ static inline int _is_occluded(int x,int y,int z, int side_num)
     return isOccludes( t_map::get(x,y,z) );
 }
 
-static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) {
+static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) 
+{
     int i;
     i = 3*side_num;
     x += s_array[i+0];
@@ -74,7 +75,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
 //#3D525E
 
 const int _pallet_num = 5;
-const char _pallet[3*(_pallet_num+1)] = 
+const char _pallet[ 3*(_pallet_num+1) ] = 
 {
     0xa0, 0xa0,0xa0,
     0x3d, 0x52,0x5e,
@@ -135,7 +136,8 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
 
 
 
-static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) {
+static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
+{
     int i;
 
     memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
@@ -172,8 +174,16 @@ void Vbo_map::update_vbo(int i, int j)
 
     //first pass, count quads
 
-    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+    /*
+        1> Use internals for the chunk instead of map get
+        2> Use z indices
+        3> memcpy rows
+    */
 
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+        /*
+            precompute starting and ending positions
+        */
         for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
         for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
 
@@ -285,7 +295,7 @@ void Vbo_map::update_vbo(int i, int j)
 
 
 int update_chunks() {
-#if 0 
+#if 0
     struct vm_map* m;
     struct vm_column* c;
     int i,j;
