@@ -1,6 +1,10 @@
 #pragma once
 
 
+const int XMAX = 512;
+const int YMAX = 512;
+const int ZMAX = 512;
+
 struct MapDimension
 {
     int x,y,z;

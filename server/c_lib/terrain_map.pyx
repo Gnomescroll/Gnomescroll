@@ -1,6 +1,9 @@
 
+
 cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
     void init_t_map()
+
+cdef extern from "../c_lib/t_map/t_map.hpp":
     int _get(int x, int y, int z)
     void _set(int x, int y, int z, int value)
 
