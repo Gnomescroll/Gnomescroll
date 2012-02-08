@@ -237,10 +237,14 @@ Alt-tab
 /team, /name
 prevent player_agent_actions when dead
 body part damage
+played w/ shaders
 ====================
 
-body part damage
 dont destroy teammate voxels
+restore voxels on revive
+
+endpoints on hitscan laser
+clients dont play laser anim when other player shoots nothing
 
 mouse momentum
 Ratelimit jetpack / cap height

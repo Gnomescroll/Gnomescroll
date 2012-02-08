@@ -9,7 +9,6 @@ varying vec3 vertex;
 
 void main(void) 
 {                       
-  
         inColor = gl_Color;
  
         texCoord = InTexCoord0;
