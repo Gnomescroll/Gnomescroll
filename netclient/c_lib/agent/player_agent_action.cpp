@@ -11,7 +11,8 @@
 
 void PlayerAgent_action::fire() {
     if (p->you == NULL) return;
-
+    if (p->you->status.dead) return;
+    
     int type = p->you->weapons.active_type();
     if (!p->you->weapons.fire()) return;
     switch (type)
@@ -38,6 +39,8 @@ void PlayerAgent_action::fire() {
 }
 
 void PlayerAgent_action::hitscan_laser() {
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
     
     // get camera vector
     float vec[3];
@@ -207,6 +210,8 @@ void PlayerAgent_action::hitscan_laser() {
 }
 
 void PlayerAgent_action::hitscan_pick() {
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
 
     // TODO: implement hitscan methods that take in a max distance
 
@@ -336,6 +341,9 @@ void PlayerAgent_action::hitscan_pick() {
 }
 
 void PlayerAgent_action::throw_grenade() {
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+
     ThrowGrenade_CtoS msg;
 
     msg.x = p->camera_state.x;
@@ -353,6 +361,7 @@ void PlayerAgent_action::throw_grenade() {
 
 void PlayerAgent_action::set_block() {
     if (p->you == NULL) return;
+    if (p->you->status.dead) return;
 
     // get nearest empty block
     const float max_dist = 4.0f;
@@ -379,6 +388,7 @@ void PlayerAgent_action::set_block() {
 
 void PlayerAgent_action::reload() {
     if (p->you == NULL) return;
+    if (p->you->status.dead) return;
 
     AgentReloadWeapon_CtoS msg;
     msg.type = p->you->weapons.active_type();
@@ -386,10 +396,11 @@ void PlayerAgent_action::reload() {
 }
 
 bool PlayerAgent_action::switch_weapon(int i) {
+    if (p->you == NULL) return false;
+    if (p->you->status.dead) return false;
+
     static const int UP = -1;
     static const int DOWN = -2;
-
-    if (p->you == NULL) return false;
 
     bool switched = false;
     int old_active = p->you->weapons.active;
@@ -410,7 +421,8 @@ bool PlayerAgent_action::switch_weapon(int i) {
 
 void PlayerAgent_action::place_spawner()
 {
-    if (this->p->you == NULL) return;
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
     
     AgentState* state = &this->p->s1;
     float v[3];
@@ -436,7 +448,9 @@ void PlayerAgent_action::place_spawner()
 
 int PlayerAgent_action::select_block()
 {
-    if (this->p->you == NULL) return 0;
+    if (p->you == NULL) return 0;
+    if (p->you->status.dead) return 0;
+
     int block_type = this->p->you->get_facing_block_type();
     if (block_type)
         this->p->you->weapons.set_active_block(block_type);
