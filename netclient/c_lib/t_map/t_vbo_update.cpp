@@ -18,7 +18,6 @@ static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, 
 1, 1, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, -1, 1, -1, -1, 1, 0, -1, 1, 1, 0, 1, 1,
 -1, -1, 1, -1, -1, 0, -1, -1, -1, 0, -1, -1, 1, -1, -1, 1, -1, 0, 1, -1, 1, 0, -1, 1 };
 
-
 static inline int calcAdj(int side_1, int side_2, int corner)  __attribute((always_inline));
 static inline int _is_occluded(int x,int y,int z, int side_num) __attribute((always_inline));
 static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int _tile_id) __attribute((always_inline));
@@ -152,7 +151,7 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
 
 static const int VERTEX_SLACK = 128;
 
-int update_column_VBO(struct vm_column* column) {
+//int update_column_VBO(struct vm_column* column) {
 
 
 void Vbo_map::update_vbo(int i, int j)
@@ -160,9 +159,11 @@ void Vbo_map::update_vbo(int i, int j)
     int tile_id, side_num;
     int _x, _y, _z;
 
-    struct VBO* vbo = &column->vbo;
-    struct vm_chunk* chunk;
-    int i;
+    //struct VBO* vbo = &column->vbo;
+    //struct vm_chunk* chunk;
+
+    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
@@ -170,28 +171,24 @@ void Vbo_map::update_vbo(int i, int j)
     //first pass, count quads
     int active;
     int transparency;
-    for(i = 0; i < vm_column_max; i++) {
-        if(column->chunk[i] == NULL) { continue; }
-        //printf("chunk= %i\n", i);
-        chunk = column->chunk[i];
-        //chunk->vbo_needs_update = 0;
-        //printf("1,2,3 = %i, %i, %i \n", 8*chunk->x_off, 8*chunk->y_off, 8*chunk->z_off);
-        for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
-        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
-        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
+
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
+        for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
+            
             tile_id = _get(_x,_y,_z);
-            //printf("test %i, %i, %i tile= %i\n", _x,_y,_z,tile_id );
             active = isActive(tile_id);
-            if(active == 0) continue;
+            if(active == false) continue;
 
             transparency = isTransparent(tile_id);
-            if(active == 1)  
+            if(active == true)  
             {
-                if(transparency == 0)
+                if(transparency == false)
                 { 
-                    for(side_num=0; side_num<6; side_num++) {
+                    for(side_num=0; side_num<6; side_num++) 
+                    {
                         if(! _is_occluded(_x,_y,_z,side_num)) {
-                            //add_quad(_x,_y,_z,side_num,tile_id);
                             vertex_count += 4;
                             cube_vertex_count[0] += 4;
                         }
@@ -204,17 +201,17 @@ void Vbo_map::update_vbo(int i, int j)
                     {
                         if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                         {
-                            //add_quad(_x,_y,_z,side_num,tile_id);
                             vertex_count += 4;
-                            cube_vertex_count[transparency] += 4;
+                            cube_vertex_count[1] += 4;
                         }
                     }
                 }
                 continue;    
             }
 
-        }}}
+        }}
     }
+    
 
     vbo->_v_num[0] = cube_vertex_count[0];
     vbo->_v_num[1] = cube_vertex_count[1];
@@ -231,32 +228,19 @@ void Vbo_map::update_vbo(int i, int j)
         -malloc is slow, so over allocated and reuse if possible 
     */
 
-    if(vertex_count == 0) {
-        vbo->v_num = 0;
+    if(vertex_count == 0) 
+    {
+        vbo->vnum = 0;
 
-        set_flag(column, VBO_loaded, 0);
-        set_flag(column, VBO_needs_update, 0);
-        set_flag(column, VBO_has_blocks, 0);
         return 0;
-    } else {
-        set_flag(column, VBO_loaded, 1);
-        set_flag(column, VBO_needs_update, 0);
-        set_flag(column, VBO_has_blocks, 1);
-
-
-        vbo->v_num = vertex_count; //total vertices, size of VBO
-
-        if(vertex_count > vbo->v_list_max_size) {
-            if(vbo->v_list != NULL) {
-                free(vbo->v_list);
-                vbo->v_list = NULL;
-            }
-            vbo->v_list_max_size = VERTEX_SLACK+vertex_count;
-            vbo->v_list = (struct Vertex*)malloc(vbo->v_list_max_size*sizeof(struct Vertex)); 
-        }
+    } 
+    else 
+    {
+        vbo->vnum = vertex_count; //total vertices, size of VBO
+        if( vertex_count > vbo->vnum_max ) vbo->resize(vertex_count);
     }
 
-    int _cube_vertex_count[4];
+    int _cube_vertex_count[3];
     _cube_vertex_count[0] = vbo->_v_offset[0];
     _cube_vertex_count[1] = vbo->_v_offset[1];
     _cube_vertex_count[2] = vbo->_v_offset[2];
@@ -265,24 +249,24 @@ void Vbo_map::update_vbo(int i, int j)
     struct Vertex* v_list2 = vbo->v_list;
 
     int infinite_texture;
-    for(i = 0; i < vm_column_max; i++) {
-        if(column->chunk[i] == NULL) { continue; }
-        chunk = column->chunk[i];
-        for(_x = 8*chunk->x_off; _x < 8*chunk->x_off +8 ; _x++) {
-        for(_y = 8*chunk->y_off; _y < 8*chunk->y_off +8 ; _y++) {
-        for(_z = 8*chunk->z_off; _z < 8*chunk->z_off +8 ; _z++) {
+
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
+        for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
+
             tile_id = _get(_x,_y,_z);
             active = isActive(tile_id);
             infinite_texture = getInfiniteTexture(tile_id);
-            if(active == 0) continue;
+            if(active == false) continue;
             transparency = isTransparent(tile_id);
-            if(active == 1)
+            if(active == true)
             {
-                if(transparency == 0)
+                if(transparency == false)
                 { 
                     for(side_num=0; side_num<6; side_num++) {
-                        if(! _is_occluded(_x,_y,_z,side_num)) {
-                            //printf("count= %i\n",_cube_vertex_count[0]);
+                        if(! _is_occluded(_x,_y,_z,side_num)) 
+                        {
                             add_quad2(v_list2, _cube_vertex_count[0], _x,_y,_z,side_num,tile_id);
                             _cube_vertex_count[0] += 4;
                         }
@@ -295,23 +279,21 @@ void Vbo_map::update_vbo(int i, int j)
                     {
                         if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                         {
-                            add_quad2(v_list2, _cube_vertex_count[transparency],_x,_y,_z,side_num,tile_id);
-                            _cube_vertex_count[transparency] += 4;
+                            add_quad2(v_list2, _cube_vertex_count[1],_x,_y,_z,side_num,tile_id);
+                            _cube_vertex_count[1] += 4;
                         }
                     }
                 }
                 continue;
             }
-        }}}
+        }}
     }
     //push to graphics card
-    if(vbo->VBO_id == 0)  glGenBuffers(1, &vbo->VBO_id);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-    glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, vbo->v_list_max_size*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
-#endif
+    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 
-    return 0;
 }
 
 

@@ -59,7 +59,8 @@ namespace t_map
             int xchunk = (x >> 4);
             int ychunk = (y >> 4);
             c = chunk[16*ychunk + xchunk];
-            if( c == NULL || (z & TERRAIN_MAP_HEIGHT_BIT_MASK != 0) ) return;
+
+            if( c == NULL ) c = new MAP_CHUNK( y & ~15, x & ~15);
         }
         if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return;
         int xi = x | 15; //bit mask

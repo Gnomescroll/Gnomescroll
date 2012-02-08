@@ -32,11 +32,14 @@ class Map_vbo
     int vnum_max;
     struct Vertex* v_list;
 
+    int vbo_id;
+
     Map_vbo()
     {
         v_list = new Vertex[MAP_VBO_STARTING_SIZE];
         vnum_max = MAP_VBO_STARTING_SIZE;
         vnum = 0;
+        vbo_id = 0;
     }
 
     ~Map_vbo()
@@ -92,6 +95,7 @@ class Vbo_map
         delete[] vbo_array;
     }
 
+    //update all VBOs that need updating
     void update()
     {
         for(int i=0; i<xchunk_dim; i++)
@@ -101,6 +105,7 @@ class Vbo_map
             if( map->chunk[j*xchunk_dim + i]->needs_update == false ) continue;
             map->chunk[j*xchunk_dim + i]->needs_update = false; //reset flag
 
+            if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo();
             update_vbo(i, j);
 
         }
