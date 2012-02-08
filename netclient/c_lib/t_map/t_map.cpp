@@ -1,10 +1,9 @@
 #include "t_map.hpp"
 
-#include "t_vbo"
+#include "t_vbo.hpp"
+#include "t_map_class.hpp"
 
 struct MapDimension map_dim;
-
-#include "t_map_class.hpp"
 
 namespace t_map
 {
@@ -29,12 +28,6 @@ int get(int x, int y, int z)
 void set(int x, int y, int z, int value)
 {
     main_map->set_block(x,y,z,value);
-}
-
-void draw_map()
-{
-    
-
 }
 
 }
