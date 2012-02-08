@@ -4,12 +4,11 @@
 
 #ifdef DC_SERVER
 
-int _set_broadcast(int x, int y, int z, int value) {
-    block_StoC msg;
-    int i,j=0;
-    i = _get(x,y,z);
-    if (i != value) {
-        //j = _set(x,y,z, value);
+void _set_broadcast(int x, int y, int z, int value) {
+    class block_StoC msg;
+    int i = _get(x,y,z);
+    if (i != value) 
+    {
         _set(x,y,z, value);
         msg.x = x;
         msg.y = y;
@@ -17,12 +16,10 @@ int _set_broadcast(int x, int y, int z, int value) {
         msg.val = value;
         msg.broadcast();
     }
-    //return j;
-    return 0;
 }
 
 void _block_broadcast(int x, int y, int z, int value) {
-    block_StoC msg;
+    class block_StoC msg;
     msg.x = x;
     msg.y = y;
     msg.z = z;
@@ -32,7 +29,7 @@ void _block_broadcast(int x, int y, int z, int value) {
 
 void send_map_metadata(int client_id)
 {
-    map_metadata_StoC msg;
+    class map_metadata_StoC msg;
     msg.x = map_dim.x;
     msg.y = map_dim.y;
     msg.z = map_dim.z;
@@ -41,7 +38,7 @@ void send_map_metadata(int client_id)
 
 void send_map_metadata()
 {
-    map_metadata_StoC msg;
+    class map_metadata_StoC msg;
     msg.x = map_dim.x;
     msg.y = map_dim.y;
     msg.z = map_dim.z;

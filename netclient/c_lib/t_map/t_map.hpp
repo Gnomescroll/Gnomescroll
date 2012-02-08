@@ -29,6 +29,11 @@ inline void set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
 void _set(int x, int y, int z, int value);
 
+//change to void?
+int _apply_damage(int x, int y, int z, int dmg)
+{
+    return 0;
+}
 
 int _get_highest_open_block(int x, int y, int agent_height);
 int _get_highest_open_block(int x, int y);
