@@ -12,7 +12,10 @@ namespace t_map
 {
     
 void init_t_map();
-void init_for_draw();
+
+#ifdef DC_CLIENT
+    void init_for_draw();
+#endif
 
 inline int get(int x, int y, int z);
 inline void set(int x, int y, int z, int value);

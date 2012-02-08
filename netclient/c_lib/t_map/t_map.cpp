@@ -2,7 +2,10 @@
 
 #include "t_vbo.hpp"
 #include "t_map_class.hpp"
-#include "cache.hpp"
+
+#ifdef DC_CLIENT
+    #include "cache.hpp"
+#endif
 
 struct MapDimension map_dim;
 
@@ -16,11 +19,13 @@ void init_t_map()
     main_map = new Terrain_map(512, 512); //512 by 512 map
 }
 
-void init_for_draw()
-{
-    init_cache();
-    init_t_vbo();
-}
+#ifdef DC_CLIENT
+    void init_for_draw()
+    {
+        init_cache();
+        init_t_vbo();
+    }
+#endif
 
 int get(int x, int y, int z)
 {
