@@ -66,6 +66,7 @@ class Terrain_map
         ychunk_dim = _ydim/16;
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
     }
 
     ~Terrain_map()

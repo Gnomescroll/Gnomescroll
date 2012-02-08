@@ -204,7 +204,7 @@ cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
 cpdef _update_chunks():
     update_chunks()
 
-cpdef _draw_terrain():
+cpdef _draw_map():
     draw_map()
 
 

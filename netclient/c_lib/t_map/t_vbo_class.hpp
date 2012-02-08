@@ -95,11 +95,12 @@ class Vbo_map
         xchunk_dim = _map->xchunk_dim;
         ychunk_dim = _map->ychunk_dim;
         vbo_array = new Map_vbo*[ xchunk_dim*ychunk_dim ];
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) vbo_array[i] = NULL;
     }
 
     ~Vbo_map()
     {
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) delete vbo_array[i];
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) if(vbo_array[i] != NULL) delete vbo_array[i];
         delete[] vbo_array;
     }
 

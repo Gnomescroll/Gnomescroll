@@ -2,6 +2,7 @@
 
 #include "t_vbo.hpp"
 #include "t_map_class.hpp"
+#include "cache.hpp"
 
 struct MapDimension map_dim;
 
@@ -17,7 +18,8 @@ void init_t_map()
 
 void init_for_draw()
 {
-    
+    init_cache();
+    init_t_vbo();
 }
 
 int get(int x, int y, int z)
