@@ -315,9 +315,7 @@ bool ChatInput::route_command()
     char c;
     int i=1;
     while((c = this->buffer[i++]) != '\0' && !isspace(c))
-    {
         cmd[i-2] = c;
-    }
 
     if (!strcmp(cmd, (char*)"team"))
     {

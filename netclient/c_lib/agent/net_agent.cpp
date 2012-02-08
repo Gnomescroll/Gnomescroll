@@ -377,7 +377,7 @@ inline void hitscan_object_CtoS::handle()
     
     void *obj;
 
-    const int agent_dmg = 25;
+    //const int agent_dmg = 25;
     const int slime_dmg = 25;
     const int spawner_dmg = 25;
     int spawner_health;
@@ -390,7 +390,8 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::agent_list.get(id);
             if (obj==NULL) return;
             // apply damage
-            ((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
+            //((Agent_state*)obj)->status.apply_damage(agent_dmg, a->id, a->type);
+            ((Agent_state*)obj)->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             x = ((Agent_state*)obj)->s.x;
             y = ((Agent_state*)obj)->s.y;
             z = ((Agent_state*)obj)->s.z;

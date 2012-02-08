@@ -235,7 +235,12 @@ Feb 07
 
 Alt-tab
 /team, /name
+prevent player_agent_actions when dead
+
 ====================
+
+body part damage
+dont destroy teammate voxels
 
 mouse momentum
 Ratelimit jetpack / cap height

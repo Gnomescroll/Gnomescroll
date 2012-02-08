@@ -48,6 +48,7 @@ class Agent_status {
     
         int apply_damage(int dmg);
         int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
+        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, Object_types inflictor_type);
         int die();
         int die(int inflictor_id, Object_types inflictor_type);
         void kill(int victim_id);

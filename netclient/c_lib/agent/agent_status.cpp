@@ -86,7 +86,8 @@ int Agent_status::apply_damage(int dmg) {
     return this->health;
 }
 
-int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type) {
+int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type)
+{
     // dont allow team kills
     if (inflictor_type == OBJ_TYPE_AGENT && inflictor_id != this->a->id)
     {
@@ -98,6 +99,38 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
     int health = this->apply_damage(dmg);
     if (!this->health) die(inflictor_id, inflictor_type);
     return health;
+}
+
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, Object_types inflictor_type)
+{
+    int dmg = 0;
+
+    switch (part_id)
+    {
+        case AGENT_PART_HEAD:
+            dmg = AGENT_PART_HEAD_DAMAGE;
+            break;
+        case AGENT_PART_TORSO:
+            dmg = AGENT_PART_TORSO_DAMAGE;
+            break;
+        case AGENT_PART_LARM:
+            dmg = AGENT_PART_LARM_DAMAGE;
+            break;
+        case AGENT_PART_RARM:
+            dmg = AGENT_PART_RARM_DAMAGE;
+            break;
+        case AGENT_PART_LLEG:
+            dmg = AGENT_PART_LLEG_DAMAGE;
+            break;
+        case AGENT_PART_RLEG:
+            dmg = AGENT_PART_RLEG_DAMAGE;
+            break;
+        default:
+            printf("WARNING Agent_status::apply_hitscan_laser_damage_to_part -- unknown part %d\n", part_id);
+            break;
+    }
+    
+    return this->apply_damage(dmg, inflictor_id, inflictor_type);
 }
 
 int Agent_status::die() {
