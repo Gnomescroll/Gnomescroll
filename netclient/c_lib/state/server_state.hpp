@@ -13,7 +13,7 @@ namespace ServerState
     extern Agent_list agent_list;
     extern Cspray_list cspray_list;
     extern Grenade_list grenade_list;
-    extern Neutron_list neutron_list;
+    //extern Neutron_list neutron_list;
     extern Monsters::Slime_list slime_list;
     extern Voxel_hitscan_list voxel_hitscan_list;
     extern Spawner_list spawner_list;

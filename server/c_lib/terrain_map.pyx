@@ -1,12 +1,20 @@
 
 cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
     void init_t_map()
+    int _get(int x, int y, int z)
+    void _set(int x, int y, int z, int value)
 
+#called automaticly after properties are loaded
 def _init_map():
     init_t_map()
 
-cdef extern from "../c_lib/t_map/t_map.hpp":
-    int _get(int x, int y, int z)
+
+
+#int _clear()
+#int _apply_damage(int x, int y, int z, int value)
+#int _get_highest_open_block(int x, int y, int n)
+#int _get_lowest_open_block(int x, int y, int n)
+#void set_map_size(int x, int y, int z)
 
 '''
 PART 2: Properties
@@ -31,17 +39,6 @@ cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
 Part 1: State
 
 '''
-
-cdef extern from "./t_map/t_map.hpp":
-    int _init_t_map()
-    int _set(int x, int y, int z, int value)
-    int _get(int x, int y, int z)
-
-    #int _clear()
-    #int _apply_damage(int x, int y, int z, int value)
-    #int _get_highest_open_block(int x, int y, int n)
-    #int _get_lowest_open_block(int x, int y, int n)
-    #void set_map_size(int x, int y, int z)
 
 cpdef inline set(int x,int y, int z,int value):
     _set(x,y,z,value)
@@ -78,8 +75,8 @@ def init_cube_properties(id=None):
 def init():
     global c_dat
     print "Init Terrain Map"
-    _init_t_map()
     init_cube_properties(c_dat)
+    init_t_map()
 init()
 
 
