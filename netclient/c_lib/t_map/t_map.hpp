@@ -41,17 +41,17 @@ int _get_highest_open_block(int x, int y);
 
 int _get_lowest_open_block(int x, int y, int n) 
 {
-    return 0;
+    return 127;
 }
 
 int _get_lowest_solid_block(int x, int y) 
 {
-    return 0;
+    return 127;
 }
 
 int get_height_at(int x, int y) 
 {
-    return 0;
+    return 127;
 }
 
 inline bool point_in_map(int x, int y, int z)

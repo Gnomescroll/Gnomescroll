@@ -56,10 +56,10 @@ void _set(int x, int y, int z, int value)
 */
 int _get_highest_open_block(int x, int y)
 {
-    return 0;
+    return 127;
 }
 
 int _get_highest_open_block(int x, int y, int agent_height)
 {
-    return 0;
+    return 127;
 }
