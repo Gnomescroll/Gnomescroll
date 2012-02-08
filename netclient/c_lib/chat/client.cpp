@@ -308,15 +308,16 @@ void ChatInput::history_older()
 bool ChatInput::route_command()
 {
     if (!buffer_len) return false;
-    
     if (this->buffer[0] != '/' || this->buffer[1] == '\0' || isspace(this->buffer[1]))
         return false;
 
-    char cmd[CHAT_BUFFER_SIZE];
+    char cmd[CHAT_BUFFER_SIZE] = {'\0'};
     char c;
     int i=1;
     while((c = this->buffer[i++]) != '\0' && !isspace(c))
+    {
         cmd[i-2] = c;
+    }
 
     if (!strcmp(cmd, (char*)"team"))
     {
@@ -333,6 +334,19 @@ bool ChatInput::route_command()
             if (!team) return true; // failure
         }
         ClientState::ctf.join_team(team);
+    }
+    else
+    if (!strcmp(cmd, (char*)"name"))
+    {
+        if (buffer_len <= (strlen((char*)"/name "))) return true;
+        char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
+        int j = 0;
+        while ((c = buffer[i++]) != '\0' && !isspace(c))
+        {
+            name[j++] = c;
+            if (j==(int)PLAYER_NAME_MAX_LENGTH) break;
+        }
+        ClientState::send_identify_packet(name);
     }
 
     return true;
