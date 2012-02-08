@@ -233,13 +233,21 @@ Increase mouse sampling
 
 Feb 07
 
+Alt-tab
+/team, /name
+prevent player_agent_actions when dead
+body part damage
+played w/ shaders
 ====================
 
-mouse momentum
-Team switch UI
-Alt-tab while mouse captured not possible?
-Ratelimit jetpack / cap height
+dont destroy teammate voxels
+restore voxels on revive
 
+endpoints on hitscan laser
+clients dont play laser anim when other player shoots nothing
+
+mouse momentum
+Ratelimit jetpack / cap height
 
 Weapon tuning
 Voxel models

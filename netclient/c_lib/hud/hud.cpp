@@ -71,6 +71,7 @@ static struct HudDrawSettings
     int equipment_slot;
     bool compass;
     bool map;
+    bool draw;
 } hud_draw_settings;
 
 void set_hud_draw_settings(
@@ -99,6 +100,7 @@ void set_hud_draw_settings(
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
+    hud_draw_settings.draw = input_state.hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector =
         (ClientState::playerAgent_state.you != NULL
@@ -161,6 +163,8 @@ void draw_reference_center()
 
 void draw_hud_textures()
 {
+    if (!hud_draw_settings.draw) return;
+
     if (!hud_draw_settings.connected) return;
 
     if (hud_draw_settings.zoom)
@@ -199,7 +203,8 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {
-
+    if (!hud_draw_settings.draw) return;
+    
     start_text_draw();
 
     ClientState::billboard_text_list.draw_hud();

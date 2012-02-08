@@ -18,8 +18,6 @@ const int AGENT_MAX = PLAYERS_MAX;
 
 #define AGENT_BOX_RADIUS 0.38f
 
-#define AGENT_START_HEALTH 100
-
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <c_lib/agent/agent_event.hpp>
