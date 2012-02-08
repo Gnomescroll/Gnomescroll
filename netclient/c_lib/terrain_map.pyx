@@ -10,8 +10,8 @@ def _init_map():
 def _init_map_for_draw():
     init_for_draw()
 
-cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
-    int get(int x, int y, int z)
+cdef extern from "../c_lib/t_map/t_map.hpp":
+    int _get(int x, int y, int z)
 
 '''
 PART 2: Properties
