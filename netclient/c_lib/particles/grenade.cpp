@@ -180,38 +180,43 @@ void Grenade::damage_blocks() {
     
     int i,j,k;
     int bx,by,bz;
-    int res;
-    int dmg;
-    for (i=0; i<ir; i++) {
-        for (j=0; j<ir; j++) {
-            for (k=0; k<ir; k++) {
+    int res=0;
+    int dmg=0;
+    for (i=0; i<ir; i++)
+        for (j=0; j<ir; j++)
+            for (k=0; k<ir; k++)
+            {
                 dmg = block_damage(i+j+k);
 
                 bx = ix + i;
                 by = iy + j;
                 bz = iz + k;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
                 bx = ix - i;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
                 by = iy - j;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
                 by = iy + j;
                 bz = iz - k;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
                 bx = ix + i;
                 by = iy - j;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
                 bx = ix - i;
                 res = _apply_damage(bx,by,bz, dmg);
-                if (res==0) { _block_broadcast(bx,by,bz,0); }
+                if (res==0)
+                    _block_broadcast(bx,by,bz,0);
             }
-        }
-    }
 #endif
 }
 
