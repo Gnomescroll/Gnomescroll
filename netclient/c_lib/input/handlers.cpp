@@ -507,7 +507,7 @@ void key_up_handler(SDL_Event* event)
         case SDLK_LALT:
         case SDLK_RALT:
             if (input_state.has_focus)
-                input_state.mouse_bound = true;
+                input_state.mouse_bound = input_state.rebind_mouse;
             break;
 
         default: break;
