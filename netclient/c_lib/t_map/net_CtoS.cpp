@@ -1,5 +1,7 @@
 #include "net_CtoS.hpp"
 
+#include "net_StoC.hpp"
+
 #ifdef DC_SERVER
 
 int _set_broadcast(int x, int y, int z, int value) {
@@ -7,14 +9,16 @@ int _set_broadcast(int x, int y, int z, int value) {
     int i,j=0;
     i = _get(x,y,z);
     if (i != value) {
-        j = _set(x,y,z, value);
+        //j = _set(x,y,z, value);
+        _set(x,y,z, value);
         msg.x = x;
         msg.y = y;
         msg.z = z;
         msg.val = value;
         msg.broadcast();
     }
-    return j;
+    //return j;
+    return 0;
 }
 
 void _block_broadcast(int x, int y, int z, int value) {
