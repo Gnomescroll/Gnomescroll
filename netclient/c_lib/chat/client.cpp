@@ -397,7 +397,9 @@ void ChatClient::teardown()
 {
     this->input.clear_buffer();
     this->input.clear_history();
-    for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; this->channels[i++]->clear_history());
+    for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
+        if (this->channels[i] != NULL)
+            this->channels[i]->clear_history();
 }
 
 void ChatClient::use_team_channel()

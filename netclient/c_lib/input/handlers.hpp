@@ -17,6 +17,9 @@ struct InputState
     bool hud;
     bool debug;
     
+    bool has_focus;
+    bool rebind_mouse;
+    
     bool can_jump;
     bool quit;
 
@@ -39,6 +42,7 @@ void mouse_button_down_handler(SDL_Event* event);
 void mouse_button_up_handler(SDL_Event* event);
 void mouse_motion_handler(SDL_Event* event);
 void quit_event_handler(SDL_Event* event);
+void active_event_handler(SDL_Event* event);
 void key_state_handler(Uint8 *keystate, int numkeys);
 
 // triggers
@@ -60,3 +64,4 @@ void set_input_options(
     bool invert_mouse,
     float sensitivity
 );
+

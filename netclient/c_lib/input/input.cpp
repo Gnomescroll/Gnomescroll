@@ -54,6 +54,10 @@ int process_events()
                 quit_event_handler(&Event);
                 break;
 
+            case SDL_ACTIVEEVENT:
+                active_event_handler(&Event);
+                break;
+
             case SDL_KEYDOWN:
                 key_down_handler(&Event);
                 break;

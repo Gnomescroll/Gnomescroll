@@ -227,17 +227,24 @@ C chat implemented
 
 fix collision detection
 fix place block when crouch (collision detection issue)
-====================
-
-
-Ratelimit jetpack / cap height
 
 Increase mouse sampling
+====================
 
-Try:
-    applying pan every sample
-    Reconstructing pan once, from samples
+Feb 07
 
+====================
+
+mouse momentum
+Team switch UI
+Alt-tab while mouse captured not possible?
+Ratelimit jetpack / cap height
+
+
+Weapon tuning
+Voxel models
+
+model Animations
 
 Spreadsheet to document interactions
 e.g.
@@ -250,12 +257,7 @@ clients play anims/sound
 
 OpenAL ? (wav easy, but others hard?)
 
-Alt-tab while mouse captured not possible?
-
 Icons on map (angus)
-
-
-Team switch UI
 
 Turrets
 
@@ -295,28 +297,6 @@ map gen scripts (can be removed easy, not integrated)
 
 -----------
 TODO LIST FROM FEB4 NET TEST RESULTS:
-
-Disable Debug Controls:
--disable t button (chat with t key?)
-    DONE
--get rid of debug controls (activate with f12)
-    DONE
- 
-Chat:
--chat with t key (and enter)
-    DONE
--team chat with y
-    DONE
--increase time chat is displayed for
-    DONE
--chat log bool
--enable chat log when when tab or typing
-    DONE
  
 Other
 -fix client side prediction bug (movement is slugish, glitch)   BRANDON
--if player disconnects, their name turns into different player and switches teams
-    DONE
-
-
-mouse momentum

@@ -108,6 +108,9 @@ void init_handlers()
     input_state.chat = false;
     input_state.hud = true;
 
+    input_state.has_focus = true;
+    input_state.rebind_mouse = input_state.mouse_bound;
+
     input_state.can_jump = true;
     input_state.quit = false;
 
@@ -460,6 +463,12 @@ void key_down_handler(SDL_Event* event)
             toggle_debug();
             break;
 
+        case SDLK_LALT:
+        case SDLK_RALT:
+            input_state.rebind_mouse = input_state.mouse_bound;
+            input_state.mouse_bound = false;
+            break;
+
         default: break;
     }
 
@@ -495,6 +504,12 @@ void key_up_handler(SDL_Event* event)
 
     switch (event->key.keysym.sym)
     {
+        case SDLK_LALT:
+        case SDLK_RALT:
+            if (input_state.has_focus)
+                input_state.mouse_bound = true;
+            break;
+
         default: break;
     }
 
@@ -572,4 +587,26 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 
     // always set control state
     ClientState::playerAgent_state.set_control_state(f,b,l,r,jet,jump,crouch,boost,m1,m2,m3, agent_camera->theta, agent_camera->phi);
+}
+
+// active event (window / input focus)
+void active_event_handler(SDL_Event* event)
+{
+    Uint8 app_state = SDL_GetAppState();
+    
+    //if (app_state & SDL_APPMOUSEFOCUS)
+        //printf("Mouse\n");
+    //if (app_state & SDL_APPINPUTFOCUS)
+        //printf("Keyboard\n");
+    if (app_state & SDL_APPACTIVE)
+    {
+        if (event->active.gain)
+        {
+            if (!input_state.has_focus)
+                input_state.mouse_bound = input_state.rebind_mouse;
+            input_state.has_focus = true;
+        }
+        else
+            input_state.has_focus = false;
+    }
 }
