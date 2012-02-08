@@ -1,5 +1,7 @@
-#include once
+#pragma once
 
+namespace t_map
+{
     struct ColorElement
     {
         union
@@ -53,3 +55,5 @@
             unsigned int AO;
         };
     };
+    
+}

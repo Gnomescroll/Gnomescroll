@@ -8,8 +8,7 @@
 
 #include <ray_trace/ray_trace.h>
 
-#include <t_map/t_properties.h>
-#include <t_map/t_extern.h>
+#include <t_map/texture.hpp>
 
 #include <c_lib/camera/fulstrum_test.hpp>
 

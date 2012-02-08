@@ -39,7 +39,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
         ttl = randrange(20,40);
         //get_random_pixel(cube_id, side, &r, &g, &b, &a);
 
-        tex_id = _get_cube_side_texture(cube_id, side);
+        tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
@@ -67,7 +67,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
     //printf("block damage: %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f cube_id=%d, cube_side=%d\n", x,y,z,ix,iy,iz, cube_id, cube_side);
 
-    int tex_id = _get_cube_side_texture(cube_id, cube_side);
+    int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     // reflection bias
     float ref[3];

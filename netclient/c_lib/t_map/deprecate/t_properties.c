@@ -1,4 +1,4 @@
-#include "./t_properties.h"
+#include "./t_properties.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>

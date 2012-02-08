@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+#include <t_map/t_properties.hpp>
 
 #include <c_lib/SDL/shader_loader.hpp>
 
@@ -449,7 +449,7 @@ static const bool GL_PERF = 0;
 GLuint gl_perf_queries[64];
 int gl_per_queries_index = 0;
 
-SDL_Surface *px_surface;
+//SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
 
