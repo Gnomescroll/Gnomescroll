@@ -154,7 +154,7 @@ void Vbo_map::draw_map()
     }
     glDepthMask(true); 
 */
-    glDisable(GL_BLEND);
+    //glDisable(GL_BLEND);
         
     //end draw
     glDisableClientState(GL_VERTEX_ARRAY);
