@@ -38,7 +38,67 @@ const int SHADER_ON = 1;
     static GLenum shader_frag = 0;
     static GLenum shader_prog = 0;
 
+static GLenum steve_sv = 0;
+static GLenum steve_sf = 0;
+static GLenum steve_sp = 0;
 
+void steveShader(GLenum *shader_vert, GLenum *shader_frag, GLenum *shader_prog)
+{
+
+    // create shader objects
+    *shader_prog = glCreateProgramObjectARB();
+    *shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    *shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    // read shader files
+    char *vs, *fs;
+    vs = textFileRead((char*) "./media/shaders/lsd.vsh");
+    fs = textFileRead((char*) "./media/shaders/lsd.fsh");
+
+
+    /* glShaderSourceARB takes four parameters: the handle to your object,
+     * the number of strings you are passing (usually 1),
+     * a pointer to the array of these strings,
+     * and a pointer to an array of integers that is their length.
+     * (You may specify a 0 length and omit the terminating null character on the string.)
+     */
+
+    //int len = 0;
+    //len = strlen(vs);
+    glShaderSourceARB(*shader_vert, 1, (const GLcharARB**)&vs, NULL);
+    //len = strlen(fs);
+    glShaderSourceARB(*shader_frag, 1, (const GLcharARB**)&fs, NULL);
+
+    // compiling and linking stages can throw error
+    int len = 1000;
+    char err[len+1];
+    int err_len = 0;
+    
+    // compile vertex shader
+    glCompileShaderARB(*shader_vert);
+    glGetInfoLogARB(*shader_vert, len, &err_len, err);
+    err[err_len] = '\0';
+    if (err[0])
+        printf("Vertex shader error:\n%s\n", err);
+
+    // compile fragment shader
+    glCompileShaderARB(*shader_frag);
+    glGetInfoLogARB(*shader_frag, len, &err_len, err);
+    err[err_len] = '\0';
+    if (err[0])
+        printf("Fragment shader error:\n%s\n", err);
+
+    // attach to prog
+    glAttachObjectARB(*shader_prog, *shader_vert);
+    glAttachObjectARB(*shader_prog, *shader_frag);
+    // link together
+    glLinkProgramARB(*shader_prog);
+    glGetInfoLogARB(*shader_prog, len, &err_len, err);
+    err[err_len] = '\0';
+    if (err[0])
+        printf("Shader link error:\n%s\n", err);
+
+}
 
 void setShaders2() 
 {
@@ -452,6 +512,9 @@ int gl_per_queries_index = 0;
 SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
+
+    printf("Steve shader\n");
+    steveShader(&steve_sv, &steve_sf, &steve_sp);
 
     printf("init: LSD shader \n");
     setShaders2();
@@ -1246,9 +1309,11 @@ int _draw_terrain() {
 
         if(SHADER_ON) 
         {
-            //DRAW_VBOS3();  
-            //DRAW_VBOS4();
-            DRAW_VBOS5();
+            ////DRAW_VBOS3();  
+            ////DRAW_VBOS4();
+            
+            //DRAW_VBOS5();
+            DRAW_VBOS_STEVE();
         } 
         else 
         {
@@ -2166,6 +2231,100 @@ void DRAW_VBOS5() {
     glDisable(GL_TEXTURE_2D);
         //printf("vnum= %i\n", _vnum);
 
+}
+
+void DRAW_VBOS_STEVE() {
+    
+    glUseProgramObjectARB(steve_sp);
+    //glUseProgramObjectARB(shader_prog4);
+
+    glEnableVertexAttribArray(texCoord0Loc_4);
+    glEnableVertexAttribArray(LightMatrix0Loc_4);
+
+    glColor3b(255,255,255);
+
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+
+    glShadeModel(GL_SMOOTH);
+    glEnable (GL_DEPTH_TEST);
+    glAlphaFunc(GL_GREATER, 0.1);
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl_1);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    glEnable(GL_CULL_FACE);
+
+    int i;
+    struct VBO* vbo;
+
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+        if(vbo->_v_num[0] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        
+        glVertexAttribPointer(texCoord0Loc_4, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+        glVertexAttribPointer(LightMatrix0Loc_4, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
+
+        glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
+    }
+
+    glDisableVertexAttribArray(texCoord0Loc_4);
+    glDisableVertexAttribArray(LightMatrix0Loc_4);
+
+    glUseProgramObjectARB(0);
+    glActiveTexture(GL_TEXTURE0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable (GL_ALPHA_TEST);
+
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+        if(vbo->_v_num[1] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
+    }
+
+    glDisable(GL_CULL_FACE);
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+        if(vbo->_v_num[2] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
+    }
+
+    glDisable(GL_ALPHA_TEST);   
+
+    glDepthMask(false);
+    for(i=0;i<draw_vbo_n;i++) {
+        vbo = draw_vbo_array[i];
+        if(vbo->_v_num[3] == 0) continue; 
+        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
+    }
+    glDepthMask(true); 
+    glDisable(GL_BLEND);
+
+    //end draw
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 /*
