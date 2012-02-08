@@ -17,8 +17,6 @@ void init_for_draw();
 inline int get(int x, int y, int z);
 inline void set(int x, int y, int z, int value);
 
-void draw_map();
-
 }
 
 int _get(int x, int y, int z);
