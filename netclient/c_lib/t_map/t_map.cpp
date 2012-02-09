@@ -21,10 +21,10 @@ void init_t_map()
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 
-    for( int i=0; i<16; i++ )
-    for( int j=0; j<16; j++ )
+    for( int i=0; i<32; i++ )
+    for( int j=0; j<32; j++ )
     {
-        set(i,j, 10, 5);
+        set(i,j, 10, 1);
         //if(i%2 == 0)  set(i,j, 6, 1);
         //if(j%3 == 0)  set(i,j, 7, 1);
 

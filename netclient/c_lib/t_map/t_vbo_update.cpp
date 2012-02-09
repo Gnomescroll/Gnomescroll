@@ -179,6 +179,10 @@ void Vbo_map::update_vbo(int i, int j)
 
     //first pass, count quads
 
+
+    tile_id = 1;
+    printf("active= %i transparenct= %i \n", isActive(tile_id), isTransparent(tile_id)  );
+
     /*
         1> Use internals for the chunk instead of map get
         2> Use z indices
