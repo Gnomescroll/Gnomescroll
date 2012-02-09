@@ -32,12 +32,12 @@ void init_t_map()
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 
-    for( int i=0; i<128; i++ )
-    for( int j=0; j<128; j++ )
+    for( int i=0; i<512; i++ )
+    for( int j=0; j<512; j++ )
     {
-        set(i,j, 1, 1);
-        if(i%2 == 0)  set(i,j, 6, 2);
-        if(j%3 == 0)  set(i,j, 7, 2);
+        set(i,j, 1, 2);
+        if(i%5 == 0)  set(i,j, 6, 2);
+        if(j%7 == 0)  set(i,j, 7, 2);
 
     }
 
