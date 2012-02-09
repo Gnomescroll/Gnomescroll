@@ -204,6 +204,23 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
             cs_vy += -xy_speed*sin( _cs.theta * pi + pi/2);
     }
 
+    // need distance from ground
+    const float max_jetpack_height = 8.0f;
+    const float jetpack_velocity_max = z_jetpack * 10;
+    float dist_from_ground = as.z - (_get_highest_open_block(as.x, as.y, 1)-1); //TODO: use a function like this that takes a starting z point
+    if (jetpack)
+    {
+        if (dist_from_ground < max_jetpack_height)
+        {   // cap jetpack velocity
+            if (as.vz <= jetpack_velocity_max)
+                as.vz += z_jetpack;
+            else
+                as.vz = -z_gravity;
+        }
+        else if (dist_from_ground < max_jetpack_height + 0.3f)
+            as.vz = -z_gravity;
+    }
+
     //jet pack and gravity
     if(as.z > 0)
     {
@@ -213,10 +230,6 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     {
         as.vz -= z_gravity;
     }    
-
-    if (jetpack) {
-        as.vz += z_jetpack;
-    }
 
     float new_jump_pow = as.jump_pow;
     if (jump)

@@ -250,12 +250,13 @@ hitscan laser anim vectors against models appear in other clients properly
 ===================
 
 
-endpoints on hitscan laser
 
 Ratelimit jetpack / cap height
 
 Weapon tuning
 Voxel models
+
+Server memory leak
 
 model Animations
 
@@ -301,6 +302,7 @@ terminate called after throwing an instance of 'St9bad_alloc'
   what():  std::bad_alloc
 """
 
+
 PYTHON DEPRECATION:
 Font
 Main loop
@@ -308,9 +310,8 @@ settings.py
 Parsers
 map gen scripts (can be removed easy, not integrated)
 
------------
-TODO LIST FROM FEB4 NET TEST RESULTS:
- 
-Other
--fix client side prediction bug (movement is slugish, glitch)   BRANDON
-mouse momentum  BRANDON
+
+BRANDON:
+-fix client side prediction bug (movement is slugish, glitch)
+mouse momentum
+endpoints on hitscan laser

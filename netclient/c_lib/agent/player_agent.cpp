@@ -164,6 +164,30 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
         jump = 0;
     }
 
+    if (jetpack_decay)
+    {
+        jetpack = 0;
+        jetpack_decay--;
+        jetpack_decay = (jetpack_decay < 0) ? 0 : jetpack_decay;
+    }
+    else
+    {
+        if (jetpack)
+        {
+            jetpack_ticks++;
+            if (jetpack_ticks >= JETPACK_TICKS_MAX)
+            {
+                jetpack = 0;
+                jetpack_ticks = 0;
+                jetpack_decay = JETPACK_DECAY_TICKS;
+            }
+        }
+        else
+        {
+            jetpack_ticks--;
+        }
+    }
+
     cs = this->pack_control_state(
         forward, backwards, left, right,
         jetpack, jump, crouch, boost,
@@ -280,6 +304,9 @@ void PlayerAgent_state::update_sound() {
 
 PlayerAgent_state::PlayerAgent_state()
 :
+crouching(false),
+jetpack_ticks(0),
+jetpack_decay(0),
 action(this),
 identified(false)
 {
