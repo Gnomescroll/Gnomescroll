@@ -250,19 +250,38 @@ hitscan laser anim vectors against models appear in other clients properly
 Ratelimit jetpack / cap height
 valgrind server memory leaks
 proper object_list deconstruction (wasnt deleteing array members)
-located network leak
 add character mode terminal in server for graceful exit in linux shells
+fix network packet memory leak
+fix valgrind voxel loader uninitialized errors
 ===================
 
+Feb09
 
-Weapon tuning
-    -- firing rate
-    -- perspective model
-Voxel models
+===================
 
-model Animations
--- need skeleton editor
+== MODELS ==
+Make new model that fits inside agent box
+Make input tool for adjusting skeleton
+Saving skeleton state in C
+--Standing skeleton
+--Dead skeleton
+--Crouched skeleton
 
+Animations
+--Keyframes?
+--Splines/interpolated between points
+----If can say "here is the standing leg vector, here is the leg stretched furthest when walking" and get the angle, i can do this
+
+Gun model
+Gun in first person and zoomed perspectives
+agent Skeleton for holding gun, standing and zoomed, gun in place
+--gun might be a node off of one of the arms
+
+
+== UI / FEEDBACK ==
+System notifications (you killed...)
+Icons on map (angus)
+Minimap
 Spreadsheet to document interactions
 e.g.
 Client fires weapon:
@@ -272,20 +291,13 @@ server responds,
 send packet to clients,
 clients play anims/sound
 
-OpenAL ? (wav easy, but others hard?)
-
-Icons on map (angus)
-
+== GAMEPLAY ==
 Turrets
-
-Minimap
-
-Sounds
-
-System notifications (you killed...)
-
 better base/spawner spawn logic (i.e. if the spawner is buried in a room underground, spawn there, not on top)
+Weapon firing rate
+Tune jumping
 
+== VOXEL EDITOR ==
 Voxel editor:
 Bucket fill
 Rewrite deserializer
@@ -293,21 +305,47 @@ Color pallete
 Color wheel --contingent on js lib
 http://design.geckotribe.com/colorwheel/    (shows complementary colors)
 http://jscolor.com/ (has saturation slider)
-
+Team base color select
 Sort out converter pipeline. Fix off by one dimension bug translating from slab6vox ->v3a->json->dcvox
 
+== AUDIO ==
+OpenAL ? (wav easy, but others hard?)
+Sounds integrated to more actions
+--Document all actions in a spreadsheet
+
+== NOTES ==
 SDL input normalization
 --There is no real solution. Might be able to use scancodes to handle most cases. Keymapping feature is only real solution
 
-PYTHON DEPRECATION:
+== TEXT ==
+Font metadata in C
+different font sizes
+fix lack of glBlend sometimes (server not connected is one)
+
+== WEB ==
+Retrieve tumblr account
+Website:
+    Collect email addresses
+    Host builds for all systems
+
+== DISTRIBUTION / HOSTING ==
+Builds for all 3 systems, at once
+    Production input settings
+    Remove debug symbols, optimize, obfuscate?
+2 copies of repo on 100tb: dev and production
+GDB script to collect information on crash
+bash/python script to run server perpetually, and save gdb crash info
+
+
+== PYTHON ==
+NetServer
 Font
 Main loop
 settings.py
 Parsers
 map gen scripts (can be removed easy, not integrated)
 
-
-BRANDON:
+== BRANDON ==
 -fix client side prediction bug (movement is slugish, glitch)
 mouse momentum
 endpoints on hitscan laser
