@@ -43,7 +43,7 @@ char* read_file_to_buffer(char* file_name, int* size)
             if(*size != expected_size) printf("Warning: size of %s differs from expected\n", file_name);
             if (bufsize == -1) { /* Error */ }
             /* Allocate our buffer to that size. */
-            source = (char*) malloc(sizeof(char) * (bufsize + 2));
+            source = (char*) calloc(bufsize+2, sizeof(char));
             /* Go back to the start of the file. */
             if (fseek(fp, 0L, SEEK_SET) == 0) { /* Error */ }
             /* Read the entire file into memory. */
