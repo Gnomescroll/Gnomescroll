@@ -62,7 +62,7 @@ class App(object):
             import cube_dat
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
-        
+        c_lib.terrain_map.init()
         '''
             Init terrain map and prepare for draw
         '''

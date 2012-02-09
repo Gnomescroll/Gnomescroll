@@ -34,24 +34,6 @@ cpdef _draw_map():
 
 
 '''
-Hud Selector Stuff
-'''
-
-cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
-    cdef cppclass CubeSelector:
-        void load_cube_property(int pos, int cube_id, int tex_id)
-
-    CubeSelector cube_selector
-
-def set_hud_cube_selector():
-    global dat
-
-    for id in dat:
-        hud_img = c_dat.get(id,'hud_img')
-        hud_pos = c_dat.get(id,'hud_pos')
-        cube_selector.load_cube_property(hud_pos, id, hud_img)
-
-'''
 PART 2: Properties
 '''
 
@@ -80,6 +62,10 @@ def init_cube_properties():
         cdef cubeProperties* cp
         cp = get_cube(id)
         #print "id= %s" % ( c_dat.get(id,'active') )
+
+        #print self.dat
+        #print type, prop
+
         cp.active = int(c_dat.get(id,'active'))
         cp.solid = int(c_dat.get(id,'solid'))
         cp.occludes = int(c_dat.get(id,'occludes'))
@@ -89,6 +75,25 @@ def init_cube_properties():
     for id in c_dat.dat:
         print "%s" %(id)
         apply(id)
+
+
+'''
+Hud Selector Stuff
+'''
+
+cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
+    cdef cppclass CubeSelector:
+        void load_cube_property(int pos, int cube_id, int tex_id)
+
+    CubeSelector cube_selector
+
+def set_hud_cube_selector():
+    global dat
+
+    for id in dat:
+        hud_img = c_dat.get(id,'hud_img')
+        hud_pos = c_dat.get(id,'hud_pos')
+        cube_selector.load_cube_property(hud_pos, id, hud_img)
 
 '''
     Set the textures on sides of cube
@@ -115,7 +120,6 @@ def init():
     init_cube_side_texture()
     init_t_map()
     set_hud_cube_selector()
-init()
 
 
 
