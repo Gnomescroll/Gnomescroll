@@ -44,6 +44,16 @@ int _get_lowest_open_block(int x, int y, int n)
     return 127;
 }
 
+int _get_lowest_open_block(int x, int y) 
+{
+    return 127;
+}
+
+int _get_highest_solid_block(int x, int y)
+{
+    return 127;
+}
+
 int _get_lowest_solid_block(int x, int y) 
 {
     return 127;
@@ -58,3 +68,12 @@ inline bool point_in_map(int x, int y, int z)
 {
     return true;
 }
+
+
+int _apply_damage_broadcast(int x, int y, int z, int dmg);
+
+void _set_broadcast(int x, int y, int z, int value) ;
+void _block_broadcast(int x, int y, int z, int value) ;
+void send_map_metadata(int client_id);
+void send_map_metadata();
+void set_map_size(int x, int y, int z);
