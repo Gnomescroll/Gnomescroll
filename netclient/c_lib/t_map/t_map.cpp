@@ -7,7 +7,7 @@
     #include "cache.hpp"
 #endif
 
-struct MapDimension map_dim;
+struct MapDimension map_dim = { 512,512,128 };
 
 namespace t_map
 {
