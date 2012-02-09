@@ -244,20 +244,19 @@ Feb08
 
 fix valgrind errors on server
 lower mouse sensitivity when zoomed
-
-===================
-
 dont destroy teammate voxels
 restore voxels on revive
+hitscan laser anim vectors against models appear in other clients properly
+===================
 
-endpoints on hitscan laser
-clients dont play laser anim when other player shoots nothing
 
-mouse momentum
+
 Ratelimit jetpack / cap height
 
 Weapon tuning
 Voxel models
+
+Server memory leak
 
 model Animations
 
@@ -303,6 +302,7 @@ terminate called after throwing an instance of 'St9bad_alloc'
   what():  std::bad_alloc
 """
 
+
 PYTHON DEPRECATION:
 Font
 Main loop
@@ -310,8 +310,8 @@ settings.py
 Parsers
 map gen scripts (can be removed easy, not integrated)
 
------------
-TODO LIST FROM FEB4 NET TEST RESULTS:
- 
-Other
--fix client side prediction bug (movement is slugish, glitch)   BRANDON
+
+BRANDON:
+-fix client side prediction bug (movement is slugish, glitch)
+mouse momentum
+endpoints on hitscan laser

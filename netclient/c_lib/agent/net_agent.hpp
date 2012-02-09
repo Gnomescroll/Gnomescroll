@@ -162,7 +162,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
         int target_type;
         int target_part;
         int vx,vy,vz;   //voxel
-        float x,y,z;    // need this, because the target can be destroyed by the hitscan action
+        //float x,y,z;    // need this, because the target can be destroyed by the hitscan action
         // and the destroy packet might (read: DOES ALMOST ALWAYS) reach before this packet
         // and then player cannot animate
         // OR
@@ -175,9 +175,9 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
             pack_u8(&target_id, buff, buff_n, pack);
             pack_u8(&target_type, buff, buff_n, pack);
             pack_u8(&target_part, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
             pack_u8(&vx, buff, buff_n, pack);
             pack_u8(&vy, buff, buff_n, pack);
             pack_u8(&vz, buff, buff_n, pack);
