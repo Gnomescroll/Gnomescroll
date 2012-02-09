@@ -9,7 +9,7 @@ void chunk_meta_data_StoC::handle()
 {
     //int chunk_x,chunk_y;
     //int version;
-
+    printf("chunk_meta_data_StoC: chunk_x= %i chunk_y= %i version= %i \n", chunk_x, chunk_y, version);
 }
 
 void block_StoC::handle() 

@@ -26,7 +26,9 @@
             {
                 printf("sending chunk meta to client %i \n", client_id);
                 class chunk_meta_data_StoC m;
-
+                m.chunk_x = i;
+                m.chunk_y = j;
+                m.version = 1;
                 m.sendToClient(client_id);
             }
         }
