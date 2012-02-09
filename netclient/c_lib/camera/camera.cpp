@@ -152,7 +152,14 @@ void Camera::world_projection()
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+ /*
+    DEPRECATE GLU
+*/   
     gluPerspective( fov, ratio, z_near, z_far);
+/*
+    DEPRECATE GLU
+*/
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
@@ -169,10 +176,16 @@ void Camera::world_projection()
     yu = 0.0f;
     zu = 1.0f;
 
+/*
+    DEPRECATE GLU
+*/
     gluLookAt(x,y,z,
                x+xl, y+yl, z+zl,
                xu, yu, zu);
 
+/*
+    DEPRECATE GLU
+*/
     update_camera_matrices();
     
     //set fulstrum camera up
@@ -203,7 +216,14 @@ void Camera::hud_projection() {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+/*
+    DEPRECATE GLU
+*/
     gluOrtho2D(0, x_size, 0, y_size);
+/*
+    DEPRECATE GLU
+*/
 
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();

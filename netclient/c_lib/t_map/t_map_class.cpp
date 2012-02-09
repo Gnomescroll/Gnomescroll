@@ -25,7 +25,8 @@ namespace t_map
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         //c = chunk[ (y | ~15) + (x >> 4)];
         if(c == NULL) return NO_MAP_ELEMENT;
-        return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
+        //return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
+        return c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)];
     #else
 
         if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return NO_MAP_ELEMENT;
@@ -67,7 +68,8 @@ namespace t_map
             c = new MAP_CHUNK( x & ~15, y & ~15);
             chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ] = c;
         }
-        c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
+        //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
+        c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)] = element;
         c->needs_update = true;
     #else
         //printf("set: %i %i %i \n",  x,y,z);
