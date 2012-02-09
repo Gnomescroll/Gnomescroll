@@ -248,15 +248,20 @@ dont destroy teammate voxels
 restore voxels on revive
 hitscan laser anim vectors against models appear in other clients properly
 Ratelimit jetpack / cap height
+valgrind server memory leaks
+proper object_list deconstruction (wasnt deleteing array members)
+located network leak
+add character mode terminal in server for graceful exit in linux shells
 ===================
 
 
 Weapon tuning
+    -- firing rate
+    -- perspective model
 Voxel models
 
-Server memory leak
-
 model Animations
+-- need skeleton editor
 
 Spreadsheet to document interactions
 e.g.
@@ -293,13 +298,6 @@ Sort out converter pipeline. Fix off by one dimension bug translating from slab6
 
 SDL input normalization
 --There is no real solution. Might be able to use scancodes to handle most cases. Keymapping feature is only real solution
-
-Figure out the long term server crash
-"""
-terminate called after throwing an instance of 'St9bad_alloc'
-  what():  std::bad_alloc
-"""
-
 
 PYTHON DEPRECATION:
 Font

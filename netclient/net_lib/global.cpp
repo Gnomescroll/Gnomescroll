@@ -1,5 +1,7 @@
 #include "global.hpp"
 
+NetMessageArray_pool net_message_array_pool;
+
 namespace NetClient
 {
     NetPeer Server;

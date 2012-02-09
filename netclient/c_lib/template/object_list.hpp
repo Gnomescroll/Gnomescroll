@@ -8,7 +8,7 @@
  * void server_tick();
  */
 
-#define OBJECT_LIST_DEBUG 1
+#define OBJECT_LIST_DEBUG 0
 
 template <class Object_state, int max_n=1024>
 class Object_list {
