@@ -57,7 +57,7 @@ void Vbo_map::prep_draw()
     }}
     //sort VBOs by distance to player
 
-    printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
+    //printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
 }
 
 
@@ -92,7 +92,11 @@ void Vbo_map::draw_map()
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i];
-        if(vbo->_v_num[0] == 0) continue; 
+        if(vbo->_v_num[0] == 0)
+        {
+            printf("no blocks\n");
+            continue; 
+        } 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
         
         glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);

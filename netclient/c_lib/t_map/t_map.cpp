@@ -5,6 +5,8 @@
 
 #ifdef DC_CLIENT
     #include "cache.hpp"
+    #include "texture.hpp"
+    #include "shader.hpp"
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -46,6 +48,8 @@ void init_t_map()
     {
         init_cache();
         init_t_vbo();
+        init_textures();
+        void init_shaders();
     }
 #endif
 

@@ -15,7 +15,7 @@ namespace t_map
     void set_map_shader_0() 
     {
         const int index = 0;    //shader index
-        const int DEBUG = 0;
+        const int DEBUG = 1;
 
         map_shader[index] = glCreateProgramObjectARB();
         map_vert_shader[index] = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);

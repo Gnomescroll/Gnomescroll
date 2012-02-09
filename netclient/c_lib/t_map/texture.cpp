@@ -69,23 +69,23 @@ int get_cube_side_texture(int id, int side)
     return cube_side_texture_array[6*id + side]; 
 }
 
-    void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
-    {
-        int tex_id = get_cube_side_texture(cube_id, side);
-        int ra = rand() % (32*32);
-        *r = pixel_data[tex_id][4*(ra)+0];
-        *g = pixel_data[tex_id][4*(ra)+1];
-        *b = pixel_data[tex_id][4*(ra)+2];
-        *a = pixel_data[tex_id][4*(ra)+3];
-    }
+void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
+{
+    int tex_id = get_cube_side_texture(cube_id, side);
+    int ra = rand() % (32*32);
+    *r = pixel_data[tex_id][4*(ra)+0];
+    *g = pixel_data[tex_id][4*(ra)+1];
+    *b = pixel_data[tex_id][4*(ra)+2];
+    *a = pixel_data[tex_id][4*(ra)+3];
+}
 
-    void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-        if (must_lock_block_surface) SDL_LockSurface(block_surface);
-        int p = px + py*block_surface_width;
-        Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
-        SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
-        if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
-    }
+void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
+    if (must_lock_block_surface) SDL_LockSurface(block_surface);
+    int p = px + py*block_surface_width;
+    Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
+    SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
+    if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
+}
 
 
 
