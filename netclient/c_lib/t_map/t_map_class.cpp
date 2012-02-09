@@ -5,6 +5,7 @@ namespace t_map
 
     const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
     const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
+    const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1);
 
     #define T_MAP_GET_OPTIMIZED 1
 
@@ -18,7 +19,12 @@ namespace t_map
         struct MAP_CHUNK* c;
         //c = chunk[16*(y >> 4) + (x >> 4)];
         c = chunk[ (y | 15) + (x >> 4)];
-        if( c == NULL || ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) ) return NO_MAP_ELEMENT;
+        if( 
+            (c == NULL) 
+            || ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
+            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+            || ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+        ) return NO_MAP_ELEMENT;
         return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
     #else
         struct MAP_CHUNK* c;
@@ -45,8 +51,11 @@ namespace t_map
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
     #if T_MAP_SET_OPTIMIZED
-
-        if( (z & TERRAIN_MAP_HEIGHT_BIT_MASK) == 0 ) return; //an error
+        if(   
+            ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
+            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+        ) return; //an error
         struct MAP_CHUNK* c;
         c = chunk[ (y | 15) + (x >> 4)];
         if( c != NULL ) c = new MAP_CHUNK( y & ~15, x & ~15);
@@ -63,6 +72,9 @@ namespace t_map
             if( c == NULL ) c = new MAP_CHUNK( y & ~15, x & ~15);
         }
         if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return;
+        if( x >= 512 || x < 0 ) return;
+        if( y >= 512 || y < 0 ) return;
+
         int xi = x | 15; //bit mask
         int yi = y | 15; //bit mask
         c->e[16*16*z+ 16*yi + xi] = element;
