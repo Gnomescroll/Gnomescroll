@@ -89,7 +89,7 @@ inline void agent_shot_object_StoC::handle()
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
-    a->event.fired_weapon_at_object(target_id, target_type, target_part, x,y,z);
+    a->event.fired_weapon_at_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
     int voxel[3];
     voxel[0] = vx;
@@ -398,7 +398,7 @@ inline void hitscan_object_CtoS::handle()
     const int spawner_dmg = 25;
     int spawner_health;
 
-    float x,y,z;
+    //float x,y,z;
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
     Spawner* spawner = NULL;
@@ -410,9 +410,9 @@ inline void hitscan_object_CtoS::handle()
             if (agent==NULL) return;
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            x = agent->s.x;
-            y = agent->s.y;
-            z = agent->s.z;
+            //x = agent->s.x;
+            //y = agent->s.y;
+            //z = agent->s.z;
             break;
 
         case OBJ_TYPE_SLIME:
@@ -420,9 +420,9 @@ inline void hitscan_object_CtoS::handle()
             if (slime==NULL) return;
             // apply damage
             slime->take_damage(slime_dmg);
-            x = slime->x;
-            y = slime->y;
-            z = slime->z;
+            //x = slime->x;
+            //y = slime->y;
+            //z = slime->z;
             break;
 
         case OBJ_TYPE_SPAWNER:
@@ -440,9 +440,9 @@ inline void hitscan_object_CtoS::handle()
                 int coins = spawner->get_coins_for_kill(a->status.team);
                 a->status.add_coins(coins);
             }
-            x = spawner->x;
-            y = spawner->y;
-            z = spawner->z;
+            //x = spawner->x;
+            //y = spawner->y;
+            //z = spawner->z;
             break;
 
         case OBJ_TYPE_TURRET:
@@ -458,9 +458,9 @@ inline void hitscan_object_CtoS::handle()
     msg.target_id = this->id;
     msg.target_type = this->type;
     msg.target_part = this->part;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
+    //msg.x = x;
+    //msg.y = y;
+    //msg.z = z;
     msg.vx = vx;
     msg.vy = vy;
     msg.vz = vz;

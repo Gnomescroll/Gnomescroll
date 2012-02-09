@@ -111,92 +111,16 @@ void Agent_event::coins_changed(unsigned int coins)
     this->a->status.coins = coins;
 }
 
-void Agent_event::fired_weapon_at_object(int id, int type, int part, float x, float y, float z)
+void Agent_event::fired_weapon_at_object(int id, int type, int part)
 {
-    // animate laser to target
-
-    // get vector from player to target's part
-    // pick random piece of the part
-    // animate to that
-
-    // TODO:
-    // need function get part position
-    // currently goes straight to the target point, which is usually the feet
-
-//// Gets x,y,z from packet;
-//// reasons for this stated in agent_hit_object_StoC class declaration
-
-    //void *obj;
-    //float x,y,z;
-    //switch (type)
-    //{
-        //case OBJ_TYPE_AGENT:
-            //obj = ClientState::agent_list.get(id);
-            //if (obj == NULL) return;
-            //x = ((Agent_state*)obj)->s.x;
-            //y = ((Agent_state*)obj)->s.y;
-            //z = ((Agent_state*)obj)->s.z;
-            //break;
-
-        //case OBJ_TYPE_SLIME:
-            //obj = ClientState::slime_list.get(id);
-            //if (obj==NULL) return;
-            //printf("Slime not null\n");
-            //x = ((Monsters::Slime*)obj)->x;
-            //y = ((Monsters::Slime*)obj)->y;
-            //z = ((Monsters::Slime*)obj)->z;
-            //break;
-            
-        //case OBJ_TYPE_SPAWNER:
-            //obj = ClientState::spawner_list.get(id);
-            //if (obj==NULL) return;
-            //x = ((Spawner*)obj)->x;
-            //y = ((Spawner*)obj)->y;
-            //z = ((Spawner*)obj)->z;
-            //break;
-
-        //case OBJ_TYPE_TURRET:
-            ////obj = ClientState::turret_list.get(id);
-            ////if (obj==NULL) return;
-            ////x = ((Turret*)obj)->x;
-            ////y = ((Turret*)obj)->y;
-            ////z = ((Turret*)obj)->z;
-            ////break;
-            //printf("Agent_event::fired_weapon_at_object -- turret type not implemented\n");
-            //return;
-
-        //default:
-            //printf("Hitscan against invalid or non-hitscanned type %d\n", type);
-            //return;
-    //}
-
-    //if (type == OBJ_TYPE_AGENT)
-    //{
-        //Agent_state* agent = ClientState::agent_list.get(id);
-        //if (agent != NULL && agent->vox != NULL)
-        //{
-            //Voxel_volume* vv = agent->vox->get_part(part);
-            //if (vv != NULL)
-            //{
-                //float c[3];
-                //vv->get_center(c);
-                //Animations::agent_bleed(c[0], c[1], c[2]);
-            //}
-        //}
-    //}
-
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;
     sz = this->a->s.z + this->a->camera_height();
 
     float f[3];
-    f[0] = x - sx;
-    f[1] = y - sy;
-    f[2] = z - sz;
-
-    normalize_vector(f);
-
+    this->a->s.forward_vector(f);
+    
     // animate
     const float hitscan_speed = 200.0f;
     ClientState::hitscan_effect_list.create(

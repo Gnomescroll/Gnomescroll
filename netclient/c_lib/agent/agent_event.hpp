@@ -29,7 +29,7 @@ class Agent_event {
         void dropped_flag();
         void scored_flag();
 
-        void fired_weapon_at_object(int id, int type, int part, float x, float y, float z);
+        void fired_weapon_at_object(int id, int type, int part);
         void fired_weapon_at_block(float x, float y, float z, int cube, int side);
         void fired_weapon_at_nothing();
         void melee_attack_object(int id, int type, int part, float x, float y, float z);

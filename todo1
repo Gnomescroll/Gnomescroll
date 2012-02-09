@@ -244,16 +244,14 @@ Feb08
 
 fix valgrind errors on server
 lower mouse sensitivity when zoomed
-
-===================
-
 dont destroy teammate voxels
 restore voxels on revive
+hitscan laser anim vectors against models appear in other clients properly
+===================
+
 
 endpoints on hitscan laser
-clients dont play laser anim when other player shoots nothing
 
-mouse momentum
 Ratelimit jetpack / cap height
 
 Weapon tuning
@@ -315,3 +313,4 @@ TODO LIST FROM FEB4 NET TEST RESULTS:
  
 Other
 -fix client side prediction bug (movement is slugish, glitch)   BRANDON
+mouse momentum  BRANDON
