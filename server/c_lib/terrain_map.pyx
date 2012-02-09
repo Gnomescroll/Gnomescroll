@@ -50,15 +50,14 @@ cpdef inline int get(int x, int y,int z):
     return _get(x,y,z)
 
 
-from dats.loader import c_dat
+import dats.loader as dat_loader
+c_dat = dat_loader.c_dat
 
-def init_cube_properties(id=None):
-    global c_dat
+def init_cube_properties(c_dat):
 
     def apply(id):
         global infinite_texture_counter
         cdef cubeProperties* cp
-        print "%s= d" % (id)
         cp = get_cube(id)
         cp.active = int(c_dat.get(id,'active'))
         cp.solid = int(c_dat.get(id,'solid'))
@@ -66,10 +65,7 @@ def init_cube_properties(id=None):
         cp.transparent = int(c_dat.get(id,'transparent'))
         cp.max_damage = int(c_dat.get(id,'max_damage'))
 
-    if id is None:
-        for id in c_dat.dat:
-            apply(id)
-    else:
+    for id in c_dat.dat:
         apply(id)
 
 '''
