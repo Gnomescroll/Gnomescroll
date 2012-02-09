@@ -13,6 +13,44 @@ def _init_map_for_draw():
 cdef extern from "../c_lib/t_map/t_map.hpp":
     int _get(int x, int y, int z)
 
+
+
+## functions ##
+'''
+PART 3: Drawing Functions
+'''
+
+cdef extern from "./t_map/t_vbo_update.hpp" namespace "t_map":
+    int update_chunks()
+
+cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
+    int draw_map()
+
+cpdef _update_chunks():
+    update_chunks()
+
+cpdef _draw_map():
+    draw_map()
+
+
+'''
+Hud Selector Stuff
+'''
+
+cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
+    cdef cppclass CubeSelector:
+        void load_cube_property(int pos, int cube_id, int tex_id)
+
+    CubeSelector cube_selector
+
+def set_hud_cube_selector():
+    global dat
+
+    for id in dat:
+        hud_img = c_dat.get(id,'hud_img')
+        hud_pos = c_dat.get(id,'hud_pos')
+        cube_selector.load_cube_property(hud_pos, id, hud_img)
+
 '''
 PART 2: Properties
 '''
@@ -35,23 +73,21 @@ cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
 ## Setup ##
 from dat_loader import c_dat
 
-def init_cube_properties(id=None):
+def init_cube_properties():
     global c_dat
 
     def apply(id):
-        global infinite_texture_counter
         cdef cubeProperties* cp
         cp = get_cube(id)
+        #print "id= %s" % ( c_dat.get(id,'active') )
         cp.active = int(c_dat.get(id,'active'))
         cp.solid = int(c_dat.get(id,'solid'))
         cp.occludes = int(c_dat.get(id,'occludes'))
         cp.transparent = int(c_dat.get(id,'transparent'))
         cp.max_damage = int(c_dat.get(id,'max_damage'))
 
-    if id is None:
-        for id in c_dat.dat:
-            apply(id)
-    else:
+    for id in c_dat.dat:
+        print "%s" %(id)
         apply(id)
 
 '''
@@ -67,6 +103,24 @@ def init_cube_side_texture():
         for side in range(6):
             texture_id = cube['texture_id'][side]
             set_cube_side_texture(id, side, texture_id)
+
+'''
+init stuff
+'''
+
+def init():
+    global c_dat
+    print "Init Terrain Map"
+    init_cube_properties()
+    init_cube_side_texture()
+    init_t_map()
+    set_hud_cube_selector()
+init()
+
+
+
+#DEPRECATE BELOW LINE
+
 
 '''
 Part 3: Quad Cache
@@ -188,39 +242,3 @@ def get_tex_texture(int tile_id, int side, int vert_num):
         ty = 0.0
     return (tx,ty,texture_id)
 '''
-
-## functions ##
-'''
-PART 3: Drawing Functions
-'''
-
-
-cdef extern from "./t_map/t_vbo_update.hpp" namespace "t_map":
-    int update_chunks()
-
-cdef extern from "./t_map/t_vbo.hpp" namespace "t_map":
-    int draw_map()
-
-cpdef _update_chunks():
-    update_chunks()
-
-cpdef _draw_map():
-    draw_map()
-
-
-'''
-Hud Selector Stuff
-'''
-cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
-    cdef cppclass CubeSelector:
-        void load_cube_property(int pos, int cube_id, int tex_id)
-
-    CubeSelector cube_selector
-
-def set_hud_cube_selector():
-    global c_dat
-
-    for id in c_dat.dat:
-        hud_img = c_dat.get(id,'hud_img')
-        hud_pos = c_dat.get(id,'hud_pos')
-        cube_selector.load_cube_property(hud_pos, id, hud_img)

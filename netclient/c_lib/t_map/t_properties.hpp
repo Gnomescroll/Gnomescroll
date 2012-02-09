@@ -39,7 +39,7 @@ inline struct cubeProperties* _get_cube(int id) __attribute((always_inline));
 
 struct cubeProperties* _get_cube(int id)
 {
-    return cube_list + id;
+    return &cube_list[id];
 }
 
 }

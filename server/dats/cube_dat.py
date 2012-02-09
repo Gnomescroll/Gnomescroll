@@ -1,4 +1,4 @@
-dat = {   0: {   'active': False,
+dat = {   0: {   'active': 0,
            'gravity': 0,
            'hud_img': -1,
            'hud_pos': -1,

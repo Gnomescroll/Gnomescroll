@@ -9,4 +9,9 @@ struct cubeProperties cube_list[max_cubes];
 
 //struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
 
+void init_t_properties()
+{
+    printf("init cube property list \n");
+}
+
 }

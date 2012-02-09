@@ -16,6 +16,15 @@ Terrain_map* main_map;
 
 void init_t_map()
 {
+
+    static int init = 0;
+    if(init != 0) 
+    {
+        printf("error: init_t_map called twice \n");
+        return;
+    }
+    init = 1;
+    
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
     //set(2,4,5, 10);
