@@ -17,6 +17,19 @@ Terrain_map* main_map;
 void init_t_map()
 {
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
+
+    //set(2,4,5, 10);
+    //printf("get= %i \n", get(2,4,5) );
+
+    for( int i=0; i<16; i++ )
+    for( int j=0; j<16; j++ )
+    {
+        set(i,j, 10, 5);
+        //if(i%2 == 0)  set(i,j, 6, 1);
+        //if(j%3 == 0)  set(i,j, 7, 1);
+
+    }
+
 }
 
 #ifdef DC_CLIENT

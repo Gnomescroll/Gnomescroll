@@ -338,7 +338,10 @@ class Main:
         '''
 
         #terrain_map.set_map_dimensions(128,128,128)
-        map_gen.floor(terrain_map)
+        
+        if False:
+            map_gen.floor(terrain_map)
+        
             #terrain_map.load_from_disk("natural_terrain")
 
         #_gen_map()

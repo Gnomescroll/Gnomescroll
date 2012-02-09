@@ -109,14 +109,18 @@ class Vbo_map
     {
         class MAP_CHUNK* m;
         for(int i=0; i<xchunk_dim; i++)
-        for(int j=0; j<xchunk_dim; j++)
+        for(int j=0; j<ychunk_dim; j++)
         {
             m = map->chunk[j*xchunk_dim + i];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
+
+            //printf("t\n");
+
             if( m->needs_update == false ) continue;
             m->needs_update = false; //reset flag
 
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
+            //printf("updating vbo: %i %i \n", i, j);
             update_vbo(i, j);
 
         }

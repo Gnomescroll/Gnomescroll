@@ -160,6 +160,8 @@ static const int VERTEX_SLACK = 128;
 
 void Vbo_map::update_vbo(int i, int j)
 {
+    printf("update vbo: %i %i \n", i,j);
+
     int tile_id, side_num;
     int _x, _y, _z;
 
@@ -168,6 +170,9 @@ void Vbo_map::update_vbo(int i, int j)
 
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    if(chunk == NULL) printf("chunk null\n");
+    if(vbo == NULL) printf("vbo null\n");
 
     int cube_vertex_count[4] = {0, 0, 0, 0};
     int vertex_count = 0; //clear counter
@@ -179,15 +184,17 @@ void Vbo_map::update_vbo(int i, int j)
         2> Use z indices
         3> memcpy rows
     */
-
+    int nz= 0;
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
         /*
             precompute starting and ending positions
         */
-        for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
-        for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
+        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
             tile_id = map->get_block(_x,_y,_z);
+
+            if(tile_id != 0) nz++;
 
             if( !isActive(tile_id) ) continue;
 
@@ -218,6 +225,7 @@ void Vbo_map::update_vbo(int i, int j)
         }}
     }
     
+    printf("nz= %i \n",nz);
 
     vbo->_v_num[0] = cube_vertex_count[0];
     vbo->_v_num[1] = cube_vertex_count[1];
@@ -253,8 +261,8 @@ void Vbo_map::update_vbo(int i, int j)
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
-        for(_x = 8*chunk->xpos; _x < 8*chunk->xpos +8 ; _x++) {
-        for(_y = 8*chunk->ypos; _y < 8*chunk->ypos +8 ; _y++) {
+        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
             tile_id = map->get_block(_x,_y,_z);
 
@@ -291,6 +299,7 @@ void Vbo_map::update_vbo(int i, int j)
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 
+    printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
 }
 
 

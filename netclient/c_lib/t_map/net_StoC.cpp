@@ -4,6 +4,7 @@
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
 
+using namespace t_map;
 
 void chunk_meta_data_StoC::handle()
 {

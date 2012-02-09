@@ -18,7 +18,10 @@ namespace t_map
 
 const int MAP_WIDTH = 512;
 const int MAP_HEIGHT = 512;
-    
+   
+const int MAP_CHUNK_WIDTH = MAP_WIDTH/16;
+const int MAP_CHUNK_HEIGHT = MAP_CHUNK_HEIGHT/16;
+ 
 void init_t_map();
 
 #ifdef DC_CLIENT
