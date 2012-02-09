@@ -2,14 +2,13 @@
 
 //#include <sys/types.h>
 
-#define NET_PEER_DEBUG 1
+#define NET_PEER_DEBUG 0
 
 NetPeer::NetPeer() 
 {
     connected = 0;
     client_id = -1;
     enet_peer = NULL;
-
 }
 
 

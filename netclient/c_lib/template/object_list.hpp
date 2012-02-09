@@ -8,7 +8,7 @@
  * void server_tick();
  */
 
-#define OBJECT_LIST_DEBUG 1
+#define OBJECT_LIST_DEBUG 0
 
 template <class Object_state, int max_n=1024>
 class Object_list {
@@ -85,7 +85,14 @@ template <class Object_state, int max_n>
 Object_list<Object_state, max_n>::~Object_list()
 {
     if (a != NULL)
+    {
+        for (int i=0; i<this->n_max; i++)
+        {
+            if (this->a[i] != NULL)
+                delete this->a[i];
+        }
         free(this->a);
+    }
 }
 
 template <class Object_state, int max_n>

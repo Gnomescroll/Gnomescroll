@@ -16,7 +16,11 @@ opts = opts.opts
 
 import random
 import time
-
+import platform
+OS = platform.system()
+if OS == 'Linux':
+    import linux_terminal
+    
 import map_gen
 import init_c_lib
 import c_lib.map_gen
@@ -322,7 +326,6 @@ def good_cave1():
 
     #c_lib.map_gen.floor(128,128,14,1,101)
 
-
 class Main:
 
     def __init__(self):
@@ -407,6 +410,10 @@ class Main:
         init_c_lib.slime_test(30)
         init_c_lib.ctf_start()
         while True:
+
+            if linux_terminal.check_stdin():
+                break
+            
             NetServer.connectionPool.dispatch_buffer()
             NetServer.connectionPool.check_clients_ready()
 
@@ -436,7 +443,25 @@ class Main:
 
             time.sleep(0.0001)
             #time.sleep(0.100)
+
+        init_c_lib.close()
+            
 if __name__ == "__main__":
     print "starting server"
     main = Main()
-    main.run2()
+
+    if OS == 'Linux':
+        # for reading character input
+        # need to switch terminal to character mode,
+        # and restore it when done
+        # it is inside a try loop, to catch control-c and make sure teardown is complete
+        termios = linux_terminal.termios
+        tty = linux_terminal.tty
+        old_settings = termios.tcgetattr(sys.stdin)
+        try:
+            tty.setcbreak(sys.stdin.fileno())
+            main.run2()
+        finally:
+            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+    else:
+        main.run2()

@@ -337,6 +337,8 @@ class FixedSizeReliableNetPacketToClient {
                 if(np == NULL) continue;
                 np->push_reliable_message(nm);
             }
+            //delete nm->buff;
+            //delete nm;
         }
 
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}

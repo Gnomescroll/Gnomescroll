@@ -4,6 +4,8 @@
 #include <net_lib/common/net_peer.hpp>
 #include <c_lib/defines.h>
 
+extern NetMessageArray_pool net_message_array_pool;
+
 namespace NetClient
 {
     extern NetPeer Server;

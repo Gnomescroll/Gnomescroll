@@ -15,8 +15,6 @@ enum FLAG_PARTS {
 
 const float FLAG_HEIGHT = 1.0f;
 
-class Flag;
-
 class Flag {
     public:
         float x,y,z;

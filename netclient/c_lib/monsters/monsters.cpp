@@ -22,18 +22,8 @@ type(OBJ_TYPE_SLIME)
 {
     this->init_vox();
 }
-Slime::Slime(float x, float y, float z, float vx, float vy, float vz)
-:
-x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
-theta(0.0), phi(0.0),
-type(OBJ_TYPE_SLIME)
-#ifdef DC_SERVER
-, changed(true),tick_num(0)
-#endif
-{
-    printf("Slime::Slime(float x, float y, float z, float vx, float vy, float vz), DEPRECATED, use vox_dat\n");
-    //this->vox = new Voxel_model(SLIME_PART_NUM);
-}
+
+
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
@@ -49,15 +39,15 @@ type(OBJ_TYPE_SLIME)
 
 Slime::~Slime()
 {
-    if (this->vox != NULL) {
+    if (this->vox != NULL)
         delete this->vox;
-    }
+
     #ifdef DC_CLIENT
     Animations::slime_melt(this->x, this->y, this->z);
     #endif
     
     #ifdef DC_SERVER
-    DestroySlime_StoC msg = DestroySlime_StoC();
+    DestroySlime_StoC msg;
     msg.id = this->id;
     msg.broadcast();
     #endif
@@ -87,7 +77,14 @@ void Slime::tick() {
     }
 
     #ifdef DC_SERVER
-    if (changed) {
+    tick_num++;
+    if (tick_num == 30)
+    {
+        tick_num = 0;
+        changed = true;
+    }
+    if (changed)
+    {
         SlimeState_StoC msg;
         msg.id = this->id;
         msg.seq = 0;
@@ -100,12 +97,8 @@ void Slime::tick() {
         msg.theta = this->theta;
         msg.phi = this->phi;
         msg.broadcast();
+        changed = false;
     }
-    tick_num++;
-    if (tick_num == 30) {
-        changed = true;
-    }
-    tick_num %= 6;
     #endif
     
     // find nearby players
@@ -123,14 +116,16 @@ void Slime::tick() {
     if (closest >= 0 && this->vox != NULL)
     {
         float min_dist = STATE::agent_list.filtered_object_distances[closest];
-        if (min_dist < this->vox->largest_radius()) {
+        if (min_dist < this->vox->largest_radius())
+        {
             // damage and die if within range
             const int slime_dmg = 20; // TODO
             // blow up, damage player
             agent = STATE::agent_list.filtered_objects[closest];
-            if (agent != NULL) {
+            if (agent != NULL)
+            {
                 agent->status.apply_damage(slime_dmg, this->id, this->type);
-                STATE::slime_list.destroy(this->id);    // die
+                this->health = 0;
                 return;
             }
         }
@@ -185,33 +180,22 @@ void Slime::tick() {
     #ifdef DC_SERVER
     changed = true;
     #endif
-
-    //SlimeState_StoC msg;
-    //msg.id = this->id;
-    //msg.seq = 0;
-    //msg.x = this->x;
-    //msg.y = this->y;
-    //msg.z = this->z;
-    //msg.vx = this->vx;
-    //msg.vy = this->vy;
-    //msg.vz = this->vz;
-    //msg.theta = this->theta;
-    //msg.phi = this->phi;
-    //msg.broadcast();
 }
 
-void Slime_list::update() {
-    int i;
-    for (i=0; i<this->n_max; i++) {
+void Slime_list::update()
+{
+    for (int i=0; i<this->n_max; i++)
+    {
         if (this->a[i] == NULL) continue;
         if (this->a[i]->vox == NULL) continue;
         this->a[i]->vox->update(&slime_vox_dat, this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
     }
 }
 
-void Slime_list::tick() {
-    int i;
-    for (i=0; i<this->n_max; i++) {
+void Slime_list::tick()
+{
+    for (int i=0; i<this->n_max; i++)
+    {
         if (this->a[i] == NULL) continue;
         this->a[i]->tick();
     }
@@ -239,11 +223,10 @@ void Slime::set_state(float x, float y, float z, float vx, float vy, float vz, f
     this->set_angles(theta, phi);
 }
 
-void Slime_list::send_to_client(int client_id) {
-    int i;
-    Slime* s;
-    for (i=0; i<n_max; i++) {
-        s = this->a[i];
+void Slime_list::send_to_client(int client_id)
+{
+    for (int i=0; i<n_max; i++) {
+        Slime* s = this->a[i];
         if (s==NULL) continue;
         CreateSlime_StoC msg;
         msg.id = s->id;
@@ -251,10 +234,11 @@ void Slime_list::send_to_client(int client_id) {
     }
 }
 
-void test(int n) {
-    int i;
+void test(int n)
+{
     int x,y,z;
-    for (i=0; i<n; i++) {
+    for (int i=0; i<n; i++)
+    {
         x = randrange(0,127);
         y = randrange(0,127);
         z = _get_highest_open_block(x,y);
@@ -267,11 +251,10 @@ void test(int n) {
         #ifdef DC_SERVER
         Slime* s = STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
         if (s==NULL) return;
-        CreateSlime_StoC msg = CreateSlime_StoC();
+        CreateSlime_StoC msg;
         msg.id = s->id;
         msg.broadcast();
         #endif
-
     }
 }
 

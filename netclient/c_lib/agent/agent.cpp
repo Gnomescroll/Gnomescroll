@@ -539,17 +539,15 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     this->init_vox();
 }
 
-Agent_state::~Agent_state() {
-
+Agent_state::~Agent_state()
+{
     #ifdef DC_SERVER
     agent_destroy_StoC msg;
     msg.id = id;
     msg.broadcast();
     #endif
 
-    #ifdef DC_CLIENT
     if (this->vox != NULL) delete this->vox;
-    #endif
 }
 
 

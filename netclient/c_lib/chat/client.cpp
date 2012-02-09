@@ -319,7 +319,7 @@ bool ChatInput::route_command()
 
     if (!strcmp(cmd, (char*)"team"))
     {
-        if (buffer_len <= (strlen((char*)"/team "))) return true;
+        if (buffer_len <= (int)(strlen((char*)"/team "))) return true;
         char team_str[2];
         team_str[1] = '\0';
         team_str[0] = buffer[i];
@@ -336,7 +336,7 @@ bool ChatInput::route_command()
     else
     if (!strcmp(cmd, (char*)"name"))
     {
-        if (buffer_len <= (strlen((char*)"/name "))) return true;
+        if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
         char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
         int j = 0;
         while ((c = buffer[i++]) != '\0' && !isspace(c))

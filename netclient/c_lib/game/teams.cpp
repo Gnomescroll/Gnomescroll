@@ -213,6 +213,8 @@ void CTFTeam::tick()
 
 CTFTeam::~CTFTeam()
 {
-    if (this->flag != NULL) delete this->flag;
-    if (this->base != NULL) delete this->base;
+    if (this->flag != NULL)
+        delete this->flag;
+    if (this->base != NULL)
+        delete this->base;
 }

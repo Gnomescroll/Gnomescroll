@@ -103,3 +103,5 @@ core
 voxtmp/*
 
 churnlog
+
+.~lock*

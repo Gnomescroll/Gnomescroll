@@ -1,21 +1,10 @@
 #include "packet_buffer.hpp"
 
+#define PACKET_BUFFER_MALLOC_DEBUG 0
 
-#define PACKET_BUFFER_MALLOC_DEBUG 1
+#define NET_MESSAGE_ARRAY_MALLOC_DEBUG 0
 
-#define NET_MESSAGE_ARRAY_MALLOC_DEBUG 1
-
-class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
-{
-    public:
-        static char* name();
-};
-
-char* NetMessageArray_pool::name() {
-    static char* x = (char*) "NetMessageArray_pool"; return x;
-} 
-
-static NetMessageArray_pool net_message_array_pool;
+//static NetMessageArray_pool net_message_array_pool;
 
 void NetMessageArray::retire() 
 {
@@ -162,4 +151,98 @@ class Net_message* Net_message::acquire(int length)
     t->reference_count = 0;
     return t;
 #endif
+}
+
+/* NetMessageManager */
+
+NetMessageManager::NetMessageManager()
+{
+    nma_insert = NetMessageArray::acquire();
+
+    nma_insert_index = 0;
+    nma_read = nma_insert;
+    nma_read_index = 0;
+
+    pending_messages = 0;
+    pending_bytes_out = 0;
+}
+
+
+void NetMessageManager::push_message(Net_message* nm) 
+{
+    if(nm->len == 0) {printf("NETMESSAGEERROR!!!!\n");}
+
+    pending_bytes_out += nm->len;
+    pending_messages++;
+
+    nm->reference_count++;  //increment reference count?
+
+    //insert message
+    nma_insert->net_message_array[nma_insert_index] = nm;
+
+    //insert 
+    nma_insert_index++;
+    if(nma_insert_index == NET_MESSAGE_ARRAY_SIZE)
+    {
+        printf("NetMessageManager::push_message, rare condition \n");
+        //DEBUG?
+        nma_insert->next = NetMessageArray::acquire();
+        nma_insert->next->next = NULL; //head of list
+        nma_insert = nma_insert->next;
+        nma_insert_index = 0;
+    }
+}
+
+void NetMessageManager::serialize_messages(char* buff_, int index)
+{
+    int max = pending_bytes_out;
+    //printf("Starting serialization at address %i \n", buff_);
+    if(pending_messages == 0)
+    {
+        printf("impossible error \n");
+        return;
+    }
+    /*
+        Create packet and serialize to it
+    */
+
+    class Net_message* nm;
+
+    for(int i=0; i < pending_messages; i++)
+    {
+        nm = nma_read->net_message_array[nma_read_index];
+
+        memcpy(buff_+index, nm->buff, nm->len);
+        index += nm->len;
+
+
+        if(index > max)
+        {
+            printf("BLOODY HELL: %i, %i \n", index, max);
+        }
+
+        nm->decrement(); //reference count on packet
+
+        nma_read_index++;
+        if(nma_read_index == NET_MESSAGE_ARRAY_SIZE)
+        {
+            printf("NetMessageManager::serialize_messages, rare condition \n");
+            NetMessageArray* tmp = nma_read;
+            nma_read = nma_read->next;
+            tmp->retire();
+            nma_read_index=0;
+        }
+    }      
+
+    if(max != index)
+    {
+        printf("NetMessageManager, ERROR, index exceeds bytes to be wrrite: index= %i, max= %i \n", index, max);
+    }
+    //reset to virgin state
+    nma_insert_index = 0;
+    nma_read = nma_insert;
+    nma_read_index = 0;
+
+    pending_messages = 0;
+    pending_bytes_out = 0;
 }
