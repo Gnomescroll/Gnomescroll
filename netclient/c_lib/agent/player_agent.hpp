@@ -10,7 +10,7 @@
 #define AGENT_INTERPOLATION_DECAY 0.8f
 
 enum active_camera_states {
-    net_agent = 0 ,
+    net_agent = 0,
     client_side_prediction_interpolated,
     client_side_prediction,
     last_server_snapshot,

@@ -120,6 +120,7 @@ void init_handlers()
 }
 
 // options
+const float ZOOM_SENSITIVITY_SCALE = 0.7f;
 void set_input_options(
     bool invert_mouse,
     float sensitivity
@@ -127,6 +128,8 @@ void set_input_options(
 {
     input_state.invert_mouse = invert_mouse;
     input_state.sensitivity = sensitivity;
+    if (Hud::hud_draw_settings.zoom)
+        input_state.sensitivity *= ZOOM_SENSITIVITY_SCALE;
 }
 
 /* Chat buffer */

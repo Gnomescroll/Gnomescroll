@@ -171,11 +171,6 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
 #endif 
     {   
         distance *= scale;
-        //printf("collision distance= %f \n", distance);
-        //printf("voxel= %i %i %i \n", collision[0], collision[1], collision[2]);
-
-        //set(voxel[0], voxel[1], voxel[2], 0,0,0, 0);  // dont set here; terrain may have blocked the hitscan
-        
         needs_vbo_update = true;
         return 1;
     }

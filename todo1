@@ -240,6 +240,13 @@ body part damage
 played w/ shaders
 ====================
 
+Feb08
+
+fix valgrind errors on server
+lower mouse sensitivity when zoomed
+
+===================
+
 dont destroy teammate voxels
 restore voxels on revive
 
