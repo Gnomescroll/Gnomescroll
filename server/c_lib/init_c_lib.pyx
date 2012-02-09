@@ -2,6 +2,10 @@ from libcpp cimport bool
 
 cdef extern from "c_lib.hpp":
     int init_c_lib()
+    void close_c_lib()
+
+def close():
+    close_c_lib()
 
 #print "Initing c_lib"
 

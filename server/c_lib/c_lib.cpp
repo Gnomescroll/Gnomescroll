@@ -74,7 +74,8 @@
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
-int init_c_lib() {
+int init_c_lib()
+{
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
     srand(time(NULL));
@@ -83,7 +84,15 @@ int init_c_lib() {
 
     init_network();
     ServerState::init();
-return 0;
+
+    return 0;
+}
+
+void close_c_lib()
+{
+    
+    
+    printf("Closed c_lib\n");
 }
 
 void _set_seed(int seed) {

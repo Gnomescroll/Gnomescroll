@@ -32,6 +32,7 @@ class Object_pool {
     inline void retire(Object* nmb) __attribute__((always_inline));
 
     Object_pool();
+    ~Object_pool();
 
 };
 
@@ -40,6 +41,12 @@ Object_pool<Base, Object, BUFFER_POOL_SIZE>::Object_pool()
 {
     batch_num = 0;
     first = NULL;
+}
+
+template <class Base, class Object, int BUFFER_POOL_SIZE>
+Object_pool<Base, Object, BUFFER_POOL_SIZE>::~Object_pool()
+{
+
 }
 
 template <class Base, class Object, int BUFFER_POOL_SIZE>

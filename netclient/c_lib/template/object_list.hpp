@@ -85,7 +85,14 @@ template <class Object_state, int max_n>
 Object_list<Object_state, max_n>::~Object_list()
 {
     if (a != NULL)
+    {
+        for (int i=0; i<this->n_max; i++)
+        {
+            if (this->a[i] != NULL)
+                delete this->a[i];
+        }
         free(this->a);
+    }
 }
 
 template <class Object_state, int max_n>

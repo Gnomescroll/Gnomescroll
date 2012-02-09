@@ -49,12 +49,11 @@ class Slime {
     int take_damage(int dmg);
 
     Slime(int id);
-    Slime(float x, float y, float z, float vx, float vy, float vz);
     Slime(int id, float x, float y, float z, float vx, float vy, float vz);
     ~Slime();
 };
 
-#define SLIME_MAX 1024
+#define SLIME_MAX 256
 class Slime_list: public Object_list<Slime,SLIME_MAX>
 {
     private:

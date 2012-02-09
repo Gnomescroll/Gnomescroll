@@ -1,9 +1,8 @@
 #include "packet_buffer.hpp"
 
+#define PACKET_BUFFER_MALLOC_DEBUG 0
 
-#define PACKET_BUFFER_MALLOC_DEBUG 1
-
-#define NET_MESSAGE_ARRAY_MALLOC_DEBUG 1
+#define NET_MESSAGE_ARRAY_MALLOC_DEBUG 0
 
 class NetMessageArray_pool: public Object_pool<NetMessageArray_pool, NetMessageArray, 64>  //set to 64, 2 for testing
 {

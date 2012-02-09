@@ -25,7 +25,8 @@ type(OBJ_TYPE_FLAG)
 
 Flag::~Flag()
 {
-    if (this->vox != NULL) delete this->vox;
+    if (this->vox != NULL)
+        delete this->vox;
 }
 
 void Flag::tick()

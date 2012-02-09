@@ -539,8 +539,8 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     this->init_vox();
 }
 
-Agent_state::~Agent_state() {
-
+Agent_state::~Agent_state()
+{
     #ifdef DC_SERVER
     agent_destroy_StoC msg;
     msg.id = id;
