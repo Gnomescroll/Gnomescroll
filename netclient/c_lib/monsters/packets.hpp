@@ -28,7 +28,7 @@ class DestroySlime_StoC: public FixedSizeReliableNetPacketToClient<DestroySlime_
         inline void handle();
 };
 
-class SlimeState_StoC: public FixedSizeReliableNetPacketToClient<SlimeState_StoC>
+class SlimeState_StoC: public FixedSizeNetPacketToClient<SlimeState_StoC>
 {
     public:
         int id;
