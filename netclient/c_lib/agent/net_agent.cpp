@@ -96,6 +96,11 @@ inline void agent_shot_object_StoC::handle()
     voxel[0] = vx;
     voxel[1] = vy;
     voxel[2] = vz;
+    if (target_type == OBJ_TYPE_AGENT)
+    {
+        Agent_state* target = ClientState::agent_list.get(target_id);
+        if (target->status.team == a->status.team) return;
+    }
     destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 
@@ -126,6 +131,11 @@ inline void agent_melee_object_StoC::handle()
     voxel[0] = vx;
     voxel[1] = vy;
     voxel[2] = vz;
+    if (target_type == OBJ_TYPE_AGENT)
+    {
+        Agent_state* target = ClientState::agent_list.get(target_id);
+        if (target->status.team == a->status.team) return;
+    }
     destroy_object_voxel(target_id, target_type, target_part, voxel);
 }
 

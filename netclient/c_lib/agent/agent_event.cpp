@@ -67,6 +67,9 @@ void Agent_event::died() {
 
 void Agent_event::born() {
     a->status.dead = false;
+    // regenerate model
+    if (this->a->vox != NULL)
+        this->a->vox->restore(&agent_vox_dat, this->a->status.team);
 }
 
 void Agent_event::life_changing(bool dead) {

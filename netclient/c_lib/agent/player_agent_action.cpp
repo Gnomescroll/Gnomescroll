@@ -132,6 +132,8 @@ void PlayerAgent_action::hitscan_laser() {
     hitscan_block_CtoS block_msg;
     hitscan_none_CtoS none_msg;
     hitscan_object_CtoS obj_msg;
+
+    Agent_state* agent;
     
     switch (target_type) {
         case TARGET_VOXEL:
@@ -156,7 +158,10 @@ void PlayerAgent_action::hitscan_laser() {
                     look.x, look.y, look.z
                 );
             }
-            target.vv->set(target.voxel[0], target.voxel[1], target.voxel[2],0,0,0,0);  // delete voxel in model
+            agent = ClientState::agent_list.get(target.entity_id);
+            if (agent==NULL) break;
+            if (agent->status.team == this->p->you->status.team) break;
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);
             break;
 
         case TARGET_BLOCK:            
@@ -276,7 +281,9 @@ void PlayerAgent_action::hitscan_pick() {
     // send packet
     hit_block_CtoS block_msg;
     melee_object_CtoS obj_msg;
-    
+
+    Agent_state* agent;
+
     switch (target_type) {
         case TARGET_VOXEL:
             if (vox_distance > MELEE_PICK_MAX_DISTANCE)
@@ -300,8 +307,10 @@ void PlayerAgent_action::hitscan_pick() {
                     vec[0], vec[1], vec[2]
                 );
             }
-            target.vv->set(target.voxel[0], target.voxel[1], target.voxel[2],0,0,0,0);  // delete voxel in model
-            
+            agent = ClientState::agent_list.get(target.entity_id);
+            if (agent==NULL) break;
+            if (agent->status.team == this->p->you->status.team) break;
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);            
             break;
 
         case TARGET_BLOCK:
