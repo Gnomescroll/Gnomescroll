@@ -150,26 +150,90 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         vv->set_hitscan_properties(id, type, i);
 
         #ifdef DC_CLIENT
-        unsigned char r,g,b,a;
-        int j;
-        int ix,iy,iz;
-        if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
-        for (j=0; j < vp->colors.n; j++) {
-            ix = vp->colors.index[j][0];
-            iy = vp->colors.index[j][1];
-            iz = vp->colors.index[j][2];
-            if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
-
-            r = vp->colors.rgba[j][0];
-            g = vp->colors.rgba[j][1];
-            b = vp->colors.rgba[j][2];
-            a = vp->colors.rgba[j][3];
-            vv->set_color(ix, iy, iz, r,g,b,a);
-        }
-
+        this->set_part_color(vox_dat, i);
         ClientState::voxel_render_list.register_voxel_volume(vv);
         #endif
     }
+}
+
+void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
+{
+    #ifdef DC_CLIENT
+    unsigned char team_r, team_g, team_b;
+    int ret = ClientState::ctf.get_team_color(team, &team_r, &team_g, &team_b);
+    if (ret) return;
+
+    for (int i=0; i<this->n_parts; i++)
+        this->set_part_team_color(vox_dat, i, team_r, team_g, team_b);
+    #endif
+}
+
+void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
+{
+    #ifdef DC_CLIENT
+    VoxPart* vp = vox_dat->vox_part[part_num];
+    Voxel_volume* vv = &(this->vv[part_num]);
+
+    int ix,iy,iz;
+    unsigned char r,g,b,a;
+    for (int j=0; j<vp->colors.n; j++)
+    {
+        ix = vp->colors.index[j][0];
+        iy = vp->colors.index[j][1];
+        iz = vp->colors.index[j][2];
+        r = vp->colors.rgba[j][0];
+        g = vp->colors.rgba[j][1];
+        b = vp->colors.rgba[j][2];
+        a = vp->colors.rgba[j][3];
+
+        if (vp->colors.team
+        && r == vp->colors.team_r
+        && g == vp->colors.team_g
+        && b == vp->colors.team_b)
+        {
+            r = team_r;
+            g = team_g;
+            b = team_b;
+        }
+
+        vv->set_color(ix, iy, iz, r,g,b,a);
+    }
+    #endif
+}
+
+void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
+{
+    VoxPart *vp = vox_dat->vox_part[part_num];
+    Voxel_volume* vv = &(this->vv[part_num]);
+    int x,y,z;
+    x = vp->dimension.x;
+    y = vp->dimension.y;
+    z = vp->dimension.z;
+    
+    #ifdef DC_CLIENT
+    unsigned char r,g,b,a;
+    int j;
+    int ix,iy,iz;
+    if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
+    for (j=0; j < vp->colors.n; j++) {
+        ix = vp->colors.index[j][0];
+        iy = vp->colors.index[j][1];
+        iz = vp->colors.index[j][2];
+        if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
+
+        r = vp->colors.rgba[j][0];
+        g = vp->colors.rgba[j][1];
+        b = vp->colors.rgba[j][2];
+        a = vp->colors.rgba[j][3];
+        vv->set_color(ix, iy, iz, r,g,b,a);
+    }
+    #endif
+}
+
+void Voxel_model::set_colors(VoxDat* vox_dat)
+{
+    for (int i=0; i<this->n_parts; i++)
+        this->set_part_color(vox_dat, i);
 }
 
 void Voxel_model::set_draw(bool draw) {
@@ -256,50 +320,6 @@ float Voxel_model::largest_radius() {
     return largest;
 }
 
-void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
-{
-    #ifdef DC_CLIENT
-    unsigned char team_r, team_g, team_b;
-    int ret = ClientState::ctf.get_team_color(team, &team_r, &team_g, &team_b);
-    if (ret) return;
-
-    int i;
-    VoxPart* vp;
-    Voxel_volume* vv;
-    for (i=0; i<this->n_parts; i++)
-    {
-        vp = vox_dat->vox_part[i];
-        vv = &(this->vv[i]);
-
-        int j;
-        int ix,iy,iz;
-        unsigned char r,g,b,a;
-        for (j=0; j<vp->colors.n; j++)
-        {
-            ix = vp->colors.index[j][0];
-            iy = vp->colors.index[j][1];
-            iz = vp->colors.index[j][2];
-            r = vp->colors.rgba[j][0];
-            g = vp->colors.rgba[j][1];
-            b = vp->colors.rgba[j][2];
-            a = vp->colors.rgba[j][3];
-
-            if (vp->colors.team
-            && r == vp->colors.team_r
-            && g == vp->colors.team_g
-            && b == vp->colors.team_b)
-            {
-                r = team_r;
-                g = team_g;
-                b = team_b;
-            }
-
-            vv->set_color(ix, iy, iz, r,g,b,a);
-        }
-    }
-    #endif
-}
-
 Voxel_volume* Voxel_model::get_part(int part)
 {
     if (part >= this->n_parts)
@@ -309,4 +329,12 @@ Voxel_volume* Voxel_model::get_part(int part)
     }
 
     return &this->vv[part];
+}
+
+// restores voxels to starting state
+void Voxel_model::restore(VoxDat* vox_dat, int team)
+{
+    this->set_colors(vox_dat);
+    if (team >= 0)
+        this->update_team_color(vox_dat, team);
 }
