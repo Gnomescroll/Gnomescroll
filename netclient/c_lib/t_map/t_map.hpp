@@ -12,8 +12,12 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
+
 namespace t_map
 {
+
+const int MAP_WIDTH = 512;
+const int MAP_HEIGHT = 512;
     
 void init_t_map();
 

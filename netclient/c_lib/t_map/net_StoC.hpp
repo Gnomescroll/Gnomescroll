@@ -2,6 +2,24 @@
 
 #include <net_lib/net.hpp>
 
+
+class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<block_StoC>
+{
+    public:
+
+        int x,y
+        int version;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&version, buff, buff_n, pack);
+        }
+        
+        inline void handle();
+};
+
 class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
 {
     public:

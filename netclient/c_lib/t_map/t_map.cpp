@@ -16,7 +16,7 @@ Terrain_map* main_map;
 
 void init_t_map()
 {
-    main_map = new Terrain_map(512, 512); //512 by 512 map
+    main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 }
 
 #ifdef DC_CLIENT

@@ -48,6 +48,12 @@ void RegisterMessages() {
     agent_name_StoC::register_client_packet();
 
     agent_block_CtoS::register_server_packet();
+
+    /*
+        Map Messages
+    */
+    map_chunk_list_request_CtoS::register_server_packet();
+    chunk_meta_data_StoC::register_client_packet();
     // block value change
     block_StoC::register_client_packet();
     block_CtoS::register_server_packet();

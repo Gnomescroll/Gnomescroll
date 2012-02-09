@@ -3,7 +3,7 @@
 namespace t_map
 {
 
-    const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
+    static const MAP_ELEMENT NO_MAP_ELEMENT = {{{0}}};
     const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
     const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
 

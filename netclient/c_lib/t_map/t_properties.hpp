@@ -33,9 +33,6 @@ struct cubeProperties* get_cube(int id)
     return &cube_list[id];
 }
 
-
-
-
 using namespace t_map;
 
 inline struct cubeProperties* _get_cube(int id) __attribute((always_inline));
