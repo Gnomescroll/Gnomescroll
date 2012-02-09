@@ -1,5 +1,7 @@
 #include "t_map_class.hpp"
 
+#include "t_map.hpp"
+
 namespace t_map
 {
 

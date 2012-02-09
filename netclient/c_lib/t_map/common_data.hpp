@@ -40,8 +40,8 @@ namespace t_map
         to reduce size from x 36 to 16 bytes per vertex for normal blocks
     */
     struct Vertex {
-        float x,y,z;
-        float tx,ty,tz; //12
+        float x,y,z; //12
+        float tx,ty,tz; //24
 
         union
         {

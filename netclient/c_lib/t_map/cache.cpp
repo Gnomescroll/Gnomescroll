@@ -6,6 +6,7 @@
 namespace t_map
 {
 
+void init_quad_cache_vertex_cordinates();
 void init_quad_cache_texture_cordinates();
 void init_quad_cache_normals();
 
@@ -17,6 +18,7 @@ void init_cache()
 
     init_quad_cache_texture_cordinates();
     init_quad_cache_normals();
+    init_quad_cache_vertex_cordinates();
 }
 
 /*
@@ -38,6 +40,34 @@ void init_cache()
         ty = 0.0
 */
 
+void init_quad_cache_vertex_cordinates()
+{
+
+    static const float v_index[72] = 
+    {
+        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+    };
+
+    for(int cube_id=0;cube_id<max_cubes;cube_id++) 
+    {
+        for(int side=0;side<6;side++) 
+        {
+            for(int i=0; i<4; i++)
+            {
+                int index = 12*side+3*i;
+                quad_cache[cube_id*6*4 +4*side + i].x = v_index[index + 0];
+                quad_cache[cube_id*6*4 +4*side + i].y = v_index[index + 1];
+                quad_cache[cube_id*6*4 +4*side + i].z = v_index[index + 2];
+            }
+        }
+    }
+
+}
 void init_quad_cache_texture_cordinates()
 {
     
