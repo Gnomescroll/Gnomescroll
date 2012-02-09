@@ -4,11 +4,13 @@ cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
     void init_t_map()
     void init_for_draw()
 
+'''
 def _init_map():
     init_t_map()
 
 def _init_map_for_draw():
     init_for_draw()
+'''
 
 cdef extern from "../c_lib/t_map/t_map.hpp":
     int _get(int x, int y, int z)
@@ -113,13 +115,12 @@ init stuff
 '''
 
 def init():
-    global c_dat
     print "Init Terrain Map"
     init_cube_properties()
     init_cube_side_texture()
     init_t_map()
     set_hud_cube_selector()
-
+    init_for_draw()
 
 
 #DEPRECATE BELOW LINE

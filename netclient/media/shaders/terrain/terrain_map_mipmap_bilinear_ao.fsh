@@ -1,5 +1,5 @@
 varying vec3 texCoord;
-varying mat2 lightMatrix0;
+varying mat2 lightMatrix;
  
 varying vec4 inColor;
  
@@ -12,7 +12,7 @@ void main()
 	vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
 	vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
 
-	float tmp = dot(vx, lightMatrix0 * vy);
+	float tmp = dot(vx, lightMatrix * vy);
 
 	//vec3 color = inColor.rgb;	
 	vec3 color = tmp*(texture2DArray(base_texture, texCoord.xyz).rgb);	

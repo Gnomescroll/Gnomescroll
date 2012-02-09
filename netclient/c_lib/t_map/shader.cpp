@@ -8,8 +8,8 @@ namespace t_map
 
     void init_shaders()
     {
-        void set_map_shader_0();
-        void init_map_3d_texture();
+        set_map_shader_0();
+        init_map_3d_texture();
     }
 
     void set_map_shader_0() 
@@ -45,10 +45,14 @@ namespace t_map
         
         map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
+        
+        //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
+
     }
 
     void init_map_3d_texture()
     {
+
         terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
         if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
 
@@ -84,7 +88,8 @@ namespace t_map
         glEnable(GL_TEXTURE_2D);
 
         glGenTextures( 1, &terrain_map_glsl );
-        glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_texture);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, terrain_map_glsl);
+
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

@@ -32,12 +32,12 @@ void init_t_map()
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 
-    for( int i=0; i<32; i++ )
-    for( int j=0; j<32; j++ )
+    for( int i=0; i<128; i++ )
+    for( int j=0; j<128; j++ )
     {
-        set(i,j, 10, 1);
-        //if(i%2 == 0)  set(i,j, 6, 1);
-        //if(j%3 == 0)  set(i,j, 7, 1);
+        set(i,j, 1, 1);
+        if(i%2 == 0)  set(i,j, 6, 2);
+        if(j%3 == 0)  set(i,j, 7, 2);
 
     }
 
@@ -46,10 +46,12 @@ void init_t_map()
 #ifdef DC_CLIENT
     void init_for_draw()
     {
+        printf("init for draw \n");
+
         init_cache();
         init_t_vbo();
         init_textures();
-        void init_shaders();
+        init_shaders();
     }
 #endif
 
@@ -74,20 +76,6 @@ int _get(int x, int y, int z)
 void _set(int x, int y, int z, int value)
 {
     t_map::main_map->set_block(x,y,z,value);
-}
-
-
-/*
-    Move to utility functions
-*/
-int _get_highest_open_block(int x, int y)
-{
-    return 127;
-}
-
-int _get_highest_open_block(int x, int y, int agent_height)
-{
-    return 127;
 }
 
 

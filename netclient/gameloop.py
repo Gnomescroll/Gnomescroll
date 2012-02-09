@@ -62,12 +62,11 @@ class App(object):
             import cube_dat
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
-        c_lib.terrain_map.init()
+
         '''
             Init terrain map and prepare for draw
         '''
-        c_lib.terrain_map._init_map()
-        c_lib.terrain_map._init_map_for_draw()
+        c_lib.terrain_map.init()
 
         #init_c_lib.camera_callback = c_lib.terrain_map.camera_callback
 

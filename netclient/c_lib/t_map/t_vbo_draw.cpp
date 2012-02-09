@@ -68,12 +68,11 @@ void Vbo_map::draw_map()
 
     glUseProgramObjectARB(map_shader[0]);
 
-    glEnableVertexAttribArray(map_TexCoord);
-    glEnableVertexAttribArray(map_LightMatrix);
+
 
     glColor3b(255,255,255);
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
     
     glShadeModel(GL_SMOOTH);
@@ -82,9 +81,15 @@ void Vbo_map::draw_map()
 
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
+    glEnableVertexAttribArray(map_TexCoord);
+    glEnableVertexAttribArray(map_LightMatrix);
+
+    //printf("mapshader= %i  texture= %i \n", map_shader[0], terrain_map_glsl );
+    
     struct Map_vbo* vbo;
 
     glEnable(GL_CULL_FACE);
@@ -92,6 +97,7 @@ void Vbo_map::draw_map()
     for(int i=0;i<draw_vbo_n;i++)
     {
         vbo = draw_vbo_array[i];
+
         if(vbo->_v_num[0] == 0)
         {
             printf("no blocks\n");
@@ -111,8 +117,14 @@ void Vbo_map::draw_map()
     glDisableVertexAttribArray(map_TexCoord);
     glDisableVertexAttribArray(map_LightMatrix);
 
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+
     glUseProgramObjectARB(0);
 
+    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    //glDisable(GL_TEXTURE_2D);
 
     //transparency, backface culling
 /*
@@ -164,11 +176,7 @@ void Vbo_map::draw_map()
     //glDisable(GL_BLEND);
         
     //end draw
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glDisable(GL_TEXTURE_2D);
 
 }
 

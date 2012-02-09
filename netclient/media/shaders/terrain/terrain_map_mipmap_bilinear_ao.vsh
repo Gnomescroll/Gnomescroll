@@ -1,10 +1,10 @@
-attribute vec3 InTexCoord0;
-attribute vec4 InLightMatrix0; //intensity for AO at each corner of quad
+attribute vec3 InTexCoord;
+attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
  
 //varying float intensity;
  
 varying vec3 texCoord;
-varying mat2 lightMatrix0;
+varying mat2 lightMatrix;
  
 varying vec4 inColor;
  
@@ -15,9 +15,9 @@ void main(void)
  
         inColor = gl_Color;
  
-        texCoord = InTexCoord0;
+        texCoord = InTexCoord;
  
-        lightMatrix0 = mat2(InLightMatrix0[0], InLightMatrix0[1], InLightMatrix0[2],InLightMatrix0[3] );
+        lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
  
 }
 
