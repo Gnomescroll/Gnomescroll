@@ -37,15 +37,11 @@
         _set_broadcast(x,y,z, val);
     }
 
-    void block_StoC::handle()
-    {
-         
-    }
-    
-    void map_metadata_StoC::handle()
-    {
-        
-    }
-
 #endif
 
+#ifdef DC_CLIENT
+
+void map_chunk_list_request_CtoS::handle() {}
+void block_CtoS::handle() {}
+
+#endif

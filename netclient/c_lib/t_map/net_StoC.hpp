@@ -3,17 +3,17 @@
 #include <net_lib/net.hpp>
 
 
-class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<block_StoC>
+class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<chunk_meta_data_StoC>
 {
     public:
 
-        int x,y
+        int chunk_x,chunk_y;
         int version;
         
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u16(&x, buff, buff_n, pack);
-            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&chunk_x, buff, buff_n, pack);
+            pack_u16(&chunk_y, buff, buff_n, pack);
             pack_u16(&version, buff, buff_n, pack);
         }
         

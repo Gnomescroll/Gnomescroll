@@ -7,7 +7,8 @@
 
 void chunk_meta_data_StoC::handle()
 {
-        
+    //int chunk_x,chunk_y;
+    //int version;
 
 }
 
@@ -28,9 +29,14 @@ void map_metadata_StoC::handle()
     map_dim.z = z;
 }
 
-void block_CtoS::handle()
-{
-    
-}
+
+#endif
+
+
+#ifdef DC_SERVER
+
+void chunk_meta_data_StoC::handle() {}
+void block_StoC::handle() {}
+void map_metadata_StoC::handle() {}
 
 #endif
