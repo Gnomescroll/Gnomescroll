@@ -49,15 +49,15 @@ type(OBJ_TYPE_SLIME)
 
 Slime::~Slime()
 {
-    if (this->vox != NULL) {
+    if (this->vox != NULL)
         delete this->vox;
-    }
+
     #ifdef DC_CLIENT
     Animations::slime_melt(this->x, this->y, this->z);
     #endif
     
     #ifdef DC_SERVER
-    DestroySlime_StoC msg = DestroySlime_StoC();
+    DestroySlime_StoC msg;
     msg.id = this->id;
     msg.broadcast();
     #endif
@@ -100,12 +100,13 @@ void Slime::tick() {
         msg.theta = this->theta;
         msg.phi = this->phi;
         msg.broadcast();
+        changed = false;
     }
     tick_num++;
     if (tick_num == 30) {
+        tick_num = 0;
         changed = true;
     }
-    tick_num %= 6;
     #endif
     
     // find nearby players
@@ -130,7 +131,8 @@ void Slime::tick() {
             agent = STATE::agent_list.filtered_objects[closest];
             if (agent != NULL) {
                 agent->status.apply_damage(slime_dmg, this->id, this->type);
-                STATE::slime_list.destroy(this->id);    // die
+                this->health = 0;
+                //STATE::slime_list.destroy(this->id);    // die
                 return;
             }
         }
@@ -210,8 +212,8 @@ void Slime_list::update() {
 }
 
 void Slime_list::tick() {
-    int i;
-    for (i=0; i<this->n_max; i++) {
+    for (int i=0; i<this->n_max; i++)
+    {
         if (this->a[i] == NULL) continue;
         this->a[i]->tick();
     }
@@ -251,10 +253,11 @@ void Slime_list::send_to_client(int client_id) {
     }
 }
 
-void test(int n) {
-    int i;
+void test(int n)
+{
     int x,y,z;
-    for (i=0; i<n; i++) {
+    for (int i=0; i<n; i++)
+    {
         x = randrange(0,127);
         y = randrange(0,127);
         z = _get_highest_open_block(x,y);
@@ -267,11 +270,10 @@ void test(int n) {
         #ifdef DC_SERVER
         Slime* s = STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
         if (s==NULL) return;
-        CreateSlime_StoC msg = CreateSlime_StoC();
+        CreateSlime_StoC msg;
         msg.id = s->id;
         msg.broadcast();
         #endif
-
     }
 }
 

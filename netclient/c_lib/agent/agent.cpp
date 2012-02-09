@@ -547,9 +547,7 @@ Agent_state::~Agent_state() {
     msg.broadcast();
     #endif
 
-    #ifdef DC_CLIENT
     if (this->vox != NULL) delete this->vox;
-    #endif
 }
 
 
