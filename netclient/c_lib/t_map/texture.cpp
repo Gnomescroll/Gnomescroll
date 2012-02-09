@@ -23,6 +23,11 @@ void set_cube_side_texture(int id, int side, int tex_id)
     }
     cube_side_texture_array[6*id +side] = tex_id;
 
+
+    //DEBUG!!!
+    return; //DEBUG!!!
+    //DEBUG!!!
+    
     /*
         Init Pixel Sampler
     */

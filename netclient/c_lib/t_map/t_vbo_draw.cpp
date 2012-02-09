@@ -56,6 +56,8 @@ void Vbo_map::prep_draw()
         }
     }}
     //sort VBOs by distance to player
+
+    printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
 }
 
 

@@ -73,7 +73,6 @@ def init_cube_properties():
         cp.max_damage = int(c_dat.get(id,'max_damage'))
 
     for id in c_dat.dat:
-        print "%s" %(id)
         apply(id)
 
 
@@ -88,9 +87,9 @@ cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
     CubeSelector cube_selector
 
 def set_hud_cube_selector():
-    global dat
+    global c_dat
 
-    for id in dat:
+    for id in c_dat.dat:
         hud_img = c_dat.get(id,'hud_img')
         hud_pos = c_dat.get(id,'hud_pos')
         cube_selector.load_cube_property(hud_pos, id, hud_img)
@@ -104,9 +103,9 @@ cdef extern from "./t_map/texture.hpp" namespace "t_map":
 
 def init_cube_side_texture():
     global c_dat
-    for id, cube in c_dat:
+    for id in c_dat.dat:
         for side in range(6):
-            texture_id = cube['texture_id'][side]
+            texture_id = c_dat.get(id, 'texture_id')[side]
             set_cube_side_texture(id, side, texture_id)
 
 '''
