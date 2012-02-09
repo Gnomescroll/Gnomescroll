@@ -8,7 +8,7 @@
 #include "t_vbo.h"
 
 #include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+#include <t_map/t_properties.hpp>
 
 #define xw 5
 #define yh 5

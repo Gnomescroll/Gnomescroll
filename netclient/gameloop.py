@@ -27,7 +27,7 @@ from profiler import P
 from net_client import NetClientGlobal
 from net_out import NetOut
 from net_event import NetEventGlobal
-from map_controller import MapControllerGlobal
+#from map_controller import MapControllerGlobal
 from hud import Hud
 from dat_loader import dat_loader
 
@@ -35,9 +35,9 @@ from dat_loader import dat_loader
 
 init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
-c_lib.terrain_map.set_view_distance(256) #set view distance for terrain map
+#c_lib.terrain_map.set_view_distance(256) #set view distance for terrain map
 
-P2 = c_lib.terrain_map.Profiler()
+#P2 = c_lib.terrain_map.Profiler()
 
 class App(object):
 
@@ -45,7 +45,7 @@ class App(object):
         NetClientGlobal.init()
         NetEventGlobal.init()
         NetOut.init()
-        MapControllerGlobal.init()
+        #MapControllerGlobal.init()
         init_c_lib.init()
 
     def init_sound(self):
@@ -63,7 +63,13 @@ class App(object):
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
         
-        init_c_lib.camera_callback = c_lib.terrain_map.camera_callback
+        '''
+            Init terrain map and prepare for draw
+        '''
+        c_lib.terrain_map._init_map()
+        c_lib.terrain_map._init_map_for_draw()
+
+        #init_c_lib.camera_callback = c_lib.terrain_map.camera_callback
 
         self.hud = Hud()
 
@@ -113,7 +119,6 @@ class App(object):
         init_c_lib.update_mouse(self.get_tick())
 
         while not init_c_lib.cy_input_state.quit:
-            P2.start_frame()
             P.start_frame()
 
             NetClientGlobal.connection.dispatch_buffer()
@@ -161,9 +166,6 @@ class App(object):
             NetClientFlushToNet()
             NetClientDispatchNetworkEvents() #networking input/output
 
-            P.event("MapControllerGlobal.mapController.tick()")
-            MapControllerGlobal.mapController.tick()
-
             # camera input
             P.event("Camera Setup")
 
@@ -184,7 +186,7 @@ class App(object):
 
             # terrain
             P.event("Draw Terrain")
-            c_lib.terrain_map.draw_terrain()
+            c_lib.terrain_map._draw_map()
 
             # particles
             P.event("Draw voxels and particles")
@@ -195,8 +197,8 @@ class App(object):
             init_c_lib.AnimationDraw()
 
             # update map chunks
-            P.event("terrain_map.update_chunks")
-            c_lib.terrain_map.update_chunks()
+            #P.event("terrain_map.update_chunks")
+            #c_lib.terrain_map.update_chunks()
 
 
             # update mouse
@@ -211,7 +213,7 @@ class App(object):
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
-                    P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
+                    #P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
                     #_pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
 
             P.event("SDL flip")

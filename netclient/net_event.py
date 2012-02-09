@@ -10,7 +10,7 @@ import stats
 
 class NetEventGlobal:
     messageHandler = None
-    mapMessageHandler = None
+    #mapMessageHandler = None
     miscMessageHandler = None
 
     @classmethod
@@ -18,7 +18,7 @@ class NetEventGlobal:
         cls.messageHandler = MessageHandler()
         cls.miscMessageHandler = MiscMessageHandler()
 
-        cls.mapMessageHandler = MapMessageHandler()
+        #cls.mapMessageHandler = MapMessageHandler()
 
     @classmethod
     def register_json_events(cls, events):
@@ -41,6 +41,7 @@ class MessageHandler:
 
 #binary events
     def process_binary_event(self, msg_type, datagram):
+        assert False
         if msg_type == 3:
             NetEventGlobal.mapMessageHandler._map_chunk(datagram)
         elif msg_type == 4:
@@ -114,6 +115,7 @@ class MiscMessageHandler(GenericMessageHandler):
     def _ping(self, timestamp, **msg):
         stats.last_ping = init_c_lib.get_ticks() - timestamp
 
+'''
 class MapMessageHandler(GenericMessageHandler):
 
     events = {
@@ -128,10 +130,11 @@ class MapMessageHandler(GenericMessageHandler):
     def _map_chunk(self, datagram):
         (x,y,z) = terrainMap.set_packed_chunk(datagram)
         MapControllerGlobal.mapController.incoming_map_chunk(x,y,z)
+'''
 
 from net_client import NetClientGlobal
 from net_out import NetOut
-from map_controller import MapControllerGlobal
+#from map_controller import MapControllerGlobal
 
 import c_lib.terrain_map as terrainMap
 

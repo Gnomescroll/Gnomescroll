@@ -1,7 +1,5 @@
 #include "t_decompress.h"
 
-#include <zlib.h>
-
 char* t_zlib_src;
 FILE* t_zlib_src_file;
 
@@ -46,7 +44,7 @@ int t_zlib_decompress_update_buffer(unsigned char* out, int n) {
         return 1;
     }
     
-    return 0; 
+    return 0;
 }
 
 int t_zlib_decompress() {

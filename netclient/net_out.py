@@ -9,13 +9,13 @@ Client network outgoing
 class NetOut:
     sendPacket = None
 
-    mapMessage = None
+    #mapMessage = None
     miscMessage = None
 
     @classmethod
     def init(cls):
         cls.sendPacket = NetClientGlobal.sendPacket
-        cls.mapMessage = MapMessage()
+        #cls.mapMessage = MapMessage()
         cls.miscMessage = MiscMessage()
         
     @classmethod
@@ -70,6 +70,7 @@ class MiscMessage:
     def ping(self):
         return { 'timestamp' : init_c_lib.get_ticks() }
 
+'''
 class MapMessage:
 
     @sendJSON('request_chunk_list')
@@ -81,3 +82,4 @@ class MapMessage:
         return {
             'value' : (x,y,z),
         }
+'''

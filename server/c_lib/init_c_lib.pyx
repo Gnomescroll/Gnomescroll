@@ -393,6 +393,7 @@ cdef extern from "./particles/cspray.hpp":
         void destroy(int id)
         void tick()
 
+'''
 cdef extern from "./particles/neutron.hpp":
     cdef cppclass Neutron:
         Particle2 particle
@@ -407,23 +408,25 @@ cdef extern from "./particles/neutron.hpp":
         void destroy(int id)
         void draw()
         void tick()
-
+'''
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Grenade_list grenade_list
     Cspray_list cspray_list
-    Neutron_list neutron_list
+    #Neutron_list neutron_list
 
 def tick():
     grenade_list.tick()
     cspray_list.tick()
-    neutron_list.tick()
-    
+    #neutron_list.tick()
+ 
+'''
 def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
     cdef Neutron* neutron
     neutron = neutron_list.create(x,y,z, vx,vy,vz)
     if neutron == NULL: return
     neutron.set_energy(energy)
+'''
 
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)

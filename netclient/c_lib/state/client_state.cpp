@@ -15,7 +15,7 @@ namespace ClientState {
     Grenade_list grenade_list;
     Shrapnel_list shrapnel_list;
     Blood_list blood_list;
-    Neutron_list neutron_list;
+    //Neutron_list neutron_list;
     Minivox_list minivox_list;
     BillboardText_list billboard_text_list;
 
@@ -58,7 +58,7 @@ namespace ClientState {
         grenade_list.draw();
         shrapnel_list.draw();
         blood_list.draw();
-        neutron_list.draw();
+        //neutron_list.draw();
         minivox_list.draw();
         billboard_text_list.draw();
     }
@@ -70,7 +70,7 @@ namespace ClientState {
         grenade_list.tick();
         shrapnel_list.tick();
         blood_list.tick();
-        neutron_list.tick();
+        //neutron_list.tick();
         minivox_list.tick();
         billboard_text_list.tick();
     }

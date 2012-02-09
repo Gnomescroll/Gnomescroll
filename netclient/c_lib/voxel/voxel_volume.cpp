@@ -159,8 +159,6 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
     v.z = ((v.z - radius*u.z) / scale) + zdim/2;
 #endif
 
-
-
     float distance;
     //int collision[3];
 

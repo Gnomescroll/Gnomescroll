@@ -12,6 +12,7 @@ syntax: glob
 
 dist
 
+.glc
 screenshot
 
 nohup.out

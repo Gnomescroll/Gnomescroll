@@ -4,7 +4,9 @@
 #include <c_lib/animations/hitscan.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/agent/net_agent.hpp>
-#include <c_lib/t_map/t_map_net.hpp>
+
+//stuff
+#include <c_lib/t_map/net_CtoS.hpp>
 
 #define BLOCK_PICK_MAX_DISTANCE 4.0f
 #define MELEE_PICK_MAX_DISTANCE 2.7f

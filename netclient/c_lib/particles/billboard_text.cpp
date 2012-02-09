@@ -2,7 +2,7 @@
 
 #include <ray_trace/ray_trace.h>
 #include <t_map/t_map.hpp>
-#include <t_map/t_properties.h>
+#include <t_map/t_properties.hpp>
 #include <hud/text.hpp>
 #include <SDL/SDL_functions.h>
 #include <camera/camera.hpp>

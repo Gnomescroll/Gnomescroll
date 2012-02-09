@@ -1,5 +1,7 @@
-#include once
+#pragma once
 
+namespace t_map
+{
     struct ColorElement
     {
         union
@@ -24,6 +26,15 @@
         };
     };
 
+    struct NormalElement
+    {
+        union
+        {
+            char normal[4]; //16
+            unsigned int n;
+        };
+    };
+    
     /*
         Replace x,y,z and tx,ty,tz by char
         to reduce size from x 36 to 16 bytes per vertex for normal blocks
@@ -53,3 +64,5 @@
             unsigned int AO;
         };
     };
+    
+}
