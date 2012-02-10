@@ -160,7 +160,7 @@ static const int VERTEX_SLACK = 128;
 
 void Vbo_map::update_vbo(int i, int j)
 {
-    printf("update vbo: %i %i \n", i,j);
+    //printf("update vbo: %i %i \n", i,j);
 
     int tile_id, side_num;
     int _x, _y, _z;
@@ -181,7 +181,7 @@ void Vbo_map::update_vbo(int i, int j)
 
 
     tile_id = 1;
-    printf("active= %i transparenct= %i \n", isActive(tile_id), isTransparent(tile_id)  );
+    //printf("active= %i transparenct= %i \n", isActive(tile_id), isTransparent(tile_id)  );
 
     /*
         1> Use internals for the chunk instead of map get
@@ -229,7 +229,7 @@ void Vbo_map::update_vbo(int i, int j)
         }}
     }
     
-    printf("nz= %i \n",nz);
+    //printf("nz= %i \n",nz);
 
     vbo->_v_num[0] = cube_vertex_count[0];
     vbo->_v_num[1] = cube_vertex_count[1];
@@ -303,7 +303,7 @@ void Vbo_map::update_vbo(int i, int j)
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
 
-    printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
+    //printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
 }
 
 

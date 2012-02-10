@@ -3,6 +3,9 @@
 #include "shader.hpp"
 #include "texture.hpp"
 
+#include <c_lib/camera/camera.hpp>
+#include <c_lib/camera/fulstrum_test.hpp>
+
 namespace t_map
 {
 
@@ -12,7 +15,13 @@ namespace t_map
 */
 bool chunk_render_check( float x, float y)
 {
-    return true;
+    const float dist = 128.0;
+    const float dist2 = dist*dist;
+
+    float dx = current_camera->x - x;
+    float dy = current_camera->y - y;
+
+    return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
 static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
@@ -35,7 +44,7 @@ void Vbo_map::prep_draw()
         col = vbo_array[j*xchunk_dim + i ];
 
         if( col == NULL ) continue;
-        if( chunk_render_check( col->xpos, col->ypos) ) 
+        if( chunk_render_check( col->xpos, col->ypos) && xy_point_fulstrum_test(col->xpos, col->ypos) )
         {
             c_drawn++;
             /*

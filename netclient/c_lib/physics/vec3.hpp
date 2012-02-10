@@ -1,7 +1,6 @@
 #pragma once
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-#include <c_lib/physics/vector.hpp>
 #include <math.h>
 
 struct Vec3 
@@ -19,7 +18,7 @@ struct Vec3
 //__attribute__((aligned (16)));
 
 /*
-    vector operations
+    Vec3 operations
 */
 
 static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
@@ -86,9 +85,9 @@ struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec
     return v;
 }
 
-static struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z) __attribute((always_inline));
+static struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z) __attribute((always_inline));
 
-struct Vec3 vec3_euler_rotation(Vector v, float x, float y, float z)
+struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
 {   
     x *= PI;
     y *= PI;
@@ -148,7 +147,7 @@ float vec3_length(struct Vec3 v)
 /*
     diagnostic
 */
-void vec3_print_dot(struct Vector v1, struct Vector v2);
+void vec3_print_dot(struct Vec3 v1, struct Vec3 v2);
 void vec3_print_length(struct Vec3 v);
 
 
@@ -156,12 +155,12 @@ void vec3_print_length(struct Vec3 v);
 void vec3_print_length(struct Vec3 v) 
 {
     float l = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-    printf("vector_length= %fs \n", l);
+    printf("Vec3_length= %fs \n", l);
 }
 
 
 //diagnostic
-void vec3_print_dot(struct Vector v1, struct Vector v2) 
+void vec3_print_dot(struct Vec3 v1, struct Vec3 v2) 
 {
     float d = v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
     printf("dot= %f \n", d);

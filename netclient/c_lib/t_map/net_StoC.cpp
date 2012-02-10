@@ -6,6 +6,13 @@
 
 using namespace t_map;
 
+void send_map_chunk(int x, int y, char* buffer, int n) {}
+
+void handle_map_chunk(int x, int y, char *buffer, int n)
+{
+    
+}
+
 void chunk_meta_data_StoC::handle()
 {
     //int chunk_x,chunk_y;
@@ -39,5 +46,12 @@ void map_metadata_StoC::handle()
 void chunk_meta_data_StoC::handle() {}
 void block_StoC::handle() {}
 void map_metadata_StoC::handle() {}
+
+void handle_map_chunk(int x, int y, char *buffer, int n) {}
+
+void send_map_chunk(int x, int y, char* buffer, int n)
+{
+    
+}
 
 #endif

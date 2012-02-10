@@ -2,6 +2,8 @@
 
 #include <net_lib/net.hpp>
 
+void send_map_chunk(int x, int y, char* buffer, int n);
+void handle_map_chunk(int x, int y, char *buffer, int n);
 
 class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<chunk_meta_data_StoC>
 {

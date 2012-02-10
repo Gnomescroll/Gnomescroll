@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include <c_lib/physics/vector.hpp>
+#include <c_lib/physics/vec3.hpp>
 
 void setup_test_fulstrum(int camera)
 {}
@@ -18,12 +18,17 @@ static float fulstrum_hy;
 static float fulstrum_hy_sphere;
 static float fulstrum_hx_sphere;
 
-static struct Vector fulstrum_c; //camera
-static struct Vector fulstrum_f;   //forward
-static struct Vector fulstrum_u;   //up
-static struct Vector fulstrum_r;   //right
+/*
+    Use vec3, Vec3 deprecated
+*/
+static struct Vec3 fulstrum_c; //camera
+static struct Vec3 fulstrum_f;   //forward
+static struct Vec3 fulstrum_u;   //up
+static struct Vec3 fulstrum_r;   //right
 
-void setup_fulstrum(float fovy, float aspect, float zfar, Vector camera, Vector* forward, Vector *right, Vector* up)
+static struct Vec3 fulstrum_2d_r;   //right
+
+void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* forward, Vec3 *right, Vec3* up)
 {
     const float pi = 3.14159265;
 
@@ -46,6 +51,11 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vector camera, Vector*
     fulstrum_f = *forward;
     fulstrum_r = *right;
     fulstrum_u = *up;
+
+    fulstrum_2d_r = *right;
+    fulstrum_2d_r.z = 0.0;
+    //fulstrum_2d_r.x
+
 }
 
 #define SPHERE_FULSTRUM_DEBUG 0
@@ -103,6 +113,32 @@ bool point_fulstrum_test(float x, float y, float  z)
 
     return true;
 }
+
+bool xy_circle_fulstrum_test(float x, float y, float r)
+{
+    return true;
+}
+
+
+bool xy_point_fulstrum_test(float x, float y)
+{
+    x -= fulstrum_c.x;
+    y -= fulstrum_c.y;
+
+    if(x*x + y*y <= 16*16) return true;
+
+    float dz = x*fulstrum_f.x + y*fulstrum_f.y;
+    if( dz < 0 || dz > fulstrum_zfar ) return false;
+
+    float dx = (x*fulstrum_r.x + y*fulstrum_r.y);
+    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+
+    //float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
+    //if( dy < -dz*fulstrum_hy || dy > dz*fulstrum_hy ) return false;
+
+    return true;
+}
+
 
 void draw_fulstrum()
 {

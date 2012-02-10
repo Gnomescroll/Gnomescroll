@@ -2,7 +2,7 @@
 
 #include <c_lib/camera/fulstrum_test.hpp>
 
-#include <c_lib/physics/vector.hpp>
+#include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/matrix.hpp>
 
 #include <c_lib/input/input.hpp>
@@ -164,11 +164,11 @@ void Camera::world_projection()
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    Vector f = Vector_init(1.0, 0.0, 0.0);
-    Vector r = Vector_init(0.0, 1.0, 0.0);
-    Vector u = Vector_init(0.0, 0.0, 1.0);
+    Vec3 f = vec3_init(1.0, 0.0, 0.0);
+    Vec3 r = vec3_init(0.0, 1.0, 0.0);
+    Vec3 u = vec3_init(0.0, 0.0, 1.0);
     
-    Vector _l  = euler_rotation(f, theta + 1.00, phi - 1.00, 0.0 );
+    Vec3 _l  = vec3_euler_rotation(f, theta + 1.00, phi - 1.00, 0.0 );
 
     xl = _l.x; yl = _l.y; zl = _l.z;
 
@@ -191,11 +191,11 @@ void Camera::world_projection()
     //set fulstrum camera up
     {
 
-        f = euler_rotation(f, theta+1.00, phi - 1.00, 0.0 );
-        r = euler_rotation(r, theta+1.00, phi - 1.00, 0.0 );
-        u = euler_rotation(u, theta+1.00, phi - 1.00, 0.0 );
+        f = vec3_euler_rotation(f, theta+1.00, phi - 1.00, 0.0 );
+        r = vec3_euler_rotation(r, theta+1.00, phi - 1.00, 0.0 );
+        u = vec3_euler_rotation(u, theta+1.00, phi - 1.00, 0.0 );
 
-        setup_fulstrum(fov, ratio, z_far, Vector_init(x,y,z), &f,&r,&u );
+        setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), &f,&r,&u );
          //fulstrum test
     }
 
