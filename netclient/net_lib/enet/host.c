@@ -38,7 +38,7 @@ enet_host_create (const ENetAddress * address, size_t peerCount, size_t channelL
     host = (ENetHost *) enet_malloc (sizeof (ENetHost));
     if (host == NULL)
       return NULL;
-
+    
     host -> peers = (ENetPeer *) enet_malloc (peerCount * sizeof (ENetPeer));
     if (host -> peers == NULL)
     {

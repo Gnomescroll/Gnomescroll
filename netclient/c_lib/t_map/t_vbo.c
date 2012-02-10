@@ -513,8 +513,8 @@ SDL_Surface *px_surface;
 
 int _init_draw_terrain() {
 
-    printf("Steve shader\n");
-    steveShader(&steve_sv, &steve_sf, &steve_sp);
+    //printf("Steve shader\n");
+    //steveShader(&steve_sv, &steve_sf, &steve_sp);
 
     printf("init: LSD shader \n");
     setShaders2();
@@ -1312,8 +1312,8 @@ int _draw_terrain() {
             ////DRAW_VBOS3();  
             ////DRAW_VBOS4();
             
-            //DRAW_VBOS5();
-            DRAW_VBOS_STEVE();
+            DRAW_VBOS5();
+            //DRAW_VBOS_STEVE();
         } 
         else 
         {
