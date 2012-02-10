@@ -235,9 +235,16 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     const float arc = 48.0f;
     for (int i=0; i<n; i++)
     {
+        /*
+
+        euler already rotates them
         theta = randf() * 3.14159 * 2;
         phi = randf() * 3.14159 * 2;
         gamma = randf() * 3.14159 * 2;
+        */
+        theta = 2*randf();
+        phi = 2*randf();
+        gamma = 2*randf();
         v = vec3_euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
 
         speed = (randf() + 0.5) * randrange(0,2);

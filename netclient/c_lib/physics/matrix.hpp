@@ -7,6 +7,9 @@ optimization: compute matix and return matrix
 */
 // possibly wrong
 
+/*
+
+DEPRECATED: use vec3_euler_rotation
 
 struct Vector euler_rotation(Vector v, float x, float y, float z)
 {   
@@ -64,7 +67,7 @@ struct Vector euler_rotation(Vector v, float x, float y, float z)
 
     return u;
 }
-
+*/
 
 //Matix reference implementation
 
