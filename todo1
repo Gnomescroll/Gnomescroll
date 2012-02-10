@@ -257,6 +257,7 @@ fix valgrind voxel loader uninitialized errors
 
 Feb09
 
+do the models
 ===================
 
 == MODELS ==
