@@ -405,10 +405,8 @@ void ChatClient::received_message(int channel, int sender, char* payload)
 void ChatClient::subscribe_channels()
 {   // call after playerAgent_state has been assigned by server
     if (ClientState::playerAgent_state.you == NULL)
-    {
-        printf("ChatClient::init -- playerAgent_state.you is NULL, abort\n");
         return;
-    }
+
     ChatClientChannel* chan;
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
