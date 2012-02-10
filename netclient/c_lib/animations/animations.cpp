@@ -3,7 +3,12 @@
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/physics/matrix.hpp>
+
+//#include <c_lib/physics/matrix.hpp>
+
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/physics/mat3.hpp>
+
 
 namespace Animations {
 
@@ -222,8 +227,8 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
     float theta,phi,gamma;
 
-    struct Vector iv = Vector_init(ix,iy,iz);
-    struct Vector v;
+    struct Vec3 iv = vec3_init(ix,iy,iz);
+    struct Vec3 v;
     int n = randrange(200,250);
     const float base_speed = 10.0f;
     float speed;
@@ -233,7 +238,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
         theta = randf() * 3.14159 * 2;
         phi = randf() * 3.14159 * 2;
         gamma = randf() * 3.14159 * 2;
-        v = euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
+        v = vec3_euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
