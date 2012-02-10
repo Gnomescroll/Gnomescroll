@@ -3,7 +3,7 @@
 #include <c_lib/camera/fulstrum_test.hpp>
 
 #include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/matrix.hpp>
+#include <c_lib/physics/mat3.hpp>
 
 #include <c_lib/input/input.hpp>
 #include <c_lib/voxel/voxel_loader.hpp>
@@ -164,11 +164,9 @@ void Camera::world_projection()
     glMatrixMode( GL_MODELVIEW );
     glLoadIdentity();
 
-    Vec3 f = vec3_init(1.0, 0.0, 0.0);
-    Vec3 r = vec3_init(0.0, 1.0, 0.0);
-    Vec3 u = vec3_init(0.0, 0.0, 1.0);
-    
-    Vec3 _l  = vec3_euler_rotation(f, theta + 1.00, phi - 1.00, 0.0 );
+    struct Vec3 _l;
+    _l = vec3_init(1.0, 0.0, 0.0);
+    _l = vec3_euler_rotation( _l, theta + 1.00, phi - 1.00, 0.0 );
 
     xl = _l.x; yl = _l.y; zl = _l.z;
 
@@ -190,6 +188,9 @@ void Camera::world_projection()
     
     //set fulstrum camera up
     {
+        Vec3 f = vec3_init(1.0, 0.0, 0.0);
+        Vec3 r = vec3_init(0.0, 1.0, 0.0);
+        Vec3 u = vec3_init(0.0, 0.0, 1.0);
 
         f = vec3_euler_rotation(f, theta+1.00, phi - 1.00, 0.0 );
         r = vec3_euler_rotation(r, theta+1.00, phi - 1.00, 0.0 );
