@@ -59,7 +59,11 @@ void enable_quit()
 
 void toggle_skeleton_editor()
 {
+#ifdef PRODUCTION
+    input_state.skeleton_editor = false;
+#else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
+#endif
 }
 
 void toggle_input_mode()
