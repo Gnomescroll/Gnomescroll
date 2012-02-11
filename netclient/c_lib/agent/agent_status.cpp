@@ -32,7 +32,8 @@ identified(false),
 team(0),
 has_flag(false),
 flag_captures(0),
-coins(0)
+coins(0),
+vox_crouched(false)
 {
     strcpy(this->name, (char*)"undefined-agent-name");
 }

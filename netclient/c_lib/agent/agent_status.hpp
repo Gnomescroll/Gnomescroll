@@ -41,6 +41,8 @@ class Agent_status {
 
         unsigned int coins;
 
+        bool vox_crouched;
+
         void set_name(char* n);
 
         void set_spawner(int pt);

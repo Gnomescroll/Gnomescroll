@@ -15,6 +15,8 @@ class Agent_event {
         void took_damage(int dmg);
         void died();
         void born();
+        void crouched();
+        void uncrouched();
         void life_changing(bool dead);
         void reload_weapon(int type);
 

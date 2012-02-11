@@ -4,6 +4,7 @@
 #include <agent/agent_status.hpp>
 
 extern VoxDat agent_vox_dat;
+extern VoxDat agent_vox_dat_crouched;
 
 enum AGENT_BODY_PARTS
 {

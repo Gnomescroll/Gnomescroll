@@ -69,7 +69,21 @@ void Agent_event::born() {
     a->status.dead = false;
     // regenerate model
     if (this->a->vox != NULL)
+    {
         this->a->vox->restore(&agent_vox_dat, this->a->status.team);
+    }
+}
+
+void Agent_event::crouched()
+{
+    printf("event crouched\n");
+    this->a->vox->reset_skeleton(&agent_vox_dat_crouched);
+}
+
+void Agent_event::uncrouched()
+{
+    printf("event uncrouched\n");
+    this->a->vox->reset_skeleton(&agent_vox_dat);
 }
 
 void Agent_event::life_changing(bool dead) {
