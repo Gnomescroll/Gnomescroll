@@ -257,8 +257,15 @@ fix valgrind voxel loader uninitialized errors
 
 Feb09
 
-do the models
+model dimensions
 ===================
+
+Feb10
+
+
+
+===================
+
 
 == MODELS ==
 Make new model that fits inside agent box

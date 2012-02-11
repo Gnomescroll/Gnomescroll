@@ -5,6 +5,6 @@
 #skeleton_node: anchor x,y,z rotatation x,y,z
 0 0.0 0.0 0.0  0.0 0.0 0.0
 #node number, skeleton parent matrix, voxel volume
-0 0 media/voxel/robots_legs_torso_arms_head.dcvox
+0 0 media/voxel/better_robot.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
-0 0.0 0.0 1.4  -0.5 0.0 0.0
+0 0.0 0.0 2.0  -0.5 0.0 0.0
