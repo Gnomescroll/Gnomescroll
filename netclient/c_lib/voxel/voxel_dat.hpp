@@ -4,6 +4,8 @@
 #include <physics/affine.hpp>
 /* Dat storage */
 
+class VoxDat; // forward decl;
+
 #ifdef DC_CLIENT
 class VoxColors {
     public:
@@ -23,26 +25,6 @@ class VoxColors {
 };
 #endif
 
-class VoxPartRotation {
-    public:
-        float x,y,z;
-
-        void set(float x, float y, float z);
-
-        VoxPartRotation();
-        VoxPartRotation(float x, float y, float z);
-};
-
-class VoxPartAnchor {
-    public:
-        float x,y,z;
-
-        void set(float x, float y, float z);
-
-        VoxPartAnchor();
-        VoxPartAnchor(float x, float y, float z);
-};
-
 class VoxPartDimension {
     public:
         int x,y,z;
@@ -56,49 +38,40 @@ class VoxPartDimension {
 
 class VoxPart {
     public:
-        VoxPartRotation rotation;
-        VoxPartAnchor anchor;
         VoxPartDimension dimension;
         #ifdef DC_CLIENT
         VoxColors colors;
         #endif
+        VoxDat* dat;    // parent
         
         int part_num;
+        
         int skeleton_parent_matrix;
-
+        float sx, sy, sz, srx, sry, srz;    // skeleton local matrix parameters
+        
         float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
-        void set_rotation(float x, float y, float z);
-        void set_anchor(float x, float y, float z);
+        void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
         void set_dimension(int x, int y, int z);
 
         VoxPart(
+            VoxDat* dat,
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
-            bool biaxial=false
-        );
-        
-        VoxPart(
-            int part_num,
-            float vox_size,
-            int dimension_x, int dimension_y, int dimension_z,
-            float anchor_x, float anchor_y, float anchor_z,
-            float rotation_x, float rotation_y, float rotation_z,
             bool biaxial=false
         );
 };
 
 class VoxDat {
     public:
-
         //voxel volume
         bool voxel_volume_inited;
         int n_parts;
         class VoxPart** vox_part;
+
         struct Affine* vox_volume_local_matrix;
-        //skeleton node
         bool voxel_skeleton_inited;
         int* vox_skeleton_transveral_list;
         struct Affine* vox_skeleton_local_matrix;

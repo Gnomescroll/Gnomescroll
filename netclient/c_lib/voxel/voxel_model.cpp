@@ -79,7 +79,6 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     }
     skeleton_inited = true;
 
-    skeleton_needs_update = true;
     n_skeleton_nodes = vox_dat->n_skeleton_nodes;
 
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
@@ -88,6 +87,15 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     vox_skeleton_local_matrix = new Affine[num_skeleton_nodes];
     vox_skeleton_world_matrix = new Affine[num_skeleton_nodes];
 
+    this->reset_skeleton(vox_dat);
+}
+
+// implemented for the voxel editor
+void Voxel_model::reset_skeleton(VoxDat* vox_dat)
+{
+    int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
+    skeleton_needs_update = true;
+    
     const int debug_0 = 0;
 
     if(debug_0) printf("Voxel_model::init_skeleton, number of nodes= %i \n", num_skeleton_nodes );
@@ -124,6 +132,7 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
             print_affine( vv->local_matrix );
         }
     }
+
 }
 
 void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {

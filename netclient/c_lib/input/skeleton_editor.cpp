@@ -4,48 +4,69 @@
 
 namespace SkeletonEditor
 {
-
+bool rotate = false;
 Object_types type = OBJ_TYPE_AGENT;
-int n_parts = 1;
+int id = 0;
 int part = 0;
-VoxDat* vox_dat;
+VoxDat* vox_dat = NULL;
+Voxel_model* vox = NULL;
 
 float lateral_speed = 0.05f;
-float rotation_speed = 0.05f;
+const int ROT_STEPS = 10;   // key presses for a full cycle
+float rotation_speed = 2.0 / ROT_STEPS;
 
 void move_in_x(float s)
 {
-printf("motion x %0.2f\n", s);
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->sx += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void move_in_y(float s)
 {
-printf("motion y %0.2f\n", s);
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->sy += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void move_in_z(float s)
 {
-printf("motion z %0.2f\n", s);
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->sz += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void rotate_in_x(float s)
 {
-printf("rotate x %0.2f\n", s);
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->srx += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void rotate_in_y(float s)
 {
-printf("rotate y %0.2f\n", s);
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->sry += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void rotate_in_z(float s)
 {
-printf("rotate z %0.2f\n", s);
-}
-
-void select_model(int type, int part)
-{
-    // need vox_dat attached to vox model probably
+    if (vox_dat == NULL || vox == NULL) return;
+    VoxPart* vp = vox_dat->vox_part[part];
+    vp->srz += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
 
 void raycast_to_part()
@@ -75,31 +96,48 @@ void raycast_to_part()
     if (!voxel_hit)
         return;
 
+    id = target.entity_id;
     part = target.part_id;
     type = (Object_types)target.entity_type;
+
+    void *obj;
 
     switch (type)
     {
         case OBJ_TYPE_AGENT:
             vox_dat = &agent_vox_dat;
+            obj = ClientState::agent_list.get(id);
+            if (obj==NULL) break;
+            vox = ((Agent_state*)obj)->vox;
             break;
         case OBJ_TYPE_SLIME:
             vox_dat = &Monsters::slime_vox_dat;
+            obj = ClientState::slime_list.get(id);
+            if (obj==NULL) break;
+            vox = ((Monsters::Slime*)obj)->vox;
             break;
         case OBJ_TYPE_SPAWNER:
             vox_dat = &spawner_vox_dat;
+            obj = ClientState::spawner_list.get(id);
+            if (obj==NULL) break;
+            vox = ((Spawner*)obj)->vox;
             break;
-        case OBJ_TYPE_BASE:
-            vox_dat = &base_vox_dat;
-            break;
-        case OBJ_TYPE_FLAG:
-            vox_dat = &flag_vox_dat;
-            break;
+        //case OBJ_TYPE_BASE:
+            //vox_dat = &base_vox_dat;
+            //obj = ClientState::ctf.get_base(id);
+            //if (obj==NULL) break;
+            //vox = ((Base*)obj)->vox;
+            //break;
+        //case OBJ_TYPE_FLAG:
+            //vox_dat = &flag_vox_dat;
+            //obj = ClientState::ctf.get_flag(id);
+            //if (obj==NULL) break;
+            //vox = ((Flag*)obj)->vox;
+            //break;
         default: break;
     }
-    n_parts = vox_dat->n_parts;
-    printf("Selected:\n");
-    printf("type=%d part=%d n_parts=%d\n", type, part, n_parts);
+    //printf("Selected:\n");
+    //printf("type=%d part=%d n_parts=%d\n", type, part, vox->n_parts);
 }
 
 /* Handlers */
@@ -112,29 +150,52 @@ void key_down_handler(SDL_Event* event)
         case SDLK_o:
             toggle_skeleton_editor();
             break;
+
+        case SDLK_r:
+            rotate = (!rotate);
+            break;
         
         case SDLK_LEFT:
-            move_in_x(lateral_speed);
+            if (rotate)
+                rotate_in_x(rotation_speed);
+            else
+                move_in_x(lateral_speed);
             break;
         case SDLK_RIGHT:
-            move_in_x(-lateral_speed);
+            if (rotate)
+                rotate_in_x(-rotation_speed);
+            else
+                move_in_x(-lateral_speed);
             break;
         case SDLK_UP:
-            move_in_y(lateral_speed);
+            if (rotate)
+                rotate_in_y(rotation_speed);
+            else
+                move_in_y(lateral_speed);
             break;
         case SDLK_DOWN:
-            move_in_y(-lateral_speed);
+            if (rotate)
+                rotate_in_y(-rotation_speed);
+            else
+                move_in_y(-lateral_speed);
             break;
         case SDLK_PERIOD:
-            move_in_z(lateral_speed);
+            if (rotate)
+                rotate_in_z(rotation_speed);
+            else
+                move_in_z(lateral_speed);
             break;
         case SDLK_COMMA:
-            move_in_z(-lateral_speed);
+            if (rotate)
+                rotate_in_z(-rotation_speed);
+            else
+                move_in_z(-lateral_speed);
             break;
 
         case SDLK_RIGHTBRACKET: // toggle thru parts
+            if (vox == NULL) break;
             part++;
-            part %= n_parts;
+            part %= vox->n_parts;
             break;
             
         default: break;
@@ -160,12 +221,6 @@ void mouse_button_up_handler(SDL_Event* event)
 {}
 
 void key_state_handler(Uint8 *keystate, int numkeys)
-{}
-
-void init()
-{}
-
-void update()
 {}
 
 void save()
