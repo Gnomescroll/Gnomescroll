@@ -16,6 +16,7 @@ struct InputState
     bool chat;
     bool hud;
     bool debug;
+    bool skeleton_editor;
     
     bool has_focus;
     bool rebind_mouse;
@@ -52,6 +53,7 @@ void toggle_inventory();
 void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();
+void toggle_skeleton_editor();
 
 void enable_jump();
 void enable_quit();

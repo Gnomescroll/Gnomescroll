@@ -122,6 +122,7 @@
 /* input */
 #include <c_lib/input/input.cpp>
 #include <c_lib/input/handlers.cpp>
+#include <c_lib/input/skeleton_editor.cpp>
 
 /* sound */
 #include <c_lib/sound/sound.cpp>
