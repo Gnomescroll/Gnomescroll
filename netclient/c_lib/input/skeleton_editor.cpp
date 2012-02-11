@@ -8,6 +8,7 @@ namespace SkeletonEditor
 Object_types type = OBJ_TYPE_AGENT;
 int n_parts = 1;
 int part = 0;
+VoxDat* vox_dat;
 
 float lateral_speed = 0.05f;
 float rotation_speed = 0.05f;
@@ -76,6 +77,29 @@ void raycast_to_part()
 
     part = target.part_id;
     type = (Object_types)target.entity_type;
+
+    switch (type)
+    {
+        case OBJ_TYPE_AGENT:
+            vox_dat = &agent_vox_dat;
+            break;
+        case OBJ_TYPE_SLIME:
+            vox_dat = &Monsters::slime_vox_dat;
+            break;
+        case OBJ_TYPE_SPAWNER:
+            vox_dat = &spawner_vox_dat;
+            break;
+        case OBJ_TYPE_BASE:
+            vox_dat = &base_vox_dat;
+            break;
+        case OBJ_TYPE_FLAG:
+            vox_dat = &flag_vox_dat;
+            break;
+        default: break;
+    }
+    n_parts = vox_dat->n_parts;
+    printf("Selected:\n");
+    printf("type=%d part=%d n_parts=%d\n", type, part, n_parts);
 }
 
 /* Handlers */
