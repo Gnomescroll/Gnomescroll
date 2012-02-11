@@ -350,3 +350,5 @@ map gen scripts (can be removed easy, not integrated)
 -fix client side prediction bug (movement is slugish, glitch)
 mouse momentum
 endpoints on hitscan laser
+map networking
+map compression
