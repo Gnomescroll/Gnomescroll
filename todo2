@@ -117,3 +117,6 @@ Optimization (LATER):
 -storing pointers to map tile structs, instead of tile_ids
 -computation of vertex buffers in C?
 -openGL C rendering
+
+Voxel Butterflies
+LSD shader
