@@ -44,7 +44,6 @@ Object_pool<Base, Object, BUFFER_POOL_SIZE>::Object_pool()
 {
     //batch_num = 0;
     //first = NULL;
-    //batch_alloc();
 }
 
 template <class Base, class Object, int BUFFER_POOL_SIZE>
@@ -66,15 +65,15 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
     {
         inited = 1;
 
-    /*
-        This is the constructor
-    */
         batch_num = 0;
         first = NULL;
 
         const int INITIAL_SIZE = 4;
         alloc_list = new Object*[INITIAL_SIZE];
         alloc_list_max_size = INITIAL_SIZE;
+        alloc_list_index = 0;
+    }
+
         alloc_list_index = 0;
     }
 
