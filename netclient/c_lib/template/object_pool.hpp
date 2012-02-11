@@ -74,9 +74,6 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
         alloc_list_index = 0;
     }
 
-        alloc_list_index = 0;
-    }
-
     batch_num++;
 
     Object* ar = new Object[BUFFER_POOL_SIZE];
