@@ -5,6 +5,7 @@
 
 extern VoxDat agent_vox_dat;
 extern VoxDat agent_vox_dat_crouched;
+extern VoxDat agent_vox_dat_dead;
 
 enum AGENT_BODY_PARTS
 {

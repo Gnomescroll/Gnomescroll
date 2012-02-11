@@ -13,14 +13,18 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         you = (agent->id == ClientState::playerAgent_state.agent_id);
         if (agent->vox == NULL) continue;
         
-        if ((current_camera->first_person && you) || agent->status.dead)
+        if (current_camera->first_person && you)
         {
             agent->vox->set_draw(false);
             agent->vox->set_hitscan(false);
         }
         else
         {
-            if (agent->crouched())
+            if (agent->status.dead)
+            {
+                agent->vox->update(&agent_vox_dat_dead, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+            }
+            else if (agent->crouched())
             {
                 if (!agent->status.vox_crouched)
                 {

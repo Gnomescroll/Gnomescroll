@@ -62,33 +62,39 @@ void Agent_event::took_damage(int dmg) {
 }
 
 void Agent_event::died() {
-    a->status.dead = true;
-}
-
-void Agent_event::born() {
-    a->status.dead = false;
-    // regenerate model
-    if (this->a->vox != NULL)
+    if (!this->a->status.dead)
     {
-        this->a->vox->restore(&agent_vox_dat, this->a->status.team);
+        this->a->status.dead = true;
+        this->a->vox->reset_skeleton(&agent_vox_dat_dead);
     }
 }
 
-void Agent_event::crouched()
-{
-    printf("event crouched\n");
-    this->a->vox->reset_skeleton(&agent_vox_dat_crouched);
-}
+void Agent_event::born() {
+    if (this->a->status.dead)
+    {
+        this->a->status.dead = false;
+        // regenerate model
+        if (this->a->vox != NULL)
+            this->a->vox->restore(&agent_vox_dat, this->a->status.team);
 
-void Agent_event::uncrouched()
-{
-    printf("event uncrouched\n");
-    this->a->vox->reset_skeleton(&agent_vox_dat);
+        VoxDat* vd = (this->a->crouched()) ? &agent_vox_dat_crouched : &agent_vox_dat;
+        this->a->vox->reset_skeleton(vd);
+    }
 }
 
 void Agent_event::life_changing(bool dead) {
     if (dead) died();
     else born();
+}
+
+void Agent_event::crouched()
+{
+    this->a->vox->reset_skeleton(&agent_vox_dat_crouched);
+}
+
+void Agent_event::uncrouched()
+{
+    this->a->vox->reset_skeleton(&agent_vox_dat);
 }
 
 void Agent_event::reload_weapon(int type) {
