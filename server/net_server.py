@@ -46,9 +46,10 @@ class PyClient:
         init_c_lib.send_game_state(self.client_id)
         
     def send_map(self):
-        print "Sending map"
-        cMap.send_map_metadata_to_client(self.client_id)
-        self.sendMessage.send_chunk_list()
+        pass
+        #print "Sending map"
+        #cMap.send_map_metadata_to_client(self.client_id)
+        #self.sendMessage.send_chunk_list()
 
     def send(self, MESSAGE):
         _send_python_net_message(MESSAGE, self.client_id)
