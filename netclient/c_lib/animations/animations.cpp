@@ -3,7 +3,12 @@
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/physics/matrix.hpp>
+
+//#include <c_lib/physics/matrix.hpp>
+
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/physics/mat3.hpp>
+
 
 namespace Animations {
 
@@ -39,7 +44,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
         ttl = randrange(20,40);
         //get_random_pixel(cube_id, side, &r, &g, &b, &a);
 
-        tex_id = _get_cube_side_texture(cube_id, side);
+        tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
@@ -67,7 +72,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
     //printf("block damage: %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f cube_id=%d, cube_side=%d\n", x,y,z,ix,iy,iz, cube_id, cube_side);
 
-    int tex_id = _get_cube_side_texture(cube_id, cube_side);
+    int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     // reflection bias
     float ref[3];
@@ -222,18 +227,25 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
     float theta,phi,gamma;
 
-    struct Vector iv = Vector_init(ix,iy,iz);
-    struct Vector v;
+    struct Vec3 iv = vec3_init(ix,iy,iz);
+    struct Vec3 v;
     int n = randrange(200,250);
     const float base_speed = 10.0f;
     float speed;
     const float arc = 48.0f;
     for (int i=0; i<n; i++)
     {
+        /*
+
+        euler already rotates them
         theta = randf() * 3.14159 * 2;
         phi = randf() * 3.14159 * 2;
         gamma = randf() * 3.14159 * 2;
-        v = euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
+        */
+        theta = 2*randf();
+        phi = 2*randf();
+        gamma = 2*randf();
+        v = vec3_euler_rotation(iv, theta/arc, phi/arc, gamma/arc);
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;

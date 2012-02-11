@@ -1,6 +1,21 @@
 #pragma once
 
+#include <c_lib/common/functional.h>
 
+/*
+#include "t_vbo.h"
+#include "t_properties.hpp"
+*/
+
+/*
+#ifndef  t_properties
+#include "t_properties.hpp"
+#endif
+
+#ifndef  t_vbo
+#include "t_vbo.h"
+#endif
+*/
 
 #define vm_map_dim 64 //number of map chunks in x/y
 #define vm_chunk_size 8
@@ -21,16 +36,34 @@ extern struct MapDimension map_dim;
 struct VBO {
         int v_num;
         struct Vertex* v_list;
-        int VBO_id;
+        int v_list_max_size;
+
+        #ifdef DC_CLIENT
+            //GLuint VBO_id;
+            unsigned int VBO_id;
+        #else
+            unsigned int VBO_id;
+        #endif
+        int _v_num[4];       //parameters for draw pass
+        int _v_offset[4];
+
+        //draw pass 0, normal quads
+        //draw pass 1, normal quads
+        //draw pass 1, normal quads
+        //draw pass 1, normal quads
 };
 
+//need 3 types of transparency
+
 struct vm_chunk {
-    unsigned short voxel[vm_chunk_voxel_size];
-    unsigned char damage[vm_chunk_voxel_size];
+    unsigned short voxel[512];
+    unsigned char hash2[8*8*8];   //hash result for 2ary infinite texture
+    unsigned char hash3[8*8*8];   //hash result for 3ary infinite texture
     int x_off, y_off, z_off; //lower corner of chunk
     unsigned int local_version;
     unsigned int server_version;
     unsigned int vbo_needs_update;
+    unsigned int requested;
 };
 
 struct vm_column {
@@ -50,6 +83,12 @@ struct vm_map {
     struct vm_column column[vm_map_dim*vm_map_dim];
 };
 
+//state flags
+
+//flag setting
+
+//int __inline set_flag(vm_column* c, unsigned int flag);
+//int __inline get_flag(vm_column* c, unsigned int flag);
 
 //functions
 extern struct vm_map map;
@@ -59,31 +98,37 @@ int _set(int x, int y, int z, int value);
 int _get(int x, int y, int z);
 int _clear();
 
-int _apply_damage(int x, int y, int z, int dmg);
-
 int _set_server_version(int x,int y,int z, int server_version);
 
 struct vm_map* _get_map();
 struct vm_chunk* _get_chunk(int xoff, int yoff, int zoff);
-
-int _set_chunk_voxels(int xoff, int yoff, int zoff, unsigned short* vox);
-int _set_chunk_voxel(int xoff, int yoff, int zoff, unsigned short val, int i);
 
 int _get_highest_open_block(int x, int y, int n=1);
 int _get_lowest_open_block(int x, int y, int n=1);
 
 int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
+int get_height_at(int x, int y);
 
-int _set_broadcast(int x, int y, int z, int value);
-
-//these flags are not used on server for anything
 /*
+#endif
+
+//inline functions
+#ifndef T_MAP_INLINE
+#define T_MAP_INLINE
+*/
+
+
 #define VBO_loaded 1
 #define VBO_needs_update 2
 #define VBO_has_blocks 4
 #define VBO_drawn 8
-*/
+
+//#define set_flag(c,flag,value) value ? c->flag | flag : c->flag & ~flag
+
+//#define set_flag(c, f, value)  ({ (c) -> flag = (value) ? (c) -> flag | f : (c) -> flag & ~ (f); })
+//#define get_flag(c, f)  ({c -> flag & f})
+
 
 static inline void set_flag(struct vm_column* c, int flag, int value) {
     if(value) {
@@ -102,11 +147,12 @@ static inline int flag_is_false(struct vm_column* c, int flag) {
 }
 
 
-void _block_broadcast(int x, int y, int z, int value);
-int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
+//void set_flag(struct vm_column* c, unsigned int flag, int value);
+//int get_flag(struct vm_column* c, unsigned int flag);
 
-void send_map_metadata(int client_id);
-void send_map_metadata();
-void set_map_size(int x, int y, int z);
+//extern void set_flag(struct vm_column* c, unsigned int flag, int value);
+//extern int get_flag(struct vm_column* c, unsigned int flag);
+/* Network */
+
 inline bool point_in_map(int x, int y, int z);

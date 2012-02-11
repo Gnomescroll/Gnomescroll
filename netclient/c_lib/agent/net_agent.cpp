@@ -6,6 +6,7 @@
 #include <c_lib/defines.h>
 #include <c_lib/weapons/weapons.hpp>
 #include <monsters/monsters.hpp>
+
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.h>

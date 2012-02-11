@@ -10,7 +10,8 @@ const int N_PIXEL_SAMPLES = 10;
 //use flags
 //precompute if statements with flags
 //use seperate arrays for different access patterns (flags vs max_damage)
-struct cubeProperties {
+struct cubeProperties 
+{
     int active;
     int occludes;
     int solid;

@@ -94,4 +94,3 @@ void DRAW_VBOS2();
 void DRAW_VBOS3(); //shader version 
 void DRAW_VBOS4();
 void DRAW_VBOS5();
-void DRAW_VBOS_STEVE();

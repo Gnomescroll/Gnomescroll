@@ -73,13 +73,24 @@
 #include <c_lib/animations/hitscan_laser.cpp>
 
 /* map */
-#include <c_lib/t_map/t_map.cpp>
-#include <c_lib/t_map/t_properties.c>
-#include <c_lib/t_map/t_serialize.c>
-#include <c_lib/t_map/t_map_net.cpp>
 
-#include <c_lib/t_map/t_viz.c>
-#include <c_lib/t_map/t_vbo.c>
+#include <c_lib/t_map/t_map_class.cpp>
+#include <c_lib/t_map/t_map.cpp>
+#include <c_lib/t_map/t_properties.cpp>
+
+#include <c_lib/t_map/t_vbo.cpp>
+#include <c_lib/t_map/t_vbo_draw.cpp>
+#include <c_lib/t_map/t_vbo_update.cpp>
+
+#include <c_lib/t_map/cache.cpp>
+#include <c_lib/t_map/net_CtoS.cpp>
+#include <c_lib/t_map/net_StoC.cpp>
+#include <c_lib/t_map/shader.cpp>
+#include <c_lib/t_map/texture.cpp>
+
+//#include <c_lib/t_map/t_viz.c>
+//#include <c_lib/t_map/t_vbo.c>
+
 
 /* camera */
 #include <c_lib/camera/camera.cpp>

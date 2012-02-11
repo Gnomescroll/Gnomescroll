@@ -6,7 +6,7 @@
 #include "./particles/particles.hpp"
 
 #include "./particles/grenade.hpp"
-#include "./particles/neutron.hpp"
+//#include "./particles/neutron.hpp"
 #include "./particles/cspray.hpp"
 
 #ifdef DC_CLIENT

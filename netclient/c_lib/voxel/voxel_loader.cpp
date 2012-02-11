@@ -32,7 +32,7 @@ char* read_file_to_buffer(char* file_name, int* size)
     int expected_size = fsize(file_name);
     char *source = NULL;
     FILE *fp = fopen(file_name, "r");
-    if (fp != NULL) 
+    if (fp != NULL)
     {
         /* Go to the end of the file. */
         if (fseek(fp, 0L, SEEK_END) == 0) 
@@ -50,7 +50,7 @@ char* read_file_to_buffer(char* file_name, int* size)
             size_t newLen = fread(source, sizeof(char), bufsize, fp);
             if (newLen == 0) 
             {
-                fputs("read_file_to_buffer: error reading file", stderr);
+                printf("read_file_to_buffer: error reading file %s", file_name);
                 return NULL;
             } 
             else 
@@ -68,7 +68,7 @@ char* read_file_to_buffer(char* file_name, int* size)
 
 void read_skeleton(char* file_name, VoxDat* vox_dat)
 {
-    printf("Loading skeleton: %s \n", file_name);
+    //printf("Loading skeleton: %s \n", file_name);
     int size;
     char* buffer = read_file_to_buffer(file_name, &size);
     if(buffer == NULL) printf("error reading %s \n", file_name);
@@ -144,7 +144,7 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
 void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
 {
-    printf("Loading voxel model: %s \n", file_name);
+    //printf("Loading voxel model: %s \n", file_name);
     int size = 0;
     char* buffer = read_file_to_buffer(file_name, &size);
     if(buffer == NULL)

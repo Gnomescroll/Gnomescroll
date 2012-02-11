@@ -3,8 +3,6 @@
 #include <compat_gl.h>
 #include <math.h>
 
-#include <c_lib/physics/vector.hpp>
-
 #define N_CAMERAS 2
 
 enum CAMERA_TYPES {

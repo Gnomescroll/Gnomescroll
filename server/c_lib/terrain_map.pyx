@@ -63,10 +63,10 @@ cdef extern from "./t_map/t_map.hpp":
     void set_map_size(int x, int y, int z)
     void send_map_metadata(int client_id)
 
-cdef extern from "./t_map/t_compress.h":
-    int map_save_to_disk(char* fn)
-cdef extern from "./t_map/t_decompress.h":
-    int map_load_from_disk(char* fn)
+#cdef extern from "./t_map/t_compress.h":
+#    int map_save_to_disk(char* fn)
+#cdef extern from "./t_map/t_decompress.h":
+#    int map_load_from_disk(char* fn)
     
 #done
 
@@ -297,35 +297,35 @@ def set_map_dimensions(int x, int y, int z):
 def send_map_metadata_to_client(int id):
     send_map_metadata(id)
 
-'''
-Part 5: Serialization
-'''
+#'''
+#Part 5: Serialization
+#'''
 
-import os, os.path, time
-map_file_location = './content/maps/%s'
+#import os, os.path, time
+#map_file_location = './content/maps/%s'
 
-def save_to_disk(fn=''):
+#def save_to_disk(fn=''):
 
-    if not fn:
-        fn = 'map_%0.2f' % (time.time())
-        fn = fn.replace('.', '_')
-    fn = fn.replace('/', '_')
-    fn = map_file_location % (fn,)
+#    if not fn:
+#        fn = 'map_%0.2f' % (time.time())
+#        fn = fn.replace('.', '_')
+#    fn = fn.replace('/', '_')
+#    fn = map_file_location % (fn,)
 
-    map_save_to_disk(fn);
+#    map_save_to_disk(fn);
 
-def load_from_disk(fn=''):
-    if not fn:
-        fn = 'mapsave1'
+#def load_from_disk(fn=''):
+#    if not fn:
+#        fn = 'mapsave1'
         
-    fn = map_file_location % (fn,)
-    if not os.path.exists(fn):
-        print "Map %s does not exist. Abort map load." % (fn,)
-        return 1
+#    fn = map_file_location % (fn,)
+#    if not os.path.exists(fn):
+#        print "Map %s does not exist. Abort map load." % (fn,)
+#        return 1
         
-    map_load_from_disk(fn)
+#    map_load_from_disk(fn)
 
-'''
-Part 6: Generation
-'''
+#'''
+#Part 6: Generation
+#'''
 

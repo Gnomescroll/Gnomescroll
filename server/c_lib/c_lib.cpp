@@ -8,10 +8,13 @@
 #include <c_lib/time/physics_timer.c>
 
 //map
-#include <c_lib/t_map/t_map_net.cpp>
-#include "./t_map/t_map.cpp"
-#include "./t_map/t_properties.c"
-#include "./t_map/t_serialize.c"
+
+#include <c_lib/t_map/t_map_class.cpp>
+#include <c_lib/t_map/t_map.cpp>
+#include <c_lib/t_map/t_properties.cpp>
+
+#include <c_lib/t_map/net_CtoS.cpp>
+#include <c_lib/t_map/net_StoC.cpp>
 
 //physics
 

@@ -35,7 +35,6 @@ void t_zerr(int ret)
     }
 }
 
-#ifdef DC_SERVER
-    #include "t_buffer.c"
-    #include "t_compress.c"
-#endif
+#include "t_buffer.c"
+#include "t_compress.c"
+//#include "t_decompress.c"

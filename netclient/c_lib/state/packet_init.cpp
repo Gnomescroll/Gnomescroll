@@ -9,7 +9,8 @@
 
 #include <c_lib/particles/particle_lib.hpp>
 
-#include <c_lib/t_map/t_map_net.hpp>
+#include <c_lib/t_map/net_CtoS.hpp>
+#include <c_lib/t_map/net_StoC.hpp>
 
 #include <c_lib/items/items.hpp>
 
@@ -47,6 +48,12 @@ void RegisterMessages() {
     agent_name_StoC::register_client_packet();
 
     agent_block_CtoS::register_server_packet();
+
+    /*
+        Map Messages
+    */
+    map_chunk_list_request_CtoS::register_server_packet();
+    chunk_meta_data_StoC::register_client_packet();
     // block value change
     block_StoC::register_client_packet();
     block_CtoS::register_server_packet();
