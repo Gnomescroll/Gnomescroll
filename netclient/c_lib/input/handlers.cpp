@@ -332,7 +332,17 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys,
 
 /* Camera */
 
-void camera_key_down_handler(SDL_Event* event){}
+void camera_key_down_handler(SDL_Event* event)
+{
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_p:    // jump to agent camera
+            free_camera->copy_state_from(agent_camera);
+            break;
+        default: break;
+    }
+}
+
 void camera_key_up_handler(SDL_Event* event){}
 void camera_mouse_down_handler(SDL_Event* event)
 {

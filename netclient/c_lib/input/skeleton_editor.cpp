@@ -154,6 +154,10 @@ void key_down_handler(SDL_Event* event)
         case SDLK_r:
             rotate = (!rotate);
             break;
+
+        case SDLK_RETURN:
+            save();
+            break;
         
         case SDLK_LEFT:
             if (rotate)
@@ -225,6 +229,10 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 
 void save()
 {
+    if (vox_dat == NULL) return;
+    char fn[100] = {'\0'};
+    sprintf(fn, "./media/voxel/saves/%d.skeleton", _GET_MS_TIME());
+    vox_dat->save(fn);
 }
 
 }

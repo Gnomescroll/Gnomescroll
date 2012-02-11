@@ -100,7 +100,6 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
     }
 
     // skeleton node matrixs
-
     check_for_comments(buffer, &index);
     for(int i=0; i<num_skeleton_nodes; i++)
     {
@@ -174,7 +173,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %n", &biaxial, &read);
     index += read;
 
-    vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, (bool)biaxial);
+    vox_dat->set_part_properties(part_num, vox_size, xdim, ydim, zdim, file_name, (bool)biaxial);
 
     // team
     int team;

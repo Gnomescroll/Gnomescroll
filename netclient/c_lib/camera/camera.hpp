@@ -50,6 +50,8 @@ class Camera {
         void zoom();
         void unzoom();
 
+        void copy_state_from(Camera* c);
+
         Camera();
 };
 

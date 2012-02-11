@@ -45,23 +45,29 @@ class VoxPart {
         VoxDat* dat;    // parent
         
         int part_num;
-        
+
         int skeleton_parent_matrix;
         float sx, sy, sz, srx, sry, srz;    // skeleton local matrix parameters
         
         float vox_size;
         bool biaxial; // true for horizontal+vertical (head). default=false
 
+        char *filename;
+
         void set_local_matrix();   // uses cached x,y,z,rx,ry,rz values
         void set_dimension(int x, int y, int z);
 
+        void set_filename(char *filename);
         VoxPart(
             VoxDat* dat,
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
+            char* filename,
             bool biaxial=false
         );
+
+        ~VoxPart();
 };
 
 class VoxDat {
@@ -75,6 +81,7 @@ class VoxDat {
         bool voxel_skeleton_inited;
         int* vox_skeleton_transveral_list;
         struct Affine* vox_skeleton_local_matrix;
+        float** vox_skeleton_local_matrix_reference;
         int n_skeleton_nodes;
         
         void init_skeleton(int n_skeleton);
@@ -89,6 +96,7 @@ class VoxDat {
             int part_num,
             float vox_size,
             int dimension_x, int dimension_y, int dimension_z,
+            char* filename,
             bool biaxial=false
         );
 
@@ -99,6 +107,8 @@ class VoxDat {
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
         #endif
+
+        void save(char *fn);
 
         VoxDat();
         ~VoxDat();
