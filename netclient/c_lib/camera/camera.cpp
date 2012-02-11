@@ -263,6 +263,12 @@ void Camera::forward_vector(float f[3])
     f[2] /= len;
 }
 
+void Camera::copy_state_from(Camera* c)
+{
+    this->set_state(c->x, c->y, c->z);
+    this->set_angles(c->theta, c->phi);
+}
+
 void update_camera_matrices()
 {
     glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);
@@ -270,7 +276,6 @@ void update_camera_matrices()
     glGetDoublev(GL_PROJECTION_MATRIX, projection_matrix);
     glGetIntegerv(GL_VIEWPORT, viewport);
 }
-
 
 Camera* get_agent_camera()
 {

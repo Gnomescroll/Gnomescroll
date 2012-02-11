@@ -9,6 +9,7 @@ class Voxel_model
     public:
         //skeleton
         void init_skeleton(VoxDat* vox_dat);
+        void reset_skeleton(VoxDat* vox_dat); // reset skeleton properties from voxdat
         void set_skeleton_root(float x, float y, float z, float theta);
         void update_skeleton();  //recalculate world view matrices
 
@@ -20,7 +21,6 @@ class Voxel_model
         int* vox_skeleton_transveral_list;
         struct Affine* vox_skeleton_local_matrix;
         struct Affine* vox_skeleton_world_matrix;
-        
         //parts voxel volume parst
         bool vox_inited;
 

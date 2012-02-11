@@ -257,8 +257,15 @@ fix valgrind voxel loader uninitialized errors
 
 Feb09
 
-do the models
+model dimensions
 ===================
+
+Feb10
+
+
+
+===================
+
 
 == MODELS ==
 Make new model that fits inside agent box
@@ -350,3 +357,5 @@ map gen scripts (can be removed easy, not integrated)
 -fix client side prediction bug (movement is slugish, glitch)
 mouse momentum
 endpoints on hitscan laser
+map networking
+map compression

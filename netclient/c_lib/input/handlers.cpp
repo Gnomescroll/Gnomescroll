@@ -2,6 +2,7 @@
 
 #include <chat/client.hpp>
 #include <hud/hud.hpp>
+#include <input/skeleton_editor.hpp>
 
 InputState input_state;
 
@@ -56,6 +57,11 @@ void enable_quit()
     input_state.quit = true;
 }
 
+void toggle_skeleton_editor()
+{
+    input_state.skeleton_editor = (!input_state.skeleton_editor);
+}
+
 void toggle_input_mode()
 {
     switch (input_state.input_mode)
@@ -107,6 +113,7 @@ void init_handlers()
     input_state.map = false;
     input_state.chat = false;
     input_state.hud = true;
+    input_state.skeleton_editor = false;
 
     input_state.has_focus = true;
     input_state.rebind_mouse = input_state.mouse_bound;
@@ -325,7 +332,17 @@ void agent_key_state_handler(Uint8 *keystate, int numkeys,
 
 /* Camera */
 
-void camera_key_down_handler(SDL_Event* event){}
+void camera_key_down_handler(SDL_Event* event)
+{
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_p:    // jump to agent camera
+            free_camera->copy_state_from(agent_camera);
+            break;
+        default: break;
+    }
+}
+
 void camera_key_up_handler(SDL_Event* event){}
 void camera_mouse_down_handler(SDL_Event* event)
 {
@@ -371,6 +388,12 @@ void camera_key_state_handler(Uint8 *keystate, int numkeys)
 void key_down_handler(SDL_Event* event)
 {
 
+    if (input_state.skeleton_editor)
+    {
+        SkeletonEditor::key_down_handler(event);
+        return;
+    }
+
     if (input_state.chat)
         chat_key_down_handler(event);
     else
@@ -402,6 +425,10 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_m:
                 toggle_map();
+                break;
+
+            case SDLK_o:
+                toggle_skeleton_editor();
                 break;
 
             case SDLK_t:
@@ -490,6 +517,12 @@ void key_down_handler(SDL_Event* event)
 void key_up_handler(SDL_Event* event)
 {
 
+    if (input_state.skeleton_editor)
+    {
+        SkeletonEditor::key_up_handler(event);
+        return;
+    }
+
     if (input_state.chat)
         chat_key_up_handler(event);
     else
@@ -522,6 +555,12 @@ void key_up_handler(SDL_Event* event)
 void mouse_button_down_handler(SDL_Event* event)
 {
 
+    if (input_state.skeleton_editor)
+    {
+        SkeletonEditor::mouse_button_down_handler(event);
+        return;
+    }
+
     // chat doesnt affect mouse
 
     if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -539,6 +578,13 @@ void mouse_button_down_handler(SDL_Event* event)
 // mouse up
 void mouse_button_up_handler(SDL_Event* event)
 {
+
+    if (input_state.skeleton_editor)
+    {
+        SkeletonEditor::mouse_button_up_handler(event);
+        return;
+    }
+
     // chat doesnt affect mouse
 
     if (input_state.input_mode == INPUT_STATE_AGENT)
@@ -577,6 +623,12 @@ void quit_event_handler(SDL_Event* event)
 // keyboard state
 void key_state_handler(Uint8 *keystate, int numkeys)
 {
+    if (input_state.skeleton_editor)
+    {
+        SkeletonEditor::key_state_handler(keystate, numkeys);
+        return;
+    }
+    
     char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
     f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
     
