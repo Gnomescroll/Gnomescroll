@@ -1,6 +1,7 @@
 #include "skeleton_editor.hpp"
 
 #include <input/handlers.hpp>
+#include <time.h>
 
 namespace SkeletonEditor
 {
@@ -10,15 +11,16 @@ int id = 0;
 int part = 0;
 VoxDat* vox_dat = NULL;
 Voxel_model* vox = NULL;
+void *obj = NULL;
+VoxPart* vp = NULL;
 
 float lateral_speed = 0.05f;
-const int ROT_STEPS = 10;   // key presses for a full cycle
+const int ROT_STEPS = 16;   // key presses for a full cycle
 float rotation_speed = 2.0 / ROT_STEPS;
 
 void move_in_x(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sx += s;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
@@ -26,8 +28,7 @@ void move_in_x(float s)
 
 void move_in_y(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sy += s;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
@@ -35,8 +36,7 @@ void move_in_y(float s)
 
 void move_in_z(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sz += s;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
@@ -44,8 +44,7 @@ void move_in_z(float s)
 
 void rotate_in_x(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srx += s;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
@@ -53,8 +52,7 @@ void rotate_in_x(float s)
 
 void rotate_in_y(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sry += s;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
@@ -62,9 +60,21 @@ void rotate_in_y(float s)
 
 void rotate_in_z(float s)
 {
-    if (vox_dat == NULL || vox == NULL) return;
-    VoxPart* vp = vox_dat->vox_part[part];
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srz += s;
+    vp->set_local_matrix();    // TODO: use node
+    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+}
+
+void reset_part()
+{
+    if (vox_dat == NULL || vox == NULL || vp == NULL) return;
+    vp->sx = 0;
+    vp->sy = 0;
+    vp->sz = 0;
+    vp->srx = 0;
+    vp->sry = 0;
+    vp->srz = 0;
     vp->set_local_matrix();    // TODO: use node
     vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
 }
@@ -100,8 +110,6 @@ void raycast_to_part()
     part = target.part_id;
     type = (Object_types)target.entity_type;
 
-    void *obj;
-
     switch (type)
     {
         case OBJ_TYPE_AGENT:
@@ -134,10 +142,17 @@ void raycast_to_part()
             //if (obj==NULL) break;
             //vox = ((Flag*)obj)->vox;
             //break;
+
+        //case OBJ_TYPE_TURRET:
+            //vox_dat = &turret_vox_dat;
+            //obj = ClientState::turret_list.get(id);
+            //if (obj==NULL) break;
+            //vox = ((Turret*)obj)->vox;
+            //break;
+
         default: break;
     }
-    //printf("Selected:\n");
-    //printf("type=%d part=%d n_parts=%d\n", type, part, vox->n_parts);
+    vp = vox_dat->vox_part[part];
 }
 
 /* Handlers */
@@ -153,6 +168,10 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_r:
             rotate = (!rotate);
+            break;
+
+        case SDLK_l:
+            reset_part();
             break;
 
         case SDLK_RETURN:
@@ -200,6 +219,7 @@ void key_down_handler(SDL_Event* event)
             if (vox == NULL) break;
             part++;
             part %= vox->n_parts;
+            vp = vox_dat->vox_part[part];
             break;
             
         default: break;
@@ -231,7 +251,10 @@ void save()
 {
     if (vox_dat == NULL) return;
     char fn[100] = {'\0'};
-    sprintf(fn, "./media/voxel/saves/%d.skeleton", _GET_MS_TIME());
+    char inter[70] = {'\0'};
+    long int t = time(NULL);
+    sprintf(inter, "./media/voxel/saves/%ld", t);
+    sprintf(fn, "%s.skeleton", inter);
     vox_dat->save(fn);
 }
 

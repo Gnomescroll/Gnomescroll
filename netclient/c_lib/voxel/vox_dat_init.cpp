@@ -11,7 +11,8 @@ void init_vox_dats()
 {
     //read_skeleton((char*)"./media/voxel/agent.skeleton", &agent_vox_dat);
     //read_skeleton((char*)"./media/voxel/robot.skeleton", &agent_vox_dat);
-    read_skeleton((char*)"./media/voxel/robot1/robot1.skeleton", &agent_vox_dat);
+    //read_skeleton((char*)"./media/voxel/robot1/robot1.skeleton", &agent_vox_dat);
+    read_skeleton((char*)"./media/voxel/saves/newrobotfinal_centered.skeleton", &agent_vox_dat);
     read_skeleton((char*)"./media/voxel/slime.skeleton", &Monsters::slime_vox_dat);
     //read_skeleton((char*)"./media/voxel/flag.skeleton", &flag_vox_dat);
     read_skeleton((char*)"./media/voxel/dbag_flag.skeleton", &flag_vox_dat);

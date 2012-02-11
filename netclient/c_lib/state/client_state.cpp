@@ -106,13 +106,11 @@ namespace ClientState {
     void update_camera()
     {
         if (input_state.camera_mode == INPUT_STATE_AGENT)
-        {
             use_agent_camera();
-            if (playerAgent_state.you != NULL)
-                update_agent_camera();
-        }
         else
             use_free_camera();
+
+        update_agent_camera();
     }
 
 }

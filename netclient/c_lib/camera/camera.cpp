@@ -317,8 +317,4 @@ void update_agent_camera()
     agent_camera->x = ClientState::playerAgent_state.camera_state.x;
     agent_camera->y = ClientState::playerAgent_state.camera_state.y;
     agent_camera->z = ClientState::playerAgent_state.camera_state.z + ClientState::playerAgent_state.you->camera_height();
-
-    // set camera_state's angle from agent_camera
-    //ClientState::playerAgent_state.camera_state.theta = agent_camera->theta;
-    //ClientState::playerAgent_state.camera_state.phi = agent_camera->phi;
 }

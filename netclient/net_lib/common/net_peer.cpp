@@ -37,7 +37,7 @@ void NetPeer::flush_to_net()
 {
     if(this->connected == 0) 
     {
-        printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
+        //printf("flush_outgoing_packets: Cannot send packet, disconnected!\n");
         return;
     }
 
