@@ -47,7 +47,6 @@ void map_chunk_request_CtoS::handle()
         return;
     }
 
-    s
 }
 
 

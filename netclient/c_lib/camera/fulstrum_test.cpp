@@ -54,6 +54,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* for
 
     fulstrum_2d_r = *right;
     fulstrum_2d_r.z = 0.0;
+    fulstrum_2d_r = vec3_normalize(fulstrum_2d_r);
     //fulstrum_2d_r.x
 
 }
@@ -116,6 +117,22 @@ bool point_fulstrum_test(float x, float y, float  z)
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
+    //float dz = x*fulstrum_f.x + y*fulstrum_f.y;
+    //if( dz + r < 0 || dz > fulstrum_zfar - r ) return false;
+
+    x -= fulstrum_c.x;
+    y -= fulstrum_c.y;
+    
+    float dz = x*fulstrum_f.x + y*fulstrum_f.y;
+
+    float dx = x*fulstrum_r.x + y*fulstrum_r.y;
+    float rx = fulstrum_hx_sphere*r;
+    if( dx < -dz*fulstrum_hx - rx|| dx > dz*fulstrum_hx + rx ) return false;
+    
+    //float dy = x*fulstrum_u.x + y*fulstrum_u.y;
+    //float ry = fulstrum_hx_sphere*r;
+    //if( dy < -dz*fulstrum_hy - ry || dy > dz*fulstrum_hy + ry ) return false;
+
     return true;
 }
 
