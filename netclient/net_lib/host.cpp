@@ -110,10 +110,6 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.enet_peer = event->peer;
     event->peer -> data = (void*) &NetClient::Server;
     NetClient::Server.connected = 1;
- 
-    //dont send until client id received
-    //client_connect_event(nc->client_id);
-
 }
 
 static void client_disconnect(ENetEvent* event)
@@ -124,8 +120,6 @@ static void client_disconnect(ENetEvent* event)
     enet_peer_reset(event->peer); //TEST
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
-
-    //client_disconnect_event(0);
 }
 
 }
@@ -233,16 +227,6 @@ void client_dispatch_network_events()
                         0
                         ); 
                     break;
-                //case 2:
-                    ////printf("server received channel 2 message \n");
-                    //index= 0;
-                    //process_python_messages(
-                        //(char*) event.packet -> data, 
-                        //&index, 
-                        //event.packet->dataLength, 
-                        //0
-                        //); 
-                    //break;
                 case 3:
                 #ifdef DC_SERVER
                     printf("server received channel 3 message \n");
@@ -325,8 +309,6 @@ static void client_connect(ENetEvent* event)
 
     nc->flush_to_net();
     enet_host_flush(server_host);
-
-    //client_connect_event(nc->client_id);
 }
 
 static void client_disconnect(ENetEvent* event)
@@ -343,7 +325,6 @@ static void client_disconnect(ENetEvent* event)
 
     npm->teardown();
 
-    //client_disconnect_event(client_id);
     printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
 
     enet_peer_reset(event->peer); //TEST
@@ -417,16 +398,6 @@ void server_dispatch_network_events()
                         ((class NetPeer*)event.peer->data)->client_id 
                         ); 
                     break;
-                //case 2:
-                    ////printf("server received channel 2 message \n");
-                    //index= 0;
-                    //process_python_messages(
-                        //(char*) event.packet -> data, 
-                        //&index, 
-                        //event.packet->dataLength, 
-                        //((class NetPeer*)event.peer->data)->client_id 
-                        //); 
-                    //break;
                 case 3:
                     printf("server received channel 4 message \n");
                     index= 0;

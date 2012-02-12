@@ -186,64 +186,6 @@ int process_client_map_messages(char* buff, int *n, int max_n, int client_id)
     return 0; //should not happen
 }
 
-//int process_python_messages(char* buff, int *n, int max_n, int client_id)
-//{
-    //int length;
-    
-    ////printf("Received a python packet of size %i \n", max_n);
-
-    //PYTHON_LOOP:
-
-    ////UNPACK_uint16_t(&length, n, &n1);    //length
-
-    ////printf("py0 n= %i, max_n= %i \n", *n, max_n);
-
-    //pack_u16(&length, buff, n, false);
-
-    //if(length + *n > max_n) 
-
-    //{    
-        //printf("Invalid Length: length+*n > max_n \n");
-        //return -1;
-    //}
-
-    ////printf("python message: size %i \n", length);
-
-    ////printf("py1 n= %i, max_n= %i \n", *n, max_n);
-
-    //if(PY_MESSAGE_CALLBACK_GLOBAL == NULL) 
-    //{
-        //printf("PY_MESSAGE_CALLBACK_GLOBAL is NULL\n");    
-    //} else {
-        //PY_MESSAGE_CALLBACK_GLOBAL(buff+*n, length, client_id);
-    //}
-
-    ////printf("py3 n= %i, max_n= %i \n", *n, max_n);
-    //*n += length;
-    ////printf("py4 n= %i, max_n= %i \n", *n, max_n);
-
-    //if(*n < max_n) 
-    //{ 
-        //goto PYTHON_LOOP;     
-    //}
-    ////finished procesing messages
-    //if(*n == max_n) 
-    //{ 
-        //return 0; 
-    //}       
-
-    ////error that should never occur
-    //if(*n > max_n) 
-    //{                    
-        ////error, read past buff 
-        //printf("process_python_messages: network error!!! Error: read past buffer\n");
-        //return -1; 
-    //}
-
-    //return 0;
-//}
-
-
 int process_large_messages(char* buff, int *n, int max_n, int client_id)
 {
     printf("WARNING: process_large_messages, received message on large message channel \n");
