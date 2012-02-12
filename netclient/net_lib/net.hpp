@@ -5,7 +5,7 @@
 #include <net_lib/common/type_pack.h>
 #include <net_lib/common/packet_buffer.hpp>
 
-#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
+#define NET_PERF1_DISABLED 0 //performance enhancement by amortizing serialization
 /*
     When this is set to zero, each packet only needs to be serialized/allocated once even if sent to multiple clients
     This causes issues with staticly allocated packet, unless you set nm to NULL before using
@@ -47,7 +47,7 @@ class FixedSizeNetPacketToServer {
         
         void send() {
             Net_message* nm = Net_message::acquire(Derived::size);
-            if (nm == NULL) return;
+            //if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
@@ -114,7 +114,7 @@ class FixedSizeNetPacketToClient {
             if(nm == NULL || NET_PERF1_DISABLED ) 
             {
                 nm = Net_message::acquire(Derived::size);
-                if (nm == NULL) return;
+                //if (nm == NULL) return;
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
@@ -133,7 +133,7 @@ class FixedSizeNetPacketToClient {
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            if (nm == NULL) return;
+            //if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
@@ -198,7 +198,6 @@ class FixedSizeReliableNetPacketToServer {
         void send() 
         {
             Net_message* nm = Net_message::acquire(Derived::size);
-            if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_reliable_message(nm);
@@ -266,7 +265,6 @@ class FixedSizeReliableNetPacketToClient {
             if(nm == NULL || NET_PERF1_DISABLED ) 
             {
                 nm = Net_message::acquire(Derived::size);
-                if (nm == NULL) return;
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
@@ -284,7 +282,6 @@ class FixedSizeReliableNetPacketToClient {
             if( NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
@@ -315,3 +312,152 @@ class FixedSizeReliableNetPacketToClient {
 
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
+
+
+
+/*
+    Map Message Channel
+*/
+
+/*
+    Just a reliable message to server
+*/
+template <class Derived>
+class MapMessagePacketToServer {
+
+    private:
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
+    public:
+        static int message_id;
+        static int size;
+        int client_id; //id of the UDP client who sent message
+
+        void serialize(char* buff, int* buff_n) { //, int* size
+            //int _buff_n = *buff_n;
+            pack_message_id(Derived::message_id, buff, buff_n);
+            packet(buff, buff_n, true);
+            //*size = *buff_n - _buff_n;
+        }
+        inline void unserialize(char* buff, int* buff_n, int* size) {
+            int _buff_n = *buff_n;
+            packet(buff, buff_n, false);
+            *size = *buff_n - _buff_n;
+        }
+        
+        void send() 
+        {
+            Net_message* nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+            //NetClient::Server.push_map_message(nm);
+        }
+        
+
+        //will overflow if more than 64 bytes
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+
+        //virtual inline void handle() = 0;
+
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
+            Derived x;  //allocated on stack
+            x.client_id = _client_id;   //client id of client who sent the packet
+            x.unserialize(buff, &buff_n, bytes_read);
+            x.handle();
+        }
+
+        static void register_server_packet() {
+            Derived x = Derived();
+            Derived::message_id = next_server_packet_id(); //set size
+            Derived::size = x.Size();
+            register_server_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        }
+
+};
+
+//template <typename T> int Base<T>::staticVar(0);
+template <class Derived> int MapMessagePacketToServer<Derived>::message_id(255);
+template <class Derived> int MapMessagePacketToServer<Derived>::size(-1);
+
+/*
+Optimize this so it only serilizes once when sending to multiple clients
+Should onyl use one net message allocation per message
+*/
+
+template <class Derived>
+class MapMessagePacketToClient {
+    private:
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+        class Net_message* nm;
+    public:
+        static int message_id;
+        static int size;
+        //int client_id; //not used yet
+
+        //FixedSizeReliableNetPacketToClient() : nm(NULL) {}
+        MapMessagePacketToClient() { nm = NULL; }
+
+        void serialize(char* buff, int* buff_n) { //, int* size
+            //int _buff_n = *buff_n;
+            pack_message_id(Derived::message_id, buff, buff_n);
+            packet(buff, buff_n, true);
+            //*size = *buff_n - _buff_n;
+        }
+        inline void unserialize(char* buff, int* buff_n, int* size) {
+            int _buff_n = *buff_n;
+            packet(buff, buff_n, false);
+            *size = *buff_n - _buff_n;
+        }
+
+        void sendToClient(int client_id) 
+        {
+            
+            if(nm == NULL || NET_PERF1_DISABLED ) 
+            {
+                nm = Net_message::acquire(Derived::size);
+                int buff_n = 0;
+                serialize(nm->buff, &buff_n);
+            }
+            
+            if(NetServer::pool[client_id] == NULL)
+            {
+                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
+                return;
+            }
+            NetServer::pool[client_id]->push_reliable_message(nm);
+        }
+
+        void broadcast() 
+        {
+            if( NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
+
+            Net_message* nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+
+            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            {
+                class NetPeer* np = NetServer::pool[i]; //use better iterator
+                if(np == NULL) continue;
+                np->push_reliable_message(nm);
+            }
+        }
+
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
+            Derived x;  //allocated on stack
+            //x.client_id = _client_id //not used yet
+            x.unserialize(buff, &buff_n, bytes_read);
+            x.handle();
+        }
+
+        static void register_client_packet() {
+            Derived x = Derived();
+            Derived::message_id = next_client_packet_id(); //set size
+            Derived::size = x.Size();
+            register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        }
+}; 
+
+template <class Derived> int MapMessagePacketToClient<Derived>::message_id(255);
+template <class Derived> int MapMessagePacketToClient<Derived>::size(-1);

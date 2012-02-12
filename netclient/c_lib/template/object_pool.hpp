@@ -78,6 +78,11 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
 
     Object* ar = new Object[BUFFER_POOL_SIZE];
 
+    if( ar == NULL)
+    {
+        printf("%s: Batch Alloc  %i:NEW RETURNED NULL, MEMORY ERROR! \n", Base::name(), batch_num);
+    }
+    
     #if OBJECT_POOL_DEBUG
         for(int i=0; i<BUFFER_POOL_SIZE; i++) ar[i].allocated = 0;
     #endif
