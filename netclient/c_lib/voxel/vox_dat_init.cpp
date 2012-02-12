@@ -9,9 +9,6 @@
 
 void init_vox_dats()
 {
-    //read_skeleton((char*)"./media/voxel/agent.skeleton", &agent_vox_dat);
-    //read_skeleton((char*)"./media/voxel/robot.skeleton", &agent_vox_dat);
-    //read_skeleton((char*)"./media/voxel/robot1/robot1.skeleton", &agent_vox_dat);
     read_skeleton((char*)"./media/voxel/saves/2.skeleton", &agent_vox_dat);
     read_skeleton((char*)"./media/voxel/saves/crouch2.skeleton", &agent_vox_dat_crouched);
     read_skeleton((char*)"./media/voxel/saves/dead2.skeleton", &agent_vox_dat_dead);
