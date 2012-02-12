@@ -386,14 +386,14 @@ template <class Derived>
 class MapMessagePacketToClient {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
-        class Net_message* nm;
+
     public:
         static int message_id;
         static int size;
         //int client_id; //not used yet
 
         //FixedSizeReliableNetPacketToClient() : nm(NULL) {}
-        MapMessagePacketToClient() { nm = NULL; }
+        MapMessagePacketToClient() { }
 
         void serialize(char* buff, int* buff_n) { //, int* size
             //int _buff_n = *buff_n;
@@ -406,6 +406,19 @@ class MapMessagePacketToClient {
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
+
+        void sendToClient(int client_id) 
+        {
+            NetPeer* np = NetServer::pool[client_id];
+            if(np == NULL)
+            {
+                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
+                return;
+            }
+            serialize(np->map_message_buffer, &np->map_message_buffer_index);
+ 
+        }
+
 
         void sendToClient(int client_id, char* buff, int len) 
         {
