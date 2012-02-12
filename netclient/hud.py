@@ -22,7 +22,7 @@ class Hud(object):
         except (TypeError, ValueError):
             fps = 0.
 
-        draw_ping = opts.fps #TODO
+        draw_ping = opts.ping
         
         init_c_lib.HUD.set_draw_settings(
             draw_fps,
