@@ -32,33 +32,31 @@ class FixedSizeNetPacketToServer {
         int client_id; //id of the UDP client who sent message
 
         //flatten this
-        void serialize(char* buff, int* buff_n) { //, int* size
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        { //, int* size
             //int _buff_n = *buff_n;
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
             //*size = *buff_n - _buff_n;
         }
         //flatten this
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
         
-        void send() {
+        void send() 
+        {
             Net_message* nm = Net_message::acquire(Derived::size);
-            //if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
             NetClient::Server.push_unreliable_message(nm);
-            //if(bytes_written != Derived::size ) printf("Error: message serialization size wrong\n"); //DEBUG
         }
         
-
-        //will overflow if more than 64 bytes
+        //will overflow if more than 128 bytes
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
-
-        //virtual inline void handle() = 0;
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -93,13 +91,14 @@ class FixedSizeNetPacketToClient {
 
         FixedSizeNetPacketToClient() { nm = NULL; }
         
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -114,7 +113,6 @@ class FixedSizeNetPacketToClient {
             if(nm == NULL || NET_PERF1_DISABLED ) 
             {
                 nm = Net_message::acquire(Derived::size);
-                //if (nm == NULL) return;
                 int buff_n = 0;
                 serialize(nm->buff, &buff_n);
             }
@@ -129,11 +127,9 @@ class FixedSizeNetPacketToClient {
 
         void broadcast() 
         {
-
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
 
             Net_message* nm = Net_message::acquire(Derived::size);
-            //if (nm == NULL) return;
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
 
@@ -147,13 +143,12 @@ class FixedSizeNetPacketToClient {
             }
         }
 
-        //will overflow if more than 64 bytes
+        //will overflow if more than 128 bytes
         int _size() { char buff[128];int buff_n = 0;int size;unserialize(buff, &buff_n, &size);return size+1;}
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
         {
-            Derived x;  //allocated on stack
-            //x.client_id = _client_id //not used yet
+            Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
@@ -183,13 +178,13 @@ class FixedSizeReliableNetPacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -203,11 +198,8 @@ class FixedSizeReliableNetPacketToServer {
             NetClient::Server.push_reliable_message(nm);
         }
         
-
-        //will overflow if more than 64 bytes
+        //will overflow if more than 128 bytes
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
-
-        //virtual inline void handle() = 0;
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -242,18 +234,16 @@ class FixedSizeReliableNetPacketToClient {
     public:
         static int message_id;
         static int size;
-        //int client_id; //not used yet
 
-        //FixedSizeReliableNetPacketToClient() : nm(NULL) {}
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
 
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -295,14 +285,15 @@ class FixedSizeReliableNetPacketToClient {
 
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
 
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
-            Derived x;  //allocated on stack
-            //x.client_id = _client_id //not used yet
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
+        {
+            Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
 
-        static void register_client_packet() {
+        static void register_client_packet() 
+        {
             Derived x = Derived();
             Derived::message_id = next_client_packet_id(); //set size
             Derived::size = x.Size();
@@ -317,6 +308,9 @@ template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-
 
 /*
     Map Message Channel
+
+    client to server is over reliable channel
+    server to client is over channel 3 (map channel)
 */
 
 /*
@@ -332,13 +326,13 @@ class MapMessagePacketToServer {
         static int size;
         int client_id; //id of the UDP client who sent message
 
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -349,14 +343,11 @@ class MapMessagePacketToServer {
             Net_message* nm = Net_message::acquire(Derived::size);
             int buff_n = 0;
             serialize(nm->buff, &buff_n);
-            //NetClient::Server.push_map_message(nm);
+            NetClient::Server.push_reliable_message(nm);
         }
         
-
-        //will overflow if more than 64 bytes
+        //will overflow if more than 128 bytes
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
-
-        //virtual inline void handle() = 0;
 
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
             Derived x;  //allocated on stack
@@ -386,22 +377,20 @@ template <class Derived>
 class MapMessagePacketToClient {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
-
     public:
         static int message_id;
         static int size;
-        //int client_id; //not used yet
 
-        //FixedSizeReliableNetPacketToClient() : nm(NULL) {}
         MapMessagePacketToClient() { }
 
-        void serialize(char* buff, int* buff_n) { //, int* size
-            //int _buff_n = *buff_n;
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
-        inline void unserialize(char* buff, int* buff_n, int* size) {
+
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
             int _buff_n = *buff_n;
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
@@ -410,13 +399,12 @@ class MapMessagePacketToClient {
         void sendToClient(int client_id) 
         {
             NetPeer* np = NetServer::pool[client_id];
-            if(np == NULL)
+            if(np == NULL)  //remove in debug
             {
-                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
+                printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d \n", client_id, message_id);
                 return;
             }
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
- 
         }
 
 
@@ -434,22 +422,24 @@ class MapMessagePacketToClient {
                 printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
             }
 
-
+            /*
+                Have fast route for small messages
+                For larger messages, force flush then construct packet
+            */
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
             memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
             np->map_message_buffer_index += len;
             if(np->map_message_buffer_index > 4096)
             {
                 printf("MapMessagePacketToClient: map_message_buffer_index overflow \n");
-
             }
         }
 
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
 
-        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) {
-            Derived x;  //allocated on stack
-            //x.client_id = _client_id //not used yet
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
+        {
+            Derived x;
             x.unserialize(buff, &buff_n, bytes_read);
             x.handle();
         }
