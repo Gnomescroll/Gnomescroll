@@ -30,7 +30,13 @@ class MAP_CHUNK
     int xpos;
     int ypos;
 
-    bool needs_update;
+    #ifdef DC_CLIENT
+        bool needs_update;
+    #endif
+
+    #ifdef DC_SERVER
+        // 
+    #endif
 
     unsigned char top_block[16*16];
 

@@ -137,6 +137,54 @@ PROCESS:
 }
 
 
+/*
+    Client to server is safe
+*/
+int process_client_map_messages(char* buff, int *n, int max_n, int client_id) 
+{
+#ifdef DC_SERVER
+    printf("process_client_map_messages Error: this should never be called on server\n");
+#endif
+    //printf("*n= %i, max_n= %i \n", *n, max_n);
+
+    int message_id;
+
+    int read_bytes;
+
+    MAP_MESSAGE_LOOP:
+
+    unpack_message_id(&message_id, buff, n);
+
+    if(client_handler_array[message_id] == NULL) 
+    {
+        printf("message_handler error: no handler for message_id= %i\n", message_id);
+        return -1;
+    }
+    client_handler_array[message_id](buff, *n, &read_bytes, client_id);
+
+    *n += read_bytes; //works for non fixed sized
+    
+    //printf("n= %i, size= %i, read_bytes= %i \n", *n, size, read_bytes);
+    //printf("2 n= %i, max_n= %i \n", *n, max_n);
+
+    if(*n < max_n) goto MAP_MESSAGE_LOOP;     
+
+    //finished procesing messages
+    if(*n == max_n) 
+    { 
+        return 0; 
+    }       
+
+    //error that should never occur
+    if(*n > max_n) 
+    {                    
+        //error, read past buff 
+        printf("process_client_map_messages: network error!!! Error: read past buffer\n");
+        return -1; 
+    }
+
+    return 0; //should not happen
+}
 
 int process_python_messages(char* buff, int *n, int max_n, int client_id)
 {
@@ -201,33 +249,3 @@ int process_large_messages(char* buff, int *n, int max_n, int client_id)
     printf("WARNING: process_large_messages, received message on large message channel \n");
     return 0;
 }
-
-/*
-void process_packet_messages(char* buff, int n, int max_n, int client_id) 
-{
-
-    //pop message: n= 1288, message_id= 7 
-
-    if(max_n > 1000)
-    {
-        
-        printf("The 1288th byte is %i, %i \n", (int) buff[1288], (int) buff[1227]);
-
-    }
-    //printf("start packet: n= %i, max_n= %i \n", n, max_n);
-    int i=0;
-    int condition;
-    while(n != max_n) {
-        condition = pop_message(buff, &n, max_n, client_id);
-        if(condition == 1) continue;
-        if(condition < 0  ) {
-            printf("Packet processing terminated with error: %i\n", condition);
-            break;
-        }
-        if(condition == 0) {
-            break;
-        }
-        i++;
-    };
-}
-*/

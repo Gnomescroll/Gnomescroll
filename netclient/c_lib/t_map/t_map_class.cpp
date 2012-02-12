@@ -70,7 +70,10 @@ namespace t_map
         }
         //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
         c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)] = element;
-        c->needs_update = true;
+
+        #ifdef DC_CLIENT
+            c->needs_update = true;
+        #endif
     #else
         //printf("set: %i %i %i \n",  x,y,z);
 
@@ -102,7 +105,9 @@ namespace t_map
         //printf("index2 = %i \n", 16*16*z+ 16*yi + xi);
 
         c->e[16*16*z+ 16*yi + xi] = element;
-        c->needs_update = true;
+        #ifdef DC_CLIENT
+            c->needs_update = true;
+        #endif
     #endif
     }
 

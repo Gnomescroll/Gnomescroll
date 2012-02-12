@@ -14,6 +14,8 @@ void init_message_handler();
 
 int process_packet_messages(char* buff, int *n, int max_n, int client_id);
 
+int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+
 int process_python_messages(char* buff, int *n, int max_n, int client_id);
 int process_large_messages(char* buff, int *n, int max_n, int client_id);
 //typedef const void (*_pt2handler)(char*, int, int*);

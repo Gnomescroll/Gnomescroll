@@ -46,52 +46,10 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
 void _set_broadcast(int x, int y, int z, int value) ;
 void _block_broadcast(int x, int y, int z, int value) ;
-void send_map_metadata(int client_id);
-void send_map_metadata();
-void set_map_size(int x, int y, int z);
 
-
-/*
-int _get_highest_open_block(int x, int y, int agent_height)
-{
-    return 127;
-}
-
-int _get_highest_open_block(int x, int y)
-{
-    return 127;
-}
-
-int _get_lowest_open_block(int x, int y, int n) 
-{
-    return 127;
-}
-
-int _get_lowest_open_block(int x, int y) 
-{
-    return 127;
-}
-
-int _get_highest_solid_block(int x, int y)
-{
-    return 127;
-}
-
-int _get_lowest_solid_block(int x, int y) 
-{
-    return 127;
-}
-
-int get_height_at(int x, int y) 
-{
-    return 127;
-}
-
-inline bool point_in_map(int x, int y, int z)
-{
-    return true;
-}
-*/
+void send_map_metadata(int client_id);  //Deprecate
+void send_map_metadata();   //Deprecate
+void set_map_size(int x, int y, int z); //Deprecate
 
 #include "t_properties.hpp"
 

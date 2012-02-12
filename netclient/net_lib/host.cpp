@@ -245,8 +245,13 @@ void client_dispatch_network_events()
                         ); 
                     break;
                 case 3:
+                #ifdef DC_SERVER
                     printf("server received channel 3 message \n");
                     index= 0;
+                    break;
+                #endif
+                    index= 0;
+                    int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
                     break;
             }
 
