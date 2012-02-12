@@ -19,34 +19,16 @@ import stats
 import c_lib.terrain_map
 import init_c_lib
 
-#init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
 from init_c_lib import NetClientDispatchNetworkEvents, NetClientConnectTo, NetClientFlushToNet
 from profiler import P
-#from net_client import NetClientGlobal
-#from net_out import NetOut
-#from net_event import NetEventGlobal
-#from map_controller import MapControllerGlobal
 from hud import Hud
 from dat_loader import dat_loader
 
-#from init_c_lib import _pviz_draw
-
 init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 
-#c_lib.terrain_map.set_view_distance(256) #set view distance for terrain map
-
-#P2 = c_lib.terrain_map.Profiler()
-
 class App(object):
-
-    def init_globals(self):
-        #NetClientGlobal.init()
-        #NetEventGlobal.init()
-        #NetOut.init()
-        #MapControllerGlobal.init()
-        init_c_lib.init()
 
     def init_sound(self):
         path = './media/sound/wav/'
@@ -56,7 +38,7 @@ class App(object):
     def __init__(self):
         init_c_lib.load_options(opts)
 
-        self.init_globals()
+        init_c_lib.init()
 
         def load_cube_dat():
             import cube_dat
@@ -98,17 +80,14 @@ class App(object):
         self.last_tick = current_tick
         return delta_tick
 
-
     def mainLoop(self):
         global P, Phy
 
         self.connect()
         # Server sends the chunk list after client is "ready" (identified & dat loaded)
-        #NetOut.mapMessage.request_chunk_list()
 
         average = []
         fps_val = None
-        #ping_val = None
         fps = opts.fps
         ping = opts.fps
         ping_n = init_c_lib.get_ticks()
@@ -121,8 +100,6 @@ class App(object):
 
         while not init_c_lib.cy_input_state.quit:
             P.start_frame()
-
-            #NetClientGlobal.connection.dispatch_buffer()
 
             tick_count = 0
             _density = 1
@@ -197,11 +174,6 @@ class App(object):
             P.event("Draw animations")
             init_c_lib.AnimationDraw()
 
-            # update map chunks
-            #P.event("terrain_map.update_chunks")
-            #c_lib.terrain_map.update_chunks()
-
-
             # update mouse
             init_c_lib.update_mouse(self.get_tick())
 
@@ -214,16 +186,15 @@ class App(object):
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
-                    #P2.draw_perf_graph(opts.fps_perf_graph_x_offset, opts.fps_perf_graph_y_offset,-0.30)
-                    #_pviz_draw(opts.network_latency_graph_x_offset,opts.network_latency_graph_y_offset, -.30)
 
             P.event("SDL flip")
             init_c_lib.flip()
+
             P.event("Misc")
+
             #FPS calculation
             if fps:
                 ctick = init_c_lib.get_ticks()
-                #print str(ctick - ltick)
                 average.append(ctick-ltick)
                 ltick = ctick
                 if len(average) > 30:
@@ -232,7 +203,6 @@ class App(object):
                         sum += float(x)
                     fps_val = sum / float(len(average))
                     average = []
-                    #print "mean render time= %f" % (sum)
 
             if ping:
                 _ping_n_now = init_c_lib.get_ticks()
@@ -240,7 +210,6 @@ class App(object):
                     # do ping stuff here
                     ping_n = _ping_n_now
                     init_c_lib.ping()
-                    #ping_val = stats.last_ping
 
             P.finish_frame()
 
