@@ -37,7 +37,6 @@ class App(object):
 
     def __init__(self):
         init_c_lib.load_options(opts)
-
         init_c_lib.init()
 
         def load_cube_dat():
@@ -45,20 +44,12 @@ class App(object):
             dat_loader.load('cubes', cube_dat.dat)
         load_cube_dat()
 
-        '''
-            Init terrain map and prepare for draw
-        '''
         c_lib.terrain_map.init()
-
-        #init_c_lib.camera_callback = c_lib.terrain_map.camera_callback
-
         self.hud = Hud()
-
         self.init_sound()
-
         init_c_lib.choose_name(opts.name)
         
-        print "App init finished"
+        print "Client init finished"
 
     def connect(self):
         START_CLOCK() #clock must be started before networking stuff
