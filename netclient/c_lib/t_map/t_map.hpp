@@ -37,10 +37,7 @@ int _get(int x, int y, int z);
 void _set(int x, int y, int z, int value);
 
 //change to void?
-int _apply_damage(int x, int y, int z, int dmg)
-{
-    return 0;
-}
+int _apply_damage(int x, int y, int z, int dmg);
 
 int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
