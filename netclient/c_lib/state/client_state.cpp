@@ -119,4 +119,18 @@ namespace ClientState {
         msg.ticks = _get_ticks();
         msg.send();
     }
+
+    void set_desired_name(char* name)
+    {
+        if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+            name[PLAYER_NAME_MAX_LENGTH] = '\0';
+
+        strcpy(desired_name, name);
+    }
+
+    void client_id_received(int client_id)
+    {
+        send_identify_packet(desired_name);
+    }
+
 }

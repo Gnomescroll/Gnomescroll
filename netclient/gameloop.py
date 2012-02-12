@@ -73,6 +73,8 @@ class App(object):
         self.hud = Hud()
 
         self.init_sound()
+
+        init_c_lib.choose_name(opts.name)
         
         print "App init finished"
 

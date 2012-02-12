@@ -26,13 +26,13 @@ import init_c_lib
 import c_lib.map_gen
 import c_lib.terrain_map as terrain_map
 
-init_c_lib.init_python_net()
+#init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import NetServerInit,  NetServerDispatchNetworkEvents, NetServerFlushToNet
 from init_c_lib import START_CLOCK, GET_TICK
 from net_server import NetServer
-from net_out import NetOut
-from net_event import NetEvent
+#from net_out import NetOut
+#from net_event import NetEvent
 
 '''
 Noise notes:
@@ -386,8 +386,8 @@ class Main:
         init_c_lib.set_seed(int(time.time()))
 
         NetServer.init()
-        NetOut.init()
-        NetEvent.init()
+        #NetOut.init()
+        #NetEvent.init()
 
     def run2(self):
         print "Server Started"
@@ -414,7 +414,7 @@ class Main:
             if linux_terminal.check_stdin():
                 break
             
-            NetServer.connectionPool.dispatch_buffer()
+            #NetServer.connectionPool.dispatch_buffer()
             NetServer.connectionPool.check_clients_ready()
 
             sl_c =0
@@ -436,7 +436,7 @@ class Main:
             NetServerFlushToNet()
             NetServerDispatchNetworkEvents()
             
-            NetOut.event.process_events()
+            #NetOut.event.process_events()
 
             init_c_lib.slime_tick()
             init_c_lib.check_agent_proximities()

@@ -104,7 +104,7 @@ class Agent_state {
 
         void spawn_state();
 
-        void send_id_to_client(int client_id);
+        //void send_id_to_client(int client_id);
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);
 

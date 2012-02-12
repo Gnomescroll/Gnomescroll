@@ -29,6 +29,7 @@
 #include <net_lib/global.cpp>
 
 #include <net_lib/common/net_peer.cpp>
+#include <net_lib/common/net_peer_manager.cpp>
 #include <net_lib/common/packet_buffer.cpp>
 #include <net_lib/common/message_handler.c>
 #include <net_lib/common/net_time.c>

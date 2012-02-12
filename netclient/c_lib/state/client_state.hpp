@@ -43,9 +43,13 @@ namespace ClientState {
      
     extern CTF ctf;
 
+    char desired_name[PLAYER_NAME_MAX_LENGTH+1];
+
+    void set_desired_name(char* name);
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
         
     void set_PlayerAgent_id(int id);
+    void client_id_received(int client_id);
 
     void update();
     void draw();
@@ -59,6 +63,7 @@ namespace ClientState {
     int get_client_id_from_name(char* name);
     void update_camera();
     void send_ping();
+
 }
 #endif
 

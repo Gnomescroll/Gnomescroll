@@ -35,20 +35,19 @@ inline void PlayerAgent_Snapshot::handle() {
 
 inline void SendClientId_StoC::handle()
 {
-    //printf("Client Received Client id = %i \n", client_id);
     NetClient::Server.client_id = client_id;
-    client_connect_event(client_id);
+
     if (ClientState::playerAgent_state.you != NULL)
-    {
         ClientState::playerAgent_state.you->client_id = client_id;
-    }
+
+    ClientState::client_id_received(client_id);
 }
 
 
 inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        printf("Agent_state_message -- Agent %d does not exist\n", id);
         return;
     }
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
@@ -57,7 +56,7 @@ inline void Agent_state_message::handle() {
 inline void Agent_teleport_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        printf("Agent_teleport_message -- Agent %d does not exist\n", id);
         return;
     }
     // reset camera angle
@@ -286,7 +285,8 @@ inline void Spawner_destroy_StoC::handle()
 
 inline void ping_StoC::handle()
 {
-    printf("ticks %d\n", _get_ticks() - ticks);
+    //printf("ticks %d\n", _get_ticks() - ticks);
+    // TODO: set hud ping val
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -776,6 +776,8 @@ inline void identify_CtoS::handle()
     identified_StoC msg;
     strcpy(msg.name, name);
     msg.sendToClient(client_id);
+
+    NetServer::clients[client_id]->ready();
 }
 
 inline void ping_CtoS::handle()

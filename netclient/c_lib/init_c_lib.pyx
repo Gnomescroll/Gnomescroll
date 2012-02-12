@@ -75,8 +75,8 @@ Python specific network
 [net_*]
 """
 cdef extern from "./net_lib/export.hpp":
-    ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
-    ctypedef void (*PY_CLIENT_EVENT_CALLBACK)(int client_id, int event_type)
+#    ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
+#    ctypedef void (*PY_CLIENT_EVENT_CALLBACK)(int client_id, int event_type)
 #    void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
 #    void set_python_net_event_callback_function(PY_CLIENT_EVENT_CALLBACK pt)
 #    void send_python_net_message(char* message, int size, int client_id)
@@ -551,8 +551,7 @@ cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void update_client_state()
     void draw_client_state()
     void tick_client_state()
-
-    void send_identify_packet(char* name)
+    void set_desired_name(char* name)
 
 class ClientState(object):
     @classmethod
@@ -565,8 +564,8 @@ class ClientState(object):
     def tick(cls):
         tick_client_state()
 
-def identify(name):
-    send_identify_packet(name)
+def choose_name(name):
+    set_desired_name(name)
 def identified():
     return playerAgent_state.identified
 
