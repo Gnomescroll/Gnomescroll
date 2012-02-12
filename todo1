@@ -262,9 +262,15 @@ model dimensions
 
 Feb10
 
-
-
+improvement to html editor
 ===================
+
+Feb11
+
+Cleaned up agent model (still needs coloring)
+Made skeleton editor
+Made crouched and dead alignments
+==================
 
 
 == MODELS ==

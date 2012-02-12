@@ -6,6 +6,7 @@
 namespace SkeletonEditor
 {
 bool rotate = false;
+bool use_skeleton = false;
 Object_types type = OBJ_TYPE_AGENT;
 int id = 0;
 int part = 0;
@@ -13,6 +14,7 @@ VoxDat* vox_dat = NULL;
 Voxel_model* vox = NULL;
 void *obj = NULL;
 VoxPart* vp = NULL;
+int node = 0;
 
 float lateral_speed = 0.05f;
 const int ROT_STEPS = 16;   // key presses for a full cycle
@@ -23,7 +25,7 @@ void move_in_x(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sx += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void move_in_y(float s)
@@ -31,7 +33,7 @@ void move_in_y(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sy += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void move_in_z(float s)
@@ -39,7 +41,7 @@ void move_in_z(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sz += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void rotate_in_x(float s)
@@ -47,7 +49,7 @@ void rotate_in_x(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srx += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void rotate_in_y(float s)
@@ -55,7 +57,7 @@ void rotate_in_y(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sry += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void rotate_in_z(float s)
@@ -63,7 +65,7 @@ void rotate_in_z(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srz += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void reset_part()
@@ -76,7 +78,7 @@ void reset_part()
     vp->sry = 0;
     vp->srz = 0;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   // TODO maybe need to make this a reset switch
+    vox->reset_skeleton(vox_dat);   
 }
 
 void raycast_to_part()
@@ -110,6 +112,7 @@ void raycast_to_part()
     part = target.part_id;
     type = (Object_types)target.entity_type;
 
+    VoxDat* old = vox_dat;
     switch (type)
     {
         case OBJ_TYPE_AGENT:
@@ -152,7 +155,94 @@ void raycast_to_part()
 
         default: break;
     }
+    if (old != vox_dat)
+        node = 0;
     vp = vox_dat->vox_part[part];
+}
+
+
+/* Skeleton nodes */
+
+void reset_node()
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][0] = 0;
+    vox_dat->vox_skeleton_local_matrix_reference[node][1] = 0;
+    vox_dat->vox_skeleton_local_matrix_reference[node][2] = 0;
+    vox_dat->vox_skeleton_local_matrix_reference[node][3] = 0;
+    vox_dat->vox_skeleton_local_matrix_reference[node][4] = 0;
+    vox_dat->vox_skeleton_local_matrix_reference[node][5] = 0;
+    vox_dat->reset_skeleton_local_matrix(node);
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void move_node_in_x(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][0] += s;
+    vox_dat->reset_skeleton_local_matrix(node);
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void move_node_in_y(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][1] += s;
+    vox_dat->reset_skeleton_local_matrix(node);
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void move_node_in_z(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][2] += s;
+    vox_dat->reset_skeleton_local_matrix(node);  
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void rotate_node_in_x(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][3] += s;
+    vox_dat->reset_skeleton_local_matrix(node);
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void rotate_node_in_y(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][4] += s;
+    vox_dat->reset_skeleton_local_matrix(node); 
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
+}
+
+void rotate_node_in_z(float s)
+{
+    if (vox_dat == NULL || vox == NULL) return;
+    vox_dat->vox_skeleton_local_matrix_reference[node][5] += s;
+    vox_dat->reset_skeleton_local_matrix(node); 
+    if (node == 0)
+        vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
+    else
+        vox->reset_skeleton(vox_dat);
 }
 
 /* Handlers */
@@ -170,6 +260,13 @@ void key_down_handler(SDL_Event* event)
             rotate = (!rotate);
             break;
 
+        case SDLK_t:
+            use_skeleton = (!use_skeleton);
+            break;
+
+        case SDLK_k:
+            reset_node();
+            break;
         case SDLK_l:
             reset_part();
             break;
@@ -180,46 +277,90 @@ void key_down_handler(SDL_Event* event)
         
         case SDLK_LEFT:
             if (rotate)
-                rotate_in_x(rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_x(rotation_speed);
+                else
+                    rotate_in_x(rotation_speed);
             else
-                move_in_x(lateral_speed);
+                if (use_skeleton)
+                    move_node_in_x(lateral_speed);
+                else
+                    move_in_x(lateral_speed);
             break;
         case SDLK_RIGHT:
             if (rotate)
-                rotate_in_x(-rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_x(-rotation_speed);
+                else
+                    rotate_in_x(-rotation_speed);
             else
-                move_in_x(-lateral_speed);
+                if (use_skeleton)
+                    move_node_in_x(-lateral_speed);
+                else
+                    move_in_x(-lateral_speed);
             break;
         case SDLK_UP:
             if (rotate)
-                rotate_in_y(rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_y(rotation_speed);
+                else
+                    rotate_in_y(rotation_speed);
             else
-                move_in_y(lateral_speed);
+                if (use_skeleton)
+                    move_node_in_y(lateral_speed);
+                else
+                    move_in_y(lateral_speed);
             break;
         case SDLK_DOWN:
             if (rotate)
-                rotate_in_y(-rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_y(-rotation_speed);
+                else
+                    rotate_in_y(-rotation_speed);
             else
-                move_in_y(-lateral_speed);
+                if (use_skeleton)
+                    move_node_in_y(-lateral_speed);
+                else
+                    move_in_y(-lateral_speed);
             break;
         case SDLK_PERIOD:
             if (rotate)
-                rotate_in_z(rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_z(rotation_speed);
+                else
+                    rotate_in_z(rotation_speed);
             else
-                move_in_z(lateral_speed);
+                if (use_skeleton)
+                    move_node_in_z(lateral_speed);
+                else
+                    move_in_z(lateral_speed);
             break;
         case SDLK_COMMA:
             if (rotate)
-                rotate_in_z(-rotation_speed);
+                if (use_skeleton)
+                    rotate_node_in_z(-rotation_speed);
+                else
+                    rotate_in_z(-rotation_speed);
             else
-                move_in_z(-lateral_speed);
+                if (use_skeleton)
+                    move_node_in_z(-lateral_speed);
+                else
+                    move_in_z(-lateral_speed);
             break;
 
         case SDLK_RIGHTBRACKET: // toggle thru parts
-            if (vox == NULL) break;
+            if (vox_dat == NULL || vox == NULL) break;
             part++;
             part %= vox->n_parts;
             vp = vox_dat->vox_part[part];
+            break;
+
+        case SDLK_EQUALS:
+        case SDLK_PLUS:
+            if (vox_dat == NULL || vox == NULL) break;
+            node++;
+            node %= vox->n_skeleton_nodes;
+            printf("Selected node %d\n", node);
             break;
             
         default: break;
