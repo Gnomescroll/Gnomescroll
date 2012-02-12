@@ -113,4 +113,10 @@ namespace ClientState {
         update_agent_camera();
     }
 
+    void send_ping()
+    {
+        ping_CtoS msg;
+        msg.ticks = _get_ticks();
+        msg.send();
+    }
 }

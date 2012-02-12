@@ -19,14 +19,14 @@ import stats
 import c_lib.terrain_map
 import init_c_lib
 
-init_c_lib.init_python_net()
+#init_c_lib.init_python_net()
 from init_c_lib import StartPhysicsTimer, PhysicsTimerTickCheck
 from init_c_lib import START_CLOCK, GET_TICK
 from init_c_lib import NetClientDispatchNetworkEvents, NetClientConnectTo, NetClientFlushToNet
 from profiler import P
-from net_client import NetClientGlobal
-from net_out import NetOut
-from net_event import NetEventGlobal
+#from net_client import NetClientGlobal
+#from net_out import NetOut
+#from net_event import NetEventGlobal
 #from map_controller import MapControllerGlobal
 from hud import Hud
 from dat_loader import dat_loader
@@ -42,9 +42,9 @@ init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
 class App(object):
 
     def init_globals(self):
-        NetClientGlobal.init()
-        NetEventGlobal.init()
-        NetOut.init()
+        #NetClientGlobal.init()
+        #NetEventGlobal.init()
+        #NetOut.init()
         #MapControllerGlobal.init()
         init_c_lib.init()
 
@@ -106,7 +106,7 @@ class App(object):
 
         average = []
         fps_val = None
-        ping_val = None
+        #ping_val = None
         fps = opts.fps
         ping = opts.fps
         ping_n = init_c_lib.get_ticks()
@@ -120,7 +120,7 @@ class App(object):
         while not init_c_lib.cy_input_state.quit:
             P.start_frame()
 
-            NetClientGlobal.connection.dispatch_buffer()
+            #NetClientGlobal.connection.dispatch_buffer()
 
             tick_count = 0
             _density = 1
@@ -208,7 +208,7 @@ class App(object):
             if opts.hud:
                 init_c_lib.camera_hud_projection()
                 
-                self.hud.draw(fps=fps_val, ping=ping_val)
+                self.hud.draw(fps=fps_val)
 
                 if opts.diagnostic_hud:
                     c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
@@ -233,11 +233,12 @@ class App(object):
                     #print "mean render time= %f" % (sum)
 
             if ping:
-                if init_c_lib.get_ticks() - ping_n > opts.ping_update_interval:
+                _ping_n_now = init_c_lib.get_ticks()
+                if _ping_n_now - ping_n > opts.ping_update_interval:
                     # do ping stuff here
-                    ping_n = init_c_lib.get_ticks()
-                    NetOut.miscMessage.ping()
-                    ping_val = stats.last_ping
+                    ping_n = _ping_n_now
+                    init_c_lib.ping()
+                    #ping_val = stats.last_ping
 
             P.finish_frame()
 

@@ -7,6 +7,10 @@
 #include <c_lib/weapons/weapons.hpp>
 #include <monsters/monsters.hpp>
 
+#ifdef DC_CLIENT
+#include <c_lib/SDL/SDL_functions.h>
+#endif
+
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
@@ -280,6 +284,11 @@ inline void Spawner_destroy_StoC::handle()
     ClientState::spawner_list.destroy(id);
 }
 
+inline void ping_StoC::handle()
+{
+    printf("ticks %d\n", _get_ticks() - ticks);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -293,6 +302,8 @@ inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
+inline void ping_CtoS::handle(){}
+
 #endif
 
 // Client -> Server handlers
@@ -326,6 +337,7 @@ inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
 inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
+inline void ping_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -763,6 +775,13 @@ inline void identify_CtoS::handle()
 
     identified_StoC msg;
     strcpy(msg.name, name);
+    msg.sendToClient(client_id);
+}
+
+inline void ping_CtoS::handle()
+{
+    ping_StoC msg;
+    msg.ticks = ticks;
     msg.sendToClient(client_id);
 }
 
