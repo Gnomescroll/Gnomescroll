@@ -9,6 +9,10 @@ NetPeer::NetPeer()
     connected = 0;
     client_id = -1;
     enet_peer = NULL;
+
+    map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_SIZE ];
+    map_message_buffer_index = 0;
+
 }
 
 
@@ -63,7 +67,15 @@ void NetPeer::flush_to_net()
         enet_peer_send (enet_peer, 2, python_p);
     }
 
-
+#ifdef DC_SERVER
+    if( map_message_buffer_index > 0) 
+    {
+        printf("Flushing %i map bytes \n", map_message_buffer_index);
+        ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send (enet_peer, 3, map_p);
+        map_message_buffer_index = 0;
+    }
+#endif
 /*
     int n1 = 0;
     int seq = get_next_sequence_number(this);

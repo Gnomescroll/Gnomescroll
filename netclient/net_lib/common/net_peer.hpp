@@ -35,6 +35,8 @@ NetPeer
 
 //struct ENetPeer;
 
+const int NET_PEER_MAP_MESSAGE_BUFFER_SIZE = 4096;
+
 class NetPeer
 {
     private:
@@ -63,6 +65,10 @@ class NetPeer
     void push_unreliable_message(class Net_message* nm);
     void push_reliable_message(class Net_message* nm);
     void push_python_message(class Net_message* nm);
+
+    char* map_message_buffer;
+    int map_message_buffer_index;
+
     /*
         packet sequencer
     */

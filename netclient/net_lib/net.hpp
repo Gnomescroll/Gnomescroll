@@ -378,11 +378,10 @@ class MapMessagePacketToServer {
 template <class Derived> int MapMessagePacketToServer<Derived>::message_id(255);
 template <class Derived> int MapMessagePacketToServer<Derived>::size(-1);
 
-/*
-Optimize this so it only serilizes once when sending to multiple clients
-Should onyl use one net message allocation per message
-*/
 
+/*
+    Special server packet
+*/
 template <class Derived>
 class MapMessagePacketToClient {
     private:
@@ -408,37 +407,28 @@ class MapMessagePacketToClient {
             *size = *buff_n - _buff_n;
         }
 
-        void sendToClient(int client_id) 
+        void sendToClient(int client_id, char* buff, int len) 
         {
-            
-            if(nm == NULL || NET_PERF1_DISABLED ) 
-            {
-                nm = Net_message::acquire(Derived::size);
-                int buff_n = 0;
-                serialize(nm->buff, &buff_n);
-            }
-            
-            if(NetServer::pool[client_id] == NULL)
+            NetPeer* np = NetServer::pool[client_id];
+            if(np == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
                 return;
             }
-            NetServer::pool[client_id]->push_reliable_message(nm);
-        }
 
-        void broadcast() 
-        {
-            if( NetServer::number_of_clients == 0) return;  //prevents memory leak when no clients are connected
-
-            Net_message* nm = Net_message::acquire(Derived::size);
-            int buff_n = 0;
-            serialize(nm->buff, &buff_n);
-
-            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            if(len > 512) 
             {
-                class NetPeer* np = NetServer::pool[i]; //use better iterator
-                if(np == NULL) continue;
-                np->push_reliable_message(nm);
+                printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
+            }
+
+
+            serialize(np->map_message_buffer, &np->map_message_buffer_index);
+            memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
+            np->map_message_buffer_index += len;
+            if(np->map_message_buffer_index > 4096)
+            {
+                printf("MapMessagePacketToClient: map_message_buffer_index overflow \n");
+
             }
         }
 
