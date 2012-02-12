@@ -78,6 +78,10 @@ void _set(int x, int y, int z, int value)
     t_map::main_map->set_block(x,y,z,value);
 }
 
+int _apply_damage(int x, int y, int z, int dmg)
+{
+    return t_map::main_map->apply_damage(x,y,z,dmg);
+}
 
 #include "net_StoC.hpp"
 // apply block damage & broadcast the update to client

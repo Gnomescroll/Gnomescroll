@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace t_map
 {
 
@@ -48,46 +49,27 @@ struct cubeProperties* _get_cube(int id)
 Cube Properties
 */
 
+
+/*
+    Properties by cube id
+*/
+
 inline bool isActive(int id) __attribute((always_inline));
 inline bool isSolid(int id) __attribute((always_inline));
 inline bool isOccludes(int id) __attribute((always_inline));
 inline bool isTransparent(int id) __attribute((always_inline));
 
-bool isActive(int id) 
-{
-    return t_map::cube_list[id].active;
-}
-
-bool isSolid(int id) 
-{
-    return t_map::cube_list[id].solid;
-}
-
-bool isOccludes(int id) 
-{
-    return t_map::cube_list[id].occludes;
-}
-
-bool isTransparent(int id)
-{
-    return t_map::cube_list[id].transparent;
-}
+/*
+    Properties by coordinates
+*/
 
 inline bool isActive(int x, int y, int z) __attribute((always_inline));
 inline bool isSolid(int x, int y, int z) __attribute((always_inline));
 inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
 
-bool isActive(int x, int y, int z)
-{
-    return isActive(t_map::get(x,y,z));
-}
 
-bool isSolid(int x, int y, int z)
-{
-    return isSolid(t_map::get(x,y,z));
-}
+/*
+    Map Damage
+*/
 
-bool isOccludes(int x, int y, int z)
-{
-    return isOccludes(t_map::get(x,y,z));
-}
+int maxDamage(int id) __attribute((always_inline));

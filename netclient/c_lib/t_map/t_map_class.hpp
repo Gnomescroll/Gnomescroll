@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "t_properties.hpp"
+
 namespace t_map
 {
 
@@ -89,6 +91,9 @@ class Terrain_map
 
     inline int get_block(int x, int y, int z) __attribute((always_inline));
     inline void set_block(int x, int y, int z, int value) __attribute((always_inline));
+
+    int apply_damage(int x, int y, int z, int dmg);
+
 };
 
 } //
