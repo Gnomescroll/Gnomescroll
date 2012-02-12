@@ -28,6 +28,9 @@ namespace ClientState {
     Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
 
     CTF ctf;
+
+    char desired_name[PLAYER_NAME_MAX_LENGTH+1];
+    int last_ping_time;
     
     PlayerAgent_state playerAgent_state;
 

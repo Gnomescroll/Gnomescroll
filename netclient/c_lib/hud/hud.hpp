@@ -99,11 +99,9 @@ void init();
 
 // CYTHON
 void set_hud_draw_settings(
-    bool connected,
     bool fps,
     float fps_val,
-    bool ping,
-    int ping_val
+    bool ping
 );
 void update_hud_draw_settings();
 void draw_hud();

@@ -285,8 +285,7 @@ inline void Spawner_destroy_StoC::handle()
 
 inline void ping_StoC::handle()
 {
-    //printf("ticks %d\n", _get_ticks() - ticks);
-    // TODO: set hud ping val
+    ClientState::last_ping_time = _get_ticks() - ticks;
 }
 
 inline void Agent_cs_CtoS::handle() {}

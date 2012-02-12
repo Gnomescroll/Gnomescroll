@@ -5,6 +5,8 @@
 #include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
 #include <c_lib/input/handlers.hpp>
+#include <net_lib/export.hpp>
+
 /* Configuration */
 namespace Hud
 {
@@ -75,15 +77,11 @@ static struct HudDrawSettings
 } hud_draw_settings;
 
 void set_hud_draw_settings(
-    bool connected,
     bool fps,
     float fps_val,
-    bool ping,
-    int ping_val
+    bool ping
 )
 {
-    hud_draw_settings.connected = connected;
-    
     hud_draw_settings.fps = fps;
     // sanitize
     fps_val = (fps_val >= 1000.0f) ? 999.99 : fps_val;
@@ -91,15 +89,12 @@ void set_hud_draw_settings(
     hud_draw_settings.fps_val = fps_val;
 
     hud_draw_settings.ping = ping;
-    // sanitize
-    ping_val = (ping_val >= 1000) ? 999 : ping_val;
-    ping_val = (ping_val < 0) ? 0 : ping_val;
-    hud_draw_settings.ping_val = ping_val;
 }
 
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
+    hud_draw_settings.connected = _check_connection_status();
     hud_draw_settings.draw = input_state.hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector =
@@ -114,6 +109,11 @@ void update_hud_draw_settings()
         && ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
      );
+
+    // sanitize
+    int ping_val = ClientState::last_ping_time;
+    ping_val = (ping_val >= 1000) ? 999 : ping_val;
+    hud_draw_settings.ping_val = (ping_val < 0) ? 0 : ping_val;
 
     hud_draw_settings.player_stats = true;
 

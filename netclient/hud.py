@@ -16,29 +16,18 @@ class Hud(object):
 
     def draw(self, fps=None):
 
-        #connected = NetClientGlobal.connection.connected
-        connected = init_c_lib.connected()
-        
         draw_fps = fps is not None
         try:
             fps = float(fps)
         except (TypeError, ValueError):
             fps = 0.
 
-        #draw_ping = ping is not None
-        #try:
-            #ping = int(ping)
-        #except (TypeError, ValueError):
-            #ping = 0
-        draw_ping = True #TODO
-        ping = 0    # TODO
+        draw_ping = opts.fps #TODO
         
         init_c_lib.HUD.set_draw_settings(
-            connected,
             draw_fps,
             fps,
             draw_ping,
-            ping,
         )
         init_c_lib.HUD.update_hud_draw_settings()
         init_c_lib.HUD.draw()
