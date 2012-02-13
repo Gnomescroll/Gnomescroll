@@ -3,6 +3,8 @@
 #include "t_properties.hpp"
 #include "texture.hpp"
 
+#include <c_lib/t_map/client/structs.hpp>
+
 namespace t_map
 {
 

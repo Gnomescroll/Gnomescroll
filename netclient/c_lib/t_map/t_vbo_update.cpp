@@ -1,8 +1,10 @@
 #include "t_vbo_update.hpp"
 
-#include "common_data.hpp"
-#include "common_function.hpp"
+#include <c_lib/t_map/client/structs.hpp>
+
 #include "cache.hpp"
+
+#include <c_lib/t_map/client/hash_functions.hpp>
 
 #include "t_map_class.hpp"
 #include "t_vbo_update.hpp"
