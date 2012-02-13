@@ -3,7 +3,7 @@
 
 const int XMAX = 512;
 const int YMAX = 512;
-const int ZMAX = 512;
+const int ZMAX = 128;
 
 struct MapDimension
 {
