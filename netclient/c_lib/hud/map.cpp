@@ -286,7 +286,6 @@ void draw() {
 }
 
 // for cython
-//void update_map() {update();}
 void draw_map() {draw();}
 
 }
