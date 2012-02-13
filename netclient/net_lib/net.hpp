@@ -7,7 +7,7 @@
 
 #include <net_lib/common/packet_id_counter.hpp>
 
-#define NET_PERF1_DISABLED 0 //performance enhancement by amortizing serialization
+#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
 /*
     When this is set to zero, each packet only needs to be serialized/allocated once even if sent to multiple clients
     This causes issues with staticly allocated packet, unless you set nm to NULL before using
