@@ -13,8 +13,8 @@
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.cpp>
 
-#include <c_lib/t_map/net_CtoS.cpp>
-#include <c_lib/t_map/net_StoC.cpp>
+#include <c_lib/t_map/net/t_CtoS.cpp>
+#include <c_lib/t_map/net/t_StoC.cpp>
 
 //physics
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <net_lib/net.hpp>
+#include "t_net.hpp"
 
 void send_map_chunk(int x, int y, char* buffer, int n);
 void handle_map_chunk(int x, int y, char *buffer, int n);
@@ -21,7 +21,7 @@ class chunk_meta_data_StoC: public MapMessagePacketToClient<chunk_meta_data_StoC
             pack_u16(&version, buff, buff_n, pack);
         }
         
-        inline void handle(char* buff, int buff_n, int* bytes_read, int max_n);
+        inline void handle(char* buff, int* buff_n, int* bytes_read, int max_n);
 };
 
 class block_StoC: public MapMessagePacketToClient<block_StoC>
@@ -39,7 +39,7 @@ class block_StoC: public MapMessagePacketToClient<block_StoC>
             pack_u16(&val, buff, buff_n, pack);
         }
         
-        inline void handle(char* buff, int buff_n, int* bytes_read, int max_n);
+        inline void handle(char* buff, int* buff_n, int* bytes_read, int max_n);
 };
 
 class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
@@ -54,6 +54,6 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
         pack_u16(&z, buff, buff_n, pack);
     }
     
-    inline void handle(char* buff, int buff_n, int* bytes_read, int max_n);
+    inline void handle(char* buff, int* buff_n, int* bytes_read, int max_n);
 
 };

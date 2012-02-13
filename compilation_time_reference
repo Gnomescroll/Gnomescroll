@@ -1,5 +1,21 @@
 precompiled headers
 
+!!!
+precompiled headers
+http://gcc.gnu.org/onlinedocs/gcc/Precompiled-Headers.html
+
+"Only one precompiled header can be used in a particular compilation"
+
+-precompiled headers on ram disc
+-precompiled headers for stdlib
+-precompiled headers for SDL
+-precompiled headers for SDL_image
+-precompiled headers for net_lib
+
+Commonly Included Headers
+-precompiled headers for networking template
+-precompiled headers for map networking template
+-precompiled headers for map
 
 !!! compiling on ram disc
 

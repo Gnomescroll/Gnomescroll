@@ -1,7 +1,8 @@
-#include "net_CtoS.hpp"
+#include "t_CtoS.hpp"
 
-#include "net_StoC.hpp"
-#include "t_map.hpp"
+#include "t_StoC.hpp"
+
+#include "../t_map.hpp"
 
 using namespace t_map;
 

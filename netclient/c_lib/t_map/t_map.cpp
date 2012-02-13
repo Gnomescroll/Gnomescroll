@@ -83,7 +83,12 @@ int _apply_damage(int x, int y, int z, int dmg)
     return t_map::main_map->apply_damage(x,y,z,dmg);
 }
 
-#include "net_StoC.hpp"
+/*
+
+    Move soehwerew
+*/
+
+#include "./net/t_StoC.hpp"
 // apply block damage & broadcast the update to client
 int _apply_damage_broadcast(int x, int y, int z, int dmg)
 {

@@ -9,8 +9,8 @@
 
 #include <c_lib/particles/particle_lib.hpp>
 
-#include <c_lib/t_map/net_CtoS.hpp>
-#include <c_lib/t_map/net_StoC.hpp>
+#include <c_lib/t_map/net/t_CtoS.hpp>
+#include <c_lib/t_map/net/t_StoC.hpp>
 
 #include <c_lib/items/items.hpp>
 

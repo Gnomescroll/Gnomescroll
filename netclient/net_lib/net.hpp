@@ -5,6 +5,8 @@
 #include <net_lib/common/type_pack.h>
 #include <net_lib/common/packet_buffer.hpp>
 
+#include <net_lib/common/packet_id_counter.hpp>
+
 #define NET_PERF1_DISABLED 0 //performance enhancement by amortizing serialization
 /*
     When this is set to zero, each packet only needs to be serialized/allocated once even if sent to multiple clients
@@ -15,12 +17,6 @@
     TODO:
     have a "start" and "fast send" function for server to client packets sent to multiple clients
 */
-
-static int _server_packet_id = 1;
-int next_server_packet_id() { return _server_packet_id++; }
-
-static int _client_packet_id = 1;
-int next_client_packet_id() { return _client_packet_id++; }
 
 template <class Derived>
 class FixedSizeNetPacketToServer {
