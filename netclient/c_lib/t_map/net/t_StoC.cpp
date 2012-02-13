@@ -6,6 +6,7 @@
 
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
+#include <sound/triggers.hpp>
 
 using namespace t_map;
 
@@ -48,6 +49,7 @@ void block_StoC::handle()
     {
         int cube_id = _get(x,y,z);
         Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
+        Sound::block_destroyed((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, 0,0,0);
     }
     _set(x,y,z,val);
 }
