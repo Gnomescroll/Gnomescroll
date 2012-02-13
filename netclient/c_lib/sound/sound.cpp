@@ -88,6 +88,22 @@ void init_channel_group() {
     //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
+void load_sounds_from_conf(char *fn)
+{
+    FILE* f = fopen(fn, "r");
+    if (f == NULL)
+    {
+        printf("Could not open sound configuration file %s\n", fn);
+        return;
+    }
+
+    // read each line
+    // 2nd column has sound file, 3rd has function name
+
+
+    fclose(f);
+}
+
 void init() {
     printf("sound init\n");
     init_sound_system();
@@ -97,6 +113,7 @@ void init() {
     const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
     const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
     set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
+    parse_sound_triggers((char*)"./media/sound/sounds.csv");
 }
 
 void update_sound_system() {
@@ -435,6 +452,7 @@ void release_all() {
 void close() {
     printf("Sound.cpp: release all\n");
     release_all();
+    teardown_triggers();
 }
 
 /*
