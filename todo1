@@ -276,6 +276,9 @@ Feb12
 
 added node editing to skeleton editor
 remade dead alignment, by rotating skeleton instead of rotating individual parts
+
+removed python networking
+moved ping to C
 ===================
 
 
@@ -287,6 +290,8 @@ Saving skeleton state in C                  DONE
 --Dead skeleton                             DONE
 --Crouched skeleton                         DONE
 --Aiming gun
+
+glDraw'd skeleton
 
 Animations
 --Keyframes?
