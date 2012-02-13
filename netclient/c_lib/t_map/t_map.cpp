@@ -1,6 +1,8 @@
 #include "t_map.hpp"
 
 #include "t_vbo.hpp"
+#include "t_properties.hpp"
+
 #include "t_map_class.hpp"
 
 #ifdef DC_CLIENT
@@ -27,6 +29,8 @@ void init_t_map()
     }
     init = 1;
     
+    init_t_properties();
+
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
     //set(2,4,5, 10);

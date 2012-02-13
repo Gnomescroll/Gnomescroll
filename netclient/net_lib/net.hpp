@@ -7,10 +7,18 @@
 
 #include <net_lib/common/packet_id_counter.hpp>
 
-#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
+//#define NET_PERF1_DISABLED 1 //performance enhancement by amortizing serialization
 /*
-    When this is set to zero, each packet only needs to be serialized/allocated once even if sent to multiple clients
-    This causes issues with staticly allocated packet, unless you set nm to NULL before using
+    !!!
+
+    Note:  Currently, netmessages are replicated multiple times on server
+    , even if they will be sent to multiple clients
+
+
+    Because it introduces bugs, the bunching of netmessages was deprecated.
+
+    Needs a new interface
+    !!!
 */
 
 /*
@@ -29,11 +37,9 @@ class FixedSizeNetPacketToServer {
 
         //flatten this
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
-        { //, int* size
-            //int _buff_n = *buff_n;
+        {
             pack_message_id(Derived::message_id, buff, buff_n);
             packet(buff, buff_n, true);
-            //*size = *buff_n - _buff_n;
         }
         //flatten this
         inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
@@ -106,12 +112,9 @@ class FixedSizeNetPacketToClient {
         void sendToClient(int client_id) 
         {
 
-            if(nm == NULL || NET_PERF1_DISABLED ) 
-            {
-                nm = Net_message::acquire(Derived::size);
-                int buff_n = 0;
-                serialize(nm->buff, &buff_n);
-            }
+            nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
   
             if(NetServer::pool[client_id] == NULL)
             {
@@ -248,13 +251,10 @@ class FixedSizeReliableNetPacketToClient {
         void sendToClient(int client_id) 
         {
             
-            if(nm == NULL || NET_PERF1_DISABLED ) 
-            {
-                nm = Net_message::acquire(Derived::size);
-                int buff_n = 0;
-                serialize(nm->buff, &buff_n);
-            }
-            
+            nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+
             if(NetServer::pool[client_id] == NULL)
             {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d\n", client_id, message_id);
