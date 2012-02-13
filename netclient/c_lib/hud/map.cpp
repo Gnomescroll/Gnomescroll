@@ -11,8 +11,8 @@ int num_cells = 0;
 unsigned char* cells = NULL;
 
 // for texture init
-const int width = 128;
-const int height = 128;
+const int width = 512;
+const int height = 512;
 
 static SDL_Surface* map_surface;
 static GLuint map_textures[2];

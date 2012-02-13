@@ -276,8 +276,17 @@ Feb12
 
 added node editing to skeleton editor
 remade dead alignment, by rotating skeleton instead of rotating individual parts
+
+removed python networking
+moved ping to C
 ===================
 
+Feb13
+
+
+
+
+===================
 
 == MODELS ==
 Make new model that fits inside agent box   DONE
@@ -287,6 +296,8 @@ Saving skeleton state in C                  DONE
 --Dead skeleton                             DONE
 --Crouched skeleton                         DONE
 --Aiming gun
+
+glDraw'd skeleton
 
 Animations
 --Keyframes?
@@ -303,14 +314,6 @@ agent Skeleton for holding gun, standing and zoomed, gun in place
 System notifications (you killed...)
 Icons on map (angus)
 Minimap
-Spreadsheet to document interactions
-e.g.
-Client fires weapon:
-play anims/sound client side, (based on expected server filtering. i.e, if server will not apply damage because same team, then dont destroy voxel)
-send packet to server,
-server responds,
-send packet to clients,
-clients play anims/sound
 
 == GAMEPLAY ==
 Turrets
@@ -321,7 +324,6 @@ Tune jumping
 == VOXEL EDITOR ==
 Voxel editor:
 Bucket fill
-Rewrite deserializer
 Color pallete
 Color wheel --contingent on js lib
 http://design.geckotribe.com/colorwheel/    (shows complementary colors)
@@ -332,7 +334,6 @@ Sort out converter pipeline. Fix off by one dimension bug translating from slab6
 == AUDIO ==
 OpenAL ? (wav easy, but others hard?)
 Sounds integrated to more actions
---Document all actions in a spreadsheet
 
 == NOTES ==
 SDL input normalization

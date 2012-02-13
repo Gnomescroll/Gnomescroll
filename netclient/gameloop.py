@@ -14,8 +14,6 @@ import opts
 opts.opts = args_client.get_args()
 opts = opts.opts
 
-import stats
-
 import c_lib.terrain_map
 import init_c_lib
 
