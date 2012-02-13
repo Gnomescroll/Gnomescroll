@@ -66,6 +66,7 @@ static struct HudDrawSettings
     float fps_val;
     bool ping;
     int ping_val;
+    int reliable_ping_val;
     bool player_stats;
     bool chat;
     bool chat_input;
@@ -116,6 +117,10 @@ void update_hud_draw_settings()
     ping_val = (ping_val >= 1000) ? 999 : ping_val;
     hud_draw_settings.ping_val = (ping_val < 0) ? 0 : ping_val;
 
+    int reliable_ping_val = ClientState::last_reliable_ping_time;
+    reliable_ping_val = (reliable_ping_val >= 1000) ? 999 : reliable_ping_val;
+    hud_draw_settings.reliable_ping_val = (reliable_ping_val < 0) ? 0 : reliable_ping_val;
+    
     hud_draw_settings.player_stats = true;
 
     hud_draw_settings.chat = true;
@@ -233,6 +238,8 @@ void draw_hud_text()
     {
         hud->ping->update_formatted_string(1, hud_draw_settings.ping_val);
         hud->ping->draw();
+        hud->reliable_ping->update_formatted_string(1, hud_draw_settings.reliable_ping_val);
+        hud->reliable_ping->draw();
     }
 
     if (hud_draw_settings.player_stats)
@@ -325,6 +332,12 @@ void HUD::init()
     ping->set_format_extra_length(3 - 2);
     ping->set_color(255,10,10,255);
     ping->set_position(3, (18*2)+3);
+    
+    reliable_ping = HudText::text_list.create();
+    reliable_ping->set_format((char*) ping_format);
+    reliable_ping->set_format_extra_length(3 - 2);
+    reliable_ping->set_color(255,10,10,255);
+    reliable_ping->set_position(3, (18*3)+3);
 
     player_stats = HudText::text_list.create();
     player_stats->set_text((char*) player_stats_text_no_agent);
@@ -354,6 +367,7 @@ disconnected(NULL),
 dead(NULL),
 fps(NULL),
 ping(NULL),
+reliable_ping(NULL),
 player_stats(NULL),
 scoreboard(NULL),
 chat(NULL)
@@ -371,6 +385,8 @@ HUD::~HUD()
         HudText::text_list.destroy(fps->id);
     if (ping != NULL)
         HudText::text_list.destroy(ping->id);
+    if (reliable_ping != NULL)
+        HudText::text_list.destroy(reliable_ping->id);
     if (player_stats != NULL)
         HudText::text_list.destroy(player_stats->id);
     if (scoreboard != NULL)

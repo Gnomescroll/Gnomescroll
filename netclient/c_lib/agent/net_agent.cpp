@@ -288,6 +288,11 @@ inline void ping_StoC::handle()
     ClientState::last_ping_time = _get_ticks() - ticks;
 }
 
+inline void ping_reliable_StoC::handle()
+{
+    ClientState::last_reliable_ping_time = _get_ticks() - ticks;
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -302,6 +307,7 @@ inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
+inline void ping_reliable_CtoS::handle(){}
 
 #endif
 
@@ -337,6 +343,7 @@ inline void identified_StoC::handle(){}
 inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
 inline void ping_StoC::handle(){}
+inline void ping_reliable_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -782,6 +789,13 @@ inline void identify_CtoS::handle()
 inline void ping_CtoS::handle()
 {
     ping_StoC msg;
+    msg.ticks = ticks;
+    msg.sendToClient(client_id);
+}
+
+inline void ping_reliable_CtoS::handle()
+{
+    ping_reliable_StoC msg;
     msg.ticks = ticks;
     msg.sendToClient(client_id);
 }
