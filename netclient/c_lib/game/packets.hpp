@@ -2,7 +2,6 @@
 
 #include <net_lib/net.hpp>
 #include <net_lib/global.hpp>
-#include <net_lib/export.hpp>
 
 #include <c_lib/game/teams.hpp>
 
