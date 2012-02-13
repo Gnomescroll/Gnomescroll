@@ -416,14 +416,16 @@ class Main:
                 sl_c+=1
                 tick+=1
 
+                NetServerFlushToNet()
+                init_c_lib.slime_tick()
+                init_c_lib.check_agent_proximities()
+
             if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
             
-            NetServerFlushToNet()
+
             NetServerDispatchNetworkEvents()
             
-            init_c_lib.slime_tick()
-            init_c_lib.check_agent_proximities()
 
             time.sleep(0.001)
 
