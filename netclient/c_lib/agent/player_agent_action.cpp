@@ -4,6 +4,7 @@
 #include <c_lib/animations/hitscan.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/agent/net_agent.hpp>
+#include <sound/triggers.hpp>
 
 //stuff
 #include <c_lib/t_map/net_CtoS.hpp>
@@ -204,9 +205,7 @@ void PlayerAgent_action::hitscan_laser() {
             break;
     }
 
-    // play sound
-    char soundfile[] = "laser_01.wav";
-    Sound::play_2d_sound(soundfile);
+    Sound::fire_laser();
 
     // play laser anim
     const float hitscan_speed = 200.0f;
