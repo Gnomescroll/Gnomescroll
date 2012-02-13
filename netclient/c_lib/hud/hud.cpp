@@ -5,7 +5,8 @@
 #include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
 #include <c_lib/input/handlers.hpp>
-#include <net_lib/export.hpp>
+
+//#include <net_lib/export.hpp>
 
 /* Configuration */
 namespace Hud
@@ -94,7 +95,7 @@ void set_hud_draw_settings(
 // read game state to decide what to draw
 void update_hud_draw_settings()
 {
-    hud_draw_settings.connected = _check_connection_status();
+    hud_draw_settings.connected = NetClient::Server.connected;
     hud_draw_settings.draw = input_state.hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector =

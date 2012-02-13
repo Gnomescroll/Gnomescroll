@@ -70,19 +70,6 @@ def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
 def NetClientFlushToNet():
     flush_to_net()
 
-"""
-Python specific network
-[net_*]
-"""
-cdef extern from "./net_lib/export.hpp":
-    int _get_client_id()
-    int _check_connection_status()
-
-def get_client_id():
-    return _get_client_id()
-
-def connected():
-    return _check_connection_status()
 
 """
 sound

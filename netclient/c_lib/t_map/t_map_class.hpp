@@ -25,9 +25,17 @@ struct MAP_ELEMENT
 
 const int TERRAIN_MAP_HEIGHT = 128;
 
-class MAP_CHUNK
+#ifdef DC_SERVER
+    class MAP_CHUNK 
+#else
+    class MAP_CHUNK 
+#endif 
 {
     public:
+
+#ifdef DC_SERVER
+    int version;
+#endif
 
     int xpos;
     int ypos;

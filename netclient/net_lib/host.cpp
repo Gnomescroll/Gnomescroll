@@ -3,7 +3,7 @@
 #include <net_lib/enet/enet.h>
 
 #include <net_lib/global.hpp>
-#include <net_lib/export.hpp>
+
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/message_handler.h>
 

@@ -7,7 +7,17 @@
 using namespace t_map;
 
 #ifdef DC_SERVER
+
+// unsigned short x,y;
+// unsigned short chunk_alias;
+// unsigned short chunk_version;
+
+void map_chunk_subscription_request_CtoS::handle() 
+{
     
+
+}
+
 void map_chunk_list_request_CtoS::handle() 
 {
     x = x*16 + 8;
@@ -32,11 +42,16 @@ void map_chunk_list_request_CtoS::handle()
             class chunk_meta_data_StoC m;
             m.chunk_x = i;
             m.chunk_y = j;
-            m.version = 1;
+            m.version = c->version;
             m.sendToClient(client_id);
         }
     }
 }
+
+/*
+    Old Messages
+*/
+
 
 void map_chunk_request_CtoS::handle() 
 {
@@ -61,7 +76,13 @@ void block_CtoS::handle()
 
 #ifdef DC_CLIENT
 
+void map_chunk_subscription_request_CtoS::handle() {}
 void map_chunk_list_request_CtoS::handle() {}
+
+/*
+    Old Messages
+*/
+
 void map_chunk_request_CtoS::handle() {}
 void block_CtoS::handle() {}
 
