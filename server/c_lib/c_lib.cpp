@@ -3,6 +3,7 @@
 #include <defines.h>
 
 #include <stdio.h>
+#include <string.h>
 
 //utility
 #include <c_lib/time/physics_timer.c>

@@ -2,13 +2,9 @@
     #define DC_CLIENT
 #endif
 
-/* kill the compiler */
-#ifdef DC_SERVER 
-    sasfsafgdg4423+3
-#endif
-
 #include <c_lib.hpp>
 
+#include <stdio.h>
 
 /* Network */
 #include <net_lib/net_lib.h>
