@@ -84,6 +84,9 @@ void _set(int x, int y, int z, int value)
 
 int _apply_damage(int x, int y, int z, int dmg)
 {
+    #ifdef DC_CLIENT
+    Sound::block_took_damage(x,y,z,0,0,0);
+    #endif
     return t_map::main_map->apply_damage(x,y,z,dmg);
 }
 

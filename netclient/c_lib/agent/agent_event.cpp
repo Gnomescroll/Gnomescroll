@@ -61,21 +61,32 @@ void Agent_event::took_damage(int dmg)
     b->set_size(1.0f);
     b->set_ttl(5);
 
-    Sound::agent_took_damage();
+    if (a->is_you())
+        Sound::agent_took_damage();
+    else
+        Sound::agent_took_damage(a->s.x, a->s.y, a->s.z, 0,0,0);
 }
 
 void Agent_event::died() {
     if (!this->a->status.dead)
     {
         this->a->status.dead = true;
-        Sound::died();
+        if (a->is_you())
+            Sound::died();
+        else
+            Sound::died(a->s.x, a->s.y, a->s.z, 0,0,0);
         this->a->vox->reset_skeleton(&agent_vox_dat_dead);
     }
 }
 
-void Agent_event::born() {
+void Agent_event::born()
+{
     if (this->a->status.dead)
     {
+        if (a->is_you())
+            Sound::respawned();
+        //else
+            //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
         this->a->status.dead = false;
         // regenerate model
         if (this->a->vox != NULL)
@@ -116,6 +127,7 @@ void Agent_event::joined_team(int team)
 
 void Agent_event::picked_up_flag()
 {
+    Sound::flag_picked_up();
     this->a->status.has_flag = true;
 }
 
@@ -126,6 +138,7 @@ void Agent_event::dropped_flag()
 
 void Agent_event::scored_flag()
 {
+    Sound::flag_scored();
     this->a->status.has_flag = false;
     this->a->status.flag_captures++;
 }
@@ -221,13 +234,6 @@ void Agent_event::fired_weapon_at_nothing()
     Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
-void Agent_event::hit_block()
-{
-    // play pick swing
-    // play block damage animation
-    //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
-}
-
 void Agent_event::threw_grenade()
 {
     // play throw grenade animation
@@ -239,18 +245,28 @@ void Agent_event::placed_block()
     // player agent block placement animation
 }
 
+void Agent_event::hit_block()
+{
+    // play pick swing
+    // play block damage animation
+    //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
+}
+
 void Agent_event::melee_attack_object(int id, int type, int part, float x, float y, float z)
 {
     // play pick swing animation
     // play blood animation
     // play swing sound
     // play object's hurt sound
+    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
     //Sound::pick_hit_agent(x,y,z,0,0,0);
 }
 
 void Agent_event::melee_attack_nothing()
 {
     // play pick swing animation
+    //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
 }
 
 void Agent_event::fire_empty_weapon(int weapon_type)

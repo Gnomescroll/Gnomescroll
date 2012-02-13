@@ -72,7 +72,7 @@ void flag_picked_up()
 {
 }
 
-void flag_returned_to_base()
+void flag_scored()
 {
 }
 
@@ -148,11 +148,7 @@ void restock_at_base()
 {
 }
 
-void place_block()
-{
-}
-
-void place_block(float x, float y, float z, float vx, float vy, float vz)
+void block_set(float x, float y, float z, float vx, float vy, float vz)
 {
 }
 

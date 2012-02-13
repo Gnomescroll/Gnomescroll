@@ -21,7 +21,8 @@
  *  Player Agent Packets
  */
 
-inline void PlayerAgent_Snapshot::handle() {
+inline void PlayerAgent_Snapshot::handle()
+{
     #ifdef DC_CLIENT
     ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     #endif
@@ -44,7 +45,8 @@ inline void SendClientId_StoC::handle()
 }
 
 
-inline void Agent_state_message::handle() {
+inline void Agent_state_message::handle()
+{
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
         printf("Agent_state_message -- Agent %d does not exist\n", id);
@@ -53,7 +55,8 @@ inline void Agent_state_message::handle() {
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
-inline void Agent_teleport_message::handle() {
+inline void Agent_teleport_message::handle()
+{
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
         printf("Agent_teleport_message -- Agent %d does not exist\n", id);
@@ -67,7 +70,8 @@ inline void Agent_teleport_message::handle() {
 }
 
 //Agent control state, server to client
-inline void Agent_cs_StoC::handle() {
+inline void Agent_cs_StoC::handle()
+{
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
         printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
@@ -80,7 +84,8 @@ inline void Agent_cs_StoC::handle() {
 }
 
 // damage indicator packet
-inline void agent_damage_StoC::handle() {
+inline void agent_damage_StoC::handle()
+{
     Agent_state* a = STATE::agent_list.get(id);
     if(a == NULL) {
         return;
@@ -174,20 +179,23 @@ inline void agent_placed_block_StoC::handle()
     a->event.placed_block();
 }
 
-inline void agent_dead_StoC::handle() {
+inline void agent_dead_StoC::handle()
+{
     bool _dead = (bool)dead;
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
     a->event.life_changing(_dead);
 }
 
-inline void agent_health_StoC::handle() {
+inline void agent_health_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
     a->status.health = health;
 }
 
-inline void agent_create_StoC::handle() {
+inline void agent_create_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get_or_create(id);
     if (a==NULL) printf("agent_create_StoC:: get_or_create agent failed\n");
     a->client_id = client_id;
@@ -207,40 +215,47 @@ inline void agent_name_StoC::handle()
     a->event.name_changed();
 }
 
-inline void agent_destroy_StoC::handle() {
+inline void agent_destroy_StoC::handle()
+{
     ClientState::agent_list.destroy(id);
 }
 
-inline void PlayerAgent_id_StoC::handle() {
+inline void PlayerAgent_id_StoC::handle()
+{
     ClientState::set_PlayerAgent_id(id);
 }
 
-inline void AgentKills_StoC::handle() {
+inline void AgentKills_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
     a->status.kills = kills;
 }
 
-inline void AgentDeaths_StoC::handle() {
+inline void AgentDeaths_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
     a->status.deaths = deaths;
 }
 
-inline void AgentSuicides_StoC::handle() {
+inline void AgentSuicides_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
     a->status.suicides = suicides;
 }
 
-inline void AgentActiveWeapon_StoC::handle() {
+inline void AgentActiveWeapon_StoC::handle()
+{
     Agent_state* a =  ClientState::agent_list.get(id);
     if (a==NULL) return;
     //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
     a->weapons.active = slot;
 }
 
-inline void AgentReloadWeapon_StoC::handle() {
+inline void AgentReloadWeapon_StoC::handle()
+{
     Agent_state* a = ClientState::agent_list.get(id);
     if (a==NULL) return;
     a->event.reload_weapon(type);
@@ -349,7 +364,8 @@ inline void ping_reliable_StoC::handle(){}
 //static int _total = 0;
 //static const int a_DEBUG = 1;
 
-inline void Agent_cs_CtoS::handle() {
+inline void Agent_cs_CtoS::handle()
+{
     //printf("cs_CtoS: seq= %i \n", seq);
 
     //for benchmarking
@@ -388,7 +404,8 @@ inline void Agent_cs_CtoS::handle() {
 }
 
 // agent hit block action
-inline void hit_block_CtoS::handle() {
+inline void hit_block_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
@@ -488,7 +505,8 @@ inline void hitscan_object_CtoS::handle()
 }
 
 // hitscan target:block
-inline void hitscan_block_CtoS::handle() {
+inline void hitscan_block_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
@@ -647,7 +665,8 @@ inline void melee_none_CtoS::handle()
     msg.broadcast();
 }
 
-inline void ThrowGrenade_CtoS::handle() {
+inline void ThrowGrenade_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
@@ -666,13 +685,15 @@ inline void ThrowGrenade_CtoS::handle() {
     g->owner = a->id;
 }
 
-inline void AgentActiveWeapon_CtoS::handle() {
+inline void AgentActiveWeapon_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
     a->weapons.set_active(slot);
 }
 
-inline void AgentReloadWeapon_CtoS::handle() {
+inline void AgentReloadWeapon_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
     a->weapons.reload(type);
@@ -683,7 +704,8 @@ inline void AgentReloadWeapon_CtoS::handle() {
     msg.broadcast();
 }
 
-inline void agent_block_CtoS::handle() {
+inline void agent_block_CtoS::handle()
+{
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 

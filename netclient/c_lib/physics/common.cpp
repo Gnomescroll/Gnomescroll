@@ -155,9 +155,9 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     return s;
 }
 
-int* bounce_simple_rk4(struct Particle2* p, float damp) {
+bool bounce_simple_rk4(struct Particle2* p, float damp) {
 
-
+    bool bounced = false;
     float dt = 1.0f;
 
     motion_inter->p.x = p->state.p.x;
@@ -169,9 +169,8 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
 
     rk4(motion_inter, dt);
 
-    float interval;
-    int* s;
-    s = _ray_cast4(
+    float interval = 0.0f;
+    int *s = _ray_cast4(
         p->state.p.x, p->state.p.y, p->state.p.z,
         motion_inter->p.x, motion_inter->p.y, motion_inter->p.z,
         &interval
@@ -181,15 +180,14 @@ int* bounce_simple_rk4(struct Particle2* p, float damp) {
         p->state = *motion_inter;
     } else {
         // collision
+        bounced = true;
         rk4(&(p->state), interval);
         struct Vector norm = {(float)s[0], (float)s[1], (float)s[2]};
         struct Vector v = reflect(&(p->state.v), &norm);
         p->state.v = *(mult_vec_scalar(&v, damp));
     }
 
-    
-
-    return s;
+    return bounced;
 }
 
 int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float damp) {

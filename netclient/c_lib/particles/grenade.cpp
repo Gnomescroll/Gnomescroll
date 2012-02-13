@@ -108,7 +108,19 @@ void Grenade::create_message(grenade_StoC* msg)
 }
 
 void Grenade::tick() {
-    bounce_simple_rk4(&particle, GRENADE_DAMP);
+    int bounced = bounce_simple_rk4(&particle, GRENADE_DAMP);
+    
+    if (bounced)
+    {
+        #ifdef DC_CLIENT
+        Sound::grenade_bounce(
+            particle.state.p.x,
+            particle.state.p.y,
+            particle.state.p.z,
+            0,0,0
+        );
+        #endif
+    }
     particle.ttl++;
 }
 
