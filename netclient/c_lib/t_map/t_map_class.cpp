@@ -2,6 +2,8 @@
 
 #include "t_map.hpp"
 
+#include <stdio.h>
+
 namespace t_map
 {
 
@@ -9,6 +11,7 @@ namespace t_map
     const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
     const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
 
+    #define T_MAP_GET_DEBUG 1
     #define T_MAP_GET_OPTIMIZED 0
 
 /*
@@ -26,6 +29,11 @@ namespace t_map
         //c = chunk[ (y | ~15) + (x >> 4)];
         if(c == NULL) return NO_MAP_ELEMENT;
         //return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
+
+    #if T_MAP_GET_DEBUG
+        if( (z<<8)+((y|15)<<4)+(x|15) >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds!\n");
+    #endif
+
         return c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)];
     #else
 
@@ -44,6 +52,11 @@ namespace t_map
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
 
+
+        int index = 16*16*z+ 16*yi + xi;
+    #if T_MAP_GET_DEBUG
+        if( index >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds!\n");
+    #endif
         return c->e[16*16*z+ 16*yi + xi];
     #endif
     }

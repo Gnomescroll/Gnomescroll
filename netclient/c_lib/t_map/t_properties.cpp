@@ -2,6 +2,8 @@
 
 #include "t_map.hpp"
 
+#include <stdio.h>
+
 namespace t_map
 {
 
