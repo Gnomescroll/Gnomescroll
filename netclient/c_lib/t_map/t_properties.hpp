@@ -21,8 +21,9 @@ struct cubeProperties
     //bool gravity;
 };
 
-const int max_cubes = 256;
-extern struct cubeProperties* cube_list;
+const int MAX_CUBES = 256;
+
+extern struct cubeProperties cube_list[MAX_CUBES];
 
 
 void init_t_properties();
@@ -30,7 +31,7 @@ void init_t_properties();
 struct cubeProperties* get_cube(int id)
 {
     if(id < 0) printf("get_cube: error id less than zero \n");
-    if(id >= max_cubes ) printf("get_cube: error id exceeds max_cubes \n");
+    if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
     return &cube_list[id];
 }
 

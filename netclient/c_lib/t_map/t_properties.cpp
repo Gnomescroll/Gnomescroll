@@ -7,18 +7,13 @@
 namespace t_map
 {
 
-const int MAX_TEXTURES = 256;
-
-struct cubeProperties* cube_list;
+struct cubeProperties cube_list[MAX_CUBES];
 
 //struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
 
 void init_t_properties()
 {
-    printf("init cube property list \n");
-    
-    cube_list = new struct cubeProperties[MAX_TEXTURES];
-    memset(cube_list, 0, MAX_TEXTURES* sizeof(struct cubeProperties) );
+    return;
 }
 
 }

@@ -5,6 +5,7 @@
 #include <c_lib.hpp>
 
 #include <stdio.h>
+#include <string.h>
 
 /* Network */
 #include <net_lib/net_lib.h>
