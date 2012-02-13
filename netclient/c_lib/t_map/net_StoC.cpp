@@ -13,14 +13,14 @@ void handle_map_chunk(int x, int y, char *buffer, int n)
     
 }
 
-void chunk_meta_data_StoC::handle()
+void chunk_meta_data_StoC::handle(char* buff, int max_bytes, int* bytes_read)
 {
     //int chunk_x,chunk_y;
     //int version;
     printf("chunk_meta_data_StoC: chunk_x= %i chunk_y= %i version= %i \n", chunk_x, chunk_y, version);
 }
 
-void block_StoC::handle() 
+void block_StoC::handle(char* buff, int max_bytes, int* bytes_read) 
 {
     if (val == 0) 
     {
@@ -30,7 +30,7 @@ void block_StoC::handle()
     _set(x,y,z,val);
 }
 
-void map_metadata_StoC::handle() 
+void map_metadata_StoC::handle(char* buff, int max_bytes, int* bytes_read) 
 {
     map_dim.x = x;
     map_dim.y = y;

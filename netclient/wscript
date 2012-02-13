@@ -67,6 +67,11 @@ def configure(conf):
     conf.env.os = OS
     
     '''
+    add to linker for faster linking --incremental
+    must be removed from production build
+    '''
+    
+    '''
     Using -Winline will warn when a function marked inline could not be substituted, and will give the reason for the failure.
     '''
 

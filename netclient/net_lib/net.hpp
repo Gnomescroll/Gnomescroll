@@ -440,8 +440,10 @@ class MapMessagePacketToClient {
         static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
         {
             Derived x;
+            printf("0 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
             x.unserialize(buff, &buff_n, bytes_read);
-            x.handle();
+            printf("1 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
+            x.handle(buff+bytes_read, buff_n-bytes_read, bytes_read);
         }
 
         static void register_client_packet() {

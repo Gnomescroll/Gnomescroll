@@ -5,7 +5,9 @@
 void send_map_chunk(int x, int y, char* buffer, int n);
 void handle_map_chunk(int x, int y, char *buffer, int n);
 
-class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<chunk_meta_data_StoC>
+//MapMessagePacketToClient
+
+class chunk_meta_data_StoC: public MapMessagePacketToClient<chunk_meta_data_StoC>
 {
     public:
 
@@ -19,10 +21,10 @@ class chunk_meta_data_StoC: public FixedSizeNetPacketToClient<chunk_meta_data_St
             pack_u16(&version, buff, buff_n, pack);
         }
         
-        inline void handle();
+        inline void handle(char* buff, int max_bytes, int* bytes_read);
 };
 
-class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
+class block_StoC: public MapMessagePacketToClient<block_StoC>
 {
     public:
 
@@ -37,10 +39,10 @@ class block_StoC: public FixedSizeNetPacketToClient<block_StoC>
             pack_u16(&val, buff, buff_n, pack);
         }
         
-        inline void handle();
+        inline void handle(char* buff, int max_bytes, int* bytes_read);
 };
 
-class map_metadata_StoC: public FixedSizeReliableNetPacketToClient<map_metadata_StoC>
+class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
 {
     public:
     int x,y,z;  // dimensions
@@ -52,6 +54,6 @@ class map_metadata_StoC: public FixedSizeReliableNetPacketToClient<map_metadata_
         pack_u16(&z, buff, buff_n, pack);
     }
     
-    inline void handle();
+    inline void handle(char* buff, int max_bytes, int* bytes_read);
 
 };
