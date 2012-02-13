@@ -2,7 +2,7 @@
 
 
 #include <stdio.h>
-
+#include <string.h>
 #include "t_properties.hpp"
 
 namespace t_map
