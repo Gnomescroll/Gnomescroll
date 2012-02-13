@@ -22,7 +22,7 @@ struct cubeProperties
 };
 
 const int max_cubes = 256;
-extern struct cubeProperties cube_list[max_cubes];
+extern struct cubeProperties* cube_list;
 
 
 void init_t_properties();

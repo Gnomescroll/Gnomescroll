@@ -37,3 +37,7 @@ DistGCC:
 compiler farm
 http://code.google.com/p/distcc/
 
+Insanity/the future:
+Interactive Compilation Interface (GCC-ICI)
+http://pathscale-ici.sourceforge.net/
+http://gcc.gnu.org/wiki/InteractiveCompilationInterface
