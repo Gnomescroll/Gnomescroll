@@ -16,7 +16,7 @@ void set_cube_side_texture(int id, int side, int tex_id)
         printf("_set_cube_side_texture: error, tex id would exceed MAX_TEXTURES: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
     }
-    if(6*id + side > max_cubes*6)
+    if(6*id + side > MAX_CUBES*6)
     {
         printf("_set_cube_side_texture: error, would overflow array: id= %i, side=%i, tex_id= %i\n", id, side, tex_id);
         return;
