@@ -6,7 +6,7 @@
 #include "t_map_class.hpp"
 
 #ifdef DC_CLIENT
-    #include "cache.hpp"
+    #include <c_lib/t_map/glsl/cache.hpp>
     #include "texture.hpp"
     #include "shader.hpp"
 #endif
