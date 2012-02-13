@@ -101,6 +101,13 @@ namespace ServerState
         //turret_list.send_to_client(client_id);
     }
 
+    void send_id_to_client(int client_id)
+    {
+        PlayerAgent_id_StoC msg;
+        msg.id = client_id;
+        msg.sendToClient(client_id);
+    }
+
     void add_player_to_chat(int client_id)
     {
         chat_server.player_join(client_id);

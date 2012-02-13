@@ -86,6 +86,7 @@ class VoxDat {
         
         void init_skeleton(int n_skeleton);
         
+        void reset_skeleton_local_matrix(int node);
         void set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz);
         void set_skeleton_node_parent(int node, int parent);
         void set_skeleton_parent_matrix(int part, int parent);
@@ -101,7 +102,7 @@ class VoxDat {
         );
 
         //anchor x,y,z then rotation x,y,z
-        void set_part_local_matrix( int part_num, float x, float y, float z, float rx, float ry, float rz);
+        void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
 
         #ifdef DC_CLIENT
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);

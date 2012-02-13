@@ -206,6 +206,30 @@ void VoxDat::init_skeleton(int n_skeleton)
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
+void VoxDat::reset_skeleton_local_matrix(int node)
+{
+    if (voxel_skeleton_inited != true)
+    {
+        printf("VoxDat::reset_skeleton_local_matrix ERROR!! skeletons not inited!\n");
+        return;
+    }
+
+    if (node < 0 || node >= this->n_skeleton_nodes)
+    {
+        printf("VoxDat::reset_skeleton_local_matrix -- node %d invalid\n", node);
+        return;
+    }
+
+    float x,y,z,rx,ry,rz;
+    x = vox_skeleton_local_matrix_reference[node][0];
+    y = vox_skeleton_local_matrix_reference[node][1];
+    z = vox_skeleton_local_matrix_reference[node][2];
+    rx = vox_skeleton_local_matrix_reference[node][3];
+    ry = vox_skeleton_local_matrix_reference[node][4];
+    rz = vox_skeleton_local_matrix_reference[node][5];
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
+}
+
 void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, float rx, float ry, float rz)
 {
     if( voxel_skeleton_inited != true)
@@ -216,7 +240,7 @@ void VoxDat::set_skeleton_local_matrix(int node, float x, float y, float z, floa
 
     const int debug = 0;
 
-    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation( x,y,z, rx,ry,rz);
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx,ry,rz);
     vox_skeleton_local_matrix_reference[node][0] = x;
     vox_skeleton_local_matrix_reference[node][1] = y;
     vox_skeleton_local_matrix_reference[node][2] = z;
@@ -392,7 +416,7 @@ void VoxDat::save(char* fn)
             this->vox_skeleton_local_matrix_reference[i][5]
         );
 
-    fprintf(f, "#node number, skeleton parent matrix, voxel volume\n");
+    fprintf(f, "#part number, node number, voxel format filename\n");
     for (i=0; i<this->n_parts; i++)
         fprintf(f, "%d %d %s\n", i,
             this->vox_part[i]->skeleton_parent_matrix,

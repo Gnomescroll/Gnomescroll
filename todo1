@@ -262,18 +262,31 @@ model dimensions
 
 Feb10
 
+improvement to html editor
+===================
 
+Feb11
 
+Cleaned up agent model (still needs coloring)
+Made skeleton editor
+Made crouched and dead alignments
+==================
+
+Feb12
+
+added node editing to skeleton editor
+remade dead alignment, by rotating skeleton instead of rotating individual parts
 ===================
 
 
 == MODELS ==
-Make new model that fits inside agent box
-Make input tool for adjusting skeleton
-Saving skeleton state in C
---Standing skeleton
---Dead skeleton
---Crouched skeleton
+Make new model that fits inside agent box   DONE
+Make input tool for adjusting skeleton      DONE
+Saving skeleton state in C                  DONE
+--Standing skeleton                         DONE
+--Dead skeleton                             DONE
+--Crouched skeleton                         DONE
+--Aiming gun
 
 Animations
 --Keyframes?

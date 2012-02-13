@@ -719,3 +719,25 @@ class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC
         }
         inline void handle();
 };
+
+class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
+{
+    public:
+        int ticks;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&ticks, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class ping_CtoS: public FixedSizeNetPacketToServer<ping_CtoS>
+{
+    public:
+        int ticks;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&ticks, buff, buff_n, pack);
+        }
+        inline void handle();
+};

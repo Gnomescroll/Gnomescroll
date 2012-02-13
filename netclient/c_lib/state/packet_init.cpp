@@ -142,5 +142,9 @@ void RegisterMessages() {
     ChatMessage_CtoS::register_server_packet();
     ChatMessage_StoC::register_client_packet();
 
+    //ping
+    ping_CtoS::register_server_packet();
+    ping_StoC::register_client_packet();
+
 }
 }

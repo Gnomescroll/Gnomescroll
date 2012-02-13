@@ -25,27 +25,19 @@ void Voxel_model::set_skeleton_root(float x, float y, float z, float theta)
 {
     vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(x,y,z, theta,0.0,0.0);
 }
+void Voxel_model::set_skeleton_root(float *data)
+{
+    vox_skeleton_world_matrix[0] = affine_euler_rotation_and_translation(
+        data[0], data[1], data[2],
+        data[3], data[4], data[5]
+    );
+}
 
 void Voxel_model::update_skeleton()
 {
     const int debug = 0;
     if(debug) printf("update skeleton: %i nodes \n", n_skeleton_nodes);
-/*
-    if(n_skeleton_nodes == 3)
-    {
-        static float c1=0;
 
-
-        vox_skeleton_local_matrix[2] = 
-        affine_euler_rotation_and_translation(0.0, -0.75, 5.0,  0.0, sin(c1)/3, 0.0);
-        c1 += 0.010;
-
-        vox_skeleton_local_matrix[1] = 
-        affine_euler_rotation_and_translation(0.0, 0.75, 5.0,  0.0, sin(-1.0*c1)/3, 0.0);
-        c1 += 0.020;
-
-    }
-*/
     for(int i=1; i<n_skeleton_nodes; i++)
     {
         if(debug) 
@@ -64,7 +56,7 @@ void Voxel_model::update_skeleton()
 
     for(int i=0; i<this->n_parts; i++)
     {
-        class Voxel_volume* vv = &this->vv[i];
+        Voxel_volume* vv = &this->vv[i];
         vv->world_matrix = affine_mult( *vv->parent_world_matrix, vv->local_matrix );
     }
 

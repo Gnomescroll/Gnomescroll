@@ -11,6 +11,7 @@ class Voxel_model
         void init_skeleton(VoxDat* vox_dat);
         void reset_skeleton(VoxDat* vox_dat); // reset skeleton properties from voxdat
         void set_skeleton_root(float x, float y, float z, float theta);
+        void set_skeleton_root(float *data);
         void update_skeleton();  //recalculate world view matrices
 
         //skeleton

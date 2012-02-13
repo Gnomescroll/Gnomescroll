@@ -7,8 +7,6 @@ cdef extern from "c_lib.hpp":
 def close():
     close_c_lib()
 
-#print "Initing c_lib"
-
 _init = 0
 def init():
     global _init
@@ -17,7 +15,6 @@ def init():
     _init = 1
 
 ## net stuff
-
 cdef extern from "./net_lib/host.hpp":
     void init_net_server(int a, int b, int c, int d, int port)
     void server_dispatch_network_events()
@@ -74,84 +71,6 @@ def GET_TICK():
 def GET_MS_TIME():
     return _GET_MS_TIME();
 
-
-
-
-### python network
-
-cdef extern from "./net_lib/export.hpp":
-    ctypedef void (*PY_MESSAGE_CALLBACK)(char* buff, int n, int client_id)
-    ctypedef void (*PY_CLIENT_EVENT_CALLBACK)(int client_id, int event_type)
-    void set_python_net_callback_function(PY_MESSAGE_CALLBACK pt)
-    void set_python_net_event_callback_function(PY_CLIENT_EVENT_CALLBACK pt)
-    void send_python_net_message(char* message, int size, int client_id)
-    int _check_connection_status(int client_id)
-
-def connected(client_id):
-    return _check_connection_status(client_id)
-
-def _send_python_net_message(message, int client_id):
-    #print "Send python net message"
-    cdef int length = len(message)
-    cdef char* c_string = message
-    send_python_net_message(message, length, client_id)
-
-_CLIENT_CREATION_CALLBACK = None
-_CLIENT_DELETION_CALLBACK = None
-_CLIENT_MESSAGE_CALLBACK = None
-
-def register_client_creation(function):
-    global _CLIENT_CREATION_CALLBACK
-    _CLIENT_CREATION_CALLBACK = function
-
-def register_client_deletion(function):
-    global _CLIENT_DELETION_CALLBACK
-    _CLIENT_DELETION_CALLBACK = function
-
-def register_client_message_handling(function):
-    global _CLIENT_MESSAGE_CALLBACK
-    _CLIENT_MESSAGE_CALLBACK = function
-
-_total_python_bytes = 0 
-cdef void py_net_message_callback(char* buff, int n, int client_id):
-    ustring = buff[:n]
-    if(_CLIENT_MESSAGE_CALLBACK != None):
-        _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
-
-
-
-'''
-    cdef bytes py_string = buff[:n]
-    if(_CLIENT_MESSAGE_CALLBACK != None):
-        _CLIENT_MESSAGE_CALLBACK(client_id, bytes)
-'''
-
-'''
-    ustring = buff[:n].decode('UTF-8')
-    #_total_python_bytes += n
-    #print "%i bytes,from client %i: %s" % (n, client_id, ustring)
-    if(_CLIENT_MESSAGE_CALLBACK != None):
-        _CLIENT_MESSAGE_CALLBACK(client_id, ustring)
-'''
-
-cdef void py_net_event_callback(int client_id, int event_type):
-    if event_type == 0:
-        print "Client connected: %i" % (client_id)
-        _CLIENT_CREATION_CALLBACK(client_id)
-    if event_type == 1:
-        print "Client disconnected: %i" % (client_id)
-        _CLIENT_DELETION_CALLBACK(client_id)
-
-cpdef init_python_net():
-    pass
-    #cdef PY_MESSAGE_CALLBACK p = py_net_message_callback
-    set_python_net_callback_function(py_net_message_callback)
-    print "Python net callback set"
-    set_python_net_event_callback_function(py_net_event_callback)
-
-#register_client_creation, register_client_deletion, register_client_message_handling
-
-
 cdef extern from "c_lib.hpp":
     void _set_seed(int seed)
     
@@ -160,13 +79,9 @@ def set_seed(int seed):
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     void server_tick()
-    void send_game_state_to_client(int client_id)
 
 def tick_server_state():
     server_tick();
-
-def send_game_state(int client_id):
-    send_game_state_to_client(client_id)
 
 """
     Condensed cython files here
@@ -198,7 +113,6 @@ cdef extern from "./agent/agent.hpp":
         int id
         Agent_status status
         void teleport(float x,float y,float z)
-        void send_id_to_client(int client_id)
 
 cdef extern from "./agent/agent.hpp":
     cdef cppclass Agent_list:
@@ -209,29 +123,14 @@ cdef extern from "./agent/agent.hpp":
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Agent_list agent_list
 
-def send_id_to_client(int client_id):
-    cdef Agent_state* a
-    a = agent_list.get(client_id)
-    a.send_id_to_client(client_id)
-
 def get_agent_name(int id):
     cdef Agent_state* a
     a = agent_list.get(id)
     return a.status.name
 
-def create_agent(int id):
-    agent_list.create(id)
-
 def destroy_agent(int id):
     agent_list.destroy(id)
 
-def client_identified(int client_id):
-    cdef Agent_state* a
-    a = agent_list.get(client_id)
-    if a == NULL:
-        return False
-    return a.status.identified
-    
 def teleport_Agent(int id, float x, float y, float z):
     cdef Agent_state* a
     a = agent_list.get(id)
@@ -344,9 +243,6 @@ def get_team(int id):
 def join_team(int agent_id, int team_id):
     ctf.add_agent_to_team(team_id, agent_id)
 
-def leave_team(int agent_id):
-    ctf.remove_agent_from_team(agent_id)
-
 def ctf_start():
     ctf.start()
     
@@ -397,41 +293,14 @@ cdef extern from "./particles/cspray.hpp":
         void destroy(int id)
         void tick()
 
-'''
-cdef extern from "./particles/neutron.hpp":
-    cdef cppclass Neutron:
-        Particle2 particle
-        void set_energy(int energy)
-
-    cdef cppclass Neutron_list:
-        Neutron* get(int id)
-        Neutron* create()
-        Neutron* create(int id)
-        Neutron* create(float x, float y, float z, float vx, float vy, float vz)
-        Neutron* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
-        void draw()
-        void tick()
-'''
-
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Grenade_list grenade_list
     Cspray_list cspray_list
-    #Neutron_list neutron_list
 
 def tick():
     grenade_list.tick()
     cspray_list.tick()
-    #neutron_list.tick()
  
-'''
-def _create_neutron(int type, int energy, float x, float y, float z, float vx, float vy, float vz):
-    cdef Neutron* neutron
-    neutron = neutron_list.create(x,y,z, vx,vy,vz)
-    if neutron == NULL: return
-    neutron.set_energy(energy)
-'''
-
 def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
     cspray_list.create(x,y,z, vx,vy,vz)
 
@@ -445,13 +314,3 @@ def load(opts):
 
     ctf.set_team_name(1, opts.team_name_one)
     ctf.set_team_name(2, opts.team_name_two)
-
-""" Chat """
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    void add_player_to_chat(int client_id)
-    void remove_player_from_chat(int client_id)
-
-def join_chat(int id):
-    add_player_to_chat(id)
-def leave_chat(int id):
-    remove_player_from_chat(id)

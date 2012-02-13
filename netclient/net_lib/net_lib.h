@@ -21,14 +21,12 @@
     #include <enet/unix.c>
 #endif
 
-
-//stuff
-
 #include <net_lib/host.cpp>
 #include <net_lib/export.cpp>
 #include <net_lib/global.cpp>
 
 #include <net_lib/common/net_peer.cpp>
+#include <net_lib/common/net_peer_manager.cpp>
 #include <net_lib/common/packet_buffer.cpp>
 #include <net_lib/common/message_handler.c>
 #include <net_lib/common/net_time.c>
@@ -39,16 +37,3 @@
 #ifdef DC_CLIENT
 #include <net_lib/common/pviz.c>
 #endif
-//#include <net_lib/common/sequencer.c>
-
-//#include <net_lib/common/python_channel.cpp>
-
-//#ifdef DC_CLIENT
-//#include <net_lib/client/client.cpp>
-//#include <net_lib/client.c>
-//#endif
-
-//#ifdef DC_SERVER
-//#include <net_lib/server/server.c>
-//#include <net_lib/server.c>
-//#endif

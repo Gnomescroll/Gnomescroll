@@ -28,6 +28,9 @@ namespace ClientState {
     Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
 
     CTF ctf;
+
+    char desired_name[PLAYER_NAME_MAX_LENGTH+1];
+    int last_ping_time;
     
     PlayerAgent_state playerAgent_state;
 
@@ -111,6 +114,26 @@ namespace ClientState {
             use_free_camera();
 
         update_agent_camera();
+    }
+
+    void send_ping()
+    {
+        ping_CtoS msg;
+        msg.ticks = _get_ticks();
+        msg.send();
+    }
+
+    void set_desired_name(char* name)
+    {
+        if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
+            name[PLAYER_NAME_MAX_LENGTH] = '\0';
+
+        strcpy(desired_name, name);
+    }
+
+    void client_id_received(int client_id)
+    {
+        send_identify_packet(desired_name);
     }
 
 }

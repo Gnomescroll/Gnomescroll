@@ -110,11 +110,6 @@ static void client_connect(ENetEvent* event)
     NetClient::Server.enet_peer = event->peer;
     event->peer -> data = (void*) &NetClient::Server;
     NetClient::Server.connected = 1;
- 
-    //dont send until client id received
-    //client_connect_event(nc->client_id);
-    
-
 }
 
 static void client_disconnect(ENetEvent* event)
@@ -125,8 +120,6 @@ static void client_disconnect(ENetEvent* event)
     enet_peer_reset(event->peer); //TEST
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
-
-    client_disconnect_event(0);
 }
 
 }
@@ -234,16 +227,6 @@ void client_dispatch_network_events()
                         0
                         ); 
                     break;
-                case 2:
-                    //printf("server received channel 2 message \n");
-                    index= 0;
-                    process_python_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        0
-                        ); 
-                    break;
                 case 3:
                 #ifdef DC_SERVER
                     printf("server received channel 3 message \n");
@@ -252,6 +235,9 @@ void client_dispatch_network_events()
                 #endif
                     index= 0;
                     int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+                    break;
+                default:
+                    printf("server received unhandled channel %d message\n", event.channelID);
                     break;
             }
 
@@ -270,8 +256,9 @@ static int client_id_offset = 1;
 
 static void client_connect(ENetEvent* event)
 {
-    class NetPeer* nc = NULL;
-
+    NetPeer* nc = NULL;
+    NetPeerManager* npm = NULL;
+    
     if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
@@ -295,14 +282,21 @@ static void client_connect(ENetEvent* event)
         nc->connected = 1;
         NetServer::pool[index]= nc;
         event->peer->data = (NetPeer*) nc;
+
+        npm = new NetPeerManager();
+        npm->init(index);
+        NetServer::clients[index] = npm;
+        
         break;    
     }
 
-    printf ("client %i connected from %x:%u. %i clients connected\n", 
-    index,
-    event->peer -> address.host, 
-    event->peer -> address.port, 
-    NetServer::number_of_clients+1);
+    printf(
+        "client %i connected from %x:%u. %i clients connected\n", 
+        index,
+        event->peer -> address.host, 
+        event->peer -> address.port, 
+        NetServer::number_of_clients+1
+    );
     //startup sequence
 
     /*
@@ -315,27 +309,29 @@ static void client_connect(ENetEvent* event)
 
     nc->flush_to_net();
     enet_host_flush(server_host);
-
-    client_connect_event(nc->client_id);
 }
 
 static void client_disconnect(ENetEvent* event)
 {
     NetServer::number_of_clients--;
-    class NetPeer* nc = (NetPeer*) event->peer -> data;
+    NetPeer* nc = (NetPeer*) event->peer -> data;
     
     int client_id = nc->client_id;
+    NetPeerManager* npm = NetServer::clients[client_id];
 
     NetServer::pool[client_id] = NULL;
     NetServer::agents[client_id] = NULL;
+    NetServer::clients[client_id] = NULL;
 
-    client_disconnect_event(client_id);
+    npm->teardown();
+
     printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
 
     enet_peer_reset(event->peer); //TEST
     event->peer -> data = NULL;
 
     delete nc;
+    delete npm;
     //printf ("%s disconected.\n", (char*) event->peer -> data);
     /* Reset the peer's client information. */
 }
@@ -402,19 +398,12 @@ void server_dispatch_network_events()
                         ((class NetPeer*)event.peer->data)->client_id 
                         ); 
                     break;
-                case 2:
-                    //printf("server received channel 2 message \n");
-                    index= 0;
-                    process_python_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
-                    break;
                 case 3:
                     printf("server received channel 4 message \n");
                     index= 0;
+                    break;
+                default:
+                    printf("server received unhandled channel %d message\n", event.channelID);
                     break;
             }
 

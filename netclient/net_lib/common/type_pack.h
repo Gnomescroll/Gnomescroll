@@ -57,14 +57,14 @@ static inline void pack_32(int* x, char* buff, int* buff_n, bool pack)
 
 static inline void pack_u32(int* x, char* buff, int* buff_n, bool pack)
 {
-    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x;
+    if(pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
     if(pack == false)   *x = *((uint32_t*)(buff+*buff_n));
     *buff_n += sizeof(uint32_t);
 }
 
 static inline void pack_u32_t(uint32_t* x, char* buff, int* buff_n, bool pack)
 {
-    if(pack == true)    *((uint8_t*)(buff+*buff_n)) = *x;
+    if(pack == true)    *((uint32_t*)(buff+*buff_n)) = *x;
     if(pack == false)   *x = *((uint32_t*)(buff+*buff_n));
     *buff_n += sizeof(uint32_t);
 }

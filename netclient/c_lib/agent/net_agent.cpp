@@ -7,6 +7,10 @@
 #include <c_lib/weapons/weapons.hpp>
 #include <monsters/monsters.hpp>
 
+#ifdef DC_CLIENT
+#include <c_lib/SDL/SDL_functions.h>
+#endif
+
 #ifdef DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.h>
@@ -31,20 +35,19 @@ inline void PlayerAgent_Snapshot::handle() {
 
 inline void SendClientId_StoC::handle()
 {
-    //printf("Client Received Client id = %i \n", client_id);
     NetClient::Server.client_id = client_id;
-    client_connect_event(client_id);
+
     if (ClientState::playerAgent_state.you != NULL)
-    {
         ClientState::playerAgent_state.you->client_id = client_id;
-    }
+
+    ClientState::client_id_received(client_id);
 }
 
 
 inline void Agent_state_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        printf("Agent_state_message -- Agent %d does not exist\n", id);
         return;
     }
     A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
@@ -53,7 +56,7 @@ inline void Agent_state_message::handle() {
 inline void Agent_teleport_message::handle() {
     Agent_state* A = STATE::agent_list.get(id);
     if(A == NULL) {
-        printf("Agent_state_message :: Agent does not exist: create agent, id=%i \n", id);
+        printf("Agent_teleport_message -- Agent %d does not exist\n", id);
         return;
     }
     // reset camera angle
@@ -280,6 +283,11 @@ inline void Spawner_destroy_StoC::handle()
     ClientState::spawner_list.destroy(id);
 }
 
+inline void ping_StoC::handle()
+{
+    ClientState::last_ping_time = _get_ticks() - ticks;
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -293,6 +301,8 @@ inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
+inline void ping_CtoS::handle(){}
+
 #endif
 
 // Client -> Server handlers
@@ -326,6 +336,7 @@ inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
 inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
+inline void ping_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -763,6 +774,15 @@ inline void identify_CtoS::handle()
 
     identified_StoC msg;
     strcpy(msg.name, name);
+    msg.sendToClient(client_id);
+
+    NetServer::clients[client_id]->ready();
+}
+
+inline void ping_CtoS::handle()
+{
+    ping_StoC msg;
+    msg.ticks = ticks;
     msg.sendToClient(client_id);
 }
 

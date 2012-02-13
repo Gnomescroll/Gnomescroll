@@ -60,14 +60,6 @@ bool Agent_state::is_you() {
     return is;
 }
 
-void Agent_state::send_id_to_client(int client_id) {
-    #ifdef DC_SERVER
-    PlayerAgent_id_StoC msg;
-    msg.id = id;
-    msg.sendToClient(client_id);
-    #endif
-}
-
 void Agent_state::teleport(float x,float y,float z) {
     s.x = x;
     s.y = y;
@@ -484,7 +476,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     client_id = id;
 
     // add to NetServer pool
-    NetServer::assign_agent_to_client(this->client_id, this);
+    //NetServer::assign_agent_to_client(this->client_id, this);
 
     #ifdef DC_SERVER
     agent_create_StoC msg;
