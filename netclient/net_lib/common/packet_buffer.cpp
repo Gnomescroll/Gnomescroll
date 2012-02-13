@@ -184,7 +184,7 @@ void NetMessageManager::push_message(Net_message* nm)
     nma_insert_index++;
     if(nma_insert_index == NET_MESSAGE_ARRAY_SIZE)
     {
-        printf("NetMessageManager::push_message, rare condition \n");
+        //printf("NetMessageManager::push_message, rare condition \n");
         //DEBUG?
         nma_insert->next = NetMessageArray::acquire();
         nma_insert->next->next = NULL; //head of list
@@ -226,7 +226,7 @@ void NetMessageManager::serialize_messages(char* buff_, int index)
         nma_read_index++;
         if(nma_read_index == NET_MESSAGE_ARRAY_SIZE)
         {
-            printf("NetMessageManager::serialize_messages, rare condition \n");
+            //printf("NetMessageManager::serialize_messages, rare condition \n");
             NetMessageArray* tmp = nma_read;
             nma_read = nma_read->next;
             tmp->retire();

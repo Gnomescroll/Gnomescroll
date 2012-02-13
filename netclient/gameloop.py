@@ -194,11 +194,13 @@ class App(object):
                     average = []
 
             if ping:
-                _ping_n_now = init_c_lib.get_ticks()
-                if _ping_n_now - ping_n > opts.ping_update_interval:
-                    # do ping stuff here
-                    ping_n = _ping_n_now
+                for i in range(300):
                     init_c_lib.ping()
+                #_ping_n_now = init_c_lib.get_ticks()
+                #if _ping_n_now - ping_n > opts.ping_update_interval:
+                    # do ping stuff here
+                    #ping_n = _ping_n_now
+                    #init_c_lib.ping()
 
             P.finish_frame()
 
