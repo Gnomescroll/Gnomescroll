@@ -55,7 +55,7 @@ namespace t_map
 
         int index = 16*16*z+ 16*yi + xi;
     #if T_MAP_GET_DEBUG
-        if( index >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds!\n");
+        if( index >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds! %i %i %i \n", xi,yi,z);
     #endif
         return c->e[16*16*z+ 16*yi + xi];
     #endif
@@ -90,7 +90,7 @@ namespace t_map
     #else
         //printf("set: %i %i %i \n",  x,y,z);
 
-        if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return;
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return;
         if( x >= 512 || x < 0 ) return;
         if( y >= 512 || y < 0 ) return;
         //printf("set %i, %i, %i \n", x,y,z);
@@ -194,7 +194,7 @@ namespace t_map
     #else
         if (dmg <= 0) return -4;
 
-        if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
         if( x >= 512 || x < 0 ) return -2 ;
         if( y >= 512 || y < 0 ) return -2;
         //printf("set %i, %i, %i \n", x,y,z);
