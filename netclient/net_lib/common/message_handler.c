@@ -160,7 +160,7 @@ int process_client_map_messages(char* buff, int *n, int max_n, int client_id)
         printf("message_handler error: no handler for message_id= %i\n", message_id);
         return -1;
     }
-    client_handler_array[message_id](buff, *n, &read_bytes, client_id);
+    client_handler_array[message_id](buff, *n, &read_bytes, max_n);
 
     *n += read_bytes; //works for non fixed sized
     

@@ -83,10 +83,11 @@
 #include <c_lib/t_map/t_vbo_update.cpp>
 
 #include <c_lib/t_map/cache.cpp>
-#include <c_lib/t_map/net_CtoS.cpp>
-#include <c_lib/t_map/net_StoC.cpp>
 #include <c_lib/t_map/shader.cpp>
 #include <c_lib/t_map/texture.cpp>
+
+#include <c_lib/t_map/net/t_CtoS.cpp>
+#include <c_lib/t_map/net/t_StoC.cpp>
 
 //#include <c_lib/t_map/t_viz.c>
 //#include <c_lib/t_map/t_vbo.c>

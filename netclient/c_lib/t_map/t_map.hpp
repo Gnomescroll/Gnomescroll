@@ -41,11 +41,11 @@ int _apply_damage(int x, int y, int z, int dmg);
 
 int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
-void _set_broadcast(int x, int y, int z, int value) ;
-void _block_broadcast(int x, int y, int z, int value) ;
+//void _set_broadcast(int x, int y, int z, int value) ;
+//void _block_broadcast(int x, int y, int z, int value) ;
 
 void send_map_metadata(int client_id);  //Deprecate
-void send_map_metadata();   //Deprecate
+//void send_map_metadata();   //Deprecate
 void set_map_size(int x, int y, int z); //Deprecate
 
 #include "t_properties.hpp"

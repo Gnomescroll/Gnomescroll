@@ -88,13 +88,15 @@ int _apply_damage(int x, int y, int z, int dmg)
 int _apply_damage_broadcast(int x, int y, int z, int dmg)
 {
     int res = _apply_damage(x,y,z, dmg);
-    if (res == 0) {
-        _block_broadcast(x,y,z, 0);
-    }
+
+    printf("warning: _apply_damage_broadcast \n");
+    //if (res == 0) {
+    //    _block_broadcast(x,y,z, 0);
+    //}
     return res;
 }
 
-
+/*
 void _set_broadcast(int x, int y, int z, int value) 
 {
     class block_StoC msg;
@@ -108,6 +110,7 @@ void _set_broadcast(int x, int y, int z, int value)
         msg.val = value;
         msg.broadcast();
     }
+
 }
 
 void _block_broadcast(int x, int y, int z, int value) 
@@ -119,6 +122,8 @@ void _block_broadcast(int x, int y, int z, int value)
     msg.val = value;
     msg.broadcast();
 }
+*/
+
 
 void send_map_metadata(int client_id)
 {
@@ -129,6 +134,7 @@ void send_map_metadata(int client_id)
     msg.sendToClient(client_id);
 }
 
+/*
 void send_map_metadata()
 {
     class map_metadata_StoC msg;
@@ -137,7 +143,9 @@ void send_map_metadata()
     msg.z = map_dim.z;
     msg.broadcast();
 }
+*/
 
+/*
 void set_map_size(int x, int y, int z)
 {
     map_dim.x = x;
@@ -145,3 +153,4 @@ void set_map_size(int x, int y, int z)
     map_dim.z = z;
     send_map_metadata();
 }
+*/

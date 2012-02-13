@@ -1,0 +1,18 @@
+precompiled headers
+
+
+!!! compiling on ram disc
+
+Avoid <iostream>
+Avoid STL
+Precompiled Headers
+--incremental for dev builds
+buy faster computer
+
+put things that are not changed often, in shared libs
+
+ccache
+http://ccache.samba.org/performance.html
+
+DistGCC
+compiler farm
