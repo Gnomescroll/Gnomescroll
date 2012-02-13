@@ -27,8 +27,13 @@ buy faster computer
 
 put things that are not changed often, in shared libs
 
-ccache
+http://stackoverflow.com/questions/373142/what-techniques-can-be-used-to-speed-up-c-compilation-times/373179
+
+ccache:
+(cache compiler).
 http://ccache.samba.org/performance.html
 
-DistGCC
+DistGCC:
 compiler farm
+http://code.google.com/p/distcc/
+
