@@ -13,8 +13,8 @@ void init_quad_cache_normals();
 
 void init_cache()
 {
-    if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( max_cubes*6*4 * sizeof(struct Vertex));
-    memset(quad_cache, 0, max_cubes*6*4 * sizeof(struct Vertex));
+    if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
+    memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
     init_quad_cache_texture_cordinates();
     init_quad_cache_normals();
@@ -53,7 +53,7 @@ void init_quad_cache_vertex_cordinates()
         0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
     };
 
-    for(int cube_id=0;cube_id<max_cubes;cube_id++) 
+    for(int cube_id=0;cube_id<MAX_CUBES;cube_id++) 
     {
         for(int side=0;side<6;side++) 
         {
@@ -74,7 +74,7 @@ void init_quad_cache_texture_cordinates()
     static const float _0 = 0.0f;
     static const float _1 = 1.0f;
     
-    for(int cube_id=0;cube_id<max_cubes;cube_id++) 
+    for(int cube_id=0;cube_id<MAX_CUBES;cube_id++) 
     {
         for(int side=0;side<6;side++) 
         {
@@ -112,7 +112,7 @@ void init_quad_cache_normals()
         {{{0,-1,0,0}}}
         };
 
-    for(int cube_id=0;cube_id<max_cubes;cube_id++) 
+    for(int cube_id=0;cube_id<MAX_CUBES;cube_id++) 
     {
         for(int side=0;side<6;side++) 
         {

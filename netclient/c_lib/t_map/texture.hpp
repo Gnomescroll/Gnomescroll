@@ -13,8 +13,9 @@ GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using th
 
 namespace t_map
 {
+    const int MAX_TEXTURES = MAX_CUBES*6;
 
-    short cube_side_texture_array[max_cubes*6];
+    short cube_side_texture_array[MAX_CUBES*6];
 
     GLuint terrain_map_glsl; //for shader
      
