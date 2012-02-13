@@ -83,5 +83,6 @@ class NetPeer
     void init() {}
 
     NetPeer();
+    ~NetPeer();
 
 };

@@ -15,6 +15,11 @@ NetPeer::NetPeer()
 
 }
 
+NetPeer::~NetPeer()
+{
+    delete[] map_message_buffer;
+}
+
 
 //class NetMessageManager reliable_message_manager;
 //class NetMessageManager unreliable_message_manager;
