@@ -409,18 +409,22 @@ class Main:
 
             while True: #physics loop
                 tc = GET_TICK()
-                if tc == 0 or sl_c > 3: #net out
+                if tc == 0 or sl_c > 1: #net out
+                    sl_c+=1
                     break
-                    
+
                 init_c_lib.tick_server_state()
                 init_c_lib.tick()
-                sl_c+=1
+
                 tick+=1
 
                 NetServerFlushToNet()
                 init_c_lib.slime_tick()
                 init_c_lib.check_agent_proximities()
 
+            if sl_c > 0:
+                while GET_TICK() != 0:
+                    sl_c+=1
             if sl_c > 1:
                 print "Physics: %i ticks this frame" % (sl_c)
             
