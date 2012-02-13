@@ -1,0 +1,25 @@
+
+Specular Lighting on Glass:
+http://www.youtube.com/watch?feature=player_detailpage&v=Pxv8x52PGZU
+
+
+Specular Lighting Reference:
+http://www.ozone3d.net/tutorials/bump_mapping_p2.php
+
+The Is term expresses the final specular component. This component is obtained by:
+Is = Sm x Sl x pow( max(R dot E, 0.0), f )
+
+Sl is the specular component of the light and Sm that of the material. 
+E is the view vector or camera vector and R is the light L reflected vector in relation to the normal N. 
+R is obtained with:
+R = reflect(-L, N)
+where N is the normal vector to the pixel considered, L the light vector and reflect() a function (available in GLSL) which makes it possible to calculate the reflexion vector of L in relation to N. 
+
+ The pow() function is the power function which makes it possible to raise a number N to the power of p: pow(n, p). f is the specular exponential factor (the famous shininess in OpenGL) which represents the hardness and the precision of the specular reflection.
+
+!!!
+These small explanations show us the importance of the N normal vector. In traditional rendering process, the N vector at the level of a pixel results from the interpolation of the three normal vectors of the three vertices which form the current face of the 3D object. In this case the variations of the N vector are very small on the current face.
+
+The bump mapping technique precisely consists in giving more life and sparkling to this poor N vector by drawing for each pixel a normal vector from a normal-map. For more details on the normal map, please refer to this tutorial: Normal Maps. The textures used for this tutorial are the same ones as those of the normal-maps tutorial.
+
+Normal Map: Gives normal for each pixel, to enhance specular lighting

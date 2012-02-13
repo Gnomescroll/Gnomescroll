@@ -6,9 +6,9 @@
 #include "t_map_class.hpp"
 
 #ifdef DC_CLIENT
-    #include "cache.hpp"
-    #include "texture.hpp"
-    #include "shader.hpp"
+    #include <c_lib/t_map/glsl/cache.hpp>
+    #include <c_lib/t_map/glsl/texture.hpp>
+    #include <c_lib/t_map/glsl/shader.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };

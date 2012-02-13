@@ -1,7 +1,7 @@
 #include "t_vbo_draw.hpp"
 
-#include "shader.hpp"
-#include "texture.hpp"
+#include <c_lib/t_map/glsl/shader.hpp>
+#include <c_lib/t_map/glsl/texture.hpp>
 
 #include <c_lib/camera/camera.hpp>
 #include <c_lib/camera/fulstrum_test.hpp>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common_data.hpp"
+#include <c_lib/t_map/glsl/structs.hpp>
 
 #include "t_map_class.hpp"
 
