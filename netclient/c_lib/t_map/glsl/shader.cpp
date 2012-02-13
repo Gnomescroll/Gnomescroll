@@ -1,7 +1,7 @@
 #include "shader.hpp"
 
-#include "settings.hpp"
-#include "texture.hpp"
+#include <c_lib/t_map/glsl/settings.hpp>
+#include <c_lib/t_map/glsl/texture.hpp>
 
 namespace t_map
 { 

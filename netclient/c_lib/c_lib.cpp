@@ -80,9 +80,8 @@
 #include <c_lib/t_map/t_vbo_update.cpp>
 
 #include <c_lib/t_map/glsl/cache.cpp>
-
-#include <c_lib/t_map/shader.cpp>
-#include <c_lib/t_map/texture.cpp>
+#include <c_lib/t_map/glsl/shader.cpp>
+#include <c_lib/t_map/glsl/texture.cpp>
 
 #include <c_lib/t_map/net/t_CtoS.cpp>
 #include <c_lib/t_map/net/t_StoC.cpp>

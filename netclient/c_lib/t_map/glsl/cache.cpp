@@ -1,8 +1,8 @@
 #include "cache.hpp"
 
 #include <c_lib/t_map/t_properties.hpp>
-#include <c_lib/t_map/texture.hpp>
 
+#include <c_lib/t_map/glsl/texture.hpp>
 #include <c_lib/t_map/glsl/structs.hpp>
 
 namespace t_map
