@@ -616,7 +616,7 @@ inline void melee_object_CtoS::handle()
 
         case OBJ_TYPE_TURRET:
             printf("hitscan_object_CtoS::handle -- Turrets not implemented\n");
-            break;
+            return;
         default:
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;

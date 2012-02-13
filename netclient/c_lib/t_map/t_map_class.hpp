@@ -1,7 +1,7 @@
 #pragma once
 
 
-
+#include <string.h>
 #include "t_properties.hpp"
 
 namespace t_map
