@@ -425,7 +425,7 @@ class Main:
             init_c_lib.slime_tick()
             init_c_lib.check_agent_proximities()
 
-            time.sleep(0.0001)
+            time.sleep(0.001)
 
         init_c_lib.close()
             
