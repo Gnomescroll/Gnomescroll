@@ -14,21 +14,41 @@ Agent_weapons::Agent_weapons(Agent_state* a)
 
 void Agent_weapons::set_ammo(int type, int ammo) {
 
+    int old;
+
     switch (type) {
         case Weapons::TYPE_block_applier:
+            old = blocks.ammo;
             blocks.ammo = ammo;
             break;
         //case Weapons::TYPE_block_pick:
             //break;
         case Weapons::TYPE_grenade_thrower:
+            old = grenades.ammo;
             grenades.ammo = ammo;
             break;
         case Weapons::TYPE_hitscan_laser:
+            old = laser.ammo;
             laser.ammo = ammo;
             break;
         default:
             printf("Agent_weapons::set_ammo unknown or invalid weapon type %d\n", type);
             return;
+    }
+
+    if (ammo > old)
+    {
+        #ifdef DC_CLIENT
+        if (a->is_you())
+            Sound::restore_ammo();
+        else
+            Sound::restore_ammo(
+                a->s.x,
+                a->s.y,
+                a->s.z,
+                0,0,0
+            );
+        #endif
     }
 
 }

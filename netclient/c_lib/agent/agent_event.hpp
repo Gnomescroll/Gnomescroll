@@ -13,6 +13,7 @@ class Agent_event {
 
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
+        void healed(int health);
         void died();
         void born();
         void crouched();

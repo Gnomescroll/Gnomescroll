@@ -191,7 +191,7 @@ inline void agent_health_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
     if (a == NULL) return;
-    a->status.health = health;
+    a->event.healed(health);
 }
 
 inline void agent_create_StoC::handle()

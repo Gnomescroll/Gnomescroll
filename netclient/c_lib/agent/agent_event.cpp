@@ -67,6 +67,21 @@ void Agent_event::took_damage(int dmg)
         Sound::agent_took_damage(a->s.x, a->s.y, a->s.z, 0,0,0);
 }
 
+void Agent_event::healed(int health)
+{
+    a->status.health = health;
+
+    if (a->is_you())
+        Sound::restore_health();
+    else
+        Sound::restore_health(
+            a->s.x,
+            a->s.y,
+            a->s.z,
+            0,0,0
+        );
+}
+
 void Agent_event::died() {
     if (!this->a->status.dead)
     {
@@ -113,8 +128,8 @@ void Agent_event::uncrouched()
 }
 
 void Agent_event::reload_weapon(int type) {
-    Sound::reload(a->s.x, a->s.y, a->s.z, 0,0,0);
     if (! a->weapons.is_active(type)) return;
+    Sound::reload(a->s.x, a->s.y, a->s.z, 0,0,0);
     // play reload animation/sound for the weapon
 }
 

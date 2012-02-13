@@ -144,7 +144,19 @@ void victory()
 {
 }
 
-void restock_at_base()
+void restore_health()
+{
+}
+
+void restore_ammo()
+{
+}
+
+void restore_health(float x, float y, float z, float vx, float vy, float vz)
+{
+}
+
+void restore_ammo(float x, float y, float z, float vx, float vy, float vz)
 {
 }
 
