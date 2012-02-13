@@ -199,10 +199,10 @@ void VoxDat::init_skeleton(int n_skeleton)
     voxel_skeleton_inited = true;
 
     this->n_skeleton_nodes = n_skeleton;
-    vox_skeleton_local_matrix = new Affine[n_skeleton];
-    vox_skeleton_local_matrix_reference = (float**)malloc(sizeof(float) * this->n_skeleton_nodes);
+    vox_skeleton_local_matrix = new Affine[this->n_skeleton_nodes];
+    vox_skeleton_local_matrix_reference = (float**)malloc(sizeof(float*) * this->n_skeleton_nodes);
     for (int i=0; i<this->n_skeleton_nodes; i++)
-        vox_skeleton_local_matrix_reference[i] = (float*)malloc(sizeof(float) * 6);
+        vox_skeleton_local_matrix_reference[i] = (float*)malloc(sizeof(float) * 6); // x,y,z,rx,ry,rz
     vox_skeleton_transveral_list = new int[n_skeleton];
 }
 
