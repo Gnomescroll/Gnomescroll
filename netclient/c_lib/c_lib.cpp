@@ -127,6 +127,7 @@
 
 /* sound */
 #include <c_lib/sound/sound.cpp>
+#include <c_lib/sound/triggers.cpp>
 
 /* chat */
 #include <c_lib/chat/globals.hpp>

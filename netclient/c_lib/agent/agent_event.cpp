@@ -4,7 +4,7 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/animations/hitscan.hpp>
-#include <c_lib/sound/sound.hpp>
+#include <c_lib/sound/triggers.hpp>
 #include <chat/client.hpp>
 
 void Agent_event::name_changed()
@@ -164,9 +164,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
         }
     }
 
-    // play sound
-    char soundfile[] = "laser_01.wav";
-    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
@@ -191,9 +189,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     // play block surface crumble
     Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
 
-    // play sound
-    char soundfile[] = "laser_01.wav";
-    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_nothing()
@@ -212,9 +208,7 @@ void Agent_event::fired_weapon_at_nothing()
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
-    // play sound
-    char soundfile[] = "laser_01.wav";
-    Sound::play_3d_sound(soundfile, sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::hit_block()

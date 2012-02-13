@@ -35,6 +35,7 @@ class Grenade {
 
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
+        ~Grenade();
 };
 
 #include <c_lib/template/object_list.hpp>

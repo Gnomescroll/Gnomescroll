@@ -3,6 +3,7 @@
 #ifdef DC_CLIENT
 #include <compat_gl.h>
 #include <c_lib/animations/animations.hpp>
+#include <sound/triggers.hpp>
 #endif
 
 #include <ray_trace/ray_trace.h>
@@ -79,6 +80,17 @@ owner(-1)
     grenade_StoC msg;
     this->create_message(&msg);
     msg.broadcast();
+    #endif
+}
+
+Grenade::~Grenade()
+{
+    #ifdef DC_CLIENT
+    float x,y,z;
+    x = particle.state.p.x;
+    y = particle.state.p.y;
+    z = particle.state.p.z;
+    Sound::grenade_explode(x,y,z, 0,0,0);
     #endif
 }
 
