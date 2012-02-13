@@ -56,7 +56,8 @@ const int TERRAIN_MAP_HEIGHT = 128;
     {
         xpos = _xpos;
         ypos = _ypos;
-        for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
+        //for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
+        memset(e, 0, 16*16*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
         for(int i=0; i<16*16;i++) top_block[i] = 0;
     }
 
