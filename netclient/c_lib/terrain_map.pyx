@@ -125,69 +125,7 @@ def init():
 
 #DEPRECATE BELOW LINE
 
-
 '''
-Part 3: Quad Cache
-'''
-
-#north/south is +/- x
-#west/east is +/- y
-l = [
-        1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , #top
-        0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , #bottom
-        1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #north
-        0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #south
-        1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , #west
-        0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
-]
-
-'''
- 0,1,1 , 0,0,1 , 1,0,1 , 1,1,1 , #top
- 1,0,0 , 0,0,0 , 0,1,0 , 1,1,0 , #bottom
- 0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , #north
- 1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , #south
- 0,1,1 , 1,1,1 , 1,1,0 , 0,1,0 , #west
- 0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , #east
-'''
-
-'''
-GLSL_TEXTURE_ARRAY = True
-
-def init_quad_cache():
-    global v_index
-    global c_dat
-    global GLSL_TEXTURE_ARRAY
-    cdef Vertex* quad_cache
-    quad_cache = _get_quad_cache()
-    cdef Vertex* v
-    cdef int id,side,vnum,index
-    for id in range(max_cubes):
-        for side in range(6):
-            for vert_num in range(4):
-                index = id*6*4+4*side+vert_num
-                index2 = 12*side+3*vert_num
-                v = &quad_cache[index]
-                v.x = v_index[index2 + 0]
-                v.y = v_index[index2 + 1]
-                v.z = v_index[index2 + 2]
-                v.r = 255
-                v.g = 255
-                v.b = 255
-                v.a = 255
-
-                if GLSL_TEXTURE_ARRAY:
-                    tx,ty,tz = get_tex_texture(id, side, vert_num) #tile_id, side, vert_num
-                    if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
-                        tx,ty,tz = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
-                else:
-                    tx,ty,tz = get_cube_texture(id, side, vert_num) #tile_id, side, vert_num
-                    if c_dat.get(id, 'active') > 1: # wtf is 'active' > 1 supposed to mean
-                        tx,ty,tz = get_cube_texture_alt(id, side, vert_num) #tile_id, side, vert_num
-                    tz = 0.0
-                v.tx = tx
-                v.ty = ty
-                v.tz = tz
-
 def get_cube_texture(int tile_id, int side, int vert_num):
     global c_dat
     margin = (1./16.) *0.001#*0.004
@@ -219,30 +157,5 @@ def get_cube_texture(int tile_id, int side, int vert_num):
     else:
         print "Error!!!! set_tex invalid input"
         assert False
-    return (tx,ty,texture_id)
-
-def get_tex_texture(int tile_id, int side, int vert_num):
-    global c_dat
-    texture_id = c_dat.get(tile_id, 'texture_id')[side]
-
-    cdef cubeProperties* cp
-    cp = _get_cube(tile_id)
-
-    texture_order = c_dat.get(tile_id, 'texture_order')[side][vert_num]
-    tx = 0
-    ty = 0
-
-    if vert_num == 0:
-        tx = 0.0
-        ty = 0.0
-    elif vert_num == 1:
-        tx = 0.0
-        ty = 1.0
-    elif vert_num == 2:
-        tx = 1.0
-        ty = 1.0
-    elif vert_num == 3:
-        tx = 1.0
-        ty = 0.0
     return (tx,ty,texture_id)
 '''
