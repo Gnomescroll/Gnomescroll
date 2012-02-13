@@ -741,3 +741,25 @@ class ping_CtoS: public FixedSizeNetPacketToServer<ping_CtoS>
         }
         inline void handle();
 };
+
+class ping_reliable_StoC: public FixedSizeReliableNetPacketToClient<ping_reliable_StoC>
+{
+    public:
+        int ticks;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&ticks, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class ping_reliable_CtoS: public FixedSizeReliableNetPacketToServer<ping_reliable_CtoS>
+{
+    public:
+        int ticks;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&ticks, buff, buff_n, pack);
+        }
+        inline void handle();
+};

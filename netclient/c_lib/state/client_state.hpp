@@ -45,6 +45,7 @@ namespace ClientState {
 
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;
+    extern int last_reliable_ping_time;
     
     void set_desired_name(char* name);
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);

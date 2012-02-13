@@ -145,6 +145,8 @@ void RegisterMessages() {
     //ping
     ping_CtoS::register_server_packet();
     ping_StoC::register_client_packet();
+    ping_reliable_CtoS::register_server_packet();
+    ping_reliable_StoC::register_client_packet();
 
 }
 }

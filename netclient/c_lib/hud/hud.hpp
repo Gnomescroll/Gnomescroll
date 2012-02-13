@@ -79,6 +79,7 @@ class HUD
     Text* dead;
     Text* fps;
     Text* ping;
+    Text* reliable_ping;
     Text* player_stats;
 
     // scoreboard needs rewritten logic

@@ -31,7 +31,8 @@ namespace ClientState {
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
-    
+    int last_reliable_ping_time;
+
     PlayerAgent_state playerAgent_state;
 
     int agent_control_state[16];
@@ -118,9 +119,15 @@ namespace ClientState {
 
     void send_ping()
     {
+        int n = _get_ticks();
+        
         ping_CtoS msg;
-        msg.ticks = _get_ticks();
+        msg.ticks = n;
         msg.send();
+
+        ping_reliable_CtoS msg2;
+        msg2.ticks = n;
+        msg2.send();
     }
 
     void set_desired_name(char* name)
