@@ -7,7 +7,7 @@
     x,y chunk cordinates
     r - radius
 */
-class map_chunk_list_request_CtoS: public FixedSizeNetPacketToServer<map_chunk_list_request_CtoS>
+class map_chunk_list_request_CtoS: public MapMessagePacketToServer<map_chunk_list_request_CtoS>
 {
     public:
 
@@ -23,7 +23,7 @@ class map_chunk_list_request_CtoS: public FixedSizeNetPacketToServer<map_chunk_l
         inline void handle();
 };
 
-class map_chunk_request_CtoS: public FixedSizeNetPacketToServer<map_chunk_request_CtoS>
+class map_chunk_request_CtoS: public MapMessagePacketToServer<map_chunk_request_CtoS>
 {
     public:
 
@@ -39,7 +39,7 @@ class map_chunk_request_CtoS: public FixedSizeNetPacketToServer<map_chunk_reques
         inline void handle();
 };
 
-class block_CtoS: public FixedSizeNetPacketToServer<block_CtoS>
+class block_CtoS: public MapMessagePacketToServer<block_CtoS>
 {
     public:
 

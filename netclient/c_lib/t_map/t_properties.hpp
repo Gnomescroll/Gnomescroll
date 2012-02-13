@@ -55,7 +55,8 @@ Cube Properties
 */
 
 inline bool isActive(int id) __attribute((always_inline));
-inline bool isSolid(int id) __attribute((always_inline));
+//inline bool isSolid(int id) __attribute((always_inline));
+bool isSolid(int id);
 inline bool isOccludes(int id) __attribute((always_inline));
 inline bool isTransparent(int id) __attribute((always_inline));
 
