@@ -102,6 +102,8 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg)
 }
 
 /*
+    WTF
+*/
 void _set_broadcast(int x, int y, int z, int value) 
 {
     class block_StoC msg;
@@ -118,6 +120,9 @@ void _set_broadcast(int x, int y, int z, int value)
 
 }
 
+/*
+    WTF
+*/
 void _block_broadcast(int x, int y, int z, int value) 
 {
     class block_StoC msg;
@@ -127,7 +132,7 @@ void _block_broadcast(int x, int y, int z, int value)
     msg.val = value;
     msg.broadcast();
 }
-*/
+
 
 
 void send_map_metadata(int client_id)

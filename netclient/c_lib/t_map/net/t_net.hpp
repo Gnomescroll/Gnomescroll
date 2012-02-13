@@ -97,6 +97,24 @@ class MapMessagePacketToClient {
             *size = *buff_n - _buff_n;
         }
 
+        void broadcast() 
+        {
+            if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
+
+            Net_message* nm = Net_message::acquire(Derived::size);
+            int buff_n = 0;
+            serialize(nm->buff, &buff_n);
+
+            class NetPeer* np;
+
+            for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++) 
+            {
+                np = NetServer::pool[i]; //use better iterator
+                if(np == NULL) continue;
+                np->push_reliable_message(nm);
+            }
+        }
+
         void sendToClient(int client_id) 
         {
             NetPeer* np = NetServer::pool[client_id];

@@ -41,15 +41,11 @@ int _apply_damage(int x, int y, int z, int dmg);
 
 int _apply_damage_broadcast(int x, int y, int z, int dmg);
 
-void _set_broadcast(int x, int y, int z, int value)
-{
-    printf("Warning: deprecated function _set_broadcast\n");
-}
-
-void _block_broadcast(int x, int y, int z, int value)
-{
-    printf("Warning: deprecated function _set_broadcast\n");
-}
+/*
+    Deprecate eventually
+*/
+void _set_broadcast(int x, int y, int z, int value);
+void _block_broadcast(int x, int y, int z, int value);
 
 void send_map_metadata(int client_id);  //Deprecate
 //void send_map_metadata();   //Deprecate
