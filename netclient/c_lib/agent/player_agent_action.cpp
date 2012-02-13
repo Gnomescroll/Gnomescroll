@@ -163,6 +163,10 @@ void PlayerAgent_action::hitscan_laser() {
                     collision_point[0], collision_point[1], collision_point[2],
                     look.x, look.y, look.z
                 );
+                Sound::laser_hit_agent(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    0,0,0
+                );
             }
             agent = ClientState::agent_list.get(target.entity_id);
             if (agent==NULL) break;
@@ -199,7 +203,7 @@ void PlayerAgent_action::hitscan_laser() {
                 look.x, look.y, look.z,
                 tile, side
             );
-            Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            Sound::laser_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             
@@ -311,11 +315,15 @@ void PlayerAgent_action::hitscan_pick() {
                     collision_point[0], collision_point[1], collision_point[2],
                     vec[0], vec[1], vec[2]
                 );
+                Sound::pick_hit_agent(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    0,0,0
+                );
             }
             agent = ClientState::agent_list.get(target.entity_id);
             if (agent==NULL) break;
             if (agent->status.team == this->p->you->status.team) break;
-            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);            
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);        
             break;
 
         case TARGET_BLOCK:
@@ -410,6 +418,7 @@ void PlayerAgent_action::reload() {
     AgentReloadWeapon_CtoS msg;
     msg.type = p->you->weapons.active_type();
     msg.send();
+    Sound::reload();
 }
 
 bool PlayerAgent_action::switch_weapon(int i) {

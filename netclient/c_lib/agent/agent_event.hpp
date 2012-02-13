@@ -36,6 +36,7 @@ class Agent_event {
         void fired_weapon_at_nothing();
         void melee_attack_object(int id, int type, int part, float x, float y, float z);
         void melee_attack_nothing();
+        void fire_empty_weapon(int weapon_type);
 
         void hit_block();
         void placed_block();

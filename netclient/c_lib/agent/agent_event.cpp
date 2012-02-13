@@ -102,7 +102,7 @@ void Agent_event::uncrouched()
 }
 
 void Agent_event::reload_weapon(int type) {
-    Sound::reload();
+    Sound::reload(a->s.x, a->s.y, a->s.z, 0,0,0);
     if (! a->weapons.is_active(type)) return;
     // play reload animation/sound for the weapon
 }
@@ -165,6 +165,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
                 float c[3];
                 vv->get_center(c);
                 Animations::blood_spray(c[0], c[1], c[2], f[0], f[1], f[2]);
+                Sound::pick_hit_agent(
+                    c[0], c[1], c[2],
+                    0,0,0
+                );
             }
         }
     }
@@ -241,6 +245,7 @@ void Agent_event::melee_attack_object(int id, int type, int part, float x, float
     // play blood animation
     // play swing sound
     // play object's hurt sound
+    //Sound::pick_hit_agent(x,y,z,0,0,0);
 }
 
 void Agent_event::melee_attack_nothing()
@@ -248,6 +253,10 @@ void Agent_event::melee_attack_nothing()
     // play pick swing animation
 }
 
+void Agent_event::fire_empty_weapon(int weapon_type)
+{
+    Sound::out_of_ammo(a->s.x, a->s.y, a->s.z, 0,0,0);
+}
 
 Agent_event::~Agent_event()
 {
