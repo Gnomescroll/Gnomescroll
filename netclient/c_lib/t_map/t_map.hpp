@@ -46,6 +46,9 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg);
 */
 void _set_broadcast(int x, int y, int z, int value);
 void _block_broadcast(int x, int y, int z, int value);
+/*
+    Deprecated
+*/
 
 void send_map_metadata(int client_id);  //Deprecate
 //void send_map_metadata();   //Deprecate

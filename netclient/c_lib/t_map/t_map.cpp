@@ -94,10 +94,10 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg)
 {
     int res = _apply_damage(x,y,z, dmg);
 
-    printf("warning: _apply_damage_broadcast \n");
-    //if (res == 0) {
-    //    _block_broadcast(x,y,z, 0);
-    //}
+    //printf("warning: _apply_damage_broadcast \n");
+    if (res == 0) {
+        _block_broadcast(x,y,z, 0);
+    }
     return res;
 }
 
