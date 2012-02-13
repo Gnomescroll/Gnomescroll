@@ -109,7 +109,6 @@ void read_skeleton(char* file_name, VoxDat* vox_dat)
 
         sscanf (buffer+index, "%d %f %f %f  %f %f %f %n", &node, &x,&y,&z, &rx,&ry,&rz, &read);
         index += read;
-        printf("node=%d\n", node);
         vox_dat->set_skeleton_local_matrix(node, x,y,z, rx,ry,rz);
     }
 
