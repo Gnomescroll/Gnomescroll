@@ -18,7 +18,11 @@ void PlayerAgent_action::fire() {
     if (p->you->status.dead) return;
     
     int type = p->you->weapons.active_type();
-    if (!p->you->weapons.fire()) return;
+    if (!p->you->weapons.fire())
+    {
+        Sound::out_of_ammo();   // move this to individual weapon fire methods later
+        return;
+    }
     switch (type)
     {
         case Weapons::TYPE_block_applier:
@@ -195,6 +199,7 @@ void PlayerAgent_action::hitscan_laser() {
                 look.x, look.y, look.z,
                 tile, side
             );
+            Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             
@@ -333,6 +338,7 @@ void PlayerAgent_action::hitscan_pick() {
                 vec[0], vec[1], vec[2],
                 tile, side
             );
+            Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
             

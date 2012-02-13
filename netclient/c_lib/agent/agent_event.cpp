@@ -45,7 +45,8 @@ void Agent_event::display_name()
 }
 
 // side effects of taking damage. dont modify health/death here
-void Agent_event::took_damage(int dmg) {
+void Agent_event::took_damage(int dmg)
+{
     BillboardText* b = ClientState::billboard_text_list.create(
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
@@ -59,12 +60,15 @@ void Agent_event::took_damage(int dmg) {
     b->set_text(txt);
     b->set_size(1.0f);
     b->set_ttl(5);
+
+    Sound::agent_took_damage();
 }
 
 void Agent_event::died() {
     if (!this->a->status.dead)
     {
         this->a->status.dead = true;
+        Sound::died();
         this->a->vox->reset_skeleton(&agent_vox_dat_dead);
     }
 }
@@ -98,6 +102,7 @@ void Agent_event::uncrouched()
 }
 
 void Agent_event::reload_weapon(int type) {
+    Sound::reload();
     if (! a->weapons.is_active(type)) return;
     // play reload animation/sound for the weapon
 }
@@ -164,7 +169,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
         }
     }
 
-    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
@@ -188,8 +193,9 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
 
     // play block surface crumble
     Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
+    Sound::laser_hit_block(x,y,z, 0,0,0);
 
-    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_nothing()
@@ -208,13 +214,14 @@ void Agent_event::fired_weapon_at_nothing()
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
-    Sound::fire_laser_3d(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::hit_block()
 {
     // play pick swing
     // play block damage animation
+    //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
 }
 
 void Agent_event::threw_grenade()
