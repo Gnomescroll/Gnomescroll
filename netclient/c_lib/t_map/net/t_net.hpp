@@ -71,6 +71,7 @@ template <class Derived> int MapMessagePacketToServer<Derived>::message_id(255);
 template <class Derived> int MapMessagePacketToServer<Derived>::size(-1);
 
 
+
 /*
     Special server packet
 */
@@ -126,6 +127,55 @@ class MapMessagePacketToClient {
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
         }
 
+        int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
+
+        static void handler(char* buff, int buff_n, int* bytes_read, int _client_id) 
+        {
+            Derived x;
+            x.unserialize(buff, &buff_n, bytes_read);
+            x.handle();
+        }
+
+        static void register_client_packet() {
+            Derived x = Derived();
+            Derived::message_id = next_client_packet_id(); //set size
+            Derived::size = x.Size();
+            register_client_message_handler(Derived::message_id, Derived::size, &Derived::handler);   //server/client handler
+        }
+}; 
+
+template <class Derived> int MapMessagePacketToClient<Derived>::message_id(255);
+template <class Derived> int MapMessagePacketToClient<Derived>::size(-1);
+
+/*
+    For sending Arrays of Messages
+
+    -variable length messages
+    -arrays of data
+*/
+
+template <class Derived>
+class MapMessageArrayPacketToClient {
+    private:
+        virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
+    public:
+        static int message_id;
+        static int size;
+
+        MapMessageArrayPacketToClient() { }
+
+        void serialize(char* buff, int* buff_n) __attribute((always_inline))
+        {
+            pack_message_id(Derived::message_id, buff, buff_n);
+            packet(buff, buff_n, true);
+        }
+
+        inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
+        {
+            int _buff_n = *buff_n;
+            packet(buff, buff_n, false);
+            *size = *buff_n - _buff_n;
+        }
 
         void sendToClient(int client_id, char* buff, int len) 
         {
@@ -173,5 +223,5 @@ class MapMessagePacketToClient {
         }
 }; 
 
-template <class Derived> int MapMessagePacketToClient<Derived>::message_id(255);
-template <class Derived> int MapMessagePacketToClient<Derived>::size(-1);
+template <class Derived> int MapMessageArrayPacketToClient<Derived>::message_id(255);
+template <class Derived> int MapMessageArrayPacketToClient<Derived>::size(-1);

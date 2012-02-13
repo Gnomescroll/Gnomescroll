@@ -19,6 +19,8 @@
 
 #include "t_map_class.hpp"
 
+#include "./net/t_StoC.hpp"
+
 namespace t_map
 {
 
@@ -35,6 +37,12 @@ struct CHUNK_HISTORY_ELEMENT
     struct MAP_ELEMENT e;
 };
 
+struct CHUNK_SUBSCRIBER
+{
+    unsigned short client_id;
+    unsigned short chunk_alias;
+};
+
 const int SMC_MAX_SUBSCRIBERS = 64;
 const int SMC_HISTORY_ARRAY_SIZE
 
@@ -42,7 +50,8 @@ class SERVER_MAP_CHUNK
 {
     public:
 
-    int subscribers[ SMC_MAX_SUBSCRIBERS ];
+    unsigned short subscribers[ SMC_MAX_SUBSCRIBERS ];
+    unsigned short chunk_aliases[ SMC_MAX_SUBSCRIBERS ]; 
     int subscriber_num;
 
     struct CHUNK_HISTORY_ELEMENT history_array[ SMC_HISTORY_ARRAY_SIZE ];
@@ -62,11 +71,18 @@ class SERVER_MAP_CHUNK
     void add_subscriber(int client_id, int client_map_version);
     void remove_subscriber(int client_id);
 
-
+    void block_change(int x, int y, int z, struct MAP_ELEMENT e)
+    {
+        
+        for(int i=0; i < subscriber_num; i++)
+        {
+            //send element
+        }
+    }
 };
 
 
-void SERVER_MAP_CHUNK::add_subscriber(int client_id, int client_map_version)
+void SERVER_MAP_CHUNK::add_subscriber(int client_id, int chunk_alias, int client_map_version)
 {
     //check that they are not already subscribed
     for(int i=0; i < subscriber_num; i++)
@@ -78,6 +94,8 @@ void SERVER_MAP_CHUNK::add_subscriber(int client_id, int client_map_version)
         }
     }
     subscribers[subscriber_num] = client_id;
+    chunk_aliases[subscriber_num] = chunk_alias;
+
     subscriber_num++;
 
     //n00b solution; zip map up and send it
@@ -106,6 +124,7 @@ void SERVER_MAP_CHUNK::remove_subscriber(int client_id)
 
     subscriber_num--;
     subscribers[i] = subcribers[subscriber_num];
+    chunk_aliases[i] = chunk_aliases[subscriber_num]; 
 }
 
 }
