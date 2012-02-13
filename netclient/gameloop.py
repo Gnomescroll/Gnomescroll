@@ -200,7 +200,7 @@ class App(object):
                 if _ping_n_now - ping_n > opts.ping_update_interval:
                      ##do ping stuff here
                     ping_n = _ping_n_now
-                    for i in range(100):
+                    for i in range(1):
                         init_c_lib.ping()
 
             P.finish_frame()
