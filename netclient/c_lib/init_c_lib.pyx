@@ -187,13 +187,13 @@ class Font:
 """
 Game loop
 """
-cdef extern from "./loop.hpp":
-    void init_main_loop()
-    int main_loop()
+cdef extern from "./main.hpp" namespace "Main":
+    void init()
+    int run()
 def init_game():
-    init_main_loop()
+    init()
 def run_game():
-    main_loop()
+    run()
 
 
 """

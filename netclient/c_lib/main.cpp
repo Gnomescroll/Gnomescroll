@@ -1,4 +1,4 @@
-#include "loop.hpp"
+#include "main.hpp"
 
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/SDL_functions.h>
@@ -10,6 +10,9 @@
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/t_map/t_vbo.hpp>
 #include <c_lib/options.hpp>
+
+namespace Main
+{
 
 int get_mouse_tick()
 {
@@ -46,16 +49,17 @@ void connect()
     client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
-void init_main_loop()
+void init()
 {
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
+    ClientState::ctf.start();
     _START_CLOCK(); // must start before networking
     connect();
 }
 
-int main_loop()
+int run()
 {
     
 /* BEGIN SETUP */
@@ -197,4 +201,6 @@ int main_loop()
     close_c_lib();
     
     return 0;
+}
+
 }

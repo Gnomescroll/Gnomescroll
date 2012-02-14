@@ -5,6 +5,7 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/game/packets.hpp>
 #include <common/random.h>
+#include <c_lib/options.hpp>
 
 CTF::CTF()
 {}
@@ -19,6 +20,12 @@ void CTF::init() {
 }
 
 void CTF::start() {
+
+    #ifdef DC_CLIENT
+    this->auto_assign = Options::auto_assign_team;
+    #endif
+
+    #ifdef DC_SERVER
     float x,y,z;
 
     int x_max = map_dim.x;
@@ -52,6 +59,7 @@ void CTF::start() {
     z = _get_highest_open_block(x,y);
     x+=0.5f;y+=0.5f;
     this->set_flag_position(2,x,y,z);
+    #endif
 }
 
 void CTF::tick()

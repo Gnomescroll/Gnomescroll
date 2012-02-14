@@ -67,7 +67,7 @@ const FMOD_VECTOR create_vector(float x, float y, float z) {
 
 
 /* Init and update */
-void init_sound_system() {
+int init_sound_system() {
     FMOD_RESULT result;
 
     result = FMOD_System_Create(&sound_sys);   // create system
@@ -76,14 +76,15 @@ void init_sound_system() {
     result = FMOD_System_Init(sound_sys, MAX_CHANNELS, FMOD_INIT_NORMAL, NULL);
     ERRCHECK(result);
     if (result) enabled = 0;
+    return result;
 }
 
-void init_channel_group() {
+int init_channel_group() {
     FMOD_RESULT r;
     r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
     ERRCHECK(r);
     if (r) enabled = 0;
-    //update_listener(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    return r;
 }
 
 void load_sounds_from_conf(char *fn)
@@ -107,9 +108,15 @@ void init() {
 
     enabled = Options::sound;
     if (!enabled) return;
-    
-    init_sound_system();
-    init_channel_group();
+
+    int fail;
+    fail = init_sound_system();
+    if (fail)
+        return;
+    fail = init_channel_group();
+    if (fail)
+        return;
+
     const float doppler_scale = 1.0f;   //default "The doppler scale is a general scaling factor for how much the pitch varies due to doppler shifting in 3D sound."
     const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
     const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world

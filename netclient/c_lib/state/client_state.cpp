@@ -79,7 +79,6 @@ namespace ClientState {
         billboard_text_list.tick();
     }
 
-
     //CYTHON
     void update_client_state(){update();}
     void draw_client_state(){draw();}

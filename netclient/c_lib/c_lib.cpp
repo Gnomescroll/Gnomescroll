@@ -148,7 +148,7 @@
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
-#include <c_lib/loop.cpp>
+#include <c_lib/main.cpp>
 
 int init_c_lib() {
     static int inited = 0;
