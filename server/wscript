@@ -245,11 +245,21 @@ class optimized_ctx(ConfigurationContext):
 class map_gen_ctx(ConfigurationContext):
     cmd = 'map_gen'
     fun = 'map_gen'
+    
+class multicore_ctx(ConfigurationContext):
+    cmd = 'multicore'
+    fun = 'multicore'
 
 def optimized(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
     ctx.env.CXXFLAGS.append('-O3')
+
+def multicore(ctx):
+    configure(ctx)
+    optimized(ctx)
+    ctx.env.CFLAGS.append('-j 6')
+    ctx.env.CXXFLAGS.append('-j 6')
 
 def debug(ctx):
     configure(ctx)

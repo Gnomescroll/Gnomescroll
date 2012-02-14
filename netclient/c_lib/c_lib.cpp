@@ -146,6 +146,8 @@
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
+#include <c_lib/loop.cpp>
+
 int init_c_lib() {
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");

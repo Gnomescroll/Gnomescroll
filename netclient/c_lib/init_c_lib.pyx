@@ -503,3 +503,8 @@ def choose_name(name):
 def identified():
     return playerAgent_state.identified
 
+cdef extern from "./loop.hpp":
+    void main_loop()
+
+def run_game():
+    main_loop()

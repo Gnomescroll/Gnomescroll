@@ -284,9 +284,18 @@ moved ping to C
 Feb13
 
 Fix map segfault
-
-
+Sound trigger handlers integrated
 ===================
+
+Feb 14
+
+install new system
+
+TODO:
+main loop in C
+options struct in C
+openal
+====================
 
 == MODELS ==
 Make new model that fits inside agent box   DONE

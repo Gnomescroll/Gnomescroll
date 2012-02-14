@@ -73,143 +73,144 @@ class App(object):
         global P, Phy
 
         self.connect()
-        # Server sends the chunk list after client is "ready" (identified & dat loaded)
 
-        average = []
-        fps_val = None
-        fps = opts.fps
-        ping = opts.fps
-        ping_n = init_c_lib.get_ticks()
-        ltick, ctick = 0,0
+        init_c_lib.run_game()
 
-        last_tick = 0
+        #average = []
+        #fps_val = None
+        #fps = opts.fps
+        #ping = opts.fps
+        #ping_n = init_c_lib.get_ticks()
+        #ltick, ctick = 0,0
 
-        # update mouse
-        init_c_lib.update_mouse(self.get_tick())
+        #last_tick = 0
 
-        while not init_c_lib.cy_input_state.quit:
-            P.start_frame()
+        ## update mouse
+        #init_c_lib.update_mouse(self.get_tick())
 
-            tick_count = 0
-            _density = 1
-            _min = 0.025
-            _max = 0.9
+        #while not init_c_lib.cy_input_state.quit:
+            #P.start_frame()
 
-            agent = init_c_lib.player_agent_assigned()
+            #tick_count = 0
+            #_density = 1
+            #_min = 0.025
+            #_max = 0.9
 
-            # update mouse
-            init_c_lib.update_mouse(self.get_tick())
+            #agent = init_c_lib.player_agent_assigned()
 
-            P.event("Physics Loop")
-            phy_ticks = 0
-            while True:
-                tick_count = GET_TICK()
-                if tick_count == 0 or phy_ticks > 0: #only run once
-                    break
-                phy_ticks += 1
+            ## update mouse
+            #init_c_lib.update_mouse(self.get_tick())
+
+            #P.event("Physics Loop")
+            #phy_ticks = 0
+            #while True:
+                #tick_count = GET_TICK()
+                #if tick_count == 0 or phy_ticks > 0: #only run once
+                    #break
+                #phy_ticks += 1
             
-                init_c_lib.process_input()
-                init_c_lib.AnimationTick()                    
-                init_c_lib.ClientState.tick()
-                if agent:
-                    init_c_lib.update_sound_listener()
+                #init_c_lib.process_input()
+                #init_c_lib.AnimationTick()                    
+                #init_c_lib.ClientState.tick()
+                #if agent:
+                    #init_c_lib.update_sound_listener()
 
-                # update mouse
-                init_c_lib.update_mouse(self.get_tick())
+                ## update mouse
+                #init_c_lib.update_mouse(self.get_tick())
 
                                     
-            #this gets triggered if longer than 30ms between render frames
-            if phy_ticks >= 2:
-                print "Physics: %i ticks this frame" % (phy_ticks)
+            ##this gets triggered if longer than 30ms between render frames
+            #if phy_ticks >= 2:
+                #print "Physics: %i ticks this frame" % (phy_ticks)
 
-            # update mouse
-            init_c_lib.update_mouse(self.get_tick())
+            ## update mouse
+            #init_c_lib.update_mouse(self.get_tick())
 
-            # updates hud projected display names (doesnt draw them)
-            if agent:
-                init_c_lib.display_agent_names()
+            ## updates hud projected display names (doesnt draw them)
+            #if agent:
+                #init_c_lib.display_agent_names()
 
-            P.event("Networking 1")
-            NetClientFlushToNet()
-            NetClientDispatchNetworkEvents() #networking input/output
+            #P.event("Networking 1")
+            #NetClientFlushToNet()
+            #NetClientDispatchNetworkEvents() #networking input/output
 
-            # camera input
-            P.event("Camera Setup")
+            ## camera input
+            #P.event("Camera Setup")
 
-            # set input options
-            init_c_lib.cy_input_state.set_options(
-                opts.invert_mouse,
-                opts.sensitivity
-            )
+            ## set input options
+            #init_c_lib.cy_input_state.set_options(
+                #opts.invert_mouse,
+                #opts.sensitivity
+            #)
 
-            # update mouse
-            init_c_lib.update_mouse(self.get_tick())
+            ## update mouse
+            #init_c_lib.update_mouse(self.get_tick())
 
-            # update current camera
-            init_c_lib.update_camera_state()
+            ## update current camera
+            #init_c_lib.update_camera_state()
 
-            # world projection
-            init_c_lib.camera_world_projection()
+            ## world projection
+            #init_c_lib.camera_world_projection()
 
-            # terrain
-            P.event("Draw Terrain")
-            c_lib.terrain_map._draw_map()
+            ## terrain
+            #P.event("Draw Terrain")
+            #c_lib.terrain_map._draw_map()
 
-            # particles
-            P.event("Draw voxels and particles")
-            init_c_lib.ClientState.draw()
+            ## particles
+            #P.event("Draw voxels and particles")
+            #init_c_lib.ClientState.draw()
 
-            # animations
-            P.event("Draw animations")
-            init_c_lib.AnimationDraw()
+            ## animations
+            #P.event("Draw animations")
+            #init_c_lib.AnimationDraw()
 
-            # update mouse
-            init_c_lib.update_mouse(self.get_tick())
+            ## update mouse
+            #init_c_lib.update_mouse(self.get_tick())
 
-            # hud projection
-            P.event("draw hud")
-            if opts.hud:
-                init_c_lib.camera_hud_projection()
+            ## hud projection
+            #P.event("draw hud")
+            #if opts.hud:
+                #init_c_lib.camera_hud_projection()
                 
-                self.hud.draw(fps=fps_val)
+                #self.hud.draw(fps=fps_val)
 
-                if opts.diagnostic_hud:
-                    c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
+                #if opts.diagnostic_hud:
+                    #c_lib.terrain_map.draw_vbo_indicator(opts.map_vbo_indicator_x_offset,opts.map_vbo_indicator_y_offset, -0.3)
 
-            P.event("SDL flip")
-            init_c_lib.flip()
+            #P.event("SDL flip")
+            #init_c_lib.flip()
 
-            P.event("Misc")
+            #P.event("Misc")
 
-            #FPS calculation
-            if fps:
-                ctick = init_c_lib.get_ticks()
-                average.append(ctick-ltick)
-                ltick = ctick
-                if len(average) > 30:
-                    sum = 0.
-                    for x in average:
-                        sum += float(x)
-                    fps_val = sum / float(len(average))
-                    average = []
+            ##FPS calculation
+            #if fps:
+                #ctick = init_c_lib.get_ticks()
+                #average.append(ctick-ltick)
+                #ltick = ctick
+                #if len(average) > 30:
+                    #sum = 0.
+                    #for x in average:
+                        #sum += float(x)
+                    #fps_val = sum / float(len(average))
+                    #average = []
 
-            if ping:
-                #for i in range(300):
-                    #init_c_lib.ping()
-                _ping_n_now = init_c_lib.get_ticks()
-                if _ping_n_now - ping_n > opts.ping_update_interval:
-                     ##do ping stuff here
-                    ping_n = _ping_n_now
-                    for i in range(1):
-                        init_c_lib.ping()
+            #if ping:
+                ##for i in range(300):
+                    ##init_c_lib.ping()
+                #_ping_n_now = init_c_lib.get_ticks()
+                #if _ping_n_now - ping_n > opts.ping_update_interval:
+                     ###do ping stuff here
+                    #ping_n = _ping_n_now
+                    #for i in range(1):
+                        #init_c_lib.ping()
 
-            P.finish_frame()
+            #P.finish_frame()
 
-            # update mouse
-            init_c_lib.update_mouse(self.get_tick())
+            ## update mouse
+            #init_c_lib.update_mouse(self.get_tick())
 
-            init_c_lib.Sound.update()
-            init_c_lib.ClientState.update()
+            #init_c_lib.Sound.update()
+            #init_c_lib.ClientState.update()
 
         init_c_lib.close()
 
