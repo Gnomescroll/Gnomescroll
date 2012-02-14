@@ -1,5 +1,7 @@
 #pragma once
 
+#include <compat_gl.h>
+
 namespace HudFont
 {
 

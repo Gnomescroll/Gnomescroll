@@ -27,11 +27,12 @@ void set_##NAME(int val)\
 }
 
 #define OPT_STRING(NAME, DEFAULT)\
-char* NAME = DEFAULT;\
+static char NAME##_default[] = DEFAULT;\
+char* NAME = NAME##_default;\
 void set_##NAME(char* val)\
 {\
     unsigned int len = strlen(val);\
-    if (NAME == NULL)\
+    if (NAME == NULL || NAME == NAME##_default)\
     {\
         NAME = (char*)malloc(sizeof(char) * (len+1));\
     }\
@@ -46,10 +47,10 @@ void set_##NAME(char* val)\
 }
 
 /* User */
-OPT_STRING(name, (char*)"default-name")
+OPT_STRING(name, "default-name")
 
 /* Network */
-OPT_STRING(server, (char*)"0.0.0.0")
+OPT_STRING(server, "0.0.0.0")
 OPT_INT(port, 0)
 
 /* Game preferences */
@@ -74,7 +75,7 @@ OPT_BOOL(ping, true)
 OPT_INT(ping_update_interval, 500)
 
 /* Font */
-OPT_STRING(font, (char*)"inc_18")
+OPT_STRING(font, "inc_18")
 OPT_INT(font_size, 18)
 
 /* Sound */

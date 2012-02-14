@@ -22,21 +22,12 @@ int get_mouse_tick()
 int main_loop()
 {
 /* BEGIN SETUP */
-// TODO: const variables are meant to be options
-    const bool hud = true;
+    int ping_ticks = _get_ticks();
     
-    const int ping_update_interval = 500; //ms
-    const bool ping = true;
-    int p_n = _get_ticks();
-    
-    const bool fps = true;
     int fps_average_index = 0;
     int fps_average[30+1];
     int fps_last_tick = _get_ticks();
     float fps_value = 0.0f;
-
-    const bool invert_mouse = false;
-    const float sensitivity = 70.0f;
 /* END SETUP */
 
     // update mouse
@@ -90,8 +81,8 @@ int main_loop()
 
         // set input options (set these in an options struct at load)   TODO
         set_input_options(
-            invert_mouse,
-            sensitivity
+            Options::invert_mouse,
+            Options::sensitivity
         );
 
         // update mouse
@@ -115,13 +106,13 @@ int main_loop()
         // update mouse
         pan_camera(get_mouse_tick());
 
-        if (hud)
+        if (Options::hud)
         {
             // switch to hud  projection
             hud_projection();
 
             // draw hud
-            Hud::set_hud_draw_settings(fps, fps_value, ping);
+            Hud::set_hud_draw_settings(Options::fps, fps_value, Options::ping);
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
         }
@@ -130,7 +121,7 @@ int main_loop()
         _swap_buffers();
 
         // do fps calculation
-        if (fps)
+        if (Options::fps)
         {
             int fps_current_tick = _get_ticks();
             fps_average[fps_average_index++] = fps_current_tick - fps_last_tick;
@@ -147,12 +138,12 @@ int main_loop()
         }
 
         // check ping throttle
-        if (ping)
+        if (Options::ping)
         {
-            int p_now = _get_ticks();
-            if (p_now - p_n > ping_update_interval)
+            int ping_now = _get_ticks();
+            if (ping_now - ping_ticks > Options::ping_update_interval)
             {
-                p_n = p_now;
+                ping_ticks = ping_now;
                 ClientState::send_ping();
             }
         }

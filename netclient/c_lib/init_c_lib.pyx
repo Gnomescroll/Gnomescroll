@@ -74,15 +74,61 @@ Options & Settings
 -- this is one of the few things to keep in cython until the end
 """
 
-cdef extern from "./game/ctf.hpp":
-    cdef cppclass CTF:
-        bool auto_assign
+#cdef extern from "./game/ctf.hpp":
+#    cdef cppclass CTF:
+#        bool auto_assign
 
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    CTF ctf
+#cdef extern from "./state/client_state.hpp" namespace "ClientState":
+#    CTF ctf
+
+#def load_options(opts):
+#    ctf.auto_assign = opts.auto_assign_team
+
+cdef extern from "./options.hpp" namespace "Options":
+    void set_name(char* name)
+    void set_server(char* server)
+    void set_port(int port)
+    void set_auto_assign_team(bool auto_assign_team)
+    void set_width(int width)
+    void set_height(int height)
+    void set_fullscreen(bool fullscreen)
+    void set_fov(float fov)
+    void set_sensitivity(float sensitivity)
+    void set_camera_speed(float camera_speed)
+    void set_invert_mouse(bool invert_mouse)
+    void set_hud(bool hud)
+    void set_diagnostic_hud(bool diagnostic_hud)
+    void set_fps(bool fps)
+    void set_ping(bool ping)
+    void set_ping_update_interval(int ping_update_interval)
+    void set_font(char* font)
+    void set_font_size(int font_size)
+    void set_sound(bool sound)
+    void set_sfx(int sfx)
+    void set_music(int music)
 
 def load_options(opts):
-    ctf.auto_assign = opts.auto_assign_team
+    set_name(opts.name)
+    set_server(opts.server)
+    set_port(opts.port)
+    set_auto_assign_team(opts.auto_assign_team)
+    set_width(opts.width)
+    set_height(opts.height)
+    set_fullscreen(opts.fullscreen)
+    set_fov(opts.fov)
+    set_sensitivity(opts.sensitivity)
+    set_camera_speed(opts.camera_speed)
+    set_invert_mouse(opts.invert_mouse)
+    set_hud(opts.hud)
+    set_diagnostic_hud(opts.diagnostic_hud)
+    set_fps(opts.fps)
+    set_ping(opts.ping)
+    set_ping_update_interval(opts.ping_update_interval)
+    set_font(opts.font)
+    set_font_size(opts.font_size)
+    set_sound(opts.sound)
+    set_sfx(opts.sfx)
+    set_music(opts.music)
 
 """
 Font
