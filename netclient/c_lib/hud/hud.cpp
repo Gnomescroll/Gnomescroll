@@ -5,6 +5,7 @@
 #include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
 #include <c_lib/input/handlers.hpp>
+#include <c_lib/options.hpp>
 
 //#include <net_lib/export.hpp>
 
@@ -78,19 +79,12 @@ static struct HudDrawSettings
     bool draw;
 } hud_draw_settings;
 
-void set_hud_draw_settings(
-    bool fps,
-    float fps_val,
-    bool ping
-)
+void set_hud_fps_display(float fps_val)
 {
-    hud_draw_settings.fps = fps;
     // sanitize
     fps_val = (fps_val >= 1000.0f) ? 999.99 : fps_val;
     fps_val = (fps_val < 0.0f) ? 0.0f : fps_val;
     hud_draw_settings.fps_val = fps_val;
-
-    hud_draw_settings.ping = ping;
 }
 
 // read game state to decide what to draw
@@ -111,6 +105,9 @@ void update_hud_draw_settings()
         && ClientState::playerAgent_state.you != NULL
         && ClientState::playerAgent_state.you->status.dead
      );
+
+    hud_draw_settings.fps = Options::fps;
+    hud_draw_settings.ping  = Options::ping;
 
     // sanitize
     int ping_val = ClientState::last_ping_time;

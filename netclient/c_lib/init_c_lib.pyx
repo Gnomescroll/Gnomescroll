@@ -1,89 +1,5 @@
 from libcpp cimport bool
 
-"""
-Init
-[gameloop]
-"""
-cdef extern from "c_lib.hpp":
-    int init_c_lib()
-    void close_c_lib()
-def init():
-    init_c_lib()
-def close():
-    close_c_lib()
-
-"""
-Timer
-[gameloopm netout]
-"""
-cdef extern from "../c_lib/time/physics_timer.h":
-    void _START_CLOCK()
-def START_CLOCK():
-    _START_CLOCK()
-
-"""
-Network
-[gameloop, netclient]
-"""
-cdef extern from "./net_lib/host.hpp":
-    void client_connect_to(int a, int b, int c, int d, unsigned short port)
-def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
-    client_connect_to(a, b, c, d, _port)
-
-"""
-sound
-[sound]
--- needs a listdir (or hardcode each soundfile [no]) to move into C
--- dirent is probably cross platform
-"""
-cdef extern from "./sound/sound.hpp" namespace "Sound":
-    void set_volume(float vol)
-    void set_enabled(int y)
-    void set_sound_path(char* path)
-    void load_sound(char* file)
-
-class Sound(object):
-
-    @classmethod
-    def init(cls, char* sound_path, sounds=[], enabled=True, float sfxvol=1.0, float musicvol=1.0):
-        if not len(sounds):
-            set_enabled(0)
-        if sfxvol <= 0. and musicvol <= 0.:
-            set_enabled(0)
-
-        set_enabled(int(enabled))
-        set_volume(sfxvol)
-        set_sound_path(sound_path)
-
-        for snd in sounds:
-            load_sound(snd)
-
-"""
-SDL
-[gameloop]
-"""
-
-cdef extern from "./SDL/SDL_functions.h":
-    int _set_resolution(int xres, int yres, int fullscreen)
-def set_resolution(xres, yres, fullscreen = 0):
-    _set_resolution(xres, yres, fullscreen)
-
-"""
-Options & Settings
-[options]
--- this is one of the few things to keep in cython until the end
-"""
-
-#cdef extern from "./game/ctf.hpp":
-#    cdef cppclass CTF:
-#        bool auto_assign
-
-#cdef extern from "./state/client_state.hpp" namespace "ClientState":
-#    CTF ctf
-
-#def load_options(opts):
-#    ctf.auto_assign = opts.auto_assign_team
-
 cdef extern from "./options.hpp" namespace "Options":
     void set_name(char* name)
     void set_server(char* server)
@@ -269,15 +185,13 @@ class Font:
         self.ready = True
 
 """
-Misc
+Game loop
 """
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    void set_desired_name(char* name)
-def choose_name(name):
-    set_desired_name(name)
-
 cdef extern from "./loop.hpp":
-    void main_loop()
+    void init_main_loop()
+    int main_loop()
+def init_game():
+    init_main_loop()
 def run_game():
     main_loop()
 

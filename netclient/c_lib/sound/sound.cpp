@@ -30,8 +30,6 @@ static FMOD_VECTOR lis_vel;
 static FMOD_VECTOR lis_for;
 static FMOD_VECTOR lis_up;
 
-static char sound_path[100];
-
 static FMOD_SYSTEM* sound_sys;
 
 static FMOD_CHANNELGROUP* chgroup;
@@ -106,13 +104,17 @@ void load_sounds_from_conf(char *fn)
 
 void init() {
     printf("sound init\n");
+
+    enabled = Options::sound;
+    if (!enabled) return;
+    
     init_sound_system();
     init_channel_group();
-    if (!enabled) return;
     const float doppler_scale = 1.0f;   //default "The doppler scale is a general scaling factor for how much the pitch varies due to doppler shifting in 3D sound."
     const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
     const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
     set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
+    set_volume(Options::sfx);
     parse_sound_triggers((char*)"./media/sound/sounds.csv");
 }
 
@@ -131,14 +133,6 @@ void set_volume(float vol) {
     r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
     ERRCHECK(r);
     printf("volume set to %0.2f\n", vol);
-}
-
-void set_enabled(int y) {
-    enabled = y;
-}
-
-void set_sound_path(char* path) {
-    strcpy(sound_path, path);
 }
 
 void set_3D_settings(float doppler_scale, float distance_factor, float rolloff_scale) {
@@ -283,14 +277,10 @@ void load_sound(char *file) {
         return;
     }
 
-    const unsigned int max_filename_length = 50u;
-    if (strlen(file) >= max_filename_length) {
-        fprintf(stderr, "Filename %s too large. Will overflow char buffer\n", file);
-        return;
-    }
-    char fullpath[strlen(sound_path) + max_filename_length + 1u];
-    sprintf(fullpath, "%s%s", sound_path, file);
-
+    const char base_path[] = "./media/sound/wav/";
+    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(file) + 1));
+    sprintf(fullpath, "%s%s", base_path, file);
+    
     static const float mindistance = 20.0f; // distance at which attenuation begins
     Soundfile* s;
     s = &soundfiles[soundfile_index];
@@ -299,6 +289,8 @@ void load_sound(char *file) {
     s->sound3d = load_3d_sound(fullpath, mindistance);
     s->loaded = true;
     soundfile_index++;
+
+    free(fullpath);
 }
 
 int get_sound_id(char* file, bool three_d) {

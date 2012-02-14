@@ -9,6 +9,7 @@
 #include <net_lib/host.hpp>
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/t_map/t_vbo.hpp>
+#include <c_lib/options.hpp>
 
 int get_mouse_tick()
 {
@@ -19,8 +20,44 @@ int get_mouse_tick()
     return delta;
 }
 
+void connect()
+{   // parse IP address string
+
+    int address[4];
+    int address_index = 0;
+
+    char c;
+    int i=0, j=0;
+    char tmp[3+1];
+    while ((c = Options::server[i++]) != '\0')
+    {
+        if (c == '.')
+        {
+            tmp[j] = '\0';
+            address[address_index++] = atoi(tmp);
+            j = 0;
+            continue;
+        }
+        tmp[j++] = c;
+    }
+    tmp[j] = '\0';
+    address[address_index] = atoi(tmp);
+
+    client_connect_to(address[0], address[1], address[2], address[3], Options::port);
+}
+
+void init_main_loop()
+{
+    _set_resolution(Options::width, Options::height, Options::fullscreen);
+    init_c_lib();
+    ClientState::set_desired_name(Options::name);
+    _START_CLOCK(); // must start before networking
+    connect();
+}
+
 int main_loop()
 {
+    
 /* BEGIN SETUP */
     int ping_ticks = _get_ticks();
     
@@ -112,7 +149,7 @@ int main_loop()
             hud_projection();
 
             // draw hud
-            Hud::set_hud_draw_settings(Options::fps, fps_value, Options::ping);
+            Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
         }
@@ -156,6 +193,8 @@ int main_loop()
         // update client_state
         ClientState::update_client_state();
     }
+
+    close_c_lib();
     
     return 0;
 }

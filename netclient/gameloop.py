@@ -20,15 +20,9 @@ from dat_loader import dat_loader
 
 class App(object):
 
-    def init_sound(self):
-        path = './media/sound/wav/'
-        soundfiles = os.listdir(path)
-        init_c_lib.Sound.init(path, soundfiles, enabled=opts.sound, sfxvol=opts.sfx, musicvol=opts.music)
-
     def __init__(self):
-        init_c_lib.set_resolution(opts.width, opts.height, fullscreen=opts.fullscreen)
         init_c_lib.load_options(opts)
-        init_c_lib.init()
+        init_c_lib.init_game()
 
         def load_cube_dat():
             import cube_dat
@@ -37,32 +31,15 @@ class App(object):
 
         init_c_lib.init_terrain()
         init_c_lib.Font.init()
-        self.init_sound()
-        init_c_lib.choose_name(opts.name)
         
         print "Client init finished"
 
-    def connect(self):
-        init_c_lib.START_CLOCK() #clock must be started before networking stuff
-
-        try:
-            a,b,c,d = map(int, opts.server.split("."))
-            print "Ip address: %s" % (opts.server,)
-        except ValueError, e:
-            print e
-            print "Invalid server ip address %s" % (opts.server,)
-            sys.exit(1)
-        init_c_lib.NetClientConnectTo(a,b,c,d, opts.port)
-
-    def mainLoop(self):
-        self.connect()
+    def run(self):
         init_c_lib.run_game()
-        init_c_lib.close()
 
 if __name__ == '__main__':
-    app = App()
-    app.mainLoop()
+    App().run()
 else:
-    print "Not Run as Main!"
+    print "gameloop.py not run as __main__!"
 
 sys.exit()

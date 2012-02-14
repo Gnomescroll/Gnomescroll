@@ -91,6 +91,8 @@ bool set_soundfile(int i, char* fn, char* file)
     sound_file_functions[i].file = (char*)malloc(sizeof(char) * (file_len + 1));
     strcpy(sound_file_functions[i].file, file);
 
+    load_sound(file);
+
     printf("Set sound trigger: %s -> %s\n", fn, file);
 
     return true;
