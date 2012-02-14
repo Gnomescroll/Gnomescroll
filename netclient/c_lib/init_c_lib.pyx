@@ -7,14 +7,8 @@ Init
 cdef extern from "c_lib.hpp":
     int init_c_lib()
     void close_c_lib()
-
-_init = 0
 def init():
-    global _init
-    if _init == 0:
-        init_c_lib()
-    _init = 1
-
+    init_c_lib()
 def close():
     close_c_lib()
 
@@ -24,52 +18,17 @@ Timer
 """
 cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
-    int _GET_TICK()
-    int _GET_MS_TIME()
-
-#DEPRECATE
-def StartPhysicsTimer():
-    _START_CLOCK()
-
-#DEPRECATE
-def PhysicsTimerTickCheck():
-    return _GET_TICK()
-
-#DEPRECATE
-def get_time():
-    return _GET_MS_TIME();
-
-#DEPRECATE
-def get_tick():
-    return _GET_TICK()
-
 def START_CLOCK():
     _START_CLOCK()
-
-def GET_TICK():
-    return _GET_TICK()
-
-def GET_MS_TIME():
-    return _GET_MS_TIME();
 
 """
 Network
 [gameloop, netclient]
 """
 cdef extern from "./net_lib/host.hpp":
-    void client_dispatch_network_events()
     void client_connect_to(int a, int b, int c, int d, unsigned short port)
-    void flush_to_net()
-
-def NetClientDispatchNetworkEvents():
-    client_dispatch_network_events()
-
 def NetClientConnectTo(int a, int b,int c, int d, unsigned short _port):
     client_connect_to(a, b, c, d, _port)
-
-def NetClientFlushToNet():
-    flush_to_net()
-
 
 """
 sound
@@ -81,9 +40,7 @@ cdef extern from "./sound/sound.hpp" namespace "Sound":
     void set_volume(float vol)
     void set_enabled(int y)
     void set_sound_path(char* path)
-
     void load_sound(char* file)
-    void update_sound()
 
 class Sound(object):
 
@@ -101,10 +58,6 @@ class Sound(object):
         for snd in sounds:
             load_sound(snd)
 
-    @classmethod
-    def update(cls):
-        update_sound()
-
 """
 SDL
 [gameloop]
@@ -112,20 +65,8 @@ SDL
 
 cdef extern from "./SDL/SDL_functions.h":
     int _set_resolution(int xres, int yres, int fullscreen)
-    int _init_video()
-    void _del_video()
-    int _swap_buffers()
-    int _get_ticks()
-
-def flip():
-    _swap_buffers()
-
-def get_ticks():
-    return _get_ticks()
-
 def set_resolution(xres, yres, fullscreen = 0):
     _set_resolution(xres, yres, fullscreen)
-
 
 """
 Options & Settings
@@ -139,203 +80,9 @@ cdef extern from "./game/ctf.hpp":
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     CTF ctf
-    void send_ping()
 
 def load_options(opts):
     ctf.auto_assign = opts.auto_assign_team
-
-def ping():
-    send_ping()
-
-"""
-Camera
-[gameloop]
-"""
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    void update_camera()
-
-cdef extern from "./camera/camera.hpp":
-    void world_projection()
-    void hud_projection()
-
-camera_callback = None
-def camera_world_projection():
-    world_projection()
-def camera_hud_projection():
-    hud_projection()
-def update_camera_state():
-    update_camera()
-    
-"""
-Animations
-[gameloop]
-"""
-cdef extern from "./animations/animations.hpp" namespace "Animations":
-    void animations_tick()
-    void animations_draw()
-
-def AnimationTick():
-    animations_tick()
-
-def AnimationDraw():
-    animations_draw()
-
-"""
-Agents
-[chat, gameloop, netclient, netout, hud]
-"""
-
-cdef extern from "./agent/agent_status.hpp":
-    unsigned int PLAYER_NAME_MAX_LENGTH
-    cdef cppclass Agent_status:
-        char* name
-
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass Agent_state:
-        int id
-        Agent_status status
-
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass Agent_list:
-        Agent_state* get(int id)
-        Agent_state* get_or_create(int id)
-        int get_ids()
-        int* ids_in_use
-
-cdef extern from "./agent/player_agent.hpp":
-    cdef cppclass PlayerAgent_state:
-        int agent_id
-        void update_sound()
-        void display_agent_names()
-        bool identified
-        Agent_state* you
-
-
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    Agent_list agent_list
-    PlayerAgent_state playerAgent_state
-    int get_client_id_from_name(char* name)
-
-def update_sound_listener():
-    playerAgent_state.update_sound()
-
-def display_agent_names():
-    playerAgent_state.display_agent_names()
-
-def get_player_agent_id():
-    return playerAgent_state.agent_id
-
-def client_id_from_name(name):
-    get_client_id_from_name(name)
-
-def player_agent_assigned():
-    if playerAgent_state.you != NULL:
-        return True
-    return False
-
-def get_agent_name(int id):
-    cdef Agent_state* a
-    a = agent_list.get(id)
-    if a == NULL: return ''
-    return a.status.name
-
-
-""" Input """
-
-cdef extern from "./input/input.hpp":
-    int get_key_state()
-    int process_events()
-    void pan_camera(int delta_tick)
-    
-def process_input():
-    process_events()
-    get_key_state()
-
-def update_mouse(int delta_tick):
-    pan_camera(delta_tick)
-
-cdef extern from "./input/handlers.hpp":
-
-    cdef enum InputStateMode:
-        INPUT_STATE_AGENT
-        INPUT_STATE_CAMERA
-
-    cdef struct InputState:
-        bool chat
-        bool quit
-        InputStateMode input_mode
-        InputStateMode camera_mode
-
-    InputState input_state
-
-    void set_input_options(
-        bool invert_mouse,
-        float sensitivity
-    )
-
-class CyInputState(object):
-    def __setattr__(self,k,v):
-        if k == 'chat':
-            input_state.chat = v
-        elif k == 'quit':
-            input_state.quit = v
-        elif k == 'input_mode':
-            input_state.input_mode = v
-        elif k == 'camera_mode':
-            input_state.camera_mode = v
-        else:
-            raise AttributeError
-    def __getattribute__(self, k):
-        if k == 'chat':
-            return input_state.chat
-        elif k == 'quit':
-            return input_state.quit
-        elif k == 'input_mode':
-            return input_state.input_mode
-        elif k == 'camera_mode':
-            return input_state.camera_mode
-        else:
-            return object.__getattribute__(self, k)
-    def set_options(self,
-        bool invert_mouse,
-        float sensitivity
-    ):
-        set_input_options(invert_mouse, sensitivity)
-    
-cy_input_state = CyInputState()
-
-"""
-HUD
--- this is here because hud.py needs to tell it to render certain things
-"""
-
-cdef extern from "./hud/hud.hpp" namespace "Hud":
-    void set_hud_draw_settings(
-        bool fps,
-        float fps_val,
-        bool ping,
-    )
-    void draw_hud()
-    void update_hud_draw_settings()
-
-cdef class HUD:
-    @classmethod
-    def draw(cls):
-        draw_hud()
-    @classmethod
-    def set_draw_settings(cls,
-        bool fps,
-        float fps_val,
-        bool ping,
-    ):
-        set_hud_draw_settings(
-            fps,
-            fps_val,
-            ping,
-        )
-    @classmethod
-    def update_hud_draw_settings(cls):
-        update_hud_draw_settings()
 
 """
 Font
@@ -475,36 +222,15 @@ class Font:
         self.add_glyphs_to_c()
         self.ready = True
 
-
 """
-Client State
-[gameloop]
+Misc
 """
-
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
-    void update_client_state()
-    void draw_client_state()
-    void tick_client_state()
     void set_desired_name(char* name)
-
-class ClientState(object):
-    @classmethod
-    def update(cls):
-        update_client_state()
-    @classmethod
-    def draw(cls):
-        draw_client_state()
-    @classmethod
-    def tick(cls):
-        tick_client_state()
-
 def choose_name(name):
     set_desired_name(name)
-def identified():
-    return playerAgent_state.identified
 
 cdef extern from "./loop.hpp":
     void main_loop()
-
 def run_game():
     main_loop()

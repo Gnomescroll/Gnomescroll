@@ -149,6 +149,13 @@
 #include <c_lib/loop.cpp>
 
 int init_c_lib() {
+    static int inited = 0;
+    if (inited++)
+    {
+        printf("WARNING: Attempt to init c_lib more than once\n");
+        return 1;
+    }
+
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 

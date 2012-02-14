@@ -21,22 +21,22 @@ int get_mouse_tick()
 
 int main_loop()
 {
-    bool hud = true;
+/* BEGIN SETUP */
+// TODO: const variables are meant to be options
+    const bool hud = true;
     
-    int ping_update_interval = 500; //ms
-    bool ping = true;
-    int p_n = 0;
+    const int ping_update_interval = 500; //ms
+    const bool ping = true;
+    int p_n = _get_ticks();
     
-    bool fps = true;
+    const bool fps = true;
     int fps_average_index = 0;
     int fps_average[30+1];
     int fps_last_tick = _get_ticks();
     float fps_value = 0.0f;
 
-    bool invert_mouse = false;
-    float sensitivity = 70.0f;
-
-    
+    const bool invert_mouse = false;
+    const float sensitivity = 70.0f;
 /* END SETUP */
 
     // update mouse
@@ -121,7 +121,9 @@ int main_loop()
             hud_projection();
 
             // draw hud
-            // place python hud here    TODO
+            Hud::set_hud_draw_settings(fps, fps_value, ping);
+            Hud::update_hud_draw_settings();
+            Hud::draw_hud();
         }
 
         // flip sdl
