@@ -230,11 +230,6 @@ def build(bld):
         target='c_lib')
 
     bld(features='cxx cshlib pyext',
-        source=['c_lib/terrain_map.pyx'],
-        use=common_libraries + SDL_libraries+['c_lib'],
-        target='c_lib.terrain_map')
-
-    bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
@@ -269,7 +264,6 @@ def install_in_ext(ctx):
 
 
     targets = [
-       'c_lib.terrain_map',
        'init_c_lib',
     ]
 
