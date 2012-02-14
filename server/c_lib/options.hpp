@@ -14,7 +14,6 @@ OPT_INT_HEADER(port)
 
 /* Game settings */
 OPT_STRING_HEADER(game_mode)
-OPT_INT_HEADER(number_of_teams)
 OPT_BOOL_HEADER(team_kills)
 OPT_INT_HEADER(victory_points)
 OPT_STRING_HEADER(team_name_one)
