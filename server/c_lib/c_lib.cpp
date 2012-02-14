@@ -81,6 +81,12 @@
 
 int init_c_lib()
 {
+    static int inited = 0;
+    if (inited++)
+    {
+        printf("WARNING: Attempt to call init_c_lib more than once\n");
+        return 1;
+    }
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
     srand(time(NULL));

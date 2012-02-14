@@ -7,12 +7,8 @@ cdef extern from "c_lib.hpp":
 def close():
     close_c_lib()
 
-_init = 0
 def init():
-    global _init
-    if _init == 0:
-        init_c_lib()
-    _init = 1
+    init_c_lib()
 
 ## net stuff
 cdef extern from "./net_lib/host.hpp":
@@ -33,8 +29,6 @@ def NetServerFlushToNet():
 
 #old functions: deprecate
 cdef extern from "../c_lib/time/physics_timer.h":
-    int _start_physics_timer(int frequency)
-    int _tick_check()
     long _get_time()
     long _get_tick()
 
@@ -43,16 +37,6 @@ cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
     int _GET_TICK()
     int _GET_MS_TIME()
-
-#consider deprecating?
-
-#DEPRECATE
-def StartPhysicsTimer(frequency):
-    _start_physics_timer(frequency)
-
-#DEPRECATE
-def PhysicsTimerTickCheck():
-    return _tick_check()
 
  #DEPRECATE
 def get_time():
@@ -225,3 +209,80 @@ def load(opts):
 
     ctf.set_team_name(1, opts.team_name_one)
     ctf.set_team_name(2, opts.team_name_two)
+
+
+"""
+Terrain map
+"""
+cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
+    void init_t_map()
+
+cdef extern from "../c_lib/t_map/t_map.hpp":
+    int _get(int x, int y, int z)
+    void _set(int x, int y, int z, int value)
+
+#called automaticly after properties are loaded
+def _init_map():
+    init_t_map()
+
+'''
+PART 2: Properties
+'''
+
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
+    struct cubeProperties:
+        bint active
+        bint solid
+        bint occludes
+        bint transparent
+        bint reserved5
+        bint reserved6
+        bint reserved7
+        bint reserved8
+        unsigned char max_damage
+
+cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
+    cubeProperties* get_cube(int id)
+
+'''
+Part 1: State
+
+'''
+
+cpdef inline set(int x,int y, int z,int value):
+    _set(x,y,z,value)
+
+cpdef inline int get(int x, int y,int z):
+    return _get(x,y,z)
+
+
+import dats.loader as dat_loader
+c_dat = dat_loader.c_dat
+
+def init_cube_properties(c_dat):
+
+    def apply(id):
+        global infinite_texture_counter
+        cdef cubeProperties* cp
+        cp = get_cube(id)
+        cp.active = int(c_dat.get(id,'active'))
+        cp.solid = int(c_dat.get(id,'solid'))
+        cp.occludes = int(c_dat.get(id,'occludes'))
+        cp.transparent = int(c_dat.get(id,'transparent'))
+        cp.max_damage = int(c_dat.get(id,'max_damage'))
+
+    for id in c_dat.dat:
+        apply(id)
+
+
+'''
+    Init Stuff
+'''
+
+def init_terrain():
+    global c_dat
+    print "Init Terrain Map"
+    init_cube_properties(c_dat)
+    init_t_map()
+init_terrain()
+
