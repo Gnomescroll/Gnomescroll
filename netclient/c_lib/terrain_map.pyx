@@ -100,7 +100,7 @@ def set_hud_cube_selector():
     Set the textures on sides of cube
 '''
 
-cdef extern from "./t_map/texture.hpp" namespace "t_map":
+cdef extern from "./t_map/glsl/texture.hpp" namespace "t_map":
     void set_cube_side_texture(int id, int side, int tex_id)
 
 def init_cube_side_texture():
