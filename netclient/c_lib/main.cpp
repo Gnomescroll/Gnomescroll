@@ -10,6 +10,7 @@
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/t_map/t_vbo.hpp>
 #include <c_lib/options.hpp>
+#include <c_lib/common/common.hpp>
 
 namespace Main
 {
@@ -23,32 +24,6 @@ int get_mouse_tick()
     return delta;
 }
 
-void connect()
-{   // parse IP address string
-
-    int address[4];
-    int address_index = 0;
-
-    char c;
-    int i=0, j=0;
-    char tmp[3+1];
-    while ((c = Options::server[i++]) != '\0')
-    {
-        if (c == '.')
-        {
-            tmp[j] = '\0';
-            address[address_index++] = atoi(tmp);
-            j = 0;
-            continue;
-        }
-        tmp[j++] = c;
-    }
-    tmp[j] = '\0';
-    address[address_index] = atoi(tmp);
-
-    client_connect_to(address[0], address[1], address[2], address[3], Options::port);
-}
-
 void init()
 {
     _set_resolution(Options::width, Options::height, Options::fullscreen);
@@ -56,7 +31,11 @@ void init()
     ClientState::set_desired_name(Options::name);
     ClientState::ctf.start();
     _START_CLOCK(); // must start before networking
-    connect();
+
+    // parse ip address and connect
+    int address[4];
+    address_from_string(Options::server, address);
+    client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
 int run()

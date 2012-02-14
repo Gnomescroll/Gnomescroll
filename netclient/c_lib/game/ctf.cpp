@@ -59,6 +59,9 @@ void CTF::start() {
     z = _get_highest_open_block(x,y);
     x+=0.5f;y+=0.5f;
     this->set_flag_position(2,x,y,z);
+
+    this->set_team_name(1, Options::team_name_one);
+    this->set_team_name(2, Options::team_name_two);
     #endif
 }
 

@@ -1,23 +1,9 @@
 #pragma once
 
+#include <c_lib/common/macros.hpp>
+
 namespace Options
 {
-
-#define OPT_BOOL_HEADER(NAME)\
-extern bool NAME;\
-void set_##NAME(bool val);
-
-#define OPT_FLOAT_HEADER(NAME)\
-extern float NAME;\
-void set_##NAME(float val);
-
-#define OPT_INT_HEADER(NAME)\
-extern int NAME;\
-void set_##NAME(int val);
-
-#define OPT_STRING_HEADER(NAME)\
-extern char* NAME;\
-void set_##NAME(char* val);
 
 /* User */
 OPT_STRING_HEADER(name)

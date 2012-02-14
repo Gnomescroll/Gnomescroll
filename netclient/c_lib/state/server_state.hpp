@@ -35,54 +35,7 @@ namespace ServerState
     void add_player_to_chat(int client_id);
     void remove_player_from_chat(int client_id);
 
+    void start_game();
 }
-//class NewClient
-//{
-    //public:
-        //int client_id;
-        //bool inited;
-        //bool loaded;
-
-        //void ready()
-        //{
-            //if (!this->inited) return;
-            //if (this->loaded) return;
-            
-            //Agent_state* a = agent_list.get(client_id);
-            //if (a==NULL) return;
-            //if (!a->status.identified) return;
-
-            //this->loaded = true;
-            //send_game_state_to_client(this->client_id);
-        //}
-
-        //void init(int client_id)
-        //{
-            //if (this->inited) return;
-
-            //this->inited = true;
-            //this->client_id = client_id;
-
-            //Agent_state* a = agent_list.create(client_id);
-            //a->send_to_client(client_id);
-            //a->add_player_to_chat(client_id);
-        //}
-
-        //void teardown()
-        //{
-            //remove_player_from_chat(this->client_id);
-            //ctf.remove_agent_from_team(this->client_id);
-            //agent_list.destroy(client_id);
-        //}
-    
-
-        //NewClient()
-        //:
-        //client_id(-1),
-        //inited(false),
-        //loaded(false)
-        //{}
-        
-//};
 
 #endif

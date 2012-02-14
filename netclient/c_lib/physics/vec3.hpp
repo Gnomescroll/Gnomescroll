@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#define PI 3.14159265
+
 struct Vec3 
 {
     union

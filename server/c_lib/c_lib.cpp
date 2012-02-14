@@ -7,10 +7,14 @@
 
 //utility
 #include <c_lib/time/physics_timer.c>
+#include <c_lib/common/macros.hpp>
+#include <c_lib/common/common.cpp>
 #include <c_lib/common/files.cpp>
 
-//map
+//options
+#include <c_lib/options.cpp>
 
+//map
 #include <c_lib/t_map/t_map_class.cpp>
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.cpp>
@@ -19,7 +23,6 @@
 #include <c_lib/t_map/net/t_StoC.cpp>
 
 //physics
-
 #include <c_lib/physics/vector.cpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>

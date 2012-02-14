@@ -19,8 +19,10 @@
 #include "defines.h"
 
 //utility
+#include <c_lib/common/macros.hpp>
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/files.cpp>
+#include <c_lib/common/common.cpp>
 #include <c_lib/time/physics_timer.c>
 
 /* Vectors, Ray Tracers, Physics */

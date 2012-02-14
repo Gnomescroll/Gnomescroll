@@ -12,12 +12,12 @@ def init():
 
 ## net stuff
 cdef extern from "./net_lib/host.hpp":
-    void init_net_server(int a, int b, int c, int d, int port)
+#    void init_net_server(int a, int b, int c, int d, int port)
     void server_dispatch_network_events()
     void flush_to_net()
 
-def NetServerInit(int a=0, int b=0, int c=0, int d=0, int port=0):
-    init_net_server(a,b,c,d,port)
+#def NetServerInit(int a=0, int b=0, int c=0, int d=0, int port=0):
+#    init_net_server(a,b,c,d,port)
 
 def NetServerDispatchNetworkEvents():
     server_dispatch_network_events()
@@ -25,8 +25,37 @@ def NetServerDispatchNetworkEvents():
 def NetServerFlushToNet():
     flush_to_net()
 
-##timer
+"""
+Options
+"""
+cdef extern from "./options.hpp" namespace "Options":
+    void set_server_name(char* server_name)
+    void set_ip_address(char* ip_address)
+    void set_port(int port)
+    void set_game_mode(char* game_mode)
+    void set_team_kills(bool team_kills)
+    void set_victory_points(int victory_points)
+    void set_team_name_one(char* team_name_one)
+    void set_team_name_two(char* team_name_two)
+    void set_map(char* map)
+    void set_seed(unsigned int seed)
 
+def load_options(opts):
+    set_server_name(opts.server_name)
+    set_ip_address(opts.ip_address)
+    set_port(opts.port)
+    set_game_mode(opts.game_mode)
+    set_team_kills(opts.team_kills)
+    set_victory_points(opts.victory_points)
+    set_team_name_one(opts.team_name_one)
+    set_team_name_two(opts.team_name_two)
+    set_map(opts.map)
+    set_seed(opts.seed)
+
+def reset_seed(int seed):
+    set_seed(seed)
+
+##timer
 #old functions: deprecate
 cdef extern from "../c_lib/time/physics_timer.h":
     long _get_time()
@@ -55,17 +84,6 @@ def GET_TICK():
 def GET_MS_TIME():
     return _GET_MS_TIME();
 
-cdef extern from "c_lib.hpp":
-    void _set_seed(int seed)
-    
-def set_seed(int seed):
-    _set_seed(seed)
-
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    void server_tick()
-
-def tick_server_state():
-    server_tick();
 
 """
     Condensed cython files here
@@ -130,85 +148,27 @@ cdef extern from "./game/ctf.hpp":
         void set_team_color(int team, unsigned char r, unsigned char g, unsigned char b)
         void start()
         void check_agent_proximities()
-        void set_team_name(int team, char* name)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     CTF ctf
 
 def set_team_color(int team, unsigned char r, unsigned char g, unsigned char b):
     ctf.set_team_color(team, r,g,b)
-
-def ctf_start():
-    ctf.start()
     
 def check_agent_proximities():
     ctf.check_agent_proximities()
 
 """ Particles """
 
-cdef extern from "./physics/vector.hpp":
-    struct Vector:
-        float x
-        float y
-        float z
-
-cdef extern from "./physics/common.hpp":
-    struct State:
-        Vector p
-        Vector v
-
-cdef extern from "./particles/particles.hpp":
-    cdef struct Particle2:
-        State state
-        unsigned int id
-
 cdef extern from "./particles/grenade.hpp":
-    cdef cppclass Grenade:
-        Particle2 particle
-
     cdef cppclass Grenade_list:
-        Grenade* get(int id)
-        Grenade* create()
-        Grenade* create(int id)
-        Grenade* create(float x, float y, float z, float vx, float vy, float vz)
-        Grenade* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
-        void tick()
-
-cdef extern from "./particles/cspray.hpp":
-    cdef cppclass Cspray:
-        Particle2 particle
-
-    cdef cppclass Cspray_list:
-        Cspray* get(int id)
-        Cspray* create()
-        Cspray* create(int id)
-        Cspray* create(float x, float y, float z, float vx, float vy, float vz)
-        Cspray* create(int id, float x, float y, float z, float vx, float vy, float vz)
-        void destroy(int id)
         void tick()
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Grenade_list grenade_list
-    Cspray_list cspray_list
 
 def tick():
     grenade_list.tick()
-    cspray_list.tick()
- 
-def _create_cspray(float x, float y, float z, float vx, float vy, float vz):
-    cspray_list.create(x,y,z, vx,vy,vz)
-
-""" Options & Settings """
-
-cdef extern from "./game/game.hpp":
-    void set_team_kills(bool team_kills)
-
-def load(opts):
-    set_team_kills(opts.team_kills)
-
-    ctf.set_team_name(1, opts.team_name_one)
-    ctf.set_team_name(2, opts.team_name_two)
 
 
 """
@@ -286,3 +246,12 @@ def init_terrain():
     init_t_map()
 init_terrain()
 
+
+cdef extern from "./state/server_state.hpp" namespace "ServerState":
+    void server_tick()
+    void start_game()
+
+def tick_server_state():
+    server_tick();
+def start():
+    start_game()

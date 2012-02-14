@@ -5,7 +5,7 @@ alt_name = '[%s]' % (name,)
 ''' Network '''
 #server = '127.0.0.1'
 server = '0.0.0.0'  # use internal default
-port = 0            # use internal default
+port = 4096
 
 ''' Game Preferences '''
 auto_assign_team = True

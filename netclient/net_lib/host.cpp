@@ -9,7 +9,7 @@
 
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/state/packet_init.hpp>
-
+#include <c_lib/options.hpp>
 
 const int DEFAULT_PORT = 4096;
 
@@ -51,7 +51,7 @@ void init_net_server(int a, int b, int c, int d, int port)
 
     if(port == 0)
     {
-        address.port = DEFAULT_PORT;
+        address.port = (Options::port) ? Options::port : DEFAULT_PORT;
     }
     else
     {
@@ -138,7 +138,7 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
 
     if(port == 0)
     {
-        address.port = DEFAULT_PORT;
+        address.port = (Options::port) ? Options::port : DEFAULT_PORT;
     }
     else
     {

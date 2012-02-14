@@ -25,15 +25,14 @@ import init_c_lib
 import c_lib.map_gen
 import map_recipes
 
-from init_c_lib import NetServerInit,  NetServerDispatchNetworkEvents, NetServerFlushToNet
+from init_c_lib import NetServerDispatchNetworkEvents, NetServerFlushToNet
 from init_c_lib import START_CLOCK, GET_TICK
 
 class Main:
 
     def __init__(self):
-        init_c_lib.set_seed(opts.seed)  # only use seed for map gen
-        init_c_lib.load(opts)
-        init_c_lib.set_seed(int(time.time()))
+        init_c_lib.load_options(opts)
+        init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
 
     def init_net(self):
         START_CLOCK()
@@ -51,12 +50,11 @@ class Main:
         print "Server Started"
 
         init_c_lib.init()
-        self.init_net()
+        init_c_lib.start()
         
         tick = 0
 
         init_c_lib.slime_test(30)
-        init_c_lib.ctf_start()
         while True:
 
             if linux_terminal.check_stdin():
