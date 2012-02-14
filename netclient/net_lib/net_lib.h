@@ -31,7 +31,7 @@
 #include <net_lib/common/net_time.c>
 
 #include <net_lib/net.cpp>
-
+#include <net_lib/common/packet_id_counter.cpp>
 
 #ifdef DC_CLIENT
 #include <net_lib/common/pviz.c>
