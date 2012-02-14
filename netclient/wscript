@@ -260,7 +260,8 @@ def install_in_ext(ctx):
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
-        print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+        pass
+        #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
 
     targets = [
@@ -277,8 +278,9 @@ def install_in_ext(ctx):
                 dest_path = dest_path.replace('csound', 'libcsound')
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
         except Exception, e:
-            print e
-            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+            pass
+            #print e
+            #print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
     install_libs()

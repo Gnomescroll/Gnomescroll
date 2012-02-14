@@ -186,7 +186,8 @@ def install_in_ext(ctx):
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
-        print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+        pass
+        #print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
         'init_c_lib',
@@ -201,7 +202,8 @@ def install_in_ext(ctx):
         try:
             shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
         except:
-            print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+            pass
+            #print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
     make_dest_modules(ctx)
 
 
