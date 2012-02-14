@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
+/* configuration options */
+#include <c_lib/options.cpp>
+
 /* Network */
 #include <net_lib/net_lib.h>
 
@@ -89,7 +92,6 @@
 
 //#include <c_lib/t_map/t_viz.c>
 //#include <c_lib/t_map/t_vbo.c>
-
 
 /* camera */
 #include <c_lib/camera/camera.cpp>
