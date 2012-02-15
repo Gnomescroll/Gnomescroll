@@ -114,6 +114,8 @@ namespace t_map
         }
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
         glDisable(GL_TEXTURE_2D);
+
+        delete[] Pixels;
     }
 
     void teardown_shader()
