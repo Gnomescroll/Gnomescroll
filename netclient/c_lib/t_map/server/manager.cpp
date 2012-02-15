@@ -45,7 +45,7 @@ void t_map_manager_update(int client_id, int x, int y)
 
     if( map_manager_list[client_id] == NULL )
     {
-        printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n");
+        printf("ERROR: t_map_manager_update, client %i map manager pointer is null! \n", client_id);
         return;
     }
 

@@ -2,10 +2,7 @@
 
 //#include <string.h>
 #include "t_properties.hpp"
-
-#ifdef DC_SERVER
-    #include "t_map_server.hpp"
-#endif
+#include "struct.hpp"
 
 namespace t_map
 {
@@ -14,26 +11,27 @@ namespace t_map
 const int TERRAIN_MAP_HEIGHT = 128;
 
 #ifdef DC_SERVER
-    class MAP_CHUNK : public SERVER_MAP_CHUNK
-#else
-    class MAP_CHUNK 
+
+    #include "./server/map_chunk_history.hpp"
 #endif
+
+ //: public Map_chunk_history
+ /*
+#ifdef DC_SERVER
+    class MAP_CHUNK
+#else
+    class MAP_CHUNK
+#endif
+*/
+class MAP_CHUNK
 {
     public:
-
-#ifdef DC_SERVER
-    int version;
-#endif
 
     int xpos;
     int ypos;
 
     #ifdef DC_CLIENT
         bool needs_update;
-    #endif
-
-    #ifdef DC_SERVER
-        // 
     #endif
 
     unsigned char top_block[16*16];

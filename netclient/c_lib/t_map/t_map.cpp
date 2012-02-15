@@ -100,7 +100,8 @@ int _apply_damage(int x, int y, int z, int dmg)
     Move soehwerew
 */
 
-#include "./net/t_StoC.hpp"
+#include <c_lib/t_map/net/t_StoC.hpp>
+
 // apply block damage & broadcast the update to client
 int _apply_damage_broadcast(int x, int y, int z, int dmg)
 {

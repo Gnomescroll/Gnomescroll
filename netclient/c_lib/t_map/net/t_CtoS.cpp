@@ -42,7 +42,7 @@ void map_chunk_list_request_CtoS::handle()
             class chunk_meta_data_StoC m;
             m.chunk_x = i;
             m.chunk_y = j;
-            m.version = c->version;
+            m.version = 1; //c->version;
             m.sendToClient(client_id);
         }
     }
