@@ -20,7 +20,7 @@ void Font::load_font_png()
 
     if(!surface)
     {
-        printf("Failed to IMG_Load surface %s. Error: %s", path, IMG_GetError());
+        printf("Failed to IMG_Load surface %s. Error: %s\n", path, IMG_GetError());
         return;
     }
 
@@ -65,7 +65,7 @@ void Font::parse_font_file()
 
     if (buff == NULL)
     {
-        printf("Error opening file %s for reading\n", data.file);
+        printf("Error opening file %s for reading\n", path);
         return;
     }
 
@@ -133,21 +133,21 @@ void Font::parse_font_file()
         switch (line_mode)
         {
             case COMMON:
-                sscanf(&buff[i],
+                sscanf(&buff[i-1],
                     "lineHeight=%d base=%d scaleW=%d scaleH=%d",
                     &data.line_height, &dummy, &data.scaleW, &data.scaleH);
                 processed_line = true;
                 break;
             case PAGE:
-                sscanf(&buff[i], "id=%d file=\"%s\"", &dummy, data.png);
+                sscanf(&buff[i-1], "id=%d file=\"%32[^\"]\"", &dummy, data.png);
                 processed_line = true;
                 break;
             case CHARS:
-                sscanf(&buff[i], "count=%d", &data.num_glyphs_defined);
+                sscanf(&buff[i-1], "count=%d", &data.num_glyphs_defined);
                 processed_line = true;
                 break;
             case CHAR:
-                sscanf(&buff[i],
+                sscanf(&buff[i-1],
                     "id=%d x=%d y=%d width=%d height=%d xoffset=%d yoffset=%d xadvance=%d",
                     &g, &x, &y, &w, &h, &xoff, &yoff, &xadvance
                 );
@@ -254,16 +254,17 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
 
 void init()
 {
-    if (fonts != NULL)
+    static int inited = 0;
+    if (inited++)
+    {
+        printf("WARNING: Attempt to init fonts twice\n");
         return;
-
-    fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
-    int i = 0;
-
-    char path[strlen(font_path) + strlen(Options::font) + 1];
-    sprintf(path, "%s%s", font_path, Options::font);
+    }
     
-    fonts[i++] = new Font(path);
+    fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
+
+    int i = 0;
+    fonts[i++] = new Font(Options::font);
 
     font = fonts[i-1];
 

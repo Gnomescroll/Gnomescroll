@@ -77,6 +77,12 @@ class Font
             glyphs[i].available = 0;
         }
 
+        if (strlen(fn) > 32)
+        {
+            printf("WARNING: font file %s name length > 32\n",fn);
+            fn[33] = '\0';
+        }
+
         // save filename
         strcpy(data.file, fn);
 
