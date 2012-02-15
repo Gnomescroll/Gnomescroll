@@ -44,6 +44,8 @@ class MAP_CHUNK_HISTORY
 {
     public:
 
+    int version;
+
     unsigned short subscribers[ SMC_MAX_SUBSCRIBERS ];
     unsigned short chunk_aliases[ SMC_MAX_SUBSCRIBERS ]; 
     
@@ -54,6 +56,8 @@ class MAP_CHUNK_HISTORY
 
     MAP_CHUNK_HISTORY()
     {
+        version = 1;    //chunk version number
+
         subscriber_num = 0;
         memset( &history_array, 0, SMC_HISTORY_ARRAY_SIZE*sizeof(struct CHUNK_HISTORY_ELEMENT));
     }

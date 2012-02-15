@@ -77,7 +77,7 @@ class Map_manager
     }
 
     void update();
-    void set_position(int x, int y);
+    void set_position(float x, float y);
 
     private:
 
@@ -121,10 +121,10 @@ void Map_manager::sub(int x, int y)
     //set alias
     alias_list[alias] = index;
     //grab chunk
-    map_history.chunk[index].add_subscriber(client_id, alias, version_list[index] );
+    map_history->chunk[index].add_subscriber(client_id, alias, version_list[index].version);
 
     send_alias(alias);
-    send_compressed_chunk(int index);
+    send_compressed_chunk(index);
 
     //send alias to client
     /*
@@ -139,9 +139,9 @@ void Map_manager::unsub(int alias)
 {
     int index = alias_list[alias];
 
-    version_list[index] = map_history.chunk[index].version; //cache version
+    version_list[index] = map_history->chunk[index].version; //cache version
 
-    map_history.chunk[index].remove_subscriber(client_id, alias);
+    map_history->chunk[index].remove_subscriber(client_id, alias);
 }
 
 

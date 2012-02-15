@@ -97,7 +97,9 @@ class MapMessagePacketToClient {
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
-
+        /*
+            Deprecate This
+        */
         void broadcast() 
         {
             if( NetServer::number_of_clients == 0) return; //prevents memory leak when no clients are connected
@@ -124,6 +126,10 @@ class MapMessagePacketToClient {
                 printf("FixedSizeReliableNetPacketToClient: sendToClient error, client_id %i is null. msg_id=%d \n", client_id, message_id);
                 return;
             }
+
+            if(np->map_message_buffer_index + size >= np->map_message_buffer_max) 
+                np->resize_map_message_buffer(np->map_message_buffer_index + size);
+
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
         }
 
@@ -186,6 +192,9 @@ class MapMessageArrayPacketToClient {
                 return;
             }
 
+            if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max) 
+                np->resize_map_message_buffer(np->map_message_buffer_index + size + len);
+
             if(len > 512) 
             {
                 printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
@@ -198,10 +207,6 @@ class MapMessageArrayPacketToClient {
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
             memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
             np->map_message_buffer_index += len;
-            if(np->map_message_buffer_index > 4096)
-            {
-                printf("MapMessagePacketToClient: map_message_buffer_index overflow \n");
-            }
         }
 
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}
