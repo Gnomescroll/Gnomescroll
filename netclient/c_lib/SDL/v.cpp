@@ -27,7 +27,7 @@ static float heightf = (float)height;
 static int grad_num = 1;
 
 
-static SDL_Surface* surface;
+static SDL_Surface* surface = NULL;
 static GLuint texture;
 
 static SDL_Surface* gradient_surface;
@@ -76,6 +76,7 @@ void init() {
     //glBindTexture(GL_TEXTURE_2D, texture);
     //glTexSubImage2D(GL_TEXTURE_2D, 0,0,0, width, height, GL_BGRA, GL_UNSIGNED_BYTE, surface->pixels);
     //glDisable(GL_TEXTURE_2D);
+
 }
 
 void init_vn(int w, int h, int grad) {
@@ -201,6 +202,12 @@ void generate_frames(float seconds) {
         sprintf(fn, fn_fmt, i);
         png_save_surface(fn, surface);  // lock first?
     }
+}
+
+void teardown()
+{
+    if (surface != NULL)
+        SDL_FreeSurface(surface);
 }
 
 }

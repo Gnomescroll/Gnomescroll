@@ -6,6 +6,9 @@
 namespace t_map
 { 
 
+    SDL_Surface *terrain_map_surface = NULL;
+    GLuint terrain_map_texture;
+
     void init_shaders()
     {
         set_map_shader_0();
@@ -47,6 +50,9 @@ namespace t_map
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
+
+        free(vs);
+        free(fs);
 
     }
 
@@ -108,6 +114,12 @@ namespace t_map
         }
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
         glDisable(GL_TEXTURE_2D);
+    }
+
+    void teardown_shader()
+    {
+        if (terrain_map_surface != NULL)
+            SDL_FreeSurface(terrain_map_surface);
     }
     
 }

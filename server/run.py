@@ -54,7 +54,7 @@ class Main:
         
         tick = 0
 
-        init_c_lib.slime_test(30)
+        init_c_lib.slime_test(2)
         while True:
 
             if linux_terminal.check_stdin():

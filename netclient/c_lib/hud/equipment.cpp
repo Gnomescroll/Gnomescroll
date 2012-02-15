@@ -5,9 +5,9 @@
 
 namespace HudEquipment {
 
-static SDL_Surface* panel_surface;
+static SDL_Surface* panel_surface = NULL;
 static GLuint panel_texture;
-static SDL_Surface* sprite_surface;
+static SDL_Surface* sprite_surface = NULL;
 static GLuint sprite_texture;
 
 static const int width = 256;
@@ -68,6 +68,10 @@ void init_surface() {
     glTexImage2D( GL_TEXTURE_2D, 0, 4, sprite_surface->w, sprite_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, sprite_surface->pixels );
     glDisable(GL_TEXTURE_2D);
 
+    SDL_FreeSurface(panel_surface);
+    SDL_FreeSurface(sprite_surface);
+    panel_surface = NULL;
+    sprite_surface = NULL;
 }
 
 void set_slot(int s) {

@@ -14,8 +14,8 @@ static float x;
 static float y;
 static float theta = 0.5f; // rotation
 
-static SDL_Surface* surface;
-static GLuint texture;
+static SDL_Surface* surface = NULL;
+static GLuint texture = 0;
 
 void init() {
 
@@ -43,6 +43,9 @@ void init() {
     glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
 
+    SDL_FreeSurface(surface);
+    surface = NULL;
+
 }
 
 // rotate compass texture
@@ -52,7 +55,8 @@ void update() {
 
 void draw() {
 
-    if (surface == NULL) return;
+    if (texture == 0)
+        return;
 
     static const float z = -0.5f;
 

@@ -208,6 +208,13 @@ void close_c_lib() {
     teardown_cameras();
     chat_client.teardown();
     HudFont::teardown();
+
+    // free surfaces
+    t_map::teardown_shader();
+    teardown_particle_surface();
+    HudMap::teardown();
+    //vn::teardown();
+    
     #ifdef DC_CLIENT
         Sound::close();
         //close_SDL();  //would be called twice, already scheduled for at exit
