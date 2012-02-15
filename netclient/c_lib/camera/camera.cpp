@@ -37,6 +37,21 @@ void init_cameras()
     free_camera->set_fov(85.0f);
 
     current_camera = free_camera;
+
+    Vec3 f = vec3_init(1.0, 0.0, 0.0);
+    Vec3 r = vec3_init(0.0, 1.0, 0.0);
+    Vec3 u = vec3_init(0.0, 0.0, 1.0);
+
+    f = vec3_euler_rotation(f, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
+    r = vec3_euler_rotation(r, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
+    u = vec3_euler_rotation(u, current_camera->theta+1.00, current_camera->phi - 1.00, 0.0 );
+
+    setup_fulstrum(
+        current_camera->fov, current_camera->ratio, current_camera->z_far,
+        vec3_init(current_camera->x,current_camera->y,current_camera->z),
+        &f,&r,&u
+    );
+
 }
 
 void teardown_cameras()

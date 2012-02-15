@@ -143,12 +143,6 @@ void BillboardText::draw_axis_aligned()
     right[0] /= norm;
     right[1] /= norm;
 
-    struct HudFont::Glyph glyph;
-    float tx_min, tx_max, ty_min, ty_max;
-    float x,y,z;
-
-    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
-
     // get pixel length & height of string
     float len;
     float height;
@@ -158,6 +152,7 @@ void BillboardText::draw_axis_aligned()
     height = (float)_h;
     
     // calcalute half length pixel offset to center the text
+    const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
     float start = -(0.5 * len * scale * this->size);
     float cursor = 0.0f;
     float xoff, xw;
@@ -166,16 +161,19 @@ void BillboardText::draw_axis_aligned()
 
     // letters draw a bit into the ground, this offset fixes that
     const float ground_offset = 0.05;
+    float x,y,z;
     x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
     x += ground_offset;
     y += ground_offset;
     z += ground_offset;
 
+    struct HudFont::Glyph glyph;
+    float tx_min, tx_max, ty_min, ty_max;
     char c;
     int i = 0;
     while ((c = text[i++]) != '\0')
     {
-        HudFont::font->get_glyph(c);
+        glyph = HudFont::font->get_glyph(c);
 
         tx_min = glyph.x;
         tx_max = glyph.x + glyph.tw;
@@ -214,7 +212,6 @@ void BillboardText::draw_axis_aligned()
 void BillboardText::draw_hud()
 {
 #ifdef DC_CLIENT
-
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
 
     glColor4ub(r,g,b,a);
@@ -232,8 +229,7 @@ void BillboardText::draw_hud()
         return;
     }
 
-    const float line_height = 18.0f;
-    HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size, line_height);
+    HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
 
 #endif
 }

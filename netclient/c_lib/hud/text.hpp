@@ -8,13 +8,12 @@ namespace HudText
 void start_text_draw();
 void end_text_draw();
 
-void draw_string(char* text, float x, float y, float depth, float scale, float line_height);
+void draw_string(char* text, float x, float y, float depth, float scale);
 
 class Text
 {
     private:
         float width,height;
-        float line_height;
         int text_len;
         int format_len;
         int formatted_extra_len;

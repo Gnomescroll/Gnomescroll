@@ -252,6 +252,41 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
     *height = maxy - miny;
 }
 
+Font::Font(char* fn)
+:
+alpha(true),
+missing_glyph('?')
+{
+    // init glyphs
+    for (int i=0; i<128; i++)
+    {
+        glyphs[i].x = 0.0f;
+        glyphs[i].y = 0.0f;
+        glyphs[i].xoff = 0.0f;
+        glyphs[i].yoff = 0.0f;
+        glyphs[i].w = 0.0f;
+        glyphs[i].h = 0.0f;
+        glyphs[i].xadvance = 0.0f;
+        glyphs[i].available = 0;
+    }
+
+    if (strlen(fn) > 32)
+    {
+        printf("WARNING: font file %s name length > 32\n",fn);
+        fn[33] = '\0';
+    }
+
+    // save filename
+    strcpy(data.file, fn);
+
+    parse_font_file();  // gets all metadata (line height, png file) and glyphs
+    load_font_png();    // load font png from acquired filename
+    update_glyphs();    // post process glyphs (scaling texture coordinates; tab character)
+
+    printf("Loaded font %s\n", data.file);
+}
+
+
 void init()
 {
     static int inited = 0;
@@ -262,6 +297,8 @@ void init()
     }
     
     fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
+
+    //fonts[i++] = new Font((char*)"inc_16.fnt");
 
     int i = 0;
     fonts[i++] = new Font(Options::font);

@@ -303,6 +303,11 @@ void draw_hud()
 void HUD::init()
 {
     if (this->inited) return;
+
+    if (HudFont::font == NULL)
+        printf("WARNING: initing HUD before HudFont\n");
+
+    int line_height = HudFont::font->data.line_height;
     
     help = HudText::text_list.create();
     help->set_text((char*) help_text);
@@ -322,19 +327,19 @@ void HUD::init()
     fps->set_format((char*) fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(255,10,10,255);
-    fps->set_position(3, 18+3);
+    fps->set_position(3, line_height+3);
     
     ping = HudText::text_list.create();
     ping->set_format((char*) ping_format);
     ping->set_format_extra_length(3 - 2);
     ping->set_color(255,10,10,255);
-    ping->set_position(3, (18*2)+3);
+    ping->set_position(3, (line_height*2)+3);
     
     reliable_ping = HudText::text_list.create();
     reliable_ping->set_format((char*) ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
     reliable_ping->set_color(255,10,10,255);
-    reliable_ping->set_position(3, (18*3)+3);
+    reliable_ping->set_position(3, (line_height*3)+3);
 
     player_stats = HudText::text_list.create();
     player_stats->set_text((char*) player_stats_text_no_agent);
@@ -345,7 +350,7 @@ void HUD::init()
       + (Weapons::WEAPON_HUD_STRING_MAX - 2)
     );
     player_stats->set_color(255,10,10,255);
-    player_stats->set_position(_xresf - 360, 18 + 3);
+    player_stats->set_position(_xresf - 360, line_height + 3);
 
     scoreboard = new Scoreboard();
     scoreboard->init();
@@ -405,12 +410,15 @@ void init()
 
 void ChatRender::init()
 {
+    if (HudFont::font == NULL)
+        printf("WARNING: initing ChatRender before HudFont\n");
+        
     if (this->inited) return;
     int i=0;
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list.create();
-        t->set_position(50, _yresf - (50 + (18 + 2)*i));
+        t->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
         t->set_text((char*) "");
         t->set_format((char*) "%s: %s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX - 4);
@@ -421,7 +429,7 @@ void ChatRender::init()
     input = HudText::text_list.create();
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
-    input->set_position(50, _yresf - (50 + (18 + 2)*i));
+    input->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
     
     this->inited = true;
 }
@@ -434,7 +442,7 @@ void ChatRender::set_cursor(char* text, float x, float y)
     int h = 0;
     const int w = 8;
     HudFont::font->get_string_pixel_dimension(text, &len, &h);
-    h = 18; // line height
+    //h = HudFont::font->data.line_height; // line height
     cursor_x = x + len + 4;
     cursor_y = y - h;
     cursor_w = w;
@@ -592,6 +600,10 @@ void Scoreboard::init()
 void Scoreboard::update()
 {
     if (!this->inited) return;
+
+    if (HudFont::font == NULL)
+        return;
+        
     const float start_y = 120;
     const float start_x = _xresf / 8.0f;
     const float col_width = (_xresf * 0.75f) / N_STATS;
@@ -628,14 +640,14 @@ void Scoreboard::update()
             scores[i]->set_text((char*)"");
             continue;
         }
-        float y = start_y + 18*(j+2);
+        float y = start_y + HudFont::font->data.line_height*(j+2);
         if (agent->status.team != team) {
             team = agent->status.team;
             team_draw[team-1] = true;
-            y += 18;    // newline
+            y += HudFont::font->data.line_height;    // newline
             team_name_pos[team-1].y = y;
             team_score_pos[team-1].y = y;
-            y += 18;    // team name line
+            y += HudFont::font->data.line_height;    // team name line
             j += 2; // newline + team name line
         }
         j++;

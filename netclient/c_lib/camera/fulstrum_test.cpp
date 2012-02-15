@@ -10,13 +10,13 @@ void setup_test_fulstrum(int camera)
 //static float fulstrum_fovy;
 //static float fulstrum_fovx;
 //static float fulstrum_aspect;
-static float fulstrum_zfar;
+static float fulstrum_zfar = 0;
 
-static float fulstrum_hx;
-static float fulstrum_hy;
+static float fulstrum_hx = 0;
+static float fulstrum_hy = 0;
 
-static float fulstrum_hy_sphere;
-static float fulstrum_hx_sphere;
+static float fulstrum_hy_sphere = 0;
+static float fulstrum_hx_sphere = 0;
 
 /*
     Use vec3, Vec3 deprecated

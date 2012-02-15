@@ -50,7 +50,7 @@ void blit_character(
 
 
 
-void draw_string(char* text, float x, float y, float depth, float scale, float line_height)
+void draw_string(char* text, float x, float y, float depth, float scale)
 {
     if (HudFont::font == NULL)
         return;
@@ -66,7 +66,7 @@ void draw_string(char* text, float x, float y, float depth, float scale, float l
     while ((c = text[i++]) != '\0')
     {
         if (c == '\n') {
-            cursor_y += line_height;
+            cursor_y += HudFont::font->data.line_height;
             cursor_x = 0.0f;
             continue;
         }
@@ -189,14 +189,13 @@ void Text::draw()
     if (this->text == NULL || this->text_len == 0)
         return;
     glColor4ub(r,g,b,a);
-    draw_string(this->text, this->x, this->y, this->depth, this->scale, this->line_height);
+    draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
 
 Text::Text(int id)
 :
 width(10),height(10),
-line_height(18),
 text_len(0),
 format_len(0),
 formatted_extra_len(0),
