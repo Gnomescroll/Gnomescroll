@@ -10,9 +10,13 @@ NetPeer::NetPeer()
     client_id = -1;
     enet_peer = NULL;
 
-    map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_SIZE ];
+#ifdef DC_SERVER
+    map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT ];
     map_message_buffer_index = 0;
-
+    map_message_buffer_max = NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT;
+#else
+    map_message_buffer = NULL;
+#endif
 }
 
 NetPeer::~NetPeer()
@@ -39,6 +43,27 @@ void NetPeer::push_unreliable_message(Net_message* nm)
 void NetPeer::push_python_message(class Net_message* nm)
 {
     python_message_manager.push_message(nm);
+}
+
+
+void NetPeer::flush_map_messages()
+{
+    printf("Flushing %i map bytes \n", map_message_buffer_index);
+    ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
+    enet_peer_send (enet_peer, 3, map_p);
+    map_message_buffer_index = 0;
+}
+
+
+void NetPeer::resize_map_message_buffer(int size_min)
+{
+    flush_map_messages();
+
+    int size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
+    printf("resize_ map message buffer from %i to %i \n", map_message_buffer_max, size);
+    map_message_buffer_max = size;
+    delete[] map_message_buffer;
+    map_message_buffer = new char[map_message_buffer_max];
 }
 
 

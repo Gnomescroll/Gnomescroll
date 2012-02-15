@@ -3,6 +3,8 @@
 #include <c_lib/t_map/t_map_class.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
+#include <c_lib/t_map/net/t_StoC.hpp>
+
 namespace t_map
 {
 
@@ -42,7 +44,7 @@ class Map_manager
 
     int client_id;
 
-    int xpos;
+    int xpos; //player position
     int ypos;
 
     int xchunk_dim;
@@ -74,40 +76,73 @@ class Map_manager
         delete[] version_list;
     }
 
-    void sub(int x, int y)
-    {
-        int index = y*xchunk_dim + x;
-
-        int alias=0;
-        while( alias_list[alias] != NO_ALIAS) alias++;
-        //set alias
-        alias_list[alias] = index;
-        //grab chunk
-        struct MAP_CHUNK* c = t->chunk[index];
-        if(c == 0)
-        {
-            printf("Map_manager::sub, Error: chunk pointer is null: %i %i \n", x,y);
-            return;
-        }
-
-        c->add_subscriber(client_id, alias, version_list[index] );
-    }
-
-    void unsub(int x, int y)
-    {
-        //grab chunk
-        //set version number
-        //remove alias
-    }
     void update();
-
     void set_position(int x, int y);
+
+    private:
+
+    void sub(int x, int y);
+    void unsub(int alias);
+
+    void send_alias(int alias)
+    {
+        
+    }
+
+    void send_compressed_chunk(int index)
+    {
+        
+
+    }
+
+    void send_delta()
+    {
+        
+    }
 };
+
+void Map_manager::update()
+{
+    //sub chunks 
+}
 
 void Map_manager::set_position(float x, float y)
 {
     xpos = x;
     ypos = y;      
 }
+
+void Map_manager::sub(int x, int y)
+{
+    int index = y*xchunk_dim + x;
+
+    int alias=0;
+    while( alias_list[alias] != NO_ALIAS) alias++;
+    //set alias
+    alias_list[alias] = index;
+    //grab chunk
+    map_history.chunk[index].add_subscriber(client_id, alias, version_list[index] );
+
+    send_alias(alias);
+    send_compressed_chunk(int index);
+
+    //send alias to client
+    /*
+        send alias to client
+        compress map chunk
+
+    */
+}
+
+
+void Map_manager::unsub(int alias)
+{
+    int index = alias_list[alias];
+
+    version_list[index] = map_history.chunk[index].version; //cache version
+
+    map_history.chunk[index].remove_subscriber(client_id, alias);
+}
+
 
 }
