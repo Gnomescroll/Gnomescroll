@@ -40,6 +40,8 @@ class Map_manager
     public:
     class Terrain_map* t;
 
+    int client_id;
+
     int xpos;
     int ypos;
 
@@ -51,11 +53,13 @@ class Map_manager
     int subed_chunks;
     unsigned short alias_list[ MAP_MANAGER_ALIAS_LIST_SIZE ];
 
-    Map_manager()
+    Map_manager(int _client_id)
     {
+        client_id = _client_id;
+
         subed_chunks = 0;
-        int xpos=0;
-        int ypos=0;
+        xpos = 0;
+        ypos = 0;
 
         t = get_map();
         xchunk_dim = t->xchunk_dim;
@@ -74,12 +78,19 @@ class Map_manager
     {
         int index = y*xchunk_dim + x;
 
-        int i=0;
-        while( alias_list[i] != NO_ALIAS) i++;
+        int alias=0;
+        while( alias_list[alias] != NO_ALIAS) alias++;
         //set alias
-        alias_list[i] = index;
+        alias_list[alias] = index;
         //grab chunk
-        
+        struct MAP_CHUNK* c = t->chunk[index];
+        if(c == 0)
+        {
+            printf("Map_manager::sub, Error: chunk pointer is null: %i %i \n", x,y);
+            return;
+        }
+
+        c->add_subscriber(client_id, alias, version_list[index] );
     }
 
     void unsub(int x, int y)
@@ -90,7 +101,7 @@ class Map_manager
     }
     void update();
 
-    void set_position(int x, int y)
+    void set_position(int x, int y);
 };
 
 void Map_manager::set_position(float x, float y)

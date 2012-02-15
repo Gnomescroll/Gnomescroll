@@ -11,6 +11,11 @@
     #include <c_lib/t_map/glsl/shader.hpp>
 #endif
 
+#ifdef DC_SERVER
+    #include <c_lib/t_map/server/manager.hpp>
+    #include <c_lib/t_map/server/map_chunk_history.hpp>
+#endif
+
 struct MapDimension map_dim = { 512,512,128 };
 
 namespace t_map
@@ -32,7 +37,9 @@ void init_t_map()
     init_t_properties();
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
-
+#ifdef DC_SERVER
+    map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
+#endif
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 

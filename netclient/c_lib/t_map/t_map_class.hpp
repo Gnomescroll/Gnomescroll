@@ -2,7 +2,7 @@
 
 //#include <string.h>
 #include "t_properties.hpp"
-#include "struct.hpp"
+#include <c_lib/t_map/common/map_element.hpp>
 
 namespace t_map
 {
@@ -10,15 +10,8 @@ namespace t_map
 
 const int TERRAIN_MAP_HEIGHT = 128;
 
-#ifdef DC_SERVER
-    #include "./server/map_chunk_history.hpp"
-#endif
 
-#ifdef DC_SERVER
-    class MAP_CHUNK
-#else
-    class MAP_CHUNK
-#endif
+class MAP_CHUNK
 {
     public:
 

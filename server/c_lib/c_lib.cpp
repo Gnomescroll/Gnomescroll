@@ -23,8 +23,8 @@
 #include <c_lib/t_map/net/t_StoC.cpp>
 
 #include <c_lib/t_map/server/map_manager_class.cpp>
-#include <c_lib/t_map/server/map_chunk_history.cpp>
 #include <c_lib/t_map/server/manager.cpp>
+#include <c_lib/t_map/server/map_chunk_history.cpp>
 
 //physics
 #include <c_lib/physics/vector.cpp>

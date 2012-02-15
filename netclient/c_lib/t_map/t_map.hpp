@@ -12,7 +12,7 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
-#include "struct.hpp" //map element
+#include <c_lib/t_map/common/map_element.hpp>
 
 namespace t_map
 {
