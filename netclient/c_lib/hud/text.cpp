@@ -7,26 +7,26 @@ namespace HudText
 {
     
 void start_text_draw() {
-    
-    if (!HudFont::font_loaded) {
+    if (HudFont::font == NULL)
+    {
         printf("No font loaded\n");
         return;
     }
 
-    if (HudFont::tex_alpha) {
+    if (HudFont::font->alpha) {
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
     }
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, HudFont::fontTextureId);
+    glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
     glBegin(GL_QUADS);
 }
 
 void end_text_draw() {
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    if (HudFont::tex_alpha) {
+    if (HudFont::font->alpha) {
         glDisable(GL_BLEND);
     }
 }
@@ -52,6 +52,8 @@ void blit_character(
 
 void draw_string(char* text, float x, float y, float depth, float scale, float line_height)
 {
+    if (HudFont::font == NULL)
+        return;
     int i = 0;
     char c;
     struct HudFont::Glyph glyph;
@@ -69,11 +71,7 @@ void draw_string(char* text, float x, float y, float depth, float scale, float l
             continue;
         }
         
-        glyph = HudFont::glyphs[(unsigned int)c];
-
-        if (! glyph.available) {
-            glyph = HudFont::get_missing_glyph(c);
-        }
+        glyph = HudFont::font->get_glyph(c);
 
         tx_max = glyph.x;
         tx_min = glyph.x + glyph.tw;

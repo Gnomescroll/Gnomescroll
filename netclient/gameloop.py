@@ -30,7 +30,8 @@ class App(object):
         load_cube_dat()
 
         init_c_lib.init_terrain()
-        init_c_lib.Font.init()
+        #init_c_lib.Font.init()
+        #init_c_lib.start_font()
         
         print "Client init finished"
 

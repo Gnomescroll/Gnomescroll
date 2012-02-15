@@ -116,12 +116,12 @@
 #include <c_lib/hud/cube_selector.cpp>
 #include <c_lib/hud/inventory.cpp>
 #include <c_lib/hud/font.cpp>
+//#include <c_lib/hud/font_loader.cpp>
 #include <c_lib/hud/text.cpp>
 #include <c_lib/hud/map.cpp>
 #include <c_lib/hud/equipment.cpp>
 #include <c_lib/hud/compass.cpp>
 #include <c_lib/hud/hud.cpp>
-#include <c_lib/menu/font_loader/font_loader.cpp>
 
 /* input */
 #include <c_lib/input/input.cpp>
@@ -180,6 +180,7 @@ int init_c_lib() {
         init_cameras();
 
         init_particles();
+        HudFont::init();
         HudInventory::init();
         HudMap::init();
         HudEquipment::init();
@@ -206,6 +207,7 @@ void close_c_lib() {
     shutdown_net_client();
     teardown_cameras();
     chat_client.teardown();
+    HudFont::teardown();
     #ifdef DC_CLIENT
         Sound::close();
         //close_SDL();  //would be called twice, already scheduled for at exit

@@ -167,3 +167,34 @@ SDL_Surface* create_surface_from_nothing(int w, int h) {
     }
     return surface;
 }
+
+//SDL_Surface* create_surface_from_bitmap(unsigned char *bmp, int size)
+//{
+    ////Get the bitmap's buffer and size from the resource file
+    ////int filesize = 0;
+    ////char *buffer = GetBufferFromResource(resourcefilename, bitmapfilename, &filesize);
+ 
+    ////Load the buffer into a surface using RWops
+    //SDL_RWops *rw = SDL_RWFromMem(bmp, size);
+    //SDL_Surface *temp = SDL_LoadBMP_RW(rw, 1);
+ 
+    ////Release the bitmap buffer memory
+    ////free(buffer);
+ 
+    ////Were we able to load the bitmap?
+    //if (temp == NULL) 
+    //{
+        //printf("Unable to load bitmap: %s\n", SDL_GetError());
+        //exit(1);
+    //}
+ 
+    ////Convert the image to optimal display format
+    //SDL_Surface *image;
+    //image = SDL_DisplayFormat(temp);
+ 
+    ////Free the temporary surface
+    //SDL_FreeSurface(temp);
+ 
+    ////Return our loaded image
+    //return image;
+//}

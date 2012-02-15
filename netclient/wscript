@@ -142,13 +142,13 @@ def configure(conf):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
-    conf.check(header_name='ft2build.h',
-            lib='freetype',
-            use='freetype',
-            uselib_store='freetype',
-            includes=["/usr/include", "/usr/include/freetype2"],
-            fragment='#include <ft2build.h>' + FONT_MAIN_TEST_CODE,
-            mandatory=True)
+    #conf.check(header_name='ft2build.h',
+            #lib='freetype',
+            #use='freetype',
+            #uselib_store='freetype',
+            #includes=["/usr/include", "/usr/include/freetype2"],
+            #fragment='#include <ft2build.h>' + FONT_MAIN_TEST_CODE,
+            #mandatory=True)
                
     #conf.check(header_name='SDL_keyboard.h',
                #lib='SDL',
@@ -219,7 +219,8 @@ def build(bld):
     #SDL_libraries = ['GL', 'SDL', 'SDL_keyboard', 'SDL_keysym', 'SDL_image']
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
-    font_libraries = ['freetype']
+    #font_libraries = ['freetype']
+    font_libraries = []
     #noise_libraries = ['noise']
 
     if OS == "Darwin":

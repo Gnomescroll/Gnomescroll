@@ -111,6 +111,9 @@ void BillboardText::draw() {
 void BillboardText::draw_axis_aligned()
 {
 #ifdef DC_CLIENT
+    if (HudFont::font == NULL)
+        return;
+        
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
 
     glColor4ub(r,g,b,a);
@@ -146,23 +149,14 @@ void BillboardText::draw_axis_aligned()
 
     const float scale = 1.0f/16.0f; // pixels to meters. NOT scaled size
 
-    char c;
-    int i = 0;
-
     // get pixel length & height of string
-    float len = 0;
-    float height = 0;
-    while ((c = text[i++]) != '\0')
-    {
-        glyph = HudFont::glyphs[(unsigned int)c];
-        if (!glyph.available) glyph = HudFont::get_missing_glyph(c);
-        len += glyph.xadvance;
-        if (i==1)
-            len += glyph.xoff;
-        if (glyph.h > height) height = glyph.h;
-    }
-    i=0;
-
+    float len;
+    float height;
+    int _l,_h;
+    HudFont::font->get_string_pixel_dimension(text, &_l, &_h);
+    len = (float)_l;
+    height = (float)_h;
+    
     // calcalute half length pixel offset to center the text
     float start = -(0.5 * len * scale * this->size);
     float cursor = 0.0f;
@@ -177,10 +171,11 @@ void BillboardText::draw_axis_aligned()
     y += ground_offset;
     z += ground_offset;
 
+    char c;
+    int i = 0;
     while ((c = text[i++]) != '\0')
     {
-        glyph = HudFont::glyphs[(unsigned int)c];
-        if (!glyph.available) glyph = HudFont::get_missing_glyph(c);
+        HudFont::font->get_glyph(c);
 
         tx_min = glyph.x;
         tx_max = glyph.x + glyph.tw;
@@ -259,6 +254,9 @@ void BillboardText_list::tick() {
 
 void BillboardText_list::draw() {
 #ifdef DC_CLIENT
+    if (HudFont::font == NULL)
+        return;
+        
     if (current_camera == NULL) return;
 
     if(num == 0) { return; }
@@ -268,7 +266,7 @@ void BillboardText_list::draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture(GL_TEXTURE_2D, HudFont::fontTextureId);
+    glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 

@@ -5,124 +5,225 @@
 namespace HudFont
 {
 
-GLuint fontTextureId;
-float font_texture_width = 256.0f;
-float font_texture_height = 256.0f;
+static const char font_path[] = "./media/fonts/";
+const int n_fonts = 1;
+Font** fonts = NULL;
+Font* font = NULL;
 
-static int tex_alpha = 1;
-static int font_loaded = 0;
+void Font::load_font_png()
+{
 
-void init_glyphs();
+    char path[strlen(font_path) + strlen(data.png) + 1];
+    sprintf(path, "%s%s", font_path, data.png);
 
-int load_font(char* fontfile) {
-    SDL_Surface *font = IMG_Load(fontfile);
+    SDL_Surface *surface = IMG_Load(path);
 
-    if(!font) { printf("text.init_test(): font load error, %s \n", IMG_GetError()); return 0;}
-    if(font->format->BytesPerPixel != 4) {
-        printf("Font Image File: image is missing alpha channel \n");
-        tex_alpha = 0;
+    if(!surface)
+    {
+        printf("Failed to IMG_Load surface %s. Error: %s", path, IMG_GetError());
+        return;
     }
+
+    if(surface->format->BytesPerPixel != 4)
+    {
+        printf("surface Image File: image is missing alpha channel \n");
+        this->alpha = 0;
+    }
+
+    this->tex_width = surface->w;
+    this->tex_height = surface->h;
 
     glEnable(GL_TEXTURE_2D);
-    glGenTextures(1,&fontTextureId);
-    glBindTexture(GL_TEXTURE_2D,fontTextureId);
+    glGenTextures(1,&this->texture);
+    glBindTexture(GL_TEXTURE_2D,this->texture);
 
-    if (tex_alpha) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, font->w, font->h, 0, GL_RGBA, //rgb
-                     GL_UNSIGNED_BYTE, font->pixels);
-    } else {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, font->w, font->h, 0, GL_RGB, //rgb
-                     GL_UNSIGNED_BYTE, font->pixels);
-    }
+    if (this->alpha)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, //rgb
+                     GL_UNSIGNED_BYTE, surface->pixels);
+    else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, surface->w, surface->h, 0, GL_RGB, //rgb
+                     GL_UNSIGNED_BYTE, surface->pixels);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    SDL_FreeSurface(font);
-
     glDisable(GL_TEXTURE_2D);
-    font_loaded = 1;
-    printf("Loaded font %s\n", fontfile);
 
-    init_glyphs();
-    
-    return 1;
+    SDL_FreeSurface(surface);
+
+    printf("Loaded surface %s\n", data.png);
 }
 
+void Font::parse_font_file()
+{
+    int size = 0;
+    char path[strlen(font_path) + strlen(data.file) + 1];
+    sprintf(path, "%s%s", font_path, data.file);
+    char* buff = read_file_to_buffer(path, &size);
 
-
-/* Glyph store */
-
-struct Glyph glyphs[128];
-int missing_character = '?';
-
-void set_missing_character(int cc) {
-    missing_character = cc;
-}
-
-void init_glyphs() {
-    static int once = 0;
-    if (once) return;
-    int i;
-    for (i=0; i<128; i++) {
-        glyphs[i].x = 0.0f;
-        glyphs[i].y = 0.0f;
-        glyphs[i].xoff = 0.0f;
-        glyphs[i].yoff = 0.0f;
-        glyphs[i].w = 0.0f;
-        glyphs[i].h = 0.0f;
-        glyphs[i].xadvance = 0.0f;
-        glyphs[i].available = 0;
+    if (buff == NULL)
+    {
+        printf("Error opening file %s for reading\n", data.file);
+        return;
     }
-    once++;
+
+    enum LINE_MODE
+    {
+        INFO = 0,
+        COMMON,
+        PAGE,
+        CHARS,
+        CHAR
+    } line_mode;
+
+    char c;
+    int i = 0;
+    char line_name[10];
+    int line_name_index = 0;
+    bool have_line_name = false;
+    bool processed_line = false;
+    
+    while ((c = buff[i++]) != '\0')
+    {
+        if (!have_line_name)
+        {   // process line name
+            if (!isspace(c))
+                line_name[line_name_index++] = c;
+            else
+            {
+                line_name[line_name_index] = '\0';
+                have_line_name = true;
+
+                if (!strcmp(line_name, (char*)"info"))
+                    line_mode = INFO;
+                else
+                if (!strcmp(line_name, (char*)"common"))
+                    line_mode = COMMON;
+                else
+                if (!strcmp(line_name, (char*)"page"))
+                    line_mode = PAGE;
+                else
+                if (!strcmp(line_name, (char*)"chars"))
+                    line_mode = CHARS;
+                else
+                if (!strcmp(line_name, (char*)"char"))
+                    line_mode = CHAR;
+            }
+            continue;
+        }
+
+        if (c == '\n')
+        {   // reset line name counter
+            have_line_name = false;
+            processed_line = false;
+            line_name_index = 0;
+            continue;
+        }
+
+        if (processed_line) // skip to the end of the line, if its been processed
+            continue;
+
+        if (line_mode == INFO)  // this line is worthless
+            continue;
+
+        int dummy;  // dummy var to work with sscanf
+        int g,x,y,w,h,xoff,yoff,xadvance;   // glyph data
+        switch (line_mode)
+        {
+            case COMMON:
+                sscanf(&buff[i],
+                    "lineHeight=%d base=%d scaleW=%d scaleH=%d",
+                    &data.line_height, &dummy, &data.scaleW, &data.scaleH);
+                processed_line = true;
+                break;
+            case PAGE:
+                sscanf(&buff[i], "id=%d file=\"%s\"", &dummy, data.png);
+                processed_line = true;
+                break;
+            case CHARS:
+                sscanf(&buff[i], "count=%d", &data.num_glyphs_defined);
+                processed_line = true;
+                break;
+            case CHAR:
+                sscanf(&buff[i],
+                    "id=%d x=%d y=%d width=%d height=%d xoffset=%d yoffset=%d xadvance=%d",
+                    &g, &x, &y, &w, &h, &xoff, &yoff, &xadvance
+                );
+                add_glyph(g, x, y, xoff, yoff, w, h, xadvance);
+                processed_line = true;
+                break;
+            default: break;
+        }
+    }
+    
+    free(buff);
 }
 
-void add_glyph(
+
+void Font::add_glyph(
     int c,
     float x, float y,
     float xoff, float yoff,
     float w, float h,
     float xadvance
 ) {
-    glyphs[c].x = x / font_texture_width;
-    glyphs[c].y = y / font_texture_height;
-    glyphs[c].tw = w / font_texture_width;
-    glyphs[c].th = h / font_texture_height;
+    glyphs[c].x = x;
+    glyphs[c].y = y;
     glyphs[c].w = w;
     glyphs[c].h = h;
     glyphs[c].xoff = xoff;
     glyphs[c].yoff = yoff;
     glyphs[c].xadvance = xadvance;
     glyphs[c].available = 1;
+}
 
-    // tab is 4 spaces
-    const int TABS_IN_SPACES = 4;
-    if (c == (int)'\t')
+void Font::update_glyphs()
+{
+    for (int i=0; i<128; i++)
     {
-        glyphs[c].w *= TABS_IN_SPACES;
-        glyphs[c].xoff *= TABS_IN_SPACES;
-        glyphs[c].xadvance *= TABS_IN_SPACES;
-        glyphs[c].available = 1;
+        if (i == '\t' && glyphs[' '].available)
+        {
+            const int TABS_IN_SPACES = 4;
+            glyphs[i].w = glyphs[' '].w * TABS_IN_SPACES;
+            glyphs[i].xoff = glyphs[' '].xoff * TABS_IN_SPACES;
+            glyphs[i].xadvance = glyphs[' '].xadvance * TABS_IN_SPACES;
+            glyphs[i].available = true;
+        }
+        
+        if (!glyphs[i].available)
+            continue;
+
+        glyphs[i].x = glyphs[i].x / tex_width;
+        glyphs[i].y = glyphs[i].y / tex_height;
+        glyphs[i].tw = glyphs[i].w / tex_width;
+        glyphs[i].th = glyphs[i].h / tex_height;
     }
 }
 
-struct Glyph get_missing_glyph(unsigned char c)
+struct Glyph Font::get_glyph(unsigned char c)
+{
+    struct Glyph glyph = glyphs[(unsigned int)c];
+    if (!glyph.available)
+        glyph = get_missing_glyph(c);
+    return glyph;
+}
+
+struct Glyph Font::get_missing_glyph(unsigned char c)
 {
     struct Glyph glyph;
 
     switch (c)
     {
         default:
-            glyph = glyphs[missing_character];
+            glyph = glyphs[(int)missing_glyph];
             break;
     }
-
     return glyph;
 }
 
-void get_string_pixel_dimension(char* str, int *length, int *height)
+void Font::get_string_pixel_dimension(char* str, int *length, int *height)
 {
     char c;
     int i = 0;
@@ -150,5 +251,37 @@ void get_string_pixel_dimension(char* str, int *length, int *height)
     *length = len;
     *height = maxy - miny;
 }
+
+void init()
+{
+    if (fonts != NULL)
+        return;
+
+    fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
+    int i = 0;
+
+    char path[strlen(font_path) + strlen(Options::font) + 1];
+    sprintf(path, "%s%s", font_path, Options::font);
+    
+    fonts[i++] = new Font(path);
+
+    font = fonts[i-1];
+
+    if (i > n_fonts)
+        printf("WARNING: max fonts exceeded\n");
+}
+
+void teardown()
+{
+    if (fonts == NULL)
+        return;
+        
+    for (int i=0; i<n_fonts; i++)
+        if (fonts[i] != NULL)
+            delete fonts[i];
+
+    free(fonts);
+}
+
 
 }

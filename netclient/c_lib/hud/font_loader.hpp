@@ -1,3 +1,4 @@
+#pragma once
 
 /*
     Usage: create CFontSys instance and call GenerateFont as many times as you want
@@ -16,32 +17,28 @@
 
 */
 
-#ifndef FONTSYS_H
-#define FONTSYS_H
-
-class CFontSys;
-int next_p2(int a); // first power of 2
-
 #include <ft2build.h>
 #include <freetype/freetype.h>
 #include <freetype/ftglyph.h>
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 
-// DELETE THIS
-struct glyph
-{
-    float x, y, tw, th;
-    float w, h;
-    float xadvance;
-    float xoff, yoff;
+#include <c_lib/hud/font.hpp>
 
-    // temporary
-    unsigned char* bitmap;
-};
+//// DELETE THIS
+//struct glyph
+//{
+    //float x, y, tw, th;
+    //float w, h;
+    //float xadvance;
+    //float xoff, yoff;
 
-extern void add_glyph(int c,  float x, float y,  float xoff, float yoff,   float w, float h, float xadvance     );
-extern glyph glyphs[];
+    //// temporary
+    //unsigned char* bitmap;
+//};
+
+//extern void add_glyph(int c,  float x, float y,  float xoff, float yoff,   float w, float h, float xadvance     );
+//extern glyph glyphs[];
 
 class CFontSys
 {
@@ -67,14 +64,4 @@ class CFontSys
         int segment_height;
 };
 
-// First Power Of 2
-inline int next_p2 (int a )
-{
-    int rval=1;
-    while(rval<a)
-        rval*=2;
-
-    return rval;
-}
-
-#endif
+void load_fonts();

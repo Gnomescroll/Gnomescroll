@@ -20,3 +20,6 @@ int create_texture_from_surface(SDL_Surface* surface, int* tex);
 SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex);
 
 SDL_Surface* create_surface_from_nothing(int w, int h);
+
+///* http://content.gpwiki.org/index.php/SDL:Tutorials:Displaying_a_Bitmap_from_a_Custom_Resource_File_using_SDL_RWops */
+//SDL_Surface* create_surface_from_bitmap(unsigned char *bmp, int size);

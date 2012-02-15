@@ -53,136 +53,144 @@ Font
 -- No python is dependent on this code here; its mostly doing parsing
 -- It does need to add font set metadata, however
 """
-cdef extern from "./hud/font.hpp" namespace "HudFont":
-    int load_font(char* filename)
+#cdef extern from "./hud/font.hpp" namespace "HudFont":
+#    int init_font()
 
-    void add_glyph(
-        int c,
-        float x, float y,
-        float xoff, float yoff,
-        float w, float h,
-        float xadvance
-    )
-    void set_missing_character(int cc)
+#def init_font_set():
+#    init_font()
 
-import os.path
+#    void add_glyph(
+#        int c,
+#        float x, float y,
+#        float xoff, float yoff,
+#        float w, float h,
+#        float xadvance
+#    )
+#    void set_missing_character(int cc)
 
-class Font:
+#import os.path
 
-    font_path = "./media/fonts/"
-    font_ext = ".fnt"
-    png_ext = "_0.png"
-    missing_character = '?'
-    glyphs = {}
-    info = {}
-    font = None
+#class Font:
 
-    ready = False
+#    font_path = "./media/fonts/"
+#    font_ext = ".fnt"
+#    png_ext = "_0.png"
+#    missing_character = '?'
+#    glyphs = {}
+#    info = {}
+#    font = None
+
+#    ready = False
     
-    @classmethod
-    def init(cls):
-        if not os.path.exists(cls.font_path):
-            print "ERROR c_lib_fonts.pyx :: cannot find font path %s" % (cls.font_path,)
-            cls.ready = False
-            return
+#    @classmethod
+#    def init(cls):
+#        if not os.path.exists(cls.font_path):
+#            print "ERROR c_lib_fonts.pyx :: cannot find font path %s" % (cls.font_path,)
+#            cls.ready = False
+#            return
 
-        import opts
-        cls.font = cls(opts.opts.font)
-        cls.font.parse()
-        cls.font.load()
+#        import opts
+#        cls.font = cls(opts.opts.font)
+#        cls.font.parse()
+#        cls.font.load()
 
-    def __init__(self, fn):
-        self.fontfile = fn
-        self.pngfile = ''
-        self.process_font_filename()
+#    def __init__(self, fn):
+#        self.fontfile = fn
+#        self.pngfile = ''
+#        self.process_font_filename()
         
-    def process_font_filename(self):
-        fn = self.fontfile
-        fn = fn.split('.')[0]
-        fn += self.font_ext
-        fn = self.font_path + fn
-        self.fontfile = fn
-        if not os.path.exists(self.fontfile):
-            print "ERROR c_lib_fonts.pyx :: cannot find font file %s in %s" % (fn, self.font_path,)
-            self.ready = False
-            return
-        self.ready = True
+#    def process_font_filename(self):
+#        fn = self.fontfile
+#        fn = fn.split('.')[0]
+#        fn += self.font_ext
+#        fn = self.font_path + fn
+#        self.fontfile = fn
+#        if not os.path.exists(self.fontfile):
+#            print "ERROR c_lib_fonts.pyx :: cannot find font file %s in %s" % (fn, self.font_path,)
+#            self.ready = False
+#            return
+#        self.ready = True
             
-    def parse(self):
-        png = ""
+#    def parse(self):
+#        png = ""
         
-        # parse .fnt
-        with open(self.fontfile) as f:
-            lines = f.readlines()
-            for line in lines:
-                line = line.strip()
-                tags = line.split()
-                name = tags[0]
-                tags = dict(map(lambda a: a.split('='), tags[1:]))
+#        # parse .fnt
+#        with open(self.fontfile) as f:
+#            lines = f.readlines()
+#            for line in lines:
+#                line = line.strip()
+#                tags = line.split()
+#                name = tags[0]
+#                tags = dict(map(lambda a: a.split('='), tags[1:]))
 
-                if name == 'page':
-                    png = tags['file'].strip('"')
-                elif name == 'info':
-                    self.info.update(tags)
-                    print "Font: %s" % (line,)
-                elif name == 'common':
-                    self.info.update(tags)
-                    print "Font: %s" % (line,)
-                elif name == 'chars':
-                    print '%s characters in font set' % (tags['count'],)
-                elif name == 'char':
-                    self.glyphs[int(tags['id'])] = tags
+#                if name == 'page':
+#                    png = tags['file'].strip('"')
+#                elif name == 'info':
+#                    self.info.update(tags)
+#                    print "Font: %s" % (line,)
+#                elif name == 'common':
+#                    self.info.update(tags)
+#                    print "Font: %s" % (line,)
+#                elif name == 'chars':
+#                    print '%s characters in font set' % (tags['count'],)
+#                elif name == 'char':
+#                    self.glyphs[int(tags['id'])] = tags
 
-        # process png filename
-        if not png:
-            png = self.fontfile + self.png_ext
-        fp_png = self.font_path + png
-        if not os.path.exists(fp_png):
-            print "ERROR c_lib_fonts.pyx :: cannot find font png file %s in %s" % (fp_png, self.font_path,)
-            self.ready = False
-            return
-        self.pngfile = fp_png
+#        # process png filename
+#        if not png:
+#            png = self.fontfile + self.png_ext
+#        fp_png = self.font_path + png
+#        if not os.path.exists(fp_png):
+#            print "ERROR c_lib_fonts.pyx :: cannot find font png file %s in %s" % (fp_png, self.font_path,)
+#            self.ready = False
+#            return
+#        self.pngfile = fp_png
 
-        self.clean_glyphs()
-        self.missing_character_available()
+#        self.clean_glyphs()
+#        self.missing_character_available()
 
-    def add_glyphs_to_c(self):
-        for char_code, glyph in self.glyphs.items():
-            x = float(glyph['x'])
-            y = float(glyph['y'])
-            xoff = float(glyph['xoffset'])
-            yoff = float(glyph['yoffset'])
-            w = float(glyph['width'])
-            h = float(glyph['height'])
-            xadvance = float(glyph['xadvance'])
-            add_glyph(char_code, x, y, xoff, yoff, w,h, xadvance)
+#    def add_glyphs_to_c(self):
+#        for char_code, glyph in self.glyphs.items():
+#            x = float(glyph['x'])
+#            y = float(glyph['y'])
+#            xoff = float(glyph['xoffset'])
+#            yoff = float(glyph['yoffset'])
+#            w = float(glyph['width'])
+#            h = float(glyph['height'])
+#            xadvance = float(glyph['xadvance'])
+#            add_glyph(char_code, x, y, xoff, yoff, w,h, xadvance)
 
-            if char_code == ord(' '):
-                add_glyph(ord('\t'), x,y, xoff, yoff, w,h, xadvance)
+#            if char_code == ord(' '):
+#                add_glyph(ord('\t'), x,y, xoff, yoff, w,h, xadvance)
                 
-    def clean_glyphs(self):
-        for kc, glyph in self.glyphs.items():
-            for k,v in glyph.items():
-                try:
-                    glyph[k] = int(glyph[k])
-                except ValueError:
-                    pass
+#    def clean_glyphs(self):
+#        for kc, glyph in self.glyphs.items():
+#            for k,v in glyph.items():
+#                try:
+#                    glyph[k] = int(glyph[k])
+#                except ValueError:
+#                    pass
 
-    def missing_character_available(self):
-        cc = ord(self.missing_character)
-        if cc not in self.glyphs:
-            print "ERROR Missing character placeholder %s is not a known glyph" % (self.missing_character,)
-            self.ready = False
-            return False
-        set_missing_character(cc)
-        return True
+#    def missing_character_available(self):
+#        cc = ord(self.missing_character)
+#        if cc not in self.glyphs:
+#            print "ERROR Missing character placeholder %s is not a known glyph" % (self.missing_character,)
+#            self.ready = False
+#            return False
+#        set_missing_character(cc)
+#        return True
         
-    def load(self):
-        if not load_font(self.pngfile):
-            self.ready = False
-            return
-        self.add_glyphs_to_c()
-        self.ready = True
+#    def load(self):
+#        if not load_font(self.pngfile):
+#            self.ready = False
+#            return
+#        self.add_glyphs_to_c()
+#        self.ready = True
+
+#cdef extern from "./hud/font_loader.hpp":
+#    void load_fonts()
+#def start_font():
+#    load_fonts()
 
 """
 Game loop
