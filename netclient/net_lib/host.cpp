@@ -126,8 +126,6 @@ static void client_disconnect(ENetEvent* event)
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
 {
-    printf("client attempting connection with server \n");
-
     ENetPeer *peer;
 
     if (client_host == NULL)
@@ -150,7 +148,8 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port)
     {
         a=127;b=0;c=0;d=1;
     }
-
+    printf("connecting to %i.%i.%i.%i on port %i \n", a,b,c,d,port);
+    
     address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
 
     /* Initiate the connection, allocating the two channels 0 and 1. */
@@ -191,10 +190,12 @@ void client_dispatch_network_events()
 
         case ENET_EVENT_TYPE_CONNECT:
             NetClient::client_connect(&event);
+            printf("Client connected to server \n");
             break;
 
         case ENET_EVENT_TYPE_DISCONNECT:
             NetClient::client_disconnect(&event);
+            printf("Client disconnected from server \n");
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:

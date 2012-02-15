@@ -9,7 +9,7 @@ namespace Options
 OPT_STRING(server_name, "gnomescroll_one")
 
 /* Network */
-OPT_STRING(ip_address, "0.0.0.0")
+OPT_STRING(ip_address, "127.0.0.1")
 OPT_INT(port, 4096)
 
 /* Game settings */
