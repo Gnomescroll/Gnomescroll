@@ -1,8 +1,10 @@
 #include "t_StoC.hpp"
 
-#ifdef DC_CLIENT
+#include "t_CtoS.hpp"
 
 #include "../t_map.hpp"
+
+#ifdef DC_CLIENT
 
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>

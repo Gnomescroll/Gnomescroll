@@ -18,19 +18,17 @@
 */
 
 #include <c_lib/t_map/t_map_class.hpp>
-
-#include <c_lib/t_map/net/t_StoC.hpp>
-
-#include <c_lib/t_map/struct.hpp> //map
+//#include <c_lib/t_map/net/t_StoC.hpp>
+#include <c_lib/t_map/struct.hpp>
 
 namespace t_map
 {
 
 /*
-            unsigned char block;
-            unsigned char palette;
-            unsigned char damage;
-            unsigned char lighting;
+    unsigned char block;
+    unsigned char palette;
+    unsigned char damage;
+    unsigned char lighting;
 */
 
 struct CHUNK_HISTORY_ELEMENT

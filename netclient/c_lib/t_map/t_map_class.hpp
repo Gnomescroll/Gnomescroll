@@ -11,19 +11,14 @@ namespace t_map
 const int TERRAIN_MAP_HEIGHT = 128;
 
 #ifdef DC_SERVER
-
     #include "./server/map_chunk_history.hpp"
 #endif
 
- //: public Map_chunk_history
- /*
 #ifdef DC_SERVER
     class MAP_CHUNK
 #else
     class MAP_CHUNK
 #endif
-*/
-class MAP_CHUNK
 {
     public:
 
