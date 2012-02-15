@@ -1,6 +1,32 @@
 #include "net_peer_manager.hpp"
 
-#include <c_lib/state/server_state.hpp>
+#ifdef DC_SERVER
+    #include <net_lib/global.hpp>
+
+    #include <c_lib/state/server_state.hpp>
+    #include <c_lib/state/server_state.hpp>
+
+    #include <c_lib/t_map/server/manager.hpp>
+#endif
+
+void NetPeerManager::init(int client_id)
+{
+    #ifdef DC_SERVER
+    if(client_id < 0 || client_id >= NetServer::HARD_MAX_CONNECTIONS) printf("FATAL ERROR: NetPeerManager::init, client id invalid \n");
+    if (this->inited) 
+    {
+        printf("Warning: NetPeerManager::init, double init \n");
+        return;
+    }
+    this->inited = true;
+    this->client_id = client_id;
+
+    Agent_state* a = ServerState::agent_list.create(client_id);
+    NetServer::assign_agent_to_client(client_id, a);
+    ServerState::send_id_to_client(client_id);
+    ServerState::add_player_to_chat(client_id);
+    #endif
+}
 
 void NetPeerManager::ready()
 {
@@ -26,24 +52,13 @@ void NetPeerManager::ready()
 
     this->loaded = true;
     ServerState::send_game_state_to_client(this->client_id);
+
+    t_map_manager_setup(this->client_id);   //setup t_map_manager
+
     printf("ready\n");
     #endif
 }
 
-void NetPeerManager::init(int client_id)
-{
-    #ifdef DC_SERVER
-    if (this->inited) return;
-
-    this->inited = true;
-    this->client_id = client_id;
-
-    Agent_state* a = ServerState::agent_list.create(client_id);
-    NetServer::assign_agent_to_client(client_id, a);
-    ServerState::send_id_to_client(client_id);
-    ServerState::add_player_to_chat(client_id);
-    #endif
-}
 
 void NetPeerManager::teardown()
 {
@@ -51,6 +66,8 @@ void NetPeerManager::teardown()
     ServerState::remove_player_from_chat(this->client_id);
     ServerState::ctf.remove_agent_from_team(this->client_id);
     ServerState::agent_list.destroy(client_id);
+
+    t_map_manager_teardown(this->client_id);   //setup t_map_manager
     #endif
 }
 

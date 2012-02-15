@@ -7,8 +7,8 @@ class NetPeerManager
         bool inited;
         bool loaded;
 
-        void ready();
         void init(int client_id);
+        void ready();
         void teardown();
 
         NetPeerManager();

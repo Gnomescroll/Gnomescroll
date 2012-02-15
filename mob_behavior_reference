@@ -3,6 +3,9 @@ Simplify as much as necisary
 Collaborative_Diffusion Reference:
 http://scalablegamedesign.cs.colorado.edu/wiki/Collaborative_Diffusion
 
+-add term for clustering (nearness to other agents)
+-add term for spreading out (swarm behavior)
+
 Squads of robots that roam landscape, looking for players.
 
 Waves of hostile mobs spawn
