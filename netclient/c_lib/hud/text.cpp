@@ -48,8 +48,6 @@ void blit_character(
     glVertex3f(screen_x_max, screen_y_max, depth);
 }
 
-
-
 void draw_string(char* text, float x, float y, float depth, float scale)
 {
     if (HudFont::font == NULL)
