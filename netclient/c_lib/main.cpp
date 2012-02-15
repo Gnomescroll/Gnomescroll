@@ -16,30 +16,21 @@
 bool _quit = false;
 
 
-#define INTERCEPT_CTRL_C 1 
+#define INTERCEPT_CTRL_C 0 
+#define GRACEFULL_CTRL_C_SHUTDOWN 1 
 #ifdef linux
-/*
-    Handles ctrl+c and attempts to shutdown gracefully
-    If I hit key twice, will force exit
-*/
-#include <signal.h>
-static int _triggered = 0;
-void intHandler(int dummy=0) 
-{
-    //close_c_lib();
-    _quit = true;
+    #include <signal.h>
 
-    if(_triggered == 0)
+    void intHandler(int dummy=0) 
     {
-       _triggered++;
-    } 
-    else
-    {
+    #if GRACEFULL_CTRL_C_SHUTDOWN
+        _quit = true;
+    #else
         printf("Attempting Force Close\n");
         close_c_lib();
         exit(0);    
+    #endif
     }
-}
 #endif
 
 namespace Main
@@ -59,7 +50,7 @@ void init()
 #if INTERCEPT_CTRL_C
     #ifdef linux
         signal(SIGINT, intHandler);
-        signal(SIGKILL, intHandler);
+        //signal(SIGKILL, intHandler);
     #endif
 #endif
 
@@ -90,8 +81,9 @@ int run()
     // update mouse
     pan_camera(get_mouse_tick());
 
-    while (!input_state.quit && !_quit)
+    while (!input_state.quit)
     {
+        if(_quit) break;
 
         // update mouse
         pan_camera(get_mouse_tick());
