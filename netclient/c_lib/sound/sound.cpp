@@ -30,9 +30,9 @@ static FMOD_VECTOR lis_vel;
 static FMOD_VECTOR lis_for;
 static FMOD_VECTOR lis_up;
 
-static FMOD_SYSTEM* sound_sys;
+static FMOD_SYSTEM* sound_sys = NULL;
 
-static FMOD_CHANNELGROUP* chgroup;
+static FMOD_CHANNELGROUP* chgroup = NULL;
 static FMOD_CHANNEL* channels[MAX_CHANNELS];
 
 static FMOD_SOUND* sounds[MAX_SOUNDS];
@@ -422,11 +422,15 @@ void end_sound(int snd_id) {
 }
 
 void release_sound_system() {
+    if (sound_sys == NULL)
+        return;
     FMOD_RESULT result = FMOD_System_Release(sound_sys);
     ERRCHECK(result);
 }
 
 void release_channel_group() {
+    if (chgroup == NULL)
+        return;
     FMOD_RESULT result = FMOD_ChannelGroup_Release(chgroup);
     ERRCHECK(result);
 }
