@@ -1,1 +1,0 @@
-#include "manager_class.hpp"

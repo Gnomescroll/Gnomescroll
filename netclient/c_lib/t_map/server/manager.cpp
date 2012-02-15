@@ -2,7 +2,7 @@
 
 #include <net_lib/global.hpp>
 
-#include <c_lib/t_map/server/manager_class.hpp>
+#include <c_lib/t_map/server/map_manager_class.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
 namespace t_map
@@ -25,7 +25,9 @@ void t_map_manager_teardown(int client_id)
     map_manager_list[client_id] = NULL;
 }
 
-
+/*
+    Call this to set player position for map loading
+*/
 void t_map_manager_update(int client_id, int x, int y)
 {
     if(x<0) x = 0;
@@ -49,7 +51,19 @@ void t_map_manager_update(int client_id, int x, int y)
         return;
     }
 
-    map_manager_list[client_id]->update(x,y);
+    map_manager_list[client_id]->set_position(x,y);
+
+}
+
+void update_manager()
+{
+    static int tick=0;
+
+    tick++;
+    if(tick % 30 == 0)
+    {
+        for(int i=0; map_manager_list[i]; i++) map_manager_list[i]->update();
+    }
 
 }
 

@@ -1,0 +1,1 @@
+#include "map_manager_class.hpp"

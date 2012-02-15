@@ -40,6 +40,9 @@ class Map_manager
     public:
     class Terrain_map* t;
 
+    int xpos;
+    int ypos;
+
     int xchunk_dim;
     int ychunk_dim;
     
@@ -51,6 +54,8 @@ class Map_manager
     Map_manager()
     {
         subed_chunks = 0;
+        int xpos=0;
+        int ypos=0;
 
         t = get_map();
         xchunk_dim = t->xchunk_dim;
@@ -83,12 +88,15 @@ class Map_manager
         //set version number
         //remove alias
     }
-    void update(int x, int y);
+    void update();
+
+    void set_position(int x, int y)
 };
 
-void Map_manager::update(int x, int y)
+void Map_manager::set_position(float x, float y)
 {
-       
+    xpos = x;
+    ypos = y;      
 }
 
 }

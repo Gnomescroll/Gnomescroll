@@ -57,6 +57,7 @@ void init_net_server(int a, int b, int c, int d, int port)
     {
         address.port = port;
     }
+    printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
 
     server_host = enet_host_create (& address /* the address to bind the server host to */, 
                                  32      /* allow up to 32 clients and/or outgoing connections */,
@@ -65,7 +66,7 @@ void init_net_server(int a, int b, int c, int d, int port)
                                   0      /* assume any amount of outgoing bandwidth */);
     if (server_host == NULL)
     {
-        fprintf (stderr, "An error occurred while trying to create an ENet server host.\n");
+        fprintf (stderr, "An error occurred while trying to create ENet server host: check that no other server is running on port %i \n", address.port);
         exit (EXIT_FAILURE);
     }
     //enet_host_destroy(server);
@@ -362,6 +363,7 @@ void server_dispatch_network_events()
             break;
 
         case ENET_EVENT_TYPE_CONNECT:
+            printf("Client Connection Attempt \n");
             NetServer::client_connect(&event);
             break;
 
@@ -398,6 +400,9 @@ void server_dispatch_network_events()
                         event.packet->dataLength, 
                         ((class NetPeer*)event.peer->data)->client_id 
                         ); 
+                    break;
+                case 2:
+                    printf("server received channel 2 message \n");
                     break;
                 case 3:
                     printf("server received channel 4 message \n");
