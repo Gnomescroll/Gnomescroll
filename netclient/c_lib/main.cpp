@@ -16,6 +16,7 @@
 bool _quit = false;
 
 
+#define INTERCEPT_CTRL_C 1 
 #ifdef linux
 /*
     Handles ctrl+c and attempts to shutdown gracefully
@@ -35,6 +36,7 @@ void intHandler(int dummy=0)
     else
     {
         printf("Attempting Force Close\n");
+        close_c_lib();
         exit(0);    
     }
 }
@@ -54,10 +56,12 @@ int get_mouse_tick()
 
 void init()
 {
-//#ifdef linux
-    signal(SIGINT, intHandler);
-    signal(SIGKILL, intHandler);
-//#endif
+#if INTERCEPT_CTRL_C
+    #ifdef linux
+        signal(SIGINT, intHandler);
+        signal(SIGKILL, intHandler);
+    #endif
+#endif
 
      _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
