@@ -9,7 +9,7 @@ namespace Options
 OPT_STRING(name, "default-name")
 
 /* Network */
-OPT_STRING(server, "0.0.0.0")
+OPT_STRING(server, "127.0.0.1")
 OPT_INT(port, 4096)
 
 /* Game preferences */
