@@ -14,16 +14,31 @@
 
 
 bool _quit = false;
-//#ifdef linux
 
+
+#ifdef linux
+/*
+    Handles ctrl+c and attempts to shutdown gracefully
+    If I hit key twice, will force exit
+*/
 #include <signal.h>
-
+static int _triggered = 0;
 void intHandler(int dummy=0) 
 {
     //close_c_lib();
-   _quit = true;
+    _quit = true;
+
+    if(_triggered == 0)
+    {
+       _triggered++;
+    } 
+    else
+    {
+        printf("Attempting Force Close\n");
+        exit(0);    
+    }
 }
-//#endif
+#endif
 
 namespace Main
 {

@@ -3,7 +3,7 @@
 namespace t_map
 {
 
-void Map_chunk_history::add_subscriber(int client_id, int chunk_alias, int client_map_version)
+void MAP_CHUNK_HISTORY::add_subscriber(int client_id, int chunk_alias, int client_map_version)
 {
     //check that they are not already subscribed
     for(int i=0; i < subscriber_num; i++)
@@ -32,7 +32,7 @@ void Map_chunk_history::add_subscriber(int client_id, int chunk_alias, int clien
     }
 }
 
-void Map_chunk_history::remove_subscriber(int client_id)
+void MAP_CHUNK_HISTORY::remove_subscriber(int client_id)
 {
     int i = 0;
     while(i < subscriber_num && subscribers[i] != client_id) i++;

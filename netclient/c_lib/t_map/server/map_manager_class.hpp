@@ -139,9 +139,9 @@ void Map_manager::unsub(int alias)
 {
     int index = alias_list[alias];
 
-    version_list[index] = map_history->chunk[index].version; //cache version
+    version_list[index].version = map_history->chunk[index].version; //cache version
 
-    map_history->chunk[index].remove_subscriber(client_id, alias);
+    map_history->chunk[index].remove_subscriber(client_id);
 }
 
 
