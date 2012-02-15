@@ -17,11 +17,11 @@
 
 */
 
-#include "t_map_class.hpp"
+#include <c_lib/t_map/t_map_class.hpp>
 
-#include "./net/t_StoC.hpp"
+#include <c_lib/t_map/net/t_StoC.hpp>
 
-#include "struct.hpp" //map
+#include <c_lib/t_map/struct.hpp> //map
 
 namespace t_map
 {
@@ -44,7 +44,7 @@ struct CHUNK_HISTORY_ELEMENT
 const int SMC_MAX_SUBSCRIBERS = 64;
 const int SMC_HISTORY_ARRAY_SIZE = 256;
 
-class SERVER_MAP_CHUNK
+class Map_chunk_history
 {
     public:
 
@@ -56,13 +56,13 @@ class SERVER_MAP_CHUNK
     struct CHUNK_HISTORY_ELEMENT history_array[ SMC_HISTORY_ARRAY_SIZE ];
     int last_history;
 
-    SERVER_MAP_CHUNK()
+    Map_chunk_history()
     {
         subscriber_num = 0;
         memset( &history_array, 0, SMC_HISTORY_ARRAY_SIZE*sizeof(struct CHUNK_HISTORY_ELEMENT));
     }
 
-    ~SERVER_MAP_CHUNK()
+    ~Map_chunk_history()
     {
                 
     }
@@ -81,14 +81,14 @@ class SERVER_MAP_CHUNK
 };
 
 
-void SERVER_MAP_CHUNK::add_subscriber(int client_id, int chunk_alias, int client_map_version)
+void Map_chunk_history::add_subscriber(int client_id, int chunk_alias, int client_map_version)
 {
     //check that they are not already subscribed
     for(int i=0; i < subscriber_num; i++)
     {
         if( subscribers[i] == client_id )
         {
-            printf("SERVER_MAP_CHUNK::add_subscriber, Error: client %i is already subscribed to map chunk\n", client_id);
+            printf("Map_chunk_history::add_subscriber, Error: client %i is already subscribed to map chunk\n", client_id);
             return;
         }
     }
@@ -110,14 +110,14 @@ void SERVER_MAP_CHUNK::add_subscriber(int client_id, int chunk_alias, int client
     }
 }
 
-void SERVER_MAP_CHUNK::remove_subscriber(int client_id)
+void Map_chunk_history::remove_subscriber(int client_id)
 {
     int i = 0;
     while(i < subscriber_num && subscribers[i] != client_id) i++;
     
     if(i == subscriber_num)
     {
-        printf("SERVER_MAP_CHUNK::remove_subscriber, Error: client %i was not subscribed to map chunk!", client_id);
+        printf("Map_chunk_history::remove_subscriber, Error: client %i was not subscribed to map chunk!", client_id);
         return;
     }
 
