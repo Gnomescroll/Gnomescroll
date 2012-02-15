@@ -121,6 +121,7 @@
 #include <c_lib/hud/equipment.cpp>
 #include <c_lib/hud/compass.cpp>
 #include <c_lib/hud/hud.cpp>
+#include <c_lib/menu/font_loader/font_loader.cpp>
 
 /* input */
 #include <c_lib/input/input.cpp>

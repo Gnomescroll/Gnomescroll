@@ -290,11 +290,17 @@ Sound trigger handlers integrated
 Feb 14
 
 install new system
+Client main loop in C
+Server/client options in C
+
+====================
+
+Feb 16
 
 TODO:
-main loop in C
-options struct in C
+font
 openal
+System notifications (you killed...)
 ====================
 
 == MODELS ==

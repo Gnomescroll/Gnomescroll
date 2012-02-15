@@ -1,5 +1,9 @@
 
-#include "fontloader.hpp"
+#include "font_loader.hpp"
+
+glyph glyphs[128];
+void add_glyph(int c,  float x, float y,  float xoff, float yoff,   float w, float h, float xadvance     )
+{}
 
 CFontSys::CFontSys()
 {
