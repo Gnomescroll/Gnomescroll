@@ -47,6 +47,11 @@ void init_t_map()
 
 }
 
+class Terrain_map* get_map()
+{
+    return main_map;
+}
+
 #ifdef DC_CLIENT
     void init_for_draw()
     {

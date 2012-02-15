@@ -12,6 +12,7 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
+#include "struct.hpp" //map element
 
 namespace t_map
 {
@@ -27,6 +28,8 @@ void init_t_map();
 #ifdef DC_CLIENT
     void init_for_draw();
 #endif
+
+class Terrain_map* get_map();
 
 inline int get(int x, int y, int z);
 inline void set(int x, int y, int z, int value);

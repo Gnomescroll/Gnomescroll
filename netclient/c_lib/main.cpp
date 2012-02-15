@@ -12,6 +12,19 @@
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>
 
+
+bool _quit = false;
+//#ifdef linux
+
+#include <signal.h>
+
+void intHandler(int dummy=0) 
+{
+    //close_c_lib();
+   _quit = true;
+}
+//#endif
+
 namespace Main
 {
 
@@ -26,7 +39,12 @@ int get_mouse_tick()
 
 void init()
 {
-    _set_resolution(Options::width, Options::height, Options::fullscreen);
+//#ifdef linux
+    signal(SIGINT, intHandler);
+    signal(SIGKILL, intHandler);
+//#endif
+
+     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
     ClientState::ctf.start();
@@ -53,7 +71,7 @@ int run()
     // update mouse
     pan_camera(get_mouse_tick());
 
-    while (!input_state.quit)
+    while (!input_state.quit && !_quit)
     {
 
         // update mouse

@@ -1,34 +1,23 @@
 #pragma once
 
-
-#include <string.h>
+//#include <string.h>
 #include "t_properties.hpp"
+
+#ifdef DC_SERVER
+    #include "t_map_server.hpp"
+#endif
 
 namespace t_map
 {
 
-struct MAP_ELEMENT
-{
-    union
-    {
-        struct
-        {
-            unsigned char block;
-            unsigned char palette;
-            unsigned char damage;
-            unsigned char lighting;
-        };
-        unsigned int n;
-    };
-};
 
 const int TERRAIN_MAP_HEIGHT = 128;
 
 #ifdef DC_SERVER
-    class MAP_CHUNK 
+    class MAP_CHUNK : public SERVER_MAP_CHUNK
 #else
     class MAP_CHUNK 
-#endif 
+#endif
 {
     public:
 
