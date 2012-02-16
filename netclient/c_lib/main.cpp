@@ -226,7 +226,7 @@ int run()
         pan_camera(get_mouse_tick());
 
         // update sound
-        Sound::update_sound();
+        Sound::update();
         // update client_state
         ClientState::update_client_state();
     }

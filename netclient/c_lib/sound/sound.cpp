@@ -1,479 +1,96 @@
 #include "sound.hpp"
 
-#ifndef TRUE
-  #define TRUE 1
-#endif
-#ifndef FALSE
-  #define FALSE 0
-#endif
-
-namespace Sound {
-
-class Soundfile {
-    public:
-        unsigned int hash;
-        int sound2d;
-        int sound3d;
-        bool loaded;
-
-    Soundfile():
-        hash(0), sound2d(-1), sound3d(-1), loaded(false)
-        {}
-};
-
-static int enabled = 1;
-static const int MAX_CHANNELS = 100;
-static const int MAX_SOUNDS = 200;
-
-static FMOD_VECTOR lis_pos;
-static FMOD_VECTOR lis_vel;
-static FMOD_VECTOR lis_for;
-static FMOD_VECTOR lis_up;
-
-static FMOD_SYSTEM* sound_sys = NULL;
-
-static FMOD_CHANNELGROUP* chgroup = NULL;
-static FMOD_CHANNEL* channels[MAX_CHANNELS];
-
-static FMOD_SOUND* sounds[MAX_SOUNDS];
-static Soundfile soundfiles[MAX_SOUNDS/2];
-
-
-/* Debug */
-int ERRCHECK(FMOD_RESULT result)
+namespace Sound
 {
-    if (result != FMOD_OK)
-    {
-        printf("FMOD error! (%d) %s\n", result, FMOD_ErrorString(result));
-        //print_trace();
-        //exit(1);
-        return 1;
-    }
-    return 0;
-}
-
-/* FMOD Vectors */
-void set_vector(FMOD_VECTOR* vec, float x, float y, float z) {
-    // convert velocity units to m/s (comes in at m/tick, tick=33ms)
-    vec->x = x;
-    vec->y = z; // flip y and z for our coordinate system
-    vec->z = y;
-}
-
-const FMOD_VECTOR create_vector(float x, float y, float z) {
-    const FMOD_VECTOR vec = {x, z, y};  // y and z must be flipped to match our coordinate system
-    return vec;
-}
-
-
-/* Init and update */
-int init_sound_system() {
-    FMOD_RESULT result;
-
-    result = FMOD_System_Create(&sound_sys);   // create system
-    ERRCHECK(result);
-    if (result) enabled = 0;
-    result = FMOD_System_Init(sound_sys, MAX_CHANNELS, FMOD_INIT_NORMAL, NULL);
-    ERRCHECK(result);
-    if (result) enabled = 0;
-    return result;
-}
-
-int init_channel_group() {
-    FMOD_RESULT r;
-    r = FMOD_System_CreateChannelGroup(sound_sys, "main", &chgroup);
-    ERRCHECK(r);
-    if (r) enabled = 0;
-    return r;
-}
-
-void load_sounds_from_conf(char *fn)
-{
-    FILE* f = fopen(fn, "r");
-    if (f == NULL)
-    {
-        printf("Could not open sound configuration file %s\n", fn);
-        return;
-    }
-
-    // read each line
-    // 2nd column has sound file, 3rd has function name
-
-
-    fclose(f);
-}
 
 void init() {
-    printf("sound init\n");
-
-    enabled = Options::sound;
-    if (!enabled) return;
-
-    int fail;
-    fail = init_sound_system();
-    if (fail)
-        return;
-    fail = init_channel_group();
-    if (fail)
-        return;
-
-    const float doppler_scale = 1.0f;   //default "The doppler scale is a general scaling factor for how much the pitch varies due to doppler shifting in 3D sound."
-    const float distance_factor = 1.0f;   //default (converts game distance units to meters (internal fmod units)
-    const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
-    set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
-    set_volume(Options::sfx);
-    parse_sound_triggers((char*)"./media/sound/sounds.csv");
-}
-
-void update_sound_system() {
-    FMOD_System_Update(sound_sys);
-    // do not ERRCHECK
+    #if USE_FMOD
+    FMODSound::init();
+    #endif
+    #if USE_OPENAL
+    OpenALSound::init();
+    #endif
 }
 
 void update() {
-    update_sound_system();
+    #if USE_FMOD
+    FMODSound::update();
+    #endif
+    #if USE_OPENAL
+    OpenALSound::update();
+    #endif
 }
 
 /* Setters */
 void set_volume(float vol) {
-    FMOD_RESULT r;
-    r = FMOD_ChannelGroup_SetVolume(chgroup, vol);
-    ERRCHECK(r);
-    printf("volume set to %0.2f\n", vol);
-}
-
-void set_3D_settings(float doppler_scale, float distance_factor, float rolloff_scale) {
-    FMOD_RESULT r;
-    r = FMOD_System_Set3DSettings(sound_sys, doppler_scale, distance_factor, rolloff_scale);
-    ERRCHECK(r);
+    #if USE_FMOD
+    FMODSound::set_volume(vol);
+    #endif
+    #if USE_OPENAL
+    OpenALSound::set_volume(vol);
+    #endif
 }
 
 /* Listener (player) */
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz) {
-    static const float tick = 30.0f;
-    set_vector(&lis_pos, x, y, z);
-    set_vector(&lis_vel, vx*tick, vy*tick, vz*tick);
-    set_vector(&lis_for, fx, fy, fz);
-    set_vector(&lis_up, ux, uy, uz);
-    
-    FMOD_RESULT r = FMOD_System_Set3DListenerAttributes(sound_sys, 0, &lis_pos, &lis_vel, &lis_for, &lis_up);
-    ERRCHECK(r);
-}
-
-
-/* Channels */
-
-int _add_channel(FMOD_CHANNEL* ch) {    // to channels array
-    int i;
-    for (i=0; i<MAX_CHANNELS; i++) {
-        if (channels[i] == NULL) {
-            channels[i] = ch;
-            break;
-        }
-    }
-    if (i == MAX_CHANNELS) {
-        i = -1;
-    }
-    return i;
-}
-
-int _update_channel(FMOD_CHANNEL* ch, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
-    FMOD_RESULT r = FMOD_Channel_Set3DAttributes(ch, &pos, &vel);
-    int i = ERRCHECK(r);
-    return i;
-}
-
-int update_channel(int ch_id, float x, float y, float z, float vx, float vy, float vz) {
-    static const float tick = 30.0f;
-    int i = -1;
-    if (ch_id < 0 || ch_id >= MAX_CHANNELS) {
-        return i;
-    }
-    FMOD_CHANNEL* ch = channels[ch_id];
-    if (ch == NULL) {
-        const FMOD_VECTOR pos = create_vector(x,y,z);
-        const FMOD_VECTOR vel = create_vector(vx*tick,vy*tick,vz*tick);
-        i = _update_channel(ch, pos, vel);
-    }
-    return i;
-}
-
-/* Sounds */
-
-unsigned int hash(char* s) {
-    unsigned int highorder;
-    unsigned int h = 0;
-    int i;
-    for (i=0; s[i] != '\0'; i++) {
-         highorder = h & 0xf8000000;    // extract high-order 5 bits from h
-                                        // 0xf8000000 is the hexadecimal representation
-                                        //   for the 32-bit number with the first five 
-                                        //   bits = 1 and the other bits = 0   
-         h = h << 5;                    // shift h left by 5 bits
-         h = h ^ (highorder >> 27);     // move the highorder 5 bits to the low-order
-                                        //   end and XOR into h
-         h = h ^ (unsigned int)s[i];                  // XOR h and ki
-    }
-    return h;
-}
-
-
-/* Loading */
-
-int _add_sound(FMOD_SOUND* snd) {   // to sounds array
-    if (snd == NULL) return -1;
-    int i;
-    for (i=0; i<MAX_SOUNDS; i++) {
-        if (sounds[i] == NULL) {
-            sounds[i] = snd;
-            ////printf("_add_sound :: sound found :: %d\n", i);
-            break;
-        }
-    }
-    if (i == MAX_SOUNDS) {
-        ////printf("_add_sound :: No NULL sounds found, reached max :: %d\n", i);
-        i = -1;
-    }
-    return i;
-}
-
-FMOD_SOUND* _load_2d_sound(char *soundfile) {
-    FMOD_SOUND* sound;
-    FMOD_RESULT result;
-    result = FMOD_System_CreateSound(sound_sys, soundfile, FMOD_2D, 0, &sound);
-    ERRCHECK(result);
-    if (result) return NULL;
-    return sound;
-}
-
-FMOD_SOUND* _load_3d_sound(char *soundfile, float mindistance) { // use lower mindistance for quieter things. use 4.0f as default
-    FMOD_SOUND* sound;
-    FMOD_RESULT result;
-
-    result = FMOD_System_CreateSound(sound_sys, soundfile, FMOD_3D, 0, &sound);
-    ERRCHECK(result);
-    if (result) return NULL;
-    const float max_distance = 10000.0f;    // distance where attenuation stops (volume will stay constant at attenuated value)
-    result = FMOD_Sound_Set3DMinMaxDistance(sound, mindistance, max_distance);
-    ERRCHECK(result);
-    if (result) return NULL;
-    return sound;
-}
-
-int load_2d_sound(char *soundfile) {
-    FMOD_SOUND* snd = _load_2d_sound(soundfile);
-    int i = _add_sound(snd);
-    return i;
-}
-
-int load_3d_sound(char *soundfile, float mindistance) {
-    //printf("load_3d_sound :: request :: %s %f\n", soundfile, mindistance);
-    FMOD_SOUND* snd = _load_3d_sound(soundfile, mindistance);
-    int i = _add_sound(snd);
-    //printf("load_3d_sound :: loaded :: %d\n", i);
-    return i;
+    #if USE_FMOD
+    return FMODSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::update_listener(x,y,z, vx,vy,vz, fx,fy,fz, ux,uy,uz);
+    #endif
 }
 
 // Public
 void load_sound(char *file) {
-    static int soundfile_index = 0;
-
-    if (soundfile_index >= MAX_SOUNDS/2) {
-        printf("MAX_SOUNDS reached.\n");
-        return;
-    }
-
-    const char base_path[] = "./media/sound/wav/";
-    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(file) + 1));
-    sprintf(fullpath, "%s%s", base_path, file);
-    
-    static const float mindistance = 20.0f; // distance at which attenuation begins
-    Soundfile* s;
-    s = &soundfiles[soundfile_index];
-    s->hash = hash(file);
-    s->sound2d = load_2d_sound(fullpath);
-    s->sound3d = load_3d_sound(fullpath, mindistance);
-    s->loaded = true;
-    soundfile_index++;
-
-    free(fullpath);
+    #if USE_FMOD
+    return FMODSound::load_sound(file);
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::load_sound(file);
+    #endif
 }
-
-int get_sound_id(char* file, bool three_d) {
-
-    unsigned int h = hash(file);
-    int i;
-    Soundfile* s = NULL;
-    for (i=0; i<MAX_SOUNDS/2; i++) {
-        if (soundfiles[i].loaded && soundfiles[i].hash == h) {
-            s = &soundfiles[i];
-            break;
-        }
-    }
-
-    if (s != NULL) {
-        if (three_d) {
-            return s->sound3d;
-        }
-        return s->sound2d;
-    }
-    return -1;
-}
-
-/* Playback */
-
-FMOD_CHANNEL* _play_2d_sound(FMOD_SOUND* sound) {
-    FMOD_CHANNEL* channel = NULL;
-    FMOD_RESULT result;
-
-    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
-    ERRCHECK(result);
-    result = FMOD_Channel_SetChannelGroup(channel, chgroup);
-    ERRCHECK(result);
-    result = FMOD_Channel_SetPaused(channel, FALSE);
-    ERRCHECK(result);
-    return channel;
-}
-
-FMOD_CHANNEL* _play_3d_sound(FMOD_SOUND* sound, const FMOD_VECTOR pos, const FMOD_VECTOR vel) {
-    FMOD_CHANNEL* channel = NULL;
-    FMOD_RESULT result;
-
-    result = FMOD_System_PlaySound(sound_sys, FMOD_CHANNEL_FREE, sound, TRUE, &channel);
-    ERRCHECK(result);
-    result = FMOD_Channel_SetChannelGroup(channel, chgroup);
-    ERRCHECK(result);
-    result = FMOD_Channel_Set3DAttributes(channel, &pos, &vel);
-    ERRCHECK(result);
-    result = FMOD_Channel_SetPaused(channel, FALSE);
-    ERRCHECK(result);
-
-    return channel;
-}
-
-int play_2d_sound(int snd_id) {
-    int i = -1;
-    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
-        return i;
-    }
-    FMOD_CHANNEL* ch = NULL;
-    FMOD_SOUND* snd = sounds[snd_id];
-    if (snd != NULL) {
-        ch =_play_2d_sound(snd);
-        if (ch != NULL)
-            i = _add_channel(ch);
-    }
-    return i;
-}
-
-int play_3d_sound(int snd_id, float x, float y, float z, float vx, float vy, float vz) {
-    static const float tick = 30.0f;
-    int i = -1;
-    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
-        return i;
-    }
-    FMOD_SOUND* snd = sounds[snd_id];
-    FMOD_CHANNEL* ch = NULL;
-    if (snd != NULL) {
-        const FMOD_VECTOR pos = create_vector(x,y,z);
-        const FMOD_VECTOR vel = create_vector(vx*tick,vy*tick,vz*tick);
-        ch = _play_3d_sound(snd, pos, vel);
-        if (ch != NULL)
-            i = _add_channel(ch);
-    }
-    return i;
-}
-
 
 // Public
 int play_2d_sound(char* file) {
-    if (!enabled) return -1;
-    bool three_d = false;
-    int snd_id = get_sound_id(file, three_d);
-    if (snd_id < 0) return snd_id;
-    return play_2d_sound(snd_id);
+    #if USE_FMOD
+    return FMODSound::play_2d_sound(file);
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::play_2d_sound(file);
+    #endif
 }
 
 //Public
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz) {
-    if (!enabled) return -1;
-    bool three_d = true;
-    int snd_id = get_sound_id(file, three_d);
-    if (snd_id < 0) return snd_id;
-    return play_3d_sound(snd_id, x,y,z,vx,vy,vz);
-}
-
-/* Completion */
-void release_sound(FMOD_SOUND* sound) {
-    FMOD_RESULT r = FMOD_Sound_Release(sound);
-    ERRCHECK(r);
-}
-
-void end_sound(int snd_id) {
-    if (snd_id < 0 || snd_id >= MAX_SOUNDS) {
-        return;
-    }
-    FMOD_SOUND* snd = sounds[snd_id];
-    if (snd != NULL) {
-        release_sound(snd);
-    }
-    sounds[snd_id] = NULL;
-}
-
-void release_sound_system() {
-    if (sound_sys == NULL)
-        return;
-    FMOD_RESULT result = FMOD_System_Release(sound_sys);
-    ERRCHECK(result);
-}
-
-void release_channel_group() {
-    if (chgroup == NULL)
-        return;
-    FMOD_RESULT result = FMOD_ChannelGroup_Release(chgroup);
-    ERRCHECK(result);
-}
-
-void release_globals() {
-    release_channel_group();
-    release_sound_system();
-}
-
-void release_sounds() {
-    int i;
-    for (i=0; i<MAX_SOUNDS; i++) {
-        end_sound(i);
-    }
-}
-
-void release_all() {
-    release_sounds();
-    release_globals();
+    #if USE_FMOD
+    return FMODSound::play_3d_sound(file, x,y,z, vx,vy,vz);
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::play_3d_sound(file, x,y,z, vx,vy,vz);
+    #endif
 }
 
 void close() {
-    printf("Sound.cpp: release all\n");
-    release_all();
-    teardown_triggers();
+    #if USE_FMOD
+    return FMODSound::close();
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::close();
+    #endif
 }
 
 /*
     UTILITIES
                 */
 int test() {
-    init_sound_system();
-    char testfile[] = "../media/sound/wav/semishoot.wav";
-    FMOD_SOUND* gun = _load_2d_sound(testfile);
-
-    _play_2d_sound(gun);
-
-    release_sound(gun);
-    release_sound_system();
-    return 0;
+    #if USE_FMOD
+    return FMODSound::test();
+    #endif
+    #if USE_OPENAL
+    return OpenALSound::test();
+    #endif
 }
 
-
-//CYTHON
-void update_sound(){update();}
 }

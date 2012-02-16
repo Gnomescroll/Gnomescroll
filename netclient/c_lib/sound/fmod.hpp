@@ -1,12 +1,14 @@
+#pragma once
+
 #include <fmod.h>
 #include <fmod_errors.h>
 #include <c_lib/sound/wincompat.h>
 #include <stdio.h>
 
-#define USE_FMOD 1
-#define USE_OPENAL 0
+#if USE_FMOD
 
-namespace Sound {
+namespace FMODSound
+{
 
 void init(float vol);
 void close();
@@ -24,3 +26,5 @@ void update();
 int test();
 
 }
+
+#endif

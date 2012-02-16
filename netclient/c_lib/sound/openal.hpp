@@ -1,12 +1,9 @@
-#include <fmod.h>
-#include <fmod_errors.h>
-#include <c_lib/sound/wincompat.h>
-#include <stdio.h>
+#pragma once
 
-#define USE_FMOD 1
-#define USE_OPENAL 0
+#if USE_OPENAL
 
-namespace Sound {
+namespace OpenALSound
+{
 
 void init(float vol);
 void close();
@@ -24,3 +21,5 @@ void update();
 int test();
 
 }
+
+#endif

@@ -133,8 +133,10 @@
 #include <c_lib/input/skeleton_editor.cpp>
 
 /* sound */
-#include <c_lib/sound/sound.cpp>
 #include <c_lib/sound/triggers.cpp>
+#include <c_lib/sound/fmod.cpp>
+#include <c_lib/sound/openal.cpp>
+#include <c_lib/sound/sound.cpp>
 
 /* chat */
 #include <c_lib/chat/globals.hpp>
