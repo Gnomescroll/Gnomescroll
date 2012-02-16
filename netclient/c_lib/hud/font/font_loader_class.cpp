@@ -28,6 +28,15 @@ void CFontSys::add_glyph(
     glyphs[c].xoff = xoff;
     glyphs[c].yoff = yoff;
     glyphs[c].xadvance = xadvance;
+
+    meta->glyphs[c].x = x;
+    meta->glyphs[c].y = y;
+    meta->glyphs[c].w = w;
+    meta->glyphs[c].h = h;
+    meta->glyphs[c].xoff = xoff;
+    meta->glyphs[c].yoff = yoff;
+    meta->glyphs[c].xadvance = xadvance;
+
 }
 
 
@@ -85,12 +94,11 @@ void CFontSys::save_font_to_file(char* filename)
 }
 */
 
-CFontSys::CFontSys(struct _font_meta* meta)
+CFontSys::CFontSys(struct _font_meta* _meta)
 :
 bitmap(NULL)
 {
-    glyphs = (_glyph*) &meta->glyphs;
-
+    meta = _meta;
     error = 0;
     //memset(glyphs, 0 , 256*sizeof(struct _glyph));
     // Initializing FT library

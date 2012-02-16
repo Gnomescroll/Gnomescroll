@@ -25,7 +25,7 @@ namespace font_loader
 */
 
 //// DELETE THIS
-struct _glyph
+struct _Glyph
 {
     float x, y, tw, th;
     float w, h;
@@ -53,9 +53,10 @@ class CFontSys
             float w, float h,
             float xadvance
         );
-        struct _glyph* glyphs;
+        struct _Glyph glyphs[256];
+        struct _font_meta* meta;
     public:
-        CFontSys(struct _font_meta* meta);
+        CFontSys(struct _font_meta* _meta);
         ~CFontSys();
 
         int error;
