@@ -299,7 +299,7 @@ void init()
     fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
 
     int i = 0;
-    fonts[i++] = new Font((char*)"inc_16.fnt");
+    fonts[i++] = new Font((char*)"inconsolata_16.fnt");
     fonts[i++] = new Font(Options::font);
 
     font = fonts[i-1];
