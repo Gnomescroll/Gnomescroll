@@ -45,8 +45,40 @@ int get_mouse_tick()
     return delta;
 }
 
+#include <c_lib/hud/font/font_loader.hpp>
+#include <c_lib/hud/font/font_loader.cpp>
+
+//using namespace font_loader;
+
+#include <c_lib/SDL/texture_loader.hpp>
+
+#include <c_lib/SDL/IMG_savepng.h>
+void font_test()
+{
+    printf("Generating Font \n");
+    class font_loader::CFontSys c;
+
+    c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
+    //c.GenerateFont((char*)"./media/fonts/freesansbold.ttf", 12);
+
+
+    struct SDL_Surface* s = create_surface_from_nothing(c.font_texture_width, c.font_texture_height);
+    for(int i=0; i< c.font_texture_width*c.font_texture_height; i++)
+    {
+        ((Uint32*)s->pixels)[i] = ((Uint32*) c.bitmap )[i];
+    }
+    IMG_SavePNG("test.png", s, -1);
+
+    c.save_font_to_file( (char*) "font_hate.png");
+
+    exit(0);
+}
+
 void init()
 {
+
+font_test();
+
 #if INTERCEPT_CTRL_C
     #ifdef linux
         signal(SIGINT, intHandler);
