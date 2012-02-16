@@ -14,13 +14,13 @@ unsigned char* cells = NULL;
 const int width = 512;
 const int height = 512;
 
-static SDL_Surface* map_surface;
+static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2];
 
-static SDL_Surface* overlay_surface;
+static SDL_Surface* overlay_surface = NULL;
 static GLuint overlay_textures[2];
 
-static SDL_Surface* gradient_surface;
+static SDL_Surface* gradient_surface = NULL;
 
 // create blank surface
 void init_surface() {
@@ -283,6 +283,21 @@ void draw() {
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
+}
+
+void teardown()
+{
+    if (overlay_surface != NULL)
+        SDL_FreeSurface(overlay_surface);
+
+    if (map_surface != NULL)
+        SDL_FreeSurface(map_surface);
+
+    if (gradient_surface != NULL)
+        SDL_FreeSurface(gradient_surface);
+
+    if (cells != NULL)
+        free(cells);
 }
 
 // for cython

@@ -295,10 +295,13 @@ Server/client options in C
 
 ====================
 
-Feb 16
+Feb 15
+
+polish font integration failure
+write own font system in C++ (works)
+free sdl surfaces
 
 TODO:
-font
 openal
 System notifications (you killed...)
 ====================

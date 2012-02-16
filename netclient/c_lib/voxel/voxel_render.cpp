@@ -80,22 +80,23 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     if (vv == NULL) return;
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    int i=0;
+    for(; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if(render_list[i] == vv)
         {
             num_elements--;
             render_list[i] = NULL;
-            //printf("Removed voxel volume %i from render list\n", i);
-            vv->id = -1;
-            vv->voxel_render_list = NULL;
-            return;
+            break;
         }
     }
 
-    printf("Voxel_render_list::unregister_voxel_volume error, volume was not on list \n");
     vv->id = -1;
     vv->voxel_render_list = NULL;
+    if (i == VOXEL_RENDER_LIST_SIZE)
+        printf("Voxel_render_list::unregister_voxel_volume error, volume was not on list \n");
+    //else
+        //printf("Removed voxel volume %i from render list\n", i);
 }
 
 void Voxel_render_list::update_vertex_buffer_object()
@@ -219,6 +220,9 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
     InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
     InTex = glGetAttribLocation(voxel_shader_prog, "InTex");
+
+    free(vs);
+    free(fs);
 
     init=1;
 }

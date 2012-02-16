@@ -52,7 +52,7 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-def configure(conf):
+def configure(conf, add_flags=[], rm_flags=[]):
     global _OS
     global os_libpth
 
@@ -85,23 +85,35 @@ def configure(conf):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
+    cflags = []
+
     extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch'] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
+        #conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
+        #conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
+        cflags += ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']
     else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
+        #conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
+        #conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
+        cflags += ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'] # '-lefence'
 
     if OS == 'Windows':
-        pass
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
         conf.env.append_value("LINKFLAGS", "-lwinmm")
 
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+
+    cflags += extra_options
+
+    cflags += [c for c in add_flags if c not in cflags]
+    cflags = [c for c in cflags if c not in rm_flags]
+
+    conf.env.append_value('CFLAGS', cflags)
+    conf.env.append_value('CXXFLAGS', cflags)
+    
 
     '''
     incremental linking
@@ -368,12 +380,23 @@ class exceptions_ctx(ConfigurationContext):
 class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
+    
+#class bounds_check_ctx(ConfigurationContext):
+    #cmd = 'bounds_check'
+    #fun = 'bounds_check'
 
+#def bounds_check(ctx):
+    #configure(ctx)
+    #ctx.env.CFLAGS.append('-fbounds-checking')
+    #ctx.env.CXXFLAGS.append('-fbounds-checking')
+    
 def production(ctx):
-    configure(ctx)
-    optimized(ctx)
-    ctx.env.CFLAGS.append('-DPRODUCTION')
-    ctx.env.CXXFLAGS.append('-DPRODUCTION')
+    #configure(ctx)
+    #optimized(ctx)
+    #ctx.env.CFLAGS.append('-DPRODUCTION')
+    #ctx.env.CXXFLAGS.append('-DPRODUCTION')
+
+    configure(ctx, add_flags=['-DPRODUCTION', '-O3', '-Winline'], rm_flags=['-ggdb'])
 
 def profile(ctx):
     configure(ctx)

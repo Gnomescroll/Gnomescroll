@@ -43,6 +43,13 @@ struct Texture _load_image_create_texture(char *file) {
     SDL_Surface *image = _load_image(file);
 
     Texture texture;
+
+    if (image == NULL)
+    {
+        printf("ERROR: _load_image_create_texture, surface is NULL\n");
+        return texture;
+    }
+
     texture.w = image->w;
     texture.h = image->h;
     texture.tex = 0;
@@ -50,11 +57,20 @@ struct Texture _load_image_create_texture(char *file) {
     if (err) {
         printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
     }
+    
+    SDL_FreeSurface(image);
+    
     return texture;
 }
 
 void _load_image_create_texture(char *file, struct Texture *tex) {
     SDL_Surface *image = _load_image(file);
+
+    if (image == NULL)
+    {
+        printf("ERROR: _load_image_create_texture, surface is NULL\n");
+        return;
+    }
 
     tex->w = image->w;
     tex->h = image->h;
@@ -63,6 +79,8 @@ void _load_image_create_texture(char *file, struct Texture *tex) {
     if (err) {
         printf("_load_image_create_texture :: Texture could not be created from surface. Error code %d\n", err);
     }
+
+    SDL_FreeSurface(image);
 }
 
 int create_texture_from_surface(SDL_Surface *surface, int *tex) {
@@ -110,6 +128,7 @@ int create_texture_from_file(char* filename, int* tex) {
     }
     glTexImage2D(GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     glDisable(GL_TEXTURE_2D);
+    SDL_FreeSurface(surface);
     return 0;
 }
 

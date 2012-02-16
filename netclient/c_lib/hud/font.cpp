@@ -273,7 +273,7 @@ missing_glyph('?')
     if (strlen(fn) > 32)
     {
         printf("WARNING: font file %s name length > 32\n",fn);
-        fn[33] = '\0';
+        fn[32+1] = '\0';
     }
 
     // save filename
@@ -299,7 +299,7 @@ void init()
     fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
 
     int i = 0;
-    fonts[i++] = new Font((char*)"inc_16.fnt");
+    fonts[i++] = new Font((char*)"inconsolata_16.fnt");
     fonts[i++] = new Font(Options::font);
 
     font = fonts[i-1];

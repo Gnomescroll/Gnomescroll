@@ -1,6 +1,6 @@
 #include "particle_functions.h"
 
-static SDL_Surface *particle_surface;
+static SDL_Surface *particle_surface = NULL;
 static GLuint particle_texture;
 static GLuint shader_program_1;
 
@@ -376,4 +376,10 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     return 0;
+}
+
+void teardown_particle_surface()
+{
+    if (particle_surface != NULL)
+        SDL_FreeSurface(particle_surface);
 }

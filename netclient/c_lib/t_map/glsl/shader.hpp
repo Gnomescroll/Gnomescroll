@@ -19,6 +19,8 @@ namespace t_map
     int map_LightMatrix;
 
     //texture
-    SDL_Surface *terrain_map_surface;
-    GLuint terrain_map_texture;
+    extern SDL_Surface *terrain_map_surface;
+    extern GLuint terrain_map_texture;
+
+    void teardown_shader(); // frees surface
 }
