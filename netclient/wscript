@@ -297,6 +297,12 @@ def install_in_ext(ctx):
         pass
         #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
+    try:
+        c_lib_target = ctx.env.cshlib_PATTERN % 'font_lib'
+        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
+    except:
+        pass
+        #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
     targets = [
        'init_c_lib',
