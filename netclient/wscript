@@ -24,6 +24,12 @@ int main(int argc, char *argv[]) {
 }
 """
 
+OPENAL_MAIN_TEST_CODE = """
+int main(int argc, char *argv[]) {
+    return 0;
+}
+"""
+
 NOISE_MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
     return 0;
@@ -147,6 +153,13 @@ def configure(conf, add_flags=[], rm_flags=[]):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
                
+    conf.check(header_name='AL/alut.h',
+               lib='openal',
+               use='openal',
+               uselib_store='openal',
+               fragment='#include <AL/alut.h>' + OPENAL_MAIN_TEST_CODE,
+               mandatory=True)
+               
     #conf.check(header_name='SDL_keyboard.h',
                #lib='SDL',
                #use='SDL',
@@ -214,7 +227,7 @@ def build(bld):
 
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
-    sound_libraries = ['fmodex']
+    sound_libraries = ['fmodex', 'openal']
     #noise_libraries = ['noise']
 
     if OS == "Darwin":

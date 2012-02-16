@@ -3,12 +3,12 @@
 #include <c_lib/sound/wincompat.h>
 #include <stdio.h>
 
-#define USE_FMOD 1
-#define USE_OPENAL 0
+#define USE_FMOD 0
+#define USE_OPENAL 1
 
 namespace Sound {
 
-void init(float vol);
+void init();
 void close();
 
 void set_volume(float vol);

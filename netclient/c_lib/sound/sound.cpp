@@ -3,7 +3,8 @@
 namespace Sound
 {
 
-void init() {
+void init()
+{
     #if USE_FMOD
     FMODSound::init();
     #endif

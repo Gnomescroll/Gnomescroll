@@ -10,7 +10,7 @@
 namespace FMODSound
 {
 
-void init(float vol);
+void init();
 void close();
 
 void set_volume(float vol);
