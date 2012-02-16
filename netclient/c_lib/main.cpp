@@ -56,14 +56,13 @@ void font_test()
 {
     printf("Generating Font \n");
     //class font_loader::CFontSys c;
-
-
     //struct _font_meta* load_font(char* filename, int size);
-    struct _font_meta* meta = load_font((char*)"./media/fonts/verdana.ttf", 18);
     //font_to_file(&c);
     //c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
     //c.save_font_to_file( (char*) "font_hate.png");
-    exit(0);
+
+    //struct _font_meta* meta = load_font((char*)"./media/fonts/verdana.ttf", 18);
+    //exit(0);
 }
 
 void init()
