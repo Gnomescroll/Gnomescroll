@@ -112,12 +112,15 @@
 #endif
 
 /* HUD */
+
+#include <c_lib/hud/font/font_loader.hpp> /* TEMP */
+#include <c_lib/hud/font/struct.hpp>
+
 #include <c_lib/hud/reticle.cpp>
 #include <c_lib/hud/cube_selector.cpp>
 #include <c_lib/hud/inventory.cpp>
 #include <c_lib/hud/font.cpp>
-//#include <c_lib/hud/font_loader.cpp>
-#include <c_lib/hud/font/font_loader.hpp> /* TEMP */
+
 #include <c_lib/hud/text.cpp>
 #include <c_lib/hud/map.cpp>
 #include <c_lib/hud/equipment.cpp>
