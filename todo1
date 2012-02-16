@@ -299,12 +299,16 @@ Feb 15
 
 polish font integration failure
 write own font system in C++ (works)
+clean up font files
 free sdl surfaces
+ctrl-c exit works again
 
 TODO:
 openal
 System notifications (you killed...)
 ====================
+
+MYSTERY (buffer overrun?) valgrind bitches about voxels sometimes
 
 == MODELS ==
 Make new model that fits inside agent box   DONE
