@@ -117,6 +117,7 @@
 #include <c_lib/hud/inventory.cpp>
 #include <c_lib/hud/font.cpp>
 //#include <c_lib/hud/font_loader.cpp>
+#include <c_lib/hud/font/font_loader.hpp> /* TEMP */
 #include <c_lib/hud/text.cpp>
 #include <c_lib/hud/map.cpp>
 #include <c_lib/hud/equipment.cpp>

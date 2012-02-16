@@ -255,9 +255,9 @@ def build(bld):
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+['font_lib'],
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+font_libraries,
 
-        lib=sound_libraries+png_libs+font_libraries+['font_lib'],
+        lib=sound_libraries+png_libs+font_libraries,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
