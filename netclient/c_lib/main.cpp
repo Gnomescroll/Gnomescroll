@@ -55,21 +55,21 @@ int get_mouse_tick()
 //#include <c_lib/SDL/IMG_savepng.h>
 void font_test()
 {
-    printf("Generating Font \n");
+    //printf("Generating Font \n");
     //class font_loader::CFontSys c;
     //struct _font_meta* load_font(char* filename, int size);
     //font_to_file(&c);
     //c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
     //c.save_font_to_file( (char*) "font_hate.png");
 
-    struct _font_meta* meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
+    //struct _font_meta* meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
     //exit(0);
-    if(meta == NULL) printf("WTF\n");
+    //if(meta == NULL) printf("WTF\n");
 }
 
 void init()
 {
-
+ 
 font_test();
 
 #if INTERCEPT_CTRL_C

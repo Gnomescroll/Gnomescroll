@@ -243,6 +243,7 @@ def build(bld):
         time_lib = []
 
     #font loader
+    '''
     bld(features='cxx cxxshlib',
         source=['c_lib/hud/font/font_loader.cpp'],
         use=font_libraries,
@@ -251,12 +252,12 @@ def build(bld):
         libpath=[], #hack
         uselib_store='font_lib',
         target='font_lib')
-
+    '''
     #clib
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+['font_lib'],
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs,
 
         lib=sound_libraries+png_libs,
         includes=['./sound/api/inc/', './sound'],
@@ -271,7 +272,7 @@ def build(bld):
 
     # final
     bld(features='cxx cprogram pyembed',
-        use=SDL_libraries + ['c_lib'] + ['font_lib'], #removing font does not compile?
+        use=SDL_libraries + ['c_lib'], #removing font does not compile?
         source='run.c',
         target='run')
 

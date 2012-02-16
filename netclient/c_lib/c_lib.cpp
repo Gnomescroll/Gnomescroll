@@ -113,7 +113,7 @@
 
 /* HUD */
 
-#include <c_lib/hud/font/font_loader.hpp> /* TEMP */
+//#include <c_lib/hud/font/font_loader.hpp> /* TEMP */
 //#include <c_lib/hud/font/struct.hpp>
 
 #include <c_lib/hud/reticle.cpp>
