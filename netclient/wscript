@@ -154,13 +154,13 @@ def configure(conf, add_flags=[], rm_flags=[]):
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
 
-    #conf.check(header_name='ft2build.h',
-            #lib='freetype',
-            #use='freetype',
-            #uselib_store='freetype',
-            #includes=["/usr/include", "/usr/include/freetype2"],
-            #fragment='#include <ft2build.h>' + FONT_MAIN_TEST_CODE,
-            #mandatory=True)
+    conf.check(header_name='ft2build.h',
+            lib='freetype',
+            use='freetype',
+            uselib_store='freetype',
+            includes=["/usr/include", "/usr/include/freetype2"],
+            fragment='#include <ft2build.h>' + FONT_MAIN_TEST_CODE,
+            mandatory=True)
                
     #conf.check(header_name='SDL_keyboard.h',
                #lib='SDL',
@@ -228,11 +228,9 @@ def build(bld):
     """"""
 
     common_libraries = []
-    #SDL_libraries = ['GL', 'SDL', 'SDL_keyboard', 'SDL_keysym', 'SDL_image']
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
-    #font_libraries = ['freetype']
-    font_libraries = []
+    font_libraries = ['freetype']
     #noise_libraries = ['noise']
 
     if OS == "Darwin":
@@ -240,18 +238,26 @@ def build(bld):
     else:
         png_libs=['png']
 
-
     time_lib = ['rt']
     if OS == "Darwin":
         time_lib = []
 
+    #font loader
+    bld(features='cxx cxxshlib',
+        source=['c_lib/hud/font/font_loader.cpp'],
+        use=font_libraries,
+        lib=font_libraries,
+        includes=[],
+        libpath=[], #hack
+        target='font_lib')
+
+    #clib
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+font_libraries,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+['font_lib'],
 
-        #lib=sound_libraries+noise_libraries+png_libs,
-        lib=sound_libraries+png_libs+font_libraries,
+        lib=sound_libraries+png_libs+font_libraries+['font_lib'],
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -259,12 +265,12 @@ def build(bld):
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
-        use=common_libraries + ['c_lib'],
+        use=common_libraries + ['c_lib'] + ['font_lib'],
         target='init_c_lib')
 
     # final
     bld(features='cxx cprogram pyembed',
-        use=SDL_libraries + ['c_lib'], #added clib
+        use=SDL_libraries + ['c_lib'] + ['font_lib'], #added clib
         source='run.c',
         target='run')
 

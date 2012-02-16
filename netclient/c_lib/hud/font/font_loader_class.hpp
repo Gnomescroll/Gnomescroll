@@ -1,5 +1,12 @@
 #pragma once
 
+
+#include "struct.hpp"
+
+namespace font_loader
+{
+    
+
 /*
     Usage: create CFontSys instance and call GenerateFont as many times as you want
     then use CFontSys::bitmap to make texture. its in RGBARGBARGBA... format (actually values are same)
@@ -17,25 +24,17 @@
 
 */
 
-#include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftglyph.h>
-#include <freetype/ftoutln.h>
-#include <freetype/fttrigon.h>
-
-#include <c_lib/hud/font.hpp>
-
 //// DELETE THIS
-//struct glyph
-//{
-    //float x, y, tw, th;
-    //float w, h;
-    //float xadvance;
-    //float xoff, yoff;
+struct _glyph
+{
+    float x, y, tw, th;
+    float w, h;
+    float xadvance;
+    float xoff, yoff;
 
     //// temporary
-    //unsigned char* bitmap;
-//};
+    unsigned char* bitmap;
+};
 
 //extern void add_glyph(int c,  float x, float y,  float xoff, float yoff,   float w, float h, float xadvance     );
 //extern glyph glyphs[];
@@ -43,17 +42,27 @@
 class CFontSys
 {
     private:
-        FT_Library library;
-        bool make_char(FT_Face face,unsigned char ch);
         void GenerateTexture(int n_glyphs);
-
+        //bool make_char(class FT_Face* face, unsigned char ch);
+        bool make_char(void* face, unsigned char ch);
+        
+        void add_glyph(
+            int c,
+            float x, float y,
+            float xoff, float yoff,
+            float w, float h,
+            float xadvance
+        );
+        struct _glyph* glyphs;
     public:
-        CFontSys();
+        CFontSys(struct _font_meta* meta);
         ~CFontSys();
 
         int error;
 
         void GenerateFont(const char* path,int fontsize);
+        //struct SDL_Surface* GenerateSDL_Surface();
+        //void save_font_to_file(char* filename);
 
         // Font Bitmap values
         // READ ONLY!
@@ -64,4 +73,4 @@ class CFontSys
         int segment_height;
 };
 
-void load_fonts();
+}
