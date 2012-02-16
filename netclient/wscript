@@ -12,14 +12,7 @@ import shutil
 import subprocess
 import re
 
-
 SDL_MAIN_TEST_CODE = """
-int main(int argc, char *argv[]) {
-    return 0;
-}
-"""
-
-FONT_MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
     return 0;
 }
@@ -153,14 +146,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
                uselib_store='SDL_image',
                fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
                mandatory=True)
-
-    conf.check(header_name='ft2build.h',
-            lib='freetype',
-            use='freetype',
-            uselib_store='freetype',
-            includes=["/usr/include", "/usr/include/freetype2"],
-            fragment='#include <ft2build.h>' + FONT_MAIN_TEST_CODE,
-            mandatory=True)
                
     #conf.check(header_name='SDL_keyboard.h',
                #lib='SDL',
@@ -230,7 +215,6 @@ def build(bld):
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
-    font_libraries = ['freetype']
     #noise_libraries = ['noise']
 
     if OS == "Darwin":
@@ -242,23 +226,13 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
-    #font loader
-    bld(features='cxx cxxshlib',
-        source=['c_lib/hud/font/font_loader.cpp'],
-        use=font_libraries,
-        lib=font_libraries,
-        includes=[],
-        libpath=[], #hack
-        uselib_store='font_lib',
-        target='font_lib')
-
     #clib
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+font_libraries,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs,
 
-        lib=sound_libraries+png_libs+font_libraries,
+        lib=sound_libraries+png_libs,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -266,12 +240,12 @@ def build(bld):
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
-        use=common_libraries + ['c_lib'] + ['font_lib'],
+        use=common_libraries + ['c_lib'],
         target='init_c_lib')
 
     # final
     bld(features='cxx cprogram pyembed',
-        use=SDL_libraries + ['c_lib'] + ['font_lib'], #added clib
+        use=SDL_libraries + ['c_lib'],
         source='run.c',
         target='run')
 
@@ -293,13 +267,6 @@ def install_in_ext(ctx):
 
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
-        shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
-    except:
-        pass
-        #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
-
-    try:
-        c_lib_target = ctx.env.cshlib_PATTERN % 'font_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
         pass
