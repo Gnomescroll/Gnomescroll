@@ -1,8 +1,12 @@
 #pragma once
 
+namespace font_loader
+{
+    
 
 struct _font_meta* load_font(char* filename, int size);
 
+}
 /*
 struct SDL_Surface* font_to_surface(class CFontSys* c)
 {

@@ -1,12 +1,8 @@
 #include "font_loader.hpp"
 
 
-
-//#include <c_lib/SDL/texture_loader.hpp>
-//#include <c_lib/SDL/IMG_savepng.h>
-
-//#include <stdlib.h>
-//include <string.h>
+namespace font_loader
+{
 
 #include <stdlib.h>
 #include <string.h>
@@ -26,4 +22,6 @@ struct _font_meta* load_font(char* filename, int size)
     c.GenerateFont( filename, size);
 
     return meta;
+}
+
 }

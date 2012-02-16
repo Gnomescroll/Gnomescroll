@@ -249,6 +249,7 @@ def build(bld):
         lib=font_libraries,
         includes=[],
         libpath=[], #hack
+        uselib_store='font_lib',
         target='font_lib')
 
     #clib
