@@ -8,6 +8,7 @@ syntax: glob
 *.so
 *.o
 
+font_cache
 *.glc
 
 dist
