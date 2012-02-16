@@ -63,7 +63,7 @@ void font_test()
     //c.save_font_to_file( (char*) "font_hate.png");
 
     struct _font_meta* meta;
-    meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
+    //meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
     //exit(0);
 }
 
