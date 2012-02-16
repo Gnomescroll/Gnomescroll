@@ -11,6 +11,7 @@ struct _glyph
 
 struct _font_meta
 {
+    unsigned char* bitmap;
     unsigned short bitmap_width;
     unsigned short bitmap_height;
     struct _glyph glyphs[256];

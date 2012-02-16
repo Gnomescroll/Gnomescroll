@@ -307,6 +307,15 @@ void CFontSys::GenerateTexture(int n_glyphs)
             }
         }
     }
+    export_to_meta();
+}
+
+void CFontSys::export_to_meta()
+{
+    meta->bitmap_width = font_texture_width;
+    meta->bitmap_height = font_texture_height;
+    meta->bitmap = new unsigned char[font_texture_width*font_texture_height];
+    memcpy(meta->bitmap, bitmap, 4*font_texture_width*font_texture_height);
 }
 
 /*

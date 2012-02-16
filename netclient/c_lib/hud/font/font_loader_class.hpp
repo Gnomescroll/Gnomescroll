@@ -45,7 +45,8 @@ class CFontSys
         void GenerateTexture(int n_glyphs);
         //bool make_char(class FT_Face* face, unsigned char ch);
         bool make_char(void* face, unsigned char ch);
-        
+        void export_to_meta();
+
         void add_glyph(
             int c,
             float x, float y,
