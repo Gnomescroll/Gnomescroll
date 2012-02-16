@@ -299,6 +299,7 @@ Feb 15
 
 polish font integration failure
 write own font system in C++ (works)
+free sdl surfaces
 
 TODO:
 openal

@@ -205,18 +205,26 @@ int init_c_lib() {
 void close_c_lib() {
     printf("close c_lib() \n");
     shutdown_net_client();
+    printf("net client shut down\n");
     teardown_cameras();
+    printf("cameras torn down\n");
     chat_client.teardown();
+    printf("chat client torn down\n");
     HudFont::teardown();
+    printf("HudFont torn down\n");
 
     // free surfaces
     t_map::teardown_shader();
     teardown_particle_surface();
     HudMap::teardown();
     //vn::teardown();
+
+    printf("surfaces torn down\n");
     
     #ifdef DC_CLIENT
         Sound::close();
-        //close_SDL();  //would be called twice, already scheduled for at exit
+        printf("sound torn down\n");
+        close_SDL();  //would be called twice, already scheduled for at exit
+        printf("sdl closed\n");
     #endif
 }

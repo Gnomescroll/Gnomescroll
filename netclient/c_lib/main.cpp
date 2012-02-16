@@ -16,19 +16,18 @@
 bool _quit = false;
 
 
-#define INTERCEPT_CTRL_C 0 
-#define GRACEFULL_CTRL_C_SHUTDOWN 1 
+#define INTERCEPT_CTRL_C 1
+#define GRACEFULL_CTRL_C_SHUTDOWN 0
 #ifdef linux
     #include <signal.h>
-
+#include <pthread.h>
     void intHandler(int dummy=0) 
     {
     #if GRACEFULL_CTRL_C_SHUTDOWN
         _quit = true;
     #else
         printf("Attempting Force Close\n");
-        close_c_lib();
-        exit(0);    
+        abort();
     #endif
     }
 #endif

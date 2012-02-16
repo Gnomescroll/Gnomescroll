@@ -80,17 +80,12 @@ SDL_VideoInfo *pSDLVideoInfo;
 void _del_video() {
 
     static int SDL_CLOSED = 0;
-    if(SDL_CLOSED == 1)
+    if(SDL_CLOSED++)
     {
         printf("Warning! SDL un-init function called twiced! \n");
         return;
     }
-    SDL_CLOSED = 1;
-        
     printf("Deconstructing SDL OpenGL Window\n");
-    _del_video();
-    
-    //printf("SDL_functions.c: _del_video, gracefull shutdown\n");
     SDL_Quit();
 }
 
