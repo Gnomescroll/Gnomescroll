@@ -216,7 +216,6 @@ def build(bld):
     """"""
 
     common_libraries = []
-    #SDL_libraries = ['GL', 'SDL', 'SDL_keyboard', 'SDL_keysym', 'SDL_image']
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
     font_libraries = ['freetype']
@@ -227,18 +226,14 @@ def build(bld):
     else:
         png_libs=['png']
 
-
     time_lib = ['rt']
     if OS == "Darwin":
         time_lib = []
 
-    #SDL_libraries
-
     #font loader
     bld(features='cxx cxxshlib',
         source=['c_lib/hud/font/font_loader.cpp'],
-        #use=common_libraries+png_libs,
-        use=common_libraries+font_libraries,
+        use=font_libraries,
         lib=font_libraries,
         includes=[],
         libpath=[], #hack
@@ -250,7 +245,7 @@ def build(bld):
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
         use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+['font_lib'],
 
-        lib=sound_libraries+png_libs+font_libraries,
+        lib=sound_libraries+png_libs+font_libraries+['font_lib'],
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
 
@@ -258,12 +253,12 @@ def build(bld):
 
     bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
-        use=common_libraries + ['c_lib'],
+        use=common_libraries + ['c_lib'] + ['font_lib'],
         target='init_c_lib')
 
     # final
     bld(features='cxx cprogram pyembed',
-        use=SDL_libraries + ['c_lib'], #added clib
+        use=SDL_libraries + ['c_lib'] + ['font_lib'], #added clib
         source='run.c',
         target='run')
 
