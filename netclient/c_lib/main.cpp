@@ -44,8 +44,8 @@ int get_mouse_tick()
     return delta;
 }
 
-#include <c_lib/hud/font/struct.hpp>
-#include <c_lib/hud/font/font_loader.hpp>
+//#include <c_lib/hud/font/struct.hpp>
+//#include <c_lib/hud/font/font_loader.hpp>
 //#include <c_lib/hud/font/font_loader_class.hpp>
 //#include <c_lib/hud/font/font_loader.cpp>
 
@@ -64,6 +64,7 @@ void font_test()
 
     struct _font_meta* meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
     //exit(0);
+    if(meta == NULL) printf("WTF\n");
 }
 
 void init()
