@@ -46,31 +46,24 @@ int get_mouse_tick()
 }
 
 #include <c_lib/hud/font/font_loader.hpp>
-#include <c_lib/hud/font/font_loader.cpp>
+//#include <c_lib/hud/font/font_loader_class.hpp>
+//#include <c_lib/hud/font/font_loader.cpp>
 
 //using namespace font_loader;
 
-#include <c_lib/SDL/texture_loader.hpp>
-
-#include <c_lib/SDL/IMG_savepng.h>
+//#include <c_lib/SDL/texture_loader.hpp>
+//#include <c_lib/SDL/IMG_savepng.h>
 void font_test()
 {
     printf("Generating Font \n");
-    class font_loader::CFontSys c;
-
-    c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
-    //c.GenerateFont((char*)"./media/fonts/freesansbold.ttf", 12);
+    //class font_loader::CFontSys c;
 
 
-    struct SDL_Surface* s = create_surface_from_nothing(c.font_texture_width, c.font_texture_height);
-    for(int i=0; i< c.font_texture_width*c.font_texture_height; i++)
-    {
-        ((Uint32*)s->pixels)[i] = ((Uint32*) c.bitmap )[i];
-    }
-    IMG_SavePNG("test.png", s, -1);
-
-    c.save_font_to_file( (char*) "font_hate.png");
-
+    //struct _font_meta* load_font(char* filename, int size);
+    struct _font_meta* meta = load_font((char*)"./media/fonts/verdana.ttf", 18);
+    //font_to_file(&c);
+    //c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
+    //c.save_font_to_file( (char*) "font_hate.png");
     exit(0);
 }
 

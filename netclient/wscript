@@ -220,7 +220,6 @@ def build(bld):
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     sound_libraries = ['fmodex']
     font_libraries = ['freetype']
-    #font_libraries = []
     #noise_libraries = ['noise']
 
     if OS == "Darwin":
@@ -233,12 +232,24 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
+    #SDL_libraries
+
+    #font loader
+    bld(features='cxx cxxshlib',
+        source=['c_lib/hud/font/font_loader.cpp'],
+        #use=common_libraries+png_libs,
+        use=common_libraries+font_libraries,
+        lib=font_libraries,
+        includes=[],
+        libpath=[], #hack
+        target='font_lib')
+
+    #clib
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
         #use=common_libraries+time_lib+SDL_libraries+sound_libraries+noise_libraries+png_libs,
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+font_libraries,
+        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs+['font_lib'],
 
-        #lib=sound_libraries+noise_libraries+png_libs,
         lib=sound_libraries+png_libs+font_libraries,
         includes=['./sound/api/inc/', './sound'],
         libpath=['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'], #hack
