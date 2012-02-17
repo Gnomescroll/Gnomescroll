@@ -143,9 +143,18 @@ void init()
         enabled = false;
         return;
     }
+    // set source properties
+    for (int i=0; i<MAX_SOURCES; i++)
+    {
+        alSourcef(sources[i], AL_PITCH, 1.0f);
+        alSourcef(sources[i], AL_MIN_GAIN, 0.0f);
+        alSourcef(sources[i], AL_MAX_GAIN, 1.0f);
+        alSourcef(sources[i], AL_MAX_DISTANCE, 1000.0f);
+        alSourcef(sources[i], AL_REFERENCE_DISTANCE, 5.0f);
+    }
 
     // set distance model
-    alDistanceModel(AL_INVERSE_DISTANCE);
+    //alDistanceModel(AL_INVERSE_DISTANCE); // defaults to AL_INVERSE_DISTANCE_CLAMPED
 
     // init listener state
     set_volume(Options::sfx);
