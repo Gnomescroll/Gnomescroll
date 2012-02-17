@@ -37,7 +37,7 @@ namespace t_map
         return c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)];
     #else
 
-        if( z > TERRAIN_MAP_HEIGHT || z < 0 ) return NO_MAP_ELEMENT;
+        if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return NO_MAP_ELEMENT;
         if( x >= 512 || x < 0 ) return NO_MAP_ELEMENT;
         if( y >= 512 || y < 0 ) return NO_MAP_ELEMENT;
 

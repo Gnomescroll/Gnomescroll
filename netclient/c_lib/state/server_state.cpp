@@ -95,6 +95,8 @@ namespace ServerState
         counter++;
         if(counter % 32 == 0) agent_list.update_map_manager_positions();
 
+        if(counter % 32 == 0) t_map_manager_update();
+
         spawner_list.tick();
         ctf.tick();
     }

@@ -32,7 +32,7 @@ void t_map_manager_teardown(int client_id)
 /*
     Call this to set player position for map loading
 */
-void t_map_manager_update(int client_id, float _x, float _y)
+void t_map_manager_update_client_position(int client_id, float _x, float _y)
 {
 
     printf("updated client %i to %f %f \n", client_id, _x, _y);
@@ -65,16 +65,14 @@ void t_map_manager_update(int client_id, float _x, float _y)
 
 }
 
-void update_manager()
+void t_map_manager_update()
 {
-    static int tick=0;
+    
+}
 
-    tick++;
-    if(tick % 30 == 0)
-    {
-        for(int i=0; map_manager_list[i]; i++) map_manager_list[i]->update();
-    }
-
+void t_map_manager_force_update(int client_id)
+{
+    
 }
 
 }

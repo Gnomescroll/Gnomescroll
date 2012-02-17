@@ -17,7 +17,7 @@ void Agent_list::update_map_manager_positions()
     {
         agent = a[i];
         if (agent == NULL) continue;
-        t_map_manager_update(i, agent->s.x, agent->s.y);
+        t_map_manager_update_client_position(i, agent->s.x, agent->s.y);
     }
 #endif
 }
