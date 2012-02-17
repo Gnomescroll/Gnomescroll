@@ -258,7 +258,7 @@ int play_2d_sound(char* file)
     alGetListener3f(AL_VELOCITY, &vx, &vy, &vz);
 
     // play at listener state
-    return play_3d_sound(file, x,y,z,vx,vy,vz);
+    return play_3d_sound(file, x,z,y,vx,vz,vy);
 }
 
 int get_free_source()
@@ -289,26 +289,31 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
     // lookup buffer from file
 
     int source_id = get_free_source();
+    printf("source id=%d\n", source_id);
     if (source_id < 0)
         return 1;
         
     int buffer_id = get_buffer_from_filename(file);
+    printf("buffer id=%d\n", buffer_id);
     if (buffer_id < 0)
         return 1;
 
     // set source state
-    alSource3f(source_id, AL_POSITION, x, z, y);
-    alSource3f(source_id, AL_VELOCITY, vx, vz, vy);
-    alSource3f(source_id, AL_ORIENTATION, 0, 1, 0); // always looking up (for now)
+    printf("setting source state\n");
+    alSource3f(sources[source_id], AL_POSITION, x, z, y);
+    alSource3f(sources[source_id], AL_VELOCITY, vx, vz, vy);
+    alSource3f(sources[source_id], AL_DIRECTION, 0, -1, 0);  // always looking up (for now)
     if (checkError())
         return 1;
-        
+
+    printf("binding buffer to source\n");
     // Attach buffer 0 to source 
     alSourcei(sources[source_id], AL_BUFFER, buffers[buffer_id]); 
     if (checkError())
         return 1;
 
     // play
+    printf("playing\n");
     alSourcePlay(sources[source_id]);
     if (checkError())
         return 1;
