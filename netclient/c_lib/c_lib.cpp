@@ -133,6 +133,7 @@
 #include <c_lib/input/skeleton_editor.cpp>
 
 /* sound */
+#include <c_lib/sound/wav.cpp>
 #include <c_lib/sound/triggers.cpp>
 #include <c_lib/sound/fmod.cpp>
 #include <c_lib/sound/openal.cpp>
@@ -202,6 +203,8 @@ int init_c_lib() {
         Sound::init();
 
         ClientState::init();
+
+        Sound::test();
     #endif
     
     return 0;
@@ -209,15 +212,11 @@ int init_c_lib() {
 
 
 void close_c_lib() {
-    printf("close c_lib() \n");
+    printf("Closing c_lib\n");
     shutdown_net_client();
-    printf("net client shut down\n");
     teardown_cameras();
-    printf("cameras torn down\n");
     chat_client.teardown();
-    printf("chat client torn down\n");
     HudFont::teardown();
-    printf("HudFont torn down\n");
 
     // free surfaces
     t_map::teardown_shader();
@@ -225,12 +224,8 @@ void close_c_lib() {
     HudMap::teardown();
     //vn::teardown();
 
-    printf("surfaces torn down\n");
-    
     #ifdef DC_CLIENT
         Sound::close();
-        printf("sound torn down\n");
         close_SDL();  //would be called twice, already scheduled for at exit
-        printf("sdl closed\n");
     #endif
 }
