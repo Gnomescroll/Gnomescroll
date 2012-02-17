@@ -67,7 +67,12 @@ void t_map_manager_update_client_position(int client_id, float _x, float _y)
 
 void t_map_manager_update()
 {
-    
+    //iterate through client ids
+    for(int i=0; i < NetServer::HARD_MAX_CONNECTIONS; i++)
+    {
+        if(map_manager_list[i] == NULL) continue;
+        map_manager_list[i]->update();
+    }
 }
 
 void t_map_manager_force_update(int client_id)

@@ -8,7 +8,8 @@
 namespace t_map
 {
 
-const int _radius = 16;
+const int  DEFAULT_MAP_MANAGER_RADIUS = 3;
+
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
 
 //alias constants
@@ -44,8 +45,10 @@ class Map_manager
 
     int client_id;
 
-    int xpos; //player position
+    bool needs_update;
+    int xpos; //player chunk position
     int ypos;
+    int radius;
 
     int xchunk_dim;
     int ychunk_dim;
@@ -57,11 +60,14 @@ class Map_manager
 
     Map_manager(int _client_id)
     {
+        needs_update = false;
         client_id = _client_id;
+        
+        radius = DEFAULT_MAP_MANAGER_RADIUS;
 
         subed_chunks = 0;
-        xpos = 0;
-        ypos = 0;
+        xpos = 0xffff;
+        ypos = 0xffff;
 
         t = get_map();
         xchunk_dim = t->xchunk_dim;
@@ -77,7 +83,7 @@ class Map_manager
     }
 
     void update();
-    void set_position(float x, float y);
+    void set_position(int x, int y);
 
     private:
 
@@ -103,11 +109,36 @@ class Map_manager
 
 void Map_manager::update()
 {
+    if(needs_update == false) return;
     //sub chunks 
+
+    int i = xpos - radius;
+    if (i < 0) i = 0;
+
+    int j = ypos - radius;
+    if (j < 0) j = 0;
+
+    int imax = i+radius;
+    if(imax > xchunk_dim) imax = xchunk_dim;
+
+    int jmax = j+radius;
+    if(jmax > ychunk_dim) jmax = ychunk_dim;
+
+    printf("i,j= %i %i imax,jmax= %i %i \n", i,j, imax,jmax);
+    for(;i<imax; i++)
+    {
+        for(;j<jmax; j++)
+        {
+            //if( version_list[i*xchunk_dim + y] )
+            printf("sub %i %i \n", i,j);
+        }
+    }
 }
 
-void Map_manager::set_position(float x, float y)
+//this is chunk position!
+void Map_manager::set_position(int x, int y)
 {
+    if(x != xpos || y != ypos) needs_update = true;
     xpos = x;
     ypos = y;      
 }
