@@ -297,7 +297,7 @@ static void client_connect(ENetEvent* event)
         index,
         event->peer -> address.host, 
         event->peer -> address.port, 
-        NetServer::number_of_clients+1
+        NetServer::number_of_clients
     );
     //startup sequence
 

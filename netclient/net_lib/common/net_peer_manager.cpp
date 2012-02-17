@@ -23,6 +23,7 @@ void NetPeerManager::init(int client_id)
 
     Agent_state* a = ServerState::agent_list.create(client_id);
     NetServer::assign_agent_to_client(client_id, a);
+
     ServerState::send_id_to_client(client_id);
     ServerState::add_player_to_chat(client_id);
     #endif
@@ -54,7 +55,7 @@ void NetPeerManager::ready()
     ServerState::send_game_state_to_client(this->client_id);
 
     t_map_manager_setup(this->client_id);   //setup t_map_manager
-
+    
     printf("ready\n");
     #endif
 }
