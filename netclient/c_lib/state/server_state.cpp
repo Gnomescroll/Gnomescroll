@@ -86,9 +86,14 @@ namespace ServerState
 
     }
 
+/*
+    Map update function called from here
+*/
     void server_tick()
-    {
-        agent_list.update_map_manager_positions();
+    {   
+        static int counter = 0;
+        counter++;
+        if(counter % 32 == 0) agent_list.update_map_manager_positions();
 
         spawner_list.tick();
         ctf.tick();

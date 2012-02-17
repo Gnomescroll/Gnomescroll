@@ -34,6 +34,9 @@ void t_map_manager_teardown(int client_id)
 */
 void t_map_manager_update(int client_id, float _x, float _y)
 {
+
+    printf("updated client %i to %f %f \n", client_id, _x, _y);
+    
     int x = _x;
     int y = _y;
 
