@@ -144,9 +144,12 @@ void init()
         return;
     }
 
+    // set distance model
+    alDistanceModel(AL_INVERSE_DISTANCE);
+
     // init listener state
     set_volume(Options::sfx);
-    update_listener(0,0,0, 0,0,0, 0, 0, -1, 0, 1, 0);
+    update_listener(0,0,0, 0,0,0, 0,-1,0, 0,0,1);
     if (checkError())
     {
         close();
@@ -160,10 +163,13 @@ void init()
 
 void close()
 {
+    alDeleteSources(MAX_SOURCES, sources);
+    checkError();
+    
     alDeleteBuffers(MAX_BUFFERS, buffers);
     buffer_index = 0;
     checkError();
-    
+
     alcMakeContextCurrent(NULL); 
     if (context != NULL)
     {
@@ -201,6 +207,9 @@ unsigned int hash(char* s)
 
 void load_sound(char* fn)
 {
+    if (!enabled)
+        return;
+        
     if (buffer_index == MAX_BUFFERS)
     {
         printf("ERROR OpenALSound::load_sound -- no AL buffers available\n");
@@ -251,6 +260,9 @@ void load_sound(char* fn)
 
 int play_2d_sound(char* file)
 {
+    if (!enabled)
+        return 1;
+        
     // get listener state
     ALfloat x,y,z;
     ALfloat vx,vy,vz;
@@ -285,35 +297,32 @@ int get_buffer_from_filename(char *fn)
 
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz)
 {
-    // get free source
-    // lookup buffer from file
+    if (!enabled)
+        return 1;
 
+    // get free source
     int source_id = get_free_source();
-    printf("source id=%d\n", source_id);
     if (source_id < 0)
         return 1;
         
+    // lookup buffer from file
     int buffer_id = get_buffer_from_filename(file);
-    printf("buffer id=%d\n", buffer_id);
     if (buffer_id < 0)
         return 1;
 
     // set source state
-    printf("setting source state\n");
     alSource3f(sources[source_id], AL_POSITION, x, z, y);
     alSource3f(sources[source_id], AL_VELOCITY, vx, vz, vy);
     alSource3f(sources[source_id], AL_DIRECTION, 0, -1, 0);  // always looking up (for now)
     if (checkError())
         return 1;
 
-    printf("binding buffer to source\n");
     // Attach buffer 0 to source 
     alSourcei(sources[source_id], AL_BUFFER, buffers[buffer_id]); 
     if (checkError())
         return 1;
 
     // play
-    printf("playing\n");
     alSourcePlay(sources[source_id]);
     if (checkError())
         return 1;
