@@ -88,6 +88,8 @@ namespace ServerState
 
     void server_tick()
     {
+        agent_list.update_map_manager_positions();
+
         spawner_list.tick();
         ctf.tick();
     }

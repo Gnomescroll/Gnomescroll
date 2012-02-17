@@ -112,7 +112,8 @@ void Agent_state::tick()
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) {
+    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) 
+    {
 
         cs_seq = (cs_seq+1)%256;
         _cs = cs[cs_seq % 128];

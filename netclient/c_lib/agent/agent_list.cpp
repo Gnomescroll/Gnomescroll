@@ -1,5 +1,27 @@
 #include "agent_list.hpp"
 
+#ifdef DC_SERVER
+    #include <c_lib/t_map/server/manager.hpp>
+#endif
+
+/*
+    Warning: using agent position for map loading
+
+*/
+
+void Agent_list::update_map_manager_positions()
+{
+#ifdef DC_SERVER
+    Agent_state* agent;
+    for(int i=0; i<n_max; i++)
+    {
+        agent = a[i];
+        if (agent == NULL) continue;
+        t_map_manager_update(i, agent->s.x, agent->s.y);
+    }
+#endif
+}
+
 /* Agent list */
 
 void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan properties

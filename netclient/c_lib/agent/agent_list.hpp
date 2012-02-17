@@ -10,6 +10,8 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void quicksort_team(int beg, int end);
 
     public:
+        void update_map_manager_positions();
+
         void draw();
 
         int ids_in_use[AGENT_MAX];
