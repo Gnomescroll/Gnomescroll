@@ -309,10 +309,17 @@ Feb 16
 
 wav file reader
 openal
+fmod/openal build switch
+
+====================
+
+Feb 17
 
 TODO:
+Finish OpenAL integration
 System notifications (you killed...)
 ====================
+
 
 MYSTERY (buffer overrun?) valgrind bitches about voxels sometimes
 

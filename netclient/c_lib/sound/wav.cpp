@@ -4,6 +4,7 @@ namespace Sound
 {
 
 static WavData* wav_buffers = NULL;
+static const char base_path[] = "./media/sound/wav/";
 
 void print_wav_data(WavData* data)
 {
@@ -22,7 +23,7 @@ void print_wav_data(WavData* data)
     );
 }
 
-#if USE_OPENAL
+#ifdef USE_OPENAL
 ALenum get_openal_wav_format(WavData* data)
 {
     if (data->channels == 1)
@@ -186,7 +187,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
  
 // returns buffer id.  make sure to free *buffer after binding to an ALbuffer
 int load_wav_file(char *fn, unsigned char** buffer)
-{
+{    
     *buffer = NULL;
     WavData* data = NULL;
     int id = get_free_wav_data(&data);
@@ -197,7 +198,10 @@ int load_wav_file(char *fn, unsigned char** buffer)
     }
 
     // open file
-    FILE* f = fopen(fn, "rb");
+    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(fn) + 1));
+    sprintf(fullpath, "%s%s", base_path, fn);
+    FILE* f = fopen(fullpath, "rb");
+    free(fullpath);
     if (f == NULL)
     {
         printf("Error opening file: %s\n", fn);
@@ -278,8 +282,8 @@ void teardown_wav_buffers()
         for (int i=0; i<MAX_WAV_BUFFERS; i++)
             if (!wav_buffers[i].in_use)
                 release_wav_data(i);
+        free(wav_buffers);
     }
-    free(wav_buffers);
     wav_buffers = NULL;
 }
 
