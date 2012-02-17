@@ -8,7 +8,7 @@
 namespace Sound
 {
 
-const int MAX_WAV_BUFFERS = 32;
+const int MAX_WAV_BUFFERS = 64;
 typedef struct WavFile
 {
     short format;
@@ -21,7 +21,7 @@ typedef struct WavFile
     bool in_use;
 } WavData;
 
-#if USE_OPENAL
+#ifdef USE_OPENAL
 ALenum get_openal_wav_format(WavData* data);
 #endif
 

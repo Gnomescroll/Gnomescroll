@@ -204,7 +204,7 @@ int init_c_lib() {
 
         ClientState::init();
 
-        Sound::test();
+        //Sound::test();
     #endif
     
     return 0;

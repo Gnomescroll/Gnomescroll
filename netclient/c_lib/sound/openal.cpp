@@ -9,9 +9,32 @@
 namespace OpenALSound
 {
 
-static bool enabled = false;
+// lookup table
+class Soundfile {
+    public:
+        unsigned int hash;
+        int buffer;
+        bool loaded;
+
+    Soundfile():
+        hash(0), buffer(-1), loaded(false)
+        {}
+};
+static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
+static Soundfile soundfiles[MAX_SOUNDS];
+static int soundfile_index = 0;
+
+static bool enabled = true;
 static ALCdevice *device = NULL;
 static ALCcontext *context = NULL;
+
+static const ALsizei MAX_BUFFERS = Sound::MAX_WAV_BUFFERS;
+static ALuint buffers[MAX_BUFFERS];
+static int buffer_index = 0;
+
+static const ALsizei MAX_SOURCES = 16;
+static ALuint sources[MAX_SOURCES];
+
 
 bool checkError()
 {
@@ -43,8 +66,31 @@ bool checkError()
     return true;
 }
 
+void set_volume(float vol)
+{
+    alListenerf(AL_GAIN, vol);
+    checkError();
+}
+
+void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
+{
+    alListener3f(AL_POSITION, x,z,y);
+    alListener3f(AL_VELOCITY, vx,vz,vy);
+    float o[6];
+    o[0] = fx;
+    o[1] = fz;
+    o[2] = fy;
+    o[3] = ux;
+    o[4] = uz;
+    o[5] = uy;
+    alListenerfv(AL_ORIENTATION, o);
+}
+
 void init()
 {
+    enabled = Options::sound;
+    if (!enabled) return;
+    
     static int inited = 0;
     if (inited++)
     {
@@ -54,15 +100,17 @@ void init()
 
     Sound::init_wav_buffers();
 
-    // Initialization 
+    // open device (enumerate before this) 
     device = alcOpenDevice(NULL); // select the "preferred device" 
 
     if (device == NULL)
     {
+        close();
         enabled = false;
         return;
     }
 
+    // create context
     context = alcCreateContext(device, NULL); 
     alcMakeContextCurrent(context);  
     
@@ -72,17 +120,36 @@ void init()
         printf("EAX is present\n");
 
     if (checkError())
-    { // clear error code
+    {
+        close();
         enabled = false;
         return;
     }
 
-    alListener3f(AL_POSITION, 0, 0, 0);
-    alListener3f(AL_VELOCITY, 0, 0, 0);
-    float orientation[6] = {0, -1, 0, 0, 0, 1};
-    alListenerfv(AL_ORIENTATION, orientation);
+    // init AL buffers
+    alGenBuffers(MAX_BUFFERS, buffers); 
     if (checkError())
     {
+        close();
+        enabled = false;
+        return;
+    }
+
+    // init AL sources
+    alGenSources(MAX_SOURCES, sources); 
+    if (checkError())
+    {
+        close();
+        enabled = false;
+        return;
+    }
+
+    // init listener state
+    set_volume(Options::sfx);
+    update_listener(0,0,0, 0,0,0, 0, 0, -1, 0, 1, 0);
+    if (checkError())
+    {
+        close();
         enabled = false;
         return;
     }
@@ -93,6 +160,10 @@ void init()
 
 void close()
 {
+    alDeleteBuffers(MAX_BUFFERS, buffers);
+    buffer_index = 0;
+    checkError();
+    
     alcMakeContextCurrent(NULL); 
     if (context != NULL)
     {
@@ -106,72 +177,177 @@ void close()
     }
 
     Sound::teardown_wav_buffers();
-    
+    enabled = false;
     printf("OpenAL sound closed.\n");
 }
 
-void set_volume(float vol)
+unsigned int hash(char* s)
 {
-
+    unsigned int highorder;
+    unsigned int h = 0;
+    int i;
+    for (i=0; s[i] != '\0'; i++) {
+         highorder = h & 0xf8000000;    // extract high-order 5 bits from h
+                                        // 0xf8000000 is the hexadecimal representation
+                                        //   for the 32-bit number with the first five 
+                                        //   bits = 1 and the other bits = 0   
+         h = h << 5;                    // shift h left by 5 bits
+         h = h ^ (highorder >> 27);     // move the highorder 5 bits to the low-order
+                                        //   end and XOR into h
+         h = h ^ (unsigned int)s[i];                  // XOR h and ki
+    }
+    return h;
 }
 
-void load_sound(char* file)
+void load_sound(char* fn)
 {
+    if (buffer_index == MAX_BUFFERS)
+    {
+        printf("ERROR OpenALSound::load_sound -- no AL buffers available\n");
+        return;
+    }
+    unsigned char* buffer = NULL;
 
+    // Load test.wav 
+    int data_id = Sound::load_wav_file(fn, &buffer);
+    if (data_id < 0)
+    {
+        printf("OpenALSound::load_sound -- wav data_id %d invalid\n", data_id);
+        return;
+    }
+    if (buffer == NULL)
+    {
+        printf("OpenALSound::load_sound -- buffer data is NULL\n");
+        return;
+    }
+
+    Sound::WavData *data = Sound::get_loaded_wav_data(data_id);
+    if (data == NULL)
+    {
+        printf("OpenALSound::load_sound -- wav metadata is NULL\n");
+        return;
+    }
+    //Sound::print_wav_data(data);
+
+    // retrieve OpenAL specific format, determined from wav metadata
+    ALenum fmt = Sound::get_openal_wav_format(data);
+
+    // put the PCM data into the alBuffer
+    // (this will copy the buffer, so we must free our PCM buffer)
+    alBufferData(buffers[buffer_index], fmt, buffer, data->size, data->sample_rate);
+    free(buffer);
+    if (checkError())
+        return;
+
+    // put in lookup table for playback
+    Soundfile* s;
+    s = &soundfiles[soundfile_index++];
+    s->hash = hash(fn);
+    s->buffer = buffer_index;
+    s->loaded = true;
+
+    buffer_index++;
 }
 
 int play_2d_sound(char* file)
 {
-    return 0;
+    // get listener state
+    ALfloat x,y,z;
+    ALfloat vx,vy,vz;
+    alGetListener3f(AL_POSITION, &x, &y, &z);
+    alGetListener3f(AL_VELOCITY, &vx, &vy, &vz);
 
+    // play at listener state
+    return play_3d_sound(file, x,y,z,vx,vy,vz);
+}
+
+int get_free_source()
+{
+    ALint source_state;
+    for (int i=0; i<MAX_SOURCES; i++)
+    {
+        alGetSourcei(sources[i], AL_SOURCE_STATE, &source_state);
+        if (source_state != AL_PLAYING)
+            return i;
+    }
+    return -1;
+}
+
+int get_buffer_from_filename(char *fn)
+{
+    unsigned int h = hash(fn);
+    for (int i=0; i<MAX_SOUNDS; i++)
+        if (soundfiles[i].loaded && soundfiles[i].hash == h)
+            return soundfiles[i].buffer;
+
+    return -1;
 }
 
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz)
 {
+    // get free source
+    // lookup buffer from file
+
+    int source_id = get_free_source();
+    if (source_id < 0)
+        return 1;
+        
+    int buffer_id = get_buffer_from_filename(file);
+    if (buffer_id < 0)
+        return 1;
+
+    // set source state
+    alSource3f(source_id, AL_POSITION, x, z, y);
+    alSource3f(source_id, AL_VELOCITY, vx, vz, vy);
+    alSource3f(source_id, AL_ORIENTATION, 0, 1, 0); // always looking up (for now)
+    if (checkError())
+        return 1;
+        
+    // Attach buffer 0 to source 
+    alSourcei(sources[source_id], AL_BUFFER, buffers[buffer_id]); 
+    if (checkError())
+        return 1;
+
+    // play
+    alSourcePlay(sources[source_id]);
+    if (checkError())
+        return 1;
+
     return 0;
-
-}
-
-void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
-{
-
 }
 
 void update()
 {
-
+    // nothing?
 }
 
 int test()
 {
-    const ALsizei NUM_BUFFERS = 1;
-    ALuint buffers[NUM_BUFFERS];
+    const ALsizei MAX_BUFFERS = 1;
+    ALuint buffers[MAX_BUFFERS];
 
-    const ALsizei NUM_SOURCES = 1;
-    ALuint sources[NUM_SOURCES];
+    const ALsizei MAX_SOURCES = 1;
+    ALuint sources[MAX_SOURCES];
 
-    alGenBuffers(NUM_BUFFERS, buffers); 
+    alGenBuffers(MAX_BUFFERS, buffers); 
     if (checkError())
     {   printf("alGenBuffers:\n");
         return 1;
     }
 
     // Generate Sources 
-    alGenSources(NUM_SOURCES, sources); 
+    alGenSources(MAX_SOURCES, sources); 
     if (checkError())
     {   printf("alGenSources:\n");
-        alDeleteBuffers(NUM_BUFFERS, buffers); 
+        alDeleteBuffers(MAX_BUFFERS, buffers); 
         return 1;
     }
 
-    for (int i=0; i<NUM_SOURCES; i++)
-    {
-        alSourcef(sources[i], AL_PITCH, 1);
-        alSourcef(sources[i], AL_GAIN, 1);
-        alSource3f(sources[i], AL_POSITION, 0, 0, 0);
-        alSource3f(sources[i], AL_VELOCITY, 0, 0, 0);
-        alSourcei(sources[i], AL_LOOPING, AL_TRUE);
-    }
+    alSourcef(sources[0], AL_PITCH, 1);
+    alSourcef(sources[0], AL_GAIN, 1);
+    alSource3f(sources[0], AL_POSITION, 0, 0, 0);
+    alSource3f(sources[0], AL_VELOCITY, 0, 0, 0);
+    alSourcei(sources[0], AL_LOOPING, AL_TRUE);
 
     checkError();
 
@@ -207,7 +383,7 @@ int test()
     alBufferData(buffers[0], fmt, buffer, data->size, data->sample_rate);
     if (checkError())
     {   printf("alBufferData:\n");
-        alDeleteBuffers(NUM_BUFFERS, buffers); 
+        alDeleteBuffers(MAX_BUFFERS, buffers); 
         free(buffer);
         return 1;
     }
@@ -218,7 +394,7 @@ int test()
     alSourcei(sources[0], AL_BUFFER, buffers[0]); 
     if (checkError())
     {   printf("alSourcei: BUFFER\n");
-        alDeleteBuffers(NUM_BUFFERS, buffers); 
+        alDeleteBuffers(MAX_BUFFERS, buffers); 
         return 1;
     }
 
@@ -226,14 +402,13 @@ int test()
     alSourcePlay(sources[0]);
     if (checkError())
     {   printf("alSourcePlay:\n");
-        alDeleteBuffers(NUM_BUFFERS, buffers); 
+        alDeleteBuffers(MAX_BUFFERS, buffers); 
         free(buffer);
         return 1;
     }
 
     return 0;
 }
-
 
 }
 

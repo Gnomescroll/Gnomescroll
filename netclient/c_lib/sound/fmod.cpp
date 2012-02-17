@@ -121,7 +121,7 @@ void init() {
     const float rolloff_scale = 2.0f;   // attenuation distance. higher == faster attenuate. 1.0f is default, simulates real world
     set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
     set_volume(Options::sfx);
-    Sound::parse_sound_triggers((char*)"./media/sound/sounds.csv");
+    //Sound::parse_sound_triggers((char*)"./media/sound/sounds.csv");
 
     printf("FMOD init\n");
 }

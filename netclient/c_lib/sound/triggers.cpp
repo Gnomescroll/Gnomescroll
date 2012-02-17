@@ -29,6 +29,8 @@ void NAME(float x, float y, float z, float vx, float vy, float vz)\
     }\
     if (soundfile != NULL)\
         play_3d_sound(soundfile, x,y,z,vx,vy,vz);\
+\
+    printf("3d soundfile: %s\n", soundfile);\
 }
 
 /* triggers */
