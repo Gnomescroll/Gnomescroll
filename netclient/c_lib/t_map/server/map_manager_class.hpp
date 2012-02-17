@@ -107,32 +107,29 @@ class Map_manager
     }
 };
 
+#include <stdlib.h>
+
+//http://gcc.gnu.org/onlinedocs/gcc-3.4.6/gcc/Min-and-Max.html
+
 void Map_manager::update()
 {
     if(needs_update == false) return;
     //sub chunks 
 
-    int i = xpos - radius;
-    if (i < 0) i = 0;
+    int imin = (xpos - radius) >= 0;
+    int jmin = (ypos - radius) >= 0;
 
-    int j = ypos - radius;
-    if (j < 0) j = 0;
+    int imax = (xpos+radius) <= xchunk_dim;
+    int jmax = (ypos+radius) <= ychunk_dim;
 
-    int imax = i+radius;
-    if(imax > xchunk_dim) imax = xchunk_dim;
-
-    int jmax = j+radius;
-    if(jmax > ychunk_dim) jmax = ychunk_dim;
-
-    printf("i,j= %i %i imax,jmax= %i %i \n", i,j, imax,jmax);
-    for(;i<imax; i++)
+    printf("imin,jmin= %i %i imax,jmax= %i %i \n", imin,jmin, imax,jmax);
+    for(int i=imin;i<imax; i++)
+    for(int j=jmin;j<jmax; j++)
     {
-        for(;j<jmax; j++)
-        {
-            //if( version_list[i*xchunk_dim + y] )
-            printf("sub %i %i \n", i,j);
-        }
+        //if( version_list[i*xchunk_dim + y] )
+        printf("sub %i %i \n", i,j);
     }
+
 }
 
 //this is chunk position!
