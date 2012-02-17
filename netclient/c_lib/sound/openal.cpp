@@ -1,9 +1,10 @@
 #include "openal.hpp"
 
-#if USE_OPENAL
+#ifdef USE_OPENAL
 
 #include <c_lib/sound/sound.hpp>
-#include <AL/alut.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 namespace OpenALSound
 {
@@ -143,8 +144,6 @@ void update()
 
 int test()
 {
-    //init();
-
     const ALsizei NUM_BUFFERS = 1;
     ALuint buffers[NUM_BUFFERS];
 
@@ -165,11 +164,14 @@ int test()
         return 1;
     }
 
-    alSourcef(sources[0], AL_PITCH, 1);
-    alSourcef(sources[0], AL_GAIN, 1);
-    alSource3f(sources[0], AL_POSITION, 0, 0, 0);
-    alSource3f(sources[0], AL_VELOCITY, 0, 0, 0);
-    alSourcei(sources[0], AL_LOOPING, AL_TRUE);
+    for (int i=0; i<NUM_SOURCES; i++)
+    {
+        alSourcef(sources[i], AL_PITCH, 1);
+        alSourcef(sources[i], AL_GAIN, 1);
+        alSource3f(sources[i], AL_POSITION, 0, 0, 0);
+        alSource3f(sources[i], AL_VELOCITY, 0, 0, 0);
+        alSourcei(sources[i], AL_LOOPING, AL_TRUE);
+    }
 
     checkError();
 
@@ -185,22 +187,23 @@ int test()
     }
     if (buffer == NULL)
     {
-        printf("OpenALSound::test -- buffer is NULL\n");
+        printf("OpenALSound::test -- buffer data is NULL\n");
         return 1;
     }
 
     Sound::WavData *data = Sound::get_loaded_wav_data(data_id);
     if (data == NULL)
     {
-        printf("OpenALSound::test -- wav data is NULL\n");
+        printf("OpenALSound::test -- wav metadata is NULL\n");
         return 1;
     }
-    
-    ALenum fmt;
-    fmt = (data->channels == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-    //put the data into our sampleset buffer
-    //alBufferData(buffers[0], data->format, buffer, data->size, data->sample_rate);
-    //alBufferData(buffers[0], getFormatInfoFrom(data->channels, data->bits_per_sample), buffer, data->size, data->sample_rate);
+    //Sound::print_wav_data(data);
+
+    // retrieve OpenAL specific format, determined from wav metadata
+    ALenum fmt = Sound::get_openal_wav_format(data);
+
+    // put the PCM data into the alBuffer
+    // (this will copy the buffer, so we must free our char buffer)
     alBufferData(buffers[0], fmt, buffer, data->size, data->sample_rate);
     if (checkError())
     {   printf("alBufferData:\n");
@@ -208,26 +211,17 @@ int test()
         free(buffer);
         return 1;
     }
+
+    free(buffer);
  
     // Attach buffer 0 to source 
     alSourcei(sources[0], AL_BUFFER, buffers[0]); 
     if (checkError())
     {   printf("alSourcei: BUFFER\n");
         alDeleteBuffers(NUM_BUFFERS, buffers); 
-        free(buffer);
         return 1;
     }
 
-    free(buffer);
-
-    //alSourcei(sources[0],AL_LOOPING,AL_TRUE);
-    //if (checkError())
-    //{   printf("alSourcei: LOOPING\n");
-        //alDeleteBuffers(NUM_BUFFERS, buffers); 
-        //free(buffer);
-        //return 1;
-    //}
-    
     //play
     alSourcePlay(sources[0]);
     if (checkError())
@@ -237,7 +231,6 @@ int test()
         return 1;
     }
 
-    //close();
     return 0;
 }
 

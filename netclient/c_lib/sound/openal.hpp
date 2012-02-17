@@ -1,6 +1,6 @@
 #pragma once
 
-#if USE_OPENAL
+#ifdef USE_OPENAL
 
 namespace OpenALSound
 {

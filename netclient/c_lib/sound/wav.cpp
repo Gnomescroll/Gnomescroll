@@ -5,6 +5,44 @@ namespace Sound
 
 static WavData* wav_buffers = NULL;
 
+void print_wav_data(WavData* data)
+{
+    printf(
+        "WavData:\n"
+        "format: %hd\n"
+        "channels: %hd\n"
+        "sample rate: %d\n"
+        "byte rate: %d\n"
+        "bits per sample: %hd\n"
+        "duration (seconds): %0.2f\n"
+        "size (bytes):  %d\n"
+        "in use: %d\n",
+        data->format, data->channels, data->sample_rate, data->byte_rate,
+        data->bits_per_sample, data->duration, data->size, data->in_use
+    );
+}
+
+#if USE_OPENAL
+ALenum get_openal_wav_format(WavData* data)
+{
+    if (data->channels == 1)
+    {
+        if (data->bits_per_sample == 8)
+            return AL_FORMAT_MONO8;
+        else
+            return AL_FORMAT_MONO16;
+    }
+    else
+    {
+        if (data->bits_per_sample == 8)
+            return AL_FORMAT_STEREO8;
+        else
+            return AL_FORMAT_STEREO16;
+    }
+
+}
+#endif
+
 int get_free_wav_data(WavData** data)
 {
     *data = NULL;
@@ -97,7 +135,6 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
 
     return true;
 }
-
 
 bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
 {

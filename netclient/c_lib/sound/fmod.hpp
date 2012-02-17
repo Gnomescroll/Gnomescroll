@@ -1,11 +1,11 @@
 #pragma once
 
+#ifdef USE_FMOD
+
 #include <fmod.h>
 #include <fmod_errors.h>
 #include <c_lib/sound/wincompat.h>
 #include <stdio.h>
-
-#if USE_FMOD
 
 namespace FMODSound
 {

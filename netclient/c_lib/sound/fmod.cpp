@@ -1,8 +1,8 @@
 #include "fmod.hpp"
 
-#include <c_lib/sound/sound.hpp>
+#ifdef USE_FMOD
 
-#if USE_FMOD
+#include <c_lib/sound/sound.hpp>
 
 #ifndef TRUE
   #define TRUE 1
@@ -104,26 +104,7 @@ int init_channel_group() {
     return r;
 }
 
-void load_sounds_from_conf(char *fn)
-{
-    FILE* f = fopen(fn, "r");
-    if (f == NULL)
-    {
-        printf("Could not open sound configuration file %s\n", fn);
-        return;
-    }
-
-    // read each line
-    // 2nd column has sound file, 3rd has function name
-
-
-    fclose(f);
-}
-
-//void Sound::parse_sound_triggers(char* fn);
 void init() {
-    printf("sound init\n");
-
     enabled = Options::sound;
     if (!enabled) return;
 
@@ -141,6 +122,8 @@ void init() {
     set_3D_settings(doppler_scale, distance_factor, rolloff_scale);
     set_volume(Options::sfx);
     Sound::parse_sound_triggers((char*)"./media/sound/sounds.csv");
+
+    printf("FMOD init\n");
 }
 
 void update_sound_system() {
@@ -467,14 +450,11 @@ void close() {
     UTILITIES
                 */
 int test() {
-    init_sound_system();
-    char testfile[] = "../media/sound/wav/semishoot.wav";
+    return 0;
+
+    char testfile[] = "../media/sound/wav/plasma_grenade_explode.wav";
     FMOD_SOUND* gun = _load_2d_sound(testfile);
-
     _play_2d_sound(gun);
-
-    release_sound(gun);
-    release_sound_system();
     return 0;
 }
 
