@@ -130,7 +130,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     ''' 
     #conf.env.append_value("LINKFLAGS", "--incremental")
 
-    conf.check(header_name='GL/glew.h', mandatory=True)
+    conf.check(header_name='GL/glew.h', mandatory=True, includes='/usr/local/cuda/extras/CUPTI/include')
 
     if OS == 'Windows':
         glew_lib_path = ['/c/lib/glew/lib/', '/c/lib/glew/bin/']
