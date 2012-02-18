@@ -140,7 +140,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
         conf.check(lib=['GLU'], uselib_store='GL')
         conf.check(lib=['GLEW'], uselib_store='GL')
     elif OS == 'Darwin':
-        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL', includes='/usr/local/cuda/extras/CUPTI/include')
+        conf.check(lib=['GLEW'], framework=['Cocoa', 'OpenGL'], uselib_store='GL')
 
     if OS != 'Windows':
         conf.check_cfg(path='sdl-config', args='--cflags --libs', package='', uselib_store='SDL')
@@ -163,7 +163,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     if sound.lower() == 'openal':
         if OS == 'Darwin':
-            conf.check(lib=['OpenAl'], framework=['OpenAL'], uselib_store='openal')
+            conf.check(lib=['OpenAL'], framework=['OpenAL'], uselib_store='openal')
         else:
             conf.check(header_name='AL/al.h',
                        lib='openal',
