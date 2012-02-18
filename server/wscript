@@ -171,6 +171,18 @@ def build(bld):
         source='run.c',
         target='run')
 
+    # compile python files
+    if '-DPRODUCTION' in bld.env.CFLAGS:
+        import py_compile
+        py_compile.compile('run.py')
+        py_compile.compile('cube.py')
+        py_compile.compile('map_recipes.py')
+        py_compile.compile('args_server.py')
+        py_compile.compile('__init__.py')
+        py_compile.compile('linux_terminal.py')
+        py_compile.compile('opts.py')
+        py_compile.compile('default_settings.py')
+
     bld.add_post_fun(install_in_ext)
 
 
