@@ -8,8 +8,8 @@
 namespace t_map
 {
 
-const int  DEFAULT_MAP_MANAGER_RADIUS = 3;
-const int UNSUB_DISTANCE = 5;
+const int  DEFAULT_MAP_MANAGER_RADIUS = 16;
+const int UNSUB_DISTANCE = 20;
 const int UNSUB_DISTANCE2 = UNSUB_DISTANCE*UNSUB_DISTANCE;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;

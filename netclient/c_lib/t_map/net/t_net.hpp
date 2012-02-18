@@ -219,6 +219,8 @@ class MapMessageArrayPacketToClient {
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
             memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
             np->map_message_buffer_index += len;
+
+            if(np->map_message_buffer_index >= 1024) np->flush_map_messages();
         }
 
         int Size() { char buff[128];int buff_n = 0;int _s;unserialize(buff, &buff_n, &_s);return _s+1;}

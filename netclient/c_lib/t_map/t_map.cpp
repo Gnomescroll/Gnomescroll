@@ -43,7 +43,7 @@ void init_t_map()
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 
-#ifdef DC_CLIENT
+#ifdef DC_SERVER
     for( int i=0; i<512; i++ )
     for( int j=0; j<512; j++ )
     {

@@ -5,6 +5,24 @@
 namespace t_map
 {
 
+
+class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_compressed_StoC>
+{
+    public:
+
+        unsigned short chunk_alias;
+        int chunk_index;
+        //int byte_size;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&chunk_alias, buff, buff_n, pack);
+            pack_u32(&chunk_index, buff, buff_n, pack);
+        }
+        
+        inline void handle(char* buff, int byte_num) __attribute((always_inline));
+};
+
 class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
 {
     public:
