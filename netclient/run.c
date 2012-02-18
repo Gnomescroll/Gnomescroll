@@ -34,9 +34,15 @@ void exec_file(int argc, char** argv) {
     // Execute two different files of
     // Python code in separate environments
     //exec_pycode("import os; import sys; print os.getcwd(); sys.path.insert(0, os.getcwd());");
-    FILE* file_1 = fopen("gameloop.py", "r");
+    #ifdef PRODUCTION
+    char pyfile[] = "gameloop.pyc";
+    #else
+    char pyfile[] = "gameloop.py";
+    #endif
+    
+    FILE* file_1 = fopen(pyfile, "r");
     //PyRun_File(file_1, "gameloop.py", Py_file_input, main_dict, main_dict);
-    if (PyRun_SimpleFile(file_1, "gameloop.py")) {
+    if (PyRun_SimpleFile(file_1, pyfile)) {
         fprintf(stderr, "Error executing gameloop.py.");
         fflush(stderr);
     }
