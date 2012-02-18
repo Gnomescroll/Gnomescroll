@@ -192,6 +192,9 @@ class MapMessageArrayPacketToClient {
                 return;
             }
 
+            //printf("1 size= %i \n", size);
+            //printf("2 size= %i \n", Derived::size);       
+                
             if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max) 
                 np->resize_map_message_buffer(np->map_message_buffer_index + size + len);
 
@@ -217,7 +220,7 @@ class MapMessageArrayPacketToClient {
             printf("0 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
             x.unserialize(buff, &buff_n, bytes_read);
             printf("1 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
-            x.handle(buff, &buff_n, bytes_read, max_n);
+            x.handle(buff, buff_n, bytes_read, max_n);
         }
 
         static void register_client_packet() {
