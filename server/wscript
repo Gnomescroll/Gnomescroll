@@ -260,12 +260,19 @@ class linux_production_ctx(ConfigurationContext):
     cmd = 'linux'
     fun = 'linux'
     
+class linux64_production_ctx(ConfigurationContext):
+    cmd = 'linux64'
+    fun = 'linux64'
+    
 class multicore_ctx(ConfigurationContext):
     cmd = 'multicore'
     fun = 'multicore'
 
 def linux(ctx):
     production(ctx, add=['-march=i386', '-shared-libgcc'])
+    
+def linux64(ctx):
+    production(ctx, add=['-m64', '-shared-libgcc'])
 
 def optimized(ctx):
     configure(ctx)

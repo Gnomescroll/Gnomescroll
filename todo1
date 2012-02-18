@@ -322,7 +322,16 @@ Working on linux build
 
 Feb 18
 
+determined package requirement for latest 32bit versions of ubuntu, fedora, opensuse
+
 TODO:
+
+backup and wipe metahentai, replace with ubuntu server
+move metaless to metahentai (scp + dns change)
+close bluemile account
+put gnomescroll.com on metahentai
+scripts to push linux build + instructions to gnomescroll.com
+
 System notifications (you killed...)
 ====================
 
