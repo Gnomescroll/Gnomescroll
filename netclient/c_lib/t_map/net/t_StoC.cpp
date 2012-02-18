@@ -19,10 +19,12 @@ int client_chunk_alias_list[1024] = {0};
 //unsigned short chunk_alias;
 //int chunk_index;
 //int byte_size;
-void map_chunk_uncompressed_StoC::handle(char* buff, int buff_n, int* bytes_read, int max_n)
+void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
     printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
-    printf("byte_size= %i \n", byte_size);
+    //printf("byte_size= %i \n", byte_size);
+
+    printf("map chunk is %i bytes \n", byte_size);
 }
 
 
@@ -32,13 +34,6 @@ void set_map_alias_StoC::handle()
 {
     client_chunk_alias_list[chunk_alias] = chunk_index;
     printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
-}
-
-void send_map_chunk(int x, int y, char* buffer, int n) {}
-
-void handle_map_chunk(int x, int y, char *buffer, int n)
-{
-    
 }
 
 
@@ -74,7 +69,7 @@ void map_metadata_StoC::handle()
 
 #ifdef DC_SERVER
 
-void map_chunk_uncompressed_StoC::handle(char* buff, int buff_n, int* bytes_read, int max_n) {}
+void map_chunk_uncompressed_StoC::handle(char* buff, int byte_size) {}
 
 void set_map_alias_StoC::handle() {}
 

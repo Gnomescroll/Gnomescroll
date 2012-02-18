@@ -160,6 +160,9 @@ template <class Derived> int MapMessagePacketToClient<Derived>::size(-1);
     -arrays of data
 */
 
+/*
+    Could be safer to size of buffer being read here
+*/
 template <class Derived>
 class MapMessageArrayPacketToClient {
     private:
@@ -168,23 +171,28 @@ class MapMessageArrayPacketToClient {
         static int message_id;
         static int size;
 
+        int byte_size;
+
         MapMessageArrayPacketToClient() {}
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {
             pack_message_id(Derived::message_id, buff, buff_n);
+            pack_u32(&byte_size, buff, buff_n, true);
             packet(buff, buff_n, true);
         }
 
         inline void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline))
         {
             int _buff_n = *buff_n;
+            pack_u32(&byte_size, buff, buff_n, false);
             packet(buff, buff_n, false);
             *size = *buff_n - _buff_n;
         }
 
         void sendToClient(int client_id, char* buff, int len) 
         {
+
             NetPeer* np = NetServer::pool[client_id];
             if(np == NULL)
             {
@@ -207,6 +215,7 @@ class MapMessageArrayPacketToClient {
                 Have fast route for small messages
                 For larger messages, force flush then construct packet
             */
+            byte_size = len;
             serialize(np->map_message_buffer, &np->map_message_buffer_index);
             memcpy( np->map_message_buffer + np->map_message_buffer_index, buff, len);
             np->map_message_buffer_index += len;
@@ -217,10 +226,19 @@ class MapMessageArrayPacketToClient {
         static void handler(char* buff, int buff_n, int* bytes_read, int max_n) 
         {
             Derived x;
-            printf("0 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
-            x.unserialize(buff, &buff_n, bytes_read);
-            printf("1 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
-            x.handle(buff, buff_n, bytes_read, max_n);
+
+            //printf("1 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
+            x._handle(buff, buff_n, bytes_read, max_n);
+            //printf("2 read message: buff_n= %i bytes_read= %i \n", buff_n, *bytes_read);
+        }
+
+        virtual void handle(char* buff, int byte_num) __attribute((always_inline)) = 0;
+
+        void _handle(char* buff, int buff_n, int* bytes_read, int max_n) __attribute((always_inline))
+        {
+            unserialize(buff, &buff_n, bytes_read);
+            handle(buff+buff_n, byte_size);
+            *bytes_read += byte_size;
         }
 
         static void register_client_packet() {
