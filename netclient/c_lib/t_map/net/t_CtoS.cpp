@@ -4,7 +4,8 @@
 
 #include "../t_map.hpp"
 
-using namespace t_map;
+namespace t_map
+{
 
 #ifdef DC_SERVER
 
@@ -20,3 +21,5 @@ void block_CtoS::handle()
 void block_CtoS::handle() {}
 
 #endif
+
+}

@@ -4,13 +4,14 @@
 
 #include "../t_map.hpp"
 
+namespace t_map
+{
+
 #ifdef DC_CLIENT
 
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/common/random.h>
 #include <sound/triggers.hpp>
-
-using namespace t_map;
 
 int client_chunk_alias_list[1024] = {0};
 
@@ -18,13 +19,16 @@ int client_chunk_alias_list[1024] = {0};
 
 //unsigned short chunk_alias;
 //int chunk_index;
-//int byte_size;
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
     printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
     //printf("byte_size= %i \n", byte_size);
 
     printf("map chunk is %i bytes \n", byte_size);
+
+    client_chunk_alias_list[chunk_alias] = chunk_index;
+
+
 }
 
 
@@ -77,3 +81,5 @@ void block_StoC::handle() {}
 void map_metadata_StoC::handle() {}
 
 #endif
+
+}

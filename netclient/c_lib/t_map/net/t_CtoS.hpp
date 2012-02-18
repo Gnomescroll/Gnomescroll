@@ -2,6 +2,8 @@
 
 #include "t_net.hpp"
 
+namespace t_map
+{
 
 class block_CtoS: public MapMessagePacketToServer<block_CtoS>
 {
@@ -20,3 +22,5 @@ class block_CtoS: public MapMessagePacketToServer<block_CtoS>
 
         inline void handle();
 };
+
+}

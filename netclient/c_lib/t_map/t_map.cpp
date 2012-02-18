@@ -43,14 +43,15 @@ void init_t_map()
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
 
+#ifdef DC_CLIENT
     for( int i=0; i<512; i++ )
     for( int j=0; j<512; j++ )
     {
         set(i,j, 1, 2);
         if(i%5 == 0)  set(i,j, 6, 2);
         if(j%7 == 0)  set(i,j, 7, 2);
-
     }
+#endif
 
 }
 
@@ -126,7 +127,7 @@ int _apply_damage_broadcast(int x, int y, int z, int dmg)
 */
 void _set_broadcast(int x, int y, int z, int value) 
 {
-    class block_StoC msg;
+    class t_map::block_StoC msg;
     int i = _get(x,y,z);
     if (i != value) 
     {
@@ -145,7 +146,7 @@ void _set_broadcast(int x, int y, int z, int value)
 */
 void _block_broadcast(int x, int y, int z, int value) 
 {
-    class block_StoC msg;
+    class t_map::block_StoC msg;
     msg.x = x;
     msg.y = y;
     msg.z = z;
@@ -157,7 +158,7 @@ void _block_broadcast(int x, int y, int z, int value)
 
 void send_map_metadata(int client_id)
 {
-    class map_metadata_StoC msg;
+    class t_map::map_metadata_StoC msg;
     msg.x = map_dim.x;
     msg.y = map_dim.y;
     msg.z = map_dim.z;

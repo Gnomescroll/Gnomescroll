@@ -53,17 +53,13 @@ void RegisterMessages() {
         Map Messages
     */
 
-    map_chunk_uncompressed_StoC::register_client_packet();
-    set_map_alias_StoC::register_client_packet();
+    t_map::map_chunk_uncompressed_StoC::register_client_packet();
+    t_map::set_map_alias_StoC::register_client_packet();
 
-
-    //map_chunk_list_request_CtoS::register_server_packet();
-    //chunk_meta_data_StoC::register_client_packet();
-    
     // block value change
-    block_StoC::register_client_packet();
-    block_CtoS::register_server_packet();
-    map_metadata_StoC::register_client_packet();
+    t_map::block_StoC::register_client_packet();
+    t_map::block_CtoS::register_server_packet();
+    t_map::map_metadata_StoC::register_client_packet();
     
     // agent hit block action
     hit_block_CtoS::register_server_packet();

@@ -2,6 +2,9 @@
 
 #include "t_net.hpp"
 
+namespace t_map
+{
+
 class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
 {
     public:
@@ -89,3 +92,5 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
     inline void handle() __attribute((always_inline));
 
 };
+
+}

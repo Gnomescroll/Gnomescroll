@@ -54,7 +54,7 @@ void NetPeerManager::ready()
     this->loaded = true;
     ServerState::send_game_state_to_client(this->client_id);
 
-    t_map_manager_setup(this->client_id);   //setup t_map_manager
+    t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
     
     printf("ready\n");
     #endif
@@ -68,7 +68,7 @@ void NetPeerManager::teardown()
     ServerState::ctf.remove_agent_from_team(this->client_id);
     ServerState::agent_list.destroy(client_id);
 
-    t_map_manager_teardown(this->client_id);   //setup t_map_manager
+    t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
     #endif
 }
 
