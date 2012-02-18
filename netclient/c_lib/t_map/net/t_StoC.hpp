@@ -33,6 +33,22 @@ class map_element_update_array: public MapMessagePacketToClient<map_element_upda
 };
 */
 
+class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
+{
+    public:
+
+        unsigned short chunk_alias;
+        int chunk_index;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&chunk_alias, buff, buff_n, pack);
+            pack_u32(&chunk_index, buff, buff_n, pack);
+        }
+        
+        inline void handle() __attribute((always_inline));
+};
+
 class end_map_stream: public MapMessagePacketToClient<end_map_stream>
 {
     public:

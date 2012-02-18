@@ -88,14 +88,15 @@ namespace ServerState
 
 /*
     Map update function called from here
+
+    4 times per second per client.  Maybe too fast?
 */
     void server_tick()
     {   
         static int counter = 0;
         counter++;
-        if(counter % 32 == 0) agent_list.update_map_manager_positions();
-
-        if(counter % 32 == 0) t_map_manager_update();
+        if(counter % 8 == 0) agent_list.update_map_manager_positions();
+        if(counter % 8 == 0) t_map_manager_update();
 
         spawner_list.tick();
         ctf.tick();

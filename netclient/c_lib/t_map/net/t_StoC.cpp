@@ -12,6 +12,16 @@
 
 using namespace t_map;
 
+int client_chunk_alias_list[1024] = {0};
+
+//unsigned short chunk_alias;
+//unsigned int chunk_index;
+void set_map_alias_StoC::handle()
+{
+    client_chunk_alias_list[chunk_alias] = chunk_index;
+    printf("Alias %i set to %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH);
+}
+
 void send_map_chunk(int x, int y, char* buffer, int n) {}
 
 void handle_map_chunk(int x, int y, char *buffer, int n)
@@ -70,6 +80,8 @@ void map_metadata_StoC::handle()
 
 
 #ifdef DC_SERVER
+
+void set_map_alias_StoC::handle() {}
 
 void chunk_meta_data_StoC::handle() {}
 void block_StoC::handle() {}
