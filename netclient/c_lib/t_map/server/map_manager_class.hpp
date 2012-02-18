@@ -193,7 +193,7 @@ void Map_manager::set_position(int x, int y)
 
 void Map_manager::sub(int x, int y)
 {
-    printf("sub: %i %i \n", x, y);
+    //printf("sub: %i %i \n", x, y);
 
     int index = y*xchunk_dim + x;
 
@@ -260,7 +260,7 @@ void Map_manager::unsub(int alias)
 
     int index = alias_list[alias];
 
-    printf("unsub: %i %i \n", index % xchunk_dim, index / xchunk_dim);
+    //printf("unsub: %i %i \n", index % xchunk_dim, index / xchunk_dim);
 
     version_list[index].version = map_history->chunk[index].version; //cache version
 

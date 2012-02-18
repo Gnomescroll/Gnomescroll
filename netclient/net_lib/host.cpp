@@ -230,13 +230,10 @@ void client_dispatch_network_events()
                         ); 
                     break;
                 case 3:
-                #ifdef DC_SERVER
-                    printf("server received channel 3 message \n");
+                    printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
+
                     index= 0;
-                    break;
-                #endif
-                    index= 0;
-                    int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+                    //int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
                     break;
                 default:
                     printf("server received unhandled channel %d message\n", event.channelID);
@@ -405,7 +402,7 @@ void server_dispatch_network_events()
                     printf("server received channel 2 message \n");
                     break;
                 case 3:
-                    printf("server received channel 4 message \n");
+                    printf("server received channel 3 message \n");
                     index= 0;
                     break;
                 default:
