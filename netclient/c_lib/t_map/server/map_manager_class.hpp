@@ -103,7 +103,7 @@ class Map_manager
         c.sendToClient(client_id);
     }
 
-    void send_compressed_chunk(int x, int y);
+    void send_compressed_chunk(int alias, int index);
 
     void send_delta() {}
 };
@@ -155,13 +155,32 @@ void Map_manager::update()
 
 }
 
-void Map_manager::send_compressed_chunk(int x, int y)
+void Map_manager::send_compressed_chunk(int alias, int index)
 {
-    int index = y*xchunk_dim + x;
 
+    //printf("sending compressed chunk! \n");
 
-//void sendToClient(int client_id, char* buff, int len) 
-//map_chunk_uncompressed_StoC
+    //unsigned short chunk_alias;
+    //int chunk_index;
+    //int byte_size;
+
+    if(t->chunk[index] == NULL)
+    {
+        printf("Chunk is null!  Handle this! \n");
+        return;
+    }
+    map_chunk_uncompressed_StoC c;
+
+    c.chunk_alias = alias;
+    c.chunk_index = index;
+    c.byte_size = 4*16*16*128;
+
+    int size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+    c.byte_size = size;
+    c.sendToClient(client_id, (char*)t->chunk[index]->e, size);
+
+    //void sendToClient(int client_id, char* buff, int len) 
+    //map_chunk_uncompressed_StoC
 }
 
 //this is chunk position!
@@ -200,7 +219,7 @@ void Map_manager::sub(int x, int y)
 
     send_alias(alias, index);
     //send alias to client
-    send_compressed_chunk(x,y);
+    send_compressed_chunk(alias, index);
 
     //send alias to client
     /*
