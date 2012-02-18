@@ -55,7 +55,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     global _OS
     global os_libpth
 
-    if centos:
+    if centos:  #doesntwork
         conf.check_tool('gcc44')
         conf.check_tool('g++44')
     else:

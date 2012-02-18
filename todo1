@@ -323,10 +323,14 @@ Working on linux build
 Feb 18
 
 determined package requirement for latest 32bit versions of ubuntu, fedora, opensuse
+64bit ubuntu build
 
 TODO:
+deb,rpm
+obfuscate/make sure symbols out
 
-backup and wipe metahentai, replace with ubuntu server
+backup and wipe metahentai, replace with ubuntu server  WAITING ON TICKET
+backup metaless's stuff DONE
 move metaless to metahentai (scp + dns change)
 close bluemile account
 put gnomescroll.com on metahentai
