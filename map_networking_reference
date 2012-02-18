@@ -1,0 +1,9 @@
+
+Performance:
+Put block attributes in seperate arrays?
+Use threads and callbacks for map compression
+
+Bandwidth Usage:
+
+-test explicit run length compression (go over each block and only put in non-zero blocks)
+-add a compressor for each block attribute array

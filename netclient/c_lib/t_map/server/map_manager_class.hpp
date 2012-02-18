@@ -5,20 +5,25 @@
 
 #include <c_lib/t_map/net/t_StoC.hpp>
 
+#include <c_lib/common/qsort.h>
+
 namespace t_map
 {
 
 const int  DEFAULT_MAP_MANAGER_RADIUS = 16;
-const int UNSUB_DISTANCE = 20;
+const int UNSUB_DISTANCE = 18;
 const int UNSUB_DISTANCE2 = UNSUB_DISTANCE*UNSUB_DISTANCE;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
+
+const int MAP_CHUNK_QUE_SIZE = 512; //que for loading map chunks
 
 //alias constants
 const unsigned short NO_ALIAS = 0xffff;
 
 const unsigned short SUBSCRIBED = 0;
 const unsigned UNSUBSCRIBED_NO_DATA = 0xffff;
+const unsigned QUED = 0xffff-1;
 
 /*
     state:
@@ -38,6 +43,13 @@ class MAP_MANAGER_ELEMENT
     {
         version = UNSUBSCRIBED_NO_DATA;    
     }
+};
+
+struct QUE_ELEMENT
+{
+    int distance2;
+    int index;
+    short version;
 };
 
 class Map_manager
@@ -60,11 +72,17 @@ class Map_manager
     int subed_chunks;
     int alias_list[ MAP_MANAGER_ALIAS_LIST_SIZE ];  //aliases are ints
 
+    struct QUE_ELEMENT chunk_que[MAP_CHUNK_QUE_SIZE];
+
+    int chunk_que_num;
+
     Map_manager(int _client_id)
     {
         needs_update = false;
         client_id = _client_id;
         
+        chunk_que_num = 0;
+
         radius = DEFAULT_MAP_MANAGER_RADIUS;
 
         subed_chunks = 0;
@@ -87,21 +105,15 @@ class Map_manager
     void update();
     void set_position(int x, int y);
 
+    void sort_que();
+    void dispatch_que();
+
     private:
 
-    //int distance2(int alias) __attribute((always_inline));
-    //int get_farthest_subbed_chunk() __attribute((always_inline));
+    void que_for_sub(int x, int y);
 
-    void sub(int x, int y);
+    void sub(int index, int version);
     void unsub(int alias);
-
-    void send_alias(int alias, int index) __attribute((always_inline))
-    {
-        set_map_alias_StoC c;
-        c.chunk_alias = alias;
-        c.chunk_index = index;
-        c.sendToClient(client_id);
-    }
 
     void send_compressed_chunk(int alias, int index);
 
@@ -110,6 +122,7 @@ class Map_manager
 
 void Map_manager::update()
 {
+
     if(needs_update == false) return;
 
     int imin = (xpos - radius) > 0 ? xpos - radius : 0;
@@ -118,52 +131,90 @@ void Map_manager::update()
     int imax = (xpos+radius) < xchunk_dim ? xpos+radius : xchunk_dim;
     int jmax = (ypos+radius) < ychunk_dim ? ypos+radius : ychunk_dim;
 
-    //printf("xpos,ypos= %i %i imin,jmin= %i %i imax,jmax= %i %i \n", xpos,ypos, imin,jmin, imax,jmax);
-
-/*
-
-    Crude method: 
-*/
-
-    //printf("unsub\n");
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
-        if( alias_list[i] == NO_ALIAS ) continue;
+        if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS 
         int x = (alias_list[i] % xchunk_dim);
         int y = (alias_list[i] / xchunk_dim);
-
-        //printf("alias= %i index=%i \n", i, alias_list[i] );
 
         x = x - xpos;
         y = y - ypos; 
 
-
-
         if( x*x + y*y > UNSUB_DISTANCE2 ) unsub(i);
     }
 
-    //printf("sub\n");
     for(int i=imin;i<imax; i++)
     for(int j=jmin;j<jmax; j++)
     {
         if( (xpos - i)*(xpos - i) + (ypos - j)*(ypos - j) >= radius ) continue;
-        if( version_list[j*xchunk_dim + i].version == SUBSCRIBED ) continue;
+        unsigned int version = version_list[j*xchunk_dim + i].version;
+
+        if( version == SUBSCRIBED || version == QUED ) continue;
         //printf("sub %i %i \n", i,j);
-        sub(i,j);
+        que_for_sub(i,j);
     }
 
+    needs_update = false;
+}
+
+//put chunk onto the que to be subscribed
+void Map_manager::que_for_sub(int x, int y)
+{
+
+    if( chunk_que_num == MAP_CHUNK_QUE_SIZE)
+    {
+        printf("Map_manager::que_for_sub: Warning chunk_que_num == MAP_CHUNK_QUE_SIZEs \n" );
+        return;
+    }
+
+    int index = y*xchunk_dim + x;
+
+    if(version_list[index].version == QUED)
+    {
+        printf("Error: Map_manager::que_for_sub, adding to que twice!\n");
+        return;
+    }
+
+    struct QUE_ELEMENT q; 
+
+    q.version = version_list[index].version;   //save version
+
+    {
+        int _x = xpos -x;
+        int _y = ypos -y;
+        q.distance2 = _x*_x + _y*_y;
+    }
+    q.index = index;
+
+    chunk_que[chunk_que_num] = q;
+    chunk_que_num++;
+    //set version, so it is not requed
+    version_list[index].version = QUED; //set subscription property, so it does not get requed
+}
+
+static inline void QUE_ELEMENT_qsort(struct QUE_ELEMENT *arr, unsigned n) 
+{
+    #define QUE_ELEMENT_lt(a,b) ((a)->distance2 > (b)->distance2)
+    QSORT(struct QUE_ELEMENT, arr, n, QUE_ELEMENT_lt );
+}
+
+void Map_manager::sort_que()
+{
+    if(chunk_que_num == 0) return;
+    QUE_ELEMENT_qsort(chunk_que, chunk_que_num);
+}
+
+void Map_manager::dispatch_que()
+{
+    if( chunk_que_num == 0) return;
+    struct QUE_ELEMENT* q = &chunk_que[chunk_que_num-1];
+    sub(q->index, q->version);
+    chunk_que_num--;
 }
 
 void Map_manager::send_compressed_chunk(int alias, int index)
 {
-
-    //printf("sending compressed chunk! \n");
-
-    //unsigned short chunk_alias;
-    //int chunk_index;
-    //int byte_size;
-
     if(t->chunk[index] == NULL)
     {
         printf("Chunk is null!  Handle this! \n");
@@ -191,12 +242,10 @@ void Map_manager::set_position(int x, int y)
     ypos = y;      
 }
 
-void Map_manager::sub(int x, int y)
+void Map_manager::sub(int index, int version)
 {
     //printf("sub: %i %i \n", x, y);
-
-    int index = y*xchunk_dim + x;
-
+    //int index = y*xchunk_dim + x;
     //int version = version_list[index].version;
     if( subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
     {
@@ -209,56 +258,31 @@ void Map_manager::sub(int x, int y)
     //set alias
     alias_list[alias] = index;
 
-    //printf("alisas = %i index = %i \n", alias, index);
-    
-    //grab chunk
     map_history->chunk[index].add_subscriber(client_id, alias, version_list[index].version);
 
-    version_list[index].version = SUBSCRIBED;   //set subscription property
+    version_list[index].version = SUBSCRIBED;
     subed_chunks++;
 
-    send_alias(alias, index);
-    //send alias to client
     send_compressed_chunk(alias, index);
 
     //send alias to client
     /*
         send alias to client
         compress map chunk
-
     */
 }
 
-/*
-int Map_manager::distance2(int alias)
-{
-    int index = alias_list[alias];
-
-    int x = index % x_chunk_size;
-    int y = index / x_chunk_size;
-
-    x = x - xpos;
-    y = y - ypos;
-
-    return x*x+y*y;
-}
-
-int Map_manager::get_farthest_subbed_chunk()
-{
-    //get first non-zero alias
-    int alias = 0;
-    while( alias_list[alias] == NO_ALIAS ) alias++;
-    int distance = alias_list[alias]
-    int lowest = alias;
-
-    int index = alias_list[0]; 
-}
-*/
-
 void Map_manager::unsub(int alias)
 {
-
     int index = alias_list[alias];
+
+
+    if(version_list[index].version == QUED)
+    {
+        printf("Error: Map_manager::unsub, unsubbing element on que!? wtf\n");
+        return;
+    }
+
 
     //printf("unsub: %i %i \n", index % xchunk_dim, index / xchunk_dim);
 
@@ -268,7 +292,6 @@ void Map_manager::unsub(int alias)
 
     alias_list[alias] = NO_ALIAS;
     subed_chunks--;
-
 
     //send unsubscribed
 }

@@ -27,6 +27,7 @@ static struct Vec3 fulstrum_u;   //up
 static struct Vec3 fulstrum_r;   //right
 
 static struct Vec3 fulstrum_2d_r;   //right
+static struct Vec3 fulstrum_2d_f;
 
 void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* forward, Vec3 *right, Vec3* up)
 {
@@ -51,6 +52,10 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* for
     fulstrum_f = *forward;
     fulstrum_r = *right;
     fulstrum_u = *up;
+
+    fulstrum_2d_f = *forward;
+    fulstrum_2d_f.z = 0.0;
+    fulstrum_2d_f = vec3_normalize(fulstrum_2d_f);
 
     fulstrum_2d_r = *right;
     fulstrum_2d_r.z = 0.0;
@@ -123,9 +128,9 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
     x -= fulstrum_c.x;
     y -= fulstrum_c.y;
     
-    float dz = x*fulstrum_f.x + y*fulstrum_f.y;
+    float dz = x*fulstrum_2d_f.x + y*fulstrum_2d_f.y;
 
-    float dx = x*fulstrum_r.x + y*fulstrum_r.y;
+    float dx = x*fulstrum_2d_r.x + y*fulstrum_2d_r.y;
     float rx = fulstrum_hx_sphere*r;
     if( dx < -dz*fulstrum_hx - rx|| dx > dz*fulstrum_hx + rx ) return false;
     
@@ -142,9 +147,9 @@ bool xy_point_fulstrum_test(float x, float y)
     x -= fulstrum_c.x;
     y -= fulstrum_c.y;
 
-    if(x*x + y*y <= 16*16) return true;
+    //if(x*x + y*y <= 16*16) return true;
 
-    float dz = x*fulstrum_f.x + y*fulstrum_f.y;
+    float dz = x*fulstrum_2d_f.x + y*fulstrum_2d_f.y;
     if( dz < 0 || dz > fulstrum_zfar ) return false;
 
     float dx = (x*fulstrum_r.x + y*fulstrum_r.y);

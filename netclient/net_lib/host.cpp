@@ -95,7 +95,8 @@ void shutdown_net_client()
     if(NetClient::Server.enet_peer != NULL)
     {
         enet_peer_disconnect(NetClient::Server.enet_peer, 0);   //graceful shutdown
-        enet_host_flush(client_host);   //flush packets
+        //enet_host_flush(client_host);   //flush packets
+        client_dispatch_network_events();
     }
 
     enet_host_destroy(client_host);
@@ -174,7 +175,7 @@ void client_dispatch_network_events()
 
     int index = 0;
 
-    int timeout = 5;
+    int timeout = 1;
     while (enet_host_service (client_host, & event, timeout) > 0)
     {
         switch (event.type)
@@ -313,7 +314,8 @@ static void client_connect(ENetEvent* event)
     u.sendToClient(nc->client_id);
 
     nc->flush_to_net();
-    enet_host_flush(server_host);
+    //enet_host_flush(server_host);
+    //client_dispatch_network_events();
 }
 
 static void client_disconnect(ENetEvent* event)
@@ -350,7 +352,7 @@ void server_dispatch_network_events()
     /* Wait up to 5 milliseconds for an event. */
 
     int index = 0;
-    int timeout = 5;
+    int timeout = 1;
     while (enet_host_service (server_host, &event, timeout) > 0)
     {
         switch (event.type)

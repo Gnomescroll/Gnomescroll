@@ -48,6 +48,7 @@ void NetPeer::push_python_message(class Net_message* nm)
 
 void NetPeer::flush_map_messages()
 {
+    if(map_message_buffer_index == 0) return;
     printf("Flushing %i map bytes \n", map_message_buffer_index);
     ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send (enet_peer, 3, map_p);
@@ -98,13 +99,7 @@ void NetPeer::flush_to_net()
     }
 
 #ifdef DC_SERVER
-    if( map_message_buffer_index > 0) 
-    {
-        printf("Flushing %i map bytes \n", map_message_buffer_index);
-        ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
-        enet_peer_send (enet_peer, 3, map_p);
-        map_message_buffer_index = 0;
-    }
+    flush_map_messages();
 #endif
 /*
     int n1 = 0;

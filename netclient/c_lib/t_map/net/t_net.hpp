@@ -206,7 +206,7 @@ class MapMessageArrayPacketToClient {
             if(np->map_message_buffer_index + size + len >= np->map_message_buffer_max) 
                 np->resize_map_message_buffer(np->map_message_buffer_index + size + len);
 
-            if(len > 512) 
+            if(len > 1024) 
             {
                 printf("MapMessagePacketToClient: large map message, prefix length= %i length= %i \n", size, len);
             }
