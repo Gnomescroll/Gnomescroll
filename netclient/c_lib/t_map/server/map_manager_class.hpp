@@ -124,14 +124,14 @@ void Map_manager::update()
 
     //printf("xpos,ypos= %i %i imin,jmin= %i %i imax,jmax= %i %i \n", xpos,ypos, imin,jmin, imax,jmax);
 
-    for(int i=0; i< alias)
+    for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
         if( alias_list[i] == NO_ALIAS ) continue;
-        int x = alias_list[i] % x_chunk_dim;
-        int y = alias_list[i] / x_chunk_dim;
+        int x = (alias_list[i] % xchunk_dim) - xpos;
+        int y = (alias_list[i] / ychunk_dim) - ypos;
 
-        x = x - xpos;
-        y = y - ypos;
+        //x = x - xpos;
+        //y = y - ypos;
 
         if( x*x + y*y > UNSUB_DISTANCE2 ) unsub(i);
     }
@@ -157,6 +157,8 @@ void Map_manager::set_position(int x, int y)
 
 void Map_manager::sub(int x, int y)
 {
+    printf("unsub: %i %i \n", x,y);
+
     int index = y*xchunk_dim + x;
 
     //int version = version_list[index].version;
