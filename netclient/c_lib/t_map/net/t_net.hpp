@@ -168,7 +168,7 @@ class MapMessageArrayPacketToClient {
         static int message_id;
         static int size;
 
-        MapMessageArrayPacketToClient() { }
+        MapMessageArrayPacketToClient() {}
 
         void serialize(char* buff, int* buff_n) __attribute((always_inline))
         {

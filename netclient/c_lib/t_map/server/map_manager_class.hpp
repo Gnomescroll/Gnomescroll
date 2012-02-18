@@ -95,21 +95,17 @@ class Map_manager
     void sub(int x, int y);
     void unsub(int alias);
 
-    void send_alias(int alias)
+    void send_alias(int alias, int index) __attribute((always_inline))
     {
-        
+        set_map_alias_StoC c;
+        c.chunk_alias = alias;
+        c.chunk_index = index;
+        c.sendToClient(client_id);
     }
 
-    void send_compressed_chunk(int index)
-    {
-        
+    void send_compressed_chunk(int index);
 
-    }
-
-    void send_delta()
-    {
-        
-    }
+    void send_delta() {}
 };
 
 void Map_manager::update()
@@ -124,27 +120,48 @@ void Map_manager::update()
 
     //printf("xpos,ypos= %i %i imin,jmin= %i %i imax,jmax= %i %i \n", xpos,ypos, imin,jmin, imax,jmax);
 
+/*
+
+    Crude method: 
+*/
+
+    //printf("unsub\n");
+
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
         if( alias_list[i] == NO_ALIAS ) continue;
-        int x = (alias_list[i] % xchunk_dim) - xpos;
-        int y = (alias_list[i] / ychunk_dim) - ypos;
+        int x = (alias_list[i] % xchunk_dim);
+        int y = (alias_list[i] / xchunk_dim);
 
-        //x = x - xpos;
-        //y = y - ypos;
+        //printf("alias= %i index=%i \n", i, alias_list[i] );
+
+        x = x - xpos;
+        y = y - ypos; 
+
+
 
         if( x*x + y*y > UNSUB_DISTANCE2 ) unsub(i);
     }
 
+    //printf("sub\n");
     for(int i=imin;i<imax; i++)
     for(int j=jmin;j<jmax; j++)
     {
         if( (xpos - i)*(xpos - i) + (ypos - j)*(ypos - j) >= radius ) continue;
         if( version_list[j*xchunk_dim + i].version == SUBSCRIBED ) continue;
-        printf("sub %i %i \n", i,j);
+        //printf("sub %i %i \n", i,j);
         sub(i,j);
     }
 
+}
+
+void Map_manager::send_compressed_chunk(int x, int y)
+{
+    int index = y*xchunk_dim + x;
+
+
+//void sendToClient(int client_id, char* buff, int len) 
+//map_chunk_uncompressed_StoC
 }
 
 //this is chunk position!
@@ -157,15 +174,11 @@ void Map_manager::set_position(int x, int y)
 
 void Map_manager::sub(int x, int y)
 {
-    printf("unsub: %i %i \n", x,y);
+    printf("sub: %i %i \n", x, y);
 
     int index = y*xchunk_dim + x;
 
     //int version = version_list[index].version;
-
-
-
-
     if( subed_chunks == MAP_MANAGER_ALIAS_LIST_SIZE)
     {
         printf("FIX THIS!!! Map_manager::sub, alias list maxed out \n");
@@ -176,15 +189,18 @@ void Map_manager::sub(int x, int y)
     while( alias_list[alias] != NO_ALIAS) alias++;
     //set alias
     alias_list[alias] = index;
+
+    //printf("alisas = %i index = %i \n", alias, index);
+    
     //grab chunk
     map_history->chunk[index].add_subscriber(client_id, alias, version_list[index].version);
 
     version_list[index].version = SUBSCRIBED;   //set subscription property
     subed_chunks++;
 
-    send_alias(alias);
+    send_alias(alias, index);
     //send alias to client
-    send_compressed_chunk(index);
+    send_compressed_chunk(x,y);
 
     //send alias to client
     /*
@@ -222,7 +238,10 @@ int Map_manager::get_farthest_subbed_chunk()
 
 void Map_manager::unsub(int alias)
 {
+
     int index = alias_list[alias];
+
+    printf("unsub: %i %i \n", index % xchunk_dim, index / xchunk_dim);
 
     version_list[index].version = map_history->chunk[index].version; //cache version
 

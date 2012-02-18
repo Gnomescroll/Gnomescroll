@@ -33,6 +33,25 @@ class map_element_update_array: public MapMessagePacketToClient<map_element_upda
 };
 */
 
+class map_chunk_uncompressed_StoC MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
+{
+    public:
+
+        unsigned short chunk_alias;
+        int chunk_index;
+        int byte_size;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&chunk_alias, buff, buff_n, pack);
+            pack_u32(&chunk_index, buff, buff_n, pack);
+            pack_u16(&byte_size, buff, buff_n, pack);
+        }
+        
+        inline void handle(char* buff, int buff_n, int* bytes_read, int max_n) __attribute((always_inline));
+};
+
+
 class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
 {
     public:
