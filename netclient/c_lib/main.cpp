@@ -108,6 +108,7 @@ int run()
 
     while (!input_state.quit)
     {
+
         if(_quit) break;
 
         // update mouse

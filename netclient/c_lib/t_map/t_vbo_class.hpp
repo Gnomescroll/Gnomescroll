@@ -104,26 +104,31 @@ class Vbo_map
         delete[] vbo_array;
     }
 
+
     //update all VBOs that need updating
     void update_map()
     {
+        //int count = 0;
+
         class MAP_CHUNK* m;
         for(int i=0; i<xchunk_dim; i++)
         for(int j=0; j<ychunk_dim; j++)
         {
+
             m = map->chunk[j*xchunk_dim + i];
             if( m == NULL ) continue; //can speed up by maintain list of chunks
-
-            //printf("t\n");
 
             if( m->needs_update == false ) continue;
             m->needs_update = false; //reset flag
 
+            //count++;
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             update_vbo(i, j);
 
         }
+
+        //if(count > 0) printf("!!! count= %i \n", count);
     }
 
     void update_vbo(int i, int j);

@@ -28,6 +28,10 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos)
     {
+
+        #ifdef DC_CLIENT
+            needs_update = false;
+        #endif
         xpos = _xpos;
         ypos = _ypos;
         //for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;

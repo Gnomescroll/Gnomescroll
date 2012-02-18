@@ -231,7 +231,7 @@ void client_dispatch_network_events()
                         ); 
                     break;
                 case 3:
-                    printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
+                    //printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
 
                     index= 0;
                     //process_client_map_messages(char* buff, int *n, int max_n, int client_id);

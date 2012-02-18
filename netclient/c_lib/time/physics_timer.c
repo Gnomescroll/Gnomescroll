@@ -174,6 +174,12 @@ int _GET_TICK() {
 	#endif
 	
     if(c_tick < t) {
+        if(c_tick+5 < t)
+        {
+            printf("Timer error: c_tick < t is %i < %i \n", c_tick,t);
+            _START_CLOCK();
+            return 1;
+        }
         c_tick++;
         _last_tick = _ti;
         return 1;

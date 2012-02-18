@@ -42,7 +42,7 @@ void init_t_map()
 #endif
     //set(2,4,5, 10);
     //printf("get= %i \n", get(2,4,5) );
-
+/*
 #ifdef DC_SERVER
     for( int i=0; i<512; i++ )
     for( int j=0; j<512; j++ )
@@ -52,7 +52,7 @@ void init_t_map()
         if(j%7 == 0)  set(i,j, 7, 2);
     }
 #endif
-
+*/
 }
 
 class Terrain_map* get_map()

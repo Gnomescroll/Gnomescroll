@@ -50,8 +50,12 @@ class Main:
         print "Server Started"
 
         init_c_lib.init()
+        
+        map_recipes.gen_map_simple()
+
         init_c_lib.start()
         
+
         tick = 0
 
         init_c_lib.slime_test(2)

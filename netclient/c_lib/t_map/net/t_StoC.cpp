@@ -17,7 +17,7 @@ namespace t_map
 int client_chunk_alias_list[1024] = {0};
 
 
-
+#define MAP_NET_DEBUG 0
 //unsigned short chunk_alias;
 //int chunk_index;
 
@@ -25,8 +25,9 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 {
     //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
     //printf("byte_size= %i \n", byte_size);
-
+#if MAP_NET_DEBUG
     printf("map chunk is %i bytes \n", byte_size);
+#endif
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
@@ -48,8 +49,9 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 {
     //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
     //printf("byte_size= %i \n", byte_size);
-
+#if MAP_NET_DEBUG
     printf("map chunk is %i bytes \n", byte_size);
+#endif
 
     client_chunk_alias_list[chunk_alias] = chunk_index;
 

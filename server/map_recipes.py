@@ -19,9 +19,16 @@ DO NOT USE SIMPLEX3. probably dont use simplex2 either. it is bad broken code st
 
 '''
 
+import init_c_lib
+
+import args_server
+import opts
+opts.opts = args_server.get_args()
+opts = opts.opts
+
 def feb3_test_map():
     #setup
-    terrain_map.set_map_dimensions(128,128,128) # TODO:: get this value from the map gen or saved map    
+    init_c_lib.set_map_dimensions(128,128,128) # TODO:: get this value from the map gen or saved map    
     m = c_lib.map_gen
     m.init(128,128, 128)
     m.conf.seed(opts.seed)
@@ -57,7 +64,7 @@ def _gen_map():
 
     feb3_test_map()
     return
-    terrain_map.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
+    init_c_lib.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
     if not opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
         c_lib.map_gen.init(512,512,128)
         c_lib.map_gen.conf.seed(opts.seed)
@@ -183,10 +190,11 @@ def _gen_map():
 
         print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
 
+import time
 
 def gen_map_simple():
     size = 128
-    terrain_map.set_map_dimensions(size,size,size) # TODO:: get this value from the map gen or saved map
+    #init_c_lib.set_map_dimensions(size,size,size) # TODO:: get this value from the map gen or saved map
 
     c_lib.map_gen.init(size,size,size)
     c_lib.map_gen.conf.seed(opts.seed)
@@ -216,20 +224,20 @@ def gen_map_simple():
     #.start()\
     #.reset()
 
-
+'''
 def pallet_pillar(x,y,z):
     for i in range(0,32):
-        m = terrain_map
+        m = init_c_lib.
         m.set(x,y,z+2*i, i)
 
 def clear_pillar(x,y):
      for i in range(0,128):
-        m = terrain_map
+        m = init_c_lib.
         m.set(x,y,i, 0)
-
+'''
 
 def draw_sphere(block, radius, x,y,z):
-    m = terrain_map
+    #m = init_c_lib.
     t = int(radius)+1
     radius = float(radius)
     fx = float(x);fy=float(y);fz=float(z)
