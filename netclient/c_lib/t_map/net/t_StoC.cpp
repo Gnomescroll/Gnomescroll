@@ -41,31 +41,12 @@ void handle_map_chunk(int x, int y, char *buffer, int n)
     
 }
 
-//unsigned short chunk_alias;
-//unsigned short chunk_version; //for debugging
-void end_map_stream::handle()
-{
-    printf("received stream end \n");
-}
-
-//unsigned short chunk_alias;
-//unsigned char block_id;
-//unsigned char pallete;
 
 void map_element_update::handle()
 {
     printf("received map element update \n");
 }
 
-/*
-    Old Methods
-*/
-void chunk_meta_data_StoC::handle()
-{
-    //int chunk_x,chunk_y;
-    //int version;
-    printf("chunk_meta_data_StoC: chunk_x= %i chunk_y= %i version= %i \n", chunk_x, chunk_y, version);
-}
 
 void block_StoC::handle() 
 {
@@ -97,12 +78,7 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int buff_n, int* bytes_read
 
 void set_map_alias_StoC::handle() {}
 
-void chunk_meta_data_StoC::handle() {}
 void block_StoC::handle() {}
 void map_metadata_StoC::handle() {}
-
-void handle_map_chunk() {}
-
-void send_map_chunk() {}
 
 #endif

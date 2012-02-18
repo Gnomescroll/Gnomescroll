@@ -233,7 +233,13 @@ void client_dispatch_network_events()
                     printf("client received channel3 message of of size: %i \n", event.packet->dataLength);
 
                     index= 0;
-                    //int process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+                    //process_client_map_messages(char* buff, int *n, int max_n, int client_id);
+                    process_client_map_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        0
+                        ); 
                     break;
                 default:
                     printf("server received unhandled channel %d message\n", event.channelID);

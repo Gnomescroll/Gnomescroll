@@ -55,10 +55,11 @@ void RegisterMessages() {
 
     map_chunk_uncompressed_StoC::register_client_packet();
     set_map_alias_StoC::register_client_packet();
-    
 
-    map_chunk_list_request_CtoS::register_server_packet();
-    chunk_meta_data_StoC::register_client_packet();
+
+    //map_chunk_list_request_CtoS::register_server_packet();
+    //chunk_meta_data_StoC::register_client_packet();
+    
     // block value change
     block_StoC::register_client_packet();
     block_CtoS::register_server_packet();
