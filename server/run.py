@@ -65,8 +65,9 @@ class Main:
         init_c_lib.slime_test(2)
         while True:
 
-            if linux_terminal.check_stdin():
-                break
+            if OS == 'Linux':
+                if linux_terminal.check_stdin():
+                    break
             
             sl_c =0
 
