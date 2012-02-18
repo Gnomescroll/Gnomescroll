@@ -1,0 +1,5 @@
+Server:
+sudo apt-get install build-essential cython python-dev
+
+Client: (server + these)
+sudo apt-get install libglew1.6-dev libsdl1.2-dev libsdl-image1.2-dev libopenal-dev
