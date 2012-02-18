@@ -1,0 +1,5 @@
+Server:
+	worked out of box
+
+Client:
+	SDL_image openal
