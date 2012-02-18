@@ -51,12 +51,16 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
+def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     global _OS
     global os_libpth
 
-    conf.check_tool('gcc')
-    conf.check_tool('g++')
+    if centos:
+        conf.check_tool('gcc44')
+        conf.check_tool('g++44')
+    else:
+        conf.check_tool('gcc')
+        conf.check_tool('g++')
     conf.check_tool('python')
     conf.check_tool('cython')
     #conf.load('compiler_c compiler_cxx python cython')
@@ -396,6 +400,10 @@ class linux_production_ctx(ConfigurationContext):
 class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
+    
+class centos64_production_ctx(ConfigurationContext):
+    cmd = 'centos64'
+    fun = 'centos64'
 
 class fmod_ctx(ConfigurationContext):
     cmd = 'fmod'
@@ -425,6 +433,9 @@ def linux(ctx):
 
 def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
+    
+def centos64(ctx):
+    production(ctx, add=['-m64', '-shared-libgcc'], centos=True)
     
 def production(ctx, add=[], rm=[]):
     configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
