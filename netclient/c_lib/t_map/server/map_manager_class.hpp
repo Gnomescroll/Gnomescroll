@@ -103,7 +103,7 @@ class Map_manager
         c.sendToClient(client_id);
     }
 
-    void send_compressed_chunk(int index);
+    void send_compressed_chunk(int x, int y);
 
     void send_delta() {}
 };
