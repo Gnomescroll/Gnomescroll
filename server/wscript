@@ -26,7 +26,7 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-def configure(conf, add_flags=[], rm_flags=[]):
+def configure(conf, add_flags=[], rm_flags=[], centos=False):
     OS = platform.system()
     conf.env.os = OS
 
