@@ -437,8 +437,8 @@ def linux64(ctx):
 def centos64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'], centos=True)
     
-def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
+def production(ctx, add=[], rm=[], centos=False):
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
 
 def profile(ctx):
     configure(ctx)

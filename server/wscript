@@ -310,6 +310,6 @@ class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
 
-def production(ctx, add=[], rm=[]):
-    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
+def production(ctx, add=[], rm=[], centos=False):
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
 
