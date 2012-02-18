@@ -164,11 +164,9 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     if sound.lower() == 'openal':
         if OS == 'Darwin':
             conf.check(
-                header_name='AL/al.h',
                 lib=['OpenAL'],
                 framework=['OpenAL'],
                 uselib_store='openal',
-                fragment='#include <AL/al.h>\n#include <AL/alc.h>' + OPENAL_MAIN_TEST_CODE,
                 mandatory=True
             )
         else:
