@@ -315,8 +315,14 @@ fmod/openal build switch
 
 Feb 17
 
-TODO:
 Finish OpenAL integration
+Working on linux build
+
+====================
+
+Feb 18
+
+TODO:
 System notifications (you killed...)
 ====================
 

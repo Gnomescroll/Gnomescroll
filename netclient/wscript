@@ -192,7 +192,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     
     #'cube_lib',
     conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include'] + fmod_includes
-    conf.env.RPATH = ['.', '..', './ext/'] + fmod_rpath
+    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib'] + fmod_rpath
     
 def build(bld):
     OS = platform.system()
@@ -273,7 +273,16 @@ def build(bld):
         source='run.c',
         target='run')
 
-
+    # compile python files
+    if '-DPRODUCTION' in bld.env.CFLAGS:
+        import py_compile
+        py_compile.compile('cube_dat.py')
+        py_compile.compile('dat_loader.py')
+        py_compile.compile('args_client.py')
+        py_compile.compile('gameloop.py')
+        py_compile.compile('opts.py')
+        py_compile.compile('default_settings.py')
+        
     bld.add_post_fun(install_in_ext)
 
 
@@ -380,6 +389,10 @@ class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
     
+class linux_production_ctx(ConfigurationContext):
+    cmd = 'linux'
+    fun = 'linux'
+
 class fmod_ctx(ConfigurationContext):
     cmd = 'fmod'
     fun = 'fmod'
@@ -402,13 +415,12 @@ def openal(ctx):
     #configure(ctx)
     #ctx.env.CFLAGS.append('-fbounds-checking')
     #ctx.env.CXXFLAGS.append('-fbounds-checking')
+
+def linux(ctx):
+    production(ctx, add=['-march=i386', '-shared-libgcc'])
     
-def production(ctx):
-    #configure(ctx)
-    #optimized(ctx)
-    #ctx.env.CFLAGS.append('-DPRODUCTION')
-    #ctx.env.CXXFLAGS.append('-DPRODUCTION')
-    configure(ctx, add_flags=['-DPRODUCTION', '-O3', '-Winline'], rm_flags=['-ggdb'])
+def production(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
 
 def profile(ctx):
     configure(ctx)

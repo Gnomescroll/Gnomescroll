@@ -26,7 +26,7 @@ def _grab_output(*cmd):
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
-def configure(conf):
+def configure(conf, add_flags=[], rm_flags=[]):
     OS = platform.system()
     conf.env.os = OS
 
@@ -45,18 +45,21 @@ def configure(conf):
     #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
     #conf.env.CXXFLAGS = conf.env.CFLAGS
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch']
+    cflags = []
     if OS == 'Windows':
-        conf.env.append_value('CFLAGS', ['-g','-Wall','-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
-        conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_SERVER','-fpermissive', '-static-libgcc']+extra_options)
+        cflags += ['-g','-Wall','-DDC_SERVER','-fpermissive', '-static-libgcc']
     else:
-        conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_SERVER']+extra_options)
-        conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_SERVER']+extra_options)
+        cflags += ['-ggdb','-Wall','-fPIC','-DDC_SERVER']
 
-    #,'-D DC_CLIENT'
-    #if OS != 'Windows':
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch']
+    cflags += extra_options
 
-    
+    cflags += [c for c in add_flags if c not in cflags]
+    cflags = [c for c in cflags if c not in rm_flags]
+
+    conf.env.append_value('CFLAGS', cflags)
+    conf.env.append_value('CXXFLAGS', cflags)
+
     conf.env.append_value("LINKFLAGS", "-lz")
 
     if OS == 'Linux':
@@ -101,7 +104,7 @@ def configure(conf):
 
     conf.env.INCLUDES = ['.', 'c_lib', 'net_lib', '/usr/local/include']
     #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
-    conf.env.RPATH = ['.', '..', './ext/']
+    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
 
     if OS == 'Darwin':
         conf.env.ARCH = ['x86_64']
@@ -167,6 +170,18 @@ def build(bld):
         use=common_libraries,
         source='run.c',
         target='run')
+
+    # compile python files
+    if '-DPRODUCTION' in bld.env.CFLAGS:
+        import py_compile
+        py_compile.compile('run.py')
+        py_compile.compile('cube.py')
+        py_compile.compile('map_recipes.py')
+        py_compile.compile('args_server.py')
+        py_compile.compile('__init__.py')
+        py_compile.compile('linux_terminal.py')
+        py_compile.compile('opts.py')
+        py_compile.compile('default_settings.py')
 
     bld.add_post_fun(install_in_ext)
 
@@ -240,10 +255,17 @@ class optimized_ctx(ConfigurationContext):
 class map_gen_ctx(ConfigurationContext):
     cmd = 'map_gen'
     fun = 'map_gen'
+
+class linux_production_ctx(ConfigurationContext):
+    cmd = 'linux'
+    fun = 'linux'
     
 class multicore_ctx(ConfigurationContext):
     cmd = 'multicore'
     fun = 'multicore'
+
+def linux(ctx):
+    production(ctx, add=['-march=i386', '-shared-libgcc'])
 
 def optimized(ctx):
     configure(ctx)
@@ -270,9 +292,6 @@ class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
 
-def production(ctx):
-    configure(ctx)
-    optimized(ctx)
-    ctx.env.CFLAGS.append('-DPRODUCTION')
-    ctx.env.CXXFLAGS.append('-DPRODUCTION')
+def production(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
 
