@@ -33,7 +33,7 @@ class map_element_update_array: public MapMessagePacketToClient<map_element_upda
 };
 */
 
-class map_chunk_uncompressed_StoC MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
+class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chunk_uncompressed_StoC>
 {
     public:
 
