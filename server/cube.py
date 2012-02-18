@@ -769,3 +769,32 @@ dat = {   0: {   'active': False,
              'solid': True,
              'texture_id': [119, 119, 119, 119, 119, 119],
              'transparent': 2}}
+
+
+def _build_cubes():
+    def get_default_tile(i):
+
+        return {
+            'name'  :   'tile%d' % (i+1,),
+            'occludes': True,
+            'active':   True,
+            'solid':    True,
+            'max_damage' : 32,
+            'neutron_tolerance' : 2,
+            'nuclear' : i%2,
+            'texture_id': [255]*6,
+            'gravity'   :   0,
+            'transparent': 0,
+        }
+
+_build_cubes()
+
+# module reload behavior
+try:
+    _init
+except NameError:
+    _init = None
+else:
+    reload(cube_dat)
+    dat.update(cube_dat.dat)
+

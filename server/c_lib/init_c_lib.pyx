@@ -216,23 +216,23 @@ cpdef inline int get(int x, int y,int z):
     return _get(x,y,z)
 
 
-import dats.loader as dat_loader
-c_dat = dat_loader.c_dat
+#import dats.loader as dat_loader
+#c_dat = dat_loader.c_dat
 
 def init_cube_properties(c_dat):
 
-    def apply(id):
+    def apply(id, dat):
         global infinite_texture_counter
         cdef cubeProperties* cp
         cp = get_cube(id)
-        cp.active = int(c_dat.get(id,'active'))
-        cp.solid = int(c_dat.get(id,'solid'))
-        cp.occludes = int(c_dat.get(id,'occludes'))
-        cp.transparent = int(c_dat.get(id,'transparent'))
-        cp.max_damage = int(c_dat.get(id,'max_damage'))
+        cp.active = int(dat.get('active'))
+        cp.solid = int(dat.get('solid'))
+        cp.occludes = int(dat.get('occludes'))
+        cp.transparent = int(dat.get('transparent'))
+        cp.max_damage = int(dat.get('max_damage'))
 
-    for id in c_dat.dat:
-        apply(id)
+    for id, dat in c_dat.items():
+        apply(id, dat)
 
 
 '''
@@ -240,11 +240,8 @@ def init_cube_properties(c_dat):
 '''
 
 def init_terrain():
-    global c_dat
     print "Init Terrain Map"
-    init_cube_properties(c_dat)
     init_t_map()
-init_terrain()
 
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":

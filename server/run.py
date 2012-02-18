@@ -24,6 +24,7 @@ if OS == 'Linux':
 import init_c_lib
 import c_lib.map_gen
 import map_recipes
+import cube #dat
 
 from init_c_lib import NetServerDispatchNetworkEvents, NetServerFlushToNet
 from init_c_lib import START_CLOCK, GET_TICK
@@ -33,6 +34,9 @@ class Main:
     def __init__(self):
         init_c_lib.load_options(opts)
         init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
+
+        init_c_lib.init_terrain()
+        init_c_lib.init_cube_properties(cube.dat)
 
     def init_net(self):
         START_CLOCK()
