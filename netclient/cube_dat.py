@@ -1,1 +1,1 @@
-../server/dats/cube_dat.py
+../server/cube.py

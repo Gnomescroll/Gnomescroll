@@ -192,7 +192,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     
     #'cube_lib',
     conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include'] + fmod_includes
-    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib'] + fmod_rpath
+    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib'] + fmod_rpath
     
 def build(bld):
     OS = platform.system()
@@ -273,7 +273,16 @@ def build(bld):
         source='run.c',
         target='run')
 
-
+    # compile python files
+    if '-DPRODUCTION' in bld.env.CFLAGS:
+        import py_compile
+        py_compile.compile('cube_dat.py')
+        py_compile.compile('dat_loader.py')
+        py_compile.compile('args_client.py')
+        py_compile.compile('gameloop.py')
+        py_compile.compile('opts.py')
+        py_compile.compile('default_settings.py')
+        
     bld.add_post_fun(install_in_ext)
 
 
@@ -408,14 +417,10 @@ def openal(ctx):
     #ctx.env.CXXFLAGS.append('-fbounds-checking')
 
 def linux(ctx):
-    production(ctx, add=['-march=i386'])
+    production(ctx, add=['-march=i386', '-shared-libgcc'])
     
 def production(ctx, add=[], rm=[]):
-    #configure(ctx)
-    #optimized(ctx)
-    #ctx.env.CFLAGS.append('-DPRODUCTION')
-    #ctx.env.CXXFLAGS.append('-DPRODUCTION')
-    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb'])
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline'], rm_flags=rm+['-ggdb', '-g'])
 
 def profile(ctx):
     configure(ctx)
