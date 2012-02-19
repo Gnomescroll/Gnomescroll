@@ -116,6 +116,7 @@ class ChatClient
     void teardown();
     void subscribe_channels();
     void received_message(int channel, int sender, char* payload);
+    void send_system_message(char* msg);
     void submit();
 
     void use_team_channel();

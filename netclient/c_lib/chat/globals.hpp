@@ -10,6 +10,7 @@ const int CHANNEL_ID_TEAM_OFFSET = 16;
 const int CHANNEL_ID_AGENT_OFFSET = 32;
 
 const int CHAT_SENDER_SYSTEM = 255;
+const int CHAT_CHANNEL_SYSTEM = 0;
 
 const unsigned char CHAT_SYSTEM_COLOR_R = 255;
 const unsigned char CHAT_SYSTEM_COLOR_G = 0;

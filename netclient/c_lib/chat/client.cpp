@@ -402,6 +402,11 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     chan->add_message(m);
 }
 
+void ChatClient::send_system_message(char* msg)
+{
+    this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
+}
+
 void ChatClient::subscribe_channels()
 {   // call after playerAgent_state has been assigned by server
     if (ClientState::playerAgent_state.you == NULL)
@@ -460,7 +465,6 @@ void ChatClient::use_global_channel()
 {
     this->channel = 1;
 }
-
 
 ChatClient::ChatClient()
 :

@@ -193,16 +193,16 @@ def _gen_map():
 import time
 
 def gen_map_simple():
-    size = 128
+    size = 512
     #init_c_lib.set_map_dimensions(size,size,size) # TODO:: get this value from the map gen or saved map
 
-    c_lib.map_gen.init(size,size,size)
+    c_lib.map_gen.init(512, 512 ,128)
     c_lib.map_gen.conf.seed(opts.seed)
     _n = time.time()
 
     ##base heightmap, smooth shallow hills
     c_lib.map_gen.conf\
-    .size(size,size,size)\
+    .size(512,512,128)\
     .group(0)\
     .tile(2)\
     .interpolate(4,4,1)\
