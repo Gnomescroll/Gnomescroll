@@ -167,9 +167,9 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
             conf.check(
                 lib=[],
                 framework=['OpenAL'],
+                uselib_store='openal',
                 mandatory=True
             )
-                #uselib_store='openal',
         else:
             conf.check(header_name='AL/al.h',
                        lib='openal',
@@ -247,7 +247,10 @@ def build(bld):
     if using_fmod:
         sound_libraries = ['fmodex']
     elif using_openal:
-        sound_libraries = ['openal']
+        if OS == 'Darwin':
+            sound_libraries = []
+        else:
+            sound_libraries = ['openal']
     #noise_libraries = ['noise']
 
     if OS == "Darwin":
