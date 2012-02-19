@@ -763,3 +763,18 @@ class ping_reliable_CtoS: public FixedSizeReliableNetPacketToServer<ping_reliabl
         }
         inline void handle();
 };
+
+class agent_conflict_notification_StoC: public FixedSizeNetPacketToClient<agent_conflict_notification_StoC>
+{
+    public:
+        int attacker;
+        int victim;
+        int method;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&attacker, buff, buff_n, pack);
+            pack_u8(&victim, buff, buff_n, pack);
+            pack_u8(&method, buff, buff_n, pack);
+        }
+        inline void handle();
+};

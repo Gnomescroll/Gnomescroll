@@ -201,7 +201,6 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
 
 void Agent_status::kill(int victim_id) {
     if (victim_id == this->a->id) {
-        printf("SUICIDE\n");
         suicides++;
         AgentSuicides_StoC as;
         as.id = this->a->id;
@@ -214,6 +213,13 @@ void Agent_status::kill(int victim_id) {
         ak.kills = kills;
         ak.broadcast();
     }
+    #ifdef DC_SERVER
+    agent_conflict_notification_StoC msg;
+    msg.victim = victim_id;
+    msg.attacker = this->a->id;
+    msg.method = DEATH_NORMAL;    // put headshot, grenades here
+    msg.broadcast();
+    #endif
 }
 
 int Agent_status::score() {

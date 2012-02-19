@@ -7,6 +7,13 @@
 
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 
+typedef enum AgentDeathMethod
+{
+    DEATH_NORMAL = 0,
+    DEATH_HEADSHOT,
+    DEATH_GRENADE
+} AgentDeathMethod;
+
 class Agent_state;  // forward declaration
 
 // Use for:
