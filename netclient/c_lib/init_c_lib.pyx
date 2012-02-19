@@ -46,6 +46,13 @@ def load_options(opts):
     set_sfx(opts.sfx)
     set_music(opts.music)
 
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void enumerate_sound_devices()
+
+def show_sound_devices():
+    enumerate_sound_devices()
+
+
 """
 Game loop
 """
@@ -175,4 +182,6 @@ def init_terrain():
     init_t_map()
     set_hud_cube_selector()
     init_for_draw()
+
+
 

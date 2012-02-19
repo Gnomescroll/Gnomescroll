@@ -21,6 +21,9 @@ from dat_loader import dat_loader
 class App(object):
 
     def __init__(self):
+        if opts.sound_devices:
+            init_c_lib.show_sound_devices()
+            sys.exit()
         init_c_lib.load_options(opts)
         init_c_lib.init_game()
 
