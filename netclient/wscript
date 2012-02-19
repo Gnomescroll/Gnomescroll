@@ -249,7 +249,7 @@ def build(bld):
         sound_libraries = ['fmodex']
     elif using_openal:
         if OS == 'Darwin':
-            sound_libraries = []
+            sound_libraries = ['openal']
             sound_framework = ['OpenAL']
         else:
             sound_libraries = ['openal']
