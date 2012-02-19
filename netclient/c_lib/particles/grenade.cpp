@@ -175,7 +175,7 @@ void Grenade::explode() {
     ServerState::damage_objects_within_sphere(
         particle.state.p.x, particle.state.p.y, particle.state.p.z,
         GRENADE_DAMAGE_RADIUS,
-        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_AGENT // inflictor (agent is inflictor for now, only they can create grenades
+        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE
     );
     
     damage_blocks();

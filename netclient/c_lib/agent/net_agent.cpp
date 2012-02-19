@@ -379,7 +379,7 @@ inline void agent_conflict_notification_StoC::handle()
             else
             {
                 if (a->is_you())
-                    sprintf(msg, "You knocked the guts out of %s", b_name);
+                    sprintf(msg, "You destroyed %s with a grenade", b_name);
                 else if (b->is_you())
                     sprintf(msg, "You were mangled by %s's grenade", a_name);
                 else

@@ -101,7 +101,7 @@ int Agent_status::apply_damage(int dmg) {
     return this->health;
 }
 
-int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type)
+int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id)
 {
     #ifdef DC_SERVER
     // dont allow team kills
@@ -113,7 +113,13 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
     }
     
     int health = this->apply_damage(dmg);
-    if (!this->health) die(inflictor_id, inflictor_type);
+    AgentDeathMethod death_method = DEATH_NORMAL;
+    if (part_id == AGENT_PART_HEAD)
+        death_method = DEATH_HEADSHOT;
+    else if (inflictor_type == OBJ_TYPE_GRENADE)
+        death_method = DEATH_GRENADE;
+        
+    if (!this->health) die(inflictor_id, inflictor_type, death_method);
     #endif
     return health;
 }
@@ -147,7 +153,7 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
             break;
     }
     
-    return this->apply_damage(dmg, inflictor_id, inflictor_type);
+    return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
 int Agent_status::die() {
@@ -167,8 +173,10 @@ int Agent_status::die() {
     return 1;
 }
 
-int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
-    printf("inflictor_id=%d, type=%d\n", inflictor_id, inflictor_type);
+int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method) {
+    if (inflictor_type == OBJ_TYPE_GRENADE)
+        inflictor_type = OBJ_TYPE_AGENT;
+        
     int killed = this->die();
     Agent_state* attacker;
     if (killed) {
@@ -194,7 +202,18 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type) {
             this->drop_flag();
             ServerState::ctf.agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
         }
+
+        // send conflict notification to clients
+        if (inflictor_type == OBJ_TYPE_AGENT)
+        {
+            agent_conflict_notification_StoC msg;
+            msg.victim = this->a->id;
+            msg.attacker = inflictor_id;
+            msg.method = death_method;    // put headshot, grenades here
+            msg.broadcast();
+        }
         #endif
+
     }
     return killed;
 }
@@ -213,13 +232,6 @@ void Agent_status::kill(int victim_id) {
         ak.kills = kills;
         ak.broadcast();
     }
-    #ifdef DC_SERVER
-    agent_conflict_notification_StoC msg;
-    msg.victim = victim_id;
-    msg.attacker = this->a->id;
-    msg.method = DEATH_NORMAL;    // put headshot, grenades here
-    msg.broadcast();
-    #endif
 }
 
 int Agent_status::score() {
