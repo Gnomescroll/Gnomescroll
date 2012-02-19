@@ -47,8 +47,8 @@ void PlayerAgent_action::fire() {
 }
 
 void PlayerAgent_action::hitscan_laser() {
-    printf("Firing laser\n");
-    chat_client.received_message(0, 0, (char*)"YOU SHOT SOMETHIN"); // TODO, specific method for system message. needs special id
+    //printf("Firing laser\n");
+    //chat_client.received_message(0, 0, (char*)"YOU SHOT SOMETHIN"); // TODO, specific method for system message. needs special id
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     
