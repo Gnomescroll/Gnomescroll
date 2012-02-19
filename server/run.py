@@ -59,6 +59,9 @@ class Main:
         for x in range(0,512):
             for y in range(0,512):
                 init_c_lib.set(x,y,2, 1)
+        for x in range(0,512/16):
+            for y in range(0,512/16):
+                init_c_lib.set(x*16,y*16,3, 2)
 
         init_c_lib.start()
         

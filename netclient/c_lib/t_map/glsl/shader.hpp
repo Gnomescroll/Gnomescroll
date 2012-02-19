@@ -6,6 +6,8 @@ namespace t_map
     void init_shaders();
     
     void set_map_shader_0();
+
+    void toggle_3d_texture_settings();
     void init_map_3d_texture();
 
     const int num_map_shaders = 1;
@@ -19,8 +21,8 @@ namespace t_map
     int map_LightMatrix;
 
     //texture
-    extern SDL_Surface *terrain_map_surface = NULL;
-    extern GLuint terrain_map_texture = 0;
+    extern SDL_Surface *terrain_map_surface;
+    extern GLuint terrain_map_texture;
 
     void teardown_shader(); // frees surface
 }

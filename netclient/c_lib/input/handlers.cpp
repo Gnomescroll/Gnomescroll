@@ -4,6 +4,9 @@
 #include <hud/hud.hpp>
 #include <input/skeleton_editor.hpp>
 
+//toggling graphics settings
+#include <c_lib/t_map/glsl/shader.hpp>
+
 InputState input_state;
 
 // triggers
@@ -433,6 +436,10 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_o:
                 toggle_skeleton_editor();
+                break;
+            
+            case SDLK_F12:
+                t_map::toggle_3d_texture_settings();;
                 break;
 
             case SDLK_t:
