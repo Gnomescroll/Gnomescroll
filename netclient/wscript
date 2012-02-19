@@ -283,7 +283,7 @@ def build(bld):
         framework = sound_framework,
         target='c_lib')
 
-    bld(features='cxx cshlib pyext',
+    bld(features='cxx cxxshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
         target='init_c_lib')
