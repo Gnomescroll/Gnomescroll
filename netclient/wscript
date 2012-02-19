@@ -111,8 +111,8 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     cflags += extra_options
 
-    if OS == 'Darwin':
-        cflags += ['-x c++-header']
+    #if OS == 'Darwin':
+        #cflags += ['-x c++-header']
 
     cflags += [c for c in add_flags if c not in cflags]
     cflags = [c for c in cflags if c not in rm_flags]
