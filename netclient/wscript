@@ -242,6 +242,7 @@ def build(bld):
                 pass
         """"""
 
+    sound_framework = []
     common_libraries = []
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     if using_fmod:
@@ -249,6 +250,7 @@ def build(bld):
     elif using_openal:
         if OS == 'Darwin':
             sound_libraries = []
+            sound_framework = ['OpenAL']
         else:
             sound_libraries = ['openal']
     #noise_libraries = ['noise']
@@ -275,7 +277,7 @@ def build(bld):
         lib=sound_libraries+png_libs,
         includes= c_lib_includes,
         libpath= c_lib_libpath,
-
+        framework = sound_framework,
         target='c_lib')
 
     bld(features='cxx cshlib pyext',
