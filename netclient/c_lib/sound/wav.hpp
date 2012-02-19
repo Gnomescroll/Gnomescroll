@@ -1,8 +1,9 @@
 #pragma once
 
 #ifdef USE_OPENAL
-#include <AL/al.h>
-#include <AL/alc.h>
+//#include <AL/al.h>
+//#include <AL/alc.h>
+#include <compat_al.h>
 #endif
 
 namespace Sound

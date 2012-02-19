@@ -17,6 +17,7 @@
 
 /* Graphics, SDL */
 #include "compat_gl.h"
+#include "compat_al.h"
 #include "defines.h"
 
 //utility

@@ -3,8 +3,9 @@
 #ifdef USE_OPENAL
 
 #include <c_lib/sound/sound.hpp>
-#include <AL/al.h>
-#include <AL/alc.h>
+//#include <AL/al.h>
+//#include <AL/alc.h>
+#include <compat_al.h>
 
 namespace OpenALSound
 {
