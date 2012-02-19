@@ -9,8 +9,8 @@
    * Change History
      May 15, v1.09 - Initial stable release.
      May 27, v1.10 - Substantial compressor optimizations:
-      Level 1 is now ~4x faster than before. The L1 compressor's throughput now varies between 70-110MB/sec. on a 
-      Core i7 (actual throughput varies depending on the type of data, and x64 vs. x86).     
+      Level 1 is now ~4x faster than before. The L1 compressor's throughput now varies between 70-110MB/sec. on a
+      Core i7 (actual throughput varies depending on the type of data, and x64 vs. x86).
       Improved baseline L2-L9 compression perf. Also, greatly improved compression perf. issues on some file types.
       Refactored the compression code for better readability and maintainability.
       Added level 10 compression level (L10 has slightly better ratio than level 9, but could have a potentially large
@@ -127,17 +127,17 @@
 // If all macros here are defined the only functionality remaining will be CRC-32, adler-32, tinfl, and tdefl.
 
 // Define MINIZ_NO_STDIO to disable all usage and any functions which rely on stdio for file I/O.
-//#define MINIZ_NO_STDIO
+#define MINIZ_NO_STDIO
 
 // If MINIZ_NO_TIME is specified then the ZIP archive functions will not be able to get the current time, or
 // get/set file times.
-//#define MINIZ_NO_TIME
+#define MINIZ_NO_TIME
 
 // Define MINIZ_NO_ARCHIVE_APIS to disable all ZIP archive API's.
-//#define MINIZ_NO_ARCHIVE_APIS
+#define MINIZ_NO_ARCHIVE_APIS
 
 // Define MINIZ_NO_ARCHIVE_APIS to disable all writing related ZIP archive API's.
-//#define MINIZ_NO_ARCHIVE_WRITING_APIS
+#define MINIZ_NO_ARCHIVE_WRITING_APIS
 
 // Define MINIZ_NO_ZLIB_APIS to remove all ZLIB-style compression/decompression API's.
 //#define MINIZ_NO_ZLIB_APIS
@@ -2153,7 +2153,7 @@ static int tdefl_flush_block(tdefl_compressor *d, int flush)
       if (!(*d->m_pPut_buf_func)(d->m_output_buf, n, d->m_pPut_buf_user))
         return (d->m_prev_return_status = TDEFL_STATUS_PUT_BUF_FAILED);
     }
-    else if (pOutput_buf_start == d->m_output_buf) 
+    else if (pOutput_buf_start == d->m_output_buf)
     {
       int bytes_to_copy = (int)MZ_MIN((size_t)n, (size_t)(*d->m_pOut_buf_size - d->m_out_buf_ofs));
       memcpy((mz_uint8 *)d->m_pOut_buf + d->m_out_buf_ofs, d->m_output_buf, bytes_to_copy);

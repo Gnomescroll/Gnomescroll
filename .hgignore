@@ -23,16 +23,11 @@ screenshot.png
 __MACOSX
 ___MACOSX
 *.pyc.orig
-cube_dat.py.orig
 .DS_Store
 
 */build/*
 
 *.old
-
-test.wav
-perlin.png
-out.png
 
 run 
 
@@ -42,40 +37,9 @@ tags_sorted_by_file
 server.sublime-workspace
 netclient.sublime-workspace
 
-terrain_map.c
-terrain_map2.c
-dat.c
-cube_lib.c
-cube_dat.c
-map_chunk_manager.c
-hud.c
-ChromeEmbedded.c
-vox.c
-vox_lib.c
-_ray_trace.c
-init_c_lib.c
-c_lib_objects.c
-input.c
-c_lib_map_gen.c
-c_lib_timer.c
-c_lib_agents.c
-
-test_client
-test_server
-
-VBO.c
-input.c
-gl.c
-
-SDL_interface.c
-
-pyglet_client/log/
-
 dump.rdb
 
-steve.py
 startall.sh
-node_modules/
 
 lastserverpid*
 *.tmp
@@ -83,7 +47,6 @@ conf/*.conf
 
 settings.py
 
-jdump
 output_msgs
 .idea/
 

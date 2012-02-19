@@ -58,6 +58,13 @@ namespace t_map
 
     void init_map_3d_texture()
     {
+        /*
+            Cleanup
+        */
+        if(terrain_map_surface != NULL) 
+        SDL_FreeSurface(terrain_map_surface);
+        if(terrain_map_glsl != 0)
+        glDeleteTextures(1,&terrain_map_glsl);
 
         terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
         if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
@@ -106,8 +113,11 @@ namespace t_map
         } 
         else 
         {
+            //GL_LINEAR_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_NEAREST, and GL_NEAREST_MIPMAP_NEAREST
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR );
+            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR );
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 6);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);

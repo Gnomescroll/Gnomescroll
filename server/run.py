@@ -55,7 +55,10 @@ class Main:
 
         init_c_lib.init()
         
-        map_recipes.gen_map_simple()
+        #map_recipes.gen_map_simple()
+        for x in range(0,512):
+            for y in range(0,512):
+                init_c_lib.set(x,y,2, 1)
 
         init_c_lib.start()
         
