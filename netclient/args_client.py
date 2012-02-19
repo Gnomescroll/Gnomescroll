@@ -45,7 +45,8 @@ font-size       Size of the font
 no-sound        Disable all sound
 sfx             Sound effects volume (Values 0-100)
 music           Music volume (Values 0-100)
-sound-devices    Display all sound devices available (OpenAL only)
+display-sound-devices    Display all sound devices available (OpenAL only)
+sound-device    String identifying sound device to use (OpenAL only). The available device names can be found using display-sound-devices
 
 no-player       Free-camera only. Will not create player or join game
 disable-draw-agents Don't draw agent character models
@@ -139,7 +140,8 @@ def parse(cl_args=None):
     parser.add_argument('-ns', '--no-sound', action='store_true', dest='sound')
     parser.add_argument('--sfx', default=DEFAULTS['sfx'], type=int)
     parser.add_argument('--music', default=DEFAULTS['music'], type=int)
-    parser.add_argument('--sound-devices', action='store_true')
+    parser.add_argument('--display-sound-devices', action='store_true', dest='sound_devices')
+    parser.add_argument('--sound-device', default="", type=str)
 
     ''' Rendering '''
     parser.add_argument('-np', '--no-player', action='store_true') # no player, just camera viewer

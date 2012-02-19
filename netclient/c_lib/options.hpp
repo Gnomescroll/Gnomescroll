@@ -41,5 +41,6 @@ OPT_INT_HEADER(font_size)
 OPT_BOOL_HEADER(sound)
 OPT_INT_HEADER(sfx)
 OPT_INT_HEADER(music)
+OPT_STRING_HEADER(sound_device)
 
 }

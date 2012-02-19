@@ -102,17 +102,20 @@ void init()
     Sound::init_wav_buffers();
 
     // open device (enumerate before this) 
-    device = alcOpenDevice(NULL); // select the "preferred device" 
+    if (Options::sound_device[0] != '\0')
+        device = alcOpenDevice(Options::sound_device);
+    else
+        device = alcOpenDevice(NULL); // select the "preferred device" 
 
     if (device == NULL)
     {
+        printf("OpenAL error: sound device %s not found\n", Options::sound_device);
         close();
         enabled = false;
         return;
     }
 
-    // create context
-    context = alcCreateContext(device, NULL); 
+    context = alcCreateContext(device, NULL);
     alcMakeContextCurrent(context);  
     
     // Check for EAX 2.0 support 
@@ -457,7 +460,7 @@ void enumerate_devices()
         if (c == '\0')
         {
             j = 0;
-            printf(device_name);
+            printf("%s", device_name);
             memset(device_name, '\0', 200 * sizeof(ALchar));
             printf("\n");
             if (devices[i] == '\0')
@@ -471,7 +474,7 @@ void enumerate_devices()
     
     printf("\n");
     printf("Default device:\n");
-    printf(default_device);
+    printf("%s", default_device);
     printf("\n");
 
 }
