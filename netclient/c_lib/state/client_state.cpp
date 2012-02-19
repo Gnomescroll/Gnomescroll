@@ -142,4 +142,14 @@ namespace ClientState {
         send_identify_packet(desired_name);
     }
 
+    void on_connect()
+    {
+        chat_client.send_system_message((char*)"Connected to server");   
+    }
+    
+    void on_disconnect()
+    {
+        chat_client.send_system_message((char*)"Disconnected from server");
+    }
+
 }

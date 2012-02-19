@@ -211,8 +211,11 @@ inline void agent_name_StoC::handle()
         printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
         return;
     }
-    a->status.set_name(name);
-    a->event.name_changed();
+    char old_name[strlen(a->status.name)];
+    strcpy(old_name, a->status.name);
+    bool new_name = a->status.set_name(name);
+    if (new_name)
+        a->event.name_changed(old_name);
 }
 
 inline void agent_destroy_StoC::handle()
@@ -276,9 +279,12 @@ inline void identified_StoC::handle()
         printf("identified_StoC -- identified as %s but player agent not assigned\n", name);
         return;
     }
-    printf("Identified as %s\n", name);
     ClientState::playerAgent_state.identified = true;
-    a->status.set_name(name);
+    char old_name[strlen(a->status.name)];
+    strcpy(old_name, a->status.name);
+    bool new_name = a->status.set_name(name);
+    if (new_name)
+        a->event.name_changed(old_name);
 }
 
 inline void Spawner_create_StoC::handle()

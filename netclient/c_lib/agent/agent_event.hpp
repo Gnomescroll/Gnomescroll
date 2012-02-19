@@ -26,7 +26,7 @@ class Agent_event {
         void hide_name();
 
         void joined_team(int team);
-        void name_changed();
+        void name_changed(char* old_name);
         
         void picked_up_flag();
         void dropped_flag();

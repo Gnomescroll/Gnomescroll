@@ -114,6 +114,7 @@ class ChatClient
     ChatClientChannel** channels;
 
     void teardown();
+    void subscribe_system_channel();
     void subscribe_channels();
     void received_message(int channel, int sender, char* payload);
     void send_system_message(char* msg);
@@ -122,7 +123,7 @@ class ChatClient
     void use_team_channel();
     void use_global_channel();
 
-    ChatInput input;
+    ChatInput* input;
 
     ChatClient();
     ~ChatClient();

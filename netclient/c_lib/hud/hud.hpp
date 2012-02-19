@@ -9,6 +9,8 @@ namespace Hud
 using namespace HudText;
 
 const int CHAT_MESSAGE_RENDER_MAX = 8;
+char CHAT_NAME_DEFAULT_SEPARATOR[] = ": ";
+const int CHAT_NAME_SEPARATOR_LENGTH_MAX = strlen(CHAT_NAME_DEFAULT_SEPARATOR);
 class ChatRender
 {
     //private:

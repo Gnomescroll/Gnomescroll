@@ -10,6 +10,7 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/state/packet_init.hpp>
 #include <c_lib/options.hpp>
+#include <c_lib/state/client_state.hpp>
 
 const int DEFAULT_PORT = 4096;
 
@@ -107,21 +108,27 @@ namespace NetClient
 
 static void client_connect(ENetEvent* event)
 {
-    printf("Client connected with server \n");
-
     NetClient::Server.enet_peer = event->peer;
     event->peer -> data = (void*) &NetClient::Server;
     NetClient::Server.connected = 1;
+
+    printf("Client connected with server \n");
+    #ifdef DC_CLIENT
+    ClientState::on_connect();
+    #endif
 }
 
 static void client_disconnect(ENetEvent* event)
 {
-    printf ("Client disconected from server\n");
-
     event->peer -> data = NULL;
     enet_peer_reset(event->peer); //TEST
     NetClient::Server.connected = 0;
     NetClient::Server.client_id = -1;
+
+    printf("Client disconnected from server\n");
+    #ifdef DC_CLIENT
+    ClientState::on_disconnect();
+    #endif
 }
 
 }
@@ -192,12 +199,12 @@ void client_dispatch_network_events()
 
         case ENET_EVENT_TYPE_CONNECT:
             NetClient::client_connect(&event);
-            printf("Client connected to server \n");
+            //printf("Client connected to server \n");
             break;
 
         case ENET_EVENT_TYPE_DISCONNECT:
             NetClient::client_disconnect(&event);
-            printf("Client disconnected from server \n");
+            //printf("Client disconnected from server \n");
             break;
 
         case ENET_EVENT_TYPE_RECEIVE:

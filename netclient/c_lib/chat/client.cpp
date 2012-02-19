@@ -379,11 +379,12 @@ void ChatClient::received_message(int channel, int sender, char* payload)
 
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
-        if (this->channels[i]->id == channel)
-        {
-            chan  = this->channels[i];
+        chan = this->channels[i];
+        if (chan == NULL)
+            continue;
+        if (chan->id == channel)
             break;
-        }
+        chan = NULL;
     }
 
     if (chan == NULL)
@@ -407,13 +408,25 @@ void ChatClient::send_system_message(char* msg)
     this->received_message(CHAT_CHANNEL_SYSTEM, CHAT_SENDER_SYSTEM, msg);
 }
 
+void ChatClient::subscribe_system_channel()
+{
+    if (this->channels[CHANNEL_SYSTEM] == NULL)
+        this->channels[CHANNEL_SYSTEM] = new ChatClientChannel();
+
+    this->channels[CHANNEL_SYSTEM]->type = CHANNEL_SYSTEM;
+    this->channels[CHANNEL_SYSTEM]->id = 0;
+}
+
 void ChatClient::subscribe_channels()
-{   // call after playerAgent_state has been assigned by server
+{
+    this->subscribe_system_channel();
+
+    // call after playerAgent_state has been assigned by server
     if (ClientState::playerAgent_state.you == NULL)
         return;
 
     ChatClientChannel* chan;
-    for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
+    for (int i=1; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
         if (this->channels[i] == NULL)
             this->channels[i] = new ChatClientChannel();
@@ -441,13 +454,13 @@ void ChatClient::subscribe_channels()
 
 void ChatClient::submit()
 {
-    this->input.submit(this->channel);
+    this->input->submit(this->channel);
 }
 
 void ChatClient::teardown()
 {
-    this->input.clear_buffer();
-    this->input.clear_history();
+    this->input->clear_buffer();
+    this->input->clear_history();
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; i++)
         if (this->channels[i] != NULL)
             this->channels[i]->clear_history();
@@ -472,6 +485,9 @@ channel(1)
 {
     this->channels = (ChatClientChannel**)malloc(sizeof(ChatClientChannel*)*CHAT_CLIENT_CHANNELS_MAX);
     for (int i=0; i<CHAT_CLIENT_CHANNELS_MAX; channels[i++] = NULL);
+    this->subscribe_system_channel();
+    
+    this->input = new ChatInput;
 }
 
 ChatClient::~ChatClient()
@@ -485,6 +501,9 @@ ChatClient::~ChatClient()
         }
         free(this->channels);
     }
+
+    if (this->input != NULL)
+        delete this->input;
 }
 
 /* ChatMessageList */

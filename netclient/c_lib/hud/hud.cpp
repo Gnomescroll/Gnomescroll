@@ -143,7 +143,7 @@ void update_hud_draw_settings()
         HudText::Text *t = hud->chat->input;
         if (t != NULL)
         {
-            t->set_text(chat_client.input.buffer);
+            t->set_text(chat_client.input->buffer);
             hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
@@ -420,8 +420,8 @@ void ChatRender::init()
         HudText::Text* t = HudText::text_list.create();
         t->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
         t->set_text((char*) "");
-        t->set_format((char*) "%s: %s");
-        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX - 4);
+        t->set_format((char*) "%s%s %s");
+        t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
         t->set_color(255,255,255,255);
         messages[i] = t;
     }
@@ -488,13 +488,28 @@ void ChatRender::update(bool timeout)
         n_draw++;
     }
 
+    char blank[] = "";
+    char* separator;
+    char* name;
+    
     j = n_draw;
     i = 0;
     for (;j>0;)
     {
         ChatMessage* m = chat_message_list.filtered_objects[--j];
         HudText::Text* t = this->messages[i++];
-        t->update_formatted_string(2, m->name, m->payload);
+
+        if (m->sender == CHAT_SENDER_SYSTEM)
+        {
+            separator = blank;
+            name = blank;
+        }
+        else
+        {
+            separator = CHAT_NAME_DEFAULT_SEPARATOR;
+            name = m->name;
+        }
+        t->update_formatted_string(3, name, separator, m->payload);
         t->set_color(m->r, m->g, m->b, 255);
     }
 

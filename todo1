@@ -329,8 +329,11 @@ osx works with openal
 =====================
 
 Feb 19
+fix map gen
 
+TODO:
 System notifications (you killed...)
+alsa device selection
 ====================
 
 

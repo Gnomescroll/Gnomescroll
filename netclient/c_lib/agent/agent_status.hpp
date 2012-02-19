@@ -43,7 +43,7 @@ class Agent_status {
 
         bool vox_crouched;
 
-        void set_name(char* n);
+        bool set_name(char* n); // return true if the new name is different
 
         void set_spawner(int pt);
         void set_spawner();

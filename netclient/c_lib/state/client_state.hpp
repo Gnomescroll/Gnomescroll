@@ -57,6 +57,10 @@ namespace ClientState {
     void draw();
     void init();
 
+    // connect callback
+    void on_connect();
+    void on_disconnect();
+
     //CYTHON
     void update_client_state();
     void draw_client_state();

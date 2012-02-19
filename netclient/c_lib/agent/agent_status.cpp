@@ -17,6 +17,8 @@
  *
  */
 
+const char AGENT_UNDEFINED_NAME[] = "undefined-agent-name";
+
 Agent_status::Agent_status(Agent_state* a)
 :
 a(a),
@@ -35,7 +37,7 @@ flag_captures(0),
 coins(0),
 vox_crouched(false)
 {
-    strcpy(this->name, (char*)"undefined-agent-name");
+    strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
 
 void Agent_status::set_spawner(int pt)
@@ -50,10 +52,20 @@ void Agent_status::set_spawner()
     this->spawner = pt;
 }
 
-void Agent_status::set_name(char* name)
+bool Agent_status::set_name(char* name)
 {
+    #ifdef DC_SERVER
+    if (strcmp(AGENT_UNDEFINED_NAME, name) == 0)
+        return false;
+    if (name[0] == '\0')
+        return false;
+    #endif
+    
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
         name[PLAYER_NAME_MAX_LENGTH] = '\0';
+
+    bool new_name = (strcmp(this->name, name) == 0) ? false : true;
+
     strcpy(this->name, name);
     #ifdef DC_SERVER
     agent_name_StoC msg;
@@ -62,6 +74,8 @@ void Agent_status::set_name(char* name)
     strcpy(msg.name, this->name);
     msg.broadcast();
     #endif
+
+    return new_name;
 }
 
 int Agent_status::apply_damage(int dmg) {
