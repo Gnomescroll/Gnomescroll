@@ -324,17 +324,11 @@ Feb 18
 
 determined package requirement for latest 32bit versions of ubuntu, fedora, opensuse
 64bit ubuntu build
+osx works with openal
 
-TODO:
-deb,rpm
-obfuscate/make sure symbols out
+=====================
 
-backup and wipe metahentai, replace with ubuntu server  WAITING ON TICKET
-backup metaless's stuff DONE
-move metaless to metahentai (scp + dns change)
-close bluemile account
-put gnomescroll.com on metahentai
-scripts to push linux build + instructions to gnomescroll.com
+Feb 19
 
 System notifications (you killed...)
 ====================
@@ -427,3 +421,18 @@ mouse momentum
 endpoints on hitscan laser
 map networking
 map compression
+
+
+BUILD:
+deb,rpm
+obfuscate/make sure symbols out
+compile against known build of python (2.6)
+
+SERVER:
+backup and wipe metahentai, replace with ubuntu server  DONE
+backup metaless's stuff DONE
+move metaless to metahentai (scp + dns change)
+close bluemile account
+put gnomescroll.com on metahentai
+scripts to push linux build + instructions to gnomescroll.com
+

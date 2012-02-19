@@ -73,10 +73,10 @@ void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int ti
     if (maxheight <= 0) {
         printf("WARNING: set_terrain_height. maxheight <= 0. Will trigger FPE. abort.\n");
         return;
-    } else if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
-        printf("WARNING: set_terrain_map. x,y,z out of bounds\n");
+    } else if (x > map_dim.x || y > map_dim.y || z > map_dim.z || x < 0 || y < 0 || z < 0) {
+        printf("WARNING: set_terrain_map. x,y,z (%d,%d,%d) out of bounds (%d,%d,%d)\n",x,y,z, map_dim.x, map_dim.y, map_dim.z);
         return;
-    } else if (maxheight + baseline > ZMAX) {
+    } else if (maxheight + baseline > map_dim.z) {
         printf("WARNING: maxheight + baseline exceeds map height. abort.\n");
         return;
     }
@@ -144,14 +144,14 @@ void reverse_heightmap(int x, int y, int z, int baseline, int maxheight, int min
     if (maxheight <= 0) {
         printf("WARNING: reverse_heightmap. maxheight <= 0. Will trigger FPE. abort.\n");
         return;
-    } else if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
+    } else if (x > map_dim.x || y > map_dim.y || z > map_dim.z || x < 0 || y < 0 || z < 0) {
         printf("WARNING: reverse_heightmap. x,y,z out of bounds\n");
         return;
     } else if (baseline-maxheight < 0) {
         printf("WARNING: reverse_heightmap. baseline-maxheight goes below z=0. abort.\n");
         return;
-    } else if (baseline > ZMAX) {
-        printf("WARNING: reverse_heightmap. baseline > ZMAX. abort.\n");
+    } else if (baseline > map_dim.z) {
+        printf("WARNING: reverse_heightmap. baseline > map_dim.z. abort.\n");
         return;
     }
 
@@ -205,10 +205,10 @@ void set_terrain_height_over_tile(int x, int y, int z, int baseline, int maxheig
     if (maxheight <= 0) {
         printf("WARNING: set_terrain_height_over_tile. maxheight <= 0. Will trigger FPE. abort.\n");
         return;
-    } else if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
+    } else if (x > map_dim.x || y > map_dim.y || z > map_dim.z || x < 0 || y < 0 || z < 0) {
         printf("WARNING: set_terrain_height_over_tile. x,y,z out of bounds\n");
         return;
-    } else if (maxheight + baseline > ZMAX) {
+    } else if (maxheight + baseline > map_dim.z) {
         printf("WARNING: set_terrain_height_over_tile. maxheight + baseline exceeds map height. abort.\n");
         return;
     }
@@ -279,14 +279,14 @@ void reverse_heightmap_over_tile(int x, int y, int z, int baseline, int maxheigh
     } else if (minheight > maxheight) {
         printf("WARNING: reverse_heightmap_over_tile. minheight > maxheight. abort\n");
         return;
-    } else if (x > XMAX || y > YMAX || z > ZMAX || x < 0 || y < 0 || z < 0) {
+    } else if (x > map_dim.x || y > map_dim.y || z > map_dim.z || x < 0 || y < 0 || z < 0) {
         printf("WARNING: reverse_heightmap_over_tile. x,y,z out of bounds\n");
         return;
     } else if (baseline-maxheight < 0) {
         printf("WARNING: reverse_heightmap_over_tile. baseline-maxheight goes below z=0. abort.\n");
         return;
-    } else if (baseline > ZMAX) {
-        printf("WARNING: reverse_heightmap_over_tile. baseline > ZMAX. abort.\n");
+    } else if (baseline > map_dim.z) {
+        printf("WARNING: reverse_heightmap_over_tile. baseline > map_dim.z. abort.\n");
         return;
     }
 
@@ -340,7 +340,7 @@ void reverse_heightmap_over_tile(int x, int y, int z, int baseline, int maxheigh
 
 void clear_noisemap() {
     int i;
-    for (i=0; i<XMAX*YMAX*ZMAX; i++) {
+    for (i=0; i<map_dim.x*map_dim.y*map_dim.z; i++) {
         noisemap[i] = 0.0f;
     }
 }
