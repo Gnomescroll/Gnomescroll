@@ -13,9 +13,9 @@ namespace t_map
 const int COMPRESSION_BUFFER_SIZE = 1024*512;
 extern char* COMPRESSION_BUFFER;
 
-const int  DEFAULT_MAP_MANAGER_RADIUS = 32;
-const int UNSUB_DISTANCE = 40;
-const int UNSUB_DISTANCE2 = UNSUB_DISTANCE*UNSUB_DISTANCE;
+const int DEFAULT_SUB_RADIUS = 48;
+const int DEFAULT_UNSUB_RADIUS = 64;
+const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
 
@@ -65,7 +65,9 @@ class Map_manager
     bool needs_update;
     int xpos; //player chunk position
     int ypos;
-    int radius;
+
+    int SUB_RADIUS;
+    int UNSUB_RADIUS2;
 
     int xchunk_dim;
     int ychunk_dim;
@@ -92,7 +94,8 @@ class Map_manager
         
         chunk_que_num = 0;
 
-        radius = DEFAULT_MAP_MANAGER_RADIUS;
+        SUB_RADIUS = DEFAULT_SUB_RADIUS;
+        UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS2;
 
         subed_chunks = 0;
         xpos = 0xffff;
@@ -135,12 +138,7 @@ class Map_manager
 
 void Map_manager::init_compressor()
 {
-    //#define BUF_SIZE (1024 * 1024)
-
-    //uint infile_size;
     int level = MZ_BEST_COMPRESSION;
-
-    // Init the z_stream
     memset(&stream, 0, sizeof(stream));  
 
     if (mz_deflateInit(&stream, level) != MZ_OK)
@@ -152,7 +150,6 @@ void Map_manager::init_compressor()
 
 void Map_manager::send_compressed_chunk(int alias, int index)
 {
-
     if(t->chunk[index] == NULL)
     {
         printf("Chunk is null!  Handle this! \n");
@@ -165,19 +162,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
     stream.avail_out = COMPRESSION_BUFFER_SIZE;  
 
-    int status;
-
-    status = mz_deflate(&stream, MZ_SYNC_FLUSH); //Z_FINISH
-
-/*
-    if ( status == MZ_STREAM_END )
-    {
-    // Output buffer is full, or compression is done
-    uint n = BUF_SIZE - stream.avail_out;  //number of bytes written
-    stream.next_out = s_outbuf;   //reset output buffer
-    stream.avail_out = BUF_SIZE;  //reset output buffer
-    }
-*/
+    int status = mz_deflate(&stream, MZ_SYNC_FLUSH); //Z_FINISH
     if (status != MZ_OK)
     {
         printf("Map_manager::send_compressed_chunk: deflate() failed with status %i! \n", status);
@@ -185,18 +170,21 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     }
 
     int size = COMPRESSION_BUFFER_SIZE - stream.avail_out;  //number of bytes written
-
     printf("compressed size = %i \n", size);
-
     map_chunk_compressed_StoC c;
-
     c.chunk_alias = alias;
     c.chunk_index = index;
-    //c.byte_size = 4*16*16*128;
-    //int size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
-    //c.byte_size = size;
     c.sendToClient(client_id, COMPRESSION_BUFFER, size);
+}
 
+static inline int MY_MIN(int x, int y)
+{
+    return x < y ? x : y;
+}
+
+static inline int MY_MAX(int x, int y)
+{
+    return x > y ? x : y;
 }
 
 void Map_manager::update()
@@ -204,29 +192,46 @@ void Map_manager::update()
 
     if(needs_update == false) return;
 
-    int imin = (xpos - radius) > 0 ? xpos - radius : 0;
-    int jmin = (ypos - radius) > 0 ? ypos - radius : 0;
-
-    int imax = (xpos+radius) < xchunk_dim ? xpos+radius : xchunk_dim;
-    int jmax = (ypos+radius) < ychunk_dim ? ypos+radius : ychunk_dim;
-
+    /*
+        unsub part
+    */
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
         if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS 
-        int x = (alias_list[i] % xchunk_dim);
-        int y = (alias_list[i] / xchunk_dim);
+
+        int x = 16*(alias_list[i] % xchunk_dim)+8;
+        int y = 16*(alias_list[i] / ychunk_dim)+8;
 
         x = x - xpos;
         y = y - ypos; 
 
-        if( x*x + y*y > UNSUB_DISTANCE2 ) unsub(i);
+        if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
     }
+
+    /*
+        sub part
+    */
+
+    int _xpos = xpos / 16;
+    int _ypos = xpos / 16;  
+    
+    int imin = MY_MIN(_xpos - SUB_RADIUS, 0);
+    int jmin = MY_MIN(_ypos - SUB_RADIUS, 0);
+
+    int imax = MY_MAX( _xpos + SUB_RADIUS, MAP_WIDTH);
+    int jmax = MY_MAX( _ypos + SUB_RADIUS, MAP_HEIGHT);
+
+    int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
     for(int i=imin;i<imax; i++)
     for(int j=jmin;j<jmax; j++)
     {
-        if( (xpos - i)*(xpos - i) + (ypos - j)*(ypos - j) >= radius ) continue;
+        int x = xpos - (i*16 + 8);
+        int y = ypos - (j*16 + 8);
+
+        if( x*x + y*y >= SUB_RADIUS2 ) continue;
+
         unsigned int version = version_list[j*xchunk_dim + i].version;
 
         if( version == SUBSCRIBED || version == QUED ) continue;
