@@ -9,6 +9,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/SDL/SDL_functions.h>
+#include <c_lib/chat/client.hpp>
 #endif
 
 #ifdef DC_SERVER
@@ -315,6 +316,83 @@ inline void ping_reliable_StoC::handle()
     ClientState::last_reliable_ping_time = _get_ticks() - ticks;
 }
 
+inline void agent_conflict_notification_StoC::handle()
+{
+    bool suicide = (victim == attacker) ? true : false;
+
+    Agent_state* a = ClientState::agent_list.get(attacker);
+    Agent_state* b = ClientState::agent_list.get(victim);
+
+    char unknown_name[] = "Someone";
+    char *a_name = (a == NULL) ? unknown_name : a->status.name;
+    char *b_name = (b == NULL) ? unknown_name : b->status.name;
+
+    char msg[150] = {'\0'};
+    switch (method)
+    {
+        case DEATH_NORMAL:
+            if (suicide)
+            {
+                if (a->is_you())
+                    strcpy(msg, "You killed yourself");
+                else
+                    sprintf(msg, "%s killed themself", a_name);
+            }
+            else
+            {
+                if (a->is_you())
+                    sprintf(msg, "You killed %s", b_name);
+                else if (b->is_you())
+                    sprintf(msg, "You were killed by %s", a_name);
+                else
+                    sprintf(msg, "%s killed %s", a_name, b_name);
+            }
+            break;
+
+        case DEATH_HEADSHOT:
+            if (suicide)
+            {
+                if (a->is_you())
+                    strcpy(msg, "You shot yourself in the head");
+                else
+                    sprintf(msg, "%s shot themself in the head", a_name);
+            }
+            else
+            {
+                if (a->is_you())
+                    sprintf(msg, "You shot %s in the head", b_name);
+                else if (b->is_you())
+                    sprintf(msg, "You shot in the head by %s", a_name);
+                else
+                    sprintf(msg, "%s shot %s in the head", a_name, b_name);
+            }
+            break;
+
+        case DEATH_GRENADE:
+            if (suicide)
+            {
+                if (a->is_you())
+                    strcpy(msg, "You blew yourself up");
+                else
+                    sprintf(msg, "%s blew themself up", a_name);
+            }
+            else
+            {
+                if (a->is_you())
+                    sprintf(msg, "You destroyed %s with a grenade", b_name);
+                else if (b->is_you())
+                    sprintf(msg, "You were mangled by %s's grenade", a_name);
+                else
+                    sprintf(msg, "%s ripped %s to pieces", a_name, b_name);
+            }
+            break;
+            
+        default: break;
+    }
+    
+    chat_client.send_system_message(msg);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -366,6 +444,7 @@ inline void Spawner_create_StoC::handle() {}
 inline void Spawner_destroy_StoC::handle() {}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
+inline void agent_conflict_notification_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;

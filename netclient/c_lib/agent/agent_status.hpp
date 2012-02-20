@@ -7,6 +7,13 @@
 
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 
+typedef enum AgentDeathMethod
+{
+    DEATH_NORMAL = 0,
+    DEATH_HEADSHOT,
+    DEATH_GRENADE
+} AgentDeathMethod;
+
 class Agent_state;  // forward declaration
 
 // Use for:
@@ -49,10 +56,10 @@ class Agent_status {
         void set_spawner();
     
         int apply_damage(int dmg);
-        int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type);
+        int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id=-1);
         int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, Object_types inflictor_type);
         int die();
-        int die(int inflictor_id, Object_types inflictor_type);
+        int die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void respawn();
         void restore_health();

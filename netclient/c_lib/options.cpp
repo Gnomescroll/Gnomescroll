@@ -41,5 +41,6 @@ OPT_INT(font_size, 18)
 OPT_BOOL(sound, false)
 OPT_INT(sfx, 100)
 OPT_INT(music, 100)
+OPT_STRING(sound_device, "")
 
 }

@@ -69,12 +69,16 @@ bool checkError()
 
 void set_volume(float vol)
 {
+    if (!enabled)
+        return;
     alListenerf(AL_GAIN, vol);
     checkError();
 }
 
 void update_listener(float x, float y, float z, float vx, float vy, float vz, float fx, float fy, float fz, float ux, float uy, float uz)
 {
+    if (!enabled)
+        return;
     alListener3f(AL_POSITION, x,z,y);
     alListener3f(AL_VELOCITY, vx,vz,vy);
     float o[6];
@@ -102,17 +106,20 @@ void init()
     Sound::init_wav_buffers();
 
     // open device (enumerate before this) 
-    device = alcOpenDevice(NULL); // select the "preferred device" 
+    if (Options::sound_device[0] != '\0')
+        device = alcOpenDevice(Options::sound_device);
+    else
+        device = alcOpenDevice(NULL); // select the "preferred device" 
 
     if (device == NULL)
     {
+        printf("OpenAL error: sound device %s not found\n", Options::sound_device);
         close();
         enabled = false;
         return;
     }
 
-    // create context
-    context = alcCreateContext(device, NULL); 
+    context = alcCreateContext(device, NULL);
     alcMakeContextCurrent(context);  
     
     // Check for EAX 2.0 support 
@@ -432,6 +439,48 @@ int test()
     }
 
     return 0;
+}
+
+void enumerate_devices()
+{
+    if (alcIsExtensionPresent(NULL, (ALchar*)"ALC_ENUMERATION_EXT") != AL_TRUE)
+    {
+        printf("OpenAL device enumeration extension is not available.\n");
+        return;
+    }
+    printf("\n");
+    printf("OpenAL Device enumeration:\n\n");
+
+    const ALchar* devices = alcGetString(NULL, ALC_DEVICE_SPECIFIER);
+    const ALchar* default_device = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+
+    printf("\n");
+    printf("Devices available:\n");
+    ALchar c = '\0';
+    int i = 0, j = 0;
+    ALchar *device_name = (ALchar*)calloc(200, sizeof(ALchar));
+    while (1)
+    {
+        if (c == '\0')
+        {
+            j = 0;
+            printf("%s", device_name);
+            memset(device_name, '\0', 200 * sizeof(ALchar));
+            printf("\n");
+            if (devices[i] == '\0')
+                break;
+        }
+
+        c = devices[i++];
+        device_name[j++] = c;
+    }
+    free(device_name);
+    
+    printf("\n");
+    printf("Default device:\n");
+    printf("%s", default_device);
+    printf("\n");
+
 }
 
 }

@@ -151,5 +151,7 @@ void RegisterMessages() {
     ping_reliable_CtoS::register_server_packet();
     ping_reliable_StoC::register_client_packet();
 
+    agent_conflict_notification_StoC::register_client_packet();
+
 }
 }

@@ -22,6 +22,7 @@ cdef extern from "./options.hpp" namespace "Options":
     void set_sound(bool sound)
     void set_sfx(int sfx)
     void set_music(int music)
+    void set_sound_device(char *sound_device)
 
 def load_options(opts):
     set_name(opts.name)
@@ -45,6 +46,14 @@ def load_options(opts):
     set_sound(opts.sound)
     set_sfx(opts.sfx)
     set_music(opts.music)
+    set_sound_device(opts.sound_device)
+
+cdef extern from "./state/client_state.hpp" namespace "ClientState":
+    void enumerate_sound_devices()
+
+def show_sound_devices():
+    enumerate_sound_devices()
+
 
 """
 Game loop
@@ -175,4 +184,6 @@ def init_terrain():
     init_t_map()
     set_hud_cube_selector()
     init_for_draw()
+
+
 

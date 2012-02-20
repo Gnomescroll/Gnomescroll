@@ -20,6 +20,8 @@ void update();
 
 int test();
 
+void enumerate_devices();
+
 }
 
 #endif

@@ -438,10 +438,6 @@ void key_down_handler(SDL_Event* event)
                 toggle_skeleton_editor();
                 break;
             
-            case SDLK_F12:
-                t_map::toggle_3d_texture_settings();;
-                break;
-
             case SDLK_t:
                 if (input_state.debug)
                     toggle_input_mode();
@@ -498,6 +494,10 @@ void key_down_handler(SDL_Event* event)
     {
         case SDLK_HOME:
             save_screenshot();
+            break;
+
+        case SDLK_F10:
+            t_map::toggle_3d_texture_settings();
             break;
 
         case SDLK_F12:
