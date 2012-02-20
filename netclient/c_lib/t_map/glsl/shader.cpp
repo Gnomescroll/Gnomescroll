@@ -64,35 +64,35 @@ namespace t_map
         switch (s)
         {
             case 0:
-                T_MAP_3D_TEXTURE_MIPMAPS = 0;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
                 T_MAP_MAG_FILTER  = 0;
                 break;
             case 1:
-                T_MAP_3D_TEXTURE_MIPMAPS = 0;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 0;
                 T_MAP_MAG_FILTER  = 1;
                 break;
             case 2:
-                T_MAP_3D_TEXTURE_MIPMAPS = 1;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
                 T_MAP_MAG_FILTER  = 0;
                 break;
             case 3:
-                T_MAP_3D_TEXTURE_MIPMAPS = 1;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
                 T_MAP_MAG_FILTER  = 1;
                 break;
             case 4:
-                T_MAP_3D_TEXTURE_MIPMAPS = 1;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
                 T_MAP_MAG_FILTER  = 2;
                 break;
             case 5:
-                T_MAP_3D_TEXTURE_MIPMAPS = 1;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
                 T_MAP_MAG_FILTER  = 3;
                 break;
             default:
                 printf("toggle_3d_texture_settings: error \n");
-                T_MAP_3D_TEXTURE_MIPMAPS = 1;
+                T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = 1;
                 T_MAP_MAG_FILTER  = 0;
         }
-        printf("TEXTURE_SETTING: T_MAP_3D_TEXTURE_MIPMAPS = %i T_MAP_MAG_FILTER = %i \n", T_MAP_3D_TEXTURE_MIPMAPS,T_MAP_MAG_FILTER);
+        printf("TEXTURE_SETTING: T_MAP_TEXTURE_2D_ARRAY_MIPMAPS = %i T_MAP_MAG_FILTER = %i \n", T_MAP_TEXTURE_2D_ARRAY_MIPMAPS,T_MAP_MAG_FILTER);
         init_map_3d_texture();
     }
 
@@ -147,7 +147,7 @@ namespace t_map
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        if( T_MAP_3D_TEXTURE_MIPMAPS == 0)
+        if( T_MAP_TEXTURE_2D_ARRAY_MIPMAPS == 0)
         {
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_NEAREST : GL_LINEAR);
@@ -187,7 +187,7 @@ namespace t_map
             }
 
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
-            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 6);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 16);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);

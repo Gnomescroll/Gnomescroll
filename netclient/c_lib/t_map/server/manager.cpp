@@ -16,6 +16,11 @@ class Terrain_map_history* map_history = NULL;
 
 void t_map_manager_setup(int client_id)
 {
+    if(COMPRESSION_BUFFER == NULL) COMPRESSION_BUFFER = (char*) malloc(COMPRESSION_BUFFER_SIZE);
+    /*
+        When valgrind finds this... needs to be freed at end
+    */
+
     if(map_manager_list[client_id] != NULL ) printf("FATAL ERROR: t_map_manager_setup \n");
     map_manager_list[client_id] = new Map_manager(client_id);
 }

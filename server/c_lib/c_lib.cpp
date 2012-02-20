@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <c_lib/common/compression/miniz.c>
+
 //utility
 #include <c_lib/time/physics_timer.c>
 #include <c_lib/common/macros.hpp>

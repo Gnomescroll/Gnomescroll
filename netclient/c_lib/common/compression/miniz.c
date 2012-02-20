@@ -1,3 +1,5 @@
+#pragma GCC diagnostic ignored "-Wunused-value"
+
 /* miniz.c v1.11 - public domain deflate/inflate, zlib-subset, ZIP reading/writing/appending, PNG writing
    See "unlicense" statement at the end of this file.
    Rich Geldreich <richgel99@gmail.com>, last updated May 27, 2011
@@ -143,7 +145,7 @@
 //#define MINIZ_NO_ZLIB_APIS
 
 // Define MINIZ_NO_ZLIB_COMPATIBLE_NAME to disable zlib names, to prevent conflicts against stock zlib.
-//#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
+#define MINIZ_NO_ZLIB_COMPATIBLE_NAMES
 
 // Define MINIZ_NO_MALLOC to disable all calls to malloc, free, and realloc.
 // Note if MINIZ_NO_MALLOC is defined then the user must always provide custom user alloc/free/realloc

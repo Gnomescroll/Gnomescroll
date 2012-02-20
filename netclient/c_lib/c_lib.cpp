@@ -8,12 +8,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+    Compression
+*/
+
+#include <c_lib/common/compression/miniz.c>
+
 /* configuration options */
 #include <c_lib/options.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>
-
 
 /* Graphics, SDL */
 #include "compat_gl.h"

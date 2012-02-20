@@ -10,8 +10,11 @@
 namespace t_map
 {
 
-const int  DEFAULT_MAP_MANAGER_RADIUS = 16;
-const int UNSUB_DISTANCE = 18;
+const int COMPRESSION_BUFFER_SIZE = 1024*512;
+extern char* COMPRESSION_BUFFER;
+
+const int  DEFAULT_MAP_MANAGER_RADIUS = 32;
+const int UNSUB_DISTANCE = 40;
 const int UNSUB_DISTANCE2 = UNSUB_DISTANCE*UNSUB_DISTANCE;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
@@ -76,8 +79,14 @@ class Map_manager
 
     int chunk_que_num;
 
+    //compressor
+
+    mz_stream stream;
+
     Map_manager(int _client_id)
     {
+        init_compressor();
+
         needs_update = false;
         client_id = _client_id;
         
@@ -116,9 +125,79 @@ class Map_manager
     void unsub(int alias);
 
     void send_compressed_chunk(int alias, int index);
+    void send_uncompressed_chunk(int alias, int index);
+
+    void init_compressor();
 
     void send_delta() {}
 };
+
+
+void Map_manager::init_compressor()
+{
+    //#define BUF_SIZE (1024 * 1024)
+
+    //uint infile_size;
+    int level = MZ_BEST_COMPRESSION;
+
+    // Init the z_stream
+    memset(&stream, 0, sizeof(stream));  
+
+    if (mz_deflateInit(&stream, level) != MZ_OK)
+    {
+        printf("deflateInit() failed!\n");
+        return;
+    }
+}
+
+void Map_manager::send_compressed_chunk(int alias, int index)
+{
+
+    if(t->chunk[index] == NULL)
+    {
+        printf("Chunk is null!  Handle this! \n");
+        return;
+    }
+
+    stream.next_in = (unsigned char*) t->chunk[index]->e;
+    stream.avail_in = 4*16*16*128;
+
+    stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
+    stream.avail_out = COMPRESSION_BUFFER_SIZE;  
+
+    int status;
+
+    status = mz_deflate(&stream, MZ_SYNC_FLUSH); //Z_FINISH
+
+/*
+    if ( status == MZ_STREAM_END )
+    {
+    // Output buffer is full, or compression is done
+    uint n = BUF_SIZE - stream.avail_out;  //number of bytes written
+    stream.next_out = s_outbuf;   //reset output buffer
+    stream.avail_out = BUF_SIZE;  //reset output buffer
+    }
+*/
+    if (status != MZ_OK)
+    {
+        printf("Map_manager::send_compressed_chunk: deflate() failed with status %i! \n", status);
+        return;
+    }
+
+    int size = COMPRESSION_BUFFER_SIZE - stream.avail_out;  //number of bytes written
+
+    printf("compressed size = %i \n", size);
+
+    map_chunk_compressed_StoC c;
+
+    c.chunk_alias = alias;
+    c.chunk_index = index;
+    //c.byte_size = 4*16*16*128;
+    //int size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+    //c.byte_size = size;
+    c.sendToClient(client_id, COMPRESSION_BUFFER, size);
+
+}
 
 void Map_manager::update()
 {
@@ -213,7 +292,10 @@ void Map_manager::dispatch_que()
     chunk_que_num--;
 }
 
-void Map_manager::send_compressed_chunk(int alias, int index)
+
+
+
+void Map_manager::send_uncompressed_chunk(int alias, int index)
 {
     if(t->chunk[index] == NULL)
     {
@@ -224,10 +306,9 @@ void Map_manager::send_compressed_chunk(int alias, int index)
 
     c.chunk_alias = alias;
     c.chunk_index = index;
-    c.byte_size = 4*16*16*128;
 
     int size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
-    c.byte_size = size;
+    //c.byte_size = size;
     c.sendToClient(client_id, (char*)t->chunk[index]->e, size);
 
     //void sendToClient(int client_id, char* buff, int len) 
@@ -262,6 +343,8 @@ void Map_manager::sub(int index, int version)
 
     version_list[index].version = SUBSCRIBED;
     subed_chunks++;
+
+    //send_uncompressed_chunk(alias, index);
 
     send_compressed_chunk(alias, index);
 
