@@ -71,25 +71,24 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
         Handle
     */
 
-    //printf("map_chunk: alias= %i for %i %i \n", chunk_alias, chunk_index%MAP_CHUNK_WIDTH, chunk_index /MAP_CHUNK_WIDTH );
-    //printf("byte_size= %i \n", byte_size);
-#if MAP_NET_DEBUG
-    printf("map chunk is %i bytes \n", byte_size);
-#endif
-
     client_chunk_alias_list[chunk_alias] = chunk_index;
 
     int x = chunk_index % MAP_CHUNK_WIDTH;
     int y = chunk_index / MAP_CHUNK_WIDTH;
     
-    main_map->set_block(16*x,16*y,0, 1); //create chunk
-
-/*
-    This is evil, dont do this
-*/
     struct MAP_CHUNK* m = main_map->chunk[chunk_index];
+    if(m == NULL)
+    {
+        main_map->set_block(16*x,16*y,0, 0); //create chunk    
+        m = main_map->chunk[chunk_index];
+    }
 
-    memcpy( (char *) m->e, buff, byte_num);
+
+    int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
+
+    if(size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
+
+    memcpy( (char *) m->e, DECOMPRESSION_BUFFER, _size);
 
 }
 
