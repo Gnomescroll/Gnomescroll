@@ -13,8 +13,8 @@ namespace t_map
 const int COMPRESSION_BUFFER_SIZE = 1024*512;
 extern char* COMPRESSION_BUFFER;
 
-const int DEFAULT_SUB_RADIUS = 48;
-const int DEFAULT_UNSUB_RADIUS = 64;
+const int DEFAULT_SUB_RADIUS = 128 + 8;
+const int DEFAULT_UNSUB_RADIUS = 128 +32;
 const int DEFAULT_UNSUB_RADIUS2 = DEFAULT_UNSUB_RADIUS*DEFAULT_UNSUB_RADIUS;
 
 const int MAP_MANAGER_ALIAS_LIST_SIZE = 512;
@@ -156,6 +156,11 @@ void Map_manager::send_compressed_chunk(int alias, int index)
         return;
     }
 
+    if(t->chunk[index] == NULL)
+    {
+        printf("Map_manager::send_compressed_chunk, fatal error! NULL map chunk \n");
+        return;
+    }
     stream.next_in = (unsigned char*) t->chunk[index]->e;
     stream.avail_in = 4*16*16*128;
 
@@ -196,6 +201,9 @@ void Map_manager::update()
         unsub part
     */
 
+    int _xpos = xpos / 16;
+    int _ypos = xpos / 16;  
+
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
         if( alias_list[i] == NO_ALIAS) continue;  //QUED || NO_ALIAS 
@@ -203,18 +211,15 @@ void Map_manager::update()
         int x = 16*(alias_list[i] % xchunk_dim)+8;
         int y = 16*(alias_list[i] / ychunk_dim)+8;
 
-        x = x - xpos;
-        y = y - ypos; 
+        x = x - _xpos;
+        y = y - _ypos; 
 
-        if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
+        //if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
     }
 
     /*
         sub part
     */
-
-    int _xpos = xpos / 16;
-    int _ypos = xpos / 16;  
     
     int imin = MY_MIN(_xpos - SUB_RADIUS, 0);
     int jmin = MY_MIN(_ypos - SUB_RADIUS, 0);
@@ -263,6 +268,7 @@ void Map_manager::que_for_sub(int x, int y)
     struct QUE_ELEMENT q; 
 
     q.version = version_list[index].version;   //save version
+    printf("version = %hx \n", q.version);
 
     {
         int _x = xpos -x;

@@ -95,6 +95,17 @@ namespace ServerState
     {   
         static int counter = 0;
         counter++;
+/*
+        t_map::t_map_send_map_chunks();  //every tick
+
+        if(counter % 15 == 0) 
+        {
+            agent_list.update_map_manager_positions();
+            t_map::t_map_manager_update();
+            t_map::t_map_sort_map_chunk_ques();
+        }
+*/
+
         if(counter % 2 == 0) 
         {
             agent_list.update_map_manager_positions();
