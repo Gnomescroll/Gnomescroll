@@ -50,10 +50,14 @@ class Voxel_volume
     struct Voxel_hitscan_element vhe;
 
     int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2,  int voxel[3]);
-    inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision) __attribute((always_inline));
 
-    inline void get_center(float* v) __attribute((always_inline));
-    inline struct Vec3 get_center() __attribute((always_inline));
+    //inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision) __attribute((always_inline));
+    //inline struct Vec3 get_center() __attribute((always_inline));
+
+    inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
+    
+    inline struct Vec3 get_center();
+    inline void get_center(float *f);
 
 #ifdef DC_CLIENT
     class Voxel_render_list* voxel_render_list;

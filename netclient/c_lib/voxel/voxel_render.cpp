@@ -188,7 +188,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     int DEBUG = 0;
 
-    voxel_shader_prog = glCreateProgramObjectARB();
+    voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
     voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
     voxel_shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
