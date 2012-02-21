@@ -51,8 +51,8 @@ class Minivox {
         void set_texture(int tex_id);
         void set_texture(int tex_id, int pixels_wide);
         
-        void draw_colored() __attribute((always_inline));
-        void draw_textured(); __attribute((always_inline));
+        void draw_colored();
+        void draw_textured();
         void tick();
         
         Minivox(int id);

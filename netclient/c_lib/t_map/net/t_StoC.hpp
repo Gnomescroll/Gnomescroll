@@ -40,6 +40,19 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
         inline void handle(char* buff, int byte_num) __attribute((always_inline));
 };
 
+class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>
+{
+    public:
+
+        unsigned short chunk_alias;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&chunk_alias, buff, buff_n, pack);
+        }
+        
+        inline void handle() __attribute((always_inline));
+};
 
 class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
 {

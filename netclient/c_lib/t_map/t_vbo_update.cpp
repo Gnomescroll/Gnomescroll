@@ -257,7 +257,7 @@ void Vbo_map::update_vbo(int i, int j)
         if( vertex_count > vbo->vnum_max ) vbo->resize(vertex_count);
     }
 
-    int _cube_vertex_count[3];
+    int _cube_vertex_count[4];
     _cube_vertex_count[0] = vbo->_v_offset[0];
     _cube_vertex_count[1] = vbo->_v_offset[1];
     _cube_vertex_count[2] = vbo->_v_offset[2];

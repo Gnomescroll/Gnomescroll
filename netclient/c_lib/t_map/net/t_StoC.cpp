@@ -118,6 +118,12 @@ void map_chunk_uncompressed_StoC::handle(char* buff, int byte_num)
 }
 
 
+//unsigned short chunk_alias;//
+void clear_alias_StoC::handle()
+{
+    client_chunk_alias_list[chunk_alias] = -1;
+}
+
 //unsigned short chunk_alias;
 //unsigned int chunk_index;
 void set_map_alias_StoC::handle()
@@ -162,6 +168,7 @@ void map_metadata_StoC::handle()
 void map_chunk_compressed_StoC::handle(char* buff, int byte_num) {}
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_size) {}
 
+void clear_alias_StoC::handle() {}
 void set_map_alias_StoC::handle() {}
 
 void block_StoC::handle() {}

@@ -138,7 +138,8 @@ class Map_manager
 
 void Map_manager::init_compressor()
 {
-    int level = MZ_BEST_COMPRESSION;
+    //int level = MZ_BEST_COMPRESSION;
+    int level = 5;
     memset(&stream, 0, sizeof(stream));  
 
     if (mz_deflateInit(&stream, level) != MZ_OK)

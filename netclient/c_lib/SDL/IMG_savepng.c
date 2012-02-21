@@ -62,7 +62,8 @@ int IMG_SavePNG_RW(SDL_RWops *src, SDL_Surface *surf,int compression){
     SDL_Surface *tempsurf=NULL;
     int ret,funky_format,used_alpha;
     //unsigned int i,temp_alpha;
-    int i,temp_alpha;
+    int i;
+    int temp_alpha = 0;
     png_colorp palette;
     Uint8 *palette_alpha=NULL;
     png_byte **row_pointers=NULL;

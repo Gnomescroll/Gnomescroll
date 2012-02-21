@@ -74,4 +74,4 @@ inline bool isOccludes(int x, int y, int z) __attribute((always_inline));
     Map Damage
 */
 
-int maxDamage(int id) __attribute((always_inline));
+inline int maxDamage(int id) __attribute((always_inline));

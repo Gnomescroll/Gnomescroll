@@ -55,7 +55,9 @@ void RegisterMessages() {
     
     t_map::map_chunk_compressed_StoC::register_client_packet();
     t_map::map_chunk_uncompressed_StoC::register_client_packet();
+
     t_map::set_map_alias_StoC::register_client_packet();
+    t_map::clear_alias_StoC::register_client_packet();
 
     // block value change
     t_map::block_StoC::register_client_packet();
