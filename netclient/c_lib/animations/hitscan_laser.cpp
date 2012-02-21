@@ -58,7 +58,7 @@ void HitscanLaserEffect::draw1(float delta, Vector* camera)
 {
     const float width = 0.5;
 
-    struct Vector r = Vector_init(f-fx, y-fy, z-fz);
+    struct Vector r = Vector_init(x-fx, y-fy, z-fz);
 
     normalize_vector( &r );
 /*

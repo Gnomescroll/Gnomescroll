@@ -15,6 +15,7 @@
     #include <Windows.h>
 #endif
 
+/*
 int f;
 long start_time;
 long last_tick;
@@ -92,20 +93,23 @@ int _tick_check() {
         return 0;
     }
 }
-
+*/
 
 //int delta;
 
+/*
 #ifdef _POSIX_TIMERS
 	long start_sec;
 	long start_nsec;
 #else
 	int window_ms_start;
 #endif
+*/
 
 int c_tick = 0;
 
 void _START_CLOCK() {
+/*
     c_tick = 0;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
         clock_serv_t cclock;
@@ -127,9 +131,10 @@ void _START_CLOCK() {
 			window_ms_start = GetTickCount();
 		#endif
     #endif
+*/
 }
 
-#define TICK_MS 33
+#define TICK_MS 33.3333
 
 int _last_tick;
 
@@ -144,6 +149,10 @@ int _GET_TICK() {
         mach_port_deallocate(mach_task_self(), cclock);
         s_sec = mts.tv_sec;
         n_sec = mts.tv_nsec;
+
+        static const long s_sec_start = mts.tv_sec;
+        static const long n_sec_start = mts.tv_nsec;
+
     #else
         #ifdef _POSIX_TIMERS
             struct timespec tp;
@@ -151,6 +160,9 @@ int _GET_TICK() {
             clock_gettime(CLOCK_MONOTONIC, &tp);
             s_sec = tp.tv_sec;
             n_sec = tp.tv_nsec;
+
+            static const long s_sec_start = s_sec;
+            static const long n_sec_start = n_sec;
         #else
             //printf("_POSIX_TIMERS not defined! \n");
         #endif
@@ -158,26 +170,22 @@ int _GET_TICK() {
 	
 	#ifdef _POSIX_TIMERS
 		long cs_sec, cn_sec;
-		cs_sec = s_sec - start_sec;
-		cn_sec = n_sec - start_nsec;
-
-		//printf("s= %i n=%i \n", cs_sec, cn_sec/1000000);
+		cs_sec = s_sec - s_sec_start;
+		cn_sec = n_sec - n_sec_start;
 
 		int t = cs_sec*1000/TICK_MS + cn_sec/(1000*1000)/TICK_MS;
         _ti = cs_sec*1000 + cn_sec/(1000*1000);
-		//printf("t=%i ;%i, %i \n", t, cs_sec*1000/TICK_MS, cn_sec/(1000*1000)/TICK_MS);
-    //printf("d=%i t=%i c=%i \n", t - c_tick, t, c_tick);
 	#else
-		int cs_ms = GetTickCount();
-		int t = (cs_ms-window_ms_start) / TICK_MS;		
-        _ti = (cs_ms-window_ms_start);
+        static const long GetTickCount_start = GetTickCount();
+		long cs_ms = GetTickCount() - GetTickCount_start;  
+		int t = cs_ms / TICK_MS;		
+        _ti = cs_ms;
 	#endif
 	
     if(c_tick < t) {
         if(c_tick+5 < t)
         {
             printf("Timer error: c_tick < t is %i < %i \n", c_tick,t);
-            _START_CLOCK();
             return 1;
         }
         c_tick++;
