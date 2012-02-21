@@ -57,9 +57,20 @@ def reset_seed(int seed):
 
 ##timer
 #old functions: deprecate
+'''
 cdef extern from "../c_lib/time/physics_timer.h":
     long _get_time()
     long _get_tick()
+
+#DEPRECATE
+def get_time():
+    return _get_time()
+
+ #DEPRECATE
+def get_tick():
+    return _get_tick()
+
+'''
 
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":
@@ -67,13 +78,6 @@ cdef extern from "../c_lib/time/physics_timer.h":
     int _GET_TICK()
     int _GET_MS_TIME()
 
- #DEPRECATE
-def get_time():
-    return _get_time()
-
- #DEPRECATE
-def get_tick():
-    return _get_tick()
 
 def START_CLOCK():
     _START_CLOCK()
