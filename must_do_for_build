@@ -1,0 +1,25 @@
+Confirm:
+debug symbols are stripped / obfuscated binary
+production keybindings
+remove gun from agent model
+fix valgrind errors
+fix reasonable compiler warnings thrown during optimized compilation
+
+running on permaserver:
+small script to always run game
+ulimit unlimited for core dump generation
+copy core w/ timestamp and restart
+
+Linux Build
+--Ubuntu 11.10
+--Ubuntu 11.10 64bit
+--Fedora19 or w/e
+--OpenSuse10 or w/e
+
+Put links on site
+
+BRANDON:
+map
+windows build
+
+

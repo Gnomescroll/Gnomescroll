@@ -434,7 +434,9 @@ SERVER:
 backup and wipe metahentai, replace with ubuntu server  DONE
 backup metaless's stuff DONE
 move metaless to metahentai (scp + dns change)
+put metaless content back on 100tb (~2-3days of rsyncing)
 close bluemile account
-put gnomescroll.com on metahentai
+
+put gnomescroll.com on 100tb
 scripts to push linux build + instructions to gnomescroll.com
 
