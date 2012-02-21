@@ -162,7 +162,9 @@ void Map_manager::send_compressed_chunk(int alias, int index)
         return;
     }
     stream.next_in = (unsigned char*) t->chunk[index]->e;
-    stream.avail_in = 4*16*16*128;
+    //stream.avail_in = 4*16*16*128;
+
+    stream.avail_in = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
 
     stream.next_out = (unsigned char*) COMPRESSION_BUFFER;
     stream.avail_out = COMPRESSION_BUFFER_SIZE;  
@@ -202,7 +204,9 @@ void Map_manager::update()
     */
 
     int _xpos = xpos / 16;
-    int _ypos = xpos / 16;  
+    int _ypos = ypos / 16;  
+
+    int _SUB_RADIUS = SUB_RADIUS/16 + 1;
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
@@ -214,18 +218,18 @@ void Map_manager::update()
         x = x - _xpos;
         y = y - _ypos; 
 
-        //if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
+        if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
     }
 
     /*
         sub part
     */
     
-    int imin = MY_MIN(_xpos - SUB_RADIUS, 0);
-    int jmin = MY_MIN(_ypos - SUB_RADIUS, 0);
+    int imin = MY_MAX(_xpos - _SUB_RADIUS, 0);
+    int jmin = MY_MAX(_ypos - _SUB_RADIUS, 0);
 
-    int imax = MY_MAX( _xpos + SUB_RADIUS, MAP_WIDTH);
-    int jmax = MY_MAX( _ypos + SUB_RADIUS, MAP_HEIGHT);
+    int imax = MY_MIN( _xpos + _SUB_RADIUS, MAP_CHUNK_WIDTH-1);
+    int jmax = MY_MIN( _ypos + _SUB_RADIUS, MAP_CHUNK_HEIGHT-1);
 
     int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
@@ -241,6 +245,10 @@ void Map_manager::update()
 
         if( version == SUBSCRIBED || version == QUED ) continue;
         //printf("sub %i %i \n", i,j);
+
+
+        if(i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
+
         que_for_sub(i,j);
     }
 
@@ -271,8 +279,8 @@ void Map_manager::que_for_sub(int x, int y)
     printf("version = %hx \n", q.version);
 
     {
-        int _x = xpos -x;
-        int _y = ypos -y;
+        int _x = xpos -x*16+8;
+        int _y = ypos -y*16+8;
         q.distance2 = _x*_x + _y*_y;
     }
     q.index = index;
