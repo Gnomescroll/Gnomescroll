@@ -66,7 +66,8 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 
     int size = DECOMPRESSION_BUFFER_SIZE - stream.avail_out;
 
-    printf("compressed chunk: %i bytes decompressed to %i bytes \n", byte_num, size);
+    //printf("compressed chunk: %i bytes decompressed to %i bytes \n", byte_num, size);
+    
     /*
         Handle
     */

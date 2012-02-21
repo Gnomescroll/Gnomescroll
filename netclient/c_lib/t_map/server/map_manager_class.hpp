@@ -177,7 +177,7 @@ void Map_manager::send_compressed_chunk(int alias, int index)
     }
 
     int size = COMPRESSION_BUFFER_SIZE - stream.avail_out;  //number of bytes written
-    printf("compressed size = %i \n", size);
+    //printf("compressed size = %i \n", size);
     map_chunk_compressed_StoC c;
     c.chunk_alias = alias;
     c.chunk_index = index;
