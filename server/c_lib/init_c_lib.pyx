@@ -55,23 +55,6 @@ def load_options(opts):
 def reset_seed(int seed):
     set_seed(seed)
 
-##timer
-#old functions: deprecate
-'''
-cdef extern from "../c_lib/time/physics_timer.h":
-    long _get_time()
-    long _get_tick()
-
-#DEPRECATE
-def get_time():
-    return _get_time()
-
- #DEPRECATE
-def get_tick():
-    return _get_tick()
-
-'''
-
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":
     void _START_CLOCK()
