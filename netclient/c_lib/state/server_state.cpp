@@ -95,7 +95,7 @@ namespace ServerState
     {   
         static int counter = 0;
         counter++;
-
+    
         t_map::t_map_send_map_chunks();  //every tick
 
         if(counter % 15 == 0) 

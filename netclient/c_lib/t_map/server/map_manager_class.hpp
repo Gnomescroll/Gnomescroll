@@ -186,12 +186,12 @@ void Map_manager::send_compressed_chunk(int alias, int index)
 
 static inline int MY_MIN(int x, int y)
 {
-    return x < y ? x : y;
+    return x <= y ? x : y;
 }
 
 static inline int MY_MAX(int x, int y)
 {
-    return x > y ? x : y;
+    return x >= y ? x : y;
 }
 
 void Map_manager::update()
@@ -206,7 +206,7 @@ void Map_manager::update()
     int _xpos = xpos / 16;
     int _ypos = ypos / 16;  
 
-    int _SUB_RADIUS = SUB_RADIUS/16 + 1;
+    int _SUB_RADIUS = (SUB_RADIUS/16) + 1;
 
     for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
     {
@@ -215,8 +215,8 @@ void Map_manager::update()
         int x = 16*(alias_list[i] % xchunk_dim)+8;
         int y = 16*(alias_list[i] / ychunk_dim)+8;
 
-        x = x - _xpos;
-        y = y - _ypos; 
+        x = x - xpos;
+        y = y - ypos; 
 
         if( x*x + y*y > UNSUB_RADIUS2 ) unsub(i);
     }
@@ -228,11 +228,12 @@ void Map_manager::update()
     int imin = MY_MAX(_xpos - _SUB_RADIUS, 0);
     int jmin = MY_MAX(_ypos - _SUB_RADIUS, 0);
 
-    int imax = MY_MIN( _xpos + _SUB_RADIUS, MAP_CHUNK_WIDTH-1);
-    int jmax = MY_MIN( _ypos + _SUB_RADIUS, MAP_CHUNK_HEIGHT-1);
+    int imax = MY_MIN( _xpos + _SUB_RADIUS, xchunk_dim-1);
+    int jmax = MY_MIN( _ypos + _SUB_RADIUS, ychunk_dim-1);
 
     int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
+    //printf("imin, imax = %i %i jmin jmax = %i %i \n", imin,imax, jmin,jmax);
     for(int i=imin;i<imax; i++)
     for(int j=jmin;j<jmax; j++)
     {
@@ -245,7 +246,6 @@ void Map_manager::update()
 
         if( version == SUBSCRIBED || version == QUED ) continue;
         //printf("sub %i %i \n", i,j);
-
 
         if(i<0 || i >= xchunk_dim || j<0 || j >= ychunk_dim) printf("Map_manager::update(), ERROR!!!\n");
 
@@ -276,11 +276,11 @@ void Map_manager::que_for_sub(int x, int y)
     struct QUE_ELEMENT q; 
 
     q.version = version_list[index].version;   //save version
-    printf("version = %hx \n", q.version);
+    //printf("version = %hx \n", q.version);
 
     {
-        int _x = xpos -x*16+8;
-        int _y = ypos -y*16+8;
+        int _x = xpos - (x*16 + 8);
+        int _y = ypos - (y*16 + 8);
         q.distance2 = _x*_x + _y*_y;
     }
     q.index = index;
