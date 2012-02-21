@@ -32,6 +32,10 @@ int get_key_state() {
     return 0;
 }
 
+#include <c_lib/time/physics_timer.h>
+
+//_GET_MS_TIME();
+
 int process_events()
 {
     if (input_state.mouse_bound)
@@ -45,8 +49,25 @@ int process_events()
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 
-    
+
+        static int otime = _GET_MS_TIME();
+        int one = 0;
+        static int event_polls = 0;
+        static int counter = 0;
+        if( _GET_MS_TIME() -otime > 1000)
+        {
+            one = 1;
+            otime = _GET_MS_TIME();
+
+            printf("%i events, %i event polls \n", counter, event_polls);
+            counter = 0; //reset
+            event_polls =0;
+        }
+
+        event_polls++;
+                    
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
+
 
         switch( Event.type )
         {
@@ -67,6 +88,9 @@ int process_events()
                 break;
 
             case SDL_MOUSEMOTION:
+                counter++;
+                //printf( "dx,dy= %i %i \n", Event.motion.xrel, Event.motion.yrel);
+            
                 mouse_motion_handler(&Event);
                 break;
 
@@ -86,7 +110,8 @@ int process_events()
 }
 
 // Taken from somewhere on the internet:
-char getUnicodeValue(SDL_keysym keysym) {
+char getUnicodeValue(SDL_keysym keysym) 
+{
     // magic numbers courtesy of SDL docs :)
     const int INTERNATIONAL_MASK = 0xFF80, UNICODE_MASK = 0x7F;
     int uni = keysym.unicode;
@@ -145,7 +170,33 @@ static inline float mouse_axis_average(int* buffer)
 
 static inline void calculate_mouse_state(int t) // t is time since last tick
 {
-    SDL_GetRelativeMouseState(&mouse_input_buffer_x[mouse_buffer_index], &mouse_input_buffer_y[mouse_buffer_index]);
+    int current_time = _GET_MS_TIME();
+    
+    static int otime = _GET_MS_TIME();
+    static int counter = 0;
+    static int non_zero = 0;
+    if( current_time -otime > 1000)
+    {
+        otime = _GET_MS_TIME();
+        printf("%i mouse polls, %i non_zero \n", counter, non_zero);
+        counter = 0; //reset
+        non_zero = 0;
+    }
+    counter++;
+
+    SDL_PumpEvents(); //mouse state does not update unless this is called
+
+    int dx, dy;
+    SDL_GetRelativeMouseState(&dx, &dy);
+
+    counter ++;
+    if(dx == 0 && dy == 0) return;
+
+    printf("event= %i %i \n", dx,dy);
+    non_zero++;
+
+    mouse_input_buffer_x[mouse_buffer_index] = dx;
+    mouse_input_buffer_y[mouse_buffer_index] = dy;
 
     mouse_input_buffer_timestamps[mouse_buffer_index] = (float)t;
     mm.x = mouse_axis_average(mouse_input_buffer_x);

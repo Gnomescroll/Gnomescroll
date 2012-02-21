@@ -15,22 +15,29 @@
 
 bool _quit = false;
 
-
-#define INTERCEPT_CTRL_C 1
-#define GRACEFULL_CTRL_C_SHUTDOWN 0
-#ifdef linux
-    #include <signal.h>
-#include <pthread.h>
-    void intHandler(int dummy=0) 
-    {
-    #if GRACEFULL_CTRL_C_SHUTDOWN
-        _quit = true;
-    #else
-        printf("Attempting Force Close\n");
-        abort();
+/*
+    #define INTERCEPT_CTRL_C 1
+    #define GRACEFULL_CTRL_C_SHUTDOWN 0
+    #ifdef linux
+        #include <signal.h>
+    #include <pthread.h>
+        void intHandler(int dummy=0) 
+        {
+        #if GRACEFULL_CTRL_C_SHUTDOWN
+            _quit = true;
+        #else
+            printf("Attempting Force Close\n");
+            abort();
+        #endif
+        }
     #endif
-    }
-#endif
+
+    #if INTERCEPT_CTRL_C
+        #ifdef linux
+            signal(SIGINT, intHandler);
+        #endif
+    #endif
+*/
 
 namespace Main
 {
@@ -44,42 +51,9 @@ int get_mouse_tick()
     return delta;
 }
 
-//#include <c_lib/hud/font/struct.hpp>
-//#include <c_lib/hud/font/font_loader.hpp>
-//#include <c_lib/hud/font/font_loader_class.hpp>
-//#include <c_lib/hud/font/font_loader.cpp>
-
-//using namespace font_loader;
-
-//#include <c_lib/SDL/texture_loader.hpp>
-//#include <c_lib/SDL/IMG_savepng.h>
-void font_test()
-{
-    //printf("Generating Font \n");
-    //class font_loader::CFontSys c;
-    //struct _font_meta* load_font(char* filename, int size);
-    //font_to_file(&c);
-    //c.GenerateFont((char*)"./media/fonts/verdana.ttf", 18);
-    //c.save_font_to_file( (char*) "font_hate.png");
-
-    //struct _font_meta* meta = (_font_meta*) font_loader::load_font((char*)"./media/fonts/verdana.ttf", 18);
-    //exit(0);
-    //if(meta == NULL) printf("WTF\n");
-}
-
 void init()
 {
- 
-font_test();
-
-#if INTERCEPT_CTRL_C
-    #ifdef linux
-        signal(SIGINT, intHandler);
-        //signal(SIGKILL, intHandler);
-    #endif
-#endif
-
-     _set_resolution(Options::width, Options::height, Options::fullscreen);
+    _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
     ClientState::ctf.start();
