@@ -8,7 +8,7 @@
 #include <monsters/monsters.hpp>
 
 #ifdef DC_CLIENT
-#include <c_lib/SDL/SDL_functions.h>
+#include <c_lib/time/physics_timer.h>
 #include <c_lib/chat/client.hpp>
 #endif
 
@@ -308,12 +308,12 @@ inline void Spawner_destroy_StoC::handle()
 
 inline void ping_StoC::handle()
 {
-    ClientState::last_ping_time = _get_ticks() - ticks;
+    ClientState::last_ping_time = _GET_MS_TIME() - ticks;
 }
 
 inline void ping_reliable_StoC::handle()
 {
-    ClientState::last_reliable_ping_time = _get_ticks() - ticks;
+    ClientState::last_reliable_ping_time = _GET_MS_TIME() - ticks;
 }
 
 inline void agent_conflict_notification_StoC::handle()

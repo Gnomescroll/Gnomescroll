@@ -190,11 +190,11 @@ static inline void calculate_mouse_state(int t) // t is time since last tick
     int dx, dy;
     SDL_GetRelativeMouseState(&dx, &dy);
 
-    counter ++;
     if(dx == 0 && dy == 0) return;
+    non_zero++;
 
     printf("event= %i %i \n", dx,dy);
-    non_zero++;
+
 
     mouse_input_buffer_x[mouse_buffer_index] = dx;
     mouse_input_buffer_y[mouse_buffer_index] = dy;
@@ -263,21 +263,21 @@ static float linear_sensitivity = 0.0;
 
 //Example of completely flat response
 
+/*
 static float x_sensitivity = 0.0;
 static float y_sensitivity = 0.0;
 
 static const float dampening = 0.00;
 static float linear_sensitivity = 1.0 / (2*3.1415* 120);
-
-
-//use for sniper
-/*
-static float x_sensitivity = 1 / (2*3.1415*12000);
-static float y_sensitivity = 1 / (2*3.1415*12000);
-static const float dampening = 0.999;
-
-static float linear_sensitivity = 0.0;
 */
+
+
+static float x_sensitivity = 1 / (2*3.1415*6000);
+static float y_sensitivity = 1 / (2*3.1415*6000);
+static const float dampening = 0.25;
+
+static float linear_sensitivity = 0.0f;
+
 
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
 static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
@@ -345,9 +345,9 @@ void apply_camera_physics()
 
 
     if (input_state.input_mode == INPUT_STATE_AGENT)
-        agent_camera->pan(vx+accum_dx,accum_vy+accum_dy);
+        agent_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
     else
-        free_camera->pan(accum_vx+accum_dx,vy+accum_dy);
+        free_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
 
     MOUSE_MOVEMENT_ARRAY_INDEX = 0;
     //LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
@@ -370,16 +370,11 @@ void pan_camera(int delta_tick)
     counter++;
 
     SDL_PumpEvents(); //mouse state does not update unless this is called
-
     int dx, dy;
     SDL_GetRelativeMouseState(&dx, &dy);
 
-    counter ++;
-
-    if(dx == 0 && dy == 0)
-    {
-        return;
-    }
+    if(dx == 0 && dy == 0) return;
+    non_zero++;
 
     dx *= -1;
     dy *=  input_state.invert_mouse ? 1 : -1;
@@ -395,7 +390,7 @@ void pan_camera(int delta_tick)
 
 
     //printf("event= %i %i \n", dx,dy);
-    non_zero++;
+
 
     //vx += dx*x_sensitivity;
     //vy += dy*y_sensitivity; 

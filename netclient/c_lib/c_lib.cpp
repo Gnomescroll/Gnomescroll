@@ -30,7 +30,9 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/files.cpp>
 #include <c_lib/common/common.cpp>
+
 #include <c_lib/time/physics_timer.c>
+#include <c_lib/time/frame_rate_limiter.cpp>
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vector.cpp>

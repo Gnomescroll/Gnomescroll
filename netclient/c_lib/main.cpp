@@ -12,6 +12,7 @@
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>
 
+#include <c_lib/time/frame_rate_limiter.hpp>
 
 bool _quit = false;
 
@@ -45,7 +46,7 @@ namespace Main
 int get_mouse_tick()
 {
     static int last = 0;
-    int current = _get_ticks();
+    int current = _GET_MS_TIME();
     int delta = current - last;
     last = current;
     return delta;
@@ -69,11 +70,11 @@ int run()
 {
     
 /* BEGIN SETUP */
-    int ping_ticks = _get_ticks();
+    int ping_ticks = _GET_MS_TIME();
     
     int fps_average_index = 0;
     int fps_average[30+1];
-    int fps_last_tick = _get_ticks();
+    int fps_last_tick = _GET_MS_TIME();
     float fps_value = 0.0f;
 /* END SETUP */
 
@@ -171,12 +172,14 @@ int run()
         }
 
         // flip sdl
+        //frame_left(); //swap every 15 ms?
         _swap_buffers();
+        frame_left(); //swap every 15 ms?
 
         // do fps calculation
         if (Options::fps)
         {
-            int fps_current_tick = _get_ticks();
+            int fps_current_tick = _GET_MS_TIME();
             fps_average[fps_average_index++] = fps_current_tick - fps_last_tick;
             fps_last_tick = fps_current_tick;
             if (fps_average_index > 30)
@@ -193,7 +196,7 @@ int run()
         // check ping throttle
         if (Options::ping)
         {
-            int ping_now = _get_ticks();
+            int ping_now = _GET_MS_TIME();
             if (ping_now - ping_ticks > Options::ping_update_interval)
             {
                 ping_ticks = ping_now;

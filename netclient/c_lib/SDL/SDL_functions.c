@@ -356,10 +356,6 @@ int _swap_buffers() {
     return 0;
 }
 
-int _get_ticks() {
-    return SDL_GetTicks();
-}
-
 void close_SDL() 
 {
     printf("close_SDL: Deconstructing SDL OpenGL Window\n");

@@ -122,7 +122,7 @@ namespace ClientState {
 
     void send_ping()
     {
-        int n = _get_ticks();
+        int n = _GET_MS_TIME();
         
         ping_CtoS msg;
         msg.ticks = n;
