@@ -168,10 +168,11 @@ static inline float mouse_axis_average(int* buffer)
     return total; 
 }
 
+
 static inline void calculate_mouse_state(int t) // t is time since last tick
 {
     int current_time = _GET_MS_TIME();
-    
+
     static int otime = _GET_MS_TIME();
     static int counter = 0;
     static int non_zero = 0;
@@ -206,12 +207,15 @@ static inline void calculate_mouse_state(int t) // t is time since last tick
     mouse_buffer_index %= MOUSE_INPUT_BUFFER_SIZE;
 }
 
+
+
 struct MouseMotionAverage* get_mouse_render_state(int t)
 {
     calculate_mouse_state(t);
     return &mm;
 }
 
+/*
 void pan_camera(int delta_tick)
 {
     struct MouseMotionAverage* mm;
@@ -226,4 +230,182 @@ void pan_camera(int delta_tick)
         agent_camera->pan(dx,dy);
     else
         free_camera->pan(dx,dy);
+}
+*/
+
+//    static float vx = 0.0;
+//    static float vy = 0.0;
+
+static float vx = 0.0;
+static float vy = 0.0;
+
+
+//    For Zoomed in, use
+
+
+
+
+
+
+struct MOUSE_MOVEMENT
+{
+    long time;  
+    int dx;
+    int dy;
+};
+
+/*
+static float x_sensitivity = 1 / (2*3.1415*500);
+static float y_sensitivity = 1 / (2*3.1415*500);
+static const float dampening = 0.25;
+static float linear_sensitivity = 0.0;
+*/
+
+//Example of completely flat response
+
+static float x_sensitivity = 0.0;
+static float y_sensitivity = 0.0;
+
+static const float dampening = 0.00;
+static float linear_sensitivity = 1.0 / (2*3.1415* 120);
+
+
+//use for sniper
+/*
+static float x_sensitivity = 1 / (2*3.1415*12000);
+static float y_sensitivity = 1 / (2*3.1415*12000);
+static const float dampening = 0.999;
+
+static float linear_sensitivity = 0.0;
+*/
+
+static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
+static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+
+/*
+    Normalize vx,vy by time since last frame!
+*/
+void apply_camera_physics()
+{
+
+    static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
+    
+    long current_time = _GET_MS_TIME();
+
+    //if(LAST_MOUSE_MOVEMENT_TIME == current_time) return; //at least once ms must pass
+
+    const float cfactor = 1.0/33.3333;
+    float _dampening = pow(dampening, cfactor); // dampening per frame
+
+    int index = 0;
+   
+    float accum_dx = 0;
+    float accum_dy = 0;
+
+    float accum_vx = 0;
+    float accum_vy = 0;
+
+    while(LAST_MOUSE_MOVEMENT_TIME <= current_time)
+    {
+        
+        //printf("%i %i \n", LAST_MOUSE_MOVEMENT_TIME, MOUSE_MOVEMENT_ARRAY[index].time);
+
+        while( MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME )
+        {
+            int dx = MOUSE_MOVEMENT_ARRAY[index].dx;
+            int dy = MOUSE_MOVEMENT_ARRAY[index].dy;
+        
+
+            vx += dx*x_sensitivity;
+            vy += dy*y_sensitivity;
+
+            accum_dx += dx*linear_sensitivity;
+            accum_dy += dy*linear_sensitivity;
+
+            index++;
+        }
+
+        accum_vx += vx;     //newton integration, replace with verlet, lulz
+        accum_vy += vy;
+
+        vx *= _dampening;
+        vy *= _dampening;
+
+        LAST_MOUSE_MOVEMENT_TIME++;
+    }
+
+
+    //printf("index= %i \n", index);
+    if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
+    {
+        
+        printf("error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
+    }
+    //printf("vx,vy = %f %f \n", vx, vy);
+
+
+    if (input_state.input_mode == INPUT_STATE_AGENT)
+        agent_camera->pan(vx+accum_dx,accum_vy+accum_dy);
+    else
+        free_camera->pan(accum_vx+accum_dx,vy+accum_dy);
+
+    MOUSE_MOVEMENT_ARRAY_INDEX = 0;
+    //LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
+}
+
+void pan_camera(int delta_tick)
+{
+    int current_time = _GET_MS_TIME();
+
+    static int otime = _GET_MS_TIME();
+    static int counter = 0;
+    static int non_zero = 0;
+    if( current_time - otime > 1000)
+    {
+        otime = _GET_MS_TIME();
+        //printf("%i mouse polls, %i non_zero \n", counter, non_zero);
+        counter = 0; //reset
+        non_zero = 0;
+    }
+    counter++;
+
+    SDL_PumpEvents(); //mouse state does not update unless this is called
+
+    int dx, dy;
+    SDL_GetRelativeMouseState(&dx, &dy);
+
+    counter ++;
+
+    if(dx == 0 && dy == 0)
+    {
+        return;
+    }
+
+    dx *= -1;
+    dy *=  input_state.invert_mouse ? 1 : -1;
+
+    struct MOUSE_MOVEMENT m;
+
+    m.time = _GET_MS_TIME();
+    m.dx = dx;
+    m.dy = dy;
+
+    MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX] = m;
+    MOUSE_MOVEMENT_ARRAY_INDEX++;
+
+
+    //printf("event= %i %i \n", dx,dy);
+    non_zero++;
+
+    //vx += dx*x_sensitivity;
+    //vy += dy*y_sensitivity; 
+    
+
+    
+    //int inv = (input_state.invert_mouse) ? 1 : -1;
+    //float _dx
+    //float _dy;
+    
+    //_dx = ((float)(-mm->x) * input_state.sensitivity) / 40000.0f; // magic #
+    //_dy = ((float)(inv * mm->y) * input_state.sensitivity) / 40000.0f; // magic #
 }

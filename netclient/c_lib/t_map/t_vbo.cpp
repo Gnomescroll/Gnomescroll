@@ -15,6 +15,12 @@ namespace t_map
     void draw_map()
     {
         vbo_map->draw_map();
+        
+
+    }
+
+    void update_map()
+    {
         vbo_map->update_map();
     }
 }

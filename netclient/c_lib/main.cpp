@@ -78,6 +78,7 @@ int run()
 /* END SETUP */
 
     // update mouse
+
     pan_camera(get_mouse_tick());
 
     while (!input_state.quit)
@@ -86,6 +87,7 @@ int run()
         if(_quit) break;
 
         // update mouse
+
         pan_camera(get_mouse_tick());
         
         // physics loop
@@ -137,6 +139,7 @@ int run()
         // update mouse
         pan_camera(get_mouse_tick());
 
+        apply_camera_physics(); //apply velocity
         // update camera state
         ClientState::update_camera();
 
@@ -145,7 +148,8 @@ int run()
 
         // draw map TODO
         t_map::draw_map();
-    
+        t_map::update_map();
+
         // draw client state
         ClientState::draw_client_state();
 

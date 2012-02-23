@@ -125,7 +125,7 @@ class Vbo_map
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             update_vbo(i, j);
-
+            break;
         }
 
         //if(count > 0) printf("!!! count= %i \n", count);

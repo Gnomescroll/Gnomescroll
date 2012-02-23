@@ -271,7 +271,6 @@ int init_video() {
     //glGetIntegerv(GL_MAJOR_VERSION, &OpenGLVersion[0]);
     //glGetIntegerv(GL_MINOR_VERSION, &OpenGLVersion[1]);
 
-
     if(GLEW_ARB_multisample) {
         printf("ARB_MULTISAMPLE supported \n");
     } else {
