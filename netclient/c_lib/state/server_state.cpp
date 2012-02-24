@@ -65,7 +65,7 @@ namespace ServerState
             if (s==NULL) continue;
             int h = s->take_damage(dmg);
             if (h <= 0 && agent != NULL)
-                coins += s->get_coins_for_kill(agent->status.team);
+                coins += s->get_coins_for_kill(agent->id, agent->status.team);
         }
 
         // turrets
@@ -77,7 +77,7 @@ namespace ServerState
             //if (t==NULL) continue;
             //t->take_damage(dmg);
             //if (h <= 0 && agent != NULL)
-                //coins += s->get_coins_for_kill(agent->status.team);
+                //coins += s->get_coins_for_kill(agent->id, agent->status.team);
         //}
 
     // add all the coins

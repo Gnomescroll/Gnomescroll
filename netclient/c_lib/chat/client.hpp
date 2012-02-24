@@ -139,7 +139,17 @@ class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HIST
         void sort_by_most_recent();
 };
 
+// collection of methods
+class ChatSystemMessage
+{
+    public:
+    void agent_pickup_flag(Agent_state* a);
+    void agent_drop_flag(Agent_state* a);
+    void agent_score_flag(Agent_state* a);
+};
+
 void teardown_chat_client();
 
 extern ChatMessageList chat_message_list;
 extern ChatClient chat_client;
+extern ChatSystemMessage system_message;

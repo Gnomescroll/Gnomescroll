@@ -181,6 +181,7 @@ extern "C" {
 
 // For more compatibility with zlib, miniz.c uses unsigned long for some parameters/struct members.
 typedef unsigned long mz_ulong;
+typedef unsigned char mz_uint8 __attribute__((__may_alias__));
 
 // Heap allocation callbacks.
 // Note that mz_alloc_func parameter types purpsosely differ from zlib's: items/size is size_t, not unsigned long.
@@ -194,7 +195,7 @@ mz_ulong mz_adler32(mz_ulong adler, const unsigned char *ptr, size_t buf_len);
 
 #define MZ_CRC32_INIT (0)
 // mz_crc32() returns the initial CRC-32 value to use when called with ptr==NULL.
-mz_ulong mz_crc32(mz_ulong crc, const unsigned char *ptr, size_t buf_len);
+mz_ulong mz_crc32(mz_ulong crc, const mz_uint8 *ptr, size_t buf_len);
 
 // Compression strategies.
 enum { MZ_DEFAULT_STRATEGY = 0, MZ_FILTERED = 1, MZ_HUFFMAN_ONLY = 2, MZ_RLE = 3, MZ_FIXED = 4 };
@@ -417,9 +418,11 @@ const char *mz_error(int err);
 
 // ------------------- Types and macros
 
-typedef unsigned char mz_uint8;
+//typedef unsigned char mz_uint8;
+//typedef unsigned char mz_uint8 __attribute__((__may_alias__));
 typedef signed short mz_int16;
-typedef unsigned short mz_uint16;
+//typedef unsigned short mz_uint16;
+typedef unsigned short mz_uint16 __attribute__((__may_alias__));
 typedef unsigned int mz_uint32;
 typedef unsigned int mz_uint;
 typedef long long mz_int64;

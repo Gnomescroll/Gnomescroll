@@ -301,6 +301,7 @@ inline void Spawner_create_StoC::handle()
     s->init_vox();
     Sound::spawner_placed(x,y,z,0,0,0);
 }
+
 inline void Spawner_destroy_StoC::handle()
 {
     ClientState::spawner_list.destroy(id);
@@ -559,7 +560,7 @@ inline void hitscan_object_CtoS::handle()
             spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = spawner->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             //x = spawner->x;
@@ -596,9 +597,10 @@ inline void hitscan_block_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;
 
-    //TEMP TODO REMOVE
+    #ifdef PRODUCTION
+    #else
     a->status.add_coins(100);
-    //TEMP TODO REMOVE
+    #endif
 
     if (!a->weapons.laser.fire()) return;
 
@@ -710,7 +712,7 @@ inline void melee_object_CtoS::handle()
             spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = spawner->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             x = spawner->x;

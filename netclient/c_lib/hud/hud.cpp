@@ -442,7 +442,6 @@ void ChatRender::set_cursor(char* text, float x, float y)
     int h = 0;
     const int w = 8;
     HudFont::font->get_string_pixel_dimension(text, &len, &h);
-    //h = HudFont::font->data.line_height; // line height
     cursor_x = x + len + 4;
     cursor_y = y - h;
     cursor_w = w;

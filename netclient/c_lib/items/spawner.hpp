@@ -38,7 +38,7 @@ class Spawner
         
         void get_spawn_point(int agent_height, int* spawn);
 
-        int get_coins_for_kill(int team);
+        int get_coins_for_kill(int owner, int team);
         int take_damage(int dmg);
 
         void tick();

@@ -1,9 +1,12 @@
 Confirm:
+redo mouse
+
+Check after code frozen, but before release:
 debug symbols are stripped / obfuscated binary
-production keybindings
-remove gun from agent model
 fix valgrind errors
-fix reasonable compiler warnings thrown during optimized compilation
+
+One last check before release:
+production keybindings
 
 running on permaserver:
 small script to always run game
@@ -21,5 +24,10 @@ Put links on site
 BRANDON:
 map
 windows build
+truncate hitscan laser
 
-
+NEXT BUILD:
+spawner location selection
+fixed block selector
+skeleton / model
+agent arm / hitscan laser comes out of it

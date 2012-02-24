@@ -136,10 +136,10 @@ void Spawner::create_message(Spawner_create_StoC* msg)
     #endif
 }
 
-int Spawner::get_coins_for_kill(int team)
+int Spawner::get_coins_for_kill(int owner, int team)
 {
-    if (this->team != team)
-        return 3;
+    if (this->team != team || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
+        return get_object_cost(this->type);
     return 0;
 }
 

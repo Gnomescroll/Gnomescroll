@@ -344,7 +344,7 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
-    const unsigned int coins = 200;
+    const unsigned int coins = get_object_cost(OBJ_TYPE_SPAWNER) * 3;
     this->add_coins(coins);
     this->has_flag = false;
 }

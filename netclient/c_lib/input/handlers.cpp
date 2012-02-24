@@ -109,7 +109,7 @@ void init_handlers()
     input_state.camera_mode = INPUT_STATE_AGENT;
 #else
     input_state.mouse_bound = false;
-    input_state.debug = true;
+    input_state.debug = false;
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
 #endif
