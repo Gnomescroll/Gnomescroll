@@ -10,7 +10,7 @@
 void init_vox_dats()
 {
     read_skeleton((char*)"./media/voxel/saves/2.skeleton", &agent_vox_dat);
-    read_skeleton((char*)"./media/voxel/saves/crouch2.skeleton", &agent_vox_dat_crouched);
+    read_skeleton((char*)"./media/voxel/saves/crouch3.skeleton", &agent_vox_dat_crouched);
     read_skeleton((char*)"./media/voxel/saves/dead2.skeleton", &agent_vox_dat_dead);
     read_skeleton((char*)"./media/voxel/slime.skeleton", &Monsters::slime_vox_dat);
     //read_skeleton((char*)"./media/voxel/flag.skeleton", &flag_vox_dat);
