@@ -292,6 +292,16 @@ void apply_camera_physics()
     
     long current_time = _GET_MS_TIME();
 
+    if(current_time == LAST_MOUSE_MOVEMENT_TIME)
+    {
+        return;
+        printf("0 apply_camera_physics: Warning: timer error\n");
+    }
+
+    if(current_time < LAST_MOUSE_MOVEMENT_TIME)
+    {
+        printf("1 apply_camera_physics: Warning: ERROR!! timer error\n");
+    }
 
     long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
     
@@ -313,7 +323,7 @@ void apply_camera_physics()
         
         //printf("%i %i \n", LAST_MOUSE_MOVEMENT_TIME, MOUSE_MOVEMENT_ARRAY[index].time);
 
-        while( MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME )
+        while( MOUSE_MOVEMENT_ARRAY[index].time == LAST_MOUSE_MOVEMENT_TIME &&  index < MOUSE_MOVEMENT_ARRAY_INDEX)
         {
             int dx = MOUSE_MOVEMENT_ARRAY[index].dx;
             int dy = MOUSE_MOVEMENT_ARRAY[index].dy;
@@ -336,8 +346,8 @@ void apply_camera_physics()
 
         LAST_MOUSE_MOVEMENT_TIME++;
     }
-
-
+    LAST_MOUSE_MOVEMENT_TIME--;
+    
     //printf("index= %i \n", index);
     if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
@@ -346,7 +356,7 @@ void apply_camera_physics()
         printf("start_time= %li \n ",_start_time);
         printf("end_time= %li \n ",LAST_MOUSE_MOVEMENT_TIME);
         
-        for(int i=0; i<index; i++ )
+        for(int i=0; i<MOUSE_MOVEMENT_ARRAY_INDEX; i++ )
         {
             printf("mouse move %i: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
         }
