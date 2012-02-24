@@ -249,7 +249,10 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
         if (g.yoff < miny) miny = g.yoff;
     }
     *length = len;
-    *height = maxy - miny;
+    if (len <= 0)
+        *height = font->data.line_height;
+    else
+        *height = maxy - miny;
 }
 
 Font::Font(char* fn)
