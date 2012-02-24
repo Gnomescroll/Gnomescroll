@@ -559,7 +559,7 @@ inline void hitscan_object_CtoS::handle()
             spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = spawner->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             //x = spawner->x;
@@ -710,7 +710,7 @@ inline void melee_object_CtoS::handle()
             spawner_health = spawner->take_damage(spawner_dmg);
             if (spawner_health <= 0)
             {
-                int coins = spawner->get_coins_for_kill(a->status.team);
+                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             x = spawner->x;
