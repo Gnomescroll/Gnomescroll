@@ -49,7 +49,7 @@ int process_events()
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 
-
+    /*
         static int otime = _GET_MS_TIME();
         int one = 0;
         static int event_polls = 0;
@@ -63,9 +63,9 @@ int process_events()
             counter = 0; //reset
             event_polls =0;
         }
-
         event_polls++;
-                    
+    */
+      
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 
 
@@ -88,7 +88,7 @@ int process_events()
                 break;
 
             case SDL_MOUSEMOTION:
-                counter++;
+                //counter++;
                 //printf( "dx,dy= %i %i \n", Event.motion.xrel, Event.motion.yrel);
             
                 mouse_motion_handler(&Event);
@@ -338,8 +338,7 @@ void apply_camera_physics()
     //printf("index= %i \n", index);
     if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
-        
-        printf("error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
+        printf("apply_camera_physics, error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
     }
     //printf("vx,vy = %f %f \n", vx, vy);
 
