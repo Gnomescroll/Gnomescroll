@@ -24,16 +24,32 @@ struct column
 const int MAP_VBO_STARTING_SIZE = 1024;
 const int MAP_VBO_INCREMENT = 256;
 
+struct VBO_FLAGS
+{
+    union
+    {
+        struct
+        {
+            bool vertex_list_loaded;
+            bool vbo_loaded;
+            bool render;   
+        };
+        int flags;
+    };
+};
+
 class Map_vbo
 {
     public:
+    //flags
+    struct VBO_FLAGS flags;
+
+    float xpos;
+    float ypos;
 
     int vnum;
     int vnum_max;
     struct Vertex* v_list;
-
-    float xpos;
-    float ypos;
 
     int _v_num[4];
     int _v_offset[4];
@@ -42,6 +58,9 @@ class Map_vbo
 
     Map_vbo( class MAP_CHUNK* m )
     {
+
+        flags.flags = 0; //zero all flags
+
         xpos = m->xpos + 8.0;
         ypos = m->ypos + 8.0;
 
@@ -79,6 +98,8 @@ class Map_vbo
 
 };
 
+const int VBO_LIST_SIZE = 512; //max number of VBOS that can have loaded VBOs
+
 class Vbo_map
 {
     public:    
@@ -89,6 +110,8 @@ class Vbo_map
     class Map_vbo** vbo_array;
     class Terrain_map* map;
 
+    class Map_vbo** vbo_list; //list of loaded vbos
+
     Vbo_map(class Terrain_map* _map)
     {
         map = _map;
@@ -96,6 +119,9 @@ class Vbo_map
         ychunk_dim = _map->ychunk_dim;
         vbo_array = new Map_vbo*[ xchunk_dim*ychunk_dim ];
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) vbo_array[i] = NULL;
+
+        vbo_list = new Map_vbo*[VBO_LIST_SIZE];
+        for(int i=0; i<VBO_LIST_SIZE; i++) vbo_list[i] = NULL;
     }
 
     ~Vbo_map()
@@ -104,6 +130,19 @@ class Vbo_map
         delete[] vbo_array;
     }
 
+/*
+    void clean_vbos()
+    {
+        
+        for(int i=0; i<xchunk_dim; i++)
+        for(int j=0; j<ychunk_dim; j++)
+        {
+            if( vbo_array[j*xchunk_dim + i] == NULL ) continue;
+
+            if( )
+        }
+    }
+*/
 
     //update all VBOs that need updating
     void update_map()
@@ -125,7 +164,7 @@ class Vbo_map
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             update_vbo(i, j);
-            break;
+            return;;
         }
 
         //if(count > 0) printf("!!! count= %i \n", count);

@@ -292,6 +292,9 @@ void apply_camera_physics()
     
     long current_time = _GET_MS_TIME();
 
+
+    long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
+    
     //if(LAST_MOUSE_MOVEMENT_TIME == current_time) return; //at least once ms must pass
 
     const float cfactor = 1.0/33.3333;
@@ -339,6 +342,15 @@ void apply_camera_physics()
     if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
         printf("apply_camera_physics, error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
+
+        printf("start_time= %li \n ",_start_time);
+        printf("end_time= %li \n ",LAST_MOUSE_MOVEMENT_TIME);
+        
+        for(int i=0; i<index; i++ )
+        {
+            printf("mouse move %i: at time %li \n", i, MOUSE_MOVEMENT_ARRAY[i].time);
+        }
+        printf("end error\n");
     }
     //printf("vx,vy = %f %f \n", vx, vy);
 
