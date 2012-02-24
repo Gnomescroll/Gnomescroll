@@ -482,7 +482,7 @@ class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC
             pack_u8(&id, buff, buff_n, pack);
             pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
         }
-        inline void handle();
+        inline void handle() __attribute((always_inline));
 };
 
 class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destroy_StoC>
@@ -717,7 +717,7 @@ class identified_StoC: public FixedSizeReliableNetPacketToClient<identified_StoC
         {
             pack_string(name, PLAYER_NAME_MAX_LENGTH, buff, buff_n, pack);
         }
-        inline void handle();
+        inline void handle() __attribute((always_inline));
 };
 
 class ping_StoC: public FixedSizeNetPacketToClient<ping_StoC>
