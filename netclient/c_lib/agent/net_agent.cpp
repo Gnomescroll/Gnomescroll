@@ -300,8 +300,8 @@ inline void Spawner_create_StoC::handle()
     s->set_owner(owner);
     s->init_vox();
     Sound::spawner_placed(x,y,z,0,0,0);
-    printf("added a spawner at %0.2f %0.2f %0.2f\n", x,y,z);
 }
+
 inline void Spawner_destroy_StoC::handle()
 {
     ClientState::spawner_list.destroy(id);

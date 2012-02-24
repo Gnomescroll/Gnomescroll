@@ -25,5 +25,10 @@ Put links on site
 BRANDON:
 map
 windows build
+truncate hitscan laser
 
-
+NEXT BUILD:
+spawner location selection
+fixed block selector
+skeleton / model
+agent arm / hitscan laser comes out of it
