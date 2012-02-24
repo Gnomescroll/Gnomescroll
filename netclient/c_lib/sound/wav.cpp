@@ -3,6 +3,13 @@
 namespace Sound
 {
 
+typedef union WavDataElement
+{
+    char buffer[5];
+    int16_t two_bytes;
+    int32_t four_bytes;
+} WavDataElement;
+
 static WavData* wav_buffers = NULL;
 static const char base_path[] = "./media/sound/wav/";
 
@@ -59,15 +66,16 @@ int get_free_wav_data(WavData** data)
 
 bool is_valid_wav(FILE* f)
 {
-    char metadata[5] = {'\0'};
+    WavDataElement metadata;
+    memset(metadata.buffer, 0, sizeof(char)*5);
 
-    if (fread(metadata, sizeof(char), 4, f) != 4 || strcmp(metadata, "RIFF") != 0)
+    if (fread(metadata.buffer, sizeof(char), 4, f) != 4 || strcmp(metadata.buffer, "RIFF") != 0)
         return false;
 
-    if (fread(metadata, sizeof(char), 4, f) != 4)   // chunk size, dont need (fixed size)
+    if (fread(metadata.buffer, sizeof(char), 4, f) != 4)   // chunk size, dont need (fixed size)
         return false;
 
-    if (fread(metadata, sizeof(char), 4, f) != 4 || strcmp(metadata, "WAVE") != 0)
+    if (fread(metadata.buffer, sizeof(char), 4, f) != 4 || strcmp(metadata.buffer, "WAVE") != 0)
         return false;
 
     return true;
@@ -75,61 +83,62 @@ bool is_valid_wav(FILE* f)
 
 bool read_wav_fmt_subchunk(FILE* f, WavData* data)
 {
-    char metadata[5] = {'\0'};
+    WavDataElement metadata;
+    memset(metadata.buffer, 0, sizeof(char)*5);
     int read;
     int total_read = 0;
 
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
-    if (strcmp(metadata, "fmt ") != 0)
+    if (strcmp(metadata.buffer, "fmt ") != 0)
         return false;
         
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
-    int chunk_size = *((int32_t*)metadata);
+    int chunk_size = metadata.four_bytes;
 
-    read = fread(metadata, sizeof(char), 2, f);
+    read = fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
-    data->format = *((int16_t*)metadata);
+    data->format = metadata.two_bytes;
 
-    read = fread(metadata, sizeof(char), 2, f);
+    read = fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
-    data->channels = *((int16_t*)metadata);
+    data->channels = metadata.two_bytes;
 
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     total_read += read;
-    data->sample_rate = *((int32_t*)metadata);
+    data->sample_rate = metadata.four_bytes;
 
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
     total_read += read;
-    data->byte_rate = *((int32_t*)metadata);
+    data->byte_rate = metadata.four_bytes;
 
-    read = fread(metadata, sizeof(char), 2, f);
+    read = fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
     // blockAlignment, dont care
 
-    read = fread(metadata, sizeof(char), 2, f);
+    read = fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
     total_read += read;
-    data->bits_per_sample = *((int16_t*)metadata);
+    data->bits_per_sample = metadata.two_bytes;
 
     int extra = chunk_size - total_read;
     if (extra)
     {   // skip past extra metadata
-        read = fread(metadata, sizeof(char), extra, f);
+        read = fread(metadata.buffer, sizeof(char), extra, f);
         if (read != extra)
             return false;
     }
@@ -142,24 +151,26 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     *buffer = NULL;
     data->size = 0;
     data->duration = 0;
-    char metadata[5] = {'\0'};
+
+    WavDataElement metadata;
+    memset(metadata.buffer, 0, sizeof(char)*5);
     int read;
 
     // verify chunk id
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
-    if (strcmp(metadata, "data") != 0)
+    if (strcmp(metadata.buffer, "data") != 0)
     {
-        printf("data subchunk id invalid: %s\n", metadata);
+        printf("data subchunk id invalid: %s\n", metadata.buffer);
         return false;
     }
 
     // get size of wav data
-    read = fread(metadata, sizeof(char), 4, f);
+    read = fread(metadata.buffer, sizeof(char), 4, f);
     if (read != 4)
         return false;
-    data->size = *((int32_t*)metadata);
+    data->size = metadata.four_bytes;
     data->duration = ((float)data->size) / data->byte_rate;
 
     if (data->size == 0)

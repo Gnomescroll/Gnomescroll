@@ -1,9 +1,10 @@
 Confirm:
 debug symbols are stripped / obfuscated binary
-production keybindings
-remove gun from agent model
+production keybindings  DONE
+remove gun from agent model DONE
 fix valgrind errors
 fix reasonable compiler warnings thrown during optimized compilation
+redo mouse
 
 running on permaserver:
 small script to always run game
