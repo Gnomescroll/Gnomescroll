@@ -274,9 +274,9 @@ static float linear_sensitivity = 1.0 / (2*3.1415* 120);
 
 static float x_sensitivity = 1 / (2*3.1415*100000);
 static float y_sensitivity = 1 / (2*3.1415*100000);
-static const float dampening = 0.5;
+static const float dampening = 0.8;
 
-static float linear_sensitivity = 0.001f;
+static float linear_sensitivity = 0.005f;
 
 
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
