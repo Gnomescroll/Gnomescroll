@@ -4,6 +4,9 @@
 
 int frame_left()
 {
+
+    return 0; //debug
+
     static int last_time =  _GET_MS_TIME();
 
     int current_time = _GET_MS_TIME();
