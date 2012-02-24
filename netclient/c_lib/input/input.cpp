@@ -59,7 +59,7 @@ int process_events()
             one = 1;
             otime = _GET_MS_TIME();
 
-            printf("%i events, %i event polls \n", counter, event_polls);
+            //printf("%i events, %i event polls \n", counter, event_polls);
             counter = 0; //reset
             event_polls =0;
         }

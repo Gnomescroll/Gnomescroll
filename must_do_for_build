@@ -4,6 +4,7 @@ production keybindings
 remove gun from agent model
 fix valgrind errors
 fix reasonable compiler warnings thrown during optimized compilation
+redo mouse
 
 running on permaserver:
 small script to always run game
