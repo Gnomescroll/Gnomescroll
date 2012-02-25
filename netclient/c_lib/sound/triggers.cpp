@@ -135,8 +135,8 @@ void parse_sound_triggers(char *fn)
     int comma = 0;
 
     const int MAX_FN_LEN = 100;
-    char filename[MAX_FN_LEN+1] = {'\0'};
-    char function_name[MAX_FN_LEN+1] = {'\0'};
+    char* filename = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
+    char* function_name = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
     int filename_index = 0;
     int function_name_index = 0;
 
@@ -210,6 +210,8 @@ void parse_sound_triggers(char *fn)
         sound_file_functions = (struct Sound_file_function_map*)realloc(sound_file_functions, sizeof(struct Sound_file_function_map) *  n_sounds);
 
     free(buff);
+    free(filename);
+    free(function_name);
 }
 
 void teardown_triggers()
