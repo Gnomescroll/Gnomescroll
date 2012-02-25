@@ -17,28 +17,29 @@ void Agent_event::name_changed(char* old_name)
 
     if (a->is_you())
     {
-        char fmt[] = "You are identified as %s";
-        char msg[strlen(fmt) + strlen(this->a->status.name) - 2 + 1];
+        const char fmt[] = "You are identified as %s";
+        char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
         sprintf(msg, fmt, this->a->status.name);
         chat_client->send_system_message(msg);
+        free(msg);
     }
     else
     {
         if (strcmp(AGENT_UNDEFINED_NAME, old_name))
         {
-            char fmt[] = "%s is now known as %s";
-            char msg[strlen(fmt) + strlen(old_name) + strlen(this->a->status.name) - 4 + 1];
+            const char fmt[] = "%s is now known as %s";
+            char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
             sprintf(msg, fmt, old_name, this->a->status.name);
             chat_client->send_system_message(msg);
+            free(msg);
         }
         else
         {
-            char fmt[] = "%s has joined the game";
-            int fmt_len = strlen(fmt);
-            int name_len = strlen(this->a->status.name);
-            char msg[fmt_len + name_len - 2 + 1];
+            const char fmt[] = "%s has joined the game";
+            char* msg = (char*)calloc(strlen(fmt) + strlen(this->a->status.name) - 2 + 1, sizeof(char));
             sprintf(msg, fmt, this->a->status.name);
             chat_client->send_system_message(msg);
+            free(msg);
         }
     }
 

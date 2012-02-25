@@ -4,19 +4,27 @@
 
 namespace Weapons {
 
-static const char hud_undefined_string[] = "--";
-static const char hud_display_format_string[] = "%s/%s::%s/%s";
-
-
-Weapon::Weapon(weapon_type type) :
-max_ammo(0), speed(1),
+Weapon::Weapon(weapon_type type)
+:
+clip_str(NULL),
+clip_size_str(NULL),
+ammo_str(NULL),
+max_ammo_str(NULL),
+max_ammo(0),
+speed(1),
 id(0),
 owner(0),
 type(type),
 ammo(0),
 scope(false)
-{}
+{
+    this->hud_string = (char*)calloc(WEAPON_HUD_STRING_MAX, sizeof(char));
+}
 
+Weapon::~Weapon()
+{
+    free(this->hud_string);
+}
 
 void Weapon::restore_ammo()
 {
@@ -53,13 +61,21 @@ bool HitscanLaser::fire() {
 }
 
 char* HitscanLaser::hud_display() {
-    char clip_str[4+1];
+
+    if (clip > 9999) clip = 9999;
+    if (clip < -999) clip = -999;
     sprintf(clip_str, "%d", clip);
-    char clip_size_str[4+1];
+    
+    if (clip_size > 9999) clip_size = 9999;
+    if (clip_size < -999) clip_size = -999;
     sprintf(clip_size_str, "%d", clip_size);
-    char ammo_str[4+1];
+
+    if (ammo > 9999) ammo = 9999;
+    if (ammo < -999) ammo = -999;
     sprintf(ammo_str, "%d", ammo);
-    char max_ammo_str[4+1];
+
+    if (max_ammo > 9999) max_ammo = 9999;
+    if (max_ammo < -999) max_ammo = -999;
     sprintf(max_ammo_str, "%d", max_ammo);
     
     sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
@@ -75,6 +91,18 @@ clip(100)
     this-> max_ammo = 100;
     this->ammo = 100;
     this->scope = true;
+    this->clip_str = (char*)calloc(4+1, sizeof(char));
+    this->clip_size_str = (char*)calloc(4+1, sizeof(char));
+    this->ammo_str = (char*)calloc(4+1, sizeof(char));
+    this->max_ammo_str = (char*)calloc(4+1, sizeof(char));
+}
+
+HitscanLaser::~HitscanLaser()
+{
+    free(this->clip_str);
+    free(this->clip_size_str);
+    free(this->ammo_str);
+    free(this->max_ammo_str);
 }
 
 void HitscanLaser::reload() {
@@ -142,11 +170,12 @@ bool BlockApplier::fire() {
 }
 
 char* BlockApplier::hud_display() {
-    const char* clip_str = hud_undefined_string;
-    const char* clip_size_str = hud_undefined_string;
-    char ammo_str[4+1];
+    if (ammo > 9999) ammo = 9999;
+    if (ammo < -999) ammo = -999;
     sprintf(ammo_str, "%d", ammo);
-    char max_ammo_str[4+1];
+
+    if (max_ammo > 9999) max_ammo = 9999;
+    if (max_ammo < -999) max_ammo = -999;
     sprintf(max_ammo_str, "%d", max_ammo);
     
     sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
@@ -161,6 +190,16 @@ block(2)
 {
     this->max_ammo = 9999;
     this->ammo = 9999;
+    this->clip_str = const_cast<char*>(hud_undefined_string);
+    this->clip_size_str = const_cast<char*>(hud_undefined_string);
+    this->ammo_str = (char*)calloc(4+1, sizeof(char));
+    this->max_ammo_str = (char*)calloc(4+1, sizeof(char));
+}
+
+BlockApplier::~BlockApplier()
+{
+    free(this->ammo_str);
+    free(this->max_ammo_str);
 }
 
 /* Pick */
@@ -170,18 +209,21 @@ bool BlockPick::fire() {
 }
 
 char* BlockPick::hud_display() {
-    const char* clip_str = hud_undefined_string;
-    const char* clip_size_str = hud_undefined_string;
-    const char* ammo_str = hud_undefined_string;
-    const char* max_ammo_str = hud_undefined_string;
     sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
 BlockPick::BlockPick() :
 Weapon(TYPE_block_pick)
-{}
+{
+    this->clip_str = const_cast<char*>(hud_undefined_string);
+    this->clip_size_str = const_cast<char*>(hud_undefined_string);
+    this->ammo_str = const_cast<char*>(hud_undefined_string);
+    this->max_ammo_str = const_cast<char*>(hud_undefined_string);
+}
 
+BlockPick::~BlockPick()
+{}
 
 /* Grenade thrower */
 
@@ -201,11 +243,12 @@ bool GrenadeThrower::fire() {
 }
 
 char* GrenadeThrower::hud_display() {
-    const char* clip_str = hud_undefined_string;
-    const char* clip_size_str = hud_undefined_string;
-    char ammo_str[4+1];
+    if (ammo > 9999) ammo = 9999;
+    if (ammo < -999) ammo = -999;
     sprintf(ammo_str, "%d", ammo);
-    char max_ammo_str[4+1];
+
+    if (max_ammo > 9999) max_ammo = 9999;
+    if (max_ammo < -999) max_ammo = -999;
     sprintf(max_ammo_str, "%d", max_ammo);
     
     sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
@@ -218,6 +261,16 @@ Weapon(TYPE_grenade_thrower)
 {
     this->max_ammo = 9999;
     this->ammo = 9999;
+    this->clip_str = const_cast<char*>(hud_undefined_string);
+    this->clip_size_str = const_cast<char*>(hud_undefined_string);
+    this->ammo_str = (char*)calloc(4+1, sizeof(char));
+    this->max_ammo_str = (char*)calloc(4+1, sizeof(char));
+}
+
+GrenadeThrower::~GrenadeThrower()
+{
+    free(this->ammo_str);
+    free(this->max_ammo_str);
 }
 
 /* SpawnerPlacer (TEMPORARY) */
@@ -229,7 +282,7 @@ bool SpawnerPlacer::fire()
 
 char* SpawnerPlacer::hud_display()
 {
-    sprintf(hud_string, hud_display_format_string, hud_undefined_string, hud_undefined_string, hud_undefined_string, hud_undefined_string);
+    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
@@ -239,7 +292,14 @@ Weapon(TYPE_spawner_placer)
 {
     this->max_ammo = 9999;
     this->ammo = 9999;
+    this->clip_str = const_cast<char*>(hud_undefined_string);
+    this->clip_size_str = const_cast<char*>(hud_undefined_string);
+    this->ammo_str = const_cast<char*>(hud_undefined_string);
+    this->max_ammo_str = const_cast<char*>(hud_undefined_string);
 }
+
+SpawnerPlacer::~SpawnerPlacer()
+{}
 
 
 }
