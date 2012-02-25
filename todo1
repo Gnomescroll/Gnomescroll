@@ -348,7 +348,7 @@ Fixed compiler warnings
 Removed gun from voxel model
 Realign crouching legs
 Fixed byte overflow for spawner packets
-
+Fixed valgrind errors, including --tool=exp-sgcheck
 
 ====================
 

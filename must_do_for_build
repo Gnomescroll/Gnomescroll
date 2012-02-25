@@ -3,7 +3,7 @@ redo mouse
 
 Check after code frozen, but before release:
 debug symbols are stripped / obfuscated binary
-fix valgrind errors
+fix valgrind memory errors in client
 
 One last check before release:
 production keybindings
@@ -31,3 +31,19 @@ spawner location selection
 fixed block selector
 skeleton / model
 agent arm / hitscan laser comes out of it
+
+
+REMOVING SYMBOLS:
+strip -g
+
+ALSO (see http://stackoverflow.com/questions/2872638/how-to-remove-strings-from-a-compiled-binary-so)
+compile with
+    -fvisibility=hidden
+
+and mark cython-imported symbols as:
+__attribute__((visibility("default")));
+
+(the complement is)
+__attribute__((visibility("hidden")));
+
+dynamic symbol table pruning
