@@ -287,7 +287,6 @@ static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 */
 void apply_camera_physics()
 {
-    printf("");
     static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
     
     long current_time = _GET_MS_TIME();

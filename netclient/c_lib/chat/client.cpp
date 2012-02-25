@@ -585,9 +585,10 @@ void ChatSystemMessage::agent_pickup_flag(Agent_state* a)
         verb = has;
     }
     char fmt[] = "%s %s the flag";
-    char msg[strlen(fmt) + strlen(name) +strlen(verb) - 4 + 1];
+    char* msg = (char*)calloc(strlen(fmt) + strlen(name) + strlen(verb) - 4 + 1, sizeof(char));
     sprintf(msg, fmt, name, verb);
     chat_client->send_system_message(msg);
+    free(msg);
 }
 
 void ChatSystemMessage::agent_drop_flag(Agent_state* a)
@@ -599,9 +600,10 @@ void ChatSystemMessage::agent_drop_flag(Agent_state* a)
     else
         name = a->status.name;
     char fmt[] = "%s dropped the flag";
-    char msg[strlen(fmt) + strlen(name) - 2 + 1];
+    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, name);
     chat_client->send_system_message(msg);
+    free(msg);
 }
 
 void ChatSystemMessage::agent_score_flag(Agent_state* a)
@@ -613,9 +615,10 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
     else
         name = a->status.name;
     char fmt[] = "%s captured the flag";
-    char msg[strlen(fmt) + strlen(name) - 2 + 1];
+    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, name);
     chat_client->send_system_message(msg);
+    free(msg);
 }
 
 /* globals */

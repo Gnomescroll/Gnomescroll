@@ -212,11 +212,12 @@ inline void agent_name_StoC::handle()
         printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
         return;
     }
-    char old_name[strlen(a->status.name)];
+    char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
     strcpy(old_name, a->status.name);
     bool new_name = a->status.set_name(name);
     if (new_name)
         a->event.name_changed(old_name);
+    free(old_name);
 }
 
 inline void agent_destroy_StoC::handle()
@@ -281,11 +282,12 @@ inline void identified_StoC::handle()
         return;
     }
     ClientState::playerAgent_state.identified = true;
-    char old_name[strlen(a->status.name)];
+    char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
     strcpy(old_name, a->status.name);
     bool new_name = a->status.set_name(name);
     if (new_name)
         a->event.name_changed(old_name);
+    free(old_name);
 }
 
 inline void Spawner_create_StoC::handle()
@@ -328,7 +330,7 @@ inline void agent_conflict_notification_StoC::handle()
     char *a_name = (a == NULL) ? unknown_name : a->status.name;
     char *b_name = (b == NULL) ? unknown_name : b->status.name;
 
-    char msg[150] = {'\0'};
+    char* msg = (char*)calloc(150, sizeof(char));
     switch (method)
     {
         case DEATH_NORMAL:
@@ -392,6 +394,7 @@ inline void agent_conflict_notification_StoC::handle()
     }
     
     chat_client->send_system_message(msg);
+    free(msg);
 }
 
 inline void Agent_cs_CtoS::handle() {}
