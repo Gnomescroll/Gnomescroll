@@ -354,7 +354,7 @@ Fixed valgrind errors, including --tool=exp-sgcheck
 
 Fed 25
 
-
+tweak input settings
 ====================
 
 MYSTERY (buffer overrun?) valgrind bitches about voxels sometimes

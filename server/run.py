@@ -70,7 +70,7 @@ class Main:
 
         tick = 0
 
-        init_c_lib.slime_test(2)
+        init_c_lib.slime_test(30)
         while True:
 
             if OS == 'Linux':
