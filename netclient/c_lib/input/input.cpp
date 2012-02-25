@@ -276,7 +276,7 @@ static float x_sensitivity = 1 / (2*3.1415*100000);
 static float y_sensitivity = 1 / (2*3.1415*100000);
 static const float dampening = 0.8;
 
-static float linear_sensitivity = 0.005f;
+static float linear_sensitivity = 0.003f;
 
 
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
@@ -287,7 +287,7 @@ static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 */
 void apply_camera_physics()
 {
-
+    printf("");
     static long LAST_MOUSE_MOVEMENT_TIME = _GET_MS_TIME();
     
     long current_time = _GET_MS_TIME();

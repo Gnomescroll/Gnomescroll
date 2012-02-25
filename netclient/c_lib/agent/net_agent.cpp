@@ -391,7 +391,7 @@ inline void agent_conflict_notification_StoC::handle()
         default: break;
     }
     
-    chat_client.send_system_message(msg);
+    chat_client->send_system_message(msg);
 }
 
 inline void Agent_cs_CtoS::handle() {}

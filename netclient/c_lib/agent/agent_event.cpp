@@ -20,7 +20,7 @@ void Agent_event::name_changed(char* old_name)
         char fmt[] = "You are identified as %s";
         char msg[strlen(fmt) + strlen(this->a->status.name) - 2 + 1];
         sprintf(msg, fmt, this->a->status.name);
-        chat_client.send_system_message(msg);
+        chat_client->send_system_message(msg);
     }
     else
     {
@@ -29,14 +29,16 @@ void Agent_event::name_changed(char* old_name)
             char fmt[] = "%s is now known as %s";
             char msg[strlen(fmt) + strlen(old_name) + strlen(this->a->status.name) - 4 + 1];
             sprintf(msg, fmt, old_name, this->a->status.name);
-            chat_client.send_system_message(msg);
+            chat_client->send_system_message(msg);
         }
         else
         {
             char fmt[] = "%s has joined the game";
-            char msg[strlen(fmt) + strlen(this->a->status.name) - 2 + 1];
+            int fmt_len = strlen(fmt);
+            int name_len = strlen(this->a->status.name);
+            char msg[fmt_len + name_len - 2 + 1];
             sprintf(msg, fmt, this->a->status.name);
-            chat_client.send_system_message(msg);
+            chat_client->send_system_message(msg);
         }
     }
 
@@ -164,7 +166,7 @@ void Agent_event::joined_team(int team)
 {
     this->a->status.team = team;
     this->a->vox->update_team_color(&agent_vox_dat, team);
-    chat_client.subscribe_channels();
+    chat_client->subscribe_channels();
 }
 
 void Agent_event::picked_up_flag()

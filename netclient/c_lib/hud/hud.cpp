@@ -143,7 +143,7 @@ void update_hud_draw_settings()
         HudText::Text *t = hud->chat->input;
         if (t != NULL)
         {
-            t->set_text(chat_client.input->buffer);
+            t->set_text(chat_client->input->buffer);
             hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
@@ -474,14 +474,14 @@ void ChatRender::update(bool timeout)
     if (!this->inited) return;
 
     int now = _GET_MS_TIME();
-    chat_message_list.sort_by_most_recent();
+    chat_message_list->sort_by_most_recent();
     int i=paging_offset;
     int j=CHAT_MESSAGE_RENDER_MAX-1;
     int n_draw = 0;
-    for (; i<chat_message_list.n_filtered; i++)
+    for (; i<chat_message_list->n_filtered; i++)
     {
         if (n_draw == CHAT_MESSAGE_RENDER_MAX) break;
-        ChatMessage* m = chat_message_list.filtered_objects[i];
+        ChatMessage* m = chat_message_list->filtered_objects[i];
         if (m == NULL) break;
         if (timeout && now - m->timestamp > CHAT_MESSAGE_RENDER_TIMEOUT) break;
         n_draw++;
@@ -495,7 +495,7 @@ void ChatRender::update(bool timeout)
     i = 0;
     for (;j>0;)
     {
-        ChatMessage* m = chat_message_list.filtered_objects[--j];
+        ChatMessage* m = chat_message_list->filtered_objects[--j];
         HudText::Text* t = this->messages[i++];
 
         if (m->sender == CHAT_SENDER_SYSTEM)
@@ -518,8 +518,8 @@ void ChatRender::update(bool timeout)
 //void ChatRender::page_up()
 //{
     //paging_offset += 4;
-    //if (paging_offset > chat_message_list.num-8)
-        //paging_offset = chat_message_list.num-8;
+    //if (paging_offset > chat_message_list->num-8)
+        //paging_offset = chat_message_list->num-8;
 //}
 
 //void ChatRender::page_down()

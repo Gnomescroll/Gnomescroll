@@ -40,7 +40,7 @@ inline void AgentPickupFlag_StoC::handle()
     if (a==NULL) return;
     a->event.picked_up_flag();
     ClientState::ctf.flag_picked_up(a->status.team);
-    system_message.agent_pickup_flag(a);
+    system_message->agent_pickup_flag(a);
 }
 
 inline void AgentDropFlag_StoC::handle()
@@ -49,7 +49,7 @@ inline void AgentDropFlag_StoC::handle()
     if (a==NULL) return;    
     a->event.dropped_flag();
     ClientState::ctf.flag_dropped(a->status.team);
-    system_message.agent_drop_flag(a);
+    system_message->agent_drop_flag(a);
 }
 
 inline void AgentScoreFlag_StoC::handle()
@@ -58,7 +58,7 @@ inline void AgentScoreFlag_StoC::handle()
     if (a==NULL) return;
     a->event.scored_flag();
     ClientState::ctf.flag_scored(a->status.team);
-    system_message.agent_score_flag(a);
+    system_message->agent_score_flag(a);
 }
 
 // dummies

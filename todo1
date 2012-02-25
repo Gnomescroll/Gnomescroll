@@ -338,11 +338,16 @@ alsa device selection
 Feb 20-23
 Mom visit
 
+Added mailing list and chat to website
+
 ====================
 
 Feb 24
 
-TODO:
+Fixed compiler warnings
+Removed gun from voxel model
+Realign crouching legs
+Fixed byte overflow for spawner packets
 
 
 ====================

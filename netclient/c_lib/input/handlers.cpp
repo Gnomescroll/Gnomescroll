@@ -155,27 +155,27 @@ void chat_key_down_handler(SDL_Event* event)
     switch (event->key.keysym.sym)
     {
         case SDLK_ESCAPE:
-            chat_client.input->clear_buffer();
+            chat_client->input->clear_buffer();
             toggle_chat();
             return;
         case SDLK_BACKSPACE:
-            chat_client.input->remove();
+            chat_client->input->remove();
             return;
         case SDLK_RETURN:
-            chat_client.submit();
+            chat_client->submit();
             toggle_chat();
             return;
         case SDLK_LEFT:
-            chat_client.input->cursor_left();
+            chat_client->input->cursor_left();
             return;
         case SDLK_RIGHT:
-            chat_client.input->cursor_right();
+            chat_client->input->cursor_right();
             return;
         case SDLK_UP:
-            chat_client.input->history_older();
+            chat_client->input->history_older();
             return;
         case SDLK_DOWN:
-            chat_client.input->history_newer();
+            chat_client->input->history_newer();
             return;
         //case SDLK_PAGEUP:
             //if (hud->inited && hud->chat != NULL && hud->chat->inited)
@@ -192,7 +192,7 @@ void chat_key_down_handler(SDL_Event* event)
     t = (t) ? t : event->key.keysym.sym;
 
     if (t < 0 || t > 127) t = '?';
-    chat_client.input->add((char)t);
+    chat_client->input->add((char)t);
 }
 
 void chat_key_up_handler(SDL_Event* event){}
@@ -444,7 +444,7 @@ void key_down_handler(SDL_Event* event)
                 else
                 {
                     toggle_chat();
-                    chat_client.use_global_channel();
+                    chat_client->use_global_channel();
                 }
                 break;
                 
@@ -455,7 +455,7 @@ void key_down_handler(SDL_Event* event)
             case SDLK_y:
                 toggle_chat();
                 if (!input_state.debug)
-                    chat_client.use_team_channel();
+                    chat_client->use_team_channel();
                 break;
 
             case SDLK_TAB:
@@ -464,7 +464,7 @@ void key_down_handler(SDL_Event* event)
 
             case SDLK_RETURN:
                 toggle_chat();
-                chat_client.use_global_channel();
+                chat_client->use_global_channel();
                 break;
 
             case SDLK_SLASH:

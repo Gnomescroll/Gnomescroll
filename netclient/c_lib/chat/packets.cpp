@@ -12,7 +12,7 @@ inline void ChatMessage_StoC::handle()
         if (a==NULL) return;
     }
 
-    chat_client.received_message(channel, sender, msg);
+    chat_client->received_message(channel, sender, msg);
 }
 
 inline void ChatMessage_CtoS::handle(){}
@@ -35,7 +35,7 @@ inline void ChatMessage_CtoS::handle()
       && a->status.team-1 != channel-CHANNEL_ID_TEAM_OFFSET)
         return;
         
-    chat_server.receive_message(channel, client_id, msg);
+    chat_server->receive_message(channel, client_id, msg);
 }
 
 inline void ChatMessage_StoC::handle(){}

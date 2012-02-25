@@ -148,12 +148,12 @@ namespace ClientState {
 
     void on_connect()
     {
-        chat_client.send_system_message((char*)"Connected to server");   
+        chat_client->send_system_message((char*)"Connected to server");   
     }
     
     void on_disconnect()
     {
-        chat_client.send_system_message((char*)"Disconnected from server");
+        chat_client->send_system_message((char*)"Disconnected from server");
     }
 
     void enumerate_sound_devices()

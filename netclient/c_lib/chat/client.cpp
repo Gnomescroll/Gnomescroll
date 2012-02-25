@@ -75,7 +75,7 @@ prev(NULL)
 
 ChatMessageHistoryObject::~ChatMessageHistoryObject()
 {
-    chat_message_list.destroy(m->id);
+    chat_message_list->destroy(m->id);
 }
 
 /* ChatClientChannel */
@@ -393,7 +393,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
         return;
     }
 
-    ChatMessage* m = chat_message_list.create();
+    ChatMessage* m = chat_message_list->create();
     m->sender = sender;
     m->channel = channel;
     strcpy(m->payload, payload);
@@ -587,7 +587,7 @@ void ChatSystemMessage::agent_pickup_flag(Agent_state* a)
     char fmt[] = "%s %s the flag";
     char msg[strlen(fmt) + strlen(name) +strlen(verb) - 4 + 1];
     sprintf(msg, fmt, name, verb);
-    chat_client.send_system_message(msg);
+    chat_client->send_system_message(msg);
 }
 
 void ChatSystemMessage::agent_drop_flag(Agent_state* a)
@@ -601,7 +601,7 @@ void ChatSystemMessage::agent_drop_flag(Agent_state* a)
     char fmt[] = "%s dropped the flag";
     char msg[strlen(fmt) + strlen(name) - 2 + 1];
     sprintf(msg, fmt, name);
-    chat_client.send_system_message(msg);
+    chat_client->send_system_message(msg);
 }
 
 void ChatSystemMessage::agent_score_flag(Agent_state* a)
@@ -615,10 +615,30 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
     char fmt[] = "%s captured the flag";
     char msg[strlen(fmt) + strlen(name) - 2 + 1];
     sprintf(msg, fmt, name);
-    chat_client.send_system_message(msg);
+    chat_client->send_system_message(msg);
 }
 
 /* globals */
-ChatClient chat_client;
-ChatMessageList chat_message_list;
-ChatSystemMessage system_message;
+ChatClient* chat_client = NULL;
+ChatMessageList* chat_message_list = NULL;
+ChatSystemMessage* system_message = NULL;
+
+void init_chat_client()
+{
+    chat_client = new ChatClient;
+    chat_message_list = new ChatMessageList;
+    system_message = new ChatSystemMessage;
+}
+
+void teardown_chat_client()
+{
+    if (chat_client != NULL)
+    {
+        chat_client->teardown();
+        delete chat_client;
+    }
+    if (chat_message_list != NULL)
+        delete chat_message_list;
+    if (system_message != NULL)
+        delete system_message;
+}

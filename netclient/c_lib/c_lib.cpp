@@ -194,7 +194,7 @@ int init_c_lib() {
         init_handlers();
         init_particle_functions();
         init_cameras();
-
+        init_chat_client();
         init_particles();
         HudFont::init();
         HudInventory::init();
@@ -224,9 +224,8 @@ void close_c_lib() {
     printf("Closing c_lib\n");
     shutdown_net_client();
     teardown_cameras();
-    chat_client.teardown();
     HudFont::teardown();
-
+    teardown_chat_client();
     // free surfaces
     t_map::teardown_shader();
     teardown_particle_surface();

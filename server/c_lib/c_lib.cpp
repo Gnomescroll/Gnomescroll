@@ -102,6 +102,7 @@ int init_c_lib()
     srand(time(NULL));
 
     init_vox_dats();
+    init_chat_server();
 
     init_network();
     ServerState::init();
@@ -111,7 +112,7 @@ int init_c_lib()
 
 void close_c_lib()
 {
-    
+    teardown_chat_server();
     
     printf("Closed c_lib\n");
 }

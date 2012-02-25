@@ -150,6 +150,6 @@ class ChatSystemMessage
 
 void teardown_chat_client();
 
-extern ChatMessageList chat_message_list;
-extern ChatClient chat_client;
-extern ChatSystemMessage system_message;
+extern ChatMessageList* chat_message_list;
+extern ChatClient* chat_client;
+extern ChatSystemMessage* system_message;

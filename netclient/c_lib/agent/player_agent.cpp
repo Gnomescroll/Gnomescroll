@@ -22,7 +22,7 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->agent_id = id;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
-    chat_client.subscribe_channels();
+    chat_client->subscribe_channels();
 }
 
 
