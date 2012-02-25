@@ -122,7 +122,7 @@ def parse(cl_args=None):
     parser.add_argument('-fov', '--field-of-view', default=DEFAULTS['fov'], dest='fov', type=float)
 
     ''' Controls '''
-    parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=int)
+    parser.add_argument('-sen', '--sensitivity', default=DEFAULTS['sensitivity'], type=float)
     parser.add_argument('-cs', '--camera-speed', default=DEFAULTS['camera_speed'], type=float)
     parser.add_argument('-im', '--invert-mouse', action='store_true')
     parser.add_argument('-am', '--agent-motion', default=DEFAULTS['agent_motion'], choices=['normal', 'smoothed', 'interpolated_prediction', 'prediction', 'server_snapshot'])

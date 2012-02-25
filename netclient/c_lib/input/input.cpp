@@ -205,7 +205,7 @@ struct MOUSE_MOVEMENT
 
 /* DO NOT MODIFY THESE */
 static const float DEFAULT_DAMPENING = 0.68f;
-static const float DEFAULT_SENSITIVITY_OPTION = 100.0f;
+static const float DEFAULT_SENSITIVITY_OPTION = 1000.0f;
 static const float DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT = 4100;   // higher is less sensitive
 static const float DEFAULT_X_SENSITIVITY_COEFFICIENT = 10000;   // higher is less sensitive
 static const float DEFAULT_Y_SENSITIVITY_COEFFICIENT = 10000;   // higher is less sensitive

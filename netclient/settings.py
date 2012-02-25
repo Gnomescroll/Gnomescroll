@@ -17,7 +17,7 @@ fullscreen = False
 fov = 85.
 
 ''' Controls '''
-sensitivity = 100
+sensitivity = 1000
 camera_speed = 0.8
 invert_mouse = False
 agent_motion = 'normal'
