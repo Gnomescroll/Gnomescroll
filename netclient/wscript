@@ -172,6 +172,13 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                 uselib_store='openal',
                 mandatory=True
             )
+        elif OS == 'Windows':
+            conf.check(header_name='AL/al.h',
+                       lib='OpenAL32',
+                       use='openal',
+                       uselib_store='openal',
+                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + OPENAL_MAIN_TEST_CODE,
+                       mandatory=True)
         else:
             conf.check(header_name='AL/al.h',
                        lib='openal',
@@ -179,7 +186,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                        uselib_store='openal',
                        fragment='#include <AL/al.h>\n#include <AL/alc.h>' + OPENAL_MAIN_TEST_CODE,
                        mandatory=True)
-
+                       
     fmod_includes = []
     fmod_rpath = []
     if sound.lower() == 'fmod':
