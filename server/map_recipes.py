@@ -62,133 +62,133 @@ def feb3_test_map():
 
 def _gen_map():
 
-    feb3_test_map()
-    return
-    init_c_lib.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
-    if not opts.map:   # if loading map dont do this debug stuff so angus wont get embarassed
-        c_lib.map_gen.init(512,512,128)
-        c_lib.map_gen.conf.seed(opts.seed)
-        _n = time.time()
+    #feb3_test_map()
+    #return
+    #init_c_lib.set_map_dimensions(512,512,128) # TODO:: get this value from the map gen or saved map    
 
-        ##base heightmap, smooth shallow hills
-        c_lib.map_gen.conf\
-        .size(512,512,128)\
-        .group(0)\
-        .tile(2)\
-        .interpolate(4,2,1)\
-        .scale(4.0, 4.0, 1.0)\
-        .heightmap(baseline=40, maxheight=60)\
-        .p2(octaves=6, persistence=0.45)\
-        .start()\
-        .reset()
+    c_lib.map_gen.init(512,512,128)
+    c_lib.map_gen.conf.seed(opts.seed)
+    _n = time.time()
 
-         ###base heightmap, smooth shallowER hills
-        c_lib.map_gen.conf\
-        .size(512,512,128)\
-        .group(5)\
-        .scale(x=1.0, y=1.0, z=1.0)\
-        .tile(2)\
-        .interpolate(2,4,1)\
-        .heightmap(baseline=30, maxheight=45)\
-        .p2(octaves=6, persistence=0.4)\
-        .start()\
-        .reset()
+    ##base heightmap, smooth shallow hills
+    c_lib.map_gen.conf\
+    .size(512,512,128)\
+    .group(0)\
+    .tile(2)\
+    .interpolate(4,2,1)\
+    .scale(4.0, 4.0, 1.0)\
+    .heightmap(baseline=40, maxheight=60)\
+    .p2(octaves=6, persistence=0.45)\
+    .start()\
+    .reset()
 
-        c_lib.map_gen.grass(512,512,0)
+     ###base heightmap, smooth shallowER hills
+    c_lib.map_gen.conf\
+    .size(512,512,128)\
+    .group(5)\
+    .scale(x=1.0, y=1.0, z=1.0)\
+    .tile(2)\
+    .interpolate(2,4,1)\
+    .heightmap(baseline=30, maxheight=45)\
+    .p2(octaves=6, persistence=0.4)\
+    .start()\
+    .reset()
 
-        ### 3d density noise. floating islands, overhangs
-        #c_lib.map_gen.conf\
-        #.size(512,512,128)\
-        #.tile(2)\
-        #.scale(x=3.5, y=3.5, z=1.0)\
-        #.gradient2()\
-        #.group(1)\
-        #.interpolate(4,4,2)\
-        #.density(threshold=0.75)\
-        #.p3(octaves=6, persistence=0.7)\
-        #.start()\
-        #.reset()
+    c_lib.map_gen.grass(512,512,0)
 
-        ## 3d density noise. floating islands, overhangs, same seed different scale
-        c_lib.map_gen.conf\
-        .size(512,512,128)\
-        .tile(2)\
-        .scale(x=4.0, y=4.0, z=1.0)\
-        .group(1)\
-        .gradient(z0=0.0, z1=-0.3)\
-        .interpolate(4,4,2)\
-        .density(threshold=0.75)\
-        .p3(octaves=6, persistence=0.7)\
-        .start()\
-        .reset()
+    ### 3d density noise. floating islands, overhangs
+    #c_lib.map_gen.conf\
+    #.size(512,512,128)\
+    #.tile(2)\
+    #.scale(x=3.5, y=3.5, z=1.0)\
+    #.gradient2()\
+    #.group(1)\
+    #.interpolate(4,4,2)\
+    #.density(threshold=0.75)\
+    #.p3(octaves=6, persistence=0.7)\
+    #.start()\
+    #.reset()
 
-        c_lib.map_gen.grass(512,512,0)
+    ## 3d density noise. floating islands, overhangs, same seed different scale
+    c_lib.map_gen.conf\
+    .size(512,512,128)\
+    .tile(2)\
+    .scale(x=4.0, y=4.0, z=1.0)\
+    .group(1)\
+    .gradient(z0=0.0, z1=-0.3)\
+    .interpolate(4,4,2)\
+    .density(threshold=0.75)\
+    .p3(octaves=6, persistence=0.7)\
+    .start()\
+    .reset()
 
-        ## 3d density noise, subtractive RMF. forms caves
-        c_lib.map_gen.conf\
-        .interpolate(4,2,4)\
-        .size(512,512,128)\
-        .tile(0)\
-        .scale(x=4.0, y=4.0, z=2.0)\
-        .group(2)\
-        .density(threshold=0.97)\
-        .gradient2()\
-        .rmf()\
-        .p3(octaves=6, persistence=0.8)\
-        .start()\
-        .reset()
+    c_lib.map_gen.grass(512,512,0)
 
-         ##3d density noise, subtractive RMF. forms caves
-        c_lib.map_gen.conf\
-        .interpolate(2,4,2)\
-        .size(512,512,128)\
-        .gradient2()\
-        .tile(0)\
-        .scale(x=4.0, y=4.0, z=3.0)\
-        .group(3)\
-        .density(threshold=0.97)\
-        .rmf()\
-        .p3(octaves=6, persistence=0.7)\
-        .start()\
-        .reset()
+    ## 3d density noise, subtractive RMF. forms caves
+    c_lib.map_gen.conf\
+    .interpolate(4,2,4)\
+    .size(512,512,128)\
+    .tile(0)\
+    .scale(x=4.0, y=4.0, z=2.0)\
+    .group(2)\
+    .density(threshold=0.97)\
+    .gradient2()\
+    .rmf()\
+    .p3(octaves=6, persistence=0.8)\
+    .start()\
+    .reset()
 
-        """
-        New gradient method
-        Uses a parabolic falloff
-        #"""
-        ## 3d density noise. floating islands, overhangs
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.tile(2)\
-        #.scale(x=1.0, y=1.0, z=1.0)\
-        #.gradient2()\
-        #.interpolate(4,4,2)\
-        #.density(threshold=0.75)\
-        #.p3(octaves=6, persistence=0.7)\
-        #.grass()\
-        #.start()\
-        #.reset()
+     ##3d density noise, subtractive RMF. forms caves
+    c_lib.map_gen.conf\
+    .interpolate(2,4,2)\
+    .size(512,512,128)\
+    .gradient2()\
+    .tile(0)\
+    .scale(x=4.0, y=4.0, z=3.0)\
+    .group(3)\
+    .density(threshold=0.97)\
+    .rmf()\
+    .p3(octaves=6, persistence=0.7)\
+    .start()\
+    .reset()
 
-        #c_lib.map_gen.ceiling(128,128,128,1,3)
+    """
+    New gradient method
+    Uses a parabolic falloff
+    #"""
+    ## 3d density noise. floating islands, overhangs
+    #c_lib.map_gen.conf\
+    #.size(512,512,128)\
+    #.tile(2)\
+    #.scale(x=1.0, y=1.0, z=1.0)\
+    #.gradient2()\
+    #.interpolate(4,4,2)\
+    #.density(threshold=0.75)\
+    #.p3(octaves=6, persistence=0.7)\
+    #.grass()\
+    #.start()\
+    #.reset()
 
-        """
-        - Perturbing the noisemap tests
-        #c_lib.map_gen.conf\
-        #.size(128,128,128)\
-        #.group(0)\
-        #.tile(2)\
-        #.interpolate(4,2,1)\
-        #.p2(octaves=6, persistence=0.45)\
-        #.start()
-        #c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0)
-        #c_lib.map_gen.perturb2d(128,128, turbulence=1.0, blend='-')
-        #c_lib.map_gen.heightmap(128,128,128, 40, 40, base_tile=2)
-        #c_lib.map_gen.grass(128,128, 0)
-        """
+    #c_lib.map_gen.ceiling(512,512,128,1,3)
 
-        c_lib.map_gen.destroy()
+    """
+    - Perturbing the noisemap tests
+    #c_lib.map_gen.conf\
+    #.size(512,512,128)\
+    #.group(0)\
+    #.tile(2)\
+    #.interpolate(4,2,1)\
+    #.p2(octaves=6, persistence=0.45)\
+    #.start()
+    #c_lib.map_gen.noise_parameters(octaves=6, persistence=0.9, lacunarity=2.0, frequency=1.0, amplitude=15.0)
+    #c_lib.map_gen.perturb2d(512,512, turbulence=1.0, blend='-')
+    #c_lib.map_gen.heightmap(512,512,128, 40, 40, base_tile=2)
+    #c_lib.map_gen.grass(512,512, 0)
+    """
 
-        print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
+    c_lib.map_gen.destroy()
+
+    print "512,512,128 shit took %0.2f seconds" % (time.time() - _n)
 
 import time
 
@@ -250,54 +250,57 @@ def draw_sphere(block, radius, x,y,z):
                     m.set(_x+x,_y+y,_z+z,block)
 
 def good_cave1():
-    pass
-    c_lib.map_gen.Dragon.generate()
-    c_lib.map_gen.Dungeon.generate()
+    print "Good cave"
+    #c_lib.map_gen.Dragon.generate()
+    #c_lib.map_gen.Dungeon.generate()
     
-    ##base heightmap, smooth shallow hills
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.group(0)\
-    #.tile(3)\
-    #.interpolate(4,2,1)\
-    #.scale(4.0, 4.0, 1.0)\
-    #.heightmap(baseline=22, maxheight=6)\
-    #.p2(octaves=6, persistence=0.35)\
-    #.start()\
-    #.reset()
-    
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.group(1)\
-    #.tile(3)\
-    #.interpolate(4,2,1)\
-    #.scale(2.0, 2.0, 1.0)\
-    #.reverse_heightmap(baseline=37, maxheight=7)\
-    #.p2(octaves=6, persistence=0.6)\
-    #.start()\
-    #.reset()
+    #base heightmap, smooth shallow hills
 
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.group(0)\
-    #.tile(103)\
-    #.interpolate(4,2,1)\
-    #.scale(4.0, 4.0, 1.0)\
-    #.heightmap(baseline=13, maxheight=20, tile=103)\
-    #.p2(octaves=6, persistence=0.6)\
-    #.start()\
-    #.reset()
+    x,y,z = 512,512,128
     
-    #c_lib.map_gen.conf\
-    #.size(128,128,128)\
-    #.group(0)\
-    #.tile(0)\
-    #.interpolate(4,2,1)\
-    #.scale(2.0, 2.0, 1.0)\
-    #.reverse_heightmap(baseline=13, maxheight=12, minheight=3, tile=103)\
-    #.p2(octaves=6, persistence=0.35)\
-    #.start()\
-    #.reset()
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .group(0)\
+    .tile(3)\
+    .interpolate(4,2,1)\
+    .scale(4.0, 4.0, 1.0)\
+    .heightmap(baseline=22, maxheight=6)\
+    .p2(octaves=6, persistence=0.35)\
+    .start()\
+    .reset()
+    
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .group(1)\
+    .tile(3)\
+    .interpolate(4,2,1)\
+    .scale(2.0, 2.0, 1.0)\
+    .reverse_heightmap(baseline=37, maxheight=7)\
+    .p2(octaves=6, persistence=0.6)\
+    .start()\
+    .reset()
+
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .group(0)\
+    .tile(103)\
+    .interpolate(4,2,1)\
+    .scale(4.0, 4.0, 1.0)\
+    .heightmap(baseline=13, maxheight=20, tile=103)\
+    .p2(octaves=6, persistence=0.6)\
+    .start()\
+    .reset()
+    
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .group(0)\
+    .tile(0)\
+    .interpolate(4,2,1)\
+    .scale(2.0, 2.0, 1.0)\
+    .reverse_heightmap(baseline=13, maxheight=12, minheight=3, tile=103)\
+    .p2(octaves=6, persistence=0.35)\
+    .start()\
+    .reset()
 
     #c_lib.map_gen.floor(128,128,14,1,101)
 
