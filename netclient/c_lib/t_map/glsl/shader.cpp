@@ -17,6 +17,18 @@ namespace t_map
         //determine support for anisotropic filtering
 
 
+        if(! GLEW_EXT_texture_array)
+        {
+            printf("Error: no GL_EXT_texture_array support! \n");
+            exit(0);
+        }
+
+        if(!GLEW_SGIS_generate_mipmap)
+        {
+            printf("Error: no GLEW_SGIS_generate_mipmap support! \n");
+            exit(0);
+        }
+
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {
             glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);
