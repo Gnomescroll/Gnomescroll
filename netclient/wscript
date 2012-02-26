@@ -254,6 +254,8 @@ def build(bld):
         if OS == 'Darwin':
             sound_libraries = ['OpenAL']
             sound_framework = ['OpenAL']
+        elif OS == 'Windows':
+            sound_libraries = ['OpenAL32']
         else:
             sound_libraries = ['openal']
     #noise_libraries = ['noise']
