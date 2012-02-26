@@ -27,7 +27,7 @@ while True:
     if os.path.exists('./core'):
         print "Core dumped; saving"
         os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time(),))
-    if os.path.exist('./%s', % (logname,)):
+    if os.path.exists('./%s' % (logname,)):
         print "Saving %s" % (logname,)
         os.rename('./%s' % (logname,), '%s/coredumps/%s', (os.path.expanduser('~'), logname,))
 
