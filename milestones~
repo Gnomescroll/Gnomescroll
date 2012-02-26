@@ -1,0 +1,17 @@
+
+Gameplay:
+
+
+Infrastructure:
+
+performance graphs for rendering
+profiling of main loop
+profiling of GPU
+measurement of total bandwidth usage
+bandwidth usage per packet type
+
+Remote crash reports via google-breakpad
+
+Analytics
+
+
