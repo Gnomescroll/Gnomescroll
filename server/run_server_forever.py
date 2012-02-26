@@ -4,6 +4,7 @@ import subprocess
 import os
 import platform
 import sys
+import time
 
 if platform.system() != "Linux":
     print "This script is only compatible with linux"
