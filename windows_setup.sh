@@ -17,6 +17,9 @@ cp -rf ./netclient/c_lib/agent ./server/c_lib/agent
 rm -rf ./server/c_lib/common
 cp -rf ./netclient/c_lib/common ./server/c_lib/common
 
+rm -rf ./server/c_lib/chat
+cp -rf ./netclient/c_lib/chat ./server/c_lib/chat
+
 rm -rf ./server/c_lib/game
 cp -rf ./netclient/c_lib/game ./server/c_lib/game
 
