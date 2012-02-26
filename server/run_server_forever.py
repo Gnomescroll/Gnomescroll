@@ -23,6 +23,6 @@ while True:
         break
     if os.path.exists('./core'):
         print "Core dumped; saving"
-        os.rename("./core", "~/coredumps/core%d" % (time.time()))
+        os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time()))
 
 print "Exiting"
