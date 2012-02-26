@@ -6,12 +6,19 @@
 rm -rf ./server/net_lib
 cp -rf ./netclient/net_lib ./server/net_lib
 
+#tmap
+rm -rf ./server/c_lib/t_map
+cp -rf ./netclient/c_lib/t_map ./server/c_lib/t_map
+
 #other stuff
 rm -rf ./server/c_lib/agent
 cp -rf ./netclient/c_lib/agent ./server/c_lib/agent
 
 rm -rf ./server/c_lib/common
 cp -rf ./netclient/c_lib/common ./server/c_lib/common
+
+rm -rf ./server/c_lib/chat
+cp -rf ./netclient/c_lib/chat ./server/c_lib/chat
 
 rm -rf ./server/c_lib/game
 cp -rf ./netclient/c_lib/game ./server/c_lib/game
