@@ -305,7 +305,18 @@ def build(bld):
         py_compile.compile('default_settings.py')
         
     bld.add_post_fun(install_in_ext)
+    if '-DPRODUCTION' in bld.env.CFLAGS:
+        bld.add_post_fun(strip_symbols)
 
+def strip_symbols(ctx):
+    OS = platform.system()
+    if OS == 'Linux':
+        print 'Stripping symbols'
+        subprocess.Popen(['strip', '-s', 'libc_lib.so'])
+        subprocess.Popen(['strip', '-s', 'build/libc_lib.so'])
+        subprocess.Popen(['strip', '-s', 'libfont_lib.so'])
+        subprocess.Popen(['strip', '-s', 'build/init_c_lib.so'])
+        subprocess.Popen(['strip', '-s', 'ext/init_c_lib.so'])
 
 def install_in_ext(ctx):
     global out, _OS
