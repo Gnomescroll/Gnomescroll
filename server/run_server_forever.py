@@ -17,7 +17,7 @@ MAX_DUMPS = 100
 ct = 0
 while True:
     print '%d-th server run' % ct
-    subprocess.call(['./m643_run_log.sh log%d' % (time.time(),)], shell=True)
+    subprocess.call(['./m643_run.sh'], shell=True)
     print "Server died"
     ct += 1
     if ct >= MAX_DUMPS:
