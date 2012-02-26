@@ -6,6 +6,10 @@
 rm -rf ./server/net_lib
 cp -rf ./netclient/net_lib ./server/net_lib
 
+#tmap
+rm -rf ./server/c_lib/t_map
+cp -rf ./netclient/c_lib/t_map ./server/c_lib/t_map
+
 #other stuff
 rm -rf ./server/c_lib/agent
 cp -rf ./netclient/c_lib/agent ./server/c_lib/agent
