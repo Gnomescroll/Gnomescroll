@@ -11,7 +11,7 @@ name = 'your_name'
 alt_name = '[%s]' % (name,)
 
 ''' Network '''
-server = '0.0.0.0'  # use internal default
+server = '174.37.26.119'  # use internal default
 port = 0            # use internal default
 
 ''' Game Preferences '''
