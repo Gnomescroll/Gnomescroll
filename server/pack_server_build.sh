@@ -1,3 +1,6 @@
+./waf clean
+./waf linux
+./waf
 f="SERVERBUILD"
 rm -rf $f
 mkdir $f/
