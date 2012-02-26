@@ -12,6 +12,7 @@ rm $f/settings.pyc
 cp -R media $f/
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
+cp README $f/
 rm $f.tar.gz
 tar cvzf $f.tar.gz $f
 mv $f.tar.gz ~/Dropbox/Public
