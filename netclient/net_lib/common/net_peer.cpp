@@ -49,7 +49,7 @@ void NetPeer::push_python_message(class Net_message* nm)
 void NetPeer::flush_map_messages()
 {
     if(map_message_buffer_index == 0) return;
-    printf("Flushing %i map bytes \n", map_message_buffer_index);
+    //printf("Flushing %i map bytes \n", map_message_buffer_index);
     ENetPacket* map_p = enet_packet_create( map_message_buffer, map_message_buffer_index, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send (enet_peer, 3, map_p);
     map_message_buffer_index = 0;
@@ -61,7 +61,7 @@ void NetPeer::resize_map_message_buffer(int size_min)
     flush_map_messages();
 
     int size = 4096*((size_min / 4096) + 1); //round up to next 4096 bytes
-    printf("resize_ map message buffer from %i to %i \n", map_message_buffer_max, size);
+    //printf("resize_ map message buffer from %i to %i \n", map_message_buffer_max, size);
     map_message_buffer_max = size;
     delete[] map_message_buffer;
     map_message_buffer = new char[map_message_buffer_max];
