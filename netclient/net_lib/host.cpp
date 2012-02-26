@@ -194,7 +194,7 @@ void client_dispatch_network_events()
         //ENET_EVENT_TYPE_RECEIVE    = 3
 
         case ENET_EVENT_TYPE_NONE:
-            printf("Nothing happened \n");
+            printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
             break;
 
         case ENET_EVENT_TYPE_CONNECT:
@@ -371,7 +371,7 @@ void server_dispatch_network_events()
         //ENET_EVENT_TYPE_RECEIVE    = 3
 
         case ENET_EVENT_TYPE_NONE:
-            printf("Nothing happened \n");
+            printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
             break;
 
         case ENET_EVENT_TYPE_CONNECT:
