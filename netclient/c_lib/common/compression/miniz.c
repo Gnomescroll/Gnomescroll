@@ -1,5 +1,11 @@
 #pragma GCC diagnostic ignored "-Wunused-value"
 
+#define __forceinline __attribute__((always_inline))
+
+/*
+ Hack 
+*/
+
 /* miniz.c v1.11 - public domain deflate/inflate, zlib-subset, ZIP reading/writing/appending, PNG writing
    See "unlicense" statement at the end of this file.
    Rich Geldreich <richgel99@gmail.com>, last updated May 27, 2011
