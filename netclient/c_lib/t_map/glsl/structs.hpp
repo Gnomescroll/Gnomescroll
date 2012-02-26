@@ -54,7 +54,7 @@ namespace t_map
 
         union
         {
-            char normal[4]; //16
+            char normal[3]; //16
             unsigned int n;
         };
 

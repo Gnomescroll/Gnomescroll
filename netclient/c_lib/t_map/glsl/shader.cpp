@@ -3,6 +3,16 @@
 #include <c_lib/t_map/glsl/settings.hpp>
 #include <c_lib/t_map/glsl/texture.hpp>
 
+/*
+In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 
+So for those versions, you must use glGenerateMipmap.
+
+GL_GENERATE_MIPMAP is supported for 1.4 and over
+*/
+
+//glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
+//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); 
+
 namespace t_map
 { 
 
@@ -19,15 +29,10 @@ namespace t_map
 
         if(! GLEW_EXT_texture_array)
         {
-            printf("Error: no GL_EXT_texture_array support! \n");
+            printf("Error: GL_EXT_texture_array not supported! \n");
             exit(0);
         }
 
-        if(!GLEW_SGIS_generate_mipmap)
-        {
-            printf("Error: no GLEW_SGIS_generate_mipmap support! \n");
-            exit(0);
-        }
 
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {

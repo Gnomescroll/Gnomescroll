@@ -114,7 +114,7 @@ void Vbo_map::draw_map()
 
         if(vbo->_v_num[0] == 0)
         {
-            printf("no blocks\n");
+            printf("t_vbo_draw.cpp:117 no blocks\n");
             continue; 
         } 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
