@@ -7,7 +7,7 @@ Edit your settings in settings.py
 '''
 
 ''' User '''
-name = 'your_name'
+name = 'ctank'
 alt_name = '[%s]' % (name,)
 
 ''' Network '''
