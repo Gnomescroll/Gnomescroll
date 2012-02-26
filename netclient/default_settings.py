@@ -7,11 +7,11 @@ Edit your settings in settings.py
 '''
 
 ''' User '''
-name = 'your_name'
+name = 'ctank'
 alt_name = '[%s]' % (name,)
 
 ''' Network '''
-server = '0.0.0.0'  # use internal default
+server = '174.37.26.119'  # use internal default
 port = 0            # use internal default
 
 ''' Game Preferences '''
