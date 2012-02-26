@@ -75,12 +75,6 @@ cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
     void init_t_map()
     void init_for_draw()
 
-cdef extern from "../c_lib/t_map/t_map.hpp":
-    int _get(int x, int y, int z)
-
-
-
-## functions ##
 '''
 PART 3: Drawing Functions
 '''

@@ -1,24 +1,30 @@
 #pragma once
 
+#include <defines.h>
+
+/* options headers */
+
 #define OPT_BOOL_HEADER(NAME)\
 extern bool NAME;\
-void set_##NAME(bool val);
+void set_##NAME(bool val) GNOMESCROLL_API;
 
 #define OPT_FLOAT_HEADER(NAME)\
 extern float NAME;\
-void set_##NAME(float val);
+void set_##NAME(float val) GNOMESCROLL_API;
 
 #define OPT_INT_HEADER(NAME)\
 extern int NAME;\
-void set_##NAME(int val);
+void set_##NAME(int val) GNOMESCROLL_API;
 
 #define OPT_UINT_HEADER(NAME)\
 extern unsigned int NAME;\
-void set_##NAME(unsigned int val);
+void set_##NAME(unsigned int val) GNOMESCROLL_API;
 
 #define OPT_STRING_HEADER(NAME)\
 extern char* NAME;\
-void set_##NAME(char* val);
+void set_##NAME(char* val) GNOMESCROLL_API;
+
+/* options definitions */
 
 #define OPT_BOOL(NAME, DEFAULT)\
 bool NAME = DEFAULT;\

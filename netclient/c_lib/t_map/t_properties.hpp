@@ -28,21 +28,16 @@ extern struct cubeProperties cube_list[MAX_CUBES];
 
 void init_t_properties();
 
-struct cubeProperties* get_cube(int id)
-{
-    if(id < 0) printf("get_cube: error id less than zero \n");
-    if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
-    return &cube_list[id];
-}
+struct cubeProperties* get_cube(int id) GNOMESCROLL_API;
 
 using namespace t_map;
 
-inline struct cubeProperties* _get_cube(int id) __attribute((always_inline));
+inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNOMESCROLL_API;
 
-struct cubeProperties* _get_cube(int id)
-{
-    return &cube_list[id];
-}
+//struct cubeProperties* _get_cube(int id)
+//{
+    //return &cube_list[id];
+//}
 
 }
 
@@ -57,7 +52,7 @@ Cube Properties
 
 inline bool isActive(int id) __attribute((always_inline));
 //inline bool isSolid(int id) __attribute((always_inline));
-bool isSolid(int id);
+bool isSolid(int id) GNOMESCROLL_API;
 inline bool isOccludes(int id) __attribute((always_inline));
 inline bool isTransparent(int id) __attribute((always_inline));
 

@@ -55,7 +55,7 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     else:
         cflags += ['-ggdb','-Wall','-fPIC','-DDC_SERVER']
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch']
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO']
     cflags += extra_options
 
     cflags += [c for c in add_flags if c not in cflags]
@@ -140,17 +140,13 @@ def build(bld):
         target='c_lib')
     '''
     ##attemping C++ build
+    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.cpp',
-                #'c_lib/c_lib.c',
-                #'c_lib/net_lib/server.c',
-                #'c_lib/time/physics_timer.c',
-                #'c_lib/test.cpp',
-                #'c_lib/physics/common.c',
-            ],
+        source=['c_lib/c_lib.cpp',],
         use=common_libraries+time_lib,
         lib=time_lib,
         target='c_lib')
+    bld.env.CFLAGS.remove('-fvisibility=hidden')
 
     # c_lib
     bld(features='cxx cshlib pyext',

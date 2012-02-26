@@ -61,11 +61,11 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
     public:
         void draw();
         void update();
-        void tick();
+        void tick() GNOMESCROLL_API;
 
         void send_to_client(int client_id);
 };
 
-void test(int n);
+void test(int n) GNOMESCROLL_API;
 
 }

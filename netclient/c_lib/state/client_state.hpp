@@ -69,7 +69,7 @@ namespace ClientState {
     int get_client_id_from_name(char* name);
     void update_camera();
     void send_ping();
-    void enumerate_sound_devices();
+    void enumerate_sound_devices() GNOMESCROLL_API;
 
 
 }

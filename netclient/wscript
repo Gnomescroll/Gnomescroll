@@ -90,7 +90,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     cflags = []
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch'] #'-fstrict-aliasing'
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO'] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
         #conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
@@ -267,6 +267,8 @@ def build(bld):
     if OS == "Darwin":
         time_lib = []
 
+
+    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     c_lib_includes = []
     c_lib_libpath = []
     if using_fmod:
@@ -282,6 +284,7 @@ def build(bld):
         libpath= c_lib_libpath,
         framework = sound_framework,
         target='c_lib')
+    bld.env.CFLAGS.remove('-fvisibility=hidden')
 
     bld(features='cxx cshlib cxxshlib pyext',
         source=['c_lib/init_c_lib.pyx'],

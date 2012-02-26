@@ -9,11 +9,11 @@ long _get_time();
 long _get_tick();
 */
 
-void _START_CLOCK();
+void _START_CLOCK() GNOMESCROLL_API;
 
-int _GET_TICK();
+int _GET_TICK() GNOMESCROLL_API;
 
-int _GET_MS_TIME();
+int _GET_MS_TIME() GNOMESCROLL_API;
 long _GET_MICROSECOND_TIME();
 
 int _LAST_TICK();

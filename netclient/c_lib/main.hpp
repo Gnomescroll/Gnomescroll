@@ -3,7 +3,7 @@
 namespace Main
 {
 
-void init();
-int run();
+void init() GNOMESCROLL_API;
+int run() GNOMESCROLL_API;
 
 }

@@ -149,6 +149,17 @@ namespace ServerState
         chat_server->player_quit(client_id, a->status.team);
     }
 
+    char* agent_name(int id)
+    {
+        Agent_state* a = ServerState::agent_list.get(id);
+        if (a==NULL)
+            return NULL;
+        if (!a->status.identified)
+            return NULL;
+        return a->status.name;
+    }
+
+
     void start_game()
     {
         int address[4];

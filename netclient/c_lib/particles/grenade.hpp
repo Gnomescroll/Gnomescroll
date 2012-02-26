@@ -45,5 +45,5 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
         const char* name() { return "Grenade"; }
     public:
         void draw();
-        void tick();
+        void tick() GNOMESCROLL_API;
 };

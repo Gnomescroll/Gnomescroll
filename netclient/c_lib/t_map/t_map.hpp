@@ -1,5 +1,6 @@
 #pragma once
 
+#include <defines.h>
 
 const int XMAX = 512;
 const int YMAX = 512;
@@ -23,10 +24,10 @@ const int MAP_HEIGHT = 512;
 const int MAP_CHUNK_WIDTH = MAP_WIDTH/16;
 const int MAP_CHUNK_HEIGHT = MAP_CHUNK_HEIGHT/16;
  
-void init_t_map();
+void init_t_map() GNOMESCROLL_API;
 
 #ifdef DC_CLIENT
-    void init_for_draw();
+    void init_for_draw() GNOMESCROLL_API;
 #endif
 
 class Terrain_map* get_map();
@@ -36,8 +37,8 @@ inline void set(int x, int y, int z, int value);
 
 }
 
-int _get(int x, int y, int z);
-void _set(int x, int y, int z, int value);
+int _get(int x, int y, int z) GNOMESCROLL_API;
+void _set(int x, int y, int z, int value) GNOMESCROLL_API;
 
 //change to void?
 int _apply_damage(int x, int y, int z, int dmg);

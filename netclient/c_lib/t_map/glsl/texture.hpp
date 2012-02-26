@@ -26,7 +26,7 @@ namespace t_map
 
     void init_textures();
 
-    void set_cube_side_texture(int id, int side, int tex_id);
+    void set_cube_side_texture(int id, int side, int tex_id) GNOMESCROLL_API;
     int get_cube_side_texture(int id, int side);
 
     void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);

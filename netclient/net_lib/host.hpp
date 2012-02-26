@@ -19,5 +19,5 @@ void client_connect_to(int a, int b, int c, int d, unsigned short port) ;
 
 //iterate through client list
 void client_dispatch_network_events();
-void server_dispatch_network_events();
-void flush_to_net();
+void server_dispatch_network_events() GNOMESCROLL_API;
+void flush_to_net() GNOMESCROLL_API;

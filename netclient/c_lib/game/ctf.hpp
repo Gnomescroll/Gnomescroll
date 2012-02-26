@@ -26,7 +26,7 @@ class CTF {
     void send_to_client(int client_id);
 
     void reset_flag(int team);
-    void check_agent_proximities();        
+    void check_agent_proximities() GNOMESCROLL_API;        
     void agent_drop_flag(int agent_team, float x, float y, float z);
     bool remove_agent_from_team(int agent);
     #endif
@@ -36,7 +36,7 @@ class CTF {
     CTFTeam two;
 
     void init();
-    void start();
+    void start() GNOMESCROLL_API;
     void tick();
 
     void set_team_name(int team, char* name);
@@ -51,7 +51,7 @@ class CTF {
 
     bool add_agent_to_team(int team, int agent);
     void set_team_color(int team,
-        unsigned char r, unsigned char g, unsigned char b);
+        unsigned char r, unsigned char g, unsigned char b) GNOMESCROLL_API;
 
     CTF();
 };

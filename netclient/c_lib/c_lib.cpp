@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-    Compression
-*/
+/* Common headers */
+#include "defines.h"
+#include "compat_gl.h"
+#include "compat_al.h"
 
+/* Compression */
 #include <c_lib/common/compression/miniz.c>
 
 /* configuration options */
@@ -20,10 +22,6 @@
 /* Network */
 #include <net_lib/net_lib.h>
 
-/* Graphics, SDL */
-#include "compat_gl.h"
-#include "compat_al.h"
-#include "defines.h"
 
 //utility
 #include <c_lib/common/macros.hpp>

@@ -16,7 +16,15 @@ void init_t_properties()
     return;
 }
 
+struct cubeProperties* get_cube(int id)
+{
+    if(id < 0) printf("get_cube: error id less than zero \n");
+    if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
+    return &cube_list[id];
 }
+
+}
+
 
 /*
     Properties by cube id

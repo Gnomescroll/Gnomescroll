@@ -91,42 +91,34 @@ def slime_test(int n):
 def slime_tick():
     slime_list.tick()
 
-""" Agents """
-cdef extern from "./agent/agent_status.hpp":
-    cdef cppclass Agent_status:
-        char* name
-        bool identified
+#""" Agents """
+#cdef extern from "./agent/agent_status.hpp":
+#    cdef cppclass Agent_status:
+#        char* name
+#        bool identified
         
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass Agent_state:
-        int id
-        Agent_status status
-        void teleport(float x,float y,float z)
+#cdef extern from "./agent/agent.hpp":
+#    cdef cppclass Agent_state:
+#        int id
+#        Agent_status status
 
-cdef extern from "./agent/agent.hpp":
-    cdef cppclass Agent_list:
-        Agent_state* get(int id)
-        Agent_state* create(int id)
-        void destroy(int id)
+#cdef extern from "./agent/agent_list.hpp":
+#    cdef cppclass Agent_list:
+#        Agent_state* get(int id)
+#        void destroy(int id)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    Agent_list agent_list
+#    Agent_list agent_list
+    char* agent_name(int id)
 
 def get_agent_name(int id):
-    cdef Agent_state* a
-    a = agent_list.get(id)
-    return a.status.name
-
-def destroy_agent(int id):
-    agent_list.destroy(id)
-
-def teleport_Agent(int id, float x, float y, float z):
-    cdef Agent_state* a
-    a = agent_list.get(id)
-    if a != NULL:
-        a.teleport(x,y,z)
-    else:
-        print "Cannot teleport agent: agent %i does not exist" %(id)
+    name = agent_name(id)
+    if name == NULL:
+        return ''
+    return name
+#    cdef Agent_state* a
+#    a = agent_list.get(id)
+#    return a.status.name
 
 """ Game Modes (CTF) """
 

@@ -6,9 +6,10 @@
     #endif
 #endif
 
+#include <defines.h>
 
-int init_c_lib();
-void close_c_lib();
+int init_c_lib() GNOMESCROLL_API;
+void close_c_lib() GNOMESCROLL_API;
 
 void _set_seed(int seed);
 

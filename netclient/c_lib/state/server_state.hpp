@@ -10,15 +10,15 @@
 
 namespace ServerState
 {
-    extern Agent_list agent_list;
+    extern Agent_list agent_list GNOMESCROLL_API;
     extern Cspray_list cspray_list;
-    extern Grenade_list grenade_list;
+    extern Grenade_list grenade_list GNOMESCROLL_API;
     //extern Neutron_list neutron_list;
-    extern Monsters::Slime_list slime_list;
+    extern Monsters::Slime_list slime_list GNOMESCROLL_API;
     extern Voxel_hitscan_list voxel_hitscan_list;
     extern Spawner_list spawner_list;
     
-    extern CTF ctf;
+    extern CTF ctf GNOMESCROLL_API;
     
     void init();
 
@@ -27,7 +27,7 @@ namespace ServerState
         int dmg, int owner, Object_types inflictor_type
     );
 
-    void server_tick();
+    void server_tick() GNOMESCROLL_API;
 
     void send_game_state_to_client(int client_id);
     void send_id_to_client(int client_id);
@@ -35,7 +35,9 @@ namespace ServerState
     void add_player_to_chat(int client_id);
     void remove_player_from_chat(int client_id);
 
-    void start_game();
+    char* agent_name(int id) GNOMESCROLL_API;
+
+    void start_game() GNOMESCROLL_API;
 }
 
 #endif
