@@ -55,8 +55,8 @@ class Main:
 
         init_c_lib.init()
         
-        #map_recipes.gen_map_simple()
-        map_recipes._gen_map()
+        map_recipes.gen_map_simple()
+        #map_recipes._gen_map()
 
         init_c_lib.start()
         
