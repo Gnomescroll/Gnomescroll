@@ -47,7 +47,9 @@ namespace t_map
 
             unsigned char r,g,b; //9
 
-            char normal[3]; //12
+            unsigned char normal; //10
+
+            char EXTRA_SPACE[2]; //12
 
             /*
                 Replace normal with uniform lookup

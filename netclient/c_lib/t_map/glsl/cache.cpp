@@ -105,6 +105,24 @@ void init_quad_cache_texture_cordinates()
 
 void init_quad_cache_normals() 
 {
+    for(int cube_id=0;cube_id<MAX_CUBES;cube_id++) 
+    {
+        for(int side=0;side<6;side++) 
+        {
+            for(int i=0;i<4;i++) 
+            {
+                int index = cube_id*6*4 +4*side +i;
+
+                quad_cache[index].normal = side;
+            }
+        }
+    }
+}
+
+/*
+void init_quad_cache_normals() 
+{
+
     static const struct NormalElement normal_array[6] = { 
         {{{0,0,1,0}}},
         {{{0,0,-1,0}}},
@@ -122,12 +140,12 @@ void init_quad_cache_normals()
             {
                 int index = cube_id*6*4 +4*side +i;
                 //quad_cache[index].n = normal_array[side].n;
-                quad_cache[index].normal[0] = normal_array[side].normal[0];
-                quad_cache[index].normal[1] = normal_array[side].normal[1];
-                quad_cache[index].normal[2] = normal_array[side].normal[2];
+                //quad_cache[index].normal[0] = normal_array[side].normal[0];
+                //quad_cache[index].normal[1] = normal_array[side].normal[1];
+                //quad_cache[index].normal[2] = normal_array[side].normal[2];
             }
         }
     }
 }
-
+*/
 }
