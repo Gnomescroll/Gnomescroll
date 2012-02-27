@@ -366,6 +366,7 @@ update website
 
 grenade blows up on second bounce
 increase grenade-agent damage radius and damage amount
+fix alpha blending for "Server Not Connected" message
 ====================
 
 == MODELS ==
@@ -434,4 +435,3 @@ move chat display to bottom
 put better map on server (requires brandon fixing map bug)
 modifier keys shouldnt insert ? into chat
 version checking in init protocol
-glBlend font

@@ -258,7 +258,8 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
 Font::Font(char* fn)
 :
 alpha(true),
-missing_glyph('?')
+//missing_glyph('?')
+missing_glyph('\0')
 {
     // init glyphs
     for (int i=0; i<128; i++)
