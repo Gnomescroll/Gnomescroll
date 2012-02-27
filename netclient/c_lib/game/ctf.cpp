@@ -6,13 +6,14 @@
 #include <c_lib/game/packets.hpp>
 #include <common/random.h>
 #include <c_lib/options.hpp>
+#include <c_lib/hud/map.hpp>
 
 CTF::CTF()
 {}
 
 void CTF::init() {
-    one.set_color(34, 144, 191);    //dark teal
-    two.set_color(158, 24, 93);   // green-ish
+    this->set_team_color(1, 34, 144, 191);    //dark teal
+    this->set_team_color(2, 158, 24, 93);   // green-ish
 
     none.init(0);
     one.init(1);
@@ -555,8 +556,10 @@ bool CTF::add_agent_to_team(int team, int agent) {
     return success;
 }
 
-void CTF::set_team_color(int team,
-    unsigned char r, unsigned char g, unsigned char b)
+void CTF::set_team_color(
+    int team,
+    unsigned char r, unsigned char g, unsigned char b
+)
 {
     switch (team) {
         case 1:
@@ -569,6 +572,7 @@ void CTF::set_team_color(int team,
             printf("CTF::set_team_color -- invalid team %d\n", team);
             return;
     }
+    HudMap::update_team_icons(team);
 }
 
 void CTF::get_base_spawn_point(int team, int agent_height, int* spawn)

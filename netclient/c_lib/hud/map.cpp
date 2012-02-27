@@ -30,12 +30,10 @@ static SDL_Surface* gradient_surface = NULL;
 // swap pixels from base to new
 // generate texture
 // free surface
-
 void load_colored_icon(
     char* fn, GLuint* texture,
-    int w, int h,
-    unsigned char r, unsigned char g, unsigned char b,
-    unsigned char br, unsigned char bg, unsigned char bb
+    unsigned char br, unsigned char bg, unsigned char bb,   // base color
+    unsigned char r, unsigned char g, unsigned char b       // replace with
 )
 {
     // format path
@@ -57,12 +55,12 @@ void load_colored_icon(
     // alter surface
     Uint32 pix;
     Uint8 sr,sg,sb,sa;
-    for (int i=0; i<w*h; i++)
+    for (int i=0; i<s->w*s->h; i++)
     {
         pix = ((Uint32*)s->pixels)[i];
         SDL_GetRGBA(pix, s->format, &sr, &sg, &sb, &sa);
-        if (sr == r && sg == g && sb == b)
-            ((Uint32*)s->pixels)[i] = SDL_MapRGBA(s->format, bb,bg,br,sa);
+        if (sr == br && sg == bg && sb == bb)
+            ((Uint32*)s->pixels)[i] = SDL_MapRGBA(s->format, r,g,b,sa);
     }
     glDisable(GL_TEXTURE_2D);
 
@@ -77,40 +75,49 @@ void load_colored_icon(
 }
 
 /* Map icons */
-static GLuint spawner_icon = 0;
-static GLuint base_icon = 0;
-static GLuint flag_icon = 0;
-void init_icons()
+static GLuint spawner_icons[N_TEAMS] = {0};
+static GLuint base_icons[N_TEAMS] = {0};
+static GLuint flag_icons[N_TEAMS] = {0};
+void update_team_icons(int team)    // team is optional; team=0 means generate all
 {
-    static int inited = 0;
-    if (inited++)
-    {
-        printf("WARNING: Attempt to init map hud icons more than once.\n");
-        return;
-    }
-    printf("Init Hud Map Icons\n");
-
-    const char icon_path_fmt[] = "./media/texture/icons/%s";
-    const int ICON_FILENAME_MAX = 64;
-    char* path = (char*)calloc(strlen(icon_path_fmt) + ICON_FILENAME_MAX - 2 + 1, sizeof(char));
-    
     char spawner_icon_filename[] = "spawner_map_icon2.png";
-    sprintf(path, icon_path_fmt, spawner_icon_filename);
-    if (create_texture_from_file(path, &spawner_icon))
-        printf("ERROR: Creating texture of %s failed.\n", path);
-
     char base_icon_filename[] = "base_icon.png";
-    //sprintf(path, icon_path_fmt, base_icon_filename);
-    //if (create_texture_from_file(path, &base_icon))
-        //printf("ERROR: Creating texture of %s failed.\n", path);
-    load_colored_icon(base_icon_filename, &base_icon, 8,8, 249,10,38, 10,249,38);
-        
     char flag_icon_filename[] = "flag_icon.png";
-    sprintf(path, icon_path_fmt, flag_icon_filename);
-    if (create_texture_from_file(path, &flag_icon))
-        printf("ERROR: Creating texture of %s failed.\n", path);
 
-    free(path);
+    // pack filenames and icon arrays for easy looping
+    int i=0;
+    const int N_ICONS = 3;
+    char* icon_filenames[N_ICONS];
+    icon_filenames[i++] = spawner_icon_filename;
+    icon_filenames[i++] = base_icon_filename;
+    icon_filenames[i++] = flag_icon_filename;
+    i=0;
+    GLuint* icons[N_ICONS];
+    icons[i++] = spawner_icons;
+    icons[i++] = base_icons;
+    icons[i++] = flag_icons;
+
+    // base color, to replace
+    unsigned char br = 0;
+    unsigned char bg = 0;
+    unsigned char bb = 0;
+
+    if (!team)
+        for (int i=0; i<(int)N_TEAMS; i++)
+        {
+            unsigned char r,g,b;    // color to replace with
+            ClientState::ctf.get_team_color(i+1, &r, &g, &b);
+            for (int j=0; j<N_ICONS; j++)
+                load_colored_icon(icon_filenames[j], &icons[j][i], br,bg,bb, r,g,b);
+        }
+    else
+    {
+        unsigned char r,g,b;    // color to replace with
+        ClientState::ctf.get_team_color(team, &r, &g, &b);
+        for (int j=0; j<N_ICONS; j++)
+            load_colored_icon(icon_filenames[j], &icons[j][team-1], br,bg,bb, r,g,b);
+    }
+
 }
 
 // create blank surface
@@ -181,7 +188,7 @@ void init_surface()
     }
     glDisable(GL_TEXTURE_2D);
 
-    init_icons();
+    update_team_icons();
 }
 
 void init_cells()
@@ -342,30 +349,31 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 
 void draw_spawners(float z)
 {
-    if (!spawner_icon) return;
-    glBindTexture(GL_TEXTURE_2D, spawner_icon);
     // read all spawners
     // translate coordinates to map screen coordinate
     float sx,sy;
     const int w = 8;
     const int h = 8;
-    for (int i=0; i<ClientState::spawner_list.n_max; i++)
+    for (int team=1; team<(int)N_TEAMS+1; team++)
     {
-        Spawner* s = ClientState::spawner_list.a[i];
-        if (s == NULL) continue;
         if (ClientState::playerAgent_state.you != NULL
             && ClientState::playerAgent_state.you->status.team != 0
-            && ClientState::playerAgent_state.you->status.team != s->team)
+            && ClientState::playerAgent_state.you->status.team != team)
             continue;
-        world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
-        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        glBindTexture(GL_TEXTURE_2D, spawner_icons[team-1]);
+        for (int i=0; i<ClientState::spawner_list.n_max; i++)
+        {
+            Spawner* s = ClientState::spawner_list.a[i];
+            if (s == NULL) continue;
+            if (s->team != team) continue;
+            world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
+            draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        }
     }
 }
 
 void draw_bases(float z)
 {
-    if (!base_icon) return;
-    glBindTexture(GL_TEXTURE_2D, base_icon);
     float sx,sy;
     const int w = 8;
     const int h = 8;
@@ -378,16 +386,19 @@ void draw_bases(float z)
     Base* b;
     if (team == 0)
     {   // draw both
+        glBindTexture(GL_TEXTURE_2D, base_icons[0]);
         b = ClientState::ctf.one.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
+        glBindTexture(GL_TEXTURE_2D, base_icons[1]);
         b = ClientState::ctf.two.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
     else
     {
+        glBindTexture(GL_TEXTURE_2D, base_icons[team-1]);
         if (team == 1)
             b = ClientState::ctf.one.base;
         else if (team == 2)
@@ -400,8 +411,6 @@ void draw_bases(float z)
 
 void draw_flags(float z)
 {
-    if (!flag_icon) return;
-    glBindTexture(GL_TEXTURE_2D, flag_icon);
     float sx,sy;
     const int w = 8;
     const int h = 8;
@@ -414,16 +423,19 @@ void draw_flags(float z)
     Flag* b;
     if (team == 0)
     {   // draw both
+        glBindTexture(GL_TEXTURE_2D, flag_icons[0]);
         b = ClientState::ctf.one.flag;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
+        glBindTexture(GL_TEXTURE_2D, flag_icons[1]);
         b = ClientState::ctf.two.flag;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
     else
     {
+        glBindTexture(GL_TEXTURE_2D, flag_icons[team-1]);
         if (team == 1)
             b = ClientState::ctf.one.flag;
         else if (team == 2)
@@ -443,8 +455,7 @@ void draw_items(float z)
 
 
 void draw()
-{
-    //  double buffered texture swap indices
+{   //  double buffered texture swap indices
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
     static int draw_overlay_texture_index = 0;
