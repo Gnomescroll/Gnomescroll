@@ -39,6 +39,10 @@ namespace t_map
         Replace x,y,z and tx,ty,tz by char
         to reduce size from x 36 to 16 bytes per vertex for normal blocks
     */
+
+    /*
+        Steves computer requires 4 byte aligned data
+    */
     struct Vertex {
         struct
         {
@@ -46,11 +50,12 @@ namespace t_map
             unsigned char EXTRA_SPACE0; //12
             unsigned char tx,ty,tz; //6
 
+            unsigned char EXTRA_SPACE1; //12
+
             unsigned char r,g,b; //9
 
             unsigned char normal; //10
 
-            unsigned char EXTRA_SPACE1; //12
 
             /*
                 Replace normal with uniform lookup
