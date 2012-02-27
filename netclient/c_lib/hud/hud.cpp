@@ -235,8 +235,8 @@ void draw_hud_text()
         return;
     }
 
-    if (!hud_draw_settings.version_match)
-        hud->version_mismatch->draw();
+    //if (!hud_draw_settings.version_match)
+        //hud->version_mismatch->draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();
