@@ -43,13 +43,14 @@ namespace t_map
         struct
         {
             unsigned char x,y,z; //3
+            unsigned char EXTRA_SPACE0; //12
             unsigned char tx,ty,tz; //6
 
             unsigned char r,g,b; //9
 
             unsigned char normal; //10
 
-            char EXTRA_SPACE[2]; //12
+            unsigned char EXTRA_SPACE1; //12
 
             /*
                 Replace normal with uniform lookup
