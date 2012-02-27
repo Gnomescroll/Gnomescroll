@@ -124,7 +124,7 @@ void Vbo_map::draw_map()
     //printf("mapshader= %i  texture= %i \n", map_shader[0], terrain_map_glsl );
     
     printf("%i = \n", map_TexCoord);
-    
+
     struct Map_vbo* vbo;
 
     glEnable(GL_CULL_FACE);
@@ -161,7 +161,8 @@ void Vbo_map::draw_map()
 
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
-        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)3);
+        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)3);
+
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)6);
         //glVertexAttribPointer(map_Normal, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)9);
 
