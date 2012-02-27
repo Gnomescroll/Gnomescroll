@@ -8,6 +8,8 @@ syntax: glob
 *.so
 *.o
 
+*~
+
 font_bake
 font_cache
 *.glc
