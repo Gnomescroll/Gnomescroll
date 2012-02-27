@@ -364,6 +364,9 @@ bool ChatInput::route_command()
                 return true;
         }
         printf("Chat select spawner %d\n", spawner_id);
+        choose_spawn_location_CtoS msg;
+        msg.id = spawner_id;
+        msg.send();
     }
 
     return true;
