@@ -40,6 +40,11 @@ void toggle_chat()
     input_state.chat = (!input_state.chat);
 }
 
+void toggle_full_chat()
+{
+    input_state.full_chat = (!input_state.full_chat);
+}
+
 void toggle_hud()
 {
     input_state.hud = (!input_state.hud);
@@ -119,6 +124,7 @@ void init_handlers()
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
+    input_state.full_chat = false;
     input_state.hud = true;
     input_state.skeleton_editor = false;
 
@@ -512,8 +518,7 @@ void key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_BACKQUOTE:
-            printf("toggling chat\n");
-            Hud::hud_draw_settings.chat = (!Hud::hud_draw_settings.chat);
+            toggle_full_chat();
             break;
             
         default: break;
