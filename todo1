@@ -377,6 +377,12 @@ fix server seeding; seed option only applied during map gen
 collision detection on head in lateral motion
 ====================
 
+Feb 27
+
+REBATES!!
+CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
+====================
+
 == MODELS ==
 --Aiming gun
 
@@ -436,7 +442,7 @@ color agent model more appropriately and  use team base color
 
 GRENADES:
 charge up
-client side predicted (dont wait for create)
+client side predicted (dont wait for create) [PROBLEM: id syncs]
 
 PHYSICS:
 verlet integrator

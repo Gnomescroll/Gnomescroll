@@ -55,7 +55,7 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     else:
         cflags += ['-ggdb','-Wall','-fPIC','-DDC_SERVER']
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION 666']
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=666']
     cflags += extra_options
 
     cflags += [c for c in add_flags if c not in cflags]

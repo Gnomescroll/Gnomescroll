@@ -90,7 +90,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     cflags = []
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION 666'] #'-fstrict-aliasing'
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=666'] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
         #conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
