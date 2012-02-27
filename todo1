@@ -373,6 +373,7 @@ system message for building/losing spawner
 fix 2d sound orientation
 select spawners (/spawner command)
 added map icons for spawners, base, flags
+fix server seeding; seed option only applied during map gen
 ====================
 
 == MODELS ==
@@ -432,4 +433,3 @@ collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 version checking in init protocol
 color map hud icons by team
-check that random seed is being reset properly (flags/bases seem to be in same spot every time)
