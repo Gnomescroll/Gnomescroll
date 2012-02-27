@@ -47,14 +47,11 @@ namespace t_map
         struct
         {
             unsigned char x,y,z; //3
-            unsigned char EXTRA_SPACE0; //12
-            unsigned char tx,ty,tz; //6
+            unsigned char EXTRA_SPACE0; //4
+            unsigned char tx,ty,tz; //
+            unsigned char EXTRA_SPACE1; //8
 
-            unsigned char EXTRA_SPACE1; //12
-
-            unsigned char r,g,b; //9
-
-            unsigned char normal; //10
+            unsigned char r,g,b, normal;; //9
 
 
             /*
