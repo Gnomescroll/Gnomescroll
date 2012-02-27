@@ -172,7 +172,6 @@ namespace ServerState
     {
         version_StoC msg;
         msg.version = DC_VERSION;
-        printf("SENDING VERSION %d\n", DC_VERSION);
         msg.sendToClient(client_id);
     }
 

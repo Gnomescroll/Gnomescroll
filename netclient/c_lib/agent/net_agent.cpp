@@ -402,7 +402,15 @@ inline void agent_conflict_notification_StoC::handle()
 
 inline void version_StoC::handle()
 {
+    printf("Client Version: %d\n", DC_VERSION);
     printf("Server Version: %d\n", version);
+    if (DC_VERSION != version)
+    {
+        printf("WARNING: Version mismatch\n");
+        NetClient::Server.version_match = false;
+    }
+    else
+        NetClient::Server.version_match = true;
 }
 
 

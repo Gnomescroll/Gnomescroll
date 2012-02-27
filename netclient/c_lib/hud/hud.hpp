@@ -78,6 +78,7 @@ class HUD
     // text objects
     Text* help;
     Text* disconnected;
+    Text* version_mismatch;
     Text* dead;
     Text* fps;
     Text* ping;
@@ -100,7 +101,6 @@ extern HUD* hud;
 
 void init();
 
-// CYTHON
 void set_hud_fps_display(float fps_val);
 void update_hud_draw_settings();
 void draw_hud();

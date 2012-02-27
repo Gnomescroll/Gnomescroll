@@ -4,12 +4,13 @@
 
 #define NET_PEER_DEBUG 0
 
-NetPeer::NetPeer() 
+NetPeer::NetPeer()
+:
+client_id(-1),
+connected(0),
+version_match(false),
+enet_peer(NULL)
 {
-    connected = 0;
-    client_id = -1;
-    enet_peer = NULL;
-
 #ifdef DC_SERVER
     map_message_buffer = new char[ NET_PEER_MAP_MESSAGE_BUFFER_DEFAULT ];
     map_message_buffer_index = 0;
