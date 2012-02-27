@@ -237,10 +237,10 @@ namespace t_map
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 8);
 
-            //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
+            glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
-        glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+        //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
         glDisable(GL_TEXTURE_2D);
 
