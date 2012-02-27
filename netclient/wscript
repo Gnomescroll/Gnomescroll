@@ -48,6 +48,23 @@ def _grab_output(*cmd):
     return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
 
 
+def get_version():
+    try:
+        version = subprocess.check_output(['../get_current_head.sh'], shell=True)
+    except Exception, e:
+        print e
+        print "Could not get version number from hg repo. Abort"
+        raise ValueError
+
+    try:
+        version = int(version.strip())
+    except ValueError:
+        print "Version %s invalid" % (version,)
+        raise ValueError
+
+    print "Gnomescroll Version: %d" % (version,)
+    return version
+
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
 
@@ -90,7 +107,8 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     cflags = []
 
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=666'] #'-fstrict-aliasing'
+    version = get_version()
+    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
     #extra_options = ['-Winline']
     if OS == 'Windows':
         #conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
