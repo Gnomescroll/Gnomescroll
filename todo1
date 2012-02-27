@@ -371,6 +371,7 @@ dont insert ? for SHIFT etc keys
 backquote toggles chat display (in addition to chat_input=true)
 move chat to bottom left
 system message for building/losing spawner
+fix 2d sound orientation
 ====================
 
 == MODELS ==
@@ -428,7 +429,6 @@ scripts to push linux build + instructions to gnomescroll.com
 BUILD RESULTS:
 
 /nick doesnt work most of the time
-sound listener orientation might be backwards
 for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
