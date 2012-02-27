@@ -432,7 +432,6 @@ collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 select spawners (/spawner command)
 chat message for building spawner
-` should toggle chat display
 move chat display to bottom
 put better map on server (requires brandon fixing map bug)
 modifier keys shouldnt insert ? into chat

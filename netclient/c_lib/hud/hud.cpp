@@ -427,10 +427,11 @@ void ChatRender::init()
         
     if (this->inited) return;
     int i=0;
+    const int y_offset = _yres - 200;
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list.create();
-        t->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
+        t->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
         t->set_text((char*) "");
         t->set_format((char*) "%s%s %s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
@@ -441,7 +442,7 @@ void ChatRender::init()
     input = HudText::text_list.create();
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
-    input->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
+    input->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
     
     this->inited = true;
 }
