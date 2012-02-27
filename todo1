@@ -363,6 +363,8 @@ Feb 26
 
 log remote server
 update website
+
+grenade blows up on second bounce
 ====================
 
 == MODELS ==
@@ -433,4 +435,3 @@ put better map on server (requires brandon fixing map bug)
 modifier keys shouldnt insert ? into chat
 version checking in init protocol
 glBlend font
-grenade blows up on second bounce
