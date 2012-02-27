@@ -6,7 +6,10 @@
 #include <c_lib/game/packets.hpp>
 #include <common/random.h>
 #include <c_lib/options.hpp>
+
+#ifdef DC_CLIENT
 #include <c_lib/hud/map.hpp>
+#endif
 
 CTF::CTF()
 {}
@@ -572,7 +575,9 @@ void CTF::set_team_color(
             printf("CTF::set_team_color -- invalid team %d\n", team);
             return;
     }
+    #ifdef DC_CLIENT
     HudMap::update_team_icons(team);
+    #endif
 }
 
 void CTF::get_base_spawn_point(int team, int agent_height, int* spawn)
