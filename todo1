@@ -365,6 +365,7 @@ log remote server
 update website
 
 grenade blows up on second bounce
+increase grenade-agent damage radius and damage amount
 ====================
 
 == MODELS ==
@@ -426,7 +427,6 @@ sound listener orientation might be backwards
 for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
-increase grenade-agent damage radius
 select spawners
 chat message for building spawner
 ` should toggle chat display
