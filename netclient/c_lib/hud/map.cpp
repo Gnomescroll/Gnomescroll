@@ -27,6 +27,7 @@ static SDL_Surface* gradient_surface = NULL;
 /* Map icons */
 static GLuint spawner_icon = 0;
 static GLuint base_icon = 0;
+static GLuint flag_icon = 0;
 void init_icons()
 {
     static int inited = 0;
@@ -49,6 +50,11 @@ void init_icons()
     char base_icon_filename[] = "base_icon.png";
     sprintf(path, icon_path_fmt, base_icon_filename);
     if (create_texture_from_file(path, &base_icon))
+        printf("ERROR: Creating texture of %s failed.\n", path);
+        
+    char flag_icon_filename[] = "flag_icon.png";
+    sprintf(path, icon_path_fmt, flag_icon_filename);
+    if (create_texture_from_file(path, &flag_icon))
         printf("ERROR: Creating texture of %s failed.\n", path);
 
     free(path);
@@ -333,10 +339,46 @@ void draw_bases(float z)
     }
 }
 
+void draw_flags(float z)
+{
+    if (!flag_icon) return;
+    glBindTexture(GL_TEXTURE_2D, flag_icon);
+    float sx,sy;
+    const int w = 8;
+    const int h = 8;
+
+    int team = 0;
+    if (ClientState::playerAgent_state.you != NULL
+        && ClientState::playerAgent_state.you != NULL)
+        team = ClientState::playerAgent_state.you->status.team;
+
+    Flag* b;
+    if (team == 0)
+    {   // draw both
+        b = ClientState::ctf.one.flag;
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+
+        b = ClientState::ctf.two.flag;
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+    }
+    else
+    {
+        if (team == 1)
+            b = ClientState::ctf.one.flag;
+        else if (team == 2)
+            b = ClientState::ctf.two.flag;
+
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+    }
+}
+
 void draw_items(float z)
 {
     draw_bases(z);
-    //draw_flags(z);
+    draw_flags(z);
     draw_spawners(z);
 }
 
