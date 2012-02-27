@@ -11,5 +11,5 @@
 int init_c_lib() GNOMESCROLL_API;
 void close_c_lib() GNOMESCROLL_API;
 
-void _set_seed(int seed);
+void _set_seed(int seed) GNOMESCROLL_API;
 

@@ -369,10 +369,10 @@ increase grenade-agent damage radius and damage amount
 fix alpha blending for "Server Not Connected" message
 dont insert ? for SHIFT etc keys
 backquote toggles chat display (in addition to chat_input=true)
-move chat to bottom left
 system message for building/losing spawner
 fix 2d sound orientation
 select spawners (/spawner command)
+added map icons for spawners, base, flags
 ====================
 
 == MODELS ==
@@ -391,7 +391,6 @@ agent Skeleton for holding gun, standing and zoomed, gun in place
 --gun might be a node off of one of the arms
 
 == UI / FEEDBACK ==
-Icons on map (angus)
 Minimap
 
 == GAMEPLAY ==
@@ -416,7 +415,6 @@ SDL input normalization
 
 == TEXT ==
 different font sizes
-fix lack of glBlend sometimes (server not connected is one)
 
 == BRANDON ==
 client side prediction bug
@@ -427,10 +425,11 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 scripts to push linux build + instructions to gnomescroll.com
 
 ==================
-BUILD RESULTS:
+POLISH TODO:
 
-/nick doesnt work most of the time
 for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 version checking in init protocol
+color map hud icons by team
+check that random seed is being reset properly (flags/bases seem to be in same spot every time)

@@ -55,8 +55,10 @@ class Main:
 
         init_c_lib.init()
         
+        init_c_lib.reset_seed(opts.seed)   # reset seed (opts.seed only meant for map gen)
         map_recipes.gen_map_simple()
         #map_recipes._gen_map()
+        init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
 
         init_c_lib.start()
         
