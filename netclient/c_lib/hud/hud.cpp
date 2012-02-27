@@ -69,8 +69,9 @@ static struct HudDrawSettings
     int ping_val;
     int reliable_ping_val;
     bool player_stats;
-    bool chat;
-    bool chat_input;
+    bool chat;  // draw chat messages normally (using timeouts)
+    bool chat_input;    // draw chat input area
+    bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
     bool equipment;
     int equipment_slot;
@@ -122,6 +123,7 @@ void update_hud_draw_settings()
 
     hud_draw_settings.chat = true;
     hud_draw_settings.chat_input = input_state.chat;
+    hud_draw_settings.full_chat = input_state.full_chat;
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
@@ -147,7 +149,12 @@ void update_hud_draw_settings()
             hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
-        hud->chat->update(!hud_draw_settings.chat_input);
+        bool timeout = true;
+        if (hud_draw_settings.full_chat)
+            timeout = false;
+        else if (hud_draw_settings.chat_input)
+            timeout = false;
+        hud->chat->update(timeout);
     }
 }
 
