@@ -427,7 +427,7 @@ void ChatRender::init()
         
     if (this->inited) return;
     int i=0;
-    const int y_offset = _yres - 200;
+    const int y_offset = 50;   // from the top
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list.create();

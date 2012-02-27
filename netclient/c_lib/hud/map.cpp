@@ -7,12 +7,14 @@
 
 namespace HudMap {
 
-int num_cells = 0;
-unsigned char* cells = NULL;
+static int num_cells = 0;
+static unsigned char* cells = NULL;
 
 // for texture init
-const int width = 512;
-const int height = 512;
+static const int width = 512;
+static const int height = 512;
+static const int screen_x_offset = 50;
+static const int screen_y_offset = 50;
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2];
@@ -21,6 +23,26 @@ static SDL_Surface* overlay_surface = NULL;
 static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface = NULL;
+
+/* Map icons */
+static GLuint spawner_icon = 0;
+void init_icons()
+{
+    static int inited = 0;
+    if (inited++)
+    {
+        printf("WARNING: Attempt to init map hud icons more than once.\n");
+        return;
+    }
+    printf("Init Hud Map Icons\n");
+
+    char spawner_icon_filename[] = "./media/texture/icons/spawner_map_icon.png";
+    if (create_texture_from_file(spawner_icon_filename, &spawner_icon))
+    {
+        printf("ERROR: Creating texture of %s failed.\n", spawner_icon_filename);
+        return;
+    }
+}
 
 // create blank surface
 void init_surface() {
@@ -85,6 +107,8 @@ void init_surface() {
         glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
     }
     glDisable(GL_TEXTURE_2D);
+
+    init_icons();
 }
 
 void init_cells()
@@ -210,8 +234,6 @@ void update_agents() {
     }
 }
 
-void update_items(){};
-
 void update_indicators(int tex_id) {
 
     if (overlay_surface == NULL) return;
@@ -219,7 +241,6 @@ void update_indicators(int tex_id) {
 
     update_overlay_surface();
     update_agents();
-    update_items();
 
     SDL_UnlockSurface(overlay_surface);
     
@@ -233,6 +254,42 @@ void update_terrain_map(int tex_id) {
     update_map_surface();
     update_texture(map_textures[tex_id], map_surface);
 }
+
+void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
+{
+    float x_scale = ((float)width)/((float)map_dim.x);
+    float y_scale = ((float)height)/((float)map_dim.y);
+    *sx = x * x_scale;
+    *sy = y * y_scale;
+    *sx += screen_x_offset;
+    *sy += screen_y_offset;
+}
+
+void draw_spawners(float z)
+{
+    if (!spawner_icon) return;
+    glBindTexture(GL_TEXTURE_2D, spawner_icon);
+    // read all spawners
+    // translate coordinates to map screen coordinate
+    float sx,sy;
+    const int w = 8;
+    const int h = 8;
+    for (int i=0; i<ClientState::spawner_list.n_max; i++)
+    {
+        Spawner* s = ClientState::spawner_list.a[i];
+        if (s == NULL) continue;
+        world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+    }
+}
+
+void draw_items(float z)
+{
+    //draw_bases();
+    //draw_flags();
+    draw_spawners(z);
+}
+
 
 void draw() {
     //  double buffered texture swap indices
@@ -264,10 +321,6 @@ void draw() {
     update_counter++;
 
     static const float z = -0.5f;
-    static const int x = 50;
-    static const int y = 50;
-    static const int w = 512;
-    static const int h = 512;
 
     glColor3ub(255,255,255);
 
@@ -276,10 +329,12 @@ void draw() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
-    draw_bound_texture(x, y, w, h, z*2);
+    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z*2);
 
     glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
-    draw_bound_texture(x,y,w,h,z);
+    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
+
+    draw_items(z/2);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);

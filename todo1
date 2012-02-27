@@ -372,6 +372,7 @@ backquote toggles chat display (in addition to chat_input=true)
 move chat to bottom left
 system message for building/losing spawner
 fix 2d sound orientation
+select spawners (/spawner command)
 ====================
 
 == MODELS ==
@@ -432,5 +433,4 @@ BUILD RESULTS:
 for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
-select spawners (/spawner command)
 version checking in init protocol
