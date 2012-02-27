@@ -21,6 +21,8 @@
 
 #include <net_lib/net.hpp>
 
+const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
+
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
     public:
@@ -59,6 +61,7 @@ inline void grenade_StoC::handle() {
 
 Grenade::Grenade(int id)
 :
+bounce_count(0),
 owner(-1)
 {
     create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
@@ -72,6 +75,7 @@ owner(-1)
 
 Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz)
 :
+bounce_count(0),
 owner(-1)
 {
     create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
@@ -112,6 +116,7 @@ void Grenade::tick() {
     
     if (bounced)
     {
+        bounce_count++;
         #ifdef DC_CLIENT
         Sound::grenade_bounce(
             particle.state.p.x,
@@ -121,6 +126,8 @@ void Grenade::tick() {
         );
         #endif
     }
+    if (bounce_count==GRENADE_BOUNCE_EXPLODE_LIMIT)
+        particle.ttl = particle.ttl_max;
     particle.ttl++;
 }
 
@@ -166,7 +173,8 @@ void Grenade::draw() {
 #endif    
 }
 
-void Grenade::explode() {
+void Grenade::explode()
+{
 #ifdef DC_CLIENT
     Animations::grenade_explode(particle.state.p.x, particle.state.p.y, particle.state.p.z);
 #endif

@@ -15,7 +15,7 @@ namespace Hud
 
 /* Strings */
 
-const char help_text[] =
+static const char help_text[] =
 "\n"
 "    Key:            Action:\n"
 "\n"
@@ -46,14 +46,14 @@ const char help_text[] =
 "    4               Grenades\n"
 ;
 
-const char disconnected_text[] = "Server not connected.";
-const char dead_text[] = "You died.";
-const char fps_format[] = "%3.2f";
-const char ping_format[] = "%dms";
+static const char disconnected_text[] = "Server not connected.";
+static const char dead_text[] = "You died.";
+static const char fps_format[] = "%3.2f";
+static const char ping_format[] = "%dms";
 
-const char player_stats_text_no_agent[] = "No Agent Assigned";
-const char player_stats_text_viewer[] = "Viewer Mode";
-const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
+static const char player_stats_text_no_agent[] = "No Agent Assigned";
+static const char player_stats_text_viewer[] = "Viewer Mode";
+static const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
 
 static struct HudDrawSettings
 {
@@ -212,10 +212,15 @@ void draw_hud_text()
 
     ClientState::billboard_text_list.draw_hud();
     
-    if (!hud->inited) return;
+    if (!hud->inited)
+    {
+        end_text_draw();
+        return;
+    }
     if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw();
+        end_text_draw();
         return;
     }
 
