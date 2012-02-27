@@ -136,8 +136,8 @@ void Vbo_map::draw_map()
 
         //glUniform3fv(map_ChunkPosition, 1, (GLfloat*) _chunk_position );
 
-        printf("%i \n", map_ChunkPosition);
-        
+        //printf("%i \n", map_ChunkPosition);
+
         glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
 
         //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);

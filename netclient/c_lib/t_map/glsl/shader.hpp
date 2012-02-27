@@ -17,15 +17,15 @@ namespace t_map
     GLenum map_shader[num_map_shaders] = {0};
 
     //shader 0
-    int map_Vertex = 0;
-    int map_TexCoord = 0;
-    int map_RGB = 0;
-    int map_Normal = 0;
+    int map_Vertex;
+    int map_TexCoord;
+    int map_RGB;
+    int map_Normal;
 
-    int map_ChunkPosition = 0;   //uniform
-    int map_NormalArray = 0;     //uniform
+    int map_ChunkPosition;   //uniform
+    int map_NormalArray;     //uniform
 
-    int map_LightMatrix = 0;
+    int map_LightMatrix;
 
     //texture
     extern SDL_Surface *terrain_map_surface;
