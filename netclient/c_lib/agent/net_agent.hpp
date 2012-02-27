@@ -637,7 +637,9 @@ class agent_block_CtoS: public FixedSizeNetPacketToServer<agent_block_CtoS>
         inline void handle();
 };
 
-class place_spawner_CtoS: public FixedSizeNetPacketToServer<place_spawner_CtoS> // reliable?
+/****************/
+
+class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawner_CtoS> // reliable?
 {
     public:
         int x,y,z;
@@ -651,8 +653,18 @@ class place_spawner_CtoS: public FixedSizeNetPacketToServer<place_spawner_CtoS> 
         inline void handle();
 };
 
+class choose_spawn_location_CtoS: public FixedSizeReliableNetPacketToServer<choose_spawn_location_CtoS>
+{
+    public:
+        int id;
 
-/****************/
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+}
+
 class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
 {
     public:

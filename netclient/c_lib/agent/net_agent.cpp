@@ -415,6 +415,7 @@ inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
+inline void choose_spawn_location_CtoS::handle(){}
 
 #endif
 
@@ -859,6 +860,13 @@ inline void place_spawner_CtoS::handle()
     Spawner_create_StoC msg;
     s->create_message(&msg);
     msg.broadcast();
+}
+
+inline void choose_spawn_location_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a==NULL) return;
+    a->status.set_spawner(id);
 }
 
 const char DEFAULT_PLAYER_NAME[] = "Clunker";

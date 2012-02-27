@@ -400,7 +400,7 @@ void Agent_state::get_spawn_point(int* spawn) {
     int h = this->current_height_int();
 
     // check that assigned spawner still exists, reassign if not
-    Spawner *s;
+    Spawner *s = NULL;
     if (this->status.spawner != -1)
     {
         while ((s = STATE::spawner_list.get(this->status.spawner)) == NULL)
