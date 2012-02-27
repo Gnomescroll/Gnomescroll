@@ -75,6 +75,10 @@ void Vbo_map::prep_draw()
 }
 
 
+
+float _normal_array[3*6];
+float _chunk_position[3] = {0};
+
 void Vbo_map::draw_map() 
 {
 
@@ -96,10 +100,14 @@ void Vbo_map::draw_map()
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    //glEnableClientState(GL_VERTEX_ARRAY);
+    //glEnableClientState(GL_COLOR_ARRAY);
 
+    glEnableVertexAttribArray(map_Vertex);
     glEnableVertexAttribArray(map_TexCoord);
+    glEnableVertexAttribArray(map_RGB);
+    glEnableVertexAttribArray(map_Normal);
+
     glEnableVertexAttribArray(map_LightMatrix);
 
     //printf("mapshader= %i  texture= %i \n", map_shader[0], terrain_map_glsl );
@@ -114,25 +122,51 @@ void Vbo_map::draw_map()
 
         if(vbo->_v_num[0] == 0)
         {
-            printf("no blocks\n");
+            printf("t_vbo_draw.cpp:117 no blocks\n");
             continue; 
         } 
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
         
-        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
 
-        glVertexAttribPointer(map_TexCoord, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-        glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)32);
+        //glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+        //glVertexPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)0);
+
+        //_chunk_position[0] = vbo->xoff;
+        //_chunk_position[1] = vbo->xoff;
+
+        //glUniform3fv(map_ChunkPosition, 1, (GLfloat*) _chunk_position );
+
+        //printf("%i \n", map_ChunkPosition);
+
+        glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+
+        //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);
+
+        glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
+
+
+        glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
+        glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)3);
+        glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)6);
+        glVertexAttribPointer(map_Normal, 3, GL_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)9);
+
+        glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
+        //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
+        //glVertexAttribPointer(map_TexCoord, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
+
 
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
     }
 
+    glDisableVertexAttribArray(map_Vertex);
     glDisableVertexAttribArray(map_TexCoord);
+    glDisableVertexAttribArray(map_RGB);
+    glDisableVertexAttribArray(map_Normal);
+
     glDisableVertexAttribArray(map_LightMatrix);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    //glDisableClientState(GL_VERTEX_ARRAY);
+    //glDisableClientState(GL_COLOR_ARRAY);
 
     glUseProgramObjectARB(0);
 

@@ -21,8 +21,8 @@ struct column
     Iterate over slices, copying in chunks until something needs to be updated, update, insert and continue
 */
 
-const int MAP_VBO_STARTING_SIZE = 1024;
-const int MAP_VBO_INCREMENT = 256;
+const int MAP_VBO_STARTING_SIZE = 128;
+const int MAP_VBO_INCREMENT = 128;
 
 struct VBO_FLAGS
 {
@@ -47,6 +47,9 @@ class Map_vbo
     float xpos;
     float ypos;
 
+    float xoff;
+    float yoff;
+
     int vnum;
     int vnum_max;
     struct Vertex* v_list;
@@ -63,6 +66,9 @@ class Map_vbo
 
         xpos = m->xpos + 8.0;
         ypos = m->ypos + 8.0;
+
+        xoff = m->xpos;
+        yoff = m->ypos;
 
         v_list = new Vertex[MAP_VBO_STARTING_SIZE];
         vnum_max = MAP_VBO_STARTING_SIZE;
@@ -164,14 +170,14 @@ class Vbo_map
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             update_vbo(i, j);
-            return;;
+            return;
         }
 
         //if(count > 0) printf("!!! count= %i \n", count);
     }
 
     void update_vbo(int i, int j);
-    
+
     void prep_draw();
     void draw_map();
 

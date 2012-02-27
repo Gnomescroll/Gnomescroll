@@ -1,19 +1,35 @@
+/*
+Attributes
+*/
+
+attribute vec3 InVertex;
 attribute vec3 InTexCoord;
+attribute vec3 InRGB;
+attribute vec3 InNormal;
+
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
- 
-//varying float intensity;
- 
+
+/*
+Uniform
+*/
+
+uniform vec3 ChunkPosition;
+uniform vec3 NormalArray[6];
+
+/*
+Varying
+*/
 varying vec3 texCoord;
 varying mat2 lightMatrix;
  
-varying vec4 inColor;
- 
+varying vec3 inColor;
+
 void main(void) 
 {                       
+        vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
+        gl_Position = gl_ModelViewProjectionMatrix * vertex;
  
-        gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
- 
-        inColor = gl_Color;
+        inColor = InRGB;
  
         texCoord = InTexCoord;
  
