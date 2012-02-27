@@ -433,6 +433,4 @@ for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 select spawners (/spawner command)
-put better map on server (requires brandon fixing map bug)
-modifier keys shouldnt insert ? into chat
 version checking in init protocol
