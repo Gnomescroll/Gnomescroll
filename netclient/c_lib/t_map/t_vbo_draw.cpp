@@ -123,7 +123,7 @@ void Vbo_map::draw_map()
 
     //printf("mapshader= %i  texture= %i \n", map_shader[0], terrain_map_glsl );
     
-    printf("%i = \n", map_TexCoord);
+    //printf("%i = \n", map_TexCoord);
 
     struct Map_vbo* vbo;
 
