@@ -5,7 +5,8 @@ Attributes
 attribute vec3 InVertex;
 attribute vec3 InTexCoord;
 attribute vec3 InRGB;
-attribute float InNormal;
+
+attribute int InNormal;
 
 attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 
