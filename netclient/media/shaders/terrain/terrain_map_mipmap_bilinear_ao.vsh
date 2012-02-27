@@ -36,13 +36,13 @@ void main(void)
  
         inColor = InRGB;
  
-        //texCoord = InTexCoord;
- 
-        texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);
+        texCoord = InTexCoord;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
  
 }
+
+//texCoord = vec3(InTexCoord[0], InTexCoord[1], 0.0);
 
 /*
 attribute vec3 InTexCoord0;
