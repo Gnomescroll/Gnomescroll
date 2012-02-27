@@ -26,6 +26,7 @@ static SDL_Surface* gradient_surface = NULL;
 
 /* Map icons */
 static GLuint spawner_icon = 0;
+static GLuint base_icon = 0;
 void init_icons()
 {
     static int inited = 0;
@@ -36,12 +37,21 @@ void init_icons()
     }
     printf("Init Hud Map Icons\n");
 
-    char spawner_icon_filename[] = "./media/texture/icons/spawner_map_icon.png";
-    if (create_texture_from_file(spawner_icon_filename, &spawner_icon))
-    {
-        printf("ERROR: Creating texture of %s failed.\n", spawner_icon_filename);
-        return;
-    }
+    const char icon_path_fmt[] = "./media/texture/icons/%s";
+    const int ICON_FILENAME_MAX = 64;
+    char* path = (char*)calloc(strlen(icon_path_fmt) + ICON_FILENAME_MAX - 2 + 1, sizeof(char));
+    
+    char spawner_icon_filename[] = "spawner_map_icon2.png";
+    sprintf(path, icon_path_fmt, spawner_icon_filename);
+    if (create_texture_from_file(path, &spawner_icon))
+        printf("ERROR: Creating texture of %s failed.\n", path);
+
+    char base_icon_filename[] = "base_icon.png";
+    sprintf(path, icon_path_fmt, base_icon_filename);
+    if (create_texture_from_file(path, &base_icon))
+        printf("ERROR: Creating texture of %s failed.\n", path);
+
+    free(path);
 }
 
 // create blank surface
@@ -278,15 +288,55 @@ void draw_spawners(float z)
     {
         Spawner* s = ClientState::spawner_list.a[i];
         if (s == NULL) continue;
+        if (ClientState::playerAgent_state.you != NULL
+            && ClientState::playerAgent_state.you->status.team != 0
+            && ClientState::playerAgent_state.you->status.team != s->team)
+            continue;
         world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+    }
+}
+
+void draw_bases(float z)
+{
+    if (!base_icon) return;
+    glBindTexture(GL_TEXTURE_2D, base_icon);
+    float sx,sy;
+    const int w = 8;
+    const int h = 8;
+
+    int team = 0;
+    if (ClientState::playerAgent_state.you != NULL
+        && ClientState::playerAgent_state.you != NULL)
+        team = ClientState::playerAgent_state.you->status.team;
+
+    Base* b;
+    if (team == 0)
+    {   // draw both
+        b = ClientState::ctf.one.base;
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+
+        b = ClientState::ctf.two.base;
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+    }
+    else
+    {
+        if (team == 1)
+            b = ClientState::ctf.one.base;
+        else if (team == 2)
+            b = ClientState::ctf.two.base;
+
+        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
 }
 
 void draw_items(float z)
 {
-    //draw_bases();
-    //draw_flags();
+    draw_bases(z);
+    //draw_flags(z);
     draw_spawners(z);
 }
 
