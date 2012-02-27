@@ -17,7 +17,7 @@ Uniform
 */
 
 uniform vec3 ChunkPosition;
-//uniform vec3 NormalArray[6];
+uniform vec3 NormalArray[6];
 
 /*
 Varying
@@ -29,12 +29,12 @@ varying vec3 inColor;
 
 void main(void) 
 {                      
-        //vec3 Normal = NormalArray[InNormal];
+        //vec3 Normal = NormalArray[inColor[4]*255];
 
         vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
  
-        inColor = InRGB;
+        inColor = InRGB.rgb;
  
         texCoord = InTexCoord;
 
