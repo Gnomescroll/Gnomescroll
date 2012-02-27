@@ -397,6 +397,12 @@ inline void agent_conflict_notification_StoC::handle()
     free(msg);
 }
 
+inline void version_StoC::handle()
+{
+    printf("Server Version: %d\n", version);
+}
+
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -449,6 +455,7 @@ inline void Spawner_destroy_StoC::handle() {}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
+inline void version_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
