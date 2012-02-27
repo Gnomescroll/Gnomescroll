@@ -80,7 +80,7 @@ void Vbo_map::prep_draw()
 float _chunk_position[3] = {0};
 
 
-static const float _normal_array[3*6] = 
+const float _normal_array[3*6] = 
 { 
     0,0,1,
     0,0,-1,
@@ -152,6 +152,7 @@ void Vbo_map::draw_map()
         //printf("%i \n", map_ChunkPosition);
 
         glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+        glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
         //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);
 
