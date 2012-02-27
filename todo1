@@ -374,6 +374,7 @@ select spawners (/spawner command)
 added map icons for spawners, base, flags
 color map hud icons by team
 fix server seeding; seed option only applied during map gen
+collision detection on head in lateral motion
 ====================
 
 == MODELS ==
@@ -396,7 +397,6 @@ Minimap
 
 == GAMEPLAY ==
 Turrets
-better base/spawner spawn logic (i.e. if the spawner is buried in a room underground, spawn there, not on top)
 Weapon firing rate
 Tune jumping
 
@@ -429,10 +429,10 @@ scripts to push linux build + instructions to gnomescroll.com
 POLISH TODO:
 
 for 2d sounds, update them on the listener every tick (instead of just creation)
-collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 version checking in init protocol
 figure out interface for spawner selection from map icons
+color agent model more appropriately and  use team base color
 
 GRENADES:
 charge up
