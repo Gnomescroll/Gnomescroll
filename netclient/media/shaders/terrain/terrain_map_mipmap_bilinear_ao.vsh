@@ -26,7 +26,7 @@ varying vec3 inColor;
 
 void main(void) 
 {                      
-        //vec3 Normal = NormalArray[InNormal]
+        vec3 Normal = NormalArray[InNormal];
 
         vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
