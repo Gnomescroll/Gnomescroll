@@ -21,13 +21,13 @@ int get_key_state() {
     SDL_PumpEvents();
 
     key_state_handler(keystate, numkeys);
-    if(keystate['`'] != 0)
-    {
-        for(int x=0; x<numkeys; x++)
-            if(keystate[x] != 0) printf("%i='%c' ", x, (char)x);
+    //if(keystate['`'] != 0)
+    //{
+        //for(int x=0; x<numkeys; x++)
+            //if(keystate[x] != 0) printf("%i='%c' ", x, (char)x);
 
-        printf("\n");
-    }
+        //printf("\n");
+    //}
 
     return 0;
 }
@@ -216,7 +216,6 @@ static float x_sensitivity = 1 / (2*3.1415*DEFAULT_X_SENSITIVITY_COEFFICIENT);
 static float y_sensitivity = 1 / (2*3.1415*DEFAULT_Y_SENSITIVITY_COEFFICIENT);
 static const float dampening = DEFAULT_DAMPENING;
 static float linear_sensitivity = 1 / (2 * 3.14159 * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
-static float linear_sensitivity_zoomed = linear_sensitivity * ZOOM_SENSITIVITY_SCALE_FACTOR;
 
 static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
 static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;

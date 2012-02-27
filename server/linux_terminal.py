@@ -19,7 +19,7 @@ def isData():
 def check_stdin():
     if isData():
         c = sys.stdin.read(1)
-        if c == '\x1b':         # x1b is ESC
+        if c == '\x1b':         # x1b is ESC, (also arrow keys??)
             return True
         else:
             return False
