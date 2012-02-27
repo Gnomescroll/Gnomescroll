@@ -76,7 +76,17 @@ namespace t_map
 
         if(DEBUG) printProgramInfoLog(map_shader[index]);
         
+        //uniforms
+
+        map_ChunkPosition = glGetUniformLocationARB(voxel_shader_prog, "ChunkPosition");
+        map_NormalArray = glGetUniformLocationARB(voxel_shader_prog, "NormalArray");
+
+        //attributes
+        map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
         map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
+        map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
+        map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
+
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );

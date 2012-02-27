@@ -17,7 +17,14 @@ namespace t_map
     GLenum map_shader[num_map_shaders] = {0};
 
     //shader 0
+    int map_Vertex;
     int map_TexCoord;
+    int map_RGB;
+    int map_Normal;
+
+    int map_ChunkPosition;   //uniform
+    int map_NormalArray;     //uniform
+
     int map_LightMatrix;
 
     //texture

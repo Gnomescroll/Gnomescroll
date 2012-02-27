@@ -40,6 +40,33 @@ namespace t_map
         to reduce size from x 36 to 16 bytes per vertex for normal blocks
     */
     struct Vertex {
+        struct
+        {
+            unsigned char x,y,z; //3
+            unsigned char tx,ty,tz; //6
+
+            unsigned char r,g,b; //9
+
+            char normal[3]; //12
+
+            /*
+                Replace normal with uniform lookup
+                this frees up 2 bytes (one more byte for texture and one for alpha)
+            */
+
+        };
+
+        union
+        {
+            unsigned char ao[4]; 
+            unsigned int AO;
+        };
+    };
+    
+}
+
+/*
+    struct Vertex {
         float x,y,z; //12
         float tx,ty,tz; //24
 
@@ -54,7 +81,7 @@ namespace t_map
 
         union
         {
-            char normal[3]; //16
+            char normal[4]; //16
             unsigned int n;
         };
 
@@ -64,5 +91,4 @@ namespace t_map
             unsigned int AO;
         };
     };
-    
-}
+*/

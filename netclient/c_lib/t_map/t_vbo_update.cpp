@@ -118,47 +118,150 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         v_list[offset+2].AO = _ao.AO;
         v_list[offset+3].AO = _ao.AO;
 
-        int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
-
-        struct ColorElement _ce;
-
-        _ce.r = _pallet[index+0];
-        _ce.g = _pallet[index+1];
-        _ce.b = _pallet[index+2];
-        _ce.a = 0;
-
-        v_list[offset+0].color = _ce.color;
-        v_list[offset+1].color = _ce.color;
-        v_list[offset+2].color = _ce.color;
-        v_list[offset+3].color = _ce.color;
     }
 }
 
+static inline void _set_quad_color(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+    int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
 
+    struct ColorElement _ce;
+
+    _ce.r = _pallet[index+0];
+    _ce.g = _pallet[index+1];
+    _ce.b = _pallet[index+2];
+    _ce.a = 0;
+    
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].r = _ce.r;
+        v_list[offset+i].g = _ce.g;
+        v_list[offset+i].b = _ce.b;
+    }
+}
 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
 {
-    int i;
-
     memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 
-    float _x = x;
-    float _y = y;
-    float _z = z;
-    for(i=0; i<=3;i++) {
+    int _x = x & 15;
+    int _y = y & 15;
+
+    for(int i=0; i<4;i++) 
+    {
         v_list[offset+i].x += _x;
         v_list[offset+i].y += _y;
-        v_list[offset+i].z += _z;
+        v_list[offset+i].z += z;
     }
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    _set_quad_color(v_list, offset, x, y, z, side);
 }
 
 static const int VERTEX_SLACK = 128;
 
 //int update_column_VBO(struct vm_column* column) {
 
-
 void Vbo_map::update_vbo(int i, int j)
+{
+    int _x, _y, _z;
+
+    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    if(chunk == NULL) printf("chunk null\n");
+    if(vbo == NULL) printf("vbo null\n");
+
+    int vertex_count[2] = {0, 0};
+
+    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+
+    /*
+        1> Use internals for the chunk instead of map get
+        2> Use z indices
+        3> memcpy rows
+    */
+    
+    /*
+        Now that quads have been counted, malloc memory
+        -malloc is slow, so over allocated and reuse if possible 
+    */
+
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+
+            int tile_id = map->get_block(_x,_y,_z);
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            { 
+                for(int side_num=0; side_num<6; side_num++) {
+                    if(! _is_occluded(_x,_y,_z,side_num)) 
+                    {
+                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        vertex_count[0] += 4;
+                    }
+                }
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(int side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                    {
+                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        vertex_count[1] += 4;
+                    }
+                }
+            }
+
+        }}
+    }
+
+/*
+    vbo->_v_num[0] = cube_vertex_count[0];
+    vbo->_v_num[1] = cube_vertex_count[1];
+    vbo->_v_num[2] = cube_vertex_count[2];
+    vbo->_v_num[3] = cube_vertex_count[3];
+*/
+
+/*
+    offsets
+
+    vbo->_v_offset[0] = 0;
+    vbo->_v_offset[1] = cube_vertex_count[0];
+    vbo->_v_offset[2] = cube_vertex_count[0]+cube_vertex_count[1];
+    vbo->_v_offset[3] = cube_vertex_count[0]+cube_vertex_count[1]+cube_vertex_count[2];
+*/
+
+/*
+    if(vertex_count == 0) 
+    {
+        vbo->vnum = 0;
+        return ;
+    } 
+    else 
+    {
+        vbo->vnum = vertex_count; //total vertices, size of VBO
+        if( vertex_count > vbo->vnum_max ) vbo->resize(vertex_count);
+    }
+*/
+    //buffer
+
+    //push to graphics card
+    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+
+    //printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
+}
+
+void Vbo_map::update_vbo2(int i, int j)
 {
     //printf("update vbo: %i %i \n", i,j);
 
@@ -178,7 +281,6 @@ void Vbo_map::update_vbo(int i, int j)
     int vertex_count = 0; //clear counter
 
     //first pass, count quads
-
 
     tile_id = 1;
     //printf("active= %i transparenct= %i \n", isActive(tile_id), isTransparent(tile_id)  );
