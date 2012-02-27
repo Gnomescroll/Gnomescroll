@@ -131,11 +131,18 @@ void Vbo_map::draw_map()
         //glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
         //glVertexPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)0);
 
-        _chunk_position[0] = vbo->xoff;
-        _chunk_position[1] = vbo->xoff;
+        //_chunk_position[0] = vbo->xoff;
+        //_chunk_position[1] = vbo->xoff;
 
-        glUniform3fv(map_ChunkPosition, 1, (GLfloat*) _chunk_position );
-        glUniform3fv(map_NormalArray , 1, (GLfloat*) _normal_array );
+        //glUniform3fv(map_ChunkPosition, 1, (GLfloat*) _chunk_position );
+
+        printf("%i \n", map_ChunkPosition);
+        
+        glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
+
+        //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);
+
+        glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         

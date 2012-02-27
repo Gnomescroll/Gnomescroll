@@ -21,8 +21,8 @@ struct column
     Iterate over slices, copying in chunks until something needs to be updated, update, insert and continue
 */
 
-const int MAP_VBO_STARTING_SIZE = 1024;
-const int MAP_VBO_INCREMENT = 256;
+const int MAP_VBO_STARTING_SIZE = 128;
+const int MAP_VBO_INCREMENT = 128;
 
 struct VBO_FLAGS
 {

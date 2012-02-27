@@ -13,6 +13,8 @@ attribute vec4 InLightMatrix; //intensity for AO at each corner of quad
 Uniform
 */
 
+uniform vec3 ChunkPosition;
+uniform vec3 NormalArray[6];
 
 /*
 Varying
@@ -24,7 +26,7 @@ varying vec3 inColor;
 
 void main(void) 
 {                       
-        vec4 vertex = vec4(InVertex, 1.0);
+        vec4 vertex = vec4(InVertex+ChunkPosition, 1.0);
         gl_Position = gl_ModelViewProjectionMatrix * vertex;
  
         inColor = InRGB;

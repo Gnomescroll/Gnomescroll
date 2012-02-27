@@ -78,8 +78,8 @@ namespace t_map
         
         //uniforms
 
-        map_ChunkPosition = glGetUniformLocationARB(voxel_shader_prog, "ChunkPosition");
-        map_NormalArray = glGetUniformLocationARB(voxel_shader_prog, "NormalArray");
+        map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
+        map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
 
         //attributes
         map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
