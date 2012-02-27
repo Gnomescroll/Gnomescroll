@@ -370,6 +370,7 @@ fix alpha blending for "Server Not Connected" message
 dont insert ? for SHIFT etc keys
 backquote toggles chat display (in addition to chat_input=true)
 move chat to bottom left
+system message for building/losing spawner
 ====================
 
 == MODELS ==
@@ -432,7 +433,6 @@ for 2d sounds, update them on the listener every tick (instead of just creation)
 collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 select spawners (/spawner command)
-chat message for building spawner
 put better map on server (requires brandon fixing map bug)
 modifier keys shouldnt insert ? into chat
 version checking in init protocol
