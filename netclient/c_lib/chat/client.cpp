@@ -334,7 +334,7 @@ bool ChatInput::route_command()
         ClientState::ctf.join_team(team);
     }
     else
-    if (!strcmp(cmd, (char*)"name"))
+    if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
         if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
         char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
