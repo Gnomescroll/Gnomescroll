@@ -433,3 +433,12 @@ collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 version checking in init protocol
 color map hud icons by team
+figure out interface for spawner selection from map icons
+
+GRENADES:
+charge up
+client side predicted (dont wait for create)
+
+
+PHYSICS:
+verlet integrator

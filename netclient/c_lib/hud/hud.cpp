@@ -203,7 +203,7 @@ void draw_hud_textures()
 
     if (hud_draw_settings.map)
     {
-        HudMap::draw_map();
+        HudMap::draw();
     }
 
     if (hud_draw_settings.chat_input      //not actually a texture
