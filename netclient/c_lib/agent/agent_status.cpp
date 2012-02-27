@@ -25,7 +25,7 @@ a(a),
 health(AGENT_HEALTH),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
-spawner(-1),  // -1 will mean default spawn point (base)
+spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),
@@ -48,7 +48,6 @@ void Agent_status::set_spawner(int pt)
 void Agent_status::set_spawner()
 {
     int pt = STATE::spawner_list.get_random_spawner(this->team);
-    if (pt < 0) pt = -1;
     this->spawner = pt;
 }
 

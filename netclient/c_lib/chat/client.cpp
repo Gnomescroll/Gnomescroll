@@ -364,6 +364,10 @@ bool ChatInput::route_command()
                 return true;
         }
         printf("Chat select spawner %d\n", spawner_id);
+        if (spawner_id == 0)
+            spawner_id = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
+        else
+            spawner_id -= 1;    // spawners are 0-index internally, but for UI purposes they are 1-indexed.s
         choose_spawn_location_CtoS msg;
         msg.id = spawner_id;
         msg.send();

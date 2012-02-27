@@ -11,6 +11,7 @@ const int MAX_SPAWNERS = 18;
 const int SPAWNERS_PER_TEAM = 9;
 const int SPAWNER_HEALTH = 300;
 const float SPAWNER_HEIGHT = 1.9f;
+const int BASE_SPAWN_ID = 255;
 
 class Spawner_create_StoC; // forward decl
 

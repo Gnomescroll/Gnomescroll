@@ -236,18 +236,16 @@ bool Spawner_list::point_occupied(int x, int y, int z)
 
 int Spawner_list::get_random_spawner(int team)
 {
-    int spawners[SPAWNERS_PER_TEAM];
+    int spawners[SPAWNERS_PER_TEAM+1];
     int j=0;
     for (int i=0; i<n_max; i++)
-    {
+    {   // filter down to team's spawners
         Spawner *s = this->a[i];
         if (s == NULL) continue;
         if (s->team == team) spawners[j++] = i;
     }
-    if (j==0)
-        return -1;
-    else
-        return spawners[randrange(0,j-1)];
+    spawners[j++] = BASE_SPAWN_ID;
+    return spawners[randrange(0,j-1)];
 }
 
 void Spawner_list::send_to_client(int client_id)
