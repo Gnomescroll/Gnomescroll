@@ -146,6 +146,9 @@ class ChatSystemMessage
     void agent_pickup_flag(Agent_state* a);
     void agent_drop_flag(Agent_state* a);
     void agent_score_flag(Agent_state* a);
+
+    void spawner_created(Spawner* s);
+    void spawner_destroyed(Spawner* s);
 };
 
 void teardown_chat_client();

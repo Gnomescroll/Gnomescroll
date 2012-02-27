@@ -17,7 +17,8 @@ MAX_DUMPS = 100
 ct = 0
 while True:
     print '%d-th server run' % ct
-    subprocess.call(['./m643_run.sh'], shell=True)
+    logname = 'log%d' % (time.time(),)
+    subprocess.call(['./m643_run_log.sh %s' % (logname)], shell=True)
     print "Server died"
     ct += 1
     if ct >= MAX_DUMPS:
@@ -25,7 +26,10 @@ while True:
         break
     if os.path.exists('./core'):
         print "Core dumped; saving"
-        os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time()))
+        os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time(),))
+    if os.path.exists('./%s' % (logname,)):
+        print "Saving %s" % (logname,)
+        os.rename('./%s' % (logname,), '%s/coredumps/%s', (os.path.expanduser('~'), logname,))
 
 subprocess.Popen('ulimit -c 0', shell=True)
 

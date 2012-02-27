@@ -1,7 +1,9 @@
+#version 140
+
 varying vec3 texCoord;
 varying mat2 lightMatrix;
  
-varying vec4 inColor;
+varying vec3 inColor;
  
 uniform sampler2DArray base_texture;
 
@@ -15,11 +17,11 @@ void main()
 	float tmp = dot(vx, lightMatrix * vy);
 
 	//vec3 color = inColor.rgb;	
-	vec3 color = tmp*(texture2DArray(base_texture, texCoord.xyz).rgb);	
+	vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	
 
 	float intensity = (inColor.r + inColor.g + inColor.b) / 3.0f;
 	vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
-	
+
 	color = color2 * color;
 	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 	//gl_FragColor.rgb = vec3(1.0,0,0);

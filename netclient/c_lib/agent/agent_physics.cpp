@@ -646,8 +646,8 @@ inline bool collision_check_final(float box_r, float box_h, float x, float y, fl
     int y_min = y - box_r;
     int y_max = y + box_r;
 
-    const int steps = 5;
-    const float step_size = box_h / steps;
+    const int steps = 9;    // CALIBRATED TO AGENT'S HEIGHT SETTINGS. AD HOC
+    const float step_size = box_h / ((float)steps);
 
     for (int i=0; i<steps; i++)
     {

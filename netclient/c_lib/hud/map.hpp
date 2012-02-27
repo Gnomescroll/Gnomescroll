@@ -6,7 +6,5 @@ void init();
 void update();
 void draw();
 
-// namespaced for cython
-void draw_map();
-
+void update_team_icons(int team=0);
 }

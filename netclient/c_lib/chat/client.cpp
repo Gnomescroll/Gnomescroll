@@ -314,7 +314,7 @@ bool ChatInput::route_command()
     char cmd[CHAT_BUFFER_SIZE] = {'\0'};
     char c;
     int i=1;
-    while((c = this->buffer[i++]) != '\0' && !isspace(c))
+    while((c = this->buffer[i++]) != '\0' && !isspace(c))   // advance cursor past command
         cmd[i-2] = c;
 
     if (!strcmp(cmd, (char*)"team"))
@@ -334,7 +334,7 @@ bool ChatInput::route_command()
         ClientState::ctf.join_team(team);
     }
     else
-    if (!strcmp(cmd, (char*)"name"))
+    if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
         if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
         char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
@@ -345,6 +345,32 @@ bool ChatInput::route_command()
             if (j==(int)PLAYER_NAME_MAX_LENGTH) break;
         }
         ClientState::send_identify_packet(name);
+    }
+    else
+    if (!strcmp(cmd, (char*)"spawner"))
+    {
+        if (buffer_len <= (int)(strlen((char*)"/spawner "))) return true;
+        char spawner[3] = {'\0'};
+        int j = 0;
+        while ((c = buffer[i++]) != '\0' && !isspace(c))
+        {
+            spawner[j++] = c;
+            if (j == 2) break;
+        }
+        int spawner_id = atoi(spawner);
+        if (spawner_id == 0)
+        {   // could be failure, could be 0
+            if (spawner[0] != '0')
+                return true;
+        }
+        printf("Chat select spawner %d\n", spawner_id);
+        if (spawner_id == 0)
+            spawner_id = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
+        else
+            spawner_id -= 1;    // spawners are 0-index internally, but for UI purposes they are 1-indexed.s
+        choose_spawn_location_CtoS msg;
+        msg.id = spawner_id;
+        msg.send();
     }
 
     return true;
@@ -620,6 +646,27 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
     chat_client->send_system_message(msg);
     free(msg);
 }
+
+void ChatSystemMessage::spawner_created(Spawner* s)
+{
+    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char fmt[] = "%s has built a new spawner";
+    char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
+    sprintf(msg, fmt, team_name);
+    chat_client->send_system_message(msg);
+    free(msg);
+}
+
+void ChatSystemMessage::spawner_destroyed(Spawner* s)
+{
+    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char fmt[] = "%s has lost a spawner";
+    char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
+    sprintf(msg, fmt, team_name);
+    chat_client->send_system_message(msg);
+    free(msg);
+}
+
 
 /* globals */
 ChatClient* chat_client = NULL;

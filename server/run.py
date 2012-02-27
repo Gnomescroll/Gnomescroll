@@ -55,15 +55,10 @@ class Main:
 
         init_c_lib.init()
         
+        init_c_lib.reset_seed(opts.seed)   # reset seed (opts.seed only meant for map gen)
         map_recipes.gen_map_simple()
-        '''
-        for x in range(0,512):
-            for y in range(0,512):
-                init_c_lib.set(x,y,2, 1)
-        for x in range(0,512/16):
-            for y in range(0,512/16):
-                init_c_lib.set(x*16,y*16,3, 2)
-        '''
+        #map_recipes._gen_map()
+        init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
 
         init_c_lib.start()
         

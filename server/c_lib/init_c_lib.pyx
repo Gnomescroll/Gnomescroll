@@ -3,12 +3,16 @@ from libcpp cimport bool
 cdef extern from "c_lib.hpp":
     int init_c_lib()
     void close_c_lib()
-
+    void _set_seed(int seed)
+    
 def close():
     close_c_lib()
 
 def init():
     init_c_lib()
+
+def reset_seed(int seed):
+    _set_seed(seed)
 
 ## net stuff
 cdef extern from "./net_lib/host.hpp":
@@ -51,9 +55,7 @@ def load_options(opts):
     set_team_name_two(opts.team_name_two)
     set_map(opts.map)
     set_seed(opts.seed)
-
-def reset_seed(int seed):
-    set_seed(seed)
+    reset_seed(opts.seed)
 
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":

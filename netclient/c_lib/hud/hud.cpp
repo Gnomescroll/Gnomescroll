@@ -15,7 +15,7 @@ namespace Hud
 
 /* Strings */
 
-const char help_text[] =
+static const char help_text[] =
 "\n"
 "    Key:            Action:\n"
 "\n"
@@ -46,14 +46,14 @@ const char help_text[] =
 "    4               Grenades\n"
 ;
 
-const char disconnected_text[] = "Server not connected.";
-const char dead_text[] = "You died.";
-const char fps_format[] = "%3.2f";
-const char ping_format[] = "%dms";
+static const char disconnected_text[] = "Server not connected.";
+static const char dead_text[] = "You died.";
+static const char fps_format[] = "%3.2f";
+static const char ping_format[] = "%dms";
 
-const char player_stats_text_no_agent[] = "No Agent Assigned";
-const char player_stats_text_viewer[] = "Viewer Mode";
-const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
+static const char player_stats_text_no_agent[] = "No Agent Assigned";
+static const char player_stats_text_viewer[] = "Viewer Mode";
+static const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
 
 static struct HudDrawSettings
 {
@@ -69,8 +69,9 @@ static struct HudDrawSettings
     int ping_val;
     int reliable_ping_val;
     bool player_stats;
-    bool chat;
-    bool chat_input;
+    bool chat;  // draw chat messages normally (using timeouts)
+    bool chat_input;    // draw chat input area
+    bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
     bool equipment;
     int equipment_slot;
@@ -122,6 +123,7 @@ void update_hud_draw_settings()
 
     hud_draw_settings.chat = true;
     hud_draw_settings.chat_input = input_state.chat;
+    hud_draw_settings.full_chat = input_state.full_chat;
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
@@ -147,7 +149,12 @@ void update_hud_draw_settings()
             hud->chat->set_cursor(t->text, t->x, t->y);
         }
 
-        hud->chat->update(!hud_draw_settings.chat_input);
+        bool timeout = true;
+        if (hud_draw_settings.full_chat)
+            timeout = false;
+        else if (hud_draw_settings.chat_input)
+            timeout = false;
+        hud->chat->update(timeout);
     }
 }
 
@@ -196,7 +203,7 @@ void draw_hud_textures()
 
     if (hud_draw_settings.map)
     {
-        HudMap::draw_map();
+        HudMap::draw();
     }
 
     if (hud_draw_settings.chat_input      //not actually a texture
@@ -212,10 +219,15 @@ void draw_hud_text()
 
     ClientState::billboard_text_list.draw_hud();
     
-    if (!hud->inited) return;
+    if (!hud->inited)
+    {
+        end_text_draw();
+        return;
+    }
     if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw();
+        end_text_draw();
         return;
     }
 
@@ -415,10 +427,11 @@ void ChatRender::init()
         
     if (this->inited) return;
     int i=0;
+    const int y_offset = 50;   // from the top
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list.create();
-        t->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
+        t->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
         t->set_text((char*) "");
         t->set_format((char*) "%s%s %s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
@@ -429,7 +442,7 @@ void ChatRender::init()
     input = HudText::text_list.create();
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
-    input->set_position(50, _yresf - (50 + (HudFont::font->data.line_height + 2)*i));
+    input->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
     
     this->inited = true;
 }

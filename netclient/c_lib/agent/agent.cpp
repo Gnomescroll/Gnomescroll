@@ -398,23 +398,19 @@ void Agent_state::set_angles(float theta, float phi) {
 void Agent_state::get_spawn_point(int* spawn) {
 
     int h = this->current_height_int();
-
-    // check that assigned spawner still exists, reassign if not
-    Spawner *s;
-    if (this->status.spawner != -1)
-    {
+    Spawner *s = NULL;
+    
+    if (this->status.spawner != BASE_SPAWN_ID)
+    {    // check that assigned spawner still exists, reassign if not
         while ((s = STATE::spawner_list.get(this->status.spawner)) == NULL)
         {
             this->status.set_spawner();
-            if (this->status.spawner == -1) break;  // no spawners available
+            if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
         }
     }
-    
-    if (this->status.spawner != -1)
-        s->get_spawn_point(h, spawn);
-    else
-    {
-        // spawner is base
+
+    if (this->status.spawner == BASE_SPAWN_ID)
+    {   // spawner is base
         STATE::ctf.get_base_spawn_point(this->status.team, h, spawn);
 
         // team is 0, or spawn get failed for some reason. spawn anywhere
@@ -429,6 +425,8 @@ void Agent_state::get_spawn_point(int* spawn) {
             spawn[2]=z;
         }
     }
+    else // spawner was found
+        s->get_spawn_point(h, spawn);
 }
 
 void Agent_state::spawn_state() {

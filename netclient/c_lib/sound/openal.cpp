@@ -285,9 +285,10 @@ int play_2d_sound(char* file)
     ALfloat vx,vy,vz;
     alGetListener3f(AL_POSITION, &x, &y, &z);
     alGetListener3f(AL_VELOCITY, &vx, &vy, &vz);
-
+    ALfloat o[6];
+    alGetListenerfv(AL_ORIENTATION, o);
     // play at listener state
-    return play_3d_sound(file, x,z,y,vx,vz,vy);
+    return play_3d_sound(file, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
 }
 
 int get_free_source()
@@ -312,7 +313,7 @@ int get_buffer_from_filename(char *fn)
     return -1;
 }
 
-int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz)
+int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
         return 1;
@@ -330,7 +331,7 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
     // set source state
     alSource3f(sources[source_id], AL_POSITION, x, z, y);
     alSource3f(sources[source_id], AL_VELOCITY, vx, vz, vy);
-    alSource3f(sources[source_id], AL_DIRECTION, 0, -1, 0);  // always looking up (for now)
+    alSource3f(sources[source_id], AL_DIRECTION, ox, oz, oy);
     if (checkError())
         return 1;
 

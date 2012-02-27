@@ -40,6 +40,11 @@ void toggle_chat()
     input_state.chat = (!input_state.chat);
 }
 
+void toggle_full_chat()
+{
+    input_state.full_chat = (!input_state.full_chat);
+}
+
 void toggle_hud()
 {
     input_state.hud = (!input_state.hud);
@@ -119,6 +124,7 @@ void init_handlers()
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
+    input_state.full_chat = false;
     input_state.hud = true;
     input_state.skeleton_editor = false;
 
@@ -191,7 +197,8 @@ void chat_key_down_handler(SDL_Event* event)
     int t = getUnicodeValue(event->key.keysym);
     t = (t) ? t : event->key.keysym.sym;
 
-    if (t < 0 || t > 127) t = '?';
+    if (t < 0 || t > 127)
+        return;
     chat_client->input->add((char)t);
 }
 
@@ -510,18 +517,22 @@ void key_down_handler(SDL_Event* event)
             input_state.mouse_bound = false;
             break;
 
+        case SDLK_BACKQUOTE:
+            toggle_full_chat();
+            break;
+            
         default: break;
     }
 
 
     //for Dany0 (azerty testing)
     //while holding n, will show key struct info
-    if (keystate['r'] != 0)
-    {
-        printf("scancode = %d\n", (int)event->key.keysym.scancode);
-        printf("keysym = %d\n", (int)event->key.keysym.sym);
-        printf("\n");
-    }
+    //if (keystate['r'] != 0)
+    //{
+        //printf("scancode = %d\n", (int)event->key.keysym.scancode);
+        //printf("keysym = %d\n", (int)event->key.keysym.sym);
+        //printf("\n");
+    //}
 }
 
 // key up

@@ -3,6 +3,16 @@
 #include <c_lib/t_map/glsl/settings.hpp>
 #include <c_lib/t_map/glsl/texture.hpp>
 
+/*
+In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 
+So for those versions, you must use glGenerateMipmap.
+
+GL_GENERATE_MIPMAP is supported for 1.4 and over
+*/
+
+//glGenerateMipmap(GL_TEXTURE_2D);  //Generate mipmaps now!!!
+//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); 
+
 namespace t_map
 { 
 
@@ -19,15 +29,10 @@ namespace t_map
 
         if(! GLEW_EXT_texture_array)
         {
-            printf("Error: no GL_EXT_texture_array support! \n");
+            printf("Error: GL_EXT_texture_array not supported! \n");
             exit(0);
         }
 
-        if(!GLEW_SGIS_generate_mipmap)
-        {
-            printf("Error: no GLEW_SGIS_generate_mipmap support! \n");
-            exit(0);
-        }
 
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {
@@ -71,7 +76,17 @@ namespace t_map
 
         if(DEBUG) printProgramInfoLog(map_shader[index]);
         
+        //uniforms
+
+        map_ChunkPosition = glGetUniformLocation(map_shader[index], "ChunkPosition");
+        map_NormalArray = glGetUniformLocation(map_shader[index], "NormalArray");
+
+        //attributes
+        map_Vertex = glGetAttribLocation(map_shader[index], "InVertex");
         map_TexCoord = glGetAttribLocation(map_shader[index], "InTexCoord");
+        map_RGB = glGetAttribLocation(map_shader[index], "InRGB");
+        map_Normal = glGetAttribLocation(map_shader[index], "InNormal");
+
         map_LightMatrix = glGetAttribLocation(map_shader[index], "InLightMatrix"); 
         
         //printf("s1= %i s2= %i \n", map_TexCoord, map_LightMatrix );
@@ -221,9 +236,12 @@ namespace t_map
 
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_LEVEL, 8);
+
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
         glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+        //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
+
         glDisable(GL_TEXTURE_2D);
 
         delete[] Pixels;
