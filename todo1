@@ -369,6 +369,7 @@ increase grenade-agent damage radius and damage amount
 fix alpha blending for "Server Not Connected" message
 dont insert ? for SHIFT etc keys
 backquote toggles chat display (in addition to chat_input=true)
+move chat to bottom left
 ====================
 
 == MODELS ==
@@ -432,7 +433,6 @@ collision detection on head (try readjusting sample rate)
 bring ammo down to reasonable values
 select spawners (/spawner command)
 chat message for building spawner
-move chat display to bottom
 put better map on server (requires brandon fixing map bug)
 modifier keys shouldnt insert ? into chat
 version checking in init protocol

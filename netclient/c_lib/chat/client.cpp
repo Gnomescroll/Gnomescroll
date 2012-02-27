@@ -621,6 +621,27 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
     free(msg);
 }
 
+void ChatSystemMessage::spawner_created(Spawner* s)
+{
+    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char fmt[] = "%s has built a new spawner";
+    char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
+    sprintf(msg, fmt, team_name);
+    chat_client->send_system_message(msg);
+    free(msg);
+}
+
+void ChatSystemMessage::spawner_destroyed(Spawner* s)
+{
+    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char fmt[] = "%s has lost a spawner";
+    char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
+    sprintf(msg, fmt, team_name);
+    chat_client->send_system_message(msg);
+    free(msg);
+}
+
+
 /* globals */
 ChatClient* chat_client = NULL;
 ChatMessageList* chat_message_list = NULL;

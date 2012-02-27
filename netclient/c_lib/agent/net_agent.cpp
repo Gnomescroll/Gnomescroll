@@ -302,11 +302,14 @@ inline void Spawner_create_StoC::handle()
     s->set_owner(owner);
     s->init_vox();
     Sound::spawner_placed(x,y,z,0,0,0);
+    system_message->spawner_created(s);
 }
 
 inline void Spawner_destroy_StoC::handle()
 {
+    Spawner* s = ClientState::spawner_list.get(id);
     ClientState::spawner_list.destroy(id);
+    system_message->spawner_destroyed(s);
 }
 
 inline void ping_StoC::handle()
