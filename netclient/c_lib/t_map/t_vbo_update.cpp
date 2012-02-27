@@ -254,7 +254,9 @@ void Vbo_map::update_vbo(int i, int j)
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    
     //printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
 }
 
