@@ -177,7 +177,6 @@ class Vbo_map
     }
 
     void update_vbo(int i, int j);
-    void update_vbo2(int i, int j);
 
     void prep_draw();
     void draw_map();
