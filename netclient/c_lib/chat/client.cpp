@@ -314,7 +314,7 @@ bool ChatInput::route_command()
     char cmd[CHAT_BUFFER_SIZE] = {'\0'};
     char c;
     int i=1;
-    while((c = this->buffer[i++]) != '\0' && !isspace(c))
+    while((c = this->buffer[i++]) != '\0' && !isspace(c))   // advance cursor past command
         cmd[i-2] = c;
 
     if (!strcmp(cmd, (char*)"team"))
@@ -345,6 +345,25 @@ bool ChatInput::route_command()
             if (j==(int)PLAYER_NAME_MAX_LENGTH) break;
         }
         ClientState::send_identify_packet(name);
+    }
+    else
+    if (!strcmp(cmd, (char*)"spawner"))
+    {
+        if (buffer_len <= (int)(strlen((char*)"/spawner "))) return true;
+        char spawner[3] = {'\0'};
+        int j = 0;
+        while ((c = buffer[i++]) != '\0' && !isspace(c))
+        {
+            spawner[j++] = c;
+            if (j == 2) break;
+        }
+        int spawner_id = atoi(spawner);
+        if (spawner_id == 0)
+        {   // could be failure, could be 0
+            if (spawner[0] != '0')
+                return true;
+        }
+        printf("Chat select spawner %d\n", spawner_id);
     }
 
     return true;
