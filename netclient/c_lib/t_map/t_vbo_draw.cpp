@@ -117,7 +117,7 @@ void Vbo_map::draw_map()
     glEnableVertexAttribArray(map_Vertex);
     glEnableVertexAttribArray(map_TexCoord);
     glEnableVertexAttribArray(map_RGB);
-    glEnableVertexAttribArray(map_Normal);
+    //glEnableVertexAttribArray(map_Normal);
 
     glEnableVertexAttribArray(map_LightMatrix);
 
@@ -127,7 +127,7 @@ void Vbo_map::draw_map()
 
     glEnable(GL_CULL_FACE);
 
-    glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
+    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
     for(int i=0;i<draw_vbo_n;i++)
     {
@@ -161,7 +161,7 @@ void Vbo_map::draw_map()
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);         
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)3);
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)6);
-        glVertexAttribPointer(map_Normal, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)9);
+        //glVertexAttribPointer(map_Normal, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)9);
 
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
         //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
@@ -174,7 +174,7 @@ void Vbo_map::draw_map()
     glDisableVertexAttribArray(map_Vertex);
     glDisableVertexAttribArray(map_TexCoord);
     glDisableVertexAttribArray(map_RGB);
-    glDisableVertexAttribArray(map_Normal);
+    //glDisableVertexAttribArray(map_Normal);
 
     glDisableVertexAttribArray(map_LightMatrix);
 
