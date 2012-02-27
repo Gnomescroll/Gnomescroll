@@ -19,6 +19,8 @@
 class grenade_StoC;     // forward decl
 
 class Grenade {
+    private:
+        int bounce_count;
     public:
         struct Particle2 particle;
         int owner;  // agent_id

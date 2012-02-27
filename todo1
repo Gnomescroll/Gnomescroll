@@ -355,12 +355,14 @@ Fixed valgrind errors, including --tool=exp-sgcheck
 Feb 25
 
 tweak input settings
+put builds on website
+eternal server script
 ====================
 
 Feb 26
 
-TODO:
-log prints
+log remote server
+update website
 ====================
 
 == MODELS ==
@@ -428,3 +430,7 @@ chat message for building spawner
 ` should toggle chat display
 move chat display to bottom
 put better map on server (requires brandon fixing map bug)
+modifier keys shouldnt insert ? into chat
+version checking in init protocol
+glBlend font
+grenade blows up on second bounce
