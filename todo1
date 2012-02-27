@@ -368,6 +368,7 @@ grenade blows up on second bounce
 increase grenade-agent damage radius and damage amount
 fix alpha blending for "Server Not Connected" message
 dont insert ? for SHIFT etc keys
+backquote toggles chat display (in addition to chat_input=true)
 ====================
 
 == MODELS ==
