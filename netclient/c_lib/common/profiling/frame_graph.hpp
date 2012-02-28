@@ -98,9 +98,15 @@ class FrameGraph
 		for(int i=0; i< 64; i++) ts->set_pixel(index, i, 0, 0,0, 0);
 		int i = 0;
 
+	/*
+		R> loop up to flip
+		G> flip time
+		B> time waiting
+
+	*/
 		while(++i < t1) ts->set_pixel(index, i, 255, 0,0, 255);
-		while(++i < t2) ts->set_pixel(index, i, 0, 255,0, 255);
-		while(++i < t1) ts->set_pixel(index, i, 0, 0,255, 255);
+		while(++i < t1+t2) ts->set_pixel(index, i, 0, 255,0, 255);
+		while(++i < t1+t2+t3) ts->set_pixel(index, i, 0, 0,255, 255);
 	}
 
 	void draw(int x, int y)
