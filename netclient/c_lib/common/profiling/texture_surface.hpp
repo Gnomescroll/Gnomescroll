@@ -14,6 +14,7 @@ struct PIXEL
 
 class Texture_surface
 {
+
 	int xdim;
 	int ydim;
 
@@ -23,6 +24,8 @@ class Texture_surface
 
 	unsigned int tex[2]; //texture ids
 	int tex_index;
+
+	public:
 
 	Texture_surface(int x, int y)
 	{
@@ -35,15 +38,42 @@ class Texture_surface
 		needs_update = false;
 
 		//surface = create_surface_from_nothing(x, y);
-		pixels = (struct PIXEL*) calloc(x*y, sizeof(struct PIXEL));
+		
+		//pixels = (struct PIXEL*) calloc(x*y, sizeof(struct PIXEL));
+		pixels = (struct PIXEL*) malloc(x*y*sizeof(struct PIXEL));
+
+		for(int i = 0; i < x*y; i++) pixels[i].color = 0;
+
+
+		for(int i = 0; i < xdim; i++)
+		{ 
+			set_pixel(i,0, 255, 0,0,150);
+			set_pixel(i,ydim-1, 255, 0,0,150);
+		}
+
+		for(int i = 0; i < ydim; i++)
+		{ 
+			set_pixel(0, i, 255, 0,0,150);
+			set_pixel(xdim-1,i, 255, 0,0,150);
+		}
+	/*
+	    for(int i = 0; i < x*y; i++)
+	    {
+	        //this->set_pixel(i, 14, 254,0,0,120);
+	    	pixels[i].r = 254;
+
+	    }
+	*/
 
 		glEnable(GL_TEXTURE_2D);
     	glGenTextures( 2, (GLuint*) &tex );
 
     	glBindTexture( GL_TEXTURE_2D, tex[0] );
+
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
+
+    	glTexImage2D(GL_TEXTURE_2D, 0, 4, xdim, ydim, 0, GL_BGRA, GL_UNSIGNED_BYTE, pixels );
 
     	/*
     	glBindTexture( GL_TEXTURE_2D, tex[1] );
@@ -64,35 +94,44 @@ class Texture_surface
 
 	void draw(int x, int y)
 	{
-
 	    glColor3ub(255,255,255);
 
-	    //glEnable(GL_TEXTURE_2D);
+	    glEnable(GL_TEXTURE_2D);
+
+    	glEnable(GL_BLEND);
+    	glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+
 	    glBindTexture(GL_TEXTURE_2D, tex[0]);
-	    
-	    //glEnable(GL_BLEND);
-	    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	   
+
+		const float z = -0.4;
+
+	    float x0 = x;
+	    float x1 = x+xdim;
+	    float y0 = y;
+	    float y1 = y+ydim;
+
 	    glBegin(GL_QUADS);
-	    {
-   			const float z = -0.5;
 
-	        glTexCoord2f(0.0,0.0);
-	        glVertex3f(x, y, z);  // Top left
+        glTexCoord2f(0.0,0.0);
+        glVertex3f(x0,y0, z);  // Top left
 
-	        glTexCoord2f(1.0,0.0);
-	        glVertex3f(x+xdim, y, z);  // Top right
+        glTexCoord2f(1.0,0.0);
+        glVertex3f(x1, y0, z);  // Top right
 
-	        glTexCoord2f(1.0,1.0);
-	        glVertex3i(x+xdim, y-ydim, z);  // Bottom right
+        glTexCoord2f(1.0,1.0);
+        glVertex3f(x1, y1, z);  // Bottom right
 
-	        glTexCoord2f(0.0,1.0);
-	        glVertex3i(x, y-ydim, z);  // Bottom left
-	    }
+        glTexCoord2f(0.0,1.0);
+        glVertex3f(x0, y1, z);  // Bottom left
+
 	    glEnd();
 
 
 	    if(needs_update == true) update();
+
+	    glDisable(GL_BLEND);
+	    glDisable(GL_TEXTURE_2D);
+
 	}
 
 	void update()

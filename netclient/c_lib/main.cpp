@@ -66,9 +66,17 @@ void init()
     client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
+#include <c_lib/common/profiling/texture_surface.hpp>
+
 int run()
 {
-    
+    static Texture_surface tx(256,256);
+
+    for(int i = 20; i < 60; i++)
+    {
+        tx.set_pixel(i, 14, 254,0,0,120);
+    }
+
 /* BEGIN SETUP */
     int ping_ticks = _GET_MS_TIME();
     
@@ -164,6 +172,8 @@ int run()
         {
             // switch to hud  projection
             hud_projection();
+
+            tx.draw(500, 500);
 
             // draw hud
             Hud::set_hud_fps_display(fps_value);

@@ -228,7 +228,7 @@ void Camera::set_angles(float theta, float phi) {
 
 void Camera::hud_projection() {
 
-    glDisable (GL_DEPTH_TEST);   // end world projection
+    //glDisable (GL_DEPTH_TEST);   // end world projection
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
