@@ -17,11 +17,11 @@ class Texture_surface
 	int xdim;
 	int ydim;
 
-	struct PIXEL pixels*;
+	struct PIXEL* pixels;
 
-	bool update;
+	bool needs_update;
 
-	int tex[2]; //textures
+	unsigned int tex[2]; //texture ids
 	int tex_index;
 
 	Texture_surface(int x, int y)
@@ -32,13 +32,13 @@ class Texture_surface
 		//x/y must be a power of two
 
 		tex_index = 0;
-		update = false;
+		needs_update = false;
 
 		//surface = create_surface_from_nothing(x, y);
-		pixels = (struct PIXEL) calloc(x*y*sizeof(uint));
+		pixels = (struct PIXEL*) calloc(x*y, sizeof(struct PIXEL));
 
 		glEnable(GL_TEXTURE_2D);
-    	glGenTextures( 2, &tex );
+    	glGenTextures( 2, (GLuint*) &tex );
 
     	glBindTexture( GL_TEXTURE_2D, tex[0] );
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -58,15 +58,9 @@ class Texture_surface
 	~Texture_surface()
 	{
 		free(pixels);
-		glDeleteTextures( 2, &tex );
+		glDeleteTextures( 2, (GLuint*) &tex );
 	}
 
-	void update()
-	{
-		glBindTexture(GL_TEXTURE_2D, tex[0] );    //A texture you have already created with glTexImage2D
-   		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, xdim, ydim, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
-
-	}
 
 	void draw(int x, int y)
 	{
@@ -98,12 +92,20 @@ class Texture_surface
 	    glEnd();
 
 
-	    if(update == true) update();
+	    if(needs_update == true) update();
+	}
+
+	void update()
+	{
+		glBindTexture(GL_TEXTURE_2D, tex[0] );    //A texture you have already created with glTexImage2D
+   		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, xdim, ydim, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
+
+   		needs_update = false;
 	}
 
 	void set_pixel(int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 	{
-		update = true;
+		needs_update = true;
 
 		struct PIXEL p;
 
