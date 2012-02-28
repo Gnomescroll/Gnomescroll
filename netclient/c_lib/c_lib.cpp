@@ -85,6 +85,7 @@
 /* Profiling */
 
 #include <c_lib/common/profiling/texture_surface.cpp>
+#include <c_lib/common/profiling/frame_graph.cpp>
 
 /* map */
 

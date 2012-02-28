@@ -142,6 +142,12 @@ class Texture_surface
    		needs_update = false;
 	}
 
+	void clear()
+	{
+		for(int i = 0; i < xdim*ydim; i++) pixels[i].color = 0;
+		needs_update = true;
+	}
+	
 	void set_pixel(int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 	{
 		needs_update = true;
