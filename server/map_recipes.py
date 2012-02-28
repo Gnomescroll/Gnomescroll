@@ -60,7 +60,7 @@ def feb3_test_map():
     m.destroy()
 
 
-def _gen_map():
+def best_caves():
 
     #feb3_test_map()
     #return
