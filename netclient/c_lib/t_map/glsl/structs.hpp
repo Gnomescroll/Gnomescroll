@@ -51,7 +51,9 @@ namespace t_map
             unsigned char tx,ty,tz; //
             unsigned char EXTRA_SPACE1; //8
 
-            unsigned char r,g,b, normal;; //9
+            unsigned char r,g,b;
+
+            unsigned char normal;; //9
 
 
             /*
