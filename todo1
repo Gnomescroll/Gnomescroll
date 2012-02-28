@@ -386,11 +386,7 @@ for 2d sounds, update them on the listener every tick (instead of just creation)
 
 tweaked rk4 -- bugged, bad
 implemented verlet
-deprecated old Particle/Particle2 crap -- new class interface
-
-TODO:
-finish migrating particles to new class CParticle
-fully deprecate old struct particle
+refactored particle system
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
@@ -455,7 +451,8 @@ GRENADES:
 charge up
 client side predicted (dont wait for create) [PROBLEM: id syncs]
 
-PHYSICS:
-verlet integrator
+TODO:
+integrate force into physics
+migrate all struct Vector to Vec3 format
 
 bell when players join server
