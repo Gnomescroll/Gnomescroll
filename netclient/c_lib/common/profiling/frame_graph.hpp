@@ -102,9 +102,9 @@ class FrameGraph
 		while(++i < t1) ts->set_pixel(index, i, 0, 0,255, 255);
 	}
 
-	void draw()
+	void draw(int x, int y)
 	{
-		ts->draw();
+		ts->draw(x,y);
 	}
 };
 
