@@ -83,7 +83,7 @@ class FrameGraph
 			return;
 		}
 
-		if(t2 < 0 || t2 > 64)
+		if(t3 < 0 || t3 > 64)
 		{
 			printf("error3\n");
 			return;
@@ -95,6 +95,7 @@ class FrameGraph
 			return;
 		}
 
+		for(int i=0; i< 64; i++) ts->set_pixel(index, i, 0, 0,0, 0);
 		int i = 0;
 
 		while(++i < t1) ts->set_pixel(index, i, 255, 0,0, 255);

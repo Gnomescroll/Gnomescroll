@@ -66,16 +66,11 @@ void init()
     client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
-#include <c_lib/common/profiling/texture_surface.hpp>
+#include <c_lib/common/profiling/frame_graph.hpp>
 
 int run()
 {
-    static Texture_surface tx(256,256);
-
-    for(int i = 20; i < 60; i++)
-    {
-        tx.set_pixel(i, 14, 254,0,0,120);
-    }
+    static class Profiling::FrameGraph frame_graph;
 
 /* BEGIN SETUP */
     int ping_ticks = _GET_MS_TIME();
@@ -94,6 +89,9 @@ int run()
     {
 
         if(_quit) break;
+
+
+        frame_graph.frame_start();
 
         // update mouse
 
@@ -173,7 +171,8 @@ int run()
             // switch to hud  projection
             hud_projection();
 
-            tx.draw(500, 500);
+            //tx.draw(500, 500);
+            frame_graph.draw(500,500);
 
             // draw hud
             Hud::set_hud_fps_display(fps_value);
@@ -181,10 +180,25 @@ int run()
             Hud::draw_hud();
         }
 
+
+        // update sound
+        Sound::update();
+        // update client_state
+        ClientState::update_client_state();
+
+
         // flip sdl
         //frame_left(); //swap every 15 ms?
+
+        frame_graph.frame_flip_start();
+
         _swap_buffers();
+
+        frame_graph.frame_wait_start();
+        
         frame_left(); //swap every 15 ms?
+
+        frame_graph.frame_end();
 
         // do fps calculation
         if (Options::fps)
@@ -217,10 +231,6 @@ int run()
         // update mouse
         pan_camera(get_mouse_tick());
 
-        // update sound
-        Sound::update();
-        // update client_state
-        ClientState::update_client_state();
     }
 
     close_c_lib();
