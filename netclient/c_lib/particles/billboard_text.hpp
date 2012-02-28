@@ -19,11 +19,10 @@ namespace Billboard {
     Projection DEFAULT = AXIS_ALIGNED;
 }
 
-class BillboardText {
-
+class BillboardText: public CParticle
+{
     public:
         unsigned char r,g,b,a;
-        Particle2 particle;
         char text[max_letters+1];
 
         bool gravity;
@@ -32,7 +31,6 @@ class BillboardText {
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
-        void set_ttl(int ttl);
         void set_gravity(bool grav);
         void set_state(float x, float y, float z, float vx, float vy, float vz);
         void set_text(char* t);

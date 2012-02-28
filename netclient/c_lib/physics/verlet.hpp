@@ -53,14 +53,21 @@ namespace Verlet
             //leapfrog_verlet(dt*fraction);
         }
 
-        VerletParticle(float x, float y, float z, float vx, float vy, float vz)
+        void set_state(float x, float y, float z, float vx, float vy, float vz)
         {
+            old_p = p;
+            old_v = v;
             p.x = x;
             p.y = y;
             p.z = z;
             v.x = vx;
             v.y = vy;
             v.z = vz;
+        }
+
+        VerletParticle(float x, float y, float z, float vx, float vy, float vz)
+        {
+            this->set_state(x,y,z,vx,vy,vz);
             old_p = p;
             old_v = v;
         }

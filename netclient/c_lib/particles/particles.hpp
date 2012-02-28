@@ -16,7 +16,7 @@ class CParticle
         VerletParticle* vp;
 
         void set_ttl(int ttl)
-        {
+        {   // set to a negative number for no timeout
             this->ttl = ttl;
         }
 

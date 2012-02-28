@@ -10,17 +10,20 @@
 
 BillboardText::BillboardText(int id)
 :
+CParticle(id, 0,0,0,0,0,0),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
 projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
-    create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BILLBOARD_TEXT_TTL);
+    this->ttl_max = BILLBOARD_TEXT_TTL;
+    this->type = BILLBOARD_TEXT_TYPE;
 }
 
 BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz)
 :
+CParticle(id, x,y,z, vx,vy,vz),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -28,24 +31,23 @@ size(BILLBOARD_TEXT_TEXTURE_SCALE),
 projection_type(Billboard::DEFAULT)
 {
     text[0] = '\0';
-    create_particle2(&particle, id, BILLBOARD_TEXT_TYPE, x,y,z,vx,vy,vz, 0, BILLBOARD_TEXT_TTL);
+    this->ttl_max = BILLBOARD_TEXT_TTL;
+    this->type = BILLBOARD_TEXT_TYPE;
 }
 
 void BillboardText::tick()
 {
     if (this->gravity)
-        bounce_simple_rk4(&this->particle, BILLBOARD_TEXT_DAMP);
-    if (this->particle.ttl >= 0)
-        this->particle.ttl++;
+        Verlet::bounce(this->vp, BILLBOARD_TEXT_DAMP);
+    if (this->ttl >= 0)
+        this->ttl++;
 }
 
 
 void BillboardText::set_text(char* t) {
     int i;
     for (i=0; t[i] != '\0' && i < max_letters; i++)
-    {
         text[i] = t[i];
-    }
     text[i] = '\0';
 }
 
@@ -57,14 +59,9 @@ void BillboardText::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
-void BillboardText::set_ttl(int ttl)
-{
-    // set to a negative number to never die
-    this->particle.ttl = ttl;
-}
 void BillboardText::set_state(float x, float y, float z, float vx, float vy, float vz)
 {
-    set_particle2_state(&this->particle, x,y,z,vx,vy,vz);
+    this->vp->set_state(x,y,z, vx,vy,vz);
 }
 
 void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b) {
@@ -123,9 +120,9 @@ void BillboardText::draw_axis_aligned()
     float norm;
 
     float look[3];
-    look[0] = current_camera->x - particle.state.p.x;
-    look[1] = current_camera->y - particle.state.p.y;
-    look[2] = current_camera->z - particle.state.p.z;
+    look[0] = current_camera->x - this->vp->p.x;
+    look[1] = current_camera->y - this->vp->p.y;
+    look[2] = current_camera->z - this->vp->p.z;
     norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
     look[0] /= -norm;
     look[1] /= -norm;
@@ -158,7 +155,7 @@ void BillboardText::draw_axis_aligned()
     // letters draw a bit into the ground, this offset fixes that
     const float ground_offset = 0.05;
     float x,y,z;
-    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
     x += ground_offset;
     y += ground_offset;
     z += ground_offset;
@@ -213,9 +210,9 @@ void BillboardText::draw_hud()
     glColor4ub(r,g,b,a);
 
     float x,y,z;
-    x = particle.state.p.x;
-    y = particle.state.p.y;
-    z = particle.state.p.z;
+    x = this->vp->p.x;
+    y = this->vp->p.y;
+    z = this->vp->p.z;
 
     GLdouble sx,sy,sz;
     //GLint res = gluProject(x,y,z, billboard_modelview_mtrx_dbl, projection_matrix, viewport, &sx, &sy, &sz);
@@ -238,8 +235,8 @@ void BillboardText_list::tick() {
     for (i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
+        if (a[i]->ttl >= a[i]->ttl_max) {
+            destroy(a[i]->id);
         }
     }
 }
