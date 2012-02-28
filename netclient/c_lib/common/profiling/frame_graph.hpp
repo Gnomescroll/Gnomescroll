@@ -129,7 +129,7 @@ class FrameGraph
 		j=0;
 		while(j < t1)
 		{
-			ts->set_pixel(index, i, 255, 0,0, 255);
+			ts->set_pixel(index, i, 255, 0,0, 100);
 			j++;
 			i++;
 		}
@@ -145,7 +145,7 @@ class FrameGraph
 		j=0;
 		while(j < t3)
 		{
-			ts->set_pixel(index, i, 0, 0,255, 255);
+			ts->set_pixel(index, i, 0, 0,255, 50);
 			j++;
 			i++;
 		}
