@@ -1,5 +1,8 @@
 #pragma once
 
+int FRAME_RATE_THOTTLE_ENABLED = 1;
+int FRAME_RATE_THOTTLE_TARGET = 15; //ms for 60, 33 for 30
+
 namespace Profiling
 {
 
@@ -54,6 +57,15 @@ class FrameGraph
 	void frame_wait_start()
 	{
 		_frame_wait_start[index] = _GET_MS_TIME();
+
+		if(FRAME_RATE_THOTTLE_ENABLED)
+		{
+			int wait = FRAME_RATE_THOTTLE_TARGET - (_frame_wait_start[index] - _frame_start[index]);
+			if( wait <= 0) return;
+
+			usleep(1000*wait);
+		}
+
 	}
 
 	void frame_end()
