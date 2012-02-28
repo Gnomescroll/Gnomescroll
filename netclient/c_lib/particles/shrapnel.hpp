@@ -12,10 +12,9 @@
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
 
-class Shrapnel {
+class Shrapnel: public Particle
+{
     public:
-        Particle2 particle;
-
         inline void draw() __attribute((always_inline));
         void tick();
         Shrapnel(int id);

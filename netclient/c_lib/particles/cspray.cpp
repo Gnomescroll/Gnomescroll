@@ -8,36 +8,44 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-Cspray::Cspray(int _id) {
-    active = 0;
-    stopped = 0;
-    create_particle2(&particle, _id, CSPRAY_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, CSPRAY_TTL);
-                   // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
+Cspray::Cspray(int id)
+:
+EventParticle(id, 0,0,0,0,0,0),
+active(0),
+stopped(0)
+{
+    this->ttl_max = CSPRAY_TTL;
+    this->type = CSPRAY_TYPE;
+    this->event_ttl = 1;
 }
 
-Cspray::Cspray(int _id, float x, float y, float z, float vx, float vy, float vz) {
-    active = 0;
-    stopped = 0;
-    create_particle2(&particle, _id, CSPRAY_TYPE, x,y,z, vx,vy,vz, 0, CSPRAY_TTL);
-                   // particle, _id,      type,   x,y,z, vx,vy,vz, ttl, ttl_max
+Cspray::Cspray(int id, float x, float y, float z, float vx, float vy, float vz)
+:
+EventParticle(id, x,y,z,vx,vy,vz),
+active(0),
+stopped(0)
+{
+    this->ttl_max = CSPRAY_TTL;
+    this->type = CSPRAY_TYPE;
+    this->event_ttl = 1;
 }
 
 void Cspray::tick() {
 
-    particle.ttl++;
+    ttl++;
 
     int* s;
     int collision[3];
     int tile;
 
-    s = bounce_collide_tile_rk4(&(particle), collision, &tile, CSPRAY_DAMP);
+    s = Verlet::bounce(this->vp, collision, &tile, CSPRAY_DAMP);
 
     // cement effect
     if(active == 1) {
-        particle.ttl= particle.ttl_max;
+        ttl= ttl_max;
         if(!isActive(tile)) {
             _set(collision[0],collision[1],collision[2], CSPRAY_CEMENT_BLOCK_TYPE);    // create block
-            particle.ttl = particle.ttl_max;
+            ttl = ttl_max;
             return;
         }
     }
@@ -46,23 +54,23 @@ void Cspray::tick() {
     {
         if(isActive(tile)) {
             active=1;
-            particle.ttl *= 2;
+            ttl *= 2;
 
             _set(collision[0] - s[0], collision[1] - s[1], collision[2] - s[2], CSPRAY_CEMENT_BLOCK_TYPE);    // create block
-            particle.ttl = particle.ttl_max;
+            ttl = ttl_max;
             return;
 
         }
     }
 
     /* TEST: Stop cspray falling indefinitely */
-    if (particle.state.p.z < -1.0f) {
-        particle.state.p.z = 0.0f;
-        particle.state.v.x = 0.0f;
-        particle.state.v.y = 0.0f;
-        particle.state.v.z = 0.0f;
+    if (this->vp->p.z < -1.0f) {
+        this->vp->p.z = 0.0f;
+        this->vp->v.x = 0.0f;
+        this->vp->v.y = 0.0f;
+        this->vp->v.z = 0.0f;
 
-        particle.ttl = particle.ttl_max;
+        ttl = ttl_max;
     }
 }
 
@@ -84,7 +92,7 @@ void Cspray::draw() {
     ty_min = (float)(CSPRAY_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
 
     glTexCoord2f(tx_min,ty_max );
     glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
@@ -110,8 +118,8 @@ void Cspray_list::tick() {
 
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
+        if (a[i]->ttl >= a[i]->ttl_max) {
+            destroy(a[i]->id);
         }
 
     }

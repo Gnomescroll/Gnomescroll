@@ -41,6 +41,7 @@
 #include "./ray_trace/ray_trace.c"
 #include "./ray_trace/hitscan.cpp"
 #include "./physics/common.cpp"
+#include <c_lib/physics/verlet.cpp>
 
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>

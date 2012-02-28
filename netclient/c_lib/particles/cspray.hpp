@@ -9,17 +9,17 @@
 #define CSPRAY_TYPE 1
 #define CSPRAY_TEXTURE_ID 21
 
-class Cspray {
+class Cspray: public EventParticle
+{
     public:
-        struct Particle2 particle;
         int active;
         int stopped;
 
         void draw();
         void tick();
 
-        Cspray(int _id);
-        Cspray(int _id, float x, float y, float z, float vx, float vy, float vz);
+        Cspray(int id);
+        Cspray(int id, float x, float y, float z, float vx, float vy, float vz);
 };
 
 

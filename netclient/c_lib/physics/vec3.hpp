@@ -18,6 +18,7 @@ struct Vec3
 };
 
 //__attribute__((aligned (16)));
+static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 /*
     Vec3 operations
@@ -76,6 +77,27 @@ struct Vec3 vec3_scalar_mult(struct Vec3 v, float scalar)
     return v;
 }
 
+static struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar) __attribute((always_inline)); 
+
+struct Vec3 vec3_scalar_add(struct Vec3 v, float scalar)
+{
+    v.x += scalar;
+    v.y += scalar;
+    v.z += scalar;
+    return v;
+}
+
+static struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
+
+struct Vec3 vec3_add(struct Vec3 v1, struct Vec3 v2) 
+{
+    struct Vec3 v;
+    v.x = v1.x + v2.x;
+    v.y = v1.y + v2.y;
+    v.z = v1.z + v2.z;
+    return v;
+}
+
 static struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) __attribute((always_inline)); 
 
 struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec3 v4) 
@@ -84,6 +106,16 @@ struct Vec3 vec3_add4(struct Vec3 v1, struct Vec3 v2, struct Vec3 v3, struct Vec
     v.x = v1.x + v2.x + v3.x + v4.x;
     v.y = v1.y + v2.y + v3.y + v4.y;
     v.z = v1.z + v2.z + v3.z + v4.z;
+    return v;
+}
+
+static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n) __attribute((always_inline));
+
+static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
+{
+    struct Vec3 v;
+    v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
+    //v = inc - 2*(nor.inc)*nor   <<< pseudocode
     return v;
 }
 
@@ -131,7 +163,6 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
 /*
     scalar return
 */
-static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
 {
@@ -152,7 +183,12 @@ float vec3_length(struct Vec3 v)
 void vec3_print_dot(struct Vec3 v1, struct Vec3 v2);
 void vec3_print_length(struct Vec3 v);
 
+void vec3_print(struct Vec3 v);
 
+void vec3_print(struct Vec3 v)
+{
+    printf("Vec3: %0.2f %0.2f %0.2f\n", v.x, v.y, v.z);
+}
 
 void vec3_print_length(struct Vec3 v) 
 {

@@ -9,18 +9,16 @@
 #define NEUTRON_TEXTURE_ID 21 /* Not used. Texture id is dependent on energy */
 #define NEUTRON_TEXTURE_SCALE 0.3f
 
-class Neutron {
+class Neutron: public EventParticle
+{
     public:
-        Particle2 particle;
-        unsigned int event_ttl;
         int energy;
 
         void draw();
         void tick();
-        void set_energy(int _energy);
+        void set_energy(int energy);
         Neutron(int id);
         Neutron(int id, float x, float y, float z, float vx, float vy, float vz);
-        Neutron(int id, int _energy, float x, float y, float z, float vx, float vy, float vz);
 };
 
 #include <c_lib/template/object_list.hpp>
