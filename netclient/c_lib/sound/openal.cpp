@@ -36,6 +36,7 @@ static int buffer_index = 0;
 static const ALsizei MAX_SOURCES = 16;
 static ALuint sources[MAX_SOURCES];
 
+static int active_2d_sounds[MAX_SOURCES] = {-1};
 
 bool checkError()
 {
@@ -275,22 +276,6 @@ void load_sound(char* fn)
     buffer_index++;
 }
 
-int play_2d_sound(char* file)
-{
-    if (!enabled)
-        return 1;
-        
-    // get listener state
-    ALfloat x,y,z;
-    ALfloat vx,vy,vz;
-    alGetListener3f(AL_POSITION, &x, &y, &z);
-    alGetListener3f(AL_VELOCITY, &vx, &vy, &vz);
-    ALfloat o[6];
-    alGetListenerfv(AL_ORIENTATION, o);
-    // play at listener state
-    return play_3d_sound(file, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
-}
-
 int get_free_source()
 {
     ALint source_state;
@@ -313,44 +298,96 @@ int get_buffer_from_filename(char *fn)
     return -1;
 }
 
+
+int update_source_state(int id, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+{
+    alSource3f(id, AL_POSITION, x, z, y);
+    alSource3f(id, AL_VELOCITY, vx, vz, vy);
+    alSource3f(id, AL_DIRECTION, ox, oz, oy);
+    if (checkError())
+        return -1;
+    return 0;
+}
+
+void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, float *vz, float orientation[6])
+{
+    alGetListener3f(AL_POSITION, x, y, z);
+    alGetListener3f(AL_VELOCITY, vx, vy, vz);
+    alGetListenerfv(AL_ORIENTATION, orientation);
+}
+
+int play_2d_sound(char* file)
+{
+    if (!enabled)
+        return -1;
+        
+    // get listener state
+    ALfloat x,y,z;
+    ALfloat vx,vy,vz;
+    ALfloat o[6];
+    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
+    // play at listener state
+    int source_id = play_3d_sound(file, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+
+    // add sound to active sources
+    for (int i=0; i<MAX_SOURCES; i++)
+        if (active_2d_sounds[i] < 0)
+            active_2d_sounds[i] = source_id;
+    return source_id;
+}
+
 int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
-        return 1;
+        return -1;
 
     // get free source
     int source_id = get_free_source();
     if (source_id < 0)
-        return 1;
+        return -1;
         
     // lookup buffer from file
     int buffer_id = get_buffer_from_filename(file);
     if (buffer_id < 0)
-        return 1;
+        return -1;
 
     // set source state
-    alSource3f(sources[source_id], AL_POSITION, x, z, y);
-    alSource3f(sources[source_id], AL_VELOCITY, vx, vz, vy);
-    alSource3f(sources[source_id], AL_DIRECTION, ox, oz, oy);
-    if (checkError())
-        return 1;
+    if (update_source_state(sources[source_id], x,y,z, vx,vy,vz, ox,oy,oz))
+        return -1;
 
-    // Attach buffer 0 to source 
+    // Attach buffer 0 to source
     alSourcei(sources[source_id], AL_BUFFER, buffers[buffer_id]); 
     if (checkError())
-        return 1;
+        return -1;
 
     // play
     alSourcePlay(sources[source_id]);
     if (checkError())
-        return 1;
+        return -1;
 
-    return 0;
+    return source_id;
 }
 
 void update()
 {
-    // nothing?
+    // get listener state
+    ALfloat x,y,z;
+    ALfloat vx,vy,vz;
+    ALfloat o[6];
+    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
+
+    // update playing sources to listener state
+    ALint source_state;
+    for (int i=0; i<MAX_SOURCES; i++)
+    {
+        int source_id = active_2d_sounds[i];
+        if (source_id < 0) continue;
+        alGetSourcei(sources[source_id], AL_SOURCE_STATE, &source_state);
+        if (source_state != AL_PLAYING)
+            active_2d_sounds[i] = -1;
+        else    // update 2d sound
+            update_source_state(sources[source_id], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    }
 }
 
 int test()

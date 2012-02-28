@@ -379,6 +379,9 @@ collision detection on head in lateral motion
 
 Feb 27
 
+version checking in init protocol
+
+
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 ====================
@@ -436,7 +439,6 @@ POLISH TODO:
 
 for 2d sounds, update them on the listener every tick (instead of just creation)
 bring ammo down to reasonable values
-version checking in init protocol
 figure out interface for spawner selection from map icons
 color agent model more appropriately and  use team base color
 
