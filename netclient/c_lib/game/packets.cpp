@@ -3,7 +3,8 @@
 #ifdef DC_CLIENT
 #include <c_lib/chat/client.hpp>
 
-inline void TeamColor_StoC::handle(){
+inline void TeamColor_StoC::handle()
+{
     ClientState::ctf.set_team_color(team, r,g,b);
 }
 

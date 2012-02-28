@@ -47,6 +47,7 @@ static const char help_text[] =
 ;
 
 static const char disconnected_text[] = "Server not connected.";
+static const char version_mismatch_text[] = "Version mismatch. Update the client.";
 static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2f";
 static const char ping_format[] = "%dms";
@@ -62,6 +63,7 @@ static struct HudDrawSettings
     bool inventory;
     bool help;
     bool connected;
+    bool version_match;
     bool dead;
     bool fps;
     float fps_val;
@@ -92,6 +94,8 @@ void set_hud_fps_display(float fps_val)
 void update_hud_draw_settings()
 {
     hud_draw_settings.connected = NetClient::Server.connected;
+    hud_draw_settings.version_match = NetClient::Server.version_match;
+    
     hud_draw_settings.draw = input_state.hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector =
@@ -203,7 +207,7 @@ void draw_hud_textures()
 
     if (hud_draw_settings.map)
     {
-        HudMap::draw_map();
+        HudMap::draw();
     }
 
     if (hud_draw_settings.chat_input      //not actually a texture
@@ -230,6 +234,9 @@ void draw_hud_text()
         end_text_draw();
         return;
     }
+
+    //if (!hud_draw_settings.version_match)
+        //hud->version_mismatch->draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();
@@ -329,6 +336,11 @@ void HUD::init()
     disconnected->set_text((char*) disconnected_text);
     disconnected->set_color(255,10,10,255);
     disconnected->set_position(_xresf/2 - 80, _yresf/2);
+
+    version_mismatch = HudText::text_list.create();
+    version_mismatch->set_text((char*)version_mismatch_text);
+    version_mismatch->set_color(255,10,10,255);
+    version_mismatch->set_position(_xresf/2 - 80, _yresf/2 - 18);
     
     dead = HudText::text_list.create();
     dead->set_text((char*) dead_text);

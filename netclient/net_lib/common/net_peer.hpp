@@ -44,6 +44,7 @@ class NetPeer
     public:
     int client_id;
     int connected;
+    bool version_match;
     
     ENetPeer *  enet_peer;
 

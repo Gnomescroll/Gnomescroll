@@ -167,5 +167,13 @@ namespace ServerState
         init_net_server(address[0], address[1], address[2], address[3], Options::port);
         ctf.start();
     }
+
+    void send_version_to_client(int client_id)
+    {
+        version_StoC msg;
+        msg.version = DC_VERSION;
+        msg.sendToClient(client_id);
+    }
+
 }
 #endif

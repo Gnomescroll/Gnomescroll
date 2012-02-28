@@ -2,10 +2,7 @@
 
 #ifdef DC_SERVER
     #include <net_lib/global.hpp>
-
     #include <c_lib/state/server_state.hpp>
-    #include <c_lib/state/server_state.hpp>
-
     #include <c_lib/t_map/server/manager.hpp>
 #endif
 
@@ -20,6 +17,8 @@ void NetPeerManager::init(int client_id)
     }
     this->inited = true;
     this->client_id = client_id;
+
+    ServerState::send_version_to_client(client_id);
 
     Agent_state* a = ServerState::agent_list.create(client_id);
     NetServer::assign_agent_to_client(client_id, a);

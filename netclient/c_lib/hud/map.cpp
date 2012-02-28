@@ -5,7 +5,8 @@
 #include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/SDL/draw_functions.h>
 
-namespace HudMap {
+namespace HudMap
+{
 
 static int num_cells = 0;
 static unsigned char* cells = NULL;
@@ -24,44 +25,104 @@ static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface = NULL;
 
-/* Map icons */
-static GLuint spawner_icon = 0;
-static GLuint base_icon = 0;
-static GLuint flag_icon = 0;
-void init_icons()
+// COLORING ICONS:
+// load surface
+// swap pixels from base to new
+// generate texture
+// free surface
+void load_colored_icon(
+    char* fn, GLuint* texture,
+    unsigned char br, unsigned char bg, unsigned char bb,   // base color
+    unsigned char r, unsigned char g, unsigned char b       // replace with
+)
 {
-    static int inited = 0;
-    if (inited++)
+    // format path
+    const char icon_path_fmt[] = "./media/texture/icons/%s";
+    char* path = (char*)calloc(strlen(icon_path_fmt) + strlen(fn) - 2 + 1, sizeof(char));
+    sprintf(path, icon_path_fmt, fn);
+
+    // get surface
+    SDL_Surface* s = NULL;
+    s = create_surface_from_file(path);
+    if (s==NULL)
     {
-        printf("WARNING: Attempt to init map hud icons more than once.\n");
+        printf("ERROR: Failed to create surface for %s\n", path);
         return;
     }
-    printf("Init Hud Map Icons\n");
+    SDL_LockSurface(s);
+    glEnable(GL_TEXTURE_2D);
 
-    const char icon_path_fmt[] = "./media/texture/icons/%s";
-    const int ICON_FILENAME_MAX = 64;
-    char* path = (char*)calloc(strlen(icon_path_fmt) + ICON_FILENAME_MAX - 2 + 1, sizeof(char));
-    
-    char spawner_icon_filename[] = "spawner_map_icon2.png";
-    sprintf(path, icon_path_fmt, spawner_icon_filename);
-    if (create_texture_from_file(path, &spawner_icon))
-        printf("ERROR: Creating texture of %s failed.\n", path);
+    // alter surface
+    Uint32 pix;
+    Uint8 sr,sg,sb,sa;
+    for (int i=0; i<s->w*s->h; i++)
+    {
+        pix = ((Uint32*)s->pixels)[i];
+        SDL_GetRGBA(pix, s->format, &sr, &sg, &sb, &sa);
+        if (sr == br && sg == bg && sb == bb)
+            ((Uint32*)s->pixels)[i] = SDL_MapRGBA(s->format, r,g,b,sa);
+    }
+    glDisable(GL_TEXTURE_2D);
 
-    char base_icon_filename[] = "base_icon.png";
-    sprintf(path, icon_path_fmt, base_icon_filename);
-    if (create_texture_from_file(path, &base_icon))
-        printf("ERROR: Creating texture of %s failed.\n", path);
-        
-    char flag_icon_filename[] = "flag_icon.png";
-    sprintf(path, icon_path_fmt, flag_icon_filename);
-    if (create_texture_from_file(path, &flag_icon))
-        printf("ERROR: Creating texture of %s failed.\n", path);
+    // create texture
+    if (create_texture_from_surface(s, texture))
+        printf("ERROR: failed to create texture from surface for %s\n", path);
 
+    // cleanup
+    SDL_UnlockSurface(s);
+    SDL_FreeSurface(s);
     free(path);
 }
 
+/* Map icons */
+static GLuint spawner_icons[N_TEAMS] = {0};
+static GLuint base_icons[N_TEAMS] = {0};
+static GLuint flag_icons[N_TEAMS] = {0};
+void update_team_icons(int team)    // team is optional; team=0 means generate all
+{
+    char spawner_icon_filename[] = "spawner_map_icon2.png";
+    char base_icon_filename[] = "base_icon.png";
+    char flag_icon_filename[] = "flag_icon.png";
+
+    // pack filenames and icon arrays for easy looping
+    int i=0;
+    const int N_ICONS = 3;
+    char* icon_filenames[N_ICONS];
+    icon_filenames[i++] = spawner_icon_filename;
+    icon_filenames[i++] = base_icon_filename;
+    icon_filenames[i++] = flag_icon_filename;
+    i=0;
+    GLuint* icons[N_ICONS];
+    icons[i++] = spawner_icons;
+    icons[i++] = base_icons;
+    icons[i++] = flag_icons;
+
+    // base color, to replace
+    unsigned char br = 0;
+    unsigned char bg = 0;
+    unsigned char bb = 0;
+
+    if (!team)
+        for (int i=0; i<(int)N_TEAMS; i++)
+        {
+            unsigned char r,g,b;    // color to replace with
+            ClientState::ctf.get_team_color(i+1, &r, &g, &b);
+            for (int j=0; j<N_ICONS; j++)
+                load_colored_icon(icon_filenames[j], &icons[j][i], br,bg,bb, r,g,b);
+        }
+    else
+    {
+        unsigned char r,g,b;    // color to replace with
+        ClientState::ctf.get_team_color(team, &r, &g, &b);
+        for (int j=0; j<N_ICONS; j++)
+            load_colored_icon(icon_filenames[j], &icons[j][team-1], br,bg,bb, r,g,b);
+    }
+
+}
+
 // create blank surface
-void init_surface() {
+void init_surface()
+{
     printf("init: hud_map \n");
 
     const int grad_num = 4;
@@ -69,7 +130,8 @@ void init_surface() {
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
     gradient_surface = create_surface_from_file(grad_str);
-    if (gradient_surface==NULL) {
+    if (gradient_surface==NULL)
+    {
         printf("HudMap gradient surface is NULL\n");
         return;
     }
@@ -78,7 +140,8 @@ void init_surface() {
 
     /* Init blank map surface */
     map_surface = create_surface_from_nothing(width, height);
-    if (map_surface==NULL) {
+    if (map_surface==NULL)
+    {
         printf("HudMap blank surface is NULL\n");
         return;
     }
@@ -102,7 +165,8 @@ void init_surface() {
 
     /* Init blank indicator overlay surface */
     overlay_surface = create_surface_from_nothing(width, height);
-    if (overlay_surface==NULL) {
+    if (overlay_surface==NULL)
+    {
         printf("Hud indicator overlay blank surface is NULL\n");
         return;
     }
@@ -124,7 +188,7 @@ void init_surface() {
     }
     glDisable(GL_TEXTURE_2D);
 
-    init_icons();
+    update_team_icons();
 }
 
 void init_cells()
@@ -134,28 +198,27 @@ void init_cells()
 
     num_cells = n_cells;
 
-    if (!n_cells) { // no cells, free/null cells
+    if (!n_cells)
+    { // no cells, free/null cells
         free(cells);
         cells = NULL;
         return;
     }
 
     if (cells != NULL)
-    {
         cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
-    }
     else
-    {
         cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
-    }
 }
 
-void init() {
+void init()
+{
     init_surface();
     init_cells();
 }
 
-void update_heightmap() {
+void update_heightmap()
+{
     static int strip = 0;
     const int strips = 16;
     int strip_width = map_dim.x / strips;
@@ -163,26 +226,27 @@ void update_heightmap() {
     if (cells == NULL) return;
     int i,j;
     int h;
-    for (i=strip_width*strip; i < strip_width*(strip+1); i++) {
-        for (j=0; j < map_dim.y; j++) {
+    for (i=strip_width*strip; i < strip_width*(strip+1); i++)
+        for (j=0; j < map_dim.y; j++)
+        {
             h = get_height_at(i,j);
             cells[i + map_dim.x*j] = (unsigned char)2*h;
         }
-    }
 
     strip++;
     strip%=strips;
 }
 
-void update_map_surface() {
+void update_map_surface()
+{
     if (map_surface == NULL) return;
     if (cells == NULL) return;
     SDL_LockSurface(map_surface);
     
-    int i;
     Uint32 pix;
     Uint8 r,g,b,a;
-    for (i=0; i<num_cells; i++) {
+    for (int i=0; i<num_cells; i++)
+    {
         pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
         SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
         ((Uint32*)map_surface->pixels)[i] = SDL_MapRGBA(map_surface->format, b,g,r,a);
@@ -191,7 +255,8 @@ void update_map_surface() {
     SDL_UnlockSurface(map_surface);
 }
 
-void update_texture(GLuint texture, SDL_Surface* surface) {
+void update_texture(GLuint texture, SDL_Surface* surface)
+{
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -200,16 +265,15 @@ void update_texture(GLuint texture, SDL_Surface* surface) {
     glDisable(GL_TEXTURE_2D);
 }
 
-void update_overlay_surface() {
-
+void update_overlay_surface()
+{
     // blank the surface
-    int i;
-    for (i=0; i<num_cells; i++) {
+    for (int i=0; i<num_cells; i++)
         ((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
-    }
 }
 
-void update_agents() {
+void update_agents()
+{
     if (ClientState::playerAgent_state.you == NULL) return;
     int team = ClientState::playerAgent_state.you->status.team;
     if (team == 0) return;
@@ -250,7 +314,8 @@ void update_agents() {
     }
 }
 
-void update_indicators(int tex_id) {
+void update_indicators(int tex_id)
+{
 
     if (overlay_surface == NULL) return;
     SDL_LockSurface(overlay_surface);
@@ -263,7 +328,8 @@ void update_indicators(int tex_id) {
     update_texture(overlay_textures[tex_id], overlay_surface);
 }
 
-void update_terrain_map(int tex_id) {
+void update_terrain_map(int tex_id)
+{
     init_cells();   // updates cells array if map size changed
     if (cells == NULL) return;
     update_heightmap();
@@ -283,30 +349,31 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
 
 void draw_spawners(float z)
 {
-    if (!spawner_icon) return;
-    glBindTexture(GL_TEXTURE_2D, spawner_icon);
     // read all spawners
     // translate coordinates to map screen coordinate
     float sx,sy;
     const int w = 8;
     const int h = 8;
-    for (int i=0; i<ClientState::spawner_list.n_max; i++)
+    for (int team=1; team<(int)N_TEAMS+1; team++)
     {
-        Spawner* s = ClientState::spawner_list.a[i];
-        if (s == NULL) continue;
         if (ClientState::playerAgent_state.you != NULL
             && ClientState::playerAgent_state.you->status.team != 0
-            && ClientState::playerAgent_state.you->status.team != s->team)
+            && ClientState::playerAgent_state.you->status.team != team)
             continue;
-        world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
-        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        glBindTexture(GL_TEXTURE_2D, spawner_icons[team-1]);
+        for (int i=0; i<ClientState::spawner_list.n_max; i++)
+        {
+            Spawner* s = ClientState::spawner_list.a[i];
+            if (s == NULL) continue;
+            if (s->team != team) continue;
+            world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
+            draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        }
     }
 }
 
 void draw_bases(float z)
 {
-    if (!base_icon) return;
-    glBindTexture(GL_TEXTURE_2D, base_icon);
     float sx,sy;
     const int w = 8;
     const int h = 8;
@@ -319,16 +386,19 @@ void draw_bases(float z)
     Base* b;
     if (team == 0)
     {   // draw both
+        glBindTexture(GL_TEXTURE_2D, base_icons[0]);
         b = ClientState::ctf.one.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
+        glBindTexture(GL_TEXTURE_2D, base_icons[1]);
         b = ClientState::ctf.two.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
     else
     {
+        glBindTexture(GL_TEXTURE_2D, base_icons[team-1]);
         if (team == 1)
             b = ClientState::ctf.one.base;
         else if (team == 2)
@@ -341,8 +411,6 @@ void draw_bases(float z)
 
 void draw_flags(float z)
 {
-    if (!flag_icon) return;
-    glBindTexture(GL_TEXTURE_2D, flag_icon);
     float sx,sy;
     const int w = 8;
     const int h = 8;
@@ -355,16 +423,19 @@ void draw_flags(float z)
     Flag* b;
     if (team == 0)
     {   // draw both
+        glBindTexture(GL_TEXTURE_2D, flag_icons[0]);
         b = ClientState::ctf.one.flag;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
+        glBindTexture(GL_TEXTURE_2D, flag_icons[1]);
         b = ClientState::ctf.two.flag;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
     else
     {
+        glBindTexture(GL_TEXTURE_2D, flag_icons[team-1]);
         if (team == 1)
             b = ClientState::ctf.one.flag;
         else if (team == 2)
@@ -383,8 +454,8 @@ void draw_items(float z)
 }
 
 
-void draw() {
-    //  double buffered texture swap indices
+void draw()
+{   //  double buffered texture swap indices
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
     static int draw_overlay_texture_index = 0;
@@ -446,8 +517,5 @@ void teardown()
     if (cells != NULL)
         free(cells);
 }
-
-// for cython
-void draw_map() {draw();}
 
 }

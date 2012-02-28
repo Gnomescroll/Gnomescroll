@@ -790,3 +790,14 @@ class agent_conflict_notification_StoC: public FixedSizeNetPacketToClient<agent_
         }
         inline void handle();
 };
+
+class version_StoC: public FixedSizeReliableNetPacketToClient<version_StoC>
+{
+    public:
+        int version;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u32(&version, buff, buff_n, pack);
+        }
+        inline void handle();
+};
