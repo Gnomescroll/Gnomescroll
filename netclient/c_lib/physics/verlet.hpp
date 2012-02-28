@@ -76,5 +76,6 @@ namespace Verlet
     
     //int* move(Vec3* v, float damp);
     bool bounce(VerletParticle* v, float damp);
+    int* bounce(VerletParticle* v, int* collision, int* tile, float damp);
 }
 

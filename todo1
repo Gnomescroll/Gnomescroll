@@ -457,3 +457,5 @@ client side predicted (dont wait for create) [PROBLEM: id syncs]
 
 PHYSICS:
 verlet integrator
+
+bell when players join server

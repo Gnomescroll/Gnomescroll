@@ -15,10 +15,9 @@ namespace Verlet
         // check collision over interval
         
         // if interval < 1: bounce
-        // truncate next state by interval
-        // 2 ways;
-        // A: partial dt (might need time corrected verlet)
-        // B: freeze position at collision point, reflect velocity
+        // recompute delta with fractional interval (introduces minor inaccuracies)
+        // reflect
+        // dampen
 
         bool bounced = false;
         
@@ -41,6 +40,28 @@ namespace Verlet
         }
         
         return bounced;
+    }
+
+    int* bounce(VerletParticle* v, int* collision, int* tile, float damp)
+    {   // same as simple bounce, but gets extra metadata on the bounce
+        v->compute();
+
+        float interval = 0.0f;
+        int *s = _ray_cast5_capped(
+            v->old_p.x, v->old_p.y, v->old_p.z,
+            v->p.x, v->p.y, v->p.z,
+            &interval, collision, tile
+        );
+
+        if (interval < 1.0f)
+        {   // collision
+            v->recompute(interval);
+            Vec3 norm = vec3_init(s[0], s[1], s[2]);
+            v->v = vec3_reflect(v->v, norm);
+            v->v = vec3_scalar_mult(v->v, damp);
+        }
+        
+        return s;
     }
 
 }
