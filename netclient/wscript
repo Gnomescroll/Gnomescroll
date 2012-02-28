@@ -486,7 +486,7 @@ def openal(ctx):
     #ctx.env.CXXFLAGS.append('-fbounds-checking')
 
 def linux(ctx):
-    production(ctx, add=['-march=i386', '-shared-libgcc'])
+    production(ctx, add=['-shared-libgcc'])
 
 def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
