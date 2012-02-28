@@ -67,9 +67,14 @@ class FrameGraph
 		//CPU
 		//flip length
 		//wait
+
+		//int total = _frame_end[index] - _frame_start[index];
+
 		int t1 = _frame_flip_start[index] - _frame_start[index];
 		int t2 = _frame_wait_start[index] - _frame_flip_start[index];
 		int t3 = _frame_end[index] - _frame_wait_start[index];
+
+		//printf("%i: %i %i %i \n", total, t1,t2,t3);
 
 		if(t1 < 0 || t1 > 64)
 		{
@@ -96,7 +101,7 @@ class FrameGraph
 		}
 
 		for(int i=0; i< 64; i++) ts->set_pixel(index, i, 0, 0,0, 0);
-		int i = 0;
+
 
 	/*
 		R> loop up to flip
@@ -104,9 +109,42 @@ class FrameGraph
 		B> time waiting
 
 	*/
-		while(++i < t1) ts->set_pixel(index, i, 255, 0,0, 255);
-		while(++i < t1+t2) ts->set_pixel(index, i, 0, 255,0, 255);
-		while(++i < t1+t2+t3) ts->set_pixel(index, i, 0, 0,255, 255);
+
+		int i = 0;
+
+		int j;
+
+		j=0;
+		while(j < t1)
+		{
+			ts->set_pixel(index, i, 255, 0,0, 255);
+			j++;
+			i++;
+		}
+
+		j=0;
+		while(j < t2)
+		{
+			ts->set_pixel(index, i, 0, 255,0, 255);
+			j++;
+			i++;
+		}
+
+		j=0;
+		while(j < t3)
+		{
+			ts->set_pixel(index, i, 0, 0,255, 255);
+			j++;
+			i++;
+		}
+		while(i < 64)
+		{
+			ts->set_pixel(index, i, 0, 0,0, 0);
+			i++;
+		}
+		//while(++i < t1) ts->set_pixel(index, i, 255, 0,0, 255);
+		//while(++i < t1+t2) ts->set_pixel(index, i, 0, 255,0, 255);
+		//while(++i < t1+t2+t3) ts->set_pixel(index, i, 0, 0,255, 255);
 	}
 
 	void draw(int x, int y)

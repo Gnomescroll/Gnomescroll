@@ -105,10 +105,12 @@ class Texture_surface
 
 		const float z = -0.4;
 
+		const float scale = 4.0;
+
 	    float x0 = x;
-	    float x1 = x+xdim;
+	    float x1 = x+scale*xdim;
 	    float y0 = y;
-	    float y1 = y+ydim;
+	    float y1 = y+scale*ydim;
 
 	    glBegin(GL_QUADS);
 
@@ -147,7 +149,7 @@ class Texture_surface
 		for(int i = 0; i < xdim*ydim; i++) pixels[i].color = 0;
 		needs_update = true;
 	}
-	
+
 	void set_pixel(int x, int y, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 	{
 		needs_update = true;
