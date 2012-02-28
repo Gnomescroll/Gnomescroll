@@ -290,7 +290,7 @@ static inline void rk4_step(struct State* initial, struct State* final, struct S
      step_inter->v.z = initial->v.z + old->v.z*dt;
 
     final->p = step_inter->v;
-    rk4_accelerate(step_inter, dt/(1/(FPS*RK4_STEPS)));
+    rk4_accelerate(step_inter, dt);
     final->v = step_inter->v;
 }
 

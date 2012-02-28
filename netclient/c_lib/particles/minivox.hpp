@@ -17,7 +17,8 @@ float minivox_size = 0.05f;
 
 #define MINIVOX_DRAW_MODE_TEXTURED 1
 
-class Minivox {
+class Minivox: public CParticle
+{
     public:
         float theta, phi;
         float dtheta, dphi;
@@ -26,8 +27,6 @@ class Minivox {
         void spin();
 
         unsigned char r,g,b,a;
-
-        Particle2 particle;
 
         float size;
 
@@ -38,7 +37,6 @@ class Minivox {
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_orientation(float theta, float phi);
-        void set_ttl(int ttl);
         void set_size(float size);
         void set_angles(float theta, float phi);
 

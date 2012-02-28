@@ -1,10 +1,53 @@
 #pragma once
 
 #include <c_lib/physics/common.hpp>
+#include <c_lib/physics/verlet.hpp>
+
+using Verlet::VerletParticle;
+
+class CParticle
+{
+    public:
+        int id;
+        int ttl;
+        int ttl_max;
+        int type;
+
+        VerletParticle* vp;
+
+        void set_ttl(int ttl)
+        {
+            this->ttl = ttl;
+        }
+
+
+    CParticle(int id, float x, float y, float z, float vx, float vy, float vz)
+    :
+    id(id),
+    ttl(0)
+    {
+        vp = new VerletParticle(x,y,z,vx,vy,vz);
+    }
+
+    ~CParticle()
+    {
+        delete vp;
+    }
+};
+
+class CEventParticle: public CParticle
+{
+    public:
+        int event_ttl;
+
+    CEventParticle(int id, float x, float y, float z, float vx, float vy, float vz)
+    :
+    CParticle(id, x,y,z,vx,vy,vz)
+    {}
+};
 
 struct Particle {
-    int id; // WTF
-    //unsigned int id;
+    int id;
     float x,y,z;
     float vx,vy,vz;
     int ttl;

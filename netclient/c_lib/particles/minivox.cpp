@@ -17,23 +17,27 @@
 
 Minivox::Minivox(int id)
 :
+CParticle(id, 0,0,0,0,0,0),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(minivox_size), draw_mode(0), texture_pixel_width(2)
 {
-    create_particle2(&particle, id, MINIVOX_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, MINIVOX_TTL);
+    this->ttl_max = MINIVOX_TTL;
+    this->type = MINIVOX_TYPE;
     orient_vectors();
 }
 
 Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz)
 :
+CParticle(id, x,y,z, vx,vy,vz),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
 size(minivox_size), draw_mode(0), texture_pixel_width(2)
 {
-    create_particle2(&particle, id, MINIVOX_TYPE, x,y,z,vx,vy,vz, 0, MINIVOX_TTL);
+    this->ttl_max = MINIVOX_TTL;
+    this->type = MINIVOX_TYPE;
     orient_vectors();
 }
 
@@ -77,9 +81,6 @@ void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b, unsig
     this->a = a;
 }
 
-void Minivox::set_ttl(int ttl) {
-    particle.ttl = ttl;
-}
 void Minivox::set_size(float size) {
     this->size = size;
 }
@@ -149,9 +150,10 @@ void Minivox::set_texture(int tex_id, int pixels_wide) {
 }
 
 void Minivox::tick() {
-    bounce_simple_rk4(&particle, MINIVOX_DAMP);
+    //bounce_simple_rk4(&particle, MINIVOX_DAMP);
+    Verlet::bounce(vp, MINIVOX_DAMP);
     this->spin();
-    particle.ttl++;
+    this->ttl++;
 }
 
 /* Minivox list */
@@ -161,8 +163,8 @@ void Minivox_list::tick() {
     for (i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
+        if (a[i]->ttl >= a[i]->ttl_max) {
+            destroy(a[i]->id);
         }
     }
 }
@@ -207,9 +209,9 @@ void Minivox::draw_colored() {
     if(this->a == 0) return;
 
     const float
-        x0 = particle.state.p.x,
-        y0 = particle.state.p.y,
-        z0 = particle.state.p.z;
+        x0 = this->vp->p.x,
+        y0 = this->vp->p.y,
+        z0 = this->vp->p.z;
 
     if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 
@@ -246,9 +248,9 @@ void Minivox::draw_textured() {
     if(this->a == 0) return;
 
     const float
-        x0 = particle.state.p.x,
-        y0 = particle.state.p.y,
-        z0 = particle.state.p.z;
+        x0 = this->vp->p.x,
+        y0 = this->vp->p.y,
+        z0 = this->vp->p.z;
 
     if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 

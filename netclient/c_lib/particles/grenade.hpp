@@ -1,12 +1,13 @@
 #pragma once
 
 #include <physics/common.hpp>
+#include <physics/verlet.hpp>
 
 
 /* These should be pulled from a dat or something */
 #define GRENADE_MAX 1024
 #define GRENADE_TTL 100
-#define GRENADE_DAMP 0.3f
+#define GRENADE_DAMP 0.5f
 #define GRENADE_TYPE 1
 #define GRENADE_TEXTURE_ID 5
 #define GRENADE_TEXTURE_SCALE 1.0f
@@ -16,17 +17,52 @@
 #define GRENADE_SPLASH_DAMAGE 65
 #define GRENADE_BLOCK_DAMAGE 32
 
+using Verlet::VerletParticle;
+
 class grenade_StoC;     // forward decl
 
-class Grenade {
+//class Grenade {
+    //private:
+        //int bounce_count;
+    //public:
+        //int id;
+        //int ttl;
+        //int ttl_max;
+        //int type;
+        //int owner;  // agent_id
+
+        //VerletParticle* vp;
+
+        //void draw();
+        //void tick();
+        //void set_ttl(int ttl);
+
+        //void explode();
+
+        //int block_damage(int dist);
+        //void damage_blocks();
+
+        //void create_message(grenade_StoC* msg);
+
+        //Grenade(int id);
+        //Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
+        //~Grenade();
+//};
+
+class Grenade: public CParticle {
     private:
         int bounce_count;
     public:
-        struct Particle2 particle;
+        //int id;
+        //int ttl;
+        //int ttl_max;
+        //int type;
         int owner;  // agent_id
+
+        //VerletParticle* vp;
+
         void draw();
         void tick();
-        void set_ttl(int ttl);
 
         void explode();
 

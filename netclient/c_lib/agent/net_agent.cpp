@@ -789,8 +789,8 @@ inline void ThrowGrenade_CtoS::handle()
     n[0] = vx;
     n[1] = vy;
     n[2] = vz;
-    //normalize_vector(n);
-    static const float GRENADE_VEL = 19.0f; // load from dat later
+    normalize_vector(n);
+    static const float GRENADE_VEL = 15.0f; // load from dat later
     //create grenade
     n[0] *= GRENADE_VEL;
     n[1] *= GRENADE_VEL;

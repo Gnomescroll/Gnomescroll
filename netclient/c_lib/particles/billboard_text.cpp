@@ -34,13 +34,9 @@ projection_type(Billboard::DEFAULT)
 void BillboardText::tick()
 {
     if (this->gravity)
-    {
         bounce_simple_rk4(&this->particle, BILLBOARD_TEXT_DAMP);
-    }
     if (this->particle.ttl >= 0)
-    {
         this->particle.ttl++;
-    }
 }
 
 

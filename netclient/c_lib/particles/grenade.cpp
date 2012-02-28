@@ -54,18 +54,19 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 inline void grenade_StoC::handle() {
     #ifdef DC_CLIENT
     Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, vx, vy, vz);
-    g->particle.ttl_max = (int)ttl_max;
-    g->particle.type = (int)type;
+    g->ttl_max = (int)ttl_max;
+    g->type = (int)type;
     #endif
 }
 
 Grenade::Grenade(int id)
 :
+CParticle(id, 0,0,0,0,0,0),
 bounce_count(0),
 owner(-1)
 {
-    create_particle2(&particle, id, GRENADE_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, GRENADE_TTL);
-                   // particle, _id,      type,      x,y,z,         vx,vy,vz,   ttl,  ttl_max
+    this->ttl_max = GRENADE_TTL;
+    this->type = GRENADE_TYPE;
     #ifdef DC_SERVER
     grenade_StoC msg;
     this->create_message(&msg);
@@ -75,11 +76,12 @@ owner(-1)
 
 Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz)
 :
+CParticle(id, x,y,z,vx,vy,vz),
 bounce_count(0),
 owner(-1)
 {
-    create_particle2(&particle, id, GRENADE_TYPE, x,y,z,vx,vy,vz, 0, GRENADE_TTL);
-                   // particle, _id,      type,   x,y,z vx,vy,vz, ttl, ttl_max
+    this->ttl_max = GRENADE_TTL;
+    this->type = GRENADE_TYPE;
     #ifdef DC_SERVER
     grenade_StoC msg;
     this->create_message(&msg);
@@ -90,49 +92,45 @@ owner(-1)
 Grenade::~Grenade()
 {
     #ifdef DC_CLIENT
-    float x,y,z;
-    x = particle.state.p.x;
-    y = particle.state.p.y;
-    z = particle.state.p.z;
-    Sound::grenade_explode(x,y,z, 0,0,0);
+    Sound::grenade_explode(
+        this->vp->p.x, this->vp->p.y, this->vp->p.z,
+        0,0,0
+    );
     #endif
 }
 
 void Grenade::create_message(grenade_StoC* msg)
 {
-    msg->x = this->particle.state.p.x;
-    msg->y = this->particle.state.p.y;
-    msg->z = this->particle.state.p.z;
-    msg->vx = this->particle.state.v.x;
-    msg->vy = this->particle.state.v.y;
-    msg->vz = this->particle.state.v.z;
-    msg->ttl_max = this->particle.ttl_max;
-    msg->id = this->particle.id;
-    msg->type = this->particle.type;
+    msg->x = this->vp->p.x;
+    msg->y = this->vp->p.y;
+    msg->z = this->vp->p.z;
+    msg->vx = this->vp->v.x;
+    msg->vy = this->vp->v.y;
+    msg->vz = this->vp->v.z;
+    msg->ttl_max = this->ttl_max;
+    msg->id = this->id;
+    msg->type = this->type;
 }
 
 void Grenade::tick() {
-    int bounced = bounce_simple_rk4(&particle, GRENADE_DAMP);
-    
+
+    //int bounced = bounce_simple_rk4(&particle, GRENADE_DAMP);
+    bool bounced = Verlet::bounce(this->vp, GRENADE_DAMP);
     if (bounced)
     {
         bounce_count++;
         #ifdef DC_CLIENT
         Sound::grenade_bounce(
-            particle.state.p.x,
-            particle.state.p.y,
-            particle.state.p.z,
+            this->vp->p.x,
+            this->vp->p.y,
+            this->vp->p.z,
             0,0,0
         );
         #endif
     }
     if (bounce_count==GRENADE_BOUNCE_EXPLODE_LIMIT)
-        particle.ttl = particle.ttl_max;
-    particle.ttl++;
-}
-
-void Grenade::set_ttl(int ttl) {
-    particle.ttl = ttl;
+        this->ttl = this->ttl_max;
+    this->ttl++;
 }
 
 void Grenade::draw() {
@@ -157,7 +155,8 @@ void Grenade::draw() {
     ty_min = (float)(GRENADE_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    //x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
+    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
 
     glTexCoord2f(tx_min,ty_max );
     glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
@@ -176,12 +175,12 @@ void Grenade::draw() {
 void Grenade::explode()
 {
 #ifdef DC_CLIENT
-    Animations::grenade_explode(particle.state.p.x, particle.state.p.y, particle.state.p.z);
+    Animations::grenade_explode(this->vp->p.x, this->vp->p.y, this->vp->p.z);
 #endif
 
 #ifdef DC_SERVER
     ServerState::damage_objects_within_sphere(
-        particle.state.p.x, particle.state.p.y, particle.state.p.z,
+        this->vp->p.x, this->vp->p.y, this->vp->p.z,
         GRENADE_DAMAGE_RADIUS,
         GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE
     );
@@ -200,9 +199,9 @@ int Grenade::block_damage(int dist) {
 
 void Grenade::damage_blocks() {
 #ifdef DC_SERVER
-    float x = particle.state.p.x;
-    float y = particle.state.p.y;
-    float z = particle.state.p.z;
+    float x = this->vp->p.x;
+    float y = this->vp->p.y;
+    float z = this->vp->p.z;
 
     int ir = GRENADE_BLOCK_DESTROY_RADIUS;
 
@@ -259,9 +258,9 @@ void Grenade_list::tick() {
         if (a[i] == NULL) continue;
         a[i]->tick();
 
-        if(a[i]->particle.ttl >= a[i]->particle.ttl_max) {
+        if(a[i]->ttl >= a[i]->ttl_max) {
             a[i]->explode();
-            destroy(a[i]->particle.id);
+            destroy(a[i]->id);
             num--;
         }
     }
@@ -299,9 +298,9 @@ void Grenade_list::draw() {
 
 inline void print_grenade(Grenade *g) {
     printf("Print Grenade -\n");
-    printf("ID: %d\n", g->particle.id);
-    printf("Pos: %0.2f %0.2f %0.2f\n", g->particle.state.p.x, g->particle.state.p.y, g->particle.state.p.z);
-    printf("Vel: %0.2f %0.2f %0.2f\n", g->particle.state.v.x, g->particle.state.v.y, g->particle.state.v.z);
-    printf("TTL max: %d\n", g->particle.ttl_max);
-    printf("Type: %d\n", g->particle.type);
+    printf("ID: %d\n", g->id);
+    printf("Pos: %0.2f %0.2f %0.2f\n", g->vp->p.x, g->vp->p.y, g->vp->p.z);
+    printf("Vel: %0.2f %0.2f %0.2f\n", g->vp->v.x, g->vp->v.y, g->vp->v.z);
+    printf("TTL max: %d\n", g->ttl_max);
+    printf("Type: %d\n", g->type);
 }

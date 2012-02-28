@@ -384,6 +384,7 @@ version checking in init protocol
 update 2d sounds to listener state every tick (so they are actually 3d)
 for 2d sounds, update them on the listener every tick (instead of just creation)
 
+tweaked rk4 -- bugged, bad
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
