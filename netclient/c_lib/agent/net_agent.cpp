@@ -785,12 +785,17 @@ inline void ThrowGrenade_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    static const float grenade_vel = 22.0f; // load from dat later
-    vx *= grenade_vel;
-    vy *= grenade_vel;
-    vz *= grenade_vel;
+    float n[3];
+    n[0] = vx;
+    n[1] = vy;
+    n[2] = vz;
+    //normalize_vector(n);
+    static const float GRENADE_VEL = 19.0f; // load from dat later
     //create grenade
-    Grenade* g = ServerState::grenade_list.create(x,y,z, vx,vy,vz);
+    n[0] *= GRENADE_VEL;
+    n[1] *= GRENADE_VEL;
+    n[2] *= GRENADE_VEL;
+    Grenade* g = ServerState::grenade_list.create(x,y,z, n[0], n[1], n[2]);
     if (g==NULL) return;
     g->owner = a->id;
 }

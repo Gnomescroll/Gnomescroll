@@ -1,5 +1,7 @@
 #include "common.hpp"
 
+const int RK4_STEPS = 4;
+
 static inline void _adjust_vel(struct Particle* p, int* rot, int adj) {
     if(rot[0] != 0 ) {
         p->vx *= adj;
@@ -137,7 +139,7 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, dt);
+    rk4(motion_inter, dt, RK4_STEPS);
 
     float interval;
     int* s;
@@ -148,7 +150,7 @@ int* move_simple_rk4(struct Particle2* p, float damp) {
     if (interval >= dt) {
         p->state = *motion_inter;
     } else {
-        rk4(&(p->state), interval);
+        rk4(&(p->state), interval, RK4_STEPS);
     }
     
 
@@ -167,7 +169,7 @@ bool bounce_simple_rk4(struct Particle2* p, float damp) {
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, dt);
+    rk4(motion_inter, dt, RK4_STEPS);
 
     float interval = 0.0f;
     int *s = _ray_cast4(
@@ -181,7 +183,7 @@ bool bounce_simple_rk4(struct Particle2* p, float damp) {
     } else {
         // collision
         bounced = true;
-        rk4(&(p->state), interval);
+        rk4(&(p->state), interval, RK4_STEPS);
         struct Vector norm = {(float)s[0], (float)s[1], (float)s[2]};
         struct Vector v = reflect(&(p->state.v), &norm);
         p->state.v = *(mult_vec_scalar(&v, damp));
@@ -191,7 +193,6 @@ bool bounce_simple_rk4(struct Particle2* p, float damp) {
 }
 
 int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float damp) {
-
 
     float dt = 1.0f;
 
@@ -204,7 +205,7 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     motion_inter->v.z = p->state.v.z;
 
     /* integrate */
-    rk4(motion_inter, dt);
+    rk4(motion_inter, dt, RK4_STEPS);
 
     float interval;
     int* s;
@@ -220,7 +221,7 @@ int* bounce_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, flo
     if (interval >= dt) { // no collision
         p->state = *motion_inter;
     } else {            // collided interval%. integrate this amount
-        rk4(&(p->state), interval);
+        rk4(&(p->state), interval, RK4_STEPS);
     }
     
     return s;
@@ -238,7 +239,7 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
     motion_inter->v.y = p->state.v.y;
     motion_inter->v.z = p->state.v.z;
 
-    rk4(motion_inter, dt);
+    rk4(motion_inter, dt, RK4_STEPS);
 
     float interval;
     int* s;
@@ -249,7 +250,7 @@ int* move_collide_tile_rk4(struct Particle2* p, int* collision, int* tile, float
     if (interval >= dt) {
         p->state = *motion_inter;
     } else {
-        rk4(&(p->state), interval);
+        rk4(&(p->state), interval, RK4_STEPS);
     }
 
     return s;
@@ -263,17 +264,16 @@ static inline void rk4_accelerate(struct State* inter, float dt) {
 
     //const float air_resist = 1.0f;
     //const float spring = 0.1f;
-    const float gravity = 28.0f * 30.0f;
-    //const float gravity = 9.8f * 2.0f;
+    //const float gravity = 28.0f * 30.0f;
+    const float gravity = 9.8f*dt;
     //printf("final g %0.2f\n", gravity*dt);
-    inter->v.z -= gravity * dt;
-    //inter->v.z -= gravity * dt; /* This is too fucking slow!! The ball does not drop */
+    inter->v.z -= gravity;
 
     ////inter->v.x -= spring * inter->p.x;
     ////inter->v.y -= spring * inter->p.y;
     ////inter->v.z -= spring * (inter->p.z * inter->p.z);
 
-    //inter->v.x *= air_resist;
+    //inter->v.x *= air_resist;ddddddddd
     //inter->v.y *= air_resist;
     //inter->v.z *= air_resist;
 }
@@ -290,8 +290,8 @@ static inline void rk4_step(struct State* initial, struct State* final, struct S
      step_inter->v.z = initial->v.z + old->v.z*dt;
 
     final->p = step_inter->v;
-     rk4_accelerate(step_inter, dt);
-     final->v = step_inter->v;
+    rk4_accelerate(step_inter, dt/(1/(FPS*RK4_STEPS)));
+    final->v = step_inter->v;
 }
 
 static inline void rk4_step0(struct State* initial, struct State* final) {
@@ -302,10 +302,9 @@ static inline void rk4_step0(struct State* initial, struct State* final) {
     rk4_accelerate(final, 0.0f);
 }
 
-void rk4(struct State* state, float dt)
+// dont use!! bad!!
+static void rk4_single(struct State* state, float dt)
 {
-    dt /= FPS;
-    
     rk4_step0(state, &derivatives[0]);
     rk4_step(state, &derivatives[1], &derivatives[0], dt*0.5f);
     rk4_step(state, &derivatives[2], &derivatives[1], dt*0.5f);
@@ -326,6 +325,14 @@ void rk4(struct State* state, float dt)
     state->v.x = state->v.x + dvxdt * dt;
     state->v.y = state->v.y + dvydt * dt;
     state->v.z = state->v.z + dvzdt * dt;
+}
+
+void rk4(struct State* state, float dt, int steps)
+{
+    dt = 1/FPS;
+    for (int i=0; i<steps; i++)
+        rk4_single(state, dt/steps);
+    
 }
 
 bool cube_intersects(

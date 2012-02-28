@@ -381,6 +381,9 @@ Feb 27
 
 version checking in init protocol
 
+update 2d sounds to listener state every tick (so they are actually 3d)
+for 2d sounds, update them on the listener every tick (instead of just creation)
+
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
@@ -437,7 +440,6 @@ scripts to push linux build + instructions to gnomescroll.com
 ==================
 POLISH TODO:
 
-for 2d sounds, update them on the listener every tick (instead of just creation)
 bring ammo down to reasonable values
 figure out interface for spawner selection from map icons
 color agent model more appropriately and  use team base color
