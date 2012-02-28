@@ -82,6 +82,10 @@
 #include <c_lib/animations/hitscan.cpp>
 #include <c_lib/animations/hitscan_laser.cpp>
 
+/* Profiling */
+
+#include <c_lib/common/profiling/texture_surface.cpp>
+
 /* map */
 
 #include <c_lib/t_map/t_map_class.cpp>
