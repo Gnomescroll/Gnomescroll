@@ -229,8 +229,8 @@ void Map_manager::update()
     int imin = MY_MAX(_xpos - _SUB_RADIUS, 0);
     int jmin = MY_MAX(_ypos - _SUB_RADIUS, 0);
 
-    int imax = MY_MIN( _xpos + _SUB_RADIUS, xchunk_dim-1);
-    int jmax = MY_MIN( _ypos + _SUB_RADIUS, ychunk_dim-1);
+    int imax = MY_MIN( _xpos + _SUB_RADIUS, xchunk_dim);
+    int jmax = MY_MIN( _ypos + _SUB_RADIUS, ychunk_dim);
 
     int SUB_RADIUS2 = SUB_RADIUS*SUB_RADIUS;
 
