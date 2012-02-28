@@ -1,6 +1,6 @@
 #pragma once
 
-#include <physics/common.hpp>
+#include <particles/particles.hpp>
 
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300
@@ -19,7 +19,7 @@ namespace Billboard {
     Projection DEFAULT = AXIS_ALIGNED;
 }
 
-class BillboardText: public CParticle
+class BillboardText: public Particle
 {
     public:
         unsigned char r,g,b,a;

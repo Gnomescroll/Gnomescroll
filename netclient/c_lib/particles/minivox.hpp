@@ -17,7 +17,7 @@ float minivox_size = 0.05f;
 
 #define MINIVOX_DRAW_MODE_TEXTURED 1
 
-class Minivox: public CParticle
+class Minivox: public Particle
 {
     public:
         float theta, phi;

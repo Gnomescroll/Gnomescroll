@@ -10,22 +10,24 @@
 
 Cspray::Cspray(int id)
 :
-CEventParticle(id, 0,0,0,0,0,0),
+EventParticle(id, 0,0,0,0,0,0),
 active(0),
 stopped(0)
 {
     this->ttl_max = CSPRAY_TTL;
     this->type = CSPRAY_TYPE;
+    this->event_ttl = 1;
 }
 
 Cspray::Cspray(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-CEventParticle(id, x,y,z,vx,vy,vz),
+EventParticle(id, x,y,z,vx,vy,vz),
 active(0),
 stopped(0)
 {
     this->ttl_max = CSPRAY_TTL;
     this->type = CSPRAY_TYPE;
+    this->event_ttl = 1;
 }
 
 void Cspray::tick() {

@@ -9,7 +9,7 @@
 #define CSPRAY_TYPE 1
 #define CSPRAY_TEXTURE_ID 21
 
-class Cspray: public CEventParticle
+class Cspray: public EventParticle
 {
     public:
         int active;

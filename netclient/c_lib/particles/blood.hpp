@@ -10,7 +10,7 @@
 #define BLOOD_TEXTURE_SCALE 0.1f
 
 
-class Blood: public CParticle
+class Blood: public Particle
 {
     public:
         void draw();

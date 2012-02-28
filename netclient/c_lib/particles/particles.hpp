@@ -5,7 +5,7 @@
 
 using Verlet::VerletParticle;
 
-class CParticle
+class Particle
 {
     public:
         int id;
@@ -15,67 +15,16 @@ class CParticle
 
         VerletParticle* vp;
 
-        void set_ttl(int ttl)
-        {   // set to a negative number for no timeout
-            this->ttl = ttl;
-        }
+        void set_ttl(int ttl);
 
-
-    CParticle(int id, float x, float y, float z, float vx, float vy, float vz)
-    :
-    id(id),
-    ttl(0)
-    {
-        vp = new VerletParticle(x,y,z,vx,vy,vz);
-    }
-
-    ~CParticle()
-    {
-        delete vp;
-    }
+        Particle(int id, float x, float y, float z, float vx, float vy, float vz);
+        ~Particle();
 };
 
-class CEventParticle: public CParticle
+class EventParticle: public Particle
 {
     public:
         int event_ttl;
 
-    CEventParticle(int id, float x, float y, float z, float vx, float vy, float vz)
-    :
-    CParticle(id, x,y,z,vx,vy,vz)
-    {}
+        EventParticle(int id, float x, float y, float z, float vx, float vy, float vz);
 };
-
-struct Particle {
-    int id;
-    float x,y,z;
-    float vx,vy,vz;
-    int ttl;
-    int ttl_max;
-    int type;
-};
-
-struct Particle2 {
-    unsigned int id;
-    struct State state;
-    int ttl;
-    int ttl_max;
-    int type;
-};
-
-struct EventParticle {
-    struct Particle particle;
-    int event_ttl;
-};
-
-struct EventParticle2 {
-    struct Particle2 particle;
-    int event_ttl;
-};
-
-void create_particle(struct Particle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
-void create_particle2(struct Particle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max);
-void create_event_particle(struct EventParticle* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
-void create_event_particle2(struct EventParticle2* p, unsigned int id, int type, float x, float y, float z, float vx, float vy, float vz, int ttl, int ttl_max, int event_ttl);
-
-void set_particle2_state(struct Particle2* p, float x, float y, float z, float vx, float vy, float vz);

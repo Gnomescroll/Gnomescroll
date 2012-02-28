@@ -17,7 +17,7 @@
 
 Minivox::Minivox(int id)
 :
-CParticle(id, 0,0,0,0,0,0),
+Particle(id, 0,0,0,0,0,0),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
@@ -30,7 +30,7 @@ size(minivox_size), draw_mode(0), texture_pixel_width(2)
 
 Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-CParticle(id, x,y,z, vx,vy,vz),
+Particle(id, x,y,z, vx,vy,vz),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),

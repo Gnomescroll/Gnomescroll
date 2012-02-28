@@ -21,45 +21,12 @@ using Verlet::VerletParticle;
 
 class grenade_StoC;     // forward decl
 
-//class Grenade {
-    //private:
-        //int bounce_count;
-    //public:
-        //int id;
-        //int ttl;
-        //int ttl_max;
-        //int type;
-        //int owner;  // agent_id
-
-        //VerletParticle* vp;
-
-        //void draw();
-        //void tick();
-        //void set_ttl(int ttl);
-
-        //void explode();
-
-        //int block_damage(int dist);
-        //void damage_blocks();
-
-        //void create_message(grenade_StoC* msg);
-
-        //Grenade(int id);
-        //Grenade(int id, float x, float y, float z, float vx, float vy, float vz);
-        //~Grenade();
-//};
-
-class Grenade: public CParticle {
+class Grenade: public Particle
+{
     private:
         int bounce_count;
     public:
-        //int id;
-        //int ttl;
-        //int ttl_max;
-        //int type;
         int owner;  // agent_id
-
-        //VerletParticle* vp;
 
         void draw();
         void tick();

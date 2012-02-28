@@ -10,7 +10,7 @@
 
 BillboardText::BillboardText(int id)
 :
-CParticle(id, 0,0,0,0,0,0),
+Particle(id, 0,0,0,0,0,0),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -23,7 +23,7 @@ projection_type(Billboard::DEFAULT)
 
 BillboardText::BillboardText(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-CParticle(id, x,y,z, vx,vy,vz),
+Particle(id, x,y,z, vx,vy,vz),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),

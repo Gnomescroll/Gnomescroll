@@ -61,7 +61,7 @@ inline void grenade_StoC::handle() {
 
 Grenade::Grenade(int id)
 :
-CParticle(id, 0,0,0,0,0,0),
+Particle(id, 0,0,0,0,0,0),
 bounce_count(0),
 owner(-1)
 {
@@ -76,7 +76,7 @@ owner(-1)
 
 Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-CParticle(id, x,y,z,vx,vy,vz),
+Particle(id, x,y,z,vx,vy,vz),
 bounce_count(0),
 owner(-1)
 {
@@ -114,7 +114,6 @@ void Grenade::create_message(grenade_StoC* msg)
 
 void Grenade::tick() {
 
-    //int bounced = bounce_simple_rk4(&particle, GRENADE_DAMP);
     bool bounced = Verlet::bounce(this->vp, GRENADE_DAMP);
     if (bounced)
     {
@@ -155,7 +154,6 @@ void Grenade::draw() {
     ty_min = (float)(GRENADE_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    //x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
     x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
 
     glTexCoord2f(tx_min,ty_max );

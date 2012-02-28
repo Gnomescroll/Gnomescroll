@@ -12,49 +12,52 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/defines.h>
 
-Neutron::Neutron(int id) {
-    create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);
-    energy = 1;
-    event_ttl = 1;
-}
-
-Neutron::Neutron(int id, float x, float y, float z, float vx, float vy, float vz) {
-    create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);
-    event_ttl = 1;
+Neutron::Neutron(int id)
+:
+EventParticle(id, 0,0,0,0,0,0)
+{
+    this->ttl_max = NEUTRON_TTL;
+    this->type = NEUTRON_TYPE;
+    this->event_ttl = 1;
     energy = rand() % 3 + 1;
-    if (energy == 3) {
-        event_ttl = 150;
-    }
+    if (energy == 3)
+        this->event_ttl = 150;
 }
 
-/* Can't be accessed via Object_list without adding a create() method with this type sig */
-Neutron::Neutron(int id, int _energy, float x, float y, float z, float vx, float vy, float vz) {
-    create_particle2(&particle, (unsigned int)id, NEUTRON_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, NEUTRON_TTL);
-    event_ttl = 1;
-    energy = _energy;
-    if (energy == 3) {
-        event_ttl = 150;
-    }
+Neutron::Neutron(int id, float x, float y, float z, float vx, float vy, float vz)
+:
+EventParticle(id, x,y,z, vx,vy,vz)
+{
+    this->ttl_max = NEUTRON_TTL;
+    this->type = NEUTRON_TYPE;
+    this->event_ttl = 1;
+    energy = rand() % 3 + 1;
+    if (energy == 3)
+        this->event_ttl = 150;
 }
 
-void Neutron::set_energy(int _energy) {
-    energy = _energy;
+void Neutron::set_energy(int energy)
+{
+    this->energy = energy;
 }
 
-void Neutron::tick() {
+void Neutron::tick()
+{
     int* s;
     int collision[3];
     int tile;
-    s = bounce_collide_tile_rk4(&particle, collision, &tile, NEUTRON_DAMP);
+    s = Verlet::bounce(this->vp, collision, &tile, NEUTRON_DAMP);
 
     Neutron* newtron;
 
-    if(energy==3) {
+    if(energy==3)
+    {
         event_ttl--;
-        if(event_ttl == 0) {
-            newtron = STATE::neutron_list.create(particle.state.p.x,particle.state.p.y,particle.state.p.z, particle.state.v.x,particle.state.v.y,particle.state.v.z);
+        if(event_ttl == 0)
+        {
+            newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
             newtron->energy = 1;
-            newtron = STATE::neutron_list.create(particle.state.p.x,particle.state.p.y,particle.state.p.z, -particle.state.v.x,-particle.state.v.y,-particle.state.v.z);
+            newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
             newtron->energy = 1;
         }
 
@@ -62,9 +65,11 @@ void Neutron::tick() {
 
     if(s[0] != 0 || s[1] != 0 || s[2] != 0)
     {
-        if(isNuclear(tile)) {
-            particle.ttl=0; //reset TTL
-            if(energy ==3) {
+        if(isNuclear(tile))
+        {
+            ttl=0; //reset TTL
+            if(energy ==3)
+            {
                 event_ttl = 0;
 
                 float _vx, _vy, _vz, len, vel=2;
@@ -77,23 +82,22 @@ void Neutron::tick() {
                 _vy *= vel/len;
                 _vz *= vel/len;
 
-                newtron = STATE::neutron_list.create(particle.state.p.x,particle.state.p.y,particle.state.p.z, particle.state.v.x,particle.state.v.y,particle.state.v.z);
+                newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
                 newtron->energy = 1;
-                newtron = STATE::neutron_list.create(particle.state.p.x,particle.state.p.y,particle.state.p.z, -particle.state.v.x,-particle.state.v.y,-particle.state.v.z);
+                newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
                 newtron->energy = 1;
 
             }
-            if(energy < 3) {
+            if(energy < 3)
+            {
                 energy++;
-
-                if(energy==3) {
+                if(energy==3)
                     event_ttl= 60;
-                }
             }
         }
     }
     
-    particle.ttl++;
+    ttl++;
 }
 
 void Neutron::draw() {
@@ -114,14 +118,14 @@ void Neutron::draw() {
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
 
-    int id = 48+ (3 * particle.type) + (energy-1);
+    int id = 48+ (3 * type) + (energy-1);
 
     tx_min = (float)(id%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
     ty_min = (float)(id/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
 
     glTexCoord2f(tx_min,ty_max );
     glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
@@ -145,8 +149,8 @@ void Neutron_list::tick() {
     for (i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
+        if (a[i]->ttl >= a[i]->ttl_max) {
+            destroy(a[i]->id);
         }
     }
 }
