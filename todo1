@@ -385,6 +385,12 @@ update 2d sounds to listener state every tick (so they are actually 3d)
 for 2d sounds, update them on the listener every tick (instead of just creation)
 
 tweaked rk4 -- bugged, bad
+implemented verlet
+deprecated old Particle/Particle2 crap -- new class interface
+
+TODO:
+finish migrating particles to new class CParticle
+fully deprecate old struct particle
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY

@@ -9,17 +9,25 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-Blood::Blood(int id) {
-    create_particle2(&particle, id, BLOOD_TYPE, 0.0f,0.0f,0.0f,0.0f,0.0f,0.0f, 0, BLOOD_TTL);
+Blood::Blood(int id)
+:
+CParticle(id, 0,0,0,0,0,0)
+{
+    this->ttl_max = BLOOD_TTL;
+    this->type = BLOOD_TYPE;
 }
 
-Blood::Blood(int id, float x, float y, float z, float vx, float vy, float vz) {
-    create_particle2(&particle, id, BLOOD_TYPE, x,y,z,vx,vy,vz, 0, BLOOD_TTL);
+Blood::Blood(int id, float x, float y, float z, float vx, float vy, float vz)
+:
+CParticle(id, x,y,z, vx,vy,vz)
+{
+    this->ttl_max = BLOOD_TTL;
+    this->type = BLOOD_TYPE;
 }
 
 void Blood::tick() {
-    bounce_simple_rk4(&particle, BLOOD_DAMP);
-    particle.ttl++;
+    Verlet::bounce(this->vp, BLOOD_DAMP);
+    this->ttl++;
 }
 
 void Blood::draw() {
@@ -45,7 +53,7 @@ void Blood::draw() {
     ty_min = (float)(BLOOD_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    x=particle.state.p.x; y=particle.state.p.y; z=particle.state.p.z;
+    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
 
     glTexCoord2f(tx_min,ty_max );
     glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
@@ -70,8 +78,8 @@ void Blood_list::tick() {
     for (i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->particle.ttl >= a[i]->particle.ttl_max) {
-            destroy(a[i]->particle.id);
+        if (a[i]->ttl >= a[i]->ttl_max) {
+            destroy(a[i]->id);
         }
     }
 }

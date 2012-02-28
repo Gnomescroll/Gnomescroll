@@ -10,10 +10,9 @@
 #define BLOOD_TEXTURE_SCALE 0.1f
 
 
-class Blood {
+class Blood: public CParticle
+{
     public:
-        Particle2 particle;
-
         void draw();
         void tick();
         Blood(int id);
