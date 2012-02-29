@@ -9,17 +9,19 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+const float BLOOD_MASS = 0.1f;
+
 Blood::Blood(int id)
 :
-Particle(id, 0,0,0,0,0,0, DEFAULT_MASS)
+Particle(id, 0,0,0,0,0,0, BLOOD_MASS)
 {
     this->ttl_max = BLOOD_TTL;
     this->type = BLOOD_TYPE;
 }
 
-Blood::Blood(int id, float x, float y, float z, float vx, float vy, float vz)
+Blood::Blood(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-Particle(id, x,y,z, vx,vy,vz, DEFAULT_MASS)
+Particle(id, x,y,z, ix,iy,iz, BLOOD_MASS)
 {
     this->ttl_max = BLOOD_TTL;
     this->type = BLOOD_TYPE;

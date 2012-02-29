@@ -9,17 +9,19 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+const float SHRAPNEL_MASS = 0.2f;
+
 Shrapnel::Shrapnel(int id)
 :
-Particle(id, 0,0,0,0,0,0, DEFAULT_MASS)
+Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS)
 {
     this->ttl_max = SHRAPNEL_TTL;
     this->type = SHRAPNEL_TYPE;
 }
 
-Shrapnel::Shrapnel(int id, float x, float y, float z, float vx, float vy, float vz)
+Shrapnel::Shrapnel(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-Particle(id, x,y,z, vx,vy,vz, DEFAULT_MASS)
+Particle(id, x,y,z, ix,iy,iz, SHRAPNEL_MASS)
 {
     this->ttl_max = SHRAPNEL_TTL;
     this->type = SHRAPNEL_TYPE;

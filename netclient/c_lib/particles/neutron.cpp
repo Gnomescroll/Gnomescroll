@@ -12,9 +12,11 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/defines.h>
 
+const float NEUTRON_MASS = 0.1f;
+
 Neutron::Neutron(int id)
 :
-EventParticle(id, 0,0,0,0,0,0, DEFAULT_MASS)
+EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS)
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;
@@ -24,9 +26,9 @@ EventParticle(id, 0,0,0,0,0,0, DEFAULT_MASS)
         this->event_ttl = 150;
 }
 
-Neutron::Neutron(int id, float x, float y, float z, float vx, float vy, float vz)
+Neutron::Neutron(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-EventParticle(id, x,y,z, vx,vy,vz, DEFAULT_MASS)
+EventParticle(id, x,y,z, ix,iy,iz, NEUTRON_MASS)
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;

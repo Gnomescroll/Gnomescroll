@@ -15,9 +15,11 @@
 //#include <t_map/t_map.hpp>
 //#include <t_map/t_vbo.h>
 
+const float MINIVOX_MASS = 2.0f;
+
 Minivox::Minivox(int id)
 :
-Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
+Particle(id, 0,0,0,0,0,0, MINIVOX_MASS*minivox_size),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
@@ -28,9 +30,9 @@ size(minivox_size), draw_mode(0), texture_pixel_width(2)
     orient_vectors();
 }
 
-Minivox::Minivox(int id, float x, float y, float z, float vx, float vy, float vz)
+Minivox::Minivox(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-Particle(id, x,y,z, vx,vy,vz, DEFAULT_MASS),
+Particle(id, x,y,z, ix,iy,iz, MINIVOX_MASS*minivox_size),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),

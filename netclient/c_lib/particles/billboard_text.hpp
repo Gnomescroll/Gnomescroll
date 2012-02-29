@@ -32,7 +32,7 @@ class BillboardText: public Particle
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
         void set_gravity(bool grav);
-        void set_state(float x, float y, float z, float vx, float vy, float vz);
+        void set_state(float x, float y, float z, float ix, float iy, float iz);
         void set_text(char* t);
         void set_draw(bool draw);
         void set_size(float size);
@@ -45,7 +45,7 @@ class BillboardText: public Particle
 
         void tick();
         BillboardText(int id);
-        BillboardText(int id, float x, float y, float z, float vx, float vy, float vz);
+        BillboardText(int id, float x, float y, float z, float ix, float iy, float iz);
 };
 
 #include <c_lib/template/object_list.hpp>

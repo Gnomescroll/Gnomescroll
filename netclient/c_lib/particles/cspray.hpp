@@ -19,7 +19,7 @@ class Cspray: public EventParticle
         void tick();
 
         Cspray(int id);
-        Cspray(int id, float x, float y, float z, float vx, float vy, float vz);
+        Cspray(int id, float x, float y, float z, float ix, float iy, float iz);
 };
 
 

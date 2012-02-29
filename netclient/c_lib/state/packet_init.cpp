@@ -70,9 +70,6 @@ void RegisterMessages() {
     //player agent
     PlayerAgent_Snapshot::register_client_packet();
 
-    //object packets
-    cspray_StoC::register_client_packet();
-
     // hitscans
     hitscan_object_CtoS::register_server_packet();
     hitscan_block_CtoS::register_server_packet();

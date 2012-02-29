@@ -39,23 +39,23 @@ void VerletParticle::recompute(float fraction)
     //leapfrog_verlet(dt*fraction);
 }
 
-void VerletParticle::set_state(float x, float y, float z, float vx, float vy, float vz)
+void VerletParticle::set_state(float x, float y, float z, float ix, float iy, float iz)
 {
     old_p = p;
     old_v = v;
     p.x = x;
     p.y = y;
     p.z = z;
-    v.x = vx;
-    v.y = vy;
-    v.z = vz;
+    v.x = ix / m;
+    v.y = iy / m;
+    v.z = iz / m;
 }
 
-VerletParticle::VerletParticle(float x, float y, float z, float vx, float vy, float vz, float mass)
+VerletParticle::VerletParticle(float x, float y, float z, float ix, float iy, float iz, float mass)
 :
 m(mass)
 {
-    this->set_state(x,y,z,vx,vy,vz);
+    this->set_state(x,y,z,ix,iy,iz);
     v = vec3_scalar_mult(v, 1/mass);
     old_p = p;
     old_v = v;

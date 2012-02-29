@@ -8,9 +8,11 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
+const float CSPRAY_MASS = 0.1f;
+
 Cspray::Cspray(int id)
 :
-EventParticle(id, 0,0,0,0,0,0, DEFAULT_MASS),
+EventParticle(id, 0,0,0,0,0,0, CSPRAY_MASS),
 active(0),
 stopped(0)
 {
@@ -19,9 +21,9 @@ stopped(0)
     this->event_ttl = 1;
 }
 
-Cspray::Cspray(int id, float x, float y, float z, float vx, float vy, float vz)
+Cspray::Cspray(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-EventParticle(id, x,y,z,vx,vy,vz, DEFAULT_MASS),
+EventParticle(id, x,y,z,ix,iy,iz, CSPRAY_MASS),
 active(0),
 stopped(0)
 {
@@ -156,44 +158,3 @@ void Cspray_list::draw() {
 
 #endif
 }
-
-
-/*
- *  Networking; spawn packet from server to client
- */
-
-
-#include <net_lib/net.hpp>
-
-class cspray_StoC: public FixedSizeNetPacketToClient<cspray_StoC>
-{
-    public:
-
-        float x,y,z;
-        float vx,vy,vz;
-        uint16_t ttl;
-        uint16_t ttl_max;
-        uint16_t id;
-        uint8_t type;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
-
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u16(&ttl, buff, buff_n, pack);
-            pack_u16(&ttl_max, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-        }
-
-        inline void handle() {
-            printf("Spawn cspray particle: %i \n", id);
-        }
-};
-

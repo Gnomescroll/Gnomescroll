@@ -16,7 +16,7 @@ class Blood: public Particle
         void draw();
         void tick();
         Blood(int id);
-        Blood(int id, float x, float y, float z, float vx, float vy, float vz);
+        Blood(int id, float x, float y, float z, float ix, float iy, float iz);
 };
 
 #include <c_lib/template/object_list.hpp>

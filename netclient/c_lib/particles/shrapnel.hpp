@@ -18,7 +18,7 @@ class Shrapnel: public Particle
         inline void draw() __attribute((always_inline));
         void tick();
         Shrapnel(int id);
-        Shrapnel(int id, float x, float y, float z, float vx, float vy, float vz);
+        Shrapnel(int id, float x, float y, float z, float ix, float iy, float iz);
 };
 
 #include <c_lib/template/object_list.hpp>
