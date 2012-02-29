@@ -462,3 +462,6 @@ integrate force into physics
 migrate all struct Vector to Vec3 format
 
 bell when players join server
+
+fix jump off ground
+set velocity to 0 when jump

@@ -19,8 +19,9 @@ class VerletParticle
     public:
         Vec3 old_p;
         Vec3 old_v;
-        Vec3 p;
-        Vec3 v;
+        Vec3 p; // position
+        Vec3 v; // velocity
+        float m;    // inverse mass
 
         void compute();
         void recompute(float fraction);

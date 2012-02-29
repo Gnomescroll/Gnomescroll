@@ -3,6 +3,9 @@
 namespace Verlet
 {
 
+// impulse = dmom
+// mom = m * v
+
 //pos += vel + 0.5f * oldImpulse / mass;
 //vel += (oldImpulse + Impulse) / (2 * mass);
 //oldImpulse = Impulse;
@@ -56,8 +59,11 @@ void VerletParticle::set_state(float x, float y, float z, float vx, float vy, fl
 }
 
 VerletParticle::VerletParticle(float x, float y, float z, float vx, float vy, float vz)
+:
+m(1)
 {
     this->set_state(x,y,z,vx,vy,vz);
+    v = vec3_scalar_mult(v, 1/m);
     old_p = p;
     old_v = v;
 }
