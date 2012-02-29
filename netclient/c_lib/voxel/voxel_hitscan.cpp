@@ -14,7 +14,9 @@ Voxel_hitscan_target* target
     float x2,y2,z2;
 
     float r2;
-    float x,y,z;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
 
     float radius;
     struct Voxel_hitscan_element* vhe;
@@ -32,9 +34,8 @@ Voxel_hitscan_target* target
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if (hitscan_list[i] == NULL) continue;
-        if (!hitscan_list[i]->vv->hitscan) {
-            continue;
-        }
+        if (!hitscan_list[i]->vv->hitscan) continue;
+
         vhe = hitscan_list[i];
 
         // skip firing agent
@@ -49,7 +50,8 @@ Voxel_hitscan_target* target
         dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
         if (dist < 0.0f || dist > max_dist) continue; //check this
 
-        if( r2 < radius*radius ) {
+        if( r2 < radius*radius )
+        {
             if (dist > min_dist) continue;  //check this
             if (!vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
             min_dist = dist;

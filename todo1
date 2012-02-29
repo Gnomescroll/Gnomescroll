@@ -413,6 +413,14 @@ CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 -- Call mom, ask to put $200 in checking
 ====================
 
+Feb 29
+
+add --production argument for server python
+
+====================
+
+
+
 == MODELS ==
 --Aiming gun
 
@@ -482,3 +490,5 @@ Fix this:
 /usr/freespace/dc_mmo_dev/server/c_lib/voxel/voxel_hitscan.cpp:17: warning: 'y' may be used uninitialized in this function
 /usr/freespace/dc_mmo_dev/server/c_lib/voxel/voxel_hitscan.cpp:17: warning: 'z' may be used uninitialized in this function
 
+fix slime test, regenerate periodocially
+make slimes faster
