@@ -122,7 +122,11 @@ void Agent_state::tick()
     }
 
     #ifdef DC_SERVER
-    status.respawn();
+    const float Z_DEATH_ZONE = -200.0f;
+    if (!this->status.dead && this->s.z < Z_DEATH_ZONE)
+        this->status.die(this->id, OBJ_TYPE_AGENT, DEATH_BELOW_MAP);
+    else
+        this->status.respawn();
     #endif
 }
 
@@ -220,14 +224,14 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     }
 
     //jet pack and gravity
-    if(as.z > 0)
-    {
+    //if(as.z > 0)
+    //{
         as.vz += z_gravity;
-    } 
-    else // under the map, go back up
-    {
-        as.vz -= z_gravity;
-    }    
+    //} 
+    //else // under the map, go back up
+    //{
+        //as.vz -= z_gravity;
+    //}    
 
 #if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;

@@ -392,6 +392,20 @@ inline void agent_conflict_notification_StoC::handle()
                     sprintf(msg, "%s ripped %s to pieces", a_name, b_name);
             }
             break;
+
+        case DEATH_BELOW_MAP:
+            if (a->is_you())
+                strcpy(msg, "You found the afterlife.");
+            else
+                strcpy(msg, "You hear a faint scream.");
+            break;
+
+        case DEATH_FALL:
+            if(a->is_you())
+                strcpy(msg, "Ouch");
+            else
+                sprintf(msg, "%s died from a fall.", a_name);
+            break;
             
         default: break;
     }

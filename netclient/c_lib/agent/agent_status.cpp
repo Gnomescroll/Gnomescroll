@@ -155,7 +155,8 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
     return this->apply_damage(dmg, inflictor_id, inflictor_type, part_id);
 }
 
-int Agent_status::die() {
+int Agent_status::die()
+{
     if (dead) return 0;
     dead = true;
     deaths++;
@@ -172,7 +173,8 @@ int Agent_status::die() {
     return 1;
 }
 
-int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method) {
+int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method)
+{
     if (inflictor_type == OBJ_TYPE_GRENADE)
         inflictor_type = OBJ_TYPE_AGENT;
         

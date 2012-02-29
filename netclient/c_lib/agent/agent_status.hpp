@@ -11,7 +11,9 @@ typedef enum AgentDeathMethod
 {
     DEATH_NORMAL = 0,
     DEATH_HEADSHOT,
-    DEATH_GRENADE
+    DEATH_GRENADE,
+    DEATH_FALL,
+    DEATH_BELOW_MAP
 } AgentDeathMethod;
 
 class Agent_state;  // forward declaration
