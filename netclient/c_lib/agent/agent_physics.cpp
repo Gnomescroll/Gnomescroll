@@ -257,7 +257,7 @@ inline bool collision_check4(float box_r, float box_h, float x, float y, float z
     return false;
 }
 
-#define GROUND_MARGIN 0.10f
+#define GROUND_MARGIN 0.03f
 // checks the (agent bottom - margin) at 4 corners of the agent
 inline bool on_ground(float box_r, float x, float y, float z)
 {

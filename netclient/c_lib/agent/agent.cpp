@@ -127,7 +127,7 @@ void Agent_state::tick()
 }
 
 
-#define ADVANCED_JUMP 0
+#define ADVANCED_JUMP 1
 //#define ADVANCED_JETPACK 0
 
 //takes an agent state and control state and returns new agent state
@@ -233,6 +233,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
+        as.vz = 0;
         new_jump_pow = JUMP_POWINITIAL;
     }
     if (new_jump_pow >= 0) {

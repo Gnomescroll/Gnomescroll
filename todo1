@@ -397,6 +397,8 @@ release mouse before exit
 added mass to particle physics
 --particles should be initalized with momentum instead of velocity
 
+control state constants enum'd
+
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 ====================
