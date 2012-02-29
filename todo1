@@ -394,6 +394,8 @@ Feb 28
 fixed collision detection more (there is still lurking edge case -- dont think i can get it)
 release mouse before exit
 
+added mass to particle physics
+
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 ====================
