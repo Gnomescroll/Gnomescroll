@@ -29,7 +29,7 @@ while True:
         os.rename("./core", "%s/coredumps/core%d" % (os.path.expanduser('~'), time.time(),))
     if os.path.exists('./%s' % (logname,)):
         print "Saving %s" % (logname,)
-        os.rename('./%s' % (logname,), '%s/coredumps/%s', (os.path.expanduser('~'), logname,))
+        os.rename('./%s' % (logname,), '%s/coredumps/%s' % (os.path.expanduser('~'), logname,))
 
 subprocess.Popen('ulimit -c 0', shell=True)
 
