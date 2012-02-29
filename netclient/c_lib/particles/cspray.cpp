@@ -10,7 +10,7 @@
 
 Cspray::Cspray(int id)
 :
-EventParticle(id, 0,0,0,0,0,0),
+EventParticle(id, 0,0,0,0,0,0, DEFAULT_MASS),
 active(0),
 stopped(0)
 {
@@ -21,7 +21,7 @@ stopped(0)
 
 Cspray::Cspray(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-EventParticle(id, x,y,z,vx,vy,vz),
+EventParticle(id, x,y,z,vx,vy,vz, DEFAULT_MASS),
 active(0),
 stopped(0)
 {

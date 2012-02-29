@@ -3,13 +3,6 @@
 namespace Verlet
 {
 
-// impulse = dmom
-// mom = m * v
-
-//pos += vel + 0.5f * oldImpulse / mass;
-//vel += (oldImpulse + Impulse) / (2 * mass);
-//oldImpulse = Impulse;
-
 /* reference: bottom of http://www.fisica.uniud.it/~ercolessi/md/md/node21.html */
 inline void VerletParticle::velocity_verlet(float dt)
 {
@@ -58,16 +51,15 @@ void VerletParticle::set_state(float x, float y, float z, float vx, float vy, fl
     v.z = vz;
 }
 
-VerletParticle::VerletParticle(float x, float y, float z, float vx, float vy, float vz)
+VerletParticle::VerletParticle(float x, float y, float z, float vx, float vy, float vz, float mass)
 :
-m(1)
+m(mass)
 {
     this->set_state(x,y,z,vx,vy,vz);
-    v = vec3_scalar_mult(v, 1/m);
+    v = vec3_scalar_mult(v, 1/mass);
     old_p = p;
     old_v = v;
 }
-
 
 
 //int* move(Vec3* v, float damp){}

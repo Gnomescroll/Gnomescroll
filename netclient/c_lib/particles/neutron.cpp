@@ -14,7 +14,7 @@
 
 Neutron::Neutron(int id)
 :
-EventParticle(id, 0,0,0,0,0,0)
+EventParticle(id, 0,0,0,0,0,0, DEFAULT_MASS)
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;
@@ -26,7 +26,7 @@ EventParticle(id, 0,0,0,0,0,0)
 
 Neutron::Neutron(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-EventParticle(id, x,y,z, vx,vy,vz)
+EventParticle(id, x,y,z, vx,vy,vz, DEFAULT_MASS)
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;

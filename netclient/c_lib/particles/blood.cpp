@@ -11,7 +11,7 @@
 
 Blood::Blood(int id)
 :
-Particle(id, 0,0,0,0,0,0)
+Particle(id, 0,0,0,0,0,0, DEFAULT_MASS)
 {
     this->ttl_max = BLOOD_TTL;
     this->type = BLOOD_TYPE;
@@ -19,7 +19,7 @@ Particle(id, 0,0,0,0,0,0)
 
 Blood::Blood(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-Particle(id, x,y,z, vx,vy,vz)
+Particle(id, x,y,z, vx,vy,vz, DEFAULT_MASS)
 {
     this->ttl_max = BLOOD_TTL;
     this->type = BLOOD_TYPE;

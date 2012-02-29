@@ -1,5 +1,7 @@
 #pragma once
 
+const float DEFAULT_MASS = 1.0f;
+
 /* Aggregator */
 
 /* objects */

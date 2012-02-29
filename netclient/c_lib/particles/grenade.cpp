@@ -21,14 +21,17 @@
 
 #include <net_lib/net.hpp>
 
+/* properties */
+
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
+const float GRENADE_MASS = 0.5f;
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
     public:
 
         float x,y,z;
-        float vx,vy,vz;
+        float ix,iy,iz; // send initial impulse, not velocity
         uint16_t ttl_max;
         uint16_t id;
         uint8_t type;
@@ -39,9 +42,9 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
 
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
+            pack_float(&ix, buff, buff_n, pack);
+            pack_float(&iy, buff, buff_n, pack);
+            pack_float(&iz, buff, buff_n, pack);
 
             pack_u16(&id, buff, buff_n, pack);
             pack_u16(&ttl_max, buff, buff_n, pack);
@@ -53,7 +56,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
 inline void grenade_StoC::handle() {
     #ifdef DC_CLIENT
-    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, vx, vy, vz);
+    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, ix, iy, iz);
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
     #endif
@@ -61,7 +64,7 @@ inline void grenade_StoC::handle() {
 
 Grenade::Grenade(int id)
 :
-Particle(id, 0,0,0,0,0,0),
+Particle(id, 0,0,0,0,0,0, GRENADE_MASS),
 bounce_count(0),
 owner(-1)
 {
@@ -74,9 +77,9 @@ owner(-1)
     #endif
 }
 
-Grenade::Grenade(int id, float x, float y, float z, float vx, float vy, float vz)
+Grenade::Grenade(int id, float x, float y, float z, float ix, float iy, float iz)
 :
-Particle(id, x,y,z,vx,vy,vz),
+Particle(id, x,y,z,ix,iy,iz, GRENADE_MASS),
 bounce_count(0),
 owner(-1)
 {
@@ -104,9 +107,9 @@ void Grenade::create_message(grenade_StoC* msg)
     msg->x = this->vp->p.x;
     msg->y = this->vp->p.y;
     msg->z = this->vp->p.z;
-    msg->vx = this->vp->v.x;
-    msg->vy = this->vp->v.y;
-    msg->vz = this->vp->v.z;
+    msg->ix = this->vp->v.x * GRENADE_MASS;
+    msg->iy = this->vp->v.y * GRENADE_MASS;
+    msg->iz = this->vp->v.z * GRENADE_MASS;
     msg->ttl_max = this->ttl_max;
     msg->id = this->id;
     msg->type = this->type;
