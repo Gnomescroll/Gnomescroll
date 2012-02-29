@@ -105,19 +105,10 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
-    cflags = []
-
-    version = get_version()
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
-    #extra_options = ['-Winline']
     if OS == 'Windows':
-        #conf.env.append_value('CFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
-        #conf.env.append_value('CXXFLAGS', ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']+extra_options)
-        cflags += ['-g','-Wall', '-DDC_CLIENT','-fpermissive', '-static-libgcc']
+        cflags = ['-g', '-fpermissive', '-static-libgcc']
     else:
-        #conf.env.append_value('CFLAGS', ['-ggdb','-Wall','-fPIC','-DDC_CLIENT']+extra_options) # '-lefence'
-        #conf.env.append_value('CXXFLAGS', ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT']+extra_options) # '-lefence'
-        cflags += ['-ggdb','-Wall','-fPIC', '-DDC_CLIENT'] # '-lefence'
+        cflags = ['-ggdb', '-fPIC'] # '-lefence'
 
     if OS == 'Windows':
         conf.env.append_value("LINKFLAGS", "-lwsock32")
@@ -127,6 +118,8 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
+    version = get_version()
+    extra_options = ['-Wall', '-Wextra', '-DDC_CLIENT', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
     cflags += extra_options
 
     if OS == 'Darwin':

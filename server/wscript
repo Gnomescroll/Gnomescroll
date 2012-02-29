@@ -62,17 +62,14 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
 
-    #conf.env.CFLAGS = ['-g','-Wall', '-fPIC'] # use '-O2' or '-O3' in distro build
-    #conf.env.CXXFLAGS = conf.env.CFLAGS
-
-    cflags = ['-g', '-Wall','-Wextra','-DDC_SERVER']
     if OS == 'Windows':
-        cflags += ['-g',,'-fpermissive', '-static-libgcc']
+        cflags = ['-g', '-fpermissive', '-static-libgcc']
     else:
-        cflags += ['-ggdb','-fPIC']
+        cflags = ['-ggdb','-fPIC']
 
     version = get_version()
-    extra_options = [ '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)]
+
+    extra_options = ['-Wall','-Wextra','-DDC_SERVER', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)]
     cflags += extra_options
 
     cflags += [c for c in add_flags if c not in cflags]
