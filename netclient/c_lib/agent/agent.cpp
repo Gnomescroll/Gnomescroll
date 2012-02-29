@@ -112,13 +112,12 @@ void Agent_state::tick()
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while(cs[(cs_seq+1) % 256].seq == (cs_seq+1)% 256) 
+    while(cs[cs_seq].seq == cs_seq )
     {
+        _cs = cs[cs_seq];
+        s = _agent_tick(_cs, box, s, this);
 
         cs_seq = (cs_seq+1)%256;
-        _cs = cs[cs_seq];
-
-        s = _agent_tick(_cs, box, s, this);
         _tc++;
     }
 
@@ -243,6 +242,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 #else
     if (jump)
     {
+        as.vz = 0.0f;
         as.vz += JUMP_POW;
     }
 #endif
@@ -311,12 +311,17 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
 
     //printf("cs= %i \n", seq);
 
-    int index = seq%256;
 
-    this->cs[index].seq = seq;
-    this->cs[index].cs = cs;
-    this->cs[index].theta = theta;
-    this->cs[index].phi = phi;
+    if (seq != cs_seq) printf("seq != cs_seq: %i %i  \n", seq, cs_seq);
+
+    //int index = seq%256;
+
+    this->cs[seq].seq = seq;
+    this->cs[seq].cs = cs;
+    this->cs[seq].theta = theta;
+    this->cs[seq].phi = phi;
+
+    //printf("index= %i \n", index);
 
     //printf("1 seq: %i \n", seq);
     //printf("1 cs_seq: %i \n", cs_seq);
@@ -325,7 +330,6 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     //printf("2 cs_seq: %i \n", cs_seq);
 
     #ifdef DC_SERVER
-    if (seq != cs_seq) printf("seq != cs_seq \n");
     
     if (client_id != -1) 
     {
