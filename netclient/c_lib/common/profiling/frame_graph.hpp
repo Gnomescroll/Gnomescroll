@@ -38,6 +38,11 @@ class FrameGraph
 		ts = new Texture_surface(128, 64);
 	}
 
+	~FrameGraph()
+	{
+		delete[] ts;
+	}
+
 	void frame_start()
 	{
 		int t = _GET_MS_TIME();
@@ -86,21 +91,23 @@ class FrameGraph
 		int t2 = _frame_wait_start[index] - _frame_flip_start[index];
 		int t3 = _frame_end[index] - _frame_wait_start[index];
 
+		if(t2 <= 1 ) t2 = 0;
+
 		//printf("%i: %i %i %i \n", total, t1,t2,t3);
 
-		if(t1 < 0 || t1 > 64)
+		if(t1 < 0)
 		{
 			printf("error1\n");
 			return;
 		}
 
-		if(t2 < 0 || t2 > 64)
+		if(t2 < 0)
 		{
 			printf("error2\n");
 			return;
 		}
 
-		if(t3 < 0 || t3 > 64)
+		if(t3 < 0)
 		{
 			printf("error3\n");
 			return;
@@ -108,8 +115,8 @@ class FrameGraph
 
 		if(t1+t2+t3 >= 64)
 		{
-			printf("error4\n");
-			return;
+			printf("frame_graph: error frame took more than 64 ms\n");
+			//return;
 		}
 
 		for(int i=0; i< 64; i++) ts->set_pixel(index, i, 0, 0,0, 0);
@@ -127,7 +134,7 @@ class FrameGraph
 		int j;
 
 		j=0;
-		while(j < t1)
+		while(j < t1 && i<64)
 		{
 			ts->set_pixel(index, i, 255, 0,0, 100);
 			j++;
@@ -135,7 +142,7 @@ class FrameGraph
 		}
 
 		j=0;
-		while(j < t2)
+		while(j < t2 && i<64)
 		{
 			ts->set_pixel(index, i, 0, 255,0, 255);
 			j++;
@@ -143,13 +150,13 @@ class FrameGraph
 		}
 
 		j=0;
-		while(j < t3)
+		while(j < t3 && i<64)
 		{
 			ts->set_pixel(index, i, 0, 0,255, 50);
 			j++;
 			i++;
 		}
-		while(i < 64)
+		while(i < 64 && i<64)
 		{
 			ts->set_pixel(index, i, 0, 0,0, 0);
 			i++;
