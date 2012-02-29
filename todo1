@@ -404,6 +404,7 @@ jump sets velocity to 0 before adding in jump burst
 client's grenades start play locally instead of waiting for network packet
 cleaned some -Wextra warnings
 no body rotation while dead
+block_action packet, for encoding the event type that caused a block change. variable crumble forces
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY

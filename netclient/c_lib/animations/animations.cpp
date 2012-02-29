@@ -18,10 +18,6 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     const float crumble_size = 0.17f;
     ClientState::minivox_list.set_size(crumble_size);
 
-    const float _vx = momentum,
-                  _vy = momentum,
-                  _vz = momentum;
-
     //unsigned char r,g,b,a;
     int side, ttl;
     int tex_id;
@@ -37,9 +33,9 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         ny = y + randf() -0.5f;
         nz = z + randf() -0.5f;
 
-        vx = _vx*(randf() -0.5f);
-        vy = _vy*(randf() -0.5f);
-        vz = _vz*(randf() -0.5f);
+        vx = momentum*(randf() -0.5f);
+        vy = momentum*(randf() -0.5f);
+        vz = momentum*(randf() -0.5f);
 
         side = randrange(0,5);
         ttl = randrange(20,40);
@@ -104,10 +100,10 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     normalize_vector_f(&ref[0], &ref[1], &ref[2]);
 
     // compute initial base velocities
-    const float base_v = 2.5f;
-    float _vx = base_v*ref[0],
-          _vy = base_v*ref[1],
-          _vz = base_v*ref[2];
+    const float momentum = 0.2f;
+    float _vx = ref[0],
+           _vy = ref[1],
+           _vz = ref[2];
 
     // "invert" the normal for perturbing the initial positions along the plane
     side[0] = (side[0]) ? 0 : 1;
@@ -120,7 +116,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float nx,ny,nz;
 
     int i;
-    int n = randrange(5,10);
+    int n = randrange(10,15);
     int ttl;
     for (i=0; i<n; i++) {
 
@@ -129,6 +125,9 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         vx = _vx + (randf() -0.5f);
         vy = _vy + (randf() -0.5f);
         vz = _vz + (randf() -0.5f);
+        vx *= momentum;
+        vy *= momentum;
+        vz *= momentum;
 
         // perturb the initial positions along the side's plane
         nx = x + ((randf() -0.5f)*0.4f*side[0]);
