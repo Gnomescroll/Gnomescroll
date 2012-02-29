@@ -387,6 +387,12 @@ for 2d sounds, update them on the listener every tick (instead of just creation)
 tweaked rk4 -- bugged, bad
 implemented verlet
 refactored particle system
+====================
+
+Feb 28
+
+fixed collision detection more (there is still lurking edge case -- dont think i can get it)
+release mouse before exit
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY

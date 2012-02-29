@@ -89,6 +89,11 @@ void _del_video() {
     SDL_Quit();
 }
 
+void close_SDL() 
+{
+    _del_video();
+}
+
 int _set_resolution(int xres, int yres, int fullscreen) {
     _xres = xres;
     _yres = yres;
@@ -168,7 +173,7 @@ int init_video() {
     {
         printf("SDL_GetVideoInfo() failed. SDL Error: %s\n", SDL_GetError());
         DisplayBox();
-        SDL_Quit();
+        close_SDL();
         return 1;
     }
     nFlags = SDL_OPENGL; // | SDL_FULLSCREEN; //| SDL_GL_DOUBLEBUFFER; // | SDL_HWPALETTE;
@@ -219,7 +224,7 @@ int init_video() {
     {
         printf( "Call to SDL_SetVideoMode() failed! - SDL_Error: %s\n", SDL_GetError() );
         DisplayBox();
-        SDL_Quit();
+        close_SDL();
         return 1;
     }
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
@@ -354,13 +359,6 @@ int _swap_buffers() {
         }
     }
     return 0;
-}
-
-void close_SDL() 
-{
-    printf("close_SDL: Deconstructing SDL OpenGL Window\n");
-    _del_video();
-    
 }
 
 void save_screenshot()

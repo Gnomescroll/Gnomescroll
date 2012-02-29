@@ -3,6 +3,10 @@
 namespace Verlet
 {
 
+//pos += vel + 0.5f * oldImpulse / mass;
+//vel += (oldImpulse + Impulse) / (2 * mass);
+//oldImpulse = Impulse;
+
 /* reference: bottom of http://www.fisica.uniud.it/~ercolessi/md/md/node21.html */
 inline void VerletParticle::velocity_verlet(float dt)
 {
