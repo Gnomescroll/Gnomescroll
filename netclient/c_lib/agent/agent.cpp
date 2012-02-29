@@ -128,6 +128,8 @@ void Agent_state::tick()
 }
 
 
+#define ADVANCED_JUMP 0
+
 //takes an agent state and control state and returns new agent state
 class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a)
  {
@@ -165,9 +167,12 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float z_gravity = -3.0f / tr2;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
+#if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
-
+#else
+    const float JUMP_POW = 1 * 0.30;
+#endif
     //const float z_bounce = 0.10f;
     //const float z_bounce_v_threshold = 1.5f / tr;
 
@@ -224,6 +229,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz -= z_gravity;
     }    
 
+#if ADVANCED_JUMP
     float new_jump_pow = as.jump_pow;
     if (jump)
     {
@@ -233,6 +239,12 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
         as.vz += new_jump_pow;
         new_jump_pow -= JUMP_POWDEC;
     }
+#else
+    if (jump)
+    {
+        as.vz += JUMP_POW;
+    }
+#endif
 
     float new_x, new_y, new_z;
     new_x = as.x + as.vx + cs_vx;
@@ -283,7 +295,10 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     as.x = new_x;
     as.y = new_y;
     as.z = new_z;
+
+#if ADVANCED_JUMP
     as.jump_pow = new_jump_pow;
+#endif
 
     as.theta = _cs.theta;
     as.phi = _cs.phi;
