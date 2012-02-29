@@ -117,10 +117,10 @@ void PlayerAgent_action::hitscan_laser() {
     // for hitscan animation:
     // readjust the vector so that the translated position points to target
     // get the right vector for translating the hitscan laser anim
-    struct Vector look = Vector_init(vec[0], vec[1], vec[2]);
+    Vec3 look = vec3_init(vec[0], vec[1], vec[2]);
     normalize_vector(&look);
-    struct Vector up = Vector_init(0,0,1);
-    struct Vector right = vector_cross(look, up);
+    Vec3 up = vec3_init(0,0,1);
+    Vec3 right = vec3_cross(look, up);
     normalize_vector(&right);
 
     // magic offset numbers found by rotating the laser to the right spot

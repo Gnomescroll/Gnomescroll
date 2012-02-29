@@ -204,7 +204,7 @@ int _draw_particle2(int id, float size, float x, float y, float z) {
     return 0;
 }
 
-void draw(struct Vector v0, struct Vector v1, int r, int g, int b) {
+void draw(Vec3 v0, Vec3 v1, int r, int g, int b) {
 
     glColor3ub((unsigned char)r,(unsigned char)g,(unsigned char)b);
     glBegin(GL_LINES);
@@ -219,32 +219,30 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
         printf("particle_functions planar_laser() camera is null \n");
         return 0;
     }
-    struct Vector pos = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
 
-    struct Vector po;
+    Vec3 po;
     po.x =  pos.x - (x0+y1)/2;
     po.y =  pos.y - (y0+y1)/2;
     po.z =  pos.z -(z0+z1)/2;
     normalize_vector(&po);
 
     int i =0 ;
-    struct Vector up = Vector_init(x1-x0, y1-y0, z1-z0);
+    Vec3 up = vec3_init(x1-x0, y1-y0, z1-z0);
     normalize_vector(&up);
-    vector_length(&up);
-    struct Vector left = vector_cross(po, up);
+    Vec3 left = vec3_cross(po, up);
     normalize_vector(&left);
-    vector_length(&left);
-    struct Vector right = vector_cross(left, up);
-    vector_length(&right);
+    Vec3 right = vec3_cross(left, up);
+    normalize_vector(&right);
 
-    struct Vector vu;
-    vu = Vector_init((x0+y1)/2, (y0+y1)/2, (z0+z1)/2);
+    Vec3 vu;
+    vu = vec3_init((x0+y1)/2, (y0+y1)/2, (z0+z1)/2);
     draw(vu, up, 255,0,0);
     draw(vu, left, 0,255,0);
     draw(vu, right, 0,0,255);
 
     float a, b;
-    struct Vector v1;
+    Vec3 v1;
 
     while(i< 8) {
         a = sin(i*PI/8);
@@ -276,7 +274,7 @@ int _planar_laser(float x0, float y0, float z0, float x1, float y1, float z1) {
     return 0;
 }
 
-static struct Vector ta[1024*2]; //temp array
+static Vec3 ta[1024*2]; //temp array
 
 int _planar_laser2(int density, float width, float x0, float y0, float z0, float x1, float y1, float z1) {
     if(current_camera == NULL) {
@@ -306,12 +304,12 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     int i=0;
     float bx,by,bz;
 
-    struct Vector pos = Vector_init(current_camera->x, current_camera->y, current_camera->z); //camera position
-    struct Vector up = Vector_init(x1-x0, y1-y0, z1-z0); //up position
+    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z); //camera position
+    Vec3 up = vec3_init(x1-x0, y1-y0, z1-z0); //up position
     normalize_vector(&up);
-    struct Vector po; //camera to point vector
+    Vec3 po; //camera to point vector
 
-    struct Vector left;
+    Vec3 left;
 
     bx = i*dx + x0;
     by = i*dy + y0;
@@ -322,7 +320,7 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
     po.z =  pos.z - bz;
     normalize_vector(&po);
 
-    left = vector_cross(po, up);
+    left = vec3_cross(po, up);
 
     for(i=0; i<=density; i++) {
         bx = i*dx + x0;
@@ -334,10 +332,10 @@ int _planar_laser2(int density, float width, float x0, float y0, float z0, float
         po.z =  pos.z - bz;
         normalize_vector(&po);
 
-        left = vector_cross(po, up);
+        left = vec3_cross(po, up);
 
-        ta[2*i+0] = Vector_init(bx - width*left.x, by - width*left.y, bz - width*left.z);
-        ta[2*i+1] = Vector_init(bx + width*left.x, by + width*left.y, bz + width*left.z);
+        ta[2*i+0] = vec3_init(bx - width*left.x, by - width*left.y, bz - width*left.z);
+        ta[2*i+1] = vec3_init(bx + width*left.x, by + width*left.y, bz + width*left.z);
     }
 
     glEnable(GL_TEXTURE_2D);

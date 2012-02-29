@@ -67,7 +67,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     dx = cos(xangle*PI)*cos(yangle*PI);
     dy = sin(xangle*PI)*cos(yangle*PI);
     dz = sin(yangle);
-    struct Vector dv = Vector_init(dx,dy,dz);
+    Vec3 dv = vec3_init(dx,dy,dz);
     normalize_vector(&dv);
 
     glBegin(GL_POINTS);

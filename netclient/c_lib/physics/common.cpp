@@ -10,3 +10,8 @@ bool cube_intersects(
         return false;
     return true;
 }
+
+float distancef(float x, float y, float z, float a, float b, float c)
+{
+    return sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
+}

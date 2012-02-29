@@ -88,22 +88,16 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 }
 
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
-    //printf("block damage: %0.2f %0.2f %0.2f %0.2f %0.2f %0.2f cube_id=%d, cube_side=%d\n", x,y,z,ix,iy,iz, cube_id, cube_side);
-
     int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     // reflection bias
-    float ref[3];
-    float inc[3];   inc[0]=ix;inc[1]=iy;inc[2]=iz;
-    float nor[3];   nor[0]=(float)side[0];nor[1]=(float)side[1];nor[2]=(float)side[2];
-    reflect(inc, nor, ref);
-    normalize_vector_f(&ref[0], &ref[1], &ref[2]);
+    Vec3 inc = vec3_init(ix,iy,iz);
+    Vec3 nor = vec3_init(side[0], side[1], side[2]);
+    Vec3 ref = vec3_reflect(inc, nor);
+    normalize_vector(&ref);
 
     // compute initial base velocities
     const float momentum = 0.2f;
-    float _vx = ref[0],
-           _vy = ref[1],
-           _vz = ref[2];
 
     // "invert" the normal for perturbing the initial positions along the plane
     side[0] = (side[0]) ? 0 : 1;
@@ -122,9 +116,9 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
         ttl = randrange(15,25);
 
-        vx = _vx + (randf() -0.5f);
-        vy = _vy + (randf() -0.5f);
-        vz = _vz + (randf() -0.5f);
+        vx = ref.x + (randf() -0.5f);
+        vy = ref.y + (randf() -0.5f);
+        vz = ref.z + (randf() -0.5f);
         vx *= momentum;
         vy *= momentum;
         vz *= momentum;

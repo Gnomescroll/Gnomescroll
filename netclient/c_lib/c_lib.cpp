@@ -33,7 +33,6 @@
 #include <c_lib/time/frame_rate_limiter.cpp>
 
 /* Vectors, Ray Tracers, Physics */
-#include <c_lib/physics/vector.cpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
 #include <c_lib/physics/mat3.hpp>

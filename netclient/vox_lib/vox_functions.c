@@ -5,13 +5,13 @@
 struct VoxelList* vo;
 
 //util
-__inline float vlength(struct Vector v) {
+__inline float vlength(Vec3 v) {
     float length = 0;
     length = v.x*v.x + v.y*v.y + v.z*v.z;
     return length;
 }
 
-__inline float iproduct(struct Vector v1, struct Vector v2) {
+__inline float iproduct(Vec3 v1, Vec3 v2) {
     float ip = 0;
     ip = v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
     return ip;
@@ -55,11 +55,11 @@ int _q_set[4*6]= {
 //end util
 
 __inline void compute_vo_normals(struct VoxelList* volist) {
-    //const struct Vector* center = &skel->center;
+    //const Vec3* center = &skel->center;
     float theta = volist->theta;
     //float phi = volist->phi;
-    struct Vector* n = volist->n;
-    struct Vector* n2 = volist->n2;
+    Vec3* n = volist->n;
+    Vec3* n2 = volist->n2;
 
     n[0].x = volist->vosize*cos(theta);
     n[0].y = volist->vosize*sin(theta);
@@ -311,7 +311,7 @@ int _deleteVoxelList(struct VoxelList* vo) {
     return 0;
 }
 
-__inline float ipd(float x, float y, float z, struct Vector v2) {
+__inline float ipd(float x, float y, float z, Vec3 v2) {
     return x*v2.x + y*v2.y + z*v2.z;
 }
 

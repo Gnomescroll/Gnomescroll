@@ -3,6 +3,7 @@
 #ifdef DC_SERVER
     #include <c_lib/t_map/server/manager.hpp>
 #endif
+#include <c_lib/physics/common.hpp>
 
 /*
     Warning: using agent position for map loading
@@ -120,7 +121,7 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius) {
     int i;
     for (i=0; i<AGENT_MAX; i++) {
         if (a[i] == NULL) continue;
-        dist = distance(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
         if (dist < radius) {
             // agent in sphere
             filtered_objects[ct] = a[i];

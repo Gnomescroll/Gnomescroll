@@ -17,7 +17,7 @@ class HitscanEffect
     float vx,vy,vz;
     int ttl;
 
-    inline void draw(float delta, Vector* camera) __attribute((always_inline));
+    inline void draw(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
     HitscanEffect(int id);

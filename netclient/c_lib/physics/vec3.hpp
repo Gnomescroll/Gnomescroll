@@ -24,6 +24,14 @@ static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline
     Vec3 operations
 */
 
+static void normalize_vector(struct Vec3* v)
+{
+    float len = sqrt(v->x*v->x + v->y*v->y + v->z*v->z);
+    v->x /= len;
+    v->y /= len;
+    v->z /= len;
+}
+
 static struct Vec3 vec3_init(float x, float y, float z) __attribute((always_inline)); 
 
 struct Vec3 vec3_init(float x, float y, float z)
@@ -176,6 +184,11 @@ float vec3_length(struct Vec3 v)
     return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
+static float vec3_distance(struct Vec3 v) __attribute((always_inline));
+float vec3_distance(struct Vec3 v1, struct Vec3 v2)
+{
+    return sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
+}
 
 /*
     diagnostic

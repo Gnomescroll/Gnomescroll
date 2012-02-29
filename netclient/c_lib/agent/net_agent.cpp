@@ -799,17 +799,12 @@ inline void ThrowGrenade_CtoS::handle()
     msg.id = a->id;
     msg.broadcast();
 
-    float n[3];
-    n[0] = vx;
-    n[1] = vy;
-    n[2] = vz;
-    normalize_vector(n);
+    Vec3 n = vec3_init(vx,vy,vz);
+    normalize_vector(&n);
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
-    n[0] *= PLAYER_ARM_FORCE;
-    n[1] *= PLAYER_ARM_FORCE;
-    n[2] *= PLAYER_ARM_FORCE;
-    Grenade* g = ServerState::grenade_list.create(x,y,z, n[0], n[1], n[2]);
+    n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
+    Grenade* g = ServerState::grenade_list.create(x,y,z, n.x, n.y, n.z);
     if (g==NULL) return;
     g->owner = a->id;
     g->broadcast();

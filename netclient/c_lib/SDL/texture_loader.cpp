@@ -2,7 +2,6 @@
 
 //wtf
 #include <c_lib/camera/camera.hpp>
-#include <c_lib/physics/vector.hpp>
 //wtf
 
 #include <compat_gl.h>

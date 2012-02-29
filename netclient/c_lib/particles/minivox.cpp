@@ -44,8 +44,8 @@ size(minivox_size), draw_mode(0), texture_pixel_width(2)
 }
 
 // recalculates orientation vectors from angular parameter
-void Minivox::orient_vectors() {
-
+void Minivox::orient_vectors()
+{
     vec_x.x = cos(theta * PI) * cos(phi * PI);
     vec_x.y = sin(theta * PI) * cos(phi * PI);
     vec_x.z = sin(phi);
@@ -56,12 +56,12 @@ void Minivox::orient_vectors() {
     vec_y.z = 0.0f;
     normalize_vector(&vec_y);
 
-    vec_z = vector_cross(vec_x, vec_y);
-    vec_y = vector_cross(vec_x, vec_z);
+    vec_z = vec3_cross(vec_x, vec_y);
+    vec_y = vec3_cross(vec_x, vec_z);
 
-    mult_vec_scalar_ptr(&vec_x, size);
-    mult_vec_scalar_ptr(&vec_y, size);
-    mult_vec_scalar_ptr(&vec_z, size);
+    vec_x = vec3_scalar_mult(vec_x, size);
+    vec_y = vec3_scalar_mult(vec_y, size);
+    vec_z = vec3_scalar_mult(vec_z, size);
 }
 
 void Minivox::set_orientation(float t, float p) {

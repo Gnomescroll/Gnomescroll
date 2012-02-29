@@ -30,9 +30,9 @@ class Minivox: public Particle
 
         float size;
 
-        Vector vec_x;
-        Vector vec_y;
-        Vector vec_z;
+        Vec3 vec_x;
+        Vec3 vec_y;
+        Vec3 vec_z;
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);

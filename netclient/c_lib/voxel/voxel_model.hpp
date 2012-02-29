@@ -1,6 +1,5 @@
 #pragma once
 
-#include <c_lib/physics/vector.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 

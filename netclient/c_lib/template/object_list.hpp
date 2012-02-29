@@ -7,7 +7,8 @@
  * void client_tick();
  * void server_tick();
  */
-
+#include <c_lib/physics/common.hpp>
+ 
 #define OBJECT_LIST_DEBUG 0
 
 template <class Object_state, int max_n=1024>
@@ -360,7 +361,7 @@ int Object_list<Object_state, max_n>::objects_within_sphere(
     int i;
     for (i=0; i<max_n; i++) {
         if (a[i] == NULL) continue;
-        dist = distance(x,y,z, a[i]->x, a[i]->y, a[i]->z);
+        dist = distancef(x,y,z, a[i]->x, a[i]->y, a[i]->z);
         if (dist < radius) {
             // agent in sphere
             filtered_objects[ct] = a[i];

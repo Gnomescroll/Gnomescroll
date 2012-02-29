@@ -5,8 +5,6 @@
 
 #define PI 3.14159265
 
-#include <physics/vector.hpp>
-
 struct Vector4 {
     union
     {

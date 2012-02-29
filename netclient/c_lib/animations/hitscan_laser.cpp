@@ -7,7 +7,6 @@
 
 #include <compat_gl.h>
 #include <c_lib/SDL/texture_loader.hpp>
-#include <c_lib/physics/vector.hpp>
 
 namespace Animations
 {
@@ -46,33 +45,24 @@ fx(fx), fy(fy), fz(fz),
 ttl(hitscan_lader_ttl)
 {}
 
-
-
 void HitscanLaserEffect::tick()
 {
     //check for collision with terrain/players
     //play animations for terrain/player collision
 }
 
-void HitscanLaserEffect::draw1(float delta, Vector* camera)
+void HitscanLaserEffect::draw1(float delta, Vec3 camera)
 {
     const float width = 0.5;
 
-    struct Vector r = Vector_init(x-fx, y-fy, z-fz);
+    Vec3 r = vec3_init(x-fx, y-fy, z-fz);
+    normalize_vector(&r);
 
-    normalize_vector( &r );
-/*
-    float ratio = ((float) (hitscan_lader_ttl - ttl))/15.0;
-    if(ratio > 1.0) ratio = 1.0;
-    float _x = x + (fx-x)*ratio;
-    float _y = y + (fy-y)*ratio;
-    float _z = z + (fz-z)*ratio;
-*/
-    struct Vector x1 = Vector_init(x,y,z);
-    struct Vector l1 = sub_vec(&x1, camera);
+    Vec3 x1 = vec3_init(x,y,z);
+    Vec3 l1 = vec3_sub(x1, camera);
 
-    struct Vector u1 = vector_cross( l1, r);
-    normalize_vector( &u1 );
+    Vec3 u1 = vec3_cross(l1, r);
+    normalize_vector(&u1);
 
     float ratio = ((float) (hitscan_lader_ttl - ttl))/15.0;
     if(ratio > 1.0) ratio = 1.0;
@@ -80,31 +70,20 @@ void HitscanLaserEffect::draw1(float delta, Vector* camera)
     float _fy = y + (fy-y)*ratio;
     float _fz = z + (fz-z)*ratio;
 
-    //float _fx = fx - (fx-x)*ratio;
-    //float _fy = fy - (fy-y)*ratio;
-    //float _fz = fz - (fz-z)*ratio;
+    Vec3 x2 = vec3_init(_fx, _fy, _fz);
 
-    struct Vector x2 = Vector_init(_fx, _fy, _fz);
+    Vec3 l2 = vec3_sub(x2, camera);
 
-    struct Vector l2 = sub_vec(&x2, camera);
+    Vec3 u2 = vec3_cross(l2, r);
+    normalize_vector(&u2);
 
-    struct Vector u2 = vector_cross( l2, r);
-    normalize_vector( &u2 );
+    u1 = vec3_scalar_mult(u1, width);
+    u2 = vec3_scalar_mult(u2, width);  
 
-    vector_scalar1(&u1, width);
-    vector_scalar1(&u2, width);  
-
-/*
-    Vector top_left = Vector_init(x1.x + width*u1.x, x1.y + width*u1.y, x1.z + width*u1.z);
-    Vector top_right = Vector_init(x1.x - width*u1.x, x1.y - width*u1.y, x1.z - width*u1.z);
-    Vector bottom_right = Vector_init(x2.x - width*u2.x, x2.y - width*u2.y, x2.z - width*u2.z);
-    Vector bottom_left = Vector_init(x2.x + width*u2.x, x2.y + width*u2.y, x2.z + width*u2.z);
-*/
     const float tx_min = 0.0;
     const float tx_max = 1.0;
     const float ty_min = 0.0;
     const float ty_max = 1.0;
-
 
     glTexCoord2f(tx_max,ty_max );
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
@@ -120,12 +99,11 @@ void HitscanLaserEffect::draw1(float delta, Vector* camera)
 
 }
 
-void HitscanLaserEffect::draw2(float delta, Vector* camera)
+void HitscanLaserEffect::draw2(float delta, Vec3 camera)
 {
     const float width = 0.5;
     const float height = 12.0;
-    //struct Vector r = Vector_init(x-fx, y-fy, z-fz);
-    struct Vector r = Vector_init(fx-x, fy-y, fz-z);
+    Vec3 r = vec3_init(fx-x, fy-y, fz-z);
     normalize_vector( &r );
 
 
@@ -135,35 +113,28 @@ void HitscanLaserEffect::draw2(float delta, Vector* camera)
     float _fy = y + (fy-y)*ratio;
     float _fz = z + (fz-z)*ratio;
     
-    struct Vector x1 = Vector_init(_fx, _fy, _fz);
-    struct Vector l1 = sub_vec(&x1, camera);
+    Vec3 x1 = vec3_init(_fx, _fy, _fz);
+    Vec3 l1 = vec3_sub(x1, camera);
 
-    struct Vector u1 = vector_cross( l1, r);
+    Vec3 u1 = vec3_cross(l1, r);
     normalize_vector( &u1 );
 
 
-    struct Vector tmp = Vector_init(r.x*height, r.y*height, r.z*height);
-    struct Vector x2 = sub_vec( &x1, &tmp );
+    Vec3 tmp = vec3_init(r.x*height, r.y*height, r.z*height);
+    Vec3 x2 = vec3_sub(x1, tmp);
 
-    struct Vector l2 = sub_vec(&x2, camera);
+    Vec3 l2 = vec3_sub(x2, camera);
 
-    struct Vector u2 = vector_cross( l2, r);
+    Vec3 u2 = vec3_cross( l2, r);
     normalize_vector( &u2 );
 
-    vector_scalar1(&u1, width);
-    vector_scalar1(&u2, width);  
+    u1 = vec3_scalar_mult(u1, width);
+    u2 = vec3_scalar_mult(u2, width);  
 
-/*
-    Vector top_left = Vector_init(x1.x + width*u1.x, x1.y + width*u1.y, x1.z + width*u1.z);
-    Vector top_right = Vector_init(x1.x - width*u1.x, x1.y - width*u1.y, x1.z - width*u1.z);
-    Vector bottom_right = Vector_init(x2.x - width*u2.x, x2.y - width*u2.y, x2.z - width*u2.z);
-    Vector bottom_left = Vector_init(x2.x + width*u2.x, x2.y + width*u2.y, x2.z + width*u2.z);
-*/
     const float tx_min = 0.0;
     const float tx_max = 1.0;
     const float ty_min = 0.0;
     const float ty_max = 1.0;
-
 
     glTexCoord2f(tx_max,ty_max );
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
@@ -195,7 +166,7 @@ void HitscanLaserEffect_list::draw()
     delta /= 30.0f;
     //printf("delta= %f \n", delta);
 
-    struct Vector camera = Vector_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 camera = vec3_init(current_camera->x, current_camera->y, current_camera->z);
  
     glColor3ub(255,255,255);
 
@@ -212,7 +183,7 @@ void HitscanLaserEffect_list::draw()
     for(int i=0; i<n_max; i++) 
     {
         if (a[i] == NULL) continue;
-        a[i]->draw1(delta, &camera); //diffuse beam
+        a[i]->draw1(delta, camera); //diffuse beam
     }
     glEnd();
 
@@ -221,7 +192,7 @@ void HitscanLaserEffect_list::draw()
     for(int i=0; i<n_max; i++) 
     {
         if (a[i] == NULL) continue;
-        a[i]->draw2(delta, &camera); //diffuse beam
+        a[i]->draw2(delta, camera); //diffuse beam
     }
     glEnd();
 

@@ -1,16 +1,7 @@
 #pragma once 
 
 #include <voxel/common.h>
-
-//#include <physics/vector.hpp>
-//#include <physics/matrix.hpp>
-
-//#include <physics/vec3.hpp>
-//#include <physics/vec4.hpp>
-//#include <physics/mat3.hpp>
-//#include <physics/mat4.hpp>
 #include <physics/affine.hpp>
-
 #include <voxel/voxel_hitscan.hpp>
 
 class Voxel_render_list; //forward declarations

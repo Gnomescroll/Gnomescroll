@@ -8,7 +8,7 @@ Get drawing working first
 Then do collision detection
 */
 
-struct Vector {
+Vec3 {
     float x,y,z;
 };
 
@@ -22,9 +22,9 @@ struct VoxelList {
     int xdim, ydim, zdim;
     float vosize;
     float theta;
-    struct Vector center;
-    struct Vector n[3]; //the normals; for internal cordinates
-    struct Vector n2[3]; //normals for projection from cordinate system to internal
+    Vec3 center;
+    Vec3 n[3]; //the normals; for internal cordinates
+    Vec3 n2[3]; //normals for projection from cordinate system to internal
     float radius2; //used for hitscan pruning
 };
 

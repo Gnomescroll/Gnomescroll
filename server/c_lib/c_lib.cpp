@@ -37,7 +37,6 @@
 #include <c_lib/physics/verlet.cpp>
 #include <c_lib/physics/common.cpp>
 
-#include <c_lib/physics/vector.cpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
 #include <c_lib/physics/mat3.hpp>
