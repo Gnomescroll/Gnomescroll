@@ -54,7 +54,7 @@ class Minivox: public Particle
         void tick();
         
         Minivox(int id);
-        Minivox(int id, float x, float y, float z, float ix, float iy, float iz);
+        Minivox(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
 #include <c_lib/template/object_list.hpp>

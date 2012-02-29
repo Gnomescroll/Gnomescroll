@@ -6,12 +6,12 @@ void Particle::set_ttl(int ttl)
     this->ttl = ttl;
 }
 
-Particle::Particle(int id, float x, float y, float z, float ix, float iy, float iz, float mass)
+Particle::Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
 id(id),
 ttl(0)
 {
-    vp = new VerletParticle(x,y,z,ix,iy,iz, mass);
+    vp = new VerletParticle(x,y,z,mx,my,mz, mass);
 }
 
 Particle::~Particle()
@@ -19,7 +19,7 @@ Particle::~Particle()
     delete vp;
 }
 
-EventParticle::EventParticle(int id, float x, float y, float z, float ix, float iy, float iz, float mass)
+EventParticle::EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
-Particle(id, x,y,z,ix,iy,iz, mass)
+Particle(id, x,y,z,mx,my,mz, mass)
 {}

@@ -21,9 +21,9 @@ projection_type(Billboard::DEFAULT)
     this->type = BILLBOARD_TEXT_TYPE;
 }
 
-BillboardText::BillboardText(int id, float x, float y, float z, float ix, float iy, float iz)
+BillboardText::BillboardText(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, ix,iy,iz, DEFAULT_MASS),
+Particle(id, x,y,z, mx,my,mz, DEFAULT_MASS),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -59,9 +59,9 @@ void BillboardText::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
-void BillboardText::set_state(float x, float y, float z, float ix, float iy, float iz)
+void BillboardText::set_state(float x, float y, float z, float mx, float my, float mz)
 {
-    this->vp->set_state(x,y,z, ix,iy,iz);
+    this->vp->set_state(x,y,z, mx,my,mz);
 }
 
 void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b) {

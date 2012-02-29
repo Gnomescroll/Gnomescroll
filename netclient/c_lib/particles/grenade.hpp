@@ -39,7 +39,7 @@ class Grenade: public Particle
         void create_message(grenade_StoC* msg);
 
         Grenade(int id);
-        Grenade(int id, float x, float y, float z, float ix, float iy, float iz);
+        Grenade(int id, float x, float y, float z, float mx, float my, float mz);
         ~Grenade();
 };
 

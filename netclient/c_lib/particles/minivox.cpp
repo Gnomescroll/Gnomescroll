@@ -30,9 +30,9 @@ size(minivox_size), draw_mode(0), texture_pixel_width(2)
     orient_vectors();
 }
 
-Minivox::Minivox(int id, float x, float y, float z, float ix, float iy, float iz)
+Minivox::Minivox(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, ix,iy,iz, MINIVOX_MASS*minivox_size),
+Particle(id, x,y,z, mx,my,mz, MINIVOX_MASS*minivox_size),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
 r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
@@ -109,15 +109,15 @@ void Minivox::set_texture(int tex_id) {
     ftx = itx * scale;
     fty = ity * scale;
 
-    int ix,iy;
+    int mx,my;
     float fx,fy;
     // random point within cube, with margins wide enough to fit pix
-    ix = (rand() % (cube_w -(pix*2))) +pix;
-    iy = (rand() % (cube_w -(pix*2))) +pix;
+    mx = (rand() % (cube_w -(pix*2))) +pix;
+    my = (rand() % (cube_w -(pix*2))) +pix;
 
     // ...scaled to texture
-    fx = ((float)ix) * pixel_w;
-    fy = ((float)iy) * pixel_w;
+    fx = ((float)mx) * pixel_w;
+    fy = ((float)my) * pixel_w;
 
     ftx += fx;
     fty += fy;

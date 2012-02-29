@@ -17,7 +17,7 @@ class Particle
 
         void set_ttl(int ttl);
 
-        Particle(int id, float x, float y, float z, float ix, float iy, float iz, float mass);
+        Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
         ~Particle();
 };
 
@@ -26,5 +26,5 @@ class EventParticle: public Particle
     public:
         int event_ttl;
 
-        EventParticle(int id, float x, float y, float z, float ix, float iy, float iz, float mass);
+        EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
 };

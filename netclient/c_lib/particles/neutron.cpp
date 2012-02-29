@@ -26,9 +26,9 @@ EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS)
         this->event_ttl = 150;
 }
 
-Neutron::Neutron(int id, float x, float y, float z, float ix, float iy, float iz)
+Neutron::Neutron(int id, float x, float y, float z, float mx, float my, float mz)
 :
-EventParticle(id, x,y,z, ix,iy,iz, NEUTRON_MASS)
+EventParticle(id, x,y,z, mx,my,mz, NEUTRON_MASS)
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;

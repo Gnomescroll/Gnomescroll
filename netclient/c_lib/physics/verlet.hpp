@@ -25,8 +25,9 @@ class VerletParticle
 
         void compute();
         void recompute(float fraction);
-        void set_state(float x, float y, float z, float ix, float iy, float iz);
-        VerletParticle(float x, float y, float z, float ix, float iy, float iz, float mass);
+        void set_state(float x, float y, float z, float mx, float my, float mz);
+        Vec3 get_momentum();
+        VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass);
 };
 
 //int* move(Vec3* v, float damp);

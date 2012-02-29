@@ -24,14 +24,14 @@
 /* properties */
 
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
-const float GRENADE_MASS = 1.0f;
+const float GRENADE_MASS = 2.0f;
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
     public:
 
         float x,y,z;
-        float ix,iy,iz; // send initial impulse, not velocity
+        float mx,my,mz; // send initial impulse, not velocity
         uint16_t ttl_max;
         uint16_t id;
         uint8_t type;
@@ -42,9 +42,9 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
 
-            pack_float(&ix, buff, buff_n, pack);
-            pack_float(&iy, buff, buff_n, pack);
-            pack_float(&iz, buff, buff_n, pack);
+            pack_float(&mx, buff, buff_n, pack);
+            pack_float(&my, buff, buff_n, pack);
+            pack_float(&mz, buff, buff_n, pack);
 
             pack_u16(&id, buff, buff_n, pack);
             pack_u16(&ttl_max, buff, buff_n, pack);
@@ -56,7 +56,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
 inline void grenade_StoC::handle() {
     #ifdef DC_CLIENT
-    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, ix, iy, iz);
+    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, mx, my, mz);
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
     #endif
@@ -77,9 +77,9 @@ owner(-1)
     #endif
 }
 
-Grenade::Grenade(int id, float x, float y, float z, float ix, float iy, float iz)
+Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z,ix,iy,iz, GRENADE_MASS),
+Particle(id, x,y,z,mx,my,mz, GRENADE_MASS),
 bounce_count(0),
 owner(-1)
 {
@@ -107,9 +107,10 @@ void Grenade::create_message(grenade_StoC* msg)
     msg->x = this->vp->p.x;
     msg->y = this->vp->p.y;
     msg->z = this->vp->p.z;
-    msg->ix = this->vp->v.x * GRENADE_MASS;
-    msg->iy = this->vp->v.y * GRENADE_MASS;
-    msg->iz = this->vp->v.z * GRENADE_MASS;
+    Vec3 mom = this->vp->get_momentum();
+    msg->mx = mom.x;
+    msg->my = mom.y;
+    msg->mz = mom.z;
     msg->ttl_max = this->ttl_max;
     msg->id = this->id;
     msg->type = this->type;
@@ -206,9 +207,9 @@ void Grenade::damage_blocks() {
 
     int ir = GRENADE_BLOCK_DESTROY_RADIUS;
 
-    int ix = (int)x;
-    int iy = (int)y;
-    int iz = (int)z;
+    int mx = (int)x;
+    int my = (int)y;
+    int mz = (int)z;
     
     int i,j,k;
     int bx,by,bz;
@@ -220,31 +221,31 @@ void Grenade::damage_blocks() {
             {
                 dmg = block_damage(i+j+k);
 
-                bx = ix + i;
-                by = iy + j;
-                bz = iz + k;
+                bx = mx + i;
+                by = my + j;
+                bz = mz + k;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);
-                bx = ix - i;
+                bx = mx - i;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);
-                by = iy - j;
+                by = my - j;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);
-                by = iy + j;
-                bz = iz - k;
+                by = my + j;
+                bz = mz - k;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);
-                bx = ix + i;
-                by = iy - j;
+                bx = mx + i;
+                by = my - j;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);
-                bx = ix - i;
+                bx = mx - i;
                 res = _apply_damage(bx,by,bz, dmg);
                 if (res==0)
                     _block_broadcast(bx,by,bz,0);

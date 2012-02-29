@@ -21,9 +21,9 @@ stopped(0)
     this->event_ttl = 1;
 }
 
-Cspray::Cspray(int id, float x, float y, float z, float ix, float iy, float iz)
+Cspray::Cspray(int id, float x, float y, float z, float mx, float my, float mz)
 :
-EventParticle(id, x,y,z,ix,iy,iz, CSPRAY_MASS),
+EventParticle(id, x,y,z,mx,my,mz, CSPRAY_MASS),
 active(0),
 stopped(0)
 {

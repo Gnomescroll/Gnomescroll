@@ -19,9 +19,9 @@ Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS)
     this->type = SHRAPNEL_TYPE;
 }
 
-Shrapnel::Shrapnel(int id, float x, float y, float z, float ix, float iy, float iz)
+Shrapnel::Shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, ix,iy,iz, SHRAPNEL_MASS)
+Particle(id, x,y,z, mx,my,mz, SHRAPNEL_MASS)
 {
     this->ttl_max = SHRAPNEL_TTL;
     this->type = SHRAPNEL_TYPE;
