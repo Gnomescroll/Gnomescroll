@@ -325,7 +325,7 @@ identified(false)
     agent_id = -1;
     this->you = NULL;
     
-    cs_seq_local = 0;
+    cs_seq_local = 255;  // so first one is zero
     cs_seq_net = -1;
 
     state_history_index = 0;

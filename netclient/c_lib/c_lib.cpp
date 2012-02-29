@@ -87,6 +87,7 @@
 
 #include <c_lib/common/profiling/texture_surface.cpp>
 #include <c_lib/common/profiling/frame_graph.cpp>
+#include <c_lib/common/profiling/map_vbo_graph.cpp>
 
 /* map */
 
