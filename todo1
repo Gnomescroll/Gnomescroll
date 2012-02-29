@@ -476,3 +476,9 @@ apply terrain cover to damage
 TODO:
 migrate all struct Vector to Vec3 format
 bell when players join server
+
+Fix this:
+/usr/freespace/dc_mmo_dev/server/c_lib/voxel/voxel_hitscan.cpp:17: warning: 'x' may be used uninitialized in this function
+/usr/freespace/dc_mmo_dev/server/c_lib/voxel/voxel_hitscan.cpp:17: warning: 'y' may be used uninitialized in this function
+/usr/freespace/dc_mmo_dev/server/c_lib/voxel/voxel_hitscan.cpp:17: warning: 'z' may be used uninitialized in this function
+
