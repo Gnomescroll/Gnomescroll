@@ -90,6 +90,9 @@ def parse(cl_args=None):
     parser.add_argument('-pa', '--print-args', action='store_true')
     parser.add_argument('-nl', '--no-load', action='store_true')
 
+    ''' Production '''
+    parser.add_argument('--production', action='store_true')
+
     if cl_args is not None:
         args = parser.parse_args(cl_args)
     else:

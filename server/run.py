@@ -56,7 +56,7 @@ class Main:
         init_c_lib.init()
         
         init_c_lib.reset_seed(opts.seed)   # reset seed (opts.seed only meant for map gen)
-        if opts.map == "CAVE":
+        if opts.production or opts.map == "CAVE":
             map_recipes.best_caves()
         else:
             map_recipes.gen_map_simple()
