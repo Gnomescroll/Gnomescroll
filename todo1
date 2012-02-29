@@ -398,6 +398,8 @@ added mass to particle physics
 --particles should be initalized with momentum instead of velocity
 
 control state constants enum'd
+jump ground margin decreased
+jump sets velocity to 0 before adding in jump burst
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
