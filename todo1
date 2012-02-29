@@ -401,6 +401,8 @@ control state constants enum'd
 jump ground margin decreased
 jump sets velocity to 0 before adding in jump burst
 
+client's grenades start play locally instead of waiting for network packet
+
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 ====================
@@ -462,8 +464,10 @@ color agent model more appropriately and  use team base color
 
 GRENADES:
 charge up
-client side predicted (dont wait for create) [PROBLEM: id syncs] [solution -- dont id sync grenades -- not needed]
 
 TODO:
 migrate all struct Vector to Vec3 format
 bell when players join server
+
+packets per blockset0 action (grenade, pick)
+minimally, 2 packets: set0, set0anim (force to apply to anim, or anim/action type)

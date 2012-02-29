@@ -589,18 +589,6 @@ void Agent_state::revert_to_rollback() {
 void Agent_state::print_cs()
 {
     uint16_t cs = this->cs[this->CS_seq].cs;
-    //int forward     = cs & 1? 1 :0;
-    //int backwards   = cs & 2? 1 :0;
-    //int left        = cs & 4? 1 :0;
-    //int right       = cs & 8? 1 :0;
-    //int jetpack     = cs & 16? 1 :0;
-    //int jump        = cs & 32? 1 :0;
-    //int crouch      = cs & 64? 1 :0;
-    //int boost       = cs & 128? 1 :0;
-    //int misc1       = cs & 256? 1 :0;
-    //int misc2       = cs & 512? 1 :0;
-    //int misc3       = cs & 1024? 1 :0;  
-
     int forward     = cs & CS_FORWARD ? 1 :0;
     int backwards   = cs & CS_BACKWARD ? 1 :0;
     int left        = cs & CS_LEFT ? 1 :0;
@@ -650,16 +638,6 @@ int Agent_state::current_height_int()
     float h = this->current_height();
     return (int)ceil(h);
 }
-
-//void send_identify_message(char* name)
-//{
-    //// truncate name
-    //for (int i=0; i<PLAYER_NAME_MAX_LENGTH; i++)
-        //if (name[i] == '\0') break;
-    //if (i == PLAYER_NAME_MAX_LENGTH) name[i-1] = '\0';
-
-    
-//}
 
 #define CUBE_SELECT_MAX_DISTANCE 12.0f
 int Agent_state::get_facing_block_type()

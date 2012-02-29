@@ -26,6 +26,9 @@ static Soundfile soundfiles[MAX_SOUNDS];
 static int soundfile_index = 0;
 
 static bool enabled = true;
+static bool inited = false;
+static bool buffers_inited = false;
+static bool sources_inited = false;
 static ALCdevice *device = NULL;
 static ALCcontext *context = NULL;
 
@@ -94,16 +97,15 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 
 void init()
 {
-    enabled = Options::sound;
-    if (!enabled) return;
-    
-    static int inited = 0;
-    if (inited++)
+    if (inited)
     {
         printf("WARNING: attempt to init OpenAl more than once\n");
         return;
     }
 
+    inited = enabled = Options::sound;
+    if (!enabled) return;
+    
     Sound::init_wav_buffers();
 
     // open device (enumerate before this) 
@@ -116,7 +118,7 @@ void init()
     {
         printf("OpenAL error: sound device %s not found\n", Options::sound_device);
         close();
-        enabled = false;
+        inited = enabled = false;
         return;
     }
 
@@ -131,7 +133,7 @@ void init()
     if (checkError())
     {
         close();
-        enabled = false;
+        inited = enabled = false;
         return;
     }
 
@@ -140,18 +142,21 @@ void init()
     if (checkError())
     {
         close();
-        enabled = false;
+        inited = enabled = false;
         return;
     }
+    buffers_inited = true;
 
     // init AL sources
     alGenSources(MAX_SOURCES, sources); 
     if (checkError())
     {
         close();
-        enabled = false;
+        inited = enabled = false;
         return;
     }
+    sources_inited = true;
+    
     // set source properties
     for (int i=0; i<MAX_SOURCES; i++)
     {
@@ -171,22 +176,29 @@ void init()
     if (checkError())
     {
         close();
-        enabled = false;
+        inited = enabled = false;
         return;
     }
 
     enabled = true;
+    inited = true;
     printf("OpenAL inited\n");
 }
 
 void close()
 {
-    alDeleteSources(MAX_SOURCES, sources);
-    checkError();
-    
-    alDeleteBuffers(MAX_BUFFERS, buffers);
-    buffer_index = 0;
-    checkError();
+    if (sources_inited)
+    {
+        alDeleteSources(MAX_SOURCES, sources);
+        checkError();
+    }
+
+    if (buffers_inited)
+    {
+        alDeleteBuffers(MAX_BUFFERS, buffers);
+        buffer_index = 0;
+        checkError();
+    }
 
     alcMakeContextCurrent(NULL); 
     if (context != NULL)
@@ -202,7 +214,8 @@ void close()
 
     Sound::teardown_wav_buffers();
     enabled = false;
-    printf("OpenAL sound closed.\n");
+    if (inited)
+        printf("OpenAL sound closed.\n");
 }
 
 unsigned int hash(char* s)
