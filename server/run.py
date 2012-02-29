@@ -64,15 +64,15 @@ class Main:
 
         init_c_lib.start()
         
-
         tick = 0
 
-        init_c_lib.slime_test(30)
         while True:
 
             if linux_term:
                 if linux_terminal.check_stdin():
                     break
+
+            init_c_lib.slime_populate(50)
             
             sl_c =0
 
@@ -114,16 +114,23 @@ if __name__ == "__main__":
         # need to switch terminal to character mode,
         # and restore it when done
         # it is inside a try loop, to catch control-c and make sure teardown is complete
+        main_run = False
         try:
             termios = linux_terminal.termios
             tty = linux_terminal.tty
             old_settings = termios.tcgetattr(sys.stdin)
             try:
                 tty.setcbreak(sys.stdin.fileno())
+                main_run = True
                 main.run(linux_term=True)
             finally:
                 termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-        except:
-            main.run()
+        except Exception, e:
+            print Exception, e
+            if not main_run:
+                main.run()
+            else:
+                raise Exception, e
     else:
+        print "else"
         main.run()

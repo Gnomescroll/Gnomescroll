@@ -104,8 +104,8 @@ void Slime::tick() {
     // find nearby players
     // if nearby, move toward it
 
-    const float r = 10.0f;
-    const float speed = 0.1f;
+    const float r = 15.0f;
+    const float speed = 0.25f;
 
     // choose a random agent in range
     int closest = STATE::agent_list.objects_within_sphere(this->x, this->y, this->z, r);
@@ -239,12 +239,12 @@ void test(int n)
     int x,y,z;
     for (int i=0; i<n; i++)
     {
-        x = randrange(0,127);
-        y = randrange(0,127);
+        x = randrange(0,map_dim.x-1);
+        y = randrange(0,map_dim.y-1);
         z = _get_highest_open_block(x,y);
         
         #ifdef DC_CLIENT
-        z = 127;
+        z = map_dim.z-1;
         STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
         #endif
 
@@ -256,6 +256,14 @@ void test(int n)
         msg.broadcast();
         #endif
     }
+}
+
+void populate_slimes(int n_max)
+{   // regenerates slimes up to a maximum
+    int n_slimes = STATE::slime_list.num;
+    n_max -= n_slimes;
+    if (n_max > 0)
+        test(n_max);
 }
 
 }

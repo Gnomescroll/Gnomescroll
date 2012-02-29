@@ -83,6 +83,7 @@ cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     cdef cppclass Slime_list:
         void tick()
     void test(int n)
+    void populate_slimes(int n_max)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     Slime_list slime_list
@@ -90,27 +91,14 @@ cdef extern from "./state/server_state.hpp" namespace "ServerState":
 def slime_test(int n):
     test(n)
 
+def slime_populate(int n_max):
+    populate_slimes(n_max)
+
 def slime_tick():
     slime_list.tick()
 
-#""" Agents """
-#cdef extern from "./agent/agent_status.hpp":
-#    cdef cppclass Agent_status:
-#        char* name
-#        bool identified
-        
-#cdef extern from "./agent/agent.hpp":
-#    cdef cppclass Agent_state:
-#        int id
-#        Agent_status status
-
-#cdef extern from "./agent/agent_list.hpp":
-#    cdef cppclass Agent_list:
-#        Agent_state* get(int id)
-#        void destroy(int id)
-
+""" Agents """
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-#    Agent_list agent_list
     char* agent_name(int id)
 
 def get_agent_name(int id):
@@ -118,9 +106,6 @@ def get_agent_name(int id):
     if name == NULL:
         return ''
     return name
-#    cdef Agent_state* a
-#    a = agent_list.get(id)
-#    return a.status.name
 
 """ Game Modes (CTF) """
 

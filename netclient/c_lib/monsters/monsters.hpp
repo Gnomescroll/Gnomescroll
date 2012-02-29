@@ -67,5 +67,5 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
 };
 
 void test(int n) GNOMESCROLL_API;
-
+void populate_slimes(int n_max) GNOMESCROLL_API;
 }
