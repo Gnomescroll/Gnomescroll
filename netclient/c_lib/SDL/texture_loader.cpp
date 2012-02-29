@@ -1,17 +1,9 @@
 #include "./texture_loader.hpp"
 
-//wtf
-#include <c_lib/camera/camera.hpp>
-//wtf
-
 #include <compat_gl.h>
 #include <math.h>
 
-#include <compat_gl.h>
-
 #include <c_lib/SDL/shader_loader.hpp>
-
-
 
 // Note: Don't load surfaces via arguments, you must return SDL_Surface*
 
