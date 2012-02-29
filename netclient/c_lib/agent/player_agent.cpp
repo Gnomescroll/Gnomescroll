@@ -111,17 +111,17 @@ uint16_t PlayerAgent_state::pack_control_state(
 )
 {
     uint16_t cs = 0;
-    if(f) cs |= 1;
-    if(b) cs |= 2;
-    if(l) cs |= 4;
-    if(r) cs |= 8;
-    if(jet) cs |= 16;
-    if(jump) cs |= 32;
-    if(crouch) cs |= 64;
-    if(boost) cs |= 128;
-    if(misc1) cs |= 256;
-    if(misc2) cs |= 512;
-    if(misc3) cs |= 1024;
+    if(f) cs |= CS_FORWARD;
+    if(b) cs |= CS_BACKWARD;
+    if(l) cs |= CS_LEFT;
+    if(r) cs |= CS_RIGHT;
+    if(jet) cs |= CS_JETPACK;
+    if(jump) cs |= CS_JUMP;
+    if(crouch) cs |= CS_CROUCH;
+    if(boost) cs |= CS_BOOST;
+    if(misc1) cs |= CS_MISC1;
+    if(misc2) cs |= CS_MISC2;
+    if(misc3) cs |= CS_MISC3;
     return cs;
 }
 
@@ -132,17 +132,17 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
 
     int forward,backwards,left,right,jetpack,jump,crouch,boost,misc1,misc2,misc3;
     //set control state variables
-    forward     = cs & 1? 1 :0;
-    backwards   = cs & 2? 1 :0;
-    left        = cs & 4? 1 :0;
-    right       = cs & 8? 1 :0;
-    jetpack     = cs & 16? 1 :0;
-    jump        = cs & 32? 1 :0;
-    crouch      = cs & 64? 1 :0;
-    boost       = cs & 128? 1 :0;
-    misc1       = cs & 256? 1 :0;
-    misc2       = cs & 512? 1 :0;
-    misc3       = cs & 1024? 1 :0;
+    forward     = cs & CS_FORWARD ? 1 :0;
+    backwards   = cs & CS_BACKWARD ? 1 :0;
+    left        = cs & CS_LEFT ? 1 :0;
+    right       = cs & CS_RIGHT ? 1 :0;
+    jetpack     = cs & CS_JETPACK ? 1 :0;
+    jump        = cs & CS_JUMP ? 1 :0;
+    crouch      = cs & CS_CROUCH ? 1 :0;
+    boost       = cs & CS_BOOST ? 1 :0;
+    misc1       = cs & CS_MISC1 ? 1 :0;
+    misc2       = cs & CS_MISC2 ? 1 :0;
+    misc3       = cs & CS_MISC3 ? 1 :0;
 
     AgentState* state;
     state = &this->s1;

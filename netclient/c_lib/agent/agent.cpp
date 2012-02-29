@@ -112,12 +112,12 @@ void Agent_state::tick()
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while(cs[cs_seq].seq == cs_seq )
+    while(cs[CS_seq].seq == CS_seq )
     {
-        _cs = cs[cs_seq];
+        _cs = cs[CS_seq];
         s = _agent_tick(_cs, box, s, this);
 
-        cs_seq = (cs_seq+1)%256;
+        CS_seq = (CS_seq+1)%256;
         _tc++;
     }
 
@@ -135,19 +135,19 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
  {
     int a_cs = _cs.cs;
     //set control state variables
-    bool forward     = a_cs & 1? 1 :0;
-    bool backwards   = a_cs & 2? 1 :0;
-    bool left        = a_cs & 4? 1 :0;
-    bool right       = a_cs & 8? 1 :0;
-    bool jetpack     = a_cs & 16? 1 :0;
-    bool jump        = a_cs & 32? 1 :0;
-    bool crouch      = a_cs & 64? 1 :0;
+    bool forward     = a_cs & CS_FORWARD ? 1 :0;
+    bool backwards   = a_cs & CS_BACKWARD ? 1 :0;
+    bool left        = a_cs & CS_LEFT ? 1 :0;
+    bool right       = a_cs & CS_RIGHT ? 1 :0;
+    bool jetpack     = a_cs & CS_JETPACK ? 1 :0;
+    bool jump        = a_cs & CS_JUMP ? 1 :0;
+    bool crouch      = a_cs & CS_CROUCH ? 1 :0;
     //implemented, but unused
     /*
-    bool boost       = a_cs & 128? 1 :0;
-    bool misc1       = a_cs & 256? 1 :0;
-    bool misc2       = a_cs & 512? 1 :0;
-    bool misc3       = a_cs & 1024? 1 :0;     
+    bool boost       = a_cs & CS_BOOST ? 1 :0;
+    bool misc1       = a_cs & CS_MISC1 ? 1 :0;
+    bool misc2       = a_cs & CS_MISC2 ? 1 :0;
+    bool misc3       = a_cs & CS_MISC3 ? 1 :0;     
     */
 
     const float tr = 10.0f;    //tick rate
@@ -178,28 +178,28 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     const float pi = 3.14159265f;
 
-    float cs_vx = 0;
-    float cs_vy = 0;
+    float CS_vx = 0;
+    float CS_vy = 0;
 
     if(forward)
     {
-            cs_vx += xy_speed*cos( _cs.theta * pi);
-            cs_vy += xy_speed*sin( _cs.theta * pi);
+            CS_vx += xy_speed*cos( _cs.theta * pi);
+            CS_vy += xy_speed*sin( _cs.theta * pi);
     }
     if(backwards)
     {
-            cs_vx += -xy_speed*cos( _cs.theta * pi);
-            cs_vy += -xy_speed*sin( _cs.theta * pi);
+            CS_vx += -xy_speed*cos( _cs.theta * pi);
+            CS_vy += -xy_speed*sin( _cs.theta * pi);
     }
     if(left) 
     {
-            cs_vx += xy_speed*cos( _cs.theta * pi + pi/2);
-            cs_vy += xy_speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += xy_speed*cos( _cs.theta * pi + pi/2);
+            CS_vy += xy_speed*sin( _cs.theta * pi + pi/2);
     }
     if(right) 
     {
-            cs_vx += -xy_speed*cos( _cs.theta * pi + pi/2);
-            cs_vy += -xy_speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += -xy_speed*cos( _cs.theta * pi + pi/2);
+            CS_vy += -xy_speed*sin( _cs.theta * pi + pi/2);
     }
 
     // need distance from ground
@@ -248,8 +248,8 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 #endif
 
     float new_x, new_y, new_z;
-    new_x = as.x + as.vx + cs_vx;
-    new_y = as.y + as.vy + cs_vy;
+    new_x = as.x + as.vx + CS_vx;
+    new_y = as.y + as.vy + CS_vy;
     new_z = as.z + as.vz;
     //collision
     bool current_collision = collision_check_final_current(box.box_r, height, as.x,as.y,as.z);
@@ -312,7 +312,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     //printf("cs= %i \n", seq);
 
 
-    if (seq != cs_seq) printf("seq != cs_seq: %i %i  \n", seq, cs_seq);
+    if (seq != CS_seq) printf("seq != CS_seq: %i %i  \n", seq, CS_seq);
 
     //int index = seq%256;
 
@@ -324,10 +324,10 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     //printf("index= %i \n", index);
 
     //printf("1 seq: %i \n", seq);
-    //printf("1 cs_seq: %i \n", cs_seq);
+    //printf("1 CS_seq: %i \n", CS_seq);
     tick();
     //printf("2 seq: %i \n", seq);
-    //printf("2 cs_seq: %i \n", cs_seq);
+    //printf("2 CS_seq: %i \n", CS_seq);
 
     #ifdef DC_SERVER
     
@@ -336,8 +336,8 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
         class PlayerAgent_Snapshot P;
         
         P.id = id;
-        //P.seq = (cs_seq+1) % 256;
-        P.seq = cs_seq;
+        //P.seq = (CS_seq+1) % 256;
+        P.seq = CS_seq;
 
         P.x = s.x;
         P.y = s.y;
@@ -356,8 +356,8 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     {
         class Agent_state_message A;
 
-        //P.seq = (cs_seq+1) % 256;
-        A.seq = cs_seq;
+        //P.seq = (CS_seq+1) % 256;
+        A.seq = CS_seq;
 
         A.x = s.x;
         A.y = s.y;
@@ -403,7 +403,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     }
                 
     state_rollback = state_snapshot; //when new snapshot comes, in, set rollbacks
-    cs_seq = seq;
+    CS_seq = seq;
 
     s = state_snapshot;
 
@@ -491,7 +491,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
-    cs_seq = 0;
+    CS_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
     
@@ -535,7 +535,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     box.c_height = AGENT_HEIGHT_CROUCHED;
     box.box_r = AGENT_BOX_RADIUS;
 
-    cs_seq = 0;
+    CS_seq = 0;
 
     printf("Agent_state::Agent_state, new agent, id=%i \n", id);
     
@@ -577,28 +577,40 @@ Agent_state::~Agent_state()
 
 void Agent_state::revert_to_snapshot() {
     s = state_snapshot;
-    cs_seq = state_snapshot.seq;
+    CS_seq = state_snapshot.seq;
 }
 
 void Agent_state::revert_to_rollback() {
     s = state_rollback;            
-    cs_seq = state_rollback.seq;
+    CS_seq = state_rollback.seq;
 }
 
 void Agent_state::print_cs()
 {
-    uint16_t cs = this->cs[this->cs_seq].cs;
-    int forward     = cs & 1? 1 :0;
-    int backwards   = cs & 2? 1 :0;
-    int left        = cs & 4? 1 :0;
-    int right       = cs & 8? 1 :0;
-    int jetpack     = cs & 16? 1 :0;
-    int jump        = cs & 32? 1 :0;
-    int crouch      = cs & 64? 1 :0;
-    int boost       = cs & 128? 1 :0;
-    int misc1       = cs & 256? 1 :0;
-    int misc2       = cs & 512? 1 :0;
-    int misc3       = cs & 1024? 1 :0;  
+    uint16_t cs = this->cs[this->CS_seq].cs;
+    //int forward     = cs & 1? 1 :0;
+    //int backwards   = cs & 2? 1 :0;
+    //int left        = cs & 4? 1 :0;
+    //int right       = cs & 8? 1 :0;
+    //int jetpack     = cs & 16? 1 :0;
+    //int jump        = cs & 32? 1 :0;
+    //int crouch      = cs & 64? 1 :0;
+    //int boost       = cs & 128? 1 :0;
+    //int misc1       = cs & 256? 1 :0;
+    //int misc2       = cs & 512? 1 :0;
+    //int misc3       = cs & 1024? 1 :0;  
+
+    int forward     = cs & CS_FORWARD ? 1 :0;
+    int backwards   = cs & CS_BACKWARD ? 1 :0;
+    int left        = cs & CS_LEFT ? 1 :0;
+    int right       = cs & CS_RIGHT ? 1 :0;
+    int jetpack     = cs & CS_JETPACK ? 1 :0;
+    int jump        = cs & CS_JUMP ? 1 :0;
+    int crouch      = cs & CS_CROUCH ? 1 :0;
+    int boost       = cs & CS_BOOST ? 1 :0;
+    int misc1       = cs & CS_MISC1 ? 1 :0;
+    int misc2       = cs & CS_MISC2 ? 1 :0;
+    int misc3       = cs & CS_MISC3 ? 1 :0;     
 
     printf("f,b,l,r = %d%d%d%d\n", forward, backwards, left, right);
     printf("jet=%d\n", jetpack);
@@ -610,7 +622,7 @@ void Agent_state::print_cs()
 
 Agent_control_state Agent_state::get_current_control_state()
 {
-    return this->cs[(this->cs_seq-1+256)%256];
+    return this->cs[(this->CS_seq-1+256)%256];
 }
 
 int Agent_state::crouched()

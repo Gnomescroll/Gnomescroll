@@ -70,7 +70,7 @@ class Agent_state {
         class AgentState state_rollback;
         struct Agent_control_state cs[256];
         int snapshot_seq;
-        int cs_seq; // <--current counter
+        int CS_seq; // <--current counter
 
         void get_spawn_point(int* spawn);
 
