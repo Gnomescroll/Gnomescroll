@@ -416,6 +416,8 @@ CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 Feb 29
 
 add --production argument for server python
+fix slime test, regenerate periodocially
+make slimes faster
 
 ====================
 
@@ -442,7 +444,6 @@ Minimap
 == GAMEPLAY ==
 Turrets
 Weapon firing rate
-Tune jumping
 
 == VOXEL EDITOR ==
 Voxel editor:
@@ -464,6 +465,7 @@ different font sizes
 == BRANDON ==
 client side prediction bug
 endpoints on hitscan laser
+Lua
 
 SERVER:
 put metaless content back on 100tb (~2-3days of rsyncing)
@@ -485,5 +487,3 @@ TODO:
 migrate all struct Vector to Vec3 format
 bell when players join server
 
-fix slime test, regenerate periodocially
-make slimes faster
