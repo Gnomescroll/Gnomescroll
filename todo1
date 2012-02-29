@@ -406,6 +406,7 @@ cleaned some -Wextra warnings
 no body rotation while dead
 block_action packet, for encoding the event type that caused a block change. variable crumble forces
 tweaked momentums for animation particles
+die if z level goes below a threshhold -- dont bounce players back up
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
@@ -475,8 +476,3 @@ apply terrain cover to damage
 TODO:
 migrate all struct Vector to Vec3 format
 bell when players join server
-
-packets per blockset0 action (grenade, pick)
-minimally, 2 packets: set0, set0anim (force to apply to anim, or anim/action type)
-
-kill people on floor fall
