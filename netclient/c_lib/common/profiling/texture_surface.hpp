@@ -88,7 +88,7 @@ class Texture_surface
 
 	~Texture_surface()
 	{
-		//free(pixels);
+		free(pixels);
 		glDeleteTextures( 2, (GLuint*) &tex );
 	}
 

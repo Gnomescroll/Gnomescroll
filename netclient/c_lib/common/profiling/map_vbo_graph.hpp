@@ -35,9 +35,9 @@ class MapGraph
 
 	~MapGraph()
 	{
-		delete[] ts;
+		delete ts;
 	}
-	
+
 	void frame_start()
 	{
 		int t = _GET_MS_TIME();

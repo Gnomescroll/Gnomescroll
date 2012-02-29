@@ -24,7 +24,7 @@ class FrameGraph
 
     FrameGraph()
     {
-        index = 0;
+		index = 0;
         pixel_column = 0;
 
         for(int i=0; i<128; i++) 
@@ -40,7 +40,7 @@ class FrameGraph
 
     ~FrameGraph()
     {
-        delete ts;
+		delete ts;
     }
 
     void frame_start()
