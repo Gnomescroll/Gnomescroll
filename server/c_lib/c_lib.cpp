@@ -29,19 +29,20 @@
 #include <c_lib/t_map/server/manager.cpp>
 #include <c_lib/t_map/server/map_chunk_history.cpp>
 
+//ray tracing
+#include <c_lib/ray_trace/ray_trace.c>
+#include <c_lib/ray_trace/hitscan.cpp>
+
 //physics
+#include <c_lib/physics/verlet.cpp>
+#include <c_lib/physics/common.cpp>
+
 #include <c_lib/physics/vector.cpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/vec4.hpp>
 #include <c_lib/physics/mat3.hpp>
 #include <c_lib/physics/mat4.hpp>
 #include <c_lib/physics/affine.hpp>
-
-//other physics
-#include "./ray_trace/ray_trace.c"
-#include "./ray_trace/hitscan.cpp"
-#include "./physics/common.cpp"
-#include <c_lib/physics/verlet.cpp>
 
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>

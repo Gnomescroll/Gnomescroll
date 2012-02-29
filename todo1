@@ -394,6 +394,9 @@ Feb 28
 fixed collision detection more (there is still lurking edge case -- dont think i can get it)
 release mouse before exit
 
+added mass to particle physics
+--particles should be initalized with momentum instead of velocity
+
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
 ====================
@@ -455,10 +458,9 @@ color agent model more appropriately and  use team base color
 
 GRENADES:
 charge up
-client side predicted (dont wait for create) [PROBLEM: id syncs]
+client side predicted (dont wait for create) [PROBLEM: id syncs] [solution -- dont id sync grenades -- not needed]
 
 TODO:
-integrate force into physics
 migrate all struct Vector to Vec3 format
 
 bell when players join server

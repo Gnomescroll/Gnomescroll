@@ -24,7 +24,7 @@
 /* properties */
 
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
-const float GRENADE_MASS = 2.0f;
+const float GRENADE_MASS = 0.5f;
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {

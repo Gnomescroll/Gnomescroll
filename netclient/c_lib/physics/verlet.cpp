@@ -55,8 +55,8 @@ Vec3 VerletParticle::get_momentum()
 {
     Vec3 mom;
     mom.x = this->v.x * this->m;
-    mom.x = this->v.y * this->m;
-    mom.x = this->v.z * this->m;
+    mom.y = this->v.y * this->m;
+    mom.z = this->v.z * this->m;
     return mom;
 }
 
@@ -65,7 +65,6 @@ VerletParticle::VerletParticle(float x, float y, float z, float mx, float my, fl
 m(mass)
 {
     this->set_state(x,y,z,mx,my,mz);
-    v = vec3_scalar_mult(v, 1/mass);
     old_p = p;
     old_v = v;
 }
