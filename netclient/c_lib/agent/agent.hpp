@@ -68,7 +68,7 @@ class Agent_state {
         void print_cs();
         Agent_control_state get_current_control_state();
         class AgentState state_rollback;
-        struct Agent_control_state cs[128];
+        struct Agent_control_state cs[256];
         int snapshot_seq;
         int cs_seq; // <--current counter
 

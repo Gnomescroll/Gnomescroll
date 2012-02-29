@@ -112,11 +112,11 @@ void Agent_state::tick()
     int _tc =0;
     struct Agent_control_state _cs;
 
-    while(cs[(cs_seq+1) % 128].seq == (cs_seq+1)% 256) 
+    while(cs[(cs_seq+1) % 256].seq == (cs_seq+1)% 256) 
     {
 
         cs_seq = (cs_seq+1)%256;
-        _cs = cs[cs_seq % 128];
+        _cs = cs[cs_seq];
 
         s = _agent_tick(_cs, box, s, this);
         _tc++;
@@ -129,6 +129,7 @@ void Agent_state::tick()
 
 
 #define ADVANCED_JUMP 0
+//#define ADVANCED_JETPACK 0
 
 //takes an agent state and control state and returns new agent state
 class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a)
@@ -307,14 +308,21 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 }
 
 void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) {
-    int index = seq%128;
+
+    //printf("cs= %i \n", seq);
+
+    int index = seq%256;
 
     this->cs[index].seq = seq;
     this->cs[index].cs = cs;
     this->cs[index].theta = theta;
     this->cs[index].phi = phi;
 
+    //printf("1 seq: %i \n", seq);
+    //printf("1 cs_seq: %i \n", cs_seq);
     tick();
+    //printf("2 seq: %i \n", seq);
+    //printf("2 cs_seq: %i \n", cs_seq);
 
     #ifdef DC_SERVER
     if (seq != cs_seq) printf("seq != cs_seq \n");
@@ -324,7 +332,8 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
         class PlayerAgent_Snapshot P;
         
         P.id = id;
-        P.seq = (cs_seq+1) % 256;
+        //P.seq = (cs_seq+1) % 256;
+        P.seq = cs_seq;
 
         P.x = s.x;
         P.y = s.y;
@@ -343,8 +352,8 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     {
         class Agent_state_message A;
 
-        A.id = id;
-        A.seq = (cs_seq+1) % 256;
+        //P.seq = (cs_seq+1) % 256;
+        A.seq = cs_seq;
 
         A.x = s.x;
         A.y = s.y;
@@ -363,7 +372,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
         int index;
         for(i=16;i<96;i++)
         {
-            index = (seq + i)%128;
+            index = (seq + i)%256;
             this->cs[index].seq = -1;
         }
     }
@@ -371,6 +380,11 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
+    #ifdef DC_SERVER
+        printf("WTF ERROR!!!\n");
+    #endif
+
+
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
@@ -380,7 +394,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     int i;
     int index;
     for(i=16;i<96;i++){
-        index = (seq + i)%128;
+        index = (seq + i)%256;
         cs[index].seq = -1;
     }
                 
@@ -389,9 +403,9 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 
     s = state_snapshot;
 
-    #ifdef DC_CLIENT
-    AgentDraw::add_snapshot_to_history(this);
-    #endif
+    //#ifdef DC_CLIENT
+    //AgentDraw::add_snapshot_to_history(this);
+    //#endif
 
     tick();
 }
@@ -479,7 +493,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128; i++)
+    for(int i=0; i<256; i++)
     {
         cs[i].seq = -1;
         cs[i].cs = 0;
@@ -523,7 +537,7 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
     
     state_snapshot.seq = -1;
     state_rollback.seq = -1;
-    for(int i=0; i<128; i++)
+    for(int i=0; i<256; i++)
     {
         cs[i].seq = -1;
         cs[i].cs = 0;
@@ -592,7 +606,7 @@ void Agent_state::print_cs()
 
 Agent_control_state Agent_state::get_current_control_state()
 {
-    return this->cs[(this->cs_seq-1)%128];
+    return this->cs[(this->cs_seq-1+256)%256];
 }
 
 int Agent_state::crouched()
