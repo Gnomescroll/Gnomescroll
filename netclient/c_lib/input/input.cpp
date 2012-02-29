@@ -34,18 +34,25 @@ int get_key_state() {
 
 #include <c_lib/time/physics_timer.h>
 
+void bind_mouse()
+{
+    SDL_ShowCursor(0);
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+}
+
+void unbind_mouse()
+{
+    SDL_ShowCursor(1);
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+}
+
+
 int process_events()
 {
     if (input_state.mouse_bound)
-    {
-        SDL_ShowCursor(0);
-        SDL_WM_GrabInput(SDL_GRAB_ON);
-    }
+        bind_mouse();
     else
-    {
-        SDL_ShowCursor(1);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);
-    }
+        unbind_mouse();
 
     while(SDL_PollEvent( &Event )) { //returns 0 if no event
 

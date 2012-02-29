@@ -17,3 +17,6 @@ int process_events();
 void pan_camera(int delta_tick);
 
 char getUnicodeValue(SDL_keysym keysym);
+
+void bind_mouse();
+void unbind_mouse();

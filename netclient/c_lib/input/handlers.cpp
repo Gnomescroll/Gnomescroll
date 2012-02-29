@@ -62,6 +62,8 @@ void enable_jump()
 
 void enable_quit()
 {
+    // release mouse
+    unbind_mouse();
     input_state.quit = true;
 }
 

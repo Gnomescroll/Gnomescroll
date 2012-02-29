@@ -383,7 +383,7 @@ void draw_bases(float z)
         && ClientState::playerAgent_state.you != NULL)
         team = ClientState::playerAgent_state.you->status.team;
 
-    Base* b;
+    Base* b = NULL;
     if (team == 0)
     {   // draw both
         glBindTexture(GL_TEXTURE_2D, base_icons[0]);
@@ -404,8 +404,11 @@ void draw_bases(float z)
         else if (team == 2)
             b = ClientState::ctf.two.base;
 
-        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
-        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        if (b != NULL)
+        {
+            world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+            draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        }
     }
 }
 
@@ -420,29 +423,32 @@ void draw_flags(float z)
         && ClientState::playerAgent_state.you != NULL)
         team = ClientState::playerAgent_state.you->status.team;
 
-    Flag* b;
+    Flag* f = NULL;
     if (team == 0)
     {   // draw both
         glBindTexture(GL_TEXTURE_2D, flag_icons[0]);
-        b = ClientState::ctf.one.flag;
-        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        f = ClientState::ctf.one.flag;
+        world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
         glBindTexture(GL_TEXTURE_2D, flag_icons[1]);
-        b = ClientState::ctf.two.flag;
-        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
+        f = ClientState::ctf.two.flag;
+        world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
     else
     {
         glBindTexture(GL_TEXTURE_2D, flag_icons[team-1]);
         if (team == 1)
-            b = ClientState::ctf.one.flag;
+            f = ClientState::ctf.one.flag;
         else if (team == 2)
-            b = ClientState::ctf.two.flag;
+            f = ClientState::ctf.two.flag;
 
-        world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
-        draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        if (f != NULL)
+        {
+            world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
+            draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
+        }
     }
 }
 
