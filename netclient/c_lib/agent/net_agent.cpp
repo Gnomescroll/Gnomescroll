@@ -422,7 +422,7 @@ inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
 inline void AgentActiveWeapon_CtoS::handle() {}
 inline void AgentReloadWeapon_CtoS::handle(){}
-inline void agent_block_CtoS::handle() {}
+inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
@@ -528,7 +528,7 @@ inline void hit_block_CtoS::handle()
     
     //int dmg = a->weapons.pick.damage;
     int dmg = 32;
-    _apply_damage_broadcast(x,y,z, dmg);
+    t_map::apply_damage_broadcast(x,y,z, dmg, t_map::TMA_PICK);
 }
 
 inline void hitscan_object_CtoS::handle()
@@ -628,7 +628,7 @@ inline void hitscan_block_CtoS::handle()
 
     // damage block
     int weapon_block_damage = 12;
-    _apply_damage_broadcast(x,y,z, weapon_block_damage);
+    t_map::apply_damage_broadcast(x,y,z, weapon_block_damage, t_map::TMA_LASER);
     //printf("hitscan block %d:: %d,%d,%d\n", id, x,y,z);
     // TODO: Use weapon block dmg
 
@@ -820,7 +820,7 @@ inline void AgentReloadWeapon_CtoS::handle()
     msg.broadcast();
 }
 
-inline void agent_block_CtoS::handle()
+inline void agent_set_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a==NULL) return;

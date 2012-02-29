@@ -12,14 +12,15 @@
 
 namespace Animations {
 
-void block_crumble(float x, float y, float z, int n, int cube_id) {
+void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
+{
 
     const float crumble_size = 0.17f;
     ClientState::minivox_list.set_size(crumble_size);
 
-    const float _vx = 10.0f,
-                  _vy = 10.0f,
-                  _vz = 10.0f;
+    const float _vx = momentum,
+                  _vy = momentum,
+                  _vz = momentum;
 
     //unsigned char r,g,b,a;
     int side, ttl;
@@ -53,6 +54,27 @@ void block_crumble(float x, float y, float z, int n, int cube_id) {
     }
 
     ClientState::minivox_list.unset_size();
+}
+
+void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action)
+{
+    float momentum = 5.0f;
+    switch (action)
+    {
+        case t_map::TMA_PICK:
+            momentum = 2.0f;
+            break;
+        case t_map::TMA_GRENADE:
+            momentum = 10.0f;
+            break;
+        case t_map::TMA_LASER:
+            momentum = 0.5f;
+            break;
+        default:
+            printf("block_crumble received unhandled terrain modification action %d\n", action);
+            break;
+    }
+    block_crumble(x,y,z, n, cube_id, momentum);
 }
 
 // surface block dmg

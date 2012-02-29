@@ -197,6 +197,9 @@ int Grenade::block_damage(int dist) {
 
 void Grenade::damage_blocks() {
 #ifdef DC_SERVER
+    const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
+    using t_map::apply_damage_broadcast;
+    
     float x = this->vp->p.x;
     float y = this->vp->p.y;
     float z = this->vp->p.z;
@@ -209,7 +212,6 @@ void Grenade::damage_blocks() {
     
     int i,j,k;
     int bx,by,bz;
-    int res=0;
     int dmg=0;
     for (i=0; i<ir; i++)
         for (j=0; j<ir; j++)
@@ -220,31 +222,19 @@ void Grenade::damage_blocks() {
                 bx = mx + i;
                 by = my + j;
                 bz = mz + k;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
                 bx = mx - i;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
                 by = my - j;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
                 by = my + j;
                 bz = mz - k;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
                 bx = mx + i;
                 by = my - j;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
                 bx = mx - i;
-                res = _apply_damage(bx,by,bz, dmg);
-                if (res==0)
-                    _block_broadcast(bx,by,bz,0);
+                apply_damage_broadcast(bx,by,bz, dmg, action);
             }
 #endif
 }

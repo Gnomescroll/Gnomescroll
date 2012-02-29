@@ -108,6 +108,27 @@ class block_StoC: public MapMessagePacketToClient<block_StoC>
         inline void handle() __attribute((always_inline));
 };
 
+// sets a block, but also provides information on how the block was set
+class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
+{
+    public:
+
+        int x,y,z;
+        int val;
+        int action;
+        
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+            pack_u16(&val, buff, buff_n, pack);
+            pack_u8(&action, buff, buff_n, pack);
+        }
+        
+        inline void handle() __attribute((always_inline));
+};
+
 class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
 {
     public:

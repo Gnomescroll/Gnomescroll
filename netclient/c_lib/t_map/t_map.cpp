@@ -14,6 +14,7 @@
 #ifdef DC_SERVER
     #include <c_lib/t_map/server/manager.hpp>
     #include <c_lib/t_map/server/map_chunk_history.hpp>
+    #include <c_lib/t_map/net/t_StoC.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -82,6 +83,32 @@ void set(int x, int y, int z, int value)
     main_map->set_block(x,y,z,value);
 }
 
+int apply_damage(int x, int y, int z, int dmg)
+{
+    #ifdef DC_CLIENT
+    Sound::block_took_damage(x,y,z,0,0,0);
+    #endif
+    return t_map::main_map->apply_damage(x,y,z,dmg);
+}
+
+#ifdef DC_SERVER
+// apply block damage & broadcast the update to client
+void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
+{
+    int res = apply_damage(x,y,z, dmg);
+    if (res == 0)
+    {
+        block_action_StoC msg;
+        msg.x = x;
+        msg.y = y;
+        msg.z = z;
+        msg.val = res;
+        msg.action = action;
+        msg.broadcast();
+    }
+}
+#endif
+
 }
  
 
@@ -95,39 +122,13 @@ void _set(int x, int y, int z, int value)
     t_map::main_map->set_block(x,y,z,value);
 }
 
-int _apply_damage(int x, int y, int z, int dmg)
-{
-    #ifdef DC_CLIENT
-    Sound::block_took_damage(x,y,z,0,0,0);
-    #endif
-    return t_map::main_map->apply_damage(x,y,z,dmg);
-}
-
-/*
-
-    Move soehwerew
-*/
-
-#include <c_lib/t_map/net/t_StoC.hpp>
-
-// apply block damage & broadcast the update to client
-int _apply_damage_broadcast(int x, int y, int z, int dmg)
-{
-    int res = _apply_damage(x,y,z, dmg);
-
-    //printf("warning: _apply_damage_broadcast \n");
-    if (res == 0) {
-        _block_broadcast(x,y,z, 0);
-    }
-    return res;
-}
-
 /*
     WTF
 */
+#ifdef DC_SERVER
 void _set_broadcast(int x, int y, int z, int value) 
 {
-    class t_map::block_StoC msg;
+    t_map::block_StoC msg;
     int i = _get(x,y,z);
     if (i != value) 
     {
@@ -141,21 +142,6 @@ void _set_broadcast(int x, int y, int z, int value)
 
 }
 
-/*
-    WTF
-*/
-void _block_broadcast(int x, int y, int z, int value) 
-{
-    class t_map::block_StoC msg;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    msg.val = value;
-    msg.broadcast();
-}
-
-
-
 void send_map_metadata(int client_id)
 {
     class t_map::map_metadata_StoC msg;
@@ -164,6 +150,7 @@ void send_map_metadata(int client_id)
     msg.z = map_dim.z;
     msg.sendToClient(client_id);
 }
+#endif
 
 /*
 void send_map_metadata()

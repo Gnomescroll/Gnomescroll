@@ -18,6 +18,14 @@ extern struct MapDimension map_dim;
 namespace t_map
 {
 
+typedef enum TerrainModificationAction
+{
+    TMA_PICK=0,
+    TMA_APPLIER,
+    TMA_GRENADE,
+    TMA_LASER
+} TerrainModificationAction;
+
 const int MAP_WIDTH = 512;
 const int MAP_HEIGHT = 512;
    
@@ -27,7 +35,7 @@ const int MAP_CHUNK_HEIGHT = MAP_CHUNK_HEIGHT/16;
 void init_t_map() GNOMESCROLL_API;
 
 #ifdef DC_CLIENT
-    void init_for_draw() GNOMESCROLL_API;
+void init_for_draw() GNOMESCROLL_API;
 #endif
 
 class Terrain_map* get_map();
@@ -35,26 +43,27 @@ class Terrain_map* get_map();
 inline int get(int x, int y, int z);
 inline void set(int x, int y, int z, int value);
 
+int apply_damage(int x, int y, int z, int dmg);
+#ifdef DC_SERVER
+void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
+#endif
+
 }
 
 int _get(int x, int y, int z) GNOMESCROLL_API;
 void _set(int x, int y, int z, int value) GNOMESCROLL_API;
 
-//change to void?
-int _apply_damage(int x, int y, int z, int dmg);
-
-int _apply_damage_broadcast(int x, int y, int z, int dmg);
-
 /*
     Deprecate eventually
 */
+#ifdef DC_SERVER
 void _set_broadcast(int x, int y, int z, int value);
-void _block_broadcast(int x, int y, int z, int value);
 /*
     Deprecated
 */
 
 void send_map_metadata(int client_id);  //Deprecate
+#endif
 //void send_map_metadata();   //Deprecate
 void set_map_size(int x, int y, int z); //Deprecate
 

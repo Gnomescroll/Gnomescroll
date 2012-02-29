@@ -141,11 +141,16 @@ void map_element_update::handle()
 
 void block_StoC::handle() 
 {
+    _set(x,y,z,val);
+}
+
+void block_action_StoC::handle()
+{
     if (val == 0) 
     {
         int cube_id = _get(x,y,z);
-        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id);
-        Sound::block_destroyed(x, y, z, 0,0,0);
+        Animations::block_crumble((float)x+0.5f, (float)y+0.5f, (float)z+0.5f, randrange(10,30), cube_id, (TerrainModificationAction)action);
+        Sound::block_destroyed(x,y,z, 0,0,0);
     }
     else
         Sound::block_set(x,y,z,0,0,0);
@@ -172,6 +177,7 @@ void clear_alias_StoC::handle() {}
 void set_map_alias_StoC::handle() {}
 
 void block_StoC::handle() {}
+void block_action_StoC::handle() {}
 void map_metadata_StoC::handle() {}
 
 #endif

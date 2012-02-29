@@ -1,8 +1,13 @@
 #pragma once
 
+#include <c_lib/t_map/t_map.hpp>
+
 namespace Animations {
 
-void block_crumble(float x, float y, float z, int n, int cube_id);
+using t_map::TerrainModificationAction;
+
+void block_crumble(float x, float y, float z, int n, int cube_id, float momentum);
+void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action);
 
 // pos, incident vector, cube_id, side[3] array returned from ray_cast6
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side);

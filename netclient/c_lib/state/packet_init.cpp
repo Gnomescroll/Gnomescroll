@@ -47,7 +47,7 @@ void RegisterMessages() {
     agent_destroy_StoC::register_client_packet();
     agent_name_StoC::register_client_packet();
 
-    agent_block_CtoS::register_server_packet();
+    agent_set_block_CtoS::register_server_packet();
 
     /*
         Map Messages
@@ -61,6 +61,7 @@ void RegisterMessages() {
 
     // block value change
     t_map::block_StoC::register_client_packet();
+    t_map::block_action_StoC::register_client_packet();
     t_map::block_CtoS::register_server_packet();
     t_map::map_metadata_StoC::register_client_packet();
     

@@ -403,9 +403,11 @@ jump sets velocity to 0 before adding in jump burst
 
 client's grenades start play locally instead of waiting for network packet
 cleaned some -Wextra warnings
+no body rotation while dead
 
 REBATES!!
 CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
+-- Call mom, ask to put $200 in checking
 ====================
 
 == MODELS ==
@@ -472,5 +474,3 @@ bell when players join server
 
 packets per blockset0 action (grenade, pick)
 minimally, 2 packets: set0, set0anim (force to apply to anim, or anim/action type)
-
-no body rotation while dead

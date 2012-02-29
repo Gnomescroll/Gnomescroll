@@ -416,7 +416,7 @@ void PlayerAgent_action::set_block() {
     );
     if (b==NULL) return;
 
-    agent_block_CtoS msg;
+    agent_set_block_CtoS msg;
     msg.x = b[0];
     msg.y = b[1];
     msg.z = b[2];

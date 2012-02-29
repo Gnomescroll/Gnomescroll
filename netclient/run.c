@@ -59,8 +59,8 @@ void exec_file(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
-    char* args[1];
-    args[0] = "test";
+    //char* args[1];
+    //args[0] = "test";
 
     printf("Start\n");
     //exec_pycode("import os; import sys; print os.getcwd(); sys.path.append(os.getcwd());import args_client;args_client.main()");

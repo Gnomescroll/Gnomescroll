@@ -621,7 +621,7 @@ class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentRel
         inline void handle();
 };
 
-class agent_block_CtoS: public FixedSizeNetPacketToServer<agent_block_CtoS>
+class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_CtoS>
 {
     public:
         int x,y,z;
