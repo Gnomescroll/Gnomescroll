@@ -40,7 +40,7 @@ class FrameGraph
 
 	~FrameGraph()
 	{
-		delete[] ts;
+		//delete ts;
 	}
 
 	void frame_start()
