@@ -256,7 +256,7 @@ void Voxel_model::set_hitscan(bool hitscan) {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
+void Voxel_model::update(float x, float y, float z, float theta, float phi) 
 {
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();

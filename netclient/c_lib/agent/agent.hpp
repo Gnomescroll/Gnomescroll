@@ -135,6 +135,6 @@ class Agent_state {
         ~Agent_state();
 };
 
-class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a);
+class AgentState _agent_tick(struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as);
 
 bool agent_collides_terrain(Agent_state* a);

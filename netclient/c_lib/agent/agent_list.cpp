@@ -42,18 +42,13 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         }
         else
         {
-            if (agent->status.dead)
-            {
-                agent->vox->update(&agent_vox_dat_dead, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
-            }
-            else if (agent->crouched())
+            if (agent->crouched())
             {
                 if (!agent->status.vox_crouched)
                 {
                     agent->vox->reset_skeleton(&agent_vox_dat_crouched);
                     agent->status.vox_crouched = true;
                 }
-                agent->vox->update(&agent_vox_dat_crouched, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
             }
             else
             {
@@ -62,8 +57,8 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
                     agent->vox->reset_skeleton(&agent_vox_dat);
                     agent->status.vox_crouched = false;
                 }
-                agent->vox->update(&agent_vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
             }
+            agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
 
             agent->vox->set_draw(true);
             agent->vox->set_hitscan(true);
@@ -175,11 +170,6 @@ void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, 
     }
 
     this->n_filtered = ct;
-}
-
-int Agent_list::get_ids(int* p) {
-    p = ids_in_use;
-    return get_ids();
 }
 
 int Agent_list::get_ids() {

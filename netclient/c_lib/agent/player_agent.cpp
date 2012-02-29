@@ -212,6 +212,12 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
 
     cs_seq_local = (cs_seq_local+1) % 256;
 
+    if (this->you->status.dead)
+    {   // use the last agent state's theta,phi (instead of the camera which is normally passed in)
+        theta = this->you->s.theta;
+        phi = this->you->s.phi;
+    }
+
     Agent_cs_CtoS csp;
 
     csp.seq = cs_seq_local;
@@ -244,14 +250,14 @@ void PlayerAgent_state::set_control_state(uint16_t cs, float theta, float phi) {
     {
         acs = cs_local[cs_index%128]; //check seq number
 
-        tmp = _agent_tick(acs, you->box, tmp, this->you);
+        tmp = _agent_tick(acs, you->box, tmp);
         tmp.seq = (tmp.seq+1) % 256;
 
         cs_index = (cs_index+1) % 256;
     }
     s0 = tmp;
     acs = cs_local[cs_seq_local % 128];
-    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp, this->you);
+    s1 = _agent_tick(cs_local[cs_seq_local % 128], you->box, tmp);
 }
 
 float PlayerAgent_state::camera_height() {

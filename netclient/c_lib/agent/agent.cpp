@@ -115,7 +115,7 @@ void Agent_state::tick()
     while(cs[CS_seq].seq == CS_seq )
     {
         _cs = cs[CS_seq];
-        s = _agent_tick(_cs, box, s, this);
+        s = _agent_tick(_cs, box, s);
 
         CS_seq = (CS_seq+1)%256;
         _tc++;
@@ -131,7 +131,7 @@ void Agent_state::tick()
 //#define ADVANCED_JETPACK 0
 
 //takes an agent state and control state and returns new agent state
-class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as, Agent_state* a)
+class AgentState _agent_tick(const struct Agent_control_state _cs, const struct Agent_collision_box box, class AgentState as)
  {
     int a_cs = _cs.cs;
     //set control state variables

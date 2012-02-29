@@ -49,7 +49,7 @@ void Spawner::set_position(float x, float y, float z)
     this->x = x;
     this->y = y;
     this->z = z;
-    this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 
     #ifdef DC_SERVER
     spawner_state_StoC msg;
@@ -97,7 +97,7 @@ void Spawner::init_vox()
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
-    this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
 Spawner::Spawner(int id)
@@ -124,17 +124,17 @@ spawn_radius(SPAWNER_RADIUS),
 vox(NULL)
 {}
 
+#ifdef DC_SERVER
 void Spawner::create_message(Spawner_create_StoC* msg)
 {
-    #ifdef DC_SERVER
     msg->id = this->id;
     msg->team = this->team;
     msg->owner = this->owner;
     msg->x = this->x;
     msg->y = this->y;
     msg->z = this->z;
-    #endif
 }
+#endif
 
 int Spawner::get_coins_for_kill(int owner, int team)
 {
@@ -248,9 +248,9 @@ int Spawner_list::get_random_spawner(int team)
     return spawners[randrange(0,j-1)];
 }
 
+#ifdef DC_SERVER
 void Spawner_list::send_to_client(int client_id)
 {
-    #ifdef DC_SERVER
     for (int i=0; i<n_max; i++)
     {
         Spawner *s = this->a[i];
@@ -260,8 +260,8 @@ void Spawner_list::send_to_client(int client_id)
         s->create_message(&msg);
         msg.sendToClient(client_id);
     }
-    #endif
 }
+#endif
 
 void Spawner_list::tick()
 {

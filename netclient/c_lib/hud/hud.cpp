@@ -808,7 +808,7 @@ Scoreboard::~Scoreboard()
     {
         if (ids[i] != NULL) HudText::text_list.destroy(ids[i]->id);
         if (names[i] != NULL) HudText::text_list.destroy(names[i]->id);
-        if (kills[i] != NULL); HudText::text_list.destroy(kills[i]->id);
+        if (kills[i] != NULL) HudText::text_list.destroy(kills[i]->id);
         if (deaths[i] != NULL) HudText::text_list.destroy(deaths[i]->id);
         if (scores[i] != NULL) HudText::text_list.destroy(scores[i]->id);
     }    

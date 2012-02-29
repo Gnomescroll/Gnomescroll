@@ -188,7 +188,7 @@ void Slime_list::update()
     {
         if (this->a[i] == NULL) continue;
         if (this->a[i]->vox == NULL) continue;
-        this->a[i]->vox->update(&slime_vox_dat, this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
+        this->a[i]->vox->update(this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
     }
 }
 

@@ -119,7 +119,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
     version = get_version()
-    extra_options = ['-Wall', '-Wextra', '-DDC_CLIENT', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
+    extra_options = ['-Wall', '-DDC_CLIENT', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
     cflags += extra_options
 
     if OS == 'Darwin':
@@ -458,6 +458,13 @@ class centos64_production_ctx(ConfigurationContext):
 class fmod_ctx(ConfigurationContext):
     cmd = 'fmod'
     fun = 'fmod'
+
+class extra_ctx(ConfigurationContext):
+    cmd = 'extra'
+    fun = 'extra'
+
+def extra(ctx):
+    configure(ctx, add_flags=['-Wextra'])
 
 def fmod(ctx):
     configure(ctx, sound='fmod')

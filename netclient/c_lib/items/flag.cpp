@@ -6,7 +6,7 @@ void Flag::set_position(float x, float y, float z) {
     this->x = x;
     this->y = y;
     this->z = z;
-    this->vox->update(&flag_vox_dat, x,y,z, this->theta, this->phi);
+    this->vox->update(x,y,z, this->theta, this->phi);
 }
 
 Flag::Flag(int id, int team)
@@ -71,6 +71,6 @@ void Flag::animate()
 
     float dtheta = 0.02f;
     this->theta += dtheta;
-    this->vox->update(&flag_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 

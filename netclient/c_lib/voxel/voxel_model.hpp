@@ -36,7 +36,7 @@ class Voxel_model
         void set_colors(VoxDat* vox_dat);
         void update_team_color(VoxDat* vox_dat, int team);
 
-        void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
+        void update(float x, float y, float z, float theta, float phi);
         void restore(VoxDat* vox_dat, int team=-1);
 
         Voxel_volume* vv;

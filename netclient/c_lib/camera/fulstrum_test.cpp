@@ -4,9 +4,6 @@
 
 #include <c_lib/physics/vec3.hpp>
 
-void setup_test_fulstrum(int camera)
-{}
-
 //static float fulstrum_fovy;
 //static float fulstrum_fovx;
 //static float fulstrum_aspect;

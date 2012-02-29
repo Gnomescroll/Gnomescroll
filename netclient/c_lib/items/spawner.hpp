@@ -44,7 +44,9 @@ class Spawner
 
         void tick();
 
+        #ifdef DC_SERVER
         void create_message(Spawner_create_StoC* msg);
+        #endif
         Spawner(int id);
         Spawner(int id, float x, float y, float z);
         ~Spawner();
@@ -59,7 +61,9 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
     public:
         bool team_spawner_available(int team);
         bool point_occupied(int x, int y, int z);
+        #ifdef DC_SERVER
         void send_to_client(int client_id);
+        #endif
         int get_random_spawner(int team);
 
         void tick();

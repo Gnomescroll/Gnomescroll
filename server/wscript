@@ -69,7 +69,7 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
 
     version = get_version()
 
-    extra_options = ['-Wall','-Wextra','-DDC_SERVER', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)]
+    extra_options = ['-Wall','-DDC_SERVER', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)]
     cflags += extra_options
 
     cflags += [c for c in add_flags if c not in cflags]
@@ -300,6 +300,13 @@ class centos64_production_ctx(ConfigurationContext):
 class multicore_ctx(ConfigurationContext):
     cmd = 'multicore'
     fun = 'multicore'
+
+class extra_ctx(ConfigurationContext):
+    cmd = 'extra'
+    fun = 'extra'
+
+def extra(ctx):
+    configure(ctx, add_flags=['-Wextra'])
 
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])

@@ -43,15 +43,6 @@ bool _quit = false;
 namespace Main
 {
 
-int get_mouse_tick()
-{
-    static int last = 0;
-    int current = _GET_MS_TIME();
-    int delta = current - last;
-    last = current;
-    return delta;
-}
-
 void init()
 {
     _set_resolution(Options::width, Options::height, Options::fullscreen);
@@ -83,7 +74,7 @@ int run()
 
     // update mouse
 
-    pan_camera(get_mouse_tick());
+    pan_camera();
 
     while (!input_state.quit)
     {
@@ -95,7 +86,7 @@ int run()
 
         // update mouse
 
-        pan_camera(get_mouse_tick());
+        pan_camera();
         
         // physics loop
         int physics_ticks = 0;
@@ -120,14 +111,14 @@ int run()
             ClientState::playerAgent_state.update_sound();
 
             // update mouse
-            pan_camera(get_mouse_tick());
+            pan_camera();
         }
 
         if (physics_ticks >= 2)
             printf("Physics: %d ticks this frame\n", physics_ticks);
 
         // update mouse
-        pan_camera(get_mouse_tick());
+        pan_camera();
             
         // update hud projected names
         ClientState::playerAgent_state.display_agent_names();
@@ -144,7 +135,7 @@ int run()
         );
 
         // update mouse
-        pan_camera(get_mouse_tick());
+        pan_camera();
 
         apply_camera_physics(); //apply velocity
         // update camera state
@@ -164,7 +155,7 @@ int run()
         Animations::animations_draw();
 
         // update mouse
-        pan_camera(get_mouse_tick());
+        pan_camera();
 
         if (Options::hud)
         {
@@ -229,7 +220,7 @@ int run()
         }
 
         // update mouse
-        pan_camera(get_mouse_tick());
+        pan_camera();
 
     }
 

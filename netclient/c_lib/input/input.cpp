@@ -322,7 +322,7 @@ void apply_camera_physics()
     MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 }
 
-void pan_camera(int delta_tick)
+void pan_camera()
 {
     int current_time = _GET_MS_TIME();
 
