@@ -790,14 +790,15 @@ inline void ThrowGrenade_CtoS::handle()
     n[1] = vy;
     n[2] = vz;
     normalize_vector(n);
-    static const float GRENADE_VEL = 15.0f; // load from dat later
+    static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
-    n[0] *= GRENADE_VEL;
-    n[1] *= GRENADE_VEL;
-    n[2] *= GRENADE_VEL;
+    n[0] *= PLAYER_ARM_FORCE;
+    n[1] *= PLAYER_ARM_FORCE;
+    n[2] *= PLAYER_ARM_FORCE;
     Grenade* g = ServerState::grenade_list.create(x,y,z, n[0], n[1], n[2]);
     if (g==NULL) return;
     g->owner = a->id;
+    g->broadcast();
 }
 
 inline void AgentActiveWeapon_CtoS::handle()

@@ -85,6 +85,7 @@ class PlayerAgent_state {
         //set also sends
         void set_control_state(int f, int b, int l, int r, int jet, int jump, int crouch, int boost, int misc1, int misc2, int misc3, float theta, float phi);
 
+        float camera_z();
         float camera_height();
 
         PlayerAgent_action action;

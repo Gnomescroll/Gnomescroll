@@ -36,8 +36,10 @@ class Grenade: public Particle
         int block_damage(int dist);
         void damage_blocks();
 
-        void create_message(grenade_StoC* msg);
-
+        #ifdef DC_SERVER
+        void broadcast();
+        #endif
+        
         Grenade(int id);
         Grenade(int id, float x, float y, float z, float mx, float my, float mz);
         ~Grenade();

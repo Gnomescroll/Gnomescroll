@@ -259,6 +259,12 @@ float PlayerAgent_state::camera_height() {
     return this->you->camera_height();
 }
 
+float PlayerAgent_state::camera_z()
+{
+    if (this->you == NULL) return 0.0f;
+    return this->camera_state.z + this->camera_height();
+}
+
 void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT

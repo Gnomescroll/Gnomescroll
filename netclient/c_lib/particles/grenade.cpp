@@ -32,8 +32,8 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
         float x,y,z;
         float mx,my,mz; // send initial impulse, not velocity
+        int owner;
         uint16_t ttl_max;
-        uint16_t id;
         uint8_t type;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -46,7 +46,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
             pack_float(&my, buff, buff_n, pack);
             pack_float(&mz, buff, buff_n, pack);
 
-            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&owner, buff, buff_n, pack);
             pack_u16(&ttl_max, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
         }
@@ -56,7 +56,9 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
 inline void grenade_StoC::handle() {
     #ifdef DC_CLIENT
-    Grenade* g = ClientState::grenade_list.create((int)id, x, y, z, mx, my, mz);
+    if (owner == ClientState::playerAgent_state.agent_id) return;
+    Grenade* g = ClientState::grenade_list.create(x, y, z, mx, my, mz);
+    g->owner = owner;
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
     #endif
@@ -70,11 +72,6 @@ owner(-1)
 {
     this->ttl_max = GRENADE_TTL;
     this->type = GRENADE_TYPE;
-    #ifdef DC_SERVER
-    grenade_StoC msg;
-    this->create_message(&msg);
-    msg.broadcast();
-    #endif
 }
 
 Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
@@ -85,11 +82,6 @@ owner(-1)
 {
     this->ttl_max = GRENADE_TTL;
     this->type = GRENADE_TYPE;
-    #ifdef DC_SERVER
-    grenade_StoC msg;
-    this->create_message(&msg);
-    msg.broadcast();
-    #endif
 }
 
 Grenade::~Grenade()
@@ -102,19 +94,23 @@ Grenade::~Grenade()
     #endif
 }
 
-void Grenade::create_message(grenade_StoC* msg)
+#ifdef DC_SERVER
+void Grenade::broadcast()
 {
-    msg->x = this->vp->p.x;
-    msg->y = this->vp->p.y;
-    msg->z = this->vp->p.z;
+    grenade_StoC msg;
+    msg.x = this->vp->p.x;
+    msg.y = this->vp->p.y;
+    msg.z = this->vp->p.z;
     Vec3 mom = this->vp->get_momentum();
-    msg->mx = mom.x;
-    msg->my = mom.y;
-    msg->mz = mom.z;
-    msg->ttl_max = this->ttl_max;
-    msg->id = this->id;
-    msg->type = this->type;
+    msg.mx = mom.x;
+    msg.my = mom.y;
+    msg.mz = mom.z;
+    msg.ttl_max = this->ttl_max;
+    msg.owner = this->owner;
+    msg.type = this->type;
+    msg.broadcast();
 }
+#endif
 
 void Grenade::tick() {
 

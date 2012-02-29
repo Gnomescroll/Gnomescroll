@@ -365,23 +365,37 @@ void PlayerAgent_action::hitscan_pick() {
     //Sound::play_2d_sound(soundfile);
 }
 
-void PlayerAgent_action::throw_grenade() {
+void PlayerAgent_action::throw_grenade()
+{
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
 
+    // message to server
+    float x = p->camera_state.x;
+    float y = p->camera_state.y;
+    float z = p->camera_z();
     ThrowGrenade_CtoS msg;
-
-    msg.x = p->camera_state.x;
-    msg.y = p->camera_state.y;
-    msg.z = p->camera_state.z + p->you->camera_height();
-
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
     float f[3];
     agent_camera->forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];
-    
     msg.send();
+
+    // local play (copied from ThrowGrenade_CtoS)
+    if (!this->p->you->weapons.grenades.fire()) return;
+    static const float PLAYER_ARM_FORCE = 15.0f; // make agent property
+    //create grenade
+    f[0] *= PLAYER_ARM_FORCE;
+    f[1] *= PLAYER_ARM_FORCE;
+    f[2] *= PLAYER_ARM_FORCE;
+    Grenade* g = ClientState::grenade_list.create(x,y,z, f[0], f[1], f[2]);
+    if (g==NULL) return;
+    g->owner = this->p->agent_id;
+    
 }
 
 void PlayerAgent_action::set_block() {
