@@ -1,4 +1,6 @@
-#version 140
+#version 120
+
+#extension GL_EXT_texture_array : enable
 
 varying vec3 texCoord;
 varying mat2 lightMatrix;
