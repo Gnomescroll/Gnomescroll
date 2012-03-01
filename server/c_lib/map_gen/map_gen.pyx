@@ -35,7 +35,7 @@ cdef extern from "./map_gen/noise.h":
     void noise_destroy()
 
 cdef extern from "./map_gen/features.h":
-    void _grass(int x, int y, int base)
+    void _grass(int x, int y, int base, int dirt, int grass)
     void _caves(int x, int y, int z, float threshold, int base)
     void _ceiling(int x, int y, int z, int height, int tile)
     void _floor(int x, int y, int z, int h, int tile)
@@ -377,7 +377,7 @@ class Config:
 
         # features
         if self.add_grass:
-            _grass(self.x, self.y, self.base)
+            grass(self.x, self.y, self.base)
 
         print 'map gen took %0.2f seconds' % (time.time() - _n)
 
@@ -471,8 +471,8 @@ def invert(x=XMAX, y=YMAX, z=ZMAX, tile=2):
 def caves(x, y, z):
     _caves(x,y,z, 0.9, 2)
 
-def grass(int x, int y, int base):
-    _grass(x,y, base)
+def grass(int x, int y, int base, int dirt=5, int grass=4):
+    _grass(x,y, base, dirt, grass)
 
 def perturb(int x, int y, int z, float turbulence):
     perturb_perlin2(x,y,z, turbulence)

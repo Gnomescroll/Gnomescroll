@@ -492,5 +492,7 @@ charge up
 decayed damage by range
 apply terrain cover to damage
 
-
+fit help text into smaller screens (800x600)
 drop camera to floor when dead
+use heightmap
+swap textures in map

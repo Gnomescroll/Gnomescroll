@@ -2,7 +2,7 @@
 
 // x,y are dimensions of map to apply to
 
-void _grass(int x, int y, int base) {
+void _grass(int x, int y, int base, int dirt, int grass) {
 
     float fx = (float)x + 2.0f,
            fy = (float)y + 2.0f;
@@ -14,7 +14,7 @@ void _grass(int x, int y, int base) {
         for (j=0; j<y; j++) {
             k = _get_highest_solid_block(i,j);
             if (k >= 0) {
-                _set(i,j,k, 4);
+                _set(i,j,k, grass);
                 if (k != 0) {
                     // dirt
                     d = perlin2(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale, x, y, base);
@@ -22,7 +22,7 @@ void _grass(int x, int y, int base) {
                     dd %= (k < 3) ? k : 3;
                     dd += 1;
                     for (n=1; n <= dd; n++) {
-                        _set(i,j,k-n, 5);
+                        _set(i,j,k-n, dirt);
                     }
                 }
             }

@@ -94,7 +94,19 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(512,512,0)
+    ## short heightmap for bottom layer, blue ore
+    c_lib.map_gen.conf\
+    .size(512,512,128)\
+    .group(112)\
+    .tile(3)\
+    .interpolate(4,2,1)\
+    .scale(4.0, 4.0, 1.0)\
+    .heightmap(baseline=5, maxheight=25)\
+    .p2(octaves=8, persistence=0.85)\
+    .start()\
+    .reset()
+
+    c_lib.map_gen.grass(512,512,0, dirt=2, grass=100)
 
     ### 3d density noise. floating islands, overhangs
     #c_lib.map_gen.conf\
@@ -122,7 +134,7 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(512,512,0)
+    c_lib.map_gen.grass(512,512,0, dirt=2, grass=101)
 
     ## 3d density noise, subtractive RMF. forms caves
     c_lib.map_gen.conf\
@@ -149,6 +161,34 @@ def best_caves():
     .density(threshold=0.97)\
     .rmf()\
     .p3(octaves=6, persistence=0.7)\
+    .start()\
+    .reset()
+    
+     ##3d density noise, bottom half of map, lava
+    c_lib.map_gen.conf\
+    .interpolate(4,4,2)\
+    .size(512,512,128/2)\
+    .gradient2()\
+    .tile(7)\
+    .scale(x=4.0, y=4.0, z=3.0)\
+    .group(100)\
+    .density(threshold=0.99)\
+    .rmf()\
+    .p3(octaves=6, persistence=0.7)\
+    .start()\
+    .reset()
+
+     ##3d density noise, blue ore
+    c_lib.map_gen.conf\
+    .interpolate(2,2,2)\
+    .size(512,512,128*0.75)\
+    .gradient2()\
+    .tile(3)\
+    .scale(x=4.0, y=4.0, z=3.0)\
+    .group(1011)\
+    .density(threshold=0.995)\
+    .rmf()\
+    .p3(octaves=6, persistence=0.9)\
     .start()\
     .reset()
 
