@@ -304,14 +304,14 @@ void Agent_event::hit_block()
     //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
 }
 
-void Agent_event::melee_attack_object(int id, int type, int part, float x, float y, float z)
+void Agent_event::melee_attack_object(int id, int type, int part)
 {
     // play pick swing animation
     // play blood animation
     // play swing sound
     // play object's hurt sound
     //Sound::pick_swung(a->s.x,a->s.y,a->s.z,0,0,0);
-    //Sound::pick_hit_agent(x,y,z,0,0,0);
+    //Sound::pick_hit_agent(a->s.x, a->s.y, a->s.z,0,0,0);
 }
 
 void Agent_event::melee_attack_nothing()

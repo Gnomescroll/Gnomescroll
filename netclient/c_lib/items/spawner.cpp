@@ -12,7 +12,7 @@ VoxDat spawner_vox_dat;
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
     public:
-        int id;
+        uint8_t id;
         float x,y,z;
         //float vx,vy,vz;
 

@@ -9,8 +9,8 @@ class block_CtoS: public MapMessagePacketToServer<block_CtoS>
 {
     public:
 
-        int x,y,z;
-        int val;
+        uint16_t x,y,z;
+        uint16_t val;
         
         inline void packet(char* buff, int* buff_n, bool pack) 
         {

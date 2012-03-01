@@ -32,7 +32,7 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 
         float x,y,z;
         float mx,my,mz; // send initial impulse, not velocity
-        int owner;
+        uint8_t owner;
         uint16_t ttl_max;
         uint8_t type;
 

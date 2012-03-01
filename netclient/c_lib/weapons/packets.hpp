@@ -8,8 +8,8 @@ namespace Weapons {
 class WeaponAmmo_StoC: public FixedSizeReliableNetPacketToClient<WeaponAmmo_StoC>
 {
     public:
-        int type;
-        int ammo;
+        uint8_t type;
+        uint16_t ammo;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -22,8 +22,8 @@ class WeaponAmmo_StoC: public FixedSizeReliableNetPacketToClient<WeaponAmmo_StoC
 class WeaponClip_StoC: public FixedSizeReliableNetPacketToClient<WeaponClip_StoC>
 {
     public:
-        int type;
-        int clip;
+        uint8_t type;
+        uint16_t clip;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {

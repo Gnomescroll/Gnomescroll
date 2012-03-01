@@ -10,8 +10,8 @@
 class TeamColor_StoC: public FixedSizeReliableNetPacketToClient<TeamColor_StoC>
 {
     public:
-        int team;
-        unsigned char r,g,b;
+        uint8_t team;
+        uint8_t r,g,b;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -26,8 +26,8 @@ class TeamColor_StoC: public FixedSizeReliableNetPacketToClient<TeamColor_StoC>
 class AgentJoinTeam_StoC: public FixedSizeReliableNetPacketToClient<AgentJoinTeam_StoC>
 {
     public:
-        int team;
-        int agent;
+        uint8_t team;
+        uint8_t agent;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -42,7 +42,7 @@ class AgentJoinTeam_StoC: public FixedSizeReliableNetPacketToClient<AgentJoinTea
 class AgentJoinTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentJoinTeam_CtoS>
 {
     public:
-        int team;
+        uint8_t team;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -62,7 +62,7 @@ class AgentAutoAssignTeam_CtoS: public FixedSizeReliableNetPacketToServer<AgentA
 class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
 {
     public:
-        int team;
+        uint8_t team;
         char name[TEAM_NAME_MAX_LENGTH];
 
         inline void packet(char* buff, int* buff_n, bool pack)
@@ -76,13 +76,13 @@ class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
 class TeamScore_StoC: public FixedSizeReliableNetPacketToClient<TeamScore_StoC>
 {
     public:
-        int team;
-        int score;
+        uint8_t team;
+        uint16_t score;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&team, buff, buff_n, pack);
-            pack_u8(&score, buff, buff_n, pack);
+            pack_u16(&score, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -93,7 +93,7 @@ class TeamScore_StoC: public FixedSizeReliableNetPacketToClient<TeamScore_StoC>
 class FlagState_StoC: public FixedSizeReliableNetPacketToClient<FlagState_StoC>
 {
     public:
-        int team;
+        uint8_t team;
         float x,y,z;
 
         inline void packet(char* buff, int* buff_n, bool pack)
@@ -109,7 +109,7 @@ class FlagState_StoC: public FixedSizeReliableNetPacketToClient<FlagState_StoC>
 class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
 {
     public:
-        int team;
+        uint8_t team;
         float x,y,z;
 
         inline void packet(char* buff, int* buff_n, bool pack)
@@ -125,7 +125,7 @@ class BaseState_StoC: public FixedSizeReliableNetPacketToClient<BaseState_StoC>
 class AgentPickupFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentPickupFlag_StoC>
 {
     public:
-        int id;
+        uint8_t id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -137,7 +137,7 @@ class AgentPickupFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentPicku
 class AgentDropFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentDropFlag_StoC>
 {
     public:
-        int id;
+        uint8_t id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -149,7 +149,7 @@ class AgentDropFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentDropFla
 class AgentScoreFlag_StoC: public FixedSizeReliableNetPacketToClient<AgentScoreFlag_StoC>
 {
     public:
-        int id;
+        uint8_t id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {

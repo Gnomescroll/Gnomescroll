@@ -10,8 +10,8 @@ class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_
 {
     public:
 
-        unsigned short chunk_alias;
-        int chunk_index;
+        uint16_t chunk_alias;
+        uint32_t chunk_index;
         //int byte_size;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -27,8 +27,8 @@ class map_chunk_uncompressed_StoC: public MapMessageArrayPacketToClient<map_chun
 {
     public:
 
-        unsigned short chunk_alias;
-        int chunk_index;
+        uint16_t chunk_alias;
+        uint32_t chunk_index;
         //int byte_size;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -44,7 +44,7 @@ class clear_alias_StoC: public MapMessagePacketToClient<clear_alias_StoC>
 {
     public:
 
-        unsigned short chunk_alias;
+        uint16_t chunk_alias;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -58,8 +58,8 @@ class set_map_alias_StoC: public MapMessagePacketToClient<set_map_alias_StoC>
 {
     public:
 
-        unsigned short chunk_alias;
-        int chunk_index;
+        uint16_t chunk_alias;
+        uint32_t chunk_index;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -75,9 +75,9 @@ class map_element_update: public MapMessagePacketToClient<map_element_update>
 {
     public:
 
-        unsigned short chunk_alias;
-        unsigned char block_id;
-        unsigned char pallete;
+        uint16_t chunk_alias;
+        uint8_t block_id;
+        uint8_t pallete;
           
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -94,8 +94,8 @@ class block_StoC: public MapMessagePacketToClient<block_StoC>
 {
     public:
 
-        int x,y,z;
-        int val;
+        uint16_t x,y,z;
+        uint16_t val;
         
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -113,9 +113,9 @@ class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
 {
     public:
 
-        int x,y,z;
-        int val;
-        int action;
+        uint16_t x,y,z;
+        uint16_t val;
+        uint8_t action;
         
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -132,7 +132,7 @@ class block_action_StoC: public MapMessagePacketToClient<block_action_StoC>
 class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
 {
     public:
-    int x,y,z;  // dimensions
+    uint16_t x,y,z;  // dimensions
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {

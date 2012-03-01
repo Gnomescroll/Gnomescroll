@@ -6,7 +6,7 @@ class CreateSlime_StoC: public FixedSizeReliableNetPacketToClient<CreateSlime_St
 {
 
     public:
-        int id;
+        uint8_t id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -19,7 +19,7 @@ class DestroySlime_StoC: public FixedSizeReliableNetPacketToClient<DestroySlime_
 {
 
     public:
-        int id;
+        uint8_t id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -31,8 +31,8 @@ class DestroySlime_StoC: public FixedSizeReliableNetPacketToClient<DestroySlime_
 class SlimeState_StoC: public FixedSizeNetPacketToClient<SlimeState_StoC>
 {
     public:
-        int id;
-        int seq;
+        uint8_t id;
+        uint8_t seq;
 
         float x,y,z;
         float vx,vy,vz;

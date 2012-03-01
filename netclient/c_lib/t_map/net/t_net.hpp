@@ -23,7 +23,7 @@ class MapMessagePacketToServer {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
         int client_id; //id of the UDP client who sent message
 
@@ -67,7 +67,7 @@ class MapMessagePacketToServer {
 };
 
 //template <typename T> int Base<T>::staticVar(0);
-template <class Derived> int MapMessagePacketToServer<Derived>::message_id(255);
+template <class Derived> uint8_t MapMessagePacketToServer<Derived>::message_id(255);
 template <class Derived> int MapMessagePacketToServer<Derived>::size(-1);
 
 
@@ -80,7 +80,7 @@ class MapMessagePacketToClient {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
 
         MapMessagePacketToClient() { }
@@ -150,7 +150,7 @@ class MapMessagePacketToClient {
         }
 }; 
 
-template <class Derived> int MapMessagePacketToClient<Derived>::message_id(255);
+template <class Derived> uint8_t MapMessagePacketToClient<Derived>::message_id(255);
 template <class Derived> int MapMessagePacketToClient<Derived>::size(-1);
 
 /*
@@ -168,10 +168,10 @@ class MapMessageArrayPacketToClient {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
 
-        int byte_size;
+        uint32_t byte_size;
 
         MapMessageArrayPacketToClient() {}
 
@@ -251,5 +251,5 @@ class MapMessageArrayPacketToClient {
         }
 }; 
 
-template <class Derived> int MapMessageArrayPacketToClient<Derived>::message_id(255);
+template <class Derived> uint8_t MapMessageArrayPacketToClient<Derived>::message_id(255);
 template <class Derived> int MapMessageArrayPacketToClient<Derived>::size(-1);
