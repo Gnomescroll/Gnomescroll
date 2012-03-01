@@ -443,6 +443,10 @@ class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
     
+class production_dev_ctx(ConfigurationContext):
+    cmd = 'production_dev'
+    fun = 'production_dev'
+    
 class linux_production_ctx(ConfigurationContext):
     cmd = 'linux'
     fun = 'linux'
@@ -496,6 +500,10 @@ def centos64(ctx):
     
 def production(ctx, add=[], rm=[], centos=False):
     configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
+
+# developers' build of the production build
+def production_dev(ctx, add=[], rm=[], centos=False):
+    configure(ctx, add_flags=add+['-DPRODUCTION', '-DPRODUCTION_DEV', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
 
 def profile(ctx):
     configure(ctx)

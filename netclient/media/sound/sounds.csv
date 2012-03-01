@@ -29,3 +29,6 @@ Victory,,victory,,,,"there are no victory condition implemented"
 "grenade bounce",,grenade_bounce,,,y,
 "agent took damage",,agent_took_damage,,,y,
 "restore health",,restore_health,,,y,
+"you joined server",,you_joined_server,,,,
+"other player joined server",player_joined_server.wav,player_joined_server,,,y,
+"other player left server",,player_left_server,,,,

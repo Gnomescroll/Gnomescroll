@@ -35,6 +35,9 @@ SOUND_TRIGGER_HEADER(block_set)
 SOUND_TRIGGER_HEADER(grenade_explode)
 SOUND_TRIGGER_HEADER(grenade_bounce)
 SOUND_TRIGGER_HEADER(agent_took_damage)
+SOUND_TRIGGER_HEADER(you_joined_server)
+SOUND_TRIGGER_HEADER(player_joined_server)
+SOUND_TRIGGER_HEADER(player_left_server)
 
 struct Sound_file_function_map
 {

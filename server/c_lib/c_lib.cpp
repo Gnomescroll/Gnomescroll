@@ -15,6 +15,7 @@
 #include <c_lib/common/files.cpp>
 
 //options
+#include <c_lib/option_macros.hpp>
 #include <c_lib/options.cpp>
 
 //map

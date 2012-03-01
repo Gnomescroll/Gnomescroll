@@ -17,6 +17,7 @@
 #include <c_lib/common/compression/miniz.c>
 
 /* configuration options */
+#include <c_lib/option_macros.hpp>
 #include <c_lib/options.cpp>
 
 /* Network */

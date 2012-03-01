@@ -61,7 +61,9 @@ SOUND_TRIGGER(block_set)
 SOUND_TRIGGER(grenade_explode)
 SOUND_TRIGGER(grenade_bounce)
 SOUND_TRIGGER(agent_took_damage)
-
+SOUND_TRIGGER(you_joined_server)
+SOUND_TRIGGER(player_joined_server)
+SOUND_TRIGGER(player_left_server)
 
 /* function -> filename mapping */
 
