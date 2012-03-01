@@ -167,8 +167,8 @@ void Vbo_map::update_vbo(int i, int j)
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
-    if(chunk == NULL) printf("chunk null\n");
-    if(vbo == NULL) printf("vbo null\n");
+    //if(chunk == NULL) printf("chunk null\n");
+    //if(vbo == NULL) printf("vbo null\n");
 
     int vertex_count[2] = {0, 0};
 
