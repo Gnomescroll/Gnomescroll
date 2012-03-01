@@ -489,3 +489,6 @@ GRENADES:
 charge up
 decayed damage by range
 apply terrain cover to damage
+
+
+drop camera to floor when dead
