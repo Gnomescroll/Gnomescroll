@@ -50,8 +50,12 @@ def _grab_output(*cmd):
 
 def get_version():
     try:
-        #version = subprocess.check_output(['../get_current_head.sh'], shell=True)
-        version = os.popen('../get_current_head.sh').read()
+        OS = platform.system()
+        if OS == 'Windows':
+            version = subprocess.check_output(['/c/dc_mmo/get_current_head.sh'], shell=True)
+        else:
+            version = subprocess.check_output(['../get_current_head.sh'], shell=True)
+        //version = os.popen('../get_current_head.sh').read()
         print "version= %s" % (version)
     except Exception, e:
         print "Could not get version number from hg repo. Abort"
