@@ -52,9 +52,9 @@ def get_version():
     try:
         version = subprocess.check_output(['../get_current_head.sh'], shell=True)
     except Exception, e:
-        print e
         print "Could not get version number from hg repo. Abort"
-        raise ValueError
+        print Exception, e
+        raise Exception, e
 
     try:
         version = int(version.strip())
