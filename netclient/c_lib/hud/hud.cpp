@@ -16,37 +16,29 @@ namespace Hud
 /* Strings */
 
 static const char help_text[] =
-"\n"
 "    Key:            Action:\n"
 "\n"
 "    Esc             Quit\n"
 "    WASD            Move\n"
 "    Space           Jump\n"
 "    Z               Jetpack (hold down)\n"
-"    \n"
-"    G               Toggle camera\n"
-"    T               Toggle keyboard\n"
-"\n"
 "    R               Reload\n"
-"    Num keys        Select weapon\n"
-"    Mouse scroll    Select weapon\n"
+"    Num keys / Scrollwheel     Select weapon\n"
 "    Left click      Activate weapon\n"
-"    Right click     Zoom (if weapon has scope)\n"
-"    Arrow keys      Choose block type when block selector is active\n"
-"\n"
+"    Right click     Zoom\n"
+"    Arrow keys      Control block selector\n"
 "    Weapons:\n"
 "    1               Laser\n"
 "    2               Pick\n"
 "    3               Block selector / applier\n"
 "    4               Grenades\n"
 "    5               Spawner Synthesizer\n"
-"    \n"
-"    Y               Chat\n"
+"    T               Chat\n"
+"    Y               Team Chat\n"
 "    H               Display this menu\n"
 "    Tab             Display scoreboard\n"
-"    M               Minimap\n"
-"    \n"
-"    Chat Commands:\n"
+"    M               Map\n"
+"  Chat Commands:\n"
 "       /nick <name>        -- Sets name\n"
 "       /name <name>        -- Sets name\n"
 "       /team <0, 1, or 2>  -- Sets team. Team 0 is Viewer\n"
@@ -341,7 +333,8 @@ void HUD::init()
     
     help = HudText::text_list.create();
     help->set_text((char*) help_text);
-    help->set_position(_xresf/2, _yresf);
+    int help_width = help->get_width();
+    help->set_position(_xres - help_width - 5, _yresf - 5);
 
     disconnected = HudText::text_list.create();
     disconnected->set_text((char*) disconnected_text);

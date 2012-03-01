@@ -433,6 +433,8 @@ fix block applier
 updated build scripts, pushed build
 
 more scifi default map
+fix get_height_at() -- jetpack and hud map restored
+camera goes to ground when dead
 ====================
 
 
@@ -495,5 +497,5 @@ decayed damage by range
 apply terrain cover to damage
 
 fit help text into smaller screens (800x600)
-drop camera to floor when dead
-use heightmap
+
+make "YOURE DEAD" larger

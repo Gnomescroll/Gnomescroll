@@ -331,5 +331,5 @@ void update_agent_camera()
     // set agent_camera from state
     agent_camera->x = ClientState::playerAgent_state.camera_state.x;
     agent_camera->y = ClientState::playerAgent_state.camera_state.y;
-    agent_camera->z = ClientState::playerAgent_state.camera_state.z + ClientState::playerAgent_state.you->camera_height();
+    agent_camera->z = ClientState::playerAgent_state.camera_z();
 }

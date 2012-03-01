@@ -190,6 +190,68 @@ void Text::draw()
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
+int Text:: get_width()
+{
+    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL)
+        return 0;
+    char* buffer = (char*)calloc(this->text_len+1, sizeof(char));
+
+    // check length of each line, return longest
+    int len = 0, h = 0;
+    int longest = 0;
+    int i = 0;
+    int j = 0;
+    char c;
+    while ((c = this->text[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            buffer[j++] = '\0';
+            j = 0;
+            HudFont::font->get_string_pixel_dimension(buffer, &len, &h);
+            if (len > longest)
+                longest = len;
+            continue;
+        }
+        buffer[j++] = c;
+    }
+    buffer[j++] = '\0';
+    HudFont::font->get_string_pixel_dimension(buffer, &len, &h);
+    if (len > longest)
+        longest = len;
+
+    free(buffer);
+    return longest;
+}
+
+int Text:: get_height()
+{
+    if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL)
+        return 0;
+
+    // count number of newlines with !isspace chars after them + 1
+    // multiply by font height
+    int i = 0;
+    int n = 1;
+    bool check = false;
+    char c;
+    while ((c = this->text[i++]) != '\0')
+    {
+        if (check && !isspace(c))
+        {
+            check = false;
+            n++;
+        }
+        if (c == '\n')
+            check = true;    
+    }
+
+    int len=0,h=0;
+    HudFont::font->get_string_pixel_dimension((char*)"X", &len, &h);
+    return n * h;
+}
+        
+
 
 Text::Text(int id)
 :

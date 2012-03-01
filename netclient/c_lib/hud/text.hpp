@@ -44,6 +44,9 @@ class Text
         void set_position(float x, float y);
         void set_scale(float scale);
         void set_depth(float depth);
+
+        int get_width();
+        int get_height();
         
         void draw();
 
