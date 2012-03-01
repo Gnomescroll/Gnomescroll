@@ -423,7 +423,7 @@ migrated all "struct Vector" to Vec3
 
 production_dev build (developers' version of the production build)
 bell when players join server on production_dev
-
+reasonable ammo levels for production build
 ====================
 
 
@@ -478,7 +478,6 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 ==================
 POLISH TODO:
 
-bring ammo down to reasonable values
 figure out interface for spawner selection from map icons
 color agent model more appropriately and  use team base color
 

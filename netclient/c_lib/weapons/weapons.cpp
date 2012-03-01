@@ -267,7 +267,7 @@ Weapon(TYPE_grenade_thrower)
 {
     #ifdef PRODUCTION
     this->max_ammo = 100;
-    this->ammo = 10;
+    this->ammo = 100;
     #else
     this->max_ammo = 9999;
     this->ammo = 9999;
