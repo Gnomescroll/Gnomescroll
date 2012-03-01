@@ -10,7 +10,7 @@ cp libc_lib.so $f/
 cp run $f/
 cp *.pyc $f/
 rm $f/settings.pyc
-cp default_settings.py $f/settings.py
+#cp default_settings.py $f/settings.py
 cp -R media $f/
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
