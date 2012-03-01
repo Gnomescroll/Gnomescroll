@@ -427,6 +427,8 @@ reasonable ammo levels for production build
 
 stricter types for packets
 fix nasty Agent_state_message bug (id wasnt set)
+
+fix block applier
 ====================
 
 
@@ -487,5 +489,3 @@ GRENADES:
 charge up
 decayed damage by range
 apply terrain cover to damage
-
-fix block applier
