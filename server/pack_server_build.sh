@@ -1,7 +1,8 @@
 ./waf clean
 ./waf linux
 ./waf
-f="SERVERBUILD"
+version=`../get_current_head.sh`
+f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f/
 cp -R ext $f/

@@ -2,7 +2,7 @@
 ./waf linux
 ./waf
 version=`../get_current_head.sh`
-f="gnomescroll_linux_"$version
+f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f
 cp -R ext $f/
