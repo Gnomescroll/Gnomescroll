@@ -420,6 +420,10 @@ fix slime test, regenerate periodocially
 make slimes faster
 clean agent_physics.cpp
 migrated all "struct Vector" to Vec3
+
+production_dev build (developers' version of the production build)
+bell when players join server on production_dev
+
 ====================
 
 
@@ -482,8 +486,3 @@ GRENADES:
 charge up
 decayed damage by range
 apply terrain cover to damage
-
-TODO:
-migrate all struct Vector to Vec3 format
-bell when players join server
-

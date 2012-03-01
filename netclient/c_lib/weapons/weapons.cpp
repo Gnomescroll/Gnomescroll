@@ -188,8 +188,14 @@ BlockApplier::BlockApplier()
 Weapon(TYPE_block_applier),
 block(2)
 {
+    #ifdef PRODUCTION
+    this->max_ammo = 200;
+    this->ammo = 200;
+    #else
     this->max_ammo = 9999;
     this->ammo = 9999;
+    #endif
+
     this->clip_str = const_cast<char*>(hud_undefined_string);
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = (char*)calloc(4+1, sizeof(char));
@@ -259,8 +265,13 @@ GrenadeThrower::GrenadeThrower()
 :
 Weapon(TYPE_grenade_thrower)
 {
+    #ifdef PRODUCTION
+    this->max_ammo = 100;
+    this->ammo = 10;
+    #else
     this->max_ammo = 9999;
     this->ammo = 9999;
+    #endif
     this->clip_str = const_cast<char*>(hud_undefined_string);
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = (char*)calloc(4+1, sizeof(char));
@@ -290,6 +301,9 @@ SpawnerPlacer::SpawnerPlacer()
 :
 Weapon(TYPE_spawner_placer)
 {
+    // doesnt use traditional ammo
+    // set these values very high so that it shouldnt run out,
+    // and any fire() tests will pass
     this->max_ammo = 9999;
     this->ammo = 9999;
     this->clip_str = const_cast<char*>(hud_undefined_string);
