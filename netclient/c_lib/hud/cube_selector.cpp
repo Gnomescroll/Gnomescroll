@@ -6,6 +6,9 @@
 #include <stdlib.h>
 
 #include <c_lib/SDL/draw_functions.h>
+#include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/agent_weapons.hpp>
+#include <c_lib/weapons/weapons.hpp>
 
 namespace HudCubeSelector
 {
@@ -32,7 +35,8 @@ void CubeSelector::init()
 
 void CubeSelector::load_cube_property(int pos, int cube_id, int tex_id)
 {
-    if(tex_id == -1 || pos == -1) return;
+    //printf("loading cube property: %d %d %d\n", pos, cube_id, tex_id);
+    if(pos == -1 || tex_id == -1) return;
     cubes[pos].cube_id = cube_id;
     cubes[pos].tex_id = tex_id;
 }
@@ -58,6 +62,8 @@ void CubeSelector::set_active_pos(int pos)
     this->pos = pos;
     this->pos_x = pos % 8;
     this->pos_y = pos / 8;
+
+    this->update_block_applier();
 }
 
 void CubeSelector::set_active_id(int id)
@@ -69,6 +75,12 @@ void CubeSelector::set_active_id(int id)
                 this->set_active_pos(i);
                 break;
             }
+}
+
+void CubeSelector::update_block_applier()
+{
+    if (ClientState::playerAgent_state.you == NULL) return;
+    ClientState::playerAgent_state.you->weapons.blocks.set_block(this->get_active_id());
 }
 
 void CubeSelector::draw()
@@ -215,7 +227,6 @@ mode(0),
 n_x(8), n_y(8),
 pos(0),
 pos_x(0), pos_y(0),
-cube_id(0),
 texture(0)
 {}
 

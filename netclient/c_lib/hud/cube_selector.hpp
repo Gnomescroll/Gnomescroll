@@ -21,7 +21,7 @@ class CubeSelector
     private:
         void horizontal(bool left);
         void vertical(bool up);
-
+        void update_block_applier();
     public:
         bool inited;
         float x,y;
@@ -31,7 +31,6 @@ class CubeSelector
         int n_x, n_y;
         int pos;
         int pos_x,pos_y;
-        int cube_id;
 
         int texture;
 

@@ -58,7 +58,8 @@ class HitscanLaser: public Weapon {
 class BlockApplier: public Weapon {
     public:
         int block;
-        
+
+        void set_block(int id);
         bool fire();
         char* hud_display();
 

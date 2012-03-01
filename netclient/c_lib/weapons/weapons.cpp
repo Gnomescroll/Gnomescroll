@@ -182,6 +182,10 @@ char* BlockApplier::hud_display() {
     return hud_string;
 }
 
+void BlockApplier::set_block(int block)
+{
+    this->block = block;
+}
 
 BlockApplier::BlockApplier()
 :
