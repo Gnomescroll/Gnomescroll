@@ -31,7 +31,7 @@ class FixedSizeNetPacketToServer {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
         int client_id; //id of the UDP client who sent message
 
@@ -77,7 +77,7 @@ class FixedSizeNetPacketToServer {
 };
 
 //template <typename T> int Base<T>::staticVar(0);
-template <class Derived> int FixedSizeNetPacketToServer<Derived>::message_id(255);
+template <class Derived> uint8_t FixedSizeNetPacketToServer<Derived>::message_id(255);
 template <class Derived> int FixedSizeNetPacketToServer<Derived>::size(-1);
 
 
@@ -87,7 +87,7 @@ class FixedSizeNetPacketToClient {
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
         //int client_id; //not used yet
 
@@ -161,7 +161,7 @@ class FixedSizeNetPacketToClient {
         }
 }; 
 
-template <class Derived> int FixedSizeNetPacketToClient<Derived>::message_id(255);
+template <class Derived> uint8_t FixedSizeNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeNetPacketToClient<Derived>::size(-1);
 
 //reliable packets
@@ -173,7 +173,7 @@ class FixedSizeReliableNetPacketToServer {
     private:
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
         int client_id; //id of the UDP client who sent message
 
@@ -217,7 +217,7 @@ class FixedSizeReliableNetPacketToServer {
 };
 
 //template <typename T> int Base<T>::staticVar(0);
-template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::message_id(255);
+template <class Derived> uint8_t FixedSizeReliableNetPacketToServer<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToServer<Derived>::size(-1);
 
 /*
@@ -231,7 +231,7 @@ class FixedSizeReliableNetPacketToClient {
         virtual void packet(char* buff, int* buff_n, bool pack) __attribute((always_inline)) = 0 ;
         class Net_message* nm;
     public:
-        static int message_id;
+        static uint8_t message_id;
         static int size;
 
         FixedSizeReliableNetPacketToClient(){ nm = NULL; }
@@ -297,6 +297,6 @@ class FixedSizeReliableNetPacketToClient {
         }
 }; 
 
-template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
+template <class Derived> uint8_t FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
 
