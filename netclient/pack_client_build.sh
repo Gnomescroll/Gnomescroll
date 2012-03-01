@@ -1,7 +1,8 @@
 ./waf clean
 ./waf linux
 ./waf
-f="CLIENTBUILD"
+version=`../get_current_head.sh`
+f="gnomescroll_linux_"$version
 rm -rf $f
 mkdir $f
 cp -R ext $f/
@@ -9,6 +10,7 @@ cp libc_lib.so $f/
 cp run $f/
 cp *.pyc $f/
 rm $f/settings.pyc
+cp default_settings.py $f/settings.py
 cp -R media $f/
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
