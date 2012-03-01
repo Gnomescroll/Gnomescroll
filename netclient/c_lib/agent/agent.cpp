@@ -317,7 +317,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     //printf("cs= %i \n", seq);
 
 
-    if (seq != CS_seq) printf("seq != CS_seq: %i %i  \n", seq, CS_seq);
+    //if (seq != CS_seq) printf("seq != CS_seq: %i %i  \n", seq, CS_seq);
 
     //int index = seq%256;
 
