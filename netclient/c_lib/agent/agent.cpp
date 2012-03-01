@@ -373,7 +373,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
 
         A.theta = s.theta;
         A.phi = s.phi;
-
+        A.id = this->id;
         A.broadcast();
 
         //clean out old control state
