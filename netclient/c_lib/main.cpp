@@ -165,7 +165,8 @@ int run()
             //tx.draw(500, 500);
             #if !PRODUCTION || PRODUCTION_DEV
                 frame_graph->draw(500,500);
-            #endif 
+            #endif
+            
             // draw hud
             Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();

@@ -34,16 +34,25 @@ static const char help_text[] =
 "    Right click     Zoom (if weapon has scope)\n"
 "    Arrow keys      Choose block type when block selector is active\n"
 "\n"
-"    Y               Chat\n"
-"    H               Display this menu\n"
-"    Tab             Display scoreboard\n"
-"    M               Minimap\n"
-"    \n"
 "    Weapons:\n"
 "    1               Laser\n"
 "    2               Pick\n"
 "    3               Block selector / applier\n"
 "    4               Grenades\n"
+"    5               Spawner Synthesizer\n"
+"    \n"
+"    Y               Chat\n"
+"    H               Display this menu\n"
+"    Tab             Display scoreboard\n"
+"    M               Minimap\n"
+"    \n"
+"    Chat Commands:\n"
+"       /nick <name>        -- Sets name\n"
+"       /name <name>        -- Sets name\n"
+"       /team <0, 1, or 2>  -- Sets team. Team 0 is Viewer\n"
+"       /spawner <#>        -- A number less than or equal to the\n"
+"                              number of spawners on your team.\n"
+"                              0 is your base\n"
 ;
 
 static const char disconnected_text[] = "Server not connected.";
@@ -79,6 +88,7 @@ static struct HudDrawSettings
     int equipment_slot;
     bool compass;
     bool map;
+    //bool frame_graph;
     bool draw;
 } hud_draw_settings;
 
@@ -142,7 +152,8 @@ void update_hud_draw_settings()
 
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
-
+    //hud_draw_settings.frame_graph = input_state.frame_graph;
+    
     // update chat rendering
     if (hud->inited && hud->chat != NULL && hud->chat->inited)
     {

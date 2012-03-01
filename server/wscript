@@ -69,7 +69,7 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
 
     version = get_version()
 
-    extra_options = ['-Wall','-DDC_SERVER', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS', '-DGNOMESCROLL_DSO', '-DDC_VERSION=%d' % (version,)]
+    extra_options = ['-Wall','-DDC_SERVER=1', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS=1', '-DGNOMESCROLL_DSO=1', '-DDC_VERSION=%d' % (version,)]
     cflags += extra_options
 
     cflags += [c for c in add_flags if c not in cflags]
@@ -186,7 +186,7 @@ def build(bld):
         target='run')
 
     # compile python files
-    if '-DPRODUCTION' in bld.env.CFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
         import py_compile
         py_compile.compile('run.py')
         py_compile.compile('cube.py')
@@ -198,7 +198,7 @@ def build(bld):
         py_compile.compile('default_settings.py')
 
     bld.add_post_fun(install_in_ext)
-    if '-DPRODUCTION' in bld.env.CFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
         bld.add_post_fun(strip_symbols)
 
 def strip_symbols(ctx):
@@ -206,7 +206,6 @@ def strip_symbols(ctx):
     if OS == 'Linux':
         print 'Stripping symbols'
         subprocess.Popen(['strip', '-s', './ext/init_c_lib.so'])
-        subprocess.Popen(['strip', '-s', './ext/c_lib/terrain_map.so'])
         subprocess.Popen(['strip', '-s', './ext/c_lib/map_gen.so'])
         subprocess.Popen(['strip', '-s', './ext/c_lib/noise.so'])
         subprocess.Popen(['strip', '-s', './build/c_lib.noise.so'])
@@ -335,13 +334,13 @@ def debug(ctx):
 
 def map_gen(ctx):
     configure(ctx)
-    ctx.env.CFLAGS.append('-DDUNGEON')
-    ctx.env.CXXFLAGS.append('-DDUNGEON')
+    ctx.env.CFLAGS.append('-DDUNGEON=1')
+    ctx.env.CXXFLAGS.append('-DDUNGEON=1')
 
 class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
 
 def production(ctx, add=[], rm=[], centos=False):
-    configure(ctx, add_flags=add+['-DPRODUCTION', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
 
