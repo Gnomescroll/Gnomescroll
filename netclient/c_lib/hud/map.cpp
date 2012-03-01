@@ -220,7 +220,7 @@ void init()
 void update_heightmap()
 {
     static int strip = 0;
-    const int strips = 16;
+    const int strips = 16*8;
     int strip_width = map_dim.x / strips;
     
     if (cells == NULL) return;
@@ -284,8 +284,8 @@ void update_agents()
     y = (int)ClientState::playerAgent_state.camera_state.y;
     
     // set agent pixel
-    Uint8 r = 10,
-          g = 210,
+    Uint8 r = 210,
+          g = 10,
           b = 10,
           a = 255;
     Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red

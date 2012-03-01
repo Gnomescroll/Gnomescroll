@@ -79,7 +79,12 @@ bool point_in_map(int x, int y, int z);
 
 int get_height_at(int x, int y)
 {
-    return 64;
+    for (int i=map_dim.z-1; i>=0; i--)
+    {
+        if (isSolid(_get(x,y,i)))
+            return i;
+    }
+    return 0;
 }
 
 int _get_highest_open_block(int x, int y, int n) {

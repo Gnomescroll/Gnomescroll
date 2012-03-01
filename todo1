@@ -431,6 +431,8 @@ fix nasty Agent_state_message bug (id wasnt set)
 fix block applier
 
 updated build scripts, pushed build
+
+more scifi default map
 ====================
 
 
@@ -495,4 +497,3 @@ apply terrain cover to damage
 fit help text into smaller screens (800x600)
 drop camera to floor when dead
 use heightmap
-swap textures in map
