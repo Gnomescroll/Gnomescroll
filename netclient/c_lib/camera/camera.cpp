@@ -284,6 +284,13 @@ void Camera::copy_state_from(Camera* c)
     this->set_angles(c->theta, c->phi);
 }
 
+bool Camera::in_view(float x, float y, float z)
+{
+    if (distancef(x,y,z, this->x, this->y, this->z) < CAMERA_VIEW_DISTANCE)
+        return true;
+    return false;
+}
+
 void update_camera_matrices()
 {
     glGetFloatv(GL_MODELVIEW_MATRIX, model_view_matrix);

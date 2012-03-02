@@ -109,6 +109,9 @@ void BillboardText::draw_axis_aligned()
         
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
 
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
+
     glColor4ub(r,g,b,a);
 
     float up[3] = {
@@ -206,6 +209,8 @@ void BillboardText::draw_hud()
 {
 #ifdef DC_CLIENT
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
 
     glColor4ub(r,g,b,a);
 

@@ -209,6 +209,8 @@ void Minivox::draw_colored() {
 
     // Quit if voxel is completely transparent
     if(this->a == 0) return;
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
 
     const float
         x0 = this->vp->p.x,
@@ -248,6 +250,8 @@ void Minivox::draw_colored() {
 void Minivox::draw_textured() {
 #ifdef DC_CLIENT
     if(this->a == 0) return;
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
 
     const float
         x0 = this->vp->p.x,

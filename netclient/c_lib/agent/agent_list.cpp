@@ -43,6 +43,11 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         }
         else
         {
+            if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z)) {
+                agent->vox->set_draw(false);
+                agent->vox->set_hitscan(false);
+                continue;
+            }
             if (agent->crouched())
             {
                 if (!agent->status.vox_crouched)

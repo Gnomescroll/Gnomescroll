@@ -509,7 +509,8 @@ apply terrain cover to damage
 
 make "YOURE DEAD" larger
 
-Bug: fill chat buffer, presss alt, send it
 Bug: agent_id unrecognized
-
+Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
+        gdb resisted watchpoints
+        
 team color agents is broken

@@ -43,7 +43,8 @@ class Spawner
         int take_damage(int dmg);
 
         void tick();
-
+        void update(); // client side
+        
         #ifdef DC_SERVER
         void create_message(Spawner_create_StoC* msg);
         #endif
@@ -67,5 +68,6 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
         int get_random_spawner(int team);
 
         void tick();
+        void update();  // client side
 };
 

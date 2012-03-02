@@ -30,6 +30,7 @@ class Flag {
         void set_position(float x, float y, float z);
         void tick();
         void animate(); // client side
+        void update();  // client side
         
         Flag(int id, int team);
         ~Flag();

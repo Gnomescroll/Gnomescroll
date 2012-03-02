@@ -50,9 +50,11 @@ namespace ClientState {
     void update()
     {
         slime_list.update();
+        ctf.update();
     }
 
-    void set_PlayerAgent_id(int id) {
+    void set_PlayerAgent_id(int id)
+    {
         playerAgent_state.set_PlayerAgent_id(id);
         ctf.on_ready();
     }

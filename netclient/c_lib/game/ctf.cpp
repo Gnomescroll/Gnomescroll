@@ -599,3 +599,10 @@ void CTF::get_base_spawn_point(int team, int agent_height, int* spawn)
     }
 }
 
+void CTF::update()
+{
+    one.flag->update();
+    one.base->update();
+    two.flag->update();
+    two.base->update();
+}

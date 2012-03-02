@@ -100,6 +100,22 @@ void Spawner::init_vox()
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
+void Spawner::update()
+{
+    #ifdef DC_CLIENT
+    if (current_camera == NULL || !current_camera->in_view(x,y,z))
+    {
+        this->vox->set_draw(false);
+        this->vox->set_draw(false);
+    }
+    else
+    {
+        this->vox->set_draw(true);
+        this->vox->set_draw(true);
+    }
+    #endif
+}
+
 Spawner::Spawner(int id)
 :
 id(id),
@@ -269,5 +285,14 @@ void Spawner_list::tick()
     {
         if (this->a[i] == NULL) continue;
         this->a[i]->tick();
+    }
+}
+
+void Spawner_list::update()
+{
+    for (int i=0; i<n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->update();
     }
 }

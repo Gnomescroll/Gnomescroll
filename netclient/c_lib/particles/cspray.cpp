@@ -80,6 +80,8 @@ void Cspray::tick() {
 
 void Cspray::draw() {
 #ifdef DC_CLIENT
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
 
     float size = 0.3;
     float up[3] = {model_view_matrix[0]*size, model_view_matrix[4]*size, model_view_matrix[8]*size};

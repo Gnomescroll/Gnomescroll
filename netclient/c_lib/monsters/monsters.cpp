@@ -186,8 +186,21 @@ void Slime_list::update()
 {
     for (int i=0; i<this->n_max; i++)
     {
+        #ifdef DC_CLIENT
         if (this->a[i] == NULL) continue;
         if (this->a[i]->vox == NULL) continue;
+        if (current_camera == NULL || !current_camera->in_view(this->a[i]->x, this->a[i]->y, this->a[i]->z))
+        {
+            this->a[i]->vox->set_draw(false);
+            this->a[i]->vox->set_hitscan(false);
+            continue;
+        }
+        else
+        {
+            this->a[i]->vox->set_draw(true);
+            this->a[i]->vox->set_hitscan(true);
+        }
+        #endif
         this->a[i]->vox->update(this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
     }
 }

@@ -3,7 +3,8 @@
 #include <compat_gl.h>
 #include <math.h>
 
-#define N_CAMERAS 2
+const int N_CAMERAS = 2;
+const float CAMERA_VIEW_DISTANCE = 128.0f;
 
 enum CAMERA_TYPES {
     UNKNOWN_CAM,
@@ -49,6 +50,8 @@ class Camera {
         void toggle_zoom();
         void zoom();
         void unzoom();
+
+        bool in_view(float x, float y, float z);
 
         void copy_state_from(Camera* c);
 

@@ -38,6 +38,7 @@ class CTF {
     void init();
     void start() GNOMESCROLL_API;
     void tick();
+    void update();  // client side
 
     void set_team_name(int team, char* name);
     char* get_team_name(int team);

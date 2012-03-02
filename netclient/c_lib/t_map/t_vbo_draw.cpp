@@ -15,8 +15,7 @@ namespace t_map
 */
 bool chunk_render_check( float x, float y)
 {
-    const float dist = 128.0;
-    const float dist2 = dist*dist;
+    const float dist2 = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
     float dx = current_camera->x - x;
     float dy = current_camera->y - y;

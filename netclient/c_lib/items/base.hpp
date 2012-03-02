@@ -34,6 +34,7 @@ class Base {
         void get_spawn_point(int *spawn, int agent_height);
 
         void tick();
+        void update(); // client side
         
         Base(int id, int team);
         ~Base();

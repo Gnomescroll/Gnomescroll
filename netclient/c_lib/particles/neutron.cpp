@@ -105,6 +105,8 @@ void Neutron::tick()
 void Neutron::draw() {
 
 #ifdef DC_CLIENT
+    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+
 
     float up[3] = {
         model_view_matrix[0]*NEUTRON_TEXTURE_SCALE,
