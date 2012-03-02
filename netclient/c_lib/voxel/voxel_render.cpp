@@ -225,11 +225,11 @@ void Voxel_render_list::draw()
         vv->draw_bounding_box();
     }
 
-    this->update_vertex_buffer_object();
+    //this->update_vertex_buffer_object();
     glEnable (GL_DEPTH_TEST);
     //glDisable(GL_TEXTURE_2D);
 
-    return;
+    //return;
 
     //glDisable(GL_TEXTURE_2D);
 
