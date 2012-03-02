@@ -537,4 +537,6 @@ fix bug in dcvox pipeline where dimensions are incorrect
 -- sort out pipeline
 -- move dimensions to inferred by parser?
 
+realign model with correct bounding boxes/dimensions
+
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
