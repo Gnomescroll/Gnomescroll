@@ -83,7 +83,8 @@ class Voxel_vertex_list
 
     ~Voxel_vertex_list()
     {
-        if(vertex_list != NULL) delete[] vertex_list;
+        if(vertex_list != NULL)
+            delete[] vertex_list;
     }
 };
 #endif

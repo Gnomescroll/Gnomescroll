@@ -13,6 +13,19 @@
     }
 #endif
 
+const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
+static Voxel_vertex* voxel_vertex_scratch_buffer = NULL;
+
+void init_voxel_volume()
+{
+    voxel_vertex_scratch_buffer = new Voxel_vertex[VOXEL_VERTEX_SCRATCH_SIZE];
+}
+
+void teardown_voxel_volume()
+{
+    if (voxel_vertex_scratch_buffer != NULL)
+        delete[] voxel_vertex_scratch_buffer;
+}
 
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
@@ -433,8 +446,6 @@ l = [
 
 void Voxel_volume::update_vertex_list()
 {
-    static int III = 0;
-    printf("update_Vertex_list called %d times\n", III++);
     static int compute_gamma_chart = 0;
     if(compute_gamma_chart == 0) 
     {
@@ -449,8 +460,9 @@ void Voxel_volume::update_vertex_list()
         }
     }
 
-    // TODO: clean this up
-    static Voxel_vertex* scratch = new Voxel_vertex[65536]; //65536*20 bytes of memory
+    //const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
+    //// TODO: clean this allocation up
+    //static Voxel_vertex* voxel_vertex_scratch_buffer = new Voxel_vertex[VOXEL_VERTEX_SCRATCH_SIZE]; //65536*20 bytes of memory
 
     static const float vset[72] = { 
         1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
@@ -476,19 +488,19 @@ void Voxel_volume::update_vertex_list()
         if (get_as_int(x,y,z) == 0) continue;
 
     #if VOXEL_RENDER_DEBUG_02
-        push_voxel_quad(scratch, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
-        push_voxel_quad(scratch, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
-        push_voxel_quad(scratch, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
-        push_voxel_quad(scratch, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
-        push_voxel_quad(scratch, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
-        push_voxel_quad(scratch, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #else
-        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(scratch, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
-        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(scratch, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
-        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
-        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
-        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
-        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(scratch, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
+        if(z+1 == zdim || get_as_int(x,y,z+1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
+        if(z == 0 || get_as_int(x,y,z-1) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 1, vset_dynamic, ox,oy,oz);
+        if(x+1 == xdim || get_as_int(x+1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 2, vset_dynamic, ox,oy,oz);
+        if(x == 0 || get_as_int(x-1,y,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 3, vset_dynamic, ox,oy,oz);
+        if(y+1 ==ydim || get_as_int(x,y+1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 4, vset_dynamic, ox,oy,oz);
+        if(y == 0 || get_as_int(x,y-1,z) == 0) push_voxel_quad(voxel_vertex_scratch_buffer, &index, x,y,z, 5, vset_dynamic, ox,oy,oz);
     #endif
     }}}
 
@@ -505,13 +517,18 @@ void Voxel_volume::update_vertex_list()
         return;
     }
     
-    if (index >= 65536)
+    if (index > VOXEL_VERTEX_SCRATCH_SIZE)
     {
-        index = 65536;
         printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
+        printf("Shrinking vertex count -- expect bugs\n");
+        index = VOXEL_VERTEX_SCRATCH_SIZE;
+    }
+    if (index < 0)
+    {
+        printf("WTF\n");
     }
     vvl.vertex_list = new Voxel_vertex[index];
-    memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
+    memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(Voxel_vertex));
     
     vvl.vnum = index;
 }

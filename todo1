@@ -510,3 +510,5 @@ make "YOURE DEAD" larger
 
 Bug: fill chat buffer, presss alt, send it
 Bug: agent_id unrecognized
+
+team color agents is broken

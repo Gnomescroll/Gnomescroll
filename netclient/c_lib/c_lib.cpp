@@ -198,6 +198,7 @@ int init_c_lib() {
         init_input();
         init_handlers();
         init_particle_functions();
+        init_voxel_volume();
         init_cameras();
         init_chat_client();
         init_particles();
@@ -231,6 +232,7 @@ void close_c_lib() {
     teardown_cameras();
     HudFont::teardown();
     teardown_chat_client();
+    teardown_voxel_volume();
     // free surfaces
     t_map::teardown_shader();
     teardown_particle_surface();

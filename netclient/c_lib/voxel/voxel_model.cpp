@@ -163,34 +163,45 @@ void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
     unsigned char team_r, team_g, team_b;
     int ret = ClientState::ctf.get_team_color(team, &team_r, &team_g, &team_b);
     if (ret) return;
-
     for (int i=0; i<this->n_parts; i++)
         this->set_part_team_color(vox_dat, i, team_r, team_g, team_b);
     #endif
 }
 
 void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
-{
+{   // VERIFIED
     #ifdef DC_CLIENT
-    VoxPart* vp = vox_dat->vox_part[part_num];
+    VoxPart *vp = vox_dat->vox_part[part_num];
+    // if team base color is 0,0,0 abort. this means team base color was not set. 0,0,0 is reserved for empty voxels
+    if (vp->colors.team_r == 0
+      && vp->colors.team_g == 0
+      && vp->colors.team_g == 0)
+          return;
+          
     Voxel_volume* vv = &(this->vv[part_num]);
-
-    int ix,iy,iz;
+    int x,y,z;
+    x = vp->dimension.x;
+    y = vp->dimension.y;
+    z = vp->dimension.z;
+    
     unsigned char r,g,b,a;
-    for (int j=0; j<vp->colors.n; j++)
-    {
+    int ix,iy,iz;
+    if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
+    for (int j=0; j < vp->colors.n; j++) {
         ix = vp->colors.index[j][0];
         iy = vp->colors.index[j][1];
         iz = vp->colors.index[j][2];
+        if (ix >= x || iy >= y || iz >= z) printf("WARNING color index %d,%d,%d is out of dimensions %d,%d,%d\n", ix,iy,iz, x,y,z);
+
         r = vp->colors.rgba[j][0];
         g = vp->colors.rgba[j][1];
         b = vp->colors.rgba[j][2];
         a = vp->colors.rgba[j][3];
 
         if (vp->colors.team
-        && r == vp->colors.team_r
-        && g == vp->colors.team_g
-        && b == vp->colors.team_b)
+          && r == vp->colors.team_r
+          && g == vp->colors.team_g
+          && b == vp->colors.team_b)
         {
             r = team_r;
             g = team_g;
@@ -200,6 +211,7 @@ void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned ch
         vv->set_color(ix, iy, iz, r,g,b,a);
     }
     #endif
+
 }
 
 void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
@@ -213,10 +225,9 @@ void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
     z = vp->dimension.z;
     
     unsigned char r,g,b,a;
-    int j;
     int ix,iy,iz;
     if (vp->colors.n != x*y*z) printf("WARNING: vp colors %d != xyz %d\n", vp->colors.n, x*y*z);
-    for (j=0; j < vp->colors.n; j++) {
+    for (int j=0; j < vp->colors.n; j++) {
         ix = vp->colors.index[j][0];
         iy = vp->colors.index[j][1];
         iz = vp->colors.index[j][2];
