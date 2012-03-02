@@ -445,6 +445,8 @@ msg id logging to net agent packets
 fill color script for models
 change agent to army green, add team color
 fix bug that occurs when team base color is 0,0,0
+
+apply view distance to particles, models
 ====================
 
 
@@ -491,6 +493,7 @@ different font sizes
 client side prediction bug
 endpoints on hitscan laser
 Lua
+fog
 
 SERVER:
 put metaless content back on 100tb (~2-3days of rsyncing)
@@ -500,7 +503,6 @@ POLISH TODO:
 
 figure out interface for spawner selection from map icons
 rotate head
-apply view distance to voxel models
 
 GRENADES:
 charge up
@@ -513,4 +515,5 @@ Bug: agent_id unrecognized
 Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
         gdb resisted watchpoints
         
-team color agents is broken
+territory control
+    -- color in GLSL

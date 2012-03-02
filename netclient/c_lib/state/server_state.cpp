@@ -43,6 +43,7 @@ namespace ServerState
         {
             a = agent_list.filtered_objects[i];
             if (a == NULL) continue;
+            if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
             a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
         }
 

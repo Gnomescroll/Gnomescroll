@@ -3,7 +3,7 @@
 #include "player_agent.hpp"
 
 #include <c_lib/agent/agent.hpp>
-#include <c_lib/ray_trace/ray_trace.h>
+#include <c_lib/ray_trace/ray_trace.hpp>
 
 #ifdef DC_CLIENT
 #include <c_lib/sound/sound.hpp>

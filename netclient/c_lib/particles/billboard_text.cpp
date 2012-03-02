@@ -1,6 +1,6 @@
 #include "billboard_text.hpp"
 
-#include <ray_trace/ray_trace.h>
+#include <ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 #include <hud/text.hpp>

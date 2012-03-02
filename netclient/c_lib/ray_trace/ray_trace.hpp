@@ -7,12 +7,6 @@
 
 #define raycast_tick_max 1024
 
-//int ray_cast(float x0,float y0,float z0, float x1,float y1,float z1);
-//int ray_cast_lax(float x0,float y0,float z0, float x1,float y1,float z1);
-
-//int* _ray_cast3(float x0,float y0,float z0, float x1,float y1,float z1, float* distance);
-
-
 //used by grenade
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 
@@ -29,3 +23,6 @@ inline float sphere_line_distance(float px, float py, float pz, float ox, float 
 // converts int[3] filled by ray_trace6 to a cube_side id
 int get_cube_side_from_side_array(int* side);
 void get_side_array_from_cube_side(int cube_id);
+
+bool ray_cast_simple(float x, float y, float z, float a, float b, float c);
+bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float max_distance);
