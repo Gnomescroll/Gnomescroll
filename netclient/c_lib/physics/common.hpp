@@ -6,3 +6,8 @@ bool cube_intersects(
 );
 
 float distancef(float x, float y, float z, float a, float b, float c);
+
+float gaussian_value(const float mean, const float stddev, const float x);
+
+const float kPI = 3.14159f;
+const float kE = 2.71828f;

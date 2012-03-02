@@ -15,3 +15,9 @@ float distancef(float x, float y, float z, float a, float b, float c)
 {
     return sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));
 }
+
+float gaussian_value(const float mean, const float stddev, const float x)
+{
+    const float sqrt_2pi = sqrt(2*kPI);
+    return pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
+}
