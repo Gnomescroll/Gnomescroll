@@ -532,3 +532,7 @@ player name sanitization
 -- not all spaces
 
 better damage on character models (radius instead of single voxel)
+
+fix bug in dcvox pipeline where dimensions are incorrect
+-- sort out pipeline
+-- move dimensions to inferred by parser?
