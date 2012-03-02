@@ -225,7 +225,8 @@ void Voxel_render_list::draw()
         vv->draw_bounding_box();
     }
 
-
+    return;
+    
     glDisable(GL_TEXTURE_2D);
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
