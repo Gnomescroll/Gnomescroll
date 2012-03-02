@@ -67,14 +67,50 @@ void Voxel_model::draw_skeleton()
 {
 #ifdef DC_CLIENT
 
+    glDisable(GL_TEXTURE_2D);
+
+    glLineWidth(3.0f);
+
+    glBegin(GL_LINES);
+
+    //float x,y,z;
+
+    struct Vec3 v;
+
+    const float len = 0.25;
 
     for(int i=1; i<n_skeleton_nodes; i++)
     {
 
         struct Affine m = vox_skeleton_world_matrix[i];
 
-        
+        glColor3ub(255, 0, 0);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[0], len));
+        glVertex3f(v.x,v.y,v.z);
+
+        glColor3ub(0, 255, 0);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[1], len));
+        glVertex3f(v.x,v.y,v.z);
+
+        glColor3ub(0, 0, 255);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[2], len));
+        glVertex3f(v.x,v.y,v.z);
+
+
     }
+
+    glEnd();
+
+    glColor3ub(255, 255, 255);
+    glEnable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+
 #endif
 }
 
@@ -288,6 +324,7 @@ void Voxel_model::update(float x, float y, float z, float theta, float phi)
 {
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
+    this->draw_skeleton();
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)

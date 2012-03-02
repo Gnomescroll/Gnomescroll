@@ -225,9 +225,13 @@ void Voxel_render_list::draw()
         vv->draw_bounding_box();
     }
 
+    this->update_vertex_buffer_object();
+    glEnable (GL_DEPTH_TEST);
+    //glDisable(GL_TEXTURE_2D);
+
     return;
-    
-    glDisable(GL_TEXTURE_2D);
+
+    //glDisable(GL_TEXTURE_2D);
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
 
@@ -245,13 +249,13 @@ void Voxel_render_list::draw()
         return;
     }
 
-    glUseProgramObjectARB(voxel_shader_prog);
-
-    glColor3b(255,255,255);
-    
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
+
+    glUseProgramObjectARB(voxel_shader_prog);
+
+    glColor3b(255,255,255);
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -322,8 +326,6 @@ void Voxel_render_list::draw()
     glDisableVertexAttribArray(InNormal);
     glDisableVertexAttribArray(InAO);
     glDisableVertexAttribArray(InTex);
-
-    glEnable (GL_DEPTH_TEST);
 
     glUseProgramObjectARB(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

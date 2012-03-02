@@ -557,7 +557,6 @@ void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, sh
 void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
-    glDisable (GL_DEPTH_TEST);
     glDisable(GL_TEXTURE_2D);
     glLineWidth(5.0f);
 
@@ -608,29 +607,9 @@ void Voxel_volume::draw_bounding_box()
 
     glEnd();
 
-    glDisable (GL_DEPTH_TEST);
-/*
-    //offset
-    glColor3ub((unsigned char)0,(unsigned char)0,(unsigned char)255);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(v[3].x, v[3].y, v[3].z);
-    glEnd();
-    glPointSize(1.0);
-
-    //center
-    glColor3ub((unsigned char)0,(unsigned char)255,(unsigned char)0);
-    glPointSize(10.0);
-    glBegin(GL_POINTS);
-    glVertex3f(center.x,center.y, center.z);
-    glEnd();
-    glPointSize(1.0);
-*/
     glColor3ub(255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
-
-    glEnable (GL_DEPTH_TEST);
 
 #endif
 }
