@@ -81,7 +81,6 @@ inline void Agent_cs_StoC::handle()
         printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
         return;
     }
-
     //printf("!!! control state= %i \n", cs);
     a->handle_control_state(seq, cs, theta, phi);
     ClientState::playerAgent_state.handle_net_control_state(seq, cs, theta, phi);
@@ -108,7 +107,6 @@ inline void agent_shot_object_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.fired_weapon_at_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
     int voxel[3];
@@ -132,7 +130,6 @@ inline void agent_shot_block_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.fired_weapon_at_block(x,y,z, cube, side);
 }
 
@@ -145,7 +142,6 @@ inline void agent_shot_nothing_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.fired_weapon_at_nothing();
 }
 
@@ -158,7 +154,6 @@ inline void agent_melee_object_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.melee_attack_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
     int voxel[3];
@@ -182,7 +177,6 @@ inline void agent_melee_nothing_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.melee_attack_nothing();
 }
 
@@ -195,7 +189,6 @@ inline void agent_hit_block_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.hit_block();
 }
 
@@ -208,7 +201,6 @@ inline void agent_threw_grenade_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.threw_grenade();
 }
 
@@ -221,7 +213,6 @@ inline void agent_placed_block_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.placed_block();
 }
 
@@ -245,7 +236,6 @@ inline void agent_health_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->event.healed(health);
 }
 
@@ -307,7 +297,6 @@ inline void AgentDeaths_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->status.deaths = deaths;
 }
 
@@ -319,7 +308,6 @@ inline void AgentSuicides_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     a->status.suicides = suicides;
 }
 
@@ -331,7 +319,6 @@ inline void AgentActiveWeapon_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
     //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
     a->weapons.active = slot;
 }
@@ -344,7 +331,6 @@ inline void AgentReloadWeapon_StoC::handle()
         printf("Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
-
 
     if (a == NULL)
     {
@@ -623,8 +609,6 @@ inline void hit_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
-
     if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;
     msg.id = a->id;
@@ -646,8 +630,6 @@ inline void hitscan_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
-
     if (!a->weapons.laser.fire()) return;
 
     //const int agent_dmg = 25;
@@ -709,15 +691,11 @@ inline void hitscan_object_CtoS::handle()
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
     }
-
     agent_shot_object_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
     msg.target_type = this->type;
     msg.target_part = this->part;
-    //msg.x = x;
-    //msg.y = y;
-    //msg.z = z;
     msg.vx = vx;
     msg.vy = vy;
     msg.vz = vz;
@@ -734,7 +712,6 @@ inline void hitscan_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
 
     #ifdef PRODUCTION
     #else
@@ -767,10 +744,7 @@ inline void hitscan_block_CtoS::handle()
         fz = a->s.z + a->camera_height();
 
     int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
-    if (!collided) {
-        return;
-    }
-
+    if (!collided) return;
     // pt of collision
     fx += f[0] * distance;
     fy += f[1] * distance;
@@ -786,7 +760,6 @@ inline void hitscan_block_CtoS::handle()
     msg.cube = cube;
     msg.side = cube_side;
     msg.broadcast();
-
 }
 
 inline void hitscan_none_CtoS::handle()
@@ -797,7 +770,6 @@ inline void hitscan_none_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
 
     if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
@@ -813,7 +785,6 @@ inline void melee_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
 
     if (!a->weapons.pick.fire()) return;
 
@@ -866,7 +837,6 @@ inline void melee_object_CtoS::handle()
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
     }
-
     agent_melee_object_StoC msg;
     msg.id = a->id;
     msg.target_id = this->id;
@@ -887,7 +857,6 @@ inline void melee_none_CtoS::handle()
         return;
     }
 
-
     if (!a->weapons.pick.fire()) return;
     agent_melee_nothing_StoC msg;
     msg.id = a->id;
@@ -902,7 +871,6 @@ inline void ThrowGrenade_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
 
     if (!a->weapons.grenades.fire()) return;
     agent_threw_grenade_StoC msg;
@@ -928,7 +896,6 @@ inline void AgentActiveWeapon_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
     a->weapons.set_active(slot);
 }
 
@@ -940,7 +907,6 @@ inline void AgentReloadWeapon_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
     a->weapons.reload(type);
     // forward action
     AgentReloadWeapon_StoC msg;
@@ -957,7 +923,6 @@ inline void agent_set_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
     // fire block applier
     if (!a->weapons.blocks.fire()) return;
     agent_placed_block_StoC msg;
@@ -1002,7 +967,6 @@ inline void place_spawner_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
     if (a->status.team == 0) return;
     if (!a->status.can_afford(OBJ_TYPE_SPAWNER)) return;
     if (ServerState::spawner_list.full()) return;
@@ -1029,7 +993,6 @@ inline void choose_spawn_location_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
     a->status.set_spawner(id);
 }
 

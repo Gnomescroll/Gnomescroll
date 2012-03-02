@@ -4,10 +4,7 @@
 
 inline void CreateSlime_StoC::handle()
 {
-    Monsters::Slime* s = ClientState::slime_list.create(id);
-    if (s->vox == NULL) return;
-    s->vox->set_draw(true);
-    s->vox->update(s->x, s->y, s->z, s->theta, s->phi);
+    ClientState::slime_list.create(id);
 }
 
 inline void DestroySlime_StoC::handle()
@@ -18,7 +15,11 @@ inline void DestroySlime_StoC::handle()
 inline void SlimeState_StoC::handle()
 {
     Monsters::Slime* s = ClientState::slime_list.get(id);
-    if (s==NULL) return;
+    if (s==NULL)
+    {
+        printf("SlimeState_StoC:: slime %d not found\n", id);
+        return;
+    }
     s->set_state(x,y,z, vx,vy,vz, theta, phi);
 }
 
