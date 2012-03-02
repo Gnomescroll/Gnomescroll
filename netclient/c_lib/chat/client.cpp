@@ -208,7 +208,10 @@ void ChatInput::submit(int channel)
     if (!route_command())
     {   // create, send packet
         ChatMessage_CtoS msg;
-        strcpy(msg.msg, buffer);
+        char c;
+        int i = 0;
+        while ((c = buffer[i]) != '\0')
+            msg.msg[i++] = c;
         msg.channel = channel;
         msg.send();
     }
@@ -230,6 +233,7 @@ void ChatInput::clear_buffer()
 
 void ChatInput::add(char x)
 {
+    printf("%d\n", x);
     if (cursor == CHAT_BUFFER_SIZE) return;
     if (buffer_len == CHAT_BUFFER_SIZE) return;
 

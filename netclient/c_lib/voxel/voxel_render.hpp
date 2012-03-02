@@ -29,8 +29,6 @@ class Voxel_volume_token
     int voff;   //offset of vertices
 };
 
-#define VOXEL_RENDER_LIST_SIZE 1024
-
 /*
     Note: again, here need a list template for adding/removing/iterating
     list, add, remove, swap, iterate

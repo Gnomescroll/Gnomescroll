@@ -443,7 +443,8 @@ Mar 1
 
 msg id logging to net agent packets
 fill color script for models
-
+change agent to army green, add team color
+fix bug that occurs when team base color is 0,0,0
 ====================
 
 
@@ -498,8 +499,8 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 POLISH TODO:
 
 figure out interface for spawner selection from map icons
-color agent model more appropriately and  use team base color
 rotate head
+apply view distance to voxel models
 
 GRENADES:
 charge up

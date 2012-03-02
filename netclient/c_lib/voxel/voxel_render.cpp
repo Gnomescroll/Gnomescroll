@@ -11,9 +11,10 @@
 
 #include <c_lib/common/enum_types.hpp>
 
+const int VOXEL_RENDER_LIST_SIZE = 1024;
+
 Voxel_render_list::Voxel_render_list()
 :
-render_list(NULL),
 num_elements(0)
 {
     const int starting_size = 1024;
@@ -30,21 +31,15 @@ num_elements(0)
     vbo_wrapper[0].vnum = 0;
     vbo_wrapper[1].vnum = 0;
 
-    // i'm not sure how to delete[] this properly
-    //this->render_list = new Voxel_volume*[VOXEL_RENDER_LIST_SIZE];
-    //for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++) this->render_list[i] = NULL;
-
-    this->render_list = (Voxel_volume**)malloc(sizeof(Voxel_volume*) * VOXEL_RENDER_LIST_SIZE);
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    {
-        this->render_list[i] = NULL;
-    }
+    this->render_list = (Voxel_volume**)calloc(VOXEL_RENDER_LIST_SIZE, sizeof(Voxel_volume*));
+    //for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    //{
+        //this->render_list[i] = NULL;
+    //}
 }
 
 Voxel_render_list::~Voxel_render_list()
 {
-    //if (this->render_list)
-        //delete[] this->render_list;
     if (this->render_list)
         free(this->render_list);
 
@@ -61,17 +56,12 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
     }
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == NULL)
+        if(this->render_list[i] == NULL)
         {
             num_elements++;
-            render_list[i] = vv;
+            this->render_list[i] = vv;
             vv->id = i;
             vv->voxel_render_list = this;
-
-            //vv->vvl.vnum = 0;
-            //vv->vvl.vertex_list = NULL;
-            
-            //printf("Added voxel volume %i \n", i);
             break;
         }
     }
@@ -80,13 +70,13 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     if (vv == NULL) return;
-    int i=0;
-    for(; i < VOXEL_RENDER_LIST_SIZE; i++)
+    int i;
+    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == vv)
+        if(this->render_list[i] == vv)
         {
             num_elements--;
-            render_list[i] = NULL;
+            this->render_list[i] = NULL;
             break;
         }
     }
@@ -95,8 +85,6 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
     vv->voxel_render_list = NULL;
     if (i == VOXEL_RENDER_LIST_SIZE)
         printf("Voxel_render_list::unregister_voxel_volume error, volume was not on list \n");
-    //else
-        //printf("Removed voxel volume %i from render list\n", i);
 }
 
 void Voxel_render_list::update_vertex_buffer_object()
@@ -108,9 +96,9 @@ void Voxel_render_list::update_vertex_buffer_object()
     int volumes_updated = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == NULL) continue;
+        if(this->render_list[i] == NULL) continue;
 
-        vv = render_list[i];
+        vv = this->render_list[i];
         if( vv->needs_vbo_update == true )
         {
             vv->needs_vbo_update = false;
@@ -148,8 +136,8 @@ void Voxel_render_list::update_vertex_buffer_object()
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(render_list[i] == NULL) continue;
-        vv = render_list[i];
+        if(this->render_list[i] == NULL) continue;
+        vv = this->render_list[i];
 
         if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
         if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
@@ -274,8 +262,8 @@ void Voxel_render_list::draw()
     //int drawn = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if( render_list[i] == NULL || !render_list[i]->draw ) continue;
-        Voxel_volume* vv = render_list[i];
+        if( this->render_list[i] == NULL || !this->render_list[i]->draw ) continue;
+        Voxel_volume* vv = this->render_list[i];
 
         if(vv->vvl.vnum == 0) continue;
         if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
