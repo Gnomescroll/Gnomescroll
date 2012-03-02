@@ -11,14 +11,17 @@
 //#include <luajit/lauxlib.h>
 
 //#include<luajit-2.0/
-
+/*
  extern "C" 
 {
 #include <lua5.1/lua.h>
 #include <lua5.1/lualib.h>
 #include <lua5.1/lauxlib.h>
 }
+*/
 
+#include <luajit/lua.hpp>
+#include <luajit/lauxlib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,6 +37,17 @@
  
     return 0;
 */
+
+ extern "C" 
+{
+
+int barfunc(int foo)
+{
+    /* a dummy function to test with FFI */ 
+    return foo + 1;
+}
+
+}
 
 int run_lua_test()
 {
@@ -52,14 +66,25 @@ int run_lua_test()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "script.lua");
-    if (status) {
+    status = luaL_loadfile(L, "./media/lua/test.lua");
+    if (status) 
+    {
         /* If something went wrong, error message is at the top of */
         /* the stack */
         fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
         exit(1);
     }
 
+ 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    if (result) 
+    {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    lua_close(L);   /* Cya, Lua */
+
+#if 0
     /*
      * Ok, now here we go: We pass data to the lua script on the stack.
      * That is, we first have to prepare Lua's virtual stack the way we
@@ -82,6 +107,7 @@ int run_lua_test()
      * of the stack, so that after it has been called, the table is at the
      * top of the stack.
      */
+
     for (i = 1; i <= 5; i++) 
     {
         lua_pushnumber(L, i);   /* Push the table index */
@@ -106,7 +132,9 @@ int run_lua_test()
     printf("Script returned: %.0f\n", sum);
 
     lua_pop(L, 1);  /* Take the returned value out of the stack */
-    lua_close(L);   /* Cya, Lua */
+#endif
+
+    printf("finished \n");
 
     return 0;
 
