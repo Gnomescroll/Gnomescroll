@@ -233,7 +233,6 @@ void ChatInput::clear_buffer()
 
 void ChatInput::add(char x)
 {
-    printf("%d\n", x);
     if (cursor == CHAT_BUFFER_SIZE) return;
     if (buffer_len == CHAT_BUFFER_SIZE) return;
 
