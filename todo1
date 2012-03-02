@@ -525,3 +525,8 @@ territory control
     -- color in GLSL
 
 better feedback on damage received
+
+player name sanitization
+-- limited punctuation? (clans like to use it)
+-- no spaces or \t or \n  (maybe spaces in the middle of text but not at ends)
+-- not all spaces
