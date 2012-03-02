@@ -211,9 +211,14 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     init=1;
 }
 
+
+#define VOXEL_RENDER_WIREFRAME 1
+#define VOXEL_RENDER_DISABLE_VOXEL_VOLUMES 0
+
 void Voxel_render_list::draw()
 {
 
+#if VOXEL_RENDER_WIREFRAME
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
         if( render_list[i] == NULL || !render_list[i]->draw ) continue;
@@ -225,17 +230,15 @@ void Voxel_render_list::draw()
         vv->draw_bounding_box();
     }
 
-    //this->update_vertex_buffer_object();
-    glEnable (GL_DEPTH_TEST);
-    //glDisable(GL_TEXTURE_2D);
 
-    //return;
+#endif DEBUG_VOXEL_RENDER_WIREFRAME
 
-    //glDisable(GL_TEXTURE_2D);
+#if VOXEL_RENDER_DISABLE_VOXEL_VOLUMES
+    this->update_vertex_buffer_object();
+    return;
+#endif
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
-
-    //printf("buff= %i \n",  _vbo->id);
 
     if( _vbo->vnum == 0 )
     {

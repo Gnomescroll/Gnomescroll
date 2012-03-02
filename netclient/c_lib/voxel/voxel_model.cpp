@@ -68,6 +68,7 @@ void Voxel_model::draw_skeleton()
 #ifdef DC_CLIENT
 
     glDisable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
 
     glLineWidth(3.0f);
 
@@ -79,7 +80,7 @@ void Voxel_model::draw_skeleton()
 
     const float len = 0.25;
 
-    for(int i=1; i<n_skeleton_nodes; i++)
+    for(int i=0; i<n_skeleton_nodes; i++)
     {
 
         struct Affine m = vox_skeleton_world_matrix[i];
@@ -102,7 +103,60 @@ void Voxel_model::draw_skeleton()
         v = vec3_add(m.v[3], vec3_scalar_mult(m.v[2], len));
         glVertex3f(v.x,v.y,v.z);
 
+    }
 
+    for(int i=1; i<n_skeleton_nodes; i++)
+    {
+
+        struct Affine m1 = vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]];
+        struct Affine m2 = vox_skeleton_world_matrix[i];
+
+        glColor3ub(160, 32, 240);
+        v = m1.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        
+        glColor3ub(255, 165, 0);
+        v = m2.v[3];
+        glVertex3f(v.x,v.y,v.z);
+    }
+
+
+    for(int i=0; i<this->n_parts; i++)
+    {
+        struct Affine m = this->vv[i].world_matrix;
+
+        glColor3ub(255, 0, 0);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[0], len));
+        glVertex3f(v.x,v.y,v.z);
+
+        glColor3ub(0, 255, 0);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[1], len));
+        glVertex3f(v.x,v.y,v.z);
+
+        glColor3ub(0, 0, 255);
+        v = m.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        v = vec3_add(m.v[3], vec3_scalar_mult(m.v[2], len));
+        glVertex3f(v.x,v.y,v.z);
+    }
+
+
+    for(int i=0; i<this->n_parts; i++)
+    {
+        struct Affine m1 = *(this->vv[i].parent_world_matrix);
+        struct Affine m2 = this->vv[i].world_matrix;
+
+        glColor3ub(0, 0, 0);
+        v = m1.v[3];
+        glVertex3f(v.x,v.y,v.z);
+        
+        glColor3ub(255, 255, 255);
+        v = m2.v[3];
+        glVertex3f(v.x,v.y,v.z);
     }
 
     glEnd();
@@ -111,6 +165,7 @@ void Voxel_model::draw_skeleton()
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
 
+    glShadeModel(GL_FLAT);
 #endif
 }
 
