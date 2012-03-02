@@ -72,6 +72,7 @@ def process(args):
     data = metadata + voxels
 
     # convert to string
+    data += ['']
     data = '\n'.join(data)
 
     # write to file

@@ -442,6 +442,7 @@ correct info and reformat help text to fit 800x600 screens
 Mar 1
 
 msg id logging to net agent packets
+fill color script for models
 
 ====================
 
@@ -498,6 +499,7 @@ POLISH TODO:
 
 figure out interface for spawner selection from map icons
 color agent model more appropriately and  use team base color
+rotate head
 
 GRENADES:
 charge up
@@ -505,3 +507,6 @@ decayed damage by range
 apply terrain cover to damage
 
 make "YOURE DEAD" larger
+
+Bug: fill chat buffer, presss alt, send it
+Bug: agent_id unrecognized

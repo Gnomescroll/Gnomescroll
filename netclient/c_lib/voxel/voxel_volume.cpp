@@ -37,10 +37,6 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     y = y0;
     z = z0;
 
-    //int _x,_y,_z;
-    //_x=x;
-    //_y=y;
-    //_z=z;
 
     int _dx,_dy,_dz;
     _dx = ((x1-x0)/len) *_ssize;
@@ -66,8 +62,6 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     int max_i = (_bsize / _ssize)*len + 1; //over project
 
     int col=0;
-    //printf("--hitscan-- \n");
-    //printf("_s x,y,z= %i %i %i \n", x,y,z);
 
     for(i =0; i < max_i; i++) {
         cx += dx;
@@ -438,7 +432,9 @@ l = [
 #define VOXEL_RENDER_DEBUG_02 1
 
 void Voxel_volume::update_vertex_list()
-{   
+{
+    static int III = 0;
+    printf("update_Vertex_list called %d times\n", III++);
     static int compute_gamma_chart = 0;
     if(compute_gamma_chart == 0) 
     {
@@ -453,6 +449,7 @@ void Voxel_volume::update_vertex_list()
         }
     }
 
+    // TODO: clean this up
     static Voxel_vertex* scratch = new Voxel_vertex[65536]; //65536*20 bytes of memory
 
     static const float vset[72] = { 
@@ -471,16 +468,12 @@ void Voxel_volume::update_vertex_list()
     const float oy = this->hdy*this->scale;
     const float oz = this->hdz*this->scale;
 
-    //this->hdx = ((float) xdim) / 2;
-    //this->hdy = ((float) ydim) / 2;
-    //this->hdz = ((float) zdim) / 2;
-
     int index = 0;
 
     for(int x=0; x < xdim; x++){
     for(int y=0; y < ydim; y++){
     for(int z=0; z < zdim; z++){
-        if( get_as_int(x,y,z) == 0) continue;
+        if (get_as_int(x,y,z) == 0) continue;
 
     #if VOXEL_RENDER_DEBUG_02
         push_voxel_quad(scratch, &index, x,y,z, 0, vset_dynamic, ox,oy,oz);
@@ -499,23 +492,26 @@ void Voxel_volume::update_vertex_list()
     #endif
     }}}
 
-    if(vvl.vertex_list != NULL)
+    if (vvl.vertex_list != NULL)
     {
         delete[] vvl.vertex_list;
         vvl.vertex_list = NULL;
     }
 
-    if(index == 0)
+    if (index == 0)
     {
         printf("Voxel_volume::update_vertex_list, FATAL ERROR, no quads in voxel model\n");
         vvl.vnum = 0;
         return;
     }
     
+    if (index >= 65536)
+    {
+        index = 65536;
+        printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
+    }
     vvl.vertex_list = new Voxel_vertex[index];
-
-    if (index >= 65536) printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
-    memcpy( vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
+    memcpy(vvl.vertex_list, scratch, index*sizeof(Voxel_vertex));
     
     vvl.vnum = index;
 }

@@ -17,12 +17,12 @@
 5 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 6 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 #part number, node number, voxel format filename
-0 1 media/voxel/robot1/torso2.dcvox
-1 6 media/voxel/robot1/head.dcvox
-2 4 media/voxel/robot1/arm.dcvox
-3 5 media/voxel/robot1/swaparm.dcvox
-4 2 media/voxel/robot1/swapleg2.dcvox
-5 3 media/voxel/robot1/leg2.dcvox
+0 1 media/voxel/robot/torso.dcvox
+1 6 media/voxel/robot/head.dcvox
+2 4 media/voxel/robot/arm.dcvox
+3 5 media/voxel/robot/swaparm.dcvox
+4 2 media/voxel/robot/swapleg.dcvox
+5 3 media/voxel/robot/leg.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
 0 -0.050000 -0.150000 2.300001  -0.500000 0.000000 0.000000
 1 -0.500000 -0.250000 2.900001  -0.500000 0.000000 0.000000

@@ -355,7 +355,8 @@ void VoxDat::set_skeleton_parent_matrix(int part, int parent)
 void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
-    if (p==NULL) {
+    if (p==NULL)
+    {
         printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
         return;
     }
@@ -366,7 +367,8 @@ void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned 
 void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
 {
     VoxPart* p = vox_part[part];
-    if (p==NULL) {
+    if (p==NULL)
+    {
         printf("WARNING VoxDat::set_color -- part %d is NULL\n", part);
         return;
     }

@@ -1,5 +1,4 @@
 #skeleton nodes, voxel volumes
-#8 7
 7 6
 #connection matrix
 0 0
@@ -9,24 +8,21 @@
 4 1
 5 1
 6 1
-#7 6
 #skeleton_node: anchor x,y,z rotatation x,y,z
-0 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
-1 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
+0 0.000000 0.000000 0.000000  0.125000 0.125000 0.000000
+1 0.000000 0.000000 0.000000  2.000000 -0.500000 0.000000
 2 0.000000 -1.000000 1.200000  0.000000 0.000000 0.000000
 3 0.000000 1.000000 1.200000  0.000000 0.000000 0.000000
 4 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 5 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 6 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
-#7 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 #part number, node number, voxel format filename
-0 1 media/voxel/robot1/torso_red.dcvox
-1 6 media/voxel/robot1/head.dcvox
-2 4 media/voxel/robot1/arm.dcvox
-3 5 media/voxel/robot1/swaparm.dcvox
-4 2 media/voxel/robot1/swapleg2.dcvox
-5 3 media/voxel/robot1/leg2.dcvox
-#6 7 media/voxel/robot1/gun1.dcvox
+0 1 media/voxel/robot/torso.dcvox
+1 6 media/voxel/robot/head.dcvox
+2 4 media/voxel/robot/arm.dcvox
+3 5 media/voxel/robot/swaparm.dcvox
+4 2 media/voxel/robot/swapleg.dcvox
+5 3 media/voxel/robot/leg.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
 0 -0.050000 -0.150000 3.300000  -0.500000 0.000000 0.000000
 1 -0.500000 -0.250000 3.850000  -0.500000 0.000000 0.000000
@@ -34,4 +30,3 @@
 3 -0.450000 -0.250000 3.300000  0.000000 0.000000 0.000000
 4 0.000000 0.600000 0.800000  0.000000 0.000000 0.000000
 5 0.000000 -0.900000 0.800000  -0.500000 0.000000 0.000000
-#6 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
