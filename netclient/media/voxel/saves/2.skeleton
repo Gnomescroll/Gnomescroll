@@ -20,7 +20,7 @@
 6 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 #7 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
 #part number, node number, voxel format filename
-0 1 media/voxel/robot1/torso2.dcvox
+0 1 media/voxel/robot1/torso_red.dcvox
 1 6 media/voxel/robot1/head.dcvox
 2 4 media/voxel/robot1/arm.dcvox
 3 5 media/voxel/robot1/swaparm.dcvox
