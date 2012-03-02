@@ -49,7 +49,8 @@ inline void SendClientId_StoC::handle()
 inline void Agent_state_message::handle()
 {
     Agent_state* A = STATE::agent_list.get(id);
-    if(A == NULL) {
+    if(A == NULL)
+    {
         printf("Agent_state_message -- Agent %d does not exist\n", id);
         return;
     }
@@ -59,7 +60,8 @@ inline void Agent_state_message::handle()
 inline void Agent_teleport_message::handle()
 {
     Agent_state* A = STATE::agent_list.get(id);
-    if(A == NULL) {
+    if(A == NULL)
+    {
         printf("Agent_teleport_message -- Agent %d does not exist\n", id);
         return;
     }
@@ -73,14 +75,15 @@ inline void Agent_teleport_message::handle()
 //Agent control state, server to client
 inline void Agent_cs_StoC::handle()
 {
-    Agent_state* A = STATE::agent_list.get(id);
-    if(A == NULL) {
+    Agent_state* a = STATE::agent_list.get(id);
+    if(a == NULL)
+    {
         printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
         return;
     }
 
     //printf("!!! control state= %i \n", cs);
-    A->handle_control_state(seq, cs, theta, phi);
+    a->handle_control_state(seq, cs, theta, phi);
     ClientState::playerAgent_state.handle_net_control_state(seq, cs, theta, phi);
 }
 
@@ -88,7 +91,9 @@ inline void Agent_cs_StoC::handle()
 inline void agent_damage_StoC::handle()
 {
     Agent_state* a = STATE::agent_list.get(id);
-    if(a == NULL) {
+    if(a == NULL)
+    {
+        printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
         return;
     }
     a->event.took_damage(dmg);
@@ -98,7 +103,12 @@ inline void agent_shot_object_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.fired_weapon_at_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
     int voxel[3];
@@ -117,7 +127,12 @@ inline void agent_shot_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.fired_weapon_at_block(x,y,z, cube, side);
 }
 
@@ -125,7 +140,12 @@ inline void agent_shot_nothing_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.fired_weapon_at_nothing();
 }
 
@@ -133,7 +153,12 @@ inline void agent_melee_object_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.melee_attack_object(target_id, target_type, target_part);
     // get obj from metadata, set voxel
     int voxel[3];
@@ -152,7 +177,12 @@ inline void agent_melee_nothing_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.melee_attack_nothing();
 }
 
@@ -160,7 +190,12 @@ inline void agent_hit_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.hit_block();
 }
 
@@ -168,7 +203,12 @@ inline void agent_threw_grenade_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.threw_grenade();
 }
 
@@ -176,7 +216,12 @@ inline void agent_placed_block_StoC::handle()
 {
     if (id == ClientState::playerAgent_state.agent_id) return;   // ignore you, should have played locally before transmission
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.placed_block();
 }
 
@@ -184,21 +229,34 @@ inline void agent_dead_StoC::handle()
 {
     bool _dead = (bool)dead;
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if(a == NULL)
+    {
+        printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+        return;
+    }
     a->event.life_changing(_dead);
 }
 
 inline void agent_health_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->event.healed(health);
 }
 
 inline void agent_create_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get_or_create(id);
-    if (a==NULL) printf("agent_create_StoC:: get_or_create agent failed\n");
+    if (a == NULL)
+    {
+        printf("agent_create_StoC:: get_or_create agent %d failed\n", id);
+        return;
+    }
     a->client_id = client_id;
     a->event.joined_team(team);
     //printf("C Agent created. id: %d\n", a->id);
@@ -207,7 +265,7 @@ inline void agent_create_StoC::handle()
 inline void agent_name_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL)
+    if (a == NULL)
     {
         printf("agent_name_StoC:: agent %d unknown. Could not name %s\n", id, name);
         return;
@@ -233,28 +291,47 @@ inline void PlayerAgent_id_StoC::handle()
 inline void AgentKills_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if(a == NULL)
+    {
+        printf("Agent_control_to_client_message: agent does not exist, id= %i\n", id);
+        return;
+    }
     a->status.kills = kills;
 }
 
 inline void AgentDeaths_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->status.deaths = deaths;
 }
 
 inline void AgentSuicides_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     a->status.suicides = suicides;
 }
 
 inline void AgentActiveWeapon_StoC::handle()
 {
     Agent_state* a =  ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
     //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
     a->weapons.active = slot;
 }
@@ -262,7 +339,18 @@ inline void AgentActiveWeapon_StoC::handle()
 inline void AgentReloadWeapon_StoC::handle()
 {
     Agent_state* a = ClientState::agent_list.get(id);
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
+
+
+    if (a == NULL)
+    {
+        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        return;
+    }
     a->event.reload_weapon(type);
 }
 
@@ -530,7 +618,12 @@ inline void Agent_cs_CtoS::handle()
 inline void hit_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;
@@ -548,7 +641,12 @@ inline void hit_block_CtoS::handle()
 inline void hitscan_object_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.laser.fire()) return;
 
@@ -631,7 +729,12 @@ inline void hitscan_object_CtoS::handle()
 inline void hitscan_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     #ifdef PRODUCTION
     #else
@@ -689,7 +792,12 @@ inline void hitscan_block_CtoS::handle()
 inline void hitscan_none_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
@@ -700,7 +808,12 @@ inline void hitscan_none_CtoS::handle()
 inline void melee_object_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.pick.fire()) return;
 
@@ -768,7 +881,12 @@ inline void melee_object_CtoS::handle()
 inline void melee_none_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.pick.fire()) return;
     agent_melee_nothing_StoC msg;
@@ -779,7 +897,12 @@ inline void melee_none_CtoS::handle()
 inline void ThrowGrenade_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
 
     if (!a->weapons.grenades.fire()) return;
     agent_threw_grenade_StoC msg;
@@ -800,14 +923,24 @@ inline void ThrowGrenade_CtoS::handle()
 inline void AgentActiveWeapon_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
     a->weapons.set_active(slot);
 }
 
 inline void AgentReloadWeapon_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
     a->weapons.reload(type);
     // forward action
     AgentReloadWeapon_StoC msg;
@@ -819,7 +952,11 @@ inline void AgentReloadWeapon_CtoS::handle()
 inline void agent_set_block_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
 
     // fire block applier
     if (!a->weapons.blocks.fire()) return;
@@ -860,7 +997,12 @@ inline void agent_set_block_CtoS::handle()
 inline void place_spawner_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
     if (a->status.team == 0) return;
     if (!a->status.can_afford(OBJ_TYPE_SPAWNER)) return;
     if (ServerState::spawner_list.full()) return;
@@ -882,7 +1024,12 @@ inline void place_spawner_CtoS::handle()
 inline void choose_spawn_location_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL) return;
+    if (a == NULL)
+    {
+        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+
     a->status.set_spawner(id);
 }
 
@@ -900,7 +1047,7 @@ void adjust_name(char* name, unsigned int len)
 inline void identify_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
-    if (a==NULL)
+    if (a == NULL)
     {
         printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
         return;

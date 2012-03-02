@@ -435,6 +435,14 @@ updated build scripts, pushed build
 more scifi default map
 fix get_height_at() -- jetpack and hud map restored
 camera goes to ground when dead
+
+correct info and reformat help text to fit 800x600 screens
+====================
+
+Mar 1
+
+
+
 ====================
 
 
@@ -495,7 +503,5 @@ GRENADES:
 charge up
 decayed damage by range
 apply terrain cover to damage
-
-fit help text into smaller screens (800x600)
 
 make "YOURE DEAD" larger
