@@ -217,9 +217,13 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 #endif
     voxel_hitscan_list = NULL;
 
+    printf("!!! %i %i %i \n", xdim,ydim,zdim );
+
     this->hdx = ((float) xdim) / 2;
     this->hdy = ((float) ydim) / 2;
     this->hdz = ((float) zdim) / 2;
+
+    //printf("!!! %f %f %f \n", hdx, hdy,hdz);
 
     int powx = pow2_2(xdim);
     int powy = pow2_2(ydim);
