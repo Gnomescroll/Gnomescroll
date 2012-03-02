@@ -517,7 +517,7 @@ charge up
 
 make "YOURE DEAD" larger
 
-Bug: agent_id unrecognized
+Bug: agent_id unrecognized. happens in the object list
 Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
         gdb resisted watchpoints
         
@@ -525,3 +525,14 @@ territory control
     -- color in GLSL
 
 better feedback on damage received
+
+player name sanitization
+-- limited punctuation? (clans like to use it)
+-- no spaces or \t or \n  (maybe spaces in the middle of text but not at ends)
+-- not all spaces
+
+better damage on character models (radius instead of single voxel)
+
+fix bug in dcvox pipeline where dimensions are incorrect
+-- sort out pipeline
+-- move dimensions to inferred by parser?
