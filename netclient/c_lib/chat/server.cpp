@@ -21,7 +21,10 @@ ChatServerChannel::~ChatServerChannel()
 void ChatServerChannel::broadcast(int sender, char* payload)
 {
     ChatMessage_StoC msg;
-    strcpy(msg.msg, payload);
+    int i = 0;
+    char c;
+    while ((c = payload[i]) != '\0')
+        msg.msg[i++] = c;
     msg.channel = this->id;
     msg.sender = sender;
     

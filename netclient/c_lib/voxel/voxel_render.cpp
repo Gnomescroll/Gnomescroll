@@ -32,10 +32,6 @@ num_elements(0)
     vbo_wrapper[1].vnum = 0;
 
     this->render_list = (Voxel_volume**)calloc(VOXEL_RENDER_LIST_SIZE, sizeof(Voxel_volume*));
-    //for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    //{
-        //this->render_list[i] = NULL;
-    //}
 }
 
 Voxel_render_list::~Voxel_render_list()
