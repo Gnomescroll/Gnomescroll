@@ -548,7 +548,7 @@ void Voxel_volume::draw_bounding_box()
     glDisable(GL_TEXTURE_2D);
     glLineWidth(5.0f);
 
-/*
+
     int i,j;
     float _x,_y,_z;
 
@@ -556,20 +556,22 @@ void Voxel_volume::draw_bounding_box()
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
     struct Vec3 vx;
-    Vec3 vy;
-    Vec3 vz;
+    struct Vec3 vy;
+    struct Vec3 vz;
 
     Vec3 u;
+
+    //world_matrix
 
     for(i=0; i<12; i++) 
     {
             j = 3*vertex_index2[2*i+0];
             
-            vx = vec3_scalar_mult(v[0].v3, 2.0*v_set[j+0]*hdx*scale);
-            vy = vec3_scalar_mult(v[1].v3, 2.0*v_set[j+1]*hdy*scale);
-            vz = vec3_scalar_mult(v[2].v3, 2.0*v_set[j+2]*hdz*scale);
+            vx = vec3_scalar_mult(world_matrix.v[0], 2.0*v_set2[j+0]*hdx*scale/2);
+            vy = vec3_scalar_mult(world_matrix.v[1], 2.0*v_set2[j+1]*hdy*scale/2);
+            vz = vec3_scalar_mult(world_matrix.v[2], 2.0*v_set2[j+2]*hdz*scale/2);
 
-            u = vec3_add4(vx,vy,vz,v[3].v3);
+            u = vec3_add4(vx,vy,vz, world_matrix.v[3]);
 
             _x = u.x;
             _y = u.y;
@@ -578,11 +580,11 @@ void Voxel_volume::draw_bounding_box()
             glVertex3f(_x,_y,_z);
             j = 3*vertex_index2[2*i+1];
 
-            vx = vec3_scalar_mult(v[0].v3, 2.0*v_set[j+0]*hdx*scale);
-            vy = vec3_scalar_mult(v[1].v3, 2.0*v_set[j+1]*hdy*scale);
-            vz = vec3_scalar_mult(v[2].v3, 2.0*v_set[j+2]*hdz*scale);
-            
-            u = vec3_add4(vx,vy,vz,v[3].v3);
+            vx = vec3_scalar_mult(world_matrix.v[0], 2.0*v_set2[j+0]*hdx*scale/2);
+            vy = vec3_scalar_mult(world_matrix.v[1], 2.0*v_set2[j+1]*hdy*scale/2);
+            vz = vec3_scalar_mult(world_matrix.v[2], 2.0*v_set2[j+2]*hdz*scale/2);
+
+            u = vec3_add4(vx,vy,vz, world_matrix.v[3]);
 
             _x = u.x;
             _y = u.y;
@@ -590,7 +592,7 @@ void Voxel_volume::draw_bounding_box()
 
             glVertex3f(_x,_y,_z);
     }
-*/
+
     glEnd();
 
     glDisable (GL_DEPTH_TEST);
