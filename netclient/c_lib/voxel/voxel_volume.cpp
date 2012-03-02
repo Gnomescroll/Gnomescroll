@@ -27,6 +27,7 @@ void teardown_voxel_volume()
         delete[] voxel_vertex_scratch_buffer;
 }
 
+// wonderful copy and past TODO
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
     const static int _ssize = 256;
@@ -67,6 +68,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
     dz = _dz*cdz;
 
     int cx,cy,cz;
+    float dummy;
     cx = cdx >=0 ? modff(x0, &dummy)*_bsize : _bsize - modff(x0, &dummy)*_bsize; //convert fractional part
     cy = cdy >=0 ? modff(y0, &dummy)*_bsize : _bsize - modff(y0, &dummy)*_bsize;
     cz = cdz >=0 ? modff(z0, &dummy)*_bsize : _bsize - modff(z0, &dummy)*_bsize;

@@ -445,6 +445,10 @@ msg id logging to net agent packets
 fill color script for models
 change agent to army green, add team color
 fix bug that occurs when team base color is 0,0,0
+
+apply view distance to particles, models
+simple terrain cover for grenade blasts
+grenade damage gaussian radius
 ====================
 
 
@@ -491,21 +495,25 @@ different font sizes
 client side prediction bug
 endpoints on hitscan laser
 Lua
+fog
 
 SERVER:
 put metaless content back on 100tb (~2-3days of rsyncing)
+
+==PARTICLES==
+make better particle class to abstract some drawing
+ParticleSystem class for doing much cheaper view distance checks
 
 ==================
 POLISH TODO:
 
 figure out interface for spawner selection from map icons
 rotate head
-apply view distance to voxel models
 
 GRENADES:
 charge up
-decayed damage by range
-apply terrain cover to damage
+-- for better grenade blast cover simulation, can emit a handful of small particles (like the animation, but more and a little bit higher ttl) and if they collide with an agent then it hits
+-- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
 
 make "YOURE DEAD" larger
 
@@ -513,4 +521,7 @@ Bug: agent_id unrecognized
 Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
         gdb resisted watchpoints
         
-team color agents is broken
+territory control
+    -- color in GLSL
+
+better feedback on damage received

@@ -39,10 +39,14 @@ namespace ServerState
         // agents
         agent_list.objects_within_sphere(x,y,z,radius);
         Agent_state* a;
+        const float blast_mean = 0;
+        const float blast_stddev = 0.5;
         for (i=0; i<agent_list.n_filtered; i++)
         {
             a = agent_list.filtered_objects[i];
             if (a == NULL) continue;
+            if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
+            dmg *= gaussian_value(blast_mean, blast_stddev, agent_list.filtered_object_distances[i] / radius);
             a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
         }
 
@@ -63,7 +67,7 @@ namespace ServerState
         {
             s = spawner_list.filtered_objects[i];
             if (s==NULL) continue;
-            int h = s->take_damage(dmg);
+            int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
             if (h <= 0 && agent != NULL)
                 coins += s->get_coins_for_kill(agent->id, agent->status.team);
         }

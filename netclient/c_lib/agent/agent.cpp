@@ -655,7 +655,7 @@ int Agent_state::get_facing_block_type()
     AgentState *s;
 #ifdef DC_CLIENT
     if (ClientState::playerAgent_state.you == this)
-    {   // use camera / player agent state instead.
+    {   // if you, use camera / player agent state instead.
         s = &ClientState::playerAgent_state.camera_state;
         agent_camera->forward_vector(f);
     }
@@ -674,4 +674,65 @@ int Agent_state::get_facing_block_type()
     );
     if (pos == NULL) return 0;
     return _get(pos[0], pos[1], pos[2]);
+}
+
+bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
+{
+    // checks if a point can raycast to some area of the agent box,
+    // or if the terrain prevents it
+
+    // sample points on the outside of the agent box
+    const int samples_per_height = 8;
+    float step = this->current_height() / samples_per_height;
+
+    int i;
+    float a,b,c;
+
+    // check the center column
+    a = this->s.x;
+    b = this->s.y;
+    for (i=0; i<samples_per_height; i++)
+    {
+        c = this->s.z + i*step;
+        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+            return true;
+    }
+
+    // check the 4 corner columns
+    a = this->s.x + this->box.box_r;
+    b = this->s.y + this->box.box_r;
+    for (i=0; i<samples_per_height; i++)
+    {
+        c = this->s.z + i*step;
+        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+            return true;
+    }
+    
+    a = this->s.x + this->box.box_r;
+    b = this->s.y - this->box.box_r;
+    for (i=0; i<samples_per_height; i++)
+    {
+        c = this->s.z + i*step;
+        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+            return true;
+    }
+    a = this->s.x - this->box.box_r;
+    b = this->s.y + this->box.box_r;
+    for (i=0; i<samples_per_height; i++)
+    {
+        c = this->s.z + i*step;
+        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+            return true;
+    }
+    a = this->s.x - this->box.box_r;
+    b = this->s.y - this->box.box_r;
+    for (i=0; i<samples_per_height; i++)
+    {
+        c = this->s.z + i*step;
+        if (ray_cast_simple(x,y,z, a,b,c, max_dist))
+            return true;
+    }
+
+    return false;
+    
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/ray_trace/ray_trace.h>
+#include <c_lib/ray_trace/ray_trace.hpp>
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/defines.h>
 
@@ -122,6 +122,8 @@ class Agent_state {
         void draw();
 
         bool is_you();
+
+        bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
 
         float camera_height();
         float current_height();

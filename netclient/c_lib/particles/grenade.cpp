@@ -6,7 +6,7 @@
 #include <sound/triggers.hpp>
 #endif
 
-#include <ray_trace/ray_trace.h>
+#include <ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
@@ -179,6 +179,7 @@ void Grenade::explode()
 #endif
 
 #ifdef DC_SERVER
+    // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
     ServerState::damage_objects_within_sphere(
         this->vp->p.x, this->vp->p.y, this->vp->p.z,
         GRENADE_DAMAGE_RADIUS,

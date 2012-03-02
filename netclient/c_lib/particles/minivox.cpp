@@ -6,7 +6,7 @@
 
 #include <voxel/common_data.h>
 
-#include <ray_trace/ray_trace.h>
+#include <ray_trace/ray_trace.hpp>
 
 #include <t_map/glsl/texture.hpp>
 

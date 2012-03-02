@@ -41,7 +41,7 @@
 #include <c_lib/physics/affine.hpp>
 
 #include <c_lib/physics/color_matrix.cpp>
-#include <c_lib/ray_trace/ray_trace.c>
+#include <c_lib/ray_trace/ray_trace.cpp>
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/physics/common.cpp>
 #include <c_lib/physics/verlet.cpp>
