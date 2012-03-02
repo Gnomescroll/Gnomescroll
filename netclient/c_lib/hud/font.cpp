@@ -220,7 +220,7 @@ struct Glyph Font::get_missing_glyph(unsigned char c)
             glyph = glyphs[(int)missing_glyph];
             break;
     }
-    printf("missing glyph: %d\n", missing_glyph);
+    printf("missing glyph: %d\n", c);
     return glyph;
 }
 
