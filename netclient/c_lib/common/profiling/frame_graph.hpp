@@ -113,12 +113,13 @@ class FrameGraph
             return;
         }
 
+    /*
         if(t1+t2+t3 >= 64)
         {
             printf("frame_graph: error frame took more than 64 ms\n");
-            //return;
+            return;
         }
-
+    */
         for(int i=0; i< 64; i++) ts->set_pixel(index, i, 0, 0,0, 0);
 
 

@@ -131,7 +131,7 @@ void Agent_state::tick()
 }
 
 
-#define ADVANCED_JUMP 1
+#define ADVANCED_JUMP 0
 //#define ADVANCED_JETPACK 0
 
 //takes an agent state and control state and returns new agent state

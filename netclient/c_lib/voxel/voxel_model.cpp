@@ -62,6 +62,23 @@ void Voxel_model::update_skeleton()
 
 }
 
+
+void Voxel_model::draw_skeleton()
+{
+#ifdef DC_CLIENT
+
+
+    for(int i=1; i<n_skeleton_nodes; i++)
+    {
+
+        struct Affine m = vox_skeleton_world_matrix[i];
+
+        
+    }
+#endif
+}
+
+
 void Voxel_model::init_skeleton(VoxDat* vox_dat)
 {
     if( skeleton_inited == true )

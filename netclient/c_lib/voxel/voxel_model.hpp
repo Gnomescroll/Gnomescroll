@@ -13,6 +13,8 @@ class Voxel_model
         void set_skeleton_root(float *data);
         void update_skeleton();  //recalculate world view matrices
 
+        void draw_skeleton();
+        
         //skeleton
         bool skeleton_inited;
 
