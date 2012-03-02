@@ -229,9 +229,7 @@ void Voxel_render_list::draw()
 
         vv->draw_bounding_box();
     }
-
-
-#endif DEBUG_VOXEL_RENDER_WIREFRAME
+#endif
 
 #if VOXEL_RENDER_DISABLE_VOXEL_VOLUMES
     this->update_vertex_buffer_object();

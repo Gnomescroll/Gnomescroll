@@ -12,30 +12,7 @@ import shutil
 import subprocess
 import re
 
-SDL_MAIN_TEST_CODE = """
-int main(int argc, char *argv[]) {
-    return 0;
-}
-"""
-
-FMOD_MAIN_TEST_CODE = """
-int main(int argc, char *argv[]) {
-    return 0;
-}
-"""
-
-OPENAL_MAIN_TEST_CODE = """
-int main(int argc, char *argv[]) {
-    return 0;
-}
-"""
-
-NOISE_MAIN_TEST_CODE = """
-int main(int argc, char *argv[]) {
-    return 0;
-}
-"""
-PNG_MAIN_TEST_CODE = """
+MAIN_TEST_CODE = """
 int main(int argc, char *argv[]) {
     return 0;
 }
@@ -171,14 +148,14 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     conf.check(header_name='SDL.h',
                use='SDL',
-               fragment='#include <SDL.h>' + SDL_MAIN_TEST_CODE,
+               fragment='#include <SDL.h>' + MAIN_TEST_CODE,
                mandatory=True)
     
     conf.check(header_name='SDL_image.h',
                lib='SDL_image',
                use='SDL',
                uselib_store='SDL_image',
-               fragment='#include <SDL_image.h>' + SDL_MAIN_TEST_CODE,
+               fragment='#include <SDL_image.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
     if sound.lower() == 'openal':
@@ -194,16 +171,25 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                        lib='OpenAL32',
                        use='openal',
                        uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + OPENAL_MAIN_TEST_CODE,
+                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
                        mandatory=True)
         else:
             conf.check(header_name='AL/al.h',
                        lib='openal',
                        use='openal',
                        uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + OPENAL_MAIN_TEST_CODE,
+                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
                        mandatory=True)
-                       
+
+    
+    conf.check(header_name='lua.h',
+               lib='lua5.1',
+               use='lua5.1',
+               uselib_store='LUA',
+               fragment='#include <lua5.1/lua.h>' + MAIN_TEST_CODE,
+               mandatory=True)
+    
+
     fmod_includes = []
     fmod_rpath = []
     if sound.lower() == 'fmod':
@@ -271,6 +257,7 @@ def build(bld):
     sound_framework = []
     sound_libraries = []
     common_libraries = []
+    lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     if using_fmod:
         sound_libraries = ['fmodex']
@@ -303,8 +290,7 @@ def build(bld):
     #clib
     bld(features='cxx cxxshlib',
         source=['c_lib/c_lib.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+sound_libraries+png_libs, # +noise_libraries
-
+        use=common_libraries+time_lib+SDL_libraries+['LUA'], # +noise_libraries +png_libs
         lib=sound_libraries+png_libs,
         includes= c_lib_includes,
         libpath= c_lib_libpath,
