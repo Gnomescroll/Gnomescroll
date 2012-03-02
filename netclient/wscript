@@ -183,10 +183,11 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     
     conf.check(header_name='lua.h',
-               lib='lua5.1',
-               use='lua5.1',
+               lib='luajit-5.1', #'lua5.1',
+               use='luajit-5.1', #'lua5.1',
                uselib_store='LUA',
-               fragment='#include <lua5.1/lua.h>' + MAIN_TEST_CODE,
+               fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
+               includes='/usr/include/luajit-2.0',
                mandatory=True)
     
 

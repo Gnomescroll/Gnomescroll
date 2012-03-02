@@ -15,6 +15,7 @@
  extern "C" 
 {
 #include <lua5.1/lua.h>
+#include <lua5.1/lualib.h>
 #include <lua5.1/lauxlib.h>
 }
 
@@ -22,9 +23,22 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/*
+    int s=0;
+    lua_State *L = lua_open();
+    // load the libs
+    luaL_openlibs(L);
+    //run a Lua scrip here
+    luaL_dofile(L,"./media/lua/test.lua");
+    lua_close(L);
+ 
+    return 0;
+*/
 
 int run_lua_test()
 {
+
+
     int status, result, i;
     double sum;
     lua_State *L;
@@ -35,7 +49,7 @@ int run_lua_test()
      */
     L = luaL_newstate();
 
-    //luaL_openlibs(L); /* Load Lua libraries */
+    luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
     status = luaL_loadfile(L, "script.lua");
@@ -68,7 +82,8 @@ int run_lua_test()
      * of the stack, so that after it has been called, the table is at the
      * top of the stack.
      */
-    for (i = 1; i <= 5; i++) {
+    for (i = 1; i <= 5; i++) 
+    {
         lua_pushnumber(L, i);   /* Push the table index */
         lua_pushnumber(L, i*2); /* Push the cell value */
         lua_rawset(L, -3);      /* Stores the pair in the table */
@@ -79,7 +94,8 @@ int run_lua_test()
 
     /* Ask Lua to run our little script */
     result = lua_pcall(L, 0, LUA_MULTRET, 0);
-    if (result) {
+    if (result) 
+    {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
         exit(1);
     }
@@ -93,4 +109,5 @@ int run_lua_test()
     lua_close(L);   /* Cya, Lua */
 
     return 0;
+
 }
