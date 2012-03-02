@@ -217,7 +217,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
 #endif
     voxel_hitscan_list = NULL;
 
-    printf("!!! %i %i %i \n", xdim,ydim,zdim );
+    //printf("!!! %i %i %i \n", xdim,ydim,zdim );
 
     this->hdx = ((float) xdim) / 2;
     this->hdy = ((float) ydim) / 2;
@@ -564,14 +564,14 @@ void Voxel_volume::draw_bounding_box()
 {
 #ifdef DC_CLIENT
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(5.0f);
+    glLineWidth(2.0f);
 
 
     int i,j;
     float _x,_y,_z;
 
     glBegin(GL_LINES);
-    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
+    glColor3ub(255,0,0);
 
     struct Vec3 vx;
     struct Vec3 vy;
