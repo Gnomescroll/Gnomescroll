@@ -208,10 +208,7 @@ void ChatInput::submit(int channel)
     if (!route_command())
     {   // create, send packet
         ChatMessage_CtoS msg;
-        char c;
-        int i = 0;
-        while ((c = buffer[i]) != '\0')
-            msg.msg[i++] = c;
+        strcpy_no_null(msg.msg, buffer);
         msg.channel = channel;
         msg.send();
     }

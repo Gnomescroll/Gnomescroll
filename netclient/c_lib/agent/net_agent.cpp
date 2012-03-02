@@ -1031,7 +1031,7 @@ inline void identify_CtoS::handle()
     a->status.identified = true;
 
     identified_StoC msg;
-    strcpy(msg.name, name);
+    strcpy_no_null(msg.name, name);
     msg.sendToClient(client_id);
 
     NetServer::clients[client_id]->ready();

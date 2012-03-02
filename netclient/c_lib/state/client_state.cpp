@@ -97,7 +97,7 @@ namespace ClientState {
             name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
         identify_CtoS msg;
-        strcpy(msg.name, name);
+        strcpy_no_null(msg.name, name);
         msg.send();
     }
     int get_client_id_from_name(char* name)

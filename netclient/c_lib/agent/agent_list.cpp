@@ -112,7 +112,7 @@ void Agent_list::send_to_client(int client_id) {
 
         agent_name_StoC name_msg;
         name_msg.id = a[i]->id;
-        strcpy(name_msg.name, a[i]->status.name);
+        strcpy_no_null(name_msg.name, a[i]->status.name);
         name_msg.sendToClient(client_id);
     }
 }

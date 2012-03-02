@@ -25,3 +25,12 @@ void address_from_string(char* ip, int address[4])
     address[address_index] = atoi(tmp);
 
 }
+
+// strcpy but dont add \0 to the end of a
+void strcpy_no_null(char* dest, char* src)
+{
+    char c;
+    int i = 0;
+    while ((c = src[i]) != '\0')
+        dest[i++] = c;
+}
