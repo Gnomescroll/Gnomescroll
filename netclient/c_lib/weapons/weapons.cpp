@@ -67,10 +67,12 @@ bool HitscanLaser::fire() {
 
 char* HitscanLaser::hud_display()
 {
-    if (ammo <= 0)
-        return const_cast<char*>(out_of_ammo_string);
-    else if (clip <= 0)
+    if (clip <= 0)
+    {
+        if (ammo <= 0)
+            return const_cast<char*>(out_of_ammo_string);
         return const_cast<char*>(reload_string);
+    }
 
     if (clip > 9999) clip = 9999;
     if (clip < -999) clip = -999;
@@ -98,7 +100,7 @@ Weapon(TYPE_hitscan_laser),
 clip_size(100),
 clip(100)
 {
-    this-> max_ammo = 100;
+    this->max_ammo = 100;
     this->ammo = 100;
     this->scope = true;
     this->clip_str = (char*)calloc(4+1, sizeof(char));
