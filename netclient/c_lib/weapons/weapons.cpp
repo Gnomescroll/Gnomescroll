@@ -245,7 +245,7 @@ char* BlockPick::hud_display()
 BlockPick::BlockPick() :
 Weapon(TYPE_block_pick)
 {
-    sprintf(this->hud_string, (char*)"Block pick");
+    sprintf(this->hud_string, (char*)"Disintegrator");
     this->clip_str = const_cast<char*>(hud_undefined_string);
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = const_cast<char*>(hud_undefined_string);
