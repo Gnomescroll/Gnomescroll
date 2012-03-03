@@ -408,9 +408,6 @@ block_action packet, for encoding the event type that caused a block change. var
 tweaked momentums for animation particles
 die if z level goes below a threshhold -- dont bounce players back up
 
-REBATES!!
-CALL BANK, GET BALANCE -- TRANSFER TO IF NECESSARY
--- Call mom, ask to put $200 in checking
 ====================
 
 Feb 29
@@ -457,6 +454,7 @@ player name sanitization
 fixed possible buffer overruns on some pack_string using packets
 convert all statically allocatied Client/ServerState lists & ctf to pointers on the heap
 fix segfault in rename system notification
+realign agent skeleton to proper alignment
 ====================
 
 == MODELS ==
@@ -539,8 +537,10 @@ fix bug in dcvox pipeline where dimensions are incorrect
 -- sort out pipeline
 -- move dimensions to inferred by parser?
 
-realign model with correct bounding boxes/dimensions
+realign crouched & dead models
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 lower blood momentum
+
+PRINT & MAIL REBATES
