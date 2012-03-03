@@ -170,7 +170,7 @@ void PlayerAgent_action::hitscan_laser() {
             }
             agent = ClientState::agent_list->get(target.entity_id);
             if (agent==NULL) break;
-            if (agent->status.team == this->p->you->status.team) break;
+            //if (agent->status.team == this->p->you->status.team) break;
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 3);
             break;
 

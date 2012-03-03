@@ -126,6 +126,7 @@ int run()
         // check if we've failed to receive any identify packets (lost in initialization)
         // Shouldn't be needed? initialization packets are reliable
         ClientState::agent_list->check_missing_names();  // will ratelimit itself
+        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
 
         // dispatch
         client_dispatch_network_events();

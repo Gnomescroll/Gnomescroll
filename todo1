@@ -477,6 +477,7 @@ fix jetpack decay
 --test out very short jetpack height (~1.2 off the ground). works well but need testing
 
 much better body destruction
+regenerate damaged body at base
 ====================
 
 Animations

@@ -32,6 +32,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         bool name_available(char* name);
 
         void check_missing_names();
+        void check_if_at_base();
         
         Agent_list();
 };

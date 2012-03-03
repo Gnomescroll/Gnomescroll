@@ -17,11 +17,14 @@
  *
  */
 
+const int VOXEL_MODEL_RESTORE_WAIT = 30 * 10; // ~ once every 10 seconds
+
 const char AGENT_UNDEFINED_NAME[] = "undefined-agent-name";
 
 Agent_status::Agent_status(Agent_state* a)
 :
 a(a),
+voxel_model_restore_throttle(0),
 health(AGENT_HEALTH),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
@@ -431,5 +434,25 @@ bool Agent_status::purchase(Object_types obj)
     if (!this->can_afford(cost)) return false;
     this->spend_coins(cost);
     return true;
+}
+
+void Agent_status::check_if_at_base()
+{
+#if DC_CLIENT
+    if (ClientState::ctf != NULL
+      && ClientState::ctf->is_at_base(
+        this->a->status.team,
+        this->a->s.x, this->a->s.y, this->a->s.z
+    ))
+    {   // regenerate model
+        voxel_model_restore_throttle++;
+        voxel_model_restore_throttle %= VOXEL_MODEL_RESTORE_WAIT;
+        if (voxel_model_restore_throttle == 0)
+        {
+            if (this->a->vox != NULL)
+                this->a->vox->restore(&agent_vox_dat, this->a->status.team);
+        }
+    }
+#endif
 }
 

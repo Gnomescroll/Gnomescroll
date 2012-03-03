@@ -487,7 +487,21 @@ Voxel_volume* Voxel_model::get_part(int part)
 // restores voxels to starting state
 void Voxel_model::restore(VoxDat* vox_dat, int team)
 {
-    this->set_colors(vox_dat);
-    if (team >= 0)
-        this->update_team_color(vox_dat, team);
+    Voxel_volume* vv;
+    #if DC_CLIENT
+    unsigned char r=0,g=0,b=0;
+    if (team >= 0 && ClientState::ctf != NULL)
+        ClientState::ctf->get_team_color(team, &r, &g, &b);
+    #endif
+    for (int i=0; i<this->n_parts; i++)
+    {
+        vv = &this->vv[i];
+        if (!vv->damaged) continue;
+        this->set_part_color(vox_dat, i);
+        #if DC_CLIENT
+        if (team >= 0)
+            this->set_part_team_color(vox_dat, i, r,g,b);
+        #endif
+        vv->damaged = false;
+    }
 }

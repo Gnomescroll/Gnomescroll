@@ -246,7 +246,8 @@ id(-1),
 draw(true),
 hitscan(true),
 radius(0),
-voxel(NULL)
+voxel(NULL),
+damaged(false)
 {}
 
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
@@ -254,7 +255,8 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 id(-1),
 draw(true),
 hitscan(true),
-radius(0)
+radius(0),
+damaged(false)
 {
     this->voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
@@ -276,6 +278,7 @@ void Voxel_volume::set(int x, int y, int z, Voxel* v)
     if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
     _set(x,y,z,v);
     needs_vbo_update = true;
+    damaged = true;
 }
 
 inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
@@ -283,6 +286,7 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
     if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
+    damaged = true;
 }
 
 #ifdef DC_CLIENT

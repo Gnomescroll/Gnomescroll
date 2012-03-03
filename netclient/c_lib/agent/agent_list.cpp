@@ -224,6 +224,15 @@ void Agent_list::check_missing_names()
     }
 }
 
+void Agent_list::check_if_at_base()
+{
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->status.check_if_at_base();
+    }
+}
+
 Agent_list::Agent_list()
 :
 check_name_interval(0)

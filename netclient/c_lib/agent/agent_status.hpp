@@ -27,6 +27,7 @@ class Agent_status {
 
     private:
         Agent_state* a;
+        int voxel_model_restore_throttle;
 
     public:
 
@@ -78,6 +79,7 @@ class Agent_status {
         void set_team(int team);
 
         float get_spawn_angle();
+        void check_if_at_base();
 
         // coin stuff
         bool can_afford(Object_types obj);

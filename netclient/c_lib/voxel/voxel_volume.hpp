@@ -37,7 +37,8 @@ class Voxel_volume
     float hdx,hdy,hdz;  //half of width, height, depth as floats
 
     bool needs_vbo_update;
-
+    bool damaged;
+    
     struct Voxel_hitscan_element vhe;
 
     int hitscan_test(float x, float y, float z, float vx, float vy, float vz, float r2,  int voxel[3]);

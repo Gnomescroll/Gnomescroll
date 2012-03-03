@@ -49,6 +49,7 @@ class CTF {
     void set_base_position(int team, float x, float y, float z);
 
     void get_base_spawn_point(int team, int agent_height, int* spawn);
+    bool is_at_base(int team, float x, float y, float z);
 
     bool add_agent_to_team(int team, int agent);
     void set_team_color(int team,
