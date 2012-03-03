@@ -423,9 +423,7 @@ Voxel_model::~Voxel_model() {
         delete[] vox_skeleton_world_matrix;
     }
     else
-    {
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
-    }
 }
 
 float Voxel_model::largest_radius() {
