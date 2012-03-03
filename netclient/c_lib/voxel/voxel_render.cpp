@@ -214,9 +214,9 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 }
 
 #if PRODUCTION
-    #define VOXEL_RENDER_WIREFRAME 1
-#else
     #define VOXEL_RENDER_WIREFRAME 0
+#else
+    #define VOXEL_RENDER_WIREFRAME 1
 #endif
 
 #define VOXEL_RENDER_DISABLE_VOXEL_VOLUMES 0
