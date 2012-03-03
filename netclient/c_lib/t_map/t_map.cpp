@@ -38,24 +38,25 @@ void init_t_map()
     init_t_properties();
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
+
 #ifdef DC_SERVER
     map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
 #endif
-    //set(2,4,5, 10);
-    //printf("get= %i \n", get(2,4,5) );
-/*
-#ifdef DC_SERVER
-    for( int i=0; i<512; i++ )
-    for( int j=0; j<512; j++ )
-    {
-        set(i,j, 1, 2);
-        if(i%5 == 0)  set(i,j, 6, 2);
-        if(j%7 == 0)  set(i,j, 7, 2);
-    }
-#endif
-*/
+
 }
 
+void end_t_map()
+{
+    //mz_inflateEnd()
+
+    end_t_properties();
+    delete main_map;
+
+#ifdef DC_SERVER
+    delete map_history;
+#endif
+
+}
 class Terrain_map* get_map()
 {
     return main_map;

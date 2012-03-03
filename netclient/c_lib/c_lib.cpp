@@ -233,6 +233,9 @@ int init_c_lib() {
 
 void close_c_lib() {
     printf("Closing game...\n");
+
+    t_map::end_t_map();
+
     shutdown_net_client();
     teardown_cameras();
     HudFont::teardown();

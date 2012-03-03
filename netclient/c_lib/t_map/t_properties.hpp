@@ -23,10 +23,12 @@ struct cubeProperties
 
 const int MAX_CUBES = 256;
 
-extern struct cubeProperties cube_list[MAX_CUBES];
+extern struct cubeProperties* cube_list; //[MAX_CUBES];
 
 
 void init_t_properties();
+
+void end_t_properties();
 
 struct cubeProperties* get_cube(int id) GNOMESCROLL_API;
 
