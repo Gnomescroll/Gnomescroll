@@ -76,21 +76,22 @@ char* HitscanLaser::hud_display()
 
     if (clip > 9999) clip = 9999;
     if (clip < -999) clip = -999;
-    sprintf(clip_str, "%d", clip);
+    //sprintf(clip_str, "%d", clip);
     
-    if (clip_size > 9999) clip_size = 9999;
-    if (clip_size < -999) clip_size = -999;
-    sprintf(clip_size_str, "%d", clip_size);
+    //if (clip_size > 9999) clip_size = 9999;
+    //if (clip_size < -999) clip_size = -999;
+    //sprintf(clip_size_str, "%d", clip_size);
 
     if (ammo > 9999) ammo = 9999;
     if (ammo < -999) ammo = -999;
-    sprintf(ammo_str, "%d", ammo);
+    //sprintf(ammo_str, "%d", ammo);
 
-    if (max_ammo > 9999) max_ammo = 9999;
-    if (max_ammo < -999) max_ammo = -999;
-    sprintf(max_ammo_str, "%d", max_ammo);
-    
-    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+    //if (max_ammo > 9999) max_ammo = 9999;
+    //if (max_ammo < -999) max_ammo = -999;
+    //sprintf(max_ammo_str, "%d", max_ammo);
+
+    sprintf(hud_string, "%d/%d charges", clip, ammo);
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
@@ -188,13 +189,14 @@ char* BlockApplier::hud_display()
 
     if (ammo > 9999) ammo = 9999;
     if (ammo < -999) ammo = -999;
-    sprintf(ammo_str, "%d", ammo);
+    //sprintf(ammo_str, "%d", ammo);
 
-    if (max_ammo > 9999) max_ammo = 9999;
-    if (max_ammo < -999) max_ammo = -999;
-    sprintf(max_ammo_str, "%d", max_ammo);
-    
-    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+    //if (max_ammo > 9999) max_ammo = 9999;
+    //if (max_ammo < -999) max_ammo = -999;
+    //sprintf(max_ammo_str, "%d", max_ammo);
+
+    sprintf(hud_string, "%d blocks", ammo);
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
@@ -277,13 +279,14 @@ char* GrenadeThrower::hud_display()
 
     if (ammo > 9999) ammo = 9999;
     if (ammo < -999) ammo = -999;
-    sprintf(ammo_str, "%d", ammo);
+    //sprintf(ammo_str, "%d", ammo);
 
-    if (max_ammo > 9999) max_ammo = 9999;
-    if (max_ammo < -999) max_ammo = -999;
-    sprintf(max_ammo_str, "%d", max_ammo);
-    
-    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+    //if (max_ammo > 9999) max_ammo = 9999;
+    //if (max_ammo < -999) max_ammo = -999;
+    //sprintf(max_ammo_str, "%d", max_ammo);
+
+    sprintf(hud_string, "%d grenades", ammo);
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
@@ -318,7 +321,7 @@ bool SpawnerPlacer::fire()
 }
 
 char* SpawnerPlacer::hud_display()
-{
+{   // TODO: get # of spawners agent can afford, print that
     //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
@@ -336,7 +339,7 @@ Weapon(TYPE_spawner_placer)
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = const_cast<char*>(hud_undefined_string);
     this->max_ammo_str = const_cast<char*>(hud_undefined_string);
-    sprintf(this->hud_string, (char*)"Block pick");
+    sprintf(this->hud_string, (char*)"Spawner synthesizer");
 }
 
 SpawnerPlacer::~SpawnerPlacer()
