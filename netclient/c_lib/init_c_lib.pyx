@@ -173,9 +173,9 @@ init stuff
 
 def init_terrain():
     print "Init Terrain Map"
+    init_t_map()
     init_cube_properties()
     init_cube_side_texture()
-    init_t_map()
     set_hud_cube_selector()
     init_for_draw()
 
