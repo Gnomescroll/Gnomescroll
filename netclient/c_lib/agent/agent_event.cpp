@@ -65,13 +65,13 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = ClientState::billboard_text_list.create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        this->bb = ClientState::billboard_text_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         if (this->bb == NULL) return;
         this->bb->set_gravity(false);   // stay put
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
         unsigned char r,g,b,a=255;
-        ClientState::ctf.get_team_color(this->a->status.team, &r, &g, &b);
+        ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
         this->bb->set_color(r,g,b,a);
         this->bb->projection_type = Billboard::HUD;
         this->bb->set_size(0.7);
@@ -83,7 +83,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
-    BillboardText* b = ClientState::billboard_text_list.create(
+    BillboardText* b = ClientState::billboard_text_list->create(
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.z + a->current_height(),
@@ -212,7 +212,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     
     // animate
     const float hitscan_speed = 200.0f;
-    ClientState::hitscan_effect_list.create(
+    ClientState::hitscan_effect_list->create(
         sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
@@ -220,7 +220,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
 
     if (type == OBJ_TYPE_AGENT)
     {
-        Agent_state* agent = ClientState::agent_list.get(id);
+        Agent_state* agent = ClientState::agent_list->get(id);
         if (agent != NULL && agent->vox != NULL)
         {
             Voxel_volume* vv = agent->vox->get_part(part);
@@ -254,7 +254,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     f[2] = z - sz;
 
     const float hitscan_speed = 200.0f;
-    ClientState::hitscan_effect_list.create(
+    ClientState::hitscan_effect_list->create(
         sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
@@ -277,7 +277,7 @@ void Agent_event::fired_weapon_at_nothing()
     this->a->s.forward_vector(f);
     
     const float hitscan_speed = 200.0f;
-    ClientState::hitscan_effect_list.create(
+    ClientState::hitscan_effect_list->create(
         sx,sy,sz,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
@@ -328,7 +328,7 @@ void Agent_event::fire_empty_weapon(int weapon_type)
 Agent_event::~Agent_event()
 {
     if (this->bb != NULL)
-    {
+    {   // BUG -- particle list dtor might be called before this, on close
         this->bb->set_ttl(10000);   // let it die (will be culled next tick)
     }
 }

@@ -14,7 +14,7 @@
 #include <c_lib/chat/client.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
-    this->you = ClientState::agent_list.get(id);
+    this->you = ClientState::agent_list->get(id);
     if (this->you == NULL)
     {
         printf("WARNING: set_PlayerAgent_id -- agent %d does not exist\n", id);
@@ -279,24 +279,24 @@ void PlayerAgent_state::display_agent_names()
     AgentState *s = &this->camera_state;
     float f[3];
     agent_camera->forward_vector(f);
-    ClientState::agent_list.objects_in_cone(
+    ClientState::agent_list->objects_in_cone(
         s->x, s->y, s->z + this->camera_height(),
         f[0], f[1], f[2],
         threshold
     );
 
     // hide all names
-    for (int i=0; i < ClientState::agent_list.n_max; i++)
+    for (int i=0; i < ClientState::agent_list->n_max; i++)
     {
-        Agent_state* a = ClientState::agent_list.a[i];
+        Agent_state* a = ClientState::agent_list->a[i];
         if (a==NULL) continue;
         a->event.hide_name();
     }
 
     // choose names to display
-    for (int i=0; i < ClientState::agent_list.n_filtered; i++)
+    for (int i=0; i < ClientState::agent_list->n_filtered; i++)
     {
-        Agent_state* a = ClientState::agent_list.filtered_objects[i];
+        Agent_state* a = ClientState::agent_list->filtered_objects[i];
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
         if (a->status.team != you->status.team) continue;  // only show teammates
@@ -380,7 +380,7 @@ void PlayerAgent_state::pump_camera() {
         case net_agent:
             #ifdef DC_CLIENT
             if(agent_id != -1) {
-                Agent_state* A = ClientState::agent_list.get(agent_id);
+                Agent_state* A = ClientState::agent_list->get(agent_id);
                 camera_state = A->s;
             } else {
                 printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");

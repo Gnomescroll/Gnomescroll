@@ -14,24 +14,22 @@
 
 namespace ClientState {
 
-    Agent_list agent_list;
-    Cspray_list cspray_list;
-    Grenade_list grenade_list;
-    Shrapnel_list shrapnel_list;
-    Blood_list blood_list;
-    //Neutron_list neutron_list;
-    Minivox_list minivox_list;
-    BillboardText_list billboard_text_list;
+    Agent_list* agent_list = NULL;
+    Cspray_list* cspray_list = NULL;
+    Grenade_list* grenade_list = NULL;
+    Shrapnel_list* shrapnel_list = NULL;
+    Blood_list* blood_list = NULL;
+    //Neutron_list* neutron_list = NULL;
+    Minivox_list* minivox_list = NULL;
+    BillboardText_list* billboard_text_list = NULL;
 
-    Voxel_render_list voxel_render_list;
-    Voxel_hitscan_list voxel_hitscan_list;
-    Monsters::Slime_list slime_list;
-    Spawner_list spawner_list;
+    Voxel_render_list* voxel_render_list = NULL;
+    Voxel_hitscan_list* voxel_hitscan_list = NULL;
+    Monsters::Slime_list* slime_list = NULL;
+    Spawner_list* spawner_list = NULL;
 
-    Animations::HitscanEffect_list hitscan_effect_list;
-    Animations::HitscanLaserEffect_list hitscan_laser_effect_list;
-
-    CTF ctf;
+    Animations::HitscanEffect_list* hitscan_effect_list = NULL;
+    Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
@@ -40,49 +38,123 @@ namespace ClientState {
     PlayerAgent_state playerAgent_state;
 
     int agent_control_state[16];
+
+    CTF* ctf = NULL;
         
+    void init_lists()
+    {
+        agent_list = new Agent_list;
+        cspray_list = new Cspray_list;
+        grenade_list = new Grenade_list;
+        shrapnel_list = new Shrapnel_list;
+        blood_list = new Blood_list;
+        //neutron_list = new Neutron_list;
+        minivox_list = new Minivox_list;
+        billboard_text_list = new BillboardText_list;
+
+        voxel_render_list = new Voxel_render_list;
+        voxel_hitscan_list = new Voxel_hitscan_list;
+        slime_list = new Monsters::Slime_list;
+        spawner_list = new Spawner_list;
+
+        hitscan_effect_list = new Animations::HitscanEffect_list;
+        hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
+    }
+
+    void teardown_lists()
+    {
+        // voxel models
+        delete agent_list;
+        delete slime_list;
+        delete spawner_list;
+
+        // voxel lists
+        delete voxel_render_list;
+        delete voxel_hitscan_list;
+
+        // particles
+        delete cspray_list;
+        delete grenade_list;
+        delete shrapnel_list;
+        delete blood_list;
+        //delete neutron_list;
+        delete minivox_list;
+        delete billboard_text_list;
+        delete hitscan_effect_list;
+        delete hitscan_laser_effect_list;
+    }
+
+    static void init_ctf()
+    {
+        static int inited = 0;
+        if (inited++)
+        {
+            printf("WARNING: ClientState::init_ctf -- attempt to call more than once\n");
+            return;
+        }
+        ctf = new CTF;
+        ctf->init();
+    }
+    
+    static void teardown_ctf()
+    {
+        if (ctf != NULL)
+            delete ctf;
+    }
+
     void init()
     {
-        ctf.init();
-        voxel_render_list.init_voxel_render_list_shader1();
+        static int inited = 0;
+        if (inited++)
+        {
+            printf("WARNING: ClientState::init -- attempt to call more than once\n");
+            return;
+        }
+        init_ctf();
+        voxel_render_list->init_voxel_render_list_shader1();
+    }
+
+    void teardown()
+    {
+        teardown_ctf();
     }
 
     void update()
     {
-        slime_list.update();
-        ctf.update();
+        slime_list->update();
+        ctf->update();
     }
 
     void set_PlayerAgent_id(int id)
     {
         playerAgent_state.set_PlayerAgent_id(id);
-        ctf.on_ready();
+        ctf->on_ready();
     }
 
     void draw()
     {
-        agent_list.draw();
-        voxel_render_list.draw();
+        agent_list->draw();
+        voxel_render_list->draw();
         
-        cspray_list.draw();
-        grenade_list.draw();
-        shrapnel_list.draw();
-        blood_list.draw();
-        //neutron_list.draw();
-        minivox_list.draw();
-        billboard_text_list.draw();
+        cspray_list->draw();
+        grenade_list->draw();
+        shrapnel_list->draw();
+        blood_list->draw();
+        //neutron_list->draw();
+        minivox_list->draw();
+        billboard_text_list->draw();
     }
 
     void tick()
     {
-        //agent_list.tick();
-        cspray_list.tick();
-        grenade_list.tick();
-        shrapnel_list.tick();
-        blood_list.tick();
-        //neutron_list.tick();
-        minivox_list.tick();
-        billboard_text_list.tick();
+        //agent_list->tick();
+        cspray_list->tick();
+        grenade_list->tick();
+        shrapnel_list->tick();
+        blood_list->tick();
+        //neutron_list->tick();
+        minivox_list->tick();
+        billboard_text_list->tick();
     }
 
     //CYTHON
@@ -107,12 +179,12 @@ namespace ClientState {
     
     int get_client_id_from_name(char* name)
     {
-        for (int i=0; i<agent_list.n_max; i++)
+        for (int i=0; i<agent_list->n_max; i++)
         {
-            if (agent_list.a[i] == NULL) continue;
-            if (agent_list.a[i]->status.name == NULL) continue;
-            if (!agent_list.a[i]->status.identified) continue;
-            if (!strcmp(agent_list.a[i]->status.name, name)) return agent_list.a[i]->id;
+            if (agent_list->a[i] == NULL) continue;
+            if (agent_list->a[i]->status.name == NULL) continue;
+            if (!agent_list->a[i]->status.identified) continue;
+            if (!strcmp(agent_list->a[i]->status.name, name)) return agent_list->a[i]->id;
         }
         return -1;
     }

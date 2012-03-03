@@ -86,7 +86,7 @@ cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
     void populate_slimes(int n_max)
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    Slime_list slime_list
+    Slime_list* slime_list
 
 def slime_test(int n):
     test(n)
@@ -95,7 +95,8 @@ def slime_populate(int n_max):
     populate_slimes(n_max)
 
 def slime_tick():
-    slime_list.tick()
+    if slime_list != NULL:
+        slime_list.tick()
 
 """ Agents """
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
@@ -116,13 +117,15 @@ cdef extern from "./game/ctf.hpp":
         void check_agent_proximities()
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    CTF ctf
+    CTF* ctf
 
 def set_team_color(int team, unsigned char r, unsigned char g, unsigned char b):
-    ctf.set_team_color(team, r,g,b)
+    if ctf != NULL:
+        ctf.set_team_color(team, r,g,b)
     
 def check_agent_proximities():
-    ctf.check_agent_proximities()
+    if ctf != NULL:
+        ctf.check_agent_proximities()
 
 """ Particles """
 
@@ -131,10 +134,11 @@ cdef extern from "./particles/grenade.hpp":
         void tick()
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    Grenade_list grenade_list
+    Grenade_list* grenade_list
 
 def tick():
-    grenade_list.tick()
+    if grenade_list != NULL:
+        grenade_list.tick()
 
 
 """

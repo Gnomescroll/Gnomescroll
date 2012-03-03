@@ -97,7 +97,7 @@ void raycast_to_part()
     float vox_distance = 10000000.0f;
     float collision_point[3];
     Voxel_hitscan_target target;
-    bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
+    bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
         -1, (Object_types)-1,
@@ -117,38 +117,38 @@ void raycast_to_part()
     {
         case OBJ_TYPE_AGENT:
             vox_dat = &agent_vox_dat;
-            obj = ClientState::agent_list.get(id);
+            obj = ClientState::agent_list->get(id);
             if (obj==NULL) break;
             vox = ((Agent_state*)obj)->vox;
             break;
         case OBJ_TYPE_SLIME:
             vox_dat = &Monsters::slime_vox_dat;
-            obj = ClientState::slime_list.get(id);
+            obj = ClientState::slime_list->get(id);
             if (obj==NULL) break;
             vox = ((Monsters::Slime*)obj)->vox;
             break;
         case OBJ_TYPE_SPAWNER:
             vox_dat = &spawner_vox_dat;
-            obj = ClientState::spawner_list.get(id);
+            obj = ClientState::spawner_list->get(id);
             if (obj==NULL) break;
             vox = ((Spawner*)obj)->vox;
             break;
         //case OBJ_TYPE_BASE:
             //vox_dat = &base_vox_dat;
-            //obj = ClientState::ctf.get_base(id);
+            //obj = ClientState::ctf->get_base(id);
             //if (obj==NULL) break;
             //vox = ((Base*)obj)->vox;
             //break;
         //case OBJ_TYPE_FLAG:
             //vox_dat = &flag_vox_dat;
-            //obj = ClientState::ctf.get_flag(id);
+            //obj = ClientState::ctf->get_flag(id);
             //if (obj==NULL) break;
             //vox = ((Flag*)obj)->vox;
             //break;
 
         //case OBJ_TYPE_TURRET:
             //vox_dat = &turret_vox_dat;
-            //obj = ClientState::turret_list.get(id);
+            //obj = ClientState::turret_list->get(id);
             //if (obj==NULL) break;
             //vox = ((Turret*)obj)->vox;
             //break;

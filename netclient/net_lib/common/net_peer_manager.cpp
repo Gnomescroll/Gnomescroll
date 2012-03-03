@@ -1,9 +1,9 @@
 #include "net_peer_manager.hpp"
 
 #ifdef DC_SERVER
-    #include <net_lib/global.hpp>
-    #include <c_lib/state/server_state.hpp>
-    #include <c_lib/t_map/server/manager.hpp>
+#include <net_lib/global.hpp>
+#include <c_lib/state/server_state.hpp>
+#include <c_lib/t_map/server/manager.hpp>
 #endif
 
 void NetPeerManager::init(int client_id)
@@ -20,7 +20,7 @@ void NetPeerManager::init(int client_id)
 
     ServerState::send_version_to_client(client_id);
 
-    Agent_state* a = ServerState::agent_list.create(client_id);
+    Agent_state* a = ServerState::agent_list->create(client_id);
     NetServer::assign_agent_to_client(client_id, a);
 
     ServerState::send_id_to_client(client_id);
@@ -61,8 +61,8 @@ void NetPeerManager::teardown()
 {
     #ifdef DC_SERVER
     ServerState::remove_player_from_chat(this->client_id);
-    ServerState::ctf.remove_agent_from_team(this->client_id);
-    ServerState::agent_list.destroy(client_id);
+    ServerState::ctf->remove_agent_from_team(this->client_id);
+    ServerState::agent_list->destroy(client_id);
 
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
     #endif

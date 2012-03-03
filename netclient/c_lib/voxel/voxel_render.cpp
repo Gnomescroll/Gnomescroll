@@ -36,11 +36,13 @@ num_elements(0)
 
 Voxel_render_list::~Voxel_render_list()
 {
-    if (this->render_list)
+    if (this->render_list != NULL)
         free(this->render_list);
 
-    free(vbo_wrapper[0].vertex_list);
-    free(vbo_wrapper[1].vertex_list);
+    if (vbo_wrapper[0].vertex_list != NULL)
+        free(vbo_wrapper[0].vertex_list);
+    if (vbo_wrapper[1].vertex_list != NULL)
+        free(vbo_wrapper[1].vertex_list);
 }
 
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)

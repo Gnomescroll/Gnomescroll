@@ -72,7 +72,7 @@ void Slime::tick() {
 
     if (health <= 0)
     {
-        STATE::slime_list.destroy(this->id);
+        STATE::slime_list->destroy(this->id);
         return;
     }
 
@@ -108,20 +108,20 @@ void Slime::tick() {
     const float speed = 0.25f;
 
     // choose a random agent in range
-    int closest = STATE::agent_list.objects_within_sphere(this->x, this->y, this->z, r);
-    int n_nearby = STATE::agent_list.n_filtered;
+    int closest = STATE::agent_list->objects_within_sphere(this->x, this->y, this->z, r);
+    int n_nearby = STATE::agent_list->n_filtered;
     if (n_nearby == 0) return;
 
     Agent_state* agent;
     if (closest >= 0 && this->vox != NULL)
     {
-        float min_dist = STATE::agent_list.filtered_object_distances[closest];
+        float min_dist = STATE::agent_list->filtered_object_distances[closest];
         if (min_dist < this->vox->largest_radius())
         {
             // damage and die if within range
             const int slime_dmg = 20; // TODO
             // blow up, damage player
-            agent = STATE::agent_list.filtered_objects[closest];
+            agent = STATE::agent_list->filtered_objects[closest];
             if (agent != NULL)
             {
                 agent->status.apply_damage(slime_dmg, this->id, this->type);
@@ -133,7 +133,7 @@ void Slime::tick() {
 
     // choose random player to target
     int i = randrange(0,n_nearby-1);
-    agent = STATE::agent_list.filtered_objects[i];
+    agent = STATE::agent_list->filtered_objects[i];
     if (agent == NULL) return;
     
     // determine velocity tick
@@ -258,11 +258,11 @@ void test(int n)
         
         #ifdef DC_CLIENT
         z = map_dim.z-1;
-        STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
+        STATE::slime_list->create(x+0.5,y+0.5,z, 0,0,0);
         #endif
 
         #ifdef DC_SERVER
-        Slime* s = STATE::slime_list.create(x+0.5,y+0.5,z, 0,0,0);
+        Slime* s = STATE::slime_list->create(x+0.5,y+0.5,z, 0,0,0);
         if (s==NULL) return;
         CreateSlime_StoC msg;
         msg.id = s->id;
@@ -273,7 +273,7 @@ void test(int n)
 
 void populate_slimes(int n_max)
 {   // regenerates slimes up to a maximum
-    int n_slimes = STATE::slime_list.num;
+    int n_slimes = STATE::slime_list->num;
     n_max -= n_slimes;
     if (n_max > 0)
         test(n_max);

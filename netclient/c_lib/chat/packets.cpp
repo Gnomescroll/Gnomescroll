@@ -8,7 +8,7 @@ inline void ChatMessage_StoC::handle()
 
     if (sender != CHAT_SENDER_SYSTEM)
     {
-        Agent_state *a = ClientState::agent_list.get(sender);
+        Agent_state *a = ClientState::agent_list->get(sender);
         if (a==NULL) return;
     }
 

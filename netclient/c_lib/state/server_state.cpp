@@ -10,19 +10,70 @@
 
 namespace ServerState
 {
-    Agent_list agent_list;
-    Cspray_list cspray_list;
-    Grenade_list grenade_list;
-    //Neutron_list neutron_list;
-    Monsters::Slime_list slime_list;
-    Voxel_hitscan_list voxel_hitscan_list;
-    Spawner_list spawner_list;
+    Agent_list* agent_list = NULL;
+    Cspray_list* cspray_list = NULL;
+    Grenade_list* grenade_list = NULL;
+    //Neutron_list* neutron_list = NULL;
+    Monsters::Slime_list* slime_list = NULL;
+    Voxel_hitscan_list* voxel_hitscan_list = NULL;
+    Spawner_list* spawner_list = NULL;
 
-    CTF ctf;
+    void init_lists()
+    {
+        agent_list = new Agent_list;
+        cspray_list = new Cspray_list;
+        grenade_list = new Grenade_list;
+        //neutron_list = new Neutron_list;
+        slime_list = new Monsters::Slime_list;
+        voxel_hitscan_list = new Voxel_hitscan_list;
+        spawner_list = new Spawner_list;
+    }
+
+    void teardown_lists()
+    {
+        delete agent_list;
+        delete cspray_list;
+        delete grenade_list;
+        //delete neutron_list;
+        delete slime_list;
+        delete voxel_hitscan_list;
+        delete spawner_list;
+    }
+
+    CTF* ctf = NULL;
+
+    static void init_ctf()
+    {
+        static int inited = 0;
+        if (inited++)
+        {
+            printf("WARNING: ServerState::init_ctf -- attempt to call more than once\n");
+            return;
+        }
+        ctf = new CTF;
+        ctf->init();
+    }
+    
+    static void teardown_ctf()
+    {
+        if (ctf != NULL)
+            delete ctf;
+    }
 
     void init()
     {
-        ctf.init();
+        static int inited = 0;
+        if (inited++)
+        {
+            printf("WARNING: ServerState::init -- attempt to call more than once\n");
+            return;
+        }
+        init_ctf();
+    }
+
+    void teardown()
+    {
+        teardown_ctf();
     }
 
     void damage_objects_within_sphere(
@@ -30,42 +81,42 @@ namespace ServerState
         int dmg, int owner, Object_types inflictor_type
     )
     {
-        Agent_state* agent = agent_list.get(owner);
+        Agent_state* agent = agent_list->get(owner);
         // dont check null here, its not required.
         // agent could have disconnected, we'll let his grenades stay effective
         int i;                
         int coins = 0;
 
         // agents
-        agent_list.objects_within_sphere(x,y,z,radius);
+        agent_list->objects_within_sphere(x,y,z,radius);
         Agent_state* a;
         const float blast_mean = 0;
         const float blast_stddev = 0.5;
-        for (i=0; i<agent_list.n_filtered; i++)
+        for (i=0; i<agent_list->n_filtered; i++)
         {
-            a = agent_list.filtered_objects[i];
+            a = agent_list->filtered_objects[i];
             if (a == NULL) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
-            dmg *= gaussian_value(blast_mean, blast_stddev, agent_list.filtered_object_distances[i] / radius);
+            dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
             a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
         }
 
         // slimes
-        slime_list.objects_within_sphere(x,y,z,radius);
+        slime_list->objects_within_sphere(x,y,z,radius);
         Monsters::Slime* slime;
-        for (i=0; i<slime_list.n_filtered; i++)
+        for (i=0; i<slime_list->n_filtered; i++)
         {
-            slime = slime_list.filtered_objects[i];
+            slime = slime_list->filtered_objects[i];
             if (slime == NULL) continue;
-            slime_list.destroy(slime->id);
+            slime_list->destroy(slime->id);
         }
 
         // spawners
-        spawner_list.objects_within_sphere(x,y,z,radius);
+        spawner_list->objects_within_sphere(x,y,z,radius);
         Spawner* s;
-        for (i=0; i<spawner_list.n_filtered; i++)
+        for (i=0; i<spawner_list->n_filtered; i++)
         {
-            s = spawner_list.filtered_objects[i];
+            s = spawner_list->filtered_objects[i];
             if (s==NULL) continue;
             int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
             if (h <= 0 && agent != NULL)
@@ -73,11 +124,11 @@ namespace ServerState
         }
 
         // turrets
-        //turrent_list.objects_within_sphere(x,y,z,radius);
+        //turrent_list->objects_within_sphere(x,y,z,radius);
         //Turrent* t;
-        //for (i=0; i<turrent_list.n_filtered; i++)
+        //for (i=0; i<turrent_list->n_filtered; i++)
         //{
-            //t = turrent_list.filtered[i];
+            //t = turrent_list->filtered[i];
             //if (t==NULL) continue;
             //t->take_damage(dmg);
             //if (h <= 0 && agent != NULL)
@@ -104,7 +155,7 @@ namespace ServerState
 
         if(counter % 15 == 0) 
         {
-            agent_list.update_map_manager_positions();
+            agent_list->update_map_manager_positions();
             t_map::t_map_manager_update();
             t_map::t_map_sort_map_chunk_ques();
         }
@@ -112,23 +163,23 @@ namespace ServerState
 /*
         if(counter % 2 == 0) 
         {
-            agent_list.update_map_manager_positions();
+            agent_list->update_map_manager_positions();
             t_map::t_map_manager_update();
             t_map::t_map_sort_map_chunk_ques();
             t_map::t_map_send_map_chunks();
         }
 */
-        spawner_list.tick();
-        ctf.tick();
+        spawner_list->tick();
+        ctf->tick();
     }
 
     void send_game_state_to_client(int client_id)
     {
-        agent_list.send_to_client(client_id);
-        slime_list.send_to_client(client_id);
-        ctf.send_to_client(client_id);
-        spawner_list.send_to_client(client_id);
-        //turret_list.send_to_client(client_id);
+        agent_list->send_to_client(client_id);
+        slime_list->send_to_client(client_id);
+        ctf->send_to_client(client_id);
+        spawner_list->send_to_client(client_id);
+        //turret_list->send_to_client(client_id);
     }
 
     void send_id_to_client(int client_id)
@@ -145,7 +196,7 @@ namespace ServerState
 
     void remove_player_from_chat(int client_id)
     {
-        Agent_state* a = agent_list.get(client_id);
+        Agent_state* a = agent_list->get(client_id);
         if (a==NULL) {
             printf("WARNING ServerState::remove_player_from_chat -- id %d does not have an agent\n", client_id);
             return;
@@ -155,7 +206,7 @@ namespace ServerState
 
     char* agent_name(int id)
     {
-        Agent_state* a = ServerState::agent_list.get(id);
+        Agent_state* a = ServerState::agent_list->get(id);
         if (a==NULL)
             return NULL;
         if (!a->status.identified)
@@ -169,7 +220,7 @@ namespace ServerState
         int address[4];
         address_from_string(Options::ip_address, address);
         init_net_server(address[0], address[1], address[2], address[3], Options::port);
-        ctf.start();
+        ctf->start();
     }
 
     void send_version_to_client(int client_id)

@@ -23,25 +23,25 @@ namespace ClientState {
 
     extern PlayerAgent_state playerAgent_state;
     /* SINGLETONS
-     * Make sure to extern declare in cython_imports
+     * Make sure to extern declare* in cython_imports
      *          */
-    extern Agent_list agent_list;
-    extern Cspray_list cspray_list;
-    extern Grenade_list grenade_list;
-    extern Shrapnel_list shrapnel_list;
-    extern Blood_list blood_list;
-    //extern Neutron_list neutron_list;
-    extern Minivox_list minivox_list;
-    extern BillboardText_list billboard_text_list;
-    extern Voxel_render_list voxel_render_list;
-    extern Voxel_hitscan_list voxel_hitscan_list;
-    extern Monsters::Slime_list slime_list;
-    extern Spawner_list spawner_list;
+    extern Agent_list* agent_list;
+    extern Cspray_list* cspray_list;
+    extern Grenade_list* grenade_list;
+    extern Shrapnel_list* shrapnel_list;
+    extern Blood_list* blood_list;
+    //extern Neutron_list* neutron_list;
+    extern Minivox_list* minivox_list;
+    extern BillboardText_list* billboard_text_list;
+    extern Voxel_render_list* voxel_render_list;
+    extern Voxel_hitscan_list* voxel_hitscan_list;
+    extern Monsters::Slime_list* slime_list;
+    extern Spawner_list* spawner_list;
 
-    extern Animations::HitscanEffect_list hitscan_effect_list;
-    extern Animations::HitscanLaserEffect_list hitscan_laser_effect_list;   
+    extern Animations::HitscanEffect_list* hitscan_effect_list;
+    extern Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
      
-    extern CTF ctf;
+    extern CTF* ctf;
 
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;
@@ -56,6 +56,9 @@ namespace ClientState {
     void update();
     void draw();
     void init();
+    void init_lists();
+    void teardown();
+    void teardown_lists();
 
     // connect callback
     void on_connect();
