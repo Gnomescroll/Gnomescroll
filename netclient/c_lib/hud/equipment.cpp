@@ -152,7 +152,7 @@ void draw_equipped() {
     y1 = _yresf;
     
     glLineWidth(line_width);
-    glColor4ub(0,0,255,0);  // blue
+    glColor3ub(255,10,10);  // red
     glBegin(GL_LINE_STRIP);
 
     glVertex3f(x0, y0, z);  // Top left
