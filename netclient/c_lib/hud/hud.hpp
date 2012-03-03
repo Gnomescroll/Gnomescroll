@@ -2,7 +2,6 @@
 
 #include <c_lib/hud/text.hpp>
 
-
 namespace Hud
 {
 

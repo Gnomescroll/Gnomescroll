@@ -18,10 +18,11 @@ struct InputState
     bool hud;
     bool debug;
     bool skeleton_editor;
+    bool graphs;
     
     bool has_focus;
     bool rebind_mouse;
-    
+
     bool can_jump;
     bool quit;
 

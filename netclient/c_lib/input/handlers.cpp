@@ -55,6 +55,11 @@ void toggle_debug()
     input_state.debug = (!input_state.debug);
 }
 
+void toggle_graphs()
+{
+    input_state.graphs = (!input_state.graphs);
+}
+
 void enable_jump()
 {
     input_state.can_jump = true;
@@ -116,11 +121,13 @@ void init_handlers()
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
+    input_state.graphs = false;
 #else
     input_state.mouse_bound = false;
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
+    input_state.graphs = true;
 #endif
 
     input_state.help_menu = false;
@@ -427,6 +434,8 @@ void key_down_handler(SDL_Event* event)
         else
             camera_key_down_handler(event);
 
+    
+        // these should occur for both Agent and Camera
         switch (event->key.keysym.sym)
         {
             case SDLK_b:
@@ -498,6 +507,10 @@ void key_down_handler(SDL_Event* event)
                     Monsters::test(30);
                 break;
 
+            case SDLK_QUOTE:
+                toggle_graphs();
+                break;
+
             case SDLK_ESCAPE:
                 enable_quit();
                 break;
@@ -506,7 +519,7 @@ void key_down_handler(SDL_Event* event)
         }
     }
 
-    // these should occur regardless of chat/camera/agent
+    // these should occur for all of Chat, Agent and Camera
     switch (event->key.keysym.sym)
     {
         case SDLK_HOME:

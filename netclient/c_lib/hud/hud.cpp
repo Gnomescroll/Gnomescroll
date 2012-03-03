@@ -6,8 +6,7 @@
 #include <c_lib/hud/font.hpp>
 #include <c_lib/input/handlers.hpp>
 #include <c_lib/options.hpp>
-
-//#include <net_lib/export.hpp>
+#include <c_lib/common/profiling/frame_graph.hpp>
 
 /* Configuration */
 namespace Hud
@@ -81,7 +80,7 @@ static struct HudDrawSettings
     int equipment_slot;
     bool compass;
     bool map;
-    //bool frame_graph;
+    bool graphs;
     bool draw;
 } hud_draw_settings;
 
@@ -145,7 +144,7 @@ void update_hud_draw_settings()
 
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
-    //hud_draw_settings.frame_graph = input_state.frame_graph;
+    hud_draw_settings.graphs = input_state.graphs;
     
     // update chat rendering
     if (hud->inited && hud->chat != NULL && hud->chat->inited)
@@ -217,6 +216,11 @@ void draw_hud_textures()
     if (hud_draw_settings.chat_input      //not actually a texture
      && hud->inited && hud->chat != NULL && hud->chat->inited)
         hud->chat->draw_cursor();
+
+    using Profiling::frame_graph;
+    if (hud_draw_settings.graphs)
+        frame_graph->draw(_xresf - frame_graph->ts->screen_width(), 0);
+
 }
 
 void draw_hud_text()

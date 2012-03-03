@@ -481,6 +481,7 @@ regenerate damaged body at base
 notify player disconnected
 
 add Flag::held property -- fixes draw decision issues and teammates "stealing" the flag from each other
+fulstrum culling on spawners
 ====================
 
 Animations
@@ -587,9 +588,8 @@ frame graph chat toggle (just "graphs")
 grenade damage indication (blood, voxel destruction)
 
 teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
+--probably have to do periodic checks
 
 slime models not taking voxel damage
-
-fulstrum culling on spawners?
 
 PRINT & MAIL REBATES

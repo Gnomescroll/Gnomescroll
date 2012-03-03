@@ -13,6 +13,7 @@
 #include <c_lib/common/common.hpp>
 
 #include <c_lib/time/frame_rate_limiter.hpp>
+#include <c_lib/common/profiling/frame_graph.hpp>
 
 bool _quit = false;
 
@@ -57,11 +58,10 @@ void init()
     client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
-#include <c_lib/common/profiling/frame_graph.hpp>
-
 int run()
 {
-    static Profiling::FrameGraph* frame_graph = new Profiling::FrameGraph();
+    using Profiling::frame_graph;
+    Profiling::init_frame_graph();
 
 /* BEGIN SETUP */
     int ping_ticks = _GET_MS_TIME();
@@ -166,11 +166,6 @@ int run()
         {
             // switch to hud  projection
             hud_projection();
-
-            //tx.draw(500, 500);
-            #if !PRODUCTION || PRODUCTION_DEV
-                frame_graph->draw(500,500);
-            #endif
             
             // draw hud
             Hud::set_hud_fps_display(fps_value);
@@ -231,7 +226,7 @@ int run()
 
     }
 
-    delete frame_graph;
+    Profiling::teardown_frame_graph();
 
     close_c_lib();
     

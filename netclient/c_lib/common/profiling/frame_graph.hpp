@@ -24,7 +24,7 @@ class FrameGraph
 
     FrameGraph()
     {
-		index = 0;
+        index = 0;
         pixel_column = 0;
 
         for(int i=0; i<128; i++) 
@@ -40,7 +40,7 @@ class FrameGraph
 
     ~FrameGraph()
     {
-		delete ts;
+        delete ts;
     }
 
     void frame_start()
@@ -171,6 +171,11 @@ class FrameGraph
     {
         ts->draw(x,y);
     }
+
 };
+
+extern FrameGraph* frame_graph;
+void init_frame_graph();
+void teardown_frame_graph();
 
 }
