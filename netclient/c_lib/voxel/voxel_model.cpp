@@ -52,6 +52,41 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
     }
 }
 
+//Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
+Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
+{
+    //const int arm_part = 4;  // hardcoded part for now
+    //const int arm_node = 5;  // hardcoded node for now
+    //Vec3 v;
+
+    ////struct Affine c = affine_mult(vox_dat->vox_volume_local_matrix[arm_part], vox_skeleton_local_matrix[arm_node]);
+    ////struct Affine c = vox_dat->vox_volume_local_matrix[arm_part];
+    //struct Affine c = vox_skeleton_local_matrix[arm_node];
+
+    //static int i = 0;
+    //switch (i++)
+    //{
+        //case 0:
+            //v = c.vx;
+            //printf("vx\n");
+            //break;
+        //case 1:
+            //v = c.vy;
+            //printf("vy\n");
+            //break;
+        //case 2:
+            //v = c.vz;
+            //printf("vz\n");
+            //break;
+        //default:
+            //v = c.vz;
+            //printf("vz\n");
+    //}
+    //i %= 3;
+
+    //return v;
+}
+
 void Voxel_model::update_skeleton()
 {
     const int debug = 0;

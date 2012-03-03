@@ -465,10 +465,9 @@ redesign hud
 -- make weapon text more helpful
 normalize agent's speed (was going faster if moving at a diagonal)
 adjust blood spray effect
-====================
 
-== MODELS ==
---Aiming gun
+make head and arm point in agent camera direction
+====================
 
 Animations
 --Keyframes?

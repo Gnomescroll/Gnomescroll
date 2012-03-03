@@ -219,9 +219,11 @@ void PlayerAgent_action::hitscan_laser() {
 
     // play laser anim
     const float hitscan_speed = 200.0f;
+    //Vec3 aim = this->p->you->vox->get_arm_direction(&agent_vox_dat);
     ClientState::hitscan_effect_list->create(
         origin[0], origin[1], origin[2],
         look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
+        //aim.x*hitscan_speed, aim.y*hitscan_speed, aim.z*hitscan_speed
     );
 }
 
