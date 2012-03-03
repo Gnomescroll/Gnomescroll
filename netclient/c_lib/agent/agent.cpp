@@ -175,7 +175,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
 #else
-    const float JUMP_POW = 1 * 0.30;
+    const float JUMP_POW = 1 * 0.40;
 #endif
     //const float z_bounce = 0.10f;
     //const float z_bounce_v_threshold = 1.5f / tr;
