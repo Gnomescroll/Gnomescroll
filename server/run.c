@@ -32,7 +32,7 @@ void exec_file(int argc, char** argv) {
     // Execute two different files of
     // Python code in separate environments
     //exec_pycode("import os; import sys; print os.getcwd(); sys.path.insert(0, os.getcwd());");
-    #ifdef PRODUCTION
+    #if PRODUCTION
     char runpy[] = "run.pyc";
     #else
     char runpy[] = "run.py";

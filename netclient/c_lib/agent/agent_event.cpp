@@ -38,7 +38,7 @@ void Agent_event::name_changed(char* old_name)
             chat_client->send_system_message(msg);
             free(msg);
             #ifdef DC_CLIENT
-            #ifdef PRODUCTION_DEV
+            #if PRODUCTION_DEV
             printf("sound\n");
             Sound::player_joined_server();  // move this to a better place, along with the other dis/connect events
             #endif

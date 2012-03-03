@@ -192,7 +192,7 @@ BlockApplier::BlockApplier()
 Weapon(TYPE_block_applier),
 block(2)
 {
-    #ifdef PRODUCTION
+    #if PRODUCTION
     this->max_ammo = 200;
     this->ammo = 200;
     #else
@@ -269,7 +269,7 @@ GrenadeThrower::GrenadeThrower()
 :
 Weapon(TYPE_grenade_thrower)
 {
-    #ifdef PRODUCTION
+    #if PRODUCTION
     this->max_ammo = 100;
     this->ammo = 100;
     #else

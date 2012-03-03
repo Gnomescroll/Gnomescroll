@@ -713,7 +713,7 @@ inline void hitscan_block_CtoS::handle()
         return;
     }
 
-    #ifdef PRODUCTION
+    #if PRODUCTION
     #else
     a->status.add_coins(100);
     #endif
