@@ -33,19 +33,16 @@ void NetPeerManager::ready()
     #ifdef DC_SERVER
     if (!this->inited)
     {
-        printf("NOT INITED!!\n");
+        printf("ERROR NetPeerManager::ready() -- not inited yet\n");
         return;
     }
     if (this->loaded)
-    {
-        printf("ALREADY LOADED!\n");
         return;
-    }
     
     Agent_state* a = NetServer::agents[this->client_id];
     if (a==NULL)
     {
-        printf("Agent %d UNKNOWN!!\n", this->client_id);
+        printf("ERRO NetPeerManager::ready() -- Agent %d UNKNOWN!!\n", this->client_id);
         return;
     }
     if (!a->status.identified) return;

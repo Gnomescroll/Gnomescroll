@@ -451,6 +451,12 @@ simple terrain cover for grenade blasts
 grenade damage gaussian radius
 ====================
 
+Mar 2
+
+player name sanitization
+fixed possible buffer overruns on some pack_string using packets
+
+====================
 
 == MODELS ==
 --Aiming gun
@@ -526,7 +532,6 @@ territory control
 
 better feedback on damage received
 
-player name sanitization
 -- limited punctuation? (clans like to use it)
 -- no spaces or \t or \n  (maybe spaces in the middle of text but not at ends)
 -- not all spaces
@@ -536,3 +541,7 @@ better damage on character models (radius instead of single voxel)
 fix bug in dcvox pipeline where dimensions are incorrect
 -- sort out pipeline
 -- move dimensions to inferred by parser?
+
+realign model with correct bounding boxes/dimensions
+
+private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)

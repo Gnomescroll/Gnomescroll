@@ -61,14 +61,13 @@ bool Agent_status::set_name(char* name)
     #endif
     
     if (strlen(name) > PLAYER_NAME_MAX_LENGTH)
-        name[PLAYER_NAME_MAX_LENGTH] = '\0';
+        name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
     bool new_name = (strcmp(this->name, name) == 0) ? false : true;
 
     strcpy(this->name, name);
     #ifdef DC_SERVER
     agent_name_StoC msg;
-    //msg.id = id;
     msg.id = this->a->id;
     strcpy(msg.name, this->name);
     msg.broadcast();
