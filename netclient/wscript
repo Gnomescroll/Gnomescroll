@@ -181,7 +181,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                        fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
                        mandatory=True)
 
-    
+    '''
     conf.check(header_name='lua.h',
                lib='luajit-5.1', #'lua5.1',
                use='luajit-5.1', #'lua5.1',
@@ -189,7 +189,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                includes='/usr/include/luajit-2.0',
                mandatory=True)
-    
+    '''
 
     fmod_includes = []
     fmod_rpath = []
@@ -258,7 +258,10 @@ def build(bld):
     sound_framework = []
     sound_libraries = []
     common_libraries = []
-    lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
+    
+    #lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
+    lua_libraries = []
+
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     if using_fmod:
         sound_libraries = ['fmodex']
