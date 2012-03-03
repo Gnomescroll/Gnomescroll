@@ -63,12 +63,12 @@ class TeamName_StoC: public FixedSizeReliableNetPacketToClient<TeamName_StoC>
 {
     public:
         uint8_t team;
-        char name[TEAM_NAME_MAX_LENGTH];
+        char name[TEAM_NAME_MAX_LENGTH+1];
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&team, buff, buff_n, pack);
-            pack_string(name, TEAM_NAME_MAX_LENGTH, buff, buff_n, pack);
+            pack_string(name, TEAM_NAME_MAX_LENGTH+1, buff, buff_n, pack);
         }
         inline void handle();
 };

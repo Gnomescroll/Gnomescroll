@@ -254,6 +254,8 @@ inline void agent_create_StoC::handle()
 
 inline void agent_name_StoC::handle()
 {
+    printf("agent_name packet handler\n");
+    printf("name = %s\n", name);
     Agent_state* a = ClientState::agent_list->get(id);
     if (a == NULL)
     {

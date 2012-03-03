@@ -3,7 +3,7 @@
 #include <chat/globals.hpp>
 #include <chat/packets.hpp>
 
-const int CHAT_BUFFER_SIZE = 90;
+const int CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
 const int CHAT_CLIENT_INPUT_HISTORY_MAX = 20;
 const int CHAT_CLIENT_MESSAGE_HISTORY_MAX = 50;
 const int CHAT_CLIENT_CHANNELS_MAX = 4; // pm, global, team, system
