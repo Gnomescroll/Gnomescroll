@@ -215,10 +215,13 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     init=1;
 }
 
+
+#define VOXEL_BOUNDING_BOXES 1
+
 void Voxel_render_list::draw()
 {
 
-#if !PRODUCTION
+#if VOXEL_BOUNDING_BOXES
     if (input_state.skeleton_editor)
     {
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
@@ -234,8 +237,8 @@ void Voxel_render_list::draw()
     }
 #endif
 
-    this->update_vertex_buffer_object();
-    return;
+    //this->update_vertex_buffer_object();
+    //return;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
 
