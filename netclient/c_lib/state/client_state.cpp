@@ -123,6 +123,7 @@ namespace ClientState {
     {
         slime_list->update();
         ctf->update();
+        spawner_list->update();
     }
 
     void set_PlayerAgent_id(int id)

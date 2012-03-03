@@ -79,14 +79,8 @@ void Flag::update()
 {
     #ifdef DC_CLIENT
     if (this->held || current_camera == NULL || !current_camera->in_view(x,y,z))
-    {
         this->vox->set_draw(false);
-        this->vox->set_draw(false);
-    }
     else
-    {
         this->vox->set_draw(true);
-        this->vox->set_draw(true);
-    }
     #endif
 }

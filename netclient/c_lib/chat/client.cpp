@@ -422,7 +422,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     ChatMessage* m = chat_message_list->create();
     m->sender = sender;
     m->channel = channel;
-    if (strlen(payload) > CHAT_MESSAGE_SIZE_MAX)
+    if (strlen(payload) > (unsigned int)CHAT_MESSAGE_SIZE_MAX)
         payload[CHAT_MESSAGE_SIZE_MAX] = '\0';
     strcpy(m->payload, payload);
     m->set_color();
@@ -439,7 +439,7 @@ void ChatClient::send_system_message(char* msg)
 void ChatClient::subscribe_system_channel()
 {
     if (this->channels[CHANNEL_SYSTEM] == NULL)
-        this->channels[CHANNEL_SYSTEM] = new ChatClientChannel();
+        this->channels[CHANNEL_SYSTEM] = new ChatClientChannel;
 
     this->channels[CHANNEL_SYSTEM]->type = CHANNEL_SYSTEM;
     this->channels[CHANNEL_SYSTEM]->id = 0;
@@ -457,7 +457,7 @@ void ChatClient::subscribe_channels()
     for (int i=1; i<CHAT_CLIENT_CHANNELS_MAX; i++)
     {
         if (this->channels[i] == NULL)
-            this->channels[i] = new ChatClientChannel();
+            this->channels[i] = new ChatClientChannel;
 
         chan = this->channels[i];
         chan->type = (ChannelTypes)i;

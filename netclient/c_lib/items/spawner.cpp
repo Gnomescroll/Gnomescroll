@@ -106,12 +106,12 @@ void Spawner::update()
     if (current_camera == NULL || !current_camera->in_view(x,y,z))
     {
         this->vox->set_draw(false);
-        this->vox->set_draw(false);
+        this->vox->set_hitscan(false);
     }
     else
     {
         this->vox->set_draw(true);
-        this->vox->set_draw(true);
+        this->vox->set_hitscan(true);
     }
     #endif
 }
