@@ -273,12 +273,14 @@ Voxel_volume::~Voxel_volume()
 //external methods
 void Voxel_volume::set(int x, int y, int z, Voxel* v)
 {
+    if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
     _set(x,y,z,v);
     needs_vbo_update = true;
 }
 
 inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
+    if (x<0 || x>= xdim || y<0 || y>=ydim || z<0 || z>=zdim) return;
     _set(x,y,z,r,g,b,a);
     needs_vbo_update = true;
 }
