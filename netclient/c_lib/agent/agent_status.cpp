@@ -103,7 +103,8 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
 {
     #ifdef DC_SERVER
     // dont allow team kills
-    if (inflictor_type == OBJ_TYPE_AGENT && inflictor_id != this->a->id)
+    if ((inflictor_type == OBJ_TYPE_AGENT || inflictor_type == OBJ_TYPE_GRENADE)
+      && inflictor_id != this->a->id)
     {
         Agent_state *inf = STATE::agent_list->get(inflictor_id);
         if (inf == NULL) return this->health;

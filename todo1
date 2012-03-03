@@ -466,9 +466,7 @@ redesign hud
 -- make weapon text more helpful
 normalize agent's speed (was going faster if moving at a diagonal)
 adjust blood spray effect
-
-make head and arm point in agent camera direction
---failed attempts to align laser to arm -- need function that returns center of voxel volume in world space
+laser aligned with arm
 ====================
 
 Animations
@@ -510,7 +508,6 @@ client side prediction bug
 endpoints on hitscan laser
 Lua
 fog
--- need function for getting the centerpoint in world space of a voxel part
 
 SERVER:
 put metaless content back on 100tb (~2-3days of rsyncing)

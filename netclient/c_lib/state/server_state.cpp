@@ -98,7 +98,7 @@ namespace ServerState
             if (a == NULL) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
             dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
-            a->status.apply_damage(dmg, owner, inflictor_type); // need to be able to pass owner & suicidal arguments to apply_damage
+            a->status.apply_damage(dmg, owner, inflictor_type);
         }
 
         // slimes
