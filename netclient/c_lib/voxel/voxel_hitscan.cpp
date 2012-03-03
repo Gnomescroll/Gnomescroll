@@ -142,3 +142,8 @@ num_elements(0)
     hitscan_list = new Voxel_hitscan_element*[VOXEL_HITSCAN_LIST_SIZE];
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++) hitscan_list[i] = NULL;
 }
+
+Voxel_hitscan_list::~Voxel_hitscan_list()
+{
+    delete[] this->hitscan_list;
+}

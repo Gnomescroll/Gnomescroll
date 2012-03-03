@@ -59,4 +59,5 @@ class Voxel_hitscan_list
     );
 
     Voxel_hitscan_list();
+    ~Voxel_hitscan_list();
 };
