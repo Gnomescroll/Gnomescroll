@@ -213,8 +213,12 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     init=1;
 }
 
+#if PRODUCTION
+    #define VOXEL_RENDER_WIREFRAME 1
+#else
+    #define VOXEL_RENDER_WIREFRAME 0
+#endif
 
-#define VOXEL_RENDER_WIREFRAME 1
 #define VOXEL_RENDER_DISABLE_VOXEL_VOLUMES 0
 
 void Voxel_render_list::draw()
