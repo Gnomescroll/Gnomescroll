@@ -43,6 +43,7 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         }
         else
         {
+            VoxDat* vox_dat = &agent_vox_dat;
             if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z)) {
                 agent->vox->set_draw(false);
                 agent->vox->set_hitscan(false);
@@ -50,6 +51,7 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
             }
             if (agent->crouched())
             {
+                vox_dat = &agent_vox_dat_crouched;
                 if (!agent->status.vox_crouched)
                 {
                     agent->vox->reset_skeleton(&agent_vox_dat_crouched);
@@ -64,7 +66,9 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
                     agent->status.vox_crouched = false;
                 }
             }
-            agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+            if (agent->status.dead)
+                vox_dat = &agent_vox_dat_dead;
+            agent->vox->update(vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
 
             agent->vox->set_draw(true);
             agent->vox->set_hitscan(true);

@@ -33,6 +33,25 @@ void Voxel_model::set_skeleton_root(float *data)
     );
 }
 
+void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
+{
+    // in the editor, head and arm rotate the same way
+    // here, they rotate opposite directions
+    
+    for (int i=0; i<this->n_skeleton_nodes; i++)
+    {
+        if (!biaxial_nodes[i]) continue;
+        float x,y,z,rx,ry,rz;
+        x = vox_dat->vox_skeleton_local_matrix_reference[i][0];
+        y = vox_dat->vox_skeleton_local_matrix_reference[i][1];
+        z = vox_dat->vox_skeleton_local_matrix_reference[i][2];
+        rx = vox_dat->vox_skeleton_local_matrix_reference[i][3];
+        ry = vox_dat->vox_skeleton_local_matrix_reference[i][4];
+        rz = vox_dat->vox_skeleton_local_matrix_reference[i][5];
+        vox_skeleton_local_matrix[i] = affine_euler_rotation_and_translation(x,y,z, rx, ry - phi, rz);
+    }
+}
+
 void Voxel_model::update_skeleton()
 {
     const int debug = 0;
@@ -82,7 +101,6 @@ void Voxel_model::draw_skeleton()
 
     for(int i=0; i<n_skeleton_nodes; i++)
     {
-
         struct Affine m = vox_skeleton_world_matrix[i];
 
         glColor3ub(255, 0, 0);
@@ -186,6 +204,14 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
     vox_skeleton_transveral_list = new int[num_skeleton_nodes];
     vox_skeleton_local_matrix = new Affine[num_skeleton_nodes];
     vox_skeleton_world_matrix = new Affine[num_skeleton_nodes];
+    biaxial_nodes = (bool*)calloc(num_skeleton_nodes, sizeof(bool));
+    for (int i=0; i<vox_dat->n_parts; i++)
+    {
+        VoxPart* vp = vox_dat->vox_part[i];
+        if (vp == NULL)
+            continue;
+        biaxial_nodes[vp->skeleton_parent_matrix] = vp->biaxial;
+    }
 
     this->reset_skeleton(vox_dat);
 }
@@ -374,12 +400,17 @@ void Voxel_model::set_hitscan(bool hitscan) {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(float x, float y, float z, float theta, float phi) 
+void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
 {
     this->set_skeleton_root(x,y,z, theta);
+#if DC_CLIENT && !PRODUCTION
+    if (!input_state.skeleton_editor)
+#endif
+        this->set_biaxial_nodes(vox_dat, phi);
     this->update_skeleton();
 #if DC_CLIENT
-    if (input_state.skeleton_editor) this->draw_skeleton();
+    if (input_state.skeleton_editor)
+        this->draw_skeleton();
 #endif
 }
 
@@ -423,6 +454,7 @@ Voxel_model::~Voxel_model() {
         delete[] vox_skeleton_transveral_list;
         delete[] vox_skeleton_local_matrix;
         delete[] vox_skeleton_world_matrix;
+        delete[] biaxial_nodes;
     }
     else
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");

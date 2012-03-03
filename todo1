@@ -464,6 +464,7 @@ redesign hud
 -- move status text to top left
 -- make weapon text more helpful
 normalize agent's speed (was going faster if moving at a diagonal)
+adjust blood spray effect
 ====================
 
 == MODELS ==
@@ -545,8 +546,6 @@ try jetpack hover height of ~1.2
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
-
-lower blood momentum
 
 update help to mention 'U' key
 

@@ -11,6 +11,7 @@ class Voxel_model
         void reset_skeleton(VoxDat* vox_dat); // reset skeleton properties from voxdat
         void set_skeleton_root(float x, float y, float z, float theta);
         void set_skeleton_root(float *data);
+        void set_biaxial_nodes(VoxDat* vox_dat, float phi);
         void update_skeleton();  //recalculate world view matrices
 
         void draw_skeleton();
@@ -23,6 +24,7 @@ class Voxel_model
         int* vox_skeleton_transveral_list;
         struct Affine* vox_skeleton_local_matrix;
         struct Affine* vox_skeleton_world_matrix;
+        bool* biaxial_nodes;
         //parts voxel volume parst
         bool vox_inited;
 
@@ -37,7 +39,7 @@ class Voxel_model
         void set_colors(VoxDat* vox_dat);
         void update_team_color(VoxDat* vox_dat, int team);
 
-        void update(float x, float y, float z, float theta, float phi);
+        void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
         void restore(VoxDat* vox_dat, int team=-1);
 
         Voxel_volume* vv;

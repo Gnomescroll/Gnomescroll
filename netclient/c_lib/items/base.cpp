@@ -8,7 +8,7 @@ void Base::set_position(float x, float y, float z) {
     this->x = x;
     this->y = y;
     this->z = z;
-    this->vox->update(x,y,z, this->theta, this->phi);
+    this->vox->update(&base_vox_dat, x,y,z, this->theta, this->phi);
 }
 
 void Base::get_spawn_point(int *spawn, int agent_height)

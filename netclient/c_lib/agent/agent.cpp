@@ -381,11 +381,9 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
         A.broadcast();
 
         //clean out old control state
-        int i;
-        int index;
-        for(i=16;i<96;i++)
+        for(int i=16; i<96; i++)
         {
-            index = (seq + i)%256;
+            int index = (seq + i)%256;
             this->cs[index].seq = -1;
         }
     }
@@ -393,21 +391,16 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
 }
 
 void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
-    #ifdef DC_SERVER
-        printf("WTF ERROR!!!\n");
-    #endif
-
-
+    #if DC_CLIENT
     state_snapshot.seq = seq;
     state_snapshot.theta = theta;
     state_snapshot.phi = phi;
     state_snapshot.x=x;state_snapshot.y=y;state_snapshot.z=z;
     state_snapshot.vx=vx;state_snapshot.vy=vy;state_snapshot.vz=vz;
 
-    int i;
-    int index;
-    for(i=16;i<96;i++){
-        index = (seq + i)%256;
+    for(int i=16; i<96; i++)
+    {
+        int index = (seq + i)%256;
         cs[index].seq = -1;
     }
                 
@@ -421,6 +414,9 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     //#endif
 
     tick();
+    #else
+    printf("ERROR: Server is calling handle_state_snapshot\n");
+    #endif
 }
 
 void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz) {
