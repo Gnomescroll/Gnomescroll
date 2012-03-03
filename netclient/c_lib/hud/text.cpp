@@ -279,6 +279,17 @@ Text::~Text()
         free(this->format);
 }
 
-Text_list text_list;
+Text_list* text_list = NULL;
+
+void init()
+{
+    if (text_list == NULL)
+    text_list = new Text_list;
+}
+void teardown()
+{
+    if (text_list != NULL)
+        delete text_list;
+}
 
 }

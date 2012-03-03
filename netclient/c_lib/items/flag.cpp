@@ -61,7 +61,7 @@ void Flag::tick()
         }
         z++;
     }
-    ServerState::ctf.set_flag_position(this->team, this->x, this->y, (float)z);
+    ServerState::ctf->set_flag_position(this->team, this->x, this->y, (float)z);
 #endif
 }
 

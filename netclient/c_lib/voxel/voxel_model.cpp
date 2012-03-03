@@ -9,14 +9,14 @@
 #ifdef DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
 namespace ClientState {
-    extern Voxel_render_list voxel_render_list;
-    extern Voxel_hitscan_list voxel_hitscan_list;
+    extern Voxel_render_list* voxel_render_list;
+    extern Voxel_hitscan_list* voxel_hitscan_list;
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
 #ifdef DC_SERVER
 namespace ServerState {
-    extern Voxel_hitscan_list voxel_hitscan_list;
+    extern Voxel_hitscan_list* voxel_hitscan_list;
 }
 #endif
 
@@ -243,11 +243,10 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         return;
     }
     this->vox_inited = true;
-    int i;
     int x,y,z;
     VoxPart *vp;
     Voxel_volume* vv;
-    for (i=0; i<this->n_parts; i++) {
+    for (int i=0; i<this->n_parts; i++) {
         vp = vox_dat->vox_part[i];
         x = vp->dimension.x;
         y = vp->dimension.y;
@@ -260,7 +259,7 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
 
         #ifdef DC_CLIENT
         this->set_part_color(vox_dat, i);
-        ClientState::voxel_render_list.register_voxel_volume(vv);
+        ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
 }
@@ -269,7 +268,7 @@ void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;
-    int ret = ClientState::ctf.get_team_color(team, &team_r, &team_g, &team_b);
+    int ret = ClientState::ctf->get_team_color(team, &team_r, &team_g, &team_b);
     if (ret) return;
     for (int i=0; i<this->n_parts; i++)
         this->set_part_team_color(vox_dat, i, team_r, team_g, team_b);
@@ -368,7 +367,7 @@ void Voxel_model::register_hitscan()
         return;
     }
     for (int i=0; i<this->n_parts;
-        STATE::voxel_hitscan_list.register_voxel_volume(&this->vv[i++]));
+        STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i++]));
 }
 
 void Voxel_model::set_hitscan(bool hitscan) {
@@ -410,9 +409,9 @@ Voxel_model::~Voxel_model() {
     {
         for (int i=0; i<this->n_parts; i++) {
             #ifdef DC_CLIENT
-            ClientState::voxel_render_list.unregister_voxel_volume(&(this->vv[i]));
+            ClientState::voxel_render_list->unregister_voxel_volume(&(this->vv[i]));
             #endif
-            STATE::voxel_hitscan_list.unregister_voxel_volume(&(this->vv[i]));
+            STATE::voxel_hitscan_list->unregister_voxel_volume(&(this->vv[i]));
         }
         delete[] this->vv;
     }

@@ -440,7 +440,7 @@ void Agent_state::get_spawn_point(int* spawn) {
     
     if (this->status.spawner != BASE_SPAWN_ID)
     {    // check that assigned spawner still exists, reassign if not
-        while ((s = STATE::spawner_list.get(this->status.spawner)) == NULL)
+        while ((s = STATE::spawner_list->get(this->status.spawner)) == NULL)
         {
             this->status.set_spawner();
             if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
@@ -449,7 +449,7 @@ void Agent_state::get_spawn_point(int* spawn) {
 
     if (this->status.spawner == BASE_SPAWN_ID)
     {   // spawner is base
-        STATE::ctf.get_base_spawn_point(this->status.team, h, spawn);
+        STATE::ctf->get_base_spawn_point(this->status.team, h, spawn);
 
         // team is 0, or spawn get failed for some reason. spawn anywhere
         if (spawn == NULL)

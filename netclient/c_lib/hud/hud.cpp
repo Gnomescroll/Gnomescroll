@@ -224,7 +224,7 @@ void draw_hud_text()
     
     start_text_draw();
 
-    ClientState::billboard_text_list.draw_hud();
+    ClientState::billboard_text_list->draw_hud();
     
     if (!hud->inited)
     {
@@ -331,45 +331,45 @@ void HUD::init()
 
     int line_height = HudFont::font->data.line_height;
     
-    help = HudText::text_list.create();
+    help = HudText::text_list->create();
     help->set_text((char*) help_text);
     int help_width = help->get_width();
     help->set_position(_xres - help_width - 5, _yresf - 5);
 
-    disconnected = HudText::text_list.create();
+    disconnected = HudText::text_list->create();
     disconnected->set_text((char*) disconnected_text);
     disconnected->set_color(255,10,10,255);
     disconnected->set_position(_xresf/2 - 80, _yresf/2);
 
-    version_mismatch = HudText::text_list.create();
+    version_mismatch = HudText::text_list->create();
     version_mismatch->set_text((char*)version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
     version_mismatch->set_position(_xresf/2 - 80, _yresf/2 - 18);
     
-    dead = HudText::text_list.create();
+    dead = HudText::text_list->create();
     dead->set_text((char*) dead_text);
     dead->set_color(255,10,10,255);
     dead->set_position(_xresf/2 - 80, _yresf/2);
     
-    fps = HudText::text_list.create();
+    fps = HudText::text_list->create();
     fps->set_format((char*) fps_format);
     fps->set_format_extra_length(6 - 5);
     fps->set_color(255,10,10,255);
     fps->set_position(3, line_height+3);
     
-    ping = HudText::text_list.create();
+    ping = HudText::text_list->create();
     ping->set_format((char*) ping_format);
     ping->set_format_extra_length(3 - 2);
     ping->set_color(255,10,10,255);
     ping->set_position(3, (line_height*2)+3);
     
-    reliable_ping = HudText::text_list.create();
+    reliable_ping = HudText::text_list->create();
     reliable_ping->set_format((char*) ping_format);
     reliable_ping->set_format_extra_length(3 - 2);
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
-    player_stats = HudText::text_list.create();
+    player_stats = HudText::text_list->create();
     player_stats->set_text((char*) player_stats_text_no_agent);
     player_stats->set_format((char*) player_stats_format);
     player_stats->set_format_extra_length(
@@ -406,19 +406,19 @@ chat(NULL)
 HUD::~HUD()
 {
     if (help != NULL)
-        HudText::text_list.destroy(help->id);
+        HudText::text_list->destroy(help->id);
     if (disconnected != NULL)
-        HudText::text_list.destroy(disconnected->id);
+        HudText::text_list->destroy(disconnected->id);
     if (dead != NULL)
-        HudText::text_list.destroy(dead->id);
+        HudText::text_list->destroy(dead->id);
     if (fps != NULL)
-        HudText::text_list.destroy(fps->id);
+        HudText::text_list->destroy(fps->id);
     if (ping != NULL)
-        HudText::text_list.destroy(ping->id);
+        HudText::text_list->destroy(ping->id);
     if (reliable_ping != NULL)
-        HudText::text_list.destroy(reliable_ping->id);
+        HudText::text_list->destroy(reliable_ping->id);
     if (player_stats != NULL)
-        HudText::text_list.destroy(player_stats->id);
+        HudText::text_list->destroy(player_stats->id);
     if (scoreboard != NULL)
         delete scoreboard;
     if (chat != NULL)
@@ -446,7 +446,7 @@ void ChatRender::init()
     const int y_offset = 50;   // from the top
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
-        HudText::Text* t = HudText::text_list.create();
+        HudText::Text* t = HudText::text_list->create();
         t->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
         t->set_text((char*) "");
         t->set_format((char*) "%s%s %s");
@@ -455,7 +455,7 @@ void ChatRender::init()
         messages[i] = t;
     }
 
-    input = HudText::text_list.create();
+    input = HudText::text_list->create();
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
     input->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
@@ -572,9 +572,9 @@ ChatRender::~ChatRender()
 {
     for (int i=0; i<CHAT_MESSAGE_RENDER_MAX; i++)
         if (messages[i] != NULL)
-            HudText::text_list.destroy(messages[i]->id);
+            HudText::text_list->destroy(messages[i]->id);
 
-    if (input != NULL) HudText::text_list.destroy(input->id);
+    if (input != NULL) HudText::text_list->destroy(input->id);
 }
 
 /* Scoreboard */
@@ -587,7 +587,7 @@ void Scoreboard::init()
     int i;
     for (i=0; i<N_STATS; i++)
     {
-        tags[i] = HudText::text_list.create();
+        tags[i] = HudText::text_list->create();
         tags[i]->set_color(150, 150, 255, 255);
         tags[i]->set_position(start_x + i*col_width, _yresf - start_y);
     }
@@ -601,10 +601,10 @@ void Scoreboard::init()
     const char team_score_fmt[] = "%d";
     for (i=0; i<(int)N_TEAMS; i++)
     {
-        team_names[i] = HudText::text_list.create();
+        team_names[i] = HudText::text_list->create();
         team_names[i]->set_format((char*)team_name_fmt);
         team_names[i]->set_format_extra_length(TEAM_NAME_MAX_LENGTH - 2);
-        team_scores[i] = HudText::text_list.create();
+        team_scores[i] = HudText::text_list->create();
         team_scores[i]->set_format((char*)team_score_fmt);
         team_scores[i]->set_format_extra_length(6 - 2);
     }
@@ -616,23 +616,23 @@ void Scoreboard::init()
     const char score_fmt[] = "%d";
     for (i=0; i<PLAYERS_MAX; i++)
     {
-        ids[i] = HudText::text_list.create();
+        ids[i] = HudText::text_list->create();
         ids[i]->set_format((char*)id_fmt);
         ids[i]->set_format_extra_length(3 - 2);
 
-        names[i] = HudText::text_list.create();
+        names[i] = HudText::text_list->create();
         names[i]->set_format((char*)name_fmt);
         names[i]->set_format_extra_length(PLAYER_NAME_MAX_LENGTH - 2);
 
-        kills[i] = HudText::text_list.create();
+        kills[i] = HudText::text_list->create();
         kills[i]->set_format((char*)kills_fmt);
         kills[i]->set_format_extra_length(3 - 2);
 
-        deaths[i] = HudText::text_list.create();
+        deaths[i] = HudText::text_list->create();
         deaths[i]->set_format((char*)deaths_fmt);
         deaths[i]->set_format_extra_length(3 - 2);
 
-        scores[i] = HudText::text_list.create();
+        scores[i] = HudText::text_list->create();
         scores[i]->set_format((char*)score_fmt);
         scores[i]->set_format_extra_length(4 - 2);
     }
@@ -670,11 +670,11 @@ void Scoreboard::update()
     int i,j=0;
     unsigned char r,g,b,a=255;
     int team = -1;
-    ClientState::agent_list.sort_by_team(); // sorts ascending
-    for (i=0; i<ClientState::agent_list.n_max; i++)
+    ClientState::agent_list->sort_by_team(); // sorts ascending
+    for (i=0; i<ClientState::agent_list->n_max; i++)
     {
-        Agent_state* agent = ClientState::agent_list.filtered_objects[i];
-        if (i >= ClientState::agent_list.n_filtered || agent==NULL || agent->status.team == 0)
+        Agent_state* agent = ClientState::agent_list->filtered_objects[i];
+        if (i >= ClientState::agent_list->n_filtered || agent==NULL || agent->status.team == 0)
         {
             ids[i]->set_text((char*)"");
             names[i]->set_text((char*)"");
@@ -695,7 +695,7 @@ void Scoreboard::update()
         }
         j++;
 
-        ClientState::ctf.get_team_color(agent->status.team, &r, &g, &b);
+        ClientState::ctf->get_team_color(agent->status.team, &r, &g, &b);
         
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
@@ -734,13 +734,13 @@ void Scoreboard::update()
             team_scores[i]->set_text((char*)"");
             continue;
         }
-        ClientState::ctf.get_team_color(i+1, &r, &g, &b);
+        ClientState::ctf->get_team_color(i+1, &r, &g, &b);
         team_names[i]->set_position(team_name_pos[i].x, _yresf - team_name_pos[i].y);
-        team_names[i]->update_formatted_string(1, ClientState::ctf.get_team_name(i+1));
+        team_names[i]->update_formatted_string(1, ClientState::ctf->get_team_name(i+1));
         team_names[i]->set_color(r,g,b,a);
 
         team_scores[i]->set_position(team_score_pos[i].x, _yresf - team_score_pos[i].y);
-        int s = ClientState::ctf.get_score(i+1);
+        int s = ClientState::ctf->get_score(i+1);
         s = (s >= 1000000) ? 999999 : s;
         s = (s < -99999) ? -99999 : s;
         team_scores[i]->update_formatted_string(1, s);
@@ -801,20 +801,20 @@ Scoreboard::~Scoreboard()
     int i;
     for (i=0; i<N_STATS; i++)
     {
-        if (tags[i] != NULL) HudText::text_list.destroy(tags[i]->id);
+        if (tags[i] != NULL) HudText::text_list->destroy(tags[i]->id);
     }
     for (i=0; i<(int)N_TEAMS; i++)
     {
-        if (team_names[i] != NULL) HudText::text_list.destroy(team_names[i]->id);
-        if (team_scores[i] != NULL) HudText::text_list.destroy(team_scores[i]->id);
+        if (team_names[i] != NULL) HudText::text_list->destroy(team_names[i]->id);
+        if (team_scores[i] != NULL) HudText::text_list->destroy(team_scores[i]->id);
     }
     for (i=0; i<PLAYERS_MAX; i++)
     {
-        if (ids[i] != NULL) HudText::text_list.destroy(ids[i]->id);
-        if (names[i] != NULL) HudText::text_list.destroy(names[i]->id);
-        if (kills[i] != NULL) HudText::text_list.destroy(kills[i]->id);
-        if (deaths[i] != NULL) HudText::text_list.destroy(deaths[i]->id);
-        if (scores[i] != NULL) HudText::text_list.destroy(scores[i]->id);
+        if (ids[i] != NULL) HudText::text_list->destroy(ids[i]->id);
+        if (names[i] != NULL) HudText::text_list->destroy(names[i]->id);
+        if (kills[i] != NULL) HudText::text_list->destroy(kills[i]->id);
+        if (deaths[i] != NULL) HudText::text_list->destroy(deaths[i]->id);
+        if (scores[i] != NULL) HudText::text_list->destroy(scores[i]->id);
     }    
 }
 

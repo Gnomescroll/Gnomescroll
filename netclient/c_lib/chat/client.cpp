@@ -11,7 +11,7 @@ void ChatMessage::set_name()
         strcpy(name, (char*)"System");
     else
     {
-        Agent_state* a = ClientState::agent_list.get(sender);
+        Agent_state* a = ClientState::agent_list->get(sender);
         if (a==NULL || !a->status.identified)
             strcpy(name, (char*)"UNKNOWN");
         else
@@ -40,7 +40,7 @@ void ChatMessage::set_color()
     }
     else if (channel >= CHANNEL_ID_TEAM_OFFSET && channel < (int)(CHANNEL_ID_TEAM_OFFSET+N_TEAMS))
     {   // team
-        ClientState::ctf.get_team_color(channel - CHANNEL_ID_TEAM_OFFSET + 1, &r, &g, &b);
+        ClientState::ctf->get_team_color(channel - CHANNEL_ID_TEAM_OFFSET + 1, &r, &g, &b);
         return;
     }
     else
@@ -208,7 +208,7 @@ void ChatInput::submit(int channel)
     if (!route_command())
     {   // create, send packet
         ChatMessage_CtoS msg;
-        strcpy_no_null(msg.msg, buffer);
+        strcpy(msg.msg, buffer);
         msg.channel = channel;
         msg.send();
     }
@@ -331,7 +331,7 @@ bool ChatInput::route_command()
             team = atoi(team_str);
             if (!team) return true; // failure
         }
-        ClientState::ctf.join_team(team);
+        ClientState::ctf->join_team(team);
     }
     else
     if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
@@ -649,7 +649,7 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
 
 void ChatSystemMessage::spawner_created(Spawner* s)
 {
-    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char* team_name = ClientState::ctf->get_team_name(s->team);
     char fmt[] = "%s has built a new spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);
@@ -659,7 +659,7 @@ void ChatSystemMessage::spawner_created(Spawner* s)
 
 void ChatSystemMessage::spawner_destroyed(Spawner* s)
 {
-    char* team_name = ClientState::ctf.get_team_name(s->team);
+    char* team_name = ClientState::ctf->get_team_name(s->team);
     char fmt[] = "%s has lost a spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);

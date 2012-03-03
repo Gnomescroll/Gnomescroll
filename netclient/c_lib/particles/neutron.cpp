@@ -57,9 +57,9 @@ void Neutron::tick()
         event_ttl--;
         if(event_ttl == 0)
         {
-            newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
+            newtron = STATE::neutron_list->create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
             newtron->energy = 1;
-            newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
+            newtron = STATE::neutron_list->create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
             newtron->energy = 1;
         }
 
@@ -84,9 +84,9 @@ void Neutron::tick()
                 _vy *= vel/len;
                 _vz *= vel/len;
 
-                newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
+                newtron = STATE::neutron_list->create(this->vp->p.x,this->vp->p.y,this->vp->p.z, this->vp->v.x,this->vp->v.y,this->vp->v.z);
                 newtron->energy = 1;
-                newtron = STATE::neutron_list.create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
+                newtron = STATE::neutron_list->create(this->vp->p.x,this->vp->p.y,this->vp->p.z, -this->vp->v.x,-this->vp->v.y,-this->vp->v.z);
                 newtron->energy = 1;
 
             }

@@ -59,7 +59,7 @@ void Base::tick()
         }
         z++;
     }
-    ServerState::ctf.set_base_position(this->team, this->x, this->y, (float)z);
+    ServerState::ctf->set_base_position(this->team, this->x, this->y, (float)z);
 #endif
 }
 

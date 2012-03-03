@@ -16,7 +16,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 {
 
     const float crumble_size = 0.17f;
-    ClientState::minivox_list.set_size(crumble_size);
+    ClientState::minivox_list->set_size(crumble_size);
 
     //unsigned char r,g,b,a;
     int side, ttl;
@@ -42,14 +42,14 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         //get_random_pixel(cube_id, side, &r, &g, &b, &a);
 
         tex_id = t_map::get_cube_side_texture(cube_id, side);
-        minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
+        minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
     }
 
-    ClientState::minivox_list.unset_size();
+    ClientState::minivox_list->unset_size();
 }
 
 void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action)
@@ -128,7 +128,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         ny = y + ((randf() -0.5f)*0.4f*side[1]);
         nz = z + ((randf() -0.5f)*0.4f*side[2]);
         
-        minivox = ClientState::minivox_list.create(nx,ny,nz, vx,vy,vz);
+        minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
         minivox->set_ttl(ttl);
@@ -153,13 +153,13 @@ void grenade_explode(float x, float y, float z) {
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        if (ClientState::shrapnel_list.create(cx, cy, cz, cvx, cvy, cvz) == NULL) return;
+        if (ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz) == NULL) return;
     }
 }
 
 void slime_melt(float x, float y, float z) {
 
-    ClientState::minivox_list.set_size(0.7f);
+    ClientState::minivox_list->set_size(0.7f);
     
      int n = randrange(50,100);
      float vx,vy,vz;
@@ -188,7 +188,7 @@ void slime_melt(float x, float y, float z) {
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
         
-        minivox = ClientState::minivox_list.create(cx,cy,cz, cvx,cvy,cvz);
+        minivox = ClientState::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
         if (minivox == NULL) return;
         minivox->set_color(128,223,31);
         //minivox->set_size(0.7);
@@ -197,7 +197,7 @@ void slime_melt(float x, float y, float z) {
         minivox->set_angles(theta, phi);
     }
 
-    ClientState::minivox_list.unset_size();
+    ClientState::minivox_list->unset_size();
 }
 
 void agent_bleed(float x, float y, float z)
@@ -225,9 +225,9 @@ void agent_bleed(float x, float y, float z)
 
         //ttl = randrange(10,25);
 
-        //blood = ClientState::blood_list.create(nx,ny,nz, vx,vy,vz);
+        //blood = ClientState::blood_list->create(nx,ny,nz, vx,vy,vz);
         //if (blood == NULL) return;
-        if (ClientState::blood_list.create(nx,ny,nz, vx,vy,vz) == NULL) return;
+        if (ClientState::blood_list->create(nx,ny,nz, vx,vy,vz) == NULL) return;
         //blood->ttl = ttl;
     }
 }
@@ -258,21 +258,21 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
-        if (ClientState::blood_list.create(x,y,z, v.x*speed, v.y*speed, v.z*speed) == NULL) return;
+        if (ClientState::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed) == NULL) return;
     }
 }
 
 void animations_tick()
 {
-    ClientState::ctf.animate_flags();
-    ClientState::hitscan_effect_list.tick();
-    ClientState::hitscan_laser_effect_list.tick();
+    ClientState::ctf->animate_flags();
+    ClientState::hitscan_effect_list->tick();
+    ClientState::hitscan_laser_effect_list->tick();
 }
 
 void animations_draw()
 {
-    ClientState::hitscan_effect_list.draw();
-    ClientState::hitscan_laser_effect_list.draw();
+    ClientState::hitscan_effect_list->draw();
+    ClientState::hitscan_laser_effect_list->draw();
 }
 
 }

@@ -31,7 +31,7 @@ class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_stat
 inline void spawner_state_StoC::handle()
 {
     
-    Spawner* s = ClientState::spawner_list.get(id);
+    Spawner* s = ClientState::spawner_list->get(id);
     if (s==NULL) return;
     s->set_position(x,y,z);
 }
@@ -170,7 +170,7 @@ void Spawner::tick()
 {
     if (this->health <= 0)
     {
-        STATE::spawner_list.destroy(this->id);
+        STATE::spawner_list->destroy(this->id);
         return;
     }
     
