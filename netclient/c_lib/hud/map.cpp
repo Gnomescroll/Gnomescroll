@@ -272,6 +272,23 @@ void update_overlay_surface()
         ((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
 }
 
+void draw_2x2_pixel(Uint32 pix, int x, int y)
+{
+    int j=0,k=0;
+    for (int i=0; i<4; i++)
+    {
+        if (i==2)
+            j = 1;
+        if (i==3)
+            k = 1;
+        
+        if (x+j >= 0 && x+j < width && y+k >= 0 && y+k < height)    // only draw in surface bounds (or could segfault)
+        {
+            ((Uint32*)overlay_surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
+        }
+    }
+}
+
 void update_agents()
 {
     if (ClientState::playerAgent_state.you == NULL) return;
@@ -285,16 +302,13 @@ void update_agents()
     
     // set agent pixel
     Uint8 r = 210,
-          g = 10,
+          g = 150,
           b = 10,
           a = 255;
     Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
+    draw_2x2_pixel(pix,x,y);
 
-    if (x >= 0 && x < width && y >= 0 && y < height)    // only draw in surface bounds (or could segfault)
-    {
-        ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
-    }
-
+    // draw teammates
     ClientState::ctf->get_team_color(team, &r, &g, &b);
     for (int i=0; i<ClientState::agent_list->n_max; i++)
     {
@@ -306,11 +320,8 @@ void update_agents()
         x = (int)agent->s.x;
         y = (int)agent->s.y;
 
-        if (!(x >= 0 && x < width && y >= 0 && y < height))    // only draw in surface bounds (or could segfault)
-         continue;
-
         pix = SDL_MapRGBA(overlay_surface->format, b, g, r, a);
-        ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
+        draw_2x2_pixel(pix,x,y);
     }
 }
 
@@ -500,10 +511,10 @@ void draw()
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
     draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z*2);
 
-    glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
-    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
+    draw_items(z);
 
-    draw_items(z/2);
+    glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
+    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z/2);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
