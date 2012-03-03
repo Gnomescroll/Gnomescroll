@@ -77,6 +77,10 @@ int _get_highest_solid_block(int x, int y);
 int _get_lowest_solid_block(int x, int y);
 bool point_in_map(int x, int y, int z);
 
+
+int get_height_at(int x, int y);
+
+
 int get_height_at(int x, int y)
 {
     for (int i=map_dim.z-1; i>=0; i--)
