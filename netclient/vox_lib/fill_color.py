@@ -49,6 +49,8 @@ def process(args):
     voxels = []
     found = False
     for line in data:
+        if not line:
+            continue
         if found:
             voxels.append(line.strip())
         else:
