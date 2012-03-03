@@ -147,8 +147,8 @@ void draw_equipped() {
     float x0,y0,x1,y1;
 
     x0 = icon_width * slot;
-    x1 = x0 + icon_width;
-    y0 = _yresf - icon_height;
+    x1 = x0 + icon_width - 1;
+    y0 = _yresf - icon_height + 1;
     y1 = _yresf;
     
     glLineWidth(line_width);
