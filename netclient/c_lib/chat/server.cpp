@@ -20,7 +20,7 @@ ChatServerChannel::~ChatServerChannel()
 
 void ChatServerChannel::broadcast(int sender, char* payload)
 {
-    if (strlen(payload) > CHAT_MESSAGE_SIZE_MAX)
+    if (strlen(payload) > (int)CHAT_MESSAGE_SIZE_MAX)
         payload[CHAT_MESSAGE_SIZE_MAX] = '\0';
     ChatMessage_StoC msg;
     strcpy(msg.msg, payload);
