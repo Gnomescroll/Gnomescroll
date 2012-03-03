@@ -91,15 +91,20 @@ namespace ClientState {
     void tick_client_state(){tick();}
     void send_identify_packet(char* name)
     {
-        printf("sending identify packet to server; name=%s\n", name);
         unsigned int len = strlen(name);
         if (len >= PLAYER_NAME_MAX_LENGTH)
             name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
+        len = sanitize_player_name(name);
+        if (len == 0)
+            return;
+        
+        printf("sending identify packet to server; name=%s\n", name);
         identify_CtoS msg;
-        strcpy_no_null(msg.name, name);
+        strcpy(msg.name, name);
         msg.send();
     }
+    
     int get_client_id_from_name(char* name)
     {
         for (int i=0; i<agent_list.n_max; i++)

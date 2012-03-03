@@ -1016,8 +1016,9 @@ inline void identify_CtoS::handle()
         return;
     }
     printf("Rceived name %s\n", name);
-    unsigned int len = strlen(name);
 
+    unsigned int len = sanitize_player_name(name);
+    
     if (len == 0)
         strcpy(name, DEFAULT_PLAYER_NAME);
 
@@ -1031,7 +1032,7 @@ inline void identify_CtoS::handle()
     a->status.identified = true;
 
     identified_StoC msg;
-    strcpy_no_null(msg.name, name);
+    strcpy(msg.name, name);
     msg.sendToClient(client_id);
 
     NetServer::clients[client_id]->ready();
