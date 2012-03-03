@@ -118,7 +118,7 @@ inline void agent_shot_object_StoC::handle()
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
     }
-    destroy_object_voxel(target_id, target_type, target_part, voxel);
+    destroy_object_voxel(target_id, target_type, target_part, voxel, 3);
 }
 
 inline void agent_shot_block_StoC::handle()
@@ -165,7 +165,7 @@ inline void agent_melee_object_StoC::handle()
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
     }
-    destroy_object_voxel(target_id, target_type, target_part, voxel);
+    destroy_object_voxel(target_id, target_type, target_part, voxel, 3);
 }
 
 inline void agent_melee_nothing_StoC::handle()

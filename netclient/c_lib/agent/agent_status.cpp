@@ -54,9 +54,9 @@ void Agent_status::set_spawner()
 bool Agent_status::set_name(char* name)
 {
     #ifdef DC_SERVER
-    if (strcmp(AGENT_UNDEFINED_NAME, name) == 0)
+    if (strcmp(AGENT_UNDEFINED_NAME, name) == 0)    // cant be the undefined holder
         return false;
-    if (name[0] == '\0')
+    if (name[0] == '\0')                            // no empties
         return false;
     #endif
     

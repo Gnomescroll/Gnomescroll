@@ -9,7 +9,7 @@
 #define AGENT_STATE_HISTORY_SIZE 64
 #define AGENT_INTERPOLATION_DECAY 0.8f
 
-const int JETPACK_TICKS_MAX = 30 * 10;
+const int JETPACK_TICKS_MAX = 30 * 10 * 2;
 const int JETPACK_DECAY_TICKS = 30 * 10;
 
 enum active_camera_states {
@@ -97,6 +97,3 @@ class PlayerAgent_state {
 
         void update_sound();
 };
-
-
-//#include <c_lib/agent/net_agent.hpp>

@@ -211,6 +211,7 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     }
 
     // need distance from ground
+    //const float max_jetpack_height = 2.2f;
     const float max_jetpack_height = 8.0f;
     const float jetpack_velocity_max = z_jetpack * 10;
     float dist_from_ground = as.z - (_get_highest_open_block(as.x, as.y, 1)-1); //TODO: use a function like this that takes a starting z point

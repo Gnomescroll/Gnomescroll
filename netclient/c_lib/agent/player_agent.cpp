@@ -184,7 +184,7 @@ uint16_t PlayerAgent_state::sanitize_control_state(uint16_t cs)
         }
         else
         {
-            jetpack_ticks--;
+            jetpack_ticks = (jetpack_ticks <= 0) ? 0 : jetpack_ticks-1;
         }
     }
 

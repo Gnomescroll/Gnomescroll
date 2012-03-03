@@ -468,6 +468,13 @@ normalize agent's speed (was going faster if moving at a diagonal)
 adjust blood spray effect
 laser aligned with arm
 fix grenades damaging teammates (shouldnt)
+
+periodically check agents' names if set to "undefined-agent-name"; request real name if so
+-- i've seen this occur live, but its possibly a network bug because all init packets (agent create, identify etc) are reliable
+-- either the packet dropped anyway, or the packet was received before the agent create
+
+fix jetpack decay
+--test out very short jetpack height (~1.2 off the ground). works well but need testing
 ====================
 
 Animations
@@ -541,13 +548,9 @@ better feedback on damage received
 
 better damage on character models (radius instead of single voxel)
 
-try jetpack hover height of ~1.2
-
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
-
-request agent name if set to "undefined-agent-name"
 
 update teammate dot in hudmap (switched player to red, but teammates are red)
 
@@ -580,5 +583,7 @@ frame graph chat toggle (just "graphs")
 grenade damage indication (blood, voxel destruction)
 
 teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
+
+subvoxel shooting is inaccurate
 
 PRINT & MAIL REBATES
