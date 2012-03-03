@@ -547,4 +547,34 @@ private properties of packets, use explicit data filling (but not a constructor,
 
 lower blood momentum
 
+update help to mention 'U' key
+
+request agent name if set to "undefined-agent-name"
+
+update teammate dot in hudmap (switched player to red, but teammates are red)
+
+icons are difficult/impossible to see on the hudmap with blue gradient
+
+try 256x256 map
+
+notify player disconnected
+
+tell players they can afford spawners the first time they capture a flag
+
+when out of ammo, say OUT OF AMMO in the hud
+
+test what happens you jump off the map with the flag
+
+confirmation dialog for ESC quit
+
+arrows points to enemy flag, points to base when you have flag?
+
+chat command for places of interest
+
+ammo drops
+
+flag grabbing bug -- make sure players cant grab the flag if held
+
+turn off skeleton gl draw
+
 PRINT & MAIL REBATES
