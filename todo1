@@ -455,7 +455,8 @@ Mar 2
 
 player name sanitization
 fixed possible buffer overruns on some pack_string using packets
-
+convert all statically allocatied Client/ServerState lists & ctf to pointers on the heap
+fix segfault in rename system notification
 ====================
 
 == MODELS ==
@@ -532,10 +533,6 @@ territory control
 
 better feedback on damage received
 
--- limited punctuation? (clans like to use it)
--- no spaces or \t or \n  (maybe spaces in the middle of text but not at ends)
--- not all spaces
-
 better damage on character models (radius instead of single voxel)
 
 fix bug in dcvox pipeline where dimensions are incorrect
@@ -547,13 +544,3 @@ realign model with correct bounding boxes/dimensions
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 lower blood momentum
-
---segfault on some clients' close
-
-all object lists to be heap allocated so can control destruction order
-or wrapped in a class to guarantee order
-0. ClientState::grenade_list.
-1. ClientState::grenade_list->
-2. ClientState::list.grenade_list.
-3. ClientState::list.grenade.
-3. ClientState::list.grenades.
