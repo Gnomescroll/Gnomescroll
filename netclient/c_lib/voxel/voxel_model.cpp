@@ -455,7 +455,7 @@ Voxel_model::~Voxel_model() {
         delete[] vox_skeleton_transveral_list;
         delete[] vox_skeleton_local_matrix;
         delete[] vox_skeleton_world_matrix;
-        delete[] biaxial_nodes;
+        free(biaxial_nodes);
     }
     else
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");

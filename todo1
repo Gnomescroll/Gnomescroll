@@ -475,6 +475,8 @@ periodically check agents' names if set to "undefined-agent-name"; request real 
 
 fix jetpack decay
 --test out very short jetpack height (~1.2 off the ground). works well but need testing
+
+much better body destruction
 ====================
 
 Animations
