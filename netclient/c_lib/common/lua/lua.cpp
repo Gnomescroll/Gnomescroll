@@ -2,7 +2,7 @@
 
 int run_lua_test()
 {
-
+ return 0;
 }
 
 

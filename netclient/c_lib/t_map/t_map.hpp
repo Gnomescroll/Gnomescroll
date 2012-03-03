@@ -69,6 +69,10 @@ void set_map_size(int x, int y, int z); //Deprecate
 
 #include "t_properties.hpp"
 
+
+/*
+    Move this somewhere
+*/
 int _get_highest_open_block(int x, int y, int agent_height);
 int _get_highest_open_block(int x, int y);
 int _get_lowest_open_block(int x, int y, int n) ;
@@ -80,96 +84,3 @@ bool point_in_map(int x, int y, int z);
 
 int get_height_at(int x, int y);
 
-
-int get_height_at(int x, int y)
-{
-    for (int i=map_dim.z-1; i>=0; i--)
-    {
-        if (isSolid(_get(x,y,i)))
-            return i;
-    }
-    return 0;
-}
-
-int _get_highest_open_block(int x, int y, int n) {
-    if (n < 1) {
-        printf("WARNING: _get_highest_open_block :: called with n < 1\n");
-        return -1;
-    }
-    if (n==1) return _get_highest_solid_block(x,y) + 1;
-
-    int open=n;
-    int block;
-    int i;
-
-    for (i=ZMAX-1; i>=0; i--) {
-        block = _get(x,y,i);
-        if (!isSolid(block)) {
-            open++;
-        } else {
-            if (open >= n) {
-                return i+1;
-            }
-            open = 0;
-        }
-    }
-    if (open >= n) return 0;
-    return -1;
-}
-
-int _get_highest_open_block(int x, int y) 
-{
-    return _get_highest_open_block(x,y,1);
-}
-
-int _get_highest_solid_block(int x, int y) {
-
-    int i;
-    for (i=ZMAX-1; i>=0; i--) {
-        if (isSolid(_get(x,y,i))) {
-            break;
-        }
-    }
-    return  i;
-}
-
-int _get_lowest_open_block(int x, int y, int n) {
-    if (n < 1) {
-        printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
-        return -1;
-    }
-
-    int i;
-    int block;
-    int open=0;
-    for (i=0; i<ZMAX; i++) {
-        block = _get(x,y,i);
-        if (isSolid(block)) {
-            open = 0;
-        } else {
-            open++;
-        }
-        if (open >= n) return i-open+1;
-    }
-
-    return i;
-}
-
-int _get_lowest_solid_block(int x, int y) {
-
-    int i;
-    for (i=0; i < ZMAX; i++) {
-        if (isSolid(_get(x,y,i))) {
-            break;
-        }
-    }
-    if (i >= ZMAX) i = -1;  // failure
-    return i;
-}
-
-inline bool point_in_map(int x, int y, int z)
-{
-    if (x<0 || x>=map_dim.x || y<0 || y>=map_dim.y || z<0 || z>map_dim.z)
-        return false;
-    return true;
-}
