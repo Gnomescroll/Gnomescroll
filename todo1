@@ -463,6 +463,7 @@ realign crouched & dead models
 redesign hud
 -- move status text to top left
 -- make weapon text more helpful
+normalize agent's speed (was going faster if moving at a diagonal)
 ====================
 
 == MODELS ==
@@ -578,5 +579,9 @@ make non-root user on m643 for angus
 sparks on laser terrain impact
 
 frame graph chat toggle (just "graphs")
+
+grenade damage indication (blood, voxel destruction)
+
+teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 
 PRINT & MAIL REBATES

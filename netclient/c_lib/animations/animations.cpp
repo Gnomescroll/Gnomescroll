@@ -202,15 +202,13 @@ void slime_melt(float x, float y, float z) {
 
 void agent_bleed(float x, float y, float z)
 {
-    const float _vx = 10.0f,
-                  _vy = 10.0f,
-                  _vz = 10.0f;
+    const float momentum = 1.0f;
+    const float _vx = momentum,
+                  _vy = momentum,
+                  _vz = momentum;
 
-    //int ttl;
     float nx,ny,nz;
     float vx,vy,vz;
-
-    //Blood* blood;
 
     int n = randrange(50,70);
     for (int i=0; i<n; i++) {
@@ -223,12 +221,7 @@ void agent_bleed(float x, float y, float z)
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        //ttl = randrange(10,25);
-
-        //blood = ClientState::blood_list->create(nx,ny,nz, vx,vy,vz);
-        //if (blood == NULL) return;
         if (ClientState::blood_list->create(nx,ny,nz, vx,vy,vz) == NULL) return;
-        //blood->ttl = ttl;
     }
 }
 
@@ -245,7 +238,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     struct Vec3 iv = vec3_init(ix,iy,iz);
     struct Vec3 v;
     int n = randrange(200,250);
-    const float base_speed = 10.0f;
+    const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;
     for (int i=0; i<n; i++)
