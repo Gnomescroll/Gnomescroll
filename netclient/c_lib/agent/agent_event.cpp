@@ -9,11 +9,8 @@
 
 void Agent_event::name_changed(char* old_name)
 {
-    printf("name changed from %s to %s\n", old_name, this->a->status.name);
     if (this->bb != NULL)
         this->bb->set_text(this->a->status.name);
-
-    printf("billboard text was set\n");
 
     if (a->is_you())
     {
@@ -29,13 +26,9 @@ void Agent_event::name_changed(char* old_name)
         {
             const char fmt[] = "%s is now known as %s";
             char* msg = (char*)calloc(strlen(fmt) + strlen(old_name) + strlen(this->a->status.name) - 4 + 1, sizeof(char));
-            printf("msg allocated\n");
             sprintf(msg, fmt, old_name, this->a->status.name);
-            printf("msg sprintf'd\n");
             chat_client->send_system_message(msg);
-            printf("sent message to system\n");
             free(msg);
-            printf("free message\n");
         }
         else
         {
