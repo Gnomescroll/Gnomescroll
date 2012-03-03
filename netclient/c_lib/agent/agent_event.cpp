@@ -204,16 +204,10 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     sy = this->a->s.y;
     sz = this->a->s.z + this->a->camera_height();
 
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+
     float f[3];
     this->a->s.forward_vector(f);
-    
-    // animate
-    const float hitscan_speed = 200.0f;
-    ClientState::hitscan_effect_list->create(
-        sx,sy,sz,
-        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
-    );
-
 
     if (type == OBJ_TYPE_AGENT)
     {
@@ -234,7 +228,15 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
         }
     }
 
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+    if (this->a->vox == NULL) return;
+    // play laser anim out of arm
+    const float hitscan_speed = 200.0f;
+    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    ClientState::hitscan_effect_list->create(
+        aim.x, aim.y, aim.z,
+        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+    );
+
 }
 
 void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int side)
@@ -244,15 +246,21 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     sy = this->a->s.y;
     sz = this->a->s.z + this->a->camera_height();
 
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+
+    if (this->a->vox == NULL) return;
+
     // animate laser to target
     float f[3];
     f[0] = x - sx;
     f[1] = y - sy;
     f[2] = z - sz;
 
+    // play laser anim out of arm
     const float hitscan_speed = 200.0f;
+    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     ClientState::hitscan_effect_list->create(
-        sx,sy,sz,
+        aim.x, aim.y, aim.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
@@ -260,7 +268,6 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
     Sound::laser_hit_block(x,y,z, 0,0,0);
 
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::fired_weapon_at_nothing()
@@ -270,16 +277,20 @@ void Agent_event::fired_weapon_at_nothing()
     sy = this->a->s.y;
     sz = this->a->s.z + this->a->camera_height();
 
+    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
+
+    if (this->a->vox == NULL) return;
+    
     float f[3];
     this->a->s.forward_vector(f);
     
+    // play laser anim out of arm
     const float hitscan_speed = 200.0f;
+    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     ClientState::hitscan_effect_list->create(
-        sx,sy,sz,
+        aim.x, aim.y, aim.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
-
-    Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 }
 
 void Agent_event::threw_grenade()

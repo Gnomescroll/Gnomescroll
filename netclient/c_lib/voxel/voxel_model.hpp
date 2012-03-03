@@ -42,8 +42,6 @@ class Voxel_model
         void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
         void restore(VoxDat* vox_dat, int team=-1);
 
-        Vec3 get_arm_direction(VoxDat* vox_dat);    //FAILED
-
         Voxel_volume* vv;
 
         Voxel_volume* get_part(int part);

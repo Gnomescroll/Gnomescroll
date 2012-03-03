@@ -119,7 +119,6 @@ void PlayerAgent_action::hitscan_laser() {
     // get the right vector for translating the hitscan laser anim
     Vec3 look = vec3_init(vec[0], vec[1], vec[2]);
     normalize_vector(&look);
-    Vec3 saved_look = vec3_init(look.x, look.y, look.z);
     Vec3 up = vec3_init(0,0,1);
     Vec3 right = vec3_cross(look, up);
     normalize_vector(&right);
@@ -218,19 +217,11 @@ void PlayerAgent_action::hitscan_laser() {
 
     Sound::fire_laser();
 
-    // play laser anim
+    // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
-    Vec3 aim = this->p->you->vox->get_arm_direction(&agent_vox_dat);
-    //Vec3 aim = this->p->you->vox->get_part(AGENT_PART_RARM)->get_aim();
-    //origin[0] = x + aim.x;
-    //origin[1] = y + aim.y;
-    //origin[2] = z + aim.z;
     ClientState::hitscan_effect_list->create(
-        //origin[0], origin[1], origin[2],
-        aim.x, aim.y, aim.z,
-        //look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
-        //aim.x*hitscan_speed, aim.y*hitscan_speed, aim.z*hitscan_speed
-        saved_look.x*hitscan_speed, saved_look.y*hitscan_speed, saved_look.z*hitscan_speed
+        origin[0], origin[1], origin[2],
+        look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
     );
 }
 

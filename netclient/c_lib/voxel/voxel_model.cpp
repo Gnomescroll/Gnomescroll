@@ -52,30 +52,6 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
     }
 }
 
-//Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
-Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
-{
-    const int arm_part = 3;  // hardcoded part for now
-    const int arm_node = 5;  // hardcoded node for now
-    Vec3 v;
-
-    struct Affine c = affine_mult(vox_skeleton_world_matrix[0], vox_skeleton_local_matrix[arm_node]);
-    //struct Affine c = affine_mult(vox_dat->vox_volume_local_matrix[arm_part], vox_skeleton_local_matrix[arm_node]);
-    //struct Affine c = vox_dat->vox_volume_local_matrix[arm_part];
-    //struct Affine d = vox_dat->vox_volume_local_matrix[arm_part];
-    //struct Affine c = vox_skeleton_local_matrix[arm_node];
-    //v = vec3_add(c.c, vox_skeleton_world_matrix[0].c);
-    v = c.c;
-    //v = d.c;
-    //v = vec3_add(c.c, d.c);
-    //v = vec3_sub(c.c, d.c);
-    //VoxPart* vp = vox_dat->vox_part[arm_part];
-    //v.x -= vp->dimension.x * vp->vox_size;
-    //v.y -= vp->dimension.y * vp->vox_size;
-    //v.z -= vp->dimension.z * vp->vox_size;
-    return v;
-}
-
 void Voxel_model::update_skeleton()
 {
     const int debug = 0;
@@ -102,9 +78,7 @@ void Voxel_model::update_skeleton()
         Voxel_volume* vv = &this->vv[i];
         vv->world_matrix = affine_mult(*vv->parent_world_matrix, vv->local_matrix);
     }
-
 }
-
 
 void Voxel_model::draw_skeleton()
 {
