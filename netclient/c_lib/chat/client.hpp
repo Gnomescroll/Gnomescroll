@@ -14,14 +14,14 @@ class ChatMessage
     public:
     int id; // only used by object list
 
-    char payload[CHAT_MESSAGE_SIZE_MAX];
+    char payload[CHAT_MESSAGE_SIZE_MAX+1];
     int sender;
     int channel;
 
     int timestamp;
 
     unsigned char r,g,b;
-    char name[PLAYER_NAME_MAX_LENGTH];
+    char name[PLAYER_NAME_MAX_LENGTH+1];
 
     void set_color();
     void set_name();
