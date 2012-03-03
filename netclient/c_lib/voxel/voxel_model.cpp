@@ -378,7 +378,7 @@ void Voxel_model::update(float x, float y, float z, float theta, float phi)
 {
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-    this->draw_skeleton();
+    //this->draw_skeleton();
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
