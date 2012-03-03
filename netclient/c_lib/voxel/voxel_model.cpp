@@ -43,9 +43,9 @@ void Voxel_model::update_skeleton()
         if(debug) 
         {   
             printf("i=%i vox_skeleton_transveral_list[i]= %i \n", i, vox_skeleton_transveral_list[i]);
-            print_affine( vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]] );
+            print_affine(vox_skeleton_world_matrix[vox_skeleton_transveral_list[i]]);
             printf("\n");
-            print_affine( vox_skeleton_local_matrix[i] );
+            print_affine(vox_skeleton_local_matrix[i]);
         }
 
         vox_skeleton_world_matrix[i] = affine_mult( 
@@ -57,7 +57,7 @@ void Voxel_model::update_skeleton()
     for(int i=0; i<this->n_parts; i++)
     {
         Voxel_volume* vv = &this->vv[i];
-        vv->world_matrix = affine_mult( *vv->parent_world_matrix, vv->local_matrix );
+        vv->world_matrix = affine_mult(*vv->parent_world_matrix, vv->local_matrix);
     }
 
 }

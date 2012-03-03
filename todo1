@@ -460,7 +460,9 @@ realign agent skeleton to proper alignment
 pushed build 6245(7)
 
 realign crouched & dead models
-
+redesign hud
+-- move status text to top left
+-- make weapon text more helpful
 ====================
 
 == MODELS ==
@@ -558,9 +560,6 @@ try 256x256 map
 notify player disconnected
 
 tell players they can afford spawners the first time they capture a flag
-
-when out of ammo, say OUT OF AMMO in the hud
-move indicator to below icons
 
 test what happens you jump off the map with the flag
 

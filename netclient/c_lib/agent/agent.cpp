@@ -157,16 +157,13 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float tr = 10.0f;    //tick rate
     const float tr2 = tr*tr;
 
-    float xy_speed;
-    float height;
-    xy_speed = AGENT_SPEED / tr;
-    height = box.b_height;
+    float speed = AGENT_SPEED / tr;
+    float height = box.b_height;
     if (crouch)
     {
-        xy_speed = AGENT_SPEED_CROUCHED / tr;
+        speed = AGENT_SPEED_CROUCHED / tr;
         height = box.c_height;
     }
-
 
     const float z_gravity = -3.0f / tr2;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
@@ -187,23 +184,30 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
 
     if(forward)
     {
-            CS_vx += xy_speed*cos( _cs.theta * pi);
-            CS_vy += xy_speed*sin( _cs.theta * pi);
+            CS_vx += speed*cos( _cs.theta * pi);
+            CS_vy += speed*sin( _cs.theta * pi);
     }
     if(backwards)
     {
-            CS_vx += -xy_speed*cos( _cs.theta * pi);
-            CS_vy += -xy_speed*sin( _cs.theta * pi);
+            CS_vx += -speed*cos( _cs.theta * pi);
+            CS_vy += -speed*sin( _cs.theta * pi);
     }
     if(left) 
     {
-            CS_vx += xy_speed*cos( _cs.theta * pi + pi/2);
-            CS_vy += xy_speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += speed*cos( _cs.theta * pi + pi/2);
+            CS_vy += speed*sin( _cs.theta * pi + pi/2);
     }
     if(right) 
     {
-            CS_vx += -xy_speed*cos( _cs.theta * pi + pi/2);
-            CS_vy += -xy_speed*sin( _cs.theta * pi + pi/2);
+            CS_vx += -speed*cos( _cs.theta * pi + pi/2);
+            CS_vy += -speed*sin( _cs.theta * pi + pi/2);
+    }
+
+    if (CS_vx || CS_vy)
+    {
+        float len = sqrt(CS_vx*CS_vx + CS_vy*CS_vy);
+        CS_vx *= speed/len;
+        CS_vy *= speed/len;
     }
 
     // need distance from ground
