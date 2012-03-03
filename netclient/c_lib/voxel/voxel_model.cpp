@@ -55,36 +55,25 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
 //Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
 Vec3 Voxel_model::get_arm_direction(VoxDat* vox_dat)
 {
-    //const int arm_part = 4;  // hardcoded part for now
-    //const int arm_node = 5;  // hardcoded node for now
-    //Vec3 v;
+    const int arm_part = 3;  // hardcoded part for now
+    const int arm_node = 5;  // hardcoded node for now
+    Vec3 v;
 
-    ////struct Affine c = affine_mult(vox_dat->vox_volume_local_matrix[arm_part], vox_skeleton_local_matrix[arm_node]);
-    ////struct Affine c = vox_dat->vox_volume_local_matrix[arm_part];
+    struct Affine c = affine_mult(vox_skeleton_world_matrix[0], vox_skeleton_local_matrix[arm_node]);
+    //struct Affine c = affine_mult(vox_dat->vox_volume_local_matrix[arm_part], vox_skeleton_local_matrix[arm_node]);
+    //struct Affine c = vox_dat->vox_volume_local_matrix[arm_part];
+    //struct Affine d = vox_dat->vox_volume_local_matrix[arm_part];
     //struct Affine c = vox_skeleton_local_matrix[arm_node];
-
-    //static int i = 0;
-    //switch (i++)
-    //{
-        //case 0:
-            //v = c.vx;
-            //printf("vx\n");
-            //break;
-        //case 1:
-            //v = c.vy;
-            //printf("vy\n");
-            //break;
-        //case 2:
-            //v = c.vz;
-            //printf("vz\n");
-            //break;
-        //default:
-            //v = c.vz;
-            //printf("vz\n");
-    //}
-    //i %= 3;
-
-    //return v;
+    //v = vec3_add(c.c, vox_skeleton_world_matrix[0].c);
+    v = c.c;
+    //v = d.c;
+    //v = vec3_add(c.c, d.c);
+    //v = vec3_sub(c.c, d.c);
+    //VoxPart* vp = vox_dat->vox_part[arm_part];
+    //v.x -= vp->dimension.x * vp->vox_size;
+    //v.y -= vp->dimension.y * vp->vox_size;
+    //v.z -= vp->dimension.z * vp->vox_size;
+    return v;
 }
 
 void Voxel_model::update_skeleton()
@@ -134,6 +123,7 @@ void Voxel_model::draw_skeleton()
 
     const float len = 0.25;
 
+    // node matrix orientation
     for(int i=0; i<n_skeleton_nodes; i++)
     {
         struct Affine m = vox_skeleton_world_matrix[i];
@@ -158,6 +148,7 @@ void Voxel_model::draw_skeleton()
 
     }
 
+    // node->node connection
     for(int i=1; i<n_skeleton_nodes; i++)
     {
 
@@ -174,6 +165,7 @@ void Voxel_model::draw_skeleton()
     }
 
 
+    // part matrix orientation
     for(int i=0; i<this->n_parts; i++)
     {
         struct Affine m = this->vv[i].world_matrix;
@@ -197,7 +189,7 @@ void Voxel_model::draw_skeleton()
         glVertex3f(v.x,v.y,v.z);
     }
 
-
+    // node->part connection
     for(int i=0; i<this->n_parts; i++)
     {
         struct Affine m1 = *(this->vv[i].parent_world_matrix);

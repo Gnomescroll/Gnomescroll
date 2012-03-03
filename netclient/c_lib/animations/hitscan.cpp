@@ -107,7 +107,7 @@ void HitscanEffect::tick()
 }
 
 void HitscanEffect::draw(float delta, Vec3 camera)
-{   // COMMENT THE FUCKING CODE
+{
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 

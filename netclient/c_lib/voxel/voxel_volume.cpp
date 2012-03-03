@@ -568,7 +568,6 @@ void Voxel_volume::draw_bounding_box()
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0f);
 
-
     int i,j;
     float _x,_y,_z;
 
