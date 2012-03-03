@@ -8,6 +8,12 @@
 #include <compat_gl.h>
 #include <c_lib/SDL/texture_loader.hpp>
 
+/*
+ *
+ * NOT USED. go to hitscan.cpp
+ *
+ */
+
 namespace Animations
 {
 
@@ -207,23 +213,23 @@ void HitscanLaserEffect_list::tick()
 {
     //printf("tick \n");
 
-    const int debug = 0;
+    //const int debug = 0;
 
-    if(debug)
-    {
-        static int frame = 0;
-        frame++;
+    //if(debug)
+    //{
+        //static int frame = 0;
+        //frame++;
 
-        if(frame % 8 == 0 )
-        {
-            const float vm = 16.0;
-            float vx = vm*(float)rand()/(float)RAND_MAX;
-            float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
-            float vz = vm*(float)rand()/(float)RAND_MAX;
-            ClientState::hitscan_laser_effect_list->create(32.0, 32.0, 128.0, vx, vy, vz );
-        }
+        //if(frame % 8 == 0 )
+        //{
+            //const float vm = 16.0;
+            //float vx = vm*(float)rand()/(float)RAND_MAX;
+            //float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
+            //float vz = vm*(float)rand()/(float)RAND_MAX;
+            //ClientState::hitscan_laser_effect_list->create(32.0, 32.0, 128.0, vx, vy, vz );
+        //}
 
-    }
+    //}
 
     //create_hitscan(0.0, 0.0, 0.0, 0.0, 0.0, 160.0);
 

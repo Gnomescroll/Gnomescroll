@@ -10,9 +10,7 @@ typedef enum {
     TYPE_spawner_placer
 } weapon_type;
 
-const int WEAPON_HUD_STRING_MAX = 22+1;
-const char hud_undefined_string[] = "--";
-const char hud_display_format_string[] = "%s/%s::%s/%s";
+const int WEAPON_HUD_STRING_MAX = 31;
 
 class Weapon {
     protected:

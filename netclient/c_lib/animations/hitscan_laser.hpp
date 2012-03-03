@@ -2,6 +2,12 @@
 
 #include <c_lib/template/object_list.hpp>
 
+/*
+ *
+ * NOT USED. go to hitscan.hpp
+ *
+ */
+
 namespace Animations
 {
 

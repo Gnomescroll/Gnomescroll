@@ -454,13 +454,17 @@ player name sanitization
 fixed possible buffer overruns on some pack_string using packets
 convert all statically allocatied Client/ServerState lists & ctf to pointers on the heap
 fix segfault in rename system notification
+script to clean dcvox conf files
 realign agent skeleton to proper alignment
+
+pushed build 6245(7)
+
+realign crouched & dead models
+
 ====================
 
 == MODELS ==
 --Aiming gun
-
-glDraw'd skeleton for editing
 
 Animations
 --Keyframes?
@@ -533,12 +537,6 @@ better feedback on damage received
 
 better damage on character models (radius instead of single voxel)
 
-fix bug in dcvox pipeline where dimensions are incorrect
--- sort out pipeline
--- move dimensions to inferred by parser?
-
-realign crouched & dead models
-
 try jetpack hover height of ~1.2
 
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
@@ -562,6 +560,7 @@ notify player disconnected
 tell players they can afford spawners the first time they capture a flag
 
 when out of ammo, say OUT OF AMMO in the hud
+move indicator to below icons
 
 test what happens you jump off the map with the flag
 
@@ -575,8 +574,8 @@ ammo drops
 
 flag grabbing bug -- make sure players cant grab the flag if held
 
-turn off skeleton gl draw
-
 make non-root user on m643 for angus
+
+sparks on laser terrain impact
 
 PRINT & MAIL REBATES

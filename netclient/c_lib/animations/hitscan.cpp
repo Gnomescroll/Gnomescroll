@@ -107,31 +107,23 @@ void HitscanEffect::tick()
 }
 
 void HitscanEffect::draw(float delta, Vec3 camera)
-{
+{   // COMMENT THE FUCKING CODE
     const float width = 0.50;
     const float height = 1.0/4.0;   //length per velocity
 
-    float _x = x + vx*delta;
-    float _y = y + vy*delta;
-    float _z = z + vz*delta;  
+    Vec3 v = vec3_init(vx,vy,vz);
+    normalize_vector(&v);
 
-    _x = x;
-    _y = y;
-    _z = z;
+    Vec3 x1 = vec3_init(x,y,z);
+    Vec3 look = vec3_sub(x1, camera);
 
-    Vec3 r = vec3_init(vx,vy,vz);
-    normalize_vector( &r );
-
-    Vec3 x1 = vec3_init(_x,_y,_z);
-    Vec3 l1 = vec3_sub(x1, camera);
-
-    Vec3 u1 = vec3_cross( l1, r);
-    normalize_vector( &u1 );
+    Vec3 u1 = vec3_cross(look, v);
+    normalize_vector(&u1);
     
-    Vec3 x2 = vec3_init(_x- height*vx, _y - height*vy, _z - height*vz);
-    Vec3 l2 = vec3_sub(x2, camera);
+    Vec3 x2 = vec3_init(x - height*vx, y - height*vy, z - height*vz);
+    look = vec3_sub(x2, camera);
 
-    Vec3 u2 = vec3_cross( l2, r);
+    Vec3 u2 = vec3_cross(look, v);
     normalize_vector(&u2);
 
     u1 = vec3_scalar_mult(u1, width);
@@ -142,18 +134,24 @@ void HitscanEffect::draw(float delta, Vec3 camera)
     static const float ty_min = 0.0;
     static const float ty_max = 1.0;
 
-
-    glTexCoord2f(tx_max,ty_max );
+    glTexCoord2f(tx_max,ty_max);
     glVertex3f( x2.x + u2.x, x2.y + u2.y, x2.z + u2.z );  // Bottom left
     
-    glTexCoord2f(tx_min,ty_max );
+    glTexCoord2f(tx_min,ty_max);
     glVertex3f( x1.x + u1.x, x1.y + u1.y, x1.z + u1.z);  // Top left
     
-    glTexCoord2f(tx_min,ty_min );
+    glTexCoord2f(tx_min,ty_min);
     glVertex3f( x1.x - u1.x, x1.y - u1.y, x1.z - u1.z );  // Top right
 
     glTexCoord2f(tx_max,ty_min);
     glVertex3f( x2.x - u2.x, x2.y - u2.y, x2.z - u2.z );  // Bottom right
+
+     ////LOOKS BETTER -
+    //glTexCoord2f(tx_min,ty_min);
+    //glVertex3f( x1.x, x1.y, x1.z );  // Top right
+
+    //glTexCoord2f(tx_max,ty_min);
+    //glVertex3f( x2.x, x2.y, x2.z );  // Bottom right
 }
 
 /* List */

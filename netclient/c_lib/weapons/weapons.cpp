@@ -4,6 +4,11 @@
 
 namespace Weapons {
 
+static const char hud_undefined_string[] = "--";
+static const char hud_display_format_string[] = "%s/%s::%s/%s";
+static const char out_of_ammo_string[] = "OUT OF AMMO";
+static const char reload_string[] = "RELOAD";
+
 Weapon::Weapon(weapon_type type)
 :
 clip_str(NULL),
@@ -18,7 +23,7 @@ type(type),
 ammo(0),
 scope(false)
 {
-    this->hud_string = (char*)calloc(WEAPON_HUD_STRING_MAX, sizeof(char));
+    this->hud_string = (char*)calloc(WEAPON_HUD_STRING_MAX+1, sizeof(char));
 }
 
 Weapon::~Weapon()
@@ -60,7 +65,12 @@ bool HitscanLaser::fire() {
     return true;
 }
 
-char* HitscanLaser::hud_display() {
+char* HitscanLaser::hud_display()
+{
+    if (ammo <= 0)
+        return const_cast<char*>(out_of_ammo_string);
+    else if (clip <= 0)
+        return const_cast<char*>(reload_string);
 
     if (clip > 9999) clip = 9999;
     if (clip < -999) clip = -999;
@@ -169,7 +179,11 @@ bool BlockApplier::fire() {
     return true;
 }
 
-char* BlockApplier::hud_display() {
+char* BlockApplier::hud_display()
+{
+    if (ammo <= 0)
+        return const_cast<char*>(out_of_ammo_string);
+
     if (ammo > 9999) ammo = 9999;
     if (ammo < -999) ammo = -999;
     sprintf(ammo_str, "%d", ammo);
@@ -218,14 +232,16 @@ bool BlockPick::fire() {
     return true;
 }
 
-char* BlockPick::hud_display() {
-    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+char* BlockPick::hud_display()
+{
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
 BlockPick::BlockPick() :
 Weapon(TYPE_block_pick)
 {
+    sprintf(this->hud_string, (char*)"Block pick");
     this->clip_str = const_cast<char*>(hud_undefined_string);
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = const_cast<char*>(hud_undefined_string);
@@ -252,7 +268,11 @@ bool GrenadeThrower::fire() {
     return true;
 }
 
-char* GrenadeThrower::hud_display() {
+char* GrenadeThrower::hud_display()
+{
+    if (ammo <= 0)
+        return const_cast<char*>(out_of_ammo_string);
+
     if (ammo > 9999) ammo = 9999;
     if (ammo < -999) ammo = -999;
     sprintf(ammo_str, "%d", ammo);
@@ -297,7 +317,7 @@ bool SpawnerPlacer::fire()
 
 char* SpawnerPlacer::hud_display()
 {
-    sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
     return hud_string;
 }
 
@@ -314,6 +334,7 @@ Weapon(TYPE_spawner_placer)
     this->clip_size_str = const_cast<char*>(hud_undefined_string);
     this->ammo_str = const_cast<char*>(hud_undefined_string);
     this->max_ammo_str = const_cast<char*>(hud_undefined_string);
+    sprintf(this->hud_string, (char*)"Block pick");
 }
 
 SpawnerPlacer::~SpawnerPlacer()
