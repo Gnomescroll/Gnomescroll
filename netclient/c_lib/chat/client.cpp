@@ -422,6 +422,8 @@ void ChatClient::received_message(int channel, int sender, char* payload)
     ChatMessage* m = chat_message_list->create();
     m->sender = sender;
     m->channel = channel;
+    if (strlen(payload) > CHAT_MESSAGE_SIZE_MAX)
+        payload[CHAT_MESSAGE_SIZE_MAX] = '\0';
     strcpy(m->payload, payload);
     m->set_color();
     m->set_name();

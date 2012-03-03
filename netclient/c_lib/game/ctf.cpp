@@ -145,6 +145,14 @@ int CTF::get_score(int team)
 
 void CTF::set_flag_position(int team, float x, float y, float z)
 {
+    // sanitize position
+    if (x < 0) x = 0;
+    if (x >= map_dim.x) x = map_dim.x - 1;
+    if (y < 0) y = 0;
+    if (y >= map_dim.y) y = map_dim.y - 1;
+    if (z < 0) z = 0;
+    if (z >= map_dim.z) z = map_dim.z - 1;
+    
     switch (team) {
         case 1:
             one.flag->set_position(x,y,z);
@@ -366,8 +374,8 @@ void CTF::send_to_client(int client_id)
 void CTF::reset_flag(int team)
 {
     float x,y,z;
-    int x_max = 128;
-    int y_max = 128;
+    int x_max = map_dim.x;
+    int y_max = map_dim.y;
 
     x = randrange(0, x_max-1);
     switch (team)
@@ -383,12 +391,11 @@ void CTF::reset_flag(int team)
             return;
     }
     z = _get_highest_open_block(x,y);
-    x += randf(); y += randf();
     this->set_flag_position(team, x,y,z);
 }
 
 void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
-{printf("agent drop flag\n");
+{
     switch (agent_team)
     {
         case 1:
@@ -650,10 +657,10 @@ void CTF::update_flags_held()
             switch (a->status.team)
             {
                 case 1:
-                    one.flag->held = true;
+                    two.flag->held = true;
                     break;
                 case 2:
-                    two.flag->held = true;
+                    one.flag->held = true;
                     break;
                 default:
                     printf("WARNING -- CTF::update_flags_held() -- agent %d has_flag but has team %d\n", a->id, a->status.team);
