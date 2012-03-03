@@ -65,7 +65,7 @@ void Voxel_model::update_skeleton()
 
 void Voxel_model::draw_skeleton()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT && !PRODUCTION
 
     glDisable(GL_TEXTURE_2D);
     glShadeModel(GL_SMOOTH);
@@ -378,7 +378,10 @@ void Voxel_model::update(float x, float y, float z, float theta, float phi)
 {
     this->set_skeleton_root(x,y,z, theta);
     this->update_skeleton();
-    //this->draw_skeleton();
+    #if DC_CLIENT
+    if (input_state.skeleton_editor)
+        this->draw_skeleton();
+    #endif
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)

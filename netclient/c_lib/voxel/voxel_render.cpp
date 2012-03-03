@@ -11,6 +11,8 @@
 
 #include <c_lib/common/enum_types.hpp>
 
+#include <c_lib/input/handlers.hpp>
+
 const int VOXEL_RENDER_LIST_SIZE = 1024;
 
 Voxel_render_list::Voxel_render_list()
@@ -213,34 +215,27 @@ void Voxel_render_list::init_voxel_render_list_shader1()
     init=1;
 }
 
-#if PRODUCTION
-    #define VOXEL_RENDER_WIREFRAME 0
-#else
-    #define VOXEL_RENDER_WIREFRAME 1
-#endif
-
-#define VOXEL_RENDER_DISABLE_VOXEL_VOLUMES 0
-
 void Voxel_render_list::draw()
 {
 
-#if VOXEL_RENDER_WIREFRAME
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+#if !PRODUCTION
+    if (input_state.skeleton_editor)
     {
-        if( render_list[i] == NULL || !render_list[i]->draw ) continue;
-        Voxel_volume* vv = render_list[i];
+        for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+        {
+            if( render_list[i] == NULL || !render_list[i]->draw ) continue;
+            Voxel_volume* vv = render_list[i];
 
-        if(vv->vvl.vnum == 0) continue;
-        if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
+            if(vv->vvl.vnum == 0) continue;
+            if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
 
-        vv->draw_bounding_box();
+            vv->draw_bounding_box();
+        }
     }
 #endif
 
-#if VOXEL_RENDER_DISABLE_VOXEL_VOLUMES
     this->update_vertex_buffer_object();
     return;
-#endif
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
 
