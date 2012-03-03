@@ -211,11 +211,17 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 
 /* Agent */
 
+#include <c_lib/common/lua/lua.hpp>
+
 void agent_key_down_handler(SDL_Event* event)
 {
 
     switch (event->key.keysym.sym)
     {
+        case SDLK_k:
+            run_lua_test();
+            break;
+
         case SDLK_r:
             ClientState::playerAgent_state.action.reload();
             break;

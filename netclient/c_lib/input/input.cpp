@@ -32,8 +32,6 @@ int get_key_state() {
     return 0;
 }
 
-#include <c_lib/time/physics_timer.h>
-
 void bind_mouse()
 {
     SDL_ShowCursor(0);
@@ -46,6 +44,7 @@ void unbind_mouse()
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
+#include <c_lib/common/lua/lua.hpp>
 
 int process_events()
 {

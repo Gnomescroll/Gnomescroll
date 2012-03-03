@@ -89,6 +89,10 @@
 #include <c_lib/common/profiling/frame_graph.cpp>
 #include <c_lib/common/profiling/map_vbo_graph.cpp>
 
+/* LUA */
+
+#include <c_lib/common/lua/lua.cpp>
+
 /* map */
 
 #include <c_lib/t_map/t_map_class.cpp>
