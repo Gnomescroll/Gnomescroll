@@ -218,7 +218,7 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 void Voxel_render_list::draw()
 {
 
-#if DC_CLIENT && !PRODUCTION
+#if !PRODUCTION
     if (input_state.skeleton_editor)
     {
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
