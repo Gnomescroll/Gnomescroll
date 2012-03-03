@@ -63,6 +63,8 @@ class Text_list: public Object_list<Text,TEXT_MAX>
         const char* name() { return "Text"; }
 };
 
-extern Text_list text_list;
+extern Text_list* text_list;
+void init();
+void teardown();
 
 }

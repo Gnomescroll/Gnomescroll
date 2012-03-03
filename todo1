@@ -545,3 +545,15 @@ fix bug in dcvox pipeline where dimensions are incorrect
 realign model with correct bounding boxes/dimensions
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
+
+lower blood momentum
+
+--segfault on some clients' close
+
+all object lists to be heap allocated so can control destruction order
+or wrapped in a class to guarantee order
+0. ClientState::grenade_list.
+1. ClientState::grenade_list->
+2. ClientState::list.grenade_list.
+3. ClientState::list.grenade.
+3. ClientState::list.grenades.

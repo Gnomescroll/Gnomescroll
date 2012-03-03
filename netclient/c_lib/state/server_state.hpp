@@ -10,17 +10,20 @@
 
 namespace ServerState
 {
-    extern Agent_list agent_list GNOMESCROLL_API;
-    extern Cspray_list cspray_list;
-    extern Grenade_list grenade_list GNOMESCROLL_API;
-    //extern Neutron_list neutron_list;
-    extern Monsters::Slime_list slime_list GNOMESCROLL_API;
-    extern Voxel_hitscan_list voxel_hitscan_list;
-    extern Spawner_list spawner_list;
+    extern Agent_list* agent_list GNOMESCROLL_API;
+    extern Cspray_list* cspray_list;
+    extern Grenade_list* grenade_list GNOMESCROLL_API;
+    //extern Neutron_list* neutron_list;
+    extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
+    extern Voxel_hitscan_list* voxel_hitscan_list;
+    extern Spawner_list* spawner_list;
     
-    extern CTF ctf GNOMESCROLL_API;
+    extern CTF* ctf GNOMESCROLL_API;
     
     void init();
+    void init_lists();
+    void teardown();
+    void teardown_lists();
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,

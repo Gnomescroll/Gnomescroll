@@ -191,60 +191,65 @@ int init_c_lib() {
 
     srand(time(NULL));   // seed the RNG
 
-    init_vox_dats();
+    init_video();
+    init_image_loader();
 
+    init_vox_dats();
+    ClientState::init_lists();
+    init_voxel_volume();
+    ClientState::init();
+
+    HudText::init();
+    
     init_network();
     init_net_client();
     
-    #ifdef DC_CLIENT
-        init_video();
-        init_image_loader();
-        init_input();
-        init_handlers();
-        init_particle_functions();
-        init_voxel_volume();
-        init_cameras();
-        init_chat_client();
-        init_particles();
-        HudFont::init();
-        HudInventory::init();
-        HudMap::init();
-        HudEquipment::init();
-        HudReticle::init();
-        HudCubeSelector::init();
-        Compass::init();
-        Hud::init();
-        //vn::init();
-        
-        Animations::init_hitscan();
-        Animations::init_hitscan_laser();
-        
-        Sound::init();
+    init_input();
+    init_handlers();
+    init_particle_functions();
+    init_cameras();
+    init_chat_client();
+    init_particles();
+    HudFont::init();
+    HudInventory::init();
+    HudMap::init();
+    HudEquipment::init();
+    HudReticle::init();
+    HudCubeSelector::init();
+    Compass::init();
+    Hud::init();
+    //vn::init();
+    
+    Animations::init_hitscan();
+    Animations::init_hitscan_laser();
+    
+    Sound::init();
 
-        ClientState::init();
-
-        //Sound::test();
-    #endif
+    //Sound::test();
     
     return 0;
 }
 
 
 void close_c_lib() {
-    printf("Closing c_lib\n");
+    printf("Closing game...\n");
     shutdown_net_client();
     teardown_cameras();
     HudFont::teardown();
     teardown_chat_client();
+
+    ClientState::teardown();
+    ClientState::teardown_lists();
     teardown_voxel_volume();
+    HudText::teardown();
+
     // free surfaces
     t_map::teardown_shader();
     teardown_particle_surface();
     HudMap::teardown();
     //vn::teardown();
+    Sound::close();
+    close_SDL();  //would be called twice, already scheduled for at exit
 
-    #ifdef DC_CLIENT
-        Sound::close();
-        close_SDL();  //would be called twice, already scheduled for at exit
-    #endif
+    printf("Game closed\n");
 }

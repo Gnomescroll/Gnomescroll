@@ -47,7 +47,7 @@ void Agent_status::set_spawner(int pt)
 
 void Agent_status::set_spawner()
 {
-    int pt = STATE::spawner_list.get_random_spawner(this->team);
+    int pt = STATE::spawner_list->get_random_spawner(this->team);
     this->spawner = pt;
 }
 
@@ -105,7 +105,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
     // dont allow team kills
     if (inflictor_type == OBJ_TYPE_AGENT && inflictor_id != this->a->id)
     {
-        Agent_state *inf = STATE::agent_list.get(inflictor_id);
+        Agent_state *inf = STATE::agent_list->get(inflictor_id);
         if (inf == NULL) return this->health;
         if (inf->status.team == this->team && (!Options::team_kills)) return this->health;
     }
@@ -182,13 +182,13 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
     if (killed) {
         switch (inflictor_type) {
             case OBJ_TYPE_AGENT:
-                attacker = STATE::agent_list.get(inflictor_id);
+                attacker = STATE::agent_list->get(inflictor_id);
                 if (attacker != NULL) {
                     attacker->status.kill(this->a->id);
                 }
                 break;
             case OBJ_TYPE_SLIME:
-                //Monsters::Slime* slime = STATE::slime_list.get(inflictor_id);
+                //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
                 //if (slime != NULL) {}
                 break;
             default:
@@ -200,7 +200,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
         // drop any items (FLAG)
         if (this->has_flag) {
             this->drop_flag();
-            ServerState::ctf.agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
+            ServerState::ctf->agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
         }
 
         // send conflict notification to clients

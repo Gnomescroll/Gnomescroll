@@ -64,7 +64,7 @@ void PlayerAgent_action::hitscan_laser() {
     float vox_distance = 10000000.0f;
     float collision_point[3];
     Voxel_hitscan_target target;
-    bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
+    bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
@@ -168,7 +168,7 @@ void PlayerAgent_action::hitscan_laser() {
                     0,0,0
                 );
             }
-            agent = ClientState::agent_list.get(target.entity_id);
+            agent = ClientState::agent_list->get(target.entity_id);
             if (agent==NULL) break;
             if (agent->status.team == this->p->you->status.team) break;
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);
@@ -219,7 +219,7 @@ void PlayerAgent_action::hitscan_laser() {
 
     // play laser anim
     const float hitscan_speed = 200.0f;
-    ClientState::hitscan_effect_list.create(
+    ClientState::hitscan_effect_list->create(
         origin[0], origin[1], origin[2],
         look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
     );
@@ -245,7 +245,7 @@ void PlayerAgent_action::hitscan_pick() {
     float vox_distance = 10000000.0f;
     float collision_point[3];
     struct Voxel_hitscan_target target;
-    bool voxel_hit = ClientState::voxel_hitscan_list.hitscan(
+    bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
         p->agent_id, OBJ_TYPE_AGENT,
@@ -320,7 +320,7 @@ void PlayerAgent_action::hitscan_pick() {
                     0,0,0
                 );
             }
-            agent = ClientState::agent_list.get(target.entity_id);
+            agent = ClientState::agent_list->get(target.entity_id);
             if (agent==NULL) break;
             if (agent->status.team == this->p->you->status.team) break;
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel);        
@@ -392,7 +392,7 @@ void PlayerAgent_action::throw_grenade()
     f[0] *= PLAYER_ARM_FORCE;
     f[1] *= PLAYER_ARM_FORCE;
     f[2] *= PLAYER_ARM_FORCE;
-    Grenade* g = ClientState::grenade_list.create(x,y,z, f[0], f[1], f[2]);
+    Grenade* g = ClientState::grenade_list->create(x,y,z, f[0], f[1], f[2]);
     if (g==NULL) return;
     g->owner = this->p->agent_id;
     

@@ -4,13 +4,13 @@
 #include <voxel/constants.hpp>
 
 #ifdef DC_CLIENT
-    #include <voxel/voxel_render.hpp>
+#include <voxel/voxel_render.hpp>
 
-    void Voxel_volume::register_with_renderer(Voxel_render_list* vrl)
-    {
-        vrl->register_voxel_volume(this);
-        voxel_render_list = vrl;
-    }
+void Voxel_volume::register_with_renderer(Voxel_render_list* vrl)
+{
+    vrl->register_voxel_volume(this);
+    voxel_render_list = vrl;
+}
 #endif
 
 const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
@@ -245,6 +245,7 @@ Voxel_volume::Voxel_volume()
 id(-1),
 draw(true),
 hitscan(true),
+radius(0),
 voxel(NULL)
 {}
 
@@ -252,7 +253,8 @@ Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
 :
 id(-1),
 draw(true),
-hitscan(true)
+hitscan(true),
+radius(0)
 {
     this->voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
@@ -652,21 +654,21 @@ void destroy_object_voxel(int id, int type, int part, int voxel[3])
     switch (type)
     {
         case OBJ_TYPE_AGENT:
-            obj = STATE::agent_list.get(id);
+            obj = STATE::agent_list->get(id);
             if (obj == NULL || ((Agent_state*)obj)->vox == NULL) return;
             vv = ((Agent_state*)obj)->vox->get_part(part);
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;
         case OBJ_TYPE_SLIME:
-            obj = STATE::slime_list.get(id);
+            obj = STATE::slime_list->get(id);
             if (obj == NULL || ((Monsters::Slime*)obj)->vox == NULL) return;
             vv = ((Monsters::Slime*)obj)->vox->get_part(part);
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;
         //case OBJ_TYPE_SPAWNER:
-            //obj = STATE::spawner_list.get(id);
+            //obj = STATE::spawner_list->get(id);
             //if (obj == NULL || ((Spawner*)obj)->vox == NULL) return;
             //vv = ((Spawner*)obj)->vox->get_part(part);
             //if (vv == NULL) return;

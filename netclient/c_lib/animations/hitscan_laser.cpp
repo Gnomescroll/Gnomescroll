@@ -220,7 +220,7 @@ void HitscanLaserEffect_list::tick()
             float vx = vm*(float)rand()/(float)RAND_MAX;
             float vy = 160.0; //+vm*(float)rand()/(float)RAND_MAX;
             float vz = vm*(float)rand()/(float)RAND_MAX;
-            ClientState::hitscan_laser_effect_list.create(32.0, 32.0, 128.0, vx, vy, vz );
+            ClientState::hitscan_laser_effect_list->create(32.0, 32.0, 128.0, vx, vy, vz );
         }
 
     }

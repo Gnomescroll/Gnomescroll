@@ -100,9 +100,10 @@ int init_c_lib()
         return 1;
     }
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
-    printf("init c_lib\n");
+    printf("Server init\n");
     srand(time(NULL));
 
+    ServerState::init_lists();
     init_vox_dats();
     init_chat_server();
 
@@ -114,9 +115,11 @@ int init_c_lib()
 
 void close_c_lib()
 {
+    printf("Server closing...\n");
     teardown_chat_server();
-    
-    printf("Closed c_lib\n");
+    ServerState::teardown();
+    ServerState::teardown_lists();
+    printf("Server closed\n");
 }
 
 void _set_seed(int seed) {

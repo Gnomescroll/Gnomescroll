@@ -106,14 +106,14 @@ void update_team_icons(int team)    // team is optional; team=0 means generate a
         for (int i=0; i<(int)N_TEAMS; i++)
         {
             unsigned char r,g,b;    // color to replace with
-            ClientState::ctf.get_team_color(i+1, &r, &g, &b);
+            ClientState::ctf->get_team_color(i+1, &r, &g, &b);
             for (int j=0; j<N_ICONS; j++)
                 load_colored_icon(icon_filenames[j], &icons[j][i], br,bg,bb, r,g,b);
         }
     else
     {
         unsigned char r,g,b;    // color to replace with
-        ClientState::ctf.get_team_color(team, &r, &g, &b);
+        ClientState::ctf->get_team_color(team, &r, &g, &b);
         for (int j=0; j<N_ICONS; j++)
             load_colored_icon(icon_filenames[j], &icons[j][team-1], br,bg,bb, r,g,b);
     }
@@ -295,10 +295,10 @@ void update_agents()
         ((Uint32*)overlay_surface->pixels)[x + map_dim.x*y] = pix;
     }
 
-    ClientState::ctf.get_team_color(team, &r, &g, &b);
-    for (int i=0; i<ClientState::agent_list.n_max; i++)
+    ClientState::ctf->get_team_color(team, &r, &g, &b);
+    for (int i=0; i<ClientState::agent_list->n_max; i++)
     {
-        Agent_state* agent = ClientState::agent_list.a[i];
+        Agent_state* agent = ClientState::agent_list->a[i];
         if (agent == NULL) continue;
         if (agent->status.team != team) continue;
         if (agent->id == ClientState::playerAgent_state.agent_id) continue;
@@ -361,9 +361,9 @@ void draw_spawners(float z)
             && ClientState::playerAgent_state.you->status.team != team)
             continue;
         glBindTexture(GL_TEXTURE_2D, spawner_icons[team-1]);
-        for (int i=0; i<ClientState::spawner_list.n_max; i++)
+        for (int i=0; i<ClientState::spawner_list->n_max; i++)
         {
-            Spawner* s = ClientState::spawner_list.a[i];
+            Spawner* s = ClientState::spawner_list->a[i];
             if (s == NULL) continue;
             if (s->team != team) continue;
             world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
@@ -387,12 +387,12 @@ void draw_bases(float z)
     if (team == 0)
     {   // draw both
         glBindTexture(GL_TEXTURE_2D, base_icons[0]);
-        b = ClientState::ctf.one.base;
+        b = ClientState::ctf->one.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
         glBindTexture(GL_TEXTURE_2D, base_icons[1]);
-        b = ClientState::ctf.two.base;
+        b = ClientState::ctf->two.base;
         world_to_map_screen_coordinates(b->x, b->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
@@ -400,9 +400,9 @@ void draw_bases(float z)
     {
         glBindTexture(GL_TEXTURE_2D, base_icons[team-1]);
         if (team == 1)
-            b = ClientState::ctf.one.base;
+            b = ClientState::ctf->one.base;
         else if (team == 2)
-            b = ClientState::ctf.two.base;
+            b = ClientState::ctf->two.base;
 
         if (b != NULL)
         {
@@ -427,12 +427,12 @@ void draw_flags(float z)
     if (team == 0)
     {   // draw both
         glBindTexture(GL_TEXTURE_2D, flag_icons[0]);
-        f = ClientState::ctf.one.flag;
+        f = ClientState::ctf->one.flag;
         world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
 
         glBindTexture(GL_TEXTURE_2D, flag_icons[1]);
-        f = ClientState::ctf.two.flag;
+        f = ClientState::ctf->two.flag;
         world_to_map_screen_coordinates(f->x, f->y, &sx, &sy);
         draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
     }
@@ -440,9 +440,9 @@ void draw_flags(float z)
     {
         glBindTexture(GL_TEXTURE_2D, flag_icons[team-1]);
         if (team == 1)
-            f = ClientState::ctf.one.flag;
+            f = ClientState::ctf->one.flag;
         else if (team == 2)
-            f = ClientState::ctf.two.flag;
+            f = ClientState::ctf->two.flag;
 
         if (f != NULL)
         {
