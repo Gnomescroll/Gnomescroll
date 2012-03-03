@@ -69,10 +69,12 @@ void enable_quit()
 
 void toggle_skeleton_editor()
 {
-#ifdef PRODUCTION
+#if PRODUCTION
     input_state.skeleton_editor = false;
 #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
+    if (input_state.skeleton_editor)
+        printf("Skeleton editor enabled\n");
 #endif
 }
 
@@ -109,7 +111,7 @@ void toggle_camera_mode()
 void init_handlers()
 {
     // set input_state defaults
-#ifdef PRODUCTION
+#if PRODUCTION
     input_state.mouse_bound = true;
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_AGENT;
