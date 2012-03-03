@@ -83,7 +83,9 @@ class HUD
     Text* fps;
     Text* ping;
     Text* reliable_ping;
-    Text* player_stats;
+    Text* coins;
+    Text* health;
+    Text* weapon;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects

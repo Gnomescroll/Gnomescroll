@@ -17,7 +17,6 @@ namespace Hud
 
 static const char help_text[] =
 "    Key:            Action:\n"
-"\n"
 "    Esc             Quit\n"
 "    WASD            Move\n"
 "    Space           Jump\n"
@@ -38,9 +37,9 @@ static const char help_text[] =
 "    H               Display this menu\n"
 "    Tab             Display scoreboard\n"
 "    M               Map\n"
+"    U               Release mouse\n"
 "  Chat Commands:\n"
 "       /nick <name>        -- Sets name\n"
-"       /name <name>        -- Sets name\n"
 "       /team <0, 1, or 2>  -- Sets team. Team 0 is Viewer\n"
 "       /spawner <#>        -- A number less than or equal to the\n"
 "                              number of spawners on your team.\n"
@@ -53,9 +52,11 @@ static const char dead_text[] = "You died.";
 static const char fps_format[] = "%3.2f";
 static const char ping_format[] = "%dms";
 
-static const char player_stats_text_no_agent[] = "No Agent Assigned";
-static const char player_stats_text_viewer[] = "Viewer Mode";
-static const char player_stats_format[] = "$%d :: HP %d/%d :: %s";
+static const char no_agent_text[] = "No Agent Assigned";
+static const char agent_viewer_text[] = "Viewer Mode";
+static const char coins_format[] = "$%d";
+static const char health_format[] = "HP %d";
+static const char weapon_format[] = "%s";
 
 static struct HudDrawSettings
 {
@@ -267,27 +268,40 @@ void draw_hud_text()
         if (a != NULL)
         {
             if (a->status.team == 0)
-                hud->player_stats->set_text((char*)player_stats_text_viewer);
+            {
+                hud->coins->set_text((char*)"");
+                hud->health->set_text((char*)"");
+                hud->weapon->set_text((char*)agent_viewer_text);
+            }
             else
             {
                 int coins = a->status.coins;
                 coins = (coins > 100000) ? 99999 : coins;
                 coins = (coins < 0) ? 0 : coins;
+                hud->coins->update_formatted_string(1, coins);
+
                 int health = a->status.health;
                 health = (health >= 1000) ? 999 : health;
                 health = (health < 0) ? 0 : health;
-                int max_health = AGENT_HEALTH;
-                max_health = (max_health >= 1000) ? 999 : max_health;
-                max_health = (max_health < 0) ? 0 : max_health;
+                //int max_health = AGENT_HEALTH;
+                //max_health = (max_health >= 1000) ? 999 : max_health;
+                //max_health = (max_health < 0) ? 0 : max_health;
+                //hud->health->update_formatted_string(2, health, max_health);
+                hud->health->update_formatted_string(2, health);
+
                 char* weapon_string = a->weapons.hud_display();
-                hud->player_stats->update_formatted_string(4, coins, health, max_health, weapon_string);
+                hud->weapon->update_formatted_string(1, weapon_string);
             }
         }
         else
         {
-            hud->player_stats->set_text((char*)player_stats_text_no_agent);
+            hud->coins->set_text((char*)"");
+            hud->health->set_text((char*)no_agent_text);
+            hud->weapon->set_text((char*)"");
         }
-        hud->player_stats->draw();
+        hud->coins->draw();
+        hud->health->draw();
+        hud->weapon->draw();
     }
 
     if (hud->chat->inited)
@@ -369,16 +383,27 @@ void HUD::init()
     reliable_ping->set_color(255,10,10,255);
     reliable_ping->set_position(3, (line_height*3)+3);
 
-    player_stats = HudText::text_list->create();
-    player_stats->set_text((char*) player_stats_text_no_agent);
-    player_stats->set_format((char*) player_stats_format);
-    player_stats->set_format_extra_length(
-        (5 - 2)   /*coins*/
-      + (3 - 2)*2 /*health/max_health*/
-      + (Weapons::WEAPON_HUD_STRING_MAX - 2)
-    );
-    player_stats->set_color(255,10,10,255);
-    player_stats->set_position(_xresf - 360, line_height + 3);
+    coins = HudText::text_list->create();
+    coins->set_text((char*) "");
+    coins->set_format((char*) coins_format);
+    coins->set_format_extra_length(5 - 2);
+    coins->set_color(255,10,10,255);
+    coins->set_position(32*5 + 2, _yresf - line_height + 2);
+    
+    health = HudText::text_list->create();
+    health->set_text((char*) "");
+    health->set_format((char*) health_format);
+    //health->set_format_extra_length((3 - 2) + (3 - 2));
+    health->set_format_extra_length((3 - 2));
+    health->set_color(255,10,10,255);
+    health->set_position(32*5 + 2, _yresf + 2);
+
+    weapon = HudText::text_list->create();
+    weapon->set_text((char*)"");
+    weapon->set_format((char*) weapon_format);
+    weapon->set_format_extra_length(Weapons::WEAPON_HUD_STRING_MAX - 2);
+    weapon->set_color(255,10,10,255);
+    weapon->set_position(2, _yresf - (line_height + 16));
 
     scoreboard = new Scoreboard();
     scoreboard->init();
@@ -398,7 +423,9 @@ dead(NULL),
 fps(NULL),
 ping(NULL),
 reliable_ping(NULL),
-player_stats(NULL),
+coins(NULL),
+health(NULL),
+weapon(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -417,8 +444,12 @@ HUD::~HUD()
         HudText::text_list->destroy(ping->id);
     if (reliable_ping != NULL)
         HudText::text_list->destroy(reliable_ping->id);
-    if (player_stats != NULL)
-        HudText::text_list->destroy(player_stats->id);
+    if (coins != NULL)
+        HudText::text_list->destroy(coins->id);
+    if (health != NULL)
+        HudText::text_list->destroy(health->id);
+    if (weapon != NULL)
+        HudText::text_list->destroy(weapon->id);
     if (scoreboard != NULL)
         delete scoreboard;
     if (chat != NULL)
@@ -443,13 +474,15 @@ void ChatRender::init()
         
     if (this->inited) return;
     int i=0;
-    const int y_offset = 50;   // from the top
+    int line_height = HudFont::font->data.line_height;
+    const int y_offset = 50 + line_height;   // from the top
+    const int x_offset = 2;   // from the top
     for (; i<CHAT_MESSAGE_RENDER_MAX; i++)
     {
         HudText::Text* t = HudText::text_list->create();
-        t->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
+        t->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
         t->set_text((char*) "");
-        t->set_format((char*) "%s%s %s");
+        t->set_format((char*) "%s%s%s");
         t->set_format_extra_length(PLAYER_NAME_MAX_LENGTH + CHAT_MESSAGE_SIZE_MAX + CHAT_NAME_SEPARATOR_LENGTH_MAX - 4);
         t->set_color(255,255,255,255);
         messages[i] = t;
@@ -458,7 +491,7 @@ void ChatRender::init()
     input = HudText::text_list->create();
     input->set_text((char*)"");
     input->set_color(255,10,10,255);
-    input->set_position(50, _yresf - (y_offset + (HudFont::font->data.line_height + 2)*i));
+    input->set_position(x_offset, _yresf - (y_offset + (line_height + 2)*i));
     
     this->inited = true;
 }
