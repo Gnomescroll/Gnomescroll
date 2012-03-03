@@ -4,6 +4,8 @@
 #include <c_lib/game/teams.hpp>
 
 class CTF {
+    private:
+        void update_flags_held();
 
     public:
 
@@ -38,7 +40,7 @@ class CTF {
     void init();
     void start() GNOMESCROLL_API;
     void tick();
-    void update();  // client side
+    void update();  GNOMESCROLL_API;
 
     void set_team_name(int team, char* name);
     char* get_team_name(int team);

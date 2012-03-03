@@ -214,7 +214,8 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
 
         #ifdef DC_SERVER
         // drop any items (FLAG)
-        if (this->has_flag) {
+        if (this->has_flag)
+        {
             this->drop_flag();
             ServerState::ctf->agent_drop_flag(this->team, this->a->s.x, this->a->s.y, this->a->s.z);
         }
@@ -334,7 +335,7 @@ void Agent_status::restore_health()
     health_msg.sendToClient(a->client_id);
 }
 
-void Agent_status::pickup_flag() {
+bool Agent_status::pickup_flag() {
     if (!this->has_flag) {
         AgentPickupFlag_StoC msg;
         msg.id = this->a->id;
@@ -342,8 +343,10 @@ void Agent_status::pickup_flag() {
     }
     
     this->has_flag = true;
+    return true;
 }
-void Agent_status::drop_flag() {
+
+bool Agent_status::drop_flag() {
     if (this->has_flag) {
         AgentDropFlag_StoC msg;
         msg.id = this->a->id;
@@ -351,6 +354,7 @@ void Agent_status::drop_flag() {
     }
 
     this->has_flag = false;
+    return true;
 }
 void Agent_status::score_flag() {
     if (this->has_flag) {

@@ -212,11 +212,11 @@ void CTF::flag_picked_up(int team)
     {
         case 1:
             if (two.flag->vox != NULL)
-                two.flag->vox->set_draw(false);
+                two.flag->held = true;
             break;
         case 2:
             if (one.flag->vox != NULL)
-                one.flag->vox->set_draw(false);
+                two.flag->held = true;
             break;
         default:
             printf("CTF::flag_picked_up -- invalid team %d\n", team);
@@ -230,11 +230,11 @@ void CTF::flag_dropped(int team)
     {
         case 1:
             if (two.flag->vox != NULL)
-                two.flag->vox->set_draw(true);
+                two.flag->held = false;
             break;
         case 2:
             if (one.flag->vox != NULL)
-                one.flag->vox->set_draw(true);
+                two.flag->held = false;
             break;
         default:
             printf("CTF::flag_dropped -- invalid team %d\n", team);
@@ -248,11 +248,11 @@ void CTF::flag_scored(int team)
     {
         case 1:
             if (two.flag != NULL && two.flag->vox != NULL)
-                two.flag->vox->set_draw(true);
+                two.flag->held = false;
             break;
         case 2:
             if (two.flag != NULL && one.flag->vox != NULL)
-                one.flag->vox->set_draw(true);
+                two.flag->held = false;
             break;
         default:
             printf("CTF::flag_scored -- invalid team %d\n", team);
@@ -388,14 +388,16 @@ void CTF::reset_flag(int team)
 }
 
 void CTF::agent_drop_flag(int agent_team, float x, float y, float z)
-{
+{printf("agent drop flag\n");
     switch (agent_team)
     {
         case 1:
             this->set_flag_position(2, x,y,z);
+            two.flag->held = false;
             break;
         case 2:
             this->set_flag_position(1, x,y,z);
+            one.flag->held = false;
             break;
         default:
             printf("CTF::agent_drop_flag -- agent_team %d invalid.\n", agent_team);
@@ -411,19 +413,21 @@ void CTF::check_agent_proximities() {
     int i;
         
     f = one.flag;
-    r = f->vox->largest_radius();
-    STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list->sort_filtered_objects_by_distance();
-    for (i=0; i<STATE::agent_list->n_filtered; i++) {
-        a = STATE::agent_list->filtered_objects[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team == 1) continue;
-        // pickup
-        if (!a->status.dead)
-        {
-            a->status.pickup_flag();
+    if (!f->held)
+    {
+        r = f->vox->largest_radius();
+        STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
+        STATE::agent_list->sort_filtered_objects_by_distance();
+        for (i=0; i<STATE::agent_list->n_filtered; i++) {
+            a = STATE::agent_list->filtered_objects[i];
+            if (a==NULL) continue;
+            if (!a->status.team || a->status.team == 1) continue;
+            // pickup
+            if (!a->status.dead)
+                if (a->status.pickup_flag())
+                    f->held = true;
+            break;
         }
-        break;
     }
 
     b = one.base;
@@ -447,19 +451,21 @@ void CTF::check_agent_proximities() {
     }
 
     f = two.flag;
-    r = f->vox->largest_radius();
-    STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
-    STATE::agent_list->sort_filtered_objects_by_distance();
-    for (i=0; i<STATE::agent_list->n_filtered; i++) {
-        a = STATE::agent_list->filtered_objects[i];
-        if (a==NULL) continue;
-        if (!a->status.team || a->status.team == 2) continue;
-        // pickup
-        if (!a->status.dead)
-        {
-            a->status.pickup_flag();
+    if (!f->held)
+    {
+        r = f->vox->largest_radius();
+        STATE::agent_list->objects_within_sphere(f->x, f->y, f->z, r);
+        STATE::agent_list->sort_filtered_objects_by_distance();
+        for (i=0; i<STATE::agent_list->n_filtered; i++) {
+            a = STATE::agent_list->filtered_objects[i];
+            if (a==NULL) continue;
+            if (!a->status.team || a->status.team == 2) continue;
+            // pickup
+            if (!a->status.dead)
+                if (a->status.pickup_flag())
+                    f->held = true;
+            break;
         }
-        break;
     }
 
     b = two.base;
@@ -630,8 +636,35 @@ void CTF::get_base_spawn_point(int team, int agent_height, int* spawn)
     }
 }
 
+void CTF::update_flags_held()
+{
+    using STATE::agent_list;
+    Agent_state* a;
+    one.flag->held = false;
+    two.flag->held = false;
+    for (int i=0; i<agent_list->n_max; i++)
+    {
+        a = agent_list->a[i];
+        if (a == NULL) continue;
+        if (a->status.has_flag)
+            switch (a->status.team)
+            {
+                case 1:
+                    one.flag->held = true;
+                    break;
+                case 2:
+                    two.flag->held = true;
+                    break;
+                default:
+                    printf("WARNING -- CTF::update_flags_held() -- agent %d has_flag but has team %d\n", a->id, a->status.team);
+                    break;
+            }
+    }
+}
+
 void CTF::update()
 {
+    update_flags_held();
     one.flag->update();
     one.base->update();
     two.flag->update();

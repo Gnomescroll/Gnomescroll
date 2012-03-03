@@ -115,6 +115,7 @@ cdef extern from "./game/ctf.hpp":
         void set_team_color(int team, unsigned char r, unsigned char g, unsigned char b)
         void start()
         void check_agent_proximities()
+        void update()
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     CTF* ctf
@@ -126,6 +127,7 @@ def set_team_color(int team, unsigned char r, unsigned char g, unsigned char b):
 def check_agent_proximities():
     if ctf != NULL:
         ctf.check_agent_proximities()
+        ctf.update()
 
 """ Particles """
 

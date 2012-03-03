@@ -25,6 +25,8 @@ class Flag {
         int team;
         Object_types type;
 
+        bool held;
+
         Voxel_model* vox;
 
         void set_position(float x, float y, float z);

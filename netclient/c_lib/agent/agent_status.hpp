@@ -68,8 +68,8 @@ class Agent_status {
         void respawn();
         void restore_health();
         
-        void pickup_flag();
-        void drop_flag();
+        bool pickup_flag();
+        bool drop_flag();
         void score_flag();
 
         int score();

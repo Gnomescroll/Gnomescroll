@@ -478,6 +478,8 @@ fix jetpack decay
 
 much better body destruction
 regenerate damaged body at base
+notify player disconnected
+
 ====================
 
 Animations
@@ -562,8 +564,6 @@ icons are difficult/impossible to see on the hudmap with blue gradient
 make icons biggers
 
 try 256x256 map
-
-notify player disconnected
 
 tell players they can afford spawners the first time they capture a flag
 
