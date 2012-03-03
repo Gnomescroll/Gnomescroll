@@ -214,6 +214,22 @@ namespace ServerState
         return a->status.name;
     }
 
+    void send_disconnect_notice(int client_id)
+    {
+        Agent_state* a = NetServer::agents[client_id];
+        char* name;
+        if (a == NULL)
+        {
+            printf("agent was already destroyed\n");
+            name = (char*)"";
+        }
+        else
+            name = a->status.name;
+        client_disconnected_StoC msg;
+        msg.id = client_id;
+        strcpy(msg.name, name);
+        msg.broadcast();
+    }
 
     void start_game()
     {

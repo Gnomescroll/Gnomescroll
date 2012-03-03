@@ -804,3 +804,16 @@ class version_StoC: public FixedSizeReliableNetPacketToClient<version_StoC>
         }
         inline void handle();
 };
+
+class client_disconnected_StoC: public FixedSizeReliableNetPacketToClient<client_disconnected_StoC>
+{
+    public:
+        uint8_t id;
+        char name[PLAYER_NAME_MAX_LENGTH+1];    // send name because agent destroy might arrive first (and then we cant get name)
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_string(name, PLAYER_NAME_MAX_LENGTH+1, buff, buff_n, pack);
+        }
+        inline void handle();
+};

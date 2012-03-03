@@ -333,11 +333,11 @@ static void client_disconnect(ENetEvent* event)
     int client_id = nc->client_id;
     NetPeerManager* npm = NetServer::clients[client_id];
 
+    npm->teardown();
+
     NetServer::pool[client_id] = NULL;
     NetServer::agents[client_id] = NULL;
     NetServer::clients[client_id] = NULL;
-
-    npm->teardown();
 
     printf("Client %i disconnected, %i clients connected \n", client_id, NetServer::number_of_clients);
 

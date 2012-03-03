@@ -270,6 +270,7 @@ inline void agent_name_StoC::handle()
 
 inline void agent_destroy_StoC::handle()
 {
+    printf("destroying agent %d\n", id);
     ClientState::agent_list->destroy(id);
 }
 
@@ -501,6 +502,14 @@ inline void version_StoC::handle()
         NetClient::Server.version_match = true;
 }
 
+inline void client_disconnected_StoC::handle()
+{
+    const char fmt[] = "%s has left the game";
+    char* msg = (char*)calloc(strlen(fmt) + strlen(name) - 2 + 1, sizeof(char));
+    sprintf(msg, fmt, name);
+    chat_client->send_system_message(msg);
+    free(msg);
+}
 
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
@@ -556,6 +565,7 @@ inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
+inline void client_disconnected_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;

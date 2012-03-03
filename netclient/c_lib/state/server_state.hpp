@@ -39,6 +39,8 @@ namespace ServerState
     void add_player_to_chat(int client_id);
     void remove_player_from_chat(int client_id);
 
+    void send_disconnect_notice(int client_id);
+
     char* agent_name(int id) GNOMESCROLL_API;
 
     void start_game() GNOMESCROLL_API;

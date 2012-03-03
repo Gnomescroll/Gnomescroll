@@ -556,8 +556,10 @@ get hudmap to use z height checks so it can load faster, maybe in the background
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 update teammate dot in hudmap (switched player to red, but teammates are red)
+make dot bigger
 
 icons are difficult/impossible to see on the hudmap with blue gradient
+make icons biggers
 
 try 256x256 map
 
@@ -588,7 +590,5 @@ grenade damage indication (blood, voxel destruction)
 teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 
 slime models not taking voxel damage
-
-heal model at base also
 
 PRINT & MAIL REBATES
