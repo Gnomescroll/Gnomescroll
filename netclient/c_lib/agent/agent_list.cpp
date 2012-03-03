@@ -210,3 +210,22 @@ bool Agent_list::name_available(char* name)
     }
     return true;
 }
+
+void Agent_list::check_missing_names()
+{
+    this->check_name_interval++;
+    if ((this->check_name_interval %= CHECK_MISSING_NAME_INTERVAL) != 0)
+        return;
+
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->status.check_missing_name();
+    }
+}
+
+Agent_list::Agent_list()
+:
+check_name_interval(0)
+{}
+

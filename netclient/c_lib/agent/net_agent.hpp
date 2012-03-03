@@ -476,6 +476,18 @@ class agent_name_StoC: public FixedSizeReliableNetPacketToClient<agent_name_StoC
         inline void handle() __attribute((always_inline));
 };
 
+class request_agent_name_CtoS: public FixedSizeReliableNetPacketToServer<request_agent_name_CtoS>
+{
+    public:
+        uint8_t id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle() __attribute((always_inline));
+};
+
 class agent_destroy_StoC: public FixedSizeReliableNetPacketToClient<agent_destroy_StoC>
 {
     public:

@@ -467,6 +467,7 @@ redesign hud
 normalize agent's speed (was going faster if moving at a diagonal)
 adjust blood spray effect
 laser aligned with arm
+fix grenades damaging teammates (shouldnt)
 ====================
 
 Animations

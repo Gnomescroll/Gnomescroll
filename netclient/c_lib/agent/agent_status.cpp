@@ -76,6 +76,18 @@ bool Agent_status::set_name(char* name)
     return new_name;
 }
 
+void Agent_status::check_missing_name()
+{
+    #ifdef DC_CLIENT
+    if (strcmp(name, AGENT_UNDEFINED_NAME) == 0)
+    {
+        request_agent_name_CtoS msg;
+        msg.id = this->a->id;
+        msg.send();
+    }
+    #endif
+}
+
 int Agent_status::apply_damage(int dmg) {
     if (dead) return this->health;
     

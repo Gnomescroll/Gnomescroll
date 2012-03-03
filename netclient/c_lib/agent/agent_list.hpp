@@ -3,12 +3,17 @@
 #include <c_lib/agent/agent.hpp>
 
 #include <c_lib/template/object_list.hpp>
+
+const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
+
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:
         const char* name() { return "Agent"; }
         void quicksort_team(int beg, int end);
 
+        int check_name_interval;
+        
     public:
         void update_map_manager_positions();
 
@@ -25,5 +30,9 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int get_ids();
 
         bool name_available(char* name);
+
+        void check_missing_names();
+        
+        Agent_list();
 };
 

@@ -518,7 +518,7 @@ inline void identify_CtoS::handle(){}
 inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
 inline void choose_spawn_location_CtoS::handle(){}
-
+inline void request_agent_name_CtoS::handle(){}
 #endif
 
 // Client -> Server handlers
@@ -1052,4 +1052,18 @@ inline void ping_reliable_CtoS::handle()
     msg.sendToClient(client_id);
 }
 
+inline void request_agent_name_CtoS::handle()
+{
+    Agent_state* a = ServerState::agent_list->get(id);
+    if (a == NULL)
+    {
+        printf("request_agent_name_CtoS:: unknown agent %d\n", id);
+        return;
+    }
+    
+    agent_name_StoC msg;
+    strcpy(msg.name, a->status.name);
+    msg.id = id;
+    msg.sendToClient(client_id);
+}
 #endif
