@@ -7,12 +7,19 @@
 namespace t_map
 {
 
-struct cubeProperties cube_list[MAX_CUBES];
+struct cubeProperties* cube_list;;
 
 //struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
 
 void init_t_properties()
 {
+    cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
+    return;
+}
+
+void end_t_properties()
+{
+    free(cube_list);
     return;
 }
 

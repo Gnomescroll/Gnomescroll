@@ -112,6 +112,8 @@ class Map_manager
     ~Map_manager()
     {
         delete[] version_list;
+
+        end_compressor();
     }
 
     void update();
@@ -131,6 +133,7 @@ class Map_manager
     void send_uncompressed_chunk(int alias, int index);
 
     void init_compressor();
+    void end_compressor();
 
     void send_delta() {}
 };
@@ -148,6 +151,12 @@ void Map_manager::init_compressor()
         return;
     }
 }
+
+void Map_manager::end_compressor()
+{
+    mz_inflateEnd(&stream);
+}
+
 
 void Map_manager::send_compressed_chunk(int alias, int index)
 {
