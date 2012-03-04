@@ -47,24 +47,28 @@ char* read_file_to_buffer(char* file_name, int* size)
     return source;
 }
 
-int count_lines(char* fn)
+int count_lines(char* buffer)
 {
     int lines = 0;
+    int i = 0;
+    char c;
     while ((c = buffer[i++]) != '\0')
         if (c == '\n')
             lines++;
     return lines;
 }
 
-int count_lines(char* fn, int* longest)
+int count_lines(char* buffer, int* longest)
 {
     int lines = 0;
     int length = 0;
+    int i = 0;
+    char c;
     while ((c = buffer[i++]) != '\0')
     {
         if (c == '\n')
         {
-            if (length > longest)
+            if (length > *longest)
                 *longest = length;
             length = 0;
             lines++;
@@ -72,7 +76,7 @@ int count_lines(char* fn, int* longest)
         else
             length++;
     }
-    if (length > longest)
+    if (length > *longest)
         *longest = length;
     return lines;
 }
@@ -82,24 +86,25 @@ void free_read_lines(char** readlines, int lines)
     if (readlines == NULL) return;
     for (int i=0; i<lines; i++)
         if (readlines[i] != NULL)
-            free(readlines[i])
+            free(readlines[i]);
     free(readlines);
 }
 
-// free the returned char** array after use
-char** read_lines(char* fn, int* lines)
+//// free the returned char** array after use
+char** read_lines(char* buffer, int* lines)
 {
-    *lines = count_lines(fn);
-    char** arr = (char**)malloc(sizeof(char*)*lines);
-    int j = 0;
-    char* 
-    while ((c = buffer[i++]) != '\0')
-    {
-        if (c == '\n')
-        {
-            (*lines)++;
-        }
-        else
-            length++;
-    }
+    //*lines = count_lines(buffer);
+    //char** arr = (char**)malloc(sizeof(char*)**lines);
+    //int i = 0;
+    //int j = 0;
+    //char* 
+    //while ((c = buffer[i++]) != '\0')
+    //{
+        //if (c == '\n')
+        //{
+            //(*lines)++;
+        //}
+        //else
+            //length++;
+    //}
 }
