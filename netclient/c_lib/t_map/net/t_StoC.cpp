@@ -26,7 +26,7 @@ char* DECOMPRESSION_BUFFER = NULL;
 //unsigned short chunk_alias;
 //int chunk_index;
 
-int  init_compressors()
+void init_client_compressors()
 {
     // Init the z_stream
     DECOMPRESSION_BUFFER = (char*) malloc(DECOMPRESSION_BUFFER_SIZE);
@@ -36,17 +36,19 @@ int  init_compressors()
     if (mz_inflateInit(&stream))
     {
         printf("map_chunk_compressed_StoC::handle, inflateInit() failed!\n");
-        return 0;
     }
 
-    return 1;
+    return;
+}
+
+void end_client_compressors()
+{
+    free(DECOMPRESSION_BUFFER);
+
 }
 
 void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
 {
-
-    static int init = 0;
-    if(init == 0) init = init_compressors();
 
 
     stream.next_in = (unsigned char*) buff;

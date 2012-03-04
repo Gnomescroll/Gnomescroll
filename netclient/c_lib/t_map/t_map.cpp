@@ -9,6 +9,8 @@
     #include <c_lib/t_map/glsl/cache.hpp>
     #include <c_lib/t_map/glsl/texture.hpp>
     #include <c_lib/t_map/glsl/shader.hpp>
+
+    #include <c_lib/t_map/net/t_StoC.hpp>
 #endif
 
 #ifdef DC_SERVER
@@ -39,6 +41,10 @@ void init_t_map()
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
+#ifdef DC_CLIENT
+    init_client_compressors();
+#endif
+
 #ifdef DC_SERVER
     map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
 #endif
@@ -51,6 +57,10 @@ void end_t_map()
 
     end_t_properties();
     delete main_map;
+
+#ifdef DC_CLIENT
+    end_client_compressors();
+#endif
 
 #ifdef DC_SERVER
     delete map_history;
