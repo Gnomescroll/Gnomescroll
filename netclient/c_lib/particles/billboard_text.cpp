@@ -227,7 +227,10 @@ void BillboardText::draw_hud()
         return;
     }
 
-    HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
+    z = 0.1;
+    //HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
+    //printf("%0.2f\n", sz);
+    HudText::draw_string(this->text, (float)sx, (float)sy, z, this->size);
 
 #endif
 }
@@ -248,12 +251,10 @@ void BillboardText_list::tick() {
 
 void BillboardText_list::draw() {
 #ifdef DC_CLIENT
-    if (HudFont::font == NULL)
-        return;
-        
+    if (HudFont::font == NULL) return;
     if (current_camera == NULL) return;
+    if (num == 0) return;
 
-    if(num == 0) { return; }
     int i;
 
     glEnable(GL_TEXTURE_2D);
