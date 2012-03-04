@@ -135,6 +135,8 @@ class Agent_state {
         float angle_to_enemy_flag();
         float angle_to_friendly_base();
 
+        struct Vec3 enemy_flag_pos();
+        struct Vec3 friendly_base_pos();
 
         void init_vox();
 

@@ -60,12 +60,20 @@ void update()
         return;
     //}
 
+    Vec3 goal_pos;
     if (a->status.has_flag)
-        theta = a->angle_to_friendly_base();
+        goal_pos = a->friendly_base_pos();
+        //theta = a->angle_to_friendly_base();
     else
-        theta = a->angle_to_enemy_flag();
+        //theta = a->angle_to_enemy_flag();
+        goal_pos = a->enemy_flag_pos();
     //theta -= kPI/2;
 
+    goal_pos.x -= a->s.x;
+    goal_pos.y -= a->s.y;
+    goal_pos.z = 0;
+
+/*   
     theta += 0.5f;
 
     if (theta > 1.0f)
@@ -74,7 +82,7 @@ void update()
         theta += 2.0f;
     
     printf("theta=%0.2f\n",theta);
-
+*/
 }
 
 void draw() {
