@@ -220,38 +220,35 @@ void draw_hud_textures()
 void draw_hud_text()
 {
     if (!hud_draw_settings.draw) return;
-    
-    start_text_draw();
 
+    // move large text to the front, so we dont swap textures twice
+    if (hud->inited)
+    {
+        HudFont::set_properties(32);
+        start_text_draw();
+
+        if (!hud_draw_settings.connected)
+            hud->disconnected->draw();
+
+        //if (!hud_draw_settings.version_match)
+            //hud->version_mismatch->draw();
+
+        if (hud_draw_settings.dead)
+            hud->dead->draw();
+
+        end_text_draw();
+        HudFont::reset_default();
+    }
+
+    // draw hud projected billboard text. does not require Hud instance inited
+    start_text_draw();
     ClientState::billboard_text_list->draw_hud();
     
-    if (!hud->inited)
+    if (!hud->inited || !hud_draw_settings.connected)
     {
         end_text_draw();
         return;
     }
-
-    end_text_draw();
-
-    HudFont::set_properties(32);
-    start_text_draw();
-
-    if (!hud_draw_settings.connected)
-    {
-        hud->disconnected->draw();
-        end_text_draw();
-        return;
-    }
-
-    //if (!hud_draw_settings.version_match)
-        //hud->version_mismatch->draw();
-
-    if (hud_draw_settings.dead)
-        hud->dead->draw();
-
-    end_text_draw();
-    HudFont::reset_default();
-    start_text_draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();
