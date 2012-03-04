@@ -171,7 +171,8 @@ void Vbo_map::update_vbo(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
-            int tile_id = map->get_block(_x,_y,_z);
+            //int tile_id = map->get_block(_x,_y,_z);
+            int tile_id = chunk->get_block(_x,_y,_z); //faster
 
             if( !isActive(tile_id) ) continue;
 
@@ -257,7 +258,8 @@ void Vbo_map::update_vbo(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
-            int tile_id = map->get_block(_x,_y,_z);
+            //int tile_id = map->get_block(_x,_y,_z);
+            int tile_id = chunk->get_block(_x,_y,_z); //faster
 
             if( !isActive(tile_id) ) continue;
 

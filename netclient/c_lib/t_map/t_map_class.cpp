@@ -53,6 +53,13 @@ namespace t_map
 /*
     Get Methods
 */
+
+
+    int MAP_CHUNK::get_block(int x, int y, int z)
+    {
+        return e[ (z<<8)+((y&15)<<4)+(x&15) ].block;
+    }
+
     struct MAP_ELEMENT Terrain_map::get_element(int x, int y, int z)
     {
     #if T_MAP_GET_OPTIMIZED
