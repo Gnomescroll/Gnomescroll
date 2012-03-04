@@ -5,30 +5,24 @@
 
 namespace HudText
 {
-    
-void start_text_draw() {
-    if (HudFont::font == NULL)
-    {
-        printf("No font loaded\n");
-        return;
-    }
 
-    if (HudFont::font->alpha) {
-        glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-    }
+// must call in between font set switching
+void start_text_draw()
+{
+    // all fonts must have alpha
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
     glBegin(GL_QUADS);
 }
 
-void end_text_draw() {
+void end_text_draw()
+{
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    if (HudFont::font->alpha) {
-        glDisable(GL_BLEND);
-    }
+    glDisable(GL_BLEND);
 }
 
 void blit_character(
@@ -63,7 +57,8 @@ void draw_string(char* text, float x, float y, float depth, float scale)
 
     while ((c = text[i++]) != '\0')
     {
-        if (c == '\n') {
+        if (c == '\n')
+        {
             cursor_y += HudFont::font->data.line_height;
             cursor_x = 0.0f;
             continue;
@@ -250,8 +245,18 @@ int Text:: get_height()
     HudFont::font->get_string_pixel_dimension((char*)"X", &len, &h);
     return n * h;
 }
-        
 
+//void Text::set_font_properties(int size, int bold, int italic)
+//{
+    //HudFont::set_font_properties(size,bold,italic);
+    //this->font = HudFont::font;
+    //HudFont::reset_default();
+//}
+
+//void Text::set_font(Font* font)
+//{
+    //this->font = font;
+//}
 
 Text::Text(int id)
 :
@@ -264,6 +269,7 @@ inited(false),
 depth(-0.1),
 scale(1.0),
 formatted(false),
+//font(HudFont::font),
 r(255),g(255),b(255),a(255),
 text(NULL),
 format(NULL),

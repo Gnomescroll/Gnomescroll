@@ -6,8 +6,9 @@ namespace HudFont
 {
 
 static const char font_path[] = "./media/fonts/";
-int n_fonts = 0;
-Font** fonts = NULL;
+static int n_fonts = 0;
+static Font** fonts = NULL;
+static Font* default_font = NULL;
 Font* font = NULL;
 
 void Font::load_font_png()
@@ -125,13 +126,16 @@ void Font::parse_font_file()
         if (processed_line) // skip to the end of the line, if its been processed
             continue;
 
-        if (line_mode == INFO)  // this line is worthless
-            continue;
-
         int dummy;  // dummy var to work with sscanf
         int g,x,y,w,h,xoff,yoff,xadvance;   // glyph data
         switch (line_mode)
         {
+            case INFO:
+                sscanf(&buff[i-1],
+                    "face=\"%32[^\"]\" size=%d bold=%d italic=%d",
+                    data.name, &data.size, &data.bold, &data.italic);
+                processed_line = true;
+                break;
             case COMMON:
                 sscanf(&buff[i-1],
                     "lineHeight=%d base=%d scaleW=%d scaleH=%d",
@@ -260,7 +264,6 @@ Font::Font(char* fn)
 :
 alpha(true),
 missing_glyph('?')
-//missing_glyph('\0')
 {
     // init glyphs
     for (int i=0; i<128; i++)
@@ -356,6 +359,8 @@ static int read_fonts_used()
     }
     if (font == NULL && lines)
         font = fonts[0];
+
+    default_font = font;
         
     free(font_name);
     free(buffer);
@@ -363,29 +368,35 @@ static int read_fonts_used()
     return 0;
 }
 
+void reset_default()
+{
+    font = default_font;
+}
+
+void set_properties(int size, int bold, int italic)
+{
+    for (int i=0; i<n_fonts; i++)
+        if (fonts[i]->data.size == size
+          && fonts[i]->data.bold == bold
+          && fonts[i]->data.italic == italic)
+        {
+            font = fonts[i];
+            return;
+        }
+    font = NULL;
+}
+
 void init()
 {
     static int inited = 0;
     if (inited++)
     {
-        printf("WARNING: Attempt to init fonts twice\n");
+        printf("WARNING: Attempt to init fonts more than once\n");
         return;
     }
 
     if (read_fonts_used())
         font = NULL;
-
-    //const int expected_fonts = 20;
-    //fonts = (Font**)malloc(sizeof(Font*) * expected_fonts);
-
-    //int i = 0;
-    //fonts[i++] = new Font((char*)"inconsolata_16.fnt");
-    //fonts[i++] = new Font(Options::font);
-
-    //font = fonts[i-1];
-
-    //if (i > n_fonts)
-        //printf("WARNING: max fonts exceeded\n");
 }
 
 void teardown()

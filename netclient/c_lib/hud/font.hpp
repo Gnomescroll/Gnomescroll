@@ -23,9 +23,13 @@ struct Glyph {
 // metadata of a font set
 struct FontData
 {
+    int size;
+    int bold;
+    int italic;
     int line_height;
     int scaleW, scaleH;
     char file[32];
+    char name[32];
     char png[32];
     int num_glyphs_defined;
 };
@@ -59,16 +63,17 @@ class Font
     struct Glyph get_glyph(unsigned char c);
     void get_string_pixel_dimension(char* str, int *length, int *height);
 
+    int size() { return data.size; }
+
     Font(char* fn);
 };
+
+void reset_default();
+void set_properties(int size, int bold=0, int italic=0);
 
 void init();
 void teardown();
 
-extern Font** fonts;
-extern int n_fonts;
 extern Font* font;
-
-
 
 }

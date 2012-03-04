@@ -236,6 +236,12 @@ void draw_hud_text()
         end_text_draw();
         return;
     }
+
+    end_text_draw();
+
+    HudFont::set_properties(32);
+    start_text_draw();
+
     if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw();
@@ -246,11 +252,15 @@ void draw_hud_text()
     //if (!hud_draw_settings.version_match)
         //hud->version_mismatch->draw();
 
-    if (hud_draw_settings.help)
-        hud->help->draw();
-
     if (hud_draw_settings.dead)
         hud->dead->draw();
+
+    end_text_draw();
+    HudFont::reset_default();
+    start_text_draw();
+
+    if (hud_draw_settings.help)
+        hud->help->draw();
 
     if (hud_draw_settings.fps)
     {
