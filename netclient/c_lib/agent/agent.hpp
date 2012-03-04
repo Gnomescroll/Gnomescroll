@@ -14,8 +14,8 @@ const int AGENT_MAX = PLAYERS_MAX;
 
 #define CAMERA_HEIGHT_DEAD 0.3f;
 
-//#define AGENT_SPEED 2.8f
-#define AGENT_SPEED 28.0f
+#define AGENT_SPEED 2.8f
+//#define AGENT_SPEED 28.0f
 #define AGENT_SPEED_CROUCHED 0.8f
 
 #define AGENT_BOX_RADIUS 0.38f
