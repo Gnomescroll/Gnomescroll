@@ -309,62 +309,42 @@ static int read_fonts_used()
     }
 
     int lines = 0;
-    int i = 0;
-    int longest = 0;
-    int length = 0;
-    char c;
-    while ((c = buffer[i++]) != '\0')
-    {
-        if (c == '\n')
-        {
-            if (length > longest)
-                longest = length;
-            length = 0;
-            lines++;
-        }
-        else
-            length++;
-    }
-    if (length > longest)
-        longest = length;
-
+    fonts = (Font**)malloc(sizeof(Font*) * lines);
+    char** font_names = read_lines(buffer, &lines); // read file into lines
     if (!lines)
-    {
+    {   // check there are lines
         printf("WARNING: no fonts found in fonts file %s\n", fn);
         return 1;
     }
-
-    printf("Font file: %d lines found\n", lines);
-
-    fonts = (Font**)malloc(sizeof(Font*) * lines);
-    char* font_name = (char*)malloc(longest + 1);
-    int j = 0;
-    i = 0;
-    while ((c = buffer[i++]) != '\0')
-    {
-        if (c == '\n')
-        {
-            font_name[j] = '\0';
-            j = 0;
-            fonts[n_fonts] = new Font(font_name);
-            if (strcmp(Options::font, font_name) == 0)
-            {
-                printf("Selecting default font: %s\n", Options::font);
-                font = fonts[n_fonts];
-            }
-            n_fonts++;
+    for (int i=0; i<lines; i++)
+    {   // itearte lines, loading fonts
+        if (font_names[i][0] == '\0' || font_names[i][0] == '#')    // skip blank lines, comments
+            continue;
+        fonts[n_fonts] = new Font(font_names[i]);
+        if (strcmp(Options::font, font_names[i]) == 0)
+        {   // default font as specified in settings
+            printf("Selecting default font: %s\n", Options::font);
+            font = fonts[n_fonts];
         }
-        else
-            font_name[j++] = c;
+        n_fonts++;
     }
-    if (font == NULL && lines)
+    if (n_fonts == 0)
+    {   // no fonts were really found in the file (all blank lines & comments)
+        printf("WARNING: no fonts found in fonts file %s (Lines starting with # are considered comments)\n", fn);
+        return 1;
+    }
+    if (font == NULL && lines && n_fonts)
+    {   // the options font was not in fonts_used
+        printf("Requested font %s not found in %s. Using font %s\n", Options::font, fn, font_names[0]);
         font = fonts[0];
-
+    }
     default_font = font;
-        
-    free(font_name);
+
+    free_read_lines(font_names, lines);
     free(buffer);
     free(fn);
+    if (n_fonts < lines)
+        fonts = (Font**)realloc(fonts, sizeof(Font*)*n_fonts);
     return 0;
 }
 

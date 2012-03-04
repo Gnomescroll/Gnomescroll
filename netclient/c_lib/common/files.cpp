@@ -107,9 +107,9 @@ char** read_lines(char* buffer, int* lines)
         if (c == '\n')
         {
             arr[n][j] = '\0';
-            j = 0;
             if (j < longest+1)
-                arr[n] = (char*)realloc(arr[n], j);
+                arr[n] = (char*)realloc(arr[n], j+1);
+            j = 0;
             n++;
         }
         else
