@@ -14,6 +14,22 @@
 namespace t_map
 {
 
+
+struct Vertex* vlist_scratch_0;
+struct Vertex* vlist_scratch_1;
+
+void t_vbo_update_init()
+{
+    vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+}
+
+void t_vbo_update_end()
+{
+    free(vlist_scratch_0);
+    free(vlist_scratch_1);
+}
+
 //cache line optimization; minimize size
 static const int_fast8_t CI[6*8*3] = {1, 1, 1, 0, 1, 1, -1, 1, 1, -1, 0, 1, -1, -1, 1, 0, -1, 1, 1, -1, 1, 1, 0, 1,
 -1, 1, -1, 0, 1, -1, 1, 1, -1, 1, 0, -1, 1, -1, -1, 0, -1, -1, -1, -1, -1, -1, 0, -1,
@@ -153,6 +169,10 @@ static const int VERTEX_SLACK = 128;
 
 //int update_column_VBO(struct vm_column* column) {
 
+/*
+    Two optimizations: incremental updates and by sidesgoogl
+
+*/
 void Vbo_map::update_vbo(int i, int j)
 {
 
@@ -161,8 +181,8 @@ void Vbo_map::update_vbo(int i, int j)
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
     class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
 
-    //if(chunk == NULL) printf("chunk null\n");
-    //if(vbo == NULL) printf("vbo null\n");
+    if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
+    if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
 
     int vertex_count[2] = {0, 0};
 
@@ -171,7 +191,6 @@ void Vbo_map::update_vbo(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
-            //int tile_id = map->get_block(_x,_y,_z);
             int tile_id = chunk->get_block(_x,_y,_z); //faster
 
             if( !isActive(tile_id) ) continue;
@@ -258,8 +277,7 @@ void Vbo_map::update_vbo(int i, int j)
         for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
         for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
 
-            //int tile_id = map->get_block(_x,_y,_z);
-            int tile_id = chunk->get_block(_x,_y,_z); //faster
+            int tile_id = map->get_block(_x,_y,_z);
 
             if( !isActive(tile_id) ) continue;
 
