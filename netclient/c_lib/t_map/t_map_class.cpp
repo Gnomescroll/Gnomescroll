@@ -2,7 +2,8 @@
 
 #include "t_map.hpp"
 
-//#include <stdio.h>
+#include "t_properties.hpp"
+#include <c_lib/t_map/common/map_element.hpp>
 
 namespace t_map
 {
@@ -11,8 +12,43 @@ namespace t_map
     const int TERRAIN_MAP_HEIGHT_BIT_MASK = ~(TERRAIN_MAP_HEIGHT-1);
     const int TERRAIN_MAP_WIDTH_BIT_MASK = ~(512-1); //assumes map size of 512
 
-    #define T_MAP_GET_DEBUG 1
-    #define T_MAP_GET_OPTIMIZED 0
+    /*
+        Constructors
+    */
+    MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
+    {
+
+        #ifdef DC_CLIENT
+            needs_update = false;
+        #endif
+        xpos = _xpos;
+        ypos = _ypos;
+        //for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
+        memset(e, 0, 16*16*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
+        for(int i=0; i<16*16;i++) top_block[i] = 0;
+    }
+
+
+    Terrain_map::Terrain_map(int _xdim, int _ydim)
+    {
+        xdim = (_xdim/16)*16; 
+        ydim = (_ydim/16)*16;
+        xchunk_dim = _xdim/16; 
+        ychunk_dim = _ydim/16;
+
+        chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
+        for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
+    }
+
+    Terrain_map::~Terrain_map()
+    {
+        for(int i=0; i < xchunk_dim*ychunk_dim; i++)
+        {
+            if(chunk[i] != NULL) delete chunk[i];
+        }
+        delete[] chunk;
+    }
+
 
 /*
     Get Methods
@@ -31,10 +67,27 @@ namespace t_map
         //return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
 
     #if T_MAP_GET_DEBUG
-        if( (z<<8)+((y|15)<<4)+(x|15) >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds!\n");
-    #endif
+        if( (z<<8)+((y&15)<<4)+(x&15) >= 16*16*TERRAIN_MAP_HEIGHT) 
+        {
+            printf("ERROR: terrain map get, index out of bounds!\n");
+            printf("0 original: x= %i y= %i z= %i \n", x,y,z);
+            printf("1 original: x= %i y= %i z= %i \n", (x&15),(y&15),z);
+            printf("2 index= %i, x= %i, y= %i z= %i \n", (z<<8)+((y&15)<<4)+(x&15), (x&15) ,((y&15)<<4), (z<<8)+((y|15)<<4) );
+        }
 
-        return c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)];
+        {
+            int xi = x & 15; //bit mask
+            int yi = y & 15; //bit mask
+
+            int index = 16*16*z+ 16*yi + xi;
+            if(index != (z<<8)+((y&15)<<4)+(x&15))
+            {
+                printf("ERROR: terrain map get, descrepency between optimized and unoptimized index values! \n");
+            }
+        }
+     #endif
+
+        return c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)];
     #else
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return NO_MAP_ELEMENT;
@@ -82,7 +135,7 @@ namespace t_map
             chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ] = c;
         }
         //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
-        c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)] = element;
+        c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #ifdef DC_CLIENT
             c->needs_update = true;
@@ -174,7 +227,7 @@ namespace t_map
         //c = chunk[ (y | ~15) + (x >> 4)];
         if( c != NULL ) return -3;
         //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
-        struct MAP_ELEMENT* e = &c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)]
+        struct MAP_ELEMENT* e = &c->e[ (z << 8)+ ((y | 15) <<4) + (x | 15)];
 
         if(e->block == 0) return -1;
 

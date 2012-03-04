@@ -1,13 +1,19 @@
 #pragma once
 
-//#include <string.h>
-#include "t_properties.hpp"
-#include <c_lib/t_map/common/map_element.hpp>
-
 namespace t_map
 {
 
+/*
+    Optimization parameters
+*/
+#define TERRAIN_MAP_FORCE_INLINE 0
 
+#define T_MAP_GET_DEBUG 1
+#define T_MAP_GET_OPTIMIZED 1
+
+/*
+    Implementation
+*/
 const int TERRAIN_MAP_HEIGHT = 128;
 
 
@@ -26,18 +32,7 @@ class MAP_CHUNK
 
     struct MAP_ELEMENT e[16*16*TERRAIN_MAP_HEIGHT];
 
-    MAP_CHUNK(int _xpos, int _ypos)
-    {
-
-        #ifdef DC_CLIENT
-            needs_update = false;
-        #endif
-        xpos = _xpos;
-        ypos = _ypos;
-        //for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
-        memset(e, 0, 16*16*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
-        for(int i=0; i<16*16;i++) top_block[i] = 0;
-    }
+    MAP_CHUNK(int _xpos, int _ypos);
 
 };
 
@@ -53,31 +48,22 @@ class Terrain_map
     
     struct MAP_CHUNK** chunk;
 
-    Terrain_map(int _xdim, int _ydim)
-    {
-        xdim = (_xdim/16)*16; 
-        ydim = (_ydim/16)*16;
-        xchunk_dim = _xdim/16; 
-        ychunk_dim = _ydim/16;
-
-        chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
-        for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
-    }
-
-    ~Terrain_map()
-    {
-        for(int i=0; i < xchunk_dim*ychunk_dim; i++)
-        {
-            if(chunk[i] != NULL) delete chunk[i];
-        }
-        delete[] chunk;
-    }
+    Terrain_map(int _xdim, int _ydim);
+    ~Terrain_map();
     
+#if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
     inline int get_block(int x, int y, int z) __attribute((always_inline));
     inline void set_block(int x, int y, int z, int value) __attribute((always_inline));
+#else
+    struct MAP_ELEMENT get_element(int x, int y, int z);
+    void set_element(int x, int y, int z, struct MAP_ELEMENT element);
+    int get_block(int x, int y, int z);
+    void set_block(int x, int y, int z, int value);
+#endif
+
 
     int apply_damage(int x, int y, int z, int dmg);
 
