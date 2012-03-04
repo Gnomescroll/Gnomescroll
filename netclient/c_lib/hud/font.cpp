@@ -309,13 +309,13 @@ static int read_fonts_used()
     }
 
     int lines = 0;
-    fonts = (Font**)malloc(sizeof(Font*) * lines);
     char** font_names = read_lines(buffer, &lines); // read file into lines
     if (!lines)
     {   // check there are lines
         printf("WARNING: no fonts found in fonts file %s\n", fn);
         return 1;
     }
+    fonts = (Font**)malloc(sizeof(Font*) * lines);
     for (int i=0; i<lines; i++)
     {   // itearte lines, loading fonts
         if (font_names[i][0] == '\0' || font_names[i][0] == '#')    // skip blank lines, comments
