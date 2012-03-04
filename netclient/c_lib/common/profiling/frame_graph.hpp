@@ -51,13 +51,20 @@ class FrameGraph
         {
             set_stage_color(i, 255,255,255,255);
         }
-
+        /*
         set_stage_color(0, 255, 0,0, 70);
         set_stage_color(1, 255, 0,0, 150);
         set_stage_color(2, 255, 0,0, 200);
         set_stage_color(3, 255, 0,255, 100);
         set_stage_color(4, 0, 255,0, 255);
         set_stage_color(5, 0, 0,255, 50);
+        */
+        set_stage_color(0, 70, 0,0, 255);
+        set_stage_color(1, 150, 0,0, 255);
+        set_stage_color(2, 200, 0,0, 255);
+        set_stage_color(3, 255, 0,255, 100);
+        set_stage_color(4, 0, 255,0, 255);
+        set_stage_color(5, 0, 0,127, 200);
 
         ts = new Texture_surface(128, 64);
     }
