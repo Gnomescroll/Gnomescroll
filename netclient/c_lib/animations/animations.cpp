@@ -157,6 +157,33 @@ void grenade_explode(float x, float y, float z) {
     }
 }
 
+void terrain_sparks(float x, float y, float z)
+{
+    int n = randrange(15,20);
+
+    float vx = 1.0f;
+    float vy = 1.0f;
+    float vz = 1.0f;
+
+    float cx,cy,cz;
+    float cvx,cvy,cvz;
+
+    int i;
+    for (i=0; i<n; i++) {
+        cx = x + ((randf() - 0.5f) / 20.0f);
+        cy = y + ((randf() - 0.5f) / 20.0f);
+        cz = z + ((randf() - 0.5f) / 20.0f);
+        cvx = vx * (randf() - 0.5f);
+        cvy = vy * (randf() - 0.5f);
+        cvz = vz * (randf() - 0.5f);
+        Shrapnel* s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        if (s==NULL) return;
+        s->set_ttl(10);
+        s->set_size(0.05);
+        s->set_texture(54);
+    }
+}
+
 void slime_melt(float x, float y, float z) {
 
     ClientState::minivox_list->set_size(0.7f);

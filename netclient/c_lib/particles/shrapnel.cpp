@@ -17,6 +17,8 @@ Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS)
 {
     this->ttl_max = SHRAPNEL_TTL;
     this->type = SHRAPNEL_TYPE;
+    this->set_texture(SHRAPNEL_TEXTURE_ID);
+    this->size = SHRAPNEL_TEXTURE_SCALE;
 }
 
 Shrapnel::Shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
@@ -25,11 +27,24 @@ Particle(id, x,y,z, mx,my,mz, SHRAPNEL_MASS)
 {
     this->ttl_max = SHRAPNEL_TTL;
     this->type = SHRAPNEL_TYPE;
+    this->set_texture(SHRAPNEL_TEXTURE_ID);
+    this->size = SHRAPNEL_TEXTURE_SCALE;
 }
 
 void Shrapnel::tick() {
     Verlet::bounce(this->vp, SHRAPNEL_DAMP);
     ttl++;
+}
+
+void Shrapnel::set_texture(int index)
+{
+    this->tex_x = (float)((index%16)*(1.0/16.0));
+    this->tex_y = (float)((index/16)*(1.0/16.0));
+}
+
+void Shrapnel::set_size(float size)
+{
+    this->size = size;
 }
 
 void Shrapnel::draw() {
@@ -38,22 +53,22 @@ void Shrapnel::draw() {
     if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
 
     float up[3] = {
-        model_view_matrix[0]*SHRAPNEL_TEXTURE_SCALE,
-        model_view_matrix[4]*SHRAPNEL_TEXTURE_SCALE,
-        model_view_matrix[8]*SHRAPNEL_TEXTURE_SCALE
+        model_view_matrix[0]*this->size,
+        model_view_matrix[4]*this->size,
+        model_view_matrix[8]*this->size
     };
     float right[3] = {
-        model_view_matrix[1]*SHRAPNEL_TEXTURE_SCALE,
-        model_view_matrix[5]*SHRAPNEL_TEXTURE_SCALE,
-        model_view_matrix[9]*SHRAPNEL_TEXTURE_SCALE
+        model_view_matrix[1]*this->size,
+        model_view_matrix[5]*this->size,
+        model_view_matrix[9]*this->size
     };
 
     float tx_min, tx_max, ty_min, ty_max;
     float x,y,z;
 
-    tx_min = (float)(SHRAPNEL_TEXTURE_ID%16)* (1.0/16.0);
+    tx_min = this->tex_x;
     tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(SHRAPNEL_TEXTURE_ID/16)* (1.0/16.0);
+    ty_min = this->tex_y;
     ty_max = ty_min + (1.0/16.0);
 
     x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
@@ -97,7 +112,7 @@ void Shrapnel_list::draw() {
     glEnable (GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, particle_texture_id );
+    glBindTexture(GL_TEXTURE_2D, particle_texture_id);
     glEnable(GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 

@@ -203,6 +203,7 @@ void PlayerAgent_action::hitscan_laser() {
                 look.x, look.y, look.z,
                 tile, side
             );
+            Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
             Sound::laser_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;
@@ -346,6 +347,7 @@ void PlayerAgent_action::hitscan_pick() {
                 vec[0], vec[1], vec[2],
                 tile, side
             );
+            Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
             Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
             break;

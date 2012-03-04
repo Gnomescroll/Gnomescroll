@@ -16,6 +16,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 
 // actual method called by convenience methods
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int* side, int cube_side);
+void terrain_sparks(float x, float y, float z);
 
 void grenade_explode(float x, float y, float z);
 
