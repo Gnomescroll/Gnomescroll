@@ -23,6 +23,8 @@ void exec_interactive_interpreter(int argc, char** argv)
 void exec_file(int argc, char** argv) {
     Py_Initialize();
     PySys_SetArgv(argc, argv);
+    const char* pyversion = Py_GetVersion();
+    printf("Python: %s\n", pyversion);
     // Get a reference to the main module.
     //PyObject* main_module = PyImport_AddModule("__main__");
 
