@@ -2601,7 +2601,7 @@ tdefl_status tdefl_compress(tdefl_compressor *d, const void *pIn_buf, size_t *pI
   }
 
   if ((d->m_flags & (TDEFL_WRITE_ZLIB_HEADER | TDEFL_COMPUTE_ADLER32)) && (pIn_buf))
-    d->m_adler32 = (mz_uint32)mz_adler32(d->m_adler32, reinterpret_cast<const mz_uint8*>(pIn_buf), d->m_pSrc - (const mz_uint8 *)pIn_buf); //STEVE EDIT -- reinterpret_cast casts added for OSX build
+    d->m_adler32 = (mz_uint32)mz_adler32(d->m_adler32, (unsigned char*)pIn_buf, d->m_pSrc - (const mz_uint8 *)pIn_buf); //STEVE EDIT -- (unsigned char*) casts added for OSX build
 
   if ((flush) && (!d->m_lookahead_size) && (!d->m_src_buf_left) && (!d->m_output_flush_remaining))
   {
