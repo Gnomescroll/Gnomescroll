@@ -235,6 +235,7 @@ void close_c_lib() {
     printf("Closing game...\n");
 
     t_map::end_t_map();
+    t_map::end_t_vbo();
 
     shutdown_net_client();
     teardown_cameras();

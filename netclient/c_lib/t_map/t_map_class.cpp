@@ -61,6 +61,19 @@ namespace t_map
             || ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
         ) return NO_MAP_ELEMENT;
         struct MAP_CHUNK* c;
+
+
+    #if T_MAP_GET_DEBUG
+        {
+            int xchunk = (x >> 4);
+            int ychunk = (y >> 4);
+            int tmp = MAP_CHUNK_WIDTH*ychunk + xchunk;
+
+            if(tmp != MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4))
+                printf("0 T_MAP_GET_DEBUG ERROR!\n");
+        }
+    #endif
+
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         //c = chunk[ (y | ~15) + (x >> 4)];
         if(c == NULL) return NO_MAP_ELEMENT;
@@ -179,7 +192,7 @@ namespace t_map
     int Terrain_map::apply_damage(int x, int y, int z, int dmg)
     {
         //printf("set: %i %i %i %i \n", x,y,element.block);
-    #if T_MAP_GET_OPTIMIZED
+    #if T_MAP_SET_OPTIMIZED
         if (dmg <= 0) return -4;
 
         if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
@@ -188,39 +201,12 @@ namespace t_map
         ) return -2; //an error
         struct MAP_CHUNK* c;
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
-        //c = chunk[ (y | ~15) + (x >> 4)];
         if( c != NULL ) return -3;
-        //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
-
-
-    #if T_MAP_GET_DEBUG
-        if( (z<<8)+((y&15)<<4)+(x&15) >= 16*16*TERRAIN_MAP_HEIGHT) 
-        {
-            printf("ERROR: terrain map apply_damage, index out of bounds!\n");
-            printf("0 original: x= %i y= %i z= %i \n", x,y,z);
-            printf("1 original: x= %i y= %i z= %i \n", (x&15),(y&15),z);
-            printf("2 index= %i, x= %i, y= %i z= %i \n", (z<<8)+((y&15)<<4)+(x&15), (x&15) ,((y&15)<<4), (z<<8)+((y|15)<<4) );
-        }
-
-        {
-            int xi = x & 15; //bit mask
-            int yi = y & 15; //bit mask
-
-            int index = 16*16*z+ 16*yi + xi;
-            if(index != (z<<8)+((y&15)<<4)+(x&15))
-            {
-                printf("ERROR: terrain map apply_damage, descrepency between optimized and unoptimized index values! \n");
-            }
-        }
-    #endif
-
 
         struct MAP_ELEMENT* e = &c->e[ (z<<8)+((y&15)<<4)+(x&15) ];
 
         if(e->block == 0) return -1;
-
         e->damage += dmg;
-
         if(e->damage >= maxDamage(e->block) ) 
         {
             // destroy block
@@ -233,6 +219,7 @@ namespace t_map
         }
 
     #else
+
         if (dmg <= 0) return -4;
 
         if( z >= TERRAIN_MAP_HEIGHT || z < 0 ) return -2;
@@ -257,10 +244,9 @@ namespace t_map
         //printf("index2 = %i \n", 16*16*z+ 16*yi + xi);
 
         struct MAP_ELEMENT* e =  &c->e[16*16*z+ 16*yi + xi];
+        
         if(e->block == 0) return -1;
-
         e->damage += dmg;
-
         if(e->damage >= maxDamage(e->block) ) 
         {
             // destroy block

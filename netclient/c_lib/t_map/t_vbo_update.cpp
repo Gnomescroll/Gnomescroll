@@ -9,6 +9,8 @@
 
 #include "t_properties.hpp"
 
+
+
 namespace t_map
 {
 
@@ -72,9 +74,6 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     return isActive(tile_id);
 }
 
-#include <c_lib/physics/color_matrix.hpp>
-
-
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -86,18 +85,12 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         CX[i] = isOccludes( t_map::get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
 
-    int occ1, occ2, occ3, occ4;
-
-    occ1 = calcAdj(CX[7], CX[1], CX[0]);
-    occ2 = calcAdj(CX[5], CX[7], CX[6]);
-    occ3 = calcAdj(CX[1], CX[3], CX[2]);
-    occ4 = calcAdj(CX[3], CX[5], CX[4]);
-
     AOElement _ao;
-    _ao.ao[0] = occ1;
-    _ao.ao[1] = occ2;
-    _ao.ao[2] = occ3;
-    _ao.ao[3] = occ4;
+
+    _ao.ao[0] = calcAdj(CX[7], CX[1], CX[0]);
+    _ao.ao[1] = calcAdj(CX[5], CX[7], CX[6]);
+    _ao.ao[2] = calcAdj(CX[1], CX[3], CX[2]);
+    _ao.ao[3] = calcAdj(CX[3], CX[5], CX[4]);
 
     v_list[offset+0].AO = _ao.AO;
     v_list[offset+1].AO = _ao.AO;
@@ -162,6 +155,13 @@ static const int VERTEX_SLACK = 128;
 
 void Vbo_map::update_vbo(int i, int j)
 {
+
+/*
+    Move these to init and tear down
+*/
+    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+
     int _x, _y, _z;
 
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
@@ -171,20 +171,6 @@ void Vbo_map::update_vbo(int i, int j)
     //if(vbo == NULL) printf("vbo null\n");
 
     int vertex_count[2] = {0, 0};
-
-    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-
-    /*
-        1> Use internals for the chunk instead of map get
-        2> Use z indices
-        3> memcpy rows
-    */
-    
-    /*
-        Now that quads have been counted, malloc memory
-        -malloc is slow, so over allocated and reuse if possible 
-    */
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
@@ -254,12 +240,94 @@ void Vbo_map::update_vbo(int i, int j)
     glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
-    
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
-    
-    //printf("id= %i vnun= %i \n", vbo->vbo_id, vbo->vnum);
 }
 
+#if 0
+void Vbo_map::update_vbo(int i, int j)
+{
+    int _x, _y, _z;
+
+    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    //if(chunk == NULL) printf("chunk null\n");
+    //if(vbo == NULL) printf("vbo null\n");
+
+    int vertex_count[2] = {0, 0};
+
+    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+
+            int tile_id = map->get_block(_x,_y,_z);
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            { 
+                for(int side_num=0; side_num<6; side_num++) {
+                    if(! _is_occluded(_x,_y,_z,side_num)) 
+                    {
+                        add_quad2( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        vertex_count[0] += 4;
+                    }
+                }
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(int side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                    {
+                        add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        vertex_count[1] += 4;
+                    }
+                }
+            }
+
+        }}
+    }
+
+    int vnum = vertex_count[0] + vertex_count[1];
+
+    vbo->_v_num[0] = vertex_count[0];
+    vbo->_v_num[1] = vertex_count[1];
+
+    vbo->_v_offset[0] = 0;
+    vbo->_v_offset[1] = vertex_count[0];
+
+
+
+    if(vnum == 0) 
+    {
+        vbo->vnum = 0;
+        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        return;
+    } 
+    else 
+    {
+        vbo->vnum = vnum; //total vertices, size of VBO
+        if( vnum > vbo->vnum_max ) vbo->resize(vnum);
+    }
+
+    /*
+        Memcpy from buffer into vlist
+    */
+    memcpy(vbo->v_list, vlist_scratch_0, vertex_count[0]*sizeof(struct Vertex));
+    memcpy(vbo->v_list+vertex_count[0], vlist_scratch_1, vertex_count[1]*sizeof(struct Vertex));
+
+    //push to graphics card
+    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+}
+#endif
 
 int update_chunks() {
 #if 0
@@ -301,5 +369,6 @@ int update_chunks() {
 #endif
     return 0;
 }
+
 
 }
