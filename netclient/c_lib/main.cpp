@@ -74,7 +74,7 @@ int run()
 
     // update mouse
 
-    pan_camera();
+    poll_mouse();
 
     while (!input_state.quit)
     {
@@ -86,7 +86,7 @@ int run()
 
         // update mouse
 
-        pan_camera();
+        poll_mouse();
         
         // physics loop
         int physics_ticks = 0;
@@ -111,7 +111,7 @@ int run()
             ClientState::playerAgent_state.update_sound();
 
             // update mouse
-            pan_camera();
+            poll_mouse();
         }
 
         if (physics_ticks >= 2)
@@ -125,7 +125,7 @@ int run()
         flush_to_net();
 
         // update mouse
-        pan_camera();
+        poll_mouse();
 
         // set input options (set these in an options struct at load)   TODO
         set_input_options(
@@ -152,7 +152,7 @@ int run()
         ClientState::agent_list->check_if_at_base();  // will ratelimit itself
 
         // update mouse
-        pan_camera();
+        poll_mouse();
 
         frame_graph->frame_stage(2); // call draw functions
 
@@ -179,7 +179,7 @@ int run()
         Animations::animations_draw();
 
         // update mouse
-        pan_camera();
+        poll_mouse();
 
         if (Options::hud)
         {
@@ -252,7 +252,7 @@ int run()
         }
 
         // update mouse
-        pan_camera();
+        poll_mouse();
 
     }
 

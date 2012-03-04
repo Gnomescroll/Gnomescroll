@@ -3,10 +3,11 @@
 int FRAME_RATE_THOTTLE_ENABLED = 1;
 int FRAME_RATE_THOTTLE_TARGET = 15; //ms for 60, 33 for 30
 
+#include <c_lib/time/physics_timer.h>
+#include <c_lib/input/input.hpp>
+
 namespace Profiling
 {
-
-#include <c_lib/time/physics_timer.h>
 
 const int STAGES = 7; //includes start and end
 
@@ -109,11 +110,24 @@ class FrameGraph
         timer[index][n] = _time;
         
         //Sample input every 1ms during wait!!
+
+        #if 0
         if(FRAME_RATE_THOTTLE_ENABLED)
         {
             int wait = FRAME_RATE_THOTTLE_TARGET - (_time - timer[index][0]);
             if( wait <= 0) return;
             usleep(1000*wait);
+        }
+        #endif
+        if(FRAME_RATE_THOTTLE_ENABLED)
+        {
+            //int t_start = _time;
+
+            while( (FRAME_RATE_THOTTLE_TARGET - (_GET_MS_TIME() - timer[index][0])) > 0 )
+            {
+                poll_mouse();
+                usleep(500); //half a millisecond
+            }
         }
     }
 

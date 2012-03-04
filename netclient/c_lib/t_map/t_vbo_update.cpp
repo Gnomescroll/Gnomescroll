@@ -156,12 +156,6 @@ static const int VERTEX_SLACK = 128;
 void Vbo_map::update_vbo(int i, int j)
 {
 
-/*
-    Move these to init and tear down
-*/
-    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-
     int _x, _y, _z;
 
     class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk

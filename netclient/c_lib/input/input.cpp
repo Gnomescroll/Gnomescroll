@@ -1,4 +1,4 @@
-#include "./input.hpp"
+#include "input.hpp"
 
 #include <c_lib/SDL/SDL_functions.h>
 #include <c_lib/input/handlers.hpp>
@@ -7,6 +7,11 @@ static SDL_Event Event;
 
 static int numkeys;
 static Uint8* keystate;
+
+struct MouseMotionAverage 
+{
+    float x,y;
+};
 
 int init_input() {
     static int inited = 0;
@@ -118,6 +123,7 @@ static int mouse_input_buffer_y[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_input_buffer_x[MOUSE_INPUT_BUFFER_SIZE];
 static float mouse_input_buffer_timestamps[MOUSE_INPUT_BUFFER_SIZE];
 static int mouse_buffer_index = 0;
+
 static struct MouseMotionAverage mm = {0.0f, 0.0f};
 
 #define INITIAL_MOUSE_WEIGHT 1.0f
@@ -321,7 +327,7 @@ void apply_camera_physics()
     MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 }
 
-void pan_camera()
+void poll_mouse()
 {
     int current_time = _GET_MS_TIME();
 
