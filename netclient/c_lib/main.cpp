@@ -221,7 +221,7 @@ int run()
         /*
             Sample input during wait!!
         */
-        frame_graph->frame_end(); //stage 3
+        frame_graph->frame_end(6); //stage 3
 
         // do fps calculation
         if (Options::fps)

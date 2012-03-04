@@ -8,7 +8,7 @@ namespace Profiling
 
 #include <c_lib/time/physics_timer.h>
 
-const int STAGES = 6; //includes start and end
+const int STAGES = 7; //includes start and end
 
 /*
     Stage description
@@ -59,12 +59,12 @@ class FrameGraph
         set_stage_color(4, 0, 255,0, 255);
         set_stage_color(5, 0, 0,255, 50);
         */
-        set_stage_color(0, 70, 0,0, 255);
+        set_stage_color(0, 70, 0,0, 255);   //physics tick
         set_stage_color(1, 150, 0,0, 255);
         set_stage_color(2, 200, 0,0, 255);
-        set_stage_color(3, 255, 0,255, 100);
-        set_stage_color(4, 0, 255,0, 255);
-        set_stage_color(5, 0, 0,127, 200);
+        set_stage_color(3, 255, 0,255, 100);    //map and voxel updates
+        set_stage_color(4, 0, 255,0, 50);   //swap buffers
+        set_stage_color(5, 0, 0, 75, 50);  //wait stage
 
         ts = new Texture_surface(128, 64);
     }
@@ -117,8 +117,9 @@ class FrameGraph
         }
     }
 
-    void frame_end()
+    void frame_end(int n)
     {
+        if(n != STAGES-1) printf("Warning: frame_graph, frame_end() \n");
         timer[index][STAGES-1] = _GET_MS_TIME();
         blit_column();
     }
@@ -132,8 +133,16 @@ class FrameGraph
         {
             t[i] = timer[index][i+1] - timer[index][i]; 
             if(t[i] < 0) printf("frame_graph timer: WTF temporal error on index %i \n", i);
-            if(t[i] == 1) t[i] = 0;
+            //if(t[i] == 1) t[i] = 0;
+            if(t[i] == 0) t[i] = 1;
         }
+
+    /*
+        for(int i=0; i< STAGES-1; i++)
+        {
+            if(t[i] > 5) printf("warning: stage %i took %i \n", i, t[i]);
+        }
+    */
 
     /*
         R> loop up to flip

@@ -117,7 +117,6 @@ namespace t_map
 /*
     Set Methods 
 */
-    #define T_MAP_SET_OPTIMIZED 0
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
         //printf("set: %i %i %i %i \n", x,y,element.block);

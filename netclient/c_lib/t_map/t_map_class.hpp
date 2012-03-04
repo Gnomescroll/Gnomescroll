@@ -4,14 +4,16 @@ namespace t_map
 {
 
 #include <c_lib/t_map/common/map_element.hpp>
-    
+
 /*
     Optimization parameters
 */
 #define TERRAIN_MAP_FORCE_INLINE 0 //inlining may slow program from cache misses
 
-#define T_MAP_GET_DEBUG 0  //disable for more speed
-#define T_MAP_GET_OPTIMIZED 1
+#define T_MAP_GET_DEBUG 1  //disable for more speed
+#define T_MAP_GET_OPTIMIZED 0
+
+#define T_MAP_SET_OPTIMIZED 0   //not safe
 
 /*
     Implementation
