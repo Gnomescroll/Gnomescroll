@@ -208,6 +208,9 @@ int run()
         
         frame_left(); //swap every 15 ms?
 
+        /*
+            Sample input during wait!!
+        */
         frame_graph->frame_end();
 
         // do fps calculation

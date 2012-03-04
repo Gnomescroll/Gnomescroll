@@ -177,41 +177,6 @@ namespace t_map
     #endif
     }
 
-/*
-    if (dmg <= 0) return -4;
-    int xoff, yoff, zoff, xrel, yrel, zrel;
-    int tile;
-    struct vm_column* column;
-    struct vm_chunk* chunk;
-    xoff = x >> 3; yoff = y >> 3; zoff = z >> 3;
-    if(xoff < 0 || xoff >= vm_map_dim || yoff < 0 || yoff >= vm_map_dim || zoff < 0 || zoff >= vm_column_max) {
-        return -2;
-    }
-    xrel = x - (xoff << 3); yrel = y - (yoff << 3); zrel = z - (zoff << 3);
-    column = &map.column[vm_map_dim*yoff + xoff];
-    chunk = column->chunk[zoff];
-    if(chunk == NULL) {
-        //printf("_apply_damage: Chunk is NULL:: %d,%d,%d dmg=%d\n", x,y,z, dmg);
-        //printf("xyzoff:: %d %d %d\n", xoff, yoff, zoff);
-        return -3;
-    }
-    tile = chunk->voxel[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
-    if (tile==0) {
-        return -1;
-    }
-    unsigned char* damage;
-    damage = &chunk->damage[vm_chunk_size*vm_chunk_size*zrel+ vm_chunk_size*yrel + xrel];
-    *damage += dmg;
-    if(*damage >= _maxDamage(tile) ) {
-        // destroy block
-        _set(x,y,z, 0);
-        return 0;
-    } else {
-        return *damage;
-    }
-*/
-
-
     int Terrain_map::apply_damage(int x, int y, int z, int dmg)
     {
         //printf("set: %i %i %i %i \n", x,y,element.block);
