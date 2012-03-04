@@ -589,6 +589,8 @@ grenade damage indication (blood, voxel destruction)
 teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 --probably have to do periodic checks
 
+dont draw player name hud text over map
+
 slime models not taking voxel damage
 
 PRINT & MAIL REBATES

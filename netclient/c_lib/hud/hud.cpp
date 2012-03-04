@@ -205,7 +205,7 @@ void draw_hud_textures()
 
     if (hud_draw_settings.compass)
     {
-        Compass::draw_compass();
+        Compass::draw();
     }
 
     if (hud_draw_settings.map)

@@ -190,6 +190,18 @@ float vec3_distance(struct Vec3 v1, struct Vec3 v2)
     return sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
 }
 
+// Angle from look vector vx,vy,vz to point x,y,z
+static float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2) __attribute((always_inline));
+float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
+{
+    normalize_vector(&look);
+    pt2 = vec3_sub(pt2, pt);
+    normalize_vector(&pt2);
+    float x = vec3_dot(look, pt2);
+    x = acos(x);
+    return x;
+}
+
 /*
     diagnostic
 */

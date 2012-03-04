@@ -50,6 +50,68 @@ void AgentState::forward_vector(float f[3]) {
     f[2] /= len;
 }
 
+Vec3 AgentState::forward_vector()
+{
+    float f[3];
+    this->forward_vector(f);
+    return vec3_init(f[0], f[1], f[2]);
+}
+
+// TODO: targeting interface. let the player choose
+float Agent_state::angle_to_enemy_flag()
+{
+    if (this->status.team == 0)
+        return 0.0f;
+    if (STATE::ctf == NULL)
+        return 0.0f;
+        
+    Flag* f;
+    switch (this->status.team)
+    {
+        case 1:
+            f = STATE::ctf->two.flag;
+            break;
+        case 2:
+            f = STATE::ctf->one.flag;
+            break;
+        default: return 0.0f;
+    }
+
+    Vec3 pt = vec3_init(s.x, s.y, 0);
+    Vec3 look = s.forward_vector();
+    Vec3 pt2 = vec3_init(f->x, f->y, 0);
+    float theta = vec3_angle_to_point(pt, look, pt2);
+
+    return theta;
+}
+
+float Agent_state::angle_to_friendly_base()
+{
+    if (this->status.team == 0)
+        return 0.0f;
+    if (STATE::ctf == NULL)
+        return 0.0f;
+        
+    Base* b;
+    switch (this->status.team)
+    {
+        case 1:
+            b = STATE::ctf->one.base;
+            break;
+        case 2:
+            b = STATE::ctf->two.base;
+            break;
+        default: return 0.0f;
+    }
+
+    Vec3 pt = vec3_init(s.x, s.y, 0);
+    Vec3 look = s.forward_vector();
+    Vec3 pt2 = vec3_init(b->x, b->y, 0);
+    float theta = vec3_angle_to_point(pt, look, pt2);
+
+    return theta;
+}
+
 bool Agent_state::is_you() {
     bool is = false;
     #ifdef DC_CLIENT

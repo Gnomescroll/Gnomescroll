@@ -48,15 +48,41 @@ void init() {
 
 }
 
+#include <math.h>
+
 // rotate compass texture
-void update() {
-    theta = ClientState::playerAgent_state.camera_state.theta;
+void update()
+{
+    Agent_state* a = ClientState::playerAgent_state.you;
+    //if (a == NULL || ClientState::ctf == NULL)
+    //{
+        theta = ClientState::playerAgent_state.camera_state.theta;
+        return;
+    //}
+
+    if (a->status.has_flag)
+        theta = a->angle_to_friendly_base();
+    else
+        theta = a->angle_to_enemy_flag();
+    //theta -= kPI/2;
+
+    theta += 0.5f;
+
+    if (theta > 1.0f)
+        theta -= 2.0f;
+    else if (theta < -1.0f)
+        theta += 2.0f;
+    
+    printf("theta=%0.2f\n",theta);
+
 }
 
 void draw() {
 
     if (texture == 0)
         return;
+
+    update();
 
     static const float z = -0.5f;
 
@@ -70,13 +96,6 @@ void draw() {
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
-}
-
-
-//cython
-void draw_compass() {
-    update();
-    draw();
 }
 
 }

@@ -43,6 +43,7 @@ class AgentState {
         AgentState();
         
         void forward_vector(float f[3]);
+        Vec3 forward_vector();
 };
 
 
@@ -130,6 +131,10 @@ class Agent_state {
         float current_height();
         int current_height_int();
         int get_facing_block_type();
+
+        float angle_to_enemy_flag();
+        float angle_to_friendly_base();
+
 
         void init_vox();
 

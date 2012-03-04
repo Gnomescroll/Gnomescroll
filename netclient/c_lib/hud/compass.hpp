@@ -6,7 +6,4 @@ namespace Compass {
     void draw();
     void update();
 
-    //cython
-    void draw_compass();
-
 }
