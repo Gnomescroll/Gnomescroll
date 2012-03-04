@@ -114,7 +114,7 @@ void rotate_point(float x, float y, float theta, float *x1, float *y1) {
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta) {
 
     const float pi = 3.14159;
-    theta -= 0.5f;
+    //theta -= 0.5f;
     theta *= pi;
     float cx = x + w/2;
     float cy = y + h/2; //center

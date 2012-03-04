@@ -54,6 +54,9 @@ void init() {
 void update()
 {
     Agent_state* a = ClientState::playerAgent_state.you;
+
+    AgentState* _a = &ClientState::playerAgent_state.camera_state;
+
     if (a == NULL || ClientState::ctf == NULL)
     {
         theta = ClientState::playerAgent_state.camera_state.theta;
@@ -69,10 +72,29 @@ void update()
         goal_pos = a->enemy_flag_pos();
     //theta -= kPI/2;
 
-    goal_pos.x -= a->s.x;
-    goal_pos.y -= a->s.y;
-    goal_pos.z = 0;
+    //signed_angle = atan2(b.y,b.x) - atan2(a.y,a.x)
 
+    goal_pos.x -= _a->x;
+    goal_pos.y -= _a->y;
+    goal_pos.z = 0;
+    normalize_vector(&goal_pos);
+
+    struct Vec3 forward = _a->forward_vector();
+    forward.z = 0;
+    normalize_vector(&forward);
+
+    float t = acos(vec3_dot(forward, goal_pos)) / 3.1415;
+    
+    if(forward.x*goal_pos.y - forward.y*goal_pos.x < 0) t = -t;
+
+    //float _x = sin(t);
+    //float _y = cos(t);
+
+    //printf("c= %f \n", _x*forward.x + _y*forward.y );
+
+    //printf("theta = %f \n", t);
+
+    theta = t; // - 0.5;;
 /*   
     theta += 0.5f;
     if (theta > 1.0f)

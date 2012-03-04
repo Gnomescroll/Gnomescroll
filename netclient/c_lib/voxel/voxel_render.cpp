@@ -89,6 +89,8 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
+    printf("test\n");
+    
     Voxel_volume* vv;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
