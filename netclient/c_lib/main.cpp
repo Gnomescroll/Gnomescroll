@@ -117,34 +117,44 @@ int run()
         if (physics_ticks >= 2)
             printf("Physics: %d ticks this frame\n", physics_ticks);
 
-        // update mouse
-        pan_camera();
-            
-        // update hud projected names
-        ClientState::playerAgent_state.display_agent_names();
-
-        // check if we've failed to receive any identify packets (lost in initialization)
-        // Shouldn't be needed? initialization packets are reliable
-        ClientState::agent_list->check_missing_names();  // will ratelimit itself
-        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
+        frame_graph->frame_stage(1); // misc stuff and network
 
         // dispatch
         client_dispatch_network_events();
         // flush network
         flush_to_net();
 
+        // update mouse
+        pan_camera();
+
         // set input options (set these in an options struct at load)   TODO
         set_input_options(
             Options::invert_mouse,
             Options::sensitivity
         );
+        
+        apply_camera_physics(); //apply velocity
+        // update camera state
+        ClientState::update_camera();
+
+        /*
+            Move this crap!!! 
+
+            Client state tick maybe?
+
+        */
+
+        // update hud projected names
+        ClientState::playerAgent_state.display_agent_names();   
+        // check if we've failed to receive any identify packets (lost in initialization)
+        // Shouldn't be needed? initialization packets are reliable
+        ClientState::agent_list->check_missing_names();  // will ratelimit itself
+        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
 
         // update mouse
         pan_camera();
 
-        apply_camera_physics(); //apply velocity
-        // update camera state
-        ClientState::update_camera();
+        frame_graph->frame_stage(2); // call draw functions
 
         // switch to world projection
         world_projection();
@@ -194,21 +204,17 @@ int run()
 
         //frame_graph->frame_flip_start();
 
-        frame_graph->frame_stage(1);
+        frame_graph->frame_stage(3); //map and voxel updates
 
-        _swap_buffers();
-
-        //updates 
-
-        //frame_graph->frame_map_update_start();
         t_map::update_map();
-        //frame_graph->frame_voxel_update_start();
         ClientState::voxel_render_list->update();
 
-        //wait
-        //frame_graph->frame_wait_start();
+
+        frame_graph->frame_stage(4); //swap buffers
+
+        _swap_buffers();
         
-        frame_graph->frame_wait_stage(2);
+        frame_graph->frame_wait_stage(5); //wait stage
 
         //frame_left(); //swap every 15 ms?
 
