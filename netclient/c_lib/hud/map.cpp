@@ -500,7 +500,7 @@ void draw()
 
     update_counter++;
 
-    static const float z = -0.5f;
+    static const float z = 0.5f;
 
     glColor3ub(255,255,255);
 

@@ -569,8 +569,6 @@ try 256x256 map
 
 tell players they can afford spawners the first time they capture a flag
 
-test what happens you jump off the map with the flag
-
 confirmation dialog for ESC quit
 
 chat command for places of interest

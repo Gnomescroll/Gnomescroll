@@ -54,11 +54,11 @@ void init() {
 void update()
 {
     Agent_state* a = ClientState::playerAgent_state.you;
-    //if (a == NULL || ClientState::ctf == NULL)
-    //{
+    if (a == NULL || ClientState::ctf == NULL)
+    {
         theta = ClientState::playerAgent_state.camera_state.theta;
         return;
-    //}
+    }
 
     Vec3 goal_pos;
     if (a->status.has_flag)
@@ -75,13 +75,11 @@ void update()
 
 /*   
     theta += 0.5f;
-
     if (theta > 1.0f)
         theta -= 2.0f;
     else if (theta < -1.0f)
-        theta += 2.0f;
-    
-    printf("theta=%0.2f\n",theta);
+        theta += 2.0f;    
+    //printf("theta=%0.2f\n",theta);
 */
 }
 

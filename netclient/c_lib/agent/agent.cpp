@@ -83,6 +83,7 @@ float Agent_state::angle_to_enemy_flag()
 
     Vec3 pt = vec3_init(s.x, s.y, 0);
     Vec3 look = s.forward_vector();
+    look.z = 0;
     Vec3 pt2 = vec3_init(f->x, f->y, 0);
     float theta = vec3_angle_to_point(pt, look, pt2);
 
@@ -111,6 +112,7 @@ float Agent_state::angle_to_friendly_base()
 
     Vec3 pt = vec3_init(s.x, s.y, 0);
     Vec3 look = s.forward_vector();
+    look.z = 0;
     Vec3 pt2 = vec3_init(b->x, b->y, 0);
     float theta = vec3_angle_to_point(pt, look, pt2);
 
