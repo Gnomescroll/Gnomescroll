@@ -192,26 +192,30 @@ int run()
         // flip sdl
         //frame_left(); //swap every 15 ms?
 
-        frame_graph->frame_flip_start();
+        //frame_graph->frame_flip_start();
+
+        frame_graph->frame_stage(1);
 
         _swap_buffers();
 
         //updates
 
-        frame_graph->frame_map_update_start();
+        //frame_graph->frame_map_update_start();
         t_map::update_map();
-        frame_graph->frame_voxel_update_start();
+        //frame_graph->frame_voxel_update_start();
         ClientState::voxel_render_list->update();
 
         //wait
-        frame_graph->frame_wait_start();
+        //frame_graph->frame_wait_start();
         
-        frame_left(); //swap every 15 ms?
+        frame_graph->frame_wait_stage(2);
+
+        //frame_left(); //swap every 15 ms?
 
         /*
             Sample input during wait!!
         */
-        frame_graph->frame_end();
+        frame_graph->frame_end(); //stage 3
 
         // do fps calculation
         if (Options::fps)

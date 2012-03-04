@@ -8,7 +8,7 @@ namespace Profiling
 
 #include <c_lib/time/physics_timer.h>
 
-const int STAGES = 4;
+const int STAGES = 4; //includes start and end
 /*
     Stage description
 
@@ -109,13 +109,13 @@ class FrameGraph
 
     void frame_start()
     {
-        int t = _GET_MS_TIME();
-/*
-        _frame_end[index] = t;
-        index = (index + 1) % 128;
 
-        _frame_start[index] = t;
-*/
+
+        int t = _GET_MS_TIME();
+
+        timer[index][STAGES-1] = t;
+        index = (index + 1) % 128;
+        timer[index][0] = t;
 
     }
 
@@ -187,6 +187,20 @@ class FrameGraph
         }
 
     }
+
+/*
+    void frame_start()
+    {
+
+        int t = _GET_MS_TIME();
+
+        _frame_end[index] = t;
+        index = (index + 1) % 128;
+
+        _frame_start[index] = t;
+    }
+*/
+
 
 /*
     void frame_flip_start()
