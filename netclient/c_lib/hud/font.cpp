@@ -331,6 +331,8 @@ static int read_fonts_used()
     if (n_fonts == 0)
     {   // no fonts were really found in the file (all blank lines & comments)
         printf("WARNING: no fonts found in fonts file %s (Lines starting with # are considered comments)\n", fn);
+        free(fonts);
+        fonts = NULL;
         return 1;
     }
     if (font == NULL && lines && n_fonts)
@@ -355,6 +357,11 @@ void reset_default()
 
 void set_properties(int size, int bold, int italic)
 {
+    if (fonts == NULL)
+    {
+        font = NULL;
+        return;
+    }
     for (int i=0; i<n_fonts; i++)
         if (fonts[i]->data.size == size
           && fonts[i]->data.bold == bold
