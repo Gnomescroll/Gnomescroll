@@ -50,6 +50,6 @@ sound = True # global sound.
 sfx = 100
 music = 100
 
-font = "inc_40.fnt"
+font = "inc_18_b.fnt"
 font_size = 32
 

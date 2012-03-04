@@ -66,7 +66,7 @@ void init();
 void teardown();
 
 extern Font** fonts;
-extern const int n_fonts;
+extern int n_fonts;
 extern Font* font;
 
 

@@ -6,7 +6,7 @@ namespace HudFont
 {
 
 static const char font_path[] = "./media/fonts/";
-const int n_fonts = 2;
+int n_fonts = 0;
 Font** fonts = NULL;
 Font* font = NULL;
 
@@ -220,7 +220,7 @@ struct Glyph Font::get_missing_glyph(unsigned char c)
             glyph = glyphs[(int)missing_glyph];
             break;
     }
-    printf("missing glyph: %d\n", c);
+    //printf("missing glyph: %d\n", c);
     return glyph;
 }
 
@@ -291,6 +291,77 @@ missing_glyph('?')
     printf("Loaded font %s\n", data.file);
 }
 
+static int read_fonts_used()
+{
+    const char fonts_used[] = "fonts_used";
+    char* fn = (char*)malloc(strlen(fonts_used) + strlen(font_path) - 4 + 1);
+    sprintf(fn, "%s%s", font_path, fonts_used);
+
+    int size = 0;
+    char* buffer = read_file_to_buffer(fn, &size);
+    if (buffer == NULL)
+    {
+        printf("ERROR: failed to read fonts file %s\n", fn);
+        return 1;
+    }
+
+    int lines = 0;
+    int i = 0;
+    int longest = 0;
+    int length = 0;
+    char c;
+    while ((c = buffer[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            if (length > longest)
+                longest = length;
+            length = 0;
+            lines++;
+        }
+        else
+            length++;
+    }
+    if (length > longest)
+        longest = length;
+
+    if (!lines)
+    {
+        printf("WARNING: no fonts found in fonts file %s\n", fn);
+        return 1;
+    }
+
+    printf("Font file: %d lines found\n", lines);
+
+    fonts = (Font**)malloc(sizeof(Font*) * lines);
+    char* font_name = (char*)malloc(longest + 1);
+    int j = 0;
+    i = 0;
+    while ((c = buffer[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            font_name[j] = '\0';
+            j = 0;
+            fonts[n_fonts] = new Font(font_name);
+            if (strcmp(Options::font, font_name) == 0)
+            {
+                printf("Selecting default font: %s\n", Options::font);
+                font = fonts[n_fonts];
+            }
+            n_fonts++;
+        }
+        else
+            font_name[j++] = c;
+    }
+    if (font == NULL && lines)
+        font = fonts[0];
+        
+    free(font_name);
+    free(buffer);
+    free(fn);
+    return 0;
+}
 
 void init()
 {
@@ -300,17 +371,21 @@ void init()
         printf("WARNING: Attempt to init fonts twice\n");
         return;
     }
-    
-    fonts = (Font**)malloc(sizeof(Font*) * n_fonts);
 
-    int i = 0;
-    fonts[i++] = new Font((char*)"inconsolata_16.fnt");
-    fonts[i++] = new Font(Options::font);
+    if (read_fonts_used())
+        font = NULL;
 
-    font = fonts[i-1];
+    //const int expected_fonts = 20;
+    //fonts = (Font**)malloc(sizeof(Font*) * expected_fonts);
 
-    if (i > n_fonts)
-        printf("WARNING: max fonts exceeded\n");
+    //int i = 0;
+    //fonts[i++] = new Font((char*)"inconsolata_16.fnt");
+    //fonts[i++] = new Font(Options::font);
+
+    //font = fonts[i-1];
+
+    //if (i > n_fonts)
+        //printf("WARNING: max fonts exceeded\n");
 }
 
 void teardown()

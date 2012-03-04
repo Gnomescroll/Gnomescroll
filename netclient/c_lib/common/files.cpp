@@ -8,6 +8,7 @@ off_t fsize(const char *filename)
     return -1; 
 }
 
+// free the returned char* buffer after use
 char* read_file_to_buffer(char* file_name, int* size)
 {
     int expected_size = fsize(file_name);
@@ -44,4 +45,61 @@ char* read_file_to_buffer(char* file_name, int* size)
     }
     //free(source); /* Don't forget to call free() later! */
     return source;
+}
+
+int count_lines(char* fn)
+{
+    int lines = 0;
+    while ((c = buffer[i++]) != '\0')
+        if (c == '\n')
+            lines++;
+    return lines;
+}
+
+int count_lines(char* fn, int* longest)
+{
+    int lines = 0;
+    int length = 0;
+    while ((c = buffer[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            if (length > longest)
+                *longest = length;
+            length = 0;
+            lines++;
+        }
+        else
+            length++;
+    }
+    if (length > longest)
+        *longest = length;
+    return lines;
+}
+
+void free_read_lines(char** readlines, int lines)
+{
+    if (readlines == NULL) return;
+    for (int i=0; i<lines; i++)
+        if (readlines[i] != NULL)
+            free(readlines[i])
+    free(readlines);
+}
+
+// free the returned char** array after use
+char** read_lines(char* fn, int* lines)
+{
+    *lines = count_lines(fn);
+    char** arr = (char**)malloc(sizeof(char*)*lines);
+    int j = 0;
+    char* 
+    while ((c = buffer[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            (*lines)++;
+        }
+        else
+            length++;
+    }
 }
