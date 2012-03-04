@@ -149,12 +149,21 @@ int run()
         // switch to world projection
         world_projection();
 
-        // draw map TODO
+        // draw map
         t_map::draw_map();
-        t_map::update_map();
+
 
         // draw client state
-        ClientState::draw_client_state();
+        ClientState::agent_list->draw();
+        ClientState::voxel_render_list->draw();
+        
+        ClientState::cspray_list->draw();
+        ClientState::grenade_list->draw();
+        ClientState::shrapnel_list->draw();
+        ClientState::blood_list->draw();
+        ClientState::minivox_list->draw();
+        ClientState::billboard_text_list->draw();
+
 
         // draw animations
         Animations::animations_draw();
@@ -187,6 +196,14 @@ int run()
 
         _swap_buffers();
 
+        //updates
+
+        frame_graph->frame_map_update_start();
+        t_map::update_map();
+        frame_graph->frame_voxel_update_start();
+        ClientState::voxel_render_list->update();
+
+        //wait
         frame_graph->frame_wait_start();
         
         frame_left(); //swap every 15 ms?

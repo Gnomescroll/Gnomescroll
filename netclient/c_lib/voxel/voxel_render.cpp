@@ -87,6 +87,11 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
         printf("Voxel_render_list::unregister_voxel_volume error, volume was not on list \n");
 }
 
+void Voxel_render_list::update()
+{
+    this->update_vertex_buffer_object();
+}
+
 void Voxel_render_list::update_vertex_buffer_object()
 {
 

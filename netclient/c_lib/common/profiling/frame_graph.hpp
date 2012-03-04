@@ -59,6 +59,17 @@ class FrameGraph
         _frame_flip_start[index] =  _GET_MS_TIME();
     }
 
+    void map_update_start()
+    {
+
+
+    }
+
+    void voxel_update_start()
+    {
+
+    }
+    
     void frame_wait_start()
     {
         _frame_wait_start[index] = _GET_MS_TIME();

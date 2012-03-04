@@ -134,16 +134,18 @@ namespace ClientState {
 
     void draw()
     {
-        agent_list->draw();
-        voxel_render_list->draw();
-        
-        cspray_list->draw();
-        grenade_list->draw();
-        shrapnel_list->draw();
-        blood_list->draw();
-        //neutron_list->draw();
-        minivox_list->draw();
-        billboard_text_list->draw();
+        //moved to main()
+    /*
+        ClientState::agent_list->draw();
+        ClientState::voxel_render_list->draw();
+        ClientState::cspray_list->draw();
+        ClientState::grenade_list->draw();
+        ClientState::shrapnel_list->draw();
+        ClientState::blood_list->draw();
+        ClientState::minivox_list->draw();
+        ClientState::billboard_text_list->draw();
+
+    */
     }
 
     void tick()

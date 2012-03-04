@@ -50,7 +50,8 @@ class Voxel_render_list
     void unregister_voxel_volume(Voxel_volume* vv);
 
     void draw();
-    
+    void update();
+
     static void init_voxel_render_list_shader1();
 
     Voxel_render_list();
