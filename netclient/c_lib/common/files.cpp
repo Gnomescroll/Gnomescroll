@@ -93,18 +93,27 @@ void free_read_lines(char** readlines, int lines)
 //// free the returned char** array after use
 char** read_lines(char* buffer, int* lines)
 {
-    //*lines = count_lines(buffer);
-    //char** arr = (char**)malloc(sizeof(char*)**lines);
-    //int i = 0;
-    //int j = 0;
-    //char* 
-    //while ((c = buffer[i++]) != '\0')
-    //{
-        //if (c == '\n')
-        //{
-            //(*lines)++;
-        //}
-        //else
-            //length++;
-    //}
+    int longest = 0;
+    *lines = count_lines(buffer, &longest);
+    char** arr = (char**)malloc(sizeof(char*)**lines);
+    for (int i=0; i<*lines; i++)
+        arr[i] = (char*)malloc(sizeof(char)*(longest+1));
+    int i = 0;
+    int j = 0;
+    int n = 0;
+    char c;
+    while ((c = buffer[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            arr[n][j] = '\0';
+            j = 0;
+            if (j < longest+1)
+                arr[n] = (char*)realloc(arr[n], j);
+            n++;
+        }
+        else
+            arr[n][j++] = c;
+    }
+    return arr;
 }
