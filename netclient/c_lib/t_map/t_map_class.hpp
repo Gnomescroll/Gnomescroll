@@ -3,6 +3,8 @@
 namespace t_map
 {
 
+#include <c_lib/t_map/common/map_element.hpp>
+    
 /*
     Optimization parameters
 */
