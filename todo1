@@ -483,6 +483,7 @@ notify player disconnected
 add Flag::held property -- fixes draw decision issues and teammates "stealing" the flag from each other
 fulstrum culling on spawners
 integrated frame_graph into input and hud
+point compass to flag / base (when you have flag)
 ====================
 
 Animations
@@ -571,8 +572,6 @@ tell players they can afford spawners the first time they capture a flag
 test what happens you jump off the map with the flag
 
 confirmation dialog for ESC quit
-
-arrows points to enemy flag, points to base when you have flag?
 
 chat command for places of interest
 
