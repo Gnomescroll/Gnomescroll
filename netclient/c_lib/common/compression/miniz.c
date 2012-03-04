@@ -1160,7 +1160,7 @@ int mz_inflate(mz_streamp pStream, int flush)
     // MZ_FINISH on the first call implies that the input and output buffers are large enough to hold the entire compressed/decompressed file.
     decomp_flags |= TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF;
     in_bytes = pStream->avail_in; out_bytes = pStream->avail_out;
-    status = tinfl_decompress(&pState->m_decomp, pStream->next_in, &in_bytes, pStream->next_out, pStream->next_out, &out_bytes, decomp_flags);
+    status = tinfl_decompress(&pState->m_decomp, (mz_uint8*)pStream->next_in, &in_bytes, pStream->next_out, pStream->next_out, &out_bytes, decomp_flags);
     pState->m_last_status = status;
     pStream->next_in += (mz_uint)in_bytes; pStream->avail_in -= (mz_uint)in_bytes; pStream->total_in += (mz_uint)in_bytes;
     pStream->adler = tinfl_get_adler32(&pState->m_decomp);
