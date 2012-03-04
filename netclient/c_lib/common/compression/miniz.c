@@ -1160,7 +1160,7 @@ int mz_inflate(mz_streamp pStream, int flush)
     // MZ_FINISH on the first call implies that the input and output buffers are large enough to hold the entire compressed/decompressed file.
     decomp_flags |= TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF;
     in_bytes = pStream->avail_in; out_bytes = pStream->avail_out;
-    status = tinfl_decompress(&pState->m_decomp, (mz_uint8*)pStream->next_in, &in_bytes, pStream->next_out, pStream->next_out, &out_bytes, decomp_flags);
+    status = tinfl_decompress(&pState->m_decomp, (mz_uint8*)pStream->next_in, &in_bytes, (mz_uint8*)pStream->next_out, (mz_uint8*)pStream->next_out, &out_bytes, decomp_flags); //STEVE EDIT -- (mz_uint8*) casts added for OSX build
     pState->m_last_status = status;
     pStream->next_in += (mz_uint)in_bytes; pStream->avail_in -= (mz_uint)in_bytes; pStream->total_in += (mz_uint)in_bytes;
     pStream->adler = tinfl_get_adler32(&pState->m_decomp);
@@ -1192,7 +1192,7 @@ int mz_inflate(mz_streamp pStream, int flush)
     in_bytes = pStream->avail_in;
     out_bytes = TINFL_LZ_DICT_SIZE - pState->m_dict_ofs;
 
-    status = tinfl_decompress(&pState->m_decomp, pStream->next_in, &in_bytes, pState->m_dict, pState->m_dict + pState->m_dict_ofs, &out_bytes, decomp_flags);
+    status = tinfl_decompress(&pState->m_decomp, (mz_uint8*)pStream->next_in, &in_bytes, pState->m_dict, pState->m_dict + pState->m_dict_ofs, &out_bytes, decomp_flags); //STEVE EDIT -- (mz_uint8*) casts added for OSX build
     pState->m_last_status = status;
 
     pStream->next_in += (mz_uint)in_bytes; pStream->avail_in -= (mz_uint)in_bytes;
@@ -2601,7 +2601,7 @@ tdefl_status tdefl_compress(tdefl_compressor *d, const void *pIn_buf, size_t *pI
   }
 
   if ((d->m_flags & (TDEFL_WRITE_ZLIB_HEADER | TDEFL_COMPUTE_ADLER32)) && (pIn_buf))
-    d->m_adler32 = (mz_uint32)mz_adler32(d->m_adler32, (const mz_uint8 *)pIn_buf, d->m_pSrc - (const mz_uint8 *)pIn_buf);
+    d->m_adler32 = (mz_uint32)mz_adler32(d->m_adler32, reinterpret_cast<const mz_uint8*>(pIn_buf), d->m_pSrc - (const mz_uint8 *)pIn_buf); //STEVE EDIT -- reinterpret_cast casts added for OSX build
 
   if ((flush) && (!d->m_lookahead_size) && (!d->m_src_buf_left) && (!d->m_output_flush_remaining))
   {
