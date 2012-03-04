@@ -35,7 +35,6 @@ OPT_INT(ping_update_interval, 500)
 
 /* Font */
 OPT_STRING(font, "inconsolata_18.fnt")
-OPT_INT(font_size, 18)
 
 /* Sound */
 OPT_BOOL(sound, false)

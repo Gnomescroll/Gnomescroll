@@ -49,7 +49,3 @@ ping_update_interval = 500  # ms delay between ping updates
 sound = True # global sound.
 sfx = 100
 music = 100
-
-font = "inc_18.fnt"
-font_size = 32
-

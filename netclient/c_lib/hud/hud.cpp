@@ -71,7 +71,7 @@ static struct HudDrawSettings
     bool ping;
     int ping_val;
     int reliable_ping_val;
-    bool player_stats;
+    bool agent_status;
     bool chat;  // draw chat messages normally (using timeouts)
     bool chat_input;    // draw chat input area
     bool full_chat;     // draw chat messages (ignoring timeouts)
@@ -125,7 +125,7 @@ void update_hud_draw_settings()
     reliable_ping_val = (reliable_ping_val >= 1000) ? 999 : reliable_ping_val;
     hud_draw_settings.reliable_ping_val = (reliable_ping_val < 0) ? 0 : reliable_ping_val;
     
-    hud_draw_settings.player_stats = true;
+    hud_draw_settings.agent_status = true;
 
     hud_draw_settings.chat = true;
     hud_draw_settings.chat_input = input_state.chat;
@@ -199,19 +199,13 @@ void draw_hud_textures()
         HudInventory::inventory.draw();
 
     if (hud_draw_settings.equipment)
-    {
         HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
-    }
 
     if (hud_draw_settings.compass)
-    {
         Compass::draw();
-    }
 
     if (hud_draw_settings.map)
-    {
         HudMap::draw();
-    }
 
     if (hud_draw_settings.chat_input      //not actually a texture
      && hud->inited && hud->chat != NULL && hud->chat->inited)
@@ -276,7 +270,7 @@ void draw_hud_text()
         hud->reliable_ping->draw();
     }
 
-    if (hud_draw_settings.player_stats)
+    if (hud_draw_settings.agent_status)
     {
         Agent_state* a = ClientState::playerAgent_state.you;
         if (a != NULL)
@@ -319,25 +313,14 @@ void draw_hud_text()
     }
 
     if (hud->chat->inited)
-    {
         if (hud_draw_settings.chat)
-        {
             hud->chat->draw_messages();
-        }
-        
         if (hud_draw_settings.chat_input)
-        {
             hud->chat->draw_input();
-        }
-    }
 
     if (hud->scoreboard->inited)
-    {
         if (hud_draw_settings.scoreboard)
-        {
             hud->scoreboard->draw();
-        }
-    }
 
     end_text_draw();
 }
@@ -345,7 +328,8 @@ void draw_hud_text()
 void draw_hud()
 {
     draw_hud_textures();
-    draw_hud_text();
+    if (!hud_draw_settings.zoom)
+        draw_hud_text();
 }
 
 /* HUD */

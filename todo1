@@ -472,6 +472,9 @@ fix grenades damaging teammates (shouldnt)
 periodically check agents' names if set to "undefined-agent-name"; request real name if so
 -- i've seen this occur live, but its possibly a network bug because all init packets (agent create, identify etc) are reliable
 -- either the packet dropped anyway, or the packet was received before the agent create
+====================
+
+Mar 3
 
 fix jetpack decay
 --test out very short jetpack height (~1.2 off the ground). works well but need testing
@@ -485,6 +488,16 @@ fulstrum culling on spawners
 integrated frame_graph into input and hud
 point compass to flag / base (when you have flag)
 ====================
+
+Mar 4
+
+create multiple inconsolata font sizes
+load multiple fonts from ./media/fonts/fonts_used
+swap fonts by size/italic/bold
+"You died" and "Server Not Connected" in large print
+
+====================
+
 
 Animations
 --Keyframes?
@@ -516,9 +529,6 @@ Sort out converter pipeline. Fix off by one dimension bug translating from slab6
 == INPUT ==
 SDL input normalization
 --There is no real solution. Might be able to use scancodes to handle most cases. Keymapping feature is only real solution
-
-== TEXT ==
-different font sizes
 
 == BRANDON ==
 client side prediction bug

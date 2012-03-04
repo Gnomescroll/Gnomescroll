@@ -52,8 +52,7 @@ fps = True  # display FPS
 ping = True # calculate and display ping
 ping_update_interval = 500  # ms delay between ping updates
 
-font = "inconsolata_18.fnt"
-font_size = 18
+font = "inc_18_b.fnt"
 
 ''' Sound '''
 sound = True

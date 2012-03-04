@@ -40,7 +40,6 @@ display-fps     Show FPS (frames per second) in HUD
 display-ping    Show round trip ping time in milliseconds in HUD
 ping-update-interval    How often the server is pinged
 font            Name of the font file to use
-font-size       Size of the font
 
 no-sound        Disable all sound
 sfx             Sound effects volume (Values 0-100)
@@ -90,7 +89,6 @@ DEFAULTS = {
     # HUD / Info Panels
     'ping_update_interval' : settings.ping_update_interval,
     'font'          :   settings.font,
-    'font_size'          :   settings.font_size,
 
     # Sound
     'sfx'       :   settings.sfx,
@@ -134,7 +132,6 @@ def parse(cl_args=None):
     parser.add_argument('-ping', '--display-ping', action='store_true', dest='ping')
     parser.add_argument('-pud', '--ping-update-interval', default=DEFAULTS['ping_update_interval'], type=int)
     parser.add_argument('--font', default=DEFAULTS['font'])
-    parser.add_argument('--font-size', default=DEFAULTS['font_size'])
 
     ''' Sound '''
     parser.add_argument('-ns', '--no-sound', action='store_true', dest='sound')

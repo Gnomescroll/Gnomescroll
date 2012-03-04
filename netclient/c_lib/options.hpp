@@ -35,7 +35,6 @@ OPT_INT_HEADER(ping_update_interval)
 
 /* Font */
 OPT_STRING_HEADER(font)
-OPT_INT_HEADER(font_size)
 
 /* Sound */
 OPT_BOOL_HEADER(sound)
