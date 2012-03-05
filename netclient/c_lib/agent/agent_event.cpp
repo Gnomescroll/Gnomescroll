@@ -165,10 +165,8 @@ void Agent_event::reload_weapon(int type) {
     // play reload animation/sound for the weapon
 }
 
-void Agent_event::update_team_color()
+void Agent_event::update_team_color(unsigned char r, unsigned char b, unsigned char c)
 {
-    unsigned char r,g,b;
-    ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
     if (r == this->r && g == this->g && b == this->b)
         return;
     this->r = r;
@@ -178,6 +176,13 @@ void Agent_event::update_team_color()
         this->a->vox->update_team_color(&agent_vox_dat, this->a->status.team);
     if (this->bb != NULL)
         this->bb->set_color(r,g,b);
+}
+
+void Agent_event::update_team_color()
+{
+    unsigned char r,g,b;
+    ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
+    this->update_team_color(r,g,b);
 }
 
 void Agent_event::joined_team(int team)

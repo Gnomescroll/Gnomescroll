@@ -127,7 +127,14 @@ namespace ClientState {
         slime_list->update();
         ctf->update();
         spawner_list->update();
-        agent_list->update_team_colors();
+
+        static int team_color_update = 0;
+        const int team_color_update_interval = 30 * 6;  // once every 6 seconds
+        if (team_color_update++ >= team_color_update_interval)
+        {
+            agent_list->update_team_colors();
+            team_color_update %= team_color_update_interval;
+        }
     }
 
     void set_PlayerAgent_id(int id)

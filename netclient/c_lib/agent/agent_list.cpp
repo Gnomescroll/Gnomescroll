@@ -248,10 +248,10 @@ void Agent_list::update_team_colors()
         switch (this->a[i]->status.team)
         {
             case 1:
-                this->a[i]->event.update_team_color();
+                this->a[i]->event.update_team_color(r1, g1, b1);
                 break;
             case 2:
-                this->a[i]->event.update_team_color();
+                this->a[i]->event.update_team_color(r2, g2, b2);
                 break;
             default: continue;
         }
