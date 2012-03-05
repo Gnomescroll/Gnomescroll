@@ -382,6 +382,13 @@ bool ChatInput::route_command()
         msg.id = spawner_team_index;
         msg.send();
     }
+    else
+    if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B"))
+    {
+        choose_spawn_location_CtoS msg;
+        msg.id = BASE_SPAWN_ID;
+        msg.send();
+    }
 
     return true;
 }
