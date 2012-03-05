@@ -88,23 +88,9 @@ class Map_vbo
         v_list = new Vertex[ vnum_max ];
     }
 
-    /*
-        Has to copy to new buffer, cannot use
-    */
-
-    /*
-    void expand(int num) //vertex num currently being processed
-    {
-        vnum_max += MAP_VBO_INCREMENT;
-        struct Vertex* v_tmp= new Vertex[ vnum_max ];
-        memcpy(v_tmp, v_list, num*sizeof(struct Vertex));
-        delete[] v_list;
-    }
-    */
-
 };
 
-const int VBO_LIST_SIZE = 512; //max number of VBOS that can have loaded VBOs
+const int VBO_LIST_SIZE = 1024; //max number of VBOS that can have loaded VBOs
 
 class Vbo_map
 {
@@ -169,7 +155,15 @@ class Vbo_map
             //count++;
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
-            update_vbo(i, j);
+            
+            if(0)
+            {
+                update_vbo(i, j);
+            }
+            else
+            {
+                update_vbo_comptability(i, j);
+            }
             return;
         }
 
@@ -177,10 +171,11 @@ class Vbo_map
     }
 
     void update_vbo(int i, int j);
+    void update_vbo_comptability(int i, int j);
 
     void prep_draw();
     void draw_map();
-
+    void draw_map_comptability();
 };
 
 }

@@ -370,10 +370,14 @@ void Map_manager::sub(int index, int version)
 
     map_history->chunk[index].add_subscriber(client_id, alias, version_list[index].version);
 
+    /*
+        If current version equals the version the player has, do not send
+        -need to compare chunk version to current version
+        -if version is same, just send alias instead of chunk
+    */
+
     version_list[index].version = SUBSCRIBED;
     subed_chunks++;
-
-    //send_uncompressed_chunk(alias, index);
 
     send_compressed_chunk(alias, index);
 

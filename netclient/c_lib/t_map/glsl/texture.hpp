@@ -15,7 +15,7 @@ namespace t_map
 {
     const int MAX_TEXTURES = MAX_CUBES*6;
 
-    short cube_side_texture_array[MAX_CUBES*6];
+    unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
 
     GLuint terrain_map_glsl; //for shader
      

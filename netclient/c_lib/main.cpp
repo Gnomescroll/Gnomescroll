@@ -44,6 +44,17 @@ bool _quit = false;
 namespace Main
 {
 
+void time_since(int n)
+{
+    static int c_time = _GET_MS_TIME();;
+
+    int t = _GET_MS_TIME();
+
+    if(n != -1  && (t - c_time > 2) ) printf("%i: = %i ms \n", n, t - c_time);
+    c_time = t;
+
+}
+
 void init()
 {
     _set_resolution(Options::width, Options::height, Options::fullscreen);
@@ -203,9 +214,11 @@ int run()
 
         frame_graph->frame_stage(3); //map and voxel updates
 
+        //time_since(-1);
         t_map::update_map();
+        //time_since(1);
         ClientState::voxel_render_list->update();
-
+        //time_since(2);
 
         frame_graph->frame_stage(4); //swap buffers
 
