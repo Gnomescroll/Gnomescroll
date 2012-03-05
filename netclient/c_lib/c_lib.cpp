@@ -196,6 +196,16 @@ int init_c_lib() {
     init_image_loader();
 
     HudText::init();
+    HudFont::init();
+    HudInventory::init();
+    HudMap::init();
+    HudEquipment::init();
+    HudReticle::init();
+    HudCubeSelector::init();
+    Compass::init();
+    Hud::init();
+    //vn::init();
+
     init_vox_dats();
     ClientState::init_lists();
     init_voxel_volume();
@@ -210,15 +220,6 @@ int init_c_lib() {
     init_cameras();
     init_chat_client();
     init_particles();
-    HudFont::init();
-    HudInventory::init();
-    HudMap::init();
-    HudEquipment::init();
-    HudReticle::init();
-    HudCubeSelector::init();
-    Compass::init();
-    Hud::init();
-    //vn::init();
     
     Animations::init_hitscan();
     Animations::init_hitscan_laser();

@@ -620,7 +620,9 @@ void CTF::set_team_color(
             return;
     }
     #ifdef DC_CLIENT
-    HudMap::update_team(team);
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you != NULL && playerAgent_state.you->status.team == team)
+        HudMap::update_team(team);
     #endif
 }
 

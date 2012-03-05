@@ -128,6 +128,8 @@ namespace ClientState {
         ctf->update();
         spawner_list->update();
 
+        if (playerAgent_state.you != NULL)
+            HudMap::update_team(playerAgent_state.you->status.team);
         static int team_color_update = 0;
         const int team_color_update_interval = 30 * 6;  // once every 6 seconds
         if (team_color_update++ >= team_color_update_interval)

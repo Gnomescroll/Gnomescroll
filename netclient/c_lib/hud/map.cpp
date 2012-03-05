@@ -139,6 +139,7 @@ static void set_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
+    printf("teams icon color=%d,%d,%d,%d\n", r,g,b,a);
     you->set_color(r,g,b,a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
@@ -151,10 +152,20 @@ static void set_team_icons_color(
 void update_team(int team)
 {
     if (!text_icons_inited)
+    {
+        printf("WARNING: HudMap::update_team -- text icons are not inited\n");
         return;
+    }
+    static unsigned char _r=0,_g=0,_b=0;
     unsigned char r,g,b;
-    if (ClientState::ctf->get_team_color(team, &r,&g,&b))
-        set_team_icons_color(0,0,0,0);  // failed, team has no color
+    int failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
+    if (failure)
+        r=g=b=0;
+    if (r == _r && g == _g && b == _b)
+        return;
+    _r = r;
+    _g = g;
+    _b = b;
     set_team_icons_color(r,g,b);
 }
 
