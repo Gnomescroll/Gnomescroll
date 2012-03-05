@@ -148,22 +148,93 @@ static inline void _set_quad_color(struct Vertex* v_list, int offset, int x, int
     }
 }
 
+static const unsigned char _0 = 0;
+static const unsigned char _1 = 1;
+
+
+const struct TextureElement texElementArray[4] =
+{
+    {{{_0,_0,0,0}}},
+    {{{_0,_1,0,0}}},
+    {{{_1,_1,0,0}}},
+    {{{_1,_0,0,0}}}
+};
+
+
+static const struct PositionElement _v_index[4*6] = 
+{
+    {{{1,1,1,0}}} , {{{0,1,1,0}}} , {{{0,0,1,0}}} , {{{1,0,1,0}}} , //top
+    {{{0,1,0,0}}} , {{{1,1,0,0}}} , {{{1,0,0,0}}} , {{{0,0,0,0}}} , //bottom
+    {{{1,0,1,0}}} , {{{1,0,0,0}}} , {{{1,1,0,0}}} , {{{1,1,1,0}}} , //north
+    {{{0,1,1,0}}} , {{{0,1,0,0}}} , {{{0,0,0,0}}} , {{{0,0,1,0}}} , //south
+    {{{1,1,1,0}}} , {{{1,1,0,0}}} , {{{0,1,0,0}}} , {{{0,1,1,0}}} , //west
+    {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
+};
+
+#define USE_QUAD_CACHE 0
+
+/*
+    Test this!
+*/
+
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
 {
+
+#if USE_QUAD_CACHE
     memcpy(&v_list[offset], &quad_cache[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+#else
+    unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
 
-    int _x = x & 15;
-    int _y = y & 15;
+    struct TextureElement tex;
+    tex.tex = 0;
+    tex.tz = tile_tex;
 
-    for(int i=0; i<4;i++) 
+    v_list[offset+0].tex = texElementArray[0].tex | tex.tex;
+    v_list[offset+1].tex = texElementArray[1].tex | tex.tex;
+    v_list[offset+2].tex = texElementArray[2].tex | tex.tex;
+    v_list[offset+3].tex = texElementArray[3].tex | tex.tex;
+
+    v_list[offset+0].pos = _v_index[4*side+0].pos;
+    v_list[offset+1].pos = _v_index[4*side+1].pos;
+    v_list[offset+2].pos = _v_index[4*side+2].pos;
+    v_list[offset+3].pos = _v_index[4*side+3].pos;
+#endif
+
     {
-        v_list[offset+i].x += _x;
-        v_list[offset+i].y += _y;
-        v_list[offset+i].z += z;
+        int _x = x & 15;
+        int _y = y & 15;
+
+        for(int i=0; i<4;i++) 
+        {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += z;
+        }
     }
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
     _set_quad_color(v_list, offset, x, y, z, side);
 }
+
+static inline void add_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
+{
+
+    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+
+    {
+        int _x = x & 15;
+        int _y = y & 15;
+
+        for(int i=0; i<4;i++) 
+        {
+            v_list[offset+i].x += _x;
+            v_list[offset+i].y += _y;
+            v_list[offset+i].z += z;
+        }
+    }
+    _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
+    _set_quad_color(v_list, offset, x, y, z, side);
+}
+
 
 static const int VERTEX_SLACK = 128;
 
@@ -213,6 +284,89 @@ void Vbo_map::update_vbo(int i, int j)
                     if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
                     {
                         add_quad2( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
+                        vertex_count[1] += 4;
+                    }
+                }
+            }
+
+        }}
+    }
+
+    int vnum = vertex_count[0] + vertex_count[1];
+
+    vbo->_v_num[0] = vertex_count[0];
+    vbo->_v_num[1] = vertex_count[1];
+
+    vbo->_v_offset[0] = 0;
+    vbo->_v_offset[1] = vertex_count[0];
+
+
+
+    if(vnum == 0) 
+    {
+        vbo->vnum = 0;
+        if(vbo->vbo_id != 0) glDeleteBuffers(1, &vbo->vbo_id);
+        return;
+    } 
+    else 
+    {
+        vbo->vnum = vnum; //total vertices, size of VBO
+        if( vnum > vbo->vnum_max ) vbo->resize(vnum);
+    }
+
+    /*
+        Memcpy from buffer into vlist
+    */
+    memcpy(vbo->v_list, vlist_scratch_0, vertex_count[0]*sizeof(struct Vertex));
+    memcpy(vbo->v_list+vertex_count[0], vlist_scratch_1, vertex_count[1]*sizeof(struct Vertex));
+
+    //push to graphics card
+    if(vbo->vbo_id == 0)  glGenBuffers(1, &vbo->vbo_id);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vbo->vnum*sizeof(struct Vertex), vbo->v_list, GL_STATIC_DRAW);
+}
+
+void Vbo_map::update_vbo_comptability(int i, int j)
+{
+
+    int _x, _y, _z;
+
+    class MAP_CHUNK* chunk = map->chunk[j*xchunk_dim + i];  //map chunk
+    class Map_vbo* vbo = vbo_array[j*xchunk_dim + i];       //vbo for storing resulting vertices
+
+    if(chunk == NULL) printf("Error: Vbo_map::update_vbo, chunk null; impossible\n");
+    if(vbo == NULL) printf("Error: Vbo_map::update_vbo, vbo null; impossible\n");
+
+    int vertex_count[2] = {0, 0};
+
+    for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
+
+        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+
+            int tile_id = chunk->get_block(_x,_y,_z); //faster
+
+            if( !isActive(tile_id) ) continue;
+
+            if( !isTransparent(tile_id) )
+            { 
+                for(int side_num=0; side_num<6; side_num++) {
+                    if(! _is_occluded(_x,_y,_z,side_num)) 
+                    {
+                        add_quad_comptability( vlist_scratch_0, vertex_count[0], _x,_y,_z,side_num,tile_id);
+                        vertex_count[0] += 4;
+                    }
+                }
+            } 
+            else
+            {
+                //active block that does not occlude
+                for(int side_num=0; side_num<6; side_num++) 
+                {
+                    if(! _is_occluded_transparent(_x,_y,_z,side_num, tile_id)) 
+                    {
+                        add_quad_comptability( vlist_scratch_1, vertex_count[1],_x,_y,_z,side_num,tile_id);
                         vertex_count[1] += 4;
                     }
                 }

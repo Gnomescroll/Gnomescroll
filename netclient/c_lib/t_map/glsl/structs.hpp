@@ -2,6 +2,33 @@
 
 namespace t_map
 {
+
+    struct PositionElement
+    {
+        union
+        {
+            struct
+            {
+                unsigned char x,y,z;
+                unsigned char w; //unused
+            };
+            unsigned int pos;
+        };
+    };
+
+    struct TextureElement
+    {
+        union
+        {
+            struct
+            {
+                unsigned char tx,ty,tz;
+                unsigned char tw; //unused
+            };
+            unsigned int tex;
+        };
+    };
+
     struct ColorElement
     {
         union
@@ -43,24 +70,36 @@ namespace t_map
     /*
         Steves computer requires 4 byte aligned data
     */
-    struct Vertex {
-        struct
+    struct Vertex 
+    {
+        union
         {
-            unsigned char x,y,z; //3
-            unsigned char EXTRA_SPACE0; //4
-            unsigned char tx,ty,tz; //
-            unsigned char EXTRA_SPACE1; //8
+            struct
+            {
+                unsigned char x,y,z;
+                unsigned char w; //unused
+            };
+            unsigned int pos;
+        };
 
-            unsigned char r,g,b;
+        union
+        {
+            struct
+            {
+                unsigned char tx,ty,tz;
+                unsigned char tw; //unused
 
-            unsigned char normal;; //9
+            };
+            unsigned int tex;
+        };
 
-
-            /*
-                Replace normal with uniform lookup
-                this frees up 2 bytes (one more byte for texture and one for alpha)
-            */
-
+        union
+        {
+            struct
+            {
+                unsigned char r,g,b,a;
+            };
+            unsigned int color;
         };
 
         union

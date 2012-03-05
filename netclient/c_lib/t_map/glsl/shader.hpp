@@ -10,6 +10,9 @@ namespace t_map
     void toggle_3d_texture_settings();
     void init_map_3d_texture();
 
+    void set_map_shader_0_comptability();
+    void init_map_3d_texture_comptability();
+
     const int num_map_shaders = 1;
 
     GLenum map_vert_shader[num_map_shaders] = {0};

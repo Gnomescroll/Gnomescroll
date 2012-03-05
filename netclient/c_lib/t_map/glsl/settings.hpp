@@ -3,6 +3,8 @@
 
 namespace t_map
 { 
+	int T_MAP_BACKUP_SHADER = 1;
+	
     int T_MAP_3D_TEXTURES = 1;
     int T_MAP_MAG_FILTER = 0;  //T_MAP_MAG_FILTER ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR
 
