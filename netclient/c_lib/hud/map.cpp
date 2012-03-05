@@ -413,7 +413,7 @@ void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
         //{
             //Spawner* s = ClientState::spawner_list->a[i];
             //if (s == NULL) continue;
-            //if (s->team != team) continue;
+            //if (s->get_team() != team) continue;
             //world_to_map_screen_coordinates(s->x, s->y, &sx, &sy);
             //draw_bound_texture(sx - w/2, sy - h/2, w, h, z);
         //}
@@ -529,8 +529,13 @@ void draw_team_text_icons(float z)
     {
         Spawner* s = spawner_list->a[i];
         if (s==NULL) continue;
-        if (s->team != playerAgent_state.you->status.team) continue;
-        spawner[j]->update_formatted_string(1, j);
+        if (s->get_team() != playerAgent_state.you->status.team) continue;
+        if (s->team_index < 0)
+        {
+            printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", s->team_index);
+            continue;
+        }
+        spawner[j]->update_formatted_string(1, s->team_index);
         world_to_map_screen_coordinates(s->x, s->y, &x, &y);
         spawner[j]->set_position(x,y);
         spawner[j]->set_depth(z);

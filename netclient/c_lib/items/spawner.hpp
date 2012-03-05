@@ -17,9 +17,11 @@ class Spawner_create_StoC; // forward decl
 
 class Spawner
 {
+    private:
+        int team;
     public:
         int id;
-        int team;
+        int team_index;
         int owner;
         int health;
         Object_types type;
@@ -32,6 +34,7 @@ class Spawner
 
         Voxel_model* vox;
         void init_vox();
+        int get_team();
         void set_team(int team);
         void set_owner(int owner);
 
@@ -60,12 +63,17 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
         const char* name() { return "Spawner"; }
 
     public:
+    
         bool team_spawner_available(int team);
         bool point_occupied(int x, int y, int z);
         #ifdef DC_SERVER
         void send_to_client(int client_id);
         #endif
         int get_random_spawner(int team);
+        int get_numbered_team_spawner(int team, int id);
+        Spawner* get_by_team_index(int team, int team_index);
+        bool spawner_exists(int team, int team_index);
+        void assign_team_index(Spawner* spawner);
 
         void tick();
         void update();  // client side

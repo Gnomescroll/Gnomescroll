@@ -98,8 +98,7 @@ void Text::set_string(char* text, char** this_text, int* this_len)
 {
     int len = strlen(text);
     if (*this_text == NULL)
-    {
-        // first time adding
+    {   // first time adding
         *this_text = (char*)malloc(sizeof(char) * (len+1));
         strcpy(*this_text, text);
         *this_len = len;
@@ -107,8 +106,7 @@ void Text::set_string(char* text, char** this_text, int* this_len)
     else
     {
         if (len > *this_len)
-        {
-            // string is greater size
+        {   // string is greater size
             *this_text = (char*)realloc(*this_text, sizeof(char)*(len+1));
             *this_len = len;
         }

@@ -374,6 +374,7 @@ inline void Spawner_create_StoC::handle()
         return;
     }
     s->set_team(team);
+    s->team_index = team_index; //overwrite with server authority
     s->set_owner(owner);
     s->init_vox();
     Sound::spawner_placed(x,y,z,0,0,0);
@@ -383,8 +384,8 @@ inline void Spawner_create_StoC::handle()
 inline void Spawner_destroy_StoC::handle()
 {
     Spawner* s = ClientState::spawner_list->get(id);
-    ClientState::spawner_list->destroy(id);
     system_message->spawner_destroyed(s);
+    ClientState::spawner_list->destroy(id);
 }
 
 inline void ping_StoC::handle()
@@ -678,7 +679,7 @@ inline void hitscan_object_CtoS::handle()
             spawner = ServerState::spawner_list->get(id);
             if (spawner == NULL) return;
 
-            if (spawner->team == a->status.team
+            if (spawner->get_team() == a->status.team
             && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
@@ -827,7 +828,7 @@ inline void melee_object_CtoS::handle()
             spawner = ServerState::spawner_list->get(id);
             if (spawner == NULL) return;
 
-            if (spawner->team == a->status.team
+            if (spawner->get_team() == a->status.team
             && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
@@ -1003,6 +1004,7 @@ inline void choose_spawn_location_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    if (a->status.team == 0) return;
     a->status.set_spawner(id);
 }
 

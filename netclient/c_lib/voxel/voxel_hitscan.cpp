@@ -120,7 +120,7 @@ void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
         if (hitscan_list[i] == NULL) continue;
-        if(hitscan_list[i]->vv == vv)
+        if (hitscan_list[i]->vv == vv)
         {
             num_elements--;
             hitscan_list[i] = NULL;

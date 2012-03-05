@@ -35,9 +35,11 @@ namespace ServerState
         delete cspray_list;
         delete grenade_list;
         //delete neutron_list;
+
+        // voxels
         delete slime_list;
-        delete voxel_hitscan_list;
         delete spawner_list;
+        delete voxel_hitscan_list; // must go last
     }
 
     CTF* ctf = NULL;

@@ -12,6 +12,7 @@
 #include <c_lib/time/physics_timer.c>
 #include <c_lib/common/macros.hpp>
 #include <c_lib/common/common.cpp>
+#include <c_lib/common/quicksort.hpp>
 #include <c_lib/common/files.cpp>
 
 //options

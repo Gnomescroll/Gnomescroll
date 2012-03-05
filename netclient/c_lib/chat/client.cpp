@@ -357,19 +357,17 @@ bool ChatInput::route_command()
             spawner[j++] = c;
             if (j == 2) break;
         }
-        int spawner_id = atoi(spawner);
-        if (spawner_id == 0)
+        int spawner_team_index = atoi(spawner);
+        if (spawner_team_index == 0)
         {   // could be failure, could be 0
             if (spawner[0] != '0')
                 return true;
         }
-        printf("Chat select spawner %d\n", spawner_id);
-        if (spawner_id == 0)
-            spawner_id = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
-        else
-            spawner_id -= 1;    // spawners are 0-index internally, but for UI purposes they are 1-indexed.s
+        printf("Chat select spawner %d\n", spawner_team_index);
+        if (spawner_team_index == 0)
+            spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
         choose_spawn_location_CtoS msg;
-        msg.id = spawner_id;
+        msg.id = spawner_team_index;
         msg.send();
     }
 
@@ -651,7 +649,7 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
 
 void ChatSystemMessage::spawner_created(Spawner* s)
 {
-    char* team_name = ClientState::ctf->get_team_name(s->team);
+    char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has built a new spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);
@@ -661,7 +659,7 @@ void ChatSystemMessage::spawner_created(Spawner* s)
 
 void ChatSystemMessage::spawner_destroyed(Spawner* s)
 {
-    char* team_name = ClientState::ctf->get_team_name(s->team);
+    char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has lost a spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);

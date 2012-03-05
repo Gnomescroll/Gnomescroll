@@ -45,6 +45,15 @@ vox_crouched(false)
 
 void Agent_status::set_spawner(int pt)
 {
+    pt = STATE::spawner_list->get_numbered_team_spawner(this->team, pt);
+    if ((pt <= 0 || pt > MAX_SPAWNERS) && pt != BASE_SPAWN_ID)
+    {   // attempt to set strange spawner
+        if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
+            return;     // current spawner valid, leave it
+        else
+            pt = BASE_SPAWN_ID; // current spawner invalid, default to base
+    }
+    printf("Setting spawner to %d\n", pt);
     this->spawner = pt;
 }
 

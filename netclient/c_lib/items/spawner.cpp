@@ -8,6 +8,7 @@
 VoxDat spawner_vox_dat;
 
 #include <net_lib/net.hpp>
+#include <c_lib/common/quicksort.hpp>
 
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
@@ -61,6 +62,11 @@ void Spawner::set_position(float x, float y, float z)
     #endif
 }
 
+int Spawner::get_team()
+{
+    return this->team;
+}
+
 void Spawner::get_spawn_point(int agent_height, int* spawn)
 {
     int x,y;
@@ -85,6 +91,8 @@ void Spawner::set_owner(int owner)
 void Spawner::set_team(int team)
 {
     this->team = team;
+    STATE::spawner_list->assign_team_index(this);
+    printf("Team index=%d\n", this->team_index);
     if (this->vox != NULL) this->vox->update_team_color(&spawner_vox_dat, this->team);
 }
 
@@ -118,19 +126,22 @@ void Spawner::update()
 
 Spawner::Spawner(int id)
 :
-id(id),
 team(0),
+id(id),
+team_index(-1),
 owner(0),
 type(OBJ_TYPE_SPAWNER),
 x(0), y(0), z(0),
 theta(0), phi(0),
 spawn_radius(SPAWNER_RADIUS),
 vox(NULL)
-{}
+{
+}
 Spawner::Spawner(int id, float x, float y, float z)
 :
-id(id),
 team(0),
+id(id),
+team_index(-1),
 owner(0),
 health(SPAWNER_HEALTH),
 type(OBJ_TYPE_SPAWNER),
@@ -138,7 +149,8 @@ x(x), y(y), z(z),
 theta(0), phi(0),
 spawn_radius(SPAWNER_RADIUS),
 vox(NULL)
-{}
+{
+}
 
 #ifdef DC_SERVER
 void Spawner::create_message(Spawner_create_StoC* msg)
@@ -146,6 +158,7 @@ void Spawner::create_message(Spawner_create_StoC* msg)
     msg->id = this->id;
     msg->team = this->team;
     msg->owner = this->owner;
+    msg->team_index = this->team_index;
     msg->x = this->x;
     msg->y = this->y;
     msg->z = this->z;
@@ -227,7 +240,7 @@ bool Spawner_list::team_spawner_available(int team)
     for (int i=0; i<n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        if (this->a[i]->team == team) ct++;
+        if (this->a[i]->get_team() == team) ct++;
     }
     return (ct < SPAWNERS_PER_TEAM);
 }
@@ -258,16 +271,36 @@ int Spawner_list::get_random_spawner(int team)
     {   // filter down to team's spawners
         Spawner *s = this->a[i];
         if (s == NULL) continue;
-        if (s->team == team) spawners[j++] = i;
+        if (s->get_team() == team) spawners[j++] = s->team_index;
     }
     spawners[j++] = BASE_SPAWN_ID;
     return spawners[randrange(0,j-1)];
 }
 
+// when a player says "spawner 8" he may be on the other team
+// we need to find the 8th spawner for his team
+int Spawner_list::get_numbered_team_spawner(int team, int id)
+{
+    printf("Looking for numbered team spawner %d\n", id);
+    for (int i=0; i<this->n_max; i++)
+    {
+        Spawner *s = this->a[i];
+        if (s == NULL) continue;
+        printf("team_index = %d\n", s->team_index);
+        if (s->get_team() == team && s->team_index == id)
+        {
+            printf("found\n");
+            return i+1;
+        }
+    }
+    printf("not found\n");
+    return BASE_SPAWN_ID;
+}
+
 #ifdef DC_SERVER
 void Spawner_list::send_to_client(int client_id)
 {
-    for (int i=0; i<n_max; i++)
+    for (int i=0; i<this->n_max; i++)
     {
         Spawner *s = this->a[i];
         if (s == NULL) continue;
@@ -278,6 +311,49 @@ void Spawner_list::send_to_client(int client_id)
     }
 }
 #endif
+
+Spawner* Spawner_list::get_by_team_index(int team, int team_index)
+{
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->get_team() == team && this->a[i]->team_index == team_index)
+            return this->a[i];
+    }
+    return NULL;
+}
+
+bool Spawner_list::spawner_exists(int team, int team_index)
+{
+    if (this->get_by_team_index(team, team_index) != NULL)
+        return true;
+    return false;
+}
+
+void Spawner_list::assign_team_index(Spawner* spawner)
+{   // pick an index for the spawner that is available, these are separate from
+    // id because each team's set of spawners has its own indexing
+    // and spawners may be destroyed; we dont want to renumber every time
+
+    // get smallest available team index
+    int taken[MAX_SPAWNERS] = {0};
+    for (int i=0; i<this->n_max; i++)
+    {
+        Spawner* s = this->a[i];
+        if (s == NULL) continue;
+        if (s->get_team() != spawner->get_team()) continue;
+        if (s->team_index != -1 && s->team_index != 0)  // should never be 0
+            taken[s->team_index - 1] = 1;
+    }
+    for (int i=0; i<MAX_SPAWNERS; i++)
+        if (!taken[i])
+        {
+            spawner->team_index = i+1;
+            return;
+        }
+    printf("failed to get team index\n");
+    spawner->team_index = -1;
+}
 
 void Spawner_list::tick()
 {
