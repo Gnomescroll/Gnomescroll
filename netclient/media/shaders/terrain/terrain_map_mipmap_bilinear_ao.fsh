@@ -19,7 +19,10 @@ void main()
 	float tmp = dot(vx, lightMatrix * vy);
 
 	//vec3 color = inColor.rgb;	
-	vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	
+	
+
+    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	    
+    //vec3 color = tmp*vec3(1.0, 0.0, 0.0);
 
 	float intensity = (inColor.r + inColor.g + inColor.b) / 3.0f;
 	vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
