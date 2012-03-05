@@ -228,12 +228,14 @@ const struct TextureElement texElementArray2[4] =
     {{{_12,_02,0,0}}}
 };
 
-#define USE_QUAD_CACHE_COMPATIBABILITY 0
+#define USE_QUAD_CACHE_COMPATIBABILITY 1
+
+//quad_cache_comptability[cube_id*6*4 +4*side + 3]
 
 static inline void add_quad_comptability(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
 {
 #if USE_QUAD_CACHE_COMPATIBABILITY
-    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4+4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
+    memcpy(&v_list[offset], &quad_cache_comptability[tile_id*6*4 +4*side], 4*sizeof(struct Vertex)); //id*6*4+4*side+vert_num
 #else
 
     v_list[offset+0].tex = texElementArray2[0].tex;
@@ -244,7 +246,7 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
     //int iz = 0;
     //int iw = 0;
 
-    unsigned char tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
+    int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
 
     int iz = (tile_tex % 16)*16;
     int iw = (tile_tex / 16)*16;

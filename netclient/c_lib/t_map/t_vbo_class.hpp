@@ -1,10 +1,11 @@
 #pragma once
 
 #include <c_lib/t_map/glsl/structs.hpp>
+#include <c_lib/t_map/glsl/settings.hpp>
 
 #include "t_map_class.hpp"
 
-#include <stdio.h>
+//#include <stdio.h>
 
 namespace t_map 
 {
@@ -156,7 +157,7 @@ class Vbo_map
             if( vbo_array[j*xchunk_dim + i] == NULL ) vbo_array[j*xchunk_dim + i] = new Map_vbo( m );
             //printf("updating vbo: %i %i \n", i, j);
             
-            if(0)
+            if(T_MAP_BACKUP_SHADER == 0)
             {
                 update_vbo(i, j);
             }

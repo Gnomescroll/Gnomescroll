@@ -25,7 +25,8 @@ namespace t_map
         //determine support for anisotropic filtering
 
 
-        if( true || !GLEW_EXT_texture_array)
+        //if( true || !GLEW_EXT_texture_array)
+        if(!GLEW_EXT_texture_array)
         {
             printf("Error: GL_EXT_texture_array not supported! \n");
             T_MAP_BACKUP_SHADER = 1;
@@ -407,7 +408,7 @@ namespace t_map
         {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
-        
+
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, terrain_map_surface->w, terrain_map_surface->h, 0, format, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
         
 
