@@ -3,7 +3,7 @@
 #extension GL_EXT_texture_array : enable
 
 varying vec3 texCoord;
-varying mat2 lightMatrix;
+flat varying mat2 lightMatrix;
  
 varying vec3 inColor;
  

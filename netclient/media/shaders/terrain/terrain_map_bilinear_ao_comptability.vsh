@@ -26,7 +26,7 @@ Varying
 varying vec2 texCoord;
 varying vec2 texCoord2;
 
-varying mat2 lightMatrix; 
+flat varying mat2 lightMatrix; 
 varying vec3 inColor;
 
 void main(void) 

@@ -23,7 +23,7 @@ uniform vec3 NormalArray[6];
 Varying
 */
 varying vec3 texCoord;
-varying mat2 lightMatrix;
+flat varying mat2 lightMatrix;
  
 varying vec3 inColor;
 
