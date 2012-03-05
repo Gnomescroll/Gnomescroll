@@ -163,13 +163,13 @@ void init_quad_cache_texture_cordinates_comptability()
 
             unsigned char tmp = (unsigned char) cube_side_texture_array[6*cube_id+side];
 
-            int ix = (tmp % 8)*16;
-            int iy = (tmp / 8)*16;
+            int ix = (tmp % 16)*16;
+            int iy = (tmp / 16)*16;
 
-            //ix = 0;
-            //iy = 0;
+            ix = 0;
+            iy = 0;
         
-            quad_cache_comptability[cube_id*6*4 +4*side + 0].tx =_0;
+            quad_cache_comptability[cube_id*6*4 +4*side + 0].tx = _0;
             quad_cache_comptability[cube_id*6*4 +4*side + 0].ty = _0;
 
             quad_cache_comptability[cube_id*6*4 +4*side + 1].tx = _0;

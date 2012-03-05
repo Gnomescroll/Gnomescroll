@@ -278,8 +278,10 @@ void Vbo_map::draw_map_comptability()
     glShadeModel(GL_SMOOTH);
 
     glEnable (GL_DEPTH_TEST);   //needed?
+    glEnable(GL_CULL_FACE);
 
     glEnable(GL_TEXTURE_2D);
+
     glBindTexture( GL_TEXTURE_2D, terrain_map_glsl );
 
     glEnableVertexAttribArray(map_Vertex);
@@ -290,8 +292,6 @@ void Vbo_map::draw_map_comptability()
 
 
     struct Map_vbo* vbo;
-
-    glEnable(GL_CULL_FACE);
 
     glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
@@ -327,7 +327,8 @@ void Vbo_map::draw_map_comptability()
     glUseProgramObjectARB(0);
 
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
+    glDisable(GL_CULL_FACE);
 }
 
 }

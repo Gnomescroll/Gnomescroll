@@ -217,11 +217,11 @@ int run()
 
         frame_graph->frame_stage(3); //map and voxel updates
 
-        time_since(-1);
+        //time_since(-1);
         t_map::update_map();
-        time_since(1);
+        //time_since(1);
         ClientState::voxel_render_list->update();
-        time_since(2);
+        //time_since(2);
 
         frame_graph->frame_stage(4); //swap buffers
 

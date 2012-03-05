@@ -375,6 +375,7 @@ namespace t_map
 
         glDisable(GL_TEXTURE_2D);
     */
+
         if(terrain_map_surface != NULL) 
         SDL_FreeSurface(terrain_map_surface);
         if(terrain_map_glsl != 0)
@@ -388,10 +389,28 @@ namespace t_map
         // Bind the texture object
         glBindTexture( GL_TEXTURE_2D, terrain_map_glsl );
         // Set the texture's stretching properties
+
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+        GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+        GLuint format;
+        if (terrain_map_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
+        if (terrain_map_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
+
         // Edit the texture object's image data using the information SDL_Surface gives us
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        //glTexImage2D(GL_TEXTURE_2D, 0, 4, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        
+        if(ANISOTROPIC_FILTERING)
+        {
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
+        }
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, terrain_map_surface->w, terrain_map_surface->h, 0, format, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        
+
         glDisable(GL_TEXTURE_2D);
 
     }
