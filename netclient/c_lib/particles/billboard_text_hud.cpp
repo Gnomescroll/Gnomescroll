@@ -80,7 +80,13 @@ void BillboardTextHud::draw()
         return;
     }
 
-    z = 0.04;
+    int w = this->text->get_width();
+    int h = this->text->get_height();
+    if (!rect_intersects((float)sx, (float)sy, w, h, 0, 0, _xresf, _yresf))
+        return; // not on screen (tested, works)
+
+    z = -0.9;
+    //z = sz;
     //HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
     //printf("%0.2f\n", sz);
     //HudText::draw_string(this->text, (float)sx, (float)sy, z, this->size);

@@ -500,6 +500,8 @@ Don't draw hud text when zoomed
 
 sparks on laser terrain impact
 
+split billboard text particles into axis-aligned and hud-projected classes
+hud projected use HudText::Text class now
 ====================
 
 
@@ -601,6 +603,5 @@ slime models not taking voxel damage
 
 fix fulstrum culling on player hud name -- the location of the particle is very much offset from the draw location
 -- calculate properties every time text is set, and use that as position
-billboard text hud using a text object
 
 PRINT & MAIL REBATES

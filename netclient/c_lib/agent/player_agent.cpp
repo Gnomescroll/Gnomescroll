@@ -275,15 +275,15 @@ void PlayerAgent_state::display_agent_names()
 {
     #ifdef DC_CLIENT
     if (this->you == NULL) return;
-    float threshold = (3.14159 / 180) * 18; //degrees->radians
-    AgentState *s = &this->camera_state;
-    float f[3];
-    agent_camera->forward_vector(f);
-    ClientState::agent_list->objects_in_cone(
-        s->x, s->y, s->z + this->camera_height(),
-        f[0], f[1], f[2],
-        threshold
-    );
+    //float threshold = (kPI / 180) * 18; //degrees->radians
+    //AgentState *s = &this->camera_state;
+    //float f[3];
+    //agent_camera->forward_vector(f);
+    //ClientState::agent_list->objects_in_cone(
+        //s->x, s->y, s->z + this->camera_height(),
+        //f[0], f[1], f[2],
+        //threshold
+    //);
 
     // hide all names
     for (int i=0; i < ClientState::agent_list->n_max; i++)
@@ -294,9 +294,9 @@ void PlayerAgent_state::display_agent_names()
     }
 
     // choose names to display
-    for (int i=0; i < ClientState::agent_list->n_filtered; i++)
+    for (int i=0; i < ClientState::agent_list->n_max; i++)
     {
-        Agent_state* a = ClientState::agent_list->filtered_objects[i];
+        Agent_state* a = ClientState::agent_list->a[i];
         if (a==NULL) continue;
         if (a->id == this->agent_id) continue;
         if (a->status.team != you->status.team) continue;  // only show teammates
