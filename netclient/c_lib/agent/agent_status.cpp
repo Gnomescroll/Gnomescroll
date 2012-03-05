@@ -383,10 +383,10 @@ void Agent_status::set_team(int team)
     if (team == this->team) return;
 
     #ifdef DC_SERVER
+    // am i leaving old team?
     chat_server->player_join_team(this->a->id, this->team, team);
     #endif
     
-    //printf("Agent_Status:: set_team.  agent=%d team=%d\n", this->a->id, team);
     // respawn instantly if switching from viewer to team
     if (this->team == 0 && team)
         this->respawn_countdown = 0;
@@ -395,6 +395,7 @@ void Agent_status::set_team(int team)
     #ifdef DC_SERVER
     this->set_spawner();    // choose new spawn point
 
+    // kill player
     this->dead = true;
     agent_dead_StoC dead_msg;
     dead_msg.id = a->id;

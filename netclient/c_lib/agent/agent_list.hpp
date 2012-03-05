@@ -33,6 +33,9 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 
         void check_missing_names();
         void check_if_at_base();
+        #ifdef DC_CLIENT
+        void update_team_colors();
+        #endif
         
         Agent_list();
 };

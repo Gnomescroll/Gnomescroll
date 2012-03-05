@@ -233,6 +233,32 @@ void Agent_list::check_if_at_base()
     }
 }
 
+#ifdef DC_CLIENT
+void Agent_list::update_team_colors()
+{
+    if (ClientState::ctf == NULL) return;
+    unsigned char r1,g1,b1;
+    unsigned char r2,g2,b2;
+    ClientState::ctf->get_team_color(1, &r1, &g1, &b1);
+    ClientState::ctf->get_team_color(2, &r2, &g2, &b2);
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->status.team == 0) continue;
+        switch (this->a[i]->status.team)
+        {
+            case 1:
+                this->a[i]->event.update_team_color();
+                break;
+            case 2:
+                this->a[i]->event.update_team_color();
+                break;
+            default: continue;
+        }
+    }
+}
+#endif
+
 Agent_list::Agent_list()
 :
 check_name_interval(0)

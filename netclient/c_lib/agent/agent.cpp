@@ -858,5 +858,4 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
     }
 
     return false;
-    
 }

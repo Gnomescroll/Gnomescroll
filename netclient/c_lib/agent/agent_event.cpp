@@ -165,12 +165,29 @@ void Agent_event::reload_weapon(int type) {
     // play reload animation/sound for the weapon
 }
 
+void Agent_event::update_team_color()
+{
+    unsigned char r,g,b;
+    ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
+    if (r == this->r && g == this->g && b == this->b)
+        return;
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    if (this->a->vox != NULL)
+        this->a->vox->update_team_color(&agent_vox_dat, this->a->status.team);
+    if (this->bb != NULL)
+        this->bb->set_color(r,g,b);
+}
+
 void Agent_event::joined_team(int team)
 {
+    int old_team = this->a->status.team;
     this->a->status.team = team;
-    this->a->vox->update_team_color(&agent_vox_dat, team);
+    if (old_team != team)
+        this->update_team_color();
     chat_client->subscribe_channels();
-    if (this->a->is_you())
+    if (this->a->is_you() && old_team != team)
         HudMap::update_team(team);
 }
 
@@ -346,6 +363,7 @@ Agent_event::~Agent_event()
 Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
+r(0),g(0),b(0),
 bb(NULL)
 {}
 

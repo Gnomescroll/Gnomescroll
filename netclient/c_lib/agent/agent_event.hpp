@@ -9,6 +9,7 @@ class Agent_state;
 class Agent_event {
     private:
         Agent_state* a;
+        unsigned char r,g,b;  // team colors
     public:
 
         // side effects of taking damage. dont modify health/death here
@@ -25,6 +26,7 @@ class Agent_event {
         void display_name();
         void hide_name();
 
+        void update_team_color();
         void joined_team(int team);
         void name_changed(char* old_name);
         
@@ -45,7 +47,7 @@ class Agent_event {
 
         void coins_changed(unsigned int coins);
 
-        Agent_event(Agent_state* owner);
+        explicit Agent_event(Agent_state* owner);
         ~Agent_event();
 };
 
