@@ -237,7 +237,7 @@ void draw_hud_text()
         hud->dead->draw();
 
     end_text_draw();
-    HudFont::set_properties(16);
+    HudFont::set_properties(HudMap::text_icon_size);
     start_text_draw();
 
     if (hud_draw_settings.map)

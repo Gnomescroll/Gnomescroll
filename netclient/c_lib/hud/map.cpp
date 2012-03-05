@@ -22,8 +22,8 @@ static const int screen_y_offset = 50;   // from bottom;
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2];
 
-static SDL_Surface* overlay_surface = NULL;
-static GLuint overlay_textures[2];
+//static SDL_Surface* overlay_surface = NULL;
+//static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface = NULL;
 
@@ -201,30 +201,30 @@ void init_surface()
     }
     glDisable(GL_TEXTURE_2D);
 
-    /* Init blank indicator overlay surface */
-    overlay_surface = create_surface_from_nothing(width, height);
-    if (overlay_surface==NULL)
-    {
-        printf("Hud indicator overlay blank surface is NULL\n");
-        return;
-    }
+    ///* Init blank indicator overlay surface */
+    //overlay_surface = create_surface_from_nothing(width, height);
+    //if (overlay_surface==NULL)
+    //{
+        //printf("Hud indicator overlay blank surface is NULL\n");
+        //return;
+    //}
 
-    tex_format = GL_BGRA;
-    if (overlay_surface->format->Rmask == 0x000000ff)
-        tex_format = GL_RGBA;
+    //tex_format = GL_BGRA;
+    //if (overlay_surface->format->Rmask == 0x000000ff)
+        //tex_format = GL_RGBA;
 
-    // texture
-    glEnable(GL_TEXTURE_2D);
-    for (int i=0; i<2; i++)
-    {
-        glGenTextures(1, &overlay_textures[i]);
-        glBindTexture(GL_TEXTURE_2D, overlay_textures[i]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //GL_BGRA
-        glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
-    }
-    glDisable(GL_TEXTURE_2D);
+    //// texture
+    //glEnable(GL_TEXTURE_2D);
+    //for (int i=0; i<2; i++)
+    //{
+        //glGenTextures(1, &overlay_textures[i]);
+        //glBindTexture(GL_TEXTURE_2D, overlay_textures[i]);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        ////GL_BGRA
+        //glTexImage2D( GL_TEXTURE_2D, 0, 4, overlay_surface->w, overlay_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, overlay_surface->pixels );
+    //}
+    //glDisable(GL_TEXTURE_2D);
 }
 
 void init_cells()
@@ -302,14 +302,14 @@ void update_texture(GLuint texture, SDL_Surface* surface)
     glDisable(GL_TEXTURE_2D);
 }
 
-void update_overlay_surface()
-{
-    // blank the surface
-    for (int i=0; i<num_cells; i++)
-        ((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
-}
+//void update_overlay_surface()
+//{
+    //// blank the surface
+    //for (int i=0; i<num_cells; i++)
+        //((Uint32*)overlay_surface->pixels)[i] = SDL_MapRGBA(overlay_surface->format, 0,0,0,0);
+//}
 
-void draw_2x2_pixel(Uint32 pix, int x, int y)
+void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
 {
     int j=0,k=0;
     for (int i=0; i<4; i++)
@@ -321,60 +321,60 @@ void draw_2x2_pixel(Uint32 pix, int x, int y)
         
         if (x+j >= 0 && x+j < width && y+k >= 0 && y+k < height)    // only draw in surface bounds (or could segfault)
         {
-            ((Uint32*)overlay_surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
+            ((Uint32*)surface->pixels)[x+j + map_dim.x*(y+k)] = pix;
         }
     }
 }
 
-void update_agents()
-{
-    if (ClientState::playerAgent_state.you == NULL) return;
-    int team = ClientState::playerAgent_state.you->status.team;
-    if (team == 0) return;
+//void update_agents()
+//{
+    //if (ClientState::playerAgent_state.you == NULL) return;
+    //int team = ClientState::playerAgent_state.you->status.team;
+    //if (team == 0) return;
 
-    int x,y;
+    //int x,y;
 
-    x = (int)ClientState::playerAgent_state.camera_state.x;
-    y = (int)ClientState::playerAgent_state.camera_state.y;
+    //x = (int)ClientState::playerAgent_state.camera_state.x;
+    //y = (int)ClientState::playerAgent_state.camera_state.y;
     
-    // set agent pixel
-    Uint8 r = 210,
-          g = 150,
-          b = 10,
-          a = 255;
-    Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
-    draw_2x2_pixel(pix,x,y);
+    //// set agent pixel
+    //Uint8 r = 210,
+          //g = 150,
+          //b = 10,
+          //a = 255;
+    //Uint32 pix = SDL_MapRGBA(overlay_surface->format, b,g,r,a); // bgra, red
+    //draw_2x2_pixel(overlay_surface, pix,x,y);
 
-    // draw teammates
-    ClientState::ctf->get_team_color(team, &r, &g, &b);
-    for (int i=0; i<ClientState::agent_list->n_max; i++)
-    {
-        Agent_state* agent = ClientState::agent_list->a[i];
-        if (agent == NULL) continue;
-        if (agent->status.team != team) continue;
-        if (agent->id == ClientState::playerAgent_state.agent_id) continue;
+    //// draw teammates
+    //ClientState::ctf->get_team_color(team, &r, &g, &b);
+    //for (int i=0; i<ClientState::agent_list->n_max; i++)
+    //{
+        //Agent_state* agent = ClientState::agent_list->a[i];
+        //if (agent == NULL) continue;
+        //if (agent->status.team != team) continue;
+        //if (agent->id == ClientState::playerAgent_state.agent_id) continue;
 
-        x = (int)agent->s.x;
-        y = (int)agent->s.y;
+        //x = (int)agent->s.x;
+        //y = (int)agent->s.y;
 
-        pix = SDL_MapRGBA(overlay_surface->format, b, g, r, a);
-        draw_2x2_pixel(pix,x,y);
-    }
-}
+        //pix = SDL_MapRGBA(overlay_surface->format, b, g, r, a);
+        //draw_2x2_pixel(overlay_surface, pix,x,y);
+    //}
+//}
 
-void update_indicators(int tex_id)
-{
+//void update_indicators(int tex_id)
+//{
 
-    if (overlay_surface == NULL) return;
-    SDL_LockSurface(overlay_surface);
+    //if (overlay_surface == NULL) return;
+    //SDL_LockSurface(overlay_surface);
 
-    update_overlay_surface();
-    update_agents();
+    //update_overlay_surface();
+    //update_agents();
 
-    SDL_UnlockSurface(overlay_surface);
+    //SDL_UnlockSurface(overlay_surface);
     
-    update_texture(overlay_textures[tex_id], overlay_surface);
-}
+    //update_texture(overlay_textures[tex_id], overlay_surface);
+//}
 
 void update_terrain_map(int tex_id)
 {
@@ -573,12 +573,12 @@ void draw_text_icons(float z)
     //printf("r,g,b %d,%d,%d,%d\n", you->r, you->g, you->b, you->a);
 }
 
-void draw_items(float z)
-{
+//void draw_items(float z)
+//{
     //draw_bases(z);
     //draw_flags(z);
     //draw_spawners(z);
-}
+//}
 
 void draw_text()
 {
@@ -591,8 +591,8 @@ void draw()
 {   //  double buffered texture swap indices
     static int draw_map_texture_index = 0;
     static int update_map_texture_index = 1;
-    static int draw_overlay_texture_index = 0;
-    static int update_overlay_texture_index = 1;
+    //static int draw_overlay_texture_index = 0;
+    //static int update_overlay_texture_index = 1;
     
     static unsigned int update_counter = 0;
 
@@ -605,16 +605,16 @@ void draw()
         update_map_texture_index%=2;
     }
 
-    if (update_counter % 2 == 0)
-    {
-        update_indicators(update_overlay_texture_index);
-        draw_overlay_texture_index++;
-        draw_overlay_texture_index%=2;
-        update_overlay_texture_index++;
-        update_overlay_texture_index%=2;
-    }
+    //if (update_counter % 2 == 0)
+    //{
+        //update_indicators(update_overlay_texture_index);
+        //draw_overlay_texture_index++;
+        //draw_overlay_texture_index%=2;
+        //update_overlay_texture_index++;
+        //update_overlay_texture_index%=2;
+    //}
 
-    update_counter++;
+    //update_counter++;
 
     static const float z = -0.03f;
 
@@ -627,10 +627,10 @@ void draw()
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
     draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
 
-    draw_items(z+0.01);
+    //draw_items(z+0.01);
 
-    glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
-    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z+0.02);
+    //glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
+    //draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z+0.02);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -638,8 +638,8 @@ void draw()
 
 void teardown()
 {
-    if (overlay_surface != NULL)
-        SDL_FreeSurface(overlay_surface);
+    //if (overlay_surface != NULL)
+        //SDL_FreeSurface(overlay_surface);
 
     if (map_surface != NULL)
         SDL_FreeSurface(map_surface);
