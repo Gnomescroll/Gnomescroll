@@ -81,6 +81,16 @@ void draw_string(char* text, float x, float y, float depth, float scale)
     }
 }
 
+void Text::draw_centered()
+{
+    float w = this->get_width();
+    float h = this->get_height();
+    this->x = this->x - w/2;    // -/+ is weird because of the character vertex draw order
+    this->y = this->y + h/2;
+    glColor4ub(r,g,b,a);
+    draw_string(this->text, x,y, this->depth, this->scale);
+}
+
 // internal string copy
 // if string is changed, char buffer will expand
 // however, char buffer will never contract
@@ -198,7 +208,7 @@ void Text::draw()
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
-int Text:: get_width()
+int Text::get_width()
 {
     if (this->text == NULL || this->text_len == 0 || HudFont::font == NULL)
         return 0;
@@ -259,18 +269,6 @@ int Text:: get_height()
     return n * h;
 }
 
-//void Text::set_font_properties(int size, int bold, int italic)
-//{
-    //HudFont::set_font_properties(size,bold,italic);
-    //this->font = HudFont::font;
-    //HudFont::reset_default();
-//}
-
-//void Text::set_font(Font* font)
-//{
-    //this->font = font;
-//}
-
 Text::Text(int id)
 :
 width(10),height(10),
@@ -282,7 +280,6 @@ inited(false),
 depth(-1.0),
 scale(1.0),
 formatted(false),
-//font(HudFont::font),
 r(255),g(255),b(255),a(255),
 text(NULL),
 format(NULL),
@@ -298,8 +295,6 @@ Text::~Text()
         free(this->format);
 }
 
-Text_list* text_list = NULL;
-
 void init()
 {
     if (text_list == NULL)
@@ -310,5 +305,7 @@ void teardown()
     if (text_list != NULL)
         delete text_list;
 }
+
+Text_list* text_list = NULL;
 
 }

@@ -237,11 +237,15 @@ void draw_hud_text()
         hud->dead->draw();
 
     end_text_draw();
-    HudFont::reset_default();
+    HudFont::set_properties(16);
     start_text_draw();
 
     if (hud_draw_settings.map)
         HudMap::draw_text();
+
+    end_text_draw();
+    HudFont::reset_default();
+    start_text_draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();

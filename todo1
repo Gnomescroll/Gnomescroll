@@ -548,8 +548,7 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 ==PARTICLES==
 make better particle class to abstract some drawing
 ParticleSystem class for doing much cheaper view distance checks
-fix fulstrum culling on player hud name
-hud projected text underneath hud elements
+
 ==================
 POLISH TODO:
 
@@ -601,5 +600,7 @@ teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 slime models not taking voxel damage
 
 show dead body for longer
+
+fix repeated death in viewer mode
 
 PRINT & MAIL REBATES

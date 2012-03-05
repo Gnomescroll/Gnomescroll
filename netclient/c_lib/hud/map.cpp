@@ -121,16 +121,17 @@ void init_text_icons()
         ally[i]->set_text((char*)ally_symbol);
     }
         
+    char* max_spawners_string = (char*)malloc(sizeof(char) * (10+1));
+    sprintf(max_spawners_string, "%d", MAX_SPAWNERS);
+    int len = strlen(max_spawners_string);
     for (int i=0; i<MAX_SPAWNERS; i++)
     {
         spawner[i] = HudText::text_list->create();
         spawner[i]->set_format((char*)spawner_symbol);
-        char* max_spawners_string = (char*)malloc(sizeof(char) * (10+1));
-        sprintf(max_spawners_string, "%d", MAX_SPAWNERS);
-        int len = strlen(max_spawners_string);
-        spawner[i]->set_format_extra_length(len - 2);
-        free(max_spawners_string);
+        spawner[i]->set_format_extra_length(len - 1);
     }
+    free(max_spawners_string);
+
     text_icons_inited = true;
 }
 
@@ -141,10 +142,10 @@ static void set_team_icons_color(
     you->set_color(r,g,b,a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
-    for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
-        ally[i]->set_color(r,g,b,a);
-    for (int i=0; i<MAX_SPAWNERS; i++)
-        spawner[i]->set_color(r,g,b,a);
+    for (int i=0; i<(int)TEAM_MAX_PLAYERS;
+        ally[i++]->set_color(r,g,b,a));
+    for (int i=0; i<MAX_SPAWNERS;
+        spawner[i++]->set_color(r,g,b,a));
 }
 
 void update_team(int team)
@@ -511,15 +512,17 @@ void draw_team_text_icons(float z)
         return;
         
     float x,y;
+    int j=0;
     for (int i=0; i<agent_list->n_max; i++)
     {
         Agent_state* a = agent_list->a[i];
         if (a==NULL) continue;
         if (a->status.team != playerAgent_state.you->status.team) continue;
         world_to_map_screen_coordinates(a->s.x, a->s.y, &x, &y);
-        ally[i]->set_position(x,y);
-        ally[i]->set_depth(z);
-        ally[i]->draw();
+        ally[j]->set_position(x,y);
+        ally[j]->set_depth(z);
+        ally[j]->draw_centered();
+        j++;
     }
 
     for (int i=0; i<spawner_list->n_max; i++)
@@ -527,23 +530,25 @@ void draw_team_text_icons(float z)
         Spawner* s = spawner_list->a[i];
         if (s==NULL) continue;
         if (s->team != playerAgent_state.you->status.team) continue;
+        spawner[j]->update_formatted_string(1, j);
         world_to_map_screen_coordinates(s->x, s->y, &x, &y);
-        spawner[i]->set_position(x,y);
-        spawner[i]->set_depth(z);
-        spawner[i]->draw();
+        spawner[j]->set_position(x,y);
+        spawner[j]->set_depth(z);
+        spawner[j]->draw_centered();
+        j++;
     }
 
     Base* b = ctf->get_base(playerAgent_state.you->status.team);
     world_to_map_screen_coordinates(b->x, b->y, &x, &y);
     base->set_position(x,y);
     base->set_depth(z);
-    base->draw();
+    base->draw_centered();
 
     Flag* f = ctf->get_flag(playerAgent_state.you->status.team);
     world_to_map_screen_coordinates(f->x, f->y, &x, &y);
     flag->set_position(x,y);
     flag->set_depth(z);
-    flag->draw();
+    flag->draw_centered();
 }
 
 void draw_text_icons(float z)
@@ -558,7 +563,7 @@ void draw_text_icons(float z)
     );
     you->set_position(x,y);
     you->set_depth(z);
-    you->draw();
+    you->draw_centered();
     //printf("set you to draw at %0.2f %0.2f\n", x,y);
     //printf("r,g,b %d,%d,%d,%d\n", you->r, you->g, you->b, you->a);
 }

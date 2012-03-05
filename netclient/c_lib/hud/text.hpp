@@ -26,7 +26,6 @@ class Text
         float depth;
         float scale;
         bool formatted;
-        //Font* font;
         
         unsigned char r,g,b,a;
 
@@ -46,9 +45,7 @@ class Text
         void set_position(float x, float y);
         void set_scale(float scale);
         void set_depth(float depth);
-        //void set_font_properties(int size, int bold=0, int italic=0);
-        //void set_font(Font* font);
-
+        void draw_centered();
         int get_width();
         int get_height();
         int charcount();
