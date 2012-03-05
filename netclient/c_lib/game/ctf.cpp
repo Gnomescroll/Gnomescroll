@@ -620,7 +620,7 @@ void CTF::set_team_color(
             return;
     }
     #ifdef DC_CLIENT
-    HudMap::update_team_icons(team);
+    HudMap::update_team(team);
     #endif
 }
 
@@ -677,3 +677,30 @@ void CTF::update()
     two.flag->update();
     two.base->update();
 }
+
+Base* CTF::get_base(int team)
+{
+    switch (team)
+    {
+        case 1:
+            return one.base;
+        case 2:
+            return two.base;
+        default:
+            return NULL;
+    }
+}
+
+Flag* CTF::get_flag(int team)
+{
+    switch (team)
+    {
+        case 1:
+            return one.flag;
+        case 2:
+            return two.flag;
+        default:
+            return NULL;
+    }
+}
+

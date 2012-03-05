@@ -194,12 +194,11 @@ int init_c_lib() {
     init_video();
     init_image_loader();
 
+    HudText::init();
     init_vox_dats();
     ClientState::init_lists();
     init_voxel_volume();
     ClientState::init();
-
-    HudText::init();
     
     init_network();
     init_net_client();
@@ -224,7 +223,6 @@ int init_c_lib() {
     Animations::init_hitscan_laser();
     
     Sound::init();
-
     //Sound::test();
     
     return 0;

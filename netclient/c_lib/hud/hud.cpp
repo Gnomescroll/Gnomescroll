@@ -240,6 +240,9 @@ void draw_hud_text()
     HudFont::reset_default();
     start_text_draw();
 
+    if (hud_draw_settings.map)
+        HudMap::draw_text();
+
     if (hud_draw_settings.help)
         hud->help->draw();
 

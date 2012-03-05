@@ -1,10 +1,13 @@
 #pragma once
 
-namespace HudMap {
+namespace HudMap
+{
 
 void init();
 void update();
 void draw();
+void draw_text();
 
-void update_team_icons(int team=0);
+void update_team(int team);
+
 }

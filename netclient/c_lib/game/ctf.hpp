@@ -53,6 +53,9 @@ class CTF {
     void get_base_spawn_point(int team, int agent_height, int* spawn);
     bool is_at_base(int team, float x, float y, float z);
 
+    Base* get_base(int team);
+    Flag* get_flag(int team);
+
     bool add_agent_to_team(int team, int agent);
     void set_team_color(int team,
         unsigned char r, unsigned char g, unsigned char b) GNOMESCROLL_API;

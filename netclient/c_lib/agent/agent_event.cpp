@@ -6,6 +6,7 @@
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/sound/triggers.hpp>
 #include <chat/client.hpp>
+#include <hud/map.hpp>
 
 void Agent_event::name_changed(char* old_name)
 {
@@ -169,6 +170,8 @@ void Agent_event::joined_team(int team)
     this->a->status.team = team;
     this->a->vox->update_team_color(&agent_vox_dat, team);
     chat_client->subscribe_channels();
+    if (this->a->is_you())
+        HudMap::update_team(team);
 }
 
 void Agent_event::picked_up_flag()
