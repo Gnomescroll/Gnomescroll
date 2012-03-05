@@ -258,33 +258,40 @@ SDL_Surface* create_surface_from_nothing(int w, int h)
     return surface;
 }
 
-//SDL_Surface* create_surface_from_bitmap(unsigned char *bmp, int size)
-//{
-    ////Get the bitmap's buffer and size from the resource file
-    ////int filesize = 0;
-    ////char *buffer = GetBufferFromResource(resourcefilename, bitmapfilename, &filesize);
- 
-    ////Load the buffer into a surface using RWops
-    //SDL_RWops *rw = SDL_RWFromMem(bmp, size);
-    //SDL_Surface *temp = SDL_LoadBMP_RW(rw, 1);
- 
-    ////Release the bitmap buffer memory
-    ////free(buffer);
- 
-    ////Were we able to load the bitmap?
-    //if (temp == NULL) 
-    //{
-        //printf("Unable to load bitmap: %s\n", SDL_GetError());
-        //exit(1);
-    //}
- 
-    ////Convert the image to optimal display format
-    //SDL_Surface *image;
-    //image = SDL_DisplayFormat(temp);
- 
-    ////Free the temporary surface
-    //SDL_FreeSurface(temp);
- 
-    ////Return our loaded image
-    //return image;
-//}
+void load_colored_texture(
+    char* path, GLuint* texture,
+    unsigned char br, unsigned char bg, unsigned char bb,   // base color
+    unsigned char r, unsigned char g, unsigned char b       // replace with
+)
+{
+    // get surface
+    SDL_Surface* s = NULL;
+    s = create_surface_from_file(path);
+    if (s==NULL)
+    {
+        printf("ERROR: Failed to create surface for %s\n", path);
+        return;
+    }
+    SDL_LockSurface(s);
+    glEnable(GL_TEXTURE_2D);
+
+    // alter surface, swapping base rgb with new rgb
+    Uint32 pix;
+    Uint8 sr,sg,sb,sa;
+    for (int i=0; i<s->w*s->h; i++)
+    {
+        pix = ((Uint32*)s->pixels)[i];
+        SDL_GetRGBA(pix, s->format, &sr, &sg, &sb, &sa);
+        if (sr == br && sg == bg && sb == bb)
+            ((Uint32*)s->pixels)[i] = SDL_MapRGBA(s->format, r,g,b,sa);
+    }
+    glDisable(GL_TEXTURE_2D);
+
+    // create texture
+    if (create_texture_from_surface(s, texture))
+        printf("ERROR: failed to create texture from surface for %s\n", path);
+
+    // cleanup
+    SDL_UnlockSurface(s);
+    SDL_FreeSurface(s);
+}

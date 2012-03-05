@@ -25,11 +25,6 @@ static GLuint overlay_textures[2];
 
 static SDL_Surface* gradient_surface = NULL;
 
-// COLORING ICONS:
-// load surface
-// swap pixels from base to new
-// generate texture
-// free surface
 void load_colored_icon(
     char* fn, GLuint* texture,
     unsigned char br, unsigned char bg, unsigned char bb,   // base color
@@ -40,37 +35,7 @@ void load_colored_icon(
     const char icon_path_fmt[] = "./media/texture/icons/%s";
     char* path = (char*)calloc(strlen(icon_path_fmt) + strlen(fn) - 2 + 1, sizeof(char));
     sprintf(path, icon_path_fmt, fn);
-
-    // get surface
-    SDL_Surface* s = NULL;
-    s = create_surface_from_file(path);
-    if (s==NULL)
-    {
-        printf("ERROR: Failed to create surface for %s\n", path);
-        return;
-    }
-    SDL_LockSurface(s);
-    glEnable(GL_TEXTURE_2D);
-
-    // alter surface
-    Uint32 pix;
-    Uint8 sr,sg,sb,sa;
-    for (int i=0; i<s->w*s->h; i++)
-    {
-        pix = ((Uint32*)s->pixels)[i];
-        SDL_GetRGBA(pix, s->format, &sr, &sg, &sb, &sa);
-        if (sr == br && sg == bg && sb == bb)
-            ((Uint32*)s->pixels)[i] = SDL_MapRGBA(s->format, r,g,b,sa);
-    }
-    glDisable(GL_TEXTURE_2D);
-
-    // create texture
-    if (create_texture_from_surface(s, texture))
-        printf("ERROR: failed to create texture from surface for %s\n", path);
-
-    // cleanup
-    SDL_UnlockSurface(s);
-    SDL_FreeSurface(s);
+    load_colored_texture(path, texture, br,bg,bb, r,g,b);
     free(path);
 }
 

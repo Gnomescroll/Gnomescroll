@@ -23,5 +23,8 @@ SDL_Surface* create_texture_and_surface_from_file(char* filename, GLuint* tex);
 
 SDL_Surface* create_surface_from_nothing(int w, int h);
 
-///* http://content.gpwiki.org/index.php/SDL:Tutorials:Displaying_a_Bitmap_from_a_Custom_Resource_File_using_SDL_RWops */
-//SDL_Surface* create_surface_from_bitmap(unsigned char *bmp, int size);
+void load_colored_texture(
+    char* path, GLuint* texture,
+    unsigned char br, unsigned char bg, unsigned char bb,   // base color
+    unsigned char r, unsigned char g, unsigned char b       // replace with
+);

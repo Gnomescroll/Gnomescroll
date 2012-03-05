@@ -549,6 +549,7 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 make better particle class to abstract some drawing
 ParticleSystem class for doing much cheaper view distance checks
 fix fulstrum culling on player hud name
+hud projected text underneath hud elements
 ==================
 POLISH TODO:
 
@@ -596,8 +597,6 @@ grenade damage indication (blood, voxel destruction)
 
 teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 --probably have to do periodic checks
-
-dont draw player name hud text over map
 
 slime models not taking voxel damage
 
