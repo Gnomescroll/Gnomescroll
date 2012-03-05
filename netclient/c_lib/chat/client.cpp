@@ -383,7 +383,7 @@ bool ChatInput::route_command()
         msg.send();
     }
     else
-    if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B"))
+    if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B") || !strcmp(cmd, (char*)"base"))
     {
         choose_spawn_location_CtoS msg;
         msg.id = BASE_SPAWN_ID;
