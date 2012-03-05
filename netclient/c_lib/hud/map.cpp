@@ -139,7 +139,6 @@ static void set_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
-    printf("teams icon color=%d,%d,%d,%d\n", r,g,b,a);
     you->set_color(r,g,b,a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
