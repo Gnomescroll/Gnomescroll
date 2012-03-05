@@ -242,7 +242,7 @@ void draw_hud_text()
 
     // draw hud projected billboard text. does not require Hud instance inited
     start_text_draw();
-    ClientState::billboard_text_list->draw_hud();
+    ClientState::billboard_text_hud_list->draw();
     
     if (!hud->inited || !hud_draw_settings.connected)
     {

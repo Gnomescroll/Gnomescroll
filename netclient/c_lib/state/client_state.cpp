@@ -22,6 +22,7 @@ namespace ClientState {
     //Neutron_list* neutron_list = NULL;
     Minivox_list* minivox_list = NULL;
     BillboardText_list* billboard_text_list = NULL;
+    BillboardTextHud_list* billboard_text_hud_list = NULL;
 
     Voxel_render_list* voxel_render_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
@@ -51,6 +52,7 @@ namespace ClientState {
         //neutron_list = new Neutron_list;
         minivox_list = new Minivox_list;
         billboard_text_list = new BillboardText_list;
+        billboard_text_hud_list = new BillboardTextHud_list;
 
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
@@ -80,6 +82,7 @@ namespace ClientState {
         //delete neutron_list;
         delete minivox_list;
         delete billboard_text_list;
+        delete billboard_text_hud_list;
         delete hitscan_effect_list;
         delete hitscan_laser_effect_list;
     }
@@ -132,25 +135,8 @@ namespace ClientState {
         ctf->on_ready();
     }
 
-    void draw()
-    {
-        //moved to main()
-    /*
-        ClientState::agent_list->draw();
-        ClientState::voxel_render_list->draw();
-        ClientState::cspray_list->draw();
-        ClientState::grenade_list->draw();
-        ClientState::shrapnel_list->draw();
-        ClientState::blood_list->draw();
-        ClientState::minivox_list->draw();
-        ClientState::billboard_text_list->draw();
-
-    */
-    }
-
     void tick()
     {
-        //agent_list->tick();
         cspray_list->tick();
         grenade_list->tick();
         shrapnel_list->tick();
@@ -160,10 +146,6 @@ namespace ClientState {
         billboard_text_list->tick();
     }
 
-    //CYTHON
-    void update_client_state(){update();}
-    void draw_client_state(){draw();}
-    void tick_client_state(){tick();}
     void send_identify_packet(char* name)
     {
         unsigned int len = strlen(name);
@@ -180,18 +162,6 @@ namespace ClientState {
         msg.send();
     }
     
-    int get_client_id_from_name(char* name)
-    {
-        for (int i=0; i<agent_list->n_max; i++)
-        {
-            if (agent_list->a[i] == NULL) continue;
-            if (agent_list->a[i]->status.name == NULL) continue;
-            if (!agent_list->a[i]->status.identified) continue;
-            if (!strcmp(agent_list->a[i]->status.name, name)) return agent_list->a[i]->id;
-        }
-        return -1;
-    }
-
     void update_camera()
     {
         if (input_state.camera_mode == INPUT_STATE_AGENT)
@@ -238,6 +208,7 @@ namespace ClientState {
         chat_client->send_system_message((char*)"Disconnected from server");
     }
 
+    //CYTHON
     void enumerate_sound_devices()
     {
         #ifdef USE_OPENAL

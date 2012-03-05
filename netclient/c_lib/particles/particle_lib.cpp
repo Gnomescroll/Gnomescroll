@@ -13,6 +13,7 @@
 #include "./particles/blood.cpp"
 #include "./particles/minivox.cpp"
 #include "./particles/billboard_text.cpp"
+#include "./particles/billboard_text_hud.cpp"
 #endif
 
 #include "./particles/grenade.cpp"

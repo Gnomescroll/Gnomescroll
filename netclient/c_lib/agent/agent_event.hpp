@@ -2,7 +2,7 @@
 
 #ifdef DC_CLIENT
 
-#include <c_lib/particles/billboard_text.hpp>
+#include <c_lib/particles/billboard_text_hud.hpp>
 
 class Agent_state;
 
@@ -21,7 +21,7 @@ class Agent_event {
         void life_changing(bool dead);
         void reload_weapon(int type);
 
-        BillboardText* bb;
+        BillboardTextHud* bb;
         void display_name();
         void hide_name();
 

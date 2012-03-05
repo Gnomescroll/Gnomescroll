@@ -14,7 +14,7 @@ Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
-projection_type(Billboard::DEFAULT)
+size(BILLBOARD_TEXT_TEXTURE_SCALE)
 {
     text[0] = '\0';
     this->ttl_max = BILLBOARD_TEXT_TTL;
@@ -27,8 +27,7 @@ Particle(id, x,y,z, mx,my,mz, DEFAULT_MASS),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
-size(BILLBOARD_TEXT_TEXTURE_SCALE),
-projection_type(Billboard::DEFAULT)
+size(BILLBOARD_TEXT_TEXTURE_SCALE)
 {
     text[0] = '\0';
     this->ttl_max = BILLBOARD_TEXT_TTL;
@@ -46,7 +45,7 @@ void BillboardText::tick()
 
 void BillboardText::set_text(char* t) {
     int i;
-    for (i=0; t[i] != '\0' && i < max_letters; i++)
+    for (i=0; t[i] != '\0' && i < BILLBOARD_TEXT_MAX_LETTERS; i++)
         text[i] = t[i];
     text[i] = '\0';
 }
@@ -81,36 +80,12 @@ void BillboardText::set_size(float size)
     this->size = size;
 }
 
-#include <c_lib/camera/camera.hpp>
-void BillboardText::draw() {
-    switch (this->projection_type)
-    {
-        case Billboard::AXIS_ALIGNED:
-            this->draw_axis_aligned();
-            break;
-        case Billboard::AXIS:
-            printf("BillboardText::draw -- AXIS projection mode not implemented.\n");
-            //this->draw_axis();
-            break;
-        case Billboard::HUD:
-            printf("BillboardText::draw -- HUD projection should be called directly, not in ::draw() switch\n");
-            break;
-        default:
-            printf("BillboardText::draw -- invalid projection mode %d\n", this->projection_type);
-            return;
-    }
-}
-
-void BillboardText::draw_axis_aligned()
+void BillboardText::draw()
 {
 #ifdef DC_CLIENT
-    if (HudFont::font == NULL)
-        return;
-        
+    if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
-
     if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
-
 
     glColor4ub(r,g,b,a);
 
@@ -201,62 +176,28 @@ void BillboardText::draw_axis_aligned()
         glTexCoord2f(tx_min,ty_max);
         glVertex3f(bx, by, az);
     }
-
 #endif    
 }
 
-void BillboardText::draw_hud()
-{
-#ifdef DC_CLIENT
-    if(text == NULL || text[0] == '\0') return;
-    if (current_camera == NULL
-    || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z))
-        return;
-
-    glColor4ub(r,g,b,a);
-
-    float x,y,z;
-    x = this->vp->p.x;
-    y = this->vp->p.y;
-    z = this->vp->p.z;
-
-    GLdouble sx,sy,sz;
-    //GLint res = gluProject(x,y,z, billboard_modelview_mtrx_dbl, projection_matrix, viewport, &sx, &sy, &sz);
-    GLint res = gluProject(x,y,z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
-    if (res == GLU_FALSE) {
-        printf("BillboardText hud projection -- gluProject failed\n");
-        return;
-    }
-
-    z = -2;
-    //HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
-    //printf("%0.2f\n", sz);
-    HudText::draw_string(this->text, (float)sx, (float)sy, z, this->size);
-
-#endif
-}
-
-
 /* BillboardText list */
 
-void BillboardText_list::tick() {
+void BillboardText_list::tick()
+{
     int i;
     for (i=0; i<n_max; i++) {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max) {
+        if (a[i]->ttl >= a[i]->ttl_max)
             destroy(a[i]->id);
-        }
     }
 }
 
-void BillboardText_list::draw() {
+void BillboardText_list::draw()
+{
 #ifdef DC_CLIENT
     if (HudFont::font == NULL) return;
     if (current_camera == NULL) return;
     if (num == 0) return;
-
-    int i;
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -269,10 +210,10 @@ void BillboardText_list::draw() {
     glBegin( GL_QUADS );
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
-    for(i=0; i<n_max; i++) {
+    for(int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
-        if (a[i]->projection_type == Billboard::HUD) continue;  // draw these during hud mode
         a[i]->draw();
     }
 
@@ -282,22 +223,6 @@ void BillboardText_list::draw() {
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-#endif
-}
-
-void BillboardText_list::draw_hud() {
-#ifdef DC_CLIENT
-    if (current_camera == NULL) return;
-
-    if(num == 0) { return; }
-    int i;
-
-    for(i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        if (!a[i]->should_draw) continue;
-        if (a[i]->projection_type != Billboard::HUD) continue;
-        a[i]->draw_hud();
-    }
 #endif
 }
 

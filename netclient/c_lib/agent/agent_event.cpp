@@ -62,7 +62,7 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = ClientState::billboard_text_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        this->bb = ClientState::billboard_text_hud_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         if (this->bb == NULL) return;
         this->bb->set_gravity(false);   // stay put
         this->bb->set_ttl(-1000);          // dont die
@@ -70,7 +70,6 @@ void Agent_event::display_name()
         unsigned char r,g,b,a=255;
         ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
         this->bb->set_color(r,g,b,a);
-        this->bb->projection_type = Billboard::HUD;
         this->bb->set_size(0.7);
     }
     this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);

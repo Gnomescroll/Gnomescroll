@@ -500,7 +500,7 @@ void draw()
 
     update_counter++;
 
-    static const float z = 0.5f;
+    static const float z = -0.03f;
 
     glColor3ub(255,255,255);
 
@@ -509,12 +509,12 @@ void draw()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glBindTexture(GL_TEXTURE_2D, map_textures[draw_map_texture_index]);
-    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z*2);
+    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z);
 
-    draw_items(z);
+    draw_items(z+0.01);
 
     glBindTexture(GL_TEXTURE_2D, overlay_textures[draw_overlay_texture_index]);
-    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z/2);
+    draw_bound_texture(screen_x_offset, screen_y_offset, width, height, z+0.02);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);

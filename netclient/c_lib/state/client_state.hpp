@@ -33,6 +33,7 @@ namespace ClientState {
     //extern Neutron_list* neutron_list;
     extern Minivox_list* minivox_list;
     extern BillboardText_list* billboard_text_list;
+    extern BillboardTextHud_list* billboard_text_hud_list;
     extern Voxel_render_list* voxel_render_list;
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern Monsters::Slime_list* slime_list;
@@ -54,7 +55,6 @@ namespace ClientState {
     void client_id_received(int client_id);
 
     void update();
-    void draw();
     void init();
     void init_lists();
     void teardown();
@@ -64,17 +64,11 @@ namespace ClientState {
     void on_connect();
     void on_disconnect();
 
-    //CYTHON
-    void update_client_state();
-    void draw_client_state();
-    void tick_client_state();
     void send_identify_packet(char* name);
-    int get_client_id_from_name(char* name);
     void update_camera();
-    void send_ping();
+
+    //CYTHON
     void enumerate_sound_devices() GNOMESCROLL_API;
-
-
 }
 #endif
 

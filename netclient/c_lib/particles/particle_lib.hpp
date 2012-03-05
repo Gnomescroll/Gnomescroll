@@ -17,4 +17,5 @@ const float DEFAULT_MASS = 1.0f;
 #include "./particles/blood.hpp"
 #include "./particles/minivox.hpp"
 #include "./particles/billboard_text.hpp"
+#include "./particles/billboard_text_hud.hpp"
 #endif

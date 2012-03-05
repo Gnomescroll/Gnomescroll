@@ -2,19 +2,19 @@
 
 #include <particles/particles.hpp>
 
-#define BILLBOARD_TEXT_MAX 1024
-#define BILLBOARD_TEXT_TTL 300
-#define BILLBOARD_TEXT_TYPE 10
-#define BILLBOARD_TEXT_DAMP 0.2f
-#define BILLBOARD_TEXT_TEXTURE_SCALE 0.2f
+#define BILLBOARD_TEXT_HUD_MAX 1024
+#define BILLBOARD_TEXT_HUD_TTL 300
+#define BILLBOARD_TEXT_HUD_TYPE 10
+#define BILLBOARD_TEXT_HUD_DAMP 0.2f
+#define BILLBOARD_TEXT_HUD_TEXTURE_SCALE 0.2f
 
-const static int BILLBOARD_TEXT_MAX_LETTERS = 12;
+const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 
-class BillboardText: public Particle
+class BillboardTextHud: public Particle
 {
     public:
         unsigned char r,g,b,a;
-        char text[BILLBOARD_TEXT_MAX_LETTERS+1];
+        char text[BILLBOARD_TEXT_HUD_MAX_LETTERS+1];
 
         bool gravity;
         bool should_draw;
@@ -30,17 +30,17 @@ class BillboardText: public Particle
 
         void draw();
         void tick();
-
-        BillboardText(int id);
-        BillboardText(int id, float x, float y, float z, float mx, float my, float mz);
+        
+        BillboardTextHud(int id);
+        BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
 #include <c_lib/template/object_list.hpp>
 
-class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
+class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
 {
     private:
-        const char* name() { return "BillboardText"; }
+        const char* name() { return "BillboardTextHud"; }
     public:
         void draw();
         void tick();

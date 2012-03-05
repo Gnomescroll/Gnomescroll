@@ -599,4 +599,8 @@ dont draw player name hud text over map
 
 slime models not taking voxel damage
 
+fix fulstrum culling on player hud name -- the location of the particle is very much offset from the draw location
+-- calculate properties every time text is set, and use that as position
+billboard text hud using a text object
+
 PRINT & MAIL REBATES

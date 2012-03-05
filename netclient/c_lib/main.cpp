@@ -78,14 +78,11 @@ int run()
 
     while (!input_state.quit)
     {
-
         if(_quit) break;
-
 
         frame_graph->frame_start();
 
         // update mouse
-
         poll_mouse();
         
         // physics loop
@@ -105,7 +102,7 @@ int run()
             Animations::animations_tick();
             
             // tick client state
-            ClientState::tick_client_state();
+            ClientState::tick();
 
             // update sound listener
             ClientState::playerAgent_state.update_sound();
@@ -196,7 +193,7 @@ int run()
         // update sound
         Sound::update();
         // update client_state
-        ClientState::update_client_state();
+        ClientState::update();
 
 
         // flip sdl
