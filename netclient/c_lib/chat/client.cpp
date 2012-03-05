@@ -350,19 +350,31 @@ bool ChatInput::route_command()
     if (!strcmp(cmd, (char*)"spawner"))
     {
         if (buffer_len <= (int)(strlen((char*)"/spawner "))) return true;
-        char spawner[3] = {'\0'};
+        char spawner[4] = {'\0'};
         int j = 0;
         while ((c = buffer[i++]) != '\0' && !isspace(c))
         {
             spawner[j++] = c;
-            if (j == 2) break;
+            if (j == 3) break;
         }
         int spawner_team_index = atoi(spawner);
-        if (spawner_team_index == 0)
-        {   // could be failure, could be 0
+        if (spawner_team_index == 0)    // not an int
+        {
+            if (spawner[0] == 's' || spawner[0] == 'S') // allow S# syntax
+            {
+                int k = 1;
+                while ((c = spawner[k]) != '\0')
+                {
+                    spawner[k-1] = spawner[k];
+                    k++;
+                }
+                spawner[k-1] = '\0';
+                spawner_team_index = atoi(spawner);
+            }
+        }
+        if (spawner_team_index == 0)    // could be legitimate 0
             if (spawner[0] != '0')
                 return true;
-        }
         printf("Chat select spawner %d\n", spawner_team_index);
         if (spawner_team_index == 0)
             spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID

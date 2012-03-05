@@ -608,7 +608,7 @@ other team spawner select puts them at other spawner
 # as well as S# work in chat
 B works in chat
 
-don't renumber spawners as they are destroyed
+rotate * symbol for agent in hud map
 
 color the selected spawner differently
 
