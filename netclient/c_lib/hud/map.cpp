@@ -254,40 +254,39 @@ void init()
     init_cells();
 }
 
+
+static int strip = 0;
+const int strips = 16*16*2;
+
 void update_heightmap()
 {
-    static int strip = 0;
-    const int strips = 16*8;
-    int strip_width = map_dim.x / strips;
-    
     if (cells == NULL) return;
-    int i,j;
+    int strip_width = map_dim.x / strips;
     int h;
-    for (i=strip_width*strip; i < strip_width*(strip+1); i++)
-        for (j=0; j < map_dim.y; j++)
+    for (int i=strip_width*strip; i < strip_width*(strip+1); i++)
+        for (int j=0; j < map_dim.y; j++)
         {
             h = get_height_at(i,j);
             cells[i + map_dim.x*j] = (unsigned char)2*h;
         }
-
-    strip++;
-    strip%=strips;
 }
 
 void update_map_surface()
 {
     if (map_surface == NULL) return;
     if (cells == NULL) return;
+    int strip_width = map_dim.x / strips;
     SDL_LockSurface(map_surface);
-    
+
     Uint32 pix;
     Uint8 r,g,b,a;
-    for (int i=0; i<num_cells; i++)
-    {
-        pix = ((Uint32*)gradient_surface->pixels)[cells[i]];
-        SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-        ((Uint32*)map_surface->pixels)[i] = SDL_MapRGBA(map_surface->format, b,g,r,a);
-    }
+    for (int i=strip_width*strip; i<strip_width*(strip+1); i++)
+        for (int j=0; j < map_dim.y; j++)
+        {
+            pix = ((Uint32*)gradient_surface->pixels)[cells[i + map_dim.x*j]];
+            SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+            ((Uint32*)map_surface->pixels)[i + map_dim.x*j] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+        }
 
     SDL_UnlockSurface(map_surface);
 }
@@ -383,6 +382,8 @@ void update_terrain_map(int tex_id)
     update_heightmap();
     update_map_surface();
     update_texture(map_textures[tex_id], map_surface);
+    strip++;
+    strip%=strips;
 }
 
 void world_to_map_screen_coordinates(float x, float y, float *sx, float *sy)
@@ -596,7 +597,7 @@ void draw()
     
     static unsigned int update_counter = 0;
 
-    if(update_counter % 6 == 0)
+    if(update_counter % 1 == 0)
     {
         update_terrain_map(update_map_texture_index);
         draw_map_texture_index++;
@@ -614,7 +615,7 @@ void draw()
         //update_overlay_texture_index%=2;
     //}
 
-    //update_counter++;
+    update_counter++;
 
     static const float z = -0.03f;
 
