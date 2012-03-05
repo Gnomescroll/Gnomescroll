@@ -146,6 +146,12 @@ void Text::update_formatted_string(int n_args, ...)
     va_end(args);
 }
 
+void Text::set_color(unsigned char r, unsigned char g, unsigned char b)
+{
+    this->r = r;
+    this->g = g;
+    this->b = b;
+}
 void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     this->r = r;
@@ -175,6 +181,13 @@ void Text::set_scale(float scale)
 void Text::set_depth(float depth)
 {
     this->depth = depth;
+}
+
+int Text::charcount()
+{
+    if (this->text == NULL)
+        return 0;
+    return strlen(this->text);
 }
 
 void Text::draw()

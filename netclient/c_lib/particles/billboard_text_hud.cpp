@@ -11,48 +11,34 @@
 BillboardTextHud::BillboardTextHud(int id)
 :
 Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
-r(100), g(100), b(100), a(255),
-gravity(true),
-should_draw(true),
-size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE)
+should_draw(true)
 {
-    text[0] = '\0';
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
+    this->text = HudText::text_list->create();
+    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
 }
 
 BillboardTextHud::BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz)
 :
 Particle(id, x,y,z, mx,my,mz, DEFAULT_MASS),
-r(100), g(100), b(100), a(255),
-gravity(true),
-should_draw(true),
-size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE)
+should_draw(true)
 {
-    text[0] = '\0';
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
     this->type = BILLBOARD_TEXT_HUD_TYPE;
+    this->text = HudText::text_list->create();
+    this->set_size(BILLBOARD_TEXT_HUD_TEXTURE_SCALE);
 }
 
 void BillboardTextHud::tick()
 {
-    if (this->gravity)
-        Verlet::bounce(this->vp, BILLBOARD_TEXT_HUD_DAMP);
     if (this->ttl >= 0)
         this->ttl++;
 }
 
-
-void BillboardTextHud::set_text(char* t) {
-    int i;
-    for (i=0; t[i] != '\0' && i < BILLBOARD_TEXT_HUD_MAX_LETTERS; i++)
-        text[i] = t[i];
-    text[i] = '\0';
-}
-
-void BillboardTextHud::set_gravity(bool grav)
+void BillboardTextHud::set_text(char* t)
 {
-    this->gravity = grav;
+    this->text->set_text(t);
 }
 void BillboardTextHud::set_draw(bool draw)
 {
@@ -62,28 +48,23 @@ void BillboardTextHud::set_state(float x, float y, float z, float mx, float my, 
 {
     this->vp->set_state(x,y,z, mx,my,mz);
 }
-
-void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b) {
-    this->r = r;
-    this->g = g;
-    this->b = b;
+void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b)
+{
+    this->text->set_color(r,g,b);
 }
-
-void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a) {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->a = a;
+void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+{
+    this->text->set_color(r,g,b,a);
 }
 void BillboardTextHud::set_size(float size)
 {
-    this->size = size;
+    this->text->set_scale(size);
 }
 
 void BillboardTextHud::draw()
 {
 #ifdef DC_CLIENT
-    if(text == NULL || text[0] == '\0') return;
+    if(!this->text->charcount()) return;
     if (current_camera == NULL) return;
 
     float x,y,z;
@@ -91,7 +72,6 @@ void BillboardTextHud::draw()
     y = this->vp->p.y;
     z = this->vp->p.z;
 
-    glColor4ub(r,g,b,a);
     GLdouble sx,sy,sz;
     GLint res = gluProject(x,y,z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
     if (res == GLU_FALSE)
@@ -103,7 +83,10 @@ void BillboardTextHud::draw()
     z = 0.04;
     //HudText::draw_string(this->text, (float)sx, (float)sy, (float)sz, this->size);
     //printf("%0.2f\n", sz);
-    HudText::draw_string(this->text, (float)sx, (float)sy, z, this->size);
+    //HudText::draw_string(this->text, (float)sx, (float)sy, z, this->size);
+    this->text->set_position((float)sx, (float)sy);
+    this->text->set_depth((float)z);
+    this->text->draw();
 
 #endif
 }

@@ -64,7 +64,6 @@ void Agent_event::display_name()
     {
         this->bb = ClientState::billboard_text_hud_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         if (this->bb == NULL) return;
-        this->bb->set_gravity(false);   // stay put
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
         unsigned char r,g,b,a=255;

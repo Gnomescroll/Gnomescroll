@@ -41,6 +41,7 @@ class Text
         void set_format_extra_length(int size);
         void update_formatted_string(int n_args, ...);
         
+        void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
         void set_position(float x, float y);
         void set_scale(float scale);
@@ -50,6 +51,7 @@ class Text
 
         int get_width();
         int get_height();
+        int charcount();
         
         void draw();
 

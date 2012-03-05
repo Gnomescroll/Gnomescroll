@@ -1,6 +1,7 @@
 #pragma once
 
 #include <particles/particles.hpp>
+#include <hud/text.hpp>
 
 #define BILLBOARD_TEXT_HUD_MAX 1024
 #define BILLBOARD_TEXT_HUD_TTL 300
@@ -13,16 +14,11 @@ const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 class BillboardTextHud: public Particle
 {
     public:
-        unsigned char r,g,b,a;
-        char text[BILLBOARD_TEXT_HUD_MAX_LETTERS+1];
-
-        bool gravity;
+        HudText::Text* text;
         bool should_draw;
-        float size;
         
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
-        void set_gravity(bool grav);
         void set_state(float x, float y, float z, float mx, float my, float mz);
         void set_text(char* t);
         void set_draw(bool draw);
