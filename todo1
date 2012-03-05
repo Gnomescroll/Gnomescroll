@@ -591,6 +591,8 @@ confirmation dialog for ESC quit
 
 chat command for places of interest
 
+rotate arm slightly inward to point at look location
+
 get icons instead of pixels for hudmap -- balancing colors is too much juggling
 
 ammo drops
@@ -603,7 +605,7 @@ slime models not taking voxel damage
 
 show dead body for longer
 
-fix repeated death in viewer mode
+fix repeated death in viewer mode (keep falling)
 
 rotate * symbol for agent in hud map
 
