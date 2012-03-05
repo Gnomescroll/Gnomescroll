@@ -14,8 +14,8 @@ static unsigned char* cells = NULL;
 // for texture init
 static const int width = 512;
 static const int height = 512;
-static const int screen_x_offset = 50;
-static const int screen_y_offset = 50;
+static const int screen_x_offset = 50;  // from left
+static const int screen_y_offset = 50;   // from bottom;
 
 static SDL_Surface* map_surface = NULL;
 static GLuint map_textures[2];

@@ -114,14 +114,14 @@ void BillboardTextHud_list::draw() {
     if (current_camera == NULL) return;
     if (num == 0) return;
 
-    // the gl calls are made in HudFont::start_text_draw();
-
+    HudText::start_text_draw();
     for (int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
         a[i]->draw();
     }
+    HudText::end_text_draw();
 #endif
 }
 

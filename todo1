@@ -548,7 +548,7 @@ put metaless content back on 100tb (~2-3days of rsyncing)
 ==PARTICLES==
 make better particle class to abstract some drawing
 ParticleSystem class for doing much cheaper view distance checks
-
+fix fulstrum culling on player hud name
 ==================
 POLISH TODO:
 
@@ -600,8 +600,5 @@ teammates' hud text color is wrong?? (3 clients, switch odd one to even team)
 dont draw player name hud text over map
 
 slime models not taking voxel damage
-
-fix fulstrum culling on player hud name -- the location of the particle is very much offset from the draw location
--- calculate properties every time text is set, and use that as position
 
 PRINT & MAIL REBATES

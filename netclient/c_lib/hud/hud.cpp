@@ -219,36 +219,26 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {
+    if (!hud->inited || !hud_draw_settings.connected) return;
     if (!hud_draw_settings.draw) return;
 
     // move large text to the front, so we dont swap textures twice
-    if (hud->inited)
-    {
-        HudFont::set_properties(32);
-        start_text_draw();
-
-        if (!hud_draw_settings.connected)
-            hud->disconnected->draw();
-
-        //if (!hud_draw_settings.version_match)
-            //hud->version_mismatch->draw();
-
-        if (hud_draw_settings.dead)
-            hud->dead->draw();
-
-        end_text_draw();
-        HudFont::reset_default();
-    }
-
-    // draw hud projected billboard text. does not require Hud instance inited
+    const int large_text_size = 32;
+    HudFont::set_properties(large_text_size);
     start_text_draw();
-    ClientState::billboard_text_hud_list->draw();
-    
-    if (!hud->inited || !hud_draw_settings.connected)
-    {
-        end_text_draw();
-        return;
-    }
+
+    if (!hud_draw_settings.connected)
+        hud->disconnected->draw();
+
+    //if (!hud_draw_settings.version_match)
+        //hud->version_mismatch->draw();
+
+    if (hud_draw_settings.dead)
+        hud->dead->draw();
+
+    end_text_draw();
+    HudFont::reset_default();
+    start_text_draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();
@@ -324,6 +314,11 @@ void draw_hud_text()
 
 void draw_hud()
 {
+    // could not get z-depth to listen to me
+    // and hud projected names should be underneath everything,
+    // so i moved the list draw call out 
+    if (!hud_draw_settings.zoom)
+        ClientState::billboard_text_hud_list->draw();
     draw_hud_textures();
     if (!hud_draw_settings.zoom)
         draw_hud_text();
