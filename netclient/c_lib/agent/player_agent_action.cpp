@@ -141,7 +141,8 @@ void PlayerAgent_action::hitscan_laser() {
 
     Agent_state* agent;
     
-    switch (target_type) {
+    switch (target_type)
+    {
         case TARGET_VOXEL:
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
@@ -167,10 +168,10 @@ void PlayerAgent_action::hitscan_laser() {
                     collision_point[0], collision_point[1], collision_point[2],
                     0,0,0
                 );
+                agent = ClientState::agent_list->get(target.entity_id);
+                if (agent==NULL) break;
+                if (agent->status.team == this->p->you->status.team) break;
             }
-            agent = ClientState::agent_list->get(target.entity_id);
-            if (agent==NULL) break;
-            if (agent->status.team == this->p->you->status.team) break;
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 3);
             break;
 

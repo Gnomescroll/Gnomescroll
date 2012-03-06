@@ -104,7 +104,7 @@ inline void agent_shot_object_StoC::handle()
     Agent_state* a = ClientState::agent_list->get(id);
     if (a == NULL)
     {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
+        printf("WARNING: agent_shot_object_StoC -- Agent %d not found. message_id=%d\n", id, message_id);
         return;
     }
     a->event.fired_weapon_at_object(target_id, target_type, target_part);
@@ -118,7 +118,8 @@ inline void agent_shot_object_StoC::handle()
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
     }
-    destroy_object_voxel(target_id, target_type, target_part, voxel, 3);
+    const int voxel_blast_radius = 3;
+    destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_shot_block_StoC::handle()
