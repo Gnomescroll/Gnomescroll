@@ -90,6 +90,8 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     return isActive(tile_id);
 }
 
+#define AO_DEBUG 1
+
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int i;
@@ -100,6 +102,26 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
         index = side*8*3+i*3;
         CX[i] = isOccludes( t_map::get(x+CI[index+0],y+CI[index+1],z+CI[index+2]));
     }
+
+#if AO_DEBUG
+    int occ1, occ2, occ3, occ4;
+
+    occ1 = calcAdj(CX[7], CX[1], CX[0]);
+    occ2 = calcAdj(CX[5], CX[7], CX[6]);
+    occ3 = calcAdj(CX[1], CX[3], CX[2]);
+    occ4 = calcAdj(CX[3], CX[5], CX[4]);
+
+    AOElement _ao;
+    _ao.ao[0] = occ1;
+    _ao.ao[1] = occ2;
+    _ao.ao[2] = occ3;
+    _ao.ao[3] = occ4;
+
+    v_list[offset+0].AO = _ao.AO;
+    v_list[offset+1].AO = _ao.AO;
+    v_list[offset+2].AO = _ao.AO;
+    v_list[offset+3].AO = _ao.AO;
+#else
 
     AOElement _ao;
 
@@ -112,6 +134,7 @@ static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int 
     v_list[offset+1].AO = _ao.AO;
     v_list[offset+2].AO = _ao.AO;
     v_list[offset+3].AO = _ao.AO;
+#endif
 
 }
 

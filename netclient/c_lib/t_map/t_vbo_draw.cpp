@@ -171,7 +171,7 @@ void Vbo_map::draw_map()
         //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
         //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);
-
+ 
 
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
