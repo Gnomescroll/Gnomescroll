@@ -92,7 +92,6 @@ void Spawner::set_team(int team)
 {
     this->team = team;
     STATE::spawner_list->assign_team_index(this);
-    printf("Team index=%d\n", this->team_index);
     if (this->vox != NULL) this->vox->update_team_color(&spawner_vox_dat, this->team);
 }
 
@@ -281,19 +280,16 @@ int Spawner_list::get_random_spawner(int team)
 // we need to find the 8th spawner for his team
 int Spawner_list::get_numbered_team_spawner(int team, int id)
 {
-    printf("Looking for numbered team spawner %d\n", id);
     for (int i=0; i<this->n_max; i++)
     {
         Spawner *s = this->a[i];
         if (s == NULL) continue;
-        printf("team_index = %d\n", s->team_index);
-        if (s->get_team() == team && s->team_index == id)
+        if (s->get_team() != team) continue;
+        if (s->team_index == id)
         {
-            printf("found\n");
-            return i+1;
+            return s->id;
         }
     }
-    printf("not found\n");
     return BASE_SPAWN_ID;
 }
 
@@ -317,7 +313,8 @@ Spawner* Spawner_list::get_by_team_index(int team, int team_index)
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        if (this->a[i]->get_team() == team && this->a[i]->team_index == team_index)
+        if (this->a[i]->get_team() != team) continue;
+        if (this->a[i]->team_index == team_index)
             return this->a[i];
     }
     return NULL;

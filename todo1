@@ -516,6 +516,9 @@ Mar 5
 fix slime voxel destruction
 dont tick physics on server for viewers
 filter actions for viewer time (client and server side)
+explicit keyword on single-argument constructors
+fix another spawner selection bug
+current spawn point highlighted in hud map
 ====================
 
 
@@ -572,6 +575,7 @@ GRENADES:
 charge up
 -- for better grenade blast cover simulation, can emit a handful of small particles (like the animation, but more and a little bit higher ttl) and if they collide with an agent then it hits
 -- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
+grenade damage indication (blood, voxel destruction)
 
 Bug: agent_id unrecognized. happens in the object list
 Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
@@ -585,7 +589,6 @@ better feedback on damage received
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
-explicit 1-argument constructors
 
 blue text icons difficult to see on the hudmap with blue gradient
 
@@ -605,14 +608,12 @@ ammo drops
 
 make non-root user on m643 for angus
 
-grenade damage indication (blood, voxel destruction)
-
 show dead body for longer
+--requires 2 copies of every agent model
 
 more filtering for viewer teams (slimes probably attack a viewer, for example)
 
 rotate * symbol for agent in hud map
-
-color the selected spawner icon differently
+-- need to write a few more draw methods, that accept texture coordinates
 
 PRINT & MAIL REBATES

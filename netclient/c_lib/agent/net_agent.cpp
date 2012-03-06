@@ -514,6 +514,13 @@ inline void client_disconnected_StoC::handle()
     free(msg);
 }
 
+inline void spawn_location_StoC::handle()
+{
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you == NULL) return;
+    playerAgent_state.you->event.set_spawner(pt);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -569,6 +576,7 @@ inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
+inline void spawn_location_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;

@@ -96,6 +96,7 @@ void RegisterMessages() {
     // agent item actions
     place_spawner_CtoS::register_server_packet();
     choose_spawn_location_CtoS::register_server_packet();
+    spawn_location_StoC::register_client_packet();
     spawner_state_StoC::register_client_packet();
 
     // game/teams stuff

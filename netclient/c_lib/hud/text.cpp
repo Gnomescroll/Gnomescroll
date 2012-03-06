@@ -114,6 +114,11 @@ void Text::set_string(char* text, char** this_text, int* this_len)
     }
 }
 
+//void Text::draw_rotated()
+//{
+    
+//}
+
 void Text::resize_string(int n, char** str, int* str_len)
 {
     if (*str_len == n) return;

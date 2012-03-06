@@ -45,22 +45,34 @@ vox_crouched(false)
 
 void Agent_status::set_spawner(int pt)
 {
-    pt = STATE::spawner_list->get_numbered_team_spawner(this->team, pt);
-    if ((pt <= 0 || pt > MAX_SPAWNERS) && pt != BASE_SPAWN_ID)
-    {   // attempt to set strange spawner
-        if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
-            return;     // current spawner valid, leave it
-        else
-            pt = BASE_SPAWN_ID; // current spawner invalid, default to base
+    if (pt != BASE_SPAWN_ID)
+    {   // check new spawner exists
+        if (!STATE::spawner_list->spawner_exists(this->team, pt))
+        {
+            if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
+                return;     // current spawner valid, leave it
+            else
+                pt = BASE_SPAWN_ID; // current spawner invalid, default to base
+        }
     }
-    printf("Setting spawner to %d\n", pt);
+    //printf("Setting spawner to %d\n", pt);
     this->spawner = pt;
+    #ifdef DC_SERVER
+    spawn_location_StoC msg;
+    msg.pt = pt;
+    msg.sendToClient(this->a->id);
+    #endif
 }
 
 void Agent_status::set_spawner()
 {
     int pt = STATE::spawner_list->get_random_spawner(this->team);
     this->spawner = pt;
+    #ifdef DC_SERVER
+    spawn_location_StoC msg;
+    msg.pt = pt;
+    msg.sendToClient(this->a->id);
+    #endif
 }
 
 bool Agent_status::set_name(char* name)

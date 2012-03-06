@@ -668,6 +668,17 @@ class choose_spawn_location_CtoS: public FixedSizeReliableNetPacketToServer<choo
         inline void handle();
 };
 
+class spawn_location_StoC: public FixedSizeReliableNetPacketToClient<spawn_location_StoC>
+{
+    public:
+        uint8_t pt;
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&pt, buff, buff_n, pack);
+        }
+    inline void handle();
+};
+
 class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
 {
     public:

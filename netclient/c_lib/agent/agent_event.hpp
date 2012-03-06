@@ -46,6 +46,7 @@ class Agent_event {
         void placed_block();
         void threw_grenade();
 
+        void set_spawner(int pt);
         void coins_changed(unsigned int coins);
 
         explicit Agent_event(Agent_state* owner);

@@ -51,6 +51,7 @@ class Text
         int charcount();
         
         void draw();
+        //void draw_rotated();
 
         explicit Text(int id);
         ~Text();

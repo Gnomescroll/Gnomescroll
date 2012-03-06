@@ -10,6 +10,13 @@
 namespace HudMap
 {
 
+struct Color {
+    unsigned char r,g,b;
+};
+
+static Color current_color;
+static Color highlight;
+
 static int num_cells = 0;
 static unsigned char* cells = NULL;
 
@@ -155,16 +162,15 @@ void update_team(int team)
         printf("WARNING: HudMap::update_team -- text icons are not inited\n");
         return;
     }
-    static unsigned char _r=0,_g=0,_b=0;
     unsigned char r,g,b;
     int failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
     if (failure)
         r=g=b=0;
-    if (r == _r && g == _g && b == _b)
+    if (r == current_color.r && g == current_color.g && b == current_color.b)
         return;
-    _r = r;
-    _g = g;
-    _b = b;
+    current_color.r = r;
+    current_color.g = g;
+    current_color.b = b;
     set_team_icons_color(r,g,b);
 }
 
@@ -262,6 +268,13 @@ void init()
     init_surface();
     init_text_icons();
     init_cells();
+    current_color.r = 255;
+    current_color.g = 255;
+    current_color.b = 255;
+
+    highlight.r = 247;
+    highlight.g = 247;
+    highlight.b = 10;
 }
 
 
@@ -546,6 +559,10 @@ void draw_team_text_icons(float z)
             printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", s->team_index);
             continue;
         }
+        if (s->team_index == playerAgent_state.you->status.spawner)
+            spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
+        else
+            spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
         spawner[j]->update_formatted_string(1, s->team_index);
         world_to_map_screen_coordinates(s->x, s->y, &x, &y);
         spawner[j]->set_position(x,y);
@@ -558,6 +575,10 @@ void draw_team_text_icons(float z)
     world_to_map_screen_coordinates(b->x, b->y, &x, &y);
     base->set_position(x,y);
     base->set_depth(z);
+    if (playerAgent_state.you->status.spawner == BASE_SPAWN_ID)
+        base->set_color(highlight.r, highlight.g, highlight.b);
+    else
+        base->set_color(current_color.r, current_color.g, current_color.b);
     base->draw_centered();
 
     Flag* f = ctf->get_flag(playerAgent_state.you->status.team);

@@ -144,9 +144,16 @@ void Agent_event::born()
     }
 }
 
-void Agent_event::life_changing(bool dead) {
+void Agent_event::life_changing(bool dead)
+{
     if (dead) died();
     else born();
+}
+
+void Agent_event::set_spawner(int pt)
+{
+    this->a->status.spawner = pt;
+    //printf("Agent_event:: set spawner to %d\n", pt);
 }
 
 void Agent_event::crouched()
