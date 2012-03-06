@@ -58,6 +58,8 @@ class Main:
         init_c_lib.reset_seed(opts.seed)   # reset seed (opts.seed only meant for map gen)
         if opts.production or opts.map == "CAVE":
             map_recipes.best_caves()
+        elif opts.map == 'NOISY':
+            map_recipes.noisy_height()
         else:
             map_recipes.gen_map_simple()
         init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)

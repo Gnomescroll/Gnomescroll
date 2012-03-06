@@ -15,8 +15,10 @@ CTF::CTF()
 {}
 
 void CTF::init() {
-    this->set_team_color(1, 34, 144, 191);    //dark teal
-    this->set_team_color(2, 158, 24, 93);   // green-ish
+    //this->set_team_color(1, 34, 144, 191);    //dark teal
+    //this->set_team_color(1, 93, 158, 24);    //dark green
+    this->set_team_color(1, 59, 99, 17);    //dark green
+    this->set_team_color(2, 158, 24, 93);   // darker red/purple
 
     none.init(0);
     one.init(1);

@@ -276,6 +276,20 @@ def clear_pillar(x,y):
         m.set(x,y,i, 0)
 '''
 
+def noisy_height():
+    x,y,z = 512,512,128
+    c_lib.map_gen.conf.seed(opts.seed)
+
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .group(0)\
+    .tile(2)\
+    .scale(1,1,1)\
+    .heightmap(baseline=0, maxheight=z)\
+    .p2(octaves=8, persistence=0.1, frequency=4.0)\
+    .start()\
+    .reset()
+
 def draw_sphere(block, radius, x,y,z):
     #m = init_c_lib.
     t = int(radius)+1

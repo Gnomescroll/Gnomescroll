@@ -595,6 +595,7 @@ get hudmap to use z height checks so it can load faster, maybe in the background
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 blue text icons difficult to see on the hudmap with blue gradient
+--change gradient or team color
 
 try 256x256 map
 
@@ -620,6 +621,6 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 rotate * symbol for agent in hud map
 -- need to write a few more draw methods, that accept texture coordinates
 
-SERVER NOT CONNECTED is not being drawn (color is black??)
+text alignment settings (center,left,right,bottom,top)
 
 PRINT & MAIL REBATES

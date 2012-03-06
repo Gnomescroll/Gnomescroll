@@ -290,7 +290,7 @@ void update_heightmap()
         for (int j=0; j < map_dim.y; j++)
         {
             h = get_height_at(i,j);
-            cells[i + map_dim.x*j] = (unsigned char)2*h;
+            cells[i + map_dim.x*j] = (unsigned char)h;
         }
 }
 
