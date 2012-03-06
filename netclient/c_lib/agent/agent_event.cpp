@@ -67,9 +67,7 @@ void Agent_event::display_name()
         if (this->bb == NULL) return;
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
-        unsigned char r,g,b,a=255;
-        ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
-        this->bb->set_color(r,g,b,a);
+        this->bb->set_color(r,g,b,255);
         this->bb->set_size(0.7);
     }
     this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);
@@ -172,7 +170,7 @@ void Agent_event::reload_weapon(int type) {
     // play reload animation/sound for the weapon
 }
 
-void Agent_event::update_team_color(unsigned char r, unsigned char b, unsigned char c)
+void Agent_event::update_team_color(unsigned char r, unsigned char g, unsigned char b)
 {
     if (r == this->r && g == this->g && b == this->b)
         return;
