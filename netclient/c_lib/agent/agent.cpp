@@ -232,16 +232,19 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
 
 void Agent_state::tick() 
 {
-    int _tc =0;
-    struct Agent_control_state _cs;
+    if (this->status.team != 0)
+    {   // dont apply physics to viewers
+        int _tc =0;
+        struct Agent_control_state _cs;
 
-    while(cs[CS_seq].seq == CS_seq )
-    {
-        _cs = cs[CS_seq];
-        s = _agent_tick(_cs, box, s);
+        while(cs[CS_seq].seq == CS_seq )
+        {
+            _cs = cs[CS_seq];
+            s = _agent_tick(_cs, box, s);
 
-        CS_seq = (CS_seq+1)%256;
-        _tc++;
+            CS_seq = (CS_seq+1)%256;
+            _tc++;
+        }
     }
 
     #ifdef DC_SERVER
@@ -558,6 +561,12 @@ void Agent_state::set_angles(float theta, float phi) {
 }
 
 void Agent_state::get_spawn_point(int* spawn) {
+    if (this->status.team == 0)
+    {
+        spawn[0] = map_dim.x/2;
+        spawn[1] = map_dim.y/2;
+        spawn[2] = map_dim.z - 1;
+    }
 
     int h = this->current_height_int();
     Spawner *s = NULL;
@@ -591,7 +600,8 @@ void Agent_state::get_spawn_point(int* spawn) {
         s->get_spawn_point(h, spawn);
 }
 
-void Agent_state::spawn_state() {
+void Agent_state::spawn_state()
+{
     // update position
     int spawn[3];
     this->get_spawn_point(spawn);

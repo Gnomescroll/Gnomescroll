@@ -151,7 +151,7 @@ void PlayerAgent_action::hitscan_laser() {
             obj_msg.vy = target.voxel[1];
             obj_msg.vz = target.voxel[2];
             obj_msg.send();
-            //printf("msg: id=%d type=%d part=%d\n", obj_msg.id, obj_msg.type, obj_msg.part);
+
             // subtract the collision point from the origin to get the new vector for animation
             look.x = collision_point[0] - origin[0];
             look.y = collision_point[1] - origin[1];
