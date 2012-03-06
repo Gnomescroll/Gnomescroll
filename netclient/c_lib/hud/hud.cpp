@@ -219,7 +219,7 @@ void draw_hud_textures()
 
 void draw_hud_text()
 {
-    if (!hud->inited || !hud_draw_settings.connected) return;
+    if (!hud->inited) return;
     if (!hud_draw_settings.draw) return;
 
     // move large text to the front, so we dont swap textures twice
@@ -232,6 +232,12 @@ void draw_hud_text()
 
     //if (!hud_draw_settings.version_match)
         //hud->version_mismatch->draw();
+
+    if (!hud_draw_settings.connected)
+    {
+        end_text_draw();
+        return;
+    }
 
     if (hud_draw_settings.dead)
         hud->dead->draw();

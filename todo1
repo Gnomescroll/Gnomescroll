@@ -507,6 +507,9 @@ hudmap uses text icons
 spawner system updated
 team colors periodically checked in case missed update
 smoothed hudmap texture updating
+
+::BRANDON::
+compass points to flag, then base
 ====================
 
 Mar 5
@@ -519,6 +522,7 @@ filter actions for viewer time (client and server side)
 explicit keyword on single-argument constructors
 fix another spawner selection bug
 current spawn point highlighted in hud map
+increase slime health
 ====================
 
 
