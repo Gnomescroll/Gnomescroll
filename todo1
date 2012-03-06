@@ -527,6 +527,7 @@ change team1 color to green
 new heightmap gradient
 fix agent hud text color update
 view distance check for agent hud text
+variable ttls on all particle effect systems
 ====================
 
 
