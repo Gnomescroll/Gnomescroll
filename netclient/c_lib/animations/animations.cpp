@@ -14,21 +14,20 @@ namespace Animations {
 
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
 {
-
     const float crumble_size = 0.17f;
     ClientState::minivox_list->set_size(crumble_size);
 
     //unsigned char r,g,b,a;
-    int side, ttl;
+    int side;
+    int ttl;
     int tex_id;
     float nx,ny,nz;
     float vx,vy,vz;
 
     Minivox* minivox;
     
-    int i;
-    for (i=0; i < n; i++) {
-
+    for (int i=0; i < n; i++)
+    {
         nx = x + randf() -0.5f;
         ny = y + randf() -0.5f;
         nz = z + randf() -0.5f;
@@ -38,13 +37,13 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         vz = momentum*(randf() -0.5f);
 
         side = randrange(0,5);
-        ttl = randrange(20,40);
         //get_random_pixel(cube_id, side, &r, &g, &b, &a);
 
         tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
+        ttl = randrange(20,40);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
     }
@@ -109,13 +108,10 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     float vx,vy,vz;
     float nx,ny,nz;
 
-    int i;
     int n = randrange(10,15);
     int ttl;
-    for (i=0; i<n; i++) {
-
-        ttl = randrange(15,25);
-
+    for (int i=0; i<n; i++)
+    {
         vx = ref.x + (randf() -0.5f);
         vy = ref.y + (randf() -0.5f);
         vz = ref.z + (randf() -0.5f);
@@ -131,6 +127,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
+        ttl = randrange(15,25);
         minivox->set_ttl(ttl);
     }
 }
@@ -145,15 +142,20 @@ void grenade_explode(float x, float y, float z) {
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    int i;
-    for (i=0; i<n; i++) {
+    int ttl;
+    Shrapnel *s;
+    for (int i=0; i<n; i++)
+    {
         cx = x + ((randf() - 0.5f) / 20.0f);
         cy = y + ((randf() - 0.5f) / 20.0f);
         cz = z + ((randf() - 0.5f) / 20.0f);
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        if (ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz) == NULL) return;
+        s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        if (s == NULL) return;
+        ttl = randrange(15,25);
+        s->ttl_max = ttl;
     }
 }
 
@@ -168,17 +170,20 @@ void terrain_sparks(float x, float y, float z)
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    int i;
-    for (i=0; i<n; i++) {
+    int ttl;
+    Shrapnel *s;
+    for (int i=0; i<n; i++)
+    {
         cx = x + ((randf() - 0.5f) / 20.0f);
         cy = y + ((randf() - 0.5f) / 20.0f);
         cz = z + ((randf() - 0.5f) / 20.0f);
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        Shrapnel* s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
-        s->set_ttl(10);
+        ttl = randrange(8,15);
+        s->ttl_max = ttl;
         s->set_size(0.05);
         s->set_texture(54);
     }
@@ -199,9 +204,8 @@ void slime_melt(float x, float y, float z) {
 
     Minivox* minivox;
     int ttl;
-    
-    int i;
-    for (i=0; i<n; i++) {
+    for (int i=0; i<n; i++)
+    {
         ttl = randrange(50,80);
         cx = x + ((randf() - 0.5f) / 20.0f);
         cy = y + ((randf() - 0.5f) / 20.0f);
@@ -238,6 +242,8 @@ void agent_bleed(float x, float y, float z)
     float vx,vy,vz;
 
     int n = randrange(50,70);
+    int ttl;
+    Blood *b;
     for (int i=0; i<n; i++) {
 
         nx = x + randf() -0.5f;
@@ -248,7 +254,10 @@ void agent_bleed(float x, float y, float z)
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        if (ClientState::blood_list->create(nx,ny,nz, vx,vy,vz) == NULL) return;
+        b = ClientState::blood_list->create(nx,ny,nz, vx,vy,vz);
+        if (b==NULL) return;
+        ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
+        b->ttl_max = ttl;
     }
 }
 
@@ -268,6 +277,8 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;
+    Blood *b;
+    int ttl;
     for (int i=0; i<n; i++)
     {
         theta = randf() * 3.14159 * 2;
@@ -278,7 +289,10 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
-        if (ClientState::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed) == NULL) return;
+        b = ClientState::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed);
+        if (b == NULL) return;
+        ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
+        b->ttl_max = ttl;
     }
 }
 
