@@ -47,7 +47,7 @@ class Slime {
 
     int take_damage(int dmg);
 
-    Slime(int id);
+    explicit Slime(int id);
     Slime(int id, float x, float y, float z, float vx, float vy, float vz);
     ~Slime();
 };

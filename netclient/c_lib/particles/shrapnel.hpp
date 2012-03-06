@@ -23,7 +23,8 @@ class Shrapnel: public Particle
         void tick();
         void set_texture(int index);
         void set_size(float size);
-        Shrapnel(int id);
+
+        explicit Shrapnel(int id);
         Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
 };
 

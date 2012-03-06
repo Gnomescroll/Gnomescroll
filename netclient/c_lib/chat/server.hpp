@@ -14,7 +14,7 @@ class ChatServerChannel
     bool add_listener(int id);
     bool remove_listener(int id);
 
-    ChatServerChannel(int max);
+    explicit ChatServerChannel(int max);
     ~ChatServerChannel();
 };
 

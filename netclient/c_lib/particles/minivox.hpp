@@ -53,7 +53,7 @@ class Minivox: public Particle
         void draw_textured();
         void tick();
         
-        Minivox(int id);
+        explicit Minivox(int id);
         Minivox(int id, float x, float y, float z, float mx, float my, float mz);
 };
 

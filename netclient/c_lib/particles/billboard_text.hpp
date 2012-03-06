@@ -31,7 +31,7 @@ class BillboardText: public Particle
         void draw();
         void tick();
 
-        BillboardText(int id);
+        explicit BillboardText(int id);
         BillboardText(int id, float x, float y, float z, float mx, float my, float mz);
 };
 

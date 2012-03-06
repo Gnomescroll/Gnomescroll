@@ -52,7 +52,7 @@ class Text
         
         void draw();
 
-        Text(int id);
+        explicit Text(int id);
         ~Text();
 };
 

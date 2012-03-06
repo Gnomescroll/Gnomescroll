@@ -26,7 +26,7 @@ class ChatMessage
     void set_color();
     void set_name();
     
-    ChatMessage(int id);
+    explicit ChatMessage(int id);
 };
 
 class ChatMessageHistoryObject
@@ -36,7 +36,7 @@ class ChatMessageHistoryObject
     ChatMessageHistoryObject* next;
     ChatMessageHistoryObject* prev;
 
-    ChatMessageHistoryObject(ChatMessage* m);
+    explicit ChatMessageHistoryObject(ChatMessage* m);
     ~ChatMessageHistoryObject();
 };
 
@@ -73,7 +73,7 @@ class ChatInputHistoryObject
     ChatInputHistoryObject *next;
     ChatInputHistoryObject *prev;
 
-    ChatInputHistoryObject(char* m);
+    explicit ChatInputHistoryObject(char* m);
     ~ChatInputHistoryObject();
 };
 

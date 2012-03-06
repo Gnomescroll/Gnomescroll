@@ -89,5 +89,5 @@ class Agent_status {
         void send_coin_packet();
         bool purchase(Object_types obj);
 
-        Agent_status(Agent_state* a);
+        explicit Agent_status(Agent_state* a);
 };

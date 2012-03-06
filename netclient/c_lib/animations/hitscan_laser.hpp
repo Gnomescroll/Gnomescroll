@@ -25,7 +25,7 @@ class HitscanLaserEffect
     inline void draw2(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
-    HitscanLaserEffect(int id);
+    explicit HitscanLaserEffect(int id);
     HitscanLaserEffect(float x, float y, float z, float fx, float fy, float fz);
     HitscanLaserEffect(int id, float x, float y, float z, float fx, float fy, float fz);
 };

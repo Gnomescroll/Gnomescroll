@@ -20,7 +20,7 @@ class HitscanEffect
     inline void draw(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
-    HitscanEffect(int id);
+    explicit HitscanEffect(int id);
     HitscanEffect(float x, float y, float z, float vx, float vy, float vz);
     HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz);
 };

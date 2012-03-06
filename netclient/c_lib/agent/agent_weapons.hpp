@@ -41,5 +41,5 @@ class Agent_weapons {
 
         bool can_zoom();
 
-        Agent_weapons(Agent_state* a);
+        explicit Agent_weapons(Agent_state* a);
 };

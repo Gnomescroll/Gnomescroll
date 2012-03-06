@@ -35,7 +35,7 @@ class Weapon {
 
         void restore_ammo();
 
-        Weapon(weapon_type type);
+        explicit Weapon(weapon_type type);
         ~Weapon();
 };
 

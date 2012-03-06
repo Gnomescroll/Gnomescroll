@@ -65,7 +65,7 @@ class Font
 
     int size() { return data.size; }
 
-    Font(char* fn);
+    explicit Font(char* fn);
 };
 
 void reset_default();

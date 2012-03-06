@@ -515,6 +515,7 @@ Mar 5
 
 fix slime voxel destruction
 dont tick physics on server for viewers
+filter actions for viewer time (client and server side)
 ====================
 
 
@@ -584,12 +585,9 @@ better feedback on damage received
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
+explicit 1-argument constructors
 
-update teammate dot in hudmap (switched player to red, but teammates are red)
-make dot bigger
-
-icons are difficult/impossible to see on the hudmap with blue gradient
-make icons biggers
+blue text icons difficult to see on the hudmap with blue gradient
 
 try 256x256 map
 
@@ -611,7 +609,7 @@ grenade damage indication (blood, voxel destruction)
 
 show dead body for longer
 
-properly filter all viewer team actions
+more filtering for viewer teams (slimes probably attack a viewer, for example)
 
 rotate * symbol for agent in hud map
 

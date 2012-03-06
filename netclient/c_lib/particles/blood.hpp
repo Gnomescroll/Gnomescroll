@@ -15,7 +15,7 @@ class Blood: public Particle
     public:
         void draw();
         void tick();
-        Blood(int id);
+        explicit Blood(int id);
         Blood(int id, float x, float y, float z, float mx, float my, float mz);
 };
 

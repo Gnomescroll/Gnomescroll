@@ -51,7 +51,7 @@ class Spawner
         #ifdef DC_SERVER
         void create_message(Spawner_create_StoC* msg);
         #endif
-        Spawner(int id);
+        explicit Spawner(int id);
         Spawner(int id, float x, float y, float z);
         ~Spawner();
 };

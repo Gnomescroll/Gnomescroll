@@ -41,7 +41,7 @@ class Grenade: public Particle
         void broadcast();
         #endif
         
-        Grenade(int id);
+        explicit Grenade(int id);
         Grenade(int id, float x, float y, float z, float mx, float my, float mz);
         ~Grenade();
 };

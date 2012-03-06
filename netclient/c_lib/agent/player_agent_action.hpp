@@ -23,5 +23,5 @@ class PlayerAgent_action {
         
         void place_spawner();
 
-        PlayerAgent_action(PlayerAgent_state* player_agent);
+        explicit PlayerAgent_action(PlayerAgent_state* player_agent);
 };

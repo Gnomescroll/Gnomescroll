@@ -60,7 +60,7 @@ class Map_vbo
 
     GLuint vbo_id;
 
-    Map_vbo( class MAP_CHUNK* m )
+    explicit Map_vbo( class MAP_CHUNK* m )
     {
 
         flags.flags = 0; //zero all flags
@@ -105,7 +105,7 @@ class Vbo_map
 
     class Map_vbo** vbo_list; //list of loaded vbos
 
-    Vbo_map(class Terrain_map* _map)
+    explicit Vbo_map(class Terrain_map* _map)
     {
         map = _map;
         xchunk_dim = _map->xchunk_dim;
