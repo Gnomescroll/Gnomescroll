@@ -16,7 +16,7 @@ enum SLIME_BODY_PARTS {
     SLIME_PART_BODY
 };
 
-const int SLIME_HEALTH = 50;
+const int SLIME_HEALTH = 75;
 
 class Slime;    // forward decl
 

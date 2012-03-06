@@ -616,4 +616,6 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 rotate * symbol for agent in hud map
 -- need to write a few more draw methods, that accept texture coordinates
 
+SERVER NOT CONNECTED is not being drawn (color is black??)
+
 PRINT & MAIL REBATES
