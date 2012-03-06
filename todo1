@@ -514,7 +514,7 @@ Mar 5
 -WORK-
 
 fix slime voxel destruction
-
+dont tick physics on server for viewers
 ====================
 
 
@@ -611,7 +611,7 @@ grenade damage indication (blood, voxel destruction)
 
 show dead body for longer
 
-fix repeated death in viewer mode (keep falling)
+properly filter all viewer team actions
 
 rotate * symbol for agent in hud map
 

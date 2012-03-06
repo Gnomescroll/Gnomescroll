@@ -566,6 +566,7 @@ void Agent_state::get_spawn_point(int* spawn) {
         spawn[0] = map_dim.x/2;
         spawn[1] = map_dim.y/2;
         spawn[2] = map_dim.z - 1;
+        return;
     }
 
     int h = this->current_height_int();

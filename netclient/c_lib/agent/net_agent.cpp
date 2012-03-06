@@ -48,28 +48,29 @@ inline void SendClientId_StoC::handle()
 
 inline void Agent_state_message::handle()
 {
-    Agent_state* A = STATE::agent_list->get(id);
-    if(A == NULL)
+    Agent_state* a = STATE::agent_list->get(id);
+    if(a == NULL)
     {
         //printf("Agent_state_message -- Agent %d does not exist\n", id);
         return;
     }
-    A->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
+    a->handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
 }
 
 inline void Agent_teleport_message::handle()
 {
-    Agent_state* A = STATE::agent_list->get(id);
-    if(A == NULL)
+    Agent_state* a = STATE::agent_list->get(id);
+    if(a == NULL)
     {
         //printf("Agent_teleport_message -- Agent %d does not exist\n", id);
         return;
     }
+    if (a->status.team == 0) return;
     // reset camera angle
-    if (A->is_you() && agent_camera != NULL)
+    if (a->is_you() && agent_camera != NULL)
         agent_camera->set_angles(theta, phi);
-    A->set_state(x,y,z, vx,vy,vz);
-    A->set_angles(theta, phi);
+    a->set_state(x,y,z, vx,vy,vz);
+    a->set_angles(theta, phi);
 }
 
 //Agent control state, server to client
@@ -621,6 +622,7 @@ inline void hit_block_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    if (a->status.team == 0) return;
     if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;
     msg.id = a->id;
@@ -642,6 +644,7 @@ inline void hitscan_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    if (a->status.team == 0) return;
     if (!a->weapons.laser.fire()) return;
 
     //const int agent_dmg = 25;
@@ -725,11 +728,11 @@ inline void hitscan_block_CtoS::handle()
         return;
     }
 
-    #if PRODUCTION
-    #else
+    #if !PRODUCTION
     a->status.add_coins(100);
     #endif
 
+    if (a->status.team == 0) return;
     if (!a->weapons.laser.fire()) return;
 
     // damage block
@@ -782,7 +785,7 @@ inline void hitscan_none_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
+    if (a->status.team == 0) return;
     if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
     msg.id = a->id;
@@ -797,7 +800,7 @@ inline void melee_object_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
+    if (a->status.team == 0) return;
     if (!a->weapons.pick.fire()) return;
 
     Agent_state* agent = NULL;
@@ -868,7 +871,7 @@ inline void melee_none_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
+    if (a->status.team == 0) return;
     if (!a->weapons.pick.fire()) return;
     agent_melee_nothing_StoC msg;
     msg.id = a->id;
@@ -883,7 +886,7 @@ inline void ThrowGrenade_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
-
+    if (a->status.team == 0) return;
     if (!a->weapons.grenades.fire()) return;
     agent_threw_grenade_StoC msg;
     msg.id = a->id;
@@ -908,6 +911,7 @@ inline void AgentActiveWeapon_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    if (a->status.team == 0) return;
     a->weapons.set_active(slot);
 }
 
@@ -919,6 +923,7 @@ inline void AgentReloadWeapon_CtoS::handle()
         printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
         return;
     }
+    if (a->status.team == 0) return;
     a->weapons.reload(type);
     // forward action
     AgentReloadWeapon_StoC msg;
@@ -936,6 +941,7 @@ inline void agent_set_block_CtoS::handle()
         return;
     }
     // fire block applier
+    if (a->status.team == 0) return;
     if (!a->weapons.blocks.fire()) return;
     agent_placed_block_StoC msg;
     msg.id = a->id;
