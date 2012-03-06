@@ -179,7 +179,7 @@ void init_surface()
 {
     printf("init: hud_map \n");
 
-    const int grad_num = 4;
+    const int grad_num = 10;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);

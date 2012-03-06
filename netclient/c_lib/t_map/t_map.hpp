@@ -2,6 +2,7 @@
 
 #include <defines.h>
 
+// deprecate in favor of MapDimension map_dim
 const int XMAX = 512;
 const int YMAX = 512;
 const int ZMAX = 128;
