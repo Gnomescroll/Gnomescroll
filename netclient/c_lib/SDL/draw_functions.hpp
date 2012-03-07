@@ -22,6 +22,7 @@ int _bind_VBO(struct Quad* quad_list, int v_num);
 // Draw full texture
 void draw_bound_texture(float x, float y, float w, float h, float z);
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta);
+void draw_bound_texture_rotated(float x, float y, float x2, float y2, float tx, float ty, float tw, float th, float depth, float theta);
 
 // Blit sprites from a larger bound texture
 void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);

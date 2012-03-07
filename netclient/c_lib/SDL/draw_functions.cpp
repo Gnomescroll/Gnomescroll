@@ -1,4 +1,4 @@
-#include "draw_functions.h"
+#include "draw_functions.hpp"
 
 #include <compat_gl.h>
 #include <stdio.h>
@@ -105,7 +105,8 @@ void draw_bound_texture(float x, float y, float w, float h, float z) {
     glEnd();
 }
 
-void rotate_point(float x, float y, float theta, float *x1, float *y1) {
+void rotate_point(float x, float y, float theta, float *x1, float *y1)
+{
     *x1 = x*cos(theta) - y*sin(theta);
     *y1 = x*sin(theta) + y*cos(theta);
 }
@@ -143,8 +144,76 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float z, flo
     glEnd();
 }
 
-void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sx, float sy, float sw, float sh, float ssw, float ssh) {
+//// y coordinates start along the bottom
+//void draw_bound_texture_rotated(float x, float y, float w, float h, float tx, float ty, float tw, float th, float depth, float theta)
+//{
+    //theta *= kPI;
+    //float cx = x + w/2;
+    //float cy = y + h/2; //center
 
+    //x -= cx;
+    //y -= cy;
+
+    //float rx=0.0f;
+    //float ry=0.0f;
+
+    //glBegin(GL_QUADS);
+
+    //glTexCoord2f(tx, ty+th);
+    //rotate_point(x, y, theta, &rx, &ry);
+    //glVertex3f(rx+cx, ry+cy, theta);  // Top left
+
+    //glTexCoord2f(tx+tw, ty+th);
+    //rotate_point(x+w, y, theta, &rx, &ry);
+    //glVertex3f(rx+cx, ry+cy, theta);  // Top right
+
+    //glTexCoord2f(tx+tw, ty);
+    //rotate_point(x+w, y+h, theta, &rx, &ry);
+    //glVertex3f(rx+cx, ry+cy, theta);  // Bottom right
+
+    //glTexCoord2f(tx, ty);
+    //rotate_point(x, y+h, theta, &rx, &ry);
+    //glVertex3f(rx+cx, ry+cy, theta);  // Bottom left
+    //glEnd();
+//}
+
+// y coordinates start along the bottom
+void draw_bound_texture_rotated(float x, float y, float x2, float y2, float tx, float ty, float tw, float th, float depth, float theta)
+{
+    theta *= kPI;
+    float cx = x + (x2-x)/2;
+    float cy = y + (y2-y)/2; //center
+
+    x -= cx;
+    y -= cy;
+    x2 -= cx;
+    y2 -= cy;
+
+    float rx=0.0f;
+    float ry=0.0f;
+
+    glBegin(GL_QUADS);
+
+    glTexCoord2f(tx, ty+th);
+    rotate_point(x, y2, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);  // Top left
+
+    glTexCoord2f(tx, ty);
+    rotate_point(x, y, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);  // Top right
+
+    glTexCoord2f(tx+tw, ty);
+    rotate_point(x2, y, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);  // Bottom right
+
+    glTexCoord2f(tx+tw, ty+th);
+    rotate_point(x2, y2, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);  // Bottom left
+    glEnd();
+}
+
+void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sx, float sy, float sw, float sh, float ssw, float ssh)
+{
     sx /= ssw;
     sy /= ssh;
     sw /= ssw;

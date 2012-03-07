@@ -122,7 +122,7 @@
 /* SDL */
 #include <c_lib/SDL/shader_loader.cpp>
 #include <c_lib/SDL/texture_loader.cpp>
-#include <c_lib/SDL/draw_functions.c>
+#include <c_lib/SDL/draw_functions.cpp>
 #include <c_lib/SDL/particle_functions.c>
 #include <c_lib/SDL/SDL_functions.c>
 

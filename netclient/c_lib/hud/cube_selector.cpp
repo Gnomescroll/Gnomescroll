@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <c_lib/SDL/draw_functions.h>
+#include <c_lib/SDL/draw_functions.hpp>
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 #include <c_lib/weapons/weapons.hpp>

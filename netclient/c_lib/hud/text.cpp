@@ -114,10 +114,48 @@ void Text::set_string(char* text, char** this_text, int* this_len)
     }
 }
 
-//void Text::draw_rotated()
-//{
-    
-//}
+// BROKEN
+void Text::draw_rotated(float theta)
+{
+    printf("WARNING: Text::draw_rotated broken\n");
+    if (HudFont::font == NULL)
+        return;
+    int i = 0;
+    char c;
+    struct HudFont::Glyph glyph;
+
+    float tx_min, tx_max, ty_min, ty_max;
+    float sx_min, sx_max, sy_min, sy_max;
+    float cursor_x = 0.0f;
+    float cursor_y = 0.0f;
+
+    while ((c = text[i++]) != '\0')
+    {
+        if (c == '\n')
+        {
+            cursor_y += HudFont::font->data.line_height;
+            cursor_x = 0.0f;
+            continue;
+        }
+        
+        glyph = HudFont::font->get_glyph(c);
+
+        tx_max = glyph.x;
+        tx_min = glyph.x + glyph.tw;
+        ty_min = glyph.y;
+        ty_max = glyph.y + glyph.th;
+
+        sx_max = x + (cursor_x + glyph.xoff) * scale;
+        sx_min = x + (cursor_x + glyph.xoff + glyph.w) * scale;
+        sy_min = y - (cursor_y + glyph.yoff) * scale;
+        sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
+        //blit_character(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
+        draw_bound_texture_rotated(sx_min, sx_max, sy_min, sy_max, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
+        //draw_bound_texture_rotated(sx_max, sx_min, sy_max, sy_min, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
+
+        cursor_x += glyph.xadvance;
+    }
+}
 
 void Text::resize_string(int n, char** str, int* str_len)
 {

@@ -3,7 +3,7 @@
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/texture_loader.hpp>
-#include <c_lib/SDL/draw_functions.h>
+#include <c_lib/SDL/draw_functions.hpp>
 #include <c_lib/game/teams.hpp>
 #include <c_lib/items/spawner.hpp>
 
@@ -542,6 +542,7 @@ void draw_team_text_icons(float z)
         Agent_state* a = agent_list->a[i];
         if (a==NULL) continue;
         if (a->status.team != playerAgent_state.you->status.team) continue;
+        if (a == playerAgent_state.you) continue;
         world_to_map_screen_coordinates(a->s.x, a->s.y, &x, &y);
         ally[j]->set_position(x,y);
         ally[j]->set_depth(z);
@@ -601,6 +602,8 @@ void draw_text_icons(float z)
     you->set_position(x,y);
     you->set_depth(z);
     you->draw_centered();
+    //you->draw_rotated(playerAgent_state.camera_state.theta);
+    
     //printf("set you to draw at %0.2f %0.2f\n", x,y);
     //printf("r,g,b %d,%d,%d,%d\n", you->r, you->g, you->b, you->a);
 }
