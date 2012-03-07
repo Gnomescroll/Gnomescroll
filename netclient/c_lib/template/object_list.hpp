@@ -15,9 +15,7 @@ template <class Object_state, int max_n=1024>
 class Object_list {
     private:
         int id_c;
-        //virtual const char* name() { return ""; }
         virtual const char* name() = 0;
-
 
     protected:
         // quicksort helpers
