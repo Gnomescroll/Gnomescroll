@@ -15,7 +15,8 @@ template <class Object_state, int max_n=1024>
 class Object_list {
     private:
         int id_c;
-        virtual const char* name() { return "Object"; }
+        //virtual const char* name() { return ""; }
+        virtual const char* name() = 0;
 
 
     protected:
@@ -53,6 +54,7 @@ class Object_list {
         void draw(int all);
 
         void where();
+        void print();
         void print_members();
 
         // filtering
@@ -75,12 +77,16 @@ Object_list<Object_state, max_n>::Object_list()
 id_c(0),
 num(0)
 {
-    this->a = (Object_state**)malloc(sizeof(Object_state*)*max_n);
-    for (int i=0;i<max_n; this->a[i++] = NULL);
-    printf("%s list instantiated at %p\n", this->name(), this);
+    this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
     //where();
 }
 
+template <class Object_state, int max_n> 
+void Object_list<Object_state, max_n>::print()
+{
+    const char* n = this->name();
+    printf("%s list instantiated at %p\n", n, this);
+}
 
 template <class Object_state, int max_n> 
 Object_list<Object_state, max_n>::~Object_list()

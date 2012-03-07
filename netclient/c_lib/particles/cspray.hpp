@@ -32,4 +32,6 @@ class Cspray_list: public Object_list<Cspray,CSPRAY_MAX>
     public:
         void draw();
         void tick();
+
+        Cspray_list() { print(); }
 };

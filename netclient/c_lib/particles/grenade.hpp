@@ -54,4 +54,6 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
     public:
         void draw();
         void tick() GNOMESCROLL_API;
+
+        Grenade_list() { print(); }
 };

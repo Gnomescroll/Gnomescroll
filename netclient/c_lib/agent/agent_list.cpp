@@ -266,5 +266,7 @@ void Agent_list::update_team_colors()
 Agent_list::Agent_list()
 :
 check_name_interval(0)
-{}
+{
+    print();
+}
 

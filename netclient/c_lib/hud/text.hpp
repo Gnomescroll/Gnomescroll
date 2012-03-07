@@ -64,6 +64,9 @@ class Text_list: public Object_list<Text,TEXT_MAX>
 {
     private:
         const char* name() { return "Text"; }
+
+    public:
+        Text_list() { print(); }
 };
 
 extern Text_list* text_list;

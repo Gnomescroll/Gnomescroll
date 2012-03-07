@@ -33,7 +33,7 @@ class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
         void draw();
         void tick();
 
-        HitscanEffect_list() {}
+        HitscanEffect_list() { print(); }
 };
 
 }

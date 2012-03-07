@@ -77,5 +77,7 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
 
         void tick();
         void update();  // client side
+
+        Spawner_list() { print(); }
 };
 

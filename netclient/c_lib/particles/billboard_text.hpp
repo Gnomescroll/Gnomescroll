@@ -44,5 +44,7 @@ class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
     public:
         void draw();
         void tick();
+
+        BillboardText_list() { print(); }
 };
 

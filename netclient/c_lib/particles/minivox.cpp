@@ -310,4 +310,6 @@ void Minivox_list::unset_size()
 Minivox_list::Minivox_list()
 :
 _s(minivox_size)
-{}
+{
+    print();
+}

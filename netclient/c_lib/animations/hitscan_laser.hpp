@@ -38,7 +38,7 @@ class HitscanLaserEffect_list: public Object_list<HitscanLaserEffect, MINIVOX_MA
         void draw();
         void tick();
 
-        HitscanLaserEffect_list() {}
+        HitscanLaserEffect_list() { print(); }
 };
 
 }

@@ -30,4 +30,7 @@ class Neutron_list: public Object_list<Neutron, NEUTRON_MAX>
     public:
         void draw();
         void tick();
+
+        Neutron_list() { print(); }
+
 };

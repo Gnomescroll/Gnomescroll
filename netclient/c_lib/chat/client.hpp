@@ -135,8 +135,11 @@ class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HIST
     private:
         void quicksort_timestamp_asc(int beg, int end);
         void quicksort_timestamp_desc(int beg, int end);
+        const char* name() { return "ChatMessage"; }
     public:
         void sort_by_most_recent();
+
+        ChatMessageList() { print(); }
 };
 
 // collection of methods

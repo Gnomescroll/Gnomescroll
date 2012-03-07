@@ -37,5 +37,7 @@ class Shrapnel_list: public Object_list<Shrapnel, SHRAPNEL_MAX>
     public:
         void draw();
         void tick();
+
+        Shrapnel_list() { print(); }
 };
     

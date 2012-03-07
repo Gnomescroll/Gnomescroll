@@ -63,6 +63,8 @@ class Slime_list: public Object_list<Slime,SLIME_MAX>
         void tick() GNOMESCROLL_API;
 
         void send_to_client(int client_id);
+
+        Slime_list() { print(); }
 };
 
 void test(int n) GNOMESCROLL_API;

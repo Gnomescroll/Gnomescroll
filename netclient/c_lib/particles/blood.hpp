@@ -28,5 +28,7 @@ class Blood_list: public Object_list<Blood, BLOOD_MAX>
     public:
         void draw();
         void tick();
+
+    Blood_list() { print(); }
 };
     
