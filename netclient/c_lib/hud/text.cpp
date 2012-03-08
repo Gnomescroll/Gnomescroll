@@ -161,7 +161,8 @@ void Text::draw_character_rotated(float theta)
     sw = glyph.w * scale;
     sy = this->y - glyph.h/2;
     sh = glyph.h * scale;
-    
+
+    glColor4ub(r,g,b,a);
     draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 

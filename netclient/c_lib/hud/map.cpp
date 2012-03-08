@@ -150,8 +150,10 @@ static void set_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
-    you_star->set_color(r,g,b,a);
-    you_A->set_color(r,g,b,a);
+    //you_star->set_color(r,g,b,a);
+    //you_A->set_color(r,g,b,a);
+    you_star->set_color(highlight.r, highlight.g, highlight.b, a);
+    you_A->set_color(highlight.r, highlight.g, highlight.b, a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
     for (int i=0; i<(int)TEAM_MAX_PLAYERS;
@@ -604,6 +606,9 @@ void draw_text_icons(float z)
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
         &x, &y
     );
+        //you_star->set_color(highlight.r, highlight.g, highlight.b, 255);
+    //you_A->set_color(highlight.r, highlight.g, highlight.b, 255);
+
     you_star->set_position(x,y);
     you_star->set_depth(z);
     you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
