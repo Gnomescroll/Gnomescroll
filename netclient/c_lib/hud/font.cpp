@@ -240,18 +240,16 @@ void Font::get_string_pixel_dimension(char* str, int *length, int *height)
     {
         g = glyphs[(unsigned int)c];
         if (!g.available)
-        {
             g = get_missing_glyph(c);
-        }
 
         len += g.xadvance;
 
         if (i==1)
-        {
             len += g.xoff;
-        }
-        if (g.yoff + g.h > maxy) maxy = g.yoff + g.h;
-        if (g.yoff < miny) miny = g.yoff;
+        if (g.yoff + g.h > maxy)
+            maxy = g.yoff + g.h;
+        if (g.yoff < miny)
+            miny = g.yoff;
     }
     *length = len;
     if (len <= 0)

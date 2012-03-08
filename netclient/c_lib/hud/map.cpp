@@ -81,7 +81,7 @@ void load_colored_icon(
 
 /* Map letter icons */
 /*
- * You: *
+ * You: * and A on top of each other
  * Teammate: A (ally)
  * Base:    B
  * Flag:    F
@@ -89,7 +89,8 @@ void load_colored_icon(
  * Turret   T
  */
 
-const char you_symbol[] = "*";
+const char you_star_symbol[] = "*";
+const char you_A_symbol[] = "A";
 const char ally_symbol[] = "A";
 const char base_symbol[] = "B";
 const char flag_symbol[] = "F";
@@ -97,7 +98,8 @@ const char spawner_symbol[] = "S%d";
 const char turret_symbol[] = "T";
 
 using HudText::Text;
-static Text* you = NULL;
+static Text* you_star = NULL;
+static Text* you_A = NULL;
 static Text* base = NULL;
 static Text* flag = NULL;
 static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
@@ -113,8 +115,10 @@ void init_text_icons()
         printf("ERROR: HudMap::init_text_icons() -- HudText::text_list is NULL\n");
         return;
     }
-    you = HudText::text_list->create();
-    you->set_text((char*)you_symbol);
+    you_star = HudText::text_list->create();
+    you_star->set_text((char*)you_star_symbol);
+    you_A = HudText::text_list->create();
+    you_A->set_text((char*)you_A_symbol);
 
     base = HudText::text_list->create();
     base->set_text((char*)base_symbol);
@@ -146,7 +150,8 @@ static void set_team_icons_color(
     unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
 )
 {
-    you->set_color(r,g,b,a);
+    you_star->set_color(r,g,b,a);
+    you_A->set_color(r,g,b,a);
     base->set_color(r,g,b,a);
     flag->set_color(r,g,b,a);
     for (int i=0; i<(int)TEAM_MAX_PLAYERS;
@@ -599,13 +604,14 @@ void draw_text_icons(float z)
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
         &x, &y
     );
-    you->set_position(x,y);
-    you->set_depth(z);
-    you->draw_centered();
-    //you->draw_rotated(playerAgent_state.camera_state.theta);
-    
-    //printf("set you to draw at %0.2f %0.2f\n", x,y);
-    //printf("r,g,b %d,%d,%d,%d\n", you->r, you->g, you->b, you->a);
+    you_star->set_position(x,y);
+    you_star->set_depth(z);
+    you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
+
+    you_A->set_position(x,y);
+    you_A->set_depth(z);
+    you_A->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
+    // -0.5 offset to orient texture properly
 }
 
 //void draw_items(float z)

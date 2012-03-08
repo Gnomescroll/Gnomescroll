@@ -42,6 +42,37 @@ void blit_character(
     glVertex3f(screen_x_max, screen_y_max, depth);
 }
 
+void blit_character_rotated(
+    float tex_x_min, float tex_x_max,
+    float tex_y_min, float tex_y_max,
+    float screen_x_min, float screen_x_max,
+    float screen_y_min, float screen_y_max,
+    float depth, float theta)
+{
+    theta *= kPI;
+    float cx,cy;
+    cx = (screen_x_max - screen_x_min) / 2 + screen_x_min;
+    cy = (screen_y_max - screen_y_min) / 2 + screen_y_min;
+
+    float rx,ry;
+    
+    glTexCoord2f(tex_x_min+cx, tex_y_max);
+    rotate_point(screen_x_min-cx, screen_y_max-cy, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);
+
+    glTexCoord2f(tex_x_min, tex_y_min);
+    rotate_point(screen_x_min-cx, screen_y_min-cy, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);
+
+    glTexCoord2f(tex_x_max, tex_y_min);
+    rotate_point(screen_x_min-cx, screen_y_min-cy, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);
+
+    glTexCoord2f(tex_x_max, tex_y_max);
+    rotate_point(screen_x_max-cx, screen_y_max-cy, theta, &rx, &ry);
+    glVertex3f(rx+cx, ry+cy, depth);
+}
+
 void draw_string(char* text, float x, float y, float depth, float scale)
 {
     if (HudFont::font == NULL)
@@ -85,8 +116,8 @@ void Text::draw_centered()
 {
     float w = this->get_width();
     float h = this->get_height();
-    this->x = this->x - w/2;    // -/+ is weird because of the character vertex draw order
-    this->y = this->y + h/2;
+    float x = this->x - w/2;    // -/+ is weird because of the character vertex draw order
+    float y = this->y + h/2;
     glColor4ub(r,g,b,a);
     draw_string(this->text, x,y, this->depth, this->scale);
 }
@@ -114,47 +145,24 @@ void Text::set_string(char* text, char** this_text, int* this_len)
     }
 }
 
-// BROKEN
-void Text::draw_rotated(float theta)
-{
-    printf("WARNING: Text::draw_rotated broken\n");
-    if (HudFont::font == NULL)
+void Text::draw_character_rotated(float theta)
+{   // draws as single character. glyph alignment offset not used
+    using HudFont::font;
+    if (font == NULL)
         return;
-    int i = 0;
-    char c;
-    struct HudFont::Glyph glyph;
 
-    float tx_min, tx_max, ty_min, ty_max;
-    float sx_min, sx_max, sy_min, sy_max;
-    float cursor_x = 0.0f;
-    float cursor_y = 0.0f;
+    char c = this->text[0];
+    if (c == '\0') return;
+    struct HudFont::Glyph glyph = font->get_glyph(c);
 
-    while ((c = text[i++]) != '\0')
-    {
-        if (c == '\n')
-        {
-            cursor_y += HudFont::font->data.line_height;
-            cursor_x = 0.0f;
-            continue;
-        }
-        
-        glyph = HudFont::font->get_glyph(c);
+    float sx,sy, sw,sh;
 
-        tx_max = glyph.x;
-        tx_min = glyph.x + glyph.tw;
-        ty_min = glyph.y;
-        ty_max = glyph.y + glyph.th;
-
-        sx_max = x + (cursor_x + glyph.xoff) * scale;
-        sx_min = x + (cursor_x + glyph.xoff + glyph.w) * scale;
-        sy_min = y - (cursor_y + glyph.yoff) * scale;
-        sy_max = y - (cursor_y + glyph.yoff + glyph.h) * scale;
-        //blit_character(tx_min, tx_max, ty_min, ty_max, sx_min, sx_max, sy_min, sy_max, depth);
-        draw_bound_texture_rotated(sx_min, sx_max, sy_min, sy_max, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
-        //draw_bound_texture_rotated(sx_max, sx_min, sy_max, sy_min, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
-
-        cursor_x += glyph.xadvance;
-    }
+    sx = this->x - glyph.w/2;
+    sw = glyph.w * scale;
+    sy = this->y - glyph.h/2;
+    sh = glyph.h * scale;
+    
+    draw_bound_texture_rotated(sx, sy, sw, sh, glyph.x, glyph.y, glyph.tw, glyph.th, this->depth, theta);
 }
 
 void Text::resize_string(int n, char** str, int* str_len)
