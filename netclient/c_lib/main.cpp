@@ -175,12 +175,14 @@ int run()
         ClientState::agent_list->draw();
         ClientState::voxel_render_list->draw();
         
+        ClientState::minivox_list->draw();
+
+        ClientState::billboard_text_list->draw();
+
         ClientState::cspray_list->draw();
         ClientState::grenade_list->draw();
         ClientState::shrapnel_list->draw();
         ClientState::blood_list->draw();
-        ClientState::minivox_list->draw();
-        ClientState::billboard_text_list->draw();
 
 
         // draw animations
