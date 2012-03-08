@@ -54,6 +54,8 @@ ping_update_interval = 500  # ms delay between ping updates
 
 font = "inc_18_b.fnt"
 
+animations = True
+
 ''' Sound '''
 sound = True
 sfx = 100

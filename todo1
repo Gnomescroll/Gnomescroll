@@ -530,6 +530,20 @@ view distance check for agent hud text
 variable ttls on all particle effect systems
 ====================
 
+Mar 6
+
+-WORK-
+
+Attempt to draw rotated text
+====================
+
+Mar 7
+
+-WORK-
+
+Finish rotated text (single character only)
+Highlight player's indicator in addition to selected spawner
+====================
 
 Animations
 --Keyframes?

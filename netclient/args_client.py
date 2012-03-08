@@ -49,6 +49,7 @@ sound-device    String identifying sound device to use (OpenAL only). The availa
 
 no-player       Free-camera only. Will not create player or join game
 disable-draw-agents Don't draw agent character models
+no-animations   Disable particle effect animations
 
 print-args      Print all settings to STDOUT
 no-load         Don't start the client. Abort after argument processing.
@@ -143,6 +144,7 @@ def parse(cl_args=None):
     ''' Rendering '''
     parser.add_argument('-np', '--no-player', action='store_true') # no player, just camera viewer
     parser.add_argument('-dad', '--disable-draw-agents', action='store_true', dest='draw_agents')   # Don't draw agents
+    parser.add_argument('-na', '--no-animations', action='store_true', dest='animations')   # dont draw particle animations
 
     ''' Physics '''
     #parser.add_argument('-g', '--gravity', default=DEFAULTS['gravity'], type=float)
@@ -219,6 +221,10 @@ def postprocess_args(args):
 
     ''' Camera, Rendering '''
     args.draw_agents = not args.draw_agents # cli argument is "--disable-agents-draw", so flip it
+    if not args.animations:   # cli argument is '--no-animations'
+        args.animations = settings.animations
+    else:
+        args.animations = not args.animations
 
 
 def get_args():

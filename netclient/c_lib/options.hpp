@@ -42,4 +42,7 @@ OPT_INT_HEADER(sfx)
 OPT_INT_HEADER(music)
 OPT_STRING_HEADER(sound_device)
 
+/* Graphics */
+OPT_BOOL_HEADER(animations)
+
 }

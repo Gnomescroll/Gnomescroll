@@ -27,11 +27,15 @@ typedef enum TerrainModificationAction
     TMA_LASER
 } TerrainModificationAction;
 
+
+const int TERRAIN_MAP_HEIGHT = 128;
+const int TERRAIN_CHUNK_WIDTH = 16;
+
 const int MAP_WIDTH = 512;
 const int MAP_HEIGHT = 512;
-   
-const int MAP_CHUNK_WIDTH = MAP_WIDTH/16;
-const int MAP_CHUNK_HEIGHT = MAP_CHUNK_HEIGHT/16;
+
+const int MAP_CHUNK_WIDTH = MAP_WIDTH/TERRAIN_CHUNK_WIDTH;
+const int MAP_CHUNK_HEIGHT = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
  
 void init_t_map() GNOMESCROLL_API;
 
@@ -78,10 +82,13 @@ int _get_highest_open_block(int x, int y, int agent_height);
 int _get_highest_open_block(int x, int y);
 int _get_lowest_open_block(int x, int y, int n) ;
 int _get_lowest_open_block(int x, int y) ;
-int _get_highest_solid_block(int x, int y);
+int _get_highest_solid_block(int x, int y, int z=t_map::MAP_HEIGHT);
 int _get_lowest_solid_block(int x, int y);
 bool point_in_map(int x, int y, int z);
 
 
 int get_height_at(int x, int y);
+#if DC_CLIENT
+unsigned char get_cached_height(int x, int y);
+#endif
 

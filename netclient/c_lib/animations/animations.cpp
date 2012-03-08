@@ -1,5 +1,6 @@
 #include "animations.hpp"
 
+#include <c_lib/options.hpp>
 #include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
@@ -14,6 +15,7 @@ namespace Animations {
 
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
 {
+    if (!Options::animations) return;
     const float crumble_size = 0.17f;
     ClientState::minivox_list->set_size(crumble_size);
 
@@ -74,19 +76,23 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
 
 // surface block dmg
 // takes encoded side int and translates to side[3];
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side) {
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side)
+{
     int side[3];
     get_side_array_from_cube_side(cube_side, side);
     block_damage(x,y,z,ix,iy,iz,cube_id,side, cube_side);
 }
 
 // surface block dmg    
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side) {
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side)
+{
     int cube_side = get_cube_side_from_side_array(side);
     block_damage(x,y,z,ix,iy,iz,cube_id, side, cube_side);
 }
 
-void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side) {
+void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side, int cube_side)
+{
+    if (!Options::animations) return;
     int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
     // reflection bias
@@ -132,7 +138,9 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     }
 }
 
-void grenade_explode(float x, float y, float z) {
+void grenade_explode(float x, float y, float z)
+{
+    if (!Options::animations) return;
     int n = randrange(15,25);
 
     float vx = 20.0f;
@@ -161,6 +169,7 @@ void grenade_explode(float x, float y, float z) {
 
 void terrain_sparks(float x, float y, float z)
 {
+    if (!Options::animations) return;
     int n = randrange(15,20);
 
     float vx = 1.0f;
@@ -189,13 +198,14 @@ void terrain_sparks(float x, float y, float z)
     }
 }
 
-void slime_melt(float x, float y, float z) {
-
+void slime_melt(float x, float y, float z)
+{
+    if (!Options::animations) return;
     ClientState::minivox_list->set_size(0.7f);
     
-     int n = randrange(50,100);
-     float vx,vy,vz;
-     vx=vy=vz=20.0f;
+    int n = randrange(50,100);
+    float vx,vy,vz;
+    vx=vy=vz=20.0f;
     
     float cx,cy,cz;
     float cvx,cvy,cvz;
@@ -233,6 +243,7 @@ void slime_melt(float x, float y, float z) {
 
 void agent_bleed(float x, float y, float z)
 {
+    if (!Options::animations) return;
     const float momentum = 1.0f;
     const float _vx = momentum,
                   _vy = momentum,
@@ -263,7 +274,7 @@ void agent_bleed(float x, float y, float z)
 
 void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // pos, incident vector
 {
-
+    if (!Options::animations) return;
     float len = sqrt(ix*ix + iy*iy + iz*iz);
     ix /= len;
     iy /= len;

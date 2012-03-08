@@ -92,6 +92,7 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     if(size != _size) printf("map_chunk_compressed_StoC::handle, warning: invalid size!\n");
 
     memcpy( (char *) m->e, DECOMPRESSION_BUFFER, _size);
+    main_map->chunk_received(x,y);
 
 }
 

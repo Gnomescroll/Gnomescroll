@@ -20,8 +20,8 @@ struct Vertex* vlist_scratch_1;
 
 void t_vbo_update_init()
 {
-    vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
 }
 
 void t_vbo_update_end()
@@ -271,8 +271,8 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
 
     int tile_tex = (unsigned char) cube_side_texture_array[6*tile_id+side];
 
-    int iz = (tile_tex % 16)*16;
-    int iw = (tile_tex / 16)*16;
+    int iz = (tile_tex % TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
+    int iw = (tile_tex / TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
 
     v_list[offset+0].tz = iz;
     v_list[offset+0].tw = iw;
@@ -332,8 +332,8 @@ void Vbo_map::update_vbo(int i, int j)
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
-        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
 
             int tile_id = chunk->get_block(_x,_y,_z); //faster
 
@@ -415,8 +415,8 @@ void Vbo_map::update_vbo_comptability(int i, int j)
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
-        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
 
             int tile_id = chunk->get_block(_x,_y,_z); //faster
 
@@ -496,13 +496,13 @@ void Vbo_map::update_vbo(int i, int j)
 
     int vertex_count[2] = {0, 0};
 
-    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
-    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(16*16*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    static struct Vertex* vlist_scratch_0 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
+    static struct Vertex* vlist_scratch_1 = (struct Vertex*) malloc(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*(TERRAIN_MAP_HEIGHT/2)*4*sizeof(struct Vertex));
 
     for(_z = 0; _z < TERRAIN_MAP_HEIGHT; _z++) {
 
-        for(_x = chunk->xpos; _x < chunk->xpos +16 ; _x++) {
-        for(_y = chunk->ypos; _y < chunk->ypos +16 ; _y++) {
+        for(_x = chunk->xpos; _x < chunk->xpos +TERRAIN_CHUNK_WIDTH ; _x++) {
+        for(_y = chunk->ypos; _y < chunk->ypos +TERRAIN_CHUNK_WIDTH ; _y++) {
 
             int tile_id = map->get_block(_x,_y,_z);
 

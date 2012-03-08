@@ -42,4 +42,7 @@ OPT_INT(sfx, 100)
 OPT_INT(music, 100)
 OPT_STRING(sound_device, "")
 
+/* Graphics */
+OPT_BOOL(animations, true)
+
 }

@@ -199,6 +199,15 @@ int get_height_at(int x, int y)
     return 0;
 }
 
+#if DC_CLIENT
+unsigned char get_cached_height(int x, int y)
+{
+    if (t_map::main_map != NULL)
+        return t_map::main_map->get_cached_height(x,y);
+    return 0;
+}
+#endif
+
 int _get_highest_open_block(int x, int y, int n) {
     if (n < 1) {
         printf("WARNING: _get_highest_open_block :: called with n < 1\n");
@@ -230,15 +239,13 @@ int _get_highest_open_block(int x, int y)
     return _get_highest_open_block(x,y,1);
 }
 
-int _get_highest_solid_block(int x, int y) {
-
-    int i;
-    for (i=ZMAX-1; i>=0; i--) {
-        if (isSolid(_get(x,y,i))) {
+int _get_highest_solid_block(int x, int y, int z)
+{
+    int i = z-1;
+    for (; i>=0; i--)
+        if (isSolid(_get(x,y,i)))
             break;
-        }
-    }
-    return  i;
+    return i;
 }
 
 int _get_lowest_open_block(int x, int y, int n) {

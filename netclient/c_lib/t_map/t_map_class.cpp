@@ -17,27 +17,31 @@ namespace t_map
     */
     MAP_CHUNK::MAP_CHUNK(int _xpos, int _ypos)
     {
-
         #ifdef DC_CLIENT
             needs_update = false;
         #endif
         xpos = _xpos;
         ypos = _ypos;
-        //for(int i=0; i<16*16*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
-        memset(e, 0, 16*16*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
-        for(int i=0; i<16*16;i++) top_block[i] = 0;
+        //for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT;i++) e[i].n = 0;
+        memset(e, 0, TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT*sizeof(struct MAP_ELEMENT) );
+        for(int i=0; i<TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH;i++) top_block[i] = 0;
     }
 
 
     Terrain_map::Terrain_map(int _xdim, int _ydim)
     {
-        xdim = (_xdim/16)*16; 
-        ydim = (_ydim/16)*16;
-        xchunk_dim = _xdim/16; 
-        ychunk_dim = _ydim/16;
+        xdim = (_xdim/TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH; 
+        ydim = (_ydim/TERRAIN_CHUNK_WIDTH)*TERRAIN_CHUNK_WIDTH;
+        xchunk_dim = _xdim/TERRAIN_CHUNK_WIDTH; 
+        ychunk_dim = _ydim/TERRAIN_CHUNK_WIDTH;
 
         chunk = new MAP_CHUNK*[xchunk_dim*ychunk_dim];
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) chunk[i] = NULL;
+
+        #if DC_CLIENT
+        for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
+        for (int i=0; i<MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; chunk_heights[i++] = 0);
+        #endif
     }
 
     Terrain_map::~Terrain_map()
@@ -84,10 +88,10 @@ namespace t_map
         c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
         //c = chunk[ (y | ~15) + (x >> 4)];
         if(c == NULL) return NO_MAP_ELEMENT;
-        //return c->e[(16*16)*z+ 16*(y | 15) + (x | 15)];
+        //return c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)];
 
     #if T_MAP_GET_DEBUG
-        if( (z<<8)+((y&15)<<4)+(x&15) >= 16*16*TERRAIN_MAP_HEIGHT) 
+        if( (z<<8)+((y&15)<<4)+(x&15) >= TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT) 
         {
             printf("ERROR: terrain map get, index out of bounds!\n");
             printf("0 original: x= %i y= %i z= %i \n", x,y,z);
@@ -99,7 +103,7 @@ namespace t_map
             int xi = x & 15; //bit mask
             int yi = y & 15; //bit mask
 
-            int index = 16*16*z+ 16*yi + xi;
+            int index = TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi;
             if(index != (z<<8)+((y&15)<<4)+(x&15))
             {
                 printf("ERROR: terrain map get, descrepency between optimized and unoptimized index values! \n");
@@ -126,11 +130,11 @@ namespace t_map
         int yi = y & 15; //bit mask
 
 
-        int index = 16*16*z+ 16*yi + xi;
+        int index = TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi;
     #if T_MAP_GET_DEBUG
-        if( index >= 16*16*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds! %i %i %i \n", xi,yi,z);
+        if( index >= TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT) printf("ERROR: terrain map get, index out of bounds! %i %i %i \n", xi,yi,z);
     #endif
-        return c->e[16*16*z+ 16*yi + xi];
+        return c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
     #endif
     }
 
@@ -153,7 +157,7 @@ namespace t_map
             c = new MAP_CHUNK( x & ~15, y & ~15);
             chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ] = c;
         }
-        //c->e[(16*16)*z+ 16*(y | 15) + (x | 15)] = element;
+        //c->e[(TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH)*z+ TERRAIN_CHUNK_WIDTH*(y | 15) + (x | 15)] = element;
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #ifdef DC_CLIENT
@@ -187,9 +191,9 @@ namespace t_map
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
         //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", 16*16*z+ 16*yi + xi);
+        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
-        c->e[16*16*z+ 16*yi + xi] = element;
+        c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
         #ifdef DC_CLIENT
             c->needs_update = true;
         #endif
@@ -248,9 +252,9 @@ namespace t_map
         int xi = x & 15; //bit mask
         int yi = y & 15; //bit mask
         //printf("xi= %i, yi= %i, z= %i \n", xi,yi,z );
-        //printf("index2 = %i \n", 16*16*z+ 16*yi + xi);
+        //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
-        struct MAP_ELEMENT* e =  &c->e[16*16*z+ 16*yi + xi];
+        struct MAP_ELEMENT* e =  &c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi];
         
         if(e->block == 0) return -1;
         e->damage += dmg;
@@ -268,6 +272,77 @@ namespace t_map
     #endif
     }
 
+    #if DC_CLIENT
+    void Terrain_map::chunk_received(int cx, int cy)
+    {   // update chunk/column heights based on this chunk
+        int highest = -1;
+        int h;
+        int xoff = cx * TERRAIN_CHUNK_WIDTH;
+        int yoff = cy * TERRAIN_CHUNK_WIDTH;
+        //MAP_CHUNK* m = this->chunk[cx + MAP_CHUNK_WIDTH*cy];
+        int x,y;
+
+        for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+            for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
+            {
+                x = xoff+i;
+                y = yoff+j;
+                //TODO -- shortcut to get height here
+                h = get_height_at(x, y);
+                if (h > highest) highest = h;
+                this->column_heights[x + y*MAP_WIDTH] = h;
+            }
+        this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
+    }
+    
+    unsigned char Terrain_map::get_cached_height(int x, int y)
+    {
+        return this->column_heights[x + y*MAP_WIDTH];
+    }
+
+    void Terrain_map::update_heights(int x, int y, int z, int val)
+    {
+        z += 1; // heights are not 0 indexed;
+        int new_h = -1;
+        unsigned char h = this->column_heights[x + y*MAP_WIDTH];
+        if (val)
+        {   // setting higher block
+            if (z > h)
+                new_h = z;
+        }
+        else
+        {
+            if (z >= h) // deleting top block
+                new_h = _get_highest_solid_block(x,y,z) + 1;
+        }
+
+        if (new_h < 0) return; // no change in height
+        printf("new_h = %d\n", new_h);
+        this->column_heights[x + y*MAP_WIDTH] = new_h;
+
+        unsigned char old_h = h;
+        int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
+        int cy = y / TERRAIN_CHUNK_WIDTH;
+        h = this->chunk_heights[cx + cy * MAP_CHUNK_WIDTH];
+        if (new_h > h)  // higher
+            this->chunk_heights[cx+cy * MAP_CHUNK_WIDTH] = new_h;
+        else if (old_h >= h)
+        {   // old column height was possibly highest
+            // must find highest other column in chunk
+            int highest = -1;
+            unsigned char ch;
+            int xoff = cx*TERRAIN_CHUNK_WIDTH;
+            int yoff = cy*TERRAIN_CHUNK_WIDTH;
+            for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+                for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
+                {
+                    ch = this->column_heights[(xoff+i) + (yoff+j)*MAP_WIDTH];
+                    if (ch > highest) highest = ch;
+                }
+            this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
+        }
+    }
+    #endif
 
 /*
     Block Methodss
@@ -280,7 +355,9 @@ namespace t_map
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
         struct MAP_ELEMENT element = {{{value, 0,0,0}}};
+        #if DC_CLIENT
+        update_heights(x,y,z,value);
+        #endif
         set_element(x,y,z, element);
     }
-
 }

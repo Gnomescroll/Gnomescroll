@@ -292,12 +292,13 @@ void update_heightmap()
 {
     if (cells == NULL) return;
     int strip_width = map_dim.x / strips;
-    int h;
+    unsigned char h;
     for (int i=strip_width*strip; i < strip_width*(strip+1); i++)
         for (int j=0; j < map_dim.y; j++)
         {
-            h = get_height_at(i,j);
-            cells[i + map_dim.x*j] = (unsigned char)h;
+            h = get_cached_height(i,j);
+            //if (h) printf("h= %d\n", h);
+            cells[i + map_dim.x*j] = h;
         }
 }
 

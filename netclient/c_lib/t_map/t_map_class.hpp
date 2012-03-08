@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/t_map/t_map.hpp>
+
 namespace t_map
 {
 
@@ -19,7 +21,6 @@ namespace t_map
 /*
     Implementation
 */
-const int TERRAIN_MAP_HEIGHT = 128;
 
 class MAP_CHUNK
 {
@@ -32,9 +33,9 @@ class MAP_CHUNK
         bool needs_update;
     #endif
 
-    unsigned char top_block[16*16];
+    unsigned char top_block[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
 
-    struct MAP_ELEMENT e[16*16*TERRAIN_MAP_HEIGHT];
+    struct MAP_ELEMENT e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*TERRAIN_MAP_HEIGHT];
 
     MAP_CHUNK(int _xpos, int _ypos);
 
@@ -53,6 +54,14 @@ class Terrain_map
     
     struct MAP_CHUNK** chunk;
 
+    #if DC_CLIENT
+    void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
+    unsigned char get_cached_height(int x, int y);
+    void update_heights(int x, int y, int z, int val);
+    unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
+    unsigned char chunk_heights[MAP_CHUNK_WIDTH * MAP_CHUNK_HEIGHT];    // chunk-wide columns
+    #endif
+    
     Terrain_map(int _xdim, int _ydim);
     ~Terrain_map();
 
