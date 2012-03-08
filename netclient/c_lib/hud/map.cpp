@@ -606,9 +606,6 @@ void draw_text_icons(float z)
         playerAgent_state.camera_state.x, playerAgent_state.camera_state.y,
         &x, &y
     );
-        //you_star->set_color(highlight.r, highlight.g, highlight.b, 255);
-    //you_A->set_color(highlight.r, highlight.g, highlight.b, 255);
-
     you_star->set_position(x,y);
     you_star->set_depth(z);
     you_star->draw_character_rotated(playerAgent_state.camera_state.theta - 0.5);
