@@ -59,7 +59,7 @@ class Terrain_map
     unsigned char get_cached_height(int x, int y);
     void update_heights(int x, int y, int z, int val);
     unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
-    unsigned char chunk_heights[MAP_CHUNK_WIDTH * MAP_CHUNK_HEIGHT];    // chunk-wide columns
+    //unsigned char chunk_heights[MAP_CHUNK_WIDTH * MAP_CHUNK_HEIGHT];    // chunk-wide columns
     #endif
     
     Terrain_map(int _xdim, int _ydim);

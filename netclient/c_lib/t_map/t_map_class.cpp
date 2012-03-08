@@ -40,7 +40,7 @@ namespace t_map
 
         #if DC_CLIENT
         for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
-        for (int i=0; i<MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; chunk_heights[i++] = 0);
+        //for (int i=0; i<MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; chunk_heights[i++] = 0);
         #endif
     }
 
@@ -292,7 +292,7 @@ namespace t_map
                 if (h > highest) highest = h;
                 this->column_heights[x + y*MAP_WIDTH] = h;
             }
-        this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
+        //this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
     }
     
     unsigned char Terrain_map::get_cached_height(int x, int y)
@@ -317,30 +317,30 @@ namespace t_map
         }
 
         if (new_h < 0) return; // no change in height
-        printf("new_h = %d\n", new_h);
+        //printf("new_h = %d\n", new_h);
         this->column_heights[x + y*MAP_WIDTH] = new_h;
 
-        unsigned char old_h = h;
-        int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
-        int cy = y / TERRAIN_CHUNK_WIDTH;
-        h = this->chunk_heights[cx + cy * MAP_CHUNK_WIDTH];
-        if (new_h > h)  // higher
-            this->chunk_heights[cx+cy * MAP_CHUNK_WIDTH] = new_h;
-        else if (old_h >= h)
-        {   // old column height was possibly highest
-            // must find highest other column in chunk
-            int highest = -1;
-            unsigned char ch;
-            int xoff = cx*TERRAIN_CHUNK_WIDTH;
-            int yoff = cy*TERRAIN_CHUNK_WIDTH;
-            for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
-                for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
-                {
-                    ch = this->column_heights[(xoff+i) + (yoff+j)*MAP_WIDTH];
-                    if (ch > highest) highest = ch;
-                }
-            this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
-        }
+        //unsigned char old_h = h;
+        //int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
+        //int cy = y / TERRAIN_CHUNK_WIDTH;
+        //h = this->chunk_heights[cx + cy * MAP_CHUNK_WIDTH];
+        //if (new_h > h)  // higher
+            //this->chunk_heights[cx+cy * MAP_CHUNK_WIDTH] = new_h;
+        //else if (old_h >= h)
+        //{   // old column height was possibly highest
+            //// must find highest other column in chunk
+            //int highest = -1;
+            //unsigned char ch;
+            //int xoff = cx*TERRAIN_CHUNK_WIDTH;
+            //int yoff = cy*TERRAIN_CHUNK_WIDTH;
+            //for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
+                //for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
+                //{
+                    //ch = this->column_heights[(xoff+i) + (yoff+j)*MAP_WIDTH];
+                    //if (ch > highest) highest = ch;
+                //}
+            //this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
+        //}
     }
     #endif
 

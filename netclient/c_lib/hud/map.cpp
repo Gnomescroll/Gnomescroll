@@ -286,35 +286,38 @@ void init()
 
 
 static int strip = 0;
-const int strips = 16*16*2;
+//const int strips = 16*16*2;
+const int strips = 16*8;
 
 void update_heightmap()
 {
-    if (cells == NULL) return;
-    int strip_width = map_dim.x / strips;
-    unsigned char h;
-    for (int i=strip_width*strip; i < strip_width*(strip+1); i++)
-        for (int j=0; j < map_dim.y; j++)
-        {
-            h = get_cached_height(i,j);
-            //if (h) printf("h= %d\n", h);
-            cells[i + map_dim.x*j] = h;
-        }
+    //if (cells == NULL) return;
+    //int strip_width = map_dim.x / strips;
+    //unsigned char h;
+    //for (int i=strip_width*strip; i < strip_width*(strip+1); i++)
+        //for (int j=0; j < map_dim.y; j++)
+        //{
+            //h = get_cached_height(i,j);
+            //cells[i + map_dim.x*j] = h;
+        //}
 }
 
 void update_map_surface()
 {
     if (map_surface == NULL) return;
     if (cells == NULL) return;
+    if (t_map::main_map == NULL) return;
     int strip_width = map_dim.x / strips;
     SDL_LockSurface(map_surface);
 
     Uint32 pix;
     Uint8 r,g,b,a;
     for (int i=strip_width*strip; i<strip_width*(strip+1); i++)
+    //for (int i=0; i<map_dim.x; i++)
         for (int j=0; j < map_dim.y; j++)
         {
-            pix = ((Uint32*)gradient_surface->pixels)[cells[i + map_dim.x*j]];
+            //pix = ((Uint32*)gradient_surface->pixels)[cells[i + map_dim.x*j]];
+            pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[i + map_dim.x*j]];
             SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
             ((Uint32*)map_surface->pixels)[i + map_dim.x*j] = SDL_MapRGBA(map_surface->format, b,g,r,a);
         }
@@ -640,7 +643,8 @@ void draw()
     
     static unsigned int update_counter = 0;
 
-    if(update_counter % 1 == 0)
+    const int tick_update_rate = 1;
+    if(update_counter % tick_update_rate == 0)
     {
         update_terrain_map(update_map_texture_index);
         draw_map_texture_index++;
