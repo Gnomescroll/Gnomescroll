@@ -305,7 +305,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     //rotate_point(1,0, theta, &_x, &_y);
     //Vec3 look = vec3_init(_x, _y, 0);
     //look.z = 0;
-    normalize_vector(&look);
+    //normalize_vector(&look);
 
     //printf("f:");
     //vec3_print(f);
