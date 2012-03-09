@@ -307,20 +307,40 @@ void update_map_surface()
     if (map_surface == NULL) return;
     if (cells == NULL) return;
     if (t_map::main_map == NULL) return;
-    int strip_width = map_dim.x / strips;
+    if (!t_map::main_map->height_changed) return;
+    //int strip_width = map_dim.x / strips;
     SDL_LockSurface(map_surface);
 
     Uint32 pix;
     Uint8 r,g,b,a;
-    for (int i=strip_width*strip; i<strip_width*(strip+1); i++)
-    //for (int i=0; i<map_dim.x; i++)
-        for (int j=0; j < map_dim.y; j++)
+
+    int cx,cy;
+    for (int i=0; i<t_map::MAP_CHUNK_WIDTH; i++)
+        for (int j=0; j<t_map::MAP_CHUNK_HEIGHT; j++)
         {
-            //pix = ((Uint32*)gradient_surface->pixels)[cells[i + map_dim.x*j]];
-            pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[i + map_dim.x*j]];
-            SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
-            ((Uint32*)map_surface->pixels)[i + map_dim.x*j] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+            if (!t_map::main_map->chunk_heights_changed[i + j*t_map::MAP_CHUNK_WIDTH]) continue;
+            for (int m=0; m<t_map::TERRAIN_CHUNK_WIDTH; m++)
+            {
+                cx = i*t_map::TERRAIN_CHUNK_WIDTH + m;
+                for (int n=0; n<t_map::TERRAIN_CHUNK_WIDTH; n++)
+                {
+                    cy = j*t_map::TERRAIN_CHUNK_WIDTH + n;
+                    pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[cx + t_map::MAP_WIDTH*cy]];
+                    SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+                    ((Uint32*)map_surface->pixels)[cx + t_map::MAP_WIDTH*cy] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+                }
+            }
         }
+
+    t_map::main_map->reset_heights_read();
+
+    //for (int i=strip_width*strip; i<strip_width*(strip+1); i++)
+        //for (int j=0; j < map_dim.y; j++)
+        //{
+            //pix = ((Uint32*)gradient_surface->pixels)[t_map::main_map->column_heights[i + map_dim.x*j]];
+            //SDL_GetRGBA(pix, gradient_surface->format, &r, &g, &b, &a);
+            //((Uint32*)map_surface->pixels)[i + map_dim.x*j] = SDL_MapRGBA(map_surface->format, b,g,r,a);
+        //}
 
     SDL_UnlockSurface(map_surface);
 }
@@ -643,7 +663,7 @@ void draw()
     
     static unsigned int update_counter = 0;
 
-    const int tick_update_rate = 1;
+    const int tick_update_rate = 3;
     if(update_counter % tick_update_rate == 0)
     {
         update_terrain_map(update_map_texture_index);

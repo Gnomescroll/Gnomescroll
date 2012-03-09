@@ -40,7 +40,7 @@ namespace t_map
 
         #if DC_CLIENT
         for (int i=0; i<MAP_WIDTH*MAP_HEIGHT; column_heights[i++] = 0);
-        //for (int i=0; i<MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT; chunk_heights[i++] = 0);
+        this->reset_heights_read();
         #endif
     }
 
@@ -273,13 +273,19 @@ namespace t_map
     }
 
     #if DC_CLIENT
+    void Terrain_map::reset_heights_read()
+    {   // call when heights ar edone being read
+        this->height_changed = false;
+        for (int i=0; i<MAP_CHUNK_HEIGHT*MAP_CHUNK_WIDTH; chunk_heights_changed[i++] = false);
+    }
+    
     void Terrain_map::chunk_received(int cx, int cy)
     {   // update chunk/column heights based on this chunk
         int highest = -1;
         int h;
         int xoff = cx * TERRAIN_CHUNK_WIDTH;
         int yoff = cy * TERRAIN_CHUNK_WIDTH;
-        //MAP_CHUNK* m = this->chunk[cx + MAP_CHUNK_WIDTH*cy];
+        MAP_CHUNK* m = this->chunk[cx + MAP_CHUNK_WIDTH*cy];
         int x,y;
 
         for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
@@ -287,12 +293,17 @@ namespace t_map
             {
                 x = xoff+i;
                 y = yoff+j;
-                //TODO -- shortcut to get height here
-                h = get_height_at(x, y);
+
+                for (h=map_dim.z-1; h>=0; h--)
+                    if (isSolid(m->get_block(x,y,h))) break;
+                h += 1;
+                
                 if (h > highest) highest = h;
                 this->column_heights[x + y*MAP_WIDTH] = h;
             }
-        //this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
+
+        this->chunk_heights_changed[cx + cy*MAP_CHUNK_WIDTH] = true;
+        this->height_changed = true;
     }
     
     unsigned char Terrain_map::get_cached_height(int x, int y)
@@ -317,30 +328,12 @@ namespace t_map
         }
 
         if (new_h < 0) return; // no change in height
-        //printf("new_h = %d\n", new_h);
         this->column_heights[x + y*MAP_WIDTH] = new_h;
 
-        //unsigned char old_h = h;
-        //int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
-        //int cy = y / TERRAIN_CHUNK_WIDTH;
-        //h = this->chunk_heights[cx + cy * MAP_CHUNK_WIDTH];
-        //if (new_h > h)  // higher
-            //this->chunk_heights[cx+cy * MAP_CHUNK_WIDTH] = new_h;
-        //else if (old_h >= h)
-        //{   // old column height was possibly highest
-            //// must find highest other column in chunk
-            //int highest = -1;
-            //unsigned char ch;
-            //int xoff = cx*TERRAIN_CHUNK_WIDTH;
-            //int yoff = cy*TERRAIN_CHUNK_WIDTH;
-            //for (int i=0; i<TERRAIN_CHUNK_WIDTH; i++)
-                //for (int j=0; j<TERRAIN_CHUNK_WIDTH; j++)
-                //{
-                    //ch = this->column_heights[(xoff+i) + (yoff+j)*MAP_WIDTH];
-                    //if (ch > highest) highest = ch;
-                //}
-            //this->chunk_heights[cx+cy*MAP_CHUNK_WIDTH] = highest;
-        //}
+        int cx = x / TERRAIN_CHUNK_WIDTH;   // truncate
+        int cy = y / TERRAIN_CHUNK_WIDTH;
+        this->chunk_heights_changed[cx + cy*MAP_CHUNK_WIDTH] = true;
+        this->height_changed = true;
     }
     #endif
 
@@ -355,9 +348,9 @@ namespace t_map
     void Terrain_map::set_block(int x, int y, int z, int value)
     {
         struct MAP_ELEMENT element = {{{value, 0,0,0}}};
+        set_element(x,y,z, element);
         #if DC_CLIENT
         update_heights(x,y,z,value);
         #endif
-        set_element(x,y,z, element);
     }
 }

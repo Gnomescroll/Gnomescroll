@@ -30,7 +30,7 @@ class MAP_CHUNK
     int ypos;
 
     #ifdef DC_CLIENT
-        bool needs_update;
+    bool needs_update;
     #endif
 
     unsigned char top_block[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
@@ -55,11 +55,13 @@ class Terrain_map
     struct MAP_CHUNK** chunk;
 
     #if DC_CLIENT
+    bool height_changed;
+    bool chunk_heights_changed[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
+    void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
     unsigned char get_cached_height(int x, int y);
     void update_heights(int x, int y, int z, int val);
     unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
-    //unsigned char chunk_heights[MAP_CHUNK_WIDTH * MAP_CHUNK_HEIGHT];    // chunk-wide columns
     #endif
     
     Terrain_map(int _xdim, int _ydim);
