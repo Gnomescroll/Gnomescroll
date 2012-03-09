@@ -38,11 +38,8 @@ void Agent_event::name_changed(char* old_name)
             sprintf(msg, fmt, this->a->status.name);
             chat_client->send_system_message(msg);
             free(msg);
-            #ifdef DC_CLIENT
-            #if PRODUCTION_DEV
-            printf("sound\n");
+            #if DC_CLIENT && PRODUCTION_DEV
             Sound::player_joined_server();  // move this to a better place, along with the other dis/connect events
-            #endif
             #endif
         }
     }
@@ -102,7 +99,10 @@ void Agent_event::healed(int health)
     a->status.health = health;
 
     if (a->is_you())
+    {
         Sound::restore_health();
+        chat_client->send_system_message((char*) "You healed.");
+    }
     else
         Sound::restore_health(
             a->s.x,
@@ -248,7 +248,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
                 float c[3];
                 vv->get_center(c);
                 Animations::blood_spray(c[0], c[1], c[2], f[0], f[1], f[2]);
-                Sound::pick_hit_agent(
+                Sound::pick_hit_agent(  // TODO: switch (weapon) {}
                     c[0], c[1], c[2],
                     0,0,0
                 );
@@ -259,9 +259,13 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     if (this->a->vox == NULL) return;
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
-    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    //f[0] = x - arm_center.x;
+    //f[1] = y - arm_center.y;
+    //f[2] = z - arm_center.z;
+    
     ClientState::hitscan_effect_list->create(
-        aim.x, aim.y, aim.z,
+        arm_center.x, arm_center.y, arm_center.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 
@@ -279,24 +283,74 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     if (this->a->vox == NULL) return;
 
     // animate laser to target
-    float f[3];
-    f[0] = x - sx;
-    f[1] = y - sy;
-    f[2] = z - sz;
 
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
-    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    //Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    Vec3 arm_center = this->a->vox->get_node(5)->c;
+    
+    // vector from arm center to collision point
+    Vec3 p = vec3_init(x,y,z);
+    Vec3 f = vec3_sub(p, arm_center);
+    normalize_vector(&f);
+
+    Vec3 look = this->a->s.forward_vector();    // wrong thing
+    // NEED THE FKN FORWARD VECTOR OF THE NODE
+    // ROTATE FROM DEFAULT FORWARD VECTOR OF NODE (READ MATRIX OFF VOX DAT)
+    // TO LASER
+    //Vec3 look = vec3_scalar_mult(this->a->vox->get_node(5)->vz, -1);
+    // need the look vector for the ARM
+    //float theta = this->a->s.theta;
+    //float _x,_y;
+    //rotate_point(1,0, theta, &_x, &_y);
+    //Vec3 look = vec3_init(_x, _y, 0);
+    //look.z = 0;
+    normalize_vector(&look);
+
+    //printf("f:");
+    //vec3_print(f);
+    //printf("look:");
+    //vec3_print(look);
+    //printf("\n");
+    Vec3 f_cache = vec3_copy(f);
+    Vec3 look_cache = vec3_copy(look);
+
+    float theta, phi;
+
+    // xy plane
+    f.z = 0;
+    look.z = 0;
+    normalize_vector(&f);
+    normalize_vector(&look);
+    theta = acos(vec3_dot(f, look));
+
+    f = vec3_copy(f_cache);
+    look = vec3_copy(look_cache);
+
+    // xz plane
+    f.y = 0;
+    look.y = 0;
+    normalize_vector(&f);
+    normalize_vector(&look);
+    phi = acos(vec3_dot(f, look));
+
+    f = vec3_copy(f_cache);
+    look = vec3_copy(look_cache);
+
+    //ax /= kPI;
+    //ay /= kPI;
+    this->a->vox->set_arm(&agent_vox_dat, -phi, -theta);
+
+    f = vec3_scalar_mult(f, hitscan_speed);
     ClientState::hitscan_effect_list->create(
-        aim.x, aim.y, aim.z,
-        f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
+        arm_center.x, arm_center.y, arm_center.z,
+        f.x, f.y, f.z
     );
 
     // play block surface crumble
-    Animations::block_damage(x,y,z, f[0], f[1], f[2], cube, side);
+    Animations::block_damage(x,y,z, f.x, f.y, f.z, cube, side);
     Animations::terrain_sparks(x,y,z);
     Sound::laser_hit_block(x,y,z, 0,0,0);
-
 }
 
 void Agent_event::fired_weapon_at_nothing()
@@ -315,9 +369,9 @@ void Agent_event::fired_weapon_at_nothing()
     
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
-    Vec3 aim = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
     ClientState::hitscan_effect_list->create(
-        aim.x, aim.y, aim.z,
+        arm_center.x, arm_center.y, arm_center.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
 }

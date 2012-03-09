@@ -32,3 +32,9 @@ float gaussian_value(const float mean, const float stddev, const float x)
     const float sqrt_2pi = sqrt(2*kPI);
     return pow(kE, -((x - mean)*(x - mean))/(2 * stddev * stddev)) / (sqrt_2pi * stddev);
 }
+
+void rotate_point(float x, float y, float theta, float *x1, float *y1)
+{
+    *x1 = x*cos(theta) - y*sin(theta);
+    *y1 = x*sin(theta) + y*cos(theta);
+}

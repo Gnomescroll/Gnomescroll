@@ -105,12 +105,6 @@ void draw_bound_texture(float x, float y, float w, float h, float z) {
     glEnd();
 }
 
-void rotate_point(float x, float y, float theta, float *x1, float *y1)
-{
-    *x1 = x*cos(theta) - y*sin(theta);
-    *y1 = x*sin(theta) + y*cos(theta);
-}
-
 // y coordinates start along the bottom
 void draw_bound_texture_rotated(float x, float y, float w, float h, float z, float theta)
 {

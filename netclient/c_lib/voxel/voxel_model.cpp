@@ -37,7 +37,6 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
 {
     // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
-    
     for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         if (!biaxial_nodes[i]) continue;
@@ -50,6 +49,19 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
         rz = vox_dat->vox_skeleton_local_matrix_reference[i][5];
         vox_skeleton_local_matrix[i] = affine_euler_rotation_and_translation(x,y,z, rx, ry - phi, rz);
     }
+}
+
+void Voxel_model::set_arm(VoxDat* vox_dat, float theta, float phi)
+{   // not sure if works
+    int arm_node = 5;
+    float x,y,z,rx,ry,rz;
+    x = vox_dat->vox_skeleton_local_matrix_reference[arm_node][0];
+    y = vox_dat->vox_skeleton_local_matrix_reference[arm_node][1];
+    z = vox_dat->vox_skeleton_local_matrix_reference[arm_node][2];
+    rx = vox_dat->vox_skeleton_local_matrix_reference[arm_node][3];
+    ry = vox_dat->vox_skeleton_local_matrix_reference[arm_node][4];
+    rz = vox_dat->vox_skeleton_local_matrix_reference[arm_node][5];
+    vox_skeleton_local_matrix[arm_node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz);
 }
 
 void Voxel_model::update_skeleton()
@@ -397,22 +409,28 @@ void Voxel_model::register_hitscan()
         STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i++]));
 }
 
-void Voxel_model::set_hitscan(bool hitscan) {
+void Voxel_model::set_hitscan(bool hitscan)
+{
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
 void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
 {
     this->set_skeleton_root(x,y,z, theta);
-#if DC_CLIENT && !PRODUCTION
+
+    #if DC_CLIENT && !PRODUCTION
     if (!input_state.skeleton_editor)
-#endif
         this->set_biaxial_nodes(vox_dat, phi);
+    #else
+    this->set_biaxial_nodes(vox_dat, phi);
+    #endif
+
     this->update_skeleton();
-#if DC_CLIENT
+
+    #if DC_CLIENT
     if (input_state.skeleton_editor)
         this->draw_skeleton();
-#endif
+    #endif
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
@@ -438,7 +456,8 @@ vox_inited(false)
     this->init_skeleton(vox_dat);
 }
 
-Voxel_model::~Voxel_model() {
+Voxel_model::~Voxel_model()
+{
     if (this->vv != NULL)
     {
         for (int i=0; i<this->n_parts; i++) {
@@ -475,7 +494,7 @@ float Voxel_model::largest_radius() {
 
 Voxel_volume* Voxel_model::get_part(int part)
 {
-    if (part >= this->n_parts)
+    if (part < 0 || part >= this->n_parts)
     {
         printf("Voxel_model::get_part -- part %d invalid\n", part);
         return NULL;
@@ -484,6 +503,15 @@ Voxel_volume* Voxel_model::get_part(int part)
     return &this->vv[part];
 }
 
+Affine* Voxel_model::get_node(int node)
+{
+    if (node < 0 || node >= this->n_skeleton_nodes)
+    {
+        printf("Voxel_model::get_node -- part %d invalid\n", node);
+        return NULL;
+    }
+    return &this->vox_skeleton_world_matrix[node];
+}
 // restores voxels to starting state
 void Voxel_model::restore(VoxDat* vox_dat, int team)
 {

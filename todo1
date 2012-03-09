@@ -550,7 +550,7 @@ Mar 8
 
 -WORK-
 
-
+Finish map height cache & use in hud map
 
 ====================
 
@@ -601,8 +601,6 @@ ParticleSystem class for doing much cheaper view distance checks
 ==================
 POLISH TODO:
 
-figure out interface for spawner selection from map icons
-
 GRENADES:
 charge up
 -- for better grenade blast cover simulation, can emit a handful of small particles (like the animation, but more and a little bit higher ttl) and if they collide with an agent then it hits
@@ -622,20 +620,17 @@ get hudmap to use z height checks so it can load faster, maybe in the background
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
-blue text icons difficult to see on the hudmap with blue gradient
---change gradient or team color
-
 try 256x256 map
 
 tell players they can afford spawners the first time they capture a flag
+
+give $$ for N kills
 
 confirmation dialog for ESC quit
 
 chat command for places of interest
 
 rotate arm slightly inward to point at look location
-
-get icons instead of pixels for hudmap -- balancing colors is too much juggling
 
 ammo drops
 
@@ -645,9 +640,6 @@ show dead body for longer
 --requires 2 copies of every agent model
 
 more filtering for viewer teams (slimes probably attack a viewer, for example)
-
-rotate * symbol for agent in hud map
--- need to write a few more draw methods, that accept texture coordinates
 
 text alignment settings (center,left,right,bottom,top)
 

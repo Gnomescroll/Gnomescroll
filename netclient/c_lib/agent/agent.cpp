@@ -21,27 +21,26 @@ vx(0), vy(0), vz(0),
 jump_pow(0)
 {}
 
-void AgentState::forward_vector(float f[3]) {
+void AgentState::forward_vector(float f[3])
+{
 
     float xa = theta;
     float ya = phi;
-    if (theta > 1.0f) {
+    if (theta > 1.0f)
         xa -= 2.0f;
-    } else if (theta < -1.0f) {
+    else if (theta < -1.0f)
         xa += 2.0f;
-    }
 
     // DO NOT ADD ANY MORE SIGNIFICANT DIGITS TO 0.4999f
     // Camera behavior when looking straight up or down is fucked up otherwise
-    if (phi > 0.4999f) {
+    if (phi > 0.4999f)
         ya = 0.4999f;
-    } else if (phi < -0.4999f) {
+    else if (phi < -0.4999f)
         ya = -0.4999f;
-    }
     
-    f[0] = cos( xa * PI) * cos( ya * PI);
-    f[1] = sin( xa * PI) * cos( ya * PI);
-    f[2] = sin( ya * PI);
+    f[0] = cos(xa * PI) * cos(ya * PI);
+    f[1] = sin(xa * PI) * cos(ya * PI);
+    f[2] = sin(ya * PI);
 
     // normalize
     float len = sqrt(f[0]*f[0] + f[1]*f[1] + f[2]*f[2]);

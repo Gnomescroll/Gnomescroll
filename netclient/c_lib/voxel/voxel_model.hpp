@@ -42,6 +42,10 @@ class Voxel_model
         void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
         void restore(VoxDat* vox_dat, int team=-1);
 
+        void set_arm(VoxDat* vox_dat, float theta, float phi);
+        Affine* get_node(int node);
+
+
         Voxel_volume* vv;
 
         Voxel_volume* get_part(int part);
