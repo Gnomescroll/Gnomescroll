@@ -123,7 +123,8 @@ int Agent_status::apply_damage(int dmg) {
     dmg_msg.broadcast();
 
     if (!dmg) return this->health;
-
+    if (this->health <= 0) return this->health;
+    
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
 
@@ -137,7 +138,7 @@ int Agent_status::apply_damage(int dmg) {
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id)
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     // dont allow team kills
     if ((inflictor_type == OBJ_TYPE_AGENT || inflictor_type == OBJ_TYPE_GRENADE)
       && inflictor_id != this->a->id)
@@ -349,6 +350,7 @@ float Agent_status::get_spawn_angle()
 
 void Agent_status::restore_health()
 {
+    if (this->health == AGENT_HEALTH) return;
     this->health = AGENT_HEALTH;
     agent_health_StoC health_msg;
     health_msg.id = a->id;

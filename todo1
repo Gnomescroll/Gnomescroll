@@ -554,6 +554,14 @@ Finish map height cache & use in hud map
 failed attempt to rotate arm
 ====================
 
+Mar 9
+
+
+TODO:
+adjust coins
+rate limit health regen
+====================
+
 Animations
 --Keyframes?
 --Splines/interpolated between points
