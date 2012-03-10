@@ -28,7 +28,7 @@ namespace t_map
         //if( true || !GLEW_EXT_texture_array)
         if(!GLEW_EXT_texture_array)
         {
-            printf("Error: GL_EXT_texture_array not supported! \n");
+            printf("!!! Warning: GL_EXT_texture_array not supported.  Using Backup Shader! \n");
             T_MAP_BACKUP_SHADER = 1;
 
         }
