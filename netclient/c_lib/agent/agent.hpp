@@ -132,12 +132,6 @@ class Agent_state {
         int current_height_int();
         int get_facing_block_type();
 
-        float angle_to_enemy_flag();
-        float angle_to_friendly_base();
-
-        struct Vec3 enemy_flag_pos();
-        struct Vec3 friendly_base_pos();
-
         void init_vox();
 
         float camera_z();

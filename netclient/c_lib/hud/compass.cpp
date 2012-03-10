@@ -17,8 +17,8 @@ static float theta = 0.5f; // rotation
 static SDL_Surface* surface = NULL;
 static GLuint texture = 0;
 
-void init() {
-
+void init()
+{
     surface = create_surface_from_file(file);
 
     if (surface == NULL)
@@ -46,7 +46,6 @@ void init() {
 
     SDL_FreeSurface(surface);
     surface = NULL;
-
 }
 
 #include <math.h>
@@ -54,66 +53,58 @@ void init() {
 // rotate compass texture
 void update()
 {
-    Agent_state* a = ClientState::playerAgent_state.you;
-
-    AgentState* _a = &ClientState::playerAgent_state.camera_state;
-
-    if (a == NULL || ClientState::ctf == NULL)
-    {
-        theta = ClientState::playerAgent_state.camera_state.theta;
+    using ClientState::playerAgent_state;
+    using ClientState::ctf;
+    
+    Agent_state* a = playerAgent_state.you;
+    AgentState* s = &playerAgent_state.camera_state;
+    if (a == NULL || ctf == NULL)
+    {   // just point in agent direction
+        theta = s->theta;
         return;
     }
 
     Vec3 goal_pos;
     if (a->status.has_flag)
-        goal_pos = a->friendly_base_pos();
-        //theta = a->angle_to_friendly_base();
+    {
+        Base* b = ctf->get_base(a->status.team);
+        if (b == NULL)
+        {
+            theta = s->theta;
+            return;
+        }
+        goal_pos = vec3_init(b->x, b->y, 0);
+    }
     else
-        //theta = a->angle_to_enemy_flag();
-        goal_pos = a->enemy_flag_pos();
-    //theta -= kPI/2;
+    {
+        Flag* f = ctf->get_enemy_flag(a->status.team);
+        if (f == NULL)
+        {
+            theta = s->theta;
+            return;
+        }
+        goal_pos = vec3_init(f->x, f->y, 0);
+    }
 
-    //signed_angle = atan2(b.y,b.x) - atan2(a.y,a.x)
-
-    goal_pos.x -= _a->x;
-    goal_pos.y -= _a->y;
-    goal_pos.z = 0;
+    goal_pos.x -= s->x;
+    goal_pos.y -= s->y;
     normalize_vector(&goal_pos);
 
-    struct Vec3 forward = _a->forward_vector();
+    Vec3 forward = s->forward_vector();
     forward.z = 0;
     normalize_vector(&forward);
 
-    float t = acos(vec3_dot(forward, goal_pos)) / 3.1415;
-    
-    if(forward.x*goal_pos.y - forward.y*goal_pos.x < 0) t = -t;
-
-    //float _x = sin(t);
-    //float _y = cos(t);
-
-    //printf("c= %f \n", _x*forward.x + _y*forward.y );
-
-    //printf("theta = %f \n", t);
-
-    theta = t; // - 0.5;;
-/*   
-    theta += 0.5f;
-    if (theta > 1.0f)
-        theta -= 2.0f;
-    else if (theta < -1.0f)
-        theta += 2.0f;    
-    //printf("theta=%0.2f\n",theta);
-*/
+    float t = acos(vec3_dot(forward, goal_pos)) / kPI;
+    if ((forward.x*goal_pos.y - forward.y*goal_pos.x) < 0)
+        t = -t;
+    theta = t;
 }
 
-void draw() {
-
-    if (texture == 0)
-        return;
-
-    update();
-
+void draw()
+{
     static const float z = -0.5f;
+    if (texture == 0) return;
+    update();
 
     glColor4ub(255,255,255,255);
     glEnable(GL_TEXTURE_2D);

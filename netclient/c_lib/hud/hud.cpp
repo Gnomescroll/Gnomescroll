@@ -306,8 +306,7 @@ void draw_hud_text()
             }
             else
             {
-                team = (team == 1) ? 2 : 1;
-                ClientState::ctf->get_team_color(team, &r, &g, &b);  // TODO -- get_enemy_team_color (ctf->get_enemy_color??)
+                ClientState::ctf->get_enemy_team_color(team, &r, &g, &b);
                 compass_text = (char*)compass_enemy_flag;
             }
         }

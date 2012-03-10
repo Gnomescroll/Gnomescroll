@@ -291,6 +291,13 @@ int CTF::get_team_color(int team, unsigned char *r, unsigned char *g, unsigned c
     return 0;
 }
 
+int CTF::get_enemy_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b)
+{
+    if (team)
+        team = (team == 1) ? 2 : 1;
+    return get_team_color(team, r,g,b);
+}
+
 void CTF::animate_flags()
 {
     if (one.flag != NULL && one.flag->vox != NULL)
@@ -693,6 +700,13 @@ Base* CTF::get_base(int team)
     }
 }
 
+Base* CTF::get_enemy_base(int team)
+{
+    if (team)
+        team = (team == 1) ? 2 : 1;
+    return this->get_base(team);
+}
+
 Flag* CTF::get_flag(int team)
 {
     switch (team)
@@ -704,5 +718,12 @@ Flag* CTF::get_flag(int team)
         default:
             return NULL;
     }
+}
+
+Flag* CTF::get_enemy_flag(int team)
+{
+    if (team)
+        team = (team == 1) ? 2 : 1;
+    return this->get_flag(team);
 }
 

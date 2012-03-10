@@ -19,6 +19,7 @@ class CTF {
     void flag_scored(int team);
 
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
+    int get_enemy_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
     void animate_flags();
     #endif
 
@@ -55,6 +56,8 @@ class CTF {
 
     Base* get_base(int team);
     Flag* get_flag(int team);
+    Base* get_enemy_base(int team);
+    Flag* get_enemy_flag(int team);
 
     bool add_agent_to_team(int team, int agent);
     void set_team_color(int team,
