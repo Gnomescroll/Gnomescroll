@@ -169,7 +169,9 @@ const int KEY_HOLD_RATE = 2;    // 15 pulses per second
 typedef enum {
     kBACKSPACE = 0,
     kLEFT_ARROW,
-    kRIGHT_ARROW
+    kRIGHT_ARROW,
+    kUP_ARROW,
+    kDOWN_ARROW
 } held_down_key;
 
 typedef struct {
@@ -177,12 +179,14 @@ typedef struct {
     int t;
 } key_rate_limit;
 
-const int KEYS_HELD_DOWN = 3;
+const int KEYS_HELD_DOWN = 5;
 static key_rate_limit keys_held_down[KEYS_HELD_DOWN];
 static const SDLKey keys_held_down_map[KEYS_HELD_DOWN] = {
     SDLK_BACKSPACE,
     SDLK_LEFT,
-    SDLK_RIGHT
+    SDLK_RIGHT,
+    SDLK_UP,
+    SDLK_DOWN
 };
 
 static void update_keys_held_down()
@@ -631,6 +635,14 @@ void key_down_handler(SDL_Event* event)
             if (event->user.code != SDL_EVENT_USER_TRIGGER)
                 keys_held_down[kRIGHT_ARROW].pressed = true;
             break;
+        case SDLK_UP:
+            if (event->user.code != SDL_EVENT_USER_TRIGGER)
+                keys_held_down[kUP_ARROW].pressed = true;
+            break;
+        case SDLK_DOWN:
+            if (event->user.code != SDL_EVENT_USER_TRIGGER)
+                keys_held_down[kDOWN_ARROW].pressed = true;
+            break;
             
         default: break;
     }
@@ -687,6 +699,12 @@ void key_up_handler(SDL_Event* event)
             break;
         case SDLK_RIGHT:
             keys_held_down[kRIGHT_ARROW].pressed = false;
+            break;
+        case SDLK_UP:
+            keys_held_down[kUP_ARROW].pressed = false;
+            break;
+        case SDLK_DOWN:
+            keys_held_down[kDOWN_ARROW].pressed = false;
             break;
 
         default: break;

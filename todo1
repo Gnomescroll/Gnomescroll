@@ -580,6 +580,7 @@ draw chat, scoreboard, player hud text when zoomed
 quit confirmation dialog
 /s#, /S#, /s #, /S # syntax for selecting spawner via chat
 repeat-hold-down keys: backspace, left, right
+fix chat cursor draw
 ====================
 
 Animations
@@ -662,7 +663,5 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 text alignment settings (center,left,right,bottom,top)
 
 color compass arrow, not text
-
-chat cursor not updating to cursor position
 
 PRINT & MAIL REBATES

@@ -586,6 +586,7 @@ void ChatRender::set_cursor(char* text, float x, float y)
     HudFont::font->get_string_pixel_dimension(tmp_text, &len, &h);
     free(tmp_text);
     h = HudFont::font->data.line_height;
+    
     cursor_x = x + len;
     if (chat_client->input->cursor == s_len)
         cursor_x += 4;  // margin at the end
