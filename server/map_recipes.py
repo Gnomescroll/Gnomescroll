@@ -35,13 +35,14 @@ for id,v in dat.items():
     cubes[name] = id
 
 def names_available():
+    print ""
     print "Cube names available:"
     for id,v in dat.items():
         name = v.get('name', None)
         if name is None:
             continue
         print name, id
-        
+    print ""
 
 def test_names():
     missing_names = False
