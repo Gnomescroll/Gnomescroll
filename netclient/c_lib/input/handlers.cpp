@@ -47,7 +47,11 @@ void toggle_full_chat()
 
 void toggle_hud()
 {
+    #if PRODUCTION
+    input_state.hud = true;
+    #else
     input_state.hud = (!input_state.hud);
+    #endif
 }
 
 void toggle_debug()

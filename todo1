@@ -565,10 +565,11 @@ adjust coins
 -- $1 for 10 slime kills
 -- $1 for killing agent
 fix font loader segfault
+show enemy flag on map
+init map surface as 0,0,0,255 (black, nontransparent)
 
 TODO:
 adjust tile ids for terrain
-put enemy flag on map
 put text below arrow saying what it is pointing at
 ====================
 
