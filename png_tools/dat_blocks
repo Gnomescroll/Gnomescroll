@@ -136,6 +136,126 @@ south   solar-panel.png
 west    solar-panel.png
 east    solar-panel.png
 ===
+id      14
+name    soft_rock
+hud     24 cell/soft_rock.png
+top     cell/soft_rock.png
+bottom  cell/soft_rock.png
+north   cell/soft_rock.png
+south   cell/soft_rock.png
+west    cell/soft_rock.png
+east    cell/soft_rock.png
+===
+id      15
+name    crystal_ore
+hud     25 cell/crystal_ore.png
+top     cell/crystal_ore.png
+bottom  cell/crystal_ore.png
+north   cell/crystal_ore.png
+south   cell/crystal_ore.png
+west    cell/crystal_ore.png
+east    cell/crystal_ore.png
+===
+id      16
+name    yellow_ore
+hud     26 cell/yellow_ore.png
+top     cell/yellow_ore.png
+bottom  cell/yellow_ore.png
+north   cell/yellow_ore.png
+south   cell/yellow_ore.png
+west    cell/yellow_ore.png
+east    cell/yellow_ore.png
+===
+id      17
+name    purple_ore
+hud     27 cell/purple_ore.png
+top     cell/purple_ore.png
+bottom  cell/purple_ore.png
+north   cell/purple_ore.png
+south   cell/purple_ore.png
+west    cell/purple_ore.png
+east    cell/purple_ore.png
+===
+id      18
+name    holy_stone
+hud     32 cell/holy_stone.png
+top     cell/holy_stone.png
+bottom  cell/holy_stone.png
+north   cell/holy_stone.png
+south   cell/holy_stone.png
+west    cell/holy_stone.png
+east    cell/holy_stone.png
+===
+id      19
+name    light_lunar_dust
+hud     33 cell/light_lunar_dust.png
+top     cell/light_lunar_dust.png
+bottom  cell/light_lunar_dust.png
+north   cell/light_lunar_dust.png
+south   cell/light_lunar_dust.png
+west    cell/light_lunar_dust.png
+east    cell/light_lunar_dust.png
+===
+id      20
+name    dark_lunar_dust
+hud     34 cell/dark_lunar_dust.png
+top     cell/dark_lunar_dust.png
+bottom  cell/dark_lunar_dust.png
+north   cell/dark_lunar_dust.png
+south   cell/dark_lunar_dust.png
+west    cell/dark_lunar_dust.png
+east    cell/dark_lunar_dust.png
+===
+id      21
+name    sand_stone
+hud     35 cell/sand_stone.png
+top     cell/sand_stone.png
+bottom  cell/sand_stone.png
+north   cell/sand_stone.png
+south   cell/sand_stone.png
+west    cell/sand_stone.png
+east    cell/sand_stone.png
+===
+id      22
+name    infected_rock
+hud     40 cell/infected_rock.png
+top     cell/infected_rock.png
+bottom  cell/infected_rock.png
+north   cell/infected_rock.png
+south   cell/infected_rock.png
+west    cell/infected_rock.png
+east    cell/infected_rock.png
+===
+id      23
+name    hard_rock
+hud     41 cell/hard_rock.png
+top     cell/hard_rock.png
+bottom  cell/hard_rock.png
+north   cell/hard_rock.png
+south   cell/hard_rock.png
+west    cell/hard_rock.png
+east    cell/hard_rock.png
+===
+id      24
+name    extruder
+hud     42 cell/extruder.png
+top     cell/extruder.png
+bottom  cell/extruder.png
+north   cell/extruder.png
+south   cell/extruder.png
+west    cell/extruder.png
+east    cell/extruder.png
+===
+id      25
+name    artifact
+hud     43 cell/artifact.png
+top     cell/artifact.png
+bottom  cell/artifact.png
+north   cell/artifact.png
+south   cell/artifact.png
+west    cell/artifact.png
+east    cell/artifact.png
+===
 id      100
 name    tree_bark_01
 hud     44 xox/Tree-bark_01.png
