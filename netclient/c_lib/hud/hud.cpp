@@ -292,25 +292,15 @@ void draw_hud_text()
     if (hud_draw_settings.compass)
     {
         char* compass_text;
-        unsigned char r,g,b;
-        r=g=b=0;
         if (ClientState::playerAgent_state.you == NULL)
             compass_text = (char*)"";
         else
         {
-            int team = ClientState::playerAgent_state.you->status.team;
             if (ClientState::playerAgent_state.you->status.has_flag)
-            {
-                ClientState::ctf->get_team_color(team, &r, &g, &b);
                 compass_text = (char*)compass_friendy_base;
-            }
             else
-            {
-                ClientState::ctf->get_enemy_team_color(team, &r, &g, &b);
                 compass_text = (char*)compass_enemy_flag;
-            }
         }
-        hud->compass->set_color(r,g,b,255);
         hud->compass->update_formatted_string(1, compass_text);
         int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
         hud->compass->set_position(compass_x, _yresf);
@@ -464,7 +454,7 @@ void HUD::init()
     compass->set_text((char*)"");
     compass->set_format((char*) compass_format);
     compass->set_format_extra_length(30);   // arbitrarily big enough
-    compass->set_color(0,0,0,255); // draw with team colors
+    compass->set_color(255,10,10,255);
     compass->set_position(_xresf, _yresf);
 
     confirm_quit = HudText::text_list->create();

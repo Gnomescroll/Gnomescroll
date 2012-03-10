@@ -582,6 +582,7 @@ quit confirmation dialog
 repeat-hold-down keys: backspace, arrow keys
 fix chat cursor draw
 fix cube selector controls
+color compass arrow depending on target's team color
 ====================
 
 Animations
@@ -663,6 +664,6 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 
 text alignment settings (center,left,right,bottom,top)
 
-color compass arrow, not text
+offset player hud text better
 
 PRINT & MAIL REBATES
