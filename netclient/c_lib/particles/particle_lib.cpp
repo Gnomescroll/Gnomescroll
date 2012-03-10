@@ -4,9 +4,9 @@
 
 /* objects */
 #include "./particles/particles.cpp"
+#include "./particles/textures.cpp"
 
 #if DC_CLIENT
-#include "./particles/textures.cpp"
 //#include "./particles/circuit_tree.cpp"
 #include "./particles/shrapnel.cpp"
 #include "./particles/blood.cpp"

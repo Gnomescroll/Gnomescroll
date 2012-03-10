@@ -1,6 +1,6 @@
 #include "textures.hpp"
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 #include <compat_gl.h>
 #include <c_lib/camera/camera.hpp>
@@ -28,8 +28,11 @@ void end_transparent_particle_draw()
     end_transparent_draw();
 }
 
+#endif
+
 void BillboardSprite::draw(Vec3 v)
 {
+    #if DC_CLIENT
     if (current_camera == NULL
     || !current_camera->in_view(v.x, v.y, v.z))
         return;
@@ -66,6 +69,7 @@ void BillboardSprite::draw(Vec3 v)
     p = vec3_add(v, vec3_sub(right, up));         // Bottom right
     glTexCoord2f(tx_max,ty_max);
     glVertex3f(p.x, p.y, p.z);
+    #endif
 }
 
 BillboardSprite::BillboardSprite()
@@ -73,5 +77,3 @@ BillboardSprite::BillboardSprite()
 scale(1.0f),
 texture_index(0)
 {}
-
-#endif

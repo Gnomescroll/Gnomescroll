@@ -585,7 +585,7 @@ fix cube selector controls
 color compass arrow depending on target's team color
 disable empty vnum warnings for voxel models unless debug flag set
 offset & center player name hud text away from body for better visibility
-preliminary text alignments
+preliminary text alignments -- center implemented
 refactor particles/*
 ====================
 
@@ -596,8 +596,6 @@ Animations
 
 Gun model
 Gun in first person and zoomed perspectives
-agent Skeleton for holding gun, standing and zoomed, gun in place
---gun might be a node off of one of the arms
 
 == UI / FEEDBACK ==
 Minimap
@@ -628,9 +626,6 @@ fog
 rotate arm
 voxel animations -- shaded minivox
 
-SERVER:
-put metaless content back on 100tb (~2-3days of rsyncing)
-
 ==PARTICLES==
 make better particle class to abstract some drawing
 ParticleSystem class for doing much cheaper view distance checks
@@ -644,14 +639,7 @@ charge up
 -- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
 grenade damage indication (blood, voxel destruction)
 
-territory control
-    -- color in GLSL
-
 visual feedback for damage received
-
-get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
-
-private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 try 256x256 map
 

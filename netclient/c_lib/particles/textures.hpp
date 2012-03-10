@@ -1,10 +1,10 @@
 #pragma once
 
-#ifdef DC_CLIENT
-
+#if DC_CLIENT
 int init_particles();
 void begin_transparent_particle_draw();
 void end_transparent_particle_draw();
+#endif
 
 class BillboardSprite
 {
@@ -16,5 +16,3 @@ class BillboardSprite
 
         BillboardSprite();
 };
-
-#endif

@@ -126,28 +126,26 @@ void Agent_list::send_to_client(int client_id) {
 }
 
 // have to override these because of Agent_state->s.x,y,z
-int Agent_list::objects_within_sphere(float x, float y, float z, float radius) {
+int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
+{
     int ct = 0;
     float dist;
     float min_dist = 10000000.0f;
-    int closest = -1;
-    int i;
-    for (i=0; i<AGENT_MAX; i++) {
+    for (int i=0; i<AGENT_MAX; i++)
+    {
         if (a[i] == NULL) continue;
         dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-        if (dist < radius) {
-            // agent in sphere
+        if (dist < radius)
+        {   // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
-            if (dist < min_dist) {
+            if (dist < min_dist)
                 min_dist = dist;
-                closest = ct;
-            }
             ct++;            
         }
     }
     this->n_filtered = ct;
-    return closest;
+    return ct;
 }
 
 // origin, direction, cone threshold
