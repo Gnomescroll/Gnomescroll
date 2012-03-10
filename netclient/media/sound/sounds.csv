@@ -27,7 +27,7 @@ Victory,,victory,,,,"there are no victory condition implemented"
 "laser hit agent",,laser_hit_agent,,,y,
 "grenade explode",plasma_grenade_explode_quieter.wav,grenade_explode,,y,y,
 "grenade bounce",,grenade_bounce,,,y,
-"agent took damage",,agent_took_damage,,,y,
+"agent took damage",agent_damage.wav,agent_took_damage,,,y,
 "restore health",,restore_health,,,y,
 "you joined server",,you_joined_server,,,,
 "other player joined server",player_joined_server.wav,player_joined_server,,,y,
