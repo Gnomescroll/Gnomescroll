@@ -429,13 +429,13 @@ namespace t_map
             if(chunk[ MAP_CHUNK_WIDTH*(cy+1) + cx ] != NULL)
                 chunk[ MAP_CHUNK_WIDTH*(cy+1) + cx ]->needs_update = true;
         }
-        if(cx-1 >= 0)
+        if(cy-1 >= 0)
         {
             if(chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ] != NULL)
                 chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ]->needs_update = true;
         }
     #endif
-        
+
     }
     
     unsigned char Terrain_map::get_cached_height(int x, int y)
