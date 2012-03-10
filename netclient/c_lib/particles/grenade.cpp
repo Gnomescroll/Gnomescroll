@@ -80,6 +80,7 @@ void Grenade::init()
 Grenade::Grenade(int id)
 :
 Particle(id, 0,0,0,0,0,0, GRENADE_MASS),
+BillboardSprite(),
 bounce_count(0),
 owner(-1)
 {
@@ -89,6 +90,7 @@ owner(-1)
 Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
 :
 Particle(id, x,y,z,mx,my,mz, GRENADE_MASS),
+BillboardSprite(),
 bounce_count(0),
 owner(-1)
 {
@@ -249,10 +251,8 @@ void Grenade_list::draw()
     glBegin(GL_QUADS);
 
     for(int i=0; i<n_max; i++)
-    {
-        if (a[i] == NULL) continue;
-        a[i]->draw();
-    }
+        if (a[i] != NULL)
+            a[i]->draw(a[i]->vp->p);
 
     glEnd();
     glDepthMask(GL_TRUE);

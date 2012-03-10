@@ -6,12 +6,15 @@ const float DEFAULT_MASS = 1.0f;
 
 /* objects */
 #include "./particles/particles.hpp"
+#if DC_CLIENT
+#include "./particles/textures.hpp"
+#endif
 
 #include "./particles/grenade.hpp"
 //#include "./particles/neutron.hpp"
 #include "./particles/cspray.hpp"
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include "./particles/circuit_tree.hpp"
 #include "./particles/shrapnel.hpp"
 #include "./particles/blood.hpp"

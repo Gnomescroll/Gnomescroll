@@ -10,7 +10,7 @@
 #define CSPRAY_TEXTURE_ID 21
 const float CSPRAY_TEXTURE_SCALE = 0.3f;
 
-class Cspray: public EventParticle
+class Cspray: public EventParticle, public BillboardSprite
 {
     public:
         int active;

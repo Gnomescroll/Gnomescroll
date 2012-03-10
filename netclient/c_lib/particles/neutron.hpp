@@ -9,7 +9,7 @@
 #define NEUTRON_TEXTURE_ID 21 /* Not used. Texture id is dependent on energy */
 #define NEUTRON_TEXTURE_SCALE 0.3f
 
-class Neutron: public EventParticle
+class Neutron: public EventParticle, public BillboardSprite
 {
     public:
         int energy;

@@ -22,6 +22,7 @@ void Cspray::init()
 Cspray::Cspray(int id)
 :
 EventParticle(id, 0,0,0,0,0,0, CSPRAY_MASS),
+BillboardSprite(),
 active(0),
 stopped(0)
 {
@@ -31,6 +32,7 @@ stopped(0)
 Cspray::Cspray(int id, float x, float y, float z, float mx, float my, float mz)
 :
 EventParticle(id, x,y,z,mx,my,mz, CSPRAY_MASS),
+BillboardSprite(),
 active(0),
 stopped(0)
 {
@@ -111,7 +113,7 @@ void Cspray_list::draw()
 
     for (int i=0; i<n_max; i++)
         if (a[i] != NULL)
-            a[i]->draw();
+            a[i]->draw(a[i]->vp->p);
     
     glEnd();
 

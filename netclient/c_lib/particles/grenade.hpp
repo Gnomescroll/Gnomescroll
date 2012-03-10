@@ -15,7 +15,7 @@ using Verlet::VerletParticle;
 
 class grenade_StoC;     // forward decl
 
-class Grenade: public Particle
+class Grenade: public Particle, public BillboardSprite
 {
     private:
         int bounce_count;

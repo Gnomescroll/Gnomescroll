@@ -21,14 +21,16 @@ void Shrapnel::init()
 
 Shrapnel::Shrapnel(int id)
 :
-Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS)
+Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS),
+BillboardSprite()
 {
     this->init();
 }
 
 Shrapnel::Shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, SHRAPNEL_MASS)
+Particle(id, x,y,z, mx,my,mz, SHRAPNEL_MASS),
+BillboardSprite()
 {
     this->init();
 }
@@ -70,7 +72,7 @@ void Shrapnel_list::draw()
 
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
-            a[i]->draw();
+            a[i]->draw(a[i]->vp->p);
 
     glEnd();
     glDepthMask(GL_TRUE);

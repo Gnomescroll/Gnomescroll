@@ -12,7 +12,7 @@
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
 
-class Shrapnel: public Particle
+class Shrapnel: public Particle, public BillboardSprite
 {
     public:
         void init();

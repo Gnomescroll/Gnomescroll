@@ -28,14 +28,16 @@ void Neutron::init()
 
 Neutron::Neutron(int id)
 :
-EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS)
+EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS),
+BillboardSprite()
 {
     this->init();
 }
 
 Neutron::Neutron(int id, float x, float y, float z, float mx, float my, float mz)
 :
-EventParticle(id, x,y,z, mx,my,mz, NEUTRON_MASS)
+EventParticle(id, x,y,z, mx,my,mz, NEUTRON_MASS),
+BillboardSprite()
 {
     this->init();
 }
@@ -132,7 +134,7 @@ void Neutron_list::draw() {
 
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
-            a[i]->draw();
+            a[i]->draw(a[i]->vp->p);
 
     glEnd();
     glDepthMask(GL_TRUE);
