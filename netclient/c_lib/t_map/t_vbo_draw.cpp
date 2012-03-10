@@ -99,26 +99,31 @@ void Vbo_map::prep_draw()
         else
         {
             c_pruned++;
-            //set_flag(col,VBO_drawn,0);
         }
     }}
-    //sort VBOs by distance to player
-
     //printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
 }
 
 void Vbo_map::sort_draw()
 {
 
+    float x = current_camera->x;
+    float y = current_camera->y;
+
     for(int i=0; i<draw_vbo_n; i++ )
     {
         class Map_vbo* v = draw_vbo_array[i].map_vbo;
 
-        draw_vbo_array[i].distance = 0.0f; //set this
+        v->xpos, y->ypos
+
+        float _x = (v->xpos - x);
+        float _y = (v->ypos - y);
+
+        draw_vbo_array[i].distance = _x*_x + _y*_y; //set this
     }
 
-//    #define elt_lt(a,b) ((a)->key < (b)->key)
-//    QSORT(struct elt, arr, n, elt_lt);
+  #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
+  QSORT(struct elt, arr, n, _VBO_DRAW_STRUCT_lt);
 
 /*
  * struct elt {
