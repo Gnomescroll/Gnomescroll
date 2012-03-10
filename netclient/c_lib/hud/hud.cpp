@@ -282,10 +282,9 @@ void draw_hud_text()
             }
         }
         hud->compass->set_color(r,g,b,255);
-        //hud->compass->set_text(compass_text);
         hud->compass->update_formatted_string(1, compass_text);
         int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
-        hud->compass->set_position(compass_x, _yresf - hud->compass->get_height()/2);
+        hud->compass->set_position(compass_x, _yresf);
         hud->compass->draw();
     }
 
