@@ -87,7 +87,7 @@ void BillboardTextHud::draw()
 
     this->text->set_position((float)sx, (float)sy);
     this->text->set_depth((float)sz);
-    this->text->draw();
+    this->text->draw_centered();
 
 #endif
 }
