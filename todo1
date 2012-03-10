@@ -574,6 +574,8 @@ map recipes uses tiles by name
 
 only play damage sound for you
 dont draw flag icon if held
+chat message validation / filtering
+fix billboard hud text timeouts and set_draw properties
 ====================
 
 Animations
@@ -663,11 +665,7 @@ text alignment settings (center,left,right,bottom,top)
 
 color compass arrow, not text
 
-double hud player text happens -- not destroying via text list?
-
 show chat, player hud text when zoomed
-
-empty chat messages
 
 backspace hold down
 

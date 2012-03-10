@@ -298,8 +298,16 @@ void PlayerAgent_state::display_agent_names()
     {
         Agent_state* a = ClientState::agent_list->a[i];
         if (a==NULL) continue;
-        if (a->id == this->agent_id) continue;
-        if (a->status.team != you->status.team) continue;  // only show teammates
+        if (a->id == this->agent_id)
+        {
+            a->event.hide_name();
+            continue;
+        }
+        if (a->status.team != you->status.team) // only show teammates
+        {
+            a->event.hide_name();
+            continue;
+        }
         a->event.display_name();
     }
     #endif

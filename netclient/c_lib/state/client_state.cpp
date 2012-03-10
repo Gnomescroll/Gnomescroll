@@ -154,6 +154,7 @@ namespace ClientState {
         //neutron_list->tick();
         minivox_list->tick();
         billboard_text_list->tick();
+        billboard_text_hud_list->tick();
     }
 
     void send_identify_packet(char* name)

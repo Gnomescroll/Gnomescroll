@@ -50,9 +50,7 @@ void Agent_event::name_changed(char* old_name)
 void Agent_event::hide_name()
 {
     if (this->bb != NULL)
-    {
         this->bb->set_draw(false);
-    }
 }
 
 void Agent_event::display_name()

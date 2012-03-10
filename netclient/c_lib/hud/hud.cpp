@@ -246,18 +246,41 @@ void draw_hud_text()
         hud->dead->draw();
 
     end_text_draw();
-    HudFont::set_properties(HudMap::text_icon_size);
-    start_text_draw();
 
-    if (hud_draw_settings.map)
-        HudMap::draw_text();
+    if (!hud_draw_settings.zoom)
+    {
+        HudFont::set_properties(HudMap::text_icon_size);
+        start_text_draw();
 
-    end_text_draw();
+        if (hud_draw_settings.map)
+            HudMap::draw_text();
+
+        end_text_draw();
+    }
     HudFont::reset_default();
     start_text_draw();
 
     if (hud_draw_settings.help)
         hud->help->draw();
+
+    if (hud->chat->inited)
+    {
+        if (hud_draw_settings.chat)
+            hud->chat->draw_messages();
+        if (hud_draw_settings.chat_input)
+            hud->chat->draw_input();
+    }
+
+    if (hud->scoreboard->inited)
+        if (hud_draw_settings.scoreboard)
+            hud->scoreboard->draw();
+
+    // everything after this is hidden when zoomed
+    if (hud_draw_settings.zoom)
+    {
+        end_text_draw();
+        return;
+    }
 
     if (hud_draw_settings.compass)
     {
@@ -344,16 +367,6 @@ void draw_hud_text()
         hud->weapon->draw();
     }
 
-    if (hud->chat->inited)
-        if (hud_draw_settings.chat)
-            hud->chat->draw_messages();
-        if (hud_draw_settings.chat_input)
-            hud->chat->draw_input();
-
-    if (hud->scoreboard->inited)
-        if (hud_draw_settings.scoreboard)
-            hud->scoreboard->draw();
-
     end_text_draw();
 }
 
@@ -361,12 +374,13 @@ void draw_hud()
 {
     // could not get z-depth to listen to me
     // and hud projected names should be underneath everything,
-    // so i moved the list draw call out 
-    if (!hud_draw_settings.zoom)
-        ClientState::billboard_text_hud_list->draw();
+    // so i moved the list draw call out
+    
+    //if (!hud_draw_settings.zoom)
+    ClientState::billboard_text_hud_list->draw();
     draw_hud_textures();
-    if (!hud_draw_settings.zoom)
-        draw_hud_text();
+    //if (!hud_draw_settings.zoom)
+    draw_hud_text();
 }
 
 /* HUD */
