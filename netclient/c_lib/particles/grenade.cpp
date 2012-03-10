@@ -134,41 +134,42 @@ void Grenade::tick() {
 
 void Grenade::draw() {
 #ifdef DC_CLIENT
-    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+    if (current_camera == NULL
+    || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z))
+        return;
 
-
-    float up[3] = {
+    Vec3 up = vec3_init(
         model_view_matrix[0]*GRENADE_TEXTURE_SCALE,
         model_view_matrix[4]*GRENADE_TEXTURE_SCALE,
         model_view_matrix[8]*GRENADE_TEXTURE_SCALE
-    };
-    float right[3] = {
+    );
+    Vec3 right = vec3_init(
         model_view_matrix[1]*GRENADE_TEXTURE_SCALE,
         model_view_matrix[5]*GRENADE_TEXTURE_SCALE,
         model_view_matrix[9]*GRENADE_TEXTURE_SCALE
-    };
+    );
 
     float tx_min, tx_max, ty_min, ty_max;
-    float x,y,z;
-
     tx_min = (float)(GRENADE_TEXTURE_ID%16)* (1.0/16.0);
     tx_max = tx_min + (1.0/16.0);
     ty_min = (float)(GRENADE_TEXTURE_ID/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
+    Vec3 p = vec3_sub(this->vp->p, vec3_add(right, up));    // Bottom left
+    glTexCoord2f(tx_min,ty_max);
+    glVertex3f(p.x, p.y, p.z);
 
-    glTexCoord2f(tx_min,ty_max );
-    glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
+    p = vec3_add(this->vp->p, vec3_sub(up, right));         // Top left
+    glTexCoord2f(tx_min,ty_min);
+    glVertex3f(p.x, p.y, p.z);
 
-    glTexCoord2f(tx_min,ty_min );
-    glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
-
+    p = vec3_add(this->vp->p, vec3_add(up, right));         // Top right
     glTexCoord2f(tx_max,ty_min);
-    glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
+    glVertex3f(p.x, p.y, p.z);
 
-    glTexCoord2f(tx_max,ty_max );
-    glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
+    p = vec3_add(this->vp->p, vec3_sub(right, up));         // Bottom right
+    glTexCoord2f(tx_max,ty_max);
+    glVertex3f(p.x, p.y, p.z);
 #endif    
 }
 

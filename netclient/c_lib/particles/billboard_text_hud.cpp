@@ -63,7 +63,7 @@ void BillboardTextHud::set_size(float size)
 
 void BillboardTextHud::draw()
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     if(!this->text->charcount()) return;
     if (current_camera == NULL) return;
 
@@ -89,8 +89,7 @@ void BillboardTextHud::draw()
 
     this->text->set_depth((float)sz);
     this->text->draw_centered();
-
-#endif
+    #endif
 }
 
 

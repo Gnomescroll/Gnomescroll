@@ -584,6 +584,8 @@ fix chat cursor draw
 fix cube selector controls
 color compass arrow depending on target's team color
 disable empty vnum warnings for voxel models unless debug flag set
+offset & center player name hud text away from body for better visibility
+preliminary text alignments
 ====================
 
 Animations
@@ -622,6 +624,8 @@ client side prediction bug
 endpoints on hitscan laser
 Lua
 fog
+rotate arm
+voxel animations -- shaded minivox
 
 SERVER:
 put metaless content back on 100tb (~2-3days of rsyncing)
@@ -663,7 +667,5 @@ show dead body for longer
 --can keep a few clean bodies around, swap them
 
 more filtering for viewer teams (slimes probably attack a viewer, for example)
-
-offset player hud text better
 
 PRINT & MAIL REBATES
