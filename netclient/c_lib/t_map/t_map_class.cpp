@@ -140,7 +140,7 @@ namespace t_map
 
     void Terrain_map::set_update(int x, int y)
     {
-        printf("set update: %i %i \n", x,y);
+        //printf("set update: %i %i \n", x,y);
 
         if( ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
             ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
@@ -155,7 +155,7 @@ namespace t_map
 */
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
-        printf("set element: %i %i %i \n", x,y,z);
+        //printf("set element: %i %i %i \n", x,y,z);
         //printf("set: %i %i %i %i \n", x,y,element.block);
     #if T_MAP_SET_OPTIMIZED
         if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
@@ -251,7 +251,7 @@ namespace t_map
                 set_update(x,y+1);
             }
         #endif
-            
+
     #endif
     }
 
