@@ -558,8 +558,10 @@ Mar 9
 
 
 TODO:
+rate limit base ammo/health restore
+"You healed" message
+
 adjust coins
-rate limit health regen
 ====================
 
 Animations
