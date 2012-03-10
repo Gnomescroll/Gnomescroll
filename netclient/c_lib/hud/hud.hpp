@@ -85,6 +85,7 @@ class HUD
     Text* coins;
     Text* health;
     Text* weapon;
+    Text* compass;
 
     // scoreboard needs rewritten logic
     // will be its own class, also holding text objects

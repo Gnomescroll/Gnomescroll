@@ -21,7 +21,8 @@ void init() {
 
     surface = create_surface_from_file(file);
 
-    if (surface == NULL) {
+    if (surface == NULL)
+    {
         printf("Compass surface init failed\n");
         return;
     }

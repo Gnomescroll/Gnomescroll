@@ -15,10 +15,11 @@ struct Color {
 };
 
 static Color current_color;
+static Color current_enemy_color;
 static Color highlight;
 
-static int num_cells = 0;
-static unsigned char* cells = NULL;
+//static int num_cells = 0;
+//static unsigned char* cells = NULL;
 
 // for texture init
 static const int width = 512;
@@ -102,6 +103,7 @@ static Text* you_star = NULL;
 static Text* you_A = NULL;
 static Text* base = NULL;
 static Text* flag = NULL;
+static Text* enemy_flag = NULL;
 static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
 static Text* spawner[MAX_SPAWNERS] = {NULL};
 //static Text turret[MAX_TURRETS];
@@ -125,6 +127,9 @@ void init_text_icons()
 
     flag = HudText::text_list->create();
     flag->set_text((char*)flag_symbol);
+    
+    enemy_flag = HudText::text_list->create();
+    enemy_flag->set_text((char*)flag_symbol);
 
     for (int i=0; i<(int)TEAM_MAX_PLAYERS; i++)
     {
@@ -162,6 +167,13 @@ static void set_team_icons_color(
         spawner[i++]->set_color(r,g,b,a));
 }
 
+static void set_enemy_team_icons_color(
+    unsigned char r, unsigned char g, unsigned char b, unsigned char a=255
+)
+{
+    enemy_flag->set_color(r,g,b,a);
+}
+
 void update_team(int team)
 {
     if (!text_icons_inited)
@@ -169,6 +181,7 @@ void update_team(int team)
         printf("WARNING: HudMap::update_team -- text icons are not inited\n");
         return;
     }
+    if (!team) return;
     unsigned char r,g,b;
     int failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
     if (failure)
@@ -179,6 +192,17 @@ void update_team(int team)
     current_color.g = g;
     current_color.b = b;
     set_team_icons_color(r,g,b);
+
+    team = (team == 1) ? 2 : 1;
+    failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
+    if (failure)
+        r=g=b=0;
+    if (r == current_enemy_color.r && g == current_enemy_color.g && b == current_enemy_color.b)
+        return;
+    current_enemy_color.r = r;
+    current_enemy_color.g = g;
+    current_enemy_color.b = b;
+    set_enemy_team_icons_color(r,g,b);
 }
 
 // create blank surface
@@ -210,6 +234,11 @@ void init_surface()
     tex_format = GL_BGRA;
     if (map_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
+
+    // set surface pixels to 0,0,0,255;
+    for (int i=0; i<map_surface->w; i++)
+        for (int j=0; j<map_surface->h; j++)
+            ((Uint32*)map_surface->pixels)[i + map_surface->w*j] = SDL_MapRGBA(map_surface->format, 0,0,0,255);
     
     // texture
     glEnable(GL_TEXTURE_2D);
@@ -220,7 +249,7 @@ void init_surface()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         //GL_BGRA
-        glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels );
+        glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels);
     }
     glDisable(GL_TEXTURE_2D);
 
@@ -250,36 +279,40 @@ void init_surface()
     //glDisable(GL_TEXTURE_2D);
 }
 
-void init_cells()
-{
-    int n_cells = map_dim.x * map_dim.y;
-    if (n_cells == num_cells) return;   // size same, dont change
+//void init_cells()
+//{
+    //int n_cells = map_dim.x * map_dim.y;
+    //if (n_cells == num_cells) return;   // size same, dont change
 
-    num_cells = n_cells;
+    //num_cells = n_cells;
 
-    if (!n_cells)
-    { // no cells, free/null cells
-        free(cells);
-        cells = NULL;
-        return;
-    }
+    //if (!n_cells)
+    //{ // no cells, free/null cells
+        //free(cells);
+        //cells = NULL;
+        //return;
+    //}
 
-    if (cells != NULL)
-        cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
-    else
-        cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
-}
+    //if (cells != NULL)
+        //cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
+    //else
+        //cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
+//}
 
 void init()
 {
     init_surface();
     init_text_icons();
-    init_cells();
+    //init_cells();
     current_color.r = 255;
     current_color.g = 255;
     current_color.b = 255;
+    
+    current_enemy_color.r = 255;
+    current_enemy_color.g = 255;
+    current_enemy_color.b = 255;
 
-    highlight.r = 247;
+    highlight.r = 247;  // yellow/gold
     highlight.g = 247;
     highlight.b = 10;
 }
@@ -305,7 +338,7 @@ void update_heightmap()
 void update_map_surface()
 {
     if (map_surface == NULL) return;
-    if (cells == NULL) return;
+    //if (cells == NULL) return;
     if (t_map::main_map == NULL) return;
     if (!t_map::main_map->height_changed) return;
     //int strip_width = map_dim.x / strips;
@@ -431,8 +464,8 @@ void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
 
 void update_terrain_map(int tex_id)
 {
-    init_cells();   // updates cells array if map size changed
-    if (cells == NULL) return;
+    //init_cells();   // updates cells array if map size changed
+    //if (cells == NULL) return;
     update_heightmap();
     update_map_surface();
     update_texture(map_textures[tex_id], map_surface);
@@ -613,11 +646,19 @@ void draw_team_text_icons(float z)
         base->set_color(current_color.r, current_color.g, current_color.b);
     base->draw_centered();
 
-    Flag* f = ctf->get_flag(playerAgent_state.you->status.team);
+    int team = playerAgent_state.you->status.team;
+    Flag* f = ctf->get_flag(team);
     world_to_map_screen_coordinates(f->x, f->y, &x, &y);
     flag->set_position(x,y);
     flag->set_depth(z);
     flag->draw_centered();
+
+    team = (team == 1) ? 2 : 1; // TODO, retrieve enemy flag from ctf
+    f = ctf->get_flag(team);
+    world_to_map_screen_coordinates(f->x, f->y, &x, &y);
+    enemy_flag->set_position(x,y);
+    enemy_flag->set_depth(z);
+    enemy_flag->draw_centered();
 }
 
 void draw_text_icons(float z)
@@ -715,8 +756,8 @@ void teardown()
     if (gradient_surface != NULL)
         SDL_FreeSurface(gradient_surface);
 
-    if (cells != NULL)
-        free(cells);
+    //if (cells != NULL)
+        //free(cells);
 }
 
 }
