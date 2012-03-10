@@ -6,3 +6,7 @@ void address_from_string(char* ip, int address[4]);
 //void strcpy_no_null(char* dest, char* src);
 
 unsigned int sanitize_player_name(char* name);
+
+struct Color {
+    unsigned char r,g,b;
+};

@@ -1,54 +1,53 @@
 #include "compass.hpp"
 
+#include <math.h>
+#include <c_lib/common/common.hpp>
+
 namespace Compass {
 
 static char file[] = "media/texture/compass.png";
 
 static const float scale = 0.5f;
-static const int x_margin = 10;
-static const int y_margin = 10;
+static const int x_margin = 4;
+static const int y_margin = 4;
 
-static int width;
-static int height;
+static int width = 128;
+static int height = 128;
 static float x;
 static float y;
 static float theta = 0.5f; // rotation
 
-static SDL_Surface* surface = NULL;
-static GLuint texture = 0;
+struct Color base_color = {37,247,255};
+
+static int current_texture_index = 0;
+static GLuint texture[N_TEAMS] = {0};
+
+void update_team_colors()
+{
+    static struct Color cache[N_TEAMS] = {{0,0,0}};
+    unsigned char r,g,b;
+    if (ClientState::ctf == NULL) return;
+    for (int i=0; i<(int)N_TEAMS; i++)
+    {
+        if (ClientState::ctf->get_team_color(i+1, &r, &g, &b))
+            continue;
+        if (cache[i].r == r && cache[i].g == g && cache[i].b == b)
+            continue;
+        load_colored_texture(file, &texture[i],
+            base_color.r, base_color.g, base_color.b,
+            r, g, b
+        );
+        cache[i].r = r;
+        cache[i].g = g;
+        cache[i].b = b;
+    }
+}
 
 void init()
 {
-    surface = create_surface_from_file(file);
-
-    if (surface == NULL)
-    {
-        printf("Compass surface init failed\n");
-        return;
-    }
-
-    width = surface->w;
-    height = surface->h;
-    x = _xresf - ((float)width * scale) - x_margin;
-    y = _yresf - ((float)height * scale) - y_margin;
-
-    Uint32 tex_format = GL_BGRA;
-    if (surface->format->Rmask == 0x000000ff)
-        tex_format = GL_RGBA;
-
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D( GL_TEXTURE_2D, 0, 4, surface->w, surface->h, 0, tex_format, GL_UNSIGNED_BYTE, surface->pixels );
-    glDisable(GL_TEXTURE_2D);
-
-    SDL_FreeSurface(surface);
-    surface = NULL;
+    x = _xresf - (((float)width)*scale + x_margin);
+    y = _yresf - (((float)height)*scale + y_margin);
 }
-
-#include <math.h>
 
 // rotate compass texture
 void update()
@@ -58,7 +57,11 @@ void update()
     
     Agent_state* a = playerAgent_state.you;
     AgentState* s = &playerAgent_state.camera_state;
-    if (a == NULL || ctf == NULL)
+
+    if (a != NULL && a->status.team)    // set index to current team by default
+        current_texture_index = a->status.team - 1;
+
+    if (a == NULL || ctf == NULL || !a->status.team)
     {   // just point in agent direction
         theta = s->theta;
         return;
@@ -66,7 +69,7 @@ void update()
 
     Vec3 goal_pos;
     if (a->status.has_flag)
-    {
+    {   // point to home base
         Base* b = ctf->get_base(a->status.team);
         if (b == NULL)
         {
@@ -74,9 +77,10 @@ void update()
             return;
         }
         goal_pos = vec3_init(b->x, b->y, 0);
+        current_texture_index = a->status.team - 1;
     }
     else
-    {
+    {   // point to enemy's flag
         Flag* f = ctf->get_enemy_flag(a->status.team);
         if (f == NULL)
         {
@@ -84,6 +88,7 @@ void update()
             return;
         }
         goal_pos = vec3_init(f->x, f->y, 0);
+        current_texture_index = (a->status.team == 1) ? 2-1 : 1-1;
     }
 
     goal_pos.x -= s->x;
@@ -102,16 +107,16 @@ void update()
 
 void draw()
 {
-    static const float z = -0.5f;
-    if (texture == 0) return;
+    static const float z = -0.5f;    
     update();
+    if (texture[current_texture_index] == 0) return;
 
     glColor4ub(255,255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
-    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindTexture(GL_TEXTURE_2D, texture[current_texture_index]);
     draw_bound_texture_rotated(x,y, ((float)width)*scale, ((float)height)*scale, z, theta);
 
     glDisable(GL_TEXTURE_2D);

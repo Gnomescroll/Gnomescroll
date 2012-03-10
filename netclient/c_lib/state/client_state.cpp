@@ -130,11 +130,12 @@ namespace ClientState {
 
         if (playerAgent_state.you != NULL)
             HudMap::update_team(playerAgent_state.you->status.team);
-        static int team_color_update = 0;
+        static int team_color_update = 30 * 5;  // start at 4seconds in, so initial update happens quickly
         const int team_color_update_interval = 30 * 6;  // once every 6 seconds
         if (team_color_update++ >= team_color_update_interval)
         {
             agent_list->update_team_colors();
+            Compass::update_team_colors();
             team_color_update %= team_color_update_interval;
         }
     }

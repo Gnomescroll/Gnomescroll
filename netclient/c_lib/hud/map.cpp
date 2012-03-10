@@ -1,5 +1,6 @@
 #include "map.hpp"
 
+#include <c_lib/common/common.hpp>
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/texture_loader.hpp>
@@ -9,10 +10,6 @@
 
 namespace HudMap
 {
-
-struct Color {
-    unsigned char r,g,b;
-};
 
 static Color current_color;
 static Color current_enemy_color;
@@ -193,8 +190,7 @@ void update_team(int team)
     current_color.b = b;
     set_team_icons_color(r,g,b);
 
-    team = (team == 1) ? 2 : 1;
-    failure = ClientState::ctf->get_team_color(team, &r,&g,&b);
+    failure = ClientState::ctf->get_enemy_team_color(team, &r,&g,&b);
     if (failure)
         r=g=b=0;
     if (r == current_enemy_color.r && g == current_enemy_color.g && b == current_enemy_color.b)

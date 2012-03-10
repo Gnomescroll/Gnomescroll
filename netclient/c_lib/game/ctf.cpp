@@ -9,6 +9,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/hud/map.hpp>
+#include <c_lib/hud/compass.hpp>
 #endif
 
 CTF::CTF()
@@ -626,10 +627,14 @@ void CTF::set_team_color(
             printf("CTF::set_team_color -- invalid team %d\n", team);
             return;
     }
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->status.team == team)
-        HudMap::update_team(team);
+    if (playerAgent_state.you != NULL)
+    {
+        if (playerAgent_state.you->status.team == team)
+            HudMap::update_team(team);
+        Compass::update_team_colors();
+    }
     #endif
 }
 

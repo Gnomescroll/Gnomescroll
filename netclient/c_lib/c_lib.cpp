@@ -23,7 +23,6 @@
 /* Network */
 #include <net_lib/net_lib.h>
 
-
 //utility
 #include <c_lib/common/macros.hpp>
 #include <c_lib/common/enum_types.hpp>
