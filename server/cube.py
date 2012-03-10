@@ -789,6 +789,14 @@ def _build_cubes():
 
 _build_cubes()
 
+# buld name map
+names = {}
+for id,v in dat.items():
+    name = v.get('name', None)
+    if name is None:
+        continue
+    names[name] = id
+
 # module reload behavior
 try:
     _init
