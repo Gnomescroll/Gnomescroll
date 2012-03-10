@@ -18,8 +18,8 @@ static Color current_color;
 static Color current_enemy_color;
 static Color highlight;
 
-static int num_cells = 0;
-static unsigned char* cells = NULL;
+//static int num_cells = 0;
+//static unsigned char* cells = NULL;
 
 // for texture init
 static const int width = 512;
@@ -234,6 +234,11 @@ void init_surface()
     tex_format = GL_BGRA;
     if (map_surface->format->Rmask == 0x000000ff)
         tex_format = GL_RGBA;
+
+    // set surface pixels to 0,0,0,255;
+    for (int i=0; i<map_surface->w; i++)
+        for (int j=0; j<map_surface->h; j++)
+            ((Uint32*)map_surface->pixels)[i + map_surface->w*j] = SDL_MapRGBA(map_surface->format, 0,0,0,255);
     
     // texture
     glEnable(GL_TEXTURE_2D);
@@ -244,7 +249,7 @@ void init_surface()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         //GL_BGRA
-        glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels );
+        glTexImage2D( GL_TEXTURE_2D, 0, 4, map_surface->w, map_surface->h, 0, tex_format, GL_UNSIGNED_BYTE, map_surface->pixels);
     }
     glDisable(GL_TEXTURE_2D);
 
@@ -274,31 +279,31 @@ void init_surface()
     //glDisable(GL_TEXTURE_2D);
 }
 
-void init_cells()
-{
-    int n_cells = map_dim.x * map_dim.y;
-    if (n_cells == num_cells) return;   // size same, dont change
+//void init_cells()
+//{
+    //int n_cells = map_dim.x * map_dim.y;
+    //if (n_cells == num_cells) return;   // size same, dont change
 
-    num_cells = n_cells;
+    //num_cells = n_cells;
 
-    if (!n_cells)
-    { // no cells, free/null cells
-        free(cells);
-        cells = NULL;
-        return;
-    }
+    //if (!n_cells)
+    //{ // no cells, free/null cells
+        //free(cells);
+        //cells = NULL;
+        //return;
+    //}
 
-    if (cells != NULL)
-        cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
-    else
-        cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
-}
+    //if (cells != NULL)
+        //cells = (unsigned char*)realloc(cells, num_cells*sizeof(unsigned char));
+    //else
+        //cells = (unsigned char*)calloc(num_cells, sizeof(unsigned char));
+//}
 
 void init()
 {
     init_surface();
     init_text_icons();
-    init_cells();
+    //init_cells();
     current_color.r = 255;
     current_color.g = 255;
     current_color.b = 255;
@@ -333,7 +338,7 @@ void update_heightmap()
 void update_map_surface()
 {
     if (map_surface == NULL) return;
-    if (cells == NULL) return;
+    //if (cells == NULL) return;
     if (t_map::main_map == NULL) return;
     if (!t_map::main_map->height_changed) return;
     //int strip_width = map_dim.x / strips;
@@ -459,8 +464,8 @@ void draw_2x2_pixel(SDL_Surface* surface, Uint32 pix, int x, int y)
 
 void update_terrain_map(int tex_id)
 {
-    init_cells();   // updates cells array if map size changed
-    if (cells == NULL) return;
+    //init_cells();   // updates cells array if map size changed
+    //if (cells == NULL) return;
     update_heightmap();
     update_map_surface();
     update_texture(map_textures[tex_id], map_surface);
@@ -751,8 +756,8 @@ void teardown()
     if (gradient_surface != NULL)
         SDL_FreeSurface(gradient_surface);
 
-    if (cells != NULL)
-        free(cells);
+    //if (cells != NULL)
+        //free(cells);
 }
 
 }
