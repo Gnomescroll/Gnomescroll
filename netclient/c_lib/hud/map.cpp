@@ -649,17 +649,23 @@ void draw_team_text_icons(float z)
 
     int team = playerAgent_state.you->status.team;
     Flag* f = ctf->get_flag(team);
-    world_to_map_screen_coordinates(f->x, f->y, &x, &y);
-    flag->set_position(x,y);
-    flag->set_depth(z);
-    flag->draw_centered();
+    if (!f->held)
+    {
+        world_to_map_screen_coordinates(f->x, f->y, &x, &y);
+        flag->set_position(x,y);
+        flag->set_depth(z);
+        flag->draw_centered();
+    }
 
     team = (team == 1) ? 2 : 1; // TODO, retrieve enemy flag from ctf
     f = ctf->get_flag(team);
-    world_to_map_screen_coordinates(f->x, f->y, &x, &y);
-    enemy_flag->set_position(x,y);
-    enemy_flag->set_depth(z);
-    enemy_flag->draw_centered();
+    if (!f->held)
+    {
+        world_to_map_screen_coordinates(f->x, f->y, &x, &y);
+        enemy_flag->set_position(x,y);
+        enemy_flag->set_depth(z);
+        enemy_flag->draw_centered();
+    }
 }
 
 void draw_text_icons(float z)
