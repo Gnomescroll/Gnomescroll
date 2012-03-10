@@ -69,16 +69,19 @@ void enable_jump()
     input_state.can_jump = true;
 }
 
-void toggle_confirm_quit()
-{
-    input_state.confirm_quit = (!input_state.confirm_quit);
-}
-
 void enable_quit()
-{
-    // release mouse
+{   // release mouse
     unbind_mouse();
     input_state.quit = true;
+}
+
+void toggle_confirm_quit()
+{
+    #if PRODUCTION
+    input_state.confirm_quit = (!input_state.confirm_quit);
+    #else
+    enable_quit();
+    #endif
 }
 
 void toggle_skeleton_editor()
