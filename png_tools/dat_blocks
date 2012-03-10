@@ -97,24 +97,24 @@ west    sand.png
 east    sand.png
 ===
 id      10
-name    terminal
-hud     16 terminal.png
-top     terminal.png
-bottom  terminal.png
-north   terminal.png
-south   terminal.png
-west    terminal.png
-east    terminal.png
+name    blue_terminal
+hud     16 blue_terminal.png
+top     blue_terminal.png
+bottom  blue_terminal.png
+north   blue_terminal.png
+south   blue_terminal.png
+west    blue_terminal.png
+east    blue_terminal.png
 ===
 id      11
-name    tron
-hud     17 tron.png
-top     tron.png
-bottom  tron.png
-north   tron.png
-south   tron.png
-west    tron.png
-east    tron.png
+name    green_terminal
+hud     17 green_terminal.png
+top     green_terminal.png
+bottom  green_terminal.png
+north   green_terminal.png
+south   green_terminal.png
+west    green_terminal.png
+east    green_terminal.png
 ===
 id      12
 name    battery
