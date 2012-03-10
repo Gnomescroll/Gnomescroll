@@ -56,6 +56,9 @@ static const char coins_format[] = "$%d";
 static const char health_format[] = "HP %d";
 static const char weapon_format[] = "%s";
 
+static const char compass_enemy_flag[] = "Enemy Flag";
+static const char compass_friendy_base[] = "Friendly Base";
+
 static struct HudDrawSettings
 {
     bool zoom;
@@ -255,6 +258,24 @@ void draw_hud_text()
     if (hud_draw_settings.help)
         hud->help->draw();
 
+    if (hud_draw_settings.compass)
+    {
+        char* compass_text;
+        if (ClientState::playerAgent_state.you == NULL)
+            compass_text = (char*)"";
+        else
+        {
+            if (ClientState::playerAgent_state.you->status.has_flag)
+                compass_text = (char*)compass_friendy_base;
+            else
+                compass_text = (char*)compass_enemy_flag;
+        }
+        hud->compass->set_text(compass_text);
+        int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
+        hud->compass->set_position(compass_x, 0);
+        hud->compass->draw();
+    }
+
     if (hud_draw_settings.fps)
     {
         hud->fps->update_formatted_string(1, hud_draw_settings.fps_val);
@@ -406,6 +427,11 @@ void HUD::init()
     weapon->set_format_extra_length(Weapons::WEAPON_HUD_STRING_MAX - 2);
     weapon->set_color(255,10,10,255);
     weapon->set_position(2, _yresf - (line_height + 16));
+    
+    compass = HudText::text_list->create();
+    compass->set_text((char*)"");
+    compass->set_color(0,0,0,255); // draw with team colors
+    compass->set_position(_xresf, _yresf);
 
     scoreboard = new Scoreboard();
     scoreboard->init();
