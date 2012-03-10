@@ -138,7 +138,7 @@ east    solar-panel.png
 ===
 id      100
 name    tree_bark_01
-hud     32 xox/Tree-bark_01.png
+hud     44 xox/Tree-bark_01.png
 top     xox/Tree-End_01.png
 bottom  xox/Tree-End_01.png
 north   xox/Tree-bark_01.png
@@ -148,7 +148,7 @@ east    xox/Tree-bark_01.png
 ===
 id      101
 name    tree_bark_02
-hud     33 xox/Tree-bark_02.png
+hud     45 xox/Tree-bark_02.png
 top     xox/Tree-End_02.png
 bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_02.png
@@ -158,7 +158,7 @@ east    xox/Tree-bark_02.png
 ===
 id      102
 name    tree_bark_03
-hud     34 xox/Tree-bark_03.png
+hud     46 xox/Tree-bark_03.png
 top     xox/Tree-End_01.png
 bottom  xox/Tree-End_01.png
 north   xox/Tree-bark_03.png
@@ -168,7 +168,7 @@ east    xox/Tree-bark_03.png
 ===
 id      103
 name    tree_bark_01
-hud     35 xox/Tree-bark_04.png
+hud     47 xox/Tree-bark_04.png
 top     xox/Tree-End_02.png
 bottom  xox/Tree-End_02.png
 north   xox/Tree-bark_04.png

@@ -567,6 +567,7 @@ adjust coins
 fix font loader segfault
 show enemy flag on map
 init map surface as 0,0,0,255 (black, nontransparent)
+hud text next to compass to say what it is pointing at
 
 TODO:
 adjust tile ids for terrain
