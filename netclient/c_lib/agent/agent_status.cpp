@@ -38,7 +38,8 @@ team(0),
 has_flag(false),
 flag_captures(0),
 coins(0),
-vox_crouched(false)
+vox_crouched(false),
+base_restore_rate_limiter(0)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
@@ -123,7 +124,8 @@ int Agent_status::apply_damage(int dmg) {
     dmg_msg.broadcast();
 
     if (!dmg) return this->health;
-
+    if (this->health <= 0) return this->health;
+    
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
 
@@ -137,7 +139,7 @@ int Agent_status::apply_damage(int dmg) {
 
 int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id)
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     // dont allow team kills
     if ((inflictor_type == OBJ_TYPE_AGENT || inflictor_type == OBJ_TYPE_GRENADE)
       && inflictor_id != this->a->id)
@@ -349,11 +351,20 @@ float Agent_status::get_spawn_angle()
 
 void Agent_status::restore_health()
 {
+    if (this->health == AGENT_HEALTH) return;
     this->health = AGENT_HEALTH;
     agent_health_StoC health_msg;
     health_msg.id = a->id;
     health_msg.health = this->health;
     health_msg.sendToClient(a->client_id);
+}
+
+void Agent_status::at_base()
+{
+    this->base_restore_rate_limiter++;
+    if (this->base_restore_rate_limiter % AGENT_BASE_PROXIMITY_EFFECT_RATE != 0) return;
+    this->restore_health();
+    this->a->weapons.restore_ammo();
 }
 
 bool Agent_status::pickup_flag() {

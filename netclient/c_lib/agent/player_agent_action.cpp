@@ -376,15 +376,19 @@ void PlayerAgent_action::throw_grenade()
     if (p->you->status.team == 0) return;
 
     // message to server
-    float x = p->camera_state.x;
-    float y = p->camera_state.y;
-    float z = p->camera_z();
+    //float x = p->camera_state.x;
+    //float y = p->camera_state.y;
+    //float z = p->camera_z();
+    float x = p->you->s.x;
+    float y = p->you->s.y;
+    float z = p->you->camera_z();
     ThrowGrenade_CtoS msg;
     msg.x = x;
     msg.y = y;
     msg.z = z;
     float f[3];
-    agent_camera->forward_vector(f);
+    //agent_camera->forward_vector(f);
+    p->you->s.forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];

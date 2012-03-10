@@ -10,7 +10,12 @@ class Agent_event {
     private:
         Agent_state* a;
         unsigned char r,g,b;  // team colors
+        bool first_time_receiving_coins;
     public:
+
+        BillboardTextHud* bb;
+        void display_name();
+        void hide_name();
 
         // side effects of taking damage. dont modify health/death here
         void took_damage(int dmg);
@@ -21,10 +26,6 @@ class Agent_event {
         void uncrouched();
         void life_changing(bool dead);
         void reload_weapon(int type);
-
-        BillboardTextHud* bb;
-        void display_name();
-        void hide_name();
 
         void joined_team(int team);
         void name_changed(char* old_name);

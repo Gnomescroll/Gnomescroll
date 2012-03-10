@@ -96,20 +96,27 @@ void Agent_event::took_damage(int dmg)
 
 void Agent_event::healed(int health)
 {
+    bool healed = (a->status.health < health);
     a->status.health = health;
 
     if (a->is_you())
     {
-        Sound::restore_health();
-        chat_client->send_system_message((char*) "You healed.");
+        if (healed)
+        {
+            Sound::restore_health();
+            chat_client->send_system_message((char*) "You healed.");
+        }
     }
     else
-        Sound::restore_health(
-            a->s.x,
-            a->s.y,
-            a->s.z,
-            0,0,0
-        );
+    {
+        if (healed)
+            Sound::restore_health(
+                a->s.x,
+                a->s.y,
+                a->s.z,
+                0,0,0
+            );
+    }
 }
 
 void Agent_event::died() {
@@ -222,6 +229,15 @@ void Agent_event::scored_flag()
 void Agent_event::coins_changed(unsigned int coins)
 {
     if (coins == this->a->status.coins) return;
+    if (this->first_time_receiving_coins)
+    {
+        this->first_time_receiving_coins = false;
+        const char msg_fmt[] = "You have $%d. Use these to build spawners (weapon 5)";
+        char* msg = (char*)malloc(sizeof(char) * (strlen(msg_fmt) + 10 - 2 + 1));
+        sprintf(msg, msg_fmt, coins);
+        chat_client->send_system_message(msg);
+        free(msg);
+    }
     this->a->status.coins = coins;
 }
 
@@ -428,6 +444,7 @@ Agent_event::Agent_event(Agent_state* owner)
 :
 a(owner),
 r(0),g(0),b(0),
+first_time_receiving_coins(true),
 bb(NULL)
 {}
 

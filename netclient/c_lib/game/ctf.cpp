@@ -454,8 +454,7 @@ void CTF::check_agent_proximities() {
                 one.captured_flag();
                 a->status.score_flag();
             }
-            a->status.restore_health();
-            a->weapons.restore_ammo();
+            a->status.at_base();
         }
     }
 
@@ -492,8 +491,7 @@ void CTF::check_agent_proximities() {
                 two.captured_flag();
                 a->status.score_flag();
             }
-            a->status.restore_health();
-            a->weapons.restore_ammo();
+            a->status.at_base();
         }
     }
 }

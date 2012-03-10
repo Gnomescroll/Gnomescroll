@@ -2,6 +2,7 @@
 
 #define AGENT_HEALTH 100
 #define RESPAWN_TICKS (2000 / 30)
+const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 
 #include <common/enum_types.hpp>
 
@@ -53,6 +54,8 @@ class Agent_status {
 
         bool vox_crouched;
 
+        int base_restore_rate_limiter;
+
         bool set_name(char* n); // return true if the new name is different
         void check_missing_name();
         
@@ -67,6 +70,8 @@ class Agent_status {
         void kill(int victim_id);
         void respawn();
         void restore_health();
+
+        void at_base();
         
         bool pickup_flag();
         bool drop_flag();
