@@ -34,6 +34,15 @@ for id,v in dat.items():
         continue
     cubes[name] = id
 
+def names_available():
+    print "Cube names available:"
+    for id,v in dat.items():
+        name = v.get('name', None)
+        if name is None:
+            continue
+        print name, id
+        
+
 def test_names():
     missing_names = False
     names = [
@@ -50,7 +59,9 @@ def test_names():
             missing_names = True
             print "%s not found in cube dat" % (n,)
     if missing_names:
+        names_available()
         raise ValueError, "Cube names are missing, map gen will fail"
+        
 test_names()
 
 def feb3_test_map():
