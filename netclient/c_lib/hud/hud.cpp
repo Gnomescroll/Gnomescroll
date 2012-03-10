@@ -56,6 +56,7 @@ static const char coins_format[] = "$%d";
 static const char health_format[] = "HP %d";
 static const char weapon_format[] = "%s";
 
+static const char compass_format[] = "Target:\n%s";
 static const char compass_enemy_flag[] = "Enemy Flag";
 static const char compass_friendy_base[] = "Friendly Base";
 
@@ -281,9 +282,10 @@ void draw_hud_text()
             }
         }
         hud->compass->set_color(r,g,b,255);
-        hud->compass->set_text(compass_text);
+        //hud->compass->set_text(compass_text);
+        hud->compass->update_formatted_string(1, compass_text);
         int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
-        hud->compass->set_position(compass_x, _yresf - hud->compass->get_height());
+        hud->compass->set_position(compass_x, _yresf - hud->compass->get_height()/2);
         hud->compass->draw();
     }
 
@@ -441,6 +443,8 @@ void HUD::init()
     
     compass = HudText::text_list->create();
     compass->set_text((char*)"");
+    compass->set_format((char*) compass_format);
+    compass->set_format_extra_length(30);   // arbitrarily big enough
     compass->set_color(0,0,0,255); // draw with team colors
     compass->set_position(_xresf, _yresf);
 
