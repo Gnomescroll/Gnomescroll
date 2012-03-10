@@ -219,15 +219,10 @@ void Text::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned
 
 void Text::set_position(float x, float y)
 {
-    static int first = 0;
     this->x = x;
     this->y = y;
-    if (!first)
-    {
-        this->refx = x;
-        this->refy = y;
-    }
-    first++;
+    this->refx = x;
+    this->refy = y;
 }
 
 void Text::set_scale(float scale)
