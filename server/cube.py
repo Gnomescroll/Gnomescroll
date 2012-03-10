@@ -217,7 +217,7 @@ dat = {   0: {   'active': False,
     100: {   'active': 1,
              'gravity': 0,
              'hud_img': 13,
-             'hud_pos': 32,
+             'hud_pos': 44,
              'infinite_texture': None,
              'infinite_texture_array': [],
              'infinite_texture_level': 0,
@@ -232,7 +232,7 @@ dat = {   0: {   'active': False,
     101: {   'active': 1,
              'gravity': 0,
              'hud_img': 14,
-             'hud_pos': 33,
+             'hud_pos': 45,
              'infinite_texture': None,
              'infinite_texture_array': [],
              'infinite_texture_level': 0,
@@ -247,7 +247,7 @@ dat = {   0: {   'active': False,
     102: {   'active': 1,
              'gravity': 0,
              'hud_img': 15,
-             'hud_pos': 34,
+             'hud_pos': 46,
              'infinite_texture': None,
              'infinite_texture_array': [],
              'infinite_texture_level': 0,
@@ -262,7 +262,7 @@ dat = {   0: {   'active': False,
     103: {   'active': 1,
              'gravity': 0,
              'hud_img': 16,
-             'hud_pos': 35,
+             'hud_pos': 47,
              'infinite_texture': None,
              'infinite_texture_array': [],
              'infinite_texture_level': 0,
@@ -274,11 +274,3 @@ dat = {   0: {   'active': False,
              'solid': True,
              'texture_id': [17, 17, 20, 20, 20, 20],
              'transparent': 0}}
-# buld name map
-names = {}
-for id,v in dat.items():
-    name = v.get('name', None)
-    if name is None:
-        continue
-    names[name] = id
-

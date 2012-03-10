@@ -26,7 +26,32 @@ import opts
 opts.opts = args_server.get_args()
 opts = opts.opts
 
-from cube import names as cubes
+from cube import dat
+cubes = {} # TODO -- move this out of here
+for id,v in dat.items():
+    name = v.get('name', None)
+    if name is None:
+        continue
+    cubes[name] = id
+
+def test_names():
+    missing_names = False
+    names = [
+        'tron_blue',
+        'tron_green',
+        'battery',
+        'blue_ore',
+        'stone',
+        'lava',
+        'solar_panel',
+    ]
+    for n in names:
+        if n not in cubes:
+            missing_names = True
+            print "%s not found in cube dat" % (n,)
+    if missing_names:
+        raise ValueError, "Cube names are missing, map gen will fail"
+test_names()
 
 def feb3_test_map():
     #setup
