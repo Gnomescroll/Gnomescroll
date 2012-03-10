@@ -205,7 +205,10 @@ void ChatInput::submit(int channel)
 {
     if (!buffer_len) return;
 
-    if (!route_command())
+    bool was_cmd = route_command();
+    bool valid = is_valid_chat_message(this->buffer);
+
+    if (!was_cmd && valid)
     {   // create, send packet
         ChatMessage_CtoS msg;
         strcpy(msg.msg, buffer);
@@ -214,7 +217,8 @@ void ChatInput::submit(int channel)
     }
     
     // add to history
-    this->add_to_history(buffer);
+    if (was_cmd || valid)
+        this->add_to_history(buffer);
 
     // reset buffer
     this->clear_buffer();
@@ -319,7 +323,7 @@ bool ChatInput::route_command()
 
     if (!strcmp(cmd, (char*)"team"))
     {
-        if (buffer_len <= (int)(strlen((char*)"/team "))) return true;
+        if (buffer_len <= (int)(strlen((char*)"/team "))) return false;
         char team_str[2];
         team_str[1] = '\0';
         team_str[0] = buffer[i];
@@ -332,11 +336,12 @@ bool ChatInput::route_command()
             if (!team) return true; // failure
         }
         ClientState::ctf->join_team(team);
+        return true;
     }
     else
     if (!strcmp(cmd, (char*)"name") || !strcmp(cmd, (char*)"nick"))
     {
-        if (buffer_len <= (int)(strlen((char*)"/name "))) return true;
+        if (buffer_len <= (int)(strlen((char*)"/name "))) return false;
         char name[PLAYER_NAME_MAX_LENGTH+1] = {'\0'};
         int j = 0;
         while ((c = buffer[i++]) != '\0' && !isspace(c))
@@ -345,11 +350,12 @@ bool ChatInput::route_command()
             if (j==(int)PLAYER_NAME_MAX_LENGTH) break;
         }
         ClientState::send_identify_packet(name);
+        return true;
     }
     else
     if (!strcmp(cmd, (char*)"spawner"))
     {
-        if (buffer_len <= (int)(strlen((char*)"/spawner "))) return true;
+        if (buffer_len <= (int)(strlen((char*)"/spawner "))) return false;
         char spawner[4] = {'\0'};
         int j = 0;
         while ((c = buffer[i++]) != '\0' && !isspace(c))
@@ -374,13 +380,14 @@ bool ChatInput::route_command()
         }
         if (spawner_team_index == 0)    // could be legitimate 0
             if (spawner[0] != '0')
-                return true;
+                return false;
         printf("Chat select spawner %d\n", spawner_team_index);
         if (spawner_team_index == 0)
             spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
         choose_spawn_location_CtoS msg;
         msg.id = spawner_team_index;
         msg.send();
+        return true;
     }
     else
     if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B") || !strcmp(cmd, (char*)"base"))
@@ -388,9 +395,10 @@ bool ChatInput::route_command()
         choose_spawn_location_CtoS msg;
         msg.id = BASE_SPAWN_ID;
         msg.send();
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 ChatInput::ChatInput()

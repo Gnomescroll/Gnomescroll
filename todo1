@@ -568,9 +568,12 @@ fix font loader segfault
 show enemy flag on map
 init map surface as 0,0,0,255 (black, nontransparent)
 hud text next to compass to say what it is pointing at
+map recipes uses tiles by name
 
-TODO:
-adjust tile ids for terrain
+--BUILD 6431--
+
+only play damage sound for you
+dont draw flag icon if held
 ====================
 
 Animations
@@ -658,9 +661,7 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 
 text alignment settings (center,left,right,bottom,top)
 
-hide flag from map when held
-
-damage sound only for you
+color compass arrow, not text
 
 double hud player text happens -- not destroying via text list?
 

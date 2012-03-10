@@ -90,8 +90,9 @@ void Agent_event::took_damage(int dmg)
 
     if (a->is_you())
         Sound::agent_took_damage();
-    else
-        Sound::agent_took_damage(a->s.x, a->s.y, a->s.z, 0,0,0);
+    // TODO: attenuated damage sound
+    //else
+        //Sound::agent_took_damage(a->s.x, a->s.y, a->s.z, 0,0,0);
 }
 
 void Agent_event::healed(int health)

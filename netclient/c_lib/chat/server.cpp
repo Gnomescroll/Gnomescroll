@@ -99,6 +99,8 @@ void ChatServer::receive_message(int channel, int sender, char* payload)
 {
     if (channel < 0 || channel >= CHAT_SERVER_CHANNELS_MAX) return;
 
+    if (!is_valid_chat_message(payload)) return;
+
     if (channel == 0)
     {
         if (sender == CHAT_SENDER_SYSTEM)
