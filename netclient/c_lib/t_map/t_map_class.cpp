@@ -138,6 +138,7 @@ namespace t_map
     #endif
     }
 
+#if DC_CLIENT
     void Terrain_map::set_update(int x, int y)
     {
         //printf("set update: %i %i \n", x,y);
@@ -150,6 +151,8 @@ namespace t_map
         if( c == NULL ) return;
         c->needs_update = true;
     }
+#endif
+
 /*
     Set Methods 
 */
