@@ -82,10 +82,9 @@ void map_chunk_compressed_StoC::handle(char* buff, int byte_num)
     struct MAP_CHUNK* m = main_map->chunk[chunk_index];
     if(m == NULL)
     {
-        main_map->set_block(16*x,16*y,0, 0); //create chunk    
+        main_map->set_block(16*x+8,16*y+8,0, 0); //create chunk    
         m = main_map->chunk[chunk_index];
     }
-
 
     int _size = sizeof(struct MAP_ELEMENT)*16*16*TERRAIN_MAP_HEIGHT;
 

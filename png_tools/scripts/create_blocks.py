@@ -293,7 +293,7 @@ for block in lblock.list:
 #print str(dat)
 
 import pprint
-f = open("../server/dats/cube_dat.py", "w")
+f = open("../server/cube.py", "w")
 pp = pprint.PrettyPrinter(stream=f, indent=4)
 #pp = pprint.PrettyPrinter(indent=4)
 f.write("dat = ")
