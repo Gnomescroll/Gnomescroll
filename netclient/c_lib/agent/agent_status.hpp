@@ -7,6 +7,7 @@ const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 #include <common/enum_types.hpp>
 
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
+const int SLIME_KILLS_PER_COIN = 10;
 
 typedef enum AgentDeathMethod
 {
@@ -40,6 +41,7 @@ class Agent_status {
         unsigned int kills;
         unsigned int deaths;
         unsigned int suicides;
+        unsigned int slime_kills;
 
         unsigned int health_max;
 
@@ -68,9 +70,9 @@ class Agent_status {
         int die();
         int die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
+        void kill_slime();
         void respawn();
         void restore_health();
-
         void at_base();
         
         bool pickup_flag();

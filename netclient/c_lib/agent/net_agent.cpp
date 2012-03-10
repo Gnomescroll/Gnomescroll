@@ -658,7 +658,7 @@ inline void hitscan_object_CtoS::handle()
     //const int agent_dmg = 25;
     const int slime_dmg = 25;
     const int spawner_dmg = 25;
-    int spawner_health;
+    int dmg_health;
 
     //float x,y,z;
     Agent_state* agent = NULL;
@@ -671,7 +671,9 @@ inline void hitscan_object_CtoS::handle()
             agent = ServerState::agent_list->get(id);
             if (agent==NULL) return;
             // apply damage
-            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
+            if (dmg_health <= 0)
+                a->status.add_coins(1);
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
@@ -681,7 +683,9 @@ inline void hitscan_object_CtoS::handle()
             slime = ServerState::slime_list->get(id);
             if (slime==NULL) return;
             // apply damage
-            slime->take_damage(slime_dmg);
+            dmg_health = slime->take_damage(slime_dmg);
+            if (dmg_health <= 0)
+                a->status.kill_slime();
             //x = slime->x;
             //y = slime->y;
             //z = slime->z;
@@ -696,8 +700,8 @@ inline void hitscan_object_CtoS::handle()
                 return; // teammates cant kill spawners
                 
             // apply damage
-            spawner_health = spawner->take_damage(spawner_dmg);
-            if (spawner_health <= 0)
+            dmg_health = spawner->take_damage(spawner_dmg);
+            if (dmg_health <= 0)
             {
                 int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
@@ -820,7 +824,7 @@ inline void melee_object_CtoS::handle()
     const int agent_dmg = 50;
     const int slime_dmg = 50;
     const int spawner_dmg = 50;
-    int spawner_health;
+    int dmg_health;
     
     switch (type)
     {
@@ -828,14 +832,18 @@ inline void melee_object_CtoS::handle()
             agent = ServerState::agent_list->get(id);
             if (agent==NULL) return;
             // apply damage
-            agent->status.apply_hitscan_laser_damage_to_part(agent_dmg, a->id, a->type);
+            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(agent_dmg, a->id, a->type);
+            if (dmg_health <= 0)
+                a->status.add_coins(1);
             break;
 
         case OBJ_TYPE_SLIME:
             slime = ServerState::slime_list->get(id);
             if (slime==NULL) return;
             // apply damage
-            slime->take_damage(slime_dmg);
+            dmg_health = slime->take_damage(slime_dmg);
+            if (dmg_health <= 0)
+                a->status.kill_slime();
             break;
 
         case OBJ_TYPE_SPAWNER:
@@ -847,8 +855,8 @@ inline void melee_object_CtoS::handle()
                 return; // teammates cant kill spawners
                 
             // apply damage
-            spawner_health = spawner->take_damage(spawner_dmg);
-            if (spawner_health <= 0)
+            dmg_health = spawner->take_damage(spawner_dmg);
+            if (dmg_health <= 0)
             {
                 int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);

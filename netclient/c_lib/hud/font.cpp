@@ -292,10 +292,11 @@ missing_glyph('?')
     printf("Loaded font %s\n", data.file);
 }
 
-static int read_fonts_used()
+int read_fonts_used()
 {
     const char fonts_used[] = "fonts_used";
-    char* fn = (char*)malloc(strlen(fonts_used) + strlen(font_path) - 4 + 1);
+    int fn_len = strlen(fonts_used) + strlen(font_path) + 1;
+    char* fn = (char*)malloc(fn_len);
     sprintf(fn, "%s%s", font_path, fonts_used);
 
     int size = 0;
@@ -315,7 +316,7 @@ static int read_fonts_used()
     }
     fonts = (Font**)malloc(sizeof(Font*) * lines);
     for (int i=0; i<lines; i++)
-    {   // itearte lines, loading fonts
+    {   // iterate lines, loading fonts
         if (font_names[i][0] == '\0' || font_names[i][0] == '#')    // skip blank lines, comments
             continue;
         fonts[n_fonts] = new Font(font_names[i]);

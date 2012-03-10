@@ -32,6 +32,7 @@ spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),
+slime_kills(0),
 health_max(AGENT_HEALTH),
 identified(false),
 team(0),
@@ -272,6 +273,13 @@ void Agent_status::kill(int victim_id) {
         ak.kills = kills;
         ak.broadcast();
     }
+}
+
+void Agent_status::kill_slime()
+{
+    this->slime_kills++;
+    if (this->slime_kills % SLIME_KILLS_PER_COIN == 0)
+        this->add_coins(1);
 }
 
 int Agent_status::score() {
