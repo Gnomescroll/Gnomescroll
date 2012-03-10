@@ -5,11 +5,12 @@
 #include <compat_gl.h>
 #include <c_lib/camera/camera.hpp>
 #include <c_lib/SDL/texture_loader.hpp>
+#include <c_lib/SDL/draw_functions.hpp>
 
-static int particle_texture_id;
+static int particle_texture;
 
 int init_particles() {
-    int i = create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture_id);
+    int i = create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
     if (i)
     {
         printf("init_particles failed with code %d\n", i);
@@ -63,5 +64,14 @@ BillboardSprite::BillboardSprite()
 scale(1.0f),
 texture_index(0)
 {}
+
+void begin_transparent_particle_draw()
+{
+    begin_transparent_draw(particle_texture);
+}
+void end_transparent_particle_draw()
+{
+    end_transparent_draw();
+}
 
 #endif

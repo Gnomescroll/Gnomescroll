@@ -5,10 +5,9 @@
 #include <c_lib/agent/player_agent.hpp>
 
 #include <c_lib/particles/particle_lib.hpp>
-
 #include <c_lib/game/ctf.hpp>
 
-#ifdef USE_OPENAL
+#if USE_OPENAL
 #include <c_lib/sound/openal.hpp>
 #endif
 
@@ -156,6 +155,26 @@ namespace ClientState {
         minivox_list->tick();
         billboard_text_list->tick();
         billboard_text_hud_list->tick();
+    }
+
+    void draw()
+    {
+        // voxels
+        agent_list->draw();
+        voxel_render_list->draw();
+
+        // quads
+        minivox_list->draw();
+
+        // transparent
+        begin_transparent_particle_draw();
+        billboard_text_list->draw();
+        cspray_list->draw();
+        grenade_list->draw();
+        shrapnel_list->draw();
+        blood_list->draw();
+        end_transparent_draw();
+        end_transparent_particle_draw();
     }
 
     void send_identify_packet(char* name)

@@ -26,3 +26,6 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float tx, fl
 
 // Blit sprites from a larger bound texture
 void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);
+
+void begin_transparent_draw(int texture);
+void end_transparent_draw();

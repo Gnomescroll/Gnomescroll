@@ -215,7 +215,6 @@ int init_c_lib() {
     
     init_input();
     init_handlers();
-    init_particle_functions();
     init_cameras();
     init_chat_client();
     init_particles();
@@ -248,7 +247,6 @@ void close_c_lib() {
 
     // free surfaces
     t_map::teardown_shader();
-    teardown_particle_surface();
     HudMap::teardown();
     //vn::teardown();
     Sound::close();

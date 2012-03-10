@@ -194,3 +194,26 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
     glEnd();
 }
 
+void begin_transparent_draw(int texture)
+{
+    glColor3ub(255,255,255);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    glBegin(GL_QUADS);
+}
+
+void end_transparent_draw()
+{
+    glEnd();
+    glDepthMask(GL_TRUE);
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+}
+

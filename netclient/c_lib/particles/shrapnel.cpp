@@ -51,27 +51,9 @@ void Shrapnel_list::draw()
 {
 #ifdef DC_CLIENT
     if(num == 0) return;
-
-    glColor3ub(255,255,255);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    glBindTexture(GL_TEXTURE_2D, particle_texture_id);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-    glBegin(GL_QUADS);
-
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
             a[i]->draw(a[i]->vp->p);
-
-    glEnd();
-    glDepthMask(GL_TRUE);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
 #endif
 }
 

@@ -15,4 +15,7 @@ class BillboardSprite
         BillboardSprite();
 };
 
+void begin_transparent_particle_draw();
+void end_transparent_particle_draw();
+
 #endif
