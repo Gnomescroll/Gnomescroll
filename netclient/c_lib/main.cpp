@@ -108,6 +108,7 @@ int run()
             // input
             process_events();
             get_key_state();
+            trigger_keys_held_down();
 
             // tick animations
             Animations::animations_tick();

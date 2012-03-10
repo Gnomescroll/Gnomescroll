@@ -5,6 +5,7 @@
 
 #define MOUSE_INPUT_BUFFER_SIZE 32
 #define MOUSE_BUFFER_DECAY 0.70f
+
 struct MouseMotionAverage* get_mouse_render_state(int t);
 
 int init_input();

@@ -1,5 +1,8 @@
 #pragma once
 
+const int SDL_EVENT_USER_NONE = 0;
+const int SDL_EVENT_USER_TRIGGER = 1;
+
 typedef enum InputStateMode
 {
     INPUT_STATE_AGENT,
@@ -70,3 +73,4 @@ void set_input_options(
     float sensitivity
 );
 
+void trigger_keys_held_down();

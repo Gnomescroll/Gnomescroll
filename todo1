@@ -578,6 +578,7 @@ chat message validation / filtering
 fix billboard hud text timeouts and set_draw properties
 draw chat, scoreboard, player hud text when zoomed
 quit confirmation dialog
+/s#, /S#, /s #, /S # syntax for selecting spawner via chat
 ====================
 
 Animations
@@ -662,7 +663,5 @@ text alignment settings (center,left,right,bottom,top)
 color compass arrow, not text
 
 backspace hold down
-
-s# shortcut
 
 PRINT & MAIL REBATES

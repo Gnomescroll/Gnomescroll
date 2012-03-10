@@ -58,9 +58,9 @@ int process_events()
     else
         unbind_mouse();
 
-    while(SDL_PollEvent( &Event )) { //returns 0 if no event
-
-
+    while(SDL_PollEvent(&Event))
+    { //returns 0 if no event
+        Event.user.code = SDL_EVENT_USER_NONE;
         switch( Event.type )
         {
             case SDL_QUIT:

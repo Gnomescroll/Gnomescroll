@@ -162,6 +162,56 @@ void init_handlers()
     input_state.sensitivity = 100.0f;
 }
 
+// keys that can be held down
+const int KEY_HOLD_DELAY = 30 * 1;  // 1 second
+const int KEY_HOLD_RATE = 3;    // 10 pulses per second
+
+typedef enum {
+    kBACKSPACE = 0,
+    kLEFT_ARROW,
+    kRIGHT_ARROW
+} held_down_key;
+
+typedef struct {
+    bool pressed;
+    int t;
+} key_rate_limit;
+
+const int KEYS_HELD_DOWN = 3;
+static key_rate_limit keys_held_down[KEYS_HELD_DOWN];
+static const SDLKey keys_held_down_map[KEYS_HELD_DOWN] = {
+    SDLK_BACKSPACE,
+    SDLK_LEFT,
+    SDLK_RIGHT
+};
+
+static void update_keys_held_down()
+{
+    for (int i=0; i<KEYS_HELD_DOWN; i++)
+    {
+        if (keys_held_down[i].pressed)
+            keys_held_down[i].t++;
+        else
+            keys_held_down[i].t = 0;
+    }
+}
+
+void trigger_keys_held_down()
+{
+    update_keys_held_down();
+    static SDL_Event event;
+    for (int i=0; i<KEYS_HELD_DOWN; i++)
+    {
+        if (keys_held_down[i].t > KEY_HOLD_DELAY
+          && (keys_held_down[i].t - KEY_HOLD_DELAY) % KEY_HOLD_RATE == 0)
+        {
+            event.user.code = SDL_EVENT_USER_TRIGGER;
+            event.key.keysym.sym = keys_held_down_map[i];
+            key_down_handler(&event);
+        }
+    }
+}
+
 // options
 const float ZOOM_SENSITIVITY_SCALE = 0.7f;
 void set_input_options(
@@ -568,6 +618,19 @@ void key_down_handler(SDL_Event* event)
         case SDLK_BACKQUOTE:
             toggle_full_chat();
             break;
+
+        case SDLK_BACKSPACE:
+            if (event->user.code != SDL_EVENT_USER_TRIGGER)
+                keys_held_down[kBACKSPACE].pressed = true;
+            break;
+        case SDLK_LEFT:
+            if (event->user.code != SDL_EVENT_USER_TRIGGER)
+                keys_held_down[kLEFT_ARROW].pressed = true;
+            break;
+        case SDLK_RIGHT:
+            if (event->user.code != SDL_EVENT_USER_TRIGGER)
+                keys_held_down[kRIGHT_ARROW].pressed = true;
+            break;
             
         default: break;
     }
@@ -614,6 +677,16 @@ void key_up_handler(SDL_Event* event)
         case SDLK_RALT:
             if (input_state.has_focus)
                 input_state.mouse_bound = input_state.rebind_mouse;
+            break;
+
+        case SDLK_BACKSPACE:
+            keys_held_down[kBACKSPACE].pressed = false;
+            break;
+        case SDLK_LEFT:
+            keys_held_down[kLEFT_ARROW].pressed = false;
+            break;
+        case SDLK_RIGHT:
+            keys_held_down[kRIGHT_ARROW].pressed = false;
             break;
 
         default: break;
