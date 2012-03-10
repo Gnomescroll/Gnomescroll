@@ -25,7 +25,7 @@ struct _VBO_DRAW_STRUCT
     float distance;
 };
 
-static struct _VBO_DRAW_STRUCT* draw_vbo_array;;
+static struct _VBO_DRAW_STRUCT* draw_vbo_array;
 
 void vbo_draw_init()
 {
@@ -114,8 +114,6 @@ void Vbo_map::sort_draw()
     {
         class Map_vbo* v = draw_vbo_array[i].map_vbo;
 
-        v->xpos, y->ypos
-
         float _x = (v->xpos - x);
         float _y = (v->ypos - y);
 
@@ -123,7 +121,7 @@ void Vbo_map::sort_draw()
     }
 
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
-  QSORT(struct elt, arr, n, _VBO_DRAW_STRUCT_lt);
+  QSORT(struct  _VBO_DRAW_STRUCT, draw_vbo_array, draw_vbo_n, _VBO_DRAW_STRUCT_lt);
 
 /*
  * struct elt {
