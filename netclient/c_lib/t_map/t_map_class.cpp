@@ -138,6 +138,17 @@ namespace t_map
     #endif
     }
 
+    void Terrain_map::set_update(int x, int y)
+    {
+        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
+            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+            ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+        ) return;
+        struct MAP_CHUNK* c;
+        c = chunk[ MAP_CHUNK_WIDTH*(y >> 4) + (x >> 4) ];
+        if( c == NULL ) return;
+        c->needs_update = true;
+    }
 /*
     Set Methods 
 */
@@ -161,7 +172,31 @@ namespace t_map
         c->e[ (z << 8)+ ((y & 15) <<4) + (x & 15)] = element;
 
         #ifdef DC_CLIENT
-            c->needs_update = true;
+            c->needs_update = true; 
+
+
+
+            if((x & 15) == 0)
+            {
+                set_update(x-1,y);
+            }
+
+            if(x & 15) == 15)
+            {
+                set_update(x-1,y);
+            }
+
+            if((y & 15) == 0)
+            {
+                set_update(x,y-1);
+            }
+
+            if(y & 15) == 15)
+            {
+                set_update(x,y+1);
+            }
+
+
         #endif
     #else
         //printf("set: %i %i %i \n",  x,y,z);
