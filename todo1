@@ -577,6 +577,7 @@ dont draw flag icon if held
 chat message validation / filtering
 fix billboard hud text timeouts and set_draw properties
 draw chat, scoreboard, player hud text when zoomed
+quit confirmation dialog
 ====================
 
 Animations
@@ -632,10 +633,6 @@ charge up
 -- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
 grenade damage indication (blood, voxel destruction)
 
-Bug: agent_id unrecognized. happens in the object list
-Bug: very nasty -- invalid read/write at different points in the voxel render list unregister. may be related to uninitialised fulstrum test variable that sometimes appears.
-        gdb resisted watchpoints
-        
 territory control
     -- color in GLSL
 
@@ -646,8 +643,6 @@ get hudmap to use z height checks so it can load faster, maybe in the background
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 try 256x256 map
-
-confirmation dialog for ESC quit
 
 chat command for places of interest
 
@@ -669,7 +664,5 @@ color compass arrow, not text
 backspace hold down
 
 s# shortcut
-
-review server segfaults
 
 PRINT & MAIL REBATES

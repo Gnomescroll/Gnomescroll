@@ -321,6 +321,8 @@ bool ChatInput::route_command()
     while((c = this->buffer[i++]) != '\0' && !isspace(c))   // advance cursor past command
         cmd[i-2] = c;
 
+    if (i == 2) return false;
+
     if (!strcmp(cmd, (char*)"team"))
     {
         if (buffer_len <= (int)(strlen((char*)"/team "))) return false;
@@ -353,16 +355,35 @@ bool ChatInput::route_command()
         return true;
     }
     else
-    if (!strcmp(cmd, (char*)"spawner"))
+    if (!strcmp(cmd, (char*)"spawner") || cmd[0] == 's' || cmd[0] == 'S')
     {
-        if (buffer_len <= (int)(strlen((char*)"/spawner "))) return false;
         char spawner[4] = {'\0'};
         int j = 0;
-        while ((c = buffer[i++]) != '\0' && !isspace(c))
+
+        // check for s# syntax
+        int k = 1;
+        while ((c = buffer[k++]) != '\0' && isdigit(c))
         {
             spawner[j++] = c;
             if (j == 3) break;
         }
+
+        if (!j)
+        {   // check for s # syntax
+            k = 2;
+            while ((c = buffer[k++]) != '\0' && isdigit(c))
+            {
+                spawner[j++] = c;
+                if (j == 3) break;
+            }
+        }
+
+        if (!j) // /spawner # syntax
+            while ((c = buffer[i++]) != '\0' && !isspace(c))
+            {
+                spawner[j++] = c;
+                if (j == 3) break;
+            }
         int spawner_team_index = atoi(spawner);
         if (spawner_team_index == 0)    // not an int
         {
