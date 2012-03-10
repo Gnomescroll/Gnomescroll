@@ -577,8 +577,18 @@ void ChatRender::set_cursor(char* text, float x, float y)
     int len = 0;
     int h = 0;
     const int w = 8;
-    HudFont::font->get_string_pixel_dimension(text, &len, &h);
-    cursor_x = x + len + 4;
+
+    int s_len = strlen(text);
+    char* tmp_text = (char*)malloc(sizeof(char) * (s_len + 1));
+    strcpy(tmp_text, text);
+    if (chat_client->input->cursor <= s_len)    // truncate text buffer to cursor position
+        tmp_text[chat_client->input->cursor] = '\0';
+    HudFont::font->get_string_pixel_dimension(tmp_text, &len, &h);
+    free(tmp_text);
+    h = HudFont::font->data.line_height;
+    cursor_x = x + len;
+    if (chat_client->input->cursor == s_len)
+        cursor_x += 4;  // margin at the end
     cursor_y = y - h;
     cursor_w = w;
     cursor_h = h;
