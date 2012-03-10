@@ -3,20 +3,13 @@
 #include <physics/common.hpp>
 #include <physics/verlet.hpp>
 
-
 /* These should be pulled from a dat or something */
-#define GRENADE_MAX 1024
-#define GRENADE_TTL 100
-#define GRENADE_DAMP 0.5f
-#define GRENADE_TYPE 1
-#define GRENADE_TEXTURE_ID 5
-#define GRENADE_TEXTURE_SCALE 1.0f
-
-#define GRENADE_BLOCK_DESTROY_RADIUS 2
-#define GRENADE_DAMAGE_RADIUS 4.5f
-#define GRENADE_SPLASH_DAMAGE 100
-#define GRENADE_BLOCK_DAMAGE 32
-#define GRENADE_SPAWNER_DAMAGE 20
+const int GRENADE_MAX = 1024;
+const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
+const float GRENADE_DAMAGE_RADIUS = 4.5f;
+const int GRENADE_SPLASH_DAMAGE = 100;
+const int GRENADE_BLOCK_DAMAGE = 32;
+const int GRENADE_SPAWNER_DAMAGE = 20;
 
 using Verlet::VerletParticle;
 
@@ -26,12 +19,11 @@ class Grenade: public Particle
 {
     private:
         int bounce_count;
+        void init();
     public:
         int owner;  // agent_id
 
-        void draw();
         void tick();
-
         void explode();
 
         int block_damage(int dist);

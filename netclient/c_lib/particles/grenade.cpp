@@ -1,6 +1,6 @@
 #include "grenade.hpp"
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <compat_gl.h>
 #include <c_lib/animations/animations.hpp>
 #include <sound/triggers.hpp>
@@ -23,6 +23,11 @@
 
 /* properties */
 
+const int GRENADE_TTL = 100;
+const float GRENADE_DAMP = 0.5f;
+const int GRENADE_TYPE = 1;
+const int GRENADE_TEXTURE_ID = 5;
+const float GRENADE_TEXTURE_SCALE = 1.0f;
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
 const float GRENADE_MASS = 0.5f;
 
@@ -53,9 +58,9 @@ class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
         inline void handle();
 };
 
-
-inline void grenade_StoC::handle() {
-    #ifdef DC_CLIENT
+inline void grenade_StoC::handle()
+{
+    #if DC_CLIENT
     if (owner == ClientState::playerAgent_state.agent_id) return;
     Grenade* g = ClientState::grenade_list->create(x, y, z, mx, my, mz);
     g->owner = owner;
@@ -64,14 +69,21 @@ inline void grenade_StoC::handle() {
     #endif
 }
 
+void Grenade::init()
+{
+    this->ttl_max = GRENADE_TTL;
+    this->type = GRENADE_TYPE;
+    this->texture_index = GRENADE_TEXTURE_ID;
+    this->scale = GRENADE_TEXTURE_SCALE;    
+}
+
 Grenade::Grenade(int id)
 :
 Particle(id, 0,0,0,0,0,0, GRENADE_MASS),
 bounce_count(0),
 owner(-1)
 {
-    this->ttl_max = GRENADE_TTL;
-    this->type = GRENADE_TYPE;
+    this->init();
 }
 
 Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
@@ -80,13 +92,12 @@ Particle(id, x,y,z,mx,my,mz, GRENADE_MASS),
 bounce_count(0),
 owner(-1)
 {
-    this->ttl_max = GRENADE_TTL;
-    this->type = GRENADE_TYPE;
+    this->init();
 }
 
 Grenade::~Grenade()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     Sound::grenade_explode(
         this->vp->p.x, this->vp->p.y, this->vp->p.z,
         0,0,0
@@ -94,7 +105,7 @@ Grenade::~Grenade()
     #endif
 }
 
-#ifdef DC_SERVER
+#if DC_SERVER
 void Grenade::broadcast()
 {
     grenade_StoC msg;
@@ -112,13 +123,14 @@ void Grenade::broadcast()
 }
 #endif
 
-void Grenade::tick() {
+void Grenade::tick()
+{
 
     bool bounced = Verlet::bounce(this->vp, GRENADE_DAMP);
     if (bounced)
     {
         bounce_count++;
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         Sound::grenade_bounce(
             this->vp->p.x,
             this->vp->p.y,
@@ -132,54 +144,13 @@ void Grenade::tick() {
     this->ttl++;
 }
 
-void Grenade::draw() {
-#ifdef DC_CLIENT
-    if (current_camera == NULL
-    || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z))
-        return;
-
-    Vec3 up = vec3_init(
-        model_view_matrix[0]*GRENADE_TEXTURE_SCALE,
-        model_view_matrix[4]*GRENADE_TEXTURE_SCALE,
-        model_view_matrix[8]*GRENADE_TEXTURE_SCALE
-    );
-    Vec3 right = vec3_init(
-        model_view_matrix[1]*GRENADE_TEXTURE_SCALE,
-        model_view_matrix[5]*GRENADE_TEXTURE_SCALE,
-        model_view_matrix[9]*GRENADE_TEXTURE_SCALE
-    );
-
-    float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(GRENADE_TEXTURE_ID%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(GRENADE_TEXTURE_ID/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
-
-    Vec3 p = vec3_sub(this->vp->p, vec3_add(right, up));    // Bottom left
-    glTexCoord2f(tx_min,ty_max);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(this->vp->p, vec3_sub(up, right));         // Top left
-    glTexCoord2f(tx_min,ty_min);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(this->vp->p, vec3_add(up, right));         // Top right
-    glTexCoord2f(tx_max,ty_min);
-    glVertex3f(p.x, p.y, p.z);
-
-    p = vec3_add(this->vp->p, vec3_sub(right, up));         // Bottom right
-    glTexCoord2f(tx_max,ty_max);
-    glVertex3f(p.x, p.y, p.z);
-#endif    
-}
-
 void Grenade::explode()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     Animations::grenade_explode(this->vp->p.x, this->vp->p.y, this->vp->p.z);
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
     ServerState::damage_objects_within_sphere(
         this->vp->p.x, this->vp->p.y, this->vp->p.z,
@@ -191,7 +162,8 @@ void Grenade::explode()
 #endif
 }
 
-int Grenade::block_damage(int dist) {
+int Grenade::block_damage(int dist)
+{
     int max_dist = GRENADE_BLOCK_DESTROY_RADIUS*3;
     float ratio = (float)(max_dist - dist) / (float)(max_dist);
     float dmg = ratio * (float)(GRENADE_BLOCK_DAMAGE);
@@ -199,8 +171,9 @@ int Grenade::block_damage(int dist) {
     return idmg;
 }
 
-void Grenade::damage_blocks() {
-#ifdef DC_SERVER
+void Grenade::damage_blocks()
+{
+#if DC_SERVER
     const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
     using t_map::apply_damage_broadcast;
     
@@ -244,13 +217,14 @@ void Grenade::damage_blocks() {
 }
 
 /* Grenade list */
-void Grenade_list::tick() {
-    int i;
-    for(i=0; i<n_max; i++) {
+void Grenade_list::tick()
+{
+    for(int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->tick();
-
-        if(a[i]->ttl >= a[i]->ttl_max) {
+        if(a[i]->ttl >= a[i]->ttl_max)
+        {
             a[i]->explode();
             destroy(a[i]->id);
             num--;
@@ -258,23 +232,24 @@ void Grenade_list::tick() {
     }
 }
 
-void Grenade_list::draw() {
-#ifdef DC_CLIENT
-    if(num == 0) { return; }
+void Grenade_list::draw()
+{
+#if DC_CLIENT
+    if(num == 0) return;
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, particle_texture_id );
+    glBindTexture(GL_TEXTURE_2D, particle_texture_id);
     glEnable(GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glBegin( GL_QUADS );
+    glBegin(GL_QUADS);
 
-    int i;
-    for(i=0; i<n_max; i++) {
+    for(int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->draw();
     }
@@ -282,13 +257,13 @@ void Grenade_list::draw() {
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-
 #endif
 }
 
-inline void print_grenade(Grenade *g) {
+inline void print_grenade(Grenade *g)
+{
     printf("Print Grenade -\n");
     printf("ID: %d\n", g->id);
     printf("Pos: %0.2f %0.2f %0.2f\n", g->vp->p.x, g->vp->p.y, g->vp->p.z);

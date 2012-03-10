@@ -15,6 +15,10 @@ class Particle
 
         VerletParticle* vp;
 
+        float scale;
+        int texture_index;
+
+        void draw();
         void set_ttl(int ttl);
 
         Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
