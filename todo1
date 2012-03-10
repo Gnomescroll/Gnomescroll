@@ -561,6 +561,7 @@ TODO:
 rate limit base ammo/health restore
 "You healed" message
 "You have $%d coins. Use them to build spawners (weapon 5)" message, first time receiving coins
+Use net agent state for grenade animation
 
 adjust coins
 ====================

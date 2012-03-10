@@ -387,7 +387,8 @@ void PlayerAgent_action::throw_grenade()
     msg.y = y;
     msg.z = z;
     float f[3];
-    agent_camera->forward_vector(f);
+    //agent_camera->forward_vector(f);
+    p->you->s.forward_vector(f);
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];
