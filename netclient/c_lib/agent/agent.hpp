@@ -140,6 +140,8 @@ class Agent_state {
 
         void init_vox();
 
+        float camera_z();
+
         explicit Agent_state(int id); //default constructor
         Agent_state(int id, float x, float y, float z, float vx, float vy, float vz);
 

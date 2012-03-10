@@ -779,6 +779,11 @@ int Agent_state::current_height_int()
     return (int)ceil(h);
 }
 
+float Agent_state::camera_z()
+{
+    return this->s.z + this->camera_height();
+}
+
 #define CUBE_SELECT_MAX_DISTANCE 12.0f
 int Agent_state::get_facing_block_type()
 {

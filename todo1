@@ -560,6 +560,7 @@ Mar 9
 TODO:
 rate limit base ammo/health restore
 "You healed" message
+"You have $%d coins. Use them to build spawners (weapon 5)" message, first time receiving coins
 
 adjust coins
 ====================
@@ -631,8 +632,6 @@ get hudmap to use z height checks so it can load faster, maybe in the background
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 try 256x256 map
-
-tell players they can afford spawners the first time they capture a flag
 
 give $$ for N kills
 
