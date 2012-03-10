@@ -10,6 +10,15 @@ void end_text_draw();
 
 void draw_string(char* text, float x, float y, float depth, float scale);
 
+typedef struct
+{
+    bool center;
+    bool left;
+    bool right;
+    bool top;
+    bool bottom;
+} TextAlignment;
+
 class Text
 {
     private:
@@ -33,7 +42,15 @@ class Text
         char* format;
         
         float x,y;  // active x,y
-        float xoff,yoff; // reference x,y
+        float refx, refy; // reference x,y
+
+        TextAlignment alignment;
+        void reset_alignment();
+        void center();
+        void left();
+        void right();
+        void top();
+        void bottom();
 
         void set_text(char* text);
         void set_format(char* format);

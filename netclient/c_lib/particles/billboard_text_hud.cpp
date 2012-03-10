@@ -80,12 +80,13 @@ void BillboardTextHud::draw()
         return;
     }
 
+    this->text->set_position((float)sx, (float)sy);
+    this->text->center();
     int w = this->text->get_width();
     int h = this->text->get_height();
-    if (!rect_intersects((float)sx, (float)sy, w, h, 0, 0, _xresf, _yresf))
+    if (!rect_intersects(this->text->x, this->text->y-h, w, h, 0, 0, _xresf, _yresf)) // -h reason: text draw order
         return; // not on screen (tested, works)
 
-    this->text->set_position((float)sx, (float)sy);
     this->text->set_depth((float)sz);
     this->text->draw_centered();
 

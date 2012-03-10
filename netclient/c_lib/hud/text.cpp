@@ -114,12 +114,9 @@ void draw_string(char* text, float x, float y, float depth, float scale)
 
 void Text::draw_centered()
 {
-    float w = this->get_width();
-    float h = this->get_height();
-    float x = this->x - w/2;    // -/+ is weird because of the character vertex draw order
-    float y = this->y + h/2;
+    center();
     glColor4ub(r,g,b,a);
-    draw_string(this->text, x,y, this->depth, this->scale);
+    draw_string(this->text, this->x, this->y, this->depth, this->scale);
 }
 
 // internal string copy
@@ -227,8 +224,8 @@ void Text::set_position(float x, float y)
     this->y = y;
     if (!first)
     {
-        this->xoff = x;
-        this->yoff = y;
+        this->refx = x;
+        this->refy = y;
     }
     first++;
 }
@@ -250,12 +247,51 @@ int Text::charcount()
     return strlen(this->text);
 }
 
-void Text::draw()
+void Text::reset_alignment()
+{
+    this->alignment.center = false;
+    this->alignment.left = false;
+    this->alignment.right = false;
+    this->alignment.top = false;
+    this->alignment.bottom = false;
+    this->x = this->refx;
+    this->y = this->refy;
+}
+void Text::center()
+{
+    if (!this->alignment.center)
+    {
+        float w = this->get_width();
+        float h = this->get_height();
+        this->x = this->refx - w/2;    // -/+ is weird because of the character vertex draw order
+        this->y = this->refy + h/2;
+        this->alignment.center = true;
+    }
+}
+void Text::left()
+{
+    this->alignment.left = true;
+}
+void Text::right()
+{
+    this->alignment.right = true;
+}
+void Text::top()
+{
+    this->alignment.top = true;
+}
+void Text::bottom()
+{
+    this->alignment.bottom = true;
+}
+
+void Text::Text::draw()
 {
     if (this->text == NULL || this->text_len == 0)
         return;
     glColor4ub(r,g,b,a);
     draw_string(this->text, this->x, this->y, this->depth, this->scale);
+    this->reset_alignment();
 }
 
 int Text::get_width()
@@ -334,7 +370,7 @@ r(255),g(255),b(255),a(255),
 text(NULL),
 format(NULL),
 x(0), y(0),
-xoff(0),yoff(0)
+refx(0),refy(0)
 {}
 
 Text::~Text()
