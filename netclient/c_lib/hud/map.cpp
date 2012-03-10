@@ -210,10 +210,12 @@ void init_surface()
 {
     printf("init: hud_map \n");
 
-    const int grad_num = 10;
+    // load gradient surface
+    const int grad_num = 11;
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
+    printf("Loading gradient %s\n", grad_str);
     gradient_surface = create_surface_from_file(grad_str);
     if (gradient_surface==NULL)
     {
@@ -221,9 +223,8 @@ void init_surface()
         return;
     }
 
-    Uint32 tex_format;
-
     /* Init blank map surface */
+    Uint32 tex_format;
     map_surface = create_surface_from_nothing(width, height);
     if (map_surface==NULL)
     {
