@@ -47,11 +47,18 @@ def names_available():
 def test_names():
     missing_names = False
     names = [
+        'dark_lunar_dust',
+        'light_lunar_dust',
+        'holy_stone',
+        'infected_rock',
+        'soft_rock',
+        'hard_rock',
+        'sand_stone',
         'blue_terminal',
         'green_terminal',
         'battery',
         'blue_ore',
-        'stone',
+        'holy_stone',
         'lava',
         'solar_panel',
     ]
@@ -116,7 +123,7 @@ def best_caves():
     c_lib.map_gen.conf\
     .size(x,y,z)\
     .group(0)\
-    .tile(cubes['stone'])\
+    .tile(cubes['sand_stone'])\
     .interpolate(4,2,1)\
     .scale(4.0, 4.0, 1.0)\
     .heightmap(baseline=40, maxheight=60)\
@@ -129,7 +136,7 @@ def best_caves():
     .size(x,y,z)\
     .group(5)\
     .scale(x=1.0, y=1.0, z=1.0)\
-    .tile(cubes['stone'])\
+    .tile(cubes['soft_rock'])\
     .interpolate(2,4,1)\
     .heightmap(baseline=30, maxheight=45)\
     .p2(octaves=6, persistence=0.4)\
@@ -140,7 +147,7 @@ def best_caves():
     c_lib.map_gen.conf\
     .size(x,y,z)\
     .group(112)\
-    .tile(cubes['blue_ore'])\
+    .tile(cubes['hard_rock'])\
     .interpolate(4,2,1)\
     .scale(4.0, 4.0, 1.0)\
     .heightmap(baseline=5, maxheight=25)\
@@ -148,12 +155,12 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['green_terminal'])
+    c_lib.map_gen.grass(x,y,0, dirt=cubes['dark_lunar_dust'], grass=cubes['dark_lunar_dust'])
 
     ### 3d density noise. floating islands, overhangs
     #c_lib.map_gen.conf\
     #.size(x,y,z)\
-    #.tile(cubes['stone'])\
+    #.tile(cubes['holy_stone'])\
     #.scale(x=3.5, y=3.5, z=1.0)\
     #.gradient2()\
     #.group(1)\
@@ -166,7 +173,7 @@ def best_caves():
     ## 3d density noise. floating islands, overhangs, same seed different scale
     c_lib.map_gen.conf\
     .size(x,y,z)\
-    .tile(cubes['stone'])\
+    .tile(cubes['sand_stone'])\
     .scale(x=4.0, y=4.0, z=1.0)\
     .group(1)\
     .gradient(z0=0.0, z1=-0.3)\
@@ -176,7 +183,7 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['blue_terminal'])
+    c_lib.map_gen.grass(x,y,0, dirt=cubes['light_lunar_dust'], grass=cubes['light_lunar_dust'])
 
     ## 3d density noise, subtractive RMF. forms caves
     c_lib.map_gen.conf\
@@ -213,7 +220,7 @@ def best_caves():
     .gradient2()\
     .tile(cubes['lava'])\
     .scale(x=4.0, y=4.0, z=3.0)\
-    .group(cubes['green_terminal'])\
+    .group(101233)\
     .density(threshold=0.99)\
     .rmf()\
     .p3(octaves=6, persistence=0.7)\
@@ -225,12 +232,27 @@ def best_caves():
     .interpolate(2,2,2)\
     .size(x,y,z*0.75)\
     .gradient2()\
-    .tile(cubes['blue_ore'])\
+    .tile(cubes['infected_rock'])\
     .scale(x=4.0, y=4.0, z=3.0)\
     .group(1011)\
     .density(threshold=0.995)\
     .rmf()\
     .p3(octaves=6, persistence=0.9)\
+    .start()\
+    .reset()
+
+    ##3d density noise, upper part of map, extruder blocks
+    ## NOTE: very good
+    c_lib.map_gen.conf\
+    .interpolate(4,4,2)\
+    .size(x,y,z)\
+    .gradient(z0=0.0, z1=0.1)\
+    .tile(cubes['extruder'])\
+    .scale(x=4.0, y=4.0, z=1.0)\
+    .group(88)\
+    .density(threshold=0.998)\
+    .rmf()\
+    .p3(octaves=8, persistence=0.3, frequency=2.1)\
     .start()\
     .reset()
 
@@ -241,7 +263,7 @@ def best_caves():
     ## 3d density noise. floating islands, overhangs
     #c_lib.map_gen.conf\
     #.size(x,y,z)\
-    #.tile(cubes['stone'])\
+    #.tile(cubes['holy_stone'])\
     #.scale(x=1.0, y=1.0, z=1.0)\
     #.gradient2()\
     #.interpolate(4,4,2)\
@@ -258,7 +280,7 @@ def best_caves():
     #c_lib.map_gen.conf\
     #.size(x,y,z)\
     #.group(0)\
-    #.tile(cubes['stone'])\
+    #.tile(cubes['holy_stone'])\
     #.interpolate(4,2,1)\
     #.p2(octaves=6, persistence=0.45)\
     #.start()
@@ -286,7 +308,7 @@ def gen_map_simple():
     c_lib.map_gen.conf\
     .size(x,y,z)\
     .group(0)\
-    .tile(cubes['stone'])\
+    .tile(cubes['holy_stone'])\
     .interpolate(4,4,1)\
     .scale(4.0, 4.0, 1.0)\
     .heightmap(baseline=20, maxheight=30)\
@@ -299,7 +321,7 @@ def gen_map_simple():
     #.size(x,y,z)\
     #.group(5)\
     #.scale(x=4.0, y=4.0, z=1.0)\
-    #.tile(cubes['stone'])\
+    #.tile(cubes['holy_stone'])\
     #.interpolate(2,4,1)\
     #.heightmap(baseline=30, maxheight=45)\
     #.p2(octaves=6, persistence=0.4)\
@@ -313,7 +335,7 @@ def noisy_height():
     c_lib.map_gen.conf\
     .size(x,y,z)\
     .group(0)\
-    .tile(cubes['stone'])\
+    .tile(cubes['holy_stone'])\
     .scale(1,1,1)\
     .heightmap(baseline=0, maxheight=z)\
     .p2(octaves=8, persistence=0.1, frequency=4.0)\
