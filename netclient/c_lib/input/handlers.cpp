@@ -163,8 +163,8 @@ void init_handlers()
 }
 
 // keys that can be held down
-const int KEY_HOLD_DELAY = 30 * 1;  // 1 second
-const int KEY_HOLD_RATE = 3;    // 10 pulses per second
+const int KEY_HOLD_DELAY = 20;  // in ticks
+const int KEY_HOLD_RATE = 2;    // 15 pulses per second
 
 typedef enum {
     kBACKSPACE = 0,
