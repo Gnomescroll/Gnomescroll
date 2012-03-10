@@ -571,7 +571,6 @@ hud text next to compass to say what it is pointing at
 
 TODO:
 adjust tile ids for terrain
-put text below arrow saying what it is pointing at
 ====================
 
 Animations
@@ -634,15 +633,13 @@ Bug: very nasty -- invalid read/write at different points in the voxel render li
 territory control
     -- color in GLSL
 
-better feedback on damage received
+visual feedback for damage received
 
 get hudmap to use z height checks so it can load faster, maybe in the background (slow in the background, fast when open)
 
 private properties of packets, use explicit data filling (but not a constructor, no need to hit the heap)
 
 try 256x256 map
-
-give $$ for N kills
 
 confirmation dialog for ESC quit
 
