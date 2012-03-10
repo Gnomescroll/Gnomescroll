@@ -47,8 +47,8 @@ def names_available():
 def test_names():
     missing_names = False
     names = [
-        'tron_blue',
-        'tron_green',
+        'blue_terminal',
+        'green_terminal',
         'battery',
         'blue_ore',
         'stone',
@@ -77,7 +77,7 @@ def feb3_test_map():
     #1
     m.conf\
     .size(x,y,z)\
-    .tile(cubes['tron_blue'])\
+    .tile(cubes['blue_terminal'])\
     .interpolate(4,4,2)\
     .scale(3.0, 3.0, 1.0)\
     .heightmap(baseline=20, maxheight=40)\
@@ -148,7 +148,7 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['tron_green'])
+    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['green_terminal'])
 
     ### 3d density noise. floating islands, overhangs
     #c_lib.map_gen.conf\
@@ -176,7 +176,7 @@ def best_caves():
     .start()\
     .reset()
 
-    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['tron_blue'])
+    c_lib.map_gen.grass(x,y,0, dirt=cubes['stone'], grass=cubes['blue_terminal'])
 
     ## 3d density noise, subtractive RMF. forms caves
     c_lib.map_gen.conf\
@@ -213,7 +213,7 @@ def best_caves():
     .gradient2()\
     .tile(cubes['lava'])\
     .scale(x=4.0, y=4.0, z=3.0)\
-    .group(cubes['tron_green'])\
+    .group(cubes['green_terminal'])\
     .density(threshold=0.99)\
     .rmf()\
     .p3(octaves=6, persistence=0.7)\
@@ -386,5 +386,5 @@ def good_cave1():
     .start()\
     .reset()
 
-    #c_lib.map_gen.floor(x,y,14,1,cubes['tron_blue'])
+    #c_lib.map_gen.floor(x,y,14,1,cubes['blue_terminal'])
 
