@@ -140,6 +140,8 @@ namespace t_map
 
     void Terrain_map::set_update(int x, int y)
     {
+        printf("set update: %i %i \n", x,y);
+
         if( ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
             ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
         ) return;
@@ -153,6 +155,7 @@ namespace t_map
 */
     void Terrain_map::set_element(int x, int y, int z, struct MAP_ELEMENT element)
     {
+        printf("set element: %i %i %i \n", x,y,z);
         //printf("set: %i %i %i %i \n", x,y,element.block);
     #if T_MAP_SET_OPTIMIZED
         if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
@@ -173,16 +176,14 @@ namespace t_map
         #ifdef DC_CLIENT
             c->needs_update = true; 
 
-
-
             if((x & 15) == 0)
             {
                 set_update(x-1,y);
             }
 
-            if(x & 15) == 15)
+            if((x & 15) == 15)
             {
-                set_update(x-1,y);
+                set_update(x+1,y);
             }
 
             if((y & 15) == 0)
@@ -190,12 +191,10 @@ namespace t_map
                 set_update(x,y-1);
             }
 
-            if(y & 15) == 15)
+            if((y & 15) == 15)
             {
                 set_update(x,y+1);
             }
-
-
         #endif
     #else
         //printf("set: %i %i %i \n",  x,y,z);
@@ -228,9 +227,31 @@ namespace t_map
         //printf("index2 = %i \n", TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi);
 
         c->e[TERRAIN_CHUNK_WIDTH*TERRAIN_CHUNK_WIDTH*z+ TERRAIN_CHUNK_WIDTH*yi + xi] = element;
+
         #ifdef DC_CLIENT
-            c->needs_update = true;
+            c->needs_update = true; 
+
+            if((x & 15) == 0)
+            {
+                set_update(x-1,y);
+            }
+
+            if((x & 15) == 15)
+            {
+                set_update(x+1,y);
+            }
+
+            if((y & 15) == 0)
+            {
+                set_update(x,y-1);
+            }
+
+            if((y & 15) == 15)
+            {
+                set_update(x,y+1);
+            }
         #endif
+            
     #endif
     }
 
@@ -256,6 +277,31 @@ namespace t_map
         {
             // destroy block
             *e = NO_MAP_ELEMENT; 
+            
+            #ifdef DC_CLIENT
+                c->needs_update = true; 
+
+                if((x & 15) == 0)
+                {
+                    set_update(x-1,y);
+                }
+
+                if((x & 15) == 15)
+                {
+                    set_update(x+1,y);
+                }
+
+                if((y & 15) == 0)
+                {
+                    set_update(x,y-1);
+                }
+
+                if((y & 15) == 15)
+                {
+                    set_update(x,y+1);
+                }
+            #endif
+
             return 0;
         } 
         else 
@@ -296,6 +342,31 @@ namespace t_map
         {
             // destroy block
             *e = NO_MAP_ELEMENT; 
+
+            #ifdef DC_CLIENT
+                c->needs_update = true; 
+
+                if((x & 15) == 0)
+                {
+                    set_update(x-1,y);
+                }
+
+                if((x & 15) == 15)
+                {
+                    set_update(x+1,y);
+                }
+
+                if((y & 15) == 0)
+                {
+                    set_update(x,y-1);
+                }
+
+                if((y & 15) == 15)
+                {
+                    set_update(x,y+1);
+                }
+            #endif
+
             return 0;
         } 
         else 
