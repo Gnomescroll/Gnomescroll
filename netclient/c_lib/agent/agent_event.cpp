@@ -65,7 +65,8 @@ void Agent_event::display_name()
         this->bb->set_color(r,g,b,255);
         this->bb->set_size(0.7);
     }
-    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height, 0.0f, 0.0f, 0.0f);
+    const float z_margin = 0.4;
+    this->bb->set_state(a->s.x, a->s.y, a->s.z + a->box.b_height + z_margin, 0.0f, 0.0f, 0.0f);
     this->bb->set_draw(true);
 }
 
