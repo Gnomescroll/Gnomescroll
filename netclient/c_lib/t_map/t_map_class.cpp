@@ -316,7 +316,7 @@ namespace t_map
         z += 1; // heights are not 0 indexed;
         int new_h = -1;
         unsigned char h = this->column_heights[x + y*MAP_WIDTH];
-        if (val)
+        if (val != 0)
         {   // setting higher block
             if (z > h)
                 new_h = z;

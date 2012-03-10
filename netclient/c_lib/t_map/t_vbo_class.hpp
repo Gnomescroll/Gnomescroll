@@ -175,6 +175,8 @@ class Vbo_map
     void update_vbo_comptability(int i, int j);
 
     void prep_draw();
+    void sort_draw();
+
     void draw_map();
     void draw_map_comptability();
 };

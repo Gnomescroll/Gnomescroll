@@ -11,6 +11,23 @@
 namespace t_map
 {
 
+static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
+
+static int draw_vbo_n;
+//static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
+static class Map_vbo** draw_vbo_array;;
+
+void vbo_draw_init()
+{
+
+    draw_vbo_array = (Map_vbo**) malloc(MAX_DRAWN_VBO * sizeof(class Map_vbo*));
+}
+
+void vbo_draw_end()
+{
+    free(draw_vbo_array);
+}
+
 
 /*
     Do distance check
@@ -25,10 +42,9 @@ bool chunk_render_check( float x, float y)
     return (dx*dx + dy*dy > dist2) ? false : true;
 }
 
-static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will piss someone off
 
-static int draw_vbo_n;
-static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
+
+
 
 
 void Vbo_map::prep_draw()
@@ -63,6 +79,12 @@ void Vbo_map::prep_draw()
             */
             draw_vbo_array[draw_vbo_n] = col;
             draw_vbo_n++;
+            
+            if(draw_vbo_n == MAX_DRAWN_VBO)
+            {
+                printf("Vbo_map::prep_draw(), ERROR, draw_vbo == MAX_DRAWN_VBO \n");
+                return;
+            }
         }
         else
         {
@@ -75,7 +97,11 @@ void Vbo_map::prep_draw()
     //printf("drawn: %i pruned: %i \n",  c_drawn, c_pruned);
 }
 
+void Vbo_map::sort_draw()
+{
 
+
+}
 
 //float _normal_array[3*6];
 float _chunk_position[3] = {0};
