@@ -197,6 +197,7 @@ void CubeSelector::horizontal(bool left)
     int col = this->pos % this->n_x;
 
     int n = (col + shift) % this->n_x;
+    if (n < 0) n += this->n_x;
     n += row * this->n_x;
 
     if (n < 0 || n > (this->n_x*this->n_y-1)) return;
@@ -211,6 +212,7 @@ void CubeSelector::vertical(bool up)
     int col = this->pos % this->n_x;
 
     row = (row + shift) % this->n_y;
+    if (row < 0) row += this->n_y;
     int n = (row * this->n_x) + col;
 
     if (n < 0 || n > (this->n_x*this->n_y-1)) return;

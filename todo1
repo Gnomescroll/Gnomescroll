@@ -579,7 +579,7 @@ fix billboard hud text timeouts and set_draw properties
 draw chat, scoreboard, player hud text when zoomed
 quit confirmation dialog
 /s#, /S#, /s #, /S # syntax for selecting spawner via chat
-repeat-hold-down keys: backspace, left, right
+repeat-hold-down keys: backspace, arrow keys
 fix chat cursor draw
 ====================
 
