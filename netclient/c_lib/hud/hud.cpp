@@ -237,7 +237,7 @@ void draw_hud_text()
 
     if (!hud_draw_settings.connected)
     {
-        hud->disconnected->draw();
+        hud->disconnected->draw_centered();
         end_text_draw();
         return;
     }
@@ -246,11 +246,10 @@ void draw_hud_text()
         hud->confirm_quit->draw_centered();
     else
     {
-        //if (!hud_draw_settings.version_match)
-            //hud->version_mismatch->draw();
-
         if (hud_draw_settings.dead)
-            hud->dead->draw();
+            hud->dead->draw_centered();
+        //if (!hud_draw_settings.version_match)
+            //hud->version_mismatch->draw_centered();
     }
 
     end_text_draw();
@@ -410,17 +409,17 @@ void HUD::init()
     disconnected = HudText::text_list->create();
     disconnected->set_text((char*) disconnected_text);
     disconnected->set_color(255,10,10,255);
-    disconnected->set_position(_xresf/2 - 80, _yresf/2);
+    disconnected->set_position(_xresf/2, _yresf/2);
 
     version_mismatch = HudText::text_list->create();
     version_mismatch->set_text((char*)version_mismatch_text);
     version_mismatch->set_color(255,10,10,255);
-    version_mismatch->set_position(_xresf/2 - 80, _yresf/2 - 18);
+    version_mismatch->set_position(_xresf/2, _yresf/2);
     
     dead = HudText::text_list->create();
     dead->set_text((char*) dead_text);
     dead->set_color(255,10,10,255);
-    dead->set_position(_xresf/2 - 80, _yresf/2);
+    dead->set_position(_xresf/2, _yresf/2);
     
     fps = HudText::text_list->create();
     fps->set_format((char*) fps_format);
