@@ -6,7 +6,7 @@
 #include "./particles/particles.cpp"
 
 #if DC_CLIENT
-#include "./particles/textures.cpp" /* Textures */
+#include "./particles/textures.cpp"
 //#include "./particles/circuit_tree.cpp"
 #include "./particles/shrapnel.cpp"
 #include "./particles/blood.cpp"
