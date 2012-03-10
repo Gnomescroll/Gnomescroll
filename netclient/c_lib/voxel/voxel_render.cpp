@@ -15,6 +15,8 @@
 
 const int VOXEL_RENDER_LIST_SIZE = 1024;
 
+#define VOXEL_RENDER_DEBUG 0
+
 Voxel_render_list::Voxel_render_list()
 :
 num_elements(0)
@@ -110,7 +112,9 @@ void Voxel_render_list::update_vertex_buffer_object()
             vv->needs_vbo_update = false;
             volumes_updated++;
             vv->update_vertex_list();
-            if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
+            if (VOXEL_RENDER_DEBUG)
+                if(vv->vvl.vnum == 0)
+                    printf("Voxel_render_list::update_vertex_buffer_object, FATAL ERROR, voxel volume has no voxel!\n");
         }
         v_num += vv->vvl.vnum;
     }
@@ -125,7 +129,8 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     if(v_num == 0)
     {
-        printf("Voxel_render_list::update_vertex_buffer_object, zero vertices \n");
+        if (VOXEL_RENDER_DEBUG)
+            printf("Voxel_render_list::update_vertex_buffer_object, zero vertices \n");
         return;
     }
 
@@ -146,8 +151,11 @@ void Voxel_render_list::update_vertex_buffer_object()
         if(this->render_list[i] == NULL) continue;
         vv = this->render_list[i];
 
-        if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
-        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
+        if (VOXEL_RENDER_DEBUG)
+        {
+            if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
+            if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
+        }
 
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         vv->vvl.voff = index;
@@ -174,9 +182,9 @@ int InTex;
 void Voxel_render_list::init_voxel_render_list_shader1()
 {
     static int init=0;
-    if (init)
+    if (init++)
     {
-        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init twice\n");
+        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init more than once\n");
         return;
     }
     printf("init voxel shader\n");
@@ -218,8 +226,6 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
     free(vs);
     free(fs);
-
-    init=1;
 }
 
 void Voxel_render_list::draw()
@@ -245,13 +251,15 @@ void Voxel_render_list::draw()
 
     if( _vbo->vnum == 0 )
     {
-        printf("Voxel_render_list::draw, vnum equals zero \n");
+        if (VOXEL_RENDER_DEBUG)
+            printf("Voxel_render_list::draw, vnum equals zero \n");
         this->update_vertex_buffer_object();
         return;
     }
     if( _vbo->id == 0 )
     {
-        printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
+        if (VOXEL_RENDER_DEBUG)
+            printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
         return;
     }
 
@@ -290,23 +298,21 @@ void Voxel_render_list::draw()
 
         //drawn++;
 
-        int debug = 0;
-
         if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 2 )
         {
-            //debug = 1;
+            //VOXEL_RENDER_DEBUG = 1;
         }
         if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 3 )
         {
-            //debug = 1;
+            //VOXEL_RENDER_DEBUG = 1;
         }
 
-        if(debug)
+        if (VOXEL_RENDER_DEBUG)
         { 
             printf("=== \n");
 
             printf("entity= %i, entity_type= %i, part_id= %i \n", 
-            vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+                vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
 
             printf("parent_world_matrix= \n");
             print_affine( *vv->parent_world_matrix );
@@ -346,3 +352,4 @@ void Voxel_render_list::draw()
 */
     this->update_vertex_buffer_object(); 
 }
+
