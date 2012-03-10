@@ -96,20 +96,27 @@ void Agent_event::took_damage(int dmg)
 
 void Agent_event::healed(int health)
 {
+    bool healed = (a->status.health < health);
     a->status.health = health;
 
     if (a->is_you())
     {
-        Sound::restore_health();
-        chat_client->send_system_message((char*) "You healed.");
+        if (healed)
+        {
+            Sound::restore_health();
+            chat_client->send_system_message((char*) "You healed.");
+        }
     }
     else
-        Sound::restore_health(
-            a->s.x,
-            a->s.y,
-            a->s.z,
-            0,0,0
-        );
+    {
+        if (healed)
+            Sound::restore_health(
+                a->s.x,
+                a->s.y,
+                a->s.z,
+                0,0,0
+            );
+    }
 }
 
 void Agent_event::died() {

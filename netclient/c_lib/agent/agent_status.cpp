@@ -38,7 +38,8 @@ team(0),
 has_flag(false),
 flag_captures(0),
 coins(0),
-vox_crouched(false)
+vox_crouched(false),
+base_restore_rate_limiter(0)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
@@ -356,6 +357,14 @@ void Agent_status::restore_health()
     health_msg.id = a->id;
     health_msg.health = this->health;
     health_msg.sendToClient(a->client_id);
+}
+
+void Agent_status::at_base()
+{
+    this->base_restore_rate_limiter++;
+    if (this->base_restore_rate_limiter % AGENT_BASE_PROXIMITY_EFFECT_RATE != 0) return;
+    this->restore_health();
+    this->a->weapons.restore_ammo();
 }
 
 bool Agent_status::pickup_flag() {
