@@ -67,7 +67,7 @@ class Terrain_map
     Terrain_map(int _xdim, int _ydim);
     ~Terrain_map();
 
-    set_update(int x, int y);
+    void set_update(int x, int y);
 
 #if TERRAIN_MAP_FORCE_INLINE
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));

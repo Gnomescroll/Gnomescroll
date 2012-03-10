@@ -140,8 +140,7 @@ namespace t_map
 
     void Terrain_map::set_update(int x, int y)
     {
-        if( ((z & TERRAIN_MAP_HEIGHT_BIT_MASK) != 0) 
-            || ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
+        if( ((x & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
             ||  ((y & TERRAIN_MAP_WIDTH_BIT_MASK) != 0) 
         ) return;
         struct MAP_CHUNK* c;
