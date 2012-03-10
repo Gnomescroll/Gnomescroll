@@ -60,6 +60,8 @@ static const char compass_format[] = "Target:\n%s";
 static const char compass_enemy_flag[] = "Enemy Flag";
 static const char compass_friendy_base[] = "Friendly Base";
 
+static const char confirm_quit_text[] = "Really quit? Y/N";
+
 static struct HudDrawSettings
 {
     bool zoom;
@@ -85,6 +87,7 @@ static struct HudDrawSettings
     bool map;
     bool graphs;
     bool draw;
+    bool confirm_quit;
 } hud_draw_settings;
 
 void set_hud_fps_display(float fps_val)
@@ -166,6 +169,8 @@ void update_hud_draw_settings()
             timeout = false;
         hud->chat->update(timeout);
     }
+
+    hud_draw_settings.confirm_quit = input_state.confirm_quit;
 }
 
 /* Draw routines */
@@ -231,19 +236,22 @@ void draw_hud_text()
     start_text_draw();
 
     if (!hud_draw_settings.connected)
-        hud->disconnected->draw();
-
-    //if (!hud_draw_settings.version_match)
-        //hud->version_mismatch->draw();
-
-    if (!hud_draw_settings.connected)
     {
+        hud->disconnected->draw();
         end_text_draw();
         return;
     }
 
-    if (hud_draw_settings.dead)
-        hud->dead->draw();
+    if (hud_draw_settings.confirm_quit)
+        hud->confirm_quit->draw_centered();
+    else
+    {
+        //if (!hud_draw_settings.version_match)
+            //hud->version_mismatch->draw();
+
+        if (hud_draw_settings.dead)
+            hud->dead->draw();
+    }
 
     end_text_draw();
 
@@ -461,6 +469,11 @@ void HUD::init()
     compass->set_color(0,0,0,255); // draw with team colors
     compass->set_position(_xresf, _yresf);
 
+    confirm_quit = HudText::text_list->create();
+    confirm_quit->set_text((char*)confirm_quit_text);
+    confirm_quit->set_color(255,10,10,255);
+    confirm_quit->set_position(_xresf/2, _yresf/2);
+
     scoreboard = new Scoreboard();
     scoreboard->init();
 
@@ -482,6 +495,8 @@ reliable_ping(NULL),
 coins(NULL),
 health(NULL),
 weapon(NULL),
+compass(NULL),
+confirm_quit(NULL),
 scoreboard(NULL),
 chat(NULL)
 {}
@@ -506,6 +521,10 @@ HUD::~HUD()
         HudText::text_list->destroy(health->id);
     if (weapon != NULL)
         HudText::text_list->destroy(weapon->id);
+    if (compass != NULL)
+        HudText::text_list->destroy(compass->id);
+    if (confirm_quit != NULL)
+        HudText::text_list->destroy(confirm_quit->id);
     if (scoreboard != NULL)
         delete scoreboard;
     if (chat != NULL)

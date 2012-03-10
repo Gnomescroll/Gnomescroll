@@ -69,6 +69,11 @@ void enable_jump()
     input_state.can_jump = true;
 }
 
+void toggle_confirm_quit()
+{
+    input_state.confirm_quit = (!input_state.confirm_quit);
+}
+
 void enable_quit()
 {
     // release mouse
@@ -464,6 +469,11 @@ void key_down_handler(SDL_Event* event)
                 toggle_map();
                 break;
 
+            case SDLK_n:
+                if (input_state.confirm_quit)
+                    toggle_confirm_quit();
+                break;
+
             case SDLK_o:
                 toggle_skeleton_editor();
                 break;
@@ -483,6 +493,11 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_y:
+                if (input_state.confirm_quit)
+                {
+                    enable_quit();
+                    break;
+                }
                 toggle_chat();
                 if (!input_state.debug)
                     chat_client->use_team_channel();
@@ -516,7 +531,10 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_ESCAPE:
-                enable_quit();
+                if (NetClient::Server.connected)
+                    toggle_confirm_quit();
+                else
+                    enable_quit();
                 break;
 
             default: break;

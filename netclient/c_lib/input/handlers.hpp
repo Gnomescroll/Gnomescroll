@@ -24,6 +24,7 @@ struct InputState
     bool rebind_mouse;
 
     bool can_jump;
+    bool confirm_quit;
     bool quit;
 
     InputStateMode input_mode;

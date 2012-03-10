@@ -576,6 +576,7 @@ only play damage sound for you
 dont draw flag icon if held
 chat message validation / filtering
 fix billboard hud text timeouts and set_draw properties
+draw chat, scoreboard, player hud text when zoomed
 ====================
 
 Animations
@@ -664,8 +665,6 @@ more filtering for viewer teams (slimes probably attack a viewer, for example)
 text alignment settings (center,left,right,bottom,top)
 
 color compass arrow, not text
-
-show chat, player hud text when zoomed
 
 backspace hold down
 
