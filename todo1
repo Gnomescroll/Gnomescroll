@@ -654,6 +654,8 @@ private properties of packets, use explicit data filling (but not a constructor,
 
 try 256x256 map
 
+sound attenuations
+
 chat command for places of interest
 
 rotate arm slightly inward to point at look location

@@ -14,15 +14,9 @@
 
 class Shrapnel: public Particle
 {
-    private:
-        float tex_x;
-        float tex_y;
-        float size;
     public:
-        inline void draw() __attribute((always_inline));
+        void init();
         void tick();
-        void set_texture(int index);
-        void set_size(float size);
 
         explicit Shrapnel(int id);
         Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);

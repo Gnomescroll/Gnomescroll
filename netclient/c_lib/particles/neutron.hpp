@@ -14,7 +14,7 @@ class Neutron: public EventParticle
     public:
         int energy;
 
-        void draw();
+        void init();
         void tick();
         void set_energy(int energy);
         explicit Neutron(int id);

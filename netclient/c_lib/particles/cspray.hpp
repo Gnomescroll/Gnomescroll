@@ -8,6 +8,7 @@
 #define CSPRAY_DAMP 0.0f
 #define CSPRAY_TYPE 1
 #define CSPRAY_TEXTURE_ID 21
+const float CSPRAY_TEXTURE_SCALE = 0.3f;
 
 class Cspray: public EventParticle
 {
@@ -15,7 +16,7 @@ class Cspray: public EventParticle
         int active;
         int stopped;
 
-        void draw();
+        void init();
         void tick();
 
         explicit Cspray(int id);

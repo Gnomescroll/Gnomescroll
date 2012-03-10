@@ -96,7 +96,8 @@ void BillboardTextHud::draw()
 /* BillboardTextHud list */
 
 void BillboardTextHud_list::tick() {
-    for (int i=0; i<n_max; i++) {
+    for (int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->tick();
         if (a[i]->ttl >= a[i]->ttl_max)

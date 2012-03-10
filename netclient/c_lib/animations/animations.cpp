@@ -193,8 +193,8 @@ void terrain_sparks(float x, float y, float z)
         if (s==NULL) return;
         ttl = randrange(8,15);
         s->ttl_max = ttl;
-        s->set_size(0.05);
-        s->set_texture(54);
+        s->scale = 0.05;
+        s->texture_index = 54;
     }
 }
 

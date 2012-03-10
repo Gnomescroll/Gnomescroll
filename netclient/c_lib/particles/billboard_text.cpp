@@ -43,7 +43,8 @@ void BillboardText::tick()
 }
 
 
-void BillboardText::set_text(char* t) {
+void BillboardText::set_text(char* t)
+{
     int i;
     for (i=0; t[i] != '\0' && i < BILLBOARD_TEXT_MAX_LETTERS; i++)
         text[i] = t[i];
@@ -63,13 +64,15 @@ void BillboardText::set_state(float x, float y, float z, float mx, float my, flo
     this->vp->set_state(x,y,z, mx,my,mz);
 }
 
-void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b) {
+void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b)
+{
     this->r = r;
     this->g = g;
     this->b = b;
 }
 
-void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a) {
+void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a)
+{
     this->r = r;
     this->g = g;
     this->b = b;
@@ -183,8 +186,8 @@ void BillboardText::draw()
 
 void BillboardText_list::tick()
 {
-    int i;
-    for (i=0; i<n_max; i++) {
+    for (int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->tick();
         if (a[i]->ttl >= a[i]->ttl_max)
@@ -200,14 +203,14 @@ void BillboardText_list::draw()
     if (num == 0) return;
 
     glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
     glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
     glEnable(GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glBegin( GL_QUADS );
+    glBegin(GL_QUADS);
     glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
 
     for(int i=0; i<n_max; i++)
@@ -220,9 +223,8 @@ void BillboardText_list::draw()
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-
 #endif
 }
 

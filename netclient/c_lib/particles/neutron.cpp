@@ -14,28 +14,30 @@
 
 const float NEUTRON_MASS = 0.1f;
 
-Neutron::Neutron(int id)
-:
-EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS)
+void Neutron::init()
 {
     this->ttl_max = NEUTRON_TTL;
     this->type = NEUTRON_TYPE;
+    this->texture_index = NEUTRON_TEXTURE_ID;
+    this->scale = NEUTRON_TEXTURE_SCALE;
     this->event_ttl = 1;
     energy = rand() % 3 + 1;
     if (energy == 3)
         this->event_ttl = 150;
 }
 
+Neutron::Neutron(int id)
+:
+EventParticle(id, 0,0,0,0,0,0, NEUTRON_MASS)
+{
+    this->init();
+}
+
 Neutron::Neutron(int id, float x, float y, float z, float mx, float my, float mz)
 :
 EventParticle(id, x,y,z, mx,my,mz, NEUTRON_MASS)
 {
-    this->ttl_max = NEUTRON_TTL;
-    this->type = NEUTRON_TYPE;
-    this->event_ttl = 1;
-    energy = rand() % 3 + 1;
-    if (energy == 3)
-        this->event_ttl = 150;
+    this->init();
 }
 
 void Neutron::set_energy(int energy)
@@ -102,91 +104,41 @@ void Neutron::tick()
     ttl++;
 }
 
-void Neutron::draw() {
-
-#ifdef DC_CLIENT
-    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
-
-
-    float up[3] = {
-        model_view_matrix[0]*NEUTRON_TEXTURE_SCALE,
-        model_view_matrix[4]*NEUTRON_TEXTURE_SCALE,
-        model_view_matrix[8]*NEUTRON_TEXTURE_SCALE
-    };
-    float right[3] = {
-        model_view_matrix[1]*NEUTRON_TEXTURE_SCALE,
-        model_view_matrix[5]*NEUTRON_TEXTURE_SCALE,
-        model_view_matrix[9]*NEUTRON_TEXTURE_SCALE
-    };
-
-    float tx_min, tx_max, ty_min, ty_max;
-    float x,y,z;
-
-    int id = 48+ (3 * type) + (energy-1);
-
-    tx_min = (float)(id%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(id/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
-
-    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
-
-    glTexCoord2f(tx_min,ty_max );
-    glVertex3f(x+(-right[0]-up[0]), y+(-right[1]-up[1]), z+(-right[2]-up[2]));  // Bottom left
-
-    glTexCoord2f(tx_min,ty_min );
-    glVertex3f(x+(up[0]-right[0]), y+(up[1]-right[1]), z+(up[2]-right[2]));  // Top left
-
-    glTexCoord2f(tx_max,ty_min);
-    glVertex3f(x+(up[0]+right[0]), y+(up[1]+right[1]), z+(up[2]+right[2]));  // Top right
-
-    glTexCoord2f(tx_max,ty_max );
-    glVertex3f(x+(right[0]-up[0]), y+(right[1]-up[1]), z+(right[2]-up[2]));  // Bottom right
-
-#endif    
-}
-
-
-
-void Neutron_list::tick() {
-    int i;
-    for (i=0; i<n_max; i++) {
+void Neutron_list::tick()
+{
+    for (int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max) {
+        if (a[i]->ttl >= a[i]->ttl_max)
             destroy(a[i]->id);
-        }
     }
 }
 
 void Neutron_list::draw() {
 #ifdef DC_CLIENT
-
-    if(num == 0) { return; }
+    if(num == 0) return;
 
     glColor3ub(255,255,255);
     glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
 
-    glBindTexture( GL_TEXTURE_2D, particle_texture_id );
+    glBindTexture(GL_TEXTURE_2D, particle_texture_id);
     glEnable(GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glBegin( GL_QUADS );
+    glBegin(GL_QUADS);
 
-    int i;
-    for(i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        a[i]->draw();
-    }
+    for(int i=0; i<n_max; i++)
+        if (a[i] != NULL)
+            a[i]->draw();
 
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
-
 #endif
 }
 

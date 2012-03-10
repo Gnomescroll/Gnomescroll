@@ -13,7 +13,7 @@
 class Blood: public Particle
 {
     public:
-        void draw();
+        void init();
         void tick();
         explicit Blood(int id);
         Blood(int id, float x, float y, float z, float mx, float my, float mz);
