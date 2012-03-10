@@ -114,8 +114,11 @@ void Slime::tick() {
     if (n_nearby == 0) return;
 
     // check if any agent in explode radius
-    Agent_state* agent;
-    float dist = STATE::agent_list->filtered_object_distances[0];
+    int i = 0;
+    Agent_state* agent = STATE::agent_list->filtered_objects[i++];
+    while (agent->status.team == 0) // skip viewer agents
+        agent = STATE::agent_list->filtered_objects[i++];
+    float dist = STATE::agent_list->filtered_object_distances[i-1];
     if (dist < this->vox->largest_radius()*0.5f)
     {
         agent = STATE::agent_list->filtered_objects[0];
@@ -126,7 +129,7 @@ void Slime::tick() {
     }
     
     // target random nearby player
-    int i = randrange(0,n_nearby-1);
+    i = randrange(0,n_nearby-1);
     agent = STATE::agent_list->filtered_objects[i];
     if (agent == NULL) return;
     
