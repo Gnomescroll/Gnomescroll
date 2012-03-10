@@ -1,8 +1,5 @@
 #pragma once
 
-#include <physics/common.hpp>
-#include <physics/verlet.hpp>
-
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;

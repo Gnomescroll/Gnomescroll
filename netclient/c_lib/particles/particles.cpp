@@ -1,12 +1,9 @@
 #include "particles.hpp"
 
-#include <c_lib/camera/camera.hpp>
-
 void Particle::set_ttl(int ttl)
 {   // set to a negative number for no timeout
     this->ttl = ttl;
 }
-
 
 Particle::Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :

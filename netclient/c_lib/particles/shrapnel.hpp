@@ -1,10 +1,5 @@
 #pragma once
 
-
-
-#include <physics/common.hpp>
-
-
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
 #define SHRAPNEL_DAMP 0.5f

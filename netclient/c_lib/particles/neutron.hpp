@@ -1,7 +1,5 @@
 #pragma once
 
-#include <physics/common.hpp>
-
 #define NEUTRON_MAX 1024
 #define NEUTRON_TTL 600
 #define NEUTRON_DAMP 1.0f

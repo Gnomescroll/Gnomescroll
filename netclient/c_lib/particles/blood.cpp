@@ -1,12 +1,6 @@
 #include "blood.hpp"
 
-#ifdef DC_CLIENT
-#include <compat_gl.h>
-#endif
-
-#include <ray_trace/ray_trace.hpp>
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.hpp>
+#include <physics/common.hpp>
 
 const float BLOOD_MASS = 0.1f;
 

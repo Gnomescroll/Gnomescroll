@@ -1,7 +1,5 @@
 #pragma once
 
-#include <physics/common.hpp>
-
 #define BLOOD_MAX 4096
 #define BLOOD_TTL 30
 #define BLOOD_DAMP 0.6f

@@ -1,16 +1,8 @@
 #include "neutron.hpp"
 
-#ifdef DC_CLIENT
-#include <compat_gl.h>
-#endif
-
-#include <ray_trace/ray_trace.hpp>
+#include <physics/common.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
-
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/defines.h>
 
 const float NEUTRON_MASS = 0.1f;
 

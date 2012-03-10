@@ -586,6 +586,7 @@ color compass arrow depending on target's team color
 disable empty vnum warnings for voxel models unless debug flag set
 offset & center player name hud text away from body for better visibility
 preliminary text alignments
+refactor particles/*
 ====================
 
 Animations

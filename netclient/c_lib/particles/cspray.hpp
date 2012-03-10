@@ -1,7 +1,5 @@
 #pragma once
 
-#include <physics/common.hpp>
-
 #define CSPRAY_MAX 4096
 #define CSPRAY_TTL 1200
 #define CSPRAY_CEMENT_BLOCK_TYPE 2

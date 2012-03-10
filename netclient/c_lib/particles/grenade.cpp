@@ -1,25 +1,15 @@
 #include "grenade.hpp"
 
 #if DC_CLIENT
-#include <compat_gl.h>
 #include <c_lib/animations/animations.hpp>
 #include <sound/triggers.hpp>
 #endif
-
-#include <ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
-
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
-
 #include <common/enum_types.hpp>
 
-/*
- *  Networking; spawn packet from server to client
- */
-
-#include <net_lib/net.hpp>
 
 /* properties */
 
@@ -30,6 +20,13 @@ const int GRENADE_TEXTURE_ID = 5;
 const float GRENADE_TEXTURE_SCALE = 1.0f;
 const int GRENADE_BOUNCE_EXPLODE_LIMIT = 2;
 const float GRENADE_MASS = 0.5f;
+
+
+/*
+ *  Networking; spawn packet from server to client
+ */
+
+#include <net_lib/net.hpp>
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {
