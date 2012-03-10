@@ -556,15 +556,20 @@ failed attempt to rotate arm
 
 Mar 9
 
-
-TODO:
 rate limit base ammo/health restore
 "You healed" message
 "You have $%d coins. Use them to build spawners (weapon 5)" message, first time receiving coins
 Use net agent state for grenade animation
 Agent damage sound
-
 adjust coins
+-- $1 for 10 slime kills
+-- $1 for killing agent
+fix font loader segfault
+
+TODO:
+adjust tile ids for terrain
+put enemy flag on map
+put text below arrow saying what it is pointing at
 ====================
 
 Animations
