@@ -25,6 +25,7 @@ Varying
 
 varying vec2 texCoord;
 varying vec2 texCoord2;
+varying vec2 texCoord3;
 
 flat varying mat2 lightMatrix; 
 varying vec3 inColor;
@@ -42,6 +43,11 @@ void main(void)
 
         texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
 
+        vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
+        texCoord3 = 0.0625f*tmp +InTexCoord.zw;
+
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
  
 }
+
+        /* (InTexCoord.xy - vec2(0.5,0.5)) * .94 */

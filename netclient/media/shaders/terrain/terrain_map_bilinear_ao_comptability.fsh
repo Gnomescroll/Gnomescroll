@@ -4,6 +4,7 @@
 
 varying vec2 texCoord;
 varying vec2 texCoord2;
+varying vec2 texCoord3;
 
 flat varying mat2 lightMatrix;
  
@@ -25,7 +26,7 @@ void main()
 	//vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	
     
     //vec3 color = tmp*vec3(1.0,0.0,0.0);
-    vec3 color = (tmp*texture2D(base_texture, texCoord2).rgb);
+    vec3 color = (tmp*texture2D(base_texture, texCoord3).rgb);
 
 	float intensity = (inColor.r + inColor.g + inColor.b) / 3.0f;
 	vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
