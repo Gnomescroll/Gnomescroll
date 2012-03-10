@@ -7,7 +7,7 @@
 #include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/SDL/draw_functions.hpp>
 
-static int particle_texture;
+static GLuint particle_texture;
 
 int init_particles() {
     int i = create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
@@ -17,6 +17,15 @@ int init_particles() {
         return 1;
     }
     return 0;
+}
+
+void begin_transparent_particle_draw()
+{
+    begin_transparent_draw(&particle_texture);
+}
+void end_transparent_particle_draw()
+{
+    end_transparent_draw();
 }
 
 void BillboardSprite::draw(Vec3 v)
@@ -64,14 +73,5 @@ BillboardSprite::BillboardSprite()
 scale(1.0f),
 texture_index(0)
 {}
-
-void begin_transparent_particle_draw()
-{
-    begin_transparent_draw(particle_texture);
-}
-void end_transparent_particle_draw()
-{
-    end_transparent_draw();
-}
 
 #endif

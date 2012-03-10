@@ -137,6 +137,14 @@ namespace ClientState {
             Compass::update_team_colors();
             team_color_update %= team_color_update_interval;
         }
+
+        // update hud projected names
+        ClientState::playerAgent_state.display_agent_names();   
+        // check if we've failed to receive any identify packets (lost in initialization)
+        // Shouldn't be needed? initialization packets are reliable
+        ClientState::agent_list->check_missing_names();  // will ratelimit itself
+        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
+
     }
 
     void set_PlayerAgent_id(int id)
@@ -167,13 +175,13 @@ namespace ClientState {
         minivox_list->draw();
 
         // transparent
-        begin_transparent_particle_draw();
         billboard_text_list->draw();
+        
+        begin_transparent_particle_draw();
         cspray_list->draw();
         grenade_list->draw();
         shrapnel_list->draw();
         blood_list->draw();
-        end_transparent_draw();
         end_transparent_particle_draw();
     }
 

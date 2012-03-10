@@ -256,14 +256,15 @@ void draw_hud_text()
 
     if (!hud_draw_settings.zoom)
     {
-        HudFont::set_properties(HudMap::text_icon_size);
-        start_text_draw();
-
         if (hud_draw_settings.map)
+        {
+            HudFont::set_properties(HudMap::text_icon_size);
+            start_text_draw();
             HudMap::draw_text();
-
-        end_text_draw();
+            end_text_draw();
+        }
     }
+
     HudFont::reset_default();
     start_text_draw();
 

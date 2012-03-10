@@ -7,6 +7,7 @@
 #include <SDL/SDL_functions.h>
 #include <camera/camera.hpp>
 #include <c_lib/hud/font.hpp>
+#include <c_lib/hud/text.hpp>
 
 BillboardText::BillboardText(int id)
 :
@@ -202,29 +203,14 @@ void BillboardText_list::draw()
     if (current_camera == NULL) return;
     if (num == 0) return;
 
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE);
-
-    glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-    glBegin(GL_QUADS);
-    glColor3ub((unsigned char)255,(unsigned char)0,(unsigned char)0);
-
+    HudText::start_text_draw(); // gl calls
     for(int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
         a[i]->draw();
     }
-
-    glEnd();
-    glDepthMask(GL_TRUE);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
+    HudText::end_text_draw();
 #endif
 }
 

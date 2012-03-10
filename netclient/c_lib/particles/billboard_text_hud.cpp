@@ -110,7 +110,7 @@ void BillboardTextHud_list::draw() {
     if (current_camera == NULL) return;
     if (num == 0) return;
 
-    HudText::start_text_draw();
+    HudText::start_text_draw(); // gl calls
     for (int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;

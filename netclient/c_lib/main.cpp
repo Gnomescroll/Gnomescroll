@@ -146,20 +146,6 @@ int run()
         // update camera state
         ClientState::update_camera();
 
-        /*
-            Move this crap!!! 
-
-            Client state tick maybe?
-
-        */
-
-        // update hud projected names
-        ClientState::playerAgent_state.display_agent_names();   
-        // check if we've failed to receive any identify packets (lost in initialization)
-        // Shouldn't be needed? initialization packets are reliable
-        ClientState::agent_list->check_missing_names();  // will ratelimit itself
-        ClientState::agent_list->check_if_at_base();  // will ratelimit itself
-
         // update mouse
         poll_mouse();
 
@@ -170,7 +156,6 @@ int run()
 
         // draw map
         t_map::draw_map();
-
 
         // draw client state
         ClientState::draw();
@@ -192,12 +177,10 @@ int run()
             Hud::draw_hud();
         }
 
-
         // update sound
         Sound::update();
         // update client_state
         ClientState::update();
-
 
         // flip sdl
         //frame_left(); //swap every 15 ms?
