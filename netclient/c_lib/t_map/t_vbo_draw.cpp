@@ -123,17 +123,7 @@ void Vbo_map::sort_draw()
   #define _VBO_DRAW_STRUCT_lt(a,b) ((a)->distance < (b)->distance)
   QSORT(struct  _VBO_DRAW_STRUCT, draw_vbo_array, draw_vbo_n, _VBO_DRAW_STRUCT_lt);
 
-/*
- * struct elt {
- *   int key;
- *   ...
- * };
- * void elt_qsort(struct elt *arr, unsigned n) {
- * #define elt_lt(a,b) ((a)->key < (b)->key)
- *  QSORT(struct elt, arr, n, elt_lt);
- * }
-*/
-
+  //if(draw_vbo_n > 10) draw_vbo_n = 10;
 }
 
 //float _normal_array[3*6];
@@ -159,6 +149,7 @@ void Vbo_map::draw_map()
     }
 
     prep_draw();
+    sort_draw();
 
     glUseProgramObjectARB(map_shader[0]);
 
@@ -325,6 +316,7 @@ void Vbo_map::draw_map_comptability()
 {
 
     prep_draw();
+    sort_draw();
 
     glUseProgramObjectARB(map_shader[0]);
 
