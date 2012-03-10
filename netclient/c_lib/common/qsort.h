@@ -1,3 +1,5 @@
+#pragma once
+
 /* $Id: qsort.h,v 1.5 2008-01-28 18:16:49 mjt Exp $
  * Adopted from GNU glibc by Mjt.
  * See stdlib/qsort.c in glibc */

@@ -8,6 +8,9 @@
 
 #include <c_lib/t_map/glsl/settings.hpp>
 
+
+#include <c_lib/common/qsort.h>
+
 namespace t_map
 {
 
@@ -15,12 +18,19 @@ static const int MAX_DRAWN_VBO = 1024;  //this should not be hardcoded; will pis
 
 static int draw_vbo_n;
 //static struct Map_vbo* draw_vbo_array[MAX_DRAWN_VBO];
-static class Map_vbo** draw_vbo_array;;
+
+struct _VBO_DRAW_STRUCT
+{
+    class Map_vbo* map_vbo;
+    float distance;
+};
+
+static struct _VBO_DRAW_STRUCT* draw_vbo_array;;
 
 void vbo_draw_init()
 {
 
-    draw_vbo_array = (Map_vbo**) malloc(MAX_DRAWN_VBO * sizeof(class Map_vbo*));
+    draw_vbo_array = (_VBO_DRAW_STRUCT*) malloc(MAX_DRAWN_VBO * sizeof(_VBO_DRAW_STRUCT));
 }
 
 void vbo_draw_end()
@@ -77,7 +87,7 @@ void Vbo_map::prep_draw()
             /*
                 Fulstrum culling
             */
-            draw_vbo_array[draw_vbo_n] = col;
+            draw_vbo_array[draw_vbo_n].map_vbo = col;
             draw_vbo_n++;
             
             if(draw_vbo_n == MAX_DRAWN_VBO)
@@ -100,6 +110,26 @@ void Vbo_map::prep_draw()
 void Vbo_map::sort_draw()
 {
 
+    for(int i=0; i<draw_vbo_n; i++ )
+    {
+        class Map_vbo* v = draw_vbo_array[i].map_vbo;
+
+        draw_vbo_array[i].distance = 0.0f; //set this
+    }
+
+//    #define elt_lt(a,b) ((a)->key < (b)->key)
+//    QSORT(struct elt, arr, n, elt_lt);
+
+/*
+ * struct elt {
+ *   int key;
+ *   ...
+ * };
+ * void elt_qsort(struct elt *arr, unsigned n) {
+ * #define elt_lt(a,b) ((a)->key < (b)->key)
+ *  QSORT(struct elt, arr, n, elt_lt);
+ * }
+*/
 
 }
 
@@ -173,7 +203,7 @@ void Vbo_map::draw_map()
 
     for(int i=0;i<draw_vbo_n;i++)
     {
-        vbo = draw_vbo_array[i];
+        vbo = draw_vbo_array[i].map_vbo;
 
         if(vbo->_v_num[0] == 0)
         {
@@ -323,7 +353,7 @@ void Vbo_map::draw_map_comptability()
 
     for(int i=0;i<draw_vbo_n;i++)
     {
-        vbo = draw_vbo_array[i];
+        vbo = draw_vbo_array[i].map_vbo;
 
         if(vbo->_v_num[0] == 0)
         {
