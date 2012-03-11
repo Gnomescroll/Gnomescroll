@@ -758,6 +758,7 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
 
 bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
 {   // TODO -- implement
+    *sink = vec3_init(this->s.x, this->s.y, this->camera_z() - 0.1f);
     return true;
 }
 

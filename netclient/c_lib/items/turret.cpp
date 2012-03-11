@@ -56,6 +56,63 @@ class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_
         inline void handle();
 };
 
+
+class turret_shot_nothing_StoC: public FixedSizeNetPacketToClient<turret_shot_nothing_StoC>
+{
+    public:
+        uint8_t id;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class turret_shot_object_StoC: public FixedSizeNetPacketToClient<turret_shot_object_StoC>
+{
+    public:
+        uint8_t id;
+        uint8_t target_id;
+        uint8_t target_type;
+        uint8_t target_part;
+        uint8_t vx,vy,vz;   //voxel
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&target_id, buff, buff_n, pack);
+            pack_u8(&target_type, buff, buff_n, pack);
+            pack_u8(&target_part, buff, buff_n, pack);
+            pack_u8(&vx, buff, buff_n, pack);
+            pack_u8(&vy, buff, buff_n, pack);
+            pack_u8(&vz, buff, buff_n, pack);
+
+        }
+        inline void handle();
+};
+
+class turret_shot_block_StoC: public FixedSizeNetPacketToClient<turret_shot_block_StoC>
+{
+    public:
+        uint8_t id;
+        uint8_t cube;   // might not need this (infer from x,y,z)
+        uint8_t side;
+        float x,y,z;    // send the actual collision point
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&cube, buff, buff_n, pack);
+            pack_u8(&side, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
 #ifdef DC_CLIENT
 inline void turret_state_StoC::handle()
 {
@@ -86,12 +143,19 @@ inline void turret_destroy_StoC::handle()
     //system_message->turret_destroyed(t);
     ClientState::turret_list->destroy(id);
 }
+
+inline void turret_shot_object_StoC::handle(){}
+inline void turret_shot_nothing_StoC::handle(){}
+inline void turret_shot_block_StoC::handle(){}
 #endif
 
 #ifdef DC_SERVER
 inline void turret_state_StoC::handle(){}
 inline void turret_create_StoC::handle(){}
 inline void turret_destroy_StoC::handle(){}
+inline void turret_shot_object_StoC::handle(){}
+inline void turret_shot_nothing_StoC::handle(){}
+inline void turret_shot_block_StoC::handle(){}
 #endif
 
 
@@ -166,6 +230,7 @@ void Turret::update()
 
 Turret::Turret(int id)
 :
+fire_limiter(0),
 team(0),
 id(id),
 owner(0),
@@ -178,6 +243,7 @@ vox(NULL)
 }
 Turret::Turret(int id, float x, float y, float z)
 :
+fire_limiter(0),
 team(0),
 id(id),
 owner(0),
@@ -189,6 +255,18 @@ camera_height(TURRET_CAMERA_HEIGHT),
 vox(NULL)
 {
 }
+
+Turret::~Turret()
+{
+    #ifdef DC_SERVER
+    turret_destroy_StoC msg;
+    msg.id = this->id;
+    msg.broadcast();
+    #endif
+    if (this->vox != NULL) delete this->vox;
+}
+
+
 
 #ifdef DC_SERVER
 void Turret::create_message(turret_create_StoC* msg)
@@ -226,18 +304,15 @@ void Turret::acquire_target()
     Vec3 source = vec3_init(x,y, z + camera_height);
     Vec3 sink;
     int chosen[agent_list->n_filtered];
-    int c = 0;
-    int choice;
+    for (int i=0; i<agent_list->n_filtered; i++)
+        chosen[i] = i;
+    shuffle_int_array(chosen, agent_list->n_filtered);  // randomize
+    
     Agent_state* agent = NULL;
     for (int i=0; i<agent_list->n_filtered; i++)
-    {
-        do {    // acquire random agent that hasnt been checked yet
-            choice = randrange(0, agent_list->n_filtered-1);
-        } while (!in_array_int(chosen, agent_list->n_filtered, choice));
-        chosen[c++] = choice;
-        
-        // ray cast to agent
-        agent = agent_list->filtered_objects[choice];
+    {   // ray cast to agent
+        agent = agent_list->filtered_objects[chosen[i]];
+        //if (agent->status.dead) continue;
         if (agent->in_sight_of(source, &sink))
         {
             printf("Found target agent %d ", agent->id);
@@ -259,7 +334,23 @@ void Turret::acquire_target()
     v = vec3_euler_rotation(v, theta/arc, phi/arc, rho/arc);
 
     // fire like hitscan laser
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
 
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            source, v, this->id, OBJ_TYPE_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
+
+    printf("turret hit target_type= %d\n", target_type);
+    // route; create/send packets
 }
 
 void Turret::tick()
@@ -301,18 +392,10 @@ void Turret::tick()
     }
     this->set_position(this->x, this->y, (float)z);
 
-    this->acquire_target();
+    if (fire_limiter % TURRET_FIRE_LIMIT == 0)
+        this->acquire_target();
+    fire_limiter++;
 #endif
-}
-
-Turret::~Turret()
-{
-    #ifdef DC_SERVER
-    turret_destroy_StoC msg;
-    msg.id = this->id;
-    msg.broadcast();
-    #endif
-    if (this->vox != NULL) delete this->vox;
 }
 
 /* Turret list */
