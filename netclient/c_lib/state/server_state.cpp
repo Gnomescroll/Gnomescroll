@@ -135,9 +135,9 @@ namespace ServerState
         {
             t = turret_list->filtered_objects[i];
             if (t==NULL) continue;
-            int h = s->take_damage(GRENADE_TURRET_DAMAGE);
+            int h = t->take_damage(GRENADE_TURRET_DAMAGE);
             if (h <= 0 && agent != NULL)
-                coins += s->get_coins_for_kill(agent->id, agent->status.team);
+                coins += t->get_coins_for_kill(agent->id, agent->status.team);
         }
 
         // add all the coins

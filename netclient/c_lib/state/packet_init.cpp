@@ -101,6 +101,7 @@ void RegisterMessages() {
     choose_spawn_location_CtoS::register_server_packet();
     spawn_location_StoC::register_client_packet();
 
+    turret_state_StoC::register_client_packet();
     turret_create_StoC::register_client_packet();
     turret_destroy_StoC::register_client_packet();
     place_turret_CtoS::register_server_packet();

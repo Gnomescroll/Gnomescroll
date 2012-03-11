@@ -57,9 +57,8 @@ Vec3 AgentState::forward_vector()
 bool Agent_state::is_you() {
     bool is = false;
     #ifdef DC_CLIENT
-    if (id == ClientState::playerAgent_state.agent_id) {
+    if (id == ClientState::playerAgent_state.agent_id)
         is = true;
-    }
     #endif
     return is;
 }
