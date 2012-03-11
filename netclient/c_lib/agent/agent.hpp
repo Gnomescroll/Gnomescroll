@@ -28,7 +28,6 @@ const int AGENT_MAX = PLAYERS_MAX;
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 
-#include <c_lib/voxel/voxel_model.hpp>
 //store last network messsage
 
 class AgentState {
@@ -91,7 +90,7 @@ class Agent_state {
         class Agent_status status;
         class Agent_weapons weapons;
 
-        Voxel_model* vox;
+        Agent_voxel_model* vox;
         #ifdef DC_CLIENT
         Agent_event event;
         #endif

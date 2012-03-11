@@ -285,7 +285,7 @@ void Object_list<Object_state, max_n>::draw(int all) {
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::full()
 {
-    if (this->num > max_n) printf("Num %d exceed max_n %d !!\n", num, max_n);
+    if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
     return (this->num >= max_n);
 }
 

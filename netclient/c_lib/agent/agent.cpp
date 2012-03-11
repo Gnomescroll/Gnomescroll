@@ -10,8 +10,6 @@
 #include <math.h>
 #include <c_lib/common/random.h>
 
-#include <c_lib/voxel/voxel_volume.hpp>
-
 AgentState::AgentState()
 :
 seq(-1),
@@ -495,7 +493,7 @@ void Agent_state::spawn_state()
 
 void Agent_state::init_vox()
 {
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
+    this->vox = new Agent_voxel_model(&agent_vox_dat, this->id, this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }

@@ -625,7 +625,7 @@ endpoints on hitscan laser
 Lua
 fog
 rotate arm
-voxel animations -- shaded minivox
+glsl minivox
 
 ==PARTICLES==
 make better particle class to abstract some drawing
@@ -649,8 +649,6 @@ try 256x256 map
 sound attenuations
 
 chat command for places of interest
-
-rotate arm slightly inward to point at look location
 
 ammo drops
 
