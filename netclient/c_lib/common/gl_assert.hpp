@@ -4,6 +4,11 @@
 
 /*
 This prints error/line when gl assertion fails
+
+example:
+
+GL_ASSERT(GL_DEPTH_TEST, true);
+GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particles/minivox.cpp, line 183
 */
 
 
@@ -31,5 +36,4 @@ bool gl_assert(GLenum flag)
 	fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
 #else
 #define GL_ASSERT(flag) ;
-
 #endif
