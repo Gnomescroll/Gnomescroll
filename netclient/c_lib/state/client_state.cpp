@@ -43,6 +43,11 @@ namespace ClientState {
         
     void init_lists()
     {
+        voxel_render_list = new Voxel_render_list;
+        voxel_hitscan_list = new Voxel_hitscan_list;
+        slime_list = new Monsters::Slime_list;
+        spawner_list = new Spawner_list;
+
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
         grenade_list = new Grenade_list;
@@ -52,11 +57,6 @@ namespace ClientState {
         minivox_list = new Minivox_list;
         billboard_text_list = new BillboardText_list;
         billboard_text_hud_list = new BillboardTextHud_list;
-
-        voxel_render_list = new Voxel_render_list;
-        voxel_hitscan_list = new Voxel_hitscan_list;
-        slime_list = new Monsters::Slime_list;
-        spawner_list = new Spawner_list;
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;

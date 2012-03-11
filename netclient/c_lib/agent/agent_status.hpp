@@ -1,7 +1,7 @@
 #pragma once
 
 #define AGENT_HEALTH 100
-#define RESPAWN_TICKS (2000 / 30)
+const int RESPAWN_TICKS = 30 * 4; // 4 seconds
 const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 
 #include <common/enum_types.hpp>

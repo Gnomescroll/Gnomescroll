@@ -90,7 +90,7 @@ class Agent_state {
         class Agent_status status;
         class Agent_weapons weapons;
 
-        Agent_voxel_model* vox;
+        Voxel_model* vox;
         #ifdef DC_CLIENT
         Agent_event event;
         #endif
