@@ -178,8 +178,6 @@ void Minivox_list::draw() {
 
     glColor3ub(255,255,255);
 
-    //glEnable(GL_DEPTH_TEST);
-
     GL_ASSERT(GL_DEPTH_TEST, true);
 
     glBegin(GL_QUADS);
@@ -205,7 +203,6 @@ void Minivox_list::draw() {
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    //glDisable(GL_DEPTH_TEST);
     
 #endif
 }
