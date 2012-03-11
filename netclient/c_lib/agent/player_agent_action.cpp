@@ -56,74 +56,27 @@ void PlayerAgent_action::hitscan_laser()
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
 
-    // get camera vector
-    float vec[3];
-    agent_camera->forward_vector(vec);
+    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    Vec3 look = p->camera_state.forward_vector();
 
-    // get camera position
-    float x,y,z;
-    x = p->camera_state.x;
-    y = p->camera_state.y;
-    z = p->camera_state.z + p->you->camera_height();
-
-    // hitscan against voxels
-    float vox_distance = 10000000.0f;
+    struct Voxel_hitscan_target target;
+    float vox_distance;
     float collision_point[3];
-    Voxel_hitscan_target target;
-    bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
-        x,y,z,
-        vec[0], vec[1], vec[2],
-        p->agent_id, OBJ_TYPE_AGENT,
-        collision_point, &vox_distance,
-        &target
-    );
-
-    //if (voxel_hit)
-    //{
-        //printf("entity_id=%d entity_type=%d part_id=%d\n", vhe.entity_id, vhe.entity_type, vhe.part_id);
-        //if (vhe.entity_type == OBJ_TYPE_SPAWNER) printf("... is a spawner\n");
-    //}
-    
-    // hitscan against terrain
-    float block_distance = 10000000.0f;
     int block_pos[3];
     int side[3];
     int tile;
-    int target_type;
-    target_type = Hitscan::terrain(
-        x,y,z,
-        vec[0], vec[1], vec[2],
-        block_pos, &block_distance,
-        side, &tile
-    );
+    float block_distance;
 
-    // choose closer collision (or none)
-    const int TARGET_NONE = 0;
-    const int TARGET_VOXEL = 1;
-    const int TARGET_BLOCK = 2;
-    
-    bool block_hit = (target_type == Hitscan::HITSCAN_TARGET_BLOCK);
-    bool voxel_closer = (vox_distance <= block_distance);
-    //bool block_closer = (block_distance > vox_distance);
-
-    if (voxel_hit && block_hit) {
-        if (voxel_closer) {
-            target_type = TARGET_VOXEL;
-        } else {
-            target_type = TARGET_BLOCK;
-        }
-    } else if (voxel_hit) {
-        target_type = TARGET_VOXEL;
-    } else if (block_hit) {
-        target_type = TARGET_BLOCK;
-    } else {
-        target_type = TARGET_NONE;
-    }
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, look, this->p->agent_id, OBJ_TYPE_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
 
     // for hitscan animation:
     // readjust the vector so that the translated position points to target
     // get the right vector for translating the hitscan laser anim
-    Vec3 look = vec3_init(vec[0], vec[1], vec[2]);
     normalize_vector(&look);
     Vec3 up = vec3_init(0,0,1);
     Vec3 right = vec3_cross(look, up);
@@ -136,9 +89,9 @@ void PlayerAgent_action::hitscan_laser()
 
     // animation origin
     float origin[3];
-    origin[0] = x + dxy * right.x;
-    origin[1] = y + dxy * right.y;
-    origin[2] = z + dz;
+    origin[0] = pos.x + dxy * right.x;
+    origin[1] = pos.y + dxy * right.y;
+    origin[2] = pos.z + dz;
 
     // send packet
     hitscan_block_CtoS block_msg;
@@ -149,7 +102,7 @@ void PlayerAgent_action::hitscan_laser()
     
     switch (target_type)
     {
-        case TARGET_VOXEL:
+        case Hitscan::HITSCAN_TARGET_VOXEL:
             obj_msg.id = target.entity_id;
             obj_msg.type = target.entity_type;
             obj_msg.part = target.part_id;
@@ -181,20 +134,16 @@ void PlayerAgent_action::hitscan_laser()
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 3);
             break;
 
-        case TARGET_BLOCK:            
+        case Hitscan::HITSCAN_TARGET_BLOCK:            
             block_msg.x = block_pos[0];
             block_msg.y = block_pos[1];
             block_msg.z = block_pos[2];
             block_msg.send();
 
             // multiply look vector by distance to collision
-            look.x *= block_distance;
-            look.y *= block_distance;
-            look.z *= block_distance;
+            look = vec3_scalar_mult(look, block_distance);
             // add agent position, now we have collision point
-            look.x += x;
-            look.y += y;
-            look.z += z;
+            look = vec3_add(look, pos);
             // copy this to collision_point, for block damage animation
             collision_point[0] = look.x;
             collision_point[1] = look.y;
@@ -215,7 +164,7 @@ void PlayerAgent_action::hitscan_laser()
             
             break;
             
-        case TARGET_NONE:
+        case Hitscan::HITSCAN_TARGET_NONE:
             // for no target, leave translated animation origin
             none_msg.send();    // server will know to forward a fire weapon packet
             break;
@@ -227,9 +176,10 @@ void PlayerAgent_action::hitscan_laser()
 
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
+    look = vec3_scalar_mult(look, hitscan_speed);
     ClientState::hitscan_effect_list->create(
         origin[0], origin[1], origin[2],
-        look.x*hitscan_speed, look.y*hitscan_speed, look.z*hitscan_speed
+        look.x, look.y, look.z
     );
 }
 
@@ -238,17 +188,6 @@ void PlayerAgent_action::hitscan_pick()
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
-    // TODO: implement hitscan methods that take in a max distance
-
-    //// get camera vector
-    //float vec[3];
-    //agent_camera->forward_vector(vec);
-
-    //// get camera position
-    //float x,y,z;
-    //x = p->camera_state.x;
-    //y = p->camera_state.y;
-    //z = p->camera_state.z + p->you->camera_height();
 
     Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
     Vec3 vec = p->camera_state.forward_vector();
@@ -267,52 +206,6 @@ void PlayerAgent_action::hitscan_pick()
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
-
-    //// hitscan against voxels
-    //float vox_distance = 10000000.0f;
-    //float collision_point[3];
-    //struct Voxel_hitscan_target target;
-    //bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
-        //x,y,z,
-        //vec[0], vec[1], vec[2],
-        //p->agent_id, OBJ_TYPE_AGENT,
-        //collision_point, &vox_distance,
-        //&target
-    //);
-
-     ////hitscan against terrain
-    //float block_distance = 10000000.0f;
-    //int block_pos[3];
-    //int side[3];
-    //int tile;
-    //int target_type;
-    //target_type = Hitscan::terrain(
-        //x,y,z,
-        //vec[0], vec[1], vec[2],
-        //block_pos, &block_distance,
-        //side, &tile
-    //);
-
-    //// choose closer collision (or none)
-    //const int TARGET_NONE = 0;
-    //const int TARGET_VOXEL = 1;
-    //const int TARGET_BLOCK = 2;
-    
-    //bool block_hit = (target_type == Hitscan::HITSCAN_TARGET_BLOCK);
-    //bool voxel_closer = (vox_distance <= block_distance);
-    ////bool block_closer = (block_distance > vox_distance);
-
-    //if (voxel_hit && block_hit)
-        //if (voxel_closer)
-            //target_type = TARGET_VOXEL;
-        //else
-            //target_type = TARGET_BLOCK;
-    //else if (voxel_hit)
-        //target_type = TARGET_VOXEL;
-    //else if (block_hit)
-        //target_type = TARGET_BLOCK;
-    //else
-        //target_type = TARGET_NONE;
 
     // send packet
     hit_block_CtoS block_msg;
