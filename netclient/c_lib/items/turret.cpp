@@ -395,7 +395,7 @@ void Turret::acquire_target()
     float rho = randf() * kPI * 2 - kPI;
     v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
 
-    // fire like hitscan laser
+    // hitscan biased laser against world
     struct Voxel_hitscan_target target;
     float vox_distance;
     float collision_point[3];
@@ -403,7 +403,6 @@ void Turret::acquire_target()
     int side[3];
     int tile;
     float block_distance;
-
     Hitscan::HitscanTargetTypes
     target_type = Hitscan::hitscan_against_world(
         source, v,
@@ -416,7 +415,6 @@ void Turret::acquire_target()
     turret_shot_object_StoC object_msg;
     turret_shot_block_StoC block_msg;
     Vec3 collision_pt;
-
     switch (target_type)
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
@@ -569,5 +567,3 @@ void Turret_list::update()
         if (this->a[i] != NULL)
             this->a[i]->update();
 }
-
-
