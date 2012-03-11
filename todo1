@@ -602,6 +602,7 @@ finish turret functions:
 colors/skeletons used in server now
 update skeletons when in view or when requested
 revoke item ownership when exiting
+freeze/thaw settings for voxel_models (locks update-ability, prevents wasteful skeleton updates from occuring)
 ====================
 
 Animations
@@ -675,7 +676,5 @@ put all voxel models in a list?
 server needs a minimized version of color -- voxel set/unset
 
 start/end text draw -- render within the glDepth block, just swap textures
-
-never_update flag for models
 
 PRINT & MAIL REBATES
