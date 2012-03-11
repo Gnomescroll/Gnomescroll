@@ -16,7 +16,7 @@ import random
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('files', type=str, nargs='*', help='input voxel model file')
-    parser.add_argument('outfile', type=str, help='output voxel model file', default='')
+    parser.add_argument('--outfile', type=str, help='file to save old version to', default='')
     args = parser.parse_args()
     return args
 
@@ -142,8 +142,9 @@ def run():
             continue
         try:
             process(args)
-        except:
+        except Exception, e:
             print "Failed to process %s" % (f,)
+            print Exception, e
             continue
 
 if __name__ == '__main__':

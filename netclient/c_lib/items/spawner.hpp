@@ -27,7 +27,6 @@ class Spawner
         Object_types type;
 
         float x,y,z;
-        //float vx,vy,vz;
         float theta,phi;
 
         int spawn_radius;

@@ -27,6 +27,7 @@ namespace ClientState {
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Monsters::Slime_list* slime_list = NULL;
     Spawner_list* spawner_list = NULL;
+    Turret_list* turret_list = NULL;
 
     Animations::HitscanEffect_list* hitscan_effect_list = NULL;
     Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
@@ -47,6 +48,7 @@ namespace ClientState {
         voxel_hitscan_list = new Voxel_hitscan_list;
         slime_list = new Monsters::Slime_list;
         spawner_list = new Spawner_list;
+        turret_list = new Turret_list;
 
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
@@ -68,6 +70,7 @@ namespace ClientState {
         delete agent_list;
         delete slime_list;
         delete spawner_list;
+        delete turret_list;
 
         // voxel lists
         delete voxel_render_list;
@@ -126,6 +129,7 @@ namespace ClientState {
         slime_list->update();
         ctf->update();
         spawner_list->update();
+        turret_list->update();
 
         if (playerAgent_state.you != NULL)
             HudMap::update_team(playerAgent_state.you->status.team);

@@ -679,40 +679,6 @@ class spawn_location_StoC: public FixedSizeReliableNetPacketToClient<spawn_locat
     inline void handle();
 };
 
-class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t owner;
-        uint8_t team;
-        int8_t team_index;
-        float x,y,z;
-        
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
-            pack_8(&team_index, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_destroy_StoC>
-{
-    public:
-        uint8_t id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 class agent_coins_StoC: public FixedSizeReliableNetPacketToClient<agent_coins_StoC>
 {
     public:

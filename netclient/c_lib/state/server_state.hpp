@@ -17,6 +17,7 @@ namespace ServerState
     extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern Spawner_list* spawner_list;
+    extern Turret_list* turret_list;
     
     extern CTF* ctf GNOMESCROLL_API;
     

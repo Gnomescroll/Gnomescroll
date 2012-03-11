@@ -1,14 +1,45 @@
 #include "spawner.hpp"
 
-#include <c_lib/common/random.h>
 #include <math.h>
-
-#include <c_lib/agent/net_agent.hpp>
-
-VoxDat spawner_vox_dat;
-
+#include <c_lib/common/random.h>
+#include <c_lib/chat/client.hpp>
 #include <net_lib/net.hpp>
 #include <c_lib/common/quicksort.hpp>
+
+/* Packets */
+class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
+{
+    public:
+        uint8_t id;
+        uint8_t owner;
+        uint8_t team;
+        int8_t team_index;
+        float x,y,z;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&owner, buff, buff_n, pack);
+            pack_u8(&team, buff, buff_n, pack);
+            pack_8(&team_index, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_destroy_StoC>
+{
+    public:
+        uint8_t id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
@@ -36,12 +67,40 @@ inline void spawner_state_StoC::handle()
     if (s==NULL) return;
     s->set_position(x,y,z);
 }
+
+inline void Spawner_create_StoC::handle()
+{
+    Spawner* s = ClientState::spawner_list->create(id, x,y,z);
+    if (s==NULL)
+    {
+        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        return;
+    }
+    s->set_team(team);
+    s->team_index = team_index; //overwrite with server authority
+    s->set_owner(owner);
+    s->init_vox();
+    Sound::spawner_placed(x,y,z,0,0,0);
+    system_message->spawner_created(s);
+}
+
+inline void Spawner_destroy_StoC::handle()
+{
+    Spawner* s = ClientState::spawner_list->get(id);
+    system_message->spawner_destroyed(s);
+    ClientState::spawner_list->destroy(id);
+}
 #endif
 
 #ifdef DC_SERVER
 inline void spawner_state_StoC::handle(){}
+inline void Spawner_create_StoC::handle(){}
+inline void Spawner_destroy_StoC::handle(){}
 #endif
 
+/* Spawners */
+
+VoxDat spawner_vox_dat;
 
 void Spawner::set_position(float x, float y, float z)
 {

@@ -367,29 +367,6 @@ inline void identified_StoC::handle()
     free(old_name);
 }
 
-inline void Spawner_create_StoC::handle()
-{
-    Spawner* s = ClientState::spawner_list->create(id, x,y,z);
-    if (s==NULL)
-    {
-        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
-        return;
-    }
-    s->set_team(team);
-    s->team_index = team_index; //overwrite with server authority
-    s->set_owner(owner);
-    s->init_vox();
-    Sound::spawner_placed(x,y,z,0,0,0);
-    system_message->spawner_created(s);
-}
-
-inline void Spawner_destroy_StoC::handle()
-{
-    Spawner* s = ClientState::spawner_list->get(id);
-    system_message->spawner_destroyed(s);
-    ClientState::spawner_list->destroy(id);
-}
-
 inline void ping_StoC::handle()
 {
     ClientState::last_ping_time = _GET_MS_TIME() - ticks;
@@ -569,8 +546,6 @@ inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
-inline void Spawner_create_StoC::handle() {}
-inline void Spawner_destroy_StoC::handle() {}
 inline void ping_StoC::handle(){}
 inline void ping_reliable_StoC::handle(){}
 inline void agent_conflict_notification_StoC::handle(){}

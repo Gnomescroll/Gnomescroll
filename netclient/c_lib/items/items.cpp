@@ -5,3 +5,4 @@
 #include <c_lib/items/flag.cpp>
 #include <c_lib/items/base.cpp>
 #include <c_lib/items/spawner.cpp>
+#include <c_lib/items/turret.cpp>

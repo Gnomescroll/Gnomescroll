@@ -17,6 +17,9 @@ namespace ServerState
     Monsters::Slime_list* slime_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Spawner_list* spawner_list = NULL;
+    Turret_list* turret_list = NULL;
+
+    CTF* ctf = NULL;
 
     void init_lists()
     {
@@ -27,22 +30,22 @@ namespace ServerState
         slime_list = new Monsters::Slime_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new Spawner_list;
+        turret_list = new Turret_list;
     }
 
     void teardown_lists()
     {
-        delete agent_list;
         delete cspray_list;
         delete grenade_list;
         //delete neutron_list;
 
         // voxels
+        delete agent_list;
         delete slime_list;
         delete spawner_list;
+        delete turret_list;
         delete voxel_hitscan_list; // must go last
     }
-
-    CTF* ctf = NULL;
 
     static void init_ctf()
     {
@@ -126,20 +129,20 @@ namespace ServerState
         }
 
         // turrets
-        //turrent_list->objects_within_sphere(x,y,z,radius);
-        //Turrent* t;
-        //for (i=0; i<turrent_list->n_filtered; i++)
-        //{
-            //t = turrent_list->filtered[i];
-            //if (t==NULL) continue;
-            //t->take_damage(dmg);
-            //if (h <= 0 && agent != NULL)
-                //coins += s->get_coins_for_kill(agent->id, agent->status.team);
-        //}
+        turret_list->objects_within_sphere(x,y,z,radius);
+        Turret* t;
+        for (i=0; i<turret_list->n_filtered; i++)
+        {
+            t = turret_list->filtered_objects[i];
+            if (t==NULL) continue;
+            int h = s->take_damage(GRENADE_TURRET_DAMAGE);
+            if (h <= 0 && agent != NULL)
+                coins += s->get_coins_for_kill(agent->id, agent->status.team);
+        }
 
-    // add all the coins
-    if (agent != NULL)
-        agent->status.add_coins(coins);
+        // add all the coins
+        if (agent != NULL)
+            agent->status.add_coins(coins);
 
     }
 
@@ -172,6 +175,7 @@ namespace ServerState
         }
 */
         spawner_list->tick();
+        turret_list->tick();
         ctf->tick();
     }
 
@@ -181,7 +185,7 @@ namespace ServerState
         slime_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
         spawner_list->send_to_client(client_id);
-        //turret_list->send_to_client(client_id);
+        turret_list->send_to_client(client_id);
     }
 
     void send_id_to_client(int client_id)

@@ -38,6 +38,7 @@ namespace ClientState {
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern Monsters::Slime_list* slime_list;
     extern Spawner_list* spawner_list;
+    extern Turret_list* turret_list;
 
     extern Animations::HitscanEffect_list* hitscan_effect_list;
     extern Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
