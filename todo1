@@ -666,4 +666,8 @@ when agent is destroyed, change ownership of things he owns like turrets, spawne
 
 integrate new abstracted hitscan method
 
+make sure damaged models are damaged on server
+
+fix ray cast simple
+
 PRINT & MAIL REBATES

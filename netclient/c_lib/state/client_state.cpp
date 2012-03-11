@@ -167,6 +167,8 @@ namespace ClientState {
         minivox_list->tick();
         billboard_text_list->tick();
         billboard_text_hud_list->tick();
+
+        turret_list->tick();
     }
 
     void draw()

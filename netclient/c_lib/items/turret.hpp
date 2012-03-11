@@ -12,7 +12,7 @@ const int MAX_TURRETS = TURRETS_PER_PLAYER * AGENT_MAX;
 const int TURRET_HEALTH = 125;
 const float TURRET_HEIGHT = 1.9f;
 const float TURRET_CAMERA_HEIGHT = 1.6f;
-const float TURRET_SIGHT_RANGE = 128.0f;    // same as agent
+const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;    // same as agent
 const int TURRET_FIRE_LIMIT = 10; // 3 times per second
 
 class turret_create_StoC; // forward decl

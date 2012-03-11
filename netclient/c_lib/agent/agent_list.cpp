@@ -27,10 +27,11 @@ void Agent_list::update_map_manager_positions()
 
 void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan properties
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     bool you;
     Agent_state* agent;
-    for(int i=0; i<n_max; i++) {
+    for(int i=0; i<n_max; i++)
+    {
         agent = a[i];
         if (agent == NULL) continue;
         you = (agent->id == ClientState::playerAgent_state.agent_id);
@@ -44,7 +45,8 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
         else
         {
             VoxDat* vox_dat = &agent_vox_dat;
-            if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z)) {
+            if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z))
+            {
                 agent->vox->set_draw(false);
                 agent->vox->set_hitscan(false);
                 if (agent->event.bb != NULL)
@@ -77,6 +79,40 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
             agent->vox->set_draw(true);
             agent->vox->set_hitscan(true);
         }
+    }
+    #endif
+    
+    #if DC_SERVER
+    Agent_state* agent;
+    VoxDat* vox_dat;
+    for(int i=0; i<n_max; i++)
+    {
+        agent = a[i];
+        if (agent == NULL) continue;
+        if (agent->vox == NULL) continue;
+        
+        vox_dat = &agent_vox_dat;
+        if (agent->crouched())
+        {
+            vox_dat = &agent_vox_dat_crouched;
+            if (!agent->status.vox_crouched)
+            {
+                agent->vox->reset_skeleton(&agent_vox_dat_crouched);
+                agent->status.vox_crouched = true;
+            }
+        }
+        else
+        {
+            if (agent->status.vox_crouched)
+            {   // was crouched last frame, but not this frame: restore standing model
+                agent->vox->reset_skeleton(&agent_vox_dat);
+                agent->status.vox_crouched = false;
+            }
+        }
+        if (agent->status.dead)
+            vox_dat = &agent_vox_dat_dead;
+        agent->vox->update(vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+        agent->vox->set_hitscan(true);
     }
     #endif
 }
@@ -130,7 +166,6 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
 {
     int ct = 0;
     float dist;
-    float min_dist = 10000000.0f;
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
@@ -139,8 +174,6 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
         {   // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
-            if (dist < min_dist)
-                min_dist = dist;
             ct++;            
         }
     }
@@ -154,7 +187,6 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
     int enemy_team = (team == 1) ? 2 : 1; // swap to enemy team id
     int ct = 0;
     float dist;
-    float min_dist = 10000000.0f;
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
@@ -164,8 +196,6 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
         {   // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
-            if (dist < min_dist)
-                min_dist = dist;
             ct++;            
         }
     }

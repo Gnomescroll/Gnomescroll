@@ -57,7 +57,7 @@ class Voxel_hitscan_list
         float collision_point[3], float *distance,
         Voxel_hitscan_target* target
     );
-
+    
     Voxel_hitscan_list();
     ~Voxel_hitscan_list();
 };

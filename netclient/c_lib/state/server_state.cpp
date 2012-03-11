@@ -177,6 +177,7 @@ namespace ServerState
         spawner_list->tick();
         turret_list->tick();
         ctf->tick();
+        agent_list->draw(); // sets skeleton
     }
 
     void send_game_state_to_client(int client_id)

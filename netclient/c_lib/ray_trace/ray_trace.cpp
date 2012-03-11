@@ -11,16 +11,16 @@
 #include <c_lib/physics/common.hpp>
 
 static inline int collision_check(int x, int y, int z) {
-    return isActive(x,y,z);
+    return isSolid(_get(x,y,z));
 }
 
 // called only by ray_cast_simple interfaces
 static bool _ray_cast_simple(float x, float y, float z, float a, float b, float c, float len)
 {
     int sx,sy,sz;
-    sx = x; //truncating conversion
-    sy = y;
-    sz = z;
+    sx = (int)x; //truncating conversion
+    sy = (int)y;
+    sz = (int)z;
 
     int _dx,_dy,_dz;
     _dx = ((a-x)/len) *ssize;
@@ -44,34 +44,33 @@ static bool _ray_cast_simple(float x, float y, float z, float a, float b, float 
     cz = cdz >=0 ? modff(z, &dummy)*bsize : bsize - modff(z, &dummy)*bsize;
 
     int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
-    max_i = fmin(raycast_tick_max, max_i);
 
     for(int i=0; i < max_i; i++)
     {
         cx += dx;
         cy += dy;
         cz += dz;
-        if(cx >= bsize || cy >= bsize || cz >= bsize)
+        if (cx >= bsize || cy >= bsize || cz >= bsize)
         {
-            if(cx >= bsize)
+            if (cx >= bsize)
             {
                 cx -= bsize;
                 sx += cdx;
-                if(collision_check(sx,sy,sz))
+                if (collision_check(sx,sy,sz))
                     return false;
             }
-            if(cy >= bsize)
+            if (cy >= bsize)
             {
                 cy -= bsize;
                 sy += cdy;
-                if(collision_check(sx,sy,sz))
+                if (collision_check(sx,sy,sz))
                     return false;
             }
-            if(cz >= bsize)
+            if (cz >= bsize)
             {
                 cz -= bsize;
                 sz += cdz;
-                if(collision_check(sx,sy,sz))
+                if (collision_check(sx,sy,sz))
                     return false;
             }
         }
@@ -94,8 +93,6 @@ bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float
     return ray_cast_simple(x,y,z, a,b,c);
 }
 
-// SHIT
-//static int ri3[4]; //return value
 static int ri4[3];
 
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {

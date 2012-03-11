@@ -46,6 +46,7 @@ class Voxel_model
         void set_arm(VoxDat* vox_dat, float theta, float phi);
         Affine* get_node(int node);
 
+        bool in_sight_of(Vec3 source, Vec3* sink);
 
         Voxel_volume* vv;
 

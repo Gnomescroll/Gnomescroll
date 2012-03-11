@@ -61,10 +61,14 @@ class turret_shot_nothing_StoC: public FixedSizeNetPacketToClient<turret_shot_no
 {
     public:
         uint8_t id;
+        float vx,vy,vz;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -144,9 +148,93 @@ inline void turret_destroy_StoC::handle()
     ClientState::turret_list->destroy(id);
 }
 
-inline void turret_shot_object_StoC::handle(){}
-inline void turret_shot_nothing_StoC::handle(){}
-inline void turret_shot_block_StoC::handle(){}
+void turret_fire_at_object(int id, int target_id, int target_part)
+{
+    printf("turret shot object local\n");
+
+    //if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+
+    Turret* t = ClientState::turret_list->get(id);
+    if (t == NULL) return;
+    Agent_state* a = ClientState::agent_list->get(target_id);
+    if (a == NULL || a->vox == NULL) return;
+    Voxel_volume* vv = a->vox->get_part(target_part);
+    if (vv == NULL) return;
+
+    Vec3 c = vv->get_center();
+    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    
+    const float hitscan_effect_speed = 200.0f;
+    Vec3 v = vec3_sub(c, p);
+    normalize_vector(&v);
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    ClientState::hitscan_effect_list->create(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z
+    );
+}
+
+inline void turret_shot_object_StoC::handle()
+{
+    printf("turret shot object\n");
+
+    if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+
+    Turret* t = ClientState::turret_list->get(id);
+    if (t == NULL) return;
+    Agent_state* a = ClientState::agent_list->get(target_id);
+    if (a == NULL || a->vox == NULL) return;
+    Voxel_volume* vv = a->vox->get_part(target_part);
+    if (vv == NULL) return;
+
+    Vec3 c = vv->get_center();
+    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    
+    const float hitscan_effect_speed = 200.0f;
+    Vec3 v = vec3_sub(c, p);
+    normalize_vector(&v);
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    ClientState::hitscan_effect_list->create(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z
+    );
+}
+
+inline void turret_shot_nothing_StoC::handle()
+{
+    printf("turret shot nothing\n");
+
+    Turret *t = ClientState::turret_list->get(id);
+    if (t == NULL) return;
+
+    const float hitscan_effect_speed = 200.0f;
+    Vec3 v = vec3_init(vx,vy,vz);
+    normalize_vector(&v);
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    ClientState::hitscan_effect_list->create(
+        t->x, t->y, t->z + t->camera_height,
+        v.x, v.y, v.z
+    );
+}
+
+inline void turret_shot_block_StoC::handle()
+{
+    printf("turret shot block\n");
+
+    Turret *t = ClientState::turret_list->get(id);
+    if (t == NULL) return;
+
+    const float hitscan_effect_speed = 200.0f;
+    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    Vec3 c = vec3_init(x,y,z);
+    Vec3 v = vec3_sub(c, p); 
+    normalize_vector(&v);
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    ClientState::hitscan_effect_list->create(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z
+    );
+}
 #endif
 
 #ifdef DC_SERVER
@@ -234,6 +322,7 @@ fire_limiter(0),
 team(0),
 id(id),
 owner(0),
+health(TURRET_HEALTH),
 type(OBJ_TYPE_TURRET),
 x(0), y(0), z(0),
 theta(0), phi(0),
@@ -298,7 +387,8 @@ void Turret::acquire_target()
 {
     using STATE::agent_list;
     // find enemies in range
-    agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);
+    //agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);   //TODO: reenable
+    agent_list->objects_within_sphere(x,y,z, TURRET_SIGHT_RANGE);
     if (!agent_list->n_filtered) return;
 
     Vec3 source = vec3_init(x,y, z + camera_height);
@@ -312,12 +402,11 @@ void Turret::acquire_target()
     for (int i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         agent = agent_list->filtered_objects[chosen[i]];
-        //if (agent->status.dead) continue;
         if (agent->in_sight_of(source, &sink))
         {
-            printf("Found target agent %d ", agent->id);
-            printf("at ");
-            vec3_print(sink);
+            //printf("Found target agent %d ", agent->id);
+            //printf("at ");
+            //vec3_print(sink);
             break;
         }
         agent = NULL;
@@ -326,12 +415,13 @@ void Turret::acquire_target()
 
     // get vector to sink
     Vec3 v = vec3_sub(sink, source);
+    normalize_vector(&v);
     // add random bias
-    float arc = 10.0f;
-    float theta = randf() * kPI * 2;
-    float phi = randf() * kPI * 2;
-    float rho = randf() * kPI * 2;
-    v = vec3_euler_rotation(v, theta/arc, phi/arc, rho/arc);
+    float arc = 3.0f / 360.0f;
+    float theta = randf() * kPI * 2 - kPI;
+    float phi = randf() * kPI * 2 - kPI;
+    float rho = randf() * kPI * 2 - kPI;
+    v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
 
     // fire like hitscan laser
     struct Voxel_hitscan_target target;
@@ -344,24 +434,79 @@ void Turret::acquire_target()
 
     Hitscan::HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            source, v, this->id, OBJ_TYPE_AGENT,
+            source, v,
+            this->id, OBJ_TYPE_TURRET,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
 
-    printf("turret hit target_type= %d\n", target_type);
+    //printf("turret hit target_type= %d\n", target_type);
     // route; create/send packets
+
+    turret_shot_object_StoC object_msg;
+    turret_shot_block_StoC block_msg;
+    Vec3 collision_pt;
+    
+    switch (target_type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            if (vox_distance > TURRET_SIGHT_RANGE)
+                return; // should not occur
+            object_msg.id = this->id;
+            object_msg.target_id = target.entity_id;
+            object_msg.target_type = target.entity_type;
+            object_msg.target_part = target.part_id;
+            object_msg.vx = target.voxel[0];
+            object_msg.vy = target.voxel[1];
+            object_msg.vz = target.voxel[2];
+            object_msg.broadcast();
+            #if DC_CLIENT
+            //turret_fire_at_object(this->id, target.entity_id, target.part_id);
+            #endif
+
+            break;
+            
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            if (block_distance > TURRET_SIGHT_RANGE)
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
+            collision_pt = vec3_add(source, vec3_scalar_mult(v, block_distance));
+            block_msg.x = collision_pt.x;
+            block_msg.y = collision_pt.y;
+            block_msg.z = collision_pt.z;
+            block_msg.id = this->id;
+            block_msg.cube = tile;
+            block_msg.side = get_cube_side_from_side_array(side);
+            block_msg.broadcast();
+            break;
+
+        default:
+            target_type = Hitscan::HITSCAN_TARGET_NONE;
+            break;
+    }
+
+    if (target_type == Hitscan::HITSCAN_TARGET_NONE)
+    {
+        turret_shot_nothing_StoC msg;
+        msg.id = this->id;
+        msg.vx = v.x;
+        msg.vy = v.y;
+        msg.vz = v.z;
+        msg.broadcast();
+    }
 }
 
 void Turret::tick()
-{
+{    
+#ifdef DC_SERVER
     if (this->health <= 0)
     {
         STATE::turret_list->destroy(this->id);
         return;
     }
-    
-#ifdef DC_SERVER
+
     // fall/climb with terrain
     int x,y,z;
     x = (int)this->x;
@@ -436,19 +581,15 @@ void Turret_list::send_to_client(int client_id)
 void Turret_list::tick()
 {
     for (int i=0; i<n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->tick();
-    }
+        if (this->a[i] != NULL)
+            this->a[i]->tick();
 }
 
 void Turret_list::update()
 {
     for (int i=0; i<n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->update();
-    }
+        if (this->a[i] != NULL)
+            this->a[i]->update();
 }
 
 

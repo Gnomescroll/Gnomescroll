@@ -544,3 +544,25 @@ void Voxel_model::restore(VoxDat* vox_dat, int team)
         vv->damaged = false;
     }
 }
+
+bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
+{   // ray cast from source to each body part center (shuffled)
+    int part_numbers[this->n_parts];
+    for (int i=0; i<this->n_parts; i++)
+        part_numbers[i] = i;
+    shuffle_int_array(part_numbers, this->n_parts);
+    
+    Voxel_volume* vv;
+    Vec3 c;
+    for (int i=0; i<this->n_parts; i++)
+    {
+        vv = &this->vv[part_numbers[i]];
+        c = vv->get_center(); // ray cast to center of volume
+        if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
+        {
+            *sink = c;
+            return true;
+        }
+    }
+    return false;
+}
