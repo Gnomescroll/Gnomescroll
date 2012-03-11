@@ -306,6 +306,32 @@ void CTF::animate_flags()
     if (two.flag != NULL && two.flag->vox != NULL)
         two.flag->animate();
 }
+
+void CTF::register_items_for_hitscan()
+{
+    one.flag->vox->set_hitscan(true);
+    two.flag->vox->set_hitscan(true);
+    one.base->vox->set_hitscan(true);
+    two.base->vox->set_hitscan(true);
+
+    one.flag->vox->register_hitscan();
+    two.flag->vox->register_hitscan();
+    one.base->vox->register_hitscan();
+    two.base->vox->register_hitscan();
+
+}
+void CTF::unregister_items_for_hitscan()
+{
+    one.flag->vox->set_hitscan(false);
+    two.flag->vox->set_hitscan(false);
+    one.base->vox->set_hitscan(false);
+    two.base->vox->set_hitscan(false);
+
+    one.flag->vox->unregister_hitscan();
+    two.flag->vox->unregister_hitscan();
+    one.base->vox->unregister_hitscan();
+    two.base->vox->unregister_hitscan();
+}
 #endif
 
 #ifdef DC_SERVER
@@ -731,4 +757,3 @@ Flag* CTF::get_enemy_flag(int team)
         team = (team == 1) ? 2 : 1;
     return this->get_flag(team);
 }
-

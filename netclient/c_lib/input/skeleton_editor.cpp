@@ -94,6 +94,7 @@ void raycast_to_part()
     z = current_camera->z;
 
     // hitscan against voxels
+    ClientState::ctf->register_items_for_hitscan();
     float vox_distance = 10000000.0f;
     float collision_point[3];
     Voxel_hitscan_target target;
@@ -104,6 +105,7 @@ void raycast_to_part()
         collision_point, &vox_distance,
         &target
     );
+    ClientState::ctf->unregister_items_for_hitscan();
 
     if (!voxel_hit)
         return;
@@ -118,42 +120,44 @@ void raycast_to_part()
         case OBJ_TYPE_AGENT:
             vox_dat = &agent_vox_dat;
             obj = ClientState::agent_list->get(id);
-            if (obj==NULL) break;
+            if (obj==NULL) return;
             vox = ((Agent_state*)obj)->vox;
             break;
         case OBJ_TYPE_SLIME:
             vox_dat = &Monsters::slime_vox_dat;
             obj = ClientState::slime_list->get(id);
-            if (obj==NULL) break;
+            if (obj==NULL) return;
             vox = ((Monsters::Slime*)obj)->vox;
             break;
         case OBJ_TYPE_SPAWNER:
             vox_dat = &spawner_vox_dat;
             obj = ClientState::spawner_list->get(id);
-            if (obj==NULL) break;
+            if (obj==NULL) return;
             vox = ((Spawner*)obj)->vox;
             break;
-        //case OBJ_TYPE_BASE:
-            //vox_dat = &base_vox_dat;
-            //obj = ClientState::ctf->get_base(id);
-            //if (obj==NULL) break;
-            //vox = ((Base*)obj)->vox;
-            //break;
-        //case OBJ_TYPE_FLAG:
-            //vox_dat = &flag_vox_dat;
-            //obj = ClientState::ctf->get_flag(id);
-            //if (obj==NULL) break;
-            //vox = ((Flag*)obj)->vox;
-            //break;
+        case OBJ_TYPE_BASE:
+            vox_dat = &base_vox_dat;
+            obj = ClientState::ctf->get_base(id+1);
+            if (obj==NULL) return;
+            vox = ((Base*)obj)->vox;
+            break;
+        case OBJ_TYPE_FLAG:
+            vox_dat = &flag_vox_dat;
+            obj = ClientState::ctf->get_flag(id+1);
+            if (obj==NULL) return;
+            vox = ((Flag*)obj)->vox;
+            break;
 
-        //case OBJ_TYPE_TURRET:
-            //vox_dat = &turret_vox_dat;
-            //obj = ClientState::turret_list->get(id);
-            //if (obj==NULL) break;
-            //vox = ((Turret*)obj)->vox;
-            //break;
+        case OBJ_TYPE_TURRET:
+            vox_dat = &turret_vox_dat;
+            obj = ClientState::turret_list->get(id);
+            if (obj==NULL) return;
+            vox = ((Turret*)obj)->vox;
+            break;
 
-        default: break;
+        default:
+            printf("WARNING: Skeleton editor -- raycast_to_part() -- unhandled object type %d\n", type);
+            return;
     }
     if (old != vox_dat)
         node = 0;

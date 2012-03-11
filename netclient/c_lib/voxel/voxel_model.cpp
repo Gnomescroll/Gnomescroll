@@ -409,6 +409,17 @@ void Voxel_model::register_hitscan()
         STATE::voxel_hitscan_list->register_voxel_volume(&this->vv[i++]));
 }
 
+void Voxel_model::unregister_hitscan()
+{
+    if (this->vv == NULL)
+    {
+        printf("ERROR Voxel_model::register_hitscan -- voxel volume array is NULL\n");
+        return;
+    }
+    for (int i=0; i<this->n_parts;
+        STATE::voxel_hitscan_list->unregister_voxel_volume(&this->vv[i++]));
+}
+
 void Voxel_model::set_hitscan(bool hitscan)
 {
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);

@@ -21,6 +21,9 @@ class CTF {
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
     int get_enemy_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
     void animate_flags();
+
+    void register_items_for_hitscan();
+    void unregister_items_for_hitscan();
     #endif
 
     #ifdef DC_SERVER

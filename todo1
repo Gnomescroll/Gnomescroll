@@ -632,6 +632,9 @@ Lua
 fog
 rotate arm
 glsl minivox
+player jump
+player momentum
+map instrumentation - fix remaining bugs
 
 ==PARTICLES==
 make better particle class to abstract some drawing

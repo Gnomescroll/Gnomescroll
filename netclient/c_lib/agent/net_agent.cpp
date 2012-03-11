@@ -508,6 +508,7 @@ inline void AgentActiveWeapon_CtoS::handle() {}
 inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
+inline void place_turret_CtoS::handle(){}
 inline void melee_object_CtoS::handle(){}
 inline void melee_none_CtoS::handle(){}
 inline void identify_CtoS::handle(){}

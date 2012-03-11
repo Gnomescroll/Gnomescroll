@@ -112,7 +112,6 @@ void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)
         }
     }
     if (i == VOXEL_HITSCAN_LIST_SIZE) printf("WARNING: register_voxel_hitscan - no space available\n");
-
 }
 
 void Voxel_hitscan_list::unregister_voxel_volume(Voxel_volume* vv)

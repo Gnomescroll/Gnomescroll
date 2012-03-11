@@ -56,23 +56,48 @@ class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_
         inline void handle();
 };
 
-
 #ifdef DC_CLIENT
 inline void turret_state_StoC::handle()
 {
     
-    Turret* s = ClientState::turret_list->get(id);
-    if (s==NULL) return;
-    s->set_position(x,y,z);
+    Turret* t = ClientState::turret_list->get(id);
+    if (t==NULL) return;
+    t->set_position(x,y,z);
+}
+
+inline void turret_create_StoC::handle()
+{
+    Turret* t = ClientState::turret_list->create(id, x,y,z);
+    if (t==NULL)
+    {
+        printf("WARNING turret_create_StoC::handle() -- could not create turret %d\n", id);
+        return;
+    }
+    t->set_team(team);
+    t->set_owner(owner);
+    t->init_vox();
+    //Sound::turret_placed(x,y,z,0,0,0);
+    //system_message->turret_created(t);
+}
+
+inline void turret_destroy_StoC::handle()
+{
+    //turret* t = ClientState::turret_list->get(id);
+    //system_message->turret_destroyed(t);
+    ClientState::turret_list->destroy(id);
 }
 #endif
 
 #ifdef DC_SERVER
 inline void turret_state_StoC::handle(){}
+inline void turret_create_StoC::handle(){}
+inline void turret_destroy_StoC::handle(){}
 #endif
 
-VoxDat turret_vox_dat;
 
+/* Turrets */
+
+VoxDat turret_vox_dat;
 
 void Turret::set_position(float x, float y, float z)
 {
@@ -134,6 +159,8 @@ void Turret::update()
         this->vox->set_draw(true);
         this->vox->set_hitscan(true);
     }
+    if (input_state.skeleton_editor)
+        this->vox->update(&turret_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }
 

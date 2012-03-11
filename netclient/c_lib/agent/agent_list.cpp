@@ -65,7 +65,7 @@ void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan proper
             else
             {
                 if (agent->status.vox_crouched)
-                {
+                {   // was crouched last frame, but not this frame: restore standing model
                     agent->vox->reset_skeleton(&agent_vox_dat);
                     agent->status.vox_crouched = false;
                 }

@@ -82,5 +82,7 @@ void Flag::update()
         this->vox->set_draw(false);
     else
         this->vox->set_draw(true);
+    if (input_state.skeleton_editor)
+        this->vox->update(&flag_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }

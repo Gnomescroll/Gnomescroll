@@ -87,7 +87,8 @@ inline void Spawner_create_StoC::handle()
 inline void Spawner_destroy_StoC::handle()
 {
     Spawner* s = ClientState::spawner_list->get(id);
-    system_message->spawner_destroyed(s);
+    if (s != NULL)
+        system_message->spawner_destroyed(s);
     ClientState::spawner_list->destroy(id);
 }
 #endif
@@ -179,6 +180,8 @@ void Spawner::update()
         this->vox->set_draw(true);
         this->vox->set_hitscan(true);
     }
+    if (input_state.skeleton_editor)
+        this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }
 

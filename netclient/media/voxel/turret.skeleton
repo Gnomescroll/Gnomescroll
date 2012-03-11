@@ -3,9 +3,8 @@
 #connection matrix
 0 0
 #skeleton_node: anchor x,y,z rotatation x,y,z
-0 0.0 0.0 0.0  0.0 0.0 0.0
-#node number, skeleton parent matrix, voxel volume
+0 0.000000 0.000000 0.000000  0.000000 0.000000 0.000000
+#part number, node number, voxel format filename
 0 0 media/voxel/turret.dcvox
 #voxel: anchor x,y,z rotatation x,y,z
-0 0.0 0.0 0.8  0.0 0.0 0.0
-
+0 0.000000 0.000000 0.900000  0.000000 0.000000 0.000000

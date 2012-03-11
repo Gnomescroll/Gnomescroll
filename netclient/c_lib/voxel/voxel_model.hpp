@@ -34,6 +34,7 @@ class Voxel_model
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
         void register_hitscan();
+        void unregister_hitscan();
         void set_part_color(VoxDat* vox_dat, int part_num);
         void set_part_team_color(VoxDat* vox_dat, int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b);
         void set_colors(VoxDat* vox_dat);
