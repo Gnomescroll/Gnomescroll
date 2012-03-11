@@ -39,7 +39,7 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos);
 
-    int get_block(int x, int y, int z) __attribute((always_inline)); //for VBO generator
+    int get_block(int x, int y, int z);// __attribute((always_inline)); //for VBO generator
 };
 
 class Terrain_map
@@ -75,7 +75,7 @@ class Terrain_map
     inline struct MAP_ELEMENT get_element(int x, int y, int z) __attribute((always_inline));
     inline void set_element(int x, int y, int z, struct MAP_ELEMENT element) __attribute((always_inline));
 
-    inline int get_block(int x, int y, int z);// __attribute((always_inline));
+    inline int get_block(int x, int y, int z) __attribute((always_inline));
     inline void set_block(int x, int y, int z, int value) __attribute((always_inline));
 #else
     struct MAP_ELEMENT get_element(int x, int y, int z);
