@@ -18,6 +18,7 @@ occludes = 0,
 transparent = 0
 }
 
+--- falls through if property is not set
 function BlockProperties:new (o)
   o = o or {}
   setmetatable(o, self)
@@ -55,17 +56,91 @@ w west
 e east
 ]]
 
+---default valuessssss
+BlockHud =
+{
+hud_pos = nil,
+hud_img = nil,
+}
 
+function BlockHud:new ()
+  o = {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+BlockHudDefault = BlockHud.new()
+
+function default_hud()
+---default value
 BlockTexture =
 {
-hud     0 stone.png
-t = stone.png
-b = stone.png
-n = stone.png
-s = stone.png
-w = stone.png
-e = stone.png
+  t = nil,
+  b = nil,
+  n = nil,
+  s = nil,
+  w = nil,
+  e = nil
 }
+
+function iso_texture(tex) =
+{
+  o = 
+  {
+    t = tex,
+    b = tex,
+    n = tex,
+    s = tex,
+    w = tex,
+    e = tex
+  }
+  return o;
+}
+
+
+---holds everything else
+Block = 
+{
+  name = nil,
+  properties = nil,
+  texture = nil,
+  hud = nil
+}
+
+--- register ids
+
+
+block_id_table = {};
+
+function Block:new(id, name, properties, texture, hud)
+  o = {name = name, properties = properties, texture = texture, hud = hud}
+  setmetatable(o, self)
+  self.__index = self
+  --- table set
+  if( block_id_table[id] != nil)
+    print "Error: id taken"
+  end
+  block_id_table[id] = o;
+  return o
+end
+
+
+function Block:iso_texture(tex)
+  self.texture = 
+  {
+    t = tex,
+    b = tex,
+    n = tex,
+    s = tex,
+    w = tex,
+    e = tex
+  }
+end
+
+--[[
+Set 
+]]
 
 id      1
 name    test
