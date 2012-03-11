@@ -345,5 +345,37 @@ Weapon(TYPE_spawner_placer)
 SpawnerPlacer::~SpawnerPlacer()
 {}
 
+/* TurretPlacer (TEMPORARY) */
+
+bool TurretPlacer::fire()
+{
+    return true;
+}
+
+char* TurretPlacer::hud_display()
+{   // TODO: get # of Turrets agent can afford, print that
+    //sprintf(hud_string, hud_display_format_string, clip_str, clip_size_str, ammo_str, max_ammo_str);
+    return hud_string;
+}
+
+TurretPlacer::TurretPlacer()
+:
+Weapon(TYPE_turret_placer)
+{
+    // doesnt use traditional ammo
+    // set these values very high so that it shouldnt run out,
+    // and any fire() tests will pass
+    this->max_ammo = 9999;
+    this->ammo = 9999;
+    this->clip_str = const_cast<char*>(hud_undefined_string);
+    this->clip_size_str = const_cast<char*>(hud_undefined_string);
+    this->ammo_str = const_cast<char*>(hud_undefined_string);
+    this->max_ammo_str = const_cast<char*>(hud_undefined_string);
+    sprintf(this->hud_string, (char*)"Turret synthesizer");
+}
+
+TurretPlacer::~TurretPlacer()
+{}
+
 
 }

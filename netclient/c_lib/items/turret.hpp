@@ -9,7 +9,7 @@ extern VoxDat turret_vox_dat;
 
 const int TURRETS_PER_PLAYER = 10;
 const int MAX_TURRETS = TURRETS_PER_PLAYER * AGENT_MAX;
-const int TURRET_HEALTH = 200;
+const int TURRET_HEALTH = 125;
 const float TURRET_HEIGHT = 1.9f;
 
 class turret_create_StoC; // forward decl

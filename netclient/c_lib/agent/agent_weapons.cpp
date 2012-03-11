@@ -1,6 +1,6 @@
 #include "agent_weapons.hpp"
 
-static const int N_AGENT_WEAPONS = 5;
+static const int N_AGENT_WEAPONS = 6;
 
 Agent_weapons::Agent_weapons(Agent_state* a)
 : a(a), active(0)
@@ -10,6 +10,7 @@ Agent_weapons::Agent_weapons(Agent_state* a)
     blocks.owner = a->id;
     grenades.owner = a->id;
     spawner.owner = a->id;
+    turret.owner = a->id;
 }
 
 void Agent_weapons::set_ammo(int type, int ammo) {
@@ -113,11 +114,14 @@ void Agent_weapons::weapon_change_message() {
     #endif
 }
 
-#define LASER_SLOT 0
-#define PICK_SLOT 1
-#define BLOCKS_SLOT 2
-#define GRENADES_SLOT 3
-#define SPAWNER_SLOT 4
+typedef enum {
+     LASER_SLOT,
+     PICK_SLOT,
+     BLOCKS_SLOT,
+     GRENADES_SLOT,
+     SPAWNER_SLOT,
+     TURRET_SLOT
+} AgentWeaponSlots;
 
 bool Agent_weapons::is_active(int type) {
     bool res = false;
@@ -136,6 +140,9 @@ bool Agent_weapons::is_active(int type) {
             break;
         case SPAWNER_SLOT:
             res = (spawner.type == type);
+            break;
+        case TURRET_SLOT:
+            res = (turret.type == type);
             break;
         default:
             printf("Agent_weapons::is_active critical error. active weapon %d out of range\n", active);
@@ -184,7 +191,6 @@ void Agent_weapons::reload(int type) {
             laser.reload();
             break;
         default:
-            printf("Agent_weapons::reload unknown or invalid weapon type %d\n", type);
             return;
     }
 }
@@ -207,6 +213,9 @@ char* Agent_weapons::hud_display() {
             break;
         case Weapons::TYPE_spawner_placer:
             str = spawner.hud_display();
+            break;
+        case Weapons::TYPE_turret_placer:
+            str = turret.hud_display();
             break;
         default:
             printf("Agent_weapons::hud_display unknown or invalid weapon type %d\n", type);
@@ -233,6 +242,9 @@ int Agent_weapons::active_type() {
             break;
         case SPAWNER_SLOT:
             t = spawner.type;
+            break;
+        case TURRET_SLOT:
+            t = turret.type;
             break;
         default:
             printf("Agent_weapons::active_type unknown or invalid weapon slot %d\n", active);
@@ -264,6 +276,9 @@ bool Agent_weapons::fire() {
         case Weapons::TYPE_spawner_placer:
             fired = spawner.fire();
             break;
+        case Weapons::TYPE_turret_placer:
+            fired = turret.fire();
+            break;
         default:
             printf("Agent_weapons::fire -- unknown or invalid weapon type %d\n", type);
             break;
@@ -289,6 +304,9 @@ bool Agent_weapons::fire(int type) {
         case Weapons::TYPE_spawner_placer:
             fired = spawner.fire();
             break;
+        case Weapons::TYPE_turret_placer:
+            fired = turret.fire();
+            break;
         default:
             printf("Agent_weapons::fire -- unknown or invalid weapon type %d\n", type);
             break;
@@ -313,6 +331,9 @@ bool Agent_weapons::can_zoom() {
             break;
         case SPAWNER_SLOT:
             zoom = spawner.scope;
+            break;
+        case TURRET_SLOT:
+            zoom = turret.scope;
             break;
         default:
             printf("Agent_weapons::can_zoom unknown or invalid weapon slot %d\n", active);

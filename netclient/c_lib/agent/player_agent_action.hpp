@@ -22,6 +22,7 @@ class PlayerAgent_action {
         int select_block();
         
         void place_spawner();
+        void place_turret();
 
         explicit PlayerAgent_action(PlayerAgent_state* player_agent);
 };

@@ -434,7 +434,7 @@ void HUD::init()
     coins->set_format((char*) coins_format);
     coins->set_format_extra_length(5 - 2);
     coins->set_color(255,10,10,255);
-    coins->set_position(32*5 + 2, _yresf - line_height + 2);
+    coins->set_position(HudEquipment::rendered_width + 2, _yresf - line_height + 2);
     
     health = HudText::text_list->create();
     health->set_text((char*) "");
@@ -442,7 +442,7 @@ void HUD::init()
     //health->set_format_extra_length((3 - 2) + (3 - 2));
     health->set_format_extra_length((3 - 2));
     health->set_color(255,10,10,255);
-    health->set_position(32*5 + 2, _yresf + 2);
+    health->set_position(HudEquipment::rendered_width + 2, _yresf + 2);
 
     weapon = HudText::text_list->create();
     weapon->set_text((char*)"");

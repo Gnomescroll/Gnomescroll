@@ -7,7 +7,8 @@ typedef enum {
     TYPE_hitscan_laser,
     TYPE_block_applier,
     TYPE_grenade_thrower,
-    TYPE_spawner_placer
+    TYPE_spawner_placer,
+    TYPE_turret_placer
 } weapon_type;
 
 const int WEAPON_HUD_STRING_MAX = 31;
@@ -85,7 +86,8 @@ class GrenadeThrower: public Weapon {
         ~GrenadeThrower();
 };
 
-
+// TODO -- one weapon to synthesize items with
+// TEMP
 class SpawnerPlacer: public Weapon
 {
     public:
@@ -94,6 +96,16 @@ class SpawnerPlacer: public Weapon
         char* hud_display();
         SpawnerPlacer();
         ~SpawnerPlacer();
+};
+
+class TurretPlacer: public Weapon
+{
+    public:
+        bool fire();
+
+        char* hud_display();
+        TurretPlacer();
+        ~TurretPlacer();
 };
 
 }

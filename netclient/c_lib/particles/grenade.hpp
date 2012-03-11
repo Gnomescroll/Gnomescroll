@@ -6,8 +6,8 @@ const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
 const float GRENADE_DAMAGE_RADIUS = 4.5f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 32;
-const int GRENADE_SPAWNER_DAMAGE = 20;
-const int GRENADE_TURRET_DAMAGE = 40;
+const int GRENADE_SPAWNER_DAMAGE = 25;
+const int GRENADE_TURRET_DAMAGE = 25;
 
 using Verlet::VerletParticle;
 

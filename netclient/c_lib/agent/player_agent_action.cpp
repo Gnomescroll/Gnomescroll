@@ -41,6 +41,9 @@ void PlayerAgent_action::fire() {
         case Weapons::TYPE_spawner_placer:
             place_spawner();
             break;
+        case Weapons::TYPE_turret_placer:
+            place_turret();
+            break;
         default:
             printf("PlayerAgent_action::fire -- No action defined for weapon type %d\n", type);
             break;
@@ -493,6 +496,34 @@ void PlayerAgent_action::place_spawner()
     if (block == NULL) return;
     
     place_spawner_CtoS msg;
+    msg.x = block[0];
+    msg.y = block[1];
+    msg.z = block[2];
+    msg.send();
+}
+
+void PlayerAgent_action::place_turret()
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
+
+    AgentState* state = &this->p->s1;
+    float v[3];
+    agent_camera->forward_vector(v);
+
+    int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
+    const float max_dist = 4.0f;
+    const int z_low = 4;
+    const int z_high = 3;
+    int* block = _farthest_empty_block(
+        state->x, state->y, state->z + this->p->you->camera_height(),
+        v[0], v[1], v[2],
+        max_dist, z_low, z_high
+    );
+    if (block == NULL) return;
+    
+    place_turret_CtoS msg;
     msg.x = block[0];
     msg.y = block[1];
     msg.z = block[2];

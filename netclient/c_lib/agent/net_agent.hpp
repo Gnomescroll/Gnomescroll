@@ -642,7 +642,21 @@ class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_Ct
 
 /****************/
 
-class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawner_CtoS> // reliable?
+class place_turret_CtoS: public FixedSizeReliableNetPacketToServer<place_turret_CtoS>
+{
+    public:
+        uint16_t x,y,z;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&x, buff, buff_n, pack);
+            pack_u16(&y, buff, buff_n, pack);
+            pack_u16(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class place_spawner_CtoS: public FixedSizeReliableNetPacketToServer<place_spawner_CtoS>
 {
     public:
         uint16_t x,y,z;

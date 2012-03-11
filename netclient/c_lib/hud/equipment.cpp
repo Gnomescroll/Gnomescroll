@@ -25,6 +25,8 @@ static int slot = 0;
 static const int n_icons = (spritesheet_width / icon_width) * (spritesheet_height / icon_height);
 static int slot_icons[n_items];
 
+static int rendered_width = 0;
+
 void init_surface() {
 
     char panel_fn[] = "media/texture/equipment_panel.png";
@@ -92,6 +94,11 @@ void set_slot_icon(int slot, int icon_id) {
         return;
     }
     slot_icons[slot] = icon_id;
+
+    // calculate maximum rendered width
+    int r_width = (slot+1) * 32;
+    if (r_width > rendered_width)
+        rendered_width = r_width;
 }
 
 
@@ -103,6 +110,7 @@ void init() {
     set_slot_icon(2, 2); // block applier
     set_slot_icon(3, 4); // grenades
     set_slot_icon(4, 5); // spawner
+    set_slot_icon(5, 6); // turret
 }
 
 int get_equipment_slot_icon(int slot) {

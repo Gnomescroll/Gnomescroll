@@ -633,12 +633,14 @@ inline void hitscan_object_CtoS::handle()
     //const int agent_dmg = 25;
     const int slime_dmg = 25;
     const int spawner_dmg = 25;
+    const int turret_dmg = 25;
     int dmg_health;
 
     //float x,y,z;
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
     Spawner* spawner = NULL;
+    Turret* turret = NULL;
 
     switch (type)
     {
@@ -687,7 +689,20 @@ inline void hitscan_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            printf("hitscan_object_CtoS::handle -- Turrets not implemented\n");
+            turret = ServerState::turret_list->get(id);
+            if (turret == NULL) return;
+
+            if (turret->get_team() == a->status.team
+            && turret->owner != a->id)
+                return; // teammates cant kill turrets
+                
+            // apply damage
+            dmg_health = turret->take_damage(turret_dmg);
+            if (dmg_health <= 0)
+            {
+                int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                a->status.add_coins(coins);
+            }
             break;
         default:
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
@@ -795,10 +810,12 @@ inline void melee_object_CtoS::handle()
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
     Spawner* spawner = NULL;
+    Turret* turret = NULL;
 
     const int agent_dmg = 50;
     const int slime_dmg = 50;
     const int spawner_dmg = 50;
+    const int turret_dmg = 50;
     int dmg_health;
     
     switch (type)
@@ -839,8 +856,22 @@ inline void melee_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            printf("hitscan_object_CtoS::handle -- Turrets not implemented\n");
-            return;
+            turret = ServerState::turret_list->get(id);
+            if (turret == NULL) return;
+
+            if (turret->get_team() == a->status.team
+            && turret->owner != a->id)
+                return; // teammates cant kill turrets
+                
+            // apply damage
+            dmg_health = turret->take_damage(turret_dmg);
+            if (dmg_health <= 0)
+            {
+                int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                a->status.add_coins(coins);
+            }
+            break;
+
         default:
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
@@ -993,6 +1024,31 @@ inline void place_spawner_CtoS::handle()
     s->init_vox();
     Spawner_create_StoC msg;
     s->create_message(&msg);
+    msg.broadcast();
+}
+
+inline void place_turret_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL)
+    {
+        printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+    if (a->status.team == 0) return;
+    if (!a->status.can_afford(OBJ_TYPE_TURRET)) return;
+    if (ServerState::turret_list->full()) return;
+    if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return;
+
+    a->status.purchase(OBJ_TYPE_TURRET);
+
+    Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,z);
+    if (t==NULL) return;
+    t->set_team(a->status.team);
+    t->set_owner(a->id);
+    t->init_vox();
+    turret_create_StoC msg;
+    t->create_message(&msg);
     msg.broadcast();
 }
 

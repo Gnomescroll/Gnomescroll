@@ -13,7 +13,7 @@ enum Object_types
 };
 
 #define COST_SPAWNER 5
-#define COST_TURRET 3
+#define COST_TURRET 2
 
 unsigned int get_object_cost(Object_types obj)
 {
