@@ -10,3 +10,10 @@ unsigned int sanitize_player_name(char* name);
 struct Color {
     unsigned char r,g,b;
 };
+
+bool in_array_int(int* arr, int arr_max, int val)
+{
+    for (int i=0; i<arr_max; i++)
+        if (arr[i] == val) return true;
+    return false;
+}

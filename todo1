@@ -593,7 +593,7 @@ slimes wont attack viewers
 Mar 10
 
 increase respawn time to 4 seconds
-
+add turrets (CRUD functionality -- does not attack anyone yet)
 ====================
 
 Animations
@@ -608,7 +608,6 @@ Gun in first person and zoomed perspectives
 Minimap
 
 == GAMEPLAY ==
-Turrets
 Weapon firing rate
 
 == VOXEL EDITOR ==

@@ -755,3 +755,9 @@ bool Agent_state::point_can_cast(float x, float y, float z, float max_dist)
 
     return false;
 }
+
+bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
+{   // TODO -- implement
+    return true;
+}
+

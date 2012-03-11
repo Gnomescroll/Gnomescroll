@@ -2,8 +2,12 @@
 
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.hpp>
-#include <c_lib/state/client_state.hpp>
 
+//forward decl
+namespace STATE
+{
+    extern Voxel_hitscan_list* voxel_hitscan_list;
+}
 
 namespace Hitscan {
 
@@ -48,14 +52,15 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
     return &dummy_hitscan_block;
 }
 
-int terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], int *tile)
+HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3], float *distance, int side[3], int *tile)
 {
 
     HitscanBlock* block = ray_intersect_block(x,y,z, vx,vy,vz);
 
-    int target = HITSCAN_TARGET_NONE;
+    HitscanTargetTypes target = HITSCAN_TARGET_NONE;
 
-    if (block->hit) {
+    if (block->hit)
+    {
         target = HITSCAN_TARGET_BLOCK;
         pos[0] = block->x;
         pos[1] = block->y;
@@ -68,6 +73,51 @@ int terrain(float x, float y, float z, float vx, float vy, float vz, int pos[3],
     }
 
     return target;
+}
+
+
+HitscanTargetTypes hitscan_against_world(
+    Vec3 p, Vec3 v, int firing_id, Object_types firing_type,    // inputs
+    struct Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
+    int block_pos[3], int side[3], int* tile, float* block_distance // outputs
+)
+{   // hitscan against voxels
+    *vox_distance = 10000000.0f;
+    bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z,
+        firing_id, firing_type,
+        collision_point, vox_distance,
+        target
+    );
+
+     //hitscan against terrain
+    *block_distance = 10000000.0f;
+    HitscanTargetTypes target_type = terrain(
+        p.x, p.y, p.z,
+        v.x, v.y, v.z,
+        block_pos, block_distance,
+        side, tile
+    );
+
+    // choose closer collision (or none)
+    bool block_hit = (target_type == HITSCAN_TARGET_BLOCK);
+    bool voxel_closer = (vox_distance <= block_distance);
+    //bool block_closer = (block_distance > vox_distance);
+
+    if (voxel_hit && block_hit)
+        if (voxel_closer)
+            target_type = HITSCAN_TARGET_VOXEL;
+        else
+            target_type = HITSCAN_TARGET_BLOCK;
+    else if (voxel_hit)
+        target_type = HITSCAN_TARGET_VOXEL;
+    else if (block_hit)
+        target_type = HITSCAN_TARGET_BLOCK;
+    else
+        target_type = HITSCAN_TARGET_NONE;
+
+    return target_type;
 }
 
 }

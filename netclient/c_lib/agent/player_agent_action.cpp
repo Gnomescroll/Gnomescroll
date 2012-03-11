@@ -50,7 +50,8 @@ void PlayerAgent_action::fire() {
     }
 }
 
-void PlayerAgent_action::hitscan_laser() {
+void PlayerAgent_action::hitscan_laser()
+{
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
@@ -232,7 +233,8 @@ void PlayerAgent_action::hitscan_laser() {
     );
 }
 
-void PlayerAgent_action::hitscan_pick() {
+void PlayerAgent_action::hitscan_pick()
+{
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;

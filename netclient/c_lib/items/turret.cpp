@@ -172,6 +172,7 @@ owner(0),
 type(OBJ_TYPE_TURRET),
 x(0), y(0), z(0),
 theta(0), phi(0),
+camera_height(TURRET_CAMERA_HEIGHT),
 vox(NULL)
 {
 }
@@ -184,6 +185,7 @@ health(TURRET_HEALTH),
 type(OBJ_TYPE_TURRET),
 x(x), y(y), z(z),
 theta(0), phi(0),
+camera_height(TURRET_CAMERA_HEIGHT),
 vox(NULL)
 {
 }
@@ -214,6 +216,52 @@ int Turret::take_damage(int dmg)
     return this->health;
 }
 
+void Turret::acquire_target()
+{
+    using STATE::agent_list;
+    // find enemies in range
+    agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);
+    if (!agent_list->n_filtered) return;
+
+    Vec3 source = vec3_init(x,y, z + camera_height);
+    Vec3 sink;
+    int chosen[agent_list->n_filtered];
+    int c = 0;
+    int choice;
+    Agent_state* agent = NULL;
+    for (int i=0; i<agent_list->n_filtered; i++)
+    {
+        do {    // acquire random agent that hasnt been checked yet
+            choice = randrange(0, agent_list->n_filtered-1);
+        } while (!in_array_int(chosen, agent_list->n_filtered, choice));
+        chosen[c++] = choice;
+        
+        // ray cast to agent
+        agent = agent_list->filtered_objects[choice];
+        if (agent->in_sight_of(source, &sink))
+        {
+            printf("Found target agent %d ", agent->id);
+            printf("at ");
+            vec3_print(sink);
+            break;
+        }
+        agent = NULL;
+    }
+    if (agent == NULL) return;
+
+    // get vector to sink
+    Vec3 v = vec3_sub(sink, source);
+    // add random bias
+    float arc = 10.0f;
+    float theta = randf() * kPI * 2;
+    float phi = randf() * kPI * 2;
+    float rho = randf() * kPI * 2;
+    v = vec3_euler_rotation(v, theta/arc, phi/arc, rho/arc);
+
+    // fire like hitscan laser
+
+}
+
 void Turret::tick()
 {
     if (this->health <= 0)
@@ -223,6 +271,7 @@ void Turret::tick()
     }
     
 #ifdef DC_SERVER
+    // fall/climb with terrain
     int x,y,z;
     x = (int)this->x;
     y = (int)this->y;
@@ -251,9 +300,10 @@ void Turret::tick()
         z++;
     }
     this->set_position(this->x, this->y, (float)z);
+
+    this->acquire_target();
 #endif
 }
-
 
 Turret::~Turret()
 {

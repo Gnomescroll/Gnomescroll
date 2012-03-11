@@ -99,6 +99,8 @@ class Agent_state {
 
         void tick();
 
+        bool in_sight_of(Vec3 source, Vec3 *sink);
+
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
         void set_angles(float theta, float phi);
         void teleport(float x,float y,float z); //should only be used on server

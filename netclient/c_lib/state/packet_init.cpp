@@ -106,7 +106,6 @@ void RegisterMessages() {
     turret_destroy_StoC::register_client_packet();
     place_turret_CtoS::register_server_packet();
 
-
     // game/teams stuff
     TeamColor_StoC::register_client_packet();
     TeamScore_StoC::register_client_packet();

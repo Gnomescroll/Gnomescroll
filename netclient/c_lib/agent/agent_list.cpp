@@ -148,6 +148,31 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
     return ct;
 }
 
+int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, int team)
+{
+    if (!team) return 0;
+    int enemy_team = (team == 1) ? 2 : 1; // swap to enemy team id
+    int ct = 0;
+    float dist;
+    float min_dist = 10000000.0f;
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (a[i] == NULL) continue;
+        if (a[i]->status.team != enemy_team) continue;
+        dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        if (dist < radius)
+        {   // agent in sphere
+            filtered_objects[ct] = a[i];
+            filtered_object_distances[ct] = dist;
+            if (dist < min_dist)
+                min_dist = dist;
+            ct++;            
+        }
+    }
+    this->n_filtered = ct;
+    return ct;
+}
+
 // origin, direction, cone threshold
 void Agent_list::objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta)
 {

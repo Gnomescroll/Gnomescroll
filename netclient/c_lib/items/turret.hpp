@@ -7,10 +7,12 @@
 
 extern VoxDat turret_vox_dat;
 
-const int TURRETS_PER_PLAYER = 1;
+const int TURRETS_PER_PLAYER = 10;
 const int MAX_TURRETS = TURRETS_PER_PLAYER * AGENT_MAX;
 const int TURRET_HEALTH = 125;
 const float TURRET_HEIGHT = 1.9f;
+const float TURRET_CAMERA_HEIGHT = 1.6f;
+const float TURRET_SIGHT_RANGE = 128.0f;    // same as agent
 
 class turret_create_StoC; // forward decl
 
@@ -26,7 +28,8 @@ class Turret
 
         float x,y,z;
         float theta,phi;
-
+        float camera_height; // z offset to fire from
+        
         Voxel_model* vox;
         void init_vox();
         int get_team();
@@ -37,6 +40,7 @@ class Turret
         
         int get_coins_for_kill(int owner, int team);
         int take_damage(int dmg);
+        void acquire_target();
 
         void tick();
         void update(); // client side
