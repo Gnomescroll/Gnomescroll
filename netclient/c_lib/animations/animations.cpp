@@ -39,7 +39,6 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         vz = momentum*(randf() -0.5f);
 
         side = randrange(0,5);
-        //get_random_pixel(cube_id, side, &r, &g, &b, &a);
 
         tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);

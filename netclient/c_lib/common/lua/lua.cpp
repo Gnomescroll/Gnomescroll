@@ -61,8 +61,9 @@ int run_lua_test()
 {
 
 
-    int status, result, i;
-    double sum;
+    int status, result;
+    //int i;
+    //double sum;
     lua_State *L;
 
     /*
@@ -142,7 +143,45 @@ int run_lua_test()
     lua_pop(L, 1);  /* Take the returned value out of the stack */
 #endif
 
-    printf("finished \n");
+    //printf("run_lua_test: finished \n");
+
+    return 0;
+
+}
+
+
+int lua_load_map_tiles()
+{
+    int status, result;
+    lua_State *L;
+
+    /*
+     * All Lua contexts are held in this structure. We work with it almost
+     * all the time.
+     */
+    L = luaL_newstate();
+
+    luaL_openlibs(L); /* Load Lua libraries */
+
+    /* Load the file containing the script we are going to run */
+    status = luaL_loadfile(L, "./media/lua/map_load_tiles.lua");
+    if (status) 
+    {
+        /* If something went wrong, error message is at the top of the stack */
+        fprintf(stderr, "lua_load_map_tiles: Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    if (result) 
+    {
+        fprintf(stderr, "lua_load_map_tiles: Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    lua_close(L);   /* Cya, Lua */
+
+    printf("lua_load_map_tiles: finished \n");
 
     return 0;
 

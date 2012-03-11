@@ -13,6 +13,7 @@
 #include "compat_gl.h"
 #include "compat_al.h"
 
+
 /* Compression */
 #include <c_lib/common/compression/miniz.c>
 
@@ -25,6 +26,7 @@
 
 //utility
 #include <c_lib/common/macros.hpp>
+#include <c_lib/common/gl_assert.hpp>
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/common.cpp>
 #include <c_lib/common/quicksort.hpp>

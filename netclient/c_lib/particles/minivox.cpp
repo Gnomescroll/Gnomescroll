@@ -176,7 +176,12 @@ void Minivox_list::draw() {
 
     if(num == 0) return;
 
-    glEnable(GL_DEPTH_TEST);
+    glColor3ub(255,255,255);
+
+    //glEnable(GL_DEPTH_TEST);
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+
     glBegin(GL_QUADS);
 
     for (int i=0; i<n_max; i++) {
@@ -189,6 +194,7 @@ void Minivox_list::draw() {
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);
+
     glBegin(GL_QUADS);
 
     for (int i=0; i<n_max; i++) {
@@ -199,7 +205,7 @@ void Minivox_list::draw() {
 
     glEnd();
     glDisable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_DEPTH_TEST);
     
 #endif
 }
@@ -260,7 +266,6 @@ void Minivox::draw_textured() {
 
     if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 
-    glColor3ub(255,255,255);
 
     float tx_min = tx;
     float tx_max = tx + pix_margin;
