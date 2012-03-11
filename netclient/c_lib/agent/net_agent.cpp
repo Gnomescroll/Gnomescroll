@@ -500,7 +500,24 @@ inline void spawn_location_StoC::handle()
 
 inline void alter_item_ownership_StoC::handle()
 {
-    printf("item %d type %d owner %d\n", id, type, owner);
+    void* obj;
+    switch (type)
+    {
+        case OBJ_TYPE_SPAWNER:
+            obj = ClientState::spawner_list->get(id);
+            if (obj == NULL) return;
+            ((Spawner*)obj)->owner = owner;
+            break;
+        case OBJ_TYPE_TURRET:
+            obj = ClientState::turret_list->get(id);
+            if (obj == NULL) return;
+            ((Turret*)obj)->owner = owner;
+            break;
+        default:
+            printf("alter_item_ownership_StoC::handle() -- unhandled item type %d\n", type);
+            return;
+        
+    }
 }
 
 inline void Agent_cs_CtoS::handle() {}
