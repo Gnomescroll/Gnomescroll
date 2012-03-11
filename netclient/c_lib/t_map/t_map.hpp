@@ -24,7 +24,8 @@ typedef enum TerrainModificationAction
     TMA_PICK=0,
     TMA_APPLIER,
     TMA_GRENADE,
-    TMA_LASER
+    TMA_LASER,
+    TMA_TURRET
 } TerrainModificationAction;
 
 

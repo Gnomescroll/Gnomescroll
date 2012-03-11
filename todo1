@@ -594,6 +594,7 @@ Mar 10
 
 increase respawn time to 4 seconds
 add turrets (CRUD functionality -- does not attack anyone yet)
+fix skeleton editor
 ====================
 
 Animations

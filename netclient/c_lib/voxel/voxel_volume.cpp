@@ -201,7 +201,8 @@ void Voxel_volume::set_parameters(int xdim, int ydim, int zdim, float scale)
     this->scale = scale;
 }
 
-void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
+void Voxel_volume::init(int xdim, int ydim, int zdim, float scale)
+{
     if(this->voxel != NULL)
     {
         printf("Voxel_volume::init, error voxel is not null, init called twice?\n");
@@ -234,7 +235,7 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale) {
     this->index_max = powx*powy*powz;
 
     //update radius if changing scale
-    this->radius =  sqrt( (hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
+    this->radius = sqrt((hdx*hdz + hdy*hdy + hdz*hdz)) * scale; //radius of bounding sphere
 
     this->voxel = (union Voxel*)malloc(sizeof(union Voxel) * powx * powy * powz);
     needs_vbo_update = true;

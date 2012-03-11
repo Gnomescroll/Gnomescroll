@@ -11,7 +11,7 @@
 #include <c_lib/physics/common.hpp>
 
 static inline int collision_check(int x, int y, int z) {
-    return isSolid(_get(x,y,z));
+    return isSolid(x,y,z);
 }
 
 // called only by ray_cast_simple interfaces

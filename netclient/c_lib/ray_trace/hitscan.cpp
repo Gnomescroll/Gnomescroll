@@ -77,7 +77,7 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
 
 
 HitscanTargetTypes hitscan_against_world(
-    Vec3 p, Vec3 v, int firing_id, Object_types firing_type,    // inputs
+    Vec3 p, Vec3 v, int ignore_id, Object_types ignore_type,    // inputs
     struct Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], int* tile, float* block_distance // outputs
 )
@@ -86,7 +86,7 @@ HitscanTargetTypes hitscan_against_world(
     bool voxel_hit = STATE::voxel_hitscan_list->hitscan(
         p.x, p.y, p.z,
         v.x, v.y, v.z,
-        firing_id, firing_type,
+        ignore_id, ignore_type,
         collision_point, vox_distance,
         target
     );
@@ -102,8 +102,10 @@ HitscanTargetTypes hitscan_against_world(
 
     // choose closer collision (or none)
     bool block_hit = (target_type == HITSCAN_TARGET_BLOCK);
-    bool voxel_closer = (vox_distance <= block_distance);
-    //bool block_closer = (block_distance > vox_distance);
+    bool voxel_closer = (*vox_distance <= *block_distance);
+
+    //printf("voxel closer = %d\n", voxel_closer);
+    //printf("vox distance = %0.2f\n", *vox_distance);
 
     if (voxel_hit && block_hit)
         if (voxel_closer)

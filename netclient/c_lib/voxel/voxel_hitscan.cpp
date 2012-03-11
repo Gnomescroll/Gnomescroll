@@ -4,13 +4,14 @@
 #include <c_lib/ray_trace/ray_trace.hpp>
 
 bool Voxel_hitscan_list::hitscan(
-const float x0, const float y0, const float z0, 
-const float x1, const float y1, const float z1,
-int skip_id, Object_types skip_type, // skip player agent id
-float collision_point[3], float *distance,
-Voxel_hitscan_target* target
+    const float x0, const float y0, const float z0, 
+    const float x1, const float y1, const float z1,
+    int skip_id, Object_types skip_type, // skip player agent id
+    float collision_point[3], float *distance,
+    Voxel_hitscan_target* target
 )
 {
+    //printf("\n");
     float x2,y2,z2;
 
     float r2;
@@ -24,7 +25,7 @@ Voxel_hitscan_target* target
     target_hit = NULL;
 
     int voxel[3];
-    int* voxel_hit;
+    int voxel_hit[3];
 
     float dist;
     float min_dist = 1000000.0f;
@@ -33,33 +34,46 @@ Voxel_hitscan_target* target
 
     for(int i=0; i < VOXEL_HITSCAN_LIST_SIZE; i++)
     {
-        if (hitscan_list[i] == NULL) continue;
-        if (!hitscan_list[i]->vv->hitscan) continue;
-
         vhe = hitscan_list[i];
-
-        // skip firing agent
-        if(vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
+        if (vhe == NULL) continue;
+        if (!vhe->vv->hitscan) continue;
         
+        // skip firing agent
+        if (vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
+        //if (vhe->entity_type == OBJ_TYPE_AGENT)
+            //printf("hitscanning an agent\n");
         float* _tmp = vhe->vv->world_matrix.v[3].f;
         x2 = _tmp[0];
         y2 = _tmp[1];
         z2 = _tmp[2];
         radius = vhe->vv->radius;
-
+        //if (vhe->entity_type == OBJ_TYPE_AGENT)
+            //printf("radius**2= %0.2f\n", radius*radius);
         dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
         if (dist < 0.0f || dist > max_dist) continue; //check this
-
-        if( r2 < radius*radius )
+        //printf("passed sphereline\n");
+        //if (vhe->entity_type == OBJ_TYPE_AGENT)
+            //printf("r2= %0.2f\n", r2);
+        if (r2 < radius*radius)
         {
+            //if (vhe->entity_type == OBJ_TYPE_AGENT)
+                //printf("dist > min_dist= %0.2f > %0.2f\n", dist, min_dist);
             if (dist > min_dist) continue;  //check this
+            //float len = sqrt(tpos[0]*tpos[0] + tpos[1]*tpos[1] + tpos[2]*tpos[2]);
+            //tpos[0] /= len;
+            //tpos[1] /= len;
+            //tpos[2] /= len;
             if (!vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
+            //printf("HIT\n");
             min_dist = dist;
             x = tpos[0];
             y = tpos[1];
             z = tpos[2];
-            voxel_hit = voxel;
+            voxel_hit[0] = voxel[0];
+            voxel_hit[1] = voxel[1];
+            voxel_hit[2] = voxel[2];
             target_hit = vhe;
+            //printf("struck voxel %p\n", target_hit);
         }
     }
 
@@ -73,6 +87,7 @@ Voxel_hitscan_target* target
         target->copy_voxel(voxel_hit);
         return true;
     }
+    //printf("target was nul...\n");
     return false;
 }
 

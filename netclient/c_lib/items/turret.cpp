@@ -355,8 +355,6 @@ Turret::~Turret()
     if (this->vox != NULL) delete this->vox;
 }
 
-
-
 #ifdef DC_SERVER
 void Turret::create_message(turret_create_StoC* msg)
 {
@@ -385,6 +383,7 @@ int Turret::take_damage(int dmg)
 
 void Turret::acquire_target()
 {
+#if DC_SERVER
     using STATE::agent_list;
     // find enemies in range
     //agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);   //TODO: reenable
@@ -403,12 +402,7 @@ void Turret::acquire_target()
     {   // ray cast to agent
         agent = agent_list->filtered_objects[chosen[i]];
         if (agent->in_sight_of(source, &sink))
-        {
-            //printf("Found target agent %d ", agent->id);
-            //printf("at ");
-            //vec3_print(sink);
             break;
-        }
         agent = NULL;
     }
     if (agent == NULL) return;
@@ -417,12 +411,13 @@ void Turret::acquire_target()
     Vec3 v = vec3_sub(sink, source);
     normalize_vector(&v);
     // add random bias
-    float arc = 3.0f / 360.0f;
-    float theta = randf() * kPI * 2 - kPI;
-    float phi = randf() * kPI * 2 - kPI;
-    float rho = randf() * kPI * 2 - kPI;
-    v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
-
+    //float arc = 1.5f / 360.0f;
+    //float theta = randf() * kPI * 2 - kPI;
+    //float phi = randf() * kPI * 2 - kPI;
+    //float rho = randf() * kPI * 2 - kPI;
+    //v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
+    normalize_vector(&v);
+    vec3_print(v);
     // fire like hitscan laser
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -432,26 +427,27 @@ void Turret::acquire_target()
     int tile;
     float block_distance;
 
-    Hitscan::HitscanTargetTypes target_type =
-        Hitscan::hitscan_against_world(
-            source, v,
-            this->id, OBJ_TYPE_TURRET,
-            &target, &vox_distance, collision_point,
-            block_pos, side, &tile, &block_distance
-        );
+    Hitscan::HitscanTargetTypes
+    target_type = Hitscan::hitscan_against_world(
+        source, v,
+        this->id, OBJ_TYPE_TURRET,
+        &target, &vox_distance, collision_point,
+        block_pos, side, &tile, &block_distance
+    );
 
-    //printf("turret hit target_type= %d\n", target_type);
-    // route; create/send packets
-
+    // create/send packets; apply damage
     turret_shot_object_StoC object_msg;
     turret_shot_block_StoC block_msg;
     Vec3 collision_pt;
-    
+
     switch (target_type)
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
             if (vox_distance > TURRET_SIGHT_RANGE)
                 return; // should not occur
+            // damage
+            agent->status.apply_damage(TURRET_AGENT_DAMAGE, this->id, OBJ_TYPE_TURRET, target.part_id);
+            // fire packet
             object_msg.id = this->id;
             object_msg.target_id = target.entity_id;
             object_msg.target_type = target.entity_type;
@@ -460,10 +456,6 @@ void Turret::acquire_target()
             object_msg.vy = target.voxel[1];
             object_msg.vz = target.voxel[2];
             object_msg.broadcast();
-            #if DC_CLIENT
-            //turret_fire_at_object(this->id, target.entity_id, target.part_id);
-            #endif
-
             break;
             
         case Hitscan::HITSCAN_TARGET_BLOCK:
@@ -473,6 +465,9 @@ void Turret::acquire_target()
                 break;
             }
             collision_pt = vec3_add(source, vec3_scalar_mult(v, block_distance));
+            // damage
+            apply_damage_broadcast(collision_pt.x, collision_pt.y, collision_pt.z, TURRET_BLOCK_DAMAGE, t_map::TMA_LASER);
+            // fire packet
             block_msg.x = collision_pt.x;
             block_msg.y = collision_pt.y;
             block_msg.z = collision_pt.z;
@@ -496,6 +491,7 @@ void Turret::acquire_target()
         msg.vz = v.z;
         msg.broadcast();
     }
+#endif
 }
 
 void Turret::tick()
