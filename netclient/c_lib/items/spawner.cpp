@@ -111,7 +111,10 @@ void Spawner::set_position(float x, float y, float z)
     this->x = x;
     this->y = y;
     this->z = z;
+
+    this->vox->thaw();
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->freeze();
 
     #ifdef DC_SERVER
     spawner_state_StoC msg;
@@ -165,12 +168,16 @@ void Spawner::init_vox()
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+    this->vox->thaw();
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->freeze();
 }
 
 void Spawner::update()
 {
-    #ifdef DC_CLIENT
+    if (this->vox == NULL) return;
+    #if DC_CLIENT
+    this->vox->was_updated = false;
     if (current_camera == NULL || !current_camera->in_view(x,y,z))
     {
         this->vox->set_draw(false);
@@ -182,7 +189,16 @@ void Spawner::update()
         this->vox->set_hitscan(true);
     }
     if (input_state.skeleton_editor)
+    {
+        this->vox->thaw();
         this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+        this->vox->freeze();
+    }
+    #endif
+
+    #if DC_SERVER
+    this->vox->was_updated = false;
+    this->vox->set_hitscan(true);
     #endif
 }
 

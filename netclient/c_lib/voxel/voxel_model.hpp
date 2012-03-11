@@ -28,7 +28,10 @@ class Voxel_model
         //parts voxel volume parst
         bool vox_inited;
         bool was_updated;
-
+        bool frozen;    // if true, refuse to update no matter what
+        void freeze();
+        void thaw();
+        
         VoxDat* vox_dat;
 
         int n_parts;

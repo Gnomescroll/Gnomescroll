@@ -78,6 +78,7 @@ void Flag::animate()
 void Flag::update()
 {
     #ifdef DC_CLIENT
+    this->vox->was_updated = false;
     if (this->held || current_camera == NULL || !current_camera->in_view(x,y,z))
         this->vox->set_draw(false);
     else

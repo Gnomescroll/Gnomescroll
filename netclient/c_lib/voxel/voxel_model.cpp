@@ -428,6 +428,7 @@ void Voxel_model::set_hitscan(bool hitscan)
 
 void Voxel_model::update(float x, float y, float z, float theta, float phi) 
 {
+    if (this->frozen) return;
     if (this->was_updated) return;
     this->set_skeleton_root(x,y,z, theta);
 
@@ -455,7 +456,8 @@ void Voxel_model::set_vox_dat(VoxDat* vox_dat)
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
 :
 skeleton_inited(false),
-vox_inited(false)
+vox_inited(false),
+frozen(false)
 {
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
@@ -468,7 +470,8 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type, int team)
 :
 skeleton_inited(false),
 vox_inited(false),
-was_updated(false)
+was_updated(false),
+frozen(false)
 {
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
@@ -500,6 +503,16 @@ Voxel_model::~Voxel_model()
     }
     else
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
+}
+
+void Voxel_model::freeze()
+{
+    this->frozen = true;
+}
+
+void Voxel_model::thaw()
+{
+    this->frozen = false;
 }
 
 float Voxel_model::largest_radius() {

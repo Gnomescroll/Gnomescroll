@@ -235,7 +235,10 @@ void Turret::set_position(float x, float y, float z)
     this->x = x;
     this->y = y;
     this->z = z;
+    
+    this->vox->thaw();
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->freeze();
 
     #ifdef DC_SERVER
     turret_state_StoC msg;
@@ -272,12 +275,17 @@ void Turret::init_vox()
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+    this->vox->thaw();
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->freeze();
 }
 
 void Turret::update()
 {
+    if (this->vox == NULL) return;
+    
     #ifdef DC_CLIENT
+    this->vox->was_updated = false;
     if (current_camera == NULL || !current_camera->in_view(x,y,z))
     {
         this->vox->set_draw(false);
@@ -289,7 +297,16 @@ void Turret::update()
         this->vox->set_hitscan(true);
     }
     if (input_state.skeleton_editor)
+    {
+        this->vox->thaw();
         this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+        this->vox->freeze();
+    }
+    #endif
+
+    #if DC_SERVER
+    this->vox->was_updated = false;
+    this->vox->set_hitscan(true);
     #endif
 }
 
