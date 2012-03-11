@@ -1,12 +1,13 @@
 #include "lua.hpp"
 
+/*
 int run_lua_test()
 {
  return 0;
 }
+*/
 
 
-#if 0
 /*
  * test.c
  * Example of a C program that interfaces with Lua.
@@ -146,5 +147,3 @@ int run_lua_test()
     return 0;
 
 }
-
-#endif

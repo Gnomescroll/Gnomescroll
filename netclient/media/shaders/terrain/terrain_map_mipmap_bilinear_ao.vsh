@@ -1,5 +1,9 @@
 #version 120
 
+# ifdef GL_EXT_gpu_shader4
+#extension GL_EXT_gpu_shader4 : enable
+# endif
+
 /*
 Attributes
 */
@@ -23,7 +27,14 @@ uniform vec3 NormalArray[6];
 Varying
 */
 varying vec3 texCoord;
-flat varying mat2 lightMatrix;
+
+# ifdef GL_EXT_gpu_shader4
+    flat varying mat2 lightMatrix;
+#else
+    varying mat2 lightMatrix;
+#endif
+
+//flat varying mat2 lightMatrix;
  
 varying vec3 inColor;
 
