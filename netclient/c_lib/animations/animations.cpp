@@ -76,6 +76,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModific
 
 // surface block dmg
 // takes encoded side int and translates to side[3];
+// collision point, incident vector, cube_id, side
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int cube_side)
 {
     int side[3];
@@ -83,7 +84,8 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     block_damage(x,y,z,ix,iy,iz,cube_id,side, cube_side);
 }
 
-// surface block dmg    
+// surface block dmg
+// collision point, incident vector, cube_id, side
 void block_damage(float x, float y, float z, float ix, float iy, float iz, int cube_id, int *side)
 {
     int cube_side = get_cube_side_from_side_array(side);

@@ -174,10 +174,10 @@ namespace ServerState
             t_map::t_map_send_map_chunks();
         }
 */
+        agent_list->update_models(); // sets skeleton
         spawner_list->tick();
         turret_list->tick();
         ctf->tick();
-        agent_list->draw(); // sets skeleton
     }
 
     void send_game_state_to_client(int client_id)

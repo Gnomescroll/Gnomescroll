@@ -296,8 +296,9 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         vv->init(x,y,z, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
 
-        #ifdef DC_CLIENT
+        //#ifdef DC_CLIENT
         this->set_part_color(vox_dat, i);
+        #ifdef DC_CLIENT
         ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
@@ -362,7 +363,7 @@ void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned ch
 
 void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
     Voxel_volume* vv = &(this->vv[part_num]);
     int x,y,z;
@@ -385,7 +386,7 @@ void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
         a = vp->colors.rgba[j][3];
         vv->set_color(ix, iy, iz, r,g,b,a);
     }
-    #endif
+    //#endif
 }
 
 void Voxel_model::set_colors(VoxDat* vox_dat)

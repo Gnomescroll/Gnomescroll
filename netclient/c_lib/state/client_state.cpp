@@ -174,7 +174,7 @@ namespace ClientState {
     void draw()
     {
         // voxels
-        agent_list->draw();
+        agent_list->update_models();
         voxel_render_list->draw();
 
         // quads

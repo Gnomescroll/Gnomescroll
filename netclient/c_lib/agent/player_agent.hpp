@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef DC_CLIENT
+
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/player_agent_action.hpp>
@@ -97,3 +99,5 @@ class PlayerAgent_state {
 
         void update_sound();
 };
+
+#endif

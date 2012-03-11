@@ -2,10 +2,10 @@
 
 #include "player_agent.hpp"
 
+#ifdef DC_CLIENT
+
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/ray_trace/ray_trace.hpp>
-
-#ifdef DC_CLIENT
 #include <c_lib/sound/sound.hpp>
 
 #include <c_lib/time/physics_timer.h>
@@ -50,11 +50,9 @@ void PlayerAgent_state::update_client_side_prediction_interpolated()
     c.y = s0.y*(1-delta) + s1.y*delta;
     c.z = s0.z*(1-delta) + s1.z*delta;  
 
-#ifdef DC_CLIENT // whole file should be ifdef'd?
     if (this->you == NULL) return;
     c.theta = this->you->s.theta;
     c.phi = this->you->s.phi;
-#endif
 }
 
 void PlayerAgent_state::handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz) {
@@ -273,17 +271,7 @@ float PlayerAgent_state::camera_z()
 
 void PlayerAgent_state::display_agent_names()
 {
-    #ifdef DC_CLIENT
     if (this->you == NULL) return;
-    //float threshold = (kPI / 180) * 18; //degrees->radians
-    //AgentState *s = &this->camera_state;
-    //float f[3];
-    //agent_camera->forward_vector(f);
-    //ClientState::agent_list->objects_in_cone(
-        //s->x, s->y, s->z + this->camera_height(),
-        //f[0], f[1], f[2],
-        //threshold
-    //);
 
     // hide all names
     for (int i=0; i < ClientState::agent_list->n_max; i++)
@@ -310,7 +298,6 @@ void PlayerAgent_state::display_agent_names()
         }
         a->event.display_name();
     }
-    #endif
 }
 
 void PlayerAgent_state::update_sound() {
@@ -386,14 +373,12 @@ void PlayerAgent_state::toggle_camera_mode() {
 void PlayerAgent_state::pump_camera() {
     switch (camera_mode) {
         case net_agent:
-            #ifdef DC_CLIENT
             if(agent_id != -1) {
                 Agent_state* A = ClientState::agent_list->get(agent_id);
                 camera_state = A->s;
             } else {
                 printf("PlayerAgent Camera: cannot pump net_agent camera; agent does not exist");
             }
-            #endif
             break;
         case client_side_prediction_interpolated:
             update_client_side_prediction_interpolated();
@@ -410,7 +395,5 @@ void PlayerAgent_state::pump_camera() {
             break;
     }
 }
-
-
 
 #endif

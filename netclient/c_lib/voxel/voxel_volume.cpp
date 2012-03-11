@@ -1,6 +1,7 @@
 #include "voxel_volume.hpp"
 
-
+#include <c_lib/state/client_state.hpp>
+#include <c_lib/state/server_state.hpp>
 #include <voxel/constants.hpp>
 
 #ifdef DC_CLIENT
@@ -128,6 +129,7 @@ int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _d
 
 }
 
+// WARNING: HITSCAN_TEST_FAST 0 does not compile
 #define HITSCAN_TEST_FAST 1
 /*
     Enables using faster, Sagitta ray cast
@@ -652,9 +654,9 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
 
-void destroy_object_voxel(int id, int type, int part, int voxel[3])
+static void destroy_object_voxel(int id, int type, int part, int voxel[3])
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     void* obj;
     Voxel_volume* vv;
     switch (type)
@@ -682,7 +684,7 @@ void destroy_object_voxel(int id, int type, int part, int voxel[3])
             //break;
         default: break;
     }
-    #endif
+    //#endif
 }
 
 void destroy_object_voxel(int id, int type, int part, int voxel[3], int radius)

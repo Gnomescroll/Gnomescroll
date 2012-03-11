@@ -11,7 +11,6 @@ bool Voxel_hitscan_list::hitscan(
     Voxel_hitscan_target* target
 )
 {
-    //printf("\n");
     float x2,y2,z2;
 
     float r2;
@@ -23,9 +22,7 @@ bool Voxel_hitscan_list::hitscan(
     struct Voxel_hitscan_element* vhe;
     struct Voxel_hitscan_element* target_hit;
     target_hit = NULL;
-
     int voxel[3];
-    int voxel_hit[3];
 
     float dist;
     float min_dist = 1000000.0f;
@@ -37,43 +34,26 @@ bool Voxel_hitscan_list::hitscan(
         vhe = hitscan_list[i];
         if (vhe == NULL) continue;
         if (!vhe->vv->hitscan) continue;
-        
         // skip firing agent
         if (vhe->entity_id == skip_id && vhe->entity_type == skip_type) continue;
-        //if (vhe->entity_type == OBJ_TYPE_AGENT)
-            //printf("hitscanning an agent\n");
+
         float* _tmp = vhe->vv->world_matrix.v[3].f;
         x2 = _tmp[0];
         y2 = _tmp[1];
         z2 = _tmp[2];
         radius = vhe->vv->radius;
-        //if (vhe->entity_type == OBJ_TYPE_AGENT)
-            //printf("radius**2= %0.2f\n", radius*radius);
         dist = sphere_line_distance(x0, y0, z0, x1,y1,z1, x2,y2,z2, tpos, &r2);
-        if (dist < 0.0f || dist > max_dist) continue; //check this
-        //printf("passed sphereline\n");
-        //if (vhe->entity_type == OBJ_TYPE_AGENT)
-            //printf("r2= %0.2f\n", r2);
+
+        if (dist < 0.0f || dist > max_dist) continue;
         if (r2 < radius*radius)
         {
-            //if (vhe->entity_type == OBJ_TYPE_AGENT)
-                //printf("dist > min_dist= %0.2f > %0.2f\n", dist, min_dist);
-            if (dist > min_dist) continue;  //check this
-            //float len = sqrt(tpos[0]*tpos[0] + tpos[1]*tpos[1] + tpos[2]*tpos[2]);
-            //tpos[0] /= len;
-            //tpos[1] /= len;
-            //tpos[2] /= len;
+            if (dist > min_dist) continue;
             if (!vhe->vv->hitscan_test(tpos[0],tpos[1],tpos[2], x1,y1,z1, r2, voxel)) continue; //test for voxel hit
-            //printf("HIT\n");
             min_dist = dist;
             x = tpos[0];
             y = tpos[1];
             z = tpos[2];
-            voxel_hit[0] = voxel[0];
-            voxel_hit[1] = voxel[1];
-            voxel_hit[2] = voxel[2];
             target_hit = vhe;
-            //printf("struck voxel %p\n", target_hit);
         }
     }
 
@@ -84,10 +64,9 @@ bool Voxel_hitscan_list::hitscan(
         collision_point[1] = y;
         collision_point[2] = z;
         target->copy_vhe(target_hit);
-        target->copy_voxel(voxel_hit);
+        target->copy_voxel(voxel);
         return true;
     }
-    //printf("target was nul...\n");
     return false;
 }
 

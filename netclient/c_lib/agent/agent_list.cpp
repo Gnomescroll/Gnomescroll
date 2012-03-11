@@ -25,7 +25,7 @@ void Agent_list::update_map_manager_positions()
 
 /* Agent list */
 
-void Agent_list::draw() // doesnt actually draw, but updates draw/hitscan properties
+void Agent_list::update_models() // doesnt actually draw, but updates draw/hitscan properties
 {
     #if DC_CLIENT
     bool you;

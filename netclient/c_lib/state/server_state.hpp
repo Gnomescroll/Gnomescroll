@@ -7,6 +7,7 @@
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <c_lib/items/spawner.hpp>
+#include <c_lib/items/turret.hpp>
 
 namespace ServerState
 {

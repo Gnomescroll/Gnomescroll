@@ -96,7 +96,6 @@ class Voxel_volume
 
 };
 
-void destroy_object_voxel(int id, int type, int part, int voxel[3]);
 void destroy_object_voxel(int id, int type, int part, int voxel[3], int radius);
 
 void init_voxel_volume();

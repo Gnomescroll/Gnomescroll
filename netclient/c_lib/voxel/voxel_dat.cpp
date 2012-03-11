@@ -7,7 +7,7 @@
 
 /* Color */
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void VoxColors::init(int dx, int dy, int dz)
 {
     if (this->rgba != NULL)
@@ -113,7 +113,7 @@ VoxColors::~VoxColors()
         free(this->index);
     }
 }
-#endif
+//#endif
 
 /* Dimensions */
 
@@ -164,9 +164,9 @@ part_num(part_num),
 vox_size(vox_size),
 biaxial(biaxial)
 {
-    #ifdef DC_CLIENT
+    //#ifdef DC_CLIENT
     colors.init(dimension_x, dimension_y, dimension_z);
-    #endif
+    //#endif
     int len = strlen(filename);
     this->filename = (char*)malloc(sizeof(char) * (len + 1));
     strcpy(this->filename, filename);
@@ -311,9 +311,9 @@ void VoxDat::set_part_properties(
         p->part_num = part_num;
         p->vox_size = vox_size;
         p->set_dimension(dimension_x, dimension_y, dimension_z);
-        #ifdef DC_CLIENT
+        //#ifdef DC_CLIENT
         p->colors.init(dimension_x, dimension_y, dimension_z);
-        #endif
+        //#endif
         p->biaxial = biaxial;
         p->set_filename(filename);
     }
@@ -351,7 +351,7 @@ void VoxDat::set_skeleton_parent_matrix(int part, int parent)
 }
 
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     VoxPart* p = vox_part[part];
@@ -364,6 +364,7 @@ void VoxDat::set_color(int part, int x, int y, int z, unsigned char r, unsigned 
     p->colors.set(i, x,y,z, r,g,b,a);
 }
 
+#ifdef DC_CLIENT
 void VoxDat::set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b)
 {
     VoxPart* p = vox_part[part];

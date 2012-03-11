@@ -6,7 +6,7 @@
 
 class VoxDat; // forward decl;
 
-#ifdef DC_CLIENT
+//#ifdef DC_CLIENT
 class VoxColors {
     public:
         unsigned char** rgba;
@@ -23,7 +23,7 @@ class VoxColors {
         VoxColors();
         ~VoxColors();
 };
-#endif
+//#endif
 
 class VoxPartDimension {
     public:
@@ -39,9 +39,9 @@ class VoxPartDimension {
 class VoxPart {
     public:
         VoxPartDimension dimension;
-        #ifdef DC_CLIENT
+        //#ifdef DC_CLIENT
         VoxColors colors;
-        #endif
+        //#endif
         VoxDat* dat;    // parent
         
         int part_num;
@@ -104,8 +104,9 @@ class VoxDat {
         //anchor x,y,z then rotation x,y,z
         void set_part_local_matrix(int part_num, float x, float y, float z, float rx, float ry, float rz);
 
-        #ifdef DC_CLIENT
+        //#ifdef DC_CLIENT
         void set_color(int part, int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+        #ifdef DC_CLIENT
         void set_team(int part, bool team, unsigned char r, unsigned char g, unsigned char b);
         #endif
 

@@ -17,7 +17,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
     public:
         void update_map_manager_positions();
 
-        void draw();
+        void update_models();
 
         int ids_in_use[AGENT_MAX];
 

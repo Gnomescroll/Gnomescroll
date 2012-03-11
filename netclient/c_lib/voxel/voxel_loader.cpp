@@ -162,9 +162,9 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
         }
         index += read;
 
-        #ifdef DC_CLIENT
+        //#ifdef DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
-        #endif
+        //#endif
         vox_num++;
     }
 

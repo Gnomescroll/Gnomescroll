@@ -637,7 +637,7 @@ inline void hitscan_object_CtoS::handle()
     const int turret_dmg = 25;
     int dmg_health;
 
-    //float x,y,z;
+    int voxel[3] = { vx,vy,vz };
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
     Spawner* spawner = NULL;
@@ -655,6 +655,7 @@ inline void hitscan_object_CtoS::handle()
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
+            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);        
             break;
 
         case OBJ_TYPE_SLIME:
@@ -813,11 +814,12 @@ inline void melee_object_CtoS::handle()
     Spawner* spawner = NULL;
     Turret* turret = NULL;
 
-    const int agent_dmg = 50;
+    //const int agent_dmg = 50;
     const int slime_dmg = 50;
     const int spawner_dmg = 50;
     const int turret_dmg = 50;
     int dmg_health;
+    int voxel[3] = { vx,vy,vz };
     
     switch (type)
     {
@@ -825,9 +827,10 @@ inline void melee_object_CtoS::handle()
             agent = ServerState::agent_list->get(id);
             if (agent==NULL) return;
             // apply damage
-            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(agent_dmg, a->id, a->type);
+            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             if (dmg_health <= 0)
                 a->status.add_coins(1);
+            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
             break;
 
         case OBJ_TYPE_SLIME:

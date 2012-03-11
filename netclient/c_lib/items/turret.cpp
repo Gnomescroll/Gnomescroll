@@ -148,36 +148,8 @@ inline void turret_destroy_StoC::handle()
     ClientState::turret_list->destroy(id);
 }
 
-void turret_fire_at_object(int id, int target_id, int target_part)
-{
-    printf("turret shot object local\n");
-
-    //if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
-
-    Turret* t = ClientState::turret_list->get(id);
-    if (t == NULL) return;
-    Agent_state* a = ClientState::agent_list->get(target_id);
-    if (a == NULL || a->vox == NULL) return;
-    Voxel_volume* vv = a->vox->get_part(target_part);
-    if (vv == NULL) return;
-
-    Vec3 c = vv->get_center();
-    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
-    
-    const float hitscan_effect_speed = 200.0f;
-    Vec3 v = vec3_sub(c, p);
-    normalize_vector(&v);
-    v = vec3_scalar_mult(v, hitscan_effect_speed);
-    ClientState::hitscan_effect_list->create(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z
-    );
-}
-
 inline void turret_shot_object_StoC::handle()
 {
-    printf("turret shot object\n");
-
     if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
 
     Turret* t = ClientState::turret_list->get(id);
@@ -189,7 +161,7 @@ inline void turret_shot_object_StoC::handle()
 
     Vec3 c = vv->get_center();
     Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
-    
+
     const float hitscan_effect_speed = 200.0f;
     Vec3 v = vec3_sub(c, p);
     normalize_vector(&v);
@@ -198,12 +170,12 @@ inline void turret_shot_object_StoC::handle()
         p.x, p.y, p.z,
         v.x, v.y, v.z
     );
+    int voxel[3] = { vx,vy,vz };
+    destroy_object_voxel(target_id, target_type, target_part, voxel, 2);        
 }
 
 inline void turret_shot_nothing_StoC::handle()
 {
-    printf("turret shot nothing\n");
-
     Turret *t = ClientState::turret_list->get(id);
     if (t == NULL) return;
 
@@ -219,8 +191,6 @@ inline void turret_shot_nothing_StoC::handle()
 
 inline void turret_shot_block_StoC::handle()
 {
-    printf("turret shot block\n");
-
     Turret *t = ClientState::turret_list->get(id);
     if (t == NULL) return;
 
@@ -234,6 +204,11 @@ inline void turret_shot_block_StoC::handle()
         p.x, p.y, p.z,
         v.x, v.y, v.z
     );
+
+    Animations::block_damage(x,y,z, p.x, p.y, p.z, cube, side);
+    Animations::terrain_sparks(x,y,z);
+    Sound::laser_hit_block(x,y,z, 0,0,0);
+
 }
 #endif
 
@@ -410,14 +385,13 @@ void Turret::acquire_target()
     // get vector to sink
     Vec3 v = vec3_sub(sink, source);
     normalize_vector(&v);
-    // add random bias
-    //float arc = 1.5f / 360.0f;
-    //float theta = randf() * kPI * 2 - kPI;
-    //float phi = randf() * kPI * 2 - kPI;
-    //float rho = randf() * kPI * 2 - kPI;
-    //v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
-    normalize_vector(&v);
-    vec3_print(v);
+     //add random bias
+    float arc = 1.5f / 360.0f;
+    float theta = randf() * kPI * 2 - kPI;
+    float phi = randf() * kPI * 2 - kPI;
+    float rho = randf() * kPI * 2 - kPI;
+    v = vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
+
     // fire like hitscan laser
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -456,6 +430,8 @@ void Turret::acquire_target()
             object_msg.vy = target.voxel[1];
             object_msg.vz = target.voxel[2];
             object_msg.broadcast();
+            // damage model
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 2);        
             break;
             
         case Hitscan::HITSCAN_TARGET_BLOCK:

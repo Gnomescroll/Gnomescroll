@@ -669,6 +669,8 @@ integrate new abstracted hitscan method
 
 make sure damaged models are damaged on server
 
-fix ray cast simple
+put all voxel models in a list?
+
+server needs a minimized version of color -- voxel set/unset
 
 PRINT & MAIL REBATES
