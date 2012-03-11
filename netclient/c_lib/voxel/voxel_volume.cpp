@@ -28,7 +28,6 @@ void teardown_voxel_volume()
         delete[] voxel_vertex_scratch_buffer;
 }
 
-// wonderful copy and past TODO
 int Voxel_volume::voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision)
 {
     const static int _ssize = 256;
@@ -476,10 +475,6 @@ void Voxel_volume::update_vertex_list()
             _gamma_correction[i] = (unsigned char)((int) intensity);
         }
     }
-
-    //const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
-    //// TODO: clean this allocation up
-    //static Voxel_vertex* voxel_vertex_scratch_buffer = new Voxel_vertex[VOXEL_VERTEX_SCRATCH_SIZE]; //65536*20 bytes of memory
 
     static const float vset[72] = { 
         1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top

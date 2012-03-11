@@ -364,8 +364,8 @@ void Turret::acquire_target()
 #if DC_SERVER
     using STATE::agent_list;
     // find enemies in range
-    //agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);   //TODO: reenable
-    agent_list->objects_within_sphere(x,y,z, TURRET_SIGHT_RANGE);
+    agent_list->enemies_within_sphere(x,y,z, TURRET_SIGHT_RANGE, team);
+    //agent_list->objects_within_sphere(x,y,z, TURRET_SIGHT_RANGE);
     if (!agent_list->n_filtered) return;
 
     Vec3 source = vec3_init(x,y, z + camera_height);
@@ -421,7 +421,10 @@ void Turret::acquire_target()
     {
         case Hitscan::HITSCAN_TARGET_VOXEL:
             if (vox_distance > TURRET_SIGHT_RANGE)
-                return; // should not occur
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
             // damage
             agent->status.apply_damage(TURRET_AGENT_DAMAGE, this->id, OBJ_TYPE_TURRET, target.part_id);
             // fire packet

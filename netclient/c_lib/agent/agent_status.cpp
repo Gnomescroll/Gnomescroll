@@ -219,17 +219,20 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
         
     int killed = this->die();
     Agent_state* attacker;
-    if (killed) {
-        switch (inflictor_type) {
+    if (killed)
+    {
+        switch (inflictor_type)
+        {
             case OBJ_TYPE_AGENT:
                 attacker = STATE::agent_list->get(inflictor_id);
-                if (attacker != NULL) {
+                if (attacker != NULL)
                     attacker->status.kill(this->a->id);
-                }
                 break;
             case OBJ_TYPE_SLIME:
                 //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
                 //if (slime != NULL) {}
+                break;
+            case OBJ_TYPE_TURRET:
                 break;
             default:
                 printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);

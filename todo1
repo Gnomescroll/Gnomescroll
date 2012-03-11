@@ -673,4 +673,6 @@ put all voxel models in a list?
 
 server needs a minimized version of color -- voxel set/unset
 
+start/end text draw -- render within the glDepth block, just swap textures
+
 PRINT & MAIL REBATES
