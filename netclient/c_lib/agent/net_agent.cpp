@@ -498,6 +498,11 @@ inline void spawn_location_StoC::handle()
     playerAgent_state.you->event.set_spawner(pt);
 }
 
+inline void alter_item_ownership_StoC::handle()
+{
+    printf("item %d type %d owner %d\n", id, type, owner);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -553,6 +558,7 @@ inline void agent_conflict_notification_StoC::handle(){}
 inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
+inline void alter_item_ownership_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -675,8 +681,8 @@ inline void hitscan_object_CtoS::handle()
             spawner = ServerState::spawner_list->get(id);
             if (spawner == NULL) return;
 
-            if (spawner->get_team() == a->status.team
-            && spawner->owner != a->id)
+            if ((spawner->get_team() == a->status.team && spawner->owner != NO_AGENT_OWNER)
+              && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
             // apply damage
@@ -695,8 +701,8 @@ inline void hitscan_object_CtoS::handle()
             turret = ServerState::turret_list->get(id);
             if (turret == NULL) return;
 
-            if (turret->get_team() == a->status.team
-            && turret->owner != a->id)
+            if ((turret->get_team() == a->status.team && turret->owner != NO_AGENT_OWNER)
+              && turret->owner != a->id)
                 return; // teammates cant kill turrets
                 
             // apply damage
@@ -847,7 +853,7 @@ inline void melee_object_CtoS::handle()
             spawner = ServerState::spawner_list->get(id);
             if (spawner == NULL) return;
 
-            if (spawner->get_team() == a->status.team
+            if ((spawner->get_team() == a->status.team && spawner->owner != NO_AGENT_OWNER)
             && spawner->owner != a->id)
                 return; // teammates cant kill spawners
                 
@@ -864,7 +870,7 @@ inline void melee_object_CtoS::handle()
             turret = ServerState::turret_list->get(id);
             if (turret == NULL) return;
 
-            if (turret->get_team() == a->status.team
+            if ((turret->get_team() == a->status.team && turret->owner != NO_AGENT_OWNER)
             && turret->owner != a->id)
                 return; // teammates cant kill turrets
                 

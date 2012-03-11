@@ -74,6 +74,7 @@ class Turret_list: public Object_list<Turret,MAX_TURRETS>
 
         void tick();
         void update();  // client side
+        void alter_owner(int owner, int new_owner);
 
         Turret_list() { print(); }
 };

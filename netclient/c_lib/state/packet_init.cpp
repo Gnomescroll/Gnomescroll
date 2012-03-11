@@ -92,6 +92,8 @@ void RegisterMessages() {
     agent_hit_block_StoC::register_client_packet();
     agent_threw_grenade_StoC::register_client_packet();
     agent_placed_block_StoC::register_client_packet();
+
+    alter_item_ownership_StoC::register_client_packet();
     
     // agent item actions
     Spawner_create_StoC::register_client_packet();

@@ -5,6 +5,7 @@
 #include <c_lib/chat/client.hpp>
 #include <net_lib/net.hpp>
 #include <c_lib/common/quicksort.hpp>
+#include <c_lib/agent/net_agent.hpp>
 
 /* Packets */
 class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
@@ -228,7 +229,7 @@ void Spawner::create_message(Spawner_create_StoC* msg)
 
 int Spawner::get_coins_for_kill(int owner, int team)
 {
-    if (this->team != team || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
+    if ((this->team != team && this->owner != NO_AGENT_OWNER) || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
         return get_object_cost(this->type);
     return 0;
 }
@@ -430,4 +431,21 @@ void Spawner_list::update()
         if (this->a[i] == NULL) continue;
         this->a[i]->update();
     }
+}
+
+void Spawner_list::alter_owner(int owner, int new_owner)
+{
+    #if DC_SERVER
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->owner != owner) continue;
+        this->a[i]->owner = new_owner;
+        alter_item_ownership_StoC msg;
+        msg.owner = new_owner;
+        msg.id = this->a[i]->id;
+        msg.type = this->a[i]->type;
+        msg.broadcast();
+    }
+    #endif
 }

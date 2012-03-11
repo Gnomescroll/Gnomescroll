@@ -60,11 +60,7 @@ void NetPeerManager::ready()
 void NetPeerManager::teardown()
 {
     #ifdef DC_SERVER
-    ServerState::remove_player_from_chat(this->client_id);
-    ServerState::ctf->remove_agent_from_team(this->client_id);
-    ServerState::send_disconnect_notice(client_id);
-    ServerState::agent_list->destroy(client_id);
-
+    ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
 
     #endif

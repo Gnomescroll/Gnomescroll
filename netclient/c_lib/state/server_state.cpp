@@ -123,6 +123,9 @@ namespace ServerState
         {
             s = spawner_list->filtered_objects[i];
             if (s==NULL) continue;
+            if ((s->get_team() == agent->status.team && s->owner != NO_AGENT_OWNER)
+            && s->owner != agent->id)
+                continue; // teammates cant kill grenades
             int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
             if (h <= 0 && agent != NULL)
                 coins += s->get_coins_for_kill(agent->id, agent->status.team);
@@ -135,6 +138,9 @@ namespace ServerState
         {
             t = turret_list->filtered_objects[i];
             if (t==NULL) continue;
+            if ((t->get_team() == agent->status.team && t->owner != NO_AGENT_OWNER)
+            && t->owner != agent->id)
+                continue; // teammates cant kill turrets
             int h = t->take_damage(GRENADE_TURRET_DAMAGE);
             if (h <= 0 && agent != NULL)
                 coins += t->get_coins_for_kill(agent->id, agent->status.team);
@@ -244,6 +250,16 @@ namespace ServerState
         address_from_string(Options::ip_address, address);
         init_net_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
+    }
+
+    void agent_disconnect(int agent_id)
+    {
+        remove_player_from_chat(agent_id);
+        ctf->remove_agent_from_team(agent_id);
+        send_disconnect_notice(agent_id);
+        agent_list->destroy(agent_id);
+        turret_list->alter_owner(agent_id, NO_AGENT_OWNER);
+        spawner_list->alter_owner(agent_id, NO_AGENT_OWNER);
     }
 
     void send_version_to_client(int client_id)

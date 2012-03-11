@@ -44,7 +44,6 @@ class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_
     public:
         uint8_t id;
         float x,y,z;
-        //float vx,vy,vz;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -347,7 +346,7 @@ void Turret::create_message(turret_create_StoC* msg)
 
 int Turret::get_coins_for_kill(int owner, int team)
 {
-    if (this->team != team || owner == this->owner) // enemy team, or owner, can destroy/reclaim turret
+    if ((this->team != team && this->owner != NO_AGENT_OWNER) || owner == this->owner) // enemy team, or owner, can destroy/reclaim turret
         return get_object_cost(this->type);
     return 0;
 }
@@ -566,4 +565,21 @@ void Turret_list::update()
     for (int i=0; i<n_max; i++)
         if (this->a[i] != NULL)
             this->a[i]->update();
+}
+
+void Turret_list::alter_owner(int owner, int new_owner)
+{
+    #if DC_SERVER
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->owner != owner) continue;
+        this->a[i]->owner = new_owner;
+        alter_item_ownership_StoC msg;
+        msg.owner = new_owner;
+        msg.id = this->a[i]->id;
+        msg.type = this->a[i]->type;
+        msg.broadcast();
+    }
+    #endif
 }

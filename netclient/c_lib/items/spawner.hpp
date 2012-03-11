@@ -77,6 +77,8 @@ class Spawner_list: public Object_list<Spawner,MAX_SPAWNERS>
         void tick();
         void update();  // client side
 
+        void alter_owner(int owner, int new_owner);
+
         Spawner_list() { print(); }
 };
 
