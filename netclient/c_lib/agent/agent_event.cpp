@@ -119,7 +119,8 @@ void Agent_event::healed(int health)
     }
 }
 
-void Agent_event::died() {
+void Agent_event::died()
+{
     if (!this->a->status.dead)
     {
         this->a->status.dead = true;
@@ -127,7 +128,8 @@ void Agent_event::died() {
             Sound::died();
         else
             Sound::died(a->s.x, a->s.y, a->s.z, 0,0,0);
-        this->a->vox->reset_skeleton(&agent_vox_dat_dead);
+        this->a->vox->set_vox_dat(&agent_vox_dat_dead);
+        this->a->vox->reset_skeleton();
     }
 }
 
@@ -140,12 +142,15 @@ void Agent_event::born()
         //else
             //Sound::respawned(a->s.x, a->s.y, a->s.z, 0,0,0);
         this->a->status.dead = false;
+
+        // reset skeleton
+        VoxDat* vd = (this->a->crouched()) ? &agent_vox_dat_crouched : &agent_vox_dat;
+        this->a->vox->set_vox_dat(vd);
+        this->a->vox->reset_skeleton();
         // regenerate model
         if (this->a->vox != NULL)
-            this->a->vox->restore(&agent_vox_dat, this->a->status.team);
+            this->a->vox->restore(this->a->status.team);
 
-        VoxDat* vd = (this->a->crouched()) ? &agent_vox_dat_crouched : &agent_vox_dat;
-        this->a->vox->reset_skeleton(vd);
     }
 }
 
@@ -163,12 +168,14 @@ void Agent_event::set_spawner(int pt)
 
 void Agent_event::crouched()
 {
-    this->a->vox->reset_skeleton(&agent_vox_dat_crouched);
+    this->a->vox->set_vox_dat(&agent_vox_dat_crouched);
+    this->a->vox->reset_skeleton();
 }
 
 void Agent_event::uncrouched()
 {
-    this->a->vox->reset_skeleton(&agent_vox_dat);
+    this->a->vox->set_vox_dat(&agent_vox_dat);
+    this->a->vox->reset_skeleton();
 }
 
 void Agent_event::reload_weapon(int type) {
@@ -185,7 +192,7 @@ void Agent_event::update_team_color(unsigned char r, unsigned char g, unsigned c
     this->g = g;
     this->b = b;
     if (this->a->vox != NULL)
-        this->a->vox->update_team_color(&agent_vox_dat, this->a->status.team);
+        this->a->vox->update_team_color(this->a->status.team);
     if (this->bb != NULL)
         this->bb->set_color(r,g,b);
 }
@@ -355,7 +362,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
 
     //ax /= kPI;
     //ay /= kPI;
-    this->a->vox->set_arm(&agent_vox_dat, -phi, -theta);
+    this->a->vox->set_arm(-phi, -theta);
 
     f = vec3_scalar_mult(f, hitscan_speed);
     ClientState::hitscan_effect_list->create(

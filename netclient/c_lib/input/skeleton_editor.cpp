@@ -25,7 +25,8 @@ void move_in_x(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sx += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void move_in_y(float s)
@@ -33,7 +34,8 @@ void move_in_y(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sy += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void move_in_z(float s)
@@ -41,7 +43,8 @@ void move_in_z(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sz += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void rotate_in_x(float s)
@@ -49,7 +52,8 @@ void rotate_in_x(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srx += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void rotate_in_y(float s)
@@ -57,7 +61,8 @@ void rotate_in_y(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->sry += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void rotate_in_z(float s)
@@ -65,7 +70,8 @@ void rotate_in_z(float s)
     if (vox_dat == NULL || vox == NULL || vp == NULL) return;
     vp->srz += s;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void reset_part()
@@ -78,7 +84,8 @@ void reset_part()
     vp->sry = 0;
     vp->srz = 0;
     vp->set_local_matrix();    // TODO: use node
-    vox->reset_skeleton(vox_dat);   
+    vox->set_vox_dat(vox_dat);
+    vox->reset_skeleton();   
 }
 
 void raycast_to_part()
@@ -180,7 +187,10 @@ void reset_node()
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void move_node_in_x(float s)
@@ -191,7 +201,10 @@ void move_node_in_x(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void move_node_in_y(float s)
@@ -202,7 +215,10 @@ void move_node_in_y(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void move_node_in_z(float s)
@@ -213,7 +229,10 @@ void move_node_in_z(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void rotate_node_in_x(float s)
@@ -224,7 +243,10 @@ void rotate_node_in_x(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void rotate_node_in_y(float s)
@@ -235,7 +257,10 @@ void rotate_node_in_y(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 void rotate_node_in_z(float s)
@@ -246,7 +271,10 @@ void rotate_node_in_z(float s)
     if (node == 0)
         vox->set_skeleton_root(vox_dat->vox_skeleton_local_matrix_reference[node]);
     else
-        vox->reset_skeleton(vox_dat);
+    {
+        vox->set_vox_dat(vox_dat);
+        vox->reset_skeleton();
+    }
 }
 
 /* Handlers */

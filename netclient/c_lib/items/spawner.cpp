@@ -110,7 +110,7 @@ void Spawner::set_position(float x, float y, float z)
     this->x = x;
     this->y = y;
     this->z = z;
-    this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 
     #ifdef DC_SERVER
     spawner_state_StoC msg;
@@ -152,7 +152,7 @@ void Spawner::set_team(int team)
 {
     this->team = team;
     STATE::spawner_list->assign_team_index(this);
-    if (this->vox != NULL) this->vox->update_team_color(&spawner_vox_dat, this->team);
+    if (this->vox != NULL) this->vox->update_team_color(this->team);
 }
 
 void Spawner::init_vox()
@@ -164,7 +164,7 @@ void Spawner::init_vox()
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
-    this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
 void Spawner::update()
@@ -181,7 +181,7 @@ void Spawner::update()
         this->vox->set_hitscan(true);
     }
     if (input_state.skeleton_editor)
-        this->vox->update(&spawner_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+        this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }
 

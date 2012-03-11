@@ -156,6 +156,7 @@ inline void turret_shot_object_StoC::handle()
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(target_id);
     if (a == NULL || a->vox == NULL) return;
+    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
     Voxel_volume* vv = a->vox->get_part(target_part);
     if (vv == NULL) return;
 
@@ -171,7 +172,8 @@ inline void turret_shot_object_StoC::handle()
         v.x, v.y, v.z
     );
     int voxel[3] = { vx,vy,vz };
-    destroy_object_voxel(target_id, target_type, target_part, voxel, 2);        
+    destroy_object_voxel(target_id, target_type, target_part, voxel, 2);
+    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
 }
 
 inline void turret_shot_nothing_StoC::handle()
@@ -187,6 +189,7 @@ inline void turret_shot_nothing_StoC::handle()
         t->x, t->y, t->z + t->camera_height,
         v.x, v.y, v.z
     );
+    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
 }
 
 inline void turret_shot_block_StoC::handle()
@@ -208,7 +211,7 @@ inline void turret_shot_block_StoC::handle()
     Animations::block_damage(x,y,z, p.x, p.y, p.z, cube, side);
     Animations::terrain_sparks(x,y,z);
     Sound::laser_hit_block(x,y,z, 0,0,0);
-
+    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
 }
 #endif
 
@@ -233,7 +236,7 @@ void Turret::set_position(float x, float y, float z)
     this->x = x;
     this->y = y;
     this->z = z;
-    this->vox->update(&turret_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 
     #ifdef DC_SERVER
     turret_state_StoC msg;
@@ -258,7 +261,7 @@ void Turret::set_owner(int owner)
 void Turret::set_team(int team)
 {
     this->team = team;
-    if (this->vox != NULL) this->vox->update_team_color(&turret_vox_dat, this->team);
+    if (this->vox != NULL) this->vox->update_team_color(this->team);
 }
 
 void Turret::init_vox()
@@ -270,7 +273,7 @@ void Turret::init_vox()
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
-    this->vox->update(&turret_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
 void Turret::update()
@@ -287,7 +290,7 @@ void Turret::update()
         this->vox->set_hitscan(true);
     }
     if (input_state.skeleton_editor)
-        this->vox->update(&turret_vox_dat, this->x, this->y, this->z, this->theta, this->phi);
+        this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }
 

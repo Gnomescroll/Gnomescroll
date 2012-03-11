@@ -33,7 +33,7 @@ void Voxel_model::set_skeleton_root(float *data)
     );
 }
 
-void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
+void Voxel_model::set_biaxial_nodes(float phi)
 {
     // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
@@ -51,7 +51,7 @@ void Voxel_model::set_biaxial_nodes(VoxDat* vox_dat, float phi)
     }
 }
 
-void Voxel_model::set_arm(VoxDat* vox_dat, float theta, float phi)
+void Voxel_model::set_arm(float theta, float phi)
 {   // not sure if works
     int arm_node = 5;
     float x,y,z,rx,ry,rz;
@@ -201,7 +201,7 @@ void Voxel_model::draw_skeleton()
 }
 
 
-void Voxel_model::init_skeleton(VoxDat* vox_dat)
+void Voxel_model::init_skeleton()
 {
     if( skeleton_inited == true )
     {
@@ -226,18 +226,18 @@ void Voxel_model::init_skeleton(VoxDat* vox_dat)
         biaxial_nodes[vp->skeleton_parent_matrix] = vp->biaxial;
     }
 
-    this->reset_skeleton(vox_dat);
+    this->reset_skeleton();
 }
 
 // implemented for the voxel editor
-void Voxel_model::reset_skeleton(VoxDat* vox_dat)
+void Voxel_model::reset_skeleton()
 {
     int num_skeleton_nodes = vox_dat->n_skeleton_nodes;
     skeleton_needs_update = true;
     
     const int debug_0 = 0;
 
-    if(debug_0) printf("Voxel_model::init_skeleton, number of nodes= %i \n", num_skeleton_nodes );
+    if(debug_0) printf("Voxel_model::init_skeleton, number of nodes= %i \n", num_skeleton_nodes);
 
     for(int i=0; i<num_skeleton_nodes; i++)
     {
@@ -274,7 +274,7 @@ void Voxel_model::reset_skeleton(VoxDat* vox_dat)
 
 }
 
-void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
+void Voxel_model::init_parts(int id, int type) {
     // create each vox part from vox_dat conf
     if (this->vox_inited)
     { 
@@ -297,25 +297,25 @@ void Voxel_model::init_parts(VoxDat* vox_dat, int id, int type) {
         vv->set_hitscan_properties(id, type, i);
 
         //#ifdef DC_CLIENT
-        this->set_part_color(vox_dat, i);
+        this->set_part_color(i);
         #ifdef DC_CLIENT
         ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
 }
 
-void Voxel_model::update_team_color(VoxDat* vox_dat, int team)
+void Voxel_model::update_team_color(int team)
 {
     #ifdef DC_CLIENT
     unsigned char team_r, team_g, team_b;
     int ret = ClientState::ctf->get_team_color(team, &team_r, &team_g, &team_b);
     if (ret) return;
     for (int i=0; i<this->n_parts; i++)
-        this->set_part_team_color(vox_dat, i, team_r, team_g, team_b);
+        this->set_part_team_color(i, team_r, team_g, team_b);
     #endif
 }
 
-void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
+void Voxel_model::set_part_team_color(int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
 {   // VERIFIED
     #ifdef DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
@@ -361,7 +361,7 @@ void Voxel_model::set_part_team_color(VoxDat* vox_dat, int part_num, unsigned ch
 
 }
 
-void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
+void Voxel_model::set_part_color(int part_num)
 {
     //#ifdef DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
@@ -389,10 +389,10 @@ void Voxel_model::set_part_color(VoxDat* vox_dat, int part_num)
     //#endif
 }
 
-void Voxel_model::set_colors(VoxDat* vox_dat)
+void Voxel_model::set_colors()
 {
     for (int i=0; i<this->n_parts; i++)
-        this->set_part_color(vox_dat, i);
+        this->set_part_color(i);
 }
 
 void Voxel_model::set_draw(bool draw) {
@@ -426,15 +426,16 @@ void Voxel_model::set_hitscan(bool hitscan)
     for (int i=0; i<this->n_parts; this->vv[i++].hitscan = hitscan);
 }
 
-void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi) 
+void Voxel_model::update(float x, float y, float z, float theta, float phi) 
 {
+    if (this->was_updated) return;
     this->set_skeleton_root(x,y,z, theta);
 
     #if DC_CLIENT && !PRODUCTION
     if (!input_state.skeleton_editor)
-        this->set_biaxial_nodes(vox_dat, phi);
+        this->set_biaxial_nodes(phi);
     #else
-    this->set_biaxial_nodes(vox_dat, phi);
+    this->set_biaxial_nodes(phi);
     #endif
 
     this->update_skeleton();
@@ -443,6 +444,12 @@ void Voxel_model::update(VoxDat* vox_dat, float x, float y, float z, float theta
     if (input_state.skeleton_editor)
         this->draw_skeleton();
     #endif
+    this->was_updated = true;
+}
+
+void Voxel_model::set_vox_dat(VoxDat* vox_dat)
+{
+    this->vox_dat = vox_dat;
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
@@ -450,22 +457,25 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
 skeleton_inited(false),
 vox_inited(false)
 {
+    this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
-    this->init_parts(vox_dat, id, type);
-    this->init_skeleton(vox_dat);
+    this->init_parts(id, type);
+    this->init_skeleton();
 }
 
 Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type, int team)
 :
 skeleton_inited(false),
-vox_inited(false)
+vox_inited(false),
+was_updated(false)
 {
+    this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
-    this->init_parts(vox_dat, id, type);
-    this->update_team_color(vox_dat, team);
-    this->init_skeleton(vox_dat);
+    this->init_parts(id, type);
+    this->update_team_color(team);
+    this->init_skeleton();
 }
 
 Voxel_model::~Voxel_model()
@@ -525,7 +535,7 @@ Affine* Voxel_model::get_node(int node)
     return &this->vox_skeleton_world_matrix[node];
 }
 // restores voxels to starting state
-void Voxel_model::restore(VoxDat* vox_dat, int team)
+void Voxel_model::restore(int team)
 {
     Voxel_volume* vv;
     #if DC_CLIENT
@@ -537,10 +547,10 @@ void Voxel_model::restore(VoxDat* vox_dat, int team)
     {
         vv = &this->vv[i];
         if (!vv->damaged) continue;
-        this->set_part_color(vox_dat, i);
+        this->set_part_color(i);
         #if DC_CLIENT
         if (team >= 0)
-            this->set_part_team_color(vox_dat, i, r,g,b);
+            this->set_part_team_color(i, r,g,b);
         #endif
         vv->damaged = false;
     }

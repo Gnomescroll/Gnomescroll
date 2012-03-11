@@ -38,6 +38,7 @@ SOUND_TRIGGER_HEADER(agent_took_damage)
 SOUND_TRIGGER_HEADER(you_joined_server)
 SOUND_TRIGGER_HEADER(player_joined_server)
 SOUND_TRIGGER_HEADER(player_left_server)
+SOUND_TRIGGER_HEADER(turret_shoot)
 
 struct Sound_file_function_map
 {

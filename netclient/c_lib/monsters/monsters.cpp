@@ -198,7 +198,7 @@ void Slime_list::update()
             this->a[i]->vox->set_hitscan(true);
         }
         #endif
-        this->a[i]->vox->update(&slime_vox_dat, this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
+        this->a[i]->vox->update(this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
     }
 }
 

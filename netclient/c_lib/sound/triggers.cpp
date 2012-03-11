@@ -64,6 +64,7 @@ SOUND_TRIGGER(agent_took_damage)
 SOUND_TRIGGER(you_joined_server)
 SOUND_TRIGGER(player_joined_server)
 SOUND_TRIGGER(player_left_server)
+SOUND_TRIGGER(turret_shoot)
 
 /* function -> filename mapping */
 

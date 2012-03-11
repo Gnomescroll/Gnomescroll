@@ -7,11 +7,11 @@ class Voxel_model
 {
     public:
         //skeleton
-        void init_skeleton(VoxDat* vox_dat);
-        void reset_skeleton(VoxDat* vox_dat); // reset skeleton properties from voxdat
+        void init_skeleton();
+        void reset_skeleton(); // reset skeleton properties from voxdat
         void set_skeleton_root(float x, float y, float z, float theta);
         void set_skeleton_root(float *data);
-        void set_biaxial_nodes(VoxDat* vox_dat, float phi);
+        void set_biaxial_nodes(float phi);
         void update_skeleton();  //recalculate world view matrices
 
         void draw_skeleton();
@@ -27,23 +27,28 @@ class Voxel_model
         bool* biaxial_nodes;
         //parts voxel volume parst
         bool vox_inited;
+        bool was_updated;
+
+        VoxDat* vox_dat;
 
         int n_parts;
-        void init_parts(VoxDat* vox_dat, int id, int type);
+        void init_parts(int id, int type);
 
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
+        void set_vox_dat(VoxDat* vox_dat);
         void register_hitscan();
         void unregister_hitscan();
-        void set_part_color(VoxDat* vox_dat, int part_num);
-        void set_part_team_color(VoxDat* vox_dat, int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b);
-        void set_colors(VoxDat* vox_dat);
-        void update_team_color(VoxDat* vox_dat, int team);
 
-        void update(VoxDat* vox_dat, float x, float y, float z, float theta, float phi);
-        void restore(VoxDat* vox_dat, int team=-1);
+        void set_part_color(int part_num);
+        void set_part_team_color(int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b);
+        void set_colors();
+        void update_team_color(int team);
 
-        void set_arm(VoxDat* vox_dat, float theta, float phi);
+        void update(float x, float y, float z, float theta, float phi);
+        void restore(int team=-1);
+
+        void set_arm(float theta, float phi);
         Affine* get_node(int node);
 
         bool in_sight_of(Vec3 source, Vec3* sink);

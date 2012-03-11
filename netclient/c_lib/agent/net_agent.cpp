@@ -647,7 +647,8 @@ inline void hitscan_object_CtoS::handle()
     {
         case OBJ_TYPE_AGENT:
             agent = ServerState::agent_list->get(id);
-            if (agent==NULL) return;
+            if (agent == NULL || agent->vox == NULL) return;
+            agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
             // apply damage
             dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             if (dmg_health <= 0)
@@ -655,7 +656,7 @@ inline void hitscan_object_CtoS::handle()
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
-            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);        
+            destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
             break;
 
         case OBJ_TYPE_SLIME:

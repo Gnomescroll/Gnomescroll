@@ -495,7 +495,7 @@ void Agent_status::check_if_at_base()
         if (voxel_model_restore_throttle == 0)
         {
             if (this->a->vox != NULL)
-                this->a->vox->restore(&agent_vox_dat, this->a->status.team);
+                this->a->vox->restore(this->a->status.team);
         }
     }
 #endif

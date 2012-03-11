@@ -36,7 +36,8 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
         if (agent == NULL) continue;
         you = (agent->id == ClientState::playerAgent_state.agent_id);
         if (agent->vox == NULL) continue;
-        
+        agent->vox->was_updated = false;
+
         if (current_camera->first_person && you)
         {
             agent->vox->set_draw(false);
@@ -60,7 +61,8 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
                 vox_dat = &agent_vox_dat_crouched;
                 if (!agent->status.vox_crouched)
                 {
-                    agent->vox->reset_skeleton(&agent_vox_dat_crouched);
+                    agent->vox->set_vox_dat(vox_dat);
+                    agent->vox->reset_skeleton();
                     agent->status.vox_crouched = true;
                 }
             }
@@ -68,14 +70,16 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
             {
                 if (agent->status.vox_crouched)
                 {   // was crouched last frame, but not this frame: restore standing model
-                    agent->vox->reset_skeleton(&agent_vox_dat);
+                    agent->vox->set_vox_dat(vox_dat);
+                    agent->vox->reset_skeleton();
                     agent->status.vox_crouched = false;
                 }
             }
             if (agent->status.dead)
                 vox_dat = &agent_vox_dat_dead;
-            agent->vox->update(vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
-
+                
+            agent->vox->set_vox_dat(vox_dat);
+            agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
             agent->vox->set_draw(true);
             agent->vox->set_hitscan(true);
         }
@@ -90,6 +94,7 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
         agent = a[i];
         if (agent == NULL) continue;
         if (agent->vox == NULL) continue;
+        agent->vox->was_updated = false;
         
         vox_dat = &agent_vox_dat;
         if (agent->crouched())
@@ -97,7 +102,8 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
             vox_dat = &agent_vox_dat_crouched;
             if (!agent->status.vox_crouched)
             {
-                agent->vox->reset_skeleton(&agent_vox_dat_crouched);
+                agent->vox->set_vox_dat(vox_dat);
+                agent->vox->reset_skeleton();
                 agent->status.vox_crouched = true;
             }
         }
@@ -105,13 +111,16 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
         {
             if (agent->status.vox_crouched)
             {   // was crouched last frame, but not this frame: restore standing model
-                agent->vox->reset_skeleton(&agent_vox_dat);
+                agent->vox->set_vox_dat(vox_dat);
+                agent->vox->reset_skeleton();
                 agent->status.vox_crouched = false;
             }
         }
         if (agent->status.dead)
             vox_dat = &agent_vox_dat_dead;
-        agent->vox->update(vox_dat, agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+
+        agent->vox->set_vox_dat(vox_dat);
+        agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
         agent->vox->set_hitscan(true);
     }
     #endif
