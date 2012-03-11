@@ -1016,10 +1016,9 @@ inline void place_spawner_CtoS::handle()
     if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
     if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)z)) return;
 
-    a->status.purchase(OBJ_TYPE_SPAWNER);
-
     Spawner* s = ServerState::spawner_list->create(x+0.5f,y+0.5f,z);
     if (s==NULL) return;
+    a->status.purchase(OBJ_TYPE_SPAWNER);
     s->set_team(a->status.team);
     s->set_owner(a->id);
     s->init_vox();
@@ -1041,10 +1040,9 @@ inline void place_turret_CtoS::handle()
     if (ServerState::turret_list->full()) return;
     if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return;
 
-    a->status.purchase(OBJ_TYPE_TURRET);
-
     Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,z);
     if (t==NULL) return;
+    a->status.purchase(OBJ_TYPE_TURRET);
     t->set_team(a->status.team);
     t->set_owner(a->id);
     t->init_vox();
