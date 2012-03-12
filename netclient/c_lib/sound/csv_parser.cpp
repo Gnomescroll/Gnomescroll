@@ -59,7 +59,7 @@ void parse_sound_triggers(char *fn)
         return;
     }
     n_lines -= 1;   // first line of csv is metadata
-    sound_file_functions = (struct Sound_file_function_map*)malloc(sizeof(struct Sound_file_function_map) * n_lines);
+    sound_file_functions = (struct Soundfile*)malloc(sizeof(struct Soundfile) * n_lines);
 
     i = 0;
     int n = 0;
@@ -215,7 +215,7 @@ void parse_sound_triggers(char *fn)
                 if (n_sounds > n_lines)
                 {
                     n_lines *= 2;
-                    sound_file_functions = (struct Sound_file_function_map*)realloc(sound_file_functions, sizeof(struct Sound_file_function_map) * n_lines);
+                    sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
                 }
             }
 
@@ -237,7 +237,7 @@ void parse_sound_triggers(char *fn)
     if (n_sounds == 0)
         sound_file_functions = NULL;
     else if (n_sounds != n_lines)
-        sound_file_functions = (struct Sound_file_function_map*)realloc(sound_file_functions, sizeof(struct Sound_file_function_map) *  n_sounds);
+        sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) *  n_sounds);
 
     // cleanup
     free(buff);

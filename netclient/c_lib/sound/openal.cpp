@@ -11,18 +11,19 @@ namespace OpenALSound
 {
 
 // lookup table
-class Soundfile {
+class SoundBuffer {
     public:
         unsigned int hash;
         int buffer;
         bool loaded;
+        Soundfile* metadata;
 
-    Soundfile():
+    SoundBuffer():
         hash(0), buffer(-1), loaded(false)
         {}
 };
 static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
-static Soundfile soundfiles[MAX_SOUNDS];
+static SoundBuffer sound_buffers[MAX_SOUNDS];
 static int soundfile_index = 0;
 
 static bool enabled = true;
@@ -238,7 +239,7 @@ unsigned int hash(char* s)
     return h;
 }
 
-void load_sound(char* fn)
+void load_sound(Soundfile* snd)
 {
     if (!enabled)
         return;
@@ -251,7 +252,7 @@ void load_sound(char* fn)
     unsigned char* buffer = NULL;
 
     // Load test.wav 
-    int data_id = Sound::load_wav_file(fn, &buffer);
+    int data_id = Sound::load_wav_file(snd->file, &buffer);
     if (data_id < 0)
     {
         printf("OpenALSound::load_sound -- wav data_id %d invalid\n", data_id);
@@ -274,7 +275,7 @@ void load_sound(char* fn)
     // retrieve OpenAL specific format, determined from wav metadata
     ALenum fmt = Sound::get_openal_wav_format(data);
     if (fmt == AL_FORMAT_STEREO8 || fmt == AL_FORMAT_STEREO16)  // stereo samples wont be attenuated in OpenAL
-        printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", fn);
+        printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", snd->file);
         
     // put the PCM data into the alBuffer
     // (this will copy the buffer, so we must free our PCM buffer)
@@ -284,11 +285,12 @@ void load_sound(char* fn)
         return;
 
     // put in lookup table for playback
-    Soundfile* s;
-    s = &soundfiles[soundfile_index++];
-    s->hash = hash(fn);
+    SoundBuffer* s;
+    s = &sound_buffers[soundfile_index++];
+    s->hash = hash(snd->file);
     s->buffer = buffer_index;
     s->loaded = true;
+    s->metadata = snd;
 
     buffer_index++;
 }
@@ -305,16 +307,25 @@ int get_free_source()
     return -1;
 }
 
-int get_buffer_from_filename(char *fn)
+SoundBuffer* get_sound_buffer_from_filename(char *fn)
 {
     unsigned int h = hash(fn);
     for (int i=0; i<MAX_SOUNDS; i++)
-        if (soundfiles[i].loaded && soundfiles[i].hash == h)
-            return soundfiles[i].buffer;
-
-    return -1;
+        if (sound_buffers[i].loaded && sound_buffers[i].hash == h)
+            return &sound_buffers[i];
+    return NULL;
 }
 
+int set_source_properties(int source_id, Soundfile* snd)
+{
+    alSourcef(sources[source_id], AL_PITCH, snd->pitch);
+    alSourcef(sources[source_id], AL_GAIN, snd->gain);
+    alSourcef(sources[source_id], AL_MAX_DISTANCE, snd->max_distance);
+    alSourcef(sources[source_id], AL_REFERENCE_DISTANCE, snd->reference_distance);
+    alSourcef(sources[source_id], AL_MIN_GAIN, snd->minimum_gain);
+    alSourcef(sources[source_id], AL_MAX_GAIN, snd->maximum_gain);
+    return (checkError());
+}
 
 int update_source_state(int id, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
@@ -364,8 +375,14 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
         return -1;
         
     // lookup buffer from file
-    int buffer_id = get_buffer_from_filename(file);
-    if (buffer_id < 0)
+    SoundBuffer* sound_buffer = get_sound_buffer_from_filename(file);
+    if (sound_buffer == NULL)
+        return -1;
+    if (sound_buffer->buffer < 0)
+        return -1;
+
+    // set source properties
+    if (set_source_properties(source_id, sound_buffer->metadata))
         return -1;
 
     // set source state
@@ -373,7 +390,7 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
         return -1;
 
     // Attach buffer 0 to source
-    alSourcei(sources[source_id], AL_BUFFER, buffers[buffer_id]); 
+    alSourcei(sources[source_id], AL_BUFFER, buffers[sound_buffer->buffer]); 
     if (checkError())
         return -1;
 

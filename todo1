@@ -611,7 +611,10 @@ convert all wavs to mono (openal does not attenuate stereo!)
 fix slime model updating
 remote dev server updates itself hourly
 fix sound listener orientation
+added pitch,gain,max_distance,reference_distance,minimum_gain,maximum_gain to CSV & parsing
+TODO: integrate into OpenAL
 
+-WORK-
 ====================
 
 Animations
@@ -671,7 +674,6 @@ start/end text draw -- render within the glDepth block, just swap textures
 
 visual feedback for damage received
 try 256x256 map
-sound attenuation configuration
 chat command for places of interest
 ammo drops
 

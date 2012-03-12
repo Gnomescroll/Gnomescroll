@@ -40,7 +40,7 @@ SOUND_TRIGGER_HEADER(player_joined_server)
 SOUND_TRIGGER_HEADER(player_left_server)
 SOUND_TRIGGER_HEADER(turret_shoot)
 
-struct Sound_file_function_map
+struct Soundfile
 {
     char* fn;
     char* file;
@@ -53,7 +53,7 @@ struct Sound_file_function_map
     float maximum_gain;
 };
 
-extern struct Sound_file_function_map* sound_file_functions;
+extern struct Soundfile* sound_file_functions;
 extern int n_sounds;
 
 bool set_soundfile(int snd_id, char* fn, char* file);

@@ -69,7 +69,7 @@ SOUND_TRIGGER(turret_shoot)
 
 /* function -> filename mapping */
 
-struct Sound_file_function_map* sound_file_functions = NULL;
+struct Soundfile* sound_file_functions = NULL;
 int n_sounds = 0;
 
 char* get_soundfile(char *fn)
@@ -95,7 +95,7 @@ bool set_soundfile(int snd_id, char* fn, char* file)
     sound_file_functions[snd_id].file = (char*)malloc(sizeof(char) * (file_len + 1));
     strcpy(sound_file_functions[snd_id].file, file);
 
-    load_sound(file);
+    load_sound(&sound_file_functions[snd_id]);
 
     printf("Set sound trigger: %s -> %s\n", fn, file);
 
@@ -117,7 +117,7 @@ void set_soundfile_properties(
         printf("WARNING: set_soundfile_properties -- snd_id %d invalid (n_sounds=%d)\n", snd_id, n_sounds);
         return;
     }
-    Sound_file_function_map* s = &sound_file_functions[snd_id];
+    Soundfile* s = &sound_file_functions[snd_id];
     s->pitch = pitch;
     s->gain = gain;
     s->max_distance = max_distance;

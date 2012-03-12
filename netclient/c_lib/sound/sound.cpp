@@ -45,12 +45,12 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
 }
 
 // Public
-void load_sound(char *file) {
+void load_sound(Soundfile* snd) {
     #ifdef USE_FMOD
-    return FMODSound::load_sound(file);
+    return FMODSound::load_sound(snd);
     #endif
     #ifdef USE_OPENAL
-    return OpenALSound::load_sound(file);
+    return OpenALSound::load_sound(snd);
     #endif
 }
 

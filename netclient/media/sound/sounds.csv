@@ -25,7 +25,7 @@ Victory,,victory,,,,,,,,,"there are no victory condition implemented"
 "Block set nonzero",,block_set,,y,,,,,,,
 "block took damage",,block_took_damage,,y,,,,,,,"block dmg is entirely server side at the moment"
 "laser hit agent",,laser_hit_agent,,y,,,,,,,
-"grenade explode",plasma_grenade_explode.wav,grenade_explode,y,y,0.8,,,,,,
+"grenade explode",plasma_grenade_explode.wav,grenade_explode,y,y,0.1,0.8,,,,,
 "grenade bounce",,grenade_bounce,,y,,,,,,,
 "agent took damage",agent_damage.wav,agent_took_damage,Y(you),y,,,,,,,
 "restore health",,restore_health,,y,,,,,,,

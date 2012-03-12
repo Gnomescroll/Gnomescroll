@@ -13,14 +13,14 @@
 
 namespace FMODSound {
 
-class Soundfile {
+class SoundBuffer {
     public:
         unsigned int hash;
         int sound2d;
         int sound3d;
         bool loaded;
 
-    Soundfile():
+    SoundBuffer():
         hash(0), sound2d(-1), sound3d(-1), loaded(false)
         {}
 };
@@ -40,7 +40,7 @@ static FMOD_CHANNELGROUP* chgroup = NULL;
 static FMOD_CHANNEL* channels[MAX_CHANNELS];
 
 static FMOD_SOUND* sounds[MAX_SOUNDS];
-static Soundfile soundfiles[MAX_SOUNDS/2];
+static SoundBuffer sound_buffers[MAX_SOUNDS/2];
 
 
 /* Debug */
@@ -264,7 +264,7 @@ int load_3d_sound(char *soundfile, float mindistance) {
 }
 
 // Public
-void load_sound(char *file) {
+void load_sound(Soundfile* snd) {
     static int soundfile_index = 0;
 
     if (soundfile_index >= MAX_SOUNDS/2) {
@@ -273,13 +273,13 @@ void load_sound(char *file) {
     }
 
     const char base_path[] = "./media/sound/wav/";
-    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(file) + 1));
-    sprintf(fullpath, "%s%s", base_path, file);
+    char* fullpath = (char*)malloc(sizeof(char) * (strlen(base_path) + strlen(snd->file) + 1));
+    sprintf(fullpath, "%s%s", base_path, snd->file);
     
     static const float mindistance = 20.0f; // distance at which attenuation begins
-    Soundfile* s;
-    s = &soundfiles[soundfile_index];
-    s->hash = hash(file);
+    SoundBuffer* s;
+    s = &sound_buffers[soundfile_index];
+    s->hash = hash(snd->file);
     s->sound2d = load_2d_sound(fullpath);
     s->sound3d = load_3d_sound(fullpath, mindistance);
     s->loaded = true;
@@ -292,10 +292,10 @@ int get_sound_id(char* file, bool three_d) {
 
     unsigned int h = hash(file);
     int i;
-    Soundfile* s = NULL;
+    SoundBuffer* s = NULL;
     for (i=0; i<MAX_SOUNDS/2; i++) {
-        if (soundfiles[i].loaded && soundfiles[i].hash == h) {
-            s = &soundfiles[i];
+        if (sound_buffers[i].loaded && sound_buffers[i].hash == h) {
+            s = &sound_buffers[i];
             break;
         }
     }
