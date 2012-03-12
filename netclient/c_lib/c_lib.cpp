@@ -153,6 +153,7 @@
 /* sound */
 #include <c_lib/sound/wav.cpp>
 #include <c_lib/sound/triggers.cpp>
+#include <c_lib/sound/csv_parser.cpp>
 #include <c_lib/sound/fmod.cpp>
 #include <c_lib/sound/openal.cpp>
 #include <c_lib/sound/sound.cpp>

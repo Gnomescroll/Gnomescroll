@@ -1,6 +1,7 @@
 #include "triggers.hpp"
 
 #include <sound/sound.hpp>
+#include <sound/csv_parser.hpp>
 
 namespace Sound
 {
@@ -81,7 +82,7 @@ char* get_soundfile(char *fn)
     return NULL;
 }
 
-bool set_soundfile(int i, char* fn, char* file)
+bool set_soundfile(int snd_id, char* fn, char* file)
 {
     // check if function mapped already
     if (get_soundfile(fn) != NULL)
@@ -89,10 +90,10 @@ bool set_soundfile(int i, char* fn, char* file)
     
     int fn_len = strlen(fn);
     int file_len = strlen(file);
-    sound_file_functions[i].fn = (char*)malloc(sizeof(char) * (fn_len + 1));
-    strcpy(sound_file_functions[i].fn, fn);
-    sound_file_functions[i].file = (char*)malloc(sizeof(char) * (file_len + 1));
-    strcpy(sound_file_functions[i].file, file);
+    sound_file_functions[snd_id].fn = (char*)malloc(sizeof(char) * (fn_len + 1));
+    strcpy(sound_file_functions[snd_id].fn, fn);
+    sound_file_functions[snd_id].file = (char*)malloc(sizeof(char) * (file_len + 1));
+    strcpy(sound_file_functions[snd_id].file, file);
 
     load_sound(file);
 
@@ -101,120 +102,30 @@ bool set_soundfile(int i, char* fn, char* file)
     return true;
 }
 
-void parse_sound_triggers(char *fn)
+void set_soundfile_properties(
+    int snd_id,
+    float pitch,
+    float gain,
+    float max_distance,
+    float reference_distance,
+    float minimum_gain,
+    float maximum_gain
+)
 {
-    int size = 0;
-    char *buff = read_file_to_buffer(fn, &size);
-    if (buff == NULL)
+    if (snd_id < 0 || snd_id > n_sounds)
     {
-        printf("Error opening sound conf: %s\n", fn);
+        printf("WARNING: set_soundfile_properties -- snd_id %d invalid (n_sounds=%d)\n", snd_id, n_sounds);
         return;
     }
-    if (size == 0)
-    {
-        printf("Sounds conf is empty.\n");
-        return;
-    }
-
-    char c;
-    int i = 0;
-    int n_lines = 0;
-    while ((c = buff[i++]) != '\0')
-    {   // count number of lines, should correspond with number of sounds
-        if (c == '\n')
-            n_lines++;
-    }
-
-    if (n_lines == 0)
-    {
-        printf("Error parsing sounds conf: no lines found\n");
-        return;
-    }
-    n_lines -= 1;   // first line of csv is metadata
-    sound_file_functions = (struct Sound_file_function_map*)malloc(sizeof(struct Sound_file_function_map) * n_lines);
-
-    i = 0;
-    int n = 0;
-    int comma = 0;
-
-    const int MAX_FN_LEN = 100;
-    char* filename = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
-    char* function_name = (char*)calloc(MAX_FN_LEN+1, sizeof(char));
-    int filename_index = 0;
-    int function_name_index = 0;
-
-    // filename is stored in the 2nd column (1-indexed),
-    // function name is stored in the 3rd column
-    // commas deliminate columns
-    // newlines deliminate entries
-    // any character that cant be a filename or function name character should throw warning,
-    // but only ignoring spaces as is
-    // the csv exported by gnumeric contains no spaces, and looks like: col1,col2,...,colN,\n
-
-    while ((c = buff[i++]) != '\0')
-    {
-        if (c == ' ')
-            continue;
-
-        if (c == ',')
-        {
-            comma++;
-            continue;
-        }
-            
-        if (n > 0)  // first line of csv  is metadata, skip
-        {
-            if (comma == 1)
-            {
-                if (filename_index == MAX_FN_LEN)
-                {
-                    printf("Error parsing sounds conf: filename %s exceeding max length (%d)\n", filename, MAX_FN_LEN);
-                    return;
-                }
-                filename[filename_index++] = c;
-            }
-            else if (comma == 2)
-            {
-                if (function_name_index == MAX_FN_LEN)
-                {
-                    printf("Error parsing sounds conf: function name %s exceeding max length (%d)\n", function_name, MAX_FN_LEN);
-                    return;
-                }
-                function_name[function_name_index++] = c;
-            }
-        }
-            
-        if (c == '\n')
-        {
-            n++;
-            if (comma >= 2 && filename_index && function_name_index)
-            {
-                filename[filename_index] = '\0';
-                function_name[function_name_index] = '\0';
-                if (set_soundfile(n_sounds, function_name, filename))
-                    n_sounds++;
-
-                if (n_sounds > n_lines)
-                {
-                    n_lines *= 2;
-                    sound_file_functions = (struct Sound_file_function_map*)realloc(sound_file_functions, sizeof(struct Sound_file_function_map) * n_lines);
-                }
-            }
-            
-            filename_index = 0;
-            function_name_index = 0;
-            comma = 0;
-        }
-    }
-
-    if (n_sounds == 0)
-        sound_file_functions = NULL;
-    else if (n_sounds != n_lines)
-        sound_file_functions = (struct Sound_file_function_map*)realloc(sound_file_functions, sizeof(struct Sound_file_function_map) *  n_sounds);
-
-    free(buff);
-    free(filename);
-    free(function_name);
+    Sound_file_function_map* s = &sound_file_functions[snd_id];
+    s->pitch = pitch;
+    s->gain = gain;
+    s->max_distance = max_distance;
+    s->reference_distance = reference_distance;
+    s->minimum_gain = minimum_gain;
+    s->maximum_gain = maximum_gain;
+    printf("set properties: ");
+    printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
 }
 
 void teardown_triggers()

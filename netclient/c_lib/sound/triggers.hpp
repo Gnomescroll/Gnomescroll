@@ -44,13 +44,30 @@ struct Sound_file_function_map
 {
     char* fn;
     char* file;
+    // properties
+    float pitch;
+    float gain;
+    float max_distance;
+    float reference_distance;
+    float minimum_gain;
+    float maximum_gain;
 };
 
 extern struct Sound_file_function_map* sound_file_functions;
 extern int n_sounds;
 
+bool set_soundfile(int snd_id, char* fn, char* file);
+void set_soundfile_properties(
+    int snd_id,
+    float pitch,
+    float gain,
+    float max_distance,
+    float reference_distance,
+    float minimum_gain,
+    float maximum_gain
+);
+
 char* get_soundfile(char *fn);
-void parse_sound_triggers(char* fn);
 void teardown_triggers();
 
 }

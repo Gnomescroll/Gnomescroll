@@ -273,7 +273,9 @@ void load_sound(char* fn)
 
     // retrieve OpenAL specific format, determined from wav metadata
     ALenum fmt = Sound::get_openal_wav_format(data);
-
+    if (fmt == AL_FORMAT_STEREO8 || fmt == AL_FORMAT_STEREO16)  // stereo samples wont be attenuated in OpenAL
+        printf("WARNING: audio file %s is in stereo format. 3D sound will not be applied for this sample.\n", fn);
+        
     // put the PCM data into the alBuffer
     // (this will copy the buffer, so we must free our PCM buffer)
     alBufferData(buffers[buffer_index], fmt, buffer, data->size, data->sample_rate);

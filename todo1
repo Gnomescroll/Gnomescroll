@@ -610,6 +610,7 @@ Mar 12
 convert all wavs to mono (openal does not attenuate stereo!)
 fix slime model updating
 remote dev server updates itself hourly
+fix sound listener orientation
 
 ====================
 
