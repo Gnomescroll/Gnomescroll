@@ -93,7 +93,7 @@ void update_listener(float x, float y, float z, float vx, float vy, float vz, fl
     o[4] = uz;
     o[5] = uy;
     for (int i=0; i<3; i++)
-        o[i] *= -1;
+        o[i] *= -1; // reverse forward vector
     alListenerfv(AL_ORIENTATION, o);
 }
 
