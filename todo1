@@ -612,7 +612,7 @@ fix slime model updating
 remote dev server updates itself hourly
 fix sound listener orientation
 added pitch,gain,max_distance,reference_distance,minimum_gain,maximum_gain to CSV & parsing
-TODO: integrate into OpenAL
+and integrated into openal
 
 -WORK-
 ====================
@@ -676,5 +676,7 @@ visual feedback for damage received
 try 256x256 map
 chat command for places of interest
 ammo drops
+
+sounds should be unique per function, not per file
 
 PRINT & MAIL REBATES
