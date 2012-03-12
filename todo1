@@ -608,7 +608,7 @@ freeze/thaw settings for voxel_models (locks update-ability, prevents wasteful s
 Mar 12
 
 convert all wavs to mono (openal does not attenuate stereo!)
-
+fix slime model updating
 
 
 ====================
@@ -669,15 +669,9 @@ grenade damage indication (blood, voxel destruction)
 start/end text draw -- render within the glDepth block, just swap textures
 
 visual feedback for damage received
-
 try 256x256 map
-
-sound attenuations
-
+sound attenuation configuration
 chat command for places of interest
-
 ammo drops
-
-make non-root user on m643 for angus
 
 PRINT & MAIL REBATES

@@ -72,13 +72,14 @@ void Font::parse_font_file()
 
     enum LINE_MODE
     {
-        INFO = 0,
+        UNKNOWN = 0,
+        INFO = 1,
         COMMON,
         PAGE,
         CHARS,
         CHAR
-    } line_mode;
-
+    } line_mode = UNKNOWN;
+    
     char c;
     int i = 0;
     char line_name[10];
