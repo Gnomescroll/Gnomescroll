@@ -23,7 +23,6 @@ type(OBJ_TYPE_SLIME)
     this->init_vox();
 }
 
-
 Slime::Slime(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id), x(x), y(y), z(z), vx(vx), vy(vy), vz(vz),
@@ -181,34 +180,34 @@ void Slime::tick() {
 
 void Slime_list::update()
 {
+    Slime *s;
     for (int i=0; i<this->n_max; i++)
     {
-        #ifdef DC_CLIENT
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->vox == NULL) continue;
-        if (current_camera == NULL || !current_camera->in_view(this->a[i]->x, this->a[i]->y, this->a[i]->z))
+        s = this->a[i];
+        if (s == NULL) continue;
+        if (s->vox == NULL) continue;
+        
+        s->vox->was_updated = false;
+        #if DC_CLIENT
+        if (current_camera == NULL || !current_camera->in_view(s->x, s->y, s->z))
         {
-            this->a[i]->vox->set_draw(false);
-            this->a[i]->vox->set_hitscan(false);
+            s->vox->set_draw(false);
+            s->vox->set_hitscan(false);
             continue;
         }
-        else
-        {
-            this->a[i]->vox->set_draw(true);
-            this->a[i]->vox->set_hitscan(true);
-        }
+        s->vox->set_draw(true);
         #endif
-        this->a[i]->vox->update(this->a[i]->x, this->a[i]->y, this->a[i]->z, this->a[i]->theta, this->a[i]->phi);
+        
+        s->vox->set_hitscan(true);
+        s->vox->update(s->x, s->y, s->z, s->theta, s->phi);
     }
 }
 
 void Slime_list::tick()
 {
     for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->tick();
-    }
+        if (this->a[i] != NULL)
+            this->a[i]->tick();
 }
 
 void Slime::set_state(float x, float y, float z, float vx, float vy, float vz)
@@ -235,7 +234,8 @@ void Slime::set_state(float x, float y, float z, float vx, float vy, float vz, f
 
 void Slime_list::send_to_client(int client_id)
 {
-    for (int i=0; i<n_max; i++) {
+    for (int i=0; i<n_max; i++)
+    {
         Slime* s = this->a[i];
         if (s==NULL) continue;
         CreateSlime_StoC msg;

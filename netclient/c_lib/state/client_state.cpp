@@ -126,8 +126,8 @@ namespace ClientState {
 
     void update()
     {
-        slime_list->update();
         ctf->update();
+        slime_list->update();
         spawner_list->update();
         turret_list->update();
 

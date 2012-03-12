@@ -39,50 +39,50 @@ void Agent_list::update_models() // doesnt actually draw, but updates draw/hitsc
         agent->vox->was_updated = false;
 
         if (current_camera->first_person && you)
-        {
+        {   // your agent
             agent->vox->set_draw(false);
             agent->vox->set_hitscan(false);
+            continue;
+        }
+
+        // remaining agents
+        VoxDat* vox_dat = &agent_vox_dat;
+        if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z))
+        {   // agent not in view fulcrum
+            agent->vox->set_draw(false);
+            agent->vox->set_hitscan(false);
+            if (agent->event.bb != NULL)
+                agent->event.bb->set_draw(false);
+            continue;
+        }
+        if (agent->event.bb != NULL)
+            agent->event.bb->set_draw(true);
+        if (agent->crouched())
+        {
+            vox_dat = &agent_vox_dat_crouched;
+            if (!agent->status.vox_crouched)
+            {
+                agent->vox->set_vox_dat(vox_dat);
+                agent->vox->reset_skeleton();
+                agent->status.vox_crouched = true;
+            }
         }
         else
         {
-            VoxDat* vox_dat = &agent_vox_dat;
-            if (current_camera == NULL || !current_camera->in_view(agent->s.x, agent->s.y, agent->s.z))
-            {
-                agent->vox->set_draw(false);
-                agent->vox->set_hitscan(false);
-                if (agent->event.bb != NULL)
-                    agent->event.bb->set_draw(false);
-                continue;
+            if (agent->status.vox_crouched)
+            {   // was crouched last frame, but not this frame: restore standing model
+                agent->vox->set_vox_dat(vox_dat);
+                agent->vox->reset_skeleton();
+                agent->status.vox_crouched = false;
             }
-            if (agent->event.bb != NULL)
-                agent->event.bb->set_draw(true);
-            if (agent->crouched())
-            {
-                vox_dat = &agent_vox_dat_crouched;
-                if (!agent->status.vox_crouched)
-                {
-                    agent->vox->set_vox_dat(vox_dat);
-                    agent->vox->reset_skeleton();
-                    agent->status.vox_crouched = true;
-                }
-            }
-            else
-            {
-                if (agent->status.vox_crouched)
-                {   // was crouched last frame, but not this frame: restore standing model
-                    agent->vox->set_vox_dat(vox_dat);
-                    agent->vox->reset_skeleton();
-                    agent->status.vox_crouched = false;
-                }
-            }
-            if (agent->status.dead)
-                vox_dat = &agent_vox_dat_dead;
-                
-            agent->vox->set_vox_dat(vox_dat);
-            agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
-            agent->vox->set_draw(true);
-            agent->vox->set_hitscan(true);
         }
+        if (agent->status.dead)
+            vox_dat = &agent_vox_dat_dead;
+            
+        agent->vox->set_vox_dat(vox_dat);
+        agent->vox->update(agent->s.x, agent->s.y, agent->s.z, agent->s.theta, agent->s.phi);
+        agent->vox->set_draw(true);
+        agent->vox->set_hitscan(true);
     }
     #endif
     
