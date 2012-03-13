@@ -55,22 +55,22 @@ void load_sound(Soundfile* snd) {
 }
 
 // Public
-int play_2d_sound(char* file) {
+int play_2d_sound(char* fn) {
     #ifdef USE_FMOD
-    return FMODSound::play_2d_sound(file);
+    return FMODSound::play_2d_sound(fn);    //outdated
     #endif
     #ifdef USE_OPENAL
-    return OpenALSound::play_2d_sound(file);
+    return OpenALSound::play_2d_sound(fn);
     #endif
 }
 
 //Public
-int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz) {
+int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz) {
     #ifdef USE_FMOD
-    return FMODSound::play_3d_sound(file, x,y,z, vx,vy,vz);
+    return FMODSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
     #endif
     #ifdef USE_OPENAL
-    return OpenALSound::play_3d_sound(file, x,y,z, vx,vy,vz);
+    return OpenALSound::play_3d_sound(fn, x,y,z, vx,vy,vz);
     #endif
 }
 

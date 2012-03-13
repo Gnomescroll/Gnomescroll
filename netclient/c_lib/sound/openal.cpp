@@ -287,7 +287,7 @@ void load_sound(Soundfile* snd)
     // put in lookup table for playback
     SoundBuffer* s;
     s = &sound_buffers[soundfile_index++];
-    s->hash = hash(snd->file);
+    s->hash = hash(snd->fn);
     s->buffer = buffer_index;
     s->loaded = true;
     s->metadata = snd;
@@ -307,7 +307,7 @@ int get_free_source()
     return -1;
 }
 
-SoundBuffer* get_sound_buffer_from_filename(char *fn)
+SoundBuffer* get_sound_buffer_from_function_name(char *fn)
 {
     unsigned int h = hash(fn);
     for (int i=0; i<MAX_SOUNDS; i++)
@@ -364,7 +364,7 @@ int play_2d_sound(char* file)
     return source_id;
 }
 
-int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
         return -1;
@@ -375,7 +375,7 @@ int play_3d_sound(char* file, float x, float y, float z, float vx, float vy, flo
         return -1;
         
     // lookup buffer from file
-    SoundBuffer* sound_buffer = get_sound_buffer_from_filename(file);
+    SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
     if (sound_buffer == NULL)
         return -1;
     if (sound_buffer->buffer < 0)

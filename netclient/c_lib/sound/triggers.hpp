@@ -67,7 +67,6 @@ void set_soundfile_properties(
     float maximum_gain
 );
 
-char* get_soundfile(char *fn);
 void teardown_triggers();
 
 }

@@ -9,27 +9,11 @@ namespace Sound
 #define SOUND_TRIGGER(NAME)\
 void NAME()\
 {\
-    static bool looked = false;\
-    static char* soundfile = NULL;\
-    if (!looked && soundfile == NULL)\
-    {\
-        looked = true;\
-        soundfile = get_soundfile((char*)#NAME);\
-    }\
-    if (soundfile != NULL)\
-        play_2d_sound(soundfile);\
+    play_2d_sound((char*)#NAME);\
 }\
 void NAME(float x, float y, float z, float vx, float vy, float vz)\
 {\
-    static bool looked = false;\
-    static char* soundfile = NULL;\
-    if (!looked && soundfile == NULL)\
-    {\
-        looked = true;\
-        soundfile = get_soundfile((char*)#NAME);\
-    }\
-    if (soundfile != NULL)\
-        play_3d_sound(soundfile, x,y,z,vx,vy,vz);\
+    play_3d_sound((char*)#NAME, x,y,z,vx,vy,vz);\
 }
 
 /* triggers */
@@ -72,20 +56,20 @@ SOUND_TRIGGER(turret_shoot)
 struct Soundfile* sound_file_functions = NULL;
 int n_sounds = 0;
 
-char* get_soundfile(char *fn)
+static bool function_registered(char *fn)
 {
     if (sound_file_functions == NULL)
         return NULL;
     for (int i=0; i<n_sounds; i++)
         if (!strcmp(fn, sound_file_functions[i].fn))
-            return sound_file_functions[i].file;
-    return NULL;
+            return true;
+    return false;
 }
 
 bool set_soundfile(int snd_id, char* fn, char* file)
 {
     // check if function mapped already
-    if (get_soundfile(fn) != NULL)
+    if (function_registered(fn))
         return false;
     
     int fn_len = strlen(fn);

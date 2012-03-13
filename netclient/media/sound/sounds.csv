@@ -1,5 +1,5 @@
 Event,Soundfile,"function name","IN USE",Integrated,pitch,gain,"max distance","reference distance","minimum gain","maximum gain",Notes
-"Fire laser at object",laser_01.wav,fire_laser,y,y,,,,,,,
+"Fire laser at object",laser_01.wav,fire_laser,y,y,0.9,,,,,,
 "Fire laser at block",laser_01.wav,fire_laser,y,y,,,,,,,
 "Fire laser at nothing",laser_01.wav,fire_laser,y,y,,,,,,,
 "Out of ammo",,out_of_ammo,,y,,,,,,,click
@@ -32,4 +32,4 @@ Victory,,victory,,,,,,,,,"there are no victory condition implemented"
 "you joined server",,you_joined_server,,,,,,,,,
 "other player joined server",player_joined_server.wav,player_joined_server,,y,,,,,,,
 "other player left server",,player_left_server,,,,,,,,,
-"turret shoot laser",laser_01.wav,turret_shoot,Y,Y,,,,,,,
+"turret shoot laser",laser_01.wav,turret_shoot,Y,Y,0.1,,,,,,
