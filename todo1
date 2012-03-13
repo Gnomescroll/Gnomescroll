@@ -615,13 +615,15 @@ added pitch,gain,max_distance,reference_distance,minimum_gain,maximum_gain to CS
 and integrated into openal
 
 -WORK-
+
+source properties per function name, not filename 
 ====================
 
 Animations
 --Keyframes?
 --Splines/interpolated between points
 ----If can say "here is the standing leg vector, here is the leg stretched furthest when walking" and get the angle, i can do this
-
+Swing legs
 Gun model
 Gun in first person and zoomed perspectives
 
@@ -658,8 +660,8 @@ map instrumentation - fix remaining bugs
 gl blend / z buffer sorts
 
 ==PARTICLES==
-make better particle class to abstract some drawing
 ParticleSystem class for doing much cheaper view distance checks
+animation organization
 
 ==================
 POLISH TODO:
@@ -676,7 +678,5 @@ visual feedback for damage received
 try 256x256 map
 chat command for places of interest
 ammo drops
-
-sounds should be unique per function, not per file
 
 PRINT & MAIL REBATES
