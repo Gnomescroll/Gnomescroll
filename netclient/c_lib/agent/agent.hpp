@@ -125,7 +125,7 @@ class Agent_state {
         int last_full_state_message;
 
         void draw();
-
+        void update_model();
         bool is_you();
 
         bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it

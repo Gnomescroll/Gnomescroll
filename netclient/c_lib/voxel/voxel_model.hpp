@@ -51,8 +51,11 @@ class Voxel_model
         void update(float x, float y, float z, float theta, float phi);
         void restore(int team=-1);
 
-        void set_arm(float theta, float phi);
         Affine* get_node(int node);
+
+        int get_parent_node_index(int part);
+        void set_node_rotation_by_part(int part, float theta, float phi, float rho);
+        void set_node_rotation(int node, float theta, float phi, float rho);
 
         bool in_sight_of(Vec3 source, Vec3* sink);
 

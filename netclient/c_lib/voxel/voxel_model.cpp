@@ -33,35 +33,50 @@ void Voxel_model::set_skeleton_root(float *data)
     );
 }
 
-void Voxel_model::set_biaxial_nodes(float phi)
+int Voxel_model::get_parent_node_index(int part)
 {
-    // in the editor, head and arm rotate the same way
+    if (part < 0 || part >+ this->n_parts)
+    {
+        printf("WARNING: Voxel_model::get_parent_node_index -- part %d out of range\n", part);
+        return -1;
+    }
+    VoxPart* vp = vox_dat->vox_part[part];
+    if (vp == NULL) return -1;
+    return vp->skeleton_parent_matrix;
+}
+
+void Voxel_model::set_node_rotation_by_part(int part, float theta, float phi, float rho)
+{
+    int node = this->get_parent_node_index(part);
+    if (node == -1) return;
+    this->set_node_rotation(node, theta, phi, rho);
+}
+
+void Voxel_model::set_node_rotation(int node, float theta, float phi, float rho)
+{
+    if (node < 0 || node >= this->n_skeleton_nodes)
+    {
+        printf("WARNING: Voxel_mode::set_node_rotation -- node %d out of range\n", node);
+        return;
+    }
+    float x,y,z,rx,ry,rz;
+    x = vox_dat->vox_skeleton_local_matrix_reference[node][0];
+    y = vox_dat->vox_skeleton_local_matrix_reference[node][1];
+    z = vox_dat->vox_skeleton_local_matrix_reference[node][2];
+    rx = vox_dat->vox_skeleton_local_matrix_reference[node][3];
+    ry = vox_dat->vox_skeleton_local_matrix_reference[node][4];
+    rz = vox_dat->vox_skeleton_local_matrix_reference[node][5];
+    vox_skeleton_local_matrix[node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz - rho);
+}
+
+void Voxel_model::set_biaxial_nodes(float phi)
+{   // in the editor, head and arm rotate the same way
     // here, they rotate opposite directions
     for (int i=0; i<this->n_skeleton_nodes; i++)
     {
         if (!biaxial_nodes[i]) continue;
-        float x,y,z,rx,ry,rz;
-        x = vox_dat->vox_skeleton_local_matrix_reference[i][0];
-        y = vox_dat->vox_skeleton_local_matrix_reference[i][1];
-        z = vox_dat->vox_skeleton_local_matrix_reference[i][2];
-        rx = vox_dat->vox_skeleton_local_matrix_reference[i][3];
-        ry = vox_dat->vox_skeleton_local_matrix_reference[i][4];
-        rz = vox_dat->vox_skeleton_local_matrix_reference[i][5];
-        vox_skeleton_local_matrix[i] = affine_euler_rotation_and_translation(x,y,z, rx, ry - phi, rz);
+        this->set_node_rotation(i, 0, phi, 0);
     }
-}
-
-void Voxel_model::set_arm(float theta, float phi)
-{   // not sure if works
-    int arm_node = 5;
-    float x,y,z,rx,ry,rz;
-    x = vox_dat->vox_skeleton_local_matrix_reference[arm_node][0];
-    y = vox_dat->vox_skeleton_local_matrix_reference[arm_node][1];
-    z = vox_dat->vox_skeleton_local_matrix_reference[arm_node][2];
-    rx = vox_dat->vox_skeleton_local_matrix_reference[arm_node][3];
-    ry = vox_dat->vox_skeleton_local_matrix_reference[arm_node][4];
-    rz = vox_dat->vox_skeleton_local_matrix_reference[arm_node][5];
-    vox_skeleton_local_matrix[arm_node] = affine_euler_rotation_and_translation(x,y,z, rx - theta, ry - phi, rz);
 }
 
 void Voxel_model::update_skeleton()
@@ -199,7 +214,6 @@ void Voxel_model::draw_skeleton()
     glShadeModel(GL_FLAT);
 #endif
 }
-
 
 void Voxel_model::init_skeleton()
 {

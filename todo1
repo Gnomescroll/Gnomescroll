@@ -691,10 +691,10 @@ charge up
 -- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
 grenade damage indication (blood, voxel destruction)
 
-start/end text draw -- render within the glDepth block, just swap textures
-
 visual feedback for damage received
 try 256x256 map
 ammo drops
 
 PRINT & MAIL REBATES
+
+

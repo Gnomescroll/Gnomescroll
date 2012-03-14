@@ -108,7 +108,98 @@ void Agent_state::teleport(float x,float y,float z, float vx, float vy, float vz
     A.phi = s.phi;
     A.broadcast();
 }
+void Agent_state::update_model()
+{
+    #if DC_CLIENT
+    static int legtick = 0;
+    legtick++;
 
+    if (this->vox == NULL) return;
+    
+    this->vox->was_updated = false;
+    if (current_camera->first_person && this->is_you())
+    {   // your agent
+        this->vox->set_draw(false);
+        this->vox->set_hitscan(false);
+        return;
+    }
+
+    // other agents
+    VoxDat* vox_dat = &agent_vox_dat;
+    if (current_camera == NULL || !current_camera->in_view(this->s.x, this->s.y, this->s.z))
+    {   // agent not in view fulcrum
+        this->vox->set_draw(false);
+        this->vox->set_hitscan(false);
+        if (this->event.bb != NULL)
+            this->event.bb->set_draw(false);
+        return;
+    }
+    if (this->event.bb != NULL)
+        this->event.bb->set_draw(true);
+    if (this->crouched())
+    {
+        vox_dat = &agent_vox_dat_crouched;
+        if (!this->status.vox_crouched)
+        {
+            this->vox->set_vox_dat(vox_dat);
+            this->vox->reset_skeleton();
+            this->status.vox_crouched = true;
+        }
+    }
+    else
+    {
+        if (this->status.vox_crouched)
+        {   // was crouched last frame, but not this frame: restore standing model
+            this->vox->set_vox_dat(vox_dat);
+            this->vox->reset_skeleton();
+            this->status.vox_crouched = false;
+        }
+    }
+    if (this->status.dead)
+        vox_dat = &agent_vox_dat_dead;
+        
+    this->vox->set_vox_dat(vox_dat);
+
+    this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, 0.01 * ((legtick%70)-35), 0);
+    this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, 0.01 * ((legtick%70)), 0);
+
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->set_draw(true);
+    this->vox->set_hitscan(true);
+
+    #endif
+    
+    #if DC_SERVER
+    if (this->vox == NULL) return;
+    this->vox->was_updated = false;
+    VoxDat* vox_dat = &agent_vox_dat;
+    if (this->crouched())
+    {
+        vox_dat = &agent_vox_dat_crouched;
+        if (!this->status.vox_crouched)
+        {
+            this->vox->set_vox_dat(vox_dat);
+            this->vox->reset_skeleton();
+            this->status.vox_crouched = true;
+        }
+    }
+    else
+    {
+        if (this->status.vox_crouched)
+        {   // was crouched last frame, but not this frame: restore standing model
+            this->vox->set_vox_dat(vox_dat);
+            this->vox->reset_skeleton();
+            this->status.vox_crouched = false;
+        }
+    }
+    if (this->status.dead)
+        vox_dat = &agent_vox_dat_dead;
+
+    this->vox->set_vox_dat(vox_dat);
+    this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+    this->vox->set_hitscan(true);
+    #endif
+}
 
 void Agent_state::tick() 
 {
