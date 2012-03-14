@@ -640,7 +640,7 @@ Agent_control_state Agent_state::get_current_control_state()
 
 int Agent_state::crouched()
 {
-    return this->get_current_control_state().cs & 64;
+    return this->get_current_control_state().cs & CS_CROUCH;
 }
 
 float Agent_state::camera_height() {
@@ -774,11 +774,24 @@ void Agent_state::update_legs()
     const int rest = (peak-1)/2;
     const float m = (arc/180)/((float)rest);
 
+    static int idle = 0;
     static int legtick = 0;
     static float direction = -1;
+
+    Agent_control_state cs = this->get_current_control_state();
+    bool forward = (cs.cs & CS_FORWARD);
+    bool backward = (cs.cs & CS_BACKWARD);
+    bool left = (cs.cs & CS_LEFT);
+    bool right = (cs.cs & CS_RIGHT);
+
+    static bool was_forward = false;
     
-    if (this->s.vx || this->s.vy)
+    if (forward || backward || left || right)
     {
+        if (was_forward && backward && !forward)
+            direction *= -1;
+        if (!was_forward && forward && !backward)
+            direction *= -1;
         if (legtick == peak || legtick == 0)
             direction *= -1;
         if (direction < 0)
@@ -791,10 +804,20 @@ void Agent_state::update_legs()
     }
     else
     {
-        legtick = rest;
-        this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, 0, 0);
-        this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, 0, 0);
+        idle++;
+        if (idle >= (legtick%peak)-rest)
+        {
+            legtick = rest;
+            idle = 0;
+            this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, 0, 0);
+            this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, 0, 0);
+        }
     }
+
+    if (forward)
+        was_forward = true;
+    if (backward)
+        was_forward = false;
 }
 
 void Agent_state::update_model()
