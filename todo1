@@ -691,10 +691,13 @@ charge up
 -- for better grenade blast cover simulation, can emit a handful of small particles (like the animation, but more and a little bit higher ttl) and if they collide with an agent then it hits
 -- this will get some blasts around corners. still, cap the radial distance for these particles. also possibly decrease damage by particle travel distance
 grenade damage indication (blood, voxel destruction)
+improve block damage -- shuffle damage order
 
 visual feedback for damage received
 try 256x256 map
 ammo drops
+
+fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
 
 PRINT & MAIL REBATES
 
