@@ -14,8 +14,9 @@ const int AGENT_MAX = PLAYERS_MAX;
 
 #define CAMERA_HEIGHT_DEAD 0.3f;
 
-#define AGENT_SPEED 2.8f
-//#define AGENT_SPEED 28.0f
+#define AGENT_SPEED 1.9f    // testing this, 2.8 seems too fast
+//#define AGENT_SPEED 2.8f  // was default
+//#define AGENT_SPEED 28.0f // uncomment for testing high speed
 #define AGENT_SPEED_CROUCHED 0.8f
 
 #define AGENT_BOX_RADIUS 0.38f
@@ -126,6 +127,7 @@ class Agent_state {
 
         void draw();
         void update_model();
+        void update_legs();
         bool is_you();
 
         bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
