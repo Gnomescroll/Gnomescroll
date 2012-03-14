@@ -398,5 +398,36 @@ void teardown()
     free(fonts);
 }
 
+static Font* bound_gl_font = NULL;
+// call this at least once, to set the texture
+// every time you want to change the font texture, call this
+void set_texture()
+{
+    if (font == NULL) return;
+    if (bound_gl_font == font) return; // no need to rebind
+    if (bound_gl_font != NULL) glEnd();
+    glBindTexture(GL_TEXTURE_2D, font->texture);
+    glBegin(GL_QUADS);
+    bound_gl_font = font;
+}
+
+// call this once for all text
+void start_font_draw()
+{
+    // all fonts must have alpha
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+}
+
+// call this when done with all text
+void end_font_draw()
+{
+    if (bound_gl_font != NULL) glEnd();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+    bound_gl_font = NULL;
+}
+
 
 }

@@ -76,4 +76,9 @@ void teardown();
 
 extern Font* font;
 
+void start_font_draw();
+void end_font_draw();
+void set_texture();
+
+
 }

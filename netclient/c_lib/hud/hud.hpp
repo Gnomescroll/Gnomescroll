@@ -6,6 +6,10 @@ namespace Hud
 {
 
 using namespace HudText;
+using HudFont::font;
+using HudFont::start_font_draw;
+using HudFont::end_font_draw;
+using HudFont::set_texture;
 
 const int CHAT_MESSAGE_RENDER_MAX = 8;
 char CHAT_NAME_DEFAULT_SEPARATOR[] = ": ";

@@ -6,25 +6,6 @@
 namespace HudText
 {
 
-// must call in between font set switching
-void start_text_draw()
-{
-    // all fonts must have alpha
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, HudFont::font->texture);
-    glBegin(GL_QUADS);
-}
-
-void end_text_draw()
-{
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
-}
-
 void blit_character(
     float tex_x_min, float tex_x_max,
     float tex_y_min, float tex_y_max,

@@ -107,17 +107,18 @@ void BillboardTextHud_list::tick() {
 
 void BillboardTextHud_list::draw() {
 #ifdef DC_CLIENT
-    if (current_camera == NULL) return;
     if (num == 0) return;
+    if (current_camera == NULL) return;
+    if (HudFont::font == NULL) return;
 
-    HudText::start_text_draw(); // gl calls
+    HudFont::reset_default();
+    HudFont::set_texture();
     for (int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;
         if (!a[i]->should_draw) continue;
         a[i]->draw();
     }
-    HudText::end_text_draw();
 #endif
 }
 

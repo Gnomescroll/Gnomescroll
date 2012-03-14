@@ -619,6 +619,14 @@ and integrated into openal
 source properties per function name, not filename 
 ====================
 
+Mar 13
+
+-WORK-
+
+move text draw opengl calls to font.cpp
+Reduce glBlend calls to 3 (instead of 2 + once for every texture swap)
+====================
+
 Animations
 --Keyframes?
 --Splines/interpolated between points

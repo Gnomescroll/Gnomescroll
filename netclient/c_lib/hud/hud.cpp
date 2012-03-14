@@ -230,15 +230,17 @@ void draw_hud_text()
     if (!hud->inited) return;
     if (!hud_draw_settings.draw) return;
 
+    start_font_draw();
+
     // move large text to the front, so we dont swap textures twice
     const int large_text_size = 32;
     HudFont::set_properties(large_text_size);
-    start_text_draw();
+    set_texture();
 
     if (!hud_draw_settings.connected)
     {
         hud->disconnected->draw_centered();
-        end_text_draw();
+        end_font_draw();
         return;
     }
 
@@ -252,21 +254,20 @@ void draw_hud_text()
             //hud->version_mismatch->draw_centered();
     }
 
-    end_text_draw();
+    //end_font_draw();
 
     if (!hud_draw_settings.zoom)
     {
         if (hud_draw_settings.map)
         {
             HudFont::set_properties(HudMap::text_icon_size);
-            start_text_draw();
+            set_texture();
             HudMap::draw_text();
-            end_text_draw();
         }
     }
 
     HudFont::reset_default();
-    start_text_draw();
+    set_texture();
 
     if (hud_draw_settings.help)
         hud->help->draw();
@@ -286,7 +287,7 @@ void draw_hud_text()
     // everything after this is hidden when zoomed
     if (hud_draw_settings.zoom)
     {
-        end_text_draw();
+        end_font_draw();
         return;
     }
 
@@ -364,7 +365,7 @@ void draw_hud_text()
         hud->weapon->draw();
     }
 
-    end_text_draw();
+    end_font_draw();
 }
 
 void draw_hud()
@@ -373,11 +374,15 @@ void draw_hud()
     // and hud projected names should be underneath everything,
     // so i moved the list draw call out
     
-    //if (!hud_draw_settings.zoom)
+    start_font_draw();
     ClientState::billboard_text_hud_list->draw();
+    end_font_draw();
+
     draw_hud_textures();
-    //if (!hud_draw_settings.zoom)
+
+    //start_font_draw();
     draw_hud_text();
+    //end_font_draw();
 }
 
 /* HUD */
