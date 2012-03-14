@@ -625,6 +625,7 @@ Mar 13
 
 move text draw opengl calls to font.cpp
 Reduce glBlend calls to 3 (instead of 2 + once for every texture swap)
+simple leg animation
 ====================
 
 Animations

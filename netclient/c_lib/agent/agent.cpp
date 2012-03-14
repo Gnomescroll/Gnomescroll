@@ -769,17 +769,22 @@ bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
 
 void Agent_state::update_legs()
 {
-    const float m = 0.012f;
-    const int peak = 21;
+    const float arc = 25.0f;    // degree
+    const int peak = 37;
     const int rest = (peak-1)/2;
+    const float m = (arc/180)/((float)rest);
+
     static int legtick = 0;
     static float direction = -1;
     
     if (this->s.vx || this->s.vy)
     {
-        legtick++;
-        if (legtick == peak)
+        if (legtick == peak || legtick == 0)
             direction *= -1;
+        if (direction < 0)
+            legtick--;
+        else
+            legtick++;
         int swing = (legtick%peak) - rest;
         this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, m*swing, 0);
         this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, -m*swing, 0);
