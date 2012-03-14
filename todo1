@@ -633,6 +633,14 @@ Minimap
 == GAMEPLAY ==
 Weapon firing rate
 
+== Monsters ==
+Improve slimes
+--Should stick to floor/walls
+--Drop items
+--Populate in caves
+---Pick random point in z
+---Move up/down alternating until find shortest path to open area
+
 == VOXEL EDITOR ==
 Voxel editor:
 Bucket fill
@@ -663,6 +671,9 @@ gl blend / z buffer sorts
 ParticleSystem class for doing much cheaper view distance checks
 animation organization
 
+== IDEAS ==
+chat command for places of interest
+
 ==================
 POLISH TODO:
 
@@ -676,7 +687,6 @@ start/end text draw -- render within the glDepth block, just swap textures
 
 visual feedback for damage received
 try 256x256 map
-chat command for places of interest
 ammo drops
 
 PRINT & MAIL REBATES
