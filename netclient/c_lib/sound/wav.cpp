@@ -71,14 +71,31 @@ bool is_valid_wav(FILE* f)
 
     if (fread(metadata.buffer, sizeof(char), 4, f) != 4 || strcmp(metadata.buffer, "RIFF") != 0)
         return false;
-
-    if (fread(metadata.buffer, sizeof(char), 4, f) != 4)   // chunk size, dont need (fixed size)
+    
+    if (fread(metadata.buffer, sizeof(char), 4, f) != 4)    // pcm chunk size, we dont care (openal does)
         return false;
 
     if (fread(metadata.buffer, sizeof(char), 4, f) != 4 || strcmp(metadata.buffer, "WAVE") != 0)
         return false;
 
     return true;
+}
+
+int skip_extra(FILE* f, char* buffer, int buffer_size, int skip_amount)
+{
+    int skipped = 0;
+    int read_amt;
+    int remaining;
+    int read;
+    while (skipped < skip_amount)
+    {
+        remaining = skip_amount - skipped;
+        read_amt = (remaining < buffer_size) ? remaining : buffer_size;
+        read = fread(buffer, sizeof(char), read_amt, f);
+        skipped += read;
+        if (read != buffer_size) break;
+    }
+    return (skip_amount - skipped);
 }
 
 bool read_wav_fmt_subchunk(FILE* f, WavData* data)
@@ -98,7 +115,7 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
     if (read != 4)
         return false;
     int chunk_size = metadata.four_bytes;
-
+    
     read = fread(metadata.buffer, sizeof(char), 2, f);
     if (read != 2)
         return false;
@@ -136,12 +153,9 @@ bool read_wav_fmt_subchunk(FILE* f, WavData* data)
     data->bits_per_sample = metadata.two_bytes;
 
     int extra = chunk_size - total_read;
-    if (extra)
-    {   // skip past extra metadata
-        read = fread(metadata.buffer, sizeof(char), extra, f);
-        if (read != extra)
-            return false;
-    }
+    int remaining = skip_extra(f, metadata.buffer, 5, extra);
+    if (remaining)
+        return false;
 
     return true;
 }
@@ -156,14 +170,33 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     memset(metadata.buffer, 0, sizeof(char)*5);
     int read;
 
-    // verify chunk id
-    read = fread(metadata.buffer, sizeof(char), 4, f);
-    if (read != 4)
-        return false;
-    if (strcmp(metadata.buffer, "data") != 0)
-    {
-        printf("data subchunk id invalid: %s\n", metadata.buffer);
-        return false;
+    // read chunk labels until we find the "data" chunk
+    // skip any chunks that are not "data"
+    while (1)
+    {   // read subchunk label
+        int read = fread(metadata.buffer, sizeof(char), 4, f);
+        if (read != 4)
+            return false;
+
+        printf("subchunk label= %s\n", metadata.buffer);
+
+        if (strcmp(metadata.buffer, "data") == 0)
+            break;
+            
+        // read subchunk size
+        read = fread(metadata.buffer, sizeof(char), 4, f);
+        if (read != 4)
+            return false;
+
+        int size = metadata.four_bytes;
+        int remaining = skip_extra(f, metadata.buffer, 5, size);
+        if (remaining < 0)
+        {
+            printf("WARNING -- skipped %d bytes past wav subchunk size\n", -remaining);
+            return false;
+        }
+        if (remaining != 0)
+            return false;
     }
 
     // get size of wav data
