@@ -127,9 +127,9 @@
 #include <c_lib/SDL/particle_functions.c>
 #include <c_lib/SDL/SDL_functions.c>
 
-#ifdef linux
-#include <c_lib/SDL/IMG_savepng.c>
-#endif
+//#ifdef linux
+//#include <c_lib/SDL/IMG_savepng.c>
+//#endif
 
 /* HUD */
 

@@ -6,9 +6,9 @@
     #include "windows.h"
 #endif
 
-#ifdef linux
-    #include <c_lib/SDL/IMG_savepng.h>
-#endif
+//#ifdef linux
+//    #include <c_lib/SDL/IMG_savepng.h>
+//#endif
 /*
     Example code from
     http://www.opengl.org/wiki/Tutorial2:_VAOs,_VBOs,_Vertex_and_Fragment_Shaders_(C_/_SDL)
@@ -361,8 +361,6 @@ int _swap_buffers() {
     return 0;
 }
 
-#define ALT_SAVE_PNG 1
-
 void save_screenshot()
 {
 #if 0
@@ -421,13 +419,13 @@ void save_screenshot()
 //  Function returns a pointer to the compressed data, or NULL on failure.
 //  *pLen_out will be set to the size of the PNG image file.
 //  The caller must free() the returned heap block (which will typically be larger than *pLen_out) when it's no longer needed.
-void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+//void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
 
     char FileName[128];
 
     sprintf(FileName,"./screenshot/%d.png",  (int) clock() );
 
-    printf("File= %s \n", FileName);
+    printf("Screenshot: %s \n", FileName);
 
     //SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
     //                                               32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
@@ -436,15 +434,54 @@ void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, 
 
     glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
 
+    for(int i=0; i < _xres; i++) {
+    for(int j=0; j < _yres; j++) {
+
+        //if( (PBUFFER)[4*(_xres*j + i) + 3] == 0) ((unsigned int*)PBUFFER)[_xres*j + i] = 0xffffffff;
+        PBUFFER[4*(_xres*j + i) + 3] = 255;
+
+    }}
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(4*_xres);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        int pitch = _xres * 4;
+        //int w = _xres;
+        int h = _yres;
+
+        height_div_2 = (int) (_yres * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+        }
+        free(temp_row); 
+    }
+
+
+    size_t png_size;
+    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) PBUFFER, _xres, _yres, 4, &png_size);
+
     //void *tdefl_write_image_to_png_file_in_memory(
     //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
 
-    size_t png_size;
 
-    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
-        (const char*) PBUFFER, _xres, _yresm, 4, &png_size);
 
-    printf("PNG SIZE= %i \n", png_size);
+    //printf("PNG SIZE= %i \n", png_size);
+
+    FILE * pFile;
+    pFile = fopen ( FileName , "wb" );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fclose (pFile);
 
     free(PNG_IMAGE);
     free(PBUFFER);
