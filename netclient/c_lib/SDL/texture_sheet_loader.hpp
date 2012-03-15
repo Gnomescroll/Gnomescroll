@@ -125,7 +125,7 @@ extern "C"
 
 	void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index)
 	{
-		const int tex_size = 32;
+		//const int tex_size = 32;
 
 		//blit texture stat for stack
 
@@ -160,7 +160,7 @@ extern "C"
 
         if(c_lock) SDL_LockSurface(CubeTexture);
 
-        Pixels = (Uint32*) CubeTexture.pixels;
+        Pixels = (Uint32*) CubeTexture->pixels;
 
         int dest_x = index % 16;
         int dest_y = index / 16;
@@ -176,14 +176,12 @@ extern "C"
 
     }
 
-
-
-	}
-
-	void LUA_save_cube_texture() GNOMESCROLL_API;s
+	void LUA_save_cube_texture() GNOMESCROLL_API;
 
 	void LUA_save_cube_texture()
 	{
 		save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
 	}
+
+
 }
