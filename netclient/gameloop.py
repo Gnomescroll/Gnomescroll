@@ -3,7 +3,7 @@
 # boot hack
 import sys
 import os
-print "Working Directory: %s" % (os.getcwd())
+#print "Working Directory: %s" % (os.getcwd())
 sys.path.insert(0, './ext/')
 sys.path.insert(0, '/c/dc_mmo/netclient/ext/')
 sys.path.insert(0, 'c:/dc_mmo/netclient/ext/')

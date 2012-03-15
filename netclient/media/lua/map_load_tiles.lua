@@ -39,7 +39,14 @@ tex_id = load_texture_sheet("tiles_00.png");
 
 
 ffi.C.LUA_blit_cube_texture(tex_id, 0,0, 0);
-ffi.C.LUA_blit_cube_texture(tex_id, 1,1, 1);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,1, 1);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,2, 2);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,3, 3);
+
+ffi.C.LUA_blit_cube_texture(tex_id, 0,0, 16+0);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,1, 32+1);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,2, 48+2);
+ffi.C.LUA_blit_cube_texture(tex_id, 0,3, 64+3);
 
 ffi.C.LUA_save_cube_texture();
 

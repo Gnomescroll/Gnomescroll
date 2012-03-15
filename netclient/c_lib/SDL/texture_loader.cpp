@@ -303,7 +303,7 @@ void save_surface_to_png(SDL_Surface* surface, char* filename)
 
     //void *tdefl_write_image_to_png_file_in_memory(
     //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
-
+    
     char* PNG_IMAGE;
     if( SDL_MUSTLOCK(surface) == 0 )
     {

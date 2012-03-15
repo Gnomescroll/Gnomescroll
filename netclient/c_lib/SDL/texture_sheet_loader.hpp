@@ -168,7 +168,7 @@ extern "C"
         for(int j=0; j < 32; j++) 
         {
             pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
-            Pixels[ 512*(dest_y + j) + (32*dest_x + i) ] = pix;
+            Pixels[ 512*(dest_y*32 + j) + (32*dest_x + i) ] = pix;
         }
 
         if(c_lock) SDL_UnlockSurface(CubeTexture);
