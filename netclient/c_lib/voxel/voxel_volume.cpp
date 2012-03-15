@@ -639,7 +639,6 @@ inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z)
     if( x < 0 || y < 0 || z < 0 ) return 0;
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
-    if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
     if(voxel[index].color == 0) return 0;
     return 1;
 }

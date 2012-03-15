@@ -297,7 +297,7 @@ void load_colored_texture(
 }
 
 
-void save_texture_to_disc(SDL_Surface* surface, char* filename)
+void save_surface_to_png(SDL_Surface* surface, char* filename)
 {
     size_t png_size;
 
