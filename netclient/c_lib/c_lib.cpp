@@ -265,7 +265,7 @@ void close_c_lib() {
     HudMap::teardown();
     //vn::teardown();
     Sound::close();
-    close_SDL();  //would be called twice, already scheduled for at exit
+    close_SDL();
 
     printf("Game closed\n");
 }
