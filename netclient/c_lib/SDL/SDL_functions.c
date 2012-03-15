@@ -229,14 +229,14 @@ int init_video() {
     }
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
     if(value) {
-        printf("Harware Acceleration Enabled \n");
+        //printf("Harware Acceleration Enabled \n");
     } else {
         printf("Warning: Hardware Acceleration Not Enabled!\n");
     }
 
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
     if(value) {
-        printf("Double Buffering Enabled \n");
+        //printf("Double Buffering Enabled \n");
     } else {
         printf("Warning: Double Buffering Not Enabled!\n");
     }
@@ -253,10 +253,10 @@ int init_video() {
 
     //printf("SDL: %s\n", SDL_GetError());
 
-    printf("glew init\n");
+    //printf("glew init\n");
     glewInit();
     if (glewIsSupported("GL_VERSION_2_0"))
-        printf("OpenGL 2.0 Supported \n");
+        //printf("OpenGL 2.0 Supported \n");
     else {
         printf("OpenGL 2.0 not supported \n");
     }
@@ -277,7 +277,7 @@ int init_video() {
     //glGetIntegerv(GL_MINOR_VERSION, &OpenGLVersion[1]);
 
     if(GLEW_ARB_multisample) {
-        printf("ARB_MULTISAMPLE supported \n");
+        //printf("ARB_MULTISAMPLE supported \n");
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
@@ -290,7 +290,7 @@ int init_video() {
 
     }
     if(GLEW_EXT_timer_query) {
-        printf("GL_EXT_timer_query supported\n");
+        //printf("GL_EXT_timer_query supported\n");
     } else {
         printf("GL_EXT_timer_query not supported\n");
     }
@@ -299,7 +299,7 @@ int init_video() {
 
     //if(GLEW_ATI_meminfo) { ati_meminfo(); } 
 
-    printf("Finished OpenGL init\n");
+    //printf("Finished OpenGL init\n");
 
     glClearColor(0.0,0.0,0.0,0.0);
 
