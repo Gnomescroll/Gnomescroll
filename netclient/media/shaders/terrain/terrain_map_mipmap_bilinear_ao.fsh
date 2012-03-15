@@ -3,8 +3,13 @@
 #extension GL_EXT_texture_array : enable
 
 varying vec3 texCoord;
-flat varying mat2 lightMatrix;
- 
+
+# ifdef GL_EXT_gpu_shader4
+    flat varying mat2 lightMatrix;
+#else
+    varying mat2 lightMatrix;
+#endif
+
 varying vec3 inColor;
  
 uniform sampler2DArray base_texture;

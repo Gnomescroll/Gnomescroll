@@ -130,3 +130,8 @@ void init_textures()
 }
 
 }
+
+void set_cube_side_texture(int id, int side, int tex_id)
+{
+    t_map::set_cube_side_texture(id, side, tex_id);
+}

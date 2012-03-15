@@ -13,6 +13,7 @@
 #include "compat_gl.h"
 #include "compat_al.h"
 
+
 /* Compression */
 #include <c_lib/common/compression/miniz.c>
 
@@ -25,6 +26,7 @@
 
 //utility
 #include <c_lib/common/macros.hpp>
+#include <c_lib/common/gl_assert.hpp>
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/common.cpp>
 #include <c_lib/common/quicksort.hpp>
@@ -125,9 +127,9 @@
 #include <c_lib/SDL/particle_functions.c>
 #include <c_lib/SDL/SDL_functions.c>
 
-#ifdef linux
-#include <c_lib/SDL/IMG_savepng.c>
-#endif
+//#ifdef linux
+//#include <c_lib/SDL/IMG_savepng.c>
+//#endif
 
 /* HUD */
 
@@ -179,6 +181,14 @@
 
 #include <c_lib/main.cpp>
 
+/*
+    init_t_map()
+    init_cube_properties()
+    init_cube_side_texture()
+    set_hud_cube_selector()
+    init_for_draw()
+*/
+
 int init_c_lib() {
     static int inited = 0;
     if (inited++)
@@ -190,15 +200,20 @@ int init_c_lib() {
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 
+
     srand(time(NULL));   // seed the RNG
 
     init_video();
     init_image_loader();
 
+    t_map::init_t_map();
+    lua_load_block_dat(); /* Load Map Tiles */
+    t_map::init_for_draw();
+
     HudText::init();
     HudFont::init();
-    HudInventory::init();
     HudMap::init();
+    HudInventory::init();
     HudEquipment::init();
     HudReticle::init();
     HudCubeSelector::init();
@@ -251,7 +266,7 @@ void close_c_lib() {
     HudMap::teardown();
     //vn::teardown();
     Sound::close();
-    close_SDL();  //would be called twice, already scheduled for at exit
+    close_SDL();
 
     printf("Game closed\n");
 }

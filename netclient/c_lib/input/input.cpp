@@ -49,7 +49,7 @@ void unbind_mouse()
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-#include <c_lib/common/lua/lua.hpp>
+//#include <c_lib/common/lua/lua.hpp>
 
 int process_events()
 {
