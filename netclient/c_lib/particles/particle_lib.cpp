@@ -18,3 +18,7 @@
 #include "./particles/grenade.cpp"
 //#include "./particles/neutron.cpp"
 #include "./particles/cspray.cpp"
+
+#if DC_SERVER
+#include "./particles/grenade_shrapnel.cpp"
+#endif

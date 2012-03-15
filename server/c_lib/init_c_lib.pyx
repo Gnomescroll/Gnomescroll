@@ -129,20 +129,6 @@ def check_agent_proximities():
         ctf.check_agent_proximities()
         ctf.update()
 
-""" Particles """
-
-cdef extern from "./particles/grenade.hpp":
-    cdef cppclass Grenade_list:
-        void tick()
-
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    Grenade_list* grenade_list
-
-def tick():
-    if grenade_list != NULL:
-        grenade_list.tick()
-
-
 """
 Terrain map
 """

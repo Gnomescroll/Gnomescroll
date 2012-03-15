@@ -85,7 +85,6 @@ class Main:
                     break
 
                 init_c_lib.tick_server_state()
-                init_c_lib.tick()
 
                 tick+=1
 

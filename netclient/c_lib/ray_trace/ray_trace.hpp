@@ -7,7 +7,6 @@
 
 #define raycast_tick_max 1024
 
-//used by grenade
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);

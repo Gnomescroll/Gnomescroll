@@ -143,8 +143,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
 void grenade_explode(float x, float y, float z)
 {
     if (!Options::animations) return;
-    int n = randrange(15,25);
-
+    int n = randrange(25,35);
     float vx = 20.0f;
     float vy = 20.0f;
     float vz = 20.0f;

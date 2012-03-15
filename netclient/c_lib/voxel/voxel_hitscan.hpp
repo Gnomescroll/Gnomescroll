@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common/enum_types.hpp>
+#include <c_lib/physics/vec3.hpp>
 
 #define VOXEL_HITSCAN_LIST_SIZE 1024
 
@@ -35,6 +36,14 @@ class Voxel_hitscan_target
 
         void copy_vhe(Voxel_hitscan_element* vhe);
         void copy_voxel(int voxel[3]);
+        void print()
+        {
+            printf("Target:\n");
+            printf("id   %d\n", entity_id);
+            printf("type %d\n", entity_type);
+            printf("part %d\n", part_id);
+            printf("voxel: %d,%d,%d\n", voxel[0], voxel[1], voxel[2]);
+        }
 };
 
 class Voxel_hitscan_list
