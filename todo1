@@ -699,6 +699,10 @@ ammo drops
 
 fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
 
+add sfx
+
+radial subscriptions of agents to items/mobs
+
+fog shader
+
 PRINT & MAIL REBATES
-
-
