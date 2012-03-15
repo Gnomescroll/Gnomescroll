@@ -631,6 +631,8 @@ simple leg animation
 Mar13
 
 fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
+sound leveller script
+more robust wav file reading
 ====================
 
 Animations

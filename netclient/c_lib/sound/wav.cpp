@@ -1,5 +1,13 @@
 #include "wav.hpp"
 
+/*
+ *  References:
+ *  http://enigma-dev.org/forums/index.php?topic=730.0
+ *  http://home.roadrunner.com/~jgglatt/tech/wave.htm
+ *  https://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+ */
+
+
 namespace Sound
 {
 
@@ -224,10 +232,6 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
     return true;
 }
 
-/*
- *  Reference:
- *  http://enigma-dev.org/forums/index.php?topic=730.0
- */
  
 // returns buffer id.  make sure to free *buffer after binding to an ALbuffer
 int load_wav_file(char *fn, unsigned char** buffer)
