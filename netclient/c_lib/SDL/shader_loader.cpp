@@ -70,3 +70,32 @@ void printProgramInfoLog(GLuint obj)
         free(infoLog);
     }
 }
+
+// loads a vertex and fragment shader into a program
+void load_shaders(char *vert, char* frag, GLuint* prog)
+{
+    GLuint v = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    GLuint f = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char* vs = textFileRead(vert);
+    char* fs = textFileRead(frag);
+
+    glShaderSourceARB(v, 1, (const char**)&vs, NULL);
+    glShaderSourceARB(f, 1, (const char**)&fs, NULL);
+
+    free(vs);
+    free(fs);
+
+    glCompileShaderARB(v); printShaderInfoLog(v); ///diag
+    glCompileShaderARB(f); printShaderInfoLog(f); ///diag
+
+    GLuint p;
+    p = glCreateProgramObjectARB();
+
+    glAttachObjectARB(p,v);
+    glAttachObjectARB(p,f);
+
+    glLinkProgramARB(p);
+    printProgramInfoLog(p); // print diagonostic information
+    *prog = p;
+}
