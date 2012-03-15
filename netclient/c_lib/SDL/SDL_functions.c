@@ -256,7 +256,9 @@ int init_video() {
     //printf("glew init\n");
     glewInit();
     if (glewIsSupported("GL_VERSION_2_0"))
+    {
         //printf("OpenGL 2.0 Supported \n");
+    }
     else {
         printf("OpenGL 2.0 not supported \n");
     }
