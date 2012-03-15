@@ -185,6 +185,56 @@ int Voxel_volume::hitscan_test(float x, float y, float z, float vx, float vy, fl
     return 0;
 }
 
+#define DEBUG_POINT_COLLISION_TEST 1
+int Voxel_volume::point_collision_test(Vec3 p, int vxl[3]) 
+{
+#if DEBUG_POINT_COLLISION_TEST
+        float x = p.x;
+        float y = p.y;
+        float z = p.z;
+ 
+        x -= world_matrix.v[3].x;
+        y -= world_matrix.v[3].y;
+        z -= world_matrix.v[3].z;
+ 
+        struct Vec3 v;
+ 
+        v.x = x*world_matrix.v[0].x + y*world_matrix.v[0].y + z*world_matrix.v[0].z; 
+        v.y = x*world_matrix.v[1].x + y*world_matrix.v[1].y + z*world_matrix.v[1].z;
+        v.z = x*world_matrix.v[2].x + y*world_matrix.v[2].y + z*world_matrix.v[2].z;
+ 
+        v.x = (v.x / scale) + xdim/2;
+        v.y = (v.y / scale) + ydim/2;
+        v.z = (v.z / scale) + zdim/2;
+ 
+        return _test_occludes_safe(v.x,v.y,v.z, vxl);
+#else
+        p = vec3_sub(p, world_matrix_v[3]);
+ 
+        struct Vec3 v;
+ 
+        v.x = vec3_dot(p,world_matrix_v[0]);
+        v.x = vec3_dot(p,world_matrix_v[1]);
+        v.x = vec3_dot(p,world_matrix_v[2]);
+ 
+        v.x = (v.x / scale) + xdim/2;
+        v.y = (v.y / scale) + ydim/2;
+        v.z = (v.z / scale) + zdim/2;
+ 
+        return _test_occludes_safe(v.x,v.y,v.z, vxl);
+#endif
+}
+ 
+//int Voxel_volume::point_collision_test(Vec3 p, float voxel[3])
+//{
+    //struct Vec3 v;
+    //p = vec3_sub(p, world_matrix.v[3]);
+    //v.x = p.x*world_matrix.v[0].x + p.y*world_matrix.v[0].y + p.z*world_matrix.v[0].z, 
+    //v.y = p.x*world_matrix.v[1].x + p.y*world_matrix.v[1].y + p.z*world_matrix.v[1].z, 
+    //v.z = p.x*world_matrix.v[2].x + p.y*world_matrix.v[2].y + p.z*world_matrix.v[2].z;
+    //return _test_occludes_safe(v.x,v.y,v.z, voxel);
+//}
+
 
 void Voxel_volume::get_center(float *v)
 {
@@ -640,6 +690,17 @@ inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z)
     if( x >= xdim || y >= ydim || z >= zdim ) return 0;
     unsigned int index= x+(y << index1)+(z << index12);
     if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
+    if(voxel[index].color == 0) return 0;
+    return 1;
+}
+// fills voxel[3] with the voxel location
+inline unsigned int Voxel_volume::_test_occludes_safe(int x, int y, int z, int vxl[3]) 
+{ 
+    if( x < 0 || y < 0 || z < 0 ) return 0;
+    if( x >= xdim || y >= ydim || z >= zdim ) return 0;
+    unsigned int index= x+(y << index1)+(z << index12);
+    if(index >= index_max) printf("Voxel_volume::_test_occludes_safe IMPOSSIBLE \n");
+    vxl[0] = x; vxl[1] = y; vxl[2] = z; 
     if(voxel[index].color == 0) return 0;
     return 1;
 }

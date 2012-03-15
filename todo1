@@ -704,9 +704,10 @@ try 256x256 map
 ammo drops
 
 add sfx
-
 radial subscriptions of agents to items/mobs
 
-fog shader
+change name of binaries
+
+logging system
 
 PRINT & MAIL REBATES
