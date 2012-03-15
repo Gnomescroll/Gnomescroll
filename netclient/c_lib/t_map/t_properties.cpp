@@ -2,14 +2,21 @@
 
 #include "t_map.hpp"
 
-//include <stdio.h>
+
 
 namespace t_map
 {
+    struct cubeProperties* cube_list = NULL;
+}
 
-struct cubeProperties* cube_list = NULL;
+extern "C"
+{
 
-//struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
+
+}
+
+namespace t_map
+{
 
 void init_t_properties()
 {
@@ -18,6 +25,7 @@ void init_t_properties()
     if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
 
     cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
+    memset(cube_list, 0, sizeof(struct cubeProperties) * MAX_CUBES);
     return;
 }
 
@@ -82,9 +90,7 @@ bool isOccludes(int x, int y, int z)
 /*
     Map Damage
 */
-
-int maxDamage(int id) __attribute((always_inline));
-
+    
 int maxDamage(int id) 
 {
     return t_map::cube_list[id].max_damage;

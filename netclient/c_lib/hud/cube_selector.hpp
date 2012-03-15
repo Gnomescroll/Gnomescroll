@@ -53,7 +53,12 @@ class CubeSelector
         CubeSelector();
 };
 
-extern CubeSelector cube_selector GNOMESCROLL_API;
+extern CubeSelector cube_selector; // GNOMESCROLL_API;
 
 void init();
+}
+
+extern "C"
+{
+void set_cube_hud(int pos, int cube_id, int tex_id) GNOMESCROLL_API;;
 }

@@ -150,7 +150,7 @@ int run_lua_test()
 }
 
 
-int lua_load_map_tiles()
+int lua_load_block_dat()
 {
     int status, result;
     lua_State *L;

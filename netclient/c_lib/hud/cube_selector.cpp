@@ -240,3 +240,8 @@ void init()
     cube_selector.set_position(150,150);
 }
 }
+
+void set_cube_hud(int pos, int cube_id, int tex_id)
+{
+    HudCubeSelector::cube_selector.load_cube_property(pos, cube_id, tex_id);
+}

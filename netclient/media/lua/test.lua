@@ -9,3 +9,6 @@ local barreturn = ffi.C.barfunc(253)
 ---io.write('\n')
 
 print("LuaJit: run_lua_test finished");
+
+package.path = "media/lua/?.lua;?.lua"
+require("block_loader");

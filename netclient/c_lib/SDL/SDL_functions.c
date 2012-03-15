@@ -361,8 +361,11 @@ int _swap_buffers() {
     return 0;
 }
 
+#define ALT_SAVE_PNG 1
+
 void save_screenshot()
 {
+#if 0
 #ifdef linux
     //int window_width = _xres;
     //int window_height = _yres;
@@ -409,4 +412,75 @@ void save_screenshot()
     //SDL_SaveBMP(surface, FileName);
     SDL_FreeSurface(surface);
 #endif
+#endif
+
+// Compresses an image to a compressed PNG file in memory.
+// On entry:
+//  pImage, w, h, and num_chans describe the image to compress. num_chans may be 1, 2, 3, or 4.
+// On return:
+//  Function returns a pointer to the compressed data, or NULL on failure.
+//  *pLen_out will be set to the size of the PNG image file.
+//  The caller must free() the returned heap block (which will typically be larger than *pLen_out) when it's no longer needed.
+void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+
+    char FileName[128];
+
+    sprintf(FileName,"./screenshot/%d.png",  (int) clock() );
+
+    printf("File= %s \n", FileName);
+
+    //SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
+    //                                               32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
+
+    char* PBUFFER = (char*) malloc(4*_xres*_yres);
+
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+
+    //void *tdefl_write_image_to_png_file_in_memory(
+    //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+
+    size_t png_size;
+
+    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) PBUFFER, _xres, _yresm, 4, &png_size);
+
+    printf("PNG SIZE= %i \n", png_size);
+
+    free(PNG_IMAGE);
+    free(PBUFFER);
+/*
+    SDL_LockSurface(surface);
+
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(surface->pitch);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        height_div_2 = (int) (surface->h * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy((Uint8 *)temp_row,(Uint8 *)(surface->pixels) + surface->pitch * index, surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * index, (Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), temp_row, surface->pitch);
+        }
+        free(temp_row); 
+    }
+    SDL_UnlockSurface(surface);
+    //unsigned int *pixels = new unsigned int[window.width * window.height];
+    //unsigned int *pixelsbuf = new unsigned int[window.width * window.height];
+    
+    IMG_SavePNG(FileName, surface, -1);
+
+    //SDL_SaveBMP(surface, FileName);
+    SDL_FreeSurface(surface);
+*/
+
+
 }
