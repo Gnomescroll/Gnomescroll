@@ -123,6 +123,7 @@
 /* SDL */
 #include <c_lib/SDL/shader_loader.cpp>
 #include <c_lib/SDL/texture_loader.cpp>
+#include <c_lib/SDL/texture_sheet_loader.cpp>
 #include <c_lib/SDL/draw_functions.cpp>
 #include <c_lib/SDL/particle_functions.c>
 #include <c_lib/SDL/SDL_functions.c>
@@ -205,6 +206,7 @@ int init_c_lib() {
 
     init_video();
     init_image_loader();
+    TextureSheetLoader::init();
 
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Map Tiles */
@@ -250,6 +252,8 @@ void close_c_lib() {
 
     t_map::end_t_map();
     t_map::end_t_vbo();
+
+    TextureSheetLoader::teardown();
 
     shutdown_net_client();
     teardown_cameras();

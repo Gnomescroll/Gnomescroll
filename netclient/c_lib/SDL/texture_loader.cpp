@@ -295,3 +295,32 @@ void load_colored_texture(
     SDL_UnlockSurface(s);
     SDL_FreeSurface(s);
 }
+
+
+void save_texture_to_disc(SDL_Surface* surface, char* filename)
+{
+    size_t png_size;
+
+    //void *tdefl_write_image_to_png_file_in_memory(
+    //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+
+    char* PNG_IMAGE;
+    if( SDL_MUSTLOCK(surface) == 0 )
+    {
+        PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
+    }
+    else
+    {
+        SDL_LockSurface(surface);
+        PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) surface->pixels, surface->w, surface->h, 4, &png_size);
+        SDL_UnlockSurface(surface);
+    }
+
+    FILE* pFile = fopen(filename , "wb");
+    fwrite (PNG_IMAGE, 1 , png_size, pFile);
+    fclose (pFile);
+
+    free(PNG_IMAGE);
+} 

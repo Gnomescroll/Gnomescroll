@@ -28,3 +28,5 @@ void load_colored_texture(
     unsigned char br, unsigned char bg, unsigned char bb,   // base color
     unsigned char r, unsigned char g, unsigned char b       // replace with
 );
+
+void save_texture_to_disc(SDL_Surface* surface, char* filename);
