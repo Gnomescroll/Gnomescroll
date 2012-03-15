@@ -147,28 +147,21 @@ extern "C"
         int c_lock = SDL_MUSTLOCK(CubeTexture);
 
         if(s_lock) SDL_LockSurface(s);
-
-        Uint32* Pixels = (Uint32*)CubeTextureStack;
-
-        for(int i=0; i < 32; i++)
-        for(int j=0; j < 32; j++) 
-        {
-            pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
-            Pixels[ 32*32*index + (j*32+i) ] = pix;
-        }
-
-
         if(c_lock) SDL_LockSurface(CubeTexture);
 
-        Pixels = (Uint32*) CubeTexture->pixels;
+        Uint32* Pixels1 = (Uint32*)CubeTextureStack;
+        Uint32* Pixels2 = (Uint32*) CubeTexture->pixels;
 
         int dest_x = index % 16;
         int dest_y = index / 16;
+
         for(int i=0; i < 32; i++)
         for(int j=0; j < 32; j++) 
         {
             pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
-            Pixels[ 512*(dest_y*32 + j) + (32*dest_x + i) ] = pix;
+           	
+           	Pixels1[ 32*32*index + (j*32+i) ] = pix;
+            Pixels2[ 512*(dest_y*32 + j) + (32*dest_x + i) ] = pix;
         }
 
         if(c_lock) SDL_UnlockSurface(CubeTexture);
