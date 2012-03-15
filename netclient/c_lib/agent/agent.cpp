@@ -814,6 +814,12 @@ void Agent_state::update_legs()
             this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, 0, 0);
             this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, 0, 0);
         }
+        else
+        {
+            int swing = (legtick%peak) - (idle+rest);
+            this->vox->set_node_rotation_by_part(AGENT_PART_RLEG, 0, m*swing, 0);
+            this->vox->set_node_rotation_by_part(AGENT_PART_LLEG, 0, -m*swing, 0);
+        }
     }
 
     if (forward)

@@ -628,6 +628,11 @@ Reduce glBlend calls to 3 (instead of 2 + once for every texture swap)
 simple leg animation
 ====================
 
+Mar13
+
+fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
+====================
+
 Animations
 --Keyframes?
 --Splines/interpolated between points
@@ -696,8 +701,6 @@ improve block damage -- shuffle damage order
 visual feedback for damage received
 try 256x256 map
 ammo drops
-
-fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
 
 add sfx
 
