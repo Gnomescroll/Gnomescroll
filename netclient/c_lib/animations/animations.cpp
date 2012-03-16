@@ -140,6 +140,42 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     }
 }
 
+//const Vec3 _gvset[26] =
+//{
+    //{  0.57735, 0.57735, 0.57735 },
+    //{  0.57735, 0.57735,-0.57735 },
+    //{  0.57735,-0.57735, 0.57735 },
+    //{ -0.57735, 0.57735, 0.57735 },
+    //{  0.57735,-0.57735,-0.57735 },
+    //{ -0.57735, 0.57735,-0.57735 },
+    //{ -0.57735,-0.57735, 0.57735 },
+    //{ -0.57735,-0.57735,-0.57735 },   //8
+
+    //{ 0,0,1 },
+    //{ 0,1,0 },
+    //{ 1,0,0 },
+    //{ 0,0,-1 },
+    //{ 0,-1,0 },
+    //{ -1,0,0 }, // 6
+
+    //{ 0,0.70711,0.70711 },
+    //{ 0,-0.70711,0.70711 },
+    //{ 0,0.70711,-0.70711 },
+    //{ 0,-0.70711,-0.70711 },    // 4
+    
+    //{ 0.70711,0,0.70711 },
+    //{ -0.70711,0,0.70711 },
+    //{ 0.70711,0,-0.70711 },
+    //{ -0.70711,0,-0.70711 },    // 4
+
+    //{ 0.70711,0.70711,0 },
+    //{ -0.70711,0.70711,0 },
+    //{ 0.70711,-0.70711,0 },
+    //{ -0.70711,-0.70711,0 },    // 4
+
+//};
+
+
 void grenade_explode(float x, float y, float z)
 {
     if (!Options::animations) return;
@@ -167,6 +203,29 @@ void grenade_explode(float x, float y, float z)
         s->ttl_max = ttl;
     }
 }
+
+//void grenade_explode(float x, float y, float z)
+//{
+    //if (!Options::animations) return;
+
+    //const float vel = 30.0f;
+
+    //Shrapnel* g;
+    //Vec3 cv;
+    
+    //for (int i=0; i<26; i++)
+    //{
+        //cv = vec3_scalar_mult(gvset[i], vel);
+        //g = ClientState::shrapnel_list->create(
+            //x, y, z,
+            //cv.x, cv.y, cv.z
+        //);
+        //if (g == NULL) break;
+        ////g->owner = this->owner;
+    //}
+    
+
+//}
 
 void terrain_sparks(float x, float y, float z)
 {

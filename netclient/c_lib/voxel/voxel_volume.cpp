@@ -710,7 +710,7 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 { Voxel* v = &voxel[x+(y << index1)+(z << index12)]; v->r = r;v->g = g;v->b = b;v->a = a; }
 
 
-static void destroy_object_voxel(int id, int type, int part, int voxel[3])
+static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
 {
     //#ifdef DC_CLIENT
     void* obj;
@@ -743,32 +743,34 @@ static void destroy_object_voxel(int id, int type, int part, int voxel[3])
     //#endif
 }
 
-void destroy_object_voxel(int id, int type, int part, int voxel[3], int radius)
+void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius)
 {
     int mx = voxel[0];
     int my = voxel[1];
     int mz = voxel[2];
+
+    int tmp[3] = {voxel[0], voxel[1], voxel[2] };
     
     for (int i=0; i<radius; i++)
         for (int j=0; j<radius; j++)
             for (int k=0; k<radius; k++)
             {
-                voxel[0] = mx + i;
-                voxel[1] = my + j;
-                voxel[2] = mz + k;
-                destroy_object_voxel(id, type, part, voxel);
-                voxel[0] = mx - i;
-                destroy_object_voxel(id, type, part, voxel);
-                voxel[1] = my - j;
-                destroy_object_voxel(id, type, part, voxel);
-                voxel[1] = my + j;
-                voxel[2] = mz - k;
-                destroy_object_voxel(id, type, part, voxel);
-                voxel[0] = mx + i;
-                voxel[1] = my - j;
-                destroy_object_voxel(id, type, part, voxel);
-                voxel[0] = mx - i;
-                destroy_object_voxel(id, type, part, voxel);
+                tmp[0] = mx + i;
+                tmp[1] = my + j;
+                tmp[2] = mz + k;
+                destroy_object_voxel(id, type, part, tmp);
+                tmp[0] = mx - i;
+                destroy_object_voxel(id, type, part, tmp);
+                tmp[1] = my - j;
+                destroy_object_voxel(id, type, part, tmp);
+                tmp[1] = my + j;
+                tmp[2] = mz - k;
+                destroy_object_voxel(id, type, part, tmp);
+                tmp[0] = mx + i;
+                tmp[1] = my - j;
+                destroy_object_voxel(id, type, part, tmp);
+                tmp[0] = mx - i;
+                destroy_object_voxel(id, type, part, tmp);
             }
 }
 

@@ -1,6 +1,7 @@
 #include "grenade_shrapnel.hpp"
 
 #include <physics/common.hpp>
+#include <c_lib/agent/net_agent.hpp>
 
 const float GRENADE_SHRAPNEL_MASS = 1.0f;
 
@@ -26,13 +27,18 @@ Particle(id, x,y,z, mx,my,mz, GRENADE_SHRAPNEL_MASS)
 
 void Grenade_shrapnel::tick()
 {
-    const float base_dmg = 45;
-    struct Voxel_hitscan_target target;
+    const float base_dmg = 55;
+    const int voxel_blast_radius = 3;
+    Voxel_hitscan_target target;
     bool voxel_hit;
     int j=0;
-    for (int i=this->ttl; i<this->ttl_max; i++)
+    for (int i=this->ttl; i<=this->ttl_max; i++)
     {
-        if (j == 5) break;
+        if (j == 10)
+        {
+            this->ttl += j;
+            return;
+        }
         j++;
         voxel_hit = ServerState::voxel_hitscan_list->point_collision(this->vp->p, &target);
         Verlet::bounce(this->vp, GRENADE_SHRAPNEL_DAMP);
@@ -44,16 +50,29 @@ void Grenade_shrapnel::tick()
             return;   // collided with a model we arent handling
         }
 
-        destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 3);
         Agent_state* a = ServerState::agent_list->get(target.entity_id);
-        if (a == NULL) {
+        if (a == NULL)
+        {
             this->ttl = this->ttl_max;
             return;
         }
-        float dmg = base_dmg * (((float)(ttl_max-i+1)/((float)ttl_max)));
-        a->status.apply_damage(dmg, this->owner, OBJ_TYPE_GRENADE);
 
-        this->ttl++;
+        destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+        destroy_voxel_StoC msg;
+        msg.x = target.voxel[0];
+        msg.y = target.voxel[1];
+        msg.z = target.voxel[2];
+        msg.entity_id = target.entity_id;
+        msg.entity_type = target.entity_type;
+        msg.entity_part = target.part_id;
+        msg.radius = voxel_blast_radius;
+        msg.broadcast();
+
+        float dmg = base_dmg * ((float)(this->ttl+i)/((float)ttl_max+1));
+        a->status.apply_damage(dmg, this->owner, OBJ_TYPE_GRENADE);
+        
+        this->ttl = this->ttl_max;
+        return;
     }
 }
 

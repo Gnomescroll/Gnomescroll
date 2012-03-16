@@ -637,6 +637,20 @@ more robust wav file reading
 serverside grenade shrapnel, part1
 ====================
 
+Mar14
+
+-WORK-
+
+improve grenade shrapnel
+--damage feels better
+--less resources
+
+revert all grenade shrapnel; use old method for grenade damage
+
+server production binary is named "gnomescroll_server"
+  
+====================
+
 Animations
 --Keyframes?
 --Splines/interpolated between points
@@ -699,11 +713,7 @@ POLISH TODO:
 GRENADES:
 charge up
 cook
-grenade damage indication (blood, voxel destruction)
---grenade shrapnel done;
---needs: only the most powerful shrapnel damages agent, or reduce damage by a lot per unit
---voxel destruction packet
---a way for the agent to play blood animation. can use grenade_pos - agent_pos as vector BUT grenade state must be available at the time of animation
+grenade damage indication (blood, voxel destruction) [particle method failed]
 
 visual feedback for damage received
 try 256x256 map

@@ -143,6 +143,41 @@ void Grenade::tick()
     this->ttl++;
 }
 
+// vectors in a cube
+//const Vec3 gvset[26] =
+//{
+    //{{  0.57735, 0.57735, 0.57735 }},
+    //{{  0.57735, 0.57735,-0.57735 }},
+    //{{  0.57735,-0.57735, 0.57735 }},
+    //{{ -0.57735, 0.57735, 0.57735 }},
+    //{{  0.57735,-0.57735,-0.57735 }},
+    //{{ -0.57735, 0.57735,-0.57735 }},
+    //{{ -0.57735,-0.57735, 0.57735 }},
+    //{{ -0.57735,-0.57735,-0.57735 }},   //8
+
+    //{{ 0,0,1 }},
+    //{{ 0,1,0 }},
+    //{{ 1,0,0 }},
+    //{{ 0,0,-1 }},
+    //{{ 0,-1,0 }},
+    //{{ -1,0,0 }}, // 6
+
+    //{{ 0,0.70711,0.70711 }},
+    //{{ 0,-0.70711,0.70711 }},
+    //{{ 0,0.70711,-0.70711 }},
+    //{{ 0,-0.70711,-0.70711 }},    // 4
+    
+    //{{ 0.70711,0,0.70711 }},
+    //{{ -0.70711,0,0.70711 }},
+    //{{ 0.70711,0,-0.70711 }},
+    //{{ -0.70711,0,-0.70711 }},    // 4
+
+    //{{ 0.70711,0.70711,0 }},
+    //{{ -0.70711,0.70711,0 }},
+    //{{ 0.70711,-0.70711,0 }},
+    //{{ -0.70711,-0.70711,0 }},    // 4
+//};
+
 void Grenade::explode()
 {
 #if DC_CLIENT
@@ -162,25 +197,20 @@ void Grenade::explode()
     // create a bunch of grenade shrapnel particles
     // copied/modified from Animations::grenade_explode
 
-    const int n = 16;
-    const float vel = 30.0f;
-    //const Vec3 v = vec3_init(vel,vel,vel);
-    //const Vec3 cv = vec3_init(vel,vel,vel);
+    //const float vel = 15.0f;
 
-    Grenade_shrapnel* g;
-    Vec3 cv;
-    for (int i=0; i<n; i++)
-    {
-        cv = vec3_init(randf()-0.5, randf()-0.5, randf()-0.5);
-        normalize_vector(&cv);
-        cv = vec3_scalar_mult(cv, vel);
-        g = ServerState::grenade_shrapnel_list->create(
-            this->vp->p.x, this->vp->p.y, this->vp->p.z,
-            cv.x, cv.y, cv.z
-        );
-        if (g == NULL) break;
-        g->owner = this->owner;
-    }
+    //Grenade_shrapnel* g;
+    //Vec3 cv;
+    //for (int i=0; i<26; i++)
+    //{
+        //cv = vec3_scalar_mult(gvset[i], vel);
+        //g = ServerState::grenade_shrapnel_list->create(
+            //this->vp->p.x, this->vp->p.y, this->vp->p.z,
+            //cv.x, cv.y, cv.z
+        //);
+        //if (g == NULL) break;
+        //g->owner = this->owner;
+    //}
     
     // apply block damage
     damage_blocks();

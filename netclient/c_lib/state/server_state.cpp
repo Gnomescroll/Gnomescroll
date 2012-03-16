@@ -18,7 +18,7 @@ namespace ServerState
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Spawner_list* spawner_list = NULL;
     Turret_list* turret_list = NULL;
-    Grenade_shrapnel_list* grenade_shrapnel_list;
+    //Grenade_shrapnel_list* grenade_shrapnel_list;
 
     CTF* ctf = NULL;
 
@@ -32,7 +32,7 @@ namespace ServerState
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new Spawner_list;
         turret_list = new Turret_list;
-        grenade_shrapnel_list = new Grenade_shrapnel_list;
+        //grenade_shrapnel_list = new Grenade_shrapnel_list;
     }
 
     void teardown_lists()
@@ -40,7 +40,7 @@ namespace ServerState
         delete cspray_list;
         delete grenade_list;
         //delete neutron_list;
-        delete grenade_shrapnel_list;
+        //delete grenade_shrapnel_list;
 
         // voxels
         delete agent_list;
@@ -96,18 +96,18 @@ namespace ServerState
         int coins = 0;
 
         // agents
-        //agent_list->objects_within_sphere(x,y,z,radius);
-        //Agent_state* a;
-        //const float blast_mean = 0;
-        //const float blast_stddev = 0.5;
-        //for (i=0; i<agent_list->n_filtered; i++)
-        //{
-            //a = agent_list->filtered_objects[i];
-            //if (a == NULL) continue;
-            //if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
-            //dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
-            //a->status.apply_damage(dmg, owner, inflictor_type);
-        //}
+        agent_list->objects_within_sphere(x,y,z,radius);
+        Agent_state* a;
+        const float blast_mean = 0;
+        const float blast_stddev = 0.5;
+        for (i=0; i<agent_list->n_filtered; i++)
+        {
+            a = agent_list->filtered_objects[i];
+            if (a == NULL) continue;
+            if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
+            dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
+            a->status.apply_damage(dmg, owner, inflictor_type);
+        }
 
         // slimes
         slime_list->objects_within_sphere(x,y,z,radius);
@@ -188,7 +188,7 @@ namespace ServerState
         spawner_list->tick();
         turret_list->tick();
         grenade_list->tick();
-        grenade_shrapnel_list->tick();
+        //grenade_shrapnel_list->tick();
         ctf->tick();
     }
 
