@@ -162,15 +162,18 @@ void Grenade::explode()
     // create a bunch of grenade shrapnel particles
     // copied/modified from Animations::grenade_explode
 
-    const int n = 100;
-    const float vel = 20.0f;
-    const Vec3 v = vec3_init(vel,vel,vel);
+    const int n = 16;
+    const float vel = 30.0f;
+    //const Vec3 v = vec3_init(vel,vel,vel);
+    //const Vec3 cv = vec3_init(vel,vel,vel);
 
     Grenade_shrapnel* g;
     Vec3 cv;
     for (int i=0; i<n; i++)
     {
-        cv = vec3_scalar_mult(v, (randf() - 0.5f));
+        cv = vec3_init(randf()-0.5, randf()-0.5, randf()-0.5);
+        normalize_vector(&cv);
+        cv = vec3_scalar_mult(cv, vel);
         g = ServerState::grenade_shrapnel_list->create(
             this->vp->p.x, this->vp->p.y, this->vp->p.z,
             cv.x, cv.y, cv.z
