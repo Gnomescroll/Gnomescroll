@@ -1,13 +1,16 @@
+
+
 --- LUA_PATH = "./:./media/lua/"
 
 
 
 
-print("map_load_tiles: loading tiles");
+print("map_load_tiles: loading tiles") ;
 
 
 
---- convenience method ---
+--- convenience method
+
 function NewSolidBlock(id, name)
   o = BlockNew(id, name)
   o.properties = SolidBlockProperty;

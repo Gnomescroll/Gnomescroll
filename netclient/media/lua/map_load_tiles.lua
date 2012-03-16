@@ -2,10 +2,10 @@ package.path = "media/lua/?.lua;?.lua"
 
 print "map_load_tiles: starting";
 
+require("block_loader");
+require("block_dat");
 
 --[[ Setup FFI Interface ]]
-
-prefix = "./media/sprites/";
 
 local ffi = require("ffi")
 ffi.cdef[[
@@ -28,8 +28,8 @@ void load_hud_texture(char*, int pos);
 
 --[[ Block Loader Functions ]]
 
+prefix = "media/sprites/";
 function load_texture_sheet(filename)
-	local prefix = "media/sprites/";
 	local str = ffi.new("char[128]");
     ffi.copy(str, prefix..filename);
 	return ffi.C.LUA_load_cube_texture_sheet(str);
