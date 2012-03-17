@@ -29,6 +29,8 @@ map             Name of map file in ./content/maps. If not provided, map will be
 seed            RNG seed to use for map generator
 save-map        Name of file to save map as after generating. Name is not required; will default to something unique
 
+logger          Use file logging facility. Otherwise, prints to stdout/stderr
+
 print-args      Print all settings to STDOUT
 no-load         Don't start the server. Abort after argument processing.
 
@@ -60,6 +62,9 @@ DEFAULTS = {
     # Map
     'map'       :   settings.map,
     'seed'      :   settings.seed,
+
+    # Logger
+    'logger'    :   settings.logger,
 }
 
 def parse(cl_args=None):
@@ -85,6 +90,9 @@ def parse(cl_args=None):
     parser.add_argument('-m', '--map', default=DEFAULTS['map'])
     parser.add_argument('--seed', default=DEFAULTS['seed'], type=int)
     parser.add_argument('--save-map', default='')
+
+    ''' Logger '''
+    parser.add_argument('-log', '--logger', action='store_true', default=DEFAULTS['logger'])
 
     ''' Debug '''
     parser.add_argument('-pa', '--print-args', action='store_true')

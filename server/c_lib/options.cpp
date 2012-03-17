@@ -24,4 +24,7 @@ OPT_STRING(team_name_two, "Red Team")
 OPT_STRING(map, "natural_terrain")
 OPT_UINT(seed, 8007513)
 
+/* Logging */
+OPT_BOOL(logger, false)
+
 }

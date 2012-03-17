@@ -51,6 +51,8 @@ no-player       Free-camera only. Will not create player or join game
 disable-draw-agents Don't draw agent character models
 no-animations   Disable particle effect animations
 
+logger          Use file logging facility. Otherwise, prints to stdout/stderr
+
 print-args      Print all settings to STDOUT
 no-load         Don't start the client. Abort after argument processing.
 
@@ -94,6 +96,10 @@ DEFAULTS = {
     # Sound
     'sfx'       :   settings.sfx,
     'music'     :   settings.music,
+
+    # Logger
+    'logger'    :   settings.logger,
+
 }
 
 def parse(cl_args=None):
@@ -148,6 +154,9 @@ def parse(cl_args=None):
 
     ''' Physics '''
     #parser.add_argument('-g', '--gravity', default=DEFAULTS['gravity'], type=float)
+
+    ''' Logger '''
+    parser.add_argument('-log', '--logger', action='store_true', default=DEFAULTS['logger'])
 
     ''' Debug '''
     parser.add_argument('-pa', '--print-args', action='store_true') # Print args & settings

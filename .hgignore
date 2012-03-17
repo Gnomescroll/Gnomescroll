@@ -74,3 +74,6 @@ voxtmp/*
 churnlog
 
 .~lock*
+
+*/log/*
+*.log

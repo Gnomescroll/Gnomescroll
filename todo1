@@ -678,6 +678,8 @@ Adjust turret behavior
 sound:
 --max sources per sample
 --fix loading of single file multiple times
+
+updated team name to "Green Team"
 ====================
 
 Animations
@@ -749,7 +751,3 @@ add sfx
 radial subscriptions of agents to items/mobs
 
 logging system
-
-do the include path thing for linux
-
-update team name

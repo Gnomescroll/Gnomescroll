@@ -43,6 +43,7 @@ cdef extern from "./options.hpp" namespace "Options":
     void set_team_name_two(char* team_name_two)
     void set_map(char* map)
     void set_seed(unsigned int seed)
+    void set_logger(bool logger)
 
 def load_options(opts):
     set_server_name(opts.server_name)
@@ -56,6 +57,7 @@ def load_options(opts):
     set_map(opts.map)
     set_seed(opts.seed)
     reset_seed(opts.seed)
+    set_logger(opts.logger)
 
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":

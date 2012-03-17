@@ -23,6 +23,7 @@ cdef extern from "./options.hpp" namespace "Options":
     void set_music(int music)
     void set_sound_device(char *sound_device)
     void set_animations(bool animations)
+    void set_logger(bool logger)
 
 def load_options(opts):
     set_name(opts.name)
@@ -47,6 +48,7 @@ def load_options(opts):
     set_music(opts.music)
     set_sound_device(opts.sound_device)
     set_animations(opts.animations)
+    set_logger(opts.logger)
 
 cdef extern from "./state/client_state.hpp" namespace "ClientState":
     void enumerate_sound_devices()

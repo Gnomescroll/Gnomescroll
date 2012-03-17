@@ -8,6 +8,10 @@
 
 #include <c_lib/common/compression/miniz.c>
 
+//options
+#include <c_lib/option_macros.hpp>
+#include <c_lib/options.cpp>
+
 //utility
 #include <c_lib/time/physics_timer.c>
 #include <c_lib/common/macros.hpp>
@@ -15,9 +19,8 @@
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/common/files.cpp>
 
-//options
-#include <c_lib/option_macros.hpp>
-#include <c_lib/options.cpp>
+// logging
+#include <c_lib/common/logger.cpp>
 
 //map
 #include <c_lib/t_map/t_map_class.cpp>
@@ -105,6 +108,9 @@ int init_c_lib()
         printf("WARNING: Attempt to call init_c_lib more than once\n");
         return 1;
     }
+
+    Log::teardown();
+
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand(time(NULL));
@@ -126,8 +132,10 @@ void close_c_lib()
     ServerState::teardown();
     ServerState::teardown_lists();
     printf("Server closed\n");
+    Log::teardown();
 }
 
-void _set_seed(int seed) {
+void _set_seed(int seed)
+{
     srand(seed);
 }

@@ -27,6 +27,9 @@ team_name_two = "Red Team"
 map = 'natural_terrain'
 seed = 8007513
 
+''' Logger '''
+logger = False
+
 try:
     from settings import *
 except ImportError:

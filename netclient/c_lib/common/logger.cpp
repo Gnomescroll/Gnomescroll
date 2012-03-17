@@ -1,0 +1,163 @@
+#include "logger.hpp"
+
+#include <stdarg.h>
+
+#include <options.hpp>
+
+namespace Log
+{
+    
+static const int N_LOG_FILES = 14;  // update this if adding/removing a LogType
+
+static const char GENERIC_FN[] = "generic";
+static const char AUDIO_FN[] = "audio";
+static const char AGENT_FN[] = "agent";
+static const char MAP_FN[] = "map";
+static const char SHADER_FN[] = "shader";
+static const char SETUP_FN[] = "setup";
+static const char GAME_FN[] = "game";
+static const char ITEM_FN[] = "item";
+static const char VOXEL_FN[] = "voxel";
+static const char MAP_GEN_FN[] = "map_gen";
+static const char HUD_FN[] = "hud";
+static const char CHAT_FN[] = "chat";
+static const char WEAPON_FN[] = "weapon";
+static const char UNKNOWN_FN[] = "unknown";
+
+static const char FILENAME_FMT[] = "%s%s-%lld.log";
+static const char LOG_DIR[] = "./log/";
+
+static const LogType DEFAULT_TYPE = GENERIC;
+static const LogLevel DEFAULT_LEVEL = ALWAYS;
+
+static FILE* log_files[N_LOG_FILES] = {NULL};
+static char* log_filenames[N_LOG_FILES] = {NULL};
+
+
+FILE* get_file_descriptor(LogType type, LogLevel level)
+{
+    if (Options::logger)
+    {
+        if (type < 0 || type >= N_LOG_FILES)
+            return log_files[UNKNOWN];
+        return log_files[type];
+    }
+    else
+    {
+        if (level == ERROR)
+            return stderr;
+        return stdout;
+    }
+}
+
+// fprintf wrapper
+int print(LogType type, LogLevel level, const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    FILE* f = get_file_descriptor(type, level);
+    if (f == NULL) return -1;
+    int res = fprintf(f, fmt, args);
+    va_end(args);
+    return res;
+}
+
+int print(LogType type, const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int res = print(type, DEFAULT_LEVEL, fmt, args);
+    va_end(args);
+    return res;
+}
+
+int print(const char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int res = print(DEFAULT_TYPE, DEFAULT_LEVEL, fmt, args);
+    va_end(args);
+    return res;
+}
+
+#define GEN_FN_CASE(TYPENAME) \
+    case TYPENAME: \
+        fn = (char*)malloc(sizeof(char) * \
+            ((sizeof(TYPENAME##_FN)-1) \
+          + (sizeof(FILENAME_FMT)-1) \
+          + (sizeof(LOG_DIR)-1) \
+          + 20 - 8 + 1)); \
+        sprintf(fn, FILENAME_FMT, LOG_DIR, TYPENAME##_FN, timestamp); \
+        log_filenames[i] = fn; \
+        break;
+
+void generate_filenames()
+{
+    unsigned long long timestamp = (unsigned long long) time(NULL);
+    char* fn;
+    for (int i=0; i<N_LOG_FILES; i++)
+    {
+        switch (i)
+        {
+            GEN_FN_CASE(GENERIC)
+            GEN_FN_CASE(AUDIO)
+            GEN_FN_CASE(AGENT)
+            GEN_FN_CASE(MAP)
+            GEN_FN_CASE(SHADER)
+            GEN_FN_CASE(SETUP)
+            GEN_FN_CASE(GAME)
+            GEN_FN_CASE(ITEM)
+            GEN_FN_CASE(VOXEL)
+            GEN_FN_CASE(MAP_GEN)
+            GEN_FN_CASE(HUD)
+            GEN_FN_CASE(CHAT)
+            GEN_FN_CASE(WEAPON)
+            GEN_FN_CASE(UNKNOWN)
+            default:
+                fprintf(stdout, "WARNING -- Log::generate_filenames() -- N_LOG_FILES %d is out of sync with LogTypes\n", N_LOG_FILES);
+                return;
+        }
+    }
+}
+#undef GEN_FN_CASE
+
+void free_filenames()
+{
+    for (int i=0; i<N_LOG_FILES; i++)
+        if (log_filenames[i] != NULL)
+            free(log_filenames[i]);
+}
+
+void open_files()
+{
+    for (int i=0; i<N_LOG_FILES; i++)
+        log_files[i] = fopen(log_filenames[i], "w");
+}
+
+void close_files()
+{
+    for (int i=0; i<N_LOG_FILES; i++)
+        if (log_files[i] != NULL)
+            fclose(log_files[i]);
+}
+
+void flush_files()
+{   // buffers will flush on their own. DO NOT USE THIS UNLESS THERE IS PROBLEM
+    for (int i=0; i<N_LOG_FILES; i++)
+        if (log_files[i] != NULL)
+            fflush(log_files[i]);
+}
+
+void init()
+{
+    generate_filenames();
+    open_files();
+}
+
+void teardown()
+{
+    close_files();
+    free_filenames();
+}
+
+} // Log

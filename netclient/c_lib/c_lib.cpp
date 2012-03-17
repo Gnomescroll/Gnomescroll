@@ -30,6 +30,10 @@
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/common/files.cpp>
 
+// logging
+#include <c_lib/common/logger.cpp>
+
+// time
 #include <c_lib/time/physics_timer.c>
 #include <c_lib/time/frame_rate_limiter.cpp>
 
@@ -187,6 +191,8 @@ int init_c_lib() {
         printf("WARNING: Attempt to init c_lib more than once\n");
         return 1;
     }
+    
+    Log::init();
 
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
@@ -255,4 +261,6 @@ void close_c_lib() {
     close_SDL();  //would be called twice, already scheduled for at exit
 
     printf("Game closed\n");
+
+    Log::teardown();
 }

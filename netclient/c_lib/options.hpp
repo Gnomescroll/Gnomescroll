@@ -45,4 +45,7 @@ OPT_STRING_HEADER(sound_device)
 /* Graphics */
 OPT_BOOL_HEADER(animations)
 
+/* Logging */
+OPT_BOOL_HEADER(logger)
+
 }

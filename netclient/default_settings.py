@@ -61,6 +61,9 @@ sound = True
 sfx = 100
 music = 100
 
+''' Logger '''
+logger = False
+
 #######
 import os.path
 if os.path.exists("./settings.py"):

@@ -45,4 +45,7 @@ OPT_STRING(sound_device, "")
 /* Graphics */
 OPT_BOOL(animations, true)
 
+/* Logging */
+OPT_BOOL(logger, false)
+
 }
