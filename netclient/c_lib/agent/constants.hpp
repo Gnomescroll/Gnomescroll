@@ -33,7 +33,7 @@ const int AGENT_MAX = PLAYERS_MAX;
 //#define AGENT_SPEED 28.0f // uncomment for testing high speed
 #define AGENT_SPEED_CROUCHED 0.8f
 #define AGENT_BOX_RADIUS 0.38f
-const int NO_AGENT_OWNER = 255; // works as long as < AGENT_MAX 
+const int NO_AGENT = 255; // works as long as < AGENT_MAX 
 
 /* Status */
 #define AGENT_HEALTH 100

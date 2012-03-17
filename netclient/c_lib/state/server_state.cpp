@@ -128,7 +128,7 @@ namespace ServerState
         {
             s = spawner_list->filtered_objects[i];
             if (s==NULL) continue;
-            if ((s->get_team() == agent->status.team && s->get_owner() != NO_AGENT_OWNER)
+            if ((s->get_team() == agent->status.team && s->get_owner() != NO_AGENT)
             && s->get_owner() != agent->id)
                 continue; // teammates cant kill grenades
             int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
@@ -143,7 +143,7 @@ namespace ServerState
         {
             t = turret_list->filtered_objects[i];
             if (t==NULL) continue;
-            if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT_OWNER)
+            if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT)
             && t->get_owner() != agent->id)
                 continue; // teammates cant kill turrets
             int h = t->take_damage(GRENADE_TURRET_DAMAGE);
@@ -266,8 +266,8 @@ namespace ServerState
         ctf->remove_agent_from_team(agent_id);
         send_disconnect_notice(agent_id);
         agent_list->destroy(agent_id);
-        turret_list->alter_owner(agent_id, NO_AGENT_OWNER);
-        spawner_list->alter_owner(agent_id, NO_AGENT_OWNER);
+        turret_list->alter_owner(agent_id, NO_AGENT);
+        spawner_list->alter_owner(agent_id, NO_AGENT);
     }
 
     void send_version_to_client(int client_id)

@@ -551,7 +551,6 @@ bool Agent_status::lose_item(Object_types item)
     return true;
 }
 
-
 void Agent_status::send_coin_packet()
 {
     #ifdef DC_SERVER
@@ -598,5 +597,22 @@ void Agent_status::check_if_at_base()
         }
     }
 #endif
+}
+
+void switch_ownership(Object_types item, int owner, int new_owner)
+{
+    Agent_state* a;
+    if (owner != NO_AGENT)
+    {
+        a = STATE::agent_list->get(owner);
+        if (a != NULL)
+            a->status.lose_item(item);
+    }
+    if (new_owner != NO_AGENT)
+    {
+        a = STATE::agent_list->get(new_owner);
+        if (a != NULL)
+            a->status.gain_item(item);
+    }
 }
 

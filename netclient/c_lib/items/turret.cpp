@@ -263,13 +263,7 @@ void Turret::set_team(int team)
 
 void Turret::set_owner(int owner)
 {
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a != NULL)
-        a->status.gain_item(this->type);
-    a = STATE::agent_list->get(this->owner);
-    if (a != NULL)
-        a->status.lose_item(this->type);
-
+    switch_ownership(this->type, this->owner, owner);
     this->owner = owner;
 }
 
@@ -360,9 +354,12 @@ Turret::~Turret()
     msg.broadcast();
     #endif
     if (this->vox != NULL) delete this->vox;
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a != NULL)
-        a->status.lose_item(this->type);
+    if (this->owner != NO_AGENT)
+    {
+        Agent_state* a = STATE::agent_list->get(owner);
+        if (a != NULL)
+            a->status.lose_item(this->type);
+    }
 }
 
 #ifdef DC_SERVER
@@ -379,7 +376,7 @@ void Turret::create_message(turret_create_StoC* msg)
 
 int Turret::get_coins_for_kill(int owner, int team)
 {
-    if ((this->team != team && this->owner != NO_AGENT_OWNER) || owner == this->owner) // enemy team, or owner, can destroy/reclaim turret
+    if ((this->team != team && this->owner != NO_AGENT) || owner == this->owner) // enemy team, or owner, can destroy/reclaim turret
         return get_object_cost(this->type);
     return 0;
 }
@@ -613,6 +610,11 @@ void Turret_list::update()
 void Turret_list::alter_owner(int owner, int new_owner)
 {
     #if DC_SERVER
+    if (owner == new_owner)
+    {
+        printf("WARNING -- Turret_list::alter_owner -- owner == new_owner %d\n", owner);
+        return;
+    }
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;

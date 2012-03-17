@@ -154,15 +154,8 @@ int Spawner::get_owner()
 
 void Spawner::set_owner(int owner)
 {
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a != NULL)
-        a->status.gain_item(this->type);
-    a = STATE::agent_list->get(this->owner);
-    if (a != NULL)
-        a->status.lose_item(this->type);
-
+    switch_ownership(this->type, this->owner, owner);
     this->owner = owner;
-
 }
 
 void Spawner::set_team(int team)
@@ -258,7 +251,7 @@ void Spawner::create_message(Spawner_create_StoC* msg)
 
 int Spawner::get_coins_for_kill(int owner, int team)
 {
-    if ((this->team != team && this->owner != NO_AGENT_OWNER) || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
+    if ((this->team != team && this->owner != NO_AGENT) || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
         return get_object_cost(this->type);
     return 0;
 }
@@ -321,9 +314,12 @@ Spawner::~Spawner()
     msg.broadcast();
     #endif
     if (this->vox != NULL) delete this->vox;
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a != NULL)
-        a->status.lose_item(this->type);
+    if (this->owner != NO_AGENT)
+    {
+        Agent_state* a = STATE::agent_list->get(owner);
+        if (a != NULL)
+            a->status.lose_item(this->type);
+    }
 }
 
 /* Spawner list */
@@ -468,6 +464,11 @@ void Spawner_list::update()
 void Spawner_list::alter_owner(int owner, int new_owner)
 {
     #if DC_SERVER
+    if (owner == new_owner)
+    {
+        printf("WARNING -- Spawner_list::alter_owner -- owner == new_owner %d\n", owner);
+        return;
+    }
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
