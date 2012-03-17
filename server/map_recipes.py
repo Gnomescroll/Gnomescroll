@@ -72,6 +72,40 @@ def test_names():
         
 test_names()
 
+def current_test():
+    lunar_surface()
+
+def lunar_surface():
+#Dont modify this
+    x,y,z = 512,512,128
+
+    m = c_lib.map_gen
+    m.init(x,y,z)
+    m.conf.seed(opts.seed)
+
+    m.conf\
+    .size(x,y,z)\
+    .tile(cubes['soft_rock'])\
+    .interpolate(1,1,1)\
+    .scale(4.0,4.0,1.0)\
+    .heightmap(baseline=85, maxheight=35)\
+    .p2(octaves=12, persistence=0.5, frequency=5.)\
+    .start()\
+    .reset()
+
+    m.conf\
+    .size(x,y,z)\
+    .tile(cubes['soft_rock'])\
+    .interpolate(1,1,1)\
+    .scale(1.0,1.0,1.0)\
+    .heightmap(baseline=100, maxheight=10)\
+    .p2(octaves=12, persistence=0.5, frequency=0.1)\
+    .start()\
+    .reset()
+
+    m.destroy()
+
+
 def feb3_test_map():
     #setup
     x,y,z = 128,128,128
