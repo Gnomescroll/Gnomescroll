@@ -658,7 +658,8 @@ BUILD
 
 use agent_camera for all hitscan/player block methods (was using camera_state but this is off?)
 fix bug where you get $$ for shooting dead bodies 
-
+turret kills count for you
+chat message for turret deaths
 ====================
 
 Animations
@@ -739,7 +740,6 @@ update team name
 BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
-turret kills should count for the owner -- give a message (X's turret Killed Y)
 
 spawner not falling when attached to the side of a thing
 
