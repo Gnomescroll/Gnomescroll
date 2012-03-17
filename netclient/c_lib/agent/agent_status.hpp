@@ -7,7 +7,9 @@ const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 #include <common/enum_types.hpp>
 
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
-const int SLIME_KILLS_PER_COIN = 10;
+//const int SLIME_KILLS_PER_COIN = 10;
+const int SLIME_KILLS_PER_COIN = 1;
+const int COINS_PER_AGENT_KILL = 5;
 
 typedef enum AgentDeathMethod
 {
