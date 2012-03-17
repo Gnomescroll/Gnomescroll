@@ -41,6 +41,7 @@ class Camera {
         void set_state(float x, float y, float z);
         
         void forward_vector(float f[3]);
+        Vec3 forward_vector();
         
         void hud_projection();
         void world_projection();

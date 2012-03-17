@@ -278,6 +278,13 @@ void Camera::forward_vector(float f[3])
     f[2] /= len;
 }
 
+Vec3 Camera::forward_vector()
+{
+    float f[3];
+    this->forward_vector(f);
+    return vec3_init(f[0], f[1], f[2]);
+}
+
 void Camera::copy_state_from(Camera* c)
 {
     this->set_state(c->x, c->y, c->z);

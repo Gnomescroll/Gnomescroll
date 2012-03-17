@@ -333,11 +333,10 @@ void PlayerAgent_action::set_block() {
     const int z_low = 4;
     const int z_high = 3;
 
-    float f[3];
-    agent_camera->forward_vector(f);
+    Vec3 f = agent_camera->forward_vector();
     int* b = _farthest_empty_block(
-        p->you->s.x, p->you->s.y, p->you->s.z + p->you->camera_height(),
-        f[0], f[1], f[2],
+        p->camera_state.x, p->camera_state.y, p->camera_z(),
+        f.x, f.y, f.z,
         max_dist, z_low, z_high
     );
     if (b==NULL) return;

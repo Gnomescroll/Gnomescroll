@@ -706,6 +706,7 @@ animation organization
 == IDEAS ==
 chat command for places of interest
 riot shields
+contact with enemy turrent captures it?
 
 ==================
 POLISH TODO:
@@ -727,3 +728,19 @@ logging system
 do the include path thing for linux
 
 update team name
+
+============
+BUILD 6514 BUGZ
+
+pick/place does not seem to be using camera state
+cull/cap grenade fx, or implement "virtual voices"
+dont count shooting dead bodies as kills (its happening for points)
+turret kills should count for the owner -- give a message (X's turret Killed Y)
+
+spawner not falling when attached to the side of a thing
+
+Adjust turret behavior
+--lower firing rate
+--caps per team
+--caps per player
+--% chance of failing to acquire target
