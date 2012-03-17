@@ -477,14 +477,78 @@ void Agent_status::add_coins(unsigned int coins)
     #endif
 }
 
-void Agent_status::spend_coins(unsigned int coins)
+void Agent_status::spend_coins(unsigned int coins, Object_types item)
 {
-    if (coins==0) return;
-    this->coins -= coins;
     #ifdef DC_SERVER
+    if (coins==0) return;
+    if (item >= 0 && !gain_item(item)) return;
+    this->coins -= coins;
     this->send_coin_packet();
     #endif
 }
+
+bool Agent_status::can_gain_item(Object_types item)
+{
+    switch (item)
+    {
+        case OBJ_TYPE_TURRET:
+            if (owned_turrets >= AGENT_MAX_TURRETS) return false;
+            break;
+            
+        case OBJ_TYPE_SPAWNER:
+            if (owned_spawners >= AGENT_MAX_SPAWNERS) return false;
+            break;
+            
+        default: break;
+    }
+    return true;
+}
+
+bool Agent_status::gain_item(Object_types item)
+{
+    bool can = this->can_gain_item(item);
+    switch (item)
+    {
+        case OBJ_TYPE_TURRET:
+            if (can) owned_turrets++;
+            break;
+            
+        case OBJ_TYPE_SPAWNER:
+            if (can) owned_spawners++;
+            break;
+            
+        default: break;
+    }
+    return can;
+}
+
+bool Agent_status::lose_item(Object_types item)
+{
+    switch (item)
+    {
+        case OBJ_TYPE_TURRET:
+            if (owned_turrets <= 0)
+            {
+                printf("WARNING -- Agent_status::lose_item -- no turrets to lose\n");
+                return false;
+            }
+            owned_turrets--;
+            break;
+            
+        case OBJ_TYPE_SPAWNER:
+            if (owned_spawners <= 0)
+            {
+                printf("WARNING -- Agent_status::lose_item -- no spawners to lose\n");
+                return false;
+            }
+            owned_spawners--;
+            break;
+            
+        default: break;
+    }
+    return true;
+}
+
 
 void Agent_status::send_coin_packet()
 {
@@ -495,22 +559,22 @@ void Agent_status::send_coin_packet()
     #endif
 }
 
-bool Agent_status::can_afford(Object_types obj)
+bool Agent_status::can_purchase(Object_types obj)
 {
     unsigned int cost = get_object_cost(obj);
-    return can_afford(cost);
+    return can_gain_item(obj) && can_purchase(cost);
 }
 
-bool Agent_status::can_afford(unsigned int coins)
+bool Agent_status::can_purchase(unsigned int coins)
 {
     return (coins <= this->coins);
 }
 
 bool Agent_status::purchase(Object_types obj)
 {
+    if (!this->can_purchase(obj)) return false;
     unsigned int cost = get_object_cost(obj);
-    if (!this->can_afford(cost)) return false;
-    this->spend_coins(cost);
+    this->spend_coins(cost, obj);
     return true;
 }
 

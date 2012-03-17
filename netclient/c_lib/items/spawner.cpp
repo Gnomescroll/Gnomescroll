@@ -150,6 +150,11 @@ void Spawner::get_spawn_point(int agent_height, int* spawn)
 void Spawner::set_owner(int owner)
 {
     this->owner = owner;
+    #if DC_CLIENT
+    Agent_state* a = STATE::agent_list->get(owner);
+    if (a != NULL)
+        a->status.gain_item(this->type);
+    #endif
 }
 
 void Spawner::set_team(int team)
@@ -308,6 +313,9 @@ Spawner::~Spawner()
     msg.broadcast();
     #endif
     if (this->vox != NULL) delete this->vox;
+    Agent_state* a = STATE::agent_list->get(owner);
+    if (a != NULL)
+        a->status.lose_item(this->type);
 }
 
 /* Spawner list */

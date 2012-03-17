@@ -11,6 +11,9 @@ const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 const int SLIME_KILLS_PER_COIN = 1;
 const int COINS_PER_AGENT_KILL = 5;
 
+const int AGENT_MAX_TURRETS = 20;
+const int AGENT_MAX_SPAWNERS = 9;
+
 class Agent_state;  // forward declaration
 
 // Use for:
@@ -37,6 +40,9 @@ class Agent_status {
         unsigned int slime_kills;
 
         unsigned int health_max;
+
+        int owned_spawners;
+        int owned_turrets;
 
         char name[PLAYER_NAME_MAX_LENGTH + 1];
         bool identified;
@@ -82,12 +88,17 @@ class Agent_status {
         void check_if_at_base();
 
         // coin stuff
-        bool can_afford(Object_types obj);
-        bool can_afford(unsigned int coins);
+        bool can_purchase(Object_types obj);
+        bool can_purchase(unsigned int coins);
         void add_coins(unsigned int coins);
-        void spend_coins(unsigned int coins);
+        void spend_coins(unsigned int coins, Object_types item);
         void send_coin_packet();
         bool purchase(Object_types obj);
+
+        // item stuff
+        bool can_gain_item(Object_types item);
+        bool gain_item(Object_types item);
+        bool lose_item(Object_types item);
 
         explicit Agent_status(Agent_state* a);
 };

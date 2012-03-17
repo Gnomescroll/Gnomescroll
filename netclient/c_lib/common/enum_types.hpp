@@ -38,7 +38,7 @@ unsigned int get_object_cost(Object_types obj)
             cost = COST_TURRET;
             break;
         default:
-            printf("Agent_status::can_afford -- unknown obj type %d\n", obj);
+            printf("get_object_cost -- unknown obj type %d\n", obj);
             return 0;
     }
     return cost;

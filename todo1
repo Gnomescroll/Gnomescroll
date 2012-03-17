@@ -742,11 +742,13 @@ BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
 
+make sure revoking ownership when switching teams
+
 Adjust turret behavior
 --lower firing rate     DONE
 --caps per team
 --caps per player
---% chance of failing to acquire target
+--% chance of failing to acquire target DONE
 
 base spawn radius is also turret block radius
 turrets cant kill frshly spawned players (~5 seconds)

@@ -43,10 +43,10 @@ namespace ServerState
         //delete grenade_shrapnel_list;
 
         // voxels
-        delete agent_list;
         delete slime_list;
         delete spawner_list;
         delete turret_list;
+        delete agent_list;
         delete voxel_hitscan_list; // must go last
     }
 

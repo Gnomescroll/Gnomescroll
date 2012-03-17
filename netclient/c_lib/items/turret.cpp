@@ -258,6 +258,11 @@ int Turret::get_team()
 void Turret::set_owner(int owner)
 {
     this->owner = owner;
+    #if DC_CLIENT
+    Agent_state* a = STATE::agent_list->get(owner);
+    if (a != NULL)
+        a->status.gain_item(this->type);
+    #endif
 }
 
 void Turret::set_team(int team)
@@ -324,6 +329,7 @@ camera_height(TURRET_CAMERA_HEIGHT),
 vox(NULL)
 {
 }
+
 Turret::Turret(int id, float x, float y, float z)
 :
 fire_limiter(0),
@@ -347,6 +353,9 @@ Turret::~Turret()
     msg.broadcast();
     #endif
     if (this->vox != NULL) delete this->vox;
+    Agent_state* a = STATE::agent_list->get(owner);
+    if (a != NULL)
+        a->status.lose_item(this->type);
 }
 
 #ifdef DC_SERVER

@@ -1052,7 +1052,7 @@ inline void place_spawner_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->status.can_afford(OBJ_TYPE_SPAWNER)) return;
+    if (!a->status.can_purchase(OBJ_TYPE_SPAWNER)) return;
     if (ServerState::spawner_list->full()) return;
     if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
     if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)z)) return;
@@ -1081,7 +1081,7 @@ inline void place_turret_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->status.can_afford(OBJ_TYPE_TURRET)) return;
+    if (!a->status.can_purchase(OBJ_TYPE_TURRET)) return;
     if (ServerState::turret_list->full()) return;
     if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return;
     // zip down
@@ -1089,9 +1089,9 @@ inline void place_turret_CtoS::handle()
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
     if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return;
 
+    a->status.purchase(OBJ_TYPE_TURRET);
     Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,new_z);
     if (t==NULL) return;
-    a->status.purchase(OBJ_TYPE_TURRET);
     t->set_team(a->status.team);
     t->set_owner(a->id);
     t->init_vox();
