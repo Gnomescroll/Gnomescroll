@@ -674,6 +674,10 @@ Adjust turret behavior
 --turrets cant kill agents within base spawner radius
 --animation for turret explosion
 --animation for spawner explosion
+
+sound:
+--max sources per sample
+--fix loading of single file multiple times
 ====================
 
 Animations
@@ -749,8 +753,3 @@ logging system
 do the include path thing for linux
 
 update team name
-
-============
-BUILD 6514 BUGZ
-
-cull/cap grenade fx, or implement "virtual voices"
