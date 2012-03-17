@@ -58,7 +58,7 @@ void PlayerAgent_action::hitscan_laser()
     if (p->you->status.team == 0) return;
 
     Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
-    Vec3 look = p->camera_state.forward_vector();
+    Vec3 look = agent_camera->forward_vector();
 
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -191,7 +191,7 @@ void PlayerAgent_action::hitscan_pick()
     if (p->you->status.team == 0) return;
 
     Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
-    Vec3 vec = p->camera_state.forward_vector();
+    Vec3 vec = agent_camera->forward_vector();
 
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -304,7 +304,7 @@ void PlayerAgent_action::throw_grenade()
     msg.z = z;
     float f[3];
     //agent_camera->forward_vector(f);
-    p->you->s.forward_vector(f);
+    p->you->s.forward_vector(f);    // use network state
     msg.vx = f[0];
     msg.vy = f[1];
     msg.vz = f[2];
@@ -392,17 +392,14 @@ void PlayerAgent_action::place_spawner()
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
 
-    AgentState* state = &this->p->s1;
-    float v[3];
-    agent_camera->forward_vector(v);
+    Vec3 v = agent_camera->forward_vector();
 
-    int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
     const float max_dist = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
     int* block = _farthest_empty_block(
-        state->x, state->y, state->z + this->p->you->camera_height(),
-        v[0], v[1], v[2],
+        this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
+        v.x, v.y, v.z,
         max_dist, z_low, z_high
     );
     if (block == NULL) return;
@@ -420,17 +417,14 @@ void PlayerAgent_action::place_turret()
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
 
-    AgentState* state = &this->p->s1;
-    float v[3];
-    agent_camera->forward_vector(v);
+    Vec3 v = agent_camera->forward_vector();
 
-    int* _farthest_empty_block(float x, float y, float z, float vx, float vy, float vz, float max_distance, int z_low, int z_high);
     const float max_dist = 4.0f;
     const int z_low = 4;
     const int z_high = 3;
     int* block = _farthest_empty_block(
-        state->x, state->y, state->z + this->p->you->camera_height(),
-        v[0], v[1], v[2],
+        this->p->camera_state.x, this->p->camera_state.y, this->p->camera_z(),
+        v.x, v.y, v.z,
         max_dist, z_low, z_high
     );
     if (block == NULL) return;

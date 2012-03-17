@@ -253,7 +253,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;
-    sz = this->a->s.z + this->a->camera_height();
+    sz = this->a->camera_z();
 
     Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 
@@ -299,7 +299,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;
-    sz = this->a->s.z + this->a->camera_height();
+    sz = this->a->camera_z();
 
     Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 
@@ -381,7 +381,7 @@ void Agent_event::fired_weapon_at_nothing()
     float sx,sy,sz;
     sx = this->a->s.x;
     sy = this->a->s.y;
-    sz = this->a->s.z + this->a->camera_height();
+    sz = this->a->camera_z();
 
     Sound::fire_laser(sx,sy,sz, this->a->s.vx, this->a->s.vy, this->a->s.vz);
 

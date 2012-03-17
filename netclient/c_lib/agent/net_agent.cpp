@@ -786,7 +786,7 @@ inline void hitscan_block_CtoS::handle()
     float
         fx = a->s.x,
         fy = a->s.y,
-        fz = a->s.z + a->camera_height();
+        fz = a->camera_z();
 
     int collided = _ray_cast6(fx,fy,fz, f[0], f[1], f[2], max_l, &distance, collision, pre_collision, &cube, side);
     if (!collided) return;

@@ -645,7 +645,8 @@ int Agent_state::crouched()
     return this->get_current_control_state().cs & CS_CROUCH;
 }
 
-float Agent_state::camera_height() {
+float Agent_state::camera_height()
+{
     if (this->status.dead)
         return CAMERA_HEIGHT_DEAD
     else if (this->crouched())
@@ -672,30 +673,34 @@ float Agent_state::camera_z()
     return this->s.z + this->camera_height();
 }
 
-#define CUBE_SELECT_MAX_DISTANCE 12.0f
 int Agent_state::get_facing_block_type()
 {
+    const float CUBE_SELECT_MAX_DISTANCE = 12.0f;
     const int z_low = 8;
     const int z_high = 8;
-    float f[3];
-
-    AgentState *s;
+    Vec3 f;
+    float x,y,z;
+    
 #ifdef DC_CLIENT
     if (ClientState::playerAgent_state.you == this)
     {   // if you, use camera / player agent state instead.
-        s = &ClientState::playerAgent_state.camera_state;
-        agent_camera->forward_vector(f);
+        f = agent_camera->forward_vector();
+        x = ClientState::playerAgent_state.camera_state.x;
+        y = ClientState::playerAgent_state.camera_state.y;
+        z = ClientState::playerAgent_state.camera_z();
     }
     else
 #endif
     {
-        s = &this->s;
-        s->forward_vector(f);
+        f = this->s.forward_vector();
+        x = this->s.x;
+        y = this->s.y;
+        z = this->camera_z();
     }
         
     int *pos = _nearest_block(
-        s->x, s->y, s->z + this->camera_height(),
-        f[0], f[1], f[2],
+        x, y, z,
+        f.x, f.y, f.z,
         CUBE_SELECT_MAX_DISTANCE,
         z_low, z_high
     );
