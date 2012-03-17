@@ -33,7 +33,6 @@ namespace t_map
 
         }
 
-
         if(GLEW_EXT_texture_filter_anisotropic && ANISOTROPIC_FILTERING == 1) // ANISOTROPY_EXT
         {
             glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &ANISOTROPY_LARGEST_SUPPORTED);

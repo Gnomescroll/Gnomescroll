@@ -54,6 +54,12 @@ int apply_damage(int x, int y, int z, int dmg);
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 #endif
 
+int get_highest_open_block(int x, int y, int agent_height);
+int get_highest_open_block(int x, int y);
+int get_lowest_open_block(int x, int y, int n);
+int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
+int get_lowest_solid_block(int x, int y);
+
 }
 
 int _get(int x, int y, int z) GNOMESCROLL_API;
@@ -81,8 +87,7 @@ void set_map_size(int x, int y, int z); //Deprecate
 */
 int _get_highest_open_block(int x, int y, int agent_height);
 int _get_highest_open_block(int x, int y);
-int _get_lowest_open_block(int x, int y, int n) ;
-int _get_lowest_open_block(int x, int y) ;
+int _get_lowest_open_block(int x, int y, int n);
 int _get_highest_solid_block(int x, int y, int z=t_map::MAP_HEIGHT);
 int _get_lowest_solid_block(int x, int y);
 bool point_in_map(int x, int y, int z);

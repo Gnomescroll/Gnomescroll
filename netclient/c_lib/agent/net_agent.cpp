@@ -383,7 +383,7 @@ inline void agent_conflict_notification_StoC::handle()
 
     Agent_state* a = ClientState::agent_list->get(attacker);
     Agent_state* b = ClientState::agent_list->get(victim);
-
+    
     char unknown_name[] = "Someone";
     char *a_name = (a == NULL) ? unknown_name : a->status.name;
     char *b_name = (b == NULL) ? unknown_name : b->status.name;
@@ -394,16 +394,16 @@ inline void agent_conflict_notification_StoC::handle()
         case DEATH_NORMAL:
             if (suicide)
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     strcpy(msg, "You killed yourself");
                 else
                     sprintf(msg, "%s killed themself", a_name);
             }
             else
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     sprintf(msg, "You killed %s", b_name);
-                else if (b->is_you())
+                else if (b != NULL && b->is_you())
                     sprintf(msg, "You were killed by %s", a_name);
                 else
                     sprintf(msg, "%s killed %s", a_name, b_name);
@@ -413,16 +413,16 @@ inline void agent_conflict_notification_StoC::handle()
         case DEATH_HEADSHOT:
             if (suicide)
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     strcpy(msg, "You shot yourself in the head");
                 else
                     sprintf(msg, "%s shot themself in the head", a_name);
             }
             else
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     sprintf(msg, "You shot %s in the head", b_name);
-                else if (b->is_you())
+                else if (b != NULL && b->is_you())
                     sprintf(msg, "You shot in the head by %s", a_name);
                 else
                     sprintf(msg, "%s shot %s in the head", a_name, b_name);
@@ -432,16 +432,16 @@ inline void agent_conflict_notification_StoC::handle()
         case DEATH_GRENADE:
             if (suicide)
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     strcpy(msg, "You blew yourself up");
                 else
                     sprintf(msg, "%s blew themself up", a_name);
             }
             else
             {
-                if (a->is_you())
+                if (a != NULL && a->is_you())
                     sprintf(msg, "You destroyed %s with a grenade", b_name);
-                else if (b->is_you())
+                else if (b != NULL && b->is_you())
                     sprintf(msg, "You were mangled by %s's grenade", a_name);
                 else
                     sprintf(msg, "%s ripped %s to pieces", a_name, b_name);
@@ -449,21 +449,21 @@ inline void agent_conflict_notification_StoC::handle()
             break;
 
         case DEATH_BELOW_MAP:
-            if (a->is_you())
+            if (a != NULL && a->is_you())
                 strcpy(msg, "You found the afterlife.");
             else
                 strcpy(msg, "You hear a faint scream.");
             break;
 
         case DEATH_FALL:
-            if(a->is_you())
+            if (a != NULL && a->is_you())
                 strcpy(msg, "Ouch");
             else
                 sprintf(msg, "%s died from a fall.", a_name);
             break;
 
         case DEATH_TURRET:
-            if (a->is_you())
+            if (a != NULL && a->is_you())
                 strcpy(msg, "You were gunned down.");
             else
                 sprintf(msg, "%s was destroyed by %s's turret.", b_name, a_name);
@@ -1042,6 +1042,7 @@ inline void agent_set_block_CtoS::handle()
         _set_broadcast(x,y,z, val);    
 }
 
+#define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
 inline void place_spawner_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
@@ -1055,8 +1056,12 @@ inline void place_spawner_CtoS::handle()
     if (ServerState::spawner_list->full()) return;
     if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
     if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)z)) return;
+    // zip down
+    int new_z = t_map::get_highest_open_block(x,y);
+    if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
+    if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = ServerState::spawner_list->create(x+0.5f,y+0.5f,z);
+    Spawner* s = ServerState::spawner_list->create(x+0.5f,y+0.5f,new_z);
     if (s==NULL) return;
     a->status.purchase(OBJ_TYPE_SPAWNER);
     s->set_team(a->status.team);
@@ -1079,8 +1084,12 @@ inline void place_turret_CtoS::handle()
     if (!a->status.can_afford(OBJ_TYPE_TURRET)) return;
     if (ServerState::turret_list->full()) return;
     if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return;
+    // zip down
+    int new_z = t_map::get_highest_open_block(x,y);
+    if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
+    if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,z);
+    Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,new_z);
     if (t==NULL) return;
     a->status.purchase(OBJ_TYPE_TURRET);
     t->set_team(a->status.team);
@@ -1090,6 +1099,7 @@ inline void place_turret_CtoS::handle()
     t->create_message(&msg);
     msg.broadcast();
 }
+#undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 
 inline void choose_spawn_location_CtoS::handle()
 {

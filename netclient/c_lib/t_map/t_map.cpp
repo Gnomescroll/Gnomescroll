@@ -120,7 +120,82 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 }
 #endif
 
+int get_highest_open_block(int x, int y, int n) {
+    if (n < 1) {
+        printf("WARNING: _get_highest_open_block :: called with n < 1\n");
+        return -1;
+    }
+    if (n==1) return get_highest_solid_block(x,y) + 1;
+
+    int open=n;
+    int block;
+    int i;
+
+    for (i=ZMAX-1; i>=0; i--) {
+        block = _get(x,y,i);
+        if (!isSolid(block)) {
+            open++;
+        } else {
+            if (open >= n) {
+                return i+1;
+            }
+            open = 0;
+        }
+    }
+    if (open >= n) return 0;
+    return -1;
 }
+
+int get_highest_open_block(int x, int y) 
+{
+    return get_highest_open_block(x,y,1);
+}
+
+int get_highest_solid_block(int x, int y, int z)
+{
+    int i = z-1;
+    for (; i>=0; i--)
+        if (isSolid(_get(x,y,i)))
+            break;
+    return i;
+}
+
+int get_lowest_open_block(int x, int y, int n)
+{
+    if (n < 1) {
+        printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
+        return -1;
+    }
+
+    int i;
+    int block;
+    int open=0;
+    for (i=0; i<ZMAX; i++) {
+        block = _get(x,y,i);
+        if (isSolid(block)) {
+            open = 0;
+        } else {
+            open++;
+        }
+        if (open >= n) return i-open+1;
+    }
+
+    return i;
+}
+
+int get_lowest_solid_block(int x, int y)
+{
+    int i;
+    for (i=0; i < ZMAX; i++) {
+        if (isSolid(_get(x,y,i))) {
+            break;
+        }
+    }
+    if (i >= ZMAX) i = -1;  // failure
+    return i;
+}
+
+}   // t_map::
  
 
 int _get(int x, int y, int z)
@@ -208,78 +283,29 @@ unsigned char get_cached_height(int x, int y)
 }
 #endif
 
-int _get_highest_open_block(int x, int y, int n) {
-    if (n < 1) {
-        printf("WARNING: _get_highest_open_block :: called with n < 1\n");
-        return -1;
-    }
-    if (n==1) return _get_highest_solid_block(x,y) + 1;
-
-    int open=n;
-    int block;
-    int i;
-
-    for (i=ZMAX-1; i>=0; i--) {
-        block = _get(x,y,i);
-        if (!isSolid(block)) {
-            open++;
-        } else {
-            if (open >= n) {
-                return i+1;
-            }
-            open = 0;
-        }
-    }
-    if (open >= n) return 0;
-    return -1;
+int _get_highest_open_block(int x, int y, int n)
+{
+    return t_map::get_highest_open_block(x,y,n);
 }
 
 int _get_highest_open_block(int x, int y) 
 {
-    return _get_highest_open_block(x,y,1);
+    return t_map::get_highest_open_block(x,y,1);
 }
 
 int _get_highest_solid_block(int x, int y, int z)
 {
-    int i = z-1;
-    for (; i>=0; i--)
-        if (isSolid(_get(x,y,i)))
-            break;
-    return i;
+    return t_map::get_highest_solid_block(x,y,z);
 }
 
-int _get_lowest_open_block(int x, int y, int n) {
-    if (n < 1) {
-        printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
-        return -1;
-    }
-
-    int i;
-    int block;
-    int open=0;
-    for (i=0; i<ZMAX; i++) {
-        block = _get(x,y,i);
-        if (isSolid(block)) {
-            open = 0;
-        } else {
-            open++;
-        }
-        if (open >= n) return i-open+1;
-    }
-
-    return i;
+int _get_lowest_open_block(int x, int y, int n)
+{
+    return t_map::get_lowest_open_block(x,y,n);
 }
 
-int _get_lowest_solid_block(int x, int y) {
-
-    int i;
-    for (i=0; i < ZMAX; i++) {
-        if (isSolid(_get(x,y,i))) {
-            break;
-        }
-    }
-    if (i >= ZMAX) i = -1;  // failure
-    return i;
+int _get_lowest_solid_block(int x, int y)
+{
+    return t_map::get_lowest_solid_block(x,y);
 }
 
 inline bool point_in_map(int x, int y, int z)

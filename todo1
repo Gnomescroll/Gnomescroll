@@ -660,6 +660,7 @@ use agent_camera for all hitscan/player block methods (was using camera_state bu
 fix bug where you get $$ for shooting dead bodies 
 turret kills count for you
 chat message for turret deaths
+fix turret/spawner attaching to sides
 ====================
 
 Animations
@@ -741,10 +742,16 @@ BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
 
-spawner not falling when attached to the side of a thing
+dead body model not right?
 
 Adjust turret behavior
 --lower firing rate
 --caps per team
 --caps per player
 --% chance of failing to acquire target
+
+base spawn radius is also turret block radius
+turrets cant kill frshly spawned players (~5 seconds)
+
+turrets explode damage, weak radius
+--animation for turret explosion
