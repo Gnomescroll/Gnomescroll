@@ -91,7 +91,6 @@ class Agent_status {
         bool can_gain_item(Object_types item);
         bool gain_item(Object_types item);
         bool lose_item(Object_types item);
-        //void flush_ownership();
 
         explicit Agent_status(Agent_state* a);
 };
