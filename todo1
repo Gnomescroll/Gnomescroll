@@ -661,6 +661,19 @@ fix bug where you get $$ for shooting dead bodies
 turret kills count for you
 chat message for turret deaths
 fix turret/spawner attaching to sides
+
+Improved ownership management
+
+Adjust turret behavior
+--lower firing rate                         DONE
+--caps per player                           DONE
+--% chance of failing to acquire target     DONE
+--small radius damage when destroyed        DONE
+----does not affect the owner               DONE
+--turrets cant kill newly spawned players (5 seconds)  DONE
+--turrets cant kill agents within base spawner radius
+--animation for turret explosion
+--animation for spawner explosion
 ====================
 
 Animations
@@ -741,17 +754,3 @@ update team name
 BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
-
-Improved ownership management
-
-Adjust turret behavior
---lower firing rate                         DONE
---caps per player                           DONE
---% chance of failing to acquire target     DONE
---small radius damage when destroyed        DONE
-----does not affect the owner               DONE
---turrets cant kill newly spawned players (5 seconds)  DONE
---turrets cant kill agents within base spawner radius
-
---animation for turret explosion
---animation for spawner explosion

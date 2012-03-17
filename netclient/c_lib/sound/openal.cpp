@@ -10,20 +10,47 @@
 namespace OpenALSound
 {
 
+const int MAX_SOURCES_PER_SAMPLE = 6;
+
 // lookup table
-class SoundBuffer {
+class GS_SoundBuffer
+{
     public:
+        int id;
         unsigned int hash;
-        int buffer;
+        int buffer_id;
         bool loaded;
         Soundfile* metadata;
+        const int max_sources;
+        int current_sources;
+        int* sources;
 
-    SoundBuffer():
-        hash(0), buffer(-1), loaded(false)
-        {}
+    void add_source(int source_id)
+    {
+        if (this->current_sources >= this->max_sources)
+        {
+            printf("ERROR: -- GS_SoundBuffer::add_source -- attempt to add source %d to GS_SoundBuffer %d, but it is full.\n", source_id, this->id);
+            return;
+        }
+        this->sources[this->current_sources++] = source_id;
+    }
+
+    GS_SoundBuffer():
+        id(-1),
+        hash(0), buffer_id(-1), loaded(false), metadata(NULL),
+        max_sources(MAX_SOURCES_PER_SAMPLE),
+        current_sources(0)
+        {
+            this->sources = (int*)malloc(sizeof(int) * this->max_sources);
+        }
+
+    ~GS_SoundBuffer()
+    {
+        free(this->sources);
+    }
 };
 static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
-static SoundBuffer sound_buffers[MAX_SOUNDS];
+static GS_SoundBuffer sound_buffers[MAX_SOUNDS];
 static int soundfile_index = 0;
 
 static bool enabled = true;
@@ -40,7 +67,11 @@ static int buffer_index = 0;
 static const ALsizei MAX_SOURCES = 16;
 static ALuint sources[MAX_SOURCES];
 
-static int active_2d_sounds[MAX_SOURCES] = {-1};
+struct GS_SoundSource {
+    int source_id;
+    bool two_dimensional;
+};
+static GS_SoundSource active_sources[MAX_SOURCES] = {{-1, false}};
 
 bool checkError()
 {
@@ -221,7 +252,7 @@ void close()
         printf("OpenAL sound closed.\n");
 }
 
-unsigned int hash(char* s)
+static unsigned int hash(char* s)
 {
     unsigned int highorder;
     unsigned int h = 0;
@@ -243,6 +274,24 @@ void load_sound(Soundfile* snd)
 {
     if (!enabled)
         return;
+
+    GS_SoundBuffer* s;
+    // check if file has been loaded
+    for (int i=0; i<MAX_SOUNDS; i++)
+    {
+        s = &sound_buffers[i];
+        if (s->metadata != NULL && strcmp(s->metadata->file, snd->file) == 0)
+        {   // already loaded this sound file
+            GS_SoundBuffer* new_s = &sound_buffers[soundfile_index];
+            new_s->id = soundfile_index;
+            new_s->hash = hash(snd->fn);
+            new_s->buffer_id = s->buffer_id;
+            new_s->loaded = true;
+            new_s->metadata = snd;
+            soundfile_index++;
+            return;
+        }
+    }
         
     if (buffer_index == MAX_BUFFERS)
     {
@@ -285,14 +334,14 @@ void load_sound(Soundfile* snd)
         return;
 
     // put in lookup table for playback
-    SoundBuffer* s;
-    s = &sound_buffers[soundfile_index++];
+    s = &sound_buffers[soundfile_index];
+    s->id = soundfile_index;
     s->hash = hash(snd->fn);
-    s->buffer = buffer_index;
+    s->buffer_id = buffer_index;
     s->loaded = true;
     s->metadata = snd;
-
     buffer_index++;
+    soundfile_index++;
 }
 
 int get_free_source()
@@ -307,7 +356,7 @@ int get_free_source()
     return -1;
 }
 
-SoundBuffer* get_sound_buffer_from_function_name(char *fn)
+GS_SoundBuffer* get_sound_buffer_from_function_name(char *fn)
 {
     unsigned int h = hash(fn);
     for (int i=0; i<MAX_SOUNDS; i++)
@@ -344,27 +393,21 @@ void get_listener_state(float *x, float *y, float *z, float *vx, float *vy, floa
     alGetListenerfv(AL_ORIENTATION, orientation);
 }
 
-int play_2d_sound(char* file)
+static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional)
 {
-    if (!enabled)
-        return -1;
-        
-    // get listener state
-    ALfloat x,y,z;
-    ALfloat vx,vy,vz;
-    ALfloat o[6];
-    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
-    // play at listener state
-    int source_id = play_3d_sound(file, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
-
     // add sound to active sources
     for (int i=0; i<MAX_SOURCES; i++)
-        if (active_2d_sounds[i] < 0)
-            active_2d_sounds[i] = source_id;
-    return source_id;
+        if (active_sources[i].source_id < 0)
+        {
+            active_sources[i].source_id = source_id;
+            active_sources[i].two_dimensional = two_dimensional;
+            sound_buffers[soundfile_id].add_source(source_id);
+            return true;
+        }
+    return false;
 }
 
-int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
 {
     if (!enabled)
         return -1;
@@ -374,13 +417,6 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
     if (source_id < 0)
         return -1;
         
-    // lookup buffer from file
-    SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-    if (sound_buffer == NULL)
-        return -1;
-    if (sound_buffer->buffer < 0)
-        return -1;
-
     // set source properties
     if (set_source_properties(source_id, sound_buffer->metadata))
         return -1;
@@ -390,13 +426,68 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
         return -1;
 
     // Attach buffer 0 to source
-    alSourcei(sources[source_id], AL_BUFFER, buffers[sound_buffer->buffer]); 
+    alSourcei(sources[source_id], AL_BUFFER, buffers[sound_buffer->buffer_id]); 
     if (checkError())
         return -1;
 
     // play
     alSourcePlay(sources[source_id]);
     if (checkError())
+        return -1;
+    
+    return source_id;
+}
+
+int play_2d_sound(char* fn)
+{
+    if (!enabled)
+        return -1;
+
+    // lookup buffer from file
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    if (sound_buffer == NULL)
+        return -1;
+    if (sound_buffer->buffer_id < 0)
+        return -1;
+
+    if (sound_buffer->current_sources >= sound_buffer->max_sources)
+        return -1;
+        
+    // get listener state
+    ALfloat x,y,z;
+    ALfloat vx,vy,vz;
+    ALfloat o[6];
+    get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
+    // play at listener state
+    int source_id = play_sound(sound_buffer, x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+    if (source_id < 0) return source_id;
+    
+    // add sound to active sources
+    if (!add_to_sources(sound_buffer->buffer_id, source_id, true))
+        return -1;
+
+    return source_id;
+}
+
+int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float vz, float ox, float oy, float oz)
+{
+    if (!enabled)
+        return -1;
+
+    // lookup buffer from file
+    GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    if (sound_buffer == NULL)
+        return -1;
+    if (sound_buffer->buffer_id < 0)
+        return -1;
+
+    if (sound_buffer->current_sources >= sound_buffer->max_sources)
+        return -1;
+        
+    int source_id = play_sound(sound_buffer, x,y,z, vx,vy,vz, ox,oy,oz);
+    if (source_id < 0) return source_id;
+    // add sound to active sources
+    if (!add_to_sources(sound_buffer->buffer_id, source_id, false))
         return -1;
 
     return source_id;
@@ -410,17 +501,38 @@ void update()
     ALfloat o[6];
     get_listener_state(&x, &y, &z, &vx, &vy, &vz, o);
 
-    // update playing sources to listener state
     ALint source_state;
+
+    // expire any used sources
     for (int i=0; i<MAX_SOURCES; i++)
     {
-        int source_id = active_2d_sounds[i];
-        if (source_id < 0) continue;
-        alGetSourcei(sources[source_id], AL_SOURCE_STATE, &source_state);
+        GS_SoundSource* ss = &active_sources[i];
+        if (ss->source_id < 0) continue;
+        
+        alGetSourcei(sources[ss->source_id], AL_SOURCE_STATE, &source_state);
         if (source_state != AL_PLAYING)
-            active_2d_sounds[i] = -1;
+            ss->source_id = -1;
         else    // update 2d sound
-            update_source_state(sources[source_id], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+        {
+            if (ss->two_dimensional)    // update 2d listeners
+                update_source_state(sources[ss->source_id], x,z,y,vx,vz,vy, o[0], o[2], o[1]);
+        }
+    }
+
+    // update sound_buffer metadata
+    for (int i=0; i<MAX_SOUNDS; i++)
+    {
+        GS_SoundBuffer* b = &sound_buffers[i];
+        const int current_sources = b->current_sources;
+        for (int j=0; j<current_sources; j++)
+        {
+            int gs_source_id = b->sources[j];
+            if (active_sources[gs_source_id].source_id < 0)
+            {   // expired
+                b->current_sources--;
+                b->sources[b->current_sources] = -1;
+            }
+        }
     }
 }
 

@@ -337,7 +337,6 @@ void team_item_explode(Vec3 p, int team)
     ClientState::minivox_list->unset_size(); // TODO : deprecate?
 }
 
-
 void agent_bleed(float x, float y, float z)
 {
     if (!Options::animations) return;
