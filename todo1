@@ -751,3 +751,5 @@ ammo drops
 
 add sfx
 radial subscriptions of agents to items/mobs
+
+add file error handling to logger

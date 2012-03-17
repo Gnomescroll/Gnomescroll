@@ -27,20 +27,50 @@ static const char UNKNOWN_FN[] = "unknown";
 static const char FILENAME_FMT[] = "%s%s-%lld.log";
 static const char LOG_DIR[] = "./log/";
 
+static const char LOG_MSG_FMT[] = "%s:%d %s -- %s";
+static const int LOG_MSG_MAX_LEN = 2048;
+static char* log_buffer = NULL;
+
 static const LogType DEFAULT_TYPE = GENERIC;
 static const LogLevel DEFAULT_LEVEL = ALWAYS;
 
 static FILE* log_files[N_LOG_FILES] = {NULL};
 static char* log_filenames[N_LOG_FILES] = {NULL};
 
+void shutdown_file(FILE* f)
+{
+    if (f == NULL) return;
+    fclose(f);
+}
+
+void shutdown_file(LogType type)
+{
+    shutdown_file(log_files[type]);
+    log_files[type] = NULL;
+}
+
+bool file_ok(FILE* f)
+{
+    if (feof(f) || ferror(f))
+        return false;
+    return true;
+}
 
 FILE* get_file_descriptor(LogType type, LogLevel level)
 {
     if (Options::logger)
     {
+        FILE *f;
         if (type < 0 || type >= N_LOG_FILES)
-            return log_files[UNKNOWN];
-        return log_files[type];
+            f = log_files[UNKNOWN];
+        else
+            f = log_files[type];
+        if (!file_ok(f))
+        {
+            shutdown_file(type);
+            return NULL;
+        }
+        return f;
     }
     else
     {
@@ -51,31 +81,42 @@ FILE* get_file_descriptor(LogType type, LogLevel level)
 }
 
 // fprintf wrapper
-int print(LogType type, LogLevel level, const char* fmt, ...)
+int print(LogType type, LogLevel level, const char* file, int line, const char* function, char* fmt, ...)
 {
-    va_list args;
-    va_start(args, fmt);
+    if (log_buffer == NULL) return -1;
     FILE* f = get_file_descriptor(type, level);
     if (f == NULL) return -1;
-    int res = fprintf(f, fmt, args);
+
+    int len = strlen(file) + 10 + strlen(function) + strlen(LOG_MSG_FMT) - 8;
+    int remain = LOG_MSG_MAX_LEN - len - 1;
+    len = strlen(fmt);
+    if (len > remain)
+        fmt[remain] = '\0';
+    sprintf(log_buffer, LOG_MSG_FMT, file, line, function, fmt);
+
+    va_list args;
+    va_start(args, fmt);
+    int res = vfprintf(f, log_buffer, args);
+    va_end(args);
+    if (res < 0)
+        shutdown_file(type);
+    return res;
+}
+
+int print(LogType type, const char* file, int line, const char* function, char* fmt, ...)
+{
+    va_list args;
+    va_start(args, fmt);
+    int res = print(type, DEFAULT_LEVEL, file, line, function, fmt, args);
     va_end(args);
     return res;
 }
 
-int print(LogType type, const char* fmt, ...)
+int print(const char* file, int line, const char* function, char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-    int res = print(type, DEFAULT_LEVEL, fmt, args);
-    va_end(args);
-    return res;
-}
-
-int print(const char* fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    int res = print(DEFAULT_TYPE, DEFAULT_LEVEL, fmt, args);
+    int res = print(DEFAULT_TYPE, DEFAULT_LEVEL, file, line, function, fmt, args);
     va_end(args);
     return res;
 }
@@ -131,28 +172,39 @@ void free_filenames()
 void open_files()
 {
     for (int i=0; i<N_LOG_FILES; i++)
+    {
         log_files[i] = fopen(log_filenames[i], "w");
+        if (log_files[i] != NULL && feof(log_files[i]))
+        {
+            fclose(log_files[i]);
+            log_files[i] = NULL;
+        }
+    }
 }
 
 void close_files()
 {
     for (int i=0; i<N_LOG_FILES; i++)
         if (log_files[i] != NULL)
+        {
             fclose(log_files[i]);
+            log_files[i] = NULL;
+        }
 }
 
-void flush_files()
-{   // buffers will flush on their own. DO NOT USE THIS UNLESS THERE IS PROBLEM
-    for (int i=0; i<N_LOG_FILES; i++)
-        if (log_files[i] != NULL)
-            fflush(log_files[i]);
-}
+//void flush_files()
+//{   // buffers will flush on their own. DO NOT USE THIS UNLESS THERE IS PROBLEM
+    //for (int i=0; i<N_LOG_FILES; i++)
+        //if (log_files[i] != NULL)
+            //fflush(log_files[i]);
+//}
 
 void init()
 {
     if (!Options::logger) return;
     generate_filenames();
     open_files();
+    log_buffer = (char*)malloc(sizeof(char) * LOG_MSG_MAX_LEN);
 }
 
 void teardown()
@@ -160,6 +212,8 @@ void teardown()
     if (!Options::logger) return;
     close_files();
     free_filenames();
+    if (log_buffer != NULL)
+        free(log_buffer);
 }
 
 } // Log

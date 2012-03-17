@@ -90,8 +90,7 @@ void ChatClientChannel::add_message(ChatMessage* m)
     {
         // remove back
         if (this->tail == NULL)
-            //printf("WARNING ChatInput::add_message -- tail is NULL but history full\n");
-            Log::print(Log::CHAT, Log::WARNING, "WARNING ChatInput::add_message -- tail is NULL but history full\n");
+            printlog(Log::CHAT, Log::WARNING, "tail is NULL but history full\n");
             
         ChatMessageHistoryObject* delete_me = this->tail;
         this->tail = delete_me->next;
@@ -127,8 +126,7 @@ void ChatClientChannel::clear_history()
         freed++;
     }
     if (freed != history_size)
-        //printf("WARNING ~ChatClientChannel -- freed %d but history_size=%d\n", freed, history_size);
-        Log::print(Log::CHAT, Log::WARNING, "~ChatClientChannel -- freed %d but history_size=%d\n", freed, history_size);
+        printlog(Log::CHAT, Log::WARNING, "freed %d but history_size=%d\n", freed, history_size);
     this->history = NULL;
 }
 
@@ -182,8 +180,7 @@ void ChatInput::add_to_history(char *s)
     if (history_size >= CHAT_CLIENT_INPUT_HISTORY_MAX)
     {   // remove tail
         if (this->history_tail == NULL)
-            //printf("WARNING ChatInput::add_to_history -- tail is NULL but history full\n");
-            Log::print(Log::CHAT, Log::WARNING, "ChatInput::add_to_history -- tail is NULL but history full\n");
+            printlog(Log::CHAT, Log::WARNING, "tail is NULL but history full\n");
 
         ChatInputHistoryObject* delete_me = this->history_tail;
         this->history_tail = delete_me->next;
@@ -407,8 +404,7 @@ bool ChatInput::route_command()
         if (spawner_team_index == 0)    // could be legitimate 0
             if (spawner[0] != '0')
                 return false;
-        //printf("Chat select spawner %d\n", spawner_team_index);
-        Log::print(Log::CHAT, "Chat select spawner %d\n", spawner_team_index);
+        printlog(Log::CHAT, Log::ALWAYS, "Chat select spawner %d\n", spawner_team_index);
         if (spawner_team_index == 0)
             spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
         choose_spawn_location_CtoS msg;
@@ -467,8 +463,7 @@ void ChatClient::received_message(int channel, int sender, char* payload)
 
     if (chan == NULL)
     {
-        //printf("ChatClient::add_message -- unknown message channel %d\n", channel);
-        Log::print(Log::CHAT, "ChatClient::add_message -- unknown message channel %d\n", channel);
+        printlog(Log::CHAT, Log::ALWAYS, "unknown message channel %d\n", channel);
         return;
     }
 

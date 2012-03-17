@@ -1,5 +1,7 @@
 #pragma once
 
+#define printlog(TYPE, LEVEL, FMT, ...) do { Log::print(TYPE, LEVEL, __FILE__, __LINE__, __FUNCTION__, (char*)FMT , ##__VA_ARGS__); } while(0)
+
 namespace Log
 {
     
@@ -28,9 +30,9 @@ typedef enum
     ERROR
 } LogLevel;
 
-int print(LogType type, LogLevel level, const char* fmt, ...);
-int print(LogType type, const char* fmt, ...);
-int print(const char* fmt, ...);
+int print(LogType type, LogLevel level, const char* file, int line, const char* function, char* fmt, ...);
+int print(LogType type, const char* file, int line, const char* function, char* fmt, ...);
+int print(const char* file, int line, const char* function, char* fmt, ...);
 
 void init();
 void teardown();
