@@ -628,7 +628,7 @@ Reduce glBlend calls to 3 (instead of 2 + once for every texture swap)
 simple leg animation
 ====================
 
-Mar13
+Mar14
 
 fix bug when holding left+right or forward+backward (but nothing else) at the same time (should: stay; does: jitter, or move in one of the directions)
 sound leveller script
@@ -637,7 +637,7 @@ more robust wav file reading
 serverside grenade shrapnel, part1
 ====================
 
-Mar14
+Mar15
 
 -WORK-
 
@@ -646,10 +646,19 @@ improve grenade shrapnel
 --less resources
 
 revert all grenade shrapnel; use old method for grenade damage
-
 server production binary is named "gnomescroll_server"
-  
+lunar map  
 ====================
+
+Mar16
+
+change coin rewards
+
+BUILD
+
+use agent_camera for all hitscan/player block methods (was using camera_state but this is off?)
+
+
 
 Animations
 --Keyframes?
@@ -732,7 +741,6 @@ update team name
 ============
 BUILD 6514 BUGZ
 
-pick/place does not seem to be using camera state
 cull/cap grenade fx, or implement "virtual voices"
 dont count shooting dead bodies as kills (its happening for points)
 turret kills should count for the owner -- give a message (X's turret Killed Y)

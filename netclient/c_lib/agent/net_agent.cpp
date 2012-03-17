@@ -681,9 +681,7 @@ inline void hitscan_object_CtoS::handle()
             if (agent == NULL || agent->vox == NULL) return;
             agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
             // apply damage
-            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            if (dmg_health <= 0)
-                a->status.add_coins(COINS_PER_AGENT_KILL);
+            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
@@ -713,7 +711,7 @@ inline void hitscan_object_CtoS::handle()
             // apply damage
             dmg_health = spawner->take_damage(spawner_dmg);
             if (dmg_health <= 0)
-            {
+            {   // TODO -- add coins inside the take_damage() method
                 int coins = spawner->get_coins_for_kill(a->id, a->status.team);
                 a->status.add_coins(coins);
             }

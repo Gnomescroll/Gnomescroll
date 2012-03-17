@@ -262,19 +262,24 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
     return killed;
 }
 
-void Agent_status::kill(int victim_id) {
-    if (victim_id == this->a->id) {
+void Agent_status::kill(int victim_id)
+{
+    if (victim_id == this->a->id)
+    {
         suicides++;
         AgentSuicides_StoC as;
         as.id = this->a->id;
         as.suicides = suicides;
         as.broadcast();
-    } else {
+    }
+    else
+    {
         kills++;
         AgentKills_StoC ak;
         ak.id = this->a->id;
         ak.kills = kills;
         ak.broadcast();
+        this->add_coins(COINS_PER_AGENT_KILL);
     }
 }
 
