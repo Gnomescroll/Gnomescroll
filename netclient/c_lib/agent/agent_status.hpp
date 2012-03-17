@@ -11,15 +11,6 @@ const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
 const int SLIME_KILLS_PER_COIN = 1;
 const int COINS_PER_AGENT_KILL = 5;
 
-typedef enum AgentDeathMethod
-{
-    DEATH_NORMAL = 0,
-    DEATH_HEADSHOT,
-    DEATH_GRENADE,
-    DEATH_FALL,
-    DEATH_BELOW_MAP
-} AgentDeathMethod;
-
 class Agent_state;  // forward declaration
 
 // Use for:

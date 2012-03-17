@@ -657,14 +657,11 @@ change coin rewards
 BUILD
 
 use agent_camera for all hitscan/player block methods (was using camera_state but this is off?)
+fix bug where you get $$ for shooting dead bodies 
 
-
+====================
 
 Animations
---Keyframes?
---Splines/interpolated between points
-----If can say "here is the standing leg vector, here is the leg stretched furthest when walking" and get the angle, i can do this
-Swing legs
 Gun model
 Gun in first person and zoomed perspectives
 
@@ -742,7 +739,6 @@ update team name
 BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
-dont count shooting dead bodies as kills (its happening for points)
 turret kills should count for the owner -- give a message (X's turret Killed Y)
 
 spawner not falling when attached to the side of a thing

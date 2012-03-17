@@ -12,6 +12,18 @@ enum Object_types
     OBJ_TYPE_TURRET
 };
 
+typedef enum
+{
+    DEATH_NORMAL = 0,
+    DEATH_HEADSHOT,
+    DEATH_GRENADE,
+    DEATH_FALL,
+    DEATH_BELOW_MAP,
+    DEATH_TURRET,
+    DEATH_SLIME
+} AgentDeathMethod;
+
+
 #define COST_SPAWNER 5
 #define COST_TURRET 2
 
