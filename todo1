@@ -681,7 +681,12 @@ sound:
 
 updated team name to "Green Team"
 
-logging system (untested)
+logging system
+--records file,line,function, msg+args (requires macro)
+--print levels
+--print categories
+--timestamped log files per category
+--error handling
 ====================
 
 Animations
@@ -752,4 +757,3 @@ ammo drops
 add sfx
 radial subscriptions of agents to items/mobs
 
-add file error handling to logger
