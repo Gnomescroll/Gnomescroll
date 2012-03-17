@@ -20,3 +20,7 @@ const float DEFAULT_MASS = 1.0f;
 #include "./particles/grenade.hpp"
 //#include "./particles/neutron.hpp"
 #include "./particles/cspray.hpp"
+
+#if DC_SERVER
+#include "./particles/grenade_shrapnel.hpp"
+#endif

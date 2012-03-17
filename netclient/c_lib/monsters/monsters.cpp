@@ -41,11 +41,11 @@ Slime::~Slime()
     if (this->vox != NULL)
         delete this->vox;
 
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     Animations::slime_melt(this->x, this->y, this->z);
     #endif
     
-    #ifdef DC_SERVER
+    #if DC_SERVER
     DestroySlime_StoC msg;
     msg.id = this->id;
     msg.broadcast();
@@ -66,7 +66,6 @@ int Slime::take_damage(int dmg)
     return this->health;
 }
 
-
 void Slime::tick() {
 
     if (health <= 0)
@@ -75,7 +74,7 @@ void Slime::tick() {
         return;
     }
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     tick_num++;
     if (tick_num == 30)
     {
@@ -253,12 +252,12 @@ void test(int n)
         y = randrange(0,map_dim.y-1);
         z = _get_highest_open_block(x,y);
         
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         z = map_dim.z-1;
         STATE::slime_list->create(x+0.5,y+0.5,z, 0,0,0);
         #endif
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         Slime* s = STATE::slime_list->create(x+0.5,y+0.5,z, 0,0,0);
         if (s==NULL) return;
         CreateSlime_StoC msg;

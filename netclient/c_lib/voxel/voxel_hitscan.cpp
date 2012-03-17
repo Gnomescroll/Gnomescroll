@@ -70,6 +70,23 @@ bool Voxel_hitscan_list::hitscan(
     return false;
 }
 
+bool Voxel_hitscan_list::point_collision(Vec3 position, Voxel_hitscan_target* target)
+{
+    struct Voxel_hitscan_element* vhe;
+    for (int i=0; i<VOXEL_HITSCAN_LIST_SIZE; i++)
+    {
+        vhe = this->hitscan_list[i];
+        if (vhe == NULL) continue;
+        //if (!vhe->vv->hitscan) continue;  // dont do this check. we are not hitscanning here. example bug: player agent is always hitscan=false when in first person, so he doesnt shoot himself
+        if (vhe->vv->point_collision_test(position, target->voxel))
+        {
+            target->copy_vhe(vhe);
+            return true;
+        }
+    }
+    return false;
+}
+
 void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 {
     this->entity_id = vhe->entity_id;
@@ -81,9 +98,7 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 void Voxel_hitscan_target::copy_voxel(int voxel[3])
 {
     for (int i=0; i<3; i++)
-    {
         this->voxel[i] = voxel[i];
-    }
 }
 
 void Voxel_hitscan_list::register_voxel_volume(Voxel_volume* vv)

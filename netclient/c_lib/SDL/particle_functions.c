@@ -18,9 +18,9 @@ int setShaders() {
     const char * ff = fs;
     const char * gg = gs;
 
-    glShaderSourceARB(v, 1, &vv,NULL);
-    glShaderSourceARB(f, 1, &ff,NULL);
-    glShaderSourceARB(f, 1, &gg,NULL);
+    glShaderSourceARB(v, 1, &vv, NULL);
+    glShaderSourceARB(f, 1, &ff, NULL);
+    glShaderSourceARB(f, 1, &gg, NULL);
 
     free(vs);
     free(fs);

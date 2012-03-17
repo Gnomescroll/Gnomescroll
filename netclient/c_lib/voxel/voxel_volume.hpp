@@ -69,6 +69,7 @@ class Voxel_volume
     void set_parameters(int xdim, int ydim, int zdim, float scale);
 
     void draw_bounding_box();
+    int point_collision_test(Vec3 p, int vxl[3]);
 
     void init(int xdim, int ydim, int zdim, float scale);
     void set_hitscan_properties(short entity_id, short entity_type, short part_id);
@@ -91,12 +92,13 @@ class Voxel_volume
     Tests whether a voxel is occupied, for AO
 */
     inline unsigned int _test_occludes_safe(int x, int y, int z) __attribute((always_inline));
+    inline unsigned int _test_occludes_safe(int x, int y, int z, int vxl[3]) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, Voxel* v) __attribute((always_inline));
     inline void _set(unsigned int x, unsigned int y, unsigned int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a) __attribute((always_inline));
 
 };
 
-void destroy_object_voxel(int id, int type, int part, int voxel[3], int radius);
+void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius);
 
 void init_voxel_volume();
 void teardown_voxel_volume();

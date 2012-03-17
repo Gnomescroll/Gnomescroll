@@ -9,7 +9,7 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <common/enum_types.hpp>
-
+#include <c_lib/common/random.h>
 
 /* properties */
 
@@ -143,6 +143,41 @@ void Grenade::tick()
     this->ttl++;
 }
 
+// vectors in a cube
+//const Vec3 gvset[26] =
+//{
+    //{{  0.57735, 0.57735, 0.57735 }},
+    //{{  0.57735, 0.57735,-0.57735 }},
+    //{{  0.57735,-0.57735, 0.57735 }},
+    //{{ -0.57735, 0.57735, 0.57735 }},
+    //{{  0.57735,-0.57735,-0.57735 }},
+    //{{ -0.57735, 0.57735,-0.57735 }},
+    //{{ -0.57735,-0.57735, 0.57735 }},
+    //{{ -0.57735,-0.57735,-0.57735 }},   //8
+
+    //{{ 0,0,1 }},
+    //{{ 0,1,0 }},
+    //{{ 1,0,0 }},
+    //{{ 0,0,-1 }},
+    //{{ 0,-1,0 }},
+    //{{ -1,0,0 }}, // 6
+
+    //{{ 0,0.70711,0.70711 }},
+    //{{ 0,-0.70711,0.70711 }},
+    //{{ 0,0.70711,-0.70711 }},
+    //{{ 0,-0.70711,-0.70711 }},    // 4
+    
+    //{{ 0.70711,0,0.70711 }},
+    //{{ -0.70711,0,0.70711 }},
+    //{{ 0.70711,0,-0.70711 }},
+    //{{ -0.70711,0,-0.70711 }},    // 4
+
+    //{{ 0.70711,0.70711,0 }},
+    //{{ -0.70711,0.70711,0 }},
+    //{{ 0.70711,-0.70711,0 }},
+    //{{ -0.70711,-0.70711,0 }},    // 4
+//};
+
 void Grenade::explode()
 {
 #if DC_CLIENT
@@ -151,12 +186,33 @@ void Grenade::explode()
 
 #if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
+
+    // leave this for other objects, but agents are damaged by shrapnel now
     ServerState::damage_objects_within_sphere(
         this->vp->p.x, this->vp->p.y, this->vp->p.z,
         GRENADE_DAMAGE_RADIUS,
         GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE
     );
+
+    // create a bunch of grenade shrapnel particles
+    // copied/modified from Animations::grenade_explode
+
+    //const float vel = 15.0f;
+
+    //Grenade_shrapnel* g;
+    //Vec3 cv;
+    //for (int i=0; i<26; i++)
+    //{
+        //cv = vec3_scalar_mult(gvset[i], vel);
+        //g = ServerState::grenade_shrapnel_list->create(
+            //this->vp->p.x, this->vp->p.y, this->vp->p.z,
+            //cv.x, cv.y, cv.z
+        //);
+        //if (g == NULL) break;
+        //g->owner = this->owner;
+    //}
     
+    // apply block damage
     damage_blocks();
 #endif
 }
@@ -186,12 +242,11 @@ void Grenade::damage_blocks()
     int my = (int)y;
     int mz = (int)z;
     
-    int i,j,k;
     int bx,by,bz;
     int dmg=0;
-    for (i=0; i<ir; i++)
-        for (j=0; j<ir; j++)
-            for (k=0; k<ir; k++)
+    for (int i=0; i<ir; i++)
+        for (int j=0; j<ir; j++)
+            for (int k=0; k<ir; k++)
             {
                 dmg = block_damage(i+j+k);
 

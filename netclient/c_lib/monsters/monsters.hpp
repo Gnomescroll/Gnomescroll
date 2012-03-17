@@ -44,7 +44,7 @@ class Slime {
     void set_angles(float theta, float phi);
 
     void init_vox();
-
+    
     int take_damage(int dmg);
 
     explicit Slime(int id);

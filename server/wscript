@@ -3,6 +3,7 @@ VERSION = '0.1'
 
 top = '.'
 out = 'build'
+target = 'run'
 
 import errno
 import os
@@ -179,11 +180,15 @@ def build(bld):
         target='c_lib.map_gen')
 
     # final
+    global target
+    target = "run"
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+        target = "gnomescroll_server"
     bld(features='c cprogram pyembed',
         #use=common_libraries+time_lib + ['c_lib'],
         use=common_libraries,
         source='run.c',
-        target='run')
+        target=target)
 
     # compile python files
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
@@ -216,11 +221,11 @@ def strip_symbols(ctx):
 
 def install_in_ext(ctx):
     global out
-
+    global target
     # Hax to install files into ./ext/, after build
 
     try:
-        run_target = ctx.env.cprogram_PATTERN % 'run'
+        run_target = ctx.env.cprogram_PATTERN % target
         shutil.copy2(os.path.join(out, run_target), './' + run_target)
     except:
         pass

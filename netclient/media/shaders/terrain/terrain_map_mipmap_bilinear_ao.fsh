@@ -1,6 +1,10 @@
 #version 120
 
-#extension GL_EXT_texture_array : enable
+# ifdef GL_EXT_gpu_shader4
+#extension GL_EXT_gpu_shader4 : enable;
+# endif
+
+#extension GL_EXT_texture_array : enable;
 
 varying vec3 texCoord;
 

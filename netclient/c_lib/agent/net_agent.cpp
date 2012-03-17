@@ -520,6 +520,13 @@ inline void alter_item_ownership_StoC::handle()
     }
 }
 
+inline void destroy_voxel_StoC::handle()
+{
+    int voxel[3] = { x,y,z };
+    destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
+    //printf("destroy_voxel_StoC -- %d,%d,%d :: %d,%d,%d :: %d\n", entity_id, entity_type, entity_part, x,y,z, radius);
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -576,6 +583,7 @@ inline void version_StoC::handle(){}
 inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
 inline void alter_item_ownership_StoC::handle(){}
+inline void destroy_voxel_StoC::handle(){}
 
 //for benchmarking
 //static int _total = 0;
@@ -675,7 +683,7 @@ inline void hitscan_object_CtoS::handle()
             // apply damage
             dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             if (dmg_health <= 0)
-                a->status.add_coins(1);
+                a->status.add_coins(COINS_PER_AGENT_KILL);
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
