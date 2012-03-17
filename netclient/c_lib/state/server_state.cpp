@@ -119,6 +119,8 @@ namespace ServerState
             slime_list->destroy(slime->id);
         }
 
+        if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
+
         // spawners
         spawner_list->objects_within_sphere(x,y,z,radius);
         Spawner* s;
@@ -126,8 +128,8 @@ namespace ServerState
         {
             s = spawner_list->filtered_objects[i];
             if (s==NULL) continue;
-            if ((s->get_team() == agent->status.team && s->owner != NO_AGENT_OWNER)
-            && s->owner != agent->id)
+            if ((s->get_team() == agent->status.team && s->get_owner() != NO_AGENT_OWNER)
+            && s->get_owner() != agent->id)
                 continue; // teammates cant kill grenades
             int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
             if (h <= 0 && agent != NULL)
@@ -141,8 +143,8 @@ namespace ServerState
         {
             t = turret_list->filtered_objects[i];
             if (t==NULL) continue;
-            if ((t->get_team() == agent->status.team && t->owner != NO_AGENT_OWNER)
-            && t->owner != agent->id)
+            if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT_OWNER)
+            && t->get_owner() != agent->id)
                 continue; // teammates cant kill turrets
             int h = t->take_damage(GRENADE_TURRET_DAMAGE);
             if (h <= 0 && agent != NULL)

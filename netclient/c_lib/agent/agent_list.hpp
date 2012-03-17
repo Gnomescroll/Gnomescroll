@@ -4,8 +4,6 @@
 
 #include <c_lib/template/object_list.hpp>
 
-const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
-
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {
     private:

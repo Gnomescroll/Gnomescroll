@@ -34,6 +34,8 @@ deaths(0),
 suicides(0),
 slime_kills(0),
 health_max(AGENT_HEALTH),
+owned_spawners(0),
+owned_turrets(0),
 identified(false),
 team(0),
 has_flag(false),
@@ -238,7 +240,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
             case OBJ_TYPE_TURRET:
                 turret = STATE::turret_list->get(inflictor_id);
                 if (turret == NULL) break;
-                attacker = STATE::agent_list->get(turret->owner);
+                attacker = STATE::agent_list->get(turret->get_owner());
                 if (attacker != NULL)
                     attacker->status.kill(this->a->id);
                 break;
@@ -271,7 +273,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
                 // lookup turret object, get owner, this will be the inflictor id
                 turret = ServerState::turret_list->get(inflictor_id);
                 if (turret == NULL) break;
-                inflictor_id = turret->owner;
+                inflictor_id = turret->get_owner();
                 msg.victim = this->a->id;
                 msg.attacker = inflictor_id;
                 msg.method = death_method;    // put headshot, grenades here
@@ -481,7 +483,7 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
 {
     #ifdef DC_SERVER
     if (coins==0) return;
-    if (item >= 0 && !gain_item(item)) return;
+    if (item >= 0 && !can_gain_item(item)) return;
     this->coins -= coins;
     this->send_coin_packet();
     #endif
@@ -529,7 +531,7 @@ bool Agent_status::lose_item(Object_types item)
         case OBJ_TYPE_TURRET:
             if (owned_turrets <= 0)
             {
-                printf("WARNING -- Agent_status::lose_item -- no turrets to lose\n");
+                printf("WARNING -- Agent_status::lose_item -- no turrets to lose. id=%d\n", this->a->id);
                 return false;
             }
             owned_turrets--;

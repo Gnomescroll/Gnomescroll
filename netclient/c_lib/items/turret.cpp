@@ -255,20 +255,27 @@ int Turret::get_team()
     return this->team;
 }
 
-void Turret::set_owner(int owner)
-{
-    this->owner = owner;
-    #if DC_CLIENT
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a != NULL)
-        a->status.gain_item(this->type);
-    #endif
-}
-
 void Turret::set_team(int team)
 {
     this->team = team;
     if (this->vox != NULL) this->vox->update_team_color(this->team);
+}
+
+void Turret::set_owner(int owner)
+{
+    Agent_state* a = STATE::agent_list->get(owner);
+    if (a != NULL)
+        a->status.gain_item(this->type);
+    a = STATE::agent_list->get(this->owner);
+    if (a != NULL)
+        a->status.lose_item(this->type);
+
+    this->owner = owner;
+}
+
+int Turret::get_owner()
+{
+    return this->owner;
 }
 
 void Turret::init_vox()
@@ -319,8 +326,8 @@ Turret::Turret(int id)
 :
 fire_limiter(0),
 team(0),
-id(id),
 owner(0),
+id(id),
 health(TURRET_HEALTH),
 type(OBJ_TYPE_TURRET),
 x(0), y(0), z(0),
@@ -334,8 +341,8 @@ Turret::Turret(int id, float x, float y, float z)
 :
 fire_limiter(0),
 team(0),
-id(id),
 owner(0),
+id(id),
 health(TURRET_HEALTH),
 type(OBJ_TYPE_TURRET),
 x(x), y(y), z(z),
@@ -379,8 +386,18 @@ int Turret::get_coins_for_kill(int owner, int team)
 
 int Turret::take_damage(int dmg)
 {
+    if (this->health <= 0) return 0;
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
+    #if DC_SERVER
+    if (this->health <= 0)
+    {
+        ServerState::damage_objects_within_sphere(
+            this->x, this->y, this->z,
+            TURRET_EXPLOSION_RADIUS, TURRET_EXPLOSION_DAMAGE, this->owner, this->type
+        );
+    }
+    #endif
     return this->health;
 }
 
@@ -599,8 +616,8 @@ void Turret_list::alter_owner(int owner, int new_owner)
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        if (this->a[i]->owner != owner) continue;
-        this->a[i]->owner = new_owner;
+        if (this->a[i]->get_owner() != owner) continue;
+        this->a[i]->set_owner(new_owner);
         alter_item_ownership_StoC msg;
         msg.owner = new_owner;
         msg.id = this->a[i]->id;

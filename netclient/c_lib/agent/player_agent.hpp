@@ -8,12 +8,6 @@
 
 #include <c_lib/state/client_state.hpp>
 
-#define AGENT_STATE_HISTORY_SIZE 64
-#define AGENT_INTERPOLATION_DECAY 0.8f
-
-const int JETPACK_TICKS_MAX = 30 * 10 * 2;
-const int JETPACK_DECAY_TICKS = 30 * 10;
-
 enum active_camera_states {
     net_agent = 0,
     client_side_prediction_interpolated,

@@ -6,23 +6,16 @@
 
 extern VoxDat spawner_vox_dat;
 
-const int SPAWNER_RADIUS = 5;
-const int SPAWNERS_PER_TEAM = 9;
-const int MAX_SPAWNERS = SPAWNERS_PER_TEAM * N_TEAMS;
-const int SPAWNER_HEALTH = 300;
-const float SPAWNER_HEIGHT = 1.9f;
-const int BASE_SPAWN_ID = 255;
-
 class Spawner_create_StoC; // forward decl
 
 class Spawner
 {
     private:
         int team;
+        int owner;
     public:
         int id;
         int team_index;
-        int owner;
         int health;
         Object_types type;
 
@@ -35,6 +28,7 @@ class Spawner
         void init_vox();
         int get_team();
         void set_team(int team);
+        int get_owner();
         void set_owner(int owner);
 
         void set_position(float x, float y, float z);

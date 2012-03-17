@@ -59,6 +59,7 @@
 #include <c_lib/particles/particle_lib.cpp>
 
 /* Items */
+#include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
 
 /* Game Stuff */

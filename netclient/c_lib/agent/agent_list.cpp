@@ -10,6 +10,8 @@
 
 */
 
+const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
+
 void Agent_list::update_map_manager_positions()
 {
 #ifdef DC_SERVER

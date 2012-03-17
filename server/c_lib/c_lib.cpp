@@ -53,15 +53,20 @@
 #include <c_lib/voxel/voxel_loader.cpp>
 #include <c_lib/voxel/vox_dat_init.cpp>
 
+/* Particles */
 #include <c_lib/particles/particle_lib.cpp>
 
+/* Items */
+#include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
 
+/* Game modes */
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/ctf.cpp>
 #include <c_lib/game/teams.cpp>
 #include <c_lib/game/packets.cpp>
 
+/* Agents */
 #include "./agent/agent_include.h"
 
 /* Weapons */

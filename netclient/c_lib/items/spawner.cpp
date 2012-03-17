@@ -147,14 +147,22 @@ void Spawner::get_spawn_point(int agent_height, int* spawn)
     spawn[2] = _get_highest_open_block(spawn[0], spawn[1], agent_height);
 }
 
+int Spawner::get_owner()
+{
+    return this->owner;
+}
+
 void Spawner::set_owner(int owner)
 {
-    this->owner = owner;
-    #if DC_CLIENT
     Agent_state* a = STATE::agent_list->get(owner);
     if (a != NULL)
         a->status.gain_item(this->type);
-    #endif
+    a = STATE::agent_list->get(this->owner);
+    if (a != NULL)
+        a->status.lose_item(this->type);
+
+    this->owner = owner;
+
 }
 
 void Spawner::set_team(int team)
@@ -210,9 +218,9 @@ void Spawner::update()
 Spawner::Spawner(int id)
 :
 team(0),
+owner(0),
 id(id),
 team_index(-1),
-owner(0),
 type(OBJ_TYPE_SPAWNER),
 x(0), y(0), z(0),
 theta(0), phi(0),
@@ -223,9 +231,9 @@ vox(NULL)
 Spawner::Spawner(int id, float x, float y, float z)
 :
 team(0),
+owner(0),
 id(id),
 team_index(-1),
-owner(0),
 health(SPAWNER_HEALTH),
 type(OBJ_TYPE_SPAWNER),
 x(x), y(y), z(z),
@@ -463,8 +471,8 @@ void Spawner_list::alter_owner(int owner, int new_owner)
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        if (this->a[i]->owner != owner) continue;
-        this->a[i]->owner = new_owner;
+        if (this->a[i]->get_owner() != owner) continue;
+        this->a[i]->set_owner(new_owner);
         alter_item_ownership_StoC msg;
         msg.owner = new_owner;
         msg.id = this->a[i]->id;

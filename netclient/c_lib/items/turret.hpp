@@ -7,19 +7,6 @@
 
 extern VoxDat turret_vox_dat;
 
-const int TURRETS_PER_PLAYER = 10;
-//const int MAX_TURRETS = TURRETS_PER_PLAYER * AGENT_MAX;
-const int MAX_TURRETS = 256;
-const int TURRET_HEALTH = 125;
-const float TURRET_HEIGHT = 1.9f;
-const float TURRET_CAMERA_HEIGHT = 1.6f;
-const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;    // same as agent
-const int TURRET_FIRE_LIMIT = 23*2; // ticks
-const int TURRET_BLOCK_DAMAGE = 8;
-//const int TURRET_AGENT_DAMAGE = 15;
-const int TURRET_AGENT_DAMAGE = 10;
-const float TURRET_TARGET_LOCK_CHANCE = 0.80f;  // likelihood of acquiring a target in view
-
 class turret_create_StoC; // forward decl
 
 class Turret
@@ -27,9 +14,9 @@ class Turret
     private:
         unsigned int fire_limiter;
         int team;
+        int owner;
     public:
         int id;
-        int owner;
         int health;
         Object_types type;
 
@@ -41,8 +28,9 @@ class Turret
         void init_vox();
         int get_team();
         void set_team(int team);
+        int get_owner();
         void set_owner(int owner);
-
+        
         void set_position(float x, float y, float z);
         
         int get_coins_for_kill(int owner, int team);

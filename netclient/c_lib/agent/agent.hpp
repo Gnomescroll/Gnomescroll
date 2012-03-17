@@ -4,25 +4,6 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/defines.h>
 
-const int AGENT_MAX = PLAYERS_MAX;
-
-#define AGENT_HEIGHT 2.8f
-#define CAMERA_HEIGHT 2.5f
-
-#define AGENT_HEIGHT_CROUCHED 1.8f
-#define CAMERA_HEIGHT_CROUCHED 1.5f;
-
-#define CAMERA_HEIGHT_DEAD 0.3f;
-
-#define AGENT_SPEED 1.9f    // testing this, 2.8 seems too fast
-//#define AGENT_SPEED 2.8f  // was default
-//#define AGENT_SPEED 28.0f // uncomment for testing high speed
-#define AGENT_SPEED_CROUCHED 0.8f
-
-#define AGENT_BOX_RADIUS 0.38f
-
-const int NO_AGENT_OWNER = 255; // works as long as < AGENT_MAX 
-
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
 #include <c_lib/agent/agent_event.hpp>
