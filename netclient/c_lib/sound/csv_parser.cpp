@@ -22,12 +22,12 @@ typedef enum
 } ColumnName;
 
 //defaults
-const float DEFAULT_PITCH = 1.0;
-const float DEFAULT_GAIN = 1.0;
-const float DEFAULT_MAX_DISTANCE = 128.0;
-const float DEFAULT_REFERENCE_DISTANCE = 16.0;
-const float DEFAULT_MINIMUM_GAIN = 0.0;
-const float DEFAULT_MAXIMUM_GAIN = 1.0;
+const float GS_DEFAULT_PITCH = 1.0;
+const float GS_DEFAULT_GAIN = 1.0;
+const float GS_DEFAULT_MAX_DISTANCE = 128.0;
+const float GS_DEFAULT_REFERENCE_DISTANCE = 16.0;
+const float GS_DEFAULT_MINIMUM_GAIN = 0.0;
+const float GS_DEFAULT_MAXIMUM_GAIN = 1.0;
 
 void parse_sound_triggers(char *fn)
 {
@@ -202,12 +202,12 @@ void parse_sound_triggers(char *fn)
                 // set strings
                 if (set_soundfile(n_sounds, function_name, filename))
                 {   // set properties
-                    pitch_value = (pitch_index) ? atof(pitch) : DEFAULT_PITCH;
-                    gain_value = (gain_index) ? atof(gain) : DEFAULT_GAIN;
-                    max_distance_value = (max_distance_index) ? atof(max_distance) : DEFAULT_MAX_DISTANCE;
-                    reference_distance_value = (reference_distance_index) ? atof(reference_distance) : DEFAULT_REFERENCE_DISTANCE;
-                    minimum_gain_value = (minimum_gain_index) ? atof(minimum_gain) : DEFAULT_MINIMUM_GAIN;
-                    maximum_gain_value = (maximum_gain_index) ? atof(maximum_gain) : DEFAULT_MAXIMUM_GAIN;
+                    pitch_value = (pitch_index) ? atof(pitch) : GS_DEFAULT_PITCH;
+                    gain_value = (gain_index) ? atof(gain) : GS_DEFAULT_GAIN;
+                    max_distance_value = (max_distance_index) ? atof(max_distance) : GS_DEFAULT_MAX_DISTANCE;
+                    reference_distance_value = (reference_distance_index) ? atof(reference_distance) : GS_DEFAULT_REFERENCE_DISTANCE;
+                    minimum_gain_value = (minimum_gain_index) ? atof(minimum_gain) : GS_DEFAULT_MINIMUM_GAIN;
+                    maximum_gain_value = (maximum_gain_index) ? atof(maximum_gain) : GS_DEFAULT_MAXIMUM_GAIN;
                     set_soundfile_properties(n_sounds, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value);
                     n_sounds++;
                 }
