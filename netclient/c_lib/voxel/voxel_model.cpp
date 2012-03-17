@@ -4,6 +4,7 @@
 
 #include <c_lib/voxel/voxel_hitscan.hpp>
 #include <defines.h>
+#include <common/random.h>
 
 // forward declarations
 #ifdef DC_CLIENT
@@ -585,6 +586,11 @@ void Voxel_model::restore(int team)
 
 bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
 {   // ray cast from source to each body part center (shuffled)
+    return this->in_sight_of(source, sink, 0.0f);
+}
+
+bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink, float failure_chance)
+{   // ray cast from source to each body part center (shuffled)
     int part_numbers[this->n_parts];
     for (int i=0; i<this->n_parts; i++)
         part_numbers[i] = i;
@@ -596,7 +602,7 @@ bool Voxel_model::in_sight_of(Vec3 source, Vec3* sink)
     {
         vv = &this->vv[part_numbers[i]];
         c = vv->get_center(); // ray cast to center of volume
-        if (ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
+        if (randf() > failure_chance && ray_cast_simple(source.x, source.y, source.z, c.x, c.y, c.z))
         {
             *sink = c;
             return true;

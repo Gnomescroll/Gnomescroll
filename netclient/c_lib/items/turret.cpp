@@ -395,7 +395,7 @@ void Turret::acquire_target()
     for (int i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         agent = agent_list->filtered_objects[chosen[i]];
-        if (agent->in_sight_of(source, &sink))
+        if (agent->in_sight_of(source, &sink, 1-TURRET_TARGET_LOCK_CHANCE))
             break;
         agent = NULL;
     }

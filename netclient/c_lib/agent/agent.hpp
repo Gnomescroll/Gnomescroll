@@ -103,6 +103,7 @@ class Agent_state {
         void tick();
 
         bool in_sight_of(Vec3 source, Vec3 *sink);
+        bool in_sight_of(Vec3 source, Vec3 *sink, float failure_chance);
 
         void set_state(float  _x, float _y, float _z, float _vx, float _vy, float _vz);
         void set_angles(float theta, float phi);

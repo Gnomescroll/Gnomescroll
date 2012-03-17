@@ -14,10 +14,11 @@ const int TURRET_HEALTH = 125;
 const float TURRET_HEIGHT = 1.9f;
 const float TURRET_CAMERA_HEIGHT = 1.6f;
 const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;    // same as agent
-const int TURRET_FIRE_LIMIT = 23; // ticks
+const int TURRET_FIRE_LIMIT = 23*2; // ticks
 const int TURRET_BLOCK_DAMAGE = 8;
 //const int TURRET_AGENT_DAMAGE = 15;
 const int TURRET_AGENT_DAMAGE = 10;
+const float TURRET_TARGET_LOCK_CHANCE = 0.80f;  // likelihood of acquiring a target in view
 
 class turret_create_StoC; // forward decl
 

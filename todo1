@@ -742,10 +742,8 @@ BUILD 6514 BUGZ
 
 cull/cap grenade fx, or implement "virtual voices"
 
-dead body model not right?
-
 Adjust turret behavior
---lower firing rate
+--lower firing rate     DONE
 --caps per team
 --caps per player
 --% chance of failing to acquire target
