@@ -1,7 +1,7 @@
 #version 120
 
 # ifdef GL_EXT_gpu_shader4
-#extension GL_EXT_gpu_shader4 : enable
+#extension GL_EXT_gpu_shader4 : enable;
 # endif
 
 /*
