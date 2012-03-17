@@ -460,6 +460,7 @@ void Agent_status::set_team(int team)
 
     #ifdef DC_SERVER
     this->set_spawner();    // choose new spawn point
+    ServerState::revoke_ownership(this->a->id); // revoke ownership of items
 
     // kill player
     this->dead = true;

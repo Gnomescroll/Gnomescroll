@@ -268,6 +268,11 @@ namespace ServerState
         ctf->remove_agent_from_team(agent_id);
         send_disconnect_notice(agent_id);
         agent_list->destroy(agent_id);
+        revoke_ownership(agent_id);
+    }
+
+    void revoke_ownership(int agent_id)
+    {
         turret_list->alter_owner(agent_id, NO_AGENT);
         spawner_list->alter_owner(agent_id, NO_AGENT);
     }

@@ -45,6 +45,7 @@ namespace ServerState
 
     //void send_disconnect_notice(int client_id);
     void agent_disconnect(int client_id);
+    void revoke_ownership(int agent_id);
 
     char* agent_name(int id) GNOMESCROLL_API;
 
