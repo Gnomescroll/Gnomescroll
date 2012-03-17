@@ -30,7 +30,8 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner, Object_types inflictor_type
+        int dmg, int owner, Object_types inflictor_type,
+        bool suicidal=true
     );
 
     void server_tick() GNOMESCROLL_API;

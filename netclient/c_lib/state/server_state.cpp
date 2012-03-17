@@ -86,7 +86,8 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner, Object_types inflictor_type
+        int dmg, int owner, Object_types inflictor_type,
+        bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
         Agent_state* agent = agent_list->get(owner);
@@ -104,6 +105,7 @@ namespace ServerState
         {
             a = agent_list->filtered_objects[i];
             if (a == NULL) continue;
+            if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
             dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
             a->status.apply_damage(dmg, owner, inflictor_type);
