@@ -135,6 +135,7 @@ void Agent_state::tick()
         this->status.die(this->id, OBJ_TYPE_AGENT, DEATH_BELOW_MAP);
     else
         this->status.respawn();
+    this->status.tick();
     #endif
 }
 
@@ -433,7 +434,8 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
     #endif
 }
 
-void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz) {
+void Agent_state::set_state(float  x, float y, float z, float vx, float vy, float vz)
+{
     s.x = x;
     s.y = y;
     s.z = z;
@@ -442,12 +444,14 @@ void Agent_state::set_state(float  x, float y, float z, float vx, float vy, floa
     s.vz = vz;
 }
 
-void Agent_state::set_angles(float theta, float phi) {
+void Agent_state::set_angles(float theta, float phi)
+{
     s.theta = theta;
     s.phi = phi;
 }
 
-void Agent_state::get_spawn_point(int* spawn) {
+void Agent_state::get_spawn_point(int* spawn)
+{
     if (this->status.team == 0)
     {
         spawn[0] = map_dim.x/2;
@@ -489,8 +493,7 @@ void Agent_state::get_spawn_point(int* spawn) {
 }
 
 void Agent_state::spawn_state()
-{
-    // update position
+{   // update position
     int spawn[3];
     this->get_spawn_point(spawn);
     float theta = this->status.get_spawn_angle();
@@ -890,7 +893,6 @@ void Agent_state::update_model()
     this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
     this->vox->set_draw(true);
     this->vox->set_hitscan(true);
-
     #endif
     
     #if DC_SERVER
@@ -924,4 +926,14 @@ void Agent_state::update_model()
     this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
     this->vox->set_hitscan(true);
     #endif
+}
+
+bool Agent_state::near_base()
+{
+            bool near_base();   // is within the base's spawn radius
+    Base* b = STATE::ctf->get_base(this->status.team);
+    if (b == NULL) return false;
+    if (distancef_squared(b->x, b->y, b->z, this->s.x, this->s.y, this->s.z) < BASE_SPAWN_RADIUS*BASE_SPAWN_RADIUS)
+        return true;
+    return false;
 }

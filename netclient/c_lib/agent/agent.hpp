@@ -118,7 +118,7 @@ class Agent_state {
         float current_height();
         int current_height_int();
         int get_facing_block_type();
-
+        bool near_base();   // is within the base's spawn radius
         void init_vox();
 
         float camera_z();

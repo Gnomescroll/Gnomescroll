@@ -750,9 +750,9 @@ Adjust turret behavior
 --% chance of failing to acquire target     DONE
 --small radius damage when destroyed        DONE
 ----does not affect the owner               DONE
+--turrets cant kill newly spawned players (5 seconds)  DONE
 
 base spawn radius is also turret block radius
-turrets cant kill frshly spawned players (~5 seconds)
 
 --animation for turret explosion
 --animation for spawner explosion

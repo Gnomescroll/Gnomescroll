@@ -463,8 +463,6 @@ void Turret::acquire_target()
                 target_type = Hitscan::HITSCAN_TARGET_NONE;
                 break;
             }
-            // damage
-            agent->status.apply_damage(TURRET_AGENT_DAMAGE, this->id, OBJ_TYPE_TURRET, target.part_id);
             // fire packet
             object_msg.id = this->id;
             object_msg.target_id = target.entity_id;
@@ -474,8 +472,11 @@ void Turret::acquire_target()
             object_msg.vy = target.voxel[1];
             object_msg.vz = target.voxel[2];
             object_msg.broadcast();
-            // damage model
-            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 2);        
+            if (agent->status.lifetime > AGENT_TURRET_PROTECTION_DURATION && !agent->near_base())
+            {
+                agent->status.apply_damage(TURRET_AGENT_DAMAGE, this->id, OBJ_TYPE_TURRET, target.part_id);     // damage agent
+                destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, 2);    // damage model
+            }
             break;
             
         case Hitscan::HITSCAN_TARGET_BLOCK:

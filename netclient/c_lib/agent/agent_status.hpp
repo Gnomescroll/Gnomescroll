@@ -49,6 +49,10 @@ class Agent_status {
 
         int base_restore_rate_limiter;
 
+        int lifetime;
+
+        void tick();
+
         bool set_name(char* n); // return true if the new name is different
         void check_missing_name();
         

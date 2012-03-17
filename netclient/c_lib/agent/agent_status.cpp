@@ -42,7 +42,8 @@ has_flag(false),
 flag_captures(0),
 coins(0),
 vox_crouched(false),
-base_restore_rate_limiter(0)
+base_restore_rate_limiter(0),
+lifetime(0)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
 }
@@ -363,7 +364,7 @@ void Agent_status::respawn() {
     if (respawn_countdown > 0) return;  // abort if not ready
     
     a->spawn_state();
-    
+    this->lifetime = 0;
     // restore health
     this->restore_health();
     // restore ammo
@@ -598,6 +599,14 @@ void Agent_status::check_if_at_base()
         }
     }
 #endif
+}
+
+void Agent_status::tick()
+{
+    if (this->dead)
+        this->lifetime = 0;
+    else
+        this->lifetime++;
 }
 
 void switch_ownership(Object_types item, int owner, int new_owner)
