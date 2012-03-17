@@ -683,7 +683,7 @@ inline void hitscan_object_CtoS::handle()
             // apply damage
             dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             if (dmg_health <= 0)
-                a->status.add_coins(1);
+                a->status.add_coins(COINS_PER_AGENT_KILL);
             //x = agent->s.x;
             //y = agent->s.y;
             //z = agent->s.z;
