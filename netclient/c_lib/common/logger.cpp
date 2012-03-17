@@ -150,12 +150,14 @@ void flush_files()
 
 void init()
 {
+    if (!Options::logger) return;
     generate_filenames();
     open_files();
 }
 
 void teardown()
 {
+    if (!Options::logger) return;
     close_files();
     free_filenames();
 }

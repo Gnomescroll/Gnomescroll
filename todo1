@@ -680,6 +680,8 @@ sound:
 --fix loading of single file multiple times
 
 updated team name to "Green Team"
+
+logging system (untested)
 ====================
 
 Animations
@@ -749,5 +751,3 @@ ammo drops
 
 add sfx
 radial subscriptions of agents to items/mobs
-
-logging system
