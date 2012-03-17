@@ -21,6 +21,7 @@ void terrain_sparks(float x, float y, float z);
 void grenade_explode(float x, float y, float z);
 
 void slime_melt(float x, float y, float z);
+void team_item_explode(Vec3 p, int team);
 
 void agent_bleed(float x, float y, float z);
 void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector

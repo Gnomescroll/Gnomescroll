@@ -751,8 +751,7 @@ Adjust turret behavior
 --small radius damage when destroyed        DONE
 ----does not affect the owner               DONE
 --turrets cant kill newly spawned players (5 seconds)  DONE
-
-base spawn radius is also turret block radius
+--turrets cant kill agents within base spawner radius
 
 --animation for turret explosion
 --animation for spawner explosion

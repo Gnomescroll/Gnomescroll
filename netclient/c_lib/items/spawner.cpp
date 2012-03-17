@@ -313,13 +313,19 @@ Spawner::~Spawner()
     msg.id = this->id;
     msg.broadcast();
     #endif
-    if (this->vox != NULL) delete this->vox;
+
+    #if DC_CLIENT
+    Animations::team_item_explode(this->vox->get_part(0)->get_center(), this->team);
+    #endif
+
     if (this->owner != NO_AGENT)
     {
         Agent_state* a = STATE::agent_list->get(owner);
         if (a != NULL)
             a->status.lose_item(this->type);
     }
+    if (this->vox != NULL) delete this->vox;
+
 }
 
 /* Spawner list */

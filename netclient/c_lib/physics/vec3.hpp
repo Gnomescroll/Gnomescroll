@@ -76,6 +76,17 @@ struct Vec3 vec3_cross(struct Vec3 v1, struct Vec3 v2)
     return v;
 }
 
+static struct Vec3 vec3_mult(struct Vec3 vl, struct Vec3 v2) __attribute((always_inline));
+
+struct Vec3 vec3_mult(struct Vec3 v1, struct Vec3 v2)
+{
+    struct Vec3 v;
+    v.x = v1.x * v2.x;
+    v.y = v1.y * v2.y;
+    v.z = v1.z * v2.z;
+    return v;
+}
+
 static struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline)); 
 
 struct Vec3 vec3_sub(struct Vec3 v1, struct Vec3 v2)
