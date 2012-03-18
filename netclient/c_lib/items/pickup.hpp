@@ -28,10 +28,11 @@ class PickupItem: public Particle, public BillboardSprite, public Pickup
 {
     private:
         bool broadcast_death;
+        int picked_up_by;
     public:
         virtual void init();
         void tick();
-        void schedule_death_broadcast();
+        void was_picked_up(int agent_id);
 
         void born();
         void die();

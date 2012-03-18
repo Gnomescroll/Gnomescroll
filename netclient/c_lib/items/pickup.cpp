@@ -33,16 +33,17 @@ void PickupItem::tick()
     int agent_id = this->nearest_agent_in_range(this->vp->p);
     if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, (Object_types)this->type))
     {   // was picked up, die
-        this->schedule_death_broadcast();
+        this->was_picked_up(agent_id);
         this->ttl = this->ttl_max;
     }
     #endif
     this->ttl++;
 }
 
-void PickupItem::schedule_death_broadcast()
+void PickupItem::was_picked_up(int agent_id)
 {
     this->broadcast_death = true;
+    this->picked_up_by = agent_id;
 }
 
 void PickupItem::die()
@@ -50,9 +51,11 @@ void PickupItem::die()
     #if DC_SERVER
     if (this->broadcast_death)
     {
-        item_destroy_StoC msg;
+        //item_destroy_StoC msg;
+        item_picked_up_StoC msg;
         msg.type = this->type;
         msg.id = this->id;
+        msg.agent_id = this->picked_up_by;
         msg.broadcast();
     }
     #endif
@@ -87,7 +90,8 @@ PickupItem::PickupItem(int id)
 Particle(id, 0,0,0,0,0,0, DEFAULT_PICKUP_ITEM_MASS),
 BillboardSprite(),
 Pickup(DEFAULT_PICKUP_ITEM_RADIUS),
-broadcast_death(false)
+broadcast_death(false),
+picked_up_by(-1)
 {}
 
 PickupItem::PickupItem(int id, float x, float y, float z, float mx, float my, float mz)
@@ -95,7 +99,8 @@ PickupItem::PickupItem(int id, float x, float y, float z, float mx, float my, fl
 Particle(id, x,y,z,mx,my,mz, DEFAULT_PICKUP_ITEM_MASS),
 BillboardSprite(),
 Pickup(DEFAULT_PICKUP_ITEM_RADIUS),
-broadcast_death(false)
+broadcast_death(false),
+picked_up_by(-1)
 {}
 
 /* list */

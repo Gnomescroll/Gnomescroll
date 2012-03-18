@@ -40,4 +40,20 @@ class item_destroy_StoC: public FixedSizeNetPacketToClient<item_destroy_StoC>
         inline void handle();
 };
 
+class item_picked_up_StoC: public FixedSizeNetPacketToClient<item_picked_up_StoC>
+{
+    public:
+        uint8_t type;
+        uint8_t id;
+        uint8_t agent_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&type, buff, buff_n, pack);
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&agent_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 }   // ItemDrops

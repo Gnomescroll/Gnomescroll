@@ -694,8 +694,9 @@ logging system
 
 Mar 18
 
-item drops
+item drops/pickup
 --grenade and laser ammo
+--sound
 
 distance checks using distancef_squared
 =====================
@@ -768,3 +769,11 @@ ammo drops
 add sfx
 radial subscriptions of agents to items/mobs
 
+slimes should only drop items if killed (not if self destructing)
+
+in addition to sendToClient and broadcast, need:
+sendToTeam(int team);           // sends to all on a team
+sendToAllExcept(int agent_id); // excludes agent
+--First use:
+    agent picks up item: gets item_picked_up
+    everyone else: gets item_destroyed
