@@ -526,7 +526,7 @@ bool Agent_status::gain_item(Object_types item)
             break;
 
         case OBJ_TYPE_GRENADE_DROP:
-            if (can) this->a->weapons.grenades.restore_ammo();
+            if (can) this->a->weapons.grenades.add_ammo(3);
             break;
             
         default: break;

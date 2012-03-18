@@ -34,6 +34,7 @@ class Weapon {
 
         char* hud_string;
 
+        void add_ammo(int n);
         void restore_ammo();
 
         explicit Weapon(weapon_type type);

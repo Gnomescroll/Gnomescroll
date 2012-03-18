@@ -8,6 +8,7 @@
 #include <c_lib/items/turret.cpp>
 
 // pickup items
+#include <c_lib/items/pickup.cpp>
 #include <c_lib/items/grenades.cpp>
 
 // packets

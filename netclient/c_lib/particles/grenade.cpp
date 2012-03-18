@@ -273,7 +273,7 @@ void Grenade::damage_blocks()
 /* Grenade list */
 void Grenade_list::tick()
 {
-    if (num==0) return;
+    if (num <= 0) return;
     for(int i=0; i<n_max; i++)
     {
         if (a[i] == NULL) continue;
@@ -289,7 +289,7 @@ void Grenade_list::tick()
 void Grenade_list::draw()
 {
 #if DC_CLIENT
-    if(num == 0) return;
+    if (num <= 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
             a[i]->draw(a[i]->vp->p);

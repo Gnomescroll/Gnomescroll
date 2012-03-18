@@ -48,6 +48,25 @@ void Weapon::restore_ammo()
     this->ammo = max_ammo;
 }
 
+void Weapon::add_ammo(int n)
+{
+    int old = this->ammo;
+    this->ammo += n;
+    if (old != this->ammo)
+    {
+        #if DC_SERVER
+        Agent_state* a = ServerState::agent_list->get(owner);
+        if (a != NULL)
+        {
+            WeaponAmmo_StoC msg;
+            msg.type = type;
+            msg.ammo = this->ammo;
+            msg.sendToClient(a->client_id);
+        }
+        #endif
+    }
+}
+
 /* Hitscan laser */
 
 bool HitscanLaser::fire() {

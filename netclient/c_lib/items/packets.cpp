@@ -10,6 +10,7 @@ inline void item_create_StoC::handle()
     {
         case OBJ_TYPE_GRENADE_DROP:
             ClientState::grenade_drops_list->create(id, x,y,z, mx,my,mz);
+            printf("creating grenade drop\n");
             break;
         default: return;
     }
@@ -21,6 +22,7 @@ inline void item_destroy_StoC::handle()
     {
         case OBJ_TYPE_GRENADE_DROP:
             ClientState::grenade_drops_list->destroy(id);
+            printf("destroying grenade drop\n");
             break;
         default: return;
     }

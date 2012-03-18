@@ -12,6 +12,7 @@ class Particle
         int ttl;
         int ttl_max;
         int type;
+        float damp;
 
         VerletParticle* vp;
 
