@@ -52,6 +52,7 @@ void Weapon::add_ammo(int n)
 {
     int old = this->ammo;
     this->ammo += n;
+    this->ammo = (this->ammo > max_ammo) ? max_ammo : this->ammo;
     if (old != this->ammo)
     {
         #if DC_SERVER
