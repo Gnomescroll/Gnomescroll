@@ -29,6 +29,8 @@ namespace ClientState {
     Spawner_list* spawner_list = NULL;
     Turret_list* turret_list = NULL;
 
+    ItemDrops::GrenadeDrops_list* grenade_drops_list = NULL;
+
     Animations::HitscanEffect_list* hitscan_effect_list = NULL;
     Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
@@ -62,6 +64,9 @@ namespace ClientState {
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
+
+        // item drops
+        grenade_drops_list = new ItemDrops::GrenadeDrops_list;
     }
 
     void teardown_lists()
@@ -87,6 +92,8 @@ namespace ClientState {
         delete billboard_text_hud_list;
         delete hitscan_effect_list;
         delete hitscan_laser_effect_list;
+
+        delete grenade_drops_list;
     }
 
     static void init_ctf()
@@ -169,6 +176,7 @@ namespace ClientState {
         billboard_text_hud_list->tick();
 
         turret_list->tick();
+        grenade_drops_list->tick();
     }
 
     void draw()
@@ -188,6 +196,9 @@ namespace ClientState {
         grenade_list->draw();
         shrapnel_list->draw();
         blood_list->draw();
+
+        // item drops
+        grenade_drops_list->draw();
         end_transparent_particle_draw();
     }
 

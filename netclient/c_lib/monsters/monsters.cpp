@@ -49,6 +49,9 @@ Slime::~Slime()
     DestroySlime_StoC msg;
     msg.id = this->id;
     msg.broadcast();
+
+    //ServerState::grenade_drops_list->create(x,y,z+1.5f, randf(), randf(), randf());
+    ServerState::grenade_drops_list->create(x,y,z+1.5f, 0,0,0);
     #endif
 }
 

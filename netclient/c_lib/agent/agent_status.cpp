@@ -491,7 +491,7 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
     #endif
 }
 
-bool Agent_status::can_gain_item(Object_types item)
+const bool Agent_status::can_gain_item(Object_types item)
 {
     switch (item)
     {
@@ -501,6 +501,10 @@ bool Agent_status::can_gain_item(Object_types item)
             
         case OBJ_TYPE_SPAWNER:
             if (owned_spawners >= AGENT_MAX_SPAWNERS) return false;
+            break;
+
+        case OBJ_TYPE_GRENADE_DROP:
+            return true;
             break;
             
         default: break;

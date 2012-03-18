@@ -242,3 +242,10 @@ check_name_interval(0)
     print();
 }
 
+bool Agent_list::agent_pickup_item(int agent_id, Object_types item_type)
+{
+    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
+    Agent_state* a = this->get(agent_id);
+    if (a == NULL) return false;
+    return a->status.can_gain_item(item_type);
+}

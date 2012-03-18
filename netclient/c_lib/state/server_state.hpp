@@ -6,8 +6,7 @@
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
-#include <c_lib/items/spawner.hpp>
-#include <c_lib/items/turret.hpp>
+#include <c_lib/items/items.hpp>
 
 namespace ServerState
 {
@@ -20,6 +19,8 @@ namespace ServerState
     extern Spawner_list* spawner_list;
     extern Turret_list* turret_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
+
+    extern ItemDrops::GrenadeDrops_list* grenade_drops_list;
     
     extern CTF* ctf GNOMESCROLL_API;
     

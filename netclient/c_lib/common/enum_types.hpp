@@ -9,7 +9,10 @@ enum Object_types
     OBJ_TYPE_FLAG,
     OBJ_TYPE_BASE,
     OBJ_TYPE_SPAWNER,
-    OBJ_TYPE_TURRET
+    OBJ_TYPE_TURRET,
+
+
+    OBJ_TYPE_GRENADE_DROP = 111,
 };
 
 typedef enum

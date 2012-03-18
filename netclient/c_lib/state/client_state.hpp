@@ -40,6 +40,9 @@ namespace ClientState {
     extern Spawner_list* spawner_list;
     extern Turret_list* turret_list;
 
+    // item drops
+    extern ItemDrops::GrenadeDrops_list* grenade_drops_list;
+    
     extern Animations::HitscanEffect_list* hitscan_effect_list;
     extern Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
      

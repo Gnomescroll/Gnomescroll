@@ -92,7 +92,7 @@ class Agent_status {
         bool purchase(Object_types obj);
 
         // item stuff
-        bool can_gain_item(Object_types item);
+        const bool can_gain_item(Object_types item);
         bool gain_item(Object_types item);
         bool lose_item(Object_types item);
 
