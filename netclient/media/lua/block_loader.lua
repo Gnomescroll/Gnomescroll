@@ -83,6 +83,31 @@ NoHud = nil;
 
 -- default value --
 
+spritesheet_id_counter = 0;
+spritesheet_name_to_id = {};
+spritesheet_id_to_name = {};
+
+function register_spritesheet(spritesheet)
+  if(spritesheet_name_to_id[spritesheet] ) then 
+    return  spritesheet_name_to_id[spritesheet]
+  end
+
+  spritesheet_name_to_id[spritesheet] = spritesheet_id_counter;
+  spritesheet_id_to_name[spritesheet_id_counter] = spritesheet;
+
+  local id = spritesheet_id_counter;
+  spritesheet_id_counter = spritesheet_id_counter + 1;
+  return id
+end
+
+function texture_alias(spritesheet, xpos, ypos)
+  o = {};
+  o.spritesheet = spritesheet;
+  o.xpos = xpos;
+  o.ypos = ypos;
+  return o;
+end
+
 texture_id_index = 0
 texture_id_table = { [0]="error.png" } --store texture name/id pairs
 

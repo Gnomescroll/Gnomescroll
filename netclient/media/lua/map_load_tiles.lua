@@ -59,7 +59,11 @@ end
 
 print("tex")
 
-for id, tex in pairs(texture_id_table) do
+for id, tex_sheet in pairs(texture_id_table) do
+	local sheet_id = tex_sheet.texture_sheet_id;
+	local sheet_name = tex_sheet.texture_sheet_name;
+	local xpos = tex_sheet.xpos;
+	local ypos = tex_sheet.ypos;
 	print( id, "=", tex);
 end
 
