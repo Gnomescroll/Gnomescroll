@@ -1,0 +1,19 @@
+Gnomescroll turret ideas:
+
+EMP Grenades: temporarily disrupt or disable electronic equipment (such as turrets)
+
+Control panel: an item that will allow you to have advanced control over equipment in the area/wired up to it. (Advanced controls include firing modes, firing speed, etc for turrets)
+
+Capturing/Hacking control panels: When a control panel is placed, you can set a pin/password, or one will randomly be set. When you get close an enemy's control panel, you can either guess the pin (4 characters?), or use an item that will bruteforce it. Once you get into it, anything hooked up to it will be under your control. If the control panel is under your control, the pin will appear on the screen if you are near it, and you must enter it to use it.
+
+Hacking/capturing enemy turrets (not linked to a control panel): disable them with an emp grenade, use hacking tool for 5 seconds, turret is now yours
+
+Turret options: without a control panel, turrets will only do what they do now. But with control panels, you can set firing modes -- short bursts, rapid fire, slow fire, etc., and you can set targeting modes: you can make them target enemies that are the closest to them, or the closest to the flag, or closest the the nearest ally, etc.
+
+Overheating: every time a turret fires, it generates heat. if it fires too quickly, it will eventually overheat. once it overheats, it will be disabled until it completely cools down. if damage is dealt to a turret, it will overheat more quickly. if it is damaged while overheating, it will explode.
+
+Heatsink/cooling device: used to augment turrets. increases the time it takes for turrets to overheat and decreases the time it takes for them to cool down.
+
+Scanner: item used to detect enemies/enemy equipment. increases scanning range of turrets if they are close enough. enemies show up as blips on the map if allies are within range of the scanner. Can be captured by enemies, and controlled with control panels (scanning rate vs range. fast scanning rate will decrease range, slow rate will increase range)
+
+Decoy turret/scanner: Appears as a disabled piece of equipment. If an enemy attempts to capture it, it will self destruct.
