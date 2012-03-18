@@ -207,10 +207,12 @@ int init_c_lib() {
     init_video();
     init_image_loader();
     TextureSheetLoader::init();
-
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Map Tiles */
     t_map::init_for_draw();
+
+    Sound::init();
+    //Sound::test();
 
     HudText::init();
     HudFont::init();
@@ -223,10 +225,11 @@ int init_c_lib() {
     Hud::init();
     //vn::init();
 
-    init_vox_dats();
     ClientState::init_lists();
-    init_voxel_volume();
     ClientState::init();
+
+    init_vox_dats();
+    init_voxel_volume();
     
     init_network();
     init_net_client();
@@ -239,9 +242,6 @@ int init_c_lib() {
     
     Animations::init_hitscan();
     Animations::init_hitscan_laser();
-    
-    Sound::init();
-    //Sound::test();
     
     return 0;
 }
