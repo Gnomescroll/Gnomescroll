@@ -42,6 +42,8 @@ function register_spritesheet(spritesheet)
   local id = load_texture_sheet(spritesheet);
   spritesheet_name_to_id[spritesheet] = id;
   spritesheet_id_to_name[id] = spritesheet;
+
+  print("textured sheet loaded: " .. spritesheet .. " id= " .. id )
   return id
 end
 
@@ -60,7 +62,7 @@ function register_texture(spritesheet, xpos, ypos)
   local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
 
   if(texture_look_up_table[index]) then
-    print("register texture: index found:" .. index)
+    print("register texture: index found: " .. index .. " id= " .. texture_look_up_table[index])
     return texture_look_up_table[index]
   end
 

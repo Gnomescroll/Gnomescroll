@@ -42,7 +42,11 @@ void init_t_map()
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
 #ifdef DC_CLIENT
+    init_cache();
     init_client_compressors();
+    init_t_vbo();
+    init_textures();
+
 #endif
 
 #ifdef DC_SERVER
@@ -76,10 +80,7 @@ class Terrain_map* get_map()
     void init_for_draw()
     {
         printf("init for draw \n");
-
-        init_cache();
-        init_t_vbo();
-        init_textures();
+        
         init_shaders();
     }
 #endif

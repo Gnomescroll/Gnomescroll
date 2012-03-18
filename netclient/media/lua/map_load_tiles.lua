@@ -23,7 +23,6 @@ void load_cube_texture_sprite_sheet(char*, int pos);
 void load_hud_texture(char*, int pos);
 ]]
 
-ffi.C.LUA_save_cube_texture();
 
 --[[
 prefix = "media/sprites/";
@@ -50,16 +49,18 @@ for id, block in pairs(block_id_table) do
 end
 ]]
 
-for id=0, 255, 1 do
+for id=16, 255, 1 do
 	---print( id)
+	ffi.C.LUA_blit_cube_texture(0, 0,0, id);
+end
+
+for id=0, 255, 1 do
 	ffi.C.set_cube_side_texture(id, 0, 0 )
 	ffi.C.set_cube_side_texture(id, 1, 0 )
 	ffi.C.set_cube_side_texture(id, 2, 0 )
 	ffi.C.set_cube_side_texture(id, 3, 0 )
 	ffi.C.set_cube_side_texture(id, 4, 0 )
 	ffi.C.set_cube_side_texture(id, 5, 0 )
-
-	ffi.C.LUA_blit_cube_texture(0, 0,0, id);
 end
 
 
@@ -79,3 +80,5 @@ for id, tex_sheet in pairs(texture_id_table) do
 	local ypos = tex_sheet.ypos;
 	print( id, "=", tex);
 end
+
+ffi.C.LUA_save_cube_texture();

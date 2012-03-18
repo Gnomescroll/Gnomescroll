@@ -306,7 +306,7 @@ void Vbo_map::draw_map()
 
 void Vbo_map::draw_map_comptability()
 {
-    printf("comptability \n");
+    //printf("comptability \n");
 
     prep_draw();
     sort_draw();

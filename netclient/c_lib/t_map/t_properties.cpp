@@ -9,11 +9,6 @@ namespace t_map
     struct cubeProperties* cube_list = NULL;
 }
 
-extern "C"
-{
-
-
-}
 
 namespace t_map
 {
@@ -44,6 +39,26 @@ struct cubeProperties* get_cube(int id)
 
 }
 
+/*
+    LUA interface
+*/
+
+extern "C"
+{
+    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent)
+    {
+        t_map::cube_list[id].active = active;
+        t_map::cube_list[id].solid = solid;
+        t_map::cube_list[id].occludes = occludes;
+        t_map::cube_list[id].transparent = transparent;        
+    }
+
+    void LUA_set_block_max_damage(int id, int max_damage)
+    {
+        t_map::cube_list[id].max_damage = max_damage;
+    }
+
+}
 
 /*
     Properties by cube id
