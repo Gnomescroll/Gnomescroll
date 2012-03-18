@@ -50,6 +50,7 @@ SOUND_TRIGGER(you_joined_server)
 SOUND_TRIGGER(player_joined_server)
 SOUND_TRIGGER(player_left_server)
 SOUND_TRIGGER(turret_shoot)
+SOUND_TRIGGER(pickup_item)
 
 /* function -> filename mapping */
 

@@ -33,3 +33,4 @@ Victory,,victory,,,,,,,,,"there are no victory condition implemented"
 "other player joined server",player_joined_server.wav,player_joined_server,,y,,,,,,,
 "other player left server",,player_left_server,,,,,,,,,
 "turret shoot laser",laser_01.wav,turret_shoot,Y,Y,0.1,,,,,,
+"collect item drop",Plink_07.wav,pickup_item,Y,Y,,0.25,,,,,"Should only play 2d, for client's agent"

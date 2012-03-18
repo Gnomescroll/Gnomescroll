@@ -22,6 +22,8 @@ inline void item_create_StoC::handle()
 
 inline void item_destroy_StoC::handle()
 {
+    // if (id == )
+    Sound::pickup_item();
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:

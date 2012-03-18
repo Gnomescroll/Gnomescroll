@@ -697,6 +697,7 @@ Mar 18
 item drops
 --grenade and laser ammo
 
+distance checks using distancef_squared
 =====================
 
 Animations

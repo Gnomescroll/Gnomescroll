@@ -39,6 +39,7 @@ SOUND_TRIGGER_HEADER(you_joined_server)
 SOUND_TRIGGER_HEADER(player_joined_server)
 SOUND_TRIGGER_HEADER(player_left_server)
 SOUND_TRIGGER_HEADER(turret_shoot)
+SOUND_TRIGGER_HEADER(pickup_item)
 
 struct Soundfile
 {
