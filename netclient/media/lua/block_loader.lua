@@ -6,7 +6,96 @@
 3< Block Texture Information
 ]]
 
-print("block_dat: starting");
+bl_ffi = require("ffi")
+bl_ffi.cdef[[
+void set_cube_side_texture(int id, int side, int tex_id);
+void set_cube_hud(int pos, int cube_id, int tex_id);
+
+int LUA_load_cube_texture_sheet(char* filename);
+void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index);
+
+void LUA_blit_cube_texture;
+void LUA_save_cube_texture();
+
+void load_cube_texture_sprite_sheet(char*, int pos);
+void load_hud_texture(char*, int pos);
+]]
+
+prefix = "media/sprites/";
+function load_texture_sheet(filename)
+  print("load_texture_sheet: ", filename);
+  local str = bl_ffi.new("char[128]");
+    bl_ffi.copy(str, prefix .. filename ..".png");
+  return bl_ffi.C.LUA_load_cube_texture_sheet(str);
+end
+
+
+-- Spritesheet loader
+spritesheet_name_to_id = {};
+spritesheet_id_to_name = {};
+
+function register_spritesheet(spritesheet)
+  if(spritesheet_name_to_id[spritesheet] ) then 
+    return  spritesheet_name_to_id[spritesheet]
+  end
+
+  local id = load_texture_sheet(spritesheet);
+  spritesheet_name_to_id[spritesheet] = id;
+  spritesheet_id_to_name[id] = spritesheet;
+  return id
+end
+
+
+-- texture loader
+
+texture_id_counter = 0;
+texture_id_table = {};
+
+texture_look_up_table = {}
+
+
+---register a texture on a spritesheet
+function register_texture(spritesheet, xpos, ypos)
+  local sindex = register_spritesheet(spritesheet);
+  local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
+
+  if(texture_look_up_table[index]) then
+    print("register texture: index found:" .. index)
+    return texture_look_up_table[index]
+  end
+
+  local id = texture_id_counter;
+  print("registered texture: " .. index .. " id=" .. id);
+
+  bl_ffi.C.LUA_blit_cube_texture(sindex, xpos, ypos, id)
+
+  texture_look_up_table[index] = id;
+  texture_id_counter = texture_id_counter + 1;
+  return id;
+end
+
+---not used right now ---
+---registers a n individual file
+function register_individual_texture(sprite)
+  local sindex = register_spritesheet(spritesheet);
+  local index = string.format("%s", sprite);
+
+  if(texture_look_up_table[index]) then
+    return texture_look_up_table[index]
+  end
+
+  local id = texture_id_counter;
+  texture_look_up_table[index] = id;
+  texture_id_counter = texture_id_counter + 1;
+  return id;
+end
+
+
+--register_texture("t00",0,0);
+
+
+-- block dat stuff
+--print("block_dat: starting");
 
 BlockProperty = {
 active = 0,
@@ -44,15 +133,6 @@ occludes = 0,
 transparent = 1
 })
 
---[[
-t top
-b bottom
-n north
-s south
-w west
-e east
-]]
-
 ---default values
 BlockHud =
 {
@@ -80,74 +160,6 @@ function hud( pos, img)
 end
 
 NoHud = nil;
-
--- default value --
-
-spritesheet_id_counter = 0;
-spritesheet_name_to_id = {};
-spritesheet_id_to_name = {};
-
-function register_spritesheet(spritesheet)
-  if(spritesheet_name_to_id[spritesheet] ) then 
-    return  spritesheet_name_to_id[spritesheet]
-  end
-
-  spritesheet_name_to_id[spritesheet] = spritesheet_id_counter;
-  spritesheet_id_to_name[spritesheet_id_counter] = spritesheet;
-
-  local id = spritesheet_id_counter;
-  spritesheet_id_counter = spritesheet_id_counter + 1;
-  return id
-end
-
-function texture_alias(spritesheet, xpos, ypos)
-  o = {};
-  o.spritesheet = spritesheet;
-  o.xpos = xpos;
-  o.ypos = ypos;
-  return o;
-end
-
-texture_id_index = 0
-texture_id_table = { [0]="error.png" } --store texture name/id pairs
-
-texture_name_to_id = { ["error.png"]=0}
-
--- return texture id --
-function register_texture(tex)
-  if(texture_name_to_id[tex] ) then 
-    return  texture_name_to_id[id] 
-  end
-  texture_id_index = texture_id_index + 1;
-  texture_id_table[texture_id_index] = tex
-  return texture_id_index
-end
-
-BlockTexture =
-{
-  t = nil,
-  b = nil,
-  n = nil,
-  s = nil,
-  w = nil,
-  e = nil
-}
-
-function iso_texture(tex)
-  local tex = register_texture(tex)
-  o = 
-  {
-    t = tex,
-    b = tex,
-    n = tex,
-    s = tex,
-    w = tex,
-    e = tex
-  }
-  return o;
-end
-
-ErrorTexture = iso_texture("error.png")
 
 ---holds everything else
 Block = 
@@ -188,15 +200,11 @@ function Block:new1(id, name, properties, texture, hud)
   return o
 end
 
-print("block_dat: finished");
+--print("block_dat: finished");
 
 
+function blit_textures()
+  for id, tex_sheet in pairs(texture_id_table) do
 
---[[
-
-void set_cube_side_texture(int id, int side, int tex_id)
-
-cdef extern from "./hud/cube_selector.hpp" namespace "HudCubeSelector":
-    cdef cppclass CubeSelector:
-        void load_cube_property(int pos, int cube_id, int tex_id)
-]]
+  end
+end

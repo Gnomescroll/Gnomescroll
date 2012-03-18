@@ -95,37 +95,36 @@ void init_textures()
     { 
         printf("init terrain_map: load block textures \n");
         block_surface=IMG_Load("media/texture/blocks_01.png");
-        if(!block_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;
-    }
-    
-    block_surface_pixel_format = block_surface->format;
-    must_lock_block_surface = SDL_MUSTLOCK(block_surface);
-    block_surface_width = (int)block_surface->w;
-    block_surface_height = (int)block_surface->h;
+        if(!block_surface) { printf("IMG_Load: %s \n", IMG_GetError());return;}
+        
+        block_surface_pixel_format = block_surface->format;
+        must_lock_block_surface = SDL_MUSTLOCK(block_surface);
+        block_surface_width = (int)block_surface->w;
+        block_surface_height = (int)block_surface->h;
 
-    glEnable(GL_TEXTURE_2D);
-    glGenTextures( 1, &block_texture );
-    glBindTexture( GL_TEXTURE_2D, block_texture );
+        glEnable(GL_TEXTURE_2D);
+        glGenTextures( 1, &block_texture );
+        glBindTexture( GL_TEXTURE_2D, block_texture );
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    int texture_format = (block_surface->format->Rmask == 0x000000ff) ? GL_RGBA : GL_BGRA;
+        int texture_format = (block_surface->format->Rmask == 0x000000ff) ? GL_RGBA : GL_BGRA;
 
-    //formats: GL_BGRA_EXT, GL_SRGB_ALPHA_EXT, GL_SRGBA_EXT
+        //formats: GL_BGRA_EXT, GL_SRGB_ALPHA_EXT, GL_SRGBA_EXT
 
-    //internal format, input format
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8_EXT, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-    //texture without gamma correction
-    glGenTextures( 1, &block_texture_no_gamma_correction );
-    glBindTexture( GL_TEXTURE_2D, block_texture_no_gamma_correction );
+        //internal format, input format
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8_EXT, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+        //texture without gamma correction
+        glGenTextures( 1, &block_texture_no_gamma_correction );
+        glBindTexture( GL_TEXTURE_2D, block_texture_no_gamma_correction );
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w,block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
+        glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w,block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
 
-    glDisable(GL_TEXTURE_2D);
+        glDisable(GL_TEXTURE_2D);
     }
 }
 

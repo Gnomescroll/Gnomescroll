@@ -164,16 +164,8 @@ void Vbo_map::draw_map()
 
     glEnable (GL_DEPTH_TEST);   //needed?
 
+    glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
-    if(T_MAP_BACKUP_SHADER == 0)
-    {
-        glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
-    }
-    else
-    {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture( GL_TEXTURE_2D, terrain_map_glsl );
-    }
 
     //glEnableClientState(GL_VERTEX_ARRAY);
     //glEnableClientState(GL_COLOR_ARRAY);
@@ -314,6 +306,7 @@ void Vbo_map::draw_map()
 
 void Vbo_map::draw_map_comptability()
 {
+    printf("comptability \n");
 
     prep_draw();
     sort_draw();
@@ -333,7 +326,7 @@ void Vbo_map::draw_map_comptability()
 
     glEnable(GL_TEXTURE_2D);
 
-    glBindTexture( GL_TEXTURE_2D, terrain_map_glsl );
+    glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 
     glEnableVertexAttribArray(map_Vertex);
     glEnableVertexAttribArray(map_TexCoord);

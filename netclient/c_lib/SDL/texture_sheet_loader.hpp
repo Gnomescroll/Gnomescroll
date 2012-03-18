@@ -100,6 +100,7 @@ void init()
 	CubeTextureSheetList = new TextureSheetList;
 	CubeTextureStack = (unsigned int*) malloc(4*CUBE_TEXTURE_SIZE*CUBE_TEXTURE_SIZE);
 	CubeTexture = create_surface_from_nothing(CUBE_TEXTURE_SIZE, CUBE_TEXTURE_SIZE);
+
 }
 
 void teardown()
@@ -149,7 +150,7 @@ extern "C"
         if(s_lock) SDL_LockSurface(s);
         if(c_lock) SDL_LockSurface(CubeTexture);
 
-        Uint32* Pixels1 = (Uint32*)CubeTextureStack;
+        Uint32* Pixels1 = (Uint32*) CubeTextureStack;
         Uint32* Pixels2 = (Uint32*) CubeTexture->pixels;
 
         int dest_x = index % 16;
