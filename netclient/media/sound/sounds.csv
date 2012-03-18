@@ -1,7 +1,7 @@
 Event,Soundfile,"function name","IN USE",Integrated,pitch,gain,"max distance","reference distance","minimum gain","maximum gain",Notes
-"Fire laser at object",laser_01.wav,fire_laser,y,y,0.9,,,,,,
-"Fire laser at block",laser_01.wav,fire_laser,y,y,,,,,,,
-"Fire laser at nothing",laser_01.wav,fire_laser,y,y,,,,,,,
+"Fire laser at object",CyberSet_001_47.wav,fire_laser,y,y,0.7,0.6,,40,,,
+"Fire laser at block",CyberSet_001_47.wav,fire_laser,y,y,,,,,,,
+"Fire laser at nothing",CyberSet_001_47.wav,fire_laser,y,y,,,,,,,
 "Out of ammo",,out_of_ammo,,y,,,,,,,click
 Reload,,reload,,y,,,,,,,
 "Laser hit block",,laser_hit_block,,y,,,,,,,
