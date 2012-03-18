@@ -41,8 +41,9 @@ namespace ClientState {
     extern Turret_list* turret_list;
 
     // item drops
-    extern ItemDrops::GrenadeDrops_list* grenade_drops_list;
-    
+    extern ItemDrops::GrenadeRefill_list* grenade_refill_list;
+    extern ItemDrops::LaserRefill_list* laser_refill_list;
+
     extern Animations::HitscanEffect_list* hitscan_effect_list;
     extern Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
      

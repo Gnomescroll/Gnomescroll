@@ -51,7 +51,10 @@ Slime::~Slime()
     msg.broadcast();
 
     const float mom = 5.0f;
-    ServerState::grenade_drops_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, (randf()-0.5f)*mom);
+    if (randf() > 0.5f)
+        ServerState::grenade_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+    else
+        ServerState::laser_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);        
     #endif
 }
 

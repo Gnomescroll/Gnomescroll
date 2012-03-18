@@ -11,7 +11,7 @@
 
 // pickup items
 #include <c_lib/items/pickup.hpp>
-#include <c_lib/items/grenades.hpp>
+#include <c_lib/items/refills.hpp>
 
 // packets
 #include <c_lib/items/packets.hpp>

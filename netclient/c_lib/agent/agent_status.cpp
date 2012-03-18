@@ -503,7 +503,7 @@ const bool Agent_status::can_gain_item(Object_types item)
             if (owned_spawners >= AGENT_MAX_SPAWNERS) return false;
             break;
 
-        case OBJ_TYPE_GRENADE_DROP:
+        case OBJ_TYPE_GRENADE_REFILL:
             return true;
             break;
             
@@ -525,8 +525,12 @@ bool Agent_status::gain_item(Object_types item)
             if (can) owned_spawners++;
             break;
 
-        case OBJ_TYPE_GRENADE_DROP:
-            if (can) this->a->weapons.grenades.add_ammo(3);
+        case OBJ_TYPE_GRENADE_REFILL:
+            if (can) this->a->weapons.grenades.add_ammo(10);
+            break;
+            
+        case OBJ_TYPE_LASER_REFILL:
+            if (can) this->a->weapons.laser.add_ammo(20);
             break;
             
         default: break;

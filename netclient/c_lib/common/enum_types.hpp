@@ -12,7 +12,8 @@ enum Object_types
     OBJ_TYPE_TURRET,
 
 
-    OBJ_TYPE_GRENADE_DROP = 111,
+    OBJ_TYPE_GRENADE_REFILL = 111,
+    OBJ_TYPE_LASER_REFILL,
 };
 
 typedef enum

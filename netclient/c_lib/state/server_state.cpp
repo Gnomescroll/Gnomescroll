@@ -20,7 +20,8 @@ namespace ServerState
     Turret_list* turret_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
-    ItemDrops::GrenadeDrops_list* grenade_drops_list = NULL;
+    ItemDrops::GrenadeRefill_list* grenade_refill_list = NULL;
+    ItemDrops::LaserRefill_list* laser_refill_list = NULL;
 
     CTF* ctf = NULL;
 
@@ -36,7 +37,8 @@ namespace ServerState
         turret_list = new Turret_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
-        grenade_drops_list = new ItemDrops::GrenadeDrops_list;
+        grenade_refill_list = new ItemDrops::GrenadeRefill_list;
+        laser_refill_list = new ItemDrops::LaserRefill_list;
     }
 
     void teardown_lists()
@@ -53,7 +55,8 @@ namespace ServerState
         delete agent_list;
         delete voxel_hitscan_list; // must go last
 
-        delete grenade_drops_list;
+        delete grenade_refill_list;
+        delete laser_refill_list;
     }
 
     static void init_ctf()
@@ -201,7 +204,8 @@ namespace ServerState
         //grenade_shrapnel_list->tick();
 
         // item drops
-        grenade_drops_list->tick();
+        grenade_refill_list->tick();
+        laser_refill_list->tick();
 
         // game
         ctf->tick();

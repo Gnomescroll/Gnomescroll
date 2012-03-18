@@ -76,7 +76,8 @@ void BillboardSprite::draw_from_bottom(Vec3 v)
 {
     #if DC_CLIENT
 
-    v.z += this->scale / 2;
+    //v.z += this->scale / 2;
+    v.z += this->scale;
     
     if (current_camera == NULL
     || !current_camera->in_view(v.x, v.y, v.z))

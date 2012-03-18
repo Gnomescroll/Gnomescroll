@@ -8,10 +8,14 @@ inline void item_create_StoC::handle()
 {
     switch (type)
     {
-        case OBJ_TYPE_GRENADE_DROP:
-            ClientState::grenade_drops_list->create(id, x,y,z, mx,my,mz);
-            printf("creating grenade drop\n");
+        case OBJ_TYPE_GRENADE_REFILL:
+            ClientState::grenade_refill_list->create(id, x,y,z, mx,my,mz);
             break;
+            
+        case OBJ_TYPE_LASER_REFILL:
+            ClientState::laser_refill_list->create(id, x,y,z, mx,my,mz);
+            break;
+            
         default: return;
     }
 }
@@ -20,10 +24,14 @@ inline void item_destroy_StoC::handle()
 {
     switch (type)
     {
-        case OBJ_TYPE_GRENADE_DROP:
-            ClientState::grenade_drops_list->destroy(id);
-            printf("destroying grenade drop\n");
+        case OBJ_TYPE_GRENADE_REFILL:
+            ClientState::grenade_refill_list->destroy(id);
             break;
+
+        case OBJ_TYPE_LASER_REFILL:
+            ClientState::laser_refill_list->destroy(id);
+            break;
+
         default: return;
     }
 }

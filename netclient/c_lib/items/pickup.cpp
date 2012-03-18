@@ -1,4 +1,4 @@
-#include "grenades.hpp"
+#include "pickup.hpp"
 
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/items/packets.hpp>
