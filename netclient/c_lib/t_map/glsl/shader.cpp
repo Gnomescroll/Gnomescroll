@@ -44,8 +44,10 @@ namespace t_map
             ANISOTROPIC_FILTERING = 0;
         }
 
+        // || true
         if(T_MAP_BACKUP_SHADER == 1)
         {
+            printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
             set_map_shader_0_comptability();
             init_map_3d_texture_comptability();
         }

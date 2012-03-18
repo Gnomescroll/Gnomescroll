@@ -51,3 +51,7 @@
   #define GNOMESCROLL_API
   #define GNOMESCROLL_LOCAL
 #endif
+
+
+//#define LUA_API GNOMESCROLL_API
+#define LUA_API

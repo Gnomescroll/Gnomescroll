@@ -39,7 +39,7 @@ class MAP_CHUNK
 
     MAP_CHUNK(int _xpos, int _ypos);
 
-    int get_block(int x, int y, int z);// __attribute((always_inline)); //for VBO generator
+    inline int get_block(int x, int y, int z); __attribute((always_inline)); //for VBO generator
 };
 
 class Terrain_map
