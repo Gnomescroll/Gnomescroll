@@ -699,6 +699,8 @@ item drops/pickup
 --sound
 
 distance checks using distancef_squared
+
+changed laser sound
 =====================
 
 Animations
