@@ -88,9 +88,11 @@ void Grenades::tick()
     Verlet::bounce(this->vp, GRENADES_DAMP);
     #if DC_SERVER
     int agent_id = this->nearest_agent_in_range(this->vp->p);
+    printf("agent %d in range\n", agent_id);
     if (STATE::agent_list->agent_pickup_item(agent_id, (Object_types)this->type))
     {   // was picked up, die
         this->schedule_death_broadcast();
+        this->ttl = this->ttl_max;
     }
     #endif
 }
@@ -177,7 +179,7 @@ void GrenadeDrops_list::draw()
     if (num==0) return;
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
-            this->a[i]->draw(this->a[i]->vp->p);
+            this->a[i]->draw_from_bottom(this->a[i]->vp->p);
 }
 
 }   // ItemDrops

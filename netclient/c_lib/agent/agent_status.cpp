@@ -524,6 +524,10 @@ bool Agent_status::gain_item(Object_types item)
         case OBJ_TYPE_SPAWNER:
             if (can) owned_spawners++;
             break;
+
+        case OBJ_TYPE_GRENADE_DROP:
+            if (can) this->a->weapons.grenades.restore_ammo();
+            break;
             
         default: break;
     }

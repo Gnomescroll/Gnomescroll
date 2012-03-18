@@ -19,7 +19,7 @@ class PickupItem
 };
 
 const int GRENADES_TEXTURE_ID = 240;
-const float GRENADES_TEXTURE_SCALE = 1.0f;
+const float GRENADES_TEXTURE_SCALE = 0.5f;
 const float GRENADES_MASS = 1.0f;
 const int GRENADES_TTL = 30 * 12;   // 12 seconds
 const float GRENADES_DAMP = 0.1f;
@@ -54,7 +54,3 @@ class GrenadeDrops_list: public Object_list<Grenades, MAX_GRENADES>
 
 
 } // ItemDrops
-
-
-// 
-// track in an object list
