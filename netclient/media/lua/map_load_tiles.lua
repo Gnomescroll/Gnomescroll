@@ -57,5 +57,13 @@ for id, block in pairs(block_id_table) do
 	print( id, "=", block);
 end
 
+print("tex")
+
+for id, tex in pairs(texture_id_table) do
+	print( id, "=", tex);
+end
+
+
+
 --[[ Load Block Dat ]]
 

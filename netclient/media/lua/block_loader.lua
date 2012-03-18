@@ -94,6 +94,7 @@ function register_texture(tex)
     return  texture_name_to_id[id] 
   end
   texture_id_index = texture_id_index + 1;
+  texture_id_table[texture_id_index] = tex
   return texture_id_index
 end
 
