@@ -11,3 +11,6 @@
 
 // pickup items
 #include <c_lib/items/grenades.hpp>
+
+// packets
+#include <c_lib/items/packets.hpp>

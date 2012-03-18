@@ -2,76 +2,10 @@
 
 #include <c_lib/physics/verlet.hpp>
 
-#include <net_lib/net.hpp>
+#include <c_lib/items/packets.hpp>
 
 namespace ItemDrops
 {
-
-class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
-{
-    public:
-        uint8_t type;
-        uint8_t id;
-        float x,y,z,mx,my,mz;   // TODO -- encode velocity in a single param -- its just random seed direction
-        
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u8(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-class item_destroy_StoC: public FixedSizeNetPacketToClient<item_destroy_StoC>
-{
-    public:
-        uint8_t type;
-        uint8_t id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u8(&id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-#if DC_CLIENT
-inline void item_create_StoC::handle()
-{
-    switch (type)
-    {
-        case OBJ_TYPE_GRENADE_DROP:
-            ClientState::grenade_drops_list->create(id, x,y,z, mx,my,mz);
-            break;
-        default: return;
-    }
-}
-
-inline void item_destroy_StoC::handle()
-{
-    switch (type)
-    {
-        case OBJ_TYPE_GRENADE_DROP:
-            ClientState::grenade_drops_list->destroy(id);
-            break;
-        default: return;
-    }
-}
-#endif
-
-#if DC_SERVER
-inline void item_create_StoC::handle() {}
-inline void item_destroy_StoC::handle() {}
-#endif
-
-
 
 int PickupItem::nearest_agent_in_range(Vec3 p)
 {

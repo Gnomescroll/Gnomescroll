@@ -9,3 +9,6 @@
 
 // pickup items
 #include <c_lib/items/grenades.cpp>
+
+// packets
+#include <c_lib/items/packets.cpp>
