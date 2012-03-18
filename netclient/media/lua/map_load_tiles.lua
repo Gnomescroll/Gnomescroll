@@ -52,5 +52,10 @@ ffi.C.LUA_save_cube_texture();
 
 require("block_loader");
 
+
+for id, block in pairs(block_id_table) do
+	print( id, "=", block);
+end
+
 --[[ Load Block Dat ]]
 

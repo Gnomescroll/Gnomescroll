@@ -143,7 +143,7 @@ function Block:new(id, name)
   setmetatable(o, self)
   self.__index = self
   --- table set
-  if( block_id_table[id] ~= nil) then print "Error: id taken" end
+  if( block_id_table[id] ~= nil) then print("Error: block id ", id, "taken") end
   block_id_table[id] = o;
   return o
 end
@@ -157,7 +157,7 @@ function Block:new1(id, name, properties, texture, hud)
   setmetatable(o, self)
   self.__index = self
   --- table set
-  if( block_id_table[id] ~= nil) then print "Error: id taken" end
+  if( block_id_table[id] ~= nil) then print("Error: block id ", id, "taken") end
   block_id_table[id] = o;
   return o
 end
