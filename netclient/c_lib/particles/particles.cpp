@@ -5,6 +5,11 @@ void Particle::set_ttl(int ttl)
     this->ttl = ttl;
 }
 
+void Particle::set_mass(float mass)
+{
+    this->vp->mass = mass;
+}
+
 Particle::Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
 id(id),

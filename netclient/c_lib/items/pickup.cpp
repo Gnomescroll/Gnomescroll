@@ -7,7 +7,7 @@ namespace ItemDrops
 {
 
 const int DEFAULT_PICKUP_ITEM_TTL = 30 * 12;    // 12 seconds
-const float DEFAULT_PICKUP_ITEM_RADIUS = 2.5f;
+const float DEFAULT_PICKUP_ITEM_RADIUS = 2.0f;
 const float DEFAULT_PICKUP_ITEM_TEXTURE_SCALE = 1.0f;
 const float DEFAULT_PICKUP_ITEM_DAMP = 0.1f;    // hardly bounce
 const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;

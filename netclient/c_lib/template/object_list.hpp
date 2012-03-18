@@ -358,19 +358,23 @@ int Object_list<Object_state, max_n>::objects_within_sphere(
     float x, float y, float z, float radius
 )
 {
+    const float radius_squared = radius*radius;
     int ct = 0;
     float dist;
     float min_dist = 10000000.0f;
     int closest = -1;
     int i;
-    for (i=0; i<max_n; i++) {
+    for (i=0; i<max_n; i++)
+    {
         if (a[i] == NULL) continue;
-        dist = distancef(x,y,z, a[i]->x, a[i]->y, a[i]->z);
-        if (dist < radius) {
+        dist = distancef_squared(x,y,z, a[i]->x, a[i]->y, a[i]->z);
+        if (dist < radius_squared)
+        {
             // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
-            if (dist < min_dist) {
+            if (dist < min_dist)
+            {
                 min_dist = dist;
                 closest = ct;
             }

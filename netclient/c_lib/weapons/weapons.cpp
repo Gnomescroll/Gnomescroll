@@ -34,7 +34,8 @@ Weapon::~Weapon()
 void Weapon::restore_ammo()
 {
     #ifdef DC_SERVER
-    if (this->ammo != max_ammo) {
+    if (this->ammo != max_ammo)
+    {
         Agent_state* a = ServerState::agent_list->get(owner);
         if (a!=NULL) {
             WeaponAmmo_StoC ammo_msg;
@@ -70,7 +71,8 @@ void Weapon::add_ammo(int n)
 
 /* Hitscan laser */
 
-bool HitscanLaser::fire() {
+bool HitscanLaser::fire()
+{
     if (clip == 0) return false;
     #ifdef DC_SERVER
     clip--;

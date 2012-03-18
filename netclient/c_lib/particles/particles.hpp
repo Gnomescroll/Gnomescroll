@@ -17,7 +17,7 @@ class Particle
         VerletParticle* vp;
 
         void set_ttl(int ttl);
-
+        void set_mass(float mass);
         Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
         ~Particle();
 };

@@ -90,7 +90,7 @@ bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float
     float len = distancef(x,y,z,a,b,c);
     if (len > max_distance)
         return false;
-    return ray_cast_simple(x,y,z, a,b,c);
+    return _ray_cast_simple(x,y,z, a,b,c, len);
 }
 
 static int ri4[3];

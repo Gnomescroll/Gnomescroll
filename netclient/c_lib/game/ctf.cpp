@@ -558,14 +558,15 @@ bool CTF::remove_agent_from_team(int agent) {
 
 bool CTF::is_at_base(int team, float x, float y, float z)
 {
-    float d;
+    float d,r;
     switch (team)
     {
         case 1:
             if (one.base->vox == NULL)
                 return false;
-            d = distancef(x,y,z, one.base->x, one.base->y, one.base->z);
-            if (d < one.base->vox->largest_radius())
+            d = distancef_squared(x,y,z, one.base->x, one.base->y, one.base->z);
+            r = one.base->vox->largest_radius();
+            if (d < r*r)
                 return true;
             else
                 return false;
@@ -574,8 +575,9 @@ bool CTF::is_at_base(int team, float x, float y, float z)
         case 2:
             if (two.base->vox == NULL)
                 return false;
-            d = distancef(x,y,z, two.base->x, two.base->y, two.base->z);
-            if (d < two.base->vox->largest_radius())
+            d = distancef_squared(x,y,z, two.base->x, two.base->y, two.base->z);
+            r = two.base->vox->largest_radius();
+            if (d < r*r)
                 return true;
             else
                 return false;

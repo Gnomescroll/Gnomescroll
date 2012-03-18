@@ -293,7 +293,7 @@ void Camera::copy_state_from(Camera* c)
 
 bool Camera::in_view(float x, float y, float z)
 {
-    if (distancef(x,y,z, this->x, this->y, this->z) < CAMERA_VIEW_DISTANCE)
+    if (distancef_squared(x,y,z, this->x, this->y, this->z) < CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE)
         return true;
     return false;
 }

@@ -46,23 +46,35 @@ void VerletParticle::set_state(float x, float y, float z, float mx, float my, fl
     p.x = x;
     p.y = y;
     p.z = z;
-    v.x = mx / m;
-    v.y = my / m;
-    v.z = mz / m;
+    v.x = mx / mass;
+    v.y = my / mass;
+    v.z = mz / mass;
+}
+
+void VerletParticle::set_mass(float mass)
+{
+    this->mass = mass;
 }
 
 Vec3 VerletParticle::get_momentum()
 {
     Vec3 mom;
-    mom.x = this->v.x * this->m;
-    mom.y = this->v.y * this->m;
-    mom.z = this->v.z * this->m;
+    mom.x = this->v.x * this->mass;
+    mom.y = this->v.y * this->mass;
+    mom.z = this->v.z * this->mass;
     return mom;
 }
 
 VerletParticle::VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass)
 :
-m(mass)
+mass(mass)
+{
+    this->set_state(x,y,z,mx,my,mz);
+    old_p = p;
+    old_v = v;
+}
+
+VerletParticle::VerletParticle(float x, float y, float z, float mx, float my, float mz)
 {
     this->set_state(x,y,z,mx,my,mz);
     old_p = p;

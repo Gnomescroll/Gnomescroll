@@ -21,13 +21,15 @@ class VerletParticle
         Vec3 old_v;
         Vec3 p; // position
         Vec3 v; // velocity
-        float m;    // inverse mass
+        float mass;
 
         void compute();
         void recompute(float fraction);
         void set_state(float x, float y, float z, float mx, float my, float mz);
+        void set_mass(float mass);
         Vec3 get_momentum();
         
+        VerletParticle(float x, float y, float z, float mx, float my, float mz);
         VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass);
 };
 

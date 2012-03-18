@@ -674,6 +674,9 @@ Adjust turret behavior
 --turrets cant kill agents within base spawner radius
 --animation for turret explosion
 --animation for spawner explosion
+==================
+
+Mar 17
 
 sound:
 --max sources per sample
@@ -688,6 +691,13 @@ logging system
 --timestamped log files per category
 --error handling
 ====================
+
+Mar 18
+
+item drops
+--grenade and laser ammo
+
+=====================
 
 Animations
 Gun model

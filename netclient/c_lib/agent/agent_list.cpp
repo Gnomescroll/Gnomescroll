@@ -85,11 +85,12 @@ int Agent_list::objects_within_sphere(float x, float y, float z, float radius)
 {
     int ct = 0;
     float dist;
+    const float radius_squared = radius*radius;
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
-        dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-        if (dist < radius)
+        dist = distancef_squared(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        if (dist < radius_squared)
         {   // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
@@ -106,12 +107,13 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
     int enemy_team = (team == 1) ? 2 : 1; // swap to enemy team id
     int ct = 0;
     float dist;
+    const float radius_squared = radius*radius;
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (a[i] == NULL) continue;
         if (a[i]->status.team != enemy_team) continue;
         dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
-        if (dist < radius)
+        if (dist < radius_squared)
         {   // agent in sphere
             filtered_objects[ct] = a[i];
             filtered_object_distances[ct] = dist;
