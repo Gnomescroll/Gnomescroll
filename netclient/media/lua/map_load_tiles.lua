@@ -16,11 +16,10 @@ void set_cube_hud(int pos, int cube_id, int tex_id);
 int LUA_load_cube_texture_sheet(char* filename);
 void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index);
 
-void LUA_blit_cube_texture;
-void LUA_save_cube_texture();
+void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
+void LUA_set_block_max_damage(int id, int max_damage);
 
-void load_cube_texture_sprite_sheet(char*, int pos);
-void load_hud_texture(char*, int pos);
+void LUA_save_cube_texture();
 ]]
 
 
@@ -73,6 +72,14 @@ for id, block in pairs(block_id_table) do
 	ffi.C.set_cube_side_texture(id, 5, block.texture.e )
 end
 
+--- set block properties
+
+for id, block in pairs(block_id_table) do
+	p = block.properties
+	ffi.C.LUA_set_block_properties(id, p.active, p.solid, p.occludes, p.transparent )
+end
+
+---
 for id, tex_sheet in pairs(texture_id_table) do
 	local sheet_id = tex_sheet.texture_sheet_id;
 	local sheet_name = tex_sheet.texture_sheet_name;
@@ -80,5 +87,7 @@ for id, tex_sheet in pairs(texture_id_table) do
 	local ypos = tex_sheet.ypos;
 	print( id, "=", tex);
 end
+
+
 
 ffi.C.LUA_save_cube_texture();
