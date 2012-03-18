@@ -49,7 +49,6 @@ inline void item_create_StoC::handle()
     {
         case OBJ_TYPE_GRENADE_DROP:
             ClientState::grenade_drops_list->create(id, x,y,z, mx,my,mz);
-            printf("created grenade drop\n");
             break;
         default: return;
     }
@@ -61,7 +60,6 @@ inline void item_destroy_StoC::handle()
     {
         case OBJ_TYPE_GRENADE_DROP:
             ClientState::grenade_drops_list->destroy(id);
-            printf("Destroyed grenade\n");
             break;
         default: return;
     }
@@ -88,13 +86,13 @@ void Grenades::tick()
     Verlet::bounce(this->vp, GRENADES_DAMP);
     #if DC_SERVER
     int agent_id = this->nearest_agent_in_range(this->vp->p);
-    printf("agent %d in range\n", agent_id);
-    if (STATE::agent_list->agent_pickup_item(agent_id, (Object_types)this->type))
+    if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, (Object_types)this->type))
     {   // was picked up, die
         this->schedule_death_broadcast();
         this->ttl = this->ttl_max;
     }
     #endif
+    this->ttl++;
 }
 
 void Grenades::schedule_death_broadcast()
@@ -105,10 +103,13 @@ void Grenades::schedule_death_broadcast()
 void Grenades::die()
 {
     #if DC_SERVER
-    item_destroy_StoC msg;
-    msg.type = this->type;
-    msg.id = this->id;
-    msg.broadcast();
+    if (this->broadcast_death)
+    {
+        item_destroy_StoC msg;
+        msg.type = this->type;
+        msg.id = this->id;
+        msg.broadcast();
+    }
     #endif
 }
 
