@@ -54,20 +54,20 @@ void BillboardSprite::draw(Vec3 v)
     ty_min = (float)(this->texture_index/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
-    Vec3 p = vec3_sub(v, vec3_add(right, up));    // Bottom left
+    Vec3 p = vec3_sub(v, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(v, vec3_sub(up, right));         // Top left
-    glTexCoord2f(tx_min,ty_min);
+    p = vec3_add(v, vec3_sub(up, right));
+    glTexCoord2f(tx_max,ty_max);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(v, vec3_add(up, right));         // Top right
+    p = vec3_add(v, vec3_add(up, right));
     glTexCoord2f(tx_max,ty_min);
     glVertex3f(p.x, p.y, p.z);
 
-    p = vec3_add(v, vec3_sub(right, up));         // Bottom right
-    glTexCoord2f(tx_max,ty_max);
+    p = vec3_add(v, vec3_sub(right, up));
+    glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z);
     #endif
 }

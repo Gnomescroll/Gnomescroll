@@ -12,7 +12,7 @@ class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
     public:
         uint8_t type;
         uint8_t id;
-        float x,y,z,vx,vy,vz;   // TODO -- encode velocity in a single param -- its just random seed direction
+        float x,y,z,mx,my,mz;   // TODO -- encode velocity in a single param -- its just random seed direction
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -21,9 +21,9 @@ class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
+            pack_float(&mx, buff, buff_n, pack);
+            pack_float(&my, buff, buff_n, pack);
+            pack_float(&mz, buff, buff_n, pack);
         }
         inline void handle();
 };
@@ -48,7 +48,7 @@ inline void item_create_StoC::handle()
     switch (type)
     {
         case OBJ_TYPE_GRENADE_DROP:
-            ClientState::grenade_drops_list->create(id, x,y,z, vx,vy,vz);
+            ClientState::grenade_drops_list->create(id, x,y,z, mx,my,mz);
             printf("created grenade drop\n");
             break;
         default: return;
@@ -119,9 +119,10 @@ void Grenades::born()
     msg.x = this->vp->p.x;
     msg.y = this->vp->p.y;
     msg.z = this->vp->p.z;
-    msg.vx = this->vp->v.x;
-    msg.vy = this->vp->v.y;
-    msg.vz = this->vp->v.z;
+    Vec3 m = this->vp->get_momentum();
+    msg.mx = m.x;
+    msg.my = m.y;
+    msg.mz = m.z;
     msg.broadcast();
     #endif
 }
@@ -131,7 +132,7 @@ void Grenades::init()
     this->type = OBJ_TYPE_GRENADE_DROP;
     this->texture_index = GRENADES_TEXTURE_ID;
     this->scale = GRENADES_TEXTURE_SCALE;
-    this->set_ttl(GRENADES_TTL);
+    this->ttl_max = GRENADES_TTL;
     this->born();
 }
 

@@ -18,12 +18,11 @@ class PickupItem
         PickupItem(const float radius) : radius(ITEM_PICKUP_RADIUS) {}
 };
 
-//const int GRENADES_TEXTURE_ID = 239;
-const int GRENADES_TEXTURE_ID = 5;    //maybe 240
+const int GRENADES_TEXTURE_ID = 240;
 const float GRENADES_TEXTURE_SCALE = 1.0f;
 const float GRENADES_MASS = 1.0f;
 const int GRENADES_TTL = 30 * 12;   // 12 seconds
-const float GRENADES_DAMP = 0.9f;
+const float GRENADES_DAMP = 0.1f;
 
 class Grenades: public Particle, public BillboardSprite, public PickupItem
 {

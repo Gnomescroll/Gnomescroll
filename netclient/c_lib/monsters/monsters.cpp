@@ -50,8 +50,8 @@ Slime::~Slime()
     msg.id = this->id;
     msg.broadcast();
 
-    //ServerState::grenade_drops_list->create(x,y,z+1.5f, randf(), randf(), randf());
-    ServerState::grenade_drops_list->create(x,y,z+1.5f, 0,0,0);
+    const float mom = 5.0f;
+    ServerState::grenade_drops_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, (randf()-0.5f)*mom);
     #endif
 }
 
