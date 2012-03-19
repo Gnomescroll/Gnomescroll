@@ -5,6 +5,7 @@
 #include <c_lib/sound/sound.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/camera/camera.hpp>
+#include <c_lib/camera/skybox/skybox.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <net_lib/host.hpp>
 #include <c_lib/time/physics_timer.h>
@@ -156,6 +157,7 @@ int run()
 
         // draw map
         t_map::draw_map();
+        Skybox::draw();
 
         // draw client state
         ClientState::draw();

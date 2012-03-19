@@ -68,6 +68,9 @@
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
 
+/* Skybox */
+#include <c_lib/camera/skybox/skybox.cpp>
+
 /* Game Stuff */
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/teams.cpp>
@@ -221,6 +224,8 @@ int init_c_lib() {
     Sound::init();
     //Sound::test();
 
+    Skybox::init();
+
     HudText::init();
     HudFont::init();
     HudMap::init();
@@ -259,6 +264,8 @@ void close_c_lib() {
 
     t_map::end_t_map();
     t_map::end_t_vbo();
+
+    Skybox::teardown();
 
     TextureSheetLoader::teardown();
 
