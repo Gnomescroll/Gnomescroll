@@ -2,14 +2,16 @@
 
 #include "t_map.hpp"
 
-//include <stdio.h>
+
 
 namespace t_map
 {
+    struct cubeProperties* cube_list = NULL;
+}
 
-struct cubeProperties* cube_list = NULL;
 
-//struct cubeProperties* _get_cube(int id)  { return &cube_list[id]; }
+namespace t_map
+{
 
 void init_t_properties()
 {
@@ -18,6 +20,7 @@ void init_t_properties()
     if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
 
     cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
+    memset(cube_list, 0, sizeof(struct cubeProperties) * MAX_CUBES);
     return;
 }
 
@@ -36,6 +39,26 @@ struct cubeProperties* get_cube(int id)
 
 }
 
+/*
+    LUA interface
+*/
+
+extern "C"
+{
+    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent)
+    {
+        t_map::cube_list[id].active = active;
+        t_map::cube_list[id].solid = solid;
+        t_map::cube_list[id].occludes = occludes;
+        t_map::cube_list[id].transparent = transparent;        
+    }
+
+    void LUA_set_block_max_damage(int id, int max_damage)
+    {
+        t_map::cube_list[id].max_damage = max_damage;
+    }
+
+}
 
 /*
     Properties by cube id
@@ -82,9 +105,7 @@ bool isOccludes(int x, int y, int z)
 /*
     Map Damage
 */
-
-int maxDamage(int id) __attribute((always_inline));
-
+    
 int maxDamage(int id) 
 {
     return t_map::cube_list[id].max_damage;

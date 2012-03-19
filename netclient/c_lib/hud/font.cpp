@@ -54,7 +54,7 @@ void Font::load_font_png()
 
     SDL_FreeSurface(surface);
 
-    printf("Loaded surface %s\n", data.png);
+    //printf("Loaded surface %s\n", data.png);
 }
 
 void Font::parse_font_file()

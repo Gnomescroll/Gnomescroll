@@ -6,9 +6,9 @@
     #include "windows.h"
 #endif
 
-#ifdef linux
-    #include <c_lib/SDL/IMG_savepng.h>
-#endif
+//#ifdef linux
+//    #include <c_lib/SDL/IMG_savepng.h>
+//#endif
 /*
     Example code from
     http://www.opengl.org/wiki/Tutorial2:_VAOs,_VBOs,_Vertex_and_Fragment_Shaders_(C_/_SDL)
@@ -229,14 +229,14 @@ int init_video() {
     }
     SDL_GL_GetAttribute(SDL_GL_ACCELERATED_VISUAL, &value);
     if(value) {
-        printf("Harware Acceleration Enabled \n");
+        //printf("Harware Acceleration Enabled \n");
     } else {
         printf("Warning: Hardware Acceleration Not Enabled!\n");
     }
 
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &value);
     if(value) {
-        printf("Double Buffering Enabled \n");
+        //printf("Double Buffering Enabled \n");
     } else {
         printf("Warning: Double Buffering Not Enabled!\n");
     }
@@ -253,10 +253,12 @@ int init_video() {
 
     //printf("SDL: %s\n", SDL_GetError());
 
-    printf("glew init\n");
+    //printf("glew init\n");
     glewInit();
     if (glewIsSupported("GL_VERSION_2_0"))
-        printf("OpenGL 2.0 Supported \n");
+    {
+        //printf("OpenGL 2.0 Supported \n");
+    }
     else {
         printf("OpenGL 2.0 not supported \n");
     }
@@ -277,7 +279,7 @@ int init_video() {
     //glGetIntegerv(GL_MINOR_VERSION, &OpenGLVersion[1]);
 
     if(GLEW_ARB_multisample) {
-        printf("ARB_MULTISAMPLE supported \n");
+        //printf("ARB_MULTISAMPLE supported \n");
     } else {
         printf("ARB_MULTISAMPLE not supported \n");
     }
@@ -290,7 +292,7 @@ int init_video() {
 
     }
     if(GLEW_EXT_timer_query) {
-        printf("GL_EXT_timer_query supported\n");
+        //printf("GL_EXT_timer_query supported\n");
     } else {
         printf("GL_EXT_timer_query not supported\n");
     }
@@ -299,7 +301,7 @@ int init_video() {
 
     //if(GLEW_ATI_meminfo) { ati_meminfo(); } 
 
-    printf("Finished OpenGL init\n");
+    //printf("Finished OpenGL init\n");
 
     glClearColor(0.0,0.0,0.0,0.0);
 
@@ -363,6 +365,7 @@ int _swap_buffers() {
 
 void save_screenshot()
 {
+#if 0
 #ifdef linux
     //int window_width = _xres;
     //int window_height = _yres;
@@ -409,4 +412,114 @@ void save_screenshot()
     //SDL_SaveBMP(surface, FileName);
     SDL_FreeSurface(surface);
 #endif
+#endif
+
+// Compresses an image to a compressed PNG file in memory.
+// On entry:
+//  pImage, w, h, and num_chans describe the image to compress. num_chans may be 1, 2, 3, or 4.
+// On return:
+//  Function returns a pointer to the compressed data, or NULL on failure.
+//  *pLen_out will be set to the size of the PNG image file.
+//  The caller must free() the returned heap block (which will typically be larger than *pLen_out) when it's no longer needed.
+//void *tdefl_write_image_to_png_file_in_memory(const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+
+    char FileName[128];
+
+    sprintf(FileName,"./screenshot/%d.png",  (int) clock() );
+
+    printf("Screenshot: %s \n", FileName);
+
+    //SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, _xres, _yres,
+    //                                               32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
+
+    char* PBUFFER = (char*) malloc(4*_xres*_yres);
+
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, (void*) PBUFFER);
+
+    for(int i=0; i < _xres; i++) {
+    for(int j=0; j < _yres; j++) {
+
+        //if( (PBUFFER)[4*(_xres*j + i) + 3] == 0) ((unsigned int*)PBUFFER)[_xres*j + i] = 0xffffffff;
+        PBUFFER[4*(_xres*j + i) + 3] = 255;
+
+    }}
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(4*_xres);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        int pitch = _xres * 4;
+        //int w = _xres;
+        int h = _yres;
+
+        height_div_2 = (int) (_yres * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy( (Uint8 *)temp_row, (Uint8 *)(PBUFFER) + pitch * index, pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * index, (Uint8 *)PBUFFER + pitch * (h - index-1), pitch);
+            memcpy( (Uint8 *)(PBUFFER) + pitch * (h - index-1), temp_row, pitch);
+        }
+        free(temp_row); 
+    }
+
+
+    size_t png_size;
+    char* PNG_IMAGE = (char* ) tdefl_write_image_to_png_file_in_memory(
+        (const char*) PBUFFER, _xres, _yres, 4, &png_size);
+
+    //void *tdefl_write_image_to_png_file_in_memory(
+    //    const void *pImage, int w, int h, int num_chans, size_t *pLen_out);
+
+
+
+    //printf("PNG SIZE= %i \n", png_size);
+
+    FILE * pFile;
+    pFile = fopen ( FileName , "wb" );
+    fwrite (PNG_IMAGE , 1 , png_size, pFile );
+    fclose (pFile);
+
+    free(PNG_IMAGE);
+    free(PBUFFER);
+/*
+    SDL_LockSurface(surface);
+
+    glReadPixels(0, 0, _xres, _yres, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+    {
+        int index;
+        void* temp_row;
+        int height_div_2;
+
+        temp_row = (void *)malloc(surface->pitch);
+        if(NULL == temp_row)
+        {
+            SDL_SetError("save_screenshot: not enough memory for surface inversion");
+        }
+        height_div_2 = (int) (surface->h * .5);
+        for(index = 0; index < height_div_2; index++)    
+        {
+            memcpy((Uint8 *)temp_row,(Uint8 *)(surface->pixels) + surface->pitch * index, surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * index, (Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), surface->pitch);
+            memcpy((Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), temp_row, surface->pitch);
+        }
+        free(temp_row); 
+    }
+    SDL_UnlockSurface(surface);
+    //unsigned int *pixels = new unsigned int[window.width * window.height];
+    //unsigned int *pixelsbuf = new unsigned int[window.width * window.height];
+    
+    IMG_SavePNG(FileName, surface, -1);
+
+    //SDL_SaveBMP(surface, FileName);
+    SDL_FreeSurface(surface);
+*/
+
+
 }

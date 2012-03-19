@@ -287,6 +287,7 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 /* Agent */
 
 #include <c_lib/common/lua/lua.hpp>
+//lua_load_map_tiles();
 
 void agent_key_down_handler(SDL_Event* event)
 {

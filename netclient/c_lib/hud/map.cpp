@@ -211,7 +211,8 @@ void init_surface()
     const char grad_fmt[] = "media/texture/heightmap_gradient_%02d.png";
     char grad_str[strlen(grad_fmt) -2 +1];
     sprintf(grad_str, grad_fmt, grad_num);
-    printf("Loading gradient %s\n", grad_str);
+    //printf("Loading gradient %s\n", grad_str);
+    
     gradient_surface = create_surface_from_file(grad_str);
     if (gradient_surface==NULL)
     {

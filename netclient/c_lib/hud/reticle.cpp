@@ -40,7 +40,6 @@ void Reticle::draw()
 
 void init()
 {
-    printf("reticle init\n");
     reticle.init((char*)"./media/texture/target.png");
     scope_reticle.init((char*)"./media/texture/target-zoom.png");
 }
