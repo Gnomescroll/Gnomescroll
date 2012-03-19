@@ -10,7 +10,21 @@ static unsigned char* pixel_data[MAX_TEXTURES];
 
 void init_textures()
 {
-    memset(pixel_data, 0, MAX_TEXTURES);
+    static int init = 0;
+
+    if(init == 0)
+    {
+        memset(pixel_data, 0, MAX_TEXTURES);
+        init = 1;
+    }
+    else
+    {
+        init = 0;
+        printf("Error: init_textures called twice! \n");
+    }
+
+    //memset(pixel_data, 0, MAX_TEXTURES);
+
 /*
     if(block_texture == 0) 
     { 
@@ -52,6 +66,8 @@ void init_textures()
 
 void set_cube_side_texture(int id, int side, int tex_id) 
 {
+    //printf("set_cube_side_texture: %i %i %i \n", id, side, tex_id);
+
     if(tex_id < 0 ) return;
     if(tex_id > MAX_TEXTURES)
     {

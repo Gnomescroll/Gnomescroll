@@ -60,9 +60,19 @@ Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
 --- Classic Blocks ---
 
-b = NewSolidBlock(1, "error_block"); -- id, name
+b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
 b.hud = hud(63, "error.png");
+
+
+b = NewSolidBlock(2, "lava");
+b.texture = iso_texture(stone_block);
+b.hud = hud(0, "stone.png");
+
+
+b = NewSolidBlock(1, "soft_rock");
+b.texture = iso_texture("t00",0,1);
+b.hud = hud(1, "blueore.png");
 
 b = NewSolidBlock(2, "lava");
 b.texture = iso_texture(stone_block);
@@ -80,14 +90,8 @@ b = NewSolidBlock(5, "solar_panel");
 b.texture = iso_texture("t00",1,0);
 b.hud = hud(1, "blueore.png");
 
+
 print("map_load_tiles: done");
-
-
-b = NewSolidBlock(14, "soft_rock");
-b.texture = iso_texture("t00",1,1);
-b.hud = hud(1, "blueore.png");
-
-
 
 for i, block in pairs(block_id_table) do
   o = {}

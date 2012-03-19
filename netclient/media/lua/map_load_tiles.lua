@@ -48,11 +48,14 @@ for id, block in pairs(block_id_table) do
 end
 ]]
 
-for id=16, 255, 1 do
+--[[
+for id=255-16, 255, 1 do
 	---print( id)
 	ffi.C.LUA_blit_cube_texture(0, 0,0, id);
 end
+]]
 
+--[[
 for id=0, 255, 1 do
 	ffi.C.set_cube_side_texture(id, 0, 0 )
 	ffi.C.set_cube_side_texture(id, 1, 0 )
@@ -61,9 +64,11 @@ for id=0, 255, 1 do
 	ffi.C.set_cube_side_texture(id, 4, 0 )
 	ffi.C.set_cube_side_texture(id, 5, 0 )
 end
+]]
 
 
 for id, block in pairs(block_id_table) do
+	print( id, "=", to_string( block.texture) )
 	ffi.C.set_cube_side_texture(id, 0, block.texture.t )
 	ffi.C.set_cube_side_texture(id, 1, block.texture.b )
 	ffi.C.set_cube_side_texture(id, 2, block.texture.n )
@@ -72,12 +77,21 @@ for id, block in pairs(block_id_table) do
 	ffi.C.set_cube_side_texture(id, 5, block.texture.e )
 end
 
+
 --- set block properties
 
 for id, block in pairs(block_id_table) do
 	p = block.properties
+	print( id, "=", to_string(p) );
+
 	ffi.C.LUA_set_block_properties(id, p.active, p.solid, p.occludes, p.transparent )
 end
+
+--[[
+for id=1, 255, 1 do
+	ffi.C.LUA_set_block_properties(id, 1,1,1, 0)
+end
+]]
 
 ---
 for id, tex_sheet in pairs(texture_id_table) do

@@ -53,7 +53,7 @@ void main(void)
         vec2 texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
 
         vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
-        vec2 texCoord3 = 0.0625f*tmp +InTexCoord.zw;
+        texCoord3 = 0.0625f*tmp +InTexCoord.zw;
 
         lightMatrix = mat2(InLightMatrix[0], InLightMatrix[1], InLightMatrix[2],InLightMatrix[3] );
  

@@ -28,7 +28,7 @@ Terrain_map* main_map;
 
 void init_t_map()
 {
-
+    printf("init_t_map() \n");
     static int init = 0;
     if(init != 0) 
     {
@@ -42,7 +42,6 @@ void init_t_map()
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
 #ifdef DC_CLIENT
-    init_cache();
     init_client_compressors();
     init_t_vbo();
     init_textures();
@@ -55,6 +54,15 @@ void init_t_map()
 
 }
 
+#ifdef DC_CLIENT
+    void init_for_draw()
+    {
+        printf("init for draw \n");
+        init_cache();
+        init_shaders();
+    }
+#endif
+    
 void end_t_map()
 {
     //mz_inflateEnd()
@@ -76,14 +84,6 @@ class Terrain_map* get_map()
     return main_map;
 }
 
-#ifdef DC_CLIENT
-    void init_for_draw()
-    {
-        printf("init for draw \n");
-        
-        init_shaders();
-    }
-#endif
 
 int get(int x, int y, int z)
 {
