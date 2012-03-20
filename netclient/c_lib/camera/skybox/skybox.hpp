@@ -8,25 +8,75 @@
 namespace Skybox
 {
 
-SDL_Surface* surface;
+SDL_Surface* surface = NULL;
 
-GLuint star_sheet;
+GLuint star_sheet = 0 ;
 
 struct STAR
 {
 	int type;
 	float brightness;
 	float size;
-	float phi;
-	float theta;
+	//float phi;
+	//float theta;
+
+	float x;
+	float y;
+	float z;
 };
 
 struct STAR* star_list;
 int star_num = 0;
 
+
+static inline float rand_float()
+{
+	//return  (float)(rand()) / ((float) RAND_MAX);
+	return randf();
+}
+
+void generate_sky()
+{
+	printf("generate_sky \n");
+
+	const int N = 1024;
+	star_list = new STAR[N];
+
+	float r = 256.0;
+
+	for(int i=0; i < N; i++)
+	{
+		STAR s;
+
+		float theta = randf()*(3.14159265);
+		float phi = randf()*(3.14159265*2.0);
+
+		printf("theta= %f\n", theta);
+
+		float x = r*cos(phi)*sin(theta);
+		float y = r*sin(phi)*sin(theta);
+		float z = r*cos(theta);
+
+		s.x = x;
+		s.y = y;
+		s.z = z;
+		
+		s.brightness = 0.2 + (0.8)*randf();
+		s.size = 1 + 3*randf();
+		s.type = rand()%16;
+
+		star_list[i] = s;
+
+	}
+
+	star_num = N;
+
+}
 void init()
 {
-	surface = _load_image((char*) "./media/textures/skybox/Starsheet.png");
+	printf("INIT SKYBOX \n");
+
+	surface = create_surface_from_file((char*) "./media/texture/skybox/Starsheet.png");
 
 	int tex_format;
     if (surface->format->Rmask == 0x000000ff)
@@ -41,8 +91,7 @@ void init()
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -58,6 +107,8 @@ void init()
     );
 
     glDisable(GL_TEXTURE_2D);
+
+	generate_sky();
 }
 
 void teardown()
@@ -68,24 +119,52 @@ void teardown()
 
 void draw()
 {
+	//printf("drwa\n");
 
-	star_num = 256;
+	if (current_camera == NULL) return;
+
+
+    /*
+		Optimize where GL BLEND APPEARS this appears
+    */
+
+
+
+    //glDisable(GL_TEXTURE_2D);
+
+    //glColor3ub(0,255,0);
+
+	glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
+	glEnable (GL_BLEND);
+	
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_ONE, GL_ONE);
+
+    glBindTexture(GL_TEXTURE_2D, star_sheet);
 
     glBegin(GL_QUADS);
 
-	for(int i; i<star_num; i++)
+
+	float tx_min, tx_max, ty_min, ty_max;
+
+    float cx = current_camera->x; 
+    float cy = current_camera->y; 
+    float cz = current_camera->z; 
+
+	for(int i=0; i<star_num; i++)
 	{
+
+		STAR s = star_list[i];
+
+		float scale = s.size;
+
 		Vec3 v;
 
-		v.x = (float) i;
-		v.y = (float) i;
-		v.z = 256.0;
-
-		float scale = 1.0;
-
-	    if (current_camera == NULL) return;
+		v.x = s.x + cx;
+		v.y = s.y + cy;
+		v.z = s.z + cz;
 
 	    Vec3 up = vec3_init(
 	        model_view_matrix[0]*scale,
@@ -98,17 +177,13 @@ void draw()
 	        model_view_matrix[9]*scale
 	    );
 
-	    float tx_min, tx_max, ty_min, ty_max;
-	/*
-	    tx_min = (float)(texture_index%16)* (1.0/16.0);
-	    tx_max = tx_min + (1.0/16.0);
-	    ty_min = (float)(texture_index/16)* (1.0/16.0);
-	    ty_max = ty_min + (1.0/16.0);
-	*/
-	    tx_min = 0.0f;
-	    tx_max = 0.5f;
-	    ty_min = 0.0f;
-	    ty_max = 0.5f;
+
+	    tx_min = (float)(s.type%4)* (1.0/4.0);
+	    tx_max = tx_min + (1.0/4.0);
+	    ty_min = (float)(s.type/4)* (1.0/4.0);
+	    ty_max = ty_min + (1.0/4.0);
+
+
 
 	    Vec3 p = vec3_sub(v, vec3_add(right, up));
 	    glTexCoord2f(tx_min,ty_max);
@@ -130,6 +205,12 @@ void draw()
 
 	glEnd();
 	//glDisable(GL_TEXTURE_2D);
+
+    glDisable(GL_BLEND);
+
+    //glEnable(GL_TEXTURE_2D);
+
+
 }
 
 }
