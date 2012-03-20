@@ -114,12 +114,17 @@ inline void agent_shot_object_StoC::handle()
     voxel[0] = vx;
     voxel[1] = vy;
     voxel[2] = vz;
+    int voxel_blast_radius = 1;
     if (target_type == OBJ_TYPE_AGENT)
     {
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
+        voxel_blast_radius = 3;
     }
-    const int voxel_blast_radius = 3;
+    else if (target_type == OBJ_TYPE_SLIME)
+    {
+        voxel_blast_radius = 2;
+    }
     destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
@@ -162,12 +167,18 @@ inline void agent_melee_object_StoC::handle()
     voxel[0] = vx;
     voxel[1] = vy;
     voxel[2] = vz;
+    int voxel_blast_radius = 1;
     if (target_type == OBJ_TYPE_AGENT)
     {
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
+        voxel_blast_radius = 3;
     }
-    destroy_object_voxel(target_id, target_type, target_part, voxel, 3);
+    else if (target_type == OBJ_TYPE_SLIME)
+    {
+        voxel_blast_radius = 2;
+    }
+    destroy_object_voxel(target_id, target_type, target_part, voxel, voxel_blast_radius);
 }
 
 inline void agent_melee_nothing_StoC::handle()
