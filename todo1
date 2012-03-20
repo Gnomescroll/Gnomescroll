@@ -703,7 +703,6 @@ distance checks using distancef_squared
 changed laser sound
 =====================
 
-Animations
 Gun model
 Gun in first person and zoomed perspectives
 
@@ -716,7 +715,6 @@ Weapon firing rate
 == Monsters ==
 Improve slimes
 --Should stick to floor/walls
---Drop items
 --Populate in caves
 ---Pick random point in z
 ---Move up/down alternating until find shortest path to open area

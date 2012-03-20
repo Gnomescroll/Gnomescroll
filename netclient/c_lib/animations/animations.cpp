@@ -290,7 +290,8 @@ void slime_melt(float x, float y, float z)
         
         minivox = ClientState::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
         if (minivox == NULL) return;
-        minivox->set_color(128,223,31);
+        //minivox->set_color(128,223,31);//green
+        minivox->set_color(31,223,223);//sky blue
         //minivox->set_size(0.7);
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
