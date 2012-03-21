@@ -68,7 +68,7 @@ end
 
 
 for id, block in pairs(block_id_table) do
-	print( id, "=", to_string( block.texture) )
+	--print( id, "=", to_string( block.texture) )
 	ffi.C.set_cube_side_texture(id, 0, block.texture.t )
 	ffi.C.set_cube_side_texture(id, 1, block.texture.b )
 	ffi.C.set_cube_side_texture(id, 2, block.texture.n )
@@ -82,7 +82,7 @@ end
 
 for id, block in pairs(block_id_table) do
 	p = block.properties
-	print( id, "=", to_string(p) );
+	--print( id, "=", to_string(p) );
 
 	ffi.C.LUA_set_block_properties(id, p.active, p.solid, p.occludes, p.transparent )
 end
@@ -99,7 +99,7 @@ for id, tex_sheet in pairs(texture_id_table) do
 	local sheet_name = tex_sheet.texture_sheet_name;
 	local xpos = tex_sheet.xpos;
 	local ypos = tex_sheet.ypos;
-	print( id, "=", tex);
+	--print( id, "=", tex);
 end
 
 
