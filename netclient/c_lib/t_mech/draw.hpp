@@ -54,9 +54,83 @@ void draw_teardown()
 
 }
 
+/*
+struct MECH
+{
+	int x,y,z; //position
+	int type;  //type
+	int direction; //direction
+
+	bool active;
+};
+*/
+
+static const int v_index[72] = 
+{
+    1,1,1 , 0,1,1 , 0,0,1 , 1,0,1 , //top
+    0,1,0 , 1,1,0 , 1,0,0 , 0,0,0 , //bottom
+    1,0,1 , 1,0,0 , 1,1,0 , 1,1,1 , //north
+    0,1,1 , 0,1,0 , 0,0,0 , 0,0,1 , //south
+    1,1,1 , 1,1,0 , 0,1,0,  0,1,1 , //west
+    0,0,1 , 0,0,0 , 1,0,0 , 1,0,1 , //east
+};
+
+
+static const float t_index[8] =
+{
+    0.0, 0.0,
+    0.0, 1.0,
+    1.0, 1.0,
+    1.0, 0.0
+};
+
 
 void draw()
 {
+
+	glColor3ub(255,255,255);
+
+    glEnable(GL_TEXTURE_2D);
+	glEnable (GL_BLEND);
+	
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glBlendFunc(GL_ONE, GL_ONE);
+
+    glBindTexture(GL_TEXTURE_2D, mech_sheet);
+
+	float tx_min, tx_max, ty_min, ty_max;
+
+    glBegin(GL_QUADS);
+/*
+	for(int i=0; i<mech_num; i++)
+	{
+
+        struct MECH m = mech_array[i];
+
+        int ti;
+
+
+        ti = 0;
+
+        glTexCoord2f( t_index[ti+0],t_index[ti+1] );
+        glVertex3f(p.x, p.y, p.z);
+
+        ti = 2;
+
+        glTexCoord2f( t_index[ti+0],t_index[ti+1] );
+        glVertex3f(p.x, p.y, p.z);
+
+        ti = 4;
+
+        glTexCoord2f( t_index[ti+0],t_index[ti+1] );
+        glVertex3f(p.x, p.y, p.z);
+
+        ti = 6;
+        glTexCoord2f( t_index[ti+0],t_index[ti+1] );
+        glVertex3f(p.x, p.y, p.z);
+	}
+*/
+	glEnd();
 
 }
 

@@ -47,7 +47,7 @@ void generate_sky()
 	for(int i=0; i < N; i++)
 	{
 		STAR s;
-
+	/*
 		float theta = randf()*(3.14159265);
 		float phi = randf()*(3.14159265*2.0);
 
@@ -56,10 +56,21 @@ void generate_sky()
 		float x = r*cos(phi)*sin(theta);
 		float y = r*sin(phi)*sin(theta);
 		float z = r*cos(theta);
+	*/
 
-		s.x = x;
-		s.y = y;
-		s.z = z;
+		printf("theta= %f\n", randf());
+
+		float z = 2.0*randf()-1.0;
+		float t = randf()*(3.14159265*2.0);
+
+		float _r = sqrt(1- z*z);
+
+		float x = _r * cos(t);
+		float y = _r * sin(t);
+
+		s.x = r*x;
+		s.y = r*y;
+		s.z = r*z;
 		
 		s.brightness = 0.2 + (0.8)*randf();
 		s.size = 1 + 3*randf();
@@ -76,7 +87,7 @@ void init()
 {
 	printf("INIT SKYBOX \n");
 
-	surface = create_surface_from_file((char*) "./media/texture/skybox/Starsheet.png");
+	surface = create_surface_from_file((char*) "./media/texture/skybox/Starsheet2.png");
 
 	int tex_format;
     if (surface->format->Rmask == 0x000000ff)
@@ -93,7 +104,9 @@ void init()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     glTexImage2D(
         GL_TEXTURE_2D,  //target
@@ -158,7 +171,7 @@ void draw()
 
 		STAR s = star_list[i];
 
-		float scale = s.size;
+		float scale = s.size /2.0;
 
 		Vec3 v;
 
