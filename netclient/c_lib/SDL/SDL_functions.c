@@ -303,8 +303,8 @@ int init_video() {
 
     //printf("Finished OpenGL init\n");
 
-    glClearColor(0.0,0.0,0.0,0.0);
-
+    //glClearColor(0.0,0.0,0.0,0.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
     return 0;
 }
 

@@ -58,7 +58,7 @@ void generate_sky()
 		float z = r*cos(theta);
 	*/
 
-		printf("theta= %f\n", randf());
+		//printf("theta= %f\n", randf());
 
 		float z = 2.0*randf()-1.0;
 		float t = randf()*(3.14159265*2.0);
