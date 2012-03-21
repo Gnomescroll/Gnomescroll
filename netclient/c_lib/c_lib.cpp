@@ -120,6 +120,11 @@
 #include <c_lib/t_map/net/t_CtoS.cpp>
 #include <c_lib/t_map/net/t_StoC.cpp>
 
+/* mechanisms */
+
+#include <c_lib/t_mech/state.cpp>
+#include <c_lib/t_mech/draw.cpp>
+
 //#include <c_lib/t_map/t_viz.c>
 //#include <c_lib/t_map/t_vbo.c>
 
@@ -221,6 +226,9 @@ int init_c_lib() {
     lua_load_block_dat(); /* Load Map Tiles */
     t_map::init_for_draw();
 
+    t_mech::draw_init();
+    t_mech::state_init();
+
     Sound::init();
     //Sound::test();
 
@@ -269,6 +277,9 @@ void close_c_lib() {
 
     t_map::end_t_map();
     t_map::end_t_vbo();
+
+    t_mech::draw_teardown();
+    t_mech::state_teardown();
 
     Skybox::teardown();
 
