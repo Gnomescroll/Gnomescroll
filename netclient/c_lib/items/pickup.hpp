@@ -5,13 +5,6 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/template/object_list.hpp>
 
-/*
- *  Don't instantiate any of these classes directly
- *
- * See c_lib/items/grenades.*pp for an example of how to use
- *
- */
-
 // encapsulates all information needed for any object
 class ObjectState
 {
@@ -88,7 +81,25 @@ class MainObject2: public MainObject2Super
     public:
         ObjectState state;
         void die() { MainObject2Super::die(&this->state); }
-}; 
+};
+
+// using a policy template, this is the better way, because we will only need to define the die() wrapper once
+// AnchorDie can stub out the functionality
+
+class NoTick
+{ void tick() {} };
+class NoDraw
+{ void draw() {} };
+class NoDie
+{ void die() {} };
+
+template <class Tick = NoTick, class Draw = NoDraw, class Die = NoDie>
+class AnObject
+{
+    void tick() { Tick::tick(); }
+    void draw() { Draw::draw(); }
+    void die() { Die::die(); }
+};
 
 void init_die()
 {
@@ -117,6 +128,14 @@ void init_die()
     p.die();
     printf("\n\n");
 }
+
+
+/*
+ *  Don't instantiate any of these classes directly
+ *
+ * See c_lib/items/grenades.*pp for an example of how to use
+ *
+ */
 
 namespace ItemDrops
 {
