@@ -48,7 +48,7 @@ namespace t_map
             ANISOTROPIC_FILTERING = 0;
         }
 
-        T_MAP_BACKUP_SHADER = 1;
+        //T_MAP_BACKUP_SHADER = 1;
 
         // || true
         if(T_MAP_BACKUP_SHADER == 1 )

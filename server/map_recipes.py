@@ -42,7 +42,7 @@ for id,v in dat.items():
     name = v.get('name', None)
     if name is None:
         continue
-    cubes[name] = 1 # DEBUGGING
+    cubes[name] = 6 # DEBUGGING
 
 def names_available():
     print ""

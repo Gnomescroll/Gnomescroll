@@ -90,6 +90,9 @@ b = NewSolidBlock(5, "solar_panel");
 b.texture = iso_texture("t00",1,0);
 b.hud = hud(1, "blueore.png");
 
+b = NewSolidBlock(6, "holy_stone");
+b.texture = iso_texture("t01",5,4);
+b.hud = hud(1, "blueore.png");
 
 print("map_load_tiles: done");
 
