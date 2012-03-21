@@ -289,6 +289,8 @@ void chat_mouse_motion_handler(SDL_Event* event){}
 #include <c_lib/common/lua/lua.hpp>
 //lua_load_map_tiles();
 
+#include <c_lib/t_mech/state.hpp>
+
 void agent_key_down_handler(SDL_Event* event)
 {
 
@@ -296,6 +298,14 @@ void agent_key_down_handler(SDL_Event* event)
     {
         case SDLK_k:
             run_lua_test();
+            break;
+
+        case SDLK_9:
+            t_mech::add_mech();
+            break;
+
+        case SDLK_0:
+            t_mech::rotate_mech();
             break;
 
         case SDLK_r:
@@ -339,13 +349,14 @@ void agent_key_down_handler(SDL_Event* event)
         case SDLK_8:
             if (ClientState::playerAgent_state.action.switch_weapon(8-1)) agent_camera->unzoom();
             break;
+        /*
         case SDLK_9:
             if (ClientState::playerAgent_state.action.switch_weapon(9-1)) agent_camera->unzoom();
             break;
         case SDLK_0:
             if (ClientState::playerAgent_state.action.switch_weapon(10-1)) agent_camera->unzoom();
             break;
-
+        */
         default: break;
     }
 

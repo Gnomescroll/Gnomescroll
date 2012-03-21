@@ -34,6 +34,64 @@ void state_teardown() {}
 //return index or -1
 
 #if DC_CLIENT
+
+/*
+struct HitscanBlock {
+    int hit;
+    int x,y,z;
+    float distance;
+    int side[3];
+    int tile;
+};
+*/
+
+void add_mech()
+{
+    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 vec = current_camera->forward_vector();
+
+
+	Hitscan::HitscanBlock* h = Hitscan::ray_intersect_block(pos.x,pos.y,pos.z, vec.x,vec.y,vec.z);
+
+	if(!h->hit) return;
+	printf("Place: %i %i %i distance: %f \n", h->x,h->y,h->z, h->distance);
+
+	struct MECH m;
+
+	m.x = h->x;
+	m.y = h->y;
+	m.z = h->z;
+
+	m.type = 0;
+
+	m.direction = 0;
+
+	mech_array[mech_num] = m;
+	mech_num++;
+}
+
+void rotate_mech()
+{
+    Vec3 pos = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 vec = current_camera->forward_vector();
+
+    Hitscan::HitscanBlock* h;
+	h = Hitscan::ray_intersect_block(pos.x,pos.y,pos.z, vec.x,vec.y,vec.z);
+
+	if(!h->hit) return;
+	printf("Place: %i %i %i distance: %f \n", h->x,h->y,h->z, h->distance);
+
+	for(int i=0; i<mech_num; i++)
+	{
+		if(mech_array[i].x == h->x && mech_array[i].y == h->y && mech_array[i].z == h->z)
+		{
+			mech_array[i].direction = (mech_array[i].direction +1) % 4;
+			return;
+		}
+
+	}
+}
+
 int resolve_position()
 {
 
@@ -54,16 +112,11 @@ struct HitscanBlock {
 
 HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy, float vz);
 */
-	Hitscan::HitscanBlock* h = Hitscan::ray_intersect_block(pos.x,pos.y,pos.z, vec.x,vec.y,vec.y);
+    Hitscan::HitscanBlock* h;
+	h = Hitscan::ray_intersect_block(pos.x,pos.y,pos.z, vec.x,vec.y,vec.z);
 
-	if(h->hit)
-	{
-		printf("Hit: %i %i %i \n", h->x,h->y,h->z);
-	} 
-	else
-	{
-		return -1;
-	}
+
+	if(!h->hit) return -1;
 
 	for(int i=0; i<mech_num; i++)
 	{
@@ -74,7 +127,7 @@ HitscanBlock* ray_intersect_block(float x, float y, float z, float vx, float vy,
 
 	}
 
-	return 0;
+	return -1;
 }
 #endif
 

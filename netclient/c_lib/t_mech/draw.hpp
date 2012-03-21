@@ -1,6 +1,7 @@
 #pragma once
-
 #include <c_lib/SDL/texture_loader.hpp>
+
+#include <c_lib/t_mech/state.hpp>
 
 namespace t_mech
 {
@@ -52,5 +53,12 @@ void draw_teardown()
 {
 
 }
-	
+
+
+void draw()
+{
+
+}
+
+
 }
