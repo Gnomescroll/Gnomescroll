@@ -12,6 +12,112 @@
  *
  */
 
+// encapsulates all information needed for any object
+class ObjectState
+{
+    public:
+    int id;
+    bool blow_up_on_death;
+    bool pickup;
+    
+    ObjectState()
+    : id(-1), blow_up_on_death(false), pickup(false)
+    {}
+};
+
+template <class Super>
+class DieMixin: public Super
+{
+    protected:
+        ObjectState* state;
+    public:
+        void die() { Super::die(this->state); }
+
+    DieMixin<Super>(ObjectState* state)
+    : state(state) {}
+};
+
+template <class Super>
+class BlowupDie: public Super
+{
+    public:
+        void die(ObjectState* state) { if (state->blow_up_on_death) printf("blowup die\n"); Super::die(state); }
+};
+
+template <class Super>
+class PickupDie: public Super
+{
+    public:
+        void die(ObjectState* state) { printf("%d\n", state->id); if (state->pickup) printf("pickup die\n"); Super::die(state); }
+};
+
+class AnchorDie
+{
+    public:
+        void die(ObjectState* state) 
+        { 
+            printf("Reached anchor, id=%d\n", state->id);
+        }
+};
+
+typedef DieMixin < BlowupDie < PickupDie < AnchorDie > > > MergedDieSuper;
+class MergedDie: public MergedDieSuper
+{
+    public:
+    explicit MergedDie(ObjectState* state)
+    : MergedDieSuper(state) {}
+};
+
+class MainObject: public MergedDie
+{
+    public:
+        ObjectState state;
+        
+    MainObject()
+    : MergedDie(&this->state)
+    {}
+};
+
+// alternate form
+// eliminates the MergedDie and constructor passing
+// but will have to define this die() in every object
+// desirable?
+typedef PickupDie < BlowupDie < AnchorDie > > MainObject2Super;
+class MainObject2: public MainObject2Super
+{
+    public:
+        ObjectState state;
+        void die() { MainObject2Super::die(&this->state); }
+}; 
+
+void init_die()
+{
+    ObjectState _state;
+    MergedDie* m = new MergedDie(&_state);
+    m->die();
+    printf("should have died\n");
+    printf("\n\n");
+    
+    MainObject n;
+    n.state.id = 666;
+    n.die();
+    
+    n.state.pickup = true;
+    n.die();
+    
+    n.state.blow_up_on_death = true;
+    n.die();
+    
+    printf("\n\n");
+    
+    MainObject2 p;
+    p.state.blow_up_on_death = true;
+    p.state.pickup = true;
+    p.state.id = 777;
+    p.die();
+    printf("\n\n");
+}
+
 namespace ItemDrops
 {
 
