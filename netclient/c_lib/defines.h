@@ -52,6 +52,6 @@
   #define GNOMESCROLL_LOCAL
 #endif
 
-
+const int GAME_OBJECTS_MAX = 4096 * 4;
 //#define LUA_API GNOMESCROLL_API
 #define LUA_API

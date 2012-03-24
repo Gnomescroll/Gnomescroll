@@ -11,6 +11,8 @@
 #include <c_lib/sound/openal.hpp>
 #endif
 
+const int GAME_OBJECT_MAX = 4096 * 4;
+
 namespace ClientState {
 
     Agent_list* agent_list = NULL;
@@ -29,9 +31,7 @@ namespace ClientState {
     Spawner_list* spawner_list = NULL;
     Turret_list* turret_list = NULL;
 
-    ItemDrops::GrenadeRefill_list* grenade_refill_list = NULL;
-    ItemDrops::LaserRefill_list* laser_refill_list = NULL;
-
+    ItemDrops::GameObject_list* object_list;
 
     Animations::HitscanEffect_list* hitscan_effect_list = NULL;
     Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
@@ -67,9 +67,7 @@ namespace ClientState {
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
 
-        // item drops
-        grenade_refill_list = new ItemDrops::GrenadeRefill_list;
-        laser_refill_list = new ItemDrops::LaserRefill_list;
+        object_list = new ItemDrops::GameObject_list;
     }
 
     void teardown_lists()
@@ -96,8 +94,7 @@ namespace ClientState {
         delete hitscan_effect_list;
         delete hitscan_laser_effect_list;
 
-        delete grenade_refill_list;
-        delete laser_refill_list;
+        delete object_list;
     }
 
     static void init_ctf()
@@ -180,8 +177,8 @@ namespace ClientState {
         billboard_text_hud_list->tick();
 
         turret_list->tick();
-        grenade_refill_list->tick();
-        laser_refill_list->tick();
+
+        object_list->tick();
     }
 
     void draw()
@@ -202,9 +199,7 @@ namespace ClientState {
         shrapnel_list->draw();
         blood_list->draw();
 
-        // item drops
-        grenade_refill_list->draw();
-        laser_refill_list->draw();
+        object_list->draw();
         
         end_transparent_particle_draw();
     }

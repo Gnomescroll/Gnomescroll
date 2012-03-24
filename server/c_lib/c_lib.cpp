@@ -109,7 +109,9 @@ int init_c_lib()
         return 1;
     }
 
-    Log::teardown();
+    //init_die();
+
+    Log::init();
 
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");

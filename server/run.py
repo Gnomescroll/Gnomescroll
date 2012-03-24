@@ -128,12 +128,10 @@ if __name__ == "__main__":
                 main.run(linux_term=True)
             finally:
                 termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-        except Exception, e:
-            print Exception, e
+        finally:
             if not main_run:
                 main.run()
-            else:
-                raise Exception, e
+
     else:
         print "else"
         main.run()

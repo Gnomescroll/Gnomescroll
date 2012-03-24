@@ -3,10 +3,10 @@
 
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/particles/particle_lib.hpp>
+#include <c_lib/items/items.hpp>
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
-#include <c_lib/items/items.hpp>
 
 namespace ServerState
 {
@@ -20,12 +20,10 @@ namespace ServerState
     extern Turret_list* turret_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
+    extern ItemDrops::GameObject_list* object_list;
 
-    extern ItemDrops::GrenadeRefill_list* grenade_refill_list;
-    extern ItemDrops::LaserRefill_list* laser_refill_list;
-    
     extern CTF* ctf GNOMESCROLL_API;
-    
+
     void init();
     void init_lists();
     void teardown();

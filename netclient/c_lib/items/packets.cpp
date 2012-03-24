@@ -9,11 +9,8 @@ inline void item_create_StoC::handle()
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
-            ClientState::grenade_refill_list->create(id, x,y,z, mx,my,mz);
-            break;
-            
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::laser_refill_list->create(id, x,y,z, mx,my,mz);
+            ClientState::object_list->create(x,y,z, mx,my,mz, (Object_types)type);
             break;
             
         default: return;
@@ -27,11 +24,8 @@ static inline void _destroy_item_handler(int type, int id)
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
-            ClientState::grenade_refill_list->destroy(id);
-            break;
-
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::laser_refill_list->destroy(id);
+            ClientState::object_list->destroy(id);
             break;
 
         default: return;

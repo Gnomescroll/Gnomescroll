@@ -14,10 +14,11 @@
 template <class Object_state, int max_n=1024>
 class Object_list {
     private:
-        int id_c;
         virtual const char* name() = 0;
 
     protected:
+        int id_c;
+
         // quicksort helpers
         void quicksort_distance_asc(int beg, int end);
         void quicksort_distance_desc(int beg, int end);
@@ -45,6 +46,8 @@ class Object_list {
 
         bool contains(int id);
         bool full();
+
+        int get_free_id();
         
         void destroy(int _id);
 
@@ -130,6 +133,24 @@ void Object_list<Object_state, max_n>::print_members() {
         if (a[i] == NULL) continue;
         printf("%d\n", i);
     }
+}
+
+template <class Object_state, int max_n>
+int Object_list<Object_state, max_n>::get_free_id()
+{
+    int i;
+    int id;
+    for (i=0; i<n_max; i++)
+    {
+        id = (i + id_c) % n_max;
+        if (a[id] == NULL) break;
+    }
+    if (i == n_max)
+    {
+        printf("%s_list Error: no free ids found\n", name());
+        return -1;
+    }
+    return id;
 }
 
 template <class Object_state, int max_n>
