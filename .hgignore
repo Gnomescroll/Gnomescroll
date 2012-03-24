@@ -77,3 +77,6 @@ churnlog
 
 */log/*
 *.log
+
+gnomescroll_server
+gnomescroll_client
