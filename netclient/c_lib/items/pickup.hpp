@@ -14,12 +14,13 @@ const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
 class PickupObject; // forward decl
 typedef ObjectStateTemplate<PickupObject> PickupObjectState;
-typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
+
 typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObjectState) ,PickupObjectState>,PickupObjectState>,PickupObjectState> ParticleTick;
 typedef DrawBillboardSprite < NoDraw(PickupObjectState) ,PickupObjectState> BillboardSpriteDraw;
 typedef BornPickup < NoBorn(PickupObjectState) ,PickupObjectState> PickupBorn;
+typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
 
-typedef ObjectPolicy <PickupObject, PickupDie, ParticleTick, BillboardSpriteDraw, PickupBorn > PickupObjectParent;
+typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, PickupBorn, PickupDie > PickupObjectParent;
 class PickupObject: public PickupObjectParent
 {
     public:
