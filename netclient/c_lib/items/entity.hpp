@@ -3,11 +3,13 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/template/object_list.hpp>
 
-#include <c_lib/items/pickup.hpp>
-#include <c_lib/items/refills.hpp>
-
 namespace ItemDrops
 {
+
+// TODO
+// new folder, namespace for this crap
+// organize the templates
+// separate the ObjectState/Data stuff from the rest
 
 struct ObjectData
 {
@@ -216,22 +218,14 @@ template <class Super, typename State>
 class TickParticle: public Super
 {
     public:
-    void tick(State* state)
-    {
-        Verlet::bounce(state->vp, state->damp);
-        Super::tick(state);
-    }
+    void tick(State* state);
 };
 
 template <class Super, typename State>
 class TickTTL: public Super
 {
     public:
-    void tick(State* state)
-    {
-        state->ttl++;
-        Super::tick(state);
-    }
+    void tick(State* state);
 };
 
 template <class Super, typename State>

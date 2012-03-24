@@ -11,6 +11,20 @@ namespace ItemDrops
 {
 
 template <class Super, typename State>
+void TickParticle<Super, State>::tick(State* state)
+{
+    Verlet::bounce(state->vp, state->damp);
+    Super::tick(state);
+}
+
+template <class Super, typename State>
+void TickTTL<Super, State>::tick(State* state)
+{
+    state->ttl++;
+    Super::tick(state);
+}
+
+template <class Super, typename State>
 void TickPickup<Super, State>::tick(State* state)
 {
     #if DC_SERVER
