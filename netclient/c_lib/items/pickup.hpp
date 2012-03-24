@@ -17,8 +17,9 @@ typedef ObjectStateTemplate<PickupObject> PickupObjectState;
 typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
 typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObjectState) ,PickupObjectState>,PickupObjectState>,PickupObjectState> ParticleTick;
 typedef DrawBillboardSprite < NoDraw(PickupObjectState) ,PickupObjectState> BillboardSpriteDraw;
+typedef BornPickup < NoBorn(PickupObjectState) ,PickupObjectState> PickupBorn;
 
-typedef ObjectPolicy <PickupObject, PickupDie, ParticleTick, BillboardSpriteDraw > PickupObjectParent;
+typedef ObjectPolicy <PickupObject, PickupDie, ParticleTick, BillboardSpriteDraw, PickupBorn > PickupObjectParent;
 class PickupObject: public PickupObjectParent
 {
     public:
@@ -37,7 +38,6 @@ class PickupObject: public PickupObjectParent
 
     void was_picked_up(const int agent_id);
     int nearest_agent_in_range(const Vec3 p, const float radius);
-    void born();
 };
 
 } // ItemDrops

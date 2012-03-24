@@ -41,6 +41,26 @@ void DiePickup<Super, State>::die(State* state)
 }
 
 template <class Super, typename State>
+void BornPickup<Super, State>::born(State* state)
+{
+    #if DC_SERVER
+    item_create_StoC msg;
+    msg.type = state->type;
+    msg.id = state->id;
+    msg.x = state->vp->p.x;
+    msg.y = state->vp->p.y;
+    msg.z = state->vp->p.z;
+    Vec3 m = state->vp->get_momentum();
+    msg.mx = m.x;
+    msg.my = m.y;
+    msg.mz = m.z;
+    msg.broadcast();
+    #endif
+    Super::born(state);
+}
+
+
+template <class Super, typename State>
 void DrawBillboardSprite<Super, State>::draw(State* state)
 {
     #if DC_CLIENT

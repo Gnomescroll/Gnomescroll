@@ -123,6 +123,26 @@ class DieAnchor
 };
 
 template <class Super, typename State>
+class BornCombiner: public Super
+{
+    public:
+        void born(State* state)
+        {
+            Super::born(state);
+        }
+};
+
+
+template <typename State>
+class BornAnchor
+{
+    public:
+        void born(State* state) 
+        { 
+        }
+};
+
+template <class Super, typename State>
 class DieBlowup: public Super
 {
     public:
@@ -139,9 +159,17 @@ class DiePickup: public Super
         void die(State* state);
 };
 
+template <class Super, typename State>
+class BornPickup: public Super
+{
+    public:
+        void born(State* state);
+};
+
 #define NoDie(STATE) DieAnchor<STATE>
 #define NoTick(STATE) TickAnchor<STATE>
 #define NoDraw(STATE) DrawAnchor<STATE>
+#define NoBorn(STATE) BornAnchor<STATE>
 
 class ObjectPolicyInterface
 {
@@ -149,6 +177,7 @@ class ObjectPolicyInterface
         virtual void die() = 0;
         virtual void tick() = 0;
         virtual void draw() = 0;
+        virtual void born() = 0;
         virtual ObjectState* state() = 0;
 };
 
@@ -157,12 +186,14 @@ template
     class Wrapper,
     class DieSuper,
     class TickSuper,
-    class DrawSuper
+    class DrawSuper,
+    class BornSuper
 >
 class ObjectPolicy:
 public DieCombiner<DieSuper, ObjectStateTemplate<Wrapper> >,
 public TickCombiner<TickSuper, ObjectStateTemplate<Wrapper> >,
 public DrawCombiner<DrawSuper, ObjectStateTemplate<Wrapper> >,
+public BornCombiner<BornSuper, ObjectStateTemplate<Wrapper> >,
 public ObjectPolicyInterface
 {
     public:
@@ -171,9 +202,10 @@ public ObjectPolicyInterface
     void die() { DieCombiner<DieSuper, ObjectStateTemplate<Wrapper> >::die(&this->_state); }
     void tick() { TickCombiner<TickSuper, ObjectStateTemplate<Wrapper> >::tick(&this->_state); }
     void draw() { DrawCombiner<DrawSuper, ObjectStateTemplate<Wrapper> >::draw(&this->_state); }
+    void born() { BornCombiner<BornSuper, ObjectStateTemplate<Wrapper> >::born(&this->_state); }
     ObjectState* state() { return &this->_state; }
 
-    ObjectPolicy<Wrapper, DieSuper, TickSuper, DrawSuper>(Wrapper* wrapper)
+    ObjectPolicy<Wrapper, DieSuper, TickSuper, DrawSuper, BornSuper>(Wrapper* wrapper)
     {
         _state.object = wrapper;
     }
