@@ -153,6 +153,34 @@ class BornPickup: public Super
         inline void born(State* state) __attribute((always_inline));
 };
 
+template <class Super, typename State>
+class TickParticle: public Super
+{
+    public:
+    inline void tick(State* state) __attribute((always_inline));
+};
+
+template <class Super, typename State>
+class TickTTL: public Super
+{
+    public:
+    inline void tick(State* state) __attribute((always_inline));
+};
+
+template <class Super, typename State>
+class TickPickup: public Super
+{
+    public:
+    inline void tick(State* state) __attribute((always_inline));
+};
+
+template <class Super, typename State>
+class DrawBillboardSprite: public Super
+{
+    public:
+    inline void draw(State* state) __attribute((always_inline));
+};
+
 #define NoTick(STATE) TickAnchor<STATE>
 #define NoDraw(STATE) DrawAnchor<STATE>
 #define NoBorn(STATE) BornAnchor<STATE>
@@ -196,35 +224,6 @@ public ObjectPolicyInterface
     {
         _state.object = wrapper;    // pointer to subclass
     }
-};
-
-
-template <class Super, typename State>
-class TickParticle: public Super
-{
-    public:
-    inline void tick(State* state) __attribute((always_inline));
-};
-
-template <class Super, typename State>
-class TickTTL: public Super
-{
-    public:
-    inline void tick(State* state) __attribute((always_inline));
-};
-
-template <class Super, typename State>
-class TickPickup: public Super
-{
-    public:
-    inline void tick(State* state) __attribute((always_inline));
-};
-
-template <class Super, typename State>
-class DrawBillboardSprite: public Super
-{
-    public:
-    inline void draw(State* state) __attribute((always_inline));
 };
 
 class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>
