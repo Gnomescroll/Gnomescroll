@@ -1,12 +1,7 @@
 #pragma once
 
-#include <c_lib/particles/textures.hpp>
-#include <c_lib/particles/particles.hpp>
-#include <c_lib/common/enum_types.hpp>
-#include <c_lib/template/object_list.hpp>
-
 #include <c_lib/physics/verlet.hpp>
-#include <c_lib/items/packets.hpp>
+#include <c_lib/items/pickup2.hpp>
 
 namespace ItemDrops
 {
@@ -17,46 +12,32 @@ const float DEFAULT_PICKUP_ITEM_TEXTURE_SCALE = 1.0f;
 const float DEFAULT_PICKUP_ITEM_DAMP = 0.1f;    // hardly bounce
 const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
-/*
- *  Don't instantiate any of these classes directly
- *
- * See c_lib/items/grenades.*pp for an example of how to use
- *
- */
+class PickupObject; // forward decl
+typedef ObjectStateTemplate<PickupObject> PickupObjectState;
+typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
+typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObjectState) ,PickupObjectState>,PickupObjectState>,PickupObjectState> ParticleTick;
+typedef DrawBillboardSprite < NoDraw(PickupObjectState) ,PickupObjectState> BillboardSpriteDraw;
 
-class Pickup
-{
-    private:
-        const float radius;
-    public:
-        int nearest_agent_in_range(Vec3 p);
-        explicit Pickup(const float radius) : radius(radius) {}
-};
-
-class PickupItem: public Particle, public BillboardSprite, public Pickup
-{
-    private:
-        bool broadcast_death;
-        int picked_up_by;
-    public:
-        virtual void init();
-        void tick();
-        void was_picked_up(int agent_id);
-
-        void born();
-        void die();
-        
-        explicit PickupItem(int id);
-        PickupItem(int id, float x, float y, float z, float mx, float my, float mz);
-};
-
-template<class Obj, int obj_max>
-class PickupItem_list: public Object_list<Obj, obj_max>
+typedef ObjectPolicy <PickupObject, PickupDie, ParticleTick, BillboardSpriteDraw > PickupObjectParent;
+class PickupObject: public PickupObjectParent
 {
     public:
-        void tick();
-        void draw();
-        PickupItem_list() {}
+    PickupObject(int id, float x, float y, float z, float mx, float my, float mz)
+    : PickupObjectParent
+    (this)
+    {
+        this->_state.id = id;
+        this->_state.pickup = true;
+        this->_state.vp = new VerletParticle(x,y,z, mx,my,mz, DEFAULT_PICKUP_ITEM_MASS); //TODO mass; move verlet instantiation out of here
+        this->_state.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
+        this->_state.texture_scale = DEFAULT_PICKUP_ITEM_TEXTURE_SCALE;
+        this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
+        this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
+    }
+
+    void was_picked_up(const int agent_id);
+    int nearest_agent_in_range(const Vec3 p, const float radius);
+    void born();
 };
 
 } // ItemDrops

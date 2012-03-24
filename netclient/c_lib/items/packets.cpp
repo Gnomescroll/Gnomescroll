@@ -24,12 +24,8 @@ static inline void _destroy_item_handler(int type, int id)
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
-            //ClientState::grenade_refill_list->destroy(id);
-            ClientState::object_list->destroy(id);  // TODO: replace the destroy method
-            break;
-
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::laser_refill_list->destroy(id);
+            ClientState::object_list->destroy(id);
             break;
 
         default: return;

@@ -25,6 +25,22 @@ void TickPickup<Super, State>::tick(State* state)
 }
 
 template <class Super, typename State>
+void DiePickup<Super, State>::die(State* state)
+{
+    #if DC_SERVER
+    if (state->broadcast_death)
+    {
+        item_picked_up_StoC msg;
+        msg.type = state->type;
+        msg.id = state->id;
+        msg.agent_id = state->picked_up_by;
+        msg.broadcast();
+    }
+    #endif
+    Super::die(state);
+}
+
+template <class Super, typename State>
 void DrawBillboardSprite<Super, State>::draw(State* state)
 {
     #if DC_CLIENT
@@ -71,31 +87,81 @@ void DrawBillboardSprite<Super, State>::draw(State* state)
     Super::draw(state);
 }
 
-int PickupObject::nearest_agent_in_range(const Vec3 p, const float radius)
+void GameObject_list::tick()
 {
-    int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
-    if (n > 0)
-        return STATE::agent_list->filtered_objects[0]->id;
-    return -1;
+    if (this->num == 0) return;
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL)
+        {
+            this->a[i]->tick();
+            if (this->a[i]->state()->ttl >= this->a[i]->state()->ttl_max)
+            {
+                this->a[i]->die();
+                this->destroy(this->a[i]->state()->id);
+            }
+        }
 }
 
-// TODO: make born part of the object api 
-void PickupObject::born()
+void GameObject_list::draw()
 {
-    #if DC_SERVER
-    item_create_StoC msg;
-    msg.type = this->state()->type;
-    msg.id = this->state()->id;
-    msg.x = this->state()->vp->p.x;
-    msg.y = this->state()->vp->p.y;
-    msg.z = this->state()->vp->p.z;
-    Vec3 m = this->state()->vp->get_momentum();
-    msg.mx = m.x;
-    msg.my = m.y;
-    msg.mz = m.z;
-    msg.broadcast();
-    #endif
-    //Super::born(state);
+    if (this->num == 0) return;
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL)
+            this->a[i]->draw();
+}
+
+// TODO: restructure the list creation to adapt based on type
+ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float mx, float my, float mz, Object_types type)
+{
+    int id = this->get_free_id();
+    if (id < 0) return NULL;
+    this->num++;
+    this->id_c = id+1;
+
+    PickupObject* obj = new PickupObject(id, x,y,z, mx,my,mz);
+    this->a[id] = obj;
+
+    float texture_scale, mass, damp;
+    int texture_index, ttl_max;
+    
+    obj->state()->type = type;
+    switch (type)
+    {   // TODO: THIS WILL BE REPLACED BY ObjectType
+        case OBJ_TYPE_GRENADE_REFILL:
+            texture_index = GRENADE_REFILL_TEXTURE_ID;
+            texture_scale = GRENADE_REFILL_TEXTURE_SCALE;
+            mass = GRENADE_REFILL_MASS;
+            ttl_max = GRENADE_REFILL_TTL;
+            damp = GRENADE_REFILL_DAMP;
+            break;
+        case OBJ_TYPE_LASER_REFILL:
+            texture_index = LASER_REFILL_TEXTURE_ID;
+            texture_scale = LASER_REFILL_TEXTURE_SCALE;
+            mass = LASER_REFILL_MASS;
+            ttl_max = LASER_REFILL_TTL;
+            damp = LASER_REFILL_DAMP;
+            break;
+        default:
+            printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
+            break;
+    };
+    
+    obj->state()->texture_index = texture_index;
+    obj->state()->texture_scale = texture_scale;
+    obj->state()->mass = mass;
+    obj->state()->ttl_max = ttl_max;
+    obj->state()->damp = damp;
+    obj->born();
+
+    return obj;
+}
+
+void GameObject_list::destroy(int id)
+{
+    ObjectPolicyInterface* obj = this->a[id];
+    if (obj == NULL) return;
+    obj->die();
+    Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>::destroy(id);
 }
 
 } // ItemDrops
