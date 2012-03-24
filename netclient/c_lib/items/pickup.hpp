@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/physics/verlet.hpp>
-#include <c_lib/items/pickup2.hpp>
+#include <c_lib/items/entity.hpp>
 
 namespace ItemDrops
 {

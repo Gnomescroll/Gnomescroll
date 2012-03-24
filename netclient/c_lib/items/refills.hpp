@@ -1,7 +1,5 @@
 #pragma once
 
-#include <c_lib/items/pickup.hpp>
-
 namespace ItemDrops
 {
 

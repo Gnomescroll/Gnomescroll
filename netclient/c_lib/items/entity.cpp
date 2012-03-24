@@ -1,4 +1,4 @@
-#include "pickup2.hpp"
+#include "entity.hpp"
 
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/particles/textures.hpp>
