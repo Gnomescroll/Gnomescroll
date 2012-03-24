@@ -20,12 +20,13 @@ namespace ServerState
     extern Turret_list* turret_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
-
     extern ItemDrops::GrenadeRefill_list* grenade_refill_list;
     extern ItemDrops::LaserRefill_list* laser_refill_list;
     
+    extern ItemDrops::GameObject_list* object_list;
+
     extern CTF* ctf GNOMESCROLL_API;
-    
+
     void init();
     void init_lists();
     void teardown();

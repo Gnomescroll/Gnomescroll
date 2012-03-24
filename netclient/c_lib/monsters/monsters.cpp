@@ -51,10 +51,11 @@ Slime::~Slime()
     msg.broadcast();
 
     const float mom = 5.0f;
-    if (randf() > 0.5f)
-        ServerState::grenade_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-    else
-        ServerState::laser_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);        
+    ServerState::object_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom, OBJ_TYPE_GRENADE_REFILL);
+    //if (randf() > 0.5f)
+        //ServerState::grenade_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+    //else
+        //ServerState::laser_refill_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);        
     #endif
 }
 

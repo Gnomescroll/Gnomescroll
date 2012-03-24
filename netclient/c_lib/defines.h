@@ -51,3 +51,5 @@
   #define GNOMESCROLL_API
   #define GNOMESCROLL_LOCAL
 #endif
+
+const int GAME_OBJECTS_MAX = 4096 * 4;

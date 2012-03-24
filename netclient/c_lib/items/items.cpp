@@ -9,6 +9,7 @@
 
 // pickup items
 #include <c_lib/items/pickup.cpp>
+#include <c_lib/items/pickup2.cpp>
 #include <c_lib/items/refills.cpp>
 
 // packets

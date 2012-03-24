@@ -109,7 +109,7 @@ int init_c_lib()
         return 1;
     }
 
-    init_die();
+    //init_die();
 
     Log::init();
 
