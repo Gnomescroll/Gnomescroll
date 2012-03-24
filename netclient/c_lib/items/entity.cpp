@@ -11,21 +11,21 @@ namespace ItemDrops
 {
 
 template <class Super, typename State>
-void TickParticle<Super, State>::tick(State* state)
+inline void TickParticle<Super, State>::tick(State* state)
 {
     Verlet::bounce(state->vp, state->damp);
     Super::tick(state);
 }
 
 template <class Super, typename State>
-void TickTTL<Super, State>::tick(State* state)
+inline void TickTTL<Super, State>::tick(State* state)
 {
     state->ttl++;
     Super::tick(state);
 }
 
 template <class Super, typename State>
-void TickPickup<Super, State>::tick(State* state)
+inline void TickPickup<Super, State>::tick(State* state)
 {
     #if DC_SERVER
     int agent_id = state->object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
@@ -39,7 +39,7 @@ void TickPickup<Super, State>::tick(State* state)
 }
 
 template <class Super, typename State>
-void DiePickup<Super, State>::die(State* state)
+inline void DiePickup<Super, State>::die(State* state)
 {
     #if DC_SERVER
     if (state->broadcast_death)
@@ -55,7 +55,7 @@ void DiePickup<Super, State>::die(State* state)
 }
 
 template <class Super, typename State>
-void BornPickup<Super, State>::born(State* state)
+inline void BornPickup<Super, State>::born(State* state)
 {
     #if DC_SERVER
     item_create_StoC msg;
@@ -75,7 +75,7 @@ void BornPickup<Super, State>::born(State* state)
 
 
 template <class Super, typename State>
-void DrawBillboardSprite<Super, State>::draw(State* state)
+inline void DrawBillboardSprite<Super, State>::draw(State* state)
 {
     #if DC_CLIENT
     Vec3 v = state->vp->p;
@@ -177,7 +177,7 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
             break;
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
-            break;
+            return NULL;
     };
     
     obj->state()->texture_index = texture_index;

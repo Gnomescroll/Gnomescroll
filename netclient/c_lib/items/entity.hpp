@@ -21,6 +21,9 @@ struct ObjectData
     // avoids some massive switch statements
     // can even be inherited into ObjectState
     // and make all properties class members
+
+    // these members should const/immutable for most purposes
+    // but they should be adjustable by 1 thing: the dat loader
 };
 
 // encapsulates all information needed for any object
@@ -71,48 +74,38 @@ template <class Super, typename State>
 class TickCombiner: public Super
 {
     public:
-        void tick(State* state)
-        {
-            Super::tick(state);
-        }
+        inline void tick(State* state)
+        {Super::tick(state);} __attribute((always_inline));
 };
 
 template <typename State>
 class TickAnchor
 {
     public:
-        void tick(State* state) 
-        { 
-        }
+        inline void tick(State* state) {/*Empty*/} __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class DrawCombiner: public Super
 {
     public:
-        void draw(State* state)
-        {
-            Super::draw(state);
-        }
+        inline void draw(State* state)
+        {Super::draw(state);} __attribute((always_inline));
 };
 
 template <typename State>
 class DrawAnchor
 {
     public:
-        void draw(State* state) 
-        { 
-        }
+        inline void draw(State* state) {/*Empty*/} __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class BornCombiner: public Super
 {
     public:
-        void born(State* state)
-        {
-            Super::born(state);
-        }
+        inline void born(State* state)
+        {Super::born(state);} __attribute((always_inline));
 };
 
 
@@ -120,52 +113,44 @@ template <typename State>
 class BornAnchor
 {
     public:
-        void born(State* state) 
-        { 
-        }
+        inline void born(State* state) {/*Empty*/} __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class DieCombiner: public Super
 {
     public:
-        void die(State* state)
-        {
-            Super::die(state);
-        }
+        inline void die(State* state)
+        {Super::die(state);} __attribute((always_inline));
 };
 
 template <typename State>
 class DieAnchor
 {
     public:
-        void die(State* state) 
-        { 
-        }
+        inline void die(State* state) {/*Empty*/} __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class DieBlowup: public Super
 {
     public:
-        void die(State* state)
-        {
-            Super::die(state);
-        }
+        inline void die(State* state)
+        {Super::die(state);} __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class DiePickup: public Super
 {
     public:
-        void die(State* state);
+        inline void die(State* state) __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class BornPickup: public Super
 {
     public:
-        void born(State* state);
+        inline void born(State* state) __attribute((always_inline));
 };
 
 #define NoTick(STATE) TickAnchor<STATE>
@@ -209,7 +194,7 @@ public ObjectPolicyInterface
 
     ObjectPolicy<Wrapper, TickSuper, DrawSuper, BornSuper, DieSuper>(Wrapper* wrapper)
     {
-        _state.object = wrapper;
+        _state.object = wrapper;    // pointer to subclass
     }
 };
 
@@ -218,28 +203,28 @@ template <class Super, typename State>
 class TickParticle: public Super
 {
     public:
-    void tick(State* state);
+    inline void tick(State* state) __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class TickTTL: public Super
 {
     public:
-    void tick(State* state);
+    inline void tick(State* state) __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class TickPickup: public Super
 {
     public:
-    void tick(State* state);
+    inline void tick(State* state) __attribute((always_inline));
 };
 
 template <class Super, typename State>
 class DrawBillboardSprite: public Super
 {
     public:
-    void draw(State* state);
+    inline void draw(State* state) __attribute((always_inline));
 };
 
 class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>
