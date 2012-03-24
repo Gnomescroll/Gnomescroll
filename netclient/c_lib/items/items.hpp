@@ -10,8 +10,8 @@
 #include <c_lib/items/turret.hpp>
 
 // pickup items
-#include <c_lib/items/pickup.hpp>
 #include <c_lib/items/entity.hpp>
+#include <c_lib/items/pickup.hpp>
 #include <c_lib/items/refills.hpp>
 
 // packets

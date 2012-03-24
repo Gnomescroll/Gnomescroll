@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/physics/verlet.hpp>
+#include <c_lib/state/server_state.hpp>
 #include <c_lib/items/entity.hpp>
 
 namespace ItemDrops
