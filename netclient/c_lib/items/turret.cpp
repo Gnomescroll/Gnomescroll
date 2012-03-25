@@ -434,8 +434,9 @@ void Turret::acquire_target()
     // get vector to sink
     Vec3 v = vec3_sub(sink, source);
     normalize_vector(&v);
-     //add random bias
-    float arc = 1.5f / 360.0f;
+    //add random bias
+    const float bias = 0.3f;
+    float arc = bias / 360.0f;
     float theta = randf() * kPI * 2 - kPI;
     float phi = randf() * kPI * 2 - kPI;
     float rho = randf() * kPI * 2 - kPI;
