@@ -20,7 +20,7 @@ namespace ServerState
     Turret_list* turret_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
-    ItemDrops::GameObject_list* object_list;
+    GameObject_list* object_list;
 
     CTF* ctf = NULL;
 
@@ -36,7 +36,7 @@ namespace ServerState
         turret_list = new Turret_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
-        object_list = new ItemDrops::GameObject_list;
+        object_list = new GameObject_list;
     }
 
     void teardown_lists()

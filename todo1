@@ -746,6 +746,7 @@ Release build 6591
 Fixed:
 double cash for killing synthesized items
 turret kill system message
+turret radius targeting
 
 
 =====================

@@ -56,6 +56,9 @@
 #include <c_lib/voxel/voxel_loader.cpp>
 #include <c_lib/voxel/vox_dat_init.cpp>
 
+/* Entity system */
+#include <c_lib/entity/entity.cpp>
+
 /* Particles */
 #include <c_lib/particles/particle_lib.cpp>
 

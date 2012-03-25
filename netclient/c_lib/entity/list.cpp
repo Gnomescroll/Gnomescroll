@@ -1,9 +1,7 @@
-#include "entity.hpp"
+#include "list.hpp"
 
+#include <c_lib/items/pickup.hpp>
 #include <c_lib/items/refills.hpp>
-
-namespace ItemDrops
-{
 
 void GameObject_list::tick()
 {
@@ -36,7 +34,7 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     this->num++;
     this->id_c = id+1;
 
-    PickupObject* obj = new PickupObject(id, x,y,z, mx,my,mz);
+    ItemDrops::PickupObject* obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
     this->a[id] = obj;
 
     float texture_scale, mass, damp;
@@ -46,18 +44,18 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     switch (type)
     {   // TODO: THIS WILL BE REPLACED BY ObjectType
         case OBJ_TYPE_GRENADE_REFILL:
-            texture_index = GRENADE_REFILL_TEXTURE_ID;
-            texture_scale = GRENADE_REFILL_TEXTURE_SCALE;
-            mass = GRENADE_REFILL_MASS;
-            ttl_max = GRENADE_REFILL_TTL;
-            damp = GRENADE_REFILL_DAMP;
+            texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::GRENADE_REFILL_MASS;
+            ttl_max = ItemDrops::GRENADE_REFILL_TTL;
+            damp = ItemDrops::GRENADE_REFILL_DAMP;
             break;
         case OBJ_TYPE_LASER_REFILL:
-            texture_index = LASER_REFILL_TEXTURE_ID;
-            texture_scale = LASER_REFILL_TEXTURE_SCALE;
-            mass = LASER_REFILL_MASS;
-            ttl_max = LASER_REFILL_TTL;
-            damp = LASER_REFILL_DAMP;
+            texture_index = ItemDrops::LASER_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::LASER_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::LASER_REFILL_MASS;
+            ttl_max = ItemDrops::LASER_REFILL_TTL;
+            damp = ItemDrops::LASER_REFILL_DAMP;
             break;
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
@@ -81,5 +79,3 @@ void GameObject_list::destroy(int id)
     obj->die();
     Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>::destroy(id);
 }
-
-} // ItemDrops

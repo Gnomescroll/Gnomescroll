@@ -2,7 +2,7 @@
 
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/state/server_state.hpp>
-#include <c_lib/items/entity.hpp>
+#include <c_lib/entity/entity.hpp>
 
 namespace ItemDrops
 {

@@ -20,7 +20,7 @@ namespace ServerState
     extern Turret_list* turret_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
-    extern ItemDrops::GameObject_list* object_list;
+    extern GameObject_list* object_list;
 
     extern CTF* ctf GNOMESCROLL_API;
 

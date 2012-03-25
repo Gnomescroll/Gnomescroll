@@ -2,15 +2,12 @@
 
 #include <net_lib/net.hpp>
 
-namespace ItemDrops
-{
-    
 class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
 {
     public:
         uint8_t type;
         uint8_t id;
-        float x,y,z,mx,my,mz;   // TODO -- encode velocity in a single param -- its just random seed direction
+        float x,y,z,mx,my,mz;
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -55,5 +52,3 @@ class item_picked_up_StoC: public FixedSizeNetPacketToClient<item_picked_up_StoC
         }
         inline void handle();
 };
-
-}   // ItemDrops

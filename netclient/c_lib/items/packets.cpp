@@ -1,8 +1,5 @@
 #include "packets.hpp"
 
-namespace ItemDrops
-{
-
 #if DC_CLIENT
 inline void item_create_StoC::handle()
 {
@@ -51,5 +48,3 @@ inline void item_create_StoC::handle() {}
 inline void item_destroy_StoC::handle() {}
 inline void item_picked_up_StoC::handle() {}
 #endif
-
-}   // ItemDrops
