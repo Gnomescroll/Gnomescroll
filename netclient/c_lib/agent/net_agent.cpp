@@ -474,7 +474,7 @@ inline void agent_conflict_notification_StoC::handle()
             break;
 
         case DEATH_TURRET:
-            if (a != NULL && a->is_you())
+            if (b != NULL && b->is_you())
                 strcpy(msg, "You were gunned down.");
             else
                 sprintf(msg, "%s was destroyed by %s's turret.", b_name, a_name);
