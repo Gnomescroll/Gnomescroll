@@ -92,7 +92,8 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner, Object_types inflictor_type,
+        int dmg, int owner,
+        Object_types inflictor_type, int inflictor_id,
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
@@ -140,7 +141,7 @@ namespace ServerState
             && s->get_owner() != agent->id)
                 continue; // teammates cant kill grenades
             int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
-            if (h <= 0 && agent != NULL)
+            if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
                 coins += s->get_coins_for_kill(agent->id, agent->status.team);
         }
 
@@ -151,13 +152,16 @@ namespace ServerState
         {
             t = turret_list->filtered_objects[i];
             if (t==NULL) continue;
+            if (t->id == inflictor_id) continue;
             if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT)
             && t->get_owner() != agent->id)
                 continue; // teammates cant kill turrets
             int h = t->take_damage(GRENADE_TURRET_DAMAGE);
-            if (h <= 0 && agent != NULL)
+            if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
                 coins += t->get_coins_for_kill(agent->id, agent->status.team);
         }
+
+    printf("Sphere damage coins: %d\n", coins);
 
         // add all the coins
         if (agent != NULL)

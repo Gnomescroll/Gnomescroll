@@ -396,7 +396,8 @@ int Turret::take_damage(int dmg)
     {
         ServerState::damage_objects_within_sphere(
             this->x, this->y, this->z,
-            TURRET_EXPLOSION_RADIUS, TURRET_EXPLOSION_DAMAGE, this->owner, this->type,
+            TURRET_EXPLOSION_RADIUS, TURRET_EXPLOSION_DAMAGE, this->owner,
+            this->type, this->id,
             false
         );
     }
