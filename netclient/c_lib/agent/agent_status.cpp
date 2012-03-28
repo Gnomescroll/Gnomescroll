@@ -475,7 +475,6 @@ void Agent_status::set_team(int team)
 void Agent_status::add_coins(unsigned int coins)
 {
     if (coins==0) return;
-    printf("added %ud coins\n", coins);
     this->coins += coins;
     #ifdef DC_SERVER
     this->send_coin_packet();
@@ -486,7 +485,6 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
 {
     #ifdef DC_SERVER
     if (coins==0) return;
-    printf("Spent %ud coins\n", coins);
     if (item >= 0 && !can_gain_item(item)) return;
     this->coins -= coins;
     this->send_coin_packet();

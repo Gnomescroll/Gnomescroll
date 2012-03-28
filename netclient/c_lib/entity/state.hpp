@@ -2,9 +2,26 @@
 
 #include <c_lib/common/enum_types.hpp>
 
-struct ObjectData
+/* Holds constants that are dat-configurable */
+class ObjectData
 {
-    Object_types type;
+    public:
+
+        // physics
+        float damp;
+        float mass;
+
+        // tick lifespan
+        int ttl_max;
+
+        // pickup
+        bool pickup;
+        float pickup_radius;
+
+        // explosion
+        bool blow_up_on_death;
+
+        Object_types type;
     //TODO:
     // fill the struct with object metadata
     // all objects' initialization data will be stored in an array
@@ -17,29 +34,30 @@ struct ObjectData
     // but they should be adjustable by 1 thing: the dat loader
 };
 
-// encapsulates all information needed for any object
-class ObjectState
+// encapsulates all information needed for any object,
+// merging ObjectData (dat constants) with extra non-dat state
+class ObjectState: public ObjectData
 {
     public:
-    int id;
-    Object_types type;
-    bool blow_up_on_death;
-    bool pickup;
-    float pickup_radius;
-    int ttl;
-    int ttl_max;
-    float damp;
-    VerletParticle* vp;
-    float mass;
-    float texture_scale;
-    int texture_index;
-    bool broadcast_death;
-    int picked_up_by;
+        int id;
+
+        // physics
+        VerletParticle* vp;
+
+        // tick lifespan
+        int ttl;
+
+        // draw/textures
+        float texture_scale;
+        int texture_index;
+
+        // pickup
+        bool broadcast_death;
+        int picked_up_by;
     
     ObjectState()
-    : id(-1), type(OBJ_TYPE_NONE), blow_up_on_death(false), pickup(false),
-    pickup_radius(1.0f), ttl(0), ttl_max(1), damp(1.0f), vp(NULL),
-    mass(1.0f), texture_scale(1.0f), texture_index(0),
+    : ObjectData(),
+    id(-1), vp(NULL), ttl(0), texture_scale(1.0f), texture_index(0),
     broadcast_death(false), picked_up_by(-1)
     {}
 
@@ -49,7 +67,11 @@ class ObjectState
             delete this->vp;
     }
 
-    // TODO: setters
+    void create_particle(float x, float y, float z, float mx, float my, float mz)
+    {
+        if (this->vp == NULL)
+            this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
+    }
 };
 
 // encapsulates all information needed for any object
