@@ -6,7 +6,6 @@
 class ObjectData
 {
     public:
-
         // camera
         float camera_height;
 
@@ -25,10 +24,13 @@ class ObjectData
         bool blow_up_on_death;
 
         //spawning
-        int spawn_radius;
+        unsigned int spawn_radius;
 
         // buying
-        int cost;
+        unsigned int cost;
+
+        // firing
+        unsigned int fire_rate_limit;
 
         Object_types type;
     //TODO:
@@ -41,6 +43,9 @@ class ObjectData
 
     // these members should const/immutable for most purposes
     // but they should be adjustable by 1 thing: the dat loader
+
+    // TODO: copy method, for initializing from dat
+    //void load(ObjectData& data) {}
 
     ObjectData()
     :
@@ -74,6 +79,9 @@ class ObjectState: public ObjectData
         // pickup
         bool broadcast_death;
         int picked_up_by;
+
+        // firing
+        unsigned int fire_tick;
 
     int take_damage(int dmg);
     int get_coins_for_kill(int owner, int team);

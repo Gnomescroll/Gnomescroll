@@ -79,7 +79,7 @@ class TickPickup: public Super
     }
 };
 
-/* Specialization */
+/* Reusable Component */
 
 class PickupComponent
 {
@@ -99,7 +99,7 @@ typedef DrawBillboardSprite < NoDraw(PickupObjectState) ,PickupObjectState> Bill
 typedef BornPickup < NoBorn(PickupObjectState) ,PickupObjectState> PickupBorn;
 typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
 
-typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, PickupBorn, PickupDie > PickupObjectParent;
+typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObjectState), PickupBorn, PickupDie > PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:
@@ -115,9 +115,6 @@ class PickupObject: public PickupObjectParent, public PickupComponent
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
     }
-
-    //void was_picked_up(const int agent_id);
-    //int nearest_agent_in_range(const Vec3 p, const float radius);
 };
 
 } // ItemDrops

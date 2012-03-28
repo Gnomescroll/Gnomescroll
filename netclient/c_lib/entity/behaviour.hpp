@@ -43,6 +43,21 @@ class DrawAnchor
 };
 
 template <class Super, typename State>
+class UpdateCombiner: public Super
+{
+    public:
+        inline void update(State* state)
+        {Super::update(state);}
+};
+
+template <typename State>
+class UpdateAnchor
+{
+    public:
+        inline void update(State* state) {/*Empty*/}
+};
+
+template <class Super, typename State>
 class BornCombiner: public Super
 {
     public:
@@ -103,7 +118,8 @@ class TickTTL: public Super
     public:
     inline void tick(State* state)
     {
-        state->ttl++;
+        if (state->ttl >= 0)
+            state->ttl++;
         Super::tick(state);
     }
 };
@@ -167,5 +183,6 @@ class DrawBillboardSprite: public Super
 
 #define NoTick(STATE) TickAnchor<STATE>
 #define NoDraw(STATE) DrawAnchor<STATE>
+#define NoUpdate(STATE) UpdateAnchor<STATE>
 #define NoBorn(STATE) BornAnchor<STATE>
 #define NoDie(STATE) DieAnchor<STATE>

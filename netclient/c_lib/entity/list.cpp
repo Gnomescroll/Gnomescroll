@@ -27,6 +27,19 @@ void GameObject_list::draw()
             this->a[i]->draw();
 }
 
+void GameObject_list::update()
+{
+    if (this->num == 0) return;
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL)
+            this->a[i]->update();
+}
+
+void send_to_client(int client_id)
+{
+    
+}
+
 // TODO: restructure the list creation to adapt based on type
 ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float mx, float my, float mz, Object_types type)
 {
