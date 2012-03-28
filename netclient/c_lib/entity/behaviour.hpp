@@ -12,124 +12,124 @@ namespace ServerState
     extern Agent_list* agent_list;
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class TickCombiner: public Super
 {
     public:
-        inline void tick(State* state)
-        {Super::tick(state);}
+        inline void tick(ObjectState* state, Object* object)
+        {Super::tick(state, object);}
 };
 
-template <typename State>
+template <class Object>
 class TickAnchor
 {
     public:
-        inline void tick(State* state) {/*Empty*/}
+        inline void tick(ObjectState* state, Object* object) {/*Empty*/}
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class DrawCombiner: public Super
 {
     public:
-        inline void draw(State* state)
-        {Super::draw(state);}
+        inline void draw(ObjectState* state, Object* object)
+        {Super::draw(state, object);}
 };
 
-template <typename State>
+template <class Object>
 class DrawAnchor
 {
     public:
-        inline void draw(State* state) {/*Empty*/}
+        inline void draw(ObjectState* state, Object* object) {/*Empty*/}
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class UpdateCombiner: public Super
 {
     public:
-        inline void update(State* state)
-        {Super::update(state);}
+        inline void update(ObjectState* state, Object* object)
+        {Super::update(state, object);}
 };
 
-template <typename State>
+template <class Object>
 class UpdateAnchor
 {
     public:
-        inline void update(State* state) {/*Empty*/}
+        inline void update(ObjectState* state, Object* object) {/*Empty*/}
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class BornCombiner: public Super
 {
     public:
-        inline void born(State* state)
-        {Super::born(state);}
+        inline void born(ObjectState* state, Object* object)
+        {Super::born(state, object);}
 };
 
-template <typename State>
+template <class Object>
 class BornAnchor
 {
     public:
-        inline void born(State* state) {/*Empty*/}
+        inline void born(ObjectState* state, Object* object) {/*Empty*/}
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class DieCombiner: public Super
 {
     public:
-        inline void die(State* state)
-        {Super::die(state);}
+        inline void die(ObjectState* state, Object* object)
+        {Super::die(state, object);}
 };
 
-template <typename State>
+template <class Object>
 class DieAnchor
 {
     public:
-        inline void die(State* state) {/*Empty*/}
+        inline void die(ObjectState* state, Object* object) {/*Empty*/}
 };
 
 // TODO : move
-template <class Super, typename State>
+template <class Super, class Object>
 class DieBlowup: public Super
 {
     public:
-    inline void die(State* state)
+    inline void die(ObjectState* state, Object* object)
     {
-        Super::die(state);
+        Super::die(state, object);
     }
 
 };
 
 // TODO : move
-template <class Super, typename State>
+template <class Super, class Object>
 class TickParticle: public Super
 {
     public:
-    inline void tick(State* state)
+    inline void tick(ObjectState* state, Object* object)
     {
         Verlet::bounce(state->vp, state->damp);
-        Super::tick(state);
+        Super::tick(state, object);
     }
 };
 
 // TODO : move
-template <class Super, typename State>
+template <class Super, class Object>
 class TickTTL: public Super
 {
     public:
-    inline void tick(State* state)
+    inline void tick(ObjectState* state, Object* object)
     {
         if (state->ttl >= 0)
             state->ttl++;
-        Super::tick(state);
+        Super::tick(state, object);
     }
 };
 
 // TODO: move
-template <class Super, typename State>
+template <class Super, class Object>
 class DrawBillboardSprite: public Super
 {
     public:
-    inline void draw(State* state)
+    inline void draw(ObjectState* state, Object* object)
     {
         #if DC_CLIENT
         Vec3 v = state->vp->p;
@@ -172,7 +172,7 @@ class DrawBillboardSprite: public Super
         glTexCoord2f(tx_min,ty_min);
         glVertex3f(p.x, p.y, p.z);
         #endif
-        Super::draw(state);
+        Super::draw(state, object);
     }
 };
 
@@ -181,8 +181,8 @@ class DrawBillboardSprite: public Super
 // Macros for common behaviour configurations
 // All behaviours must terminate with these
 
-#define NoTick(STATE) TickAnchor<STATE>
-#define NoDraw(STATE) DrawAnchor<STATE>
-#define NoUpdate(STATE) UpdateAnchor<STATE>
-#define NoBorn(STATE) BornAnchor<STATE>
-#define NoDie(STATE) DieAnchor<STATE>
+#define NoTick(OBJECT) TickAnchor<OBJECT>
+#define NoDraw(OBJECT) DrawAnchor<OBJECT>
+#define NoUpdate(OBJECT) UpdateAnchor<OBJECT>
+#define NoBorn(OBJECT) BornAnchor<OBJECT>
+#define NoDie(OBJECT) DieAnchor<OBJECT>

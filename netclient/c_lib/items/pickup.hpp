@@ -18,11 +18,11 @@ const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
 /* Behaviour */
 
-template <class Super, typename State>
+template <class Super, class Object>
 class DiePickup: public Super
 {
     public:
-    inline void die(State* state)
+    inline void die(ObjectState* state, Object* object)
     {
         #if DC_SERVER
         if (state->broadcast_death)
@@ -34,15 +34,15 @@ class DiePickup: public Super
             msg.broadcast();
         }
         #endif
-        Super::die(state);
+        Super::die(state, object);
     }
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class BornPickup: public Super
 {
     public:
-    inline void born(State* state)
+    inline void born(ObjectState* state, Object* object)
     {
         #if DC_SERVER
         item_create_StoC msg;
@@ -57,25 +57,25 @@ class BornPickup: public Super
         msg.mz = m.z;
         msg.broadcast();
         #endif
-        Super::born(state);
+        Super::born(state, object);
     }
 };
 
-template <class Super, typename State>
+template <class Super, class Object>
 class TickPickup: public Super
 {
     public:
-    inline void tick(State* state)
+    inline void tick(ObjectState* state, Object* object)
     {
         #if DC_SERVER
-        int agent_id = state->object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
+        int agent_id = object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
         if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
         {   // was picked up, die
-            state->object->was_picked_up(state, agent_id);
+            object->was_picked_up(state, agent_id);
             state->ttl = state->ttl_max;
         }
         #endif
-        Super::tick(state);
+        Super::tick(state, object);
     }
 };
 
@@ -92,20 +92,19 @@ class PickupComponent
 /* Composition */
 
 class PickupObject; // forward decl
-typedef ObjectStateTemplate<PickupObject> PickupObjectState;
 
-typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObjectState) ,PickupObjectState>,PickupObjectState>,PickupObjectState> ParticleTick;
-typedef DrawBillboardSprite < NoDraw(PickupObjectState) ,PickupObjectState> BillboardSpriteDraw;
-typedef BornPickup < NoBorn(PickupObjectState) ,PickupObjectState> PickupBorn;
-typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
+typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject> ParticleTick;
+typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject> BillboardSpriteDraw;
+typedef BornPickup < NoBorn(PickupObject) ,PickupObject> PickupBorn;
+typedef DiePickup < NoDie(PickupObject) ,PickupObject> PickupDie;
 
-typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObjectState), PickupBorn, PickupDie > PickupObjectParent;
+typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie > PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:
     PickupObject(int id, float x, float y, float z, float mx, float my, float mz)
     : PickupObjectParent(this), PickupComponent()
-    {
+    {   // TODO: constants should be loaded via dat
         this->_state.id = id;
         this->_state.pickup = true;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;

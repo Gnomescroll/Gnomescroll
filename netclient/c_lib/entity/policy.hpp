@@ -32,25 +32,26 @@ template
     class DieSuper
 >
 class ObjectPolicy:
-public TickCombiner<TickSuper, ObjectStateTemplate<Wrapper> >,
-public DrawCombiner<DrawSuper, ObjectStateTemplate<Wrapper> >,
-public DrawCombiner<UpdateSuper, ObjectStateTemplate<Wrapper> >,
-public BornCombiner<BornSuper, ObjectStateTemplate<Wrapper> >,
-public DieCombiner<DieSuper, ObjectStateTemplate<Wrapper> >,
+public TickCombiner<TickSuper, Wrapper>,
+public DrawCombiner<DrawSuper, Wrapper>,
+public DrawCombiner<UpdateSuper, Wrapper>,
+public BornCombiner<BornSuper, Wrapper>,
+public DieCombiner<DieSuper, Wrapper>,
 public ObjectPolicyInterface
 {
     public:
-        ObjectStateTemplate<Wrapper> _state;
-    
-    void tick() { TickCombiner<TickSuper, ObjectStateTemplate<Wrapper> >::tick(&this->_state); }
-    void draw() { DrawCombiner<DrawSuper, ObjectStateTemplate<Wrapper> >::draw(&this->_state); }
-    void update() { DrawCombiner<UpdateSuper, ObjectStateTemplate<Wrapper> >::update(&this->_state); }
-    void born() { BornCombiner<BornSuper, ObjectStateTemplate<Wrapper> >::born(&this->_state); }
-    void die() { DieCombiner<DieSuper, ObjectStateTemplate<Wrapper> >::die(&this->_state); }
+        ObjectState _state;
+        Wrapper* subclass;
+        
+    void tick() { TickCombiner<TickSuper, Wrapper>::tick(&this->_state, this->subclass); }
+    void draw() { DrawCombiner<DrawSuper, Wrapper>::draw(&this->_state, this->subclass); }
+    void update() { DrawCombiner<UpdateSuper, Wrapper>::update(&this->_state, this->subclass); }
+    void born() { BornCombiner<BornSuper, Wrapper>::born(&this->_state, this->subclass); }
+    void die() { DieCombiner<DieSuper, Wrapper>::die(&this->_state, this->subclass); }
     ObjectState* state() { return &this->_state; }
 
-    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper>(Wrapper* wrapper)
+    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper>(Wrapper* subclass)
     {
-        _state.object = wrapper;    // pointer to subclass
+        this->subclass = subclass;
     }
 };

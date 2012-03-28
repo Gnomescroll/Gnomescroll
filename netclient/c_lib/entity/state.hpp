@@ -110,12 +110,3 @@ class ObjectState: public ObjectData
             this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
     }
 };
-
-// encapsulates all information needed for any object
-template <class Subclass>
-class ObjectStateTemplate: public ObjectState
-{
-    public:
-    Subclass* object;
-    ObjectStateTemplate<Subclass>() {}
-};
