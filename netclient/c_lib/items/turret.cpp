@@ -6,6 +6,8 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <net_lib/net.hpp>
 
+#include <c_lib/items/packets.hpp>
+
 /* Packets */
 class turret_create_StoC: public FixedSizeReliableNetPacketToClient<turret_create_StoC>
 {
@@ -521,6 +523,301 @@ void Turret::acquire_target()
     }
 #endif
 }
+
+/*
+ *
+ *
+ * TARGET LOCK HITSCAN ABSTRACTION
+ *
+ *
+ *
+ * */
+
+struct HitscanTarget
+{
+    Hitscan::HitscanTargetTypes hitscan;
+    int voxel[3];
+    Vec3 collision_point;
+
+    // voxel
+    int id;
+    Object_types type;
+    int part;
+
+    // terrain
+    int cube;
+    int side;
+};
+
+// replace this with full state dat
+struct AttackerProperties
+{
+    int id;
+    Object_types type;
+    int block_damage;
+    int agent_damage;
+    int voxel_damage_radius;
+    int agent_protection_duration;
+    t_map::TerrainModificationAction terrain_modification_action;
+};
+
+
+Agent_state* lock_agent_target(
+    Vec3 firing_position, Vec3 &firing_direction, int team,
+    const float range, const float acquisition_probability,
+    const bool enemies=false, const bool random=false
+)
+{
+    // find agents in range
+    using STATE::agent_list;
+    if (enemies)
+    {
+        agent_list->enemies_within_sphere(
+            firing_position.x, firing_position.y, firing_position.z, range, team
+        );
+    }
+    else
+    {
+        agent_list->objects_within_sphere(
+            firing_position.x, firing_position.y, firing_position.z, range
+        );
+    }
+    if (!agent_list->n_filtered) return NULL;
+
+    int chosen[agent_list->n_filtered];
+    if (random)
+    {
+        for (int i=0; i<agent_list->n_filtered; i++)
+            chosen[i] = i;
+        shuffle_int_array(chosen, agent_list->n_filtered);  // randomize
+    }
+    
+    Agent_state* agent = NULL;
+    Vec3 sink;
+    for (int i=0; i<agent_list->n_filtered; i++)
+    {   // ray cast to agent
+        if (random)
+            agent = agent_list->filtered_objects[chosen[i]];
+        else
+            agent = agent_list->filtered_objects[i];
+        if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
+        {
+            firing_direction = vec3_sub(sink, firing_position);
+            break;
+        }
+        agent = NULL;
+    }
+    return agent;
+}
+
+HitscanTarget shoot_at_enemy_agent(
+    Vec3 source, Vec3 firing_direction, int id, Object_types type,
+    Agent_state* agent, const float range
+)
+{
+#if DC_SERVER
+    // hitscan vector against world
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
+    Hitscan::HitscanTargetTypes
+    target_type = Hitscan::hitscan_against_world(
+        source, firing_direction,
+        id, type,
+        &target, &vox_distance, collision_point,
+        block_pos, side, &tile, &block_distance
+    );
+
+    // process target information
+    HitscanTarget target_information;
+    switch (target_type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            if (vox_distance > range)
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
+            target_information.id = target.entity_id;
+            target_information.type = (Object_types)target.entity_type;
+            target_information.part = target.part_id;
+            for (int i=0; i<3; i++)
+                target_information.voxel[i] = target.voxel[i];
+            break;
+            
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            if (block_distance > range)
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
+            target_information.collision_point = vec3_add(source,
+                        vec3_scalar_mult(firing_direction, block_distance));
+            target_information.cube = tile;
+            target_information.side = get_cube_side_from_side_array(side);
+            break;
+
+        default:
+            target_type = Hitscan::HITSCAN_TARGET_NONE;
+            break;
+    }
+
+    if (target_type == Hitscan::HITSCAN_TARGET_NONE)
+        target_information.collision_point = vec3_copy(firing_direction);
+
+    target_information.hitscan = target_type;
+    return target_information;
+#endif
+}
+
+void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
+{
+    Agent_state* agent;
+    switch (t.hitscan)
+    {
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            apply_damage_broadcast(
+                t.collision_point.x, t.collision_point.y, t.collision_point.z,
+                p.block_damage, p.terrain_modification_action
+            );
+            break;
+
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            if (t.type == OBJ_TYPE_AGENT)
+            {
+                agent = STATE::agent_list->get(t.id);
+                if (agent == NULL) break;
+                if (agent->status.lifetime > p.agent_protection_duration
+                  && !agent->near_base())
+                {
+                    agent->status.apply_damage(
+                        p.agent_damage, p.id, p.type, t.part
+                    );
+                    destroy_object_voxel(
+                        t.id, t.type, t.part, t.voxel,
+                        p.voxel_damage_radius
+                    );
+                }
+            }
+            break;
+
+        case Hitscan::HITSCAN_TARGET_NONE:
+            break;
+            
+        default: break;
+    }
+}
+
+void broadcast_object_fired(int id, Object_types type, HitscanTarget t)
+{
+    object_shot_object_StoC obj_msg;
+    object_shot_terrain_StoC terrain_msg;
+    object_shot_nothing_StoC none_msg;
+    switch (t.type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            obj_msg.id = id;
+            obj_msg.type = type;
+            obj_msg.target_id = t.id;
+            obj_msg.target_type = t.type;
+            obj_msg.target_part = t.part;
+            obj_msg.voxel_x = t.voxel[0];
+            obj_msg.voxel_y = t.voxel[1];
+            obj_msg.voxel_z = t.voxel[2];
+            obj_msg.broadcast();
+            break;
+            
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            terrain_msg.id = id;
+            terrain_msg.type = type;
+            terrain_msg.x = t.collision_point.x;
+            terrain_msg.y = t.collision_point.y;
+            terrain_msg.z = t.collision_point.z;
+            terrain_msg.cube = t.cube;
+            terrain_msg.side = t.side;
+            terrain_msg.broadcast();
+            break;
+            
+        case Hitscan::HITSCAN_TARGET_NONE:
+            none_msg.id = id;
+            none_msg.x = t.collision_point.x;
+            none_msg.y = t.collision_point.y;
+            none_msg.z = t.collision_point.z;
+            none_msg.broadcast();
+            break;
+            
+        default: break;
+    }
+}
+
+/* example */
+void do_acquire_target()
+{
+    // firing properties (will be from dat/state)
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    int id = 1;
+    int team = 1;
+    Object_types type = OBJ_TYPE_AGENT;
+    const float camera_height = 0.5f;
+    const float range = 128.0f;
+    const float bias = 1.5f;
+    const float acquisition_probability = 1.0f;
+    const bool enemies = true;
+    const bool random = true;
+    
+    // lock on agent
+    Vec3 firing_position = vec3_init(x, y, z + camera_height);
+    Vec3 firing_direction;
+    Agent_state* agent = lock_agent_target(
+        firing_position, firing_direction, team,
+        range, acquisition_probability, enemies, random
+    );
+    if (agent == NULL) return;
+
+    // normalize and bias vector
+    normalize_vector(&firing_direction);
+    if (bias)   // apply bias
+        firing_direction = vec3_bias_random(firing_direction, bias);
+
+    // get target
+    HitscanTarget t = shoot_at_enemy_agent(
+        firing_position, firing_direction, id, type,
+        agent, range
+    );
+
+    // attacker properties (will be from dat)
+    struct AttackerProperties attacker_properties;
+    attacker_properties.agent_protection_duration = 0;
+    attacker_properties.agent_damage = 25;
+    attacker_properties.block_damage = 16;
+    attacker_properties.voxel_damage_radius = 2;
+    attacker_properties.terrain_modification_action = t_map::TMA_LASER;
+
+    // let handle target hit based on attacker properties
+    handle_hitscan_target(t, attacker_properties);
+
+    // send firing packet
+    broadcast_object_fired(id, type, t);
+
+    // apply custom handling
+    // play sounds
+    // play animations
+}
+
+/*
+ *
+ *
+ * END TARGET LOCK HITSCAN ABSTRACTION
+ *
+ *
+ *
+ * */
 
 void Turret::tick()
 {    

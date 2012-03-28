@@ -93,10 +93,22 @@ class PickupComponent
 
 class PickupObject; // forward decl
 
-typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject> ParticleTick;
-typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject> BillboardSpriteDraw;
-typedef BornPickup < NoBorn(PickupObject) ,PickupObject> PickupBorn;
-typedef DiePickup < NoDie(PickupObject) ,PickupObject> PickupDie;
+// Note: Read left to right, until terminator No*(). Everything after that is noise
+// Here, we have:
+// TickParticle, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
+// behaviours will be called in order
+typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
+    ParticleTick;
+
+// TODO: move to a drawing behaviours file
+typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
+    BillboardSpriteDraw;
+
+typedef BornPickup < NoBorn(PickupObject) ,PickupObject>
+    PickupBorn;
+
+typedef DiePickup < NoDie(PickupObject) ,PickupObject>
+    PickupDie;
 
 typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie > PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent

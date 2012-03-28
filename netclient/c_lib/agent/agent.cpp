@@ -776,10 +776,10 @@ bool Agent_state::in_sight_of(Vec3 source, Vec3* sink)
     return this->in_sight_of(source, sink, 0.0f);
 }
 
-bool Agent_state::in_sight_of(Vec3 source, Vec3* sink, float failure_chance)
+bool Agent_state::in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability)
 {
     if (this->vox == NULL) return false;
-    return this->vox->in_sight_of(source, sink, failure_chance);
+    return this->vox->in_sight_of(source, sink, acquisition_probability);
 }
 
 void Agent_state::update_legs()

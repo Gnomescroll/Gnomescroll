@@ -58,7 +58,7 @@ class Voxel_model
         void set_node_rotation(int node, float theta, float phi, float rho);
 
         bool in_sight_of(Vec3 source, Vec3* sink);
-        bool in_sight_of(Vec3 source, Vec3* sink, float failure_chance);
+        bool in_sight_of(Vec3 source, Vec3* sink, float acquisition_probability);
 
         Voxel_volume* vv;
 

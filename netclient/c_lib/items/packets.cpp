@@ -41,10 +41,30 @@ inline void item_picked_up_StoC::handle()
         Sound::pickup_item();
     _destroy_item_handler(type, id);
 }
+
+inline void object_shot_object_StoC::handle()
+{
+    
+}
+
+inline void object_shot_terrain_StoC::handle()
+{
+
+}
+
+inline void object_shot_nothing_StoC::handle()
+{
+
+}
+
 #endif
 
 #if DC_SERVER
 inline void item_create_StoC::handle() {}
 inline void item_destroy_StoC::handle() {}
 inline void item_picked_up_StoC::handle() {}
+
+inline void object_shot_object_StoC::handle() {}
+inline void object_shot_terrain_StoC::handle() {}
+inline void object_shot_nothing_StoC::handle() {}
 #endif

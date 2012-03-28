@@ -1,0 +1,68 @@
+turn init_vox into a born() behaviour
+add vox update behavior
+--need own file
+
+acquire_target() is component
+-- split into many function
+-- will be collection of functions residing elsewhere
+-- the component version will only call them
+-- see example, do_acquire() in turret.cpp
+
+merge spawner/turret create/delete into item create/delete
+--...cant, spawner need more metadata
+--figure out solution for specialized packet needs
+--this affect batch send_to_client method on object_list
+
+add group types, similar to object types
+--could solve some specialization problems
+--also gives flexibility in list filtering system, e.g. fire against all enemy agents and robot guardians
+--also handles point_occupied on list
+
+object_shot_*_StoC handlers
+some sound functions need a wrapper that accepts type
+
+object metadata array
+--loading of this (need lua eventually)
+--can load from global constants
+
+get_coins_for_kills needs better customization
+--probably just set of state flags, its only an if condition
+==========
+Particles
+
+--hopefully straightforward
+
+==========
+Lists
+
+Main GameObject_list should keep indices for each type of object,
+so can cap types.  Potentially, blood particles will be in the same list as
+important items, and we dont want blood crowding out creation.
+Will likely have sublists like we do now, but grouped by type
+
+spawner_list is very specialized
+--same specialization issues of objects, appearing in lists
+--still, spawner list specialization probably not unique to spawners
+
+Make list aggregator
+--Standard api, matching object api
+--tick, update
+
+Specialized lists will added to list aggregator
+Aggregator puts object in specialized list if possible
+
+List specialization will not be complex like objects
+--No method composition. this means tick/update/draw looping are not configurable
+--they dont need to be. let the object handle anything special
+Will be simple inheritance
+e.g.
+class Spawner_list: public Object_list<Spawner, MAX_SPAWNERS>
+{
+    int get_random_team_spawner();
+    //etc
+};
+
+Draw has be tracked differently
+When object created, get assigned to a draw list based on draw type
+--When deleted, remove
+--Never retrieve from this list. only for draw tracking purposes

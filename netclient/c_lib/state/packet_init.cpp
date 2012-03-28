@@ -175,6 +175,11 @@ void RegisterMessages() {
     item_create_StoC::register_client_packet();
     item_destroy_StoC::register_client_packet();
     item_picked_up_StoC::register_client_packet();
+
+    // object fired
+    object_shot_object_StoC::register_client_packet();
+    object_shot_terrain_StoC::register_client_packet();
+    object_shot_nothing_StoC::register_client_packet();
     
 
 }
