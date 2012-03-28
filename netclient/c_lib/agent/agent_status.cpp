@@ -621,7 +621,7 @@ void Agent_status::tick()
         this->lifetime++;
 }
 
-void switch_ownership(Object_types item, int owner, int new_owner)
+void switch_agent_ownership(Object_types item, int owner, int new_owner)
 {
     Agent_state* a;
     if (owner != NO_AGENT)

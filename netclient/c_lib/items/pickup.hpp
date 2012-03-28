@@ -71,12 +71,22 @@ class TickPickup: public Super
         int agent_id = state->object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
         if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
         {   // was picked up, die
-            state->object->was_picked_up(agent_id);
+            state->object->was_picked_up(state, agent_id);
             state->ttl = state->ttl_max;
         }
         #endif
         Super::tick(state);
     }
+};
+
+/* Specialization */
+
+class PickupComponent
+{
+    public:
+    void was_picked_up(ObjectState* state, const int agent_id);
+    int nearest_agent_in_range(const Vec3 p, const float radius);
+    PickupComponent(){}
 };
 
 /* Composition */
@@ -90,12 +100,11 @@ typedef BornPickup < NoBorn(PickupObjectState) ,PickupObjectState> PickupBorn;
 typedef DiePickup < NoDie(PickupObjectState) ,PickupObjectState> PickupDie;
 
 typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, PickupBorn, PickupDie > PickupObjectParent;
-class PickupObject: public PickupObjectParent
+class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:
     PickupObject(int id, float x, float y, float z, float mx, float my, float mz)
-    : PickupObjectParent
-    (this)
+    : PickupObjectParent(this), PickupComponent()
     {
         this->_state.id = id;
         this->_state.pickup = true;
@@ -107,8 +116,8 @@ class PickupObject: public PickupObjectParent
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
     }
 
-    void was_picked_up(const int agent_id);
-    int nearest_agent_in_range(const Vec3 p, const float radius);
+    //void was_picked_up(const int agent_id);
+    //int nearest_agent_in_range(const Vec3 p, const float radius);
 };
 
 } // ItemDrops

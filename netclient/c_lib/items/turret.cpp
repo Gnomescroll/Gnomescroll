@@ -263,7 +263,7 @@ void Turret::set_team(int team)
 
 void Turret::set_owner(int owner)
 {
-    switch_ownership(this->type, this->owner, owner);
+    switch_agent_ownership(this->type, this->owner, owner);
     this->owner = owner;
 }
 

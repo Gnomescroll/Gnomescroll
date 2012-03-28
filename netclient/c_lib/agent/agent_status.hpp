@@ -4,7 +4,7 @@
 #include <common/enum_types.hpp>
 #include <c_lib/agent/constants.hpp>
 
-void switch_ownership(Object_types item, int owner, int new_owner);
+void switch_agent_ownership(Object_types item, int owner, int new_owner);
 
 class Agent_state;  // forward declaration
 

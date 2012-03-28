@@ -154,7 +154,7 @@ int Spawner::get_owner()
 
 void Spawner::set_owner(int owner)
 {
-    switch_ownership(this->type, this->owner, owner);
+    switch_agent_ownership(this->type, this->owner, owner);
     this->owner = owner;
 }
 

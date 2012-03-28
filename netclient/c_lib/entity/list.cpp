@@ -1,5 +1,6 @@
 #include "list.hpp"
 
+#include <c_lib/agent/net_agent.hpp>
 #include <c_lib/items/pickup.hpp>
 #include <c_lib/items/refills.hpp>
 
@@ -42,7 +43,7 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     
     obj->state()->type = type;
     switch (type)
-    {   // TODO: THIS WILL BE REPLACED BY ObjectType
+    {   // TODO: THIS WILL BE REPLACED BY ObjectType/Data
         case OBJ_TYPE_GRENADE_REFILL:
             texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
             texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
@@ -78,4 +79,27 @@ void GameObject_list::destroy(int id)
     if (obj == NULL) return;
     obj->die();
     Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>::destroy(id);
+}
+
+
+void GameObject_list::alter_owner(int owner, int new_owner)
+{
+    #if DC_SERVER
+    if (owner == new_owner)
+    {
+        printf("WARNING -- %s_list::alter_owner -- owner == new_owner %d\n", this->name(), owner);
+        return;
+    }
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->state()->get_owner() != owner) continue;
+        this->a[i]->state()->set_owner(new_owner);
+        alter_item_ownership_StoC msg;
+        msg.owner = new_owner;
+        msg.id = this->a[i]->state()->id;
+        msg.type = this->a[i]->state()->type;
+        msg.broadcast();
+    }
+    #endif
 }
