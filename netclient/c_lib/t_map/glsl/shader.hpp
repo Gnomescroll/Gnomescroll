@@ -34,5 +34,7 @@ namespace t_map
     extern SDL_Surface *terrain_map_surface;
     extern GLuint terrain_map_texture;
 
+    extern GLuint block_textures_compatibility; //use for intel mode
+
     void teardown_shader(); // frees surface
 }

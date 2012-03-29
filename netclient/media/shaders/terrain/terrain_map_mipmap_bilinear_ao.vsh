@@ -1,8 +1,10 @@
 #version 120
 
-# ifdef GL_EXT_gpu_shader4
+#ifdef GL_EXT_gpu_shader4
 #extension GL_EXT_gpu_shader4 : enable
-# endif
+#endif
+
+#extension GL_EXT_texture_array : enable
 
 /*
 Attributes

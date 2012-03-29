@@ -43,6 +43,16 @@ inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNO
 
 }
 
+
+/*
+    LUA interface
+*/
+extern "C"
+{
+    void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent) GNOMESCROLL_API;
+    void LUA_set_block_max_damage(int id, int max_damage) GNOMESCROLL_API;
+}
+
 /*
 Cube Properties
 */

@@ -5,6 +5,10 @@
 
 #include <c_lib/physics/vec3.hpp>
 
+#include <c_lib/physics/constants.hpp>
+
+#define PI 3.14159265
+
 struct Vec4 {
     union
     {

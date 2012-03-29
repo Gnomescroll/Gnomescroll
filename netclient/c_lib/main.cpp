@@ -5,6 +5,7 @@
 #include <c_lib/sound/sound.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/camera/camera.hpp>
+#include <c_lib/camera/skybox/skybox.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <net_lib/host.hpp>
 #include <c_lib/time/physics_timer.h>
@@ -14,6 +15,8 @@
 
 #include <c_lib/time/frame_rate_limiter.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
+
+#include <c_lib/t_mech/draw.hpp>
 
 bool _quit = false;
 
@@ -156,6 +159,10 @@ int run()
 
         // draw map
         t_map::draw_map();
+        poll_mouse();
+        
+        Skybox::draw();
+        poll_mouse();
 
         // draw client state
         ClientState::draw();
@@ -165,6 +172,8 @@ int run()
 
         // update mouse
         poll_mouse();
+
+        t_mech::draw();
 
         if (Options::hud)
         {

@@ -10,9 +10,12 @@ port = 4096
 ''' Game Preferences '''
 auto_assign_team = True
 
+#for Youtube recording
+#1920x1080, 1600x900, 1366x768, 1280x720, 1024x600 are all 16:9
+
 ''' Window / Camera '''
 width = 1280
-height = 800
+height = 720
 fullscreen = False
 fov = 85.
 

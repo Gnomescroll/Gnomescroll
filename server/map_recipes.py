@@ -26,6 +26,7 @@ import opts
 opts.opts = args_server.get_args()
 opts = opts.opts
 
+'''
 from cube import dat
 cubes = {} # TODO -- move this out of here
 for id,v in dat.items():
@@ -33,6 +34,15 @@ for id,v in dat.items():
     if name is None:
         continue
     cubes[name] = id
+'''
+
+from cube import dat
+cubes = {} # TODO -- move this out of here
+for id,v in dat.items():
+    name = v.get('name', None)
+    if name is None:
+        continue
+    cubes[name] = 6 # DEBUGGING
 
 def names_available():
     print ""

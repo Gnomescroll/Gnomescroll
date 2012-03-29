@@ -4,6 +4,12 @@
 #extension GL_EXT_gpu_shader4 : enable
 #endif
 
+#ifdef GL_EXT_gpu_shader4
+    flat varying mat2 lightMatrix; 
+#else
+    varying mat2 lightMatrix; 
+#endif
+
 /*
 Attributes
 */
@@ -28,14 +34,8 @@ Varying
 */
 
 varying vec2 texCoord;
-varying vec2 texCoord2;
+//varying vec2 texCoord2;
 varying vec2 texCoord3;
-
-#ifdef GL_EXT_gpu_shader4
-    flat varying mat2 lightMatrix; 
-#else
-    varying mat2 lightMatrix; 
-#endif
 
 varying vec3 inColor;
 
@@ -50,7 +50,7 @@ void main(void)
  
         texCoord = InTexCoord.xy;
 
-        texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
+        vec2 texCoord2 = (0.0625f*InTexCoord.xy)+InTexCoord.zw;
 
         vec2 tmp = (0.96f)*(InTexCoord.xy - vec2(0.5f,0.5f) )+ vec2(0.5f,0.5f);
         texCoord3 = 0.0625f*tmp +InTexCoord.zw;

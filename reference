@@ -1,3 +1,12 @@
+Profiling Compile Time:
+- g++ some_file.cc -ftime-report
+will give you a rough estimate of time spent in different compiler phase.
+
+Use -O0 if you're not testing execution speed or code size (and your computer is fast enough for you not to care much about the (probably small) performance hit).
+
+Bloom Shader:
+http://blenderartists.org/forum/archive/index.php/t-134703.html
+
 Pixel Artists:
 http://www.cellusious.co.nr/
 Cell on #ludumdare
@@ -7,6 +16,11 @@ klocwork.com
 Parasoft® Insure++®: C/C++ Runtime Analysis, Error Detection
 Parasoft® C/C++ Static Analysis, Code Review, Unit Testing, Runtime Error Detection
 Coverity static code analysis
+Monoidics
+Goanna (redlizards.com)
+HP Fortify
+PVS-Studio (visual studios only)
+Microsoft \Analyze
 
 >Spiral Knights as a dual currency model
 -Energy based currency that recharges over time

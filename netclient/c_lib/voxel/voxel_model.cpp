@@ -517,7 +517,10 @@ Voxel_model::~Voxel_model()
         free(biaxial_nodes);
     }
     else
+    {
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
+
+    }
 }
 
 void Voxel_model::freeze()

@@ -22,6 +22,8 @@ void init_quad_cache_vertex_cordinates_comptability();
 
 void init_cache()
 {
+    static int init = 0; if(init ==0 ) {init == 1; } else { printf("Error: init_cache() called twice!"); return;}
+    
     if( quad_cache == NULL) quad_cache = (struct Vertex*) malloc( MAX_CUBES*6*4 * sizeof(struct Vertex));
     memset(quad_cache, 0, MAX_CUBES*6*4 * sizeof(struct Vertex));
 
@@ -102,6 +104,8 @@ void init_quad_cache_texture_cordinates()
 
             unsigned char tmp = (unsigned char) cube_side_texture_array[6*cube_id+side];
 
+            if(cube_id == 1 ) printf("cube tex= %i \n", tmp);
+            
             quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
             quad_cache[cube_id*6*4 +4*side + 0].ty = _0;
             quad_cache[cube_id*6*4 +4*side + 0].tz = tmp;

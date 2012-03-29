@@ -3,7 +3,7 @@
 # boot hack
 import sys
 import os
-print "Working Directory: %s" % (os.getcwd())
+#print "Working Directory: %s" % (os.getcwd())
 sys.path.insert(0, './ext/')
 sys.path.insert(0, '/c/dc_mmo/netclient/ext/')
 sys.path.insert(0, 'c:/dc_mmo/netclient/ext/')
@@ -27,12 +27,13 @@ class App(object):
         init_c_lib.load_options(opts)
         init_c_lib.init_game()
 
-        def load_cube_dat():
-            import cube_dat
-            dat_loader.load('cubes', cube_dat.dat)
-        load_cube_dat()
-
-        init_c_lib.init_terrain()
+        #def load_cube_dat():
+        #    import cube_dat
+        #    dat_loader.load('cubes', cube_dat.dat)
+        
+        #load_cube_dat()
+        #init_c_lib.init_terrain()
+        
         #init_c_lib.Font.init()
         #init_c_lib.start_font()
         

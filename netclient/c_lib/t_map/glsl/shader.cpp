@@ -3,6 +3,8 @@
 #include <c_lib/t_map/glsl/settings.hpp>
 #include <c_lib/t_map/glsl/texture.hpp>
 
+#include <c_lib/SDL/texture_sheet_loader.hpp>
+
 /*
 In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 
 So for those versions, you must use glGenerateMipmap.
@@ -18,6 +20,8 @@ namespace t_map
 
     SDL_Surface *terrain_map_surface = NULL;
     GLuint terrain_map_texture = 0;
+
+    GLuint block_textures_compatibility = 0; //use for intel model
 
     void init_shaders()
     {
@@ -44,8 +48,12 @@ namespace t_map
             ANISOTROPIC_FILTERING = 0;
         }
 
-        if(T_MAP_BACKUP_SHADER == 1)
+        //T_MAP_BACKUP_SHADER = 1;
+
+        // || true
+        if(T_MAP_BACKUP_SHADER == 1 )
         {
+            printf("!!! Warning: Using Intel GPU Compatability mode shader\n");
             set_map_shader_0_comptability();
             init_map_3d_texture_comptability();
         }
@@ -159,10 +167,11 @@ namespace t_map
         if(terrain_map_glsl != 0)
         glDeleteTextures(1,&terrain_map_glsl);
 
+/*
         terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
         if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
 
-        GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+
         
         GLuint format;
         if (terrain_map_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
@@ -190,7 +199,8 @@ namespace t_map
         }
         }
         SDL_UnlockSurface(terrain_map_surface);
-                   
+*/      
+
         glEnable(GL_TEXTURE_2D);
 
         glGenTextures( 1, &terrain_map_glsl );
@@ -251,12 +261,26 @@ namespace t_map
 
             glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
         }
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
+
+
+        GLuint format = GL_RGBA;
+        GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
+
+        const int w = 32;
+        const int h = 32;
+        const int d = 256;
+
+        if(TextureSheetLoader::CubeTextureStack == NULL) printf("!!! ERRROR !!! \n");
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTextureStack);
+
+        
+
+        //glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, internalFormat, w, h, d, 0, format, GL_UNSIGNED_BYTE, Pixels);
         //glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
         glDisable(GL_TEXTURE_2D);
 
-        delete[] Pixels;
+        //delete[] Pixels;
     }
 
     void teardown_shader()
@@ -319,75 +343,18 @@ namespace t_map
 
     void init_map_3d_texture_comptability()
     {
-        /*
-            Cleanup
-        */
 
-    /*
-        if(terrain_map_surface != NULL) 
-        SDL_FreeSurface(terrain_map_surface);
-        if(terrain_map_glsl != 0)
-        glDeleteTextures(1,&terrain_map_glsl);
-
-        terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
-        if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
-
-        GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
-        
-        GLuint format;
-        if (terrain_map_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
-        if (terrain_map_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
-                   
-        glEnable(GL_TEXTURE_2D);
-
-        glGenTextures( 1, &terrain_map_glsl );
-        glBindTexture(GL_TEXTURE_2D, terrain_map_glsl);
-
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, terrain_map_surface->w, terrain_map_surface->h, 0, format, GL_UNSIGNED_BYTE, terrain_map_surface->pixels);
-
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
-
-        if(ANISOTROPIC_FILTERING)
-        {
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
-        }
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, T_MAP_MAG_FILTER ? GL_NEAREST : GL_LINEAR);
-
-        switch(T_MAP_MAG_FILTER)
-        {
-            case 0:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); break;
-            case 1:
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
-            default:
-                printf("Error: T_MAP_MAG_FILTER value %i invalid for GL_TEXTURE_2D\n", T_MAP_MAG_FILTER);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); break;
-        }
-        //int w = 8*512;
-        //int h = 8*512;
-
-        glDisable(GL_TEXTURE_2D);
-    */
-
-        if(terrain_map_surface != NULL) 
-        SDL_FreeSurface(terrain_map_surface);
-        if(terrain_map_glsl != 0)
-        glDeleteTextures(1,&terrain_map_glsl);
-
-        terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
-        if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
+        SDL_Surface* s = TextureSheetLoader::CubeTexture;
 
         glEnable(GL_TEXTURE_2D);
-        glGenTextures( 1, &terrain_map_glsl );
-        // Bind the texture object
-        glBindTexture( GL_TEXTURE_2D, terrain_map_glsl );
+
+        if(block_textures_compatibility == 0)
+        {
+            glGenTextures( 1, &block_textures_compatibility );
+        }
+
+        glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
+
         // Set the texture's stretching properties
 
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -397,9 +364,11 @@ namespace t_map
 
         GLuint internalFormat = GL_SRGB8_ALPHA8_EXT; //GL_RGBA;
         GLuint format;
-        if (terrain_map_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
-        if (terrain_map_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
+        
+        //if (s->format->Rmask == 0x000000ff) format = GL_RGBA;
+        //if (s->format->Rmask != 0x000000ff) format = GL_BGRA;
 
+        format = GL_RGBA;
         // Edit the texture object's image data using the information SDL_Surface gives us
         //glTexImage2D(GL_TEXTURE_2D, 0, 4, terrain_map_surface->w, terrain_map_surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
         
@@ -408,9 +377,8 @@ namespace t_map
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, terrain_map_surface->w, terrain_map_surface->h, 0, format, GL_UNSIGNED_BYTE, terrain_map_surface->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTexture->pixels ); //2nd parameter is level
         
-
         glDisable(GL_TEXTURE_2D);
 
     }
