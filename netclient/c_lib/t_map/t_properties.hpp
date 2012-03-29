@@ -41,6 +41,12 @@ inline struct cubeProperties* _get_cube(int id) __attribute((always_inline)) GNO
     //return &cube_list[id];
 //}
 
+//extern char cube_names[MAX_CUBES*64];
+//extern int cube_name_index[MAX_CUBES];
+
+void set_cube_name(int id, char* name, int length);
+char* get_cube_name(int id);
+
 }
 
 

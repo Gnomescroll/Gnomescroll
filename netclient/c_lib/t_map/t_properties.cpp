@@ -13,6 +13,9 @@ namespace t_map
 namespace t_map
 {
 
+char cube_names[MAX_CUBES*64];
+int cube_name_index[MAX_CUBES];
+
 void init_t_properties()
 {
     printf("init_t_properties() \n");
@@ -21,6 +24,13 @@ void init_t_properties()
 
     cube_list = (cubeProperties*) malloc(sizeof(struct cubeProperties) * MAX_CUBES);
     memset(cube_list, 0, sizeof(struct cubeProperties) * MAX_CUBES);
+
+
+    memset(cube_names, 0, 64* MAX_CUBES);
+    memset(cube_name_index, 0, sizeof(int) * MAX_CUBES);
+    //for(int i=0; i<MAX_CUBES*64; i++) cube_names = NULL;
+    //for(int i=0; i<MAX_CUBES; i++) cube_name_index = 0s;
+
     return;
 }
 
@@ -35,6 +45,48 @@ struct cubeProperties* get_cube(int id)
     if(id < 0) printf("get_cube: error id less than zero \n");
     if(id >= MAX_CUBES ) printf("get_cube: error id exceeds MAX_CUBES \n");
     return &cube_list[id];
+}
+
+
+void set_cube_name(int id, char* name, int length)
+{
+    static int index = 0;
+
+    if(length >= 64)
+    {
+        printf("Error: set_cube_name(), name length greater than 63 characters\n");
+        return;
+    }
+
+    if(index +length + 1 > MAX_CUBES*64)
+    {
+        printf("Error: set_cube_name(), WTF potential overflow\n");
+        return;
+    }
+
+    if(id < 0 || id >= MAX_CUBES)
+    {
+        printf("Error: set_cube_name(), cube id error\n");
+        return;
+    }
+
+    cube_name_index[id] = index;
+
+    memcpy(cube_names+index, name, length);
+    index += length;
+    cube_names[index] = 0x00;
+    index++;
+}
+
+char* get_cube_name(int id)
+{
+    if(id < 0 || id >= MAX_CUBES)
+    {
+        printf("Error: cube_name_index(), cube id error\n");
+        return NULL;
+    }
+
+    return (cube_names+ cube_name_index[id]);
 }
 
 }
