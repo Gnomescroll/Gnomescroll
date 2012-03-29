@@ -172,9 +172,9 @@ void RegisterMessages() {
     destroy_voxel_StoC::register_client_packet();
 
     // item drops
-    item_create_StoC::register_client_packet();
-    item_destroy_StoC::register_client_packet();
-    item_picked_up_StoC::register_client_packet();
+    object_create_StoC::register_client_packet();
+    object_destroy_StoC::register_client_packet();
+    object_picked_up_StoC::register_client_packet();
 
     // object fired
     object_shot_object_StoC::register_client_packet();

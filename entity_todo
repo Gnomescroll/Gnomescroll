@@ -35,6 +35,9 @@ Particles
 
 --hopefully straightforward
 
+verletparticle shouldnt hold its state
+should just operate on the state
+
 ==========
 Lists
 

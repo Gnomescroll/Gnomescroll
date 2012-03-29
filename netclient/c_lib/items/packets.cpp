@@ -4,7 +4,7 @@
 
 #if DC_CLIENT
 
-inline void item_create_StoC::handle()
+inline void object_create_StoC::handle()
 {
     switch (type)
     {
@@ -32,12 +32,12 @@ static inline void _destroy_item_handler(int type, int id)
     }    
 }
 
-inline void item_destroy_StoC::handle()
+inline void object_destroy_StoC::handle()
 {
     _destroy_item_handler(type, id);
 }
 
-inline void item_picked_up_StoC::handle()
+inline void object_picked_up_StoC::handle()
 {
     using ClientState::playerAgent_state;
     if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
@@ -84,9 +84,9 @@ inline void object_shot_nothing_StoC::handle()
 #endif
 
 #if DC_SERVER
-inline void item_create_StoC::handle() {}
-inline void item_destroy_StoC::handle() {}
-inline void item_picked_up_StoC::handle() {}
+inline void object_create_StoC::handle() {}
+inline void object_destroy_StoC::handle() {}
+inline void object_picked_up_StoC::handle() {}
 
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}

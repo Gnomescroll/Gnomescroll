@@ -27,7 +27,7 @@ class DiePickup: public Super
         #if DC_SERVER
         if (state->broadcast_death)
         {
-            item_picked_up_StoC msg;
+            object_picked_up_StoC msg;
             msg.type = state->type;
             msg.id = state->id;
             msg.agent_id = state->picked_up_by;
@@ -45,7 +45,7 @@ class BornPickup: public Super
     inline void born(ObjectState* state, Object* object)
     {
         #if DC_SERVER
-        item_create_StoC msg;
+        object_create_StoC msg;
         msg.type = state->type;
         msg.id = state->id;
         msg.x = state->vp->p.x;

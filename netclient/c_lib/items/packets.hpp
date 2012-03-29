@@ -2,7 +2,7 @@
 
 #include <net_lib/net.hpp>
 
-class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
+class object_create_StoC: public FixedSizeNetPacketToClient<object_create_StoC>
 {
     public:
         uint8_t type;
@@ -23,7 +23,7 @@ class item_create_StoC: public FixedSizeNetPacketToClient<item_create_StoC>
         inline void handle();
 };
 
-class item_destroy_StoC: public FixedSizeNetPacketToClient<item_destroy_StoC>
+class object_destroy_StoC: public FixedSizeNetPacketToClient<object_destroy_StoC>
 {
     public:
         uint8_t type;
@@ -37,7 +37,7 @@ class item_destroy_StoC: public FixedSizeNetPacketToClient<item_destroy_StoC>
         inline void handle();
 };
 
-class item_picked_up_StoC: public FixedSizeNetPacketToClient<item_picked_up_StoC>
+class object_picked_up_StoC: public FixedSizeNetPacketToClient<object_picked_up_StoC>
 {
     public:
         uint8_t type;

@@ -58,67 +58,6 @@ class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_
         inline void handle();
 };
 
-
-//class turret_shot_nothing_StoC: public FixedSizeNetPacketToClient<turret_shot_nothing_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //float vx,vy,vz;
-
-        //inline void packet(char* buff, int* buff_n, bool pack) 
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_float(&vx, buff, buff_n, pack);
-            //pack_float(&vy, buff, buff_n, pack);
-            //pack_float(&vz, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-//class turret_shot_object_StoC: public FixedSizeNetPacketToClient<turret_shot_object_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //uint8_t target_id;
-        //uint8_t target_type;
-        //uint8_t target_part;
-        //uint8_t vx,vy,vz;   //voxel
-
-        //inline void packet(char* buff, int* buff_n, bool pack) 
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&target_id, buff, buff_n, pack);
-            //pack_u8(&target_type, buff, buff_n, pack);
-            //pack_u8(&target_part, buff, buff_n, pack);
-            //pack_u8(&vx, buff, buff_n, pack);
-            //pack_u8(&vy, buff, buff_n, pack);
-            //pack_u8(&vz, buff, buff_n, pack);
-
-        //}
-        //inline void handle();
-//};
-
-//class turret_shot_block_StoC: public FixedSizeNetPacketToClient<turret_shot_block_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //uint8_t cube;   // might not need this (infer from x,y,z)
-        //uint8_t side;
-        //float x,y,z;    // send the actual collision point
-
-        //inline void packet(char* buff, int* buff_n, bool pack) 
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&cube, buff, buff_n, pack);
-            //pack_u8(&side, buff, buff_n, pack);
-            //pack_float(&x, buff, buff_n, pack);
-            //pack_float(&y, buff, buff_n, pack);
-            //pack_float(&z, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-
 #if DC_CLIENT
 inline void turret_state_StoC::handle()
 {
