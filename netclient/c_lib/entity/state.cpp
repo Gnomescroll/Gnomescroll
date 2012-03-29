@@ -1,5 +1,18 @@
 #include "state.hpp"
 
+int ObjectState::get_kill_reward(int owner, int team)
+{
+    if (
+         (COINS_ANYONE  & this->coin_rule)
+     || ((COINS_ENEMIES & this->coin_rule) && (this->team != team))
+     || ((COINS_ALLIES  & this->coin_rule) && (this->team == team))
+     || ((COINS_OWNER   & this->coin_rule) && (this->owner == owner))
+     || ((COINS_ANYONE_WHEN_UNOWNED & this->coin_rule) && (this->owner == NO_AGENT))
+    )
+        return this->reward;
+    return 0;
+}
+
 int ObjectState::get_team()
 {
     return this->team;
@@ -19,13 +32,6 @@ void ObjectState::set_owner(int owner)
 {
     switch_agent_ownership(this->type, this->owner, owner);
     this->owner = owner;
-}
-
-int ObjectState::get_coins_for_kill(int owner, int team)
-{   // TODO: allow objects to configure this behaviour
-    if ((this->team != team && this->owner != NO_AGENT) || owner == this->owner) // enemy team, or owner, can destroy/reclaim
-        return get_object_cost(this->type);
-    return 0;
 }
 
 int ObjectState::take_damage(int dmg)

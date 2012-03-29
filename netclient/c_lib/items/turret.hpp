@@ -42,7 +42,7 @@ class Turret
         
         void set_position(float x, float y, float z);
         
-        int get_coins_for_kill(int owner, int team);
+        int get_coins_for_kill(int owner, int team);    // REMAINING
         int take_damage(int dmg);
         void acquire_target();
 
@@ -50,7 +50,7 @@ class Turret
         void update(); // client side
         
         #ifdef DC_SERVER
-        void create_message(turret_create_StoC* msg);
+        void create_message(turret_create_StoC* msg);   // REMAINING
         #endif
         explicit Turret(int id);
         Turret(int id, float x, float y, float z);

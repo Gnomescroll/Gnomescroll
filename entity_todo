@@ -15,6 +15,8 @@ merge spawner/turret create/delete into item create/delete
 --...cant, spawner need more metadata
 --figure out solution for specialized packet needs
 --this affect batch send_to_client method on object_list
+DELETE MERGED
+
 
 add group types, similar to object types
 --could solve some specialization problems
@@ -23,6 +25,7 @@ add group types, similar to object types
 
 object_shot_*_StoC handlers
 some sound functions need a wrapper that accepts type
+DONE
 
 object metadata array
 --loading of this (need lua eventually)

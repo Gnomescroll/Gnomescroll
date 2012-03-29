@@ -4,6 +4,16 @@
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 
+typedef enum
+{
+    COINS_NOBODY  = 0,
+    COINS_ANYONE  = 1,
+    COINS_ENEMIES = 2,
+    COINS_ALLIES  = 4,
+    COINS_OWNER   = 8,
+    COINS_ANYONE_WHEN_UNOWNED = 16
+} COIN_RULES;
+
 /* Holds constants that are dat-configurable */
 class ObjectData
 {
@@ -28,11 +38,14 @@ class ObjectData
         //spawning
         unsigned int spawn_radius;
 
-        // buying
+        // coins
         unsigned int cost;
+        unsigned int reward;
+        int coin_rule;
 
         // firing
         unsigned int fire_rate_limit;
+
 
         Object_types type;
     //TODO:
@@ -51,8 +64,14 @@ class ObjectData
 
     ObjectData()
     :
-    damp(1.0f), mass(1.0f), ttl_max(100), pickup(false), pickup_radius(1.0f),
-    blow_up_on_death(false), type(OBJ_TYPE_NONE)
+    camera_height(0.0f),
+    damp(1.0f), mass(1.0f), ttl_max(100),
+    pickup(false), pickup_radius(1.0f),
+    blow_up_on_death(false),
+    spawn_radius(1),
+    cost(999999), reward(0), coin_rule(COINS_NOBODY),
+    fire_rate_limit(1),
+    type(OBJ_TYPE_NONE)
     {}
 };
 
@@ -91,9 +110,8 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
-        
+    int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
-    int get_coins_for_kill(int owner, int team);
 
     int get_team();
     void set_team(int team);
