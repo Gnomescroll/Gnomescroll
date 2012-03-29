@@ -1,6 +1,7 @@
 turn init_vox into a born() behaviour
 add vox update behavior
 --need own file
+DONE
 
 acquire_target() is component
 -- split into many function

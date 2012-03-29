@@ -44,3 +44,59 @@ class UpdateFrozenVox: public Super
     }
 };
 
+template <class Super, class Object>
+class BornVox: public Super
+{
+    void born(ObjectState* state, Object* object)
+    {
+        state->vox = new Voxel_model(state->vox_dat, state->id, state->type);
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornTeamVox: public Super
+{
+    void born(ObjectState* state, Object* object)
+    {
+        if (this->team == 0) printf("WARNING Turret::init_vox() -- team not set\n");
+        state->vox = new Voxel_model(state->vox_dat, state->id, state->type, state->team);
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornSetVox: public Super
+{
+    void born(ObjectState* state, Object* object)
+    {
+        this->vox->set_hitscan(state->init_hitscan);
+        this->vox->register_hitscan();
+        #ifdef DC_CLIENT
+        this->vox->set_draw(state->init_draw);
+        #endif
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornUpdateVox: public Super
+{
+    void born(ObjectState* state, Object* object)
+    {
+        this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornUpdateFrozenVox: public Super
+{
+    void born(ObjectState* state, Object* object)
+    {
+        this->vox->thaw();
+        this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+        this->vox->freeze();
+        Super::born(state, object);
+    }
+};

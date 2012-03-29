@@ -76,9 +76,13 @@ class ObjectState: public ObjectData
         // tick lifespan
         int ttl;
 
-        // draw/textures
+        // draw/textures/voxel
         float texture_scale;
         int texture_index;
+        Voxel_model* vox;
+        VoxDat* vox_dat;
+        bool init_hitscan;
+        bool init_draw;
 
         // pickup
         bool broadcast_death;
@@ -87,8 +91,6 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
-        // voxel
-        Voxel_model* vox;
         
     int take_damage(int dmg);
     int get_coins_for_kill(int owner, int team);
@@ -102,8 +104,8 @@ class ObjectState: public ObjectData
     ObjectState()
     : ObjectData(),
     id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
-    broadcast_death(false), picked_up_by(-1), fire_tick(0),
-    vox(NULL)
+    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
+    broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {
         this->position.x = 0;
         this->position.y = 0;
