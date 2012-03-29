@@ -61,10 +61,18 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
 
     float texture_scale, mass, damp;
     int texture_index, ttl_max;
+
+    // TODO: REPLACE WITH SOMETHING LIKE ObjectType/Data.
+    //ObjectData* data = get_object_metadata(type);
+    //ObjectPolicyInterface* obj = create_object(type);
+    //obj->load_data(data);
+    //obj->born();
+    // data passed to a copy method
+    // 
     
     obj->state()->type = type;
     switch (type)
-    {   // TODO: THIS WILL BE REPLACED BY ObjectType/Data
+    {
         case OBJ_TYPE_GRENADE_REFILL:
             texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
             texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
