@@ -16,8 +16,6 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg);
 
 extern VoxDat turret_vox_dat;
 
-//class turret_create_StoC; // forward decl
-
 class Turret
 {
     private:
@@ -50,7 +48,6 @@ class Turret
         void update(); // client side
         
         #ifdef DC_SERVER
-        //void create_message(turret_create_StoC* msg);   // REMAINING
         void create_message(object_create_owner_team_StoC* msg);   // REMAINING
         #endif
         explicit Turret(int id);

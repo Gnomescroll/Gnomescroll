@@ -7,28 +7,7 @@
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
-///* Packets */
-//class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
-//{
-    //public:
-        //uint8_t id;
-        //uint8_t owner;
-        //uint8_t team;
-        //int8_t team_index;  // why is this signed. anyway, encode this into team
-        //float x,y,z;
-        
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-            //pack_u8(&owner, buff, buff_n, pack);
-            //pack_u8(&team, buff, buff_n, pack);
-            //pack_8(&team_index, buff, buff_n, pack);
-            //pack_float(&x, buff, buff_n, pack);
-            //pack_float(&y, buff, buff_n, pack);
-            //pack_float(&z, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
+/* Packets */
 
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
@@ -56,24 +35,6 @@ inline void spawner_state_StoC::handle()
     if (s==NULL) return;
     s->set_position(x,y,z);
 }
-
-//inline void Spawner_create_StoC::handle()
-//{
-    //Spawner* s = ClientState::spawner_list->create(id, x,y,z);
-    //if (s==NULL)
-    //{
-        //printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
-        //return;
-    //}
-    //s->set_team(team);
-    //s->team_index = team_index; //overwrite with server authority
-    //s->set_owner(owner);
-    //s->init_vox();
-    //Sound::spawner_placed(x,y,z,0,0,0);
-    //// TODO -- use object_* after Spawner is ObjectPolicyInterface
-    ////system_message->spawner_created(s);
-    ////system_message->object_created(s);
-//}
 
 void spawner_create(object_create_owner_team_index_StoC* msg)
 {
@@ -105,7 +66,6 @@ void spawner_destroy(int id)
 
 #ifdef DC_SERVER
 inline void spawner_state_StoC::handle(){}
-//inline void Spawner_create_StoC::handle(){}
 #endif
 
 /* Spawners */
@@ -245,13 +205,13 @@ vox(NULL)
 }
 
 #ifdef DC_SERVER
-//void Spawner::create_message(Spawner_create_StoC* msg)
 void Spawner::create_message(object_create_owner_team_index_StoC* msg)
 {
     msg->id = this->id;
+    msg->type = this->type;
     msg->team = this->team;
     msg->owner = this->owner;
-    msg->team_index = this->team_index; // TODO
+    msg->team_index = this->team_index;
     msg->x = this->x;
     msg->y = this->y;
     msg->z = this->z;
@@ -407,8 +367,6 @@ void Spawner_list::send_to_client(int client_id)
     {
         Spawner *s = this->a[i];
         if (s == NULL) continue;
-
-        //Spawner_create_StoC msg;
         object_create_owner_team_index_StoC msg;
         s->create_message(&msg);
         msg.sendToClient(client_id);

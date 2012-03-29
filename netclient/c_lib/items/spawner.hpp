@@ -7,8 +7,6 @@
 
 extern VoxDat spawner_vox_dat;
 
-//class Spawner_create_StoC; // forward decl
-
 const unsigned int TEAM_INDEX_NONE = 255;
 const unsigned int TEAM_INDEX_MAX = (TEAM_INDEX_NONE+1) / N_TEAMS;
 
@@ -46,7 +44,6 @@ class Spawner
         void update(); // client side
         
         #ifdef DC_SERVER
-        //void create_message(Spawner_create_StoC* msg);
         void create_message(object_create_owner_team_index_StoC* msg);
         #endif
         explicit Spawner(int id);
