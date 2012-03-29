@@ -5,6 +5,15 @@
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
 
+// forward decl
+class object_shot_object_StoC;
+class object_shot_terrain_StoC;
+class object_shot_nothing_StoC;
+
+void turret_shot_object(object_shot_object_StoC* msg);
+void turret_shot_terrain(object_shot_terrain_StoC* msg);
+void turret_shot_nothing(object_shot_nothing_StoC* msg);
+
 extern VoxDat turret_vox_dat;
 
 class turret_create_StoC; // forward decl

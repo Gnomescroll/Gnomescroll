@@ -4,8 +4,6 @@
 
 #if DC_CLIENT
 
-
-
 inline void item_create_StoC::handle()
 {
     switch (type)
@@ -49,17 +47,38 @@ inline void item_picked_up_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
-    
+    switch (this->type)
+    {
+        case OBJ_TYPE_TURRET:
+            turret_shot_object(this);
+            break;
+            
+        default:break;
+    }
 }
 
 inline void object_shot_terrain_StoC::handle()
 {
-
+    switch (this->type)
+    {
+        case OBJ_TYPE_TURRET:
+            turret_shot_terrain(this);
+            break;
+            
+        default:break;
+    }
 }
 
 inline void object_shot_nothing_StoC::handle()
 {
-
+    switch (this->type)
+    {
+        case OBJ_TYPE_TURRET:
+            turret_shot_nothing(this);
+            break;
+            
+        default:break;
+    }
 }
 
 #endif
