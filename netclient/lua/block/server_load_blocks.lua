@@ -2,6 +2,8 @@ package.path = "lua/?.lua;lua/block/?.lua;?.lua"
 
 require("lua_library");
 
+IS_CLIENT = 0;
+
 require("block_template");
 require("block_dat");
 

@@ -1,13 +1,5 @@
 
-
---- LUA_PATH = "./:./media/lua/"
-
-
----require("block_template");
-
-print("map_load_tiles: loading tiles") ;
-
-
+--print("map_load_tiles: loading tiles") ;
 
 
 --[[
@@ -19,25 +11,35 @@ w west
 e east
 ]]
 
-function iso_texture(spritesheet, xpos, ypos)
-	local id;
-	if (type(spritesheet) == "number") then
-		id= spritesheet
-	else
-		if(not xpos or not ypos) then error("iso_texture: xpos or ypos not set!") end
-		id = register_texture(spritesheet, xpos, ypos)
+if (IS_CLIENT == 1) then 
+	function iso_texture(spritesheet, xpos, ypos)
+		local id;
+		if (type(spritesheet) == "number") then
+			id= spritesheet
+		else
+			if(not xpos or not ypos) then error("iso_texture: xpos or ypos not set!") end
+			id = register_texture(spritesheet, xpos, ypos)
+		end
+		o = {};
+		o.t = id;
+		o.b = id;
+		o.n = id;
+		o.s = id;
+		o.w = id;
+		o.e = id;
+		return o
 	end
-	o = {};
-	o.t = id;
-	o.b = id;
-	o.n = id;
-	o.s = id;
-	o.w = id;
-	o.e = id;
-	return o
+else
+	function iso_texture(spritesheet, xpos, ypos)
+		return
+	end
 end
-
 --- convenience method
+
+if (IS_CLIENT == 1) then 
+	error_block = texture_alias("t00",0,0)
+	stone_block = texture_alias("t00",0,2)
+end
 
 function NewSolidBlock(id, name)
   o = BlockNew(id, name)
@@ -45,8 +47,7 @@ function NewSolidBlock(id, name)
   return o
 end
 
-error_block = texture_alias("t00",0,0)
-stone_block = texture_alias("t00",0,2)
+
 
 Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
@@ -56,11 +57,6 @@ Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
 b.hud = hud(63, "error.png");
-
-
-b = NewSolidBlock(2, "lava");
-b.texture = iso_texture(stone_block);
-b.hud = hud(0, "stone.png");
 
 
 b = NewSolidBlock(1, "soft_rock");
@@ -89,6 +85,8 @@ b.hud = hud(1, "blueore.png");
 
 print("map_load_tiles: done");
 
+--[[
 for i, block in pairs(block_id_table) do
   o = {}
 end
+]]
