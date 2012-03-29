@@ -10,25 +10,25 @@
 #include <c_lib/ray_trace/handlers.hpp>
 
 /* Packets */
-class turret_create_StoC: public FixedSizeReliableNetPacketToClient<turret_create_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t owner;
-        uint8_t team;
-        float x,y,z;
+//class turret_create_StoC: public FixedSizeReliableNetPacketToClient<turret_create_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t owner;
+        //uint8_t team;
+        //float x,y,z;
         
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&owner, buff, buff_n, pack);
+            //pack_u8(&team, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
 class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_StoC>
 {
@@ -55,16 +55,31 @@ inline void turret_state_StoC::handle()
     t->set_position(x,y,z);
 }
 
-inline void turret_create_StoC::handle()
+//inline void turret_create_StoC::handle()
+//{
+    //Turret* t = ClientState::turret_list->create(id, x,y,z);
+    //if (t==NULL)
+    //{
+        //printf("WARNING turret_create_StoC::handle() -- could not create turret %d\n", id);
+        //return;
+    //}
+    //t->set_team(team);
+    //t->set_owner(owner);
+    //t->init_vox();
+    ////Sound::turret_placed(x,y,z,0,0,0);
+    ////system_message->turret_created(t);
+//}
+
+void turret_create(object_create_owner_team_StoC* msg)
 {
-    Turret* t = ClientState::turret_list->create(id, x,y,z);
-    if (t==NULL)
+    Turret* t = ClientState::turret_list->create(msg->id, msg->x, msg->y, msg->z);
+    if (t == NULL)
     {
-        printf("WARNING turret_create_StoC::handle() -- could not create turret %d\n", id);
+        printf("WARNING turret_create_StoC::handle() -- could not create turret %d\n", msg->id);
         return;
     }
-    t->set_team(team);
-    t->set_owner(owner);
+    t->set_team(msg->team);
+    t->set_owner(msg->owner);
     t->init_vox();
     //Sound::turret_placed(x,y,z,0,0,0);
     //system_message->turret_created(t);
@@ -153,7 +168,7 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 
 #if DC_SERVER
 inline void turret_state_StoC::handle(){}
-inline void turret_create_StoC::handle(){}
+//inline void turret_create_StoC::handle(){}
 #endif
 
 /* Turrets */
@@ -301,7 +316,8 @@ Turret::~Turret()
 }
 
 #if DC_SERVER
-void Turret::create_message(turret_create_StoC* msg)
+//void Turret::create_message(turret_create_StoC* msg)
+void Turret::create_message(object_create_owner_team_StoC* msg)
 {
     msg->id = this->id;
     msg->team = this->team;
@@ -455,7 +471,8 @@ void Turret_list::send_to_client(int client_id)
         Turret *s = this->a[i];
         if (s == NULL) continue;
 
-        turret_create_StoC msg;
+        //turret_create_StoC msg;
+        object_create_owner_team_StoC msg;
         s->create_message(&msg);
         msg.sendToClient(client_id);
     }

@@ -7,28 +7,28 @@
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
-/* Packets */
-class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t owner;
-        uint8_t team;
-        int8_t team_index;
-        float x,y,z;
+///* Packets */
+//class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_create_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t owner;
+        //uint8_t team;
+        //int8_t team_index;  // why is this signed. anyway, encode this into team
+        //float x,y,z;
         
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
-            pack_8(&team_index, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&owner, buff, buff_n, pack);
+            //pack_u8(&team, buff, buff_n, pack);
+            //pack_8(&team_index, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
@@ -57,19 +57,37 @@ inline void spawner_state_StoC::handle()
     s->set_position(x,y,z);
 }
 
-inline void Spawner_create_StoC::handle()
+//inline void Spawner_create_StoC::handle()
+//{
+    //Spawner* s = ClientState::spawner_list->create(id, x,y,z);
+    //if (s==NULL)
+    //{
+        //printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        //return;
+    //}
+    //s->set_team(team);
+    //s->team_index = team_index; //overwrite with server authority
+    //s->set_owner(owner);
+    //s->init_vox();
+    //Sound::spawner_placed(x,y,z,0,0,0);
+    //// TODO -- use object_* after Spawner is ObjectPolicyInterface
+    ////system_message->spawner_created(s);
+    ////system_message->object_created(s);
+//}
+
+void spawner_create(object_create_owner_team_index_StoC* msg)
 {
-    Spawner* s = ClientState::spawner_list->create(id, x,y,z);
-    if (s==NULL)
+    Spawner* s = ClientState::spawner_list->create(msg->id, msg->x, msg->y, msg->z);
+    if (s == NULL)
     {
-        printf("WARNING Spawner_create_StoC::handle() -- could not create spawner %d\n", id);
+        printf("WARNING object_create_owner_team_index_StoC::handle() -- could not create spawner %d\n", msg->id);
         return;
     }
-    s->set_team(team);
-    s->team_index = team_index; //overwrite with server authority
-    s->set_owner(owner);
+    s->set_team(msg->team);
+    s->team_index = msg->team_index; //overwrite with server authority
+    s->set_owner(msg->owner);
     s->init_vox();
-    Sound::spawner_placed(x,y,z,0,0,0);
+    Sound::spawner_placed(msg->x, msg->y, msg->z,0,0,0);
     // TODO -- use object_* after Spawner is ObjectPolicyInterface
     //system_message->spawner_created(s);
     //system_message->object_created(s);
@@ -87,7 +105,7 @@ void spawner_destroy(int id)
 
 #ifdef DC_SERVER
 inline void spawner_state_StoC::handle(){}
-inline void Spawner_create_StoC::handle(){}
+//inline void Spawner_create_StoC::handle(){}
 #endif
 
 /* Spawners */
@@ -203,7 +221,7 @@ Spawner::Spawner(int id)
 team(0),
 owner(0),
 id(id),
-team_index(-1),
+team_index(TEAM_INDEX_NONE),
 type(OBJ_TYPE_SPAWNER),
 x(0), y(0), z(0),
 theta(0), phi(0),
@@ -216,7 +234,7 @@ Spawner::Spawner(int id, float x, float y, float z)
 team(0),
 owner(0),
 id(id),
-team_index(-1),
+team_index(TEAM_INDEX_NONE),
 health(SPAWNER_HEALTH),
 type(OBJ_TYPE_SPAWNER),
 x(x), y(y), z(z),
@@ -227,12 +245,13 @@ vox(NULL)
 }
 
 #ifdef DC_SERVER
-void Spawner::create_message(Spawner_create_StoC* msg)
+//void Spawner::create_message(Spawner_create_StoC* msg)
+void Spawner::create_message(object_create_owner_team_index_StoC* msg)
 {
     msg->id = this->id;
     msg->team = this->team;
     msg->owner = this->owner;
-    msg->team_index = this->team_index;
+    msg->team_index = this->team_index; // TODO
     msg->x = this->x;
     msg->y = this->y;
     msg->z = this->z;
@@ -373,7 +392,7 @@ int Spawner_list::get_numbered_team_spawner(int team, int id)
         Spawner *s = this->a[i];
         if (s == NULL) continue;
         if (s->get_team() != team) continue;
-        if (s->team_index == id)
+        if ((int)s->team_index == id)
         {
             return s->id;
         }
@@ -389,7 +408,8 @@ void Spawner_list::send_to_client(int client_id)
         Spawner *s = this->a[i];
         if (s == NULL) continue;
 
-        Spawner_create_StoC msg;
+        //Spawner_create_StoC msg;
+        object_create_owner_team_index_StoC msg;
         s->create_message(&msg);
         msg.sendToClient(client_id);
     }
@@ -402,7 +422,7 @@ Spawner* Spawner_list::get_by_team_index(int team, int team_index)
     {
         if (this->a[i] == NULL) continue;
         if (this->a[i]->get_team() != team) continue;
-        if (this->a[i]->team_index == team_index)
+        if ((int)this->a[i]->team_index == team_index)
             return this->a[i];
     }
     return NULL;
@@ -427,7 +447,7 @@ void Spawner_list::assign_team_index(Spawner* spawner)
         Spawner* s = this->a[i];
         if (s == NULL) continue;
         if (s->get_team() != spawner->get_team()) continue;
-        if (s->team_index != -1 && s->team_index != 0)  // should never be 0
+        if (s->team_index != TEAM_INDEX_NONE && s->team_index != 0)  // should never be 0
             taken[s->team_index - 1] = 1;
     }
     for (int i=0; i<MAX_SPAWNERS; i++)
@@ -437,7 +457,7 @@ void Spawner_list::assign_team_index(Spawner* spawner)
             return;
         }
     printf("failed to get team index\n");
-    spawner->team_index = -1;
+    spawner->team_index = TEAM_INDEX_NONE;
 }
 
 void Spawner_list::tick()

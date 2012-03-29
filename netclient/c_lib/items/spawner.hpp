@@ -3,10 +3,14 @@
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
+#include <c_lib/items/packets.hpp>
 
 extern VoxDat spawner_vox_dat;
 
-class Spawner_create_StoC; // forward decl
+//class Spawner_create_StoC; // forward decl
+
+const unsigned int TEAM_INDEX_NONE = 255;
+const unsigned int TEAM_INDEX_MAX = (TEAM_INDEX_NONE+1) / N_TEAMS;
 
 class Spawner
 {
@@ -15,7 +19,7 @@ class Spawner
         int owner;
     public:
         int id;
-        int team_index;
+        unsigned int team_index;
         int health;
         Object_types type;
 
@@ -42,7 +46,8 @@ class Spawner
         void update(); // client side
         
         #ifdef DC_SERVER
-        void create_message(Spawner_create_StoC* msg);
+        //void create_message(Spawner_create_StoC* msg);
+        void create_message(object_create_owner_team_index_StoC* msg);
         #endif
         explicit Spawner(int id);
         Spawner(int id, float x, float y, float z);

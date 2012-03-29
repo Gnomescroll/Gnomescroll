@@ -1078,7 +1078,7 @@ inline void place_spawner_CtoS::handle()
     s->set_team(a->status.team);
     s->set_owner(a->id);
     s->init_vox();
-    Spawner_create_StoC msg;
+    object_create_owner_team_index_StoC msg;
     s->create_message(&msg);
     msg.broadcast();
 }
@@ -1106,7 +1106,7 @@ inline void place_turret_CtoS::handle()
     t->set_team(a->status.team);
     t->set_owner(a->id);
     t->init_vox();
-    turret_create_StoC msg;
+    object_create_owner_team_StoC msg;
     t->create_message(&msg);
     msg.broadcast();
 }

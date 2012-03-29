@@ -45,7 +45,7 @@ class BornPickup: public Super
     inline void born(ObjectState* state, Object* object)
     {
         #if DC_SERVER
-        object_create_StoC msg;
+        object_create_vel_StoC msg;
         msg.type = state->type;
         msg.id = state->id;
         msg.x = state->vp->p.x;

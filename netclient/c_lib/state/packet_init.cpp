@@ -96,14 +96,14 @@ void RegisterMessages() {
     alter_item_ownership_StoC::register_client_packet();
     
     // agent item actions
-    Spawner_create_StoC::register_client_packet();
+    //Spawner_create_StoC::register_client_packet();
     spawner_state_StoC::register_client_packet();
     place_spawner_CtoS::register_server_packet();
     choose_spawn_location_CtoS::register_server_packet();
     spawn_location_StoC::register_client_packet();
 
     turret_state_StoC::register_client_packet();
-    turret_create_StoC::register_client_packet();
+    //turret_create_StoC::register_client_packet();
     place_turret_CtoS::register_server_packet();
 
     // game/teams stuff
@@ -172,6 +172,9 @@ void RegisterMessages() {
 
     // object crud
     object_create_StoC::register_client_packet();
+    object_create_vel_StoC::register_client_packet();
+    object_create_owner_team_StoC::register_client_packet();
+    object_create_owner_team_index_StoC::register_client_packet();
     object_destroy_StoC::register_client_packet();
 
     // object actions

@@ -1,10 +1,25 @@
 #include "packets.hpp"
 
-#include <c_lib/items/turret.hpp>
-
 #if DC_CLIENT
 
+// forward declarations
+void turret_create(object_create_owner_team_StoC* msg);
+void spawner_create(object_create_owner_team_index_StoC* msg);
+
 inline void object_create_StoC::handle()
+{
+    switch (type)
+    {
+        case OBJ_TYPE_GRENADE_REFILL:
+        case OBJ_TYPE_LASER_REFILL:
+            ClientState::object_list->create(x,y,z, 0,0,0, (Object_types)type);
+            break;
+            
+        default: return;
+    }
+}
+
+inline void object_create_vel_StoC::handle()
 {
     switch (type)
     {
@@ -16,6 +31,32 @@ inline void object_create_StoC::handle()
         default: return;
     }
 }
+
+inline void object_create_owner_team_StoC::handle()
+{
+    switch (type)
+    {
+        case OBJ_TYPE_TURRET:
+            turret_create(this);
+            break;
+        default: return;
+    }
+}
+
+inline void object_create_owner_team_index_StoC::handle()
+{
+    switch (type)
+    {
+        case OBJ_TYPE_SPAWNER:
+            spawner_create(this);
+            break;
+        default: return;
+    }
+}
+
+// forward declarations
+void spawner_destroy(int id);
+void turret_destroy(int id);
 
 // use privately
 static inline void _destroy_object_handler(int type, int id) __attribute((always_inline));
@@ -92,6 +133,9 @@ inline void object_shot_nothing_StoC::handle()
 
 #if DC_SERVER
 inline void object_create_StoC::handle() {}
+inline void object_create_vel_StoC::handle() {}
+inline void object_create_owner_team_StoC::handle() {}
+inline void object_create_owner_team_index_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
 
