@@ -38,23 +38,16 @@ class DiePickup: public Super
     }
 };
 
+// TODO: move
 template <class Super, class Object>
-class BornPickup: public Super
+class BornCreateVel: public Super
 {
     public:
     inline void born(ObjectState* state, Object* object)
     {
         #if DC_SERVER
         object_create_vel_StoC msg;
-        msg.type = state->type;
-        msg.id = state->id;
-        msg.x = state->vp->p.x;
-        msg.y = state->vp->p.y;
-        msg.z = state->vp->p.z;
-        Vec3 m = state->vp->get_momentum();
-        msg.mx = m.x;
-        msg.my = m.y;
-        msg.mz = m.z;
+        object->create_message(&msg);
         msg.broadcast();
         #endif
         Super::born(state, object);
@@ -104,14 +97,14 @@ typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject
 typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
     BillboardSpriteDraw;
 
-typedef BornPickup < NoBorn(PickupObject) ,PickupObject>
+typedef BornCreateVel < NoBorn(PickupObject) ,PickupObject>
     PickupBorn;
 
 typedef DiePickup < NoDie(PickupObject) ,PickupObject>
     PickupDie;
 
 typedef ObjectPolicy
-<PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie, create_object_message > PickupObjectParent;
+<PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie, create_object_vel_message > PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:

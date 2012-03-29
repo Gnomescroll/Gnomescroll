@@ -262,7 +262,7 @@ void create_object_message(ObjectState* state, object_create_StoC_model* msg)
     msg->z = p.z;
 }
 
-void create_object_vel_message(ObjectState* state, object_create_vel_StoC_model* msg)
+void create_object_vel_message(ObjectState* state, object_create_StoC_model* msg)
 {
     create_object_message(state, msg);
     Vec3 m = state->get_momentum();
@@ -271,14 +271,14 @@ void create_object_vel_message(ObjectState* state, object_create_vel_StoC_model*
     msg->mz = m.z;
 }
 
-void create_object_owner_team_message(ObjectState* state, object_create_owner_team_StoC_model* msg)
+void create_object_owner_team_message(ObjectState* state, object_create_StoC_model* msg)
 {
     create_object_message(state, msg);
     msg->owner = state->owner;
     msg->team = state->team;
 }
 
-void create_object_owner_team_index_message(ObjectState* state, object_create_owner_team_index_StoC_model* msg)
+void create_object_owner_team_index_message(ObjectState* state, object_create_StoC_model* msg)
 {
     create_object_owner_team_message(state, msg);
     msg->team_index = state->team_index;
