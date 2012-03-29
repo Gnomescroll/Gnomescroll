@@ -16,7 +16,12 @@ merge spawner/turret create/delete into item create/delete
 --figure out solution for specialized packet needs
 --this affect batch send_to_client method on object_list
 DELETE MERGED
+MADE SPECIALIZAED PACKETS FOR EACH COMBO
+use if/flags in methods to decide which packet to send
 
+Strategy for packets:
+One base packet with all possible state
+virtual pack/handle methods
 
 add group types, similar to object types
 --could solve some specialization problems

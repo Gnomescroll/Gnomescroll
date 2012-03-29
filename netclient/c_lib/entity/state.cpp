@@ -43,3 +43,39 @@ int ObjectState::take_damage(int dmg)
         this->ttl = this->ttl_max;
     return this->health;
 }
+
+void ObjectState::set_position(float x, float y, float z)
+{
+    if (this->frozen_vox)
+        if (
+           this->position.x != x
+        && this->position.y != y
+        && this->position.z != z
+        )
+            this->vox->thaw();
+
+    this->position.x = x;
+    this->position.y = y;
+    this->position.z = z;
+    this->vox->update(
+        this->position.x, this->position.y, this->position.z,
+        this->theta, this->phi
+    );
+
+    if (this->frozen_vox)
+        this->vox->freeze();
+
+    #if DC_SERVER
+    if (this->broadcast_state_change)
+    {   // TODO: choose appropriate state
+        object_state_StoC msg;
+        msg.x = this->position.x;
+        msg.y = this->position.y;
+        msg.z = this->position.z;
+        msg.id = this->id;
+        msg.type = this->type;
+        msg.broadcast();
+    }
+    #endif
+
+}

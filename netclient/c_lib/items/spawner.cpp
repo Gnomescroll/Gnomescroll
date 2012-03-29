@@ -18,7 +18,7 @@ void spawner_state(object_state_StoC* msg)
     s->set_position(msg->x, msg->y, msg->z);
 }
 
-void spawner_create(object_create_owner_team_index_StoC* msg)
+void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
     Spawner* s = ClientState::spawner_list->create(msg->id, msg->x, msg->y, msg->z);
     if (s == NULL)

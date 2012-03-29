@@ -24,6 +24,7 @@ class ObjectData
         // physics
         float damp;
         float mass;
+        bool broadcast_state_change;
 
         // tick lifespan
         int ttl_max;
@@ -46,7 +47,9 @@ class ObjectData
         // firing
         unsigned int fire_rate_limit;
 
-
+        // voxel
+        bool frozen_vox;
+        
         Object_types type;
     //TODO:
     // fill the struct with object metadata
@@ -65,12 +68,14 @@ class ObjectData
     ObjectData()
     :
     camera_height(0.0f),
-    damp(1.0f), mass(1.0f), ttl_max(100),
+    damp(1.0f), mass(1.0f), broadcast_state_change(false),
+    ttl_max(100),
     pickup(false), pickup_radius(1.0f),
     blow_up_on_death(false),
     spawn_radius(1),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1),
+    frozen_vox(false),
     type(OBJ_TYPE_NONE)
     {}
 };
@@ -118,6 +123,8 @@ class ObjectState: public ObjectData
     
     int get_owner();
     void set_owner(int owner);
+
+    void set_position(float x, float y, float z);
     
     ObjectState()
     : ObjectData(),

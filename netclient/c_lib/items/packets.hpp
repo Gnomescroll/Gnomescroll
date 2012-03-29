@@ -3,14 +3,108 @@
 #include <net_lib/net.hpp>
 
 // Position
-class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>
+//class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>
+//{
+    //public:
+        //uint8_t type;
+        //uint16_t id;
+        //float x,y,z;
+        
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&type, buff, buff_n, pack);
+            //pack_u16(&id, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+//// Position + Velocity(momentum)
+//class object_create_vel_StoC: public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>
+//{
+    //public:
+        //uint8_t type;
+        //uint16_t id;
+        //float x,y,z,mx,my,mz;
+        
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&type, buff, buff_n, pack);
+            //pack_u16(&id, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+            //pack_float(&mx, buff, buff_n, pack);
+            //pack_float(&my, buff, buff_n, pack);
+            //pack_float(&mz, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+//// Position + owner,team
+//class object_create_owner_team_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>
+//{
+    //public:
+        //uint8_t type;
+        //uint16_t id;
+        //float x,y,z;
+        //uint8_t owner;
+        //uint8_t team;
+        
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&type, buff, buff_n, pack);
+            //pack_u16(&id, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+            //pack_u8(&owner, buff, buff_n, pack);
+            //pack_u8(&team, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+//// Position + owner,team,team_index
+//class object_create_owner_team_index_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>
+//{
+    //public:
+        //uint8_t type;
+        //uint16_t id;
+        //float x,y,z;
+        //uint8_t owner;
+        //uint8_t team;
+        //uint8_t team_index;
+        
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&type, buff, buff_n, pack);
+            //pack_u16(&id, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+            //pack_u8(&owner, buff, buff_n, pack);
+            //pack_u8(&team, buff, buff_n, pack);
+            //pack_u8(&team_index, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+// Position
+
+class object_create_StoC_model
 {
     public:
         uint8_t type;
         uint16_t id;
+        uint8_t team;
+        uint8_t owner;
+        uint8_t team_index;
         float x,y,z;
+        float mx,my,mz;
         
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&type, buff, buff_n, pack);
             pack_u16(&id, buff, buff_n, pack);
@@ -18,77 +112,89 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
         }
-        inline void handle();
+        inline virtual void handle();
+};
+
+class object_create_StoC: public object_create_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_StoC>
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_StoC_model::handle(); }
 };
 
 // Position + Velocity(momentum)
-class object_create_vel_StoC: public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>
+class object_create_vel_StoC_model: public object_create_StoC_model
 {
     public:
-        uint8_t type;
-        uint16_t id;
-        float x,y,z,mx,my,mz;
-        
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
+            object_create_StoC_model::packet(buff, buff_n, pack);
             pack_float(&mx, buff, buff_n, pack);
             pack_float(&my, buff, buff_n, pack);
             pack_float(&mz, buff, buff_n, pack);
         }
-        inline void handle();
+        inline virtual void handle();
+};
+
+class object_create_vel_StoC:
+public object_create_vel_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_vel_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_vel_StoC_model::handle(); }
 };
 
 // Position + owner,team
-class object_create_owner_team_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>
+class object_create_owner_team_StoC_model: public object_create_StoC_model
 {
     public:
-        uint8_t type;
-        uint16_t id;
-        float x,y,z;
-        uint8_t owner;
-        uint8_t team;
-        
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
+            object_create_StoC_model::packet(buff, buff_n, pack);
             pack_u8(&owner, buff, buff_n, pack);
             pack_u8(&team, buff, buff_n, pack);
         }
-        inline void handle();
+        inline virtual void handle();
+};
+
+class object_create_owner_team_StoC:
+public object_create_owner_team_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_owner_team_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_owner_team_StoC_model::handle(); }
 };
 
 // Position + owner,team,team_index
-class object_create_owner_team_index_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>
+class object_create_owner_team_index_StoC_model: public object_create_owner_team_StoC_model
 {
     public:
-        uint8_t type;
-        uint16_t id;
-        float x,y,z;
-        uint8_t owner;
-        uint8_t team;
-        uint8_t team_index;
-        
-        inline void packet(char* buff, int* buff_n, bool pack)
+        inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
+            object_create_owner_team_StoC_model::packet(buff, buff_n, pack);
             pack_u8(&team_index, buff, buff_n, pack);
         }
-        inline void handle();
+        inline virtual void handle();
+};
+
+class object_create_owner_team_index_StoC:
+public object_create_owner_team_index_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_owner_team_index_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_owner_team_index_StoC_model::handle(); }
 };
 
 class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_destroy_StoC>

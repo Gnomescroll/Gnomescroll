@@ -5,10 +5,10 @@
 /* Construction */
 
 // forward declarations
-void turret_create(object_create_owner_team_StoC* msg);
-void spawner_create(object_create_owner_team_index_StoC* msg);
+void turret_create(object_create_owner_team_StoC_model* msg);
+void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
-inline void object_create_StoC::handle()
+inline void object_create_StoC_model::handle()
 {
     switch (type)
     {
@@ -21,7 +21,7 @@ inline void object_create_StoC::handle()
     }
 }
 
-inline void object_create_vel_StoC::handle()
+inline void object_create_vel_StoC_model::handle()
 {
     switch (type)
     {
@@ -34,7 +34,7 @@ inline void object_create_vel_StoC::handle()
     }
 }
 
-inline void object_create_owner_team_StoC::handle()
+inline void object_create_owner_team_StoC_model::handle()
 {
     switch (type)
     {
@@ -45,7 +45,7 @@ inline void object_create_owner_team_StoC::handle()
     }
 }
 
-inline void object_create_owner_team_index_StoC::handle()
+inline void object_create_owner_team_index_StoC_model::handle()
 {
     switch (type)
     {
@@ -169,10 +169,10 @@ inline void object_shot_nothing_StoC::handle()
 #endif
 
 #if DC_SERVER
-inline void object_create_StoC::handle() {}
-inline void object_create_vel_StoC::handle() {}
-inline void object_create_owner_team_StoC::handle() {}
-inline void object_create_owner_team_index_StoC::handle() {}
+inline void object_create_StoC_model::handle() {}
+inline void object_create_vel_StoC_model::handle() {}
+inline void object_create_owner_team_StoC_model::handle() {}
+inline void object_create_owner_team_index_StoC_model::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
 inline void object_state_StoC::handle() {}

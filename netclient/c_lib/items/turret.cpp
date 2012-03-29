@@ -19,7 +19,7 @@ void turret_state(object_state_StoC* msg)
     t->set_position(msg->x, msg->y, msg->z);
 }
 
-void turret_create(object_create_owner_team_StoC* msg)
+void turret_create(object_create_owner_team_StoC_model* msg)
 {
     Turret* t = ClientState::turret_list->create(msg->id, msg->x, msg->y, msg->z);
     if (t == NULL)

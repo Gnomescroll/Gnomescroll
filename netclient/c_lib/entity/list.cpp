@@ -35,9 +35,32 @@ void GameObject_list::update()
             this->a[i]->update();
 }
 
-void send_to_client(int client_id)
-{
-    
+void GameObject_list::send_to_client(Object_types type, int client_id)
+{   // TODO: use sublists to do this efficiently
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //ObjectState* state = this->a[i]->state();
+        //if (state->type != type) continue;
+        //if (state->creation_packet & CREATION_PACKET_POS)
+        //{
+            //object_create_StoC msg;
+            //this->a[i]->create_message(&msg);
+            //msg->broadcast();
+        //}
+        //else if (state->creation_packet & CREATION_PACKET_VEL)
+        //{
+
+        //}
+        //else if (state->creation_packet & CREATION_PACKET_OWNER_TEAM)
+        //{
+
+        //}
+        //else if (state->creation_packet & CREATION_PACKET_OWNER_TEAM_INDEX)
+        //{
+
+        //}
+    //}
 }
 
 // TODO: restructure the list creation to adapt based on type
