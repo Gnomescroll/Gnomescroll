@@ -747,9 +747,13 @@ Fixed:
 double cash for killing synthesized items
 turret kill system message
 turret radius targeting
-
-
 =====================
+Mar25-28
+Mostly Thomas's work
+
+Some entity system stuff
+====================
+
 
 Gun model
 Gun in first person and zoomed perspectives

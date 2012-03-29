@@ -1,12 +1,12 @@
 #include "turret.hpp"
 
-#include <c_lib/common/random.h>
 #include <math.h>
 
+#include <c_lib/common/random.h>
 #include <c_lib/agent/net_agent.hpp>
 #include <net_lib/net.hpp>
-
 #include <c_lib/items/packets.hpp>
+#include <c_lib/t_map/t_map.hpp>
 
 /* Packets */
 class turret_create_StoC: public FixedSizeReliableNetPacketToClient<turret_create_StoC>
@@ -496,7 +496,7 @@ void Turret::acquire_target()
             }
             collision_pt = vec3_add(source, vec3_scalar_mult(v, block_distance));
             // damage
-            apply_damage_broadcast(collision_pt.x, collision_pt.y, collision_pt.z, TURRET_BLOCK_DAMAGE, t_map::TMA_LASER);
+            t_map::apply_damage_broadcast(collision_pt.x, collision_pt.y, collision_pt.z, TURRET_BLOCK_DAMAGE, t_map::TMA_LASER);
             // fire packet
             block_msg.x = collision_pt.x;
             block_msg.y = collision_pt.y;
@@ -615,7 +615,6 @@ HitscanTarget shoot_at_enemy_agent(
     Agent_state* agent, const float range
 )
 {
-#if DC_SERVER
     // hitscan vector against world
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -671,16 +670,16 @@ HitscanTarget shoot_at_enemy_agent(
 
     target_information.hitscan = target_type;
     return target_information;
-#endif
 }
 
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
 {
+    #if DC_SERVER
     Agent_state* agent;
     switch (t.hitscan)
     {
         case Hitscan::HITSCAN_TARGET_BLOCK:
-            apply_damage_broadcast(
+            t_map::apply_damage_broadcast(
                 t.collision_point.x, t.collision_point.y, t.collision_point.z,
                 p.block_damage, p.terrain_modification_action
             );
@@ -710,6 +709,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
             
         default: break;
     }
+    #endif
 }
 
 void broadcast_object_fired(int id, Object_types type, HitscanTarget t)

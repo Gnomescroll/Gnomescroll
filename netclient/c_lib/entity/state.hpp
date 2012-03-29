@@ -1,6 +1,8 @@
 #pragma once
 
 #include <c_lib/common/enum_types.hpp>
+#include <c_lib/physics/verlet.hpp>
+#include <c_lib/voxel/voxel_model.hpp>
 
 /* Holds constants that are dat-configurable */
 class ObjectData
@@ -68,7 +70,9 @@ class ObjectState: public ObjectData
 
         // physics
         VerletParticle* vp;
-
+        Vec3 position;
+        float theta, phi;
+        
         // tick lifespan
         int ttl;
 
@@ -83,6 +87,9 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
+        // voxel
+        Voxel_model* vox;
+        
     int take_damage(int dmg);
     int get_coins_for_kill(int owner, int team);
 
@@ -94,9 +101,14 @@ class ObjectState: public ObjectData
     
     ObjectState()
     : ObjectData(),
-    id(-1), vp(NULL), ttl(0), texture_scale(1.0f), texture_index(0),
-    broadcast_death(false), picked_up_by(-1)
-    {}
+    id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
+    broadcast_death(false), picked_up_by(-1), fire_tick(0),
+    vox(NULL)
+    {
+        this->position.x = 0;
+        this->position.y = 0;
+        this->position.z = 0;
+    }
 
     ~ObjectState()
     {
@@ -108,5 +120,13 @@ class ObjectState: public ObjectData
     {
         if (this->vp == NULL)
             this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
+    }
+
+    Vec3 get_position()
+    {
+        if (this->vp != NULL)
+            return this->vp->p;
+        else
+            return this->position;
     }
 };

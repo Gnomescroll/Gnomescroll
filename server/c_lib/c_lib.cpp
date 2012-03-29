@@ -59,6 +59,9 @@
 /* Entity system */
 #include <c_lib/entity/entity.cpp>
 
+/* Behaviours */
+#include <c_lib/behaviour/behaviour.cpp>
+
 /* Particles */
 #include <c_lib/particles/particle_lib.cpp>
 
