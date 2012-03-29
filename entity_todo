@@ -8,6 +8,8 @@ acquire_target() is component
 -- will be collection of functions residing elsewhere
 -- the component version will only call them
 -- see example, do_acquire() in turret.cpp
+MOVED to ray_trace/handlers.*
+
 
 merge spawner/turret create/delete into item create/delete
 --...cant, spawner need more metadata

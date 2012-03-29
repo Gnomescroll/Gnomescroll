@@ -82,14 +82,17 @@ inline void Spawner_create_StoC::handle()
     s->set_owner(owner);
     s->init_vox();
     Sound::spawner_placed(x,y,z,0,0,0);
-    system_message->spawner_created(s);
+    // TODO -- use object_* after Spawner is ObjectPolicyInterface
+    //system_message->spawner_created(s);
+    //system_message->object_created(s);
 }
 
 inline void Spawner_destroy_StoC::handle()
 {
-    Spawner* s = ClientState::spawner_list->get(id);
-    if (s != NULL)
-        system_message->spawner_destroyed(s);
+    //Spawner* s = ClientState::spawner_list->get(id);
+    //if (s != NULL)    // TODO -- use object_* after Spawner is ObjectPolicyInterface
+        //system_message->spawner_destroyed(s);
+        //system_message->object_destroyed(s);
     ClientState::spawner_list->destroy(id);
 }
 #endif

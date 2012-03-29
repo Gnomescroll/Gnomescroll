@@ -1,6 +1,11 @@
 #include "packets.hpp"
 
+#include <c_lib/items/turret.hpp>
+
 #if DC_CLIENT
+
+
+
 inline void item_create_StoC::handle()
 {
     switch (type)

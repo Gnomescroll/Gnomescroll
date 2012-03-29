@@ -59,64 +59,64 @@ class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_
 };
 
 
-class turret_shot_nothing_StoC: public FixedSizeNetPacketToClient<turret_shot_nothing_StoC>
-{
-    public:
-        uint8_t id;
-        float vx,vy,vz;
+//class turret_shot_nothing_StoC: public FixedSizeNetPacketToClient<turret_shot_nothing_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //float vx,vy,vz;
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_float(&vx, buff, buff_n, pack);
-            pack_float(&vy, buff, buff_n, pack);
-            pack_float(&vz, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack) 
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_float(&vx, buff, buff_n, pack);
+            //pack_float(&vy, buff, buff_n, pack);
+            //pack_float(&vz, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
-class turret_shot_object_StoC: public FixedSizeNetPacketToClient<turret_shot_object_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t target_id;
-        uint8_t target_type;
-        uint8_t target_part;
-        uint8_t vx,vy,vz;   //voxel
+//class turret_shot_object_StoC: public FixedSizeNetPacketToClient<turret_shot_object_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t target_id;
+        //uint8_t target_type;
+        //uint8_t target_part;
+        //uint8_t vx,vy,vz;   //voxel
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&target_id, buff, buff_n, pack);
-            pack_u8(&target_type, buff, buff_n, pack);
-            pack_u8(&target_part, buff, buff_n, pack);
-            pack_u8(&vx, buff, buff_n, pack);
-            pack_u8(&vy, buff, buff_n, pack);
-            pack_u8(&vz, buff, buff_n, pack);
+        //inline void packet(char* buff, int* buff_n, bool pack) 
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&target_id, buff, buff_n, pack);
+            //pack_u8(&target_type, buff, buff_n, pack);
+            //pack_u8(&target_part, buff, buff_n, pack);
+            //pack_u8(&vx, buff, buff_n, pack);
+            //pack_u8(&vy, buff, buff_n, pack);
+            //pack_u8(&vz, buff, buff_n, pack);
 
-        }
-        inline void handle();
-};
+        //}
+        //inline void handle();
+//};
 
-class turret_shot_block_StoC: public FixedSizeNetPacketToClient<turret_shot_block_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t cube;   // might not need this (infer from x,y,z)
-        uint8_t side;
-        float x,y,z;    // send the actual collision point
+//class turret_shot_block_StoC: public FixedSizeNetPacketToClient<turret_shot_block_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t cube;   // might not need this (infer from x,y,z)
+        //uint8_t side;
+        //float x,y,z;    // send the actual collision point
 
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&cube, buff, buff_n, pack);
-            pack_u8(&side, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack) 
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&cube, buff, buff_n, pack);
+            //pack_u8(&side, buff, buff_n, pack);
+            //pack_float(&x, buff, buff_n, pack);
+            //pack_float(&y, buff, buff_n, pack);
+            //pack_float(&z, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
 
 #ifdef DC_CLIENT
@@ -150,80 +150,146 @@ inline void turret_destroy_StoC::handle()
     ClientState::turret_list->destroy(id);
 }
 
-inline void turret_shot_object_StoC::handle()
-{
-    if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+//inline void turret_shot_object_StoC::handle()
+//{
+    //if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
 
-    Turret* t = ClientState::turret_list->get(id);
-    if (t == NULL) return;
-    Agent_state* a = ClientState::agent_list->get(target_id);
-    if (a == NULL || a->vox == NULL) return;
-    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
-    Voxel_volume* vv = a->vox->get_part(target_part);
-    if (vv == NULL) return;
+    //Turret* t = ClientState::turret_list->get(id);
+    //if (t == NULL) return;
+    //Agent_state* a = ClientState::agent_list->get(target_id);
+    //if (a == NULL || a->vox == NULL) return;
+    //a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    //Voxel_volume* vv = a->vox->get_part(target_part);
+    //if (vv == NULL) return;
 
-    Vec3 c = vv->get_center();
-    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    //Vec3 c = vv->get_center();
+    //Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
 
-    const float hitscan_effect_speed = 200.0f;
-    Vec3 v = vec3_sub(c, p);
-    normalize_vector(&v);
-    v = vec3_scalar_mult(v, hitscan_effect_speed);
-    ClientState::hitscan_effect_list->create(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z
-    );
-    int voxel[3] = { vx,vy,vz };
-    destroy_object_voxel(target_id, target_type, target_part, voxel, 2);
-    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
-}
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 v = vec3_sub(c, p);
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //p.x, p.y, p.z,
+        //v.x, v.y, v.z
+    //);
+    //int voxel[3] = { vx,vy,vz };
+    //destroy_object_voxel(target_id, target_type, target_part, voxel, 2);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
 
-inline void turret_shot_nothing_StoC::handle()
-{
-    Turret *t = ClientState::turret_list->get(id);
-    if (t == NULL) return;
+//inline void turret_shot_nothing_StoC::handle()
+//{
+    //Turret *t = ClientState::turret_list->get(id);
+    //if (t == NULL) return;
 
-    const float hitscan_effect_speed = 200.0f;
-    Vec3 v = vec3_init(vx,vy,vz);
-    normalize_vector(&v);
-    v = vec3_scalar_mult(v, hitscan_effect_speed);
-    ClientState::hitscan_effect_list->create(
-        t->x, t->y, t->z + t->camera_height,
-        v.x, v.y, v.z
-    );
-    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
-}
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 v = vec3_init(vx,vy,vz);
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //t->x, t->y, t->z + t->camera_height,
+        //v.x, v.y, v.z
+    //);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
 
-inline void turret_shot_block_StoC::handle()
-{
-    Turret *t = ClientState::turret_list->get(id);
-    if (t == NULL) return;
+//inline void turret_shot_block_StoC::handle()
+//{
+    //Turret *t = ClientState::turret_list->get(id);
+    //if (t == NULL) return;
 
-    const float hitscan_effect_speed = 200.0f;
-    Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
-    Vec3 c = vec3_init(x,y,z);
-    Vec3 v = vec3_sub(c, p); 
-    normalize_vector(&v);
-    v = vec3_scalar_mult(v, hitscan_effect_speed);
-    ClientState::hitscan_effect_list->create(
-        p.x, p.y, p.z,
-        v.x, v.y, v.z
-    );
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    //Vec3 c = vec3_init(x,y,z);
+    //Vec3 v = vec3_sub(c, p); 
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //p.x, p.y, p.z,
+        //v.x, v.y, v.z
+    //);
 
-    Animations::block_damage(x,y,z, p.x, p.y, p.z, cube, side);
-    Animations::terrain_sparks(x,y,z);
-    Sound::laser_hit_block(x,y,z, 0,0,0);
-    Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
-}
+    //Animations::block_damage(x,y,z, p.x, p.y, p.z, cube, side);
+    //Animations::terrain_sparks(x,y,z);
+    //Sound::laser_hit_block(x,y,z, 0,0,0);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
+
+//inline void turret_shot_object_StoC::handle()
+//{
+    //if (target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+
+    //Turret* t = ClientState::turret_list->get(id);
+    //if (t == NULL) return;
+    //Agent_state* a = ClientState::agent_list->get(target_id);
+    //if (a == NULL || a->vox == NULL) return;
+    //a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    //Voxel_volume* vv = a->vox->get_part(target_part);
+    //if (vv == NULL) return;
+
+    //Vec3 c = vv->get_center();
+    //Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 v = vec3_sub(c, p);
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //p.x, p.y, p.z,
+        //v.x, v.y, v.z
+    //);
+    //int voxel[3] = { vx,vy,vz };
+    //destroy_object_voxel(target_id, target_type, target_part, voxel, 2);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
+
+//void turret_shot_nothing(object_shot_object_StoC* msg)
+//{
+    //Turret *t = ClientState::turret_list->get(id);
+    //if (t == NULL) return;
+
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 v = vec3_init(vx,vy,vz);
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //t->x, t->y, t->z + t->camera_height,
+        //v.x, v.y, v.z
+    //);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
+
+//void turret_shot_terrain(object_shot_object_StoC* msg)
+//{
+    //Turret *t = ClientState::turret_list->get(msg->id);
+    //if (t == NULL) return;
+
+    //const float hitscan_effect_speed = 200.0f;
+    //Vec3 p = vec3_init(t->x, t->y, t->z + t->camera_height);
+    //Vec3 c = vec3_init(msg->x,msg->y,msg->z);
+    //Vec3 v = vec3_sub(c, p); 
+    //normalize_vector(&v);
+    //v = vec3_scalar_mult(v, hitscan_effect_speed);
+    //ClientState::hitscan_effect_list->create(
+        //p.x, p.y, p.z,
+        //v.x, v.y, v.z
+    //);
+
+    //Animations::block_damage(msg->x,msg->y,msg->z, p.x, p.y, p.z, cube, side);
+    //Animations::terrain_sparks(msg->x,msg->y,msg->z);
+    //Sound::laser_hit_block(msg->x,msg->y,msg->z, 0,0,0);
+    //Sound::turret_shoot(t->x, t->y, t->z + t->camera_height, 0,0,0);
+//}
 #endif
 
 #ifdef DC_SERVER
 inline void turret_state_StoC::handle(){}
 inline void turret_create_StoC::handle(){}
 inline void turret_destroy_StoC::handle(){}
-inline void turret_shot_object_StoC::handle(){}
-inline void turret_shot_nothing_StoC::handle(){}
-inline void turret_shot_block_StoC::handle(){}
+//inline void turret_shot_object_StoC::handle(){}
+//inline void turret_shot_nothing_StoC::handle(){}
+//inline void turret_shot_block_StoC::handle(){}
 #endif
 
 
@@ -462,8 +528,8 @@ void Turret::acquire_target()
     );
 
     // create/send packets; apply damage
-    turret_shot_object_StoC object_msg;
-    turret_shot_block_StoC block_msg;
+    //turret_shot_object_StoC object_msg;
+    //turret_shot_block_StoC block_msg;
     Vec3 collision_pt;
     switch (target_type)
     {
@@ -474,14 +540,14 @@ void Turret::acquire_target()
                 break;
             }
             // fire packet
-            object_msg.id = this->id;
-            object_msg.target_id = target.entity_id;
-            object_msg.target_type = target.entity_type;
-            object_msg.target_part = target.part_id;
-            object_msg.vx = target.voxel[0];
-            object_msg.vy = target.voxel[1];
-            object_msg.vz = target.voxel[2];
-            object_msg.broadcast();
+            //object_msg.id = this->id;
+            //object_msg.target_id = target.entity_id;
+            //object_msg.target_type = target.entity_type;
+            //object_msg.target_part = target.part_id;
+            //object_msg.vx = target.voxel[0];
+            //object_msg.vy = target.voxel[1];
+            //object_msg.vz = target.voxel[2];
+            //object_msg.broadcast();
             if (agent->status.lifetime > AGENT_TURRET_PROTECTION_DURATION && !agent->near_base())
             {
                 agent->status.apply_damage(TURRET_AGENT_DAMAGE, this->id, OBJ_TYPE_TURRET, target.part_id);     // damage agent
@@ -499,13 +565,13 @@ void Turret::acquire_target()
             // damage
             t_map::apply_damage_broadcast(collision_pt.x, collision_pt.y, collision_pt.z, TURRET_BLOCK_DAMAGE, t_map::TMA_LASER);
             // fire packet
-            block_msg.x = collision_pt.x;
-            block_msg.y = collision_pt.y;
-            block_msg.z = collision_pt.z;
-            block_msg.id = this->id;
-            block_msg.cube = tile;
-            block_msg.side = get_cube_side_from_side_array(side);
-            block_msg.broadcast();
+            //block_msg.x = collision_pt.x;
+            //block_msg.y = collision_pt.y;
+            //block_msg.z = collision_pt.z;
+            //block_msg.id = this->id;
+            //block_msg.cube = tile;
+            //block_msg.side = get_cube_side_from_side_array(side);
+            //block_msg.broadcast();
             break;
 
         default:
@@ -513,15 +579,15 @@ void Turret::acquire_target()
             break;
     }
 
-    if (target_type == Hitscan::HITSCAN_TARGET_NONE)
-    {
-        turret_shot_nothing_StoC msg;
-        msg.id = this->id;
-        msg.vx = v.x;
-        msg.vy = v.y;
-        msg.vz = v.z;
-        msg.broadcast();
-    }
+    //if (target_type == Hitscan::HITSCAN_TARGET_NONE)
+    //{
+        //turret_shot_nothing_StoC msg;
+        //msg.id = this->id;
+        //msg.vx = v.x;
+        //msg.vy = v.y;
+        //msg.vz = v.z;
+        //msg.broadcast();
+    //}
 #endif
 }
 

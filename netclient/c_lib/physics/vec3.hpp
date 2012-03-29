@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <c_lib/common/random.h>
+#include <c_lib/physics/common.hpp>
 
 #define PI 3.14159265
 

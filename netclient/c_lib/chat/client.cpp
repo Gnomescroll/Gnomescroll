@@ -697,7 +697,11 @@ void ChatSystemMessage::agent_score_flag(Agent_state* a)
     free(msg);
 }
 
-void ChatSystemMessage::spawner_created(Spawner* s)
+
+namespace SystemMessage
+{
+    
+void spawner_created(Spawner* s)
 {
     char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has built a new spawner";
@@ -707,7 +711,7 @@ void ChatSystemMessage::spawner_created(Spawner* s)
     free(msg);
 }
 
-void ChatSystemMessage::spawner_destroyed(Spawner* s)
+void spawner_destroyed(Spawner* s)
 {
     char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has lost a spawner";
@@ -716,6 +720,38 @@ void ChatSystemMessage::spawner_destroyed(Spawner* s)
     chat_client->send_system_message(msg);
     free(msg);
 }
+
+}   // SystemMessage
+
+// TODO -- enable/implement these
+void ChatSystemMessage::object_destroyed(ObjectPolicyInterface* object, Object_types type)
+{
+    switch (type)
+    {
+        case OBJ_TYPE_SPAWNER:
+            //SystemMessage::spawner_destroyed(object);
+            break;
+        case OBJ_TYPE_TURRET:
+            //SystemMessage::turret_destroyed(object);
+            break;
+        default: return;
+    }
+}
+
+void ChatSystemMessage::object_created(ObjectPolicyInterface* object, Object_types type)
+{
+    switch (type)
+    {
+        case OBJ_TYPE_SPAWNER:
+            //SystemMessage::spawner_created(object);
+            break;
+        case OBJ_TYPE_TURRET:
+            //SystemMessage::turret_created(object);
+            break;
+        default: return;
+    }
+}
+
 
 
 /* globals */
