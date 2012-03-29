@@ -2,8 +2,7 @@
 
 enum Object_types
 {
-    OBJ_TYPE_NONE = 0,
-    OBJ_TYPE_AGENT = 1,
+    OBJ_TYPE_AGENT = 0,
     OBJ_TYPE_SLIME,
     OBJ_TYPE_VELOCIRAPTOR,
     OBJ_TYPE_GRENADE,
@@ -11,10 +10,10 @@ enum Object_types
     OBJ_TYPE_BASE,
     OBJ_TYPE_SPAWNER,
     OBJ_TYPE_TURRET,
-
-
-    OBJ_TYPE_GRENADE_REFILL = 111,
+    OBJ_TYPE_GRENADE_REFILL,
     OBJ_TYPE_LASER_REFILL,
+
+    OBJ_TYPE_NONE = 255,
 };
 
 typedef enum
