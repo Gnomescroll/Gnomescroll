@@ -5,6 +5,8 @@
 
 #include <c_lib/physics/vec3.hpp>
 
+#include <c_lib/physics/constants.hpp>
+
 struct Vec4 {
     union
     {

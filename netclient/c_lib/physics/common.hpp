@@ -14,6 +14,3 @@ float distancef(float x, float y, float z, float a, float b, float c);
 float distancef_squared(float x, float y, float z, float a, float b, float c);
 void rotate_point(float x, float y, float theta, float *x1, float *y1);
 float gaussian_value(const float mean, const float stddev, const float x);
-
-const float kPI = 3.14159f;
-const float kE = 2.71828f;
