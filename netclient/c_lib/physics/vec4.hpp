@@ -7,7 +7,7 @@
 
 #include <c_lib/physics/constants.hpp>
 
-static const PI = 3.14159265;
+#define PI 3.14159265
 
 struct Vec4 {
     union

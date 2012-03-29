@@ -6,9 +6,7 @@
 
 #include <c_lib/physics/constants.hpp>
 
-//#define PI 3.14159265
-
-static const PI = 3.14159265;
+#define PI 3.14159265
 
 struct Vec3 
 {
