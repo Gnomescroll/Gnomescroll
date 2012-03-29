@@ -110,6 +110,10 @@ extern "C"
         t_map::cube_list[id].max_damage = max_damage;
     }
 
+    void LUA_set_block_name(int id, char* name, int length)
+    {
+        t_map::set_cube_name(id, name, length);
+    }
 }
 
 /*

@@ -164,7 +164,15 @@ int lua_load_block_dat()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "./media/lua/map_load_tiles.lua");
+    
+    #if DC_CLIENT
+        status = luaL_loadfile(L, "./lua/block/client_load_blocks.lua");
+    #endif
+
+    #if DC_SERVER
+        status = luaL_loadfile(L, "./lua/block/server_load_blocks.lua");
+    #endif
+
     if (status) 
     {
         /* If something went wrong, error message is at the top of the stack */

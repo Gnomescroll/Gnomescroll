@@ -3,17 +3,10 @@
 --- LUA_PATH = "./:./media/lua/"
 
 
-
+---require("block_template");
 
 print("map_load_tiles: loading tiles") ;
 
---- texture stuff
-
-texture_aliases = {}
-
-function texture_alias(spritesheet, xpos, ypos)
-  return register_texture(spritesheet, xpos, ypos)
-end
 
 
 
