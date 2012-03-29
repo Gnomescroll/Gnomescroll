@@ -18,8 +18,8 @@ inline void object_create_StoC::handle()
 }
 
 // use privately
-static inline void _destroy_item_handler(int type, int id) __attribute((always_inline));
-static inline void _destroy_item_handler(int type, int id)
+static inline void _destroy_object_handler(int type, int id) __attribute((always_inline));
+static inline void _destroy_object_handler(int type, int id)
 {
     switch (type)
     {
@@ -28,13 +28,20 @@ static inline void _destroy_item_handler(int type, int id)
             ClientState::object_list->destroy(id);
             break;
 
+        case OBJ_TYPE_SPAWNER:
+            spawner_destroy(id);
+            break;
+        case OBJ_TYPE_TURRET:
+            turret_destroy(id);
+            break;
+
         default: return;
     }    
 }
 
 inline void object_destroy_StoC::handle()
 {
-    _destroy_item_handler(type, id);
+    _destroy_object_handler(type, id);
 }
 
 inline void object_picked_up_StoC::handle()
@@ -42,7 +49,7 @@ inline void object_picked_up_StoC::handle()
     using ClientState::playerAgent_state;
     if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
         Sound::pickup_item();
-    _destroy_item_handler(type, id);
+    _destroy_object_handler(type, id);
 }
 
 inline void object_shot_object_StoC::handle()

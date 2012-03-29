@@ -30,18 +30,6 @@ class Spawner_create_StoC: public FixedSizeReliableNetPacketToClient<Spawner_cre
         inline void handle();
 };
 
-class Spawner_destroy_StoC: public FixedSizeReliableNetPacketToClient<Spawner_destroy_StoC>
-{
-    public:
-        uint8_t id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
 {
     public:
@@ -87,7 +75,7 @@ inline void Spawner_create_StoC::handle()
     //system_message->object_created(s);
 }
 
-inline void Spawner_destroy_StoC::handle()
+void spawner_destroy(int id)
 {
     //Spawner* s = ClientState::spawner_list->get(id);
     //if (s != NULL)    // TODO -- use object_* after Spawner is ObjectPolicyInterface
@@ -100,7 +88,6 @@ inline void Spawner_destroy_StoC::handle()
 #ifdef DC_SERVER
 inline void spawner_state_StoC::handle(){}
 inline void Spawner_create_StoC::handle(){}
-inline void Spawner_destroy_StoC::handle(){}
 #endif
 
 /* Spawners */
@@ -312,8 +299,9 @@ void Spawner::tick()
 Spawner::~Spawner()
 {
     #ifdef DC_SERVER
-    Spawner_destroy_StoC msg;
+    object_destroy_StoC msg;
     msg.id = this->id;
+    msg.type = this->type;
     msg.broadcast();
     #endif
 
