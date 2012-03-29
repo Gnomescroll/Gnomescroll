@@ -9,31 +9,13 @@
 
 /* Packets */
 
-class spawner_state_StoC: public FixedSizeReliableNetPacketToClient<spawner_state_StoC>
-{
-    public:
-        uint8_t id;
-        float x,y,z;
-        //float vx,vy,vz;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-
 #ifdef DC_CLIENT
-inline void spawner_state_StoC::handle()
+void spawner_state(object_state_StoC* msg)
 {
     
-    Spawner* s = ClientState::spawner_list->get(id);
-    if (s==NULL) return;
-    s->set_position(x,y,z);
+    Spawner* s = ClientState::spawner_list->get(msg->id);
+    if (s == NULL) return;
+    s->set_position(msg->x, msg->y, msg->z);
 }
 
 void spawner_create(object_create_owner_team_index_StoC* msg)
@@ -64,10 +46,6 @@ void spawner_destroy(int id)
 }
 #endif
 
-#ifdef DC_SERVER
-inline void spawner_state_StoC::handle(){}
-#endif
-
 /* Spawners */
 
 VoxDat spawner_vox_dat;
@@ -85,11 +63,12 @@ void Spawner::set_position(float x, float y, float z)
     this->vox->freeze();
 
     #ifdef DC_SERVER
-    spawner_state_StoC msg;
+    object_state_StoC msg;
     msg.x = this->x;
     msg.y = this->y;
     msg.z = this->z;
     msg.id = this->id;
+    msg.type = this->type;
     msg.broadcast();
     #endif
 }

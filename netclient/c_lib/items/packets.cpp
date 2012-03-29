@@ -2,6 +2,8 @@
 
 #if DC_CLIENT
 
+/* Construction */
+
 // forward declarations
 void turret_create(object_create_owner_team_StoC* msg);
 void spawner_create(object_create_owner_team_index_StoC* msg);
@@ -54,6 +56,8 @@ inline void object_create_owner_team_index_StoC::handle()
     }
 }
 
+/* Destruction */
+
 // forward declarations
 void spawner_destroy(int id);
 void turret_destroy(int id);
@@ -85,12 +89,33 @@ inline void object_destroy_StoC::handle()
     _destroy_object_handler(type, id);
 }
 
-inline void object_picked_up_StoC::handle()
+/* State */
+
+// forward declarations
+void turret_state(object_state_StoC* msg);
+void spawner_state(object_state_StoC* msg);
+
+inline void object_state_StoC::handle()
 {
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
-        Sound::pickup_item();
-    _destroy_object_handler(type, id);
+    switch (type)
+    {
+        case OBJ_TYPE_TURRET:
+            turret_state(this);
+            break;
+        case OBJ_TYPE_SPAWNER:
+            spawner_state(this);
+            break;
+
+        default: return;
+    }
+}
+
+inline void object_state_vel_StoC::handle()
+{
+    switch (type)
+    {
+        default: break;
+    }
 }
 
 inline void object_shot_object_StoC::handle()
@@ -104,6 +129,18 @@ inline void object_shot_object_StoC::handle()
         default:break;
     }
 }
+
+/* Actions */
+
+inline void object_picked_up_StoC::handle()
+{
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
+        Sound::pickup_item();
+    _destroy_object_handler(type, id);
+}
+
+/* Hitscan */
 
 inline void object_shot_terrain_StoC::handle()
 {
@@ -138,7 +175,8 @@ inline void object_create_owner_team_StoC::handle() {}
 inline void object_create_owner_team_index_StoC::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
-
+inline void object_state_StoC::handle() {}
+inline void object_state_vel_StoC::handle() {}
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}

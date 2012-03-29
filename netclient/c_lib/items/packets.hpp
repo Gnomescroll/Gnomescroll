@@ -105,6 +105,46 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
         inline void handle();
 };
 
+class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_StoC>
+{
+    public:
+        uint8_t id;
+        uint8_t type;
+        float x,y,z;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class object_state_vel_StoC: public FixedSizeReliableNetPacketToClient<object_state_vel_StoC>
+{
+    public:
+        uint8_t id;
+        uint8_t type;
+        float x,y,z;
+        float vx,vy,vz;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&vx, buff, buff_n, pack);
+            pack_float(&vy, buff, buff_n, pack);
+            pack_float(&vz, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 class object_picked_up_StoC: public FixedSizeReliableNetPacketToClient<object_picked_up_StoC>
 {
     public:

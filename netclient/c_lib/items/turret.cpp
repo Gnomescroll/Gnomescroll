@@ -9,30 +9,14 @@
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 
-/* Packets */
-class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_StoC>
-{
-    public:
-        uint8_t id;
-        float x,y,z;
-
-        inline void packet(char* buff, int* buff_n, bool pack) 
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 #if DC_CLIENT
-inline void turret_state_StoC::handle()
+/* Packet handlers */
+
+void turret_state(object_state_StoC* msg)
 {
-    
-    Turret* t = ClientState::turret_list->get(id);
-    if (t==NULL) return;
-    t->set_position(x,y,z);
+    Turret* t = ClientState::turret_list->get(msg->id);
+    if (t == NULL) return;
+    t->set_position(msg->x, msg->y, msg->z);
 }
 
 void turret_create(object_create_owner_team_StoC* msg)
@@ -131,10 +115,6 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 }
 #endif
 
-#if DC_SERVER
-inline void turret_state_StoC::handle(){}
-#endif
-
 /* Turrets */
 
 VoxDat turret_vox_dat;
@@ -152,11 +132,12 @@ void Turret::set_position(float x, float y, float z)
     this->vox->freeze();
 
     #if DC_SERVER
-    turret_state_StoC msg;
+    object_state_StoC msg;
     msg.x = this->x;
     msg.y = this->y;
     msg.z = this->z;
     msg.id = this->id;
+    msg.type = this->type;
     msg.broadcast();
     #endif
 }
