@@ -110,7 +110,8 @@ typedef BornPickup < NoBorn(PickupObject) ,PickupObject>
 typedef DiePickup < NoDie(PickupObject) ,PickupObject>
     PickupDie;
 
-typedef ObjectPolicy <PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie > PickupObjectParent;
+typedef ObjectPolicy
+<PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie, create_object_message > PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:

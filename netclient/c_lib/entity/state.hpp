@@ -156,4 +156,12 @@ class ObjectState: public ObjectData
         else
             return this->position;
     }
+
+    Vec3 get_momentum()
+    {
+        if (this->vp != NULL)
+            return this->vp->get_momentum();
+        else
+            return vec3_init(0,0,0);
+    }
 };

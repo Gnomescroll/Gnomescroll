@@ -3,6 +3,9 @@
 #include <c_lib/entity/state.hpp>
 #include <c_lib/entity/behaviour.hpp>
 
+//forward decl
+class object_create_StoC_model;
+
 /* Abstract interface */
 
 class ObjectPolicyInterface
@@ -13,6 +16,7 @@ class ObjectPolicyInterface
         virtual void update() = 0;
         virtual void born() = 0;
         virtual void die() = 0;
+        virtual void create_message(object_create_StoC_model* msg) = 0;
         virtual ObjectState* state() = 0;
 };
 
@@ -22,6 +26,8 @@ class ObjectPolicyInterface
  * Composes composed functions,
  * abstract interface and state into a single object */
 
+typedef void (*CreateObjectMessage)(ObjectState* state, object_create_StoC_model*);
+
 template
 <
     class Wrapper,
@@ -29,7 +35,8 @@ template
     class DrawSuper,
     class UpdateSuper,
     class BornSuper,
-    class DieSuper
+    class DieSuper,
+    CreateObjectMessage CreateMessage
 >
 class ObjectPolicy:
 public TickCombiner<TickSuper, Wrapper>,
@@ -48,9 +55,10 @@ public ObjectPolicyInterface
     void update() { DrawCombiner<UpdateSuper, Wrapper>::update(&this->_state, this->subclass); }
     void born() { BornCombiner<BornSuper, Wrapper>::born(&this->_state, this->subclass); }
     void die() { DieCombiner<DieSuper, Wrapper>::die(&this->_state, this->subclass); }
+    void create_message(object_create_StoC_model* msg) { CreateMessage(&this->_state, msg); }
     ObjectState* state() { return &this->_state; }
 
-    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper>(Wrapper* subclass)
+    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper, CreateMessage>(Wrapper* subclass)
     {
         this->subclass = subclass;
     }
