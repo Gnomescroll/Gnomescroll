@@ -1,3 +1,9 @@
+Profiling Compile Time:
+- g++ some_file.cc -ftime-report
+will give you a rough estimate of time spent in different compiler phase.
+
+Use -O0 if you're not testing execution speed or code size (and your computer is fast enough for you not to care much about the (probably small) performance hit).
+
 Bloom Shader:
 http://blenderartists.org/forum/archive/index.php/t-134703.html
 
