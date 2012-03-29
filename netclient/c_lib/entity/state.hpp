@@ -110,7 +110,7 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
-    int get_kill_reward(int owner, int team);
+    unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
     int get_team();

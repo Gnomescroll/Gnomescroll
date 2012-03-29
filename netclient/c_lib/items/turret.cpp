@@ -30,18 +30,6 @@ class turret_create_StoC: public FixedSizeReliableNetPacketToClient<turret_creat
         inline void handle();
 };
 
-//class turret_destroy_StoC: public FixedSizeReliableNetPacketToClient<turret_destroy_StoC>
-//{
-    //public:
-        //uint8_t id;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u8(&id, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
 class turret_state_StoC: public FixedSizeReliableNetPacketToClient<turret_state_StoC>
 {
     public:
@@ -81,13 +69,6 @@ inline void turret_create_StoC::handle()
     //Sound::turret_placed(x,y,z,0,0,0);
     //system_message->turret_created(t);
 }
-
-//inline void turret_destroy_StoC::handle()
-//{
-    ////turret* t = ClientState::turret_list->get(id);
-    ////system_message->turret_destroyed(t);
-    //ClientState::turret_list->destroy(id);
-//}
 
 void turret_destroy(int id)
 {
@@ -173,7 +154,6 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 #if DC_SERVER
 inline void turret_state_StoC::handle(){}
 inline void turret_create_StoC::handle(){}
-//inline void turret_destroy_StoC::handle(){}
 #endif
 
 /* Turrets */
@@ -301,7 +281,6 @@ vox(NULL)
 Turret::~Turret()
 {
     #if DC_SERVER
-    //turret_destroy_StoC msg;
     object_destroy_StoC msg;
     msg.id = this->id;
     msg.type = this->type;

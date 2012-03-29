@@ -1,6 +1,6 @@
 #include "state.hpp"
 
-int ObjectState::get_kill_reward(int owner, int team)
+unsigned int ObjectState::get_kill_reward(int owner, int team)
 {
     if (
          (COINS_ANYONE  & this->coin_rule)

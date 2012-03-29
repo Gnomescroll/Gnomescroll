@@ -33,6 +33,7 @@ object metadata array
 
 get_coins_for_kills needs better customization
 --probably just set of state flags, its only an if condition
+DONE
 ==========
 Particles
 
