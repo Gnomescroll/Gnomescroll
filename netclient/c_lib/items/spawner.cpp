@@ -10,7 +10,7 @@
 /* Packets */
 
 #ifdef DC_CLIENT
-void spawner_state(object_state_StoC* msg)
+void spawner_state(object_state_StoC_model* msg)
 {
     
     Spawner* s = ClientState::spawner_list->get(msg->id);

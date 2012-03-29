@@ -12,7 +12,7 @@
 #if DC_CLIENT
 /* Packet handlers */
 
-void turret_state(object_state_StoC* msg)
+void turret_state(object_state_StoC_model* msg)
 {
     Turret* t = ClientState::turret_list->get(msg->id);
     if (t == NULL) return;

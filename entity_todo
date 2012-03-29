@@ -34,6 +34,11 @@ object metadata array
 get_coins_for_kills needs better customization
 --probably just set of state flags, its only an if condition
 DONE
+
+Replace composed templates with normal functions
+--if/else blocks to configure
+--Cons: more annoying to rearrange order of execution
+------however, the need for that is rare/nonexistant
 ==========
 Particles
 
@@ -76,3 +81,4 @@ Draw has be tracked differently
 When object created, get assigned to a draw list based on draw type
 --When deleted, remove
 --Never retrieve from this list. only for draw tracking purposes
+

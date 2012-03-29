@@ -92,10 +92,10 @@ inline void object_destroy_StoC::handle()
 /* State */
 
 // forward declarations
-void turret_state(object_state_StoC* msg);
-void spawner_state(object_state_StoC* msg);
+void turret_state(object_state_StoC_model* msg);
+void spawner_state(object_state_StoC_model* msg);
 
-inline void object_state_StoC::handle()
+inline void object_state_StoC_model::handle()
 {
     switch (type)
     {
@@ -110,7 +110,7 @@ inline void object_state_StoC::handle()
     }
 }
 
-inline void object_state_vel_StoC::handle()
+inline void object_state_vel_StoC_model::handle()
 {
     switch (type)
     {
@@ -175,8 +175,8 @@ inline void object_create_owner_team_StoC_model::handle() {}
 inline void object_create_owner_team_index_StoC_model::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
-inline void object_state_StoC::handle() {}
-inline void object_state_vel_StoC::handle() {}
+inline void object_state_StoC_model::handle() {}
+inline void object_state_vel_StoC_model::handle() {}
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}

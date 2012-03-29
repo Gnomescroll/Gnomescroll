@@ -26,7 +26,8 @@ class ObjectPolicyInterface
  * Composes composed functions,
  * abstract interface and state into a single object */
 
-typedef void (*CreateObjectMessage)(ObjectState* state, object_create_StoC_model*);
+typedef void (*ObjectCreateMessage)(ObjectState* state, object_create_StoC_model*);
+typedef void (*ObjectStateMessage)(ObjectState* state, object_state_StoC_model*);
 
 template
 <
@@ -36,7 +37,8 @@ template
     class UpdateSuper,
     class BornSuper,
     class DieSuper,
-    CreateObjectMessage CreateMessage
+    ObjectCreateMessage CreateMessage,
+    ObjectStateMessage StateMessage
 >
 class ObjectPolicy:
 public TickCombiner<TickSuper, Wrapper>,
@@ -56,9 +58,10 @@ public ObjectPolicyInterface
     void born() { BornCombiner<BornSuper, Wrapper>::born(&this->_state, this->subclass); }
     void die() { DieCombiner<DieSuper, Wrapper>::die(&this->_state, this->subclass); }
     void create_message(object_create_StoC_model* msg) { CreateMessage(&this->_state, msg); }
+    void state_message(object_state_StoC_model* msg) { StateMessage(&this->_state, msg); }
     ObjectState* state() { return &this->_state; }
 
-    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper, CreateMessage>(Wrapper* subclass)
+    ObjectPolicy<Wrapper, TickSuper, DrawSuper, UpdateSuper, BornSuper, DieSuper, CreateMessage, StateMessage>(Wrapper* subclass)
     {
         this->subclass = subclass;
     }
