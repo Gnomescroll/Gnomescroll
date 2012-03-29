@@ -31,7 +31,7 @@ namespace ClientState {
     Spawner_list* spawner_list = NULL;
     Turret_list* turret_list = NULL;
 
-    ItemDrops::GameObject_list* object_list;
+    GameObject_list* object_list;
 
     Animations::HitscanEffect_list* hitscan_effect_list = NULL;
     Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
@@ -67,7 +67,7 @@ namespace ClientState {
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
 
-        object_list = new ItemDrops::GameObject_list;
+        object_list = new GameObject_list;
     }
 
     void teardown_lists()

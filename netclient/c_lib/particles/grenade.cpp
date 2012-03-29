@@ -191,7 +191,7 @@ void Grenade::explode()
     ServerState::damage_objects_within_sphere(
         this->vp->p.x, this->vp->p.y, this->vp->p.z,
         GRENADE_DAMAGE_RADIUS,
-        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE
+        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE, this->id
     );
 
     // create a bunch of grenade shrapnel particles

@@ -20,7 +20,7 @@ namespace ServerState
     extern Turret_list* turret_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
-    extern ItemDrops::GameObject_list* object_list;
+    extern GameObject_list* object_list;
 
     extern CTF* ctf GNOMESCROLL_API;
 
@@ -31,7 +31,8 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner, Object_types inflictor_type,
+        int dmg, int owner,
+        Object_types inflictor_type, int inflictor_id,
         bool suicidal=true
     );
 

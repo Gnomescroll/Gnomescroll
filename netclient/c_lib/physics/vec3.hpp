@@ -2,6 +2,7 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 #include <math.h>
+#include <c_lib/common/random.h>
 
 #define PI 3.14159265
 
@@ -188,6 +189,27 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     u.z = v.x*m[0].z + v.y*m[1].z + v.z*m[2].z;
 
     return u;
+}
+
+static struct Vec3 vec3_bias_random(Vec3 v, const float bias) __attribute((always_inline));
+
+Vec3 vec3_bias_random(Vec3 v, const float bias)
+{
+    const float factor = kPI * 2 - kPI;
+    const float arc = bias / 360.0f;
+    float theta = randf() * factor;
+    float phi   = randf() * factor;
+    float rho   = randf() * factor;
+    return vec3_euler_rotation(v, theta*arc, phi*arc, rho*arc);
+}
+
+static struct Vec3 vec3_bias(Vec3 v, const float bias) __attribute((always_inline));
+
+Vec3 vec3_bias(Vec3 v, const float bias)
+{
+    const float factor = kPI * 2 - kPI;
+    const float arc = bias / 360.0f;
+    return vec3_euler_rotation(v, factor*arc, factor*arc, factor*arc);
 }
 
 /*

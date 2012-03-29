@@ -112,7 +112,7 @@ int Agent_list::enemies_within_sphere(float x, float y, float z, float radius, i
     {
         if (a[i] == NULL) continue;
         if (a[i]->status.team != enemy_team) continue;
-        dist = distancef(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
+        dist = distancef_squared(x,y,z, a[i]->s.x, a[i]->s.y, a[i]->s.z);
         if (dist < radius_squared)
         {   // agent in sphere
             filtered_objects[ct] = a[i];

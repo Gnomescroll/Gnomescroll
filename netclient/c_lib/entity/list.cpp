@@ -1,9 +1,8 @@
-#include "entity.hpp"
+#include "list.hpp"
 
+#include <c_lib/agent/net_agent.hpp>
+#include <c_lib/items/pickup.hpp>
 #include <c_lib/items/refills.hpp>
-
-namespace ItemDrops
-{
 
 void GameObject_list::tick()
 {
@@ -28,6 +27,19 @@ void GameObject_list::draw()
             this->a[i]->draw();
 }
 
+void GameObject_list::update()
+{
+    if (this->num == 0) return;
+    for (int i=0; i<this->n_max; i++)
+        if (this->a[i] != NULL)
+            this->a[i]->update();
+}
+
+void send_to_client(int client_id)
+{
+    
+}
+
 // TODO: restructure the list creation to adapt based on type
 ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float mx, float my, float mz, Object_types type)
 {
@@ -36,7 +48,7 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     this->num++;
     this->id_c = id+1;
 
-    PickupObject* obj = new PickupObject(id, x,y,z, mx,my,mz);
+    ItemDrops::PickupObject* obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
     this->a[id] = obj;
 
     float texture_scale, mass, damp;
@@ -44,20 +56,20 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     
     obj->state()->type = type;
     switch (type)
-    {   // TODO: THIS WILL BE REPLACED BY ObjectType
+    {   // TODO: THIS WILL BE REPLACED BY ObjectType/Data
         case OBJ_TYPE_GRENADE_REFILL:
-            texture_index = GRENADE_REFILL_TEXTURE_ID;
-            texture_scale = GRENADE_REFILL_TEXTURE_SCALE;
-            mass = GRENADE_REFILL_MASS;
-            ttl_max = GRENADE_REFILL_TTL;
-            damp = GRENADE_REFILL_DAMP;
+            texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::GRENADE_REFILL_MASS;
+            ttl_max = ItemDrops::GRENADE_REFILL_TTL;
+            damp = ItemDrops::GRENADE_REFILL_DAMP;
             break;
         case OBJ_TYPE_LASER_REFILL:
-            texture_index = LASER_REFILL_TEXTURE_ID;
-            texture_scale = LASER_REFILL_TEXTURE_SCALE;
-            mass = LASER_REFILL_MASS;
-            ttl_max = LASER_REFILL_TTL;
-            damp = LASER_REFILL_DAMP;
+            texture_index = ItemDrops::LASER_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::LASER_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::LASER_REFILL_MASS;
+            ttl_max = ItemDrops::LASER_REFILL_TTL;
+            damp = ItemDrops::LASER_REFILL_DAMP;
             break;
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
@@ -82,4 +94,25 @@ void GameObject_list::destroy(int id)
     Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>::destroy(id);
 }
 
-} // ItemDrops
+
+void GameObject_list::alter_owner(int owner, int new_owner)
+{
+    #if DC_SERVER
+    if (owner == new_owner)
+    {
+        printf("WARNING -- %s_list::alter_owner -- owner == new_owner %d\n", this->name(), owner);
+        return;
+    }
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->state()->get_owner() != owner) continue;
+        this->a[i]->state()->set_owner(new_owner);
+        alter_item_ownership_StoC msg;
+        msg.owner = new_owner;
+        msg.id = this->a[i]->state()->id;
+        msg.type = this->a[i]->state()->type;
+        msg.broadcast();
+    }
+    #endif
+}

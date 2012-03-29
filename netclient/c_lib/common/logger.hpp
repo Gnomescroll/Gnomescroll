@@ -25,9 +25,9 @@ typedef enum
 
 typedef enum
 {
-    ALWAYS = 0,
-    WARNING,
-    ERROR
+    Always = 0,
+    Warning,
+    Error
 } LogLevel;
 
 int print(LogType type, LogLevel level, const char* file, int line, const char* function, char* fmt, ...);

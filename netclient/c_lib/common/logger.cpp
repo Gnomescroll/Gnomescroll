@@ -32,7 +32,7 @@ static const int LOG_MSG_MAX_LEN = 2048;
 static char* log_buffer = NULL;
 
 static const LogType DEFAULT_TYPE = GENERIC;
-static const LogLevel DEFAULT_LEVEL = ALWAYS;
+static const LogLevel DEFAULT_LEVEL = Always;
 
 static FILE* log_files[N_LOG_FILES] = {NULL};
 static char* log_filenames[N_LOG_FILES] = {NULL};
@@ -74,7 +74,7 @@ FILE* get_file_descriptor(LogType type, LogLevel level)
     }
     else
     {
-        if (level == ERROR)
+        if (level == Error)
             return stderr;
         return stdout;
     }
@@ -155,7 +155,7 @@ void generate_filenames()
             GEN_FN_CASE(WEAPON)
             GEN_FN_CASE(UNKNOWN)
             default:
-                fprintf(stdout, "WARNING -- Log::generate_filenames() -- N_LOG_FILES %d is out of sync with LogTypes\n", N_LOG_FILES);
+                fprintf(stdout, "Warning -- Log::generate_filenames() -- N_LOG_FILES %d is out of sync with LogTypes\n", N_LOG_FILES);
                 return;
         }
     }
