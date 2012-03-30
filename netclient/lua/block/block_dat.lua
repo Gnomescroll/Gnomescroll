@@ -88,6 +88,13 @@ b = NewSolidBlock(6, "holy_stone");
 b.texture = iso_texture(t01,5,4);
 b.hud = hud(1, t01,5,4);
 
+b = NewSolidBlock(7, "battery");
+b.texture = iso_texture("t01",5,4);
+b.texture.t = register_texture("t01",1,1);
+b.texture.b = register_texture("t01",1,3);
+b.hud = hud(1, b.texture.n);
+
+
 print("map_load_tiles: done");
 
 --[[
