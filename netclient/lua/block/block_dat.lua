@@ -11,19 +11,21 @@ w west
 e east
 ]]
 
---register texture sheets
-if (IS_CLIENT == 1) then 
-	t00 = register_spritesheet("t00")
-	t01 = register_spritesheet("t01")
-else
-	t00 = nil;
-	t01 = nil;
+
+if (IS_CLIENT == 0) then 
+	function texture_alias()
+		return nil
+	end
+
+	function register_spritesheet()
+		return nil
+	end
 end
 
---short hand functions
+--- convenience method
 
 function iso_texture(spritesheet, xpos, ypos)
-	if(IS_CLIENT == 1) then return end;
+	if(IS_CLIENT == 0) then return end;
 	local id;
 	if (type(spritesheet) == "number" and xpos == nil and ypos == nil) then
 		id = spritesheet
@@ -34,18 +36,21 @@ function iso_texture(spritesheet, xpos, ypos)
 	return  { t = id, b = id, n = id, s = id, w = id, e = id };
 end
 
---- convenience method
-
-if (IS_CLIENT == 1) then 
-	error_block = texture_alias(t00,0,0)
-	stone_block = texture_alias(t00,0,2)
-end
-
 function NewSolidBlock(id, name)
   o = BlockNew(id, name)
   o.properties = SolidBlockProperty;
   return o
 end
+
+--register texture sheets
+t00 = register_spritesheet("t00")
+t01 = register_spritesheet("t01")
+
+--alias texture
+error_block = texture_alias(t00,0,0)
+stone_block = texture_alias(t00,0,2)
+
+
 
 
 
