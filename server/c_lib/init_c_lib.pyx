@@ -134,35 +134,10 @@ def check_agent_proximities():
 """
 Terrain map
 """
-cdef extern from "../c_lib/t_map/t_map.hpp" namespace "t_map":
-    void init_t_map()
 
 cdef extern from "../c_lib/t_map/t_map.hpp":
     int _get(int x, int y, int z)
     void _set(int x, int y, int z, int value)
-
-#called automaticly after properties are loaded
-def _init_map():
-    init_t_map()
-
-'''
-PART 2: Properties
-'''
-
-cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
-    struct cubeProperties:
-        bint active
-        bint solid
-        bint occludes
-        bint transparent
-        bint reserved5
-        bint reserved6
-        bint reserved7
-        bint reserved8
-        unsigned char max_damage
-
-cdef extern from "./t_map/t_properties.hpp" namespace "t_map":
-    cubeProperties* get_cube(int id)
 
 '''
 Part 1: State
@@ -175,34 +150,9 @@ cpdef inline set(int x,int y, int z,int value):
 cpdef inline int get(int x, int y,int z):
     return _get(x,y,z)
 
-
-#import dats.loader as dat_loader
-#c_dat = dat_loader.c_dat
-
-def init_cube_properties(c_dat):
-
-    def apply(id, dat):
-        global infinite_texture_counter
-        cdef cubeProperties* cp
-        cp = get_cube(id)
-        cp.active = int(dat.get('active'))
-        cp.solid = int(dat.get('solid'))
-        cp.occludes = int(dat.get('occludes'))
-        cp.transparent = int(dat.get('transparent'))
-        cp.max_damage = int(dat.get('max_damage'))
-
-    for id, dat in c_dat.items():
-        apply(id, dat)
-
-
 '''
     Init Stuff
 '''
-
-def init_terrain():
-    print "Init Terrain Map"
-    init_t_map()
-
 
 cdef extern from "./state/server_state.hpp" namespace "ServerState":
     void server_tick()

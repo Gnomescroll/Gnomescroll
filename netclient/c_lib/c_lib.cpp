@@ -230,7 +230,7 @@ int init_c_lib() {
     init_image_loader();
     TextureSheetLoader::init();
     t_map::init_t_map();
-    lua_load_block_dat(); /* Load Map Tiles */
+    lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
     t_mech::draw_init();

@@ -61,40 +61,68 @@ Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
 b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
-b.hud = hud(63, error_block);
+b.hud = hud(0, error_block);
 
 
 b = NewSolidBlock(1, "soft_rock");
 b.texture = iso_texture(t00,0,1);
 b.hud = hud(1, t00,0,1);
 
-b = NewSolidBlock(2, "lava");
+b = NewSolidBlock(2, "stone");
 b.texture = iso_texture(stone_block);
-b.hud = hud(0, stone_block);
+b.hud = hud(2, stone_block);
 
-b = NewSolidBlock(3, "terminal_blue");
+b = NewSolidBlock(3, "lava");
+b.texture = iso_texture(stone_block);
+b.hud = hud(3, stone_block);
+
+b = NewSolidBlock(4, "terminal_blue");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(1, t00,0,3);
+b.hud = hud(4, t00,0,3);
 
-b = NewSolidBlock(4, "terminal_green");
+b = NewSolidBlock(5, "terminal_green");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(1, t00,0,3);
+b.hud = hud(8+0, t00,0,3);
 
-b = NewSolidBlock(5, "solar_panel");
-b.texture = iso_texture(t00,1,0);
-b.hud = hud(1, t00,1,0);
-
-b = NewSolidBlock(6, "holy_stone");
-b.texture = iso_texture(t01,5,4);
-b.hud = hud(1, t01,5,4);
+b = NewSolidBlock(6, "solar_panel");
+b.texture = iso_texture(t00,0,1);
+b.hud = hud(8+1, t00,1,0);
 
 b = NewSolidBlock(7, "battery");
+b.texture = iso_texture(t00,1,2);
+b.texture.t = register_texture(t00,1,1);
+b.texture.b = register_texture(t00,1,3);
+b.hud = hud(8+2, b.texture.n);
+
+b = NewSolidBlock(8, "sand");
+b.texture = iso_texture(t00,0,3);
+b.hud = hud(8+3, b.texture.n);
+
+b = NewSolidBlock(9, "sand_brick");
+b.texture = iso_texture(t00,2,2);
+b.hud = hud(16+0, b.texture.n);
+
+b = NewSolidBlock(10, "red_brick");
+b.texture = iso_texture(t00,1,2);
+b.hud = hud(16+1, b.texture.n);
+
+b = NewSolidBlock(11, "grey_brick");
+b.texture = iso_texture(t00,3,2);
+b.hud = hud(16+2, b.texture.n);
+
+b = NewSolidBlock(12, "round_stone");
+b.texture = iso_texture(t00,0,2);
+b.hud = hud(16+3, b.texture.n);
+
+b = NewSolidBlock(13, "wood_panel");
+b.texture = iso_texture(t00,2,3);
+b.hud = hud(16+4, b.texture.n);
+
+-- cell blocks --
+
+b = NewSolidBlock(16, "holy_stone");
 b.texture = iso_texture(t01,5,4);
-b.texture.t = register_texture(t01,1,1);
-b.texture.b = register_texture(t01,1,3);
-b.hud = hud(1, b.texture.n);
-
-
+b.hud = hud(12, t01,5,4);
 print("map_load_tiles: done");
 
 --[[

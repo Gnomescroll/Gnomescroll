@@ -22,6 +22,9 @@
 // logging
 #include <c_lib/common/logger.cpp>
 
+// LUA 
+#include <c_lib/common/lua/lua.cpp>
+
 //map
 #include <c_lib/t_map/t_map_class.cpp>
 #include <c_lib/t_map/t_map.cpp>
@@ -129,6 +132,10 @@ int init_c_lib()
     init_chat_server();
 
     init_network();
+
+    t_map::init_t_map();
+    lua_load_block_dat(); /* Load Block Dat */
+
     ServerState::init();
 
     return 0;
