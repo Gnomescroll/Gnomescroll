@@ -191,7 +191,7 @@ void Minivox_list::draw() {
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, block_texture_no_gamma_correction);
+    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
     glBegin(GL_QUADS);
 

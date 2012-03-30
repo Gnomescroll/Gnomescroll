@@ -9,7 +9,7 @@ struct SDL_Surface;
 struct SDL_PixelFormat;
 
 GLuint block_texture = 0;
-GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
+//GLuint block_texture_no_gamma_correction = 0; //deprecate if nothing is using this
 
 namespace t_map
 {
