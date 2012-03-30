@@ -62,7 +62,8 @@ texture_look_up_table = {}
 
 ---register a texture on a spritesheet
 function register_texture(spritesheet, xpos, ypos)
-  local sindex = register_spritesheet(spritesheet);
+  --local sindex = register_spritesheet(spritesheet);
+  sindex = spritesheet
   local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
 
   if(texture_look_up_table[index]) then
