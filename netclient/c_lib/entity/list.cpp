@@ -38,11 +38,8 @@ void GameObject_list::send_to_client(Object_types type, int client_id)
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        ObjectState* state = this->a[i]->state();
-        if (state->type != type) continue;
-        object_create_StoC_model msg;
-        this->a[i]->create_message(&msg);
-        ((PacketInterface*)&msg)->sendToClient(client_id);
+        if (this->a[i]->state()->type != type) continue;
+        this->a[i]->sendToClientCreate(client_id);
     }
 }
 

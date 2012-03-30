@@ -297,18 +297,6 @@ class FixedSizeReliableNetPacketToClient {
         }
 };
 
-class PacketInterface
-{
-    public:
-        virtual void serialize(char* buff, int* buff_n) __attribute((always_inline)) = 0;
-        inline virtual void unserialize(char* buff, int* buff_n, int* size) __attribute((always_inline)) = 0;
-        virtual void sendToClient(int client_id) = 0;
-        virtual void broadcast() = 0;
-        virtual int Size() = 0;
-        //PacketInterface() = 0;
-        //~PacketInterface() = 0;
-};
-
 template <class Derived> uint8_t FixedSizeReliableNetPacketToClient<Derived>::message_id(255);
 template <class Derived> int FixedSizeReliableNetPacketToClient<Derived>::size(-1);
 

@@ -77,55 +77,7 @@ class BornCreateMessage: public Super
     inline void born(ObjectState* state, Object* object)
     {
         #if DC_SERVER
-        object_create_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
-        printf("sent object create message\n");
-        #endif
-        Super::born(state, object);
-    }
-};
-
-template <class Super, class Object>
-class BornCreateVelMessage: public Super
-{
-    protected:
-    inline void born(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        object_create_vel_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
-        #endif
-        Super::born(state, object);
-    }
-};
-
-template <class Super, class Object>
-class BornCreateOwnerTeamMessage: public Super
-{
-    protected:
-    inline void born(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        object_create_owner_team_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
-        #endif
-        Super::born(state, object);
-    }
-};
-
-template <class Super, class Object>
-class BornCreateOwnerTeamIndexMessage: public Super
-{
-    protected:
-    inline void born(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        object_create_owner_team_index_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
+        object->broadcastCreate();
         #endif
         Super::born(state, object);
     }

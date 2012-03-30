@@ -199,9 +199,9 @@ static struct Vec3 vec3_bias_random(Vec3 v, const float bias) __attribute((alway
 Vec3 vec3_bias_random(Vec3 v, const float bias)
 {
     const float arc = bias / 360.0f;
-    const float theta = ((randf() * kPI * 2) - kPI) * arc;
-    const float phi = ((randf() * kPI * 2) - kPI) * arc;
-    const float rho = ((randf() * kPI * 2) - kPI) * arc;
+    const float theta = ((randf() * PI * 2) - PI) * arc;
+    const float phi = ((randf() * PI * 2) - PI) * arc;
+    const float rho = ((randf() * PI * 2) - PI) * arc;
     return vec3_euler_rotation(v, theta, phi, rho);
 }
 
@@ -210,7 +210,7 @@ static struct Vec3 vec3_bias(Vec3 v, const float bias) __attribute((always_inlin
 Vec3 vec3_bias(Vec3 v, const float bias)
 {
     const float arc = bias / 360.0f;
-    const float factor = ((kPI * 2) - kPI) * arc;
+    const float factor = ((PI * 2) - PI) * arc;
     return vec3_euler_rotation(v, factor, factor, factor);
 }
 

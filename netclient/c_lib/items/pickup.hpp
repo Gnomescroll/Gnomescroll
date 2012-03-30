@@ -81,14 +81,15 @@ typedef TickVerletBounce < TickPickup < TickTTL < NoTick(PickupObject) ,PickupOb
 typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
     BillboardSpriteDraw;
 
-typedef BornCreateVelMessage < NoBorn(PickupObject) ,PickupObject>
+typedef BornCreateMessage < NoBorn(PickupObject) ,PickupObject>
     PickupBorn;
 
 typedef DiePickup < NoDie(PickupObject) ,PickupObject>
     PickupDie;
 
 typedef ObjectPolicy
-<PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie, create_object_vel_message, object_state_vel_message >
+< PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie,
+    object_create_vel_StoC, object_state_vel_StoC >
 PickupObjectParent;
 
 class PickupObject: public PickupObjectParent, public PickupComponent

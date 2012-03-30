@@ -34,13 +34,14 @@ typedef TickStayOnGround < TickTargetAcquisition < NoTick(Turret), Turret>,Turre
 
 typedef UpdateFrozenVox < NoUpdate(Turret), Turret> TurretUpdate;
 
-typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < BornCreateOwnerTeamMessage < NoBorn(Turret), Turret>,Turret>,Turret>,Turret>
+typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < BornCreateMessage < NoBorn(Turret), Turret>,Turret>,Turret>,Turret>
     TurretBorn;
 
 typedef DieExplode < DieBroadcast < DieRevokeOwner < DieTeamItemAnimation < NoDie(Turret), Turret>,Turret>,Turret>,Turret> TurretDie;
 
 typedef ObjectPolicy
-<Turret, TurretTick, NoDraw(Turret), TurretUpdate, TurretBorn, TurretDie, create_object_owner_team_message, object_state_message >
+< Turret, TurretTick, NoDraw(Turret), TurretUpdate, TurretBorn, TurretDie,
+    object_create_owner_team_StoC, object_state_StoC >
 TurretObjectParent;
 
 class Turret: public TurretObjectParent, public TargetAcquisitionComponent
