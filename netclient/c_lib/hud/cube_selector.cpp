@@ -21,7 +21,7 @@ void CubeSelector::init()
     for(int i=0;i<256;i++)
     {
         cubes[i].cube_id = 255;
-        cubes[i].tex_id = 0;
+        cubes[i].tex_id = 1;
     }
     this->inited = 1;
 }

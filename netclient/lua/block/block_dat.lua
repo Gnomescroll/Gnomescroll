@@ -51,6 +51,7 @@ t01 = register_spritesheet("t01")
 
 --alias texture
 error_block = texture_alias(t00,0,0)
+black_blow = texture_alias(t00,3,1)
 stone_block = texture_alias(t00,0,2)
 
 
@@ -66,59 +67,54 @@ b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
 b.hud = hud(0, error_block);
 
+b = NewSolidBlock(1, "lava");
+b.texture = iso_texture(t00,1,0);
+b.hud = hud(3, b.texture.n);
 
-b = NewSolidBlock(1, "soft_rock");
-b.texture = iso_texture(t00,0,1);
-b.hud = hud(1, t00,0,1);
-
-b = NewSolidBlock(2, "stone");
-b.texture = iso_texture(stone_block);
-b.hud = hud(2, stone_block);
-
-b = NewSolidBlock(3, "lava");
-b.texture = iso_texture(stone_block);
-b.hud = hud(3, stone_block);
-
-b = NewSolidBlock(4, "terminal_blue");
+b = NewSolidBlock(2, "terminal_blue");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(4, t00,0,3);
+b.hud = hud(4, b.texture.n);
 
-b = NewSolidBlock(5, "terminal_green");
+b = NewSolidBlock(3, "terminal_green");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(8+0, t00,0,3);
+b.hud = hud(8+0, b.texture.n);
 
-b = NewSolidBlock(6, "solar_panel");
+b = NewSolidBlock(4, "solar_panel");
 b.texture = iso_texture(t00,0,1);
-b.hud = hud(8+1, t00,1,0);
+b.hud = hud(8+1, b.texture.n);
 
-b = NewSolidBlock(7, "battery");
-b.texture = iso_texture(t00,1,2);
-b.texture.t = register_texture(t00,1,1);
-b.texture.b = register_texture(t00,1,3);
+b = NewSolidBlock(5, "battery");
+b.texture = iso_texture(t00,2,1);
+b.texture.t = register_texture(t00,3,1);
+b.texture.b = register_texture(t00,1,1);
 b.hud = hud(8+2, b.texture.n);
 b.max_damage = 32;
 
-b = NewSolidBlock(8, "sand");
+b = NewSolidBlock(6, "sand");
 b.texture = iso_texture(t00,0,3);
 b.hud = hud(8+3, b.texture.n);
 
-b = NewSolidBlock(9, "sand_brick");
+b = NewSolidBlock(7, "sand_brick");
 b.texture = iso_texture(t00,2,2);
 b.hud = hud(16+0, b.texture.n);
 
-b = NewSolidBlock(10, "red_brick");
+b = NewSolidBlock(8, "red_brick");
 b.texture = iso_texture(t00,1,2);
 b.hud = hud(16+1, b.texture.n);
 
-b = NewSolidBlock(11, "grey_brick");
+b = NewSolidBlock(9, "grey_brick");
 b.texture = iso_texture(t00,3,2);
 b.hud = hud(16+2, b.texture.n);
 
-b = NewSolidBlock(12, "round_stone");
+b = NewSolidBlock(10, "rough_stone");
 b.texture = iso_texture(t00,0,2);
 b.hud = hud(16+3, b.texture.n);
 
-b = NewSolidBlock(13, "wood_panel");
+b = NewSolidBlock(11, "rough_stone_blue_ore");
+b.texture = iso_texture(t00,1,3);
+b.hud = hud(16+3, b.texture.n);
+
+b = NewSolidBlock(12, "wood_panel");
 b.texture = iso_texture(t00,2,3);
 b.hud = hud(16+4, b.texture.n);
 
