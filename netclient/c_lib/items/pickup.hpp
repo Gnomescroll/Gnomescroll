@@ -38,22 +38,6 @@ class DiePickup: public Super
     }
 };
 
-// TODO: move
-template <class Super, class Object>
-class BornCreateVel: public Super
-{
-    public:
-    inline void born(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        object_create_vel_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
-        #endif
-        Super::born(state, object);
-    }
-};
-
 template <class Super, class Object>
 class TickPickup: public Super
 {
@@ -88,23 +72,26 @@ class PickupObject; // forward decl
 
 // Note: Read left to right, until terminator No*(). Everything after that is noise
 // Here, we have:
-// TickParticle, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
+// TickVerletBounce, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
 // behaviours will be called in order
-typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
+typedef TickVerletBounce < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
     ParticleTick;
 
 // TODO: move to a drawing behaviours file
 typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
     BillboardSpriteDraw;
 
-typedef BornCreateVel < NoBorn(PickupObject) ,PickupObject>
+typedef BornCreateMessage < NoBorn(PickupObject) ,PickupObject>
     PickupBorn;
 
 typedef DiePickup < NoDie(PickupObject) ,PickupObject>
     PickupDie;
 
 typedef ObjectPolicy
-<PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie, create_object_vel_message, object_state_vel_message > PickupObjectParent;
+< PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie,
+    object_create_vel_StoC, object_state_vel_StoC >
+PickupObjectParent;
+
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:

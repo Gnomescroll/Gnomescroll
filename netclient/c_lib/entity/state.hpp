@@ -3,6 +3,8 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
+#include <c_lib/items/constants.hpp>
+#include <c_lib/ray_trace/handlers.hpp>
 
 typedef enum
 {
@@ -35,7 +37,9 @@ class ObjectData
 
         // explosion
         bool blow_up_on_death;
-
+        float explosion_radius;
+        int explosion_damage;
+        
         //spawning
         unsigned int spawn_radius;
 
@@ -46,6 +50,13 @@ class ObjectData
 
         // firing
         unsigned int fire_rate_limit;
+        float sight_range;
+        float accuracy_bias;
+        float target_acquisition_probability;
+        bool attack_enemies;    // TODO -- use bit mask flags
+        bool attack_random;
+        bool suicidal;  // can kill owner
+        struct Hitscan::AttackerProperties attacker_properties;
 
         // voxel
         bool frozen_vox;
@@ -118,35 +129,43 @@ class ObjectState: public ObjectData
     unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
-    int get_team();
-    void set_team(int team);
-    
-    int get_owner();
-    void set_owner(int owner);
+    int get_team()
+    {
+        return this->team;
+    }
+
+    void set_team(int team)
+    {
+        this->team = team;
+    }
+
+    int get_owner()
+    {
+        return this->owner;
+    }
+
+    void set_owner(int owner)
+    {
+        switch_agent_ownership(this->type, this->owner, owner);
+        this->owner = owner;
+    }
 
     void set_position(float x, float y, float z);
     
-    ObjectState()
-    : ObjectData(),
-    id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
-    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
-    broadcast_death(false), picked_up_by(-1), fire_tick(0)
-    {
-        this->position.x = 0;
-        this->position.y = 0;
-        this->position.z = 0;
-    }
-
-    ~ObjectState()
-    {
-        if (this->vp != NULL)
-            delete this->vp;
-    }
-
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
         if (this->vp == NULL)
             this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
+    }
+
+    float camera_z()
+    {
+        float z;
+        if (this->vp != NULL)
+            z = this->vp->p.z;
+        else
+            z = this->position.z;
+        return z + this->camera_height;
     }
 
     Vec3 get_position()
@@ -164,4 +183,29 @@ class ObjectState: public ObjectData
         else
             return vec3_init(0,0,0);
     }
+
+    Voxel_model* get_vox()
+    {
+        return this->vox;
+    }
+
+    ObjectState()
+    : ObjectData(),
+    id(-1), team(0), team_index(TEAM_INDEX_NONE), owner(NO_AGENT), health(1),
+    vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
+    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
+    broadcast_death(false), picked_up_by(-1), fire_tick(0)
+    {
+        this->set_position(0,0,0);
+    }
+
+    ~ObjectState()
+    {
+        if (this->vp != NULL)
+            delete this->vp;
+        if (this->vox != NULL)
+            delete this->vox;
+    }
 };
+
+

@@ -7,9 +7,6 @@
 
 extern VoxDat spawner_vox_dat;
 
-const unsigned int TEAM_INDEX_NONE = 255;
-const unsigned int TEAM_INDEX_MAX = (TEAM_INDEX_NONE+1) / N_TEAMS;
-
 class Spawner
 {
     private:

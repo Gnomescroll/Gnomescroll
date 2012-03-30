@@ -26,7 +26,8 @@ class object_create_StoC_model
 };
 
 // Concrete implementation
-class object_create_StoC: public object_create_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_StoC>
+class object_create_StoC:
+public FixedSizeReliableNetPacketToClient<object_create_StoC>, public object_create_StoC_model
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -40,19 +41,19 @@ class object_create_StoC: public object_create_StoC_model, public FixedSizeRelia
 class object_create_vel_StoC_model: public object_create_StoC_model
 {
     public:
-        inline virtual void packet(char* buff, int* buff_n, bool pack)
-        {
-            object_create_StoC_model::packet(buff, buff_n, pack);
-            pack_float(&mx, buff, buff_n, pack);
-            pack_float(&my, buff, buff_n, pack);
-            pack_float(&mz, buff, buff_n, pack);
-        }
-        virtual void handle();
+    inline virtual void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_StoC_model::packet(buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
+    }
+    virtual void handle();
 };
 
 // Concrete implementation
 class object_create_vel_StoC:
-public object_create_vel_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>
+public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>, public object_create_vel_StoC_model
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -77,7 +78,7 @@ class object_create_owner_team_StoC_model: public object_create_StoC_model
 
 // Concrete implementation
 class object_create_owner_team_StoC:
-public object_create_owner_team_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>
+public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>, public object_create_owner_team_StoC_model
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -101,7 +102,7 @@ class object_create_owner_team_index_StoC_model: public object_create_owner_team
 
 // Concrete implementation
 class object_create_owner_team_index_StoC:
-public object_create_owner_team_index_StoC_model, public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>
+public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>, public object_create_owner_team_index_StoC_model
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -145,7 +146,7 @@ class object_state_StoC_model
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
         }
-        inline void handle();
+        void handle();
 };
 
 // concrete
@@ -170,7 +171,7 @@ class object_state_vel_StoC_model: public object_state_StoC_model
             pack_float(&my, buff, buff_n, pack);
             pack_float(&mz, buff, buff_n, pack);
         }
-        inline void handle();
+        void handle();
 };
 
 // concrete
@@ -276,7 +277,12 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 
 /* Create */
 
-void create_object_message(ObjectState* state, object_create_StoC_model* msg)
+template <class T>
+void create_message(ObjectState* state, T* msg)
+{}
+
+template <>
+void create_message<object_create_StoC>(ObjectState* state, object_create_StoC* msg)
 {
     msg->id = state->id;
     msg->type = state->type;
@@ -286,31 +292,56 @@ void create_object_message(ObjectState* state, object_create_StoC_model* msg)
     msg->z = p.z;
 }
 
-void create_object_vel_message(ObjectState* state, object_create_StoC_model* msg)
+template <>
+void create_message<object_create_vel_StoC>(ObjectState* state, object_create_vel_StoC* msg)
 {
-    create_object_message(state, msg);
+    msg->id = state->id;
+    msg->type = state->type;
+    Vec3 p = state->get_position();
+    msg->x = p.x;
+    msg->y = p.y;
+    msg->z = p.z;
     Vec3 m = state->get_momentum();
     msg->mx = m.x;
     msg->my = m.y;
     msg->mz = m.z;
 }
 
-void create_object_owner_team_message(ObjectState* state, object_create_StoC_model* msg)
+template <>
+void create_message<object_create_owner_team_StoC>(ObjectState* state, object_create_owner_team_StoC* msg)
 {
-    create_object_message(state, msg);
+    msg->id = state->id;
+    msg->type = state->type;
+    Vec3 p = state->get_position();
+    msg->x = p.x;
+    msg->y = p.y;
+    msg->z = p.z;
     msg->owner = state->owner;
     msg->team = state->team;
 }
 
-void create_object_owner_team_index_message(ObjectState* state, object_create_StoC_model* msg)
+template <>
+void create_message<object_create_owner_team_index_StoC>(ObjectState* state, object_create_owner_team_index_StoC* msg)
 {
-    create_object_owner_team_message(state, msg);
+    msg->id = state->id;
+    msg->type = state->type;
+    Vec3 p = state->get_position();
+    msg->x = p.x;
+    msg->y = p.y;
+    msg->z = p.z;
+    msg->owner = state->owner;
+    msg->team = state->team;
     msg->team_index = state->team_index;
 }
 
 /* State */
 
-void object_state_message(ObjectState* state, object_state_StoC_model* msg)
+template <class T>
+void state_message(ObjectState* state, T* msg)
+{}
+
+template <>
+void state_message<object_state_StoC>(ObjectState* state, object_state_StoC* msg)
 {
     msg->id = state->id;
     msg->type = state->type;
@@ -320,9 +351,15 @@ void object_state_message(ObjectState* state, object_state_StoC_model* msg)
     msg->z = p.z;
 }
 
-void object_state_vel_message(ObjectState* state, object_state_StoC_model* msg)
+template <>
+void state_message<object_state_vel_StoC>(ObjectState* state, object_state_vel_StoC* msg)
 {
-    object_state_message(state, msg);
+    msg->id = state->id;
+    msg->type = state->type;
+    Vec3 p = state->get_position();
+    msg->x = p.x;
+    msg->y = p.y;
+    msg->z = p.z;
     Vec3 m = state->get_momentum();
     msg->mx = m.x;
     msg->my = m.y;

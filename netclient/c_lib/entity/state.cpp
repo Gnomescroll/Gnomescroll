@@ -13,27 +13,6 @@ unsigned int ObjectState::get_kill_reward(int owner, int team)
     return 0;
 }
 
-int ObjectState::get_team()
-{
-    return this->team;
-}
-
-void ObjectState::set_team(int team)
-{
-    this->team = team;
-}
-
-int ObjectState::get_owner()
-{
-    return this->owner;
-}
-
-void ObjectState::set_owner(int owner)
-{
-    switch_agent_ownership(this->type, this->owner, owner);
-    this->owner = owner;
-}
-
 int ObjectState::take_damage(int dmg)
 {
     if (this->health <= 0) return 0;
@@ -46,24 +25,27 @@ int ObjectState::take_damage(int dmg)
 
 void ObjectState::set_position(float x, float y, float z)
 {
-    if (this->frozen_vox)
-        if (
-           this->position.x != x
-        && this->position.y != y
-        && this->position.z != z
-        )
-            this->vox->thaw();
+    if (this->vox != NULL)
+    {
+        if (this->frozen_vox)
+            if (
+               this->position.x != x
+            && this->position.y != y
+            && this->position.z != z
+            )
+                this->vox->thaw();
 
-    this->position.x = x;
-    this->position.y = y;
-    this->position.z = z;
-    this->vox->update(
-        this->position.x, this->position.y, this->position.z,
-        this->theta, this->phi
-    );
+        this->position.x = x;
+        this->position.y = y;
+        this->position.z = z;
+        this->vox->update(
+            this->position.x, this->position.y, this->position.z,
+            this->theta, this->phi
+        );
 
-    if (this->frozen_vox)
-        this->vox->freeze();
+        if (this->frozen_vox)
+            this->vox->freeze();
+    }
 
     #if DC_SERVER
     if (this->broadcast_state_change)
@@ -78,4 +60,6 @@ void ObjectState::set_position(float x, float y, float z)
     }
     #endif
 
+    if (this->vp != NULL)
+        this->vp->set_position(x,y,z);
 }

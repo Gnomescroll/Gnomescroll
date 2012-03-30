@@ -10,28 +10,34 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
 inline void object_create_StoC_model::handle()
 {
+    ObjectPolicyInterface* obj;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::object_list->create(x,y,z, 0,0,0, (Object_types)type);
+            obj = ClientState::object_list->create(x,y,z, 0,0,0, (Object_types)type);
             break;
             
         default: return;
     }
+    if (obj != NULL)
+        obj->born();
 }
 
 inline void object_create_vel_StoC_model::handle()
 {
+    ObjectPolicyInterface* obj;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::object_list->create(x,y,z, mx,my,mz, (Object_types)type);
+            obj = ClientState::object_list->create(x,y,z, mx,my,mz, (Object_types)type);
             break;
             
         default: return;
     }
+    if (obj != NULL)
+        obj->born();
 }
 
 inline void object_create_owner_team_StoC_model::handle()

@@ -474,6 +474,7 @@ skeleton_inited(false),
 vox_inited(false),
 frozen(false)
 {
+    if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
@@ -488,6 +489,8 @@ vox_inited(false),
 was_updated(false),
 frozen(false)
 {
+    if (team == 0) printf("WARNING ::Voxel_model() ctor -- team is 0\n");
+    if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
