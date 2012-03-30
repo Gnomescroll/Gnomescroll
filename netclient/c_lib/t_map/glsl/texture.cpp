@@ -1,5 +1,6 @@
 #include "texture.hpp"
 
+#include <c_lib/SDL/texture_sheet_loader.hpp>
 
 namespace t_map
 {
@@ -130,22 +131,24 @@ int get_cube_side_texture(int id, int side)
 void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a)
 {
     int tex_id = get_cube_side_texture(cube_id, side);
-    int ra = rand() % (32*32);
-    *r = pixel_data[tex_id][4*(ra)+0];
-    *g = pixel_data[tex_id][4*(ra)+1];
-    *b = pixel_data[tex_id][4*(ra)+2];
-    *a = pixel_data[tex_id][4*(ra)+3];
-}
+    int ra = (32*32)*tex_id + (rand() % (32*32));
+    int t = TextureSheetLoader::CubeTextureStack[ra];
+    *r = (number >> (8*0)) & 0xff;
+    *g = (number >> (8*1)) & 0xff;
+    *b = (number >> (8*2)) & 0xff;
+    *a = (number >> (8*3)) & 0xff;
 
 /*
     Dont check locking and pull out of pixel buffer instead!!!
 */
 void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a) {
-    if (must_lock_block_surface) SDL_LockSurface(block_surface);
-    int p = px + py*block_surface_width;
-    Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
-    SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
-    if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
+    //if (must_lock_block_surface) SDL_LockSurface(block_surface);
+    //int p = px + py*block_surface_width;
+    //Uint32 pixel = ((Uint32*)block_surface->pixels)[p];
+    //SDL_GetRGBA(pixel, block_surface_pixel_format, r,g,b,a);
+    //if (must_lock_block_surface) SDL_UnlockSurface(block_surface);
+
+    printf("texture.cpp, get_texture_pixel(), not implemented\n");
 }
 
 
