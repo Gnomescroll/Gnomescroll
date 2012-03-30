@@ -367,6 +367,8 @@ GS_SoundBuffer* get_sound_buffer_from_function_name(char *fn)
 
 int set_source_properties(int source_id, Soundfile* snd)
 {
+    if (source_id < 0 || source_id >= MAX_SOURCES)
+        printf("WARNING -- set_source_properties -- source_id %d out of range\n", source_id);
     alSourcef(sources[source_id], AL_PITCH, snd->pitch);
     alSourcef(sources[source_id], AL_GAIN, snd->gain);
     alSourcef(sources[source_id], AL_MAX_DISTANCE, snd->max_distance);
@@ -414,8 +416,12 @@ static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, f
 
     // get free source
     int source_id = get_free_source();
+    printf("source_id = %d\n", source_id);
     if (source_id < 0)
         return -1;
+
+    if (source_id >= MAX_SOURCES || source_id < 0)
+    printf("/*********/\nWARNING: source_id %d out of bounds\n/***********/\n", source_id);
         
     // set source properties
     if (set_source_properties(source_id, sound_buffer->metadata))
@@ -445,6 +451,8 @@ int play_2d_sound(char* fn)
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    printf("function name %s\n", fn);
+
     if (sound_buffer == NULL)
         return -1;
     if (sound_buffer->buffer_id < 0)
@@ -476,6 +484,8 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
+    printf("function name %s\n", fn);
+
     if (sound_buffer == NULL)
         return -1;
     if (sound_buffer->buffer_id < 0)

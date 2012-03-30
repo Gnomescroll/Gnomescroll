@@ -4,7 +4,9 @@
 
 VoxDat base_vox_dat;
 
-void Base::set_position(float x, float y, float z) {
+void Base::set_position(float x, float y, float z)
+{
+    printf("base set_position %0.2f,%0.2f,%0.2f\n", x,y,z);
     this->x = x;
     this->y = y;
     this->z = z;
@@ -62,7 +64,7 @@ void Base::tick()
         z++;
     }
 
-    if (old_z != (float)z)
+    if (old_z != (float)z)  // sends packet
         ServerState::ctf->set_base_position(this->team, this->x, this->y, (float)z);
 #endif
 }
@@ -79,6 +81,7 @@ void Base::update()
         this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
     #endif
 }
+
 Base::Base(int id, int team)
 :
 x(0), y(0), z(0),

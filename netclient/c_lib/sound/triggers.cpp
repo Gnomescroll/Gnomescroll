@@ -54,7 +54,7 @@ SOUND_TRIGGER(pickup_item)
 
 /* function -> filename mapping */
 
-struct Soundfile* sound_file_functions = NULL;
+struct Soundfile* sound_file_functions = NULL;  // allocated by csv_parser
 int n_sounds = 0;
 
 static bool function_registered(char *fn)
@@ -75,12 +75,13 @@ bool set_soundfile(int snd_id, char* fn, char* file)
     
     int fn_len = strlen(fn);
     int file_len = strlen(file);
-    sound_file_functions[snd_id].fn = (char*)malloc(sizeof(char) * (fn_len + 1));
-    strcpy(sound_file_functions[snd_id].fn, fn);
-    sound_file_functions[snd_id].file = (char*)malloc(sizeof(char) * (file_len + 1));
-    strcpy(sound_file_functions[snd_id].file, file);
+    struct Soundfile* snd = &sound_file_functions[snd_id];
+    snd->fn = (char*)malloc(sizeof(char) * (fn_len + 1));
+    strcpy(snd->fn, fn);
+    snd->file = (char*)malloc(sizeof(char) * (file_len + 1));
+    strcpy(snd->file, file);
 
-    load_sound(&sound_file_functions[snd_id]);
+    load_sound(snd);
 
     printf("Set sound trigger: %s -> %s\n", fn, file);
 
@@ -97,7 +98,7 @@ void set_soundfile_properties(
     float maximum_gain
 )
 {
-    if (snd_id < 0 || snd_id > n_sounds)
+    if (snd_id < 0 || snd_id >= n_sounds)
     {
         printf("WARNING: set_soundfile_properties -- snd_id %d invalid (n_sounds=%d)\n", snd_id, n_sounds);
         return;

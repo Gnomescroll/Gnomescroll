@@ -503,8 +503,9 @@ Voxel_model::~Voxel_model()
 {
     if (this->vv != NULL)
     {
-        for (int i=0; i<this->n_parts; i++) {
-            #ifdef DC_CLIENT
+        for (int i=0; i<this->n_parts; i++)
+        {
+            #if DC_CLIENT
             ClientState::voxel_render_list->unregister_voxel_volume(&(this->vv[i]));
             #endif
             STATE::voxel_hitscan_list->unregister_voxel_volume(&(this->vv[i]));
@@ -520,10 +521,7 @@ Voxel_model::~Voxel_model()
         free(biaxial_nodes);
     }
     else
-    {
         printf("Voxel_model::~Voxel_model, error! skeleton not inited \n");
-
-    }
 }
 
 void Voxel_model::freeze()

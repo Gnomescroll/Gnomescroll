@@ -122,7 +122,6 @@ namespace ClientState {
             return;
         }
         init_lists();
-        init_ctf();
         voxel_render_list->init_voxel_render_list_shader1();
     }
 

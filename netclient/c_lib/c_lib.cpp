@@ -177,7 +177,6 @@
 #include <c_lib/sound/wav.cpp>
 #include <c_lib/sound/triggers.cpp>
 #include <c_lib/sound/csv_parser.cpp>
-#include <c_lib/sound/fmod.cpp>
 #include <c_lib/sound/openal.cpp>
 #include <c_lib/sound/sound.cpp>
 
@@ -265,6 +264,8 @@ int init_c_lib() {
     init_cameras();
     init_chat_client();
     init_particles();
+
+    ClientState::init_ctf();
     
     Animations::init_hitscan();
     Animations::init_hitscan_laser();

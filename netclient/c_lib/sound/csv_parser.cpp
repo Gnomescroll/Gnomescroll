@@ -200,16 +200,17 @@ void parse_sound_triggers(char *fn)
                 maximum_gain[maximum_gain_index] = '\0';
 
                 // set strings
-                if (set_soundfile(n_sounds, function_name, filename))
+                int snd_id = n_sounds;
+                if (set_soundfile(snd_id, function_name, filename))
                 {   // set properties
+                    n_sounds++;
                     pitch_value = (pitch_index) ? atof(pitch) : GS_DEFAULT_PITCH;
                     gain_value = (gain_index) ? atof(gain) : GS_DEFAULT_GAIN;
                     max_distance_value = (max_distance_index) ? atof(max_distance) : GS_DEFAULT_MAX_DISTANCE;
                     reference_distance_value = (reference_distance_index) ? atof(reference_distance) : GS_DEFAULT_REFERENCE_DISTANCE;
                     minimum_gain_value = (minimum_gain_index) ? atof(minimum_gain) : GS_DEFAULT_MINIMUM_GAIN;
                     maximum_gain_value = (maximum_gain_index) ? atof(maximum_gain) : GS_DEFAULT_MAXIMUM_GAIN;
-                    set_soundfile_properties(n_sounds, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value);
-                    n_sounds++;
+                    set_soundfile_properties(snd_id, pitch_value, gain_value, max_distance_value, reference_distance_value, minimum_gain_value, maximum_gain_value);
                 }
 
                 if (n_sounds > n_lines)
@@ -219,8 +220,6 @@ void parse_sound_triggers(char *fn)
                 }
             }
 
-            
-            
             filename_index = 0;
             function_name_index = 0;
             pitch_index = 0;
@@ -237,7 +236,7 @@ void parse_sound_triggers(char *fn)
     if (n_sounds == 0)
         sound_file_functions = NULL;
     else if (n_sounds != n_lines)
-        sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) *  n_sounds);
+        sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_sounds);
 
     // cleanup
     free(buff);
