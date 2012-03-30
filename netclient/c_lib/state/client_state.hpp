@@ -38,7 +38,6 @@ namespace ClientState {
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern Monsters::Slime_list* slime_list;
     extern Spawner_list* spawner_list;
-    //extern Turret_list* turret_list;
 
     extern GameObject_list* object_list;
 

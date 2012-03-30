@@ -118,25 +118,21 @@ int init_c_lib()
         printf("WARNING: Attempt to call init_c_lib more than once\n");
         return 1;
     }
-
-    //init_die();
-
     Log::init();
 
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand(time(NULL));
 
-    ServerState::init_lists();
     init_vox_dats();
     init_chat_server();
+
+    ServerState::init();
 
     init_network();
 
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
-
-    ServerState::init();
 
     return 0;
 }
@@ -146,7 +142,6 @@ void close_c_lib()
     printf("Server closing...\n");
     teardown_chat_server();
     ServerState::teardown();
-    ServerState::teardown_lists();
     printf("Server closed\n");
     Log::teardown();
 }

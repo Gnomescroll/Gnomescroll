@@ -17,7 +17,6 @@ namespace ServerState
     Monsters::Slime_list* slime_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Spawner_list* spawner_list = NULL;
-    //Turret_list* turret_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
     GameObject_list* object_list;
@@ -26,12 +25,13 @@ namespace ServerState
 
     void init_lists()
     {
+        voxel_hitscan_list = new Voxel_hitscan_list;
+
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
         grenade_list = new Grenade_list;
         //neutron_list = new Neutron_list;
         slime_list = new Monsters::Slime_list;
-        voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new Spawner_list;
         //turret_list = new Turret_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
@@ -49,7 +49,6 @@ namespace ServerState
         // voxels
         delete slime_list;
         delete spawner_list;
-        //delete turret_list;
         delete agent_list;
         delete object_list;
 
@@ -83,12 +82,14 @@ namespace ServerState
             printf("WARNING: ServerState::init -- attempt to call more than once\n");
             return;
         }
+        init_lists();
         init_ctf();
     }
 
     void teardown()
     {
         teardown_ctf();
+        teardown_lists();
     }
 
     void damage_objects_within_sphere(
@@ -200,7 +201,6 @@ namespace ServerState
         agent_list->update_models(); // sets skeleton
         slime_list->update();
         spawner_list->tick();
-        //turret_list->tick();
         grenade_list->tick();
         //grenade_shrapnel_list->tick();
 
@@ -216,7 +216,6 @@ namespace ServerState
         slime_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
         spawner_list->send_to_client(client_id);
-        //turret_list->send_to_client(client_id);
 
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);

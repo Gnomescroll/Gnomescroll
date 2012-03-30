@@ -29,7 +29,6 @@ namespace ClientState {
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Monsters::Slime_list* slime_list = NULL;
     Spawner_list* spawner_list = NULL;
-    //Turret_list* turret_list = NULL;
 
     GameObject_list* object_list;
 
@@ -50,9 +49,10 @@ namespace ClientState {
     {
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
+        
+        object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
         spawner_list = new Spawner_list;
-        //turret_list = new Turret_list;
 
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
@@ -66,8 +66,6 @@ namespace ClientState {
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
-
-        object_list = new GameObject_list;
     }
 
     void teardown_lists()
@@ -75,7 +73,6 @@ namespace ClientState {
         // voxel models
         delete slime_list;
         delete spawner_list;
-        //delete turret_list;
         delete agent_list;
         delete object_list;
 
@@ -124,6 +121,7 @@ namespace ClientState {
             printf("WARNING: ClientState::init -- attempt to call more than once\n");
             return;
         }
+        init_lists();
         init_ctf();
         voxel_render_list->init_voxel_render_list_shader1();
     }
@@ -131,6 +129,7 @@ namespace ClientState {
     void teardown()
     {
         teardown_ctf();
+        teardown_lists();
     }
 
     void update()
@@ -138,7 +137,6 @@ namespace ClientState {
         ctf->update();
         slime_list->update();
         spawner_list->update();
-        //turret_list->update();
         object_list->update();
 
         if (playerAgent_state.you != NULL)
@@ -177,8 +175,6 @@ namespace ClientState {
         minivox_list->tick();
         billboard_text_list->tick();
         billboard_text_hud_list->tick();
-
-        //turret_list->tick();
 
         object_list->tick();
     }

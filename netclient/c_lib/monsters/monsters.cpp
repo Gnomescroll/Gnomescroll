@@ -59,7 +59,8 @@ Slime::~Slime()
         obj_type = OBJ_TYPE_GRENADE_REFILL;
     else
         return;
-    ServerState::object_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom, obj_type);
+    ObjectPolicyInterface* obj = ServerState::object_list->create(x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom, obj_type);
+    obj->born();
     #endif
 }
 
