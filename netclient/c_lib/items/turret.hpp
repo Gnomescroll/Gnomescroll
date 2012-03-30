@@ -4,6 +4,8 @@
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
+#include <c_lib/behaviour/behaviour.hpp>
+#include <c_lib/entity/entity.hpp>
 
 // forward decl
 class object_shot_object_StoC;
@@ -53,6 +55,45 @@ class Turret
         explicit Turret(int id);
         Turret(int id, float x, float y, float z);
         ~Turret();
+};
+
+/* TargetAcquistion component */
+
+class TargetAcquisitionComponent
+{
+    public:
+    void acquire_target(ObjectState* state);
+    TargetAcquisitionComponent(){}
+};
+
+class TurretObject; // forward decl
+
+typedef TickStayOnGround < TickTargetAcquisition < NoTick(TurretObject), TurretObject>,TurretObject>
+    TurretTick;
+
+typedef NoDraw(TurretObject) TurretDraw;
+
+typedef UpdateFrozenVox < NoUpdate(TurretObject), TurretObject> TurretUpdate;
+
+typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < NoBorn(TurretObject), TurretObject>,TurretObject>,TurretObject>
+    TurretBorn;
+
+typedef DieExplode < NoDie(TurretObject), TurretObject> TurretDie;
+
+typedef ObjectPolicy
+<TurretObject, TurretTick, TurretDraw, TurretUpdate, TurretBorn, TurretDie, create_object_message, object_state_message >
+TurretObjectParent;
+
+class TurretObject: public TurretObjectParent, public TargetAcquisitionComponent
+{
+    public:
+        TurretObject(int id, float x, float y, float z, float mx, float my, float mz)
+        : TurretObjectParent(this), TargetAcquisitionComponent()
+        {
+            this->_state.id = id;
+            this->_state.create_particle(x,y,z,mx,my,mz);
+            //TODO
+        }
 };
 
 #include <c_lib/template/object_list.hpp>

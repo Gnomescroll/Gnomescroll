@@ -15,7 +15,7 @@ namespace ServerState
 template <class Super, class Object>
 class TickCombiner: public Super
 {
-    public:
+    protected:
         inline void tick(ObjectState* state, Object* object)
         {Super::tick(state, object);}
 };
@@ -23,14 +23,14 @@ class TickCombiner: public Super
 template <class Object>
 class TickAnchor
 {
-    public:
+    protected:
         inline void tick(ObjectState* state, Object* object) {/*Empty*/}
 };
 
 template <class Super, class Object>
 class DrawCombiner: public Super
 {
-    public:
+    protected:
         inline void draw(ObjectState* state, Object* object)
         {Super::draw(state, object);}
 };
@@ -38,14 +38,14 @@ class DrawCombiner: public Super
 template <class Object>
 class DrawAnchor
 {
-    public:
+    protected:
         inline void draw(ObjectState* state, Object* object) {/*Empty*/}
 };
 
 template <class Super, class Object>
 class UpdateCombiner: public Super
 {
-    public:
+    protected:
         inline void update(ObjectState* state, Object* object)
         {Super::update(state, object);}
 };
@@ -53,14 +53,14 @@ class UpdateCombiner: public Super
 template <class Object>
 class UpdateAnchor
 {
-    public:
+    protected:
         inline void update(ObjectState* state, Object* object) {/*Empty*/}
 };
 
 template <class Super, class Object>
 class BornCombiner: public Super
 {
-    public:
+    protected:
         inline void born(ObjectState* state, Object* object)
         {Super::born(state, object);}
 };
@@ -68,14 +68,14 @@ class BornCombiner: public Super
 template <class Object>
 class BornAnchor
 {
-    public:
+    protected:
         inline void born(ObjectState* state, Object* object) {/*Empty*/}
 };
 
 template <class Super, class Object>
 class DieCombiner: public Super
 {
-    public:
+    protected:
         inline void die(ObjectState* state, Object* object)
         {Super::die(state, object);}
 };
@@ -83,97 +83,8 @@ class DieCombiner: public Super
 template <class Object>
 class DieAnchor
 {
-    public:
+    protected:
         inline void die(ObjectState* state, Object* object) {/*Empty*/}
-};
-
-// TODO : move
-template <class Super, class Object>
-class DieBlowup: public Super
-{
-    public:
-    inline void die(ObjectState* state, Object* object)
-    {
-        Super::die(state, object);
-    }
-
-};
-
-// TODO : move
-template <class Super, class Object>
-class TickParticle: public Super
-{
-    public:
-    inline void tick(ObjectState* state, Object* object)
-    {
-        Verlet::bounce(state->vp, state->damp);
-        Super::tick(state, object);
-    }
-};
-
-// TODO : move
-template <class Super, class Object>
-class TickTTL: public Super
-{
-    public:
-    inline void tick(ObjectState* state, Object* object)
-    {
-        if (state->ttl >= 0)
-            state->ttl++;
-        Super::tick(state, object);
-    }
-};
-
-// TODO: move
-template <class Super, class Object>
-class DrawBillboardSprite: public Super
-{
-    public:
-    inline void draw(ObjectState* state, Object* object)
-    {
-        #if DC_CLIENT
-        Vec3 v = state->vp->p;
-        v.z += state->texture_scale;
-        
-        if (current_camera == NULL
-        || !current_camera->in_view(v.x, v.y, v.z))
-            return;
-
-        Vec3 up = vec3_init(
-            model_view_matrix[0]*state->texture_scale,
-            model_view_matrix[4]*state->texture_scale,
-            model_view_matrix[8]*state->texture_scale
-        );
-        Vec3 right = vec3_init(
-            model_view_matrix[1]*state->texture_scale,
-            model_view_matrix[5]*state->texture_scale,
-            model_view_matrix[9]*state->texture_scale
-        );
-
-        float tx_min, tx_max, ty_min, ty_max;
-        tx_min = (float)(state->texture_index%16)* (1.0/16.0);
-        tx_max = tx_min + (1.0/16.0);
-        ty_min = (float)(state->texture_index/16)* (1.0/16.0);
-        ty_max = ty_min + (1.0/16.0);
-
-        Vec3 p = vec3_sub(v, vec3_add(right, up));
-        glTexCoord2f(tx_min,ty_max);
-        glVertex3f(p.x, p.y, p.z);
-
-        p = vec3_add(v, vec3_sub(up, right));
-        glTexCoord2f(tx_max,ty_max);
-        glVertex3f(p.x, p.y, p.z);
-
-        p = vec3_add(v, vec3_add(up, right));
-        glTexCoord2f(tx_max,ty_min);
-        glVertex3f(p.x, p.y, p.z);
-
-        p = vec3_add(v, vec3_sub(right, up));
-        glTexCoord2f(tx_min,ty_min);
-        glVertex3f(p.x, p.y, p.z);
-        #endif
-        Super::draw(state, object);
-    }
 };
 
 /***************************/

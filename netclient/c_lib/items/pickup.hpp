@@ -88,9 +88,9 @@ class PickupObject; // forward decl
 
 // Note: Read left to right, until terminator No*(). Everything after that is noise
 // Here, we have:
-// TickParticle, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
+// TickVerletBounce, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
 // behaviours will be called in order
-typedef TickParticle < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
+typedef TickVerletBounce < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
     ParticleTick;
 
 // TODO: move to a drawing behaviours file

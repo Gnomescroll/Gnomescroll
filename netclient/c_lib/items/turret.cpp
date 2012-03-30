@@ -347,6 +347,56 @@ void Turret::acquire_target()
     // play animations
 }
 
+void TargetAcquisitionComponent::acquire_target(ObjectState* state)
+{
+    // firing properties (will be from dat/state)
+    const float range = state->sight_range; 
+    const float bias = state->accuracy_bias;
+    const float acquisition_probability = state->target_acquisition_probability;
+    const bool enemies = state->attack_enemies;
+    const bool random = state->attack_random;
+
+    Vec3 p = state->get_position();
+    
+    // lock on agent
+    Vec3 firing_position = vec3_init(p.x, p.y, p.z + state->camera_height);
+    Vec3 firing_direction;
+    Agent_state* agent = Hitscan::lock_agent_target(
+        firing_position, firing_direction, state->team,
+        range, acquisition_probability, enemies, random
+    );
+    if (agent == NULL) return;
+    
+    // normalize and bias vector
+    normalize_vector(&firing_direction);
+    if (bias)   // apply bias
+        firing_direction = vec3_bias_random(firing_direction, bias);
+
+    // get target
+    Hitscan::HitscanTarget t = Hitscan::shoot_at_enemy_agent(
+        firing_position, firing_direction, state->id, state->type,
+        agent, range
+    );
+
+    // attacker properties (will be from dat)
+    struct Hitscan::AttackerProperties attacker_properties;
+    attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
+    attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
+    attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
+    attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
+    attacker_properties.terrain_modification_action = t_map::TMA_LASER;
+
+    // let handle target hit based on attacker properties
+    Hitscan::handle_hitscan_target(t, attacker_properties);
+
+    // send firing packet
+    Hitscan::broadcast_object_fired(state->id, state->type, t);
+
+    // apply custom handling
+    // play sounds
+    // play animations
+}
+
 void Turret::tick()
 {    
 #if DC_SERVER

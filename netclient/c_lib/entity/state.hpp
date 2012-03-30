@@ -35,7 +35,9 @@ class ObjectData
 
         // explosion
         bool blow_up_on_death;
-
+        float explosion_radius;
+        int explosion_damage;
+        
         //spawning
         unsigned int spawn_radius;
 
@@ -46,6 +48,12 @@ class ObjectData
 
         // firing
         unsigned int fire_rate_limit;
+        float sight_range;
+        float accuracy_bias;
+        float target_acquisition_probability;
+        bool attack_enemies;    // TODO -- use bit mask flags
+        bool attack_random;
+        bool suicidal;  // can kill owner
 
         // voxel
         bool frozen_vox;
