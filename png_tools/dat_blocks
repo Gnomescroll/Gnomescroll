@@ -57,7 +57,7 @@ west    lavablock.png
 east    lavablock.png
 ===
 id      6
-name    sand_brick
+name    red_brick
 hud     8 brick-red.png
 top     brick-red.png
 bottom  brick-red.png

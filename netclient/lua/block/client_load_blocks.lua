@@ -48,6 +48,10 @@ for id, block in pairs(block_id_table) do
 	set_block_name(id, block.name)
 end
 
+for id, block in pairs(block_id_table) do
+	ffi.C.LUA_set_block_max_damage(id, block.max_damage)
+end
+
 --- set block draw properties
 
 for id, block in pairs(block_id_table) do
@@ -65,6 +69,5 @@ for id, block in pairs(block_id_table) do
 	end
 end
 
-
-ffi.C.LUA_save_cube_texture();
+--ffi.C.LUA_save_cube_texture();
 

@@ -17,8 +17,9 @@ namespace t_map
 
     unsigned char cube_side_texture_array[MAX_CUBES*6]; // for now?
 
-    GLuint terrain_map_glsl; //for shader
-     
+    GLuint terrain_map_glsl = 0 ; //for shader
+    GLuint block_textures_normal = 0; //linear scale
+
     int must_lock_block_surface;
     SDL_Surface *block_surface;
     SDL_PixelFormat *block_surface_pixel_format;

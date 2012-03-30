@@ -60,11 +60,15 @@ end
 NoHud = BlockHudDefault;
 
 ---holds everything else
+
+default_max_damage = 32;
+
 Block = 
 {
   id = nil,
   name = nil,
   properties = nil,
+  max_damage = default_max_damage, --default max damage
   texture = nil,
   hud = BlockHudDefault
 }
@@ -74,7 +78,7 @@ Block =
 block_id_table = {};  ---block id table
 
 function Block:new(id, name)
-  o = {}
+  o = { max_damage = default_max_damage }
   o.name = name;
   setmetatable(o, self)
   self.__index = self
@@ -89,7 +93,7 @@ function BlockNew(id, name)
 end
 
 function Block:new1(id, name, properties, texture, hud)
-  o = {id=id, name = name, properties = properties, texture = texture, hud = hud}
+  o = {id=id, name = name, properties = properties, texture = texture, hud = hud, max_damage = default_max_damage}
   setmetatable(o, self)
   self.__index = self
   --- table set
