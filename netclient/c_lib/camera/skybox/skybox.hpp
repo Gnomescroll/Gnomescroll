@@ -82,9 +82,9 @@ void generate_sky()
 		s.type = rand()%16;
 
 	    s.tx_min = (float)(s.type%4)* (1.0/4.0);
-	    s.tx_max = tx_min + (1.0/4.0);
+	    s.tx_max = s.tx_min + (1.0/4.0);
 	    s.ty_min = (float)(s.type/4)* (1.0/4.0);
-	    s.ty_max = ty_min + (1.0/4.0);
+	    s.ty_max = s.ty_min + (1.0/4.0);
 
 		star_list[i] = s;
 
@@ -173,7 +173,7 @@ void draw()
     glBegin(GL_QUADS);
 
 
-	float tx_min, tx_max, ty_min, ty_max;
+	//float tx_min, tx_max, ty_min, ty_max;
 
     float cx = current_camera->x; 
     float cy = current_camera->y; 

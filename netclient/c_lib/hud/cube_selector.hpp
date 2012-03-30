@@ -32,7 +32,7 @@ class CubeSelector
         int pos;
         int pos_x,pos_y;
 
-        int texture;
+        //int texture;
 
         struct cube_select_element cubes[256];
 

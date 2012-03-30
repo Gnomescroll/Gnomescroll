@@ -63,6 +63,7 @@ namespace t_map
             init_map_3d_texture();
         }
 
+        init_block_texture_normal();
     }
 
     void set_map_shader_0() 
@@ -167,39 +168,6 @@ namespace t_map
         if(terrain_map_glsl != 0)
         glDeleteTextures(1,&terrain_map_glsl);
 
-/*
-        terrain_map_surface=IMG_Load("media/texture/blocks_01.png");
-        if(!terrain_map_surface) {printf("IMG_Load: %s \n", IMG_GetError());return;}
-
-
-        
-        GLuint format;
-        if (terrain_map_surface->format->Rmask == 0x000000ff) format = GL_RGBA;
-        if (terrain_map_surface->format->Rmask != 0x000000ff) format = GL_BGRA;
-
-        int w = 32;
-        int h = 32;
-        int d = 256;
-        Uint32* Pixels = new Uint32[w * h * d];
-
-        SDL_LockSurface(terrain_map_surface);
-        int index; Uint32 pix;
-        //I have to load them in anyways...
-
-        for(int _i=0; _i < 16; _i++) {
-        for(int _j=0; _j < 16; _j++) {
-            index = _i + 16*_j;
-
-            for(int i=0; i < 32; i++) {
-            for(int j=0; j < 32; j++) {
-                pix = ((Uint32*) terrain_map_surface->pixels)[ 512*(j+32*_j) + (i+32*_i) ];
-                Pixels[ 32*32*index + (j*32+i) ] = pix;
-            }
-            }
-        }
-        }
-        SDL_UnlockSurface(terrain_map_surface);
-*/      
 
         glEnable(GL_TEXTURE_2D);
 
@@ -376,6 +344,36 @@ namespace t_map
         {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTexture->pixels ); //2nd parameter is level
+        
+        glDisable(GL_TEXTURE_2D);
+
+    }
+
+    void init_block_texture_normal()
+    {
+
+        SDL_Surface* s = TextureSheetLoader::CubeTexture;
+
+        glEnable(GL_TEXTURE_2D);
+
+        if(block_textures_normal == 0)
+        {
+            glGenTextures( 1, &block_textures_normal );
+        }
+
+        glBindTexture( GL_TEXTURE_2D, block_textures_normal );
+
+        // Set the texture's stretching properties
+
+        //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+
+        GLuint internalFormat = GL_BGRA; //GL_RGBA;
+        GLuint format = GL_RGBA;
 
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTexture->pixels ); //2nd parameter is level
         

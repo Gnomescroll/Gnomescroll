@@ -10,6 +10,8 @@
 #include <c_lib/agent/agent_weapons.hpp>
 #include <c_lib/weapons/weapons.hpp>
 
+#include <c_lib/t_map/glsl/texture.hpp>
+
 namespace HudCubeSelector
 {
 
@@ -20,23 +22,16 @@ void CubeSelector::init()
     for(i=0;i<256;i++)
     {
         cubes[i].cube_id = 255;
-        cubes[i].tex_id = 254;
+        cubes[i].tex_id = 0;
     }
-
-    i = create_texture_from_file((char*) "./media/texture/hud_cube_selector.png", &this->texture);
-    if (i)
-    {
-        printf("init_cube_selector_textures failed with code %d\n", i);
-        return;
-    }
-
-    this->inited = true;
+    this->inited = 1;
 }
 
 void CubeSelector::load_cube_property(int pos, int cube_id, int tex_id)
 {
     //printf("loading cube property: %d %d %d\n", pos, cube_id, tex_id);
     if(pos == -1 || tex_id == -1) return;
+    if(pos < 0 || pos >= 64) return;
     cubes[pos].cube_id = cube_id;
     cubes[pos].tex_id = tex_id;
 }
@@ -85,7 +80,12 @@ void CubeSelector::update_block_applier()
 
 void CubeSelector::draw()
 {
-    if (!this->inited) return;
+    if (!this->inited) 
+    {
+        printf("CubeSelector::draw() error, not inited\n");
+        return;
+    }
+
     int i,j;
     float x0,y0,x1,y1;
 
@@ -102,7 +102,7 @@ void CubeSelector::draw()
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->texture);
+    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 
     glBegin(GL_QUADS);
 
@@ -135,6 +135,7 @@ void CubeSelector::draw()
         glTexCoord2f(tx_min,ty_min );
         glVertex3f(x0,y1, z_);  // Bottom left
     }
+
     glEnd();
     glDisable(GL_TEXTURE_2D);
 
@@ -228,8 +229,7 @@ size(0),
 mode(0),
 n_x(8), n_y(8),
 pos(0),
-pos_x(0), pos_y(0),
-texture(0)
+pos_x(0), pos_y(0)
 {}
 
 CubeSelector cube_selector;
