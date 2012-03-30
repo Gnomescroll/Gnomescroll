@@ -15,6 +15,8 @@ merge spawner/turret create/delete into item create/delete
 --...cant, spawner need more metadata
 --figure out solution for specialized packet needs
 --this affect batch send_to_client method on object_list
+DELETE MERGED
+CREATE PACKETS USE VIRTUAL/INHERITANCE
 
 add group types, similar to object types
 --could solve some specialization problems
@@ -23,6 +25,7 @@ add group types, similar to object types
 
 object_shot_*_StoC handlers
 some sound functions need a wrapper that accepts type
+DONE
 
 object metadata array
 --loading of this (need lua eventually)
@@ -30,10 +33,19 @@ object metadata array
 
 get_coins_for_kills needs better customization
 --probably just set of state flags, its only an if condition
+DONE
+
+Replace composed templates with normal functions
+--if/else blocks to configure
+--Cons: more annoying to rearrange order of execution
+------however, the need for that is rare/nonexistant
 ==========
 Particles
 
 --hopefully straightforward
+
+verletparticle shouldnt hold its state
+should just operate on the state
 
 ==========
 Lists
@@ -69,3 +81,4 @@ Draw has be tracked differently
 When object created, get assigned to a draw list based on draw type
 --When deleted, remove
 --Never retrieve from this list. only for draw tracking purposes
+

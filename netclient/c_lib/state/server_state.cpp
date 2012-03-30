@@ -161,8 +161,6 @@ namespace ServerState
                 coins += t->get_coins_for_kill(agent->id, agent->status.team);
         }
 
-    printf("Sphere damage coins: %d\n", coins);
-
         // add all the coins
         if (agent != NULL)
             agent->status.add_coins(coins);

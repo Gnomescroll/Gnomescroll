@@ -4,6 +4,16 @@
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 
+typedef enum
+{
+    COINS_NOBODY  = 0,
+    COINS_ANYONE  = 1,
+    COINS_ENEMIES = 2,
+    COINS_ALLIES  = 4,
+    COINS_OWNER   = 8,
+    COINS_ANYONE_WHEN_UNOWNED = 16
+} COIN_RULES;
+
 /* Holds constants that are dat-configurable */
 class ObjectData
 {
@@ -14,6 +24,7 @@ class ObjectData
         // physics
         float damp;
         float mass;
+        bool broadcast_state_change;
 
         // tick lifespan
         int ttl_max;
@@ -28,12 +39,17 @@ class ObjectData
         //spawning
         unsigned int spawn_radius;
 
-        // buying
+        // coins
         unsigned int cost;
+        unsigned int reward;
+        int coin_rule;
 
         // firing
         unsigned int fire_rate_limit;
 
+        // voxel
+        bool frozen_vox;
+        
         Object_types type;
     //TODO:
     // fill the struct with object metadata
@@ -51,8 +67,16 @@ class ObjectData
 
     ObjectData()
     :
-    damp(1.0f), mass(1.0f), ttl_max(100), pickup(false), pickup_radius(1.0f),
-    blow_up_on_death(false), type(OBJ_TYPE_NONE)
+    camera_height(0.0f),
+    damp(1.0f), mass(1.0f), broadcast_state_change(false),
+    ttl_max(100),
+    pickup(false), pickup_radius(1.0f),
+    blow_up_on_death(false),
+    spawn_radius(1),
+    cost(999999), reward(0), coin_rule(COINS_NOBODY),
+    fire_rate_limit(1),
+    frozen_vox(false),
+    type(OBJ_TYPE_NONE)
     {}
 };
 
@@ -91,15 +115,16 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
-        
+    unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
-    int get_coins_for_kill(int owner, int team);
 
     int get_team();
     void set_team(int team);
     
     int get_owner();
     void set_owner(int owner);
+
+    void set_position(float x, float y, float z);
     
     ObjectState()
     : ObjectData(),
@@ -130,5 +155,13 @@ class ObjectState: public ObjectData
             return this->vp->p;
         else
             return this->position;
+    }
+
+    Vec3 get_momentum()
+    {
+        if (this->vp != NULL)
+            return this->vp->get_momentum();
+        else
+            return vec3_init(0,0,0);
     }
 };

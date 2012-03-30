@@ -5,9 +5,16 @@
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
 
-extern VoxDat turret_vox_dat;
+// forward decl
+class object_shot_object_StoC;
+class object_shot_terrain_StoC;
+class object_shot_nothing_StoC;
 
-class turret_create_StoC; // forward decl
+void turret_shot_object(object_shot_object_StoC* msg);
+void turret_shot_terrain(object_shot_terrain_StoC* msg);
+void turret_shot_nothing(object_shot_nothing_StoC* msg);
+
+extern VoxDat turret_vox_dat;
 
 class Turret
 {
@@ -33,7 +40,7 @@ class Turret
         
         void set_position(float x, float y, float z);
         
-        int get_coins_for_kill(int owner, int team);
+        int get_coins_for_kill(int owner, int team);    // REMAINING
         int take_damage(int dmg);
         void acquire_target();
 
@@ -41,7 +48,7 @@ class Turret
         void update(); // client side
         
         #ifdef DC_SERVER
-        void create_message(turret_create_StoC* msg);
+        void create_message(object_create_owner_team_StoC* msg);   // REMAINING
         #endif
         explicit Turret(int id);
         Turret(int id, float x, float y, float z);

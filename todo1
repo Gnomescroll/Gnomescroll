@@ -753,7 +753,12 @@ Mostly Thomas's work
 
 Some entity system stuff
 ====================
+Mar 29
 
+Preparation of spawners/turrets for entity system
+Generalize object creation -- customize creation packets
+create_message is on the object policy -- general list can now send_to_client
+====================
 
 Gun model
 Gun in first person and zoomed perspectives

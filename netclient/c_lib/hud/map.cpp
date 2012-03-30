@@ -622,7 +622,7 @@ void draw_team_text_icons(float z)
             printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", s->team_index);
             continue;
         }
-        if (s->team_index == playerAgent_state.you->status.spawner)
+        if ((int)s->team_index == playerAgent_state.you->status.spawner)
             spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
         else
             spawner[j]->set_color(current_color.r, current_color.g, current_color.b);

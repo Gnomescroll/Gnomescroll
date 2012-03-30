@@ -1,8 +1,8 @@
 #include "list.hpp"
 
 #include <c_lib/agent/net_agent.hpp>
-#include <c_lib/items/pickup.hpp>
-#include <c_lib/items/refills.hpp>
+#include <c_lib/items/items.hpp>
+#include <net_lib/net.hpp>
 
 void GameObject_list::tick()
 {
@@ -35,9 +35,17 @@ void GameObject_list::update()
             this->a[i]->update();
 }
 
-void send_to_client(int client_id)
-{
-    
+void GameObject_list::send_to_client(Object_types type, int client_id)
+{   // TODO: use sublists to do this efficiently
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        ObjectState* state = this->a[i]->state();
+        if (state->type != type) continue;
+        object_create_StoC_model msg;
+        this->a[i]->create_message(&msg);
+        ((PacketInterface*)&msg)->sendToClient(client_id);
+    }
 }
 
 // TODO: restructure the list creation to adapt based on type
@@ -53,10 +61,18 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
 
     float texture_scale, mass, damp;
     int texture_index, ttl_max;
+
+    // TODO: REPLACE WITH SOMETHING LIKE ObjectType/Data.
+    //ObjectData* data = get_object_metadata(type);
+    //ObjectPolicyInterface* obj = create_object(type);
+    //obj->load_data(data);
+    //obj->born();
+    // data passed to a copy method
+    // 
     
     obj->state()->type = type;
     switch (type)
-    {   // TODO: THIS WILL BE REPLACED BY ObjectType/Data
+    {
         case OBJ_TYPE_GRENADE_REFILL:
             texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
             texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
