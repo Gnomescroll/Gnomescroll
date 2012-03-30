@@ -100,8 +100,8 @@ void init()
     glGenTextures(1, &star_sheet);
     glBindTexture(GL_TEXTURE_2D, star_sheet);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
@@ -154,6 +154,9 @@ void draw()
 	
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	//glBlendFunc(GL_ONE, GL_ONE);
+
+
+	glDepthMask(GL_FALSE);
 
     glBindTexture(GL_TEXTURE_2D, star_sheet);
 
@@ -220,7 +223,7 @@ void draw()
 	//glDisable(GL_TEXTURE_2D);
 
     glDisable(GL_BLEND);
-
+	glDepthMask(GL_TRUE);
     //glEnable(GL_TEXTURE_2D);
 
 
