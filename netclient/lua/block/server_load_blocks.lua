@@ -33,6 +33,10 @@ for id, block in pairs(block_id_table) do
 end
 
 for id, block in pairs(block_id_table) do
+	ffi.C.LUA_set_block_max_damage(id, block.max_damage)
+end
+
+for id, block in pairs(block_id_table) do
 	set_block_name(id, block.name)
 end
 

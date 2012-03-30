@@ -96,6 +96,7 @@ b.texture = iso_texture(t00,1,2);
 b.texture.t = register_texture(t00,1,1);
 b.texture.b = register_texture(t00,1,3);
 b.hud = hud(8+2, b.texture.n);
+b.max_damage = 32;
 
 b = NewSolidBlock(8, "sand");
 b.texture = iso_texture(t00,0,3);
