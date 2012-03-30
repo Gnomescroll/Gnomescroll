@@ -77,8 +77,10 @@ namespace ClientState {
         delete spawner_list;
         //delete turret_list;
         delete agent_list;
+        delete object_list;
 
         // voxel lists
+        // must go after all voxels
         delete voxel_render_list;
         delete voxel_hitscan_list;
 
@@ -94,7 +96,6 @@ namespace ClientState {
         delete hitscan_effect_list;
         delete hitscan_laser_effect_list;
 
-        delete object_list;
     }
 
     static void init_ctf()

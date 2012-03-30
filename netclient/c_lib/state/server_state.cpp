@@ -51,9 +51,10 @@ namespace ServerState
         delete spawner_list;
         //delete turret_list;
         delete agent_list;
+        delete object_list;
+
         delete voxel_hitscan_list; // must go last
 
-        delete object_list;
     }
 
     static void init_ctf()
