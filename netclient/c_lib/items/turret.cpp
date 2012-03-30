@@ -340,7 +340,7 @@ VoxDat turret_vox_dat;
         //firing_direction = vec3_bias_random(firing_direction, bias);
 
     //// get target
-    //Hitscan::HitscanTarget t = Hitscan::shoot_at_enemy_agent(
+    //Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         //firing_position, firing_direction, this->id, this->type,
         //agent, range
     //);
@@ -490,10 +490,10 @@ void TargetAcquisitionComponent::acquire_target(ObjectState* state)
     Vec3 p = state->get_position();
     
     // lock on agent
-    Vec3 firing_position = vec3_init(p.x, p.y, p.z + state->camera_height);
+    Vec3 firing_position = vec3_init(p.x, p.y, state->camera_z());
     Vec3 firing_direction;
     Agent_state* agent = Hitscan::lock_agent_target(
-        firing_position, firing_direction, state->team,
+        firing_position, &firing_direction, state->team,
         range, acquisition_probability, enemies, random
     );
     if (agent == NULL) return;
@@ -504,7 +504,7 @@ void TargetAcquisitionComponent::acquire_target(ObjectState* state)
         firing_direction = vec3_bias_random(firing_direction, bias);
 
     // get target
-    Hitscan::HitscanTarget t = Hitscan::shoot_at_enemy_agent(
+    Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         firing_position, firing_direction, state->id, state->type,
         agent, range
     );

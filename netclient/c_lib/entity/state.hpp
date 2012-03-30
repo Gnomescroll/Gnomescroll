@@ -158,6 +158,16 @@ class ObjectState: public ObjectData
             this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
     }
 
+    float camera_z()
+    {
+        float z;
+        if (this->vp != NULL)
+            z = this->vp->p.z;
+        else
+            z = this->position.z;
+        return z + this->camera_height;
+    }
+
     Vec3 get_position()
     {
         if (this->vp != NULL)

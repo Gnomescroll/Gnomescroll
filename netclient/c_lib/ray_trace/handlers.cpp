@@ -7,7 +7,7 @@ namespace Hitscan
 {
 
 Agent_state* lock_agent_target(
-    Vec3 firing_position, Vec3 &firing_direction, int team,
+    Vec3 firing_position, Vec3* firing_direction, int team,
     const float range, const float acquisition_probability,
     const bool enemies, const bool random
 )
@@ -46,7 +46,7 @@ Agent_state* lock_agent_target(
             agent = agent_list->filtered_objects[i];
         if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
         {
-            firing_direction = vec3_sub(sink, firing_position);
+            *firing_direction = vec3_sub(sink, firing_position);
             break;
         }
         agent = NULL;
@@ -54,7 +54,7 @@ Agent_state* lock_agent_target(
     return agent;
 }
 
-HitscanTarget shoot_at_enemy_agent(
+HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, Object_types type,
     Agent_state* agent, const float range
 )
@@ -91,7 +91,7 @@ HitscanTarget shoot_at_enemy_agent(
             for (int i=0; i<3; i++)
                 target_information.voxel[i] = target.voxel[i];
             break;
-            
+
         case HITSCAN_TARGET_BLOCK:
             if (block_distance > range)
             {
@@ -161,7 +161,7 @@ void broadcast_object_fired(int id, Object_types type, HitscanTarget t)
     object_shot_object_StoC obj_msg;
     object_shot_terrain_StoC terrain_msg;
     object_shot_nothing_StoC none_msg;
-    switch (t.type)
+    switch (t.hitscan)
     {
         case HITSCAN_TARGET_VOXEL:
             obj_msg.id = id;
@@ -188,6 +188,7 @@ void broadcast_object_fired(int id, Object_types type, HitscanTarget t)
             
         case HITSCAN_TARGET_NONE:
             none_msg.id = id;
+            none_msg.type = type;
             none_msg.x = t.collision_point.x;
             none_msg.y = t.collision_point.y;
             none_msg.z = t.collision_point.z;
@@ -197,7 +198,5 @@ void broadcast_object_fired(int id, Object_types type, HitscanTarget t)
         default: break;
     }
 }
-
-
 
 }   // Hitscan
