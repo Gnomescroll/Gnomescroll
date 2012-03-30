@@ -25,6 +25,8 @@ class VerletParticle
 
         void compute();
         void recompute(float fraction);
+        void set_position(float x, float y, float z);
+        void set_momentum(float mx, float my, float mz);
         void set_state(float x, float y, float z, float mx, float my, float mz);
         void set_mass(float mass);
         Vec3 get_momentum();

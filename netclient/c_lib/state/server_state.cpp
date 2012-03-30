@@ -17,7 +17,7 @@ namespace ServerState
     Monsters::Slime_list* slime_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Spawner_list* spawner_list = NULL;
-    Turret_list* turret_list = NULL;
+    //Turret_list* turret_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
     GameObject_list* object_list;
@@ -33,7 +33,7 @@ namespace ServerState
         slime_list = new Monsters::Slime_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new Spawner_list;
-        turret_list = new Turret_list;
+        //turret_list = new Turret_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
         object_list = new GameObject_list;
@@ -49,11 +49,12 @@ namespace ServerState
         // voxels
         delete slime_list;
         delete spawner_list;
-        delete turret_list;
+        //delete turret_list;
         delete agent_list;
+        delete object_list;
+
         delete voxel_hitscan_list; // must go last
 
-        delete object_list;
     }
 
     static void init_ctf()
@@ -146,20 +147,21 @@ namespace ServerState
         }
 
         // turrets
-        turret_list->objects_within_sphere(x,y,z,radius);
-        Turret* t;
-        for (i=0; i<turret_list->n_filtered; i++)
-        {
-            t = turret_list->filtered_objects[i];
-            if (t==NULL) continue;
-            if (t->id == inflictor_id) continue;
-            if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT)
-            && t->get_owner() != agent->id)
-                continue; // teammates cant kill turrets
-            int h = t->take_damage(GRENADE_TURRET_DAMAGE);
-            if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
-                coins += t->get_coins_for_kill(agent->id, agent->status.team);
-        }
+        // TODO -- this on object_list, by type
+        //turret_list->objects_within_sphere(x,y,z,radius);
+        //Turret* t;
+        //for (i=0; i<turret_list->n_filtered; i++)
+        //{
+            //t = turret_list->filtered_objects[i];
+            //if (t==NULL) continue;
+            //if (t->id == inflictor_id) continue;
+            //if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT)
+            //&& t->get_owner() != agent->id)
+                //continue; // teammates cant kill turrets
+            //int h = t->take_damage(GRENADE_TURRET_DAMAGE);
+            //if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
+                //coins += t->get_coins_for_kill(agent->id, agent->status.team);
+        //}
 
         // add all the coins
         if (agent != NULL)
@@ -198,7 +200,7 @@ namespace ServerState
         agent_list->update_models(); // sets skeleton
         slime_list->update();
         spawner_list->tick();
-        turret_list->tick();
+        //turret_list->tick();
         grenade_list->tick();
         //grenade_shrapnel_list->tick();
 
@@ -214,9 +216,10 @@ namespace ServerState
         slime_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
         spawner_list->send_to_client(client_id);
-        turret_list->send_to_client(client_id);
+        //turret_list->send_to_client(client_id);
 
-        //object_list->send_to_client(client_id);
+        object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
+        object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
     }
 
     void send_id_to_client(int client_id)
@@ -287,7 +290,8 @@ namespace ServerState
 
     void revoke_ownership(int agent_id)
     {
-        turret_list->alter_owner(agent_id, NO_AGENT);
+        //turret_list->alter_owner(agent_id, NO_AGENT);
+        object_list->alter_owner(agent_id, NO_AGENT);
         spawner_list->alter_owner(agent_id, NO_AGENT);
     }
 

@@ -18,6 +18,7 @@ class ObjectPolicyInterface
         virtual void die() = 0;
         virtual void create_message(object_create_StoC_model* msg) = 0;
         virtual ObjectState* state() = 0;
+        virtual ~ObjectPolicyInterface() {};
 };
 
 

@@ -8,15 +8,13 @@ void GameObject_list::tick()
 {
     if (this->num == 0) return;
     for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL)
-        {
-            this->a[i]->tick();
-            if (this->a[i]->state()->ttl >= this->a[i]->state()->ttl_max)
-            {
-                this->a[i]->die();
-                this->destroy(this->a[i]->state()->id);
-            }
-        }
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->tick();
+        if (this->a[i]->state()->ttl >= this->a[i]->state()->ttl_max
+          || this->a[i]->state()->health <= 0)
+            this->destroy(this->a[i]->state()->id);
+    }
 }
 
 void GameObject_list::draw()
@@ -56,8 +54,7 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     this->num++;
     this->id_c = id+1;
 
-    ItemDrops::PickupObject* obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
-    this->a[id] = obj;
+    //ItemDrops::PickupObject* obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
 
     float texture_scale, mass, damp;
     int texture_index, ttl_max;
@@ -69,35 +66,107 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     //obj->born();
     // data passed to a copy method
     // 
+
+    ObjectPolicyInterface* obj;
     
-    obj->state()->type = type;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
+            obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
             texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
             texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
             mass = ItemDrops::GRENADE_REFILL_MASS;
             ttl_max = ItemDrops::GRENADE_REFILL_TTL;
             damp = ItemDrops::GRENADE_REFILL_DAMP;
+            obj->state()->texture_index = texture_index;
+            obj->state()->texture_scale = texture_scale;
+            obj->state()->mass = mass;
+            obj->state()->ttl_max = ttl_max;
+            obj->state()->damp = damp;
             break;
+            
         case OBJ_TYPE_LASER_REFILL:
+            obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
             texture_index = ItemDrops::LASER_REFILL_TEXTURE_ID;
             texture_scale = ItemDrops::LASER_REFILL_TEXTURE_SCALE;
             mass = ItemDrops::LASER_REFILL_MASS;
             ttl_max = ItemDrops::LASER_REFILL_TTL;
             damp = ItemDrops::LASER_REFILL_DAMP;
+            obj->state()->texture_index = texture_index;
+            obj->state()->texture_scale = texture_scale;
+            obj->state()->mass = mass;
+            obj->state()->ttl_max = ttl_max;
+            obj->state()->damp = damp;
             break;
+            
+        case OBJ_TYPE_TURRET:
+            obj = new Turret(id, x,y,z,mx,my,mz);
+            break;
+            
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
             return NULL;
     };
     
-    obj->state()->texture_index = texture_index;
-    obj->state()->texture_scale = texture_scale;
-    obj->state()->mass = mass;
-    obj->state()->ttl_max = ttl_max;
-    obj->state()->damp = damp;
-    obj->born();
+    obj->state()->type = type;
+
+    this->a[id] = obj;
+
+    return obj;
+}
+
+ObjectPolicyInterface* GameObject_list::create(int id, float x, float y, float z, float mx, float my, float mz, Object_types type)
+{
+    if (this->a[id] != NULL) return NULL;
+    this->num++;
+
+    float texture_scale, mass, damp;
+    int texture_index, ttl_max;
+
+    ObjectPolicyInterface* obj;
+    
+    switch (type)
+    {
+        case OBJ_TYPE_GRENADE_REFILL:
+            obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
+            texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::GRENADE_REFILL_MASS;
+            ttl_max = ItemDrops::GRENADE_REFILL_TTL;
+            damp = ItemDrops::GRENADE_REFILL_DAMP;
+            obj->state()->texture_index = texture_index;
+            obj->state()->texture_scale = texture_scale;
+            obj->state()->mass = mass;
+            obj->state()->ttl_max = ttl_max;
+            obj->state()->damp = damp;
+            break;
+            
+        case OBJ_TYPE_LASER_REFILL:
+            obj = new ItemDrops::PickupObject(id, x,y,z, mx,my,mz);
+            texture_index = ItemDrops::LASER_REFILL_TEXTURE_ID;
+            texture_scale = ItemDrops::LASER_REFILL_TEXTURE_SCALE;
+            mass = ItemDrops::LASER_REFILL_MASS;
+            ttl_max = ItemDrops::LASER_REFILL_TTL;
+            damp = ItemDrops::LASER_REFILL_DAMP;
+            obj->state()->texture_index = texture_index;
+            obj->state()->texture_scale = texture_scale;
+            obj->state()->mass = mass;
+            obj->state()->ttl_max = ttl_max;
+            obj->state()->damp = damp;
+            break;
+            
+        case OBJ_TYPE_TURRET:
+            obj = new Turret(id, x,y,z,mx,my,mz);
+            break;
+            
+        default:
+            printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
+            return NULL;
+    };
+    
+    obj->state()->type = type;
+
+    this->a[id] = obj;
 
     return obj;
 }

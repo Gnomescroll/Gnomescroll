@@ -145,7 +145,7 @@ class object_state_StoC_model
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
         }
-        inline void handle();
+        void handle();
 };
 
 // concrete
@@ -170,7 +170,7 @@ class object_state_vel_StoC_model: public object_state_StoC_model
             pack_float(&my, buff, buff_n, pack);
             pack_float(&mz, buff, buff_n, pack);
         }
-        inline void handle();
+        void handle();
 };
 
 // concrete
@@ -284,6 +284,7 @@ void create_object_message(ObjectState* state, object_create_StoC_model* msg)
     msg->x = p.x;
     msg->y = p.y;
     msg->z = p.z;
+    //printf("create message populated\n");
 }
 
 void create_object_vel_message(ObjectState* state, object_create_StoC_model* msg)
@@ -293,6 +294,7 @@ void create_object_vel_message(ObjectState* state, object_create_StoC_model* msg
     msg->mx = m.x;
     msg->my = m.y;
     msg->mz = m.z;
+    //printf("create object vel populated\n");
 }
 
 void create_object_owner_team_message(ObjectState* state, object_create_StoC_model* msg)
@@ -300,17 +302,19 @@ void create_object_owner_team_message(ObjectState* state, object_create_StoC_mod
     create_object_message(state, msg);
     msg->owner = state->owner;
     msg->team = state->team;
+    //printf("create object owner team message populated\n");
 }
 
 void create_object_owner_team_index_message(ObjectState* state, object_create_StoC_model* msg)
 {
     create_object_owner_team_message(state, msg);
     msg->team_index = state->team_index;
+    //printf("create object owner team index message populated\n");
 }
 
 /* State */
 
-void object_state_message(ObjectState* state, object_state_StoC_model* msg)
+inline void object_state_message(ObjectState* state, object_state_StoC_model* msg)
 {
     msg->id = state->id;
     msg->type = state->type;
@@ -318,13 +322,15 @@ void object_state_message(ObjectState* state, object_state_StoC_model* msg)
     msg->x = p.x;
     msg->y = p.y;
     msg->z = p.z;
+    //printf("state message populated\n");
 }
 
-void object_state_vel_message(ObjectState* state, object_state_StoC_model* msg)
+inline void object_state_vel_message(ObjectState* state, object_state_StoC_model* msg)
 {
     object_state_message(state, msg);
     Vec3 m = state->get_momentum();
     msg->mx = m.x;
     msg->my = m.y;
     msg->mz = m.z;
+    //printf("state message vel populated\n");
 }
