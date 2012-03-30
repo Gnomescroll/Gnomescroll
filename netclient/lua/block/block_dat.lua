@@ -61,32 +61,32 @@ Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
 b = NewSolidBlock(255, "error_block"); -- id, name
 b.texture = iso_texture(error_block);
-b.hud = hud(63, "error.png");
+b.hud = hud(63, error_block);
 
 
 b = NewSolidBlock(1, "soft_rock");
 b.texture = iso_texture(t00,0,1);
-b.hud = hud(1, "blueore.png");
+b.hud = hud(1, t00,0,1);
 
 b = NewSolidBlock(2, "lava");
 b.texture = iso_texture(stone_block);
-b.hud = hud(0, "stone.png");
+b.hud = hud(0, stone_block);
 
 b = NewSolidBlock(3, "terminal_blue");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(1, "blueore.png");
+b.hud = hud(1, t00,0,3);
 
 b = NewSolidBlock(4, "terminal_green");
 b.texture = iso_texture(t00,0,3);
-b.hud = hud(1, "blueore.png");
+b.hud = hud(1, t00,0,3);
 
 b = NewSolidBlock(5, "solar_panel");
 b.texture = iso_texture(t00,1,0);
-b.hud = hud(1, "blueore.png");
+b.hud = hud(1, t00,1,0);
 
 b = NewSolidBlock(6, "holy_stone");
 b.texture = iso_texture(t01,5,4);
-b.hud = hud(1, "blueore.png");
+b.hud = hud(1, t01,5,4);
 
 print("map_load_tiles: done");
 

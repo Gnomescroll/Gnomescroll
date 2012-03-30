@@ -10,12 +10,10 @@ require("block_dat");
 
 local ffi = require("ffi")
 ffi.cdef[[
+void LUA_save_cube_texture();
+
 void set_cube_side_texture(int id, int side, int tex_id);
 void set_cube_hud(int pos, int cube_id, int tex_id);
-
-int LUA_load_cube_texture_sheet(char* filename);
-void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index);
-void LUA_save_cube_texture();
 
 void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
 void LUA_set_block_max_damage(int id, int max_damage);
@@ -61,12 +59,12 @@ for id, block in pairs(block_id_table) do
 	ffi.C.set_cube_side_texture(id, 5, block.texture.e )
 end
 
-for id, tex_sheet in pairs(texture_id_table) do
-	local sheet_id = tex_sheet.texture_sheet_id;
-	local sheet_name = tex_sheet.texture_sheet_name;
-	local xpos = tex_sheet.xpos;
-	local ypos = tex_sheet.ypos;
+for id, block in pairs(block_id_table) do
+	if(block.hud.pos ~= nil) then
+		ffi.C.set_cube_hud(block.hud.pos, id, block.hud.tex);
+	end
 end
+
 
 ffi.C.LUA_save_cube_texture();
 

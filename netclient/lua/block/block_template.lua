@@ -37,8 +37,8 @@ transparent = 1
 ---default values
 BlockHud =
 {
-hud_pos = nil,
-hud_img = nil,
+pos = nil,
+tex = 0,
 }
 
 function BlockHud:new ()
@@ -51,16 +51,13 @@ end
 BlockHudDefault = BlockHud:new()
 
 ---function default_hud()
-
-function hud( pos, img)
-  return
-  {
-    hud_pos = pos,
-    hud_img = img
-  } 
+if( IS_CLIENT ~= 1 ) then
+  function hud( pos, img)
+    return nil
+  end
 end
 
-NoHud = nil;
+NoHud = BlockHudDefault;
 
 ---holds everything else
 Block = 
@@ -69,7 +66,7 @@ Block =
   name = nil,
   properties = nil,
   texture = nil,
-  hud = nil
+  hud = BlockHudDefault
 }
 
 --- register ids
