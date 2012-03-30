@@ -30,6 +30,8 @@ void Base::get_spawn_point(int *spawn, int agent_height)
 void Base::tick()
 {
 #ifdef DC_SERVER
+    float old_z = this->z;
+
     int x,y,z;
     x = (int)this->x;
     y = (int)this->y;
@@ -59,7 +61,9 @@ void Base::tick()
         }
         z++;
     }
-    ServerState::ctf->set_base_position(this->team, this->x, this->y, (float)z);
+
+    if (old_z != (float)z)
+        ServerState::ctf->set_base_position(this->team, this->x, this->y, (float)z);
 #endif
 }
 

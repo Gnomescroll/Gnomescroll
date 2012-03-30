@@ -31,9 +31,6 @@ class ObjectPolicyInterface
  * Composes composed functions,
  * abstract interface and state into a single object */
 
-//typedef void (*ObjectCreateMessage)(ObjectState* state, object_create_StoC_model*);
-//typedef void (*ObjectStateMessage)(ObjectState* state, object_state_StoC_model*);
-
 template
 <
     class Wrapper,

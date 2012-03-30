@@ -1,11 +1,9 @@
 #pragma once
 
 #include <defines.h>
+#include <c_lib/t_map/constants.hpp>
 
-// deprecate in favor of MapDimension map_dim
-const int XMAX = 512;
-const int YMAX = 512;
-const int ZMAX = 128;
+#include <c_lib/t_map/t_map_class.hpp>
 
 struct MapDimension
 {
@@ -19,6 +17,8 @@ extern struct MapDimension map_dim;
 namespace t_map
 {
 
+extern Terrain_map* main_map;
+
 typedef enum TerrainModificationAction
 {
     TMA_PICK=0,
@@ -27,16 +27,6 @@ typedef enum TerrainModificationAction
     TMA_LASER,
     TMA_TURRET
 } TerrainModificationAction;
-
-
-const int TERRAIN_MAP_HEIGHT = 128;
-const int TERRAIN_CHUNK_WIDTH = 16;
-
-const int MAP_WIDTH = 512;
-const int MAP_HEIGHT = 512;
-
-const int MAP_CHUNK_WIDTH = MAP_WIDTH/TERRAIN_CHUNK_WIDTH;
-const int MAP_CHUNK_HEIGHT = MAP_HEIGHT/TERRAIN_CHUNK_WIDTH;
  
 void init_t_map() GNOMESCROLL_API;
 
@@ -46,8 +36,15 @@ void init_for_draw() GNOMESCROLL_API;
 
 class Terrain_map* get_map();
 
-inline int get(int x, int y, int z);
-inline void set(int x, int y, int z, int value);
+inline int get(int x, int y, int z)
+{
+    return main_map->get_block(x,y,z);
+}
+
+inline void set(int x, int y, int z, int value)
+{
+    main_map->set_block(x,y,z,value);
+}
 
 int apply_damage(int x, int y, int z, int dmg);
 #ifdef DC_SERVER

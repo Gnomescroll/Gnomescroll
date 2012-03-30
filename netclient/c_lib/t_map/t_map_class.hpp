@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/t_map/t_map.hpp>
+#include <c_lib/t_map/constants.hpp>
 
 namespace t_map
 {

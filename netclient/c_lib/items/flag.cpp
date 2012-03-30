@@ -34,6 +34,8 @@ Flag::~Flag()
 void Flag::tick()
 {
 #ifdef DC_SERVER
+    float old_z = this->z;
+
     int x,y,z;
     x = (int)this->x;
     y = (int)this->y;
@@ -63,7 +65,8 @@ void Flag::tick()
         }
         z++;
     }
-    ServerState::ctf->set_flag_position(this->team, this->x, this->y, (float)z);
+    if (old_z != (float)z)
+        ServerState::ctf->set_flag_position(this->team, this->x, this->y, (float)z);
 #endif
 }
 

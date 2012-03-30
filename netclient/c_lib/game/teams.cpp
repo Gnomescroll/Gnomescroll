@@ -15,23 +15,22 @@ base_score(0)
 void Team::init(int id)
 {
     this->id = id;    
-    for(unsigned int i=0; i<TEAM_MAX_PLAYERS; i++) {
+    for(unsigned int i=0; i<TEAM_MAX_PLAYERS; i++)
         members[i] = -1;    // load default agent values
-    }
     if (!strcmp(this->name, "default-team-name"))   // name wasnt set, update name with id
-    {
         sprintf(this->name, "default-team-name%1.d", id);
-    }
 }
 
-void Team::set_name(char* name) {
+void Team::set_name(char* name)
+{
     if (strlen(name) > TEAM_NAME_MAX_LENGTH)
         name[TEAM_NAME_MAX_LENGTH+1] = '\0';
     strcpy(this->name, name);
     printf("Team name is %s\n", name);
 }
 
-void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
+void Team::set_color(unsigned char r, unsigned char g, unsigned char b)
+{
     this->r = r;
     this->g = g;
     this->b = b;
@@ -45,27 +44,26 @@ void Team::set_color(unsigned char r, unsigned char g, unsigned char b) {
     #endif
 }
 
-bool Team::full() {
-    if (this->n == TEAM_MAX_PLAYERS) {
-        printf("TEAM IS FULL!\n");
+bool Team::full()
+{
+    if (this->n == TEAM_MAX_PLAYERS)
         return true;
-    }
     return false;
 }
 
-bool Team::has_agent(int id) {
-    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++) {
-        if (members[i] == id) {
-            return true;
-        }
-    }
+bool Team::has_agent(int id)
+{
+    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++)
+        if (members[i] == id) return true;
     return false;
 }
 
 // returns false if team full
-bool Team::add_agent(int id) {
+bool Team::add_agent(int id)
+{
     bool added = false;
-    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++) {
+    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++)
+    {
         if (members[i] != -1) continue; // spot taken
         members[i] = id;
         added = true;
@@ -76,9 +74,11 @@ bool Team::add_agent(int id) {
 }
 
 // returns false if agent wasnt found in team
-bool Team::remove_agent(int id) {
+bool Team::remove_agent(int id)
+{
     bool removed = false;
-    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++) {
+    for (unsigned int i=0; i<TEAM_MAX_PLAYERS; i++)
+    {
         if (members[i] != id) continue;
         members[i] = -1;
         removed = true;
@@ -90,7 +90,8 @@ bool Team::remove_agent(int id) {
 
 #ifdef DC_SERVER
 
-void Team::update_client(int client_id) {
+void Team::update_client(int client_id)
+{
     // send color
     TeamColor_StoC msg;
     msg.team = id;
@@ -116,27 +117,25 @@ void NoTeam::init(int id)
     viewers = true;
     n = 0;
     this->id = id;
-    for(unsigned int i=0; i<GAME_MAX_PLAYERS; i++) {
-        members[i] = -1;    // load default agent values
-    }
+    for(unsigned int i=0; i<GAME_MAX_PLAYERS; members[i++] = -1); // load default agent values
     char name[] = "Viewers";
     strcpy(this->name, name);
 }
 
 // return true if agent in team
-bool NoTeam::has_agent(int id) {
-    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++) {
-        if (members[i] == id) {
-            return true;
-        }
-    }
+bool NoTeam::has_agent(int id)
+{
+    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++)
+        if (members[i] == id) return true;
     return false;
 }
 
 // returns false if team full
-bool NoTeam::add_agent(int id) {
+bool NoTeam::add_agent(int id)
+{
     bool added = false;
-    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++) {
+    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++)
+    {
         if (members[i] != -1) continue;
         members[i] = id;
         added = true;
@@ -147,9 +146,11 @@ bool NoTeam::add_agent(int id) {
 }
 
 // returns true if removed
-bool NoTeam::remove_agent(int id) {
+bool NoTeam::remove_agent(int id)
+{
     bool removed = false;
-    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++) {
+    for (unsigned int i=0; i<GAME_MAX_PLAYERS; i++)
+    {
         if (members[i] != id) continue;
         members[i] = -1;
         removed = true;

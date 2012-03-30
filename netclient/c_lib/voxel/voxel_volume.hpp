@@ -48,8 +48,13 @@ class Voxel_volume
 
     inline int voxel_ray_cast(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float* distance, int* collision);
     
-    inline struct Vec3 get_center();
-    inline void get_center(float *f);
+    inline void get_center(float *v)
+    {
+        v[0] = world_matrix.v[3].f[0];
+        v[1] = world_matrix.v[3].f[1];
+        v[2] = world_matrix.v[3].f[2];
+    }
+    inline struct Vec3 get_center(){ return world_matrix.v[3]; }
 
 #ifdef DC_CLIENT
     class Voxel_render_list* voxel_render_list;

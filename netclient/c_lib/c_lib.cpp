@@ -112,6 +112,7 @@
 
 /* map */
 
+#include <c_lib/t_map/constants.hpp>
 #include <c_lib/t_map/t_map_class.cpp>
 #include <c_lib/t_map/t_map.cpp>
 #include <c_lib/t_map/t_properties.cpp>

@@ -65,7 +65,7 @@ class Net_message {
 
         OBJECT_POOL_OBJECT_MACRO
 
-    static inline class Net_message* acquire(int length);
+    static class Net_message* acquire(int length) __attribute((always_inline));
 
     void inline decrement();
 

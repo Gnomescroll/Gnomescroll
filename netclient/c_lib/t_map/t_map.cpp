@@ -84,17 +84,6 @@ class Terrain_map* get_map()
     return main_map;
 }
 
-
-int get(int x, int y, int z)
-{
-    return main_map->get_block(x,y,z);
-}
-
-void set(int x, int y, int z, int value)
-{
-    main_map->set_block(x,y,z,value);
-}
-
 int apply_damage(int x, int y, int z, int dmg)
 {
     #ifdef DC_CLIENT
