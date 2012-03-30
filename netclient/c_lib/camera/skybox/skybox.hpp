@@ -23,6 +23,11 @@ struct STAR
 	float x;
 	float y;
 	float z;
+
+	float tx_min;
+	float ty_min;
+	float tx_max;
+	float ty_max;
 };
 
 struct STAR* star_list;
@@ -75,6 +80,11 @@ void generate_sky()
 		s.brightness = 0.2 + (0.8)*randf();
 		s.size = 1 + 3*randf();
 		s.type = rand()%16;
+
+	    s.tx_min = (float)(s.type%4)* (1.0/4.0);
+	    s.tx_max = tx_min + (1.0/4.0);
+	    s.ty_min = (float)(s.type/4)* (1.0/4.0);
+	    s.ty_max = ty_min + (1.0/4.0);
 
 		star_list[i] = s;
 
@@ -182,6 +192,8 @@ void draw()
 		v.y = s.y + cy;
 		v.z = s.z + cz;
 
+		if(!point_fulstrum_test(v.x, v.y, v.z)) continue;
+
 	    Vec3 up = vec3_init(
 	        model_view_matrix[0]*scale,
 	        model_view_matrix[4]*scale,
@@ -194,27 +206,27 @@ void draw()
 	    );
 
 
-	    tx_min = (float)(s.type%4)* (1.0/4.0);
-	    tx_max = tx_min + (1.0/4.0);
-	    ty_min = (float)(s.type/4)* (1.0/4.0);
-	    ty_max = ty_min + (1.0/4.0);
+	    //tx_min = (float)(s.type%4)* (1.0/4.0);
+	    //tx_max = tx_min + (1.0/4.0);
+	    //ty_min = (float)(s.type/4)* (1.0/4.0);
+	    //ty_max = ty_min + (1.0/4.0);
 
 
 
 	    Vec3 p = vec3_sub(v, vec3_add(right, up));
-	    glTexCoord2f(tx_min,ty_max);
+	    glTexCoord2f(s.tx_min,s.ty_max);
 	    glVertex3f(p.x, p.y, p.z);
 
 	    p = vec3_add(v, vec3_sub(up, right));
-	    glTexCoord2f(tx_max,ty_max);
+	    glTexCoord2f(s.tx_max,s.ty_max);
 	    glVertex3f(p.x, p.y, p.z);
 
 	    p = vec3_add(v, vec3_add(up, right));
-	    glTexCoord2f(tx_max,ty_min);
+	    glTexCoord2f(s.tx_max,s.ty_min);
 	    glVertex3f(p.x, p.y, p.z);
 
 	    p = vec3_add(v, vec3_sub(right, up));
-	    glTexCoord2f(tx_min,ty_min);
+	    glTexCoord2f(s.tx_min,s.ty_min);
 	    glVertex3f(p.x, p.y, p.z);
 
 	}
