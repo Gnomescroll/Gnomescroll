@@ -314,6 +314,12 @@ namespace t_map
 
         SDL_Surface* s = TextureSheetLoader::CubeTexture;
 
+        if(s == NULL)
+        {
+            printf("init_map_3d_texture_comptability() error \n");
+        }
+
+
         glEnable(GL_TEXTURE_2D);
 
         if(block_textures_compatibility == 0)
@@ -345,7 +351,7 @@ namespace t_map
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, ANISOTROPY_LARGEST_SUPPORTED);
         }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTexture->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
 
@@ -355,6 +361,11 @@ namespace t_map
     {
 
         SDL_Surface* s = TextureSheetLoader::CubeTexture;
+
+        if(s == NULL)
+        {
+            printf("init_block_texture_normal() error \n");
+        }
 
         glEnable(GL_TEXTURE_2D);
 
@@ -369,13 +380,12 @@ namespace t_map
 
         //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-
         glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
-        GLuint internalFormat = GL_BGRA; //GL_RGBA;
+        GLuint internalFormat = GL_RGBA; //GL_RGBA;
         GLuint format = GL_RGBA;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, TextureSheetLoader::CubeTexture->pixels ); //2nd parameter is level
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels ); //2nd parameter is level
         
         glDisable(GL_TEXTURE_2D);
 

@@ -18,8 +18,7 @@ namespace HudCubeSelector
 void CubeSelector::init()
 {
     if (this->inited) return;
-    int i;
-    for(i=0;i<256;i++)
+    for(int i=0;i<256;i++)
     {
         cubes[i].cube_id = 255;
         cubes[i].tex_id = 0;
@@ -27,11 +26,15 @@ void CubeSelector::init()
     this->inited = 1;
 }
 
-void CubeSelector::load_cube_property(int pos, int cube_id, int tex_id)
+void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
 {
-    //printf("loading cube property: %d %d %d\n", pos, cube_id, tex_id);
+    printf("set block selector: %d %d %d\n", pos, cube_id, tex_id);
     if(pos == -1 || tex_id == -1) return;
-    if(pos < 0 || pos >= 64) return;
+    if(pos < 0 || pos >= 64)
+    {
+        printf("CubeSelector::load_cube_property error!\n");
+        return;
+    }
     cubes[pos].cube_id = cube_id;
     cubes[pos].tex_id = tex_id;
 }
@@ -243,5 +246,5 @@ void init()
 
 void set_cube_hud(int pos, int cube_id, int tex_id)
 {
-    HudCubeSelector::cube_selector.load_cube_property(pos, cube_id, tex_id);
+    HudCubeSelector::cube_selector.set_block_selector(pos, cube_id, tex_id);
 }

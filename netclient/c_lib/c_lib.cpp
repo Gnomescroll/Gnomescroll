@@ -229,6 +229,7 @@ int init_c_lib() {
     init_image_loader();
     TextureSheetLoader::init();
     t_map::init_t_map();
+    HudCubeSelector::init();
     lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
@@ -246,7 +247,6 @@ int init_c_lib() {
     HudInventory::init();
     HudEquipment::init();
     HudReticle::init();
-    HudCubeSelector::init();
     Compass::init();
     Hud::init();
     //vn::init();
