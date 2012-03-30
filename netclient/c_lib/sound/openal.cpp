@@ -416,7 +416,7 @@ static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, f
 
     // get free source
     int source_id = get_free_source();
-    printf("source_id = %d\n", source_id);
+    //printf("source_id = %d\n", source_id);
     if (source_id < 0)
         return -1;
 
@@ -451,7 +451,7 @@ int play_2d_sound(char* fn)
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-    printf("function name %s\n", fn);
+    //printf("function name %s\n", fn);
 
     if (sound_buffer == NULL)
         return -1;
@@ -484,7 +484,7 @@ int play_3d_sound(char* fn, float x, float y, float z, float vx, float vy, float
 
     // lookup buffer from file
     GS_SoundBuffer* sound_buffer = get_sound_buffer_from_function_name(fn);
-    printf("function name %s\n", fn);
+    //printf("function name %s\n", fn);
 
     if (sound_buffer == NULL)
         return -1;
