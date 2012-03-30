@@ -35,8 +35,8 @@ class Main:
         init_c_lib.load_options(opts)
         init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
 
-        init_c_lib.init_terrain()
-        init_c_lib.init_cube_properties(cube.dat)
+        #init_c_lib.init_terrain()
+        #init_c_lib.init_cube_properties(cube.dat)
 
     def init_net(self):
         START_CLOCK()

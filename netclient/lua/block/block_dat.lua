@@ -20,12 +20,15 @@ if (IS_CLIENT == 0) then
 	function register_spritesheet()
 		return nil
 	end
+	function register_texture()
+		return nil
+	end
 end
 
 --- convenience method
 
 function iso_texture(spritesheet, xpos, ypos)
-	if(IS_CLIENT == 0) then return end;
+	if(IS_CLIENT == 0) then return {t = nil, b = nil, n = nil, s = nil, w = nil, e = nil} end;
 	local id;
 	if (type(spritesheet) == "number" and xpos == nil and ypos == nil) then
 		id = spritesheet
