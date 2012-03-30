@@ -31,4 +31,4 @@ const float TURRET_TARGET_LOCK_CHANCE = 0.85f;  // likelihood of acquiring a tar
 const float TURRET_EXPLOSION_RADIUS = 2.0f;
 const int TURRET_EXPLOSION_DAMAGE = 40;
 const int TURRET_LASER_VOXEL_DAMAGE_RADIUS = 2;
-const float TURRET_LASER_BIAS = 1.8f;
+const float TURRET_LASER_BIAS = 1.0f;

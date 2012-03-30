@@ -102,7 +102,7 @@ class Turret: public TurretObjectParent, public TargetAcquisitionComponent
             this->_state.sight_range = TURRET_SIGHT_RANGE;
             this->_state.accuracy_bias = TURRET_LASER_BIAS;
             this->_state.target_acquisition_probability = TURRET_TARGET_LOCK_CHANCE;
-            this->_state.attack_enemies = false;
+            this->_state.attack_enemies = true;
             this->_state.attack_random = true;
             this->_state.suicidal = false;
             this->_state.frozen_vox = true;
