@@ -126,30 +126,6 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 
 VoxDat turret_vox_dat;
 
-//TODO -- this fancy set position
-//void Turret::set_position(float x, float y, float z)
-//{
-    //if (this->x == x && this->y == y && this->z == z) return;
-
-    //this->x = x;
-    //this->y = y;
-    //this->z = z;
-    
-    //this->vox->thaw();
-    //this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
-    //this->vox->freeze();
-
-    //#if DC_SERVER
-    //object_state_StoC msg;
-    //msg.x = this->x;
-    //msg.y = this->y;
-    //msg.z = this->z;
-    //msg.id = this->id;
-    //msg.type = this->type;
-    //msg.broadcast();
-    //#endif
-//}
-
 /* Turret list */
 
 //TODO -- implement this for general objects

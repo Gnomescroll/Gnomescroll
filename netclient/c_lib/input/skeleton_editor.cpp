@@ -157,7 +157,6 @@ void raycast_to_part()
 
         case OBJ_TYPE_TURRET:
             vox_dat = &turret_vox_dat;
-            //obj = ClientState::turret_list->get(id);
             obj = ClientState::object_list->get(id);
             if (obj==NULL) return;
             vox = ((Turret*)obj)->state()->get_vox();

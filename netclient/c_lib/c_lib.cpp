@@ -251,7 +251,6 @@ int init_c_lib() {
     Hud::init();
     //vn::init();
 
-    ClientState::init_lists();
     ClientState::init();
 
     init_vox_dats();
@@ -297,7 +296,6 @@ void close_c_lib() {
     teardown_chat_client();
 
     ClientState::teardown();
-    ClientState::teardown_lists();
     teardown_voxel_volume();
     HudText::teardown();
 

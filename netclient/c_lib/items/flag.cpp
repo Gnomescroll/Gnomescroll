@@ -2,7 +2,8 @@
 
 VoxDat flag_vox_dat;
 
-void Flag::set_position(float x, float y, float z) {
+void Flag::set_position(float x, float y, float z)
+{
     this->x = x;
     this->y = y;
     this->z = z;

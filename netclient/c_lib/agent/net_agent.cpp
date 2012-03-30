@@ -741,7 +741,6 @@ inline void hitscan_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            //turret = ServerState::turret_list->get(id);
             turret = (Turret*)ServerState::object_list->get(id);
             if (turret == NULL) return;
 
@@ -912,7 +911,6 @@ inline void melee_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            //turret = ServerState::turret_list->get(id);
             turret = (Turret*)ServerState::object_list->get(id);
             if (turret == NULL) return;
 
@@ -1107,16 +1105,11 @@ inline void place_turret_CtoS::handle()
     //if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return; // TODO
 
     a->status.purchase(OBJ_TYPE_TURRET);
-    //Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,new_z);
     Turret* t = (Turret*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, OBJ_TYPE_TURRET);
     if (t==NULL) return;
     t->state()->set_team(a->status.team);    // TODO -- set properties before born() is called
     t->state()->set_owner(a->id);
     t->born();
-    //t->init_vox();
-    //object_create_owner_team_StoC msg;
-    //t->create_message(&msg);
-    //msg.broadcast();
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 
