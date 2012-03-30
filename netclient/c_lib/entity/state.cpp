@@ -13,27 +13,6 @@ unsigned int ObjectState::get_kill_reward(int owner, int team)
     return 0;
 }
 
-int ObjectState::get_team()
-{
-    return this->team;
-}
-
-void ObjectState::set_team(int team)
-{
-    this->team = team;
-}
-
-int ObjectState::get_owner()
-{
-    return this->owner;
-}
-
-void ObjectState::set_owner(int owner)
-{
-    switch_agent_ownership(this->type, this->owner, owner);
-    this->owner = owner;
-}
-
 int ObjectState::take_damage(int dmg)
 {
     if (this->health <= 0) return 0;

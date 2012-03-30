@@ -126,31 +126,29 @@ class ObjectState: public ObjectData
     unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
-    int get_team();
-    void set_team(int team);
-    
-    int get_owner();
-    void set_owner(int owner);
+    int get_team()
+    {
+        return this->team;
+    }
+
+    void set_team(int team)
+    {
+        this->team = team;
+    }
+
+    int get_owner()
+    {
+        return this->owner;
+    }
+
+    void set_owner(int owner)
+    {
+        switch_agent_ownership(this->type, this->owner, owner);
+        this->owner = owner;
+    }
 
     void set_position(float x, float y, float z);
     
-    ObjectState()
-    : ObjectData(),
-    id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
-    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
-    broadcast_death(false), picked_up_by(-1), fire_tick(0)
-    {
-        this->position.x = 0;
-        this->position.y = 0;
-        this->position.z = 0;
-    }
-
-    ~ObjectState()
-    {
-        if (this->vp != NULL)
-            delete this->vp;
-    }
-
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
         if (this->vp == NULL)
@@ -172,4 +170,28 @@ class ObjectState: public ObjectData
         else
             return vec3_init(0,0,0);
     }
+
+    Voxel_model* get_vox()
+    {
+        return this->vox;
+    }
+
+    ObjectState()
+    : ObjectData(),
+    id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
+    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
+    broadcast_death(false), picked_up_by(-1), fire_tick(0)
+    {
+        this->position.x = 0;
+        this->position.y = 0;
+        this->position.z = 0;
+    }
+
+    ~ObjectState()
+    {
+        if (this->vp != NULL)
+            delete this->vp;
+    }
 };
+
+

@@ -527,9 +527,11 @@ inline void alter_item_ownership_StoC::handle()
             ((Spawner*)obj)->set_owner(owner);
             break;
         case OBJ_TYPE_TURRET:
-            obj = ClientState::turret_list->get(id);
+            //obj = ClientState::turret_list->get(id);
+            obj = ClientState::object_list->get(id);
             if (obj == NULL) return;
-            ((Turret*)obj)->set_owner(owner);
+            //((Turret*)obj)->set_owner(owner);
+            ((ObjectPolicyInterface*)obj)->state()->set_owner(owner);
             break;
         default:
             printf("alter_item_ownership_StoC::handle() -- unhandled item type %d\n", type);
@@ -739,18 +741,20 @@ inline void hitscan_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            turret = ServerState::turret_list->get(id);
+            //turret = ServerState::turret_list->get(id);
+            turret = (Turret*)ServerState::object_list->get(id);
             if (turret == NULL) return;
 
-            if ((turret->get_team() == a->status.team && turret->get_owner() != NO_AGENT)
-              && turret->get_owner() != a->id)
+            if ((turret->state()->get_team() == a->status.team && turret->state()->get_owner() != NO_AGENT)
+              && turret->state()->get_owner() != a->id)
                 return; // teammates cant kill turrets
                 
             // apply damage
-            dmg_health = turret->take_damage(turret_dmg);
+            dmg_health = turret->state()->take_damage(turret_dmg);
             if (dmg_health <= 0)
             {
-                int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                //int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                int coins = turret->state()->get_kill_reward(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;
@@ -908,18 +912,20 @@ inline void melee_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_TURRET:
-            turret = ServerState::turret_list->get(id);
+            //turret = ServerState::turret_list->get(id);
+            turret = (Turret*)ServerState::object_list->get(id);
             if (turret == NULL) return;
 
-            if ((turret->get_team() == a->status.team && turret->get_owner() != NO_AGENT)
-            && turret->get_owner() != a->id)
+            if ((turret->state()->get_team() == a->status.team && turret->state()->get_owner() != NO_AGENT)
+            && turret->state()->get_owner() != a->id)
                 return; // teammates cant kill turrets
                 
             // apply damage
-            dmg_health = turret->take_damage(turret_dmg);
+            dmg_health = turret->state()->take_damage(turret_dmg);
             if (dmg_health <= 0)
             {
-                int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                //int coins = turret->get_coins_for_kill(a->id, a->status.team);
+                int coins = turret->state()->get_kill_reward(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;
@@ -1093,19 +1099,20 @@ inline void place_turret_CtoS::handle()
     }
     if (a->status.team == 0) return;
     if (!a->status.can_purchase(OBJ_TYPE_TURRET)) return;
-    if (ServerState::turret_list->full()) return;
-    if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return;
+    //if (ServerState::turret_list->full()) return; // TODO
+    //if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return; // TODO
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return;
+    //if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return; // TODO
 
     a->status.purchase(OBJ_TYPE_TURRET);
-    Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,new_z);
+    //Turret* t = ServerState::turret_list->create(x+0.5f,y+0.5f,new_z);
+    Turret* t = (Turret*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, OBJ_TYPE_TURRET);
     if (t==NULL) return;
-    t->set_team(a->status.team);
-    t->set_owner(a->id);
-    t->init_vox();
+    t->state()->set_team(a->status.team);    // TODO -- set properties before born() is called
+    t->state()->set_owner(a->id);
+    //t->init_vox();
     object_create_owner_team_StoC msg;
     t->create_message(&msg);
     msg.broadcast();
