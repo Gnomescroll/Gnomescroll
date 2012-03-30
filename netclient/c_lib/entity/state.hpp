@@ -3,6 +3,8 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
+#include <c_lib/items/constants.hpp>
+#include <c_lib/ray_trace/handlers.hpp>
 
 typedef enum
 {
@@ -54,6 +56,7 @@ class ObjectData
         bool attack_enemies;    // TODO -- use bit mask flags
         bool attack_random;
         bool suicidal;  // can kill owner
+        struct Hitscan::AttackerProperties attacker_properties;
 
         // voxel
         bool frozen_vox;
@@ -178,19 +181,20 @@ class ObjectState: public ObjectData
 
     ObjectState()
     : ObjectData(),
-    id(-1), vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
+    id(-1), team(0), team_index(TEAM_INDEX_NONE), owner(NO_AGENT), health(1),
+    vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {
-        this->position.x = 0;
-        this->position.y = 0;
-        this->position.z = 0;
+        this->set_position(0,0,0);
     }
 
     ~ObjectState()
     {
         if (this->vp != NULL)
             delete this->vp;
+        if (this->vox != NULL)
+            delete this->vox;
     }
 };
 

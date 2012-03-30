@@ -38,22 +38,6 @@ class DiePickup: public Super
     }
 };
 
-// TODO: move
-template <class Super, class Object>
-class BornCreateVel: public Super
-{
-    public:
-    inline void born(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        object_create_vel_StoC msg;
-        object->create_message(&msg);
-        msg.broadcast();
-        #endif
-        Super::born(state, object);
-    }
-};
-
 template <class Super, class Object>
 class TickPickup: public Super
 {
@@ -97,7 +81,7 @@ typedef TickVerletBounce < TickPickup < TickTTL < NoTick(PickupObject) ,PickupOb
 typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
     BillboardSpriteDraw;
 
-typedef BornCreateVel < NoBorn(PickupObject) ,PickupObject>
+typedef BornCreateVelMessage < NoBorn(PickupObject) ,PickupObject>
     PickupBorn;
 
 typedef DiePickup < NoDie(PickupObject) ,PickupObject>

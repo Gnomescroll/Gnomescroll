@@ -21,7 +21,6 @@ class BornTeamVox: public Super
     protected:
     inline void born(ObjectState* state, Object* object)
     {
-        if (state->team == 0) printf("WARNING Turret::init_vox() -- team not set\n");
         state->vox = new Voxel_model(state->vox_dat, state->id, state->type, state->team);
         Super::born(state, object);
     }
@@ -69,3 +68,68 @@ class BornUpdateFrozenVox: public Super
         Super::born(state, object);
     }
 };
+
+// TODO -- find way to make this type agnostic
+template <class Super, class Object>
+class BornCreateMessage: public Super
+{
+    protected:
+    inline void born(ObjectState* state, Object* object)
+    {
+        #if DC_SERVER
+        object_create_StoC msg;
+        object->create_message(&msg);
+        msg.broadcast();
+        printf("sent object create message\n");
+        #endif
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornCreateVelMessage: public Super
+{
+    protected:
+    inline void born(ObjectState* state, Object* object)
+    {
+        #if DC_SERVER
+        object_create_vel_StoC msg;
+        object->create_message(&msg);
+        msg.broadcast();
+        #endif
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornCreateOwnerTeamMessage: public Super
+{
+    protected:
+    inline void born(ObjectState* state, Object* object)
+    {
+        #if DC_SERVER
+        object_create_owner_team_StoC msg;
+        object->create_message(&msg);
+        msg.broadcast();
+        #endif
+        Super::born(state, object);
+    }
+};
+
+template <class Super, class Object>
+class BornCreateOwnerTeamIndexMessage: public Super
+{
+    protected:
+    inline void born(ObjectState* state, Object* object)
+    {
+        #if DC_SERVER
+        object_create_owner_team_index_StoC msg;
+        object->create_message(&msg);
+        msg.broadcast();
+        #endif
+        Super::born(state, object);
+    }
+};
+
+
+

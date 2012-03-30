@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/t_map/t_map.hpp>
+
 template <class Super, class Object>
 class TickVerletBounce: public Super
 {
@@ -35,9 +37,9 @@ class TickStayOnGround: public Super
         int x = (int)p.x;
         int y = (int)p.y;
         int z = (int)p.z;
-        if (isSolid(_get(x,y,z)))
+        if (isSolid(t_map::get(x,y,z)))
         {   // move up
-            while (isSolid(_get(x,y,++z)))
+            while (isSolid(t_map::get(x,y,++z)))
                 if (z >= map_dim.z)
                 {
                     z = map_dim.z;
@@ -46,7 +48,7 @@ class TickStayOnGround: public Super
         }
         else
         {   // fall down
-            while (!isSolid(_get(x,y,--z)))
+            while (!isSolid(t_map::get(x,y,--z)))
                 if (z<=0)
                 {
                     z = 0;

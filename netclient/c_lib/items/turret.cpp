@@ -23,7 +23,12 @@ void turret_state(object_state_StoC_model* msg)
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
     //Turret* t = ClientState::turret_list->create(msg->id, msg->x, msg->y, msg->z);
-    Turret* t = (Turret*)ClientState::object_list->create((int)msg->id, msg->x, msg->y, msg->z, 0,0,0, OBJ_TYPE_AGENT);
+    Turret* t = (Turret*)ClientState::object_list->create(
+        (int)msg->id,
+        msg->x, msg->y, msg->z,
+        0,0,0,
+        (Object_types)msg->type
+    );
     if (t == NULL)
     {
         printf("WARNING turret_create() -- could not create turret %d\n", msg->id);
@@ -31,6 +36,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     }
     t->state()->set_team(msg->team);
     t->state()->set_owner(msg->owner);
+    t->born();
     //t->init_vox();// TODO
     //Sound::turret_placed(x,y,z,0,0,0);
     //system_message->turret_created(t);
@@ -503,16 +509,8 @@ void TargetAcquisitionComponent::acquire_target(ObjectState* state)
         agent, range
     );
 
-    // attacker properties (will be from dat)
-    struct Hitscan::AttackerProperties attacker_properties;
-    attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
-    attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
-    attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
-    attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
-    attacker_properties.terrain_modification_action = t_map::TMA_LASER;
-
     // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, attacker_properties);
+    Hitscan::handle_hitscan_target(t, state->attacker_properties);
 
     // send firing packet
     Hitscan::broadcast_object_fired(state->id, state->type, t);

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <c_lib/ray_trace/hitscan.hpp>
+#include <c_lib/t_map/t_map.hpp>
+
 namespace Hitscan
 {
 

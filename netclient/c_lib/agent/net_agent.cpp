@@ -1112,10 +1112,11 @@ inline void place_turret_CtoS::handle()
     if (t==NULL) return;
     t->state()->set_team(a->status.team);    // TODO -- set properties before born() is called
     t->state()->set_owner(a->id);
+    t->born();
     //t->init_vox();
-    object_create_owner_team_StoC msg;
-    t->create_message(&msg);
-    msg.broadcast();
+    //object_create_owner_team_StoC msg;
+    //t->create_message(&msg);
+    //msg.broadcast();
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 

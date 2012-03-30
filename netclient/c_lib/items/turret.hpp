@@ -73,13 +73,13 @@ typedef TickStayOnGround < TickTargetAcquisition < NoTick(Turret), Turret>,Turre
 
 typedef UpdateFrozenVox < NoUpdate(Turret), Turret> TurretUpdate;
 
-typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < NoBorn(Turret), Turret>,Turret>,Turret>
+typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < BornCreateOwnerTeamMessage < NoBorn(Turret), Turret>,Turret>,Turret>,Turret>
     TurretBorn;
 
-typedef DieExplode < NoDie(Turret), Turret> TurretDie;
+typedef DieExplode < DieBroadcast < DieRevokeOwner < DieTeamItemAnimation < NoDie(Turret), Turret>,Turret>,Turret>,Turret> TurretDie;
 
 typedef ObjectPolicy
-<Turret, TurretTick, NoDraw(Turret), TurretUpdate, TurretBorn, TurretDie, create_object_message, object_state_message >
+<Turret, TurretTick, NoDraw(Turret), TurretUpdate, TurretBorn, TurretDie, create_object_owner_team_message, object_state_message >
 TurretObjectParent;
 
 class Turret: public TurretObjectParent, public TargetAcquisitionComponent
@@ -89,7 +89,7 @@ class Turret: public TurretObjectParent, public TargetAcquisitionComponent
         : TurretObjectParent(this), TargetAcquisitionComponent()
         {
             this->_state.id = id;
-            this->_state.create_particle(x,y,z,mx,my,mz);
+            this->_state.position = vec3_init(x,y,z);
             this->_state.camera_height = TURRET_CAMERA_HEIGHT;
             this->_state.broadcast_state_change = true;
             this->_state.blow_up_on_death = true;
@@ -106,7 +106,14 @@ class Turret: public TurretObjectParent, public TargetAcquisitionComponent
             this->_state.attack_random = true;
             this->_state.suicidal = false;
             this->_state.frozen_vox = true;
+            this->_state.vox_dat = &turret_vox_dat;
             this->_state.type = OBJ_TYPE_TURRET;
+            this->_state.health = TURRET_HEALTH;
+            this->_state.attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
+            this->_state.attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
+            this->_state.attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
+            this->_state.attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
+            this->_state.attacker_properties.terrain_modification_action = t_map::TMA_LASER;
         }
 };
 

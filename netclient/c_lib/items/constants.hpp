@@ -14,6 +14,9 @@ const int SPAWNER_HEALTH = 300;
 const float SPAWNER_HEIGHT = 1.9f;
 const int BASE_SPAWN_ID = 255;
 
+// Team indexing
+const unsigned int TEAM_INDEX_NONE = 255;
+const unsigned int TEAM_INDEX_MAX = (TEAM_INDEX_NONE+1) / N_TEAMS;
 
 // Turrets
 const int MAX_TURRETS = 256;

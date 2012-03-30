@@ -8,15 +8,13 @@ void GameObject_list::tick()
 {
     if (this->num == 0) return;
     for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL)
-        {
-            this->a[i]->tick();
-            if (this->a[i]->state()->ttl >= this->a[i]->state()->ttl_max)
-            {
-                this->a[i]->die();
-                this->destroy(this->a[i]->state()->id);
-            }
-        }
+    {
+        if (this->a[i] == NULL) continue;
+        this->a[i]->tick();
+        if (this->a[i]->state()->ttl >= this->a[i]->state()->ttl_max
+          || this->a[i]->state()->health <= 0)
+            this->destroy(this->a[i]->state()->id);
+    }
 }
 
 void GameObject_list::draw()
@@ -111,7 +109,6 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
     };
     
     obj->state()->type = type;
-    obj->born();    // TODO -- sometimes need to be initialized with data after create(), and this should be called later
 
     this->a[id] = obj;
 
@@ -168,7 +165,6 @@ ObjectPolicyInterface* GameObject_list::create(int id, float x, float y, float z
     };
     
     obj->state()->type = type;
-    obj->born();    // TODO -- sometimes need to be initialized with data after create(), and this should be called later
 
     this->a[id] = obj;
 
