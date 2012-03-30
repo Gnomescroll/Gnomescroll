@@ -258,7 +258,7 @@ def build(bld):
     common_libraries = []
     
     #lua_libraries = ['lua5.1'] #['luajit51'] #['lua50']
-    lua_libraries = ['luajit51']
+    #lua_libraries = ['luajit51']
 
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
     if using_fmod:
