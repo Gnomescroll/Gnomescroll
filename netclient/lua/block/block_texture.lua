@@ -70,6 +70,16 @@ function register_texture(spritesheet, xpos, ypos)
   return id;
 end
 
+
+--- hud stuff
+
+function hud( pos, tex, xpos, ypos)
+  if(xpos == nil or ypos == nil) then
+    return { pos=pos, tex=tex }
+  end
+  return { pos=pos, tex=register_texture(tex,xpos,ypos) };
+end
+
 --- texture stuff
 
 function texture_alias(spritesheet, xpos, ypos)
