@@ -24,45 +24,6 @@ void init_textures()
         printf("Error: init_textures called twice! \n");
     }
 
-    //memset(pixel_data, 0, MAX_TEXTURES);
-
-/*
-    if(block_texture == 0) 
-    { 
-        printf("init terrain_map: load block textures \n");
-        block_surface=IMG_Load("media/texture/blocks_01.png");
-        if(!block_surface) { printf("IMG_Load: %s \n", IMG_GetError());return;}
-        
-        block_surface_pixel_format = block_surface->format;
-        must_lock_block_surface = SDL_MUSTLOCK(block_surface);
-        block_surface_width = (int)block_surface->w;
-        block_surface_height = (int)block_surface->h;
-
-        glEnable(GL_TEXTURE_2D);
-        glGenTextures( 1, &block_texture );
-        glBindTexture( GL_TEXTURE_2D, block_texture );
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        int texture_format = (block_surface->format->Rmask == 0x000000ff) ? GL_RGBA : GL_BGRA;
-
-        //formats: GL_BGRA_EXT, GL_SRGB_ALPHA_EXT, GL_SRGBA_EXT
-
-        //internal format, input format
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8_EXT, block_surface->w, block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-        //texture without gamma correction
-        glGenTextures( 1, &block_texture_no_gamma_correction );
-        glBindTexture( GL_TEXTURE_2D, block_texture_no_gamma_correction );
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, 4, block_surface->w,block_surface->h, 0, texture_format, GL_UNSIGNED_BYTE, block_surface->pixels );
-
-        glDisable(GL_TEXTURE_2D);
-    }
-*/
 }
 
 void set_cube_side_texture(int id, int side, int tex_id) 
@@ -132,12 +93,12 @@ void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g,
 {
     int tex_id = get_cube_side_texture(cube_id, side);
     int ra = (32*32)*tex_id + (rand() % (32*32));
-    int t = TextureSheetLoader::CubeTextureStack[ra];
-    *r = (number >> (8*0)) & 0xff;
-    *g = (number >> (8*1)) & 0xff;
-    *b = (number >> (8*2)) & 0xff;
-    *a = (number >> (8*3)) & 0xff;
-
+    unsigned int t = TextureSheetLoader::CubeTextureStack[ra];
+    *r = (t >> (8*0)) & 0xff;
+    *g = (t >> (8*1)) & 0xff;
+    *b = (t >> (8*2)) & 0xff;
+    *a = (t >> (8*3)) & 0xff;
+}
 /*
     Dont check locking and pull out of pixel buffer instead!!!
 */
