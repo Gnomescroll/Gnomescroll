@@ -14,7 +14,6 @@
 
 void turret_state(object_state_StoC_model* msg)
 {
-    //Turret* t = ClientState::turret_list->get(msg->id);
     Turret* t = (Turret*)ClientState::object_list->get(msg->id);
     if (t == NULL) return;
     t->state()->set_position(msg->x, msg->y, msg->z);
@@ -22,7 +21,6 @@ void turret_state(object_state_StoC_model* msg)
 
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
-    //Turret* t = ClientState::turret_list->create(msg->id, msg->x, msg->y, msg->z);
     Turret* t = (Turret*)ClientState::object_list->create(
         (int)msg->id,
         msg->x, msg->y, msg->z,
@@ -37,16 +35,14 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     t->state()->set_team(msg->team);
     t->state()->set_owner(msg->owner);
     t->born();
-    //t->init_vox();// TODO
     //Sound::turret_placed(x,y,z,0,0,0);
     //system_message->turret_created(t);
 }
 
 void turret_destroy(int id)
 {
-    //turret* t = ClientState::turret_list->get(id);
+    //Turret* t = (Turret*)ClientState::object_list->get(id);
     //system_message->turret_destroyed(t);
-    //ClientState::turret_list->destroy(id);
     ClientState::object_list->destroy(id);
 }
 
@@ -54,7 +50,6 @@ void turret_shot_object(object_shot_object_StoC* msg)
 {
     if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
 
-    //Turret* t = ClientState::turret_list->get(msg->id);
     Turret* t = (Turret*)ClientState::object_list->get((int)msg->id);
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
@@ -76,10 +71,9 @@ void turret_shot_object(object_shot_object_StoC* msg)
         v.x, v.y, v.z
     );
     int voxel[3] = { msg->voxel_x, msg->voxel_y, msg->voxel_z };
-    const int voxel_damage_radius = 2;  // todo
     destroy_object_voxel(
         msg->target_id, msg->target_type, msg->target_part,
-        voxel, voxel_damage_radius
+        voxel, t->state()->attacker_properties.voxel_damage_radius
     );
     Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
 }
