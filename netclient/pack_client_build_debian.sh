@@ -1,7 +1,7 @@
 ./waf clean
 ./waf linux
 ./waf
-version=`../get_current_head.sh`
+version=`cat ../VERSIONX`
 f="gnomescroll_linux32_"$version
 rm -rf $f
 mkdir $f
@@ -12,6 +12,7 @@ cp *.pyc $f/
 rm $f/settings.pyc
 #cp default_settings.py $f/settings.py
 cp -R media $f/
+cp -R lua $f/
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
 cp README_linux $f/

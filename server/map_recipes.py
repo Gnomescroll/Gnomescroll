@@ -73,16 +73,7 @@ def lunar_surface():
     m.init(x,y,z)
     m.conf.seed(opts.seed)
 
-    m.conf\
-    .size(x,y,z)\
-    .tile(cubes('soft_rock'))\
-    .interpolate(1,1,1)\
-    .scale(4.0,4.0,1.0)\
-    .heightmap(baseline=85, maxheight=35)\
-    .p2(octaves=12, persistence=0.5, frequency=5.)\
-    .start()\
-    .reset()
-
+    # gentle
     m.conf\
     .size(x,y,z)\
     .tile(cubes('hard_rock'))\
@@ -93,15 +84,41 @@ def lunar_surface():
     .start()\
     .reset()
 
+    c_lib.map_gen.grass(x,y, 0, cubes('dark_dust'), cubes('light_dust'))
+
+    # steep
+    m.conf\
+    .size(x,y,z)\
+    .tile(cubes('soft_rock'))\
+    .interpolate(1,1,1)\
+    .scale(4.0,4.0,1.0)\
+    .heightmap(baseline=85, maxheight=35)\
+    .p2(octaves=12, persistence=0.5, frequency=5.)\
+    .start()\
+    .reset()
+
+    ## infested veins
+    c_lib.map_gen.conf\
+    .size(x,y,z)\
+    .interpolate(4,4,2)\
+    .tile(cubes('infested_rock'))\
+    .scale(x=4.0, y=4.0, z=1.0)\
+    .group(2)\
+    .gradient(z0=1.0, z1=0.7)\
+    .density(threshold=0.93)\
+    .rmf()\
+    .p3(octaves=6, persistence=0.8)\
+    .start()\
+    .reset()
+
     ## 3d density noise, subtractive RMF. forms caves
     c_lib.map_gen.conf\
-    .interpolate(4,2,4)\
     .size(x,y,z)\
+    .interpolate(4,2,4)\
     .tile(0)\
     .scale(x=4.0, y=4.0, z=2.0)\
-    .group(2)\
+    .group(3)\
     .density(threshold=0.97)\
-    .gradient2()\
     .rmf()\
     .p3(octaves=6, persistence=0.8)\
     .start()\
