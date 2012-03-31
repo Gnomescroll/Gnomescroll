@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/sound/triggers.hpp>
+
 namespace Sound {
 
 void init();
@@ -17,4 +19,6 @@ void update();
 
 int test();
 
+//CYTHON
+void enumerate_sound_devices() GNOMESCROLL_API;
 }

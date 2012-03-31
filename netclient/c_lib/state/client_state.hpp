@@ -69,8 +69,6 @@ namespace ClientState {
     void send_identify_packet(char* name);
     void update_camera();
 
-    //CYTHON
-    void enumerate_sound_devices() GNOMESCROLL_API;
 }
 #endif
 
