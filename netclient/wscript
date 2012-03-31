@@ -194,24 +194,28 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
                fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                mandatory=True)
     elif OS == 'Linux':
+        lua_lib_path = []
+        lua_include_path = '/usr/include/luajit-2.0'
         conf.check(header_name='lua.h',
                    lib='luajit-5.1', #'lua5.1',
                    use='luajit-5.1', #'lua5.1',
                    libpath=lua_lib_path,
+                   includes=lua_include_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-                   includes='/usr/include/luajit-2.0',
                    mandatory=True)
     elif OS == 'Darwin':
+        lua_lib_path = []
+        lua_include_path = '/usr/include/luajit-2.0'
         conf.check(header_name='lua.h',
                    lib='luajit-5.1', #'lua5.1',
                    use='luajit-5.1', #'lua5.1',
                    libpath=lua_lib_path,
+                   includes=lua_include_path,
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
-                   includes='/usr/include/luajit-2.0',
                    mandatory=True)
-                   
+
     fmod_includes = []
     fmod_rpath = []
     if sound.lower() == 'fmod':
