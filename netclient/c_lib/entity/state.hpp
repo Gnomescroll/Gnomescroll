@@ -155,7 +155,7 @@ class ObjectState: public ObjectData
         this->owner = owner;
     }
 
-    void set_position(float x, float y, float z);
+    bool set_position(float x, float y, float z);
     
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {

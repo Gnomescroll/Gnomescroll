@@ -146,23 +146,6 @@ namespace ServerState
                 coins += s->get_coins_for_kill(agent->id, agent->status.team);
         }
 
-        // turrets
-        // TODO -- this on object_list, by type
-        //turret_list->objects_within_sphere(x,y,z,radius);
-        //Turret* t;
-        //for (i=0; i<turret_list->n_filtered; i++)
-        //{
-            //t = turret_list->filtered_objects[i];
-            //if (t==NULL) continue;
-            //if (t->id == inflictor_id) continue;
-            //if ((t->get_team() == agent->status.team && t->get_owner() != NO_AGENT)
-            //&& t->get_owner() != agent->id)
-                //continue; // teammates cant kill turrets
-            //int h = t->take_damage(GRENADE_TURRET_DAMAGE);
-            //if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
-                //coins += t->get_coins_for_kill(agent->id, agent->status.team);
-        //}
-
         object_list->objects_within_sphere(x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
         ObjectPolicyInterface* obj;
         ObjectState* state;
@@ -170,8 +153,16 @@ namespace ServerState
         {
             obj = object_list->filtered_objects[i];
             if (obj == NULL) continue;
-            // apply teammate rules etc
             state = obj->state();
+            if (state->type != OBJ_TYPE_TURRET) continue; // TODO -- remove
+
+            /* TODO */
+            // state->can_be_killed_by(type, id, team)
+            // apply teammate rules etc
+            if ((state->get_team() == agent->status.team && state->get_owner() != NO_AGENT)
+              && state->get_owner() != agent->id)
+                continue;
+
             state->take_damage(get_grenade_damage(state->type));
             if (state->died && agent != NULL
               && !(state->type == inflictor_type && s->id == inflictor_id)) // obj is not self
@@ -181,7 +172,6 @@ namespace ServerState
         // add all the coins
         if (agent != NULL)
             agent->status.add_coins(coins);
-
     }
 
 /*
