@@ -468,9 +468,9 @@ class linux_production_ctx(ConfigurationContext):
     cmd = 'linux'
     fun = 'linux'
 
-#class linux64_production_ctx(ConfigurationContext):
-    #cmd = 'linux64'
-    #fun = 'linux64'
+class linux64_production_ctx(ConfigurationContext):
+    cmd = 'linux64'
+    fun = 'linux64'
     
 #class centos64_production_ctx(ConfigurationContext):
     #cmd = 'centos64'
@@ -509,8 +509,8 @@ def openal(ctx):
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])
 
-#def linux64(ctx):
-    #production(ctx, add=['-m64', '-shared-libgcc'])
+def linux64(ctx):
+    production(ctx, add=['-m64', '-shared-libgcc'])
     
 #def centos64(ctx):
     #production(ctx, add=['-m64', '-shared-libgcc'], centos=True)
