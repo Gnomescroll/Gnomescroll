@@ -262,16 +262,4 @@ namespace ClientState {
     {
         chat_client->send_system_message((char*)"Disconnected from server");
     }
-
-    //CYTHON
-    void enumerate_sound_devices()
-    {
-        #ifdef USE_OPENAL
-        OpenALSound::enumerate_devices();
-        #else
-        printf("Cannot enumerate sound devices: OpenAL was not compiled with this build.\n");
-        #endif
-    }
-
-
 }

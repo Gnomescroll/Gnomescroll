@@ -65,7 +65,8 @@ class Net_message {
 
         OBJECT_POOL_OBJECT_MACRO
 
-    static class Net_message* acquire(int length) __attribute((always_inline));
+    static class Net_message* acquire(int length);
+    // __attribute((always_inline));    // wont compile gcc4.4.3 (ubuntu10.04)
 
     void inline decrement();
 

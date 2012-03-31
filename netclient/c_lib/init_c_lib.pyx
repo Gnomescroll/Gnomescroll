@@ -50,12 +50,14 @@ def load_options(opts):
     set_animations(opts.animations)
     set_logger(opts.logger)
 
-cdef extern from "./state/client_state.hpp" namespace "ClientState":
+"""
+Sound
+"""
+cdef extern from "./sound/sound.hpp" namespace "Sound":
     void enumerate_sound_devices()
 
 def show_sound_devices():
     enumerate_sound_devices()
-
 
 """
 Game loop
