@@ -1097,17 +1097,17 @@ inline void place_turret_CtoS::handle()
     }
     if (a->status.team == 0) return;
     if (!a->status.can_purchase(OBJ_TYPE_TURRET)) return;
-    //if (ServerState::turret_list->full()) return; // TODO
-    //if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)z)) return; // TODO
+    //if (ServerState::turret_list->full()) return; // TODO -- full by type
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    //if (ServerState::turret_list->point_occupied((int)x, (int)y, (int)new_z)) return; // TODO
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    a->status.purchase(OBJ_TYPE_TURRET);
     Turret* t = (Turret*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, OBJ_TYPE_TURRET);
     if (t==NULL) return;
-    t->state()->set_team(a->status.team);    // TODO -- set properties before born() is called
+    a->status.purchase(OBJ_TYPE_TURRET);
+    t->state()->set_team(a->status.team);
     t->state()->set_owner(a->id);
     t->born();
 }

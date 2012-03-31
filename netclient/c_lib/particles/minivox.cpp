@@ -190,6 +190,8 @@ void Minivox_list::draw() {
 
     glEnd();
 
+    glColor3ub(255,255,255);
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
 

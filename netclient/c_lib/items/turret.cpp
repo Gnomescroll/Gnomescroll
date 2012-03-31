@@ -126,23 +126,6 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 
 VoxDat turret_vox_dat;
 
-/* Turret list */
-
-//TODO -- implement this for general objects
-//bool Turret_list::point_occupied(int x, int y, int z)
-//{
-    //for (int i=0; i<this->n_max; i++)
-    //{
-        //Turret *s = this->a[i];
-        //if (s == NULL) continue;
-        //if ((int)s->x == x && (int)s->y == y)
-            //for (int j=0; j<(int)ceil(TURRET_HEIGHT); j++)
-                //if ((int)s->z+j == z)
-                    //return true;
-    //}
-    //return false;
-//}
-
 /* TargetAcquisition */
 
 void TargetAcquisitionComponent::acquire_target(ObjectState* state)
