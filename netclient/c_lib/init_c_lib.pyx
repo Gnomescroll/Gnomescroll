@@ -50,6 +50,9 @@ def load_options(opts):
     set_animations(opts.animations)
     set_logger(opts.logger)
 
+"""
+Sound
+"""
 cdef extern from "./sound/sound.hpp" namespace "Sound":
     void enumerate_sound_devices()
 
