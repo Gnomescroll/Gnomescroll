@@ -153,7 +153,7 @@ b.hud = hud(16+4, b.texture.n);
 -- other
 
 b = NewSolidBlock(21, "extruder");
-b.texture = iso_texture(t01,2,2);
+b.texture = iso_texture(t01,2,1);
 b.hud = hud(24+0, b.texture.n);
 
 b = NewSolidBlock(22, "extruder_medical");
@@ -185,15 +185,15 @@ b.texture = iso_texture(t01,6,3);
 b.hud = hud(32+0, b.texture.n);
 
 b = NewSolidBlock(28, "box_1");
-b.texture = iso_texture(t01,6,3);
+b.texture = iso_texture(t01,6,4);
 b.hud = hud(32+1, b.texture.n);
 
 b = NewSolidBlock(29, "box_2");
-b.texture = iso_texture(t01,6,3);
+b.texture = iso_texture(t01,6,5);
 b.hud = hud(32+2, b.texture.n);
 
 b = NewSolidBlock(30, "box_3");
-b.texture = iso_texture(t01,6,3);
+b.texture = iso_texture(t01,6,6);
 b.hud = hud(32+3, b.texture.n);
 
 --end
