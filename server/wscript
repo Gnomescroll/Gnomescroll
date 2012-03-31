@@ -85,6 +85,7 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     conf.env.append_value("LINKFLAGS", "-lz")
 
     if OS == 'Linux':
+        conf.env.ARCH = ['i386']
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
     if OS == 'Windows':
