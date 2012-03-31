@@ -95,4 +95,14 @@ int test() {
     #endif
 }
 
+//CYTHON
+void enumerate_sound_devices()
+{
+    #ifdef USE_OPENAL
+    OpenALSound::enumerate_devices();
+    #else
+    printf("Cannot enumerate sound devices: OpenAL was not compiled with this build.\n");
+    #endif
+}
+
 }
