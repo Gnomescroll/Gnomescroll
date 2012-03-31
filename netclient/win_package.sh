@@ -13,6 +13,6 @@ rm -rf ./dist/media
 cp -rf ./media ./dist/media
 
 rm -rf ./dist/lua
-cp -rf ./media ./dist/lua
+cp -rf ./lua ./dist/lua
 
 cp -f ./c_lib.dll ./dist/c_lib.dll
