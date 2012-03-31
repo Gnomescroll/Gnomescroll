@@ -1036,7 +1036,7 @@ inline void agent_set_block_CtoS::handle()
     if (agent_collides_terrain(a))
     {
         collides = true;
-        printf("collides w/ player\n");
+        //printf("collides w/ player\n");
     }
     else
     {

@@ -51,8 +51,6 @@ void NetPeerManager::ready()
     ServerState::send_game_state_to_client(this->client_id);
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
-    
-    printf("ready\n");
     #endif
 }
 

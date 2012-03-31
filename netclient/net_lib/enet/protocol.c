@@ -743,7 +743,7 @@ enet_protocol_handle_bandwidth_limit (ENetHost * host, ENetPeer * peer, const EN
     if (peer -> windowSize > ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE)
       peer -> windowSize = ENET_PROTOCOL_MAXIMUM_WINDOW_SIZE;
 
-    printf("enet_protocol_handle_bandwidth_limit \n");
+    //printf("enet_protocol_handle_bandwidth_limit \n");
     return 0;
 }
 
@@ -754,7 +754,7 @@ enet_protocol_handle_throttle_configure (ENetHost * host, ENetPeer * peer, const
     peer -> packetThrottleAcceleration = ENET_NET_TO_HOST_32 (command -> throttleConfigure.packetThrottleAcceleration);
     peer -> packetThrottleDeceleration = ENET_NET_TO_HOST_32 (command -> throttleConfigure.packetThrottleDeceleration);
 
-    printf("enet_protocol_handle_throttle_configure \n");
+    //printf("enet_protocol_handle_throttle_configure \n");
     return 0;
 }
 

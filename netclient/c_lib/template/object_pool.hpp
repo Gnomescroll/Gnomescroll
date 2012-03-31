@@ -96,7 +96,7 @@ void Object_pool<Base, Object, BUFFER_POOL_SIZE>::batch_alloc()
     ar[BUFFER_POOL_SIZE-1].next = NULL;
 
     //static char* _name = name();
-    printf("%s: Batch Alloc: %i n_elements: %i \n", Base::name(), batch_num, BUFFER_POOL_SIZE);
+    //printf("%s: Batch Alloc: %i n_elements: %i \n", Base::name(), batch_num, BUFFER_POOL_SIZE);
 
     alloc_list[alloc_list_index] = ar;
     alloc_list_index++;

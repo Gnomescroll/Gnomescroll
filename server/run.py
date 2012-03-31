@@ -97,8 +97,8 @@ class Main:
             if sl_c > 0:
                 while GET_TICK() != 0:
                     sl_c+=1
-            if sl_c > 1:
-                print "Physics: %i ticks this frame" % (sl_c)
+            #if sl_c > 1:
+                #print "Physics: %i ticks this frame" % (sl_c)
             
 
             NetServerDispatchNetworkEvents()

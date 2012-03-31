@@ -126,8 +126,8 @@ int run()
             poll_mouse();
         }
 
-        if (physics_ticks >= 2)
-            printf("Physics: %d ticks this frame\n", physics_ticks);
+        //if (physics_ticks >= 2)
+            //printf("Physics: %d ticks this frame\n", physics_ticks);
 
         frame_graph->frame_stage(1); // misc stuff and network
 
