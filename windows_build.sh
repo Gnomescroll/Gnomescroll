@@ -18,5 +18,5 @@ cp -rf ./netclient/dist/. ./dist/
 #cd ..
 #cp -rf ./server/dist/. ./dist/server/
 
-rm -rf /c/Documents\ and\ Settings/Administrator/Desktop/Dropbox/gnomescroll_
-cp -rf ./dist/ /c/Documents\ and\ Settings/Administrator/Desktop/Dropbox/gnomescroll_
+rm -rf /c/Dropbox/gnomescroll_
+cp -rf ./dist/ /c/Dropbox/gnomescroll_

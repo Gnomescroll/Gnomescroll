@@ -114,12 +114,12 @@ void teardown()
 
 extern "C"
 {
-	__declspec(dllexport) int LUA_load_cube_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
+	int LUA_load_cube_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
 
 
-	__declspec(dllexport) void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index) GNOMESCROLL_API;
+	void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index) GNOMESCROLL_API;
 
 
-	__declspec(dllexport) void LUA_save_cube_texture() GNOMESCROLL_API;
+	void LUA_save_cube_texture() GNOMESCROLL_API;
 
 }
