@@ -93,6 +93,20 @@ def lunar_surface():
     .start()\
     .reset()
 
+    ## 3d density noise, subtractive RMF. forms caves
+    c_lib.map_gen.conf\
+    .interpolate(4,2,4)\
+    .size(x,y,z)\
+    .tile(0)\
+    .scale(x=4.0, y=4.0, z=2.0)\
+    .group(2)\
+    .density(threshold=0.97)\
+    .gradient2()\
+    .rmf()\
+    .p3(octaves=6, persistence=0.8)\
+    .start()\
+    .reset()
+
     m.destroy()
 
 
