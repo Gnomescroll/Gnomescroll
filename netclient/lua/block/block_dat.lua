@@ -89,11 +89,11 @@ b.hud = hud(8+0, b.texture.n);
 
 b = NewSolidBlock(6, "terminal_green");
 b.texture = iso_texture(t00,4,1);
-b.hud = hud(0+1, b.texture.n);
+b.hud = hud(8+1, b.texture.n);
 
 b = NewSolidBlock(7, "solar_panel");
 b.texture = iso_texture(t00,1,2);
-b.hud = hud(0+2, b.texture.n);
+b.hud = hud(8+2, b.texture.n);
 
 b = NewSolidBlock(8, "battery");
 b.texture = iso_texture(t00,3,2);
