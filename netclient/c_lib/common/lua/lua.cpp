@@ -28,8 +28,11 @@ int run_lua_test()
 }
 */
 
-#include <luajit/lua.hpp>
-#include <luajit/lauxlib.h>
+//#include <luajit/lua.hpp>
+//#include <luajit/lauxlib.h>
+
+#include <lua.hpp>
+#include <lauxlib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
