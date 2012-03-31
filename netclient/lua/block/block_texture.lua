@@ -7,6 +7,9 @@
 ]]
 
 bl_ffi = require("ffi")
+
+bl_ffi.load("c_lib")
+
 bl_ffi.cdef[[
 int LUA_load_cube_texture_sheet(char* filename);
 void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index);
@@ -58,7 +61,7 @@ function register_texture(spritesheet, xpos, ypos)
 
   assert(xpos >= 0);
   assert(ypos >= 0);
-  
+
   sindex = spritesheet
   local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
 

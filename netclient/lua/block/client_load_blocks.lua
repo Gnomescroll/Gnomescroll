@@ -8,7 +8,10 @@ require("block_template");
 require("block_texture");
 require("block_dat");
 
+
+
 local ffi = require("ffi")
+ffi.load("c_lib")
 ffi.cdef[[
 void LUA_save_cube_texture();
 
