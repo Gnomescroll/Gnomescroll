@@ -25,20 +25,23 @@ def _grab_output(*cmd):
 
 def get_version():
     try:
-        version = subprocess.check_output(['../get_current_head.sh'], shell=True)
+        fn = '../VERSIONX'
+        with open(fn) as f:
+            version = f.read()
     except Exception, e:
-        print e
-        print "Could not get version number from hg repo. Abort"
-        raise ValueError
+        print "Could not get version number from VERSIONX file. Abort"
+        print Exception, e
+        raise Exception, e
 
     try:
         version = int(version.strip())
     except ValueError:
-        print "Version %s invalid" % (version,)
+        print "ERROR: Version %s invalid" % (version,)
         raise ValueError
 
     print "Gnomescroll Version: %d" % (version,)
     return version
+
 
 def options(opt):
     opt.load('compiler_c compiler_cxx python cython')
