@@ -79,45 +79,23 @@ b = NewSolidBlock(3, "sand_brick");
 b.texture = iso_texture(t00,3,3);
 b.hud = hud(0+2, b.texture.n);
 
---[[
-b = NewSolidBlock(4, "red_brick");
-b.texture = iso_texture(t00,2,3);
-b.hud = hud(0+3, b.texture.n);
-]]
-
-b = NewSolidBlock(5, "grey_brick");
+b = NewSolidBlock(4, "grey_brick");
 b.texture = iso_texture(t00,4,3);
 b.hud = hud(0+3, b.texture.n);
 
---[[
-b = NewSolidBlock(6, "rough_stone");
-b.texture = iso_texture(t00,1,3);
-b.hud = hud(0+5, b.texture.n);
-]]
-
---[[
-b = NewSolidBlock(7, "rough_stone_blue_ore");
-b.texture = iso_texture(t00,2,4);
-b.hud = hud(0+6, b.texture.n);
-
-b = NewSolidBlock(8, "wood_panel");
-b.texture = iso_texture(t00,3,4);
-b.hud = hud(0+7, b.texture.n);
-]]
-
-b = NewSolidBlock(9, "terminal_blue");
-b.texture = iso_texture(t00,1,4);
+b = NewSolidBlock(5, "terminal_blue");
+b.texture = iso_texture(t00,3,1);
 b.hud = hud(8+0, b.texture.n);
 
-b = NewSolidBlock(10, "terminal_green");
-b.texture = iso_texture(t00,1,4);
+b = NewSolidBlock(6, "terminal_green");
+b.texture = iso_texture(t00,4,1);
 b.hud = hud(0+1, b.texture.n);
 
-b = NewSolidBlock(11, "solar_panel");
+b = NewSolidBlock(7, "solar_panel");
 b.texture = iso_texture(t00,1,2);
 b.hud = hud(0+2, b.texture.n);
 
-b = NewSolidBlock(12, "battery");
+b = NewSolidBlock(8, "battery");
 b.texture = iso_texture(t00,3,2);
 b.texture.t = register_texture(t00,2,2);
 b.texture.b = register_texture(t00,4,2);
@@ -153,19 +131,19 @@ b.hud = hud(16+4, b.texture.n);
 -- other
 
 b = NewSolidBlock(21, "extruder");
-b.texture = iso_texture(t01,2,1);
+b.texture = iso_texture(t01,1,2);
 b.hud = hud(24+0, b.texture.n);
 
 b = NewSolidBlock(22, "extruder_medical");
-b.texture = iso_texture(t01,2,3);
+b.texture = iso_texture(t01,3,1);
 b.hud = hud(24+1, b.texture.n);
 
 b = NewSolidBlock(23, "holy_stone");
-b.texture = iso_texture(t01,5,6);
+b.texture = iso_texture(t01,6,5);
 b.hud = hud(24+2, b.texture.n);
 
 b = NewSolidBlock(24, "holy_stone_artifact");
-b.texture = iso_texture(t01,5,1);
+b.texture = iso_texture(t01,1,5);
 b.hud = hud(24+3, b.texture.n);
 
 -- brick
