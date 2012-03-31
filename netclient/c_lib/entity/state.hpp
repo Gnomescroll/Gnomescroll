@@ -20,7 +20,8 @@ typedef enum
 class ObjectData
 {
     public:
-        // camera
+        // spatial
+        float height;
         float camera_height;
 
         // physics
@@ -78,7 +79,7 @@ class ObjectData
 
     ObjectData()
     :
-    camera_height(0.0f),
+    height(1.0f), camera_height(0.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     pickup(false), pickup_radius(1.0f),
@@ -101,7 +102,11 @@ class ObjectState: public ObjectData
         int team;
         int team_index; // id within team
         int owner;
+
+        // life
         int health;
+        bool died;
+        bool dead;
 
         // physics
         VerletParticle* vp;
@@ -150,7 +155,7 @@ class ObjectState: public ObjectData
         this->owner = owner;
     }
 
-    void set_position(float x, float y, float z);
+    bool set_position(float x, float y, float z);
     
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
@@ -191,7 +196,8 @@ class ObjectState: public ObjectData
 
     ObjectState()
     : ObjectData(),
-    id(-1), team(0), team_index(TEAM_INDEX_NONE), owner(NO_AGENT), health(1),
+    id(-1), team(0), team_index(TEAM_INDEX_NONE), owner(NO_AGENT),
+    health(1), died(false), dead(false),
     vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)

@@ -52,6 +52,7 @@ class Turret: public TurretObjectParent, public TargetAcquisitionComponent
         {
             this->_state.id = id;
             this->_state.position = vec3_init(x,y,z);
+            this->_state.height = TURRET_HEIGHT;
             this->_state.camera_height = TURRET_CAMERA_HEIGHT;
             this->_state.broadcast_state_change = true;
             this->_state.blow_up_on_death = true;

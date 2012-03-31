@@ -15,25 +15,32 @@ unsigned int ObjectState::get_kill_reward(int owner, int team)
 
 int ObjectState::take_damage(int dmg)
 {
+    this->died = false;
     if (this->health <= 0) return 0;
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
     if (this->health <= 0)
+    {
         this->ttl = this->ttl_max;
+        this->died = true;
+        this->dead = true;
+    }
     return this->health;
 }
 
-void ObjectState::set_position(float x, float y, float z)
+bool ObjectState::set_position(float x, float y, float z)
 {
+    bool changed = false;
+    if (
+       this->position.x != x
+    || this->position.y != y
+    || this->position.z != z
+    ) changed = true;
+
     if (this->vox != NULL)
     {
-        if (this->frozen_vox)
-            if (
-               this->position.x != x
-            && this->position.y != y
-            && this->position.z != z
-            )
-                this->vox->thaw();
+        if (this->frozen_vox && changed)
+            this->vox->thaw();
 
         this->position.x = x;
         this->position.y = y;
@@ -47,19 +54,8 @@ void ObjectState::set_position(float x, float y, float z)
             this->vox->freeze();
     }
 
-    #if DC_SERVER
-    if (this->broadcast_state_change)
-    {   // TODO: choose appropriate state
-        object_state_StoC msg;
-        msg.x = this->position.x;
-        msg.y = this->position.y;
-        msg.z = this->position.z;
-        msg.id = this->id;
-        msg.type = this->type;
-        msg.broadcast();
-    }
-    #endif
-
     if (this->vp != NULL)
         this->vp->set_position(x,y,z);
+        
+    return changed;
 }

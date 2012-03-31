@@ -56,7 +56,10 @@ class TickStayOnGround: public Super
                 }
             z++;
         }
-        state->set_position(p.x, p.y, (float)z);
+        
+        bool changed = state->set_position(p.x, p.y, (float)z);
+        if (changed && state->broadcast_state_change)
+            object->broadcastState();
         #endif
         Super::tick(state, object);
     }
