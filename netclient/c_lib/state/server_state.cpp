@@ -33,7 +33,6 @@ namespace ServerState
         //neutron_list = new Neutron_list;
         slime_list = new Monsters::Slime_list;
         spawner_list = new Spawner_list;
-        //turret_list = new Turret_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
         object_list = new GameObject_list;

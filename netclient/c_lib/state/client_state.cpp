@@ -53,8 +53,8 @@ namespace ClientState {
         object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
         spawner_list = new Spawner_list;
-
         agent_list = new Agent_list;
+        
         cspray_list = new Cspray_list;
         grenade_list = new Grenade_list;
         shrapnel_list = new Shrapnel_list;
@@ -196,7 +196,7 @@ namespace ClientState {
         shrapnel_list->draw();
         blood_list->draw();
 
-        object_list->draw();
+        object_list->draw();    // here temporarily. only thing with real draw is billboard particles. use draw lists later
         
         end_transparent_particle_draw();
     }
