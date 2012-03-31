@@ -112,20 +112,20 @@ b.texture = iso_texture(t01,1,1);
 b.hud = hud(16+0, b.texture.n);
 
 b = NewSolidBlock(17, "dark_dust");
-b.texture = iso_texture(t01,1,2);
+b.texture = iso_texture(t01,2,1);
 b.hud = hud(16+1, b.texture.n);
 
 --rock
 b = NewSolidBlock(18, "soft_rock");
-b.texture = iso_texture(t01,1,3);
+b.texture = iso_texture(t01,3,1);
 b.hud = hud(16+2, b.texture.n);
 
 b = NewSolidBlock(19, "hard_rock");
-b.texture = iso_texture(t01,1,4);
+b.texture = iso_texture(t01,4,1);
 b.hud = hud(16+3, b.texture.n);
 
 b = NewSolidBlock(20, "infested_rock");
-b.texture = iso_texture(t01,1,5);
+b.texture = iso_texture(t01,5,1);
 b.hud = hud(16+4, b.texture.n);
 
 -- other
@@ -159,15 +159,15 @@ b.hud = hud(40, b.texture.n);
 -- box
 
 b = NewSolidBlock(27, "box_0");
-b.texture = iso_texture(t01,6,3);
+b.texture = iso_texture(t01,3,6);
 b.hud = hud(32+0, b.texture.n);
 
 b = NewSolidBlock(28, "box_1");
-b.texture = iso_texture(t01,6,4);
+b.texture = iso_texture(t01,4,6);
 b.hud = hud(32+1, b.texture.n);
 
 b = NewSolidBlock(29, "box_2");
-b.texture = iso_texture(t01,6,5);
+b.texture = iso_texture(t01,5,6);
 b.hud = hud(32+2, b.texture.n);
 
 b = NewSolidBlock(30, "box_3");
