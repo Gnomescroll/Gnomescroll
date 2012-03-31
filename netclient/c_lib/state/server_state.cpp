@@ -163,6 +163,21 @@ namespace ServerState
                 //coins += t->get_coins_for_kill(agent->id, agent->status.team);
         //}
 
+        object_list->objects_within_sphere(x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
+        ObjectPolicyInterface* obj;
+        ObjectState* state;
+        for (int i=0; i<object_list->n_filtered; i++)
+        {
+            obj = object_list->filtered_objects[i];
+            if (obj == NULL) continue;
+            // apply teammate rules etc
+            state = obj->state();
+            state->take_damage(get_grenade_damage(state->type));
+            if (state->died && agent != NULL
+              && !(state->type == inflictor_type && s->id == inflictor_id)) // obj is not self
+                coins += state->get_kill_reward(agent->id, agent->status.team);
+        }
+
         // add all the coins
         if (agent != NULL)
             agent->status.add_coins(coins);

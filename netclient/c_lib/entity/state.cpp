@@ -15,11 +15,16 @@ unsigned int ObjectState::get_kill_reward(int owner, int team)
 
 int ObjectState::take_damage(int dmg)
 {
+    this->died = false;
     if (this->health <= 0) return 0;
     this->health -= dmg;
     this->health = (this->health < 0) ? 0 : this->health;
     if (this->health <= 0)
+    {
         this->ttl = this->ttl_max;
+        this->died = true;
+        this->dead = true;
+    }
     return this->health;
 }
 
