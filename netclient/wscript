@@ -27,23 +27,18 @@ def _grab_output(*cmd):
 
 def get_version():
     try:
-        OS = platform.system()
-        if OS == 'Windows':
-            #version = subprocess.check_output(['/c/dc_mmo/get_current_head.sh'], shell=True)
-            version = os.popen('../VERSIONX').read()
-        else:
-            version = subprocess.check_output(['../get_current_head.sh'], shell=True)
-        #//version = os.popen('../get_current_head.sh').read()
-        print "version= %s" % (version)
+        fn = '../VERSIONX'
+        with open(fn) as f:
+            version = f.read()
     except Exception, e:
-        print "Could not get version number from hg repo. Abort"
+        print "Could not get version number from VERSIONX file. Abort"
         print Exception, e
         raise Exception, e
 
     try:
         version = int(version.strip())
     except ValueError:
-        print "Version %s invalid" % (version,)
+        print "ERROR: Version %s invalid" % (version,)
         raise ValueError
 
     print "Gnomescroll Version: %d" % (version,)
