@@ -165,7 +165,7 @@ namespace ServerState
 
             state->take_damage(get_grenade_damage(state->type));
             if (state->died && agent != NULL
-              && !(state->type == inflictor_type && s->id == inflictor_id)) // obj is not self
+              && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
                 coins += state->get_kill_reward(agent->id, agent->status.team);
         }
 
