@@ -198,3 +198,21 @@ void GameObject_list::alter_owner(int owner, int new_owner)
     }
     #endif
 }
+
+bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, int z)
+{
+    for (int i=0; i<this->n_max; i++)
+    {
+        ObjectPolicyInterface *obj = this->a[i];
+        if (obj == NULL) continue;
+        ObjectState* state = obj->state();
+        if (state->type != type) continue;
+        Vec3 p = state->get_position();
+        if ((int)p.x == x && (int)p.y == y)
+            for (int j=0; j<(int)ceil(TURRET_HEIGHT); j++)
+                if ((int)p.z+j == z)
+                    return true;
+    }
+    return false;
+}
+

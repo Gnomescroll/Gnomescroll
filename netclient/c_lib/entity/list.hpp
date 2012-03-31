@@ -17,6 +17,7 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
 
         void send_to_client(Object_types type, int client_id);
         void alter_owner(int owner, int new_owner);
+        bool point_occupied_by_type(Object_types type, int x, int y, int z);
         
         GameObject_list() { print(); }
 };
