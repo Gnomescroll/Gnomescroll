@@ -169,11 +169,11 @@ int lua_load_block_dat()
     /* Load the file containing the script we are going to run */
     
     #if DC_CLIENT
-        status = luaL_loadfile(L, "./lua/block/client_load_blocks.lua");
+        status = luaL_loadfile(L, "lua/block/client_load_blocks.lua");
     #endif
 
     #if DC_SERVER
-        status = luaL_loadfile(L, "./lua/block/server_load_blocks.lua");
+        status = luaL_loadfile(L, "lua/block/server_load_blocks.lua");
     #endif
 
     if (status) 
