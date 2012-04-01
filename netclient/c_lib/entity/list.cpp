@@ -292,19 +292,23 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type)
 {
+    if (this->ct >= this->max) return NULL;
+    if (this->full(type)) return NULL;
     int i;
     int id;
     for (i=0; i<this->max; i++)
-    {
+    {   // find available id
         id = (i + this->id_start) % this->max;
         if (this->a[id] == NULL) break;
     }
-    if (i == this->max) return NULL;
+    if (i >= this->max) return NULL;    // no slots found (went through all ids without breaking)
     ObjectPolicyInterface* obj = create_object_of_type(type, id);
     if (obj == NULL) return NULL;
     a[id] = obj;
     this->ct++;
     this->id_start = id+1;
+    this->occupancy[type] += 1;
+    obj->state()->type = type;
     return obj;
 }
 
@@ -326,18 +330,22 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
 {
+    if (this->ct >= this->max) return NULL;
+    if (this->full(type)) return NULL;
+    ObjectPolicyInterface* obj = NULL;
     if (this->a[id] == NULL)
     {   // available, create
-        this->a[id] = create_object_of_type(type, id);
-        if (this->a[id] != NULL)
-            this->ct++;
-        return this->a[id];
+        obj = create_object_of_type(type, id);
+        if (obj == NULL) return NULL;
+
+        this->a[id] = obj;
+        this->ct++;
+        this->occupancy[type] += 1;
+        obj->state()->type = type;
     }
     else
-    {
         printf("%s_list: Cannot create object from id: id is in use: %d\n", name(), id);
-        return NULL;
-    }
+    return obj;
 }
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float x, float y, float z)
