@@ -4,9 +4,28 @@
 
 class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>
 {
+    private:
+        int* occupancy;
+        int* max_occupancy;
+
+        void teardown()
+        {
+            if (this->occupancy != NULL)
+                free(this->occupancy);
+            if (this->max_occupancy != NULL)
+                free(this->max_occupancy);
+        }
+
+        void init()
+        {
+            this->occupancy = (int*)calloc(255, sizeof(int));
+            this->max_occupancy = (int*)calloc(255, sizeof(int));
+        }
+
     public:
         const char* name() { return "GameObject"; }
-        
+
+        bool full(Object_types type);
         void tick();
         void draw();
         void update();
@@ -28,8 +47,17 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
         bool spawner_exists(int team, int team_index);
         void assign_team_index(ObjectPolicyInterface* spawner);
         /* END SHIT */
-        
-        GameObject_list() { print(); }
+
+        ~GameObject_list()
+        {
+            this->teardown();
+        }
+        GameObject_list()
+        : occupancy(NULL), max_occupancy(NULL)
+        {
+            this->init();
+            print();
+        }
 };
 
 // TODO: restructure the list creation to adapt based on type

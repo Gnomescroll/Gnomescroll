@@ -46,6 +46,7 @@ void GameObject_list::send_to_client(Object_types type, int client_id)
 // TODO: restructure the list creation to adapt based on type
 ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float mx, float my, float mz, Object_types type)
 {
+    if (this->full(type)) return NULL;
     int id = this->get_free_id();
     if (id < 0) return NULL;
     this->num++;
@@ -107,17 +108,18 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
             return NULL;
     };
-    
+
     obj->state()->type = type;
-
     this->a[id] = obj;
-
+    this->occupancy[type] += 1;
+    
     return obj;
 }
 
 ObjectPolicyInterface* GameObject_list::create(int id, float x, float y, float z, float mx, float my, float mz, Object_types type)
 {
     if (this->a[id] != NULL) return NULL;
+    if (this->full(type)) return NULL;
     this->num++;
 
     float texture_scale, mass, damp;
@@ -168,8 +170,8 @@ ObjectPolicyInterface* GameObject_list::create(int id, float x, float y, float z
     };
     
     obj->state()->type = type;
-
     this->a[id] = obj;
+    this->occupancy[type] += 1;
 
     return obj;
 }
@@ -179,6 +181,7 @@ void GameObject_list::destroy(int id)
     ObjectPolicyInterface* obj = this->a[id];
     if (obj == NULL) return;
     obj->die();
+    this->occupancy[obj->state()->type] -= 1;
     Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>::destroy(id);
 }
 
@@ -253,7 +256,12 @@ int GameObject_list::objects_within_sphere(float x, float y, float z, float radi
     return closest;
 }
 
-
+bool GameObject_list::full(Object_types type)
+{
+    if (this->occupancy[type] >= this->max_occupancy[type])
+        return true;
+    return false;
+}
 
 
 /* SHIT FROM SPAWNER INTERFACE */
