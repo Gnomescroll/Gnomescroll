@@ -14,10 +14,13 @@ namespace ServerState
     extern Cspray_list* cspray_list;
     extern Grenade_list* grenade_list GNOMESCROLL_API;
     //extern Neutron_list* neutron_list;
-    extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
-    extern Voxel_hitscan_list* voxel_hitscan_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
+    
+    // property lists
+    extern Voxel_hitscan_list* voxel_hitscan_list;
+    extern SpawnerList* spawner_list;
 
+    extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
     extern GameObject_list* object_list;
 
     extern CTF* ctf GNOMESCROLL_API;

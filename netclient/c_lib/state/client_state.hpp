@@ -34,10 +34,13 @@ namespace ClientState {
     extern Minivox_list* minivox_list;
     extern BillboardText_list* billboard_text_list;
     extern BillboardTextHud_list* billboard_text_hud_list;
+
+    //  property lists
     extern Voxel_render_list* voxel_render_list;
     extern Voxel_hitscan_list* voxel_hitscan_list;
+    extern SpawnerList* spawner_list;
+    
     extern Monsters::Slime_list* slime_list;
-
     extern GameObject_list* object_list;
 
     extern Animations::HitscanEffect_list* hitscan_effect_list;

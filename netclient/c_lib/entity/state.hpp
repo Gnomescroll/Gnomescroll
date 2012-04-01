@@ -41,9 +41,6 @@ class ObjectData
         float explosion_radius;
         int explosion_damage;
         
-        //spawning
-        unsigned int spawn_radius;
-
         // coins
         unsigned int cost;
         unsigned int reward;
@@ -84,7 +81,6 @@ class ObjectData
     ttl_max(100),
     pickup(false), pickup_radius(1.0f),
     blow_up_on_death(false),
-    spawn_radius(1),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1),
     frozen_vox(false),

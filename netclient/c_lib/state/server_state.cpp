@@ -15,7 +15,10 @@ namespace ServerState
     Grenade_list* grenade_list = NULL;
     //Neutron_list* neutron_list = NULL;
     Monsters::Slime_list* slime_list = NULL;
+
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
+    SpawnerList* spawner_list = NULL;
+    
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
     GameObject_list* object_list;
@@ -25,7 +28,8 @@ namespace ServerState
     void init_lists()
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
-
+        spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
+        
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
         grenade_list = new Grenade_list;
@@ -49,7 +53,7 @@ namespace ServerState
         delete object_list;
 
         delete voxel_hitscan_list; // must go last
-
+        delete spawner_list;
     }
 
     static void init_ctf()

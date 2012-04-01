@@ -1012,7 +1012,7 @@ inline void place_spawner_CtoS::handle()
     if (a->status.team == 0) return;
     if (!a->status.can_purchase(type)) return;
     if (ServerState::object_list->full(type)) return;
-    if (!ServerState::object_list->team_spawner_available(a->status.team)) return;
+    if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
     // zip down
@@ -1026,7 +1026,7 @@ inline void place_spawner_CtoS::handle()
     a->status.purchase(s->state()->type);
     s->state()->set_team(a->status.team);
     s->state()->set_owner(a->id);
-    ServerState::object_list->assign_team_index(s);
+    ServerState::spawner_list->assign_team_index(s);
     s->born();
 }
 

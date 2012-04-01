@@ -465,7 +465,7 @@ void Agent_state::get_spawn_point(int* spawn)
     
     if (this->status.spawner != BASE_SPAWN_ID)
     {    // check that assigned spawner still exists, reassign if not
-        while ((s = (Spawner*)STATE::object_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
+        while ((s = (Spawner*)STATE::spawner_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
         {
             this->status.set_spawner();
             if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available

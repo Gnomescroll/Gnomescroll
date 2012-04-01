@@ -49,7 +49,13 @@ Slime::~Slime()
     DestroySlime_StoC msg;
     msg.id = this->id;
     msg.broadcast();
+    #endif
+}
 
+void Slime::die()
+{
+    // drop items
+    #if DC_SERVER
     const float mom = 5.0f;
     float p = randf();
     Object_types obj_type;
@@ -83,6 +89,7 @@ void Slime::tick() {
 
     if (health <= 0)
     {
+        this->die();
         STATE::slime_list->destroy(this->id);
         return;
     }

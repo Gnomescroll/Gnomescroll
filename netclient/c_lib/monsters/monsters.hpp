@@ -38,6 +38,7 @@ class Slime {
     #endif
 
     void tick();
+    void die();
 
     void set_state(float x, float y, float z, float vx, float vy, float vz);
     void set_state(float x, float y, float z, float vx, float vy, float vz, float theta, float phi);

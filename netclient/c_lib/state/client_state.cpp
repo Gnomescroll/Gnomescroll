@@ -27,6 +27,8 @@ namespace ClientState {
 
     Voxel_render_list* voxel_render_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
+    SpawnerList* spawner_list = NULL;
+    
     Monsters::Slime_list* slime_list = NULL;
 
     GameObject_list* object_list;
@@ -48,6 +50,7 @@ namespace ClientState {
     {
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
+        spawner_list = new SpawnerList;
         
         object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
@@ -77,6 +80,7 @@ namespace ClientState {
         // must go after all voxels
         delete voxel_render_list;
         delete voxel_hitscan_list;
+        delete spawner_list;
 
         // particles
         delete cspray_list;
