@@ -10,7 +10,7 @@ require("block_dat");
 --[[ Setup FFI Interface ]]
 
 local ffi = require("ffi")
-ffi.load("c_lib")
+--ffi.load("c_lib")
 ffi.cdef[[
 void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent);
 void LUA_set_block_max_damage(int id, int max_damage);
@@ -20,7 +20,7 @@ void LUA_set_block_name(int id, char* name, int length);
 
 
 function set_block_name(id, name)
-  print("block_name: " .. id .. " = " .. name);
+  --print("block_name: " .. id .. " = " .. name);
   local str = ffi.new("char[64]");
   ffi.copy(str, name);
   ffi.C.LUA_set_block_name(id, str, string.len(name) );
