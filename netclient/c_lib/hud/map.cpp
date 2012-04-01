@@ -102,7 +102,7 @@ static Text* base = NULL;
 static Text* flag = NULL;
 static Text* enemy_flag = NULL;
 static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
-static Text* spawner[MAX_SPAWNERS] = {NULL};
+static Text* spawner[SPAWNER_MAX] = {NULL};
 //static Text turret[MAX_TURRETS];
 
 static bool text_icons_inited = false;
@@ -134,16 +134,16 @@ void init_text_icons()
         ally[i]->set_text((char*)ally_symbol);
     }
         
-    char* max_spawners_string = (char*)malloc(sizeof(char) * (10+1));
-    sprintf(max_spawners_string, "%d", MAX_SPAWNERS);
-    int len = strlen(max_spawners_string);
-    for (int i=0; i<MAX_SPAWNERS; i++)
+    char* SPAWNER_MAX_string = (char*)malloc(sizeof(char) * (10+1));
+    sprintf(SPAWNER_MAX_string, "%d", SPAWNER_MAX);
+    int len = strlen(SPAWNER_MAX_string);
+    for (int i=0; i<SPAWNER_MAX; i++)
     {
         spawner[i] = HudText::text_list->create();
         spawner[i]->set_format((char*)spawner_symbol);
         spawner[i]->set_format_extra_length(len - 1);
     }
-    free(max_spawners_string);
+    free(SPAWNER_MAX_string);
 
     text_icons_inited = true;
 }
@@ -160,7 +160,7 @@ static void set_team_icons_color(
     flag->set_color(r,g,b,a);
     for (int i=0; i<(int)TEAM_MAX_PLAYERS;
         ally[i++]->set_color(r,g,b,a));
-    for (int i=0; i<MAX_SPAWNERS;
+    for (int i=0; i<SPAWNER_MAX;
         spawner[i++]->set_color(r,g,b,a));
 }
 

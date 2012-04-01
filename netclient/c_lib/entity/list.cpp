@@ -339,7 +339,7 @@ void GameObject_list::assign_team_index(ObjectPolicyInterface* spawner)
     // and spawners may be destroyed; we dont want to renumber every time
 
     // get smallest available team index
-    int taken[MAX_SPAWNERS] = {0};
+    int taken[SPAWNER_MAX] = {0};
     for (int i=0; i<this->n_max; i++)
     {
         ObjectPolicyInterface* s = this->a[i];
@@ -349,7 +349,7 @@ void GameObject_list::assign_team_index(ObjectPolicyInterface* spawner)
         if (s->state()->team_index != TEAM_INDEX_NONE && s->state()->team_index != 0)  // should never be 0
             taken[s->state()->team_index - 1] = 1;
     }
-    for (int i=0; i<MAX_SPAWNERS; i++)
+    for (int i=0; i<SPAWNER_MAX; i++)
         if (!taken[i])
         {
             spawner->state()->team_index = i+1;
