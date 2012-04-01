@@ -302,7 +302,7 @@ def build(bld):
         time_lib = []
 
 
-    #bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     c_lib_includes = []
     c_lib_libpath = []
     if using_fmod:
@@ -313,33 +313,33 @@ def build(bld):
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
         target = 'gnomescroll_client'
 
-    #bld(features='cxx cxxshlib',
-        #source=['c_lib/c_lib.cpp'],
-        #use=common_libraries+time_lib+SDL_libraries+['LUA'],
-        #lib=sound_libraries+png_libs,
-        #includes= c_lib_includes,
-        #libpath= c_lib_libpath,
-        #framework = sound_framework,
-        #target='c_lib')
-
-        # compile as binary
-    bld(
-        features = 'cxx cxxprogram',
-        source = ['gnomescroll_client.cpp'],
-        use = common_libraries+time_lib+SDL_libraries+['LUA'],
-        lib = sound_libraries+png_libs,
-        includes = c_lib_includes,
-        libpath = c_lib_libpath,
+    bld(features='cxx cxxshlib',
+        source=['c_lib/c_lib.cpp'],
+        use=common_libraries+time_lib+SDL_libraries+['LUA'],
+        lib=sound_libraries+png_libs,
+        includes= c_lib_includes,
+        libpath= c_lib_libpath,
         framework = sound_framework,
-        target=target
-    )
-        
-    #bld.env.CFLAGS.remove('-fvisibility=hidden')
+        target='c_lib')
 
-    #bld(features='cxx cxxprogram',
-        #use=['c_lib'],
-        #source='gnomescroll_client.cpp',
-        #target=target)
+         ##compile as binary
+    #bld(
+        #features = 'cxx cxxprogram',
+        #source = ['gnomescroll_client.cpp'],
+        #use = common_libraries+time_lib+SDL_libraries+['LUA'],
+        #lib = sound_libraries+png_libs,
+        #includes = c_lib_includes,
+        #libpath = c_lib_libpath,
+        #framework = sound_framework,
+        #target=target
+    #)
+        
+    bld.env.CFLAGS.remove('-fvisibility=hidden')
+
+    bld(features='cxx cxxprogram',
+        use=['c_lib'],
+        source='gnomescroll_client.cpp',
+        target=target)
 
     bld.add_post_fun(install_bin)
     if '-DPRODUCTION=1' in bld.env.CFLAGS:

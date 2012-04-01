@@ -1,8 +1,8 @@
-#include <SDL.h>
-//#include <stdio.h>
-
 #include <c_lib/main.hpp>
-#include <c_lib/c_lib.cpp>
+
+//uncomment when compiling as shared lib
+//#include <SDL.h>
+//#include <c_lib/c_lib.cpp>
 
 int main(int argc, char** argv)
 {
