@@ -4,6 +4,32 @@
 #include <c_lib/items/items.hpp>
 #include <net_lib/net.hpp>
 
+// TODO -- find better way to do this
+void initialize_object_metadata(Object_types type, ObjectPolicyInterface* obj)
+{
+    ObjectState* state = obj->state();
+    switch (type)
+    {
+        case OBJ_TYPE_GRENADE_REFILL:
+            state->texture_index = ItemDrops::GRENADE_REFILL_TEXTURE_ID;
+            state->texture_scale = ItemDrops::GRENADE_REFILL_TEXTURE_SCALE;
+            state->mass = ItemDrops::GRENADE_REFILL_MASS;
+            state->ttl_max = ItemDrops::GRENADE_REFILL_TTL;
+            state->damp = ItemDrops::GRENADE_REFILL_DAMP;
+            break;
+
+        case OBJ_TYPE_LASER_REFILL:
+            state->texture_index = ItemDrops::LASER_REFILL_TEXTURE_ID;
+            state->texture_scale = ItemDrops::LASER_REFILL_TEXTURE_SCALE;
+            state->mass = ItemDrops::LASER_REFILL_MASS;
+            state->ttl_max = ItemDrops::LASER_REFILL_TTL;
+            state->damp = ItemDrops::LASER_REFILL_DAMP;
+            break;
+
+        default: return;
+    }
+}
+
 void GameObject_list::tick()
 {
     if (this->ct == 0) return;
@@ -309,6 +335,11 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type)
     this->id_start = id+1;
     this->occupancy[type] += 1;
     obj->state()->type = type;
+
+    //TODO
+    initialize_object_metadata(type, obj);
+    //TODO
+    
     return obj;
 }
 
@@ -342,6 +373,10 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
         this->ct++;
         this->occupancy[type] += 1;
         obj->state()->type = type;
+
+        //TODO
+        initialize_object_metadata(type, obj);
+        //TODO
     }
     else
         printf("%s_list: Cannot create object from id: id is in use: %d\n", name(), id);
