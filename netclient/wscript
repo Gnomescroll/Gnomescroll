@@ -45,25 +45,14 @@ def get_version():
     return version
 
 def options(opt):
-    #opt.load('compiler_c compiler_cxx python cython')
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
+def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     global _OS
     global os_libpth
 
-    if centos:  #doesntwork
-        conf.check_tool('gcc44')
-        conf.check_tool('g++44')
-    else:
-        conf.check_tool('gcc')
-        conf.check_tool('g++')
-    #conf.check_tool('python')
-    #conf.check_tool('cython')
-    #conf.load('compiler_c compiler_cxx python cython')
-
-    #conf.check_python_version((2,6,0))
-    #conf.check_python_headers()
+    conf.check_tool('gcc')
+    conf.check_tool('g++')
 
     conf.cc_add_flags()     #"-g" -ggdb
     conf.link_add_flags()   #"-g" -ggdb
@@ -101,8 +90,20 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
     version = get_version()
-    extra_options = ['-Wall', '-DDC_CLIENT=1', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS=1', '-DGNOMESCROLL_DSO=1', '-DDC_VERSION=%d' % (version,)] #'-fstrict-aliasing'
-    cflags += extra_options
+    extra_options = [
+        '-Wall',
+        '-DDC_CLIENT=1',
+        '-fno-exceptions',
+        '-Winline',
+        '-Wno-switch-enum',
+        '-Wno-switch',
+        '-DGNOMESCROLL_DSO_EXPORTS=1',
+        '-DGNOMESCROLL_DSO=1',
+        '-DDC_VERSION=%d' % (version,),
+        #'-fstrict-aliasing'
+    ]
+
+        cflags += extra_options
 
     if OS == 'Darwin':
         cflags += ['-s']
@@ -112,8 +113,6 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
 
     if sound.lower() == 'openal':
         cflags.append('-DUSE_OPENAL=1')
-    elif sound.lower() == 'fmod':
-        cflags.append('-DUSE_FMOD=1')
 
     conf.env.append_value('CFLAGS', cflags)
     conf.env.append_value('CXXFLAGS', cflags)
@@ -287,13 +286,11 @@ def build(bld):
         sound_libraries = ['fmodex']
     elif using_openal:
         if OS == 'Darwin':
-            #sound_libraries = ['OpenAL']
             sound_framework = ['OpenAL']
         elif OS == 'Windows':
             sound_libraries = ['OpenAL32']
         else:
             sound_libraries = ['openal']
-    #noise_libraries = ['noise']
 
     if OS == "Darwin":
         png_libs=[]
@@ -316,48 +313,22 @@ def build(bld):
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
         target = 'gnomescroll_client'
 
-    #clib
     bld(features='cxx cxxshlib',
-    #bld(features='cxx cxxprogram',
         source=['c_lib/c_lib.cpp'],
-        #source=['gnomescroll_client.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+['LUA'], # +noise_libraries +png_libs
+        use=common_libraries+time_lib+SDL_libraries+['LUA'],
         lib=sound_libraries+png_libs,
         includes= c_lib_includes,
         libpath= c_lib_libpath,
         framework = sound_framework,
         target='c_lib')
-        #target=target)
         
     bld.env.CFLAGS.remove('-fvisibility=hidden')
 
-    #bld(features='cxx cshlib cxxshlib pyext',
-        #source=['c_lib/init_c_lib.pyx'],
-        #use=common_libraries + ['c_lib'],
-        #target='init_c_lib')
-
-    # final
-    #bld(features='cxx cprogram pyembed',
-        #use=['c_lib'],
-        #source='run.c',
-        #target='run')
-        
     bld(features='cxx cxxprogram',
         use=['c_lib'],
         source='gnomescroll_client.cpp',
         target=target)
 
-    ## compile python files
-    #if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        #import py_compile
-        #py_compile.compile('cube_dat.py')
-        #py_compile.compile('dat_loader.py')
-        #py_compile.compile('args_client.py')
-        #py_compile.compile('gameloop.py')
-        #py_compile.compile('opts.py')
-        #py_compile.compile('default_settings.py')
-        
-    bld.add_post_fun(install_in_ext)
     bld.add_post_fun(install_bin)
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
         bld.add_post_fun(strip_symbols)
@@ -372,50 +343,21 @@ def strip_symbols(ctx):
         subprocess.Popen(['strip', '-s', 'ext/init_c_lib.so'])
 
 def install_bin(ctx):
-    if os.path.exists('./build/client'):
-        shutil.copy2('./build/client', './client')
-        shutil.copy2('./build/client', './run')
-
-def install_in_ext(ctx):
-    global out, _OS
-
-    # Hax to install files into ./ext/, after build
-
-    try:
-        run_target = ctx.env.cprogram_PATTERN % 'run'
-        shutil.copy2(os.path.join(out, run_target), './' + run_target)
+    global out
+    try:    # installs binary to ./run and ./client
+        run_target = ctx.env.cprogram_PATTERN % 'client'
+        run_dest = 'run'
+        client_dest = 'client'
+        shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+        shutil.copy2(os.path.join(out, run_target), './' + client_dest)
     except:
         pass
-
-
+        
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
     except:
         pass
-        #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
-
-    #targets = [
-       #'init_c_lib',
-    #]
-
-    #for target in targets:
-        #dest_path = target.replace('.', '/')
-        #dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
-        #ensure_dir(os.path.dirname(dest_path))
-        #try:
-            #if 'csound' in target:
-                #target = target.replace('csound', 'libcsound')
-                #dest_path = dest_path.replace('csound', 'libcsound')
-            #shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-        #except Exception, e:
-            #pass
-            ##print e
-            ##print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-    #make_dest_modules(ctx)
-
-    #if '-DUSE_FMOD=1' in ctx.env.CFLAGS:
-        #install_fmod_libs()
 
 def ensure_dir(path):
     try:
@@ -423,26 +365,6 @@ def ensure_dir(path):
     except OSError, e:
         if e.errno != errno.EEXIST:
             raise
-
-def install_fmod_libs():
-    global _OS
-    if _OS == 'Darwin':
-        libfmodex_name = "libfmodex.dylib"
-        libfmodex_pth = "./libraries/osx/fmod/lib/%s" % (libfmodex_name,)
-        if not os.path.exists(libfmodex_name):
-            if not os.path.exists(libfmodex_pth):
-                print "WARNING: OSX Build problem -- Missing %s" % (libfmodex_pth,)
-            else:
-                try:
-                    shutil.copy2(libfmdex_pth, libfmodex_name)
-                except:
-                    print "Failed to copy %s to %s" % (libfmodex_pth, libfmodex_name,)
-
-def make_dest_modules(ctx):
-    for root, dirs, files in os.walk('./ext/'):
-        with open(os.path.join(root, '__init__.py'), 'wb') as f:
-            f.close()
-
 
 '''
 Subclass related *Context
@@ -491,10 +413,6 @@ class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
     
-#class centos64_production_ctx(ConfigurationContext):
-    #cmd = 'centos64'
-    #fun = 'centos64'
-
 class fmod_ctx(ConfigurationContext):
     cmd = 'fmod'
     fun = 'fmod'
@@ -531,15 +449,12 @@ def linux(ctx):
 def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
-#def centos64(ctx):
-    #production(ctx, add=['-m64', '-shared-libgcc'], centos=True)
-    
-def production(ctx, add=[], rm=[], centos=False):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
+def production(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
 
 # developers' build of the production build
-def production_dev(ctx, add=[], rm=[], centos=False):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DPRODUCTION_DEV=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
+def production_dev(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-DPRODUCTION_DEV=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
 
 def profile(ctx):
     configure(ctx)
