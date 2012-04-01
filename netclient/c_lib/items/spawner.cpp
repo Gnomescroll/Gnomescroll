@@ -79,8 +79,8 @@ bool SpawnerList::team_spawner_available(int team)
     int n = 0;
     for (int i=0; i<this->max; i++)
     {
-        if (this->spawners[i] == NULL) continue;
-        s = this->spawners[i]->obj;
+        if (this->objects[i] == NULL) continue;
+        s = this->objects[i]->obj;
         if (s == NULL) continue;
         state = s->state();
         if (state->get_team() == team) n++;
@@ -92,22 +92,22 @@ int SpawnerList::get_random_spawner(int team)
 {
     ObjectPolicyInterface *s;
     ObjectState* state;
-    int spawners[this->max_per_team+1];
+    int objects[this->max_per_team+1];
     int j=0;
     for (int i=0; i<this->max; i++)
-    {   // filter down to team's spawners
-        if (this->spawners[i] == NULL) continue;
-        s = this->spawners[i]->obj;
+    {   // filter down to team's objects
+        if (this->objects[i] == NULL) continue;
+        s = this->objects[i]->obj;
         if (s == NULL) continue;
         state = s->state();
         if (state->get_team() == team)
-            spawners[j++] = state->team_index;
+            objects[j++] = state->team_index;
     }
-    spawners[j++] = BASE_SPAWN_ID;
-    return spawners[randrange(0,j-1)];
+    objects[j++] = BASE_SPAWN_ID;
+    return objects[randrange(0,j-1)];
 }
 
-// when spawners player says "spawner 8" he may be on the other team
+// when objects player says "spawner 8" he may be on the other team
 // we need to find the 8th spawner for his team
 int SpawnerList::get_numbered_team_spawner(int team, int id)
 {
@@ -115,8 +115,8 @@ int SpawnerList::get_numbered_team_spawner(int team, int id)
     ObjectState* state;
     for (int i=0; i<this->max; i++)
     {
-        if (this->spawners[i] == NULL) continue;
-        s = this->spawners[i]->obj;
+        if (this->objects[i] == NULL) continue;
+        s = this->objects[i]->obj;
         if (s == NULL) continue;
         state = s->state();
         if (state->get_team() != team) continue;
@@ -132,8 +132,8 @@ ObjectPolicyInterface* SpawnerList::get_by_team_index(int team, int team_index)
     ObjectState* state;
     for (int i=0; i<this->max; i++)
     {
-        if (this->spawners[i] == NULL) continue;
-        s = this->spawners[i]->obj;
+        if (this->objects[i] == NULL) continue;
+        s = this->objects[i]->obj;
         if (s == NULL) continue;
         state = s->state();
         if (state->get_team() != team) continue;
@@ -152,8 +152,8 @@ bool SpawnerList::spawner_exists(int team, int team_index)
 
 void SpawnerList::assign_team_index(ObjectPolicyInterface* spawner)
 {   // pick an index for the spawner that is available, these are separate from
-    // id because each team's set of spawners has its own indexing
-    // and spawners may be destroyed; we dont want to renumber every time
+    // id because each team's set of objects has its own indexing
+    // and objects may be destroyed; we dont want to renumber every time
     // get smallest available team index
     if (!this->max) return;
     int* taken = (int*)calloc(this->max, sizeof(int));
@@ -163,8 +163,8 @@ void SpawnerList::assign_team_index(ObjectPolicyInterface* spawner)
     ObjectState* spawner_state = spawner->state();
     for (int i=0; i<this->max; i++)
     {
-        if (this->spawners[i] == NULL) continue;
-        s = this->spawners[i]->obj;
+        if (this->objects[i] == NULL) continue;
+        s = this->objects[i]->obj;
         if (s == NULL) continue;
         state = s->state();
         if (state->get_team() != spawner_state->get_team()) continue;

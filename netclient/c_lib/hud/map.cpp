@@ -616,7 +616,7 @@ void draw_team_text_icons(float z)
     ObjectState* state;
     for (int i=0; i<spawner_list->max; i++)
     {
-        s = spawner_list->spawners[i];
+        s = (SpawnerProperties*)spawner_list->objects[i];
         if (s==NULL) continue;
         state = s->obj->state();
         if (state->get_team() != playerAgent_state.you->status.team) continue;

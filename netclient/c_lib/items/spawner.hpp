@@ -27,15 +27,25 @@ extern VoxDat spawner_vox_dat;
 
 /* Spawner Component */
 
-class SpawnerProperties
+class ListProperties
+{
+    public:
+    int id;
+    ObjectPolicyInterface* obj;
+    void* list;
+    
+    ListProperties()
+    : id(-1), obj(NULL), list(NULL)
+    {}
+};
+
+class SpawnerProperties: public ListProperties
 {
     public:
     int radius;
-    ObjectPolicyInterface* obj;
-    SpawnerList* list;
     
     SpawnerProperties()
-    : radius(1), obj(NULL), list(NULL)
+    : radius(1)
     {}
 };
 
@@ -49,69 +59,84 @@ class SpawnerComponent
 
 /* List management */
 
-const int SPAWNER_LIST_MAX = 256;
-class SpawnerList
+class BehaviourList
 {
+    private:
+        virtual const char* name() = 0;
     public:
-    SpawnerProperties** spawners;
-    int max;
-    int max_per_team;
-    int ct;
+        ListProperties** objects;
+        int max;
+        int ct;
 
-    void register_object(SpawnerProperties* state)
+    void register_object(ListProperties* state)
     {
         if (this->ct >= this->max)
         {
-            printf("WARNING: SpawnerList is full\n");
+            printf("WARNING: %s is full\n", name());
             return;
         }
         int i=0;
         for (;i<this->max; i++)
         {
-            if (this->spawners[i] == NULL)
+            if (this->objects[i] == NULL)
             {
+                state->id = i;
                 state->list = this;
-                this->spawners[i] = state;
+                this->objects[i] = state;
                 this->ct++;
                 break;
             }
         }
         if (i == this->max)
-            printf("WARNING: no empty slots found in spawner list\n");
+            printf("WARNING: no empty slots found in %s\n", name());
     }
 
-    void unregister_object(SpawnerProperties* state)
+    void unregister_object(ListProperties* state)
     {
-        for (int i=0; i<this->max; i++)
-        {
-            if (this->spawners[i] == NULL) continue;
-            if (this->spawners[i] == state)
-            {
-                state->list = NULL;
-                this->ct--;
-                this->spawners[i] = NULL;
-                return;
-            }
-        }
+        if (state->list == NULL || state->id < 0 || state->id >= this->max)
+            return;
+        if (this->objects[state->id] == NULL) return;
+        this->objects[state->id] = NULL;
+        this->ct--;
+        state->list = NULL;
+        state->id = -1;
+        return;
     }
 
-    /* MAJOR TODO -- MAKE THIS ITS OWN LIST */
+    ~BehaviourList()
+    {}
+    explicit BehaviourList(int max)
+    : objects(NULL), max(max), ct(0)
+    {}
+};
+
+
+/************/
+
+const int SPAWNER_LIST_MAX = 256;
+class SpawnerList: public BehaviourList
+{
+    private:
+        const char* name() { return "SpawnerList"; }
+    public:
+    int max_per_team;
+
     bool team_spawner_available(int team);
     int get_random_spawner(int team);
     int get_numbered_team_spawner(int team, int id);
     ObjectPolicyInterface* get_by_team_index(int team, int team_index);
     bool spawner_exists(int team, int team_index);
     void assign_team_index(ObjectPolicyInterface* spawner);
-    /* END SHIT */
 
     ~SpawnerList()
     {
-        free(this->spawners);
+        if (this->objects != NULL)
+            free(this->objects);
     }
     SpawnerList()
-    : max(SPAWNER_LIST_MAX), max_per_team(SPAWNERS_PER_TEAM), ct(0)
+    : BehaviourList(SPAWNER_MAX), max_per_team(SPAWNERS_PER_TEAM)
     {
-        this->spawners = (SpawnerProperties**)calloc(this->max, sizeof(SpawnerProperties*));
+        this->objects = (ListProperties**)calloc(this->max, sizeof(ListProperties*));
     }
 };
 
