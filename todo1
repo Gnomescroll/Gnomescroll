@@ -774,7 +774,7 @@ Mar 31
 Apr 1
 
 Integrate spawners into entity system
-
+Correct error handling for OpenAL device open failure
 ====================
 
 Gun model
@@ -853,4 +853,3 @@ sendToAllExcept(int agent_id); // excludes agent
     everyone else: gets item_destroyed
 
 mouse grab is weird in production
-when sound fails /  conflicts with pulseaudio, client does not teardown properly
