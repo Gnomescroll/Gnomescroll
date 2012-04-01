@@ -37,14 +37,15 @@ bool ObjectState::set_position(float x, float y, float z)
     || this->position.z != z
     ) changed = true;
 
+    this->position.x = x;
+    this->position.y = y;
+    this->position.z = z;
+
     if (this->vox != NULL)
     {
         if (this->frozen_vox && changed)
             this->vox->thaw();
 
-        this->position.x = x;
-        this->position.y = y;
-        this->position.z = z;
         this->vox->update(
             this->position.x, this->position.y, this->position.z,
             this->theta, this->phi

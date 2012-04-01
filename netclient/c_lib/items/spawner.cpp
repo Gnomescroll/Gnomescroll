@@ -21,10 +21,8 @@ void spawner_state(object_state_StoC_model* msg)
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
     Spawner* s = (Spawner*)ClientState::object_list->create(
-        (Object_types)msg->type,
-        (int)msg->id,
-        msg->x, msg->y, msg->z,
-        0,0,0
+        (Object_types)msg->type, (int)msg->id,
+        msg->x, msg->y, msg->z
     );
     if (s == NULL)
     {

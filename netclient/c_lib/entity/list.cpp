@@ -227,7 +227,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float
 }
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
-{
+{    
     if (this->ct >= this->max) return NULL;
     if (this->full(type)) return NULL;
     ObjectPolicyInterface* obj = NULL;

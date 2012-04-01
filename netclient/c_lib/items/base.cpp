@@ -6,7 +6,6 @@ VoxDat base_vox_dat;
 
 void Base::set_position(float x, float y, float z)
 {
-    printf("base set_position %0.2f,%0.2f,%0.2f\n", x,y,z);
     this->x = x;
     this->y = y;
     this->z = z;

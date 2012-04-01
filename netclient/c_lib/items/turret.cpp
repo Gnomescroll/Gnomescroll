@@ -22,10 +22,8 @@ void turret_state(object_state_StoC_model* msg)
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
     Turret* t = (Turret*)ClientState::object_list->create(
-        (Object_types)msg->type,
-        (int)msg->id,
-        msg->x, msg->y, msg->z,
-        0,0,0
+        (Object_types)msg->type, (int)msg->id,
+        msg->x, msg->y, msg->z
     );
     if (t == NULL)
     {

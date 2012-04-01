@@ -10,12 +10,13 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
 inline void object_create_StoC_model::handle()
 {
+    printf("object create packet -- type %d\n", type);
     ObjectPolicyInterface* obj;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create((Object_types)type, x,y,z, 0,0,0);
+            obj = ClientState::object_list->create((Object_types)type, x,y,z);
             break;
             
         default: return;

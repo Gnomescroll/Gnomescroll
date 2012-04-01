@@ -518,7 +518,7 @@ inline void spawn_location_StoC::handle()
 
 inline void alter_item_ownership_StoC::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, (int)id);
     if (obj == NULL) return;
     obj->state()->set_owner(owner);
 }
@@ -527,7 +527,6 @@ inline void destroy_voxel_StoC::handle()
 {
     int voxel[3] = { x,y,z };
     destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
-    //printf("destroy_voxel_StoC -- %d,%d,%d :: %d,%d,%d :: %d\n", entity_id, entity_type, entity_part, x,y,z, radius);
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -1021,7 +1020,7 @@ inline void place_spawner_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = (Spawner*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z, 0,0,0);
+    Spawner* s = (Spawner*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
     if (s==NULL) return;
     a->status.purchase(s->state()->type);
     s->state()->set_team(a->status.team);
@@ -1050,7 +1049,7 @@ inline void place_turret_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = (Turret*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z, 0,0,0);
+    Turret* t = (Turret*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
     if (t==NULL) return;
     a->status.purchase(t->state()->type);
     t->state()->set_team(a->status.team);

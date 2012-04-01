@@ -815,13 +815,13 @@ class alter_item_ownership_StoC: public FixedSizeReliableNetPacketToClient<alter
 {
     public:
         uint8_t owner;
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
         }
         inline void handle();
