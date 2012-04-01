@@ -3,21 +3,6 @@ http://developer.amd.com/tools/perfstudio/pages/frameprofiler.aspx
 http://blogs.amd.com/developer/tag/code-profiler/
 
 
-
-CCache and build system acceleration:
-SCONS http://www.scons.org/
-
-Reducing Linking Time:
-GNU gold linker:
-"The main feature of the new linker is that it is much faster for linking large C++ binaries. We've been using it internally at Google with great results for large projects."
-http://en.wikipedia.org/wiki/Gold_%28linker%29
-
-Profiling Compile Time:
-- g++ some_file.cc -ftime-report
-will give you a rough estimate of time spent in different compiler phase.
-
-Use -O0 if you're not testing execution speed or code size (and your computer is fast enough for you not to care much about the (probably small) performance hit).
-
 Bloom Shader:
 http://blenderartists.org/forum/archive/index.php/t-134703.html
 
