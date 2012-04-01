@@ -148,14 +148,6 @@ void init()
     else
         device = alcOpenDevice(NULL); // select the "preferred device"
 
-    if (checkError())
-    {
-        close();
-        inited = enabled = false;
-        device = NULL;
-        return;
-    }
-
     if (device == NULL)
     {
         printf("OpenAL error: sound device %s not found\n", Options::sound_device);
@@ -166,6 +158,15 @@ void init()
 
     context = alcCreateContext(device, NULL);
     alcMakeContextCurrent(context);  
+
+    // DONT alGetError() before call to alcMakeContextCurrent -- will return error!
+    if (checkError())
+    {
+        close();
+        inited = enabled = false;
+        device = NULL;
+        return;
+    }
 
     // Check for EAX 2.0 support 
     ALboolean g_bEAX = alIsExtensionPresent("EAX2.0");
