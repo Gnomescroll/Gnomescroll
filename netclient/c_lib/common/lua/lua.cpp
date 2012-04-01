@@ -350,3 +350,14 @@ void register_string_option(const char* name, char* var)
 }
 
 }
+
+
+extern "C"
+{
+
+    void LUA_set_int_option(int option_id, int value)
+    {
+        *LUA::LUA_int_option_table[option_id] = value;
+    }
+
+}

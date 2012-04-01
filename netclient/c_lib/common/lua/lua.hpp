@@ -15,3 +15,10 @@ void register_float_option(const char* name, float* var);
 void register_string_option(const char* name, char* var);
 
 }
+
+extern "C"
+{
+
+    void LUA_set_int_option(int option_id, int value);
+
+}
