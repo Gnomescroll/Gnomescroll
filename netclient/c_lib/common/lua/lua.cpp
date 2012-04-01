@@ -49,17 +49,6 @@ int run_lua_test()
     return 0;
 */
 
- extern "C" 
-{
-
-int barfunc(int foo)
-{
-    /* a dummy function to test with FFI */ 
-    return foo + 1;
-}
-
-}
-
 int run_lua_test()
 {
 
@@ -78,7 +67,7 @@ int run_lua_test()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "./media/lua/test.lua");
+    status = luaL_loadfile(L, "lua/test.lua");
     if (status) 
     {
         /* If something went wrong, error message is at the top of */
@@ -152,9 +141,18 @@ int run_lua_test()
 
 }
 
-
 int lua_load_block_dat()
 {
+    int test;
+    LUA_init_options()
+    register_int_option("test option", &test);
+    LUA_register_options()
+
+
+    /*
+        End test
+    */
+
     int status, result;
     lua_State *L;
 
@@ -196,4 +194,81 @@ int lua_load_block_dat()
 
     return 0;
 
+}
+
+void LUA_init_options();
+void LUA_register_options();
+
+void LUA_register_int_option(char* name, int* var)
+
+lua_State LUA_options_table;
+
+void LUA_init_options()
+{
+    int status;
+    double sum;
+
+    LUA_options_table = luaL_newstate();
+
+    lua_State *L = LUA_options_table;
+
+    status = luaL_loadfile(L, "lua/settings.lua");
+    if (status) 
+    {
+        fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+    lua_newtable(L);    //create options table
+
+    //pop options onto table
+}
+
+void LUA_register_options()
+{
+
+    lua_State *L = LUA_options_table;
+
+    lua_setglobal(L, "options_table"); //name options
+
+    if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+    {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        exit(1);
+    }
+
+}
+
+/*
+    Types: int, float, bool, string
+*/
+
+int LUA_int_option_index = 0;
+int* LUA_int_option_table[256] = {0};
+
+void LUA_register_int_option(char* name, int* var)
+{
+    LUA_int_option_table[LUA_int_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+    lua_newtable(L);            //value
+
+        //id
+        lua_pushnumber(L, 0);
+        lua_pushnumber(L, LUA_int_option_index);
+        lua_rawset(L, -3);
+        //type
+        lua_pushnumber(L, 1);   /* Push the table index */
+        lua_pushnumber(L, 0); /* Push the cell value */
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);
+
+    LUA_int_option_index++;
+    if(LUA_int_option_index >= 256)
+    {
+        printf("LUA OPTION ERROR\n";)
+        exit();
+    }
 }
