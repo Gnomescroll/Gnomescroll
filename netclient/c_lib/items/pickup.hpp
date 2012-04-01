@@ -18,43 +18,33 @@ const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
 /* Behaviour */
 
-template <class Super, class Object>
-class DiePickup: public Super
+template <class Object>
+inline void diePickup(ObjectState* state, Object* object)
 {
-    public:
-    inline void die(ObjectState* state, Object* object)
+    #if DC_SERVER
+    if (state->broadcast_death)
     {
-        #if DC_SERVER
-        if (state->broadcast_death)
-        {
-            object_picked_up_StoC msg;
-            msg.type = state->type;
-            msg.id = state->id;
-            msg.agent_id = state->picked_up_by;
-            msg.broadcast();
-        }
-        #endif
-        Super::die(state, object);
+        object_picked_up_StoC msg;
+        msg.type = state->type;
+        msg.id = state->id;
+        msg.agent_id = state->picked_up_by;
+        msg.broadcast();
     }
-};
+    #endif
+}
 
-template <class Super, class Object>
-class TickPickup: public Super
+template <class Object>
+void tickPickup(ObjectState* state, Object* object)
 {
-    public:
-    inline void tick(ObjectState* state, Object* object)
-    {
-        #if DC_SERVER
-        int agent_id = object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
-        if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
-        {   // was picked up, die
-            object->was_picked_up(state, agent_id);
-            state->ttl = state->ttl_max;
-        }
-        #endif
-        Super::tick(state, object);
+    #if DC_SERVER
+    int agent_id = object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
+    if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
+    {   // was picked up, die
+        object->was_picked_up(state, agent_id);
+        state->ttl = state->ttl_max;
     }
-};
+    #endif
+}
 
 /* Reusable Component */
 
@@ -68,35 +58,15 @@ class PickupComponent
 
 /* Composition */
 
-class PickupObject; // forward decl
+typedef ObjectInterface
+< object_create_vel_StoC, object_state_vel_StoC >
+PickupInterface;
 
-// Note: Read left to right, until terminator No*(). Everything after that is noise
-// Here, we have:
-// TickVerletBounce, TickPickup, TickTTL, NoTick. (NoTick is a terminator macro). When tick is called, these
-// behaviours will be called in order
-typedef TickVerletBounce < TickPickup < TickTTL < NoTick(PickupObject) ,PickupObject>,PickupObject>,PickupObject>
-    ParticleTick;
-
-// TODO: move to a drawing behaviours file
-typedef DrawBillboardSprite < NoDraw(PickupObject) ,PickupObject>
-    BillboardSpriteDraw;
-
-typedef BornCreateMessage < NoBorn(PickupObject) ,PickupObject>
-    PickupBorn;
-
-typedef DiePickup < NoDie(PickupObject) ,PickupObject>
-    PickupDie;
-
-typedef ObjectPolicy
-< PickupObject, ParticleTick, BillboardSpriteDraw, NoUpdate(PickupObject), PickupBorn, PickupDie,
-    object_create_vel_StoC, object_state_vel_StoC >
-PickupObjectParent;
-
-class PickupObject: public PickupObjectParent, public PickupComponent
+class PickupObject: public PickupComponent, public PickupInterface
 {
     public:
     PickupObject(int id)
-    : PickupObjectParent(this), PickupComponent()
+    : PickupComponent(), PickupInterface()
     {   // TODO: constants should be loaded via dat
         this->_state.id = id;
         this->_state.pickup = true;
@@ -106,6 +76,32 @@ class PickupObject: public PickupObjectParent, public PickupComponent
         this->_state.texture_scale = DEFAULT_PICKUP_ITEM_TEXTURE_SCALE;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
+    }
+
+    /* Interface */
+
+    void tick()
+    {
+        tickVerletBounce(this->state(), this);
+        tickPickup(this->state(), this);
+        tickTTL(this->state(), this);
+    }
+
+    void update() {}
+
+    void draw()
+    {
+        drawBillboardSprite(this->state(), this);
+    }
+
+    void born()
+    {
+        bornCreateMessage(this->state(), this);
+    }
+
+    void die()
+    {
+        diePickup(this->state(), this);
     }
 };
 

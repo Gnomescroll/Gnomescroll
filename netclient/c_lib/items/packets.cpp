@@ -16,7 +16,7 @@ inline void object_create_StoC_model::handle()
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create((Object_types)type, x,y,z);
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
             break;
             
         default: return;
@@ -32,7 +32,7 @@ inline void object_create_vel_StoC_model::handle()
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create((Object_types)type, x,y,z, mx,my,mz);
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx,my,mz);
             break;
             
         default: return;

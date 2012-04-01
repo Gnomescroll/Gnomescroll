@@ -66,17 +66,6 @@ Make list aggregator
 Specialized lists will added to list aggregator
 Aggregator puts object in specialized list if possible
 
-List specialization will not be complex like objects
---No method composition. this means tick/update/draw looping are not configurable
---they dont need to be. let the object handle anything special
-Will be simple inheritance
-e.g.
-class Spawner_list: public Object_list<Spawner, MAX_SPAWNERS>
-{
-    int get_random_team_spawner();
-    //etc
-};
-
 Draw has be tracked differently
 When object created, get assigned to a draw list based on draw type
 --When deleted, remove

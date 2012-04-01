@@ -27,28 +27,15 @@ class TargetAcquisitionComponent
     TargetAcquisitionComponent(){}
 };
 
-class Turret; // forward decl
+typedef ObjectInterface
+< object_create_owner_team_StoC, object_state_StoC >
+TurretInterface;
 
-typedef TickStayOnGround < TickTargetAcquisition < NoTick(Turret), Turret>,Turret>
-    TurretTick;
-
-typedef UpdateFrozenVox < NoUpdate(Turret), Turret> TurretUpdate;
-
-typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < BornCreateMessage < NoBorn(Turret), Turret>,Turret>,Turret>,Turret>
-    TurretBorn;
-
-typedef DieExplode < DieBroadcast < DieRevokeOwner < DieTeamItemAnimation < NoDie(Turret), Turret>,Turret>,Turret>,Turret> TurretDie;
-
-typedef ObjectPolicy
-< Turret, TurretTick, NoDraw(Turret), TurretUpdate, TurretBorn, TurretDie,
-    object_create_owner_team_StoC, object_state_StoC >
-TurretObjectParent;
-
-class Turret: public TurretObjectParent, public TargetAcquisitionComponent
+class Turret: public TargetAcquisitionComponent, public TurretInterface
 {
     public:
         Turret(int id)
-        : TurretObjectParent(this), TargetAcquisitionComponent()
+        : TargetAcquisitionComponent(), TurretInterface()
         {
             this->_state.id = id;
             this->_state.height = TURRET_HEIGHT;
@@ -77,4 +64,36 @@ class Turret: public TurretObjectParent, public TargetAcquisitionComponent
             this->_state.attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
             this->_state.attacker_properties.terrain_modification_action = t_map::TMA_LASER;
         }
+
+    /* Interface */
+
+    void tick()
+    {   // make each a template function
+        tickStayOnGround(this->state(), this);
+        tickTargetAcquisition(this->state(), this);
+    }
+
+    void update()
+    {
+        updateFrozenVox(this->state(), this);
+    }
+
+    void draw() {}
+
+    void born()
+    {
+        bornTeamVox(this->state(), this);
+        bornSetVox(this->state(), this);
+        bornUpdateFrozenVox(this->state(), this);
+        bornCreateMessage(this->state(), this);
+    }
+
+    void die()
+    {
+        dieExplode(this->state(), this);
+        dieBroadcast(this->state(), this);
+        dieRevokeOwner(this->state(), this);
+        dieTeamItemAnimation(this->state(), this);
+    }
+
 };

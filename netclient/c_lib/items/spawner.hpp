@@ -115,52 +115,64 @@ class SpawnerList
     }
 };
 
-/* Spawner Object */
+typedef ObjectInterface
+< object_create_owner_team_index_StoC, object_state_StoC >
+SpawnerInterface;
 
-class Spawner; // forward decl
-
-typedef TickStayOnGround < NoTick(Spawner), Spawner>
-    SpawnerTick;
-
-typedef UpdateFrozenVox < NoUpdate(Spawner), Spawner>
-    SpawnerUpdate;
-
-typedef BornTeamVox < BornSetVox < BornUpdateFrozenVox < BornCreateMessage < NoBorn(Spawner), Spawner>,Spawner>,Spawner>,Spawner>
-    SpawnerBorn;
-
-typedef DieBroadcast < DieRevokeOwner < DieTeamItemAnimation < NoDie(Spawner), Spawner>,Spawner>,Spawner>
-    SpawnerDie;
-
-typedef ObjectPolicy
-< Spawner, SpawnerTick, NoDraw(Spawner), SpawnerUpdate, SpawnerBorn, SpawnerDie,
-    object_create_owner_team_index_StoC, object_state_StoC >
-SpawnerObjectParent;
-
-class Spawner: public SpawnerObjectParent, public SpawnerComponent
+class Spawner: public SpawnerComponent, public SpawnerInterface
 {
     public:
-        Spawner(int id)
-        : SpawnerObjectParent(this), SpawnerComponent()
-        {
-            this->_state.id = id;
-            this->_state.height = SPAWNER_HEALTH;
-            this->_state.broadcast_state_change = true;
-            this->_state.cost = COST_SPAWNER;
-            this->_state.reward = COST_SPAWNER;
-            this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
-            this->_state.frozen_vox = true;
-            this->_state.vox_dat = &spawner_vox_dat;
-            this->_state.type = OBJ_TYPE_SPAWNER;
-            this->_state.health = SPAWNER_HEALTH;
+    Spawner(int id)
+    : SpawnerComponent(), SpawnerInterface()
+    {
+        this->_state.id = id;
+        this->_state.height = SPAWNER_HEALTH;
+        this->_state.broadcast_state_change = true;
+        this->_state.cost = COST_SPAWNER;
+        this->_state.reward = COST_SPAWNER;
+        this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
+        this->_state.frozen_vox = true;
+        this->_state.vox_dat = &spawner_vox_dat;
+        this->_state.type = OBJ_TYPE_SPAWNER;
+        this->_state.health = SPAWNER_HEALTH;
 
-            this->spawner_properties.obj = this;
-            this->spawner_properties.radius = SPAWNER_SPAWN_RADIUS;
-            STATE::spawner_list->register_object(&this->spawner_properties);
-        }
+        this->spawner_properties.obj = this;
+        this->spawner_properties.radius = SPAWNER_SPAWN_RADIUS;
+        STATE::spawner_list->register_object(&this->spawner_properties);
+    }
 
-        ~Spawner()
-        {
-            STATE::spawner_list->unregister_object(&this->spawner_properties);
-        }
+    ~Spawner()
+    {
+        STATE::spawner_list->unregister_object(&this->spawner_properties);
+    }
+
+    /* Interface */
+
+    void tick()
+    {
+        tickStayOnGround(this->state(), this);
+    }
+
+    void update()
+    {
+        updateFrozenVox(this->state(), this);
+    }
+
+    void draw() {}
+
+    void born()
+    {
+        bornTeamVox(this->state(), this);
+        bornSetVox(this->state(), this);
+        bornUpdateFrozenVox(this->state(), this);
+        bornCreateMessage(this->state(), this);
+    }
+
+    void die()
+    {
+        dieBroadcast(this->state(), this);
+        dieRevokeOwner(this->state(), this);
+        dieTeamItemAnimation(this->state(), this);
+    }
 };
 
