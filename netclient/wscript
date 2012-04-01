@@ -84,6 +84,8 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     GCC considers member functions defined within the body of a class to be marked inline even if they are not explicitly declared with the inline keyword. You can override this with -fno-default-inline
     '''
 
+    #-ftime-report 
+
     if OS == 'Windows':
         cflags = ['-g', '-fpermissive', '-static-libgcc']
     else:

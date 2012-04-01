@@ -8,7 +8,7 @@
 
 bl_ffi = require("ffi")
 
-bl_ffi.load("c_lib")
+--bl_ffi.load("c_lib")
 
 bl_ffi.cdef[[
 int LUA_load_cube_texture_sheet(char* filename);
