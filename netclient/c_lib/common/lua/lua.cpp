@@ -1,64 +1,16 @@
 #include "lua.hpp"
 
-/*
-int run_lua_test()
+
+extern "C"
 {
- return 0;
+    #include <lua.h>
+    #include <lualib.h>
+    #include <lauxlib.h>
 }
-*/
 
-
-/*
- * test.c
- * Example of a C program that interfaces with Lua.
- * Based on Lua 5.0 code by Pedro Martelletto in November, 2003.
- * Updated to Lua 5.1. David Manura, January 2007.
- */
-
-//#include <luajit/lua.hpp>
-//#include <luajit/lauxlib.h>
-
-//#include<luajit-2.0/
-/*
- extern "C" 
-{
-#include <lua5.1/lua.h>
-#include <lua5.1/lualib.h>
-#include <lua5.1/lauxlib.h>
-}
-*/
-
-//#include <luajit/lua.hpp>
-//#include <luajit/lauxlib.h>
-
-#include <lua.hpp>
-#include <lauxlib.h>
 
 #include <stdlib.h>
 #include <stdio.h>
-
-/*
-    int s=0;
-    lua_State *L = lua_open();
-    // load the libs
-    luaL_openlibs(L);
-    //run a Lua scrip here
-    luaL_dofile(L,"./media/lua/test.lua");
-    lua_close(L);
- 
-    return 0;
-*/
-
- extern "C" 
-{
-
-int barfunc(int foo)
-{
-    /* a dummy function to test with FFI */ 
-    return foo + 1;
-}
-
-}
 
 int run_lua_test()
 {
@@ -78,7 +30,7 @@ int run_lua_test()
     luaL_openlibs(L); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "./media/lua/test.lua");
+    status = luaL_loadfile(L, "lua/test.lua");
     if (status) 
     {
         /* If something went wrong, error message is at the top of */
@@ -152,9 +104,20 @@ int run_lua_test()
 
 }
 
-
 int lua_load_block_dat()
 {
+/*
+    int test;
+    LUA_init_options();
+    LUA_register_int_option("x_res", &test);
+    LUA_register_int_option("y_res", &test);
+    LUA_register_options();
+*/
+
+    /*
+        End test
+    */
+
     int status, result;
     lua_State *L;
 
@@ -180,14 +143,14 @@ int lua_load_block_dat()
     {
         /* If something went wrong, error message is at the top of the stack */
         fprintf(stderr, "lua_load_map_tiles: Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
+        abort();
     }
 
     result = lua_pcall(L, 0, LUA_MULTRET, 0);
     if (result) 
     {
         fprintf(stderr, "lua_load_map_tiles: Failed to run script: %s\n", lua_tostring(L, -1));
-        exit(1);
+        abort();
     }
 
     lua_close(L);   /* Cya, Lua */
@@ -195,5 +158,195 @@ int lua_load_block_dat()
     printf("lua_load_map_tiles: finished \n");
 
     return 0;
+
+}
+
+#include <options.hpp>
+
+namespace LUA
+{
+
+void LUA_init_options();
+void LUA_register_options();
+void register_int_option(const char* name, int* var);
+void register_bool_option(const char* name, bool* var);
+void register_float_option(const char* name, float* var);
+void register_sting_option(const char* name, const char* var);
+
+lua_State* LUA_options_table;
+
+
+/*
+    Load or reload options
+*/
+void load_options()
+{
+
+
+    if(LUA_options_table == NULL)
+    {
+        LUA_options_table = luaL_newstate();
+        lua_State *L = LUA_options_table;
+        luaL_openlibs(L); /* Load Lua libraries */
+
+        if (luaL_loadfile(L, "lua/settings.lua")) 
+        {
+            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+
+        lua_newtable(L);    //create options table
+        lua_setglobal(L, "options_table"); //name options
+
+        Options::register_options();
+
+        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+        {
+            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+    }
+    else
+    {
+        printf("Reloading Settings\n");
+        lua_State *L = LUA_options_table;
+
+        if (luaL_loadfile(L, "lua/settings.lua")) 
+        {
+            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+
+        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+        {
+            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+    }
+}
+
+/*
+    Types: int, float, bool, string
+*/
+
+int LUA_int_option_index = 0;
+int* LUA_int_option_table[256] = {0};
+
+void register_int_option(const char* name, int* var)
+{
+    LUA_int_option_table[LUA_int_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+
+    lua_createtable(L, 0, 2);   //value
+
+        lua_pushstring(L, "id");
+        lua_pushnumber(L, LUA_int_option_index);
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "type");
+        lua_pushstring(L, "int");
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);          //create table
+
+    LUA_int_option_index++;
+    if(LUA_int_option_index >= 256)
+    {
+        printf("LUA OPTION ERROR\n");
+        abort();
+    }
+}
+
+int LUA_bool_option_index = 0;
+bool* LUA_bool_option_table[256] = {0};
+
+void register_bool_option(const char* name, bool* var)
+{
+    LUA_bool_option_table[LUA_bool_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+
+    lua_createtable(L, 0, 2);   //value
+
+        lua_pushstring(L, "id");
+        lua_pushnumber(L, LUA_bool_option_index);
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "type");
+        lua_pushstring(L, "bool");
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);          //create table
+
+    LUA_bool_option_index++;
+    if(LUA_bool_option_index >= 256)
+    {
+        printf("LUA BOOL OPTION ERROR\n");
+        abort();
+    }
+}
+
+int LUA_float_option_index = 0;
+float* LUA_float_option_table[256] = {0};
+
+void register_float_option(const char* name, float* var)
+{
+    LUA_float_option_table[LUA_float_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+
+    lua_createtable(L, 0, 2);   //value
+
+        lua_pushstring(L, "id");
+        lua_pushnumber(L, LUA_float_option_index);
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "type");
+        lua_pushstring(L, "float");
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);          //create table
+
+    LUA_float_option_index++;
+    if(LUA_float_option_index >= 256)
+    {
+        printf("LUA FLOAT OPTION ERROR\n");
+        abort();
+    }
+}
+
+int LUA_string_option_index = 0;
+char* LUA_string_option_table[256] = {0};
+
+void register_string_option(const char* name, char* var)
+{
+    LUA_string_option_table[LUA_string_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+
+    lua_createtable(L, 0, 2);   //value
+
+        lua_pushstring(L, "id");
+        lua_pushnumber(L, LUA_string_option_index);
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "type");
+        lua_pushstring(L, "string");
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);          //create table
+
+    LUA_bool_option_index++;
+    if(LUA_bool_option_index >= 256)
+    {
+        printf("LUA STRING OPTION ERROR\n");
+        abort();
+    }
+}
 
 }

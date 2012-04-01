@@ -1,31 +1,20 @@
 #pragma once
 
-
-    #ifdef linux
+#ifdef linux
         #define NO_SDL_GLEXT
         #include <GL/glew.h>
         #include <SDL.h>
-        //#include <SDL_keyboard.h>
-        //#include <SDL_keysym.h>
         #include <SDL_opengl.h>
-    #elif _WIN32
-        //#define NO_SDL_GLEXT //do not need on windows?
+#elif _WIN32
         #include <windows.h>
         #include <SDL.h>
-        //#include <SDL_keyboard.h>
-        //#include <SDL_keysym.h>
         #include <GL/glew.h>
-        //#include <GL/wglew.h> //just in case?
-    #elif __APPLE__
-        //#define NO_SDL_GLEXT
+#elif __APPLE__
         #include <GL/glew.h>
         #include <SDL.h>
-        //#include <SDL_keyboard.h>
-        //#include <SDL_keysym.h>
         #include <OpenGL/gl.h>
         #include <OpenGL/glu.h>
-        //#include <SDL_opengl.h>
-    #endif
+#endif
 
-    #include <SDL_image.h>
+#include <SDL_image.h>
 

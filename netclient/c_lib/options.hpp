@@ -48,4 +48,6 @@ OPT_BOOL_HEADER(animations)
 /* Logging */
 OPT_BOOL_HEADER(logger)
 
+void register_options();
+
 }

@@ -1,4 +1,8 @@
+
+
 from libcpp cimport bool
+
+"""
 
 cdef extern from "./options.hpp" namespace "Options":
     void set_name(char* name)
@@ -49,6 +53,8 @@ def load_options(opts):
     set_sound_device(opts.sound_device)
     set_animations(opts.animations)
     set_logger(opts.logger)
+"""
+
 
 """
 Sound

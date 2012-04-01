@@ -4,56 +4,50 @@
 
 /* options headers */
 
+#define OPT_INT_HEADER(NAME)\
+extern int NAME;
+
 #define OPT_BOOL_HEADER(NAME)\
-extern bool NAME;\
-void set_##NAME(bool val) GNOMESCROLL_API;
+extern bool NAME;
 
 #define OPT_FLOAT_HEADER(NAME)\
-extern float NAME;\
-void set_##NAME(float val) GNOMESCROLL_API;
-
-#define OPT_INT_HEADER(NAME)\
-extern int NAME;\
-void set_##NAME(int val) GNOMESCROLL_API;
-
-#define OPT_UINT_HEADER(NAME)\
-extern unsigned int NAME;\
-void set_##NAME(unsigned int val) GNOMESCROLL_API;
+extern float NAME;
 
 #define OPT_STRING_HEADER(NAME)\
-extern char* NAME;\
-void set_##NAME(char* val) GNOMESCROLL_API;
+extern char* NAME;
 
 /* options definitions */
 
-#define OPT_BOOL(NAME, DEFAULT)\
-bool NAME = DEFAULT;\
-void set_##NAME(bool val)\
-{\
-    NAME = val;\
-}
-
-#define OPT_FLOAT(NAME, DEFAULT)\
-float NAME = DEFAULT;\
-void set_##NAME(float val)\
-{\
-    NAME = val;\
-}
 
 #define OPT_INT(NAME, DEFAULT)\
-int NAME = DEFAULT;\
-void set_##NAME(int val)\
-{\
-    NAME = val;\
-}
+int NAME = DEFAULT;
 
-#define OPT_UINT(NAME, DEFAULT)\
-unsigned int NAME = DEFAULT;\
-void set_##NAME(unsigned int val)\
-{\
-    NAME = val;\
-}
+#define OPT_BOOL(NAME, DEFAULT)\
+bool NAME = DEFAULT;
 
+#define OPT_FLOAT(NAME, DEFAULT)\
+float NAME = DEFAULT;
+
+#define OPT_STRING(NAME, DEFAULT)\
+char* NAME = (char*) DEFAULT;
+
+
+
+#define OPT_INT_REGISTER(NAME)\
+LUA::register_int_option( #NAME, & NAME );
+
+#define OPT_BOOL_REGISTER(NAME)\
+LUA::register_bool_option( #NAME, & NAME );
+
+#define OPT_FLOAT_REGISTER(NAME)\
+LUA::register_float_option( #NAME, & NAME );
+
+#define OPT_STRING_REGISTER(NAME)\
+LUA::register_string_option( #NAME,  NAME );
+
+
+
+/*
 #define OPT_STRING(NAME, DEFAULT)\
 static char NAME##_default[] = DEFAULT;\
 char* NAME = NAME##_default;\
@@ -73,4 +67,4 @@ void set_##NAME(char* val)\
     }\
     strcpy(NAME, val);\
 }
-
+*/
