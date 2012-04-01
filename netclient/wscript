@@ -317,17 +317,17 @@ def build(bld):
         target = 'gnomescroll_client'
 
     #clib
-    #bld(features='cxx cxxshlib',
-    bld(features='cxx cxxprogram',
-        #source=['c_lib/c_lib.cpp'],
-        source=['gnomescroll_client.cpp'],
+    bld(features='cxx cxxshlib',
+    #bld(features='cxx cxxprogram',
+        source=['c_lib/c_lib.cpp'],
+        #source=['gnomescroll_client.cpp'],
         use=common_libraries+time_lib+SDL_libraries+['LUA'], # +noise_libraries +png_libs
         lib=sound_libraries+png_libs,
         includes= c_lib_includes,
         libpath= c_lib_libpath,
         framework = sound_framework,
-        #target='c_lib')
-        target=target)
+        target='c_lib')
+        #target=target)
         
     bld.env.CFLAGS.remove('-fvisibility=hidden')
 
@@ -342,10 +342,10 @@ def build(bld):
         #source='run.c',
         #target='run')
         
-    #bld(features='cxx cprogram',
-        #use=['c_lib'],
-        #source='gnomescroll_client.c',
-        #target=target)
+    bld(features='cxx cxxprogram',
+        use=['c_lib'],
+        source='gnomescroll_client.cpp',
+        target=target)
 
     ## compile python files
     #if '-DPRODUCTION=1' in bld.env.CFLAGS:
@@ -357,7 +357,7 @@ def build(bld):
         #py_compile.compile('opts.py')
         #py_compile.compile('default_settings.py')
         
-    #bld.add_post_fun(install_in_ext)
+    bld.add_post_fun(install_in_ext)
     bld.add_post_fun(install_bin)
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
         bld.add_post_fun(strip_symbols)
@@ -374,6 +374,7 @@ def strip_symbols(ctx):
 def install_bin(ctx):
     if os.path.exists('./build/client'):
         shutil.copy2('./build/client', './client')
+        shutil.copy2('./build/client', './run')
 
 def install_in_ext(ctx):
     global out, _OS
@@ -394,27 +395,27 @@ def install_in_ext(ctx):
         pass
         #print "Error1: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
-    targets = [
-       'init_c_lib',
-    ]
+    #targets = [
+       #'init_c_lib',
+    #]
 
-    for target in targets:
-        dest_path = target.replace('.', '/')
-        dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
-        ensure_dir(os.path.dirname(dest_path))
-        try:
-            if 'csound' in target:
-                target = target.replace('csound', 'libcsound')
-                dest_path = dest_path.replace('csound', 'libcsound')
-            shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-        except Exception, e:
-            pass
-            #print e
-            #print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-    make_dest_modules(ctx)
+    #for target in targets:
+        #dest_path = target.replace('.', '/')
+        #dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
+        #ensure_dir(os.path.dirname(dest_path))
+        #try:
+            #if 'csound' in target:
+                #target = target.replace('csound', 'libcsound')
+                #dest_path = dest_path.replace('csound', 'libcsound')
+            #shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+        #except Exception, e:
+            #pass
+            ##print e
+            ##print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
+    #make_dest_modules(ctx)
 
-    if '-DUSE_FMOD=1' in ctx.env.CFLAGS:
-        install_fmod_libs()
+    #if '-DUSE_FMOD=1' in ctx.env.CFLAGS:
+        #install_fmod_libs()
 
 def ensure_dir(path):
     try:

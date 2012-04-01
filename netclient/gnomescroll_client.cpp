@@ -1,7 +1,7 @@
-#include <SDL.h>
-#include <stdio.h>
+//#include <SDL.h>
+//#include <stdio.h>
 
-#include <c_lib/c_lib.cpp>
+#include <c_lib/main.hpp>
 
 int main(int argc, char** argv)
 {
