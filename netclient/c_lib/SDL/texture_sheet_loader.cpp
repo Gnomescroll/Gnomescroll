@@ -11,22 +11,22 @@ namespace TextureSheetLoader
 
 extern "C"
 {
-	void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index)
-	{
-		//const int tex_size = 32;
+    void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index)
+    {
+        //const int tex_size = 32;
 
-		//blit texture stat for stack
+        //blit texture stat for stack
 
-		SDL_Surface* s = TextureSheetLoader::CubeTextureSheetList->textures[sheet_id]->surface;
-		
-		SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
-		Uint32* CubeTextureStack = (Uint32*) TextureSheetLoader::CubeTextureStack;
+        SDL_Surface* s = TextureSheetLoader::CubeTextureSheetList->textures[sheet_id]->surface;
+        
+        SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
+        Uint32* CubeTextureStack = (Uint32*) TextureSheetLoader::CubeTextureStack;
 
-		if( source_x* 16 >= s->w || source_y* 16 >= s->h )
-		{
-			printf("Error: LUA_blit_cube_texture, texture out of bounds \n");
-			return;
-		}
+        if( source_x* 16 >= s->w || source_y* 16 >= s->h )
+        {
+            printf("Error: LUA_blit_cube_texture, texture out of bounds \n");
+            return;
+        }
 
         int index = (dest_index % 16) + 16*(dest_index/16);
         Uint32 pix; 
@@ -47,8 +47,8 @@ extern "C"
         for(int j=0; j < 32; j++) 
         {
             pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
-           	
-           	Pixels1[ 32*32*index + (j*32+i) ] = pix;
+            
+            Pixels1[ 32*32*index + (j*32+i) ] = pix;
             Pixels2[ 512*( (dest_y*32 + j) ) + (32*dest_x + i) ] = pix;
         }
 
@@ -57,15 +57,15 @@ extern "C"
 
     }
 
-	int LUA_load_cube_texture_sheet(char* filename)
-	{
-		return TextureSheetLoader::CubeTextureSheetList->load_texture(filename);
-	}
+    int LUA_load_cube_texture_sheet(char* filename)
+    {
+        return TextureSheetLoader::CubeTextureSheetList->load_texture(filename);
+    }
 
-	void LUA_save_cube_texture()
-	{
-		save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
-	}
+    void LUA_save_cube_texture()
+    {
+        save_surface_to_png(TextureSheetLoader::CubeTexture, (char*) "./screenshot/cube_texture.png");
+    }
 
 
 }
