@@ -34,16 +34,16 @@ char* NAME = (char*) DEFAULT;
 
 
 #define OPT_INT_REGISTER(NAME)\
-LUA::register_int_option("#NAME", & NAME );
+LUA::register_int_option( #NAME, & NAME );
 
 #define OPT_BOOL_REGISTER(NAME)\
-LUA::register_bool_option("#NAME", & NAME );
+LUA::register_bool_option( #NAME, & NAME );
 
 #define OPT_FLOAT_REGISTER(NAME)\
-LUA::register_float_option("#NAME", & NAME );
+LUA::register_float_option( #NAME, & NAME );
 
 #define OPT_STRING_REGISTER(NAME)\
-LUA::register_string_option("#NAME",  NAME );
+LUA::register_string_option( #NAME,  NAME );
 
 
 
