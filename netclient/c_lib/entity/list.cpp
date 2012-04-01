@@ -99,6 +99,9 @@ ObjectPolicyInterface* GameObject_list::create(float x, float y, float z, float 
         case OBJ_TYPE_TURRET:
             obj = new Turret(id, x,y,z,mx,my,mz);
             break;
+        case OBJ_TYPE_SPAWNER:
+            obj = new Spawner(id, x,y,z,mx,my,mz);
+            break;
             
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
@@ -155,7 +158,10 @@ ObjectPolicyInterface* GameObject_list::create(int id, float x, float y, float z
         case OBJ_TYPE_TURRET:
             obj = new Turret(id, x,y,z,mx,my,mz);
             break;
-            
+        case OBJ_TYPE_SPAWNER:
+            obj = new Spawner(id, x,y,z,mx,my,mz);
+            break;
+
         default:
             printf("WARNING: %s create() -- unhandled object type %d\n", name(), type);
             return NULL;
@@ -247,3 +253,100 @@ int GameObject_list::objects_within_sphere(float x, float y, float z, float radi
     return closest;
 }
 
+
+
+
+/* SHIT FROM SPAWNER INTERFACE */
+
+/* MAJOR TODO -- FACTOR THIS OUT, OR LIST WILL BECOME BLOB */
+
+bool GameObject_list::team_spawner_available(int team)
+{
+    int ct = 0;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->state()->type != OBJ_TYPE_SPAWNER) continue;
+        if (this->a[i]->state()->get_team() == team) ct++;
+    }
+    return (ct < SPAWNERS_PER_TEAM);
+}
+
+int GameObject_list::get_random_spawner(int team)
+{
+    int spawners[SPAWNERS_PER_TEAM+1];
+    int j=0;
+    for (int i=0; i<this->n_max; i++)
+    {   // filter down to team's spawners
+        ObjectPolicyInterface *s = this->a[i];
+        if (s == NULL) continue;
+        if (s->state()->type != OBJ_TYPE_SPAWNER) continue;
+        if (s->state()->get_team() == team) spawners[j++] = s->state()->team_index;
+    }
+    spawners[j++] = BASE_SPAWN_ID;
+    return spawners[randrange(0,j-1)];
+}
+
+// when a player says "spawner 8" he may be on the other team
+// we need to find the 8th spawner for his team
+int GameObject_list::get_numbered_team_spawner(int team, int id)
+{
+    for (int i=0; i<this->n_max; i++)
+    {
+        ObjectPolicyInterface *s = this->a[i];
+        if (s == NULL) continue;
+        if (s->state()->type != OBJ_TYPE_SPAWNER) continue;
+        if (s->state()->get_team() != team) continue;
+        if ((int)s->state()->team_index == id)
+        {
+            return s->state()->id;
+        }
+    }
+    return BASE_SPAWN_ID;
+}
+
+ObjectPolicyInterface* GameObject_list::get_by_team_index(int team, int team_index)
+{
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        if (this->a[i]->state()->type != OBJ_TYPE_SPAWNER) continue;
+        if (this->a[i]->state()->get_team() != team) continue;
+        if ((int)this->a[i]->state()->team_index == team_index)
+            return this->a[i];
+    }
+    return NULL;
+}
+
+bool GameObject_list::spawner_exists(int team, int team_index)
+{
+    if (this->get_by_team_index(team, team_index) != NULL)
+        return true;
+    return false;
+}
+
+void GameObject_list::assign_team_index(ObjectPolicyInterface* spawner)
+{   // pick an index for the spawner that is available, these are separate from
+    // id because each team's set of spawners has its own indexing
+    // and spawners may be destroyed; we dont want to renumber every time
+
+    // get smallest available team index
+    int taken[MAX_SPAWNERS] = {0};
+    for (int i=0; i<this->n_max; i++)
+    {
+        ObjectPolicyInterface* s = this->a[i];
+        if (s == NULL) continue;
+        if (s->state()->type != OBJ_TYPE_SPAWNER) continue;
+        if (s->state()->get_team() != spawner->state()->get_team()) continue;
+        if (s->state()->team_index != TEAM_INDEX_NONE && s->state()->team_index != 0)  // should never be 0
+            taken[s->state()->team_index - 1] = 1;
+    }
+    for (int i=0; i<MAX_SPAWNERS; i++)
+        if (!taken[i])
+        {
+            spawner->state()->team_index = i+1;
+            return;
+        }
+    printf("failed to get team index\n");
+    spawner->state()->team_index = TEAM_INDEX_NONE;
+}

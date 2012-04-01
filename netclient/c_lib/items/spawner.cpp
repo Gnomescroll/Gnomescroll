@@ -13,36 +13,38 @@
 void spawner_state(object_state_StoC_model* msg)
 {
     
-    Spawner* s = ClientState::spawner_list->get(msg->id);
+    Spawner* s = (Spawner*)ClientState::object_list->get(msg->id);
     if (s == NULL) return;
-    s->set_position(msg->x, msg->y, msg->z);
+    s->state()->set_position(msg->x, msg->y, msg->z);
 }
 
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
-    Spawner* s = ClientState::spawner_list->create(msg->id, msg->x, msg->y, msg->z);
+    Spawner* s = (Spawner*)ClientState::object_list->create(
+        (int)msg->id,
+        msg->x, msg->y, msg->z,
+        0,0,0,
+        (Object_types)msg->type
+    );
     if (s == NULL)
     {
-        printf("WARNING object_create_owner_team_index_StoC::handle() -- could not create spawner %d\n", msg->id);
+        printf("WARNING spawner_create() -- could not create spawner %d\n", msg->id);
         return;
     }
-    s->set_team(msg->team);
-    s->team_index = msg->team_index; //overwrite with server authority
-    s->set_owner(msg->owner);
-    s->init_vox();
-    Sound::spawner_placed(msg->x, msg->y, msg->z,0,0,0);
-    // TODO -- use object_* after Spawner is ObjectPolicyInterface
-    //system_message->spawner_created(s);
-    //system_message->object_created(s);
+    s->state()->set_team(msg->team);
+    s->state()->team_index = msg->team_index; //overwrite with server authority
+    s->state()->set_owner(msg->owner);
+    s->born();
+    Sound::spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
+    system_message->object_created(s);
 }
 
 void spawner_destroy(int id)
 {
-    //Spawner* s = ClientState::spawner_list->get(id);
-    //if (s != NULL)    // TODO -- use object_* after Spawner is ObjectPolicyInterface
-        //system_message->spawner_destroyed(s);
-        //system_message->object_destroyed(s);
-    ClientState::spawner_list->destroy(id);
+    Spawner* s = (Spawner*)ClientState::object_list->get(id);
+    if (s != NULL)
+        system_message->object_destroyed(s);
+    ClientState::object_list->destroy(id);
 }
 #endif
 
@@ -50,389 +52,409 @@ void spawner_destroy(int id)
 
 VoxDat spawner_vox_dat;
 
-void Spawner::set_position(float x, float y, float z)
-{
-    if (this->x == x && this->y == y && this->z == z) return;
+//void Spawner::set_position(float x, float y, float z)
+//{
+    //if (this->x == x && this->y == y && this->z == z) return;
 
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    //this->x = x;
+    //this->y = y;
+    //this->z = z;
 
-    this->vox->thaw();
-    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
-    this->vox->freeze();
+    //this->vox->thaw();
+    //this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    //this->vox->freeze();
 
-    #ifdef DC_SERVER
-    object_state_StoC msg;
-    msg.x = this->x;
-    msg.y = this->y;
-    msg.z = this->z;
-    msg.id = this->id;
-    msg.type = this->type;
-    msg.broadcast();
-    #endif
-}
+    //#ifdef DC_SERVER
+    //object_state_StoC msg;
+    //msg.x = this->x;
+    //msg.y = this->y;
+    //msg.z = this->z;
+    //msg.id = this->id;
+    //msg.type = this->type;
+    //msg.broadcast();
+    //#endif
+//}
 
-int Spawner::get_team()
-{
-    return this->team;
-}
+//int Spawner::get_team()
+//{
+    //return this->team;
+//}
 
-void Spawner::get_spawn_point(int agent_height, int* spawn)
+//void Spawner::get_spawn_point(int agent_height, int* spawn)
+//{
+    //int x,y;
+    //x = (int)this->x;
+    //y = (int)this->y;
+
+    //int sx,sy;
+    //sx = randrange(x-spawn_radius, x+spawn_radius);
+    //sy = randrange(y-spawn_radius, y+spawn_radius);
+    //spawn[0] = (sx < map_dim.x) ? sx : map_dim.x;
+    //spawn[0] = (spawn[0] < 0) ? 0 : spawn[0];
+    //spawn[1] = (sy < map_dim.y) ? sy : map_dim.y;
+    //spawn[1] = (spawn[1] < 0) ? 0 : spawn[1];
+    //spawn[2] = _get_highest_open_block(spawn[0], spawn[1], agent_height);
+//}
+
+//int Spawner::get_owner()
+//{
+    //return this->owner;
+//}
+
+//void Spawner::set_owner(int owner)
+//{
+    //switch_agent_ownership(this->type, this->owner, owner);
+    //this->owner = owner;
+//}
+
+//void Spawner::set_team(int team)
+//{
+    //this->team = team;
+    //STATE::spawner_list->assign_team_index(this);
+    //if (this->vox != NULL) this->vox->update_team_color(this->team);
+//}
+
+//void Spawner::init_vox()
+//{
+    //if (this->team == 0) printf("WARNING Spawner::init_vox() -- team not set\n");
+    //this->vox = new Voxel_model(&spawner_vox_dat, this->id, this->type, this->team);
+    //this->vox->set_hitscan(true);
+    //this->vox->register_hitscan();
+    //#ifdef DC_CLIENT
+    //this->vox->set_draw(true);
+    //#endif
+    //this->vox->thaw();
+    //this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+    //this->vox->freeze();
+//}
+
+//void Spawner::update()
+//{
+    //if (this->vox == NULL) return;
+    //#if DC_CLIENT
+    //this->vox->was_updated = false;
+    //if (current_camera == NULL || !current_camera->in_view(x,y,z))
+    //{
+        //this->vox->set_draw(false);
+        //this->vox->set_hitscan(false);
+    //}
+    //else
+    //{
+        //this->vox->set_draw(true);
+        //this->vox->set_hitscan(true);
+    //}
+    //if (input_state.skeleton_editor)
+    //{
+        //this->vox->thaw();
+        //this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
+        //this->vox->freeze();
+    //}
+    //#endif
+
+    //#if DC_SERVER
+    //this->vox->was_updated = false;
+    //this->vox->set_hitscan(true);
+    //#endif
+//}
+
+/* SpawnerComponent */
+
+void SpawnerComponent::get_spawn_point(ObjectState* state, int spawned_object_height, int* spawn_pt)
 {
     int x,y;
-    x = (int)this->x;
-    y = (int)this->y;
+    Vec3 p = state->get_position();
+    x = (int)p.x;
+    y = (int)p.y;
 
     int sx,sy;
-    sx = randrange(x-spawn_radius, x+spawn_radius);
-    sy = randrange(y-spawn_radius, y+spawn_radius);
-    spawn[0] = (sx < map_dim.x) ? sx : map_dim.x;
-    spawn[0] = (spawn[0] < 0) ? 0 : spawn[0];
-    spawn[1] = (sy < map_dim.y) ? sy : map_dim.y;
-    spawn[1] = (spawn[1] < 0) ? 0 : spawn[1];
-    spawn[2] = _get_highest_open_block(spawn[0], spawn[1], agent_height);
+    sx = randrange(x-state->spawn_radius, x+state->spawn_radius);
+    sy = randrange(y-state->spawn_radius, y+state->spawn_radius);
+    spawn_pt[0] = (sx < map_dim.x) ? sx : map_dim.x;
+    spawn_pt[0] = (spawn_pt[0] < 0) ? 0 : spawn_pt[0];
+    spawn_pt[1] = (sy < map_dim.y) ? sy : map_dim.y;
+    spawn_pt[1] = (spawn_pt[1] < 0) ? 0 : spawn_pt[1];
+    spawn_pt[2] = _get_highest_open_block(spawn_pt[0], spawn_pt[1], spawned_object_height);
 }
 
-int Spawner::get_owner()
-{
-    return this->owner;
-}
 
-void Spawner::set_owner(int owner)
-{
-    switch_agent_ownership(this->type, this->owner, owner);
-    this->owner = owner;
-}
+//Spawner::Spawner(int id)
+//:
+//team(0),
+//owner(0),
+//id(id),
+//team_index(TEAM_INDEX_NONE),
+//type(OBJ_TYPE_SPAWNER),
+//x(0), y(0), z(0),
+//theta(0), phi(0),
+//spawn_radius(SPAWNER_SPAWN_RADIUS),
+//vox(NULL)
+//{
+//}
+//Spawner::Spawner(int id, float x, float y, float z)
+//:
+//team(0),
+//owner(0),
+//id(id),
+//team_index(TEAM_INDEX_NONE),
+//health(SPAWNER_HEALTH),
+//type(OBJ_TYPE_SPAWNER),
+//x(x), y(y), z(z),
+//theta(0), phi(0),
+//spawn_radius(SPAWNER_SPAWN_RADIUS),
+//vox(NULL)
+//{
+//}
 
-void Spawner::set_team(int team)
-{
-    this->team = team;
-    STATE::spawner_list->assign_team_index(this);
-    if (this->vox != NULL) this->vox->update_team_color(this->team);
-}
+//#ifdef DC_SERVER
+//void Spawner::create_message(object_create_owner_team_index_StoC* msg)
+//{
+    //msg->id = this->id;
+    //msg->type = this->type;
+    //msg->team = this->team;
+    //msg->owner = this->owner;
+    //msg->team_index = this->team_index;
+    //msg->x = this->x;
+    //msg->y = this->y;
+    //msg->z = this->z;
+//}
+//#endif
 
-void Spawner::init_vox()
-{
-    if (this->team == 0) printf("WARNING Spawner::init_vox() -- team not set\n");
-    this->vox = new Voxel_model(&spawner_vox_dat, this->id, this->type, this->team);
-    this->vox->set_hitscan(true);
-    this->vox->register_hitscan();
-    #ifdef DC_CLIENT
-    this->vox->set_draw(true);
-    #endif
-    this->vox->thaw();
-    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
-    this->vox->freeze();
-}
+//int Spawner::get_coins_for_kill(int owner, int team)
+//{
+    //if ((this->team != team && this->owner != NO_AGENT) || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
+        //return get_object_cost(this->type);
+    //return 0;
+//}
 
-void Spawner::update()
-{
-    if (this->vox == NULL) return;
-    #if DC_CLIENT
-    this->vox->was_updated = false;
-    if (current_camera == NULL || !current_camera->in_view(x,y,z))
-    {
-        this->vox->set_draw(false);
-        this->vox->set_hitscan(false);
-    }
-    else
-    {
-        this->vox->set_draw(true);
-        this->vox->set_hitscan(true);
-    }
-    if (input_state.skeleton_editor)
-    {
-        this->vox->thaw();
-        this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
-        this->vox->freeze();
-    }
-    #endif
+//int Spawner::take_damage(int dmg)
+//{
+    //this->health -= dmg;
+    //this->health = (this->health < 0) ? 0 : this->health;
+    //return this->health;
+//}
 
-    #if DC_SERVER
-    this->vox->was_updated = false;
-    this->vox->set_hitscan(true);
-    #endif
-}
-
-Spawner::Spawner(int id)
-:
-team(0),
-owner(0),
-id(id),
-team_index(TEAM_INDEX_NONE),
-type(OBJ_TYPE_SPAWNER),
-x(0), y(0), z(0),
-theta(0), phi(0),
-spawn_radius(SPAWNER_RADIUS),
-vox(NULL)
-{
-}
-Spawner::Spawner(int id, float x, float y, float z)
-:
-team(0),
-owner(0),
-id(id),
-team_index(TEAM_INDEX_NONE),
-health(SPAWNER_HEALTH),
-type(OBJ_TYPE_SPAWNER),
-x(x), y(y), z(z),
-theta(0), phi(0),
-spawn_radius(SPAWNER_RADIUS),
-vox(NULL)
-{
-}
-
-#ifdef DC_SERVER
-void Spawner::create_message(object_create_owner_team_index_StoC* msg)
-{
-    msg->id = this->id;
-    msg->type = this->type;
-    msg->team = this->team;
-    msg->owner = this->owner;
-    msg->team_index = this->team_index;
-    msg->x = this->x;
-    msg->y = this->y;
-    msg->z = this->z;
-}
-#endif
-
-int Spawner::get_coins_for_kill(int owner, int team)
-{
-    if ((this->team != team && this->owner != NO_AGENT) || owner == this->owner) // enemy team, or owner, can destroy/reclaim spawner
-        return get_object_cost(this->type);
-    return 0;
-}
-
-int Spawner::take_damage(int dmg)
-{
-    this->health -= dmg;
-    this->health = (this->health < 0) ? 0 : this->health;
-    return this->health;
-}
-
-void Spawner::tick()
-{
-    if (this->health <= 0)
-    {
-        STATE::spawner_list->destroy(this->id);
-        return;
-    }
+//void Spawner::tick()
+//{
+    //if (this->health <= 0)
+    //{
+        //STATE::spawner_list->destroy(this->id);
+        //return;
+    //}
     
-#ifdef DC_SERVER
-    int x,y,z;
-    x = (int)this->x;
-    y = (int)this->y;
-    z = (int)this->z;
-    if (isSolid(_get(x,y,z)))
-    {
-        // move up
-        while (isSolid(_get(x,y,++z)))
-        {
-            if (z >= map_dim.z)
-            {
-                z = map_dim.z;
-                break;
-            }
-        }
-    }
-    else
-    {
-        // fall down
-        while (!isSolid(_get(x,y,--z)))
-        {
-            if (z<=0)
-            {
-                z = 0;
-                break;
-            }
-        }
-        z++;
-    }
-    this->set_position(this->x, this->y, (float)z);
-#endif
-}
+//#ifdef DC_SERVER
+    //int x,y,z;
+    //x = (int)this->x;
+    //y = (int)this->y;
+    //z = (int)this->z;
+    //if (isSolid(_get(x,y,z)))
+    //{
+        //// move up
+        //while (isSolid(_get(x,y,++z)))
+        //{
+            //if (z >= map_dim.z)
+            //{
+                //z = map_dim.z;
+                //break;
+            //}
+        //}
+    //}
+    //else
+    //{
+        //// fall down
+        //while (!isSolid(_get(x,y,--z)))
+        //{
+            //if (z<=0)
+            //{
+                //z = 0;
+                //break;
+            //}
+        //}
+        //z++;
+    //}
+    //this->set_position(this->x, this->y, (float)z);
+//#endif
+//}
 
 
-Spawner::~Spawner()
-{
-    #ifdef DC_SERVER
-    object_destroy_StoC msg;
-    msg.id = this->id;
-    msg.type = this->type;
-    msg.broadcast();
-    #endif
+//Spawner::~Spawner()
+//{
+    //#ifdef DC_SERVER
+    //object_destroy_StoC msg;
+    //msg.id = this->id;
+    //msg.type = this->type;
+    //msg.broadcast();
+    //#endif
 
-    #if DC_CLIENT
-    Animations::team_item_explode(this->vox->get_part(0)->get_center(), this->team);
-    #endif
+    //#if DC_CLIENT
+    //Animations::team_item_explode(this->vox->get_part(0)->get_center(), this->team);
+    //#endif
 
-    if (this->owner != NO_AGENT)
-    {
-        Agent_state* a = STATE::agent_list->get(owner);
-        if (a != NULL)
-            a->status.lose_item(this->type);
-    }
-    if (this->vox != NULL) delete this->vox;
+    //if (this->owner != NO_AGENT)
+    //{
+        //Agent_state* a = STATE::agent_list->get(owner);
+        //if (a != NULL)
+            //a->status.lose_item(this->type);
+    //}
+    //if (this->vox != NULL) delete this->vox;
 
-}
+//}
 
 /* Spawner list */
 
-bool Spawner_list::team_spawner_available(int team)
-{
-    int ct = 0;
-    for (int i=0; i<n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->get_team() == team) ct++;
-    }
-    return (ct < SPAWNERS_PER_TEAM);
-}
+//bool Spawner_list::team_spawner_available(int team)
+//{
+    //int ct = 0;
+    //for (int i=0; i<n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //if (this->a[i]->get_team() == team) ct++;
+    //}
+    //return (ct < SPAWNERS_PER_TEAM);
+//}
 
-bool Spawner_list::point_occupied(int x, int y, int z)
-{
-    for (int i=0; i<n_max; i++)
-    {
-        Spawner *s = this->a[i];
-        if (s == NULL) continue;
-        if ((int)s->x == x && (int)s->y == y)
-        {
-            // spawner is 2 blocks tall
-            for (int j=0; j<(int)ceil(SPAWNER_HEIGHT); j++)
-            {
-                if ((int)s->z+j == z) return true;
-            }
-        }
-    }
-    return false;
-}
+//bool Spawner_list::point_occupied(int x, int y, int z)
+//{
+    //for (int i=0; i<n_max; i++)
+    //{
+        //Spawner *s = this->a[i];
+        //if (s == NULL) continue;
+        //if ((int)s->x == x && (int)s->y == y)
+        //{
+            //// spawner is 2 blocks tall
+            //for (int j=0; j<(int)ceil(SPAWNER_HEIGHT); j++)
+            //{
+                //if ((int)s->z+j == z) return true;
+            //}
+        //}
+    //}
+    //return false;
+//}
 
-int Spawner_list::get_random_spawner(int team)
-{
-    int spawners[SPAWNERS_PER_TEAM+1];
-    int j=0;
-    for (int i=0; i<n_max; i++)
-    {   // filter down to team's spawners
-        Spawner *s = this->a[i];
-        if (s == NULL) continue;
-        if (s->get_team() == team) spawners[j++] = s->team_index;
-    }
-    spawners[j++] = BASE_SPAWN_ID;
-    return spawners[randrange(0,j-1)];
-}
+//int Spawner_list::get_random_spawner(int team)
+//{
+    //int spawners[SPAWNERS_PER_TEAM+1];
+    //int j=0;
+    //for (int i=0; i<n_max; i++)
+    //{   // filter down to team's spawners
+        //Spawner *s = this->a[i];
+        //if (s == NULL) continue;
+        //if (s->get_team() == team) spawners[j++] = s->team_index;
+    //}
+    //spawners[j++] = BASE_SPAWN_ID;
+    //return spawners[randrange(0,j-1)];
+//}
 
-// when a player says "spawner 8" he may be on the other team
-// we need to find the 8th spawner for his team
-int Spawner_list::get_numbered_team_spawner(int team, int id)
-{
-    for (int i=0; i<this->n_max; i++)
-    {
-        Spawner *s = this->a[i];
-        if (s == NULL) continue;
-        if (s->get_team() != team) continue;
-        if ((int)s->team_index == id)
-        {
-            return s->id;
-        }
-    }
-    return BASE_SPAWN_ID;
-}
+//// when a player says "spawner 8" he may be on the other team
+//// we need to find the 8th spawner for his team
+//int Spawner_list::get_numbered_team_spawner(int team, int id)
+//{
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //Spawner *s = this->a[i];
+        //if (s == NULL) continue;
+        //if (s->get_team() != team) continue;
+        //if ((int)s->team_index == id)
+        //{
+            //return s->id;
+        //}
+    //}
+    //return BASE_SPAWN_ID;
+//}
 
-#ifdef DC_SERVER
-void Spawner_list::send_to_client(int client_id)
-{
-    for (int i=0; i<this->n_max; i++)
-    {
-        Spawner *s = this->a[i];
-        if (s == NULL) continue;
-        object_create_owner_team_index_StoC msg;
-        s->create_message(&msg);
-        msg.sendToClient(client_id);
-    }
-}
-#endif
+//#ifdef DC_SERVER
+//void Spawner_list::send_to_client(int client_id)
+//{
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //Spawner *s = this->a[i];
+        //if (s == NULL) continue;
+        //object_create_owner_team_index_StoC msg;
+        //s->create_message(&msg);
+        //msg.sendToClient(client_id);
+    //}
+//}
+//#endif
 
-Spawner* Spawner_list::get_by_team_index(int team, int team_index)
-{
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->get_team() != team) continue;
-        if ((int)this->a[i]->team_index == team_index)
-            return this->a[i];
-    }
-    return NULL;
-}
+//Spawner* Spawner_list::get_by_team_index(int team, int team_index)
+//{
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //if (this->a[i]->get_team() != team) continue;
+        //if ((int)this->a[i]->team_index == team_index)
+            //return this->a[i];
+    //}
+    //return NULL;
+//}
 
-bool Spawner_list::spawner_exists(int team, int team_index)
-{
-    if (this->get_by_team_index(team, team_index) != NULL)
-        return true;
-    return false;
-}
+//bool Spawner_list::spawner_exists(int team, int team_index)
+//{
+    //if (this->get_by_team_index(team, team_index) != NULL)
+        //return true;
+    //return false;
+//}
 
-void Spawner_list::assign_team_index(Spawner* spawner)
-{   // pick an index for the spawner that is available, these are separate from
-    // id because each team's set of spawners has its own indexing
-    // and spawners may be destroyed; we dont want to renumber every time
+//void Spawner_list::assign_team_index(Spawner* spawner)
+//{   // pick an index for the spawner that is available, these are separate from
+    //// id because each team's set of spawners has its own indexing
+    //// and spawners may be destroyed; we dont want to renumber every time
 
-    // get smallest available team index
-    int taken[MAX_SPAWNERS] = {0};
-    for (int i=0; i<this->n_max; i++)
-    {
-        Spawner* s = this->a[i];
-        if (s == NULL) continue;
-        if (s->get_team() != spawner->get_team()) continue;
-        if (s->team_index != TEAM_INDEX_NONE && s->team_index != 0)  // should never be 0
-            taken[s->team_index - 1] = 1;
-    }
-    for (int i=0; i<MAX_SPAWNERS; i++)
-        if (!taken[i])
-        {
-            spawner->team_index = i+1;
-            return;
-        }
-    printf("failed to get team index\n");
-    spawner->team_index = TEAM_INDEX_NONE;
-}
+    //// get smallest available team index
+    //int taken[MAX_SPAWNERS] = {0};
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //Spawner* s = this->a[i];
+        //if (s == NULL) continue;
+        //if (s->get_team() != spawner->get_team()) continue;
+        //if (s->team_index != TEAM_INDEX_NONE && s->team_index != 0)  // should never be 0
+            //taken[s->team_index - 1] = 1;
+    //}
+    //for (int i=0; i<MAX_SPAWNERS; i++)
+        //if (!taken[i])
+        //{
+            //spawner->team_index = i+1;
+            //return;
+        //}
+    //printf("failed to get team index\n");
+    //spawner->team_index = TEAM_INDEX_NONE;
+//}
 
-void Spawner_list::tick()
-{
-    for (int i=0; i<n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->tick();
-    }
-}
+//void Spawner_list::tick()
+//{
+    //for (int i=0; i<n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //this->a[i]->tick();
+    //}
+//}
 
-void Spawner_list::update()
-{
-    for (int i=0; i<n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->a[i]->update();
-    }
-}
+//void Spawner_list::update()
+//{
+    //for (int i=0; i<n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //this->a[i]->update();
+    //}
+//}
 
-void Spawner_list::alter_owner(int owner, int new_owner)
-{
-    #if DC_SERVER
-    if (owner == new_owner)
-    {
-        printf("WARNING -- Spawner_list::alter_owner -- owner == new_owner %d\n", owner);
-        return;
-    }
-    for (int i=0; i<this->n_max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->get_owner() != owner) continue;
-        this->a[i]->set_owner(new_owner);
-        alter_item_ownership_StoC msg;
-        msg.owner = new_owner;
-        msg.id = this->a[i]->id;
-        msg.type = this->a[i]->type;
-        msg.broadcast();
-    }
-    #endif
-}
+//void Spawner_list::alter_owner(int owner, int new_owner)
+//{
+    //#if DC_SERVER
+    //if (owner == new_owner)
+    //{
+        //printf("WARNING -- Spawner_list::alter_owner -- owner == new_owner %d\n", owner);
+        //return;
+    //}
+    //for (int i=0; i<this->n_max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //if (this->a[i]->get_owner() != owner) continue;
+        //this->a[i]->set_owner(new_owner);
+        //alter_item_ownership_StoC msg;
+        //msg.owner = new_owner;
+        //msg.id = this->a[i]->id;
+        //msg.type = this->a[i]->type;
+        //msg.broadcast();
+    //}
+    //#endif
+//}

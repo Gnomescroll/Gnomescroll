@@ -100,7 +100,7 @@ class ObjectState: public ObjectData
         // general status 
         int id;
         int team;
-        int team_index; // id within team
+        unsigned int team_index; // id within team
         int owner;
 
         // life

@@ -16,7 +16,6 @@ namespace ServerState
     //Neutron_list* neutron_list = NULL;
     Monsters::Slime_list* slime_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    Spawner_list* spawner_list = NULL;
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
     GameObject_list* object_list;
@@ -32,7 +31,6 @@ namespace ServerState
         grenade_list = new Grenade_list;
         //neutron_list = new Neutron_list;
         slime_list = new Monsters::Slime_list;
-        spawner_list = new Spawner_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
         object_list = new GameObject_list;
@@ -47,7 +45,6 @@ namespace ServerState
 
         // voxels
         delete slime_list;
-        delete spawner_list;
         delete agent_list;
         delete object_list;
 
@@ -131,21 +128,7 @@ namespace ServerState
 
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
-        // spawners
-        spawner_list->objects_within_sphere(x,y,z,radius);
-        Spawner* s;
-        for (i=0; i<spawner_list->n_filtered; i++)
-        {
-            s = spawner_list->filtered_objects[i];
-            if (s==NULL) continue;
-            if ((s->get_team() == agent->status.team && s->get_owner() != NO_AGENT)
-            && s->get_owner() != agent->id)
-                continue; // teammates cant kill grenades
-            int h = s->take_damage(GRENADE_SPAWNER_DAMAGE);
-            if (h <= 0 && agent != NULL && (s->type != inflictor_type || s->id != inflictor_id))
-                coins += s->get_coins_for_kill(agent->id, agent->status.team);
-        }
-
+        // Spawners, Turrets etc
         object_list->objects_within_sphere(x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
         ObjectPolicyInterface* obj;
         ObjectState* state;
@@ -154,7 +137,7 @@ namespace ServerState
             obj = object_list->filtered_objects[i];
             if (obj == NULL) continue;
             state = obj->state();
-            if (state->type != OBJ_TYPE_TURRET) continue; // TODO -- remove
+            if (state->type != OBJ_TYPE_TURRET && state->type != OBJ_TYPE_SPAWNER) continue; // TODO -- remove
 
             /* TODO */
             // state->can_be_killed_by(type, id, team)
@@ -204,11 +187,9 @@ namespace ServerState
 */
         agent_list->update_models(); // sets skeleton
         slime_list->update();
-        spawner_list->tick();
+        object_list->tick();
         grenade_list->tick();
         //grenade_shrapnel_list->tick();
-
-        object_list->tick();
 
         // game
         ctf->tick();
@@ -219,7 +200,6 @@ namespace ServerState
         agent_list->send_to_client(client_id);
         slime_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
-        spawner_list->send_to_client(client_id);
 
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
@@ -295,7 +275,6 @@ namespace ServerState
     {
         //turret_list->alter_owner(agent_id, NO_AGENT);
         object_list->alter_owner(agent_id, NO_AGENT);
-        spawner_list->alter_owner(agent_id, NO_AGENT);
     }
 
     void send_version_to_client(int client_id)

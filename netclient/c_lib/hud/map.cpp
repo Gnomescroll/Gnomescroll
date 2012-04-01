@@ -591,7 +591,7 @@ void draw_team_text_icons(float z)
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     using ClientState::agent_list;
-    using ClientState::spawner_list;
+    using ClientState::object_list;
     using ClientState::ctf;
     
     if (playerAgent_state.you == NULL || playerAgent_state.you->status.team == 0)
@@ -612,22 +612,24 @@ void draw_team_text_icons(float z)
         j++;
     }
 
-    for (int i=0; i<spawner_list->n_max; i++)
+    for (int i=0; i<object_list->n_max; i++)
     {
-        Spawner* s = spawner_list->a[i];
+        ObjectPolicyInterface* s = object_list->a[i];
         if (s==NULL) continue;
-        if (s->get_team() != playerAgent_state.you->status.team) continue;
-        if (s->team_index < 0)
+        if (s->state()->type != OBJ_TYPE_SPAWNER) continue; // todo: object_list should be able to iterate over one type only
+        if (s->state()->get_team() != playerAgent_state.you->status.team) continue;
+        if (s->state()->team_index < 0)
         {
-            printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", s->team_index);
+            printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", s->state()->team_index);
             continue;
         }
-        if ((int)s->team_index == playerAgent_state.you->status.spawner)
+        if ((int)s->state()->team_index == playerAgent_state.you->status.spawner)
             spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
         else
             spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
-        spawner[j]->update_formatted_string(1, s->team_index);
-        world_to_map_screen_coordinates(s->x, s->y, &x, &y);
+        spawner[j]->update_formatted_string(1, s->state()->team_index);
+        Vec3 p = s->state()->get_position();
+        world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         spawner[j]->set_position(x,y);
         spawner[j]->set_depth(z);
         spawner[j]->draw_centered();

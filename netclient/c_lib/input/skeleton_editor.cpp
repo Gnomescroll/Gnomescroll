@@ -136,12 +136,6 @@ void raycast_to_part()
             if (obj==NULL) return;
             vox = ((Monsters::Slime*)obj)->vox;
             break;
-        case OBJ_TYPE_SPAWNER:
-            vox_dat = &spawner_vox_dat;
-            obj = ClientState::spawner_list->get(id);
-            if (obj==NULL) return;
-            vox = ((Spawner*)obj)->vox;
-            break;
         case OBJ_TYPE_BASE:
             vox_dat = &base_vox_dat;
             obj = ClientState::ctf->get_base(id+1);
@@ -155,15 +149,16 @@ void raycast_to_part()
             vox = ((Flag*)obj)->vox;
             break;
 
+        case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
-            vox_dat = &turret_vox_dat;
             obj = ClientState::object_list->get(id);
             if (obj==NULL) return;
-            vox = ((Turret*)obj)->state()->get_vox();
+            vox = ((ObjectPolicyInterface*)obj)->state()->get_vox();
+            vox_dat = ((ObjectPolicyInterface*)obj)->state()->vox_dat;
             break;
 
         default:
-            printf("WARNING: Skeleton editor -- raycast_to_part() -- unhandled object type %d\n", type);
+            printf("Skeleton_editor -- raycast_to_part() -- unhandled obj type %d\n", type);
             return;
     }
     if (old != vox_dat)

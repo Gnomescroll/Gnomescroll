@@ -7,7 +7,7 @@
 #include <c_lib/game/game.hpp>
 
 // Spawners
-const int SPAWNER_RADIUS = 5;
+const int SPAWNER_SPAWN_RADIUS = 5;
 const int SPAWNERS_PER_TEAM = 9;
 const int MAX_SPAWNERS = SPAWNERS_PER_TEAM * N_TEAMS;
 const int SPAWNER_HEALTH = 300;

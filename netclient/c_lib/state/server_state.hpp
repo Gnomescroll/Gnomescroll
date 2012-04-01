@@ -16,7 +16,6 @@ namespace ServerState
     //extern Neutron_list* neutron_list;
     extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
     extern Voxel_hitscan_list* voxel_hitscan_list;
-    extern Spawner_list* spawner_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
     extern GameObject_list* object_list;

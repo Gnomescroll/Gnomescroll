@@ -150,8 +150,8 @@ class ChatSystemMessage
     void agent_drop_flag(Agent_state* a);
     void agent_score_flag(Agent_state* a);
 
-    void object_destroyed(ObjectPolicyInterface* object, Object_types type);
-    void object_created(ObjectPolicyInterface* object, Object_types type);
+    void object_destroyed(ObjectPolicyInterface* object);
+    void object_created(ObjectPolicyInterface* object);
 };
 
 void teardown_chat_client();

@@ -518,26 +518,9 @@ inline void spawn_location_StoC::handle()
 
 inline void alter_item_ownership_StoC::handle()
 {
-    void* obj;
-    switch (type)
-    {
-        case OBJ_TYPE_SPAWNER:
-            obj = ClientState::spawner_list->get(id);
-            if (obj == NULL) return;
-            ((Spawner*)obj)->set_owner(owner);
-            break;
-        case OBJ_TYPE_TURRET:
-            //obj = ClientState::turret_list->get(id);
-            obj = ClientState::object_list->get(id);
-            if (obj == NULL) return;
-            //((Turret*)obj)->set_owner(owner);
-            ((ObjectPolicyInterface*)obj)->state()->set_owner(owner);
-            break;
-        default:
-            printf("alter_item_ownership_StoC::handle() -- unhandled item type %d\n", type);
-            return;
-        
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->get(id);
+    if (obj == NULL) return;
+    obj->state()->set_owner(owner);
 }
 
 inline void destroy_voxel_StoC::handle()
@@ -684,15 +667,13 @@ inline void hitscan_object_CtoS::handle()
 
     //const int agent_dmg = 25;
     const int slime_dmg = 25;
-    const int spawner_dmg = 25;
-    const int turret_dmg = 25;
+    const int obj_dmg = 25;
     int dmg_health;
 
     int voxel[3] = { vx,vy,vz };
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
-    Spawner* spawner = NULL;
-    Turret* turret = NULL;
+    ObjectPolicyInterface* obj = NULL;
 
     switch (type)
     {
@@ -721,39 +702,20 @@ inline void hitscan_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_SPAWNER:
-            spawner = ServerState::spawner_list->get(id);
-            if (spawner == NULL) return;
-
-            if ((spawner->get_team() == a->status.team && spawner->get_owner() != NO_AGENT)
-              && spawner->get_owner() != a->id)
-                return; // teammates cant kill spawners
-                
-            // apply damage
-            dmg_health = spawner->take_damage(spawner_dmg);
-            if (dmg_health <= 0)
-            {   // TODO -- add coins inside the take_damage() method
-                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
-                a->status.add_coins(coins);
-            }
-            //x = spawner->x;
-            //y = spawner->y;
-            //z = spawner->z;
-            break;
-
         case OBJ_TYPE_TURRET:
-            turret = (Turret*)ServerState::object_list->get(id);
-            if (turret == NULL) return;
+            obj = ServerState::object_list->get(id);
+            if (obj == NULL) return;
 
-            if ((turret->state()->get_team() == a->status.team && turret->state()->get_owner() != NO_AGENT)
-              && turret->state()->get_owner() != a->id)
+            if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
+              && obj->state()->get_owner() != a->id) // TODO -- kill rule in ObjectState
                 return; // teammates cant kill turrets
                 
             // apply damage
-            dmg_health = turret->state()->take_damage(turret_dmg);
+            dmg_health = obj->state()->take_damage(obj_dmg);
             if (dmg_health <= 0)
             {
-                //int coins = turret->get_coins_for_kill(a->id, a->status.team);
-                int coins = turret->state()->get_kill_reward(a->id, a->status.team);
+                //int coins = obj->get_coins_for_kill(a->id, a->status.team);
+                int coins = obj->state()->get_kill_reward(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;
@@ -862,13 +824,10 @@ inline void melee_object_CtoS::handle()
 
     Agent_state* agent = NULL;
     Monsters::Slime* slime = NULL;
-    Spawner* spawner = NULL;
-    Turret* turret = NULL;
+    ObjectPolicyInterface* obj = NULL;
 
-    //const int agent_dmg = 50;
     const int slime_dmg = 50;
-    const int spawner_dmg = 50;
-    const int turret_dmg = 50;
+    const int obj_dmg = 50;
     int dmg_health;
     int voxel[3] = { vx,vy,vz };
     
@@ -894,36 +853,19 @@ inline void melee_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_SPAWNER:
-            spawner = ServerState::spawner_list->get(id);
-            if (spawner == NULL) return;
-
-            if ((spawner->get_team() == a->status.team && spawner->get_owner() != NO_AGENT)
-            && spawner->get_owner() != a->id)
-                return; // teammates cant kill spawners
-                
-            // apply damage
-            dmg_health = spawner->take_damage(spawner_dmg);
-            if (dmg_health <= 0)
-            {
-                int coins = spawner->get_coins_for_kill(a->id, a->status.team);
-                a->status.add_coins(coins);
-            }
-            break;
-
         case OBJ_TYPE_TURRET:
-            turret = (Turret*)ServerState::object_list->get(id);
-            if (turret == NULL) return;
+            obj = ServerState::object_list->get(id);
+            if (obj == NULL) return;
 
-            if ((turret->state()->get_team() == a->status.team && turret->state()->get_owner() != NO_AGENT)
-            && turret->state()->get_owner() != a->id)
-                return; // teammates cant kill turrets
+            if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
+            && obj->state()->get_owner() != a->id)   // TODO -- rule in ObjectState
+                return; // teammates cant kill turrets/spawners
                 
             // apply damage
-            dmg_health = turret->state()->take_damage(turret_dmg);
+            dmg_health = obj->state()->take_damage(obj_dmg);
             if (dmg_health <= 0)
             {
-                //int coins = turret->get_coins_for_kill(a->id, a->status.team);
-                int coins = turret->state()->get_kill_reward(a->id, a->status.team);
+                int coins = obj->state()->get_kill_reward(a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;
@@ -1068,23 +1010,22 @@ inline void place_spawner_CtoS::handle()
     }
     if (a->status.team == 0) return;
     if (!a->status.can_purchase(OBJ_TYPE_SPAWNER)) return;
-    if (ServerState::spawner_list->full()) return;
-    if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
-    if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)z)) return;
+    //if (ServerState::spawner_list->full()) return;    // TODO - full by type
+    if (!ServerState::object_list->team_spawner_available(a->status.team)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    if (ServerState::spawner_list->point_occupied((int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = ServerState::spawner_list->create(x+0.5f,y+0.5f,new_z);
+    Spawner* s = (Spawner*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, OBJ_TYPE_SPAWNER);
     if (s==NULL) return;
-    a->status.purchase(OBJ_TYPE_SPAWNER);
-    s->set_team(a->status.team);
-    s->set_owner(a->id);
-    s->init_vox();
-    object_create_owner_team_index_StoC msg;
-    s->create_message(&msg);
-    msg.broadcast();
+    a->status.purchase(s->state()->type);
+    s->state()->set_team(a->status.team);
+    s->state()->set_owner(a->id);
+    s->born();
 }
 
 inline void place_turret_CtoS::handle()
@@ -1099,14 +1040,16 @@ inline void place_turret_CtoS::handle()
     if (!a->status.can_purchase(OBJ_TYPE_TURRET)) return;
     //if (ServerState::turret_list->full()) return; // TODO -- full by type
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)z)) return;
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
     Turret* t = (Turret*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, OBJ_TYPE_TURRET);
     if (t==NULL) return;
-    a->status.purchase(OBJ_TYPE_TURRET);
+    a->status.purchase(t->state()->type);
     t->state()->set_team(a->status.team);
     t->state()->set_owner(a->id);
     t->born();

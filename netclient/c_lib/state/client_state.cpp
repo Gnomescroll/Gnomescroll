@@ -28,7 +28,6 @@ namespace ClientState {
     Voxel_render_list* voxel_render_list = NULL;
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     Monsters::Slime_list* slime_list = NULL;
-    Spawner_list* spawner_list = NULL;
 
     GameObject_list* object_list;
 
@@ -52,7 +51,6 @@ namespace ClientState {
         
         object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
-        spawner_list = new Spawner_list;
         agent_list = new Agent_list;
         
         cspray_list = new Cspray_list;
@@ -72,7 +70,6 @@ namespace ClientState {
     {
         // voxel models
         delete slime_list;
-        delete spawner_list;
         delete agent_list;
         delete object_list;
 
@@ -135,7 +132,6 @@ namespace ClientState {
     {
         ctf->update();
         slime_list->update();
-        spawner_list->update();
         object_list->update();
 
         if (playerAgent_state.you != NULL)

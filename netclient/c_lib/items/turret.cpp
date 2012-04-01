@@ -35,14 +35,14 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     t->state()->set_team(msg->team);
     t->state()->set_owner(msg->owner);
     t->born();
-    //Sound::turret_placed(x,y,z,0,0,0);
-    //system_message->turret_created(t);
+    system_message->object_created(t);
 }
 
 void turret_destroy(int id)
 {
-    //Turret* t = (Turret*)ClientState::object_list->get(id);
-    //system_message->turret_destroyed(t);
+    Turret* t = (Turret*)ClientState::object_list->get(id);
+    if (t != NULL)
+        system_message->object_destroyed(t);
     ClientState::object_list->destroy(id);
 }
 

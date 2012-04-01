@@ -702,7 +702,6 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 
 static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
 {
-    //#ifdef DC_CLIENT
     void* obj;
     Voxel_volume* vv;
     switch (type)
@@ -721,16 +720,8 @@ static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;
-        //case OBJ_TYPE_SPAWNER:
-            //obj = STATE::spawner_list->get(id);
-            //if (obj == NULL || ((Spawner*)obj)->vox == NULL) return;
-            //vv = ((Spawner*)obj)->vox->get_part(part);
-            //if (vv == NULL) return;
-            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            //break;
         default: break;
     }
-    //#endif
 }
 
 void destroy_object_voxel(int id, int type, int part, const int voxel[3], int radius)
