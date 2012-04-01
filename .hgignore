@@ -80,3 +80,5 @@ churnlog
 log13*
 gnomescroll_server
 gnomescroll_client
+
+./client

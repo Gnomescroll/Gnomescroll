@@ -45,7 +45,8 @@ def get_version():
     return version
 
 def options(opt):
-    opt.load('compiler_c compiler_cxx python cython')
+    #opt.load('compiler_c compiler_cxx python cython')
+    opt.load('compiler_c compiler_cxx')
 
 def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     global _OS
@@ -57,12 +58,12 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal', centos=False):
     else:
         conf.check_tool('gcc')
         conf.check_tool('g++')
-    conf.check_tool('python')
-    conf.check_tool('cython')
+    #conf.check_tool('python')
+    #conf.check_tool('cython')
     #conf.load('compiler_c compiler_cxx python cython')
 
-    conf.check_python_version((2,6,0))
-    conf.check_python_headers()
+    #conf.check_python_version((2,6,0))
+    #conf.check_python_headers()
 
     conf.cc_add_flags()     #"-g" -ggdb
     conf.link_add_flags()   #"-g" -ggdb
@@ -308,39 +309,54 @@ def build(bld):
     if using_fmod:
         c_lib_includes += ['./sound/api/inc/', './sound']
         c_lib_libpath += ['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'] # hack
+
+    target = 'client'
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+        target = 'gnomescroll_client'
+
     #clib
-    bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.cpp'],
+    #bld(features='cxx cxxshlib',
+    bld(features='cxx cxxprogram',
+        #source=['c_lib/c_lib.cpp'],
+        source=['gnomescroll_client.cpp'],
         use=common_libraries+time_lib+SDL_libraries+['LUA'], # +noise_libraries +png_libs
         lib=sound_libraries+png_libs,
         includes= c_lib_includes,
         libpath= c_lib_libpath,
         framework = sound_framework,
-        target='c_lib')
+        #target='c_lib')
+        target=target)
+        
     bld.env.CFLAGS.remove('-fvisibility=hidden')
 
-    bld(features='cxx cshlib cxxshlib pyext',
-        source=['c_lib/init_c_lib.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='init_c_lib')
+    #bld(features='cxx cshlib cxxshlib pyext',
+        #source=['c_lib/init_c_lib.pyx'],
+        #use=common_libraries + ['c_lib'],
+        #target='init_c_lib')
 
     # final
-    bld(features='cxx cprogram pyembed',
-        use=['c_lib'],
-        source='run.c',
-        target='run')
-
-    # compile python files
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        import py_compile
-        py_compile.compile('cube_dat.py')
-        py_compile.compile('dat_loader.py')
-        py_compile.compile('args_client.py')
-        py_compile.compile('gameloop.py')
-        py_compile.compile('opts.py')
-        py_compile.compile('default_settings.py')
+    #bld(features='cxx cprogram pyembed',
+        #use=['c_lib'],
+        #source='run.c',
+        #target='run')
         
-    bld.add_post_fun(install_in_ext)
+    #bld(features='cxx cprogram',
+        #use=['c_lib'],
+        #source='gnomescroll_client.c',
+        #target=target)
+
+    ## compile python files
+    #if '-DPRODUCTION=1' in bld.env.CFLAGS:
+        #import py_compile
+        #py_compile.compile('cube_dat.py')
+        #py_compile.compile('dat_loader.py')
+        #py_compile.compile('args_client.py')
+        #py_compile.compile('gameloop.py')
+        #py_compile.compile('opts.py')
+        #py_compile.compile('default_settings.py')
+        
+    #bld.add_post_fun(install_in_ext)
+    bld.add_post_fun(install_bin)
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
         bld.add_post_fun(strip_symbols)
 
@@ -352,6 +368,10 @@ def strip_symbols(ctx):
         subprocess.Popen(['strip', '-s', 'libfont_lib.so'])
         subprocess.Popen(['strip', '-s', 'build/init_c_lib.so'])
         subprocess.Popen(['strip', '-s', 'ext/init_c_lib.so'])
+
+def install_bin(ctx):
+    if os.path.exists('./build/client'):
+        shutil.copy2('./build/client', './client')
 
 def install_in_ext(ctx):
     global out, _OS
