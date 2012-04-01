@@ -111,7 +111,7 @@ class SpawnerList
     SpawnerList()
     : max(SPAWNER_LIST_MAX), max_per_team(SPAWNERS_PER_TEAM), ct(0)
     {
-        this->spawners = (SpawnerProperties**)malloc(sizeof(SpawnerProperties*) * this->max);
+        this->spawners = (SpawnerProperties**)calloc(this->max, sizeof(SpawnerProperties*));
     }
 };
 
