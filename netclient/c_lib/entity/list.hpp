@@ -10,7 +10,7 @@ const int MAX_OBJECT_TYPE = 256;
 
 ObjectPolicyInterface* create_object_of_type(Object_types type, int id);
 
-class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>
+class GameObject_list
 {
     protected:
         int id_start;
@@ -19,6 +19,14 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
 
         void teardown()
         {
+            if (this->a != NULL)
+                free(this->a);
+
+            if (this->filtered_objects != NULL)
+                free(this->filtered_objects);
+            if (this->filtered_object_distances != NULL)
+                free(this->filtered_object_distances);
+
             if (this->occupancy != NULL)
                 free(this->occupancy);
             if (this->max_occupancy != NULL)
@@ -27,12 +35,20 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
 
         void init()
         {
+            this->a = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
+
+            this->filtered_objects = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
+            this->filtered_object_distances = (float*)malloc(sizeof(float) * this->max);
+
             this->occupancy = (int*)calloc(MAX_OBJECT_TYPE, sizeof(int));
             this->max_occupancy = (int*)calloc(MAX_OBJECT_TYPE, sizeof(int));
             init_gameobject_list_maximums(this);
         }
 
     public:
+        int max;
+        int ct;
+        ObjectPolicyInterface** a;
         const char* name() { return "GameObject"; }
 
         void set_max_occupancy(Object_types type, int max_allowed)
@@ -67,12 +83,29 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
         bool point_occupied_by_type(Object_types type, int x, int y, int z);
         int objects_within_sphere(float x, float y, float z, float radius);
 
+        void print()
+        {
+            const char* n = this->name();
+            printf("%s_list instantiated at %p\n", n, this);
+        }
+
+        // TODO -- objects should track themselves in this list
+        // as items go in and out of inventory
+        // filtering
+        ObjectPolicyInterface** filtered_objects; // tmp array for filtering objects
+        float* filtered_object_distances;
+        int n_filtered;
+
         ~GameObject_list()
         {
             this->teardown();
         }
         GameObject_list()
-        : id_start(0), occupancy(NULL), max_occupancy(NULL)
+        :
+        id_start(0),
+        occupancy(NULL), max_occupancy(NULL),
+        max(GAME_OBJECTS_MAX), ct(0),
+        filtered_objects(NULL), filtered_object_distances(NULL), n_filtered(0)
         {
             this->init();
             print();

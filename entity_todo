@@ -82,3 +82,6 @@ When object created, get assigned to a draw list based on draw type
 --When deleted, remove
 --Never retrieve from this list. only for draw tracking purposes
 
+
+move filtering to a StateList -- this way can iterate objects in world only very easily
+
