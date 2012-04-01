@@ -775,6 +775,9 @@ Apr 1
 
 Integrate spawners into entity system
 Correct error handling for OpenAL device open failure
+behaviour lists
+remove template chaining -- replace with function templates
+remove python from client
 ====================
 
 Gun model
