@@ -82,6 +82,11 @@ void GameObject_list::destroy(Object_types type, int id)
 {
     ObjectPolicyInterface* obj = this->a[id];
     if (obj == NULL) return;
+    if (obj->state()->type != type)
+    {
+        printf("WARNING: GameObject_list::destroy() -- type provided does not object type. id: %d, type: %d\n", id, type);
+        return;
+    }
     obj->die();
     this->occupancy[type] -= 1;
     delete obj;
