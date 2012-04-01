@@ -146,7 +146,15 @@ void init()
     if (Options::sound_device[0] != '\0')
         device = alcOpenDevice(Options::sound_device);
     else
-        device = alcOpenDevice(NULL); // select the "preferred device" 
+        device = alcOpenDevice(NULL); // select the "preferred device"
+
+    if (checkError())
+    {
+        close();
+        inited = enabled = false;
+        device = NULL;
+        return;
+    }
 
     if (device == NULL)
     {
@@ -158,7 +166,7 @@ void init()
 
     context = alcCreateContext(device, NULL);
     alcMakeContextCurrent(context);  
-    
+
     // Check for EAX 2.0 support 
     ALboolean g_bEAX = alIsExtensionPresent("EAX2.0");
     if (g_bEAX)
@@ -190,7 +198,7 @@ void init()
         return;
     }
     sources_inited = true;
-    
+
     // set source properties
     for (int i=0; i<MAX_SOURCES; i++)
     {
@@ -213,7 +221,7 @@ void init()
         inited = enabled = false;
         return;
     }
-
+    
     enabled = true;
     inited = true;
     printf("OpenAL inited\n");
