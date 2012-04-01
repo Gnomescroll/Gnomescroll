@@ -27,4 +27,6 @@ OPT_UINT_HEADER(seed)
 OPT_BOOL_HEADER(logger)
 
 
+void register_options();
+
 }

@@ -27,4 +27,11 @@ OPT_UINT(seed, 8007513)
 /* Logging */
 OPT_BOOL(logger, false)
 
+
+void register_options()
+{
+
+
+}
+
 }

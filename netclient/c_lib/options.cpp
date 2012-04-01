@@ -2,6 +2,7 @@
 
 //#include <stdlib.h>
 
+
 namespace Options
 {
 
@@ -47,5 +48,12 @@ OPT_BOOL(animations, true)
 
 /* Logging */
 OPT_BOOL(logger, false)
+
+
+void register_options()
+{
+
+
+}
 
 }

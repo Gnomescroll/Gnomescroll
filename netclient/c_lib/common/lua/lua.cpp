@@ -161,6 +161,7 @@ int lua_load_block_dat()
 
 }
 
+#include <options.hpp>
 
 namespace LUA
 {
@@ -174,43 +175,54 @@ void register_sting_option(const char* name, const char* var);
 
 lua_State* LUA_options_table;
 
-void init_options()
-{
-    int status;
 
-    LUA_options_table = luaL_newstate();
-    lua_State *L = LUA_options_table;
-
-    luaL_openlibs(L); /* Load Lua libraries */
-
-    //lua_newtable(L);    //create options table
-
-    status = luaL_loadfile(L, "lua/settings.lua");
-    if (status) 
-    {
-        fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
-        abort();
-    }
-
-    lua_newtable(L);    //create options table
-
-}
-
-void register_options()
+/*
+    Load or reload options
+*/
+void load_options()
 {
 
-    lua_State* L = LUA_options_table;
 
-    lua_setglobal(L, "options_table"); //name options
-
-    if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+    if(LUA_options_table == NULL)
     {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        abort();
+        LUA_options_table = luaL_newstate();
+        lua_State *L = LUA_options_table;
+        luaL_openlibs(L); /* Load Lua libraries */
+
+        if (luaL_loadfile(L, "lua/settings.lua")) 
+        {
+            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+
+        lua_newtable(L);    //create options table
+        lua_setglobal(L, "options_table"); //name options
+
+        Options::register_options();
+
+        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+        {
+            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+            abort();
+        }
     }
+    else
+    {
+        printf("Reloading Settings\n");
+        lua_State *L = LUA_options_table;
 
-    lua_close(L);
+        if (luaL_loadfile(L, "lua/settings.lua")) 
+        {
+            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            abort();
+        }
 
+        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+        {
+            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+    }
 }
 
 /*
