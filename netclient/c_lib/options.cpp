@@ -19,7 +19,7 @@ OPT_INT(port, 4096)
 OPT_BOOL(auto_assign_team, true)
 
 /* Window / Camera */
-OPT_INT(width, 1024)
+OPT_INT(width, 1280)
 OPT_INT(height, 800)
 OPT_BOOL(fullscreen, false)
 OPT_FLOAT(fov, 85.0f)
@@ -37,12 +37,12 @@ OPT_BOOL(ping, true)
 OPT_INT(ping_update_interval, 500)
 
 /* Font */
-OPT_STRING(font, "inconsolata_18.fnt")
+OPT_STRING(font, "inc_18_b.fnt")
 
 /* Sound */
-OPT_BOOL(sound, false)
-OPT_INT(sfx, 100)
-OPT_INT(music, 100)
+OPT_BOOL(sound, true)
+OPT_INT(sfx, 1)
+OPT_INT(music, 20)
 OPT_STRING(sound_device, "")
 
 /* Graphics */
@@ -54,48 +54,48 @@ OPT_BOOL(logger, false)
 
 void register_options()
 {
-	/* User */
-	OPT_STRING_REGISTER(name)
+    /* User */
+    OPT_STRING_REGISTER(name)
 
-	/* Network */
-	OPT_STRING_REGISTER(server)
-	OPT_INT_REGISTER(port)
+    /* Network */
+    OPT_STRING_REGISTER(server)
+    OPT_INT_REGISTER(port)
 
-	/* Game preferences */
-	OPT_BOOL_REGISTER(auto_assign_team)
+    /* Game preferences */
+    OPT_BOOL_REGISTER(auto_assign_team)
 
-	/* Window / Camera */
-	OPT_INT_REGISTER(width)
-	OPT_INT_REGISTER(height)
-	OPT_BOOL_REGISTER(fullscreen)
-	OPT_FLOAT_REGISTER(fov)
+    /* Window / Camera */
+    OPT_INT_REGISTER(width)
+    OPT_INT_REGISTER(height)
+    OPT_BOOL_REGISTER(fullscreen)
+    OPT_FLOAT_REGISTER(fov)
 
-	/* Controls */
-	OPT_FLOAT_REGISTER(sensitivity)
-	OPT_FLOAT_REGISTER(camera_speed)
-	OPT_BOOL_REGISTER(invert_mouse)
+    /* Controls */
+    OPT_FLOAT_REGISTER(sensitivity)
+    OPT_FLOAT_REGISTER(camera_speed)
+    OPT_BOOL_REGISTER(invert_mouse)
 
-	/* HUD / Info */
-	OPT_BOOL_REGISTER(hud)
-	OPT_BOOL_REGISTER(diagnostic_hud)
-	OPT_BOOL_REGISTER(fps)
-	OPT_BOOL_REGISTER(ping)
-	OPT_INT_REGISTER(ping_update_interval)
+    /* HUD / Info */
+    OPT_BOOL_REGISTER(hud)
+    OPT_BOOL_REGISTER(diagnostic_hud)
+    OPT_BOOL_REGISTER(fps)
+    OPT_BOOL_REGISTER(ping)
+    OPT_INT_REGISTER(ping_update_interval)
 
-	/* Font */
-	OPT_STRING_REGISTER(font)
+    /* Font */
+    OPT_STRING_REGISTER(font)
 
-	/* Sound */
-	OPT_BOOL_REGISTER(sound)
-	OPT_INT_REGISTER(sfx)
-	OPT_INT_REGISTER(music)
-	OPT_STRING_REGISTER(sound_device)
+    /* Sound */
+    OPT_BOOL_REGISTER(sound)
+    OPT_INT_REGISTER(sfx)
+    OPT_INT_REGISTER(music)
+    OPT_STRING_REGISTER(sound_device)
 
-	/* Graphics */
-	OPT_BOOL_REGISTER(animations)
+    /* Graphics */
+    OPT_BOOL_REGISTER(animations)
 
-	/* Logging */
-	OPT_BOOL_REGISTER(logger)
+    /* Logging */
+    OPT_BOOL_REGISTER(logger)
 }
 
 }
