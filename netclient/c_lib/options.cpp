@@ -3,6 +3,8 @@
 //#include <stdlib.h>
 
 
+#include <c_lib/common/lua/lua.hpp>
+
 namespace Options
 {
 
@@ -52,8 +54,48 @@ OPT_BOOL(logger, false)
 
 void register_options()
 {
+	/* User */
+	OPT_STRING_REGISTER(name)
 
+	/* Network */
+	OPT_STRING_REGISTER(server)
+	OPT_INT_REGISTER(port)
 
+	/* Game preferences */
+	OPT_BOOL_REGISTER(auto_assign_team)
+
+	/* Window / Camera */
+	OPT_INT_REGISTER(width)
+	OPT_INT_REGISTER(height)
+	OPT_BOOL_REGISTER(fullscreen)
+	OPT_FLOAT_REGISTER(fov)
+
+	/* Controls */
+	OPT_FLOAT_REGISTER(sensitivity)
+	OPT_FLOAT_REGISTER(camera_speed)
+	OPT_BOOL_REGISTER(invert_mouse)
+
+	/* HUD / Info */
+	OPT_BOOL_REGISTER(hud)
+	OPT_BOOL_REGISTER(diagnostic_hud)
+	OPT_BOOL_REGISTER(fps)
+	OPT_BOOL_REGISTER(ping)
+	OPT_INT_REGISTER(ping_update_interval)
+
+	/* Font */
+	OPT_STRING_REGISTER(font)
+
+	/* Sound */
+	OPT_BOOL_REGISTER(sound)
+	OPT_INT_REGISTER(sfx)
+	OPT_INT_REGISTER(music)
+	OPT_STRING_REGISTER(sound_device)
+
+	/* Graphics */
+	OPT_BOOL_REGISTER(animations)
+
+	/* Logging */
+	OPT_BOOL_REGISTER(logger)
 }
 
 }
