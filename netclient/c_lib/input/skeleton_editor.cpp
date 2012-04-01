@@ -151,7 +151,7 @@ void raycast_to_part()
 
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
-            obj = ClientState::object_list->get(id);
+            obj = ClientState::object_list->get(type, id);
             if (obj==NULL) return;
             vox = ((ObjectPolicyInterface*)obj)->state()->get_vox();
             vox_dat = ((ObjectPolicyInterface*)obj)->state()->vox_dat;

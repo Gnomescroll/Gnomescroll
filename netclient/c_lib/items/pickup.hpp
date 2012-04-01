@@ -95,13 +95,13 @@ PickupObjectParent;
 class PickupObject: public PickupObjectParent, public PickupComponent
 {
     public:
-    PickupObject(int id, float x, float y, float z, float mx, float my, float mz)
+    PickupObject(int id)
     : PickupObjectParent(this), PickupComponent()
     {   // TODO: constants should be loaded via dat
         this->_state.id = id;
         this->_state.pickup = true;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
-        this->_state.create_particle(x,y,z, mx,my,mz);
+        this->_state.create_particle(0,0,0,0,0,0);
         this->_state.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
         this->_state.texture_scale = DEFAULT_PICKUP_ITEM_TEXTURE_SCALE;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;

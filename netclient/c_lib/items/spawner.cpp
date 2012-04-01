@@ -13,7 +13,7 @@
 void spawner_state(object_state_StoC_model* msg)
 {
     
-    Spawner* s = (Spawner*)ClientState::object_list->get(msg->id);
+    Spawner* s = (Spawner*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (s == NULL) return;
     s->state()->set_position(msg->x, msg->y, msg->z);
 }
@@ -21,10 +21,10 @@ void spawner_state(object_state_StoC_model* msg)
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
     Spawner* s = (Spawner*)ClientState::object_list->create(
+        (Object_types)msg->type,
         (int)msg->id,
         msg->x, msg->y, msg->z,
-        0,0,0,
-        (Object_types)msg->type
+        0,0,0
     );
     if (s == NULL)
     {
@@ -39,12 +39,12 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg)
     system_message->object_created(s);
 }
 
-void spawner_destroy(int id)
+void spawner_destroy(Object_types type, int id)
 {
-    Spawner* s = (Spawner*)ClientState::object_list->get(id);
+    Spawner* s = (Spawner*)ClientState::object_list->get(type, id);
     if (s != NULL)
         system_message->object_destroyed(s);
-    ClientState::object_list->destroy(id);
+    ClientState::object_list->destroy(type, id);
 }
 #endif
 

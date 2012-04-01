@@ -239,7 +239,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
                 //if (slime != NULL) {}
                 break;
             case OBJ_TYPE_TURRET:
-                turret = (Turret*)STATE::object_list->get(inflictor_id);
+                turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
                 if (turret == NULL) break;
                 attacker = STATE::agent_list->get(turret->state()->get_owner());
                 if (attacker != NULL)
@@ -272,7 +272,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
 
             case OBJ_TYPE_TURRET:
                 // lookup turret object, get owner, this will be the inflictor id
-                turret = (Turret*)ServerState::object_list->get(inflictor_id);
+                turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
                 if (turret == NULL) break;
                 inflictor_id = turret->state()->get_owner();
                 msg.victim = this->a->id;

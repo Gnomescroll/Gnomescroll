@@ -518,7 +518,7 @@ inline void spawn_location_StoC::handle()
 
 inline void alter_item_ownership_StoC::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->get(id);
+    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
     if (obj == NULL) return;
     obj->state()->set_owner(owner);
 }
@@ -703,7 +703,7 @@ inline void hitscan_object_CtoS::handle()
 
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
-            obj = ServerState::object_list->get(id);
+            obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
             if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
@@ -854,7 +854,7 @@ inline void melee_object_CtoS::handle()
 
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
-            obj = ServerState::object_list->get(id);
+            obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
             if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
@@ -1021,7 +1021,7 @@ inline void place_spawner_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = (Spawner*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, type);
+    Spawner* s = (Spawner*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z, 0,0,0);
     if (s==NULL) return;
     a->status.purchase(s->state()->type);
     s->state()->set_team(a->status.team);
@@ -1050,7 +1050,7 @@ inline void place_turret_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = (Turret*)ServerState::object_list->create(x+0.5f,y+0.5f,new_z, 0,0,0, type);
+    Turret* t = (Turret*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z, 0,0,0);
     if (t==NULL) return;
     a->status.purchase(t->state()->type);
     t->state()->set_team(a->status.team);

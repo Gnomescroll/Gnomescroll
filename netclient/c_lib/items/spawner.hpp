@@ -139,11 +139,10 @@ SpawnerObjectParent;
 class Spawner: public SpawnerObjectParent, public SpawnerComponent
 {
     public:
-        Spawner(int id, float x, float y, float z, float mx, float my, float mz)
+        Spawner(int id)
         : SpawnerObjectParent(this), SpawnerComponent()
         {
             this->_state.id = id;
-            this->_state.position = vec3_init(x,y,z);
             this->_state.height = SPAWNER_HEALTH;
             this->_state.broadcast_state_change = true;
             this->_state.cost = COST_SPAWNER;

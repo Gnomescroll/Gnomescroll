@@ -8,9 +8,12 @@ void init_gameobject_list_maximums(GameObject_list* list);
 
 const int MAX_OBJECT_TYPE = 256;
 
+ObjectPolicyInterface* create_object_of_type(Object_types type, int id);
+
 class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MAX>
 {
-    private:
+    protected:
+        int id_start;
         int* occupancy;
         int* max_occupancy;
 
@@ -43,35 +46,33 @@ class GameObject_list: public Object_list<ObjectPolicyInterface, GAME_OBJECTS_MA
             this->max_occupancy[type] = max_allowed;
         }
 
-        bool full(Object_types type);
         void tick();
         void draw();
         void update();
+        bool full(Object_types type);
 
-        ObjectPolicyInterface* create(float x, float y, float z, float mx, float my, float mz, Object_types type);
-        ObjectPolicyInterface* create(int id, float x, float y, float z, float mx, float my, float mz, Object_types type);
-        void destroy(int id);
+        ObjectPolicyInterface* get(Object_types type, int id);
+
+        ObjectPolicyInterface* create(Object_types type);
+        ObjectPolicyInterface* create(Object_types type, float x, float y, float z);
+        ObjectPolicyInterface* create(Object_types type, float x, float y, float z, float mx, float my, float mz);
+        ObjectPolicyInterface* create(Object_types type, int id);
+        ObjectPolicyInterface* create(Object_types type, int id, float x, float y, float z);
+        ObjectPolicyInterface* create(Object_types type, int id, float x, float y, float z, float mx, float my, float mz);
+
+        void destroy(Object_types type, int id);
 
         void send_to_client(Object_types type, int client_id);
-        void alter_owner(int owner, int new_owner);
+        void transfer_ownership(int owner, int new_owner);
         bool point_occupied_by_type(Object_types type, int x, int y, int z);
         int objects_within_sphere(float x, float y, float z, float radius);
-
-        ///* MAJOR TODO -- MAKE THIS ITS OWN LIST */
-        //bool team_spawner_available(int team);
-        //int get_random_spawner(int team);
-        //int get_numbered_team_spawner(int team, int id);
-        //ObjectPolicyInterface* get_by_team_index(int team, int team_index);
-        //bool spawner_exists(int team, int team_index);
-        //void assign_team_index(ObjectPolicyInterface* spawner);
-        ///* END SHIT */
 
         ~GameObject_list()
         {
             this->teardown();
         }
         GameObject_list()
-        : occupancy(NULL), max_occupancy(NULL)
+        : id_start(0), occupancy(NULL), max_occupancy(NULL)
         {
             this->init();
             print();

@@ -14,7 +14,7 @@
 
 void turret_state(object_state_StoC_model* msg)
 {
-    Turret* t = (Turret*)ClientState::object_list->get(msg->id);
+    Turret* t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
     t->state()->set_position(msg->x, msg->y, msg->z);
 }
@@ -22,10 +22,10 @@ void turret_state(object_state_StoC_model* msg)
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
     Turret* t = (Turret*)ClientState::object_list->create(
+        (Object_types)msg->type,
         (int)msg->id,
         msg->x, msg->y, msg->z,
-        0,0,0,
-        (Object_types)msg->type
+        0,0,0
     );
     if (t == NULL)
     {
@@ -38,19 +38,19 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     system_message->object_created(t);
 }
 
-void turret_destroy(int id)
+void turret_destroy(Object_types type, int id)
 {
-    Turret* t = (Turret*)ClientState::object_list->get(id);
+    Turret* t = (Turret*)ClientState::object_list->get(type, id);
     if (t != NULL)
         system_message->object_destroyed(t);
-    ClientState::object_list->destroy(id);
+    ClientState::object_list->destroy(type, id);
 }
 
 void turret_shot_object(object_shot_object_StoC* msg)
 {
     if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
 
-    Turret* t = (Turret*)ClientState::object_list->get((int)msg->id);
+    Turret* t = (Turret*)ClientState::object_list->get((Object_types)msg->type, (int)msg->id);
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
     if (a == NULL || a->vox == NULL) return;
@@ -80,7 +80,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
 
 void turret_shot_terrain(object_shot_terrain_StoC* msg)
 {
-    Turret *t = (Turret*)ClientState::object_list->get(msg->id);
+    Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
 
     Vec3 pos = t->state()->get_position();
@@ -106,7 +106,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
 
 void turret_shot_nothing(object_shot_nothing_StoC* msg)
 {
-    Turret *t = (Turret*)ClientState::object_list->get(msg->id);
+    Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
 
     Vec3 pos = t->state()->get_position();

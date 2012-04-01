@@ -150,8 +150,6 @@ class ObjectState: public ObjectData
         switch_agent_ownership(this->type, this->owner, owner);
         this->owner = owner;
     }
-
-    bool set_position(float x, float y, float z);
     
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
@@ -169,6 +167,8 @@ class ObjectState: public ObjectData
         return z + this->camera_height;
     }
 
+    // returns true if position was different
+    bool set_position(float x, float y, float z);
     Vec3 get_position()
     {
         if (this->vp != NULL)
@@ -177,6 +177,14 @@ class ObjectState: public ObjectData
             return this->position;
     }
 
+    void set_momentum(float mx, float my, float mz)
+    {
+        if (this->vp != NULL)
+            this->vp->set_momentum(mx,my,mz);
+        else
+            printf("WARNING: ObjectState::set_momentum() -- object type %d does not use momentum\n", this->type);
+    }
+    
     Vec3 get_momentum()
     {
         if (this->vp != NULL)

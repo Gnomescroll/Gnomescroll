@@ -277,8 +277,8 @@ namespace ServerState
 
     void revoke_ownership(int agent_id)
     {
-        //turret_list->alter_owner(agent_id, NO_AGENT);
-        object_list->alter_owner(agent_id, NO_AGENT);
+        //turret_list->transfer_ownership(agent_id, NO_AGENT);
+        object_list->transfer_ownership(agent_id, NO_AGENT);
     }
 
     void send_version_to_client(int client_id)

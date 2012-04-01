@@ -15,7 +15,7 @@ inline void object_create_StoC_model::handle()
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create(x,y,z, 0,0,0, (Object_types)type);
+            obj = ClientState::object_list->create((Object_types)type, x,y,z, 0,0,0);
             break;
             
         default: return;
@@ -31,7 +31,7 @@ inline void object_create_vel_StoC_model::handle()
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create(x,y,z, mx,my,mz, (Object_types)type);
+            obj = ClientState::object_list->create((Object_types)type, x,y,z, mx,my,mz);
             break;
             
         default: return;
@@ -65,8 +65,8 @@ inline void object_create_owner_team_index_StoC_model::handle()
 /* Destruction */
 
 // forward declarations
-void spawner_destroy(int id);
-void turret_destroy(int id);
+void spawner_destroy(Object_types type, int id);
+void turret_destroy(Object_types type, int id);
 
 // use privately
 static inline void _destroy_object_handler(int type, int id) __attribute((always_inline));
@@ -76,14 +76,14 @@ static inline void _destroy_object_handler(int type, int id)
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            ClientState::object_list->destroy(id);
+            ClientState::object_list->destroy((Object_types)type, id);
             break;
 
         case OBJ_TYPE_SPAWNER:
-            spawner_destroy(id);
+            spawner_destroy((Object_types)type, id);
             break;
         case OBJ_TYPE_TURRET:
-            turret_destroy(id);
+            turret_destroy((Object_types)type, id);
             break;
 
         default: return;
