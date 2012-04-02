@@ -64,6 +64,9 @@
 /* Entity system */
 #include <c_lib/entity/entity.cpp>
 
+/* Lists */
+#include <c_lib/lists/lists.cpp>
+
 /* Behaviours */
 #include <c_lib/behaviour/behaviour.cpp>
 

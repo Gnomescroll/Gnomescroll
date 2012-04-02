@@ -6,6 +6,7 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/behaviour/behaviour.hpp>
 #include <c_lib/entity/entity.hpp>
+#include <c_lib/lists/lists.hpp>
 
 //forward decl
 class SpawnerList;
@@ -27,18 +28,6 @@ extern VoxDat spawner_vox_dat;
 
 /* Spawner Component */
 
-class ListProperties
-{
-    public:
-    int id;
-    ObjectPolicyInterface* obj;
-    void* list;
-    
-    ListProperties()
-    : id(-1), obj(NULL), list(NULL)
-    {}
-};
-
 class SpawnerProperties: public ListProperties
 {
     public:
@@ -56,62 +45,6 @@ class SpawnerComponent
         void get_spawn_point(ObjectState* state, int spawned_object_height, int* spawn_pt);
     SpawnerComponent(){}
 };
-
-/* List management */
-
-class BehaviourList
-{
-    private:
-        virtual const char* name() = 0;
-    public:
-        ListProperties** objects;
-        int max;
-        int ct;
-
-    void register_object(ListProperties* state)
-    {
-        if (this->ct >= this->max)
-        {
-            printf("WARNING: %s is full\n", name());
-            return;
-        }
-        int i=0;
-        for (;i<this->max; i++)
-        {
-            if (this->objects[i] == NULL)
-            {
-                state->id = i;
-                state->list = this;
-                this->objects[i] = state;
-                this->ct++;
-                break;
-            }
-        }
-        if (i == this->max)
-            printf("WARNING: no empty slots found in %s\n", name());
-    }
-
-    void unregister_object(ListProperties* state)
-    {
-        if (state->list == NULL || state->id < 0 || state->id >= this->max)
-            return;
-        if (this->objects[state->id] == NULL) return;
-        this->objects[state->id] = NULL;
-        this->ct--;
-        state->list = NULL;
-        state->id = -1;
-        return;
-    }
-
-    ~BehaviourList()
-    {}
-    explicit BehaviourList(int max)
-    : objects(NULL), max(max), ct(0)
-    {}
-};
-
-
-/************/
 
 const int SPAWNER_LIST_MAX = 256;
 class SpawnerList: public BehaviourList

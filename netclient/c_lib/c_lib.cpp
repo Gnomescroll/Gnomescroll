@@ -68,6 +68,9 @@
 /* Behaviours */
 #include <c_lib/behaviour/behaviour.cpp>
 
+/* Lists */
+#include <c_lib/lists/lists.cpp>
+
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
 
