@@ -316,7 +316,7 @@ void create_message<object_create_owner_team_StoC>(ObjectState* state, object_cr
     msg->x = p.x;
     msg->y = p.y;
     msg->z = p.z;
-    msg->owner = state->owner;
+    //msg->owner = state->owner;  // PROBLEM!! TODO
     msg->team = state->team;
 }
 
@@ -329,7 +329,7 @@ void create_message<object_create_owner_team_index_StoC>(ObjectState* state, obj
     msg->x = p.x;
     msg->y = p.y;
     msg->z = p.z;
-    msg->owner = state->owner;
+    //msg->owner = state->owner;    // TODO
     msg->team = state->team;
     msg->team_index = state->team_index;
 }

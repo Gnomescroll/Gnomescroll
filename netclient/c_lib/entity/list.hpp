@@ -106,7 +106,6 @@ class GameObject_list
         void destroy(Object_types type, int id);
 
         void send_to_client(Object_types type, int client_id);
-        void transfer_ownership(int owner, int new_owner);
         bool point_occupied_by_type(Object_types type, int x, int y, int z);
         int objects_within_sphere(float x, float y, float z, float radius);
 

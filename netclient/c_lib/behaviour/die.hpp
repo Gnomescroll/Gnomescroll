@@ -29,7 +29,7 @@ void dieExplode(ObjectState* state, Object* object)
     Vec3 p = state->get_position();
     ServerState::damage_objects_within_sphere(
         p.x, p.y, p.z,
-        state->explosion_radius, state->explosion_damage, state->owner,
+        state->explosion_radius, state->explosion_damage, object->get_owner(),
         state->type, state->id,
         state->suicidal
     );
@@ -58,9 +58,10 @@ void dieTeamItemAnimation(ObjectState* state, Object* object)
 template <class Object>
 void dieRevokeOwner(ObjectState* state, Object* object)
 {
-    if (state->owner != NO_AGENT)
+    int owner = object->get_owner();
+    if (owner != NO_AGENT)
     {
-        Agent_state* a = STATE::agent_list->get(state->owner);
+        Agent_state* a = STATE::agent_list->get(owner);
         if (a != NULL)
             a->status.lose_item(state->type);
     }

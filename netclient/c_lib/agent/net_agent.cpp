@@ -520,7 +520,8 @@ inline void alter_item_ownership_StoC::handle()
 {
     ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, (int)id);
     if (obj == NULL) return;
-    obj->state()->set_owner(owner);
+    //obj->state()->set_owner(owner);
+    ((OwnedComponent*)obj)->set_owner(obj->state(), owner); // TODO -- will crash if obj does not support ownership (shouldnt happen, but malicious packets will cause failure)
 }
 
 inline void destroy_voxel_StoC::handle()
@@ -705,8 +706,10 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
-            if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
-              && obj->state()->get_owner() != a->id) // TODO -- kill rule in ObjectState
+            // TODO -- check by object method availability
+            // as soon as a  non-owned object can be added, this will break
+            if ((obj->state()->get_team() == a->status.team && ((OwnedComponent*)obj)->get_owner() != NO_AGENT)
+              && ((OwnedComponent*)obj)->get_owner() != a->id) // TODO -- kill rule in ObjectState
                 return; // teammates cant kill turrets
                 
             // apply damage
@@ -829,6 +832,7 @@ inline void melee_object_CtoS::handle()
     const int obj_dmg = 50;
     int dmg_health;
     int voxel[3] = { vx,vy,vz };
+    int owner;
     
     switch (type)
     {
@@ -856,8 +860,13 @@ inline void melee_object_CtoS::handle()
             obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
-            if ((obj->state()->get_team() == a->status.team && obj->state()->get_owner() != NO_AGENT)
-            && obj->state()->get_owner() != a->id)   // TODO -- rule in ObjectState
+            owner = ((OwnedComponent*)obj)->get_owner();
+            printf("melee onitem owned by %d\n", owner);
+
+            // TODO -- check by object method availability
+            // as soon as a  non-owned object can be added, this will break
+            if ((obj->state()->get_team() == a->status.team && owner != NO_AGENT)
+              && owner != a->id)   // TODO -- rule in ObjectState
                 return; // teammates cant kill turrets/spawners
                 
             // apply damage
@@ -1024,7 +1033,7 @@ inline void place_spawner_CtoS::handle()
     if (s==NULL) return;
     a->status.purchase(s->state()->type);
     s->state()->set_team(a->status.team);
-    s->state()->set_owner(a->id);
+    s->set_owner(s->state(), a->id);
     ServerState::spawner_list->assign_team_index(s);
     s->born();
 }
@@ -1053,7 +1062,7 @@ inline void place_turret_CtoS::handle()
     if (t==NULL) return;
     a->status.purchase(t->state()->type);
     t->state()->set_team(a->status.team);
-    t->state()->set_owner(a->id);
+    t->set_owner(t->state(), a->id);
     t->born();
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT

@@ -6,8 +6,8 @@ unsigned int ObjectState::get_kill_reward(int owner, int team)
          (COINS_ANYONE  & this->coin_rule)
      || ((COINS_ENEMIES & this->coin_rule) && (this->team != team))
      || ((COINS_ALLIES  & this->coin_rule) && (this->team == team))
-     || ((COINS_OWNER   & this->coin_rule) && (this->owner == owner))
-     || ((COINS_ANYONE_WHEN_UNOWNED & this->coin_rule) && (this->owner == NO_AGENT))
+     //|| ((COINS_OWNER   & this->coin_rule) && (this->owner == owner))
+     //|| ((COINS_ANYONE_WHEN_UNOWNED & this->coin_rule) && (this->owner == NO_AGENT))  // TODO
     )
         return this->reward;
     return 0;

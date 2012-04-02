@@ -97,7 +97,6 @@ class ObjectState: public ObjectData
         int id;
         int team;
         unsigned int team_index; // id within team
-        int owner;
 
         // life
         int health;
@@ -138,17 +137,6 @@ class ObjectState: public ObjectData
     void set_team(int team)
     {
         this->team = team;
-    }
-
-    int get_owner()
-    {
-        return this->owner;
-    }
-
-    void set_owner(int owner)
-    {
-        switch_agent_ownership(this->type, this->owner, owner);
-        this->owner = owner;
     }
     
     void create_particle(float x, float y, float z, float mx, float my, float mz)
@@ -200,7 +188,7 @@ class ObjectState: public ObjectData
 
     ObjectState()
     : ObjectData(),
-    id(-1), team(0), team_index(TEAM_INDEX_NONE), owner(NO_AGENT),
+    id(-1), team(0), team_index(TEAM_INDEX_NONE),
     health(1), died(false), dead(false),
     vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),

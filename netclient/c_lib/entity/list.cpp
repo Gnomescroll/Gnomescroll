@@ -111,35 +111,6 @@ void GameObject_list::destroy(Object_types type, int id)
     this->objects[type][id] = NULL;
 }
 
-void GameObject_list::transfer_ownership(int owner, int new_owner)
-{   // TODO -- MAKE OWNERSHIP LIST
-    #if DC_SERVER
-    if (owner == new_owner)
-    {
-        printf("WARNING -- %s_list::transfer_ownership -- owner == new_owner %d\n", this->name(), owner);
-        return;
-    }
-    ObjectState* state;
-    for (int type=0; type<this->max_objects; type++)
-    {
-        if (this->occupancy[type] == 0) continue;
-        int max = this->get_object_max((Object_types)type);
-        for (int i=0; i<max; i++)
-        {
-            if (this->objects[type][i] == NULL) continue;
-            state = this->objects[type][i]->state();
-            if (state->get_owner() != owner) continue;
-            state->set_owner(new_owner);
-            alter_item_ownership_StoC msg;
-            msg.owner = new_owner;
-            msg.id = state->id;
-            msg.type = state->type;
-            msg.broadcast();
-        }
-    }
-    #endif
-}
-
 bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, int z)
 {
     if (this->occupancy[type] == 0) return false;

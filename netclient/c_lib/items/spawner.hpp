@@ -15,12 +15,14 @@ class SpawnerList;
 namespace ServerState
 {
     extern SpawnerList* spawner_list;
+    extern OwnedList* owned_list;
 }
 #endif
 #if DC_CLIENT
 namespace ClientState
 {
     extern SpawnerList* spawner_list;
+    extern OwnedList* owned_list;
 }
 #endif
 
@@ -61,23 +63,16 @@ class SpawnerList: public BehaviourList
     bool spawner_exists(int team, int team_index);
     void assign_team_index(ObjectPolicyInterface* spawner);
 
-    ~SpawnerList()
-    {
-        if (this->objects != NULL)
-            free(this->objects);
-    }
     SpawnerList()
-    : BehaviourList(SPAWNER_MAX), max_per_team(SPAWNERS_PER_TEAM)
-    {
-        this->objects = (ListProperties**)calloc(this->max, sizeof(ListProperties*));
-    }
+    : BehaviourList(SPAWNER_LIST_MAX), max_per_team(SPAWNERS_PER_TEAM)
+    {}
 };
 
 typedef ObjectInterface
 < object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
-class Spawner: public SpawnerComponent, public SpawnerInterface
+class Spawner: public SpawnerComponent, public OwnedComponent, public SpawnerInterface
 {
     public:
     Spawner(int id)
@@ -97,11 +92,15 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
         this->spawner_properties.obj = this;
         this->spawner_properties.radius = SPAWNER_SPAWN_RADIUS;
         STATE::spawner_list->register_object(&this->spawner_properties);
+
+        this->owned_properties.obj = this;
+        STATE::owned_list->register_object(&this->owned_properties);
     }
 
     ~Spawner()
     {
         STATE::spawner_list->unregister_object(&this->spawner_properties);
+        STATE::owned_list->unregister_object(&this->owned_properties);
     }
 
     /* Interface */

@@ -19,6 +19,7 @@ namespace ServerState
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern SpawnerList* spawner_list;
+    extern OwnedList* owned_list;
 
     extern Monsters::Slime_list* slime_list GNOMESCROLL_API;
     extern GameObject_list* object_list;

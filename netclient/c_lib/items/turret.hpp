@@ -7,6 +7,20 @@
 #include <c_lib/behaviour/behaviour.hpp>
 #include <c_lib/entity/entity.hpp>
 
+//forward decl
+#if DC_SERVER
+namespace ServerState
+{
+    extern OwnedList* owned_list;
+}
+#endif
+#if DC_CLIENT
+namespace ClientState
+{
+    extern OwnedList* owned_list;
+}
+#endif
+
 // forward decl
 class object_shot_object_StoC;
 class object_shot_terrain_StoC;
@@ -31,7 +45,7 @@ typedef ObjectInterface
 < object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
-class Turret: public TargetAcquisitionComponent, public TurretInterface
+class Turret: public TargetAcquisitionComponent, public OwnedComponent, public TurretInterface
 {
     public:
         Turret(int id)
@@ -63,6 +77,14 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             this->_state.attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
             this->_state.attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
             this->_state.attacker_properties.terrain_modification_action = t_map::TMA_LASER;
+
+            this->owned_properties.obj = this;
+            STATE::owned_list->register_object(&this->owned_properties);
+        }
+
+        ~Turret()
+        {
+            STATE::owned_list->unregister_object(&this->owned_properties);
         }
 
     /* Interface */

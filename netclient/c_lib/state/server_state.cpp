@@ -18,6 +18,7 @@ namespace ServerState
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     SpawnerList* spawner_list = NULL;
+    OwnedList* owned_list = NULL;
     
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
@@ -29,6 +30,7 @@ namespace ServerState
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
+        owned_list = new OwnedList;
         
         agent_list = new Agent_list;
         cspray_list = new Cspray_list;
@@ -54,6 +56,7 @@ namespace ServerState
 
         delete voxel_hitscan_list; // must go last
         delete spawner_list;
+        delete owned_list;
     }
 
     static void init_ctf()
@@ -146,9 +149,10 @@ namespace ServerState
             /* TODO */
             // state->can_be_killed_by(type, id, team)
             // apply teammate rules etc
-            if ((state->get_team() == agent->status.team && state->get_owner() != NO_AGENT)
-              && state->get_owner() != agent->id)
-                continue;
+            // TODO
+            //if ((state->get_team() == agent->status.team && state->get_owner() != NO_AGENT)
+              //&& state->get_owner() != agent->id)
+                //continue;
 
             state->take_damage(get_grenade_damage(state->type));
             if (state->died && agent != NULL
@@ -277,8 +281,7 @@ namespace ServerState
 
     void revoke_ownership(int agent_id)
     {
-        //turret_list->transfer_ownership(agent_id, NO_AGENT);
-        object_list->transfer_ownership(agent_id, NO_AGENT);
+        owned_list->transfer_ownership(agent_id, NO_AGENT);
     }
 
     void send_version_to_client(int client_id)
