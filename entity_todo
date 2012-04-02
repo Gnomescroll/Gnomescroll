@@ -74,3 +74,34 @@ When object created, get assigned to a draw list based on draw type
 
 move filtering to a StateList -- this way can iterate objects in world only very easily
 
+
+==========
+behaviour lists:
+organization is not a problem, but
+
+Filtering:
+e.g.
++all objects in sphere
++all objects with owner==x
++all objects with team==y
+
+owner is detached from main object list
+
+one solution:
+
+generic filters to apply to a list of pointers:
+
+OwnerFilter:
+collect all OwnerProperties->obj pointers into array, filtered by owner
+
+TeamFilter:
+collect all TeamProperties->obj pointers into array, filtered by team
+
+Merge lists, removing duplicates
+
+SpatialFilter
+filter merged list by sphere/cone/etc
+
+now have filtered ObjectPolicyInterface* obj;
+HOWEVER cannot call the specialized methods on these!
+--nor state
