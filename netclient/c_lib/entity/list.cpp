@@ -32,42 +32,60 @@ void initialize_object_metadata(Object_types type, ObjectPolicyInterface* obj)
 
 void GameObject_list::tick()
 {
-    if (this->ct == 0) return;
+    ObjectPolicyInterface* obj;
     ObjectState* state;
-    for (int i=0; i<this->max; i++)
+    for (int type=0; type<this->max_objects; type++)
     {
-        if (this->a[i] == NULL) continue;
-        state = this->a[i]->state();
-        this->a[i]->tick();
-        if (state->ttl >= state->ttl_max
-          || state->health <= 0)
-            this->destroy(state->type, state->id);
+        if (this->occupancy[type] == 0) continue;
+        int max = this->get_object_max((Object_types)type);
+        for (int i=0; i<max; i++)
+        {
+            obj = this->objects[type][i];
+            if (obj == NULL) continue;
+            state = obj->state();
+            obj->tick();
+            if (state->ttl >= state->ttl_max
+              || state->health <= 0)
+                this->destroy(state->type, state->id);
+        }
     }
 }
 
 void GameObject_list::draw()
 {
-    if (this->ct == 0) return;
-    for (int i=0; i<this->max; i++)
-        if (this->a[i] != NULL)
-            this->a[i]->draw();
+    for (int type=0; type<this->max_objects; type++)
+    {
+        if (this->occupancy[type] == 0) continue;
+        int max = this->get_object_max((Object_types)type);
+        for (int i=0; i<max; i++)
+            if (this->objects[type][i] != NULL)
+                this->objects[type][i]->draw();
+    }
 }
 
 void GameObject_list::update()
 {
-    if (this->ct == 0) return;
-    for (int i=0; i<this->max; i++)
-        if (this->a[i] != NULL)
-            this->a[i]->update();
+    for (int type=0; type<this->max_objects; type++)
+    {
+        if (this->occupancy[type] == 0) continue;
+        int max = this->get_object_max((Object_types)type);
+        for (int i=0; i<max; i++)
+            if (this->objects[type][i] != NULL)
+                this->objects[type][i]->update();
+    }
 }
 
 void GameObject_list::send_to_client(Object_types type, int client_id)
-{   // TODO: use sublists to do this efficiently
-    for (int i=0; i<this->max; i++)
+{
+    if (this->occupancy[type] == 0) return;
+    int max = this->get_object_max(type);
+    ObjectPolicyInterface* obj;
+    for (int i=0; i<max; i++)
     {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->state()->type != type) continue;
-        this->a[i]->sendToClientCreate(client_id);
+        obj = this->objects[type][i];
+        if (obj == NULL) continue;
+        if (obj->state()->type != type) continue;
+        obj->sendToClientCreate(client_id);
     }
 }
 
@@ -80,7 +98,7 @@ bool GameObject_list::full(Object_types type)
 
 void GameObject_list::destroy(Object_types type, int id)
 {
-    ObjectPolicyInterface* obj = this->a[id];
+    ObjectPolicyInterface* obj = this->objects[type][id];
     if (obj == NULL) return;
     if (obj->state()->type != type)
     {
@@ -90,37 +108,45 @@ void GameObject_list::destroy(Object_types type, int id)
     obj->die();
     this->occupancy[type] -= 1;
     delete obj;
-    this->a[id] = NULL;
-    this->ct--;
+    this->objects[type][id] = NULL;
 }
 
 void GameObject_list::transfer_ownership(int owner, int new_owner)
-{
+{   // TODO -- MAKE OWNERSHIP LIST
     #if DC_SERVER
     if (owner == new_owner)
     {
         printf("WARNING -- %s_list::transfer_ownership -- owner == new_owner %d\n", this->name(), owner);
         return;
     }
-    for (int i=0; i<this->max; i++)
+    ObjectState* state;
+    for (int type=0; type<this->max_objects; type++)
     {
-        if (this->a[i] == NULL) continue;
-        if (this->a[i]->state()->get_owner() != owner) continue;
-        this->a[i]->state()->set_owner(new_owner);
-        alter_item_ownership_StoC msg;
-        msg.owner = new_owner;
-        msg.id = this->a[i]->state()->id;
-        msg.type = this->a[i]->state()->type;
-        msg.broadcast();
+        if (this->occupancy[type] == 0) continue;
+        int max = this->get_object_max((Object_types)type);
+        for (int i=0; i<max; i++)
+        {
+            if (this->objects[type][i] == NULL) continue;
+            state = this->objects[type][i]->state();
+            if (state->get_owner() != owner) continue;
+            state->set_owner(new_owner);
+            alter_item_ownership_StoC msg;
+            msg.owner = new_owner;
+            msg.id = state->id;
+            msg.type = state->type;
+            msg.broadcast();
+        }
     }
     #endif
 }
 
 bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, int z)
 {
-    for (int i=0; i<this->max; i++)
+    if (this->occupancy[type] == 0) return false;
+    int max = this->get_object_max(type);
+    for (int i=0; i<max; i++)
     {
-        ObjectPolicyInterface *obj = this->a[i];
+        ObjectPolicyInterface *obj = this->objects[type][i];
         if (obj == NULL) continue;
         ObjectState* state = obj->state();
         if (state->type != type) continue;
@@ -134,34 +160,37 @@ bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, in
 }
 
 int GameObject_list::objects_within_sphere(float x, float y, float z, float radius)
-{
-    const float radius_squared = radius*radius;
-    int ct = 0;
-    float dist;
-    float min_dist = 10000000.0f;
-    int closest = -1;
-    int i;
-    Vec3 p;
-    for (i=0; i<this->max; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        p = this->a[i]->state()->get_position();
-        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
-        if (dist < radius_squared)
-        {
-            // agent in sphere
-            this->filtered_objects[ct] = this->a[i];
-            this->filtered_object_distances[ct] = dist;
-            if (dist < min_dist)
-            {
-                min_dist = dist;
-                closest = ct;
-            }
-            ct++;            
-        }
-    }
-    this->n_filtered = ct;
-    return closest;
+{   // MAJOR TODO -- MAKE ITS OWN SUBSCRIPTION LIST
+    this->n_filtered = 0;
+    return 0;
+    
+    //const float radius_squared = radius*radius;
+    //int ct = 0;
+    //float dist;
+    //float min_dist = 10000000.0f;
+    //int closest = -1;
+    //int i;
+    //Vec3 p;
+    //for (i=0; i<this->max; i++)
+    //{
+        //if (this->a[i] == NULL) continue;
+        //p = this->a[i]->state()->get_position();
+        //dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+        //if (dist < radius_squared)
+        //{
+            //// agent in sphere
+            //this->filtered_objects[ct] = this->a[i];
+            //this->filtered_object_distances[ct] = dist;
+            //if (dist < min_dist)
+            //{
+                //min_dist = dist;
+                //closest = ct;
+            //}
+            //ct++;            
+        //}
+    //}
+    //this->n_filtered = ct;
+    //return closest;
 }
 
 /* Creation API */
@@ -190,27 +219,24 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type)
 {
-    if (this->ct >= this->max) return NULL;
     if (this->full(type)) return NULL;
     int i;
     int id;
-    for (i=0; i<this->max; i++)
+    int max = this->get_object_max(type);
+    int id_start = this->get_index_start(type);
+    for (i=0; i<max; i++)
     {   // find available id
-        id = (i + this->id_start) % this->max;
-        if (this->a[id] == NULL) break;
+        id = (i + id_start) % max;
+        if (this->objects[type][id] == NULL) break;
     }
-    if (i >= this->max) return NULL;    // no slots found (went through all ids without breaking)
+    if (i >= max) return NULL;    // no slots found (went through all ids without breaking)
     ObjectPolicyInterface* obj = create_object_of_type(type, id);
     if (obj == NULL) return NULL;
-    a[id] = obj;
-    this->ct++;
-    this->id_start = id+1;
+    this->objects[type][id] = obj;
+    this->index_start[type] = id+1;
     this->occupancy[type] += 1;
     obj->state()->type = type;
-
-    //TODO
     initialize_object_metadata(type, obj);
-    //TODO
     
     return obj;
 }
@@ -233,22 +259,16 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
 {    
-    if (this->ct >= this->max) return NULL;
-    if (this->full(type)) return NULL;
     ObjectPolicyInterface* obj = NULL;
-    if (this->a[id] == NULL)
+    if (this->objects[type][id] == NULL)
     {   // available, create
         obj = create_object_of_type(type, id);
         if (obj == NULL) return NULL;
 
-        this->a[id] = obj;
-        this->ct++;
+        this->objects[type][id] = obj;
         this->occupancy[type] += 1;
         obj->state()->type = type;
-
-        //TODO
         initialize_object_metadata(type, obj);
-        //TODO
     }
     else
         printf("%s_list: Cannot create object from id: id is in use: %d\n", name(), id);
@@ -274,12 +294,12 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float 
 /* Getter */
 ObjectPolicyInterface* GameObject_list::get(Object_types type, int id)
 {
-    if (id < 0 || id >= this->max)
+    int max = this->get_object_max(type);
+    if (id < 0 || id >= max)
     {
-        printf("WARNING: %s_list::get() -- id %d out of range\n", name(), id);
+        printf("WARNING: %s_list::get() -- id %d out of range for type %d\n", name(), id, type);
         return NULL;
     }
-    if (this->a[id] == NULL) return NULL;
-    return this->a[id];
+    return this->objects[type][id];
 }
 

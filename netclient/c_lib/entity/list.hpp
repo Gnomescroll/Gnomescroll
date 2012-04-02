@@ -13,15 +13,14 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id);
 class GameObject_list
 {
     protected:
-        int id_start;
+        int max_objects;
+        int* index_start;
         int* occupancy;
         int* max_occupancy;
+        ObjectPolicyInterface*** objects;
 
         void teardown()
         {
-            if (this->a != NULL)
-                free(this->a);
-
             if (this->filtered_objects != NULL)
                 free(this->filtered_objects);
             if (this->filtered_object_distances != NULL)
@@ -31,30 +30,45 @@ class GameObject_list
                 free(this->occupancy);
             if (this->max_occupancy != NULL)
                 free(this->max_occupancy);
+
+            if (this->index_start != NULL)
+                free(this->index_start);
+
+            if (this->objects != NULL)
+            {
+                for (int i=0; i<this->max_objects; i++)
+                    if (this->objects[i] != NULL)
+                        for (int j=0; j<this->max_occupancy[j]; j++)
+                            if (this->objects[i][j] != NULL)
+                                delete this->objects[i][j];
+                free(this->objects);
+            }
         }
 
         void init()
         {
-            this->a = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
-
-            this->filtered_objects = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
-            this->filtered_object_distances = (float*)malloc(sizeof(float) * this->max);
-
-            this->occupancy = (int*)calloc(MAX_OBJECT_TYPE, sizeof(int));
-            this->max_occupancy = (int*)calloc(MAX_OBJECT_TYPE, sizeof(int));
+            this->occupancy = (int*)calloc(this->max_objects, sizeof(int));
+            this->max_occupancy = (int*)calloc(this->max_objects, sizeof(int));
             init_gameobject_list_maximums(this);
+
+            this->index_start = (int*)calloc(this->max_objects, sizeof(int));
+
+            this->objects = (ObjectPolicyInterface***)calloc(this->max_objects, sizeof(ObjectPolicyInterface**));
+            for (int i=0; i<this->max_objects; i++)
+                if (this->max_occupancy[i] > 0)
+                    this->objects[i] = (ObjectPolicyInterface**)calloc(this->max_occupancy[i], sizeof(ObjectPolicyInterface*));
+
+            //this->filtered_objects = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
+            //this->filtered_object_distances = (float*)malloc(sizeof(float) * this->max);
         }
 
     public:
-        int max;
-        int ct;
-        ObjectPolicyInterface** a;
         const char* name() { return "GameObject"; }
 
         void set_max_occupancy(Object_types type, int max_allowed)
         {
             if (this->max_occupancy == NULL) return;
-            if (type < 0 || type >= MAX_OBJECT_TYPE)
+            if (type < 0 || type >= this->max_objects)
             {
                 printf("WARNING: GameObject_list::set_max_occupancy() -- object type %d out of range\n", type);
                 return;
@@ -66,6 +80,19 @@ class GameObject_list
         void draw();
         void update();
         bool full(Object_types type);
+
+        int get_index_start(Object_types type)
+        {
+            return this->index_start[type];
+        }
+        int get_object_max(Object_types type)
+        {
+            return this->max_occupancy[type];
+        }
+        ObjectPolicyInterface** get_object_array(Object_types type)
+        {
+            return this->objects[type];
+        }
 
         ObjectPolicyInterface* get(Object_types type, int id);
 
@@ -102,9 +129,10 @@ class GameObject_list
         }
         GameObject_list()
         :
-        id_start(0),
+        max_objects(MAX_OBJECT_TYPE),
+        index_start(0),
         occupancy(NULL), max_occupancy(NULL),
-        max(GAME_OBJECTS_MAX), ct(0),
+        objects(NULL),
         filtered_objects(NULL), filtered_object_distances(NULL), n_filtered(0)
         {
             this->init();
