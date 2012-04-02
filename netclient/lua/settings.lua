@@ -14,10 +14,12 @@ else
 	print "WTF2\n"
 end
 
---x = to_string(options_table);
----print(x);
+
 print(table.val_to_str(options_table))
 
+
+--x = to_string(options_table);
+---print(x);
 --x = { h={dd=6}, g = 5 }
 
 ---print(to_string(x)); 

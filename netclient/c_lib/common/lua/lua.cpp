@@ -173,7 +173,7 @@ void register_bool_option(const char* name, bool* var);
 void register_float_option(const char* name, float* var);
 void register_sting_option(const char* name, const char* var);
 
-lua_State* LUA_options_table;
+lua_State* LUA_options_table = NULL;
 
 
 /*
@@ -182,29 +182,31 @@ lua_State* LUA_options_table;
 void load_options()
 {
 
+    LUA_options_table = luaL_newstate();
+    lua_State *L = LUA_options_table;
+    luaL_openlibs(L); /* Load Lua libraries */
 
+    if (luaL_loadfile(L, "lua/settings.lua")) 
+    {
+        fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+        abort();
+    }
+
+    lua_newtable(L);    //create options table
+    lua_setglobal(L, "options_table"); //name options
+
+    Options::register_options();
+
+    if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+    {
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        abort();
+    }
+
+/*
     if(LUA_options_table == NULL)
     {
-        LUA_options_table = luaL_newstate();
-        lua_State *L = LUA_options_table;
-        luaL_openlibs(L); /* Load Lua libraries */
 
-        if (luaL_loadfile(L, "lua/settings.lua")) 
-        {
-            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
-            abort();
-        }
-
-        lua_newtable(L);    //create options table
-        lua_setglobal(L, "options_table"); //name options
-
-        Options::register_options();
-
-        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
-        {
-            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-            abort();
-        }
     }
     else
     {
@@ -223,6 +225,7 @@ void load_options()
             abort();
         }
     }
+*/
 }
 
 /*
@@ -324,6 +327,9 @@ char* LUA_string_option_table[256] = {0};
 
 void register_string_option(const char* name, char* var)
 {
+
+    return;
+
     LUA_string_option_table[LUA_string_option_index] = var;
     lua_State *L = LUA_options_table;
 
@@ -333,7 +339,7 @@ void register_string_option(const char* name, char* var)
 
         lua_pushstring(L, "id");
         lua_pushnumber(L, LUA_string_option_index);
-        lua_rawset(L, -3);
+        lua_rawset(L, -3);      /* segfaults? */
 
         lua_pushstring(L, "type");
         lua_pushstring(L, "string");
@@ -341,8 +347,8 @@ void register_string_option(const char* name, char* var)
 
     lua_rawset(L, -3);          //create table
 
-    LUA_bool_option_index++;
-    if(LUA_bool_option_index >= 256)
+    LUA_string_option_index++;
+    if(LUA_string_option_index >= 256)
     {
         printf("LUA STRING OPTION ERROR\n");
         abort();
