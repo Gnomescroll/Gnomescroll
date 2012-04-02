@@ -216,13 +216,16 @@ int init_c_lib() {
         printf("WARNING: Attempt to init c_lib more than once\n");
         return 1;
     }
-    
+
     Log::init();
 
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 
 
+    LUA::load_options(); //load game options
+
+    
     srand(time(NULL));   // seed the RNG
 
     init_video();
