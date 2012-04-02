@@ -28,7 +28,7 @@ void CubeSelector::init()
 
 void CubeSelector::set_block_selector(int pos, int cube_id, int tex_id)
 {
-    printf("set block selector: %d %d %d\n", pos, cube_id, tex_id);
+    //printf("set block selector: %d %d %d\n", pos, cube_id, tex_id);
     if(pos == -1 || tex_id == -1) return;
     if(pos < 0 || pos >= 64)
     {

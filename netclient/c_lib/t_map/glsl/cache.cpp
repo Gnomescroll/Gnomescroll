@@ -104,7 +104,7 @@ void init_quad_cache_texture_cordinates()
 
             unsigned char tmp = (unsigned char) cube_side_texture_array[6*cube_id+side];
 
-            if(cube_id == 1 ) printf("cube tex= %i \n", tmp);
+            //if(cube_id == 1 ) printf("cube tex= %i \n", tmp);
             
             quad_cache[cube_id*6*4 +4*side + 0].tx = _0;
             quad_cache[cube_id*6*4 +4*side + 0].ty = _0;

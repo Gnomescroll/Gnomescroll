@@ -46,8 +46,8 @@ function NewSolidBlock(id, name)
 end
 
 --register texture sheets
-t00 = register_spritesheet("t00")
-t01 = register_spritesheet("t01")
+t00 = register_spritesheet("t00.png")
+t01 = register_spritesheet("t01.png")
 
 --alias texture
 error_block = texture_alias(t00,1,1)
@@ -174,7 +174,91 @@ b = NewSolidBlock(30, "box_3");
 b.texture = iso_texture(t01,6,6);
 b.hud = hud(32+3, b.texture.n);
 
---end
+-- row 5
+
+b = NewSolidBlock(31, "t1");
+b.texture = iso_texture(t01,1,7);
+b.hud = hud(40+0, b.texture.n);
+
+b = NewSolidBlock(32, "t2");
+b.texture = iso_texture(t01,2,7);
+b.hud = hud(40+1, b.texture.n);
+
+b = NewSolidBlock(33, "t3");
+b.texture = iso_texture(t01,3,7);
+b.hud = hud(40+2, b.texture.n);
+
+b = NewSolidBlock(34, "t4");
+b.texture = iso_texture(t01,4,7);
+b.hud = hud(40+4, b.texture.n);
+
+b = NewSolidBlock(35, "t5");
+b.texture = iso_texture(t01,5,7);
+b.hud = hud(40+5, b.texture.n);
+
+b = NewSolidBlock(36, "t6");
+b.texture = iso_texture(t01,6,7);
+b.hud = hud(40+6, b.texture.n);
+
+
+-- row 6
+b = NewSolidBlock(37, "at1");
+b.texture = iso_texture(t01,7,1);
+b.hud = hud(48+0, b.texture.n);
+
+b = NewSolidBlock(38, "at2");
+b.texture = iso_texture(t01,7,2);
+b.hud = hud(48+1, b.texture.n);
+
+b = NewSolidBlock(39, "at3");
+b.texture = iso_texture(t01,7,3);
+b.hud = hud(48+2, b.texture.n);
+
+b = NewSolidBlock(40, "at4");
+b.texture = iso_texture(t01,7,4);
+b.hud = hud(48+3, b.texture.n);
+
+b = NewSolidBlock(41, "at5");
+b.texture = iso_texture(t01,7,5);
+b.hud = hud(48+4, b.texture.n);
+
+b = NewSolidBlock(42, "at6");
+b.texture = iso_texture(t01,7,6);
+b.hud = hud(48+5, b.texture.n);
+
+b = NewSolidBlock(43, "at7");
+b.texture = iso_texture(t01,7,7);
+b.hud = hud(48+6, b.texture.n);
+
+-- row 7
+
+b = NewSolidBlock(44, "bt1");
+b.texture = iso_texture(t01,1,8);
+b.hud = hud(56+0, b.texture.n);
+
+b = NewSolidBlock(45, "bt2");
+b.texture = iso_texture(t01,2,8);
+b.hud = hud(56+1, b.texture.n);
+
+b = NewSolidBlock(46, "bt3");
+b.texture = iso_texture(t01,3,8);
+b.hud = hud(56+2, b.texture.n);
+
+b = NewSolidBlock(47, "bt4");
+b.texture = iso_texture(t01,4,8);
+b.hud = hud(56+3, b.texture.n);
+
+b = NewSolidBlock(48, "bt5");
+b.texture = iso_texture(t01,5,8);
+b.hud = hud(56+4, b.texture.n);
+
+b = NewSolidBlock(49, "bt6");
+b.texture = iso_texture(t01,6,8);
+b.hud = hud(56+5, b.texture.n);
+
+b = NewSolidBlock(50, "bt7");
+b.texture = iso_texture(t01,7,8);
+b.hud = hud(56+6, b.texture.n);
 
 print("map_load_tiles: done");
 

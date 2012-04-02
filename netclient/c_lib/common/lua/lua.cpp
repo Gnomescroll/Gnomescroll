@@ -184,6 +184,7 @@ void load_options()
 
     LUA_options_table = luaL_newstate();
     lua_State *L = LUA_options_table;
+
     luaL_openlibs(L); /* Load Lua libraries */
 
     if (luaL_loadfile(L, "lua/settings.lua")) 
@@ -193,9 +194,15 @@ void load_options()
     }
 
     lua_newtable(L);    //create options table
-    lua_setglobal(L, "options_table"); //name options
 
-    Options::register_options();
+
+    Options::register_options();  
+    //int test;
+
+    //register_int_option("x_res", &test);
+    //register_int_option("y_res", &test);
+
+    lua_setglobal(L, "options_table"); //name options
 
     if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
     {
