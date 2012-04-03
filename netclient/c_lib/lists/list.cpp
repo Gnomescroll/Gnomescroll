@@ -2,7 +2,7 @@
 
 /* List management */
 
-void BehaviourList::register_object(ListProperties* state)
+void BehaviourList::register_object(ComponentProperties* state)
 {
     if (this->ct >= this->max)
     {
@@ -25,7 +25,7 @@ void BehaviourList::register_object(ListProperties* state)
         printf("WARNING: no empty slots found in %s\n", name());
 }
 
-void BehaviourList::unregister_object(ListProperties* state)
+void BehaviourList::unregister_object(ComponentProperties* state)
 {
     if (state->list == NULL || state->id < 0 || state->id >= this->max)
         return;

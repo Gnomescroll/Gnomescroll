@@ -1,10 +1,12 @@
 #pragma once
 
-#include <c_lib/entity/state.hpp>
 #include <c_lib/entity/policy.hpp>
-#include <c_lib/lists/lists.hpp>
+#include <c_lib/components/components.hpp>
 
-//typedef ObjectStateLayer<OwnedComponent, TeamComponent> OwnedState;     // all components parameterized here
-typedef ObjectStateLayer<OwnedComponent, TeamDefault> OwnedState;     // all components parameterized here
+/* Parameterized template state layers */
+
 typedef ObjectStateLayer<OwnedDefault, TeamDefault> DefaultState;
+typedef ObjectStateLayer<OwnedDefault, TeamComponent> TeamState;
+typedef ObjectStateLayer<OwnedComponent, TeamDefault> OwnedState;
+typedef ObjectStateLayer<OwnedComponent, TeamComponent> OwnedTeamState;
 

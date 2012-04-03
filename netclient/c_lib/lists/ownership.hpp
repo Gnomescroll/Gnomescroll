@@ -3,35 +3,7 @@
 #include <c_lib/agent/agent_status.hpp>
 
 #include <c_lib/lists/list.hpp>
-
-class OwnedProperties: public ListProperties
-{
-    public:
-        int owner;
-    OwnedProperties()
-    : owner(NO_AGENT)
-    {}
-};
-
-class OwnedComponent
-{
-    public:
-    
-    OwnedProperties owned_properties;
-
-    int get_owner()
-    {
-        return this->owned_properties.owner;
-    }
-
-    void set_owner(ObjectState* state, int owner)
-    {
-        switch_agent_ownership(state->type, this->owned_properties.owner, owner);
-        this->owned_properties.owner = owner;
-    }
-
-    OwnedComponent() {}
-};
+#include <c_lib/components/owned.hpp>
 
 const int OWNED_LIST_MAX = 4096;
 class OwnedList: public BehaviourList

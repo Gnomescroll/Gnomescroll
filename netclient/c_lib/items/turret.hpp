@@ -42,7 +42,7 @@ class TargetAcquisitionComponent
 };
 
 typedef ObjectInterface
-< OwnedState, object_create_owner_team_StoC, object_state_StoC >
+< OwnedTeamState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
 
