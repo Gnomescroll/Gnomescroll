@@ -166,12 +166,6 @@ int lua_load_block_dat()
 namespace LUA
 {
 
-void LUA_init_options();
-void LUA_register_options();
-void register_int_option(const char* name, int* var);
-void register_bool_option(const char* name, bool* var);
-void register_float_option(const char* name, float* var);
-void register_sting_option(const char* name, const char* var);
 
 lua_State* LUA_options_table = NULL;
 
@@ -330,13 +324,10 @@ void register_float_option(const char* name, float* var)
 }
 
 int LUA_string_option_index = 0;
-char* LUA_string_option_table[256] = {0};
+char** LUA_string_option_table[256] = {0};
 
-void register_string_option(const char* name, char* var)
+void register_string_option(const char* name, char** var)
 {
-
-    return;
-
     LUA_string_option_table[LUA_string_option_index] = var;
     lua_State *L = LUA_options_table;
 
@@ -363,12 +354,12 @@ void register_string_option(const char* name, char* var)
 }
 
 }
-
+/*
     void LUA_set_int_option(int option_id, int value);
     void LUA_set_bool_option(int option_id, int value);
     void LUA_set_float_option(int option_id, float value);
     void LUA_set_string_option(int option_id, char* value);
-
+*/
 
 extern "C"
 {
@@ -419,7 +410,7 @@ extern "C"
             printf("LUA_set_int_option: error \n");
             abort();
         }
-        LUA::LUA_string_option_table[option_id] = value;
+        *LUA::LUA_string_option_table[option_id] = value;
     }
 
 }

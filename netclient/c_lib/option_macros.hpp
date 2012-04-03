@@ -43,7 +43,7 @@ LUA::register_bool_option( #NAME, & NAME );
 LUA::register_float_option( #NAME, & NAME );
 
 #define OPT_STRING_REGISTER(NAME)\
-LUA::register_string_option( #NAME,  NAME );
+LUA::register_string_option( #NAME, & NAME );
 
 
 
