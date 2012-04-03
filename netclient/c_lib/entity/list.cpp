@@ -20,7 +20,7 @@ void GameObject_list::tick()
             state = obj->state();
             obj->tick();
             if (state->ttl >= state->ttl_max
-              || state->health <= 0)
+              || obj->is_dead())
                 this->destroy(state->type, state->id);
         }
     }

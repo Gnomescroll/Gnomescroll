@@ -5,3 +5,4 @@
 #include <c_lib/components/team.hpp>
 #include <c_lib/components/owned.hpp>
 #include <c_lib/components/billboard_sprite.hpp>
+#include <c_lib/components/health.hpp>

@@ -14,21 +14,6 @@ unsigned int get_kill_reward(ObjectPolicyInterface* object, int owner, int team)
     return 0;
 }
 
-int ObjectState::take_damage(int dmg)
-{
-    this->died = false;
-    if (this->health <= 0) return 0;
-    this->health -= dmg;
-    this->health = (this->health < 0) ? 0 : this->health;
-    if (this->health <= 0)
-    {
-        this->ttl = this->ttl_max;
-        this->died = true;
-        this->dead = true;
-    }
-    return this->health;
-}
-
 bool ObjectState::set_position(float x, float y, float z)
 {
     bool changed = false;

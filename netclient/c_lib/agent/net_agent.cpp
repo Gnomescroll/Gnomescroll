@@ -707,10 +707,9 @@ inline void hitscan_object_CtoS::handle()
                 return; // teammates cant kill turrets
                 
             // apply damage
-            dmg_health = obj->state()->take_damage(obj_dmg);
-            if (dmg_health <= 0)
+            dmg_health = obj->take_damage(obj_dmg);
+            if (obj->did_die())
             {
-                //int coins = obj->get_coins_for_kill(a->id, a->status.team);
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
             }
@@ -863,8 +862,8 @@ inline void melee_object_CtoS::handle()
                 return; // teammates cant kill turrets/spawners
                 
             // apply damage
-            dmg_health = obj->state()->take_damage(obj_dmg);
-            if (dmg_health <= 0)
+            dmg_health = obj->take_damage(obj_dmg);
+            if (obj->did_die())
             {
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);

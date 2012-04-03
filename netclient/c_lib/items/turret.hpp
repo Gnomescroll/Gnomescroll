@@ -52,7 +52,7 @@ class TargetAcquisitionComponent
 //class Turret;
 
 typedef ObjectInterface
-< OwnedTeamState, object_create_owner_team_StoC, object_state_StoC >
+< OwnedTeamHealthState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
 
@@ -64,6 +64,8 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
         : TargetAcquisitionComponent(), TurretInterface()
         {
             this->_state.id = id;
+            this->_state.type = OBJ_TYPE_TURRET;
+
             this->_state.height = TURRET_HEIGHT;
             this->_state.camera_height = TURRET_CAMERA_HEIGHT;
             this->_state.broadcast_state_change = true;
@@ -77,9 +79,13 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             this->_state.suicidal = false;
             this->_state.frozen_vox = true;
             this->_state.vox_dat = &turret_vox_dat;
-            this->_state.type = OBJ_TYPE_TURRET;
-            this->_state.health = TURRET_HEALTH;
             
+            this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
+            this->_state.sight_range = TURRET_SIGHT_RANGE;
+            this->_state.accuracy_bias = TURRET_LASER_BIAS;
+            this->_state.attack_enemies = true;
+            this->_state.attack_random = true;
+
             this->attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
             this->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
             this->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
@@ -87,17 +93,13 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             this->attacker_properties.terrain_modification_action = t_map::TMA_LASER;
             this->target_acquisition_probability = TURRET_TARGET_LOCK_CHANCE;
 
-            this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
-            this->_state.sight_range = TURRET_SIGHT_RANGE;
-            this->_state.accuracy_bias = TURRET_LASER_BIAS;
-            this->_state.attack_enemies = true;
-            this->_state.attack_random = true;
-
             this->owned_properties.obj = this;
             STATE::owned_list->register_object(&this->owned_properties);
 
             this->team_properties.obj = this;
             //STATE::team_list->register_object(&this->team_properties);
+
+            this->health_properties.health = TURRET_HEALTH;
         }
 
         ~Turret()

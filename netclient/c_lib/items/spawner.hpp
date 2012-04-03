@@ -70,7 +70,7 @@ class SpawnerList: public BehaviourList
 };
 
 typedef ObjectInterface
-< OwnedTeamState, object_create_owner_team_index_StoC, object_state_StoC >
+< OwnedTeamHealthState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
 class Spawner: public SpawnerComponent, public SpawnerInterface
@@ -88,7 +88,8 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
         this->_state.frozen_vox = true;
         this->_state.vox_dat = &spawner_vox_dat;
         this->_state.type = OBJ_TYPE_SPAWNER;
-        this->_state.health = SPAWNER_HEALTH;
+        
+        this->health_properties.health = SPAWNER_HEALTH;
 
         this->spawner_properties.obj = this;
         this->spawner_properties.radius = SPAWNER_SPAWN_RADIUS;

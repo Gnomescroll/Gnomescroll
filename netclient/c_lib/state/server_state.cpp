@@ -154,8 +154,8 @@ namespace ServerState
               && obj->get_owner() != agent->id)
                 continue;
 
-            state->take_damage(get_grenade_damage(state->type));
-            if (state->died && agent != NULL
+            obj->take_damage(get_grenade_damage(state->type));
+            if (obj->did_die() && agent != NULL
               && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
                 coins += get_kill_reward(obj, agent->id, agent->status.team);
         }

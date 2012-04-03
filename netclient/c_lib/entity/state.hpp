@@ -96,11 +96,6 @@ class ObjectState: public ObjectData
         // general status 
         int id;
 
-        // life
-        int health;
-        bool died;
-        bool dead;
-
         // physics
         VerletParticle* vp;
         Vec3 position;
@@ -120,9 +115,7 @@ class ObjectState: public ObjectData
         int picked_up_by;
 
         // firing
-        unsigned int fire_tick;
-
-    int take_damage(int dmg);
+        unsigned int fire_tick; // dont move yet; things besides target acquisition may use this (altho they should probably be bundled into that
 
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
@@ -175,7 +168,6 @@ class ObjectState: public ObjectData
     ObjectState()
     : ObjectData(),
     id(-1),
-    health(1), died(false), dead(false),
     vp(NULL), theta(0), phi(0), ttl(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
@@ -201,6 +193,7 @@ class ObjectState: public ObjectData
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
 const unsigned int NULL_TEAM_INDEX = UINT_MAX;
+const int NULL_HEALTH = INT_MAX;
 
 /* provide virtual getters that support all data operations but will return invalid values */
 class OwnedDefault
@@ -222,4 +215,17 @@ class TeamDefault
     { return NULL_TEAM_INDEX; }
     void set_team_index(unsigned int team_index)
     {}
+};
+
+class HealthDefault
+{
+    public:
+    //int get_health()
+    //{ return NULL_HEALTH; }
+    int take_damage(int dmg)
+    { return NULL_HEALTH; }
+    bool is_dead()
+    { return false; }
+    bool did_die()
+    { return false; }
 };

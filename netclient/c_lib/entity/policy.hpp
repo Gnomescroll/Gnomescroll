@@ -47,6 +47,9 @@ class ObjectPolicyInterface
         virtual void set_team(int team) = 0;
         virtual unsigned int get_team_index() = 0;
         virtual void set_team_index(unsigned int team_index) = 0;
+        virtual int take_damage(int dmg) = 0;
+        virtual bool is_dead() = 0;
+        virtual bool did_die() = 0;
 
         virtual ~ObjectPolicyInterface() {};
 };
@@ -55,8 +58,8 @@ class ObjectPolicyInterface
  * Mixin class layer for state setters/getters
  */
 
-template <class Owner, class Team>  /* more common behaviour state classes here. very specialized classes can stay out */
-class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team
+template <class Owner, class Team, class Health>  /* more common behaviour state classes here. very specialized classes can stay out */
+class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team, public Health
 {
     protected:
         ObjectState _state;
@@ -72,7 +75,11 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team
         unsigned int get_team_index() { return Team::get_team_index(); }
         void set_team_index(unsigned int team_index) { Team::set_team_index(team_index); }
 
-    ObjectStateLayer<Owner, Team>()
+        int take_damage(int dmg) { return Health::take_damage(dmg); }
+        bool is_dead() { return Health::is_dead(); }
+        bool did_die() { return Health::did_die(); }
+
+    ObjectStateLayer<Owner, Team, Health>()
     {
     }
 };
