@@ -151,6 +151,7 @@ void Vbo_map::draw_map()
     prep_draw();
     sort_draw();
 
+
     glUseProgramObjectARB(map_shader[0]);
 
 
@@ -243,65 +244,7 @@ void Vbo_map::draw_map()
 
     glUseProgramObjectARB(0);
 
-
-    if(T_MAP_BACKUP_SHADER == 1) glEnable(GL_TEXTURE_2D);
-
-    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    //glDisable(GL_TEXTURE_2D);
-
-    //transparency, backface culling
-/*
-    glAlphaFunc ( GL_GREATER, 0.1 ) ;
-
-    glActiveTexture(GL_TEXTURE0);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable (GL_ALPHA_TEST);
-
-    for(i=0;i<draw_vbo_n;i++) {
-        vbo = draw_vbo_array[i];
-        if(vbo->_v_num[1] == 0) continue; 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-        glDrawArrays(GL_QUADS, vbo->_v_offset[1], vbo->_v_num[1]);
-    }
-
-    glDisable(GL_CULL_FACE);
-    for(i=0;i<draw_vbo_n;i++) {
-        vbo = draw_vbo_array[i];
-        if(vbo->_v_num[2] == 0) continue; 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-        glDrawArrays(GL_QUADS, vbo->_v_offset[2], vbo->_v_num[2]);
-    }
-    
-    glDisable(GL_ALPHA_TEST);   
-*/
-
-/*
-    glDepthMask(false);
-    for(i=0;i<draw_vbo_n;i++) {
-        vbo = draw_vbo_array[i];
-        if(vbo->_v_num[3] == 0) continue; 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo->VBO_id);
-        glVertexPointer(3, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)0);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(struct Vertex), (GLvoid*)12);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-        glDrawArrays(GL_QUADS, vbo->_v_offset[3], vbo->_v_num[3]);
-    }
-    glDepthMask(true); 
-*/
-    //glDisable(GL_BLEND);
-        
-    //end draw
-
-
+    //if(T_MAP_BACKUP_SHADER == 1) glEnable(GL_TEXTURE_2D);
 }
 
 void Vbo_map::draw_map_comptability()
