@@ -29,8 +29,8 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg)
         printf("WARNING spawner_create() -- could not create spawner %d\n", msg->id);
         return;
     }
-    s->state()->set_team(msg->team);
-    s->state()->team_index = msg->team_index; //overwrite with server authority
+    s->set_team(msg->team);
+    s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
     s->set_owner(msg->owner);
     s->born();
     Sound::spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
@@ -75,15 +75,13 @@ void SpawnerComponent::get_spawn_point(ObjectState* state, int spawned_object_he
 bool SpawnerList::team_spawner_available(int team)
 {
     ObjectPolicyInterface *s;
-    ObjectState* state;
     int n = 0;
     for (int i=0; i<this->max; i++)
     {
         if (this->objects[i] == NULL) continue;
         s = this->objects[i]->obj;
         if (s == NULL) continue;
-        state = s->state();
-        if (state->get_team() == team) n++;
+        if (s->get_team() == team) n++;
     }
     return (n < this->max_per_team);
 }
@@ -91,7 +89,6 @@ bool SpawnerList::team_spawner_available(int team)
 int SpawnerList::get_random_spawner(int team)
 {
     ObjectPolicyInterface *s;
-    ObjectState* state;
     int objects[this->max_per_team+1];
     int j=0;
     for (int i=0; i<this->max; i++)
@@ -99,9 +96,8 @@ int SpawnerList::get_random_spawner(int team)
         if (this->objects[i] == NULL) continue;
         s = this->objects[i]->obj;
         if (s == NULL) continue;
-        state = s->state();
-        if (state->get_team() == team)
-            objects[j++] = state->team_index;
+        if (s->get_team() == team)
+            objects[j++] = s->get_team_index();
     }
     objects[j++] = BASE_SPAWN_ID;
     return objects[randrange(0,j-1)];
@@ -112,16 +108,14 @@ int SpawnerList::get_random_spawner(int team)
 int SpawnerList::get_numbered_team_spawner(int team, int id)
 {
     ObjectPolicyInterface *s;
-    ObjectState* state;
     for (int i=0; i<this->max; i++)
     {
         if (this->objects[i] == NULL) continue;
         s = this->objects[i]->obj;
         if (s == NULL) continue;
-        state = s->state();
-        if (state->get_team() != team) continue;
-        if ((int)state->team_index == id)
-            return state->id;
+        if (s->get_team() != team) continue;
+        if ((int)s->get_team_index() == id)
+            return s->state()->id;
     }
     return BASE_SPAWN_ID;
 }
@@ -129,15 +123,13 @@ int SpawnerList::get_numbered_team_spawner(int team, int id)
 ObjectPolicyInterface* SpawnerList::get_by_team_index(int team, int team_index)
 {
     ObjectPolicyInterface *s;
-    ObjectState* state;
     for (int i=0; i<this->max; i++)
     {
         if (this->objects[i] == NULL) continue;
         s = this->objects[i]->obj;
         if (s == NULL) continue;
-        state = s->state();
-        if (state->get_team() != team) continue;
-        if ((int)state->team_index == team_index)
+        if (s->get_team() != team) continue;
+        if ((int)s->get_team_index() == team_index)
             return s;
     }
     return NULL;
@@ -159,17 +151,15 @@ void SpawnerList::assign_team_index(ObjectPolicyInterface* spawner)
     int* taken = (int*)calloc(this->max, sizeof(int));
     int team_index = TEAM_INDEX_NONE;
     ObjectPolicyInterface* s;
-    ObjectState* state;
-    ObjectState* spawner_state = spawner->state();
     for (int i=0; i<this->max; i++)
     {
         if (this->objects[i] == NULL) continue;
         s = this->objects[i]->obj;
         if (s == NULL) continue;
-        state = s->state();
-        if (state->get_team() != spawner_state->get_team()) continue;
-        if (state->team_index != TEAM_INDEX_NONE && state->team_index != 0)  // should never be 0
-            taken[state->team_index - 1] = 1;
+        if (s->get_team() != spawner->get_team()) continue;
+        if (spawner->get_team_index() != TEAM_INDEX_NONE
+          && spawner->get_team_index() != 0)  // should never be 0, team_indexing starts at 1
+            taken[spawner->get_team_index() - 1] = 1;
     }
     for (int i=0; i<this->max; i++)
         if (!taken[i])
@@ -177,7 +167,7 @@ void SpawnerList::assign_team_index(ObjectPolicyInterface* spawner)
             team_index = i+1;
             break;
         }
-    spawner_state->team_index = team_index;
+    spawner->set_team_index(team_index);
     free(taken);
 }
 

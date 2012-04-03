@@ -12,7 +12,7 @@ void bornVox(ObjectState* state, Object* object)
 template <class Object>
 inline void bornTeamVox(ObjectState* state, Object* object)
 {
-    state->vox = new Voxel_model(state->vox_dat, state->id, state->type, state->team);
+    state->vox = new Voxel_model(state->vox_dat, state->id, state->type, object->get_team());
 }
 
 // Initializes vox model properties. almost always desired

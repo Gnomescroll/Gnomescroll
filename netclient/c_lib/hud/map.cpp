@@ -619,17 +619,15 @@ void draw_team_text_icons(float z)
         s = (SpawnerProperties*)spawner_list->objects[i];
         if (s==NULL) continue;
         state = s->obj->state();
-        if (state->get_team() != playerAgent_state.you->status.team) continue;
-        if (state->team_index < 0)
-        {
-            printf("WARNING: draw_team_text_icons() -- spawner->team_index %d invalid\n", state->team_index);
+        unsigned int team_index = s->obj->get_team_index();
+        if (s->obj->get_team() != playerAgent_state.you->status.team) continue;
+        if (team_index <= 0 || team_index == TEAM_INDEX_NONE || team_index == NULL_TEAM_INDEX)
             continue;
-        }
-        if ((int)state->team_index == playerAgent_state.you->status.spawner)
+        if ((int)team_index == playerAgent_state.you->status.spawner)
             spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
         else
             spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
-        spawner[j]->update_formatted_string(1, state->team_index);
+        spawner[j]->update_formatted_string(1, team_index);
         Vec3 p = state->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         spawner[j]->set_position(x,y);

@@ -47,7 +47,7 @@ def get_version():
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
+def configure(conf, add_flags=[], rm_flags=[]):
     global _OS
     global os_libpth
 
@@ -111,8 +111,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     cflags += [c for c in add_flags if c not in cflags]
     cflags = [c for c in cflags if c not in rm_flags]
 
-    if sound.lower() == 'openal':
-        cflags.append('-DUSE_OPENAL=1')
+    cflags.append('-DUSE_OPENAL=1')
 
     conf.env.append_value('CFLAGS', cflags)
     conf.env.append_value('CXXFLAGS', cflags)
@@ -156,28 +155,27 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
                fragment='#include <SDL_image.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
-    if sound.lower() == 'openal':
-        if OS == 'Darwin':
-            conf.check(
-                lib=[],
-                framework=['OpenAL'],
-                uselib_store='openal',
-                mandatory=True
-            )
-        elif OS == 'Windows':
-            conf.check(header_name='AL/al.h',
-                       lib='OpenAL32',
-                       use='openal',
-                       uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
-                       mandatory=True)
-        else:
-            conf.check(header_name='AL/al.h',
-                       lib='openal',
-                       use='openal',
-                       uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
-                       mandatory=True)
+    if OS == 'Darwin':
+        conf.check(
+            lib=[],
+            framework=['OpenAL'],
+            uselib_store='openal',
+            mandatory=True
+        )
+    elif OS == 'Windows':
+        conf.check(header_name='AL/al.h',
+                   lib='OpenAL32',
+                   use='openal',
+                   uselib_store='openal',
+                   fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
+                   mandatory=True)
+    else:
+        conf.check(header_name='AL/al.h',
+                   lib='openal',
+                   use='openal',
+                   uselib_store='openal',
+                   fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
+                   mandatory=True)
 
 
     if OS == 'Windows':
@@ -210,69 +208,14 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-    fmod_includes = []
-    fmod_rpath = []
-    if sound.lower() == 'fmod':
-        incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-        libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-
-        if OS == 'Windows':
-            os_libpth = './libraries/win'
-            incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
-            libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
-        elif OS == 'Linux':
-            os_libpth = './libraries/lin'
-            incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-            libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-        elif OS == 'Darwin':
-            os_libpth = './libraries/osx'
-            incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
-            libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
-
-        conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
-        conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
-
-        fmod_includes = ['libraries/lin/fmod/inc']
-        fmod_rpath = ['libraries/lin/fmod/lib', 'sound/api/lib/']
-    
     #'cube_lib',
-    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include'] + fmod_includes
-    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib'] + fmod_rpath
+    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include']
+    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     
 def build(bld):
     OS = platform.system()
 
-    using_fmod = using_openal = False
-    if '-DUSE_FMOD=1' in bld.env.CFLAGS:
-        using_fmod = True
-    elif '-DUSE_OPENAL=1' in bld.env.CFLAGS:
-        using_openal = True
-
-    if using_fmod:
-        """"""
-        # FMOD hack
-        if OS == 'Windows':
-            os_libpth = './libraries/win'
-        elif OS == 'Linux':
-            os_libpth = './libraries/lin'
-        elif OS == 'Darwin':
-            os_libpth = './libraries/osx'
-
-        print os.path.abspath(os.curdir)
-        libpth = '%s/fmod/lib/' % (os_libpth,)
-        despth = './build/sound/api/lib/'
-
-        if os.path.exists(despth):
-            for fn in os.listdir(despth):
-                os.remove(despth + fn)
-            for fn in os.listdir(libpth):
-                shutil.copy2(libpth + fn, despth + fn)
-        else:
-            try:
-                shutil.copytree(libpth, despth, symlinks=True)
-            except IOError, e:
-                pass
-        """"""
+    using_openal = True
 
     sound_framework = []
     sound_libraries = []
@@ -282,15 +225,12 @@ def build(bld):
     #lua_libraries = ['luajit51']
 
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
-    if using_fmod:
-        sound_libraries = ['fmodex']
-    elif using_openal:
-        if OS == 'Darwin':
-            sound_framework = ['OpenAL']
-        elif OS == 'Windows':
-            sound_libraries = ['OpenAL32']
-        else:
-            sound_libraries = ['openal']
+    if OS == 'Darwin':
+        sound_framework = ['OpenAL']
+    elif OS == 'Windows':
+        sound_libraries = ['OpenAL32']
+    else:
+        sound_libraries = ['openal']
 
     if OS == "Darwin":
         png_libs=[]
@@ -305,9 +245,6 @@ def build(bld):
     bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     c_lib_includes = []
     c_lib_libpath = []
-    if using_fmod:
-        c_lib_includes += ['./sound/api/inc/', './sound']
-        c_lib_libpath += ['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'] # hack
 
     target = 'client'
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
@@ -426,10 +363,6 @@ class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
     
-class fmod_ctx(ConfigurationContext):
-    cmd = 'fmod'
-    fun = 'fmod'
-
 class extra_ctx(ConfigurationContext):
     cmd = 'extra'
     fun = 'extra'
@@ -437,16 +370,6 @@ class extra_ctx(ConfigurationContext):
 def extra(ctx):
     configure(ctx, add_flags=['-Wextra'])
 
-def fmod(ctx):
-    configure(ctx, sound='fmod')
-    
-class openal_ctx(ConfigurationContext):
-    cmd = 'openal'
-    fun = 'openal'
-
-def openal(ctx):
-    configure(ctx, sound='openal')
-    
 #class bounds_check_ctx(ConfigurationContext):
     #cmd = 'bounds_check'
     #fun = 'bounds_check'

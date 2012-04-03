@@ -30,7 +30,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
         printf("WARNING turret_create() -- could not create turret %d\n", msg->id);
         return;
     }
-    t->state()->set_team(msg->team);
+    t->set_team(msg->team);
     t->set_owner(msg->owner);
     t->born();
     system_message->object_created(t);
@@ -71,7 +71,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     int voxel[3] = { msg->voxel_x, msg->voxel_y, msg->voxel_z };
     destroy_object_voxel(
         msg->target_id, msg->target_type, msg->target_part,
-        voxel, t->state()->attacker_properties.voxel_damage_radius
+        voxel, t->attacker_properties.voxel_damage_radius
     );
     Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
 }
@@ -126,42 +126,37 @@ VoxDat turret_vox_dat;
 
 /* TargetAcquisition */
 
-void TargetAcquisitionComponent::acquire_target(ObjectState* state)
-{
-    // firing properties (will be from dat/state)
-    const float range = state->sight_range; 
-    const float bias = state->accuracy_bias;
-    const float acquisition_probability = state->target_acquisition_probability;
-    const bool enemies = state->attack_enemies;
-    const bool random = state->attack_random;
-
-    Vec3 p = state->get_position();
-    
+void TargetAcquisitionComponent::acquire_target(
+    int id, Object_types type, int team, float camera_z, Vec3 position,
+    float accuracy_bias, float sight_range,
+    bool attack_enemies, bool attack_random
+) {
     // lock on agent
-    Vec3 firing_position = vec3_init(p.x, p.y, state->camera_z());
+    Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
     Vec3 firing_direction;
     Agent_state* agent = Hitscan::lock_agent_target(
-        firing_position, &firing_direction, state->team,
-        range, acquisition_probability, enemies, random
+        firing_position, &firing_direction, team,
+        sight_range, this->target_acquisition_probability,
+        attack_enemies, attack_random
     );
     if (agent == NULL) return;
     
     // normalize and bias vector
     normalize_vector(&firing_direction);
-    if (bias)   // apply bias
-        firing_direction = vec3_bias_random(firing_direction, bias);
+    if (accuracy_bias)   // apply bias
+        firing_direction = vec3_bias_random(firing_direction, accuracy_bias);
 
     // get target
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        firing_position, firing_direction, state->id, state->type,
-        agent, range
+        firing_position, firing_direction, id, type,
+        agent, sight_range
     );
 
     // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, state->attacker_properties);
+    Hitscan::handle_hitscan_target(t, this->attacker_properties);
 
     // send firing packet
-    Hitscan::broadcast_object_fired(state->id, state->type, t);
+    Hitscan::broadcast_object_fired(id, type, t);
 
     // apply custom handling
     // play sounds
