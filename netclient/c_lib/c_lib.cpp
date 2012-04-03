@@ -228,6 +228,7 @@ int init_c_lib() {
     
     srand(time(NULL));   // seed the RNG
 
+    _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
     init_image_loader();
     TextureSheetLoader::init();

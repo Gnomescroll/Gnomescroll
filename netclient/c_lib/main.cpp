@@ -60,7 +60,7 @@ void time_since(int n)
 
 void init()
 {
-    _set_resolution(Options::width, Options::height, Options::fullscreen);
+    //_set_resolution(Options::width, Options::height, Options::fullscreen);
     init_c_lib();
     ClientState::set_desired_name(Options::name);
     ClientState::ctf->start();

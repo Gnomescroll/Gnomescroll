@@ -109,8 +109,10 @@ int _GET_TICK() {
 
 int _GET_MS_TIME() 
 {
-    long s_sec, n_sec;
+    //long s_sec, n_sec;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+        long s_sec, n_sec;   
+        
         clock_serv_t cclock;
         mach_timespec_t mts;
         host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
@@ -122,6 +124,9 @@ int _GET_MS_TIME()
         static const long n_sec_start = mts.tv_nsec;
     #else
         #ifdef _POSIX_TIMERS
+
+            long s_sec, n_sec;
+
             struct timespec tp;
             //clock_gettime(CLOCK_REALTIME, &tp);
             clock_gettime(CLOCK_MONOTONIC, &tp);
@@ -147,8 +152,10 @@ int _GET_MS_TIME()
 
 long _GET_MICROSECOND_TIME() 
 {
-    long s_sec, n_sec;
+    //long s_sec, n_sec;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+        long s_sec, n_sec;
+
         clock_serv_t cclock;
         mach_timespec_t mts;
         host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
@@ -162,6 +169,8 @@ long _GET_MICROSECOND_TIME()
 
     #else
         #ifdef _POSIX_TIMERS
+            long s_sec, n_sec;
+            
             struct timespec tp;
             //clock_gettime(CLOCK_REALTIME, &tp);
             clock_gettime(CLOCK_MONOTONIC, &tp);

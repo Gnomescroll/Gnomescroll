@@ -364,13 +364,66 @@ void register_string_option(const char* name, char* var)
 
 }
 
+    void LUA_set_int_option(int option_id, int value);
+    void LUA_set_bool_option(int option_id, int value);
+    void LUA_set_float_option(int option_id, float value);
+    void LUA_set_string_option(int option_id, char* value);
+
 
 extern "C"
 {
 
     void LUA_set_int_option(int option_id, int value)
     {
+
+        printf("set_int option: %i at %p \n", value, LUA::LUA_int_option_table[option_id]);
+        printf("before width= %i \n", Options::width);
+        if(LUA::LUA_int_option_table[option_id] == NULL)
+        {
+            printf("LUA_set_int_option: error \n");
+            abort();
+        }
         *LUA::LUA_int_option_table[option_id] = value;
+
+        printf("after width= %i \n", Options::width);
+    }
+
+    void LUA_set_bool_option(int option_id, int value)
+    {
+        if(LUA::LUA_bool_option_table[option_id] == NULL)
+        {
+            printf("LUA_set_int_option: error \n");
+            abort();
+        }
+        if(value == 0)
+        {
+            *LUA::LUA_bool_option_table[option_id] = false;
+        }
+        else
+        {
+            *LUA::LUA_bool_option_table[option_id] = true;
+        }
+
+    }
+    
+    void LUA_set_float_option(int option_id, float value)
+    {
+        if(LUA::LUA_float_option_table[option_id] == NULL)
+        {
+            printf("LUA_set_int_option: error \n");
+            abort();
+        }
+        *LUA::LUA_float_option_table[option_id] = value;
+    }
+
+    void LUA_set_string_option(int option_id, char* value)
+    {
+        if(LUA::LUA_string_option_table[option_id] == NULL)
+        {
+            printf("LUA_set_int_option: error \n");
+            abort();
+        }
+        LUA::LUA_string_option_table[option_id] = value;
     }
 
 }
