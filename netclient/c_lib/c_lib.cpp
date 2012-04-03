@@ -290,7 +290,7 @@ void close_c_lib() {
 /*
     LOOK AT NEXT LINE
 */
-    exit(0);  
+    //exit(0);  
 
     t_map::end_t_map();
     t_map::end_t_vbo();
