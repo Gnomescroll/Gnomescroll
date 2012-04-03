@@ -77,15 +77,13 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     #-ftime-report 
 
     if OS == 'Windows':
-        cxxflags = ['-static', '-static-libgcc', '-static-libstdc++', '-fpermissive'] #'-g', 
+        cxxflags = ['-fpermissive'] #'-g', 
+        # '-static', '-static-libgcc', '-static-libstdc++',
     else:
         cxxflags = ['-ggdb', '-fPIC'] # '-lefence'
 
+    #    #'-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
     if OS == 'Windows':
-        conf.env.append_value("LINKFLAGS", '-static')
-        conf.env.append_value("LINKFLAGS", '-static-libgcc')
-        conf.env.append_value("LINKFLAGS", '-static-libstdc++')
-
         conf.env.append_value("LINKFLAGS", "-lmingw32")
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
@@ -251,6 +249,7 @@ def build(bld):
 
 
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    
     c_lib_includes = []
     c_lib_libpath = []
 
@@ -269,12 +268,13 @@ def build(bld):
         includes = c_lib_includes,
         libpath = c_lib_libpath,
         framework = sound_framework,
+        linkflags = ['-rdynamic'],
         target="run"
     )
 
     bld.add_post_fun(install_bin)
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        bld.add_post_fun(strip_symbols)
+    #if '-DPRODUCTION=1' in bld.env.CFLAGS:
+    #    bld.add_post_fun(strip_symbols)
 
 
 def strip_symbols(ctx):
@@ -288,9 +288,14 @@ def strip_symbols(ctx):
 
 def install_bin(ctx):
     global out
+    OS = platform.system()
+
     try:    # installs binary to ./run and ./client
         run_target = ctx.env.cprogram_PATTERN % 'run'
-        run_dest = 'run.exe'
+        if(OS == 'Windows'):
+            run_dest = 'run.exe'
+        else:
+            run_dest = 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_dest)
     except:
         pass

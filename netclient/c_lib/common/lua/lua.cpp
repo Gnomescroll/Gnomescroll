@@ -166,12 +166,6 @@ int lua_load_block_dat()
 namespace LUA
 {
 
-void LUA_init_options();
-void LUA_register_options();
-void register_int_option(const char* name, int* var);
-void register_bool_option(const char* name, bool* var);
-void register_float_option(const char* name, float* var);
-void register_sting_option(const char* name, const char* var);
 
 lua_State* LUA_options_table = NULL;
 
