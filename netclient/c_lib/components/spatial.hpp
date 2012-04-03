@@ -16,9 +16,6 @@ class PositionProperties
     PositionProperties()
     : theta(0.0f), phi(0.0f)
     {
-        //this->position.x = 0;
-        //this->position.y = 0;
-        //this->position.z = 0; // TODO: needed?
     }
 };
 
@@ -118,6 +115,8 @@ class PositionVoxelComponent
         { return NULL_MOMENTUM; }
         void set_momentum(float x, float y, float z)
         {}
+
+        /* Additional specialization */
 
         float camera_z()
         {

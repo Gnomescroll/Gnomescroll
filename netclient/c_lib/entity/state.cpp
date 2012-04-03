@@ -13,21 +13,3 @@ unsigned int get_kill_reward(ObjectPolicyInterface* object, int owner, int team)
         return state->reward;
     return 0;
 }
-
-//bool ObjectState::set_position(float x, float y, float z)
-//{
-    //if (
-       //this->position.x == x
-    //&& this->position.y == y
-    //&& this->position.z == z
-    //) return false;
-
-    //this->position.x = x;
-    //this->position.y = y;
-    //this->position.z = z;
-
-    //if (this->vp != NULL)
-        //this->vp->set_position(x,y,z);
-        
-    //return true;
-//}

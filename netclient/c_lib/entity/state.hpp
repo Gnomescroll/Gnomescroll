@@ -58,9 +58,6 @@ class ObjectData
         bool attack_random;
         bool suicidal;  // can kill owner
 
-        // voxel
-        //bool frozen_vox;
-        
     //TODO:
     // fill the struct with object metadata
     // all objects' initialization data will be stored in an array
@@ -96,11 +93,6 @@ class ObjectState: public ObjectData
         // general status 
         int id;
 
-        // physics
-        //VerletParticle* vp;
-        //Vec3 position;
-        //float theta, phi;
-        
         // tick lifespan
         int ttl;
 
@@ -111,57 +103,16 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick; // dont move yet; things besides target acquisition may use this (altho they should probably be bundled into that
 
-    //float camera_z()
-    //{
-        //float z;
-        //if (this->vp != NULL)
-            //z = this->vp->p.z;
-        //else
-            //z = this->position.z;
-        //return z + this->camera_height;
-    //}
-
-    //// returns true if position was different
-    //bool set_position(float x, float y, float z);
-    //Vec3 get_position()
-    //{
-        //if (this->vp != NULL)
-            //return this->vp->p;
-        //else
-            //return this->position;
-    //}
-
-    //void set_momentum(float mx, float my, float mz)
-    //{
-        //if (this->vp != NULL)
-            //this->vp->set_momentum(mx,my,mz);
-        //else
-            //printf("WARNING: ObjectState::set_momentum() -- object type %d does not use momentum\n", this->type);
-    //}
-    
-    //Vec3 get_momentum()
-    //{
-        //if (this->vp != NULL)
-            //return this->vp->get_momentum();
-        //else
-            //return vec3_init(0,0,0);
-    //}
-
     ObjectState()
     : ObjectData(),
     id(-1),
-    //vp(NULL),
-    //theta(0), phi(0),
     ttl(0),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {
-        //this->set_position(0,0,0);
     }
 
     ~ObjectState()
     {
-        //if (this->vp != NULL)
-            //delete this->vp;
     }
 };
 
