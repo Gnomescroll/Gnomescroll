@@ -1,7 +1,7 @@
 #include <c_lib/main.hpp>
 
 //uncomment when not compiling as shared lib
-//#include <SDL.h>
+#include <SDL.h>
 //#include <c_lib/c_lib.cpp>
 
 int main(int argc, char** argv)

@@ -48,9 +48,11 @@ void _START_CLOCK() {
 int _last_tick;
 
 int _GET_TICK() {
-    long s_sec, n_sec;
+    //long s_sec, n_sec;
     long _ti;
     #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+        long s_sec, n_sec;
+
         clock_serv_t cclock;
         mach_timespec_t mts;
         host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
@@ -64,6 +66,9 @@ int _GET_TICK() {
 
     #else
         #ifdef _POSIX_TIMERS
+            
+            long s_sec, n_sec;
+
             struct timespec tp;
             //clock_gettime(CLOCK_REALTIME, &tp);
             clock_gettime(CLOCK_MONOTONIC, &tp);
@@ -170,7 +175,7 @@ long _GET_MICROSECOND_TIME()
     #else
         #ifdef _POSIX_TIMERS
             long s_sec, n_sec;
-            
+
             struct timespec tp;
             //clock_gettime(CLOCK_REALTIME, &tp);
             clock_gettime(CLOCK_MONOTONIC, &tp);
