@@ -63,7 +63,6 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->_state.type = OBJ_TYPE_TURRET;
 
             this->_state.height = TURRET_HEIGHT;
-            this->_state.camera_height = TURRET_CAMERA_HEIGHT;
             this->_state.broadcast_state_change = true;
             this->_state.blow_up_on_death = true;
             this->_state.explosion_radius = TURRET_EXPLOSION_RADIUS;
@@ -99,6 +98,8 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->voxel_properties.init_hitscan = true;
             this->voxel_properties.init_draw = true;
             this->voxel_properties.vox_dat = &turret_vox_dat;
+
+            this->position_properties.camera_height = TURRET_CAMERA_HEIGHT;
         }
 
         ~Turret()

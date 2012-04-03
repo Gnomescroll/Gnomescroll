@@ -58,7 +58,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
 
     Vec3 pos = t->get_position();
     Vec3 c = vv->get_center();
-    Vec3 p = vec3_init(pos.x, pos.y, pos.z + t->state()->camera_height);
+    Vec3 p = vec3_init(pos.x, pos.y, t->camera_z());
 
     const float hitscan_effect_speed = 200.0f;
     Vec3 v = vec3_sub(c, p);
@@ -73,7 +73,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
         msg->target_id, msg->target_type, msg->target_part,
         voxel, t->attacker_properties.voxel_damage_radius
     );
-    Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
+    Sound::turret_shoot(pos.x, pos.y, t->camera_z(), 0,0,0);
 }
 
 void turret_shot_terrain(object_shot_terrain_StoC* msg)
@@ -83,7 +83,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
 
     Vec3 pos = t->get_position();
     const float hitscan_effect_speed = 200.0f;
-    Vec3 p = vec3_init(pos.x, pos.y, pos.z + t->state()->camera_height);
+    Vec3 p = vec3_init(pos.x, pos.y, t->camera_z());
     Vec3 c = vec3_init(msg->x, msg->y, msg->z);
     Vec3 v = vec3_sub(c, p); 
     normalize_vector(&v);
@@ -99,7 +99,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
     );
     Animations::terrain_sparks(msg->x, msg->y, msg->z);
     Sound::laser_hit_block(msg->x, msg->y, msg->z, 0,0,0);
-    Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
+    Sound::turret_shoot(pos.x, pos.y, t->camera_z(), 0,0,0);
 }
 
 void turret_shot_nothing(object_shot_nothing_StoC* msg)
@@ -113,10 +113,10 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
     ClientState::hitscan_effect_list->create(
-        pos.x, pos.y, pos.z + t->state()->camera_height,
+        pos.x, pos.y, t->camera_z(),
         v.x, v.y, v.z
     );
-    Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
+    Sound::turret_shoot(pos.x, pos.y, t->camera_z(), 0,0,0);
 }
 #endif
 

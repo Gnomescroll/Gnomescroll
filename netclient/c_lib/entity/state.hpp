@@ -26,7 +26,6 @@ class ObjectData
 
         // spatial
         float height;
-        float camera_height;
 
         // physics
         float damp;
@@ -59,23 +58,12 @@ class ObjectData
         bool suicidal;  // can kill owner
 
     //TODO:
-    // fill the struct with object metadata
-    // all objects' initialization data will be stored in an array
-    // when creating an object, array lookup will occur for data, and fill in
-    // avoids some massive switch statements
-    // can even be inherited into ObjectState
-    // and make all properties class members
-
-    // these members should const/immutable for most purposes
-    // but they should be adjustable by 1 thing: the dat loader
-
-    // TODO: copy method, for initializing from dat
-    //void load(ObjectData& data) {}
+    // object metadata store that objects can read for defaults
 
     ObjectData()
     :
     type(OBJ_TYPE_NONE),
-    height(1.0f), camera_height(0.0f),
+    height(1.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     pickup(false), pickup_radius(1.0f),
