@@ -214,7 +214,7 @@ void init()
     //alDistanceModel(AL_INVERSE_DISTANCE); // defaults to AL_INVERSE_DISTANCE_CLAMPED
 
     // init listener state
-    set_volume(Options::sfx);
+    set_volume(((float)Options::sfx) / 100.0f);
     update_listener(0,0,0, 0,0,0, 0,-1,0, 0,0,1);
     if (checkError())
     {

@@ -25,12 +25,12 @@ options = {}
 options.name = "flarb"
 
 -- server --
-options.server = "174.37.26.119"
+options.server = "0.0.0.0"
 options.port = 0
 
 
 -- display options -- 
-options.fullscreen = true
+options.fullscreen = false
 options.width = 1280
 options.height = 720
 options.fov = 85
