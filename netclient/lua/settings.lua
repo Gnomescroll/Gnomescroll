@@ -32,8 +32,11 @@ options.port = 0
 -- display options -- 
 options.fullscreen = false
 options.width = 1280
-options.height = 800
+options.height = 720
 options.fov = 85
+
+
+--1280x720
 
 -- mouse --
 options.sensitivity = 1000
