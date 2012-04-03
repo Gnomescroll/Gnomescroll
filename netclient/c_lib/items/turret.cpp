@@ -71,7 +71,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     int voxel[3] = { msg->voxel_x, msg->voxel_y, msg->voxel_z };
     destroy_object_voxel(
         msg->target_id, msg->target_type, msg->target_part,
-        voxel, t->state()->attacker_properties.voxel_damage_radius
+        voxel, t->attacker_properties.voxel_damage_radius
     );
     Sound::turret_shoot(pos.x, pos.y, pos.z + t->state()->camera_height, 0,0,0);
 }
@@ -127,42 +127,33 @@ VoxDat turret_vox_dat;
 /* TargetAcquisition */
 
 void TargetAcquisitionComponent::acquire_target(
-    int id, Object_types type, int team, float camera_z,
-    Vec3 position,
-    Hitscan::AttackerProperties attacker_properties,
-    float target_acquisition_probability, float accuracy_bias,
-    float sight_range, bool attack_enemies, bool attack_random
-)
-{
-    // firing properties (will be from dat/state)
-    const float range = sight_range; 
-    const float bias = accuracy_bias;
-    const float acquisition_probability = target_acquisition_probability;
-    const bool enemies = attack_enemies;
-    const bool random = attack_random;
-
+    int id, Object_types type, int team, float camera_z, Vec3 position,
+    float accuracy_bias, float sight_range,
+    bool attack_enemies, bool attack_random
+) {
     // lock on agent
     Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
     Vec3 firing_direction;
     Agent_state* agent = Hitscan::lock_agent_target(
         firing_position, &firing_direction, team,
-        range, acquisition_probability, enemies, random
+        sight_range, this->target_acquisition_probability,
+        attack_enemies, attack_random
     );
     if (agent == NULL) return;
     
     // normalize and bias vector
     normalize_vector(&firing_direction);
-    if (bias)   // apply bias
-        firing_direction = vec3_bias_random(firing_direction, bias);
+    if (accuracy_bias)   // apply bias
+        firing_direction = vec3_bias_random(firing_direction, accuracy_bias);
 
     // get target
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         firing_position, firing_direction, id, type,
-        agent, range
+        agent, sight_range
     );
 
     // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, attacker_properties);
+    Hitscan::handle_hitscan_target(t, this->attacker_properties);
 
     // send firing packet
     Hitscan::broadcast_object_fired(id, type, t);

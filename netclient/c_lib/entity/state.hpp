@@ -52,11 +52,9 @@ class ObjectData
         unsigned int fire_rate_limit;
         float sight_range;
         float accuracy_bias;
-        float target_acquisition_probability;
         bool attack_enemies;    // TODO -- use bit mask flags
         bool attack_random;
         bool suicidal;  // can kill owner
-        struct Hitscan::AttackerProperties attacker_properties;
 
         // voxel
         bool frozen_vox;
