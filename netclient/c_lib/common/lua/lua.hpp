@@ -12,7 +12,7 @@ void load_options();
 void register_int_option(const char* name, int* var);
 void register_bool_option(const char* name, bool* var);
 void register_float_option(const char* name, float* var);
-void register_string_option(const char* name, char* var);
+void register_string_option(const char* name, char** var);
 
 }
 

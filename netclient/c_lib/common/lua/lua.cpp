@@ -324,13 +324,10 @@ void register_float_option(const char* name, float* var)
 }
 
 int LUA_string_option_index = 0;
-char* LUA_string_option_table[256] = {0};
+char** LUA_string_option_table[256] = {0};
 
-void register_string_option(const char* name, char* var)
+void register_string_option(const char* name, char** var)
 {
-
-    return;
-
     LUA_string_option_table[LUA_string_option_index] = var;
     lua_State *L = LUA_options_table;
 
@@ -413,7 +410,7 @@ extern "C"
             printf("LUA_set_int_option: error \n");
             abort();
         }
-        LUA::LUA_string_option_table[option_id] = value;
+        *LUA::LUA_string_option_table[option_id] = value;
     }
 
 }

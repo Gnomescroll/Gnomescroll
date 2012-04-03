@@ -75,7 +75,9 @@ for key,value in pairs(options) do
         elseif( options_table[key].type == "float") then
             ffi.C.LUA_set_float_option(id, options[key]);
         elseif( options_table[key].type == "string") then
-            ffi.C.LUA_set_string_option(id, options[key]);
+            local str = ffi.new("char[64]");
+            ffi.copy(str, options[key]);
+            ffi.C.LUA_set_string_option(id, str);
         else
             print("Set Options Error: type error\n"); 
         end
