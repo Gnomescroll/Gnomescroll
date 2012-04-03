@@ -128,6 +128,7 @@ VoxDat turret_vox_dat;
 
 void TargetAcquisitionComponent::acquire_target(
     int id, Object_types type, int team, float camera_z,
+    Vec3 position,
     Hitscan::AttackerProperties attacker_properties,
     float target_acquisition_probability, float accuracy_bias,
     float sight_range, bool attack_enemies, bool attack_random
@@ -140,10 +141,8 @@ void TargetAcquisitionComponent::acquire_target(
     const bool enemies = attack_enemies;
     const bool random = attack_random;
 
-    Vec3 p = state->get_position();
-    
     // lock on agent
-    Vec3 firing_position = vec3_init(p.x, p.y, camera_z);
+    Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
     Vec3 firing_direction;
     Agent_state* agent = Hitscan::lock_agent_target(
         firing_position, &firing_direction, team,

@@ -55,7 +55,12 @@ void tickTargetAcquisition(ObjectState* state, Object* object)
 {
     #if DC_SERVER
     if (state->fire_tick % state->fire_rate_limit == 0)
-        object->acquire_target(state);
+        object->acquire_target(
+            state->id, state->type, object->get_team(), state->camera_z(),
+            state->get_position(), state->attacker_properties,
+            state->target_acquisition_probability, state->accuracy_bias,
+            state->sight_range, state->attack_enemies, state->attack_random
+        );
     state->fire_tick++;
     #endif
 }

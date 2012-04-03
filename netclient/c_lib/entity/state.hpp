@@ -206,7 +206,7 @@ class ObjectState: public ObjectData
  */
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
-const int NULL_TEAM_INDEX = UINT_MAX;
+const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 
 /* provide virtual getters that support all data operations but will return invalid values */
 class OwnedDefault

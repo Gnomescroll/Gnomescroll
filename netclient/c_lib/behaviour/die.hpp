@@ -51,7 +51,7 @@ template <class Object>
 void dieTeamItemAnimation(ObjectState* state, Object* object)
 {
     #if DC_CLIENT
-    Animations::team_item_explode(state->vox->get_part(0)->get_center(), state->team);
+    Animations::team_item_explode(state->vox->get_part(0)->get_center(), object->get_team());
     #endif
 }
 

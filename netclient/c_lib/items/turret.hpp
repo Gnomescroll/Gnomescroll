@@ -37,7 +37,13 @@ extern VoxDat turret_vox_dat;
 class TargetAcquisitionComponent
 {
     public:
-    void acquire_target(ObjectState* state);
+    void acquire_target(
+        int id, Object_types type, int team, float camera_z,
+        Vec3 position,
+        Hitscan::AttackerProperties attacker_properties,
+        float target_acquisition_probability, float accuracy_bias,
+        float sight_range, bool attack_enemies, bool attack_random
+    );
     TargetAcquisitionComponent(){}
 };
 
