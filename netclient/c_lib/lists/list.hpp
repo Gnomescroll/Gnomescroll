@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/entity/policy.hpp>
+
 /* List management */
 
 // inherit this into a property object for tracking

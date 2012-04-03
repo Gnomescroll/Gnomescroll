@@ -2,17 +2,32 @@
 
 #include <c_lib/entity/state.hpp>
 
+/* Interface and templates for all objects */
+
+/* The hierarchy of an object is:
+ *
+ * ObjectPolicyInterface [ defines common methods API -- actions, networking, and state accessors ]
+ *          |
+ *          v
+ * ObjectStateLayer< ComponentA, ComponentB, ... ComponentN > [template parameterized with StateComponents. e.g. OwnedComponent implements ownership, OwnedDefault returns absurd values that dont correlate with real data ]
+ *          |
+ *          v
+ * ObjectInterface < StateLayer, CreateMessage, StateMessage > [template parameterized with the StateLayer, and object's creation packets]
+ *          |
+ *          v
+ * FinalObject [e.g. Turret]
+ *      --final object can also inherit very specialized behaviour, such as TargetAcquisition.
+ *      
+ */
+
 /* Abstract interface */
 
 class ObjectPolicyInterface
 {
-    //protected:
-        //ObjectState _state;
     public:
-        //ObjectState* state()
-        //{ return this->state(); }
         virtual ObjectState* state() = 0;
 
+        // actions
         virtual void tick() = 0;
         virtual void draw() = 0;
         virtual void update() = 0;
@@ -98,11 +113,3 @@ class ObjectInterface: public StateLayer
 
     ObjectInterface<StateLayer, CreateMessage, StateMessage>() {}
 };
-
-
-// TODO: move
-#include <c_lib/lists/ownership.hpp>
-
-//typedef ObjectStateLayer<OwnedComponent, TeamComponent> OwnedState;     // all components parameterized here
-typedef ObjectStateLayer<OwnedComponent, TeamDefault> OwnedState;     // all components parameterized here
-typedef ObjectStateLayer<OwnedDefault, TeamDefault> DefaultState;
