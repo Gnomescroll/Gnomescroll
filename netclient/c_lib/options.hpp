@@ -6,7 +6,7 @@ namespace Options
 {
 
 /* User */
-OPT_STRING_HEADER(name)
+OPT_STRING_HEADER(name) // player_name
 
 /* Network */
 OPT_STRING_HEADER(server)

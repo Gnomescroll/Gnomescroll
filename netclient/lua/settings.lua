@@ -17,6 +17,42 @@ print(table.val_to_str(options_table))
 
 
 
+
+options = {}
+
+
+-- player name --
+options.name = "flarb"
+
+-- server --
+options.server = "174.37.26.119"
+options.port = 0
+
+
+-- display options -- 
+options.fullscreen = false
+options.width = 1280
+options.height = 800
+options.fov = 85
+
+-- mouse --
+options.sensitivity = 1000
+options.camera_speed = 0.6
+options.invert_mouse = false
+
+-- hud setting --
+options.hud = true
+options.diagnostic_hud = true
+options.fps = true
+options.ping = true
+options.ping_update_interval = 500
+
+-- sound settings --
+options.sound = true
+options.sfx = 100
+options.music = 100
+
+
 ffi = require("ffi")
 ffi.cdef[[
     void LUA_set_int_option(int option_id, int value);
@@ -24,12 +60,6 @@ ffi.cdef[[
     void LUA_set_float_option(int option_id, float value);
     void LUA_set_string_option(int option_id, char* value);
 ]]
-
-options = {}
-
-
-options.width = 1280
-options.height = 800
 
 for key,value in pairs(options) do 
     if(options_table[key] ~= nil) then
