@@ -97,8 +97,6 @@ class ObjectState: public ObjectData
     public:
         // general status 
         int id;
-        int team;
-        unsigned int team_index; // id within team
 
         // life
         int health;
@@ -132,16 +130,6 @@ class ObjectState: public ObjectData
     unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
-    int get_team()
-    {
-        return this->team;
-    }
-
-    void set_team(int team)
-    {
-        this->team = team;
-    }
-    
     void create_particle(float x, float y, float z, float mx, float my, float mz)
     {
         if (this->vp == NULL)
@@ -192,7 +180,7 @@ class ObjectState: public ObjectData
 
     ObjectState()
     : ObjectData(),
-    id(-1), team(0), team_index(TEAM_INDEX_NONE),
+    id(-1),
     health(1), died(false), dead(false),
     vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
@@ -218,6 +206,7 @@ class ObjectState: public ObjectData
  */
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
+const int NULL_TEAM_INDEX = UINT_MAX;
 
 /* provide virtual getters that support all data operations but will return invalid values */
 class OwnedDefault
@@ -225,7 +214,7 @@ class OwnedDefault
     public:
     int get_owner()
     { return NULL_OWNER; }
-    void set_owner(ObjectState* state, int owner) {}
+    void set_owner(Object_types type, int owner) {}
 };
 
 class TeamDefault
@@ -233,5 +222,10 @@ class TeamDefault
     public:
     int get_team()
     { return NULL_TEAM; }
-    void set_team(ObjectState* state, int team) {}
+    void set_team(int team) {}
+
+    unsigned int get_team_index()
+    { return NULL_TEAM_INDEX; }
+    void set_team_index(unsigned int team_index)
+    {}
 };

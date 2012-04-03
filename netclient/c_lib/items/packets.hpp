@@ -38,7 +38,7 @@ public FixedSizeReliableNetPacketToClient<object_create_StoC>, public object_cre
 };
 
 // Position + Velocity(momentum)
-class object_create_vel_StoC_model: public object_create_StoC_model
+class object_create_momentum_StoC_model: public object_create_StoC_model
 {
     public:
     inline virtual void packet(char* buff, int* buff_n, bool pack)
@@ -52,15 +52,15 @@ class object_create_vel_StoC_model: public object_create_StoC_model
 };
 
 // Concrete implementation
-class object_create_vel_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_vel_StoC>, public object_create_vel_StoC_model
+class object_create_momentum_StoC:
+public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>, public object_create_momentum_StoC_model
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)
     {
-        object_create_vel_StoC_model::packet(buff, buff_n, pack);
+        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
     }
-    inline void handle() { object_create_vel_StoC_model::handle(); }
+    inline void handle() { object_create_momentum_StoC_model::handle(); }
 };
 
 // Position + owner,team
@@ -161,7 +161,7 @@ public object_state_StoC_model, public FixedSizeReliableNetPacketToClient<object
     inline virtual void handle() { object_state_StoC_model::handle(); }
 };
 
-class object_state_vel_StoC_model: public object_state_StoC_model
+class object_state_momentum_StoC_model: public object_state_StoC_model
 {
     public:
         inline void packet(char* buff, int* buff_n, bool pack) 
@@ -175,15 +175,15 @@ class object_state_vel_StoC_model: public object_state_StoC_model
 };
 
 // concrete
-class object_state_vel_StoC:
-public object_state_vel_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_vel_StoC>
+class object_state_momentum_StoC:
+public object_state_momentum_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
 {
     public:
     inline virtual void packet(char* buff, int* buff_n, bool pack)
     {
-        object_state_vel_StoC_model::packet(buff, buff_n, pack);
+        object_state_momentum_StoC_model::packet(buff, buff_n, pack);
     }
-    inline virtual void handle() { object_state_vel_StoC_model::handle(); }
+    inline virtual void handle() { object_state_momentum_StoC_model::handle(); }
 };
 
 /* Actions */
@@ -273,95 +273,75 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 /* CreateMessage handlers */
 // TODO -- Move these
 
+// NOTE: all must have the same arguments except the first argument (msg) type
+
 #include <c_lib/entity/state.hpp>
 
 /* Create */
 
-template <class T>
-void create_message(ObjectState* state, T* msg)
-{}
-
-template <>
-void create_message<object_create_StoC>(ObjectState* state, object_create_StoC* msg)
+void create_message(object_create_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
 }
 
-template <>
-void create_message<object_create_vel_StoC>(ObjectState* state, object_create_vel_StoC* msg)
+void create_message(object_create_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
-    Vec3 m = state->get_momentum();
-    msg->mx = m.x;
-    msg->my = m.y;
-    msg->mz = m.z;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
 }
 
-template <>
-void create_message<object_create_owner_team_StoC>(ObjectState* state, object_create_owner_team_StoC* msg)
+void create_message(object_create_owner_team_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
-    //msg->owner = state->owner;  // PROBLEM!! TODO
-    msg->team = state->team;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->owner = owner;
+    msg->team = team;
 }
 
-template <>
-void create_message<object_create_owner_team_index_StoC>(ObjectState* state, object_create_owner_team_index_StoC* msg)
+void create_message(object_create_owner_team_index_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
-    //msg->owner = state->owner;    // TODO
-    msg->team = state->team;
-    msg->team_index = state->team_index;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->owner = owner;
+    msg->team = team;
+    msg->team_index = team_index;
 }
 
 /* State */
 
-template <class T>
-void state_message(ObjectState* state, T* msg)
-{}
-
-template <>
-void state_message<object_state_StoC>(ObjectState* state, object_state_StoC* msg)
+void state_message(object_state_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
 }
 
-template <>
-void state_message<object_state_vel_StoC>(ObjectState* state, object_state_vel_StoC* msg)
+void state_message(object_state_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum)
 {
-    msg->id = state->id;
-    msg->type = state->type;
-    Vec3 p = state->get_position();
-    msg->x = p.x;
-    msg->y = p.y;
-    msg->z = p.z;
-    Vec3 m = state->get_momentum();
-    msg->mx = m.x;
-    msg->my = m.y;
-    msg->mz = m.z;
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
 }

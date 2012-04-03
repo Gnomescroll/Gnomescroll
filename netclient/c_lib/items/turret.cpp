@@ -30,7 +30,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
         printf("WARNING turret_create() -- could not create turret %d\n", msg->id);
         return;
     }
-    t->state()->set_team(msg->team);
+    t->set_team(msg->team);
     t->set_owner(msg->owner);
     t->born();
     system_message->object_created(t);
@@ -126,22 +126,27 @@ VoxDat turret_vox_dat;
 
 /* TargetAcquisition */
 
-void TargetAcquisitionComponent::acquire_target(ObjectState* state)
+void TargetAcquisitionComponent::acquire_target(
+    int id, Object_types type, int team, float camera_z,
+    Hitscan::AttackerProperties attacker_properties,
+    float target_acquisition_probability, float accuracy_bias,
+    float sight_range, bool attack_enemies, bool attack_random
+)
 {
     // firing properties (will be from dat/state)
-    const float range = state->sight_range; 
-    const float bias = state->accuracy_bias;
-    const float acquisition_probability = state->target_acquisition_probability;
-    const bool enemies = state->attack_enemies;
-    const bool random = state->attack_random;
+    const float range = sight_range; 
+    const float bias = accuracy_bias;
+    const float acquisition_probability = target_acquisition_probability;
+    const bool enemies = attack_enemies;
+    const bool random = attack_random;
 
     Vec3 p = state->get_position();
     
     // lock on agent
-    Vec3 firing_position = vec3_init(p.x, p.y, state->camera_z());
+    Vec3 firing_position = vec3_init(p.x, p.y, camera_z);
     Vec3 firing_direction;
     Agent_state* agent = Hitscan::lock_agent_target(
-        firing_position, &firing_direction, state->team,
+        firing_position, &firing_direction, team,
         range, acquisition_probability, enemies, random
     );
     if (agent == NULL) return;
@@ -153,15 +158,15 @@ void TargetAcquisitionComponent::acquire_target(ObjectState* state)
 
     // get target
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        firing_position, firing_direction, state->id, state->type,
+        firing_position, firing_direction, id, type,
         agent, range
     );
 
     // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, state->attacker_properties);
+    Hitscan::handle_hitscan_target(t, attacker_properties);
 
     // send firing packet
-    Hitscan::broadcast_object_fired(state->id, state->type, t);
+    Hitscan::broadcast_object_fired(id, type, t);
 
     // apply custom handling
     // play sounds

@@ -41,6 +41,9 @@ class TargetAcquisitionComponent
     TargetAcquisitionComponent(){}
 };
 
+//// forward decl
+//class Turret;
+
 typedef ObjectInterface
 < OwnedTeamState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
@@ -82,6 +85,9 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
 
             this->owned_properties.obj = this;
             STATE::owned_list->register_object(&this->owned_properties);
+
+            this->team_properties.obj = this;
+            //STATE::team_list->register_object(&this->team_properties);
         }
 
         ~Turret()
@@ -90,6 +96,8 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
         }
 
     /* Interface */
+
+    Turret* get_derived() { return this; }
 
     void tick()
     {   // make each a template function

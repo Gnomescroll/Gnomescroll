@@ -96,6 +96,9 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
 
         this->owned_properties.obj = this;
         STATE::owned_list->register_object(&this->owned_properties);
+
+        this->team_properties.obj = this;
+        //STATE::team_list->register_object(&this->team_properties);
     }
 
     ~Spawner()
@@ -105,6 +108,7 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
     }
 
     /* Interface */
+    Spawner* get_derived() { return this; }
 
     void tick()
     {

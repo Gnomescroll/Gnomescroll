@@ -707,8 +707,8 @@ inline void hitscan_object_CtoS::handle()
 
             // TODO -- check by object method availability
             // as soon as a  non-owned object can be added, this will break
-            if ((obj->state()->get_team() == a->status.team && ((OwnedComponent*)obj)->get_owner() != NO_AGENT)
-              && ((OwnedComponent*)obj)->get_owner() != a->id) // TODO -- kill rule in ObjectState
+            if ((obj->get_team() == a->status.team && obj->get_owner() != NO_AGENT)
+              && obj->get_owner() != a->id) // TODO -- kill rule in ObjectState
                 return; // teammates cant kill turrets
                 
             // apply damage
@@ -860,11 +860,10 @@ inline void melee_object_CtoS::handle()
             if (obj == NULL) return;
 
             owner = obj->get_owner();
-            printf("melee onitem owned by %d\n", owner);
 
             // TODO -- check by object method availability
             // as soon as a  non-owned object can be added, this will break
-            if ((obj->state()->get_team() == a->status.team && owner != NO_AGENT)
+            if ((obj->get_team() == a->status.team && owner != NO_AGENT)
               && owner != a->id)   // TODO -- rule in ObjectState
                 return; // teammates cant kill turrets/spawners
                 
@@ -1031,7 +1030,7 @@ inline void place_spawner_CtoS::handle()
     Spawner* s = (Spawner*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
     if (s==NULL) return;
     a->status.purchase(s->state()->type);
-    s->state()->set_team(a->status.team);
+    s->set_team(a->status.team);
     s->set_owner(a->id);
     ServerState::spawner_list->assign_team_index(s);
     s->born();
@@ -1060,7 +1059,7 @@ inline void place_turret_CtoS::handle()
     Turret* t = (Turret*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
     if (t==NULL) return;
     a->status.purchase(t->state()->type);
-    t->state()->set_team(a->status.team);
+    t->set_team(a->status.team);
     t->set_owner(a->id);
     t->born();
 }

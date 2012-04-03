@@ -26,7 +26,7 @@ class ObjectPolicyInterface
 {
     public:
         virtual ObjectState* state() = 0;
-
+        
         // actions
         virtual void tick() = 0;
         virtual void draw() = 0;
@@ -45,6 +45,9 @@ class ObjectPolicyInterface
         virtual void set_owner(int owner) = 0;
         virtual int get_team() = 0;
         virtual void set_team(int team) = 0;
+        virtual unsigned int get_team_index() = 0;
+        virtual void set_team_index(unsigned int team_index) = 0;
+        
 
         virtual ~ObjectPolicyInterface() {};
 };
@@ -58,16 +61,21 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team
 {
     protected:
         ObjectState _state;
+
     public:
         ObjectState* state() { return &this->_state; }
     
         int get_owner() { return Owner::get_owner(); }
-        void set_owner(int owner) { Owner::set_owner(this->state(), owner); }
+        void set_owner(int owner) { Owner::set_owner(this->state()->type, owner); }
 
         int get_team() { return Team::get_team(); }
-        void set_team(int team) { Team::set_team(this->state(), team); }
+        void set_team(int team) { Team::set_team(team); }
+        unsigned int get_team_index() { return Team::get_team_index(); }
+        void set_team_index(unsigned int team_index) { Team::set_team_index(team_index); }
         
-    ObjectStateLayer() {}
+    ObjectStateLayer<Owner, Team>()
+    {
+    }
 };
 
 /* ObjectInterface
@@ -81,35 +89,95 @@ template
 >
 class ObjectInterface: public StateLayer
 {
+    private:
+        void createMessage(CreateMessage* msg)
+        {
+            ObjectState* state = this->state();
+            create_message(msg, state->id, state->type, state->get_position(), state->get_momentum(), this->get_owner(), this->get_team(), this->get_team_index());
+        }
+
+        void stateMessage(StateMessage* msg)
+        {
+            ObjectState* state = this->state();
+            state_message(msg, state->id, state->type, state->get_position(), state->get_momentum());
+        }
+        
     public:
 
     void sendToClientCreate(int client_id)
     {
         CreateMessage msg;
-        create_message(this->state(), &msg);
+        this->createMessage(&msg);
         msg.sendToClient(client_id);
     }
     
     void broadcastCreate()
     {
         CreateMessage msg;
-        create_message(this->state(), &msg);
+        this->createMessage(&msg);
         msg.broadcast();
     }
     
     void sendToClientState(int client_id)
     {
         StateMessage msg;
-        state_message(this->state(), &msg);
+        this->stateMessage(&msg);
         msg.sendToClient(client_id);
     }
     
     void broadcastState()
     {
         StateMessage msg;
-        state_message(this->state(), &msg);
+        this->stateMessage(&msg);
         msg.broadcast();
     }
 
-    ObjectInterface<StateLayer, CreateMessage, StateMessage>() {}
+    ObjectInterface<StateLayer, CreateMessage, StateMessage>()
+    {}
 };
+
+// TODO
+// partial specialization of the ObjectInterface methods
+
+//template
+//<
+    //class StateLayer,
+    //class object_create_StoC,
+    //class StateMessage
+//>
+//ObjectInterface::createMessage(object_create_StoC* msg)
+//{
+    //create_message(this->state()->id, this->state()->type, this->state()->get_position(), msg);
+//}
+
+//template
+//<
+    //class StateLayer,
+    //class object_create_momentum_StoC,
+    //class StateMessage
+//>
+//ObjectInterface::createMessage(object_create_momentum_StoC* msg)
+//{
+    //create_message(this->state()->id, this->state()->type, this->state()->get_position(), this->state()->get_momentum(), msg);
+//}
+
+//template
+//<
+    //class StateLayer,
+    //class object_create_owner_team_StoC,
+    //class StateMessage
+//>
+//ObjectInterface::createMessage(object_create_owner_team_StoC* msg)
+//{
+    //create_message(this->state()->id, this->state()->type, this->state()->get_position(), this->get_owner(), this->get_team(), msg);
+//}
+//template
+//<
+    //class StateLayer,
+    //class object_create_owner_team_index_StoC,
+    //class StateMessage
+//>
+//ObjectInterface::createMessage(object_create_owner_team_index_StoC* msg)
+//{
+    //create_message(this->state()->id, this->state()->type, this->state()->get_position(), this->get_owner(), this->get_team(), this->get_team_index(), msg);
+//}

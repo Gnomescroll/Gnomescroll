@@ -8,8 +8,10 @@ class TeamProperties: public ComponentProperties
 {
     public:
         int team;
+        unsigned int team_index; // id within team
+
     TeamProperties()
-    : team (NO_TEAM)
+    : team (NO_TEAM), team_index(TEAM_INDEX_NONE)
     {}
 };
 
@@ -23,10 +25,18 @@ class TeamComponent
         {
             return this->team_properties.team;
         }
-
-        void set_team(ObjectState* state, int team)
+        void set_team(int team)
         {
             this->team_properties.team = team;
+        }
+
+        unsigned int get_team_index()
+        {
+            return this->team_properties.team_index;
+        }
+        void set_team_index(unsigned int team_index)
+        {
+            this->team_properties.team_index = team_index;
         }
 
     TeamComponent() {}

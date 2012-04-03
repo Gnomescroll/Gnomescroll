@@ -167,12 +167,12 @@ void RegisterMessages() {
 
     // object crud
     object_create_StoC::register_client_packet();
-    object_create_vel_StoC::register_client_packet();
+    object_create_momentum_StoC::register_client_packet();
     object_create_owner_team_StoC::register_client_packet();
     object_create_owner_team_index_StoC::register_client_packet();
     object_destroy_StoC::register_client_packet();
     object_state_StoC::register_client_packet();
-    object_state_vel_StoC::register_client_packet();
+    object_state_momentum_StoC::register_client_packet();
     
     // object actions
     object_picked_up_StoC::register_client_packet();

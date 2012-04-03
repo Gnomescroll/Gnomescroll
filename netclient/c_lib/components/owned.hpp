@@ -25,9 +25,9 @@ class OwnedComponent
         return this->owned_properties.owner;
     }
 
-    void set_owner(ObjectState* state, int owner)
+    void set_owner(Object_types type, int owner)
     {
-        switch_agent_ownership(state->type, this->owned_properties.owner, owner);
+        switch_agent_ownership(type, this->owned_properties.owner, owner);
         this->owned_properties.owner = owner;
     }
 
