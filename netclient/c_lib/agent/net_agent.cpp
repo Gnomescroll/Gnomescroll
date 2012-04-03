@@ -695,9 +695,6 @@ inline void hitscan_object_CtoS::handle()
             dmg_health = slime->take_damage(slime_dmg);
             if (dmg_health <= 0)
                 a->status.kill_slime();
-            //x = slime->x;
-            //y = slime->y;
-            //z = slime->z;
             break;
 
         case OBJ_TYPE_SPAWNER:
@@ -705,8 +702,6 @@ inline void hitscan_object_CtoS::handle()
             obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
-            // TODO -- check by object method availability
-            // as soon as a  non-owned object can be added, this will break
             if ((obj->get_team() == a->status.team && obj->get_owner() != NO_AGENT)
               && obj->get_owner() != a->id) // TODO -- kill rule in ObjectState
                 return; // teammates cant kill turrets

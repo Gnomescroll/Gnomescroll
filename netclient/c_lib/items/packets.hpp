@@ -271,7 +271,6 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 };
 
 /* CreateMessage handlers */
-// TODO -- Move these
 
 // NOTE: all must have the same arguments except the first argument (msg) type
 

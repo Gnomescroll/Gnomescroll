@@ -138,7 +138,7 @@ namespace ServerState
         // Spawners, Turrets etc
         const int filter_n_types = 2;
         const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER };
-        object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
+        object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
         ObjectPolicyInterface* obj;
         ObjectState* state;
         for (int i=0; i<object_list->n_filtered; i++)
@@ -150,7 +150,6 @@ namespace ServerState
             /* TODO */
             // state->can_be_killed_by(type, id, team)
             // apply teammate rules etc
-            // TODO
             if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
               && obj->get_owner() != agent->id)
                 continue;
