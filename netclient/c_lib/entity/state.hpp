@@ -57,7 +57,7 @@ class ObjectData
         bool suicidal;  // can kill owner
 
         // voxel
-        bool frozen_vox;
+        //bool frozen_vox;
         
         Object_types type;
     //TODO:
@@ -83,7 +83,7 @@ class ObjectData
     blow_up_on_death(false),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1),
-    frozen_vox(false),
+    //frozen_vox(false),
     type(OBJ_TYPE_NONE)
     {}
 };
@@ -105,10 +105,10 @@ class ObjectState: public ObjectData
         int ttl;
 
         // draw/textures/voxel
-        Voxel_model* vox;
-        VoxDat* vox_dat;
-        bool init_hitscan;
-        bool init_draw;
+        //Voxel_model* vox;
+        //VoxDat* vox_dat;
+        //bool init_hitscan;
+        //bool init_draw;
 
         // pickup
         bool broadcast_death;
@@ -159,17 +159,17 @@ class ObjectState: public ObjectData
             return vec3_init(0,0,0);
     }
 
-    Voxel_model* get_vox()
-    {
-        return this->vox;
-    }
+    //Voxel_model* get_vox()
+    //{
+        //return this->vox;
+    //}
 
 
     ObjectState()
     : ObjectData(),
     id(-1),
     vp(NULL), theta(0), phi(0), ttl(0),
-    vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
+    //vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {
         this->set_position(0,0,0);
@@ -179,8 +179,8 @@ class ObjectState: public ObjectData
     {
         if (this->vp != NULL)
             delete this->vp;
-        if (this->vox != NULL)
-            delete this->vox;
+        //if (this->vox != NULL)
+            //delete this->vox;
     }
 };
 

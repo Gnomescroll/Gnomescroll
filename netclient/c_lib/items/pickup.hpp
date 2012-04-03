@@ -104,7 +104,7 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
 
     void born()
     {
-        bornCreateMessage(this->state(), this);
+        bornCreateMessage(this);
     }
 
     void die()

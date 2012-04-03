@@ -27,19 +27,21 @@ bool ObjectState::set_position(float x, float y, float z)
     this->position.y = y;
     this->position.z = z;
 
-    if (this->vox != NULL)
-    {
-        if (this->frozen_vox && changed)
-            this->vox->thaw();
+    // TODO
 
-        this->vox->update(
-            this->position.x, this->position.y, this->position.z,
-            this->theta, this->phi
-        );
+    //if (this->vox != NULL)
+    //{
+        //if (this->frozen_vox && changed)
+            //this->vox->thaw();
 
-        if (this->frozen_vox)
-            this->vox->freeze();
-    }
+        //this->vox->update(
+            //this->position.x, this->position.y, this->position.z,
+            //this->theta, this->phi
+        //);
+
+        //if (this->frozen_vox)
+            //this->vox->freeze();
+    //}
 
     if (this->vp != NULL)
         this->vp->set_position(x,y,z);

@@ -153,8 +153,8 @@ void raycast_to_part()
         case OBJ_TYPE_TURRET:
             obj = ClientState::object_list->get(type, id);
             if (obj==NULL) return;
-            vox = ((ObjectPolicyInterface*)obj)->state()->get_vox();
-            vox_dat = ((ObjectPolicyInterface*)obj)->state()->vox_dat;
+            vox = ((VoxelComponent*)obj)->voxel_properties.vox;
+            vox_dat = ((VoxelComponent*)obj)->voxel_properties.vox_dat; // pray this cast works. dont feel like adding to the virtual interface just for this
             break;
 
         default:

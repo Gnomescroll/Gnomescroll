@@ -6,35 +6,33 @@
 #endif
 
 
-template <class Object>
-void updateFrozenVox(ObjectState* state, Object* object)
+void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi)
 {
-    if (state->vox != NULL)
+    if (vox != NULL)
     {
         #if DC_CLIENT
-        Vec3 p = state->get_position();
-        state->vox->was_updated = false;
-        if (current_camera == NULL || !current_camera->in_view(p.x, p.y, p.z))
+        vox->was_updated = false;
+        if (current_camera == NULL || !current_camera->in_view(position.x, position.y, position.z))
         {
-            state->vox->set_draw(false);
-            state->vox->set_hitscan(false);
+            vox->set_draw(false);
+            vox->set_hitscan(false);
         }
         else
         {
-            state->vox->set_draw(true);
-            state->vox->set_hitscan(true);
+            vox->set_draw(true);
+            vox->set_hitscan(true);
         }
         if (input_state.skeleton_editor)
         {
-            state->vox->thaw();
-            state->vox->update(p.x, p.y, p.z, state->theta, state->phi);
-            state->vox->freeze();
+            vox->thaw();
+            vox->update(position.x, position.y, position.z, theta, phi);
+            vox->freeze();
         }
         #endif
 
         #if DC_SERVER
-        state->vox->was_updated = false;
-        state->vox->set_hitscan(true);
+        vox->was_updated = false;
+        vox->set_hitscan(true);
         #endif
     }
 }

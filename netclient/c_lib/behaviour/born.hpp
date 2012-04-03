@@ -3,53 +3,43 @@
 #include <c_lib/voxel/voxel_model.hpp>
 
 // BornVox and BornTeamVox are mutually exclusive
-template <class Object>
-void bornVox(ObjectState* state, Object* object)
+inline Voxel_model* bornVox(VoxDat* vox_dat, int id, Object_types type)
 {
-    state->vox = new Voxel_model(state->vox_dat, state->id, state->type);
+    return new Voxel_model(vox_dat, id, type);
 }
 
-template <class Object>
-inline void bornTeamVox(ObjectState* state, Object* object)
+inline Voxel_model* bornTeamVox(VoxDat* vox_dat, int id, Object_types type, int team)
 {
-    state->vox = new Voxel_model(state->vox_dat, state->id, state->type, object->get_team());
+    return new Voxel_model(vox_dat, id, type, team);
 }
 
 // Initializes vox model properties. almost always desired
-template <class Object>
-inline void bornSetVox(ObjectState* state, Object* object)
+inline void bornSetVox(Voxel_model* vox, bool init_hitscan, bool init_draw)
 {
-    state->vox->set_hitscan(state->init_hitscan);
-    state->vox->register_hitscan();
+    vox->set_hitscan(init_hitscan);
+    vox->register_hitscan();
     #ifdef DC_CLIENT
-    state->vox->set_draw(state->init_draw);
+    vox->set_draw(init_draw);
     #endif
 }
 
 // BornUpdateVox and BornUpdateFrozenVox are mutually exclusive
-template <class Object>
-inline void bornUpdateVox(ObjectState* state, Object* object)
+inline void bornUpdateVox(Voxel_model* vox, Vec3 position, float theta, float phi)
 {
-    Vec3 p = state->get_position();
-    state->vox->update(p.x, p.y, p.z, state->theta, state->phi);
+    vox->update(position.x, position.y, position.z, theta, phi);
+}
+
+inline void bornUpdateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi)
+{
+    vox->thaw();
+    vox->update(position.x, position.y, position.z, theta, phi);
+    vox->freeze();
 }
 
 template <class Object>
-inline void bornUpdateFrozenVox(ObjectState* state, Object* object)
-{
-    state->vox->thaw();
-    Vec3 p = state->get_position();
-    state->vox->update(p.x, p.y, p.z, state->theta, state->phi);
-    state->vox->freeze();
-}
-
-template <class Object>
-inline void bornCreateMessage(ObjectState* state, Object* object)
+inline void bornCreateMessage(Object* object)
 {
     #if DC_SERVER
     object->broadcastCreate();
     #endif
 }
-
-
-

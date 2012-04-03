@@ -6,6 +6,7 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/behaviour/behaviour.hpp>
 #include <c_lib/entity/entity.hpp>
+#include <c_lib/components/components.hpp>
 
 //forward decl
 #if DC_SERVER
@@ -33,7 +34,7 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg);
 extern VoxDat turret_vox_dat;
 
 /* TargetAcquistion component */
-
+// TODO: move to c_lib/components/
 class TargetAcquisitionComponent
 {
     public:
@@ -48,16 +49,11 @@ class TargetAcquisitionComponent
     TargetAcquisitionComponent(){}
 };
 
-//// forward decl
-//class Turret;
-
 typedef ObjectInterface
 < OwnedTeamHealthState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
-
-//class Turret: public TargetAcquisitionComponent, public OwnedComponent, public TurretInterface
-class Turret: public TargetAcquisitionComponent, public TurretInterface
+class Turret: public TargetAcquisitionComponent, public VoxelComponent, public TurretInterface
 {
     public:
         explicit Turret(int id)
@@ -77,9 +73,7 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
             
             this->_state.suicidal = false;
-            this->_state.frozen_vox = true;
-            this->_state.vox_dat = &turret_vox_dat;
-            
+
             this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
             this->_state.sight_range = TURRET_SIGHT_RANGE;
             this->_state.accuracy_bias = TURRET_LASER_BIAS;
@@ -100,6 +94,11 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             //STATE::team_list->register_object(&this->team_properties);
 
             this->health_properties.health = TURRET_HEALTH;
+
+            this->voxel_properties.frozen_vox = true;
+            this->voxel_properties.init_hitscan = true;
+            this->voxel_properties.init_draw = true;
+            this->voxel_properties.vox_dat = &turret_vox_dat;
         }
 
         ~Turret()
@@ -119,25 +118,29 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
 
     void update()
     {
-        updateFrozenVox(this->state(), this);
+        ObjectState* state = this->state();
+        updateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
     }
 
     void draw() {}
 
     void born()
     {
-        bornTeamVox(this->state(), this);
-        bornSetVox(this->state(), this);
-        bornUpdateFrozenVox(this->state(), this);
-        bornCreateMessage(this->state(), this);
+        ObjectState* state = this->state();
+        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
+        bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
+        bornUpdateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        bornCreateMessage(this);
     }
 
     void die()
     {
-        dieExplode(this->state(), this);
-        dieBroadcast(this->state(), this);
-        dieRevokeOwner(this->state(), this);
-        dieTeamItemAnimation(this->state(), this);
+        ObjectState* state = this->state();
+        dieExplode(state, this);
+        dieBroadcast(state, this);
+        dieRevokeOwner(state, this);
+        if (this->voxel_properties.vox != NULL)
+            dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
     }
 
 };

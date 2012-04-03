@@ -2,7 +2,7 @@
 
 #include <c_lib/components/component.hpp>
 
-class HealthProperties: public ComponentProperties
+class HealthProperties/*: public ComponentProperties*/
 {
     public:
         int health;

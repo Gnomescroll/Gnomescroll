@@ -3,7 +3,9 @@
 #include <c_lib/components/component.hpp>
 
 
-class BillboardSpriteProperties: public ComponentProperties
+// todo -- billboard sprite draw list
+
+class BillboardSpriteProperties/*: public ComponentProperties*/
 {
     public:
         int texture_index;

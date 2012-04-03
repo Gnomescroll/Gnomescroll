@@ -73,7 +73,7 @@ typedef ObjectInterface
 < OwnedTeamHealthState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
-class Spawner: public SpawnerComponent, public SpawnerInterface
+class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInterface
 {
     public:
     explicit Spawner(int id)
@@ -85,8 +85,6 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
         this->_state.cost = COST_SPAWNER;
         this->_state.reward = COST_SPAWNER;
         this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
-        this->_state.frozen_vox = true;
-        this->_state.vox_dat = &spawner_vox_dat;
         this->_state.type = OBJ_TYPE_SPAWNER;
         
         this->health_properties.health = SPAWNER_HEALTH;
@@ -100,6 +98,11 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
 
         this->team_properties.obj = this;
         //STATE::team_list->register_object(&this->team_properties);
+
+        this->voxel_properties.frozen_vox = true;
+        this->voxel_properties.init_hitscan = true;
+        this->voxel_properties.init_draw = true;
+        this->voxel_properties.vox_dat = &spawner_vox_dat;
     }
 
     ~Spawner()
@@ -118,24 +121,28 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
 
     void update()
     {
-        updateFrozenVox(this->state(), this);
+        ObjectState* state = this->state();
+        updateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
     }
 
     void draw() {}
 
     void born()
     {
-        bornTeamVox(this->state(), this);
-        bornSetVox(this->state(), this);
-        bornUpdateFrozenVox(this->state(), this);
-        bornCreateMessage(this->state(), this);
+        ObjectState* state = this->state();
+        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
+        bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
+        bornUpdateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        bornCreateMessage(this);
     }
 
     void die()
     {
-        dieBroadcast(this->state(), this);
-        dieRevokeOwner(this->state(), this);
-        dieTeamItemAnimation(this->state(), this);
+        ObjectState* state = this->state();
+        dieBroadcast(state, this);
+        dieRevokeOwner(state, this);
+        if (this->voxel_properties.vox != NULL)
+            dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
     }
 };
 

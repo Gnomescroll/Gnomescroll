@@ -47,11 +47,10 @@ void dieBroadcast(ObjectState* state, Object* object)
     #endif
 }
 
-template <class Object>
-void dieTeamItemAnimation(ObjectState* state, Object* object)
+void dieTeamItemAnimation(Vec3 position, int team)
 {
     #if DC_CLIENT
-    Animations::team_item_explode(state->vox->get_part(0)->get_center(), object->get_team());
+    Animations::team_item_explode(position, team);
     #endif
 }
 
