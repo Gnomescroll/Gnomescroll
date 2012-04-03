@@ -6,6 +6,8 @@
 #include <c_lib/items/constants.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 
+#include <limits.h>
+
 typedef enum
 {
     COINS_NOBODY  = 0,
@@ -126,6 +128,7 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
+
     unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
@@ -186,6 +189,7 @@ class ObjectState: public ObjectData
         return this->vox;
     }
 
+
     ObjectState()
     : ObjectData(),
     id(-1), team(0), team_index(TEAM_INDEX_NONE),
@@ -206,4 +210,28 @@ class ObjectState: public ObjectData
     }
 };
 
+/*
+ * NULL values. these are not like NO_OWNER, which is a legitimate value.
+ * These are values that should fail in any comparison to real data
+ * These values should never be sent over the network. They are not intended to support
+ * the limited ranges of low-byte values used in packets.
+ */
+const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
+const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
 
+/* provide virtual getters that support all data operations but will return invalid values */
+class OwnedDefault
+{
+    public:
+    int get_owner()
+    { return NULL_OWNER; }
+    void set_owner(ObjectState* state, int owner) {}
+};
+
+class TeamDefault
+{
+    public:
+    int get_team()
+    { return NULL_TEAM; }
+    void set_team(ObjectState* state, int team) {}
+};

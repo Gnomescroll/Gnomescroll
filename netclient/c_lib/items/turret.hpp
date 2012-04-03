@@ -42,10 +42,12 @@ class TargetAcquisitionComponent
 };
 
 typedef ObjectInterface
-< object_create_owner_team_StoC, object_state_StoC >
+< OwnedState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
-class Turret: public TargetAcquisitionComponent, public OwnedComponent, public TurretInterface
+
+//class Turret: public TargetAcquisitionComponent, public OwnedComponent, public TurretInterface
+class Turret: public TargetAcquisitionComponent, public TurretInterface
 {
     public:
         Turret(int id)

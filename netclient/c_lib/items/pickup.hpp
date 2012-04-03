@@ -59,7 +59,7 @@ class PickupComponent
 /* Composition */
 
 typedef ObjectInterface
-< object_create_vel_StoC, object_state_vel_StoC >
+< DefaultState, object_create_vel_StoC, object_state_vel_StoC >
 PickupInterface;
 
 class PickupObject: public PickupComponent, public PickupInterface

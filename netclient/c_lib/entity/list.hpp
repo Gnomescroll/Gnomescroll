@@ -7,6 +7,7 @@ class GameObject_list;
 void init_gameobject_list_maximums(GameObject_list* list);
 
 const int MAX_OBJECT_TYPE = 256;
+const int MAX_OBJECT_FILTER = 256;
 
 ObjectPolicyInterface* create_object_of_type(Object_types type, int id);
 
@@ -18,6 +19,8 @@ class GameObject_list
         int* occupancy;
         int* max_occupancy;
         ObjectPolicyInterface*** objects;
+
+        int max_filtered;
 
         void teardown()
         {
@@ -58,8 +61,8 @@ class GameObject_list
                 if (this->max_occupancy[i] > 0)
                     this->objects[i] = (ObjectPolicyInterface**)calloc(this->max_occupancy[i], sizeof(ObjectPolicyInterface*));
 
-            //this->filtered_objects = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
-            //this->filtered_object_distances = (float*)malloc(sizeof(float) * this->max);
+            this->filtered_objects = (ObjectPolicyInterface**)calloc(this->max_filtered, sizeof(ObjectPolicyInterface*));
+            this->filtered_object_distances = (float*)malloc(sizeof(float) * this->max_filtered);
         }
 
     public:
@@ -106,8 +109,6 @@ class GameObject_list
         void destroy(Object_types type, int id);
 
         void send_to_client(Object_types type, int client_id);
-        bool point_occupied_by_type(Object_types type, int x, int y, int z);
-        int objects_within_sphere(float x, float y, float z, float radius);
 
         void print()
         {
@@ -121,6 +122,10 @@ class GameObject_list
         ObjectPolicyInterface** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
         int n_filtered;
+        bool point_occupied_by_type(Object_types type, int x, int y, int z);
+        int all_objects_within_sphere(float x, float y, float z, float radius);
+        int objects_within_sphere(const Object_types type, float x, float y, float z, float radius);
+        int objects_within_sphere(const Object_types* types, const int n_types, float x, float y, float z, float radius);
 
         ~GameObject_list()
         {
@@ -132,6 +137,7 @@ class GameObject_list
         index_start(0),
         occupancy(NULL), max_occupancy(NULL),
         objects(NULL),
+        max_filtered(MAX_OBJECT_FILTER),
         filtered_objects(NULL), filtered_object_distances(NULL), n_filtered(0)
         {
             this->init();

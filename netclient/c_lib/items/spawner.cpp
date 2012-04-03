@@ -31,7 +31,7 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg)
     }
     s->state()->set_team(msg->team);
     s->state()->team_index = msg->team_index; //overwrite with server authority
-    s->set_owner(s->state(), msg->owner);
+    s->set_owner(msg->owner);
     s->born();
     Sound::spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
     system_message->object_created(s);

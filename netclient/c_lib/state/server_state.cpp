@@ -136,7 +136,9 @@ namespace ServerState
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
         // Spawners, Turrets etc
-        object_list->objects_within_sphere(x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
+        const int filter_n_types = 2;
+        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER };
+        object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius); // TODO -- this method should accept a type group or some flag indicating TAKES_DAMAGE_FROM_EXPLOSIONS
         ObjectPolicyInterface* obj;
         ObjectState* state;
         for (int i=0; i<object_list->n_filtered; i++)
@@ -144,15 +146,14 @@ namespace ServerState
             obj = object_list->filtered_objects[i];
             if (obj == NULL) continue;
             state = obj->state();
-            if (state->type != OBJ_TYPE_TURRET && state->type != OBJ_TYPE_SPAWNER) continue; // TODO -- remove
 
             /* TODO */
             // state->can_be_killed_by(type, id, team)
             // apply teammate rules etc
             // TODO
-            //if ((state->get_team() == agent->status.team && state->get_owner() != NO_AGENT)
-              //&& state->get_owner() != agent->id)
-                //continue;
+            if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
+              && obj->get_owner() != agent->id)
+                continue;
 
             state->take_damage(get_grenade_damage(state->type));
             if (state->died && agent != NULL

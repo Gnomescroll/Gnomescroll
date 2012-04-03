@@ -130,38 +130,120 @@ bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, in
     return false;
 }
 
-int GameObject_list::objects_within_sphere(float x, float y, float z, float radius)
+int GameObject_list::all_objects_within_sphere(float x, float y, float z, float radius)
 {   // MAJOR TODO -- MAKE ITS OWN SUBSCRIPTION LIST
-    this->n_filtered = 0;
-    return 0;
+    const float radius_squared = radius*radius;
+    int ct = 0;
+    float dist;
+    float min_dist = 10000000.0f;
+    int closest = -1;
+    Vec3 p;
+
+    for (int type=0; type<MAX_OBJECT_TYPE; type++)
+    {
+        if (ct >= this->max_filtered) break;
+        if (this->objects[type] == NULL) continue;
+        if (this->occupancy[type] == 0) continue;
+        int max = this->max_occupancy[type];
+        for (int i=0; i<max; i++)
+        {
+            if (ct >= this->max_filtered) break;
+            if (this->objects[type][i] == NULL) continue;
+            p = this->objects[type][i]->state()->get_position();
+            dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+            if (dist < radius_squared)
+            {   // object is in sphere
+                this->filtered_objects[ct] = this->objects[type][i];
+                this->filtered_object_distances[ct] = dist;
+                if (dist < min_dist)
+                {
+                    min_dist = dist;
+                    closest = ct;
+                }
+                ct++;            
+            }
+        }
+    }
     
-    //const float radius_squared = radius*radius;
-    //int ct = 0;
-    //float dist;
-    //float min_dist = 10000000.0f;
-    //int closest = -1;
-    //int i;
-    //Vec3 p;
-    //for (i=0; i<this->max; i++)
-    //{
-        //if (this->a[i] == NULL) continue;
-        //p = this->a[i]->state()->get_position();
-        //dist = distancef_squared(x,y,z, p.x, p.y, p.z);
-        //if (dist < radius_squared)
-        //{
-            //// agent in sphere
-            //this->filtered_objects[ct] = this->a[i];
-            //this->filtered_object_distances[ct] = dist;
-            //if (dist < min_dist)
-            //{
-                //min_dist = dist;
-                //closest = ct;
-            //}
-            //ct++;            
-        //}
-    //}
-    //this->n_filtered = ct;
-    //return closest;
+    this->n_filtered = ct;
+    return closest;
+}
+
+int GameObject_list::objects_within_sphere(const Object_types type, float x, float y, float z, float radius)
+{
+    if (this->objects[type] == NULL) return 0;
+    if (this->occupancy[type] == 0) return 0;
+
+    const float radius_squared = radius*radius;
+    int ct = 0;
+    float dist;
+    float min_dist = 10000000.0f;
+    int closest = -1;
+    Vec3 p;
+
+    int max = this->max_occupancy[(int)type];
+    for (int i=0; i<max; i++)
+    {
+        if (this->objects[type][i] == NULL) continue;
+        p = this->objects[type][i]->state()->get_position();
+        dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+        if (dist < radius_squared)
+        {   // object is in sphere
+            this->filtered_objects[ct] = this->objects[type][i];
+            this->filtered_object_distances[ct] = dist;
+            if (dist < min_dist)
+            {
+                min_dist = dist;
+                closest = ct;
+            }
+            ct++;
+            if (ct >= this->max_filtered) break;
+        }
+    }
+    
+    this->n_filtered = ct;
+    return closest;
+}
+
+// array of types to filter
+int GameObject_list::objects_within_sphere(const Object_types* types, const int n_types, float x, float y, float z, float radius)
+{
+    const float radius_squared = radius*radius;
+    int ct = 0;
+    float dist;
+    float min_dist = 10000000.0f;
+    int closest = -1;
+    Vec3 p;
+
+    for (int j=0; j<n_types; j++)
+    {
+        if (ct >= this->max_filtered) break;
+        Object_types type = types[j];
+        if (this->objects[type] == NULL) continue;
+        if (this->occupancy[type] == 0) continue;
+        int max = this->max_occupancy[(int)type];
+        for (int i=0; i<max; i++)
+        {
+            if (ct >= this->max_filtered) break;
+            if (this->objects[type][i] == NULL) continue;
+            p = this->objects[type][i]->state()->get_position();
+            dist = distancef_squared(x,y,z, p.x, p.y, p.z);
+            if (dist < radius_squared)
+            {   // object is in sphere
+                this->filtered_objects[ct] = this->objects[type][i];
+                this->filtered_object_distances[ct] = dist;
+                if (dist < min_dist)
+                {
+                    min_dist = dist;
+                    closest = ct;
+                }
+                ct++;
+            }
+        }
+    }
+    
+    this->n_filtered = ct;
+    return closest;
 }
 
 /* Creation API */

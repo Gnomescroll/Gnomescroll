@@ -69,10 +69,10 @@ class SpawnerList: public BehaviourList
 };
 
 typedef ObjectInterface
-< object_create_owner_team_index_StoC, object_state_StoC >
+< OwnedState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
-class Spawner: public SpawnerComponent, public OwnedComponent, public SpawnerInterface
+class Spawner: public SpawnerComponent, public SpawnerInterface
 {
     public:
     Spawner(int id)

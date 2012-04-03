@@ -31,7 +31,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
         return;
     }
     t->state()->set_team(msg->team);
-    t->set_owner(t->state(), msg->owner);
+    t->set_owner(msg->owner);
     t->born();
     system_message->object_created(t);
 }

@@ -520,8 +520,7 @@ inline void alter_item_ownership_StoC::handle()
 {
     ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, (int)id);
     if (obj == NULL) return;
-    //obj->state()->set_owner(owner);
-    ((OwnedComponent*)obj)->set_owner(obj->state(), owner); // TODO -- will crash if obj does not support ownership (shouldnt happen, but malicious packets will cause failure)
+    obj->set_owner(owner);
 }
 
 inline void destroy_voxel_StoC::handle()
@@ -860,7 +859,7 @@ inline void melee_object_CtoS::handle()
             obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 
-            owner = ((OwnedComponent*)obj)->get_owner();
+            owner = obj->get_owner();
             printf("melee onitem owned by %d\n", owner);
 
             // TODO -- check by object method availability
@@ -1033,7 +1032,7 @@ inline void place_spawner_CtoS::handle()
     if (s==NULL) return;
     a->status.purchase(s->state()->type);
     s->state()->set_team(a->status.team);
-    s->set_owner(s->state(), a->id);
+    s->set_owner(a->id);
     ServerState::spawner_list->assign_team_index(s);
     s->born();
 }
@@ -1062,7 +1061,7 @@ inline void place_turret_CtoS::handle()
     if (t==NULL) return;
     a->status.purchase(t->state()->type);
     t->state()->set_team(a->status.team);
-    t->set_owner(t->state(), a->id);
+    t->set_owner(a->id);
     t->born();
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT

@@ -2,6 +2,8 @@
 
 #include <c_lib/agent/agent_status.hpp>
 
+#include <c_lib/lists/list.hpp>
+
 class OwnedProperties: public ListProperties
 {
     public:
@@ -26,7 +28,6 @@ class OwnedComponent
     {
         switch_agent_ownership(state->type, this->owned_properties.owner, owner);
         this->owned_properties.owner = owner;
-        printf("set owner to %d\n", owner);
     }
 
     OwnedComponent() {}
