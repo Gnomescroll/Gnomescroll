@@ -20,9 +20,9 @@ void load_cube_texture_sprite_sheet(char*, int pos);
 prefix = "media/sprites/";
 
 function load_texture_sheet(filename)
-  print("load_texture_sheet: ", filename);
+  --print("load_texture_sheet: ", filename);
   local str = bl_ffi.new("char[128]");
-  bl_ffi.copy(str, prefix .. filename ..".png");
+  bl_ffi.copy(str, prefix .. filename);
   return bl_ffi.C.LUA_load_cube_texture_sheet(str);
 end
 
@@ -40,7 +40,7 @@ function register_spritesheet(spritesheet)
   spritesheet_name_to_id[spritesheet] = id;
   spritesheet_id_to_name[id] = spritesheet;
 
-  print("textured sheet loaded: " .. spritesheet .. " id= " .. id )
+  --print("textured sheet loaded: " .. spritesheet .. " id= " .. id )
   return id
 end
 
@@ -66,12 +66,12 @@ function register_texture(spritesheet, xpos, ypos)
   local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
 
   if(texture_look_up_table[index]) then
-    print("register texture: index found: " .. index .. " id= " .. texture_look_up_table[index])
+    --print("register texture: index found: " .. index .. " id= " .. texture_look_up_table[index])
     return texture_look_up_table[index]
   end
 
   local id = texture_id_counter;
-  print("registered texture: " .. index .. " id=" .. id);
+  --print("registered texture: " .. index .. " id=" .. id);
 
   bl_ffi.C.LUA_blit_cube_texture(sindex, xpos, ypos, id)
 

@@ -6,20 +6,47 @@ require("lua_library");
 
 print("LuaJit: run_lua_test finished");
 
-table_print(options_table);
-
 if( options_table == nil) then
 	print "WTF\n"
 else
 	print "WTF2\n"
 end
 
---x = to_string(options_table);
----print(x);
+
 print(table.val_to_str(options_table))
 
---x = { h={dd=6}, g = 5 }
 
----print(to_string(x)); 
 
---print(table.val_to_str(x))
+ffi = require("ffi")
+ffi.cdef[[
+    void LUA_set_int_option(int option_id, int value);
+    void LUA_set_bool_option(int option_id, int value);
+    void LUA_set_float_option(int option_id, float value);
+    void LUA_set_string_option(int option_id, char* value);
+]]
+
+options = {}
+
+
+options.width = 300
+options.height = 300
+
+for key,value in pairs(options) do 
+	if(options_table[key] ~= nil) then
+
+		local id = options_table[key].id
+		if( options_table[key].type == "int") then
+			ffi.C.LUA_set_int_option(id, options[key]);
+		elseif( options_table[key].type == "bool") then
+
+		elseif( options_table[key].type == "float") then
+
+		elseif( options_table[key].type == "string") then
+
+		else
+			print("Set Options Error: type error\n"); 
+		end
+	else
+		print("Set Options Error: option " .. key .. " does not exist \n");
+	end
+end

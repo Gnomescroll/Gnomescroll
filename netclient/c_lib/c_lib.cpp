@@ -219,15 +219,19 @@ int init_c_lib() {
         printf("WARNING: Attempt to init c_lib more than once\n");
         return 1;
     }
-    
+
     Log::init();
 
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 
 
+    LUA::load_options(); //load game options
+
+    
     srand(time(NULL));   // seed the RNG
 
+    _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
     init_image_loader();
     TextureSheetLoader::init();
