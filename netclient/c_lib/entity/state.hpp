@@ -110,8 +110,6 @@ class ObjectState: public ObjectData
         int ttl;
 
         // draw/textures/voxel
-        float texture_scale;
-        int texture_index;
         Voxel_model* vox;
         VoxDat* vox_dat;
         bool init_hitscan;
@@ -178,7 +176,7 @@ class ObjectState: public ObjectData
     : ObjectData(),
     id(-1),
     health(1), died(false), dead(false),
-    vp(NULL), theta(0), phi(0), ttl(0), texture_scale(1.0f), texture_index(0),
+    vp(NULL), theta(0), phi(0), ttl(0),
     vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {

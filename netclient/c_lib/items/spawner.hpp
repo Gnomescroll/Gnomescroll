@@ -76,7 +76,7 @@ SpawnerInterface;
 class Spawner: public SpawnerComponent, public SpawnerInterface
 {
     public:
-    Spawner(int id)
+    explicit Spawner(int id)
     : SpawnerComponent(), SpawnerInterface()
     {
         this->_state.id = id;

@@ -60,7 +60,7 @@ TurretInterface;
 class Turret: public TargetAcquisitionComponent, public TurretInterface
 {
     public:
-        Turret(int id)
+        explicit Turret(int id)
         : TargetAcquisitionComponent(), TurretInterface()
         {
             this->_state.id = id;

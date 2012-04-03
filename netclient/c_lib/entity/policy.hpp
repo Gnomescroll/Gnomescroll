@@ -47,7 +47,6 @@ class ObjectPolicyInterface
         virtual void set_team(int team) = 0;
         virtual unsigned int get_team_index() = 0;
         virtual void set_team_index(unsigned int team_index) = 0;
-        
 
         virtual ~ObjectPolicyInterface() {};
 };
@@ -72,7 +71,7 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team
         void set_team(int team) { Team::set_team(team); }
         unsigned int get_team_index() { return Team::get_team_index(); }
         void set_team_index(unsigned int team_index) { Team::set_team_index(team_index); }
-        
+
     ObjectStateLayer<Owner, Team>()
     {
     }

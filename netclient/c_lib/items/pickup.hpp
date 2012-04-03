@@ -4,6 +4,7 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/entity/entity.hpp>
 #include <c_lib/items/packets.hpp>
+#include <c_lib/components/billboard_sprite.hpp>
 
 namespace ItemDrops
 {
@@ -56,26 +57,32 @@ class PickupComponent
     PickupComponent(){}
 };
 
+//forward decl
+class PickupObject;
+void initialize_pickup_object(Object_types type, PickupObject* obj);
+
 /* Composition */
 
 typedef ObjectInterface
 < DefaultState, object_create_momentum_StoC, object_state_momentum_StoC >
 PickupInterface;
 
-class PickupObject: public PickupComponent, public PickupInterface
+class PickupObject: public PickupComponent, public BillboardSpriteComponent, public PickupInterface
 {
     public:
-    PickupObject(int id)
+    PickupObject(Object_types type, int id)
     : PickupComponent(), PickupInterface()
     {   // TODO: constants should be loaded via dat
+        this->_state.type = type;
         this->_state.id = id;
         this->_state.pickup = true;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
         this->_state.create_particle(0,0,0,0,0,0);
         this->_state.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
-        this->_state.texture_scale = DEFAULT_PICKUP_ITEM_TEXTURE_SCALE;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
+
+        initialize_pickup_object(type, this);
     }
 
     /* Interface */
@@ -92,7 +99,7 @@ class PickupObject: public PickupComponent, public PickupInterface
 
     void draw()
     {
-        drawBillboardSprite(this->state(), this);
+        drawBillboardSprite(this->state()->get_position(), this->sprite_properties.texture_index, this->sprite_properties.texture_scale);
     }
 
     void born()
@@ -105,5 +112,30 @@ class PickupObject: public PickupComponent, public PickupInterface
         diePickup(this->state(), this);
     }
 };
+
+void initialize_pickup_object(Object_types type, PickupObject* obj)
+{
+    ObjectState* state = obj->state();
+    switch (type)
+    {
+        case OBJ_TYPE_GRENADE_REFILL:
+            obj->sprite_properties.texture_index = GRENADE_REFILL_TEXTURE_ID;
+            obj->sprite_properties.texture_scale = GRENADE_REFILL_TEXTURE_SCALE;
+            state->mass = GRENADE_REFILL_MASS;
+            state->ttl_max = GRENADE_REFILL_TTL;
+            state->damp = GRENADE_REFILL_DAMP;
+            break;
+
+        case OBJ_TYPE_LASER_REFILL:
+            obj->sprite_properties.texture_index = LASER_REFILL_TEXTURE_ID;
+            obj->sprite_properties.texture_scale = LASER_REFILL_TEXTURE_SCALE;
+            state->mass = LASER_REFILL_MASS;
+            state->ttl_max = LASER_REFILL_TTL;
+            state->damp = LASER_REFILL_DAMP;
+            break;
+
+        default: return;
+    }
+}
 
 } // ItemDrops

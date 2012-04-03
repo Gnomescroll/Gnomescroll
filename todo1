@@ -846,7 +846,6 @@ grenade damage indication (blood, voxel destruction) [particle method failed]
 
 visual feedback for damage received
 try 256x256 map
-ammo drops
 
 add sfx
 radial subscriptions of agents to items/mobs
@@ -861,3 +860,5 @@ sendToAllExcept(int agent_id); // excludes agent
     everyone else: gets item_destroyed
 
 mouse grab is weird in production
+
+sound sample max play time
