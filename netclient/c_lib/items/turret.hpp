@@ -118,7 +118,11 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
 
     void update()
     {
-        updateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
+        updateFrozenVox(
+            this->voxel_properties.vox, this->get_position(),
+            this->position_properties.theta, this->position_properties.phi,
+            this->position_properties.changed()
+        );
     }
 
     void draw() {}

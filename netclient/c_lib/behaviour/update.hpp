@@ -6,7 +6,7 @@
 #endif
 
 
-void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi)
+void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bool state_changed)
 {
     if (vox != NULL)
     {
@@ -22,7 +22,7 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi)
             vox->set_draw(true);
             vox->set_hitscan(true);
         }
-        if (input_state.skeleton_editor)
+        if (state_changed || input_state.skeleton_editor)
         {
             vox->thaw();
             vox->update(position.x, position.y, position.z, theta, phi);

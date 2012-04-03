@@ -24,12 +24,22 @@ class PositionProperties
 
 class PositionVoxelProperties: public PositionProperties
 {
-
+    protected:
+        bool _changed;
     public:
         float camera_height;
 
+        bool changed()
+        {   // reset change state to false after a read
+            bool cached = this->_changed;
+            this->_changed = false;
+            return cached;
+        }
+        void set_changed(bool changed)
+        { this->_changed = changed; }
+
     PositionVoxelProperties()
-    : camera_height(1.0f)
+    : _changed(false), camera_height(1.0f)
     {}
 };
 
@@ -92,28 +102,15 @@ class PositionVoxelComponent
         bool set_position(float x, float y, float z)
         {
             if (position_is_equal(this->position_properties.position, x,y,z))
+            {
+                this->position_properties.set_changed(false);
                 return false;
+            }
             this->position_properties.position.x = x;
             this->position_properties.position.y = y;
             this->position_properties.position.z = z;
 
-            //if (this->vox != NULL)
-            //{
-                //if (this->frozen_vox)
-                    //this->vox->thaw();
-
-                //this->vox->update(
-                    //this->position_properties.position.x,
-                    //this->position_properties.position.y,
-                    //this->position_properties.position.z,
-                    //this->position_properties.theta,
-                    //this->position_properties.phi
-                //);
-
-                //if (this->frozen_vox)
-                    //this->vox->freeze();
-            //}
-            
+            this->position_properties.set_changed(true);
             return true;
         }
 
@@ -126,7 +123,7 @@ class PositionVoxelComponent
         {
             return this->position_properties.position.z + this->position_properties.camera_height;
         }
-        
+
     PositionVoxelComponent() {}
 };
 
