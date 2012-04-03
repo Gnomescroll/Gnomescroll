@@ -54,8 +54,8 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     conf.check_tool('gcc')
     conf.check_tool('g++')
 
-    conf.cc_add_flags()     #"-g" -ggdb
-    conf.link_add_flags()   #"-g" -ggdb
+    #conf.cc_add_flags()     #"-g" -ggdb
+    #conf.link_add_flags()   #"-g" -ggdb
 
     OS = platform.system()
     _OS = OS
@@ -77,11 +77,16 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     #-ftime-report 
 
     if OS == 'Windows':
-        cflags = ['-g', '-fpermissive', '-static-libgcc']
+        cxxflags = ['-static', '-static-libgcc', '-static-libstdc++', '-fpermissive'] #'-g', 
     else:
-        cflags = ['-ggdb', '-fPIC'] # '-lefence'
+        cxxflags = ['-ggdb', '-fPIC'] # '-lefence'
 
     if OS == 'Windows':
+        conf.env.append_value("LINKFLAGS", '-static')
+        conf.env.append_value("LINKFLAGS", '-static-libgcc')
+        conf.env.append_value("LINKFLAGS", '-static-libstdc++')
+
+        conf.env.append_value("LINKFLAGS", "-lmingw32")
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
         conf.env.append_value("LINKFLAGS", "-lwinmm")
@@ -90,6 +95,7 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
 
     version = get_version()
+
     extra_options = [
         '-Wall',
         '-DDC_CLIENT=1',
@@ -101,30 +107,27 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
         '-DGNOMESCROLL_DSO=1',
         '-DDC_VERSION=%d' % (version,),
         #'-fstrict-aliasing'
+        #'-fno-default-inline'
     ]
 
-    cflags += extra_options
+    cxxflags += extra_options
 
     if OS == 'Darwin':
-        cflags += ['-s']
+        cxxflags += ['-s']
 
-    cflags += [c for c in add_flags if c not in cflags]
-    cflags = [c for c in cflags if c not in rm_flags]
+    cxxflags += [c for c in add_flags if c not in cxxflags]
+    cxxflags = [c for c in cxxflags if c not in rm_flags]
 
     if sound.lower() == 'openal':
-        cflags.append('-DUSE_OPENAL=1')
+        cxxflags.append('-DUSE_OPENAL=1')
 
-    conf.env.append_value('CFLAGS', cflags)
-    conf.env.append_value('CXXFLAGS', cflags)
+    conf.env.append_value('CXXFLAGS', cxxflags)
     
 
     '''
-    incremental linking
-    may reduce recompile time
-    should not be used for release builds
-    ''' 
+    incremental linking may reduce recompile time should not be used for release builds
     #conf.env.append_value("LINKFLAGS", "--incremental")
-
+    ''' 
     conf.check(header_name='GL/glew.h', mandatory=True, includes='/usr/local/cuda/extras/CUPTI/include')
 
     if OS == 'Windows':
@@ -210,69 +213,15 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-    fmod_includes = []
-    fmod_rpath = []
-    if sound.lower() == 'fmod':
-        incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-        libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-
-        if OS == 'Windows':
-            os_libpth = './libraries/win'
-            incp='../../libraries/win/fmod/inc'  #its in ./libraries/win/fmod/inc
-            libp='../../../libraries/win/fmod/lib' #its in ./libraries/win/fmod/lib
-        elif OS == 'Linux':
-            os_libpth = './libraries/lin'
-            incp='../../libraries/lin/fmod/inc'  #its in ./libraries/lin/fmod/inc
-            libp='../../../libraries/lin/fmod/lib' #its in ./libraries/lin/fmod/lib
-        elif OS == 'Darwin':
-            os_libpth = './libraries/osx'
-            incp='../../libraries/osx/fmod/inc'  #its in ./libraries/osx/fmod/inc
-            libp='../../../libraries/osx/fmod/lib' #its in ./libraries/osx/fmod/lib
-
-        conf.check(header_name='fmod.h', includes=[incp], mandatory=True)
-        conf.check(lib=['fmodex'], libpath=[libp],includes=[incp], uselib_store='FMOD')
-
-        fmod_includes = ['libraries/lin/fmod/inc']
-        fmod_rpath = ['libraries/lin/fmod/lib', 'sound/api/lib/']
-    
-    #'cube_lib',
-    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include'] + fmod_includes
-    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib'] + fmod_rpath
+    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include']
+    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     
 def build(bld):
     OS = platform.system()
 
-    using_fmod = using_openal = False
-    if '-DUSE_FMOD=1' in bld.env.CFLAGS:
-        using_fmod = True
-    elif '-DUSE_OPENAL=1' in bld.env.CFLAGS:
+    using_openal = False
+    if '-DUSE_OPENAL=1' in bld.env.CXXFLAGS:
         using_openal = True
-
-    if using_fmod:
-        """"""
-        # FMOD hack
-        if OS == 'Windows':
-            os_libpth = './libraries/win'
-        elif OS == 'Linux':
-            os_libpth = './libraries/lin'
-        elif OS == 'Darwin':
-            os_libpth = './libraries/osx'
-
-        print os.path.abspath(os.curdir)
-        libpth = '%s/fmod/lib/' % (os_libpth,)
-        despth = './build/sound/api/lib/'
-
-        if os.path.exists(despth):
-            for fn in os.listdir(despth):
-                os.remove(despth + fn)
-            for fn in os.listdir(libpth):
-                shutil.copy2(libpth + fn, despth + fn)
-        else:
-            try:
-                shutil.copytree(libpth, despth, symlinks=True)
-            except IOError, e:
-                pass
-        """"""
 
     sound_framework = []
     sound_libraries = []
@@ -282,9 +231,8 @@ def build(bld):
     #lua_libraries = ['luajit51']
 
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
-    if using_fmod:
-        sound_libraries = ['fmodex']
-    elif using_openal:
+
+    if using_openal:
         if OS == 'Darwin':
             sound_framework = ['OpenAL']
         elif OS == 'Windows':
@@ -302,49 +250,32 @@ def build(bld):
         time_lib = []
 
 
-    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     c_lib_includes = []
     c_lib_libpath = []
-    if using_fmod:
-        c_lib_includes += ['./sound/api/inc/', './sound']
-        c_lib_libpath += ['./sound/api/lib/']+['../sound/api/lib/','../../sound/api/lib/'] # hack
 
     target = 'client'
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
         target = 'gnomescroll_client'
 
-    bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.cpp'],
-        use=common_libraries+time_lib+SDL_libraries+['LUA'],
-        lib=sound_libraries+png_libs,
-        includes= c_lib_includes,
-        libpath= c_lib_libpath,
+    #bld.env.CXXFLAGS.remove('-fvisibility=hidden')
+
+        #compile as binary
+    bld(
+        features = 'cxx cxxprogram',
+        source = ['run.cpp'],
+        use = common_libraries+time_lib+SDL_libraries+['LUA'],
+        lib = sound_libraries+png_libs,
+        includes = c_lib_includes,
+        libpath = c_lib_libpath,
         framework = sound_framework,
-        target='c_lib')
-
-         ##compile as binary
-    #bld(
-        ##features = 'cxx cxxprogram',
-        #features = 'c cprogram',
-        #source = ['gnomescroll_client.cpp'],
-        #use = common_libraries+time_lib+SDL_libraries+['LUA'],
-        #lib = sound_libraries+png_libs,
-        #includes = c_lib_includes,
-        #libpath = c_lib_libpath,
-        #framework = sound_framework,
-        #target=target
-    #)
-        
-    bld.env.CFLAGS.remove('-fvisibility=hidden')
-
-    bld(features='c cprogram',
-        use=['c_lib'],
-        source='gnomescroll_client.cpp',
-        target=target)
+        target="run"
+    )
 
     bld.add_post_fun(install_bin)
-    #if '-DPRODUCTION=1' in bld.env.CFLAGS:
-    bld.add_post_fun(strip_symbols)
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+        bld.add_post_fun(strip_symbols)
+
 
 def strip_symbols(ctx):
     OS = platform.system()
@@ -358,11 +289,9 @@ def strip_symbols(ctx):
 def install_bin(ctx):
     global out
     try:    # installs binary to ./run and ./client
-        run_target = ctx.env.cprogram_PATTERN % 'client'
-        run_dest = 'run'
-        client_dest = 'client'
+        run_target = ctx.env.cprogram_PATTERN % 'run'
+        run_dest = 'run.exe'
         shutil.copy2(os.path.join(out, run_target), './' + run_dest)
-        shutil.copy2(os.path.join(out, run_target), './' + client_dest)
     except:
         pass
         
@@ -379,11 +308,6 @@ def ensure_dir(path):
         if e.errno != errno.EEXIST:
             raise
 
-'''
-Subclass related *Context
-e.g. ConfigurationContext, BuildContext
-cmd,fun = 'name_of_function'
-'''
 from waflib.Configure import ConfigurationContext
 class optimized_ctx(ConfigurationContext):
     cmd = 'optimized'
@@ -426,35 +350,12 @@ class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
     
-class fmod_ctx(ConfigurationContext):
-    cmd = 'fmod'
-    fun = 'fmod'
-
-class extra_ctx(ConfigurationContext):
-    cmd = 'extra'
-    fun = 'extra'
-
-def extra(ctx):
-    configure(ctx, add_flags=['-Wextra'])
-
-def fmod(ctx):
-    configure(ctx, sound='fmod')
-    
 class openal_ctx(ConfigurationContext):
     cmd = 'openal'
     fun = 'openal'
 
 def openal(ctx):
     configure(ctx, sound='openal')
-    
-#class bounds_check_ctx(ConfigurationContext):
-    #cmd = 'bounds_check'
-    #fun = 'bounds_check'
-
-#def bounds_check(ctx):
-    #configure(ctx)
-    #ctx.env.CFLAGS.append('-fbounds-checking')
-    #ctx.env.CXXFLAGS.append('-fbounds-checking')
 
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])
@@ -487,10 +388,8 @@ def optimized(ctx):
 #run time profile optimization
 def optimized2(ctx):
     configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
     ctx.env.CXXFLAGS.append('-O3')
     ctx.env.CXXFLAGS.append('-Winline')
-    #ctx.env.CFLAGS.append('-fprofile-generate')
     #ctx.env.CXXFLAGS.append('-fprofile-generate')
 
 def debug(ctx):
