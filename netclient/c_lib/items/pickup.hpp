@@ -35,10 +35,10 @@ inline void diePickup(ObjectState* state, Object* object)
 }
 
 template <class Object>
-void tickPickup(ObjectState* state, Object* object)
+void tickPickup(ObjectState* state, Object* object, float pickup_radius)
 {
     #if DC_SERVER
-    int agent_id = object->nearest_agent_in_range(object->get_position(), state->pickup_radius);
+    int agent_id = object->nearest_agent_in_range(object->get_position(), pickup_radius);
     if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
     {   // was picked up, die
         object->was_picked_up(state, agent_id);
@@ -52,9 +52,13 @@ void tickPickup(ObjectState* state, Object* object)
 class PickupComponent
 {
     public:
-    void was_picked_up(ObjectState* state, const int agent_id);
-    int nearest_agent_in_range(const Vec3 p, const float radius);
-    PickupComponent(){}
+        float pickup_radius;
+
+        void was_picked_up(ObjectState* state, const int agent_id);
+        int nearest_agent_in_range(const Vec3 p, const float radius);
+    PickupComponent()
+    : pickup_radius(1.0f)
+    {}
 };
 
 //forward decl
@@ -75,11 +79,11 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
     {   // TODO: constants should be loaded via dat
         this->_state.type = type;
         this->_state.id = id;
-        this->_state.pickup = true;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
-        this->_state.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
+
+        this->pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
 
         initialize_pickup_object(type, this);
     }
@@ -90,7 +94,7 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
     void tick()
     {
         tickVerletBounce(this->verlet_properties.vp, this->state()->damp);
-        tickPickup(this->state(), this);
+        tickPickup(this->state(), this, this->pickup_radius);
         tickTTL(this->state(), this);
     }
 

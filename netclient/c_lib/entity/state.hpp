@@ -35,10 +35,6 @@ class ObjectData
         // tick lifespan
         int ttl_max;
 
-        // pickup
-        bool pickup;
-        float pickup_radius;
-
         // explosion
         bool blow_up_on_death;
         float explosion_radius;
@@ -66,7 +62,6 @@ class ObjectData
     height(1.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
-    pickup(false), pickup_radius(1.0f),
     blow_up_on_death(false),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1)
