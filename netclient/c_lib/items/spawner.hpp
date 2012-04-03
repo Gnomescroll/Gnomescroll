@@ -7,6 +7,7 @@
 #include <c_lib/behaviour/behaviour.hpp>
 #include <c_lib/entity/entity.hpp>
 #include <c_lib/lists/lists.hpp>
+#include <c_lib/components/components.hpp>
 
 //forward decl
 class SpawnerList;
@@ -30,7 +31,7 @@ extern VoxDat spawner_vox_dat;
 
 /* Spawner Component */
 
-class SpawnerProperties: public ListProperties
+class SpawnerProperties: public ComponentProperties
 {
     public:
     int radius;
@@ -69,7 +70,7 @@ class SpawnerList: public BehaviourList
 };
 
 typedef ObjectInterface
-< OwnedState, object_create_owner_team_index_StoC, object_state_StoC >
+< OwnedTeamState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
 class Spawner: public SpawnerComponent, public SpawnerInterface
@@ -95,6 +96,9 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
 
         this->owned_properties.obj = this;
         STATE::owned_list->register_object(&this->owned_properties);
+
+        this->team_properties.obj = this;
+        //STATE::team_list->register_object(&this->team_properties);
     }
 
     ~Spawner()
@@ -104,6 +108,7 @@ class Spawner: public SpawnerComponent, public SpawnerInterface
     }
 
     /* Interface */
+    Spawner* get_derived() { return this; }
 
     void tick()
     {

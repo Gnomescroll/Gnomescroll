@@ -47,7 +47,7 @@ def get_version():
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
+def configure(conf, add_flags=[], rm_flags=[]):
     global _OS
     global os_libpth
 
@@ -116,7 +116,6 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
     cxxflags += [c for c in add_flags if c not in cxxflags]
     cxxflags = [c for c in cxxflags if c not in rm_flags]
 
-    if sound.lower() == 'openal':
         cxxflags.append('-DUSE_OPENAL=1')
 
     conf.env.append_value('CXXFLAGS', cxxflags)
@@ -157,28 +156,27 @@ def configure(conf, add_flags=[], rm_flags=[], sound='openal'):
                fragment='#include <SDL_image.h>' + MAIN_TEST_CODE,
                mandatory=True)
 
-    if sound.lower() == 'openal':
-        if OS == 'Darwin':
-            conf.check(
-                lib=[],
-                framework=['OpenAL'],
-                uselib_store='openal',
-                mandatory=True
-            )
-        elif OS == 'Windows':
-            conf.check(header_name='AL/al.h',
-                       lib='OpenAL32',
-                       use='openal',
-                       uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
-                       mandatory=True)
-        else:
-            conf.check(header_name='AL/al.h',
-                       lib='openal',
-                       use='openal',
-                       uselib_store='openal',
-                       fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
-                       mandatory=True)
+    if OS == 'Darwin':
+        conf.check(
+            lib=[],
+            framework=['OpenAL'],
+            uselib_store='openal',
+            mandatory=True
+        )
+    elif OS == 'Windows':
+        conf.check(header_name='AL/al.h',
+                   lib='OpenAL32',
+                   use='openal',
+                   uselib_store='openal',
+                   fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
+                   mandatory=True)
+    else:
+        conf.check(header_name='AL/al.h',
+                   lib='openal',
+                   use='openal',
+                   uselib_store='openal',
+                   fragment='#include <AL/al.h>\n#include <AL/alc.h>' + MAIN_TEST_CODE,
+                   mandatory=True)
 
 
     if OS == 'Windows':
@@ -219,7 +217,7 @@ def build(bld):
 
     using_openal = False
     if '-DUSE_OPENAL=1' in bld.env.CXXFLAGS:
-        using_openal = True
+    using_openal = True
 
     sound_framework = []
     sound_libraries = []
@@ -231,12 +229,12 @@ def build(bld):
     SDL_libraries = ['GL', 'SDL', 'SDL_image']
 
     if using_openal:
-        if OS == 'Darwin':
-            sound_framework = ['OpenAL']
-        elif OS == 'Windows':
-            sound_libraries = ['OpenAL32']
-        else:
-            sound_libraries = ['openal']
+    if OS == 'Darwin':
+        sound_framework = ['OpenAL']
+    elif OS == 'Windows':
+        sound_libraries = ['OpenAL32']
+    else:
+        sound_libraries = ['openal']
 
     if OS == "Darwin":
         png_libs=[]
@@ -355,12 +353,6 @@ class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
     
-class openal_ctx(ConfigurationContext):
-    cmd = 'openal'
-    fun = 'openal'
-
-def openal(ctx):
-    configure(ctx, sound='openal')
 
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])

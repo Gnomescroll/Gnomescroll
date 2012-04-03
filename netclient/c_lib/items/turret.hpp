@@ -37,12 +37,22 @@ extern VoxDat turret_vox_dat;
 class TargetAcquisitionComponent
 {
     public:
-    void acquire_target(ObjectState* state);
+        float target_acquisition_probability;
+        Hitscan::AttackerProperties attacker_properties;
+        
+        void acquire_target(
+            int id, Object_types type, int team, float camera_z, Vec3 position,
+            float accuracy_bias, float sight_range,
+            bool attack_enemies, bool attack_random
+        );
     TargetAcquisitionComponent(){}
 };
 
+//// forward decl
+//class Turret;
+
 typedef ObjectInterface
-< OwnedState, object_create_owner_team_StoC, object_state_StoC >
+< OwnedTeamState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
 
@@ -63,25 +73,31 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
             this->_state.cost = COST_TURRET;
             this->_state.reward = COST_TURRET;
             this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
-            this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
-            this->_state.sight_range = TURRET_SIGHT_RANGE;
-            this->_state.accuracy_bias = TURRET_LASER_BIAS;
-            this->_state.target_acquisition_probability = TURRET_TARGET_LOCK_CHANCE;
-            this->_state.attack_enemies = true;
-            this->_state.attack_random = true;
+            
             this->_state.suicidal = false;
             this->_state.frozen_vox = true;
             this->_state.vox_dat = &turret_vox_dat;
             this->_state.type = OBJ_TYPE_TURRET;
             this->_state.health = TURRET_HEALTH;
-            this->_state.attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
-            this->_state.attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
-            this->_state.attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
-            this->_state.attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
-            this->_state.attacker_properties.terrain_modification_action = t_map::TMA_LASER;
+            
+            this->attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
+            this->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
+            this->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
+            this->attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
+            this->attacker_properties.terrain_modification_action = t_map::TMA_LASER;
+            this->target_acquisition_probability = TURRET_TARGET_LOCK_CHANCE;
+
+            this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
+            this->_state.sight_range = TURRET_SIGHT_RANGE;
+            this->_state.accuracy_bias = TURRET_LASER_BIAS;
+            this->_state.attack_enemies = true;
+            this->_state.attack_random = true;
 
             this->owned_properties.obj = this;
             STATE::owned_list->register_object(&this->owned_properties);
+
+            this->team_properties.obj = this;
+            //STATE::team_list->register_object(&this->team_properties);
         }
 
         ~Turret()
@@ -90,6 +106,8 @@ class Turret: public TargetAcquisitionComponent, public TurretInterface
         }
 
     /* Interface */
+
+    Turret* get_derived() { return this; }
 
     void tick()
     {   // make each a template function

@@ -15,7 +15,7 @@ cp -R media $f/
 cp -R lua $f/
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
-cp README_linux $f/
+cp README_linux_client $f/
 rm $f.tar.gz
 tar cvzf $f.tar.gz $f
 #mv $f.tar.gz ~/Dropbox/Public

@@ -59,7 +59,7 @@ class PickupComponent
 /* Composition */
 
 typedef ObjectInterface
-< DefaultState, object_create_vel_StoC, object_state_vel_StoC >
+< DefaultState, object_create_momentum_StoC, object_state_momentum_StoC >
 PickupInterface;
 
 class PickupObject: public PickupComponent, public PickupInterface
@@ -79,6 +79,7 @@ class PickupObject: public PickupComponent, public PickupInterface
     }
 
     /* Interface */
+    PickupObject* get_derived() { return this; }
 
     void tick()
     {

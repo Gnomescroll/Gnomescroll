@@ -703,7 +703,7 @@ namespace SystemMessage
     
 char* spawner_created(Spawner* s)
 {
-    char* team_name = ClientState::ctf->get_team_name(s->state()->get_team());
+    char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has built a new spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);
@@ -712,7 +712,7 @@ char* spawner_created(Spawner* s)
 
 char* spawner_destroyed(Spawner* s)
 {
-    char* team_name = ClientState::ctf->get_team_name(s->state()->get_team());
+    char* team_name = ClientState::ctf->get_team_name(s->get_team());
     char fmt[] = "%s has lost a spawner";
     char* msg = (char*)calloc(strlen(team_name) + strlen(fmt) - 2 + 1, sizeof(char));
     sprintf(msg, fmt, team_name);
@@ -730,7 +730,7 @@ void ChatSystemMessage::object_destroyed(ObjectPolicyInterface* object)
             msg = SystemMessage::spawner_destroyed((Spawner*)object);
             break;
         case OBJ_TYPE_TURRET:
-            //msg = SystemMessage::turret_destroyed(object);
+            //msg = SystemMessage::turret_destroyed((Turret*)object);
             break;
         default: return;
     }
@@ -750,7 +750,7 @@ void ChatSystemMessage::object_created(ObjectPolicyInterface* object)
             msg = SystemMessage::spawner_created((Spawner*)object);
             break;
         case OBJ_TYPE_TURRET:
-            //msg = SystemMessage::turret_created(object);
+            //msg = SystemMessage::turret_created((Turret*)object);
             break;
         default: return;
     }

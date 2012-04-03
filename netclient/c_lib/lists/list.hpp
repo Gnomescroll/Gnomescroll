@@ -1,19 +1,9 @@
 #pragma once
 
-/* List management */
+#include <c_lib/entity/policy.hpp>
+#include <c_lib/components/component.hpp>
 
-// inherit this into a property object for tracking
-class ListProperties
-{
-    public:
-    int id;
-    ObjectPolicyInterface* obj;
-    void* list;
-    
-    ListProperties()
-    : id(-1), obj(NULL), list(NULL)
-    {}
-};
+/* List management */
 
 // inherit this for a property list tracker
 class BehaviourList
@@ -21,7 +11,7 @@ class BehaviourList
     private:
         virtual const char* name() = 0;
     public:
-        ListProperties** objects;
+        ComponentProperties** objects;
         int max;
         int ct;
 
@@ -33,13 +23,13 @@ class BehaviourList
             return;
         }
         if (this->objects == NULL)
-            this->objects = (ListProperties**)calloc(this->max, sizeof(ListProperties*));
+            this->objects = (ComponentProperties**)calloc(this->max, sizeof(ComponentProperties*));
         else
             printf("WARNING: BehaviourList::allocate() -- attempt to allocate more than once\n");
     }
 
-    void register_object(ListProperties* state);
-    void unregister_object(ListProperties* state);
+    void register_object(ComponentProperties* state);
+    void unregister_object(ComponentProperties* state);
 
     ~BehaviourList()
     {
