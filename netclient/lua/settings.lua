@@ -7,9 +7,9 @@ require("lua_library");
 print("LuaJit: run_lua_test finished");
 
 if( options_table == nil) then
-	print "WTF\n"
+    print "WTF\n"
 else
-	print "WTF2\n"
+    print "WTF2\n"
 end
 
 
@@ -28,25 +28,25 @@ ffi.cdef[[
 options = {}
 
 
-options.width = 300
-options.height = 300
+options.width = 1280
+options.height = 800
 
 for key,value in pairs(options) do 
-	if(options_table[key] ~= nil) then
+    if(options_table[key] ~= nil) then
 
-		local id = options_table[key].id
-		if( options_table[key].type == "int") then
-			ffi.C.LUA_set_int_option(id, options[key]);
-		elseif( options_table[key].type == "bool") then
+        local id = options_table[key].id
+        if( options_table[key].type == "int") then
+            ffi.C.LUA_set_int_option(id, options[key]);
+        elseif( options_table[key].type == "bool") then
 
-		elseif( options_table[key].type == "float") then
+        elseif( options_table[key].type == "float") then
 
-		elseif( options_table[key].type == "string") then
+        elseif( options_table[key].type == "string") then
 
-		else
-			print("Set Options Error: type error\n"); 
-		end
-	else
-		print("Set Options Error: option " .. key .. " does not exist \n");
-	end
+        else
+            print("Set Options Error: type error\n"); 
+        end
+    else
+        print("Set Options Error: option " .. key .. " does not exist \n");
+    end
 end

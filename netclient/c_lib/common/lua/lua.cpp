@@ -39,7 +39,7 @@ int run_lua_test()
         exit(1);
     }
 
- 	result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    result = lua_pcall(L, 0, LUA_MULTRET, 0);
     if (result) 
     {
         fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
@@ -376,16 +376,12 @@ extern "C"
     void LUA_set_int_option(int option_id, int value)
     {
 
-        printf("set_int option: %i at %p \n", value, LUA::LUA_int_option_table[option_id]);
-        printf("before width= %i \n", Options::width);
         if(LUA::LUA_int_option_table[option_id] == NULL)
         {
             printf("LUA_set_int_option: error \n");
             abort();
         }
         *LUA::LUA_int_option_table[option_id] = value;
-
-        printf("after width= %i \n", Options::width);
     }
 
     void LUA_set_bool_option(int option_id, int value)
