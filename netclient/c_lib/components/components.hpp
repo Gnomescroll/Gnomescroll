@@ -7,3 +7,4 @@
 #include <c_lib/components/billboard_sprite.hpp>
 #include <c_lib/components/health.hpp>
 #include <c_lib/components/voxel.hpp>
+#include <c_lib/components/spatial.hpp>

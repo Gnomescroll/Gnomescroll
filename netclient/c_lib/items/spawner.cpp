@@ -15,7 +15,7 @@ void spawner_state(object_state_StoC_model* msg)
     
     Spawner* s = (Spawner*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (s == NULL) return;
-    s->state()->set_position(msg->x, msg->y, msg->z);
+    s->set_position(msg->x, msg->y, msg->z);
 }
 
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
@@ -52,12 +52,11 @@ VoxDat spawner_vox_dat;
 
 /* SpawnerComponent */
 
-void SpawnerComponent::get_spawn_point(ObjectState* state, int spawned_object_height, int* spawn_pt)
+void SpawnerComponent::get_spawn_point(Vec3 position, int spawned_object_height, int* spawn_pt)
 {
     int x,y;
-    Vec3 p = state->get_position();
-    x = (int)p.x;
-    y = (int)p.y;
+    x = (int)position.x;
+    y = (int)position.y;
 
     int sx,sy;
     sx = randrange(x - this->spawner_properties.radius, x + this->spawner_properties.radius);

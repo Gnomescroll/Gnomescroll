@@ -16,7 +16,7 @@ void turret_state(object_state_StoC_model* msg)
 {
     Turret* t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
-    t->state()->set_position(msg->x, msg->y, msg->z);
+    t->set_position(msg->x, msg->y, msg->z);
 }
 
 void turret_create(object_create_owner_team_StoC_model* msg)
@@ -56,7 +56,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     Voxel_volume* vv = a->vox->get_part(msg->target_part);
     if (vv == NULL) return;
 
-    Vec3 pos = t->state()->get_position();
+    Vec3 pos = t->get_position();
     Vec3 c = vv->get_center();
     Vec3 p = vec3_init(pos.x, pos.y, pos.z + t->state()->camera_height);
 
@@ -81,7 +81,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
     Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
 
-    Vec3 pos = t->state()->get_position();
+    Vec3 pos = t->get_position();
     const float hitscan_effect_speed = 200.0f;
     Vec3 p = vec3_init(pos.x, pos.y, pos.z + t->state()->camera_height);
     Vec3 c = vec3_init(msg->x, msg->y, msg->z);
@@ -107,7 +107,7 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
     Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
     if (t == NULL) return;
 
-    Vec3 pos = t->state()->get_position();
+    Vec3 pos = t->get_position();
     const float hitscan_effect_speed = 200.0f;
     Vec3 v = vec3_init(msg->x, msg->y, msg->z);
     normalize_vector(&v);

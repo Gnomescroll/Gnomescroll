@@ -45,7 +45,7 @@ class SpawnerComponent
 {
     public:
         SpawnerProperties spawner_properties;
-        void get_spawn_point(ObjectState* state, int spawned_object_height, int* spawn_pt);
+        void get_spawn_point(Vec3 position, int spawned_object_height, int* spawn_pt);
     SpawnerComponent(){}
 };
 
@@ -70,7 +70,7 @@ class SpawnerList: public BehaviourList
 };
 
 typedef ObjectInterface
-< OwnedTeamHealthState, object_create_owner_team_index_StoC, object_state_StoC >
+< OwnedTeamHealthPositionVoxelState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
 class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInterface
@@ -121,8 +121,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
 
     void update()
     {
-        ObjectState* state = this->state();
-        updateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        updateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
     }
 
     void draw() {}
@@ -132,7 +131,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
         bornCreateMessage(this);
     }
 

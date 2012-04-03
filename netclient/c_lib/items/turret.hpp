@@ -50,7 +50,7 @@ class TargetAcquisitionComponent
 };
 
 typedef ObjectInterface
-< OwnedTeamHealthState, object_create_owner_team_StoC, object_state_StoC >
+< OwnedTeamHealthPositionVoxelState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
 class Turret: public TargetAcquisitionComponent, public VoxelComponent, public TurretInterface
@@ -113,13 +113,12 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
     void tick()
     {   // make each a template function
         tickStayOnGround(this->state(), this);
-        tickTargetAcquisition(this->state(), this);
+        tickTargetAcquisition(this->state(), this, this->camera_z());
     }
 
     void update()
     {
-        ObjectState* state = this->state();
-        updateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        updateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
     }
 
     void draw() {}
@@ -129,7 +128,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, state->get_position(), state->theta, state->phi);
+        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
         bornCreateMessage(this);
     }
 

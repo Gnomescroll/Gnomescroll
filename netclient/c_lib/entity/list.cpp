@@ -90,13 +90,15 @@ bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, in
 {
     if (this->occupancy[type] == 0) return false;
     int max = this->get_object_max(type);
+    ObjectPolicyInterface *obj;
+    ObjectState* state;
     for (int i=0; i<max; i++)
     {
-        ObjectPolicyInterface *obj = this->objects[type][i];
+        obj = this->objects[type][i];
         if (obj == NULL) continue;
-        ObjectState* state = obj->state();
+        state = obj->state();
         if (state->type != type) continue;
-        Vec3 p = state->get_position();
+        Vec3 p = obj->get_position();
         if ((int)p.x == x && (int)p.y == y)
             for (int j=0; j<(int)ceil(state->height); j++)
                 if ((int)p.z+j == z)
@@ -124,7 +126,7 @@ int GameObject_list::all_objects_within_sphere(float x, float y, float z, float 
         {
             if (ct >= this->max_filtered) break;
             if (this->objects[type][i] == NULL) continue;
-            p = this->objects[type][i]->state()->get_position();
+            p = this->objects[type][i]->get_position();
             dist = distancef_squared(x,y,z, p.x, p.y, p.z);
             if (dist < radius_squared)
             {   // object is in sphere
@@ -160,7 +162,7 @@ int GameObject_list::objects_within_sphere(const Object_types type, float x, flo
     for (int i=0; i<max; i++)
     {
         if (this->objects[type][i] == NULL) continue;
-        p = this->objects[type][i]->state()->get_position();
+        p = this->objects[type][i]->get_position();
         dist = distancef_squared(x,y,z, p.x, p.y, p.z);
         if (dist < radius_squared)
         {   // object is in sphere
@@ -201,7 +203,7 @@ int GameObject_list::objects_within_sphere(const Object_types* types, const int 
         {
             if (ct >= this->max_filtered) break;
             if (this->objects[type][i] == NULL) continue;
-            p = this->objects[type][i]->state()->get_position();
+            p = this->objects[type][i]->get_position();
             dist = distancef_squared(x,y,z, p.x, p.y, p.z);
             if (dist < radius_squared)
             {   // object is in sphere
@@ -272,7 +274,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float
 {
     ObjectPolicyInterface* obj = this->create(type);
     if (obj != NULL)
-        obj->state()->set_position(x,y,z);
+        obj->set_position(x,y,z);
     return obj;
 }
 
@@ -280,7 +282,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float
 {
     ObjectPolicyInterface* obj = this->create(type, x,y,z);
     if (obj != NULL)
-        obj->state()->set_momentum(mx,my,mz);
+        obj->set_momentum(mx,my,mz);
     return obj;
 }
 
@@ -305,7 +307,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float 
 {
     ObjectPolicyInterface* obj = this->create(type, id);
     if (obj != NULL)
-        obj->state()->set_position(x,y,z);
+        obj->set_position(x,y,z);
     return obj;
 }
 
@@ -313,7 +315,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float 
 {
     ObjectPolicyInterface* obj = this->create(type, id, x,y,z);
     if (obj != NULL)
-        obj->state()->set_momentum(mx,my,mz);
+        obj->set_momentum(mx,my,mz);
     return obj;
 }
 

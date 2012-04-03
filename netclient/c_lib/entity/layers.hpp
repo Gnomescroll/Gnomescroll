@@ -5,13 +5,14 @@
 
 /* Parameterized template state layers */
 
-typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault> DefaultState;
-typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthDefault> TeamState;
-typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault> OwnedState;
-typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthDefault> OwnedTeamState;
+typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, SpatialDefault> DefaultState;
+typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, VerletComponent> VerletState;
+//typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthDefault> TeamState;
+//typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault> OwnedState;
+//typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthDefault> OwnedTeamState;
 
-typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent> HealthState;
-typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthComponent> TeamHealthState;
-typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthComponent> OwnedHealthState;
-typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent> OwnedTeamHealthState;
+//typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent> HealthState;
+//typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthComponent> TeamHealthState;
+//typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthComponent> OwnedHealthState;
+typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent, PositionVoxelComponent> OwnedTeamHealthPositionVoxelState;
 

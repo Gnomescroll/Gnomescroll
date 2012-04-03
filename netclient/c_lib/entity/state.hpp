@@ -22,6 +22,8 @@ typedef enum
 class ObjectData
 {
     public:
+        Object_types type;
+
         // spatial
         float height;
         float camera_height;
@@ -59,7 +61,6 @@ class ObjectData
         // voxel
         //bool frozen_vox;
         
-        Object_types type;
     //TODO:
     // fill the struct with object metadata
     // all objects' initialization data will be stored in an array
@@ -76,15 +77,14 @@ class ObjectData
 
     ObjectData()
     :
+    type(OBJ_TYPE_NONE),
     height(1.0f), camera_height(0.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     pickup(false), pickup_radius(1.0f),
     blow_up_on_death(false),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
-    fire_rate_limit(1),
-    //frozen_vox(false),
-    type(OBJ_TYPE_NONE)
+    fire_rate_limit(1)
     {}
 };
 
@@ -97,18 +97,12 @@ class ObjectState: public ObjectData
         int id;
 
         // physics
-        VerletParticle* vp;
-        Vec3 position;
-        float theta, phi;
+        //VerletParticle* vp;
+        //Vec3 position;
+        //float theta, phi;
         
         // tick lifespan
         int ttl;
-
-        // draw/textures/voxel
-        //Voxel_model* vox;
-        //VoxDat* vox_dat;
-        //bool init_hitscan;
-        //bool init_draw;
 
         // pickup
         bool broadcast_death;
@@ -117,70 +111,57 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick; // dont move yet; things besides target acquisition may use this (altho they should probably be bundled into that
 
-    void create_particle(float x, float y, float z, float mx, float my, float mz)
-    {
-        if (this->vp == NULL)
-            this->vp = new VerletParticle(x,y,z, mx,my,mz, this->mass);
-    }
-
-    float camera_z()
-    {
-        float z;
-        if (this->vp != NULL)
-            z = this->vp->p.z;
-        else
-            z = this->position.z;
-        return z + this->camera_height;
-    }
-
-    // returns true if position was different
-    bool set_position(float x, float y, float z);
-    Vec3 get_position()
-    {
-        if (this->vp != NULL)
-            return this->vp->p;
-        else
-            return this->position;
-    }
-
-    void set_momentum(float mx, float my, float mz)
-    {
-        if (this->vp != NULL)
-            this->vp->set_momentum(mx,my,mz);
-        else
-            printf("WARNING: ObjectState::set_momentum() -- object type %d does not use momentum\n", this->type);
-    }
-    
-    Vec3 get_momentum()
-    {
-        if (this->vp != NULL)
-            return this->vp->get_momentum();
-        else
-            return vec3_init(0,0,0);
-    }
-
-    //Voxel_model* get_vox()
+    //float camera_z()
     //{
-        //return this->vox;
+        //float z;
+        //if (this->vp != NULL)
+            //z = this->vp->p.z;
+        //else
+            //z = this->position.z;
+        //return z + this->camera_height;
     //}
 
+    //// returns true if position was different
+    //bool set_position(float x, float y, float z);
+    //Vec3 get_position()
+    //{
+        //if (this->vp != NULL)
+            //return this->vp->p;
+        //else
+            //return this->position;
+    //}
+
+    //void set_momentum(float mx, float my, float mz)
+    //{
+        //if (this->vp != NULL)
+            //this->vp->set_momentum(mx,my,mz);
+        //else
+            //printf("WARNING: ObjectState::set_momentum() -- object type %d does not use momentum\n", this->type);
+    //}
+    
+    //Vec3 get_momentum()
+    //{
+        //if (this->vp != NULL)
+            //return this->vp->get_momentum();
+        //else
+            //return vec3_init(0,0,0);
+    //}
 
     ObjectState()
     : ObjectData(),
     id(-1),
-    vp(NULL), theta(0), phi(0), ttl(0),
-    //vox(NULL), vox_dat(NULL), init_hitscan(false), init_draw(false),
+    //vp(NULL),
+    //theta(0), phi(0),
+    ttl(0),
     broadcast_death(false), picked_up_by(-1), fire_tick(0)
     {
-        this->set_position(0,0,0);
+        //this->set_position(0,0,0);
     }
 
     ~ObjectState()
     {
-        if (this->vp != NULL)
-            delete this->vp;
-        //if (this->vox != NULL)
-            //delete this->vox;
+        //if (this->vp != NULL)
+            //delete this->vp;
     }
 };
 
@@ -194,6 +175,8 @@ const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be 
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
 const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 const int NULL_HEALTH = INT_MAX;
+const Vec3 NULL_POSITION = vec3_init(0,0,0);
+const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
 
 /* provide virtual getters that support all data operations but will return invalid values */
 class OwnedDefault
@@ -228,4 +211,18 @@ class HealthDefault
     { return false; }
     bool did_die()
     { return false; }
+};
+
+class SpatialDefault
+{
+    public:
+
+    Vec3 get_position()
+    { return NULL_POSITION; }
+    Vec3 get_momentum()
+    { return NULL_MOMENTUM; }
+    bool set_position(float x, float y, float z)
+    { return false; }
+    void set_momentum(float mx, float my, float mz)
+    {}
 };

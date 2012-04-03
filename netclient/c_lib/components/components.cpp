@@ -5,3 +5,4 @@
 #include <c_lib/components/billboard_sprite.cpp>
 #include <c_lib/components/health.cpp>
 #include <c_lib/components/voxel.cpp>
+#include <c_lib/components/spatial.cpp>

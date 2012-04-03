@@ -489,7 +489,7 @@ void Agent_state::get_spawn_point(int* spawn)
         }
     }
     else // spawner was found
-        s->get_spawn_point(s->state(), h, spawn);
+        s->get_spawn_point(s->get_position(), h, spawn);
 }
 
 void Agent_state::spawn_state()

@@ -50,6 +50,10 @@ class ObjectPolicyInterface
         virtual int take_damage(int dmg) = 0;
         virtual bool is_dead() = 0;
         virtual bool did_die() = 0;
+        virtual Vec3 get_position() = 0;
+        virtual bool set_position(float x, float y, float z) = 0;
+        virtual Vec3 get_momentum() = 0;
+        virtual void set_momentum(float x, float y, float z) = 0;
 
         virtual ~ObjectPolicyInterface() {};
 };
@@ -58,8 +62,8 @@ class ObjectPolicyInterface
  * Mixin class layer for state setters/getters
  */
 
-template <class Owner, class Team, class Health>  /* more common behaviour state classes here. very specialized classes can stay out */
-class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team, public Health
+template <class Owner, class Team, class Health, class Spatial>  /* more common behaviour state classes here. very specialized classes can stay out */
+class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team, public Health, public Spatial
 {
     protected:
         ObjectState _state;
@@ -79,7 +83,12 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
         bool is_dead() { return Health::is_dead(); }
         bool did_die() { return Health::did_die(); }
 
-    ObjectStateLayer<Owner, Team, Health>()
+        Vec3 get_position() { return Spatial::get_position(); }
+        bool set_position(float x, float y, float z) { return Spatial::set_position(x,y,z); }
+        Vec3 get_momentum() { return Spatial::get_momentum(); }
+        void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
+
+    ObjectStateLayer<Owner, Team, Health, Spatial>()
     {
     }
 };
@@ -99,13 +108,13 @@ class ObjectInterface: public StateLayer
         void createMessage(CreateMessage* msg)
         {
             ObjectState* state = this->state();
-            create_message(msg, state->id, state->type, state->get_position(), state->get_momentum(), this->get_owner(), this->get_team(), this->get_team_index());
+            create_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_owner(), this->get_team(), this->get_team_index());
         }
 
         void stateMessage(StateMessage* msg)
         {
             ObjectState* state = this->state();
-            state_message(msg, state->id, state->type, state->get_position(), state->get_momentum());
+            state_message(msg, state->id, state->type, this->get_position(), this->get_momentum());
         }
         
     public:

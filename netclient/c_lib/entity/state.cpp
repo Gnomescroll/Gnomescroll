@@ -14,37 +14,20 @@ unsigned int get_kill_reward(ObjectPolicyInterface* object, int owner, int team)
     return 0;
 }
 
-bool ObjectState::set_position(float x, float y, float z)
-{
-    bool changed = false;
-    if (
-       this->position.x != x
-    || this->position.y != y
-    || this->position.z != z
-    ) changed = true;
+//bool ObjectState::set_position(float x, float y, float z)
+//{
+    //if (
+       //this->position.x == x
+    //&& this->position.y == y
+    //&& this->position.z == z
+    //) return false;
 
-    this->position.x = x;
-    this->position.y = y;
-    this->position.z = z;
+    //this->position.x = x;
+    //this->position.y = y;
+    //this->position.z = z;
 
-    // TODO
-
-    //if (this->vox != NULL)
-    //{
-        //if (this->frozen_vox && changed)
-            //this->vox->thaw();
-
-        //this->vox->update(
-            //this->position.x, this->position.y, this->position.z,
-            //this->theta, this->phi
-        //);
-
-        //if (this->frozen_vox)
-            //this->vox->freeze();
-    //}
-
-    if (this->vp != NULL)
-        this->vp->set_position(x,y,z);
+    //if (this->vp != NULL)
+        //this->vp->set_position(x,y,z);
         
-    return changed;
-}
+    //return true;
+//}

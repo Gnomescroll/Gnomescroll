@@ -613,12 +613,10 @@ void draw_team_text_icons(float z)
     }
 
     SpawnerProperties* s;
-    ObjectState* state;
     for (int i=0; i<spawner_list->max; i++)
     {
         s = (SpawnerProperties*)spawner_list->objects[i];
         if (s==NULL) continue;
-        state = s->obj->state();
         unsigned int team_index = s->obj->get_team_index();
         if (s->obj->get_team() != playerAgent_state.you->status.team) continue;
         if (team_index <= 0 || team_index == TEAM_INDEX_NONE || team_index == NULL_TEAM_INDEX)
@@ -628,7 +626,7 @@ void draw_team_text_icons(float z)
         else
             spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
         spawner[j]->update_formatted_string(1, team_index);
-        Vec3 p = state->get_position();
+        Vec3 p = s->obj->get_position();
         world_to_map_screen_coordinates(p.x, p.y, &x, &y);
         spawner[j]->set_position(x,y);
         spawner[j]->set_depth(z);

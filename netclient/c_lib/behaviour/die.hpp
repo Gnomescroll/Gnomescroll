@@ -26,7 +26,7 @@ template <class Object>
 void dieExplode(ObjectState* state, Object* object)
 {
     #if DC_SERVER
-    Vec3 p = state->get_position();
+    Vec3 p = object->get_position();
     ServerState::damage_objects_within_sphere(
         p.x, p.y, p.z,
         state->explosion_radius, state->explosion_damage, object->get_owner(),

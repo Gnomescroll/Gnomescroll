@@ -38,7 +38,7 @@ template <class Object>
 void tickPickup(ObjectState* state, Object* object)
 {
     #if DC_SERVER
-    int agent_id = object->nearest_agent_in_range(state->vp->p, state->pickup_radius);
+    int agent_id = object->nearest_agent_in_range(object->get_position(), state->pickup_radius);
     if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
     {   // was picked up, die
         object->was_picked_up(state, agent_id);
@@ -64,7 +64,7 @@ void initialize_pickup_object(Object_types type, PickupObject* obj);
 /* Composition */
 
 typedef ObjectInterface
-< DefaultState, object_create_momentum_StoC, object_state_momentum_StoC >
+< VerletState, object_create_momentum_StoC, object_state_momentum_StoC >
 PickupInterface;
 
 class PickupObject: public PickupComponent, public BillboardSpriteComponent, public PickupInterface
@@ -77,7 +77,6 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
         this->_state.id = id;
         this->_state.pickup = true;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
-        this->_state.create_particle(0,0,0,0,0,0);
         this->_state.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
@@ -90,7 +89,7 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
 
     void tick()
     {
-        tickVerletBounce(this->state(), this);
+        tickVerletBounce(this->verlet_properties.vp, this->state()->damp);
         tickPickup(this->state(), this);
         tickTTL(this->state(), this);
     }
@@ -99,7 +98,7 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
 
     void draw()
     {
-        drawBillboardSprite(this->state()->get_position(), this->sprite_properties.texture_index, this->sprite_properties.texture_scale);
+        drawBillboardSprite(this->get_position(), this->sprite_properties.texture_index, this->sprite_properties.texture_scale);
     }
 
     void born()
