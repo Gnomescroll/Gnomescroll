@@ -711,7 +711,7 @@ inline void hitscan_object_CtoS::handle()
             if (dmg_health <= 0)
             {
                 //int coins = obj->get_coins_for_kill(a->id, a->status.team);
-                int coins = obj->state()->get_kill_reward(a->id, a->status.team);
+                int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;
@@ -866,7 +866,7 @@ inline void melee_object_CtoS::handle()
             dmg_health = obj->state()->take_damage(obj_dmg);
             if (dmg_health <= 0)
             {
-                int coins = obj->state()->get_kill_reward(a->id, a->status.team);
+                int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
             }
             break;

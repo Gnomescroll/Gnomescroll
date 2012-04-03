@@ -1,15 +1,16 @@
 #include "state.hpp"
 
-unsigned int ObjectState::get_kill_reward(int owner, int team)
+unsigned int get_kill_reward(ObjectPolicyInterface* object, int owner, int team)
 {
-    //if (
-         //(COINS_ANYONE  & this->coin_rule)
-     //|| ((COINS_ENEMIES & this->coin_rule) && (this->get_team() != team))
-     //|| ((COINS_ALLIES  & this->coin_rule) && (this->get_team() == team))
-     //|| ((COINS_OWNER   & this->coin_rule) && (this->get_owner() == owner))
-     //|| ((COINS_ANYONE_WHEN_UNOWNED & this->coin_rule) && (this->get_owner() == NO_AGENT))  // TODO: BAD!!
-    //)
-        //return this->reward;
+    ObjectState* state = object->state();
+    if (
+         (COINS_ANYONE  & state->coin_rule)
+     || ((COINS_ENEMIES & state->coin_rule) && (object->get_team() != team))
+     || ((COINS_ALLIES  & state->coin_rule) && (object->get_team() == team))
+     || ((COINS_OWNER   & state->coin_rule) && (object->get_owner() == owner))
+     || ((COINS_ANYONE_WHEN_UNOWNED & state->coin_rule) && (object->get_owner() == NO_AGENT))  // TODO: BAD!!
+    )
+        return state->reward;
     return 0;
 }
 

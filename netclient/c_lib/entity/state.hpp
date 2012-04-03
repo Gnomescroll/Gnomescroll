@@ -124,8 +124,6 @@ class ObjectState: public ObjectData
         // firing
         unsigned int fire_tick;
 
-
-    unsigned int get_kill_reward(int owner, int team);
     int take_damage(int dmg);
 
     void create_particle(float x, float y, float z, float mx, float my, float mz)
