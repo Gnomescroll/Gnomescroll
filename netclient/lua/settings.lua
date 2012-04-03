@@ -38,11 +38,11 @@ for key,value in pairs(options) do
         if( options_table[key].type == "int") then
             ffi.C.LUA_set_int_option(id, options[key]);
         elseif( options_table[key].type == "bool") then
-
+            ffi.C.LUA_set_bool_option(id, options[key]);
         elseif( options_table[key].type == "float") then
-
+            ffi.C.LUA_set_float_option(id, options[key]);
         elseif( options_table[key].type == "string") then
-
+            ffi.C.LUA_set_string_option(id, options[key]);
         else
             print("Set Options Error: type error\n"); 
         end
