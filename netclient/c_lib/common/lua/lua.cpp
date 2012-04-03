@@ -357,12 +357,12 @@ void register_string_option(const char* name, char* var)
 }
 
 }
-
+/*
     void LUA_set_int_option(int option_id, int value);
     void LUA_set_bool_option(int option_id, int value);
     void LUA_set_float_option(int option_id, float value);
     void LUA_set_string_option(int option_id, char* value);
-
+*/
 
 extern "C"
 {

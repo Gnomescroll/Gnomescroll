@@ -30,7 +30,7 @@ options.port = 0
 
 
 -- display options -- 
-options.fullscreen = false
+options.fullscreen = true
 options.width = 1280
 options.height = 720
 options.fov = 85
