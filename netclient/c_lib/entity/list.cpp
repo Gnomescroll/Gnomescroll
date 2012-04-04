@@ -26,18 +26,6 @@ void GameObject_list::tick()
     }
 }
 
-void GameObject_list::draw()
-{
-    for (int type=0; type<this->max_objects; type++)
-    {
-        if (this->occupancy[type] == 0) continue;
-        int max = this->get_object_max((Object_types)type);
-        for (int i=0; i<max; i++)
-            if (this->objects[type][i] != NULL)
-                this->objects[type][i]->draw();
-    }
-}
-
 void GameObject_list::update()
 {
     for (int type=0; type<this->max_objects; type++)
@@ -244,7 +232,11 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
             break;
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = new ItemDrops::PickupObject(type, id);
+            obj = new ItemDrops::PickupObjectSprite(type, id);
+            break;
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
+            obj = new ItemDrops::PickupObjectMinivox(type, id);
             break;
         default: return NULL;
     }

@@ -4,6 +4,7 @@
     #defines, constants for items
 */
 
+#include <c_lib/common/common.hpp>
 #include <c_lib/game/game.hpp>
 
 // Spawners
@@ -54,5 +55,21 @@ const float LASER_REFILL_TEXTURE_SCALE = 0.5f;
 const float LASER_REFILL_MASS = 1.0f;
 const int LASER_REFILL_TTL = 30 * 12;   // 12 seconds
 const float LASER_REFILL_DAMP = 0.4f;
+
+/* Dirt */
+const int DIRT_MAX = 256;
+const Color DIRT_COLOR = { 150, 98, 0 };
+const float DIRT_SIZE = 0.2f;
+const int DIRT_TTL = 30 * 12;
+const float DIRT_DAMP = 0.4f;
+const float DIRT_MASS = 1.0f;
+
+/* Stone */
+const int STONE_MAX = 256;
+const Color STONE_COLOR = { 140, 140, 140 };
+const float STONE_SIZE = 0.2f;
+const int STONE_TTL = 30 * 12;
+const float STONE_DAMP = 0.4f;
+const float STONE_MASS = 1.0f;
 
 } // ItemDrops

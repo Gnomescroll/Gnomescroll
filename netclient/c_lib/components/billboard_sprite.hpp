@@ -5,7 +5,7 @@
 
 // todo -- billboard sprite draw list
 
-class BillboardSpriteProperties/*: public ComponentProperties*/
+class BillboardSpriteProperties: public ComponentProperties
 {
     public:
         int texture_index;

@@ -29,6 +29,8 @@ namespace ClientState {
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     SpawnerList* spawner_list = NULL;
     OwnedList* owned_list = NULL;
+    BillboardSpriteList* billboard_sprite_list = NULL;
+    ColoredMinivoxList* colored_minivox_list = NULL;
     
     Monsters::Slime_list* slime_list = NULL;
 
@@ -53,6 +55,8 @@ namespace ClientState {
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new SpawnerList;
         owned_list = new OwnedList;
+        billboard_sprite_list = new BillboardSpriteList;
+        colored_minivox_list = new ColoredMinivoxList;
         
         object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
@@ -86,6 +90,8 @@ namespace ClientState {
         // behaviour lists
         delete spawner_list;
         delete owned_list;
+        delete billboard_sprite_list;
+        delete colored_minivox_list;
 
         // particles
         delete cspray_list;
@@ -192,6 +198,16 @@ namespace ClientState {
         // quads
         minivox_list->draw();
 
+        // BEGIN -- opengl colored minivox flags
+        glColor3ub(255,255,255);
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        glBegin(GL_QUADS);
+
+        colored_minivox_list->draw();
+
+        glEnd();
+        // END
+
         // transparent
         billboard_text_list->draw();
         
@@ -201,7 +217,9 @@ namespace ClientState {
         shrapnel_list->draw();
         blood_list->draw();
 
-        object_list->draw();    // here temporarily. only thing with real draw is billboard particles. use draw lists later
+        //object_list->draw();    // here temporarily. only thing with real draw is billboard particles. use draw lists later
+
+        billboard_sprite_list->draw();
         
         end_transparent_particle_draw();
     }
