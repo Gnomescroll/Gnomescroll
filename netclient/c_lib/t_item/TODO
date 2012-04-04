@@ -1,0 +1,18 @@
+
+
+Free Item:
+1> Create
+2> Delete
+3> Player Pickup
+
+- networking
+- draw
+- tick
+
+Inventory Item:
+- state
+
+Inventory:
+- server state
+- client state
+- client draw
