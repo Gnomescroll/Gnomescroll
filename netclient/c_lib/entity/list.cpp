@@ -87,11 +87,12 @@ void GameObject_list::destroy(Object_types type, int id)
 }
 
 bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, int z)
-{
+{   // TODO -- should be on spatial list
     if (this->occupancy[type] == 0) return false;
     int max = this->get_object_max(type);
     ObjectPolicyInterface *obj;
     ObjectState* state;
+
     for (int i=0; i<max; i++)
     {
         obj = this->objects[type][i];
@@ -99,10 +100,14 @@ bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, in
         state = obj->state();
         if (state->type != type) continue;
         Vec3 p = obj->get_position();
-        if ((int)p.x == x && (int)p.y == y)
-            for (int j=0; j<(int)ceil(state->height); j++)
-                if ((int)p.z+j == z)
-                    return true;
+        int px = (int)p.x;
+        int py = (int)p.y;
+        if (px != x || py != y) continue;
+        int pz = (int)p.z;
+        int height = (int)ceil(obj->get_height());
+        for (int j=0; j<height; j++)
+            if (pz + j == z)
+                return true;
     }
     return false;
 }

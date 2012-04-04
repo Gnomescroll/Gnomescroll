@@ -54,6 +54,7 @@ class ObjectPolicyInterface
         virtual bool set_position(float x, float y, float z) = 0;
         virtual Vec3 get_momentum() = 0;
         virtual void set_momentum(float x, float y, float z) = 0;
+        virtual float get_height() = 0;
 
         virtual ~ObjectPolicyInterface() {};
 };
@@ -87,6 +88,7 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
         bool set_position(float x, float y, float z) { return Spatial::set_position(x,y,z); }
         Vec3 get_momentum() { return Spatial::get_momentum(); }
         void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
+        float get_height() { return Spatial::get_height(); }
 
     ObjectStateLayer<Owner, Team, Health, Spatial>()
     {
