@@ -4,14 +4,18 @@
 
 namespace t_item
 {
-	
+    
 SDL_Surface* ItemSheetSurface = NULL;
 GLuint ItemSheetTexture = 0;
 
 void draw_init()
 {
     SDL_Surface* s = create_surface_from_file((char*) "media/sprites/i00.png");
-    if(s == NULL){ printf("t_item: spitesheet load error\n"); abort(); } 
+    if(s == NULL)
+    {
+        printf("t_item: spitesheet load error\n");
+        return;
+    }
 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &ItemSheetTexture );
@@ -32,8 +36,8 @@ void draw_init()
 
 void draw_teardown()
 {
-	glDeleteTextures(1, &ItemSheetTexture );
-	SDL_FreeSurface(ItemSheetSurface);
+    glDeleteTextures(1, &ItemSheetTexture );
+    SDL_FreeSurface(ItemSheetSurface);
 }
 
 }

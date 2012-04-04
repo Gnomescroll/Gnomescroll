@@ -81,7 +81,10 @@
 #include <c_lib/items/items.cpp>
 
 /* t_item */
-#include <c_lib/t_item/t_item.cpp>
+#include <c_lib/t_item/free_item.cpp>
+#include <c_lib/t_item/interface.cpp>
+#include <c_lib/t_item/list.hpp>
+#include <c_lib/t_item/net.cpp>
 
 /* Game modes */
 #include <c_lib/game/game.cpp>
