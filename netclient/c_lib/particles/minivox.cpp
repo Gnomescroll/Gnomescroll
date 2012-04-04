@@ -203,15 +203,16 @@ void Minivox::draw_colored() {
 
     // Quit if voxel is completely transparent
     if(this->a == 0) return;
-    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
-
+    //if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
 
     const float
         x0 = this->vp->p.x,
         y0 = this->vp->p.y,
         z0 = this->vp->p.z;
 
-    if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
+    if( point_fulstrum_test(x0, y0, z0) == false ) return;
+
+    //if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 
     glColor3ub(this->r, this->g, this->b);
 
@@ -244,7 +245,7 @@ void Minivox::draw_colored() {
 void Minivox::draw_textured() {
 #ifdef DC_CLIENT
     if(this->a == 0) return;
-    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+    //if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
 
 
     const float

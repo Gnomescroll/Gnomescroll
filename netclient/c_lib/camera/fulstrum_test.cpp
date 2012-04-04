@@ -43,7 +43,8 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* for
     fulstrum_hy_sphere = 1.0/cos(angle);
     fulstrum_hx_sphere = 1.0/cos(anglex);
 
-    fulstrum_zfar = zfar;
+    //fulstrum_zfar = zfar;
+    fulstrum_zfar = 128.0;
 
     fulstrum_c = camera;
     fulstrum_f = *forward;

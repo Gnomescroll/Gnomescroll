@@ -292,7 +292,7 @@ int init_c_lib() {
     
     return 0;
 }
-
+ 
 
 void close_c_lib() {
     printf("Closing game...\n");
@@ -301,7 +301,7 @@ void close_c_lib() {
     LOOK AT NEXT LINE
 */
     //exit(0);  
-
+ 
     t_map::end_t_map();
     t_map::end_t_vbo();
 

@@ -1,6 +1,8 @@
 #include "interface.hpp"
 
-#include <c_lib/t_item/list.hpp>
+//#include <c_lib/t_item/list.hpp>
+
+#include <c_lib/t_item/free_item.hpp>
 
 namespace t_item
 {
@@ -22,7 +24,7 @@ void state_teardown()
     if (free_item_list != NULL)
         delete free_item_list;
 }
-
+ 
 void tick()
 {
     free_item_list->tick();
@@ -34,3 +36,4 @@ void draw()
 }
 
 }
+ 

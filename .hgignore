@@ -10,6 +10,8 @@ syntax: glob
 
 *~
 
+.pch
+
 font_bake
 font_cache
 *.glc

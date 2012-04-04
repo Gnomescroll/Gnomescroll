@@ -51,7 +51,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     global _OS
     global os_libpth
 
-    conf.check_tool('gcc')
+    #conf.check_tool('gcc')
     conf.check_tool('g++')
 
     #conf.cc_add_flags()     #"-g" -ggdb
@@ -248,8 +248,8 @@ def build(bld):
 
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     
-    c_lib_includes = []
-    c_lib_libpath = []
+    #c_lib_includes = []
+    #c_lib_libpath = []
 
     target = 'client'
     if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
@@ -263,8 +263,8 @@ def build(bld):
         source = ['run.cpp'],
         use = common_libraries+time_lib+SDL_libraries+['LUA'],
         lib = sound_libraries+png_libs,
-        includes = c_lib_includes,
-        libpath = c_lib_libpath,
+        #includes = c_lib_includes,
+        #libpath = c_lib_libpath,
         framework = sound_framework,
         linkflags = ['-rdynamic'],
         target="run"

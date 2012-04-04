@@ -1,3 +1,4 @@
+#pragma once
 #pragma GCC diagnostic ignored "-Wunused-value"
 
 #define __forceinline __attribute__((always_inline))

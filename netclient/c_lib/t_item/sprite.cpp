@@ -4,7 +4,7 @@
 
 namespace t_item
 {
-    
+     
 SDL_Surface* ItemSheetSurface = NULL;
 GLuint ItemSheetTexture = 0;
 
@@ -27,7 +27,7 @@ void draw_init()
 
     GLuint internalFormat = GL_RGBA; //GL_RGBA;
     GLuint format = GL_RGBA;
-
+ 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, s->w, s->h, 0, format, GL_UNSIGNED_BYTE, s->pixels );
     glDisable(GL_TEXTURE_2D);
 

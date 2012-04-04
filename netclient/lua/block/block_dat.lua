@@ -190,15 +190,15 @@ b.hud = hud(40+2, b.texture.n);
 
 b = NewSolidBlock(34, "t4");
 b.texture = iso_texture(t01,4,7);
-b.hud = hud(40+4, b.texture.n);
+b.hud = hud(40+3, b.texture.n);
 
 b = NewSolidBlock(35, "t5");
 b.texture = iso_texture(t01,5,7);
-b.hud = hud(40+5, b.texture.n);
+b.hud = hud(40+4, b.texture.n);
 
 b = NewSolidBlock(36, "t6");
 b.texture = iso_texture(t01,6,7);
-b.hud = hud(40+6, b.texture.n);
+b.hud = hud(40+5, b.texture.n);
 
 
 -- row 6
@@ -259,6 +259,21 @@ b.hud = hud(56+5, b.texture.n);
 b = NewSolidBlock(50, "bt7");
 b.texture = iso_texture(t01,7,8);
 b.hud = hud(56+6, b.texture.n);
+
+
+
+b = NewSolidBlock(51, "mars0");
+b.texture = iso_texture(t01,1,9);
+b.hud = hud(56-16+7, b.texture.n);
+
+b = NewSolidBlock(52, "mars1");
+b.texture = iso_texture(t01,2,9);
+b.hud = hud(56-8+7, b.texture.n);
+
+b = NewSolidBlock(53, "mars2");
+b.texture = iso_texture(t01,3,9);
+b.hud = hud(56+7, b.texture.n);
+
 
 print("map_load_tiles: done");
 
