@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/t_item/free_item.hpp>
+#include <c_lib/template/object_list.hpp>
 
 namespace t_item
 {
@@ -35,6 +36,7 @@ void Free_item_list::tick()
         free_item->tick();
         if (free_item->ttl >= free_item->ttl_max)
             this->destroy(free_item->id);
+            free_item->die();
     }
 }
 

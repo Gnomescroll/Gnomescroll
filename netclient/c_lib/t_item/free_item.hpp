@@ -1,8 +1,5 @@
 #pragma once
 
-
-#include <c_lib/t_item/net.hpp>
-
 namespace t_item
 {
 
@@ -10,7 +7,7 @@ const int FREE_ITEM_TTL = 300; // 10 seconds
 
 typedef enum
 {
-    ITEM_TYPE_NULL = 255,
+    type_NULL = 255,
 } T_ItemTypes;
 
 class Free_item
@@ -24,7 +21,7 @@ class Free_item
     public:
 
         int id;
-        T_ItemTypes item_type;
+        T_ItemTypes type;
 
         int ttl;
         int ttl_max;
@@ -33,13 +30,7 @@ class Free_item
         float mass;
         float damp;
 
-    void die()
-    {
-        t_item_destroy_StoC msg;
-        msg.id = this->id;
-        msg.type = this->type;
-        msg.broadcast();
-    }
+    void die();
         
     void tick()
     {
@@ -72,16 +63,16 @@ class Free_item
     Free_item(int id, float x, float y, float z, float mx, float my, float mz)
     :
     id(id),
-    item_type(ITEM_TYPE_NULL),
+    type(type_NULL),
     ttl(0), ttl_max(FREE_ITEM_TTL),
     mass(1.0f), damp(1.0f)
     {
-        this->create_particle(x,y,z,mx,my,mz, this->mass);
+        this->create_particle(x,y,z,mx,my,mz);
     }
 
     explicit Free_item(int id)
     :
-    id(id), item_type(ITEM_TYPE_NULL),
+    id(id), type(type_NULL),
     ttl(0), ttl_max(FREE_ITEM_TTL),
     vp(NULL), mass(1.0f), damp(1.0f)
     {
