@@ -14,6 +14,8 @@
 
 #include <c_lib/items/items.hpp>
 
+#include <c_lib/t_item/net.hpp>
+
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
@@ -181,7 +183,13 @@ void RegisterMessages() {
     object_shot_object_StoC::register_client_packet();
     object_shot_terrain_StoC::register_client_packet();
     object_shot_nothing_StoC::register_client_packet();
-    
+
+
+    // t_item
+    t_item_create_StoC::register_client_packet();
+    t_item_destroy_StoC::register_client_packet();
+    t_item_picked_up_StoC::register_client_packet();
+    t_item_pick_up_CtoS::register_server_packet();
 
 }
 }

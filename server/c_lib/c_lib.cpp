@@ -80,6 +80,9 @@
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
 
+/* t_item */
+#include <c_lib/t_item/t_item.cpp>
+
 /* Game modes */
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/ctf.cpp>
