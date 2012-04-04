@@ -1,11 +1,11 @@
 #include "interface.hpp"
 
-#include "list.hpp"
+#include "free_item.hpp"
 
 namespace t_item
 {
 
-Free_item_list* free_item_list = NULL;
+class Free_item_list* free_item_list = NULL;
 
 void state_init()
 {
