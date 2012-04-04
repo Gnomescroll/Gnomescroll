@@ -5,7 +5,7 @@
 #include <c_lib/t_item/free_item.hpp>
 #include <c_lib/t_item/list.hpp>
 
-class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToClient<t_item_pick_up_CtoS>
+class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToServer<t_item_pick_up_CtoS>
 {
     public:
         uint8_t type;
