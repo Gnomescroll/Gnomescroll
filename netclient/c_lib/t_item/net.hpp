@@ -3,7 +3,6 @@
 #include <net_lib/net.hpp>
 
 #include <c_lib/t_item/free_item.hpp>
-#include <c_lib/t_item/list.hpp>
 
 class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToServer<t_item_pick_up_CtoS>
 {
