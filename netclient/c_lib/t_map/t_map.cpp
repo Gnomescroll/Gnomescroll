@@ -17,6 +17,13 @@
     #include <c_lib/t_map/server/manager.hpp>
     #include <c_lib/t_map/server/map_chunk_history.hpp>
     #include <c_lib/t_map/net/t_StoC.hpp>
+
+    /* Added for random drops */
+    /* remove these includes after random drops are in separate file */
+    #include <c_lib/common/random.h>
+    #include <c_lib/common/enum_types.hpp>
+    #include <c_lib/entity/policy.hpp>
+    #include <c_lib/state/server_state.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -107,6 +114,23 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         msg.action = action;
         msg.broadcast();
     }
+
+    const float mom = 2.0f; // momentum
+    Object_types type;
+    float p = randf();
+    if (p < 0.3)
+        type = OBJ_TYPE_DIRT;
+    else if (p < 0.6)
+        type = OBJ_TYPE_STONE;
+    else
+        return;
+    ObjectPolicyInterface* obj = ServerState::object_list->create(
+        type,
+        x+randf(),y+randf(), z+randf(),
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
+    );
+    if (obj != NULL)
+        obj->born();
 }
 #endif
 

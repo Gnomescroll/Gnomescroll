@@ -18,6 +18,11 @@ inline void object_create_StoC_model::handle()
         case OBJ_TYPE_LASER_REFILL:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
             break;
+
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
+            break;
             
         default: return;
     }
@@ -33,6 +38,11 @@ inline void object_create_momentum_StoC_model::handle()
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx,my,mz);
+            break;
+
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
             break;
             
         default: return;

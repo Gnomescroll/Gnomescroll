@@ -214,6 +214,7 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
     PickupObjectMinivox(Object_types type, int id)
     : PickupObject(type, id)
     {
+        this->pickup_radius = 0.3f;
         #if DC_CLIENT
         initialize_minivox_properties(type, &this->minivox_properties);
         this->minivox_properties.obj = this;
