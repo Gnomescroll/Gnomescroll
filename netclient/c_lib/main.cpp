@@ -16,7 +16,7 @@
 #include <c_lib/time/frame_rate_limiter.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
 
-#include <c_lib/t_mech/draw.hpp>
+//#include <c_lib/t_mech/draw.hpp>
 
 bool _quit = false;
 

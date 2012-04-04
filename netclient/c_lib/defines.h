@@ -1,5 +1,7 @@
 #pragma once
 
+typedef unsigned int GLuint;
+
 #ifdef __WIN32__
     #ifndef uint
         #define uint unsigned int
