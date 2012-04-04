@@ -60,7 +60,6 @@ class ObjectData
     ObjectData()
     :
     type(OBJ_TYPE_NONE),
-    //height(1.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     blow_up_on_death(false),
@@ -82,7 +81,6 @@ class ObjectState: public ObjectData
 
         // pickup
         bool broadcast_death;
-        int picked_up_by;
 
         // firing
         unsigned int fire_tick; // dont move yet; things besides target acquisition may use this (altho they should probably be bundled into that
@@ -91,7 +89,7 @@ class ObjectState: public ObjectData
     : ObjectData(),
     id(-1),
     ttl(0),
-    broadcast_death(false), picked_up_by(-1), fire_tick(0)
+    broadcast_death(false), fire_tick(0)
     {
     }
 

@@ -19,16 +19,20 @@ const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
 /* Behaviour */
 
-template <class Object>
-inline void diePickup(ObjectState* state, Object* object)
+inline void diePickup(int id, Object_types type, int picked_up_by, bool broadcast_death)
 {
     #if DC_SERVER
-    if (state->broadcast_death)
+    if (picked_up_by < 0)
+    {
+        printf("WARNING: diePickup() -- picked_up_by %d is invalid (did you forget to set it?)\n", picked_up_by);
+        return;
+    }
+    if (broadcast_death)
     {
         object_picked_up_StoC msg;
-        msg.type = state->type;
-        msg.id = state->id;
-        msg.agent_id = state->picked_up_by;
+        msg.id = id;
+        msg.type = type;
+        msg.agent_id = picked_up_by;
         msg.broadcast();
     }
     #endif
@@ -41,7 +45,7 @@ void tickPickup(ObjectState* state, Object* object, float pickup_radius)
     int agent_id = object->nearest_agent_in_range(object->get_position(), pickup_radius);
     if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
     {   // was picked up, die
-        object->was_picked_up(state, agent_id);
+        object->was_picked_up(agent_id);
         state->ttl = state->ttl_max;
     }
     #endif
@@ -53,11 +57,13 @@ class PickupComponent
 {
     public:
         float pickup_radius;
+        int picked_up_by;
+        bool broadcast_death;
 
-        void was_picked_up(ObjectState* state, const int agent_id);
+        void was_picked_up(const int agent_id);
         int nearest_agent_in_range(const Vec3 p, const float radius);
     PickupComponent()
-    : pickup_radius(1.0f)
+    : pickup_radius(1.0f), picked_up_by(-1)
     {}
 };
 
@@ -112,7 +118,8 @@ class PickupObject: public PickupComponent, public BillboardSpriteComponent, pub
 
     void die()
     {
-        diePickup(this->state(), this);
+        ObjectState* state = this->state();
+        diePickup(state->id, state->type, this->picked_up_by, this->broadcast_death);
     }
 };
 
