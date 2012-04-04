@@ -11,15 +11,11 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 {
     private:
         const char* name() { return "Free_item"; }
-
     public:
-
         Free_item_list();
 
-
-        void draw();
+   		void draw();
         void tick();
-
 };
 
 void Free_item_list::draw()
@@ -41,27 +37,6 @@ void Free_item_list::tick()
             destroy(a[i]->id);
     }
 }
-	
-	void init()
-	{
 
-
-	}
-
-	void tear_down()
-	{
-
-
-	}
-
-	void tick()
-	{
-
-	}
-
-	void draw()
-	{
-
-	}
 
 }

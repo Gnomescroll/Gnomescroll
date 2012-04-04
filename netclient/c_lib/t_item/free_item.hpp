@@ -8,6 +8,8 @@ class Free_item
 {
 	public:
 	int id;
+	int item_id;
+
 	int ttl;
 	int ttl_max;
 
@@ -16,15 +18,29 @@ class Free_item
 
 	}
 
-	void draw()
+	static void init()
 	{
 
 	}
 
-	void tick()
+	static void teardown()
 	{
 
 	}
+	
+	void draw();
+	void tick();
 };
+
+void Free_item::draw()
+{
+
+}
+
+void Free_item::tick()
+{
+
+}
+
 
 }

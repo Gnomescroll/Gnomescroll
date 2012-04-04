@@ -142,7 +142,8 @@
 /* items */
 
 #include <c_lib/t_item/free_item.cpp>
-#include <c_lib/t_item/list.cpp>
+#include <c_lib/t_item/interface.cpp>
+#include <c_lib/t_item/sprite.cpp>
 
 /* camera */
 #include <c_lib/camera/camera.cpp>
@@ -245,6 +246,9 @@ int init_c_lib() {
     lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
+    t_item::state_init();
+    t_item::draw_init();
+
     t_mech::draw_init();
     t_mech::state_init();
 
@@ -296,6 +300,9 @@ void close_c_lib() {
 
     t_map::end_t_map();
     t_map::end_t_vbo();
+
+    t_item::state_teardown();
+    t_item::draw_teardown();
 
     t_mech::draw_teardown();
     t_mech::state_teardown();
