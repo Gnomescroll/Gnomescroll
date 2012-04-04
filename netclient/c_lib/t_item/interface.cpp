@@ -19,12 +19,12 @@ void state_teardown()
 
 void tick()
 {
-	free_item_list.tick();
+	free_item_list->tick();
 }
 
 void draw()
 {
-	free_item_list.draw();
+	free_item_list->draw();
 }
 
 }

@@ -12,7 +12,7 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
     private:
         const char* name() { return "Free_item"; }
     public:
-        Free_item_list();
+        Free_item_list() {}
 
    		void draw();
         void tick();

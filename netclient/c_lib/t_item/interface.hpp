@@ -6,7 +6,7 @@ namespace t_item
 {
 
 
-extern Free_item_list* free_item_list;
+extern class Free_item_list* free_item_list;
 
 void state_init();
 void state_teardown();
