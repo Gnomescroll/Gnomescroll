@@ -196,17 +196,24 @@ namespace ClientState {
         voxel_render_list->draw();
 
         // quads
-        minivox_list->draw();
-
-        // BEGIN -- opengl colored minivox flags
         glColor3ub(255,255,255);
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
+        minivox_list->draw_colored();
         colored_minivox_list->draw();
 
         glEnd();
-        // END
+
+        glColor3ub(255,255,255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
+        glBegin(GL_QUADS);
+
+        minivox_list->draw_textured();
+
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
 
         // transparent
         billboard_text_list->draw();

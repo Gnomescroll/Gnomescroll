@@ -64,7 +64,8 @@ class Minivox_list: public Object_list<Minivox, MINIVOX_MAX>
     private:
         const char* name() { return "Minivox"; }
     public:
-        void draw();
+        void draw_colored();
+        void draw_textured();
         void tick();
 
         float _s;

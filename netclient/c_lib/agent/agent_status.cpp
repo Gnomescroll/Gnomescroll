@@ -504,6 +504,9 @@ const bool Agent_status::can_gain_item(Object_types item)
             break;
 
         case OBJ_TYPE_GRENADE_REFILL:
+        case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_STONE:
+        case OBJ_TYPE_DIRT:
             return true;
             break;
             
@@ -531,6 +534,13 @@ bool Agent_status::gain_item(Object_types item)
             
         case OBJ_TYPE_LASER_REFILL:
             if (can) this->a->weapons.laser.add_ammo(20);
+            break;
+
+        case OBJ_TYPE_DIRT:
+            if (can) printf("picked up dirt\n");
+            break;
+        case OBJ_TYPE_STONE:
+            if (can) printf("picked up stone\n");
             break;
             
         default: break;

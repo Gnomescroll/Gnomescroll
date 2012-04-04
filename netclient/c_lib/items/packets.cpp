@@ -10,7 +10,6 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
 inline void object_create_StoC_model::handle()
 {
-    printf("object create packet -- type %d\n", type);
     ObjectPolicyInterface* obj;
     switch (type)
     {
@@ -87,6 +86,8 @@ static inline void _destroy_object_handler(int type, int id)
     {
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
             ClientState::object_list->destroy((Object_types)type, id);
             break;
 

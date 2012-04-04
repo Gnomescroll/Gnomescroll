@@ -171,42 +171,31 @@ void Minivox_list::tick() {
     }
 }
 
-void Minivox_list::draw() {
-#ifdef DC_CLIENT
-
+void Minivox_list::draw_textured()
+{
+    #if DC_CLIENT
     if(num == 0) return;
-
-    glColor3ub(255,255,255);
-
-    GL_ASSERT(GL_DEPTH_TEST, true);
-
-    glBegin(GL_QUADS);
-
-    for (int i=0; i<n_max; i++) {
-        if (a[i] == NULL) continue;
-        if (a[i]->draw_mode != MINIVOX_DRAW_MODE_TEXTURED)
-            a[i]->draw_colored();
-    }
-
-    glEnd();
-
-    glColor3ub(255,255,255);
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
-
-    glBegin(GL_QUADS);
-
-    for (int i=0; i<n_max; i++) {
+    for (int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         if (a[i]->draw_mode == MINIVOX_DRAW_MODE_TEXTURED)
             a[i]->draw_textured();
     }        
+    #endif
+}
 
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
-    
-#endif
+void Minivox_list::draw_colored()
+{
+    #ifdef DC_CLIENT
+    if(num == 0) return;
+
+    for (int i=0; i<n_max; i++)
+    {
+        if (a[i] == NULL) continue;
+        if (a[i]->draw_mode != MINIVOX_DRAW_MODE_TEXTURED)
+            a[i]->draw_colored();
+    }
+    #endif
 }
 
 void Minivox::draw_colored() {

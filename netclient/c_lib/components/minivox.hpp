@@ -10,8 +10,8 @@ class MinivoxProperties: public ComponentProperties
         Color color;
         float size;
         Vec3 forward;
-        Vec3 normal;
         Vec3 right;
+        Vec3 normal;
 
     MinivoxProperties()
     : size(1.0f)
@@ -24,22 +24,28 @@ class MinivoxComponent
         // TODO -- use euler matrix
         void orient_vectors(float theta, float phi)
         {   // recalculates orientation vectors from angular parameter
-            this->minivox_properties.forward.x = cos(theta * PI) * cos(phi * PI);
-            this->minivox_properties.forward.y = sin(theta * PI) * cos(phi * PI);
-            this->minivox_properties.forward.z = sin(phi);
-            normalize_vector(&this->minivox_properties.forward);
+            Vec3 forward, right, normal;
+        
+            forward.x = cos(theta * PI) * cos(phi * PI);
+            forward.y = sin(theta * PI) * cos(phi * PI);
+            forward.z = sin(phi);
+            normalize_vector(&forward);
 
-            this->minivox_properties.right.x = cos(theta*PI + PI/2.0f);
-            this->minivox_properties.right.y = sin(theta*PI + PI/2.0f);
-            this->minivox_properties.right.z = 0.0f;
-            normalize_vector(&this->minivox_properties.right);
+            right.x = cos(theta*PI + PI/2.0f);
+            right.y = sin(theta*PI + PI/2.0f);
+            right.z = 0.0f;
+            normalize_vector(&right);
 
-            this->minivox_properties.normal = vec3_cross(this->minivox_properties.forward, this->minivox_properties.right);
-            this->minivox_properties.right = vec3_cross(this->minivox_properties.forward, this->minivox_properties.normal);
+            normal = vec3_cross(forward, right);
+            right = vec3_cross(forward, normal);
 
-            this->minivox_properties.forward = vec3_scalar_mult(this->minivox_properties.forward, this->minivox_properties.size);
-            this->minivox_properties.right = vec3_scalar_mult(this->minivox_properties.right, this->minivox_properties.size);
-            this->minivox_properties.normal = vec3_scalar_mult(this->minivox_properties.normal, this->minivox_properties.size);
+            forward = vec3_scalar_mult(forward, this->minivox_properties.size);
+            right = vec3_scalar_mult(right, this->minivox_properties.size);
+            normal = vec3_scalar_mult(normal, this->minivox_properties.size);
+
+            this->minivox_properties.forward = forward;
+            this->minivox_properties.right = right;
+            this->minivox_properties.normal = normal;
         }
 
     public:

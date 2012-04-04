@@ -33,10 +33,8 @@ inline void diePickup(int id, Object_types type, int picked_up_by, bool broadcas
 {
     #if DC_SERVER
     if (picked_up_by < 0)
-    {
-        printf("WARNING: diePickup() -- picked_up_by %d is invalid (did you forget to set it?)\n", picked_up_by);
         return;
-    }
+
     if (broadcast_death)
     {
         object_picked_up_StoC msg;
@@ -214,7 +212,6 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
     PickupObjectMinivox(Object_types type, int id)
     : PickupObject(type, id)
     {
-        this->pickup_radius = 0.3f;
         #if DC_CLIENT
         initialize_minivox_properties(type, &this->minivox_properties);
         this->minivox_properties.obj = this;
