@@ -35,11 +35,3 @@ inline void bornUpdateFrozenVox(Voxel_model* vox, Vec3 position, float theta, fl
     vox->update(position.x, position.y, position.z, theta, phi);
     vox->freeze();
 }
-
-template <class Object>
-inline void bornCreateMessage(Object* object)
-{
-    #if DC_SERVER
-    object->broadcastCreate();
-    #endif
-}

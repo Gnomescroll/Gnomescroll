@@ -134,15 +134,15 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
         bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
-        bornCreateMessage(this);
+        this->broadcastCreate();
     }
 
     void die()
     {
         ObjectState* state = this->state();
-        dieExplode(state, this);
-        dieBroadcast(state, this);
-        dieRevokeOwner(state, this);
+        dieExplode(state, this->get_position(), this->get_owner());
+        this->broadcastDeath();
+        dieRevokeOwner(state->type, this->get_owner());
         if (this->voxel_properties.vox != NULL)
             dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
     }

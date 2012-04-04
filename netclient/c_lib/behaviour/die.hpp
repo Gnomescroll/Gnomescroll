@@ -22,28 +22,17 @@ namespace ClientState
 #include <c_lib/animations/animations.hpp>
 #endif
 
-template <class Object>
-void dieExplode(ObjectState* state, Object* object)
+/* die behaviours */
+
+void dieExplode(ObjectState* state, Vec3 position, int owner)
 {
     #if DC_SERVER
-    Vec3 p = object->get_position();
     ServerState::damage_objects_within_sphere(
-        p.x, p.y, p.z,
-        state->explosion_radius, state->explosion_damage, object->get_owner(),
+        position.x, position.y, position.z,
+        state->explosion_radius, state->explosion_damage, owner,
         state->type, state->id,
         state->suicidal
     );
-    #endif
-}
-
-template <class Object>
-void dieBroadcast(ObjectState* state, Object* object)
-{
-    #if DC_SERVER
-    object_destroy_StoC msg;
-    msg.id = state->id;
-    msg.type = state->type;
-    msg.broadcast();
     #endif
 }
 
@@ -54,14 +43,12 @@ void dieTeamItemAnimation(Vec3 position, int team)
     #endif
 }
 
-template <class Object>
-void dieRevokeOwner(ObjectState* state, Object* object)
+void dieRevokeOwner(Object_types type, int owner)
 {
-    int owner = object->get_owner();
     if (owner != NO_AGENT)
     {
         Agent_state* a = STATE::agent_list->get(owner);
         if (a != NULL)
-            a->status.lose_item(state->type);
+            a->status.lose_item(type);
     }
 }

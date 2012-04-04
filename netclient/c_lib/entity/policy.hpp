@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/entity/state.hpp>
+#include <c_lib/items/packets.hpp>
 
 /* Interface and templates for all objects */
 
@@ -147,6 +148,17 @@ class ObjectInterface: public StateLayer
         StateMessage msg;
         this->stateMessage(&msg);
         msg.broadcast();
+    }
+
+    void broadcastDeath()
+    {
+        #if DC_SERVER
+        ObjectState* state = this->state();
+        object_destroy_StoC msg;
+        msg.id = state->id;
+        msg.type = state->type;
+        msg.broadcast();
+        #endif
     }
 
     ObjectInterface<StateLayer, CreateMessage, StateMessage>()

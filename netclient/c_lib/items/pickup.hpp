@@ -170,7 +170,7 @@ class PickupObject: public PickupComponent, public PickupInterface
 
     void born()
     {
-        bornCreateMessage(this);
+        this->broadcastCreate();
     }
 
     void die()
