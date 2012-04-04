@@ -139,8 +139,10 @@
 #include <c_lib/t_mech/state.cpp>
 #include <c_lib/t_mech/draw.cpp>
 
-//#include <c_lib/t_map/t_viz.c>
-//#include <c_lib/t_map/t_vbo.c>
+/* items */
+
+#include <c_lib/t_item/free_item.cpp>
+#include <c_lib/t_item/list.cpp>
 
 /* camera */
 #include <c_lib/camera/camera.cpp>
