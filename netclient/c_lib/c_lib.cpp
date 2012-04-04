@@ -145,6 +145,9 @@
 #include <c_lib/t_item/interface.cpp>
 #include <c_lib/t_item/sprite.cpp>
 
+/* t_item */
+#include <c_lib/t_item/t_item.cpp>
+
 /* camera */
 #include <c_lib/camera/camera.cpp>
 #include <c_lib/camera/fulstrum_test.cpp>

@@ -3,10 +3,10 @@
 namespace ItemDrops
 {
 
-void PickupComponent::was_picked_up(ObjectState* state, const int agent_id)
+void PickupComponent::was_picked_up(const int agent_id)
 {
-    state->broadcast_death = true;
-    state->picked_up_by = agent_id;
+    this->broadcast_death = true;
+    this->picked_up_by = agent_id;
 }
 
 int PickupComponent::nearest_agent_in_range(const Vec3 p, const float radius)

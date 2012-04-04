@@ -26,7 +26,7 @@ class ObjectData
         Object_types type;
 
         // spatial
-        float height;
+        //float height;
 
         // physics
         float damp;
@@ -60,7 +60,6 @@ class ObjectData
     ObjectData()
     :
     type(OBJ_TYPE_NONE),
-    height(1.0f),
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     blow_up_on_death(false),
@@ -82,7 +81,6 @@ class ObjectState: public ObjectData
 
         // pickup
         bool broadcast_death;
-        int picked_up_by;
 
         // firing
         unsigned int fire_tick; // dont move yet; things besides target acquisition may use this (altho they should probably be bundled into that
@@ -91,7 +89,7 @@ class ObjectState: public ObjectData
     : ObjectData(),
     id(-1),
     ttl(0),
-    broadcast_death(false), picked_up_by(-1), fire_tick(0)
+    broadcast_death(false), fire_tick(0)
     {
     }
 
@@ -112,6 +110,7 @@ const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 const int NULL_HEALTH = INT_MAX;
 const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
+const float NULL_HEIGHT = 1.0f;
 
 /* provide virtual getters that support all data operations but will return invalid values */
 class OwnedDefault
@@ -160,4 +159,5 @@ class SpatialDefault
     { return false; }
     void set_momentum(float mx, float my, float mz)
     {}
+    float get_height() { return NULL_HEIGHT; }
 };

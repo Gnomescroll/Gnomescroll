@@ -25,7 +25,8 @@ class PositionVoxelProperties: public PositionProperties
         bool _changed;
     public:
         float camera_height;
-
+        float height;
+        
         bool changed()
         {   // reset change state to false after a read
             bool cached = this->_changed;
@@ -36,7 +37,7 @@ class PositionVoxelProperties: public PositionProperties
         { this->_changed = changed; }
 
     PositionVoxelProperties()
-    : _changed(false), camera_height(1.0f)
+    : _changed(false), camera_height(1.0f), height(1.0f)
     {}
 };
 
@@ -81,6 +82,8 @@ class PositionComponent
         { return NULL_MOMENTUM; }
         void set_momentum(float x, float y, float z)
         {}
+        float get_height()
+        { return NULL_HEIGHT; }
         
     PositionComponent() {}
 };
@@ -109,6 +112,11 @@ class PositionVoxelComponent
 
             this->position_properties.set_changed(true);
             return true;
+        }
+
+        float get_height()
+        {
+            return this->position_properties.height;
         }
 
         Vec3 get_momentum()
@@ -165,6 +173,9 @@ class VerletComponent
             if (this->verlet_properties.vp == NULL)
                 this->verlet_properties.vp = new VerletParticle(x,y,z, mx,my,mz, mass);
         }
+
+        float get_height()
+        { return NULL_HEIGHT; }
 
     VerletComponent()
     {

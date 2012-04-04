@@ -80,7 +80,6 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     : SpawnerComponent(), SpawnerInterface()
     {
         this->_state.id = id;
-        this->_state.height = SPAWNER_HEALTH;
         this->_state.broadcast_state_change = true;
         this->_state.cost = COST_SPAWNER;
         this->_state.reward = COST_SPAWNER;
@@ -103,6 +102,8 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         this->voxel_properties.init_hitscan = true;
         this->voxel_properties.init_draw = true;
         this->voxel_properties.vox_dat = &spawner_vox_dat;
+
+        this->position_properties.height = SPAWNER_HEIGHT;
     }
 
     ~Spawner()
