@@ -87,6 +87,5 @@ class MinivoxComponent
 
     MinivoxComponent()
     {
-        this->orient_vectors(0,0);
     }
 };

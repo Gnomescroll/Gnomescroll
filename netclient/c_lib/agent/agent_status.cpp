@@ -537,10 +537,10 @@ bool Agent_status::gain_item(Object_types item)
             break;
 
         case OBJ_TYPE_DIRT:
-            if (can) printf("picked up dirt\n");
+            //if (can) printf("picked up dirt\n");
             break;
         case OBJ_TYPE_STONE:
-            if (can) printf("picked up stone\n");
+            //if (can) printf("picked up stone\n");
             break;
             
         default: break;

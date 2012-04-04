@@ -214,6 +214,7 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
     {
         #if DC_CLIENT
         initialize_minivox_properties(type, &this->minivox_properties);
+        this->set_rotation(0,0);
         this->minivox_properties.obj = this;
         ClientState::colored_minivox_list->register_object(&this->minivox_properties);
         #endif
@@ -225,7 +226,6 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
         ClientState::colored_minivox_list->unregister_object(&this->minivox_properties);
         #endif
     }
-
 
     void draw()
     {

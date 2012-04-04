@@ -104,16 +104,15 @@ int apply_damage(int x, int y, int z, int dmg)
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
     int res = apply_damage(x,y,z, dmg);
-    if (res == 0)
-    {
-        block_action_StoC msg;
-        msg.x = x;
-        msg.y = y;
-        msg.z = z;
-        msg.val = res;
-        msg.action = action;
-        msg.broadcast();
-    }
+    if (res != 0) return;
+
+    block_action_StoC msg;
+    msg.x = x;
+    msg.y = y;
+    msg.z = z;
+    msg.val = res;
+    msg.action = action;
+    msg.broadcast();
 
     const float mom = 2.0f; // momentum
     Object_types type;
