@@ -56,6 +56,10 @@ const float LASER_REFILL_MASS = 1.0f;
 const int LASER_REFILL_TTL = 30 * 12;   // 12 seconds
 const float LASER_REFILL_DAMP = 0.4f;
 
+/* Minivxo drops */
+const float MINIVOX_ITEM_ROTATION_THETA = 0.02f;
+const float MINIVOX_ITEM_ROTATION_PHI = 0.0f;
+
 /* Dirt */
 const int DIRT_MAX = 256;
 const Color DIRT_COLOR = { 150, 98, 0 };

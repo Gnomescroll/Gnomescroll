@@ -129,6 +129,8 @@ void initialize_minivox_properties(Object_types type, MinivoxProperties* obj)
             break;
         default: return;
     }
+    obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
+    obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
 }
 
 /* Composition */
@@ -227,13 +229,22 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
         #endif
     }
 
+    void tick()
+    {
+        #if DC_CLIENT
+        tickRotate(this, this->minivox_properties.dtheta_speed, this->minivox_properties.dphi_speed);
+        #endif
+        PickupObject::tick();
+    }
+
     void draw()
     {
         drawMinivox(
             this->get_position(),
             this->minivox_properties.forward,
             this->minivox_properties.right,
-            this->minivox_properties.normal, 
+            this->minivox_properties.normal,
+            this->minivox_properties.size * 0.5,
             this->minivox_properties.color
         );
     }

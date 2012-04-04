@@ -17,6 +17,9 @@ void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
     || !current_camera->in_view(position.x, position.y, position.z))
         return;
 
+    if (point_fulstrum_test(position.x, position.y, position.z) == false)
+        return; // fulstrum check
+
     Vec3 up = vec3_init(
         model_view_matrix[0]*texture_scale,
         model_view_matrix[4]*texture_scale,
@@ -52,12 +55,15 @@ void drawBillboardSprite(Vec3 position, int texture_index, float texture_scale)
     #endif
 }
 
-void drawMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Color color)
+void drawMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, float xy_offset, Color color)
 {
+    // TODO -- merge current_camera->in_view and fulstrum test or make their calls clearer
+    // in_view does radial distance
+    
     #if DC_CLIENT
     if (current_camera == NULL
     || !current_camera->in_view(position.x, position.y, position.z))
-        return;
+        return; // radial distance check
 
     const float
         x0 = position.x,
@@ -65,7 +71,7 @@ void drawMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, Color col
         z0 = position.z;
 
     if (point_fulstrum_test(x0,y0,z0) == false)
-        return; //check to see if they are in viewing fulstrum
+        return; // fulstrum check
 
     glColor3ub(color.r, color.g, color.b);
 

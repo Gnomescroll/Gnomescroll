@@ -63,3 +63,9 @@ void tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
     state->fire_tick++;
     #endif
 }
+
+template <class Object>
+void tickRotate(Object* object, float dtheta, float dphi)
+{
+    object->delta_rotation(dtheta, dphi);
+}

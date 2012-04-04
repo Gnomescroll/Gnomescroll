@@ -299,7 +299,6 @@ void Minivox_list::unset_size()
     minivox_size = _s;
 }
 
-
 Minivox_list::Minivox_list()
 :
 _s(minivox_size)
