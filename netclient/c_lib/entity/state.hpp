@@ -7,6 +7,7 @@
 #include <c_lib/ray_trace/handlers.hpp>
 
 #include <limits.h>
+#include <float.h>
 
 typedef enum
 {
@@ -109,7 +110,7 @@ const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be 
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
 const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 const int NULL_HEALTH = INT_MAX;
-const Vec3 NULL_POSITION = vec3_init(0,0,0);
+const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
 
 /* provide virtual getters that support all data operations but will return invalid values */
