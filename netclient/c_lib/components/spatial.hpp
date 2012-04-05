@@ -45,17 +45,10 @@ class PositionVoxelProperties: public PositionProperties
 class VerletProperties
 {
     public:
-        VerletParticle* vp;
+        VerletParticle vp;
 
     VerletProperties()
-    : vp(NULL)
     {}
-
-    ~VerletProperties()
-    {
-        if (this->vp != NULL)
-            delete this->vp;
-    }
 };
 
 class PositionComponent
@@ -147,25 +140,25 @@ class VerletComponent
         
         Vec3 get_position()
         {
-            return this->verlet_properties.vp->p;
+            return this->verlet_properties.vp.p;
         }
 
         bool set_position(float x, float y, float z)
         {
-            if (position_is_equal(this->verlet_properties.vp->p, x,y,z))
+            if (position_is_equal(this->verlet_properties.vp.p, x,y,z))
                 return false;
-            this->verlet_properties.vp->set_position(x,y,z);
+            this->verlet_properties.vp.set_position(x,y,z);
             return true;
         }
 
         Vec3 get_momentum()
         {
-            return this->verlet_properties.vp->get_momentum();
+            return this->verlet_properties.vp.get_momentum();
         }
 
         void set_momentum(float x, float y, float z)
         {
-            this->verlet_properties.vp->set_momentum(x,y,z);
+            this->verlet_properties.vp.set_momentum(x,y,z);
         }
 
         /* Additional specialization */
@@ -173,8 +166,8 @@ class VerletComponent
         void create_particle(float x, float y, float z, float mx, float my, float mz)
         {
             const float mass = 1.0f; // TODO
-            if (this->verlet_properties.vp == NULL)
-                this->verlet_properties.vp = new VerletParticle(x,y,z, mx,my,mz, mass);
+            this->verlet_properties.vp.mass = mass;
+            this->verlet_properties.vp.set_state(x,y,z,mx,my,mz);
         }
 
         float get_height()
@@ -184,5 +177,4 @@ class VerletComponent
     {
         this->create_particle(0,0,0,0,0,0);
     }
-
 };

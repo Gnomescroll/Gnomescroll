@@ -70,9 +70,14 @@ class PickupComponent
 
         void was_picked_up(const int agent_id);
         int nearest_agent_in_range(const Vec3 p, const float radius);
+        
     PickupComponent()
     : pickup_radius(1.0f), picked_up_by(-1)
     {}
+
+    ~PickupComponent()
+    {
+    }
 };
 
 /* Initializers */
@@ -156,11 +161,13 @@ class PickupObject: public PickupComponent, public PickupInterface
         initialize_pickup_object(type, this->state());
     }
 
-    virtual ~PickupObject() {}
+    virtual ~PickupObject()
+    {
+    }
 
     void tick()
     {
-        tickVerletBounce(this->verlet_properties.vp, this->state()->damp);
+        tickVerletBounce(&this->verlet_properties.vp, this->state()->damp);
         tickPickup(this->state(), this, this->pickup_radius);
         tickTTL(this->state(), this);
     }

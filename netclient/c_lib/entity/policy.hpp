@@ -57,7 +57,10 @@ class ObjectPolicyInterface
         virtual void set_momentum(float x, float y, float z) = 0;
         virtual float get_height() = 0;
 
-        virtual ~ObjectPolicyInterface() {}
+    ObjectPolicyInterface() {}
+    virtual ~ObjectPolicyInterface()
+    {
+    }
 };
 
 /* ObjectStateLayer :
@@ -96,7 +99,8 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
     }
 
     virtual ~ObjectStateLayer<Owner, Team, Health, Spatial>()
-    {}
+    {
+    }
 };
 
 /* ObjectInterface
@@ -168,5 +172,6 @@ class ObjectInterface: public StateLayer
     {}
 
     virtual ~ObjectInterface<StateLayer, CreateMessage, StateMessage>()
-    {}
+    {
+    }
 };

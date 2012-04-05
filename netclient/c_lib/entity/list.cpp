@@ -59,29 +59,6 @@ bool GameObject_list::full(Object_types type)
     return false;
 }
 
-//// TODO - get real polymorphic destructors working
-//void delete_obj_of_type(Object_types type, ObjectPolicyInterface* obj)
-//{
-    //switch (type)
-    //{
-        //case OBJ_TYPE_GRENADE_REFILL:
-        //case OBJ_TYPE_LASER_REFILL:
-            //delete (ItemDrops::PickupObjectSprite*)obj;
-            //break;
-        //case OBJ_TYPE_DIRT:
-        //case OBJ_TYPE_STONE:
-            //delete (ItemDrops::PickupObjectMinivox*)obj;
-            //break;
-        //case OBJ_TYPE_TURRET:
-            //delete (Turret*)obj;
-            //break;
-        //case OBJ_TYPE_SPAWNER:
-            //delete (Spawner*)obj;
-            //break;
-        //default: return;
-    //}
-//}
-
 void GameObject_list::destroy(Object_types type, int id)
 {
     ObjectPolicyInterface* obj = this->objects[type][id];
@@ -94,7 +71,6 @@ void GameObject_list::destroy(Object_types type, int id)
     obj->die();
     this->occupancy[type] -= 1;
     delete obj;
-    //delete_obj_of_type(type, obj); // MAJOR TODO
     this->objects[type][id] = NULL;
 }
 
