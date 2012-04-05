@@ -91,7 +91,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     if OS == 'Linux':
         conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
-
+    if OS != 'Windows':
+        conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
+    
     version = get_version()
 
     extra_options = [
@@ -266,7 +268,7 @@ def build(bld):
         #includes = c_lib_includes,
         #libpath = c_lib_libpath,
         framework = sound_framework,
-        linkflags = ['-rdynamic'],
+        #linkflags = ['-rdynamic'],
         target="run"
     )
 
