@@ -29,8 +29,8 @@ OPT_UINT(seed, 8007513)
 OPT_BOOL(logger, false)
 
 
-//void register_options()
-//{
+void register_options()
+{
 ///* General */
 //OPT_STRING_REGISTER(server_name)
 
@@ -52,6 +52,6 @@ OPT_BOOL(logger, false)
 ///* Logging */
 //OPT_BOOL_REGISTER(logger)
 
-//}
+}
 
 }
