@@ -32,13 +32,13 @@ namespace ServerState
         spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
         owned_list = new OwnedList;
         
-        agent_list = new Agent_list;
         cspray_list = new Cspray_list;
         grenade_list = new Grenade_list;
         //neutron_list = new Neutron_list;
-        slime_list = new Monsters::Slime_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
+        slime_list = new Monsters::Slime_list;
+        agent_list = new Agent_list;
         object_list = new GameObject_list;
     }
 

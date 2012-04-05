@@ -41,9 +41,12 @@ class GameObject_list
             {
                 for (int i=0; i<this->max_objects; i++)
                     if (this->objects[i] != NULL)
+                    {
                         for (int j=0; j<this->max_occupancy[j]; j++)
                             if (this->objects[i][j] != NULL)
                                 delete this->objects[i][j];
+                        free(this->objects[i]);
+                    }
                 free(this->objects);
             }
         }

@@ -152,6 +152,7 @@ int init_c_lib()
 void close_c_lib()
 {
     printf("Server closing...\n");
+    t_map::end_t_map();
     teardown_chat_server();
     ServerState::teardown();
     printf("Server closed\n");
