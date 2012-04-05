@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef USE_OPENAL
-
 namespace OpenALSound
 {
 
@@ -25,5 +23,3 @@ int test();
 void enumerate_devices();
 
 }
-
-#endif

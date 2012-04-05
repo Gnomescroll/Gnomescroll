@@ -215,6 +215,7 @@ void parse_sound_triggers(char *fn)
 
                 if (n_sounds > n_lines)
                 {
+                    printf("OPENAL: double line allocation\n");
                     n_lines *= 2;
                     sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_lines);
                 }
@@ -233,10 +234,11 @@ void parse_sound_triggers(char *fn)
     }
 
     // finalize
-    if (n_sounds == 0)
+    if (n_sounds == 0 && sound_file_functions != NULL)
+    {
+        free(sound_file_functions);
         sound_file_functions = NULL;
-    else if (n_sounds != n_lines)
-        sound_file_functions = (struct Soundfile*)realloc(sound_file_functions, sizeof(struct Soundfile) * n_sounds);
+    }
 
     // cleanup
     free(buff);

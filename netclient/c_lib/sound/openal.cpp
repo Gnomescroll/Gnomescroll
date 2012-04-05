@@ -48,7 +48,7 @@ class GS_SoundBuffer
     }
 };
 static const int MAX_SOUNDS = Sound::MAX_WAV_BUFFERS;
-static GS_SoundBuffer sound_buffers[MAX_SOUNDS];
+static GS_SoundBuffer** sound_buffers = NULL;
 static int soundfile_index = 0;
 
 static bool enabled = true;
@@ -59,11 +59,11 @@ static ALCdevice *device = NULL;
 static ALCcontext *context = NULL;
 
 static const ALsizei MAX_BUFFERS = Sound::MAX_WAV_BUFFERS;
-static ALuint buffers[MAX_BUFFERS];
+static ALuint* buffers = NULL;
 static int buffer_index = 0;
 
 static const ALsizei MAX_SOURCES = 16;
-static ALuint sources[MAX_SOURCES];
+static ALuint* sources = NULL;
 
 struct GS_SoundSource {
     int source_id;
@@ -137,6 +137,13 @@ void init()
 
     inited = enabled = Options::sound;
     if (!enabled) return;
+
+    // allocate memory
+    sources = (ALuint*)malloc(sizeof(ALuint) * MAX_SOURCES);
+    memset(sources, -1, sizeof(ALuint));
+    buffers = (ALuint*)malloc(sizeof(ALuint) * MAX_BUFFERS);
+    memset(buffers, -1, sizeof(ALuint));
+    sound_buffers = (GS_SoundBuffer**)calloc(MAX_SOUNDS, sizeof(GS_SoundBuffer*));
     
     Sound::init_wav_buffers();
 
@@ -253,6 +260,19 @@ void close()
         device = NULL;
     }
 
+    // deallocate memory
+    if (sources != NULL)
+        free(sources);
+    if (buffers != NULL)
+        free(buffers);
+    if (sound_buffers != NULL)
+    {
+        for (int i=0; i<MAX_SOUNDS; i++)
+            if (sound_buffers[i] != NULL)
+                delete sound_buffers[i];
+        free(sound_buffers);
+    }
+
     Sound::teardown_wav_buffers();
     enabled = false;
     if (inited)
@@ -286,15 +306,17 @@ void load_sound(Soundfile* snd)
     // check if file has been loaded
     for (int i=0; i<MAX_SOUNDS; i++)
     {
-        s = &sound_buffers[i];
+        if (sound_buffers[i] == NULL) continue;
+        s = sound_buffers[i];
         if (s->metadata != NULL && strcmp(s->metadata->file, snd->file) == 0)
         {   // already loaded this sound file
-            GS_SoundBuffer* new_s = &sound_buffers[soundfile_index];
+            GS_SoundBuffer* new_s = new GS_SoundBuffer;
             new_s->id = soundfile_index;
             new_s->hash = hash(snd->fn);
             new_s->buffer_id = s->buffer_id;
             new_s->loaded = true;
             new_s->metadata = snd;
+            sound_buffers[soundfile_index] = new_s;
             soundfile_index++;
             return;
         }
@@ -341,12 +363,13 @@ void load_sound(Soundfile* snd)
         return;
 
     // put in lookup table for playback
-    s = &sound_buffers[soundfile_index];
+    s = new GS_SoundBuffer;
     s->id = soundfile_index;
     s->hash = hash(snd->fn);
     s->buffer_id = buffer_index;
     s->loaded = true;
     s->metadata = snd;
+    sound_buffers[soundfile_index] = s;
     buffer_index++;
     soundfile_index++;
 }
@@ -367,15 +390,26 @@ GS_SoundBuffer* get_sound_buffer_from_function_name(char *fn)
 {
     unsigned int h = hash(fn);
     for (int i=0; i<MAX_SOUNDS; i++)
-        if (sound_buffers[i].loaded && sound_buffers[i].hash == h)
-            return &sound_buffers[i];
+    {
+        if (sound_buffers[i] == NULL) continue;
+        if (sound_buffers[i]->loaded && sound_buffers[i]->hash == h)
+            return sound_buffers[i];
+    }
     return NULL;
 }
 
 int set_source_properties(int source_id, Soundfile* snd)
 {
     if (source_id < 0 || source_id >= MAX_SOURCES)
+    {
         printf("WARNING -- set_source_properties -- source_id %d out of range\n", source_id);
+        return 1;
+    }
+    if (snd == NULL)
+    {
+        printf("WARNING -- set_source_properties -- snd is NULL\n");
+        return 1;
+    }
     alSourcef(sources[source_id], AL_PITCH, snd->pitch);
     alSourcef(sources[source_id], AL_GAIN, snd->gain);
     alSourcef(sources[source_id], AL_MAX_DISTANCE, snd->max_distance);
@@ -410,7 +444,7 @@ static bool add_to_sources(int soundfile_id, int source_id, bool two_dimensional
         {
             active_sources[i].source_id = source_id;
             active_sources[i].two_dimensional = two_dimensional;
-            sound_buffers[soundfile_id].add_source(source_id);
+            sound_buffers[soundfile_id]->add_source(source_id);
             return true;
         }
     return false;
@@ -428,7 +462,7 @@ static int play_sound(GS_SoundBuffer* sound_buffer, float x, float y, float z, f
         return -1;
 
     if (source_id >= MAX_SOURCES || source_id < 0)
-    printf("/*********/\nWARNING: source_id %d out of bounds\n/***********/\n", source_id);
+        return -1;
         
     // set source properties
     if (set_source_properties(source_id, sound_buffer->metadata))
@@ -539,7 +573,8 @@ void update()
     // update sound_buffer metadata
     for (int i=0; i<MAX_SOUNDS; i++)
     {
-        GS_SoundBuffer* b = &sound_buffers[i];
+        GS_SoundBuffer* b = sound_buffers[i];
+        if (b == NULL) continue;
         const int current_sources = b->current_sources;
         for (int j=0; j<current_sources; j++)
         {
