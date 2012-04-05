@@ -347,7 +347,9 @@ text(NULL),
 format(NULL),
 x(0), y(0),
 refx(0),refy(0)
-{}
+{
+    this->reset_alignment();
+}
 
 Text::~Text()
 {

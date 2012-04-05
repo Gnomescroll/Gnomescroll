@@ -18,7 +18,7 @@ inline void bornSetVox(Voxel_model* vox, bool init_hitscan, bool init_draw)
 {
     vox->set_hitscan(init_hitscan);
     vox->register_hitscan();
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     vox->set_draw(init_draw);
     #endif
 }
