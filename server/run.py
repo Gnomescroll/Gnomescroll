@@ -32,7 +32,7 @@ from init_c_lib import START_CLOCK, GET_TICK
 class Main:
 
     def __init__(self):
-        #init_c_lib.load_options(opts)
+        init_c_lib.load_options(opts)
         init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
 
         #init_c_lib.init_terrain()
