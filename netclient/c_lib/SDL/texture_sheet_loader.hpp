@@ -19,7 +19,8 @@ class TextureSheet
 
     ~TextureSheet()
     {
-        if(surface != NULL) SDL_FreeSurface(surface);
+        if (surface != NULL)
+            SDL_FreeSurface(surface);
     }
 };
 
@@ -40,6 +41,11 @@ class TextureSheetList
         texture_num=0;
     }
 
+    ~TextureSheetList()
+    {
+        for (int i=0; i<TEXTURE_SHEET_LIST_MAX; i++) this->delete_texture(i);
+    }
+
     int load_texture(char* filename)
     {
         //load texture
@@ -51,7 +57,7 @@ class TextureSheetList
 
         int id = texture_num;
 
-        textures[texture_num] = new TextureSheet();
+        textures[texture_num] = new TextureSheet;
         textures[texture_num]->surface = _load_image(filename);
 
         if(textures[texture_num]->surface == 0)
@@ -68,8 +74,8 @@ class TextureSheetList
     int reload_texture(int id, char* filename)
     {
         delete textures[id];
-
-        textures[id] = new TextureSheet();
+        
+        textures[id] = new TextureSheet;
         textures[id]->surface = _load_image(filename);
 
         if(textures[texture_num]->surface == 0)
@@ -77,6 +83,14 @@ class TextureSheetList
             printf("TextureSheetList: reloading spritesheet %s failed \n", filename);
             return 0;
         }
+    }
+
+    void delete_texture(int id)
+    {
+        if (this->textures[id] == NULL)
+            return;
+        delete this->textures[id];
+        this->textures[id] = NULL;
     }
 
     void blit(SDL_Surface* destination, int tile_dim, int tile_xindex, int tile_yindex, int texture_sheet_index)
