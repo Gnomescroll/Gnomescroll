@@ -49,7 +49,7 @@ void init_cameras()
     setup_fulstrum(
         current_camera->fov, current_camera->ratio, current_camera->z_far,
         vec3_init(current_camera->x,current_camera->y,current_camera->z),
-        &f,&r,&u
+        f,r,u
     );
 
 }
@@ -190,7 +190,7 @@ void Camera::world_projection()
     right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
     up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
 
-    setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), &look, &right, &up);
+    setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), look, right, up);
 
     glEnable(GL_DEPTH_TEST);
     glColor3ub(255, 255, 255);

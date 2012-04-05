@@ -38,7 +38,6 @@ void print_wav_data(WavData* data)
     );
 }
 
-#ifdef USE_OPENAL
 ALenum get_openal_wav_format(WavData* data)
 {
     if (data->channels == 1)
@@ -57,7 +56,6 @@ ALenum get_openal_wav_format(WavData* data)
     }
 
 }
-#endif
 
 int get_free_wav_data(WavData** data)
 {

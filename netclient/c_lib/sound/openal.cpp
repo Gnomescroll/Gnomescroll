@@ -1,7 +1,5 @@
 #include "openal.hpp"
 
-#ifdef USE_OPENAL
-
 #include <c_lib/sound/sound.hpp>
 //#include <AL/al.h>
 //#include <AL/alc.h>
@@ -687,5 +685,3 @@ void enumerate_devices()
 }
 
 }
-
-#endif

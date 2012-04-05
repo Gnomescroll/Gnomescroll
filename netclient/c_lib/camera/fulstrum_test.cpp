@@ -4,62 +4,49 @@
 
 #include <c_lib/physics/vec3.hpp>
 
-//static float fulstrum_fovy;
-//static float fulstrum_fovx;
-//static float fulstrum_aspect;
-static float fulstrum_zfar = 0;
+static struct
+{
+    float zfar;
 
-static float fulstrum_hx = 0;
-static float fulstrum_hy = 0;
+    float hy;
+    float hy_sphere;
 
-static float fulstrum_hy_sphere = 0;
-static float fulstrum_hx_sphere = 0;
+    struct Vec3 c; //camera
+    struct Vec3 f;   //forward
+    struct Vec3 u;   //up
+    struct Vec3 r;   //right
 
-/*
-    Use vec3, Vec3 deprecated
-*/
-static struct Vec3 fulstrum_c; //camera
-static struct Vec3 fulstrum_f;   //forward
-static struct Vec3 fulstrum_u;   //up
-static struct Vec3 fulstrum_r;   //right
+    struct Vec3 r_2d;   //right
+    struct Vec3 f_2d;
+} fulstrum;
 
-static struct Vec3 fulstrum_2d_r;   //right
-static struct Vec3 fulstrum_2d_f;
-
-void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* forward, Vec3 *right, Vec3* up)
+void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forward, Vec3 right, Vec3 up)
 {
     const float pi = 3.14159265;
-
     fovy *= (pi/180);
 
-    fulstrum_hy = tan(fovy/2);
-    fulstrum_hx = fulstrum_hy*aspect;;
+    fulstrum.zfar = zfar;
 
-    //WTF COED
     double angle = fovy / 2.0;
     double tang = tan(angle);
     float anglex = atan(tang*aspect);
+    fulstrum.hy = tan(fovy/2);
+    fulstrum.hy = fulstrum.hy*aspect;;
+    fulstrum.hy_sphere = 1.0/cos(angle);
+    fulstrum.hy_sphere = 1.0/cos(anglex);
+    
+    fulstrum.c = camera;
+    fulstrum.f = forward;
+    fulstrum.u = up;
+    fulstrum.r = right;
 
-    fulstrum_hy_sphere = 1.0/cos(angle);
-    fulstrum_hx_sphere = 1.0/cos(anglex);
+    fulstrum.f_2d = forward;
+    fulstrum.f_2d.z = 0.0;
+    fulstrum.f_2d = vec3_normalize(fulstrum.f_2d);
 
-    //fulstrum_zfar = zfar;
-    fulstrum_zfar = 128.0;
-
-    fulstrum_c = camera;
-    fulstrum_f = *forward;
-    fulstrum_r = *right;
-    fulstrum_u = *up;
-
-    fulstrum_2d_f = *forward;
-    fulstrum_2d_f.z = 0.0;
-    fulstrum_2d_f = vec3_normalize(fulstrum_2d_f);
-
-    fulstrum_2d_r = *right;
-    fulstrum_2d_r.z = 0.0;
-    fulstrum_2d_r = vec3_normalize(fulstrum_2d_r);
-    //fulstrum_2d_r.x
-
+    fulstrum.r_2d = right;
+    fulstrum.r_2d.z = 0.0;
+    fulstrum.r_2d = vec3_normalize(fulstrum.r_2d);
 }
 
 #define SPHERE_FULSTRUM_DEBUG 0
@@ -67,35 +54,35 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* for
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
     //r = 1.0f;
-    x -= fulstrum_c.x;
-    y -= fulstrum_c.y;
-    z -= fulstrum_c.z;
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
+    z -= fulstrum.c.z;
 
 #if SPHERE_FULSTRUM_DEBUG
-    float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
+    float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
     //printf("dz= %f, radius= %f \n", dz,r);
-    if( dz < 0 || dz > fulstrum_zfar ) return false;
+    if( dz < 0 || dz > fulstrum.zfar ) return false;
 
-    float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
-    //printf("dx= %f, theshhold= %f \n", dx, dz*fulstrum_hx);
-    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
+    //printf("dx= %f, theshhold= %f \n", dx, dz*fulstrum.hy);
+    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
 
-    float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
-    //printf("dy= %f, theshhold= %f \n", dy, dz*fulstrum_hy);
-    if( dy < -dz*(fulstrum_hy+r/2) || dy > dz*(fulstrum_hy+r/2) ) return false;
+    float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    //printf("dy= %f, theshhold= %f \n", dy, dz*fulstrum.hy);
+    if( dy < -dz*(fulstrum.hy+r/2) || dy > dz*(fulstrum.hy+r/2) ) return false;
 
     return true;
 #else
-    float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
-    if( dz + r < 0 || dz > fulstrum_zfar - r ) return false;
+    float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
+    if( dz + r < 0 || dz > fulstrum.zfar - r ) return false;
     
-    float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
-    float rx = fulstrum_hx_sphere*r;
-    if( dx < -dz*fulstrum_hx - rx|| dx > dz*fulstrum_hx + rx ) return false;
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
+    float rx = fulstrum.hy_sphere*r;
+    if( dx < -dz*fulstrum.hy - rx|| dx > dz*fulstrum.hy + rx ) return false;
     
-    float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
-    float ry = fulstrum_hx_sphere*r;
-    if( dy < -dz*fulstrum_hy - ry || dy > dz*fulstrum_hy + ry ) return false;
+    float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    float ry = fulstrum.hy_sphere*r;
+    if( dy < -dz*fulstrum.hy - ry || dy > dz*fulstrum.hy + ry ) return false;
 
     return true;
 #endif
@@ -103,39 +90,39 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
 bool point_fulstrum_test(float x, float y, float  z)
 {
-    x -= fulstrum_c.x;
-    y -= fulstrum_c.y;
-    z -= fulstrum_c.z;
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
+    z -= fulstrum.c.z;
 
-    float dz = x*fulstrum_f.x + y*fulstrum_f.y + z*fulstrum_f.z;
-    if( dz < 0 || dz > fulstrum_zfar ) return false;
+    float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
+    if( dz < 0 || dz > fulstrum.zfar ) return false;
 
-    float dx = (x*fulstrum_r.x + y*fulstrum_r.y + z*fulstrum_r.z);
-    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
+    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
 
-    float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
-    if( dy < -dz*fulstrum_hy || dy > dz*fulstrum_hy ) return false;
+    float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
 
     return true;
 }
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
-    //float dz = x*fulstrum_f.x + y*fulstrum_f.y;
-    //if( dz + r < 0 || dz > fulstrum_zfar - r ) return false;
+    //float dz = x*fulstrum.f.x + y*fulstrum.f.y;
+    //if( dz + r < 0 || dz > fulstrum.zfar - r ) return false;
 
-    x -= fulstrum_c.x;
-    y -= fulstrum_c.y;
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
     
-    float dz = x*fulstrum_2d_f.x + y*fulstrum_2d_f.y;
+    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
 
-    float dx = x*fulstrum_2d_r.x + y*fulstrum_2d_r.y;
-    float rx = fulstrum_hx_sphere*r;
-    if( dx < -dz*fulstrum_hx - rx|| dx > dz*fulstrum_hx + rx ) return false;
+    float dx = x*fulstrum.r_2d.x + y*fulstrum.r_2d.y;
+    float rx = fulstrum.hy_sphere*r;
+    if( dx < -dz*fulstrum.hy - rx|| dx > dz*fulstrum.hy + rx ) return false;
     
-    //float dy = x*fulstrum_u.x + y*fulstrum_u.y;
-    //float ry = fulstrum_hx_sphere*r;
-    //if( dy < -dz*fulstrum_hy - ry || dy > dz*fulstrum_hy + ry ) return false;
+    //float dy = x*fulstrum.u.x + y*fulstrum.u.y;
+    //float ry = fulstrum.hy_sphere*r;
+    //if( dy < -dz*fulstrum.hy - ry || dy > dz*fulstrum.hy + ry ) return false;
 
     return true;
 }
@@ -143,19 +130,19 @@ bool xy_circle_fulstrum_test(float x, float y, float r)
 
 bool xy_point_fulstrum_test(float x, float y)
 {
-    x -= fulstrum_c.x;
-    y -= fulstrum_c.y;
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
 
     //if(x*x + y*y <= 16*16) return true;
 
-    float dz = x*fulstrum_2d_f.x + y*fulstrum_2d_f.y;
-    if( dz < 0 || dz > fulstrum_zfar ) return false;
+    float dz = x*fulstrum.f_2d.x + y*fulstrum.f_2d.y;
+    if( dz < 0 || dz > fulstrum.zfar ) return false;
 
-    float dx = (x*fulstrum_r.x + y*fulstrum_r.y);
-    if( dx < -dz*fulstrum_hx || dx > dz*fulstrum_hx ) return false;
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y);
+    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
 
-    //float dy = x*fulstrum_u.x + y*fulstrum_u.y + z*fulstrum_u.z;
-    //if( dy < -dz*fulstrum_hy || dy > dz*fulstrum_hy ) return false;
+    //float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    //if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
 
     return true;
 }

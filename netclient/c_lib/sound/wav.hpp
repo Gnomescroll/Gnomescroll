@@ -1,10 +1,8 @@
 #pragma once
 
-#ifdef USE_OPENAL
 //#include <AL/al.h>
 //#include <AL/alc.h>
 #include <compat_al.h>
-#endif
 
 namespace Sound
 {
@@ -22,9 +20,7 @@ typedef struct WavFile
     bool in_use;
 } WavData;
 
-#ifdef USE_OPENAL
 ALenum get_openal_wav_format(WavData* data);
-#endif
 
 void print_wav_data(WavData* data);
 
