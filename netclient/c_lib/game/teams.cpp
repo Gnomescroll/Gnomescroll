@@ -24,7 +24,7 @@ void Team::init(int id)
 void Team::set_name(char* name)
 {
     if (strlen(name) > TEAM_NAME_MAX_LENGTH)
-        name[TEAM_NAME_MAX_LENGTH+1] = '\0';
+        name[TEAM_NAME_MAX_LENGTH] = '\0';
     strcpy(this->name, name);
     printf("Team name is %s\n", name);
 }

@@ -200,7 +200,8 @@ void Agent_event::update_team_color(unsigned char r, unsigned char g, unsigned c
 void Agent_event::update_team_color()
 {
     unsigned char r,g,b;
-    ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
+    int ret = ClientState::ctf->get_team_color(this->a->status.team, &r, &g, &b);
+    if (ret) return;
     this->update_team_color(r,g,b);
 }
 

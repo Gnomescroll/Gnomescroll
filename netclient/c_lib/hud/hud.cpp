@@ -808,7 +808,8 @@ void Scoreboard::update()
         }
         j++;
 
-        ClientState::ctf->get_team_color(agent->status.team, &r, &g, &b);
+        int ret = ClientState::ctf->get_team_color(agent->status.team, &r, &g, &b);
+        if (ret) continue;
         
         ids[i]->set_position(start_x + col_width*0, _yresf - y);
         ids[i]->update_formatted_string(1, agent->id);
