@@ -26,10 +26,10 @@ options.name = "flarb"
 
 -- server --
 
-options.server = "174.37.26.119"
----options.server = "127.0.0.1"
----options.port = 0
-options.port = 4096
+---options.server = "174.37.26.119"
+options.server = "127.0.0.1"
+options.port = 0
+---options.port = 4096
 
 
 -- display options -- 
