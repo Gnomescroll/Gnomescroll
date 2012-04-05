@@ -31,12 +31,13 @@ class GameObject_list
             {
                 for (int i=0; i<this->max_objects; i++)
                 {
-                    if (this->objects[i] == NULL) continue;
+                    ObjectPolicyInterface** list = this->objects[i];
+                    if (list == NULL) continue;
                     if (this->max_occupancy[i] <= 0) continue;
-                    for (int j=0; j<this->max_occupancy[j]; j++)
-                        if (this->objects[i][j] != NULL)
-                            delete this->objects[i][j];
-                    free(this->objects[i]);
+                    for (int j=0; j<this->max_occupancy[i]; j++)
+                        if (list[j] != NULL)
+                            delete list[j];
+                    free(list);
                 }
                 free(this->objects);
             }
