@@ -39,4 +39,6 @@ class BillboardSpriteComponent
         {
             this->sprite_properties.texture_scale = scale;
         }
+
+        virtual ~BillboardSpriteComponent() {}
 };

@@ -36,14 +36,6 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg)
     Sound::spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
     system_message->object_created(s);
 }
-
-void spawner_destroy(Object_types type, int id)
-{
-    Spawner* s = (Spawner*)ClientState::object_list->get(type, id);
-    if (s != NULL)
-        system_message->object_destroyed(s);
-    ClientState::object_list->destroy(type, id);
-}
 #endif
 
 /* Spawners */

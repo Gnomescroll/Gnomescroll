@@ -116,4 +116,6 @@ class MinivoxComponent
     MinivoxComponent()
     {
     }
+
+    virtual ~MinivoxComponent() {}
 };

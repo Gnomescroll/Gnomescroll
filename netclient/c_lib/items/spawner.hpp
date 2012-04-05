@@ -112,9 +112,6 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         STATE::owned_list->unregister_object(&this->owned_properties);
     }
 
-    /* Interface */
-    Spawner* get_derived() { return this; }
-
     void tick()
     {
         tickStayOnGround(this->state(), this);
@@ -147,6 +144,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         dieRevokeOwner(state->type, this->get_owner());
         if (this->voxel_properties.vox != NULL)
             dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
+        dieChatMessage(this);
     }
 };
 

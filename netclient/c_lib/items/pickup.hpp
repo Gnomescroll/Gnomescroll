@@ -156,8 +156,7 @@ class PickupObject: public PickupComponent, public PickupInterface
         initialize_pickup_object(type, this->state());
     }
 
-    /* Interface */
-    PickupObject* get_derived() { return this; }
+    virtual ~PickupObject() {}
 
     void tick()
     {

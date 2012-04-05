@@ -10,7 +10,7 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
 inline void object_create_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj;
+    ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
@@ -31,7 +31,7 @@ inline void object_create_StoC_model::handle()
 
 inline void object_create_momentum_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj;
+    ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
@@ -72,41 +72,6 @@ inline void object_create_owner_team_index_StoC_model::handle()
     }
 }
 
-/* Destruction */
-
-// forward declarations
-void spawner_destroy(Object_types type, int id);
-void turret_destroy(Object_types type, int id);
-
-// use privately
-static inline void _destroy_object_handler(int type, int id) __attribute((always_inline));
-static inline void _destroy_object_handler(int type, int id)
-{
-    switch (type)
-    {
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
-            ClientState::object_list->destroy((Object_types)type, id);
-            break;
-
-        case OBJ_TYPE_SPAWNER:
-            spawner_destroy((Object_types)type, id);
-            break;
-        case OBJ_TYPE_TURRET:
-            turret_destroy((Object_types)type, id);
-            break;
-
-        default: return;
-    }    
-}
-
-inline void object_destroy_StoC::handle()
-{
-    _destroy_object_handler(type, id);
-}
-
 /* State */
 
 // forward declarations
@@ -136,6 +101,32 @@ inline void object_state_momentum_StoC_model::handle()
     }
 }
 
+/* Destruction */
+
+// use privately
+static inline void _destroy_object_handler(Object_types type, int id) __attribute((always_inline));
+static inline void _destroy_object_handler(Object_types type, int id)
+{
+    ClientState::object_list->destroy(type, id);
+}
+
+inline void object_destroy_StoC::handle()
+{
+    _destroy_object_handler((Object_types)type, id);
+}
+
+/* Actions */
+
+inline void object_picked_up_StoC::handle()
+{
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
+        Sound::pickup_item();
+    _destroy_object_handler((Object_types)type, id);
+}
+
+/* Hitscan */
+
 inline void object_shot_object_StoC::handle()
 {
     switch (this->type)
@@ -147,18 +138,6 @@ inline void object_shot_object_StoC::handle()
         default:break;
     }
 }
-
-/* Actions */
-
-inline void object_picked_up_StoC::handle()
-{
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
-        Sound::pickup_item();
-    _destroy_object_handler(type, id);
-}
-
-/* Hitscan */
 
 inline void object_shot_terrain_StoC::handle()
 {

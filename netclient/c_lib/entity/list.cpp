@@ -11,7 +11,7 @@ void GameObject_list::tick()
     ObjectState* state;
     for (int type=0; type<this->max_objects; type++)
     {
-        if (this->occupancy[type] == 0) continue;
+        if (this->occupancy[type] <= 0) continue;
         int max = this->get_object_max((Object_types)type);
         for (int i=0; i<max; i++)
         {
@@ -59,6 +59,29 @@ bool GameObject_list::full(Object_types type)
     return false;
 }
 
+//// TODO - get real polymorphic destructors working
+//void delete_obj_of_type(Object_types type, ObjectPolicyInterface* obj)
+//{
+    //switch (type)
+    //{
+        //case OBJ_TYPE_GRENADE_REFILL:
+        //case OBJ_TYPE_LASER_REFILL:
+            //delete (ItemDrops::PickupObjectSprite*)obj;
+            //break;
+        //case OBJ_TYPE_DIRT:
+        //case OBJ_TYPE_STONE:
+            //delete (ItemDrops::PickupObjectMinivox*)obj;
+            //break;
+        //case OBJ_TYPE_TURRET:
+            //delete (Turret*)obj;
+            //break;
+        //case OBJ_TYPE_SPAWNER:
+            //delete (Spawner*)obj;
+            //break;
+        //default: return;
+    //}
+//}
+
 void GameObject_list::destroy(Object_types type, int id)
 {
     ObjectPolicyInterface* obj = this->objects[type][id];
@@ -71,6 +94,7 @@ void GameObject_list::destroy(Object_types type, int id)
     obj->die();
     this->occupancy[type] -= 1;
     delete obj;
+    //delete_obj_of_type(type, obj); // MAJOR TODO
     this->objects[type][id] = NULL;
 }
 
@@ -296,7 +320,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
         obj->state()->type = type;
     }
     else
-        printf("%s_list: Cannot create object from id: id is in use: %d\n", name(), id);
+        printf("%s_list: Cannot create object type %d, id %d is in use\n", name(), type, id);
     return obj;
 }
 

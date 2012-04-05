@@ -109,10 +109,6 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             STATE::owned_list->unregister_object(&this->owned_properties);
         }
 
-    /* Interface */
-
-    Turret* get_derived() { return this; }
-
     void tick()
     {   // make each a template function
         tickStayOnGround(this->state(), this);
@@ -147,6 +143,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
         dieRevokeOwner(state->type, this->get_owner());
         if (this->voxel_properties.vox != NULL)
             dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
+        dieChatMessage(this);
     }
 
 };

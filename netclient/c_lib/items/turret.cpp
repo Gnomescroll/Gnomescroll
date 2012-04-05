@@ -36,14 +36,6 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     system_message->object_created(t);
 }
 
-void turret_destroy(Object_types type, int id)
-{
-    Turret* t = (Turret*)ClientState::object_list->get(type, id);
-    if (t != NULL)
-        system_message->object_destroyed(t);
-    ClientState::object_list->destroy(type, id);
-}
-
 void turret_shot_object(object_shot_object_StoC* msg)
 {
     if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects

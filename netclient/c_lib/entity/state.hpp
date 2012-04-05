@@ -66,6 +66,8 @@ class ObjectData
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1)
     {}
+
+    ~ObjectData() {}
 };
 
 // encapsulates all information needed for any object,
