@@ -23,6 +23,7 @@ held(false)
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
 Flag::~Flag()

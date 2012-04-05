@@ -290,6 +290,7 @@ draw(true),
 hitscan(true),
 radius(0),
 voxel(NULL),
+needs_vbo_update(false),
 damaged(false)
 {}
 
@@ -299,19 +300,20 @@ id(-1),
 draw(true),
 hitscan(true),
 radius(0),
+voxel(NULL),
+needs_vbo_update(false),
 damaged(false)
 {
-    this->voxel = NULL;
     this->init(xdim, ydim, zdim, scale);
 }
 
 Voxel_volume::~Voxel_volume()
 {
     #ifdef DC_CLIENT
-    if(voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered \n");
+    if (voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered\n");
     #endif
     if (this->hitscan)
-        if(voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered \n");
+        if (voxel_hitscan_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_hitscan_list not unregistered\n");
     free(this->voxel);
 }
 

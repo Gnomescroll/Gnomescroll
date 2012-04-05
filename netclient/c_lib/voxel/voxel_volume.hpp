@@ -28,7 +28,7 @@ class Voxel_volume
     float radius;   //update when changing scale
 
     int xdim,ydim,zdim;
-    int _xdim,_ydim,_zdim;
+    //int _xdim,_ydim,_zdim;
     Voxel* voxel;
     int index1;
     int index12;

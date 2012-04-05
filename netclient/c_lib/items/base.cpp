@@ -38,8 +38,7 @@ void Base::tick()
     y = (int)this->y;
     z = (int)this->z;
     if (isSolid(_get(x,y,z)))
-    {
-        // move up
+    {   // move up
         while (isSolid(_get(x,y,++z)))
         {
             if (z >= map_dim.z)
@@ -50,8 +49,7 @@ void Base::tick()
         }
     }
     else
-    {
-        // fall down
+    {   // fall down
         while (!isSolid(_get(x,y,--z)))
         {
             if (z<=0)
@@ -94,6 +92,7 @@ spawn_radius(BASE_SPAWN_RADIUS)
     #ifdef DC_CLIENT
     this->vox->set_draw(true);
     #endif
+    this->vox->update(this->x, this->y, this->z, this->theta, this->phi);
 }
 
 Base::~Base()
