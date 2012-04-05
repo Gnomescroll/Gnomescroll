@@ -16,6 +16,7 @@ class PositionProperties
     PositionProperties()
     : theta(0.0f), phi(0.0f)
     {
+        this->position = vec3_init(-1,-1,-1);
     }
 };
 
@@ -85,7 +86,9 @@ class PositionComponent
         float get_height()
         { return NULL_HEIGHT; }
         
-    PositionComponent() {}
+    PositionComponent()
+    {
+    }
 };
 
 class PositionVoxelComponent

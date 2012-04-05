@@ -78,6 +78,8 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->_state.attack_enemies = true;
             this->_state.attack_random = true;
 
+            this->attacker_properties.id = id;
+            this->attacker_properties.type = OBJ_TYPE_TURRET;
             this->attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
             this->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
             this->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
