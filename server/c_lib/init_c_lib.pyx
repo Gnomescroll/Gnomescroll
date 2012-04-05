@@ -33,7 +33,6 @@ def NetServerFlushToNet():
 Options
 """
 
-"""
 cdef extern from "./options.hpp" namespace "Options":
     void set_server_name(char* server_name)
     void set_ip_address(char* ip_address)
@@ -60,7 +59,6 @@ def load_options(opts):
     set_seed(opts.seed)
     reset_seed(opts.seed)
     set_logger(opts.logger)
-"""
 
 #new functions
 cdef extern from "../c_lib/time/physics_timer.h":
