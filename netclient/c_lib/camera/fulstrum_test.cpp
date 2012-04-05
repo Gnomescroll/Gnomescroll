@@ -66,6 +66,7 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3* for
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
+    //r = 1.0f;
     x -= fulstrum_c.x;
     y -= fulstrum_c.y;
     z -= fulstrum_c.z;

@@ -23,7 +23,6 @@ namespace t_map
     void end_t_vbo()
     {
         delete vbo_map;
-
         t_vbo_update_end();
         vbo_draw_end();
     }

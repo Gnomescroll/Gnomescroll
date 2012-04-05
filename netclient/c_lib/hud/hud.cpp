@@ -797,7 +797,8 @@ void Scoreboard::update()
             continue;
         }
         float y = start_y + HudFont::font->data.line_height*(j+2);
-        if (agent->status.team != team) {
+        if (agent->status.team != team)
+        {
             team = agent->status.team;
             team_draw[team-1] = true;
             y += HudFont::font->data.line_height;    // newline
@@ -843,7 +844,8 @@ void Scoreboard::update()
 
     for (i=0; i<(int)N_TEAMS; i++)
     {
-        if (!team_draw[i]) {
+        if (!team_draw[i])
+        {
             team_names[i]->set_text((char*)"");
             team_scores[i]->set_text((char*)"");
             continue;

@@ -78,31 +78,55 @@ namespace ClientState {
     void teardown_lists()
     {
         // voxel models
+        //slime_list->print();
         delete slime_list;
+        //agent_list->print();
         delete agent_list;
+        //object_list->print();
         delete object_list;
 
         // voxel lists
         // must go after all voxels
+        //printf("voxel render list\n");
+        //voxel_render_list->print();
         delete voxel_render_list;
+        //printf("voxel hitscan list\n");
+        //voxel_hitscan_list->print();
         delete voxel_hitscan_list;
 
         // behaviour lists
+        //spawner_list->print();
+        //printf("spawner list\n");
         delete spawner_list;
+        //printf("owned list\n");
+        //owned_list->print();
         delete owned_list;
+        //printf("billboard sprite list list\n");
+        //billboard_sprite_list->print();
         delete billboard_sprite_list;
+        //printf("colored minivox list\n");
+        //colored_minivox_list->print();
         delete colored_minivox_list;
 
         // particles
+        //cspray_list->print();
         delete cspray_list;
+        //grenade_list->print();
         delete grenade_list;
+        //shrapnel_list->print();
         delete shrapnel_list;
+        //blood_list->print();
         delete blood_list;
         //delete neutron_list;
+        //minivox_list->print();
         delete minivox_list;
+        //billboard_text_list->print();
         delete billboard_text_list;
+        //billboard_text_hud_list->print();
         delete billboard_text_hud_list;
+        //hitscan_effect_list->print();
         delete hitscan_effect_list;
+        //hitscan_laser_effect_list->print();
         delete hitscan_laser_effect_list;
 
     }

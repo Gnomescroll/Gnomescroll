@@ -296,14 +296,8 @@ int init_c_lib() {
 
 void close_c_lib() {
     printf("Closing game...\n");
-
-/*
-    LOOK AT NEXT LINE
-*/
-    //exit(0);  
  
     t_map::end_t_map();
-    t_map::end_t_vbo();
 
     t_item::state_teardown();
     t_item::draw_teardown();

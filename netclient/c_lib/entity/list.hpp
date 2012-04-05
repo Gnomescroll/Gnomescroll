@@ -24,31 +24,31 @@ class GameObject_list
 
         void teardown()
         {
-            if (this->filtered_objects != NULL)
-                free(this->filtered_objects);
-            if (this->filtered_object_distances != NULL)
-                free(this->filtered_object_distances);
-
-            if (this->occupancy != NULL)
-                free(this->occupancy);
-            if (this->max_occupancy != NULL)
-                free(this->max_occupancy);
-
             if (this->index_start != NULL)
                 free(this->index_start);
 
             if (this->objects != NULL)
             {
                 for (int i=0; i<this->max_objects; i++)
-                    if (this->objects[i] != NULL)
-                    {
-                        for (int j=0; j<this->max_occupancy[j]; j++)
-                            if (this->objects[i][j] != NULL)
-                                delete this->objects[i][j];
-                        free(this->objects[i]);
-                    }
+                {
+                    if (this->objects[i] == NULL) continue;
+                    for (int j=0; j<this->max_occupancy[j]; j++)
+                        if (this->objects[i][j] != NULL)
+                            delete this->objects[i][j];
+                    free(this->objects[i]);
+                }
                 free(this->objects);
             }
+
+            if (this->occupancy != NULL)
+                free(this->occupancy);
+            if (this->max_occupancy != NULL)
+                free(this->max_occupancy);
+
+            if (this->filtered_objects != NULL)
+                free(this->filtered_objects);
+            if (this->filtered_object_distances != NULL)
+                free(this->filtered_object_distances);
         }
 
         void init()

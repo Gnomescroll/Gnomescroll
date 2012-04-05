@@ -162,63 +162,38 @@ void Camera::move(float dx, float dy, float dz) {
 
 void Camera::world_projection()
 {
-
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
- /*
-    DEPRECATE GLU
-*/   
-    gluPerspective( fov, ratio, z_near, z_far);
-/*
-    DEPRECATE GLU
-*/
-
-    glMatrixMode( GL_MODELVIEW );
+    // DEPRECATE GLU
+    gluPerspective(fov, ratio, z_near, z_far);
+    // DEPRECATE GLU
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    struct Vec3 _l;
-    _l = vec3_init(1.0, 0.0, 0.0);
-    _l = vec3_euler_rotation( _l, theta + 1.00, phi - 1.00, 0.0 );
+    Vec3 right = vec3_init(0.0, 1.0, 0.0);
+    Vec3 up = vec3_init(0.0f, 0.0f, 1.0f);
+    Vec3 look = vec3_init(1.0, 0.0, 0.0);
+    look = vec3_euler_rotation(look, theta + 1.00, phi - 1.00, 0.0);
 
-    xl = _l.x; yl = _l.y; zl = _l.z;
+    // DEPRECATE GLU
+    gluLookAt(
+        x,y,z,
+        x + look.x, y + look.y, z + look.z,
+        up.x, up.y, up.z
+    );
+    // DEPRECATE GLU
 
-    xu = 0.0f;
-    yu = 0.0f;
-    zu = 1.0f;
-
-/*
-    DEPRECATE GLU
-*/
-    gluLookAt(x,y,z,
-               x+xl, y+yl, z+zl,
-               xu, yu, zu);
-
-/*
-    DEPRECATE GLU
-*/
     update_camera_matrices();
     
     //set fulstrum camera up
-    {
-        Vec3 f = vec3_init(1.0, 0.0, 0.0);
-        Vec3 r = vec3_init(0.0, 1.0, 0.0);
-        Vec3 u = vec3_init(0.0, 0.0, 1.0);
+    right = vec3_euler_rotation(right, theta+1.00, phi-1.00, 0.0 );
+    up = vec3_euler_rotation(up, theta+1.00, phi-1.00, 0.0 );
 
-        f = vec3_euler_rotation(f, theta+1.00, phi - 1.00, 0.0 );
-        r = vec3_euler_rotation(r, theta+1.00, phi - 1.00, 0.0 );
-        u = vec3_euler_rotation(u, theta+1.00, phi - 1.00, 0.0 );
+    setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), &look, &right, &up);
 
-        setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), &f,&r,&u );
-         //fulstrum test
-    }
-
-    glEnable (GL_DEPTH_TEST);
-
+    glEnable(GL_DEPTH_TEST);
     glColor3ub(255, 255, 255);
-
 }
 
 void Camera::set_angles(float theta, float phi) {
@@ -228,20 +203,14 @@ void Camera::set_angles(float theta, float phi) {
 
 void Camera::hud_projection() {
 
-    //glDisable (GL_DEPTH_TEST);   // end world projection
-
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-/*
-    DEPRECATE GLU
-*/
+    // DEPRECATE GLU
     gluOrtho2D(0, x_size, 0, y_size);
-/*
-    DEPRECATE GLU
-*/
+    // DEPRECATE GLU
 
-    glMatrixMode( GL_MODELVIEW );
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     glDisable(GL_DEPTH_TEST);

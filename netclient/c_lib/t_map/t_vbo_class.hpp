@@ -121,6 +121,7 @@ class Vbo_map
     {
         for(int i=0; i<xchunk_dim*ychunk_dim; i++) if(vbo_array[i] != NULL) delete vbo_array[i];
         delete[] vbo_array;
+        delete[] vbo_list;
     }
 
 /*

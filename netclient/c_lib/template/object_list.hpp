@@ -59,8 +59,8 @@ class Object_list {
         void print_members();
 
         // filtering
-        Object_state* filtered_objects[max_n]; // tmp array for filtering objects
-        float filtered_object_distances[max_n];
+        Object_state** filtered_objects; // tmp array for filtering objects
+        float* filtered_object_distances;
         int n_filtered;
 
         void filter_none(); // copies pointers/null into filtered list, unchanged
@@ -79,6 +79,8 @@ id_c(0),
 num(0)
 {
     this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
+    this->filtered_objects = (Object_state**)calloc(max_n, sizeof(Object_state*));
+    this->filtered_object_distances = (float*)calloc(max_n, sizeof(float));
     //where();
 }
 
@@ -101,6 +103,10 @@ Object_list<Object_state, max_n>::~Object_list()
         }
         free(this->a);
     }
+    if (this->filtered_objects != NULL)
+        free(this->filtered_objects);
+    if (this->filtered_object_distances != NULL)
+        free(this->filtered_object_distances);
 }
 
 template <class Object_state, int max_n>

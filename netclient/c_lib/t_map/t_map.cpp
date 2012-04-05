@@ -5,7 +5,7 @@
 
 #include "t_map_class.hpp"
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
     #include <c_lib/t_map/glsl/cache.hpp>
     #include <c_lib/t_map/glsl/texture.hpp>
     #include <c_lib/t_map/glsl/shader.hpp>
@@ -13,7 +13,7 @@
     #include <c_lib/t_map/net/t_StoC.hpp>
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
     #include <c_lib/t_map/server/manager.hpp>
     #include <c_lib/t_map/server/map_chunk_history.hpp>
     #include <c_lib/t_map/net/t_StoC.hpp>
@@ -48,27 +48,26 @@ void init_t_map()
 
     main_map = new Terrain_map(MAP_WIDTH, MAP_HEIGHT); //512 by 512 map
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     init_client_compressors();
     init_t_vbo();
     init_textures();
+    #endif
 
-#endif
-
-#ifdef DC_SERVER
+    #if DC_SERVER
     map_history = new Terrain_map_history(MAP_WIDTH, MAP_HEIGHT);
-#endif
+    #endif
 
 }
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     void init_for_draw()
     {
         printf("init for draw \n");
         init_cache();
         init_shaders();
     }
-#endif
+    #endif
     
 void end_t_map()
 {
@@ -77,13 +76,14 @@ void end_t_map()
     end_t_properties();
     delete main_map;
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     end_client_compressors();
-#endif
+    end_t_vbo();
+    #endif
 
-#ifdef DC_SERVER
+    #if DC_SERVER
     delete map_history;
-#endif
+    #endif
 
 }
 class Terrain_map* get_map()
@@ -93,13 +93,13 @@ class Terrain_map* get_map()
 
 int apply_damage(int x, int y, int z, int dmg)
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     Sound::block_took_damage(x,y,z,0,0,0);
     #endif
     return t_map::main_map->apply_damage(x,y,z,dmg);
 }
 
-#ifdef DC_SERVER
+#if DC_SERVER
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
@@ -224,7 +224,7 @@ void _set(int x, int y, int z, int value)
 /*
     WTF
 */
-#ifdef DC_SERVER
+#if DC_SERVER
 void _set_broadcast(int x, int y, int z, int value) 
 {
     t_map::block_StoC msg;

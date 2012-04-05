@@ -240,7 +240,12 @@ void Voxel_render_list::draw()
             Voxel_volume* vv = render_list[i];
 
             if(vv->vvl.vnum == 0) continue;
-            if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
+            if(!sphere_fulstrum_test(
+                vv->world_matrix.v[3].x,
+                vv->world_matrix.v[3].y,
+                vv->world_matrix.v[3].z,
+                vv->radius
+            )) continue;
 
             vv->draw_bounding_box();
         }
@@ -249,6 +254,7 @@ void Voxel_render_list::draw()
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
 
+    //printf("Voxel_render::draw() if _vbo->vnum\n");
     if( _vbo->vnum == 0 )
     {
         if (VOXEL_RENDER_DEBUG)
@@ -256,6 +262,7 @@ void Voxel_render_list::draw()
         this->update_vertex_buffer_object();
         return;
     }
+    //printf("Voxel_render::draw() if _vbo->id\n");
     if( _vbo->id == 0 )
     {
         if (VOXEL_RENDER_DEBUG)
@@ -290,22 +297,16 @@ void Voxel_render_list::draw()
     //int drawn = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if( this->render_list[i] == NULL || !this->render_list[i]->draw ) continue;
+        if (this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
         Voxel_volume* vv = this->render_list[i];
 
-        if(vv->vvl.vnum == 0) continue;
-        if(! sphere_fulstrum_test( vv->world_matrix.v[3].x, vv->world_matrix.v[3].y, vv->world_matrix.v[3].z, vv->radius) ) continue;
-
-        //drawn++;
-
-        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 2 )
-        {
-            //VOXEL_RENDER_DEBUG = 1;
-        }
-        if( vv->vhe.entity_type == OBJ_TYPE_AGENT && vv->vhe.part_id == 3 )
-        {
-            //VOXEL_RENDER_DEBUG = 1;
-        }
+        if (vv->vvl.vnum == 0) continue;
+        if (!sphere_fulstrum_test(
+            vv->world_matrix.v[3].x,
+            vv->world_matrix.v[3].y,
+            vv->world_matrix.v[3].z,
+            vv->radius
+        )) continue;
 
         if (VOXEL_RENDER_DEBUG)
         { 
