@@ -77,3 +77,7 @@ const float STONE_DAMP = 0.4f;
 const float STONE_MASS = 1.0f;
 
 } // ItemDrops
+
+
+// Inventory
+const int INVENTORY_MAX = 1024;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/physics/verlet.hpp>
+
 static bool position_is_equal(Vec3 p, float x, float y, float z)
 {
     if (p.x != x || p.y != y || p.z != z)
@@ -45,7 +47,7 @@ class PositionVoxelProperties: public PositionProperties
 class VerletProperties
 {
     public:
-        VerletParticle vp;
+        Verlet::VerletParticle vp;
 
     VerletProperties()
     {}

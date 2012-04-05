@@ -238,6 +238,11 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_STONE:
             obj = new ItemDrops::PickupObjectMinivox(type, id);
             break;
+
+        case OBJ_TYPE_INVENTORY:
+            obj = new Inventory(id);
+            break;
+            
         default: return NULL;
     }
     return obj;

@@ -2,8 +2,10 @@
 
 #include <c_lib/components/component.hpp>
 #include <c_lib/entity/state.hpp>
-#include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/constants.hpp>
+
+// forward decl
+void switch_agent_ownership(Object_types item, int owner, int new_owner);
 
 class OwnedProperties: public ComponentProperties
 {

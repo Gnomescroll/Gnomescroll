@@ -5,6 +5,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/player_agent_action.hpp>
+#include <c_lib/items/inventory.hpp>
 
 #include <c_lib/state/client_state.hpp>
 
@@ -87,6 +88,13 @@ class PlayerAgent_state {
         PlayerAgent_action action;
 
         bool identified;
+
+        // TODO
+        // caching inventory here, in case packet arrives early
+        // agent metadata is sent separate from creation
+        // should probably have an AgentCache object that will store any early
+        // metadata, and copy over cached info once real agent is received
+        Inventory* cached_inventory;
 
         PlayerAgent_state();
         ~PlayerAgent_state();

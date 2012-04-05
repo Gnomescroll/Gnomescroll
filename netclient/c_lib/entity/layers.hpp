@@ -16,3 +16,11 @@ typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, VerletCompone
 //typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthComponent> OwnedHealthState;
 typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent, PositionVoxelComponent> OwnedTeamHealthPositionVoxelState;
 
+
+
+/* Placeholder typedef
+ *
+ *  Inherit this to provide an object with polymorphic abilities
+ * */
+
+typedef DummyObjectInterface< DummyNetworkInterface < DefaultState > > ObjectInterfacePlaceholder;

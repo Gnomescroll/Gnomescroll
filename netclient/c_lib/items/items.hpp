@@ -12,3 +12,4 @@
 #include <c_lib/items/spawner.hpp>
 #include <c_lib/items/turret.hpp>
 #include <c_lib/items/pickup.hpp>
+#include <c_lib/items/inventory.hpp>

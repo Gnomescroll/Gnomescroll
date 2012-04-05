@@ -46,6 +46,10 @@ base_restore_rate_limiter(0),
 lifetime(0)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
+    #if DC_SERVER
+    this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY);
+    this->inventory->init(4,3);
+    #endif
 }
 
 void Agent_status::set_spawner(int pt)
@@ -496,21 +500,17 @@ const bool Agent_status::can_gain_item(Object_types item)
     switch (item)
     {
         case OBJ_TYPE_TURRET:
-            if (owned_turrets >= AGENT_MAX_TURRETS) return false;
+            if (owned_turrets >= AGENT_MAX_TURRETS)
+                return false;
             break;
             
         case OBJ_TYPE_SPAWNER:
-            if (owned_spawners >= AGENT_MAX_SPAWNERS) return false;
+            if (owned_spawners >= AGENT_MAX_SPAWNERS)
+                return false;
             break;
 
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
-        case OBJ_TYPE_STONE:
-        case OBJ_TYPE_DIRT:
+        default:
             return true;
-            break;
-            
-        default: break;
     }
     return true;
 }
@@ -535,15 +535,23 @@ bool Agent_status::gain_item(Object_types item)
         case OBJ_TYPE_LASER_REFILL:
             if (can) this->a->weapons.laser.add_ammo(20);
             break;
-
-        case OBJ_TYPE_DIRT:
-            //if (can) printf("picked up dirt\n");
-            break;
-        case OBJ_TYPE_STONE:
-            //if (can) printf("picked up stone\n");
-            break;
             
         default: break;
+    }
+    return can;
+}
+
+bool Agent_status::gain_item(ObjectPolicyInterface* obj)
+{
+    Object_types type = obj->state()->type;
+    bool can = this->can_gain_item(type);
+    if (!can) return false;
+    switch (type)
+    {
+        case OBJ_TYPE_STONE:
+        case OBJ_TYPE_DIRT:
+            can = this->inventory->add(obj);
+            break;
     }
     return can;
 }
@@ -647,4 +655,3 @@ void switch_agent_ownership(Object_types item, int owner, int new_owner)
             a->status.gain_item(item);
     }
 }
-

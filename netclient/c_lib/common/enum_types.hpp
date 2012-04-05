@@ -21,6 +21,8 @@ enum Object_types
     OBJ_TYPE_DIRT,
     OBJ_TYPE_STONE,
 
+    OBJ_TYPE_INVENTORY,
+
     OBJ_TYPE_NONE = 255,
 };
 

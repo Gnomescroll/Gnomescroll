@@ -5,7 +5,8 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/defines.h>
 #include <c_lib/weapons/weapons.hpp>
-#include <monsters/monsters.hpp>
+#include <c_lib/monsters/monsters.hpp>
+#include <c_lib/items/inventory.hpp>
 
 #ifdef DC_CLIENT
 #include <c_lib/time/physics_timer.h>
@@ -529,6 +530,22 @@ inline void destroy_voxel_StoC::handle()
     destroy_object_voxel(entity_id, entity_type, entity_part, voxel, radius);
 }
 
+inline void inventory_StoC::handle()
+{
+    Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, id);
+    if (inventory == NULL)
+    {
+        printf("WARNING: inventory_StoC::handle() -- failed to create inventory %d\n", id);
+        return;
+    }
+    inventory->init(x,y);
+    Agent_state* agent = ClientState::agent_list->get(owner);
+    if (agent == NULL)  // TODO -- better method for saving this
+        ClientState::playerAgent_state.cached_inventory = inventory;
+    else
+        agent->status.inventory = inventory;
+}
+
 inline void Agent_cs_CtoS::handle() {}
 inline void hit_block_CtoS::handle() {}
 inline void hitscan_object_CtoS::handle() {}
@@ -586,6 +603,7 @@ inline void client_disconnected_StoC::handle(){}
 inline void spawn_location_StoC::handle(){}
 inline void alter_item_ownership_StoC::handle(){}
 inline void destroy_voxel_StoC::handle(){}
+inline void inventory_StoC::handle() {}
 
 //for benchmarking
 //static int _total = 0;

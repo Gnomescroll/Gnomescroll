@@ -315,7 +315,8 @@ crouching(false),
 jetpack_ticks(0),
 jetpack_decay(0),
 action(this),
-identified(false)
+identified(false),
+cached_inventory(NULL)
 {
     //init
     static int inited=0;

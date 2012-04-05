@@ -160,8 +160,12 @@ void init_gameobject_list_maximums(GameObject_list* list)
     }
     list->set_max_occupancy(OBJ_TYPE_SPAWNER, SPAWNER_MAX);
     list->set_max_occupancy(OBJ_TYPE_TURRET, TURRET_MAX);
+    
     list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
     list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
+    
     list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
     list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
+
+    list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
 }

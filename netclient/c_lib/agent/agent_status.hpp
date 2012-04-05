@@ -3,6 +3,8 @@
 #include <c_lib/items/constants.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/agent/constants.hpp>
+#include <c_lib/items/inventory.hpp>
+#include <c_lib/entity/policy.hpp>
 
 void switch_agent_ownership(Object_types item, int owner, int new_owner);
 
@@ -51,6 +53,8 @@ class Agent_status {
 
         int lifetime;
 
+        Inventory* inventory;
+
         void tick();
 
         bool set_name(char* n); // return true if the new name is different
@@ -94,6 +98,7 @@ class Agent_status {
         // item stuff
         const bool can_gain_item(Object_types item);
         bool gain_item(Object_types item);
+        bool gain_item(ObjectPolicyInterface* obj);
         bool lose_item(Object_types item);
 
         explicit Agent_status(Agent_state* a);

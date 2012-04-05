@@ -175,3 +175,42 @@ class ObjectInterface: public StateLayer
     {
     }
 };
+
+/* Placeholders
+ *
+ *  Use while implementing a new object (so dont need to implement everything at once)
+ *  Or if object doesnt need anything
+ * */
+
+template <class State>
+class DummyNetworkInterface: public State
+{
+    public:
+        void sendToClientCreate(int client_id) {}
+        void broadcastCreate() {}
+        void sendToClientState(int client_id) {}
+        void broadcastState() {}
+        void broadcastDeath() {}
+
+    ~DummyNetworkInterface<State>() {}
+    DummyNetworkInterface<State>() {}
+};
+
+template <class Network>
+class DummyObjectInterface: public Network
+{
+    public:
+        void tick() {}
+        void draw() {}
+        void update() {}
+        void born() {}
+        void die() {}
+        void sendToClientCreate(int client_id) {}
+        void broadcastCreate() {}
+        void sendToClientState(int client_id) {}
+        void broadcastState() {}
+        void broadcastDeath() {}
+
+    ~DummyObjectInterface<Network>() {}
+    DummyObjectInterface<Network>() {}
+};
