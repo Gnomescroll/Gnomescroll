@@ -23,7 +23,8 @@ OPT_STRING_HEADER(team_name_two)
 
 /* Map */
 OPT_STRING_HEADER(map)
-OPT_INT_HEADER(seed)
+OPT_UINT_HEADER(seed)
+//OPT_INT_HEADER(seed)
 
 /* Logging */
 OPT_BOOL_HEADER(logger)

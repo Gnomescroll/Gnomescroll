@@ -13,6 +13,8 @@ rm $f/settings.pyc
 #cp default_settings.py $f/settings.py
 cp -R media $f/
 cp -R lua $f
+rm $f/lua/settings.lua
+mv $f/lua/settings_production.lua $f/lua/settings.lua
 mkdir $f/lib
 cp /usr/lib/i386-linux-gnu/libpng12.so.0 $f/lib/
 cp ../README_linux_client $f/
