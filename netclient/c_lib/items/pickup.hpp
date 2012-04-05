@@ -161,7 +161,7 @@ class PickupObject: public PickupComponent, public PickupInterface
         initialize_pickup_object(type, this->state());
     }
 
-    virtual ~PickupObject()
+    ~PickupObject()
     {
     }
 

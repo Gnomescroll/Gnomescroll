@@ -98,7 +98,7 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
     {
     }
 
-    virtual ~ObjectStateLayer<Owner, Team, Health, Spatial>()
+    ~ObjectStateLayer<Owner, Team, Health, Spatial>()
     {
     }
 };
@@ -171,7 +171,7 @@ class ObjectInterface: public StateLayer
     ObjectInterface<StateLayer, CreateMessage, StateMessage>()
     {}
 
-    virtual ~ObjectInterface<StateLayer, CreateMessage, StateMessage>()
+    ~ObjectInterface<StateLayer, CreateMessage, StateMessage>()
     {
     }
 };
