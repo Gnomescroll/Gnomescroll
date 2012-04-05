@@ -1,5 +1,5 @@
 ./waf clean
-./waf linux
+./waf production
 ./waf
 version=`cat ../VERSIONX`
 f="gnomescroll_linux32_"$version
