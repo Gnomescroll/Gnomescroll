@@ -89,12 +89,7 @@ class PlayerAgent_state {
 
         bool identified;
 
-        // TODO
-        // caching inventory here, in case packet arrives early
-        // agent metadata is sent separate from creation
-        // should probably have an AgentCache object that will store any early
-        // metadata, and copy over cached info once real agent is received
-        Inventory* cached_inventory;
+        void was_identified();
 
         PlayerAgent_state();
         ~PlayerAgent_state();

@@ -17,7 +17,11 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);
     if (this->you == NULL)
     {
-        printf("WARNING: set_PlayerAgent_id -- agent %d does not exist\n", id);
+        printf("ERROR: set_PlayerAgent_id -- agent %d does not exist\n", id);
+    }
+    else
+    {
+        printf("AGENT %d found for player\n", id);
     }
     this->agent_id = id;
     input_state.input_mode = INPUT_STATE_AGENT;
@@ -25,6 +29,12 @@ void PlayerAgent_state::set_PlayerAgent_id(int id) {
     chat_client->subscribe_channels();
 }
 
+void PlayerAgent_state::was_identified()
+{
+    this->identified = true;
+    request_remaining_state_CtoS msg;
+    msg.send();    
+}
 
 void PlayerAgent_state::update_client_side_prediction_interpolated()
 {
@@ -315,8 +325,7 @@ crouching(false),
 jetpack_ticks(0),
 jetpack_decay(0),
 action(this),
-identified(false),
-cached_inventory(NULL)
+identified(false)
 {
     //init
     static int inited=0;

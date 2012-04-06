@@ -42,25 +42,46 @@ void NetPeerManager::ready()
     Agent_state* a = NetServer::agents[this->client_id];
     if (a==NULL)
     {
-        printf("ERRO NetPeerManager::ready() -- Agent %d UNKNOWN!!\n", this->client_id);
+        printf("ERROR NetPeerManager::ready() -- Agent %d UNKNOWN!!\n", this->client_id);
         return;
     }
     if (!a->status.identified) return;
 
     this->loaded = true;
-    ServerState::send_game_state_to_client(this->client_id);
+    ServerState::send_initial_game_state_to_client(this->client_id);
+    printf("loaded\n");
 
     t_map::t_map_manager_setup(this->client_id);   //setup t_map_manager
     #endif
 }
 
+void NetPeerManager::send_remaining_state()
+{
+    #if DC_SERVER
+    printf("NPM::send_remaining_state\n");
+    if (!this->inited)
+    {
+        printf("ERROR NetPeerManager::send_remaining_state() -- not inited yet\n");
+        return;
+    }
+    if (!this->loaded)
+    {
+        printf("ERROR NetPeerManager::send_remaining_state() -- not loaded yet (agent has not been sent)\n");
+        return;
+    }
+    if (this->received_initial_state)
+        return;
+
+    this->received_initial_state = true;
+    ServerState::send_remainining_game_state_to_client(this->client_id);
+    #endif
+}
 
 void NetPeerManager::teardown()
 {
     #ifdef DC_SERVER
     ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
-
     #endif
 }
 
@@ -69,5 +90,6 @@ NetPeerManager::NetPeerManager()
 :
 client_id(-1),
 inited(false),
-loaded(false)
+loaded(false),
+received_initial_state(false)
 {}

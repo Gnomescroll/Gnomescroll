@@ -849,6 +849,19 @@ class destroy_voxel_StoC: public FixedSizeNetPacketToClient<destroy_voxel_StoC>
     inline void handle();
 };
 
+
+class request_remaining_state_CtoS: public FixedSizeReliableNetPacketToServer<request_remaining_state_CtoS>
+{
+    public:
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+    }
+    inline void handle();
+};
+
+
+
 class inventory_StoC: public FixedSizeReliableNetPacketToClient<inventory_StoC>
 {
     public:

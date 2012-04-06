@@ -370,13 +370,15 @@ inline void identified_StoC::handle()
         printf("identified_StoC -- identified as %s but player agent not assigned\n", name);
         return;
     }
-    ClientState::playerAgent_state.identified = true;
+    ClientState::playerAgent_state.was_identified();
     char* old_name = (char*)calloc(strlen(a->status.name) + 1, sizeof(char));
     strcpy(old_name, a->status.name);
     bool new_name = a->status.set_name(name);
     if (new_name)
         a->event.name_changed(old_name);
     free(old_name);
+
+    
 }
 
 inline void ping_StoC::handle()
@@ -539,11 +541,11 @@ inline void inventory_StoC::handle()
         return;
     }
     inventory->init(x,y);
-    Agent_state* agent = ClientState::agent_list->get(owner);
-    if (agent == NULL)  // TODO -- better method for saving this
-        ClientState::playerAgent_state.cached_inventory = inventory;
-    else
-        agent->status.inventory = inventory;
+    //Agent_state* agent = ClientState::agent_list->get(owner);
+    //if (agent == NULL)  // TODO -- better method for saving this
+        //ClientState::playerAgent_state.cached_inventory = inventory;
+    //else
+        //agent->status.inventory = inventory;
 }
 
 inline void Agent_cs_CtoS::handle() {}
@@ -564,6 +566,7 @@ inline void ping_CtoS::handle(){}
 inline void ping_reliable_CtoS::handle(){}
 inline void choose_spawn_location_CtoS::handle(){}
 inline void request_agent_name_CtoS::handle(){}
+inline void request_remaining_state_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -1159,4 +1162,16 @@ inline void request_agent_name_CtoS::handle()
     msg.id = id;
     msg.sendToClient(client_id);
 }
+
+inline void request_remaining_state_CtoS::handle()
+{   // client reporting received agent; send metadata
+    NetPeerManager* client = NetServer::clients[client_id];
+    if (client == NULL)
+    {
+        printf("request_remaining_state_CtoS::handle() -- NetPeerManager not found for %d\n", client_id);
+        return;
+    }
+    client->send_remaining_state();
+}
+
 #endif

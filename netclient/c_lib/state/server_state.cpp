@@ -203,7 +203,7 @@ namespace ServerState
         ctf->tick();
     }
 
-    void send_game_state_to_client(int client_id)
+    void send_initial_game_state_to_client(int client_id)
     {
         agent_list->send_to_client(client_id);
         slime_list->send_to_client(client_id);
@@ -211,6 +211,11 @@ namespace ServerState
 
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
+    }
+
+    void send_remainining_game_state_to_client(int client_id)
+    {
+        object_list->send_to_client(OBJ_TYPE_INVENTORY, client_id);
     }
 
     void send_id_to_client(int client_id)

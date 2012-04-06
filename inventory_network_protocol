@@ -1,0 +1,51 @@
+Loading initial player metadata:
+
+after received your player, send "give me metadata" packet
+
+Inventory Network API:
+
+---------------
+Server->Client:
+
+Create / Contents
+    --id, type
+    --size x,y
+    --owner
+    -- How to send contents?
+        -- id,type tuples
+        -- null values in empty slots
+    -- Do we need fixed inventory sizes?
+    -- If id,type is not associated with an object, create one
+
+Update
+    Put Item:
+        --inventory: id
+        --item: id,type
+        --slot x,y
+    Remove item:
+        --inventory: id
+        --item: id,type
+
+Delete
+    --id
+
+Open inventory
+    --id, type
+    -- yes,no
+    Client sends open inventory, opens inventory dialog,
+    waits for server confirmation before editing
+
+---------------
+Client->Server:
+
+Put item
+    --inventory: id
+    --item: id, type
+    --slot x,y
+
+Remove item
+    --inventory: id
+    --item: id,type
+    
+Open inventory:
+    --inventory: id
