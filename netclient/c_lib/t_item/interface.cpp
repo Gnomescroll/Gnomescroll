@@ -3,6 +3,7 @@
 //#include <c_lib/t_item/list.hpp>
 
 #include <c_lib/t_item/free_item.hpp>
+#include <c_lib/t_item/net/StoC.hpp>
 
 namespace t_item
 {
@@ -33,6 +34,14 @@ void tick()
 void draw()
 {
     free_item_list->draw();
+}
+
+
+
+void create_free_item(int id, float f, float y, float z, float vx, float vy, float vz)
+{
+    
+
 }
 
 }

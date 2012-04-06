@@ -100,6 +100,9 @@ int apply_damage(int x, int y, int z, int dmg)
 }
 
 #if DC_SERVER
+
+#include <c_lib/t_item/interface.hpp>
+
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
@@ -130,6 +133,11 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     );
     if (obj != NULL)
         obj->born();
+
+
+    t_item::create_free_item(0, 
+        x+randf(),y+randf(), z+randf(),
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 }
 #endif
 

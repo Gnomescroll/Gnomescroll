@@ -16,7 +16,7 @@ void draw_init()
         printf("t_item: spitesheet load error\n");
         return;
     }
-
+ 
     glEnable(GL_TEXTURE_2D);
     glGenTextures( 1, &ItemSheetTexture );
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture  );

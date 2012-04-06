@@ -40,12 +40,10 @@ class Free_item
     {
         vp.set_position(x,y,z);
     }
-
     void set_momentum(float mx, float my, float mz)
     {
         vp.set_momentum(mx,my,mz);
     }
-
     void set_state(float x, float y, float z, float mx, float my, float mz)
     {
         vp.set_position(x,y,z);
@@ -168,6 +166,5 @@ void Free_item_list::tick()
         }
     }
 }
-
 
 }

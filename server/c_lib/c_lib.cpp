@@ -141,10 +141,13 @@ int init_c_lib()
 
     ServerState::init();
 
+
     init_network();
 
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
+
+    t_item::state_init();
 
     return 0;
 }
@@ -152,7 +155,10 @@ int init_c_lib()
 void close_c_lib()
 {
     printf("Server closing...\n");
+
     t_map::end_t_map();
+    t_item::state_teardown();
+
     teardown_chat_server();
     ServerState::teardown();
     printf("Server closed\n");

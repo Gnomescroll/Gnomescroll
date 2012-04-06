@@ -119,6 +119,7 @@ int run()
             // tick client state
             ClientState::tick();
 
+            t_item::tick();
             // update sound listener
             ClientState::playerAgent_state.update_sound();
 
@@ -174,6 +175,7 @@ int run()
         poll_mouse();
 
         t_mech::draw();
+        t_item::draw();
 
         if (Options::hud)
         {

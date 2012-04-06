@@ -197,6 +197,8 @@ namespace ServerState
         slime_list->update();
         object_list->tick();
         grenade_list->tick();
+
+        t_item::tick();
         //grenade_shrapnel_list->tick();
 
         // game
