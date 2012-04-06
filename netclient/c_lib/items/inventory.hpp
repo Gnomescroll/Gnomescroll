@@ -134,6 +134,23 @@ class InventoryContents: public BehaviourList
             return true;
         }
 
+        bool remove(int x, int y)
+        {
+            int slot = this->get_slot(x,y);
+            if (slot < 0 && slot >= this->max)
+                return false;
+            this->objects[slot] = NULL;
+            return true;
+        }
+
+        InventoryProperties* item_at_slot(int x, int y)
+        {
+            if (!this->is_valid_grid_position(x,y))
+                return NULL;
+            int slot = this->get_slot(x,y);
+            return (InventoryProperties*)this->objects[slot];
+        }
+
     InventoryContents()
     : BehaviourList(),
     x(0), y(0)
@@ -180,21 +197,17 @@ class Inventory: public InventoryObjectInterface
             return this->contents.add(obj);
         }
 
-        void remove(int x, int y)
+        bool remove(int x, int y)
         {
-            int slot = this->contents.get_slot(x,y);
-            if (slot >= 0 && slot < this->contents.max)
-                this->contents.objects[slot] = NULL;
+            return this->contents.remove(x,y);
         }
 
         ObjectPolicyInterface* item_at_slot(int x, int y)
         {
-            if (!this->contents.is_valid_grid_position(x,y))
+            InventoryProperties* obj = this->contents.item_at_slot(x,y);
+            if (obj == NULL)
                 return NULL;
-            int slot = this->contents.get_slot(x,y);
-            if (this->contents.objects[slot] == NULL)
-                return NULL;
-            return this->contents.objects[slot]->obj;
+            return obj->obj;
         }
 
     explicit Inventory(int id)
@@ -256,7 +269,6 @@ class Inventory: public InventoryObjectInterface
         //inline void handle();
 //};
 
-const int INVENTORY_PACKET_MAX_CONTENTS = 64;
 class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory_create_StoC>
 {
     public:
@@ -264,8 +276,6 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
         uint8_t type;
         uint8_t x,y;
         uint8_t owner;
-        uint16_t content_ids[INVENTORY_PACKET_MAX_CONTENTS];
-        uint8_t content_types[INVENTORY_PACKET_MAX_CONTENTS];
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
@@ -274,51 +284,20 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
             pack_u8(&x, buff, buff_n, pack);
             pack_u8(&y, buff, buff_n, pack);
             pack_u8(&owner, buff, buff_n, pack);
-            for (int i=0; i<INVENTORY_PACKET_MAX_CONTENTS; i++)
-            {
-                pack_u16(&content_ids[i], buff, buff_n, pack);
-                pack_u8(&content_types[i], buff, buff_n, pack);
-            }
         }
         inline void handle();
 };
 
-bool inventory_create_message(
+void inventory_create_message(
     inventory_create_StoC* msg,
     int id, Object_types type, int x, int y, int owner,
     InventoryProperties** contents
 ) {
-    int max = x*y;
-    if (max > INVENTORY_PACKET_MAX_CONTENTS)
-    {
-        printf("WARNING: inventory_create_message() -- Inventory max %d exceeds packet contents max %d\n", max, INVENTORY_PACKET_MAX_CONTENTS);
-        return false;
-    }
     msg->id = id;
     msg->type = type;
     msg->x = x;
     msg->y = y;
     msg->owner = owner;
-    
-    InventoryProperties* elem;
-    ObjectState* state;
-    int elem_id;
-    Object_types elem_type;
-    for (int i=0; i<max; i++)
-    {
-        elem_id = EMPTY_SLOT;
-        elem_type = OBJ_TYPE_NONE;
-        elem = contents[i];
-        if (elem != NULL)
-        {
-            state = elem->obj->state();
-            elem_id = state->id;
-            elem_type = state->type;
-        }
-        msg->content_ids[i] = elem_id;
-        msg->content_types[i] = elem_type;
-    }
-    return true;
 }
 
 class inventory_destroy_StoC: public FixedSizeReliableNetPacketToClient<inventory_create_StoC>

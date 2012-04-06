@@ -6,12 +6,11 @@ void InventoryNetworkInterface::sendToClientCreate(int client_id)
 {
     inventory_create_StoC msg;
     ObjectState* state = object->state();
-    bool success = inventory_create_message(&msg,
+    inventory_create_message(&msg,
         state->id, state->type,
         object->contents.x, object->contents.y, object->owner,
         (InventoryProperties**)object->contents.objects
     );
-    if (!success) return;
     msg.sendToClient(client_id);
 }
 
@@ -19,12 +18,11 @@ void InventoryNetworkInterface::broadcastCreate()
 {
     inventory_create_StoC msg;
     ObjectState* state = object->state();
-    bool success = inventory_create_message(&msg,
+    inventory_create_message(&msg,
         state->id, state->type,
         object->contents.x, object->contents.y, object->owner,
         (InventoryProperties**)object->contents.objects
     );
-    if (!success) return;
     msg.broadcast();
 }
 
@@ -43,36 +41,6 @@ void InventoryNetworkInterface::broadcastDeath()
     msg.broadcast();
 }
 
-
-/* Inventory Object */
-
-void Inventory::add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents)
-{
-    //if (n_contents <= 0)
-    //{
-        //printf("ERROR: Inventory::add_contents() -- n_contents %d invalid\n", n_contents);
-        //return;
-    //}
-    //ObjectPolicyInterface* obj;
-    //for (int i=0; i<n_contents; i++)
-    //{
-        //if ((int)ids[i] == EMPTY_SLOT)
-        //{
-            //if (this->contents[i] != NULL)
-                //this->ct--;
-            //this->contents[i] = NULL;
-            //continue;
-        //}
-
-        //obj = STATE::object_list->get_or_create((Object_types)types[i], (int)ids[i]);
-        //if (obj != NULL)
-        //{
-            //if (this->contents[i] == NULL)
-                //this->ct++;
-        //}
-        //this->contents[i] = obj;
-    //}    
-}
 
 /* Packets */
 
@@ -96,8 +64,6 @@ inline void inventory_create_StoC::handle()
     obj->set_dimensions(x,y);
     // set owner
     obj->set_owner(owner);  // TODO : owned properties
-    // fill contents
-    obj->add_contents_from_packet(content_ids, content_types, x*y);
 
     if (create)
         obj->born();
