@@ -8,7 +8,7 @@
 typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, SpatialDefault> DefaultState;
 typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, VerletComponent> VerletState;
 //typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthDefault> TeamState;
-//typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault> OwnedState;
+typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault, SpatialDefault> OwnedState;
 //typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthDefault> OwnedTeamState;
 
 //typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent> HealthState;

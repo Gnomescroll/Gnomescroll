@@ -6,7 +6,7 @@
 #include <c_lib/components/component.hpp>
 
 class Inventory;
-typedef DefaultState InventoryState;
+typedef OwnedState InventoryState;
 class InventoryNetworkInterface: public InventoryState
 {
     private:
@@ -163,7 +163,6 @@ class Inventory: public InventoryObjectInterface
     private:
     public:
         InventoryContents contents;
-        int owner;
         
         void init(int x, int y)
         {
@@ -212,10 +211,10 @@ class Inventory: public InventoryObjectInterface
 
     explicit Inventory(int id)
     :
-    InventoryObjectInterface(this),
-    owner(NO_AGENT)
+    InventoryObjectInterface(this)
     {
         this->_state.id = id;
+        this->owned_properties.owner = NO_AGENT;
     }
 
     ~Inventory()

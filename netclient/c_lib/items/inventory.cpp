@@ -8,7 +8,7 @@ void InventoryNetworkInterface::sendToClientCreate(int client_id)
     ObjectState* state = object->state();
     inventory_create_message(&msg,
         state->id, state->type,
-        object->contents.x, object->contents.y, object->owner,
+        object->contents.x, object->contents.y, object->get_owner(),
         (InventoryProperties**)object->contents.objects
     );
     msg.sendToClient(client_id);
@@ -20,7 +20,7 @@ void InventoryNetworkInterface::broadcastCreate()
     ObjectState* state = object->state();
     inventory_create_message(&msg,
         state->id, state->type,
-        object->contents.x, object->contents.y, object->owner,
+        object->contents.x, object->contents.y, object->get_owner(),
         (InventoryProperties**)object->contents.objects
     );
     msg.broadcast();
