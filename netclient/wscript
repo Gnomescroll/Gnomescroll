@@ -279,9 +279,15 @@ def install_bin(ctx):
             run_dest = 'run.exe'
         else:
             run_dest = 'run'
-        shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+        try:
+            shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+        except Exception, e:
+            pass
         if OS == 'Linux':
-            shutil.copy2(os.path.join(out, run_target), './client')
+            try:
+                shutil.copy2('./run', './client')
+            except Exception, e:
+                pass
     except Exception, e:
         print "error copying binaries to ./"
         print e
