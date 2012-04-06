@@ -23,3 +23,8 @@ extern "C"
     void LUA_set_float_option(int option_id, float value)  GNOMESCROLL_API;
     void LUA_set_string_option(int option_id, char* value)  GNOMESCROLL_API;
 }
+
+
+#if PRODUCTION
+//stuff
+#endif
