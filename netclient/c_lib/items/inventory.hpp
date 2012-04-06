@@ -3,9 +3,12 @@
 #include <c_lib/entity/policy.hpp>
 #include <c_lib/entity/layers.hpp>
 
+class Inventory;
 typedef DefaultState InventoryState;
 class InventoryNetworkInterface: public InventoryState
 {
+    private:
+        Inventory* object;
     public:
         void sendToClientCreate(int client_id);
         void broadcastCreate();
@@ -14,7 +17,8 @@ class InventoryNetworkInterface: public InventoryState
         void broadcastDeath();
 
     ~InventoryNetworkInterface() {}
-    InventoryNetworkInterface() {}
+    InventoryNetworkInterface(Inventory* object)
+    : object(object) {}
 };
 
 class InventoryObjectInterface: public InventoryNetworkInterface
@@ -27,11 +31,12 @@ class InventoryObjectInterface: public InventoryNetworkInterface
         void die() {}
 
     ~InventoryObjectInterface() {}
-    InventoryObjectInterface() {}
+    InventoryObjectInterface(Inventory* object)
+    : InventoryNetworkInterface(object) {}
 };
 
 
-const int EMPTY_SLOT = 255;
+const int EMPTY_SLOT = 65535; // uint16_t max
 
 class Inventory: public InventoryObjectInterface
 {
@@ -59,8 +64,6 @@ class Inventory: public InventoryObjectInterface
         }
 
     public:
-        int id;
-        Object_types type;  // todo: bag subtype
         int x,y;
         ObjectPolicyInterface** contents;
 
@@ -85,7 +88,7 @@ class Inventory: public InventoryObjectInterface
         if (new_max != this->max)
         {   // resizing
             if (this->contents == NULL)
-                this->contents = (ObjectPolicyInterface**)calloc(this->max, sizeof(ObjectPolicyInterface*));
+                this->contents = (ObjectPolicyInterface**)calloc(new_max, sizeof(ObjectPolicyInterface*));
             else
             {
                 this->contents = (ObjectPolicyInterface**)realloc(this->contents, new_max * sizeof(ObjectPolicyInterface*));
@@ -100,6 +103,7 @@ class Inventory: public InventoryObjectInterface
     }
 
     void add_contents(int* ids, Object_types* types, int n_contents);
+    void add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents);
 
     bool type_allowed(Object_types type)
     {   // Restrict types here
@@ -164,13 +168,13 @@ class Inventory: public InventoryObjectInterface
 
     explicit Inventory(int id)
     :
-    id(id),
-    type(OBJ_TYPE_INVENTORY),
+    InventoryObjectInterface(this),
     x(0),y(0),
     contents(NULL),
     max(0), ct(0),
     owner(NO_AGENT)
     {
+        this->_state.id = id;
     }
 
     ~Inventory()
@@ -253,28 +257,32 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
         inline void handle();
 };
 
-bool inventory_create_message(inventory_create_StoC* msg, Inventory* obj)
-{
-    if (obj->max > INVENTORY_PACKET_MAX_CONTENTS)
+bool inventory_create_message(
+    inventory_create_StoC* msg,
+    int id, Object_types type, int x, int y, int owner,
+    ObjectPolicyInterface** contents
+) {
+    int max = x*y;
+    if (max > INVENTORY_PACKET_MAX_CONTENTS)
     {
-        printf("WARNING: inventory_create_message() -- Inventory max %d exceeds packet contents max %d\n", obj->max, INVENTORY_PACKET_MAX_CONTENTS);
+        printf("WARNING: inventory_create_message() -- Inventory max %d exceeds packet contents max %d\n", max, INVENTORY_PACKET_MAX_CONTENTS);
         return false;
     }
-    ObjectState* state = obj->state();
-    msg->id = state->id;
-    msg->type = state->type;
-    msg->x = obj->x;
-    msg->y = obj->y;
-    msg->owner = obj->owner;
+    msg->id = id;
+    msg->type = type;
+    msg->x = x;
+    msg->y = y;
+    msg->owner = owner;
     
     ObjectPolicyInterface* elem;
+    ObjectState* state;
     int elem_id;
     Object_types elem_type;
-    for (int i=0; i<obj->max; i++)
+    for (int i=0; i<max; i++)
     {
         elem_id = EMPTY_SLOT;
         elem_type = OBJ_TYPE_NONE;
-        elem = obj->contents[i];
+        elem = contents[i];
         if (elem != NULL)
         {
             state = elem->state();

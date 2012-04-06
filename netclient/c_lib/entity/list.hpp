@@ -90,14 +90,20 @@ class GameObject_list
 
         int get_index_start(Object_types type)
         {
+            if (type < 0 || type >= MAX_OBJECT_TYPE)
+                return 0;
             return this->index_start[type];
         }
         int get_object_max(Object_types type)
         {
+            if (type < 0 || type >= MAX_OBJECT_TYPE)
+                return 0;
             return this->max_occupancy[type];
         }
         ObjectPolicyInterface** get_object_array(Object_types type)
         {
+            if (type < 0 || type >= MAX_OBJECT_TYPE)
+                return NULL;
             return this->objects[type];
         }
 

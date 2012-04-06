@@ -6,7 +6,14 @@
 void InventoryNetworkInterface::sendToClientCreate(int client_id)
 {
     inventory_create_StoC msg;
-    bool success = inventory_create_message(&msg, (Inventory*)this);
+    ObjectState* state = object->state();
+    printf("going to send inventory\n");
+    printf("id,type = %d,%d\n", state->id, state->type);
+    bool success = inventory_create_message(&msg,
+        state->id, state->type,
+        object->x, object->y, object->owner,
+        object->contents
+    );
     if (!success) return;
     msg.sendToClient(client_id);
 }
@@ -14,7 +21,12 @@ void InventoryNetworkInterface::sendToClientCreate(int client_id)
 void InventoryNetworkInterface::broadcastCreate()
 {
     inventory_create_StoC msg;
-    bool success = inventory_create_message(&msg, (Inventory*)this);
+    ObjectState* state = object->state();
+    bool success = inventory_create_message(&msg,
+        state->id, state->type,
+        object->x, object->y, object->owner,
+        object->contents
+    );
     if (!success) return;
     msg.broadcast();
 }
@@ -30,14 +42,14 @@ void InventoryNetworkInterface::broadcastState()
 void InventoryNetworkInterface::broadcastDeath()
 {
     inventory_destroy_StoC msg;
-    inventory_destroy_message(&msg, this->state()->id);
+    inventory_destroy_message(&msg, object->state()->id);
     msg.broadcast();
 }
 
 
 /* Inventory Object */
 
-void Inventory::add_contents(int* ids, Object_types* types, int n_contents)
+void Inventory::add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents)
 {
     if (n_contents <= 0)
     {
@@ -47,7 +59,7 @@ void Inventory::add_contents(int* ids, Object_types* types, int n_contents)
     ObjectPolicyInterface* obj;
     for (int i=0; i<n_contents; i++)
     {
-        if (ids[i] == EMPTY_SLOT)
+        if ((int)ids[i] == EMPTY_SLOT)
         {
             if (this->contents[i] != NULL)
                 this->ct--;
@@ -55,11 +67,11 @@ void Inventory::add_contents(int* ids, Object_types* types, int n_contents)
             continue;
         }
 
-        obj = STATE::object_list->get(types[i], ids[i]);
+        obj = STATE::object_list->get((Object_types)types[i], (int)ids[i]);
         if (this->contents[i] == NULL && obj != NULL)
             this->ct++;
         this->contents[i] = obj;
-    }
+    }    
 }
 
 /* Packets */
@@ -85,7 +97,7 @@ inline void inventory_create_StoC::handle()
     // set owner
     obj->set_owner(owner);  // TODO : owned properties
     // fill contents
-    obj->add_contents((int*)content_ids, (Object_types*)content_types, x*y);
+    obj->add_contents_from_packet(content_ids, content_types, x*y);
 
     if (create)
         obj->born();

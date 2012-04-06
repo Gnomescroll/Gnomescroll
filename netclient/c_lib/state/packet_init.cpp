@@ -193,5 +193,9 @@ void RegisterMessages() {
 
     request_remaining_state_CtoS::register_server_packet();
 
+    // inventory
+    inventory_create_StoC::register_client_packet();
+    inventory_destroy_StoC::register_client_packet();
+
 }
 }
