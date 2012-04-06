@@ -75,3 +75,27 @@ however, objects will need an inventory property
 
 Assumptions to make (at first):
 Inventory is known at time of registration
+
+
+==========================
+TODO:
+
+Objects are not directly tracked in inventory?
+InventoryItem separate
+--type, slot
+
+when items leave inventory, create packet sent
+when items enter inventory, destroy packet sent
+-- how to handle properties like durability (will want to be able to show it in inventory)?
+
+variable properties will be yet another item
+both main items and inventory items will reference that item list for info
+
+object state needs an inventory component/element
+needs add/remove self from inventory(*inv);
+--un/registers from that list
+
+add new state packet types
+instead of  pos/mom they have inventory id, slot
+the send method can probably be added to the inventory properties
+since the send method for this case can be called by iterating the inventory contents

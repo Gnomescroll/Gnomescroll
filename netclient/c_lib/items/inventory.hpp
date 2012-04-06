@@ -30,6 +30,14 @@ class InventoryProperties: public ComponentProperties
     {}
 };
 
+// TODO: deprecate
+class InventoryComponent
+{
+    public:
+        InventoryProperties inventory_properties;
+    InventoryComponent() {}
+};
+
 const int EMPTY_SLOT = 65535; // uint16_t max
 
 class InventoryContents: public BehaviourList
