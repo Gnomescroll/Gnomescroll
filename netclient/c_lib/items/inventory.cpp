@@ -13,7 +13,7 @@ void Inventory::sendToClientCreate(int client_id)
     msg.sendToClient(client_id);
 
     // send create packets for everything in the inventory
-    
+    this->contents.sendToClient(client_id);
 }
 
 void Inventory::broadcastCreate()

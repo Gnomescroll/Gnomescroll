@@ -126,6 +126,17 @@ class InventoryContents: public BehaviourList
             return true;
         }
 
+        void sendToClient(int client_id)
+        {
+            InventoryProperties* obj;
+            for (int i=0; i<this->max; i++)
+            {
+                obj = (InventoryProperties*)this->objects[i];
+                if (obj == NULL) continue;
+                obj->obj->sendToClientCreate(client_id);
+            }
+        }
+
         InventoryProperties* item_at_slot(int x, int y)
         {
             if (!this->is_valid_grid_position(x,y))
