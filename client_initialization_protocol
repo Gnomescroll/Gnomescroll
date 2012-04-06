@@ -1,0 +1,39 @@
+SERVER:
+
+Init:
+client connects via enet
+
+NetPeerManager->init() sends:
+--version
+--client id
+--creates and binds agent to client, trigger agent create packet
+--sends agent's id as player agent id
+--subscribes player to chat
+
+Receives:
+identify
+    -- adjust name as needed
+    -- send identified packet back
+    -- send game state pt 1
+
+request_metadata
+    -- send remaining state metadata
+
+CLIENT:
+
+Receives:
+version
+    -- check version match
+client id
+    -- cache it
+    -- send identify packet
+player agent id
+    -- links with autosent agent
+    -- subscribes to chat channels
+...
+incoming: game state pt 1
+identified
+    -- copies name onto player's agent
+    -- send request for phase 2 metadata
+...
+incoming: game state pt 2

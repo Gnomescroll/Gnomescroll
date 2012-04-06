@@ -16,13 +16,7 @@
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);
     if (this->you == NULL)
-    {
         printf("ERROR: set_PlayerAgent_id -- agent %d does not exist\n", id);
-    }
-    else
-    {
-        printf("AGENT %d found for player\n", id);
-    }
     this->agent_id = id;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;

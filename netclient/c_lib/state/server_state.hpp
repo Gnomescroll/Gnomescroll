@@ -43,7 +43,7 @@ namespace ServerState
     void send_initial_game_state_to_client(int client_id);
     void send_remainining_game_state_to_client(int client_id);
 
-    void send_id_to_client(int client_id);
+    void send_player_agent_id_to_client(int client_id);
     void send_version_to_client(int client_id);
 
     void add_player_to_chat(int client_id);

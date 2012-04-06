@@ -242,17 +242,6 @@ def build(bld):
 
 
     bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    
-    #c_lib_includes = []
-    #c_lib_libpath = []
-
-    target = 'client'
-    if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
-        target = 'gnomescroll_client'
-
-    #bld.env.CXXFLAGS.remove('-fvisibility=hidden')
-
-        #compile as binary
     bld(
         features = 'cxx cxxprogram',
         source = ['run.cpp'],
@@ -262,12 +251,13 @@ def build(bld):
         #libpath = c_lib_libpath,
         framework = sound_framework,
         #linkflags = ['-rdynamic'],
-        target="run"
+        target='run'
     )
+    bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
-    #if '-DPRODUCTION=1' in bld.env.CFLAGS:
-    #    bld.add_post_fun(strip_symbols)
+    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+        bld.add_post_fun(strip_symbols)
 
 
 def strip_symbols(ctx):
@@ -284,19 +274,23 @@ def install_bin(ctx):
     OS = platform.system()
 
     try:    # installs binary to ./run and ./client
-        run_target = ctx.env.cprogram_PATTERN % 'run'
-        if(OS == 'Windows'):
+        run_target = 'run'
+        if OS == 'Windows':
             run_dest = 'run.exe'
         else:
             run_dest = 'run'
         shutil.copy2(os.path.join(out, run_target), './' + run_dest)
-    except:
+        if OS == 'Linux':
+            shutil.copy2(os.path.join(out, run_target), './client')
+    except Exception, e:
+        print "error copying binaries to ./"
+        print e
         pass
         
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
-    except:
+    except Exception, e:
         pass
 
 def ensure_dir(path):

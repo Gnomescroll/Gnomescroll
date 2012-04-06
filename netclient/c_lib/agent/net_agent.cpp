@@ -1121,8 +1121,18 @@ inline void identify_CtoS::handle()
     if (len >= PLAYER_NAME_MAX_LENGTH)
         name[PLAYER_NAME_MAX_LENGTH-1] = '\0';
 
+    int breakout = 0;   // safeguard against infinite loop
+    const int breakout_limit = 100;
     while (!ServerState::agent_list->name_available(name))
+    {
+        breakout++;
+        if (breakout % breakout_limit == 0)
+        {
+            printf("ERROR: identify_CtoS::handle() -- failed to find a valid agent name after %d attempts\n", breakout);
+            return; // bailout, something is wrong
+        }
         adjust_name(name, len);
+    }
 
     a->status.set_name(name);
     a->status.identified = true;

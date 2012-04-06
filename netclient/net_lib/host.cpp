@@ -272,7 +272,7 @@ static void client_connect(ENetEvent* event)
     NetPeer* nc = NULL;
     NetPeerManager* npm = NULL;
     
-    if(NetServer::number_of_clients == NetServer::HARD_MAX_CONNECTIONS)
+    if(NetServer::number_of_clients >= NetServer::HARD_MAX_CONNECTIONS)
     {
         printf("Cannot allow client connection: hard max connection reached \n");
         //send a disconnect reason packet
@@ -285,10 +285,10 @@ static void client_connect(ENetEvent* event)
     int index = client_id_offset;
     client_id_offset++;
 
-    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
-    {
+    for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS; i++)
+    {   // find free peer slot
         index = (index+1) % NetServer::HARD_MAX_CONNECTIONS;
-        if(NetServer::pool[index] != NULL) continue;
+        if (NetServer::pool[index] != NULL) continue;
         nc = new NetPeer;
         nc->enet_peer = event->peer;
         nc->client_id = index;
@@ -315,10 +315,6 @@ static void client_connect(ENetEvent* event)
     /*
         Send client id, flush netclient, then flush enet packet que
     */
-
-    SendClientId_StoC u;
-    u.client_id = nc->client_id;
-    u.sendToClient(nc->client_id);
 
     nc->flush_to_net();
     //enet_host_flush(server_host);

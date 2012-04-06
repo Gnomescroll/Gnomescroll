@@ -218,7 +218,7 @@ namespace ServerState
         object_list->send_to_client(OBJ_TYPE_INVENTORY, client_id);
     }
 
-    void send_id_to_client(int client_id)
+    void send_player_agent_id_to_client(int client_id)
     {
         PlayerAgent_id_StoC msg;
         msg.id = client_id;

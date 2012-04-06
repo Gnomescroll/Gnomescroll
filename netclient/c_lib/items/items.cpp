@@ -10,4 +10,4 @@
 #include <c_lib/items/spawner.cpp>
 #include <c_lib/items/turret.cpp>
 #include <c_lib/items/pickup.cpp>
-#include <c_lib/items/inventory.hpp>
+#include <c_lib/items/inventory.cpp>

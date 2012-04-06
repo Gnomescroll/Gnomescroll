@@ -20,10 +20,14 @@ void NetPeerManager::init(int client_id)
 
     ServerState::send_version_to_client(client_id);
 
+    SendClientId_StoC client_id_msg;
+    client_id_msg.client_id = client_id;
+    client_id_msg.sendToClient(client_id);
+
     Agent_state* a = ServerState::agent_list->create(client_id);
     NetServer::assign_agent_to_client(client_id, a);
 
-    ServerState::send_id_to_client(client_id);
+    ServerState::send_player_agent_id_to_client(client_id);
     ServerState::add_player_to_chat(client_id);
     #endif
 }
