@@ -550,7 +550,12 @@ bool Agent_status::gain_item(ObjectPolicyInterface* obj)
     {
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
-            can = this->inventory->add(obj);
+            //can = this->inventory->add(obj);  // TODO
+            // TODO:
+            // inventory registration should go through object
+            // obj->add_to_inventory(this->inventory);
+            // object will register with inventory's list and alter own inventoried state
+            can = true;
             break;
     }
     return can;

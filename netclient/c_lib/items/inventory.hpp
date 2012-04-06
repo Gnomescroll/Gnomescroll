@@ -2,6 +2,8 @@
 
 #include <c_lib/entity/policy.hpp>
 #include <c_lib/entity/layers.hpp>
+#include <c_lib/lists/list.hpp>
+#include <c_lib/components/component.hpp>
 
 class Inventory;
 typedef DefaultState InventoryState;
@@ -36,11 +38,25 @@ class InventoryObjectInterface: public InventoryNetworkInterface
 };
 
 
+/* Inventory Property, to use in an object */
+
+class InventoryProperties: public ComponentProperties
+{
+    public:
+    InventoryProperties()
+    {}
+};
+
 const int EMPTY_SLOT = 65535; // uint16_t max
 
-class Inventory: public InventoryObjectInterface
+class InventoryContents: public BehaviourList
 {
     private:
+        const char* name() { return "InventoryContents"; }
+
+    public:
+        int x,y;
+
         int get_slot(int x, int y)
         {
             return this->x*y + x;
@@ -51,7 +67,7 @@ class Inventory: public InventoryObjectInterface
             if (this->full())
                 return -1;
             for (int i=0; i<this->max; i++)
-                if (this->contents[i] == NULL)
+                if (this->objects[i] == NULL)
                     return i;
             return -1;
         }
@@ -63,115 +79,127 @@ class Inventory: public InventoryObjectInterface
             return true;
         }
 
+        void init(int x, int y)
+        {
+            this->set_dimensions(x,y);
+        }
+
+        void set_dimensions(int x, int y)
+        {
+            int new_max = x*y;
+            if (new_max <= 0)
+            {
+                printf("ERROR: Inventory::init() -- dimension %d is <=0: x,y = %d,%d\n", new_max, x,y);
+                return;
+            }
+            if (new_max != this->max)
+            {   // allocate buffer
+                if (this->objects == NULL)
+                    this->objects = (ComponentProperties**)calloc(new_max, sizeof(ComponentProperties*));
+                else
+                {   // resizing
+                    this->objects = (ComponentProperties**)realloc(this->objects, new_max * sizeof(ComponentProperties*));
+                    if (new_max > this->max)    // null new memory
+                        for (int i=this->max; i<new_max; i++)
+                            this->objects[i] = NULL;
+                }
+            }
+            this->x = x;
+            this->y = y;
+            this->max = new_max;
+        }
+
+        bool add(InventoryProperties* obj)
+        {   // auto assign slot
+            int slot = this->get_empty_slot();
+            if (slot < 0)
+                return false;
+            this->objects[slot] = obj;
+            this->ct++;
+            return true;
+        }
+
+        bool add(InventoryProperties* obj, int x, int y)
+        {
+            if (this->full())
+                return false;
+            if (!this->is_valid_grid_position(x,y))
+                return false;
+            int slot = this->get_slot(x,y);
+            if (this->objects[slot] != NULL)
+                return false;
+
+            this->objects[slot] = obj;
+            this->ct++;
+            return true;
+        }
+
+    InventoryContents()
+    : BehaviourList(),
+    x(0), y(0)
+    {
+    }
+};
+
+class Inventory: public InventoryObjectInterface
+{
+    private:
     public:
-        int x,y;
-        ObjectPolicyInterface** contents;
-
-        int max;
-        int ct;
-
+        InventoryContents contents;
         int owner;
         
-    void init(int x, int y)
-    {
-        this->set_dimensions(x,y);
-    }
-
-    void set_dimensions(int x, int y)
-    {
-        int new_max = x*y;
-        if (new_max <= 0)
+        void init(int x, int y)
         {
-            printf("ERROR: Inventory::init() -- dimension %d is <=0: x,y = %d,%d\n", new_max, x,y);
-            return;
+            this->contents.init(x,y);
         }
-        if (new_max != this->max)
-        {   // resizing
-            if (this->contents == NULL)
-                this->contents = (ObjectPolicyInterface**)calloc(new_max, sizeof(ObjectPolicyInterface*));
-            else
-            {
-                this->contents = (ObjectPolicyInterface**)realloc(this->contents, new_max * sizeof(ObjectPolicyInterface*));
-                if (new_max > this->max)    // null new memory
-                    for (int i=this->max; i<new_max; i++)
-                        this->contents[i] = NULL;
-            }
+
+        void set_dimensions(int x, int y)
+        {
+            this->contents.set_dimensions(x,y);
         }
-        this->x = x;
-        this->y = y;
-        this->max = new_max;
-    }
 
-    void add_contents(int* ids, Object_types* types, int n_contents);
-    void add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents);
+        //void add_contents(int* ids, Object_types* types, int n_contents);
+        void add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents);
 
-    bool type_allowed(Object_types type)
-    {   // Restrict types here
-        return true;
-    }
-
-    bool full()
-    {
-        if (this->ct >= this->max)
+        bool type_allowed(Object_types type)
+        {   // Restrict types here
             return true;
-        return false;
-    }
+        }
 
-    bool add(ObjectPolicyInterface* obj, int x, int y)
-    {
-        if (!this->type_allowed(obj->state()->type))
-            return false;
-        if (this->full())
-            return false;
+        bool add(InventoryProperties* obj, int x, int y)
+        {
+            if (!this->type_allowed(obj->obj->state()->type))
+                return false;
+            return this->contents.add(obj, x,y);
+        }
 
-        if (!this->is_valid_grid_position(x,y))
-            return NULL;
-        int slot = this->get_slot(x,y);
-        if (this->contents[slot] != NULL)
-            return false;
+        bool add(InventoryProperties* obj)
+        {   // auto assign slot
+            if (!this->type_allowed(obj->obj->state()->type))
+                return false;
+            return this->contents.add(obj);
+        }
 
-        this->contents[slot] = obj;
-        this->ct++;
-        return true;
-    }
+        void remove(int x, int y)
+        {
+            int slot = this->contents.get_slot(x,y);
+            if (slot >= 0 && slot < this->contents.max)
+                this->contents.objects[slot] = NULL;
+        }
 
-    // auto assign slot
-    // TODO: for stackable items, put on stack
-    bool add(ObjectPolicyInterface* obj)
-    {
-        if (!this->type_allowed(obj->state()->type))
-            return false;
-        int slot = this->get_empty_slot();
-        if (slot < 0)
-            return false;
-        this->contents[slot] = obj;
-        this->ct++;
-        return true;
-    }
-
-    ObjectPolicyInterface* remove(int x, int y)
-    {
-        ObjectPolicyInterface* obj = this->item_at_slot(x,y);
-        int slot = this->get_slot(x,y);
-        if (slot >= 0)
-            this->contents[slot] = NULL;
-        return obj;
-    }
-
-    ObjectPolicyInterface* item_at_slot(int x, int y)
-    {
-        if (!this->is_valid_grid_position(x,y))
-            return NULL;
-        int slot = this->get_slot(x,y);
-        return this->contents[slot];
-    }
+        ObjectPolicyInterface* item_at_slot(int x, int y)
+        {
+            if (!this->contents.is_valid_grid_position(x,y))
+                return NULL;
+            int slot = this->contents.get_slot(x,y);
+            if (this->contents.objects[slot] == NULL)
+                return NULL;
+            return this->contents.objects[slot]->obj;
+        }
 
     explicit Inventory(int id)
     :
     InventoryObjectInterface(this),
-    x(0),y(0),
-    contents(NULL),
-    max(0), ct(0),
     owner(NO_AGENT)
     {
         this->_state.id = id;
@@ -179,8 +207,6 @@ class Inventory: public InventoryObjectInterface
 
     ~Inventory()
     {
-        if (this->contents != NULL)
-            free(this->contents);
     }
 
 };
@@ -260,7 +286,7 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
 bool inventory_create_message(
     inventory_create_StoC* msg,
     int id, Object_types type, int x, int y, int owner,
-    ObjectPolicyInterface** contents
+    InventoryProperties** contents
 ) {
     int max = x*y;
     if (max > INVENTORY_PACKET_MAX_CONTENTS)
@@ -274,7 +300,7 @@ bool inventory_create_message(
     msg->y = y;
     msg->owner = owner;
     
-    ObjectPolicyInterface* elem;
+    InventoryProperties* elem;
     ObjectState* state;
     int elem_id;
     Object_types elem_type;
@@ -285,7 +311,7 @@ bool inventory_create_message(
         elem = contents[i];
         if (elem != NULL)
         {
-            state = elem->state();
+            state = elem->obj->state();
             elem_id = state->id;
             elem_type = state->type;
         }

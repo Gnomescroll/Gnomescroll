@@ -17,6 +17,11 @@ Create / Contents
     -- Do we need fixed inventory sizes?
     -- If id,type is not associated with an object, create one
 
+Contents handling:
+    looks up object at load time
+    if NULL, create
+    --requires objects to have an inventory field
+
 Update
     Put Item:
         --inventory: id
@@ -49,3 +54,24 @@ Remove item
     
 Open inventory:
     --inventory: id
+
+
+===========================
+Transmitting contents:
+
+V1:
+
+Send fixed id,tuples list in packet
+    --Null values for empty
+create objects if unknown
+
+
+V2:
+send inventory create, then
+send create packets for all objects in list
+--no desyncing
+however, objects will need an inventory property
+-- track similar to behaviour lists
+
+Assumptions to make (at first):
+Inventory is known at time of registration
