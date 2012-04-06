@@ -2,42 +2,43 @@
 
 /* Network Interface */
 
-void InventoryNetworkInterface::sendToClientCreate(int client_id)
+void Inventory::sendToClientCreate(int client_id)
 {
     inventory_create_StoC msg;
-    ObjectState* state = object->state();
+    ObjectState* state = this->state();
     inventory_create_message(&msg,
         state->id, state->type,
-        object->contents.x, object->contents.y, object->get_owner(),
-        (InventoryProperties**)object->contents.objects
+        this->contents.x, this->contents.y, this->get_owner()
     );
     msg.sendToClient(client_id);
+
+    // send create packets for everything in the inventory
+    
 }
 
-void InventoryNetworkInterface::broadcastCreate()
+void Inventory::broadcastCreate()
 {
     inventory_create_StoC msg;
-    ObjectState* state = object->state();
+    ObjectState* state = this->state();
     inventory_create_message(&msg,
         state->id, state->type,
-        object->contents.x, object->contents.y, object->get_owner(),
-        (InventoryProperties**)object->contents.objects
+        this->contents.x, this->contents.y, this->get_owner()
     );
     msg.broadcast();
 }
 
-void InventoryNetworkInterface::sendToClientState(int client_id)
+void Inventory::sendToClientState(int client_id)
 {
 }
 
-void InventoryNetworkInterface::broadcastState()
+void Inventory::broadcastState()
 {
 }
 
-void InventoryNetworkInterface::broadcastDeath()
+void Inventory::broadcastDeath()
 {
     inventory_destroy_StoC msg;
-    inventory_destroy_message(&msg, object->state()->id);
+    inventory_destroy_message(&msg, this->state()->id);
     msg.broadcast();
 }
 

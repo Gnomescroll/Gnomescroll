@@ -5,25 +5,9 @@
 #include <c_lib/lists/list.hpp>
 #include <c_lib/components/component.hpp>
 
-class Inventory;
 typedef OwnedState InventoryState;
-class InventoryNetworkInterface: public InventoryState
-{
-    private:
-        Inventory* object;
-    public:
-        void sendToClientCreate(int client_id);
-        void broadcastCreate();
-        void sendToClientState(int client_id);
-        void broadcastState();
-        void broadcastDeath();
 
-    ~InventoryNetworkInterface() {}
-    InventoryNetworkInterface(Inventory* object)
-    : object(object) {}
-};
-
-class InventoryObjectInterface: public InventoryNetworkInterface
+class InventoryObjectInterface: public InventoryState
 {
     public:
         void tick() {}
@@ -33,8 +17,7 @@ class InventoryObjectInterface: public InventoryNetworkInterface
         void die() {}
 
     ~InventoryObjectInterface() {}
-    InventoryObjectInterface(Inventory* object)
-    : InventoryNetworkInterface(object) {}
+    InventoryObjectInterface() {}
 };
 
 
@@ -209,9 +192,14 @@ class Inventory: public InventoryObjectInterface
             return obj->obj;
         }
 
+        /* Network API */
+        void sendToClientCreate(int client_id);
+        void broadcastCreate();
+        void sendToClientState(int client_id);
+        void broadcastState();
+        void broadcastDeath();
+
     explicit Inventory(int id)
-    :
-    InventoryObjectInterface(this)
     {
         this->_state.id = id;
         this->owned_properties.owner = NO_AGENT;
@@ -287,11 +275,8 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
         inline void handle();
 };
 
-void inventory_create_message(
-    inventory_create_StoC* msg,
-    int id, Object_types type, int x, int y, int owner,
-    InventoryProperties** contents
-) {
+void inventory_create_message(inventory_create_StoC* msg, int id, Object_types type, int x, int y, int owner)
+{
     msg->id = id;
     msg->type = type;
     msg->x = x;
