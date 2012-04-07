@@ -114,7 +114,7 @@ class OwnedDefault
     public:
     int get_owner()
     { return NULL_OWNER; }
-    void set_owner(Object_types type, int owner) {}
+    void set_owner(int id, Object_types type, int owner) {}
 };
 
 class TeamDefault

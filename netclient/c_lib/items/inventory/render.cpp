@@ -42,6 +42,7 @@ void unregister_inventory_item_draw_list(InventoryProperties* property)
 void InventoryIconDrawList::draw()
 {
     // glBindTexture(this->texture);
+    if (this->ct <= 0) return;
     InventoryProperties* obj;
     for (int i=0; i<this->max; i++)
     {

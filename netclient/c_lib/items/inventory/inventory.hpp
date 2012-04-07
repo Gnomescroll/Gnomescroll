@@ -46,6 +46,7 @@ class InventoryProperties
             if (id != EMPTY_SLOT)
                 register_inventory_item_draw_list(this);
             #endif
+            printf("Loaded inventory item %d,%d\n", id,type);
         }
         
     InventoryProperties()
@@ -113,13 +114,31 @@ class InventoryContents // dont use behaviour list unless doing the registration
                 this->objects[i].slot = i;
         }
 
-        bool add(int id, Object_types type, int slot)
+        bool can_add()
+        {
+            if (this->full())
+                return false;
+            return true;
+        }
+        
+        bool can_add(int slot)
         {
             if (slot < 0 || slot >= this->max)
+                return false;
+            if (this->objects[slot].id != EMPTY_SLOT)
+                return false;
+            return true;
+        }
+
+        bool add(int id, Object_types type, int slot)
+        {
+            if (!this->can_add(slot))
                 return false;
             if (this->objects[slot].id == EMPTY_SLOT && id != EMPTY_SLOT)
                 this->ct++;
             this->objects[slot].load(id, type);
+            printf("added %d,%d to %d\n", id, type, slot);
+            return true;
         }
 
         bool remove(int x, int y)
@@ -189,6 +208,27 @@ class Inventory: public InventoryObjectInterface
         void sendContentsToClient(int client_id)
         {
             this->contents.sendToClient(this->_state.id, client_id);
+        }
+
+        bool can_add(Object_types type)
+        {
+            if (!this->type_allowed(type))
+                return false;
+            return this->contents.can_add();
+        }
+
+        bool can_add(Object_types type, int slot)
+        {
+            if (!this->type_allowed(type))
+                return false;
+            return this->contents.can_add(slot);
+        }
+
+        bool add(int id, Object_types type)
+        {
+            int slot = this->contents.get_empty_slot();
+            if (slot < 0) return false;
+            return this->contents.add(id,type,slot);
         }
 
         void add(int id, Object_types type, int slot)

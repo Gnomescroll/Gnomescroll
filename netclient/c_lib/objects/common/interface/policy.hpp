@@ -77,7 +77,7 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
         ObjectState* state() { return &this->_state; }
     
         int get_owner() { return Owner::get_owner(); }
-        void set_owner(int owner) { Owner::set_owner(this->state()->type, owner); }
+        void set_owner(int owner) { Owner::set_owner(this->state()->id, this->state()->type, owner); }
 
         int get_team() { return Team::get_team(); }
         void set_team(int team) { Team::set_team(team); }
