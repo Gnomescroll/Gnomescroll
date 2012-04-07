@@ -81,7 +81,7 @@ inline void add_item_to_inventory_CtoS::handle()
     Inventory* inv = (Inventory*)ServerState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
     if (inv == NULL) return;
     if (inv->get_owner() != agent->id) return;
-    inv->add(id, (Object_types)type, slot);
+    inv->add_action(id, (Object_types)type, slot);
 }
 
 inline void remove_item_from_inventory_CtoS::handle()
@@ -96,7 +96,7 @@ inline void remove_item_from_inventory_CtoS::handle()
     Inventory* inv = (Inventory*)ServerState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
     if (inv == NULL) return;
     if (inv->get_owner() != agent->id) return;
-    inv->server_remove(slot);
+    inv->remove_action(slot);
 }
 
 

@@ -468,7 +468,7 @@ void PlayerAgent_action::remove_item_from_inventory()
     if (p->you->status.team == 0) return;
 
     Inventory* inv = this->p->you->status.inventory;
-    inv->client_remove_any();   // TODO -- temp moethod
+    inv->remove_any_action();   // TODO -- temp moethod
 }
 
 void PlayerAgent_action::add_item_to_inventory()

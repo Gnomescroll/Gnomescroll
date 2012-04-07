@@ -252,15 +252,6 @@ class Inventory: public InventoryObjectInterface
         bool add(int id, Object_types type, int slot)
         {
             bool added = this->contents.add(id,type,slot);
-            if (added)
-            {
-                #if DC_SERVER
-                if (this->get_owner() != NO_AGENT)
-                    this->sendToClientAdd(id, type, slot);
-                else
-                    this->broadcastAdd(id, type, slot);
-                #endif
-            }
             return added;
         }
 
@@ -270,59 +261,91 @@ class Inventory: public InventoryObjectInterface
             return removed;
         }
 
-    /// TODO -- put on server interface
-        void remove_all()
+        #if DC_SERVER
+        void remove_all_action()
         {
             for (int i=0; i<this->contents.max; i++)
             {
                 if (this->contents.objects[i].id == EMPTY_SLOT)
                     continue;
-                this->server_remove(i);
+                this->remove_action(i);
             }
         }
 
-        // TODO
-        void server_remove(int slot)
+        void remove_action(int slot)
         {
             bool removed = this->remove(slot);
-            if (removed)
-            {
-                #if DC_SERVER
-                if (this->get_owner() != NO_AGENT)
-                    this->sendToClientRemove(slot);
-                else
-                    this->broadcastRemove(slot);
-                #endif
-            }
+            if (!removed) return;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientRemove(slot);
+            else
+                this->broadcastRemove(slot);
         }
 
-        // TODO -- find better way to namespace client actions on inventory
-        // 3 interface: Client,Server,Main. main stored here. does not send packets
-        void client_remove_any()
+        bool add_action(int id, Object_types type, int slot)
+        {
+            bool added = this->add(id,type,slot);
+            if (!added) return false;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientAdd(id, type, slot);
+            else
+                this->broadcastAdd(id, type, slot);
+            return added;
+        }
+
+        bool add_action(int id, Object_types type)
+        {
+            int slot = this->contents.get_empty_slot();
+            bool added = this->add_action(id,type, slot);
+            if (!added) return false;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientAdd(id, type, slot);
+            else
+                this->broadcastAdd(id, type, slot);
+            return added;
+        }
+        #endif
+
+        #if DC_CLIENT
+        void remove_any_action()
         {
             for (int i=0; i<this->contents.max; i++)
             {
                 if (this->contents.objects[i].id == EMPTY_SLOT)
                     continue;
-                this->client_remove(i);
+                this->remove_action(i);
                 break;
             }
         }
 
-        void client_remove(int slot)
+        void remove_action(int slot)
         {
             bool can_remove = this->contents.can_remove(slot);
-            if (can_remove)
-            {
-                #if DC_CLIENT
-                remove_item_from_inventory_CtoS msg;
-                msg.inventory_id = this->_state.id;
-                msg.slot = slot;
-                msg.send();
-                #endif
-            }
+            if (!can_remove) return;
+            remove_item_from_inventory_CtoS msg;
+            msg.inventory_id = this->_state.id;
+            msg.slot = slot;
+            msg.send();
+        }
+
+        void add_action(int id, Object_types type)
+        {
+            int slot = this->contents.get_empty_slot();
+            this->add_action(id, type, slot);
         }
         
+        void add_action(int id, Object_types type, int slot)
+        {
+            bool can_add = this->can_add(type, slot);
+            if (!can_add) return;
+            add_item_to_inventory_CtoS msg;
+            msg.inventory_id = this->_state.id;
+            msg.id = id;
+            msg.type = type;
+            msg.slot = slot;
+            msg.send();
+        }
+        #endif
 
         /* Network API */
         void sendToClientCreate(int client_id);

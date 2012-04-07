@@ -218,6 +218,7 @@ int Agent_status::die()
     dead = true;
     deaths++;
 
+    #if DC_SERVER
     AgentDeaths_StoC deaths_msg;
     deaths_msg.id = a->id;
     deaths_msg.deaths = deaths;
@@ -228,8 +229,9 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    this->inventory->remove_all();
-    
+    this->inventory->remove_all_action();
+    #endif
+
     return 1;
 }
 
@@ -536,6 +538,7 @@ const bool Agent_status::can_gain_item(Object_types item)
 
 bool Agent_status::gain_item(int item_id, Object_types item_type)
 {
+    #if DC_SERVER
     bool can = this->can_gain_item(item_type);
     switch (item_type)
     {
@@ -557,12 +560,18 @@ bool Agent_status::gain_item(int item_id, Object_types item_type)
 
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
-            return this->inventory->add(item_id, item_type);
+            return this->inventory->add_action(item_id, item_type);
             break;
             
         default: break;
     }
     return can;
+    #endif
+
+    #if DC_CLIENT
+    printf("ERROR: Agent_state::gain_item() called in client\n");
+    return false;
+    #endif
 }
 
 bool Agent_status::lose_item(Object_types item)
