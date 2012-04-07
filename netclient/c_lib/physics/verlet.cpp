@@ -86,13 +86,18 @@ void VerletParticle::init_state(float x, float y, float z, float mx, float my, f
 
 void VerletParticle::init_state(float x, float y, float z, float mx, float my, float mz, float _mass)
 {
-    mass = mass;
+    mass = _mass;
     this->set_position(x,y,z);
     this->set_momentum(mx,my,mz);
 
     old_p = p;
     old_v = v;
 }
+
+VerletParticle::VerletParticle()
+:
+mass(1.0)
+{}
 
 VerletParticle::VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass)
 :

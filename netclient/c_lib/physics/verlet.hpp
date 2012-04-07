@@ -35,7 +35,7 @@ class VerletParticle
         void init_state(float x, float y, float z, float mx, float my, float mz, float mass);
 
 
-        VerletParticle() {}
+        VerletParticle();
         VerletParticle(float x, float y, float z, float mx, float my, float mz);
         VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass);
 };
