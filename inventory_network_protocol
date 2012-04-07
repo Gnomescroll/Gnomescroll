@@ -88,14 +88,26 @@ when items leave inventory, create packet sent
 when items enter inventory, destroy packet sent
 -- how to handle properties like durability (will want to be able to show it in inventory)?
 
-variable properties will be yet another item
+variable properties will be yet another item    --cached
 both main items and inventory items will reference that item list for info
 
+
+draw lists per spritesheet -- bind inventoryitems to this
+
+==OLD/ALT==
 object state needs an inventory component/element
 needs add/remove self from inventory(*inv);
 --un/registers from that list
-
 add new state packet types
 instead of  pos/mom they have inventory id, slot
 the send method can probably be added to the inventory properties
 since the send method for this case can be called by iterating the inventory contents
+===========
+
+
+RENDERING:
+
+sort out declarations/definitions
+Make a special draw_list container to avoid iteration in client
+finish the inventory panel & icon bind/lookup/draw methods
+initialize the draw lists corresponding to sprite sheets properly
