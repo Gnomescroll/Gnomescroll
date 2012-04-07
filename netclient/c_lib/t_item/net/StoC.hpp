@@ -8,7 +8,7 @@
 namespace t_item
 {
 
-class t_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<t_item_picked_up_StoC>
+class free_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<free_item_picked_up_StoC>
 {
     public:
         uint8_t type;
@@ -24,7 +24,7 @@ class t_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<t_item_pi
         inline void handle();
 };
 
-class t_item_create_StoC: public FixedSizeReliableNetPacketToClient<t_item_create_StoC>
+class free_item_create_StoC: public FixedSizeReliableNetPacketToClient<free_item_create_StoC>
 {
     public:
         uint8_t type;
@@ -46,7 +46,7 @@ class t_item_create_StoC: public FixedSizeReliableNetPacketToClient<t_item_creat
         inline void handle();
 };
 
-class t_item_destroy_StoC: public FixedSizeReliableNetPacketToClient<t_item_destroy_StoC>
+class free_item_destroy_StoC: public FixedSizeReliableNetPacketToClient<free_item_destroy_StoC>
 {
     public:
         uint8_t type;

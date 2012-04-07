@@ -145,12 +145,8 @@
 #include <c_lib/t_item/interface.cpp>
 #include <c_lib/t_item/sprite.cpp>
 
-//#include <c_lib/t_item/net.cpp>
 #include <c_lib/t_item/net/CtoS.cpp>
 #include <c_lib/t_item/net/StoC.cpp>
-
-/* t_item */
-#include <c_lib/t_item/t_item.cpp>
 
 /* camera */
 #include <c_lib/camera/camera.cpp>

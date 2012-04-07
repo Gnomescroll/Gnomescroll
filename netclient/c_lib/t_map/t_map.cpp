@@ -24,6 +24,9 @@
     #include <c_lib/common/enum_types.hpp>
     #include <c_lib/entity/policy.hpp>
     #include <c_lib/state/server_state.hpp>
+
+    #include <c_lib/t_item/interface.hpp>
+
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
