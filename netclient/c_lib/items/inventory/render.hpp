@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/objects/common/list/list.hpp>
 
 
@@ -16,8 +18,10 @@ class InventoryIconDrawList: public PropertyList<InventoryProperties>
         const char* name() { return "InventoryIconDrawList"; };
     public:
         int spritesheet_id;
+        GLuint* texture; // TODO -- move, look up texture from spritesheet id
 
         void draw();
+        void init(int n){}
         
         InventoryIconDrawList()
         : PropertyList<InventoryProperties>(ICON_DRAW_LIST_MAX)
@@ -26,3 +30,21 @@ class InventoryIconDrawList: public PropertyList<InventoryProperties>
 
 void register_inventory_item_draw_list(InventoryProperties* property);
 void unregister_inventory_item_draw_list(InventoryProperties* property);
+
+namespace InventoryRender
+{
+    extern InventoryIconDrawList* inventory_draw_list;
+    extern SDL_Surface* ItemSheetSurface;
+    extern GLuint ItemSheetTexture;
+
+    void init();
+    void teardown();
+
+}   // Inventory
+
+class DrawListAggregate: public PropertyListAggregate<InventoryIconDrawList>
+{
+    public:
+};
+
+#endif

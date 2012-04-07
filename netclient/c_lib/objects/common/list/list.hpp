@@ -8,7 +8,7 @@
 class BehaviourList
 {
     private:
-        virtual const char* name() = 0;
+        virtual const char* name() { return "BehaviourList"; }
 
         void allocate()
         {
@@ -38,6 +38,14 @@ class BehaviourList
         void register_object(ComponentProperties* state);
         void unregister_object(ComponentProperties* state);
 
+        void init(int max)
+        {
+            if (this->objects != NULL)
+                return;
+            this->max = max;
+            this->allocate();
+        }
+
     virtual ~BehaviourList()
     {
         if (this->objects != NULL)
@@ -49,10 +57,53 @@ class BehaviourList
     {}
     
     explicit BehaviourList(int max)
-    : objects(NULL), max(max), ct(0)
+    : objects(NULL), max(0), ct(0)
     {
-        this->allocate();
+        this->init(max);
     }
+};
+
+
+class BehaviourListAggregate
+{
+    public:
+        BehaviourList* lists;
+        int n;
+        
+    void init(int n_lists)
+    {
+        if (n < 0)
+        {
+            printf("WARNING: BehaviourListAggregate - init() -- n_lists=%d\n", n_lists);
+            return;
+        }
+        this->lists = new BehaviourList[n_lists];
+    }
+
+    void init(int n_lists, int size_of_lists)
+    {
+        this->init(n_lists);
+        if (this->lists != NULL)
+            for (int i=0; i<this->n; i++)
+                this->lists[i].init(size_of_lists);
+    }
+
+    BehaviourList* get(int id)
+    {
+        if (id < 0 || id >= n)
+            return NULL;
+        return &this->lists[id];
+    }
+
+    ~BehaviourListAggregate()
+    {
+        if (this->lists != NULL)
+            delete[] this->lists;
+    }
+
+    BehaviourListAggregate()
+    : lists(NULL), n(0)
+    {}
 };
 
 // inherit this for a property list tracker
@@ -90,8 +141,38 @@ class PropertyList
             return false;
         }
 
-        void register_object(Property* state);
-        void unregister_object(Property* state);
+        void register_object(Property* state)
+        {
+            if (this->ct >= this->max)
+            {
+                printf("WARNING: %s is full\n", name());
+                return;
+            }
+            int i=0;
+            for (;i<this->max; i++)
+            {
+                if (this->objects[i] == NULL)
+                {
+                    state->id = i;
+                    this->objects[i] = state;
+                    this->ct++;
+                    break;
+                }
+            }
+            if (i == this->max)
+                printf("WARNING: no empty slots found in %s\n", name());
+        }
+
+        void unregister_object(Property* state)
+        {
+            if (state->id < 0 || state->id >= this->max)
+                return;
+            if (this->objects[state->id] == NULL) return;
+            this->objects[state->id] = NULL;
+            this->ct--;
+            state->id = -1;
+            return;
+        }
 
     virtual ~PropertyList<Property>()
     {
@@ -108,4 +189,47 @@ class PropertyList
     {
         this->allocate();
     }
+};
+
+template <class List>
+class PropertyListAggregate
+{
+    public:
+        List* lists;
+        int n;
+        
+    void init(int n_lists)
+    {
+        if (n < 0)
+        {
+            printf("WARNING: PropertyListAggregate - init() -- n_lists=%d\n", n_lists);
+            return;
+        }
+        this->lists = new List[n_lists];
+    }
+
+    void init(int n_lists, int size_of_lists)
+    {
+        this->init(n_lists);
+        if (this->lists != NULL)
+            for (int i=0; i<this->n; i++)
+                this->lists[i].init(size_of_lists);
+    }
+
+    List* get(int id)
+    {
+        if (id < 0 || id >= n)
+            return NULL;
+        return &this->lists[id];
+    }
+
+    ~PropertyListAggregate<List>()
+    {
+        if (this->lists != NULL)
+            delete[] this->lists;
+    }
+
+    PropertyListAggregate<List>()
+    : lists(NULL), n(0)
+    {}
 };

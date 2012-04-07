@@ -36,12 +36,16 @@ class InventoryProperties
 
         void load(int id, Object_types type)
         {
+            #if DC_CLIENT
             if (id != EMPTY_SLOT && (id != this->id || type != this->type))
                 unregister_inventory_item_draw_list(this);
+            #endif
             this->id = id;
             this->type = type;
+            #if DC_CLIENT
             if (id != EMPTY_SLOT)
                 register_inventory_item_draw_list(this);
+            #endif
         }
         
     InventoryProperties()
@@ -158,6 +162,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
     }
 };
 
+// wrap InventoryContents into a game object
 class Inventory: public InventoryObjectInterface
 {
     private:
