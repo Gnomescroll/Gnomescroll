@@ -227,11 +227,18 @@ class Inventory: public InventoryObjectInterface
 
         void sendToClientAdd(int id, Object_types type, int slot);
         void broadcastAdd(int id, Object_types type, int slot);
+        void sendToClientRemove(int slot);
+        void broadcastRemove(int slot);
 
         bool add(int id, Object_types type)
         {
             int slot = this->contents.get_empty_slot();
             if (slot < 0) return false;
+            return this->add(id, type, slot);
+        }
+
+        bool add(int id, Object_types type, int slot)
+        {
             bool added = this->contents.add(id,type,slot);
             if (added)
             {
@@ -242,19 +249,32 @@ class Inventory: public InventoryObjectInterface
                     this->broadcastAdd(id, type, slot);
                 #endif
             }
-
             return added;
-        }
-
-        void add(int id, Object_types type, int slot)
-        {
-            this->contents.add(id, type, slot);
         }
 
         void remove(int slot)
         {
-            this->contents.remove(slot);
-        }   
+            bool removed = this->contents.remove(slot);
+            if (removed)
+            {
+                #if DC_SERVER
+                if (this->get_owner() != NO_AGENT)
+                    this->sendToClientRemove(slot);
+                else
+                    this->broadcastRemove(slot);
+                #endif
+            }
+        }
+
+        void remove_all()
+        {
+            for (int i=0; i<this->contents.max; i++)
+            {
+                if (this->contents.objects[i].id == EMPTY_SLOT)
+                    continue;
+                this->remove(i);
+            }
+        }
 
         /* Network API */
         void sendToClientCreate(int client_id);

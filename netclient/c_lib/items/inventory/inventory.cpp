@@ -88,3 +88,25 @@ void Inventory::broadcastAdd(int id, Object_types type, int slot)
     msg.broadcast();
     #endif
 }
+
+void Inventory::sendToClientRemove(int slot)
+{
+    #if DC_SERVER
+    Agent_state* agent = ServerState::agent_list->get(this->get_owner());
+    if (agent == NULL) return;
+    remove_item_from_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.slot = slot;
+    msg.sendToClient(agent->client_id);
+    #endif
+}
+
+void Inventory::broadcastRemove(int slot)
+{
+    #if DC_SERVER
+    remove_item_from_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.slot = slot;
+    msg.broadcast();
+    #endif
+}

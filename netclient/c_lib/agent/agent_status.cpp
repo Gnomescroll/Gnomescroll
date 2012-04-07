@@ -226,6 +226,9 @@ int Agent_status::die()
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
+
+    this->inventory->remove_all();
+    
     return 1;
 }
 
@@ -505,6 +508,7 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
 
 const bool Agent_status::can_gain_item(Object_types item)
 {
+    if (this->dead) return false;
     bool can;
     switch (item)
     {

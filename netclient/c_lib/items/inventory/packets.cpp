@@ -52,6 +52,7 @@ inline void remove_item_from_inventory_StoC::handle()
         return;
     }
     obj->remove(slot);
+    printf("removed item from inventory slot %d\n", slot);
 }
 
 #endif
