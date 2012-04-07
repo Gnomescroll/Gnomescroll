@@ -99,7 +99,8 @@ void Free_item::draw()
     ty_max = ty_min + (1.0/16.0);
 	*/
 
-    int texture_index = 5;
+    //int texture_index = 5;
+    int texture_index = rand() % 16;
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(texture_index%8)* (1.0/8.0);
     tx_max = tx_min + (1.0/8.0);
