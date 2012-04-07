@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/components/component.hpp>
+#include <c_lib/objects/common/component.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 
 class VoxelProperties /*: public ComponentProperties*/
