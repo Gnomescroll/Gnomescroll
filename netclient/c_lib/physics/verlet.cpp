@@ -75,6 +75,25 @@ Vec3 VerletParticle::get_momentum()
     return mom;
 }
 
+void VerletParticle::init_state(float x, float y, float z, float mx, float my, float mz)
+{
+    this->set_position(x,y,z);
+    this->set_momentum(mx,my,mz);
+
+    old_p = p;
+    old_v = v;
+}
+
+void VerletParticle::init_state(float x, float y, float z, float mx, float my, float mz, float _mass)
+{
+    mass = mass;
+    this->set_position(x,y,z);
+    this->set_momentum(mx,my,mz);
+
+    old_p = p;
+    old_v = v;
+}
+
 VerletParticle::VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass)
 :
 mass(mass)

@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef DC_CLIENT
+#include <c_lib/common/gl_assert.hpp>
+#include <c_lib/t_item/sprite.hpp>
+#endif
+
 namespace t_item
 {
 
@@ -46,8 +51,9 @@ class Free_item
     }
     void set_state(float x, float y, float z, float mx, float my, float mz)
     {
-        vp.set_position(x,y,z);
-        vp.set_momentum(mx,my,mz);
+        vp.set_state(x,y,z,mx,my,mz);
+        //vp.set_position(x,y,z);
+        //vp.set_momentum(mx,my,mz);
     }
 
     Free_item(int id, float x, float y, float z, float mx, float my, float mz)
@@ -144,9 +150,22 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 
 void Free_item_list::draw()
 {
+#ifdef DC_CLIENT
+    glColor3ub(255,255,255);
+
+    //glEnable(GL_TEXTURE_2D);
+    gl_assert(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
+
+    glBegin(GL_QUADS);
+
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
             this->a[i]->draw();
+
+    glEnd();
+#endif
 }
 
 void Free_item_list::tick()
@@ -161,8 +180,9 @@ void Free_item_list::tick()
         {
 	        #ifdef DC_SERVER
 	            free_item->die();
-	        #endif
 	            this->destroy(free_item->id);
+
+            #endif
         }
     }
 }

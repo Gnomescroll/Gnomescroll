@@ -31,6 +31,10 @@ class VerletParticle
         void set_mass(float mass);
         Vec3 get_momentum();
         
+        void init_state(float x, float y, float z, float mx, float my, float mz);
+        void init_state(float x, float y, float z, float mx, float my, float mz, float mass);
+
+
         VerletParticle() {}
         VerletParticle(float x, float y, float z, float mx, float my, float mz);
         VerletParticle(float x, float y, float z, float mx, float my, float mz, float mass);

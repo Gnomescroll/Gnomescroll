@@ -47,10 +47,16 @@ void create_free_item(int id, float x, float y, float z, float vx, float vy, flo
 
     class free_item_create_StoC p;
 
+    p.type = 0;
+    p.id = f->id;
+    p.x = x;
+    p.y = y;
+    p.z = z;
+    p.mx = vx;
+    p.my = vy;
+    p.mz = vz;
 
-
-
-
+    p.broadcast();
 }
 
 }
