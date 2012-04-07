@@ -8,7 +8,7 @@
 namespace t_item
 {
 
-const int FREE_ITEM_TTL = 300; // 10 seconds
+const int FREE_ITEM_TTL = 300*30; // 10 seconds
 
 typedef enum
 {
@@ -104,12 +104,12 @@ void Free_item::draw()
     look.y = current_camera->y - vp.p.y;
     look.z = current_camera->z - vp.p.z;
 
-    look = vec3_normalize(look);
+    //look = vec3_normalize(look);
 
     Vec3 right = vec3_cross(look, up);
 
     right = vec3_normalize(right);
-    
+
     /*
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(this->texture_index%16)* (1.0/16.0);

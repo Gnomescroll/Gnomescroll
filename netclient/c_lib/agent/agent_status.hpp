@@ -3,10 +3,9 @@
 #include <c_lib/items/constants.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/agent/constants.hpp>
-#include <c_lib/items/inventory.hpp>
-#include <c_lib/entity/policy.hpp>
+#include <c_lib/items/inventory/inventory.hpp>
 
-void switch_agent_ownership(Object_types item, int owner, int new_owner);
+void switch_agent_ownership(int item_id, Object_types item_type, int owner, int new_owner);
 
 class Agent_state;  // forward declaration
 
@@ -97,9 +96,9 @@ class Agent_status {
 
         // item stuff
         const bool can_gain_item(Object_types item);
-        bool gain_item(Object_types item);
-        bool gain_item(ObjectPolicyInterface* obj);
+        bool gain_item(int item_id, Object_types item);
         bool lose_item(Object_types item);
 
         explicit Agent_status(Agent_state* a);
+        ~Agent_status();
 };

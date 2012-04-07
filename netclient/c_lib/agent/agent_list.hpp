@@ -36,7 +36,7 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void update_team_colors();
         #endif
 
-        bool agent_pickup_item(int agent_id, Object_types item_type);    // TODO : use ObjectTypes for items
+        bool agent_pickup_item(int agent_id, int item_id, Object_types item_type);    // TODO : use ObjectTypes for items
         
         Agent_list();
 };

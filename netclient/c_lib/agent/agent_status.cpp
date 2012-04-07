@@ -48,7 +48,15 @@ lifetime(0)
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
     this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY);
+    this->inventory->set_owner(this->a->id);
     this->inventory->init(4,3);
+    #endif
+}
+
+Agent_status::~Agent_status()
+{
+    #if DC_SERVER
+    ServerState::object_list->destroy(OBJ_TYPE_INVENTORY, this->inventory->state()->id);
     #endif
 }
 
@@ -218,6 +226,9 @@ int Agent_status::die()
     dead_msg.id = a->id;
     dead_msg.dead = dead;
     dead_msg.broadcast();
+
+    this->inventory->remove_all();
+    
     return 1;
 }
 
@@ -497,6 +508,8 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
 
 const bool Agent_status::can_gain_item(Object_types item)
 {
+    if (this->dead) return false;
+    bool can;
     switch (item)
     {
         case OBJ_TYPE_TURRET:
@@ -509,16 +522,21 @@ const bool Agent_status::can_gain_item(Object_types item)
                 return false;
             break;
 
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
+            can = this->inventory->can_add(item);
+            return can;
+
         default:
             return true;
     }
     return true;
 }
 
-bool Agent_status::gain_item(Object_types item)
+bool Agent_status::gain_item(int item_id, Object_types item_type)
 {
-    bool can = this->can_gain_item(item);
-    switch (item)
+    bool can = this->can_gain_item(item_type);
+    switch (item_type)
     {
         case OBJ_TYPE_TURRET:
             if (can) owned_turrets++;
@@ -535,28 +553,13 @@ bool Agent_status::gain_item(Object_types item)
         case OBJ_TYPE_LASER_REFILL:
             if (can) this->a->weapons.laser.add_ammo(20);
             break;
-            
-        default: break;
-    }
-    return can;
-}
 
-bool Agent_status::gain_item(ObjectPolicyInterface* obj)
-{
-    Object_types type = obj->state()->type;
-    bool can = this->can_gain_item(type);
-    if (!can) return false;
-    switch (type)
-    {
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
-            //can = this->inventory->add(obj);  // TODO
-            // TODO:
-            // inventory registration should go through object
-            // obj->add_to_inventory(this->inventory);
-            // object will register with inventory's list and alter own inventoried state
-            can = true;
+            return this->inventory->add(item_id, item_type);
             break;
+            
+        default: break;
     }
     return can;
 }
@@ -644,19 +647,19 @@ void Agent_status::tick()
         this->lifetime++;
 }
 
-void switch_agent_ownership(Object_types item, int owner, int new_owner)
+void switch_agent_ownership(int item_id, Object_types item_type, int owner, int new_owner)
 {
     Agent_state* a;
     if (owner != NO_AGENT)
     {
         a = STATE::agent_list->get(owner);
         if (a != NULL)
-            a->status.lose_item(item);
+            a->status.lose_item(item_type);
     }
     if (new_owner != NO_AGENT)
     {
         a = STATE::agent_list->get(new_owner);
         if (a != NULL)
-            a->status.gain_item(item);
+            a->status.gain_item(item_id, item_type);
     }
 }

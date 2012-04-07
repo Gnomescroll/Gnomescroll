@@ -3,9 +3,9 @@
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/entity/entity.hpp>
+#include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/items/packets.hpp>
-#include <c_lib/components/billboard_sprite.hpp>
+#include <c_lib/objects/components/billboard_sprite/billboard_sprite.hpp>
 
 //forward decl
 #if DC_CLIENT
@@ -51,7 +51,7 @@ void tickPickup(ObjectState* state, Object* object, float pickup_radius)
 {
     #if DC_SERVER
     int agent_id = object->nearest_agent_in_range(object->get_position(), pickup_radius);
-    if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->type))
+    if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->id, state->type))
     {   // was picked up, die
         object->was_picked_up(agent_id);
         state->ttl = state->ttl_max;

@@ -274,7 +274,7 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 
 // NOTE: all must have the same arguments except the first argument (msg) type
 
-#include <c_lib/entity/state.hpp>
+#include <c_lib/objects/common/interface/state.hpp>
 
 /* Create */
 

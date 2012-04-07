@@ -5,7 +5,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/player_agent_action.hpp>
-#include <c_lib/items/inventory.hpp>
+#include <c_lib/items/inventory/inventory.hpp>
 
 #include <c_lib/state/client_state.hpp>
 

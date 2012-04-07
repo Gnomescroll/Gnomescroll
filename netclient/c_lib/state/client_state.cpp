@@ -39,6 +39,8 @@ namespace ClientState {
     Animations::HitscanEffect_list* hitscan_effect_list = NULL;
     Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
+    DrawListAggregate* draw_lists;
+
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
     int last_reliable_ping_time;
@@ -73,6 +75,14 @@ namespace ClientState {
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
+
+        //TODO: MOVE
+        const int SPRITESHEETS_MAX = 5;
+        const int DRAW_LIST_SIZE = 512;
+        draw_lists = new DrawListAggregate;
+        draw_lists->init(SPRITESHEETS_MAX, DRAW_LIST_SIZE);
+        //for (int i=0; i<SPRITESHEETS_MAX; i++)
+            //draw_lists[i]->spritesheet_id = i;
     }
 
     void teardown_lists()
@@ -107,6 +117,7 @@ namespace ClientState {
         //printf("colored minivox list\n");
         //colored_minivox_list->print();
         delete colored_minivox_list;
+        delete draw_lists;
 
         // particles
         //cspray_list->print();
@@ -241,6 +252,10 @@ namespace ClientState {
 
         // transparent
         billboard_text_list->draw();
+        
+        // TODO : opengl flags
+        for (int i=0; i<draw_lists->n; i++)
+            draw_lists->get(i)->draw();
         
         begin_transparent_particle_draw();
         cspray_list->draw();

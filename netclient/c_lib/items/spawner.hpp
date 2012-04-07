@@ -4,10 +4,8 @@
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
-#include <c_lib/behaviour/behaviour.hpp>
-#include <c_lib/entity/entity.hpp>
-#include <c_lib/lists/lists.hpp>
-#include <c_lib/components/components.hpp>
+#include <c_lib/objects/common/interface/entity.hpp>
+#include <c_lib/objects/common/api/include.hpp>
 
 //forward decl
 class SpawnerList;

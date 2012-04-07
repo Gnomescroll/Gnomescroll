@@ -62,17 +62,9 @@
 #include <c_lib/voxel/voxel_loader.cpp>
 #include <c_lib/voxel/vox_dat_init.cpp>
 
-/* State Components */
-#include <c_lib/components/components.cpp>
-
-/* Behaviours */
-#include <c_lib/behaviour/behaviour.cpp>
-
-/* Entity system */
-#include <c_lib/entity/entity.cpp>
-
-/* Lists */
-#include <c_lib/lists/lists.cpp>
+/* Object system */
+#include <c_lib/objects/common/include.cpp>
+#include <c_lib/objects/components/include.cpp>
 
 /* particles */
 #include <c_lib/particles/particle_lib.cpp>
@@ -284,6 +276,8 @@ int init_c_lib() {
     init_chat_client();
     init_particles();
 
+    InventoryRender::init();
+
     ClientState::init_ctf();
     
     Animations::init_hitscan();
@@ -316,7 +310,8 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
-
+    InventoryRender::teardown();
+    
     // free surfaces
     t_map::teardown_shader();
     HudMap::teardown();

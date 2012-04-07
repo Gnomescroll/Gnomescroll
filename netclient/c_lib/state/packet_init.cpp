@@ -194,6 +194,8 @@ void RegisterMessages() {
     // inventory
     inventory_create_StoC::register_client_packet();
     inventory_destroy_StoC::register_client_packet();
+    add_item_to_inventory_StoC::register_client_packet();
+    remove_item_from_inventory_StoC::register_client_packet();
 
 }
 }

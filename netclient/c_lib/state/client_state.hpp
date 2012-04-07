@@ -51,6 +51,8 @@ namespace ClientState {
 
     extern CTF* ctf;
 
+    extern DrawListAggregate* draw_lists;
+    
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;
     extern int last_reliable_ping_time;

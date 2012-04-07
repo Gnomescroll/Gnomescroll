@@ -6,7 +6,7 @@
 #include <c_lib/defines.h>
 #include <c_lib/weapons/weapons.hpp>
 #include <c_lib/monsters/monsters.hpp>
-#include <c_lib/items/inventory.hpp>
+#include <c_lib/items/inventory/inventory.hpp>
 
 #ifdef DC_CLIENT
 #include <c_lib/time/physics_timer.h>

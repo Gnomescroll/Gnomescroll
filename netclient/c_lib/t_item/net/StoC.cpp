@@ -14,7 +14,7 @@ namespace t_item
 
 inline void free_item_picked_up_StoC::handle()
 {
-    printf("%d picked up by %d\n", id, agent_id);
+    //printf("%d picked up by %d\n", id, agent_id);
     // move item to inventory
 }
 
