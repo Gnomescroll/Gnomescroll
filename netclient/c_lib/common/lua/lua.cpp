@@ -175,39 +175,39 @@ lua_State* LUA_options_table = NULL;
 */
 void load_options()
 {
+    #if PRODUCTION
+    //stuff
+    #endif
 
-    LUA_options_table = luaL_newstate();
-    lua_State *L = LUA_options_table;
-
-    luaL_openlibs(L); /* Load Lua libraries */
-
-    if (luaL_loadfile(L, "lua/settings.lua")) 
-    {
-        fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
-        abort();
-    }
-
-    lua_newtable(L);    //create options table
-
-
-    Options::register_options();  
-    //int test;
-
-    //register_int_option("x_res", &test);
-    //register_int_option("y_res", &test);
-
-    lua_setglobal(L, "options_table"); //name options
-
-    if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
-    {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-        abort();
-    }
-
-/*
     if(LUA_options_table == NULL)
     {
+        LUA_options_table = luaL_newstate();
+        lua_State *L = LUA_options_table;
 
+        luaL_openlibs(L); /* Load Lua libraries */
+
+        if (luaL_loadfile(L, "lua/settings.lua")) 
+        {
+            fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
+            abort();
+        }
+
+        lua_newtable(L);    //create options table
+
+
+        Options::register_options();  
+        //int test;
+
+        //register_int_option("x_res", &test);
+        //register_int_option("y_res", &test);
+
+        lua_setglobal(L, "options_table"); //name options
+
+        if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
+        {
+            fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+            abort();
+        }
     }
     else
     {
@@ -226,7 +226,7 @@ void load_options()
             abort();
         }
     }
-*/
+
 }
 
 /*

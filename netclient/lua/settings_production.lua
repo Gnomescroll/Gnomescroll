@@ -4,22 +4,7 @@ package.path = "lua/?.lua;lua/block/?.lua;?.lua"
 
 require("lua_library");
 
-print("LuaJit: run_lua_test finished");
-
-if( options_table == nil) then
-    print "WTF\n"
-else
-    print "WTF2\n"
-end
-
-
-print(table.val_to_str(options_table))
-
-
-
-
 options = {}
-
 
 -- player name --
 options.name = "flarb"
@@ -27,9 +12,7 @@ options.name = "flarb"
 -- server --
 
 options.server = "174.37.26.119"
----options.server = "127.0.0.1"
 options.port = 0
-
 
 -- display options -- 
 options.fullscreen = false
@@ -47,7 +30,7 @@ options.invert_mouse = false
 
 -- hud setting --
 options.hud = true
-options.diagnostic_hud = true
+options.diagnostic_hud = false
 options.fps = true
 options.ping = true
 options.ping_update_interval = 500
