@@ -161,6 +161,7 @@ class PropertyListAggregate
             printf("WARNING: PropertyListAggregate - init() -- n_lists=%d\n", n_lists);
             return;
         }
+        this->n = n_lists;
         this->lists = new List[n_lists];
     }
 
