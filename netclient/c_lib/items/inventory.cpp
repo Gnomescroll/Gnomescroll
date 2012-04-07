@@ -1,5 +1,23 @@
 #include "inventory.hpp"
 
+/* Inventory Contents */
+
+void InventoryContents::sendToClient(int inventory_id, int client_id)
+{
+    for (int i=0; i<this->max; i++)
+    {
+        if (this->objects[i].id == EMPTY_SLOT)
+            continue;
+        add_item_to_inventory_StoC msg;
+        msg.inventory_id = inventory_id;
+        msg.id = this->objects[i].id;
+        msg.type = this->objects[i].type;
+        msg.slot = i;
+        msg.sendToClient(client_id);
+    }
+}
+
+
 /* Network Interface */
 
 void Inventory::sendToClientCreate(int client_id)
@@ -13,7 +31,7 @@ void Inventory::sendToClientCreate(int client_id)
     msg.sendToClient(client_id);
 
     // send create packets for everything in the inventory
-    this->contents.sendToClient(client_id);
+    this->sendContentsToClient(client_id);
 }
 
 void Inventory::broadcastCreate()
@@ -42,7 +60,6 @@ void Inventory::broadcastDeath()
     msg.broadcast();
 }
 
-
 /* Packets */
 
 #if DC_CLIENT
@@ -59,13 +76,12 @@ inline void inventory_create_StoC::handle()
             printf("WARNING: inventory_create_StoC::handle() -- failed to create inventory %d\n", id);
             return;
         }
+        obj->init(x,y);
     }
+    else if (obj->dimension_mismatch(x,y))
+        printf("WARNING: inventory_create_StoC::handle() inventory %d known but dimension mismatch\n", id);
 
-    // set dimensions
-    obj->set_dimensions(x,y);
-    // set owner
-    obj->set_owner(owner);  // TODO : owned properties
-
+    obj->set_owner(owner);
     if (create)
         obj->born();
 }
@@ -75,9 +91,35 @@ inline void inventory_destroy_StoC::handle()
     ClientState::object_list->destroy(OBJ_TYPE_INVENTORY, id);
 }
 
+inline void add_item_to_inventory_StoC::handle()
+{
+    Inventory* obj = (Inventory*)ClientState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
+    if (obj == NULL)
+    {
+        printf("WARNING: add_item_to_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
+        return;
+    }
+    obj->add(id, (Object_types)type, slot);
+}
+
+inline void remove_item_from_inventory_StoC::handle()
+{
+    Inventory* obj = (Inventory*)ClientState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
+    if (obj == NULL)
+    {
+        printf("WARNING: add_item_to_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
+        return;
+    }
+    obj->remove(slot);
+}
+
 #endif
 
 #if DC_SERVER
 inline void inventory_create_StoC::handle() {}
 inline void inventory_destroy_StoC::handle() {}
+
+inline void add_item_to_inventory_StoC::handle() {}
+inline void remove_item_from_inventory_StoC::handle() {}
+
 #endif

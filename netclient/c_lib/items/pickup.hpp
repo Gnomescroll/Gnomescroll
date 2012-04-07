@@ -3,9 +3,9 @@
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/entity/entity.hpp>
+#include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/items/packets.hpp>
-#include <c_lib/components/billboard_sprite.hpp>
+#include <c_lib/objects/components/billboard_sprite/billboard_sprite.hpp>
 
 //forward decl
 #if DC_CLIENT

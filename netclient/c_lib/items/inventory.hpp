@@ -1,9 +1,8 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
-#include <c_lib/entity/layers.hpp>
-#include <c_lib/lists/list.hpp>
-#include <c_lib/components/component.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
+#include <c_lib/objects/common/interface/layers.hpp>
+#include <c_lib/objects/common/list/list.hpp>
 
 typedef OwnedState InventoryState;
 
@@ -20,33 +19,109 @@ class InventoryObjectInterface: public InventoryState
     InventoryObjectInterface() {}
 };
 
+//int get_icon_spritesheet_id(Object_types type)
+//{
+    //switch (type)
+    //{
+        //case OBJ_TYPE_GRENADE_REFILL:
+            //return 1;
+        //default:
+            //return 0;
+    //}
+//}
+
+//void draw_inventory_icon(Object_types type, int slot)
+//{   // lookup icon index from type, draw at slot position
+//}
+
+//const int ICON_DRAW_LIST_MAX = 512;
+//class InventoryIconDrawList: public PropertyList<InventoryProperties>
+//{
+    //private:
+        //const char* name() { return "InventoryIconDrawList"; };
+    //public:
+        //int spritesheet_id;
+
+        //void draw()
+        //{
+            //InventoryProperties* obj
+            //for (int i=0; i<this->max; i++)
+            //{
+                //obj = this->objects[i];
+                //draw_inventory_icon(obj->type, obj->slot);
+            //}
+        //}
+        
+        //InventoryIconDrawList()
+        //: PropertyList<InventoryProperties>(ICON_DRAW_LIST_MAX)
+        //{ print(); }
+//};
+
+//void register_inventory_item_draw_list(InventoryProperties* property)
+//{
+    //#if DC_CLIENT
+     //map id,type to
+    //int spritesheet = get_icon_spritesheet_id(property->type);
+    //if (spritesheet < 0) return;
+    //ClientState::draw_lists[spritesheet]->register_object(property);
+    //#endif
+//}
+
+//void unregister_inventory_item_draw_list(InventoryProperties* property)
+//{
+    //#if DC_CLIENT
+     //map id,type to
+    //int spritesheet = get_icon_spritesheet_id(property->type);
+    //if (spritesheet < 0) return;
+    //ClientState::draw_lists[spritesheet]->unregister_object(property);
+    //#endif
+//}
 
 /* Inventory Property, to use in an object */
 
-class InventoryProperties: public ComponentProperties
+const int EMPTY_SLOT = 65535;
+
+class InventoryProperties
 {
     public:
+        int id; // id would be the id of the main object it is referring to. this lets us get cache info
+                // otherwise inconsequential
+        Object_types type;
+        int slot;
+        //ObjectPolicyInterface* obj;
+
+        void load(int id, Object_types type)
+        {
+            //if (id != EMPTY_SLOT && (id != this->id || type != this->type)
+                //unregister_inventory_item_draw_list(this);
+            //this->id = id;
+            //this->type = type;
+            //if (id != EMPTY_SLOT)
+                //register_inventory_item_draw_list(this);
+        }
+        
     InventoryProperties()
+    :
+    id(EMPTY_SLOT), type(OBJ_TYPE_NONE),
+    slot(-1)    // slot is set after allocation
     {}
 };
 
-// TODO: deprecate
-class InventoryComponent
+class InventoryContents // dont use behaviour list unless doing the registration model
 {
     public:
-        InventoryProperties inventory_properties;
-    InventoryComponent() {}
-};
-
-const int EMPTY_SLOT = 65535; // uint16_t max
-
-class InventoryContents: public BehaviourList
-{
-    private:
-        const char* name() { return "InventoryContents"; }
-
-    public:
+        InventoryProperties* objects;
         int x,y;
+
+        int max;
+        int ct;
+
+        bool full()
+        {
+            if (this->ct >= this->max)
+                return true;
+            return false;
+        }
 
         int get_slot(int x, int y)
         {
@@ -58,7 +133,7 @@ class InventoryContents: public BehaviourList
             if (this->full())
                 return -1;
             for (int i=0; i<this->max; i++)
-                if (this->objects[i] == NULL)
+                if (this->objects[i].id == EMPTY_SLOT)
                     return i;
             return -1;
         }
@@ -72,90 +147,69 @@ class InventoryContents: public BehaviourList
 
         void init(int x, int y)
         {
-            this->set_dimensions(x,y);
-        }
-
-        void set_dimensions(int x, int y)
-        {
-            int new_max = x*y;
-            if (new_max <= 0)
+            if (objects != NULL)
             {
-                printf("ERROR: Inventory::init() -- dimension %d is <=0: x,y = %d,%d\n", new_max, x,y);
+                printf("WARNING: Inventory::init() -- objects is not NULL\n");
                 return;
-            }
-            if (new_max != this->max)
-            {   // allocate buffer
-                if (this->objects == NULL)
-                    this->objects = (ComponentProperties**)calloc(new_max, sizeof(ComponentProperties*));
-                else
-                {   // resizing
-                    this->objects = (ComponentProperties**)realloc(this->objects, new_max * sizeof(ComponentProperties*));
-                    if (new_max > this->max)    // null new memory
-                        for (int i=this->max; i<new_max; i++)
-                            this->objects[i] = NULL;
-                }
             }
             this->x = x;
             this->y = y;
-            this->max = new_max;
+            this->max = x*y;
+            if (this->max <= 0)
+            {
+                printf("ERROR: Inventory::init() -- dimension %d is <=0: x,y = %d,%d\n", this->max, x,y);
+                return;
+            }
+            this->objects = new InventoryProperties[this->max];
+            for (int i=0; i<this->max; i++)
+                this->objects[i].slot = i;
         }
 
-        bool add(InventoryProperties* obj)
-        {   // auto assign slot
-            int slot = this->get_empty_slot();
-            if (slot < 0)
-                return false;
-            this->objects[slot] = obj;
-            this->ct++;
-            return true;
-        }
-
-        bool add(InventoryProperties* obj, int x, int y)
+        bool add(int id, Object_types type, int slot)
         {
-            if (this->full())
+            if (slot < 0 || slot >= this->max)
                 return false;
-            if (!this->is_valid_grid_position(x,y))
-                return false;
-            int slot = this->get_slot(x,y);
-            if (this->objects[slot] != NULL)
-                return false;
-
-            this->objects[slot] = obj;
-            this->ct++;
-            return true;
+            if (this->objects[slot].id == EMPTY_SLOT && id != EMPTY_SLOT)
+                this->ct++;
+            this->objects[slot].load(id, type);
         }
 
         bool remove(int x, int y)
         {
             int slot = this->get_slot(x,y);
-            if (slot < 0 && slot >= this->max)
+            return this->remove(slot);
+        }
+        
+        bool remove(int slot)
+        {
+            if (slot < 0 || slot >= this->max)
                 return false;
-            this->objects[slot] = NULL;
+            if (this->objects[slot].id != EMPTY_SLOT)
+                this->ct--;
+            this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE);
             return true;
         }
 
-        void sendToClient(int client_id)
-        {
-            InventoryProperties* obj;
-            for (int i=0; i<this->max; i++)
-            {
-                obj = (InventoryProperties*)this->objects[i];
-                if (obj == NULL) continue;
-                obj->obj->sendToClientCreate(client_id);
-            }
-        }
+        void sendToClient(int inventory_id, int client_id);
 
         InventoryProperties* item_at_slot(int x, int y)
         {
             if (!this->is_valid_grid_position(x,y))
                 return NULL;
             int slot = this->get_slot(x,y);
-            return (InventoryProperties*)this->objects[slot];
+            return &this->objects[slot];
         }
 
+    ~InventoryContents()
+    {
+        if (this->objects != NULL)
+            delete[] this->objects;
+    }
+
     InventoryContents()
-    : BehaviourList(),
-    x(0), y(0)
+    :
+    objects(NULL),
+    x(0), y(0), max(0), ct(0)
     {
     }
 };
@@ -163,53 +217,40 @@ class InventoryContents: public BehaviourList
 class Inventory: public InventoryObjectInterface
 {
     private:
-    public:
         InventoryContents contents;
+    public:
         
         void init(int x, int y)
         {
             this->contents.init(x,y);
         }
 
-        void set_dimensions(int x, int y)
-        {
-            this->contents.set_dimensions(x,y);
-        }
-
-        //void add_contents(int* ids, Object_types* types, int n_contents);
-        void add_contents_from_packet(uint16_t* ids, uint8_t* types, int n_contents);
-
         bool type_allowed(Object_types type)
         {   // Restrict types here
             return true;
         }
 
-        bool add(InventoryProperties* obj, int x, int y)
+        bool dimension_mismatch(int x, int y)
         {
-            if (!this->type_allowed(obj->obj->state()->type))
-                return false;
-            return this->contents.add(obj, x,y);
+            if (this->contents.x != x || this->contents.y != y)
+                return true;
+            return false;
         }
 
-        bool add(InventoryProperties* obj)
-        {   // auto assign slot
-            if (!this->type_allowed(obj->obj->state()->type))
-                return false;
-            return this->contents.add(obj);
+        void sendContentsToClient(int client_id)
+        {
+            this->contents.sendToClient(this->_state.id, client_id);
         }
 
-        bool remove(int x, int y)
+        void add(int id, Object_types type, int slot)
         {
-            return this->contents.remove(x,y);
+            this->contents.add(id, type, slot);
         }
 
-        ObjectPolicyInterface* item_at_slot(int x, int y)
+        void remove(int slot)
         {
-            InventoryProperties* obj = this->contents.item_at_slot(x,y);
-            if (obj == NULL)
-                return NULL;
-            return obj->obj;
-        }
+            this->contents.remove(slot);
+        }   
 
         /* Network API */
         void sendToClientCreate(int client_id);
@@ -230,6 +271,69 @@ class Inventory: public InventoryObjectInterface
 
 };
 
+
+//struct Icon
+//{
+    //char index; // texture index in sheet
+    //char sheet; // texture sheet
+//};
+
+//struct Icon get_icon_data(Object_types type)
+//{
+    //struct Icon icon = { 0,0 }; // load "missing" icon here
+    //switch (type)
+    //{
+        //// e.g. :
+        ////case OBJ_TYPE_GRENADE_REFILL:
+            ////icon.index = 1;
+            ////icon.sheet = 0;
+        //default: break;
+    //}
+    //return icon;
+//}
+
+//void render_inventory_item(InventoryProperties data)
+//{
+    //// draw
+
+    //// Available data:
+    ////data.id;
+    ////data.type;
+    ////data.slot;
+//}
+
+//void draw_inventory_hud_panel(Object_types inventory_type)
+//{
+    ////int tex = 0;
+    //switch (inventory_type)
+    //{   // TODO: replace Object_types with Inventory_type
+        //case OBJ_TYPE_INVENTORY:
+            ////tex = inventory_panel_texture;
+            //break;
+        //default: return;
+    //}
+//}
+
+//// class data members
+////class InventoryProperties
+////{
+    ////public:
+        ////int id;
+        ////Object_types type;
+        ////int slot;
+////}
+
+//// draw wrapper will pass inventory data to this function
+//void render_inventory(Object_types inventory_type, InventoryProperties* contents, int size)
+//{
+    //draw_inventory_hud_panel(inventory_type);
+    //for (int i=0; i<size; i++)
+    //{
+        //if (contents[i].id == EMPTY_SLOT)
+            //continue;
+        //render_inventory_item(contents[i]);
+    //}
+//}
 
 //class add_to_inventory_slot_CtoS: public FixedSizeReliableNetPacketToServer<add_to_inventory_slot_CtoS>
 //{
@@ -320,3 +424,34 @@ void inventory_destroy_message(inventory_destroy_StoC* msg, int id)
     msg->id = id;
 }
 
+class add_item_to_inventory_StoC: public FixedSizeNetPacketToClient<add_item_to_inventory_StoC>
+{
+    public:
+        uint16_t inventory_id;
+        uint16_t id;
+        uint8_t type;
+        uint8_t slot;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u8(&slot, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class remove_item_from_inventory_StoC: public FixedSizeNetPacketToClient<remove_item_from_inventory_StoC>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slot;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slot, buff, buff_n, pack);
+    }
+    inline void handle();
+};
