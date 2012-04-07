@@ -36,12 +36,12 @@ class InventoryProperties
 
         void load(int id, Object_types type)
         {
-            //if (id != EMPTY_SLOT && (id != this->id || type != this->type)
-                //unregister_inventory_item_draw_list(this);
-            //this->id = id;
-            //this->type = type;
-            //if (id != EMPTY_SLOT)
-                //register_inventory_item_draw_list(this);
+            if (id != EMPTY_SLOT && (id != this->id || type != this->type))
+                unregister_inventory_item_draw_list(this);
+            this->id = id;
+            this->type = type;
+            if (id != EMPTY_SLOT)
+                register_inventory_item_draw_list(this);
         }
         
     InventoryProperties()
