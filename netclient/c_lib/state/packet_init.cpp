@@ -12,9 +12,8 @@
 #include <c_lib/t_map/net/t_CtoS.hpp>
 #include <c_lib/t_map/net/t_StoC.hpp>
 
-#include <c_lib/items/items.hpp>
-
-#include <c_lib/t_item/net.hpp>
+#include <c_lib/t_item/net/CtoS.hpp>
+#include <c_lib/t_item/net/StoC.hpp>
 
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);

@@ -28,7 +28,7 @@ void t_item_pick_up_CtoS::handle()
 
 #if DC_CLIENT
 
-inline void t_item_pick_up_CtoS::handle() {}
+void t_item_pick_up_CtoS::handle() {}
 
 #endif
 

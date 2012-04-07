@@ -2,11 +2,11 @@
 
 #include <net_lib/net.hpp>
 
+//#include <net_lib/t_item/net/CtoSs.hpp>
 //#include <c_lib/t_item/free_item.hpp>
 
 namespace t_item
 {
-
 
 class t_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<t_item_picked_up_StoC>
 {

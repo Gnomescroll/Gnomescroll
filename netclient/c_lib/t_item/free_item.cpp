@@ -1,6 +1,6 @@
 #include "free_item.hpp"
 
-#include <c_lib/t_item/net.hpp>
+#include <c_lib/t_item/net/StoC.hpp>
 
 namespace t_item
 {

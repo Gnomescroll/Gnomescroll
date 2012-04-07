@@ -138,13 +138,16 @@
 
 #include <c_lib/t_mech/state.cpp>
 #include <c_lib/t_mech/draw.cpp>
-#include <c_lib/t_item/net.cpp>
 
 /* items */
 
 #include <c_lib/t_item/free_item.cpp>
 #include <c_lib/t_item/interface.cpp>
 #include <c_lib/t_item/sprite.cpp>
+
+//#include <c_lib/t_item/net.cpp>
+#include <c_lib/t_item/net/CtoS.cpp>
+#include <c_lib/t_item/net/StoC.cpp>
 
 /* t_item */
 #include <c_lib/t_item/t_item.cpp>
