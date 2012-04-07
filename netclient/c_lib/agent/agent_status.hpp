@@ -3,7 +3,7 @@
 #include <c_lib/items/constants.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/agent/constants.hpp>
-#include <c_lib/items/inventory.hpp>
+#include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/objects/common/interface/policy.hpp>
 
 void switch_agent_ownership(Object_types item, int owner, int new_owner);
