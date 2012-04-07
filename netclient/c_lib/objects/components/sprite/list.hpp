@@ -1,14 +1,14 @@
 #pragma once
 
 #include <c_lib/objects/common/list/list.hpp>
-#include <c_lib/objects/components/billboard_sprite/billboard_sprite.hpp>
+#include <c_lib/objects/components/sprite/sprite.hpp>
 
-const int BILLBOARD_SPRITE_LIST_MAX = 1024;
+const int sprite_LIST_MAX = 1024;
 
-class BillboardSpriteList: public BehaviourList
+class SpriteList: public BehaviourList
 {
     private:
-        const char* name() { return "BillboardSpriteList"; }
+        const char* name() { return "SpriteList"; }
     public:
         void draw()
         {
@@ -18,7 +18,7 @@ class BillboardSpriteList: public BehaviourList
                     this->objects[i]->obj->draw();
         }
 
-    BillboardSpriteList()
-    : BehaviourList(BILLBOARD_SPRITE_LIST_MAX)
+    SpriteList()
+    : BehaviourList(sprite_LIST_MAX)
     {}
 };

@@ -14,7 +14,7 @@ void InventoryIconDrawList::draw()
         obj = this->objects[i];
         if (obj == NULL) continue;
         if (obj->id == EMPTY_SLOT) continue;
-        draw_inventory_icon(obj->type, obj->slot);
+        draw_inventory_icon(obj->item_type, obj->slot);
     }
 }
 

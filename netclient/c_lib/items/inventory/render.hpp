@@ -43,9 +43,9 @@ namespace InventoryRender
 
 }   // Inventory
 
-class DrawListAggregate: public PropertyListAggregate<InventoryIconDrawList>
-{
-    public:
-};
+//class DrawListAggregate: public PropertyListAggregate<InventoryIconDrawList>
+//{
+    //public:
+//};
 
 #endif

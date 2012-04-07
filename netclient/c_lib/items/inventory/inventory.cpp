@@ -9,12 +9,12 @@ void InventoryContents::sendToClient(int inventory_id, int client_id)
 {
     for (int i=0; i<this->max; i++)
     {
-        if (this->objects[i].id == EMPTY_SLOT)
+        if (this->objects[i].item_id == EMPTY_SLOT)
             continue;
         add_item_to_inventory_StoC msg;
         msg.inventory_id = inventory_id;
-        msg.id = this->objects[i].id;
-        msg.type = this->objects[i].type;
+        msg.id = this->objects[i].item_id;
+        msg.type = this->objects[i].item_type;
         msg.slot = i;
         msg.sendToClient(client_id);
     }

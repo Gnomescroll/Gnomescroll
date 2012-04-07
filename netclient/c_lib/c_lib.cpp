@@ -61,6 +61,9 @@
 #include <c_lib/SDL/particle_functions.c>
 #include <c_lib/SDL/SDL_functions.c>
 
+/* Draw lists */
+#include <c_lib/draw/transparent.cpp>
+
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
 #include <c_lib/voxel/voxel_render.cpp>
@@ -236,6 +239,7 @@ int init_c_lib() {
     init_video();
     init_image_loader();
     TextureSheetLoader::init();
+    Draw::init();
     t_map::init_t_map();
     HudCubeSelector::init();
     lua_load_block_dat();  /* Load Block Dat */
@@ -305,6 +309,7 @@ void close_c_lib() {
     shutdown_net_client();
     teardown_cameras();
     HudFont::teardown();
+    Draw::teardown();
     teardown_chat_client();
 
     ClientState::teardown();

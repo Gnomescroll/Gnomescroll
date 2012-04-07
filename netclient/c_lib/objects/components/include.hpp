@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/objects/components/billboard_sprite/billboard_sprite.hpp>
-#include <c_lib/objects/components/billboard_sprite/list.hpp>
+#include <c_lib/objects/components/sprite/sprite.hpp>
+#include <c_lib/objects/components/sprite/list.hpp>
 
 #include <c_lib/objects/components/health/health.hpp>
 //#include <c_lib/objects/components/health/list.hpp>
