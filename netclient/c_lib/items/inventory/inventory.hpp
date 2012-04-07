@@ -4,6 +4,8 @@
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/list/list.hpp>
 
+#include <c_lib/items/inventory/render.hpp>
+
 typedef OwnedState InventoryState;
 
 class InventoryObjectInterface: public InventoryState
@@ -18,64 +20,6 @@ class InventoryObjectInterface: public InventoryState
     ~InventoryObjectInterface() {}
     InventoryObjectInterface() {}
 };
-
-//int get_icon_spritesheet_id(Object_types type)
-//{
-    //switch (type)
-    //{
-        //case OBJ_TYPE_GRENADE_REFILL:
-            //return 1;
-        //default:
-            //return 0;
-    //}
-//}
-
-//void draw_inventory_icon(Object_types type, int slot)
-//{   // lookup icon index from type, draw at slot position
-//}
-
-//const int ICON_DRAW_LIST_MAX = 512;
-//class InventoryIconDrawList: public PropertyList<InventoryProperties>
-//{
-    //private:
-        //const char* name() { return "InventoryIconDrawList"; };
-    //public:
-        //int spritesheet_id;
-
-        //void draw()
-        //{
-            //InventoryProperties* obj
-            //for (int i=0; i<this->max; i++)
-            //{
-                //obj = this->objects[i];
-                //draw_inventory_icon(obj->type, obj->slot);
-            //}
-        //}
-        
-        //InventoryIconDrawList()
-        //: PropertyList<InventoryProperties>(ICON_DRAW_LIST_MAX)
-        //{ print(); }
-//};
-
-//void register_inventory_item_draw_list(InventoryProperties* property)
-//{
-    //#if DC_CLIENT
-     //map id,type to
-    //int spritesheet = get_icon_spritesheet_id(property->type);
-    //if (spritesheet < 0) return;
-    //ClientState::draw_lists[spritesheet]->register_object(property);
-    //#endif
-//}
-
-//void unregister_inventory_item_draw_list(InventoryProperties* property)
-//{
-    //#if DC_CLIENT
-     //map id,type to
-    //int spritesheet = get_icon_spritesheet_id(property->type);
-    //if (spritesheet < 0) return;
-    //ClientState::draw_lists[spritesheet]->unregister_object(property);
-    //#endif
-//}
 
 /* Inventory Property, to use in an object */
 

@@ -17,7 +17,6 @@ void InventoryContents::sendToClient(int inventory_id, int client_id)
     }
 }
 
-
 /* Network Interface */
 
 void Inventory::sendToClientCreate(int client_id)

@@ -81,6 +81,8 @@ class PropertyList
         int max;
         int ct;
 
+        void print() { printf("%s property list\n", this->name()); }
+
         bool full()
         {
             if (this->ct >= this->max)
