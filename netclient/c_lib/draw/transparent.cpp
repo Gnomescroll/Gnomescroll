@@ -71,6 +71,7 @@ void init_draw_lists()
         draw_lists->get(i)->texture_id = i;
         draw_lists->get(i)->init(render_list_sizes[i]);
         draw_lists->get(i)->texture_data = texture_data[i];
+        draw_lists->get(i)->type = (DrawListType)i;
     }
 }
 
@@ -102,16 +103,66 @@ void teardown()
     teardown_textures();
 }
 
-void draw()
+void start_draw_mode_default()
 {
     glColor4ub(255,255,255,255);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    for (int i=0; i<n_spritesheets; i++)
-        draw_lists->get(i)->draw();
+}
+
+void end_draw_mode_default()
+{
     glDisable(GL_TEXTURE_2D);   // do i need to disable before rebinding a new texture?
     glDisable(GL_BLEND);
+}
+
+void start_draw_mode_inventory_items()
+{
+    glColor4ub(255,255,255,255);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void end_draw_mode_inventory_items()
+{
+    glDisable(GL_TEXTURE_2D);   // do i need to disable before rebinding a new texture?
+    glDisable(GL_BLEND);
+}
+
+void start_draw_mode(DrawListType list_type)
+{
+    switch (list_type)
+    {
+        case NONE_DRAW_LIST:
+            break;
+        case ITEM_DRAW_LIST:
+            start_draw_mode_inventory_items();
+            break;
+        case CUBE_DRAW_LIST1:
+        case CUBE_DRAW_LIST2:
+        default:
+            start_draw_mode_default();
+            break;
+    }
+}
+
+void end_draw_mode(DrawListType list_type)
+{
+    switch (list_type)
+    {
+        case NONE_DRAW_LIST:
+            break;
+        case ITEM_DRAW_LIST:
+            end_draw_mode_inventory_items();
+            break;
+        case CUBE_DRAW_LIST1:
+        case CUBE_DRAW_LIST2:
+        default:
+            end_draw_mode_default();
+            break;
+    }
 }
 
 void draw_sprite(struct TextureData texture, struct SpriteData sprite, float scale)
@@ -133,7 +184,8 @@ void draw_sprite(struct TextureData texture, struct SpriteData sprite, float sca
 
 void SpriteList::draw()
 {
-    if (this->ct == 0) return;
+    if (this->ct == 0 || this->type == NONE_DRAW_LIST) return;
+    start_draw_mode(this->type);    // TODO -- if the glFlag toggling is a problem, bundle draws of those with same flags
     glBindTexture(GL_TEXTURE_2D, textures[this->texture_id]);
     SpriteProperties* obj;
     for (int i=0; i<this->max; i++)
@@ -143,6 +195,7 @@ void SpriteList::draw()
         obj->get_sprite_data(&this->sprite_data);
         draw_sprite(this->texture_data, this->sprite_data, obj->scale);
     }
+    end_draw_mode(this->type);
 }
 
 }   // Draw

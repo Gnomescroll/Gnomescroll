@@ -22,6 +22,13 @@ struct SpriteData
     float x,y,z;
 };
 
+typedef enum {
+    ITEM_DRAW_LIST,
+    CUBE_DRAW_LIST1,
+    CUBE_DRAW_LIST2,
+    NONE_DRAW_LIST
+} DrawListType;
+
 // draw lists
 class SpriteList: public BehaviourList
 {
@@ -30,11 +37,12 @@ class SpriteList: public BehaviourList
         int texture_id;
         struct SpriteData sprite_data;
         struct TextureData texture_data;
+        DrawListType type;
         
         void draw();
 
     SpriteList()
-    : texture_id(-1)
+    : texture_id(-1), type(NONE_DRAW_LIST)
     {}
 };
 
@@ -44,5 +52,5 @@ extern DrawListAggregate* draw_lists;
 
 void init();
 void teardown();
-void draw();
+//void draw();
 }   // Draw

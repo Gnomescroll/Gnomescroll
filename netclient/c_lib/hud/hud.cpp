@@ -224,9 +224,7 @@ void draw_hud_textures()
     if (hud_draw_settings.graphs)
         frame_graph->draw(_xresf - frame_graph->ts->screen_width(), 0);
 
-    // TODO
-    //InventoryRender::draw();
-    Draw::draw();
+    Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
 }
 
 void draw_hud_text()

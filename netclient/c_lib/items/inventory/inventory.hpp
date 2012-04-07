@@ -44,7 +44,7 @@ class InventoryProperties: public SpriteProperties
         {
             #if DC_CLIENT
             bool new_icon = (id != this->item_id || type != this->item_type);
-            if (id != EMPTY_SLOT && new_icon)
+            if (this->item_id != EMPTY_SLOT && new_icon)
                 unregister_inventory_item_draw_list(this);
             if (type != this->item_type)
                 this->sprite_index = get_icon_spritesheet_id(type);
