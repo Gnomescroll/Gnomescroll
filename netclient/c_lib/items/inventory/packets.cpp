@@ -22,6 +22,9 @@ inline void inventory_create_StoC::handle()
         printf("WARNING: inventory_create_StoC::handle() inventory %d known but dimension mismatch\n", id);
 
     obj->set_owner(owner);
+    #if DC_CLIENT   // TODO
+    obj->attach_to_owner();
+    #endif
     if (create)
         obj->born();
 }
@@ -63,9 +66,9 @@ inline void remove_item_from_inventory_CtoS::handle() {}
 #if DC_SERVER
 inline void inventory_create_StoC::handle() {}
 inline void inventory_destroy_StoC::handle() {}
-
 inline void add_item_to_inventory_StoC::handle() {}
 inline void remove_item_from_inventory_StoC::handle() {}
+
 
 inline void add_item_to_inventory_CtoS::handle()
 {
@@ -83,6 +86,7 @@ inline void add_item_to_inventory_CtoS::handle()
 
 inline void remove_item_from_inventory_CtoS::handle()
 {
+    printf("REceived remove_item: invid %d, slot %d\n", inventory_id, slot);
     Agent_state* agent = NetServer::agents[client_id];
     if (agent == NULL)
     {
@@ -92,7 +96,7 @@ inline void remove_item_from_inventory_CtoS::handle()
     Inventory* inv = (Inventory*)ServerState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
     if (inv == NULL) return;
     if (inv->get_owner() != agent->id) return;
-    inv->remove(slot);
+    inv->server_remove(slot);
 }
 
 

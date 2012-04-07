@@ -43,7 +43,8 @@ flag_captures(0),
 coins(0),
 vox_crouched(false),
 base_restore_rate_limiter(0),
-lifetime(0)
+lifetime(0),
+inventory(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER

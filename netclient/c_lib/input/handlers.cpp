@@ -325,6 +325,11 @@ void agent_key_down_handler(SDL_Event* event)
             HudCubeSelector::cube_selector.down();
             break;
 
+        // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
+        case SDLK_j:
+            ClientState::playerAgent_state.action.remove_item_from_inventory();
+            break;
+
         case SDLK_1:
             if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
             break;

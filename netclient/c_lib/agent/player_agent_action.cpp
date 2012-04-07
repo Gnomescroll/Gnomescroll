@@ -461,6 +461,21 @@ int PlayerAgent_action::select_block()
     return block_type;
 }
 
+void PlayerAgent_action::remove_item_from_inventory()
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
+
+    Inventory* inv = this->p->you->status.inventory;
+    inv->client_remove_any();   // TODO -- temp moethod
+}
+
+void PlayerAgent_action::add_item_to_inventory()
+{
+}
+
+
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
 :
 p(player_agent)

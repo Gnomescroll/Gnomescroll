@@ -158,6 +158,15 @@ class InventoryContents // dont use behaviour list unless doing the registration
             return true;
         }
 
+        bool can_remove(int slot)
+        {
+            if (slot < 0 || slot >= this->max)
+                return false;
+            if (this->objects[slot].id == EMPTY_SLOT)
+                return false;
+            return true;
+        }
+
         void sendToClient(int inventory_id, int client_id);
 
         InventoryProperties* item_at_slot(int x, int y)
@@ -188,6 +197,9 @@ class Inventory: public InventoryObjectInterface
     private:
         InventoryContents contents;
     public:
+
+        // TODO -- move, this is owned specialization
+        void attach_to_owner();
         
         void init(int x, int y)
         {
@@ -252,9 +264,27 @@ class Inventory: public InventoryObjectInterface
             return added;
         }
 
-        void remove(int slot)
+        bool remove(int slot)
         {
             bool removed = this->contents.remove(slot);
+            return removed;
+        }
+
+    /// TODO -- put on server interface
+        void remove_all()
+        {
+            for (int i=0; i<this->contents.max; i++)
+            {
+                if (this->contents.objects[i].id == EMPTY_SLOT)
+                    continue;
+                this->server_remove(i);
+            }
+        }
+
+        // TODO
+        void server_remove(int slot)
+        {
+            bool removed = this->remove(slot);
             if (removed)
             {
                 #if DC_SERVER
@@ -266,15 +296,33 @@ class Inventory: public InventoryObjectInterface
             }
         }
 
-        void remove_all()
+        // TODO -- find better way to namespace client actions on inventory
+        // 3 interface: Client,Server,Main. main stored here. does not send packets
+        void client_remove_any()
         {
             for (int i=0; i<this->contents.max; i++)
             {
                 if (this->contents.objects[i].id == EMPTY_SLOT)
                     continue;
-                this->remove(i);
+                this->client_remove(i);
+                break;
             }
         }
+
+        void client_remove(int slot)
+        {
+            bool can_remove = this->contents.can_remove(slot);
+            if (can_remove)
+            {
+                #if DC_CLIENT
+                remove_item_from_inventory_CtoS msg;
+                msg.inventory_id = this->_state.id;
+                msg.slot = slot;
+                msg.send();
+                #endif
+            }
+        }
+        
 
         /* Network API */
         void sendToClientCreate(int client_id);
