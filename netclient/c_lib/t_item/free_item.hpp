@@ -8,7 +8,7 @@
 namespace t_item
 {
 
-const int FREE_ITEM_TTL = 300; // 10 seconds
+const int FREE_ITEM_TTL = 300*30; // 10 seconds
 
 typedef enum
 {
@@ -84,7 +84,7 @@ void Free_item::draw()
 #ifdef DC_CLIENT
 	const float scale = 0.5;
     const float h = 0.75;
-
+/*
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,
         model_view_matrix[4]*scale,
@@ -95,6 +95,20 @@ void Free_item::draw()
         model_view_matrix[5]*scale,
         model_view_matrix[9]*scale
     );
+*/
+    Vec3 up = vec3_init(0.0, 0.0, 1.0);
+
+    Vec3 look;
+
+    look.x = current_camera->x - vp.p.x;
+    look.y = current_camera->y - vp.p.y;
+    look.z = current_camera->z - vp.p.z;
+
+    //look = vec3_normalize(look);
+
+    Vec3 right = vec3_cross(look, up);
+
+    right = vec3_normalize(right);
 
     /*
     float tx_min, tx_max, ty_min, ty_max;
@@ -115,6 +129,7 @@ void Free_item::draw()
     ty_min = (float)(texture_index/8)* (1.0/8.0);
     ty_max = ty_min + (1.0/8.0);
 
+
     Vec3 p = vec3_sub(vp.p, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
     glVertex3f(p.x, p.y, p.z+h);
@@ -130,6 +145,7 @@ void Free_item::draw()
     p = vec3_add(vp.p, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z+h);
+
 #endif
 }
 
