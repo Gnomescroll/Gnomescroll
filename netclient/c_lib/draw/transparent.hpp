@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/objects/common/list/list.hpp>
+
 namespace Draw
 {
 
@@ -8,13 +10,26 @@ int get_texture_id(char* path);
 
 // load textures
 
+struct TextureData
+{
+    float sprite_width;
+    float sprite_height;
+};
+
+struct SpriteData
+{
+    int index;
+    float x,y,z;
+};
+
 // draw lists
-void draw_sprite(int sprite_sprite_index, float scale) {}
 class SpriteList: public BehaviourList
 {
     public:
         // add spritesheet metadata here, like width,height
         int texture_id;
+        struct SpriteData sprite_data;
+        struct TextureData texture_data;
         
         void draw();
 

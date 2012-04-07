@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <c_lib/SDL/draw_functions.hpp>
+#include <c_lib/draw/transparent.hpp>
 
 void InventoryIconDrawList::draw()
 {
@@ -159,7 +160,8 @@ void register_inventory_item_draw_list(InventoryProperties* property)
      // map id,type to
     //int spritesheet = get_icon_spritesheet_id(property->type);
     //if (spritesheet < 0) return;
-    InventoryRender::inventory_draw_list->register_object(property);
+    //InventoryRender::inventory_draw_list->register_object(property);
+    Draw::draw_lists->get(0)->register_object(property);
     //ClientState::draw_lists[spritesheet]->register_object(property);
     #endif
 }
@@ -170,7 +172,8 @@ void unregister_inventory_item_draw_list(InventoryProperties* property)
      //map id,type to
     //int spritesheet = get_icon_spritesheet_id(property->type);
     //if (spritesheet < 0) return;
-    InventoryRender::inventory_draw_list->unregister_object(property);
+    //InventoryRender::inventory_draw_list->unregister_object(property);
+    Draw::draw_lists->get(0)->unregister_object(property);
     //ClientState::draw_lists[spritesheet]->unregister_object(property);
     #endif
 }

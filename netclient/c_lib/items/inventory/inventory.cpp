@@ -2,6 +2,22 @@
 
 #include <c_lib/agent/agent.hpp> 
 #include <c_lib/state/server_state.hpp>
+#if DC_CLIENT
+#include <c_lib/SDL/SDL_functions.h>
+#endif
+
+/* Inventory Properties */
+
+#if DC_CLIENT
+void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
+{
+    data->index = this->sprite_index;
+    const float spacing = 64.0f;
+    data->x = inventory->screen.x + spacing * slot;
+    data->y = inventory->screen.y;
+    data->z = inventory->screen.z;
+}
+#endif
 
 /* Inventory Contents */
 
@@ -21,6 +37,18 @@ void InventoryContents::sendToClient(int inventory_id, int client_id)
 }
 
 /* Network Interface */
+
+Inventory::Inventory(int id)
+{
+    this->_state.id = id;
+    this->owned_properties.owner = NO_AGENT;
+    // todo
+    #if DC_CLIENT
+    this->screen.x = _xresf/3;
+    this->screen.y = _yresf - 64;
+    this->screen.z = -0.1f;
+    #endif
+}
 
 void Inventory::sendToClientCreate(int client_id)
 {

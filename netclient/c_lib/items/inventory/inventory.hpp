@@ -7,6 +7,9 @@
 
 #include <c_lib/items/inventory/render.hpp>
 #include <c_lib/items/inventory/packets.hpp>
+#if DC_CLIENT
+#include <c_lib/draw/transparent.hpp>
+#endif
 
 typedef OwnedState InventoryState;
 
@@ -26,6 +29,7 @@ class InventoryObjectInterface: public InventoryState
 /* Inventory Property, to use in an object */
 
 const int EMPTY_SLOT = 65535;
+class Inventory;
 
 class InventoryProperties: public SpriteProperties
 {
@@ -34,7 +38,7 @@ class InventoryProperties: public SpriteProperties
                 // otherwise inconsequential
         Object_types item_type;
         int slot;
-        //ObjectPolicyInterface* obj;
+        Inventory* inventory;
 
         void load(int id, Object_types type)
         {
@@ -42,6 +46,8 @@ class InventoryProperties: public SpriteProperties
             bool new_icon = (id != this->item_id || type != this->item_type);
             if (id != EMPTY_SLOT && new_icon)
                 unregister_inventory_item_draw_list(this);
+            if (type != this->item_type)
+                this->sprite_index = get_icon_spritesheet_id(type);
             #endif
             this->item_id = id;
             this->item_type = type;
@@ -53,12 +59,19 @@ class InventoryProperties: public SpriteProperties
 
             // TODO -- lookup and set sprite properties
         }
+
+    #if DC_CLIENT
+    void get_sprite_data(struct Draw::SpriteData* data);
+    #endif
         
     InventoryProperties()
     :
     item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE),
-    slot(-1)    // slot is set after allocation
-    {}
+    slot(-1),    // slot is set after allocation
+    inventory(NULL)
+    {
+        this->scale = 4.0f;
+    }
 };
 
 class InventoryContents // dont use behaviour list unless doing the registration model
@@ -69,6 +82,8 @@ class InventoryContents // dont use behaviour list unless doing the registration
 
         int max;
         int ct;
+
+        Inventory* inventory;
 
         bool full()
         {
@@ -99,13 +114,14 @@ class InventoryContents // dont use behaviour list unless doing the registration
             return true;
         }
 
-        void init(int x, int y)
+        void init(Inventory* inventory, int x, int y)
         {
             if (objects != NULL)
             {
                 printf("WARNING: Inventory::init() -- objects is not NULL\n");
                 return;
             }
+            this->inventory = inventory;
             this->x = x;
             this->y = y;
             this->max = x*y;
@@ -116,7 +132,10 @@ class InventoryContents // dont use behaviour list unless doing the registration
             }
             this->objects = new InventoryProperties[this->max];
             for (int i=0; i<this->max; i++)
+            {
                 this->objects[i].slot = i;
+                this->objects[i].inventory = inventory;
+            }
         }
 
         bool can_add()
@@ -202,12 +221,18 @@ class Inventory: public InventoryObjectInterface
         InventoryContents contents;
     public:
 
+        #if DC_CLIENT
+        struct {
+            float x,y,z;
+        } screen;
+        #endif
+
         // TODO -- move, this is owned specialization
         void attach_to_owner();
         
         void init(int x, int y)
         {
-            this->contents.init(x,y);
+            this->contents.init(this, x,y);
         }
 
         bool type_allowed(Object_types type)
@@ -362,11 +387,7 @@ class Inventory: public InventoryObjectInterface
         void broadcastState();
         void broadcastDeath();
 
-    explicit Inventory(int id)
-    {
-        this->_state.id = id;
-        this->owned_properties.owner = NO_AGENT;
-    }
+    explicit Inventory(int id);
 
     ~Inventory()
     {
