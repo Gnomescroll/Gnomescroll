@@ -13,3 +13,4 @@
 
 #include <c_lib/items/inventory/inventory.cpp>
 #include <c_lib/items/inventory/render.cpp>
+#include <c_lib/items/inventory/packets.cpp>

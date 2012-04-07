@@ -16,3 +16,4 @@
 
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/inventory/render.hpp>
+#include <c_lib/items/inventory/packets.hpp>
