@@ -325,6 +325,11 @@ void agent_key_down_handler(SDL_Event* event)
             HudCubeSelector::cube_selector.down();
             break;
 
+        // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
+        case SDLK_j:
+            ClientState::playerAgent_state.action.remove_item_from_inventory();
+            break;
+
         case SDLK_1:
             if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
             break;
@@ -395,6 +400,8 @@ void agent_mouse_down_handler(SDL_Event* event)
                 if (block)
                     HudCubeSelector::cube_selector.set_active_id(block);
             }
+            else if (p->you->weapons.active == Weapons::TYPE_block_pick)
+                p->action.pickup_item();
             break;
 
         case SDL_BUTTON_MIDDLE:

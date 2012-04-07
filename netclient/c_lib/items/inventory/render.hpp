@@ -39,12 +39,13 @@ namespace InventoryRender
 
     void init();
     void teardown();
+    void draw();
 
 }   // Inventory
 
-class DrawListAggregate: public PropertyListAggregate<InventoryIconDrawList>
-{
-    public:
-};
+//class DrawListAggregate: public PropertyListAggregate<InventoryIconDrawList>
+//{
+    //public:
+//};
 
 #endif

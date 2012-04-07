@@ -43,7 +43,8 @@ flag_captures(0),
 coins(0),
 vox_crouched(false),
 base_restore_rate_limiter(0),
-lifetime(0)
+lifetime(0),
+inventory(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
@@ -217,6 +218,7 @@ int Agent_status::die()
     dead = true;
     deaths++;
 
+    #if DC_SERVER
     AgentDeaths_StoC deaths_msg;
     deaths_msg.id = a->id;
     deaths_msg.deaths = deaths;
@@ -227,8 +229,9 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    this->inventory->remove_all();
-    
+    this->inventory->remove_all_action();
+    #endif
+
     return 1;
 }
 
@@ -533,6 +536,7 @@ const bool Agent_status::can_gain_item(Object_types item)
     return true;
 }
 
+// TODO -- duplicate interface for client side -- should go through event
 bool Agent_status::gain_item(int item_id, Object_types item_type)
 {
     bool can = this->can_gain_item(item_type);
@@ -556,7 +560,12 @@ bool Agent_status::gain_item(int item_id, Object_types item_type)
 
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
-            return this->inventory->add(item_id, item_type);
+            #if DC_SERVER
+            return this->inventory->add_action(item_id, item_type);
+            #endif
+            //#if DC_CLIENT
+            //this->inventory->add(item_id, item_type);
+            //#endif
             break;
             
         default: break;

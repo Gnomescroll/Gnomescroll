@@ -5,13 +5,13 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/items/packets.hpp>
-#include <c_lib/objects/components/billboard_sprite/billboard_sprite.hpp>
+#include <c_lib/objects/components/sprite/sprite.hpp>
 
 //forward decl
 #if DC_CLIENT
 namespace ClientState
 {
-    extern BillboardSpriteList* billboard_sprite_list;
+    extern SpriteList* sprite_list;
     extern ColoredMinivoxList* colored_minivox_list;
 }
 #endif
@@ -23,7 +23,7 @@ namespace ItemDrops
 
 const int DEFAULT_PICKUP_ITEM_TTL = 30 * 12;    // 12 seconds
 const float DEFAULT_PICKUP_ITEM_RADIUS = 2.0f;
-const float DEFAULT_PICKUP_ITEM_TEXTURE_SCALE = 1.0f;
+const float DEFAULT_PICKUP_ITEM_scale = 1.0f;
 const float DEFAULT_PICKUP_ITEM_DAMP = 0.1f;    // hardly bounce
 const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
@@ -102,18 +102,18 @@ void initialize_pickup_object(Object_types type, ObjectState* state)
     }
 }
 
-void initialize_sprite_properties(Object_types type, BillboardSpriteProperties* obj)
+void initialize_sprite_properties(Object_types type, SpriteProperties* obj)
 {
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
-            obj->texture_index = GRENADE_REFILL_TEXTURE_ID;
-            obj->texture_scale = GRENADE_REFILL_TEXTURE_SCALE;
+            obj->sprite_index = GRENADE_REFILL_TEXTURE_ID;
+            obj->scale = GRENADE_REFILL_TEXTURE_SCALE;
             break;
 
         case OBJ_TYPE_LASER_REFILL:
-            obj->texture_index = LASER_REFILL_TEXTURE_ID;
-            obj->texture_scale = LASER_REFILL_TEXTURE_SCALE;
+            obj->sprite_index = LASER_REFILL_TEXTURE_ID;
+            obj->scale = LASER_REFILL_TEXTURE_SCALE;
             break;
 
         default: return;
@@ -186,7 +186,7 @@ class PickupObject: public PickupComponent, public PickupInterface
     }
 };
 
-class PickupObjectSprite: public PickupObject, public BillboardSpriteComponent
+class PickupObjectSprite: public PickupObject, public SpriteComponent
 {
     public:
 
@@ -196,20 +196,20 @@ class PickupObjectSprite: public PickupObject, public BillboardSpriteComponent
         #if DC_CLIENT
         initialize_sprite_properties(type, &this->sprite_properties);
         this->sprite_properties.obj = this;
-        ClientState::billboard_sprite_list->register_object(&this->sprite_properties);
+        ClientState::sprite_list->register_object(&this->sprite_properties);
         #endif
     }
 
     ~PickupObjectSprite()
     {
         #if DC_CLIENT
-        ClientState::billboard_sprite_list->unregister_object(&this->sprite_properties);
+        ClientState::sprite_list->unregister_object(&this->sprite_properties);
         #endif
     }
 
     void draw()
     {
-        drawBillboardSprite(this->get_position(), this->sprite_properties.texture_index, this->sprite_properties.texture_scale);
+        drawBillboardSprite(this->get_position(), this->sprite_properties.sprite_index, this->sprite_properties.scale);
     }
 };
 

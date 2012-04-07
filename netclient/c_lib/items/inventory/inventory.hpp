@@ -3,6 +3,7 @@
 #include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/list/list.hpp>
+#include <c_lib/objects/components/sprite/sprite.hpp>
 
 #include <c_lib/items/inventory/render.hpp>
 #include <c_lib/items/inventory/packets.hpp>
@@ -26,33 +27,36 @@ class InventoryObjectInterface: public InventoryState
 
 const int EMPTY_SLOT = 65535;
 
-class InventoryProperties
+class InventoryProperties: public SpriteProperties
 {
     public:
-        int id; // id would be the id of the main object it is referring to. this lets us get cache info
+        int item_id; // id would be the id of the main object it is referring to. this lets us get cache info
                 // otherwise inconsequential
-        Object_types type;
+        Object_types item_type;
         int slot;
         //ObjectPolicyInterface* obj;
 
         void load(int id, Object_types type)
         {
             #if DC_CLIENT
-            if (id != EMPTY_SLOT && (id != this->id || type != this->type))
+            bool new_icon = (id != this->item_id || type != this->item_type);
+            if (id != EMPTY_SLOT && new_icon)
                 unregister_inventory_item_draw_list(this);
             #endif
-            this->id = id;
-            this->type = type;
+            this->item_id = id;
+            this->item_type = type;
             #if DC_CLIENT
-            if (id != EMPTY_SLOT)
+            if (id != EMPTY_SLOT && new_icon)   // set to new
                 register_inventory_item_draw_list(this);
             #endif
             printf("Loaded inventory item %d,%d\n", id,type);
+
+            // TODO -- lookup and set sprite properties
         }
         
     InventoryProperties()
     :
-    id(EMPTY_SLOT), type(OBJ_TYPE_NONE),
+    item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE),
     slot(-1)    // slot is set after allocation
     {}
 };
@@ -83,7 +87,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
             if (this->full())
                 return -1;
             for (int i=0; i<this->max; i++)
-                if (this->objects[i].id == EMPTY_SLOT)
+                if (this->objects[i].item_id == EMPTY_SLOT)
                     return i;
             return -1;
         }
@@ -126,7 +130,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
         {
             if (slot < 0 || slot >= this->max)
                 return false;
-            if (this->objects[slot].id != EMPTY_SLOT)
+            if (this->objects[slot].item_id != EMPTY_SLOT)
                 return false;
             return true;
         }
@@ -135,7 +139,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
         {
             if (!this->can_add(slot))
                 return false;
-            if (this->objects[slot].id == EMPTY_SLOT && id != EMPTY_SLOT)
+            if (this->objects[slot].item_id == EMPTY_SLOT && id != EMPTY_SLOT)
                 this->ct++;
             this->objects[slot].load(id, type);
             printf("added %d,%d to %d\n", id, type, slot);
@@ -152,9 +156,18 @@ class InventoryContents // dont use behaviour list unless doing the registration
         {
             if (slot < 0 || slot >= this->max)
                 return false;
-            if (this->objects[slot].id != EMPTY_SLOT)
+            if (this->objects[slot].item_id != EMPTY_SLOT)
                 this->ct--;
             this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE);
+            return true;
+        }
+
+        bool can_remove(int slot)
+        {
+            if (slot < 0 || slot >= this->max)
+                return false;
+            if (this->objects[slot].item_id == EMPTY_SLOT)
+                return false;
             return true;
         }
 
@@ -188,6 +201,9 @@ class Inventory: public InventoryObjectInterface
     private:
         InventoryContents contents;
     public:
+
+        // TODO -- move, this is owned specialization
+        void attach_to_owner();
         
         void init(int x, int y)
         {
@@ -196,6 +212,10 @@ class Inventory: public InventoryObjectInterface
 
         bool type_allowed(Object_types type)
         {   // Restrict types here
+            if (type == OBJ_TYPE_AGENT
+              || type == OBJ_TYPE_SLIME
+              || type == OBJ_TYPE_NONE)
+                return false;
             return true;
         }
 
@@ -240,41 +260,100 @@ class Inventory: public InventoryObjectInterface
         bool add(int id, Object_types type, int slot)
         {
             bool added = this->contents.add(id,type,slot);
-            if (added)
-            {
-                #if DC_SERVER
-                if (this->get_owner() != NO_AGENT)
-                    this->sendToClientAdd(id, type, slot);
-                else
-                    this->broadcastAdd(id, type, slot);
-                #endif
-            }
             return added;
         }
 
-        void remove(int slot)
+        bool remove(int slot)
         {
             bool removed = this->contents.remove(slot);
-            if (removed)
-            {
-                #if DC_SERVER
-                if (this->get_owner() != NO_AGENT)
-                    this->sendToClientRemove(slot);
-                else
-                    this->broadcastRemove(slot);
-                #endif
-            }
+            return removed;
         }
 
-        void remove_all()
+        #if DC_SERVER
+        void remove_all_action()
         {
             for (int i=0; i<this->contents.max; i++)
             {
-                if (this->contents.objects[i].id == EMPTY_SLOT)
+                if (this->contents.objects[i].item_id == EMPTY_SLOT)
                     continue;
-                this->remove(i);
+                this->remove_action(i);
             }
         }
+
+        void remove_action(int slot)
+        {
+            bool removed = this->remove(slot);
+            if (!removed) return;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientRemove(slot);
+            else
+                this->broadcastRemove(slot);
+        }
+
+        bool add_action(int id, Object_types type, int slot)
+        {
+            bool added = this->add(id,type,slot);
+            if (!added) return false;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientAdd(id, type, slot);
+            else
+                this->broadcastAdd(id, type, slot);
+            return added;
+        }
+
+        bool add_action(int id, Object_types type)
+        {
+            int slot = this->contents.get_empty_slot();
+            bool added = this->add_action(id,type, slot);
+            if (!added) return false;
+            if (this->get_owner() != NO_AGENT)
+                this->sendToClientAdd(id, type, slot);
+            else
+                this->broadcastAdd(id, type, slot);
+            return added;
+        }
+        #endif
+
+        #if DC_CLIENT
+        void remove_any_action()
+        {
+            for (int i=0; i<this->contents.max; i++)
+            {
+                if (this->contents.objects[i].item_id == EMPTY_SLOT)
+                    continue;
+                this->remove_action(i);
+                break;
+            }
+        }
+
+        void remove_action(int slot)
+        {
+            bool can_remove = this->contents.can_remove(slot);
+            if (!can_remove) return;
+            remove_item_from_inventory_CtoS msg;
+            msg.inventory_id = this->_state.id;
+            msg.slot = slot;
+            msg.send();
+        }
+
+        void add_action(int id, Object_types type)
+        {
+            int slot = this->contents.get_empty_slot();
+            this->add_action(id, type, slot);
+        }
+        
+        void add_action(int id, Object_types type, int slot)
+        {
+            bool can_add = this->can_add(type, slot);
+            if (!can_add) return;
+            add_item_to_inventory_CtoS msg;
+            msg.inventory_id = this->_state.id;
+            msg.id = id;
+            msg.type = type;
+            msg.slot = slot;
+            msg.send();
+        }
+        #endif
 
         /* Network API */
         void sendToClientCreate(int client_id);
@@ -353,7 +432,7 @@ class Inventory: public InventoryObjectInterface
     //draw_inventory_hud_panel(inventory_type);
     //for (int i=0; i<size; i++)
     //{
-        //if (contents[i].id == EMPTY_SLOT)
+        //if (contents[i].item_id == EMPTY_SLOT)
             //continue;
         //render_inventory_item(contents[i]);
     //}

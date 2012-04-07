@@ -26,6 +26,11 @@ void draw_bound_texture_rotated(float x, float y, float w, float h, float tx, fl
 
 // Blit sprites from a larger bound texture
 void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);
+// same, but calculates scaling based on ssw,ssh (spritesheet width/height)
+void draw_bound_texture_sprite(float x, float y, float w, float h, float z, float sx, float sy, float sw, float sh, float ssw, float ssh);
+
+// NEW ONE:: (others are shit)
+void draw_bound_texture_sprite2(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);
 
 void begin_transparent_draw(GLuint* texture);
 void end_transparent_draw();

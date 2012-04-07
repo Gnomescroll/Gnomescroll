@@ -1,6 +1,6 @@
 
-#include <c_lib/objects/components/billboard_sprite/billboard_sprite.cpp>
-#include <c_lib/objects/components/billboard_sprite/list.cpp>
+#include <c_lib/objects/components/sprite/sprite.cpp>
+#include <c_lib/objects/components/sprite/list.cpp>
 
 #include <c_lib/objects/components/health/health.cpp>
 //#include <c_lib/objects/components/health/list.cpp>

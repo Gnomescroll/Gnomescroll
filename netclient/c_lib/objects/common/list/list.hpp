@@ -63,51 +63,7 @@ class BehaviourList
     }
 };
 
-
-class BehaviourListAggregate
-{
-    public:
-        BehaviourList* lists;
-        int n;
-        
-    void init(int n_lists)
-    {
-        if (n < 0)
-        {
-            printf("WARNING: BehaviourListAggregate - init() -- n_lists=%d\n", n_lists);
-            return;
-        }
-        this->lists = new BehaviourList[n_lists];
-    }
-
-    void init(int n_lists, int size_of_lists)
-    {
-        this->init(n_lists);
-        if (this->lists != NULL)
-            for (int i=0; i<this->n; i++)
-                this->lists[i].init(size_of_lists);
-    }
-
-    BehaviourList* get(int id)
-    {
-        if (id < 0 || id >= n)
-            return NULL;
-        return &this->lists[id];
-    }
-
-    ~BehaviourListAggregate()
-    {
-        if (this->lists != NULL)
-            delete[] this->lists;
-    }
-
-    BehaviourListAggregate()
-    : lists(NULL), n(0)
-    {}
-};
-
 // inherit this for a property list tracker
-// use the template version for nonstandard properties
 template <class Property>
 class PropertyList
 {
@@ -206,14 +162,6 @@ class PropertyListAggregate
             return;
         }
         this->lists = new List[n_lists];
-    }
-
-    void init(int n_lists, int size_of_lists)
-    {
-        this->init(n_lists);
-        if (this->lists != NULL)
-            for (int i=0; i<this->n; i++)
-                this->lists[i].init(size_of_lists);
     }
 
     List* get(int id)

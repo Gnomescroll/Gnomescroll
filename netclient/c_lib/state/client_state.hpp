@@ -40,7 +40,7 @@ namespace ClientState {
     extern Voxel_hitscan_list* voxel_hitscan_list;
     extern SpawnerList* spawner_list;
     extern OwnedList* owned_list;
-    extern BillboardSpriteList* billboard_sprite_list;
+    extern SpriteList* sprite_list;
     extern ColoredMinivoxList* colored_minivox_list;
 
     extern Monsters::Slime_list* slime_list;
@@ -51,8 +51,6 @@ namespace ClientState {
 
     extern CTF* ctf;
 
-    extern DrawListAggregate* draw_lists;
-    
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;
     extern int last_reliable_ping_time;

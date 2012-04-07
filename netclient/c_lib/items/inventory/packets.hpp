@@ -76,3 +76,35 @@ class remove_item_from_inventory_StoC: public FixedSizeNetPacketToClient<remove_
     }
     inline void handle();
 };
+
+class add_item_to_inventory_CtoS: public FixedSizeNetPacketToServer<add_item_to_inventory_CtoS>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slot;
+        uint16_t id;
+        uint8_t type;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slot, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class remove_item_from_inventory_CtoS: public FixedSizeNetPacketToServer<remove_item_from_inventory_CtoS>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slot;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slot, buff, buff_n, pack);
+    }
+    inline void handle();
+};
