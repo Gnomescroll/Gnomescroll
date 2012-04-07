@@ -22,7 +22,7 @@ class Free_item
     public:
 
         int id;
-        T_ItemTypes type;
+        int type;
 
         int ttl;
         int ttl_max;
@@ -64,6 +64,8 @@ class Free_item
     {
     	vp.set_state(x,y,z, mx,my,mz);
         vp.set_mass(mass);
+
+        type = rand() % 16;
     }
 
     Free_item(int id)
@@ -72,6 +74,8 @@ class Free_item
     ttl(0), ttl_max(FREE_ITEM_TTL), 
     mass(1.0f), damp(1.0f)
     {
+
+        type = rand() % 16;
     }
 };
 
@@ -100,7 +104,10 @@ void Free_item::draw()
 	*/
 
     //int texture_index = 5;
-    int texture_index = rand() % 16;
+    //int texture_index = rand() % 16;
+
+    int texture_index = this->type;
+
     float tx_min, tx_max, ty_min, ty_max;
     tx_min = (float)(texture_index%8)* (1.0/8.0);
     tx_max = tx_min + (1.0/8.0);
