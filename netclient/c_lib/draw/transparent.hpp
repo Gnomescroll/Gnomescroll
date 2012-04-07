@@ -14,6 +14,7 @@ struct TextureData
 {
     float sprite_width;
     float sprite_height;
+    int sprites_wide;
 };
 
 struct SpriteData

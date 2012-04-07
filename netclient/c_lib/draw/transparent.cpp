@@ -10,7 +10,7 @@ const int n_spritesheets = 3;
 char* paths[n_spritesheets] = {
     (char*)"./media/sprites/i00.png",
     (char*)"./media/sprites/t00.png",
-    (char*)"./media/sprites/t01.png"
+    (char*)"./media/sprites/t01.png"    // NOT A POWER OF  2
 };
 int render_list_sizes[n_spritesheets] = {
     512,
@@ -20,9 +20,9 @@ int render_list_sizes[n_spritesheets] = {
 GLuint textures[n_spritesheets];
 
 struct TextureData texture_data[n_spritesheets] = {
-    { 1.0f/8.0f, 1.0f/8.0f },
-    { 1.0f/4.0f, 1.0f/4.0f },
-    { 1.0f/7.0f, 1.0f/14.0f},
+    { 1.0f/8.0f, 1.0f/8.0f, 8 },   // i00.png
+    { 1.0f/4.0f, 1.0f/4.0f, 4 },   // t00.png
+    { 1.0f/7.0f, 1.0f/14.0f, 7},
 };
 
 DrawListAggregate* draw_lists;
@@ -174,8 +174,8 @@ void draw_sprite(struct TextureData texture, struct SpriteData sprite, float sca
     const float w = (1.0f/texture.sprite_width) * scale;
     const float h = (1.0f/texture.sprite_height) * scale;
 
-    const float sx = (sprite.index % 8) * texture.sprite_width;
-    const float sy = (sprite.index / 8) * texture.sprite_height;
+    const float sx = (sprite.index % texture.sprites_wide) * texture.sprite_width;
+    const float sy = (sprite.index / texture.sprites_wide) * texture.sprite_height;
     const float sw = texture.sprite_width;
     const float sh = texture.sprite_height;
     draw_bound_texture_sprite2(x,y,w,h,z, sx,sy,sw,sh);
