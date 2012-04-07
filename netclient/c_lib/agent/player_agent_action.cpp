@@ -468,13 +468,48 @@ void PlayerAgent_action::remove_item_from_inventory()
     if (p->you->status.team == 0) return;
 
     Inventory* inv = this->p->you->status.inventory;
+    if (inv == NULL) return;
     inv->remove_any_action();   // TODO -- temp moethod
 }
 
-void PlayerAgent_action::add_item_to_inventory()
+void PlayerAgent_action::add_item_to_inventory(int id, Object_types type)
 {
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
+    Inventory* inv = this->p->you->status.inventory;
+    if (inv == NULL) return;
+    inv->add_action(id,type);
 }
 
+void PlayerAgent_action::pickup_item()
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
+
+    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    Vec3 vec = agent_camera->forward_vector();
+
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
+
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, vec, this->p->agent_id, OBJ_TYPE_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
+
+    if (target_type != Hitscan::HITSCAN_TARGET_VOXEL) return;
+    if (vox_distance > MELEE_PICK_MAX_DISTANCE) return;
+    this->add_item_to_inventory(target.entity_id, (Object_types)target.entity_type);
+}
 
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
 :

@@ -536,9 +536,9 @@ const bool Agent_status::can_gain_item(Object_types item)
     return true;
 }
 
+// TODO -- duplicate interface for client side -- should go through event
 bool Agent_status::gain_item(int item_id, Object_types item_type)
 {
-    #if DC_SERVER
     bool can = this->can_gain_item(item_type);
     switch (item_type)
     {
@@ -560,18 +560,17 @@ bool Agent_status::gain_item(int item_id, Object_types item_type)
 
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
+            #if DC_SERVER
             return this->inventory->add_action(item_id, item_type);
+            #endif
+            //#if DC_CLIENT
+            //this->inventory->add(item_id, item_type);
+            //#endif
             break;
             
         default: break;
     }
     return can;
-    #endif
-
-    #if DC_CLIENT
-    printf("ERROR: Agent_state::gain_item() called in client\n");
-    return false;
-    #endif
 }
 
 bool Agent_status::lose_item(Object_types item)

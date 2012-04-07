@@ -400,6 +400,8 @@ void agent_mouse_down_handler(SDL_Event* event)
                 if (block)
                     HudCubeSelector::cube_selector.set_active_id(block);
             }
+            else if (p->you->weapons.active == Weapons::TYPE_block_pick)
+                p->action.pickup_item();
             break;
 
         case SDL_BUTTON_MIDDLE:

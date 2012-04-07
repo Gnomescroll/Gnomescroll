@@ -208,6 +208,10 @@ class Inventory: public InventoryObjectInterface
 
         bool type_allowed(Object_types type)
         {   // Restrict types here
+            if (type == OBJ_TYPE_AGENT
+              || type == OBJ_TYPE_SLIME
+              || type == OBJ_TYPE_NONE)
+                return false;
             return true;
         }
 

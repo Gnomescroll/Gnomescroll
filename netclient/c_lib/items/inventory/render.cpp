@@ -113,6 +113,11 @@ int get_icon_spritesheet_id(Object_types type)
             return 3;
         case OBJ_TYPE_STONE:
             return 4;
+
+        case OBJ_TYPE_SPAWNER:
+            return 6;
+        case OBJ_TYPE_TURRET:
+            return 7;
         
         default:
             return ERROR_SPRITE;
