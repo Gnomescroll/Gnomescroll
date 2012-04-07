@@ -3,8 +3,6 @@
 
 
 #ifdef DC_CLIENT
-//#include <c_lib/state/server_state.hpp>
-//#include <c_lib/t_item/free_item.hpp>
 #include <c_lib/t_item/interface.hpp>
 #endif
 

@@ -11,6 +11,7 @@ namespace t_map
 
 #if DC_SERVER
 
+/*
 void t_item_pick_up_CtoS::handle()
 {
     printf("agent %d attempt to pick up %d\n", client_id, id);
@@ -21,15 +22,15 @@ void t_item_pick_up_CtoS::handle()
         return;
     }
 }
-
+*/
 #endif
 
 
 
 #if DC_CLIENT
-
+/*
 void t_item_pick_up_CtoS::handle() {}
-
+*/
 #endif
 
 

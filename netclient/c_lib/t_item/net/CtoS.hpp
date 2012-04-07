@@ -4,7 +4,7 @@
 
 namespace t_item
 {
-
+/*
 class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToServer<t_item_pick_up_CtoS>
 {
     public:
@@ -18,7 +18,7 @@ class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToServer<t_item_pick
         }
         inline void handle();
 };
-
+*/
 
 
 }

@@ -185,10 +185,9 @@ void RegisterMessages() {
 
 
     // t_item
-    t_item_create_StoC::register_client_packet();
-    t_item_destroy_StoC::register_client_packet();
-    t_item_picked_up_StoC::register_client_packet();
-    t_item_pick_up_CtoS::register_server_packet();
+    t_item::t_item_create_StoC::register_client_packet();
+    t_item::t_item_destroy_StoC::register_client_packet();
+    t_item::t_item_picked_up_StoC::register_client_packet();
 
     request_remaining_state_CtoS::register_server_packet();
 
