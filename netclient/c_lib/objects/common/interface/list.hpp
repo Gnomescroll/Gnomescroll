@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
 
 //forward decl
 class GameObject_list;

@@ -2,8 +2,8 @@
 
 #include <c_lib/agent/agent_status.hpp>
 
-#include <c_lib/lists/list.hpp>
-#include <c_lib/components/owned.hpp>
+#include <c_lib/objects/common/list/list.hpp>
+#include <c_lib/objects/components/owned/owned.hpp>
 
 const int OWNED_LIST_MAX = 4096;
 class OwnedList: public BehaviourList

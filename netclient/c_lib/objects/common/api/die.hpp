@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
-#include <c_lib/entity/state.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
+#include <c_lib/objects/common/interface/state.hpp>
 
 //forward declaration
 #if DC_SERVER

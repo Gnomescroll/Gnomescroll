@@ -1,7 +1,9 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
-#include <c_lib/components/components.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
+#include <c_lib/objects/common/component/component.hpp>
+
+#include <c_lib/objects/components/include.hpp>
 
 /* Parameterized template state layers */
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/components/component.hpp>
+#include <c_lib/objects/common/component/component.hpp>
 
 
 // todo -- billboard sprite draw list

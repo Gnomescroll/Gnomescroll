@@ -1,4 +1,4 @@
-#include "ownership.hpp"
+#include "list.hpp"
 
 void OwnedList::transfer_ownership(int owner, int new_owner)
 {

@@ -22,7 +22,7 @@
     /* remove these includes after random drops are in separate file */
     #include <c_lib/common/random.h>
     #include <c_lib/common/enum_types.hpp>
-    #include <c_lib/entity/policy.hpp>
+    #include <c_lib/objects/common/interface/policy.hpp>
     #include <c_lib/state/server_state.hpp>
 
     #include <c_lib/t_item/interface.hpp>

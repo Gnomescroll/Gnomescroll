@@ -2,6 +2,6 @@
 
 /* Aggregator */
 
-#include <c_lib/entity/state.cpp>
-#include <c_lib/entity/policy.cpp>
-#include <c_lib/entity/list.cpp>
+#include <c_lib/objects/common/interface/state.cpp>
+#include <c_lib/objects/common/interface/policy.cpp>
+#include <c_lib/objects/common/interface/list.cpp>

@@ -1,9 +1,8 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
-#include <c_lib/entity/layers.hpp>
-#include <c_lib/lists/list.hpp>
-#include <c_lib/components/component.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
+#include <c_lib/objects/common/interface/layers.hpp>
+#include <c_lib/objects/common/list/list.hpp>
 
 typedef OwnedState InventoryState;
 

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <c_lib/lists/list.hpp>
-#include <c_lib/components/billboard_sprite.hpp>
-
 const int COLORED_MINIVOX_LIST_MAX = 1024;
 
 class ColoredMinivoxList: public BehaviourList

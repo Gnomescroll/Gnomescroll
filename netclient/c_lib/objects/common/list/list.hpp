@@ -1,7 +1,6 @@
 #pragma once
 
-#include <c_lib/entity/policy.hpp>
-#include <c_lib/components/component.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
 
 /* List management */
 

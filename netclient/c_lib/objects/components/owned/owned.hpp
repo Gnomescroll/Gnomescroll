@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/components/component.hpp>
-#include <c_lib/entity/state.hpp>
+#include <c_lib/objects/common/component/component.hpp>
+#include <c_lib/objects/common/interface/state.hpp>
 #include <c_lib/agent/constants.hpp>
 
 // forward decl
