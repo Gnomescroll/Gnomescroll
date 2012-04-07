@@ -225,25 +225,8 @@ class Inventory: public InventoryObjectInterface
             return this->contents.can_add(slot);
         }
 
-        void sendToClientAdd(int client_id, int id, Object_types type, int slot)
-        {
-            add_item_to_inventory_StoC msg;
-            msg.inventory_id = this->_state.id;
-            msg.id = id;
-            msg.type = type;
-            msg.slot = slot;
-            msg.sendToClient(client_id);
-        }
-
-        void broadcastAdd(int id, Object_types type, int slot)
-        {
-            add_item_to_inventory_StoC msg;
-            msg.inventory_id = this->_state.id;
-            msg.id = id;
-            msg.type = type;
-            msg.slot = slot;
-            msg.broadcast();
-        }
+        void sendToClientAdd(int id, Object_types type, int slot);
+        void broadcastAdd(int id, Object_types type, int slot);
 
         bool add(int id, Object_types type)
         {
@@ -251,7 +234,14 @@ class Inventory: public InventoryObjectInterface
             if (slot < 0) return false;
             bool added = this->contents.add(id,type,slot);
             if (added)
-                this->broadcastAdd(id, type, slot);
+            {
+                #if DC_SERVER
+                if (this->get_owner() != NO_AGENT)
+                    this->sendToClientAdd(id, type, slot);
+                else
+                    this->broadcastAdd(id, type, slot);
+                #endif
+            }
 
             return added;
         }

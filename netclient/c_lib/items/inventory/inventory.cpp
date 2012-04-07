@@ -1,5 +1,8 @@
 #include "inventory.hpp"
 
+#include <c_lib/agent/agent.hpp> 
+#include <c_lib/state/server_state.hpp>
+
 /* Inventory Contents */
 
 void InventoryContents::sendToClient(int inventory_id, int client_id)
@@ -57,4 +60,31 @@ void Inventory::broadcastDeath()
     inventory_destroy_StoC msg;
     inventory_destroy_message(&msg, this->state()->id);
     msg.broadcast();
+}
+
+void Inventory::sendToClientAdd(int id, Object_types type, int slot)
+{
+    #if DC_SERVER
+    printf("send to client add\n");
+    Agent_state* agent = ServerState::agent_list->get(this->get_owner());
+    if (agent == NULL) return;
+    add_item_to_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.id = id;
+    msg.type = type;
+    msg.slot = slot;
+    msg.sendToClient(agent->client_id);
+    #endif
+}
+
+void Inventory::broadcastAdd(int id, Object_types type, int slot)
+{
+    #if DC_SERVER
+    add_item_to_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.id = id;
+    msg.type = type;
+    msg.slot = slot;
+    msg.broadcast();
+    #endif
 }

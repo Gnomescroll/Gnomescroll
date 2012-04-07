@@ -48,6 +48,7 @@ lifetime(0)
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
     this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY);
+    this->inventory->set_owner(this->a->id);
     this->inventory->init(4,3);
     #endif
 }
