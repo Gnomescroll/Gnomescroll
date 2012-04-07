@@ -53,6 +53,14 @@
 #include <c_lib/physics/common.cpp>
 #include <c_lib/physics/verlet.cpp>
 
+/* SDL */
+#include <c_lib/SDL/shader_loader.cpp>
+#include <c_lib/SDL/texture_loader.cpp>
+#include <c_lib/SDL/texture_sheet_loader.cpp>
+#include <c_lib/SDL/draw_functions.cpp>
+#include <c_lib/SDL/particle_functions.c>
+#include <c_lib/SDL/SDL_functions.c>
+
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
 #include <c_lib/voxel/voxel_render.cpp>
@@ -143,14 +151,6 @@
 /* camera */
 #include <c_lib/camera/camera.cpp>
 #include <c_lib/camera/fulstrum_test.cpp>
-
-/* SDL */
-#include <c_lib/SDL/shader_loader.cpp>
-#include <c_lib/SDL/texture_loader.cpp>
-#include <c_lib/SDL/texture_sheet_loader.cpp>
-#include <c_lib/SDL/draw_functions.cpp>
-#include <c_lib/SDL/particle_functions.c>
-#include <c_lib/SDL/SDL_functions.c>
 
 //#ifdef linux
 //#include <c_lib/SDL/IMG_savepng.c>

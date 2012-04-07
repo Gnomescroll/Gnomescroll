@@ -39,6 +39,7 @@ namespace InventoryRender
 
     void init();
     void teardown();
+    void draw();
 
 }   // Inventory
 

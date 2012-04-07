@@ -256,7 +256,7 @@ namespace ClientState {
         // TODO : opengl flags
         for (int i=0; i<draw_lists->n; i++)
             draw_lists->get(i)->draw();
-        
+
         begin_transparent_particle_draw();
         cspray_list->draw();
         grenade_list->draw();
