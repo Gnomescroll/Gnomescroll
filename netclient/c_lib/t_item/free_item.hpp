@@ -83,6 +83,7 @@ void Free_item::draw()
 {
 #ifdef DC_CLIENT
 	const float scale = 0.5;
+    const float h = 0.75;
 
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,
@@ -116,19 +117,19 @@ void Free_item::draw()
 
     Vec3 p = vec3_sub(vp.p, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
-    glVertex3f(p.x, p.y, p.z);
+    glVertex3f(p.x, p.y, p.z+h);
 
     p = vec3_add(vp.p, vec3_sub(up, right));
     glTexCoord2f(tx_max,ty_max);
-    glVertex3f(p.x, p.y, p.z);
+    glVertex3f(p.x, p.y, p.z+h);
 
     p = vec3_add(vp.p, vec3_add(up, right));
     glTexCoord2f(tx_max,ty_min);
-    glVertex3f(p.x, p.y, p.z);
+    glVertex3f(p.x, p.y, p.z+h);
 
     p = vec3_add(vp.p, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
-    glVertex3f(p.x, p.y, p.z);
+    glVertex3f(p.x, p.y, p.z+h);
 #endif
 }
 
@@ -163,6 +164,10 @@ void Free_item_list::draw()
 
     //glEnable(GL_TEXTURE_2D);
     gl_assert(GL_TEXTURE_2D);
+    
+    glEnable(GL_ALPHA_TEST);
+
+    glAlphaFunc ( GL_GREATER, 0.5);
 
     glBindTexture(GL_TEXTURE_2D, ItemSheetTexture);
 
@@ -173,6 +178,10 @@ void Free_item_list::draw()
             this->a[i]->draw();
 
     glEnd();
+
+    glDisable(GL_ALPHA_TEST);
+
+
 #endif
 }
 

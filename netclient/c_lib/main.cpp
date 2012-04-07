@@ -162,20 +162,22 @@ int run()
         t_map::draw_map();
         poll_mouse();
         
-        Skybox::draw();
         poll_mouse();
 
         // draw client state
-        ClientState::draw();
 
-        // draw animations
-        Animations::animations_draw();
-
-        // update mouse
-        poll_mouse();
 
         t_mech::draw();
         t_item::draw();
+
+        Skybox::draw();
+
+        ClientState::draw();
+        // draw animations
+        Animations::animations_draw();  //transparency stuff
+
+        // update mouse
+        poll_mouse();
 
         if (Options::hud)
         {
