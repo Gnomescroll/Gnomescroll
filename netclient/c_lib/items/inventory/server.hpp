@@ -84,6 +84,16 @@ class Inventory: public BaseInventoryServer
         return added;
     }
 
+    bool swap_action(int slota, int slotb)
+    {
+        bool swapped = this->swap(slota, slotb);
+        if (this->get_owner() != NO_AGENT)
+            this->sendToClientAdd(id, type, slot);
+        else
+            this->broadcastAdd(id, type, slot);
+        return swapped;
+    }
+
     /* Network API */
     void sendContentsToClient(int client_id)
     {

@@ -84,6 +84,12 @@ class BaseInventory: public InventoryObjectInterface
             return removed;
         }
 
+        bool swap(int slota, int slotb)
+        {
+            bool swapped = this->contents.swap(slota, slotb);
+            return swapped;
+        }
+
     public:
 
     explicit BaseInventory<InventoryContents>(int id)
