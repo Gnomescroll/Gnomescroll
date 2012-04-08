@@ -62,7 +62,7 @@ class Inventory: public BaseInventoryClient
 
     struct {
         float x,y,z;
-    } screen;
+    } screen;   // TODO -- replace with UI element
 
     void attach_to_owner();
 

@@ -13,6 +13,14 @@ inline void object_create_StoC_model::handle()
     ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_MALACHITE:
+        case OBJ_TYPE_RUBY:
+        case OBJ_TYPE_TURQUOISE:
+        case OBJ_TYPE_SILVER:
+        case OBJ_TYPE_AMETHYST:
+        case OBJ_TYPE_JADE:
+        case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
@@ -34,6 +42,14 @@ inline void object_create_momentum_StoC_model::handle()
     ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_MALACHITE:
+        case OBJ_TYPE_RUBY:
+        case OBJ_TYPE_TURQUOISE:
+        case OBJ_TYPE_SILVER:
+        case OBJ_TYPE_AMETHYST:
+        case OBJ_TYPE_JADE:
+        case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx,my,mz);

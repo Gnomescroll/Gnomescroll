@@ -282,6 +282,7 @@ int init_c_lib() {
     init_cameras();
     init_chat_client();
     init_particles();
+    init_item_texture();
 
     ClientState::init_ctf();
     
@@ -316,6 +317,7 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
+    teardown_item_texture();
     
     // free surfaces
     t_map::teardown_shader();

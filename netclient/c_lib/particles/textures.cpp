@@ -19,13 +19,14 @@ int init_particles() {
     return 0;
 }
 
-void begin_transparent_particle_draw()
+void begin_particle_draw()
 {
-    begin_transparent_draw(&particle_texture);
+    glBindTexture(GL_TEXTURE_2D, particle_texture);
+    glBegin(GL_QUADS);
 }
-void end_transparent_particle_draw()
+void end_particle_draw()
 {
-    end_transparent_draw();
+    glEnd();
 }
 
 #endif

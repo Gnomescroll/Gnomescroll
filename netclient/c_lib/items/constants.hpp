@@ -76,6 +76,23 @@ const int STONE_TTL = 30 * 12;
 const float STONE_DAMP = 0.4f;
 const float STONE_MASS = 1.0f;
 
+/* Gems */
+const int GEMSTONE_PICKUP_RADIUS = 1.0f;
+const int GEMSTONE_MAX = 256;
+const float GEMSTONE_SCALE = 0.4f;
+const int MALACHITE_SPRITE_INDEX = 0;
+const int RUBY_SPRITE_INDEX = 2;
+const int TURQUOISE_SPRITE_INDEX = 3;
+const int SILVER_SPRITE_INDEX = 4;
+const int AMETHYST_SPRITE_INDEX = 18;
+const int JADE_SPRITE_INDEX = 19;
+const int ONYX_SPRITE_INDEX = 20;
+
+/* Misc */
+const int MEAT_MAX = 256;
+const float MEAT_SCALE = 0.5f;
+const int MEAT_SPRITE_INDEX = 1;
+
 } // ItemDrops
 
 

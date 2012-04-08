@@ -106,9 +106,38 @@ int apply_damage(int x, int y, int z, int dmg)
 
 #include <c_lib/t_item/interface.hpp>
 
+// TODO: MOVE
+void block_spawn_items(int block_value, int x, int y, int z)
+{
+    const float drop_probability = 0.3f;
+    float p = randf();
+    if (p > drop_probability) return;
+
+    const int n_items = 7;  // 7 Gemstones
+    const Object_types items[n_items] = {
+        OBJ_TYPE_MALACHITE,
+        OBJ_TYPE_RUBY,
+        OBJ_TYPE_TURQUOISE,
+        OBJ_TYPE_SILVER,
+        OBJ_TYPE_AMETHYST,
+        OBJ_TYPE_JADE,
+        OBJ_TYPE_ONYX
+    };
+    const float mom = 2.0f; // momentum
+    Object_types type = items[randrange(0,n_items-1)];
+
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
+        x+randf(),y+randf(), z+randf(),
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
+    );
+    if (obj != NULL)
+        obj->born();
+}
+
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
+    int block_value = get(x,y,z);
     int res = apply_damage(x,y,z, dmg);
     if (res != 0) return;
 
@@ -120,27 +149,11 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-    const float mom = 2.0f; // momentum
-    Object_types type;
-    float p = randf();
-    if (p < 0.3)
-        type = OBJ_TYPE_DIRT;
-    else if (p < 0.6)
-        type = OBJ_TYPE_STONE;
-    else
-        return;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(
-        type,
-        x+randf(),y+randf(), z+randf(),
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
-    if (obj != NULL)
-        obj->born();
+    block_spawn_items(block_value, x,y,z);
 
-
-    t_item::create_free_item(0, 
-        x+randf(),y+randf(), z+randf(),
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+    //t_item::create_free_item(0, 
+        //x+randf(),y+randf(), z+randf(),
+        //(randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 }
 #endif
 
