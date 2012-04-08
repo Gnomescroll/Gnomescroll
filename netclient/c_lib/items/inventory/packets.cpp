@@ -58,8 +58,21 @@ inline void remove_item_from_inventory_StoC::handle()
     printf("removed item from inventory slot %d\n", slot);
 }
 
+inline void swap_item_in_inventory_StoC::handle()
+{
+    Inventory* obj = (Inventory*)ClientState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
+    if (obj == NULL)
+    {
+        printf("WARNING: swap_item_in_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
+        return;
+    }
+    obj->swap(slota, slotb);
+    printf("swapped slots %d,%d in inventory %d\n", slota, slotb, inventory_id);
+}
+
 inline void add_item_to_inventory_CtoS::handle() {}
 inline void remove_item_from_inventory_CtoS::handle() {}
+inline void swap_item_in_inventory_CtoS::handle() {}
 
 #endif
 
@@ -68,7 +81,7 @@ inline void inventory_create_StoC::handle() {}
 inline void inventory_destroy_StoC::handle() {}
 inline void add_item_to_inventory_StoC::handle() {}
 inline void remove_item_from_inventory_StoC::handle() {}
-
+inline void swap_item_in_inventory_StoC::handle() {}
 
 inline void add_item_to_inventory_CtoS::handle()
 {
@@ -99,5 +112,19 @@ inline void remove_item_from_inventory_CtoS::handle()
     inv->remove_action(slot);
 }
 
+inline void swap_item_in_inventory_CtoS::handle()
+{
+    printf("Received swap slot: invid %d slota %d slotb %d\n", inventory_id, slota, slotb);
+    Agent_state* agent = NetServer::agents[client_id];
+    if (agent == NULL)
+    {
+        printf("swap_item_in_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
+        return;
+    }
+    Inventory* inv = (Inventory*)ServerState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
+    if (inv == NULL) return;
+    if (inv->get_owner() != agent->id) return;
+    inv->swap_action(slota, slotb);
+}
 
 #endif

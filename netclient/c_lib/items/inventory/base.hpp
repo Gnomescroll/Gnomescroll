@@ -65,6 +65,11 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_add(slot);
         }
 
+        bool can_swap(int slota, int slotb)
+        {
+            return this->contents.can_swap(slota, slotb);
+        }
+
         bool add(int id, Object_types type)
         {
             int slot = this->contents.get_empty_slot();
@@ -82,6 +87,12 @@ class BaseInventory: public InventoryObjectInterface
         {
             bool removed = this->contents.remove(slot);
             return removed;
+        }
+
+        bool swap(int slota, int slotb)
+        {
+            bool swapped = this->contents.swap(slota, slotb);
+            return swapped;
         }
 
     public:

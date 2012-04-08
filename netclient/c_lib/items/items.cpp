@@ -2,6 +2,11 @@
 
 /* Aggregator */
 
+// texture/spritesheet
+#if DC_CLIENT
+#include <c_lib/items/texture.cpp>
+#endif
+
 // packets
 #include <c_lib/items/packets.cpp>
 

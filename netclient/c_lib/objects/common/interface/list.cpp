@@ -230,6 +230,15 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_SPAWNER:
             obj = new Spawner(id);
             break;
+
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_MALACHITE:
+        case OBJ_TYPE_RUBY:
+        case OBJ_TYPE_TURQUOISE:
+        case OBJ_TYPE_SILVER:
+        case OBJ_TYPE_AMETHYST:
+        case OBJ_TYPE_JADE:
+        case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
             obj = new ItemDrops::PickupObjectSprite(type, id);

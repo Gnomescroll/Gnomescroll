@@ -65,7 +65,6 @@ void Inventory::broadcastDeath()
 
 void Inventory::sendToClientAdd(int id, Object_types type, int slot)
 {
-    #if DC_SERVER
     Agent_state* agent = ServerState::agent_list->get(this->get_owner());
     if (agent == NULL) return;
     add_item_to_inventory_StoC msg;
@@ -74,42 +73,55 @@ void Inventory::sendToClientAdd(int id, Object_types type, int slot)
     msg.type = type;
     msg.slot = slot;
     msg.sendToClient(agent->client_id);
-    #endif
 }
 
 void Inventory::broadcastAdd(int id, Object_types type, int slot)
 {
-    #if DC_SERVER
     add_item_to_inventory_StoC msg;
     msg.inventory_id = this->_state.id;
     msg.id = id;
     msg.type = type;
     msg.slot = slot;
     msg.broadcast();
-    #endif
 }
 
 void Inventory::sendToClientRemove(int slot)
 {
-    #if DC_SERVER
     Agent_state* agent = ServerState::agent_list->get(this->get_owner());
     if (agent == NULL) return;
     remove_item_from_inventory_StoC msg;
     msg.inventory_id = this->_state.id;
     msg.slot = slot;
     msg.sendToClient(agent->client_id);
-    #endif
 }
 
 void Inventory::broadcastRemove(int slot)
 {
-    #if DC_SERVER
     remove_item_from_inventory_StoC msg;
     msg.inventory_id = this->_state.id;
     msg.slot = slot;
     msg.broadcast();
-    #endif
 }
 
+void Inventory::sendToClientSwap(int slota, int slotb)
+{
+    Agent_state* agent = ServerState::agent_list->get(this->get_owner());
+    if (agent == NULL) return;
+    swap_item_in_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.slota = slota;
+    msg.slotb = slotb;
+    msg.sendToClient(agent->client_id);
+}
+
+void Inventory::broadcastSwap(int slota, int slotb)
+{
+    swap_item_in_inventory_StoC msg;
+    msg.inventory_id = this->_state.id;
+    msg.slota = slota;
+    msg.slotb = slotb;
+    msg.broadcast();
+
+}
 
 #endif

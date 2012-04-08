@@ -56,6 +56,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
+    bool is_valid_slot(int slot)
+    {
+        if (slot < 0 || slot >= this->max)
+            return false;
+        return true;
+    }
+
     void init(int x, int y)
     {
         if (objects != NULL)
@@ -85,7 +92,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     
     bool can_add(int slot)
     {
-        if (slot < 0 || slot >= this->max)
+        if (!this->is_valid_slot(slot))
             return false;
         if (this->objects[slot].item_id != EMPTY_SLOT)
             return false;
@@ -94,9 +101,18 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
 
     bool can_remove(int slot)
     {
-        if (slot < 0 || slot >= this->max)
+        if (!this->is_valid_slot(slot))
             return false;
         if (this->objects[slot].item_id == EMPTY_SLOT)
+            return false;
+        return true;
+    }
+
+    bool can_swap(int slota, int slotb)
+    {
+        if (!this->is_valid_slot(slota) || !this->is_valid_slot(slotb))
+            return false;
+        if (slota == slotb)
             return false;
         return true;
     }
@@ -119,11 +135,22 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     
     bool remove(int slot)
     {
-        if (slot < 0 || slot >= this->max)
+        if (!this->is_valid_slot(slot))
             return false;
         if (this->objects[slot].item_id != EMPTY_SLOT)
             this->ct--;
         this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE);
+        return true;
+    }
+
+    bool swap(int slota, int slotb)
+    {
+        if (!this->can_swap(slota, slotb))
+            return false;
+        int item_id = this->objects[slota].item_id;
+        Object_types item_type = this->objects[slota].item_type;
+        this->objects[slota].load(this->objects[slotb].item_id, this->objects[slotb].item_type);
+        this->objects[slotb].load(item_id, item_type);
         return true;
     }
 

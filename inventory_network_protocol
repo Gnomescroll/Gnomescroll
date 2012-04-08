@@ -151,4 +151,7 @@ inventory/
         t_map
         t_mech
         packets
-    render/?
+        render/?
+
+interfaces should not be attached to the underlying object
+interfaces should accept the objects as parameters instead

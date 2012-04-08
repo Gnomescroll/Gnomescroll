@@ -174,4 +174,15 @@ void init_gameobject_list_maximums(GameObject_list* list)
     list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
 
     list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
+    
+    list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
+    
+    list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_RUBY, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_TURQUOISE, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_SILVER, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_AMETHYST, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_JADE, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_ONYX, ItemDrops::GEMSTONE_MAX);
+
 }

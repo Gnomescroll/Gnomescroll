@@ -23,7 +23,7 @@ namespace ItemDrops
 
 const int DEFAULT_PICKUP_ITEM_TTL = 30 * 12;    // 12 seconds
 const float DEFAULT_PICKUP_ITEM_RADIUS = 2.0f;
-const float DEFAULT_PICKUP_ITEM_scale = 1.0f;
+const float DEFAULT_PICKUP_ITEM_SCALE = 1.0f;
 const float DEFAULT_PICKUP_ITEM_DAMP = 0.1f;    // hardly bounce
 const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
 
@@ -82,6 +82,7 @@ class PickupComponent
 
 /* Initializers */
 
+// TODO -- deprecate for phyics initializer
 void initialize_pickup_object(Object_types type, ObjectState* state)
 {
     switch (type)
@@ -102,6 +103,25 @@ void initialize_pickup_object(Object_types type, ObjectState* state)
     }
 }
 
+void initialize_pickup_properties(Object_types type, PickupComponent* obj)
+{
+    switch (type)
+    {
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_MALACHITE:
+        case OBJ_TYPE_RUBY:
+        case OBJ_TYPE_TURQUOISE:
+        case OBJ_TYPE_SILVER:
+        case OBJ_TYPE_AMETHYST:
+        case OBJ_TYPE_JADE:
+        case OBJ_TYPE_ONYX:
+            obj->pickup_radius = GEMSTONE_PICKUP_RADIUS;
+            break;
+            
+        default: return;
+    }
+}
+
 void initialize_sprite_properties(Object_types type, SpriteProperties* obj)
 {
     switch (type)
@@ -114,6 +134,40 @@ void initialize_sprite_properties(Object_types type, SpriteProperties* obj)
         case OBJ_TYPE_LASER_REFILL:
             obj->sprite_index = LASER_REFILL_TEXTURE_ID;
             obj->scale = LASER_REFILL_TEXTURE_SCALE;
+            break;
+
+        case OBJ_TYPE_MALACHITE:
+            obj->sprite_index = MALACHITE_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_RUBY:
+            obj->sprite_index = RUBY_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_TURQUOISE:
+            obj->sprite_index = TURQUOISE_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_SILVER:
+            obj->sprite_index = SILVER_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_AMETHYST:
+            obj->sprite_index = AMETHYST_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_JADE:
+            obj->sprite_index = JADE_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+        case OBJ_TYPE_ONYX:
+            obj->sprite_index = ONYX_SPRITE_INDEX;
+            obj->scale = GEMSTONE_SCALE;
+            break;
+
+        case OBJ_TYPE_MEAT:
+            obj->sprite_index = MEAT_SPRITE_INDEX;
+            obj->scale = MEAT_SCALE;
             break;
 
         default: return;
@@ -132,6 +186,7 @@ void initialize_minivox_properties(Object_types type, MinivoxProperties* obj)
             obj->color = STONE_COLOR;
             obj->size = STONE_SIZE;
             break;
+            
         default: return;
     }
     obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
@@ -159,6 +214,7 @@ class PickupObject: public PickupComponent, public PickupInterface
         this->pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
 
         initialize_pickup_object(type, this->state());
+        initialize_pickup_properties(type, this);
     }
 
     ~PickupObject()
