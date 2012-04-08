@@ -123,7 +123,7 @@ int run()
 
             t_item::tick();
 
-            if(counter % 10 == 0) t_item::check_item_pickups();
+            //if(counter % 10 == 0) t_item::check_item_pickups();
 
             // update sound listener
             ClientState::playerAgent_state.update_sound();

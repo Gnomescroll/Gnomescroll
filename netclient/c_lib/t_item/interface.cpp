@@ -8,14 +8,6 @@
 
 #include <c_lib/t_item/net/StoC.hpp>
 
-#ifdef DC_SERVER
-#include <c_lib/state/server_state.hpp>
-#endif
-
-#ifdef DC_CLIENT
-#include <c_lib/state/client_state.hpp>
-#endif
-
 namespace t_item
 {
 

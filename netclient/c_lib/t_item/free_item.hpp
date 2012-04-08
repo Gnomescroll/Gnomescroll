@@ -147,6 +147,10 @@ void Free_item::draw()
 
 #include <c_lib/template/object_list.hpp>
 
+#ifdef DC_SERVER
+#include <c_lib/state/server_state.hpp>
+#endif
+
 namespace t_item
 {
 
@@ -216,6 +220,7 @@ void Free_item_list::tick()
 
 void Free_item_list::check_item_pickups()
 {
+#ifdef DC_SERVER
     Free_item* free_item;
     for (int i=0; i<this->n_max; i++)
     {
@@ -224,13 +229,14 @@ void Free_item_list::check_item_pickups()
 
 
     }
+#endif
 }
 
 
 /*
     int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
     if (n > 0)
-    STATE::agent_list->filtered_objects[0]->id;
+    ServerState::agent_list->filtered_objects[0]->id;
 */
 
 
