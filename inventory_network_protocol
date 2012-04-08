@@ -127,3 +127,12 @@ Object has get_render_position
 DONE
 
 =============
+
+
+REMAINING TODO:
+
+
+more packets
+
+transitions between world objects and inventory (vaporize when picked up etc)
+
