@@ -50,8 +50,13 @@ inventory(NULL)
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
     this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY);
-    this->inventory->set_owner(this->a->id);
-    this->inventory->init(4,3);
+    if (this->inventory != NULL)
+    {
+        this->inventory->set_owner(this->a->id);
+        this->inventory->init(4,3);
+    }
+    else
+        printf("ERROR: Agent_status::Agent_status() -- failed to create inventory\n");
     #endif
 }
 

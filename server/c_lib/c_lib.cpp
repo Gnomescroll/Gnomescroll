@@ -66,7 +66,7 @@
 #include <c_lib/objects/components/include.cpp>
 
 /* Particles */
-#include <c_lib/particles/particle_lib.cpp>
+#include <c_lib/particles/_include.hpp>
 
 /* Items */
 #include <c_lib/items/constants.hpp>

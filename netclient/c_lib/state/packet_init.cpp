@@ -7,7 +7,10 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/client/player_agent.hpp>
 
-#include <c_lib/particles/particle_lib.hpp>
+//#include <c_lib/particles/particle_lib.hpp>
+#include <c_lib/particles/cspray.hpp>
+#include <c_lib/particles/grenade.hpp>
+
 
 #include <c_lib/t_map/net/t_CtoS.hpp>
 #include <c_lib/t_map/net/t_StoC.hpp>

@@ -1,8 +1,5 @@
 #pragma once
 
-
-#include <stdint.h>
-
 #include <c_lib/agent/constants.hpp>
 #include <c_lib/agent/agent.cpp>
 #include <c_lib/agent/agent_list.cpp>

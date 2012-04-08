@@ -2,6 +2,8 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
+//#include  <c_lib/particles/textures.hpp>
+
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;

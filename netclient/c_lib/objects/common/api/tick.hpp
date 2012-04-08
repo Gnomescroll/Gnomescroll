@@ -2,7 +2,9 @@
 
 #include <c_lib/t_map/t_map.hpp>
 
-void tickVerletBounce(VerletParticle *vp, float damp)
+#include <c_lib/physics/verlet.hpp>
+
+void tickVerletBounce(Verlet::VerletParticle *vp, float damp)
 {
     Verlet::bounce(vp, damp);
 }

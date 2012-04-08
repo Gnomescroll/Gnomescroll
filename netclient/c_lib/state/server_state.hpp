@@ -2,11 +2,13 @@
 #ifdef DC_SERVER
 
 #include <c_lib/agent/agent_list.hpp>
-#include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/items/items.hpp>
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
+
+#include <c_lib/particles/grenade.hpp>
+#include <c_lib/particles/cspray.hpp>
 
 namespace ServerState
 {
