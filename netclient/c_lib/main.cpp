@@ -90,6 +90,8 @@ int run()
 
     poll_mouse();
 
+    int counter = 0;
+
     while (!input_state.quit)
     {
         if(_quit) break;
@@ -120,11 +122,16 @@ int run()
             ClientState::tick();
 
             t_item::tick();
+
+            if(counter % 10 == 0) t_item::check_item_pickups();
+
             // update sound listener
             ClientState::playerAgent_state.update_sound();
 
             // update mouse
             poll_mouse();
+
+            counter++;
         }
 
         //if (physics_ticks >= 2)

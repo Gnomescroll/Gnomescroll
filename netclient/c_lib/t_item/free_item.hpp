@@ -161,6 +161,8 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 
         void draw();
         void tick();
+
+        void check_item_pickups();
 };
 
 void Free_item_list::draw()
@@ -196,8 +198,9 @@ void Free_item_list::tick()
     Free_item* free_item;
     for (int i=0; i<this->n_max; i++)
     {
+        if (this->a[i] == NULL) continue;
         free_item = this->a[i];
-        if (free_item == NULL) continue;
+
         free_item->tick();
         if (free_item->ttl >= free_item->ttl_max)
         {
@@ -209,5 +212,26 @@ void Free_item_list::tick()
         }
     }
 }
+
+
+void Free_item_list::check_item_pickups()
+{
+    Free_item* free_item;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        free_item = this->a[i];
+
+
+    }
+}
+
+
+/*
+    int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
+    if (n > 0)
+    STATE::agent_list->filtered_objects[0]->id;
+*/
+
 
 }

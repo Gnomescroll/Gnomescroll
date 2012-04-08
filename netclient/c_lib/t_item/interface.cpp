@@ -8,6 +8,14 @@
 
 #include <c_lib/t_item/net/StoC.hpp>
 
+#ifdef DC_SERVER
+#include <c_lib/state/server_state.hpp>
+#endif
+
+#ifdef DC_CLIENT
+#include <c_lib/state/client_state.hpp>
+#endif
+
 namespace t_item
 {
 
@@ -44,7 +52,13 @@ void draw()
     free_item_list->draw();
 }
 
-
+void check_item_pickups()
+{
+    #ifdef DC_CLIENT
+        printf("Warning: check_item_pickups was called on client! OOPS\n");
+    #endif
+    free_item_list->check_item_pickups();
+}
 
 void create_free_item(int id, float x, float y, float z, float vx, float vy, float vz)
 {

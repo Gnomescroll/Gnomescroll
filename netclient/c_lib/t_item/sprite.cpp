@@ -13,8 +13,8 @@ void draw_init()
     SDL_Surface* s = create_surface_from_file((char*) "media/sprites/i00.png");
     if(s == NULL)
     {
-        printf("t_item: spitesheet load error\n");
-        return;
+        printf("t_item: spritesheet load error\n");
+        abort();
     }
  
     glEnable(GL_TEXTURE_2D);
