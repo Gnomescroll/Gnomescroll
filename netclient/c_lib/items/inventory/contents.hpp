@@ -108,6 +108,15 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
+    bool can_swap(int slota, int slotb)
+    {
+        if (!this->is_valid_slot(slota) || !this->is_valid_slot(slotb))
+            return false;
+        if (slota == slotb)
+            return false;
+        return true;
+    }
+
     bool add(int id, Object_types type, int slot)
     {
         if (!this->can_add(slot))
@@ -136,12 +145,10 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
 
     bool swap(int slota, int slotb)
     {
-        if (!this->is_valid_slot(slota) || !this->is_valid_slot(slotb))
-            return false;
-        if (slota == slotb)
+        if (!this->can_swap(slota, slotb))
             return false;
         int item_id = this->objects[slota].item_id;
-        int item_type = this->objects[slota].item_type;
+        Object_types item_type = this->objects[slota].item_type;
         this->objects[slota].load(this->objects[slotb].item_id, this->objects[slotb].item_type);
         this->objects[slotb].load(item_id, item_type);
         return true;

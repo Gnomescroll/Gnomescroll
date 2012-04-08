@@ -105,6 +105,18 @@ class Inventory: public BaseInventoryClient
         msg.send();
     }
 
+    bool swap_action(int slota, int slotb)
+    {
+        bool swapped = this->can_swap(slota, slotb);
+        if (!swapped) return false;
+        swap_item_in_inventory_CtoS msg;
+        msg.inventory_id = this->_state.id;
+        msg.slota = slota;
+        msg.slotb = slotb;
+        msg.send();
+        return swapped;
+    }
+
     /* Expose API here */
     bool dimension_mismatch(int x, int y)
     {

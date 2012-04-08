@@ -115,3 +115,19 @@ class remove_item_from_inventory_CtoS: public FixedSizeNetPacketToServer<remove_
 // TODO:
 // swap item in inventory
 // swap item between inventories
+
+class swap_item_in_inventory_CtoS: public FixedSizeNetPacketToServer<swap_item_in_inventory_CtoS>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slota;
+        uint8_t slotb;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slota, buff, buff_n, pack);
+        pack_u8(&slotb, buff, buff_n, pack);
+    }
+    inline void handle();
+};
