@@ -4,6 +4,7 @@
 
 #ifdef DC_SERVER
 #include <chat/server.hpp>
+#include <c_lib/chat/interface.hpp>
 #endif
 
 /*
