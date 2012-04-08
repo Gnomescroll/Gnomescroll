@@ -49,7 +49,7 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 
         Grenade_list() { print(); }
 };
-
+ 
 int get_grenade_damage(Object_types type)
 {
     switch (type)
