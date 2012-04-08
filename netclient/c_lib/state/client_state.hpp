@@ -10,12 +10,18 @@
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/voxel/voxel_render.hpp>
-#include <c_lib/monsters/monsters.hpp>
-#include <c_lib/items/items.hpp>
-#include <c_lib/animations/hitscan.hpp>
-#include <c_lib/animations/hitscan_laser.hpp>
+
 #include <c_lib/hud/text.hpp>
 */
+
+#include <c_lib/animations/hitscan.hpp>
+#include <c_lib/animations/hitscan_laser.hpp>
+
+#include <c_lib/items/items.hpp>
+#include <c_lib/monsters/monsters.hpp>
+
+#include <c_lib/game/ctf.hpp>
+#include <c_lib/particles/particle_lib.hpp>
 
 class PlayerAgent_state; //forward declaration
 
@@ -25,31 +31,31 @@ namespace ClientState {
     /* SINGLETONS
      * Make sure to extern declare* in cython_imports
      *          */
-    extern Agent_list* agent_list;
-    extern Cspray_list* cspray_list;
-    extern Grenade_list* grenade_list;
-    extern Shrapnel_list* shrapnel_list;
-    extern Blood_list* blood_list;
+    extern class Agent_list* agent_list;
+    extern class  Cspray_list* cspray_list;
+    extern class  Grenade_list* grenade_list;
+    extern class  Shrapnel_list* shrapnel_list;
+    extern class  Blood_list* blood_list;
     //extern Neutron_list* neutron_list;
-    extern Minivox_list* minivox_list;
-    extern BillboardText_list* billboard_text_list;
-    extern BillboardTextHud_list* billboard_text_hud_list;
+    extern class  Minivox_list* minivox_list;
+    extern class  BillboardText_list* billboard_text_list;
+    extern class  BillboardTextHud_list* billboard_text_hud_list;
 
     //  property lists
-    extern Voxel_render_list* voxel_render_list;
-    extern Voxel_hitscan_list* voxel_hitscan_list;
-    extern SpawnerList* spawner_list;
-    extern OwnedList* owned_list;
-    extern SpriteList* sprite_list;
-    extern ColoredMinivoxList* colored_minivox_list;
+    extern class  Voxel_render_list* voxel_render_list;
+    extern class  Voxel_hitscan_list* voxel_hitscan_list;
+    extern class  SpawnerList* spawner_list;
+    extern class  OwnedList* owned_list;
+    extern class  SpriteList* sprite_list;
+    extern class  ColoredMinivoxList* colored_minivox_list;
 
-    extern Monsters::Slime_list* slime_list;
-    extern GameObject_list* object_list;
+    extern class  Monsters::Slime_list* slime_list;
+    extern class  GameObject_list* object_list;
 
-    extern Animations::HitscanEffect_list* hitscan_effect_list;
-    extern Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
+    extern class  Animations::HitscanEffect_list* hitscan_effect_list;
+    extern class  Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
 
-    extern CTF* ctf;
+    extern class  CTF* ctf;
 
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;

@@ -7,6 +7,10 @@
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 
+#ifdef DC_CLIENT
+#include <c_lib/agent/client/agent_event.hpp>
+#endif
+
 //store last network messsage
 
 class AgentState {

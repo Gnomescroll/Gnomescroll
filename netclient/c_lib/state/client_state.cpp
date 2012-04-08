@@ -1,12 +1,19 @@
 #include "client_state.hpp"
 
+#include <c_lib/agent/agent_list.hpp>
+#include <c_lib/game/ctf.hpp>
+#include <c_lib/voxel/voxel_render.hpp>
+
+#include <c_lib/animations/hitscan.hpp>
+#include <c_lib/animations/hitscan_laser.hpp>
+#include <c_lib/hud/text.hpp>
+
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-#include <c_lib/particles/particle_lib.hpp>
-#include <c_lib/game/ctf.hpp>
+//#include <c_lib/particles/particle_lib.hpp>
 
 #if USE_OPENAL
 #include <c_lib/sound/openal.hpp>

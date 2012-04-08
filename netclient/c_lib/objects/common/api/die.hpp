@@ -3,6 +3,8 @@
 #include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/objects/common/interface/state.hpp>
 
+#include <c_lib/agent/agent_list.hpp>
+
 //forward declaration
 #if DC_SERVER
 namespace ServerState

@@ -2,7 +2,6 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/compat_gl.h>
-#include <c_lib/agent/client/agent_event.hpp>
 #endif
 
 #include <agent/agent_vox.hpp>
