@@ -1,11 +1,18 @@
 #include "agent.hpp"
 
+#ifdef DC_CLIENT
+#include <c_lib/compat_gl.h>
+#include <c_lib/agent/client/agent_event.hpp>
+#endif
+
+#include <agent/agent_vox.hpp>
+
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/agent_physics.hpp>
 
 #ifdef DC_CLIENT
-#include <c_lib/agent/agent_draw.hpp>
-#include <c_lib/agent/player_agent.hpp>
+#include <c_lib/agent/client/agent_draw.hpp>
+#include <c_lib/agent/client/player_agent.hpp>
 #endif
 
 #include <c_lib/defines.h>

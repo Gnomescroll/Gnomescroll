@@ -4,11 +4,6 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/defines.h>
 
-#ifdef DC_CLIENT
-#include <c_lib/compat_gl.h>
-#include <c_lib/agent/agent_event.hpp>
-#endif
-#include <agent/agent_vox.hpp>
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 
@@ -76,7 +71,7 @@ class Agent_state {
         class Agent_status status;
         class Agent_weapons weapons;
 
-        Voxel_model* vox;
+        class Voxel_model* vox;
         #ifdef DC_CLIENT
         Agent_event event;
         #endif

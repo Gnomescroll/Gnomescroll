@@ -11,7 +11,9 @@
 #include <c_lib/time/physics_timer.h>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/input/handlers.hpp>
-#include <c_lib/chat/client.hpp>
+
+//#include <c_lib/chat/client.hpp>
+#include <c_lib/chat/interface.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);
