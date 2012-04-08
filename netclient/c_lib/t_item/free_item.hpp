@@ -42,19 +42,9 @@ class Free_item
 
     void draw();
 
-    void set_position(float x, float y, float z)
-    {
-        vp.set_position(x,y,z);
-    }
-    void set_momentum(float mx, float my, float mz)
-    {
-        vp.set_momentum(mx,my,mz);
-    }
     void set_state(float x, float y, float z, float mx, float my, float mz)
     {
         vp.set_state(x,y,z,mx,my,mz);
-        //vp.set_position(x,y,z);
-        //vp.set_momentum(mx,my,mz);
     }
 
     Free_item(int id, float x, float y, float z, float mx, float my, float mz)
@@ -75,7 +65,6 @@ class Free_item
     ttl(0), ttl_max(FREE_ITEM_TTL), 
     mass(1.0f), damp(FREE_ITEM_DAMPENING)
     {
-
         type = rand() % 16;
     }
 };
