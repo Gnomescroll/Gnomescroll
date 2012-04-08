@@ -220,18 +220,11 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 void begin_transparent_draw()
 {
     glColor4ub(255,255,255,255);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_FALSE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
 
 void end_transparent_draw()
 {
     glDepthMask(GL_TRUE);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_BLEND);
 }
 

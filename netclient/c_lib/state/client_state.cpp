@@ -242,19 +242,18 @@ namespace ClientState {
         // transparent
         billboard_text_list->draw();
         
-        begin_transparent_draw();
+        //begin_transparent_draw();
+        //begin_particle_draw();
+        //cspray_list->draw();
+        //grenade_list->draw();
+        //shrapnel_list->draw();
+        //blood_list->draw();
+        //end_particle_draw();
+        //end_transparent_draw();
 
-        begin_particle_draw();
-        cspray_list->draw();
-        grenade_list->draw();
-        shrapnel_list->draw();
-        blood_list->draw();
-        end_particle_draw();
-        end_transparent_draw();
-
-        begin_item_draw();
-        sprite_list->draw();
-        end_item_draw();
+        //begin_item_draw();
+        //sprite_list->draw();
+        //end_item_draw();
         
     }
 

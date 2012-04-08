@@ -21,12 +21,15 @@ int init_particles() {
 
 void begin_particle_draw()
 {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBegin(GL_QUADS);
 }
 void end_particle_draw()
 {
     glEnd();
+    glDisable(GL_BLEND);
 }
 
 #endif

@@ -166,13 +166,26 @@ int run()
 
         // draw client state
 
+        ClientState::draw();
 
         t_mech::draw();
         t_item::draw();
 
+        begin_transparent_draw();
+        begin_item_draw();
+        ClientState::sprite_list->draw();
+        end_item_draw();
+        begin_particle_draw();
+        ClientState::cspray_list->draw();
+        ClientState::grenade_list->draw();
+        ClientState::shrapnel_list->draw();
+        ClientState::blood_list->draw();
+        end_particle_draw();
+        end_transparent_draw();
+
+
         Skybox::draw();
 
-        ClientState::draw();
         // draw animations
         Animations::animations_draw();  //transparency stuff
 

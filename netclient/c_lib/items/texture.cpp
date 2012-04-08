@@ -6,8 +6,8 @@ GLuint item_texture;
 
 void begin_item_draw()
 {
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5);
     glBindTexture(GL_TEXTURE_2D, item_texture);
@@ -18,8 +18,8 @@ void end_item_draw()
 {
     glEnd();
     glDisable(GL_ALPHA_TEST);
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_DEPTH_TEST);
 }
 
 
