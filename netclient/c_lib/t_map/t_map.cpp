@@ -151,7 +151,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
 #if 1
     block_spawn_items(block_value, x,y,z);
-else
+#else
     float p = randf();
     if (p < 0.3)
     {
