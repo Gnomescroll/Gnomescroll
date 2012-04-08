@@ -8,6 +8,8 @@
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/items/items.hpp>
 
+#include <c_lib/chat/interface.hpp>
+
 namespace ServerState
 {
     Agent_list* agent_list = NULL;
@@ -270,6 +272,7 @@ namespace ServerState
     void agent_disconnect(int agent_id)
     {
         remove_player_from_chat(agent_id);
+
         ctf->remove_agent_from_team(agent_id);
         send_disconnect_notice(agent_id);
         agent_list->destroy(agent_id);

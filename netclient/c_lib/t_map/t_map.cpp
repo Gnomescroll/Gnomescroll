@@ -121,7 +121,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.broadcast();
 
     const float mom = 2.0f; // momentum
-    Object_types type;
+    //Object_types type;
     float p = randf();
 /*
     if (p < 0.3)
