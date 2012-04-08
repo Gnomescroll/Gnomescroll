@@ -4,6 +4,8 @@
 #include <net_lib/global.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/t_map/server/manager.hpp>
+
+#include <c_lib/chat/interface.hpp>
 #endif
 
 void NetPeerManager::init(int client_id)
@@ -28,7 +30,7 @@ void NetPeerManager::init(int client_id)
     NetServer::assign_agent_to_client(client_id, a);
 
     ServerState::send_player_agent_id_to_client(client_id);
-    ServerState::add_player_to_chat(client_id);
+    add_player_to_chat(client_id);
     #endif
 }
 

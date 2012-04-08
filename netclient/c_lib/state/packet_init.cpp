@@ -5,7 +5,7 @@
 #include <c_lib/game/packets.hpp>
 
 #include <c_lib/agent/net_agent.hpp>
-#include <c_lib/agent/player_agent.hpp>
+#include <c_lib/agent/client/player_agent.hpp>
 
 #include <c_lib/particles/particle_lib.hpp>
 

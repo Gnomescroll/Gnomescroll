@@ -46,9 +46,6 @@ namespace ServerState
     void send_player_agent_id_to_client(int client_id);
     void send_version_to_client(int client_id);
 
-    void add_player_to_chat(int client_id);
-    //void remove_player_from_chat(int client_id);
-
     //void send_disconnect_notice(int client_id);
     void agent_disconnect(int client_id);
     void revoke_ownership(int agent_id);

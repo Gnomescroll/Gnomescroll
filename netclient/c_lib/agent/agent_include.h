@@ -13,8 +13,8 @@
 #include <c_lib/agent/agent_physics.cpp>
 
 #ifdef DC_CLIENT
-    #include <c_lib/agent/player_agent.cpp>
-    #include <c_lib/agent/agent_draw.cpp>
-    #include <c_lib/agent/agent_event.cpp>
-    #include <c_lib/agent/player_agent_action.cpp>
+    #include <c_lib/agent/client/player_agent.cpp>
+    #include <c_lib/agent/client/agent_draw.cpp>
+    #include <c_lib/agent/client/agent_event.cpp>
+    #include <c_lib/agent/client/player_agent_action.cpp>
 #endif

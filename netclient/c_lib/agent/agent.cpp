@@ -1,10 +1,12 @@
 #include "agent.hpp"
 
 #include <c_lib/agent/net_agent.hpp>
+#include <c_lib/agent/agent_physics.hpp>
+
+#ifdef DC_CLIENT
 #include <c_lib/agent/agent_draw.hpp>
 #include <c_lib/agent/player_agent.hpp>
-
-#include <c_lib/agent/agent_physics.hpp>
+#endif
 
 #include <c_lib/defines.h>
 #include <math.h>
