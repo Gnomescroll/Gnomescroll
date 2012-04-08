@@ -7,6 +7,7 @@
 #include <c_lib/input/handlers.hpp>
 #include <c_lib/options.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
+#include <c_lib/draw/transparent.hpp>
 
 /* Configuration */
 namespace Hud
@@ -223,8 +224,7 @@ void draw_hud_textures()
     if (hud_draw_settings.graphs)
         frame_graph->draw(_xresf - frame_graph->ts->screen_width(), 0);
 
-    // TODO
-    InventoryRender::draw();
+    Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
 }
 
 void draw_hud_text()

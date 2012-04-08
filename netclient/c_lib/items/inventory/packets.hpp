@@ -45,6 +45,8 @@ void inventory_destroy_message(inventory_destroy_StoC* msg, int id)
     msg->id = id;
 }
 
+/* Transactions */
+
 class add_item_to_inventory_StoC: public FixedSizeNetPacketToClient<add_item_to_inventory_StoC>
 {
     public:
