@@ -88,15 +88,9 @@ class Inventory: public BaseInventoryServer
     {
         bool swapped = this->swap(slota, slotb);
         if (this->get_owner() != NO_AGENT)
-        {
-            this->sendToClientAdd(this->contents.objects[slota].item_id, this->contents.objects[slota].item_type, slota);
-            this->sendToClientAdd(this->contents.objects[slotb].item_id, this->contents.objects[slotb].item_type, slotb);
-        }
+            this->sendToClientSwap(slota, slotb);
         else
-        {
-            this->broadcastAdd(this->contents.objects[slota].item_id, this->contents.objects[slota].item_type, slota);
-            this->broadcastAdd(this->contents.objects[slotb].item_id, this->contents.objects[slotb].item_type, slotb);
-        }
+            this->broadcastSwap(slota, slotb);
         return swapped;
     }
 
@@ -126,6 +120,8 @@ class Inventory: public BaseInventoryServer
     void broadcastAdd(int id, Object_types type, int slot);
     void sendToClientRemove(int slot);
     void broadcastRemove(int slot);
+    void sendToClientSwap(int slota, int slotb);
+    void broadcastSwap(int slota, int slotb);
 
     
     explicit Inventory(int id)

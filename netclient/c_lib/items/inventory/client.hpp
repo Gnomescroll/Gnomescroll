@@ -138,6 +138,10 @@ class Inventory: public BaseInventoryClient
     {
         return BaseInventoryClient::remove(slot);
     }
+    bool swap(int slota, int slotb)
+    {
+        return BaseInventoryClient::swap(slota, slotb);
+    }
     void init(int x, int y)
     {
         BaseInventoryClient::init(x,y);

@@ -47,7 +47,7 @@ void inventory_destroy_message(inventory_destroy_StoC* msg, int id)
 
 /* Transactions */
 
-class add_item_to_inventory_StoC: public FixedSizeNetPacketToClient<add_item_to_inventory_StoC>
+class add_item_to_inventory_StoC: public FixedSizeReliableNetPacketToClient<add_item_to_inventory_StoC>
 {
     public:
         uint16_t inventory_id;
@@ -65,7 +65,7 @@ class add_item_to_inventory_StoC: public FixedSizeNetPacketToClient<add_item_to_
     inline void handle();
 };
 
-class remove_item_from_inventory_StoC: public FixedSizeNetPacketToClient<remove_item_from_inventory_StoC>
+class remove_item_from_inventory_StoC: public FixedSizeReliableNetPacketToClient<remove_item_from_inventory_StoC>
 {
     public:
         uint16_t inventory_id;
@@ -79,7 +79,26 @@ class remove_item_from_inventory_StoC: public FixedSizeNetPacketToClient<remove_
     inline void handle();
 };
 
-class add_item_to_inventory_CtoS: public FixedSizeNetPacketToServer<add_item_to_inventory_CtoS>
+class swap_item_in_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_item_in_inventory_StoC>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slota;
+        uint8_t slotb;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slota, buff, buff_n, pack);
+        pack_u8(&slotb, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+
+/* CtoS */
+
+class add_item_to_inventory_CtoS: public FixedSizeReliableNetPacketToServer<add_item_to_inventory_CtoS>
 {
     public:
         uint16_t inventory_id;
@@ -97,7 +116,7 @@ class add_item_to_inventory_CtoS: public FixedSizeNetPacketToServer<add_item_to_
     inline void handle();
 };
 
-class remove_item_from_inventory_CtoS: public FixedSizeNetPacketToServer<remove_item_from_inventory_CtoS>
+class remove_item_from_inventory_CtoS: public FixedSizeReliableNetPacketToServer<remove_item_from_inventory_CtoS>
 {
     public:
         uint16_t inventory_id;
@@ -113,10 +132,9 @@ class remove_item_from_inventory_CtoS: public FixedSizeNetPacketToServer<remove_
 
 
 // TODO:
-// swap item in inventory
 // swap item between inventories
 
-class swap_item_in_inventory_CtoS: public FixedSizeNetPacketToServer<swap_item_in_inventory_CtoS>
+class swap_item_in_inventory_CtoS: public FixedSizeReliableNetPacketToServer<swap_item_in_inventory_CtoS>
 {
     public:
         uint16_t inventory_id;
