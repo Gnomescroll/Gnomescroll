@@ -2,15 +2,9 @@
 
 #include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
-#include <c_lib/objects/common/list/list.hpp>
-#include <c_lib/objects/components/sprite/sprite.hpp>
 
-//#include <c_lib/items/inventory/render.hpp>
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
-#if DC_CLIENT
-#include <c_lib/draw/transparent.hpp>
-#endif
 
 typedef OwnedState InventoryState;
 
@@ -27,8 +21,9 @@ class InventoryObjectInterface: public InventoryState
     InventoryObjectInterface() {}
 };
 
-// wrap InventoryContents into a game object
 class Inventory;
+
+// wrap InventoryContents into a game object
 template <class InventoryContents>
 class BaseInventory: public InventoryObjectInterface
 {
