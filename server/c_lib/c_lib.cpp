@@ -104,6 +104,7 @@
 #include <c_lib/chat/globals.hpp>
 #include <c_lib/chat/packets.cpp>
 #include <c_lib/chat/server.cpp>
+#include <c_lib/chat/interface.cpp>
 
 /* dungeon/L system/noise */
 #ifdef DUNGEON
