@@ -280,8 +280,6 @@ int init_c_lib() {
     init_chat_client();
     init_particles();
 
-    InventoryRender::init();
-
     ClientState::init_ctf();
     
     Animations::init_hitscan();
@@ -315,7 +313,6 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
-    InventoryRender::teardown();
     
     // free surfaces
     t_map::teardown_shader();

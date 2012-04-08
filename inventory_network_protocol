@@ -111,3 +111,19 @@ sort out declarations/definitions
 Make a special draw_list container to avoid iteration in client
 finish the inventory panel & icon bind/lookup/draw methods
 initialize the draw lists corresponding to sprite sheets properly
+
+Draw lists issue:
+
+Items in the draw list need to know where to draw
+--could store indices in each property (bad, wastes memory, difficult to modify)
+Realistically, their draw positions are calculated from their slots
+Which is a factor of offset (inventory id) + position within grid (slot)
+
+Draw lists are ogranized by spritesheet, to minimize/simplify texture swapping
+But conceptually they also need to be organized by inventory, for spatial arrangement
+
+Keep draw lists per texture, because those cant swap
+Object has get_render_position
+DONE
+
+=============
