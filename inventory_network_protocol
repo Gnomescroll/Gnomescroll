@@ -128,11 +128,27 @@ DONE
 
 =============
 
-
 REMAINING TODO:
 
-
 more packets
-
 transitions between world objects and inventory (vaporize when picked up etc)
+hud rendering -- layering, draw lists, gl flags etc
+hud interaction
 
+clean interfaces
+Folder Hierarchy:
+inventory/
+    inventory (include file)
+    base        -- base class wrapper around contents, contains shared interfaces between client&server
+    contents    -- inventory contents
+    server/
+        agent
+        t_map
+        t_mech
+        packets
+    client/
+        agent
+        t_map
+        t_mech
+        packets
+    render/?
