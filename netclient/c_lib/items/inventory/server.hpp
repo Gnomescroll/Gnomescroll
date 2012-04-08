@@ -11,12 +11,9 @@
 
 #include <c_lib/items/inventory/base.hpp>
 
-class Inventory;
-
 class InventoryProperties: public BaseInventoryProperties
 {
     public:
-        Inventory* inventory;
 
         void load(int id, Object_types type)
         {
@@ -27,13 +24,12 @@ class InventoryProperties: public BaseInventoryProperties
         
     InventoryProperties()
     :
-    BaseInventoryProperties(),
-    inventory(NULL)
+    BaseInventoryProperties()
     {
     }
 };
 
-class InventoryContents: public BaseInventoryContents<Inventory, InventoryProperties>
+class InventoryContents: public BaseInventoryContents<InventoryProperties>
 {
     public:
         void sendToClient(int inventory_id, int client_id);
@@ -94,6 +90,16 @@ class Inventory: public BaseInventoryServer
         this->contents.sendToClient(this->_state.id, client_id);
     }
 
+    /* Expose Inventory API here */
+    void init(int x, int y)
+    {
+        BaseInventoryServer::init(x,y);
+    }
+    
+    bool can_add(Object_types type)
+    {
+        return BaseInventoryServer::can_add(type);
+    }
     
     void sendToClientCreate(int client_id);
     void broadcastCreate();

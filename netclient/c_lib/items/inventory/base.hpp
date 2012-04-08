@@ -29,14 +29,10 @@ class BaseInventory: public InventoryObjectInterface
 {
     protected:
         InventoryContents contents;
-    public:
-
-        // TODO -- move, this is owned specialization
-        void attach_to_owner();
         
         void init(int x, int y)
         {
-            this->contents.init((Inventory*)this, x,y);
+            this->contents.init(x,y);
         }
 
         bool type_allowed(Object_types type)
@@ -69,7 +65,6 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_add(slot);
         }
 
-
         bool add(int id, Object_types type)
         {
             int slot = this->contents.get_empty_slot();
@@ -88,6 +83,8 @@ class BaseInventory: public InventoryObjectInterface
             bool removed = this->contents.remove(slot);
             return removed;
         }
+
+    public:
 
     explicit BaseInventory<InventoryContents>(int id)
     {

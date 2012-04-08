@@ -14,10 +14,6 @@
 #include <c_lib/objects/common/interface/policy.hpp>
 
 
-class InventoryProperties;
-void register_inventory_item_draw_list(InventoryProperties* property);
-void unregister_inventory_item_draw_list(InventoryProperties* property);
-
 int get_icon_spritesheet_id(Object_types type)
 {
     const int ERROR_SPRITE = 0;
@@ -44,20 +40,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
     public:
         Inventory* inventory;
 
-        void load(int id, Object_types type)
-        {
-            bool new_icon = (id != this->item_id || type != this->item_type);
-            if (this->item_id != EMPTY_SLOT && new_icon)
-                unregister_inventory_item_draw_list(this);
-            if (type != this->item_type)
-                this->sprite_index = get_icon_spritesheet_id(type);
-            this->item_id = id;
-            this->item_type = type;
-            if (id != EMPTY_SLOT && new_icon)   // set to new
-                register_inventory_item_draw_list(this);
-            printf("Loaded inventory item %d,%d\n", id,type);
-        }
-
+    void load(int id, Object_types type);
     void get_sprite_data(struct Draw::SpriteData* data);
         
     InventoryProperties()
@@ -69,8 +52,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
     }
 };
 
-
-class InventoryContents: public BaseInventoryContents<Inventory, InventoryProperties>
+class InventoryContents: public BaseInventoryContents<InventoryProperties>
 {};
 
 typedef BaseInventory<InventoryContents> BaseInventoryClient;
@@ -121,6 +103,34 @@ class Inventory: public BaseInventoryClient
         msg.type = type;
         msg.slot = slot;
         msg.send();
+    }
+
+    /* Expose API here */
+    bool dimension_mismatch(int x, int y)
+    {
+        return BaseInventoryClient::dimension_mismatch(x,y);
+    }
+    bool can_add(Object_types type)
+    {
+        return BaseInventoryClient::can_add(type);
+    }
+    bool can_add(Object_types type, int slot)
+    {
+        return BaseInventoryClient::can_add(type, slot);
+    }
+    bool add(int id, Object_types type, int slot)
+    {
+        return BaseInventoryClient::add(id, type, slot);
+    }
+    bool remove(int slot)
+    {
+        return BaseInventoryClient::remove(slot);
+    }
+    void init(int x, int y)
+    {
+        BaseInventoryClient::init(x,y);
+        for (int i=0; i<this->contents.max; i++)
+            this->contents.objects[i].inventory = this;
     }
 
     DUMMY_NETWORK_INTERFACE // to conform to object api

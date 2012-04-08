@@ -2,16 +2,7 @@
 
 #if DC_CLIENT
 
-#include <c_lib/SDL/SDL_functions.h>
-
-Inventory::Inventory(int id)
-: BaseInventoryClient(id)
-{
-    // todo -- get the inventory window information elsewhere
-    this->screen.x = _xresf/3;
-    this->screen.y = _yresf - 64;
-    this->screen.z = -0.1f;
-}
+#include <c_lib/draw/transparent.hpp>
 
 void register_inventory_item_draw_list(InventoryProperties* property)
 {
@@ -21,6 +12,30 @@ void register_inventory_item_draw_list(InventoryProperties* property)
 void unregister_inventory_item_draw_list(InventoryProperties* property)
 {
     Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->unregister_object(property);
+}
+
+void InventoryProperties::load(int id, Object_types type)
+{
+    bool new_icon = (id != this->item_id || type != this->item_type);
+    if (this->item_id != EMPTY_SLOT && new_icon)
+        unregister_inventory_item_draw_list(this);
+    if (type != this->item_type)
+        this->sprite_index = get_icon_spritesheet_id(type);
+    this->item_id = id;
+    this->item_type = type;
+    if (id != EMPTY_SLOT && new_icon)   // set to new
+        register_inventory_item_draw_list(this);
+    printf("Loaded inventory item %d,%d\n", id,type);
+}
+
+
+Inventory::Inventory(int id)
+: BaseInventoryClient(id)
+{
+    // todo -- get the inventory window information elsewhere
+    this->screen.x = _xresf/3;
+    this->screen.y = _yresf - 64;
+    this->screen.z = -0.1f;
 }
 
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
