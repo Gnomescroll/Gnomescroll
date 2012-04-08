@@ -1,5 +1,7 @@
 #include "packets.hpp"
 
+#include <c_lib/chat/interface.hpp>
+
 #ifdef DC_CLIENT
 inline void ChatMessage_StoC::handle()
 {

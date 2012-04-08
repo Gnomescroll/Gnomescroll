@@ -5,6 +5,8 @@
 #include <c_lib/agent/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
+#include <c_lib/chat/interface.hpp>
+
 void switch_agent_ownership(int item_id, Object_types item_type, int owner, int new_owner);
 
 class Agent_state;  // forward declaration

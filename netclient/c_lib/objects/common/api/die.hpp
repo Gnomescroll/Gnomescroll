@@ -23,7 +23,7 @@ namespace ClientState
     extern Agent_list* agent_list;
 }
 #include <c_lib/animations/animations.hpp>
-#include <c_lib/chat/client.hpp>
+#include <c_lib/chat/interface.hpp>
 #endif
 
 /* die behaviours */

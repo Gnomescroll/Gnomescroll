@@ -38,4 +38,4 @@ class ChatServer
     ~ChatServer();
 };
 
-extern ChatServer* chat_server;
+//extern ChatServer* chat_server;
