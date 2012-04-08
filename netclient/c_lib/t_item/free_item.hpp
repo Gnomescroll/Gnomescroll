@@ -8,7 +8,7 @@
 namespace t_item
 {
 
-const int FREE_ITEM_TTL = 300*30; // 10 seconds
+const int FREE_ITEM_TTL = 300; // 10 seconds
 const float FREE_ITEM_DAMPENING = 0.5;
 
 typedef enum

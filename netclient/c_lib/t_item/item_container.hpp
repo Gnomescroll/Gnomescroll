@@ -90,8 +90,8 @@ class ItemContainerList: public Object_list<ItemContainer, FREE_ITEM_MAX>
     public:
         ItemContainerList() { print(); }
 
-        void draw() {}
-        void tick() {}
+        //void draw() {}
+        //void tick() {}
 };
 
 }

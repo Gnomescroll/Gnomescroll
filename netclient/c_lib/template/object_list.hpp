@@ -36,13 +36,15 @@ class Object_list {
 
         Object_state* get(int id);
         Object_state* create();         //object auto id
-
         Object_state* create(int id);   //create object with id
+        
+        Object_state* get_or_create(int id);
+
         Object_state* create(float x, float y, float z);
         Object_state* create(int id, float x, float y, float z);
         Object_state* create(float x, float y, float z, float vx, float vy, float vz);
         Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
-        Object_state* get_or_create(int id);
+
 
         bool contains(int id);
         bool full();
@@ -51,8 +53,8 @@ class Object_list {
         
         void destroy(int _id);
 
-        void draw();    //overide in template specilization on client
-        void draw(int all);
+        //void draw();    //overide in template specilization on client
+        //void draw(int all);
 
         void where();
         void print();
@@ -192,6 +194,21 @@ Object_state* Object_list<Object_state, max_n>::create(int id) {
 }
 
 template <class Object_state, int max_n>
+Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
+    //where();
+    Object_state* obj = a[id];
+    if (obj == NULL) {
+        obj = create(id);
+    }
+    return obj;
+}
+
+
+/*
+    Particle function stuff
+*/
+
+template <class Object_state, int max_n>
 Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z) {
     int i;
     int id;
@@ -258,16 +275,6 @@ bool Object_list<Object_state, max_n>::contains(int id) {
     }
     return true;
 }
-           
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
-    //where();
-    Object_state* obj = a[id];
-    if (obj == NULL) {
-        obj = create(id);
-    }
-    return obj;
-}
 
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::destroy(int id)
@@ -282,7 +289,8 @@ void Object_list<Object_state, max_n>::destroy(int id)
     num--;
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
-
+ 
+/*
 template <class Object_state, int max_n>
 void Object_list<Object_state, max_n>::draw() {
     
@@ -308,6 +316,7 @@ void Object_list<Object_state, max_n>::draw(int all) {
     }
     #endif
 }
+*/
 
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::full()
