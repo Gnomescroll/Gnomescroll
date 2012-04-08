@@ -124,3 +124,6 @@ But conceptually they also need to be organized by inventory, for spatial arrang
 
 Keep draw lists per texture, because those cant swap
 Object has get_render_position
+DONE
+
+=============

@@ -540,22 +540,23 @@ const bool Agent_status::can_gain_item(Object_types item)
 bool Agent_status::gain_item(int item_id, Object_types item_type)
 {
     bool can = this->can_gain_item(item_type);
+    if (!can) return false;
     switch (item_type)
     {
         case OBJ_TYPE_TURRET:
-            if (can) owned_turrets++;
+            owned_turrets++;
             break;
             
         case OBJ_TYPE_SPAWNER:
-            if (can) owned_spawners++;
+            owned_spawners++;
             break;
 
         case OBJ_TYPE_GRENADE_REFILL:
-            if (can) this->a->weapons.grenades.add_ammo(10);
+            this->a->weapons.grenades.add_ammo(10);
             break;
             
         case OBJ_TYPE_LASER_REFILL:
-            if (can) this->a->weapons.laser.add_ammo(20);
+            this->a->weapons.laser.add_ammo(20);
             break;
 
         case OBJ_TYPE_STONE:

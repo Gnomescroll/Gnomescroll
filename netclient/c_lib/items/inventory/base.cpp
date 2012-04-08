@@ -65,7 +65,6 @@ void BaseInventory::broadcastDeath()
 void BaseInventory::sendToClientAdd(int id, Object_types type, int slot)
 {
     #if DC_SERVER
-    printf("send to client add\n");
     Agent_state* agent = ServerState::agent_list->get(this->get_owner());
     if (agent == NULL) return;
     add_item_to_inventory_StoC msg;
