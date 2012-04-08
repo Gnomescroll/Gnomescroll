@@ -10,10 +10,59 @@
 #if DC_CLIENT
 
 #include <c_lib/items/inventory/base.hpp>
+#include <c_lib/items/inventory/contents.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
 
-class ClientInventory: public BaseInventory
+
+int get_icon_spritesheet_id(Object_types type)
+{
+    const int ERROR_SPRITE = 0;
+    switch (type)
+    {
+        case OBJ_TYPE_DIRT:
+            return 3;
+        case OBJ_TYPE_STONE:
+            return 4;
+
+        case OBJ_TYPE_SPAWNER:
+            return 6;
+        case OBJ_TYPE_TURRET:
+            return 7;
+        
+        default:
+            return ERROR_SPRITE;
+    }
+}
+
+class Inventory;
+class InventoryProperties: public BaseInventoryProperties, public SpriteProperties
 {
     public:
+        Inventory* inventory;
+
+    void load(int id, Object_types type);
+    void get_sprite_data(struct Draw::SpriteData* data);
+        
+    InventoryProperties()
+    :
+    BaseInventoryProperties(), SpriteProperties(),
+    inventory(NULL)
+    {
+        this->scale = 4.0f;
+    }
+};
+
+class InventoryContents: public BaseInventoryContents<InventoryProperties>
+{};
+
+typedef BaseInventory<InventoryContents> BaseInventoryClient;
+class Inventory: public BaseInventoryClient
+{
+    public:
+
+    struct {
+        float x,y,z;
+    } screen;
 
     void attach_to_owner();
 
@@ -56,8 +105,37 @@ class ClientInventory: public BaseInventory
         msg.send();
     }
 
-    explicit ClientInventory(int id)
-    : BaseInventory(id) {}
+    /* Expose API here */
+    bool dimension_mismatch(int x, int y)
+    {
+        return BaseInventoryClient::dimension_mismatch(x,y);
+    }
+    bool can_add(Object_types type)
+    {
+        return BaseInventoryClient::can_add(type);
+    }
+    bool can_add(Object_types type, int slot)
+    {
+        return BaseInventoryClient::can_add(type, slot);
+    }
+    bool add(int id, Object_types type, int slot)
+    {
+        return BaseInventoryClient::add(id, type, slot);
+    }
+    bool remove(int slot)
+    {
+        return BaseInventoryClient::remove(slot);
+    }
+    void init(int x, int y)
+    {
+        BaseInventoryClient::init(x,y);
+        for (int i=0; i<this->contents.max; i++)
+            this->contents.objects[i].inventory = this;
+    }
+
+    DUMMY_NETWORK_INTERFACE // to conform to object api
+
+    explicit Inventory(int id);
 };
 
 #endif

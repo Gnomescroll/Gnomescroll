@@ -110,3 +110,8 @@ class remove_item_from_inventory_CtoS: public FixedSizeNetPacketToServer<remove_
     }
     inline void handle();
 };
+
+
+// TODO:
+// swap item in inventory
+// swap item between inventories
