@@ -109,7 +109,7 @@ int apply_damage(int x, int y, int z, int dmg)
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)
 {
-    const float drop_probability = 0.3f;
+    const float drop_probability = 0.1f;
     float p = randf();
     if (p > drop_probability) return;
 
