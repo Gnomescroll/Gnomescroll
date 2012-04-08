@@ -514,6 +514,8 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 , event(this)
 #endif
 {
+    inventory_id = -1;
+
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);
 
@@ -558,6 +560,8 @@ id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 , event(this)
 #endif
 {
+    inventory_id = -1;
+
     set_state(x, y, z, vx, vy, vz);
     set_angles(0.5f, 0.0f);
     

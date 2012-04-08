@@ -760,30 +760,3 @@ void ChatSystemMessage::object_created(ObjectPolicyInterface* object)
         free(msg);
     }
 }
-
-
-
-/* globals */
-ChatClient* chat_client = NULL;
-ChatMessageList* chat_message_list = NULL;
-ChatSystemMessage* system_message = NULL;
-
-void init_chat_client()
-{
-    chat_client = new ChatClient;
-    chat_message_list = new ChatMessageList;
-    system_message = new ChatSystemMessage;
-}
-
-void teardown_chat_client()
-{
-    if (chat_client != NULL)
-    {
-        chat_client->teardown();
-        delete chat_client;
-    }
-    if (chat_message_list != NULL)
-        delete chat_message_list;
-    if (system_message != NULL)
-        delete system_message;
-}

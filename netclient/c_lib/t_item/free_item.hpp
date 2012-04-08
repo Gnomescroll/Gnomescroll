@@ -5,6 +5,8 @@
 #include <c_lib/t_item/sprite.hpp>
 #endif
 
+#include <c_lib/physics/verlet.hpp>
+
 namespace t_item
 {
 
@@ -225,7 +227,7 @@ void Free_item_list::check_item_pickups()
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        free_item = this->a[i];
+        //free_item = this->a[i];
 
 
     }

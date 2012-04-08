@@ -18,6 +18,13 @@ typedef unsigned int GLuint;
     #define  PRODUCTION 0
 #endif
 
+/*
+  Turn off asserts when production is enabled
+*/
+#ifdef PRODUCTION
+    #define NDEBUG 
+#endif
+
 #define TICK_DURATION 30.0f
 #define PLAYERS_MAX 64
 

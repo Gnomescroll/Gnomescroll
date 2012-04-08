@@ -78,6 +78,8 @@
 #include <c_lib/t_item/item_container.cpp>
 #include <c_lib/t_item/item.cpp>
 
+#include <c_lib/t_item/server/agent_inventory.cpp>
+
 #include <c_lib/t_item/net/CtoS.cpp>
 #include <c_lib/t_item/net/StoC.cpp>
 

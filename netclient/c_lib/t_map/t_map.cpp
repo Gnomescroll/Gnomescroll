@@ -123,6 +123,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     const float mom = 2.0f; // momentum
     Object_types type;
     float p = randf();
+/*
     if (p < 0.3)
         type = OBJ_TYPE_DIRT;
     else if (p < 0.6)
@@ -136,11 +137,13 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     );
     if (obj != NULL)
         obj->born();
-
-
+*/
+    if (p < 0.3)
+    {
     t_item::create_free_item(0, 
         x+randf(),y+randf(), z+randf(),
         (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+    }
 }
 #endif
 

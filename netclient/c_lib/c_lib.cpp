@@ -13,7 +13,6 @@
 #include "compat_gl.h"
 #include "compat_al.h"
 
-
 /* Compression */
 #include <c_lib/common/compression/miniz.c>
 
@@ -191,9 +190,11 @@
 #include <c_lib/sound/sound.cpp>
 
 /* chat */
-#include <c_lib/chat/globals.hpp>
+//#include <c_lib/chat/globals.hpp>
 #include <c_lib/chat/packets.cpp>
 #include <c_lib/chat/client.cpp>
+
+#include <c_lib/chat/interface.cpp>
 
 /* client side map gen / utils */
 //#include <c_lib/map_gen/hopcroft-karp.cpp>

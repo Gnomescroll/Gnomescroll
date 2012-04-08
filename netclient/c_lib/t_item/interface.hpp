@@ -22,4 +22,3 @@ void create_free_item(int id, float f, float y, float z, float vx, float vy, flo
 
 
 }
- 

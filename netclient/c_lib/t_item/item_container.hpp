@@ -9,6 +9,13 @@ typedef short ItemId ;
 
 const int EMPTY_SLOT = 0xFFFF;
 
+enum ItemContainerType
+{
+	AgentInventory,
+	//BlockInventory,
+	//Bag
+};
+
 class ItemContainer // dont use behaviour list unless doing the registration model
 {
     public:
@@ -23,15 +30,28 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         ItemId* slot;
 
-        ItemContainer(int _xdim, int _ydim)
+        ItemContainer(int _id)
         {
-        	xdim = _xdim;
-        	ydim = _ydim;
+            id = _id;
+        	slot = NULL;
+        }
 
-        	slot_max = xdim*ydim;
+        void init(ItemContainerType type, int _xdim, int _ydim)
+        {
+            container_type = type;
 
-        	slot = new ItemId[slot_max];
-        	for(int i=0; i<slot_max; i++) slot[i] = EMPTY_SLOT;
+            xdim = _xdim;
+            ydim = _ydim;
+
+            slot_max = xdim*ydim;
+
+            slot = new ItemId[slot_max];
+            for(int i=0; i<slot_max; i++) slot[i] = EMPTY_SLOT;
+        }
+
+        void init_agent_inventory()
+        {
+            this->init(AgentInventory, 18, 12);
         }
 
 	    ~ItemContainer()
@@ -63,7 +83,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
             printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
         }
 
-        bool clear_slot(int x, int y)
+       	void clear_slot(int x, int y)
         {
         	assert(is_valid_grid_position(x,y));
             slot[y*xdim + x] = EMPTY_SLOT;
@@ -73,7 +93,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 */
 };
 
-
+ 
 }
 
 #include <c_lib/template/object_list.hpp>

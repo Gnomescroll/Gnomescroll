@@ -153,9 +153,3 @@ class ChatSystemMessage
     void object_destroyed(ObjectPolicyInterface* object);
     void object_created(ObjectPolicyInterface* object);
 };
-
-void teardown_chat_client();
-
-extern ChatMessageList* chat_message_list;
-extern ChatClient* chat_client;
-extern ChatSystemMessage* system_message;

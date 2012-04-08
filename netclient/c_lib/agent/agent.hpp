@@ -67,6 +67,8 @@ class Agent_state {
         int id;
         int client_id;
 
+        int inventory_id;
+        
         Object_types type;
         
         struct Agent_collision_box box;
