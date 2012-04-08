@@ -1,8 +1,28 @@
 #pragma once
 
-const float DEFAULT_MASS = 1.0f;
-
 /* Aggregator */
+
+/* objects */
+#include "./particles/particles.cpp"
+
+#if DC_CLIENT
+#include "./particles/textures.cpp"
+
+#include "./particles/shrapnel.cpp"
+#include "./particles/blood.cpp"
+#include "./particles/minivox.cpp"
+#include "./particles/billboard_text.cpp"
+#include "./particles/billboard_text_hud.cpp"
+#endif
+
+#include "./particles/grenade.cpp"
+#include "./particles/cspray.cpp"
+
+#if DC_SERVER
+#include "./particles/grenade_shrapnel.cpp"
+#endif
+
+
 
 /* objects */
 #include "./particles/particles.hpp"
