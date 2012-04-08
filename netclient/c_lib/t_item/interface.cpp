@@ -3,12 +3,15 @@
 //#include <c_lib/t_item/list.hpp>
 
 #include <c_lib/t_item/free_item.hpp>
+#include <c_lib/t_item/item_container.hpp>
+
 #include <c_lib/t_item/net/StoC.hpp>
 
 namespace t_item
 {
 
 Free_item_list* free_item_list = NULL;
+ItemContainerList* item_container_list = NULL;
 
 void state_init()
 {
@@ -18,6 +21,8 @@ void state_init()
         return;
     }
     free_item_list = new Free_item_list;
+    item_container_list = new ItemContainerList;
+
 }
 
 void state_teardown()

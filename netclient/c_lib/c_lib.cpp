@@ -146,6 +146,8 @@
 
 #include <c_lib/t_item/free_item.cpp>
 #include <c_lib/t_item/interface.cpp>
+#include <c_lib/t_item/item_container.cpp>
+
 #include <c_lib/t_item/sprite.cpp>
 
 #include <c_lib/t_item/net/CtoS.cpp>
