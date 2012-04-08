@@ -2,77 +2,25 @@
 
 #include <c_lib/common/enum_types.hpp>
 
-class InventoryProperties;
-void register_inventory_item_draw_list(InventoryProperties* property);
-void unregister_inventory_item_draw_list(InventoryProperties* property);
-
-int get_icon_spritesheet_id(Object_types type)
-{
-    const int ERROR_SPRITE = 0;
-    switch (type)
-    {
-        case OBJ_TYPE_DIRT:
-            return 3;
-        case OBJ_TYPE_STONE:
-            return 4;
-
-        case OBJ_TYPE_SPAWNER:
-            return 6;
-        case OBJ_TYPE_TURRET:
-            return 7;
-        
-        default:
-            return ERROR_SPRITE;
-    }
-}
-
 const int EMPTY_SLOT = 65535;
-class BaseInventory;
-
-class InventoryProperties: public SpriteProperties
+class BaseInventoryProperties
 {
     public:
         int item_id; // id would be the id of the main object it is referring to. this lets us get cache info
                 // otherwise inconsequential
         Object_types item_type;
         int slot;
-        BaseInventory* inventory;
 
-        void load(int id, Object_types type)
-        {
-            #if DC_CLIENT
-            bool new_icon = (id != this->item_id || type != this->item_type);
-            if (this->item_id != EMPTY_SLOT && new_icon)
-                unregister_inventory_item_draw_list(this);
-            if (type != this->item_type)
-                this->sprite_index = get_icon_spritesheet_id(type);
-            #endif
-            this->item_id = id;
-            this->item_type = type;
-            #if DC_CLIENT
-            if (id != EMPTY_SLOT && new_icon)   // set to new
-                register_inventory_item_draw_list(this);
-            #endif
-            printf("Loaded inventory item %d,%d\n", id,type);
-
-            // TODO -- lookup and set sprite properties
-        }
-
-    #if DC_CLIENT
-    void get_sprite_data(struct Draw::SpriteData* data);
-    #endif
-        
-    InventoryProperties()
+    BaseInventoryProperties()
     :
     item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE),
-    slot(-1),    // slot is set after allocation
-    inventory(NULL)
+    slot(-1)    // slot is set after allocation
     {
-        this->scale = 4.0f;
     }
 };
 
-class InventoryContents // dont use behaviour list unless doing the registration model
+template <class Inventory, class InventoryProperties>
+class BaseInventoryContents // dont use behaviour list unless doing the registration model
 {
     public:
         InventoryProperties* objects;
@@ -81,7 +29,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
         int max;
         int ct;
 
-        BaseInventory* inventory;
+        Inventory* inventory;
 
         bool full()
         {
@@ -112,7 +60,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
             return true;
         }
 
-        void init(BaseInventory* inventory, int x, int y)
+        void init(Inventory* inventory, int x, int y)
         {
             if (objects != NULL)
             {
@@ -188,8 +136,6 @@ class InventoryContents // dont use behaviour list unless doing the registration
             return true;
         }
 
-        void sendToClient(int inventory_id, int client_id);
-
         InventoryProperties* item_at_slot(int x, int y)
         {
             if (!this->is_valid_grid_position(x,y))
@@ -198,13 +144,13 @@ class InventoryContents // dont use behaviour list unless doing the registration
             return &this->objects[slot];
         }
 
-    ~InventoryContents()
+    ~BaseInventoryContents<Inventory, InventoryProperties>()
     {
         if (this->objects != NULL)
             delete[] this->objects;
     }
 
-    InventoryContents()
+    BaseInventoryContents<Inventory, InventoryProperties>()
     :
     objects(NULL),
     x(0), y(0), max(0), ct(0)

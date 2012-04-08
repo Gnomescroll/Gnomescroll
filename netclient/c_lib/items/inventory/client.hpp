@@ -10,10 +10,77 @@
 #if DC_CLIENT
 
 #include <c_lib/items/inventory/base.hpp>
+#include <c_lib/items/inventory/contents.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
 
-class ClientInventory: public BaseInventory
+
+class InventoryProperties;
+void register_inventory_item_draw_list(InventoryProperties* property);
+void unregister_inventory_item_draw_list(InventoryProperties* property);
+
+int get_icon_spritesheet_id(Object_types type)
+{
+    const int ERROR_SPRITE = 0;
+    switch (type)
+    {
+        case OBJ_TYPE_DIRT:
+            return 3;
+        case OBJ_TYPE_STONE:
+            return 4;
+
+        case OBJ_TYPE_SPAWNER:
+            return 6;
+        case OBJ_TYPE_TURRET:
+            return 7;
+        
+        default:
+            return ERROR_SPRITE;
+    }
+}
+
+class Inventory;
+class InventoryProperties: public BaseInventoryProperties, public SpriteProperties
 {
     public:
+        Inventory* inventory;
+
+        void load(int id, Object_types type)
+        {
+            bool new_icon = (id != this->item_id || type != this->item_type);
+            if (this->item_id != EMPTY_SLOT && new_icon)
+                unregister_inventory_item_draw_list(this);
+            if (type != this->item_type)
+                this->sprite_index = get_icon_spritesheet_id(type);
+            this->item_id = id;
+            this->item_type = type;
+            if (id != EMPTY_SLOT && new_icon)   // set to new
+                register_inventory_item_draw_list(this);
+            printf("Loaded inventory item %d,%d\n", id,type);
+        }
+
+    void get_sprite_data(struct Draw::SpriteData* data);
+        
+    InventoryProperties()
+    :
+    BaseInventoryProperties(), SpriteProperties(),
+    inventory(NULL)
+    {
+        this->scale = 4.0f;
+    }
+};
+
+
+class InventoryContents: public BaseInventoryContents<Inventory, InventoryProperties>
+{};
+
+typedef BaseInventory<InventoryContents> BaseInventoryClient;
+class Inventory: public BaseInventoryClient
+{
+    public:
+
+    struct {
+        float x,y,z;
+    } screen;
 
     void attach_to_owner();
 
@@ -56,8 +123,9 @@ class ClientInventory: public BaseInventory
         msg.send();
     }
 
-    explicit ClientInventory(int id)
-    : BaseInventory(id) {}
+    DUMMY_NETWORK_INTERFACE // to conform to object api
+
+    explicit Inventory(int id);
 };
 
 #endif

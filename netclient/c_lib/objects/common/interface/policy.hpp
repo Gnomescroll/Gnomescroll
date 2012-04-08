@@ -196,6 +196,10 @@ class DummyNetworkInterface: public State
     DummyNetworkInterface<State>() {}
 };
 
+
+#define DUMMY_NETWORK_INTERFACE void sendToClientCreate(int client_id){}void broadcastCreate(){}void sendToClientState(int client_id){}void broadcastState(){}void broadcastDeath(){}
+
+
 template <class Network>
 class DummyObjectInterface: public Network
 {

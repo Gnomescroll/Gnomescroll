@@ -11,7 +11,37 @@
 
 #include <c_lib/items/inventory/base.hpp>
 
-class ServerInventory: public BaseInventory
+class Inventory;
+
+class InventoryProperties: public BaseInventoryProperties
+{
+    public:
+        Inventory* inventory;
+
+        void load(int id, Object_types type)
+        {
+            this->item_id = id;
+            this->item_type = type;
+            printf("Loaded inventory item %d,%d\n", id,type);
+        }
+        
+    InventoryProperties()
+    :
+    BaseInventoryProperties(),
+    inventory(NULL)
+    {
+    }
+};
+
+class InventoryContents: public BaseInventoryContents<Inventory, InventoryProperties>
+{
+    public:
+        void sendToClient(int inventory_id, int client_id);
+};
+
+typedef BaseInventory<InventoryContents> BaseInventoryServer;
+
+class Inventory: public BaseInventoryServer
 {
     public:
 
@@ -57,9 +87,27 @@ class ServerInventory: public BaseInventory
             this->broadcastAdd(id, type, slot);
         return added;
     }
+
+    /* Network API */
+    void sendContentsToClient(int client_id)
+    {
+        this->contents.sendToClient(this->_state.id, client_id);
+    }
+
     
-    explicit ServerInventory(int id)
-    : BaseInventory(id) {}
+    void sendToClientCreate(int client_id);
+    void broadcastCreate();
+    void sendToClientState(int client_id);
+    void broadcastState();
+    void broadcastDeath();
+    void sendToClientAdd(int id, Object_types type, int slot);
+    void broadcastAdd(int id, Object_types type, int slot);
+    void sendToClientRemove(int slot);
+    void broadcastRemove(int slot);
+
+    
+    explicit Inventory(int id)
+    : BaseInventoryServer(id) {}
 };
 
 #endif

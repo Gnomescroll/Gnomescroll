@@ -28,24 +28,20 @@ class InventoryObjectInterface: public InventoryState
 };
 
 // wrap InventoryContents into a game object
+class Inventory;
+template <class InventoryContents>
 class BaseInventory: public InventoryObjectInterface
 {
     protected:
         InventoryContents contents;
     public:
 
-        #if DC_CLIENT
-        struct {
-            float x,y,z;
-        } screen;
-        #endif
-
         // TODO -- move, this is owned specialization
         void attach_to_owner();
         
         void init(int x, int y)
         {
-            this->contents.init(this, x,y);
+            this->contents.init((Inventory*)this, x,y);
         }
 
         bool type_allowed(Object_types type)
@@ -64,11 +60,6 @@ class BaseInventory: public InventoryObjectInterface
             return false;
         }
 
-        void sendContentsToClient(int client_id)
-        {
-            this->contents.sendToClient(this->_state.id, client_id);
-        }
-
         bool can_add(Object_types type)
         {
             if (!this->type_allowed(type))
@@ -83,10 +74,6 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_add(slot);
         }
 
-        void sendToClientAdd(int id, Object_types type, int slot);
-        void broadcastAdd(int id, Object_types type, int slot);
-        void sendToClientRemove(int slot);
-        void broadcastRemove(int slot);
 
         bool add(int id, Object_types type)
         {
@@ -107,16 +94,13 @@ class BaseInventory: public InventoryObjectInterface
             return removed;
         }
 
-        /* Network API */
-        void sendToClientCreate(int client_id);
-        void broadcastCreate();
-        void sendToClientState(int client_id);
-        void broadcastState();
-        void broadcastDeath();
+    explicit BaseInventory<InventoryContents>(int id)
+    {
+        this->_state.id = id;
+        this->owned_properties.owner = NO_AGENT;
+    }
 
-    explicit BaseInventory(int id);
-
-    ~BaseInventory()
+    ~BaseInventory<InventoryContents>()
     {
     }
 
