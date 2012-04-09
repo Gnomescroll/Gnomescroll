@@ -50,10 +50,10 @@ template <class Object>
 void tickPickup(ObjectState* state, Object* object, float pickup_radius)
 {
     #if DC_SERVER
-    int agent_id = nearest_agent_in_range(object->get_position(), pickup_radius);
-    if (agent_id != NO_AGENT && STATE::agent_list->agent_pickup_item(agent_id, state->id, state->type))
+    Agent_state* agent = nearest_agent_in_range(object->get_position(), pickup_radius);
+    if (agent != NULL && agent->status.gain_item(state->id, state->type))
     {   // was picked up, die
-        object->was_picked_up(agent_id);
+        object->was_picked_up(agent->id);
         state->ttl = state->ttl_max;
     }
     #endif

@@ -246,22 +246,12 @@ check_name_interval(0)
     print();
 }
 
-bool Agent_list::agent_pickup_item(int agent_id, int item_id, Object_types item_type)
-{
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
-    Agent_state* a = this->get(agent_id);
-    if (a == NULL) return false;
-    return a->status.gain_item(item_id, item_type);
-}
-
-// TODO -- return Agent_state*
-int nearest_agent_in_range(const Vec3 position, const float radius)
+Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
 {
     int n = STATE::agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n == 0) return NULL;
     STATE::agent_list->sort_filtered_objects_by_distance();
-    if (n > 0)  // TODO -- agent viewers can be returned
-        return STATE::agent_list->filtered_objects[0]->id;
-    return NO_AGENT;
+    return STATE::agent_list->filtered_objects[0];  // TODO -- agent viewers can be returned
 }
 
 Agent_state* random_agent_in_range(const Vec3 position, const float radius)

@@ -87,7 +87,7 @@ void Slime::tick()
 {
     #if DC_SERVER
     this->tick_num++;
-    if (this->spatial_properties.changed) // TODO -- changed
+    if (this->spatial_properties.changed)
         this->broadcastState(); // send state packet if state changed
     else if (this->tick_num % network_state_update_interval == 0)
         this->broadcastState(); // send state packet every N ticks
@@ -95,11 +95,15 @@ void Slime::tick()
     Vec3 position = this->get_position();
 
     // die if near agent
-    int agent_id = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
-    if (agent_id != NO_AGENT) this->health_properties.dead = true;
+    Agent_state* agent = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
+    if (agent != NULL)
+    {
+        this->health_properties.dead = true;
+        return;
+    }
 
     // acquire target
-    Agent_state* agent = random_agent_in_range(position, this->_state.motion_proximity_radius);
+    agent = random_agent_in_range(position, this->_state.motion_proximity_radius);
     if (agent == NULL) return;
     Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
 
@@ -111,7 +115,6 @@ void Slime::tick()
     // move towards target
     position = tickMoveToPoint(agent_position, position, this->get_momentum());       // vector between agent and slime
     this->set_position(position.x, position.y, position.z); // move slime position by velocity
-
     #endif
 }
 

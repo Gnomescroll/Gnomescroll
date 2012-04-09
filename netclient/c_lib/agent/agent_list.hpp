@@ -36,10 +36,8 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         void update_team_colors();
         #endif
 
-        bool agent_pickup_item(int agent_id, int item_id, Object_types item_type);    // TODO : use ObjectTypes for items
-        
         Agent_list();
 };
 
-int nearest_agent_in_range(const Vec3 position, const float radius);
+Agent_state* nearest_agent_in_range(const Vec3 position, const float radius);
 Agent_state* random_agent_in_range(const Vec3 position, const float radius);
