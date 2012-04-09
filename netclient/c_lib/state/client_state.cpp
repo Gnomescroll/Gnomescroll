@@ -23,29 +23,22 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 
 namespace ClientState {
 
-    Agent_list* agent_list = NULL;
-    Cspray_list* cspray_list = NULL;
-    Grenade_list* grenade_list = NULL;
-    Shrapnel_list* shrapnel_list = NULL;
-    Blood_list* blood_list = NULL;
-    //Neutron_list* neutron_list = NULL;
-    Minivox_list* minivox_list = NULL;
-    BillboardText_list* billboard_text_list = NULL;
-    BillboardTextHud_list* billboard_text_hud_list = NULL;
+    class Agent_list* agent_list = NULL;
 
-    Voxel_render_list* voxel_render_list = NULL;
-    Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    SpawnerList* spawner_list = NULL;
-    OwnedList* owned_list = NULL;
-    SpriteList* sprite_list = NULL;
-    ColoredMinivoxList* colored_minivox_list = NULL;
+    class ColoredMinivoxList* colored_minivox_list = NULL;
     
-    Monsters::Slime_list* slime_list = NULL;
+    class Voxel_render_list* voxel_render_list = NULL;
+    class Voxel_hitscan_list* voxel_hitscan_list = NULL;
+    class SpawnerList* spawner_list = NULL;
+    class OwnedList* owned_list = NULL;
+    class SpriteList* sprite_list = NULL;
 
-    GameObject_list* object_list;
+    class Monsters::Slime_list* slime_list = NULL;
 
-    Animations::HitscanEffect_list* hitscan_effect_list = NULL;
-    Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
+    class GameObject_list* object_list;
+
+    class Animations::HitscanEffect_list* hitscan_effect_list = NULL;
+    class Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
@@ -59,25 +52,18 @@ namespace ClientState {
         
     void init_lists()
     {
+
+        colored_minivox_list = new ColoredMinivoxList;
+
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new SpawnerList;
         owned_list = new OwnedList;
         sprite_list = new SpriteList;
-        colored_minivox_list = new ColoredMinivoxList;
         
         object_list = new GameObject_list;
         slime_list = new Monsters::Slime_list;
         agent_list = new Agent_list;
-        
-        cspray_list = new Cspray_list;
-        grenade_list = new Grenade_list;
-        shrapnel_list = new Shrapnel_list;
-        blood_list = new Blood_list;
-        //neutron_list = new Neutron_list;
-        minivox_list = new Minivox_list;
-        billboard_text_list = new BillboardText_list;
-        billboard_text_hud_list = new BillboardTextHud_list;
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
         hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;

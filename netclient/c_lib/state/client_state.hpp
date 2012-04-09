@@ -4,7 +4,7 @@
 
 //#include <c_lib/agent/player_agent.hpp>
 
-#include <c_lib/particles/particle_lib.hpp>
+//#include <c_lib/particles/particle_lib.hpp>
 
 /*
 #include <c_lib/agent/agent_list.hpp>
@@ -31,15 +31,7 @@ namespace ClientState {
     /* SINGLETONS
      * Make sure to extern declare* in cython_imports
      *          */
-    extern class Agent_list* agent_list;
-    extern class  Cspray_list* cspray_list;
-    extern class  Grenade_list* grenade_list;
-    extern class  Shrapnel_list* shrapnel_list;
-    extern class  Blood_list* blood_list;
-    //extern Neutron_list* neutron_list;
-    extern class  Minivox_list* minivox_list;
-    extern class  BillboardText_list* billboard_text_list;
-    extern class  BillboardTextHud_list* billboard_text_hud_list;
+    extern class  ColoredMinivoxList* colored_minivox_list;
 
     //  property lists
     extern class  Voxel_render_list* voxel_render_list;
@@ -47,7 +39,7 @@ namespace ClientState {
     extern class  SpawnerList* spawner_list;
     extern class  OwnedList* owned_list;
     extern class  SpriteList* sprite_list;
-    extern class  ColoredMinivoxList* colored_minivox_list;
+
 
     extern class  Monsters::Slime_list* slime_list;
     extern class  GameObject_list* object_list;
