@@ -91,7 +91,6 @@ class Main:
                 tick+=1
 
                 NetServerFlushToNet()
-                init_c_lib.slime_tick()
                 init_c_lib.check_agent_proximities()
 
             if sl_c > 0:

@@ -83,23 +83,10 @@ def GET_MS_TIME():
 
 """ Monsters """
 cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
-    cdef cppclass Slime_list:
-        void tick()
-    void test(int n)
     void populate_slimes(int n_max)
-
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    Slime_list* slime_list
-
-def slime_test(int n):
-    test(n)
 
 def slime_populate(int n_max):
     populate_slimes(n_max)
-
-def slime_tick():
-    if slime_list != NULL:
-        slime_list.tick()
 
 """ Agents """
 cdef extern from "./state/server_state.hpp" namespace "ServerState":

@@ -13,12 +13,12 @@ typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, VerletCompone
 typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault, SpatialDefault> OwnedState;
 //typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthDefault> OwnedTeamState;
 
-//typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent> HealthState;
+//typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent, SpatialDefault> HealthState;
 //typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthComponent> TeamHealthState;
 //typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthComponent> OwnedHealthState;
-typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent, PositionVoxelComponent> OwnedTeamHealthPositionVoxelState;
+typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent, PositionChangedComponent> OwnedTeamHealthPositionChangedState;
 
-
+typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent, PositionMomentumChangedComponent> HealthPositionMomentumChangedState;
 
 /* Placeholder typedef
  *

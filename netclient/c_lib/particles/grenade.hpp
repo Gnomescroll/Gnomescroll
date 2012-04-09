@@ -17,6 +17,7 @@ const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 32;
 const int GRENADE_SPAWNER_DAMAGE = 25;
 const int GRENADE_TURRET_DAMAGE = 25;
+const int GRENADE_SLIME_DAMAGE = 100;
 
 using Verlet::VerletParticle;
 
@@ -65,6 +66,8 @@ int get_grenade_damage(Object_types type)
             return GRENADE_SPAWNER_DAMAGE;
         case OBJ_TYPE_TURRET:
             return GRENADE_TURRET_DAMAGE;
+        case OBJ_TYPE_SLIME:
+            return GRENADE_SLIME_DAMAGE;
         default: return 0;
     }
 }

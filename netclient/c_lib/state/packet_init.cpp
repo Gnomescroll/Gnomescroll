@@ -139,11 +139,6 @@ void RegisterMessages() {
     Weapons::WeaponAmmo_StoC::register_client_packet();
     Weapons::WeaponClip_StoC::register_client_packet();
 
-    // monsters
-    CreateSlime_StoC::register_client_packet();
-    DestroySlime_StoC::register_client_packet();
-    SlimeState_StoC::register_client_packet();
-
     //// identification
     identify_CtoS::register_server_packet();
     identified_StoC::register_client_packet();
@@ -171,12 +166,18 @@ void RegisterMessages() {
 
     // object crud
     object_create_StoC::register_client_packet();
-    object_create_momentum_StoC::register_client_packet();
     object_create_owner_team_StoC::register_client_packet();
     object_create_owner_team_index_StoC::register_client_packet();
+
+    object_create_momentum_StoC::register_client_packet();
+
+    object_create_momentum_angles_StoC::register_client_packet();
+    
     object_destroy_StoC::register_client_packet();
+
     object_state_StoC::register_client_packet();
     object_state_momentum_StoC::register_client_packet();
+    object_state_momentum_angles_StoC::register_client_packet();
     
     // object actions
     object_picked_up_StoC::register_client_packet();

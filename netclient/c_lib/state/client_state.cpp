@@ -27,12 +27,10 @@ namespace ClientState {
 
     class ColoredMinivoxList* colored_minivox_list = NULL;
 
-    class Voxel_render_list* voxel_render_list = NULL;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
     class SpawnerList* spawner_list = NULL;
     class OwnedList* owned_list = NULL;
     class SpriteList* sprite_list = NULL;
-
     class Monsters::Slime_list* slime_list = NULL;
 
     class GameObject_list* object_list;
@@ -62,7 +60,6 @@ namespace ClientState {
         sprite_list = new SpriteList;
         
         object_list = new GameObject_list;
-        slime_list = new Monsters::Slime_list;
         agent_list = new Agent_list;
 
         hitscan_effect_list = new Animations::HitscanEffect_list;
@@ -72,8 +69,6 @@ namespace ClientState {
     void teardown_lists()
     {
         // voxel models
-        //slime_list->print();
-        delete slime_list;
         //agent_list->print();
         delete agent_list;
         //object_list->print();
@@ -147,7 +142,6 @@ namespace ClientState {
     void update()
     {
         ctf->update();
-        slime_list->update();
         object_list->update();
 
         if (playerAgent_state.you != NULL)

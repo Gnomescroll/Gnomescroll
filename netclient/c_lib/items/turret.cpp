@@ -4,8 +4,7 @@
 
 #include <c_lib/common/random.h>
 #include <c_lib/agent/net_agent.hpp>
-#include <net_lib/net.hpp>
-#include <c_lib/items/packets.hpp>
+#include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 
@@ -44,7 +43,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
     if (a == NULL || a->vox == NULL) return;
-    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);   // TODO: why is model being updated?
     Voxel_volume* vv = a->vox->get_part(msg->target_part);
     if (vv == NULL) return;
 
@@ -115,42 +114,3 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
 /* Turrets */
 
 VoxDat turret_vox_dat;
-
-/* TargetAcquisition */
-
-void TargetAcquisitionComponent::acquire_target(
-    int id, Object_types type, int team, float camera_z, Vec3 position,
-    float accuracy_bias, float sight_range,
-    bool attack_enemies, bool attack_random
-) {
-    // lock on agent
-    Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
-    Vec3 firing_direction;
-    Agent_state* agent = Hitscan::lock_agent_target(
-        firing_position, &firing_direction, team,
-        sight_range, this->target_acquisition_probability,
-        attack_enemies, attack_random
-    );
-    if (agent == NULL) return;
-    
-    // normalize and bias vector
-    normalize_vector(&firing_direction);
-    if (accuracy_bias)   // apply bias
-        firing_direction = vec3_bias_random(firing_direction, accuracy_bias);
-
-    // get target
-    Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        firing_position, firing_direction, id, type,
-        agent, sight_range
-    );
-
-    // let handle target hit based on attacker properties
-    Hitscan::handle_hitscan_target(t, this->attacker_properties);
-
-    // send firing packet
-    Hitscan::broadcast_object_fired(id, type, t);
-
-    // apply custom handling
-    // play sounds
-    // play animations
-}

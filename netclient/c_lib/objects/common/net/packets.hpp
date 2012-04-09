@@ -13,6 +13,7 @@ class object_create_StoC_model
         uint8_t team_index;
         float x,y,z;
         float mx,my,mz;
+        float theta, phi, rho;
         
         inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
@@ -35,32 +36,6 @@ public FixedSizeReliableNetPacketToClient<object_create_StoC>, public object_cre
         object_create_StoC_model::packet(buff, buff_n, pack);
     }
     inline void handle() { object_create_StoC_model::handle(); }
-};
-
-// Position + Velocity(momentum)
-class object_create_momentum_StoC_model: public object_create_StoC_model
-{
-    public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_StoC_model::packet(buff, buff_n, pack);
-        pack_float(&mx, buff, buff_n, pack);
-        pack_float(&my, buff, buff_n, pack);
-        pack_float(&mz, buff, buff_n, pack);
-    }
-    virtual void handle();
-};
-
-// Concrete implementation
-class object_create_momentum_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>, public object_create_momentum_StoC_model
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline void handle() { object_create_momentum_StoC_model::handle(); }
 };
 
 // Position + owner,team
@@ -112,6 +87,60 @@ public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>, 
     inline void handle() { object_create_owner_team_index_StoC_model::handle(); }
 };
 
+/* Position + Momentum */
+
+class object_create_momentum_StoC_model: public object_create_StoC_model
+{
+    public:
+    inline virtual void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_StoC_model::packet(buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
+    }
+    virtual void handle();
+};
+
+// Concrete implementation
+class object_create_momentum_StoC:
+public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>, public object_create_momentum_StoC_model
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_momentum_StoC_model::handle(); }
+};
+
+/* Position + Momentum + Theta */
+
+// NOTE: only packs theta/phi for now
+class object_create_momentum_angles_StoC_model: public object_create_momentum_StoC_model
+{
+    public:
+    inline virtual void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
+        pack_float(&theta, buff, buff_n, pack);
+        pack_float(&phi, buff, buff_n, pack);
+    }
+    virtual void handle();
+};
+
+// Concrete implementation
+class object_create_momentum_angles_StoC:
+public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_StoC>, public object_create_momentum_angles_StoC_model
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_create_momentum_angles_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline void handle() { object_create_momentum_angles_StoC_model::handle(); }
+};
+
 /* Destruction */
 
 class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_destroy_StoC>
@@ -137,6 +166,7 @@ class object_state_StoC_model
         uint8_t type;
         float x,y,z;
         float mx,my,mz;
+        float theta, phi, rho;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -173,7 +203,6 @@ class object_state_momentum_StoC_model: public object_state_StoC_model
         }
         void handle();
 };
-
 // concrete
 class object_state_momentum_StoC:
 public object_state_momentum_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
@@ -184,6 +213,30 @@ public object_state_momentum_StoC_model, public FixedSizeReliableNetPacketToClie
         object_state_momentum_StoC_model::packet(buff, buff_n, pack);
     }
     inline virtual void handle() { object_state_momentum_StoC_model::handle(); }
+};
+
+// NOTE: only packs theta/phi for now
+class object_state_momentum_angles_StoC_model: public object_state_momentum_StoC_model
+{
+    public:
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            object_state_momentum_StoC_model::packet(buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+        void handle();
+};
+// concrete
+class object_state_momentum_angles_StoC:
+public object_state_momentum_angles_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_momentum_angles_StoC>
+{
+    public:
+    inline virtual void packet(char* buff, int* buff_n, bool pack)
+    {
+        object_state_momentum_angles_StoC_model::packet(buff, buff_n, pack);
+    }
+    inline virtual void handle() { object_state_momentum_angles_StoC_model::handle(); }
 };
 
 /* Actions */
@@ -278,7 +331,7 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 
 /* Create */
 
-void create_message(object_create_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
+void create_message(object_create_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
 {
     msg->id = id;
     msg->type = type;
@@ -287,19 +340,7 @@ void create_message(object_create_StoC* msg, int id, Object_types type, Vec3 pos
     msg->z = position.z;
 }
 
-void create_message(object_create_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
-{
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->mx = momentum.x;
-    msg->my = momentum.y;
-    msg->mz = momentum.z;
-}
-
-void create_message(object_create_owner_team_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
+void create_message(object_create_owner_team_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
 {
     msg->id = id;
     msg->type = type;
@@ -310,7 +351,7 @@ void create_message(object_create_owner_team_StoC* msg, int id, Object_types typ
     msg->team = team;
 }
 
-void create_message(object_create_owner_team_index_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, int owner, int team, int team_index)
+void create_message(object_create_owner_team_index_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
 {
     msg->id = id;
     msg->type = type;
@@ -322,18 +363,7 @@ void create_message(object_create_owner_team_index_StoC* msg, int id, Object_typ
     msg->team_index = team_index;
 }
 
-/* State */
-
-void state_message(object_state_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum)
-{
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-}
-
-void state_message(object_state_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum)
+void create_message(object_create_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
 {
     msg->id = id;
     msg->type = type;
@@ -343,4 +373,55 @@ void state_message(object_state_momentum_StoC* msg, int id, Object_types type, V
     msg->mx = momentum.x;
     msg->my = momentum.y;
     msg->mz = momentum.z;
+}
+
+void create_message(object_create_momentum_angles_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+{
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
+    msg->theta = angles.x;
+    msg->phi = angles.y;
+}
+
+/* State */
+
+void state_message(object_state_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
+{
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+}
+
+void state_message(object_state_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
+{
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
+}
+
+void state_message(object_state_momentum_angles_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
+{
+    msg->id = id;
+    msg->type = type;
+    msg->x = position.x;
+    msg->y = position.y;
+    msg->z = position.z;
+    msg->mx = momentum.x;
+    msg->my = momentum.y;
+    msg->mz = momentum.z;
+    msg->theta = angles.x;
+    msg->phi = angles.y;
 }

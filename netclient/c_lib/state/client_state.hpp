@@ -44,7 +44,6 @@ namespace ClientState {
     extern class  SpriteList* sprite_list;
 
 
-    extern class  Monsters::Slime_list* slime_list;
     extern class  GameObject_list* object_list;
 
     extern class  Animations::HitscanEffect_list* hitscan_effect_list;

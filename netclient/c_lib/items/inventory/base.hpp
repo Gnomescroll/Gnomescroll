@@ -6,7 +6,8 @@
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
 
-typedef OwnedState InventoryState;
+typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault, SpatialDefault> InventoryState;
+//typedef OwnedState InventoryState;    // Wont import OwnedState from layers.hpp -- cython issue??
 
 class InventoryObjectInterface: public InventoryState
 {
