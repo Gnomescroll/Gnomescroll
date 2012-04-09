@@ -11,6 +11,9 @@
 #include <c_lib/physics/mat3.hpp>
 
 #include <c_lib/particles/_include.hpp>
+#include <c_lib/particles/shrapnel.hpp>
+#include <c_lib/particles/blood.hpp>
+
 
 using Particles::Minivox;
 
@@ -190,7 +193,7 @@ void grenade_explode(float x, float y, float z)
     float cvx,cvy,cvz;
 
     int ttl;
-    Shrapnel *s;
+    Particles::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
         cx = x + ((randf() - 0.5f) / 20.0f);
@@ -212,7 +215,7 @@ void grenade_explode(float x, float y, float z)
 
     //const float vel = 30.0f;
 
-    //Shrapnel* g;
+    //Particles::Shrapnel* g;
     //Vec3 cv;
     
     //for (int i=0; i<26; i++)
@@ -242,7 +245,7 @@ void terrain_sparks(float x, float y, float z)
     float cvx,cvy,cvz;
 
     int ttl;
-    Shrapnel *s;
+    Particles::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
         cx = x + ((randf() - 0.5f) / 20.0f);
@@ -309,7 +312,7 @@ void team_item_explode(Vec3 p, int team)
     if (!Options::animations) return;
     Particles::minivox_list->set_size(0.1f);
     unsigned char r=255,g=255,b=255;
-    Particles::ctf->get_team_color(team, &r, &g, &b);
+    ClientState::ctf->get_team_color(team, &r, &g, &b);
     int n = randrange(35,50);
     const float momentum = 5.0f;
     const Vec3 v = vec3_init(momentum, momentum, momentum);
@@ -353,7 +356,7 @@ void agent_bleed(float x, float y, float z)
 
     int n = randrange(50,70);
     int ttl;
-    Blood *b;
+    Particles::Blood *b;
     for (int i=0; i<n; i++) {
 
         nx = x + randf() -0.5f;
@@ -387,7 +390,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;
-    Blood *b;
+    Particles::Blood *b;
     int ttl;
     for (int i=0; i<n; i++)
     {
