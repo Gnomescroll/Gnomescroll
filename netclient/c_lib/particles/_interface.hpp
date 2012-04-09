@@ -3,7 +3,7 @@
 namespace Particles
 {
 
-extern class Cspray_list* cspray_list;
+//extern class Cspray_list* cspray_list;
 extern class Grenade_list* grenade_list;
 
 #ifdef DC_CLIENT

@@ -3,10 +3,16 @@
 /* Aggregator */
 
 /* objects */
+
+//#include <c_lib/particles/_interface.hpp>
 #include <c_lib/particles/particles.cpp>
+
+#include <c_lib/particles/grenade.cpp>
+//#include <c_lib/particles/cspray.cpp>
 
 #if DC_CLIENT
 #include <c_lib/particles/textures.cpp>
+
 
 #include <c_lib/particles/shrapnel.cpp>
 #include <c_lib/particles/blood.cpp>
@@ -16,14 +22,11 @@
 #include <c_lib/particles/billboard_sprite.cpp>
 #endif
 
-#include <c_lib/particles/grenade.cpp>
-#include <c_lib/particles/cspray.cpp>
-
-#include <c_lib/particles/_interface.cpp>
-
 #if DC_SERVER
 #include <c_lib/particles/grenade_shrapnel.cpp>
 #endif
+
+#include <c_lib/particles/_interface.cpp>
 
 #if 0
 

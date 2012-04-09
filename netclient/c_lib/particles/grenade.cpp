@@ -6,10 +6,13 @@
 #endif
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/state/server_state.hpp>
+
+//#include <c_lib/state/client_state.hpp>
+//#include <c_lib/state/server_state.hpp>
 #include <common/enum_types.hpp>
 #include <c_lib/common/random.h>
+
+#include <c_lib/particles/_interface.hpp>
 
 /* properties */
 
