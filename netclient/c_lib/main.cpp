@@ -189,7 +189,7 @@ int run()
         Particles::blood_list->draw();
         Particles::end_particle_draw();
         
-        Particles::end_transparent_draw();
+        end_transparent_draw();
 
 
         Skybox::draw();

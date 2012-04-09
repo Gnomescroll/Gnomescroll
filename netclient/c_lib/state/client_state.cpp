@@ -21,6 +21,8 @@
 
 const int GAME_OBJECT_MAX = 4096 * 4;
 
+//using Particles::shrapnel_list
+
 namespace ClientState {
 
     class Agent_list* agent_list = NULL;
@@ -172,14 +174,12 @@ namespace ClientState {
 
     void tick()
     {
-        cspray_list->tick();
-        grenade_list->tick();
-        shrapnel_list->tick();
-        blood_list->tick();
-        //neutron_list->tick();
-        minivox_list->tick();
-        billboard_text_list->tick();
-        billboard_text_hud_list->tick();
+        Particles::grenade_list->tick();
+        Particles::shrapnel_list->tick();
+        Particles::blood_list->tick();
+        Particles::minivox_list->tick();
+        Particles::billboard_text_list->tick();
+        Particles::billboard_text_hud_list->tick();
 
         object_list->tick();
     }
