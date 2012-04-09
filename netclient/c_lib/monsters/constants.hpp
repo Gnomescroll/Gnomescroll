@@ -13,5 +13,7 @@ const float SLIME_HEIGHT = 1.0f;
 const float SLIME_EXPLOSION_RADIUS = 4.0f;
 const int SLIME_EXPLOSION_DAMAGE = 35;
 const float SLIME_EXPLOSION_PROXIMITY_RADIUS = 1.0f;
+const float SLIME_MOTION_PROXIMITY_RADIUS = 15.0f;
+;
 
 } // Monsters

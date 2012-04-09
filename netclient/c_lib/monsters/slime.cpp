@@ -22,6 +22,8 @@ void Slime::load_data(int id)
     this->_state.explosion_damage = SLIME_EXPLOSION_DAMAGE;
     this->_state.explosion_proximity_radius = SLIME_EXPLOSION_PROXIMITY_RADIUS;
 
+    this->_state.motion_proximity_radius = SLIME_MOTION_PROXIMITY_RADIUS;
+
     this->voxel_properties.init_hitscan = true;
     this->voxel_properties.init_draw = true;
     this->voxel_properties.vox_dat = &slime_vox_dat;
@@ -108,7 +110,7 @@ void Slime::tick()
 
     // die if near agent
     int agent_id = nearest_agent_in_range(this->get_position(), this->_state.explosion_proximity_radius);
-    if (agent_id >= 0) this->health_properties.dead = true;
+    if (agent_id != NO_AGENT) this->health_properties.dead = true;
 
     //this->acquire_target();
     //this->move_to_location(); // increments pos by vel
@@ -119,17 +121,13 @@ void Slime::tick()
 
     Vec3 position = this->get_position();
 
-    const float r = 15.0f;
-    // update nearby agents
-    STATE::agent_list->objects_within_sphere(position.x, position.y, position.z, r);
-    int n_nearby = STATE::agent_list->n_filtered;
-    if (n_nearby == 0) return;
-
-    // target random nearby player
-    int i = randrange(0, n_nearby-1);
-    Agent_state* agent = STATE::agent_list->filtered_objects[i];
+    Agent_state* agent = random_agent_in_range(position, this->_state.motion_proximity_radius);
     if (agent == NULL) return;
+
     
+    
+
+    // move to point
     const float speed = 0.25f;
     Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
     Vec3 velocity = vec3_sub(agent_position, position);       // vector between agent and slime
@@ -139,21 +137,13 @@ void Slime::tick()
     position = vec3_add(position, velocity);
     this->set_position(position.x, position.y, position.z); // move slime position by velocity
 
-    // calculate rotation deltas
-    //struct Vec3 angles = this->get_angles();   // TODO -- angles on object should be vector
-    //angles = vec3_init_from_angles(angles.x, angles.y, 0);
 
-    // calculate theta
-    // THETA = acos( (A.B) / (|A|*|B|) )
-    //float dot = angles.x * normalized_velocity.x + angles.y * normalized_velocity.y;
-    //float dtheta = acos(dot);
-
-    // orient towards player
-    //Vec3 new_angles = this->get_angles();
-    //new_angles.x += dtheta;
+    // get new facing angle (incorrect)
     normalized_velocity.z = 0;
     normalize_vector(&normalized_velocity);
-    this->set_angles(normalized_velocity.x, normalized_velocity.y, normalized_velocity.z);
+    float theta = acos(normalized_velocity.x);
+    Vec3 angles = this->get_angles();
+    this->set_angles(theta, angles.y, angles.z);
     #endif
 }
 

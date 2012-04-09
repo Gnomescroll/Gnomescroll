@@ -41,4 +41,5 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         Agent_list();
 };
 
-int nearest_agent_in_range(const Vec3 p, const float radius);
+int nearest_agent_in_range(const Vec3 position, const float radius);
+Agent_state* random_agent_in_range(const Vec3 position, const float radius);

@@ -54,11 +54,7 @@ void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
     }
     if (state_changed)
     {   // TODO : voxel accepts Vec3 angles
-        //vox->update(position.x, position.y, position.z, angles.x, angles.y);
-        
-        // convert vector angles to theta
-        float theta = acos(vec3_dot(vec3_init(1,0,0), angles));
-        vox->update(position.x, position.y, position.z, theta,0);
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
     }
     #endif
 
