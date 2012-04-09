@@ -1,13 +1,13 @@
 #include "server_state.hpp"
-#pragma once
+
+
 #ifdef DC_SERVER
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
-
-#include <c_lib/particles/grenade.hpp>
 #include <c_lib/particles/cspray.hpp>
+#include <c_lib/particles/grenade.hpp>
 
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/items/items.hpp>
@@ -17,9 +17,7 @@
 namespace ServerState
 {
     Agent_list* agent_list = NULL;
-    Cspray_list* cspray_list = NULL;
-    Grenade_list* grenade_list = NULL;
-    //Neutron_list* neutron_list = NULL;
+
     Monsters::Slime_list* slime_list = NULL;
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;

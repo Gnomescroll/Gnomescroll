@@ -3,24 +3,26 @@
 /* Aggregator */
 
 /* objects */
-#include "./particles/particles.cpp"
+#include <c_lib/particles/particles.cpp>
 
 #if DC_CLIENT
-#include "./particles/textures.cpp"
+#include <c_lib/particles/textures.cpp>
 
-#include "./particles/shrapnel.cpp"
-#include "./particles/blood.cpp"
-#include "./particles/minivox.cpp"
-#include "./particles/billboard_text.cpp"
-#include "./particles/billboard_text_hud.cpp"
-#include "./particles/billboard_sprite.cpp"
+#include <c_lib/particles/shrapnel.cpp>
+#include <c_lib/particles/blood.cpp>
+#include <c_lib/particles/minivox.cpp>
+#include <c_lib/particles/billboard_text.cpp>
+#include <c_lib/particles/billboard_text_hud.cpp>
+#include <c_lib/particles/billboard_sprite.cpp>
 #endif
 
-#include "./particles/grenade.cpp"
-#include "./particles/cspray.cpp"
+#include <c_lib/particles/grenade.cpp>
+#include <c_lib/particles/cspray.cpp>
+
+#include <c_lib/particles/_interface.cpp>
 
 #if DC_SERVER
-#include "./particles/grenade_shrapnel.cpp"
+#include <c_lib/particles/particles/grenade_shrapnel.cpp>
 #endif
 
 #if 0
