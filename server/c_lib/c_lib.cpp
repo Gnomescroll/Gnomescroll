@@ -138,6 +138,7 @@ int init_c_lib()
     init_chat_server();
 
     ServerState::init();
+    Particles::init_particles();
 
 
     init_network();
@@ -158,7 +159,10 @@ void close_c_lib()
     t_item::state_teardown();
 
     teardown_chat_server();
+
     ServerState::teardown();
+    Particles::teardown_particles();
+
     printf("Server closed\n");
     Log::teardown();
 }

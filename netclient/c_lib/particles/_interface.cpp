@@ -57,7 +57,7 @@ void init_particles()
 
 }
 
-void tear_down_particles()
+void teardown_particles()
 {
 	//delete cspray_list;
 	delete grenade_list;

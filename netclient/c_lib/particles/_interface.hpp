@@ -20,6 +20,6 @@ extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 #endif
 
 void init_particles();
-void tear_down_particles();
+void teardown_particles();
 
 }

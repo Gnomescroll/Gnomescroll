@@ -229,20 +229,16 @@ int init_c_lib() {
         printf("WARNING: Attempt to init c_lib more than once\n");
         return 1;
     }
-
     Log::init();
-
-    //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("init c_lib\n");
 
-
     LUA::load_options(); //load game options
-
-    
     srand(time(NULL));   // seed the RNG
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
+    Sound::init();
+
     init_image_loader();
     TextureSheetLoader::init();
     Draw::init();
@@ -257,10 +253,10 @@ int init_c_lib() {
     t_mech::draw_init();
     t_mech::state_init();
 
-    Sound::init();
-    //Sound::test();
+    Particles::init_particles();
 
     Skybox::init();
+    //Sound::test();
 
     HudText::init();
     HudFont::init();
@@ -306,6 +302,8 @@ void close_c_lib() {
 
     t_mech::draw_teardown();
     t_mech::state_teardown();
+
+    Particles::teardown_particles();
 
     Skybox::teardown();
 
