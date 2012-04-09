@@ -10,6 +10,8 @@
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/mat3.hpp>
 
+#include <c_lib/particles/_include.hpp>
+
 using Particles::Minivox;
 
 namespace Animations {
@@ -197,7 +199,7 @@ void grenade_explode(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        s = Particles::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
         if (s == NULL) return;
         ttl = randrange(15,25);
         s->ttl_max = ttl;
@@ -216,7 +218,7 @@ void grenade_explode(float x, float y, float z)
     //for (int i=0; i<26; i++)
     //{
         //cv = vec3_scalar_mult(gvset[i], vel);
-        //g = ClientState::shrapnel_list->create(
+        //g = Particles::shrapnel_list->create(
             //x, y, z,
             //cv.x, cv.y, cv.z
         //);
@@ -249,7 +251,7 @@ void terrain_sparks(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = ClientState::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        s = Particles::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
         ttl = randrange(8,15);
         s->ttl_max = ttl;
@@ -307,7 +309,7 @@ void team_item_explode(Vec3 p, int team)
     if (!Options::animations) return;
     Particles::minivox_list->set_size(0.1f);
     unsigned char r=255,g=255,b=255;
-    ClientState::ctf->get_team_color(team, &r, &g, &b);
+    Particles::ctf->get_team_color(team, &r, &g, &b);
     int n = randrange(35,50);
     const float momentum = 5.0f;
     const Vec3 v = vec3_init(momentum, momentum, momentum);
@@ -362,7 +364,7 @@ void agent_bleed(float x, float y, float z)
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        b = ClientState::blood_list->create(nx,ny,nz, vx,vy,vz);
+        b = Particles::blood_list->create(nx,ny,nz, vx,vy,vz);
         if (b==NULL) return;
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
         b->ttl_max = ttl;
@@ -397,7 +399,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
-        b = ClientState::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed);
+        b = Particles::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed);
         if (b == NULL) return;
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
         b->ttl_max = ttl;
@@ -407,14 +409,14 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 void animations_tick()
 {
     ClientState::ctf->animate_flags();
-    ClientState::hitscan_effect_list->tick();
-    ClientState::hitscan_laser_effect_list->tick();
+    Particles::hitscan_effect_list->tick();
+    Particles::hitscan_laser_effect_list->tick();
 }
 
 void animations_draw()
 {
-    ClientState::hitscan_effect_list->draw();
-    ClientState::hitscan_laser_effect_list->draw();
+    Particles::hitscan_effect_list->draw();
+    Particles::hitscan_laser_effect_list->draw();
 }
 
 }
