@@ -216,12 +216,14 @@ inline void object_shot_nothing_StoC::handle()
 #if DC_SERVER
 inline void object_create_StoC_model::handle() {}
 inline void object_create_momentum_StoC_model::handle() {}
+inline void object_create_momentum_angles_StoC_model::handle() {}
 inline void object_create_owner_team_StoC_model::handle() {}
 inline void object_create_owner_team_index_StoC_model::handle() {}
 inline void object_destroy_StoC::handle() {}
 inline void object_picked_up_StoC::handle() {}
 inline void object_state_StoC_model::handle() {}
 inline void object_state_momentum_StoC_model::handle() {}
+inline void object_state_momentum_angles_StoC_model::handle() {}
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}

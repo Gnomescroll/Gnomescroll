@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/objects/common/interface/policy.hpp>
+
 // inherit this into a component for tracking
 class ComponentProperties
 {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/ray_trace/handlers.hpp>
+
 /* TargetAcquistion component */
 // TODO: move to c_lib/components/
 class TargetAcquisitionComponent

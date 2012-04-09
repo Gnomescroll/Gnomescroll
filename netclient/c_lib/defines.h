@@ -21,7 +21,7 @@ typedef unsigned int GLuint;
 /*
   Turn off asserts when production is enabled
 */
-#ifdef PRODUCTION
+#if PRODUCTION
     #define NDEBUG 
 #endif
 

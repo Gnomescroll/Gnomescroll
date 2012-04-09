@@ -4,6 +4,8 @@
 #include <c_lib/monsters/constants.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/objects/components/voxel/component.hpp>
+#include <c_lib/objects/common/interface/layers.hpp>
+#include <c_lib/objects/common/net/packets.hpp>
 
 namespace Monsters {
 
