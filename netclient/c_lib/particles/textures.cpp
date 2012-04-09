@@ -18,6 +18,8 @@ void init_for_draw()
     {
         printf("Particles::init_for_draw failed with code %d\n", i);
     }
+
+    particle_texture = i;
 }
 
 void draw_teardown()

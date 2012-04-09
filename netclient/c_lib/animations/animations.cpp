@@ -10,6 +10,7 @@
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/mat3.hpp>
 
+using Particles::Minivox;
 
 namespace Animations {
 
@@ -17,7 +18,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 {
     if (!Options::animations) return;
     const float crumble_size = 0.17f;
-    ClientState::minivox_list->set_size(crumble_size);
+    Particles::minivox_list->set_size(crumble_size);
 
     //unsigned char r,g,b,a;
     int side;
@@ -41,7 +42,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         side = randrange(0,5);
 
         tex_id = t_map::get_cube_side_texture(cube_id, side);
-        minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
         ttl = randrange(20,40);
@@ -49,7 +50,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         minivox->set_texture(tex_id);
     }
 
-    ClientState::minivox_list->unset_size();
+    Particles::minivox_list->unset_size();
 }
 
 void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action)
@@ -131,7 +132,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         ny = y + ((randf() -0.5f)*0.4f*side[1]);
         nz = z + ((randf() -0.5f)*0.4f*side[2]);
         
-        minivox = ClientState::minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
         ttl = randrange(15,25);
@@ -260,7 +261,7 @@ void terrain_sparks(float x, float y, float z)
 void slime_melt(float x, float y, float z)
 {
     if (!Options::animations) return;
-    ClientState::minivox_list->set_size(0.7f);
+    Particles::minivox_list->set_size(0.7f);
     
     int n = randrange(50,100);
     float vx,vy,vz;
@@ -288,7 +289,7 @@ void slime_melt(float x, float y, float z)
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
         
-        minivox = ClientState::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
+        minivox = Particles::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
         if (minivox == NULL) return;
         //minivox->set_color(128,223,31);//green
         minivox->set_color(31,223,223);//sky blue
@@ -298,13 +299,13 @@ void slime_melt(float x, float y, float z)
         minivox->set_angles(theta, phi);
     }
 
-    ClientState::minivox_list->unset_size();
+    Particles::minivox_list->unset_size();
 }
 
 void team_item_explode(Vec3 p, int team)
 {
     if (!Options::animations) return;
-    ClientState::minivox_list->set_size(0.1f);
+    Particles::minivox_list->set_size(0.1f);
     unsigned char r=255,g=255,b=255;
     ClientState::ctf->get_team_color(team, &r, &g, &b);
     int n = randrange(35,50);
@@ -327,14 +328,14 @@ void team_item_explode(Vec3 p, int team)
         dtheta = randf() * 0.05f;
         dphi = randf() * 0.05f;
 
-        minivox = ClientState::minivox_list->create(c.x, c.y, c.z, cv.x, cv.y, cv.z);
+        minivox = Particles::minivox_list->create(c.x, c.y, c.z, cv.x, cv.y, cv.z);
         if (minivox == NULL) return;
         minivox->set_color(r,g,b);
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
         minivox->set_angles(theta, phi);
     }
-    ClientState::minivox_list->unset_size(); // TODO : deprecate?
+    Particles::minivox_list->unset_size(); // TODO : deprecate?
 }
 
 void agent_bleed(float x, float y, float z)
