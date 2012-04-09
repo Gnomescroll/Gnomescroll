@@ -9,6 +9,8 @@
 
 namespace Monsters {
 
+void slimeDropItem(Vec3 position);
+
 VoxDat slime_vox_dat;
 
 void Slime::load_data(int id)
@@ -32,6 +34,11 @@ void Slime::load_data(int id)
     this->spatial_properties.height = SLIME_HEIGHT;
 
     this->health_properties.health = SLIME_HEALTH;
+
+    // TODO -- make this a base property
+    // momentum should not be used this way (can be overwriiten, is only init etc)
+    const float tick_speed = 0.25f;
+    this->set_momentum(tick_speed, tick_speed, tick_speed);
 }
 
 Slime::Slime(int id)
@@ -53,29 +60,6 @@ void Slime::born()
     );
     bornUpdateVox(this->voxel_properties.vox, this->get_position(),
         this->spatial_properties.angles.x, this->spatial_properties.angles.y); 
-}
-
-void slimeDropItem(Vec3 position)
-{   // TODO -- some dat format for thiss
-    #if DC_SERVER
-    const float drop_probability = 0.66f;
-    float p = randf();
-    if (p > drop_probability) return;
-    
-    const int n_types = 2;    
-    Object_types types[n_types] = {
-        OBJ_TYPE_LASER_REFILL,
-        OBJ_TYPE_GRENADE_REFILL
-    };
-    Object_types type = types[randrange(0,n_types-1)];
-    const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
-        position.x, position.y, position.z+1.0f,
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
-    if (obj != NULL)
-        obj->born();
-    #endif
 }
 
 void Slime::die()
@@ -108,42 +92,26 @@ void Slime::tick()
     else if (this->tick_num % network_state_update_interval == 0)
         this->broadcastState(); // send state packet every N ticks
 
-    // die if near agent
-    int agent_id = nearest_agent_in_range(this->get_position(), this->_state.explosion_proximity_radius);
-    if (agent_id != NO_AGENT) this->health_properties.dead = true;
-
-    //this->acquire_target();
-    //this->move_to_location(); // increments pos by vel
-    //this->face_location();    // orients at direction
-    
-    // find nearby players
-    // if nearby, move toward it
-
     Vec3 position = this->get_position();
 
+    // die if near agent
+    int agent_id = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
+    if (agent_id != NO_AGENT) this->health_properties.dead = true;
+
+    // acquire target
     Agent_state* agent = random_agent_in_range(position, this->_state.motion_proximity_radius);
     if (agent == NULL) return;
-
-    
-    
-
-    // move to point
-    const float speed = 0.25f;
     Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
-    Vec3 velocity = vec3_sub(agent_position, position);       // vector between agent and slime
-    normalize_vector(&velocity);
-    Vec3 normalized_velocity = vec3_copy(velocity);
-    velocity = vec3_scalar_mult(velocity, speed);             //  apply magnitude to velocity
-    position = vec3_add(position, velocity);
+
+    // face the target
+    Vec3 angles = this->get_angles();
+    float theta = tickOrientToPointTheta(agent_position, position); // only rotate in x
+    this->set_angles(theta, angles.y, angles.z);
+
+    // move towards target
+    position = tickMoveToPoint(agent_position, position, this->get_momentum());       // vector between agent and slime
     this->set_position(position.x, position.y, position.z); // move slime position by velocity
 
-
-    // get new facing angle (incorrect)
-    normalized_velocity.z = 0;
-    normalize_vector(&normalized_velocity);
-    float theta = acos(normalized_velocity.x);
-    Vec3 angles = this->get_angles();
-    this->set_angles(theta, angles.y, angles.z);
     #endif
 }
 
@@ -154,6 +122,30 @@ void Slime::update()
         this->spatial_properties.angles, this->spatial_properties.changed
     );
     this->spatial_properties.set_changed(false);
+}
+
+// TODO -- generalize dat system
+void slimeDropItem(Vec3 position)
+{   // TODO -- some dat format for thiss
+    #if DC_SERVER
+    const float drop_probability = 0.66f;
+    float p = randf();
+    if (p > drop_probability) return;
+    
+    const int n_types = 2;    
+    Object_types types[n_types] = {
+        OBJ_TYPE_LASER_REFILL,
+        OBJ_TYPE_GRENADE_REFILL
+    };
+    Object_types type = types[randrange(0,n_types-1)];
+    const float mom = 5.0f;
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
+        position.x, position.y, position.z+1.0f,
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
+    );
+    if (obj != NULL)
+        obj->born();
+    #endif
 }
 
 void populate_slimes(int n_max)
@@ -174,10 +166,9 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (Slime*)STATE::object_list->create(OBJ_TYPE_SLIME, x+0.5, y+0.5, z, 0,0,0);
+        s = (Slime*)STATE::object_list->create(OBJ_TYPE_SLIME, x+0.5, y+0.5, z);
         if (s != NULL)
             s->born();
-        else printf("SLIME ISNULL\n");
     }
 }
 
