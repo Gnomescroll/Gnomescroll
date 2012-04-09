@@ -43,7 +43,7 @@ class PositionComponent
             return this->spatial_properties.angles;
         }
         void set_angles(float theta, float phi, float rho)
-        {
+        {   // TODO -- euler vector
             this->spatial_properties.angles.x = theta;
             this->spatial_properties.angles.y = phi;
             this->spatial_properties.angles.z = rho;

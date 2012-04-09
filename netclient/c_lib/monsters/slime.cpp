@@ -101,101 +101,67 @@ void Slime::tick()
 {
     #if DC_SERVER
     this->tick_num++;
-    if (this->spatial_properties.changed()) // TODO -- changed
-        this->broadcastState();
+    if (this->spatial_properties.changed) // TODO -- changed
+        this->broadcastState(); // send state packet if state changed
     else if (this->tick_num % network_state_update_interval == 0)
-        this->broadcastState();
+        this->broadcastState(); // send state packet every N ticks
 
-    // ADD THIS
+    // die if near agent
     int agent_id = nearest_agent_in_range(this->get_position(), this->_state.explosion_proximity_radius);
     if (agent_id >= 0) this->health_properties.dead = true;
+
+    //this->acquire_target();
+    //this->move_to_location(); // increments pos by vel
+    //this->face_location();    // orients at direction
+    
+    // find nearby players
+    // if nearby, move toward it
+
+    Vec3 position = this->get_position();
+
+    const float r = 15.0f;
+    // update nearby agents
+    STATE::agent_list->objects_within_sphere(position.x, position.y, position.z, r);
+    int n_nearby = STATE::agent_list->n_filtered;
+    if (n_nearby == 0) return;
+
+    // target random nearby player
+    int i = randrange(0, n_nearby-1);
+    Agent_state* agent = STATE::agent_list->filtered_objects[i];
+    if (agent == NULL) return;
+    
+    const float speed = 0.25f;
+    Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
+    Vec3 velocity = vec3_sub(agent_position, position);       // vector between agent and slime
+    normalize_vector(&velocity);
+    Vec3 normalized_velocity = vec3_copy(velocity);
+    velocity = vec3_scalar_mult(velocity, speed);             //  apply magnitude to velocity
+    position = vec3_add(position, velocity);
+    this->set_position(position.x, position.y, position.z); // move slime position by velocity
+
+    // calculate rotation deltas
+    //struct Vec3 angles = this->get_angles();   // TODO -- angles on object should be vector
+    //angles = vec3_init_from_angles(angles.x, angles.y, 0);
+
+    // calculate theta
+    // THETA = acos( (A.B) / (|A|*|B|) )
+    //float dot = angles.x * normalized_velocity.x + angles.y * normalized_velocity.y;
+    //float dtheta = acos(dot);
+
+    // orient towards player
+    //Vec3 new_angles = this->get_angles();
+    //new_angles.x += dtheta;
+    normalized_velocity.z = 0;
+    normalize_vector(&normalized_velocity);
+    this->set_angles(normalized_velocity.x, normalized_velocity.y, normalized_velocity.z);
     #endif
-
-    ////tickProximity
-
-    ////this->acquire_target();
-    ////this->move_to_location(); // increments pos by vel
-    ////this->face_location();    // orients at direction
-    
-    //// find nearby players
-    //// if nearby, move toward it
-
-    //const float r = 15.0f;
-    //const float speed = 0.25f;
-
-    //if (this->vox == NULL) return;
-    //// update nearby agents
-    //STATE::agent_list->objects_within_sphere(this->x, this->y, this->z, r);
-    //int n_nearby = STATE::agent_list->n_filtered;
-    //if (n_nearby == 0) return;
-
-    //// check if any agent in explode radius
-    //int i = 0;
-    //Agent_state* agent = STATE::agent_list->filtered_objects[i++];
-    //while (agent->status.team == 0) // skip viewer agents
-        //agent = STATE::agent_list->filtered_objects[i++];
-    //float dist = STATE::agent_list->filtered_object_distances[i-1];
-    //if (dist < this->vox->largest_radius()*0.5f)
-    //{
-        //agent = STATE::agent_list->filtered_objects[0];
-        //const int slime_dmg = 20; // TODO
-        //// blow up, damage player
-        //agent->status.apply_damage(slime_dmg, this->id, this->type);
-        //this->health = 0;
-    //}
-    
-    //// target random nearby player
-    //i = randrange(0,n_nearby-1);
-    //agent = STATE::agent_list->filtered_objects[i];
-    //if (agent == NULL) return;
-    
-    //// determine velocity tick
-    //float a,b,c;
-    //float vec[2];
-    //a = agent->s.x - this->x;
-    //b = agent->s.y - this->y;
-    //c = agent->s.z - this->z;
-    //float len = sqrt(a*a + b*b + c*c);
-    //a /= len;
-    //b /= len;
-    //c /= len;
-    //vec[0] = a;
-    //vec[1] = b;
-    //a *= speed;
-    //b *= speed;
-    //c *= speed;
-
-    //// apply velocity
-    //this->x += a;
-    //this->y += b;
-    //this->z += c;
-
-    //// calculate rotation deltas
-    //// THETA = acos( (A.B) / (|A|*|B|) )
-    //float dtheta;
-    //float dot, alen, blen;
-
-    //float ftmp[2], vtmp[2];
-    //ftmp[0] = 1.0;
-    //ftmp[1] = 0.0;
-    //vtmp[0] = vec[0];
-    //vtmp[1] = vec[1];
-
-    //// calculate theta
-    //dot = ftmp[0]*vtmp[0] + ftmp[1]*vtmp[1];
-    //alen = ftmp[0]*ftmp[0] + ftmp[1]*ftmp[1];
-    //blen = vtmp[0]*vtmp[0] + vtmp[1]*vtmp[1];
-    //dtheta = acos ( dot / sqrt(alen*blen) );
-
-    //// orient towards player
-    //this->theta = dtheta;
 }
 
 void Slime::update()
 {
     updateVox(
         this->voxel_properties.vox, this->get_position(),
-        this->spatial_properties.angles.x, this->spatial_properties.angles.y
+        this->spatial_properties.angles, this->spatial_properties.changed
     );
     this->spatial_properties.set_changed(false);
 }

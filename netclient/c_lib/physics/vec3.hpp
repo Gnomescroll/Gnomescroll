@@ -194,6 +194,16 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     return u;
 }
 
+static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho) __attribute((always_inline));
+
+static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
+{
+    Vec3 unit = vec3_init(1,0,0);
+    unit = vec3_euler_rotation(unit, theta, phi, rho);
+    normalize_vector(&unit);
+    return unit;
+}
+
 static struct Vec3 vec3_bias_random(Vec3 v, const float bias) __attribute((always_inline));
 
 Vec3 vec3_bias_random(Vec3 v, const float bias)

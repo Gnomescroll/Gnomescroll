@@ -6,7 +6,7 @@
 #endif
 
 
-void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bool state_changed)
+void updateFrozenVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
 {
     if (vox == NULL) return;
 
@@ -25,7 +25,7 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bo
     if (state_changed || input_state.skeleton_editor)
     {
         vox->thaw();
-        vox->update(position.x, position.y, position.z, theta, phi);
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
         vox->freeze();
     }
     #endif
@@ -36,7 +36,7 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bo
     #endif
 }
 
-void updateVox(Voxel_model* vox, Vec3 position, float theta, float phi)
+void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
 {
     if (vox == NULL) return;
 
@@ -52,7 +52,14 @@ void updateVox(Voxel_model* vox, Vec3 position, float theta, float phi)
         vox->set_draw(true);
         vox->set_hitscan(true);
     }
-    vox->update(position.x, position.y, position.z, theta, phi);
+    if (state_changed)
+    {   // TODO : voxel accepts Vec3 angles
+        //vox->update(position.x, position.y, position.z, angles.x, angles.y);
+        
+        // convert vector angles to theta
+        float theta = acos(vec3_dot(vec3_init(1,0,0), angles));
+        vox->update(position.x, position.y, position.z, theta,0);
+    }
     #endif
 
     #if DC_SERVER

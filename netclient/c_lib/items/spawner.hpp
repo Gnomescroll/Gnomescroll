@@ -119,9 +119,9 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     {
         updateFrozenVox(
             this->voxel_properties.vox, this->get_position(),
-            this->spatial_properties.angles.x, this->spatial_properties.angles.y,
-            this->spatial_properties.changed()
+            this->spatial_properties.angles, this->spatial_properties.changed
         );
+        this->spatial_properties.set_changed(false);
     }
 
     void draw() {}
