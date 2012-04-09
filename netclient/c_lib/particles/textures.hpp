@@ -3,6 +3,7 @@
 namespace Particles
 {
 
+extern GLuint particle_texture;
 
 void init_for_draw();
 void draw_teardown();

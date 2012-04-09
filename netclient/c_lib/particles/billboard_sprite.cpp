@@ -7,10 +7,11 @@ namespace Particles
 void BillboardSprite::draw(Vec3 v)
 {
     #if DC_CLIENT
+/*
     if (current_camera == NULL
     || !current_camera->in_view(v.x, v.y, v.z))
         return;
-
+*/
     Vec3 up = vec3_init(
         model_view_matrix[0]*this->scale,
         model_view_matrix[4]*this->scale,
@@ -52,11 +53,12 @@ void BillboardSprite::draw_from_bottom(Vec3 v)
 
     //v.z += this->scale / 2;
     v.z += this->scale;
-    
+
+/*
     if (current_camera == NULL
     || !current_camera->in_view(v.x, v.y, v.z))
         return;
-
+*/
     Vec3 up = vec3_init(
         model_view_matrix[0]*this->scale,
         model_view_matrix[4]*this->scale,

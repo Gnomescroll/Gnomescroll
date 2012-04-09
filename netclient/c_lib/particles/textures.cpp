@@ -1,15 +1,15 @@
 #include "textures.hpp"
 
 
-namespace Particles
-{
-
 #include <compat_gl.h>
 #include <c_lib/camera/camera.hpp>
 #include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/SDL/draw_functions.hpp>
 
-static GLuint particle_texture;
+namespace Particles
+{
+
+GLuint particle_texture;
 
 void init_for_draw() 
 {
