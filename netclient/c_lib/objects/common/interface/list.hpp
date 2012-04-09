@@ -94,6 +94,12 @@ class GameObject_list
                 return 0;
             return this->index_start[type];
         }
+        int get_object_count(Object_types type)
+        {
+            if (type < 0 || type >= MAX_OBJECT_TYPE)
+                return 0;
+            return this->occupancy[type];
+        }
         int get_object_max(Object_types type)
         {
             if (type < 0 || type >= MAX_OBJECT_TYPE)
@@ -154,35 +160,3 @@ class GameObject_list
             print();
         }
 };
-
-// TODO: restructure the list creation to adapt based on type
-
-void init_gameobject_list_maximums(GameObject_list* list)
-{
-    if (list == NULL)
-    {
-        printf("WARNING: init_gameobject_list_maximums() -- list is NULL\n");
-        return;
-    }
-    list->set_max_occupancy(OBJ_TYPE_SPAWNER, SPAWNER_MAX);
-    list->set_max_occupancy(OBJ_TYPE_TURRET, TURRET_MAX);
-    
-    list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
-    list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
-    
-    list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
-    list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
-
-    list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
-    
-    list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
-    
-    list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_RUBY, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_TURQUOISE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_SILVER, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_AMETHYST, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_JADE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_ONYX, ItemDrops::GEMSTONE_MAX);
-
-}

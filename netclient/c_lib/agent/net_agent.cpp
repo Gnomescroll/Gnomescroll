@@ -686,13 +686,10 @@ inline void hitscan_object_CtoS::handle()
     if (!a->weapons.laser.fire()) return;
 
     //const int agent_dmg = 25;
-    const int slime_dmg = 25;
     const int obj_dmg = 25;
-    int dmg_health;
 
     int voxel[3] = { vx,vy,vz };
     Agent_state* agent = NULL;
-    Monsters::Slime* slime = NULL;
     ObjectPolicyInterface* obj = NULL;
 
     switch (type)
@@ -710,14 +707,6 @@ inline void hitscan_object_CtoS::handle()
             break;
 
         case OBJ_TYPE_SLIME:
-            slime = ServerState::slime_list->get(id);
-            if (slime==NULL) return;
-            // apply damage
-            dmg_health = slime->take_damage(slime_dmg);
-            if (dmg_health <= 0)
-                a->status.kill_slime();
-            break;
-
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
             obj = ServerState::object_list->get((Object_types)type, id);
@@ -728,11 +717,14 @@ inline void hitscan_object_CtoS::handle()
                 return; // teammates cant kill turrets
                 
             // apply damage
-            dmg_health = obj->take_damage(obj_dmg);
+            obj->take_damage(obj_dmg);
             if (obj->did_die())
             {
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
+
+                if (type == OBJ_TYPE_SLIME)
+                    a->status.kill_slime(); // TODO, de-type this
             }
             break;
         default:
@@ -839,12 +831,9 @@ inline void melee_object_CtoS::handle()
     if (!a->weapons.pick.fire()) return;
 
     Agent_state* agent = NULL;
-    Monsters::Slime* slime = NULL;
     ObjectPolicyInterface* obj = NULL;
 
-    const int slime_dmg = 50;
     const int obj_dmg = 50;
-    int dmg_health;
     int voxel[3] = { vx,vy,vz };
     int owner;
     
@@ -854,21 +843,11 @@ inline void melee_object_CtoS::handle()
             agent = ServerState::agent_list->get(id);
             if (agent==NULL) return;
             // apply damage
-            dmg_health = agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            if (dmg_health <= 0)
-                a->status.add_coins(1);
+            agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
             destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
             break;
 
         case OBJ_TYPE_SLIME:
-            slime = ServerState::slime_list->get(id);
-            if (slime==NULL) return;
-            // apply damage
-            dmg_health = slime->take_damage(slime_dmg);
-            if (dmg_health <= 0)
-                a->status.kill_slime();
-            break;
-
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
             obj = ServerState::object_list->get((Object_types)type, id);
@@ -883,11 +862,14 @@ inline void melee_object_CtoS::handle()
                 return; // teammates cant kill turrets/spawners
                 
             // apply damage
-            dmg_health = obj->take_damage(obj_dmg);
+            obj->take_damage(obj_dmg);
             if (obj->did_die())
             {
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
+
+                if (type == OBJ_TYPE_SLIME)
+                    a->status.kill_slime(); // TODO, de-type this
             }
             break;
 

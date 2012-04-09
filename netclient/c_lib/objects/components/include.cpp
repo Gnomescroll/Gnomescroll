@@ -11,17 +11,18 @@
 #include <c_lib/objects/components/owned/owned.cpp>
 #include <c_lib/objects/components/owned/list.cpp>
 
-#include <c_lib/objects/components/spatial/spatial.cpp>
+#include <c_lib/objects/components/spatial/components.cpp>
+#include <c_lib/objects/components/spatial/properties.cpp>
 //#include <c_lib/objects/components/spatial/list.cpp>
 
 //#include <c_lib/objects/components/spawner/spawner.cpp>
 //#include <c_lib/objects/components/spawner/list.cpp>
 
-//#include <c_lib/objects/components/target_acquisition/target_acquisition.cpp>
+#include <c_lib/objects/components/target_acquisition/component.cpp>
 //#include <c_lib/objects/components/target_acquisition/list.cpp>
 
 #include <c_lib/objects/components/team/team.cpp>
 //#include <c_lib/objects/components/team/list.cpp>
 
-#include <c_lib/objects/components/voxel/voxel.cpp>
+#include <c_lib/objects/components/voxel/component.cpp>
 //#include <c_lib/objects/components/voxel/list.cpp>
