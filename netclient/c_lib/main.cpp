@@ -183,7 +183,6 @@ int run()
         ClientState::sprite_list->draw();
         end_item_draw();
         Particles::begin_particle_draw();
-        //ClientState::cspray_list->draw();
         Particles::grenade_list->draw();
         Particles::shrapnel_list->draw();
         Particles::blood_list->draw();

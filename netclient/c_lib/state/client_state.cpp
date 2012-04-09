@@ -13,7 +13,7 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-//#include <c_lib/particles/particle_lib.hpp>
+#include <c_lib/particles/_interface.hpp>
 
 #if USE_OPENAL
 #include <c_lib/sound/openal.hpp>
@@ -34,7 +34,6 @@ namespace ClientState {
     class SpawnerList* spawner_list = NULL;
     class OwnedList* owned_list = NULL;
     class SpriteList* sprite_list = NULL;
-    class Monsters::Slime_list* slime_list = NULL;
 
     class GameObject_list* object_list;
 
@@ -175,14 +174,13 @@ namespace ClientState {
 
     void tick()
     {
-        cspray_list->tick();
-        grenade_list->tick();
-        shrapnel_list->tick();
-        blood_list->tick();
+        Particles::grenade_list->tick();
+        Particles::shrapnel_list->tick();
+        Particles::blood_list->tick();
         //neutron_list->tick();
-        minivox_list->tick();
-        billboard_text_list->tick();
-        billboard_text_hud_list->tick();
+        Particles::minivox_list->tick();
+        Particles::billboard_text_list->tick();
+        Particles::billboard_text_hud_list->tick();
 
         object_list->tick();
     }
@@ -198,7 +196,7 @@ namespace ClientState {
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
-        minivox_list->draw_colored();
+        Particles::minivox_list->draw_colored();
         colored_minivox_list->draw();
 
         glEnd();
@@ -208,17 +206,16 @@ namespace ClientState {
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
         glBegin(GL_QUADS);
 
-        minivox_list->draw_textured();
+        Particles::minivox_list->draw_textured();
 
         glEnd();
         glDisable(GL_TEXTURE_2D);
 
         // transparent
-        billboard_text_list->draw();
+        Particles::billboard_text_list->draw();
         
         //begin_transparent_draw();
         //begin_particle_draw();
-        //cspray_list->draw();
         //grenade_list->draw();
         //shrapnel_list->draw();
         //blood_list->draw();
