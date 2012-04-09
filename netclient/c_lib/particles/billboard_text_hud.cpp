@@ -1,4 +1,4 @@
-#include "billboard_text.hpp"
+#include "billboard_text_hud.hpp"
 
 #include <ray_trace/ray_trace.hpp>
 #include <t_map/t_map.hpp>
