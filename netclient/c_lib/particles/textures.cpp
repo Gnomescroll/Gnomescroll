@@ -1,6 +1,8 @@
 #include "textures.hpp"
 
-#if DC_CLIENT
+
+namespace Particles
+{
 
 #include <compat_gl.h>
 #include <c_lib/camera/camera.hpp>
@@ -9,14 +11,19 @@
 
 static GLuint particle_texture;
 
-int init_particles() {
+void init_for_draw() 
+{
     int i = create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
     if (i)
     {
-        printf("init_particles failed with code %d\n", i);
-        return 1;
+        printf("Particles::init_for_draw failed with code %d\n", i);
     }
-    return 0;
+}
+
+void draw_teardown()
+{
+
+
 }
 
 void begin_particle_draw()
@@ -32,4 +39,4 @@ void end_particle_draw()
     glDisable(GL_BLEND);
 }
 
-#endif
+}

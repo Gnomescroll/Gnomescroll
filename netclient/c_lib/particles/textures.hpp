@@ -1,7 +1,13 @@
 #pragma once
 
-#if DC_CLIENT
-int init_particles();
+namespace Particles
+{
+
+
+void init_for_draw();
+void draw_teardown();
+
 void begin_particle_draw();
 void end_particle_draw();
-#endif
+
+}

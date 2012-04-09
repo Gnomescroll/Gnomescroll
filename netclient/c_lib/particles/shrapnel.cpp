@@ -2,6 +2,9 @@
 
 #include <physics/common.hpp>
 
+namespace Particles
+{
+
 const float SHRAPNEL_MASS = 0.2f;
 
 void Shrapnel::init()
@@ -57,3 +60,4 @@ void Shrapnel_list::draw()
 #endif
 }
 
+}

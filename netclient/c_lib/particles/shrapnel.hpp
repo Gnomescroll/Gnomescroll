@@ -1,13 +1,16 @@
 #pragma once
 
+#include <c_lib/particles/billboard_sprite.hpp>
+
+namespace Particles
+{
+
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
 #define SHRAPNEL_DAMP 0.5f
 #define SHRAPNEL_TYPE 5
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
-
-#include <c_lib/particles/billboard_sprite.hpp>
 
 class Shrapnel: public Particle, public BillboardSprite
 {
@@ -32,3 +35,4 @@ class Shrapnel_list: public Object_list<Shrapnel, SHRAPNEL_MAX>
         Shrapnel_list() { print(); }
 };
     
+}

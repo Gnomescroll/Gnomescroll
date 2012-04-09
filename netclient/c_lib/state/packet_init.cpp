@@ -8,7 +8,7 @@
 #include <c_lib/agent/client/player_agent.hpp>
 
 //#include <c_lib/particles/particle_lib.hpp>
-#include <c_lib/particles/cspray.hpp>
+//#include <c_lib/particles/cspray.hpp>
 #include <c_lib/particles/grenade.hpp>
 
 

@@ -8,13 +8,15 @@
 #include <c_lib/voxel/voxel_hitscan.hpp>
 
 #include <c_lib/particles/grenade.hpp>
-#include <c_lib/particles/cspray.hpp>
+//#include <c_lib/particles/cspray.hpp>
 
 namespace ServerState
 {
     extern Agent_list* agent_list GNOMESCROLL_API;
-    extern Cspray_list* cspray_list;
-    extern Grenade_list* grenade_list GNOMESCROLL_API;
+    
+    //extern Cspray_list* cspray_list;
+    //extern Grenade_list* grenade_list GNOMESCROLL_API;
+    
     //extern Neutron_list* neutron_list;
     //extern Grenade_shrapnel_list* grenade_shrapnel_list;
     

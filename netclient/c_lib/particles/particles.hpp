@@ -5,6 +5,9 @@
 
 using Verlet::VerletParticle;
 
+namespace Particles
+{
+
 class Particle
 {
     public:
@@ -29,3 +32,5 @@ class EventParticle: public Particle
 
         EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
 };
+
+}

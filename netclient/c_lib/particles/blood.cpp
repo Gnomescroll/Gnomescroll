@@ -2,6 +2,9 @@
 
 #include <physics/common.hpp>
 
+namespace Particles
+{
+
 const float BLOOD_MASS = 0.1f;
 
 void Blood::init()
@@ -57,3 +60,4 @@ void Blood_list::draw()
 #endif
 }
 
+}

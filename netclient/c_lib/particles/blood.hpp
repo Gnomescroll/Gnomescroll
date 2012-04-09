@@ -1,5 +1,8 @@
 #pragma once
 
+namespace Particles
+{
+
 #define BLOOD_MAX 4096
 #define BLOOD_TTL 30
 #define BLOOD_DAMP 0.6f
@@ -30,3 +33,4 @@ class Blood_list: public Object_list<Blood, BLOOD_MAX>
     Blood_list() { print(); }
 };
     
+}

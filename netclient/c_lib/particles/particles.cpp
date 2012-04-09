@@ -1,5 +1,8 @@
 #include "particles.hpp"
 
+namespace Particles
+{
+
 void Particle::set_ttl(int ttl)
 {   // set to a negative number for no timeout
     this->ttl = ttl;
@@ -27,3 +30,5 @@ EventParticle::EventParticle(int id, float x, float y, float z, float mx, float 
 :
 Particle(id, x,y,z,mx,my,mz, mass)
 {}
+
+}
