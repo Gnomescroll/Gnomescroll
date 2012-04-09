@@ -185,11 +185,11 @@ int run()
         Particles::begin_particle_draw();
         //ClientState::cspray_list->draw();
         Particles::grenade_list->draw();
-        ClientState::shrapnel_list->draw();
-        ClientState::blood_list->draw();
+        Particles::shrapnel_list->draw();
+        Particles::blood_list->draw();
         Particles::end_particle_draw();
         
-        Particles::end_transparent_draw();
+        end_transparent_draw();
 
 
         Skybox::draw();
