@@ -9,6 +9,8 @@
 #include <c_lib/hud/font.hpp>
 #include <c_lib/hud/text.hpp>
 
+static const float DEFAULT_MASS = 1.0;
+
 BillboardText::BillboardText(int id)
 :
 Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),

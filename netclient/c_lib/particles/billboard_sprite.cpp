@@ -1,5 +1,5 @@
 
-#include "billboar_sprite"
+#include "billboard_sprite.hpp"
 
 void BillboardSprite::draw(Vec3 v)
 {

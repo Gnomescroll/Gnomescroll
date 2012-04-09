@@ -30,7 +30,7 @@ class HitscanLaserEffect
     HitscanLaserEffect(int id, float x, float y, float z, float fx, float fy, float fz);
 };
 
-class HitscanLaserEffect_list: public Object_list<HitscanLaserEffect, MINIVOX_MAX>
+class HitscanLaserEffect_list: public Object_list<HitscanLaserEffect>
 {
     private:
         const char* name() { return "HitscanLaserEffect"; }

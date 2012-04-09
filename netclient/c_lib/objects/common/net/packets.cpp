@@ -4,6 +4,8 @@
 
 #include <c_lib/sound/sound.hpp>
 
+#include <c_lib/agent/client/player_agent.hpp>
+
 /* Construction */
 
 // forward declarations

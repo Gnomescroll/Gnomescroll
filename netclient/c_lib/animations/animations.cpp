@@ -1,7 +1,7 @@
 #include "animations.hpp"
 
 #include <c_lib/options.hpp>
-#include <c_lib/particles/particle_lib.hpp>
+//#include <c_lib/particles/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
 

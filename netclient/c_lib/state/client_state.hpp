@@ -21,7 +21,7 @@
 #include <c_lib/monsters/monsters.hpp>
 
 #include <c_lib/game/ctf.hpp>
-#include <c_lib/particles/particle_lib.hpp>
+//#include <c_lib/particles/particle_lib.hpp>
 
 class PlayerAgent_state; //forward declaration
 

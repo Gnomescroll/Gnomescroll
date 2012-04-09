@@ -7,6 +7,8 @@
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
 
+#include <c_lib/particles/billboard_sprite.hpp>
+
 class Shrapnel: public Particle, public BillboardSprite
 {
     public:

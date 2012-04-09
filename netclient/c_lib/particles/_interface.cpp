@@ -1,6 +1,8 @@
 #include "_interface.hpp"
 
 
+namespace Particles
+{
 
 #include "grenade.hpp"
 #include "cspray.hpp"
@@ -17,8 +19,6 @@ class Cspray_list* cspray_list = NULL;
 #include <c_lib/particles/billboard_text_hud.hpp>
 #include <c_lib/particles/billboard_sprite.hpp>
 
-class Cspray_list* cspray_list = NULL;
-class Grenade_list* grenade_list = NULL;
 class Shrapnel_list* shrapnel_list = NULL;
 class Blood_list* blood_list = NULL;
 class Minivox_list* minivox_list = NULL;
@@ -74,3 +74,4 @@ void tear_down_particles()
 }
 
 
+}

@@ -25,7 +25,7 @@ class HitscanEffect
     HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz);
 };
 
-class HitscanEffect_list: public Object_list<HitscanEffect, MINIVOX_MAX>
+class HitscanEffect_list: public Object_list<HitscanEffect>
 {
     private:
         const char* name() { return "HitscanEffect"; }

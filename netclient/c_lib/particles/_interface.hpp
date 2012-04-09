@@ -1,11 +1,12 @@
 #pragma once
 
+namespace Particles
+{
+
 extern class Cspray_list* cspray_list;
 extern class Grenade_list* grenade_list;
 
 #ifdef DC_CLIENT
-extern class  Cspray_list* cspray_list;
-extern class  Grenade_list* grenade_list;
 
 extern class  Shrapnel_list* shrapnel_list;
 extern class  Blood_list* blood_list;
@@ -20,3 +21,5 @@ extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 
 void init_particles();
 void tear_down_particles();
+
+}
