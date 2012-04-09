@@ -2,18 +2,17 @@
 
 #ifdef DC_CLIENT
     #include <compat_gl.h>
+    #include <t_map/glsl/texture.hpp>
+    #include <c_lib/camera/fulstrum_test.hpp>
 #endif
 
 #include <voxel/common_data.h>
-
 #include <ray_trace/ray_trace.hpp>
 
-#include <t_map/glsl/texture.hpp>
 
-#include <c_lib/camera/fulstrum_test.hpp>
+namespace Particles
+{
 
-//#include <t_map/t_map.hpp>
-//#include <t_map/t_vbo.h>
 
 const float MINIVOX_MASS = 2.0f;
 
@@ -305,4 +304,6 @@ Minivox_list::Minivox_list()
 _s(minivox_size)
 {
     print();
+}
+
 }

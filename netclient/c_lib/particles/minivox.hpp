@@ -3,6 +3,9 @@
 #include <physics/common.hpp>
 #include <c_lib/voxel/common.h>
 
+namespace Particles
+{
+
 #define MINIVOX_MAX 4096
 #define MINIVOX_TTL 100
 #define MINIVOX_DAMP 0.5f
@@ -75,3 +78,4 @@ class Minivox_list: public Object_list<Minivox, MINIVOX_MAX>
         Minivox_list();
 };
     
+}
