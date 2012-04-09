@@ -715,7 +715,7 @@ inline void hitscan_object_CtoS::handle()
             if ((obj->get_team() == a->status.team && obj->get_owner() != NO_AGENT)
               && obj->get_owner() != a->id) // TODO -- kill rule in ObjectState
                 return; // teammates cant kill turrets
-                
+
             // apply damage
             obj->take_damage(obj_dmg);
             if (obj->did_die())

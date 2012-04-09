@@ -24,6 +24,8 @@ void Slime::load_data(int id)
 
     this->spatial_properties.camera_height = SLIME_CAMERA_HEIGHT;
     this->spatial_properties.height = SLIME_HEIGHT;
+
+    this->health_properties.health = SLIME_HEALTH;
 }
 
 Slime::Slime(int id)
@@ -71,8 +73,11 @@ void Slime::die()
 
     #if DC_CLIENT
     //dieAnimation();   // TODO
-    Vec3 position = this->get_position();
-    Animations::slime_melt(position.x, position.y, position.z);
+    if (this->voxel_properties.vox != NULL)
+    {
+        Vec3 position = this->voxel_properties.vox->get_part(0)->get_center();
+        Animations::slime_melt(position.x, position.y, position.z);
+    }
     #endif
 
     //dieExplode(state, position);    // TODO -- dieExplode that doesnt require team
