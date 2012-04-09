@@ -59,7 +59,7 @@ inline void grenade_StoC::handle()
 {
     #if DC_CLIENT
     if (owner == ClientState::playerAgent_state.agent_id) return;
-    Grenade* g = ClientState::grenade_list->create(x, y, z, mx, my, mz);
+    Grenade* g = Particles::grenade_list->create(x, y, z, mx, my, mz);
     g->owner = owner;
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;

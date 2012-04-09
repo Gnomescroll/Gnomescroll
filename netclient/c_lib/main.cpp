@@ -184,7 +184,7 @@ int run()
         end_item_draw();
         begin_particle_draw();
         ClientState::cspray_list->draw();
-        ClientState::grenade_list->draw();
+        Particles::grenade_list->draw();
         ClientState::shrapnel_list->draw();
         ClientState::blood_list->draw();
         end_particle_draw();
