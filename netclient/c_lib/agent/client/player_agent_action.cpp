@@ -6,6 +6,9 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <sound/triggers.hpp>
 
+#include <c_lib/particles/_include.hpp>
+#include <c_lib/particles/grenade.hpp>
+
 //stuff
 
 //#include <c_lib/t_map/net/t_CtoS.hpp>
@@ -329,7 +332,7 @@ void PlayerAgent_action::throw_grenade()
     f[0] *= PLAYER_ARM_FORCE;
     f[1] *= PLAYER_ARM_FORCE;
     f[2] *= PLAYER_ARM_FORCE;
-    Grenade* g = Particles::grenade_list->create(x,y,z, f[0], f[1], f[2]);
+    Particles::Grenade* g = Particles::grenade_list->create(x,y,z, f[0], f[1], f[2]);
     if (g==NULL) return;
     g->owner = this->p->agent_id;
     

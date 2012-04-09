@@ -9,7 +9,7 @@
 #include <chat/client.hpp>
 #include <hud/map.hpp>
 
-#include <c_lib/particles/billboard_text_hud.hpp>
+#include <c_lib/particles/_include.hpp>
 
 void Agent_event::name_changed(char* old_name)
 {
@@ -61,7 +61,7 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = ClientState::billboard_text_hud_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        this->bb = Particles::billboard_text_hud_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         if (this->bb == NULL) return;
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
@@ -76,7 +76,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
-    BillboardText* b = ClientState::billboard_text_list->create(
+    Particles::BillboardText* b = Particles::billboard_text_list->create(
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.z + a->current_height(),
