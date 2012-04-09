@@ -17,7 +17,7 @@ extern class  BillboardTextHud_list* billboard_text_hud_list;
 #endif
 
 #ifdef DC_SERVER
-class Grenade_shrapnel_list* grenade_shrapnel_list;
+extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 #endif
 
 void init_particles();

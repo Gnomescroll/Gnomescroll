@@ -28,8 +28,7 @@ class BillboardTextHud_list* billboard_text_hud_list = NULL;
 #endif
 
 #if DC_SERVER
-#include <c_lib/particles/grenade_shrapnel.hpp>
-class Grenade_shrapnel_list* grenade_shrapnel_list;
+class Grenade_shrapnel_list* grenade_shrapnel_list = NULL;
 #endif
 
 void init_particles()
@@ -49,7 +48,7 @@ void init_particles()
 #endif
 
 #ifdef DC_SERVER
-
+    grenade_shrapnel_list = new Grenade_shrapnel_list;
 #endif
 
 
@@ -60,10 +59,6 @@ void tear_down_particles()
 	delete cspray_list;
 	delete grenade_list;
 
-#ifdef DC_SERVER
-
-#endif
-
 #ifdef DC_CLIENT
     delete shrapnel_list;
     delete blood_list;
@@ -72,6 +67,9 @@ void tear_down_particles()
     delete billboard_text_hud_list;
 #endif
 
+#ifdef DC_SERVER
+    delete grenade_shrapnel_list;
+#endif
 }
 
 
