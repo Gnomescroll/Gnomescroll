@@ -182,13 +182,14 @@ int run()
         begin_item_draw();
         ClientState::sprite_list->draw();
         end_item_draw();
-        begin_particle_draw();
-        ClientState::cspray_list->draw();
+        Particles::begin_particle_draw();
+        //ClientState::cspray_list->draw();
         Particles::grenade_list->draw();
         ClientState::shrapnel_list->draw();
         ClientState::blood_list->draw();
-        end_particle_draw();
-        end_transparent_draw();
+        Particles::end_particle_draw();
+        
+        Particles::end_transparent_draw();
 
 
         Skybox::draw();
