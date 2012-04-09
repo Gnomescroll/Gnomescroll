@@ -40,6 +40,7 @@ class ObjectData
         bool blow_up_on_death;
         float explosion_radius;
         int explosion_damage;
+        float explosion_proximity_radius;
         
         // coins
         unsigned int cost;

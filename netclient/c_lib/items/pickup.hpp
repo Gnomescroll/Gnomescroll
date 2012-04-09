@@ -50,7 +50,7 @@ template <class Object>
 void tickPickup(ObjectState* state, Object* object, float pickup_radius)
 {
     #if DC_SERVER
-    int agent_id = object->nearest_agent_in_range(object->get_position(), pickup_radius);
+    int agent_id = nearest_agent_in_range(object->get_position(), pickup_radius);
     if (agent_id >= 0 && STATE::agent_list->agent_pickup_item(agent_id, state->id, state->type))
     {   // was picked up, die
         object->was_picked_up(agent_id);
@@ -69,7 +69,6 @@ class PickupComponent
         bool broadcast_death;
 
         void was_picked_up(const int agent_id);
-        int nearest_agent_in_range(const Vec3 p, const float radius);
         
     PickupComponent()
     : pickup_radius(1.0f), picked_up_by(-1)

@@ -4,6 +4,8 @@
     #include <c_lib/t_map/server/manager.hpp>
 #endif
 #include <c_lib/physics/common.hpp>
+#include <c_lib/state/server_state.hpp>
+#include <c_lib/state/client_state.hpp>
 
 /*
     Warning: using agent position for map loading
@@ -251,3 +253,13 @@ bool Agent_list::agent_pickup_item(int agent_id, int item_id, Object_types item_
     if (a == NULL) return false;
     return a->status.gain_item(item_id, item_type);
 }
+
+int nearest_agent_in_range(const Vec3 p, const float radius)
+{
+    int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
+    STATE::agent_list->sort_filtered_objects_by_distance();
+    if (n > 0)
+        return STATE::agent_list->filtered_objects[0]->id;
+    return -1;
+}
+

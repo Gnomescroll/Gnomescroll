@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/agent/agent.hpp>
-
+#include <c_lib/physics/vec3.hpp>
 #include <c_lib/template/object_list.hpp>
 
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
@@ -41,3 +41,4 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         Agent_list();
 };
 
+int nearest_agent_in_range(const Vec3 p, const float radius);
