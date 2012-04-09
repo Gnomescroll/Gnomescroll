@@ -52,29 +52,31 @@ void Slime::born()
         this->spatial_properties.angles.x, this->spatial_properties.angles.y); 
 }
 
+void slimeDropItem(Vec3 position)
+{   // TODO -- some dat format for thiss
+    #if DC_SERVER
+    const float drop_probability = 0.66f;
+    float p = randf();
+    if (p > drop_probability) return;
+    
+    const int n_types = 2;    
+    Object_types types[n_types] = {
+        OBJ_TYPE_LASER_REFILL,
+        OBJ_TYPE_GRENADE_REFILL
+    };
+    Object_types type = types[randrange(0,n_types-1)];
+    const float mom = 5.0f;
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
+        position.x, position.y, position.z+1.0f,
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
+    );
+    if (obj != NULL)
+        obj->born();
+    #endif
+}
+
 void Slime::die()
 {
-    ObjectState* state = this->state();
-    Vec3 position = this->get_position();
-
-    // drop items
-    #if DC_SERVER   // TODO -- make this a die behaviour
-    //dieSpawnItem(this->_state.type);
-    
-    //const float mom = 5.0f;
-    //float p = randf();
-    //Object_types obj_type;
-    //if (p < 1.0f/3.0f)
-        //obj_type = OBJ_TYPE_LASER_REFILL;
-    //else if (p < 2.0f/3.0f)
-        //obj_type = OBJ_TYPE_GRENADE_REFILL;
-    //else
-        //return;
-    //ObjectPolicyInterface* obj = ServerState::object_list->create(obj_type, x,y,z+1.0f, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-    //if (obj != NULL)
-        //obj->born();
-    #endif
-
     #if DC_CLIENT
     //dieAnimation();   // TODO
     if (this->voxel_properties.vox != NULL)
@@ -84,12 +86,19 @@ void Slime::die()
     }
     #endif
 
-    dieExplode(state, position);    // TODO -- dieExplode that doesnt require team
+    #if DC_SERVER     
+    ObjectState* state = this->state();
+    Vec3 position = this->get_position();
+    
+    slimeDropItem(this->get_position());
+    dieExplode(state, position);
     this->broadcastDeath();
+    #endif
 }
 
 void Slime::tick()
-{ /*
+{
+    /*
     #if DC_SERVER
     this->tick_num++;
     if (this->spatial_properties.changed)

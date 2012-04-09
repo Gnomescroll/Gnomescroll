@@ -54,6 +54,16 @@ void dieExplode(ObjectState* state, Vec3 position, int owner)
     #endif
 }
 
+//void dieDropItem(Object_types type) // TODO -- general kill/death methods
+//{
+    //switch (type)
+    //{
+        //case OBJ_TYPE_SLIME:
+            
+            //break;
+    //}
+//}
+
 void dieTeamItemAnimation(Vec3 position, int team)
 {
     #if DC_CLIENT
