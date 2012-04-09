@@ -95,7 +95,8 @@ void BillboardText::draw()
 #ifdef DC_CLIENT
     if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
-    if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+    if (point_fulstrum_test(this->vp->p.x, this->vp->p.y, this->vp->p.z) == false)
+        return;
 
     glColor4ub(r,g,b,a);
 

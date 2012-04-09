@@ -868,7 +868,9 @@ void Agent_state::update_model()
 
     // other agents
     VoxDat* vox_dat = &agent_vox_dat;
-    if (current_camera == NULL || !current_camera->in_view(this->s.x, this->s.y, this->s.z))
+    Vec3 center = this->vox->get_part(0)->get_center();
+    float radius = this->vox->get_part(0)->radius;
+    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);

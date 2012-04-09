@@ -36,10 +36,13 @@ class ObjectData
         // tick lifespan
         int ttl_max;
 
+        // TODO: MOVE
         // explosion
         bool blow_up_on_death;
         float explosion_radius;
         int explosion_damage;
+        float explosion_proximity_radius;
+        float motion_proximity_radius;
         
         // coins
         unsigned int cost;
@@ -63,6 +66,10 @@ class ObjectData
     damp(1.0f), mass(1.0f), broadcast_state_change(false),
     ttl_max(100),
     blow_up_on_death(false),
+    explosion_radius(1.0f),
+    explosion_damage(0),
+    explosion_proximity_radius(1.0f),
+    motion_proximity_radius(1.0f),
     cost(999999), reward(0), coin_rule(COINS_NOBODY),
     fire_rate_limit(1)
     {}

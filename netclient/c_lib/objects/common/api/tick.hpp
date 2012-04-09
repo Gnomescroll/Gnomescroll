@@ -71,3 +71,22 @@ void tickRotate(Object* object, float dtheta, float dphi)
 {
     object->delta_rotation(dtheta, dphi);
 }
+
+// moves vector from origin to dest by momentum amount
+Vec3 tickMoveToPoint(Vec3 dest, Vec3 origin, Vec3 momentum)
+{
+    Vec3 direction = vec3_sub(dest, origin);
+    normalize_vector(&direction);
+    direction = vec3_mult(direction, momentum);             //  apply magnitude to velocity
+    origin = vec3_add(origin, direction);
+    return origin;
+}
+
+// return x-angle (theta) rotation between two Vec3s
+float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
+{   // TODO -- this may be incorrect
+    Vec3 direction = vec3_sub(dest, origin);
+    direction.z = 0;
+    normalize_vector(&direction);
+    return acos(direction.x);
+}

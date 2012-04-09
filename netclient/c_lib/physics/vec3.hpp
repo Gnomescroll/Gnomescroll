@@ -194,6 +194,16 @@ struct Vec3 vec3_euler_rotation(Vec3 v, float x, float y, float z)
     return u;
 }
 
+static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho) __attribute((always_inline));
+
+static struct Vec3 vec3_init_from_angles(float theta, float phi, float rho)
+{
+    Vec3 unit = vec3_init(1,0,0);
+    unit = vec3_euler_rotation(unit, theta, phi, rho);
+    normalize_vector(&unit);
+    return unit;
+}
+
 static struct Vec3 vec3_bias_random(Vec3 v, const float bias) __attribute((always_inline));
 
 Vec3 vec3_bias_random(Vec3 v, const float bias)
@@ -234,6 +244,12 @@ static float vec3_distance(struct Vec3 v) __attribute((always_inline));
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {
     return sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
+}
+
+static float vec3_distance_squared(struct Vec3 v) __attribute((always_inline));
+float vec3_distance_squared(struct Vec3 v1, struct Vec3 v2)
+{
+    return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z);
 }
 
 // Angle from look vector vx,vy,vz to point x,y,z

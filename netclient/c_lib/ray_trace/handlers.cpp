@@ -38,19 +38,21 @@ Agent_state* lock_agent_target(
     
     Agent_state* agent = NULL;
     Vec3 sink;
-    for (int i=0; i<agent_list->n_filtered; i++)
+    int i=0;
+    for (i=0; i<agent_list->n_filtered; i++)
     {   // ray cast to agent
         if (random)
             agent = agent_list->filtered_objects[chosen[i]];
         else
             agent = agent_list->filtered_objects[i];
+        if (agent == NULL || agent->status.team == NO_TEAM) continue;
         if (agent->in_sight_of(firing_position, &sink, acquisition_probability))
         {
             *firing_direction = vec3_sub(sink, firing_position);
             break;
         }
-        agent = NULL;
     }
+    if (i >= agent_list->n_filtered) return NULL;
     return agent;
 }
 

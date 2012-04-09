@@ -30,6 +30,18 @@ namespace ClientState
 
 /* die behaviours */
 
+void dieExplode(ObjectState* state, Vec3 position)
+{
+    #if DC_SERVER
+    ServerState::damage_objects_within_sphere(
+        position.x, position.y, position.z,
+        state->explosion_radius, state->explosion_damage, NO_AGENT,
+        state->type, state->id,
+        state->suicidal
+    );
+    #endif
+}
+
 void dieExplode(ObjectState* state, Vec3 position, int owner)
 {
     #if DC_SERVER
@@ -41,6 +53,16 @@ void dieExplode(ObjectState* state, Vec3 position, int owner)
     );
     #endif
 }
+
+//void dieDropItem(Object_types type) // TODO -- general kill/death methods
+//{
+    //switch (type)
+    //{
+        //case OBJ_TYPE_SLIME:
+            
+            //break;
+    //}
+//}
 
 void dieTeamItemAnimation(Vec3 position, int team)
 {

@@ -4,6 +4,8 @@
     #include <c_lib/t_map/server/manager.hpp>
 #endif
 #include <c_lib/physics/common.hpp>
+#include <c_lib/state/server_state.hpp>
+#include <c_lib/state/client_state.hpp>
 
 /*
     Warning: using agent position for map loading
@@ -244,10 +246,45 @@ check_name_interval(0)
     print();
 }
 
-bool Agent_list::agent_pickup_item(int agent_id, int item_id, Object_types item_type)
+Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
 {
-    if (agent_id < 0 || agent_id >= AGENT_MAX) return false;
-    Agent_state* a = this->get(agent_id);
-    if (a == NULL) return false;
-    return a->status.gain_item(item_id, item_type);
+    using STATE::agent_list;
+    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n <= 0) return NULL;
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {   // skip all viewing agents
+        agent = agent_list->filtered_objects[i];
+        if (agent != NULL && agent->status.team != NO_TEAM) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
+    return agent;
+}
+
+Agent_state* random_agent_in_range(const Vec3 position, const float radius)
+{
+    using STATE::agent_list;
+    // find nearby players
+    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n == 0) return NULL;
+    
+    // target random nearby player
+    int chosen[n];
+    for (int i=0; i<n; i++)
+        chosen[i] = i;
+    shuffle_int_array(chosen, n);  // randomize
+
+    // iterate shuffled ids, looking for a non-viewer agent
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {
+        agent = agent_list->filtered_objects[chosen[i]];
+        if (agent != NULL && agent->status.team != NO_TEAM) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
+    return agent;
 }

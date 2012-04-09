@@ -740,7 +740,6 @@ inline void hitscan_object_CtoS::handle()
     msg.vy = vy;
     msg.vz = vz;
     msg.broadcast();
-
 }
 
 // hitscan target:block

@@ -53,6 +53,9 @@ void setup_fulstrum(float fovy, float aspect, float zfar, Vec3 camera, Vec3 forw
 
 bool sphere_fulstrum_test(float x, float y, float  z, float r)
 {
+    if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
+        return false;
+    
     //r = 1.0f;
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
@@ -90,6 +93,9 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
 bool point_fulstrum_test(float x, float y, float  z)
 {
+    if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
+        return false;
+
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
     z -= fulstrum.c.z;

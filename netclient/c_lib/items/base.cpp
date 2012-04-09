@@ -70,7 +70,9 @@ void Base::update()
 {
     #ifdef DC_CLIENT
     this->vox->was_updated = false;
-    if (current_camera == NULL || !current_camera->in_view(x,y,z))
+    Vec3 center = this->vox->get_part(0)->get_center();
+    float radius = this->vox->get_part(0)->radius;
+    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
         this->vox->set_draw(false);
     else
         this->vox->set_draw(true);

@@ -6,13 +6,15 @@
 #endif
 
 
-void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bool state_changed)
+void updateFrozenVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
 {
     if (vox == NULL) return;
 
     #if DC_CLIENT
     vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
-    if (current_camera == NULL || !current_camera->in_view(position.x, position.y, position.z))
+    Vec3 center = vox->get_part(0)->get_center();
+    float radius = vox->get_part(0)->radius;
+    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {
         vox->set_draw(false);
         vox->set_hitscan(false);
@@ -25,7 +27,7 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bo
     if (state_changed || input_state.skeleton_editor)
     {
         vox->thaw();
-        vox->update(position.x, position.y, position.z, theta, phi);
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
         vox->freeze();
     }
     #endif
@@ -36,13 +38,15 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, float theta, float phi, bo
     #endif
 }
 
-void updateVox(Voxel_model* vox, Vec3 position, float theta, float phi)
+void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
 {
     if (vox == NULL) return;
 
     #if DC_CLIENT
     vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
-    if (current_camera == NULL || !current_camera->in_view(position.x, position.y, position.z))
+    Vec3 center = vox->get_part(0)->get_center();
+    float radius = vox->get_part(0)->radius;
+    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {
         vox->set_draw(false);
         vox->set_hitscan(false);
@@ -52,7 +56,10 @@ void updateVox(Voxel_model* vox, Vec3 position, float theta, float phi)
         vox->set_draw(true);
         vox->set_hitscan(true);
     }
-    vox->update(position.x, position.y, position.z, theta, phi);
+    if (state_changed)
+    {   // TODO : voxel accepts Vec3 angles
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
+    }
     #endif
 
     #if DC_SERVER
