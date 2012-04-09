@@ -252,6 +252,10 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_INVENTORY:
             obj = new Inventory(id);
             break;
+
+        case OBJ_TYPE_SLIME:
+            obj = new Monsters::Slime(id);
+            break;
             
         default: return NULL;
     }

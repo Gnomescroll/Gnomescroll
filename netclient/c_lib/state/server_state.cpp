@@ -205,6 +205,7 @@ namespace ServerState
 
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
+        object_list->send_to_client(OBJ_TYPE_SLIME, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)
