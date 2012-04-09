@@ -806,6 +806,25 @@ Inventory
 Migrate slimes to entity system
 ====================
 
+April 9
+
+Fix verlet API
+
+Make new mob
+--Object
+--Behaviour
+--Model
+
+This mob:
+A box with a gun
+Points and shoots at player in range
+Wanders paths
+
+--Need target location network system
+
+
+====================
+
 Gun model
 Gun in first person and zoomed perspectives
 

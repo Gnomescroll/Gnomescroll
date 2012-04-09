@@ -23,6 +23,9 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 
 namespace ClientState {
 
+    using Animations::HitscanEffect_list;
+    using Animations::HitscanLaserEffect_list;
+
     class Agent_list* agent_list = NULL;
 
     class ColoredMinivoxList* colored_minivox_list = NULL;
