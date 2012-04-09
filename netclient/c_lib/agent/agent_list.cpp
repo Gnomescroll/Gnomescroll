@@ -248,19 +248,43 @@ check_name_interval(0)
 
 Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
 {
-    int n = STATE::agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
-    if (n == 0) return NULL;
-    STATE::agent_list->sort_filtered_objects_by_distance();
-    return STATE::agent_list->filtered_objects[0];  // TODO -- agent viewers can be returned
+    using STATE::agent_list;
+    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n <= 0) return NULL;
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {   // skip all viewing agents
+        agent = agent_list->filtered_objects[i];
+        if (agent != NULL && agent->status.team != NO_TEAM) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
+    return agent;
 }
 
 Agent_state* random_agent_in_range(const Vec3 position, const float radius)
 {
+    using STATE::agent_list;
     // find nearby players
-    STATE::agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
-    if (STATE::agent_list->n_filtered == 0) return NULL;
+    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n == 0) return NULL;
+    
     // target random nearby player
-    int i = randrange(0, STATE::agent_list->n_filtered-1);
-    Agent_state* agent = STATE::agent_list->filtered_objects[i];
+    int chosen[n];
+    for (int i=0; i<n; i++)
+        chosen[i] = i;
+    shuffle_int_array(chosen, n);  // randomize
+
+    // iterate shuffled ids, looking for a non-viewer agent
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {
+        agent = agent_list->filtered_objects[chosen[i]];
+        if (agent != NULL && agent->status.team != NO_TEAM) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
     return agent;
 }
