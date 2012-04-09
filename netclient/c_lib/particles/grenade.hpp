@@ -4,10 +4,11 @@
 #include <c_lib/agent/client/player_agent.hpp>
 #endif
 
-//#include  <c_lib/particles/textures.hpp>
-
 #include <c_lib/particles/particles.hpp>
 #include <c_lib/particles/billboard_sprite.hpp>
+namespace Particles
+{
+
 
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
@@ -46,6 +47,11 @@ class Grenade: public Particle, public BillboardSprite
         ~Grenade();
 };
 
+}
+
+namespace Particles
+{
+
 #include <c_lib/template/object_list.hpp>
 class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 {
@@ -70,4 +76,6 @@ int get_grenade_damage(Object_types type)
             return GRENADE_SLIME_DAMAGE;
         default: return 0;
     }
+}
+
 }

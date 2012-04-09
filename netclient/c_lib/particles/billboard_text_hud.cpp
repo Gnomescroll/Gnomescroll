@@ -8,6 +8,10 @@
 #include <camera/camera.hpp>
 #include <c_lib/hud/font.hpp>
 
+namespace Particles
+{
+
+
 BillboardTextHud::BillboardTextHud(int id)
 :
 Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
@@ -122,3 +126,4 @@ void BillboardTextHud_list::draw() {
 #endif
 }
 
+}

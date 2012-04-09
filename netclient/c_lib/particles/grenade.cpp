@@ -4,6 +4,7 @@
 #include <c_lib/animations/animations.hpp>
 #include <sound/triggers.hpp>
 #endif
+
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
@@ -15,6 +16,10 @@
 #include <c_lib/particles/_interface.hpp>
 
 /* properties */
+
+namespace Particles
+{
+
 
 const int GRENADE_TTL = 100;
 const float GRENADE_DAMP = 0.5f;
@@ -307,4 +312,6 @@ inline void print_grenade(Grenade *g)
     printf("Vel: %0.2f %0.2f %0.2f\n", g->vp->v.x, g->vp->v.y, g->vp->v.z);
     printf("TTL max: %d\n", g->ttl_max);
     printf("Type: %d\n", g->type);
+}
+
 }

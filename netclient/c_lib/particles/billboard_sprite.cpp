@@ -1,6 +1,9 @@
 
 #include "billboard_sprite.hpp"
 
+namespace Particles
+{
+
 void BillboardSprite::draw(Vec3 v)
 {
     #if DC_CLIENT
@@ -94,3 +97,5 @@ BillboardSprite::BillboardSprite()
 scale(1.0f),
 texture_index(0)
 {}
+
+}

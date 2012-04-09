@@ -40,7 +40,7 @@ void RegisterMessages() {
     Agent_cs_StoC::register_client_packet();
 
     // grenade creation
-    grenade_StoC::register_client_packet();
+    Particles::grenade_StoC::register_client_packet();
 
     // agent took damage indicator
     agent_damage_StoC::register_client_packet();

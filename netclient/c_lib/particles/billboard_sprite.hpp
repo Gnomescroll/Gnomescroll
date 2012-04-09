@@ -1,5 +1,8 @@
 #pragma once
 
+namespace Particles
+{
+
 class BillboardSprite
 {
     public:
@@ -11,3 +14,5 @@ class BillboardSprite
 
         BillboardSprite();
 };
+
+}

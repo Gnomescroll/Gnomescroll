@@ -140,7 +140,7 @@ namespace ServerState
               && obj->get_owner() != agent->id)
                 continue;
 
-            obj->take_damage(get_grenade_damage(state->type));
+            obj->take_damage(Particles::get_grenade_damage(state->type));
             if (obj->did_die() && agent != NULL
               && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
                 coins += get_kill_reward(obj, agent->id, agent->status.team);
@@ -181,7 +181,7 @@ namespace ServerState
 */
         agent_list->update_models(); // sets skeleton
         object_list->tick();
-        grenade_list->tick();
+        Particles::grenade_list->tick();
 
         t_item::tick();
 

@@ -1,5 +1,9 @@
 #pragma once
 
+namespace Particles
+{
+
+
 #define GRENADE_SHRAPNEL_MAX 4096
 #define GRENADE_SHRAPNEL_TTL 20
 #define GRENADE_SHRAPNEL_DAMP 1.0f
@@ -29,3 +33,4 @@ class Grenade_shrapnel_list: public Object_list<Grenade_shrapnel, GRENADE_SHRAPN
         Grenade_shrapnel_list() { print(); }
 };
     
+}

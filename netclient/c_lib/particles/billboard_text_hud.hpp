@@ -3,6 +3,9 @@
 #include <particles/particles.hpp>
 #include <hud/text.hpp>
 
+namespace Particles
+{
+
 #define BILLBOARD_TEXT_HUD_MAX 1024
 #define BILLBOARD_TEXT_HUD_TTL 300
 #define BILLBOARD_TEXT_HUD_TYPE 10
@@ -31,6 +34,9 @@ class BillboardTextHud: public Particle
         BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
+namespace Particles
+{
+
 #include <c_lib/template/object_list.hpp>
 
 class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>
@@ -44,3 +50,4 @@ class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT
         BillboardTextHud_list() { print(); }
 };
 
+}

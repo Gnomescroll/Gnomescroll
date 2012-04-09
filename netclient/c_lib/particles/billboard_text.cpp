@@ -9,6 +9,10 @@
 #include <c_lib/hud/font.hpp>
 #include <c_lib/hud/text.hpp>
 
+namespace Particles
+{
+
+
 static const float DEFAULT_MASS = 1.0;
 
 BillboardText::BillboardText(int id)
@@ -218,3 +222,4 @@ void BillboardText_list::draw()
 #endif
 }
 
+}

@@ -3,6 +3,10 @@
 #include <physics/common.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
+namespace Particles
+{
+
+
 const float GRENADE_SHRAPNEL_MASS = 1.0f;
 
 void Grenade_shrapnel::init()
@@ -87,4 +91,6 @@ void Grenade_shrapnel_list::tick()
         if (a[i]->ttl >= a[i]->ttl_max)
             destroy(a[i]->id);
     }
+}
+
 }

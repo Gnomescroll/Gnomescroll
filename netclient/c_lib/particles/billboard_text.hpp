@@ -8,6 +8,10 @@
 #define BILLBOARD_TEXT_DAMP 0.2f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.2f
 
+namespace Particles
+{
+
+
 const static int BILLBOARD_TEXT_MAX_LETTERS = 12;
 
 class BillboardText: public Particle
@@ -48,3 +52,4 @@ class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
         BillboardText_list() { print(); }
 };
 
+}
