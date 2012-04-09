@@ -73,8 +73,6 @@ void tickRotate(Object* object, float dtheta, float dphi)
 // moves vector from origin to dest by momentum amount
 Vec3 tickMoveToPoint(Vec3 dest, Vec3 origin, Vec3 momentum)
 {
-    printf("mom:");
-    vec3_print(momentum);
     Vec3 direction = vec3_sub(dest, origin);
     normalize_vector(&direction);
     direction = vec3_mult(direction, momentum);             //  apply magnitude to velocity
