@@ -30,6 +30,7 @@ namespace ClientState {
 
     class ColoredMinivoxList* colored_minivox_list = NULL;
 
+    class Voxel_render_list* voxel_render_list;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
     class SpawnerList* spawner_list = NULL;
     class OwnedList* owned_list = NULL;
