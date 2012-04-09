@@ -1,8 +1,13 @@
 #pragma once
 
+#ifdef DC_CLIENT
 #include <c_lib/agent/client/player_agent.hpp>
+#endif
 
 //#include  <c_lib/particles/textures.hpp>
+
+#include <c_lib/particles/particles.hpp>
+#include <c_lib/particles/billboard_sprite.hpp>
 
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;

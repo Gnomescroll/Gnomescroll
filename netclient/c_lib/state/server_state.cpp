@@ -36,8 +36,6 @@ namespace ServerState
         spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
         owned_list = new OwnedList;
         
-        cspray_list = new Cspray_list;
-        grenade_list = new Grenade_list;
         //neutron_list = new Neutron_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
@@ -48,11 +46,6 @@ namespace ServerState
 
     void teardown_lists()
     {
-        delete cspray_list;
-        delete grenade_list;
-        //delete neutron_list;
-        //delete grenade_shrapnel_list;
-
         // voxels
         delete slime_list;
         delete agent_list;
@@ -63,6 +56,7 @@ namespace ServerState
         delete owned_list;
     }
 
+    //move this into interface
     static void init_ctf()
     {
         static int inited = 0;
@@ -75,6 +69,7 @@ namespace ServerState
         ctf->init();
     }
     
+    //move this into interface
     static void teardown_ctf()
     {
         if (ctf != NULL)
@@ -236,6 +231,14 @@ namespace ServerState
         msg.sendToClient(client_id);
     }
 
+    void send_version_to_client(int client_id)
+    {
+        version_StoC msg;
+        msg.version = DC_VERSION;
+        msg.sendToClient(client_id);
+    }
+
+    //move into agent interface
     char* agent_name(int id)
     {
         Agent_state* a = ServerState::agent_list->get(id);
@@ -284,13 +287,6 @@ namespace ServerState
     void revoke_ownership(int agent_id)
     {
         owned_list->transfer_ownership(agent_id, NO_AGENT);
-    }
-
-    void send_version_to_client(int client_id)
-    {
-        version_StoC msg;
-        msg.version = DC_VERSION;
-        msg.sendToClient(client_id);
     }
 
 }

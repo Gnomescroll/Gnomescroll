@@ -22,7 +22,7 @@
 #include <c_lib/particles/_interface.cpp>
 
 #if DC_SERVER
-#include <c_lib/particles/particles/grenade_shrapnel.cpp>
+#include <c_lib/particles/grenade_shrapnel.cpp>
 #endif
 
 #if 0

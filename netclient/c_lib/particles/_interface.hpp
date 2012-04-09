@@ -1,4 +1,4 @@
-#include "interface.hpp"
+#pragma once
 
 
 extern class Cspray_list* cspray_list;
