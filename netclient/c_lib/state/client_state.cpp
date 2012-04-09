@@ -13,7 +13,7 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-//#include <c_lib/particles/particle_lib.hpp>
+#include <c_lib/particles/_interface.hpp>
 
 #if USE_OPENAL
 #include <c_lib/sound/openal.hpp>
@@ -25,15 +25,18 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 
 namespace ClientState {
 
+    using Animations::HitscanEffect_list;
+    using Animations::HitscanLaserEffect_list;
+
     class Agent_list* agent_list = NULL;
 
     class ColoredMinivoxList* colored_minivox_list = NULL;
 
+    class Voxel_render_list* voxel_render_list;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
     class SpawnerList* spawner_list = NULL;
     class OwnedList* owned_list = NULL;
     class SpriteList* sprite_list = NULL;
-    class Monsters::Slime_list* slime_list = NULL;
 
     class GameObject_list* object_list;
 
@@ -195,7 +198,7 @@ namespace ClientState {
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
-        minivox_list->draw_colored();
+        Particles::minivox_list->draw_colored();
         colored_minivox_list->draw();
 
         glEnd();
@@ -205,17 +208,16 @@ namespace ClientState {
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
         glBegin(GL_QUADS);
 
-        minivox_list->draw_textured();
+        Particles::minivox_list->draw_textured();
 
         glEnd();
         glDisable(GL_TEXTURE_2D);
 
         // transparent
-        billboard_text_list->draw();
+        Particles::billboard_text_list->draw();
         
         //begin_transparent_draw();
         //begin_particle_draw();
-        //cspray_list->draw();
         //grenade_list->draw();
         //shrapnel_list->draw();
         //blood_list->draw();

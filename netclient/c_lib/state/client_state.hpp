@@ -28,6 +28,9 @@ class PlayerAgent_state; //forward declaration
 
 namespace ClientState {
 
+    using Animations::HitscanEffect_list;
+    using Animations::HitscanLaserEffect_list;
+
     extern PlayerAgent_state playerAgent_state;
     /* SINGLETONS
      * Make sure to extern declare* in cython_imports

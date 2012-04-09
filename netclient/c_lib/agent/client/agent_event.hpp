@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/particles/billboard_text_hud.hpp>
+
 class Agent_state;
 
 class Agent_event {
@@ -9,7 +11,7 @@ class Agent_event {
         bool first_time_receiving_coins;
     public:
 
-        class BillboardTextHud* bb;
+        class Particles::BillboardTextHud* bb;
         void display_name();
         void hide_name();
 
