@@ -43,7 +43,6 @@ namespace ClientState {
     extern SpriteList* sprite_list;
     extern ColoredMinivoxList* colored_minivox_list;
 
-    extern Monsters::Slime_list* slime_list;
     extern GameObject_list* object_list;
 
     extern Animations::HitscanEffect_list* hitscan_effect_list;

@@ -597,11 +597,6 @@ void key_down_handler(SDL_Event* event)
                     ClientState::playerAgent_state.toggle_camera_mode();
                 break;
 
-            case SDLK_RIGHTBRACKET:
-                if (input_state.debug)
-                    Monsters::test(30);
-                break;
-
             case SDLK_QUOTE:
                 toggle_graphs();
                 break;

@@ -14,7 +14,6 @@ namespace ServerState
     Cspray_list* cspray_list = NULL;
     Grenade_list* grenade_list = NULL;
     //Neutron_list* neutron_list = NULL;
-    Monsters::Slime_list* slime_list = NULL;
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
     SpawnerList* spawner_list = NULL;
@@ -37,7 +36,6 @@ namespace ServerState
         //neutron_list = new Neutron_list;
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
-        slime_list = new Monsters::Slime_list;
         agent_list = new Agent_list;
         object_list = new GameObject_list;
     }
@@ -50,7 +48,6 @@ namespace ServerState
         //delete grenade_shrapnel_list;
 
         // voxels
-        delete slime_list;
         delete agent_list;
         delete object_list;
 
@@ -123,21 +120,11 @@ namespace ServerState
             a->status.apply_damage(dmg, owner, inflictor_type);
         }
 
-        // slimes
-        slime_list->objects_within_sphere(x,y,z,radius);
-        Monsters::Slime* slime;
-        for (i=0; i<slime_list->n_filtered; i++)
-        {
-            slime = slime_list->filtered_objects[i];
-            if (slime == NULL) continue;
-            slime_list->destroy(slime->id);
-        }
-
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
         // Spawners, Turrets etc
-        const int filter_n_types = 2;
-        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER };
+        const int filter_n_types = 3;
+        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER, OBJ_TYPE_SLIME };
         object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
         ObjectPolicyInterface* obj;
         ObjectState* state;
@@ -194,7 +181,6 @@ namespace ServerState
         }
 */
         agent_list->update_models(); // sets skeleton
-        slime_list->update();
         object_list->tick();
         grenade_list->tick();
 
@@ -208,7 +194,6 @@ namespace ServerState
     void send_initial_game_state_to_client(int client_id)
     {
         agent_list->send_to_client(client_id);
-        slime_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
 
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);

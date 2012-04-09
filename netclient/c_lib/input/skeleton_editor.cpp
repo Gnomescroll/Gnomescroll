@@ -132,9 +132,9 @@ void raycast_to_part()
             break;
         case OBJ_TYPE_SLIME:
             vox_dat = &Monsters::slime_vox_dat;
-            obj = ClientState::slime_list->get(id);
+            obj = (Monsters::Slime*)ClientState::object_list->get(OBJ_TYPE_SLIME, id);
             if (obj==NULL) return;
-            vox = ((Monsters::Slime*)obj)->vox;
+            vox = ((Monsters::Slime*)obj)->voxel_properties.vox;
             break;
         case OBJ_TYPE_BASE:
             vox_dat = &base_vox_dat;

@@ -5,7 +5,7 @@
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
-
+#include <c_lib/objects/components/target_acquisition/component.hpp>
 //forward decl
 #if DC_SERVER
 namespace ServerState
@@ -31,24 +31,8 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg);
 
 extern VoxDat turret_vox_dat;
 
-/* TargetAcquistion component */
-// TODO: move to c_lib/components/
-class TargetAcquisitionComponent
-{
-    public:
-        float target_acquisition_probability;
-        Hitscan::AttackerProperties attacker_properties;
-        
-        void acquire_target(
-            int id, Object_types type, int team, float camera_z, Vec3 position,
-            float accuracy_bias, float sight_range,
-            bool attack_enemies, bool attack_random
-        );
-    TargetAcquisitionComponent(){}
-};
-
 typedef ObjectInterface
-< OwnedTeamHealthPositionVoxelState, object_create_owner_team_StoC, object_state_StoC >
+< OwnedTeamHealthPositionChangedState, object_create_owner_team_StoC, object_state_StoC >
 TurretInterface;
 
 class Turret: public TargetAcquisitionComponent, public VoxelComponent, public TurretInterface
@@ -98,8 +82,8 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->voxel_properties.init_draw = true;
             this->voxel_properties.vox_dat = &turret_vox_dat;
 
-            this->position_properties.camera_height = TURRET_CAMERA_HEIGHT;
-            this->position_properties.height = TURRET_HEIGHT;
+            this->spatial_properties.camera_height = TURRET_CAMERA_HEIGHT;
+            this->spatial_properties.height = TURRET_HEIGHT;
         }
 
         ~Turret()
@@ -117,8 +101,8 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
     {
         updateFrozenVox(
             this->voxel_properties.vox, this->get_position(),
-            this->position_properties.theta, this->position_properties.phi,
-            this->position_properties.changed()
+            this->spatial_properties.angles.x, this->spatial_properties.angles.y,
+            this->spatial_properties.changed()
         );
     }
 
@@ -129,7 +113,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
+        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial_properties.angles.x, this->spatial_properties.angles.y);
         this->broadcastCreate();
     }
 

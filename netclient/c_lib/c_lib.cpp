@@ -97,7 +97,6 @@
 #include <c_lib/agent/agent_include.h>
 
 /* Monsters */
-#include <c_lib/monsters/packets.cpp>
 #include <c_lib/monsters/monsters.cpp>
 
 /* Weapons */

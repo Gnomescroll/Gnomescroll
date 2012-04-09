@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/objects/common/interface/state.hpp>
-#include <c_lib/items/packets.hpp>
+#include <c_lib/objects/common/net/packets.hpp>
 
 /* Interface and templates for all objects */
 
@@ -56,6 +56,8 @@ class ObjectPolicyInterface
         virtual Vec3 get_momentum() = 0;
         virtual void set_momentum(float x, float y, float z) = 0;
         virtual float get_height() = 0;
+        virtual Vec3 get_angles() = 0;
+        virtual void set_angles(float theta, float phi, float rho) = 0;
 
     ObjectPolicyInterface() {}
     virtual ~ObjectPolicyInterface()
@@ -93,6 +95,8 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
         Vec3 get_momentum() { return Spatial::get_momentum(); }
         void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
         float get_height() { return Spatial::get_height(); }
+        Vec3 get_angles() { return Spatial::get_angles(); }
+        void set_angles(float theta, float phi, float rho) { return Spatial::set_angles(theta, phi, rho); }
 
     ObjectStateLayer<Owner, Team, Health, Spatial>()
     {
@@ -118,13 +122,13 @@ class ObjectInterface: public StateLayer
         void createMessage(CreateMessage* msg)
         {
             ObjectState* state = this->state();
-            create_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_owner(), this->get_team(), this->get_team_index());
+            create_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles(), this->get_owner(), this->get_team(), this->get_team_index());
         }
 
         void stateMessage(StateMessage* msg)
         {
             ObjectState* state = this->state();
-            state_message(msg, state->id, state->type, this->get_position(), this->get_momentum());
+            state_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles());
         }
         
     public:

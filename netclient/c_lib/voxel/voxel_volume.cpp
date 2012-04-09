@@ -704,21 +704,23 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 
 static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
 {
-    void* obj;
+    using Monsters::Slime;
+    Agent_state* agent;
+    Slime* slime;
     Voxel_volume* vv;
     switch (type)
     {
         case OBJ_TYPE_AGENT:
-            obj = STATE::agent_list->get(id);
-            if (obj == NULL || ((Agent_state*)obj)->vox == NULL) return;
-            vv = ((Agent_state*)obj)->vox->get_part(part);
+            agent = STATE::agent_list->get(id);
+            if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
+            vv = ((Agent_state*)agent)->vox->get_part(part);
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;
         case OBJ_TYPE_SLIME:
-            obj = STATE::slime_list->get(id);
-            if (obj == NULL || ((Monsters::Slime*)obj)->vox == NULL) return;
-            vv = ((Monsters::Slime*)obj)->vox->get_part(part);
+            slime = (Slime*)STATE::object_list->get(OBJ_TYPE_SLIME, id);
+            if (slime == NULL || slime->voxel_properties.vox == NULL) return;
+            vv = slime->voxel_properties.vox->get_part(part);
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;

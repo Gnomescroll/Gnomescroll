@@ -2,6 +2,8 @@
 
 #if DC_CLIENT
 
+#include <c_lib/sound/sound.hpp>
+
 /* Construction */
 
 // forward declarations
@@ -23,9 +25,6 @@ inline void object_create_StoC_model::handle()
         case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
-            break;
-
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
@@ -52,18 +51,32 @@ inline void object_create_momentum_StoC_model::handle()
         case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx,my,mz);
-            break;
-
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx, my, mz);
             break;
             
         default: return;
     }
     if (obj != NULL)
         obj->born();
+}
+
+inline void object_create_momentum_angles_StoC_model::handle()
+{
+    ObjectPolicyInterface* obj = NULL;
+    switch (type)
+    {
+        case OBJ_TYPE_SLIME:
+            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
+            break;
+        default: return;
+    }
+    if (obj != NULL)
+    {
+        obj->set_angles(theta, phi, 0);
+        obj->born();
+    }
 }
 
 inline void object_create_owner_team_StoC_model::handle()
@@ -114,6 +127,25 @@ inline void object_state_momentum_StoC_model::handle()
     switch (type)
     {
         default: break;
+    }
+}
+
+inline void object_state_momentum_angles_StoC_model::handle()
+{
+    ObjectPolicyInterface* obj = NULL;
+    switch (type)
+    {
+        case OBJ_TYPE_SLIME:
+            obj = STATE::object_list->get(OBJ_TYPE_SLIME, id);
+            break;
+            
+        default: break;
+    }
+    if (obj != NULL)
+    {
+        obj->set_position(x,y,z);
+        obj->set_momentum(mx,my,mz);
+        obj->set_angles(theta, phi, rho);
     }
 }
 

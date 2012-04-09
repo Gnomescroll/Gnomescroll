@@ -68,7 +68,7 @@ class SpawnerList: public BehaviourList
 };
 
 typedef ObjectInterface
-< OwnedTeamHealthPositionVoxelState, object_create_owner_team_index_StoC, object_state_StoC >
+< OwnedTeamHealthPositionChangedState, object_create_owner_team_index_StoC, object_state_StoC >
 SpawnerInterface;
 
 class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInterface
@@ -101,7 +101,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         this->voxel_properties.init_draw = true;
         this->voxel_properties.vox_dat = &spawner_vox_dat;
 
-        this->position_properties.height = SPAWNER_HEIGHT;
+        this->spatial_properties.height = SPAWNER_HEIGHT;
     }
 
     ~Spawner()
@@ -119,8 +119,8 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     {
         updateFrozenVox(
             this->voxel_properties.vox, this->get_position(),
-            this->position_properties.theta, this->position_properties.phi,
-            this->position_properties.changed()
+            this->spatial_properties.angles.x, this->spatial_properties.angles.y,
+            this->spatial_properties.changed()
         );
     }
 
@@ -131,7 +131,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->position_properties.theta, this->position_properties.phi);
+        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial_properties.angles.x, this->spatial_properties.angles.y);
         this->broadcastCreate();
     }
 

@@ -106,6 +106,7 @@ const unsigned int NULL_TEAM_INDEX = UINT_MAX;
 const int NULL_HEALTH = INT_MAX;
 const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
 const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
+const Vec3 NULL_ANGLES = vec3_init(0,0,0);
 const float NULL_HEIGHT = 1.0f;
 
 /* provide virtual getters that support all data operations but will return invalid values */
@@ -155,5 +156,10 @@ class SpatialDefault
     { return false; }
     void set_momentum(float mx, float my, float mz)
     {}
-    float get_height() { return NULL_HEIGHT; }
+    float get_height()
+    { return NULL_HEIGHT; }
+    void set_angles(float theta, float phi, float rho)
+    {}
+    Vec3 get_angles()
+    { return NULL_ANGLES; }
 };

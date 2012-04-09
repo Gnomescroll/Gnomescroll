@@ -7,9 +7,6 @@
 #include <c_lib/items/texture.hpp>
 #endif
 
-// packets
-#include <c_lib/items/packets.hpp>
-
 #include <c_lib/items/constants.hpp>
 
 #include <c_lib/items/flag.hpp>

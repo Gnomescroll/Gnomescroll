@@ -7,9 +7,6 @@
 #include <c_lib/items/texture.cpp>
 #endif
 
-// packets
-#include <c_lib/items/packets.cpp>
-
 #include <c_lib/items/flag.cpp>
 #include <c_lib/items/base.cpp>
 #include <c_lib/items/spawner.cpp>
