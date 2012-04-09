@@ -246,6 +246,12 @@ float vec3_distance(struct Vec3 v1, struct Vec3 v2)
     return sqrt((v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z));
 }
 
+static float vec3_distance_squared(struct Vec3 v) __attribute((always_inline));
+float vec3_distance_squared(struct Vec3 v1, struct Vec3 v2)
+{
+    return (v2.x-v1.x)*(v2.x-v1.x) + (v2.y-v1.y)*(v2.y-v1.y) + (v2.z-v1.z)*(v2.z-v1.z);
+}
+
 // Angle from look vector vx,vy,vz to point x,y,z
 static float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2) __attribute((always_inline));
 float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)

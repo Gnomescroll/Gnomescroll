@@ -86,7 +86,7 @@ void Slime::die()
 void Slime::tick()
 {
     #if DC_SERVER
-    this->tick_num++;
+    this->tick_num++;   // TODO -- make this a component
     if (this->spatial_properties.changed)
         this->broadcastState(); // send state packet if state changed
     else if (this->tick_num % network_state_update_interval == 0)

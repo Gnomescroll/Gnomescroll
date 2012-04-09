@@ -5,6 +5,7 @@
 
 const int N_CAMERAS = 2;
 const float CAMERA_VIEW_DISTANCE = 128.0f;
+const float CAMERA_VIEW_DISTANCE_SQUARED = CAMERA_VIEW_DISTANCE*CAMERA_VIEW_DISTANCE;
 
 enum CAMERA_TYPES {
     UNKNOWN_CAM,
@@ -51,8 +52,6 @@ class Camera {
         void toggle_zoom();
         void zoom();
         void unzoom();
-
-        bool in_view(float x, float y, float z);
 
         void copy_state_from(Camera* c);
 

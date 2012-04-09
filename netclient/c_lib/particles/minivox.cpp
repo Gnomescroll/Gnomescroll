@@ -202,28 +202,25 @@ void Minivox::draw_colored() {
 #ifdef DC_CLIENT
 
     // Quit if voxel is completely transparent
-    if(this->a == 0) return;
-    //if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
+    if (this->a == 0) return;
 
     const float
         x0 = this->vp->p.x,
         y0 = this->vp->p.y,
         z0 = this->vp->p.z;
 
-    if( point_fulstrum_test(x0, y0, z0) == false ) return;
-
-    //if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
+    if (point_fulstrum_test(x0, y0, z0) == false) return;
 
     glColor3ub(this->r, this->g, this->b);
 
     // fill vertex buffer
     int i,j;
-    for(i=0; i<8; i++) {
+    for (i=0; i<8; i++) {
         v_buffer[3*i+0] = v_set[3*i+0]*vec_x.x + v_set[3*i+1]*vec_y.x + v_set[3*i+2]*vec_z.x;
         v_buffer[3*i+1] = v_set[3*i+0]*vec_x.y + v_set[3*i+1]*vec_y.y + v_set[3*i+2]*vec_z.y;
         v_buffer[3*i+2] = v_set[3*i+0]*vec_x.z + v_set[3*i+1]*vec_y.z + v_set[3*i+2]*vec_z.z;
     }
-    for(i=0; i<6; i++) {
+    for (i=0; i<6; i++) {
         for(j=0; j<4; j++) {
             s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
             s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
@@ -232,7 +229,7 @@ void Minivox::draw_colored() {
     }
 
     // draw voxel
-    for(i=0; i<6; i++) {
+    for (i=0; i<6; i++) {
         glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
         glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
         glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
@@ -245,8 +242,6 @@ void Minivox::draw_colored() {
 void Minivox::draw_textured() {
 #ifdef DC_CLIENT
     if(this->a == 0) return;
-    //if (current_camera == NULL || !current_camera->in_view(this->vp->p.x, this->vp->p.y, this->vp->p.z)) return;
-
 
     const float
         x0 = this->vp->p.x,

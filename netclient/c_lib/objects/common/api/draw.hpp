@@ -12,10 +12,6 @@ void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_sc
 {
     #if DC_CLIENT
     position.z += texture_scale;
-    
-    if (current_camera == NULL
-    || !current_camera->in_view(position.x, position.y, position.z))
-        return; // TODO: necessary?
 
     if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return; // fulstrum check
@@ -57,14 +53,7 @@ void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_sc
 
 void drawMinivox(Vec3 position, Vec3 forward, Vec3 right, Vec3 normal, float xy_offset, Color color)
 {
-    // TODO -- merge current_camera->in_view and fulstrum test or make their calls clearer
-    // in_view does radial distance
-    
     #if DC_CLIENT
-    if (current_camera == NULL
-    || !current_camera->in_view(position.x, position.y, position.z))
-        return; // radial distance check
-
     const float
         x0 = position.x,
         y0 = position.y,

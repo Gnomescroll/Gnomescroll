@@ -37,8 +37,7 @@ void end_particle_draw()
 void BillboardSprite::draw(Vec3 v)
 {
     #if DC_CLIENT
-    if (current_camera == NULL
-    || !current_camera->in_view(v.x, v.y, v.z))
+    if (point_fulstrum_test(v.x, v.y, v.z) == false)
         return;
 
     Vec3 up = vec3_init(
@@ -83,8 +82,7 @@ void BillboardSprite::draw_from_bottom(Vec3 v)
     //v.z += this->scale / 2;
     v.z += this->scale;
     
-    if (current_camera == NULL
-    || !current_camera->in_view(v.x, v.y, v.z))
+    if (point_fulstrum_test(v.x, v.y, v.z) == false)
         return;
 
     Vec3 up = vec3_init(
