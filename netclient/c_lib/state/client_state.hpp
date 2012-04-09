@@ -31,6 +31,9 @@ namespace ClientState {
     /* SINGLETONS
      * Make sure to extern declare* in cython_imports
      *          */
+
+    extern class Agent_list* agent_list;
+
     extern class  ColoredMinivoxList* colored_minivox_list;
 
     //  property lists

@@ -28,6 +28,7 @@ class BillboardTextHud_list* billboard_text_hud_list = NULL;
 #endif
 
 #if DC_SERVER
+#include <c_lib/particles/grenade_shrapnel.hpp>
 class Grenade_shrapnel_list* grenade_shrapnel_list = NULL;
 #endif
 
