@@ -13,6 +13,7 @@
 #include "./particles/minivox.cpp"
 #include "./particles/billboard_text.cpp"
 #include "./particles/billboard_text_hud.cpp"
+#include "./particles/billboard_sprite.cpp"
 #endif
 
 #include "./particles/grenade.cpp"
@@ -22,7 +23,7 @@
 #include "./particles/grenade_shrapnel.cpp"
 #endif
 
-
+#if 0
 
 /* objects */
 #include "./particles/particles.hpp"
@@ -43,4 +44,5 @@
 
 #if DC_SERVER
 #include "./particles/grenade_shrapnel.hpp"
+#endif
 #endif
