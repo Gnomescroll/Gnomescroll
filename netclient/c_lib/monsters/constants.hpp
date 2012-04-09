@@ -10,5 +10,8 @@ enum SLIME_BODY_PARTS {
 };
 const float SLIME_CAMERA_HEIGHT = 0.7f;
 const float SLIME_HEIGHT = 1.0f;
+const float SLIME_EXPLOSION_RADIUS = 4.0f;
+const int SLIME_EXPLOSION_DAMAGE = 35;
+
 
 } // Monsters

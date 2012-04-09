@@ -18,6 +18,9 @@ void Slime::load_data(int id)
 
     this->_state.coin_rule = COINS_ANYONE;
 
+    this->_state.explosion_radius = SLIME_EXPLOSION_RADIUS;
+    this->_state.explosion_damage = SLIME_EXPLOSION_DAMAGE;
+
     this->voxel_properties.init_hitscan = true;
     this->voxel_properties.init_draw = true;
     this->voxel_properties.vox_dat = &slime_vox_dat;
@@ -51,7 +54,8 @@ void Slime::born()
 
 void Slime::die()
 {
-    //ObjectState* state = this->state();
+    ObjectState* state = this->state();
+    Vec3 position = this->get_position();
 
     // drop items
     #if DC_SERVER   // TODO -- make this a die behaviour
@@ -80,7 +84,7 @@ void Slime::die()
     }
     #endif
 
-    //dieExplode(state, position);    // TODO -- dieExplode that doesnt require team
+    dieExplode(state, position);    // TODO -- dieExplode that doesnt require team
     this->broadcastDeath();
 }
 

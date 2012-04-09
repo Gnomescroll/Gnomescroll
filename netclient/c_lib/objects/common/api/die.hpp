@@ -30,6 +30,18 @@ namespace ClientState
 
 /* die behaviours */
 
+void dieExplode(ObjectState* state, Vec3 position)
+{
+    #if DC_SERVER
+    ServerState::damage_objects_within_sphere(
+        position.x, position.y, position.z,
+        state->explosion_radius, state->explosion_damage, NO_AGENT,
+        state->type, state->id,
+        state->suicidal
+    );
+    #endif
+}
+
 void dieExplode(ObjectState* state, Vec3 position, int owner)
 {
     #if DC_SERVER
