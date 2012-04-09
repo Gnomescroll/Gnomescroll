@@ -21,7 +21,6 @@ class Cspray_list* cspray_list = NULL;
 class Grenade_list* grenade_list = NULL;
 class Shrapnel_list* shrapnel_list = NULL;
 class Blood_list* blood_list = NULL;
-//Neutron_list* neutron_list = NULL;
 class Minivox_list* minivox_list = NULL;
 class BillboardText_list* billboard_text_list = NULL;
 class BillboardTextHud_list* billboard_text_hud_list = NULL;
@@ -66,7 +65,11 @@ void tear_down_particles()
 #endif
 
 #ifdef DC_CLIENT
-
+    delete shrapnel_list;
+    delete blood_list;
+    delete minivox_list;
+    delete billboard_text_list;
+    delete billboard_text_hud_list;
 #endif
 
 }

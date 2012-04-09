@@ -26,7 +26,7 @@ namespace ClientState {
     class Agent_list* agent_list = NULL;
 
     class ColoredMinivoxList* colored_minivox_list = NULL;
-    
+
     class Voxel_render_list* voxel_render_list = NULL;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
     class SpawnerList* spawner_list = NULL;
@@ -102,23 +102,6 @@ namespace ClientState {
         //colored_minivox_list->print();
         delete colored_minivox_list;
 
-        // particles
-        //cspray_list->print();
-        delete cspray_list;
-        //grenade_list->print();
-        delete grenade_list;
-        //shrapnel_list->print();
-        delete shrapnel_list;
-        //blood_list->print();
-        delete blood_list;
-        //delete neutron_list;
-        //minivox_list->print();
-        delete minivox_list;
-        //billboard_text_list->print();
-        delete billboard_text_list;
-        //billboard_text_hud_list->print();
-        delete billboard_text_hud_list;
-        //hitscan_effect_list->print();
         delete hitscan_effect_list;
         //hitscan_laser_effect_list->print();
         delete hitscan_laser_effect_list;
