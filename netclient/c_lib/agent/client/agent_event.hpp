@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef DC_CLIENT
-
-#include <c_lib/particles/billboard_text_hud.hpp>
-
 class Agent_state;
 
 class Agent_event {
@@ -13,7 +9,7 @@ class Agent_event {
         bool first_time_receiving_coins;
     public:
 
-        BillboardTextHud* bb;
+        class BillboardTextHud* bb;
         void display_name();
         void hide_name();
 
@@ -53,5 +49,3 @@ class Agent_event {
         explicit Agent_event(Agent_state* owner);
         ~Agent_event();
 };
-
-#endif

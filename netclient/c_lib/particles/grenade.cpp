@@ -15,7 +15,9 @@
 
 #include <c_lib/particles/_interface.hpp>
 
+#include <net_lib/net.hpp>
 /* properties */
+
 
 namespace Particles
 {
@@ -34,7 +36,6 @@ const float GRENADE_MASS = 0.5f;
  *  Networking; spawn packet from server to client
  */
 
-#include <net_lib/net.hpp>
 
 class grenade_StoC: public FixedSizeNetPacketToClient<grenade_StoC>
 {

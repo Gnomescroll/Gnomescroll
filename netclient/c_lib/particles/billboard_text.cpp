@@ -190,7 +190,12 @@ void BillboardText::draw()
 #endif    
 }
 
+}
+
 /* BillboardText list */
+
+namespace Particles
+{
 
 void BillboardText_list::tick()
 {

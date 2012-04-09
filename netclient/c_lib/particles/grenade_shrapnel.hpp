@@ -21,7 +21,13 @@ class Grenade_shrapnel: public Particle
         Grenade_shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
+}
+
 #include <c_lib/template/object_list.hpp>
+
+namespace Particles
+{
+
 
 class Grenade_shrapnel_list: public Object_list<Grenade_shrapnel, GRENADE_SHRAPNEL_MAX>
 {

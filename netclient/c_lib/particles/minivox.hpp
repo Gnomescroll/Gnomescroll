@@ -60,7 +60,12 @@ class Minivox: public Particle
         Minivox(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
+}
+
 #include <c_lib/template/object_list.hpp>
+
+namespace Particles
+{
 
 class Minivox_list: public Object_list<Minivox, MINIVOX_MAX>
 {

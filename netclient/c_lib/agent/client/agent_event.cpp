@@ -1,12 +1,15 @@
 #include "agent_event.hpp"
 
-#ifdef DC_CLIENT
+#include <c_lib/particles/billboard_text_hud.hpp>
+
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/sound/triggers.hpp>
 #include <chat/client.hpp>
 #include <hud/map.hpp>
+
+#include <c_lib/particles/billboard_text_hud.hpp>
 
 void Agent_event::name_changed(char* old_name)
 {
@@ -455,5 +458,3 @@ r(0),g(0),b(0),
 first_time_receiving_coins(true),
 bb(NULL)
 {}
-
-#endif

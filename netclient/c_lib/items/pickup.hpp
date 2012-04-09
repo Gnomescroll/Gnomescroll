@@ -7,6 +7,11 @@
 #include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/objects/components/sprite/sprite.hpp>
 
+#include <c_lib/items/constants.hpp>
+
+
+using namespace ItemDrops;
+
 //forward decl
 #if DC_CLIENT
 namespace ClientState

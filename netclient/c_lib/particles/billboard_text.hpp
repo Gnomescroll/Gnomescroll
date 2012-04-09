@@ -39,7 +39,12 @@ class BillboardText: public Particle
         BillboardText(int id, float x, float y, float z, float mx, float my, float mz);
 };
 
+}
+
 #include <c_lib/template/object_list.hpp>
+
+namespace Particles
+{
 
 class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
 {

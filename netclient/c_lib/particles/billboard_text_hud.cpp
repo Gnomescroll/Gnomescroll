@@ -96,8 +96,12 @@ void BillboardTextHud::draw()
     #endif
 }
 
+}
 
 /* BillboardTextHud list */
+
+namespace Particles
+{
 
 void BillboardTextHud_list::tick() {
     for (int i=0; i<n_max; i++)

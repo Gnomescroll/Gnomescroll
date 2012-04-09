@@ -14,14 +14,15 @@
 #include <c_lib/hud/text.hpp>
 */
 
-#include <c_lib/animations/hitscan.hpp>
-#include <c_lib/animations/hitscan_laser.hpp>
-
 #include <c_lib/items/items.hpp>
 #include <c_lib/monsters/monsters.hpp>
 
 #include <c_lib/game/ctf.hpp>
 //#include <c_lib/particles/particle_lib.hpp>
+
+//move
+#include <c_lib/animations/hitscan.hpp>
+#include <c_lib/animations/hitscan_laser.hpp>
 
 class PlayerAgent_state; //forward declaration
 
@@ -46,8 +47,12 @@ namespace ClientState {
 
     extern class  GameObject_list* object_list;
 
-    extern class  Animations::HitscanEffect_list* hitscan_effect_list;
-    extern class  Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
+    //move into class
+    //extern class  Animations::HitscanEffect_list* hitscan_effect_list;
+    //extern class  Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
+
+    extern class  HitscanEffect_list* hitscan_effect_list;
+    extern class  HitscanLaserEffect_list* hitscan_laser_effect_list;   
 
     extern class  CTF* ctf;
 

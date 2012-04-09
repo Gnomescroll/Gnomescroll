@@ -80,7 +80,12 @@ void Grenade_shrapnel::tick()
     }
 }
 
+}
+
 /* Grenade_shrapnel list */
+
+namespace Particles
+{
 
 void Grenade_shrapnel_list::tick()
 {

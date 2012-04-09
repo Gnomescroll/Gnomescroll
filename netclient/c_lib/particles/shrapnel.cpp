@@ -37,7 +37,12 @@ void Shrapnel::tick()
     ttl++;
 }
 
+}
+
 /* Shrapnel list */
+
+namespace Particles
+{
 
 void Shrapnel_list::tick()
 {
