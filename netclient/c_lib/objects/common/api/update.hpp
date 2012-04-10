@@ -56,7 +56,7 @@ void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
         vox->set_draw(true);
         vox->set_hitscan(true);
     }
-    if (state_changed)
+    if (state_changed || input_state.skeleton_editor)
     {   // TODO : voxel accepts Vec3 angles
         vox->update(position.x, position.y, position.z, angles.x, angles.y);
     }
