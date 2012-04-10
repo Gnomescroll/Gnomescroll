@@ -78,13 +78,7 @@ class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<ass
             pack_u8(&agent_id, buff, buff_n, pack);
             pack_u16(&inventory_id, buff, buff_n, pack);
         }
-        inline void handle()
-        {
-            #ifdef DC_CLIENT
-            
-            
-            #endif
-        }
+        inline void handle();
 };
 
 

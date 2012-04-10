@@ -2,6 +2,14 @@
 
 
 
+#ifdef DC_CLIENT
+#include <c_lib/t_item/client/_interface.hpp>
+#endif
+
+#ifdef DC_SERVER
+#include <c_lib/t_item/server/_interface.hpp>
+#endif
+
 namespace t_item
 {
 
