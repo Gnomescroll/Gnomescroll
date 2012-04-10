@@ -5,6 +5,8 @@
 #ifdef DC_CLIENT
 #include <c_lib/t_item/_interface.hpp>
 
+#include <c_lib/animations/insect_mob.hpp>
+
 //#include <c_lib/t_item/client/_interface.hpp>
 #endif
 
@@ -26,6 +28,8 @@ inline void free_item_create_StoC::handle()
     //printf("creating %d\n", id);
     // create item via list
     t_item::free_item_list->create(id, x,y,z,mx,my,mz);
+
+    Animations::set_insect_position(x,y,z);
 }
 
 inline void free_item_destroy_StoC::handle()
@@ -45,6 +49,7 @@ inline void assign_agent_inventory_StoC::handle()
     ItemContainer* ic = item_container_list->create(inventory_id);
     ic->init_agent_inventory();
 
+    t_item::player_inventory = ic;
 }
 
 
