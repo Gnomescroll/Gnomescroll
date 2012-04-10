@@ -15,16 +15,12 @@ def reset_seed(int seed):
     _set_seed(seed)
 
 ## net stuff
-cdef extern from "./net_lib/host.hpp":
-#    void init_net_server(int a, int b, int c, int d, int port)
-    void server_dispatch_network_events()
+cdef extern from "./net_lib/host.hpp" namespace "NetServer":
+    void dispatch_network_events()
     void flush_to_net()
 
-#def NetServerInit(int a=0, int b=0, int c=0, int d=0, int port=0):
-#    init_net_server(a,b,c,d,port)
-
 def NetServerDispatchNetworkEvents():
-    server_dispatch_network_events()
+    dispatch_network_events()
 
 def NetServerFlushToNet():
     flush_to_net()
