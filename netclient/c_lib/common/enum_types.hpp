@@ -48,8 +48,8 @@ typedef enum
 } AgentDeathMethod;
 
 
-#define COST_SPAWNER 5
-#define COST_TURRET 2
+const int COST_SPAWNER = 5;
+const int COST_TURRET = 2;
 
 unsigned int get_object_cost(Object_types obj)
 {
