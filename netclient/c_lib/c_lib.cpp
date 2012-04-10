@@ -37,8 +37,7 @@
 #include <c_lib/common/logger.cpp>
 
 // time
-#include <c_lib/time/physics_timer.c>
-#include <c_lib/time/frame_rate_limiter.cpp>
+#include <c_lib/common/time/physics_timer.cpp>
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vec3.hpp>

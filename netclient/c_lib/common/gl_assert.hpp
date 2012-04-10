@@ -14,7 +14,7 @@ GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particles/minivox.cpp, li
 
 #define GL_ASSERT_DEBUG 1
 
-bool gl_assert(GLenum flag)
+bool _gl_assert(GLenum flag)
 {
 	GLboolean value;
 	glGetBooleanv(flag, &value);
@@ -29,11 +29,13 @@ bool gl_assert(GLenum flag)
 	}
 }
 
-
-#if GL_ASSERT_DEBUG
-	#define GL_ASSERT(flag, truth) \
-	if(gl_assert(flag) !=  truth) \
-	fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
+/*
+	Disable in production
+*/
+#if PRODUCTION
+	#define GL_ASSERT(flag) ;
 #else
-#define GL_ASSERT(flag) ;
+	#define GL_ASSERT(flag, truth) \
+	if(_gl_assert(flag) !=  truth) \
+	fprintf (stderr, "GL_ASSERT error: %s, line %d \n", __FILE__, __LINE__);
 #endif

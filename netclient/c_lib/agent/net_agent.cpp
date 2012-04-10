@@ -9,7 +9,7 @@
 #include <c_lib/items/inventory/inventory.hpp>
 
 #ifdef DC_CLIENT
-#include <c_lib/time/physics_timer.h>
+#include <c_lib/common/time/physics_timer.hpp>
 #include <c_lib/chat/client.hpp>
 #endif
 

@@ -8,41 +8,16 @@
 #include <c_lib/camera/skybox/skybox.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <net_lib/host.hpp>
-#include <c_lib/time/physics_timer.h>
+#include <c_lib/common/time/physics_timer.hpp>
 #include <c_lib/t_map/t_vbo.hpp>
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>
 
-#include <c_lib/time/frame_rate_limiter.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
 
 //#include <c_lib/t_mech/draw.hpp>
 
 bool _quit = false;
-
-/*
-    #define INTERCEPT_CTRL_C 1
-    #define GRACEFULL_CTRL_C_SHUTDOWN 0
-    #ifdef linux
-        #include <signal.h>
-    #include <pthread.h>
-        void intHandler(int dummy=0) 
-        {
-        #if GRACEFULL_CTRL_C_SHUTDOWN
-            _quit = true;
-        #else
-            printf("Attempting Force Close\n");
-            abort();
-        #endif
-        }
-    #endif
-
-    #if INTERCEPT_CTRL_C
-        #ifdef linux
-            signal(SIGINT, intHandler);
-        #endif
-    #endif
-*/
 
 namespace Main
 {
@@ -166,8 +141,10 @@ int run()
         world_projection();
 
         // draw map
-        t_map::draw_map();
         poll_mouse();
+
+        t_map::draw_map();
+
         
         poll_mouse();
 
@@ -178,6 +155,10 @@ int run()
         t_mech::draw();
         t_item::draw();
 
+        poll_mouse();
+
+        Skybox::draw();
+
         begin_transparent_draw();
         begin_item_draw();
         ClientState::sprite_list->draw();
@@ -187,12 +168,9 @@ int run()
         Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
-        
         end_transparent_draw();
 
-
-        Skybox::draw();
-
+        poll_mouse();
         // draw animations
         Animations::animations_draw();  //transparency stuff
 
@@ -212,33 +190,31 @@ int run()
 
         // update sound
         Sound::update();
+
+        poll_mouse();
+
         // update client_state
         ClientState::update();
-
-        // flip sdl
-        //frame_left(); //swap every 15 ms?
-
-        //frame_graph->frame_flip_start();
 
         frame_graph->frame_stage(3); //map and voxel updates
 
         //time_since(-1);
+        poll_mouse();
         t_map::update_map();
-        //time_since(1);
+        poll_mouse();
+
         ClientState::voxel_render_list->update();
-        //time_since(2);
+        poll_mouse();
 
         frame_graph->frame_stage(4); //swap buffers
 
+        poll_mouse();
         _swap_buffers();
-        
+        poll_mouse();
+
         frame_graph->frame_wait_stage(5); //wait stage
 
-        //frame_left(); //swap every 15 ms?
-
-        /*
-            Sample input during wait!!
-        */
+        poll_mouse();
         frame_graph->frame_end(6); //stage 3
 
         // do fps calculation

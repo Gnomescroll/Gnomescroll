@@ -1,7 +1,5 @@
 #pragma once
 
-#include <net_lib/common/type_pack.h>
-
 typedef void (*pt2handler)(char*, int, int*, int);
 
 void init_message_handler();

@@ -151,40 +151,28 @@ void Vbo_map::draw_map()
     prep_draw();
     sort_draw();
 
+    //GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_TEXTURE_2D);
 
     glUseProgramObjectARB(map_shader[0]);
 
 
-
     glColor3b(255,255,255);
-
-    //glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-    
-    glShadeModel(GL_SMOOTH);
-
-    glEnable (GL_DEPTH_TEST);   //needed?
 
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
 
-    //glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_COLOR_ARRAY);
-
     glEnableVertexAttribArray(map_Vertex);
     glEnableVertexAttribArray(map_TexCoord);
     glEnableVertexAttribArray(map_RGB);
-    //glEnableVertexAttribArray(map_Normal);
-
     glEnableVertexAttribArray(map_LightMatrix);
 
-    //printf("mapshader= %i  texture= %i \n", map_shader[0], terrain_map_glsl );
-    
-    //printf("%i = \n", map_TexCoord);
 
     struct Map_vbo* vbo;
-
-    glEnable(GL_CULL_FACE);
 
     glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
@@ -197,37 +185,15 @@ void Vbo_map::draw_map()
             //printf("t_vbo_draw.cpp:117 no blocks\n");
             continue; 
         } 
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo->vbo_id);
-        
-
-        //glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
-        //glVertexPointer(3, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)0);
-
-        //_chunk_position[0] = vbo->xoff;
-        //_chunk_position[1] = vbo->xoff;
-
-        //glUniform3fv(map_ChunkPosition, 1, (GLfloat*) _chunk_position );
-
-        //printf("%i \n", map_ChunkPosition);
 
         glUniform3f(map_ChunkPosition, vbo->xoff, vbo->yoff, 0.0f);
-        //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
-
-        //printf("xoff,yoff= %f %f \n", vbo->xoff, vbo->yoff);
- 
-
 
         glVertexAttribPointer(map_Vertex, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)0);    
-
         glVertexAttribPointer(map_TexCoord, 3, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)4);
-
         glVertexAttribPointer(map_RGB, 3, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)8);
-        //glVertexAttribPointer(map_Normal, 1, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Vertex), (GLvoid*)9);
-
         glVertexAttribPointer(map_LightMatrix, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Vertex), (GLvoid*)12);
-        //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Vertex), (GLvoid*)24);
-        //glVertexAttribPointer(map_TexCoord, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex), (GLvoid*)12);
-
 
         glDrawArrays(GL_QUADS,0, vbo->_v_num[0]);
     }
@@ -235,16 +201,14 @@ void Vbo_map::draw_map()
     glDisableVertexAttribArray(map_Vertex);
     glDisableVertexAttribArray(map_TexCoord);
     glDisableVertexAttribArray(map_RGB);
-    //glDisableVertexAttribArray(map_Normal);
-
     glDisableVertexAttribArray(map_LightMatrix);
-
-    //glDisableClientState(GL_VERTEX_ARRAY);
-    //glDisableClientState(GL_COLOR_ARRAY);
 
     glUseProgramObjectARB(0);
 
-    //if(T_MAP_BACKUP_SHADER == 1) glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
+
+    glShadeModel(GL_FLAT);
+    glDisable(GL_CULL_FACE);
 }
 
 void Vbo_map::draw_map_comptability()
@@ -254,20 +218,17 @@ void Vbo_map::draw_map_comptability()
     prep_draw();
     sort_draw();
 
-    glUseProgramObjectARB(map_shader[0]);
+    //GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+
+    glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_CULL_FACE);
 
 
     glColor3b(255,255,255);
 
-    //glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
-
-    glShadeModel(GL_SMOOTH);
-
-    glEnable (GL_DEPTH_TEST);   //needed?
-    glEnable(GL_CULL_FACE);
-
-    glEnable(GL_TEXTURE_2D);
+    glUseProgramObjectARB(map_shader[0]);
 
     glBindTexture( GL_TEXTURE_2D, block_textures_compatibility );
 
@@ -275,8 +236,6 @@ void Vbo_map::draw_map_comptability()
     glEnableVertexAttribArray(map_TexCoord);
     glEnableVertexAttribArray(map_RGB);
     glEnableVertexAttribArray(map_LightMatrix);
-
-
 
     struct Map_vbo* vbo;
 
@@ -315,7 +274,9 @@ void Vbo_map::draw_map_comptability()
 
 
     //glEnable(GL_TEXTURE_2D);
+    glShadeModel(GL_FLAT);
     glDisable(GL_CULL_FACE);
+
 }
 
 }

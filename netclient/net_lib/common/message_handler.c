@@ -1,6 +1,8 @@
 
 #include "message_handler.h"
 
+#include <net_lib/common/type_pack.h>
+
 #include <net_lib/global.hpp>
 
 static int h_client_packet_size[256]; 
