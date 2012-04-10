@@ -143,16 +143,7 @@
 #include <c_lib/t_mech/draw.cpp>
 
 /* items */
-
-#include <c_lib/t_item/free_item.cpp>
-#include <c_lib/t_item/interface.cpp>
-#include <c_lib/t_item/item_container.cpp>
-#include <c_lib/t_item/item.cpp>
-
-#include <c_lib/t_item/sprite.cpp>
-
-#include <c_lib/t_item/net/CtoS.cpp>
-#include <c_lib/t_item/net/StoC.cpp>
+#include <c_lib/t_item/_include.hpp>
 
 /* camera */
 #include <c_lib/camera/camera.cpp>
