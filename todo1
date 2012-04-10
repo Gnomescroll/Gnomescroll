@@ -808,12 +808,7 @@ Migrate slimes to entity system
 
 April 9
 
-Fix verlet API
-
-Make new mob
---Object
---Behaviour
---Model
+updated verlet api
 
 This mob:
 A box with a gun

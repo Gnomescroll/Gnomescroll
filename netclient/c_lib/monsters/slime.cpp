@@ -16,7 +16,6 @@ VoxDat slime_vox_dat;
 void Slime::load_data(int id)
 {
     this->_state.id = id;
-    this->_state.type = OBJ_TYPE_SLIME;
 
     this->_state.coin_rule = COINS_ANYONE;
 
@@ -37,8 +36,7 @@ void Slime::load_data(int id)
 
     // TODO -- make this a base property
     // momentum should not be used this way (can be overwriiten, is only init etc)
-    const float tick_speed = 0.25f;
-    this->set_momentum(tick_speed, tick_speed, tick_speed);
+    this->set_momentum(SLIME_SPEED, SLIME_SPEED, SLIME_SPEED);
 }
 
 Slime::Slime(int id)
@@ -77,7 +75,7 @@ void Slime::die()
     ObjectState* state = this->state();
     Vec3 position = this->get_position();
     
-    slimeDropItem(this->get_position());
+    slimeDropItem(position);
     dieExplode(state, position);
     this->broadcastDeath();
     #endif
