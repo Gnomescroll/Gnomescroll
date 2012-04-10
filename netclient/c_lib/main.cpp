@@ -8,7 +8,7 @@
 #include <c_lib/camera/skybox/skybox.hpp>
 #include <c_lib/animations/animations.hpp>
 #include <net_lib/host.hpp>
-#include <c_lib/time/physics_timer.h>
+#include <c_lib/common/time/physics_timer.hpp>
 #include <c_lib/t_map/t_vbo.hpp>
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>

@@ -8,7 +8,7 @@
 #include <c_lib/ray_trace/ray_trace.hpp>
 #include <c_lib/sound/sound.hpp>
 
-#include <c_lib/time/physics_timer.h>
+#include <c_lib/common/time/physics_timer.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/input/handlers.hpp>
 
