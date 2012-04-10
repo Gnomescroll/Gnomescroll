@@ -25,13 +25,16 @@
 #include <net_lib/global.cpp>
 
 #include <net_lib/common/net_peer.cpp>
-#include <net_lib/common/net_peer_manager.cpp>
 #include <net_lib/common/packet_buffer.cpp>
 #include <net_lib/common/message_handler.c>
 #include <net_lib/common/net_time.c>
 
 #include <net_lib/net.cpp>
 #include <net_lib/common/packet_id_counter.cpp>
+
+#ifdef DC_SERVER
+#include <net_lib/common/net_peer_manager.cpp>
+#endif
 
 #ifdef DC_CLIENT
 #include <net_lib/common/pviz.c>

@@ -192,7 +192,7 @@ namespace ServerState
         object_list->send_to_client(OBJ_TYPE_INVENTORY, client_id);
     }
 
-    //move into agent interface
+    //move somewhere
     char* agent_name(int id)
     {
         Agent_state* a = ServerState::agent_list->get(id);
@@ -203,6 +203,7 @@ namespace ServerState
         return a->status.name;
     }
 
+    //move somewhere
     void send_disconnect_notice(int client_id)
     {
         Agent_state* a = NetServer::agents[client_id];

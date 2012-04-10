@@ -103,6 +103,8 @@ void shutdown_net_client()
     enet_host_destroy(client_host);
 }
 
+#ifdef DC_CLIENT
+
 namespace NetClient
 {
 
@@ -260,7 +262,9 @@ void client_dispatch_network_events()
         }
     }
 }
+#endif
 
+#ifdef DC_SERVER
 
 namespace NetServer
 {
@@ -428,6 +432,7 @@ void server_dispatch_network_events()
         }
     }
 }
+#endif
 
 void flush_to_net()
 {
@@ -442,6 +447,5 @@ void flush_to_net()
         NetServer::pool[i]->flush_to_net();
     }
 #endif
-
 
 }
