@@ -98,7 +98,8 @@ float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
 void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
 {
     Vec3 direction = vec3_sub(dest, origin);
-    Vec3 direction_cached = vec3_copy(direction);
+    normalize_vector(&direction);
+    float z = direction.z;
     direction.z = 0;
     normalize_vector(&direction);
 
@@ -107,21 +108,7 @@ void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
     //t += 0.50f; //off by 90 degrees
     *theta = t;
 
-    direction_cached.y = 0;
-    normalize_vector(&direction_cached);
-    if (direction_cached.x < 0) direction_cached.x *= -1;
-    t = acos(direction_cached.x) / 3.14159f;
-    if (direction_cached.z < 0) t = -t;
-
-    //if (t > 0.5f)
-        //t += -0.5f;
-    //else if (t < -0.5f)
-        //t += 0.5f;
-
-    //if (t < -0.5f) t += 1;
-    //if (t > 0.5f) t -= 1;
-    //if (t < 0) t += 1;
-    //if (t > 1) t -= 1;
-    t += 0.50f;
+    t = asin(z) / 3.14159f;
+    t += 0.5f;
     *phi = t;
 }
