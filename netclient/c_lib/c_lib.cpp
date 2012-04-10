@@ -239,7 +239,7 @@ int init_c_lib() {
     t_item::draw_init();
 
     t_mech::draw_init();
-    t_mech::state_init();
+    //t_mech::state_init();
 
     Particles::init_particles();
 
@@ -289,7 +289,7 @@ void close_c_lib() {
     t_item::draw_teardown();
 
     t_mech::draw_teardown();
-    t_mech::state_teardown();
+    //t_mech::state_teardown();
 
     Particles::teardown_particles();
 
