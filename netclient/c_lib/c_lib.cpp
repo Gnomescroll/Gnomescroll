@@ -38,7 +38,6 @@
 
 // time
 #include <c_lib/time/physics_timer.c>
-#include <c_lib/time/frame_rate_limiter.cpp>
 
 /* Vectors, Ray Tracers, Physics */
 #include <c_lib/physics/vec3.hpp>

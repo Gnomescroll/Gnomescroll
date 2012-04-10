@@ -13,36 +13,11 @@
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>
 
-#include <c_lib/time/frame_rate_limiter.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
 
 //#include <c_lib/t_mech/draw.hpp>
 
 bool _quit = false;
-
-/*
-    #define INTERCEPT_CTRL_C 1
-    #define GRACEFULL_CTRL_C_SHUTDOWN 0
-    #ifdef linux
-        #include <signal.h>
-    #include <pthread.h>
-        void intHandler(int dummy=0) 
-        {
-        #if GRACEFULL_CTRL_C_SHUTDOWN
-            _quit = true;
-        #else
-            printf("Attempting Force Close\n");
-            abort();
-        #endif
-        }
-    #endif
-
-    #if INTERCEPT_CTRL_C
-        #ifdef linux
-            signal(SIGINT, intHandler);
-        #endif
-    #endif
-*/
 
 namespace Main
 {

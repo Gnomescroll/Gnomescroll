@@ -137,7 +137,6 @@ void block_spawn_items(int block_value, int x, int y, int z)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    int block_value = get(x,y,z);
     int res = apply_damage(x,y,z, dmg);
     if (res != 0) return;
 
@@ -149,13 +148,27 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 1
+#if 0
+    int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else
+    const float mom = 2.0f;
+
     float p = randf();
     if (p < 0.3)
     {
-        //(randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+        float _x = (float)x + 0.5f + randf()/3;
+        float _y = (float)y + 0.5f + randf()/3;
+        float _z = (float)z + 0.05f; 
+    /*
+        t_item::create_free_item(0, 
+            x+0.5f+randf(), y+0.5f+randf(), z+0.5f+randf(), 
+            (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+    */
+        t_item::create_free_item(0, 
+            _x, _y, _z, 
+            (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+
     }
 #endif
 

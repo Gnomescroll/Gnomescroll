@@ -126,7 +126,7 @@ class FrameGraph
             while( (FRAME_RATE_THOTTLE_TARGET - (_GET_MS_TIME() - timer[index][0])) > 0 )
             {
                 poll_mouse();
-                usleep(500); //half a millisecond
+                usleep(1000); //one millisecond
             }
         }
     }

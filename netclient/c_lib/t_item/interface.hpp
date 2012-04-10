@@ -18,7 +18,9 @@ void draw();
 
 void check_item_pickups();
 
-void create_free_item(int id, float f, float y, float z, float vx, float vy, float vz);
+void create_free_item(int item_type, 
+	float x, float y, float z,
+ float vx, float vy, float vz);
 
 
 }
