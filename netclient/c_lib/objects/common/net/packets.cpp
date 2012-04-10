@@ -140,7 +140,7 @@ inline void object_state_momentum_angles_StoC_model::handle()
     {
         case OBJ_TYPE_SLIME:
         case OBJ_TYPE_MONSTER_BOX:
-            obj = STATE::object_list->get(type, id);
+            obj = STATE::object_list->get((Object_types)type, id);
             break;
             
         default: break;

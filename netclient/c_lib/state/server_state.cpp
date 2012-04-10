@@ -122,8 +122,8 @@ namespace ServerState
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
         // Spawners, Turrets etc
-        const int filter_n_types = 3;
-        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER, OBJ_TYPE_SLIME };
+        const int filter_n_types = 4;
+        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER, OBJ_TYPE_SLIME, OBJ_TYPE_MONSTER_BOX };
         object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
         ObjectPolicyInterface* obj;
         ObjectState* state;
@@ -203,6 +203,7 @@ namespace ServerState
         object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
         object_list->send_to_client(OBJ_TYPE_SLIME, client_id);
+        object_list->send_to_client(OBJ_TYPE_MONSTER_BOX, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)

@@ -88,6 +88,14 @@ void reset_part()
     vox->reset_skeleton();   
 }
 
+// use this macro in a case label to get correct type cast
+#define GET_VOX_STUFF(TYPE) \
+obj = ClientState::object_list->get(type, id); \
+if (obj==NULL) return; \
+vox = ((TYPE*)obj)->voxel_properties.vox; \
+vox_dat = ((TYPE*)obj)->voxel_properties.vox_dat; \
+break;
+
 void raycast_to_part()
 {
     // get camera vector
@@ -130,12 +138,6 @@ void raycast_to_part()
             if (obj==NULL) return;
             vox = ((Agent_state*)obj)->vox;
             break;
-        case OBJ_TYPE_SLIME:
-            vox_dat = &Monsters::slime_vox_dat;
-            obj = (Monsters::Slime*)ClientState::object_list->get(OBJ_TYPE_SLIME, id);
-            if (obj==NULL) return;
-            vox = ((Monsters::Slime*)obj)->voxel_properties.vox;
-            break;
         case OBJ_TYPE_BASE:
             vox_dat = &base_vox_dat;
             obj = ClientState::ctf->get_base(id+1);
@@ -150,12 +152,13 @@ void raycast_to_part()
             break;
 
         case OBJ_TYPE_SPAWNER:
+            GET_VOX_STUFF(Spawner)
         case OBJ_TYPE_TURRET:
-            obj = ClientState::object_list->get(type, id);
-            if (obj==NULL) return;
-            vox = ((VoxelComponent*)obj)->voxel_properties.vox;
-            vox_dat = ((VoxelComponent*)obj)->voxel_properties.vox_dat; // pray this cast works. dont feel like adding to the virtual interface just for this
-            break;
+            GET_VOX_STUFF(Turret)
+        case OBJ_TYPE_SLIME:
+            GET_VOX_STUFF(Monsters::Slime)
+        case OBJ_TYPE_MONSTER_BOX:
+            GET_VOX_STUFF(Monsters::Box)
 
         default:
             printf("Skeleton_editor -- raycast_to_part() -- unhandled obj type %d\n", type);
@@ -166,6 +169,7 @@ void raycast_to_part()
     vp = vox_dat->vox_part[part];
 }
 
+#undef GET_VOX_STUFF
 
 /* Skeleton nodes */
 

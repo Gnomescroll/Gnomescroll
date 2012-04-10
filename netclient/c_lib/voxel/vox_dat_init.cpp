@@ -14,6 +14,7 @@ void init_vox_dats()
     read_skeleton((char*)"./media/voxel/saves/dead.skeleton", &agent_vox_dat_dead);
     //read_skeleton((char*)"./media/voxel/slime.skeleton", &Monsters::slime_vox_dat);
     read_skeleton((char*)"./media/voxel/bomb.skeleton", &Monsters::slime_vox_dat);
+    read_skeleton((char*)"./media/voxel/robot_box.skeleton", &Monsters::box_vox_dat);
     //read_skeleton((char*)"./media/voxel/flag.skeleton", &flag_vox_dat);
     read_skeleton((char*)"./media/voxel/dbag_flag.skeleton", &flag_vox_dat);
     read_skeleton((char*)"./media/voxel/base.skeleton", &base_vox_dat);
