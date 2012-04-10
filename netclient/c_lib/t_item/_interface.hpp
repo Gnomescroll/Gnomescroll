@@ -33,6 +33,7 @@ CLIENT
 namespace t_item
 {
 	extern int player_inventory_id;
+    extern class ItemContainer* player_inventory;
 
 }
 

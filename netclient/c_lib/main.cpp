@@ -74,7 +74,7 @@ int run()
         frame_graph->frame_start();
 
         // update mouse
-        poll_mouse();
+        poll_mouse(); 
         
         // physics loop
         int physics_ticks = 0;
@@ -94,7 +94,7 @@ int run()
             Animations::animations_tick();
             
             // tick client state
-            ClientState::tick();
+            ClientState::tick(); 
 
             t_item::tick();
 
@@ -144,6 +144,7 @@ int run()
 
         t_map::draw_map();
 
+        Animations::draw_insect();
         
         poll_mouse();
 

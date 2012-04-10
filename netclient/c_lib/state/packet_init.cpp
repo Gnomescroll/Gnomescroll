@@ -193,6 +193,10 @@ void RegisterMessages() {
     t_item::free_item_destroy_StoC::register_client_packet();
     t_item::free_item_picked_up_StoC::register_client_packet();
 
+    t_item::assign_agent_inventory_StoC::register_client_packet();
+
+    /* init phase */
+
     request_remaining_state_CtoS::register_server_packet();
 
     // inventory

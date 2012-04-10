@@ -142,10 +142,7 @@ void teardown()
 
 void draw()
 {
-	//printf("drwa\n");
-
-	if (current_camera == NULL) return;
-
+	assert(current_camera != NULL);
 
     /*
 		Optimize where GL BLEND APPEARS this appears
@@ -192,7 +189,7 @@ void draw()
 		v.y = s.y + cy;
 		v.z = s.z + cz;
 
-		if(!point_fulstrum_test(v.x, v.y, v.z)) continue;
+		if(point_fulstrum_test2(v.x, v.y, v.z) == false) continue;
 
 	    Vec3 up = vec3_init(
 	        model_view_matrix[0]*scale,

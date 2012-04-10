@@ -15,6 +15,8 @@ Free_item_list* free_item_list = NULL;
 ItemContainerList* item_container_list = NULL;
 ItemList* item_list = NULL;
 
+int AgentInventoryList[256];
+
 void state_init()
 {
     if (free_item_list != NULL)
@@ -25,6 +27,8 @@ void state_init()
     free_item_list = new Free_item_list;
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
+
+    for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
 }
 
 void state_teardown()
@@ -53,7 +57,9 @@ CLIENT
 
 namespace t_item
 {
-    int player_inventory_id = 0xffff;
+    int player_inventory_id = 0xffff;   //store id of player inventory
+
+    class ItemContainer* player_inventory = NULL;
 
 
 }
@@ -69,7 +75,6 @@ namespace t_item
 {
 
 //const int NO_AGENT = 0xffff;
-int AgentInventoryList[256] = {NO_AGENT};
 
 
 void create_agent_inventory(int agent_id, int client_id)
@@ -78,6 +83,7 @@ void create_agent_inventory(int agent_id, int client_id)
     ic->init_agent_inventory();
 
     assert(AgentInventoryList[agent_id] == NO_AGENT);
+    assert((agent_id < 255) && (agent_id > 0));
 
     AgentInventoryList[agent_id] = ic->id;
     
@@ -88,6 +94,8 @@ void create_agent_inventory(int agent_id, int client_id)
     p.inventory_id = ic->id;
     p.agent_id = agent_id;
     p.sendToClient(client_id);
+
+    printf("Sending inventory to client %i \n", client_id);
 }
 
 void delete_agent_inventory(int agent_id)

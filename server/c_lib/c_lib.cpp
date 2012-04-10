@@ -116,7 +116,7 @@
 //(size_t) sysconf(_SC_PAGESIZE);
 
 int init_c_lib()
-{
+{ 
     static int inited = 0;
     if (inited++)
     {
@@ -144,7 +144,7 @@ int init_c_lib()
     t_item::state_init();
 
     return 0;
-}
+} 
 
 void close_c_lib()
 {
@@ -158,7 +158,7 @@ void close_c_lib()
     ServerState::teardown();
     Particles::teardown_particles();
 
-    printf("Server closed\n");
+    printf("Server closed\n"); 
     Log::teardown();
 }
 

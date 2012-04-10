@@ -105,9 +105,7 @@
 #include <c_lib/weapons/packets.cpp>
 
 /* animations */
-#include <c_lib/animations/animations.cpp>
-#include <c_lib/animations/hitscan.cpp>
-#include <c_lib/animations/hitscan_laser.cpp>
+#include <c_lib/animations/_include.hpp>
 
 /* Profiling */
 
@@ -261,6 +259,7 @@ int init_c_lib() {
     init_vox_dats();
     init_voxel_volume();
     
+
     init_network();
     NetClient::init_net_client();
     
@@ -275,6 +274,8 @@ int init_c_lib() {
     
     Animations::init_hitscan();
     Animations::init_hitscan_laser();
+    
+    Animations::init_insect_mob();
     
     return 0;
 }
