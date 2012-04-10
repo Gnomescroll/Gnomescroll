@@ -6,6 +6,10 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
+#include <c_lib/items/turret.hpp>
+#include <c_lib/items/spawner.hpp>
+#include <c_lib/monsters/box.hpp>
+
 /* Construction */
 
 // forward declarations
@@ -183,6 +187,10 @@ inline void object_shot_object_StoC::handle()
 {
     switch (this->type)
     {
+        case OBJ_TYPE_MONSTER_BOX:
+            Monsters::box_shot_object(this);
+            break;
+            
         case OBJ_TYPE_TURRET:
             turret_shot_object(this);
             break;
@@ -210,7 +218,7 @@ inline void object_shot_nothing_StoC::handle()
         case OBJ_TYPE_TURRET:
             turret_shot_nothing(this);
             break;
-            
+
         default:break;
     }
 }

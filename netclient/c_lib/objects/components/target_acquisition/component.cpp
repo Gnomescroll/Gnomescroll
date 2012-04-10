@@ -6,7 +6,7 @@ void TargetAcquisitionComponent::acquire_target(
     int id, Object_types type, int team, float camera_z, Vec3 position,
     float accuracy_bias, float sight_range,
     bool attack_enemies, bool attack_random
-) {
+) {    
     // lock on agent
     Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
     Vec3 firing_direction;
@@ -16,7 +16,7 @@ void TargetAcquisitionComponent::acquire_target(
         attack_enemies, attack_random
     );
     if (agent == NULL) return;
-    
+
     // normalize and bias vector
     normalize_vector(&firing_direction);
     if (accuracy_bias)   // apply bias

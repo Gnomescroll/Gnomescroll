@@ -28,6 +28,8 @@ Agent_state* lock_agent_target(
     }
     if (!agent_list->n_filtered) return NULL;
 
+    //printf("found %d agents in range\n", agent_list->n_filtered);
+
     int chosen[agent_list->n_filtered];
     if (random)
     {

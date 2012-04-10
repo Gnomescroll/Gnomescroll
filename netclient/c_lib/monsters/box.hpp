@@ -16,8 +16,9 @@ namespace Monsters {
 
 extern VoxDat box_vox_dat;
 
+void box_shot_object(object_shot_object_StoC* msg);
 
-class Box: public VoxelComponent, public MonsterInterface
+class Box: public VoxelComponent, public TargetAcquisitionComponent, public MonsterInterface
 {
     public:
 
@@ -30,6 +31,7 @@ class Box: public VoxelComponent, public MonsterInterface
         // wander randomly (TODO: network model with destinations)
 
         // if see agent, stop, lock target (todo -- target lock)
+        tickTargetAcquisition(this->state(), this, this->camera_z());
 
         // TODO -- aggro component
 
@@ -87,6 +89,22 @@ class Box: public VoxelComponent, public MonsterInterface
         this->_state.motion_proximity_radius = BOX_MOTION_PROXIMITY_RADIUS;
 
         // todo -- firing rate / properties
+        this->_state.fire_rate_limit = BOX_FIRE_RATE;
+        this->_state.accuracy_bias = BOX_ACCURACY_BIAS;
+        this->_state.sight_range = BOX_SIGHT_RANGE;
+        this->_state.attack_enemies = BOX_ATTACK_ONLY_ENEMIES;    // TODO change attack_enemies to attack_only_enemies
+        this->_state.attack_random = BOX_ATTACK_RANDOM;
+
+        // target acquisition stuff
+        this->attacker_properties.id = id;
+        this->attacker_properties.type = OBJ_TYPE_MONSTER_BOX;
+        this->attacker_properties.agent_protection_duration = AGENT_BOX_PROTECTION_DURATION;
+        this->attacker_properties.agent_damage = BOX_AGENT_DAMAGE;
+        this->attacker_properties.block_damage = BOX_TERRAIN_DAMAGE;
+        this->attacker_properties.voxel_damage_radius = BOX_VOXEL_DAMAGE_RADIUS;
+        this->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
+        this->target_acquisition_probability = BOX_TARGET_LOCK_CHANGE;
+
 
         this->voxel_properties.init_hitscan = true;
         this->voxel_properties.init_draw = true;
