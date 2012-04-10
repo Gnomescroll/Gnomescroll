@@ -92,30 +92,7 @@ float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
 
 //  x- and y-angle (theta,phi) rotation between two Vec3s
 void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
-{   // TODO -- this may be incorrect
-    //Vec3 direction = vec3_sub(dest, origin);
-    //float z = direction.z;
-    //direction.z = 0;
-
-    ////Vec3 unit = vec3_init(1,0,0);
-    //normalize_vector(&direction);
-
-    //*theta = acos(vec3_dot(direction, vec3_init(1,0,0)));
-    //*theta /= 3.14159;
-
-    //if (*theta > 1.0f)
-        //*theta -= 2.0f;
-    //else if (*theta < -1.0f)
-        //*theta += 2.0f;
-
-    
-    //direction.z = z;
-    //direction.y = 0;
-    //normalize_vector(&direction);
-    ////*phi = acos(direction.x) / 2;//(3.14158);
-    //*phi = 0.0;
-
-
+{
     float x = dest.x - origin.x;
     float y = dest.y - origin.y;
 
@@ -126,7 +103,7 @@ void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
     y /= _l;
 
     float _x = 1.0;
-    float _y = 0.0;
+    float _y = 0.0; 
 
     float t = acos(_x*x + _y*y) / 3.141519;
     if ((_x*y - _y*y) < 0) t = -t;
