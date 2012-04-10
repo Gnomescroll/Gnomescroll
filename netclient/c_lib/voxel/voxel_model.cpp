@@ -110,8 +110,7 @@ void Voxel_model::update_skeleton()
 
 void Voxel_model::draw_skeleton()
 {
-#if DC_CLIENT
-
+    #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
     glShadeModel(GL_SMOOTH);
 
@@ -213,7 +212,7 @@ void Voxel_model::draw_skeleton()
     glLineWidth(1.0f);
 
     glShadeModel(GL_FLAT);
-#endif
+    #endif
 }
 
 void Voxel_model::init_skeleton()

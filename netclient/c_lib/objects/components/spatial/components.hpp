@@ -42,12 +42,16 @@ class PositionComponent
         {
             return this->spatial_properties.angles;
         }
-        void set_angles(float theta, float phi, float rho)
-        {   // TODO -- euler vector
+        bool set_angles(float theta, float phi, float rho)
+        {
+            if (position_is_equal(this->spatial_properties.angles, theta, phi, rho))
+                return false;
             this->spatial_properties.angles.x = theta;
             this->spatial_properties.angles.y = phi;
             this->spatial_properties.angles.z = rho;
+            return true;
         }
+
         
     PositionComponent()
     {
@@ -94,12 +98,16 @@ class PositionMomentumComponent
         {
             return this->spatial_properties.angles;
         }
-        void set_angles(float theta, float phi, float rho)
+        bool set_angles(float theta, float phi, float rho)
         {
+            if (position_is_equal(this->spatial_properties.angles, theta, phi, rho))
+                return false;
             this->spatial_properties.angles.x = theta;
             this->spatial_properties.angles.y = phi;
             this->spatial_properties.angles.z = rho;
+            return true;
         }
+
 
     PositionMomentumComponent()
     {
@@ -120,10 +128,7 @@ class PositionChangedComponent
         bool set_position(float x, float y, float z)
         {
             if (position_is_equal(this->spatial_properties.position, x,y,z))
-            {
-                this->spatial_properties.set_changed(false);
                 return false;
-            }
             this->spatial_properties.position.x = x;
             this->spatial_properties.position.y = y;
             this->spatial_properties.position.z = z;
@@ -141,11 +146,16 @@ class PositionChangedComponent
         {
             return this->spatial_properties.angles;
         }
-        void set_angles(float theta, float phi, float rho)
+        bool set_angles(float theta, float phi, float rho)
         {
+            if (position_is_equal(this->spatial_properties.angles, theta, phi, rho))
+                return false;
             this->spatial_properties.angles.x = theta;
             this->spatial_properties.angles.y = phi;
             this->spatial_properties.angles.z = rho;
+
+            this->spatial_properties.set_changed(true);
+            return true;
         }
 
         Vec3 get_momentum()
@@ -177,10 +187,7 @@ class PositionMomentumChangedComponent
         bool set_position(float x, float y, float z)
         {
             if (position_is_equal(this->spatial_properties.position, x,y,z))
-            {
-                this->spatial_properties.set_changed(false);
                 return false;
-            }
             this->spatial_properties.position.x = x;
             this->spatial_properties.position.y = y;
             this->spatial_properties.position.z = z;
@@ -210,11 +217,16 @@ class PositionMomentumChangedComponent
         {
             return this->spatial_properties.angles;
         }
-        void set_angles(float theta, float phi, float rho)
+        bool set_angles(float theta, float phi, float rho)
         {
+            if (position_is_equal(this->spatial_properties.angles, theta, phi, rho))
+                return false;
             this->spatial_properties.angles.x = theta;
             this->spatial_properties.angles.y = phi;
             this->spatial_properties.angles.z = rho;
+
+            this->spatial_properties.set_changed(true);
+            return true;
         }
 
         /* Additional specialization */

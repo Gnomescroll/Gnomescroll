@@ -6,6 +6,10 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
+#include <c_lib/items/turret.hpp>
+#include <c_lib/items/spawner.hpp>
+#include <c_lib/monsters/box.hpp>
+
 /* Construction */
 
 // forward declarations
@@ -70,6 +74,7 @@ inline void object_create_momentum_angles_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_SLIME:
+        case OBJ_TYPE_MONSTER_BOX:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
             break;
         default: return;
@@ -138,7 +143,8 @@ inline void object_state_momentum_angles_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_SLIME:
-            obj = STATE::object_list->get(OBJ_TYPE_SLIME, id);
+        case OBJ_TYPE_MONSTER_BOX:
+            obj = STATE::object_list->get((Object_types)type, id);
             break;
             
         default: break;
@@ -181,6 +187,10 @@ inline void object_shot_object_StoC::handle()
 {
     switch (this->type)
     {
+        case OBJ_TYPE_MONSTER_BOX:
+            Monsters::box_shot_object(this);
+            break;
+            
         case OBJ_TYPE_TURRET:
             turret_shot_object(this);
             break;
@@ -208,7 +218,7 @@ inline void object_shot_nothing_StoC::handle()
         case OBJ_TYPE_TURRET:
             turret_shot_nothing(this);
             break;
-            
+
         default:break;
     }
 }

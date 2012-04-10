@@ -96,7 +96,7 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
         void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
         float get_height() { return Spatial::get_height(); }
         Vec3 get_angles() { return Spatial::get_angles(); }
-        void set_angles(float theta, float phi, float rho) { return Spatial::set_angles(theta, phi, rho); }
+        void set_angles(float theta, float phi, float rho) { /* todo: return bool */ Spatial::set_angles(theta, phi, rho); }
 
     ObjectStateLayer<Owner, Team, Health, Spatial>()
     {

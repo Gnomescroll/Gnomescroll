@@ -35,6 +35,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     system_message->object_created(t);
 }
 
+// TODO - some way to generalize this
 void turret_shot_object(object_shot_object_StoC* msg)
 {
     if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects

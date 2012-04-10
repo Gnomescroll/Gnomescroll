@@ -45,17 +45,23 @@ void tickStayOnGround(ObjectState* state, Object* object)
 }
 
 template <class Object>
-void tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
+Agent_state* tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
 {
     #if DC_SERVER
+    Agent_state* agent = NULL;
     if (state->fire_tick % state->fire_rate_limit == 0)
-        object->acquire_target(
+        agent = object->acquire_target(
             state->id, state->type, object->get_team(), camera_z,
             object->get_position(),
             state->accuracy_bias, state->sight_range,
             state->attack_enemies, state->attack_random
         );
     state->fire_tick++;
+    return agent;
+    #endif
+
+    #if DC_CLIENT
+    return NULL;
     #endif
 }
 
@@ -82,4 +88,40 @@ float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
     direction.z = 0;
     normalize_vector(&direction);
     return acos(direction.x);
+}
+
+//  x- and y-angle (theta,phi) rotation between two Vec3s
+void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
+{   // TODO -- this may be incorrect
+    //Vec3 direction = vec3_sub(dest, origin);
+    //float z = direction.z;
+    //direction.z = 0;
+
+    ////Vec3 unit = vec3_init(1,0,0);
+    //normalize_vector(&direction);
+
+    //*theta = acos(vec3_dot(direction, vec3_init(1,0,0)));
+    //*theta /= 3.14159;
+
+    //if (*theta > 1.0f)
+        //*theta -= 2.0f;
+    //else if (*theta < -1.0f)
+        //*theta += 2.0f;
+
+    
+    //direction.z = z;
+    //direction.y = 0;
+    //normalize_vector(&direction);
+    ////*phi = acos(direction.x) / 2;//(3.14158);
+    //*phi = 0.0;
+
+    float x = dest.x - origin.x;
+    float y = dest.y - origin.y;
+
+    float _l = sqrt(x*x + y*y);
+    x /= _l;
+    y /= _l;
+
+    *theta = atan(y) / 3.14159;
+    *phi = 0;
 }

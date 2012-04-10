@@ -25,7 +25,8 @@ typedef enum TerrainModificationAction
     TMA_APPLIER,
     TMA_GRENADE,
     TMA_LASER,
-    TMA_TURRET
+    TMA_TURRET,
+    TMA_MONSTER_BOX
 } TerrainModificationAction;
  
 void init_t_map() GNOMESCROLL_API;

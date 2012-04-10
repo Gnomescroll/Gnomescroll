@@ -153,12 +153,16 @@ void slimeDropItem(Vec3 position)
 
 void populate_slimes(int n_max)
 {   // regenerates slimes up to a maximum
-    int n_slimes = STATE::object_list->get_object_count(OBJ_TYPE_SLIME);
+    //#define TYPE Slime
+    //Object_types type = OBJ_TYPE_SLIME;
+    #define TYPE Box
+    Object_types type = OBJ_TYPE_MONSTER_BOX;
+    int n_slimes = STATE::object_list->get_object_count(type);
     n_max -= n_slimes;
     //printf("Creating %d slimes\n", n_max);
     if (n_max <= 0) return;
     int x,y,z;
-    Slime* s;
+    TYPE* s;
     for (int i=0; i<n_max; i++)
     {
         x = randrange(0,map_dim.x-1);
@@ -169,10 +173,11 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (Slime*)STATE::object_list->create(OBJ_TYPE_SLIME, x+0.5, y+0.5, z);
+        s = (TYPE*)STATE::object_list->create(type, x+0.5, y+0.5, z);
         if (s != NULL)
             s->born();
     }
+    #undef TYPE
 }
 
 }   // Monsters

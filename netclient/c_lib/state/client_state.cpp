@@ -132,7 +132,7 @@ namespace ClientState {
     void update()
     {
         ctf->update();
-        object_list->update();
+        //object_list->update();
 
         if (playerAgent_state.you != NULL)
             HudMap::update_team(playerAgent_state.you->status.team);
@@ -176,6 +176,7 @@ namespace ClientState {
     {
         // voxels
         agent_list->update_models();
+        object_list->update();  // model updates
         voxel_render_list->draw();
 
         // quads

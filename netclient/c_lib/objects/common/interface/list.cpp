@@ -256,6 +256,9 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_SLIME:
             obj = new Monsters::Slime(id);
             break;
+        case OBJ_TYPE_MONSTER_BOX:
+            obj = new Monsters::Box(id);
+            break;
             
         default: return NULL;
     }
@@ -374,5 +377,6 @@ void init_gameobject_list_maximums(GameObject_list* list)
 
     // mobs
     list->set_max_occupancy(OBJ_TYPE_SLIME, Monsters::SLIME_MAX);
+    list->set_max_occupancy(OBJ_TYPE_MONSTER_BOX, Monsters::BOX_MAX);
 
 }
