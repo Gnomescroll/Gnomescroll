@@ -3,12 +3,12 @@
 #include <c_lib/physics/common.hpp>
 #include <c_lib/physics/verlet.hpp>
 
-using Verlet::VerletParticle;
+#include <c_lib/objects/components/spatial/components.hpp>
 
 namespace Particles
 {
 
-class Particle
+class Particle: public VerletComponent
 {
     public:
         int id;
@@ -17,12 +17,8 @@ class Particle
         int type;
         float damp;
 
-        VerletParticle* vp;
-
         void set_ttl(int ttl);
-        void set_mass(float mass);
         Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
-        ~Particle();
 };
 
 class EventParticle: public Particle

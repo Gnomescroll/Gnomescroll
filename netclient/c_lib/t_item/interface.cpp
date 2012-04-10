@@ -57,7 +57,7 @@ void create_free_item(int id, float x, float y, float z, float vx, float vy, flo
     
     Free_item* f = free_item_list->create();
     if(f == NULL) return;
-    f->vp.init_state(x,y,z, vx,vy,vz);
+    f->set_state(x,y,z,vx,vy,vz);
 
     class free_item_create_StoC p;
 

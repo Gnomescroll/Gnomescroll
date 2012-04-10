@@ -106,8 +106,9 @@ owner(-1)
 Grenade::~Grenade()
 {
     #if DC_CLIENT
+    Vec3 position = this->get_position();
     Sound::grenade_explode(
-        this->vp->p.x, this->vp->p.y, this->vp->p.z,
+        position.x, position.y, position.z,
         0,0,0
     );
     #endif
@@ -117,13 +118,14 @@ Grenade::~Grenade()
 void Grenade::broadcast()
 {
     grenade_StoC msg;
-    msg.x = this->vp->p.x;
-    msg.y = this->vp->p.y;
-    msg.z = this->vp->p.z;
-    Vec3 mom = this->vp->get_momentum();
-    msg.mx = mom.x;
-    msg.my = mom.y;
-    msg.mz = mom.z;
+    Vec3 position = this->get_position();
+    msg.x = position.x;
+    msg.y = position.y;
+    msg.z = position.z;
+    Vec3 momentum = this->get_momentum();
+    msg.mx = momentum.x;
+    msg.my = momentum.y;
+    msg.mz = momentum.z;
     msg.ttl_max = this->ttl_max;
     msg.owner = this->owner;
     msg.type = this->type;
@@ -134,15 +136,16 @@ void Grenade::broadcast()
 void Grenade::tick()
 {
 
-    bool bounced = Verlet::bounce(this->vp, GRENADE_DAMP);
+    bool bounced = this->verlet_bounce(GRENADE_DAMP);
     if (bounced)
     {
         bounce_count++;
         #if DC_CLIENT
+        Vec3 position = this->get_position();
         Sound::grenade_bounce(
-            this->vp->p.x,
-            this->vp->p.y,
-            this->vp->p.z,
+            position.x,
+            position.y,
+            position.z,
             0,0,0
         );
         #endif
@@ -189,16 +192,17 @@ void Grenade::tick()
 
 void Grenade::explode()
 {
-#if DC_CLIENT
-    Animations::grenade_explode(this->vp->p.x, this->vp->p.y, this->vp->p.z);
-#endif
+    Vec3 position = this->get_position();
+    #if DC_CLIENT
+    Animations::grenade_explode(position.x, position.y, position.z);
+    #endif
 
-#if DC_SERVER
+    #if DC_SERVER
     // this has to be called before damage_blocks(), unless you want the blast to go through blocks AND hit players newly exposed
 
     // leave this for other objects, but agents are damaged by shrapnel now
     ServerState::damage_objects_within_sphere(
-        this->vp->p.x, this->vp->p.y, this->vp->p.z,
+        position.x, position.y, position.z,
         GRENADE_DAMAGE_RADIUS,
         GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE, this->id
     );
@@ -214,7 +218,7 @@ void Grenade::explode()
     //{
         //cv = vec3_scalar_mult(gvset[i], vel);
         //g = ServerState::grenade_shrapnel_list->create(
-            //this->vp->p.x, this->vp->p.y, this->vp->p.z,
+            //position.x, position.y, position.z,
             //cv.x, cv.y, cv.z
         //);
         //if (g == NULL) break;
@@ -223,7 +227,7 @@ void Grenade::explode()
     
     // apply block damage
     damage_blocks();
-#endif
+    #endif
 }
 
 int Grenade::block_damage(int dist)
@@ -238,19 +242,15 @@ int Grenade::block_damage(int dist)
 void Grenade::damage_blocks()
 {
 #if DC_SERVER
-    const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
     using t_map::apply_damage_broadcast;
-    
-    float x = this->vp->p.x;
-    float y = this->vp->p.y;
-    float z = this->vp->p.z;
+    const t_map::TerrainModificationAction action = t_map::TMA_GRENADE;
 
+    Vec3 position = this->get_position();
+    int mx = (int)position.x;
+    int my = (int)position.y;
+    int mz = (int)position.z;
+    
     int ir = GRENADE_BLOCK_DESTROY_RADIUS;
-
-    int mx = (int)x;
-    int my = (int)y;
-    int mz = (int)z;
-    
     int bx,by,bz;
     int dmg=0;
     for (int i=0; i<ir; i++)
@@ -301,18 +301,8 @@ void Grenade_list::draw()
     if (num <= 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
-            a[i]->draw(a[i]->vp->p);
+            a[i]->draw(a[i]->get_position());
 #endif
-}
-
-inline void print_grenade(Grenade *g)
-{
-    printf("Print Grenade -\n");
-    printf("ID: %d\n", g->id);
-    printf("Pos: %0.2f %0.2f %0.2f\n", g->vp->p.x, g->vp->p.y, g->vp->p.z);
-    printf("Vel: %0.2f %0.2f %0.2f\n", g->vp->v.x, g->vp->v.y, g->vp->v.z);
-    printf("TTL max: %d\n", g->ttl_max);
-    printf("Type: %d\n", g->type);
 }
 
 }

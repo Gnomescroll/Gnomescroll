@@ -33,7 +33,7 @@ BillboardSprite()
 
 void Shrapnel::tick()
 {
-    Verlet::bounce(this->vp, SHRAPNEL_DAMP);
+    this->verlet_bounce(SHRAPNEL_DAMP);
     ttl++;
 }
 
@@ -61,7 +61,7 @@ void Shrapnel_list::draw()
     if(num == 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)
-            a[i]->draw(a[i]->vp->p);
+            a[i]->draw(a[i]->get_position());
 #endif
 }
 

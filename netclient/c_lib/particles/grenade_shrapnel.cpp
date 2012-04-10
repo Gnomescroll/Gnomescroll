@@ -44,8 +44,8 @@ void Grenade_shrapnel::tick()
             return;
         }
         j++;
-        voxel_hit = ServerState::voxel_hitscan_list->point_collision(this->vp->p, &target);
-        Verlet::bounce(this->vp, GRENADE_SHRAPNEL_DAMP);
+        voxel_hit = ServerState::voxel_hitscan_list->point_collision(this->get_position(), &target);
+        this->verlet_bounce(GRENADE_SHRAPNEL_DAMP);
 
         if (!voxel_hit) continue;
         if (target.entity_type != OBJ_TYPE_AGENT)

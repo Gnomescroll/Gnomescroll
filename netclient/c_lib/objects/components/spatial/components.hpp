@@ -33,7 +33,7 @@ class PositionComponent
 
         Vec3 get_momentum()
         { return NULL_MOMENTUM; }
-        void set_momentum(float x, float y, float z)
+        void set_momentum(float mx, float my, float mz)
         {}
         float get_height()
         { return NULL_HEIGHT; }
@@ -80,11 +80,11 @@ class PositionMomentumComponent
             return this->spatial_properties.momentum;
         }
 
-        void set_momentum(float x, float y, float z)
+        void set_momentum(float mx, float my, float mz)
         {
-            this->spatial_properties.momentum.x = x;
-            this->spatial_properties.momentum.y = y;
-            this->spatial_properties.momentum.z = z;
+            this->spatial_properties.momentum.x = mx;
+            this->spatial_properties.momentum.y = my;
+            this->spatial_properties.momentum.z = mz;
         }
         
         float get_height()
@@ -150,7 +150,7 @@ class PositionChangedComponent
 
         Vec3 get_momentum()
         { return NULL_MOMENTUM; }
-        void set_momentum(float x, float y, float z)
+        void set_momentum(float mx, float my, float mz)
         {}
 
         /* Additional specialization */
@@ -199,11 +199,11 @@ class PositionMomentumChangedComponent
             return this->spatial_properties.momentum;
         }
 
-        void set_momentum(float x, float y, float z)
+        void set_momentum(float mx, float my, float mz)
         {
-            this->spatial_properties.momentum.x = x;
-            this->spatial_properties.momentum.y = y;
-            this->spatial_properties.momentum.z = z;
+            this->spatial_properties.momentum.x = mx;
+            this->spatial_properties.momentum.y = my;
+            this->spatial_properties.momentum.z = mz;
         }
 
         Vec3 get_angles()
@@ -237,45 +237,68 @@ class VerletComponent
         
         Vec3 get_position()
         {
-            return this->verlet_properties.vp.p;
+            return this->verlet_properties.position;
         }
 
         bool set_position(float x, float y, float z)
         {
-            if (position_is_equal(this->verlet_properties.vp.p, x,y,z))
+            if (position_is_equal(this->verlet_properties.position, x,y,z))
                 return false;
-            this->verlet_properties.vp.set_position(x,y,z);
+            this->verlet_properties.old_position = this->verlet_properties.position;
+            this->verlet_properties.position = vec3_init(x,y,z);
             return true;
         }
 
         Vec3 get_momentum()
         {
-            return this->verlet_properties.vp.get_momentum();
+            return vec3_scalar_mult(this->verlet_properties.velocity, this->verlet_properties.mass);
         }
 
-        void set_momentum(float x, float y, float z)
+        void set_momentum(float mx, float my, float mz)
         {
-            this->verlet_properties.vp.set_momentum(x,y,z);
+            this->verlet_properties.old_velocity = this->verlet_properties.velocity;
+            this->verlet_properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->verlet_properties.mass);
         }
-
-        /* Additional specialization */
-
-        void create_particle(float x, float y, float z, float mx, float my, float mz)
+        
+        void set_momentum(Vec3 momentum)
         {
-            const float mass = 1.0f; // TODO
-            this->verlet_properties.vp.mass = mass;
-            this->verlet_properties.vp.set_state(x,y,z,mx,my,mz);
+            this->verlet_properties.old_velocity = this->verlet_properties.velocity;
+            this->verlet_properties.velocity = vec3_scalar_mult(momentum, 1.0f/this->verlet_properties.mass);
         }
 
         float get_height()
         { return NULL_HEIGHT; }
-
         Vec3 get_angles() { return NULL_ANGLES; }
         void set_angles(float theta, float phi, float rho)
         {}
 
+        /* Addition specialization */
+
+        void set_mass(float mass)
+        {
+            Vec3 momentum = this->get_momentum();
+            this->verlet_properties.mass = mass;
+            this->set_momentum(momentum);
+        }
+
+        void set_state(float x, float y, float z, float mx, float my, float mz)
+        {
+            this->set_position(x,y,z);
+            this->set_momentum(mx,my,mz);
+        }
+
+        bool verlet_bounce(float damp)
+        {
+            return Verlet::bounce(
+                &this->verlet_properties.old_position,
+                &this->verlet_properties.old_velocity,
+                &this->verlet_properties.position,
+                &this->verlet_properties.velocity,
+                damp
+            );
+        }
+
     VerletComponent()
     {
-        this->create_particle(0,0,0,0,0,0);
     }
 };

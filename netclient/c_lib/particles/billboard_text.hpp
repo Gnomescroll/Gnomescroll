@@ -27,7 +27,6 @@ class BillboardText: public Particle
         void set_color(unsigned char r, unsigned char g, unsigned char b);
         void set_color(unsigned char r, unsigned char g, unsigned char b,  unsigned char a);
         void set_gravity(bool grav);
-        void set_state(float x, float y, float z, float mx, float my, float mz);
         void set_text(char* t);
         void set_draw(bool draw);
         void set_size(float size);

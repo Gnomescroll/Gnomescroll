@@ -151,8 +151,7 @@ void Minivox::set_texture(int tex_id, int pixels_wide) {
 }
 
 void Minivox::tick() {
-    //bounce_simple_rk4(&particle, MINIVOX_DAMP);
-    Verlet::bounce(vp, MINIVOX_DAMP);
+    this->verlet_bounce(MINIVOX_DAMP);
     this->spin();
     this->ttl++;
 }
@@ -203,10 +202,11 @@ void Minivox::draw_colored() {
     // Quit if voxel is completely transparent
     if (this->a == 0) return;
 
+    Vec3 position = this->get_position();
     const float
-        x0 = this->vp->p.x,
-        y0 = this->vp->p.y,
-        z0 = this->vp->p.z;
+        x0 = position.x,
+        y0 = position.y,
+        z0 = position.z;
 
     if (point_fulstrum_test(x0, y0, z0) == false) return;
 
@@ -242,10 +242,11 @@ void Minivox::draw_textured() {
 #ifdef DC_CLIENT
     if(this->a == 0) return;
 
+    Vec3 position = this->get_position();
     const float
-        x0 = this->vp->p.x,
-        y0 = this->vp->p.y,
-        z0 = this->vp->p.z;
+        x0 = position.x,
+        y0 = position.y,
+        z0 = position.z;
 
     if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
 

@@ -8,22 +8,14 @@ void Particle::set_ttl(int ttl)
     this->ttl = ttl;
 }
 
-void Particle::set_mass(float mass)
-{
-    this->vp->mass = mass;
-}
-
 Particle::Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
 id(id),
 ttl(0)
 {
-    vp = new VerletParticle(x,y,z,mx,my,mz, mass);
-}
-
-Particle::~Particle()
-{
-    delete vp;
+    this->verlet_properties.mass = mass;    // dont use set_mass() because dont need to recompute velocity
+    this->set_position(x,y,z);
+    this->set_momentum(mx,my,mz);
 }
 
 EventParticle::EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass)

@@ -20,8 +20,6 @@ const int GRENADE_SPAWNER_DAMAGE = 25;
 const int GRENADE_TURRET_DAMAGE = 25;
 const int GRENADE_SLIME_DAMAGE = 100;
 
-using Verlet::VerletParticle;
-
 class grenade_StoC;     // forward decl
 
 class Grenade: public Particle, public BillboardSprite

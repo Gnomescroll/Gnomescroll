@@ -1,6 +1,5 @@
 #pragma once
 
-#include <c_lib/physics/verlet.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
@@ -227,9 +226,10 @@ class PickupObject: public PickupComponent, public PickupInterface
 
     void tick()
     {
-        tickVerletBounce(&this->verlet_properties.vp, this->state()->damp);
-        tickPickup(this->state(), this, this->pickup_radius);
-        tickTTL(this->state(), this);
+        ObjectState* state = this->state();
+        this->verlet_bounce(state->damp);
+        tickPickup(state, this, this->pickup_radius);
+        tickTTL(state, this);
     }
 
     void update() {}

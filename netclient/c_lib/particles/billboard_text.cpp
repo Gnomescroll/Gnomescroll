@@ -44,7 +44,7 @@ size(BILLBOARD_TEXT_TEXTURE_SCALE)
 void BillboardText::tick()
 {
     if (this->gravity)
-        Verlet::bounce(this->vp, BILLBOARD_TEXT_DAMP);
+        this->verlet_bounce(BILLBOARD_TEXT_DAMP);
     if (this->ttl >= 0)
         this->ttl++;
 }
@@ -65,10 +65,6 @@ void BillboardText::set_gravity(bool grav)
 void BillboardText::set_draw(bool draw)
 {
     this->should_draw = draw;
-}
-void BillboardText::set_state(float x, float y, float z, float mx, float my, float mz)
-{
-    this->vp->set_state(x,y,z, mx,my,mz);
 }
 
 void BillboardText::set_color(unsigned char r, unsigned char g, unsigned char b)
@@ -95,7 +91,8 @@ void BillboardText::draw()
 #ifdef DC_CLIENT
     if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
-    if (point_fulstrum_test(this->vp->p.x, this->vp->p.y, this->vp->p.z) == false)
+    Vec3 position = this->get_position();
+    if (point_fulstrum_test(position.x, position.y, position.z) == false)
         return;
 
     glColor4ub(r,g,b,a);
@@ -109,9 +106,9 @@ void BillboardText::draw()
     float norm;
 
     float look[3];
-    look[0] = current_camera->x - this->vp->p.x;
-    look[1] = current_camera->y - this->vp->p.y;
-    look[2] = current_camera->z - this->vp->p.z;
+    look[0] = current_camera->x - position.x;
+    look[1] = current_camera->y - position.y;
+    look[2] = current_camera->z - position.z;
     norm = sqrt(look[0]*look[0] + look[1]*look[1] + look[2]*look[2]);
     look[0] /= -norm;
     look[1] /= -norm;
@@ -144,7 +141,7 @@ void BillboardText::draw()
     // letters draw a bit into the ground, this offset fixes that
     const float ground_offset = 0.05;
     float x,y,z;
-    x=this->vp->p.x; y=this->vp->p.y; z=this->vp->p.z;
+    x=position.x; y=position.y; z=position.z;
     x += ground_offset;
     y += ground_offset;
     z += ground_offset;

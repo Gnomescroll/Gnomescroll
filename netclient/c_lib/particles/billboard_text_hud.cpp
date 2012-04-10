@@ -48,10 +48,6 @@ void BillboardTextHud::set_draw(bool draw)
 {
     this->should_draw = draw;
 }
-void BillboardTextHud::set_state(float x, float y, float z, float mx, float my, float mz)
-{
-    this->vp->set_state(x,y,z, mx,my,mz);
-}
 void BillboardTextHud::set_color(unsigned char r, unsigned char g, unsigned char b)
 {
     this->text->set_color(r,g,b);
@@ -71,13 +67,9 @@ void BillboardTextHud::draw()
     if(!this->text->charcount()) return;
     if (current_camera == NULL) return;
 
-    float x,y,z;
-    x = this->vp->p.x;
-    y = this->vp->p.y;
-    z = this->vp->p.z;
-
+    Vec3 position = this->get_position();
     GLdouble sx,sy,sz;
-    GLint res = gluProject(x,y,z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
+    GLint res = gluProject(position.x, position.y, position.z, model_view_matrix_dbl, projection_matrix, viewport, &sx, &sy, &sz);
     if (res == GLU_FALSE)
     {
         printf("BillboardTextHud hud projection -- gluProject failed\n");

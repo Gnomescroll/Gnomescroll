@@ -62,13 +62,23 @@ class PositionMomentumChangedProperties: public PositionMomentumProperties, publ
     {}
 };
 
-class VerletProperties
+class VerletProperties  // todo: make angles another property?
 {
     public:
-        Verlet::VerletParticle vp;
-
+        Vec3 old_position;
+        Vec3 old_velocity;
+        Vec3 position;
+        Vec3 velocity;
+        float mass;
+        
     VerletProperties()
-    {}
+    : mass(1.0f)
+    {
+        this->position = vec3_init(-1, -1, -1);
+        this->old_position = this->position;
+        this->velocity = vec3_init(0,0,0);
+        this->old_velocity = this->velocity;
+    }
 };
 
 
