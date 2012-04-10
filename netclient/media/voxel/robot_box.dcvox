@@ -1,9 +1,9 @@
 #dimension x,y,z
-12 7 5
+5 7 5
 #vox_size
-0.1
+0.2
 #biaxial
-0
+1
 #team
 0
 #team base color (r,g,b)

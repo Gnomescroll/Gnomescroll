@@ -24,6 +24,9 @@ class Box: public VoxelComponent, public MonsterInterface
     void tick()
     {
         this->broadcastState();
+
+        // must stay on ground -- apply agent collision
+        
         // wander randomly (TODO: network model with destinations)
 
         // if see agent, stop, lock target (todo -- target lock)
