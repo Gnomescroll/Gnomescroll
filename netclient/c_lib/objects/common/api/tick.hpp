@@ -83,39 +83,38 @@ Vec3 tickMoveToPoint(Vec3 dest, Vec3 origin, Vec3 momentum)
 
 // return x-angle (theta) rotation between two Vec3s
 float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
-{   // TODO -- this may be incorrect
+{
     Vec3 direction = vec3_sub(dest, origin);
     direction.z = 0;
     normalize_vector(&direction);
-    return acos(direction.x);
+
+    float t = acos(direction.x) / 3.14159f;
+    if (direction.y < 0) t = -t;
+    //t += 0.50f; //off by 90 degrees
+    return t;
 }
 
 //  x- and y-angle (theta,phi) rotation between two Vec3s
 void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
 {
-    //float x = dest.x - origin.x;
-    //float y = dest.y - origin.y;
-    //float _l = sqrt(x*x + y*y);
-    //x /= _l;
-    //y /= _l;
-
-    //float _x = 1.0;
-    //float _y = 0.0; 
-
-    //float t = acos(_x*x + _y*y) / 3.141519;
-    //if ((_x*y - _y*x) < 0) t = -t;
-
-    //t += 0.50; //off by 90 degrees
-    //*theta = t;
-    
     Vec3 direction = vec3_sub(dest, origin);
+    Vec3 direction_cached = vec3_copy(direction);
     direction.z = 0;
     normalize_vector(&direction);
 
-    float t = acos(direction.x) / 3.141519;
+    float t = acos(direction.x) / 3.14159f;
     if (direction.y < 0) t = -t;
-    t += 0.50; //off by 90 degrees
+    //t += 0.50f; //off by 90 degrees
     *theta = t;
 
-    *phi = 0;
+    direction_cached.y = 0;
+    normalize_vector(&direction_cached);
+    t = acos(direction_cached.x) / 3.14159f;
+    if (direction_cached.z < 0) t = -t;
+    //if (t < -0.5f) t += 1;
+    //if (t > 0.5f) t -= 1;
+    //if (t < 0) t += 1;
+    //if (t > 1) t -= 1;
+    t += 0.50f;
+    *phi = t;
 }

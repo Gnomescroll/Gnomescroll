@@ -68,7 +68,7 @@ void Slime::die()
     //dieAnimation();   // TODO
     if (this->voxel_properties.vox != NULL)
     {
-        Vec3 position = this->voxel_properties.vox->get_part(0)->get_center();
+        Vec3 position = this->voxel_properties.vox->get_part(SLIME_PART_BODY)->get_center();
         Animations::slime_melt(position.x, position.y, position.z);
     }
     #endif

@@ -32,7 +32,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         // if see agent, stop, lock target (todo -- target lock)
         Agent_state* agent = tickTargetAcquisition(this->state(), this, this->camera_z());
         if (agent == NULL) return;
-        Vec3 agent_position = agent->get_position();
+        Vec3 agent_position = agent->get_center();
         
         // face target
         Vec3 position = this->get_position();
@@ -82,7 +82,6 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         );
         this->spatial_properties.set_changed(false);
     }
-
     
     void draw() {/*Empty*/}
 
