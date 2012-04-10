@@ -21,7 +21,16 @@ class Box: public VoxelComponent, public MonsterInterface
 {
     public:
 
-    void tick(){}
+    void tick()
+    {
+        // wander randomly (TODO: network model with destinations)
+
+        // if see agent, stop, lock target (todo -- target lock)
+
+        // TODO -- aggro component
+
+        // fire if target lock
+    }
 
     void die()
     {
@@ -63,7 +72,7 @@ class Box: public VoxelComponent, public MonsterInterface
     }
 
     
-    void draw(){/*Empty*/}
+    void draw() {/*Empty*/}
 
     explicit Box(int id)
     {

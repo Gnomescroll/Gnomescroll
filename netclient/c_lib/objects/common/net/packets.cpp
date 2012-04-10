@@ -70,6 +70,7 @@ inline void object_create_momentum_angles_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_SLIME:
+        case OBJ_TYPE_MONSTER_BOX:
             obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
             break;
         default: return;
@@ -138,7 +139,8 @@ inline void object_state_momentum_angles_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_SLIME:
-            obj = STATE::object_list->get(OBJ_TYPE_SLIME, id);
+        case OBJ_TYPE_MONSTER_BOX:
+            obj = STATE::object_list->get(type, id);
             break;
             
         default: break;

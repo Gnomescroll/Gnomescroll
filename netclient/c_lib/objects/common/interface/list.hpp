@@ -81,6 +81,9 @@ class GameObject_list
                 printf("WARNING: GameObject_list::set_max_occupancy() -- object type %d out of range\n", type);
                 return;
             }
+            if (this->max_occupancy[type] != 0)
+                printf("WARNING: GameObject_list::set_max_occupancy() -- max_occupancy already set to %d\n", this->max_occupancy[type]);
+            assert(this->max_occupancy[type] == 0);
             this->max_occupancy[type] = max_allowed;
         }
 
