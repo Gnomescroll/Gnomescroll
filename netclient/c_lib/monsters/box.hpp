@@ -19,9 +19,32 @@ extern VoxDat box_vox_dat;
 
 void box_shot_object(object_shot_object_StoC* msg);
 
+//void box_received_shoot(Box* box, object_shot_object_StoC* msg)
+//{
+    //box->en_route = false;  // cancel all motion
+    //box->locked_on_target = true;   // flag target lock
+
+    //box->target_id = msg->target_id;    // set target
+    //box->target_type = (Object_types)msg->target_type;
+//}
+
+//void box_received_move(Box* box, object_destination_StoC* msg)
+//{
+    //box->en_route = true;
+    //box->locked_on_target = false;  // TODO -- moving and locked on target?
+//}
+
 class Box: public VoxelComponent, public TargetAcquisitionComponent, public MonsterInterface
 {
     public:
+
+    Vec3 destination;
+    bool at_destination;
+    bool en_route;
+
+    int target_id;
+    Object_types target_type;
+    bool locked_on_target;
 
     void tick()
     {
@@ -31,23 +54,75 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
 
         // if see agent, stop, lock target (todo -- target lock)
 
-        ObjectState* state = this->state();
-        Vec3 direction;
-        Agent_state* agent = this->acquire_target(
-            state->id, state->type, this->get_team(), this->camera_z(),
-            this->get_position(),
-            state->accuracy_bias, state->sight_range,
-            state->attack_enemies, state->attack_random,
-            &direction
-        );
-        if (agent == NULL) return;
+        Agent_state* agent = NULL;
+        if (this->locked_on_target)
+        {   // target locked
+            // check target still exists
+            if (this->target_type == OBJ_TYPE_AGENT)
+                agent = STATE::agent_list->get(this->target_id);
+            if (agent == NULL
+            || vec3_distance_squared(agent->get_center(), this->get_center()) > BOX_SPEED*BOX_SPEED)
+                this->locked_on_target = false;
+        }
 
-        // face target
-        //Vec3 position = this->get_position();
-        float theta,phi;
-        vec3_to_angles(direction, &theta, &phi);
-        //Vec3 angles = this->get_angles(); // z is unused for Box
-        this->set_angles(theta, phi, 0);
+        if (!this->locked_on_target)
+        {   // no target found
+            // look for target
+            ObjectState* state = this->state();
+            Vec3 direction;
+            agent = this->acquire_target(
+                state->id, state->type, this->get_team(), this->camera_z(),
+                this->get_position(),
+                state->accuracy_bias, state->sight_range,
+                state->attack_enemies, state->attack_random,
+                &direction
+            );
+        }
+
+        if (agent != NULL)
+        {   // target found
+            // lock target
+            this->locked_on_target = true;
+            this->en_route = false;
+
+            this->target_id = agent->id;
+            this->target_type = OBJ_TYPE_AGENT;
+
+            // send target packet
+        }
+        
+        if (this->locked_on_target)
+        {
+            // face target
+            float theta,phi;
+            Vec3 direction = vec3_sub(agent->get_center(), this->get_center()); // TODO -- get_center() on voxel component
+            vec3_to_angles(direction, &theta, &phi);
+            //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
+            this->set_angles(theta, phi, 0);
+        }
+
+        if (this->en_route)
+        {   // destination set
+            // move towards destination
+            Vec3 position = vec3_add(this->get_position(), this->get_momentum());
+            this->set_position(position.x, position.y, position.z);
+        }
+
+        if (!this->en_route && !this->locked_on_target)
+        {   // no destination, no target
+            // choose destination
+            float dx = randrange(0,11) - 6;
+            float dy = randrange(0,11) - 6;
+            float dz = 0;
+            this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
+            this->en_route = true;
+
+            Vec3 direction = vec3_sub(this->destination, this->get_position());\
+            normalize_vector(&direction);
+            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
+            this->set_momentum(momentum.x, momentum.y, momentum.z);
+            // send destination packet
+        }
 
         this->broadcastState();
     }
