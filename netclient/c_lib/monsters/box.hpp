@@ -13,6 +13,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/monsters/slime.hpp>
 #include <c_lib/state/server_state.hpp>
+#include <c_lib/t_map/t_map.hpp>
 
 namespace Monsters {
 
@@ -99,27 +100,52 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
             this->set_angles(theta, phi, 0);
         }
-        else if (this->en_route)
-        {   // destination set
-            // move towards destination
-            Vec3 position = vec3_add(this->get_position(), this->get_momentum());
-            this->set_position(position.x, position.y, position.z);
-        }
 
         if (!this->en_route && !this->locked_on_target)
         {   // no destination, no target
             // choose destination
-            float dx = randrange(0,11) - 6;
-            float dy = randrange(0,11) - 6;
+            const int len = 30;
+            float dx = randrange(0,len) - len/2;
+            float dy = randrange(0,len) - len/2;
             float dz = 0;
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
             this->en_route = true;
+
+            // clamp
+            if (this->destination.x < 0) this->destination.x = 0;
+            if (this->destination.x >= map_dim.x) this->destination.x = map_dim.x -1;
+            if (this->destination.y < 0) this->destination.y = 0;
+            if (this->destination.y >= map_dim.y) this->destination.y = map_dim.y -1;
+            if (this->destination.z < 0) this->destination.z = 0;
+            if (this->destination.z >= map_dim.z) this->destination.z = map_dim.z -1;
 
             Vec3 direction = vec3_sub(this->destination, this->get_position());
             normalize_vector(&direction);
             Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
             this->set_momentum(momentum.x, momentum.y, momentum.z);
             // send destination packet
+        }
+
+        //if (this->en_route && !this->at_destination)
+        //{   // heading to destination
+            //// check if at destination
+        //}
+        float dist = vec3_distance_squared(this->destination, this->get_position());
+        if (dist < 1.0f)    // TODO Margin
+        {
+            this->en_route = false;
+            this->at_destination = true;
+            this->set_momentum(0,0,0);
+        }
+        else
+            this->at_destination = false;
+
+
+        if (this->en_route)
+        {   // destination set
+            // move towards destination
+            Vec3 position = vec3_add(this->get_position(), this->get_momentum());
+            this->set_position(position.x, position.y, position.z);
         }
 
         this->broadcastState();
@@ -169,6 +195,10 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
     void draw() {/*Empty*/}
 
     explicit Box(int id)
+    :
+    at_destination(false), en_route(false),
+    target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
+    locked_on_target(false)
     {
         this->_state.id = id;
 
