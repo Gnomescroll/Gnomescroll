@@ -45,12 +45,12 @@ void tickStayOnGround(ObjectState* state, Object* object)
 }
 
 template <class Object>
-Agent_state* tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
+Agent_state* tickFireOnTarget(ObjectState* state, Object* object, float camera_z)
 {
     #if DC_SERVER
     Agent_state* agent = NULL;
     if (state->fire_tick % state->fire_rate_limit == 0)
-        agent = object->acquire_target(
+        agent = object->fire_on_target(
             state->id, state->type, object->get_team(), camera_z,
             object->get_position(),
             state->accuracy_bias, state->sight_range,
@@ -98,17 +98,19 @@ float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
 void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
 {
     Vec3 direction = vec3_sub(dest, origin);
-    normalize_vector(&direction);
-    float z = direction.z;
-    direction.z = 0;
-    normalize_vector(&direction);
+    vec3_to_angles(direction, theta, phi);
+    
+    //normalize_vector(&direction);
+    //float z = direction.z;
+    //direction.z = 0;
+    //normalize_vector(&direction);
 
-    float t = acos(direction.x) / 3.14159f;
-    if (direction.y < 0) t = -t;
-    //t += 0.50f; //off by 90 degrees
-    *theta = t;
+    //float t = acos(direction.x) / 3.14159f;
+    //if (direction.y < 0) t = -t;
+    ////t += 0.50f; //off by 90 degrees
+    //*theta = t;
 
-    t = asin(z) / 3.14159f;
-    t += 0.5f;
-    *phi = t;
+    //t = asin(z) / 3.14159f;
+    //t += 0.5f;
+    //*phi = t;
 }

@@ -94,7 +94,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
     void tick()
     {   // make each a template function
         tickStayOnGround(this->state(), this);
-        tickTargetAcquisition(this->state(), this, this->camera_z());
+        tickFireOnTarget(this->state(), this, this->camera_z());
     }
 
     void update()

@@ -5,15 +5,30 @@
 Agent_state* TargetAcquisitionComponent::acquire_target(
     int id, Object_types type, int team, float camera_z, Vec3 position,
     float accuracy_bias, float sight_range,
+    bool attack_enemies, bool attack_random,
+    Vec3* firing_direction
+) {    
+    // lock on agent
+    position.z = camera_z;
+    Agent_state* agent = Hitscan::lock_agent_target(
+        position, firing_direction, team,
+        sight_range, this->target_acquisition_probability,
+        attack_enemies, attack_random
+    );
+    return agent;
+}
+
+Agent_state* TargetAcquisitionComponent::fire_on_target(
+    int id, Object_types type, int team, float camera_z, Vec3 position,
+    float accuracy_bias, float sight_range,
     bool attack_enemies, bool attack_random
 ) {    
     // lock on agent
-    Vec3 firing_position = vec3_init(position.x, position.y, camera_z);
+    position.z = camera_z;
     Vec3 firing_direction;
-    Agent_state* agent = Hitscan::lock_agent_target(
-        firing_position, &firing_direction, team,
-        sight_range, this->target_acquisition_probability,
-        attack_enemies, attack_random
+    Agent_state* agent = this->acquire_target(
+        id, type, team, camera_z, position, accuracy_bias, sight_range,
+        attack_enemies, attack_random, &firing_direction
     );
     if (agent == NULL) return NULL;
 
@@ -24,7 +39,7 @@ Agent_state* TargetAcquisitionComponent::acquire_target(
 
     // get target
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
-        firing_position, firing_direction, id, type,
+        position, firing_direction, id, type,
         agent, sight_range
     );
 

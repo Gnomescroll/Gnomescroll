@@ -30,16 +30,24 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         // TODO -- aggro component
 
         // if see agent, stop, lock target (todo -- target lock)
-        Agent_state* agent = tickTargetAcquisition(this->state(), this, this->camera_z());
+
+        ObjectState* state = this->state();
+        Vec3 direction;
+        Agent_state* agent = this->acquire_target(
+            state->id, state->type, this->get_team(), this->camera_z(),
+            this->get_position(),
+            state->accuracy_bias, state->sight_range,
+            state->attack_enemies, state->attack_random,
+            &direction
+        );
         if (agent == NULL) return;
-        Vec3 agent_position = agent->get_center();
-        
+
         // face target
-        Vec3 position = this->get_position();
-        Vec3 angles = this->get_angles();
+        //Vec3 position = this->get_position();
         float theta,phi;
-        tickOrientToPointThetaPhi(agent_position, position, &theta, &phi); // TODO -- theta,phi rotation
-        this->set_angles(theta, phi, angles.z);
+        vec3_to_angles(direction, &theta, &phi);
+        //Vec3 angles = this->get_angles(); // z is unused for Box
+        this->set_angles(theta, phi, 0);
 
         this->broadcastState();
     }
