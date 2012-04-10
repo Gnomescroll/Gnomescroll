@@ -29,7 +29,8 @@ const float BOX_MOTION_PROXIMITY_RADIUS = 50.0f;
 //const float BOX_FIRING_PROXIMITY_RADIUS = 100.0f;
 const float BOX_SPEED = 1.0f;
 
-const int BOX_FIRE_RATE = 30;
+//const int BOX_FIRE_RATE = 30;
+const int BOX_FIRE_RATE = 1;
 const float BOX_ACCURACY_BIAS = 0.0f;
 const float BOX_SIGHT_RANGE = 15.0f;
 const bool BOX_ATTACK_ONLY_ENEMIES = false;    // TODO change attack_enemies to attack_only_enemies
