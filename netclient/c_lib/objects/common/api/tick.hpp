@@ -89,3 +89,17 @@ float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
     normalize_vector(&direction);
     return acos(direction.x);
 }
+
+//  x- and y-angle (theta,phi) rotation between two Vec3s
+void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
+{   // TODO -- this may be incorrect
+    Vec3 direction = vec3_sub(dest, origin);
+    float z = direction.z;
+    direction.z = 0;
+    normalize_vector(&direction);
+    *theta = acos(direction.x);
+    direction.z = z;
+    direction.y = 0;
+    normalize_vector(&direction);
+    *phi = acos(direction.z);
+}

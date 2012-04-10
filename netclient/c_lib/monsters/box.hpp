@@ -36,8 +36,9 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         // face target
         Vec3 position = this->get_position();
         Vec3 angles = this->get_angles();
-        float theta = tickOrientToPointTheta(agent_position, position); // TODO -- theta,phi rotation
-        this->set_angles(theta, angles.y, angles.z);
+        float theta,phi;
+        tickOrientToPointThetaPhi(agent_position, position, &theta, &phi); // TODO -- theta,phi rotation
+        this->set_angles(theta, phi, angles.z);
 
         this->broadcastState();
     }

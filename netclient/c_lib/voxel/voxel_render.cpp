@@ -230,17 +230,16 @@ void Voxel_render_list::init_voxel_render_list_shader1()
 
 void Voxel_render_list::draw()
 {
-
-#if !PRODUCTION
+    #if !PRODUCTION
     if (input_state.skeleton_editor)
     {
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
-            if( render_list[i] == NULL || !render_list[i]->draw ) continue;
+            if (render_list[i] == NULL || !render_list[i]->draw ) continue;
             Voxel_volume* vv = render_list[i];
 
-            if(vv->vvl.vnum == 0) continue;
-            if(!sphere_fulstrum_test(
+            if (vv->vvl.vnum == 0) continue;
+            if (!sphere_fulstrum_test(
                 vv->world_matrix.v[3].x,
                 vv->world_matrix.v[3].y,
                 vv->world_matrix.v[3].z,
@@ -250,7 +249,7 @@ void Voxel_render_list::draw()
             vv->draw_bounding_box();
         }
     }
-#endif
+    #endif
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
 

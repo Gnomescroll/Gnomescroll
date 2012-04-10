@@ -43,7 +43,7 @@ void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
     if (vox == NULL) return;
 
     #if DC_CLIENT
-    vox->was_updated = false;   // Reset updated flag (Voxel_model::update will restore if it did)
+    vox->was_updated = false;   // Reset was_updated flag (Voxel_model::update will restore if it does update)
     Vec3 center = vox->get_part(0)->get_center();
     float radius = vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
