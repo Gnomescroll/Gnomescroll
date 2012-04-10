@@ -2,14 +2,6 @@
 
 
 
-#ifdef DC_CLIENT
-#include <c_lib/t_item/client/_interface.hpp>
-#endif
-
-#ifdef DC_SERVER
-#include <c_lib/t_item/server/_interface.hpp>
-#endif
-
 namespace t_item
 {
 
@@ -32,3 +24,36 @@ void create_free_item(int item_type,
 
 
 }
+
+/*
+CLIENT
+*/
+#ifdef DC_CLIENT
+
+namespace t_item
+{
+	extern int player_inventory_id;
+
+}
+
+#endif 
+
+
+
+/*
+SERVER
+*/
+#ifdef DC_SERVER
+
+namespace t_item
+{
+
+void check_item_pickups();
+
+void create_free_item(int item_type, 
+    float x, float y, float z, 
+    float vx, float vy, float vz);
+
+}
+
+#endif 

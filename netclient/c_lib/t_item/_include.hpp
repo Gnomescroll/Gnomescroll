@@ -5,7 +5,7 @@
 */
 #ifdef DC_CLIENT
 
-#include <c_lib/t_item/client/_interface.cpp>
+#include <c_lib/t_item/_interface.cpp>
 
 #include <c_lib/t_item/free_item.cpp>
 #include <c_lib/t_item/item_container.cpp>
@@ -24,7 +24,7 @@
 
 #ifdef DC_SERVER
 
-#include <c_lib/t_item/server/_interface.cpp>
+#include <c_lib/t_item/_interface.cpp>
 
 #include <c_lib/t_item/free_item.cpp>
 #include <c_lib/t_item/_interface.cpp>

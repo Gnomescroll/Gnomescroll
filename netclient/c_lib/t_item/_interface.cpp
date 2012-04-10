@@ -46,3 +46,61 @@ void draw()
 
 }
  
+/*
+CLIENT
+*/
+#ifdef DC_CLIENT
+
+namespace t_item
+{
+    int player_inventory_id = 0xffff;
+}
+
+
+
+#endif 
+
+/*
+SERVER
+*/
+#ifdef DC_SERVER
+
+namespace t_item
+{
+
+void check_item_pickups()
+{
+    #ifdef DC_CLIENT
+        printf("Warning: check_item_pickups was called on client! OOPS\n");
+    #endif
+    free_item_list->check_item_pickups();
+}
+
+void create_free_item(int item_type, 
+    float x, float y, float z, 
+    float vx, float vy, float vz)
+{
+    
+    Free_item* f = free_item_list->create();
+    if(f == NULL) return;
+    f->set_state(x,y,z,vx,vy,vz);
+
+    class free_item_create_StoC p;
+
+    p.type = 0;
+    p.id = f->id;
+    p.x = x;
+    p.y = y;
+    p.z = z;
+    p.mx = vx;
+    p.my = vy;
+    p.mz = vz;
+
+    p.broadcast();
+}
+
+
+}
+
+
+#endif 
