@@ -61,7 +61,7 @@ def load_options(opts):
     set_logger(opts.logger)
 
 #new functions
-cdef extern from "../c_lib/time/physics_timer.h":
+cdef extern from "../c_lib/common/time/physics_timer.hpp":
     void _START_CLOCK()
     int _GET_TICK()
     int _GET_MS_TIME()

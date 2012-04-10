@@ -13,7 +13,7 @@
 #include <c_lib/options.cpp>
 
 //utility
-#include <c_lib/time/physics_timer.c>
+#include <c_lib/common/time/physics_timer.cpp>
 #include <c_lib/common/macros.hpp>
 #include <c_lib/common/common.cpp>
 #include <c_lib/common/quicksort.hpp>
