@@ -94,7 +94,7 @@ int run()
             Animations::animations_tick();
             
             // tick client state
-            ClientState::tick();
+            ClientState::tick(); 
 
             t_item::tick();
 

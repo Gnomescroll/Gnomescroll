@@ -98,7 +98,6 @@ void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
 
     float _l = sqrt(x*x + y*y);
 
-
     x /= _l;
     y /= _l;
 
