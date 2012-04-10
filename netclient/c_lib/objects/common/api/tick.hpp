@@ -115,13 +115,25 @@ void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
     ////*phi = acos(direction.x) / 2;//(3.14158);
     //*phi = 0.0;
 
+
     float x = dest.x - origin.x;
     float y = dest.y - origin.y;
 
     float _l = sqrt(x*x + y*y);
+
+
     x /= _l;
     y /= _l;
 
-    *theta = atan(y) / 3.14159;
+    float _x = 1.0;
+    float _y = 0.0;
+
+    float t = acos(_x*x + _y*y) / 3.141519;
+    if ((_x*y - _y*y) < 0) t = -t;
+
+    t += 0.50; //off by 90 degrees
+    *theta = t;
+
+    //printf("dest: %0.2f %0.2f origin: %0.2f %0.2f  l= %0.2f theta= %0.2f \n", dest.x, dest.y, origin.x, origin.y, _l, *theta );
     *phi = 0;
 }
