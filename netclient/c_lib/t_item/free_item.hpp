@@ -177,8 +177,9 @@ void Free_item_list::draw()
     glColor3ub(255,255,255);
 
     //glEnable(GL_TEXTURE_2D);
-    gl_assert(GL_TEXTURE_2D);
-    
+    GL_ASSERT(GL_TEXTURE_2D, true);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+
     glEnable(GL_ALPHA_TEST);
 
     glAlphaFunc ( GL_GREATER, 0.5);
