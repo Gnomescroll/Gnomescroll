@@ -45,17 +45,23 @@ void tickStayOnGround(ObjectState* state, Object* object)
 }
 
 template <class Object>
-void tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
+Agent_state* tickTargetAcquisition(ObjectState* state, Object* object, float camera_z)
 {
     #if DC_SERVER
+    Agent_state* agent = NULL;
     if (state->fire_tick % state->fire_rate_limit == 0)
-        object->acquire_target(
+        agent = object->acquire_target(
             state->id, state->type, object->get_team(), camera_z,
             object->get_position(),
             state->accuracy_bias, state->sight_range,
             state->attack_enemies, state->attack_random
         );
     state->fire_tick++;
+    return agent;
+    #endif
+
+    #if DC_CLIENT
+    return NULL;
     #endif
 }
 

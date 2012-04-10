@@ -94,6 +94,8 @@ class Agent_state {
 
         void spawn_state();
 
+        Vec3 get_position() { return vec3_init(this->s.x, this->s.y, this->s.z); }
+
         //void send_id_to_client(int client_id);
 
         void handle_state_snapshot(int seq, float theta, float phi, float x,float y,float z, float vx,float vy,float vz);

@@ -24,18 +24,22 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
 
     void tick()
     {
-        this->broadcastState();
-
         // must stay on ground -- apply agent collision
-        
         // wander randomly (TODO: network model with destinations)
-
-        // if see agent, stop, lock target (todo -- target lock)
-        tickTargetAcquisition(this->state(), this, this->camera_z());
-
         // TODO -- aggro component
 
-        // fire if target lock
+        // if see agent, stop, lock target (todo -- target lock)
+        Agent_state* agent = tickTargetAcquisition(this->state(), this, this->camera_z());
+        if (agent == NULL) return;
+        Vec3 agent_position = agent->get_position();
+        
+        // face target
+        Vec3 position = this->get_position();
+        Vec3 angles = this->get_angles();
+        float theta = tickOrientToPointTheta(agent_position, position); // TODO -- theta,phi rotation
+        this->set_angles(theta, angles.y, angles.z);
+
+        this->broadcastState();
     }
 
     void die()
