@@ -225,7 +225,7 @@ namespace ServerState
     {
         int address[4];
         address_from_string(Options::ip_address, address);
-        init_net_server(address[0], address[1], address[2], address[3], Options::port);
+        NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
     }
 

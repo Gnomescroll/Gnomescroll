@@ -101,7 +101,7 @@ void NetPeerManager::send_remaining_state()
     }
     if (this->received_initial_state)
         return;
-
+ 
     this->received_initial_state = true;
     ServerState::send_remainining_game_state_to_client(this->client_id);
 

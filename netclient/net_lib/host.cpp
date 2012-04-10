@@ -31,47 +31,6 @@ void init_network()
 
 ENetAddress address;
 
-void init_net_server(int a, int b, int c, int d, int port)
-{
-    
-    /* Bind the server to the default localhost.     */
-    /* A specific host address can be specified by   */
-    /* enet_address_set_host (& address, "x.x.x.x"); */
-
-    if(a==0 && b==0 && c==0 && d== 0)
-    {
-        address.host = ENET_HOST_ANY;
-    } 
-    else 
-    {
-        address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
-    }
-
-
-    /* Bind the server to port 1234. */
-
-    if(port == 0)
-    {
-        address.port = (Options::port) ? Options::port : DEFAULT_PORT;
-    }
-    else
-    {
-        address.port = port;
-    }
-    printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
-
-    server_host = enet_host_create (& address /* the address to bind the server host to */, 
-                                 32      /* allow up to 32 clients and/or outgoing connections */,
-                                  4      /* allow up to 4 channels to be used*/,
-                                  0      /* assume any amount of incoming bandwidth */,
-                                  0      /* assume any amount of outgoing bandwidth */);
-    if (server_host == NULL)
-    {
-        fprintf (stderr, "An error occurred while trying to create ENet server host: check that no other server is running on port %i \n", address.port);
-        exit (EXIT_FAILURE);
-    }
-    //enet_host_destroy(server);
-}
 
 void init_net_client()
 {
@@ -269,7 +228,133 @@ void client_dispatch_network_events()
 namespace NetServer
 {
 
+static void client_connect(ENetEvent* event);
+static void client_disconnect(ENetEvent* event);
+
 static int client_id_offset = 1;
+
+void init_server(int a, int b, int c, int d, int port)
+{
+    
+    /* Bind the server to the default localhost.     */
+    /* A specific host address can be specified by   */
+    /* enet_address_set_host (& address, "x.x.x.x"); */
+
+    if(a==0 && b==0 && c==0 && d== 0)
+    {
+        address.host = ENET_HOST_ANY;
+    } 
+    else 
+    {
+        address.host = htonl( ( a << 24 ) | ( b << 16 ) | ( c << 8 ) | d );
+    }
+
+
+    /* Bind the server to port 1234. */
+
+    if(port == 0)
+    {
+        address.port = (Options::port) ? Options::port : DEFAULT_PORT;
+    }
+    else
+    {
+        address.port = port;
+    }
+    printf( "Starting server on %i.%i.%i.%i port %i \n", a, b, c, d, address.port);
+
+    server_host = enet_host_create (& address /* the address to bind the server host to */, 
+                                 32      /* allow up to 32 clients and/or outgoing connections */,
+                                  4      /* allow up to 4 channels to be used*/,
+                                  0      /* assume any amount of incoming bandwidth */,
+                                  0      /* assume any amount of outgoing bandwidth */);
+    if (server_host == NULL)
+    {
+        fprintf (stderr, "An error occurred while trying to create ENet server host: check that no other server is running on port %i \n", address.port);
+        exit (EXIT_FAILURE);
+    }
+    //enet_host_destroy(server);
+}
+
+void dispatch_network_events()
+{
+    ENetEvent event;
+    
+    /* Wait up to 5 milliseconds for an event. */
+
+    int index = 0;
+    int timeout = 1;
+    while (enet_host_service (server_host, &event, timeout) > 0)
+    {
+        switch (event.type)
+        {
+
+        //ENET_EVENT_TYPE_NONE       = 0,  
+        //ENET_EVENT_TYPE_CONNECT    = 1,  
+        //ENET_EVENT_TYPE_DISCONNECT = 2,  
+        //ENET_EVENT_TYPE_RECEIVE    = 3
+
+        case ENET_EVENT_TYPE_NONE:
+            printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
+            break;
+
+        case ENET_EVENT_TYPE_CONNECT:
+            printf("Client Connection Attempt \n");
+            NetServer::client_connect(&event);
+            break;
+
+        case ENET_EVENT_TYPE_DISCONNECT:
+            NetServer::client_disconnect(&event);
+            break;
+
+        case ENET_EVENT_TYPE_RECEIVE:
+        /*
+            printf ("A packet of length %u channel %u.\n",
+                    event.packet -> dataLength,
+                    //(char*) event.packet -> data,
+                    //(event.peer -> data,
+                    event.channelID);
+        */
+            switch(event.channelID)
+            {
+                case 0:
+                    //printf("server received channel 0 message \n");
+                    index= 0;
+                    process_packet_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        ((class NetPeer*)event.peer->data)->client_id 
+                        ); 
+                    break;
+                case 1:
+                    printf("server received channel 1 message \n");
+                    index= 0;
+                    process_large_messages(
+                        (char*) event.packet -> data, 
+                        &index, 
+                        event.packet->dataLength, 
+                        ((class NetPeer*)event.peer->data)->client_id 
+                        ); 
+                    break;
+                case 2:
+                    printf("server received channel 2 message \n");
+                    break;
+                case 3:
+                    printf("server received channel 3 message \n");
+                    index= 0;
+                    break;
+                default:
+                    printf("server received unhandled channel %d message\n", event.channelID);
+                    break;
+            }
+
+            /* Clean up the packet now that we're done using it. */
+            enet_packet_destroy (event.packet);
+            break;
+           
+        }
+    }
+}
 
 static void client_connect(ENetEvent* event)
 {
@@ -352,86 +437,6 @@ static void client_disconnect(ENetEvent* event)
 
 }
 
-void server_dispatch_network_events()
-{
-    ENetEvent event;
-    
-    /* Wait up to 5 milliseconds for an event. */
-
-    int index = 0;
-    int timeout = 1;
-    while (enet_host_service (server_host, &event, timeout) > 0)
-    {
-        switch (event.type)
-        {
-
-        //ENET_EVENT_TYPE_NONE       = 0,  
-        //ENET_EVENT_TYPE_CONNECT    = 1,  
-        //ENET_EVENT_TYPE_DISCONNECT = 2,  
-        //ENET_EVENT_TYPE_RECEIVE    = 3
-
-        case ENET_EVENT_TYPE_NONE:
-            printf("ENET_EVENT_TYPE_NONE: Nothing happened \n");
-            break;
-
-        case ENET_EVENT_TYPE_CONNECT:
-            printf("Client Connection Attempt \n");
-            NetServer::client_connect(&event);
-            break;
-
-        case ENET_EVENT_TYPE_DISCONNECT:
-            NetServer::client_disconnect(&event);
-            break;
-
-        case ENET_EVENT_TYPE_RECEIVE:
-        /*
-            printf ("A packet of length %u channel %u.\n",
-                    event.packet -> dataLength,
-                    //(char*) event.packet -> data,
-                    //(event.peer -> data,
-                    event.channelID);
-        */
-            switch(event.channelID)
-            {
-                case 0:
-                    //printf("server received channel 0 message \n");
-                    index= 0;
-                    process_packet_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
-                    break;
-                case 1:
-                    printf("server received channel 1 message \n");
-                    index= 0;
-                    process_large_messages(
-                        (char*) event.packet -> data, 
-                        &index, 
-                        event.packet->dataLength, 
-                        ((class NetPeer*)event.peer->data)->client_id 
-                        ); 
-                    break;
-                case 2:
-                    printf("server received channel 2 message \n");
-                    break;
-                case 3:
-                    printf("server received channel 3 message \n");
-                    index= 0;
-                    break;
-                default:
-                    printf("server received unhandled channel %d message\n", event.channelID);
-                    break;
-            }
-
-            /* Clean up the packet now that we're done using it. */
-            enet_packet_destroy (event.packet);
-            break;
-           
-        }
-    }
-}
 #endif
 
 void flush_to_net()
