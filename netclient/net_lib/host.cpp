@@ -31,6 +31,13 @@ void init_network()
 
 ENetAddress address;
 
+#ifdef DC_CLIENT
+
+namespace NetClient
+{
+
+static void client_connect(ENetEvent* event);
+static void client_disconnect(ENetEvent* event);
 
 void init_net_client()
 {
@@ -61,11 +68,6 @@ void shutdown_net_client()
 
     enet_host_destroy(client_host);
 }
-
-#ifdef DC_CLIENT
-
-namespace NetClient
-{
 
 static void client_connect(ENetEvent* event)
 {
