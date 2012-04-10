@@ -112,7 +112,7 @@ void NetPeerManager::teardown()
 
     ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
-
+}
 
 
 NetPeerManager::NetPeerManager()
