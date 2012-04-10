@@ -109,8 +109,15 @@ void tickOrientToPointThetaPhi(Vec3 dest, Vec3 origin, float* theta, float* phi)
 
     direction_cached.y = 0;
     normalize_vector(&direction_cached);
+    if (direction_cached.x < 0) direction_cached.x *= -1;
     t = acos(direction_cached.x) / 3.14159f;
     if (direction_cached.z < 0) t = -t;
+
+    //if (t > 0.5f)
+        //t += -0.5f;
+    //else if (t < -0.5f)
+        //t += 0.5f;
+
     //if (t < -0.5f) t += 1;
     //if (t > 0.5f) t -= 1;
     //if (t < 0) t += 1;
