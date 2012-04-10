@@ -3,7 +3,7 @@
 
 
 #ifdef DC_CLIENT
-#include <c_lib/t_item/interface.hpp>
+#include <c_lib/t_item/_interface.hpp>
 #endif
 
 namespace t_item

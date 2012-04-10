@@ -138,21 +138,10 @@
 #include <c_lib/t_map/net/t_StoC.cpp>
 
 /* mechanisms */
-
-#include <c_lib/t_mech/state.cpp>
-#include <c_lib/t_mech/draw.cpp>
+#include <c_lib/t_mech/_include.hpp>
 
 /* items */
-
-#include <c_lib/t_item/free_item.cpp>
-#include <c_lib/t_item/interface.cpp>
-#include <c_lib/t_item/item_container.cpp>
-#include <c_lib/t_item/item.cpp>
-
-#include <c_lib/t_item/sprite.cpp>
-
-#include <c_lib/t_item/net/CtoS.cpp>
-#include <c_lib/t_item/net/StoC.cpp>
+#include <c_lib/t_item/_include.hpp>
 
 /* camera */
 #include <c_lib/camera/camera.cpp>
@@ -250,7 +239,7 @@ int init_c_lib() {
     t_item::draw_init();
 
     t_mech::draw_init();
-    t_mech::state_init();
+    //t_mech::state_init();
 
     Particles::init_particles();
 
@@ -300,7 +289,7 @@ void close_c_lib() {
     t_item::draw_teardown();
 
     t_mech::draw_teardown();
-    t_mech::state_teardown();
+    //t_mech::state_teardown();
 
     Particles::teardown_particles();
 

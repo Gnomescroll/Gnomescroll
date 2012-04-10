@@ -25,7 +25,7 @@
     #include <c_lib/objects/common/interface/policy.hpp>
     #include <c_lib/state/server_state.hpp>
 
-    #include <c_lib/t_item/interface.hpp>
+    #include <c_lib/t_item/_interface.hpp>
 
 #endif
 
@@ -104,7 +104,7 @@ int apply_damage(int x, int y, int z, int dmg)
 
 #if DC_SERVER
 
-#include <c_lib/t_item/interface.hpp>
+#include <c_lib/t_item/_interface.hpp>
 
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)

@@ -22,8 +22,8 @@ struct MECH
 struct MECH mech_array[1024];
 int mech_num = 0;
 
-void init() {}
-void teardown() {}
+void state_init() {}
+void state_teardown() {}
 
 //return index or -1
 
