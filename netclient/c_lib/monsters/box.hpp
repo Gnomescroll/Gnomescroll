@@ -1,4 +1,4 @@
-#pramga once
+#pragma once
 
 
 #include <c_lib/common/enum_types.hpp>
@@ -86,6 +86,6 @@ class Box: public VoxelComponent, public MonsterInterface
         // momentum should not be used this way (can be overwriiten, is only init etc)
         this->set_momentum(BOX_SPEED, BOX_SPEED, BOX_SPEED);
     }
-}
+};
 
 } // Monsters
