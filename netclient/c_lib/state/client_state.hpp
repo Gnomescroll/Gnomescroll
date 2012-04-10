@@ -1,24 +1,11 @@
 #pragma once
 
-#ifdef DC_CLIENT
-
-//#include <c_lib/agent/player_agent.hpp>
-
-//#include <c_lib/particles/particle_lib.hpp>
-
-/*
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/game/ctf.hpp>
-#include <c_lib/voxel/voxel_render.hpp>
-
-#include <c_lib/hud/text.hpp>
-*/
+#if DC_CLIENT
 
 #include <c_lib/items/items.hpp>
 #include <c_lib/monsters/monsters.hpp>
 
 #include <c_lib/game/ctf.hpp>
-//#include <c_lib/particles/particle_lib.hpp>
 
 //move
 #include <c_lib/animations/hitscan.hpp>
@@ -27,9 +14,6 @@
 class PlayerAgent_state; //forward declaration
 
 namespace ClientState {
-
-    using Animations::HitscanEffect_list;
-    using Animations::HitscanLaserEffect_list;
 
     extern PlayerAgent_state playerAgent_state;
     /* SINGLETONS
@@ -51,11 +35,8 @@ namespace ClientState {
     extern class  GameObject_list* object_list;
 
     //move into class
-    //extern class  Animations::HitscanEffect_list* hitscan_effect_list;
-    //extern class  Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
-
-    extern class  HitscanEffect_list* hitscan_effect_list;
-    extern class  HitscanLaserEffect_list* hitscan_laser_effect_list;   
+    extern class  Animations::HitscanEffect_list* hitscan_effect_list;
+    extern class  Animations::HitscanLaserEffect_list* hitscan_laser_effect_list;   
 
     extern class  CTF* ctf;
 

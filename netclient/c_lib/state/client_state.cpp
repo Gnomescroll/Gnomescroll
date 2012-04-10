@@ -1,5 +1,7 @@
 #include "client_state.hpp"
 
+#if DC_CLIENT
+
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/voxel/voxel_render.hpp>
@@ -20,8 +22,6 @@
 #endif
 
 const int GAME_OBJECT_MAX = 4096 * 4;
-
-//using Particles::shrapnel_list
 
 namespace ClientState {
 
@@ -74,36 +74,21 @@ namespace ClientState {
     void teardown_lists()
     {
         // voxel models
-        //agent_list->print();
         delete agent_list;
-        //object_list->print();
         delete object_list;
 
         // voxel lists
         // must go after all voxels
-        //printf("voxel render list\n");
-        //voxel_render_list->print();
         delete voxel_render_list;
-        //printf("voxel hitscan list\n");
-        //voxel_hitscan_list->print();
         delete voxel_hitscan_list;
 
         // behaviour lists
-        //spawner_list->print();
-        //printf("spawner list\n");
         delete spawner_list;
-        //printf("owned list\n");
-        //owned_list->print();
         delete owned_list;
-        //printf("billboard sprite list list\n");
-        //sprite_list->print();
         delete sprite_list;
-        //printf("colored minivox list\n");
-        //colored_minivox_list->print();
         delete colored_minivox_list;
 
         delete hitscan_effect_list;
-        //hitscan_laser_effect_list->print();
         delete hitscan_laser_effect_list;
 
     }
@@ -292,3 +277,5 @@ namespace ClientState {
         chat_client->send_system_message((char*)"Disconnected from server");
     }
 }
+
+#endif
