@@ -2,6 +2,8 @@
 
 #include <math.h>
 
+#include <c_lib/objects/common/api/born.hpp>
+#include <c_lib/objects/common/api/update.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/common/random.h>
