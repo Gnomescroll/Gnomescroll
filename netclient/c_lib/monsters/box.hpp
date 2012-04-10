@@ -8,8 +8,9 @@
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/api/born.hpp>
 #include <c_lib/objects/common/api/update.hpp>
+#include <c_lib/objects/common/api/tick.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
-
+#include <c_lib/agent/agent.hpp>
 #include <c_lib/monsters/slime.hpp>
 
 namespace Monsters {
