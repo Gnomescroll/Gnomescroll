@@ -32,5 +32,5 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 // NEW ONE:: (others are shit)
 void draw_bound_texture_sprite2(float x, float y, float w, float h, float z, float sprite_x, float sprite_y, float sprite_width, float sprite_height);
 
-void begin_transparent_draw(GLuint* texture);
+void begin_transparent_draw();
 void end_transparent_draw();

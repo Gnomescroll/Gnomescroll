@@ -279,7 +279,7 @@ int init_c_lib() {
     init_handlers();
     init_cameras();
     init_chat_client();
-    Particles::init_particles();
+    Particles::init_for_draw();
     init_item_texture();
 
     ClientState::init_ctf();

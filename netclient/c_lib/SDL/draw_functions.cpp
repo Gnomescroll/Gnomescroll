@@ -219,6 +219,7 @@ void draw_bound_texture_sprite(float x, float y, float w, float h, float z, floa
 
 void begin_transparent_draw()
 {
+    GL_ASSERT(GL_TEXTURE_2D, true);
     glColor4ub(255,255,255,255);
     glDepthMask(GL_FALSE);
 }

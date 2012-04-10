@@ -9,7 +9,7 @@
 namespace Particles
 {
 
-GLuint particle_texture;
+GLuint particle_texture = 0;
 
 void init_for_draw() 
 {
@@ -19,7 +19,7 @@ void init_for_draw()
         printf("Particles::init_for_draw failed with code %d\n", i);
     }
 
-    particle_texture = i;
+    //particle_texture = i;
 }
 
 void draw_teardown()
@@ -30,6 +30,7 @@ void draw_teardown()
 
 void begin_particle_draw()
 {
+    assert(particle_texture != 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
