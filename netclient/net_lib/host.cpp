@@ -223,6 +223,12 @@ void client_dispatch_network_events()
     }
 }
 
+void flush_to_net()
+{
+    NetClient::Server.flush_to_net();
+}
+
+
 }
 #endif
 
@@ -438,22 +444,18 @@ static void client_disconnect(ENetEvent* event)
     /* Reset the peer's client information. */
 }
 
-}
-
-#endif
 
 void flush_to_net()
 {
-#ifdef DC_CLIENT
-    NetClient::Server.flush_to_net();
-#endif
 
-#ifdef DC_SERVER
     for(int i=0; i<NetServer::HARD_MAX_CONNECTIONS ;i++)
     {
         if(NetServer::pool[i] == NULL) continue;
         NetServer::pool[i]->flush_to_net();
     }
-#endif
 
 }
+
+}
+
+#endif

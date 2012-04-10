@@ -116,8 +116,7 @@ int run()
 
         // dispatch
         NetClient::client_dispatch_network_events();
-        // flush network
-        flush_to_net();
+        NetClient::flush_to_net();
 
         // update mouse
         poll_mouse();

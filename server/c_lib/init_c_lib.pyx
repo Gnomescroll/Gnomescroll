@@ -35,7 +35,7 @@ cdef extern from "./options.hpp" namespace "Options":
     void set_port(int port)
     void set_game_mode(char* game_mode)
     void set_team_kills(bool team_kills)
-    void set_victory_points(int victory_points)
+    void set_victory_points(int victory_points) 
     void set_team_name_one(char* team_name_one)
     void set_team_name_two(char* team_name_two)
     void set_map(char* map)
