@@ -2,7 +2,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/common/gl_assert.hpp>
-#include <c_lib/t_item/sprite.hpp>
+#include <c_lib/t_item/client/texture.hpp>
 #endif
 
 #include <c_lib/physics/verlet.hpp>

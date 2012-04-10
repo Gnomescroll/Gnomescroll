@@ -46,9 +46,6 @@ namespace ServerState
     void send_initial_game_state_to_client(int client_id);
     void send_remainining_game_state_to_client(int client_id);
 
-    void send_player_agent_id_to_client(int client_id);
-    void send_version_to_client(int client_id);
-
     //void send_disconnect_notice(int client_id);
     void agent_disconnect(int client_id);
     void revoke_ownership(int agent_id);

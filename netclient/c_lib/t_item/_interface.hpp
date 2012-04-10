@@ -48,11 +48,19 @@ SERVER
 namespace t_item
 {
 
+const int NO_AGENT = 0xffff;
+extern int AgentInventoryList[256];
+
+
+void create_agent_inventory(int agent_id, int client_id);
+void delete_agent_inventory(int agent_id);
+
 void check_item_pickups();
 
 void create_free_item(int item_type, 
     float x, float y, float z, 
     float vx, float vy, float vz);
+
 
 }
 

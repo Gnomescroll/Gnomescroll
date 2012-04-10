@@ -11,7 +11,7 @@
 #include <c_lib/t_item/item_container.cpp>
 #include <c_lib/t_item/item.cpp>
 
-#include <c_lib/t_item/sprite.cpp>
+#include <c_lib/t_item/client/texture.cpp>
 
 #include <c_lib/t_item/net/CtoS.cpp>
 #include <c_lib/t_item/net/StoC.cpp>

@@ -6,7 +6,31 @@
 #include <c_lib/t_map/server/manager.hpp>
 
 #include <c_lib/chat/interface.hpp>
+
+//#include <c_lib/agent/agent.hpp>
+#include <c_lib/agent/net_agent.hpp>
 #endif
+
+
+/*
+    Utility Functions
+*/
+void send_player_agent_id_to_client(int client_id);
+void send_version_to_client(int client_id);
+
+void send_player_agent_id_to_client(int client_id)
+{
+    PlayerAgent_id_StoC msg;
+    msg.id = client_id;
+    msg.sendToClient(client_id);
+}
+
+void send_version_to_client(int client_id)
+{
+    version_StoC msg;
+    msg.version = DC_VERSION;
+    msg.sendToClient(client_id);
+}
 
 void NetPeerManager::init(int client_id)
 {
@@ -20,7 +44,7 @@ void NetPeerManager::init(int client_id)
     this->inited = true;
     this->client_id = client_id;
 
-    ServerState::send_version_to_client(client_id);
+    send_version_to_client(client_id);
 
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
@@ -29,7 +53,7 @@ void NetPeerManager::init(int client_id)
     Agent_state* a = ServerState::agent_list->create(client_id);
     NetServer::assign_agent_to_client(client_id, a);
 
-    ServerState::send_player_agent_id_to_client(client_id);
+    send_player_agent_id_to_client(client_id);
     add_player_to_chat(client_id);
     #endif
 }

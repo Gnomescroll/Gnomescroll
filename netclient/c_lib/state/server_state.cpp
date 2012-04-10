@@ -1,13 +1,6 @@
 #include "server_state.hpp"
 
-
-#ifdef DC_SERVER
-
 #include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/net_agent.hpp>
-
-//#include <c_lib/particles/cspray.hpp>
-//#include <c_lib/particles/grenade.hpp>
 
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/items/items.hpp>
@@ -170,15 +163,6 @@ namespace ServerState
             t_map::t_map_sort_map_chunk_ques();
         }
 
-/*
-        if(counter % 2 == 0) 
-        {
-            agent_list->update_map_manager_positions();
-            t_map::t_map_manager_update();
-            t_map::t_map_sort_map_chunk_ques();
-            t_map::t_map_send_map_chunks();
-        }
-*/
         agent_list->update_models(); // sets skeleton
         object_list->tick();
         Particles::grenade_list->tick();
@@ -189,9 +173,7 @@ namespace ServerState
         {
             t_item::check_item_pickups();
         }
-        //grenade_shrapnel_list->tick();
 
-        // game
         ctf->tick();
     }
 
@@ -208,20 +190,6 @@ namespace ServerState
     void send_remainining_game_state_to_client(int client_id)
     {
         object_list->send_to_client(OBJ_TYPE_INVENTORY, client_id);
-    }
-
-    void send_player_agent_id_to_client(int client_id)
-    {
-        PlayerAgent_id_StoC msg;
-        msg.id = client_id;
-        msg.sendToClient(client_id);
-    }
-
-    void send_version_to_client(int client_id)
-    {
-        version_StoC msg;
-        msg.version = DC_VERSION;
-        msg.sendToClient(client_id);
     }
 
     //move into agent interface
@@ -276,4 +244,3 @@ namespace ServerState
     }
 
 }
-#endif
