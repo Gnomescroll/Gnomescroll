@@ -18,7 +18,8 @@ const float SLIME_MOTION_PROXIMITY_RADIUS = 15.0f;
 const float SLIME_SPEED = 0.25f;
 
 /* Box */
-const int BOX_MAX = 256;
+//const int BOX_MAX = 256;
+const int BOX_MAX = 1024;
 const int BOX_HEALTH = 25;
 enum BOX_BODY_PARTS {
     BOX_PART_BODY

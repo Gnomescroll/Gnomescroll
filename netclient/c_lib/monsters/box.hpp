@@ -48,6 +48,8 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
     Object_types target_type;
     bool locked_on_target;
 
+    //int transmission_tick;
+
     void tick()
     {
         // must stay on ground -- apply terrain collision
@@ -100,6 +102,12 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
             this->set_angles(theta, phi, 0);
         }
+        else if (this->en_route)
+        {   // face destination
+            float theta, phi;
+            vec3_to_angles(this->get_momentum(), &theta, &phi);
+            this->set_angles(theta, phi, 0);
+        }
 
         if (!this->en_route && !this->locked_on_target)
         {   // no destination, no target
@@ -148,6 +156,9 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             this->set_position(position.x, position.y, position.z);
         }
 
+        //if (this->transmission_tick % 3 == 0)
+            //this->broadcastState();
+        //this->transmission_tick++;
         this->broadcastState();
 
         #endif
@@ -200,6 +211,8 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
     {
+        //this->transmission_tick = id % 3;
+        
         this->_state.id = id;
 
         this->_state.coin_rule = COINS_ANYONE;
