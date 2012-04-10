@@ -165,6 +165,7 @@ namespace ServerState
 
         agent_list->update_models(); // sets skeleton
         object_list->tick();
+        object_list->update();
         Particles::grenade_list->tick();
 
         t_item::tick();

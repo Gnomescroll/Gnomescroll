@@ -35,6 +35,12 @@ void updateFrozenVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_ch
     #if DC_SERVER
     vox->was_updated = false;
     vox->set_hitscan(true);
+    if (state_changed)
+    {
+        vox->thaw();
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
+        vox->freeze();
+    }
     #endif
 }
 
@@ -65,5 +71,7 @@ void updateVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
     #if DC_SERVER
     vox->was_updated = false;
     vox->set_hitscan(true);
+    //if (state_changed)
+        vox->update(position.x, position.y, position.z, angles.x, angles.y);
     #endif
 }

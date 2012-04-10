@@ -12,6 +12,7 @@
 #include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/monsters/slime.hpp>
+#include <c_lib/state/server_state.hpp>
 
 namespace Monsters {
 
@@ -48,12 +49,10 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
 
     void tick()
     {
-        // must stay on ground -- apply agent collision
+        // must stay on ground -- apply terrain collision
         // wander randomly (TODO: network model with destinations)
         // TODO -- aggro component
-
-        // if see agent, stop, lock target (todo -- target lock)
-
+        #if DC_SERVER
         Agent_state* agent = NULL;
         if (this->locked_on_target)
         {   // target locked
@@ -92,7 +91,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         }
         
         if (this->locked_on_target)
-        {
+        {   // target is locked
             // face target
             float theta,phi;
             Vec3 direction = vec3_sub(agent->get_center(), this->get_center()); // TODO -- get_center() on voxel component
@@ -100,8 +99,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
             this->set_angles(theta, phi, 0);
         }
-
-        if (this->en_route)
+        else if (this->en_route)
         {   // destination set
             // move towards destination
             Vec3 position = vec3_add(this->get_position(), this->get_momentum());
@@ -117,7 +115,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
             this->en_route = true;
 
-            Vec3 direction = vec3_sub(this->destination, this->get_position());\
+            Vec3 direction = vec3_sub(this->destination, this->get_position());
             normalize_vector(&direction);
             Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
             this->set_momentum(momentum.x, momentum.y, momentum.z);
@@ -125,6 +123,8 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         }
 
         this->broadcastState();
+
+        #endif
     }
 
     void die()
