@@ -72,13 +72,16 @@
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
 
+/* mechanisms */
+#include <c_lib/t_mech/_include.hpp>
+
 /* t_item */
 #include <c_lib/t_item/_include.hpp>
 
 /* Game modes */
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/ctf.cpp>
-#include <c_lib/game/teams.cpp>
+#include <c_lib/game/teams.cpp> 
 #include <c_lib/game/packets.cpp>
 
 /* Agents */

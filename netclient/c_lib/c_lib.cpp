@@ -138,9 +138,7 @@
 #include <c_lib/t_map/net/t_StoC.cpp>
 
 /* mechanisms */
-
-#include <c_lib/t_mech/state.cpp>
-#include <c_lib/t_mech/draw.cpp>
+#include <c_lib/t_mech/_include.hpp>
 
 /* items */
 #include <c_lib/t_item/_include.hpp>
