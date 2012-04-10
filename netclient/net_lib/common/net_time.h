@@ -1,17 +1,9 @@
-#ifndef net_lib_common_net_time_h
-#define net_lib_common_net_time_h
+#pragma once
 
-//#include "net_lib_common.h"
-
-
-#include <time/physics_timer.h>
+#include <c_lib/common/time/physics_timer.hpp>
 
 void update_current_netpeer_time();
 void NP_print_delta();
-//int NP_time_delta1(int time);
-//int NP_time_delta2(int time1, int time2);
-
-//int _GET_MS_TIME();
 
 extern int LAST_NETPEER_TIME;
 extern int CURRENT_NETPEER_TIME;
@@ -39,6 +31,3 @@ static inline int NP_time_delta2(int t1, int t2) {
     }
     return delta;
 }
-
-
-#endif
