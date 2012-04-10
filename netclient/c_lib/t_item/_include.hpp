@@ -1,26 +1,36 @@
 #pragma once
 
+/*
+	Client
+*/
+#ifdef DC_CLIENT
 
+#include <c_lib/t_item/free_item.cpp>
+#include <c_lib/t_item/_interface.cpp>
+#include <c_lib/t_item/item_container.cpp>
+#include <c_lib/t_item/item.cpp>
 
-namespace t_item
-{
+#include <c_lib/t_item/sprite.cpp>
 
+#include <c_lib/t_item/net/CtoS.cpp>
+#include <c_lib/t_item/net/StoC.cpp>
 
-extern class Free_item_list* free_item_list;
-extern class ItemContainerList* item_container_list;
-extern class ItemList* item_list;
+#endif
 
-void state_init();
-void state_teardown();
+/*
+	Server
+*/
 
-void tick();
-void draw();
+#ifdef DC_SERVER
 
-void check_item_pickups();
+#include <c_lib/t_item/free_item.cpp>
+#include <c_lib/t_item/_interface.cpp>
+#include <c_lib/t_item/item_container.cpp>
+#include <c_lib/t_item/item.cpp>
 
-void create_free_item(int item_type, 
-	float x, float y, float z,
- float vx, float vy, float vz);
+#include <c_lib/t_item/server/agent_inventory.cpp>
 
-
-}
+#include <c_lib/t_item/net/CtoS.cpp>
+#include <c_lib/t_item/net/StoC.cpp>
+	
+#endif
