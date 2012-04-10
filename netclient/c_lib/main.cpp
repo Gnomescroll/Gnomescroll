@@ -44,7 +44,7 @@ void init()
     // parse ip address and connect
     int address[4];
     address_from_string(Options::server, address);
-    client_connect_to(address[0], address[1], address[2], address[3], Options::port);
+    NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
 
 int run()
@@ -115,7 +115,7 @@ int run()
         frame_graph->frame_stage(1); // misc stuff and network
 
         // dispatch
-        client_dispatch_network_events();
+        NetClient::client_dispatch_network_events();
         // flush network
         flush_to_net();
 

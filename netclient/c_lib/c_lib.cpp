@@ -262,7 +262,7 @@ int init_c_lib() {
     init_voxel_volume();
     
     init_network();
-    init_net_client();
+    NetClient::init_net_client();
     
     init_input();
     init_handlers();
@@ -297,7 +297,8 @@ void close_c_lib() {
 
     TextureSheetLoader::teardown();
 
-    shutdown_net_client();
+    NetClient::shutdown_net_client();
+
     teardown_cameras();
     HudFont::teardown();
     Draw::teardown();

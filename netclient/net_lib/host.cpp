@@ -38,6 +38,7 @@ namespace NetClient
 
 static void client_connect(ENetEvent* event);
 static void client_disconnect(ENetEvent* event);
+void client_dispatch_network_events();
 
 void init_net_client()
 {
@@ -92,8 +93,6 @@ static void client_disconnect(ENetEvent* event)
     #ifdef DC_CLIENT
     ClientState::on_disconnect();
     #endif
-}
-
 }
 
 void client_connect_to(int a, int b, int c, int d, unsigned short port) 
@@ -222,6 +221,8 @@ void client_dispatch_network_events()
             break;
         }
     }
+}
+
 }
 #endif
 
