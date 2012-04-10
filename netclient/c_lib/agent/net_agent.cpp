@@ -709,6 +709,7 @@ inline void hitscan_object_CtoS::handle()
         case OBJ_TYPE_SLIME:
         case OBJ_TYPE_SPAWNER:
         case OBJ_TYPE_TURRET:
+        case OBJ_TYPE_MONSTER_BOX:
             obj = ServerState::object_list->get((Object_types)type, id);
             if (obj == NULL) return;
 

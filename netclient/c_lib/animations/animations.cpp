@@ -307,6 +307,47 @@ void slime_melt(float x, float y, float z)
     Particles::minivox_list->unset_size();
 }
 
+void voxel_explode(Vec3 position, int count, float size, struct Color color)
+{
+    if (!Options::animations) return;
+    Particles::minivox_list->set_size(size);
+    
+    float vx,vy,vz;
+    vx=vy=vz=20.0f;
+    
+    float cx,cy,cz;
+    float cvx,cvy,cvz;
+    float theta, phi;
+    float dtheta, dphi;
+
+    Minivox* minivox;
+    int ttl;
+    for (int i=0; i<count; i++)
+    {
+        ttl = randrange(50,80);
+        cx = position.x + ((randf() - 0.5f) / 20.0f);
+        cy = position.y + ((randf() - 0.5f) / 20.0f);
+        cz = position.z + ((randf() - 0.5f) / 20.0f);
+        cvx = vx * (randf() - 0.5f);
+        cvy = vy * (randf() - 0.5f);
+        cvz = vz * (randf() - 0.5f);
+
+        theta = randf() * PI * 2;
+        phi = randf() * PI * 2;
+        dtheta = randf() * 0.01f;
+        dphi = randf() * 0.01f;
+        
+        minivox = Particles::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
+        if (minivox == NULL) return;
+        minivox->set_color(color.r, color.g, color.b);//sky blue
+        minivox->set_ttl(ttl);
+        minivox->set_spin(dtheta, dphi);
+        minivox->set_angles(theta, phi);
+    }
+
+    Particles::minivox_list->unset_size();
+}
+
 void team_item_explode(Vec3 p, int team)
 {
     if (!Options::animations) return;

@@ -264,6 +264,16 @@ float vec3_angle_to_point(Vec3 pt, Vec3 look, Vec3 pt2)
     return x;
 }
 
+static float vec3_to_theta(Vec3 direction) __attribute((always_inline));
+static float vec3_to_theta(Vec3 direction)
+{
+    direction.z = 0;
+    normalize_vector(&direction);
+    float t = acos(direction.x) / PI;
+    if (direction.y < 0) t = -t;
+    return t;
+}
+
 //  x- and y-angle (theta,phi) rotation between two Vec3s
 static void vec3_to_angles(Vec3 direction, float* theta, float* phi) __attribute((always_inline));
 static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
@@ -273,12 +283,11 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
     direction.z = 0;
     normalize_vector(&direction);
 
-    float t = acos(direction.x) / 3.14159f;
+    float t = acos(direction.x) / PI;
     if (direction.y < 0) t = -t;
-    //t += 0.50f; //off by 90 degrees
     *theta = t;
 
-    t = asin(z) / 3.14159f;
+    t = asin(z) / PI;
     t += 0.5f;
     *phi = t;
 }

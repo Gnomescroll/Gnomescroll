@@ -2,6 +2,7 @@
 
 
 #include <c_lib/common/enum_types.hpp>
+#include <c_lib/common/common.hpp>
 #include <c_lib/monsters/constants.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/objects/components/voxel/component.hpp>
@@ -63,7 +64,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             if (this->target_type == OBJ_TYPE_AGENT)
                 agent = STATE::agent_list->get(this->target_id);
             if (agent == NULL
-            || vec3_distance_squared(agent->get_center(), this->get_center()) > BOX_SPEED*BOX_SPEED)
+            || vec3_distance_squared(agent->get_center(), this->get_center(BOX_PART_BODY)) > BOX_SPEED*BOX_SPEED)
                 this->locked_on_target = false;
         }
 
@@ -97,7 +98,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         {   // target is locked
             // face target
             float theta,phi;
-            Vec3 direction = vec3_sub(agent->get_center(), this->get_center()); // TODO -- get_center() on voxel component
+            Vec3 direction = vec3_sub(agent->get_center(), this->get_center(BOX_PART_BODY));
             vec3_to_angles(direction, &theta, &phi);
             //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
             this->set_angles(theta, phi, 0);
@@ -168,10 +169,13 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
     {
         #if DC_CLIENT
         //dieAnimation();   // todo
-        if (this->voxel_properties.vox == NULL)
+        if (this->voxel_properties.vox != NULL)
         {
-            Vec3 position = this->voxel_properties.vox->get_part(BOX_PART_BODY)->get_center();
-            Animations::slime_melt(position.x, position.y, position.z); // TODO
+            Vec3 position = this->get_center(BOX_PART_BODY);
+            const float size = 0.2f;    // TODO
+            const float count = 5*5*5;
+            const struct Color color = { 223, 31, 31 };
+            Animations::voxel_explode(position, count, size, color);
         }
         #endif
 

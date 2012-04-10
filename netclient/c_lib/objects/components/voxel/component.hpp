@@ -35,5 +35,10 @@ class VoxelComponent
         return this->voxel_properties.vox->get_part(0)->get_center();
     }
     
+    Vec3 get_center(int part)
+    {
+        return this->voxel_properties.vox->get_part(part)->get_center();
+    }
+    
     VoxelComponent() {}
 };

@@ -85,13 +85,7 @@ Vec3 tickMoveToPoint(Vec3 dest, Vec3 origin, Vec3 momentum)
 float tickOrientToPointTheta(Vec3 dest, Vec3 origin)
 {
     Vec3 direction = vec3_sub(dest, origin);
-    direction.z = 0;
-    normalize_vector(&direction);
-
-    float t = acos(direction.x) / 3.14159f;
-    if (direction.y < 0) t = -t;
-    //t += 0.50f; //off by 90 degrees
-    return t;
+    return vec3_to_theta(direction);
 }
 
 //  x- and y-angle (theta,phi) rotation between two Vec3s
