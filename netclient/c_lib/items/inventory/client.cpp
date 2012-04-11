@@ -20,7 +20,14 @@ void InventoryProperties::load(int id, Object_types type)
     if (this->item_id != EMPTY_SLOT && new_icon)
         unregister_inventory_item_draw_list(this);
     if (type != this->item_type)
+    {
         this->sprite_index = get_icon_spritesheet_id(type);
+        // MAJO TODO -- HACK
+        // hud icon spritesheet is 8x8 but rendered particle spritesheet is 16x16 -- but using same indexes
+        // (should be using same sheet)
+        if (this->sprite_index >= 8)
+            this->sprite_index -= 8;
+    }
     this->item_id = id;
     this->item_type = type;
     if (id != EMPTY_SLOT && new_icon)   // set to new

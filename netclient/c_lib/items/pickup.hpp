@@ -125,51 +125,43 @@ void initialize_pickup_properties(Object_types type, PickupComponent* obj)
     }
 }
 
+
 void initialize_sprite_properties(Object_types type, SpriteProperties* obj)
 {
+    int sprite_index = get_object_type_sprite_index(type);
+    obj->sprite_index = sprite_index;
     switch (type)
     {
         case OBJ_TYPE_GRENADE_REFILL:
-            obj->sprite_index = GRENADE_REFILL_TEXTURE_ID;
             obj->scale = GRENADE_REFILL_TEXTURE_SCALE;
             break;
-
         case OBJ_TYPE_LASER_REFILL:
-            obj->sprite_index = LASER_REFILL_TEXTURE_ID;
             obj->scale = LASER_REFILL_TEXTURE_SCALE;
             break;
 
         case OBJ_TYPE_MALACHITE:
-            obj->sprite_index = MALACHITE_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_RUBY:
-            obj->sprite_index = RUBY_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_TURQUOISE:
-            obj->sprite_index = TURQUOISE_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_SILVER:
-            obj->sprite_index = SILVER_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_AMETHYST:
-            obj->sprite_index = AMETHYST_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_JADE:
-            obj->sprite_index = JADE_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
         case OBJ_TYPE_ONYX:
-            obj->sprite_index = ONYX_SPRITE_INDEX;
             obj->scale = GEMSTONE_SCALE;
             break;
 
         case OBJ_TYPE_MEAT:
-            obj->sprite_index = MEAT_SPRITE_INDEX;
             obj->scale = MEAT_SCALE;
             break;
 
