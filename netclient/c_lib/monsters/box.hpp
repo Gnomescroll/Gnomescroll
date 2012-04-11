@@ -50,8 +50,6 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
     Object_types target_type;
     bool locked_on_target;
 
-    //int transmission_tick;
-
     void tick()
     {
         // must stay on ground -- apply terrain collision
@@ -120,6 +118,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
             float dz = 0;
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
             this->en_route = true;
+            this->at_destination = false;
 
             // clamp
             if (this->destination.x < 0) this->destination.x = 0;
@@ -136,19 +135,16 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
             // send destination packet
         }
 
-        //if (this->en_route && !this->at_destination)
-        //{   // heading to destination
-            //// check if at destination
-        //}
-        float dist = vec3_distance_squared(this->destination, this->get_position());
-        if (dist < 1.0f)    // TODO Margin
+        if (!this->at_destination)
         {
-            this->en_route = false;
-            this->at_destination = true;
-            this->set_momentum(0,0,0);
+            float dist = vec3_distance_squared(this->destination, this->get_position());
+            if (dist < 1.0f)    // TODO Margin
+            {
+                this->en_route = false;
+                this->at_destination = true;
+                this->set_momentum(0,0,0);
+            }
         }
-        else
-            this->at_destination = false;
 
 
         if (this->en_route)
