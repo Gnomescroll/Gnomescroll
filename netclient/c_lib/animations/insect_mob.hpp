@@ -3,6 +3,15 @@
 namespace Animations 
 {
 
+
+struct vertexElement;
+{
+	float x,y,z;
+	float tx,ty;
+}
+
+struct vertexElement* insect_mob_vlist;
+
 int insect_mob_surface;
 unsigned int insect_mob_texture;
 
@@ -11,7 +20,10 @@ void init_insect_mob_shader();
 
 void init_insect_mob()
 {
+	insect_mob_vlist = new vertexElement[4096];
+
 	init_insect_mob_texture();
+	init_insect_mob_shader();
 }
 
 
