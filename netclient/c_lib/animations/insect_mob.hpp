@@ -172,9 +172,9 @@ class InsectMob
 		//for(int i=0; i<max_sides; i++ ) phase[i] = 3.1415*randf();
 		for(int i=0; i<max_sides; i++ ) speed[i] = 1.0+ (0.4*randf() - 0.1);
 
-		sides = 5;
-		tw = 1.0;
-		th = 1.0;
+		sides = 3 + (rand() % 3);
+		tw = 1.0 + (randf()*.5 - 25);
+		th = 1.0 + (randf()*.5 - 25);
 
 
 	}
