@@ -22,6 +22,12 @@ void init_hitscan()
     if (i) { printf("init_hitscan failed with code %d\n", i); }
 }
 
+void teardown_hitscan()
+{
+
+
+}
+
 HitscanEffect::HitscanEffect(int id)
 :
 id(id),
@@ -218,7 +224,7 @@ void HitscanEffect_list::tick()
             float vx = vm*(float)rand()/(float)RAND_MAX;
             float vy = 160.0;
             float vz = vm*(float)rand()/(float)RAND_MAX;
-            ClientState::hitscan_effect_list->create(32.0, 32.0, 64.0, vx, vy, vz);
+            hitscan_effect_list->create(32.0, 32.0, 64.0, vx, vy, vz);
         }
 
     }

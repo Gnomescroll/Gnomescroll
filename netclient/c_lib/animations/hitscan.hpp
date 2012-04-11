@@ -5,6 +5,9 @@
 namespace Animations
 {
 
+void init_hitscan();
+void teardown_hitscan();
+
 class HitscanEffect
 {
     private:

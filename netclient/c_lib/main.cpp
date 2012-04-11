@@ -144,7 +144,7 @@ int run()
 
         t_map::draw_map();
 
-        Animations::draw_insect();
+        Animations::draw_insect_mob();
         
         poll_mouse();
 
@@ -175,7 +175,8 @@ int run()
 
         poll_mouse();
         // draw animations
-        Animations::animations_draw();  //transparency stuff
+        Animations::hitscan_effect_list->draw();
+        Animations::hitscan_laser_effect_list->draw();
 
         // update mouse
         poll_mouse();

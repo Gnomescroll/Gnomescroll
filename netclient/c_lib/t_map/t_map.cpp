@@ -148,7 +148,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 1
+#if 0
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else

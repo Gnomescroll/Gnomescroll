@@ -29,6 +29,11 @@ void init_hitscan_laser()
     if (i) { printf("init_hitscan_laser failed with code %d\n", i); }
 }
 
+void teardown_hitscan_laser()
+{
+
+}
+
 
 HitscanLaserEffect::HitscanLaserEffect(int id)
 :

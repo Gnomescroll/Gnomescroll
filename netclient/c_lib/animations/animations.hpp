@@ -31,6 +31,5 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color);
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, struct Color color);
 
-void animations_tick();
-void animations_draw();
+//void animations_draw();
 }

@@ -1,3 +1,6 @@
+How to generate a stacktrace when my gcc C++ app crashes
+http://stackoverflow.com/questions/77005/how-to-generate-a-stacktrace-when-my-gcc-c-app-crashes
+
 Counting Lines of Code:
 sloccount <directory>
 

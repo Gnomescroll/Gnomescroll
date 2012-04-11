@@ -272,11 +272,8 @@ int init_c_lib() {
 
     ClientState::init_ctf();
     
-    Animations::init_hitscan();
-    Animations::init_hitscan_laser();
-    
-    Animations::init_insect_mob();
-    
+    Animations::init();
+
     return 0;
 }
  
