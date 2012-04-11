@@ -74,7 +74,7 @@ int run()
         frame_graph->frame_start();
 
         // update mouse
-        poll_mouse(); 
+        poll_mouse();
         
         // physics loop
         int physics_ticks = 0;
