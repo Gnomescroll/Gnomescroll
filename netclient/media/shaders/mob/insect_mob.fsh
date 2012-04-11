@@ -7,13 +7,18 @@
 uniform sampler2D base_texture;
 
 varying vec2 texCoord;
+varying float diffuse;
 
+#define diffuse_p .30f //diffuse lighting weight
+#define ambient_p .70f //ambient lighting weight
 
 void main() 
 {
 	//float gamma = 2.2f;
 	
     vec4 color = texture2D(base_texture, texCoord.xy);
+    
+    color = ((diffuse_p*diffuse)*color) + ambient_p*color;
 
     gl_FragColor = color;
 	
