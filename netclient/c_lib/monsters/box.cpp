@@ -4,7 +4,9 @@
 #include <c_lib/objects/common/interface/list.hpp>
 #include <c_lib/state/client_state.hpp>
 
+#if DC_CLIENT
 #include <c_lib/animations/_interface.hpp>
+#endif
 
 namespace Monsters
 {

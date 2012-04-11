@@ -8,7 +8,9 @@
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 
+#if DC_CLIENT
 #include <c_lib/animations/_interface.hpp>
+#endif
 
 #if DC_CLIENT
 /* Packet handlers */
