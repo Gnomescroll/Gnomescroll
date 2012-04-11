@@ -6,8 +6,8 @@
 #include <c_lib/game/ctf.hpp>
 #include <c_lib/voxel/voxel_render.hpp>
 
-#include <c_lib/animations/hitscan.hpp>
-#include <c_lib/animations/hitscan_laser.hpp>
+//#include <c_lib/animations/hitscan.hpp>
+//#include <c_lib/animations/hitscan_laser.hpp>
 #include <c_lib/hud/text.hpp>
 
 #include <c_lib/agent/agent.hpp>
@@ -25,8 +25,8 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 
 namespace ClientState {
 
-    using Animations::HitscanEffect_list;
-    using Animations::HitscanLaserEffect_list;
+    //using Animations::HitscanEffect_list;
+    //using Animations::HitscanLaserEffect_list;
 
     class Agent_list* agent_list = NULL;
 
@@ -39,9 +39,6 @@ namespace ClientState {
     class SpriteList* sprite_list = NULL;
 
     class GameObject_list* object_list;
-
-    class Animations::HitscanEffect_list* hitscan_effect_list = NULL;
-    class Animations::HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
@@ -66,9 +63,6 @@ namespace ClientState {
         
         object_list = new GameObject_list;
         agent_list = new Agent_list;
-
-        hitscan_effect_list = new Animations::HitscanEffect_list;
-        hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
     }
 
     void teardown_lists()
@@ -87,9 +81,6 @@ namespace ClientState {
         delete owned_list;
         delete sprite_list;
         delete colored_minivox_list;
-
-        delete hitscan_effect_list;
-        delete hitscan_laser_effect_list;
 
     }
 

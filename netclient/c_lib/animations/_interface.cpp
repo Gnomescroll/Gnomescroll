@@ -1,13 +1,23 @@
 #include "_interface.hpp"
 
+#include <c_lib/animations/insect_mob.hpp>
+#include <c_lib/animations/hitscan.hpp>
+#include <c_lib/animations/hitscan_laser.hpp>
+
 namespace Animations 
 {
 
 class Insect_mob_list* insect_mob_list = NULL;
 
+class HitscanEffect_list* hitscan_effect_list = NULL;
+class HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 
 void init()
 {
+
+    hitscan_effect_list = new Animations::HitscanEffect_list;
+    hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
+
 	insect_mob_list = new Insect_mob_list;
 
     Animations::init_hitscan();
@@ -22,9 +32,34 @@ void teardown()
 {
 	delete insect_mob_list;
 
+    delete hitscan_effect_list;
+    delete hitscan_laser_effect_list;
+
     Animations::teardown_hitscan();
     Animations::teardown_hitscan_laser();
 
+}
+
+void animations_tick()
+{
+    ClientState::ctf->animate_flags();
+    ClientState::hitscan_effect_list->tick();
+    ClientState::hitscan_laser_effect_list->tick();
+}
+
+/*
+void animations_draw()
+{
+    Animations::hitscan_effect_list->draw();
+    Animations::hitscan_laser_effect_list->draw();
+}
+*/
+
+void draw_insect_mob()
+{
+	//!! only prep if tick has been called!!!
+	insect_mob_list->draw();
+	insect_mob_list->prep();
 }
 
 void spawn_insect_mob(float x, float y, float z)

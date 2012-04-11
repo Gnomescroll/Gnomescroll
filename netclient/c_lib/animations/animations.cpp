@@ -415,17 +415,4 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     }
 }
 
-void animations_tick()
-{
-    ClientState::ctf->animate_flags();
-    ClientState::hitscan_effect_list->tick();
-    ClientState::hitscan_laser_effect_list->tick();
-}
-
-void animations_draw()
-{
-    ClientState::hitscan_effect_list->draw();
-    ClientState::hitscan_laser_effect_list->draw();
-}
-
 }
