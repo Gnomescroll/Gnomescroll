@@ -1024,8 +1024,9 @@ inline void place_spawner_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = (Spawner*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
+    Spawner* s = (Spawner*)ServerState::object_list->create(type);
     if (s==NULL) return;
+    s->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(s->state()->type);
     s->set_team(a->status.team);
     s->set_owner(a->id);
@@ -1053,8 +1054,9 @@ inline void place_turret_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = (Turret*)ServerState::object_list->create(type, x+0.5f,y+0.5f,new_z);
+    Turret* t = (Turret*)ServerState::object_list->create(type);
     if (t==NULL) return;
+    t->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(t->state()->type);
     t->set_team(a->status.team);
     t->set_owner(a->id);

@@ -24,15 +24,13 @@ void turret_state(object_state_StoC_model* msg)
 
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
-    Turret* t = (Turret*)ClientState::object_list->create(
-        (Object_types)msg->type, (int)msg->id,
-        msg->x, msg->y, msg->z
-    );
+    Turret* t = (Turret*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);
     if (t == NULL)
     {
         printf("WARNING turret_create() -- could not create turret %d\n", msg->id);
         return;
     }
+    t->set_position(msg->x, msg->y, msg->z);
     t->set_team(msg->team);
     t->set_owner(msg->owner);
     t->born();

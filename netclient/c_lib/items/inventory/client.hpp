@@ -19,6 +19,13 @@ int get_icon_spritesheet_id(Object_types type)
     return ItemDrops::get_object_type_sprite_index(type);  // TODO: this is defined in pickup.hpp, move it
 }
 
+class InventoryProperties;
+
+class InventoryContents: public BaseInventoryContents<InventoryProperties>
+{};
+
+typedef BaseInventory<InventoryContents> BaseInventoryClient;
+
 class Inventory;
 class InventoryProperties: public BaseInventoryProperties, public SpriteProperties
 {
@@ -37,10 +44,6 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
     }
 };
 
-class InventoryContents: public BaseInventoryContents<InventoryProperties>
-{};
-
-typedef BaseInventory<InventoryContents> BaseInventoryClient;
 class Inventory: public BaseInventoryClient
 {
     public:
@@ -48,8 +51,6 @@ class Inventory: public BaseInventoryClient
     struct {
         float x,y,z;
     } screen;   // TODO -- replace with UI element
-
-    void attach_to_owner();
 
     void remove_any_action()
     {

@@ -138,12 +138,13 @@ void slimeDropItem(Vec3 position)
     };
     Object_types type = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
-        position.x, position.y, position.z+1.0f,
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
+    {
+        obj->set_position(position.x, position.y, position.z+1.0f);
+        obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
         obj->born();
+    }
     #endif
 }
 
@@ -172,9 +173,12 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (TYPE*)STATE::object_list->create(type, x+0.5, y+0.5, z);
+        s = (TYPE*)STATE::object_list->create(type);
         if (s != NULL)
+        {
+            s->set_position(x+0.5, y+0.5, z);
             s->born();
+        }
     }
     #undef TYPE
 }

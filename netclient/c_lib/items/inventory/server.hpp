@@ -11,6 +11,17 @@
 
 #include <c_lib/items/inventory/base.hpp>
 
+class InventoryProperties;
+
+class InventoryContents: public BaseInventoryContents<InventoryProperties>
+{
+    public:
+        void sendToClient(int inventory_id, int client_id);
+};
+
+typedef BaseInventory<InventoryContents> BaseInventoryServer;
+
+
 class InventoryProperties: public BaseInventoryProperties
 {
     public:
@@ -28,14 +39,6 @@ class InventoryProperties: public BaseInventoryProperties
     {
     }
 };
-
-class InventoryContents: public BaseInventoryContents<InventoryProperties>
-{
-    public:
-        void sendToClient(int inventory_id, int client_id);
-};
-
-typedef BaseInventory<InventoryContents> BaseInventoryServer;
 
 class Inventory: public BaseInventoryServer
 {

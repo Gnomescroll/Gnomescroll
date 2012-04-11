@@ -4,6 +4,7 @@
 #include <c_lib/items/items.hpp>
 #include <net_lib/net.hpp>
 #include <c_lib/items/pickup.hpp>
+#include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/monsters/monsters.hpp>
 
 void GameObject_list::tick()
@@ -219,6 +220,27 @@ int GameObject_list::objects_within_sphere(const Object_types* types, const int 
 
 /* Creation API */
 
+//Inventory* create_inventory_of_type(InventoryTypes type, int id)
+//{
+    //Inventory* inventory = NULL;
+    //switch (type)
+    //{
+        //case INVENTORY_TYPE_AGENT:
+            //inventory = new AgentInventory(id);
+            //break;
+            
+        ////case INVENTORY_TYPE_TMAP:
+            ////inventory = new TMapInventory(id);
+            ////break;
+        ////case INVENTORY_TYPE_TITEM:
+            ////inventory = new TItemInventory(id);
+            ////break;
+
+        //default: break;
+    //}
+    //return inventory;
+//}
+
 // Note: not attached to GameObject_list
 ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
 {
@@ -250,6 +272,7 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
             break;
 
         case OBJ_TYPE_INVENTORY:
+            //obj = create_inventory_of_type((InventoryTypes)subtype, id);
             obj = new Inventory(id);
             break;
 
@@ -260,7 +283,7 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
             obj = new Monsters::Box(id);
             break;
             
-        default: return NULL;
+        default: break;
     }
     return obj;
 }
@@ -289,22 +312,6 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type)
     return obj;
 }
 
-ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float y, float z)
-{
-    ObjectPolicyInterface* obj = this->create(type);
-    if (obj != NULL)
-        obj->set_position(x,y,z);
-    return obj;
-}
-
-ObjectPolicyInterface* GameObject_list::create(Object_types type, float x, float y, float z, float mx, float my, float mz)
-{
-    ObjectPolicyInterface* obj = this->create(type, x,y,z);
-    if (obj != NULL)
-        obj->set_momentum(mx,my,mz);
-    return obj;
-}
-
 ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
 {    
     ObjectPolicyInterface* obj = NULL;
@@ -319,22 +326,6 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
     }
     else
         printf("%s_list: Cannot create object type %d, id %d is in use\n", name(), type, id);
-    return obj;
-}
-
-ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float x, float y, float z)
-{
-    ObjectPolicyInterface* obj = this->create(type, id);
-    if (obj != NULL)
-        obj->set_position(x,y,z);
-    return obj;
-}
-
-ObjectPolicyInterface* GameObject_list::create(Object_types type, int id, float x, float y, float z, float mx, float my, float mz)
-{
-    ObjectPolicyInterface* obj = this->create(type, id, x,y,z);
-    if (obj != NULL)
-        obj->set_momentum(mx,my,mz);
     return obj;
 }
 

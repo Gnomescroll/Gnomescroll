@@ -22,8 +22,6 @@ class InventoryObjectInterface: public InventoryState
     InventoryObjectInterface() {}
 };
 
-class Inventory;
-
 // wrap InventoryContents into a game object
 template <class InventoryContents>
 class BaseInventory: public InventoryObjectInterface

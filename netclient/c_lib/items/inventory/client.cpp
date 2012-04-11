@@ -48,23 +48,23 @@ Inventory::Inventory(int id)
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
     data->index = this->sprite_index;
-    const float spacing = 64.0f;
+    const float spacing = 32.0f;
     data->x = inventory->screen.x + spacing * slot;
     data->y = inventory->screen.y;
     data->z = inventory->screen.z;
 }
 
-void Inventory::attach_to_owner()
+void attach_inventory_to_owner(Inventory* inventory, int owner)
 {
-    Agent_state* a = STATE::agent_list->get(this->get_owner());
+    Agent_state* a = STATE::agent_list->get(owner);
     if (a == NULL)
     {
-        printf("WARNING: Inventroy::attach_to_owner() -- agent %d not found\n", this->get_owner());
+        printf("WARNING: Inventory::attach_to_owner() -- agent %d not found\n", owner);
         return;
     }
     if (a->status.inventory != NULL)
         printf("WARNING: reassigned agent inventory\n");
-    a->status.inventory = this;
+    a->status.inventory = inventory;
 }
 
 #endif

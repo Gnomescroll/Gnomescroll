@@ -23,7 +23,7 @@ inline void inventory_create_StoC::handle()
 
     obj->set_owner(owner);
     #if DC_CLIENT   // TODO
-    obj->attach_to_owner();
+    attach_inventory_to_owner(obj, obj->get_owner());
     #endif
     if (create)
         obj->born();

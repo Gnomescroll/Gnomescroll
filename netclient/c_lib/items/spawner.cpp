@@ -20,15 +20,13 @@ void spawner_state(object_state_StoC_model* msg)
 
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
-    Spawner* s = (Spawner*)ClientState::object_list->create(
-        (Object_types)msg->type, (int)msg->id,
-        msg->x, msg->y, msg->z
-    );
+    Spawner* s = (Spawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);
     if (s == NULL)
     {
         printf("WARNING spawner_create() -- could not create spawner %d\n", msg->id);
         return;
     }
+    s->set_position(msg->x, msg->y, msg->z);
     s->set_team(msg->team);
     s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
     s->set_owner(msg->owner);

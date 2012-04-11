@@ -86,12 +86,14 @@ void boxDropItem(Vec3 position)
     };
     Object_types type = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
-        position.x, position.y, position.z+1.0f,
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
+    {
+        obj->set_position(position.x, position.y, position.z+1.0f);
+        obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
         obj->born();
+    }
+
     #endif
 }
 

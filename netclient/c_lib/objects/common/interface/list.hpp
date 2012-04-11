@@ -119,11 +119,7 @@ class GameObject_list
         ObjectPolicyInterface* get(Object_types type, int id);
 
         ObjectPolicyInterface* create(Object_types type);
-        ObjectPolicyInterface* create(Object_types type, float x, float y, float z);
-        ObjectPolicyInterface* create(Object_types type, float x, float y, float z, float mx, float my, float mz);
         ObjectPolicyInterface* create(Object_types type, int id);
-        ObjectPolicyInterface* create(Object_types type, int id, float x, float y, float z);
-        ObjectPolicyInterface* create(Object_types type, int id, float x, float y, float z, float mx, float my, float mz);
 
         void destroy(Object_types type, int id);
 
@@ -150,6 +146,7 @@ class GameObject_list
         {
             this->teardown();
         }
+        
         GameObject_list()
         :
         max_objects(MAX_OBJECT_TYPE),

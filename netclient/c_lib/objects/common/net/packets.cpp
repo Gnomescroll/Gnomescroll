@@ -33,13 +33,16 @@ inline void object_create_StoC_model::handle()
         case OBJ_TYPE_LASER_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
+            obj = ClientState::object_list->create((Object_types)type, (int)id);
             break;
             
         default: return;
     }
     if (obj != NULL)
+    {
+        obj->set_position(x,y,z);
         obj->born();
+    }
 }
 
 inline void object_create_momentum_StoC_model::handle()
@@ -59,13 +62,17 @@ inline void object_create_momentum_StoC_model::handle()
         case OBJ_TYPE_LASER_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z, mx, my, mz);
+            obj = ClientState::object_list->create((Object_types)type, (int)id);
             break;
             
         default: return;
     }
     if (obj != NULL)
+    {
+        obj->set_position(x,y,z);
+        obj->set_momentum(mx,my,mz);
         obj->born();
+    }
 }
 
 inline void object_create_momentum_angles_StoC_model::handle()
@@ -75,12 +82,13 @@ inline void object_create_momentum_angles_StoC_model::handle()
     {
         case OBJ_TYPE_SLIME:
         case OBJ_TYPE_MONSTER_BOX:
-            obj = ClientState::object_list->create((Object_types)type, (int)id, x,y,z);
+            obj = ClientState::object_list->create((Object_types)type, (int)id);
             break;
         default: return;
     }
     if (obj != NULL)
     {
+        obj->set_position(x,y,z);
         obj->set_angles(theta, phi, 0);
         obj->born();
     }

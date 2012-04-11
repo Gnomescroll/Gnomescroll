@@ -126,12 +126,13 @@ void block_spawn_items(int block_value, int x, int y, int z)
     const float mom = 2.0f; // momentum
     Object_types type = items[randrange(0,n_items-1)];
 
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
-        x+randf(),y+randf(), z+randf(),
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
+    {
+        obj->set_position(x+randf(),y+randf(), z+randf());
+        obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
         obj->born();
+    }
 }
 
 // apply block damage & broadcast the update to client

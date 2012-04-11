@@ -144,3 +144,10 @@ int get_object_type_sprite_index(Object_types type)
 
 // Inventory
 const int INVENTORY_MAX = 1024;
+
+typedef enum
+{
+    INVENTORY_TYPE_AGENT,
+    INVENTORY_TYPE_TMAP,
+    INVENTORY_TYPE_TMECH,
+} InventoryTypes;
