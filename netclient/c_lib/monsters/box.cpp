@@ -5,8 +5,6 @@
 #include <c_lib/state/client_state.hpp>
 
 #include <c_lib/animations/_interface.hpp>
-#include <c_lib/animations/hitscan.hpp>
-
 
 namespace Monsters
 {
@@ -34,7 +32,7 @@ void box_shot_object(object_shot_object_StoC* msg)
     Vec3 v = vec3_sub(c, p);
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         p.x, p.y, p.z,
         v.x, v.y, v.z
     );

@@ -10,7 +10,6 @@
 #include <c_lib/particles/grenade.hpp>
 
 #include <c_lib/animations/_interface.hpp>
-#include <c_lib/animations/hitscan.hpp>
 
 //stuff
 
@@ -190,7 +189,7 @@ void PlayerAgent_action::hitscan_laser()
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
     look = vec3_scalar_mult(look, hitscan_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         origin[0], origin[1], origin[2],
         look.x, look.y, look.z
     );

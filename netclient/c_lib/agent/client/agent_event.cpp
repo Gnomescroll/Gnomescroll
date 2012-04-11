@@ -11,7 +11,6 @@
 
 #include <c_lib/animations/_interface.hpp>
 #include <c_lib/animations/animations.hpp>
-#include <c_lib/animations/hitscan.hpp>
 
 void Agent_event::name_changed(char* old_name)
 {
@@ -293,7 +292,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     //f[1] = y - arm_center.y;
     //f[2] = z - arm_center.z;
     
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );
@@ -371,7 +370,7 @@ void Agent_event::fired_weapon_at_block(float x, float y, float z, int cube, int
     //this->a->vox->set_arm(-phi, -theta);
 
     f = vec3_scalar_mult(f, hitscan_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
         f.x, f.y, f.z
     );
@@ -399,7 +398,7 @@ void Agent_event::fired_weapon_at_nothing()
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
     Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         arm_center.x, arm_center.y, arm_center.z,
         f[0]*hitscan_speed, f[1]*hitscan_speed, f[2]*hitscan_speed
     );

@@ -17,4 +17,5 @@ void draw_insect_mob();
 
 void spawn_insect_mob(float x, float y, float z);
 
+void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz);
 }
