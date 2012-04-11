@@ -7,6 +7,8 @@ int lua_load_block_dat();
 namespace LUA
 {
 
+void set_options_file(char* path);
+
 void load_options();
 
 void register_int_option(const char* name, int* var);

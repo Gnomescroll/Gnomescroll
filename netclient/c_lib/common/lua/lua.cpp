@@ -169,6 +169,18 @@ namespace LUA
 
 lua_State* LUA_options_table = NULL;
 
+const char* default_options_file = "./lua/settings.lua";
+char* options_file = NULL;
+
+void set_options_file(char* path)
+{
+    assert(path != NULL);
+    if (options_file != NULL)
+        free(options_file);
+    options_file = (char*)malloc(sizeof(char) * (strlen(path) + 1));
+    strcpy(options_file, path);
+    printf("Set lua options file to %s\n", options_file);
+}
 
 /*
     Load or reload options
@@ -179,6 +191,10 @@ void load_options()
     //stuff
     #endif
 
+    char* options_path = options_file;
+    if (options_path == NULL)
+        options_path = (char*)default_options_file;
+
     if(LUA_options_table == NULL)
     {
         LUA_options_table = luaL_newstate();
@@ -186,7 +202,8 @@ void load_options()
 
         luaL_openlibs(L); /* Load Lua libraries */
 
-        if (luaL_loadfile(L, "lua/settings.lua")) 
+        //if (luaL_loadfile(L, "lua/settings.lua")) 
+        if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
             abort();
@@ -214,7 +231,8 @@ void load_options()
         printf("Reloading Settings\n");
         lua_State *L = LUA_options_table;
 
-        if (luaL_loadfile(L, "lua/settings.lua")) 
+        //if (luaL_loadfile(L, "lua/settings.lua")) 
+        if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
             abort();
