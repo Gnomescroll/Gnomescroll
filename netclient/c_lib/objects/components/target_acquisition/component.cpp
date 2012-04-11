@@ -55,3 +55,34 @@ Agent_state* TargetAcquisitionComponent::fire_on_target(
 
     return agent;
 }
+
+Agent_state* TargetAcquisitionComponent::fire_on_known_target(
+    int id, Object_types type, float camera_z, Vec3 position, Vec3 direction,
+    float accuracy_bias, float sight_range, Agent_state* agent
+) {    
+    // lock on agent
+    position.z = camera_z;
+
+    // normalize and bias vector
+    normalize_vector(&direction);
+    if (accuracy_bias)   // apply bias
+        direction = vec3_bias_random(direction, accuracy_bias);
+
+    // get target
+    Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
+        position, direction, id, type,
+        agent, sight_range
+    );
+
+    // let handle target hit based on attacker properties
+    Hitscan::handle_hitscan_target(t, this->attacker_properties);
+
+    // send firing packet
+    Hitscan::broadcast_object_fired(id, type, t);
+
+    // apply custom handling
+    // play sounds
+    // play animations
+
+    return agent;
+}

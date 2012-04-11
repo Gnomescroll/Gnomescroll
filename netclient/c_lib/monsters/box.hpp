@@ -138,6 +138,15 @@ class Box:
             vec3_to_angles(direction, &theta, &phi);
             //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
             this->set_angles(theta, phi, 0);
+
+            if (this->can_fire())
+            {
+                ObjectState* state = this->state();
+                this->fire_on_known_target(
+                    state->id, state->type, this->camera_z(), this->get_position(),
+                    direction, state->accuracy_bias, state->sight_range, agent
+                );
+            }
         }
         else if (this->en_route)
         {   // face destination
@@ -247,7 +256,6 @@ class Box:
         this->_state.motion_proximity_radius = BOX_MOTION_PROXIMITY_RADIUS;
 
         // todo -- firing rate / properties
-        this->_state.fire_rate_limit = BOX_FIRE_RATE;
         this->_state.accuracy_bias = BOX_ACCURACY_BIAS;
         this->_state.sight_range = BOX_SIGHT_RANGE;
         this->_state.attack_enemies = BOX_ATTACK_ONLY_ENEMIES;    // TODO change attack_enemies to attack_only_enemies
@@ -262,6 +270,8 @@ class Box:
         this->attacker_properties.voxel_damage_radius = BOX_VOXEL_DAMAGE_RADIUS;
         this->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
         this->target_acquisition_probability = BOX_TARGET_LOCK_CHANGE;
+        this->fire_rate_limit = BOX_FIRE_RATE;
+        this->set_random_fire_tick();
 
         this->voxel_properties.init_hitscan = MONSTER_INIT_HITSCAN;
         this->voxel_properties.init_draw = MONSTER_INIT_DRAW;

@@ -54,7 +54,6 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             
             this->_state.suicidal = false;
 
-            this->_state.fire_rate_limit = TURRET_FIRE_LIMIT;
             this->_state.sight_range = TURRET_SIGHT_RANGE;
             this->_state.accuracy_bias = TURRET_LASER_BIAS;
             this->_state.attack_enemies = true;
@@ -68,6 +67,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->attacker_properties.voxel_damage_radius = TURRET_LASER_VOXEL_DAMAGE_RADIUS;
             this->attacker_properties.terrain_modification_action = t_map::TMA_LASER;
             this->target_acquisition_probability = TURRET_TARGET_LOCK_CHANCE;
+            this->fire_rate_limit = TURRET_FIRE_LIMIT;
 
             this->owned_properties.obj = this;
             STATE::owned_list->register_object(&this->owned_properties);
@@ -93,8 +93,17 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
 
     void tick()
     {   // make each a template function
-        tickStayOnGround(this->state(), this);
-        tickFireOnTarget(this->state(), this, this->camera_z());
+        ObjectState* state = this->state();
+        tickStayOnGround(state, this);
+        if (this->can_fire())
+        {
+            this->fire_on_target(
+                state->id, state->type, this->get_team(), this->camera_z(),
+                this->get_position(),
+                state->accuracy_bias, state->sight_range,
+                state->attack_enemies, state->attack_random
+            );
+        }
     }
 
     void update()
