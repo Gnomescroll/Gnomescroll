@@ -26,3 +26,6 @@
 
 #include <c_lib/objects/components/voxel/component.cpp>
 //#include <c_lib/objects/components/voxel/list.cpp>
+
+#include <c_lib/objects/components/tick/components.cpp>
+#include <c_lib/objects/components/tick/properties.cpp>

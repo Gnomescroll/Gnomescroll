@@ -6,6 +6,7 @@
 #include <c_lib/monsters/constants.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/objects/components/voxel/component.hpp>
+#include <c_lib/objects/components/tick/components.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/api/born.hpp>
 #include <c_lib/objects/common/api/update.hpp>
@@ -37,7 +38,7 @@ void box_shot_object(object_shot_object_StoC* msg);
     //box->locked_on_target = false;  // TODO -- moving and locked on target?
 //}
 
-class Box: public VoxelComponent, public TargetAcquisitionComponent, public MonsterInterface
+class Box: public VoxelComponent, public TargetAcquisitionComponent, public RateLimitedStateBroadcastComponent, public MonsterInterface
 {
     public:
 
@@ -157,11 +158,10 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
             this->set_position(position.x, position.y, position.z);
         }
 
-        //if (this->transmission_tick % 3 == 0)
-            //this->broadcastState();
-        //this->transmission_tick++;
-        this->broadcastState();
-
+        if (this->spatial_properties.changed)
+            this->broadcastState(); // send state packet if state changed
+        else if (this->canSendState())
+            this->broadcastState(); // send state packet every N ticks
         #endif
     }
 
@@ -253,6 +253,8 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Mons
         // TODO -- make speed a base property
         // momentum should not be used this way (can be overwriiten, is only init etc)
         this->set_momentum(BOX_SPEED, BOX_SPEED, BOX_SPEED);
+
+        this->rate_limit_state_interval = 30;
     }
 };
 

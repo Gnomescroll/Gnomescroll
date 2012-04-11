@@ -76,7 +76,7 @@ class Main:
                 if linux_terminal.check_stdin():
                     break
 
-            init_c_lib.slime_populate(500)
+            init_c_lib.slime_populate(100)
             
             sl_c =0
 
