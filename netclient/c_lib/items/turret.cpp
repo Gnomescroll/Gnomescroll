@@ -9,7 +9,6 @@
 #include <c_lib/ray_trace/handlers.hpp>
 
 #include <c_lib/animations/_interface.hpp>
-#include <c_lib/animations/hitscan.hpp>
 
 #if DC_CLIENT
 /* Packet handlers */
@@ -59,7 +58,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     Vec3 v = vec3_sub(c, p);
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         p.x, p.y, p.z,
         v.x, v.y, v.z
     );
@@ -83,7 +82,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
     Vec3 v = vec3_sub(c, p); 
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         p.x, p.y, p.z,
         v.x, v.y, v.z
     );
@@ -107,7 +106,7 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg)
     Vec3 v = vec3_init(msg->x, msg->y, msg->z);
     normalize_vector(&v);
     v = vec3_scalar_mult(v, hitscan_effect_speed);
-    Animations::hitscan_effect_list->create(
+    Animations::create_hitscan_effect(
         pos.x, pos.y, t->camera_z(),
         v.x, v.y, v.z
     );
