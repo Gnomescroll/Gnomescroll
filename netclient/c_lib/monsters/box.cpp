@@ -63,13 +63,16 @@ void box_chose_destination(Box* box, object_choose_destination_StoC* msg)
     box->destination.x = msg->x;
     box->destination.y = msg->y;
     box->destination.z = msg->z;
+    box->ticks_to_destination = msg->ticks;
     box->at_destination = false;
     box->en_route = true;
 
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(box->destination, box->get_position());
+    float len = vec3_length(direction);
+    float speed = len / (float)box->ticks_to_destination;
     normalize_vector(&direction);
-    direction = vec3_scalar_mult(direction, Monsters::BOX_SPEED);
+    direction = vec3_scalar_mult(direction, speed);
     box->set_momentum(direction.x, direction.y, direction.z);
     
     box->locked_on_target = false;  // TODO -- moving and locked on target?

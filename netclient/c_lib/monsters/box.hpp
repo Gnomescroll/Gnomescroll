@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/common.hpp>
@@ -50,6 +51,7 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
         uint16_t id;
         uint8_t type;
         float x,y,z;
+        uint16_t ticks;
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
@@ -58,6 +60,7 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
         pack_float(&x, buff, buff_n, pack);
         pack_float(&y, buff, buff_n, pack);
         pack_float(&z, buff, buff_n, pack);
+        pack_u16(&ticks, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -106,6 +109,7 @@ class Box:
     Vec3 destination;
     bool at_destination;
     bool en_route;
+    int ticks_to_destination;
 
     int target_id;
     Object_types target_type;
@@ -197,9 +201,9 @@ class Box:
         if (!this->en_route && !this->locked_on_target)
         {   // no destination, no target
             // choose destination
-            const int len = BOX_WALK_RANGE;
-            float dx = randrange(0,len) - len/2;
-            float dy = randrange(0,len) - len/2;
+            const int walk_len = BOX_WALK_RANGE;
+            float dx = randrange(0,walk_len) - walk_len/2;
+            float dy = randrange(0,walk_len) - walk_len/2;
             float dz = 0;
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
             // clamp
@@ -212,7 +216,15 @@ class Box:
 
             this->en_route = true;
             this->at_destination = false;
+            
+            Vec3 direction = vec3_sub(this->destination, this->get_position());
+            float len = vec3_length(direction);
+            this->ticks_to_destination = (int)ceil(len/BOX_SPEED);
+            normalize_vector(&direction);
+            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
+            this->set_momentum(momentum.x, momentum.y, momentum.z);
 
+            // send destination packet
             // TODO
             object_choose_destination_StoC msg;
             msg.x = destination.x;
@@ -220,14 +232,10 @@ class Box:
             msg.z = destination.z;
             msg.id = this->_state.id;
             msg.type = this->_state.type;
+            msg.ticks = this->ticks_to_destination;
             msg.broadcast();
             // TODO
-            
-            Vec3 direction = vec3_sub(this->destination, this->get_position());
-            normalize_vector(&direction);
-            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
-            this->set_momentum(momentum.x, momentum.y, momentum.z);
-            // send destination packet
+
         }
 
         if (!this->at_destination)
@@ -348,7 +356,7 @@ class Box:
 
     explicit Box(int id)
     :
-    at_destination(false), en_route(false),
+    at_destination(false), en_route(false), ticks_to_destination(1),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
     {
