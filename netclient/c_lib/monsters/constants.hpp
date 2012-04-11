@@ -42,7 +42,7 @@ const float BOX_CAMERA_HEIGHT = 2.5f;
 const float BOX_HEIGHT = 3.0f;
 const float BOX_MOTION_PROXIMITY_RADIUS = 50.0f;
 //const float BOX_FIRING_PROXIMITY_RADIUS = 100.0f;
-const float BOX_SPEED = 0.1f;
+const float BOX_SPEED = 0.2f;
 
 const int BOX_FIRE_RATE = 45;
 const float BOX_ACCURACY_BIAS = 0.2f;
