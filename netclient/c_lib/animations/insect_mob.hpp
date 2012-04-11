@@ -19,7 +19,7 @@ unsigned int insect_mob_shader[1];
 unsigned int insect_mob_vert_shader[1];
 unsigned int insect_mob_frag_shader[1];
 
-unsigned int insect_mob_Vertex;
+//unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;
 
 void init_insect_mob_texture();
@@ -77,11 +77,12 @@ void init_insect_mob_shader()
 
     glShaderSourceARB(insect_mob_vert_shader[index], 1, (const GLcharARB**)&vs, NULL);
     glShaderSourceARB(insect_mob_frag_shader[index], 1, (const GLcharARB**)&fs, NULL);
+    
     glCompileShaderARB(insect_mob_vert_shader[index]);
     if(DEBUG) printShaderInfoLog(insect_mob_vert_shader[index]);
 
     glCompileShaderARB(insect_mob_frag_shader[index]);
-    if(DEBUG) printShaderInfoLog(insect_mob_shader[index]);
+    if(DEBUG) printShaderInfoLog(insect_mob_frag_shader[index]);
     
     glAttachObjectARB(insect_mob_shader[index], insect_mob_vert_shader[index]);
     glAttachObjectARB(insect_mob_shader[index], insect_mob_frag_shader[index]);
@@ -95,7 +96,7 @@ void init_insect_mob_shader()
     //map_ChunkPosition = glGetUniformLocation(insect_mob_shader[index], "ChunkPosition");
 
     //attributes
-    insect_mob_Vertex = glGetAttribLocation(insect_mob_shader[index], "InVertex");
+    //insect_mob_Vertex = glGetAttribLocation(insect_mob_shader[index], "InVertex");
     insect_mob_TexCoord = glGetAttribLocation(insect_mob_shader[index], "InTexCoord");
 
 }
