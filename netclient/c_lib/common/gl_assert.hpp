@@ -33,7 +33,7 @@ bool _gl_assert(GLenum flag)
 	Disable in production
 */
 #if PRODUCTION
-	#define GL_ASSERT(flag) ;
+	#define GL_ASSERT(flag, truth) ;
 #else
 	#define GL_ASSERT(flag, truth) \
 	if(_gl_assert(flag) !=  truth) \
