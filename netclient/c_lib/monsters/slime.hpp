@@ -15,17 +15,10 @@ typedef ObjectInterface
 < HealthPositionMomentumChangedState, object_create_momentum_angles_StoC, object_state_momentum_angles_StoC >
 MonsterInterface;
 
-class Slime: public VoxelComponent, public MonsterInterface
+class Slime: public VoxelComponent, public RateLimitedStateBroadcastComponent, public MonsterInterface
 {
-    private:
-        void load_data(int id);
     public:
     
-    #if DC_SERVER
-    int tick_num;
-    int network_state_update_interval;
-    #endif
-
     void tick();
     void die();
     void born();

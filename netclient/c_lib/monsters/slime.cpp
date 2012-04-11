@@ -15,7 +15,7 @@ void slimeDropItem(Vec3 position);
 
 VoxDat slime_vox_dat;
 
-void Slime::load_data(int id)
+Slime::Slime(int id)
 {
     this->_state.id = id;
 
@@ -39,14 +39,8 @@ void Slime::load_data(int id)
     // TODO -- make this a base property
     // momentum should not be used this way (can be overwriiten, is only init etc)
     this->set_momentum(SLIME_SPEED, SLIME_SPEED, SLIME_SPEED);
-}
 
-Slime::Slime(int id)
-#ifdef DC_SERVER
-: tick_num(0), network_state_update_interval(30)
-#endif
-{
-    this->load_data(id);
+    this->rate_limit_state_interval = 30;
 }
 
 void Slime::born()
@@ -86,10 +80,9 @@ void Slime::die()
 void Slime::tick()
 {
     #if DC_SERVER
-    this->tick_num++;   // TODO -- make this a component
     if (this->spatial_properties.changed)
         this->broadcastState(); // send state packet if state changed
-    else if (this->tick_num % network_state_update_interval == 0)
+    else if (this->canSendState())
         this->broadcastState(); // send state packet every N ticks
 
     Vec3 position = this->get_position();
