@@ -13,6 +13,9 @@ namespace Animations
 
 const int hitscan_lader_ttl = 30;
 
+void init_hitscan_laser();
+void teardown_hitscan_laser();
+
 class HitscanLaserEffect
 {
     public:

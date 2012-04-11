@@ -22,6 +22,12 @@ void init_hitscan()
     if (i) { printf("init_hitscan failed with code %d\n", i); }
 }
 
+void teardown_hitscan()
+{
+
+
+}
+
 HitscanEffect::HitscanEffect(int id)
 :
 id(id),

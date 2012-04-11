@@ -154,7 +154,7 @@ class InsectMob
 {
 	public:
 
-	static const int max_sides = 5;
+	static const int max_sides = 6;
 
 	float x,y,z;
 
@@ -172,9 +172,9 @@ class InsectMob
 		//for(int i=0; i<max_sides; i++ ) phase[i] = 3.1415*randf();
 		for(int i=0; i<max_sides; i++ ) speed[i] = 1.0+ (0.4*randf() - 0.1);
 
-		sides = 3 + (rand() % 3);
-		tw = 1.0 + (randf()*.5 - 25);
-		th = 1.0 + (randf()*.5 - 25);
+		sides = 3 + (rand() % 4);
+		tw = 1.0 + (randf()*.5 - 0.25);
+		th = 1.0 + (randf()*.5 - 0.25);
 
 
 	}
@@ -217,16 +217,6 @@ class InsectMob
 		   		push_vertex(v1, 0.5, 0.5);
 		   		push_vertex(v2, 0.0, 0.5+txh);
 		   		push_vertex(v3, 0.0, 0.5-txh);
-		   	/*
-	    		push_vertex( _x + 0.3*sin(speed[i]*t), _y, _z-h,
-	    			0.5, 0.5 );
-
-	    		push_vertex( _x+li*sin(f2*j), _y+li*cos(f2*j), _z,
-	    			0.0, 0.5+txh);
-
-	    		push_vertex( _x+li*sin(f2*(j+1)), _y+li*cos(f2*(j+1)), _z,
-	    			0.0,  0.5-txh);
-			*/
 	    	}
 		}
 
@@ -240,7 +230,7 @@ class InsectMob
 	    const float z1 = 0.3;
 	    const float z2 = -0.3;
 
-	    const float f = (1 / (float)(sides))*2*3.14159;
+	    const float f1 = (1 / (float)(sides))*2*3.14159;
 
 	   	struct Vec3 v1,v2,v3;
 
@@ -248,45 +238,25 @@ class InsectMob
 	   	{
 
 	   		v1 = vec3_init( x, y, z1+z );
-	   		v2 = vec3_init( x+tw*sin(f*i), y+th*cos(f*i), z0+z );
-	   		v3 = vec3_init( x+tw*sin(f*(i+1)), y+th*cos(f*(i+1)), z0+z );
+	   		v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
+	   		v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
 	   		push_vertex(v1, 0.5, 0.5);
-		   	push_vertex(v2, sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5);
-		   	push_vertex(v3, sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
+		   	push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+		   	push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
 
-		/* 		
-    		push_vertex( x, y, z1+z,
-    			0.5,0.5);
-
-    		push_vertex( x+tw*sin(f*i), y+th*cos(f*i), z0+z,
-    			sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
-
-    		push_vertex( x+tw*sin(f*(i+1)), y+th*cos(f*(i+1)), z0+z,
-    			sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
-    	*/
 	   	}
 
 	    for(int i=0; i<sides; i++)
 	   	{
 
 	   		v1 = vec3_init( x, y, z2+z );
-	   		v2 = vec3_init( x+tw*sin(f*i), y+th*cos(f*i), z0+z );
-	   		v3 = vec3_init( x+tw*sin(f*(i+1)), y+th*cos(f*(i+1)), z0+z );
+	   		v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
+	   		v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
 	   		push_vertex(v1, 0.5, 0.5);
-		   	push_vertex(v2, sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5);
-		   	push_vertex(v3, sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
-/*
-    		push_vertex( x, y, z2+z,
-    			0.5,0.5);
-
-    		push_vertex( x+tw*sin(f*i), y+th*cos(f*i), z0+z,
-    			sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
-
-			push_vertex( x+tw*sin(f*(i+1)), y+th*cos(f*(i+1)), z0+z,
-			sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
-*/
+		   	push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+		   	push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
 	   	}
 	}
 /* 
