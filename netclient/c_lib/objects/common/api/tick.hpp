@@ -2,8 +2,7 @@
 
 #include <c_lib/t_map/t_map.hpp>
 
-template <class Object>
-void tickTTL(ObjectState* state, Object* object)
+void tickTTL(ObjectState* state)
 {
     if (state->ttl >= 0)
         state->ttl++;
@@ -42,12 +41,6 @@ void tickStayOnGround(ObjectState* state, Object* object)
     if (changed && state->broadcast_state_change)
         object->broadcastState();
     #endif
-}
-
-template <class Object>
-void tickRotate(Object* object, float dtheta, float dphi)
-{
-    object->delta_rotation(dtheta, dphi);
 }
 
 // moves vector from origin to dest by momentum amount

@@ -229,7 +229,7 @@ class PickupObject: public PickupComponent, public PickupInterface
         ObjectState* state = this->state();
         this->verlet_bounce(state->damp);
         tickPickup(state, this, this->pickup_radius);
-        tickTTL(state, this);
+        tickTTL(state);
     }
 
     void update() {}
@@ -298,7 +298,7 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
     void tick()
     {
         #if DC_CLIENT
-        tickRotate(this, this->minivox_properties.dtheta_speed, this->minivox_properties.dphi_speed);
+        this->delta_rotation();
         #endif
         PickupObject::tick();
     }

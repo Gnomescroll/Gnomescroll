@@ -103,6 +103,13 @@ class MinivoxComponent
             this->orient_vectors();
         }
 
+        void delta_rotation()
+        {
+            this->minivox_properties.theta += this->minivox_properties.dtheta_speed;
+            this->minivox_properties.phi += this->minivox_properties.dphi_speed;
+            this->orient_vectors();
+        }
+
         Vec3 get_center(Vec3 position)
         {   // takes a positon vector and offsets it by half size in each dimension
             Vec3 center;
