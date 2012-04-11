@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/common.hpp>
@@ -50,6 +51,7 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
         uint16_t id;
         uint8_t type;
         float x,y,z;
+        uint16_t ticks;
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
@@ -58,6 +60,7 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
         pack_float(&x, buff, buff_n, pack);
         pack_float(&y, buff, buff_n, pack);
         pack_float(&z, buff, buff_n, pack);
+        pack_u16(&ticks, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -72,7 +75,8 @@ void box_shot_object(object_shot_object_StoC* msg);
 void boxDropItem(Vec3 position)
 {   // TODO -- some dat format for thiss
     #if DC_SERVER
-    const float drop_probability = 0.33f;
+    //const float drop_probability = 0.33f;
+    const float drop_probability = 1.00f;
     float p = randf();
     if (p > drop_probability) return;
     
@@ -105,17 +109,18 @@ class Box:
     Vec3 destination;
     bool at_destination;
     bool en_route;
+    int ticks_to_destination;
 
     int target_id;
     Object_types target_type;
     bool locked_on_target;
 
-    void tick()
+    #if DC_SERVER
+    void server_tick()
     {
         // must stay on ground -- apply terrain collision
         // wander randomly (TODO: network model with destinations)
         // TODO -- aggro component
-        #if DC_SERVER
 
         // save current target state, will use this to decide if need to send packet
         bool was_on_target = this->locked_on_target;
@@ -196,9 +201,9 @@ class Box:
         if (!this->en_route && !this->locked_on_target)
         {   // no destination, no target
             // choose destination
-            const int len = BOX_WALK_RANGE;
-            float dx = randrange(0,len) - len/2;
-            float dy = randrange(0,len) - len/2;
+            const int walk_len = BOX_WALK_RANGE;
+            float dx = randrange(0,walk_len) - walk_len/2;
+            float dy = randrange(0,walk_len) - walk_len/2;
             float dz = 0;
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
             // clamp
@@ -211,7 +216,15 @@ class Box:
 
             this->en_route = true;
             this->at_destination = false;
+            
+            Vec3 direction = vec3_sub(this->destination, this->get_position());
+            float len = vec3_length(direction);
+            this->ticks_to_destination = (int)ceil(len/BOX_SPEED);
+            normalize_vector(&direction);
+            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
+            this->set_momentum(momentum.x, momentum.y, momentum.z);
 
+            // send destination packet
             // TODO
             object_choose_destination_StoC msg;
             msg.x = destination.x;
@@ -219,14 +232,10 @@ class Box:
             msg.z = destination.z;
             msg.id = this->_state.id;
             msg.type = this->_state.type;
+            msg.ticks = this->ticks_to_destination;
             msg.broadcast();
             // TODO
-            
-            Vec3 direction = vec3_sub(this->destination, this->get_position());
-            normalize_vector(&direction);
-            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
-            this->set_momentum(momentum.x, momentum.y, momentum.z);
-            // send destination packet
+
         }
 
         if (!this->at_destination)
@@ -241,16 +250,69 @@ class Box:
         }
 
         if (this->en_route)
-        {   // destination set
-            // move towards destination
+        {   // move towards destination
             Vec3 position = vec3_add(this->get_position(), this->get_momentum());
             this->set_position(position.x, position.y, position.z);
         }
 
-        if (this->spatial_properties.changed)
-            this->broadcastState(); // send state packet if state changed
-        else if (this->canSendState())
-            this->broadcastState(); // send state packet every N ticks
+        //if (this->spatial_properties.changed)
+            //this->broadcastState(); // send state packet if state changed
+        //else if (this->canSendState())
+            //this->broadcastState(); // send state packet every N ticks
+    }
+    #endif
+
+    #if DC_CLIENT
+    void client_tick()
+    {
+        if (this->locked_on_target)
+        {   // target locked
+            if (this->target_type != OBJ_TYPE_AGENT) return;    // TODO -- more objects
+            Agent_state* agent = ClientState::agent_list->get(this->target_id);
+            if (agent == NULL) return;
+        
+            // face target
+            float theta,phi;
+            Vec3 direction = vec3_sub(agent->get_center(), this->get_center(BOX_PART_BODY));
+            vec3_to_angles(direction, &theta, &phi);
+            //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
+            this->set_angles(theta, phi, 0);
+            return; // do nothing else
+        }
+
+        if (!this->at_destination)
+        {   // check if at destination
+            float dist = vec3_distance_squared(this->destination, this->get_position());
+            if (dist < 1.0f)    // TODO Margin
+            {   // at destination, stop
+                this->en_route = false;
+                this->at_destination = true;
+                this->set_momentum(0,0,0);
+            }
+        }
+
+        if (this->en_route)
+        {   // move towards destination
+            Vec3 momentum = this->get_momentum();
+            Vec3 position = vec3_add(this->get_position(), momentum);
+            this->set_position(position.x, position.y, position.z);
+
+            // face in direction of movement
+            float theta, phi;
+            vec3_to_angles(momentum, &theta, &phi);
+            this->set_angles(theta, phi, 0);
+        }
+
+    }
+    #endif
+
+    void tick()
+    {
+        #if DC_SERVER
+        this->server_tick();
+        #endif
+        #if DC_CLIENT
+        this->client_tick();
         #endif
     }
 
@@ -284,16 +346,17 @@ class Box:
     {
         updateVox(
             this->voxel_properties.vox, this->get_position(),
-            this->spatial_properties.angles, this->spatial_properties.changed
+            this->spatial_properties.angles,
+            this->spatial_properties.changed
         );
-        this->spatial_properties.set_changed(false);
+        //this->spatial_properties.set_changed(false);
     }
     
     void draw() {/*Empty*/}
 
     explicit Box(int id)
     :
-    at_destination(false), en_route(false),
+    at_destination(false), en_route(false), ticks_to_destination(1),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
     {
