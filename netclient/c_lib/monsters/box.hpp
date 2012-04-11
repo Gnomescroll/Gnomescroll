@@ -211,8 +211,7 @@ class Box:
             if (this->destination.y < 0) this->destination.y = 0;
             if (this->destination.y >= map_dim.y) this->destination.y = map_dim.y -1;
             this->destination.z = (float)t_map::get_highest_open_block(this->destination.x,this->destination.y);
-            //if (this->destination.z < 0) this->destination.z = 0;
-            //if (this->destination.z >= map_dim.z) this->destination.z = map_dim.z -1;
+            if (this->destination.z < 0) this->destination.z = 0;
 
             this->en_route = true;
             this->at_destination = false;
