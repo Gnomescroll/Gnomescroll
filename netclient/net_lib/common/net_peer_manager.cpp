@@ -11,6 +11,7 @@
 #include <c_lib/agent/net_agent.hpp>
 
 
+#include <c_lib/t_item/_interface.hpp>
 
 /*
     Utility Functions
@@ -45,7 +46,7 @@ void NetPeerManager::init(int client_id)
     this->client_id = client_id;
 
     send_version_to_client(client_id);
-
+ 
     SendClientId_StoC client_id_msg;
     client_id_msg.client_id = client_id;
     client_id_msg.sendToClient(client_id);
@@ -56,6 +57,7 @@ void NetPeerManager::init(int client_id)
     send_player_agent_id_to_client(client_id);
     add_player_to_chat(client_id);
 
+    t_item::create_agent_inventory(client_id, client_id); //set player inventory
 }
 
 void NetPeerManager::ready()

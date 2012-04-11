@@ -93,8 +93,30 @@ bool sphere_fulstrum_test(float x, float y, float  z, float r)
 
 bool point_fulstrum_test(float x, float y, float  z)
 {
-    if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
-        return false;
+    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
+    //    return false;
+
+    x -= fulstrum.c.x;
+    y -= fulstrum.c.y;
+    z -= fulstrum.c.z;
+
+    float dz = x*fulstrum.f.x + y*fulstrum.f.y + z*fulstrum.f.z;
+    if( dz < 0 || dz > CAMERA_VIEW_DISTANCE ) return false;
+    //if( dz < 0 || dz > fulstrum.zfar ) return false;
+
+    float dx = (x*fulstrum.r.x + y*fulstrum.r.y + z*fulstrum.r.z);
+    if( dx < -dz*fulstrum.hy || dx > dz*fulstrum.hy ) return false;
+
+    float dy = x*fulstrum.u.x + y*fulstrum.u.y + z*fulstrum.u.z;
+    if( dy < -dz*fulstrum.hy || dy > dz*fulstrum.hy ) return false;
+
+    return true;
+}
+
+bool point_fulstrum_test2(float x, float y, float  z)
+{
+    //if (distancef_squared(fulstrum.c.x, fulstrum.c.y, fulstrum.c.z, x,y,z) > CAMERA_VIEW_DISTANCE_SQUARED)
+    //    return false;
 
     x -= fulstrum.c.x;
     y -= fulstrum.c.y;
@@ -111,6 +133,7 @@ bool point_fulstrum_test(float x, float y, float  z)
 
     return true;
 }
+
 
 bool xy_circle_fulstrum_test(float x, float y, float r)
 {
