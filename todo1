@@ -810,15 +810,17 @@ April 9
 
 updated verlet api
 
-This mob:
-A box with a gun
-Points and shoots at player in range
-Wanders paths
-
---Need target location network system
-
-
+robot box mob:
+wanders paths
+shoot at agents in range
 ====================
+
+April 10
+
+fix mouse issues in production build
+animation component
+command line lua settings file 
+==============
 
 Gun model
 Gun in first person and zoomed perspectives

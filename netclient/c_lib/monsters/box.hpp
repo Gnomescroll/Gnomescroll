@@ -17,6 +17,14 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/t_map/t_map.hpp>
 
+#if DC_SERVER
+//forward decl
+namespace ServerState
+{
+    extern GameObject_list* object_list;
+}
+#endif
+
 namespace Monsters {
 
 extern VoxDat box_vox_dat;
@@ -37,6 +45,28 @@ void box_shot_object(object_shot_object_StoC* msg);
     //box->en_route = true;
     //box->locked_on_target = false;  // TODO -- moving and locked on target?
 //}
+
+void boxDropItem(Vec3 position)
+{   // TODO -- some dat format for thiss
+    #if DC_SERVER
+    const float drop_probability = 0.33f;
+    float p = randf();
+    if (p > drop_probability) return;
+    
+    const int n_types = 1;    
+    Object_types types[n_types] = {
+        OBJ_TYPE_LASER_REFILL,
+    };
+    Object_types type = types[randrange(0,n_types-1)];
+    const float mom = 5.0f;
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
+        position.x, position.y, position.z+1.0f,
+        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
+    );
+    if (obj != NULL)
+        obj->born();
+    #endif
+}
 
 class Box:
     public VoxelComponent,
@@ -175,7 +205,7 @@ class Box:
         #endif
 
         #if DC_SERVER
-        //boxDropItem(this->get_position());
+        boxDropItem(this->get_position());
         this->broadcastDeath();
         #endif
     }
@@ -232,7 +262,6 @@ class Box:
         this->attacker_properties.voxel_damage_radius = BOX_VOXEL_DAMAGE_RADIUS;
         this->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
         this->target_acquisition_probability = BOX_TARGET_LOCK_CHANGE;
-
 
         this->voxel_properties.init_hitscan = MONSTER_INIT_HITSCAN;
         this->voxel_properties.init_draw = MONSTER_INIT_DRAW;
