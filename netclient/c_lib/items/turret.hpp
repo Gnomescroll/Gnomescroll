@@ -44,7 +44,6 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
             this->_state.id = id;
             this->_state.type = OBJ_TYPE_TURRET;
 
-            this->_state.broadcast_state_change = true;
             this->_state.blow_up_on_death = true;
             this->_state.explosion_radius = TURRET_EXPLOSION_RADIUS;
             this->_state.explosion_damage = TURRET_EXPLOSION_DAMAGE;
@@ -94,16 +93,23 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public T
     void tick()
     {   // make each a template function
         ObjectState* state = this->state();
-        tickStayOnGround(state, this);
+        Vec3 position = this->get_position();
+        float z = tickStayOnGround(state, position);
+        bool changed = this->set_position(position.x, position.y, z);
+
+        this->spatial_properties.set_changed(changed);
+
         if (this->can_fire())
         {
             this->fire_on_target(
-                state->id, state->type, this->get_team(), this->camera_z(),
-                this->get_position(),
+                state->id, state->type, this->get_team(), this->camera_z(), position,
                 state->accuracy_bias, state->sight_range,
                 state->attack_enemies, state->attack_random
             );
         }
+
+        if (this->spatial_properties.changed)
+            this->broadcastState();
     }
 
     void update()

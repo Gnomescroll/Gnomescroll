@@ -78,7 +78,6 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     : SpawnerComponent(), SpawnerInterface()
     {
         this->_state.id = id;
-        this->_state.broadcast_state_change = true;
         this->_state.cost = COST_SPAWNER;
         this->_state.reward = COST_SPAWNER;
         this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
@@ -112,7 +111,14 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
 
     void tick()
     {
-        tickStayOnGround(this->state(), this);
+        ObjectState* state = this->state();
+        Vec3 position = this->get_position();
+        float z = tickStayOnGround(state, position);
+        bool changed = this->set_position(position.x, position.y, z);
+        this->spatial_properties.set_changed(changed);
+
+        if (this->spatial_properties.changed)
+            this->broadcastState();
     }
 
     void update()

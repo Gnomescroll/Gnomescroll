@@ -31,7 +31,6 @@ class ObjectData
         // physics
         float damp;
         float mass;
-        bool broadcast_state_change;
 
         // tick lifespan
         int ttl_max;
@@ -63,7 +62,7 @@ class ObjectData
     ObjectData()
     :
     type(OBJ_TYPE_NONE),
-    damp(1.0f), mass(1.0f), broadcast_state_change(false),
+    damp(1.0f), mass(1.0f),
     ttl_max(100),
     blow_up_on_death(false),
     explosion_radius(1.0f),
