@@ -86,13 +86,13 @@ void toggle_confirm_quit()
 
 void toggle_skeleton_editor()
 {
-#if PRODUCTION
+    #if PRODUCTION
     input_state.skeleton_editor = false;
-#else
+    #else
     input_state.skeleton_editor = (!input_state.skeleton_editor);
     if (input_state.skeleton_editor)
         printf("Skeleton editor enabled\n");
-#endif
+    #endif
 }
 
 void toggle_input_mode()
@@ -126,21 +126,21 @@ void toggle_camera_mode()
 }
 
 void init_handlers()
-{
-    // set input_state defaults
-#if PRODUCTION
+{   // set input_state defaults
+
+    #if PRODUCTION
     input_state.mouse_bound = true;
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_AGENT;
     input_state.camera_mode = INPUT_STATE_AGENT;
     input_state.graphs = false;
-#else
+    #else
     input_state.mouse_bound = false;
     input_state.debug = false;
     input_state.input_mode = INPUT_STATE_CAMERA;
     input_state.camera_mode = INPUT_STATE_CAMERA;
     input_state.graphs = true;
-#endif
+    #endif
 
     input_state.help_menu = false;
     input_state.inventory = false;
@@ -150,9 +150,6 @@ void init_handlers()
     input_state.full_chat = false;
     input_state.hud = true;
     input_state.skeleton_editor = false;
-
-    input_state.has_focus = true;
-    input_state.rebind_mouse = input_state.mouse_bound;
 
     input_state.can_jump = true;
     input_state.quit = false;
@@ -629,8 +626,7 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_LALT:
         case SDLK_RALT:
-            input_state.rebind_mouse = input_state.mouse_bound;
-            input_state.mouse_bound = false;
+            toggle_mouse_bind();
             break;
 
         case SDLK_BACKQUOTE:
@@ -701,8 +697,7 @@ void key_up_handler(SDL_Event* event)
     {
         case SDLK_LALT:
         case SDLK_RALT:
-            if (input_state.has_focus)
-                input_state.mouse_bound = input_state.rebind_mouse;
+            toggle_mouse_bind();
             break;
 
         case SDLK_BACKSPACE:
@@ -822,21 +817,13 @@ void key_state_handler(Uint8 *keystate, int numkeys)
 // active event (window / input focus)
 void active_event_handler(SDL_Event* event)
 {
-    Uint8 app_state = SDL_GetAppState();
-    
-    //if (app_state & SDL_APPMOUSEFOCUS)
-        //printf("Mouse\n");
-    //if (app_state & SDL_APPINPUTFOCUS)
-        //printf("Keyboard\n");
-    if (app_state & SDL_APPACTIVE)
-    {
-        if (event->active.gain)
-        {
-            if (!input_state.has_focus)
-                input_state.mouse_bound = input_state.rebind_mouse;
-            input_state.has_focus = true;
-        }
-        else
-            input_state.has_focus = false;
-    }
+    //Uint8 app_state = SDL_GetAppState();
+
+    //if (app_state & SDL_APPACTIVE)
+    //{
+        ////if (event->active.gain)
+            ////input_state.has_focus = true;
+        ////else
+            ////input_state.has_focus = false;
+    //}
 }

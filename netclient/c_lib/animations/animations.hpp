@@ -28,8 +28,8 @@ void agent_bleed(float x, float y, float z);
 void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector
 
 void voxel_explode(Vec3 position, int count, float size, struct Color color);
-// will generate random count between count_lower and count_higher
-void voxel_explode(Vec3 position, int count_lower, int count_higher, float size, struct Color color);
+// will generate random count between count_min and count_max
+void voxel_explode(Vec3 position, int count_min, int count_max, float size, struct Color color);
 
 void animations_tick();
 void animations_draw();

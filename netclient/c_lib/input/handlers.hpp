@@ -23,9 +23,6 @@ struct InputState
     bool skeleton_editor;
     bool graphs;
     
-    bool has_focus;
-    bool rebind_mouse;
-
     bool can_jump;
     bool confirm_quit;
     bool quit;

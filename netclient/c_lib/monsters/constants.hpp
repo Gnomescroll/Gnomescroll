@@ -5,6 +5,11 @@
 namespace Monsters
 {
 
+/* Common/Defaults */
+const int MONSTER_BROADCAST_INTERVAL = 30;
+const bool MONSTER_INIT_HITSCAN = true;
+const bool MONSTER_INIT_DRAW = true;
+
 /* Slime */
 const int SLIME_MAX = 256;
 const int SLIME_HEALTH = 75;
@@ -26,6 +31,7 @@ const struct Color SLIME_ANIMATION_COLOR = { 31,223,223 };
 
 
 /* Box */
+
 //const int BOX_MAX = 256;
 const int BOX_MAX = 1024;
 const int BOX_HEALTH = 25;

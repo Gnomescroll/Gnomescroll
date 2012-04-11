@@ -304,12 +304,12 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
     Particles::minivox_list->unset_size();
 }
 
-// will generate random count between count_lower and count_higher
-void voxel_explode(Vec3 position, int count_lower, int count_higher, float size, struct Color color)
+// will generate random count between count_min and count_max
+void voxel_explode(Vec3 position, int count_min, int count_max, float size, struct Color color)
 {
     if (!Options::animations) return;
     
-    int count = randrange(count_lower, count_higher);
+    int count = randrange(count_min, count_max);
     voxel_explode(position, count, size, color);
 }
 

@@ -5,6 +5,8 @@
 #include <c_lib/input/handlers.hpp>
 #endif
 
+/* MAJOR TODO */
+// default draw/hitscan values
 
 void updateFrozenVox(Voxel_model* vox, Vec3 position, Vec3 angles, bool state_changed)
 {

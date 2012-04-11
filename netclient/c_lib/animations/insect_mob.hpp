@@ -6,8 +6,8 @@ namespace Animations
 
 struct vertexElement
 {
-	float x,y,z;
-	float tx,ty;
+    float x,y,z;
+    float tx,ty;
 };
 
 struct vertexElement* insect_mob_vlist;
@@ -27,16 +27,16 @@ void init_insect_mob_shader();
 
 void init_insect_mob()
 {
-	insect_mob_vlist = new vertexElement[4096];
+    insect_mob_vlist = new vertexElement[4096];
 
-	init_insect_mob_texture();
-	init_insect_mob_shader();
+    init_insect_mob_texture();
+    init_insect_mob_shader();
 }
 
 
 void init_insect_mob_texture()
 {
-	SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/AlienTex3.png");
+    SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/AlienTex3.png");
 
     if(s == NULL)
     {
@@ -102,10 +102,10 @@ void init_insect_mob_shader()
 
 const float _va[2*2*4] =
 {
-	0,1, 1,0,
-	1,0, 0,-1,
-	0,-1, -1,0,
-	-1,0, 0,1 
+    0,1, 1,0,
+    1,0, 0,-1,
+    0,-1, -1,0,
+    -1,0, 0,1 
 };
 
 const float _ta[2*2*4] =
@@ -118,135 +118,135 @@ const float _ta[2*2*4] =
 
 const float _va2[2*2*4] =
 {
-	-1,1, 1,1,
-	1,1, 1,-1,
-	1,-1, -1,-1, 
-	-1,-1, -1,1 
+    -1,1, 1,1,
+    1,1, 1,-1,
+    1,-1, -1,-1, 
+    -1,-1, -1,1 
 };
 
 
 class InsectMob
 {
-	public:
+    public:
 
-	float x,y,z;
-
-
-	InsectMob()
-	{
+    float x,y,z;
 
 
-	}
-
-	void draw_leg(float _x, float _y, float _z)
-	{
+    InsectMob()
+    {
 
 
-		const float h = 0.8;
-		const float l = 0.2;
+    }
 
-	    for(int i=0; i<4; i++)
-	   	{
-			glTexCoord2f(0.5,0.5/2 + 0.5);
-    		glVertex3f(_x, _y, _z-h);
-
-			glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2 + 0.5);
-    		glVertex3f(_x+l*_va2[4*i+0], _y+l*_va2[4*i+1], _z);
-
-			glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2 + 0.5);
-    		glVertex3f(_x+l*_va2[4*i+2], _y+l*_va2[4*i+3], _z);
-	   	}
-
-	}
+    void draw_leg(float _x, float _y, float _z)
+    {
 
 
-	void draw()
-	{
-		//printf("draw\n");
+        const float h = 0.8;
+        const float l = 0.2;
 
-	    glColor3ub(255,255,255);
+        for(int i=0; i<4; i++)
+        {
+            glTexCoord2f(0.5,0.5/2 + 0.5);
+            glVertex3f(_x, _y, _z-h);
 
-	    glEnable(GL_TEXTURE_2D);
-	    glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
+            glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2 + 0.5);
+            glVertex3f(_x+l*_va2[4*i+0], _y+l*_va2[4*i+1], _z);
 
-	    const int sides = 3;
+            glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2 + 0.5);
+            glVertex3f(_x+l*_va2[4*i+2], _y+l*_va2[4*i+3], _z);
+        }
 
-	    const float z0 = 0;
-	    const float z1 = 0.3;
-	    const float z2 = -0.3;
+    }
 
-	    const float w = 1.0;
-	    const float h = 1.0;
 
-	    glBegin( GL_TRIANGLES );
+    void draw()
+    {
+        //printf("draw\n");
 
-	    const float f = (1 / (float)(sides))*2*3.14159;
+        glColor3ub(255,255,255);
 
-	    for(int i=0; i<sides; i++)
-	   	{
-			glTexCoord2f(0.5,0.5);
-    		glVertex3f(x, y, z1+z);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
 
-			glTexCoord2f(sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
-    		glVertex3f(x+w*sin(f*i), y+h*cos(f*i), z0+z);
+        const int sides = 3;
 
-			glTexCoord2f(sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
-    		glVertex3f(x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z);
-	   	}
+        const float z0 = 0;
+        const float z1 = 0.3;
+        const float z2 = -0.3;
 
-	    for(int i=0; i<sides; i++)
-	   	{
-			glTexCoord2f(0.5,0.5);
-    		glVertex3f(x, y, z2+z);
+        const float w = 1.0;
+        const float h = 1.0;
 
-			glTexCoord2f(sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
-    		glVertex3f(x+w*sin(f*i), y+h*cos(f*i), z0+z);
+        glBegin( GL_TRIANGLES );
 
-			glTexCoord2f(sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
-    		glVertex3f(x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z);
-	   	}
+        const float f = (1 / (float)(sides))*2*3.14159;
 
-	   	draw_leg(x,y,z+3);
+        for(int i=0; i<sides; i++)
+        {
+            glTexCoord2f(0.5,0.5);
+            glVertex3f(x, y, z1+z);
 
-	    glEnd();
+            glTexCoord2f(sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
+            glVertex3f(x+w*sin(f*i), y+h*cos(f*i), z0+z);
 
-	}
+            glTexCoord2f(sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
+            glVertex3f(x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z);
+        }
+
+        for(int i=0; i<sides; i++)
+        {
+            glTexCoord2f(0.5,0.5);
+            glVertex3f(x, y, z2+z);
+
+            glTexCoord2f(sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
+            glVertex3f(x+w*sin(f*i), y+h*cos(f*i), z0+z);
+
+            glTexCoord2f(sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
+            glVertex3f(x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z);
+        }
+
+        draw_leg(x,y,z+3);
+
+        glEnd();
+
+    }
 
 };
 
 /*
-	    const float z0 = 0;
-	    const float z1 = 0.3;
+        const float z0 = 0;
+        const float z1 = 0.3;
 
-	    const float l = 1.2;
+        const float l = 1.2;
 
-	    glBegin( GL_TRIANGLES );
+        glBegin( GL_TRIANGLES );
 
-	    for(int i=0; i<4; i++)
-	   	{
-			glTexCoord2f(0.5,0.5/2);
-    		glVertex3f(x, y, z1+z);
+        for(int i=0; i<4; i++)
+        {
+            glTexCoord2f(0.5,0.5/2);
+            glVertex3f(x, y, z1+z);
 
-			glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2);
-    		glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
+            glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2);
+            glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
 
-			glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2);
-    		glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
-	   	}
+            glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2);
+            glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
+        }
 
-	    for(int i=0; i<4; i++)
-	   	{
-			glTexCoord2f(0.5,0.5/2 + 0.5);
-    		glVertex3f(x, y, z-z1);
+        for(int i=0; i<4; i++)
+        {
+            glTexCoord2f(0.5,0.5/2 + 0.5);
+            glVertex3f(x, y, z-z1);
 
-			glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2 + 0.5);
-    		glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
+            glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2 + 0.5);
+            glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
 
-			glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2 + 0.5);
-    		glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
-	   	}
+            glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2 + 0.5);
+            glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
+        }
 
-	   	glEnd();
+        glEnd();
 */
 
 InsectMob alpha;
@@ -254,16 +254,16 @@ InsectMob alpha;
 void draw_insect()
 {
 
-	alpha.draw();
+    alpha.draw();
 }
 
 void set_insect_position(float x, float y, float z)
 {
-	printf("set position: %f, %f, %f \n", x,y,z);
-	z += 3.0;
-	alpha.x = x;
-	alpha.y = y;
-	alpha.z = z;
+    //printf("set position: %f, %f, %f \n", x,y,z);
+    z += 3.0;
+    alpha.x = x;
+    alpha.y = y;
+    alpha.z = z;
 }
 
 }

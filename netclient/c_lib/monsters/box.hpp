@@ -210,8 +210,6 @@ class Box:
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
     {
-        //this->transmission_tick = id % 3;
-        
         this->_state.id = id;
 
         this->_state.coin_rule = COINS_ANYONE;
@@ -236,8 +234,8 @@ class Box:
         this->target_acquisition_probability = BOX_TARGET_LOCK_CHANGE;
 
 
-        this->voxel_properties.init_hitscan = true;
-        this->voxel_properties.init_draw = true;
+        this->voxel_properties.init_hitscan = MONSTER_INIT_HITSCAN;
+        this->voxel_properties.init_draw = MONSTER_INIT_DRAW;
         this->voxel_properties.vox_dat = &box_vox_dat;
 
         this->spatial_properties.camera_height = BOX_CAMERA_HEIGHT;
@@ -249,7 +247,7 @@ class Box:
         // momentum should not be used this way (can be overwriiten, is only init etc)
         this->set_momentum(BOX_SPEED, BOX_SPEED, BOX_SPEED);
 
-        this->rate_limit_state_interval = 30;
+        this->rate_limit_state_interval = MONSTER_BROADCAST_INTERVAL;
 
         #if DC_CLIENT
         this->animation_size = BOX_ANIMATION_PARTICLE_SIZE;
