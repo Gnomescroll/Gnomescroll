@@ -4,6 +4,7 @@
 #include <c_lib/monsters/constants.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/objects/components/voxel/component.hpp>
+#include <c_lib/objects/components/animation/components.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
 
@@ -15,7 +16,13 @@ typedef ObjectInterface
 < HealthPositionMomentumChangedState, object_create_momentum_angles_StoC, object_state_momentum_angles_StoC >
 MonsterInterface;
 
-class Slime: public VoxelComponent, public RateLimitedStateBroadcastComponent, public MonsterInterface
+class Slime:
+    public VoxelComponent, 
+    public RateLimitedStateBroadcastComponent,
+    #if DC_CLIENT
+    public AnimationVoxelComponent,
+    #endif
+    public MonsterInterface
 {
     public:
     

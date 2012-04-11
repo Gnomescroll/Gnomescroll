@@ -38,7 +38,14 @@ void box_shot_object(object_shot_object_StoC* msg);
     //box->locked_on_target = false;  // TODO -- moving and locked on target?
 //}
 
-class Box: public VoxelComponent, public TargetAcquisitionComponent, public RateLimitedStateBroadcastComponent, public MonsterInterface
+class Box:
+    public VoxelComponent,
+    public TargetAcquisitionComponent,
+    public RateLimitedStateBroadcastComponent,
+    #if DC_CLIENT
+    public AnimationVoxelComponent,
+    #endif
+    public MonsterInterface
 {
     public:
 
@@ -112,7 +119,7 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
         if (!this->en_route && !this->locked_on_target)
         {   // no destination, no target
             // choose destination
-            const int len = 30;
+            const int len = BOX_WALK_RANGE;
             float dx = randrange(0,len) - len/2;
             float dy = randrange(0,len) - len/2;
             float dz = 0;
@@ -146,7 +153,6 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
             }
         }
 
-
         if (this->en_route)
         {   // destination set
             // move towards destination
@@ -164,15 +170,8 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
     void die()
     {
         #if DC_CLIENT
-        //dieAnimation();   // todo
-        if (this->voxel_properties.vox != NULL)
-        {
-            Vec3 position = this->get_center(BOX_PART_BODY);
-            const float size = 0.2f;    // TODO
-            const float count = 5*5*5;
-            const struct Color color = { 223, 31, 31 };
-            Animations::voxel_explode(position, count, size, color);
-        }
+        Vec3 position = this->get_center(BOX_PART_BODY);
+        this->animation_voxel_explode(position);
         #endif
 
         #if DC_SERVER
@@ -251,6 +250,12 @@ class Box: public VoxelComponent, public TargetAcquisitionComponent, public Rate
         this->set_momentum(BOX_SPEED, BOX_SPEED, BOX_SPEED);
 
         this->rate_limit_state_interval = 30;
+
+        #if DC_CLIENT
+        this->animation_size = BOX_ANIMATION_PARTICLE_SIZE;
+        this->animation_count = BOX_ANIMATION_PARTICLE_COUNT;
+        this->animation_color = BOX_ANIMATION_COLOR;
+        #endif
     }
 };
 

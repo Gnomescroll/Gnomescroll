@@ -41,6 +41,13 @@ Slime::Slime(int id)
     this->set_momentum(SLIME_SPEED, SLIME_SPEED, SLIME_SPEED);
 
     this->rate_limit_state_interval = 30;
+
+    #if DC_CLIENT
+    this->animation_size = SLIME_ANIMATION_PARTICLE_SIZE;
+    this->animation_count = SLIME_ANIMATION_PARTICLE_COUNT_MIN;
+    this->animation_count_max = SLIME_ANIMATION_PARTICLE_COUNT_MAX;
+    this->animation_color = SLIME_ANIMATION_COLOR;
+    #endif
 }
 
 void Slime::born()
@@ -59,12 +66,8 @@ void Slime::born()
 void Slime::die()
 {
     #if DC_CLIENT
-    //dieAnimation();   // TODO
-    if (this->voxel_properties.vox != NULL)
-    {
-        Vec3 position = this->voxel_properties.vox->get_part(SLIME_PART_BODY)->get_center();
-        Animations::slime_melt(position.x, position.y, position.z);
-    }
+    Vec3 position = this->get_center(SLIME_PART_BODY);
+    this->animation_voxel_explode_random_count(position);
     #endif
 
     #if DC_SERVER     

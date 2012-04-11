@@ -30,3 +30,8 @@
 
 #include <c_lib/objects/components/tick/components.hpp>
 #include <c_lib/objects/components/tick/properties.hpp>
+
+#if DC_CLIENT
+#include <c_lib/objects/components/animation/components.hpp>
+//#include <c_lib/objects/components/animation/properties.hpp>
+#endif

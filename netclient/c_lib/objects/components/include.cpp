@@ -29,3 +29,8 @@
 
 #include <c_lib/objects/components/tick/components.cpp>
 #include <c_lib/objects/components/tick/properties.cpp>
+
+#if DC_CLIENT
+#include <c_lib/objects/components/animation/components.cpp>
+//#include <c_lib/objects/components/animation/properties.cpp>
+#endif

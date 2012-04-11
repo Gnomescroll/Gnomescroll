@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/common/common.hpp>
+
 namespace Monsters
 {
 
@@ -16,6 +18,12 @@ const int SLIME_EXPLOSION_DAMAGE = 35;
 const float SLIME_EXPLOSION_PROXIMITY_RADIUS = 1.0f;
 const float SLIME_MOTION_PROXIMITY_RADIUS = 15.0f;
 const float SLIME_SPEED = 0.25f;
+
+const float SLIME_ANIMATION_PARTICLE_SIZE = 0.7f;
+const int SLIME_ANIMATION_PARTICLE_COUNT_MIN = 50;
+const int SLIME_ANIMATION_PARTICLE_COUNT_MAX = 100;
+const struct Color SLIME_ANIMATION_COLOR = { 31,223,223 };
+
 
 /* Box */
 //const int BOX_MAX = 256;
@@ -43,5 +51,10 @@ const int BOX_TERRAIN_DAMAGE = 5;
 const int BOX_VOXEL_DAMAGE_RADIUS = 0;
 const float BOX_TARGET_LOCK_CHANGE = 1.0f;
 
+const int BOX_WALK_RANGE = 30;
+
+const float BOX_ANIMATION_PARTICLE_SIZE = 0.2f;
+const int BOX_ANIMATION_PARTICLE_COUNT = 5*5*5;
+const struct Color BOX_ANIMATION_COLOR = { 223,31,31 };
 
 } // Monsters
