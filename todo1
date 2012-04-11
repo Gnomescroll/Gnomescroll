@@ -822,6 +822,8 @@ animation component
 command line lua settings file
 remove API templates
 put Cell's textures in equipment panel
+
+robot choice networking + simple interpolation
 ==============
 
 Gun model

@@ -293,6 +293,13 @@ static void vec3_to_angles(Vec3 direction, float* theta, float* phi)
 }
 
 
+static bool vec3_equal(Vec3 v1, Vec3 v2) __attribute((always_inline));
+static bool vec3_equal(Vec3 v1, Vec3 v2)
+{
+    if (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z) return true;
+    return false;
+}
+
 /*
     diagnostic
 */

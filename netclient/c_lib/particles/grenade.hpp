@@ -13,6 +13,7 @@ namespace Particles
 /* These should be pulled from a dat or something */
 const int GRENADE_MAX = 1024;
 const float GRENADE_BLOCK_DESTROY_RADIUS = 2.0f;
+//const float GRENADE_DAMAGE_RADIUS = 4.5f;
 const float GRENADE_DAMAGE_RADIUS = 4.5f;
 const int GRENADE_SPLASH_DAMAGE = 100;
 const int GRENADE_BLOCK_DAMAGE = 32;
@@ -72,6 +73,8 @@ int get_grenade_damage(Object_types type)
             return GRENADE_TURRET_DAMAGE;
         case OBJ_TYPE_SLIME:
             return GRENADE_SLIME_DAMAGE;
+        case OBJ_TYPE_MONSTER_BOX:
+            return 1000;
         default: return 0;
     }
 }

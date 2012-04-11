@@ -60,21 +60,32 @@ void box_chose_target(Box* box, object_choose_target_StoC* msg)
 
 void box_chose_destination(Box* box, object_choose_destination_StoC* msg)
 {
-    box->destination.x = msg->x;
-    box->destination.y = msg->y;
-    box->destination.z = msg->z;
+    box->destination = vec3_init(msg->x, msg->y, msg->z);
     box->ticks_to_destination = msg->ticks;
-    box->at_destination = false;
-    box->en_route = true;
 
     // set momentum from destination :: TODO MOVE
     Vec3 direction = vec3_sub(box->destination, box->get_position());
-    float len = vec3_length(direction);
-    float speed = len / (float)box->ticks_to_destination;
-    normalize_vector(&direction);
-    direction = vec3_scalar_mult(direction, speed);
-    box->set_momentum(direction.x, direction.y, direction.z);
-    
+    if (msg->ticks)
+    {
+        float len = vec3_length(direction);
+        float speed = len / ((float)msg->ticks);
+        box->speed = speed;
+        box->at_destination = false;
+        box->en_route = true;
+        if (len)
+        {
+            normalize_vector(&direction);
+            box->direction = direction;
+        }
+    }
+    else
+    {   // no ticks is equivalent to a teleport
+        box->set_position(box->destination.x, box->destination.y, box->destination.z);
+        box->speed = 0.0f;
+        box->at_destination = true;
+        box->en_route = false;
+    }
+
     box->locked_on_target = false;  // TODO -- moving and locked on target?
 }
 

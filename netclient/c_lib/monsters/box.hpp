@@ -50,17 +50,17 @@ class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<
     public:
         uint16_t id;
         uint8_t type;
-        float x,y,z;
         uint16_t ticks;
+        float x,y,z;
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&ticks, buff, buff_n, pack);
         pack_float(&x, buff, buff_n, pack);
         pack_float(&y, buff, buff_n, pack);
         pack_float(&z, buff, buff_n, pack);
-        pack_u16(&ticks, buff, buff_n, pack);
     }
     inline void handle();
 };
@@ -95,6 +95,38 @@ void boxDropItem(Vec3 position)
     #endif
 }
 
+bool moveBox(Vec3 position, Vec3 direction, float speed, Vec3* new_position, Vec3* new_momentum)
+{
+    // attempt to move to location defined by direction * speed
+    // if z_level diff too high, set momentum 0, copy position, return
+    // else calculate new destination, reorient direction, multiply by speed, and set to new_momentum
+    // add new_momentum to position to get new_position
+
+    // assumes direction is normalized
+    const int max_z_level_diff_up = 4; // maximum height to climb up
+    const int max_z_level_diff_down = -8; // maximum height to climb down
+
+    //printf("direction %0.2f,%0.2f,%0.2f\n", direction.x, direction.y, direction.z);
+    Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
+    int z = t_map::get_highest_open_block(move_to.x, move_to.y);
+
+    float z_diff = position.z - z;
+    if (z_diff > max_z_level_diff_up || z_diff < max_z_level_diff_down)
+    {   // cant move
+    //printf("cant move\n");
+        *new_position = position;
+        *new_momentum = vec3_init(0,0,0);
+        return false;
+    }
+
+    move_to.z = z;
+    Vec3 new_direction = vec3_sub(move_to, position);
+    normalize_vector(&new_direction);
+    *new_momentum = vec3_scalar_mult(new_direction, speed);
+    *new_position = vec3_add(position, *new_momentum);
+    return true;
+}
+
 class Box:
     public VoxelComponent,
     public TargetAcquisitionComponent,
@@ -110,10 +142,13 @@ class Box:
     bool at_destination;
     bool en_route;
     int ticks_to_destination;
+    float speed;
 
     int target_id;
     Object_types target_type;
     bool locked_on_target;
+
+    Vec3 direction;
 
     #if DC_SERVER
     void server_tick()
@@ -134,7 +169,7 @@ class Box:
             if (this->target_type == OBJ_TYPE_AGENT)
                 agent = STATE::agent_list->get(this->target_id);
             if (agent == NULL
-            || vec3_distance_squared(agent->get_center(), this->get_center(BOX_PART_BODY)) > BOX_SPEED*BOX_SPEED)
+            || vec3_distance_squared(agent->get_center(), this->get_center(BOX_PART_BODY)) > this->speed*this->speed)
                 this->locked_on_target = false;
         }
 
@@ -176,25 +211,29 @@ class Box:
         if (this->locked_on_target)
         {   // target is locked
             // face target
-            float theta,phi;
             Vec3 direction = vec3_sub(agent->get_center(), this->get_center(BOX_PART_BODY));
-            vec3_to_angles(direction, &theta, &phi);
-            //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
-            this->set_angles(theta, phi, 0);
+            if (vec3_length(direction))
+            {
+                normalize_vector(&direction);
+                float theta,phi;
+                vec3_to_angles(direction, &theta, &phi);
+                this->set_angles(theta, phi, 0);
+                this->direction = direction;
+            }
 
             if (this->can_fire())
             {
                 ObjectState* state = this->state();
                 this->fire_on_known_target(
                     state->id, state->type, this->camera_z(), this->get_position(),
-                    direction, state->accuracy_bias, state->sight_range, agent
+                    this->direction, state->accuracy_bias, state->sight_range, agent
                 );
             }
         }
         else if (this->en_route)
         {   // face destination
             float theta, phi;
-            vec3_to_angles(this->get_momentum(), &theta, &phi);
+            vec3_to_angles(this->direction, &theta, &phi);
             this->set_angles(theta, phi, 0);
         }
 
@@ -218,10 +257,13 @@ class Box:
             
             Vec3 direction = vec3_sub(this->destination, this->get_position());
             float len = vec3_length(direction);
-            this->ticks_to_destination = (int)ceil(len/BOX_SPEED);
-            normalize_vector(&direction);
-            Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);
-            this->set_momentum(momentum.x, momentum.y, momentum.z);
+            this->ticks_to_destination = (int)ceil(len/this->speed);
+            if (len)
+            {
+                direction.z = 0;
+                normalize_vector(&direction);
+                this->direction = direction;
+            }
 
             // send destination packet
             // TODO
@@ -234,11 +276,10 @@ class Box:
             msg.ticks = this->ticks_to_destination;
             msg.broadcast();
             // TODO
-
         }
 
         if (!this->at_destination)
-        {
+        {   // check if at destination
             float dist = vec3_distance_squared(this->destination, this->get_position());
             if (dist < 1.0f)    // TODO Margin
             {
@@ -250,8 +291,11 @@ class Box:
 
         if (this->en_route)
         {   // move towards destination
-            Vec3 position = vec3_add(this->get_position(), this->get_momentum());
+            Vec3 position;
+            Vec3 momentum;
+            this->en_route = moveBox(this->get_position(), this->direction, this->speed, &position, &momentum);
             this->set_position(position.x, position.y, position.z);
+            this->set_momentum(momentum.x, momentum.y, momentum.z);
         }
 
         //if (this->spatial_properties.changed)
@@ -264,6 +308,7 @@ class Box:
     #if DC_CLIENT
     void client_tick()
     {
+        //return;
         if (this->locked_on_target)
         {   // target locked
             if (this->target_type != OBJ_TYPE_AGENT) return;    // TODO -- more objects
@@ -271,11 +316,17 @@ class Box:
             if (agent == NULL) return;
         
             // face target
-            float theta,phi;
-            Vec3 direction = vec3_sub(agent->get_center(), this->get_center(BOX_PART_BODY));
-            vec3_to_angles(direction, &theta, &phi);
-            //Vec3 angles = this->get_angles(); // rho is unused for Box, otherwise, reuse rho from here
-            this->set_angles(theta, phi, 0);
+            Vec3 agent_position = agent->get_center();
+            Vec3 position = this->get_center(BOX_PART_BODY);
+            Vec3 direction = vec3_sub(agent_position, position);
+            if (vec3_length(direction))
+            {
+                float theta,phi;
+                normalize_vector(&direction);
+                this->direction = direction;
+                vec3_to_angles(direction, &theta, &phi);
+                this->set_angles(theta, phi, 0);
+            }
             return; // do nothing else
         }
 
@@ -292,13 +343,22 @@ class Box:
 
         if (this->en_route)
         {   // move towards destination
-            Vec3 momentum = this->get_momentum();
-            Vec3 position = vec3_add(this->get_position(), momentum);
+            Vec3 position;
+            Vec3 momentum;
+            this->en_route = moveBox(this->get_position(), this->direction, this->speed, &position, &momentum);
             this->set_position(position.x, position.y, position.z);
+            this->set_momentum(momentum.x, momentum.y, momentum.z);
+
+            if (vec3_length(momentum))
+            {
+                momentum.z = 0;
+                normalize_vector(&momentum);
+                this->direction = momentum;
+            }
 
             // face in direction of movement
             float theta, phi;
-            vec3_to_angles(momentum, &theta, &phi);
+            vec3_to_angles(this->direction, &theta, &phi);
             this->set_angles(theta, phi, 0);
         }
 
@@ -348,14 +408,14 @@ class Box:
             this->spatial_properties.angles,
             this->spatial_properties.changed
         );
-        //this->spatial_properties.set_changed(false);
+        this->spatial_properties.set_changed(false);
     }
     
     void draw() {/*Empty*/}
 
     explicit Box(int id)
     :
-    at_destination(false), en_route(false), ticks_to_destination(1),
+    at_destination(false), en_route(false), ticks_to_destination(1), speed(BOX_SPEED),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
     {
@@ -392,10 +452,6 @@ class Box:
 
         this->health_properties.health = BOX_HEALTH;
 
-        // TODO -- make speed a base property
-        // momentum should not be used this way (can be overwriiten, is only init etc)
-        this->set_momentum(BOX_SPEED, BOX_SPEED, BOX_SPEED);
-
         this->rate_limit_state_interval = MONSTER_BROADCAST_INTERVAL;
 
         #if DC_CLIENT
@@ -403,6 +459,8 @@ class Box:
         this->animation_count = BOX_ANIMATION_PARTICLE_COUNT;
         this->animation_color = BOX_ANIMATION_COLOR;
         #endif
+
+        this->direction = vec3_init(1,0,0);
     }
 };
 
