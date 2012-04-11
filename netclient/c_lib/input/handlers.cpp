@@ -626,7 +626,7 @@ void key_down_handler(SDL_Event* event)
 
         case SDLK_LALT:
         case SDLK_RALT:
-            toggle_mouse_bind();
+            input_state.mouse_bound = false;
             break;
 
         case SDLK_BACKQUOTE:
@@ -695,10 +695,10 @@ void key_up_handler(SDL_Event* event)
 
     switch (event->key.keysym.sym)
     {
-        case SDLK_LALT:
-        case SDLK_RALT:
-            toggle_mouse_bind();
-            break;
+        //case SDLK_LALT:
+        //case SDLK_RALT:
+            //input_state.mouse_bound = true;
+            //break;
 
         case SDLK_BACKSPACE:
             keys_held_down[kBACKSPACE].pressed = false;
