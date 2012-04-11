@@ -1,13 +1,16 @@
 #include "player_agent_action.hpp"
 
 #include <c_lib/ray_trace/hitscan.hpp>
-#include <c_lib/animations/hitscan.hpp>
+
 #include <common/enum_types.hpp>
 #include <c_lib/agent/net_agent.hpp>
 #include <sound/triggers.hpp>
 
 #include <c_lib/particles/_include.hpp>
 #include <c_lib/particles/grenade.hpp>
+
+#include <c_lib/animations/_interface.hpp>
+#include <c_lib/animations/hitscan.hpp>
 
 //stuff
 
@@ -187,7 +190,7 @@ void PlayerAgent_action::hitscan_laser()
     // play laser anim (client viewport)
     const float hitscan_speed = 200.0f;
     look = vec3_scalar_mult(look, hitscan_speed);
-    ClientState::hitscan_effect_list->create(
+    Animations::hitscan_effect_list->create(
         origin[0], origin[1], origin[2],
         look.x, look.y, look.z
     );

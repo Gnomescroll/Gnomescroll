@@ -15,8 +15,8 @@ class HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
 void init()
 {
 
-    hitscan_effect_list = new Animations::HitscanEffect_list;
-    hitscan_laser_effect_list = new Animations::HitscanLaserEffect_list;
+    hitscan_effect_list = new HitscanEffect_list;
+    hitscan_laser_effect_list = new HitscanLaserEffect_list;
 
 	insect_mob_list = new Insect_mob_list;
 
@@ -43,8 +43,10 @@ void teardown()
 void animations_tick()
 {
     ClientState::ctf->animate_flags();
-    ClientState::hitscan_effect_list->tick();
-    ClientState::hitscan_laser_effect_list->tick();
+    hitscan_effect_list->tick();
+    hitscan_laser_effect_list->tick();
+
+    insect_mob_list->tick();
 }
 
 /*
