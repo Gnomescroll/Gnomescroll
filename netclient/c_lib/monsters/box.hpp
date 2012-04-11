@@ -202,17 +202,16 @@ class Box:
         {   // no destination, no target
             // choose destination
             const int walk_len = BOX_WALK_RANGE;
-            float dx = randrange(0,walk_len) - walk_len/2;
-            float dy = randrange(0,walk_len) - walk_len/2;
-            float dz = 0;
-            this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
+            int dx = randrange(0,walk_len) - walk_len/2;
+            int dy = randrange(0,walk_len) - walk_len/2;
+            this->destination = vec3_add(this->get_position(), vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
             // clamp
             if (this->destination.x < 0) this->destination.x = 0;
             if (this->destination.x >= map_dim.x) this->destination.x = map_dim.x -1;
             if (this->destination.y < 0) this->destination.y = 0;
             if (this->destination.y >= map_dim.y) this->destination.y = map_dim.y -1;
+            this->destination.z = (float)t_map::get_highest_open_block(this->destination.x,this->destination.y);
             if (this->destination.z < 0) this->destination.z = 0;
-            if (this->destination.z >= map_dim.z) this->destination.z = map_dim.z -1;
 
             this->en_route = true;
             this->at_destination = false;
