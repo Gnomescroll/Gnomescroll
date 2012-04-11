@@ -6,30 +6,23 @@
 
 uniform sampler2D base_texture;
 
-varying vec3 texCoord;
+varying vec2 texCoord;
+varying float diffuse;
 
+#define diffuse_p .30f //diffuse lighting weight
+#define ambient_p .70f //ambient lighting weight
 
 void main() 
 {
 	//float gamma = 2.2f;
-
-	vec2 vx = vec2(1.0f - texCoord.x, texCoord.x);
-	vec2 vy = vec2(1.0f - texCoord.y, texCoord.y);
-
-	float tmp = dot(vx, lightMatrix * vy);
-
-	//vec3 color = inColor.rgb;	
 	
-
-    vec3 color = (tmp*((texture2DArray(base_texture, texCoord.xyz)).rgb));	    
+    vec4 color = texture2D(base_texture, texCoord.xy);
     
-    uniform sampler2D base_texture;
+    color = ((diffuse_p*diffuse)*color) + ambient_p*color;
 
-	vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
-	color = color2 * color;
-
-
-	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
+    gl_FragColor = color;
+	
+    //gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 
 
 }
