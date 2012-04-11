@@ -51,7 +51,7 @@ const bool BOX_ATTACK_ONLY_ENEMIES = false;    // TODO change attack_enemies to 
 const bool BOX_ATTACK_RANDOM = false;
 
 const int AGENT_BOX_PROTECTION_DURATION = 0;
-const int BOX_AGENT_DAMAGE = 0;
+const int BOX_AGENT_DAMAGE = 1;
 const int BOX_TERRAIN_DAMAGE = 5;
 const int BOX_VOXEL_DAMAGE_RADIUS = 0;
 const float BOX_TARGET_LOCK_CHANGE = 0.9f;
