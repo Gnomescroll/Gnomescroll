@@ -13,7 +13,7 @@ void main()
 {
 	//float gamma = 2.2f;
 	
-    vec4 color = texture2D(base_texture, texCoord.xy)
+    vec4 color = texture2D(base_texture, texCoord.xy);
 
     gl_FragColor = color;
 	
