@@ -863,6 +863,7 @@ void Agent_state::update_model()
     {   // your agent
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
+        this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
         return;
     }
 

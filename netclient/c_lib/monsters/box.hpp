@@ -72,7 +72,8 @@ void box_shot_object(object_shot_object_StoC* msg);
 void boxDropItem(Vec3 position)
 {   // TODO -- some dat format for thiss
     #if DC_SERVER
-    const float drop_probability = 0.33f;
+    //const float drop_probability = 0.33f;
+    const float drop_probability = 1.00f;
     float p = randf();
     if (p > drop_probability) return;
     
@@ -338,10 +339,9 @@ class Box:
         updateVox(
             this->voxel_properties.vox, this->get_position(),
             this->spatial_properties.angles,
-            true
-            //this->spatial_properties.changed
+            this->spatial_properties.changed
         );
-        this->spatial_properties.set_changed(false);
+        //this->spatial_properties.set_changed(false);
     }
     
     void draw() {/*Empty*/}
