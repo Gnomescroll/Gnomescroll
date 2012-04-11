@@ -25,26 +25,49 @@ namespace ServerState
 }
 #endif
 
+/* TODO MOVE */
+class object_choose_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_target_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t target_id;
+        uint8_t target_type;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&target_id, buff, buff_n, pack);
+        pack_u8(&target_type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<object_choose_destination_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        float x,y,z;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+/* END TODO MOVE */
+
 namespace Monsters {
 
 extern VoxDat box_vox_dat;
 
 void box_shot_object(object_shot_object_StoC* msg);
-
-//void box_received_shoot(Box* box, object_shot_object_StoC* msg)
-//{
-    //box->en_route = false;  // cancel all motion
-    //box->locked_on_target = true;   // flag target lock
-
-    //box->target_id = msg->target_id;    // set target
-    //box->target_type = (Object_types)msg->target_type;
-//}
-
-//void box_received_move(Box* box, object_destination_StoC* msg)
-//{
-    //box->en_route = true;
-    //box->locked_on_target = false;  // TODO -- moving and locked on target?
-//}
 
 void boxDropItem(Vec3 position)
 {   // TODO -- some dat format for thiss
@@ -93,6 +116,12 @@ class Box:
         // wander randomly (TODO: network model with destinations)
         // TODO -- aggro component
         #if DC_SERVER
+
+        // save current target state, will use this to decide if need to send packet
+        bool was_on_target = this->locked_on_target;
+        int old_target_id = this->target_id;
+        int old_target_type = this->target_type;
+        
         Agent_state* agent = NULL;
         if (this->locked_on_target)
         {   // target locked
@@ -128,6 +157,15 @@ class Box:
             this->target_type = OBJ_TYPE_AGENT;
 
             // send target packet
+            if (!was_on_target || old_target_id != this->target_id || old_target_type != this->target_type)
+            {
+                object_choose_target_StoC msg;
+                msg.id = this->_state.id;
+                msg.type = this->_state.type;
+                msg.target_id = this->target_id;
+                msg.target_type = this->target_type;
+                msg.broadcast();
+            }
         }
         
         if (this->locked_on_target)
@@ -163,9 +201,6 @@ class Box:
             float dy = randrange(0,len) - len/2;
             float dz = 0;
             this->destination = vec3_add(this->get_position(), vec3_init(dx,dy,dz));
-            this->en_route = true;
-            this->at_destination = false;
-
             // clamp
             if (this->destination.x < 0) this->destination.x = 0;
             if (this->destination.x >= map_dim.x) this->destination.x = map_dim.x -1;
@@ -174,6 +209,19 @@ class Box:
             if (this->destination.z < 0) this->destination.z = 0;
             if (this->destination.z >= map_dim.z) this->destination.z = map_dim.z -1;
 
+            this->en_route = true;
+            this->at_destination = false;
+
+            // TODO
+            object_choose_destination_StoC msg;
+            msg.x = destination.x;
+            msg.y = destination.y;
+            msg.z = destination.z;
+            msg.id = this->_state.id;
+            msg.type = this->_state.type;
+            msg.broadcast();
+            // TODO
+            
             Vec3 direction = vec3_sub(this->destination, this->get_position());
             normalize_vector(&direction);
             Vec3 momentum = vec3_scalar_mult(direction, BOX_SPEED);

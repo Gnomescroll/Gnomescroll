@@ -30,7 +30,7 @@ class ObjectPolicyInterface
         
         // actions
         virtual void tick() = 0;
-        //virtual void draw() = 0;
+        virtual void draw() = 0;
         virtual void update() = 0;
         virtual void born() = 0;
         virtual void die() = 0;
@@ -209,7 +209,7 @@ class DummyObjectInterface: public Network
 {
     public:
         void tick() {}
-        //void draw() {}
+        void draw() {}
         void update() {}
         void born() {}
         void die() {}

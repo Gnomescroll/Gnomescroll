@@ -44,3 +44,68 @@ void box_shot_object(object_shot_object_StoC* msg)
 #endif
 
 } // Monsters
+
+
+/* TODO : MOVE NET STUFF */
+
+using Monsters::Box;
+void box_chose_target(Box* box, object_choose_target_StoC* msg)
+{
+    box->en_route = false;  // cancel all motion
+
+    box->target_id = msg->target_id;    // set target
+    box->target_type = (Object_types)msg->target_type;
+    box->locked_on_target = true;   // flag target lock
+}
+
+void box_chose_destination(Box* box, object_choose_destination_StoC* msg)
+{
+    box->destination.x = msg->x;
+    box->destination.y = msg->y;
+    box->destination.z = msg->z;
+    box->at_destination = false;
+    box->en_route = true;
+    
+    box->locked_on_target = false;  // TODO -- moving and locked on target?
+}
+
+
+
+#if DC_CLIENT
+
+inline void object_choose_target_StoC::handle()
+{
+    using Monsters::Box;
+    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
+    if (obj == NULL) return;
+    switch (type)
+    {
+        case OBJ_TYPE_MONSTER_BOX:
+            box_chose_target((Box*)obj, this);
+            break;
+        default: return;
+    }
+}
+
+inline void object_choose_destination_StoC::handle()
+{
+    using Monsters::Box;
+    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
+    if (obj == NULL) return;
+    switch (type)
+    {
+        case OBJ_TYPE_MONSTER_BOX:
+            box_chose_destination((Box*)obj, this);
+            break;
+        default: return;
+    }
+}
+
+#endif
+
+#if DC_SERVER
+
+inline void object_choose_target_StoC::handle() {}
+inline void object_choose_destination_StoC::handle() {}
+
+#endif

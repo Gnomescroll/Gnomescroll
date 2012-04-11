@@ -208,5 +208,9 @@ void RegisterMessages() {
     add_item_to_inventory_CtoS::register_server_packet();
     remove_item_from_inventory_CtoS::register_server_packet();
     swap_item_in_inventory_CtoS::register_server_packet();
+
+    // object/monster motion
+    object_choose_target_StoC::register_client_packet();
+    object_choose_destination_StoC::register_client_packet();
 }
 }

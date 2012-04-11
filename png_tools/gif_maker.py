@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 def gif_maker():
     z_step = 0.0013
     freq = 9

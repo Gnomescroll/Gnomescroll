@@ -819,7 +819,9 @@ April 10
 
 fix mouse issues in production build
 animation component
-command line lua settings file 
+command line lua settings file
+remove API templates
+put Cell's textures in equipment panel
 ==============
 
 Gun model
