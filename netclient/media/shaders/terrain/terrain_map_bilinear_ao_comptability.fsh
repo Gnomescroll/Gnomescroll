@@ -35,9 +35,11 @@ void main()
 
     //vec3 color = tmp*vec3(1.0,0.0,0.0);
 
-	float intensity = (inColor.r + inColor.g + inColor.b) / 3.0f;
-	vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
-	color = color2 * color;
+	//float intensity = (inColor.r + inColor.g + inColor.b) / 3.0f;
+	//vec3 color2 = vec3(inColor.r/intensity, inColor.g/intensity, inColor.b/intensity);
+	float intensity = 3.0f / (inColor.r + inColor.g + inColor.b);
+	vec3 color2 = intensity*inColor;	
+    color = color2 * color;
 
 	gl_FragColor.rgb = pow(color, vec3(1.0f / 2.2f) );
 	//gl_FragColor.rgb = vec3(1.0,0,0);
