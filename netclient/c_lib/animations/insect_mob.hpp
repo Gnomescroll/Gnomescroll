@@ -11,6 +11,9 @@ struct vertexElement
 };
 
 struct vertexElement* insect_mob_vlist;
+int insect_mob_vlist_index = 0;
+
+unsigned int insect_mob_vbo;
 
 int insect_mob_surface;
 unsigned int insect_mob_texture;
@@ -22,12 +25,29 @@ unsigned int insect_mob_frag_shader[1];
 //unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;
 
+void push_vertex(float x, float y, float z, float tx, float ty)
+{
+	vertexElement v;
+
+	v.x = x;
+	v.y = y;
+	v.z = z;
+	v.tx = tx;
+	v.ty = ty;
+
+	insect_mob_vlist[insect_mob_vlist_index] = v;
+	insect_mob_vlist_index++;
+}
+
 void init_insect_mob_texture();
 void init_insect_mob_shader();
 
 void init_insect_mob()
 {
 	insect_mob_vlist = new vertexElement[4096];
+	insect_mob_vlist_index = 0;
+
+	glGenBuffers(1, &insect_mob_vbo);
 
 	init_insect_mob_texture();
 	init_insect_mob_shader();
@@ -160,10 +180,82 @@ class InsectMob
 
 	}
 
+/*
+	Create vertex data, upload to card
+*/
 
 	void draw()
 	{
-		//printf("draw\n");
+		insect_mob_vlist_index = 0;
+
+	    const int sides = 3;
+
+	    const float z0 = 0;
+	    const float z1 = 0.3;
+	    const float z2 = -0.3;
+
+	    const float w = 1.0;
+	    const float h = 1.0;
+
+	    const float f = (1 / (float)(sides))*2*3.14159;
+
+	    for(int i=0; i<sides; i++)
+	   	{
+    		push_vertex( x, y, z1+z,
+    			0.5,0.5);
+
+    		push_vertex( x+w*sin(f*i), y+h*cos(f*i), z0+z,
+    			sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
+
+    		push_vertex( x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z,
+    			sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5);
+	   	}
+
+	    for(int i=0; i<sides; i++)
+	   	{
+    		push_vertex( x, y, z2+z,
+    			0.5,0.5);
+
+    		push_vertex( x+w*sin(f*i), y+h*cos(f*i), z0+z,
+    			sin(f*i)/2 + 0.5,  cos(f*i)/2 + 0.5 );
+
+			push_vertex( sin(f*(i+1))/2 + 0.5,  cos(f*(i+1))/2 + 0.5,
+				 x+w*sin(f*(i+1)), y+h*cos(f*(i+1)), z0+z);
+	   	}
+
+    	glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
+    	glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), NULL, GL_DYNAMIC_DRAW);
+    	glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), insect_mob_vlist, GL_DYNAMIC_DRAW);
+
+
+	    glColor3ub(255,255,255);
+
+	    glEnable(GL_TEXTURE_2D);
+	    glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
+
+
+
+    	glUseProgramObjectARB(insect_mob_vbo);
+
+	    glEnableClientState(GL_VERTEX_ARRAY);
+    	glEnableVertexAttribArray(insect_mob_TexCoord);
+
+
+    	glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement), (GLvoid*)0);
+    	glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement), (GLvoid*)12);
+
+
+    	glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist_index);
+
+	    glDisableClientState(GL_VERTEX_ARRAY);
+    	glDisableVertexAttribArray(insect_mob_TexCoord);
+
+
+	}
+
+};
+
+/*
 
 	    glColor3ub(255,255,255);
 
@@ -210,45 +302,8 @@ class InsectMob
 	   	draw_leg(x,y,z+3);
 
 	    glEnd();
-
-	}
-
-};
-
-/*
-	    const float z0 = 0;
-	    const float z1 = 0.3;
-
-	    const float l = 1.2;
-
-	    glBegin( GL_TRIANGLES );
-
-	    for(int i=0; i<4; i++)
-	   	{
-			glTexCoord2f(0.5,0.5/2);
-    		glVertex3f(x, y, z1+z);
-
-			glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2);
-    		glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
-
-			glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2);
-    		glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
-	   	}
-
-	    for(int i=0; i<4; i++)
-	   	{
-			glTexCoord2f(0.5,0.5/2 + 0.5);
-    		glVertex3f(x, y, z-z1);
-
-			glTexCoord2f(_ta[4*i+0],  _ta[4*i+1]/2 + 0.5);
-    		glVertex3f(x+_va[4*i+0], y+l*_va[4*i+1], z0+z);
-
-			glTexCoord2f(_ta[4*i+2],  _ta[4*i+3]/2 + 0.5);
-    		glVertex3f(x+_va[4*i+2], y+l*_va[4*i+3], z0+z);
-	   	}
-
-	   	glEnd();
 */
+
 
 InsectMob alpha;
 
