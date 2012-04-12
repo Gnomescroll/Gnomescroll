@@ -20,10 +20,18 @@ class MonsterSpawnerComponent
         Object_types type;
         float radius;
         void get_spawn_point(Vec3 position, float spawned_object_height, float* spawn_pt);
-    MonsterSpawnerComponent(){}
+    MonsterSpawnerComponent()
+    : type(OBJ_TYPE_NONE), radius(1.0f)
+    {}
 };
 
-class MonsterSpawner: public MonsterSpawnerComponent, public VoxelComponent, public ObjectStateLayer
+class MonsterSpawner:
+    public MonsterSpawnerComponent,
+    public VoxelComponent,
+    #if DC_CLIENT
+    public AnimationVoxelComponent,
+    #endif
+    public ObjectStateLayer
 {
     public:
         HealthComponent health;
@@ -48,6 +56,12 @@ class MonsterSpawner: public MonsterSpawnerComponent, public VoxelComponent, pub
         this->voxel_properties.vox_dat = &monster_spawner_vox_dat;
 
         this->spatial.properties.height = MONSTER_SPAWNER_HEIGHT;
+
+        #if DC_CLIENT
+        this->animation_size = MONSTER_SPAWNER_ANIMATION_PARTICLE_SIZE;
+        this->animation_count = MONSTER_SPAWNER_ANIMATION_PARTICLE_COUNT;
+        this->animation_color = MONSTER_SPAWNER_ANIMATION_COLOR;
+        #endif
     }
 
     ~MonsterSpawner()
@@ -88,12 +102,17 @@ class MonsterSpawner: public MonsterSpawnerComponent, public VoxelComponent, pub
 
     void die()
     {
+        #if DC_SERVER
         ObjectState* state = this->state();
         this->broadcastDeath();
         dieRevokeOwner(state->type, this->get_owner());
-        //if (this->voxel_properties.vox != NULL)
-            //dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team.properties.team);
+        #endif
+
+        #if DC_CLIENT
         dieChatMessage(this);
+        Vec3 position = this->get_center(MONSTER_SPAWNER_PART_BODY);
+        this->animation_voxel_explode(position);
+        #endif
     }
 };
 

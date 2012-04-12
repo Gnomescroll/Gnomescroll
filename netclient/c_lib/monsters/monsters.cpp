@@ -5,6 +5,9 @@
 #include <c_lib/monsters/box.cpp>
 #include <c_lib/monsters/monster_spawner.cpp>
 
+
+#include <math.h>
+#include <c_lib/t_map/t_map.hpp>
 namespace Monsters
 {
 
@@ -22,7 +25,7 @@ void spawn_monsters(int max_monsters)
     int max_spawners = STATE::object_list->filter_active_objects(OBJ_TYPE_MONSTER_SPAWNER);
     if (!max_spawners) return;
 
-    int monsters_per_spawner = (to_create/n_spawners) + 1;
+    int monsters_per_spawner = (int)ceil(((float)to_create)/((float)n_spawners));
 
     Box* box;
     MonsterSpawner* spawner;
@@ -52,9 +55,9 @@ void create_monsters_spawners(int max_spawners)
         float x = randrange(0,map_dim.x-1) + randf();
         float y = randrange(0,map_dim.y-1) + randf();
         float z = t_map::get_highest_open_block(x,y);
+        obj->spawn.type = OBJ_TYPE_MONSTER_BOX;
         obj->set_position(x,y,z);
         obj->born();
-        obj->spawn.type = OBJ_TYPE_MONSTER_BOX;
     }
 }
 

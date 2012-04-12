@@ -33,6 +33,7 @@ inline void object_create_StoC_model::handle()
         case OBJ_TYPE_LASER_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
+        case OBJ_TYPE_MONSTER_SPAWNER:
             obj = ClientState::object_list->create((Object_types)type, (int)id);
             break;
             
@@ -118,23 +119,21 @@ inline void object_create_owner_team_index_StoC_model::handle()
 
 /* State */
 
-// forward declarations
-void turret_state(object_state_StoC_model* msg);
-void spawner_state(object_state_StoC_model* msg);
-
 inline void object_state_StoC_model::handle()
 {
+    ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
         case OBJ_TYPE_TURRET:
-            turret_state(this);
-            break;
         case OBJ_TYPE_SPAWNER:
-            spawner_state(this);
+        case OBJ_TYPE_MONSTER_SPAWNER:
+            obj = STATE::object_list->get((Object_types)type, id);
             break;
 
         default: return;
     }
+    if (obj != NULL)
+        obj->set_position(x,y,z);
 }
 
 inline void object_state_momentum_StoC_model::handle()

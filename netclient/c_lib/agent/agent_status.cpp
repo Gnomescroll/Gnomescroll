@@ -270,7 +270,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
                     attacker->status.kill(this->a->id);
                 break;
             default:
-                printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);
+                //printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);
                 break;
         }
 

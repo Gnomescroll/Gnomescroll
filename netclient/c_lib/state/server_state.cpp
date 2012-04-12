@@ -115,8 +115,11 @@ namespace ServerState
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
         // Spawners, Turrets etc
-        const int filter_n_types = 4;
-        const Object_types filter_types[filter_n_types] = { OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER, OBJ_TYPE_SLIME, OBJ_TYPE_MONSTER_BOX };
+        const int filter_n_types = 5;
+        const Object_types filter_types[filter_n_types] = {
+            OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER,
+            OBJ_TYPE_SLIME, OBJ_TYPE_MONSTER_BOX, OBJ_TYPE_MONSTER_SPAWNER,
+        };
         object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
         ObjectPolicyInterface* obj;
         ObjectState* state;
@@ -132,7 +135,7 @@ namespace ServerState
             if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
               && obj->get_owner() != agent->id)
                 continue;
-
+            printf("grenade damage %d\n", Particles::get_grenade_damage(state->type));
             obj->take_damage(Particles::get_grenade_damage(state->type));
             if (obj->did_die() && agent != NULL
               && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
@@ -194,6 +197,7 @@ namespace ServerState
         object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
         object_list->send_to_client(OBJ_TYPE_SLIME, client_id);
         object_list->send_to_client(OBJ_TYPE_MONSTER_BOX, client_id);
+        object_list->send_to_client(OBJ_TYPE_MONSTER_SPAWNER, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)

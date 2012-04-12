@@ -102,7 +102,7 @@
 
 /* dungeon/L system/noise */
 #ifdef DUNGEON
-    #include <c_lib/map_gen/hopcroft-karp.cpp>
+#include <c_lib/map_gen/hopcroft-karp.cpp>
 #endif
 #include <c_lib/map_gen/noise.c>
 

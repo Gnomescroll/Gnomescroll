@@ -10,13 +10,6 @@
 /* Packets */
 
 #ifdef DC_CLIENT
-void spawner_state(object_state_StoC_model* msg)
-{
-    
-    Spawner* s = (Spawner*)ClientState::object_list->get((Object_types)msg->type, msg->id);
-    if (s == NULL) return;
-    s->set_position(msg->x, msg->y, msg->z);
-}
 
 void spawner_create(object_create_owner_team_index_StoC_model* msg)
 {

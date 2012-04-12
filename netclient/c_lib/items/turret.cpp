@@ -15,13 +15,6 @@
 #if DC_CLIENT
 /* Packet handlers */
 
-void turret_state(object_state_StoC_model* msg)
-{
-    Turret* t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
-    if (t == NULL) return;
-    t->set_position(msg->x, msg->y, msg->z);
-}
-
 void turret_create(object_create_owner_team_StoC_model* msg)
 {
     Turret* t = (Turret*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);

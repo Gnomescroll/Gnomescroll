@@ -12,12 +12,6 @@ namespace Monsters
 /* Packets */
 
 #ifdef DC_CLIENT
-void monster_spawner_state(object_state_StoC_model* msg)
-{
-    MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->get((Object_types)msg->type, msg->id);
-    if (s == NULL) return;
-    s->set_position(msg->x, msg->y, msg->z);
-}
 
 void monster_spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
@@ -46,14 +40,18 @@ VoxDat monster_spawner_vox_dat;
 void MonsterSpawnerComponent::get_spawn_point(Vec3 position, float spawned_object_height, float* spawn_pt)
 {
     float sx,sy;
-    sx = (randf() * this->radius * 2) - this->radius;
-    sy = (randf() * this->radius * 2) - this->radius;
-    spawn_pt[0] = (sx < map_dim.x - 1) ? sx : map_dim.x - 1;
-    spawn_pt[0] = (spawn_pt[0] < 0) ? 0 : spawn_pt[0];
-    spawn_pt[1] = (sy < map_dim.y - 1) ? sy : map_dim.y - 1;
-    spawn_pt[1] = (spawn_pt[1] < 0) ? 0 : spawn_pt[1];
+    sx = position.x + ((randf() * this->radius * 2) - this->radius);
+    sx = (sx > map_dim.x - 1) ? map_dim.x - 1 : sx;
+    sx = (sx < 0) ? 0 : sx;
+
+    sy = position.y + ((randf() * this->radius * 2) - this->radius);
+    sy = (sy < map_dim.y - 1) ? sy : map_dim.y - 1;
+    sy = (sy < 0) ? 0 : sy;
+
     int h = (int)ceil(spawned_object_height);
-    spawn_pt[2] = _get_highest_open_block((int)spawn_pt[0], (int)spawn_pt[1], h);
+    spawn_pt[2] = t_map::get_highest_open_block((int)sx, (int)sy, h);
+    spawn_pt[0] = sx;
+    spawn_pt[1] = sy;
 }
 
 } // Monsters
