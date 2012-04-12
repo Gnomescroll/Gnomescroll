@@ -1,13 +1,9 @@
 #pragma once
 
-//#include <c_lib/objects/common/interface/policy.hpp>
-#include <c_lib/objects/common/interface/layers.hpp>
-
+#include <c_lib/objects/common/interface/policy.hpp>
+#include <c_lib/objects/common/interface/interfaces.hpp>
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
-
-//typedef ObjectStateLayer<OwnedComponent, TeamNone, HealthNone, SpatialNone> ObjectStateLayer;
-//typedef OwnedState ObjectStateLayer;    // Wont import OwnedState from layers.hpp -- cython issue??
 
 class InventoryObjectInterface: public ObjectStateLayer
 {

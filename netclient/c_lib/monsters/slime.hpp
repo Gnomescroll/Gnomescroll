@@ -5,7 +5,6 @@
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/objects/components/voxel/component.hpp>
 #include <c_lib/objects/components/animation/components.hpp>
-#include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/objects/common/net/interfaces.hpp>
 

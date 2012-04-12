@@ -126,8 +126,7 @@ extern SpatialNone* spatial_none;
  * Mixin class layer for state setters/getters
  */
 
-//template <class Owner, class Team, class Health, class Spatial>  /* more common behaviour state classes here. very specialized classes can stay out */
-class ObjectStateLayer: public ObjectPolicyInterface/*, public Owner, public Team, public Health, public Spatial*/
+class ObjectStateLayer: public ObjectPolicyInterface
 {
     private:
         CreatePacketDelegate* create_packet;
@@ -144,30 +143,6 @@ class ObjectStateLayer: public ObjectPolicyInterface/*, public Owner, public Tea
     public:
         ObjectState* state() { return &this->_state; }
 
-        //// Owner
-        //int get_owner() { return Owner::get_owner(); }
-        //void set_owner(int owner) { Owner::set_owner(this->state()->id, this->state()->type, owner); }
-
-        //// Team
-        //int get_team() { return Team::get_team(); }
-        //void set_team(int team) { Team::set_team(team); }
-        //unsigned int get_team_index() { return Team::get_team_index(); }
-        //void set_team_index(unsigned int team_index) { Team::set_team_index(team_index); }
-
-        //// Health
-        //int take_damage(int dmg) { return Health::take_damage(dmg); }
-        //bool is_dead() { return Health::is_dead(); }
-        //bool did_die() { return Health::did_die(); }
-
-        //// Spatial
-        //Vec3 get_position() { return Spatial::get_position(); }
-        //bool set_position(float x, float y, float z) { return Spatial::set_position(x,y,z); }
-        //Vec3 get_momentum() { return Spatial::get_momentum(); }
-        //void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
-        //float get_height() { return Spatial::get_height(); }
-        //Vec3 get_angles() { return Spatial::get_angles(); }
-        //void set_angles(float theta, float phi, float rho) { /* todo: return bool */ Spatial::set_angles(theta, phi, rho); }
-        
         // Owner
         int get_owner() { return this->owned->get_owner(); }
         void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, owner); }
@@ -199,9 +174,7 @@ class ObjectStateLayer: public ObjectPolicyInterface/*, public Owner, public Tea
         void broadcastState() { this->state_packet->broadcast(this); }
         void broadcastDeath() { Objects::broadcastDeath(this->state()); }
 
-    //ObjectStateLayer<Owner, Team, Health, Spatial>(
-    ObjectStateLayer(
-        CreatePacketDelegate* create, StatePacketDelegate* state,
+    ObjectStateLayer(CreatePacketDelegate* create, StatePacketDelegate* state,
         OwnedDelegate* owned, TeamDelegate* team, HealthDelegate* health, SpatialDelegate* spatial
     ):
     create_packet(create), state_packet(state),
@@ -209,15 +182,13 @@ class ObjectStateLayer: public ObjectPolicyInterface/*, public Owner, public Tea
     {
     }
     
-    //ObjectStateLayer<Owner, Team, Health, Spatial>()
-    ObjectStateLayer()
+    ObjectStateLayer()  // all defaults
     : create_packet(Objects::create_packet_none), state_packet(Objects::state_packet_none),
     owned(Objects::owned_none), team(Objects::team_none), health(Objects::health_none),
     spatial(Objects::spatial_none)
     {
     }
 
-    //~ObjectStateLayer<Owner, Team, Health, Spatial>()
     ~ObjectStateLayer()
     {
     }

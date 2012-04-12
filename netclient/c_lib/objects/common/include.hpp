@@ -6,7 +6,6 @@
 #include <c_lib/objects/common/net/interfaces.hpp>
 
 #include <c_lib/objects/common/interface/entity.hpp>
-#include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/interface/interfaces.hpp>
 
 #include <c_lib/objects/common/component/component.hpp>
