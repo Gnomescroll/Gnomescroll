@@ -52,11 +52,11 @@ void create_monsters_spawners(int max_spawners)
     {
         obj = (MonsterSpawner*)STATE::object_list->create(OBJ_TYPE_MONSTER_SPAWNER);
         if (obj == NULL) break;
-        float x = randrange(0,map_dim.x-1) + randf();
-        float y = randrange(0,map_dim.y-1) + randf();
-        float z = t_map::get_highest_open_block(x,y);
+        int x = randrange(0,map_dim.x-1);
+        int y = randrange(0,map_dim.y-1);
+        int z = t_map::get_highest_open_block(x,y);
         obj->spawn.type = OBJ_TYPE_MONSTER_BOX;
-        obj->set_position(x,y,z);
+        obj->set_position(x+0.5f,y+0.5f,z);
         obj->born();
     }
 }
