@@ -7,6 +7,8 @@
  * void client_tick();
  * void server_tick();
  */
+ 
+#include <c_lib/common/common.hpp>
 #include <c_lib/physics/common.hpp>
  
 #define OBJECT_LIST_DEBUG 0
@@ -123,6 +125,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
     //where();
     if((id < 0) || (id >= n_max)) {
         printf("%s id error: id=%i\n", name() ,id);
+        print_trace();
         return NULL;
     } 
     if(a[id] == NULL) {

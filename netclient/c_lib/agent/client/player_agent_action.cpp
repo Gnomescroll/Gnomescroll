@@ -245,6 +245,17 @@ void PlayerAgent_action::hitscan_pick()
 
             if (target.entity_type == OBJ_TYPE_AGENT)
             {
+                agent = ClientState::agent_list->get(target.entity_id);
+                if (agent==NULL)
+                {
+                    target_type = Hitscan::HITSCAN_TARGET_NONE;
+                    break;
+                }
+                if (agent->status.team == this->p->you->status.team)
+                {
+                    target_type = Hitscan::HITSCAN_TARGET_NONE;
+                    break;
+                }
                 Animations::blood_spray(
                     collision_point[0], collision_point[1], collision_point[2],
                     vec.x, vec.y, vec.z
@@ -259,9 +270,6 @@ void PlayerAgent_action::hitscan_pick()
             {
                 voxel_blast_radius = 2;
             }
-            agent = ClientState::agent_list->get(target.entity_id);
-            if (agent==NULL) break;
-            if (agent->status.team == this->p->you->status.team) break;
             destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
             break;
 

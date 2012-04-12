@@ -158,7 +158,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
 {
     public:
         uint8_t id;
-        uint8_t target_id;
+        uint16_t target_id;
         uint8_t target_type;
         uint8_t target_part;
         uint8_t vx,vy,vz;   //voxel
@@ -166,7 +166,7 @@ class agent_shot_object_StoC: public FixedSizeNetPacketToClient<agent_shot_objec
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&target_id, buff, buff_n, pack);
+            pack_u16(&target_id, buff, buff_n, pack);
             pack_u8(&target_type, buff, buff_n, pack);
             pack_u8(&target_part, buff, buff_n, pack);
             pack_u8(&vx, buff, buff_n, pack);
@@ -231,7 +231,7 @@ class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_obj
 {
     public:
         uint8_t id;
-        uint8_t target_id;
+        uint16_t target_id;
         uint8_t target_type;
         uint8_t target_part;
         uint8_t vx,vy,vz;
@@ -245,7 +245,7 @@ class agent_melee_object_StoC: public FixedSizeNetPacketToClient<agent_melee_obj
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
             pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&target_id, buff, buff_n, pack);
+            pack_u16(&target_id, buff, buff_n, pack);
             pack_u8(&target_type, buff, buff_n, pack);
             pack_u8(&target_part, buff, buff_n, pack);
             //pack_float(&x, buff, buff_n, pack);
@@ -340,14 +340,14 @@ class hit_block_CtoS: public FixedSizeNetPacketToServer<hit_block_CtoS>
 class hitscan_object_CtoS: public FixedSizeNetPacketToServer<hitscan_object_CtoS>
 {
     public:
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
         uint8_t part;
         uint8_t vx,vy,vz;   // voxel
         
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u8(&part, buff, buff_n, pack);
             pack_u8(&vx, buff, buff_n, pack);
@@ -387,14 +387,14 @@ class hitscan_none_CtoS: public FixedSizeNetPacketToServer<hitscan_none_CtoS>
 class melee_object_CtoS: public FixedSizeNetPacketToServer<melee_object_CtoS>
 {
     public:
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
         uint8_t part;
         uint8_t vx,vy,vz;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_u8(&part, buff, buff_n, pack);
             pack_u8(&vx, buff, buff_n, pack);

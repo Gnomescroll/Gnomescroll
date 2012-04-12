@@ -103,13 +103,11 @@ class MonsterSpawner:
     void die()
     {
         #if DC_SERVER
-        ObjectState* state = this->state();
         this->broadcastDeath();
-        dieRevokeOwner(state->type, this->get_owner());
         #endif
 
         #if DC_CLIENT
-        dieChatMessage(this);
+        //dieChatMessage(this);
         Vec3 position = this->get_center(MONSTER_SPAWNER_PART_BODY);
         this->animation_voxel_explode(position);
         #endif
