@@ -323,105 +323,292 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
     inline void handle();
 };
 
-/* CreateMessage handlers */
-
-// NOTE: all must have the same arguments except the first argument (msg) type
-
 #include <c_lib/objects/common/interface/state.hpp>
+#include <c_lib/objects/common/interface/policy.hpp>
 
-/* Create */
+/* CreateMessage delegates */
 
-void create_message(object_create_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+class CreatePacketNone: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-}
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
+        void broadcast(ObjectPolicyInterface* obj) {}
+};
 
-void create_message(object_create_owner_team_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+class CreatePacket: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->owner = owner;
-    msg->team = team;
-}
+    private:
+        void message(ObjectPolicyInterface* obj, object_create_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_create_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
 
-void create_message(object_create_owner_team_index_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_create_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+
+class CreatePacketOwnerTeam: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->owner = owner;
-    msg->team = team;
-    msg->team_index = team_index;
-}
+    private:
+        void message(ObjectPolicyInterface* obj, object_create_owner_team_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            msg->owner = obj->get_owner();
+            msg->team = obj->get_team();
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_create_owner_team_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
 
-void create_message(object_create_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_create_owner_team_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+
+class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->mx = momentum.x;
-    msg->my = momentum.y;
-    msg->mz = momentum.z;
-}
+    private:
+        void message(ObjectPolicyInterface* obj, object_create_owner_team_index_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            msg->owner = obj->get_owner();
+            msg->team = obj->get_team();
+            msg->team_index = obj->get_team_index();
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_create_owner_team_index_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
 
-void create_message(object_create_momentum_angles_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles, int owner, int team, int team_index)
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_create_owner_team_index_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+
+class CreatePacketMomentum: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->mx = momentum.x;
-    msg->my = momentum.y;
-    msg->mz = momentum.z;
-    msg->theta = angles.x;
-    msg->phi = angles.y;
-}
+    private:
+        void message(ObjectPolicyInterface* obj, object_create_momentum_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            Vec3 momentum = obj->get_momentum();
+            msg->mx = momentum.x;
+            msg->my = momentum.y;
+            msg->mz = momentum.z;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_create_momentum_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
 
-/* State */
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_create_momentum_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
 
-void state_message(object_state_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
+class CreatePacketMomentumAngles: public CreatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-}
+    private:
+        void message(ObjectPolicyInterface* obj, object_create_momentum_angles_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            Vec3 momentum = obj->get_momentum();
+            msg->mx = momentum.x;
+            msg->my = momentum.y;
+            msg->mz = momentum.z;
+            Vec3 angles = obj->get_angles();
+            msg->theta = angles.x;
+            msg->phi = angles.y;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_create_momentum_angles_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
 
-void state_message(object_state_momentum_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
-{
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->mx = momentum.x;
-    msg->my = momentum.y;
-    msg->mz = momentum.z;
-}
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_create_momentum_angles_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
 
-void state_message(object_state_momentum_angles_StoC* msg, int id, Object_types type, Vec3 position, Vec3 momentum, Vec3 angles)
+
+/* State Packet */
+
+class StatePacketNone: public StatePacketDelegate
 {
-    msg->id = id;
-    msg->type = type;
-    msg->x = position.x;
-    msg->y = position.y;
-    msg->z = position.z;
-    msg->mx = momentum.x;
-    msg->my = momentum.y;
-    msg->mz = momentum.z;
-    msg->theta = angles.x;
-    msg->phi = angles.y;
-}
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
+        void broadcast(ObjectPolicyInterface* obj) {}
+};
+
+class StatePacket: public StatePacketDelegate
+{
+    private:
+        void message(ObjectPolicyInterface* obj, object_state_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_state_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
+
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_state_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+
+class StatePacketMomentum: public StatePacketDelegate
+{
+    private:
+        void message(ObjectPolicyInterface* obj, object_state_momentum_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            Vec3 momentum = obj->get_momentum();
+            msg->mx = momentum.x;
+            msg->my = momentum.y;
+            msg->mz = momentum.z;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_state_momentum_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
+
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_state_momentum_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+
+class StatePacketMomentumAngles: public StatePacketDelegate
+{
+    private:
+        void message(ObjectPolicyInterface* obj, object_state_momentum_angles_StoC* msg)
+        {
+            ObjectState* state = obj->state();
+            msg->id = state->id;
+            msg->type = state->type;
+            Vec3 position = obj->get_position();
+            msg->x = position.x;
+            msg->y = position.y;
+            msg->z = position.z;
+            Vec3 momentum = obj->get_momentum();
+            msg->mx = momentum.x;
+            msg->my = momentum.y;
+            msg->mz = momentum.z;
+            Vec3 angles = obj->get_angles();
+            msg->theta = angles.x;
+            msg->phi = angles.y;
+        }
+    
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id)
+        {
+            object_state_momentum_angles_StoC msg;
+            this->message(obj, &msg);
+            msg.sendToClient(client_id);
+        }
+
+        void broadcast(ObjectPolicyInterface* obj)
+        {
+            object_state_momentum_angles_StoC msg;
+            this->message(obj, &msg);
+            msg.broadcast();
+        }
+};
+

@@ -17,6 +17,7 @@
 #include <c_lib/monsters/slime.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/t_map/t_map.hpp>
+#include <c_lib/objects/common/net/interfaces.hpp>
 
 #if DC_SERVER
 //forward decl
@@ -416,7 +417,7 @@ class Box:
     void draw() {/*Empty*/}
 
     explicit Box(int id)
-    :
+    : MonsterInterface(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles),
     at_destination(false), en_route(false), ticks_to_destination(1), speed(BOX_SPEED),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)

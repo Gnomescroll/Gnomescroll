@@ -16,6 +16,7 @@ void slimeDropItem(Vec3 position);
 VoxDat slime_vox_dat;
 
 Slime::Slime(int id)
+: MonsterInterface(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles)
 {
     this->_state.id = id;
 

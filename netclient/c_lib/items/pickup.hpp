@@ -190,15 +190,18 @@ void initialize_minivox_properties(Object_types type, MinivoxProperties* obj)
 
 /* Composition */
 
+//typedef ObjectInterface
+//< VerletState, object_create_momentum_StoC, object_state_momentum_StoC >
+//PickupInterface;
 typedef ObjectInterface
-< VerletState, object_create_momentum_StoC, object_state_momentum_StoC >
+< VerletState >
 PickupInterface;
 
 class PickupObject: public PickupComponent, public PickupInterface
 {
     public:
     PickupObject(Object_types type, int id)
-    : PickupComponent(), PickupInterface()
+    : PickupComponent(), PickupInterface(Objects::create_packet_momentum, Objects::state_packet_momentum)
     {   // TODO: constants should be loaded via dat
         this->_state.type = type;
         this->_state.id = id;

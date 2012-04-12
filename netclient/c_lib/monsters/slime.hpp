@@ -7,14 +7,13 @@
 #include <c_lib/objects/components/animation/components.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
+#include <c_lib/objects/common/net/interfaces.hpp>
 
 namespace Monsters {
 
 extern VoxDat slime_vox_dat;
 
-typedef ObjectInterface
-< HealthPositionMomentumChangedState, object_create_momentum_angles_StoC, object_state_momentum_angles_StoC >
-MonsterInterface;
+typedef ObjectInterface<HealthPositionMomentumChangedState> MonsterInterface;
 
 class Slime:
     public VoxelComponent, 

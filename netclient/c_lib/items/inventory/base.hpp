@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/objects/common/interface/policy.hpp>
+//#include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/objects/common/interface/layers.hpp>
 
 #include <c_lib/items/inventory/packets.hpp>

@@ -221,6 +221,8 @@ int init_c_lib() {
     LUA::load_options(); //load game options
     srand(time(NULL));   // seed the RNG
 
+    Objects::init_net_interfaces();
+    
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
     Sound::init();
@@ -313,6 +315,8 @@ void close_c_lib() {
     //vn::teardown();
     Sound::close();
     close_SDL();
+
+    Objects::teardown_net_interfaces();
 
     printf("Game closed\n");
 

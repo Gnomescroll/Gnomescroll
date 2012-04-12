@@ -6,6 +6,7 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/api/include.hpp>
+#include <c_lib/objects/common/net/interfaces.hpp>
 
 //forward decl
 class SpawnerList;
@@ -67,15 +68,13 @@ class SpawnerList: public BehaviourList
     {}
 };
 
-typedef ObjectInterface
-< OwnedTeamHealthPositionChangedState, object_create_owner_team_index_StoC, object_state_StoC >
-SpawnerInterface;
+typedef ObjectInterface<OwnedTeamHealthPositionChangedState> SpawnerInterface;
 
 class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInterface
 {
     public:
     explicit Spawner(int id)
-    : SpawnerComponent(), SpawnerInterface()
+    : SpawnerComponent(), SpawnerInterface(Objects::create_packet_owner_team_index, Objects::state_packet)
     {
         this->_state.id = id;
         this->_state.cost = COST_SPAWNER;

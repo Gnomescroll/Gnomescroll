@@ -1,7 +1,6 @@
 #pragma once
 
 #include <c_lib/objects/common/interface/state.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
 
 /* Interface and templates for all objects */
 
@@ -107,75 +106,78 @@ class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team,
     }
 };
 
+
+/* Network Delegates */
+
+class CreatePacketDelegate
+{
+    public:
+        virtual void sendToClient(ObjectPolicyInterface* obj, int client_id) = 0;
+        virtual void broadcast(ObjectPolicyInterface* obj) = 0;
+        virtual ~CreatePacketDelegate(){}
+};
+
+class StatePacketDelegate
+{
+    public:
+        virtual void sendToClient(ObjectPolicyInterface* obj, int client_id) = 0;
+        virtual void broadcast(ObjectPolicyInterface* obj) = 0;
+        virtual ~StatePacketDelegate(){}
+};
+
+
 /* ObjectInterface
  * template accepts message types
  */
+
+ //forward decl
+namespace Objects
+{
+void broadcastDeath(ObjectState* state);
+}
+
+ 
 template
-<
-    class StateLayer,
-    class CreateMessage,
-    class StateMessage
->
+<class StateLayer>
 class ObjectInterface: public StateLayer
 {
     private:
-        void createMessage(CreateMessage* msg)
-        {
-            ObjectState* state = this->state();
-            create_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles(), this->get_owner(), this->get_team(), this->get_team_index());
-        }
-
-        void stateMessage(StateMessage* msg)
-        {
-            ObjectState* state = this->state();
-            state_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles());
-        }
+        CreatePacketDelegate* create_packet;
+        StatePacketDelegate* state_packet;
         
     public:
 
     void sendToClientCreate(int client_id)
     {
-        CreateMessage msg;
-        this->createMessage(&msg);
-        msg.sendToClient(client_id);
+        this->create_packet->sendToClient(this, client_id);
     }
     
     void broadcastCreate()
     {
-        CreateMessage msg;
-        this->createMessage(&msg);
-        msg.broadcast();
+        this->create_packet->broadcast(this);
     }
     
     void sendToClientState(int client_id)
     {
-        StateMessage msg;
-        this->stateMessage(&msg);
-        msg.sendToClient(client_id);
+        this->state_packet->sendToClient(this, client_id);
     }
     
     void broadcastState()
     {
-        StateMessage msg;
-        this->stateMessage(&msg);
-        msg.broadcast();
+        this->state_packet->broadcast(this);
     }
 
     void broadcastDeath()
     {
-        #if DC_SERVER
-        ObjectState* state = this->state();
-        object_destroy_StoC msg;
-        msg.id = state->id;
-        msg.type = state->type;
-        msg.broadcast();
-        #endif
+        Objects::broadcastDeath(this->state());
     }
 
-    ObjectInterface<StateLayer, CreateMessage, StateMessage>()
-    {}
+    ObjectInterface<StateLayer>(CreatePacketDelegate* create, StatePacketDelegate* state)
+    : create_packet(create), state_packet(state)
+    {
+    }
 
-    ~ObjectInterface<StateLayer, CreateMessage, StateMessage>()
+    ~ObjectInterface<StateLayer>()
     {
     }
 };

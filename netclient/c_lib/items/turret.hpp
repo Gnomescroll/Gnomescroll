@@ -6,6 +6,8 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
+#include <c_lib/objects/common/net/interfaces.hpp>
+
 //forward decl
 #if DC_SERVER
 namespace ServerState
@@ -31,15 +33,13 @@ void turret_shot_nothing(object_shot_nothing_StoC* msg);
 
 extern VoxDat turret_vox_dat;
 
-typedef ObjectInterface
-< OwnedTeamHealthPositionChangedState, object_create_owner_team_StoC, object_state_StoC >
-TurretInterface;
+typedef ObjectInterface <OwnedTeamHealthPositionChangedState> TurretInterface;
 
 class Turret: public TargetAcquisitionComponent, public VoxelComponent, public TurretInterface
 {
     public:
         explicit Turret(int id)
-        : TargetAcquisitionComponent(), TurretInterface()
+        : TargetAcquisitionComponent(), TurretInterface(Objects::create_packet_owner_team, Objects::state_packet)
         {
             this->_state.id = id;
             this->_state.type = OBJ_TYPE_TURRET;
