@@ -68,13 +68,16 @@ class SpawnerList: public BehaviourList
     {}
 };
 
-typedef ObjectInterface<OwnedTeamHealthPositionChangedState> SpawnerInterface;
-
-class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInterface
+class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStateLayer
 {
     public:
+        OwnedComponent owned;
+        TeamComponent team;
+        HealthComponent health;
+        PositionChangedComponent spatial;
+    
     explicit Spawner(int id)
-    : SpawnerComponent(), SpawnerInterface(Objects::create_packet_owner_team_index, Objects::state_packet)
+    : SpawnerComponent(), ObjectStateLayer(Objects::create_packet_owner_team_index, Objects::state_packet, &owned, &team, &health, &spatial)
     {
         this->_state.id = id;
         this->_state.cost = COST_SPAWNER;
@@ -82,30 +85,30 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
         this->_state.type = OBJ_TYPE_SPAWNER;
         
-        this->health_properties.health = SPAWNER_HEALTH;
+        this->health.properties.health = SPAWNER_HEALTH;
 
         this->spawner_properties.obj = this;
         this->spawner_properties.radius = SPAWNER_SPAWN_RADIUS;
         STATE::spawner_list->register_object(&this->spawner_properties);
 
-        this->owned_properties.obj = this;
-        STATE::owned_list->register_object(&this->owned_properties);
+        this->owned.properties.obj = this;
+        STATE::owned_list->register_object(&this->owned.properties);
 
-        this->team_properties.obj = this;
-        //STATE::team_list->register_object(&this->team_properties);
+        this->team.properties.obj = this;
+        //STATE::team_list->register_object(&this->team.properties);
 
         this->voxel_properties.frozen_vox = true;
         this->voxel_properties.init_hitscan = true;
         this->voxel_properties.init_draw = true;
         this->voxel_properties.vox_dat = &spawner_vox_dat;
 
-        this->spatial_properties.height = SPAWNER_HEIGHT;
+        this->spatial.properties.height = SPAWNER_HEIGHT;
     }
 
     ~Spawner()
     {
         STATE::spawner_list->unregister_object(&this->spawner_properties);
-        STATE::owned_list->unregister_object(&this->owned_properties);
+        STATE::owned_list->unregister_object(&this->owned.properties);
     }
 
     void tick()
@@ -114,9 +117,9 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         Vec3 position = this->get_position();
         float z = tickStayOnGround(state, position);
         bool changed = this->set_position(position.x, position.y, z);
-        this->spatial_properties.set_changed(changed);
+        this->spatial.properties.set_changed(changed);
 
-        if (this->spatial_properties.changed)
+        if (this->spatial.properties.changed)
             this->broadcastState();
     }
 
@@ -124,9 +127,9 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     {
         updateFrozenVox(
             this->voxel_properties.vox, this->get_position(),
-            this->spatial_properties.angles, this->spatial_properties.changed
+            this->spatial.properties.angles, this->spatial.properties.changed
         );
-        this->spatial_properties.set_changed(false);
+        this->spatial.properties.set_changed(false);
     }
 
     void draw() {}
@@ -134,9 +137,9 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
     void born()
     {
         ObjectState* state = this->state();
-        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team_properties.team);
+        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team.properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial_properties.angles.x, this->spatial_properties.angles.y);
+        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial.properties.angles.x, this->spatial.properties.angles.y);
         this->broadcastCreate();
     }
 
@@ -146,7 +149,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public SpawnerInt
         this->broadcastDeath();
         dieRevokeOwner(state->type, this->get_owner());
         if (this->voxel_properties.vox != NULL)
-            dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team_properties.team);
+            dieTeamItemAnimation(this->voxel_properties.vox->get_part(0)->get_center(), this->team.properties.team);
         dieChatMessage(this);
     }
 };

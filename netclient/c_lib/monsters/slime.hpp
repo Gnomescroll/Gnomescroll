@@ -13,17 +13,17 @@ namespace Monsters {
 
 extern VoxDat slime_vox_dat;
 
-typedef ObjectInterface<HealthPositionMomentumChangedState> MonsterInterface;
-
 class Slime:
     public VoxelComponent, 
     public RateLimitedStateBroadcastComponent,
     #if DC_CLIENT
     public AnimationVoxelComponent,
     #endif
-    public MonsterInterface
+    public ObjectStateLayer
 {
     public:
+        HealthComponent health;
+        PositionMomentumChangedComponent spatial;
     
     void tick();
     void die();

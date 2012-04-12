@@ -28,7 +28,7 @@ void box_shot_object(object_shot_object_StoC* msg)
 
     Vec3 pos = t->get_position();
     Vec3 c = vv->get_center();
-    Vec3 p = vec3_init(pos.x, pos.y, t->camera_z());
+    Vec3 p = vec3_init(pos.x, pos.y, t->spatial.camera_z());
 
     const float hitscan_effect_speed = 200.0f;
     Vec3 v = vec3_sub(c, p);
@@ -43,7 +43,7 @@ void box_shot_object(object_shot_object_StoC* msg)
         msg->target_id, msg->target_type, msg->target_part,
         voxel, t->attacker_properties.voxel_damage_radius
     );
-    Sound::turret_shoot(pos.x, pos.y, t->camera_z(), 0,0,0);
+    Sound::turret_shoot(pos.x, pos.y, t->spatial.camera_z(), 0,0,0);
 }
 #endif
 

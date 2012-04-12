@@ -16,21 +16,21 @@ class OwnedProperties: public ComponentProperties
     {}
 };
 
-class OwnedComponent
+class OwnedComponent: public OwnedDelegate
 {
     public:
     
-    OwnedProperties owned_properties;
+    OwnedProperties properties;
 
     int get_owner()
     {
-        return this->owned_properties.owner;
+        return this->properties.owner;
     }
 
     void set_owner(int id, Object_types type, int owner)
     {
-        switch_agent_ownership(id, type, this->owned_properties.owner, owner);
-        this->owned_properties.owner = owner;
+        switch_agent_ownership(id, type, this->properties.owner, owner);
+        this->properties.owner = owner;
     }
 
     OwnedComponent() {}

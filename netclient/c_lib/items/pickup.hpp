@@ -190,18 +190,13 @@ void initialize_minivox_properties(Object_types type, MinivoxProperties* obj)
 
 /* Composition */
 
-//typedef ObjectInterface
-//< VerletState, object_create_momentum_StoC, object_state_momentum_StoC >
-//PickupInterface;
-typedef ObjectInterface
-< VerletState >
-PickupInterface;
-
-class PickupObject: public PickupComponent, public PickupInterface
+class PickupObject: public PickupComponent, public ObjectStateLayer
 {
     public:
+        VerletComponent spatial;
+    
     PickupObject(Object_types type, int id)
-    : PickupComponent(), PickupInterface(Objects::create_packet_momentum, Objects::state_packet_momentum)
+    : PickupComponent(), ObjectStateLayer(Objects::create_packet_momentum, Objects::state_packet_momentum, Objects::owned_none, Objects::team_none, Objects::health_none, &spatial)
     {   // TODO: constants should be loaded via dat
         this->_state.type = type;
         this->_state.id = id;
@@ -222,7 +217,7 @@ class PickupObject: public PickupComponent, public PickupInterface
     void tick()
     {
         ObjectState* state = this->state();
-        this->verlet_bounce(state->damp);
+        this->spatial.verlet_bounce(state->damp);
         tickPickup(state, this, this->pickup_radius);
         tickTTL(state);
     }

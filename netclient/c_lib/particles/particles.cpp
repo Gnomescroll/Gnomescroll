@@ -13,7 +13,7 @@ Particle::Particle(int id, float x, float y, float z, float mx, float my, float 
 id(id),
 ttl(0)
 {
-    this->verlet_properties.mass = mass;    // dont use set_mass() because dont need to recompute velocity
+    this->verlet.properties.mass = mass;    // dont use set_mass() because dont need to recompute velocity
     this->set_position(x,y,z);
     this->set_momentum(mx,my,mz);
 }

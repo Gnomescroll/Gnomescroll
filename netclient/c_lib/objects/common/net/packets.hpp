@@ -328,13 +328,6 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
 
 /* CreateMessage delegates */
 
-class CreatePacketNone: public CreatePacketDelegate
-{
-    public:
-        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
-        void broadcast(ObjectPolicyInterface* obj) {}
-};
-
 class CreatePacket: public CreatePacketDelegate
 {
     private:
@@ -503,13 +496,6 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
 
 
 /* State Packet */
-
-class StatePacketNone: public StatePacketDelegate
-{
-    public:
-        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
-        void broadcast(ObjectPolicyInterface* obj) {}
-};
 
 class StatePacket: public StatePacketDelegate
 {

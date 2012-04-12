@@ -1,28 +1,13 @@
 #pragma once
 
+#include <c_lib/objects/common/net/interfaces.hpp>
 #include <c_lib/objects/common/interface/policy.hpp>
-#include <c_lib/objects/common/component/component.hpp>
+#include <c_lib/objects/common/interface/interfaces.hpp>
 
-#include <c_lib/objects/components/include.hpp>
+/* Common state initializers */
 
-/* Parameterized template state layers */
-
-typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, SpatialDefault> DefaultState;
-typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthDefault, VerletComponent> VerletState;
-//typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthDefault> TeamState;
-typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault, SpatialDefault> OwnedState;
-//typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthDefault> OwnedTeamState;
-
-//typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent, SpatialDefault> HealthState;
-//typedef ObjectStateLayer<OwnedDefault, TeamComponent, HealthComponent> TeamHealthState;
-//typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthComponent> OwnedHealthState;
-typedef ObjectStateLayer<OwnedComponent, TeamComponent, HealthComponent, PositionChangedComponent> OwnedTeamHealthPositionChangedState;
-
-typedef ObjectStateLayer<OwnedDefault, TeamDefault, HealthComponent, PositionMomentumChangedComponent> HealthPositionMomentumChangedState;
-
-/* Placeholder typedef
- *
- *  Inherit this to provide an object with polymorphic abilities
- * */
-
-typedef DummyObjectInterface< DummyNetworkInterface < DefaultState > > ObjectInterfacePlaceholder;
+#define DefaultState Objects::owned_none, Objects::team_none, Objects::health_none, Objects::spatial_none
+//#define VerletState Objects::owned_none, Objects::team_none, Objects::health_none, Objects::spatial_verlet
+//#define OwnedState Objects::owned, Objects::team_none, Objects::health_none, Objects::spatial_none
+//#define OwnedTeamHealthPositionChangedState Objects::owned, Objects::team, Objects::health, Objects::spatial_position_changed
+//#define HealthPositionMomentumChangedState Objects::owned_none, Objects::team_none, Objects::health, Objects::spatial_position_momentum_changed

@@ -137,21 +137,24 @@ class Box:
     #if DC_CLIENT
     public AnimationVoxelComponent,
     #endif
-    public MonsterInterface
+    public ObjectStateLayer
 {
     public:
 
-    Vec3 destination;
-    bool at_destination;
-    bool en_route;
-    int ticks_to_destination;
-    float speed;
+        HealthComponent health;
+        PositionMomentumChangedComponent spatial;
 
-    int target_id;
-    Object_types target_type;
-    bool locked_on_target;
+        Vec3 destination;
+        bool at_destination;
+        bool en_route;
+        int ticks_to_destination;
+        float speed;
 
-    Vec3 direction;
+        int target_id;
+        Object_types target_type;
+        bool locked_on_target;
+
+        Vec3 direction;
 
     #if DC_SERVER
     void server_tick()
@@ -182,7 +185,7 @@ class Box:
             ObjectState* state = this->state();
             Vec3 direction;
             agent = this->acquire_target(
-                state->id, state->type, this->get_team(), this->camera_z(),
+                state->id, state->type, this->get_team(), this->spatial.camera_z(),
                 this->get_position(),
                 state->accuracy_bias, state->sight_range,
                 state->attack_enemies, state->attack_random,
@@ -228,7 +231,7 @@ class Box:
             {
                 ObjectState* state = this->state();
                 this->fire_on_known_target(
-                    state->id, state->type, this->camera_z(), this->get_position(),
+                    state->id, state->type, this->spatial.camera_z(), this->get_position(),
                     this->direction, state->accuracy_bias, state->sight_range, agent
                 );
             }
@@ -301,7 +304,7 @@ class Box:
             this->set_momentum(momentum.x, momentum.y, momentum.z);
         }
 
-        //if (this->spatial_properties.changed)
+        //if (this->spatial.properties.changed)
             //this->broadcastState(); // send state packet if state changed
         //else if (this->canSendState())
             //this->broadcastState(); // send state packet every N ticks
@@ -401,23 +404,23 @@ class Box:
             this->voxel_properties.init_draw
         );
         bornUpdateVox(this->voxel_properties.vox, this->get_position(),
-            this->spatial_properties.angles.x, this->spatial_properties.angles.y); 
+            this->spatial.properties.angles.x, this->spatial.properties.angles.y); 
     }
 
     void update()
     {
         updateVox(
             this->voxel_properties.vox, this->get_position(),
-            this->spatial_properties.angles,
-            this->spatial_properties.changed
+            this->spatial.properties.angles,
+            this->spatial.properties.changed
         );
-        this->spatial_properties.set_changed(false);
+        this->spatial.properties.set_changed(false);
     }
     
     void draw() {/*Empty*/}
 
     explicit Box(int id)
-    : MonsterInterface(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles),
+    : ObjectStateLayer(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles, Objects::owned_none, Objects::team_none, &health, &spatial),
     at_destination(false), en_route(false), ticks_to_destination(1), speed(BOX_SPEED),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
@@ -450,10 +453,10 @@ class Box:
         this->voxel_properties.init_draw = MONSTER_INIT_DRAW;
         this->voxel_properties.vox_dat = &box_vox_dat;
 
-        this->spatial_properties.camera_height = BOX_CAMERA_HEIGHT;
-        this->spatial_properties.height = BOX_HEIGHT;
+        this->spatial.properties.camera_height = BOX_CAMERA_HEIGHT;
+        this->spatial.properties.height = BOX_HEIGHT;
 
-        this->health_properties.health = BOX_HEALTH;
+        this->health.properties.health = BOX_HEALTH;
 
         this->rate_limit_state_interval = MONSTER_BROADCAST_INTERVAL;
 

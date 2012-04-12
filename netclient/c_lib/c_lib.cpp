@@ -222,7 +222,8 @@ int init_c_lib() {
     srand(time(NULL));   // seed the RNG
 
     Objects::init_net_interfaces();
-    
+    Objects::init_state_interfaces();
+
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
     Sound::init();
@@ -317,6 +318,7 @@ void close_c_lib() {
     close_SDL();
 
     Objects::teardown_net_interfaces();
+    Objects::teardown_state_interfaces();
 
     printf("Game closed\n");
 

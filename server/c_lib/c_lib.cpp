@@ -130,6 +130,7 @@ int init_c_lib()
     srand(time(NULL));
 
     Objects::init_net_interfaces();
+    Objects::init_state_interfaces();
 
     init_vox_dats();
     init_chat_server();
@@ -161,6 +162,7 @@ void close_c_lib()
     Particles::teardown_particles();
 
     Objects::teardown_net_interfaces();
+    Objects::teardown_state_interfaces();
 
     printf("Server closed\n"); 
     Log::teardown();

@@ -6,12 +6,15 @@
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
 
-typedef ObjectStateLayer<OwnedComponent, TeamDefault, HealthDefault, SpatialDefault> InventoryState;
-//typedef OwnedState InventoryState;    // Wont import OwnedState from layers.hpp -- cython issue??
+//typedef ObjectStateLayer<OwnedComponent, TeamNone, HealthNone, SpatialNone> ObjectStateLayer;
+//typedef OwnedState ObjectStateLayer;    // Wont import OwnedState from layers.hpp -- cython issue??
 
-class InventoryObjectInterface: public InventoryState
+class InventoryObjectInterface: public ObjectStateLayer
 {
     public:
+
+        OwnedComponent owned;
+    
         void tick() {}
         void draw() {}
         void update() {}
@@ -19,7 +22,9 @@ class InventoryObjectInterface: public InventoryState
         void die() {}
 
     ~InventoryObjectInterface() {}
-    InventoryObjectInterface() {}
+    InventoryObjectInterface()
+    : ObjectStateLayer(Objects::create_packet_none, Objects::state_packet_none, &owned, Objects::team_none, Objects::health_none, Objects::spatial_none)
+    {}
 };
 
 // wrap InventoryContents into a game object
@@ -99,7 +104,7 @@ class BaseInventory: public InventoryObjectInterface
     explicit BaseInventory<InventoryContents>(int id)
     {
         this->_state.id = id;
-        this->owned_properties.owner = NO_AGENT;
+        this->owned.properties.owner = NO_AGENT;
     }
 
     ~BaseInventory<InventoryContents>()
