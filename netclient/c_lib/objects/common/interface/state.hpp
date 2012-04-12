@@ -100,6 +100,49 @@ class ObjectState: public ObjectData
     }
 };
 
+
+/* State Delegates */
+
+class OwnedDelegate
+{
+    public:
+        virtual int get_owner() = 0;
+        virtual void set_owner(int id, Object_types type, int owner) = 0;
+        virtual ~OwnedDelegate() {}
+};
+
+class TeamDelegate
+{
+    public:
+        virtual int get_team() = 0;
+        virtual void set_team(int team) = 0;
+        virtual unsigned int get_team_index() = 0;
+        virtual void set_team_index(unsigned int team_index) = 0;
+        virtual ~TeamDelegate() {}
+};
+
+class HealthDelegate
+{
+    public:
+        virtual int take_damage(int dmg) = 0;
+        virtual bool is_dead() = 0;
+        virtual bool did_die() = 0;
+        virtual ~HealthDelegate() {}
+};
+
+class SpatialDelegate
+{
+    public:
+        virtual Vec3 get_position() = 0;
+        virtual bool set_position(float x, float y, float z) = 0;
+        virtual Vec3 get_momentum() = 0;
+        virtual void set_momentum(float x, float y, float z) = 0;
+        virtual float get_height() = 0;
+        virtual Vec3 get_angles() = 0;
+        virtual bool set_angles(float theta, float phi, float rho) = 0;
+        virtual ~SpatialDelegate() {}
+};
+
 /*
  * NULL values. these are not like NO_OWNER, which is a legitimate value.
  * These are values that should fail in any comparison to real data
@@ -116,7 +159,7 @@ const Vec3 NULL_ANGLES = vec3_init(0,0,0);
 const float NULL_HEIGHT = 1.0f;
 
 /* provide virtual getters that support all data operations but will return invalid values */
-class OwnedDefault
+class OwnedNone: public OwnedDelegate
 {
     public:
     int get_owner()
@@ -124,7 +167,7 @@ class OwnedDefault
     void set_owner(int id, Object_types type, int owner) {}
 };
 
-class TeamDefault
+class TeamNone: public TeamDelegate
 {
     public:
     int get_team()
@@ -137,7 +180,7 @@ class TeamDefault
     {}
 };
 
-class HealthDefault
+class HealthNone: public HealthDelegate
 {
     public:
     //int get_health()
@@ -150,7 +193,7 @@ class HealthDefault
     { return false; }
 };
 
-class SpatialDefault
+class SpatialNone: public SpatialDelegate
 {
     public:
 
@@ -164,8 +207,8 @@ class SpatialDefault
     {}
     float get_height()
     { return NULL_HEIGHT; }
-    void set_angles(float theta, float phi, float rho)
-    {}
+    bool set_angles(float theta, float phi, float rho)
+    { return false; }
     Vec3 get_angles()
     { return NULL_ANGLES; }
 };

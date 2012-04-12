@@ -14,41 +14,41 @@ class HealthProperties/*: public ComponentProperties*/
     {}
 };
 
-class HealthComponent
+class HealthComponent: public HealthDelegate
 {
     public:
     
-        HealthProperties health_properties;
+        HealthProperties properties;
 
         //int get_health()
         //{
-            //return this->health_properties.health;
+            //return this->properties.health;
         //}
 
         int take_damage(int dmg)
         {
-            int health = this->health_properties.health;
-            this->health_properties.died = false;
+            int health = this->properties.health;
+            this->properties.died = false;
             if (health <= 0) return 0;
             health -= dmg;
             health = (health < 0) ? 0 : health;
             if (health <= 0)
             {
-                this->health_properties.died = true;
-                this->health_properties.dead = true;
+                this->properties.died = true;
+                this->properties.dead = true;
             }
-            this->health_properties.health = health;
+            this->properties.health = health;
             return health;
         }
 
         bool is_dead()
         {
-            return this->health_properties.dead;
+            return this->properties.dead;
         }
 
         // did it die the last time it took damage?
         bool did_die()
         {
-            return this->health_properties.died;
+            return this->properties.died;
         }
 };

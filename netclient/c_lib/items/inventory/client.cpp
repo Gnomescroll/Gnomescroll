@@ -20,7 +20,14 @@ void InventoryProperties::load(int id, Object_types type)
     if (this->item_id != EMPTY_SLOT && new_icon)
         unregister_inventory_item_draw_list(this);
     if (type != this->item_type)
+    {
         this->sprite_index = get_icon_spritesheet_id(type);
+        // MAJO TODO -- HACK
+        // hud icon spritesheet is 8x8 but rendered particle spritesheet is 16x16 -- but using same indexes
+        // (should be using same sheet)
+        if (this->sprite_index >= 8)
+            this->sprite_index -= 8;
+    }
     this->item_id = id;
     this->item_type = type;
     if (id != EMPTY_SLOT && new_icon)   // set to new
@@ -41,23 +48,23 @@ Inventory::Inventory(int id)
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
     data->index = this->sprite_index;
-    const float spacing = 64.0f;
+    const float spacing = 32.0f;
     data->x = inventory->screen.x + spacing * slot;
     data->y = inventory->screen.y;
     data->z = inventory->screen.z;
 }
 
-void Inventory::attach_to_owner()
+void attach_inventory_to_owner(Inventory* inventory, int owner)
 {
-    Agent_state* a = STATE::agent_list->get(this->get_owner());
+    Agent_state* a = STATE::agent_list->get(owner);
     if (a == NULL)
     {
-        printf("WARNING: Inventroy::attach_to_owner() -- agent %d not found\n", this->get_owner());
+        printf("WARNING: Inventory::attach_to_owner() -- agent %d not found\n", owner);
         return;
     }
     if (a->status.inventory != NULL)
         printf("WARNING: reassigned agent inventory\n");
-    a->status.inventory = this;
+    a->status.inventory = inventory;
 }
 
 #endif

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <net_lib/net.hpp>
+
 class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory_create_StoC>
 {
     public:

@@ -16,6 +16,7 @@ void slimeDropItem(Vec3 position);
 VoxDat slime_vox_dat;
 
 Slime::Slime(int id)
+: ObjectStateLayer(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles, Objects::owned_none, Objects::team_none, &health, &spatial)
 {
     this->_state.id = id;
 
@@ -31,10 +32,10 @@ Slime::Slime(int id)
     this->voxel_properties.init_draw = MONSTER_INIT_DRAW;
     this->voxel_properties.vox_dat = &slime_vox_dat;
 
-    this->spatial_properties.camera_height = SLIME_CAMERA_HEIGHT;
-    this->spatial_properties.height = SLIME_HEIGHT;
+    this->spatial.properties.camera_height = SLIME_CAMERA_HEIGHT;
+    this->spatial.properties.height = SLIME_HEIGHT;
 
-    this->health_properties.health = SLIME_HEALTH;
+    this->health.properties.health = SLIME_HEALTH;
 
     // TODO -- make this a base property
     // momentum should not be used this way (can be overwriiten, is only init etc)
@@ -60,7 +61,7 @@ void Slime::born()
         this->voxel_properties.init_draw
     );
     bornUpdateVox(this->voxel_properties.vox, this->get_position(),
-        this->spatial_properties.angles.x, this->spatial_properties.angles.y); 
+        this->spatial.properties.angles.x, this->spatial.properties.angles.y); 
 }
 
 void Slime::die()
@@ -83,7 +84,7 @@ void Slime::die()
 void Slime::tick()
 {
     #if DC_SERVER
-    if (this->spatial_properties.changed)
+    if (this->spatial.properties.changed)
         this->broadcastState(); // send state packet if state changed
     else if (this->canSendState())
         this->broadcastState(); // send state packet every N ticks
@@ -94,7 +95,7 @@ void Slime::tick()
     Agent_state* agent = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
     if (agent != NULL)
     {
-        this->health_properties.dead = true;
+        this->health.properties.dead = true;
         return;
     }
 
@@ -118,9 +119,9 @@ void Slime::update()
 {
     updateVox(
         this->voxel_properties.vox, this->get_position(),
-        this->spatial_properties.angles, this->spatial_properties.changed
+        this->spatial.properties.angles, this->spatial.properties.changed
     );
-    this->spatial_properties.set_changed(false);
+    this->spatial.properties.set_changed(false);
 }
 
 // TODO -- generalize dat system
@@ -138,12 +139,13 @@ void slimeDropItem(Vec3 position)
     };
     Object_types type = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type,
-        position.x, position.y, position.z+1.0f,
-        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom
-    );
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
+    {
+        obj->set_position(position.x, position.y, position.z+1.0f);
+        obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
         obj->born();
+    }
     #endif
 }
 
@@ -172,9 +174,12 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (TYPE*)STATE::object_list->create(type, x+0.5, y+0.5, z);
+        s = (TYPE*)STATE::object_list->create(type);
         if (s != NULL)
+        {
+            s->set_position(x+0.5, y+0.5, z);
             s->born();
+        }
     }
     #undef TYPE
 }

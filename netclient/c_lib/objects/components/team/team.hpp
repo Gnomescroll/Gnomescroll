@@ -15,28 +15,28 @@ class TeamProperties: public ComponentProperties
     {}
 };
 
-class TeamComponent
+class TeamComponent: public TeamDelegate
 {
     public:
 
-        TeamProperties team_properties;
+        TeamProperties properties;
 
         int get_team()
         {
-            return this->team_properties.team;
+            return this->properties.team;
         }
         void set_team(int team)
         {
-            this->team_properties.team = team;
+            this->properties.team = team;
         }
 
         unsigned int get_team_index()
         {
-            return this->team_properties.team_index;
+            return this->properties.team_index;
         }
         void set_team_index(unsigned int team_index)
         {
-            this->team_properties.team_index = team_index;
+            this->properties.team_index = team_index;
         }
 
     TeamComponent() {}

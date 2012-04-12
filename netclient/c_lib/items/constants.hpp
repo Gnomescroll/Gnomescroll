@@ -5,6 +5,7 @@
 */
 
 #include <c_lib/common/common.hpp>
+#include <c_lib/common/enum_types.hpp>
 #include <c_lib/game/game.hpp>
 
 // Spawners
@@ -93,8 +94,60 @@ const int MEAT_MAX = 256;
 const float MEAT_SCALE = 0.5f;
 const int MEAT_SPRITE_INDEX = 1;
 
+const int SPAWNER_SPRITE_INDEX = 6;
+const int TURRET_SPRITE_INDEX = 7;
+
+int get_object_type_sprite_index(Object_types type)
+{
+    static const int ERROR_SPRITE = 0;
+    switch (type)
+    {
+        // Refills
+        case OBJ_TYPE_GRENADE_REFILL:
+            return GRENADE_REFILL_TEXTURE_ID;
+        case OBJ_TYPE_LASER_REFILL:
+            return LASER_REFILL_TEXTURE_ID;
+
+        // Gems
+        case OBJ_TYPE_MALACHITE:
+            return MALACHITE_SPRITE_INDEX;
+        case OBJ_TYPE_RUBY:
+            return RUBY_SPRITE_INDEX;
+        case OBJ_TYPE_TURQUOISE:
+            return TURQUOISE_SPRITE_INDEX;
+        case OBJ_TYPE_SILVER:
+            return SILVER_SPRITE_INDEX;
+        case OBJ_TYPE_AMETHYST:
+            return AMETHYST_SPRITE_INDEX;
+        case OBJ_TYPE_JADE:
+            return JADE_SPRITE_INDEX;
+        case OBJ_TYPE_ONYX:
+            return ONYX_SPRITE_INDEX;
+
+        // Misc
+        case OBJ_TYPE_MEAT:
+            return MEAT_SPRITE_INDEX;
+            break;
+
+        // Functional items
+        case OBJ_TYPE_SPAWNER:
+            return SPAWNER_SPRITE_INDEX;
+        case OBJ_TYPE_TURRET:
+            return TURRET_SPRITE_INDEX;
+
+        default: return ERROR_SPRITE;
+    }
+}
+
 } // ItemDrops
 
 
 // Inventory
 const int INVENTORY_MAX = 1024;
+
+typedef enum
+{
+    INVENTORY_TYPE_AGENT,
+    INVENTORY_TYPE_TMAP,
+    INVENTORY_TYPE_TMECH,
+} InventoryTypes;

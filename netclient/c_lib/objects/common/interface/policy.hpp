@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/objects/common/interface/state.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
+//#include <c_lib/objects/common/interface/interfaces.hpp>
 
 /* Interface and templates for all objects */
 
@@ -10,10 +10,7 @@
  * ObjectPolicyInterface [ defines common methods API -- actions, networking, and state accessors ]
  *          |
  *          v
- * ObjectStateLayer< ComponentA, ComponentB, ... ComponentN > [template parameterized with StateComponents. e.g. OwnedComponent implements ownership, OwnedDefault returns absurd values that dont correlate with real data ]
- *          |
- *          v
- * ObjectInterface < StateLayer, CreateMessage, StateMessage > [template parameterized with the StateLayer, and object's creation packets]
+ * ObjectStateLayer< ComponentA, ComponentB, ... ComponentN > [template parameterized with StateComponents. e.g. OwnedComponent implements ownership, OwnedNone returns absurd values that dont correlate with real data ]
  *          |
  *          v
  * FinalObject [e.g. Turret]
@@ -57,7 +54,7 @@ class ObjectPolicyInterface
         virtual void set_momentum(float x, float y, float z) = 0;
         virtual float get_height() = 0;
         virtual Vec3 get_angles() = 0;
-        virtual void set_angles(float theta, float phi, float rho) = 0;
+        virtual bool set_angles(float theta, float phi, float rho) = 0;
 
     ObjectPolicyInterface() {}
     virtual ~ObjectPolicyInterface()
@@ -65,120 +62,138 @@ class ObjectPolicyInterface
     }
 };
 
-/* ObjectStateLayer :
- * Mixin class layer for state setters/getters
- */
+/* Network Delegates */
 
-template <class Owner, class Team, class Health, class Spatial>  /* more common behaviour state classes here. very specialized classes can stay out */
-class ObjectStateLayer: public ObjectPolicyInterface, public Owner, public Team, public Health, public Spatial
+class CreatePacketDelegate
 {
-    protected:
-        ObjectState _state;
-
     public:
-        ObjectState* state() { return &this->_state; }
-    
-        int get_owner() { return Owner::get_owner(); }
-        void set_owner(int owner) { Owner::set_owner(this->state()->id, this->state()->type, owner); }
-
-        int get_team() { return Team::get_team(); }
-        void set_team(int team) { Team::set_team(team); }
-        unsigned int get_team_index() { return Team::get_team_index(); }
-        void set_team_index(unsigned int team_index) { Team::set_team_index(team_index); }
-
-        int take_damage(int dmg) { return Health::take_damage(dmg); }
-        bool is_dead() { return Health::is_dead(); }
-        bool did_die() { return Health::did_die(); }
-
-        Vec3 get_position() { return Spatial::get_position(); }
-        bool set_position(float x, float y, float z) { return Spatial::set_position(x,y,z); }
-        Vec3 get_momentum() { return Spatial::get_momentum(); }
-        void set_momentum(float x, float y, float z) { return Spatial::set_momentum(x,y,z); }
-        float get_height() { return Spatial::get_height(); }
-        Vec3 get_angles() { return Spatial::get_angles(); }
-        void set_angles(float theta, float phi, float rho) { /* todo: return bool */ Spatial::set_angles(theta, phi, rho); }
-
-    ObjectStateLayer<Owner, Team, Health, Spatial>()
-    {
-    }
-
-    ~ObjectStateLayer<Owner, Team, Health, Spatial>()
-    {
-    }
+        virtual void sendToClient(ObjectPolicyInterface* obj, int client_id) = 0;
+        virtual void broadcast(ObjectPolicyInterface* obj) = 0;
+        virtual ~CreatePacketDelegate(){}
 };
+
+class StatePacketDelegate
+{
+    public:
+        virtual void sendToClient(ObjectPolicyInterface* obj, int client_id) = 0;
+        virtual void broadcast(ObjectPolicyInterface* obj) = 0;
+        virtual ~StatePacketDelegate(){}
+};
+
+
+/* Null Objects */
+
+
+class CreatePacketNone: public CreatePacketDelegate
+{
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
+        void broadcast(ObjectPolicyInterface* obj) {}
+};
+
+class StatePacketNone: public StatePacketDelegate
+{
+    public:
+        void sendToClient(ObjectPolicyInterface* obj, int client_id) {}
+        void broadcast(ObjectPolicyInterface* obj) {}
+};
+
 
 /* ObjectInterface
  * template accepts message types
  */
-template
-<
-    class StateLayer,
-    class CreateMessage,
-    class StateMessage
->
-class ObjectInterface: public StateLayer
+
+ //forward decl
+class OwnedNone;
+class TeamNone;
+class HealthNone;
+class SpatialNone;
+
+namespace Objects
+{
+void broadcastDeath(ObjectState* state);
+
+extern CreatePacketNone* create_packet_none;
+extern StatePacketNone* state_packet_none;
+
+extern OwnedNone* owned_none;
+extern TeamNone* team_none;
+extern HealthNone* health_none;
+extern SpatialNone* spatial_none;
+}
+
+/* ObjectStateLayer :
+ * Mixin class layer for state setters/getters
+ */
+
+class ObjectStateLayer: public ObjectPolicyInterface
 {
     private:
-        void createMessage(CreateMessage* msg)
-        {
-            ObjectState* state = this->state();
-            create_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles(), this->get_owner(), this->get_team(), this->get_team_index());
-        }
+        CreatePacketDelegate* create_packet;
+        StatePacketDelegate* state_packet;
 
-        void stateMessage(StateMessage* msg)
-        {
-            ObjectState* state = this->state();
-            state_message(msg, state->id, state->type, this->get_position(), this->get_momentum(), this->get_angles());
-        }
-        
+    protected:
+        ObjectState _state;
+
+        OwnedDelegate* owned;
+        TeamDelegate* team;
+        HealthDelegate* health;
+        SpatialDelegate* spatial;
+
     public:
+        ObjectState* state() { return &this->_state; }
 
-    void sendToClientCreate(int client_id)
+        // Owner
+        int get_owner() { return this->owned->get_owner(); }
+        void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, owner); }
+
+        // Team
+        int get_team() { return this->team->get_team(); }
+        void set_team(int team) { this->team->set_team(team); }
+        unsigned int get_team_index() { return this->team->get_team_index(); }
+        void set_team_index(unsigned int team_index) { this->team->set_team_index(team_index); }
+
+        // Health
+        int take_damage(int dmg) { return this->health->take_damage(dmg); }
+        bool is_dead() { return this->health->is_dead(); }
+        bool did_die() { return this->health->did_die(); }
+
+        // Spatial
+        Vec3 get_position() { return this->spatial->get_position(); }
+        bool set_position(float x, float y, float z) { return this->spatial->set_position(x,y,z); }
+        Vec3 get_momentum() { return this->spatial->get_momentum(); }
+        void set_momentum(float x, float y, float z) { return this->spatial->set_momentum(x,y,z); }
+        float get_height() { return this->spatial->get_height(); }
+        Vec3 get_angles() { return this->spatial->get_angles(); }
+        bool set_angles(float theta, float phi, float rho) { return this->spatial->set_angles(theta, phi, rho); }
+
+        /* Network API */
+        void sendToClientCreate(int client_id) { this->create_packet->sendToClient(this, client_id); }
+        void broadcastCreate() { this->create_packet->broadcast(this); }
+        void sendToClientState(int client_id) { this->state_packet->sendToClient(this, client_id); }
+        void broadcastState() { this->state_packet->broadcast(this); }
+        void broadcastDeath() { Objects::broadcastDeath(this->state()); }
+
+    ObjectStateLayer(CreatePacketDelegate* create, StatePacketDelegate* state,
+        OwnedDelegate* owned, TeamDelegate* team, HealthDelegate* health, SpatialDelegate* spatial
+    ):
+    create_packet(create), state_packet(state),
+    owned(owned), team(team), health(health), spatial(spatial)
     {
-        CreateMessage msg;
-        this->createMessage(&msg);
-        msg.sendToClient(client_id);
     }
     
-    void broadcastCreate()
+    ObjectStateLayer()  // all defaults
+    : create_packet(Objects::create_packet_none), state_packet(Objects::state_packet_none),
+    owned(Objects::owned_none), team(Objects::team_none), health(Objects::health_none),
+    spatial(Objects::spatial_none)
     {
-        CreateMessage msg;
-        this->createMessage(&msg);
-        msg.broadcast();
-    }
-    
-    void sendToClientState(int client_id)
-    {
-        StateMessage msg;
-        this->stateMessage(&msg);
-        msg.sendToClient(client_id);
-    }
-    
-    void broadcastState()
-    {
-        StateMessage msg;
-        this->stateMessage(&msg);
-        msg.broadcast();
     }
 
-    void broadcastDeath()
-    {
-        #if DC_SERVER
-        ObjectState* state = this->state();
-        object_destroy_StoC msg;
-        msg.id = state->id;
-        msg.type = state->type;
-        msg.broadcast();
-        #endif
-    }
-
-    ObjectInterface<StateLayer, CreateMessage, StateMessage>()
-    {}
-
-    ~ObjectInterface<StateLayer, CreateMessage, StateMessage>()
+    ~ObjectStateLayer()
     {
     }
 };
+
 
 /* Placeholders
  *
@@ -186,39 +201,5 @@ class ObjectInterface: public StateLayer
  *  Or if object doesnt need anything
  * */
 
-template <class State>
-class DummyNetworkInterface: public State
-{
-    public:
-        void sendToClientCreate(int client_id) {}
-        void broadcastCreate() {}
-        void sendToClientState(int client_id) {}
-        void broadcastState() {}
-        void broadcastDeath() {}
-
-    ~DummyNetworkInterface<State>() {}
-    DummyNetworkInterface<State>() {}
-};
-
-
 #define DUMMY_NETWORK_INTERFACE void sendToClientCreate(int client_id){}void broadcastCreate(){}void sendToClientState(int client_id){}void broadcastState(){}void broadcastDeath(){}
-
-
-template <class Network>
-class DummyObjectInterface: public Network
-{
-    public:
-        void tick() {}
-        void draw() {}
-        void update() {}
-        void born() {}
-        void die() {}
-        void sendToClientCreate(int client_id) {}
-        void broadcastCreate() {}
-        void sendToClientState(int client_id) {}
-        void broadcastState() {}
-        void broadcastDeath() {}
-
-    ~DummyObjectInterface<Network>() {}
-    DummyObjectInterface<Network>() {}
-};
+#define DUMMY_API_INTERFACE void tick(){}void draw(){}void update(){}void die(){}void born(){}
