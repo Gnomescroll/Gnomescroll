@@ -151,7 +151,7 @@ namespace ServerState
 */
     void server_tick()
     {   
-        static int counter = 0;
+        static unsigned int counter = 0;
         counter++;
     
         t_map::t_map_send_map_chunks();  //every tick
@@ -175,6 +175,13 @@ namespace ServerState
             t_item::check_item_pickups();
         }
 
+        const int monster_spawners = 10;
+        const int monsters = 100;
+        Monsters::create_monsters_spawners(monster_spawners);
+        Monsters::spawn_monsters(monsters);
+
+        ctf->check_agent_proximities();
+        ctf->update();
         ctf->tick();
     }
 

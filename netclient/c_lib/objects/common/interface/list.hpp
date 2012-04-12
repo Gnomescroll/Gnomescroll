@@ -141,7 +141,8 @@ class GameObject_list
         int all_objects_within_sphere(float x, float y, float z, float radius);
         int objects_within_sphere(const Object_types type, float x, float y, float z, float radius);
         int objects_within_sphere(const Object_types* types, const int n_types, float x, float y, float z, float radius);
-
+        int filter_active_objects(const Object_types type);
+        
         ~GameObject_list()
         {
             this->teardown();

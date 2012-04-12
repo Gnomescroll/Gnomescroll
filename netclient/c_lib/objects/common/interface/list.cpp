@@ -7,6 +7,79 @@
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/monsters/monsters.hpp>
 
+
+//Inventory* create_inventory_of_type(InventoryTypes type, int id)
+//{
+    //Inventory* inventory = NULL;
+    //switch (type)
+    //{
+        //case INVENTORY_TYPE_AGENT:
+            //inventory = new AgentInventory(id);
+            //break;
+            
+        ////case INVENTORY_TYPE_TMAP:
+            ////inventory = new TMapInventory(id);
+            ////break;
+        ////case INVENTORY_TYPE_TITEM:
+            ////inventory = new TItemInventory(id);
+            ////break;
+
+        //default: break;
+    //}
+    //return inventory;
+//}
+
+// Note: not attached to GameObject_list
+ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
+{
+    ObjectPolicyInterface* obj = NULL;
+    switch (type)
+    {
+        case OBJ_TYPE_TURRET:
+            obj = new Turret(id);
+            break;
+        case OBJ_TYPE_SPAWNER:
+            obj = new Spawner(id);
+            break;
+
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_MALACHITE:
+        case OBJ_TYPE_RUBY:
+        case OBJ_TYPE_TURQUOISE:
+        case OBJ_TYPE_SILVER:
+        case OBJ_TYPE_AMETHYST:
+        case OBJ_TYPE_JADE:
+        case OBJ_TYPE_ONYX:
+        case OBJ_TYPE_GRENADE_REFILL:
+        case OBJ_TYPE_LASER_REFILL:
+            obj = new ItemDrops::PickupObjectSprite(type, id);
+            break;
+        case OBJ_TYPE_DIRT:
+        case OBJ_TYPE_STONE:
+            obj = new ItemDrops::PickupObjectMinivox(type, id);
+            break;
+
+        case OBJ_TYPE_INVENTORY:
+            //obj = create_inventory_of_type((InventoryTypes)subtype, id);
+            obj = new Inventory(id);
+            break;
+
+        case OBJ_TYPE_SLIME:
+            obj = new Monsters::Slime(id);
+            break;
+        case OBJ_TYPE_MONSTER_BOX:
+            obj = new Monsters::Box(id);
+            break;
+        case OBJ_TYPE_MONSTER_SPAWNER:
+            obj = new Monsters::MonsterSpawner(id);
+            break;
+            
+        default: break;
+    }
+    return obj;
+}
+
+
 void GameObject_list::tick()
 {
     ObjectPolicyInterface* obj;
@@ -218,76 +291,24 @@ int GameObject_list::objects_within_sphere(const Object_types* types, const int 
     return closest;
 }
 
-/* Creation API */
-
-//Inventory* create_inventory_of_type(InventoryTypes type, int id)
-//{
-    //Inventory* inventory = NULL;
-    //switch (type)
-    //{
-        //case INVENTORY_TYPE_AGENT:
-            //inventory = new AgentInventory(id);
-            //break;
-            
-        ////case INVENTORY_TYPE_TMAP:
-            ////inventory = new TMapInventory(id);
-            ////break;
-        ////case INVENTORY_TYPE_TITEM:
-            ////inventory = new TItemInventory(id);
-            ////break;
-
-        //default: break;
-    //}
-    //return inventory;
-//}
-
-// Note: not attached to GameObject_list
-ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
+int GameObject_list::filter_active_objects(const Object_types type)
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
+    this->n_filtered = 0;
+    int ct = 0;
+    if (this->get_object_count(type) <= 0) return 0;
+    int max = this->get_object_max(type);
+    if (max <= 0) return 0;
+
+    for (int i=0; i<max; i++)
     {
-        case OBJ_TYPE_TURRET:
-            obj = new Turret(id);
-            break;
-        case OBJ_TYPE_SPAWNER:
-            obj = new Spawner(id);
-            break;
-
-        case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
-            obj = new ItemDrops::PickupObjectSprite(type, id);
-            break;
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
-            obj = new ItemDrops::PickupObjectMinivox(type, id);
-            break;
-
-        case OBJ_TYPE_INVENTORY:
-            //obj = create_inventory_of_type((InventoryTypes)subtype, id);
-            obj = new Inventory(id);
-            break;
-
-        case OBJ_TYPE_SLIME:
-            obj = new Monsters::Slime(id);
-            break;
-        case OBJ_TYPE_MONSTER_BOX:
-            obj = new Monsters::Box(id);
-            break;
-            
-        default: break;
+        if (this->objects[type][i] == NULL) continue;
+        this->filtered_objects[ct++] = this->objects[type][i];
     }
-    return obj;
+    this->n_filtered = ct;
+    return ct;
 }
 
+/* Creation API */
 
 ObjectPolicyInterface* GameObject_list::create(Object_types type)
 {
@@ -369,5 +390,6 @@ void init_gameobject_list_maximums(GameObject_list* list)
     // mobs
     list->set_max_occupancy(OBJ_TYPE_SLIME, Monsters::SLIME_MAX);
     list->set_max_occupancy(OBJ_TYPE_MONSTER_BOX, Monsters::BOX_MAX);
+    list->set_max_occupancy(OBJ_TYPE_MONSTER_SPAWNER, Monsters::MONSTER_SPAWNER_MAX);
 
 }

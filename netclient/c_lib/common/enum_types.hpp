@@ -4,8 +4,10 @@ enum Object_types
 {
     OBJ_TYPE_AGENT = 0,
 
+    // mobs
     OBJ_TYPE_SLIME,
     OBJ_TYPE_MONSTER_BOX,
+    OBJ_TYPE_MONSTER_SPAWNER,
 
     OBJ_TYPE_GRENADE,
 
@@ -48,6 +50,7 @@ typedef enum
 } AgentDeathMethod;
 
 
+// TODO - deprecate
 const int COST_SPAWNER = 5;
 const int COST_TURRET = 2;
 

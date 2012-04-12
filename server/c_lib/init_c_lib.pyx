@@ -72,49 +72,6 @@ def GET_TICK():
 def GET_MS_TIME():
     return _GET_MS_TIME();
 
-
-"""
-    Condensed cython files here
-"""
-
-""" Monsters """
-cdef extern from "./monsters/monsters.hpp" namespace "Monsters":
-    void populate_slimes(int n_max)
-
-def slime_populate(int n_max):
-    populate_slimes(n_max)
-
-""" Agents """
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    char* agent_name(int id)
-
-def get_agent_name(int id):
-    name = agent_name(id)
-    if name == NULL:
-        return ''
-    return name
-
-""" Game Modes (CTF) """
-
-cdef extern from "./game/ctf.hpp":
-    cdef cppclass CTF:
-        void set_team_color(int team, unsigned char r, unsigned char g, unsigned char b)
-        void start()
-        void check_agent_proximities()
-        void update()
-
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    CTF* ctf
-
-def set_team_color(int team, unsigned char r, unsigned char g, unsigned char b):
-    if ctf != NULL:
-        ctf.set_team_color(team, r,g,b)
-    
-def check_agent_proximities():
-    if ctf != NULL:
-        ctf.check_agent_proximities()
-        ctf.update()
-
 """
 Terrain map
 """

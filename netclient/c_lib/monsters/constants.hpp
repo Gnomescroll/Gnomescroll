@@ -62,4 +62,13 @@ const float BOX_ANIMATION_PARTICLE_SIZE = 0.2f;
 const int BOX_ANIMATION_PARTICLE_COUNT = 5*5*5;
 const struct Color BOX_ANIMATION_COLOR = { 223,31,31 };
 
+
+/* Monster spawners */
+
+const int MONSTER_SPAWNER_MAX = 256;
+const float MONSTER_SPAWNER_SPAWN_RADIUS = 2.5f;
+const int MONSTER_SPAWNER_HEALTH = 150;
+const float MONSTER_SPAWNER_HEIGHT = 1.9f;
+const int MONSTER_SPAWNER_REWARD = 15;
+
 } // Monsters

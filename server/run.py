@@ -76,8 +76,6 @@ class Main:
                 if linux_terminal.check_stdin():
                     break
 
-            init_c_lib.slime_populate(100)
-            
             sl_c =0
 
             while True: #physics loop
@@ -91,7 +89,6 @@ class Main:
                 tick+=1
 
                 NetServerFlushToNet()
-                init_c_lib.check_agent_proximities()
 
             if sl_c > 0:
                 while GET_TICK() != 0:
