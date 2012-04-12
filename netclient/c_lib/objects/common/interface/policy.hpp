@@ -26,20 +26,22 @@ class ObjectPolicyInterface
         virtual ObjectState* state() = 0;
         
         // actions
-        virtual void tick() = 0;
+        virtual void tick() = 0;    // these can be in lists
         virtual void draw() = 0;
         virtual void update() = 0;
-        virtual void born() = 0;
+        
+        virtual void born() = 0;    // called individual on objects at birth/death (object type is always known here)
         virtual void die() = 0;
         
         // network
-        virtual void sendToClientCreate(int client_id) = 0;
+        virtual void sendToClientCreate(int client_id) = 0; // would have to encapsulate elsewhere -- network_list ?
         virtual void broadcastCreate() = 0;
         virtual void sendToClientState(int client_id) = 0;
         virtual void broadcastState() = 0;
+        virtual void broadcastDeath() = 0;
 
         //state
-        virtual int get_owner() = 0;
+        virtual int get_owner() = 0;    // kind of stuck with these
         virtual void set_owner(int owner) = 0;
         virtual int get_team() = 0;
         virtual void set_team(int team) = 0;
@@ -189,11 +191,84 @@ class ObjectStateLayer: public ObjectPolicyInterface
     {
     }
 
-    ~ObjectStateLayer()
+    //ObjectStateLayer(OwnedDelegate* owned, TeamDelegate* team, HealthDelegate* health, SpatialDelegate* spatial)
+    //:
+    //owned(owned), team(team), health(health), spatial(spatial)
+    //{
+    //}
+    
+    //ObjectStateLayer()  // all defaults
+    //:
+    //owned(Objects::owned_none), team(Objects::team_none), health(Objects::health_none),
+    //spatial(Objects::spatial_none)
+    //{
+    //}
+
+    virtual ~ObjectStateLayer()
     {
     }
 };
 
+/*
+ * List concepts:
+ *
+ *  -- Creation/Deletion (die,born)
+ *
+ *  -- Tick, Draw, Update (one each)
+ *
+ *  -- Subcomponents, not shared in any way
+ *
+ *  -- Network interfaces
+ *
+ * at the far end of this, any special case iteration would have its own list and the objects
+ * would need to register with it, along with copies/pointers to the data needed for that
+ * iterator
+ */
+
+/* Separate Network Layer */
+/* Problems:
+ *  sending in the data needed for the packet, generically
+ *  -- can send in all data ever needed
+ *  -- instantiate with the base object (requires base object to be an instance of ObjectPolicyInterface  
+ *
+ *
+ * Add new list, network_list
+ * like an property tracking list
+ * -- have to be able to pass an object that inherits ObjectNetworkLayer 
+ * -- the cast will be from the base object, registering itself with the network list on creation
+ * 
+ */
+
+//class ObjectNetworkLayer
+//{
+    //private:
+        //ObjectPolicyInterface* object;
+        //CreatePacketDelegate* create_packet;
+        //StatePacketDelegate* state_packet;
+
+    //public:
+        ///* Network API */                               
+        //void sendToClientCreate(int client_id) { this->create_packet->sendToClient(this->object, client_id); }
+        //void broadcastCreate() { this->create_packet->broadcast(this->object); }
+        //void sendToClientState(int client_id) { this->state_packet->sendToClient(this->object, client_id); }
+        //void broadcastState() { this->state_packet->broadcast(this->object); }
+        //void broadcastDeath() { Objects::broadcastDeath(this->object->state()); }
+
+    //ObjectNetworkLayer(ObjectPolicyInterface* object, CreatePacketDelegate* create, StatePacketDelegate* state)
+    //:
+    //object(object), create_packet(create), state_packet(state)
+    //{
+    //}
+    
+    //ObjectNetworkLayer(ObjectPolicyInterface* object)  // all defaults
+    //: object(object), create_packet(Objects::create_packet_none), state_packet(Objects::state_packet_none)
+    //{
+    //}
+
+    //~ObjectNetworkLayer()
+    //{
+    //}
+//};
 
 /* Placeholders
  *

@@ -471,6 +471,7 @@ Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
 :
 skeleton_inited(false),
 vox_inited(false),
+was_updated(false),
 frozen(false)
 {
     if (vox_dat == NULL) printf("WARNING: ::Voxel_model() ctor -- vox_dat is NULL\n");

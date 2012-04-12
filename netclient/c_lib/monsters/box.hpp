@@ -466,6 +466,7 @@ class Box:
         #endif
 
         this->direction = vec3_init(1,0,0);
+        this->destination = vec3_init(0,0,0);
     }
 };
 
