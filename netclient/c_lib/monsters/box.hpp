@@ -14,6 +14,7 @@
 #include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/monsters/slime.hpp>
+#include <c_lib/monsters/monster_spawner.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/objects/common/net/interfaces.hpp>
@@ -154,6 +155,10 @@ class Box:
         bool locked_on_target;
 
         Vec3 direction;
+
+        #if DC_SERVER
+        int spawner;
+        #endif
 
     #if DC_SERVER
     void server_tick()
@@ -390,6 +395,12 @@ class Box:
         #if DC_SERVER
         boxDropItem(this->get_position());
         this->broadcastDeath();
+        MonsterSpawner* spawner = (MonsterSpawner*)ServerState::object_list->get(OBJ_TYPE_MONSTER_SPAWNER, this->spawner);
+        if (spawner != NULL)
+        {
+            ObjectState* state = this->state();
+            spawner->spawn.lose_child(state->type, state->id);
+        }
         #endif
     }
 
@@ -403,7 +414,8 @@ class Box:
             this->voxel_properties.init_draw
         );
         bornUpdateVox(this->voxel_properties.vox, this->get_position(),
-            this->spatial.properties.angles.x, this->spatial.properties.angles.y); 
+            this->spatial.properties.angles.x, this->spatial.properties.angles.y);
+        this->broadcastCreate();
     }
 
     void update()
@@ -423,6 +435,9 @@ class Box:
     at_destination(false), en_route(false), ticks_to_destination(1), speed(BOX_SPEED),
     target_id(NO_AGENT), target_type(OBJ_TYPE_NONE),
     locked_on_target(false)
+    #if DC_SERVER
+    ,spawner(NO_MONSTER_SPAWNER)
+    #endif
     {
         this->_state.id = id;
 

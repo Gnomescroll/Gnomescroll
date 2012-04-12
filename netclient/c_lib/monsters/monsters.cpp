@@ -11,6 +11,7 @@
 namespace Monsters
 {
 
+#if DC_SERVER
 void spawn_monsters(int max_monsters)
 {
     // spawn monsters rnadomly distributed over monster spawners
@@ -25,21 +26,32 @@ void spawn_monsters(int max_monsters)
     int max_spawners = STATE::object_list->filter_active_objects(OBJ_TYPE_MONSTER_SPAWNER);
     if (!max_spawners) return;
 
-    int monsters_per_spawner = (int)ceil(((float)to_create)/((float)n_spawners));
-
+    int ct = 0;
     Box* box;
     MonsterSpawner* spawner;
     float spawn_point[3];
-    for (int j=0; j<monsters_per_spawner; j++)
+
+    while (ct < to_create)
+    {
+        int added = 0;
         for (int i=0; i<max_spawners; i++)
         {
+            if (ct+added >= to_create) break;
             spawner = (MonsterSpawner*)STATE::object_list->filtered_objects[i];
+            if (spawner->spawn.full()) continue;
             box = (Box*)STATE::object_list->create(spawner->spawn.type);
             if (box == NULL) return; // abort; out of room
             spawner->spawn.get_spawn_point(spawner->get_position(), BOX_HEIGHT, spawn_point);
+            spawner->spawn.gain_child(spawner->spawn.type, box->state()->id);
             box->set_position(spawn_point[0], spawn_point[1], spawn_point[2]);
+            box->spawner = spawner->state()->id;
             box->born();
+            added++;
         }
+        if (added == 0) break; // all spawners full
+        ct += added;
+    }
+    printf("Created %d\n", ct);
 }
 
 void create_monsters_spawners(int max_spawners)
@@ -60,5 +72,6 @@ void create_monsters_spawners(int max_spawners)
         obj->born();
     }
 }
+#endif
 
 } // Monsters

@@ -54,4 +54,16 @@ void MonsterSpawnerComponent::get_spawn_point(Vec3 position, float spawned_objec
     spawn_pt[1] = sy;
 }
 
+void MonsterSpawnerComponent::gain_child(Object_types type, int id)
+{
+    this->children++;
+}
+
+void MonsterSpawnerComponent::lose_child(Object_types type, int id)
+{
+    this->children--;
+    printf("children: %d\n", this->children);
+}
+
+
 } // Monsters

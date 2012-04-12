@@ -7,5 +7,8 @@
 
 namespace Monsters
 {
+#if DC_SERVER
+void spawn_monsters(int max_monsters);
 void create_monsters_spawners(int max_spawners);
+#endif
 } // Monsters

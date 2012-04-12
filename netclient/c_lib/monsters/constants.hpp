@@ -66,6 +66,8 @@ const struct Color BOX_ANIMATION_COLOR = { 223,31,31 };
 /* Monster spawners */
 
 const int MONSTER_SPAWNER_MAX = 256;
+const int NO_MONSTER_SPAWNER = 255; // null value
+const int MONSTER_SPAWNER_MAX_CHILDREN = 10;
 const float MONSTER_SPAWNER_SPAWN_RADIUS = 2.5f;
 const int MONSTER_SPAWNER_HEALTH = 150;
 const float MONSTER_SPAWNER_HEIGHT = 1.9f;
@@ -76,6 +78,7 @@ enum MONSTER_SPAWNER_BODY_PARTS {
 const float MONSTER_SPAWNER_ANIMATION_PARTICLE_SIZE = 0.4f;
 const int MONSTER_SPAWNER_ANIMATION_PARTICLE_COUNT = 5*5*5;
 const struct Color MONSTER_SPAWNER_ANIMATION_COLOR = { 223,31,31 };
+
 
 
 } // Monsters

@@ -19,9 +19,16 @@ class MonsterSpawnerComponent
     public:
         Object_types type;
         float radius;
+        int max_children;
+        int children;
+
         void get_spawn_point(Vec3 position, float spawned_object_height, float* spawn_pt);
+        bool full() { return (this->children >= this->max_children); }
+        void gain_child(Object_types type, int id);
+        void lose_child(Object_types type, int id);
+        
     MonsterSpawnerComponent()
-    : type(OBJ_TYPE_NONE), radius(1.0f)
+    : type(OBJ_TYPE_NONE), radius(1.0f), max_children(1), children(0)
     {}
 };
 
@@ -49,6 +56,7 @@ class MonsterSpawner:
         this->health.properties.health = MONSTER_SPAWNER_HEALTH;
 
         this->spawn.radius = MONSTER_SPAWNER_SPAWN_RADIUS;
+        this->spawn.max_children = MONSTER_SPAWNER_MAX_CHILDREN;
 
         this->voxel_properties.frozen_vox = true;
         this->voxel_properties.init_hitscan = true;
