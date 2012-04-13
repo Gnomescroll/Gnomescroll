@@ -62,8 +62,53 @@ void MonsterSpawnerComponent::gain_child(Object_types type, int id)
 void MonsterSpawnerComponent::lose_child(Object_types type, int id)
 {
     this->children--;
-    printf("children: %d\n", this->children);
 }
 
+
+// can assume max 2 splits -- 1 per orthogonal side set (ie top or bottom && left or right)
+
+//// return n lines; fills in lines buffer
+//int split_lines(float a, float b, float x, float y, float lines[3][4])
+//{
+    //// assume source in bounds?
+    //bool oobx = (x > map_dim.x || x < 0);
+    //bool ooby = (y > map_dim.y || y < 0);
+
+    //if (oobx || ooby)
+    //{
+        //float xd = x-map_dim.x/2;
+        //float yd = y-map_dim.y/2;
+        //if (abs(xd) > abs(yd))   // x closer to edge (distance from middle is greater
+        //{
+            //// split on x line,
+                //// then, from this point, split on y line
+            ////lines[0][0] = a;
+            ////lines[0][1] = b;
+            ////lines[0][2] = a+xd;
+            ////lines[0][3] = y;
+
+            //// fix x to appropriate side (0 or map_dim.x)
+            //// calculate y as intersection point (simple linear)
+
+            //// if y, do same for that
+            
+        //}
+        //else    // y closer to edge
+        //{
+
+        //}
+
+        //if (oobx && ooby) return 3;
+        //return 2;
+    //}
+    //else
+    //{
+        //lines[0][0] = a;
+        //lines[0][1] = b;
+        //lines[0][2] = x;
+        //lines[0][3] = y;
+        //return 1;
+    //}
+//}
 
 } // Monsters

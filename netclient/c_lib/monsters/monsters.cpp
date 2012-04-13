@@ -12,6 +12,9 @@ namespace Monsters
 {
 
 #if DC_SERVER
+
+// should just periodically fill each spawner to their max
+
 void spawn_monsters(int max_monsters)
 {
     // spawn monsters rnadomly distributed over monster spawners

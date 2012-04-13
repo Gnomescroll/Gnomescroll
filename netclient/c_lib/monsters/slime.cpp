@@ -152,11 +152,11 @@ void slimeDropItem(Vec3 position)
 void populate_slimes(int n_max)
 {   // regenerates slimes up to a maximum
 
-    //#define TYPE Slime
-    //Object_types type = OBJ_TYPE_SLIME;
+    #define TYPE Slime
+    Object_types type = OBJ_TYPE_SLIME;
 
-    #define TYPE Box
-    Object_types type = OBJ_TYPE_MONSTER_BOX;
+    //#define TYPE Box
+    //Object_types type = OBJ_TYPE_MONSTER_BOX;
 
     int n_slimes = STATE::object_list->get_object_count(type);
     n_max -= n_slimes;

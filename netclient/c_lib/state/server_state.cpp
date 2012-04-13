@@ -27,8 +27,7 @@ namespace ServerState
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
         owned_list = new OwnedList;
-        
-        //neutron_list = new Neutron_list;
+
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
         agent_list = new Agent_list;
@@ -180,8 +179,11 @@ namespace ServerState
 
         const int monster_spawners = 10;
         const int monsters = 100;
+        const int slimes = 50;
         Monsters::create_monsters_spawners(monster_spawners);
         Monsters::spawn_monsters(monsters);
+        Monsters::populate_slimes(slimes)
+
 
         ctf->check_agent_proximities();
         ctf->update();

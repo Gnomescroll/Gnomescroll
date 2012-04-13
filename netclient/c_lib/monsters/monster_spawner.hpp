@@ -33,7 +33,6 @@ class MonsterSpawnerComponent
 };
 
 class MonsterSpawner:
-    public MonsterSpawnerComponent,
     public VoxelComponent,
     #if DC_CLIENT
     public AnimationVoxelComponent,
@@ -44,10 +43,12 @@ class MonsterSpawner:
         HealthComponent health;
         PositionChangedComponent spatial;
 
+        #if DC_SERVER
         MonsterSpawnerComponent spawn;
+        #endif
     
     explicit MonsterSpawner(int id)
-    : MonsterSpawnerComponent(), ObjectStateLayer(Objects::create_packet, Objects::state_packet, Objects::owned_none, Objects::team_none, &health, &spatial)
+    : ObjectStateLayer(Objects::create_packet, Objects::state_packet, Objects::owned_none, Objects::team_none, &health, &spatial)
     {
         this->_state.id = id;
         this->_state.reward = MONSTER_SPAWNER_REWARD;
@@ -55,9 +56,11 @@ class MonsterSpawner:
         
         this->health.properties.health = MONSTER_SPAWNER_HEALTH;
 
+        #if DC_SERVER
         this->spawn.radius = MONSTER_SPAWNER_SPAWN_RADIUS;
         this->spawn.max_children = MONSTER_SPAWNER_MAX_CHILDREN;
-
+        #endif
+        
         this->voxel_properties.frozen_vox = true;
         this->voxel_properties.init_hitscan = true;
         this->voxel_properties.init_draw = true;
