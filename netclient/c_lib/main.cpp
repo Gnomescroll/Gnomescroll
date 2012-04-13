@@ -167,11 +167,11 @@ int run()
         Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
-        end_transparent_draw();
 
         begin_item_draw();
         ClientState::sprite_list->draw();
         end_item_draw();
+        end_transparent_draw();
 
         poll_mouse();
         // draw animations
