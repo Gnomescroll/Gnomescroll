@@ -70,9 +70,9 @@ class Inventory: public BaseInventoryServer
         bool added = this->add(id, type, subtype, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, slot);
+            this->sendToClientAdd(id, type, subtype, slot);
         else
-            this->broadcastAdd(id, type, slot);
+            this->broadcastAdd(id, type, subtype, slot);
         return added;
     }
 
@@ -82,9 +82,9 @@ class Inventory: public BaseInventoryServer
         bool added = this->add_action(id, type, subtype, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, slot);
+            this->sendToClientAdd(id, type, subtype, slot);
         else
-            this->broadcastAdd(id, type, slot);
+            this->broadcastAdd(id, type, subtype, slot);
         return added;
     }
 
@@ -120,8 +120,8 @@ class Inventory: public BaseInventoryServer
     void sendToClientState(int client_id);
     void broadcastState();
     void broadcastDeath();
-    void sendToClientAdd(int id, Object_types type, int slot);
-    void broadcastAdd(int id, Object_types type, int slot);
+    void sendToClientAdd(int id, Object_types type, int subtype, int slot);
+    void broadcastAdd(int id, Object_types type, int subtype, int slot);
     void sendToClientRemove(int slot);
     void broadcastRemove(int slot);
     void sendToClientSwap(int slota, int slotb);

@@ -64,7 +64,7 @@ void Inventory::broadcastDeath()
     msg.broadcast();
 }
 
-void Inventory::sendToClientAdd(int id, Object_types type, int slot)
+void Inventory::sendToClientAdd(int id, Object_types type, int subtype, int slot)
 {
     Agent_state* agent = ServerState::agent_list->get(this->get_owner());
     if (agent == NULL) return;
@@ -72,16 +72,18 @@ void Inventory::sendToClientAdd(int id, Object_types type, int slot)
     msg.inventory_id = this->_state.id;
     msg.id = id;
     msg.type = type;
+    msg.subtype = subtype;
     msg.slot = slot;
     msg.sendToClient(agent->client_id);
 }
 
-void Inventory::broadcastAdd(int id, Object_types type, int slot)
+void Inventory::broadcastAdd(int id, Object_types type, int subtype, int slot)
 {
     add_item_to_inventory_StoC msg;
     msg.inventory_id = this->_state.id;
     msg.id = id;
     msg.type = type;
+    msg.subtype = subtype;
     msg.slot = slot;
     msg.broadcast();
 }

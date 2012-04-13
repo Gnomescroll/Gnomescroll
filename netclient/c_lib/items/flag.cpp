@@ -18,7 +18,7 @@ id(id), team(team),
 type(OBJ_TYPE_FLAG),
 held(false)
 {
-    this->vox = new Voxel_model(&flag_vox_dat, id, type, team);
+    this->vox = new Voxel_model(&flag_vox_dat, id, type, 0, team);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);

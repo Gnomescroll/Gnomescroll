@@ -91,6 +91,7 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 {
     this->entity_id = vhe->entity_id;
     this->entity_type = vhe->entity_type;
+    this->entity_subtype = vhe->entity_subtype;
     this->part_id = vhe->part_id;
     this->vv = vhe->vv;
 }

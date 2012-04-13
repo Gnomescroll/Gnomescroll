@@ -21,17 +21,14 @@ struct Voxel_hitscan_element
 {
     short entity_id;
     short entity_type;
+    short entity_subtype;
     short part_id;
     Voxel_volume* vv;
 };
 
-class Voxel_hitscan_target
+class Voxel_hitscan_target: public Voxel_hitscan_element
 {
     public:
-        short entity_id;
-        short entity_type;
-        short part_id;
-        Voxel_volume* vv;
         int voxel[3];
 
         void copy_vhe(Voxel_hitscan_element* vhe);
@@ -41,6 +38,7 @@ class Voxel_hitscan_target
             printf("Target:\n");
             printf("id   %d\n", entity_id);
             printf("type %d\n", entity_type);
+            printf("subtype %d\n", entity_subtype);
             printf("part %d\n", part_id);
             printf("voxel: %d,%d,%d\n", voxel[0], voxel[1], voxel[2]);
         }
@@ -54,7 +52,6 @@ class Voxel_hitscan_list
     public:
     int num_elements;
 
-    //void register_voxel_volume(Voxel_volume* vv, int entity_id, int entity_type, int part_id);
     void register_voxel_volume(Voxel_volume* vv);
     void unregister_voxel_volume(Voxel_volume* vv);
 

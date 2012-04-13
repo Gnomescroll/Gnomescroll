@@ -82,13 +82,13 @@ class Inventory: public BaseInventoryClient
         msg.send();
     }
 
-    void add_action(int id, Object_types type)
+    void add_action(int id, Object_types type, int subtype)
     {
         int slot = this->contents.get_empty_slot();
-        this->add_action(id, type, slot);
+        this->add_action(id, type, subtype, slot);
     }
     
-    void add_action(int id, Object_types type, int slot)
+    void add_action(int id, Object_types type, int subtype, int slot)
     {
         bool can_add = this->can_add(type, slot);
         if (!can_add) return;
@@ -96,6 +96,7 @@ class Inventory: public BaseInventoryClient
         msg.inventory_id = this->_state.id;
         msg.id = id;
         msg.type = type;
+        msg.subtype = subtype;
         msg.slot = slot;
         msg.send();
     }

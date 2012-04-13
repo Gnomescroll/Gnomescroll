@@ -601,10 +601,11 @@ void Voxel_volume::set_color(int x, int y, int z, unsigned char rgba[4])
     needs_vbo_update = true;
 }
 
-void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, short part_id)
+void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, short entity_subtype, short part_id)
 {
     this->vhe.entity_id = entity_id;
     this->vhe.entity_type = entity_type;
+    this->vhe.entity_subtype = entity_subtype;
     this->vhe.part_id = part_id;
     this->vhe.vv = this;
 }

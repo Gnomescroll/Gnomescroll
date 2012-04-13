@@ -70,11 +70,11 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_swap(slota, slotb);
         }
 
-        bool add(int id, Object_types type)
+        bool add(int id, Object_types type,  int subtype)
         {
             int slot = this->contents.get_empty_slot();
             if (slot < 0) return false;
-            return this->add(id, type, slot);
+            return this->add(id, type, subtype, slot);
         }
 
         bool add(int id, Object_types type, int subtype, int slot)

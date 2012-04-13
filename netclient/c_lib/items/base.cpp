@@ -89,7 +89,7 @@ id(id), team(team),
 type(OBJ_TYPE_BASE),
 spawn_radius(BASE_SPAWN_RADIUS)
 {
-    this->vox = new Voxel_model(&base_vox_dat, id, type, team);
+    this->vox = new Voxel_model(&base_vox_dat, id, type, 0, team);
     this->vox->set_hitscan(false);
     #ifdef DC_CLIENT
     this->vox->set_draw(true);

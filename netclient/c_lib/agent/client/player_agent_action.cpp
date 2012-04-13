@@ -485,14 +485,14 @@ void PlayerAgent_action::remove_item_from_inventory()
     inv->remove_any_action();   // TODO -- temp moethod
 }
 
-void PlayerAgent_action::add_item_to_inventory(int id, Object_types type)
+void PlayerAgent_action::add_item_to_inventory(int id, Object_types type, int subtype)
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
     Inventory* inv = this->p->you->status.inventory;
     if (inv == NULL) return;
-    inv->add_action(id,type);
+    inv->add_action(id,type,subtype);
 }
 
 void PlayerAgent_action::pickup_item()
@@ -521,7 +521,7 @@ void PlayerAgent_action::pickup_item()
 
     if (target_type != Hitscan::HITSCAN_TARGET_VOXEL) return;
     if (vox_distance > MELEE_PICK_MAX_DISTANCE) return;
-    this->add_item_to_inventory(target.entity_id, (Object_types)target.entity_type);
+    this->add_item_to_inventory(target.entity_id, (Object_types)target.entity_type, target.entity_subtype);
 }
 
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)

@@ -136,6 +136,7 @@ int get_object_type_sprite_index(Object_types type, int subtype)
         case OBJ_TYPE_BLOCK_DROP:
             switch (subtype)
             {
+                default: return ERROR_SPRITE;
             }
             break;
             
@@ -156,6 +157,7 @@ int get_object_type_sprite_index(Object_types type, int subtype)
                     return JADE_SPRITE_INDEX;
                 case ONYX:
                     return ONYX_SPRITE_INDEX;
+                default: return ERROR_SPRITE;
             }
             break;
 
@@ -166,6 +168,7 @@ int get_object_type_sprite_index(Object_types type, int subtype)
                     return GRENADE_REFILL_SPRITE_INDEX;
                 case LASER_REFILL:
                     return LASER_REFILL_SPRITE_INDEX;
+                default: return ERROR_SPRITE;
             }
             break;
 

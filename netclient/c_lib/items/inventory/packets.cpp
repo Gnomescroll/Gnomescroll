@@ -43,7 +43,7 @@ inline void add_item_to_inventory_StoC::handle()
         return;
     }
     obj->add(id, (Object_types)type, subtype, slot);
-    //printf("added item %d,%d to inventory slot %d\n", id, type, slot);
+    //printf("added item %d,%d to inventory slot %d\n", id, type, subtype, slot);
 }
 
 inline void remove_item_from_inventory_StoC::handle()

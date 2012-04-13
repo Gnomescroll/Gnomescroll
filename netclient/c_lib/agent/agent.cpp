@@ -510,7 +510,7 @@ void Agent_state::spawn_state()
 
 void Agent_state::init_vox()
 {
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type, 0);   // subtype is null
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }

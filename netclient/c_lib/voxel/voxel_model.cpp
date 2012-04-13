@@ -288,7 +288,8 @@ void Voxel_model::reset_skeleton()
 
 }
 
-void Voxel_model::init_parts(int id, int type) {
+void Voxel_model::init_parts(int id, Object_types type, int subtype)
+{
     // create each vox part from vox_dat conf
     if (this->vox_inited)
     { 
@@ -308,7 +309,7 @@ void Voxel_model::init_parts(int id, int type) {
         vv = &(this->vv[i]);
 
         vv->init(x,y,z, vp->vox_size);
-        vv->set_hitscan_properties(id, type, i);
+        vv->set_hitscan_properties(id, type, subtype, i);
 
         //#ifdef DC_CLIENT
         this->set_part_color(i);
@@ -467,7 +468,7 @@ void Voxel_model::set_vox_dat(VoxDat* vox_dat)
     this->vox_dat = vox_dat;
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type)
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, Object_types type, int subtype)
 :
 skeleton_inited(false),
 vox_inited(false),
@@ -478,11 +479,11 @@ frozen(false)
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
-    this->init_parts(id, type);
+    this->init_parts(id, type, subtype);
     this->init_skeleton();
 }
 
-Voxel_model::Voxel_model(VoxDat* vox_dat, int id, int type, int team)
+Voxel_model::Voxel_model(VoxDat* vox_dat, int id, Object_types type, int subtype, int team)
 :
 skeleton_inited(false),
 vox_inited(false),
@@ -494,7 +495,7 @@ frozen(false)
     this->set_vox_dat(vox_dat);
     this->n_parts = vox_dat->n_parts;
     this->vv = new Voxel_volume[vox_dat->n_parts];
-    this->init_parts(id, type);
+    this->init_parts(id, type, subtype);
     this->update_team_color(team);
     this->init_skeleton();
 }
