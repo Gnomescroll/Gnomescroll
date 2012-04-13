@@ -59,7 +59,7 @@ typedef enum
 /* Grenade refill */
 
 const int GRENADE_REFILL_MAX = 256;
-const int GRENADE_REFILL_TEXTURE_ID = 6;
+const int GRENADE_REFILL_SPRITE_INDEX = 6;
 const float GRENADE_REFILL_TEXTURE_SCALE = 0.5f;
 const float GRENADE_REFILL_MASS = 1.0f;
 const int GRENADE_REFILL_TTL = 30 * 12;   // 12 seconds
@@ -68,7 +68,7 @@ const float GRENADE_REFILL_DAMP = 0.4f;
 /* Laser refill */
 
 const int LASER_REFILL_MAX = 256;
-const int LASER_REFILL_TEXTURE_ID = 7;
+const int LASER_REFILL_SPRITE_INDEX = 7;
 const float LASER_REFILL_TEXTURE_SCALE = 0.5f;
 const float LASER_REFILL_MASS = 1.0f;
 const int LASER_REFILL_TTL = 30 * 12;   // 12 seconds
@@ -121,9 +121,9 @@ int get_object_type_sprite_index(PickupSpriteTypes type)
     {
          //Refills
         case GRENADE_REFILL:
-            return GRENADE_REFILL_TEXTURE_ID;
+            return GRENADE_REFILL_SPRITE_INDEX;
         case LASER_REFILL:
-            return LASER_REFILL_TEXTURE_ID;
+            return LASER_REFILL_SPRITE_INDEX;
 
         // Gems
         case MALACHITE:

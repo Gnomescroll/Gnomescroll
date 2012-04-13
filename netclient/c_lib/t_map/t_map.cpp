@@ -114,24 +114,25 @@ void block_spawn_items(int block_value, int x, int y, int z)
     if (p > drop_probability) return;
 
     const int n_items = 7;  // 7 Gemstones
-    const Object_types items[n_items] = {
-        OBJ_TYPE_MALACHITE,
-        OBJ_TYPE_RUBY,
-        OBJ_TYPE_TURQUOISE,
-        OBJ_TYPE_SILVER,
-        OBJ_TYPE_AMETHYST,
-        OBJ_TYPE_JADE,
-        OBJ_TYPE_ONYX
+    const ItemDrops::PickupSpriteTypes items[n_items] = {
+        ItemDrops::MALACHITE,
+        ItemDrops::RUBY,
+        ItemDrops::TURQUOISE,
+        ItemDrops::SILVER,
+        ItemDrops::AMETHYST,
+        ItemDrops::JADE,
+        ItemDrops::ONYX
     };
     const float mom = 2.0f; // momentum
-    Object_types type = items[randrange(0,n_items-1)];
+    const Object_types type = OBJ_TYPE_MALACHITE; // TODO -- replace with OBJ_TYPE_GEMSTONE
+    ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
 
     ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
     {
         obj->set_position(x+randf(),y+randf(), z+randf());
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(0); // TODO
+        obj->born(subtype); // TODO
     }
 }
 

@@ -338,7 +338,7 @@ class CreatePacket: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->type = state->subtype;
+            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -369,6 +369,7 @@ class CreatePacketOwnerTeam: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
+            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -401,6 +402,7 @@ class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
+            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -434,6 +436,7 @@ class CreatePacketMomentum: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
+            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -468,6 +471,7 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
+            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;

@@ -42,7 +42,7 @@ inline void object_create_StoC_model::handle()
     if (obj != NULL)
     {
         obj->set_position(x,y,z);
-        obj->born(0);   // TODO
+        obj->born(subtype);   // TODO
     }
 }
 
@@ -72,7 +72,7 @@ inline void object_create_momentum_StoC_model::handle()
     {
         obj->set_position(x,y,z);
         obj->set_momentum(mx,my,mz);
-        obj->born(0);   // TODO
+        obj->born(subtype);   // TODO
     }
 }
 

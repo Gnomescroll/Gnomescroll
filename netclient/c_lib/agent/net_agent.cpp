@@ -1098,7 +1098,7 @@ inline void identify_CtoS::handle()
         printf("identify_CtoS : handle -- client_id %d has no agent. could not identify\n", client_id);
         return;
     }
-    printf("Rceived name %s\n", name);
+    printf("Received name %s\n", name);
 
     unsigned int len = sanitize_player_name(name);
     
