@@ -826,6 +826,26 @@ put Cell's textures in equipment panel
 robot choice networking + simple interpolation
 ==============
 
+April 11-12
+
+remove ObjectStateLayer template -- replace with standard object composition
+monster spawners
+valgrind
+clean up server cython
+
+==============
+
+April 13
+
+BUILD 14
+
+added subtypes;
+removed draw() from object api
+split minivox particles into colored and textured lists
+fixed the slime update and added client side prediction
+
+===============
+
 Gun model
 Gun in first person and zoomed perspectives
 
