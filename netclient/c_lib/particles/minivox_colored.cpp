@@ -84,6 +84,7 @@ void ColoredMinivox::set_color(unsigned char r, unsigned char g, unsigned char b
 void ColoredMinivox::set_size(float size)
 {
     this->size = size;
+    this->set_mass(size * MINIVOX_MASS);
 }
 
 void ColoredMinivox::set_spin(float dtheta, float dphi)

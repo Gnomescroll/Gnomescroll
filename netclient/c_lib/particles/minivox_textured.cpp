@@ -67,6 +67,7 @@ void TexturedMinivox::set_orientation(float t, float p)
 void TexturedMinivox::set_size(float size)
 {
     this->size = size;
+    this->set_mass(size * MINIVOX_MASS);
 }
 
 void TexturedMinivox::set_texture(int tex_id)
