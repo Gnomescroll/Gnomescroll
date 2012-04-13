@@ -62,4 +62,6 @@ void print_trace()
 
     free(strings);
 }
+#else
+void print_trace() {}
 #endif
