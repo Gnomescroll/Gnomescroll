@@ -531,8 +531,9 @@ const bool Agent_status::can_gain_item(Object_types item)
                 return false;
             break;
 
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
+        case OBJ_TYPE_MEAT:
+        case OBJ_TYPE_BLOCK_DROP:
+        case OBJ_TYPE_GEMSTONE:
             can = this->inventory->can_add(item);
             return can;
 
@@ -570,24 +571,12 @@ bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
             }
             break;
 
-        case OBJ_TYPE_STONE:
-        case OBJ_TYPE_DIRT:
         case OBJ_TYPE_MEAT:
-           
-        //case OBJ_TYPE_MALACHITE:
-        //case OBJ_TYPE_RUBY:
-        //case OBJ_TYPE_TURQUOISE:
-        //case OBJ_TYPE_SILVER:
-        //case OBJ_TYPE_AMETHYST:
-        //case OBJ_TYPE_JADE:
-        //case OBJ_TYPE_ONYX:
+        case OBJ_TYPE_BLOCK_DROP:
         case OBJ_TYPE_GEMSTONE:
             #if DC_SERVER
             return this->inventory->add_action(item_id, item_type);
             #endif
-            //#if DC_CLIENT
-            //this->inventory->add(item_id, item_type);
-            //#endif
             break;
             
         default: break;

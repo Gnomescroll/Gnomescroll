@@ -161,20 +161,25 @@ void initialize_sprite_properties(PickupSpriteTypes type, SpriteProperties* obj)
     }
 }
 
-void initialize_minivox_properties(Object_types type, MinivoxProperties* obj)
+void initialize_minivox_properties(Object_types type, int subtype, MinivoxProperties* obj)
 {
     switch (type)
     {
-        case OBJ_TYPE_DIRT:
-            obj->color = DIRT_COLOR;
-            obj->size = DIRT_SIZE;
-            break;
-        case OBJ_TYPE_STONE:
-            obj->color = STONE_COLOR;
-            obj->size = STONE_SIZE;
+        case OBJ_TYPE_BLOCK_DROP:
+            switch (subtype)
+            {
+                case ItemDrops::DIRT:
+                    obj->color = DIRT_COLOR;
+                    obj->size = DIRT_SIZE;
+                    break;
+                case ItemDrops::STONE:
+                    obj->color = STONE_COLOR;
+                    obj->size = STONE_SIZE;
+                    break;
+                }
             break;
             
-        default: return;
+        default: break;
     }
     obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
     obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
@@ -187,7 +192,7 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
     public:
         VerletComponent spatial;
     
-    PickupObject(Object_types type, int id)
+    PickupObject(int id)
     : PickupComponent(), ObjectStateLayer(Objects::create_packet_momentum, Objects::state_packet_momentum, Objects::owned_none, Objects::team_none, Objects::health_none, &spatial)
     {   // TODO: constants should be loaded via dat
         this->_state.id = id;
@@ -233,8 +238,8 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
 {
     public:
 
-    PickupObjectSprite(Object_types type, int id)
-    : PickupObject(type, id)
+    PickupObjectSprite(int id)
+    : PickupObject(id)
     {
         #if DC_CLIENT
         this->sprite_properties.obj = this;
@@ -268,14 +273,12 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
 {
     public:
 
-    PickupObjectMinivox(Object_types type, int id)
-    : PickupObject(type, id)
+    PickupObjectMinivox(int id)
+    : PickupObject(id)
     {
         #if DC_CLIENT
-        initialize_minivox_properties(type, &this->minivox_properties);
         this->set_rotation(0,0);
         this->minivox_properties.obj = this;
-        ClientState::colored_minivox_list->register_object(&this->minivox_properties);
         #endif
     }
 
@@ -283,6 +286,16 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
     {
         #if DC_CLIENT
         ClientState::colored_minivox_list->unregister_object(&this->minivox_properties);
+        #endif
+    }
+
+    void born(int subtype)
+    {
+        PickupObject::born(subtype);
+        #if DC_CLIENT
+        ObjectState* state = this->state();
+        initialize_minivox_properties(state->type, state->subtype, &this->minivox_properties);
+        ClientState::colored_minivox_list->register_object(&this->minivox_properties);
         #endif
     }
 

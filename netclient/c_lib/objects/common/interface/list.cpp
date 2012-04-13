@@ -54,11 +54,12 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         //case OBJ_TYPE_LASER_REFILL:
         case OBJ_TYPE_GEMSTONE:
         case OBJ_TYPE_REFILL:
-            obj = new ItemDrops::PickupObjectSprite(type, id);  // TODO
+            obj = new ItemDrops::PickupObjectSprite(id);  // TODO
             break;
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
-            obj = new ItemDrops::PickupObjectMinivox(type, id);
+        //case OBJ_TYPE_DIRT:
+        //case OBJ_TYPE_STONE:
+        case OBJ_TYPE_BLOCK_DROP:
+            obj = new ItemDrops::PickupObjectMinivox(id);
             break;
 
         case OBJ_TYPE_INVENTORY:
@@ -379,8 +380,9 @@ void init_gameobject_list_maximums(GameObject_list* list)
     //list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
     //list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
     list->set_max_occupancy(OBJ_TYPE_REFILL, ItemDrops::REFILL_MAX);
-    list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
-    list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_BLOCK_DROP, ItemDrops::BLOCK_DROP_MAX);
     list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
     
     //list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);

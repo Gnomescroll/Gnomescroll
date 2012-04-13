@@ -18,29 +18,7 @@ void spawner_create(object_create_owner_team_index_StoC_model* msg);
 
 inline void object_create_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
-    {
-        case OBJ_TYPE_MEAT:
-        //case OBJ_TYPE_MALACHITE:
-        //case OBJ_TYPE_RUBY:
-        //case OBJ_TYPE_TURQUOISE:
-        //case OBJ_TYPE_SILVER:
-        //case OBJ_TYPE_AMETHYST:
-        //case OBJ_TYPE_JADE:
-        //case OBJ_TYPE_ONYX:
-        //case OBJ_TYPE_GRENADE_REFILL:
-        //case OBJ_TYPE_LASER_REFILL:
-        case OBJ_TYPE_GEMSTONE:
-        case OBJ_TYPE_REFILL:
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
-        case OBJ_TYPE_MONSTER_SPAWNER:
-            obj = ClientState::object_list->create((Object_types)type, (int)id);
-            break;
-            
-        default: return;
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
     if (obj != NULL)
     {
         obj->set_position(x,y,z);
@@ -50,28 +28,7 @@ inline void object_create_StoC_model::handle()
 
 inline void object_create_momentum_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
-    {
-        case OBJ_TYPE_MEAT:
-        //case OBJ_TYPE_MALACHITE:
-        //case OBJ_TYPE_RUBY:
-        //case OBJ_TYPE_TURQUOISE:
-        //case OBJ_TYPE_SILVER:
-        //case OBJ_TYPE_AMETHYST:
-        //case OBJ_TYPE_JADE:
-        //case OBJ_TYPE_ONYX:
-        //case OBJ_TYPE_GRENADE_REFILL:
-        //case OBJ_TYPE_LASER_REFILL:
-        case OBJ_TYPE_GEMSTONE:
-        case OBJ_TYPE_REFILL:
-        case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_STONE:
-            obj = ClientState::object_list->create((Object_types)type, (int)id);
-            break;
-            
-        default: return;
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
     if (obj != NULL)
     {
         obj->set_position(x,y,z);
@@ -82,15 +39,7 @@ inline void object_create_momentum_StoC_model::handle()
 
 inline void object_create_momentum_angles_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
-    {
-        case OBJ_TYPE_SLIME:
-        case OBJ_TYPE_MONSTER_BOX:
-            obj = ClientState::object_list->create((Object_types)type, (int)id);
-            break;
-        default: return;
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
     if (obj != NULL)
     {
         obj->set_position(x,y,z);
@@ -104,7 +53,7 @@ inline void object_create_owner_team_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_TURRET:
-            turret_create(this);
+            turret_create(this);    // TODO -- replace handler
             break;
         default: return;
     }
@@ -115,7 +64,7 @@ inline void object_create_owner_team_index_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_SPAWNER:
-            spawner_create(this);
+            spawner_create(this);   // TODO -- replace handler
             break;
         default: return;
     }
@@ -125,41 +74,24 @@ inline void object_create_owner_team_index_StoC_model::handle()
 
 inline void object_state_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
-    {
-        case OBJ_TYPE_TURRET:
-        case OBJ_TYPE_SPAWNER:
-        case OBJ_TYPE_MONSTER_SPAWNER:
-            obj = STATE::object_list->get((Object_types)type, id);
-            break;
-
-        default: return;
-    }
+    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
     if (obj != NULL)
         obj->set_position(x,y,z);
 }
 
 inline void object_state_momentum_StoC_model::handle()
 {
-    switch (type)
+    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
+    if (obj != NULL)
     {
-        default: break;
+        obj->set_position(x,y,z);
+        obj->set_momentum(mx,my,mz);
     }
 }
 
 inline void object_state_momentum_angles_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = NULL;
-    switch (type)
-    {
-        case OBJ_TYPE_SLIME:
-        case OBJ_TYPE_MONSTER_BOX:
-            obj = STATE::object_list->get((Object_types)type, id);
-            break;
-            
-        default: break;
-    }
+    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
     if (obj != NULL)
     {
         obj->set_position(x,y,z);
@@ -199,7 +131,7 @@ inline void object_shot_object_StoC::handle()
     switch (this->type)
     {
         case OBJ_TYPE_MONSTER_BOX:
-            Monsters::box_shot_object(this);
+            Monsters::box_shot_object(this);    // TODO -- replace handlers
             break;
             
         case OBJ_TYPE_TURRET:
