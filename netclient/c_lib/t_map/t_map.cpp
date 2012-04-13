@@ -113,26 +113,48 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
-    const int n_items = 7;  // 7 Gemstones
-    const ItemDrops::PickupSpriteTypes items[n_items] = {
-        ItemDrops::MALACHITE,
-        ItemDrops::RUBY,
-        ItemDrops::TURQUOISE,
-        ItemDrops::SILVER,
-        ItemDrops::AMETHYST,
-        ItemDrops::JADE,
-        ItemDrops::ONYX
-    };
-    const float mom = 2.0f; // momentum
-    const Object_types type = OBJ_TYPE_GEMSTONE;
-    ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
-
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
-    if (obj != NULL)
+    if (randf () < 0.5f)
     {
-        obj->set_position(x+randf(),y+randf(), z+randf());
-        obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(subtype); // TODO
+        const int n_items = 7;  // 7 Gemstones
+        const ItemDrops::PickupSpriteTypes items[n_items] = {
+            ItemDrops::MALACHITE,
+            ItemDrops::RUBY,
+            ItemDrops::TURQUOISE,
+            ItemDrops::SILVER,
+            ItemDrops::AMETHYST,
+            ItemDrops::JADE,
+            ItemDrops::ONYX
+        };
+        const float mom = 2.0f; // momentum
+        const Object_types type = OBJ_TYPE_GEMSTONE;
+        ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
+
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+        if (obj != NULL)
+        {
+            obj->set_position(x+randf(),y+randf(), z+randf());
+            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+            obj->born(subtype); // TODO
+        }
+    }
+    else
+    {
+        const int n_items = 2;
+        const ItemDrops::PickupMinivoxTypes items[n_items] = {
+            ItemDrops::DIRT,
+            ItemDrops::STONE,
+        };
+        const float mom = 2.0f;
+        const Object_types type = OBJ_TYPE_BLOCK_DROP;
+        ItemDrops::PickupMinivoxTypes subtype  = items[randrange(0,n_items-1)];
+
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+        if (obj != NULL)
+        {
+            obj->set_position(x+randf(),y+randf(), z+randf());
+            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+            obj->born(subtype); // TODO   
+        }
     }
 }
 

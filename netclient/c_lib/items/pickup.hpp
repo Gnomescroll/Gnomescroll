@@ -297,14 +297,14 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
 
     void draw()
     {
-        drawMinivox(
-            this->get_position(),
-            this->minivox_properties.forward,
-            this->minivox_properties.right,
-            this->minivox_properties.normal,
-            this->minivox_properties.size * 0.5,
-            this->minivox_properties.color
-        );
+        //drawMinivox(
+            //this->get_position(),
+            //this->minivox_properties.forward,
+            //this->minivox_properties.right,
+            //this->minivox_properties.normal,
+            //this->minivox_properties.size * 0.5,
+            //this->minivox_properties.color
+        //);
     }
 };
 
