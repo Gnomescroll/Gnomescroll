@@ -138,8 +138,7 @@ void Agent_status::check_missing_name()
 
 void Agent_status::heal(unsigned int amt)
 {
-    if (dead) return;
-
+    if (this->dead) return;
     this->health += amt;
     if (this->health > (int)this->health_max)
         this->health = this->health_max;
@@ -147,7 +146,7 @@ void Agent_status::heal(unsigned int amt)
 
 int Agent_status::apply_damage(int dmg)
 {
-    if (dead) return this->health;
+    if (this->dead) return this->health;
     
     // forward dmg indicator packet
     agent_damage_StoC dmg_msg;
@@ -230,7 +229,7 @@ int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_
 
 int Agent_status::die()
 {
-    if (dead) return 0;
+    if (this->dead) return 0;
     dead = true;
     deaths++;
 
