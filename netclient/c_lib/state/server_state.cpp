@@ -182,7 +182,7 @@ namespace ServerState
         const int slimes = 50;
         Monsters::create_monsters_spawners(monster_spawners);
         Monsters::spawn_monsters(monsters);
-        Monsters::populate_slimes(slimes)
+        Monsters::populate_slimes(slimes);
 
 
         ctf->check_agent_proximities();
