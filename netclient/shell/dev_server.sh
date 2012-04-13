@@ -1,1 +1,1 @@
-./run -s 174.37.26.118 $@
+./run lua/settings_dev.lua
