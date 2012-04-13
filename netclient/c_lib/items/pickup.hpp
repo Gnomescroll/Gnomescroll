@@ -253,7 +253,6 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
 
     void draw()
     {
-        drawBillboardSprite(this->get_position(), this->sprite_properties.sprite_index, this->sprite_properties.scale);
     }
 };
 
@@ -297,14 +296,6 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
 
     void draw()
     {
-        //drawMinivox(
-            //this->get_position(),
-            //this->minivox_properties.forward,
-            //this->minivox_properties.right,
-            //this->minivox_properties.normal,
-            //this->minivox_properties.size * 0.5,
-            //this->minivox_properties.color
-        //);
     }
 };
 
