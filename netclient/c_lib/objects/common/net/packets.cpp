@@ -12,62 +12,53 @@
 
 /* Construction */
 
-// forward declarations
-void turret_create(object_create_owner_team_StoC_model* msg);
-void spawner_create(object_create_owner_team_index_StoC_model* msg);
-
 inline void object_create_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
-    if (obj != NULL)
-    {
-        obj->set_position(x,y,z);
-        obj->born(subtype);   // TODO
-    }
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
+    obj->born(subtype);   // TODO
 }
 
 inline void object_create_momentum_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
-    if (obj != NULL)
-    {
-        obj->set_position(x,y,z);
-        obj->set_momentum(mx,my,mz);
-        obj->born(subtype);   // TODO
-    }
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
+    obj->set_momentum(mx,my,mz);
+    obj->born(subtype);
 }
 
 inline void object_create_momentum_angles_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
-    if (obj != NULL)
-    {
-        obj->set_position(x,y,z);
-        obj->set_angles(theta, phi, 0);
-        obj->born(subtype);   // TODO
-    }
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
+    obj->set_angles(theta, phi, 0);
+    obj->born(subtype);
 }
 
 inline void object_create_owner_team_StoC_model::handle()
 {
-    switch (type)
-    {
-        case OBJ_TYPE_TURRET:
-            turret_create(this);    // TODO -- replace handler
-            break;
-        default: return;
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    if (obj == NULL) return;
+    obj->set_position(x, y, z);
+    obj->set_team(team);
+    obj->set_owner(owner);
+    obj->born(subtype);
+    system_message->object_created(obj);
 }
 
 inline void object_create_owner_team_index_StoC_model::handle()
 {
-    switch (type)
-    {
-        case OBJ_TYPE_SPAWNER:
-            spawner_create(this);   // TODO -- replace handler
-            break;
-        default: return;
-    }
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    if (obj == NULL) return;
+    obj->set_position(x, y, z);
+    obj->set_team(team);
+    obj->set_owner(owner);
+    obj->set_team_index((unsigned int)team_index);
+    obj->born(subtype);
+    system_message->object_created(obj);
 }
 
 /* State */
@@ -75,29 +66,25 @@ inline void object_create_owner_team_index_StoC_model::handle()
 inline void object_state_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
-    if (obj != NULL)
-        obj->set_position(x,y,z);
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
 }
 
 inline void object_state_momentum_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
-    if (obj != NULL)
-    {
-        obj->set_position(x,y,z);
-        obj->set_momentum(mx,my,mz);
-    }
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
+    obj->set_momentum(mx,my,mz);
 }
 
 inline void object_state_momentum_angles_StoC_model::handle()
 {
     ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
-    if (obj != NULL)
-    {
-        obj->set_position(x,y,z);
-        obj->set_momentum(mx,my,mz);
-        obj->set_angles(theta, phi, 0);
-    }
+    if (obj == NULL) return;
+    obj->set_position(x,y,z);
+    obj->set_momentum(mx,my,mz);
+    obj->set_angles(theta, phi, 0);
 }
 
 /* Destruction */

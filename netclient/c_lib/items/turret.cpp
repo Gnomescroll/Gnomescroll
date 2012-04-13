@@ -15,21 +15,6 @@
 #if DC_CLIENT
 /* Packet handlers */
 
-void turret_create(object_create_owner_team_StoC_model* msg)
-{
-    Turret* t = (Turret*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);
-    if (t == NULL)
-    {
-        printf("WARNING turret_create() -- could not create turret %d\n", msg->id);
-        return;
-    }
-    t->set_position(msg->x, msg->y, msg->z);
-    t->set_team(msg->team);
-    t->set_owner(msg->owner);
-    t->born(0); // todo -- subtype
-    system_message->object_created(t);
-}
-
 // TODO - some way to generalize this
 void turret_shot_object(object_shot_object_StoC* msg)
 {

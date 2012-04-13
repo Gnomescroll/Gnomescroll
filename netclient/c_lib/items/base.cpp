@@ -30,7 +30,7 @@ void Base::get_spawn_point(int *spawn, int agent_height)
 
 void Base::tick()
 {
-#ifdef DC_SERVER
+#if DC_SERVER
     float old_z = this->z;
 
     int x,y,z;
@@ -68,7 +68,7 @@ void Base::tick()
 
 void Base::update()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     this->vox->was_updated = false;
     Vec3 center = this->vox->get_part(0)->get_center();
     float radius = this->vox->get_part(0)->radius;
@@ -91,7 +91,7 @@ spawn_radius(BASE_SPAWN_RADIUS)
 {
     this->vox = new Voxel_model(&base_vox_dat, id, type, 0, team);
     this->vox->set_hitscan(false);
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     this->vox->set_draw(true);
     #endif
     this->vox->update(this->x, this->y, this->z, this->theta, this->phi);

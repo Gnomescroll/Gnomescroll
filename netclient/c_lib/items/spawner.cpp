@@ -7,29 +7,6 @@
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
-/* Packets */
-
-#ifdef DC_CLIENT
-
-// TODO -- move this to born
-void spawner_create(object_create_owner_team_index_StoC_model* msg)
-{
-    Spawner* s = (Spawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);
-    if (s == NULL)
-    {
-        printf("WARNING spawner_create() -- could not create spawner %d\n", msg->id);
-        return;
-    }
-    s->set_position(msg->x, msg->y, msg->z);
-    s->set_team(msg->team);
-    s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
-    s->set_owner(msg->owner);
-    s->born(0); // todo -- subtype
-    Sound::spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
-    system_message->object_created(s);
-}
-#endif
-
 /* Spawners */
 
 VoxDat spawner_vox_dat;

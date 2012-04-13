@@ -7,6 +7,9 @@
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/api/include.hpp>
 #include <c_lib/objects/common/net/interfaces.hpp>
+#if DC_CLIENT
+#include <c_lib/sound/sound.hpp>
+#endif
 
 //forward decl
 class SpawnerList;
@@ -138,10 +141,18 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStat
     {
         this->_state.subtype = subtype;
         ObjectState* state = this->state();
+        Vec3 position = this->get_position();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, state->subtype, this->team.properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
-        bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial.properties.angles.x, this->spatial.properties.angles.y);
+        bornUpdateFrozenVox(this->voxel_properties.vox, position, this->spatial.properties.angles.x, this->spatial.properties.angles.y);
+
+        #if DC_SERVER
         this->broadcastCreate();
+        #endif
+
+        #if DC_CLIENT
+        Sound::spawner_placed(position.x, position.y, position.z, 0,0,0); // TODO -- generic sound handler
+        #endif
     }
 
     void die()
