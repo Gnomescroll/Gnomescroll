@@ -252,6 +252,7 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
     void born(int subtype)
     {
         PickupObject::born(subtype);
+        if (this->state()->type == OBJ_TYPE_REFILL) printf("refill Subtype is %d\n", subtype);
         #if DC_CLIENT
         initialize_sprite_properties((PickupSpriteTypes)subtype, &this->sprite_properties);
         ClientState::sprite_list->register_object(&this->sprite_properties);

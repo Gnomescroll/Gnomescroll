@@ -145,7 +145,7 @@ void slimeDropItem(Vec3 position)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(subtype);   // TODO
+        obj->born(subtype);
     }
     #endif
 }

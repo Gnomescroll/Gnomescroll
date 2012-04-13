@@ -85,7 +85,7 @@ void boxDropItem(Vec3 position)
         ItemDrops::LASER_REFILL,
         //ItemDrops::GRENADE_REFILL
     };
-    const Object_types type = OBJ_TYPE_REFILL; // TODO -- obj_type_refill
+    const Object_types type = OBJ_TYPE_REFILL;
     ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
     ObjectPolicyInterface* obj = ServerState::object_list->create(type);
@@ -93,8 +93,9 @@ void boxDropItem(Vec3 position)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(subtype);   // TODO
+        obj->born(subtype);
     }
+
     #endif
 }
 
