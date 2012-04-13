@@ -109,7 +109,7 @@ class OwnedDelegate
 {
     public:
         virtual int get_owner() = 0;
-        virtual void set_owner(int id, Object_types type, int owner) = 0;
+        virtual void set_owner(int id, Object_types type, int subtype, int owner) = 0;
         virtual ~OwnedDelegate() {}
 };
 
@@ -166,7 +166,7 @@ class OwnedNone: public OwnedDelegate
     public:
     int get_owner()
     { return NULL_OWNER; }
-    void set_owner(int id, Object_types type, int owner) {}
+    void set_owner(int id, Object_types type, int subtype, int owner) {}
 };
 
 class TeamNone: public TeamDelegate

@@ -5,7 +5,7 @@
 #include <c_lib/agent/constants.hpp>
 
 // forward decl
-void switch_agent_ownership(int id, Object_types item, int owner, int new_owner);
+void switch_agent_ownership(int id, Object_types item, int subtype, int owner, int new_owner);
 
 class OwnedProperties: public ComponentProperties
 {
@@ -27,9 +27,9 @@ class OwnedComponent: public OwnedDelegate
         return this->properties.owner;
     }
 
-    void set_owner(int id, Object_types type, int owner)
+    void set_owner(int id, Object_types type, int subtype, int owner)
     {
-        switch_agent_ownership(id, type, this->properties.owner, owner);
+        switch_agent_ownership(id, type, subtype, this->properties.owner, owner);
         this->properties.owner = owner;
     }
 

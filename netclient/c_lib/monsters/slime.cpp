@@ -133,18 +133,19 @@ void slimeDropItem(Vec3 position)
     if (p > drop_probability) return;
     
     const int n_types = 2;    
-    Object_types types[n_types] = {
-        OBJ_TYPE_LASER_REFILL,
-        OBJ_TYPE_GRENADE_REFILL
+    ItemDrops::PickupSpriteTypes types[n_types] = {
+        ItemDrops::LASER_REFILL,
+        ItemDrops::GRENADE_REFILL
     };
-    Object_types type = types[randrange(0,n_types-1)];
+    const Object_types type = OBJ_TYPE_REFILL;
+    ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
     ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(0);   // TODO
+        obj->born(subtype);   // TODO
     }
     #endif
 }

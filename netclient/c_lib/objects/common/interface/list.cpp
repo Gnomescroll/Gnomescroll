@@ -50,8 +50,9 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_AMETHYST:
         case OBJ_TYPE_JADE:
         case OBJ_TYPE_ONYX:
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
+        //case OBJ_TYPE_GRENADE_REFILL:
+        //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_REFILL:
             obj = new ItemDrops::PickupObjectSprite(type, id);  // TODO
             break;
         case OBJ_TYPE_DIRT:
@@ -374,8 +375,9 @@ void init_gameobject_list_maximums(GameObject_list* list)
     
     list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
     
-    list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
-    list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
+    list->set_max_occupancy(OBJ_TYPE_REFILL, ItemDrops::REFILL_MAX);
     list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
     list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
     list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);

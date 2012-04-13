@@ -543,7 +543,7 @@ const bool Agent_status::can_gain_item(Object_types item)
 }
 
 // TODO -- duplicate interface for client side -- should go through event
-bool Agent_status::gain_item(int item_id, Object_types item_type)
+bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
 {
     bool can = this->can_gain_item(item_type);
     if (!can) return false;
@@ -557,12 +557,17 @@ bool Agent_status::gain_item(int item_id, Object_types item_type)
             owned_spawners++;
             break;
 
-        case OBJ_TYPE_GRENADE_REFILL:
-            this->a->weapons.grenades.add_ammo(10);
-            break;
-            
-        case OBJ_TYPE_LASER_REFILL:
-            this->a->weapons.laser.add_ammo(20);
+        case OBJ_TYPE_REFILL:
+            switch (subtype)
+            {
+            case ItemDrops::GRENADE_REFILL:
+                this->a->weapons.grenades.add_ammo(10);
+                break;
+                
+            case ItemDrops::LASER_REFILL:
+                this->a->weapons.laser.add_ammo(20);
+                break;
+            }
             break;
 
         case OBJ_TYPE_STONE:
@@ -671,7 +676,7 @@ void Agent_status::tick()
         this->lifetime++;
 }
 
-void switch_agent_ownership(int item_id, Object_types item_type, int owner, int new_owner)
+void switch_agent_ownership(int item_id, Object_types item_type, int subtype, int owner, int new_owner)
 {
     Agent_state* a;
     if (owner != NO_AGENT)
@@ -684,6 +689,6 @@ void switch_agent_ownership(int item_id, Object_types item_type, int owner, int 
     {
         a = STATE::agent_list->get(new_owner);
         if (a != NULL)
-            a->status.gain_item(item_id, item_type);
+            a->status.gain_item(item_id, item_type, subtype);
     }
 }

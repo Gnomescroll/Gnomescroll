@@ -147,7 +147,7 @@ class ObjectStateLayer: public ObjectPolicyInterface
 
         // Owner
         int get_owner() { return this->owned->get_owner(); }
-        void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, owner); }
+        void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, this->state()->subtype, owner); }
 
         // Team
         int get_team() { return this->team->get_team(); }

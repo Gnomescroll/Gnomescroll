@@ -5,7 +5,7 @@
 #include <c_lib/agent/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
-void switch_agent_ownership(int item_id, Object_types item_type, int owner, int new_owner);
+void switch_agent_ownership(int item_id, Object_types item_type, int subtype, int owner, int new_owner);
 
 class Agent_state;  // forward declaration
 
@@ -96,7 +96,7 @@ class Agent_status {
 
         // item stuff
         const bool can_gain_item(Object_types item);
-        bool gain_item(int item_id, Object_types item);
+        bool gain_item(int item_id, Object_types item, int subtype);
         bool lose_item(Object_types item);
 
         explicit Agent_status(Agent_state* a);

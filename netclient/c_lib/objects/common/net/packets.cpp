@@ -29,8 +29,9 @@ inline void object_create_StoC_model::handle()
         case OBJ_TYPE_AMETHYST:
         case OBJ_TYPE_JADE:
         case OBJ_TYPE_ONYX:
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
+        //case OBJ_TYPE_GRENADE_REFILL:
+        //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_MONSTER_SPAWNER:
@@ -59,8 +60,9 @@ inline void object_create_momentum_StoC_model::handle()
         case OBJ_TYPE_AMETHYST:
         case OBJ_TYPE_JADE:
         case OBJ_TYPE_ONYX:
-        case OBJ_TYPE_GRENADE_REFILL:
-        case OBJ_TYPE_LASER_REFILL:
+        //case OBJ_TYPE_GRENADE_REFILL:
+        //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
             obj = ClientState::object_list->create((Object_types)type, (int)id);

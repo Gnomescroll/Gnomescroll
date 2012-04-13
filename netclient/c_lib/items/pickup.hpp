@@ -55,7 +55,7 @@ void tickPickup(ObjectState* state, Object* object, float pickup_radius)
 {
     #if DC_SERVER
     Agent_state* agent = nearest_agent_in_range(object->get_position(), pickup_radius);
-    if (agent != NULL && agent->status.gain_item(state->id, state->type))
+    if (agent != NULL && agent->status.gain_item(state->id, state->type, state->subtype))
     {   // was picked up, die
         object->was_picked_up(agent->id);
         state->ttl = state->ttl_max;
@@ -85,18 +85,18 @@ class PickupComponent
 
 /* Initializers */
 
-// TODO -- deprecate for phyics initializer
-void initialize_pickup_object(Object_types type, ObjectState* state)
+// TODO -- deprecate for physics initializer
+void initialize_pickup_object(Object_types type, int subtype, ObjectState* state)
 {
-    switch (type)
+    switch (subtype)
     {
-        case OBJ_TYPE_GRENADE_REFILL:
+        case ItemDrops::GRENADE_REFILL:
             state->mass = GRENADE_REFILL_MASS;
             state->ttl_max = GRENADE_REFILL_TTL;
             state->damp = GRENADE_REFILL_DAMP;
             break;
 
-        case OBJ_TYPE_LASER_REFILL:
+        case ItemDrops::LASER_REFILL:
             state->mass = LASER_REFILL_MASS;
             state->ttl_max = LASER_REFILL_TTL;
             state->damp = LASER_REFILL_DAMP;
@@ -106,7 +106,7 @@ void initialize_pickup_object(Object_types type, ObjectState* state)
     }
 }
 
-void initialize_pickup_properties(Object_types type, PickupComponent* obj)
+void initialize_pickup_properties(Object_types type, int subtype, PickupComponent* obj)
 {
     switch (type)
     {
@@ -198,7 +198,6 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
     PickupObject(Object_types type, int id)
     : PickupComponent(), ObjectStateLayer(Objects::create_packet_momentum, Objects::state_packet_momentum, Objects::owned_none, Objects::team_none, Objects::health_none, &spatial)
     {   // TODO: constants should be loaded via dat
-        this->_state.type = type;
         this->_state.id = id;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
@@ -206,8 +205,6 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
 
         this->pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
 
-        initialize_pickup_object(type, this->state());
-        initialize_pickup_properties(type, this);
     }
 
     ~PickupObject()
@@ -227,6 +224,9 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
     void born(int subtype)
     {
         this->_state.subtype = subtype;
+        ObjectState* state = this->state();
+        initialize_pickup_object(state->type, subtype, state);
+        initialize_pickup_properties(state->type, subtype, this);
         this->broadcastCreate();
     }
 

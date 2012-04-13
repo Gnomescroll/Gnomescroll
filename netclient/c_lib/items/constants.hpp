@@ -40,6 +40,9 @@ namespace ItemDrops
 {
 
 /* Refills */
+
+const int REFILL_MAX = 512;
+
 typedef enum
 {
     GRENADE_REFILL,
@@ -58,7 +61,7 @@ typedef enum
 
 /* Grenade refill */
 
-const int GRENADE_REFILL_MAX = 256;
+//const int GRENADE_REFILL_MAX = 256;
 const int GRENADE_REFILL_SPRITE_INDEX = 6;
 const float GRENADE_REFILL_TEXTURE_SCALE = 0.5f;
 const float GRENADE_REFILL_MASS = 1.0f;
@@ -67,7 +70,7 @@ const float GRENADE_REFILL_DAMP = 0.4f;
 
 /* Laser refill */
 
-const int LASER_REFILL_MAX = 256;
+//const int LASER_REFILL_MAX = 256;
 const int LASER_REFILL_SPRITE_INDEX = 7;
 const float LASER_REFILL_TEXTURE_SCALE = 0.5f;
 const float LASER_REFILL_MASS = 1.0f;
