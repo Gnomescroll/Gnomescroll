@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/objects/common/list/list.hpp>
 #include <c_lib/objects/components/sprite/sprite.hpp>
 
@@ -16,3 +18,5 @@ class SpriteList: public BehaviourList
     : BehaviourList(SPRITE_LIST_MAX)
     {}
 };
+
+#endif

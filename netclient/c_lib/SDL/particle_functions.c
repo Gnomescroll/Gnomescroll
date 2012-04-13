@@ -1,5 +1,7 @@
 #include "particle_functions.h"
 
+#include <c_lib/camera/camera.hpp>
+
 static GLuint shader_program_1;
 
 int setShaders() {

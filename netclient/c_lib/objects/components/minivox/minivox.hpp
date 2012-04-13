@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/objects/common/component/component.hpp>
 
 // todo -- minivox color draw list
@@ -124,3 +126,5 @@ class MinivoxComponent
     {
     }
 };
+
+#endif

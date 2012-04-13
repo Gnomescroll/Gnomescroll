@@ -1,5 +1,9 @@
 #include "list.hpp"
 
+#if DC_CLIENT
+
+#include <c_lib/draw/draw.hpp>
+
 void SpriteList::draw()
 {
     if (this->ct == 0) return;
@@ -11,3 +15,5 @@ void SpriteList::draw()
             drawBillboardSprite(data->obj->get_position(), data->sprite_index, data->scale);
         }
 }
+
+#endif

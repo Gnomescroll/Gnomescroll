@@ -3,6 +3,7 @@
 #if DC_CLIENT
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/input/handlers.hpp>
+#include <c_lib/camera/fulstrum_test.hpp>
 #endif
 
 /* MAJOR TODO */

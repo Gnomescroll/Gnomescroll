@@ -4,15 +4,11 @@
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
-#include <c_lib/objects/components/sprite/sprite.hpp>
-
 #include <c_lib/items/constants.hpp>
-
-
-using namespace ItemDrops;
 
 //forward decl
 #if DC_CLIENT
+#include <c_lib/objects/components/sprite/sprite.hpp>
 namespace ClientState
 {
     extern SpriteList* sprite_list;
@@ -117,7 +113,7 @@ void initialize_pickup_properties(Object_types type, int subtype, PickupComponen
     }
 }
 
-
+#if DC_CLIENT
 void initialize_sprite_properties(Object_types type, int subtype, SpriteProperties* obj)
 {
     int sprite_index = get_object_type_sprite_index(type, subtype);
@@ -173,6 +169,7 @@ void initialize_minivox_properties(Object_types type, int subtype, MinivoxProper
     obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
     obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
 }
+#endif
 
 /* Composition */
 
@@ -223,7 +220,11 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
     }
 };
 
-class PickupObjectSprite: public PickupObject, public SpriteComponent
+class PickupObjectSprite:
+    #if DC_CLIENT
+    public SpriteComponent,
+    #endif
+    public PickupObject
 {
     public:
 
@@ -252,7 +253,11 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
     }
 };
 
-class PickupObjectMinivox: public PickupObject, public MinivoxComponent
+class PickupObjectMinivox:
+    #if DC_CLIENT
+    public MinivoxComponent,
+    #endif
+    public PickupObject
 {
     public:
 

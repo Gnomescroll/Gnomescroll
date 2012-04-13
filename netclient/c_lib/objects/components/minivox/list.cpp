@@ -1,5 +1,9 @@
 #include "list.hpp"
 
+#if DC_CLIENT
+
+#include <c_lib/draw/draw.hpp>
+
 void ColoredMinivoxList::draw()
 {
     if (this->ct == 0) return;
@@ -16,3 +20,4 @@ void ColoredMinivoxList::draw()
         }
 }
 
+#endif

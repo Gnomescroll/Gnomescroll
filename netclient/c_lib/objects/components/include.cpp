@@ -1,12 +1,14 @@
 
+#if DC_CLIENT
+#include <c_lib/objects/components/minivox/minivox.cpp>
+#include <c_lib/objects/components/minivox/list.cpp>
+
 #include <c_lib/objects/components/sprite/sprite.cpp>
 #include <c_lib/objects/components/sprite/list.cpp>
+#endif
 
 #include <c_lib/objects/components/health/health.cpp>
 //#include <c_lib/objects/components/health/list.cpp>
-
-#include <c_lib/objects/components/minivox/minivox.cpp>
-#include <c_lib/objects/components/minivox/list.cpp>
 
 #include <c_lib/objects/components/owned/owned.cpp>
 #include <c_lib/objects/components/owned/list.cpp>
