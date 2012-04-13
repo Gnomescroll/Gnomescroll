@@ -39,6 +39,23 @@ const float TURRET_LASER_BIAS = 1.0f;
 namespace ItemDrops
 {
 
+/* Refills */
+typedef enum
+{
+    GRENADE_REFILL,
+    LASER_REFILL,
+    HEALTH_REFILL,
+    MEAT,
+    MALACHITE,
+    RUBY,
+    TURQUOISE,
+    SILVER,
+    AMETHYST,
+    JADE,
+    ONYX,
+
+} PickupSpriteTypes;
+
 /* Grenade refill */
 
 const int GRENADE_REFILL_MAX = 256;
@@ -97,43 +114,42 @@ const int MEAT_SPRITE_INDEX = 1;
 const int SPAWNER_SPRITE_INDEX = 6;
 const int TURRET_SPRITE_INDEX = 7;
 
-int get_object_type_sprite_index(Object_types type)
+int get_object_type_sprite_index(PickupSpriteTypes type)
 {
     static const int ERROR_SPRITE = 0;
     switch (type)
     {
-        // Refills
-        case OBJ_TYPE_GRENADE_REFILL:
+         //Refills
+        case GRENADE_REFILL:
             return GRENADE_REFILL_TEXTURE_ID;
-        case OBJ_TYPE_LASER_REFILL:
+        case LASER_REFILL:
             return LASER_REFILL_TEXTURE_ID;
 
         // Gems
-        case OBJ_TYPE_MALACHITE:
+        case MALACHITE:
             return MALACHITE_SPRITE_INDEX;
-        case OBJ_TYPE_RUBY:
+        case RUBY:
             return RUBY_SPRITE_INDEX;
-        case OBJ_TYPE_TURQUOISE:
+        case TURQUOISE:
             return TURQUOISE_SPRITE_INDEX;
-        case OBJ_TYPE_SILVER:
+        case SILVER:
             return SILVER_SPRITE_INDEX;
-        case OBJ_TYPE_AMETHYST:
+        case AMETHYST:
             return AMETHYST_SPRITE_INDEX;
-        case OBJ_TYPE_JADE:
+        case JADE:
             return JADE_SPRITE_INDEX;
-        case OBJ_TYPE_ONYX:
+        case ONYX:
             return ONYX_SPRITE_INDEX;
 
         // Misc
-        case OBJ_TYPE_MEAT:
+        case MEAT:
             return MEAT_SPRITE_INDEX;
-            break;
 
         // Functional items
-        case OBJ_TYPE_SPAWNER:
-            return SPAWNER_SPRITE_INDEX;
-        case OBJ_TYPE_TURRET:
-            return TURRET_SPRITE_INDEX;
+        //case OBJ_TYPE_SPAWNER:
+            //return SPAWNER_SPRITE_INDEX;
+        //case OBJ_TYPE_TURRET:
+            //return TURRET_SPRITE_INDEX;
 
         default: return ERROR_SPRITE;
     }

@@ -65,7 +65,6 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
  
 int get_grenade_damage(Object_types type)
 {
-    printf("type %d\n", type);
     switch (type)
     {
         case OBJ_TYPE_SPAWNER:

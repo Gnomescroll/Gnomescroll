@@ -16,7 +16,7 @@
 
 int get_icon_spritesheet_id(Object_types type)
 {
-    return ItemDrops::get_object_type_sprite_index(type);  // TODO: this is defined in pickup.hpp, move it
+    return ItemDrops::get_object_type_sprite_index((ItemDrops::PickupSpriteTypes)type);  // TODO: this is defined in pickup.hpp, move it
 }
 
 class InventoryProperties;

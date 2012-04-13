@@ -126,42 +126,42 @@ void initialize_pickup_properties(Object_types type, PickupComponent* obj)
 }
 
 
-void initialize_sprite_properties(Object_types type, SpriteProperties* obj)
+void initialize_sprite_properties(PickupSpriteTypes type, SpriteProperties* obj)
 {
     int sprite_index = get_object_type_sprite_index(type);
     obj->sprite_index = sprite_index;
     switch (type)
     {
-        case OBJ_TYPE_GRENADE_REFILL:
+        case GRENADE_REFILL:
             obj->scale = GRENADE_REFILL_TEXTURE_SCALE;
             break;
-        case OBJ_TYPE_LASER_REFILL:
+        case LASER_REFILL:
             obj->scale = LASER_REFILL_TEXTURE_SCALE;
             break;
 
-        case OBJ_TYPE_MALACHITE:
+        case MALACHITE:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_RUBY:
+        case RUBY:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_TURQUOISE:
+        case TURQUOISE:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_SILVER:
+        case SILVER:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_AMETHYST:
+        case AMETHYST:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_JADE:
+        case JADE:
             obj->scale = GEMSTONE_SCALE;
             break;
-        case OBJ_TYPE_ONYX:
+        case ONYX:
             obj->scale = GEMSTONE_SCALE;
             break;
 
-        case OBJ_TYPE_MEAT:
+        case MEAT:
             obj->scale = MEAT_SCALE;
             break;
 
@@ -244,8 +244,15 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
     : PickupObject(type, id)
     {
         #if DC_CLIENT
-        initialize_sprite_properties(type, &this->sprite_properties);
         this->sprite_properties.obj = this;
+        #endif
+    }
+
+    void born(int subtype)
+    {
+        PickupObject::born(subtype);
+        #if DC_CLIENT
+        initialize_sprite_properties((PickupSpriteTypes)subtype, &this->sprite_properties);
         ClientState::sprite_list->register_object(&this->sprite_properties);
         #endif
     }

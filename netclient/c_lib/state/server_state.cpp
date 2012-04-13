@@ -134,7 +134,6 @@ namespace ServerState
             if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
               && obj->get_owner() != agent->id)
                 continue;
-            printf("grenade damage %d\n", Particles::get_grenade_damage(state->type));
             obj->take_damage(Particles::get_grenade_damage(state->type));
             if (obj->did_die() && agent != NULL
               && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
