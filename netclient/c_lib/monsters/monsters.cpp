@@ -54,7 +54,7 @@ void spawn_monsters(int max_monsters)
         if (added == 0) break; // all spawners full
         ct += added;
     }
-    printf("Created %d\n", ct);
+    //printf("Created %d\n", ct);
 }
 
 void create_monsters_spawners(int max_spawners)

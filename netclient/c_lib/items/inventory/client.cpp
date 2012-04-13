@@ -32,7 +32,7 @@ void InventoryProperties::load(int id, Object_types type)
     this->item_type = type;
     if (id != EMPTY_SLOT && new_icon)   // set to new
         register_inventory_item_draw_list(this);
-    printf("Loaded inventory item %d,%d\n", id,type);
+    //printf("Loaded inventory item %d,%d\n", id,type);
 }
 
 

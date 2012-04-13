@@ -43,7 +43,7 @@ inline void add_item_to_inventory_StoC::handle()
         return;
     }
     obj->add(id, (Object_types)type, slot);
-    printf("added item %d,%d to inventory slot %d\n", id, type, slot);
+    //printf("added item %d,%d to inventory slot %d\n", id, type, slot);
 }
 
 inline void remove_item_from_inventory_StoC::handle()
@@ -55,7 +55,7 @@ inline void remove_item_from_inventory_StoC::handle()
         return;
     }
     obj->remove(slot);
-    printf("removed item from inventory slot %d\n", slot);
+    //printf("removed item from inventory slot %d\n", slot);
 }
 
 inline void swap_item_in_inventory_StoC::handle()
@@ -67,7 +67,7 @@ inline void swap_item_in_inventory_StoC::handle()
         return;
     }
     obj->swap(slota, slotb);
-    printf("swapped slots %d,%d in inventory %d\n", slota, slotb, inventory_id);
+    //printf("swapped slots %d,%d in inventory %d\n", slota, slotb, inventory_id);
 }
 
 inline void add_item_to_inventory_CtoS::handle() {}
