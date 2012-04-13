@@ -572,14 +572,16 @@ bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
 
         case OBJ_TYPE_STONE:
         case OBJ_TYPE_DIRT:
-        case OBJ_TYPE_MEAT:        
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
+        case OBJ_TYPE_MEAT:
+           
+        //case OBJ_TYPE_MALACHITE:
+        //case OBJ_TYPE_RUBY:
+        //case OBJ_TYPE_TURQUOISE:
+        //case OBJ_TYPE_SILVER:
+        //case OBJ_TYPE_AMETHYST:
+        //case OBJ_TYPE_JADE:
+        //case OBJ_TYPE_ONYX:
+        case OBJ_TYPE_GEMSTONE:
             #if DC_SERVER
             return this->inventory->add_action(item_id, item_type);
             #endif

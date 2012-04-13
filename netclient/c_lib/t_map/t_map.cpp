@@ -124,7 +124,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         ItemDrops::ONYX
     };
     const float mom = 2.0f; // momentum
-    const Object_types type = OBJ_TYPE_MALACHITE; // TODO -- replace with OBJ_TYPE_GEMSTONE
+    const Object_types type = OBJ_TYPE_GEMSTONE;
     ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
 
     ObjectPolicyInterface* obj = ServerState::object_list->create(type);

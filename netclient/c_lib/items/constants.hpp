@@ -99,7 +99,7 @@ const float STONE_MASS = 1.0f;
 
 /* Gems */
 const int GEMSTONE_PICKUP_RADIUS = 1.0f;
-const int GEMSTONE_MAX = 256;
+const int GEMSTONE_MAX = 256 * 16;
 const float GEMSTONE_SCALE = 0.4f;
 const int MALACHITE_SPRITE_INDEX = 0;
 const int RUBY_SPRITE_INDEX = 2;

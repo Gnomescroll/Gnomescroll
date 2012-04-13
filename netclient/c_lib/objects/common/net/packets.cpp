@@ -22,15 +22,16 @@ inline void object_create_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
+        //case OBJ_TYPE_MALACHITE:
+        //case OBJ_TYPE_RUBY:
+        //case OBJ_TYPE_TURQUOISE:
+        //case OBJ_TYPE_SILVER:
+        //case OBJ_TYPE_AMETHYST:
+        //case OBJ_TYPE_JADE:
+        //case OBJ_TYPE_ONYX:
         //case OBJ_TYPE_GRENADE_REFILL:
         //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_GEMSTONE:
         case OBJ_TYPE_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:
@@ -53,15 +54,16 @@ inline void object_create_momentum_StoC_model::handle()
     switch (type)
     {
         case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
+        //case OBJ_TYPE_MALACHITE:
+        //case OBJ_TYPE_RUBY:
+        //case OBJ_TYPE_TURQUOISE:
+        //case OBJ_TYPE_SILVER:
+        //case OBJ_TYPE_AMETHYST:
+        //case OBJ_TYPE_JADE:
+        //case OBJ_TYPE_ONYX:
         //case OBJ_TYPE_GRENADE_REFILL:
         //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_GEMSTONE:
         case OBJ_TYPE_REFILL:
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:

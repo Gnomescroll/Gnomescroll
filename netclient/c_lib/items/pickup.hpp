@@ -110,17 +110,9 @@ void initialize_pickup_properties(Object_types type, int subtype, PickupComponen
 {
     switch (type)
     {
-        case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
+        case OBJ_TYPE_GEMSTONE:
             obj->pickup_radius = GEMSTONE_PICKUP_RADIUS;
             break;
-            
         default: return;
     }
 }

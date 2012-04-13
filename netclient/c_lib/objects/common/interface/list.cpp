@@ -43,15 +43,16 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
             break;
 
         case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_MALACHITE:
-        case OBJ_TYPE_RUBY:
-        case OBJ_TYPE_TURQUOISE:
-        case OBJ_TYPE_SILVER:
-        case OBJ_TYPE_AMETHYST:
-        case OBJ_TYPE_JADE:
-        case OBJ_TYPE_ONYX:
+        //case OBJ_TYPE_MALACHITE:
+        //case OBJ_TYPE_RUBY:
+        //case OBJ_TYPE_TURQUOISE:
+        //case OBJ_TYPE_SILVER:
+        //case OBJ_TYPE_AMETHYST:
+        //case OBJ_TYPE_JADE:
+        //case OBJ_TYPE_ONYX:
         //case OBJ_TYPE_GRENADE_REFILL:
         //case OBJ_TYPE_LASER_REFILL:
+        case OBJ_TYPE_GEMSTONE:
         case OBJ_TYPE_REFILL:
             obj = new ItemDrops::PickupObjectSprite(type, id);  // TODO
             break;
@@ -381,13 +382,15 @@ void init_gameobject_list_maximums(GameObject_list* list)
     list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
     list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
     list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
-    list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_RUBY, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_TURQUOISE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_SILVER, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_AMETHYST, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_JADE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_ONYX, ItemDrops::GEMSTONE_MAX);
+    
+    //list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_RUBY, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_TURQUOISE, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_SILVER, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_AMETHYST, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_JADE, ItemDrops::GEMSTONE_MAX);
+    //list->set_max_occupancy(OBJ_TYPE_ONYX, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_GEMSTONE, ItemDrops::GEMSTONE_MAX);
 
     // mobs
     list->set_max_occupancy(OBJ_TYPE_SLIME, Monsters::SLIME_MAX);
