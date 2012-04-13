@@ -26,7 +26,6 @@ class Slime:
     void die();
     void born(int subtype);
     void update();
-    void draw(){/*Empty*/}
     
     explicit Slime(int id);
 };

@@ -100,8 +100,6 @@ class MonsterSpawner:
         this->spatial.properties.set_changed(false);
     }
 
-    void draw() {}
-
     void born(int subtype)
     {
         this->_state.subtype = subtype;

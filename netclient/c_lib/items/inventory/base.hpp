@@ -12,7 +12,6 @@ class InventoryObjectInterface: public ObjectStateLayer
         OwnedComponent owned;
     
         void tick() {}
-        void draw() {}
         void update() {}
         void born(int subtype) { this->_state.subtype = subtype; }
         void die() {}

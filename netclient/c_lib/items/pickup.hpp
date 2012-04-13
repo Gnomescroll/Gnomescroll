@@ -250,10 +250,6 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
         ClientState::sprite_list->unregister_object(&this->sprite_properties);
         #endif
     }
-
-    void draw()
-    {
-    }
 };
 
 class PickupObjectMinivox: public PickupObject, public MinivoxComponent
@@ -292,10 +288,6 @@ class PickupObjectMinivox: public PickupObject, public MinivoxComponent
         this->delta_rotation();
         #endif
         PickupObject::tick();
-    }
-
-    void draw()
-    {
     }
 };
 

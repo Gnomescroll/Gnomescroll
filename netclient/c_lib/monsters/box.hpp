@@ -430,8 +430,6 @@ class Box:
         this->spatial.properties.set_changed(false);
     }
     
-    void draw() {/*Empty*/}
-
     explicit Box(int id)
     : ObjectStateLayer(Objects::create_packet_momentum_angles, Objects::state_packet_momentum_angles, Objects::owned_none, Objects::team_none, &health, &spatial),
     at_destination(false), en_route(false), ticks_to_destination(1), speed(BOX_SPEED),
