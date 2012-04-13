@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/agent/client/player_agent.hpp>
 #endif
 
@@ -23,7 +23,7 @@ const int GRENADE_SLIME_DAMAGE = 100;
 
 class grenade_StoC;     // forward decl
 
-class Grenade: public Particle, public BillboardSprite
+class Grenade: public ParticleMotion, public BillboardSprite
 {
     private:
         int bounce_count;
@@ -37,7 +37,7 @@ class Grenade: public Particle, public BillboardSprite
         int block_damage(int dist);
         void damage_blocks();
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         void broadcast();
         #endif
         

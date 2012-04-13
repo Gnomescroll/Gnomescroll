@@ -17,7 +17,7 @@ void Blood::init()
 
 Blood::Blood(int id)
 :
-Particle(id, 0,0,0,0,0,0, BLOOD_MASS),
+ParticleMotion(id, 0,0,0,0,0,0, BLOOD_MASS),
 BillboardSprite()
 {
     this->init();
@@ -25,7 +25,7 @@ BillboardSprite()
 
 Blood::Blood(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, BLOOD_MASS),
+ParticleMotion(id, x,y,z, mx,my,mz, BLOOD_MASS),
 BillboardSprite()
 {
     this->init();
@@ -52,7 +52,7 @@ void Blood_list::tick()
 
 void Blood_list::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if(num == 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)

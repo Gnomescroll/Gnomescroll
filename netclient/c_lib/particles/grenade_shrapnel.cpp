@@ -17,14 +17,14 @@ void Grenade_shrapnel::init()
 
 Grenade_shrapnel::Grenade_shrapnel(int id)
 :
-Particle(id, 0,0,0,0,0,0, GRENADE_SHRAPNEL_MASS)
+ParticleMotion(id, 0,0,0,0,0,0, GRENADE_SHRAPNEL_MASS)
 {
     this->init();
 }
 
 Grenade_shrapnel::Grenade_shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, GRENADE_SHRAPNEL_MASS)
+ParticleMotion(id, x,y,z, mx,my,mz, GRENADE_SHRAPNEL_MASS)
 {
     this->init();
 }

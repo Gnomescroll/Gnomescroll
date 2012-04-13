@@ -16,7 +16,8 @@
 
 #include <c_lib/particles/shrapnel.cpp>
 #include <c_lib/particles/blood.cpp>
-#include <c_lib/particles/minivox.cpp>
+#include <c_lib/particles/minivox_colored.cpp>
+#include <c_lib/particles/minivox_textured.cpp>
 #include <c_lib/particles/billboard_text.cpp>
 #include <c_lib/particles/billboard_text_hud.cpp>
 #include <c_lib/particles/billboard_sprite.cpp>

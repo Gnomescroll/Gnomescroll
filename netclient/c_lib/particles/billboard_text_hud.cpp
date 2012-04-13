@@ -14,7 +14,7 @@ namespace Particles
 
 BillboardTextHud::BillboardTextHud(int id)
 :
-Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
+ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
 should_draw(true)
 {
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
@@ -25,7 +25,7 @@ should_draw(true)
 
 BillboardTextHud::BillboardTextHud(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, DEFAULT_MASS),
+ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
 should_draw(true)
 {
     this->ttl_max = BILLBOARD_TEXT_HUD_TTL;
@@ -106,7 +106,7 @@ void BillboardTextHud_list::tick() {
 }
 
 void BillboardTextHud_list::draw() {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if (num == 0) return;
     if (current_camera == NULL) return;
     if (HudFont::font == NULL) return;

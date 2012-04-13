@@ -3,12 +3,12 @@
 namespace Particles
 {
 
-void Particle::set_ttl(int ttl)
+void ParticleMotion::set_ttl(int ttl)
 {   // set to a negative number for no timeout
     this->ttl = ttl;
 }
 
-Particle::Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
+ParticleMotion::ParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
 id(id),
 ttl(0)
@@ -18,9 +18,9 @@ ttl(0)
     this->set_momentum(mx,my,mz);
 }
 
-EventParticle::EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass)
+EventParticleMotion::EventParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass)
 :
-Particle(id, x,y,z,mx,my,mz, mass)
+ParticleMotion(id, x,y,z,mx,my,mz, mass)
 {}
 
 }

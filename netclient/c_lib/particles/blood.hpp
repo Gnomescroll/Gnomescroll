@@ -11,7 +11,7 @@ namespace Particles
 #define BLOOD_TEXTURE_SCALE 0.1f
 
 
-class Blood: public Particle, public BillboardSprite
+class Blood: public ParticleMotion, public BillboardSprite
 {
     public:
         void init();

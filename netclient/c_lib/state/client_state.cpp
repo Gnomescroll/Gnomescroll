@@ -156,7 +156,8 @@ namespace ClientState {
         Particles::grenade_list->tick();
         Particles::shrapnel_list->tick();
         Particles::blood_list->tick();
-        Particles::minivox_list->tick();
+        Particles::colored_minivox_list->tick();
+        Particles::textured_minivox_list->tick();
         Particles::billboard_text_list->tick();
         Particles::billboard_text_hud_list->tick();
 
@@ -175,8 +176,8 @@ namespace ClientState {
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
-        Particles::minivox_list->draw_colored();
-        colored_minivox_list->draw();
+        Particles::colored_minivox_list->draw();
+        colored_minivox_list->draw();   // new entity system registries
 
         glEnd();
 
@@ -185,7 +186,7 @@ namespace ClientState {
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
         glBegin(GL_QUADS);
 
-        Particles::minivox_list->draw_textured();
+        Particles::textured_minivox_list->draw();
 
         glEnd();
         glDisable(GL_TEXTURE_2D);

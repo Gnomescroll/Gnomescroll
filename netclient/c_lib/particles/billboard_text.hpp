@@ -14,7 +14,7 @@ namespace Particles
 
 const static int BILLBOARD_TEXT_MAX_LETTERS = 12;
 
-class BillboardText: public Particle
+class BillboardText: public ParticleMotion
 {
     public:
         unsigned char r,g,b,a;

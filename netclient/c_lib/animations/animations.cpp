@@ -15,15 +15,12 @@
 #include <c_lib/particles/blood.hpp>
 
 
-using Particles::Minivox;
-
 namespace Animations {
 
 void block_crumble(float x, float y, float z, int n, int cube_id, float momentum)
 {
     if (!Options::animations) return;
     const float crumble_size = 0.17f;
-    Particles::minivox_list->set_size(crumble_size);
 
     //unsigned char r,g,b,a;
     int side;
@@ -32,7 +29,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     float nx,ny,nz;
     float vx,vy,vz;
 
-    Minivox* minivox;
+    Particles::TexturedMinivox* minivox;
     
     for (int i=0; i < n; i++)
     {
@@ -47,15 +44,14 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         side = randrange(0,5);
 
         tex_id = t_map::get_cube_side_texture(cube_id, side);
-        minivox = Particles::minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         //minivox->set_color(r,g,b);
         ttl = randrange(20,40);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
+        minivox->set_size(crumble_size);
     }
-
-    Particles::minivox_list->unset_size();
 }
 
 void block_crumble(float x, float y, float z, int n, int cube_id, TerrainModificationAction action)
@@ -116,7 +112,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     side[1] = (side[1]) ? 0 : 1;
     side[2] = (side[2]) ? 0 : 1;
 
-    Minivox* minivox;
+    Particles::TexturedMinivox* minivox;
 
     float vx,vy,vz;
     float nx,ny,nz;
@@ -137,7 +133,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         ny = y + ((randf() -0.5f)*0.4f*side[1]);
         nz = z + ((randf() -0.5f)*0.4f*side[2]);
         
-        minivox = Particles::minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
         ttl = randrange(15,25);
@@ -266,8 +262,6 @@ void terrain_sparks(float x, float y, float z)
 void voxel_explode(Vec3 position, int count, float size, struct Color color)
 {
     if (!Options::animations) return;
-    Particles::minivox_list->set_size(size);
-    
     float vx,vy,vz;
     vx=vy=vz=20.0f;
     
@@ -276,7 +270,7 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
     float theta, phi;
     float dtheta, dphi;
 
-    Minivox* minivox;
+    Particles::ColoredMinivox* minivox;
     int ttl;
     for (int i=0; i<count; i++)
     {
@@ -293,15 +287,14 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
         
-        minivox = Particles::minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
+        minivox = Particles::colored_minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
         if (minivox == NULL) return;
         minivox->set_color(color.r, color.g, color.b);//sky blue
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
         minivox->set_angles(theta, phi);
+        minivox->set_size(size);
     }
-
-    Particles::minivox_list->unset_size();
 }
 
 // will generate random count between count_min and count_max
@@ -316,7 +309,6 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, stru
 void team_item_explode(Vec3 p, int team)
 {
     if (!Options::animations) return;
-    Particles::minivox_list->set_size(0.1f);
     unsigned char r=255,g=255,b=255;
     ClientState::ctf->get_team_color(team, &r, &g, &b);
     int n = randrange(35,50);
@@ -326,7 +318,7 @@ void team_item_explode(Vec3 p, int team)
     float theta,phi;
     float dtheta, dphi;
     int ttl;
-    Minivox* minivox;
+    Particles::ColoredMinivox* minivox;
 
     for (int i=0; i<n; i++)
     {
@@ -339,14 +331,14 @@ void team_item_explode(Vec3 p, int team)
         dtheta = randf() * 0.05f;
         dphi = randf() * 0.05f;
 
-        minivox = Particles::minivox_list->create(c.x, c.y, c.z, cv.x, cv.y, cv.z);
+        minivox = Particles::colored_minivox_list->create(c.x, c.y, c.z, cv.x, cv.y, cv.z);
         if (minivox == NULL) return;
         minivox->set_color(r,g,b);
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
         minivox->set_angles(theta, phi);
+        minivox->set_size(0.1f);
     }
-    Particles::minivox_list->unset_size(); // TODO : deprecate?
 }
 
 void agent_bleed(float x, float y, float z)

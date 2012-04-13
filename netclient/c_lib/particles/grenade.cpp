@@ -85,7 +85,7 @@ void Grenade::init()
 
 Grenade::Grenade(int id)
 :
-Particle(id, 0,0,0,0,0,0, GRENADE_MASS),
+ParticleMotion(id, 0,0,0,0,0,0, GRENADE_MASS),
 BillboardSprite(),
 bounce_count(0),
 owner(-1)
@@ -95,7 +95,7 @@ owner(-1)
 
 Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z,mx,my,mz, GRENADE_MASS),
+ParticleMotion(id, x,y,z,mx,my,mz, GRENADE_MASS),
 BillboardSprite(),
 bounce_count(0),
 owner(-1)

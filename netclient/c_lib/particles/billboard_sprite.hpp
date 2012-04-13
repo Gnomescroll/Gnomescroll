@@ -3,7 +3,7 @@
 namespace Particles
 {
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 class BillboardSprite
 {
     public:

@@ -14,7 +14,7 @@ namespace Particles
 
 const static int BILLBOARD_TEXT_HUD_MAX_LETTERS = 12;
 
-class BillboardTextHud: public Particle
+class BillboardTextHud: public ParticleMotion
 {
     public:
         HudText::Text* text;

@@ -9,7 +9,7 @@ namespace Particles
 #define GRENADE_SHRAPNEL_DAMP 1.0f
 #define GRENADE_SHRAPNEL_TYPE 9
 
-class Grenade_shrapnel: public Particle
+class Grenade_shrapnel: public ParticleMotion
 {
     public:
         void init();

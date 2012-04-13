@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 #include <c_lib/animations/_interface.cpp>
 
@@ -12,6 +12,6 @@
 #endif
 
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 #endif

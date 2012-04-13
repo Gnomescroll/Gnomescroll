@@ -17,7 +17,7 @@ static const float DEFAULT_MASS = 1.0;
 
 BillboardText::BillboardText(int id)
 :
-Particle(id, 0,0,0,0,0,0, DEFAULT_MASS),
+ParticleMotion(id, 0,0,0,0,0,0, DEFAULT_MASS),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -30,7 +30,7 @@ size(BILLBOARD_TEXT_TEXTURE_SCALE)
 
 BillboardText::BillboardText(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, DEFAULT_MASS),
+ParticleMotion(id, x,y,z, mx,my,mz, DEFAULT_MASS),
 r(100), g(100), b(100), a(255),
 gravity(true),
 should_draw(true),
@@ -88,7 +88,7 @@ void BillboardText::set_size(float size)
 
 void BillboardText::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if (HudFont::font == NULL) return;
     if(text == NULL || text[0] == '\0' || current_camera == NULL) return;
     Vec3 position = this->get_position();
@@ -207,7 +207,7 @@ void BillboardText_list::tick()
 
 void BillboardText_list::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if (num == 0) return;
     if (current_camera == NULL) return;
     if (HudFont::font == NULL) return;

@@ -8,7 +8,16 @@
 namespace Particles
 {
 
-class Particle
+//class Particle
+//{
+    //public:
+        //virtual void draw() = 0;
+        //virtual void tick() = 0;
+
+    //virtual ~Particle() {}
+//};
+
+class ParticleMotion
 {
     public:
         VerletComponent verlet;
@@ -54,15 +63,32 @@ class Particle
         }
 
         void set_ttl(int ttl);
-        Particle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
+
+        ParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass);
+
+        ~ParticleMotion(){}
 };
 
-class EventParticle: public Particle
+class EventParticleMotion: public ParticleMotion
 {
     public:
         int event_ttl;
 
-        EventParticle(int id, float x, float y, float z, float mx, float my, float mz, float mass);
+        EventParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass);
+        ~EventParticleMotion(){}
 };
+
+//const int PARTICLES_MAX = 8192;
+//class Particle_list: public Object_list<Particle, PARTICLES_MAX>
+//{
+    //private:
+        //const char* name() { return "Shrapnel"; }
+    //public:
+        //void draw();
+        //void tick();
+
+        //Shrapnel_list() { print(); }
+//};
+
 
 }

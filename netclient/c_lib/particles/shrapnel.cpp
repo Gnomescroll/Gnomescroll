@@ -17,7 +17,7 @@ void Shrapnel::init()
 
 Shrapnel::Shrapnel(int id)
 :
-Particle(id, 0,0,0,0,0,0, SHRAPNEL_MASS),
+ParticleMotion(id, 0,0,0,0,0,0, SHRAPNEL_MASS),
 BillboardSprite()
 {
     this->init();
@@ -25,7 +25,7 @@ BillboardSprite()
 
 Shrapnel::Shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, SHRAPNEL_MASS),
+ParticleMotion(id, x,y,z, mx,my,mz, SHRAPNEL_MASS),
 BillboardSprite()
 {
     this->init();
@@ -57,7 +57,7 @@ void Shrapnel_list::tick()
 
 void Shrapnel_list::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     if(num == 0) return;
     for(int i=0; i<n_max; i++)
         if (a[i] != NULL)

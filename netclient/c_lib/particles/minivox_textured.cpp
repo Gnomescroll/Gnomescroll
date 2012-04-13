@@ -1,41 +1,35 @@
-#include "minivox.hpp"
+#include "minivox_textured.hpp"
 
-#ifdef DC_CLIENT
-    #include <compat_gl.h>
-    #include <t_map/glsl/texture.hpp>
-    #include <c_lib/camera/fulstrum_test.hpp>
+#if DC_CLIENT
+#include <compat_gl.h>
+#include <t_map/glsl/texture.hpp>
+#include <c_lib/camera/fulstrum_test.hpp>
 #endif
 
 #include <voxel/common_data.h>
 #include <ray_trace/ray_trace.hpp>
 
-
 namespace Particles
 {
 
-
-const float MINIVOX_MASS = 2.0f;
-
-Minivox::Minivox(int id)
+TexturedMinivox::TexturedMinivox(int id)
 :
-Particle(id, 0,0,0,0,0,0, MINIVOX_MASS*minivox_size),
+ParticleMotion(id, 0,0,0,0,0,0, MINIVOX_MASS*MINIVOX_SIZE),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
-r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
-size(minivox_size), draw_mode(0), texture_pixel_width(2)
+size(MINIVOX_SIZE), texture_pixel_width(2)
 {
     this->ttl_max = MINIVOX_TTL;
     this->type = MINIVOX_TYPE;
     orient_vectors();
 }
 
-Minivox::Minivox(int id, float x, float y, float z, float mx, float my, float mz)
+TexturedMinivox::TexturedMinivox(int id, float x, float y, float z, float mx, float my, float mz)
 :
-Particle(id, x,y,z, mx,my,mz, MINIVOX_MASS*minivox_size),
+ParticleMotion(id, x,y,z, mx,my,mz, MINIVOX_MASS*MINIVOX_SIZE),
 theta(0.0f), phi(0.0f),
 dtheta(0.0f), dphi(0.0f),
-r(MINIVOX_R), g(MINIVOX_G), b(MINIVOX_B), a(MINIVOX_A),
-size(minivox_size), draw_mode(0), texture_pixel_width(2)
+size(MINIVOX_SIZE), texture_pixel_width(2)
 {
     this->ttl_max = MINIVOX_TTL;
     this->type = MINIVOX_TYPE;
@@ -43,7 +37,7 @@ size(minivox_size), draw_mode(0), texture_pixel_width(2)
 }
 
 // recalculates orientation vectors from angular parameter
-void Minivox::orient_vectors()
+void TexturedMinivox::orient_vectors()
 {
     vec_x.x = cos(theta * PI) * cos(phi * PI);
     vec_x.y = sin(theta * PI) * cos(phi * PI);
@@ -63,30 +57,20 @@ void Minivox::orient_vectors()
     vec_z = vec3_scalar_mult(vec_z, size);
 }
 
-void Minivox::set_orientation(float t, float p) {
+void TexturedMinivox::set_orientation(float t, float p)
+{
     theta = t;
     phi = p;
     orient_vectors();
 }
 
-void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b) {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-}
-
-void Minivox::set_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a) {
-    this->r = r;
-    this->g = g;
-    this->b = b;
-    this->a = a;
-}
-
-void Minivox::set_size(float size) {
+void TexturedMinivox::set_size(float size)
+{
     this->size = size;
 }
 
-void Minivox::set_texture(int tex_id) {
+void TexturedMinivox::set_texture(int tex_id)
+{
     const int pix = this->texture_pixel_width;  // NxN random texture sample within cube identified by tex_id
     const int cube_w = 32;
     const int cube_surface_w = 512;
@@ -123,133 +107,74 @@ void Minivox::set_texture(int tex_id) {
 
     this->tx = ftx;
     this->ty = fty;
-
-    draw_mode = MINIVOX_DRAW_MODE_TEXTURED;
 }
 
-void Minivox::set_spin(float dtheta, float dphi) {
+void TexturedMinivox::set_spin(float dtheta, float dphi)
+{
     this->dtheta = dtheta;
     this->dphi = dphi;
 }
 
-void Minivox::set_angles(float theta, float phi)
+void TexturedMinivox::set_angles(float theta, float phi)
 {
     this->theta = theta;
     this->phi = phi;
     this->orient_vectors();
 }
 
-void Minivox::spin() {
+void TexturedMinivox::spin()
+{
     this->set_angles(this->theta + this->dtheta, this->phi + this->dphi);
 }
 
-void Minivox::set_texture(int tex_id, int pixels_wide) {
+void TexturedMinivox::set_texture(int tex_id, int pixels_wide)
+{
     int prev = this->texture_pixel_width;
     this->texture_pixel_width = pixels_wide;
     set_texture(tex_id);
     this->texture_pixel_width = prev;
 }
 
-void Minivox::tick() {
+void TexturedMinivox::tick()
+{
     this->verlet_bounce(MINIVOX_DAMP);
     this->spin();
     this->ttl++;
 }
 
-/* Minivox list */
+/* TexturedMinivox list */
 
-void Minivox_list::tick() {
-    int i;
-    for (i=0; i<n_max; i++) {
+void TexturedMinivox_list::tick()
+{
+    for (int i=0; i<n_max; i++)
+    {
         if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max) {
+        if (a[i]->ttl >= a[i]->ttl_max)
             destroy(a[i]->id);
-        }
     }
 }
 
-void Minivox_list::draw_textured()
+void TexturedMinivox_list::draw()
 {
     #if DC_CLIENT
     if(num == 0) return;
     for (int i=0; i<n_max; i++)
-    {
-        if (a[i] == NULL) continue;
-        if (a[i]->draw_mode == MINIVOX_DRAW_MODE_TEXTURED)
-            a[i]->draw_textured();
-    }        
+        if (a[i] != NULL)
+            a[i]->draw();
     #endif
 }
 
-void Minivox_list::draw_colored()
+void TexturedMinivox::draw()
 {
-    #ifdef DC_CLIENT
-    if(num == 0) return;
-
-    for (int i=0; i<n_max; i++)
-    {
-        if (a[i] == NULL) continue;
-        if (a[i]->draw_mode != MINIVOX_DRAW_MODE_TEXTURED)
-            a[i]->draw_colored();
-    }
-    #endif
-}
-
-void Minivox::draw_colored() {
-#ifdef DC_CLIENT
-
-    // Quit if voxel is completely transparent
-    if (this->a == 0) return;
-
+    #if DC_CLIENT
     Vec3 position = this->get_position();
     const float
         x0 = position.x,
         y0 = position.y,
         z0 = position.z;
 
-    if (point_fulstrum_test(x0, y0, z0) == false) return;
-
-    glColor3ub(this->r, this->g, this->b);
-
-    // fill vertex buffer
-    int i,j;
-    for (i=0; i<8; i++) {
-        v_buffer[3*i+0] = v_set[3*i+0]*vec_x.x + v_set[3*i+1]*vec_y.x + v_set[3*i+2]*vec_z.x;
-        v_buffer[3*i+1] = v_set[3*i+0]*vec_x.y + v_set[3*i+1]*vec_y.y + v_set[3*i+2]*vec_z.y;
-        v_buffer[3*i+2] = v_set[3*i+0]*vec_x.z + v_set[3*i+1]*vec_y.z + v_set[3*i+2]*vec_z.z;
-    }
-    for (i=0; i<6; i++) {
-        for(j=0; j<4; j++) {
-            s_buffer[12*i+3*j+0] = v_buffer[3*q_set[4*i+j] + 0];
-            s_buffer[12*i+3*j+1] = v_buffer[3*q_set[4*i+j] + 1];
-            s_buffer[12*i+3*j+2] = v_buffer[3*q_set[4*i+j] + 2];
-        }
-    }
-
-    // draw voxel
-    for (i=0; i<6; i++) {
-        glVertex3f(x0 + s_buffer[12*i+3*0+0], y0+ s_buffer[12*i+3*0+1], z0+ s_buffer[12*i+3*0+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*1+0], y0+ s_buffer[12*i+3*1+1], z0+ s_buffer[12*i+3*1+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*2+0], y0+ s_buffer[12*i+3*2+1], z0+ s_buffer[12*i+3*2+2]);
-        glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
-    }
-
-#endif
-}
-
-void Minivox::draw_textured() {
-#ifdef DC_CLIENT
-    if(this->a == 0) return;
-
-    Vec3 position = this->get_position();
-    const float
-        x0 = position.x,
-        y0 = position.y,
-        z0 = position.z;
-
-    if( point_fulstrum_test(x0,y0,z0) == false ) return; //check to see if they are in viewing fulstrum
-
+    if (point_fulstrum_test(x0,y0,z0) == false) return; //check to see if they are in viewing fulstrum
 
     float tx_min = tx;
     float tx_max = tx + pix_margin;
@@ -281,25 +206,7 @@ void Minivox::draw_textured() {
         glTexCoord2f(tx_max, ty_min);
         glVertex3f(x0 + s_buffer[12*i+3*3+0], y0+ s_buffer[12*i+3*3+1], z0+ s_buffer[12*i+3*3+2]);
     }
-
     #endif
-}
-
-void Minivox_list::set_size(float s)
-{
-    _s = minivox_size;
-    minivox_size = s;
-}
-void Minivox_list::unset_size()
-{
-    minivox_size = _s;
-}
-
-Minivox_list::Minivox_list()
-:
-_s(minivox_size)
-{
-    print();
 }
 
 }
