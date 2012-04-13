@@ -14,9 +14,18 @@
 #include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/items/constants.hpp>
 
-int get_icon_spritesheet_id(Object_types type)
+int get_icon_spritesheet_id(Object_types type, int subtype)
 {
-    return ItemDrops::get_object_type_sprite_index((ItemDrops::PickupSpriteTypes)type);  // TODO: this is defined in pickup.hpp, move it
+    const int ERROR_SPRITE = 0;
+    switch (type)
+    {
+        case OBJ_TYPE_REFILL:
+        case OBJ_TYPE_BLOCK_DROP:
+        case OBJ_TYPE_GEMSTONE:
+            return ItemDrops::get_object_type_sprite_index(type, subtype);
+
+        default: return ERROR_SPRITE;
+    }
 }
 
 class InventoryProperties;
@@ -32,7 +41,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
     public:
         Inventory* inventory;
 
-    void load(int id, Object_types type);
+    void load(int id, Object_types type, int subtype);
     void get_sprite_data(struct Draw::SpriteData* data);
         
     InventoryProperties()
@@ -116,9 +125,9 @@ class Inventory: public BaseInventoryClient
     {
         return BaseInventoryClient::can_add(type, slot);
     }
-    bool add(int id, Object_types type, int slot)
+    bool add(int id, Object_types type, int subtype, int slot)
     {
-        return BaseInventoryClient::add(id, type, slot);
+        return BaseInventoryClient::add(id, type, subtype, slot);
     }
     bool remove(int slot)
     {

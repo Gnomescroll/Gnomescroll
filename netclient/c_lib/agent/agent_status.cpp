@@ -575,7 +575,7 @@ bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
         case OBJ_TYPE_BLOCK_DROP:
         case OBJ_TYPE_GEMSTONE:
             #if DC_SERVER
-            return this->inventory->add_action(item_id, item_type);
+            return this->inventory->add_action(item_id, item_type, subtype);
             #endif
             break;
             

@@ -26,10 +26,11 @@ class InventoryProperties: public BaseInventoryProperties
 {
     public:
 
-        void load(int id, Object_types type)
+        void load(int id, Object_types type, int subtype)
         {
             this->item_id = id;
             this->item_type = type;
+            this->item_subtype = subtype;
             //printf("Loaded inventory item %d,%d\n", id,type);
         }
         
@@ -64,9 +65,9 @@ class Inventory: public BaseInventoryServer
             this->broadcastRemove(slot);
     }
 
-    bool add_action(int id, Object_types type, int slot)
+    bool add_action(int id, Object_types type, int subtype, int slot)
     {
-        bool added = this->add(id,type,slot);
+        bool added = this->add(id, type, subtype, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
             this->sendToClientAdd(id, type, slot);
@@ -75,10 +76,10 @@ class Inventory: public BaseInventoryServer
         return added;
     }
 
-    bool add_action(int id, Object_types type)
+    bool add_action(int id, Object_types type, int subtype)
     {
         int slot = this->contents.get_empty_slot();
-        bool added = this->add_action(id,type, slot);
+        bool added = this->add_action(id, type, subtype, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
             this->sendToClientAdd(id, type, slot);

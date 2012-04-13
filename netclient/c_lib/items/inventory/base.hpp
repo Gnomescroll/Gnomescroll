@@ -77,9 +77,9 @@ class BaseInventory: public InventoryObjectInterface
             return this->add(id, type, slot);
         }
 
-        bool add(int id, Object_types type, int slot)
+        bool add(int id, Object_types type, int subtype, int slot)
         {
-            bool added = this->contents.add(id,type,slot);
+            bool added = this->contents.add(id, type, subtype, slot);
             return added;
         }
 

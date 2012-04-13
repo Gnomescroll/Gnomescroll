@@ -14,14 +14,14 @@ void unregister_inventory_item_draw_list(InventoryProperties* property)
     Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->unregister_object(property);
 }
 
-void InventoryProperties::load(int id, Object_types type)
+void InventoryProperties::load(int id, Object_types type, int subtype)
 {
-    bool new_icon = (id != this->item_id || type != this->item_type);
+    bool new_icon = (id != this->item_id || type != this->item_type || subtype != this->item_subtype);
     if (this->item_id != EMPTY_SLOT && new_icon)
         unregister_inventory_item_draw_list(this);
-    if (type != this->item_type)
+    if (type != this->item_type || subtype != this->item_subtype)
     {
-        this->sprite_index = get_icon_spritesheet_id(type);
+        this->sprite_index = get_icon_spritesheet_id(type, subtype);
         // MAJO TODO -- HACK
         // hud icon spritesheet is 8x8 but rendered particle spritesheet is 16x16 -- but using same indexes
         // (should be using same sheet)
@@ -30,6 +30,7 @@ void InventoryProperties::load(int id, Object_types type)
     }
     this->item_id = id;
     this->item_type = type;
+    this->item_subtype = subtype;
     if (id != EMPTY_SLOT && new_icon)   // set to new
         register_inventory_item_draw_list(this);
     //printf("Loaded inventory item %d,%d\n", id,type);

@@ -42,7 +42,7 @@ inline void add_item_to_inventory_StoC::handle()
         printf("WARNING: add_item_to_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
         return;
     }
-    obj->add(id, (Object_types)type, slot);
+    obj->add(id, (Object_types)type, subtype, slot);
     //printf("added item %d,%d to inventory slot %d\n", id, type, slot);
 }
 

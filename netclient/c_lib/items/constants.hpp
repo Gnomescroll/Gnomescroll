@@ -127,45 +127,60 @@ const int MEAT_SPRITE_INDEX = 1;
 const int SPAWNER_SPRITE_INDEX = 6;
 const int TURRET_SPRITE_INDEX = 7;
 
-int get_object_type_sprite_index(PickupSpriteTypes type)
+int get_object_type_sprite_index(Object_types type, int subtype)
 {
     static const int ERROR_SPRITE = 0;
     switch (type)
     {
-         //Refills
-        case GRENADE_REFILL:
-            return GRENADE_REFILL_SPRITE_INDEX;
-        case LASER_REFILL:
-            return LASER_REFILL_SPRITE_INDEX;
 
-        // Gems
-        case MALACHITE:
-            return MALACHITE_SPRITE_INDEX;
-        case RUBY:
-            return RUBY_SPRITE_INDEX;
-        case TURQUOISE:
-            return TURQUOISE_SPRITE_INDEX;
-        case SILVER:
-            return SILVER_SPRITE_INDEX;
-        case AMETHYST:
-            return AMETHYST_SPRITE_INDEX;
-        case JADE:
-            return JADE_SPRITE_INDEX;
-        case ONYX:
-            return ONYX_SPRITE_INDEX;
+        case OBJ_TYPE_BLOCK_DROP:
+            switch (subtype)
+            {
+            }
+            break;
+            
+        case OBJ_TYPE_GEMSTONE:
+            switch (subtype)
+            {
+                case MALACHITE:
+                    return MALACHITE_SPRITE_INDEX;
+                case RUBY:
+                    return RUBY_SPRITE_INDEX;
+                case TURQUOISE:
+                    return TURQUOISE_SPRITE_INDEX;
+                case SILVER:
+                    return SILVER_SPRITE_INDEX;
+                case AMETHYST:
+                    return AMETHYST_SPRITE_INDEX;
+                case JADE:
+                    return JADE_SPRITE_INDEX;
+                case ONYX:
+                    return ONYX_SPRITE_INDEX;
+            }
+            break;
 
-        // Misc
-        case MEAT:
+        case OBJ_TYPE_REFILL:
+            switch (subtype)
+            {
+                case GRENADE_REFILL:
+                    return GRENADE_REFILL_SPRITE_INDEX;
+                case LASER_REFILL:
+                    return LASER_REFILL_SPRITE_INDEX;
+            }
+            break;
+
+        case OBJ_TYPE_MEAT:
             return MEAT_SPRITE_INDEX;
 
-        // Functional items
-        //case OBJ_TYPE_SPAWNER:
-            //return SPAWNER_SPRITE_INDEX;
-        //case OBJ_TYPE_TURRET:
-            //return TURRET_SPRITE_INDEX;
+         //Functional items
+        case OBJ_TYPE_SPAWNER:
+            return SPAWNER_SPRITE_INDEX;
+        case OBJ_TYPE_TURRET:
+            return TURRET_SPRITE_INDEX;
 
         default: return ERROR_SPRITE;
     }
+    return ERROR_SPRITE;
 }
 
 } // ItemDrops

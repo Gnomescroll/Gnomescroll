@@ -377,22 +377,10 @@ void init_gameobject_list_maximums(GameObject_list* list)
     
     list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
     
-    //list->set_max_occupancy(OBJ_TYPE_GRENADE_REFILL, ItemDrops::GRENADE_REFILL_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_LASER_REFILL, ItemDrops::LASER_REFILL_MAX);
     list->set_max_occupancy(OBJ_TYPE_REFILL, ItemDrops::REFILL_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_DIRT, ItemDrops::DIRT_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_STONE, ItemDrops::STONE_MAX);
     list->set_max_occupancy(OBJ_TYPE_BLOCK_DROP, ItemDrops::BLOCK_DROP_MAX);
-    list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
-    
-    //list->set_max_occupancy(OBJ_TYPE_MALACHITE, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_RUBY, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_TURQUOISE, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_SILVER, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_AMETHYST, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_JADE, ItemDrops::GEMSTONE_MAX);
-    //list->set_max_occupancy(OBJ_TYPE_ONYX, ItemDrops::GEMSTONE_MAX);
     list->set_max_occupancy(OBJ_TYPE_GEMSTONE, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
 
     // mobs
     list->set_max_occupancy(OBJ_TYPE_SLIME, Monsters::SLIME_MAX);

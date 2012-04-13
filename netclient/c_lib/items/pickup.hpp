@@ -118,46 +118,34 @@ void initialize_pickup_properties(Object_types type, int subtype, PickupComponen
 }
 
 
-void initialize_sprite_properties(PickupSpriteTypes type, SpriteProperties* obj)
+void initialize_sprite_properties(Object_types type, int subtype, SpriteProperties* obj)
 {
-    int sprite_index = get_object_type_sprite_index(type);
+    int sprite_index = get_object_type_sprite_index(type, subtype);
     obj->sprite_index = sprite_index;
     switch (type)
     {
-        case GRENADE_REFILL:
-            obj->scale = GRENADE_REFILL_TEXTURE_SCALE;
+        case OBJ_TYPE_REFILL:
+            switch (subtype)
+            {
+                case GRENADE_REFILL:
+                    obj->scale = GRENADE_REFILL_TEXTURE_SCALE;
+                    break;
+                case LASER_REFILL:
+                    obj->scale = LASER_REFILL_TEXTURE_SCALE;
+                    break;                
+                default: break;
+            }
             break;
-        case LASER_REFILL:
-            obj->scale = LASER_REFILL_TEXTURE_SCALE;
-            break;
-
-        case MALACHITE:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case RUBY:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case TURQUOISE:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case SILVER:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case AMETHYST:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case JADE:
-            obj->scale = GEMSTONE_SCALE;
-            break;
-        case ONYX:
+            
+        case OBJ_TYPE_GEMSTONE:
             obj->scale = GEMSTONE_SCALE;
             break;
 
-        case MEAT:
+        case OBJ_TYPE_MEAT:
             obj->scale = MEAT_SCALE;
             break;
 
-        default: return;
+        default: break;
     }
 }
 
@@ -176,7 +164,8 @@ void initialize_minivox_properties(Object_types type, int subtype, MinivoxProper
                     obj->color = STONE_COLOR;
                     obj->size = STONE_SIZE;
                     break;
-                }
+                default: break;
+            }
             break;
             
         default: break;
@@ -249,9 +238,8 @@ class PickupObjectSprite: public PickupObject, public SpriteComponent
     void born(int subtype)
     {
         PickupObject::born(subtype);
-        if (this->state()->type == OBJ_TYPE_REFILL) printf("refill Subtype is %d\n", subtype);
         #if DC_CLIENT
-        initialize_sprite_properties((PickupSpriteTypes)subtype, &this->sprite_properties);
+        initialize_sprite_properties(this->state()->type, subtype, &this->sprite_properties);
         ClientState::sprite_list->register_object(&this->sprite_properties);
         #endif
     }

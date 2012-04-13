@@ -8,11 +8,12 @@ class BaseInventoryProperties
     public:
         int item_id;
         Object_types item_type;
+        int item_subtype;
         int slot;
 
     BaseInventoryProperties()
     :
-    item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE),
+    item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE), item_subtype(SUBTYPE_NONE),
     slot(-1)    // slot is set after allocation
     {
     }
@@ -117,13 +118,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
-    bool add(int id, Object_types type, int slot)
+    bool add(int id, Object_types type, int subtype, int slot)
     {
         if (!this->can_add(slot))
             return false;
         if (this->objects[slot].item_id == EMPTY_SLOT && id != EMPTY_SLOT)
             this->ct++;
-        this->objects[slot].load(id, type);
+        this->objects[slot].load(id, type, subtype);
         return true;
     }
 
@@ -139,7 +140,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
             return false;
         if (this->objects[slot].item_id != EMPTY_SLOT)
             this->ct--;
-        this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE);
+        this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE, SUBTYPE_NONE);
         return true;
     }
 
@@ -149,8 +150,9 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
             return false;
         int item_id = this->objects[slota].item_id;
         Object_types item_type = this->objects[slota].item_type;
-        this->objects[slota].load(this->objects[slotb].item_id, this->objects[slotb].item_type);
-        this->objects[slotb].load(item_id, item_type);
+        int item_subtype = this->objects[slota].item_subtype;
+        this->objects[slota].load(this->objects[slotb].item_id, this->objects[slotb].item_type, this->objects[slotb].item_subtype);
+        this->objects[slotb].load(item_id, item_type, item_subtype);
         return true;
     }
 

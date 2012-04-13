@@ -16,6 +16,7 @@ void InventoryContents::sendToClient(int inventory_id, int client_id)
         msg.inventory_id = inventory_id;
         msg.id = this->objects[i].item_id;
         msg.type = this->objects[i].item_type;
+        msg.subtype = this->objects[i].item_subtype;
         msg.slot = i;
         msg.sendToClient(client_id);
     }
@@ -28,7 +29,7 @@ void Inventory::sendToClientCreate(int client_id)
     inventory_create_StoC msg;
     ObjectState* state = this->state();
     inventory_create_message(&msg,
-        state->id, state->type,
+        state->id, state->type, state->subtype, 
         this->contents.x, this->contents.y, this->get_owner()
     );
     msg.sendToClient(client_id);
@@ -42,7 +43,7 @@ void Inventory::broadcastCreate()
     inventory_create_StoC msg;
     ObjectState* state = this->state();
     inventory_create_message(&msg,
-        state->id, state->type,
+        state->id, state->type, state->subtype,
         this->contents.x, this->contents.y, this->get_owner()
     );
     msg.broadcast();
