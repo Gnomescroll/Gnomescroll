@@ -19,14 +19,6 @@ namespace ClientState
 namespace ItemDrops
 {
 
-/* State */
-
-const int DEFAULT_PICKUP_ITEM_TTL = 30 * 12;    // 12 seconds
-const float DEFAULT_PICKUP_ITEM_RADIUS = 2.0f;
-const float DEFAULT_PICKUP_ITEM_SCALE = 1.0f;
-const float DEFAULT_PICKUP_ITEM_DAMP = 0.1f;    // hardly bounce
-const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
-
 /* Behaviour */
 
 inline void diePickup(int id, Object_types type, int picked_up_by, bool broadcast_death)
@@ -98,7 +90,11 @@ void initialize_pickup_object(Object_types type, int subtype, ObjectState* state
             state->damp = LASER_REFILL_DAMP;
             break;
 
-        default: return;
+        default:
+            state->mass = DEFAULT_PICKUP_ITEM_MASS;
+            state->ttl_max = DEFAULT_PICKUP_ITEM_TTL;
+            state->damp = DEFAULT_PICKUP_ITEM_DAMP;            
+            break;
     }
 }
 
@@ -129,7 +125,9 @@ void initialize_sprite_properties(Object_types type, int subtype, SpriteProperti
                 case LASER_REFILL:
                     obj->scale = LASER_REFILL_TEXTURE_SCALE;
                     break;                
-                default: break;
+                default:
+                    obj->scale = DEFAULT_PICKUP_ITEM_SCALE;
+                    break;
             }
             break;
             
@@ -141,7 +139,9 @@ void initialize_sprite_properties(Object_types type, int subtype, SpriteProperti
             obj->scale = MEAT_SCALE;
             break;
 
-        default: break;
+        default:
+            obj->scale =DEFAULT_PICKUP_ITEM_SCALE;
+            break;
     }
 }
 

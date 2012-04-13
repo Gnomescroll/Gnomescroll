@@ -136,7 +136,17 @@ void Agent_status::check_missing_name()
     #endif
 }
 
-int Agent_status::apply_damage(int dmg) {
+void Agent_status::heal(unsigned int amt)
+{
+    if (dead) return;
+
+    this->health += amt;
+    if (this->health > (int)this->health_max)
+        this->health = this->health_max;
+}
+
+int Agent_status::apply_damage(int dmg)
+{
     if (dead) return this->health;
     
     // forward dmg indicator packet
@@ -567,6 +577,10 @@ bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
                 
             case ItemDrops::LASER_REFILL:
                 this->a->weapons.laser.add_ammo(20);
+                break;
+                
+            case ItemDrops::HEALTH_REFILL:
+                this->a->status.heal(50);
                 break;
             }
             break;

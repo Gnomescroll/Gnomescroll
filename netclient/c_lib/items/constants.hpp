@@ -39,10 +39,6 @@ const float TURRET_LASER_BIAS = 1.0f;
 namespace ItemDrops
 {
 
-/* Refills */
-
-const int REFILL_MAX = 512;
-
 typedef enum
 {
     GRENADE_REFILL,
@@ -59,9 +55,18 @@ typedef enum
 
 } PickupSpriteTypes;
 
+/* Refills */
+
+const int REFILL_MAX = 512;
+
+const int DEFAULT_PICKUP_ITEM_TTL = 30 * 12;    // 12 seconds
+const float DEFAULT_PICKUP_ITEM_RADIUS = 2.0f;
+const float DEFAULT_PICKUP_ITEM_SCALE = 0.5f;
+const float DEFAULT_PICKUP_ITEM_DAMP = 0.4f;
+const float DEFAULT_PICKUP_ITEM_MASS = 1.0f;
+
 /* Grenade refill */
 
-//const int GRENADE_REFILL_MAX = 256;
 const int GRENADE_REFILL_SPRITE_INDEX = 6;
 const float GRENADE_REFILL_TEXTURE_SCALE = 0.5f;
 const float GRENADE_REFILL_MASS = 1.0f;
@@ -70,12 +75,19 @@ const float GRENADE_REFILL_DAMP = 0.4f;
 
 /* Laser refill */
 
-//const int LASER_REFILL_MAX = 256;
 const int LASER_REFILL_SPRITE_INDEX = 7;
 const float LASER_REFILL_TEXTURE_SCALE = 0.5f;
 const float LASER_REFILL_MASS = 1.0f;
 const int LASER_REFILL_TTL = 30 * 12;   // 12 seconds
 const float LASER_REFILL_DAMP = 0.4f;
+
+/* Health refill */
+
+const int HEALTH_REFILL_SPRITE_INDEX = 23;
+const float HEALTH_REFILL_TEXTURE_SCALE = 0.5f;
+const float HEALTH_REFILL_MASS = 1.0f;
+const int HEALTH_REFILL_TTL = 30 * 12;   // 12 seconds
+const float HEALTH_REFILL_DAMP = 0.4f;
 
 /* Minivox drops */
 const float MINIVOX_ITEM_ROTATION_THETA = 0.02f;
@@ -168,6 +180,8 @@ int get_object_type_sprite_index(Object_types type, int subtype)
                     return GRENADE_REFILL_SPRITE_INDEX;
                 case LASER_REFILL:
                     return LASER_REFILL_SPRITE_INDEX;
+                case HEALTH_REFILL:
+                    return HEALTH_REFILL_SPRITE_INDEX;
                 default: return ERROR_SPRITE;
             }
             break;

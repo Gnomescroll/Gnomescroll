@@ -133,10 +133,11 @@ void slimeDropItem(Vec3 position)
     float p = randf();
     if (p > drop_probability) return;
     
-    const int n_types = 2;    
+    const int n_types = 3;    
     ItemDrops::PickupSpriteTypes types[n_types] = {
         ItemDrops::LASER_REFILL,
-        ItemDrops::GRENADE_REFILL
+        ItemDrops::GRENADE_REFILL,
+        ItemDrops::HEALTH_REFILL,
     };
     const Object_types type = OBJ_TYPE_REFILL;
     ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
