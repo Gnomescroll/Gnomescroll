@@ -348,7 +348,8 @@ void PlayerAgent_action::throw_grenade()
     
 }
 
-void PlayerAgent_action::set_block() {
+void PlayerAgent_action::set_block()
+{
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;

@@ -60,6 +60,7 @@ class BlockApplier: public Weapon {
         int block;
 
         void set_block(int id);
+        bool can_fire();
         bool fire();
         char* hud_display();
 

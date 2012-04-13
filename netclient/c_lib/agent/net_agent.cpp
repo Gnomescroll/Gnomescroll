@@ -8,12 +8,12 @@
 #include <c_lib/monsters/monsters.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/common/time/physics_timer.hpp>
 #include <c_lib/chat/client.hpp>
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/ray_trace.hpp>
 #endif
@@ -25,7 +25,7 @@
 
 inline void PlayerAgent_Snapshot::handle()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     ClientState::playerAgent_state.handle_state_snapshot(seq, theta, phi, x, y, z, vx, vy, vz);
     #endif
     //printf("Received Agent_state_message packet: agent_id= %i \n", id);
@@ -34,7 +34,7 @@ inline void PlayerAgent_Snapshot::handle()
 }
 
 // Server -> Client handlers
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 inline void SendClientId_StoC::handle()
 {
@@ -570,7 +570,7 @@ inline void request_remaining_state_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
-#ifdef DC_SERVER
+#if DC_SERVER
 
 inline void SendClientId_StoC::handle() {}
 inline void AgentKills_StoC::handle() {}
@@ -970,10 +970,7 @@ inline void agent_set_block_CtoS::handle()
     }
     // fire block applier
     if (a->status.team == 0) return;
-    if (!a->weapons.blocks.fire()) return;
-    agent_placed_block_StoC msg;
-    msg.id = a->id;
-    msg.broadcast();
+    if (!a->weapons.blocks.can_fire()) return;
     
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
@@ -1002,7 +999,13 @@ inline void agent_set_block_CtoS::handle()
     _set(x,y,z,0);  // unset
 
     if (!collides)
-        _set_broadcast(x,y,z, val);    
+    {
+        _set_broadcast(x,y,z, val);
+        a->weapons.blocks.fire();
+        agent_placed_block_StoC msg;
+        msg.id = a->id;
+        msg.broadcast();
+    }
 }
 
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3

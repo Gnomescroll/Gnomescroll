@@ -4,7 +4,7 @@
 
 namespace Weapons {
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 inline void WeaponAmmo_StoC::handle() {
     Agent_state* a = ClientState::agent_list->get(ClientState::playerAgent_state.agent_id);
     if (a==NULL) return;
@@ -19,7 +19,7 @@ inline void WeaponClip_StoC::handle() {
 
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
 inline void WeaponAmmo_StoC::handle() {}
 inline void WeaponClip_StoC::handle() {}
 #endif

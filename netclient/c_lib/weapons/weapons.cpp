@@ -33,7 +33,7 @@ Weapon::~Weapon()
 
 void Weapon::restore_ammo()
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     if (this->ammo != max_ammo)
     {
         Agent_state* a = ServerState::agent_list->get(owner);
@@ -74,7 +74,7 @@ void Weapon::add_ammo(int n)
 bool HitscanLaser::fire()
 {
     if (clip == 0) return false;
-    #ifdef DC_SERVER
+    #if DC_SERVER
     clip--;
     Agent_state* a = ServerState::agent_list->get(owner);
     if (a!=NULL) {
@@ -141,7 +141,7 @@ HitscanLaser::~HitscanLaser()
 }
 
 void HitscanLaser::reload() {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     int clip_used = clip_size - clip;
     // reload amt is lesser of the two: filling the clip or remaining ammo
     int amt = (ammo < clip_used) ? ammo : clip_used;
@@ -165,7 +165,7 @@ void HitscanLaser::reload() {
 void HitscanLaser::restore_ammo()
 {
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     Agent_state* a = ServerState::agent_list->get(owner);
     if (a!=NULL) {
         if (this->clip != clip_size) {
@@ -189,12 +189,19 @@ void HitscanLaser::restore_ammo()
 
 /* Block applier */
 
-bool BlockApplier::fire() {
-    if (ammo == 0) return false;
-    #ifdef DC_SERVER
+bool BlockApplier::can_fire()
+{
+    if (ammo <= 0) return false;
+    return true;
+}
+
+bool BlockApplier::fire()
+{
+    if (!this->can_fire()) return false;
+    #if DC_SERVER
     ammo--;
     Agent_state* a = ServerState::agent_list->get(owner);
-    if (a!=NULL) {
+    if (a != NULL) {
         WeaponAmmo_StoC ammo_msg;
         ammo_msg.type = type;
         ammo_msg.ammo = ammo;
@@ -254,7 +261,8 @@ BlockApplier::~BlockApplier()
 
 /* Pick */
 
-bool BlockPick::fire() {
+bool BlockPick::fire()
+{
     return true;
 }
 
@@ -280,8 +288,8 @@ BlockPick::~BlockPick()
 /* Grenade thrower */
 
 bool GrenadeThrower::fire() {
-    if (ammo == 0) return false;
-    #ifdef DC_SERVER
+    if (ammo <= 0) return false;
+    #if DC_SERVER
     ammo--;
     Agent_state* a = ServerState::agent_list->get(owner);
     if (a!=NULL) {
