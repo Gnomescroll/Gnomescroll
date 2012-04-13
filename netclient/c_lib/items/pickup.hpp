@@ -226,6 +226,7 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
 
     void born(int subtype)
     {
+        this->_state.subtype = subtype;
         this->broadcastCreate();
     }
 

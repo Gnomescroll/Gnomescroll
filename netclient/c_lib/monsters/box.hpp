@@ -406,6 +406,7 @@ class Box:
 
     void born(int subtype)
     {
+        this->_state.subtype = subtype;
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);
         bornSetVox(

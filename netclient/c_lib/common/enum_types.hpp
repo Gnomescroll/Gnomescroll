@@ -38,6 +38,8 @@ enum Object_types
     OBJ_TYPE_NONE = 255,
 };
 
+const int SUBTYPE_NONE = 255;
+
 typedef enum
 {
     DEATH_NORMAL = 0,

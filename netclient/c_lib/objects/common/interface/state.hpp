@@ -24,6 +24,7 @@ class ObjectData
 {
     public:
         Object_types type;
+        int subtype;
 
         // spatial
         //float height;
@@ -62,6 +63,7 @@ class ObjectData
     ObjectData()
     :
     type(OBJ_TYPE_NONE),
+    subtype(SUBTYPE_NONE),
     damp(1.0f), mass(1.0f),
     ttl_max(100),
     blow_up_on_death(false),

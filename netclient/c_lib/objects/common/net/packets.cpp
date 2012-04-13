@@ -91,7 +91,7 @@ inline void object_create_momentum_angles_StoC_model::handle()
     {
         obj->set_position(x,y,z);
         obj->set_angles(theta, phi, 0);
-        obj->born(0);   // TODO
+        obj->born(subtype);   // TODO
     }
 }
 

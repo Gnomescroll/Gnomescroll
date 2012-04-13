@@ -7,6 +7,7 @@ class object_create_StoC_model
 {
     public:
         uint8_t type;
+        uint8_t subtype;
         uint16_t id;
         uint8_t team;
         uint8_t owner;
@@ -18,6 +19,7 @@ class object_create_StoC_model
         inline virtual void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u8(&type, buff, buff_n, pack);
+            pack_u8(&subtype, buff, buff_n, pack);
             pack_u16(&id, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -336,6 +338,7 @@ class CreatePacket: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
+            msg->type = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;

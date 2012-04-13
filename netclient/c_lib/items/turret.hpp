@@ -128,6 +128,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public O
 
     void born(int subtype)
     {
+        this->_state.subtype = subtype;
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team.properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
