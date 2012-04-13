@@ -161,16 +161,16 @@ int run()
 
         Skybox::draw();
 
+        begin_item_draw();
+        ClientState::sprite_list->draw();
+        end_item_draw();
+
         begin_transparent_draw();
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
         Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
-
-        begin_item_draw();
-        ClientState::sprite_list->draw();
-        end_item_draw();
         end_transparent_draw();
 
         poll_mouse();
