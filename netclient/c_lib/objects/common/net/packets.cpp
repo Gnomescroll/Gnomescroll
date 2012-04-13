@@ -160,7 +160,7 @@ inline void object_state_momentum_angles_StoC_model::handle()
     {
         obj->set_position(x,y,z);
         obj->set_momentum(mx,my,mz);
-        obj->set_angles(theta, phi, rho);
+        obj->set_angles(theta, phi, 0);
     }
 }
 
