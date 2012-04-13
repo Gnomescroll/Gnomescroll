@@ -1,5 +1,6 @@
 #include "handlers.hpp"
 
+#include <math.h>
 #include <chat/client.hpp>
 #include <hud/hud.hpp>
 #include <input/skeleton_editor.hpp>

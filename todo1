@@ -845,6 +845,7 @@ split minivox particles into colored and textured lists
 fixed the slime update and added client side prediction
 health refill
 fixed block ammo decrementing despite failure
+fix opengl texture draw crap
 ===============
 
 Gun model
