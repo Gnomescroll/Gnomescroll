@@ -30,7 +30,7 @@ class ObjectPolicyInterface
         virtual void draw() = 0;
         virtual void update() = 0;
         
-        virtual void born() = 0;    // called individual on objects at birth/death (object type is always known here)
+        virtual void born(int subtype) = 0;    // called individual on objects at birth/death (object type is always known here)
         virtual void die() = 0;
         
         // network
@@ -277,4 +277,4 @@ class ObjectStateLayer: public ObjectPolicyInterface
  * */
 
 #define DUMMY_NETWORK_INTERFACE void sendToClientCreate(int client_id){}void broadcastCreate(){}void sendToClientState(int client_id){}void broadcastState(){}void broadcastDeath(){}
-#define DUMMY_API_INTERFACE void tick(){}void draw(){}void update(){}void die(){}void born(){}
+#define DUMMY_API_INTERFACE void tick(){}void draw(){}void update(){}void die(){}void born(int subtype){}

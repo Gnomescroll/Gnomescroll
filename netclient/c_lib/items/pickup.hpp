@@ -224,7 +224,7 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
 
     void update() {}
 
-    void born()
+    void born(int subtype)
     {
         this->broadcastCreate();
     }

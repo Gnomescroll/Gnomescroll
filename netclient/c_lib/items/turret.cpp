@@ -26,7 +26,7 @@ void turret_create(object_create_owner_team_StoC_model* msg)
     t->set_position(msg->x, msg->y, msg->z);
     t->set_team(msg->team);
     t->set_owner(msg->owner);
-    t->born();
+    t->born(0); // todo -- subtype
     system_message->object_created(t);
 }
 

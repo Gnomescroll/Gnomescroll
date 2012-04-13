@@ -102,7 +102,7 @@ class MonsterSpawner:
 
     void draw() {}
 
-    void born()
+    void born(int subtype)
     {
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);

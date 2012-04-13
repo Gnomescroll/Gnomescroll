@@ -48,7 +48,7 @@ void spawn_monsters(int max_monsters)
             spawner->spawn.gain_child(spawner->spawn.type, box->state()->id);
             box->set_position(spawn_point[0], spawn_point[1], spawn_point[2]);
             box->spawner = spawner->state()->id;
-            box->born();
+            box->born(0);// TODO
             added++;
         }
         if (added == 0) break; // all spawners full
@@ -72,7 +72,7 @@ void create_monsters_spawners(int max_spawners)
         int z = t_map::get_highest_open_block(x,y);
         obj->spawn.type = OBJ_TYPE_MONSTER_BOX;
         obj->set_position(x+0.5f,y+0.5f,z);
-        obj->born();
+        obj->born(0);   // TODO
     }
 }
 #endif

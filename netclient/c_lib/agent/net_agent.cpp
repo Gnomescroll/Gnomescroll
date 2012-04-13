@@ -1034,7 +1034,7 @@ inline void place_spawner_CtoS::handle()
     s->set_team(a->status.team);
     s->set_owner(a->id);
     ServerState::spawner_list->assign_team_index(s);
-    s->born();
+    s->born(0); // TODO
 }
 
 inline void place_turret_CtoS::handle()
@@ -1063,7 +1063,7 @@ inline void place_turret_CtoS::handle()
     a->status.purchase(t->state()->type);
     t->set_team(a->status.team);
     t->set_owner(a->id);
-    t->born();
+    t->born(0); // TODO
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 

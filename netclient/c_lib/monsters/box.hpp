@@ -92,7 +92,7 @@ void boxDropItem(Vec3 position)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born();
+        obj->born(0);   // TODO
     }
 
     #endif
@@ -404,7 +404,7 @@ class Box:
         #endif
     }
 
-    void born()
+    void born(int subtype)
     {
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);

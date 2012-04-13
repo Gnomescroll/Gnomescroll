@@ -24,7 +24,7 @@ class Slime:
     
     void tick();
     void die();
-    void born();
+    void born(int subtype);
     void update();
     void draw(){/*Empty*/}
     

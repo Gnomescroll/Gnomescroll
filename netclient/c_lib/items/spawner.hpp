@@ -134,7 +134,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStat
 
     void draw() {}
 
-    void born()
+    void born(int subtype)
     {
         ObjectState* state = this->state();
         this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team.properties.team);

@@ -51,7 +51,7 @@ Slime::Slime(int id)
     #endif
 }
 
-void Slime::born()
+void Slime::born(int subtype)
 {
     ObjectState* state = this->state();
     this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);
@@ -144,7 +144,7 @@ void slimeDropItem(Vec3 position)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born();
+        obj->born(0);   // TODO
     }
     #endif
 }
@@ -178,7 +178,7 @@ void populate_slimes(int n_max)
         if (s != NULL)
         {
             s->set_position(x+0.5, y+0.5, z);
-            s->born();
+            s->born(0); // TODO
         }
     }
     #undef TYPE

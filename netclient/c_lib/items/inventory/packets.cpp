@@ -26,7 +26,7 @@ inline void inventory_create_StoC::handle()
     attach_inventory_to_owner(obj, obj->get_owner());
     #endif
     if (create)
-        obj->born();
+        obj->born(0);// TODO
 }
 
 inline void inventory_destroy_StoC::handle()

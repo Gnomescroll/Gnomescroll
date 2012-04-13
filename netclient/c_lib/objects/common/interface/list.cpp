@@ -52,7 +52,7 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
         case OBJ_TYPE_ONYX:
         case OBJ_TYPE_GRENADE_REFILL:
         case OBJ_TYPE_LASER_REFILL:
-            obj = new ItemDrops::PickupObjectSprite(type, id);
+            obj = new ItemDrops::PickupObjectSprite(type, id);  // TODO
             break;
         case OBJ_TYPE_DIRT:
         case OBJ_TYPE_STONE:

@@ -14,7 +14,7 @@ class InventoryObjectInterface: public ObjectStateLayer
         void tick() {}
         void draw() {}
         void update() {}
-        void born() {}
+        void born(int subtype) {}
         void die() {}
 
     ~InventoryObjectInterface() {}
