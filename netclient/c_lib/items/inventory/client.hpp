@@ -66,6 +66,15 @@ class Inventory: public BaseInventoryClient
 
     void select_slot(int slot)
     {
+        if (slot == this->selected_slot)
+        {   // unselect
+            this->unselect_slot();
+            return;
+        }
+        // attempt swap
+        if (this->selected_slot > 0) 
+            this->swap_action(this->selected_slot, slot);
+        
         this->selected_slot = slot;
         //printf("slot is %d\n", slot);
     }
