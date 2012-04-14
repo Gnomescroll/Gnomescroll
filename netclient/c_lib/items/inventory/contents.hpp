@@ -13,7 +13,6 @@ class BaseInventoryProperties
 
     bool empty()
     {
-        printf("item_id = %d\n", item_id);
         if (this->item_id == EMPTY_SLOT)
             return true;
         return false;
