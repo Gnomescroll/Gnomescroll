@@ -62,11 +62,13 @@ class Inventory: public BaseInventoryClient
 
     InventoryProperties* selected_item()
     {
+        if (this->selected_slot < 0) return NULL;
         return get_slot_item(this->selected_slot);
     }
     
     InventoryProperties* get_slot_item(int slot)
     {
+        if (!this->contents.is_valid_slot(slot)) return NULL;
         return &this->contents.objects[slot];
     }
 
@@ -80,13 +82,14 @@ class Inventory: public BaseInventoryClient
         if (this->selected_slot > 0)
         {   // attempt swap
             this->swap_action(this->selected_slot, slot);
-            this->selected_slot = slot;
+            this->unselect_slot();
             return;
         }
 
         // only select if not empty
-        if (!this->selected_item()->empty()) printf("NOT EMPTY\n");
-        if (!this->selected_item()->empty())
+        InventoryProperties* item = this->get_slot_item(slot);
+        //if (!this->selected_item()->empty()) printf("NOT EMPTY\n");
+        if (item != NULL && !item->empty())
             this->selected_slot = slot;
         
         //printf("slot is %d\n", slot);
