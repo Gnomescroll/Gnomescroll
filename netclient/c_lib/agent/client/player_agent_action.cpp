@@ -475,7 +475,7 @@ int PlayerAgent_action::select_block()
     return block_type;
 }
 
-void PlayerAgent_action::remove_item_from_inventory()
+void PlayerAgent_action::remove_selected_item_from_inventory()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;
@@ -483,7 +483,7 @@ void PlayerAgent_action::remove_item_from_inventory()
 
     Inventory* inv = this->p->you->status.inventory;
     if (inv == NULL) return;
-    inv->remove_any_action();   // TODO -- temp moethod
+    inv->remove_selected_action();
 }
 
 void PlayerAgent_action::add_item_to_inventory(int id, Object_types type, int subtype)

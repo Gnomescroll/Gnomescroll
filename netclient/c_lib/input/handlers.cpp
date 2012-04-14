@@ -294,6 +294,11 @@ void inventory_key_down_handler(SDL_Event* event)
             toggle_inventory();
             break;
 
+        // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
+        case SDLK_j:
+            ClientState::playerAgent_state.action.remove_selected_item_from_inventory();
+            break;
+
         default: break;
     }
 }
@@ -381,11 +386,6 @@ void agent_key_down_handler(SDL_Event* event)
             break;
         case SDLK_DOWN:
             HudCubeSelector::cube_selector.down();
-            break;
-
-        // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
-        case SDLK_j:
-            ClientState::playerAgent_state.action.remove_item_from_inventory();
             break;
 
         case SDLK_1:

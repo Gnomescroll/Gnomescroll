@@ -93,15 +93,9 @@ class Inventory: public BaseInventoryClient
 
     void get_selected_icon_render_data(Draw::SpriteData* data);
 
-    void remove_any_action()
+    void remove_selected_action()
     {
-        for (int i=0; i<this->contents.max; i++)
-        {
-            if (this->contents.objects[i].item_id == EMPTY_SLOT)
-                continue;
-            this->remove_action(i);
-            break;
-        }
+        this->remove_action(this->selected_slot);
     }
 
     void remove_action(int slot)
