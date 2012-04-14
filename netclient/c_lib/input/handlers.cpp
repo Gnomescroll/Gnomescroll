@@ -282,6 +282,27 @@ void chat_mouse_down_handler(SDL_Event* event){}
 void chat_mouse_up_handler(SDL_Event* event){}
 void chat_mouse_motion_handler(SDL_Event* event){}
 
+/* Inventory / HUD */
+
+void inventory_key_down_handler(SDL_Event* event)
+{
+    switch (event->key.keysym.sym)
+    {
+        case SDLK_i:
+        case SDLK_ESCAPE:
+            toggle_inventory();
+            break;
+
+        default: break;
+    }
+}
+
+void inventory_key_up_handler(SDL_Event* event){printf("inv key up\n");}
+void inventory_mouse_down_handler(SDL_Event* event){printf("inv mouse down\n");}
+void inventory_mouse_up_handler(SDL_Event* event){printf("inv mouse up\n");}
+void inventory_mouse_motion_handler(SDL_Event* event){printf("inv mouse motion\n");}
+
+
 /* Agent */
 
 #include <c_lib/common/lua/lua.hpp>
@@ -508,7 +529,9 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
+    if (input_state.inventory)
+        inventory_key_down_handler(event);
+    else if (input_state.chat)
         chat_key_down_handler(event);
     else
     {
@@ -683,7 +706,9 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.chat)
+    if (input_state.inventory)
+        inventory_key_up_handler(event);
+    else if (input_state.chat)
         chat_key_up_handler(event);
     else
     {
@@ -737,8 +762,9 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-
-    if (input_state.input_mode == INPUT_STATE_AGENT)
+    if (input_state.inventory)
+        inventory_mouse_down_handler(event);
+    else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
     else
         camera_mouse_down_handler(event);
@@ -762,7 +788,9 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.input_mode == INPUT_STATE_AGENT)
+    if (input_state.inventory)
+        inventory_mouse_up_handler(event);
+    else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
     else
         camera_mouse_up_handler(event);
@@ -778,7 +806,9 @@ void mouse_motion_handler(SDL_Event* event)
 {
     // chat doesnt affect mouse
 
-    if (input_state.input_mode == INPUT_STATE_AGENT)
+    if (input_state.inventory)
+        inventory_mouse_motion_handler(event);
+    else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);
     else
         camera_mouse_motion_handler(event);
@@ -807,7 +837,7 @@ void key_state_handler(Uint8 *keystate, int numkeys)
     char f,b,l,r,jet,jump,crouch,boost,m1,m2,m3;
     f=b=l=r=jet=jump=crouch=boost=m1=m2=m3=0;
     
-    if (!input_state.chat)
+    if (!input_state.chat && !input_state.inventory)
     {
         if (input_state.input_mode == INPUT_STATE_AGENT)
             agent_key_state_handler(keystate, numkeys, &f, &b, &l, &r, &jet, &jump, &crouch, &boost, &m1, &m2, &m3);
