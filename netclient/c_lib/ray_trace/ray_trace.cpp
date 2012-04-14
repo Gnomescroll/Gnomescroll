@@ -10,6 +10,8 @@
 
 #include <c_lib/physics/common.hpp>
 
+#include <c_lib/physics/vec3.hpp>
+
 static inline int collision_check(int x, int y, int z) {
     return isSolid(x,y,z);
 }
@@ -93,9 +95,10 @@ bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float
     return _ray_cast_simple(x,y,z, a,b,c, len);
 }
 
-/*
+
 static int ri4[3];
 
+//note used
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -166,11 +169,9 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
     return ri4;
 }
-*/
 
-static int ri4[3];
 
-void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, Vec3* v_out) {
+void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
     int x,y,z;
@@ -214,10 +215,10 @@ void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* 
                 if(collision_check(x,y,z)) {
                     if(cdx == 1)
                     {
-                        *v_out = Vec3_init(1.0,0.0,0.0);
+                        *v_out = vec3_init(1.0,0.0,0.0);
                     } else 
                     {
-                        *v_out = Vec3_init(-1.0,0.0,0.0);
+                        *v_out = vec3_init(-1.0,0.0,0.0);
                     }
                     ri4[0] = cdx;
                     break;
@@ -229,10 +230,10 @@ void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* 
                 if(collision_check(x,y,z)) {
                     if(cdy == 1)
                     {
-                        *v_out = Vec3_init(0.0,1.0,0.0);
+                        *v_out = vec3_init(0.0,1.0,0.0);
                     } else 
                     {
-                        *v_out = Vec3_init(0.0,-1.0,0.0);
+                        *v_out = vec3_init(0.0,-1.0,0.0);
                     }
                     break;
                 }
@@ -243,10 +244,10 @@ void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* 
                 if(collision_check(x,y,z)) {
                     if(cdz == 1)
                     {
-                        *v_out = Vec3_init(0.0,0.0,1.0);
+                        *v_out = vec3_init(0.0,0.0,1.0);
                     } else 
                     {
-                        *v_out = Vec3_init(0.0,0.0,-1.0);
+                        *v_out = vec3_init(0.0,0.0,-1.0);
                     }
                     break;
                 }
@@ -255,7 +256,6 @@ void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* 
     }
 
     *interval = (float)(i) / max_i;
-    return ri4;
 }
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
@@ -332,7 +332,9 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     return ri4;
 }
 
+
 // loop ticks are capped to raycast_tick_max
+//not used
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -410,6 +412,104 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     *tile = _get(x,y,z);
     *interval = (float)(i) / max_i;
     return ri4;
+}
+
+
+// loop ticks are capped to raycast_tick_max
+void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out) {
+    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+
+    int x = (int)x0, //truncating conversion
+        y = (int)y0,
+        z = (int)z0;
+
+    /* orient the delta step */
+    int _dx,_dy,_dz;
+    _dx = ((x1-x0)/len) *ssize;
+    _dy = ((y1-y0)/len) *ssize;
+    _dz = ((z1-z0)/len) *ssize;
+
+    int cdx, cdy, cdz;
+    cdx = _dx >= 0 ? 1 : -1;
+    cdy = _dy >= 0 ? 1 : -1;
+    cdz = _dz >= 0 ? 1 : -1;
+
+    int dx,dy,dz;
+    dx = _dx*cdx;
+    dy = _dy*cdy;
+    dz = _dz*cdz;
+
+    int cx,cy,cz;
+    float dummy;
+    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
+
+    ri4[0]=0; ri4[1]=0; ri4[2]=0;
+
+    int i;
+    int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
+    // this adjustment is necessary, but the step may need to be resized
+    // if max_i > ray_cast_max.
+    if (max_i > raycast_tick_max) {
+        printf("WARNING: _ray_cast5_capped :: max_i ticks exceeded tick_max. max_i=%d\n", max_i);
+        max_i = raycast_tick_max;
+    }
+
+    int _c = 0;
+    for(i=0; i < max_i; i++) {
+        cx += dx;
+        cy += dy;
+        cz += dz;
+
+        if(cx >= bsize) {
+            cx -= bsize;
+            x += cdx;
+            if(collision_check(x,y,z)) {
+                _c = 1;
+                if(cdx == 1)
+                {
+                    *v_out = vec3_init(1.0,0.0,0.0);
+                } else 
+                {
+                    *v_out = vec3_init(-1.0,0.0,0.0);
+                }
+            }
+        }
+        if(cy >= bsize) {
+            cy -= bsize;
+            y += cdy;
+            if(_c || collision_check(x,y,z)) {
+                _c = 1;
+                if(cdy == 1)
+                {
+                    *v_out = vec3_init(0.0,1.0,0.0);
+                } else 
+                {
+                    *v_out = vec3_init(0.0,-1.0,0.0);
+                }
+            }
+        }
+        if(cz >= bsize) {
+            cz -= bsize;
+            z += cdz;
+            if(_c || collision_check(x,y,z)) {
+                _c = 1;
+                if(cdz == 1)
+                {
+                    *v_out = vec3_init(0.0,0.0,1.0);
+                } else 
+                {
+                    *v_out = vec3_init(0.0,0.0,-1.0);
+                }
+            }
+        }
+        if (_c) break;
+    }
+
+    collision[0]=x;collision[1]=y;collision[2]=z;
+    *tile = _get(x,y,z);
+    *interval = (float)(i) / max_i;
 }
 
 int _ray_cast6(float x0,float y0,float z0, float _dfx,float _dfy,float _dfz, float max_l, float *distance, int* collision, int* pre_collision, int* tile, int* side) {
