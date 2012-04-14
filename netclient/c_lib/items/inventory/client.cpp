@@ -37,16 +37,6 @@ void InventoryProperties::load(int id, Object_types type, int subtype)
     //printf("Loaded inventory item %d,%d\n", id,type);
 }
 
-
-Inventory::Inventory(int id)
-: BaseInventoryClient(id)
-{
-    // todo -- get the inventory window information elsewhere
-    this->screen.x = _xresf/3;
-    this->screen.y = _yresf - 64;
-    this->screen.z = -0.1f;
-}
-
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
     data->index = this->sprite_index;
@@ -58,6 +48,34 @@ void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
     data->x = x + this->spacing * (slot % this->inventory->width());
     data->y = y - this->spacing * (slot / this->inventory->width());
     data->z = HudInventory::inventory->z + 0.01;
+}
+
+
+/* Inventory */
+
+void Inventory::get_selected_icon_render_data(Draw::SpriteData* data)
+{
+    if (!this->selected()) return;
+
+    InventoryProperties icon = this->contents.objects[0];
+    
+    float x = HudInventory::inventory->x;// + (icon.spacing/4);
+    float y = HudInventory::inventory->y + HudInventory::inventory->height - icon.spacing; // need to subtract our height
+    data->x = x + icon.spacing * (this->selected_slot % this->width());
+    data->y = y - icon.spacing * (this->selected_slot / this->width());
+    data->z = HudInventory::inventory->z + 0.01 + 0.01;
+    data->w = icon.spacing;
+    data->h = icon.spacing;
+}
+
+
+Inventory::Inventory(int id)
+: BaseInventoryClient(id), selected_slot(0)
+{
+    // todo -- get the inventory window information elsewhere
+    //this->screen.x = _xresf/3;
+    //this->screen.y = _yresf - 64;
+    //this->screen.z = -0.1f;
 }
 
 void attach_inventory_to_owner(Inventory* inventory, int owner)

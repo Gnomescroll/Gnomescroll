@@ -21,6 +21,7 @@ struct SpriteData
 {
     int index;
     float x,y,z;
+    float w,h;
 };
 
 typedef enum {

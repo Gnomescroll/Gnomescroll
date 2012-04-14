@@ -58,9 +58,33 @@ class Inventory: public BaseInventoryClient
 {
     public:
 
-    struct {
-        float x,y,z;
-    } screen;   // TODO -- replace with UI element
+    //struct {
+        //float x,y,z;
+    //} screen;   // TODO -- replace with UI element
+
+    int selected_slot;
+
+    void select_slot(int slot)
+    {
+        this->selected_slot = slot;
+    }
+
+    void unselect_slot()
+    {
+        this->selected_slot = -1;
+    }
+    
+    bool selected()
+    {
+        //static int t = 0;
+        //t++;
+        //if (t % 5 == 0) this->selected_slot++;
+        //this->selected_slot %= this->contents.max;
+        //printf("slot %d\n", this->selected_slot);
+        return (this->selected_slot >= 0);
+    }
+
+    void get_selected_icon_render_data(Draw::SpriteData* data);
 
     void remove_any_action()
     {

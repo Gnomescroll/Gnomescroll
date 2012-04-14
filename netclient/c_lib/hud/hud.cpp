@@ -209,6 +209,7 @@ void draw_hud_textures()
     {
         HudInventory::inventory->draw();
         Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
+        HudInventory::draw_selected_icon_mask();
     }
 
     if (hud_draw_settings.equipment)

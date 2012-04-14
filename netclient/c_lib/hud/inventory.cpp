@@ -206,6 +206,20 @@ void draw_icon_mask(float x, float y, float w, float h, float depth)
     glDisable(GL_BLEND);
 }
 
+// TODO -- this reads the agent's inventory
+// find a better place / way to do this
+void draw_selected_icon_mask()
+{
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you == NULL) return;
+    if (playerAgent_state.you->status.inventory == NULL) return;
+    if (!playerAgent_state.you->status.inventory->selected()) return;
+    Draw::SpriteData data;
+    playerAgent_state.you->status.inventory->get_selected_icon_render_data(&data);
+    draw_icon_mask(data.x, data.y, data.w, data.h, data.z);
+}
+
+
 void init()
 {
     char* icon_mask_path = (char*)"./media/texture/hud/icon_mask.png";

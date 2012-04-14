@@ -25,6 +25,7 @@ class Inventory
 extern Inventory* inventory;
 
 void draw_icon_mask(float x, float y, float w, float h, float depth);
+void draw_selected_icon_mask();
 void init();
 void teardown();
 
