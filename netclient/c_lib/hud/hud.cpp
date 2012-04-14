@@ -942,16 +942,32 @@ Scoreboard::~Scoreboard()
 //  TODO -- move to own subsystem
 void handle_mouse_click(int x, int y)
 {
+    using HudInventory::inventory;
+    using ClientState::playerAgent_state;
+    if (playerAgent_state.you == NULL) return;
+    
     // check if intersect inventory (only thing we care about right now)
+    if (point_in_rect(x,y, inventory->x, inventory->y, inventory->width, inventory->height))
+    {  // check if point in an inventory icon's rect
+        // shift coordinates to 0,0 inventory relative
+        x -= inventory->x;
+        y -= inventory->y;
 
-    if (point_in_rect(
-        x,y,
-        HudInventory::inventory->x, HudInventory::inventory->y,
-        HudInventory::inventory->width, HudInventory::inventory->height
-    ))
-    {
-        // check if point in an icons rect
-        printf("point in inventory\n");
+        // divide point by slot width/height
+        //  TODO -- get icon height/width from inventory object
+        const int icon_width = 32;
+        const int icon_height = 32;
+        int col = x/icon_width;
+        int row = y/icon_height;
+
+        // invert rows, since we draw top->bottom but coordinates are bottom->top
+        // TODO -- get rows,cols from inventory objects
+        //const int cols = 8;
+        //const int rows = 4;
+        //row = rows - row; // invert
+
+        //printf("row,col %d,%d\n", row, col);
+        playerAgent_state.you->status.inventory->select_slot(row, col);
     }
 }
 

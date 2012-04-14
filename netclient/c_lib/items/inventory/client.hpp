@@ -67,6 +67,13 @@ class Inventory: public BaseInventoryClient
     void select_slot(int slot)
     {
         this->selected_slot = slot;
+        //printf("slot is %d\n", slot);
+    }
+
+    void select_slot(int row, int col)
+    {
+        int slot = row * this->contents.x + col;
+        this->select_slot(slot);
     }
 
     void unselect_slot()
