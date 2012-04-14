@@ -88,11 +88,9 @@ class Inventory: public BaseInventoryClient
 
         // only select if not empty
         InventoryProperties* item = this->get_slot_item(slot);
-        //if (!this->selected_item()->empty()) printf("NOT EMPTY\n");
         if (item != NULL && !item->empty())
             this->selected_slot = slot;
         
-        //printf("slot is %d\n", slot);
     }
 
     void select_slot(int row, int col)

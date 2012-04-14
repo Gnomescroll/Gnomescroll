@@ -13,7 +13,6 @@ class BaseInventoryProperties
 
     bool empty()
     {
-        printf("item_id = %d\n", item_id);
         if (this->item_id == EMPTY_SLOT)
             return true;
         return false;
@@ -24,7 +23,6 @@ class BaseInventoryProperties
     item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE), item_subtype(SUBTYPE_NONE),
     slot(-1)    // slot is set after allocation
     {
-        if (this->empty()) printf("Empty\n");
     }
 };
 

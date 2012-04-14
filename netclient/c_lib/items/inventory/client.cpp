@@ -34,7 +34,7 @@ void InventoryProperties::load(int id, Object_types type, int subtype)
     this->item_subtype = subtype;
     if (id != EMPTY_SLOT && new_icon)   // set to new
         register_inventory_item_draw_list(this);
-    printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);
+    //printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);
 }
 
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
