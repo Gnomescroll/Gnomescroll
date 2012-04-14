@@ -22,6 +22,13 @@ bool rect_intersects(
     return true;
 }
 
+bool point_in_rect(float px, float py, float rx, float ry, float w, float h)
+{
+    if (px > rx && px < rx+w && py > ry && py < ry+h)
+        return true;
+    return false;
+}
+
 float distancef(float x, float y, float z, float a, float b, float c)
 {
     return sqrt((a-x)*(a-x) + (b-y)*(b-y) + (c-z)*(c-z));

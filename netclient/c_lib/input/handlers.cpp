@@ -304,19 +304,26 @@ void inventory_mouse_down_handler(SDL_Event* event)
 {
     // check intersection with any slots
 
-    SDL_MouseButtonEvent e = event->button;
+    //SDL_MouseButtonEvent e = event->button;
     //printf("Button type: %d\n", e.type);
     //printf("Button which: %d\n", e.which);
     //printf("Button button: %d\n", e.button);
     //printf("Button state: %d\n", e.state);
     //printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
 
-    // 
+    // gets correct mouse pixels
     int x,y;
     SDL_GetMouseState(&x, &y);
     //printf("GetMouseState x,y: %d,%d\n", x,y);
 
-    // 
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            Hud::handle_mouse_click(x,y);
+            break;
+
+        default: break;
+    }
 }
 
 void inventory_mouse_up_handler(SDL_Event* event){}
@@ -325,7 +332,7 @@ void inventory_mouse_motion_handler(SDL_Event* event)
 {
     // trap mouse?
 
-    SDL_MouseMotionEvent e = event->motion;
+    //SDL_MouseMotionEvent e = event->motion;
 
     //printf("Motion type: %d\n", e.type);
     //printf("Motion state: %d\n", e.state);

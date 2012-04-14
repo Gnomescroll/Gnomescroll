@@ -939,6 +939,20 @@ Scoreboard::~Scoreboard()
     }    
 }
 
+//  TODO -- move to own subsystem
+void handle_mouse_click(int x, int y)
+{
+    // check if intersect inventory (only thing we care about right now)
 
+    if (point_in_rect(
+        x,y,
+        HudInventory::inventory->x, HudInventory::inventory->y,
+        HudInventory::inventory->width, HudInventory::inventory->height
+    ))
+    {
+        // check if point in an icons rect
+        printf("point in inventory\n");
+    }
+}
 
 }
