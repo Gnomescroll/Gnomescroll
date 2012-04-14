@@ -53,7 +53,7 @@ inventory(NULL)
     if (this->inventory != NULL)
     {
         this->inventory->set_owner(this->a->id);
-        this->inventory->init(4,3);
+        this->inventory->init(8,4);
     }
     else
         printf("ERROR: Agent_status::Agent_status() -- failed to create inventory\n");

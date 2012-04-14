@@ -40,6 +40,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
 {
     public:
         Inventory* inventory;
+        float spacing; // render icon spacing
 
     void load(int id, Object_types type, int subtype);
     void get_sprite_data(struct Draw::SpriteData* data);
@@ -47,9 +48,9 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
     InventoryProperties()
     :
     BaseInventoryProperties(), SpriteProperties(),
-    inventory(NULL)
+    inventory(NULL), spacing(32.0f)
     {
-        this->scale = 4.0f;
+        this->scale = 2.0f;
     }
 };
 

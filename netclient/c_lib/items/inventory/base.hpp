@@ -96,6 +96,16 @@ class BaseInventory: public InventoryObjectInterface
 
     public:
 
+        int width()
+        {
+            return this->contents.x;
+        }
+
+        int height ()
+        {
+            return this->contents.y;
+        }
+
     explicit BaseInventory<InventoryContents>(int id)
     {
         this->_state.id = id;

@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <c_lib/draw/transparent.hpp>
+#include <c_lib/hud/inventory.hpp>
 
 void register_inventory_item_draw_list(InventoryProperties* property)
 {
@@ -49,10 +50,14 @@ Inventory::Inventory(int id)
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
     data->index = this->sprite_index;
-    const float spacing = 32.0f;
-    data->x = inventory->screen.x + spacing * slot;
-    data->y = inventory->screen.y;
-    data->z = inventory->screen.z;
+    //data->x = inventory->screen.x + this->spacing * slot;
+    //data->y = inventory->screen.y;
+    //data->z = inventory->screen.z;
+    float x = HudInventory::inventory->x + (this->spacing/4);
+    float y = HudInventory::inventory->y + HudInventory::inventory->height - 3*(this->spacing/4); // need to subtract our height
+    data->x = x + this->spacing * (slot % this->inventory->width());
+    data->y = y - this->spacing * (slot / this->inventory->width());
+    data->z = HudInventory::inventory->z + 0.01;
 }
 
 void attach_inventory_to_owner(Inventory* inventory, int owner)

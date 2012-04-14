@@ -1,6 +1,8 @@
 #include "inventory.hpp"
 
-#include <compat_gl.h>
+#include <c_lib/SDL/texture_loader.hpp>
+#include <c_lib/SDL/draw_functions.hpp>
+
 namespace HudInventory
 {
     

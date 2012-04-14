@@ -31,6 +31,7 @@ typedef enum {
 } DrawListType;
 
 // draw lists
+const int SPRITE_LIST_MAX = 1024;
 class SpriteList: public BehaviourList
 {
     public:
@@ -43,7 +44,7 @@ class SpriteList: public BehaviourList
         void draw();
 
     SpriteList()
-    : texture_id(-1), type(NONE_DRAW_LIST)
+    : BehaviourList(SPRITE_LIST_MAX),texture_id(-1), type(NONE_DRAW_LIST)
     {}
 };
 

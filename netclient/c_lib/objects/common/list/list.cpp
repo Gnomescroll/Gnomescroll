@@ -1,12 +1,17 @@
 #include "list.hpp"
 
+#include <c_lib/common/common.hpp>
+
 /* List management */
 
 void BehaviourList::register_object(ComponentProperties* state)
 {
     if (this->ct >= this->max)
     {
-        printf("WARNING: %s is full\n", name());
+        printf("WARNING: %s is full\n", this->name());
+        printf("Ct %d\n", this->ct);
+        printf("max %d\n", this->max);
+        print_trace();
         return;
     }
     int i=0;
@@ -22,7 +27,7 @@ void BehaviourList::register_object(ComponentProperties* state)
         }
     }
     if (i == this->max)
-        printf("WARNING: no empty slots found in %s\n", name());
+        printf("WARNING: no empty slots found in %s\n", this->name());
 }
 
 void BehaviourList::unregister_object(ComponentProperties* state)

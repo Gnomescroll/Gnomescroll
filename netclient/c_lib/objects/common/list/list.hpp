@@ -40,6 +40,8 @@ class BehaviourList
 
         void init(int max)
         {
+            printf("initing with max %d\n", max);
+            if (max <= 0) printf("\n\n\n\nBAD BAD BAD\n\n\n");
             if (this->objects != NULL)
                 return;
             this->max = max;
@@ -101,7 +103,7 @@ class PropertyList
         {
             if (this->ct >= this->max)
             {
-                printf("WARNING: %s is full\n", name());
+                printf("WARNING: %s is full\n", this->name());
                 return;
             }
             int i=0;
@@ -116,7 +118,7 @@ class PropertyList
                 }
             }
             if (i == this->max)
-                printf("WARNING: no empty slots found in %s\n", name());
+                printf("WARNING: no empty slots found in %s\n", this->name());
         }
 
         void unregister_object(Property* state)
