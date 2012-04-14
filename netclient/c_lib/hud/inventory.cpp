@@ -183,17 +183,35 @@ Inventory::Inventory()
 :
 inited(false),
 x(0),y(0), z(-0.5f),
-item_sheet_texture(0),
-item_slot_texture(0),
+//item_sheet_texture(0),
+//item_slot_texture(0),
 inventory_background_texture(0),
 width(256.0f),height(128.0f) // todo
 {}
 
-
+GLuint icon_mask_texture = 0;
 Inventory* inventory = NULL;
+
+void draw_icon_mask(float x, float y, float w, float h, float depth)
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, icon_mask_texture);
+
+    draw_bound_texture(x,y,w,h,depth);
+    
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+}
 
 void init()
 {
+    char* icon_mask_path = (char*)"./media/texture/hud/icon_mask.png";
+    int ret = create_texture_from_file(icon_mask_path, &icon_mask_texture);
+    if (ret) printf("ERROR: Failed to load inventory icon mask %s\n", icon_mask_path);
+    
     inventory = new Inventory;
     inventory->init();
     inventory->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);

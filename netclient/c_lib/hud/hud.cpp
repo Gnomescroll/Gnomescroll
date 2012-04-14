@@ -206,7 +206,10 @@ void draw_hud_textures()
         HudCubeSelector::cube_selector.draw();
 
     if (hud_draw_settings.inventory)
+    {
         HudInventory::inventory->draw();
+        Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
+    }
 
     if (hud_draw_settings.equipment)
         HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
@@ -224,8 +227,6 @@ void draw_hud_textures()
     using Profiling::frame_graph;
     if (hud_draw_settings.graphs)
         frame_graph->draw(_xresf - frame_graph->ts->screen_width(), 0);
-
-    Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
 }
 
 void draw_hud_text()

@@ -113,7 +113,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
-    if (randf () < 0.5f)
+    if (randf () < 1.0f)
     {
         const int n_items = 7;  // 7 Gemstones
         const ItemDrops::PickupSpriteTypes items[n_items] = {
