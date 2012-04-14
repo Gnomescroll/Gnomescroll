@@ -24,6 +24,7 @@ void toggle_help_menu()
 void toggle_inventory()
 {
     input_state.inventory = (!input_state.inventory);
+    if (input_state.inventory) SDL_ShowCursor(1);
 }
 
 void toggle_scoreboard()
@@ -297,10 +298,41 @@ void inventory_key_down_handler(SDL_Event* event)
     }
 }
 
-void inventory_key_up_handler(SDL_Event* event){printf("inv key up\n");}
-void inventory_mouse_down_handler(SDL_Event* event){printf("inv mouse down\n");}
-void inventory_mouse_up_handler(SDL_Event* event){printf("inv mouse up\n");}
-void inventory_mouse_motion_handler(SDL_Event* event){printf("inv mouse motion\n");}
+void inventory_key_up_handler(SDL_Event* event){}
+
+void inventory_mouse_down_handler(SDL_Event* event)
+{
+    // check intersection with any slots
+
+    SDL_MouseButtonEvent e = event->button;
+    //printf("Button type: %d\n", e.type);
+    //printf("Button which: %d\n", e.which);
+    //printf("Button button: %d\n", e.button);
+    //printf("Button state: %d\n", e.state);
+    //printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
+
+    // 
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    //printf("GetMouseState x,y: %d,%d\n", x,y);
+
+    // 
+}
+
+void inventory_mouse_up_handler(SDL_Event* event){}
+
+void inventory_mouse_motion_handler(SDL_Event* event)
+{
+    // trap mouse?
+
+    SDL_MouseMotionEvent e = event->motion;
+
+    //printf("Motion type: %d\n", e.type);
+    //printf("Motion state: %d\n", e.state);
+    //printf("Motion x,y: %d,%d\n", e.x, e.y);
+    //printf("Motion xrel,yrel: %d,%d\n", e.xrel, e.yrel);
+
+}
 
 
 /* Agent */
@@ -807,7 +839,10 @@ void mouse_motion_handler(SDL_Event* event)
     // chat doesnt affect mouse
 
     if (input_state.inventory)
+    {
+        SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         inventory_mouse_motion_handler(event);
+    }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);
     else

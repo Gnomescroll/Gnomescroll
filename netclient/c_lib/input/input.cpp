@@ -39,7 +39,8 @@ int get_key_state() {
 
 void bind_mouse()
 {
-    SDL_ShowCursor(0);
+    if (!input_state.inventory)
+        SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
