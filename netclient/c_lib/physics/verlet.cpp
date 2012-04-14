@@ -18,7 +18,7 @@ static inline void velocity_integrate(Vec3* p, Vec3* v, float dt)
     *v = vec3_add(*v, vec3_scalar_mult(va, 0.5*dt));
 }
 
-bool bounce(Vec3* old_position, Vec3* old_velocity, Vec3* position, Vec3* velocity, float damp)
+bool bounce(Vec3* position, Vec3* velocity, float damp)
 {
     // save current state
     // calculate next state
@@ -33,13 +33,13 @@ bool bounce(Vec3* old_position, Vec3* old_velocity, Vec3* position, Vec3* veloci
 
     bool bounced = false;
     
-    *old_position = *position;
-    *old_velocity = *velocity;
+    Vec3 old_position = *position;
+    Vec3 old_velocity = *velocity;
     velocity_integrate(position, velocity, dt);
 
     float interval = 0.0f;
     int *s = _ray_cast4(
-        (*old_position).x, (*old_position).y, (*old_position).z,
+        old_position.x, old_position.y, old_position.z,
         (*position).x, (*position).y, (*position).z,
         &interval
     );
@@ -47,8 +47,8 @@ bool bounce(Vec3* old_position, Vec3* old_velocity, Vec3* position, Vec3* veloci
     if (interval < 1.0f)
     {   // collision
         bounced = true;
-        *position = *old_position;
-        *velocity = *old_velocity;
+        *position = old_position;
+        *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
         Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
@@ -58,23 +58,23 @@ bool bounce(Vec3* old_position, Vec3* old_velocity, Vec3* position, Vec3* veloci
     return bounced;
 }
 
-int* bounce(Vec3* old_position, Vec3* old_velocity, Vec3* position, Vec3* velocity, float damp, int* collision, int* tile)
+int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* tile)
 {   // same as simple bounce, but gets extra metadata on the bounce
-    *old_position = *position;
-    *old_velocity = *velocity;
+    Vec3 old_position = *position;
+    Vec3 old_velocity = *velocity;
     velocity_integrate(position, velocity, dt);
     
     float interval = 0.0f;
     int *s = _ray_cast5_capped(
-        (*old_position).x, (*old_position).y, (*old_position).z,
+        old_position.x, old_position.y, old_position.z,
         (*position).x, (*position).y, (*position).z,
         &interval, collision, tile
     );
 
     if (interval < 1.0f)
     {   // collision
-        *position = *old_position;
-        *velocity = *old_velocity;
+        *position = old_position;
+        *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
         Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);

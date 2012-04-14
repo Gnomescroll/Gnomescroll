@@ -31,7 +31,7 @@ class InventoryProperties: public BaseInventoryProperties
             this->item_id = id;
             this->item_type = type;
             this->item_subtype = subtype;
-            //printf("Loaded inventory item %d,%d\n", id,type);
+            printf("Loaded inventory item %d,%d\n", id,type);
         }
         
     InventoryProperties()

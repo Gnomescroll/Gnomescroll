@@ -256,7 +256,6 @@ class VerletComponent: public SpatialDelegate
         {
             if (position_is_equal(this->properties.position, x,y,z))
                 return false;
-            this->properties.old_position = this->properties.position;
             this->properties.position = vec3_init(x,y,z);
             return true;
         }
@@ -268,13 +267,11 @@ class VerletComponent: public SpatialDelegate
 
         void set_momentum(float mx, float my, float mz)
         {
-            this->properties.old_velocity = this->properties.velocity;
             this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
         }
         
         void set_momentum(Vec3 momentum)
         {
-            this->properties.old_velocity = this->properties.velocity;
             this->properties.velocity = vec3_scalar_mult(momentum, 1.0f/this->properties.mass);
         }
 
@@ -302,8 +299,6 @@ class VerletComponent: public SpatialDelegate
         bool verlet_bounce(float damp)
         {
             return Verlet::bounce(
-                &this->properties.old_position,
-                &this->properties.old_velocity,
                 &this->properties.position,
                 &this->properties.velocity,
                 damp

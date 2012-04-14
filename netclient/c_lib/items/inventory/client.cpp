@@ -34,15 +34,12 @@ void InventoryProperties::load(int id, Object_types type, int subtype)
     this->item_subtype = subtype;
     if (id != EMPTY_SLOT && new_icon)   // set to new
         register_inventory_item_draw_list(this);
-    //printf("Loaded inventory item %d,%d\n", id,type);
+    printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);
 }
 
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
     data->index = this->sprite_index;
-    //data->x = inventory->screen.x + this->spacing * slot;
-    //data->y = inventory->screen.y;
-    //data->z = inventory->screen.z;
     float x = HudInventory::inventory->x + (this->spacing/4);
     float y = HudInventory::inventory->y + HudInventory::inventory->height - 3*(this->spacing/4); // need to subtract our height
     data->x = x + this->spacing * (slot % this->inventory->width());
@@ -70,12 +67,8 @@ void Inventory::get_selected_icon_render_data(Draw::SpriteData* data)
 
 
 Inventory::Inventory(int id)
-: BaseInventoryClient(id), selected_slot(0)
+: BaseInventoryClient(id), selected_slot(-1)
 {
-    // todo -- get the inventory window information elsewhere
-    //this->screen.x = _xresf/3;
-    //this->screen.y = _yresf - 64;
-    //this->screen.z = -0.1f;
 }
 
 void attach_inventory_to_owner(Inventory* inventory, int owner)

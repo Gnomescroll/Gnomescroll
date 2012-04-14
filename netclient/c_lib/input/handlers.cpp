@@ -25,6 +25,12 @@ void toggle_inventory()
 {
     input_state.inventory = (!input_state.inventory);
     if (input_state.inventory) SDL_ShowCursor(1);
+    if (!input_state.inventory)
+    {   // unset selected inventory slot on close
+        using ClientState::playerAgent_state;
+        if (playerAgent_state.you != NULL)
+            playerAgent_state.you->status.inventory->unselect_slot();
+    }
 }
 
 void toggle_scoreboard()

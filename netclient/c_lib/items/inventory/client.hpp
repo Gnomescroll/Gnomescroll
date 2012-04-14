@@ -58,11 +58,17 @@ class Inventory: public BaseInventoryClient
 {
     public:
 
-    //struct {
-        //float x,y,z;
-    //} screen;   // TODO -- replace with UI element
-
     int selected_slot;
+
+    InventoryProperties* selected_item()
+    {
+        return get_slot_item(this->selected_slot);
+    }
+    
+    InventoryProperties* get_slot_item(int slot)
+    {
+        return &this->contents.objects[slot];
+    }
 
     void select_slot(int slot)
     {
@@ -71,11 +77,18 @@ class Inventory: public BaseInventoryClient
             this->unselect_slot();
             return;
         }
-        // attempt swap
-        if (this->selected_slot > 0) 
+        if (this->selected_slot > 0)
+        {   // attempt swap
             this->swap_action(this->selected_slot, slot);
+            this->selected_slot = slot;
+            return;
+        }
+
+        // only select if not empty
+        if (!this->selected_item()->empty()) printf("NOT EMPTY\n");
+        if (!this->selected_item()->empty())
+            this->selected_slot = slot;
         
-        this->selected_slot = slot;
         //printf("slot is %d\n", slot);
     }
 

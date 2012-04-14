@@ -11,6 +11,14 @@ class BaseInventoryProperties
         int item_subtype;
         int slot;
 
+    bool empty()
+    {
+        printf("item_id = %d\n", item_id);
+        if (this->item_id == EMPTY_SLOT)
+            return true;
+        return false;
+    }
+
     BaseInventoryProperties()
     :
     item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE), item_subtype(SUBTYPE_NONE),
@@ -45,7 +53,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         if (this->full())
             return -1;
         for (int i=0; i<this->max; i++)
-            if (this->objects[i].item_id == EMPTY_SLOT)
+            if (this->objects[i].empty())
                 return i;
         return -1;
     }
@@ -95,7 +103,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     {
         if (!this->is_valid_slot(slot))
             return false;
-        if (this->objects[slot].item_id != EMPTY_SLOT)
+        if (!this->objects[slot].empty())
             return false;
         return true;
     }
@@ -104,7 +112,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     {
         if (!this->is_valid_slot(slot))
             return false;
-        if (this->objects[slot].item_id == EMPTY_SLOT)
+        if (this->objects[slot].empty())
             return false;
         return true;
     }
@@ -122,7 +130,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     {
         if (!this->can_add(slot))
             return false;
-        if (this->objects[slot].item_id == EMPTY_SLOT && id != EMPTY_SLOT)
+        if (this->objects[slot].empty() && id != EMPTY_SLOT)
             this->ct++;
         this->objects[slot].load(id, type, subtype);
         return true;
@@ -138,7 +146,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     {
         if (!this->is_valid_slot(slot))
             return false;
-        if (this->objects[slot].item_id != EMPTY_SLOT)
+        if (!this->objects[slot].empty())
             this->ct--;
         this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE, SUBTYPE_NONE);
         return true;
