@@ -148,8 +148,9 @@ static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n) __attribute((alway
 static struct Vec3 vec3_reflect(struct Vec3 i, struct Vec3 n)
 {
     struct Vec3 v;
-    v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
-    //v = inc - 2*(nor.inc)*nor   <<< pseudocode
+    //v = vec3_add(i, vec3_scalar_mult(vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)), -1));
+    v = vec3_sub(i, vec3_scalar_mult(n, 2.0f*vec3_dot(n,i)));
+    //v = inc - 2*(nor.inc)*nor   <<< pseudocode    
     return v;
 }
 
