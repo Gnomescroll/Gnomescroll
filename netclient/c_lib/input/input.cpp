@@ -330,6 +330,8 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
+    if (input_state.inventory) return;
+    
     int current_time = _GET_MS_TIME();
 
     static int otime = _GET_MS_TIME();
