@@ -7,7 +7,8 @@
 
 #define raycast_tick_max 1024
 
-int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
+//int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval);
+void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, Vec3* v_out);
 
 int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile);

@@ -60,8 +60,8 @@ class Free_item //: public VerletComponent
     ttl(0), ttl_max(FREE_ITEM_TTL),
     damp(FREE_ITEM_DAMPENING)
     {
-        this->set_state(x,y,z,mx,my,mz);
-        this->set_mass(1.0f);
+        //this->set_state(x,y,z,mx,my,mz);
+        //this->set_mass(1.0f);
 
         type = rand() % 16;
     }

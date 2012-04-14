@@ -93,6 +93,7 @@ bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float
     return _ray_cast_simple(x,y,z, a,b,c, len);
 }
 
+/*
 static int ri4[3];
 
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
@@ -156,6 +157,97 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
                 z += cdz;
                 if(collision_check(x,y,z)) {
                     ri4[2] = cdz;
+                    break;
+                }
+            }
+        }
+    }
+
+    *interval = (float)(i) / max_i;
+    return ri4;
+}
+*/
+
+static int ri4[3];
+
+void _ray_cast4a(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, Vec3* v_out) {
+    float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
+
+    int x,y,z;
+    x = x0; //truncating conversion
+    y = y0;
+    z = z0;
+
+    int _dx,_dy,_dz;
+    _dx = ((x1-x0)/len) *ssize;
+    _dy = ((y1-y0)/len) *ssize;
+    _dz = ((z1-z0)/len) *ssize;
+
+    int cdx, cdy, cdz;
+    cdx = _dx >= 0 ? 1 : -1;
+    cdy = _dy >= 0 ? 1 : -1;
+    cdz = _dz >= 0 ? 1 : -1;
+
+    int dx,dy,dz;
+    dx = _dx*cdx;
+    dy = _dy*cdy;
+    dz = _dz*cdz;
+
+    int cx,cy,cz;
+    float dummy;
+    cx = cdx >=0 ? modff(x0, &dummy)*bsize : bsize - modff(x0, &dummy)*bsize; //convert fractional part
+    cy = cdy >=0 ? modff(y0, &dummy)*bsize : bsize - modff(y0, &dummy)*bsize;
+    cz = cdz >=0 ? modff(z0, &dummy)*bsize : bsize - modff(z0, &dummy)*bsize;
+
+    int i;
+    int max_i = (bsize / ssize)*len + 1; //over project so we dont end up in wall
+    max_i = fmin(raycast_tick_max, max_i);
+
+    for(i =0; i < max_i; i++) {
+        cx += dx;
+        cy += dy;
+        cz += dz;
+        if(cx >= bsize || cy >= bsize || cz >= bsize) {
+            if(cx >= bsize) {
+                cx -= bsize;
+                x += cdx;
+                if(collision_check(x,y,z)) {
+                    if(cdx == 1)
+                    {
+                        *v_out = Vec3_init(1.0,0.0,0.0);
+                    } else 
+                    {
+                        *v_out = Vec3_init(-1.0,0.0,0.0);
+                    }
+                    ri4[0] = cdx;
+                    break;
+                }
+            }
+            if(cy >= bsize) {
+                cy -= bsize;
+                y += cdy;
+                if(collision_check(x,y,z)) {
+                    if(cdy == 1)
+                    {
+                        *v_out = Vec3_init(0.0,1.0,0.0);
+                    } else 
+                    {
+                        *v_out = Vec3_init(0.0,-1.0,0.0);
+                    }
+                    break;
+                }
+            }
+            if(cz >= bsize) {
+                cz -= bsize;
+                z += cdz;
+                if(collision_check(x,y,z)) {
+                    if(cdz == 1)
+                    {
+                        *v_out = Vec3_init(0.0,0.0,1.0);
+                    } else 
+                    {
+                        *v_out = Vec3_init(0.0,0.0,-1.0);
+                    }
                     break;
                 }
             }
