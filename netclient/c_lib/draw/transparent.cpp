@@ -181,7 +181,7 @@ void draw_sprite(struct TextureData texture, struct SpriteData sprite, float sca
 }
 
 
-void SpriteList::draw()
+void HudSpriteList::draw()
 {
     if (this->ct == 0 || this->type == NONE_DRAW_LIST) return;
     start_draw_mode(this->type);    // TODO -- if the glFlag toggling is a problem, bundle draws of those with same flags

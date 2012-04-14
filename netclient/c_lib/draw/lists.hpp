@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/objects/components/minivox/list.hpp>
+#include <c_lib/objects/components/sprite/list.hpp>
 
 namespace Draw
 {

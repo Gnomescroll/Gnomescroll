@@ -32,7 +32,7 @@ typedef enum {
 
 // draw lists
 const int SPRITE_LIST_MAX = 1024;
-class SpriteList: public BehaviourList
+class HudSpriteList: public BehaviourList
 {
     public:
         // add spritesheet metadata here, like width,height
@@ -43,12 +43,12 @@ class SpriteList: public BehaviourList
         
         void draw();
 
-    SpriteList()
+    HudSpriteList()
     : BehaviourList(SPRITE_LIST_MAX),texture_id(-1), type(NONE_DRAW_LIST)
     {}
 };
 
-typedef PropertyListAggregate<SpriteList> DrawListAggregate;
+typedef PropertyListAggregate<HudSpriteList> DrawListAggregate;
 extern DrawListAggregate* draw_lists;
 // TODO: migrate inventory properties to standard property format
 
