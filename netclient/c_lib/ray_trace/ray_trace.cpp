@@ -99,6 +99,7 @@ bool ray_cast_simple(float x, float y, float z, float a, float b, float c, float
 static int ri4[3];
 
 //note used
+#if 0
 int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -169,7 +170,7 @@ int* _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* i
     *interval = (float)(i) / max_i;
     return ri4;
 }
-
+#endif
 
 void _ray_cast4(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, struct Vec3* v_out) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
@@ -335,6 +336,7 @@ int* _ray_cast5(float x0,float y0,float z0, float x1,float y1,float z1, float* i
 
 // loop ticks are capped to raycast_tick_max
 //not used
+#if 0
 int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile) {
     float len = sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) + (z0-z1)*(z0-z1) );
 
@@ -413,7 +415,7 @@ int* _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, f
     *interval = (float)(i) / max_i;
     return ri4;
 }
-
+#endif
 
 // loop ticks are capped to raycast_tick_max
 void _ray_cast5_capped(float x0,float y0,float z0, float x1,float y1,float z1, float* interval, int* collision, int* tile, struct Vec3* v_out) {

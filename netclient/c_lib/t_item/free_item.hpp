@@ -41,12 +41,6 @@ class Free_item //: public VerletComponent
     {
         //this->verlet_bounce(this->damp);
 
-        Verlet::bounce(
-        &this->verlet.old_position,
-        &this->verlet.old_velocity,
-        &this->verlet.position,
-        &this->verlet.velocity,
-        damp
     );
 
         this->ttl++;

@@ -42,7 +42,7 @@ bool bounce(Vec3* position, Vec3* velocity, float damp)
     Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
-        position.x, position.y, position.z,
+        position->x, position->y, position->z,
         &interval, &norm
     );
 
