@@ -8,10 +8,12 @@ class Inventory
     public:
         bool inited;
         float x,y;
-
-        int item_sheet_texture;
-        int item_slot_texture;
-        int inventory_background_texture;
+        float z;
+        
+        GLuint item_sheet_texture;
+        GLuint item_slot_texture;
+        GLuint inventory_background_texture;
+        float width,height;
 
         void set_position(float x, float y);
         void init();
@@ -20,8 +22,9 @@ class Inventory
         Inventory();
 };
 
-extern Inventory inventory;
+extern Inventory* inventory;
 
 void init();
+void teardown();
 
 }

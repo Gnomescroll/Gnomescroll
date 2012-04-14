@@ -87,8 +87,8 @@ int _blit_sprite(int texture, float x0, float y0, float x1, float y1, float z) {
 }
 
 // y coordinates start along the bottom
-void draw_bound_texture(float x, float y, float w, float h, float z) {
-
+void draw_bound_texture(float x, float y, float w, float h, float z)
+{
     glBegin(GL_QUADS);
 
     glTexCoord2f(0.0,0.0);

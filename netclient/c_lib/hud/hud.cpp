@@ -206,7 +206,7 @@ void draw_hud_textures()
         HudCubeSelector::cube_selector.draw();
 
     if (hud_draw_settings.inventory)
-        HudInventory::inventory.draw();
+        HudInventory::inventory->draw();
 
     if (hud_draw_settings.equipment)
         HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);

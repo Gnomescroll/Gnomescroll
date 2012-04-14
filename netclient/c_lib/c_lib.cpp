@@ -309,6 +309,7 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
+    HudInventory::teardown();
     teardown_item_texture();
     Draw::teardown();
     

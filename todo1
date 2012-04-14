@@ -860,6 +860,16 @@ blocks in inventory
 set block in inventory to block applier
 stackables
 
+Inv render & interaction:
+-- button to switch to inventory mode
+    --- cancels other interaction
+--render inventory from lists
+--assume same panel, read screen values, draw in center (no dragging)
+
+-- trap mouse in windows
+-- maybe need to draw custom cursor
+-- detect clicks inventory windows, map to slot #s
+
 ===============
 
 Gun model

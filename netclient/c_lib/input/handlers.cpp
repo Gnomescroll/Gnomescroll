@@ -599,6 +599,10 @@ void key_down_handler(SDL_Event* event)
                 toggle_graphs();
                 break;
 
+            case SDLK_i:
+                toggle_inventory();
+                break;
+
             case SDLK_ESCAPE:
                 if (NetClient::Server.connected)
                     toggle_confirm_quit();
