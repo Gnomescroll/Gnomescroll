@@ -6,7 +6,7 @@
 #endif
 
 #include <c_lib/physics/verlet.hpp>
-#include <c_lib/objects/components/spatial/components.hpp>
+//#include <c_lib/objects/components/spatial/components.hpp>
 
 namespace t_item
 {
@@ -19,11 +19,13 @@ typedef enum
     type_NULL = 255,
 } T_ItemTypes;
 
-class Free_item: public VerletComponent
+class Free_item //: public VerletComponent
 {
     private:
 
+
     public:
+        VerletProperties verlet;
 
         int id;
         int type;
@@ -37,7 +39,16 @@ class Free_item: public VerletComponent
         
     void tick()
     {
-        this->verlet_bounce(this->damp);
+        //this->verlet_bounce(this->damp);
+
+        Verlet::bounce(
+        &this->verlet.old_position,
+        &this->verlet.old_velocity,
+        &this->verlet.position,
+        &this->verlet.velocity,
+        damp
+    );
+
         this->ttl++;
     }
 
@@ -61,6 +72,14 @@ class Free_item: public VerletComponent
     ttl(0), ttl_max(FREE_ITEM_TTL), 
     damp(FREE_ITEM_DAMPENING)
     {
+        //set position
+        this->properties.old_velocity = this->properties.velocity;
+        this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
+        //set velocity
+
+        this->properties.old_position = this->properties.position;
+        this->properties.position = vec3_init(x,y,z);
+
         type = rand() % 16;
     }
 };
