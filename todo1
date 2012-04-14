@@ -846,6 +846,20 @@ fixed the slime update and added client side prediction
 health refill
 fixed block ammo decrementing despite failure
 fix opengl texture draw crap
+textured minivox drops
+===============
+
+April 14
+TODO
+
+get correct sprite indices for textured block drops
+inventory panel render
+inventory interaction
+block damages
+blocks in inventory
+set block in inventory to block applier
+stackables
+
 ===============
 
 Gun model

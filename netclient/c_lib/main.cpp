@@ -162,7 +162,7 @@ int run()
         Skybox::draw();
 
         begin_item_draw();
-        ClientState::sprite_list->draw();
+        Draw::sprite_list->draw();
         end_item_draw();
 
         begin_transparent_draw();

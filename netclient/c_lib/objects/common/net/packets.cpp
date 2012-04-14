@@ -14,7 +14,7 @@
 
 inline void object_create_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
     obj->born(subtype);   // TODO
@@ -22,7 +22,7 @@ inline void object_create_StoC_model::handle()
 
 inline void object_create_momentum_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
     obj->set_momentum(mx,my,mz);
@@ -31,7 +31,7 @@ inline void object_create_momentum_StoC_model::handle()
 
 inline void object_create_momentum_angles_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
     obj->set_angles(theta, phi, 0);
@@ -40,7 +40,7 @@ inline void object_create_momentum_angles_StoC_model::handle()
 
 inline void object_create_owner_team_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
     if (obj == NULL) return;
     obj->set_position(x, y, z);
     obj->set_team(team);
@@ -51,7 +51,7 @@ inline void object_create_owner_team_StoC_model::handle()
 
 inline void object_create_owner_team_index_StoC_model::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
     if (obj == NULL) return;
     obj->set_position(x, y, z);
     obj->set_team(team);

@@ -30,7 +30,7 @@
 //}
 
 // Note: not attached to GameObject_list
-ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
+ObjectPolicyInterface* create_object_of_type(Object_types type, int subtype, int id)
 {
     ObjectPolicyInterface* obj = NULL;
     switch (type)
@@ -43,23 +43,13 @@ ObjectPolicyInterface* create_object_of_type(Object_types type, int id)
             break;
 
         case OBJ_TYPE_MEAT:
-        //case OBJ_TYPE_MALACHITE:
-        //case OBJ_TYPE_RUBY:
-        //case OBJ_TYPE_TURQUOISE:
-        //case OBJ_TYPE_SILVER:
-        //case OBJ_TYPE_AMETHYST:
-        //case OBJ_TYPE_JADE:
-        //case OBJ_TYPE_ONYX:
-        //case OBJ_TYPE_GRENADE_REFILL:
-        //case OBJ_TYPE_LASER_REFILL:
         case OBJ_TYPE_GEMSTONE:
         case OBJ_TYPE_REFILL:
             obj = new ItemDrops::PickupObjectSprite(id);  // TODO
             break;
-        //case OBJ_TYPE_DIRT:
-        //case OBJ_TYPE_STONE:
+
         case OBJ_TYPE_BLOCK_DROP:
-            obj = new ItemDrops::PickupObjectMinivox(id);
+            obj = ItemDrops::create_block_drop(subtype, id);
             break;
 
         case OBJ_TYPE_INVENTORY:
@@ -313,7 +303,7 @@ int GameObject_list::filter_active_objects(const Object_types type)
 
 /* Creation API */
 
-ObjectPolicyInterface* GameObject_list::create(Object_types type)
+ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype)
 {
     if (this->full(type)) return NULL;
     int i;
@@ -326,27 +316,31 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type)
         if (this->objects[type][id] == NULL) break;
     }
     if (i >= max) return NULL;    // no slots found (went through all ids without breaking)
-    ObjectPolicyInterface* obj = create_object_of_type(type, id);
+    ObjectPolicyInterface* obj = create_object_of_type(type, subtype, id);
     if (obj == NULL) return NULL;
     this->objects[type][id] = obj;
     this->index_start[type] = id+1;
     this->occupancy[type] += 1;
-    obj->state()->type = type;
+    ObjectState* state = obj->state();
+    state->type = type;
+    state->subtype = subtype;
     
     return obj;
 }
 
-ObjectPolicyInterface* GameObject_list::create(Object_types type, int id)
+ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype, int id)
 {    
     ObjectPolicyInterface* obj = NULL;
     if (this->objects[type][id] == NULL)
     {   // available, create
-        obj = create_object_of_type(type, id);
+        obj = create_object_of_type(type, subtype, id);
         if (obj == NULL) return NULL;
 
         this->objects[type][id] = obj;
         this->occupancy[type] += 1;
-        obj->state()->type = type;
+        ObjectState* state = obj->state();
+        state->type = type;
+        state->subtype = subtype;
     }
     else
         printf("%s_list: Cannot create object type %d, id %d is in use\n", name(), type, id);

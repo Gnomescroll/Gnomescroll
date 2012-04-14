@@ -7,6 +7,8 @@
 //#include <c_lib/objects/components/health/list.hpp>
 
 #include <c_lib/objects/components/minivox/minivox.hpp>
+#include <c_lib/objects/components/minivox/colored_minivox.hpp>
+#include <c_lib/objects/components/minivox/textured_minivox.hpp>
 #include <c_lib/objects/components/minivox/list.hpp>
 
 #include <c_lib/objects/components/owned/owned.hpp>

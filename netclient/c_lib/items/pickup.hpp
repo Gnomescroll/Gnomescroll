@@ -9,11 +9,9 @@
 //forward decl
 #if DC_CLIENT
 #include <c_lib/objects/components/sprite/sprite.hpp>
-namespace ClientState
-{
-    extern SpriteList* sprite_list;
-    extern ColoredMinivoxList* colored_minivox_list;
-}
+#include <c_lib/objects/components/minivox/colored_minivox.hpp>
+#include <c_lib/objects/components/minivox/textured_minivox.hpp>
+#include <c_lib/draw/lists.hpp>
 #endif
 
 namespace ItemDrops
@@ -78,13 +76,13 @@ void initialize_pickup_object(Object_types type, int subtype, ObjectState* state
 {
     switch (subtype)
     {
-        case ItemDrops::GRENADE_REFILL:
+        case GRENADE_REFILL:
             state->mass = GRENADE_REFILL_MASS;
             state->ttl_max = GRENADE_REFILL_TTL;
             state->damp = GRENADE_REFILL_DAMP;
             break;
 
-        case ItemDrops::LASER_REFILL:
+        case LASER_REFILL:
             state->mass = LASER_REFILL_MASS;
             state->ttl_max = LASER_REFILL_TTL;
             state->damp = LASER_REFILL_DAMP;
@@ -145,22 +143,24 @@ void initialize_sprite_properties(Object_types type, int subtype, SpriteProperti
     }
 }
 
-void initialize_minivox_properties(Object_types type, int subtype, MinivoxProperties* obj)
+void initialize_colored_minivox_properties(Object_types type, int subtype, ColoredMinivoxProperties* obj)
 {
     switch (type)
     {
         case OBJ_TYPE_BLOCK_DROP:
+            obj->size = BLOCK_DROP_SIZE;
             switch (subtype)
             {
-                case ItemDrops::DIRT:
+                case DIRT:
                     obj->color = DIRT_COLOR;
-                    obj->size = DIRT_SIZE;
                     break;
-                case ItemDrops::STONE:
+                case STONE:
                     obj->color = STONE_COLOR;
-                    obj->size = STONE_SIZE;
                     break;
-                default: break;
+
+                default:
+                    obj->color = BLOCK_DROP_COLOR;
+                    break;
             }
             break;
             
@@ -168,6 +168,45 @@ void initialize_minivox_properties(Object_types type, int subtype, MinivoxProper
     }
     obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
     obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
+}
+
+void initialize_textured_minivox_properties(Object_types type, int subtype, TexturedMinivoxProperties* obj)
+{
+    switch (type)
+    {
+        case OBJ_TYPE_BLOCK_DROP:
+            obj->size = BLOCK_DROP_SIZE;
+            switch (subtype)
+            {
+                case DIRT:
+                    obj->sprite_index = DIRT_SPRITE_INDEX;
+                    break;
+                case STONE:
+                    obj->sprite_index = STONE_SPRITE_INDEX;
+                    break;
+                case SOFT_ROCK:
+                    obj->sprite_index = SOFT_ROCK_SPRITE_INDEX;
+                    break;
+                case MEDIUM_ROCK:
+                    obj->sprite_index = MEDIUM_ROCK_SPRITE_INDEX;
+                    break;
+                case HARD_ROCK:
+                    obj->sprite_index = HARD_ROCK_SPRITE_INDEX;
+                    break;
+                case INFECTED_ROCK:
+                    obj->sprite_index = INFECTED_ROCK_SPRITE_INDEX;
+                    break;
+                default:
+                    obj->sprite_index = BLOCK_DROP_SPRITE_INDEX;
+                    break;
+            }
+            break;
+            
+        default: break;
+    }
+    obj->dtheta_speed = MINIVOX_ITEM_ROTATION_THETA;
+    obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
+    obj->pixel_width = BLOCK_DROP_TEXTURED_PIXEL_WIDTH;
 }
 #endif
 
@@ -241,27 +280,27 @@ class PickupObjectSprite:
         PickupObject::born(subtype);
         #if DC_CLIENT
         initialize_sprite_properties(this->state()->type, subtype, &this->sprite_properties);
-        ClientState::sprite_list->register_object(&this->sprite_properties);
+        Draw::sprite_list->register_object(&this->sprite_properties);
         #endif
     }
 
     ~PickupObjectSprite()
     {
         #if DC_CLIENT
-        ClientState::sprite_list->unregister_object(&this->sprite_properties);
+        Draw::sprite_list->unregister_object(&this->sprite_properties);
         #endif
     }
 };
 
-class PickupObjectMinivox:
+class PickupObjectColoredMinivox:
     #if DC_CLIENT
-    public MinivoxComponent,
+    public ColoredMinivoxComponent,
     #endif
     public PickupObject
 {
     public:
 
-    PickupObjectMinivox(int id)
+    PickupObjectColoredMinivox(int id)
     : PickupObject(id)
     {
         #if DC_CLIENT
@@ -270,10 +309,10 @@ class PickupObjectMinivox:
         #endif
     }
 
-    ~PickupObjectMinivox()
+    ~PickupObjectColoredMinivox()
     {
         #if DC_CLIENT
-        ClientState::colored_minivox_list->unregister_object(&this->minivox_properties);
+        Draw::colored_minivox_list->unregister_object(&this->minivox_properties);
         #endif
     }
 
@@ -282,8 +321,8 @@ class PickupObjectMinivox:
         PickupObject::born(subtype);
         #if DC_CLIENT
         ObjectState* state = this->state();
-        initialize_minivox_properties(state->type, state->subtype, &this->minivox_properties);
-        ClientState::colored_minivox_list->register_object(&this->minivox_properties);
+        initialize_colored_minivox_properties(state->type, state->subtype, &this->minivox_properties);
+        Draw::colored_minivox_list->register_object(&this->minivox_properties);
         #endif
     }
 
@@ -295,5 +334,72 @@ class PickupObjectMinivox:
         PickupObject::tick();
     }
 };
+
+class PickupObjectTexturedMinivox:
+    #if DC_CLIENT
+    public TexturedMinivoxComponent,
+    #endif
+    public PickupObject
+{
+    public:
+
+    PickupObjectTexturedMinivox(int id)
+    : PickupObject(id)
+    {
+        #if DC_CLIENT
+        this->set_rotation(0,0);
+        this->minivox_properties.obj = this;
+        #endif
+    }
+
+    ~PickupObjectTexturedMinivox()
+    {
+        #if DC_CLIENT
+        Draw::textured_minivox_list->unregister_object(&this->minivox_properties);
+        #endif
+    }
+
+    void born(int subtype)
+    {
+        PickupObject::born(subtype);
+        #if DC_CLIENT
+        ObjectState* state = this->state();
+        initialize_textured_minivox_properties(state->type, state->subtype, &this->minivox_properties);
+        this->set_texture();
+        Draw::textured_minivox_list->register_object(&this->minivox_properties);
+        #endif
+    }
+
+    void tick()
+    {
+        #if DC_CLIENT
+        this->delta_rotation();
+        #endif
+        PickupObject::tick();
+    }
+};
+
+ObjectPolicyInterface* create_block_drop(int subtype, int id)
+{
+    ObjectPolicyInterface* obj = NULL;
+    switch (subtype)
+    {
+        case DIRT:
+        case STONE:
+            obj = new PickupObjectColoredMinivox(id);
+            break;
+
+        case SOFT_ROCK:
+        case MEDIUM_ROCK:
+        case HARD_ROCK:
+        case INFECTED_ROCK:
+            obj = new PickupObjectTexturedMinivox(id);
+            break;
+
+        default: break;
+    }
+    return obj;
+
+}
 
 } // ItemDrops

@@ -129,7 +129,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         const Object_types type = OBJ_TYPE_GEMSTONE;
         ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
 
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
         if (obj != NULL)
         {
             obj->set_position(x+randf(),y+randf(), z+randf());
@@ -139,16 +139,20 @@ void block_spawn_items(int block_value, int x, int y, int z)
     }
     else
     {
-        const int n_items = 2;
-        const ItemDrops::PickupMinivoxTypes items[n_items] = {
-            ItemDrops::DIRT,
-            ItemDrops::STONE,
+        const int n_items = 4;
+        const ItemDrops::BlockDropSubtypes items[n_items] = {
+            //ItemDrops::DIRT,
+            //ItemDrops::STONE,
+            ItemDrops::SOFT_ROCK,
+            ItemDrops::MEDIUM_ROCK,
+            ItemDrops::HARD_ROCK,
+            ItemDrops::INFECTED_ROCK,
         };
         const float mom = 2.0f;
         const Object_types type = OBJ_TYPE_BLOCK_DROP;
-        ItemDrops::PickupMinivoxTypes subtype  = items[randrange(0,n_items-1)];
+        ItemDrops::BlockDropSubtypes subtype  = items[randrange(0,n_items-1)];
 
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
         if (obj != NULL)
         {
             obj->set_position(x+randf(),y+randf(), z+randf());

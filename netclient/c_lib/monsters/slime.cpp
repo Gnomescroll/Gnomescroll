@@ -142,7 +142,7 @@ void slimeDropItem(Vec3 position)
     const Object_types type = OBJ_TYPE_REFILL;
     ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
     if (obj != NULL)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
@@ -177,7 +177,7 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (TYPE*)STATE::object_list->create(type);
+        s = (TYPE*)STATE::object_list->create(type, 0);
         if (s != NULL)
         {
             s->set_position(x+0.5, y+0.5, z);

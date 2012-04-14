@@ -88,7 +88,7 @@ void boxDropItem(Vec3 position)
     const Object_types type = OBJ_TYPE_REFILL;
     ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
     if (obj != NULL)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);

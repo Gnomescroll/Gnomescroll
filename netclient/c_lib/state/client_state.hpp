@@ -18,16 +18,11 @@ namespace ClientState {
 
     extern class Agent_list* agent_list;
 
-    //extern class BillboardSpriteList* billboard_sprite_list;
-    extern class ColoredMinivoxList* colored_minivox_list;
-
     //  property lists
     extern class  Voxel_render_list* voxel_render_list;
     extern class  Voxel_hitscan_list* voxel_hitscan_list;
     extern class  SpawnerList* spawner_list;
     extern class  OwnedList* owned_list;
-    extern class  SpriteList* sprite_list;
-
 
     extern class  GameObject_list* object_list;
 

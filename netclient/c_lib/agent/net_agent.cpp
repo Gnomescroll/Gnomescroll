@@ -534,7 +534,7 @@ inline void destroy_voxel_StoC::handle()
 
 inline void inventory_StoC::handle()
 {
-    Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, id);
+    Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, 0, id);
     if (inventory == NULL)
     {
         printf("WARNING: inventory_StoC::handle() -- failed to create inventory %d\n", id);
@@ -1030,7 +1030,7 @@ inline void place_spawner_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = (Spawner*)ServerState::object_list->create(type);
+    Spawner* s = (Spawner*)ServerState::object_list->create(type, 0);
     if (s==NULL) return;
     s->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(s->state()->type);
@@ -1060,7 +1060,7 @@ inline void place_turret_CtoS::handle()
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
     if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = (Turret*)ServerState::object_list->create(type);
+    Turret* t = (Turret*)ServerState::object_list->create(type, 0);
     if (t==NULL) return;
     t->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(t->state()->type);

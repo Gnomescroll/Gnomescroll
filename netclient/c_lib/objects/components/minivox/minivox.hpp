@@ -4,12 +4,9 @@
 
 #include <c_lib/objects/common/component/component.hpp>
 
-// todo -- minivox color draw list
-
 class MinivoxProperties: public ComponentProperties
 {
     public:
-        Color color;
         float size;
         float theta, phi;
         float dtheta_speed, dphi_speed;
@@ -25,6 +22,7 @@ class MinivoxProperties: public ComponentProperties
     {}
 };
 
+template <class Property>
 class MinivoxComponent
 {
     private:
@@ -60,26 +58,8 @@ class MinivoxComponent
         }
 
     public:
-        MinivoxProperties minivox_properties;
 
-        Color get_color()
-        {
-            return this->minivox_properties.color;
-        }
-
-        void set_color(Color color)
-        {
-            this->minivox_properties.color = color;
-        }
-
-        void set_color(unsigned char r, unsigned char g, unsigned char b)
-        {
-            Color color;
-            color.r = r;
-            color.g = g;
-            color.b = b;
-            this->minivox_properties.color = color;
-        }
+        Property minivox_properties;
 
         float get_minivox_size()
         {
@@ -122,9 +102,10 @@ class MinivoxComponent
             return center;
         }
 
-    MinivoxComponent()
+    MinivoxComponent<Property>()
     {
     }
 };
+
 
 #endif

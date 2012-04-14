@@ -63,6 +63,8 @@
 
 /* Draw lists */
 #include <c_lib/draw/transparent.cpp>
+#include <c_lib/draw/draw.cpp>
+#include <c_lib/draw/lists.cpp>
 
 /* Voxel Models */
 #include <c_lib/voxel/voxel_volume.cpp>
@@ -302,13 +304,13 @@ void close_c_lib() {
 
     teardown_cameras();
     HudFont::teardown();
-    Draw::teardown();
     teardown_chat_client();
 
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
     teardown_item_texture();
+    Draw::teardown();
     
     // free surfaces
     t_map::teardown_shader();

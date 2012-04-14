@@ -10,7 +10,7 @@ inline void inventory_create_StoC::handle()
     if (obj == NULL)
     {   // create [ NOTE: do not use get_or_create; will need to call born() method if created ]
         create = true;
-        obj = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, id);
+        obj = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, 0, id);
         if (obj == NULL)
         {
             printf("WARNING: inventory_create_StoC::handle() -- failed to create inventory %d\n", id);

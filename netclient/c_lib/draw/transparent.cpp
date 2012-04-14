@@ -81,7 +81,7 @@ void init_textures()
         load_texture(paths[i], i);
 }
 
-void init()
+void init_spritesheets()
 {
     init_textures();
     init_draw_lists();
@@ -89,15 +89,14 @@ void init()
 
 void teardown_draw_lists()
 {
-    if (draw_lists != NULL)
-        delete draw_lists;
+    delete draw_lists;
 }
 
 void teardown_textures()
 {
 }
 
-void teardown()
+void teardown_spritesheets()
 {
     teardown_draw_lists();
     teardown_textures();

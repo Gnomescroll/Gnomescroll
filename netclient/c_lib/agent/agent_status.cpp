@@ -49,7 +49,7 @@ inventory(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
-    this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY);
+    this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY, 0);
     if (this->inventory != NULL)
     {
         this->inventory->set_owner(this->a->id);

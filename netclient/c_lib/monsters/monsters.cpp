@@ -42,7 +42,7 @@ void spawn_monsters(int max_monsters)
             if (ct+added >= to_create) break;
             spawner = (MonsterSpawner*)STATE::object_list->filtered_objects[i];
             if (spawner->spawn.full()) continue;
-            box = (Box*)STATE::object_list->create(spawner->spawn.type);
+            box = (Box*)STATE::object_list->create(spawner->spawn.type, 0);
             if (box == NULL) return; // abort; out of room
             spawner->spawn.get_spawn_point(spawner->get_position(), BOX_HEIGHT, spawn_point);
             spawner->spawn.gain_child(spawner->spawn.type, box->state()->id);
@@ -65,7 +65,7 @@ void create_monsters_spawners(int max_spawners)
     MonsterSpawner* obj;
     for (int i=0; i<to_create; i++)
     {
-        obj = (MonsterSpawner*)STATE::object_list->create(OBJ_TYPE_MONSTER_SPAWNER);
+        obj = (MonsterSpawner*)STATE::object_list->create(OBJ_TYPE_MONSTER_SPAWNER, 0);
         if (obj == NULL) break;
         int x = randrange(0,map_dim.x-1);
         int y = randrange(0,map_dim.y-1);

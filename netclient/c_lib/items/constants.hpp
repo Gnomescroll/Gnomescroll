@@ -95,29 +95,35 @@ const float MINIVOX_ITEM_ROTATION_PHI = 0.0f;
 
 /* Block drops */
 
+// defaults
 const int BLOCK_DROP_MAX = 1024;
+const int BLOCK_DROP_TTL = 30 * 12;
+const float BLOCK_DROP_SIZE = 0.5f;
+const float BLOCK_DROP_DAMP = 0.4f;
+const float BLOCK_DROP_MASS = 1.0f;
+const int BLOCK_DROP_SPRITE_INDEX = 0;
+const struct Color BLOCK_DROP_COLOR = { 255, 255, 255 };
+const float BLOCK_DROP_TEXTURED_PIXEL_WIDTH = 4;
 
 typedef enum
 {
     DIRT,
     STONE,
-} PickupMinivoxTypes;
+    SOFT_ROCK,
+    MEDIUM_ROCK,
+    HARD_ROCK,
+    INFECTED_ROCK,
+} BlockDropSubtypes;
 
-/* Dirt */
-const int DIRT_MAX = 256;
-const Color DIRT_COLOR = { 150, 98, 0 };
-const float DIRT_SIZE = 0.2f;
-const int DIRT_TTL = 30 * 12;
-const float DIRT_DAMP = 0.4f;
-const float DIRT_MASS = 1.0f;
+const struct Color DIRT_COLOR = { 150, 98, 0 };
+const struct Color STONE_COLOR = { 140, 140, 140 };
 
-/* Stone */
-const int STONE_MAX = 256;
-const Color STONE_COLOR = { 140, 140, 140 };
-const float STONE_SIZE = 0.2f;
-const int STONE_TTL = 30 * 12;
-const float STONE_DAMP = 0.4f;
-const float STONE_MASS = 1.0f;
+const int DIRT_SPRITE_INDEX = 0;
+const int STONE_SPRITE_INDEX = 1;
+const int SOFT_ROCK_SPRITE_INDEX = 2;
+const int MEDIUM_ROCK_SPRITE_INDEX = 3;
+const int HARD_ROCK_SPRITE_INDEX = 4;
+const int INFECTED_ROCK_SPRITE_INDEX = 5;
 
 /* Gems */
 const int GEMSTONE_PICKUP_RADIUS = 1.0f;

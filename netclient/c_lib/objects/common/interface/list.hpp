@@ -9,8 +9,6 @@ void init_gameobject_list_maximums(GameObject_list* list);
 const int MAX_OBJECT_TYPE = 256;
 const int MAX_OBJECT_FILTER = 256;
 
-ObjectPolicyInterface* create_object_of_type(Object_types type, int id);
-
 class GameObject_list
 {
     protected:
@@ -118,8 +116,8 @@ class GameObject_list
 
         ObjectPolicyInterface* get(Object_types type, int id);
 
-        ObjectPolicyInterface* create(Object_types type);
-        ObjectPolicyInterface* create(Object_types type, int id);
+        ObjectPolicyInterface* create(Object_types type, int subtype);
+        ObjectPolicyInterface* create(Object_types type, int subtype, int id);
 
         void destroy(Object_types type, int id);
 

@@ -15,7 +15,7 @@ namespace Monsters
 
 void monster_spawner_create(object_create_owner_team_index_StoC_model* msg)
 {
-    MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->id);
+    MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->subtype, (int)msg->id);
     if (s == NULL)
     {
         printf("WARNING monster_spawner_create() -- could not create monster_spawner %d\n", msg->id);

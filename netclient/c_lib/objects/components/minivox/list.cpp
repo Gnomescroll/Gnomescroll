@@ -1,21 +1,39 @@
 #include "list.hpp"
 
 #if DC_CLIENT
-
+#include <c_lib/objects/components/minivox/colored_minivox.hpp>
+#include <c_lib/objects/components/minivox/textured_minivox.hpp>
 #include <c_lib/draw/draw.hpp>
 
 void ColoredMinivoxList::draw()
 {
     if (this->ct == 0) return;
-    MinivoxProperties* data;
+    ColoredMinivoxProperties* data;
     for (int i=0; i<this->max; i++)
         if (this->objects[i] != NULL && this->objects[i]->obj != NULL)
         {
-            data = (MinivoxProperties*)this->objects[i];
-            drawMinivox(
+            data = (ColoredMinivoxProperties*)this->objects[i];
+            drawColoredMinivox(
                 data->obj->get_position(),
                 data->forward, data->right, data->normal,
-                data->size, data->color
+                data->color
+            );
+        }
+}
+
+void TexturedMinivoxList::draw()
+{
+    if (this->ct == 0) return;
+    TexturedMinivoxProperties* data;
+    for (int i=0; i<this->max; i++)
+        if (this->objects[i] != NULL && this->objects[i]->obj != NULL)
+        {
+            data = (TexturedMinivoxProperties*)this->objects[i];
+            drawTexturedMinivox(
+                data->obj->get_position(),
+                data->forward, data->right, data->normal,
+                data->sprite_index,
+                data->tx, data->ty, data->pixel_margin
             );
         }
 }

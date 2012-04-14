@@ -1,6 +1,10 @@
+#include "include.hpp"
 
 #if DC_CLIENT
+
 #include <c_lib/objects/components/minivox/minivox.cpp>
+#include <c_lib/objects/components/minivox/colored_minivox.cpp>
+#include <c_lib/objects/components/minivox/textured_minivox.cpp>
 #include <c_lib/objects/components/minivox/list.cpp>
 
 #include <c_lib/objects/components/sprite/sprite.cpp>

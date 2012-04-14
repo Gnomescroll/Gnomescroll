@@ -30,13 +30,10 @@ namespace ClientState {
 
     class Agent_list* agent_list = NULL;
 
-    class ColoredMinivoxList* colored_minivox_list = NULL;
-
     class Voxel_render_list* voxel_render_list;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
     class SpawnerList* spawner_list = NULL;
     class OwnedList* owned_list = NULL;
-    class SpriteList* sprite_list = NULL;
 
     class GameObject_list* object_list;
 
@@ -52,14 +49,10 @@ namespace ClientState {
         
     void init_lists()
     {
-
-        colored_minivox_list = new ColoredMinivoxList;
-
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
         spawner_list = new SpawnerList;
         owned_list = new OwnedList;
-        sprite_list = new SpriteList;
         
         object_list = new GameObject_list;
         agent_list = new Agent_list;
@@ -79,9 +72,6 @@ namespace ClientState {
         // behaviour lists
         delete spawner_list;
         delete owned_list;
-        delete sprite_list;
-        delete colored_minivox_list;
-
     }
 
     static void init_ctf()
@@ -177,7 +167,7 @@ namespace ClientState {
         glBegin(GL_QUADS);
 
         Particles::colored_minivox_list->draw();
-        colored_minivox_list->draw();   // new entity system registries
+        Draw::colored_minivox_list->draw();   // new entity system registries
 
         glEnd();
 
@@ -187,6 +177,7 @@ namespace ClientState {
         glBegin(GL_QUADS);
 
         Particles::textured_minivox_list->draw();
+        Draw::textured_minivox_list->draw();
 
         glEnd();
         glDisable(GL_TEXTURE_2D);

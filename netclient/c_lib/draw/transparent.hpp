@@ -51,7 +51,7 @@ typedef PropertyListAggregate<SpriteList> DrawListAggregate;
 extern DrawListAggregate* draw_lists;
 // TODO: migrate inventory properties to standard property format
 
-void init();
-void teardown();
+void init_spritesheets();
+void teardown_spritesheets();
 //void draw();
 }   // Draw
