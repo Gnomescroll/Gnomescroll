@@ -301,9 +301,9 @@ void inventory_key_down_handler(SDL_Event* event)
             break;
 
         // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
-        case SDLK_j:
-            ClientState::playerAgent_state.action.remove_selected_item_from_inventory();
-            break;
+        //case SDLK_j:
+            //ClientState::playerAgent_state.action.remove_selected_item_from_inventory();
+            //break;
 
         default: break;
     }
@@ -330,7 +330,11 @@ void inventory_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            Hud::handle_mouse_click(x,y);
+            Hud::handle_left_mouse_click(x,y);
+            break;
+
+        case SDL_BUTTON_RIGHT:
+            Hud::handle_right_mouse_click(x,y);
             break;
 
         default: break;

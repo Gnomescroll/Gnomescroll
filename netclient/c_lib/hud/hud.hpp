@@ -113,6 +113,6 @@ void update_hud_draw_settings();
 void draw_hud();
 
 // TODO -- move to own subsystem
-void handle_mouse_click(int x, int y);
+void handle_left_mouse_click(int x, int y);
 
 }

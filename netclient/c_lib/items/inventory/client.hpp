@@ -162,6 +162,13 @@ class Inventory: public BaseInventoryClient
         return swapped;
     }
 
+    void select_and_remove_action(int row, int col)
+    {   // removes item at input-selected row,col
+        this->unselect_slot();
+        int slot = row * this->contents.x + col;
+        this->remove_action(slot);
+    }
+
     /* Expose API here */
     bool dimension_mismatch(int x, int y)
     {
