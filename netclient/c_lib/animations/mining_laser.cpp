@@ -149,7 +149,7 @@ void Mining_laser_list::prep()
 void Mining_laser_list::draw()
 {
 #if DC_CLIENT
-
+/*
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
     glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement1), NULL, GL_DYNAMIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement1), mining_laser_vlist, GL_DYNAMIC_DRAW);
@@ -174,7 +174,7 @@ void Mining_laser_list::draw()
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
-
+*/
 #endif
 }
 
