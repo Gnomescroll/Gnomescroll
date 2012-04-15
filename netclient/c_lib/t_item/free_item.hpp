@@ -40,7 +40,7 @@ class Free_item //: public VerletComponent
     void tick()
     {
         //this->verlet_bounce(this->damp);
-        verlet.bounce_box(0.33);
+        verlet.bounce_box(0.20);
         this->ttl++;
     }
 
