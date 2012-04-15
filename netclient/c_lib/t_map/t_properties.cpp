@@ -86,7 +86,15 @@ char* get_cube_name(int id)
         return NULL;
     }
 
-    return (cube_names+ cube_name_index[id]);
+    return (cube_names + cube_name_index[id]);
+}
+
+int get_cube_id(char* name)
+{
+    for (int i=0; i<MAX_CUBES; i++)
+        if (strcmp(name, get_cube_name(i)) == 0)
+            return i;
+    return -1;
 }
 
 }

@@ -29,7 +29,8 @@ namespace t_map
 
     void set_cube_side_texture(int id, int side, int tex_id);
     int get_cube_side_texture(int id, int side);
-
+    int get_cube_primary_sprite_index(char* name);
+    
     void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
     void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
     

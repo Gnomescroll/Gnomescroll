@@ -118,12 +118,12 @@ typedef enum
 const struct Color DIRT_COLOR = { 150, 98, 0 };
 const struct Color STONE_COLOR = { 140, 140, 140 };
 
-const int DIRT_SPRITE_INDEX = 0;
-const int STONE_SPRITE_INDEX = 1;
-const int SOFT_ROCK_SPRITE_INDEX = 2;
-const int MEDIUM_ROCK_SPRITE_INDEX = 3;
-const int HARD_ROCK_SPRITE_INDEX = 4;
-const int INFECTED_ROCK_SPRITE_INDEX = 5;
+//const int DIRT_SPRITE_INDEX = 0;
+//const int STONE_SPRITE_INDEX = 1;
+//const int SOFT_ROCK_SPRITE_INDEX = 2;
+//const int MEDIUM_ROCK_SPRITE_INDEX = 3;
+//const int HARD_ROCK_SPRITE_INDEX = 4;
+//const int INFECTED_ROCK_SPRITE_INDEX = 5;
 
 /* Gems */
 const int GEMSTONE_PICKUP_RADIUS = 1.0f;
