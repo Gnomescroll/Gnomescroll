@@ -13,30 +13,30 @@ e east
 
 
 if (IS_CLIENT == 0) then 
-	function texture_alias()
-		return nil
-	end
+    function texture_alias()
+        return nil
+    end
 
-	function register_spritesheet()
-		return nil
-	end
-	function register_texture()
-		return nil
-	end
+    function register_spritesheet()
+        return nil
+    end
+    function register_texture()
+        return nil
+    end
 end
 
 --- convenience method
 
 function iso_texture(spritesheet, xpos, ypos)
-	if(IS_CLIENT == 0) then return {t = nil, b = nil, n = nil, s = nil, w = nil, e = nil} end;
-	local id;
-	if (type(spritesheet) == "number" and xpos == nil and ypos == nil) then
-		id = spritesheet
-	else
-		if(not xpos or not ypos) then error("iso_texture: xpos or ypos not set!") end
-		id = register_texture(spritesheet, xpos, ypos)
-	end
-	return  { t = id, b = id, n = id, s = id, w = id, e = id };
+    if(IS_CLIENT == 0) then return {t = nil, b = nil, n = nil, s = nil, w = nil, e = nil} end;
+    local id;
+    if (type(spritesheet) == "number" and xpos == nil and ypos == nil) then
+        id = spritesheet
+    else
+        if(not xpos or not ypos) then error("iso_texture: xpos or ypos not set!") end
+        id = register_texture(spritesheet, xpos, ypos)
+    end
+    return  { t = id, b = id, n = id, s = id, w = id, e = id };
 end
 
 function NewSolidBlock(id, name)
@@ -110,23 +110,28 @@ b.max_damage = 32;
 b = NewSolidBlock(16, "light_dust");
 b.texture = iso_texture(t01,1,1);
 b.hud = hud(16+0, b.texture.n);
+b.max_damage = 1;
 
 b = NewSolidBlock(17, "dark_dust");
 b.texture = iso_texture(t01,2,1);
 b.hud = hud(16+1, b.texture.n);
+b.max_damage = 2;
 
 --rock
 b = NewSolidBlock(18, "soft_rock");
 b.texture = iso_texture(t01,3,1);
 b.hud = hud(16+2, b.texture.n);
+b.max_damage = 6;
 
 b = NewSolidBlock(19, "hard_rock");
 b.texture = iso_texture(t01,4,1);
 b.hud = hud(16+3, b.texture.n);
+b.max_damage = 12;
 
 b = NewSolidBlock(20, "infested_rock");
 b.texture = iso_texture(t01,5,1);
 b.hud = hud(16+4, b.texture.n);
+b.max_damage = 10;
 
 -- other
 
@@ -141,6 +146,7 @@ b.hud = hud(24+1, b.texture.n);
 b = NewSolidBlock(23, "holy_stone");
 b.texture = iso_texture(t01,6,5);
 b.hud = hud(24+2, b.texture.n);
+b.max_damage = 20;
 
 b = NewSolidBlock(24, "holy_stone_artifact");
 b.texture = iso_texture(t01,1,5);
