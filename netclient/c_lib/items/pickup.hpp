@@ -19,7 +19,28 @@
 namespace ItemDrops
 {
 
-/* Behaviour */
+/* Reusable Component */
+
+class PickupComponent
+{
+    public:
+        float pickup_radius;
+        int picked_up_by;
+        bool broadcast_death;
+        int pickup_delay;
+
+        void was_picked_up(const int agent_id);
+        void was_dropped();
+        
+    PickupComponent()
+    : pickup_radius(1.0f), picked_up_by(-1), pickup_delay(1)
+    {}
+
+    ~PickupComponent()
+    {
+    }
+};
+
 
 inline void diePickup(int id, Object_types type, int picked_up_by, bool broadcast_death)
 {
@@ -38,38 +59,24 @@ inline void diePickup(int id, Object_types type, int picked_up_by, bool broadcas
     #endif
 }
 
-template <class Object>
-void tickPickup(ObjectState* state, Object* object, float pickup_radius)
+void tickPickup(ObjectState* state, Vec3 position, PickupComponent* pickup)
 {
     #if DC_SERVER
-    Agent_state* agent = nearest_agent_in_range(object->get_position(), pickup_radius);
+    if (pickup->pickup_delay > 0)
+    {
+        pickup->pickup_delay--;
+        return;
+    }
+    Agent_state* agent = nearest_agent_in_range(position, pickup->pickup_radius);
     if (agent != NULL && agent->status.gain_item(state->id, state->type, state->subtype))
     {   // was picked up, die
-        object->was_picked_up(agent->id);
+        pickup->was_picked_up(agent->id);
         state->ttl = state->ttl_max;
     }
     #endif
 }
 
-/* Reusable Component */
 
-class PickupComponent
-{
-    public:
-        float pickup_radius;
-        int picked_up_by;
-        bool broadcast_death;
-
-        void was_picked_up(const int agent_id);
-        
-    PickupComponent()
-    : pickup_radius(1.0f), picked_up_by(-1)
-    {}
-
-    ~PickupComponent()
-    {
-    }
-};
 
 /* Initializers */
 
@@ -243,20 +250,21 @@ void initialize_textured_minivox_properties(Object_types type, int subtype, Text
 
 /* Composition */
 
-class PickupObject: public PickupComponent, public ObjectStateLayer
+class PickupObject: public ObjectStateLayer
 {
     public:
+        PickupComponent pickup;
         VerletComponent spatial;
     
     PickupObject(int id)
-    : PickupComponent(), ObjectStateLayer(Objects::create_packet_momentum, Objects::state_packet_momentum, Objects::owned_none, Objects::team_none, Objects::health_none, &spatial)
+    : ObjectStateLayer(Objects::create_packet_momentum, Objects::state_packet_momentum, Objects::owned_none, Objects::team_none, Objects::health_none, &spatial)
     {   // TODO: constants should be loaded via dat
         this->_state.id = id;
         this->_state.mass = DEFAULT_PICKUP_ITEM_MASS;
         this->_state.damp = DEFAULT_PICKUP_ITEM_DAMP;
         this->_state.ttl_max = DEFAULT_PICKUP_ITEM_TTL;
 
-        this->pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
+        this->pickup.pickup_radius = DEFAULT_PICKUP_ITEM_RADIUS;
 
     }
 
@@ -268,7 +276,7 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
     {
         ObjectState* state = this->state();
         this->spatial.verlet_bounce(state->damp);
-        tickPickup(state, this, this->pickup_radius);
+        tickPickup(state, this->get_position(), &this->pickup);
         tickTTL(state);
     }
 
@@ -279,14 +287,14 @@ class PickupObject: public PickupComponent, public ObjectStateLayer
         this->_state.subtype = subtype;
         ObjectState* state = this->state();
         initialize_pickup_object(state->type, subtype, state);
-        initialize_pickup_properties(state->type, subtype, this);
+        initialize_pickup_properties(state->type, subtype, &this->pickup);
         this->broadcastCreate();
     }
 
     void die()
     {
         ObjectState* state = this->state();
-        diePickup(state->id, state->type, this->picked_up_by, this->broadcast_death);
+        diePickup(state->id, state->type, this->pickup.picked_up_by, this->pickup.broadcast_death);
     }
 };
 

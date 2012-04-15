@@ -864,17 +864,17 @@ April 15
 
 TODO
 
+recreate items when removed from inventory
+
+
 stackables
 -- what is it like to throw a stackable on the ground? bundled? separate items?
 -- any stackable has a count value
 -- will need to be sent in network
 
-
 set block in inventory to block applier
 --need to think this through
-recreate items when removed from inventory
--- add much longer timeout
--- prevent immediate pickup
+
 
 ===============
 

@@ -135,13 +135,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
-    bool add(int id, Object_types type, int subtype, int slot)
+    bool add(int id, Object_types type, int subtype, int stack_size, int slot)
     {
         if (!this->can_add(slot))
             return false;
         if (this->objects[slot].empty() && id != EMPTY_SLOT)
             this->ct++;
-        this->objects[slot].load(id, type, subtype);
+        this->objects[slot].load(id, type, subtype, stack_size);
         return true;
     }
 
@@ -157,7 +157,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
             return false;
         if (!this->objects[slot].empty())
             this->ct--;
-        this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE, SUBTYPE_NONE);
+        this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE, SUBTYPE_NONE, 1);
         return true;
     }
 
@@ -165,11 +165,10 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
     {
         if (!this->can_swap(slota, slotb))
             return false;
-        int item_id = this->objects[slota].item_id;
-        Object_types item_type = this->objects[slota].item_type;
-        int item_subtype = this->objects[slota].item_subtype;
-        this->objects[slota].load(this->objects[slotb].item_id, this->objects[slotb].item_type, this->objects[slotb].item_subtype);
-        this->objects[slotb].load(item_id, item_type, item_subtype);
+        InventoryProperties itema = this->objects[slota];
+        InventoryProperties* itemb = &this->objects[slotb];
+        this->objects[slota].load(itemb->item_id, itemb->item_type, itemb->item_subtype, itemb->stack.properties.count);
+        this->objects[slotb].load(itema.item_id, itema.item_type, itema.item_subtype, itema.stack.properties.count);
         return true;
     }
 

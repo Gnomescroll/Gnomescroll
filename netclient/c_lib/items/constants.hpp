@@ -218,3 +218,8 @@ typedef enum
     INVENTORY_TYPE_TMAP,
     INVENTORY_TYPE_TMECH,
 } InventoryTypes;
+
+int get_max_stack_size(Object_types type, int subtype)
+{
+    return 1;
+}

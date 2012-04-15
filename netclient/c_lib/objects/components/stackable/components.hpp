@@ -9,7 +9,7 @@ class StackableProperties
         int count;
 
     StackableProperties()
-    : max(1), count(0)
+    : max(1), count(1)
     {}
 };
 

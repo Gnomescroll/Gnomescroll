@@ -42,7 +42,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
         Inventory* inventory;
         float spacing; // render icon spacing
 
-    void load(int id, Object_types type, int subtype);
+    void load(int id, Object_types type, int subtype, int stack_size);
     void get_sprite_data(struct Draw::SpriteData* data);
         
     InventoryProperties()
@@ -182,9 +182,9 @@ class Inventory: public BaseInventoryClient
     {
         return BaseInventoryClient::can_add(type, slot);
     }
-    bool add(int id, Object_types type, int subtype, int slot)
+    bool add(int id, Object_types type, int subtype, int stack_size, int slot)
     {
-        return BaseInventoryClient::add(id, type, subtype, slot);
+        return BaseInventoryClient::add(id, type, subtype, stack_size, slot);
     }
     bool remove(int slot)
     {

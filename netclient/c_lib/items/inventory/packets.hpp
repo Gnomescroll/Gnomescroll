@@ -59,6 +59,7 @@ class add_item_to_inventory_StoC: public FixedSizeReliableNetPacketToClient<add_
         uint16_t id;
         uint8_t type;
         uint8_t subtype;
+        uint8_t stack;
         uint8_t slot;
 
     inline void packet(char* buff, int* buff_n, bool pack)
@@ -67,6 +68,7 @@ class add_item_to_inventory_StoC: public FixedSizeReliableNetPacketToClient<add_
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
         pack_u8(&subtype, buff, buff_n, pack);
+        pack_u8(&stack, buff, buff_n, pack);
         pack_u8(&slot, buff, buff_n, pack);
     }
     inline void handle();
