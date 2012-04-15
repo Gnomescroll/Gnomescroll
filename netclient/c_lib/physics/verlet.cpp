@@ -67,10 +67,12 @@ int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* til
     velocity_integrate(position, velocity, dt);
     
     float interval = 0.0f;
+
+    Vec3 norm;
     int *s = _ray_cast5_capped(
         old_position.x, old_position.y, old_position.z,
         (*position).x, (*position).y, (*position).z,
-        &interval, collision, tile
+        &interval, collision, tile, &norm
     );
 
     if (interval < 1.0f)
@@ -78,7 +80,7 @@ int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* til
         *position = old_position;
         *velocity = old_velocity;
         velocity_integrate(position, velocity, dt*interval);
-        Vec3 norm = vec3_init(s[0], s[1], s[2]);
+        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
         *velocity = vec3_reflect(*velocity, norm);
         *velocity = vec3_scalar_mult(*velocity, damp);
     }

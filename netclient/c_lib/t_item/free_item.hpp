@@ -5,11 +5,13 @@
 #include <c_lib/t_item/client/texture.hpp>
 #endif
 
-#include <c_lib/physics/verlet.hpp>
+#include <c_lib/physics/verlet_particle.hpp>
 //#include <c_lib/objects/components/spatial/components.hpp>
 
 namespace t_item
 {
+
+using VerletParticle::VerletParticle;
 
 const int FREE_ITEM_TTL = 300; // 10 seconds
 const float FREE_ITEM_DAMPENING = 0.5;
@@ -22,10 +24,8 @@ typedef enum
 class Free_item //: public VerletComponent
 {
     private:
-
-
     public:
-        VerletProperties verlet;
+        VerletParticle verlet;
 
         int id;
         int type;
@@ -40,41 +40,34 @@ class Free_item //: public VerletComponent
     void tick()
     {
         //this->verlet_bounce(this->damp);
-
-    );
-
+        verlet.bounce();
         this->ttl++;
     }
 
     void draw();
 
-    Free_item(int id, float x, float y, float z, float mx, float my, float mz)
+    Free_item(int id)
     :
     id(id), type(type_NULL),
-    ttl(0), ttl_max(FREE_ITEM_TTL),
-    damp(FREE_ITEM_DAMPENING)
+    ttl(0), ttl_max(FREE_ITEM_TTL)
     {
-        //this->set_state(x,y,z,mx,my,mz);
-        //this->set_mass(1.0f);
+        verlet.dampening = FREE_ITEM_DAMPENING;
+
+        //set position
+        //this->properties.old_velocity = this->properties.velocity;
+        //this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
+        //set velocity
+
+        //this->properties.old_position = this->properties.position;
+        //this->properties.position = vec3_init(x,y,z);
 
         type = rand() % 16;
     }
 
-    Free_item(int id)
-    :
-    id(id), type(type_NULL),
-    ttl(0), ttl_max(FREE_ITEM_TTL), 
-    damp(FREE_ITEM_DAMPENING)
+    void init(float x, float y, float z, float mx, float my, float mz)
     {
-        //set position
-        this->properties.old_velocity = this->properties.velocity;
-        this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
-        //set velocity
-
-        this->properties.old_position = this->properties.position;
-        this->properties.position = vec3_init(x,y,z);
-
-        type = rand() % 16;
+        //this->set_state(x,y,z,mx,my,mz);
+        //this->set_mass(1.0f);
     }
 };
 
@@ -128,7 +121,7 @@ void Free_item::draw()
     ty_min = (float)(texture_index/8)* (1.0/8.0);
     ty_max = ty_min + (1.0/8.0);
 
-    Vec3 position = this->get_position();
+    Vec3 position = verlet.position;
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     glTexCoord2f(tx_min,ty_max);
     glVertex3f(p.x, p.y, p.z+h);

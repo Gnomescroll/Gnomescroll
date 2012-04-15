@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <string.h>
+#include <math.h>
 
 /* Common headers */
 #include "defines.h"
@@ -17,6 +18,10 @@
 
 /* Compression */
 #include <c_lib/common/compression/miniz.c>
+
+/* Templates */
+
+#include <c_lib/template/object_list.hpp>
 
 /* configuration options */
 #include <c_lib/option_macros.hpp>

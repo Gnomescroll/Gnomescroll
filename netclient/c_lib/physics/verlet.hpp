@@ -7,6 +7,7 @@ namespace Verlet
 
 bool bounce(Vec3* position, Vec3* velocity, float damp);
 int* bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* tile);
+//void bounce(Vec3* position, Vec3* velocity, float damp, int* collision, int* tile);
 
 }
 
