@@ -45,6 +45,8 @@
 
 //physics
 #include <c_lib/physics/verlet.cpp>
+#include <c_lib/physics/verlet_particle.cpp>
+
 #include <c_lib/physics/common.cpp>
 
 #include <c_lib/physics/vec3.hpp>
