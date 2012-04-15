@@ -23,7 +23,7 @@ void init()
     Animations::init_hitscan();
     Animations::init_hitscan_laser();
     
-    //Animations::init_insect_mob();
+    Animations::init_insect_mob();
 
 
 }
@@ -66,8 +66,10 @@ void draw_insect_mob()
 
 void spawn_insect_mob(float x, float y, float z)
 {
+    InsectMob* im = insect_mob_list->create();
+    im->init(x,y,z+2.5);
 
-
+    //printf("insect at: %f %f %f \n", x,y,z);
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)

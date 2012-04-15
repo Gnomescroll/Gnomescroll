@@ -7,7 +7,9 @@
 namespace Animations 
 {
 
-struct vertexElement2* insect_mob_vlist;
+static float insect_mob_t = 0.0;
+
+struct vertexElement2* insect_mob_vlist = NULL;
 int insect_mob_vlist_index = 0;
 
 unsigned int insect_mob_vbo;
@@ -96,6 +98,8 @@ class InsectMob
 
     static const int max_sides = 6;
 
+    int id;
+
     float x,y,z;
 
     int sides;
@@ -106,26 +110,34 @@ class InsectMob
     //float phase[max_sides];
     float speed[max_sides]; 
     
-    InsectMob()
-    {
+    InsectMob() {}
+    InsectMob(int _id) { id = _id; }
 
-        //for(int i=0; i<max_sides; i++ ) phase[i] = 3.1415*randf();
+    void init(float _x, float _y, float _z)
+    {
         for(int i=0; i<max_sides; i++ ) speed[i] = 1.0+ (0.4*randf() - 0.1);
 
         sides = 3 + (rand() % 4);
-        tw = 1.0 + (randf()*.5 - 0.25);
-        th = 1.0 + (randf()*.5 - 0.25);
+        //tw = 1.0 + (randf()*.5 - 0.25);
+        //th = 1.0 + (randf()*.5 - 0.25);
+        tw = 1.0;
+        th = 1.0;
 
-
+        x = _x;
+        y = _y;
+        z = _z;
     }
 
     inline void draw_legs()
     {
 
-        static float t = 0.0;
+        //static float t = 0.0;
         //printf("sf\n");
 
-        t += 0.04;
+        //t += 0.04;
+
+        const float t = insect_mob_t;
+
         const float h = 0.8;
         const float li = 0.1;
 
@@ -201,8 +213,8 @@ class InsectMob
 
     void prep()
     {
-
-
+        draw_legs();
+        draw_torso();
     }
 
     void tick()
@@ -211,7 +223,7 @@ class InsectMob
     }
 };
 
-void set_insect_position(float x, float y, float z) {}
+//void set_insect_position(float x, float y, float z) {}
 
 }
 
@@ -241,7 +253,9 @@ class Insect_mob_list: public Object_list<InsectMob, INSECT_MOB_MAX>
 void Insect_mob_list::prep()
 {
 #if DC_CLIENT
+
     if( needs_update == false) return;
+    insect_mob_t += 0.04;
     insect_mob_vlist_index = 0;
 
     for (int i=0; i<this->n_max; i++)
