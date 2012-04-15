@@ -10,7 +10,7 @@ namespace Animations
 {
 
 /*
-struct vertexElement
+struct vertexElement1
 {
     struct Vec3 pos;
 
@@ -19,7 +19,7 @@ struct vertexElement
 };
 */
 
-struct vertexElement* mining_laser_vlist;
+struct vertexElement1* mining_laser_vlist;
 int mining_laser_vlist_index = 0;
 
 unsigned int mining_laser_vbo;
@@ -32,7 +32,7 @@ unsigned int mining_laser_TexCoord;
 
 static inline void push_vertex(struct Vec3 pos, float tx, float ty)
 {
-    vertexElement* v = &mining_laser_vlist[insect_mob_vlist_index];
+    vertexElement1* v = &mining_laser_vlist[insect_mob_vlist_index];
 
     v->pos = pos;
     v->tx = tx;
@@ -46,7 +46,7 @@ void init_mining_laser_shader();
 
 void init_mining_laser()
 {
-    mining_laser_vlist = new vertexElement[1024];
+    mining_laser_vlist = new vertexElement1[1024];
     mining_laser_vlist_index = 0;
 
     glGenBuffers(1, &mining_laser_vbo);
@@ -151,8 +151,8 @@ void Mining_laser_list::draw()
 #if DC_CLIENT
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), NULL, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), mining_laser_vlist, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement1), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement1), mining_laser_vlist, GL_DYNAMIC_DRAW);
 
 
     glColor3ub(255,255,255);
@@ -166,8 +166,8 @@ void Mining_laser_list::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(mining_laser_TexCoord);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement), (GLvoid*)0);
-    glVertexAttribPointer(mining_laser_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement), (GLvoid*)12);
+    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement1), (GLvoid*)0);
+    glVertexAttribPointer(mining_laser_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement1), (GLvoid*)12);
 
     glDrawArrays(GL_TRIANGLES,0, mining_laser_vlist_index);
 

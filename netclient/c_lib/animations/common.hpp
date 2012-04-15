@@ -60,11 +60,58 @@ class SHADER
 
 };
 
-struct vertexElement
+/*
+	Textured Vertex element without normal
+*/
+
+struct vertexElement1
 {
     struct Vec3 pos;
     float tx,ty;
 };
+
+class VertexElementList1
+{
+	public:
+
+	struct vertexElement1* vlist;
+	int vlist_index;
+	int vlist_max;
+
+	VertexElementList1()
+	{
+		vlist_index = 0;
+		vlist_max = 1024;
+		vlist = (vertexElement1*) malloc(1024*sizeof(struct vertexElement1));
+	}
+
+	~VertexElementList1()
+	{
+		free(vlist);
+	}
+
+	__attribute__((always_inline))
+	void push_vertex(struct Vec3 pos, float tx, float ty)
+	 {
+
+	    vlist[vlist_index].pos = pos;
+	    vlist[vlist_index].tx = tx;
+	    vlist[vlist_index].ty = ty;
+
+	    vlist_index++;
+
+	    if(vlist_index >= vlist_max)
+	    {
+	    	vlist_max *= 2;
+	    	vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
+	    }
+	 }
+
+};
+
+/*
+	Textyred vertex element with normal
+*/
 
 struct vertexElement2
 {
