@@ -27,7 +27,7 @@ void InventoryProperties::load(int id, Object_types type, int subtype)
         // hud icon spritesheet is 8x8 but rendered particle spritesheet is 16x16 -- but using same indexes
         // (should be using same sheet)
         if (this->sprite_index >= 8)
-            this->sprite_index -= 8;
+            this->sprite_index -= 8 * this->sprite_index/16;
     }
     this->item_id = id;
     this->item_type = type;

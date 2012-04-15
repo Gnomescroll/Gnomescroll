@@ -32,7 +32,7 @@ void TexturedMinivoxList::draw()
             drawTexturedMinivox(
                 data->obj->get_position(),
                 data->forward, data->right, data->normal,
-                data->sprite_index,
+                data->texture_index,
                 data->tx, data->ty, data->pixel_margin
             );
         }

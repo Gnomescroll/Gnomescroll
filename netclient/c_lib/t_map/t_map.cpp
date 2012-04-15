@@ -157,7 +157,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         {
             obj->set_position(x+randf(),y+randf(), z+randf());
             obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(subtype); // TODO   
+            obj->born(subtype); // TODO
         }
     }
 }
@@ -176,7 +176,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 0
+#if 1
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else

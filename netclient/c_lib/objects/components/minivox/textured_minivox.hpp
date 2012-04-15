@@ -9,7 +9,7 @@
 class TexturedMinivoxProperties: public MinivoxProperties
 {
     public:
-        int sprite_index;
+        int texture_index; // for cube
         int pixel_width;
         
         float pixel_margin;   // not a config, cached value
@@ -17,7 +17,7 @@ class TexturedMinivoxProperties: public MinivoxProperties
         
     TexturedMinivoxProperties()
     : MinivoxProperties(),
-    sprite_index(0), pixel_width(1),
+    texture_index(0), pixel_width(1),
     pixel_margin(0), tx(0), ty(0)
     {}
 };
@@ -28,7 +28,7 @@ class TexturedMinivoxComponent: public MinivoxComponent<TexturedMinivoxPropertie
 
     void set_texture()
     {
-        const int pix = this->minivox_properties.pixel_width;  // NxN random texture sample within cube identified by sprite_index
+        const int pix = this->minivox_properties.pixel_width;  // NxN random texture sample within cube identified by texture_index
         const int cube_w = 32;
         const int cube_surface_w = 512;
         const int cubes_per_surface_axis = cube_surface_w / cube_w;
@@ -42,8 +42,8 @@ class TexturedMinivoxComponent: public MinivoxComponent<TexturedMinivoxPropertie
         float ftx,fty;
 
         // integer index of cube in spritesheet
-        itx = this->minivox_properties.sprite_index % cubes_per_surface_axis;
-        ity = this->minivox_properties.sprite_index / cubes_per_surface_axis;
+        itx = this->minivox_properties.texture_index % cubes_per_surface_axis;
+        ity = this->minivox_properties.texture_index / cubes_per_surface_axis;
 
         // ...scaled to texture
         ftx = itx * scale;

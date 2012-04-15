@@ -147,7 +147,7 @@ const int TURRET_SPRITE_INDEX = 7;
 
 int get_object_type_sprite_index(Object_types type, int subtype)
 {
-    static const int ERROR_SPRITE = 0;
+    const int ERROR_SPRITE = 48;    // BUG -- CANNOT SPECIFY 3rd row or higher textures
     switch (type)
     {
 

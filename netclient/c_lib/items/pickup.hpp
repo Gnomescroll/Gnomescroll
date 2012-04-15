@@ -171,56 +171,56 @@ void initialize_colored_minivox_properties(Object_types type, int subtype, Color
     obj->dphi_speed = MINIVOX_ITEM_ROTATION_PHI;
 }
 
-int get_cached_cube_sprite_indices(int cube_type)
+int get_cached_cube_texture_indices(int cube_type)
 {
-    static int DIRT_SPRITE_INDEX = -1;
-    static int STONE_SPRITE_INDEX = -1;
-    static int SOFT_ROCK_SPRITE_INDEX = -1;
-    static int MEDIUM_ROCK_SPRITE_INDEX = -1;
-    static int HARD_ROCK_SPRITE_INDEX = -1;
-    static int INFECTED_ROCK_SPRITE_INDEX = -1;
+    static int DIRT_TEXTURE_INDEX = -1;
+    static int STONE_TEXTURE_INDEX = -1;
+    static int SOFT_ROCK_TEXTURE_INDEX = -1;
+    static int MEDIUM_ROCK_TEXTURE_INDEX = -1;
+    static int HARD_ROCK_TEXTURE_INDEX = -1;
+    static int INFECTED_ROCK_TEXTURE_INDEX = -1;
 
-    static int ERROR_SPRITE_INDEX = -1;
-    if (ERROR_SPRITE_INDEX < 0)
-        ERROR_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"error_block");
+    static int ERROR_TEXTURE_INDEX = -1;
+    if (ERROR_TEXTURE_INDEX < 0)
+        ERROR_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"error_block");
 
-    int sprite_index = ERROR_SPRITE_INDEX;
+    int texture_index = ERROR_TEXTURE_INDEX;
     switch (cube_type)
     {
         case DIRT:
-            if (DIRT_SPRITE_INDEX < 0)
-                DIRT_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"dirt");
-            sprite_index = DIRT_SPRITE_INDEX;
+            if (DIRT_TEXTURE_INDEX < 0)
+                DIRT_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"dirt");
+            texture_index = DIRT_TEXTURE_INDEX;
             break;
         case STONE:
-            if (STONE_SPRITE_INDEX < 0)
-                STONE_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"stone");
-            sprite_index = STONE_SPRITE_INDEX;
+            if (STONE_TEXTURE_INDEX < 0)
+                STONE_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"stone");
+            texture_index = STONE_TEXTURE_INDEX;
             break;
         case SOFT_ROCK:
-            if (SOFT_ROCK_SPRITE_INDEX < 0)
-                SOFT_ROCK_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"soft_rock");
-            sprite_index = SOFT_ROCK_SPRITE_INDEX;
+            if (SOFT_ROCK_TEXTURE_INDEX < 0)
+                SOFT_ROCK_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"soft_rock");
+            texture_index = SOFT_ROCK_TEXTURE_INDEX;
             break;
         case MEDIUM_ROCK:
-            if (MEDIUM_ROCK_SPRITE_INDEX < 0)
-                MEDIUM_ROCK_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"medium_rock");
-            sprite_index = MEDIUM_ROCK_SPRITE_INDEX;
+            if (MEDIUM_ROCK_TEXTURE_INDEX < 0)
+                MEDIUM_ROCK_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"medium_rock");
+            texture_index = MEDIUM_ROCK_TEXTURE_INDEX;
             break;
         case HARD_ROCK:
-            if (HARD_ROCK_SPRITE_INDEX < 0)
-                HARD_ROCK_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"hard_rock");
-            sprite_index = HARD_ROCK_SPRITE_INDEX;
+            if (HARD_ROCK_TEXTURE_INDEX < 0)
+                HARD_ROCK_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"hard_rock");
+            texture_index = HARD_ROCK_TEXTURE_INDEX;
             break;
         case INFECTED_ROCK:
-            if (INFECTED_ROCK_SPRITE_INDEX < 0)
-                INFECTED_ROCK_SPRITE_INDEX = t_map::get_cube_primary_sprite_index((char*)"infested_rock");
-            sprite_index = INFECTED_ROCK_SPRITE_INDEX;
+            if (INFECTED_ROCK_TEXTURE_INDEX < 0)
+                INFECTED_ROCK_TEXTURE_INDEX = t_map::get_cube_primary_texture_index((char*)"infested_rock");
+            texture_index = INFECTED_ROCK_TEXTURE_INDEX;
             break;
         default:
             break;
     }
-    return sprite_index;;
+    return texture_index;
 }
 
 void initialize_textured_minivox_properties(Object_types type, int subtype, TexturedMinivoxProperties* obj)
@@ -229,7 +229,7 @@ void initialize_textured_minivox_properties(Object_types type, int subtype, Text
     {
         case OBJ_TYPE_BLOCK_DROP:
             obj->size = BLOCK_DROP_SIZE;
-            obj->sprite_index = get_cached_cube_sprite_indices(subtype);
+            obj->texture_index = get_cached_cube_texture_indices(subtype);
             break;
             
         default: break;

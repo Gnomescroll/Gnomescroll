@@ -89,7 +89,7 @@ int get_cube_side_texture(int id, int side)
     return cube_side_texture_array[6*id + side]; 
 }
 
-int get_cube_primary_sprite_index(char* name)
+int get_cube_primary_texture_index(char* name)
 {
     int id = get_cube_id(name);
     const int primary_side = 0; // TODO?

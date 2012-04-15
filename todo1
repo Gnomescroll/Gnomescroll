@@ -854,9 +854,9 @@ TODO
 
 inventory panel render
 inventory interaction
-
-
 get correct sprite indices for textured block drops
+
+
 block damages
 blocks in inventory
 set block in inventory to block applier
