@@ -670,8 +670,8 @@ inline void hit_block_CtoS::handle()
     msg.broadcast();
     
     //int dmg = a->weapons.pick.damage;
-    int dmg = 32;
-    t_map::apply_damage_broadcast(x,y,z, dmg, t_map::TMA_PICK);
+    int block_damage = 6;
+    t_map::apply_damage_broadcast(x,y,z, block_damage, t_map::TMA_PICK);
 }
 
 inline void hitscan_object_CtoS::handle()
