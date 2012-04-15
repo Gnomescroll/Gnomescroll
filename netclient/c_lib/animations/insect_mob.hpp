@@ -2,19 +2,12 @@
 
 #include <c_lib/physics/vec3.hpp>
 
+#include <c_lib/animations/common.hpp>
+
 namespace Animations 
 {
 
-
-struct vertexElement
-{
-    struct Vec3 pos;
-
-    float tx,ty;
-    struct Vec3 n;
-};
-
-struct vertexElement* insect_mob_vlist;
+struct vertexElement2* insect_mob_vlist;
 int insect_mob_vlist_index = 0;
 
 unsigned int insect_mob_vbo;
@@ -29,9 +22,9 @@ unsigned int insect_mob_frag_shader[1];
 //unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;
 
-static inline void push_vertex(struct Vec3 pos, float tx, float ty)
+static inline void im_push_vertex(struct Vec3 pos, float tx, float ty)
 {
-    vertexElement* v = &insect_mob_vlist[insect_mob_vlist_index];
+    vertexElement2* v = &insect_mob_vlist[insect_mob_vlist_index];
 
     v->pos = pos;
     v->tx = tx;
@@ -45,7 +38,7 @@ void init_insect_mob_shader();
 
 void init_insect_mob()
 {
-    insect_mob_vlist = new vertexElement[4096];
+    insect_mob_vlist = new vertexElement2[4096];
     insect_mob_vlist_index = 0;
 
     glGenBuffers(1, &insect_mob_vbo);
@@ -183,9 +176,9 @@ class InsectMob
                 v2 = vec3_init( _x+li*sin(f2*j), _y+li*cos(f2*j), _z );
                 v3 = vec3_init( _x+li*sin(f2*(j+1)), _y+li*cos(f2*(j+1)), _z );
 
-                push_vertex(v1, 0.5, 0.5);
-                push_vertex(v2, 0.0, 0.5+txh);
-                push_vertex(v3, 0.0, 0.5-txh);
+                im_push_vertex(v1, 0.5, 0.5);
+                im_push_vertex(v2, 0.0, 0.5+txh);
+                im_push_vertex(v3, 0.0, 0.5-txh);
             }
         }
 
@@ -210,9 +203,9 @@ class InsectMob
             v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
             v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
-            push_vertex(v1, 0.5, 0.5);
-            push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            im_push_vertex(v1, 0.5, 0.5);
+            im_push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+            im_push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
 
         }
 
@@ -223,9 +216,9 @@ class InsectMob
             v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
             v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
-            push_vertex(v1, 0.5, 0.5);
-            push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            im_push_vertex(v1, 0.5, 0.5);
+            im_push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+            im_push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
         }
     }
 /* 
@@ -291,8 +284,8 @@ void Insect_mob_list::draw()
 #if DC_CLIENT
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), NULL, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement), insect_mob_vlist, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement2), insect_mob_vlist, GL_DYNAMIC_DRAW);
 
 
     glColor3ub(255,255,255);
@@ -306,8 +299,8 @@ void Insect_mob_list::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(insect_mob_TexCoord);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement), (GLvoid*)0);
-    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement), (GLvoid*)12);
+    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement2), (GLvoid*)0);
+    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement2), (GLvoid*)12);
 
     glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist_index);
 
