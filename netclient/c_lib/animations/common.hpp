@@ -74,5 +74,44 @@ struct vertexElement2
     struct Vec3 n;
 };
 
+class VertexElementList2
+{
+	public:
+
+	struct vertexElement2* vlist;
+	int vlist_index;
+	int vlist_max;
+
+	VertexElementList2()
+	{
+		vlist_index = 0;
+		vlist_max = 1024;
+		vlist = (vertexElement2*) malloc(1024*sizeof(struct vertexElement2));
+	}
+
+	~VertexElementList2()
+	{
+		free(vlist);
+	}
+
+	__attribute__((always_inline))
+	void push_vertex(struct Vec3 pos, float tx, float ty)
+	 {
+
+	    vlist[vlist_index].pos = pos;
+	    vlist[vlist_index].tx = tx;
+	    vlist[vlist_index].ty = ty;
+
+	    vlist_index++;
+
+	    if(vlist_index >= vlist_max)
+	    {
+	    	vlist_max *= 2;
+	    	vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
+	    }
+	 }
+
+};
+
 
 }
