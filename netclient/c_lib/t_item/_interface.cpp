@@ -122,7 +122,7 @@ void create_free_item(int item_type,
     
     Free_item* f = free_item_list->create();
     if(f == NULL) return;
-    f->set_state(x,y,z,vx,vy,vz);
+    f->init(x,y,z,vx,vy,vz);
 
     class free_item_create_StoC p;
 

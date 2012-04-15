@@ -27,7 +27,8 @@ inline void free_item_create_StoC::handle()
 {
     //printf("creating %d\n", id);
     // create item via list
-    t_item::free_item_list->create(id, x,y,z,mx,my,mz);
+    Free_item* f = t_item::free_item_list->create(id);
+    f->init(x,y,z,mx,my,mz);
 
     Animations::set_insect_position(x,y,z);
 }
