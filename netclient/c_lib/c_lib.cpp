@@ -22,6 +22,7 @@
 /* Templates */
 
 #include <c_lib/template/object_list.hpp>
+#include <c_lib/template/object_pool.hpp>
 
 /* configuration options */
 #include <c_lib/option_macros.hpp>
@@ -41,7 +42,7 @@
 // logging
 #include <c_lib/common/logger.cpp>
 
-// time
+// time 
 #include <c_lib/common/time/physics_timer.cpp>
 
 /* Vectors, Ray Tracers, Physics */
