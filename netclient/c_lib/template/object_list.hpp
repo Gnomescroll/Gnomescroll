@@ -125,8 +125,8 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
     //where();
     if((id < 0) || (id >= n_max)) {
         printf("%s id error: id=%i\n", name() ,id);
-        if (id != NO_AGENT) // TODO 
-            print_trace();
+        //if (id != NO_AGENT) // TODO 
+        //    print_trace();
         return NULL;
     } 
     if(a[id] == NULL) {

@@ -23,13 +23,13 @@ bool VerletParticle::bool_bounce()
 {
     bool bounced = false;
     
-    old_position = position;
-    old_velocity = velocity;
-    velocity_integrate(position, velocity, dt);
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
+    velocity_integrate(&position, &velocity, dt);
 
     float interval = 0.0f;
 
-    struct vec3 norm;
+    Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
         position.x, position.y, position.z,
@@ -53,14 +53,14 @@ void VerletParticle::bounce()
 {
     //bool bounced = false;
     
-    struct Vec3 old_position = position;
-    struct Vec3 old_velocity = velocity;
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
     
     velocity_integrate(&position, &velocity, dt);
 
     float interval = 0.0f;
 
-    struct vec3 norm;
+    Vec3 norm;
     _ray_cast4(
         old_position.x, old_position.y, old_position.z,
         position.x, position.y, position.z,

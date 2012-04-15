@@ -57,6 +57,7 @@
 #include <c_lib/ray_trace/handlers.cpp>
 #include <c_lib/physics/common.cpp>
 #include <c_lib/physics/verlet.cpp>
+#include <c_lib/physics/verlet_particle.cpp>
 
 /* SDL */
 #include <c_lib/SDL/shader_loader.cpp>
