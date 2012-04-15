@@ -109,7 +109,22 @@ inline void remove_item_from_inventory_CtoS::handle()
     Inventory* inv = (Inventory*)ServerState::object_list->get(OBJ_TYPE_INVENTORY, inventory_id);
     if (inv == NULL) return;
     if (inv->get_owner() != agent->id) return;
-    inv->remove_action(slot);
+    if (!inv->can_remove((int)slot)) return;
+    InventoryProperties* item = inv->get(slot);
+    if (item == NULL) return;
+    if (!item->empty())
+    {   // create new item
+        ObjectPolicyInterface* obj = ServerState::object_list->create(item->item_type, item->item_subtype);
+        if (obj == NULL) return;
+        Vec3 position = agent->get_center();
+        const float velocity = 1.0f;
+        Vec3 forward = vec3_scalar_mult(agent->s.forward_vector(), velocity);
+        obj->set_position(position.x, position.y, position.z);
+        obj->set_momentum(forward.x, forward.y, forward.z);
+        obj->born(item->item_subtype);
+    }
+
+    if (!inv->remove_action(slot)) printf("ERROR: inventory remove_action failed to occur -- but can_remove() had passed\n");
 }
 
 inline void swap_item_in_inventory_CtoS::handle()

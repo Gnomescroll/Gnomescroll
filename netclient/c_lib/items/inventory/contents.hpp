@@ -2,10 +2,13 @@
 
 #include <c_lib/common/enum_types.hpp>
 
+#include <c_lib/objects/components/stackable/components.hpp>
+
 const int EMPTY_SLOT = 65535;
 class BaseInventoryProperties
 {
     public:
+        StackableComponent stack;
         int item_id;
         Object_types item_type;
         int item_subtype;
@@ -89,6 +92,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         this->objects = new InventoryProperties[this->max];
         for (int i=0; i<this->max; i++)
             this->objects[i].slot = i;
+    }
+
+    InventoryProperties* get(int slot)
+    {
+        if (!this->is_valid_slot(slot))
+            return NULL;
+        return &this->objects[slot];
     }
 
     bool can_add()

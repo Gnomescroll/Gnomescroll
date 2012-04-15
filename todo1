@@ -850,15 +850,26 @@ textured minivox drops
 ===============
 
 April 14
-TODO
 
 inventory panel render
 inventory interaction
 get correct sprite indices for textured block drops
 blocks in inventory (renders with error icon)
 block damages (only some)
+added rotation to block crumble animations
+
+===============
+
+April 15
+
+TODO
 
 stackables
+-- what is it like to throw a stackable on the ground? bundled? separate items?
+-- any stackable has a count value
+-- will need to be sent in network
+
+
 set block in inventory to block applier
 --need to think this through
 recreate items when removed from inventory
@@ -866,6 +877,7 @@ recreate items when removed from inventory
 -- prevent immediate pickup
 
 ===============
+
 
 Gun model
 Gun in first person and zoomed perspectives

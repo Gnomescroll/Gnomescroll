@@ -5,6 +5,7 @@
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/net/packets.hpp>
 #include <c_lib/items/constants.hpp>
+#include <c_lib/objects/components/stackable/components.hpp>
 
 //forward decl
 #if DC_CLIENT
@@ -329,6 +330,8 @@ class PickupObjectColoredMinivox:
     public PickupObject
 {
     public:
+
+        StackableComponent stack;
 
     PickupObjectColoredMinivox(int id)
     : PickupObject(id)

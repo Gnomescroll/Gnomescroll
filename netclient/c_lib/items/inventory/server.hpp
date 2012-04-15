@@ -55,14 +55,20 @@ class Inventory: public BaseInventoryServer
         }
     }
 
-    void remove_action(int slot)
+    InventoryProperties* get(int slot)
+    {
+        return this->contents.get(slot);
+    }
+
+    bool remove_action(int slot)
     {
         bool removed = this->remove(slot);
-        if (!removed) return;
+        if (!removed) return false;
         if (this->get_owner() != NO_AGENT)
             this->sendToClientRemove(slot);
         else
             this->broadcastRemove(slot);
+        return true;
     }
 
     bool add_action(int id, Object_types type, int subtype, int slot)
@@ -113,6 +119,10 @@ class Inventory: public BaseInventoryServer
     bool can_add(Object_types type)
     {
         return BaseInventoryServer::can_add(type);
+    }
+    bool can_remove(int slot)
+    {
+        return BaseInventoryServer::can_remove(slot);
     }
     
     void sendToClientCreate(int client_id);
