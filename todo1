@@ -861,6 +861,9 @@ block damages (only some)
 stackables
 set block in inventory to block applier
 --need to think this through
+recreate items when removed from inventory
+-- add much longer timeout
+-- prevent immediate pickup
 
 ===============
 

@@ -29,6 +29,8 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
     float nx,ny,nz;
     float vx,vy,vz;
 
+    float theta,phi;
+
     Particles::TexturedMinivox* minivox;
     
     for (int i=0; i < n; i++)
@@ -41,8 +43,10 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         vy = momentum*(randf() -0.5f);
         vz = momentum*(randf() -0.5f);
 
-        side = randrange(0,5);
+        theta = randf() * PI * 2;
+        phi = randf() * PI * 2;
 
+        side = randrange(0,5);
         tex_id = t_map::get_cube_side_texture(cube_id, side);
         minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
@@ -50,6 +54,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
         ttl = randrange(20,40);
         minivox->set_ttl(ttl);
         minivox->set_texture(tex_id);
+        minivox->set_angles(theta, phi);
         minivox->set_size(crumble_size);
     }
 }
@@ -98,6 +103,8 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     if (!Options::animations) return;
     int tex_id = t_map::get_cube_side_texture(cube_id, cube_side);
 
+    float theta,phi;
+
     // reflection bias
     Vec3 inc = vec3_init(ix,iy,iz);
     Vec3 nor = vec3_init(side[0], side[1], side[2]);
@@ -132,12 +139,16 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         nx = x + ((randf() -0.5f)*0.4f*side[0]);
         ny = y + ((randf() -0.5f)*0.4f*side[1]);
         nz = z + ((randf() -0.5f)*0.4f*side[2]);
+
+        theta = randf() * PI * 2;
+        phi = randf() * PI * 2;
         
         minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
         if (minivox == NULL) return;
         minivox->set_texture(tex_id, 2);
         ttl = randrange(15,25);
         minivox->set_ttl(ttl);
+        minivox->set_angles(theta, phi);
     }
 }
 
@@ -286,7 +297,7 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
         phi = randf() * PI * 2;
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
-        
+
         minivox = Particles::colored_minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
         if (minivox == NULL) return;
         minivox->set_color(color.r, color.g, color.b);//sky blue
