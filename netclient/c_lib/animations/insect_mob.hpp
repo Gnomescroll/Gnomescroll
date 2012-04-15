@@ -9,8 +9,8 @@ namespace Animations
 
 static float insect_mob_t = 0.0;
 
-struct vertexElement2* insect_mob_vlist = NULL;
-int insect_mob_vlist_index = 0;
+///struct vertexElement2* insect_mob_vlist = NULL;
+//int insect_mob_vlist_index = 0;
 
 unsigned int insect_mob_vbo;
 
@@ -22,6 +22,9 @@ class SHADER insect_mob_shader;
 //unsigned int insect_mob_Vertex;
 unsigned int insect_mob_TexCoord;
 
+VertexElementList2* insect_mob_vlist = NULL;
+
+/*
 static inline void im_push_vertex(struct Vec3 pos, float tx, float ty)
 {
     vertexElement2* v = &insect_mob_vlist[insect_mob_vlist_index];
@@ -32,14 +35,17 @@ static inline void im_push_vertex(struct Vec3 pos, float tx, float ty)
 
     insect_mob_vlist_index++;
 }
+*/
 
 void init_insect_mob_texture();
 void init_insect_mob_shader();
 
 void init_insect_mob()
 {
-    insect_mob_vlist = new vertexElement2[4096];
-    insect_mob_vlist_index = 0;
+    //insect_mob_vlist = new vertexElement2[4096];
+    //insect_mob_vlist_index = 0;
+
+    insect_mob_vlist = new VertexElementList2;
 
     glGenBuffers(1, &insect_mob_vbo);
 
@@ -47,6 +53,10 @@ void init_insect_mob()
     init_insect_mob_shader();
 }
 
+void teardown_insect_mob()
+{
+    delete insect_mob_vlist;
+}
 
 void init_insect_mob_texture()
 {
@@ -162,9 +172,9 @@ class InsectMob
                 v2 = vec3_init( _x+li*sin(f2*j), _y+li*cos(f2*j), _z );
                 v3 = vec3_init( _x+li*sin(f2*(j+1)), _y+li*cos(f2*(j+1)), _z );
 
-                im_push_vertex(v1, 0.5, 0.5);
-                im_push_vertex(v2, 0.0, 0.5+txh);
-                im_push_vertex(v3, 0.0, 0.5-txh);
+                insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
+                insect_mob_vlist->push_vertex(v2, 0.0, 0.5+txh);
+                insect_mob_vlist->push_vertex(v3, 0.0, 0.5-txh);
             }
         }
 
@@ -189,9 +199,9 @@ class InsectMob
             v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
             v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
-            im_push_vertex(v1, 0.5, 0.5);
-            im_push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            im_push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
+            insect_mob_vlist->push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+            insect_mob_vlist->push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
 
         }
 
@@ -202,9 +212,9 @@ class InsectMob
             v2 = vec3_init( x+tw*sin(f1*i), y+th*cos(f1*i), z0+z );
             v3 = vec3_init( x+tw*sin(f1*(i+1)), y+th*cos(f1*(i+1)), z0+z );
 
-            im_push_vertex(v1, 0.5, 0.5);
-            im_push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
-            im_push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
+            insect_mob_vlist->push_vertex(v1, 0.5, 0.5);
+            insect_mob_vlist->push_vertex(v2, sin(f1*i)/2 + 0.5,  cos(f1*i)/2 + 0.5);
+            insect_mob_vlist->push_vertex(v3, sin(f1*(i+1))/2 + 0.5,  cos(f1*(i+1))/2 + 0.5);
         }
     }
 /* 
@@ -256,7 +266,7 @@ void Insect_mob_list::prep()
 
     if( needs_update == false) return;
     insect_mob_t += 0.04;
-    insect_mob_vlist_index = 0;
+    insect_mob_vlist->reset_index();
 
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
@@ -272,8 +282,8 @@ void Insect_mob_list::draw()
 #if DC_CLIENT
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist_index*sizeof(struct vertexElement2), insect_mob_vlist, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist->vlist_index*sizeof(struct vertexElement2), insect_mob_vlist->vlist, GL_DYNAMIC_DRAW);
 
 
     glColor3ub(255,255,255);
@@ -290,7 +300,7 @@ void Insect_mob_list::draw()
     glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement2), (GLvoid*)0);
     glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement2), (GLvoid*)12);
 
-    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist_index);
+    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vlist_index);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(insect_mob_TexCoord);

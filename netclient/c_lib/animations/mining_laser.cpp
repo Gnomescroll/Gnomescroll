@@ -30,6 +30,7 @@ unsigned int mining_laser_texture;
 //unsigned int insect_mob_Vertex;
 unsigned int mining_laser_TexCoord;
 
+/*
 static inline void push_vertex(struct Vec3 pos, float tx, float ty)
 {
     vertexElement1* v = &mining_laser_vlist[insect_mob_vlist_index];
@@ -40,6 +41,7 @@ static inline void push_vertex(struct Vec3 pos, float tx, float ty)
 
     insect_mob_vlist_index++;
 }
+*/
 
 void init_mining_laser_texture();
 void init_mining_laser_shader();

@@ -167,6 +167,10 @@ class VertexElementList2
 	    }
 	 }
 
+	 void reset_index()
+	 {
+	 	vlist_index = 0;
+	 }
 };
 
 

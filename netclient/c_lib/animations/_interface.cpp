@@ -38,6 +38,8 @@ void teardown()
     Animations::teardown_hitscan();
     Animations::teardown_hitscan_laser();
 
+    Animations::teardown_insect_mob();
+
 }
 
 void animations_tick()
