@@ -66,16 +66,16 @@ class Free_item //: public VerletComponent
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
-        //this->set_state(x,y,z,mx,my,mz);
-        //this->set_mass(1.0f);
+        verlet.position = vec3_init(x,y,z);
+        verlet.velocity = vec3_init(mx,my,mz);
     }
 };
 
 void Free_item::draw()
 {
 #ifdef DC_CLIENT
-    const float scale = 0.5;
-    const float h = 0.75;
+    const float scale = 0.25;
+    const float h = 0.35;
 
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,
