@@ -60,6 +60,8 @@ class ObjectPolicyInterface
         virtual int get_stack_size() = 0;
 
         // these should return components instead?
+        // then the components would have the getters/setters
+        // for objects without a component, return a preallocated "default"
 
     ObjectPolicyInterface() {}
     virtual ~ObjectPolicyInterface()
