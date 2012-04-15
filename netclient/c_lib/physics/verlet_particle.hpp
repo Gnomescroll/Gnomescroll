@@ -26,6 +26,7 @@ class VerletParticle
 	bool bool_bounce();
 	void bounce();
 
+	void bounce_box(float radius);
 };
 
 

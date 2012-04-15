@@ -40,7 +40,7 @@ class Free_item //: public VerletComponent
     void tick()
     {
         //this->verlet_bounce(this->damp);
-        verlet.bounce();
+        verlet.bounce_box(0.33);
         this->ttl++;
     }
 
@@ -52,14 +52,6 @@ class Free_item //: public VerletComponent
     ttl(0), ttl_max(FREE_ITEM_TTL)
     {
         verlet.dampening = FREE_ITEM_DAMPENING;
-
-        //set position
-        //this->properties.old_velocity = this->properties.velocity;
-        //this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
-        //set velocity
-
-        //this->properties.old_position = this->properties.position;
-        //this->properties.position = vec3_init(x,y,z);
 
         type = rand() % 16;
     }
