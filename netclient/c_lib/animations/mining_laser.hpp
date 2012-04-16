@@ -66,8 +66,14 @@ void init_mining_laser_texture()
 
 void init_mining_laser_shader()
 {
+    insect_mob_shader.set_debug(true);
 
+    insect_mob_shader.load_shader( "mining shader",
+        "./media/shaders/weapon/mining_laser.vsh",
+        "./media/shaders/weapon/mining_laser.fsh" );
+    
 
+    mining_laser_TexCoord = insect_mob_shader.get_attribute("InTexCoord");
 }
 
 
@@ -103,12 +109,11 @@ namespace Animations
 
 const int MINING_LASER_MAX = 1024;
 
-class MiningLaserEffect_list: public Object_list<InsectMob, MINING_LASER_MAX>
+class MiningLaserEffect_list: public Object_list<MiningLaser, MINING_LASER_MAX>
 {
     private:
         const char* name() { return "MiningLaserEffect_list"; }
 
-        bool needs_update;
     public:
         MiningLaserEffect_list() { print();}
 
@@ -124,7 +129,9 @@ void MiningLaserEffect_list::prep()
 #if DC_CLIENT
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
+        {
             this->a[i]->prep();
+        }
 #endif
 }
 
@@ -163,13 +170,14 @@ void MiningLaserEffect_list::draw()
 
 void MiningLaserEffect_list::tick()
 {
-    needs_update = true;
-    InsectMob* m;
+    MiningLaser* m;
     for (int i=0; i<this->n_max; i++)
     {
-        if (this->a[i] == NULL) continue;
-        m = this->a[i];
-        m->tick();
+        if (this->a[i] != NULL)
+        {
+        	m = this->a[i];
+        	m->tick();
+        }
     }
 }
 

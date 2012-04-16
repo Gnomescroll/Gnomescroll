@@ -20,6 +20,7 @@ void init()
 
     hitscan_effect_list = new HitscanEffect_list;
     hitscan_laser_effect_list = new HitscanLaserEffect_list;
+    mining_laser_effect_list = new MiningLaserEffect_list;
 
 	insect_mob_list = new Insect_mob_list;
 
@@ -38,6 +39,7 @@ void teardown()
 
     delete hitscan_effect_list;
     delete hitscan_laser_effect_list;
+    delete mining_laser_effect_list;
 
     Animations::teardown_hitscan();
     Animations::teardown_hitscan_laser();
@@ -74,6 +76,7 @@ void draw_mining_laser_effect()
 
 void spawn_insect_mob(float x, float y, float z)
 {
+    return;
     InsectMob* im = insect_mob_list->create();
     im->init(x,y,z+2.5);
 
