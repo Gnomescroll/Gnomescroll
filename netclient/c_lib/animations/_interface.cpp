@@ -94,9 +94,9 @@ void spawn_insect_mob(float x, float y, float z)
 void create_mining_laser_particle()
 {
     float v = 5.0;
-    MiningLaser ml* = mining_laser_Effect_list->create();
+    MiningLaser* ml = mining_laser_effect_list->create();
 
-    ml->init(x13,y13,z13. randf()*v,randf()*v,randf()*v );
+    ml->init(x13,y13,z13, v* randf(), v* randf(), v* randf() );
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)

@@ -21,6 +21,7 @@ const float FREE_ITEM_DAMPENING = 0.5;
 VertexElementList1* mining_laser_vlist = NULL;
 
 unsigned int mining_laser_vbo;
+class SHADER mining_laser_shader;
 
 int mining_laser_surface;
 unsigned int mining_laser_texture;
@@ -99,12 +100,15 @@ class MiningLaser
 
         float damp;
 
-    MiningLaser()
-    {
+    MiningLaser() {}
+    MiningLaser(int _id) { id = _id; }
 
+    void init(float x, float y, float z, float mx, float my, float mz)
+    {
+        verlet.position = vec3_init(x,y,z);
+        verlet.velocity = vec3_init(mx,my,mz);
     }
 
-        
     void tick()
     {
         //this->verlet_bounce(this->damp);
