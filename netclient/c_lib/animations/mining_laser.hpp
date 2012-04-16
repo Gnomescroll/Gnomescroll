@@ -1,14 +1,22 @@
 #pragma once
 
-#include <c_lib/physics/vec3.hpp>
+#ifdef DC_CLIENT
+#include <c_lib/common/gl_assert.hpp>
+#include <c_lib/t_item/client/texture.hpp>
+#endif
 
+#include <c_lib/physics/vec3.hpp>
 #include <c_lib/animations/common.hpp>
 
-
-
+#include <c_lib/physics/verlet_particle.hpp>
 
 namespace Animations 
 {
+
+using VerletParticle::VerletParticle;
+
+const int FREE_ITEM_TTL = 300; // 10 seconds
+const float FREE_ITEM_DAMPENING = 0.5;
 
 VertexElementList1* mining_laser_vlist = NULL;
 
@@ -66,13 +74,12 @@ void init_mining_laser_texture()
 
 void init_mining_laser_shader()
 {
-    insect_mob_shader.set_debug(true);
+    mining_laser_shader.set_debug(true);
 
-    insect_mob_shader.load_shader( "mining shader",
+    mining_laser_shader.load_shader( "mining shader",
         "./media/shaders/weapon/mining_laser.vsh",
         "./media/shaders/weapon/mining_laser.fsh" );
     
-
     mining_laser_TexCoord = insect_mob_shader.get_attribute("InTexCoord");
 }
 
@@ -81,23 +88,71 @@ class MiningLaser
 {
     public:
 
-    
+    public:
+        VerletParticle verlet;
+
+        int id;
+        int type;
+
+        int ttl;
+        int ttl_max;
+
+        float damp;
+
     MiningLaser()
     {
 
     }
 
+        
+    void tick()
+    {
+        //this->verlet_bounce(this->damp);
+        verlet.bounce_box(0.20);
+        this->ttl++;
+    }
 
     void prep()
     {
+	#ifdef DC_CLIENT
+	    const float scale = 0.25;
 
+	    Vec3 up = vec3_init(
+	        model_view_matrix[0]*scale,
+	        model_view_matrix[4]*scale,
+	        model_view_matrix[8]*scale
+	    );
+	    Vec3 right = vec3_init(
+	        model_view_matrix[1]*scale,
+	        model_view_matrix[5]*scale,
+	        model_view_matrix[9]*scale
+	    );
 
+	    int texture_index = rand() % 16;
+
+	    float tx_min, tx_max, ty_min, ty_max;
+	    tx_min = (float)(texture_index%4)* (1.0/4.0);
+	    tx_max = tx_min + (1.0/4.0);
+	    ty_min = (float)(texture_index/4)* (1.0/4.0);
+	    ty_max = ty_min + (1.0/4.0);
+
+	    Vec3 position = verlet.position;
+
+	    Vec3 p = vec3_sub(position, vec3_add(right, up));
+		mining_laser_vlist->push_vertex(p, tx_min,ty_max);
+
+	    p = vec3_add(position, vec3_sub(up, right));
+	    mining_laser_vlist->push_vertex(p, tx_max,ty_max);
+
+	    p = vec3_add(position, vec3_add(up, right));
+	    mining_laser_vlist->push_vertex(p, tx_max,ty_min);
+
+	    p = vec3_add(position, vec3_sub(right, up));
+	    mining_laser_vlist->push_vertex(p, tx_min,ty_min);
+
+	#endif
     }
 
-    void tick()
-    {
-
-    }
 };
 
 }
@@ -139,7 +194,7 @@ void MiningLaserEffect_list::prep()
 void MiningLaserEffect_list::draw()
 {
 #if DC_CLIENT
-/*
+
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
@@ -164,7 +219,7 @@ void MiningLaserEffect_list::draw()
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
-*/
+
 #endif
 }
 
