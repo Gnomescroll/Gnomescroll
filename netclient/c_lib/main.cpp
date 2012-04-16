@@ -100,8 +100,6 @@ int run()
 
             //if(counter % 10 == 0) t_item::check_item_pickups();
 
-            Animations::create_mining_laser_particle();
-
             // update sound listener
             ClientState::playerAgent_state.update_sound();
 
@@ -110,6 +108,8 @@ int run()
 
             counter++;
         }
+
+        Animations::create_mining_laser_particle();
 
         //if (physics_ticks >= 2)
             //printf("Physics: %d ticks this frame\n", physics_ticks);

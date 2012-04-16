@@ -97,19 +97,19 @@ class MiningLaser
         int type;
 
         int ttl;
-        int ttl_max;
+        //int ttl_max;
 
         float damp;
 
-    MiningLaser() 
+    MiningLaser() :
+    ttl(0)
     {
     	ttl = 0;
     	verlet.dampening = MINING_LASER_DAMPENING;
     }
-    MiningLaser(int _id) 
+    MiningLaser(int id) 
+    : id(id), ttl(0)
     { 
-    	ttl = 0;
-    	id = _id; 
     	verlet.dampening = MINING_LASER_DAMPENING;
     }
 
@@ -128,7 +128,6 @@ class MiningLaser
 
     void prep()
     {
-	#ifdef DC_CLIENT
 	    const float scale = 0.25;
 
 	    Vec3 up = vec3_init(
@@ -163,8 +162,6 @@ class MiningLaser
 
 	    p = vec3_add(position, vec3_sub(right, up));
 	    mining_laser_vlist->push_vertex(p, tx_min,ty_min);
-
-	#endif
     }
 
 };
@@ -178,7 +175,7 @@ namespace Animations
 
 const int MINING_LASER_MAX = 1024;
 
-class MiningLaserEffect_list: public Object_list<MiningLaser, MINING_LASER_MAX>
+class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASER_MAX>
 {
     private:
         const char* name() { return "MiningLaserEffect_list"; }
@@ -195,21 +192,18 @@ class MiningLaserEffect_list: public Object_list<MiningLaser, MINING_LASER_MAX>
 
 void MiningLaserEffect_list::prep()
 {
-#if DC_CLIENT
-    for (int i=0; i<this->n_max; i++)
-        if (this->a[i] != NULL)
-        {
-            this->a[i]->prep();
-        }
-#endif
+    for (int i=0; i<this->num; i++)
+    {
+        this->a[i].prep();
+    }
 }
 
 
 void MiningLaserEffect_list::draw()
 {
 
-	printf("%i \n", mining_laser_vlist->vlist_index);
-	
+	//printf("%i \n", mining_laser_vlist->vlist_index);
+
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
@@ -239,20 +233,16 @@ void MiningLaserEffect_list::draw()
 
 void MiningLaserEffect_list::tick()
 {
-    MiningLaser* m;
-    for (int i=0; i<this->n_max; i++)
+    for (int i=0; i<this->num; i++)
     {
-        if (this->a[i] != NULL)
-        {
-        	m = this->a[i];
-        	m->tick();
+        a[i].tick();
 
-	        if (m->ttl >= MINING_LASER_TTL)
-	        {
-	            this->destroy(m->id);
-	        }
+	    if (a[i].ttl >= MINING_LASER_TTL)
+	    {
+	    	this->destroy(a[i].id);
+	        //printf("destroy \n");
+	    }
 
-        }
     }
 }
 

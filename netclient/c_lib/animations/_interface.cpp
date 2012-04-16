@@ -81,6 +81,8 @@ void draw_hitscan_laser_effect()
 
 void draw_mining_laser_effect()
 {
+    mining_laser_effect_list->prep();
+
     mining_laser_effect_list->draw();
 }
 
@@ -107,9 +109,14 @@ void spawn_insect_mob(float x, float y, float z)
 
 void create_mining_laser_particle()
 {
+    //printf("create \n");
     float v = 5.0;
     MiningLaser* ml = mining_laser_effect_list->create();
-    if(ml == NULL) return;
+    if(ml == NULL)
+    {
+        printf("particle limit reached \n");
+        return;
+    }
 
     ml->init(x13,y13,z13+3.0, v* randf(), v* randf(), v* randf() );
 }

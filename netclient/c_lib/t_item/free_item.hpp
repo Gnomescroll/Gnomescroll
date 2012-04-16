@@ -79,31 +79,6 @@ void Free_item::draw()
         model_view_matrix[5]*scale,
         model_view_matrix[9]*scale
     );
-/*
-    Vec3 up = vec3_init(0.0, 0.0, 1.0);
-
-    Vec3 look;
-
-    look.x = current_camera->x - vp.p.x;
-    look.y = current_camera->y - vp.p.y;
-    look.z = 0.0;
-
-    look = vec3_normalize(look);
-
-    Vec3 right = vec3_cross(look, up);
-
-    right = vec3_normalize(right);
-*/
-    /*
-    float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->texture_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->texture_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
-    */
-
-    //int texture_index = 5;
-    //int texture_index = rand() % 16;
 
     int texture_index = this->type;
 

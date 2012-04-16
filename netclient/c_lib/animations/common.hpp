@@ -102,7 +102,7 @@ class VertexElementList1
 	__attribute__((always_inline))
 	void push_vertex(struct Vec3 pos, float tx, float ty)
 	 {
-
+	 	
 	    vlist[vlist_index].pos = pos;
 	    vlist[vlist_index].tx = tx;
 	    vlist[vlist_index].ty = ty;
@@ -153,7 +153,6 @@ class VertexElementList2
 	__attribute__((always_inline))
 	void push_vertex(struct Vec3 pos, float tx, float ty)
 	 {
-
 	    vlist[vlist_index].pos = pos;
 	    vlist[vlist_index].tx = tx;
 	    vlist[vlist_index].ty = ty;
