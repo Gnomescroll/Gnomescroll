@@ -1,8 +1,10 @@
 #include "_interface.hpp"
 
 #include <c_lib/animations/insect_mob.hpp>
+
 #include <c_lib/animations/hitscan.hpp>
 #include <c_lib/animations/hitscan_laser.hpp>
+#include <c_lib/animations/mining_laser.hpp>
 
 namespace Animations 
 {
@@ -11,6 +13,7 @@ class Insect_mob_list* insect_mob_list = NULL;
 
 class HitscanEffect_list* hitscan_effect_list = NULL;
 class HitscanLaserEffect_list* hitscan_laser_effect_list = NULL;
+class MiningLaserEffect_list* mining_laser_effect_list = NULL;
 
 void init()
 {
@@ -22,7 +25,8 @@ void init()
 
     Animations::init_hitscan();
     Animations::init_hitscan_laser();
-    
+    Animations::init_mining_laser();
+
     Animations::init_insect_mob();
 
 
@@ -45,19 +49,15 @@ void teardown()
 void animations_tick()
 {
     ClientState::ctf->animate_flags();
+
     hitscan_effect_list->tick();
     hitscan_laser_effect_list->tick();
+    mining_laser_effect_list->tick();
 
     insect_mob_list->tick();
 }
 
-/*
-void animations_draw()
-{
-    Animations::hitscan_effect_list->draw();
-    Animations::hitscan_laser_effect_list->draw();
-}
-*/
+
 
 void draw_insect_mob()
 {
@@ -66,12 +66,24 @@ void draw_insect_mob()
 	insect_mob_list->prep();
 }
 
+void draw_mining_laser_effect()
+{
+
+}
+
+
 void spawn_insect_mob(float x, float y, float z)
 {
     InsectMob* im = insect_mob_list->create();
     im->init(x,y,z+2.5);
 
     //printf("insect at: %f %f %f \n", x,y,z);
+}
+
+
+void create_mining_laser_particle()
+{
+
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)

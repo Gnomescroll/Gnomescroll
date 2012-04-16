@@ -173,6 +173,8 @@ int run()
         Particles::end_particle_draw();
         end_transparent_draw();
 
+        Animations::draw_mining_laser_effect();
+
         poll_mouse();
         // draw animations
         Animations::hitscan_effect_list->draw();
