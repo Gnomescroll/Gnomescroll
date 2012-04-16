@@ -15,8 +15,6 @@ namespace Animations
 
 using VerletParticle::VerletParticle;
 
-const int FREE_ITEM_TTL = 300; // 10 seconds
-const float FREE_ITEM_DAMPENING = 0.5;
 
 VertexElementList1* mining_laser_vlist = NULL;
 
@@ -85,6 +83,9 @@ void init_mining_laser_shader()
 }
 
 
+const int MINING_LASER_TTL = 300; // 10 seconds
+const float MINING_LASER_DAMPENING = 0.5;
+
 class MiningLaser
 {
     public:
@@ -100,8 +101,17 @@ class MiningLaser
 
         float damp;
 
-    MiningLaser() {}
-    MiningLaser(int _id) { id = _id; }
+    MiningLaser() 
+    {
+    	ttl = 0;
+    	verlet.dampening = MINING_LASER_DAMPENING;
+    }
+    MiningLaser(int _id) 
+    { 
+    	ttl = 0;
+    	id = _id; 
+    	verlet.dampening = MINING_LASER_DAMPENING;
+    }
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
@@ -197,8 +207,9 @@ void MiningLaserEffect_list::prep()
 
 void MiningLaserEffect_list::draw()
 {
-#if DC_CLIENT
 
+	printf("%i \n", mining_laser_vlist->vlist_index);
+	
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
@@ -224,7 +235,6 @@ void MiningLaserEffect_list::draw()
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
 
-#endif
 }
 
 void MiningLaserEffect_list::tick()
@@ -236,6 +246,12 @@ void MiningLaserEffect_list::tick()
         {
         	m = this->a[i];
         	m->tick();
+
+	        if (m->ttl >= MINING_LASER_TTL)
+	        {
+	            this->destroy(m->id);
+	        }
+
         }
     }
 }

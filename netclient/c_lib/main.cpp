@@ -101,7 +101,7 @@ int run()
             //if(counter % 10 == 0) t_item::check_item_pickups();
 
             Animations::create_mining_laser_particle();
-            
+
             // update sound listener
             ClientState::playerAgent_state.update_sound();
 
@@ -175,12 +175,13 @@ int run()
         Particles::end_particle_draw();
         end_transparent_draw();
 
-        Animations::draw_mining_laser_effect();
+
 
         poll_mouse();
         // draw animations
-        Animations::hitscan_effect_list->draw();
-        Animations::hitscan_laser_effect_list->draw();
+        Animations::draw_hitscan_effect();
+        Animations::draw_hitscan_laser_effect();
+        Animations::draw_mining_laser_effect();
 
         // update mouse
         poll_mouse();
