@@ -344,8 +344,7 @@ void Voxel_render_list::draw()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     //glEnd();
-    //glDisable(GL_CULL_FACE);
-    //glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
     //glShadeModel(shade_model);
 
 /*

@@ -184,7 +184,8 @@ void HitscanEffect_list::draw()
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
+    GL_ASSERT(GL_DEPTH_TEST, true);
+
     glDepthMask(GL_FALSE);
 
     glBindTexture( GL_TEXTURE_2D, hitscan_texture_id );
@@ -203,7 +204,6 @@ void HitscanEffect_list::draw()
     glEnd();
     glDepthMask(GL_TRUE);
     glDisable(GL_TEXTURE_2D);
-    glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
 }
