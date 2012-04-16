@@ -15,7 +15,7 @@ void unregister_inventory_item_draw_list(InventoryProperties* property)
     Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->unregister_object(property);
 }
 
-void InventoryProperties::load(int id, Object_types type, int subtype)
+void InventoryProperties::load(int id, Object_types type, int subtype, int stack_size)
 {
     bool new_icon = (id != this->item_id || type != this->item_type || subtype != this->item_subtype);
     if (this->item_id != EMPTY_SLOT && new_icon)
@@ -32,6 +32,8 @@ void InventoryProperties::load(int id, Object_types type, int subtype)
     this->item_id = id;
     this->item_type = type;
     this->item_subtype = subtype;
+    this->stack.properties.count = stack_size;
+    this->stack.properties.max = get_max_stack_size(type, subtype);
     if (id != EMPTY_SLOT && new_icon)   // set to new
         register_inventory_item_draw_list(this);
     //printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);

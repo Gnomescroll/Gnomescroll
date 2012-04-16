@@ -57,6 +57,12 @@ class ObjectPolicyInterface
         virtual Vec3 get_angles() = 0;
         virtual bool set_angles(float theta, float phi, float rho) = 0;
 
+        virtual int get_stack_size() = 0;
+
+        // these should return components instead?
+        // then the components would have the getters/setters
+        // for objects without a component, return a preallocated "default"
+
     ObjectPolicyInterface() {}
     virtual ~ObjectPolicyInterface()
     {
@@ -167,6 +173,8 @@ class ObjectStateLayer: public ObjectPolicyInterface
         float get_height() { return this->spatial->get_height(); }
         Vec3 get_angles() { return this->spatial->get_angles(); }
         bool set_angles(float theta, float phi, float rho) { return this->spatial->set_angles(theta, phi, rho); }
+
+        int get_stack_size() { return 1; }
 
         /* Network API */
         void sendToClientCreate(int client_id) { this->create_packet->sendToClient(this, client_id); }

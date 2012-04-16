@@ -64,21 +64,26 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_add(slot);
         }
 
+        bool can_remove(int slot)
+        {
+            return this->contents.can_remove(slot);
+        }
+
         bool can_swap(int slota, int slotb)
         {
             return this->contents.can_swap(slota, slotb);
         }
 
-        bool add(int id, Object_types type,  int subtype)
+        bool add(int id, Object_types type, int subtype, int stack_size)
         {
             int slot = this->contents.get_empty_slot();
             if (slot < 0) return false;
-            return this->add(id, type, subtype, slot);
+            return this->add(id, type, subtype, stack_size, slot);
         }
 
-        bool add(int id, Object_types type, int subtype, int slot)
+        bool add(int id, Object_types type, int subtype, int stack_size, int slot)
         {
-            bool added = this->contents.add(id, type, subtype, slot);
+            bool added = this->contents.add(id, type, subtype, stack_size, slot);
             return added;
         }
 

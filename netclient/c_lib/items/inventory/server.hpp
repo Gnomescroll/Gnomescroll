@@ -26,11 +26,13 @@ class InventoryProperties: public BaseInventoryProperties
 {
     public:
 
-        void load(int id, Object_types type, int subtype)
+        void load(int id, Object_types type, int subtype, int stack_size)
         {
             this->item_id = id;
             this->item_type = type;
             this->item_subtype = subtype;
+            this->stack.properties.count = stack_size;
+            this->stack.properties.max = get_max_stack_size(type, subtype);
             //printf("Loaded inventory item %d,%d\n", id,type);
         }
         
@@ -55,36 +57,42 @@ class Inventory: public BaseInventoryServer
         }
     }
 
-    void remove_action(int slot)
+    InventoryProperties* get(int slot)
+    {
+        return this->contents.get(slot);
+    }
+
+    bool remove_action(int slot)
     {
         bool removed = this->remove(slot);
-        if (!removed) return;
+        if (!removed) return false;
         if (this->get_owner() != NO_AGENT)
             this->sendToClientRemove(slot);
         else
             this->broadcastRemove(slot);
+        return true;
     }
 
-    bool add_action(int id, Object_types type, int subtype, int slot)
+    bool add_action(int id, Object_types type, int subtype, int stack_size, int slot)
     {
         bool added = this->add(id, type, subtype, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, subtype, slot);
+            this->sendToClientAdd(id, type, subtype, stack_size, slot);
         else
-            this->broadcastAdd(id, type, subtype, slot);
+            this->broadcastAdd(id, type, subtype, stack_size, slot);
         return added;
     }
 
-    bool add_action(int id, Object_types type, int subtype)
+    bool add_action(int id, Object_types type, int subtype, int stack_size)
     {
         int slot = this->contents.get_empty_slot();
-        bool added = this->add_action(id, type, subtype, slot);
+        bool added = this->add_action(id, type, subtype, stack_size, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, subtype, slot);
+            this->sendToClientAdd(id, type, subtype, stack_size, slot);
         else
-            this->broadcastAdd(id, type, subtype, slot);
+            this->broadcastAdd(id, type, subtype, stack_size, slot);
         return added;
     }
 
@@ -114,14 +122,18 @@ class Inventory: public BaseInventoryServer
     {
         return BaseInventoryServer::can_add(type);
     }
+    bool can_remove(int slot)
+    {
+        return BaseInventoryServer::can_remove(slot);
+    }
     
     void sendToClientCreate(int client_id);
     void broadcastCreate();
     void sendToClientState(int client_id);
     void broadcastState();
     void broadcastDeath();
-    void sendToClientAdd(int id, Object_types type, int subtype, int slot);
-    void broadcastAdd(int id, Object_types type, int subtype, int slot);
+    void sendToClientAdd(int id, Object_types type, int subtype, int stack_size, int slot);
+    void broadcastAdd(int id, Object_types type, int subtype, int stack_size, int slot);
     void sendToClientRemove(int slot);
     void broadcastRemove(int slot);
     void sendToClientSwap(int slota, int slotb);

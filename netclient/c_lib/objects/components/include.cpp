@@ -36,6 +36,8 @@
 #include <c_lib/objects/components/tick/components.cpp>
 #include <c_lib/objects/components/tick/properties.cpp>
 
+#include <c_lib/objects/components/stackable/components.cpp>
+
 #if DC_CLIENT
 #include <c_lib/objects/components/animation/components.cpp>
 //#include <c_lib/objects/components/animation/properties.cpp>
