@@ -10,7 +10,7 @@
 namespace Animations 
 {
 
-VertexElementList* mining_laser_vlist = NULL;
+VertexElementList1* mining_laser_vlist = NULL;
 
 unsigned int mining_laser_vbo;
 
@@ -25,7 +25,7 @@ void init_mining_laser_shader();
 
 void init_mining_laser()
 {
-    mining_laser_vlist = new VertexElementList;
+    mining_laser_vlist = new VertexElementList1;
 
     glGenBuffers(1, &mining_laser_vbo);
 
@@ -161,7 +161,7 @@ void MiningLaserEffect_list::draw()
 #endif
 }
 
-void Mining_laser_list::tick()
+void MiningLaserEffect_list::tick()
 {
     needs_update = true;
     InsectMob* m;
