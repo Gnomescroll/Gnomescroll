@@ -94,15 +94,9 @@ class VertexElementList1
 		vlist = (vertexElement1*) malloc(1024*sizeof(struct vertexElement1));
 	}
 
-	~VertexElementList1()
-	{
-		free(vlist);
-	}
-
 	__attribute__((always_inline))
 	void push_vertex(struct Vec3 pos, float tx, float ty)
 	 {
-	 	
 	    vlist[vlist_index].pos = pos;
 	    vlist[vlist_index].tx = tx;
 	    vlist[vlist_index].ty = ty;
@@ -116,6 +110,10 @@ class VertexElementList1
 	    }
 	 }
 
+	 void reset_index()
+	 {
+	 	vlist_index = 0;
+	 }
 };
 
 /*

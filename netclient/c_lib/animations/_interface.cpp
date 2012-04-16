@@ -82,14 +82,13 @@ void draw_hitscan_laser_effect()
 void draw_mining_laser_effect()
 {
     mining_laser_effect_list->prep();
-
     mining_laser_effect_list->draw();
 }
 
 
-float x13;
-float y13;
-float z13;
+float x13 = 0.0;
+float y13 = 0.0;
+float z13 = 0.0;
 
 void spawn_insect_mob(float x, float y, float z)
 {
@@ -110,7 +109,9 @@ void spawn_insect_mob(float x, float y, float z)
 void create_mining_laser_particle()
 {
     //printf("create \n");
-    float v = 5.0;
+    float hv = 2.5;
+    float vv =  -8.0;
+
     MiningLaser* ml = mining_laser_effect_list->create();
     if(ml == NULL)
     {
@@ -118,7 +119,7 @@ void create_mining_laser_particle()
         return;
     }
 
-    ml->init(x13,y13,z13+3.0, v* randf(), v* randf(), v* randf() );
+    ml->init(x13,y13,z13+5.0, hv*randf() - hv/2, hv* randf() - hv/2, (vv/2)* randf() + vv/2 );
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)

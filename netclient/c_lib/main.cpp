@@ -161,7 +161,15 @@ int run()
 
         poll_mouse();
 
+
+        /*
+            Skybox
+        */
         Skybox::draw();
+
+        /*
+            Transparent
+        */
 
         begin_item_draw();
         Draw::sprite_list->draw();
@@ -176,12 +184,13 @@ int run()
         end_transparent_draw();
 
 
-
         poll_mouse();
         // draw animations
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
+
+
 
         // update mouse
         poll_mouse();

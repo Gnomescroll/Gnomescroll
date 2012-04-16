@@ -79,7 +79,7 @@ void init_mining_laser_shader()
         "./media/shaders/weapon/mining_laser.vsh",
         "./media/shaders/weapon/mining_laser.fsh" );
     
-    mining_laser_TexCoord = insect_mob_shader.get_attribute("InTexCoord");
+    mining_laser_TexCoord = mining_laser_shader.get_attribute("InTexCoord");
 }
 
 
@@ -192,6 +192,8 @@ class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASE
 
 void MiningLaserEffect_list::prep()
 {
+	mining_laser_vlist->reset_index();
+
     for (int i=0; i<this->num; i++)
     {
         this->a[i].prep();
@@ -201,13 +203,18 @@ void MiningLaserEffect_list::prep()
 
 void MiningLaserEffect_list::draw()
 {
+	//return;
 
-	//printf("%i \n", mining_laser_vlist->vlist_index);
+	const static unsigned int stride = sizeof(struct vertexElement1);
+
+	printf("%i \n", mining_laser_vlist->vlist_index);
 
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
-    glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*sizeof(struct vertexElement2), mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
 
+    glEnable(GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE);
 
     glColor3ub(255,255,255);
 
@@ -220,15 +227,16 @@ void MiningLaserEffect_list::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(mining_laser_TexCoord);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement2), (GLvoid*)0);
-    glVertexAttribPointer(mining_laser_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement2), (GLvoid*)12);
+    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+    glVertexAttribPointer(mining_laser_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
-    glDrawArrays(GL_TRIANGLES,0, mining_laser_vlist->vlist_index);
+    glDrawArrays(GL_QUADS,0, mining_laser_vlist->vlist_index);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
 
+    glDisable(GL_BLEND);
 }
 
 void MiningLaserEffect_list::tick()
