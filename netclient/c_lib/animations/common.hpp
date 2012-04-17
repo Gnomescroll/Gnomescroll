@@ -115,6 +115,8 @@ class VertexElementList1
 	    {
 	    	vlist_max *= 2;
 	    	vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
+	    	printf("1 size= %i \n", vlist_max); 
+
 	    }
 	 }
 
@@ -133,8 +135,8 @@ class VertexElementList1
     	{
     		if(vertex_number != 0) 
     			glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
-
     	}
+
 
     	vertex_number = vlist_index;
 
@@ -196,6 +198,8 @@ class VertexElementList2
 	    {
 	    	vlist_max *= 2;
 	    	vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
+	    	printf("1 size= %i \n", vlist_max); 
+
 	    }
 	 }
 

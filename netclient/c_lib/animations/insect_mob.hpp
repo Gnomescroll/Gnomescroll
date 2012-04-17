@@ -268,9 +268,12 @@ void Insect_mob_list::prep()
     insect_mob_t += 0.04;
 
     for (int i=0; i<this->n_max; i++)
+    {
         if (this->a[i] != NULL)
+        {
             this->a[i]->prep();
-
+        }
+    }
     needs_update = false;
     insect_mob_vlist->buffer();
 #endif
@@ -280,7 +283,8 @@ void Insect_mob_list::prep()
 void Insect_mob_list::draw()
 {
 #if DC_CLIENT
-
+    return;
+    
     if(insect_mob_vlist->vertex_number == 0) return;
 
     const static unsigned int stride = sizeof(struct vertexElement2);
