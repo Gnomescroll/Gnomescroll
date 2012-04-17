@@ -117,12 +117,7 @@ class VertexElementList1
 	    	vlist = (vertexElement1*) realloc(vlist, vlist_max*sizeof(struct vertexElement1));
 	    }
 	 }
-/*
-	void reset_index()
-	{
-		vlist_index = 0;
-	}
-*/
+
 	//upload data to card for drawing
 	void buffer()
 	{
@@ -203,12 +198,7 @@ class VertexElementList2
 	    	vlist = (vertexElement2*) realloc(vlist, vlist_max*sizeof(struct vertexElement2));
 	    }
 	 }
-/*
-	 void reset_index()
-	 {
-	 	vlist_index = 0;
-	 }
-*/
+
 	//upload data to card for drawing
 	void buffer()
 	{
@@ -216,7 +206,6 @@ class VertexElementList2
 
 		if(vlist_index != 0)
 		{
-
     		glBindBuffer(GL_ARRAY_BUFFER, VBO);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);

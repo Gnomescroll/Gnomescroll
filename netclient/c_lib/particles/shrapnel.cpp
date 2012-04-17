@@ -114,18 +114,35 @@ void Shrapnel_list::draw()
 #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
-    printf("draw: %i \n", shrapnel_vlist->vertex_number);
+    const unsigned int stride = shrapnel_vlist->stride;
+
+    //printf("draw: %i \n", shrapnel_vlist->vertex_number);
+    //printf("draw2: %i \n", shrapnel_vlist->VBO);
+
+    assert(particle_texture != 0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    glEnable(GL_TEXTURE_2D);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glEnableClientState()
 
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
-    assert(particle_texture != 0);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+    glTexCoordPointer(2, GL_FLOAT, stride, (GLvoid*)12);
 
     glDrawArrays(GL_QUADS, 0, shrapnel_vlist->vertex_number);
     
     glDisable(GL_BLEND);
+
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif
 }
 
