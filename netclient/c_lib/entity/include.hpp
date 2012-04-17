@@ -10,6 +10,6 @@
 
 #include <c_lib/entity/components/include.hpp>
 #include <c_lib/entity/component/component.hpp>
-#include <c_lib/entity/component/components.hpp>
+#include <c_lib/entity/component/component_list.hpp>
 #include <c_lib/entity/component/main.hpp>
 #include <c_lib/entity/components.hpp>

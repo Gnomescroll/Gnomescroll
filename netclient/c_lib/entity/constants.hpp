@@ -23,4 +23,4 @@ typedef enum
     COMPONENT_INTERFACE_STACKABLE,
 } ComponentInterfaceType;
 
-const Vec3 NULL_MOMENTUM = { 0,0,0 };
+//const Vec3 NULL_MOMENTUM = { 0,0,0 };
