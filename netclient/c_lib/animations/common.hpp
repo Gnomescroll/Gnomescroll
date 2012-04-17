@@ -130,14 +130,19 @@ class VertexElementList1
     		glBindBuffer(GL_ARRAY_BUFFER, VBO);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+    	
+    		printf("1 wtf 1\n");
+
     	} 
     	else
     	{
     		if(vertex_number > 0) 
     		{
-    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
     			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
     		}
+
+    		printf("1 wtf 2\n");
     	}
 
 
@@ -216,15 +221,21 @@ class VertexElementList2
     		glBindBuffer(GL_ARRAY_BUFFER, VBO);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+    	
+    		printf("2 wtf 1\n");
     	} 
     	else
     	{
     		if(vertex_number > 0) 
     		{
-    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
     			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
     		}
+
+    		printf("2 wtf 2\n");
     	}
+
+
     	vertex_number = vlist_index;
 
     	vlist_index = 0;
