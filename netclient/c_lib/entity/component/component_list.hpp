@@ -10,45 +10,46 @@ class ComponentList
 {
     protected:
         ComponentType type;
-        //Component* pool;  // TODO -- dont malloc everything
-        int ctr;
-        Component** pool;
+        //Component* components;  // TODO -- dont malloc everything
+        int count;
+        int max;
+        Component** components;
 
     public:
 
         Component* subscribe()
         {   // return pointer to available component
             for (int i=0; i<SIZE; i++)
-                if (this->pool[i] == NULL)
+                if (this->components[i] == NULL)
                 {
-                    this->pool[i] = new Component;
-                    this->pool[i]->id = i;
-                    return this->pool[i];
+                    this->components[i] = new Component;
+                    this->components[i]->id = i;
+                    return this->components[i];
                 }
             return NULL;
         }
         
         void unsubscribe(Component* component)
-        {   // deallocate/release component in pool
-            this->pool[component->id] = NULL;
+        {   // deallocate/release component in components
+            this->components[component->id] = NULL;
             delete component;
         }
             
         void init()
         {
-            //this->pool = new pool[SIZE];
-            this->pool = (Component**)calloc(SIZE, sizeof(Component*));
+            //this->components = new components[SIZE];
+            this->components = (Component**)calloc(SIZE, sizeof(Component*));
         }
     
     ComponentList<Component,TYPE,SIZE>()
-    : type(TYPE), ctr(0), pool(NULL)
+    : type(TYPE), count(0), max(SIZE), components(NULL)
     {
         this->init();
     }
     
     ~ComponentList<Component,TYPE,SIZE>()
     { 
-        if (this->pool != NULL) delete this->pool;
+        if (this->components != NULL) delete this->components;
     }
 };
 

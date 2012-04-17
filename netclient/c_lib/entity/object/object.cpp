@@ -17,7 +17,7 @@ void Object::add_component(Component* component)
 
 // returns component of type if available
 // must cast to desired component manually
-void* Object::get_component(ComponentType type)
+Component* Object::get_component(ComponentType type)
 {
     for (int i=0; i<this->n_components; i++)
         if (this->components[i]->type == type)
@@ -25,7 +25,7 @@ void* Object::get_component(ComponentType type)
     return NULL;
 }
 
-void* Object::get_component_interface(ComponentInterfaceType interface)
+Component* Object::get_component_interface(ComponentInterfaceType interface)
 {
     for (int i=0; i<this->n_components; i++)
         if (this->components[i]->interface == interface)

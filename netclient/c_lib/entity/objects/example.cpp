@@ -54,8 +54,7 @@ Object* create_REPLACEME()
 {
     // initialize object
     ObjectType type = OBJECT_REPLACEME;
-    int id = object_list->get_free_id(type);
-    Object* obj = object_list->create(type, id);
+    Object* obj = object_list->create(type);
     if (obj == NULL) return NULL;
 
     // attach components

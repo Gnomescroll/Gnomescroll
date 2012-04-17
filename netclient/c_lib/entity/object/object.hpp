@@ -23,8 +23,8 @@ class Object
         ObjectType type;
 
         void add_component(Component* component);
-        void* get_component(ComponentType type);
-        void* get_component_interface(ComponentInterfaceType interface);
+        Component* get_component(ComponentType type);
+        Component* get_component_interface(ComponentInterfaceType interface);
 
         void init(int n_components);
 

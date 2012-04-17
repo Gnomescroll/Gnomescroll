@@ -11,8 +11,7 @@ Object* create_health_refill()
 {
     // initialize object
     ObjectType type = OBJECT_HEALTH_REFILL;
-    int id = object_list->get_free_id(type);
-    Object* obj = object_list->create(type, id);
+    Object* obj = object_list->create(type);
     if (obj == NULL) return NULL;
 
     // attach components

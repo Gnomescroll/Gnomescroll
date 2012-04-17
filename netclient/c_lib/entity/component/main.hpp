@@ -26,8 +26,19 @@ typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_
     PositionPhysicsComponentList;
 typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
-typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
-    VerletPhysicsComponentList;
+//typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
+    //VerletPhysicsComponentList;
+class VerletPhysicsComponentList:
+    public ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
+{
+    public:
+        void tick()
+        {
+            for (int i=0; i<this->max; i++)
+                if (this->components[i] != NULL)
+                    this->components[i]->verlet_bounce(1.0f);
+        }
+};
 
 /* Stackables */
 const int MAX_STACKABLE_COMPONENTS = 4096;
@@ -36,8 +47,21 @@ typedef ComponentList<StackableComponent, COMPONENT_STACKABLE, MAX_STACKABLE_COM
 
 /* Drawing */
 const int MAX_RENDERABLE_COMPONENTS = 4096;
-typedef ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
-    BillboardSpriteComponentList;
+//typedef ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
+    //BillboardSpriteComponentList;
+class BillboardSpriteComponentList:
+    public ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
+{
+    public:
+        void draw()
+        {
+            for (int i=0; i<this->max; i++)
+                if (this->components[i] != NULL)
+                    this->components[i]->draw();
+        }
+};
+
+    
 
 /* ComponentList declarations */
 

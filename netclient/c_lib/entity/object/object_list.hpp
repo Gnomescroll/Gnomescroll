@@ -17,9 +17,16 @@ class ObjectList
         int* maximums;
         Object*** objects;
         
-    public:
         int get_free_id(ObjectType type);
+
+    public:
+
+        int count(ObjectType type);
+        int max(ObjectType type);
+        bool full(ObjectType type);
+        
         void destroy(ObjectType type, int id);
+        Object* create(ObjectType type);
         Object* create(ObjectType type, int id);
         void set_object_max(ObjectType type, int max);
         void init();
