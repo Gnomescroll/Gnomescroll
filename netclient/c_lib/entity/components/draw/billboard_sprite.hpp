@@ -9,7 +9,10 @@ namespace Components
 class BillboardSpriteComponent: public DrawComponent
 {
     public:
-        void draw() {}
+        int sprite_index;
+        float scale;
+        
+        void draw();
 
     BillboardSpriteComponent()
     : DrawComponent(COMPONENT_BILLBOARD_SPRITE)

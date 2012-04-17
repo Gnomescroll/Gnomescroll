@@ -34,6 +34,10 @@ const int MAX_STACKABLE_COMPONENTS = 4096;
 typedef ComponentList<StackableComponent, COMPONENT_STACKABLE, MAX_STACKABLE_COMPONENTS>
     StackableComponentList;
 
+/* Drawing */
+const int MAX_RENDERABLE_COMPONENTS = 4096;
+typedef ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
+    BillboardSpriteComponentList;
 
 /* ComponentList declarations */
 
@@ -42,7 +46,8 @@ extern PositionMomentumPhysicsComponentList* position_momentum_physics_component
 extern VerletPhysicsComponentList* verlet_physics_component_list;
 
 extern StackableComponentList* stackable_component_list;
- 
+
+extern BillboardSpriteComponentList* billboard_sprite_component_list;
 
 /* ComponentList handler switches */
 

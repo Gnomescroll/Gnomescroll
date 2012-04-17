@@ -32,7 +32,7 @@ Object* create_switch(ObjectType type)
     switch (type)
     {
         case OBJECT_HEALTH_REFILL:
-            //return create_health_refill();
+            return create_health_refill();
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
             //return create_soft_rock_block_drop();
@@ -49,7 +49,7 @@ void ready_switch(Object* object)
     switch (object->type)
     {
         case OBJECT_HEALTH_REFILL:
-            //ready_health_refill(object);
+            ready_health_refill(object);
             break;
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
@@ -69,7 +69,7 @@ void destroy_switch(Object* object)
     switch (type)
     {
         case OBJECT_HEALTH_REFILL:
-            //die_health_refill(object);
+            die_health_refill(object);
             break;
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
