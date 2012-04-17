@@ -1,6 +1,7 @@
 #include "main.hpp"
 
 #include <c_lib/entity/components.hpp>
+#include <c_lib/entity/object/helpers.hpp>
 
 namespace Objects
 {
@@ -22,21 +23,6 @@ void init()
 void teardown()
 {
     if (object_list != NULL) delete object_list;
-}
-
-/* Object initialization helpers */
-
-void add_component_to_object(Object* object, ComponentType type)
-{
-    Component* component = Components::get(type);
-    object->add_component(component);
-    component->object = object;
-}
-
-void remove_component_from_object(Object* object, Component* component)
-{
-    component->object = NULL;
-    Components::release(component);
 }
 
 /* Underlying API handlers */
