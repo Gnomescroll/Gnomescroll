@@ -69,6 +69,8 @@ void Shrapnel::prep()
     ty_min = (float)(this->texture_index/16)* (1.0/16.0);
     ty_max = ty_min + (1.0/16.0);
 
+    Vec3 position = verlet.position;
+
     Vec3 p = vec3_sub(position, vec3_add(right, up));
     shrapnel_vlist->push_vertex(p, tx_min,ty_max);
 
@@ -88,9 +90,9 @@ void Shrapnel_list::tick()
 {
     for(int i=0; i<this->num; i++)
     {
-        a[i]->tick();
-        if (a[i]->ttl <= 0)
-            destroy(a[i]->id);
+        a[i].tick();
+        if (a[i].ttl <= 0)
+            destroy(a[i].id);
     }
 }
 
@@ -121,7 +123,7 @@ void Shrapnel_list::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glDrawArrays(GL_QUADS, 0, );
+    glDrawArrays(GL_QUADS, 0, shrapnel_vlist->vertex_number);
     
     glDisable(GL_BLEND);
 #endif
