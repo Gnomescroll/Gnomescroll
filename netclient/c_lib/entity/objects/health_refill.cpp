@@ -19,7 +19,7 @@ Object* create_health_refill()
     //const int n_components = 3;
     const int n_components = 2;
     obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_SPRITE);
+    add_component_to_object(obj, COMPONENT_BILLBOARD_SPRITE);
     add_component_to_object(obj, COMPONENT_VERLET);
     //add_component_to_object(obj, COMPONENT_PICKUP);
 

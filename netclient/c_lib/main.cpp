@@ -13,6 +13,8 @@
 #include <c_lib/options.hpp>
 #include <c_lib/common/common.hpp>
 
+#include <c_lib/entity/objects.hpp>
+
 #include <c_lib/common/profiling/frame_graph.hpp>
 
 //#include <c_lib/t_mech/draw.hpp>

@@ -6,3 +6,7 @@
 #include <c_lib/entity/components/physics/position.hpp>
 #include <c_lib/entity/components/physics/position_momentum.hpp>
 #include <c_lib/entity/components/physics/verlet.hpp>
+
+#include <c_lib/entity/components/draw.hpp>
+#include <c_lib/entity/components/draw/billboard_sprite.hpp>
+
