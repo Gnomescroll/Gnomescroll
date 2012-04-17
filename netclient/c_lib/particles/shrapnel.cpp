@@ -1,9 +1,6 @@
 #include "shrapnel.hpp"
 
-#include <physics/common.hpp>
-
-#include <c_lib/physics/verlet_particle.hpp>
-
+#include <physics/vec3.hpp>
 #include <c_lib/animations/common.hpp>
 
 namespace Particles
