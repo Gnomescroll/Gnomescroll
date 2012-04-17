@@ -177,25 +177,36 @@ int run()
 
         poll_mouse();
 
+
+        /*
+            Skybox
+        */
         Skybox::draw();
+
+        /*
+            Transparent
+        */
 
         begin_item_draw();
         Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->draw();
         end_item_draw();
 
+        Particles::draw_shrapnel();
+
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
-        Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
 
-        Animations::draw_mining_laser_effect();
 
         poll_mouse();
         // draw animations
-        Animations::hitscan_effect_list->draw();
-        Animations::hitscan_laser_effect_list->draw();
+        Animations::draw_hitscan_effect();
+        Animations::draw_hitscan_laser_effect();
+        Animations::draw_mining_laser_effect();
+
+
 
         // update mouse
         poll_mouse();

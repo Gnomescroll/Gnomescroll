@@ -1,9 +1,13 @@
 #pragma once
 
-#include <c_lib/particles/billboard_sprite.hpp>
+#include <c_lib/template/simple_object_list.hpp>
+#include <c_lib/physics/verlet_particle.hpp>
 
 namespace Particles
 {
+
+void init_shrapnel();
+void teardown_shrapnel();
 
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
@@ -12,23 +16,35 @@ namespace Particles
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
 
-class Shrapnel: public ParticleMotion, public BillboardSprite
+//class Shrapnel: public ParticleMotion, public BillboardSprite
+
+class Shrapnel
 {
     public:
+
+        int id;
+        int ttl;
+
+        VerletParticle::VerletParticle verlet;
+
+        float scale;
+        int texture_index;
+
         void init();
+        void prep();
         void tick();
 
-        explicit Shrapnel(int id);
-        Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
+        void init(float x, float y, float z, float mx, float my, float mz);
 };
 
-#include <c_lib/template/object_list.hpp>
 
-class Shrapnel_list: public Object_list<Shrapnel, SHRAPNEL_MAX>
+class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
 {
     private:
         const char* name() { return "Shrapnel"; }
     public:
+
+        void prep();
         void draw();
         void tick();
 

@@ -51,6 +51,8 @@ void init_particles()
     textured_minivox_list = new TexturedMinivox_list;
     billboard_text_list = new BillboardText_list;
     billboard_text_hud_list = new BillboardTextHud_list;
+
+    Particles::init_shrapnel();
 #endif
 
 #if DC_SERVER
@@ -72,12 +74,38 @@ void teardown_particles()
     delete textured_minivox_list;
     delete billboard_text_list;
     delete billboard_text_hud_list;
+
+    Particles::teardown_shrapnel();
+
 #endif
 
 #if DC_SERVER
     delete grenade_shrapnel_list;
 #endif
 }
+
+
+#if DC_CLIENT
+
+void prep_shrapnel()
+{
+    shrapnel_list->prep();
+}
+
+void draw_shrapnel()
+{
+    shrapnel_list->draw();
+}
+
+Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz)
+{
+    Shrapnel* s = shrapnel_list->create();
+    if(s == NULL) return NULL;
+    s->init(x,y,z, vx,vy,vz);
+    return s;
+}
+
+#endif
 
 
 }

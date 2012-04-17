@@ -73,7 +73,7 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     glBegin(GL_POINTS);
 
     glDisable(GL_TEXTURE_2D);
-    glEnable(GL_DEPTH_TEST);
+    
     //glEnable(GL_CULL_FACE);
 
     glColor3ub((unsigned char) 255,(unsigned char)0,(unsigned char)0);
@@ -89,7 +89,6 @@ void draw_agent_aiming_direction(float x, float y, float z, float xangle, float 
     //glDisable(GL_CULL_FACE);
 
     glEnable(GL_TEXTURE_2D);
-    glDisable(GL_DEPTH_TEST);
     glEnd();
 }
 

@@ -199,7 +199,6 @@ void grenade_explode(float x, float y, float z)
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    int ttl;
     Particles::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
@@ -209,10 +208,9 @@ void grenade_explode(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = Particles::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        s = Particles::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s == NULL) return;
-        ttl = randrange(15,25);
-        s->ttl_max = ttl;
+        s->ttl = randrange(15,25);
     }
 }
 
@@ -251,7 +249,6 @@ void terrain_sparks(float x, float y, float z)
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    int ttl;
     Particles::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
@@ -261,10 +258,9 @@ void terrain_sparks(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = Particles::shrapnel_list->create(cx, cy, cz, cvx, cvy, cvz);
+        s = Particles::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
-        ttl = randrange(8,15);
-        s->ttl_max = ttl;
+        s->ttl = randrange(8,15);
         s->scale = 0.05;
         s->texture_index = 54;
     }

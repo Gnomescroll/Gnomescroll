@@ -266,13 +266,13 @@ void Insect_mob_list::prep()
 
     if( needs_update == false) return;
     insect_mob_t += 0.04;
-    insect_mob_vlist->reset_index();
 
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
             this->a[i]->prep();
 
     needs_update = false;
+    insect_mob_vlist->buffer();
 #endif
 }
 
@@ -281,10 +281,9 @@ void Insect_mob_list::draw()
 {
 #if DC_CLIENT
 
-    glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist->vlist_index*sizeof(struct vertexElement2), NULL, GL_DYNAMIC_DRAW);
-    glBufferData(GL_ARRAY_BUFFER, insect_mob_vlist->vlist_index*sizeof(struct vertexElement2), insect_mob_vlist->vlist, GL_DYNAMIC_DRAW);
+    if(insect_mob_vlist->vertex_number == 0) return;
 
+    const static unsigned int stride = sizeof(struct vertexElement2);
 
     glColor3ub(255,255,255);
 
@@ -297,10 +296,10 @@ void Insect_mob_list::draw()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableVertexAttribArray(insect_mob_TexCoord);
 
-    glVertexPointer(3, GL_FLOAT, sizeof(struct vertexElement2), (GLvoid*)0);
-    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, sizeof(struct vertexElement2), (GLvoid*)12);
+    glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
+    glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
-    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vlist_index);
+    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vertex_number);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(insect_mob_TexCoord);

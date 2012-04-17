@@ -23,4 +23,15 @@ extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 void init_particles();
 void teardown_particles();
 
+
+
+#if DC_CLIENT
+
+void prep_shrapnel();
+void draw_shrapnel();
+
+
+class Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz);
+
+#endif
 }

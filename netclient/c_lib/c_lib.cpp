@@ -22,6 +22,7 @@
 /* Templates */
 
 #include <c_lib/template/object_list.hpp>
+#include <c_lib/template/simple_object_list.hpp>
 #include <c_lib/template/object_pool.hpp>
 
 /* configuration options */
