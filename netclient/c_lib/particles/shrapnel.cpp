@@ -107,7 +107,7 @@ void Shrapnel_list::prep()
     shrapnel_vlist->buffer();
 #endif
 }
-
+ 
 
 void Shrapnel_list::draw()
 {
