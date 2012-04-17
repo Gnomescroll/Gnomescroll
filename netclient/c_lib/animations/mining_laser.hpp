@@ -263,7 +263,7 @@ void MiningLaserEffect_list::tick()
 	    if (a[i].ttl <= 0 )
 	    {
 	    	this->destroy(a[i].id);
-	        printf("destroy \n");
+	        //printf("destroy \n");
 	    }
 
     }
