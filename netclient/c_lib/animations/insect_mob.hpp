@@ -266,13 +266,13 @@ void Insect_mob_list::prep()
 
     if( needs_update == false) return;
     insect_mob_t += 0.04;
-    insect_mob_vlist->reset_index();
 
     for (int i=0; i<this->n_max; i++)
         if (this->a[i] != NULL)
             this->a[i]->prep();
 
     needs_update = false;
+    insect_mob_vlist->buffer();
 #endif
 }
 
@@ -281,7 +281,7 @@ void Insect_mob_list::draw()
 {
 #if DC_CLIENT
 
-    if(insect_mob_vlist->vlist_index == 0) return;
+    if(insect_mob_vlist->vertex_number == 0) return;
 
     const static unsigned int stride = sizeof(struct vertexElement2);
 
@@ -299,7 +299,7 @@ void Insect_mob_list::draw()
     glVertexPointer(3, GL_FLOAT, stride, (GLvoid*)0);
     glVertexAttribPointer(insect_mob_TexCoord, 2, GL_FLOAT, GL_FALSE, stride, (GLvoid*)12);
 
-    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vlist_index);
+    glDrawArrays(GL_TRIANGLES,0, insect_mob_vlist->vertex_number);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableVertexAttribArray(insect_mob_TexCoord);
