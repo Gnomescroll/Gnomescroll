@@ -114,6 +114,8 @@ void Shrapnel_list::draw()
 #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
+    assert(shrapnel_vlist->VBO != 0);
+    
     const unsigned int stride = shrapnel_vlist->stride;
 
     //printf("draw: %i \n", shrapnel_vlist->vertex_number);

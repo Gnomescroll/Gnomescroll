@@ -12,7 +12,7 @@ static float insect_mob_t = 0.0;
 ///struct vertexElement2* insect_mob_vlist = NULL;
 //int insect_mob_vlist_index = 0;
 
-unsigned int insect_mob_vbo;
+//unsigned int insect_mob_vbo;
 
 int insect_mob_surface;
 unsigned int insect_mob_texture;
@@ -47,7 +47,7 @@ void init_insect_mob()
 
     insect_mob_vlist = new VertexElementList2;
 
-    glGenBuffers(1, &insect_mob_vbo);
+    //glGenBuffers(1, &insect_mob_vbo);
 
     init_insect_mob_texture();
     init_insect_mob_shader();
@@ -286,6 +286,8 @@ void Insect_mob_list::draw()
 
     if(insect_mob_vlist->vertex_number == 0) return;
 
+    assert(insect_mob_vlist->VBO != 0);
+
     const static unsigned int stride = sizeof(struct vertexElement2);
 
     glColor3ub(255,255,255);
@@ -293,7 +295,8 @@ void Insect_mob_list::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, insect_mob_texture );
 
-
+    glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vlist->VBO);
+    
     glUseProgramObjectARB(insect_mob_shader.shader);
 
     glEnableClientState(GL_VERTEX_ARRAY);

@@ -18,7 +18,7 @@ using VerletParticle::VerletParticle;
 
 VertexElementList1* mining_laser_vlist = NULL;
 
-unsigned int mining_laser_vbo;
+//unsigned int mining_laser_vbo;
 class SHADER mining_laser_shader;
 
 int mining_laser_surface;
@@ -34,7 +34,7 @@ void init_mining_laser()
 {
     mining_laser_vlist = new VertexElementList1;
 
-    glGenBuffers(1, &mining_laser_vbo);
+    //glGenBuffers(1, &mining_laser_vbo);
 
     init_mining_laser_texture();
     init_mining_laser_shader();
@@ -212,6 +212,8 @@ void MiningLaserEffect_list::draw()
 
 	if(mining_laser_vlist->vertex_number == 0) return;
 	const static unsigned int stride = sizeof(struct vertexElement1);
+
+	assert(mining_laser_vlist->VBO != 0);
 
 	//printf("%i \n", mining_laser_vlist->vlist_index);
 
