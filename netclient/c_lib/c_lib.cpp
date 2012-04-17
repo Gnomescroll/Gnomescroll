@@ -86,6 +86,9 @@
 #include <c_lib/objects/common/include.cpp>
 #include <c_lib/objects/components/include.cpp>
 
+/* Entity system */
+#include <c_lib/entity/include.cpp>
+
 /* particles */
 //#include <c_lib/particles/particle_lib.cpp>
 #include <c_lib/particles/_include.hpp>
