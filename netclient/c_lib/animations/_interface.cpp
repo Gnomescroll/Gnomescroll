@@ -54,7 +54,8 @@ void animations_tick()
 
     hitscan_effect_list->tick();
     hitscan_laser_effect_list->tick();
-
+    mining_laser_effect_list->tick();
+    
     insect_mob_list->tick();
 }
 

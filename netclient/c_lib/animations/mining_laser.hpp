@@ -103,7 +103,8 @@ class MiningLaser
     void init(float x, float y, float z, float mx, float my, float mz)
     {
 
-    	ttl = 0;
+    	ttl = MINING_LASER_TTL;
+
     	type = 0+rand()%4;
     	verlet.dampening = MINING_LASER_DAMPENING;
 
@@ -116,12 +117,12 @@ class MiningLaser
         //verlet.bounce_box(0.125);
         
         
-        if( verlet.bool_no_gravity() ) ttl = MINING_LASER_TTL;
+        if( verlet.bool_no_gravity() ) ttl = 0;
         
         //verlet.bounce_box_no_gravity(0.125)
     	//verlet.radial(rx, ry);
 
-        this->ttl++;
+        this->ttl--;
     }
 
     void prep(Vec3 cam)
@@ -208,8 +209,7 @@ void MiningLaserEffect_list::prep()
 
 void MiningLaserEffect_list::draw()
 {
-	return;
-	
+
 	if(mining_laser_vlist->vertex_number == 0) return;
 	const static unsigned int stride = sizeof(struct vertexElement1);
 
@@ -260,10 +260,10 @@ void MiningLaserEffect_list::tick()
     {
         a[i].tick();
 
-	    if (a[i].ttl >= MINING_LASER_TTL)
+	    if (a[i].ttl <= 0 )
 	    {
 	    	this->destroy(a[i].id);
-	        //printf("destroy \n");
+	        printf("destroy \n");
 	    }
 
     }

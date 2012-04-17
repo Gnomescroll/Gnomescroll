@@ -94,7 +94,7 @@ int run()
 
             // tick animations
             Animations::animations_tick();
-            
+
             // tick client state
             ClientState::tick(); 
 
@@ -114,6 +114,7 @@ int run()
             counter++;
         }
 
+        Animations::create_mining_laser_particle();
 
         //if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
         //{

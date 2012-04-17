@@ -283,8 +283,7 @@ void Insect_mob_list::prep()
 void Insect_mob_list::draw()
 {
 #if DC_CLIENT
-    return;
-    
+
     if(insect_mob_vlist->vertex_number == 0) return;
 
     const static unsigned int stride = sizeof(struct vertexElement2);
