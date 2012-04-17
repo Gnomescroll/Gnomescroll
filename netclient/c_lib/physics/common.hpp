@@ -17,4 +17,7 @@ float distancef_squared(float x, float y, float z, float a, float b, float c);
 void rotate_point(float x, float y, float theta, float *x1, float *y1);
 float gaussian_value(const float mean, const float stddev, const float x);
 
+struct Vec3;
+bool position_is_equal(Vec3 p, float x, float y, float z);
+
 const float kE = 2.71828f;

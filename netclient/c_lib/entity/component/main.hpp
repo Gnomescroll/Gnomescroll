@@ -26,6 +26,8 @@ typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_
     PositionPhysicsComponentList;
 typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
+typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
+    VerletPhysicsComponentList;
 
 /* Stackables */
 const int MAX_STACKABLE_COMPONENTS = 4096;
@@ -37,6 +39,7 @@ typedef ComponentList<StackableComponent, COMPONENT_STACKABLE, MAX_STACKABLE_COM
 
 extern PositionPhysicsComponentList* position_physics_component_list;
 extern PositionMomentumPhysicsComponentList* position_momentum_physics_component_list;
+extern VerletPhysicsComponentList* verlet_physics_component_list;
 
 extern StackableComponentList* stackable_component_list;
  

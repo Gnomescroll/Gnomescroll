@@ -10,9 +10,13 @@ typedef enum
 typedef enum
 {
     COMPONENT_NONE,
+
     COMPONENT_POSITION,
     COMPONENT_POSITION_MOMENTUM,
+    COMPONENT_VERLET,
+    
     COMPONENT_STACKABLE,
+    
     COMPONENT_SPRITE,
 } ComponentType;
 

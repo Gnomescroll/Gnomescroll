@@ -50,3 +50,9 @@ void rotate_point(float x, float y, float theta, float *x1, float *y1)
     *x1 = x*cos(theta) - y*sin(theta);
     *y1 = x*sin(theta) + y*cos(theta);
 }
+
+bool position_is_equal(Vec3 p, float x, float y, float z)
+{
+    if (p.x != x || p.y != y || p.z != z) return false;
+    return true;
+}

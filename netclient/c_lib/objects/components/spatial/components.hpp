@@ -1,14 +1,8 @@
 #pragma once
 
+#include <c_lib/physics/common.hpp>
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/objects/components/spatial/properties.hpp>
-
-static bool position_is_equal(Vec3 p, float x, float y, float z)
-{
-    if (p.x != x || p.y != y || p.z != z)
-        return false;
-    return true;
-}
 
 class PositionComponent: public SpatialDelegate
 {
