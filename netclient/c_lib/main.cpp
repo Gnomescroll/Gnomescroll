@@ -136,6 +136,7 @@ int run()
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
+        Particles::prep_shrapnel();
         // update mouse
         poll_mouse();
 

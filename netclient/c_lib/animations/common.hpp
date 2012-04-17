@@ -128,9 +128,18 @@ class VertexElementList1
 	{
 		if(VBO == 0) glGenBuffers(1, &VBO);
 
-    	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    	glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
-    	glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+		if(vlist_index != 0)
+		{
+    		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+    	} 
+    	else
+    	{
+    		if(vertex_number != 0) 
+    			glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+
+    	}
 
     	vertex_number = vlist_index;
 
@@ -168,7 +177,7 @@ class VertexElementList2
 	{
 		VBO = 0;
 		vertex_number = 0;
-		
+
 		vlist_index = 0;
 		vlist_max = 1024;
 		vlist = (vertexElement2*) malloc(1024*sizeof(struct vertexElement2));
@@ -205,10 +214,18 @@ class VertexElementList2
 	{
 		if(VBO == 0) glGenBuffers(1, &VBO);
 
-    	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    	glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
-    	glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+		if(vlist_index != 0)
+		{
 
+    		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    		glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, vlist, GL_DYNAMIC_DRAW);
+    	} 
+    	else
+    	{
+    		if(vertex_number != 0) 
+    			glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    	}
     	vertex_number = vlist_index;
 
     	vlist_index = 0;

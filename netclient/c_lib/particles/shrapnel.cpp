@@ -99,8 +99,6 @@ void Shrapnel_list::tick()
 void Shrapnel_list::prep()
 {
 #if DC_CLIENT
-    if(this->num == 0) return;
-
     for(int i=0; i<this->num; i++)
     {
         a[i].prep();
@@ -115,6 +113,8 @@ void Shrapnel_list::draw()
 {
 #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
+
+    printf("draw: %i \n", shrapnel_vlist->vertex_number);
 
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
