@@ -22,65 +22,28 @@ namespace Components
  
 /* Physics */
 const int MAX_PHYSICS_COMPONENTS = 4096;
-typedef ComponentList<PositionPhysicsComponent, MAX_PHYSICS_COMPONENTS>
+typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_COMPONENTS>
     PositionPhysicsComponentList;
-typedef ComponentList<PositionMomentumPhysicsComponent, MAX_PHYSICS_COMPONENTS>
+typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
 
 /* Stackables */
 const int MAX_STACKABLE_COMPONENTS = 4096;
-typedef ComponentList<StackableComponent, MAX_STACKABLE_COMPONENTS>
+typedef ComponentList<StackableComponent, COMPONENT_STACKABLE, MAX_STACKABLE_COMPONENTS>
     StackableComponentList;
 
 
 /* ComponentList declarations */
 
-PositionPhysicsComponentList* position_physics_component_list = NULL;
-PositionMomentumPhysicsComponentList* position_momentum_physics_component_list = NULL;
+extern PositionPhysicsComponentList* position_physics_component_list;
+extern PositionMomentumPhysicsComponentList* position_momentum_physics_component_list;
 
-StackableComponentList* stackable_component_list = NULL;
+extern StackableComponentList* stackable_component_list;
  
 
 /* ComponentList handler switches */
 
-Component* get_switch(ComponentType type)
-{
-    switch (type)
-    {
-        case COMPONENT_POSITION:
-            return position_physics_component_list->subscribe();
-            
-        case COMPONENT_POSITION_MOMENTUM:
-            return position_momentum_physics_component_list->subscribe();
-            
-        case COMPONENT_STACKABLE:
-            return stackable_component_list->subscribe();
-            
-        default:
-            printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
-            return NULL;
-    }
-    return NULL;
-}
-
-void release_switch(Component* component)
-{
-    switch (component->type)
-    {
-        case COMPONENT_POSITION:
-            return position_physics_component_list->unsubscribe(component);
-            
-        case COMPONENT_POSITION_MOMENTUM:
-            return position_momentum_physics_component_list->unsubscribe(component);
-            
-        case COMPONENT_STACKABLE:
-            return stackable_component_list->unsubscribe(component);
-            
-        default:
-            printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
-            return NULL;
-    }
-    return NULL;
-}
+Component* get_switch(ComponentType type);
+void release_switch(Component* component);
 
 } // Components

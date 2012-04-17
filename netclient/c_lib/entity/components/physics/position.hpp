@@ -18,7 +18,7 @@ class PositionPhysicsComponent: public PhysicsComponent
     PositionPhysicsComponent()
     : PhysicsComponent(COMPONENT_POSITION)
     {}
-}
+};
 
 
 } // Components

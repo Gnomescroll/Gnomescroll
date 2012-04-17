@@ -233,6 +233,9 @@ int init_c_lib() {
     LUA::load_options(); //load game options
     srand(time(NULL));   // seed the RNG
 
+    Objects::init();    // Entity system
+    Components::init();
+
     Objects::init_net_interfaces();
     Objects::init_state_interfaces();
 
@@ -332,6 +335,9 @@ void close_c_lib() {
 
     Objects::teardown_net_interfaces();
     Objects::teardown_state_interfaces();
+
+    Objects::teardown();    // Entity system
+    Components::teardown();
 
     printf("Game closed\n");
 

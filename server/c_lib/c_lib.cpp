@@ -134,6 +134,9 @@ int init_c_lib()
     printf("Server init\n");
     srand(time(NULL));
 
+    Objects::init();    // Entity system
+    Components::init();
+
     Objects::init_net_interfaces();
     Objects::init_state_interfaces();
 
@@ -168,6 +171,9 @@ void close_c_lib()
 
     Objects::teardown_net_interfaces();
     Objects::teardown_state_interfaces();
+
+    Objects::teardown();    // Entity system
+    Components::teardown();
 
     printf("Server closed\n"); 
     Log::teardown();
