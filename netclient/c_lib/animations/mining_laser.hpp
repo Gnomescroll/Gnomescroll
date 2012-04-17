@@ -43,12 +43,11 @@ void init_mining_laser()
 void teardown_mining_laser()
 {
 	delete mining_laser_vlist;
-
-
 }
+
 void init_mining_laser_texture()
 {
-    SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/mining_laser.png");
+    SDL_Surface* s = create_surface_from_file((char*) "./media/sprites/mining_laser2.png");
 
     if(s == NULL)
     {
@@ -60,8 +59,8 @@ void init_mining_laser_texture()
     glGenTextures( 1, &mining_laser_texture );
     glBindTexture( GL_TEXTURE_2D, mining_laser_texture  );
 
-    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    //glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 
     GLuint internalFormat = GL_RGBA; //GL_RGBA;
@@ -83,8 +82,8 @@ void init_mining_laser_shader()
 }
 
 
-const int MINING_LASER_TTL = 300; // 10 seconds
-const float MINING_LASER_DAMPENING = 0.5;
+const int MINING_LASER_TTL = 120; // 10 seconds
+const float MINING_LASER_DAMPENING = 0.20;
 
 class MiningLaser
 {
@@ -101,20 +100,13 @@ class MiningLaser
 
         float damp;
 
-    MiningLaser() :
-    ttl(0)
-    {
-    	ttl = 0;
-    	verlet.dampening = MINING_LASER_DAMPENING;
-    }
-    MiningLaser(int id) 
-    : id(id), ttl(0)
-    { 
-    	verlet.dampening = MINING_LASER_DAMPENING;
-    }
-
     void init(float x, float y, float z, float mx, float my, float mz)
     {
+
+    	ttl = 0;
+    	type = 0+rand()%4;
+    	verlet.dampening = MINING_LASER_DAMPENING;
+
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
     }
@@ -122,26 +114,58 @@ class MiningLaser
     void tick()
     {
         //this->verlet_bounce(this->damp);
-        verlet.bounce_box(0.20);
+        //verlet.bounce_box(0.125);
+        
+        
+        if( verlet.bool_no_gravity() ) ttl = MINING_LASER_TTL;
+        
+        //verlet.bounce_box_no_gravity(0.125)
+    	//verlet.radial(rx, ry);
+
         this->ttl++;
     }
 
-    void prep()
+    void prep(Vec3 cam)
     {
-	    const float scale = 0.25;
+  /*
+    	Vec3 look = vec3_sub(verlet.position, cam);
+    	//normalize_vector(&position);
 
-	    Vec3 up = vec3_init(
-	        model_view_matrix[0]*scale,
-	        model_view_matrix[4]*scale,
-	        model_view_matrix[8]*scale
-	    );
-	    Vec3 right = vec3_init(
-	        model_view_matrix[1]*scale,
-	        model_view_matrix[5]*scale,
-	        model_view_matrix[9]*scale
-	    );
+    	Vec3 up = verlet.velocity;
+    	normalize_vector(&up);
 
-	    int texture_index = rand() % 16;
+	    //Vec3 r = vec3_init(x-fx, y-fy, z-fz);
+	    //normalize_vector(&r);
+
+	    //Vec3 x1 = vec3_init(x,y,z);
+	    //Vec3 l1 = vec3_sub(x1, camera);
+
+	    Vec3 right = vec3_cross(look, up);
+	    normalize_vector(&right);
+*/
+
+/*
+	    float ratio = ((float) (hitscan_lader_ttl - ttl))/15.0;
+	    if(ratio > 1.0) ratio = 1.0;
+	    float _fx = x + (fx-x)*ratio;
+	    float _fy = y + (fy-y)*ratio;
+	    float _fz = z + (fz-z)*ratio;
+
+	    Vec3 x2 = vec3_init(_fx, _fy, _fz);
+
+	    Vec3 l2 = vec3_sub(x2, camera);
+
+	    Vec3 u2 = vec3_cross(l2, r);
+	    normalize_vector(&u2);
+*/
+
+/*
+	    up = vec3_scalar_mult(up, 1.0);
+	    right = vec3_scalar_mult(right, 0.0125);  
+
+
+	    int texture_index = this->type;
+	    //int texture_index = 4;
 
 	    float tx_min, tx_max, ty_min, ty_max;
 	    tx_min = (float)(texture_index%4)* (1.0/4.0);
@@ -150,6 +174,7 @@ class MiningLaser
 	    ty_max = ty_min + (1.0/4.0);
 
 	    Vec3 position = verlet.position;
+	    position.z += 2.0;
 
 	    Vec3 p = vec3_sub(position, vec3_add(right, up));
 		mining_laser_vlist->push_vertex(p, tx_min,ty_max);
@@ -162,6 +187,47 @@ class MiningLaser
 
 	    p = vec3_add(position, vec3_sub(right, up));
 	    mining_laser_vlist->push_vertex(p, tx_min,ty_min);
+*/
+
+
+	    const float scale = 0.25;
+	    const float _h = scale / 2;
+
+	    Vec3 up = vec3_init(
+	        model_view_matrix[0]*scale,
+	        model_view_matrix[4]*scale,
+	        model_view_matrix[8]*scale
+	    );
+	    Vec3 right = vec3_init(
+	        model_view_matrix[1]*scale,
+	        model_view_matrix[5]*scale,
+	        model_view_matrix[9]*scale
+	    );
+
+	    int texture_index = this->type;
+	    //int texture_index = 4;
+
+	    float tx_min, tx_max, ty_min, ty_max;
+	    tx_min = (float)(texture_index%4)* (1.0/4.0);
+	    tx_max = tx_min + (1.0/4.0);
+	    ty_min = (float)(texture_index/4)* (1.0/4.0);
+	    ty_max = ty_min + (1.0/4.0);
+
+	    Vec3 position = verlet.position;
+	    position.z += _h;
+
+	    Vec3 p = vec3_sub(position, vec3_add(right, up));
+		mining_laser_vlist->push_vertex(p, tx_min,ty_max);
+
+	    p = vec3_add(position, vec3_sub(up, right));
+	    mining_laser_vlist->push_vertex(p, tx_max,ty_max);
+
+	    p = vec3_add(position, vec3_add(up, right));
+	    mining_laser_vlist->push_vertex(p, tx_max,ty_min);
+
+	    p = vec3_add(position, vec3_sub(right, up));
+	    mining_laser_vlist->push_vertex(p, tx_min,ty_min);
+
     }
 
 };
@@ -194,9 +260,10 @@ void MiningLaserEffect_list::prep()
 {
 	mining_laser_vlist->reset_index();
 
+	Vec3 cam = vec3_init(current_camera->x, current_camera->y, current_camera->z);
     for (int i=0; i<this->num; i++)
     {
-        this->a[i].prep();
+        this->a[i].prep(cam);
     }
 }
 
@@ -204,17 +271,23 @@ void MiningLaserEffect_list::prep()
 void MiningLaserEffect_list::draw()
 {
 	//return;
-
+	if(mining_laser_vlist->vlist_index == 0) return;
 	const static unsigned int stride = sizeof(struct vertexElement1);
 
-	printf("%i \n", mining_laser_vlist->vlist_index);
+	//printf("%i \n", mining_laser_vlist->vlist_index);
 
     glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
 
     glEnable(GL_BLEND);
+    glDepthMask(GL_FALSE);
+
     glBlendFunc (GL_SRC_ALPHA, GL_ONE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //AlphaFunc(GL_NOTEQUAL, 0.0);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     glColor3ub(255,255,255);
 
@@ -236,6 +309,7 @@ void MiningLaserEffect_list::draw()
     glDisableVertexAttribArray(mining_laser_TexCoord);
     glUseProgramObjectARB(0);
 
+    glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
 }
 

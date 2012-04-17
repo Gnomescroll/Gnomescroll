@@ -54,7 +54,6 @@ void animations_tick()
 
     hitscan_effect_list->tick();
     hitscan_laser_effect_list->tick();
-    mining_laser_effect_list->tick();
 
     insect_mob_list->tick();
 }
@@ -77,6 +76,11 @@ void draw_hitscan_effect()
 void draw_hitscan_laser_effect()
 {
     hitscan_laser_effect_list->draw();
+}
+
+void mining_laser_effect_tick()
+{
+    mining_laser_effect_list->tick();
 }
 
 void draw_mining_laser_effect()
@@ -109,8 +113,8 @@ void spawn_insect_mob(float x, float y, float z)
 void create_mining_laser_particle()
 {
     //printf("create \n");
-    float hv = 2.5;
-    float vv =  -8.0;
+    //float hv = 6.0;
+    //float vv =  -1.0;
 
     MiningLaser* ml = mining_laser_effect_list->create();
     if(ml == NULL)
@@ -119,7 +123,29 @@ void create_mining_laser_particle()
         return;
     }
 
-    ml->init(x13,y13,z13+5.0, hv*randf() - hv/2, hv* randf() - hv/2, (vv/2)* randf() + vv/2 );
+/*
+#if 1
+    float hv = 1.0;
+    float vv =  -2.0;
+    ml->init(x13,y13,z13+5.0, hv*randf() - hv/2, hv* randf() - hv/2, (vv/2)* randf() + vv/2  , x13, y13);
+#else
+    float hv = 6.0;
+    float vv =  -1.0;
+    const float offset = 0.3;
+    ml->init(x13,y13+offset,z13+5.0, hv*randf() - hv/2, 0.0, (vv/2)* randf() + vv/2  , x13, y13);
+#endif
+*/
+
+    float hv = 0.0;
+
+    float hvv = 0.1;
+    float vv =  -4.0;
+
+    float ratio = 0.8;
+    //ml->init(x13,y13,z13+5.0, hv*randf() - hv/2, hv* randf() - hv/2, (vv/2)* randf() + vv/2  , x13, y13);
+
+ml->init(x13+ hvv*randf(),y13+ hvv*randf(),z13+5.0, hv*randf() - hv/2, hv* randf() - hv/2, vv*ratio*randf() + vv* (1.0-ratio) );
+
 }
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)

@@ -281,6 +281,8 @@ void Insect_mob_list::draw()
 {
 #if DC_CLIENT
 
+    if(insect_mob_vlist->vlist_index == 0) return;
+    
     const static unsigned int stride = sizeof(struct vertexElement2);
 
     glBindBuffer(GL_ARRAY_BUFFER, insect_mob_vbo);

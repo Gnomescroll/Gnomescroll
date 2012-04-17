@@ -12,23 +12,35 @@ namespace Particles
 #define SHRAPNEL_TEXTURE_ID 5
 #define SHRAPNEL_TEXTURE_SCALE 0.15f
 
-class Shrapnel: public ParticleMotion, public BillboardSprite
+//class Shrapnel: public ParticleMotion, public BillboardSprite
+
+class Shrapnel
 {
     public:
         void init();
         void tick();
 
-        explicit Shrapnel(int id);
-        Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
+        //explicit Shrapnel(int id);
+        //Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
+
+        void init(float x, float y, float z, float mx, float my, float mz);
 };
 
-#include <c_lib/template/object_list.hpp>
+#include <c_lib/template/simple_object_list.hpp>
 
-class Shrapnel_list: public Object_list<Shrapnel, SHRAPNEL_MAX>
+class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
 {
     private:
         const char* name() { return "Shrapnel"; }
     public:
+
+        int id;
+
+        VerletComponent verlet;
+        int id;
+        int ttl;
+        //int ttl_max;
+
         void draw();
         void tick();
 

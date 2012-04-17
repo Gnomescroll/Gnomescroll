@@ -109,7 +109,13 @@ int run()
             counter++;
         }
 
+        //Animations::create_mining_laser_particle();
+
         Animations::create_mining_laser_particle();
+        Animations::create_mining_laser_particle();
+        
+        Animations::mining_laser_effect_tick();
+
 
         //if (physics_ticks >= 2)
             //printf("Physics: %d ticks this frame\n", physics_ticks);

@@ -146,4 +146,198 @@ void VerletParticle::bounce_box(float radius)
     //return bounced;
 }
 
+void VerletParticle::bounce_box_no_gravity(float radius)
+{
+    //bool bounced = false;
+    
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
+    
+    //const float ac = 9.8;
+
+    Vec3 a = vec3_init(0,0,0);
+
+    {
+        const float ac = -9.8;
+
+        const int _z = position.z;
+        const int _y = position.y;
+        const int _x = position.x;
+
+        if( isSolid( position.x + radius, _y, _z) ) a.x += ac;
+        if( isSolid( position.x - radius, _y, _z) ) a.x -= ac;
+
+        if( isSolid( _x, position.y + radius, _z) ) a.y += ac;
+        if( isSolid( _x, position.y - radius, _z) ) a.y -= ac;
+    }
+    velocity_integrate(&position, &velocity, &a, dt);
+
+    float interval = 0.0f;
+
+    Vec3 norm;
+    _ray_cast4(
+        old_position.x, old_position.y, old_position.z,
+        position.x, position.y, position.z,
+        &interval, &norm
+    );
+
+    if (interval < 1.0f)
+    {   // collision
+        //bounced = true;
+        position = old_position;
+        velocity = old_velocity;
+
+        const float th = 2.0*3.14159 * randf();
+        const float V = 5.0*randf();
+
+        velocity.x += V * sin(th);
+        velocity.y += V * cos(th);
+
+        velocity_integrate(&position, &velocity, dt*interval);
+        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
+        velocity = vec3_reflect(velocity, norm);
+        velocity = vec3_scalar_mult(velocity, dampening);
+    }
+    //return bounced;
+}
+
+void VerletParticle::radial(float xr, float yr)
+{
+    //bool bounced = false;
+    
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
+    
+    //const float ac = 9.8;
+
+    Vec3 a = vec3_init(0,0,0);
+
+    {
+        const float ac = -40.8;
+
+        a.x += ac* (position.x - xr);
+        a.y += ac* (position.y - yr);
+    }
+    velocity_integrate(&position, &velocity, &a, dt);
+
+    float interval = 0.0f;
+
+    Vec3 norm;
+    _ray_cast4(
+        old_position.x, old_position.y, old_position.z,
+        position.x, position.y, position.z,
+        &interval, &norm
+    );
+
+    if (interval < 1.0f)
+    {   // collision
+        //bounced = true;
+        position = old_position;
+        velocity = old_velocity;
+
+        const float th = 2.0*3.14159 * randf();
+        const float V = 5.0*randf();
+
+        velocity.x += V * sin(th);
+        velocity.y += V * cos(th);
+
+        velocity_integrate(&position, &velocity, dt*interval);
+        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
+        velocity = vec3_reflect(velocity, norm);
+        velocity = vec3_scalar_mult(velocity, dampening);
+    }
+}
+
+bool VerletParticle::bool_no_gravity()
+{
+    bool bounced = false;
+    
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
+    
+    //const float ac = 9.8;
+
+    Vec3 a = vec3_init(0,0,0);
+
+    velocity_integrate(&position, &velocity, &a, dt);
+
+    float interval = 0.0f;
+
+    Vec3 norm;
+    _ray_cast4(
+        old_position.x, old_position.y, old_position.z,
+        position.x, position.y, position.z,
+        &interval, &norm
+    );
+
+    if (interval < 1.0f)
+    {   // collision
+        bounced = true;
+        position = old_position;
+        velocity = old_velocity;
+
+        const float th = 2.0*3.14159 * randf();
+        const float V = 5.0*randf();
+
+        velocity.x += V * sin(th);
+        velocity.y += V * cos(th);
+
+        velocity_integrate(&position, &velocity, dt*interval);
+        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
+        velocity = vec3_reflect(velocity, norm);
+        velocity = vec3_scalar_mult(velocity, dampening);
+    } 
+
+    return bounced;
+}
+
+/*
+void VerletParticle::axial_bounce_box_no_gravity(float radius)
+{
+    //bool bounced = false;
+    
+    Vec3 old_position = position;
+    Vec3 old_velocity = velocity;
+    
+    //const float ac = 9.8;
+
+    Vec3 a = vec3_init(0,0,0);
+
+    {
+        const float ac = -9.8;
+
+        const int _z = position.z;
+        const int _y = position.y;
+        const int _x = position.x;
+
+        if( isSolid( position.x + radius, _y, _z) ) a.x += ac;
+        if( isSolid( position.x - radius, _y, _z) ) a.x -= ac;
+
+        if( isSolid( _x, position.y + radius, _z) ) a.y += ac;
+        if( isSolid( _x, position.y - radius, _z) ) a.y -= ac;
+    }
+    velocity_integrate(&position, &velocity, &a, dt);
+
+    float interval = 0.0f;
+
+    Vec3 norm;
+    _ray_cast4(
+        old_position.x, old_position.y, old_position.z,
+        position.x, position.y, position.z,
+        &interval, &norm
+    );
+
+    if (interval < 1.0f)
+    {   // collision
+        //bounced = true;
+        position = old_position;
+        velocity = old_velocity;
+        velocity_integrate(&position, &velocity, dt*interval);
+        //Vec3 norm = vec3_init(s[0], s[1], s[2]);
+        velocity = vec3_reflect(velocity, norm);
+        velocity = vec3_scalar_mult(velocity, dampening);
+    }
+    //return bounced;
+}
+*/
 }

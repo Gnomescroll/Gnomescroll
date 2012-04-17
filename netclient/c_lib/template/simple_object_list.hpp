@@ -55,15 +55,25 @@ Object_state* Simple_object_list<Object_state, max_n>::create()
         return NULL;
     }
 
+    Object_state* o = &a[num];
     a[num].id = num;
-    return &a[num++];
+    num++;
+    return o;
+    //return &a[num++];
 }
 
 
 template <class Object_state, int max_n>
 void Simple_object_list<Object_state, max_n>::destroy(int id)
 {
+    if(id >= num)
+    {
+        printf("simple object list index error: num= %i, id= %i \n", num, id);
+        return;
+    }
+
+    num--;
     a[id] = a[num];
     a[id].id = id;
-    num--;
+
 }

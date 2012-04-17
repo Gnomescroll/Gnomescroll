@@ -27,6 +27,10 @@ class VerletParticle
 	void bounce();
 
 	void bounce_box(float radius);
+	void bounce_box_no_gravity(float radius);
+	bool bool_no_gravity();
+
+	void radial(float xr, float yr);
 };
 
 
