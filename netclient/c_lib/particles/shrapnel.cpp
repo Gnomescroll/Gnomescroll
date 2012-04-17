@@ -24,26 +24,16 @@ void Shrapnel::init()
     //this->scale = SHRAPNEL_TEXTURE_SCALE;
 }
 
-Shrapnel::Shrapnel(int id)
-:
-ParticleMotion(id, 0,0,0,0,0,0, SHRAPNEL_MASS),
-BillboardSprite()
-{
-    this->init();
-}
-
-Shrapnel::Shrapnel(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z, mx,my,mz, SHRAPNEL_MASS),
-BillboardSprite()
-{
-    this->init();
-}
-
 void Shrapnel::tick()
 {
-    this->verlet_bounce(SHRAPNEL_DAMP);
-    ttl++;
+    this->verlet.bounce();
+    ttl--;
+}
+
+void Shrapnel::draw()
+{
+    this->verlet.bounce();
+    ttl--;
 }
 
 }
@@ -55,29 +45,43 @@ namespace Particles
 
 void Shrapnel_list::tick()
 {
-    for (int i=0; i<n_max; i++)
+    for(int i=0; i<this->num; i++)
     {
-        if (a[i] == NULL) continue;
         a[i]->tick();
-        if (a[i]->ttl >= a[i]->ttl_max)
+        if (a[i]->ttl <= 0)
             destroy(a[i]->id);
     }
 }
+
+void Shrapnel_list::prep()
+{
+#if DC_CLIENT
+    for(int i=0; i<this->num; i++)
+    {
+
+    }
+#endif
+}
+
 
 void Shrapnel_list::draw()
 {
 #if DC_CLIENT
     if(num == 0) return;
-    
+
     assert(particle_texture != 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBegin(GL_QUADS);
 
-    for(int i=0; i<n_max; i++)
-        if (a[i] != NULL)
-            a[i]->draw(a[i]->get_position());
+    for(int i=0; i<this->num; i++)
+    {
+        a[i]->draw();
+    }
+
+    glEnd();
+    glDisable(GL_BLEND);
 #endif
 }
 

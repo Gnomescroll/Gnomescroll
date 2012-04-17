@@ -2,6 +2,8 @@
 
 #include <c_lib/particles/billboard_sprite.hpp>
 
+#include <c_lib/template/simple_object_list.hpp>
+
 namespace Particles
 {
 
@@ -26,7 +28,6 @@ class Shrapnel
         void init(float x, float y, float z, float mx, float my, float mz);
 };
 
-#include <c_lib/template/simple_object_list.hpp>
 
 class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
 {
