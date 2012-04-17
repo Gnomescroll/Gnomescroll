@@ -37,6 +37,11 @@ void update()
     object_list->update();
 }
 
+void harvest()
+{
+    object_list->harvest();
+}
+
 /* Underlying API handlers */
 
 Object* create_switch(ObjectType type)

@@ -17,11 +17,12 @@ Object* create_health_refill()
 
     // attach components
     //const int n_components = 3;
-    const int n_components = 2;
+    const int n_components = 4;
     obj->init(n_components);
     add_component_to_object(obj, COMPONENT_BILLBOARD_SPRITE);
     add_component_to_object(obj, COMPONENT_VERLET);
     add_component_to_object(obj, COMPONENT_PICKUP);
+    add_component_to_object(obj, COMPONENT_TTL);
 
     obj->tick = &tick_health_refill;
     //obj->update = NULL;
@@ -43,6 +44,7 @@ void tick_health_refill(Object* object)
 {
     using Components::VerletPhysicsComponent;
     using Components::PickupComponent;
+    using Components::TTLHealthComponent;
     
     // update for physics
     VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);
@@ -51,10 +53,10 @@ void tick_health_refill(Object* object)
     //tickPickup(state, this->get_position(), &this->pickup);
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
     pickup->tick(object);
-    
+
     //tickTTL(state);
-    //TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL_HEALTH);
-    //ttl->tick();
+    TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
+    ttl->tick();
 }
 
 //void update_health_refill(Object* object)

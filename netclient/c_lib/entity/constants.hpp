@@ -11,12 +11,14 @@ typedef enum
 {
     COMPONENT_NONE,
 
-    COMPONENT_POSITION,
+    COMPONENT_POSITION, // todo -- tag with _PHYSICS
     COMPONENT_POSITION_MOMENTUM,
     COMPONENT_VERLET,
     COMPONENT_STACKABLE,
     COMPONENT_BILLBOARD_SPRITE,
     COMPONENT_PICKUP,
+    COMPONENT_TTL,
+    COMPONENT_HIT_POINTS,
     
 } ComponentType;
 
@@ -29,6 +31,7 @@ typedef enum
     COMPONENT_INTERFACE_UPDATE,     // update()
     COMPONENT_INTERFACE_TICK,       // tick()
     COMPONENT_INTERFACE_PICKUP,
+    COMPONENT_INTERFACE_HEALTH,     // is_dead()
     
 } ComponentInterfaceType;
 

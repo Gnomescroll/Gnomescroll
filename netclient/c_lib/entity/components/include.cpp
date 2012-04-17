@@ -13,3 +13,7 @@
 #include <c_lib/entity/components/draw/billboard_sprite.cpp>
 
 #include <c_lib/entity/components/pickup.cpp>
+
+#include <c_lib/entity/components/health.hpp>
+#include <c_lib/entity/components/health/hit_points.hpp>
+#include <c_lib/entity/components/health/ttl.hpp>

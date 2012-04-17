@@ -112,7 +112,7 @@ int run()
 
             counter++;
         }
-
+        Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
 
         if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))

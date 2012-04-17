@@ -19,6 +19,8 @@ namespace Components
  */
 
 /* ComponentList typedefs */
+
+// TODO - move
  
 /* Physics */
 const int MAX_PHYSICS_COMPONENTS = 4096;
@@ -48,6 +50,14 @@ const int MAX_PICKUP_COMPONENTS = 2048;
 typedef ComponentList<PickupComponent, COMPONENT_PICKUP, MAX_PICKUP_COMPONENTS>
     PickupComponentList;
 
+/* Health */
+const int MAX_HEALTH_COMPONENTS = 4096;
+typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>
+    TTLHealthComponentList;
+typedef ComponentList<HitPointsHealthComponent, COMPONENT_HIT_POINTS, MAX_HEALTH_COMPONENTS>
+    HitPointsHealthComponentList;
+
+
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -59,6 +69,9 @@ extern StackableComponentList* stackable_component_list;
 extern BillboardSpriteComponentList* billboard_sprite_component_list;
 
 extern PickupComponentList* pickup_component_list;
+
+extern TTLHealthComponentList* ttl_health_component_list;
+extern HitPointsHealthComponentList* hit_points_health_component_list;
 
 /* ComponentList handler switches */
 

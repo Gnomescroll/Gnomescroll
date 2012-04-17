@@ -31,9 +31,10 @@ class ObjectList
         void set_object_max(ObjectType type, int max);
         void init();
 
-        void tick();
-        void update();
-
+        void tick();    // physics tick
+        void update();  // draw state update
+        void harvest(); // kill
+        
     ~ObjectList();
 
     ObjectList()
