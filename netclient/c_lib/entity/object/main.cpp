@@ -25,6 +25,18 @@ void teardown()
     if (object_list != NULL) delete object_list;
 }
 
+/* Iterators */
+
+void tick()
+{
+    object_list->tick();
+}
+
+void update()
+{
+    object_list->update();
+}
+
 /* Underlying API handlers */
 
 Object* create_switch(ObjectType type)

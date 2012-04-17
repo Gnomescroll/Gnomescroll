@@ -22,6 +22,9 @@ class Object
         int id;
         ObjectType type;
 
+        void (*tick)(Object*);
+        void (*update)(Object*);
+
         void add_component(Component* component);
         Component* get_component(ComponentType type);
         Component* get_component_interface(ComponentInterfaceType interface);
@@ -31,7 +34,7 @@ class Object
     ~Object();
 
     explicit Object(int id)
-    : n_components(0), components(NULL), id(id), type(OBJECT_NONE)
+    : n_components(0), components(NULL), id(id), type(OBJECT_NONE), tick(NULL), update(NULL)
     {}
 };
 

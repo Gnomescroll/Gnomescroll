@@ -108,24 +108,24 @@ int run()
             // update mouse
             poll_mouse();
 
-
-            Components::verlet_physics_component_list->tick();
+            Objects::tick();    // update physics state
 
             counter++;
         }
 
+        Objects::update(); // update render state
 
-        //if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
-        //{
-            //Objects::Object* refill = Objects::create(OBJECT_HEALTH_REFILL);
-            //Components::PhysicsComponent* state = (Components::PhysicsComponent*)refill->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            //if (state != NULL)
-            //{
-                //Vec3 position = ClientState::playerAgent_state.you->get_center();
-                //state->set_position(position);
-                //Objects::ready(refill);
-            //}
-        //}
+        if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
+        {
+            Objects::Object* refill = Objects::create(OBJECT_HEALTH_REFILL);
+            Components::PhysicsComponent* state = (Components::PhysicsComponent*)refill->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            if (state != NULL)
+            {
+                Vec3 position = ClientState::playerAgent_state.you->get_center();
+                state->set_position(position);
+                Objects::ready(refill);
+            }
+        }
         
         //if (physics_ticks >= 2)
             //printf("Physics: %d ticks this frame\n", physics_ticks);
@@ -181,7 +181,7 @@ int run()
 
         begin_item_draw();
         Draw::sprite_list->draw();
-        Components::billboard_sprite_component_list->draw();
+        Components::billboard_sprite_component_list->call();
         end_item_draw();
 
         Particles::begin_particle_draw();

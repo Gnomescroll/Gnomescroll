@@ -11,6 +11,9 @@ extern ObjectList* object_list;
 void init();
 void teardown();
 
+void tick();
+void update();
+
 void add_component_to_object(Object* object, ComponentType type);
 void remove_component_from_object(Object* object, Component* component);
 

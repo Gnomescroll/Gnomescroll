@@ -70,6 +70,38 @@ void ObjectList::init()
     this->objects = (Object***)calloc(MAX_OBJECT_TYPES, sizeof(Object**));
 }
 
+void ObjectList::tick()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        if (this->objects[i] == NULL) continue;
+        //if (this->maximums[i] > 0 && this->objects[i][0]->tick == NULL) continue;
+        for (int j=0; j<this->maximums[i]; j++)
+        {
+            if (this->objects[i][j] == NULL) continue;
+            Object* obj = this->objects[i][j];
+            if (obj->tick != NULL)
+                obj->tick(obj);
+        }
+    }
+}
+
+void ObjectList::update()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        if (this->objects[i] == NULL) continue;
+        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
+        for (int j=0; j<this->maximums[i]; j++)
+        {
+            if (this->objects[i][j] == NULL) continue;
+            Object* obj = this->objects[i][j];
+            if (obj->update != NULL)
+                obj->update(obj);
+        }
+    }
+}
+
 ObjectList::~ObjectList()
 {
     if (this->objects != NULL)

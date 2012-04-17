@@ -28,6 +28,7 @@ typedef enum
     COMPONENT_INTERFACE_DRAW,       // draw()
     COMPONENT_INTERFACE_UPDATE,     // update()
     COMPONENT_INTERFACE_TICK,       // tick()
+    COMPONENT_INTERFACE_PICKUP,
     
 } ComponentInterfaceType;
 

@@ -8,7 +8,7 @@ namespace Components
 class DrawComponent: public Component
 {
     public:
-        virtual void draw() = 0;
+        virtual void call() = 0;
 
     explicit DrawComponent(ComponentType type)
     : Component(type, COMPONENT_INTERFACE_DRAW)

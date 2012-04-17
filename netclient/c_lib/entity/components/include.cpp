@@ -11,3 +11,5 @@
 
 #include <c_lib/entity/components/draw.cpp>
 #include <c_lib/entity/components/draw/billboard_sprite.cpp>
+
+#include <c_lib/entity/components/pickup.cpp>
