@@ -11,7 +11,25 @@ using VerletParticle::VerletParticle;
 
 const float SHRAPNEL_MASS = 0.2f;
 
-void Shrapnel::init()
+
+/* Shrapnel vlist */
+
+VertexElementList1* shrapnel_vlist = NULL;
+
+void init_shrapnel()
+{
+    shrapnel_vlist = new VertexElementList1;
+}
+
+void teardown_shrapnel()
+{
+    delete shrapnel_vlist;
+}
+
+
+/* Shrapnel */
+
+void Shrapnel::init(float x, float y, float z, float mx, float my, float mz)
 {
     verlet.dampening = SHRAPNEL_DAMP;
 
@@ -19,9 +37,9 @@ void Shrapnel::init()
     verlet.velocity = vec3_init(mx,my,mz);
 
     this->ttl = SHRAPNEL_TTL;
-    //this->type = SHRAPNEL_TYPE;
-    //this->texture_index = SHRAPNEL_TEXTURE_ID;
-    //this->scale = SHRAPNEL_TEXTURE_SCALE;
+    this->scale = SHRAPNEL_TEXTURE_SCALE;
+    this->texture_index = SHRAPNEL_TEXTURE_ID;
+
 }
 
 void Shrapnel::tick()
@@ -30,18 +48,42 @@ void Shrapnel::tick()
     ttl--;
 }
 
-void Shrapnel::draw()
+void Shrapnel::prep()
 {
-    this->verlet.bounce();
-    ttl--;
-}
+    if (point_fulstrum_test(verlet.position.x, verlet.position.y, verlet.position.z) == false)
+        return;
 
+    Vec3 up = vec3_init(
+        model_view_matrix[0]*this->scale,
+        model_view_matrix[4]*this->scale,
+        model_view_matrix[8]*this->scale
+    );
+    Vec3 right = vec3_init(
+        model_view_matrix[1]*this->scale,
+        model_view_matrix[5]*this->scale,
+        model_view_matrix[9]*this->scale
+    );
+
+    float tx_min, tx_max, ty_min, ty_max;
+    tx_min = (float)(this->texture_index%16)* (1.0/16.0);
+    tx_max = tx_min + (1.0/16.0);
+    ty_min = (float)(this->texture_index/16)* (1.0/16.0);
+    ty_max = ty_min + (1.0/16.0);
+
+    Vec3 p = vec3_sub(position, vec3_add(right, up));
+    shrapnel_vlist->push_vertex(p, tx_min,ty_max);
+
+    p = vec3_add(position, vec3_sub(up, right));
+    shrapnel_vlist->push_vertex(p, tx_max,ty_max);
+
+    p = vec3_add(position, vec3_add(up, right));
+    shrapnel_vlist->push_vertex(p, tx_max,ty_min);
+
+    p = vec3_add(position, vec3_sub(right, up));
+    shrapnel_vlist->push_vertex(p, tx_min,ty_min);
 }
 
 /* Shrapnel list */
-
-namespace Particles
-{
 
 void Shrapnel_list::tick()
 {
@@ -56,10 +98,14 @@ void Shrapnel_list::tick()
 void Shrapnel_list::prep()
 {
 #if DC_CLIENT
+    if(this->num == 0) return;
+
     for(int i=0; i<this->num; i++)
     {
-
+        a[i].prep();
     }
+
+    shrapnel_vlist->buffer();
 #endif
 }
 
@@ -67,20 +113,17 @@ void Shrapnel_list::prep()
 void Shrapnel_list::draw()
 {
 #if DC_CLIENT
-    if(num == 0) return;
+    if(shrapnel_vlist->vertex_number == 0) return;
+
+    glBindTexture(GL_TEXTURE_2D, particle_texture);
+    glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
 
     assert(particle_texture != 0);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    glBindTexture(GL_TEXTURE_2D, particle_texture);
-    glBegin(GL_QUADS);
 
-    for(int i=0; i<this->num; i++)
-    {
-        a[i]->draw();
-    }
-
-    glEnd();
+    glDrawArrays(GL_QUADS, 0, );
+    
     glDisable(GL_BLEND);
 #endif
 }

@@ -7,6 +7,9 @@
 namespace Particles
 {
 
+void init_shrapnel();
+void teardown_shrapnel();
+
 #define SHRAPNEL_MAX 4096
 #define SHRAPNEL_TTL 30
 #define SHRAPNEL_DAMP 0.5f
@@ -21,9 +24,6 @@ class Shrapnel
     public:
         void init();
         void tick();
-
-        //explicit Shrapnel(int id);
-        //Shrapnel(int id, float x, float y, float z, float mx, float my, float mz);
 
         void init(float x, float y, float z, float mx, float my, float mz);
 };
@@ -42,6 +42,7 @@ class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
         int ttl;
         //int ttl_max;
 
+        void prep();
         void draw();
         void tick();
 
