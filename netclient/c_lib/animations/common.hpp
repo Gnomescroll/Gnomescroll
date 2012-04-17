@@ -133,8 +133,11 @@ class VertexElementList1
     	} 
     	else
     	{
-    		if(vertex_number != 0) 
-    			glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    		if(vertex_number > 0) 
+    		{
+    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+    			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    		}
     	}
 
 
@@ -216,8 +219,11 @@ class VertexElementList2
     	} 
     	else
     	{
-    		if(vertex_number != 0) 
-    			glBufferData(GL_ARRAY_BUFFER, vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
+    		if(vertex_number > 0) 
+    		{
+    			glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+    			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    		}
     	}
     	vertex_number = vlist_index;
 
