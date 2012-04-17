@@ -8,6 +8,8 @@
 #include <c_lib/animations/hitscan.cpp>
 #include <c_lib/animations/hitscan_laser.cpp>
 
+#include <c_lib/animations/mining_laser.cpp>
+
 #include <c_lib/animations/insect_mob.cpp>
 #endif
 

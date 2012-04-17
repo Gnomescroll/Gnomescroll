@@ -60,7 +60,7 @@
 #include <c_lib/voxel/voxel_hitscan.cpp>
 #include <c_lib/voxel/voxel_dat.cpp>
 #include <c_lib/voxel/voxel_model.cpp>
-#include <c_lib/voxel/voxel_loader.cpp>
+#include <c_lib/voxel/voxel_loader.cpp> 
 #include <c_lib/voxel/vox_dat_init.cpp>
 
 /* Object system */

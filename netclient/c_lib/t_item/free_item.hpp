@@ -40,7 +40,7 @@ class Free_item //: public VerletComponent
     void tick()
     {
         //this->verlet_bounce(this->damp);
-        verlet.bounce();
+        verlet.bounce_box(0.20);
         this->ttl++;
     }
 
@@ -53,29 +53,21 @@ class Free_item //: public VerletComponent
     {
         verlet.dampening = FREE_ITEM_DAMPENING;
 
-        //set position
-        //this->properties.old_velocity = this->properties.velocity;
-        //this->properties.velocity = vec3_scalar_mult(vec3_init(mx,my,mz), 1.0f/this->properties.mass);
-        //set velocity
-
-        //this->properties.old_position = this->properties.position;
-        //this->properties.position = vec3_init(x,y,z);
-
         type = rand() % 16;
     }
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
-        //this->set_state(x,y,z,mx,my,mz);
-        //this->set_mass(1.0f);
+        verlet.position = vec3_init(x,y,z);
+        verlet.velocity = vec3_init(mx,my,mz);
     }
 };
 
 void Free_item::draw()
 {
 #ifdef DC_CLIENT
-    const float scale = 0.5;
-    const float h = 0.75;
+    const float scale = 0.25;
+    const float h = 0.35;
 
     Vec3 up = vec3_init(
         model_view_matrix[0]*scale,

@@ -5,7 +5,9 @@
 #ifdef DC_CLIENT
 #include <c_lib/t_item/_interface.hpp>
 
-#include <c_lib/animations/insect_mob.hpp>
+//#include <c_lib/animations/insect_mob.hpp>
+
+#include <c_lib/animations/_interface.hpp>
 
 //#include <c_lib/t_item/client/_interface.hpp>
 #endif
@@ -30,7 +32,7 @@ inline void free_item_create_StoC::handle()
     Free_item* f = t_item::free_item_list->create(id);
     f->init(x,y,z,mx,my,mz);
 
-    Animations::set_insect_position(x,y,z);
+    Animations::spawn_insect_mob(x,y,z);
 }
 
 inline void free_item_destroy_StoC::handle()
