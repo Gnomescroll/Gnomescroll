@@ -31,6 +31,11 @@ void draw_teardown()
 void begin_particle_draw()
 {
     assert(particle_texture != 0);
+    GL_ASSERT(GL_TEXTURE_2D, true);
+
+    glColor4ub(255,255,255,255);
+    glDepthMask(GL_FALSE);
+    
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
@@ -40,6 +45,7 @@ void end_particle_draw()
 {
     glEnd();
     glDisable(GL_BLEND);
+    glDepthMask(GL_TRUE);
 }
 
 }

@@ -184,13 +184,11 @@ int run()
         Components::billboard_sprite_component_list->draw();
         end_item_draw();
 
-        begin_transparent_draw();
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
         Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
-        end_transparent_draw();
 
         Animations::draw_mining_laser_effect();
 
