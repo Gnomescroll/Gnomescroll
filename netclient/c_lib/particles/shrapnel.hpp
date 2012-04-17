@@ -1,8 +1,7 @@
 #pragma once
 
-#include <c_lib/particles/billboard_sprite.hpp>
-
 #include <c_lib/template/simple_object_list.hpp>
+#include <c_lib/physics/verlet_particle.hpp>
 
 namespace Particles
 {
@@ -22,7 +21,17 @@ void teardown_shrapnel();
 class Shrapnel
 {
     public:
+
+        int id;
+        int ttl;
+
+        VerletParticle::VerletParticle verlet;
+
+        float scale;
+        int texture_index;
+
         void init();
+        void prep();
         void tick();
 
         void init(float x, float y, float z, float mx, float my, float mz);
@@ -34,13 +43,6 @@ class Shrapnel_list: public Simple_object_list<Shrapnel, SHRAPNEL_MAX>
     private:
         const char* name() { return "Shrapnel"; }
     public:
-
-        int id;
-
-        VerletComponent verlet;
-        int id;
-        int ttl;
-        //int ttl_max;
 
         void prep();
         void draw();

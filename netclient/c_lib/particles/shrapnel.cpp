@@ -4,10 +4,12 @@
 
 #include <c_lib/physics/verlet_particle.hpp>
 
+#include <c_lib/animations/common.hpp>
+
 namespace Particles
 {
 
-using VerletParticle::VerletParticle;
+using Animations::VertexElementList1;
 
 const float SHRAPNEL_MASS = 0.2f;
 

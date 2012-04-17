@@ -83,7 +83,7 @@ class VertexElementList1
 {
 	public:
 
-	const static stride = sizeof(struct vertexElement1);
+	const static unsigned int stride = sizeof(struct vertexElement1);
 
 	struct vertexElement1* vlist;
 	int vlist_index;
@@ -154,7 +154,7 @@ class VertexElementList2
 {
 	public:
 
-	const static stride = sizeof(struct vertexElement2);
+	const static unsigned int stride = sizeof(struct vertexElement2);
 
 	struct vertexElement2* vlist;
 	int vlist_index;
