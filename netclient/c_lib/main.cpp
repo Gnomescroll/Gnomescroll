@@ -113,9 +113,10 @@ int run()
 
         Animations::create_mining_laser_particle();
         Animations::create_mining_laser_particle();
-        
+
         Animations::mining_laser_effect_tick();
 
+        Particles::prep_shrapnel();
 
         //if (physics_ticks >= 2)
             //printf("Physics: %d ticks this frame\n", physics_ticks);
@@ -181,10 +182,11 @@ int run()
         Draw::sprite_list->draw();
         end_item_draw();
 
+        Particles::draw_shrapnel();
+
         begin_transparent_draw();
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
-        Particles::shrapnel_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
         end_transparent_draw();

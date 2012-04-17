@@ -95,6 +95,7 @@ class VertexElementList1
 	VertexElementList1()
 	{
 		VBO = 0;
+		vertex_number = 0;
 
 		vlist_index = 0;
 		vlist_max = 1024;
@@ -165,6 +166,9 @@ class VertexElementList2
 
 	VertexElementList2()
 	{
+		VBO = 0;
+		vertex_number = 0;
+		
 		vlist_index = 0;
 		vlist_max = 1024;
 		vlist = (vertexElement2*) malloc(1024*sizeof(struct vertexElement2));
