@@ -127,8 +127,6 @@ void Shrapnel_list::draw()
     glEnable(GL_TEXTURE_2D);
 
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    //glEnableClientState()
 
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBindBuffer(GL_ARRAY_BUFFER, shrapnel_vlist->VBO);
@@ -140,9 +138,8 @@ void Shrapnel_list::draw()
     
     glDisable(GL_BLEND);
 
-
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
 #endif
 }
 
