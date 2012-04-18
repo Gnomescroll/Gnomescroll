@@ -22,9 +22,10 @@ VerletPhysicsComponentList* verlet_physics_component_list = NULL;
 StackableComponentList* stackable_component_list = NULL;
 
 BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
+ColoredVoxelComponentList* colored_voxel_component_list = NULL;
+TexturedVoxelComponentList* textured_voxel_component_list = NULL;
 
 PickupComponentList* pickup_component_list = NULL;
-
 
 TTLHealthComponentList* ttl_health_component_list = NULL;
 HitPointsHealthComponentList* hit_points_health_component_list = NULL;
@@ -49,6 +50,12 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_BILLBOARD_SPRITE:
             return billboard_sprite_component_list->subscribe();
+
+        case COMPONENT_COLORED_VOXEL:
+            return colored_voxel_component_list->subscribe();
+
+        case COMPONENT_TEXTURED_VOXEL:
+            return textured_voxel_component_list->subscribe();
 
         case COMPONENT_PICKUP:
             return pickup_component_list->subscribe();
@@ -90,6 +97,14 @@ void release_switch(Component* component)
             billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
             break;
 
+        case COMPONENT_COLORED_VOXEL:
+            colored_voxel_component_list->unsubscribe((ColoredVoxelComponent*)component);
+            break;
+
+        case COMPONENT_TEXTURED_VOXEL:
+            textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
+            break;
+
         case COMPONENT_PICKUP:
             pickup_component_list->unsubscribe((PickupComponent*)component);
             break;
@@ -117,7 +132,9 @@ void init()
     stackable_component_list = new StackableComponentList;
 
     billboard_sprite_component_list = new BillboardSpriteComponentList;
-
+    colored_voxel_component_list = new ColoredVoxelComponentList;
+    textured_voxel_component_list = new TexturedVoxelComponentList;
+    
     pickup_component_list = new PickupComponentList;
 
     ttl_health_component_list = new TTLHealthComponentList;
@@ -133,6 +150,8 @@ void teardown()
     if (stackable_component_list != NULL) delete stackable_component_list;
 
     if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
+    if (colored_voxel_component_list != NULL) delete colored_voxel_component_list;
+    if (textured_voxel_component_list != NULL) delete textured_voxel_component_list;
 
     if (pickup_component_list != NULL) delete pickup_component_list;
 

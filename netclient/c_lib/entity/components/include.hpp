@@ -9,6 +9,8 @@
 
 #include <c_lib/entity/components/draw.hpp>
 #include <c_lib/entity/components/draw/billboard_sprite.hpp>
+#include <c_lib/entity/components/draw/colored_voxel.hpp>
+#include <c_lib/entity/components/draw/textured_voxel.hpp>
 
 #include <c_lib/entity/components/pickup.hpp>
 

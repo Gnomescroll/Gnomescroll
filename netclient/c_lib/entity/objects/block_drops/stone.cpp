@@ -1,4 +1,4 @@
-#include "grenade_refill.hpp"
+#include "stone.hpp"
 
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
@@ -8,38 +8,35 @@
 namespace Objects
 {
 
-// private
-static void set_grenade_refill_properties(Object* obj)
-{   // attach components
+static void set_stone_block_drop_properties(Object* obj)
+{
     const int n_components = 4;
     obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_BILLBOARD_SPRITE);
+    add_component_to_object(obj, COMPONENT_COLORED_VOXEL);
     add_component_to_object(obj, COMPONENT_VERLET);
     add_component_to_object(obj, COMPONENT_PICKUP);
     add_component_to_object(obj, COMPONENT_TTL);
 
-    obj->tick = &tick_grenade_refill;
-    //obj->update = NULL;
+    obj->tick = &tick_stone_block_drop;
 }
 
-Object* create_grenade_refill()
+Object* create_stone_block_drop()
 {
-    // initialize object
-    ObjectType type = OBJECT_GRENADE_REFILL;
+    ObjectType type = OBJECT_STONE_BLOCK_DROP;
     Object* obj = object_list->create(type);
     if (obj == NULL) return NULL;
-    set_grenade_refill_properties(obj);
+    set_stone_block_drop_properties(obj);
     return obj;
 }
 
-void ready_grenade_refill(Object* object)
+void ready_stone_block_drop(Object* object)
 {
     #if DC_SERVER
     // broadcast create
     #endif
 }
 
-void die_grenade_refill(Object* object)
+void die_stone_block_drop(Object* object)
 {
     #if DC_SERVER
     using Components::PickupComponent;
@@ -48,7 +45,7 @@ void die_grenade_refill(Object* object)
     #endif
 }
 
-void tick_grenade_refill(Object* object)
+void tick_stone_block_drop(Object* object)
 {
     using Components::VerletPhysicsComponent;
     using Components::PickupComponent;
@@ -67,9 +64,8 @@ void tick_grenade_refill(Object* object)
     ttl->tick();
 }
 
-//void update_grenade_refill(Object* object)
-//{
-    // update for draw
-//}
+//void update_stone_block_drop(Object* object);
+
+
 
 } // Objects

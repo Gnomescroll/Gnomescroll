@@ -42,8 +42,13 @@ const int MAX_RENDERABLE_COMPONENTS = 4096;
     //BillboardSpriteComponentList;
 class BillboardSpriteComponentList:
     public CallableComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
-{
-};
+{};
+class ColoredVoxelComponentList:
+    public CallableComponentList<ColoredVoxelComponent, COMPONENT_COLORED_VOXEL, MAX_RENDERABLE_COMPONENTS>
+{};
+class TexturedVoxelComponentList:
+    public CallableComponentList<TexturedVoxelComponent, COMPONENT_TEXTURED_VOXEL, MAX_RENDERABLE_COMPONENTS>
+{};
 
 /* Pickup */
 const int MAX_PICKUP_COMPONENTS = 2048;
@@ -57,7 +62,6 @@ typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>
 typedef ComponentList<HitPointsHealthComponent, COMPONENT_HIT_POINTS, MAX_HEALTH_COMPONENTS>
     HitPointsHealthComponentList;
 
-
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -67,6 +71,8 @@ extern VerletPhysicsComponentList* verlet_physics_component_list;
 extern StackableComponentList* stackable_component_list;
 
 extern BillboardSpriteComponentList* billboard_sprite_component_list;
+extern ColoredVoxelComponentList* colored_voxel_component_list;
+extern TexturedVoxelComponentList* textured_voxel_component_list;
 
 extern PickupComponentList* pickup_component_list;
 
