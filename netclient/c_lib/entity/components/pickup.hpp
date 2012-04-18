@@ -41,7 +41,7 @@ class PickupComponent: public Component
             PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             Vec3 position = physics->get_position();
             Agent_state* agent = nearest_agent_in_range(position, this->pickup_radius);
-            if (agent != NULL && agent->status.gain_item(object->id, (ObjectType)object->type))
+            if (agent != NULL && agent->status.gain_item(object->id, object->type))
             {   // was picked up, die
                 this->was_picked_up(agent->id);
                 HealthComponent* health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);

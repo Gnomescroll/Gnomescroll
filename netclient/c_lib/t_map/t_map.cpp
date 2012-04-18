@@ -21,12 +21,12 @@
     /* Added for random drops */
     /* remove these includes after random drops are in separate file */
     #include <c_lib/common/random.h>
-    #include <c_lib/entity/constants.hpp>
-    #include <c_lib/objects/common/interface/policy.hpp>
-    #include <c_lib/state/server_state.hpp>
-    
+    #include <c_lib/physics/vec3.hpp>
     #include <c_lib/entity/constants.hpp>
     #include <c_lib/entity/objects.hpp>
+    #include <c_lib/entity/object/object.hpp>
+    #include <c_lib/entity/components.hpp>
+    #include <c_lib/entity/components/physics.hpp>
 
     #include <c_lib/t_item/_interface.hpp>
 
@@ -66,14 +66,14 @@ void init_t_map()
 
 }
 
-    #if DC_CLIENT
-    void init_for_draw()
-    {
-        printf("init for draw \n");
-        init_cache();
-        init_shaders();
-    }
-    #endif
+#if DC_CLIENT
+void init_for_draw()
+{
+    printf("init for draw \n");
+    init_cache();
+    init_shaders();
+}
+#endif
     
 void end_t_map()
 {
@@ -116,10 +116,8 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
-    Objects::create(OBJECT_HEALTH_REFILL);
-    return;
-
-    if (randf () < 0.5f)
+    ObjectType type = OBJECT_NONE;
+    if (randf () < 0.0f)
     {
         const int n_items = 7;  // 7 Gemstones
         const ObjectType items[n_items] = {
@@ -131,16 +129,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
             OBJECT_GEMSTONE_JADE,
             OBJECT_GEMSTONE_ONYX,
         };
-        const float mom = 2.0f; // momentum
-        ObjectType type = items[randrange(0,n_items-1)];
-
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
-        if (obj != NULL)
-        {
-            obj->set_position(x+randf(),y+randf(), z+randf());
-            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(); // TODO
-        }
+        type = items[randrange(0,n_items-1)];
     }
     else
     {
@@ -153,16 +142,21 @@ void block_spawn_items(int block_value, int x, int y, int z)
             OBJECT_HARD_ROCK_BLOCK_DROP,
             OBJECT_INFECTED_ROCK_BLOCK_DROP,
         };
-        const float mom = 2.0f;
-        ObjectType type  = items[randrange(0,n_items-1)];
-
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
-        if (obj != NULL)
+        type  = items[randrange(0,n_items-1)];
+    }
+    
+    const float mom = 2.0f;
+    Objects::Object* obj = Objects::create(type);
+    if (obj != NULL)
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        if (physics != NULL)
         {
-            obj->set_position(x+randf(),y+randf(), z+randf());
-            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(); // TODO
+            physics->set_position(vec3_init(x+randf(), y+randf(), z+randf()));
+            physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
         }
+        Objects::ready(obj);
     }
 }
 

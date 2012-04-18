@@ -19,6 +19,13 @@ void init()
     object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
     object_list->set_object_max(OBJECT_LASER_REFILL, 256);
     object_list->set_object_max(OBJECT_GRENADE_REFILL, 256);
+
+    object_list->set_object_max(OBJECT_DIRT_BLOCK_DROP, 256);
+    object_list->set_object_max(OBJECT_STONE_BLOCK_DROP, 256);
+    object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
+    object_list->set_object_max(OBJECT_MEDIUM_ROCK_BLOCK_DROP, 256);
+    object_list->set_object_max(OBJECT_HARD_ROCK_BLOCK_DROP, 256);
+    object_list->set_object_max(OBJECT_INFECTED_ROCK_BLOCK_DROP, 256);
     
     object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
 }
@@ -58,8 +65,18 @@ Object* create_switch(ObjectType type)
         case OBJECT_GRENADE_REFILL:
             return create_grenade_refill();
 
+        case OBJECT_DIRT_BLOCK_DROP:
+            return create_dirt_block_drop();
+        case OBJECT_STONE_BLOCK_DROP:
+            return create_stone_block_drop();
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            //return create_soft_rock_block_drop();
+            return create_soft_rock_block_drop();
+        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
+            return create_medium_rock_block_drop();
+        case OBJECT_HARD_ROCK_BLOCK_DROP:
+            return create_hard_rock_block_drop();
+        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
+            return create_infected_rock_block_drop();
         
         default:
             printf("WARNING: creating unknown object type %d\n", type);
@@ -90,10 +107,25 @@ void ready_switch(Object* object)
             ready_grenade_refill(object);
             break;
 
-        case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            //ready_soft_rock_block_drop(object);
+        case OBJECT_DIRT_BLOCK_DROP:
+            ready_dirt_block_drop(object);
             break;
-        
+        case OBJECT_STONE_BLOCK_DROP:
+            ready_stone_block_drop(object);
+            break;
+        case OBJECT_SOFT_ROCK_BLOCK_DROP:
+            ready_soft_rock_block_drop(object);
+            break;
+        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
+            ready_medium_rock_block_drop(object);
+            break;
+        case OBJECT_HARD_ROCK_BLOCK_DROP:
+            ready_hard_rock_block_drop(object);
+            break;
+        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
+            ready_infected_rock_block_drop(object);
+            break;
+
         default:
             printf("WARNING: birthing unknown object type %d\n", object->type);
             break;
@@ -115,8 +147,23 @@ void destroy_switch(Object* object)
             die_grenade_refill(object);
             break;
 
+        case OBJECT_DIRT_BLOCK_DROP:
+            die_dirt_block_drop(object);
+            break;
+        case OBJECT_STONE_BLOCK_DROP:
+            die_stone_block_drop(object);
+            break;
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
-            //die_soft_rock_block_drop(object);
+            die_soft_rock_block_drop(object);
+            break;
+        case OBJECT_MEDIUM_ROCK_BLOCK_DROP:
+            die_medium_rock_block_drop(object);
+            break;
+        case OBJECT_HARD_ROCK_BLOCK_DROP:
+            die_hard_rock_block_drop(object);
+            break;
+        case OBJECT_INFECTED_ROCK_BLOCK_DROP:
+            die_infected_rock_block_drop(object);
             break;
         
         default:
