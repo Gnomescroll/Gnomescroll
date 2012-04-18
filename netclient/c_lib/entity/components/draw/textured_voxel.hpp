@@ -1,29 +1,36 @@
 #pragma once
 
 #include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/draw.hpp>
+#include <c_lib/entity/components/draw/voxel.hpp>
 
 namespace Components
 {
 
-class TexturedVoxelComponent: public DrawComponent
+class TexturedVoxelComponent: public VoxelComponent
 {
     private:
         Vec3 forward;
         Vec3 right;
         Vec3 normal;
         float tx,ty;
-        
-    public:
-        int sprite_index;
         float pixel_margin;
-        float scale;
         
+        void set_texture();
+
+    public:
+        int texture_index;
+        int pixel_width;
+        
+        void init()
+        {
+            VoxelComponent::init();
+            this->set_texture();
+        }
         void call();
 
     TexturedVoxelComponent()
-    : DrawComponent(COMPONENT_TEXTURED_VOXEL),
-    sprite_index(0), pixel_margin(1.0f), scale(1.0f)
+    : VoxelComponent(COMPONENT_TEXTURED_VOXEL),
+    texture_index(0), pixel_width(1)
     {}
 
 };

@@ -31,6 +31,13 @@ Object* create_medium_rock_block_drop()
 
 void ready_medium_rock_block_drop(Object* object)
 {
+    // init voxel for rendering
+    #if DC_CLIENT
+    using Components::TexturedVoxelComponent;
+    TexturedVoxelComponent* voxel = (TexturedVoxelComponent*)object->get_component(COMPONENT_TEXTURED_VOXEL);
+    voxel->init();   // sets vectors
+    #endif
+
     #if DC_SERVER
     // broadcast create
     #endif
@@ -50,6 +57,13 @@ void tick_medium_rock_block_drop(Object* object)
     using Components::VerletPhysicsComponent;
     using Components::PickupComponent;
     using Components::TTLHealthComponent;
+
+    // rotation animation
+    #if DC_CLIENT
+    using Components::VoxelComponent;
+    VoxelComponent* voxel = (VoxelComponent*)object->get_component(COMPONENT_TEXTURED_VOXEL);
+    voxel->delta_rotation();
+    #endif    
     
     // update for physics
     VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);

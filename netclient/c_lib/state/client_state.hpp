@@ -39,6 +39,7 @@ namespace ClientState {
     void client_id_received(int client_id);
 
     void update();
+    void update_for_draw();
     void init();
     void init_lists();
     void teardown();

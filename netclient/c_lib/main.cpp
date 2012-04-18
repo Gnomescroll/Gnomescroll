@@ -170,7 +170,35 @@ int run()
 
         // draw client state
 
-        ClientState::draw();
+        ClientState::update_for_draw();
+
+        ClientState::voxel_render_list->draw();
+
+        // quads
+        glColor3ub(255,255,255);
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        glBegin(GL_QUADS);
+
+        Particles::colored_minivox_list->draw();
+        Draw::colored_minivox_list->draw();   // new entity system registries
+        Components::colored_voxel_component_list->call();
+        glEnd();
+
+        glColor3ub(255,255,255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
+        glBegin(GL_QUADS);
+
+        Particles::textured_minivox_list->draw();
+        Draw::textured_minivox_list->draw();
+        Components::textured_voxel_component_list->call();
+
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+
+        // transparent
+        Particles::billboard_text_list->draw();
+        
 
         poll_mouse();
         

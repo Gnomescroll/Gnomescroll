@@ -4,6 +4,7 @@
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/physics/verlet.hpp>
+#include <c_lib/entity/components/draw/voxel.hpp>
 
 namespace Objects
 {
@@ -31,6 +32,13 @@ Object* create_dirt_block_drop()
 
 void ready_dirt_block_drop(Object* object)
 {
+    // init voxel for rendering
+    #if DC_CLIENT
+    using Components::VoxelComponent;
+    VoxelComponent* voxel = (VoxelComponent*)object->get_component(COMPONENT_COLORED_VOXEL);
+    voxel->init();   // sets vectors
+    #endif
+    
     #if DC_SERVER
     // broadcast create
     #endif
@@ -38,6 +46,7 @@ void ready_dirt_block_drop(Object* object)
 
 void die_dirt_block_drop(Object* object)
 {
+    // send pickup packet
     #if DC_SERVER
     using Components::PickupComponent;
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
@@ -50,16 +59,25 @@ void tick_dirt_block_drop(Object* object)
     using Components::VerletPhysicsComponent;
     using Components::PickupComponent;
     using Components::TTLHealthComponent;
+
+    // rotation animation
+    #if DC_CLIENT
+    using Components::VoxelComponent;
+    VoxelComponent* voxel = (VoxelComponent*)object->get_component(COMPONENT_COLORED_VOXEL);
+    voxel->delta_rotation();
+    #endif
     
-    // update for physics
+    // apply verlet physics
     VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);
     verlet->bounce();
 
+    // check for pickup
     #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
     pickup->tick(object);
     #endif
 
+    // increment ttl
     TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
     ttl->tick();
 }

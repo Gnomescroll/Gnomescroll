@@ -11,6 +11,7 @@
 
 #include <c_lib/entity/components/draw.cpp>
 #include <c_lib/entity/components/draw/billboard_sprite.cpp>
+#include <c_lib/entity/components/draw/voxel.cpp>
 #include <c_lib/entity/components/draw/colored_voxel.cpp>
 #include <c_lib/entity/components/draw/textured_voxel.cpp>
 
