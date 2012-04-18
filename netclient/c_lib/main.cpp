@@ -187,8 +187,45 @@ int run()
             Non-transparent
         */
 
-        ClientState::draw(); //deprecate this! WTF is this
+        //ClientState::draw(); //deprecate this! WTF is this
 
+        /*
+            Crap from ClientState::draw();
+        */
+        {
+            ClientState::agent_list->update_models();
+            ClientState::object_list->update();  // model updates
+            ClientState::voxel_render_list->draw();
+
+            // quads
+            glColor3ub(255,255,255);
+            GL_ASSERT(GL_DEPTH_TEST, true);
+            glBegin(GL_QUADS);
+
+            Particles::colored_minivox_list->draw();
+            Draw::colored_minivox_list->draw();   // new entity system registries
+
+            glEnd();
+
+            glColor3ub(255,255,255);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
+            glBegin(GL_QUADS);
+
+            Particles::textured_minivox_list->draw();
+            Draw::textured_minivox_list->draw();
+
+            glEnd();
+            glDisable(GL_TEXTURE_2D);
+
+        
+            glEnable(GL_TEXTURE_2D);
+
+        }
+
+        /*
+            End of Crap
+        */
         t_item::draw();
         Animations::draw_insect_mob();
 
@@ -225,6 +262,8 @@ int run()
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
 
+        Particles::billboard_text_list->draw();
+
         // update mouse
         poll_mouse();
 
@@ -241,7 +280,7 @@ int run()
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
         }
-        
+
         poll_mouse();
         // update sound
         Sound::update();

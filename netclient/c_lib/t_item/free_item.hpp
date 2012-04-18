@@ -144,7 +144,6 @@ void Free_item_list::draw()
 #ifdef DC_CLIENT
     glColor3ub(255,255,255);
 
-    //glEnable(GL_TEXTURE_2D);
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
 
@@ -199,16 +198,16 @@ void Free_item_list::check_item_pickups()
         const static float pick_up_distance = 0.5;
         Agent_state* agent = nearest_agent_in_range(free_item->verlet.position, pick_up_distance);
 
-        if(agent == NULL) return;
+        if(agent == NULL) continue;
 
-        int id = agent->id;
-
-        printf("agent %i picked up item %i \n", id, free_item->id);
+        printf("agent %i picked up item %i \n", agent->id, free_item->id);
 
         free_item_picked_up_StoC p;
         p.id = free_item->id;
         p.agent_id = agent->id;
         p.broadcast();
+
+        t_item::free_item_list->destroy(free_item->id);
     }
 #endif
 
