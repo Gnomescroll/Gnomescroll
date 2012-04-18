@@ -185,16 +185,20 @@ int run()
         */
         Skybox::draw();
 
-        /*
-            Transparent
+        /* 
+            Alpha tested non-transparent
         */
-
-        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
 
         begin_item_draw();
         Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->draw();
         end_item_draw();
+
+        /*
+            Transparent
+        */
+
+        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
