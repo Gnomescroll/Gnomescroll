@@ -133,13 +133,15 @@ int run()
 
         frame_graph->frame_stage(1); // misc stuff and network
 
-        // dispatch
-        NetClient::client_dispatch_network_events();
+        /*
+            Networking
+        */
         poll_mouse();
 
+        NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
-        Particles::prep_shrapnel();
+
         // update mouse
         poll_mouse();
 
@@ -158,23 +160,25 @@ int run()
 
         frame_graph->frame_stage(2); // call draw functions
 
-        // switch to world projection
+        /*
+            Start World Projetion
+        */
         world_projection();
-
-
-
         // draw client state
 
-        ClientState::draw();
 
         poll_mouse();
-        
 
-
+        /*
+            Prep for draw
+        */
+        Animations::prep_insect_mob();
+        Particles::prep_shrapnel();
 
         /*
             Map
         */
+
         poll_mouse();
         t_map::draw_map();
         poll_mouse();
@@ -183,6 +187,8 @@ int run()
             Non-transparent
         */
 
+        ClientState::draw(); //deprecate this! WTF is this
+        
         t_item::draw();
         Animations::draw_insect_mob();
 

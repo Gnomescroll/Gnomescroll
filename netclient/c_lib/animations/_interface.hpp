@@ -14,6 +14,7 @@ void teardown();
 
 void animations_tick();
 
+void prep_insect_mob();
 void draw_insect_mob();
 void spawn_insect_mob(float x, float y, float z);
 

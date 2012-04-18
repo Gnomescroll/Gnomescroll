@@ -61,11 +61,14 @@ void animations_tick()
 
 
 
+void prep_insect_mob()
+{
+    insect_mob_list->prep();
+}
+
 void draw_insect_mob()
 {
-	//!! only prep if tick has been called!!!
 	insect_mob_list->draw();
-	insect_mob_list->prep();
 }
 
 void draw_hitscan_effect()
