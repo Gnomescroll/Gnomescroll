@@ -77,7 +77,7 @@ class Voxel_volume
     int point_collision_test(Vec3 p, int vxl[3]);
 
     void init(int xdim, int ydim, int zdim, float scale);
-    void set_hitscan_properties(short entity_id, short entity_type, short entity_subtype, short part_id);
+    void set_hitscan_properties(short entity_id, short entity_type, short part_id);
 
     Voxel_volume(int xdim, int ydim, int zdim, float scale);
     Voxel_volume();

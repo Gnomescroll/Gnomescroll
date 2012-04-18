@@ -89,7 +89,7 @@ namespace ServerState
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
         int dmg, int owner,
-        Object_types inflictor_type, int inflictor_id,
+        ObjectType inflictor_type, int inflictor_id,
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
     {
@@ -118,9 +118,9 @@ namespace ServerState
 
         // Spawners, Turrets etc
         const int filter_n_types = 5;
-        const Object_types filter_types[filter_n_types] = {
-            OBJ_TYPE_TURRET, OBJ_TYPE_SPAWNER,
-            OBJ_TYPE_SLIME, OBJ_TYPE_MONSTER_BOX, OBJ_TYPE_MONSTER_SPAWNER,
+        const ObjectType filter_types[filter_n_types] = {
+            OBJECT_TURRET, OBJECT_SPAWNER,
+            OBJECT_SLIME, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
         };
         object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
         ObjectPolicyInterface* obj;
@@ -201,16 +201,16 @@ namespace ServerState
         agent_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
 
-        object_list->send_to_client(OBJ_TYPE_TURRET, client_id);
-        object_list->send_to_client(OBJ_TYPE_SPAWNER, client_id);
-        object_list->send_to_client(OBJ_TYPE_SLIME, client_id);
-        object_list->send_to_client(OBJ_TYPE_MONSTER_BOX, client_id);
-        object_list->send_to_client(OBJ_TYPE_MONSTER_SPAWNER, client_id);
+        object_list->send_to_client(OBJECT_TURRET, client_id);
+        object_list->send_to_client(OBJECT_SPAWNER, client_id);
+        object_list->send_to_client(OBJECT_SLIME, client_id);
+        object_list->send_to_client(OBJECT_MONSTER_BOX, client_id);
+        object_list->send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)
     {
-        object_list->send_to_client(OBJ_TYPE_INVENTORY, client_id);
+        object_list->send_to_client(OBJECT_INVENTORY, client_id);
     }
 
     //move somewhere

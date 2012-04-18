@@ -140,7 +140,7 @@ void Agent_state::tick()
     #ifdef DC_SERVER
     const float Z_DEATH_ZONE = -200.0f;
     if (!this->status.dead && this->s.z < Z_DEATH_ZONE)
-        this->status.die(this->id, OBJ_TYPE_AGENT, DEATH_BELOW_MAP);
+        this->status.die(this->id, OBJECT_AGENT, DEATH_BELOW_MAP);
     else
         this->status.respawn();
     this->status.tick();
@@ -510,14 +510,14 @@ void Agent_state::spawn_state()
 
 void Agent_state::init_vox()
 {
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type, 0);   // subtype is null
+    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
 
 Agent_state::Agent_state(int id)
 :
-id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
+id (id), type(OBJECT_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif
@@ -563,7 +563,7 @@ id (id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-id(id), type(OBJ_TYPE_AGENT), status(this), weapons(this)
+id(id), type(OBJECT_AGENT), status(this), weapons(this)
 #ifdef DC_CLIENT
 , event(this)
 #endif

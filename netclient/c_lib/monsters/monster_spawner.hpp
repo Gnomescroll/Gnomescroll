@@ -2,7 +2,7 @@
 
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/api/include.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
@@ -17,18 +17,18 @@ extern VoxDat monster_spawner_vox_dat;
 class MonsterSpawnerComponent
 {
     public:
-        Object_types type;
+        ObjectType type;
         float radius;
         int max_children;
         int children;
 
         void get_spawn_point(Vec3 position, float spawned_object_height, float* spawn_pt);
         bool full() { return (this->children >= this->max_children); }
-        void gain_child(Object_types type, int id);
-        void lose_child(Object_types type, int id);
+        void gain_child(ObjectType type, int id);
+        void lose_child(ObjectType type, int id);
         
     MonsterSpawnerComponent()
-    : type(OBJ_TYPE_NONE), radius(1.0f), max_children(1), children(0)
+    : type(OBJECT_NONE), radius(1.0f), max_children(1), children(0)
     {}
 };
 
@@ -100,11 +100,10 @@ class MonsterSpawner:
         this->spatial.properties.set_changed(false);
     }
 
-    void born(int subtype)
+    void born()
     {
-        this->_state.subtype = subtype;
         ObjectState* state = this->state();
-        this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type, state->subtype);
+        this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
         bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial.properties.angles.x, this->spatial.properties.angles.y);
         this->broadcastCreate();

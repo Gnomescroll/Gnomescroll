@@ -20,6 +20,16 @@ typedef enum CS_KEYS
     CS_MISC3 = 1024
 } CS_KEYS;
 
+typedef enum
+{
+    DEATH_NORMAL = 0,
+    DEATH_HEADSHOT,
+    DEATH_GRENADE,
+    DEATH_FALL,
+    DEATH_BELOW_MAP,
+    DEATH_TURRET,
+    DEATH_SLIME
+} AgentDeathMethod;
 
 /* Main */
 const int AGENT_MAX = PLAYERS_MAX;

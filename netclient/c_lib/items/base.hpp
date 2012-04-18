@@ -2,7 +2,7 @@
 
 #include <c_lib/game/game.hpp>
 #include <voxel/voxel_model.hpp>
-#include <common/enum_types.hpp>
+#include <entity/constants.hpp>
 
 const int N_BASES = N_TEAMS;
 
@@ -24,7 +24,7 @@ class Base {
 
         int id;
         int team;
-        Object_types type;
+        ObjectType type;
 
         unsigned int spawn_radius;
         

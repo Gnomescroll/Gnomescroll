@@ -26,20 +26,20 @@ class TargetAcquisitionComponent
         }
         
         Agent_state* acquire_target(
-            int id, Object_types type, int team, float camera_z, Vec3 position,
+            int id, ObjectType type, int team, float camera_z, Vec3 position,
             float accuracy_bias, float sight_range,
             bool attack_enemies, bool attack_random,
             Vec3* firing_direction
         );
         
         Agent_state* fire_on_target(
-            int id, Object_types type, int team, float camera_z, Vec3 position,
+            int id, ObjectType type, int team, float camera_z, Vec3 position,
             float accuracy_bias, float sight_range,
             bool attack_enemies, bool attack_random
         );
 
         Agent_state* fire_on_known_target(
-            int id, Object_types type, float camera_z, Vec3 position, Vec3 direction,
+            int id, ObjectType type, float camera_z, Vec3 position, Vec3 direction,
             float accuracy_bias, float sight_range, Agent_state* agent
         );
 

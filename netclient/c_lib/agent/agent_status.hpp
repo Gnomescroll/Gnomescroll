@@ -1,11 +1,11 @@
 #pragma once
 
 #include <c_lib/items/constants.hpp>
-#include <common/enum_types.hpp>
+#include <entity/constants.hpp>
 #include <c_lib/agent/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
-void switch_agent_ownership(int item_id, Object_types item_type, int subtype, int owner, int new_owner);
+void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 
 class Agent_state;  // forward declaration
 
@@ -64,10 +64,10 @@ class Agent_status {
 
         void heal(unsigned int amt);
         int apply_damage(int dmg);
-        int apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id=-1);
-        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, Object_types inflictor_type);
+        int apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id=-1);
+        int apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type);
         int die();
-        int die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method);
+        int die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method);
         void kill(int victim_id);
         void kill_slime();
         void respawn();
@@ -88,17 +88,17 @@ class Agent_status {
         void check_if_at_base();
 
         // coin stuff
-        bool can_purchase(Object_types obj);
+        bool can_purchase(ObjectType obj);
         bool can_purchase(unsigned int coins);
         void add_coins(unsigned int coins);
-        void spend_coins(unsigned int coins, Object_types item);
+        void spend_coins(unsigned int coins, ObjectType item);
         void send_coin_packet();
-        bool purchase(Object_types obj);
+        bool purchase(ObjectType obj);
 
         // item stuff
-        const bool can_gain_item(Object_types item);
-        bool gain_item(int item_id, Object_types item, int subtype);
-        bool lose_item(Object_types item);
+        const bool can_gain_item(ObjectType item);
+        bool gain_item(int item_id, ObjectType item);
+        bool lose_item(ObjectType item);
 
         explicit Agent_status(Agent_state* a);
         ~Agent_status();

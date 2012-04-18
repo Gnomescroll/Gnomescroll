@@ -3,7 +3,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/common/api/include.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
@@ -86,7 +86,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStat
         this->_state.cost = COST_SPAWNER;
         this->_state.reward = COST_SPAWNER;
         this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
-        this->_state.type = OBJ_TYPE_SPAWNER;
+        this->_state.type = OBJECT_SPAWNER;
         
         this->health.properties.health = SPAWNER_HEALTH;
 
@@ -135,12 +135,11 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStat
         this->spatial.properties.set_changed(false);
     }
 
-    void born(int subtype)
+    void born()
     {
-        this->_state.subtype = subtype;
         ObjectState* state = this->state();
         Vec3 position = this->get_position();
-        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, state->subtype, this->team.properties.team);
+        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team.properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
         bornUpdateFrozenVox(this->voxel_properties.vox, position, this->spatial.properties.angles.x, this->spatial.properties.angles.y);
 

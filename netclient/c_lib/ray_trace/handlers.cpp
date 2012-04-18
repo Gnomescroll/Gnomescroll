@@ -60,7 +60,7 @@ Agent_state* lock_agent_target(
 }
 
 HitscanTarget shoot_at_agent(
-    Vec3 source, Vec3 firing_direction, int id, Object_types type,
+    Vec3 source, Vec3 firing_direction, int id, ObjectType type,
     Agent_state* agent, const float range
 )
 {
@@ -91,7 +91,7 @@ HitscanTarget shoot_at_agent(
                 break;
             }
             target_information.id = target.entity_id;
-            target_information.type = (Object_types)target.entity_type;
+            target_information.type = (ObjectType)target.entity_type;
             target_information.part = target.part_id;
             for (int i=0; i<3; i++)
                 target_information.voxel[i] = target.voxel[i];
@@ -135,7 +135,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
             break;
 
         case HITSCAN_TARGET_VOXEL:
-            if (t.type == OBJ_TYPE_AGENT)
+            if (t.type == OBJECT_AGENT)
             {
                 agent = STATE::agent_list->get(t.id);
                 if (agent == NULL) break;
@@ -161,7 +161,7 @@ void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p)
     #endif
 }
 
-void broadcast_object_fired(int id, Object_types type, HitscanTarget t)
+void broadcast_object_fired(int id, ObjectType type, HitscanTarget t)
 {
     object_shot_object_StoC obj_msg;
     object_shot_terrain_StoC terrain_msg;

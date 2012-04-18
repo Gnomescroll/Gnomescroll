@@ -18,9 +18,9 @@
 // TODO - some way to generalize this
 void turret_shot_object(object_shot_object_StoC* msg)
 {
-    if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+    if (msg->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
 
-    Turret* t = (Turret*)ClientState::object_list->get((Object_types)msg->type, (int)msg->id);
+    Turret* t = (Turret*)ClientState::object_list->get((ObjectType)msg->type, (int)msg->id);
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
     if (a == NULL || a->vox == NULL) return;
@@ -50,7 +50,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
 
 void turret_shot_terrain(object_shot_terrain_StoC* msg)
 {
-    Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
+    Turret *t = (Turret*)ClientState::object_list->get((ObjectType)msg->type, msg->id);
     if (t == NULL) return;
 
     Vec3 pos = t->get_position();
@@ -76,7 +76,7 @@ void turret_shot_terrain(object_shot_terrain_StoC* msg)
 
 void turret_shot_nothing(object_shot_nothing_StoC* msg)
 {
-    Turret *t = (Turret*)ClientState::object_list->get((Object_types)msg->type, msg->id);
+    Turret *t = (Turret*)ClientState::object_list->get((ObjectType)msg->type, msg->id);
     if (t == NULL) return;
 
     Vec3 pos = t->get_position();

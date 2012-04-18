@@ -13,7 +13,7 @@ class InventoryObjectInterface: public ObjectStateLayer
     
         void tick() {}
         void update() {}
-        void born(int subtype) { this->_state.subtype = subtype; }
+        void born() {}
         void die() {}
 
     ~InventoryObjectInterface() {}
@@ -34,11 +34,11 @@ class BaseInventory: public InventoryObjectInterface
             this->contents.init(x,y);
         }
 
-        bool type_allowed(Object_types type)
+        bool type_allowed(ObjectType type)
         {   // Restrict types here
-            if (type == OBJ_TYPE_AGENT
-              || type == OBJ_TYPE_SLIME
-              || type == OBJ_TYPE_NONE)
+            if (type == OBJECT_AGENT
+              || type == OBJECT_SLIME
+              || type == OBJECT_NONE)
                 return false;
             return true;
         }
@@ -50,14 +50,14 @@ class BaseInventory: public InventoryObjectInterface
             return false;
         }
 
-        bool can_add(Object_types type)
+        bool can_add(ObjectType type)
         {
             if (!this->type_allowed(type))
                 return false;
             return this->contents.can_add();
         }
 
-        bool can_add(Object_types type, int slot)
+        bool can_add(ObjectType type, int slot)
         {
             if (!this->type_allowed(type))
                 return false;
@@ -74,16 +74,16 @@ class BaseInventory: public InventoryObjectInterface
             return this->contents.can_swap(slota, slotb);
         }
 
-        bool add(int id, Object_types type, int subtype, int stack_size)
+        bool add(int id, ObjectType type, int stack_size)
         {
             int slot = this->contents.get_empty_slot();
             if (slot < 0) return false;
-            return this->add(id, type, subtype, stack_size, slot);
+            return this->add(id, type, stack_size, slot);
         }
 
-        bool add(int id, Object_types type, int subtype, int stack_size, int slot)
+        bool add(int id, ObjectType type, int stack_size, int slot)
         {
-            bool added = this->contents.add(id, type, subtype, stack_size, slot);
+            bool added = this->contents.add(id, type, stack_size, slot);
             return added;
         }
 

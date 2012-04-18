@@ -3,7 +3,7 @@
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/objects/components/target_acquisition/component.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
@@ -45,7 +45,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public O
     : TargetAcquisitionComponent(), ObjectStateLayer(Objects::create_packet_owner_team, Objects::state_packet, &owned, &team, &health, &spatial)
     {
         this->_state.id = id;
-        this->_state.type = OBJ_TYPE_TURRET;
+        this->_state.type = OBJECT_TURRET;
 
         this->_state.blow_up_on_death = true;
         this->_state.explosion_radius = TURRET_EXPLOSION_RADIUS;
@@ -62,7 +62,7 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public O
         this->_state.attack_random = true;
 
         this->attacker_properties.id = id;
-        this->attacker_properties.type = OBJ_TYPE_TURRET;
+        this->attacker_properties.type = OBJECT_TURRET;
         this->attacker_properties.agent_protection_duration = AGENT_TURRET_PROTECTION_DURATION;
         this->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
         this->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
@@ -124,11 +124,10 @@ class Turret: public TargetAcquisitionComponent, public VoxelComponent, public O
         this->spatial.properties.set_changed(false);
     }
 
-    void born(int subtype)
+    void born()
     {
-        this->_state.subtype = subtype;
         ObjectState* state = this->state();
-        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, state->subtype, this->team.properties.team);
+        this->voxel_properties.vox = bornTeamVox(this->voxel_properties.vox_dat, state->id, state->type, this->team.properties.team);
         bornSetVox(this->voxel_properties.vox, this->voxel_properties.init_hitscan, this->voxel_properties.init_draw);
         bornUpdateFrozenVox(this->voxel_properties.vox, this->get_position(), this->spatial.properties.angles.x, this->spatial.properties.angles.y);
         this->broadcastCreate();

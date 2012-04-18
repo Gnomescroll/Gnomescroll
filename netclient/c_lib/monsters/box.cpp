@@ -16,9 +16,9 @@ VoxDat box_vox_dat;
 #if DC_CLIENT
 void box_shot_object(object_shot_object_StoC* msg)
 {
-    if (msg->target_type != OBJ_TYPE_AGENT) return; // remove this once turret can attack other objects
+    if (msg->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
 
-    Box* t = (Box*)ClientState::object_list->get((Object_types)msg->type, (int)msg->id);
+    Box* t = (Box*)ClientState::object_list->get((ObjectType)msg->type, (int)msg->id);
     if (t == NULL) return;
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
     if (a == NULL || a->vox == NULL) return;
@@ -58,7 +58,7 @@ void box_chose_target(Box* box, object_choose_target_StoC* msg)
     box->en_route = false;  // cancel all motion
 
     box->target_id = msg->target_id;    // set target
-    box->target_type = (Object_types)msg->target_type;
+    box->target_type = (ObjectType)msg->target_type;
     box->locked_on_target = true;   // flag target lock
 }
 
@@ -98,11 +98,11 @@ void box_chose_destination(Box* box, object_choose_destination_StoC* msg)
 inline void object_choose_target_StoC::handle()
 {
     using Monsters::Box;
-    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, id);
     if (obj == NULL) return;
     switch (type)
     {
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             box_chose_target((Box*)obj, this);
             break;
         default: return;
@@ -112,11 +112,11 @@ inline void object_choose_target_StoC::handle()
 inline void object_choose_destination_StoC::handle()
 {
     using Monsters::Box;
-    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, id);
     if (obj == NULL) return;
     switch (type)
     {
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             box_chose_destination((Box*)obj, this);
             break;
         default: return;

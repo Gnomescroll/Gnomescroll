@@ -26,13 +26,12 @@ class InventoryProperties: public BaseInventoryProperties
 {
     public:
 
-        void load(int id, Object_types type, int subtype, int stack_size)
+        void load(int id, ObjectType type, int stack_size)
         {
             this->item_id = id;
             this->item_type = type;
-            this->item_subtype = subtype;
             this->stack.properties.count = stack_size;
-            this->stack.properties.max = get_max_stack_size(type, subtype);
+            this->stack.properties.max = get_max_stack_size(type);
             //printf("Loaded inventory item %d,%d\n", id,type);
         }
         
@@ -73,26 +72,26 @@ class Inventory: public BaseInventoryServer
         return true;
     }
 
-    bool add_action(int id, Object_types type, int subtype, int stack_size, int slot)
+    bool add_action(int id, ObjectType type, int stack_size, int slot)
     {
-        bool added = this->add(id, type, subtype, slot);
+        bool added = this->add(id, type, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, subtype, stack_size, slot);
+            this->sendToClientAdd(id, type, stack_size, slot);
         else
-            this->broadcastAdd(id, type, subtype, stack_size, slot);
+            this->broadcastAdd(id, type, stack_size, slot);
         return added;
     }
 
-    bool add_action(int id, Object_types type, int subtype, int stack_size)
+    bool add_action(int id, ObjectType type, int stack_size)
     {
         int slot = this->contents.get_empty_slot();
-        bool added = this->add_action(id, type, subtype, stack_size, slot);
+        bool added = this->add_action(id, type, stack_size, slot);
         if (!added) return false;
         if (this->get_owner() != NO_AGENT)
-            this->sendToClientAdd(id, type, subtype, stack_size, slot);
+            this->sendToClientAdd(id, type, stack_size, slot);
         else
-            this->broadcastAdd(id, type, subtype, stack_size, slot);
+            this->broadcastAdd(id, type, stack_size, slot);
         return added;
     }
 
@@ -118,7 +117,7 @@ class Inventory: public BaseInventoryServer
         BaseInventoryServer::init(x,y);
     }
     
-    bool can_add(Object_types type)
+    bool can_add(ObjectType type)
     {
         return BaseInventoryServer::can_add(type);
     }
@@ -132,8 +131,8 @@ class Inventory: public BaseInventoryServer
     void sendToClientState(int client_id);
     void broadcastState();
     void broadcastDeath();
-    void sendToClientAdd(int id, Object_types type, int subtype, int stack_size, int slot);
-    void broadcastAdd(int id, Object_types type, int subtype, int stack_size, int slot);
+    void sendToClientAdd(int id, ObjectType type, int stack_size, int slot);
+    void broadcastAdd(int id, ObjectType type, int stack_size, int slot);
     void sendToClientRemove(int slot);
     void broadcastRemove(int slot);
     void sendToClientSwap(int slota, int slotb);

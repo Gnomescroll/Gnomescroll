@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/physics/verlet.hpp>
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/items/constants.hpp>
@@ -23,8 +23,7 @@ typedef enum
 class ObjectData
 {
     public:
-        Object_types type;
-        int subtype;
+        ObjectType type;
 
         // spatial
         //float height;
@@ -62,8 +61,7 @@ class ObjectData
 
     ObjectData()
     :
-    type(OBJ_TYPE_NONE),
-    subtype(SUBTYPE_NONE),
+    type(OBJECT_NONE),
     damp(1.0f), mass(1.0f),
     ttl_max(100),
     blow_up_on_death(false),
@@ -109,7 +107,7 @@ class OwnedDelegate
 {
     public:
         virtual int get_owner() = 0;
-        virtual void set_owner(int id, Object_types type, int subtype, int owner) = 0;
+        virtual void set_owner(int id, ObjectType type, int owner) = 0;
         virtual ~OwnedDelegate() {}
 };
 
@@ -166,7 +164,7 @@ class OwnedNone: public OwnedDelegate
     public:
     int get_owner()
     { return NULL_OWNER; }
-    void set_owner(int id, Object_types type, int subtype, int owner) {}
+    void set_owner(int id, ObjectType type, int owner) {}
 };
 
 class TeamNone: public TeamDelegate

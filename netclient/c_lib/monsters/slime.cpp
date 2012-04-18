@@ -51,10 +51,10 @@ Slime::Slime(int id)
     #endif
 }
 
-void Slime::born(int subtype)
+void Slime::born()
 {
     ObjectState* state = this->state();
-    this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type, state->subtype);
+    this->voxel_properties.vox = bornVox(this->voxel_properties.vox_dat, state->id, state->type);
     bornSetVox(
         this->voxel_properties.vox,
         this->voxel_properties.init_hitscan,
@@ -134,20 +134,19 @@ void slimeDropItem(Vec3 position)
     if (p > drop_probability) return;
     
     const int n_types = 3;    
-    ItemDrops::PickupSpriteTypes types[n_types] = {
-        ItemDrops::LASER_REFILL,
-        ItemDrops::GRENADE_REFILL,
-        ItemDrops::HEALTH_REFILL,
+    ObjectType types[n_types] = {
+        OBJECT_LASER_REFILL,
+        OBJECT_GRENADE_REFILL,
+        OBJECT_HEALTH_REFILL,
     };
-    const Object_types type = OBJ_TYPE_REFILL;
-    ItemDrops::PickupSpriteTypes subtype = types[randrange(0,n_types-1)];
+    ObjectType type = types[randrange(0,n_types-1)];
     const float mom = 5.0f;
-    ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
+    ObjectPolicyInterface* obj = ServerState::object_list->create(type);
     if (obj != NULL)
     {
         obj->set_position(position.x, position.y, position.z+1.0f);
         obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-        obj->born(subtype);
+        obj->born();
     }
     #endif
 }
@@ -156,10 +155,10 @@ void populate_slimes(int n_max)
 {   // regenerates slimes up to a maximum
 
     #define TYPE Slime
-    Object_types type = OBJ_TYPE_SLIME;
+    ObjectType type = OBJECT_SLIME;
 
     //#define TYPE Box
-    //Object_types type = OBJ_TYPE_MONSTER_BOX;
+    //ObjectType type = OBJECT_MONSTER_BOX;
 
     int n_slimes = STATE::object_list->get_object_count(type);
     n_max -= n_slimes;
@@ -177,11 +176,11 @@ void populate_slimes(int n_max)
         z = map_dim.z-1;
         #endif
 
-        s = (TYPE*)STATE::object_list->create(type, 0);
+        s = (TYPE*)STATE::object_list->create(type);
         if (s != NULL)
         {
             s->set_position(x+0.5, y+0.5, z);
-            s->born(0); // TODO
+            s->born(); // TODO
         }
     }
     #undef TYPE

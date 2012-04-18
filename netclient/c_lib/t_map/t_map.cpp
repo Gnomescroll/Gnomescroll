@@ -21,7 +21,7 @@
     /* Added for random drops */
     /* remove these includes after random drops are in separate file */
     #include <c_lib/common/random.h>
-    #include <c_lib/common/enum_types.hpp>
+    #include <c_lib/entity/constants.hpp>
     #include <c_lib/objects/common/interface/policy.hpp>
     #include <c_lib/state/server_state.hpp>
     
@@ -122,48 +122,46 @@ void block_spawn_items(int block_value, int x, int y, int z)
     if (randf () < 0.5f)
     {
         const int n_items = 7;  // 7 Gemstones
-        const ItemDrops::PickupSpriteTypes items[n_items] = {
-            ItemDrops::MALACHITE,
-            ItemDrops::RUBY,
-            ItemDrops::TURQUOISE,
-            ItemDrops::SILVER,
-            ItemDrops::AMETHYST,
-            ItemDrops::JADE,
-            ItemDrops::ONYX
+        const ObjectType items[n_items] = {
+            OBJECT_GEMSTONE_MALACHITE,
+            OBJECT_GEMSTONE_RUBY,
+            OBJECT_GEMSTONE_TURQUOISE,
+            OBJECT_GEMSTONE_SILVER,
+            OBJECT_GEMSTONE_AMETHYST,
+            OBJECT_GEMSTONE_JADE,
+            OBJECT_GEMSTONE_ONYX,
         };
         const float mom = 2.0f; // momentum
-        const Object_types type = OBJ_TYPE_GEMSTONE;
-        ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
+        ObjectType type = items[randrange(0,n_items-1)];
 
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
         if (obj != NULL)
         {
             obj->set_position(x+randf(),y+randf(), z+randf());
             obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(subtype); // TODO
+            obj->born(); // TODO
         }
     }
     else
     {
         const int n_items = 3;
-        const ItemDrops::BlockDropSubtypes items[n_items] = {
-            //ItemDrops::DIRT,
-            //ItemDrops::STONE,
-            ItemDrops::SOFT_ROCK,
-            //ItemDrops::MEDIUM_ROCK,
-            ItemDrops::HARD_ROCK,
-            ItemDrops::INFECTED_ROCK,
+        const ObjectType items[n_items] = {
+            //OBJECT_DIRT_BLOCK_DROP,
+            //OBJECT_STONE_BLOCK_DROP,
+            OBJECT_SOFT_ROCK_BLOCK_DROP,
+            //OBJECT_MEDIUM_ROCK_BLOCK_DROP,
+            OBJECT_HARD_ROCK_BLOCK_DROP,
+            OBJECT_INFECTED_ROCK_BLOCK_DROP,
         };
         const float mom = 2.0f;
-        const Object_types type = OBJ_TYPE_BLOCK_DROP;
-        ItemDrops::BlockDropSubtypes subtype  = items[randrange(0,n_items-1)];
+        ObjectType type  = items[randrange(0,n_items-1)];
 
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
+        ObjectPolicyInterface* obj = ServerState::object_list->create(type);
         if (obj != NULL)
         {
             obj->set_position(x+randf(),y+randf(), z+randf());
             obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(subtype); // TODO
+            obj->born(); // TODO
         }
     }
 }

@@ -29,7 +29,7 @@ class ObjectPolicyInterface
         virtual void tick() = 0;    // these can be in lists
         virtual void update() = 0;
         
-        virtual void born(int subtype) = 0;    // called individual on objects at birth/death (object type is always known here)
+        virtual void born() = 0;    // called individual on objects at birth/death (object type is always known here)
         virtual void die() = 0;
         
         // network
@@ -152,7 +152,7 @@ class ObjectStateLayer: public ObjectPolicyInterface
 
         // Owner
         int get_owner() { return this->owned->get_owner(); }
-        void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, this->state()->subtype, owner); }
+        void set_owner(int owner) { this->owned->set_owner(this->state()->id, this->state()->type, owner); }
 
         // Team
         int get_team() { return this->team->get_team(); }
@@ -284,4 +284,4 @@ class ObjectStateLayer: public ObjectPolicyInterface
  * */
 
 #define DUMMY_NETWORK_INTERFACE void sendToClientCreate(int client_id){}void broadcastCreate(){}void sendToClientState(int client_id){}void broadcastState(){}void broadcastDeath(){}
-#define DUMMY_API_INTERFACE void tick(){}void update(){}void die(){}void born(int subtype){}
+#define DUMMY_API_INTERFACE void tick(){}void update(){}void die(){}void born(){}

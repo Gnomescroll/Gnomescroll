@@ -12,7 +12,7 @@ namespace ServerState
 void damage_objects_within_sphere(
     float x, float y, float z, float radius,
     int dmg, int owner,
-    Object_types inflictor_type, int inflictor_id,
+    ObjectType inflictor_type, int inflictor_id,
     bool suicidal//=true
 );
     extern Agent_list* agent_list;
@@ -54,11 +54,11 @@ void dieExplode(ObjectState* state, Vec3 position, int owner)
     #endif
 }
 
-//void dieDropItem(Object_types type) // TODO -- general kill/death methods
+//void dieDropItem(ObjectType type) // TODO -- general kill/death methods
 //{
     //switch (type)
     //{
-        //case OBJ_TYPE_SLIME:
+        //case OBJECT_SLIME:
             
             //break;
     //}
@@ -71,7 +71,7 @@ void dieTeamItemAnimation(Vec3 position, int team)
     #endif
 }
 
-void dieRevokeOwner(Object_types type, int owner)
+void dieRevokeOwner(ObjectType type, int owner)
 {
     if (owner != NO_AGENT)
     {

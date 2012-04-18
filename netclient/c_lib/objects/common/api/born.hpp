@@ -3,14 +3,14 @@
 #include <c_lib/voxel/voxel_model.hpp>
 
 // BornVox and BornTeamVox are mutually exclusive
-inline Voxel_model* bornVox(VoxDat* vox_dat, int id, Object_types type, int subtype)
+inline Voxel_model* bornVox(VoxDat* vox_dat, int id, ObjectType type)
 {
-    return new Voxel_model(vox_dat, id, type, subtype);
+    return new Voxel_model(vox_dat, id, type);
 }
 
-inline Voxel_model* bornTeamVox(VoxDat* vox_dat, int id, Object_types type, int subtype, int team)
+inline Voxel_model* bornTeamVox(VoxDat* vox_dat, int id, ObjectType type, int team)
 {
-    return new Voxel_model(vox_dat, id, type, subtype, team);
+    return new Voxel_model(vox_dat, id, type, team);
 }
 
 // Initializes vox model properties. almost always desired

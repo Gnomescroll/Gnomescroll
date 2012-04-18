@@ -49,7 +49,7 @@ inventory(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
-    this->inventory = (Inventory*)ServerState::object_list->create(OBJ_TYPE_INVENTORY, 0);
+    this->inventory = (Inventory*)ServerState::object_list->create(OBJECT_INVENTORY);
     if (this->inventory != NULL)
     {
         this->inventory->set_owner(this->a->id);
@@ -63,7 +63,7 @@ inventory(NULL)
 Agent_status::~Agent_status()
 {
     #if DC_SERVER
-    ServerState::object_list->destroy(OBJ_TYPE_INVENTORY, this->inventory->state()->id);
+    ServerState::object_list->destroy(OBJECT_INVENTORY, this->inventory->state()->id);
     #endif
 }
 
@@ -169,11 +169,11 @@ int Agent_status::apply_damage(int dmg)
     return this->health;
 }
 
-int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor_type, int part_id)
+int Agent_status::apply_damage(int dmg, int inflictor_id, ObjectType inflictor_type, int part_id)
 {
     #if DC_SERVER
     // dont allow team kills
-    if ((inflictor_type == OBJ_TYPE_AGENT || inflictor_type == OBJ_TYPE_GRENADE)
+    if ((inflictor_type == OBJECT_AGENT || inflictor_type == OBJECT_GRENADE)
       && inflictor_id != this->a->id)
     {
         Agent_state *inf = STATE::agent_list->get(inflictor_id);
@@ -185,9 +185,9 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
     AgentDeathMethod death_method = DEATH_NORMAL;
     if (part_id == AGENT_PART_HEAD)
         death_method = DEATH_HEADSHOT;
-    else if (inflictor_type == OBJ_TYPE_GRENADE)
+    else if (inflictor_type == OBJECT_GRENADE)
         death_method = DEATH_GRENADE;
-    else if (inflictor_type == OBJ_TYPE_TURRET)
+    else if (inflictor_type == OBJECT_TURRET)
         death_method = DEATH_TURRET;
         
     if (!this->health) die(inflictor_id, inflictor_type, death_method);
@@ -195,7 +195,7 @@ int Agent_status::apply_damage(int dmg, int inflictor_id, Object_types inflictor
     return health;
 }
 
-int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, Object_types inflictor_type)
+int Agent_status::apply_hitscan_laser_damage_to_part(int part_id, int inflictor_id, ObjectType inflictor_type)
 {
     int dmg = 0;
 
@@ -250,10 +250,10 @@ int Agent_status::die()
     return 1;
 }
 
-int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathMethod death_method)
+int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMethod death_method)
 {
-    if (inflictor_type == OBJ_TYPE_GRENADE)
-        inflictor_type = OBJ_TYPE_AGENT;
+    if (inflictor_type == OBJECT_GRENADE)
+        inflictor_type = OBJECT_AGENT;
         
     int killed = this->die();
     Agent_state* attacker;
@@ -262,16 +262,16 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
     {
         switch (inflictor_type)
         {
-            case OBJ_TYPE_AGENT:
+            case OBJECT_AGENT:
                 attacker = STATE::agent_list->get(inflictor_id);
                 if (attacker != NULL)
                     attacker->status.kill(this->a->id);
                 break;
-            case OBJ_TYPE_SLIME:
+            case OBJECT_SLIME:
                 //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
                 //if (slime != NULL) {}
                 break;
-            case OBJ_TYPE_TURRET:
+            case OBJECT_TURRET:
                 turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
                 if (turret == NULL) break;
                 attacker = STATE::agent_list->get(turret->get_owner());
@@ -279,7 +279,7 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
                     attacker->status.kill(this->a->id);
                 break;
             default:
-                //printf("Agent_state::die -- OBJ_TYPE %d not handled\n", inflictor_type);
+                //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
                 break;
         }
 
@@ -296,14 +296,14 @@ int Agent_status::die(int inflictor_id, Object_types inflictor_type, AgentDeathM
         Turret* turret;
         switch (inflictor_type)
         {
-            case OBJ_TYPE_AGENT:
+            case OBJECT_AGENT:
                 msg.victim = this->a->id;
                 msg.attacker = inflictor_id;
                 msg.method = death_method;    // put headshot, grenades here
                 msg.broadcast();
                 break;
 
-            case OBJ_TYPE_TURRET:
+            case OBJECT_TURRET:
                 // lookup turret object, get owner, this will be the inflictor id
                 turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
                 if (turret == NULL) break;
@@ -473,7 +473,7 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
-    const unsigned int coins = get_object_cost(OBJ_TYPE_SPAWNER) * 3;
+    const unsigned int coins = get_object_cost(OBJECT_SPAWNER) * 3;
     this->add_coins(coins);
     this->has_flag = false;
 }
@@ -514,7 +514,7 @@ void Agent_status::add_coins(unsigned int coins)
     #endif
 }
 
-void Agent_status::spend_coins(unsigned int coins, Object_types item)
+void Agent_status::spend_coins(unsigned int coins, ObjectType item)
 {
     #ifdef DC_SERVER
     if (coins==0) return;
@@ -524,27 +524,27 @@ void Agent_status::spend_coins(unsigned int coins, Object_types item)
     #endif
 }
 
-const bool Agent_status::can_gain_item(Object_types item)
+const bool Agent_status::can_gain_item(ObjectType item)
 {
     if (this->dead) return false;
-    bool can;
+    //bool can;
     switch (item)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             if (owned_turrets >= AGENT_MAX_TURRETS)
                 return false;
             break;
             
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             if (owned_spawners >= AGENT_MAX_SPAWNERS)
                 return false;
             break;
 
-        case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_BLOCK_DROP:
-        case OBJ_TYPE_GEMSTONE:
-            can = this->inventory->can_add(item);
-            return can;
+        //case OBJECT_MEAT:
+        //case OBJECT_BLOCK_DROP:
+        //case OBJECT_GEMSTONE:
+            //can = this->inventory->can_add(item);
+            //return can;
 
         default:
             return true;
@@ -553,42 +553,37 @@ const bool Agent_status::can_gain_item(Object_types item)
 }
 
 // TODO -- duplicate interface for client side -- should go through event
-bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
+bool Agent_status::gain_item(int item_id, ObjectType item_type)
 {
     bool can = this->can_gain_item(item_type);
     if (!can) return false;
     switch (item_type)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             owned_turrets++;
             break;
             
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             owned_spawners++;
             break;
 
-        case OBJ_TYPE_REFILL:
-            switch (subtype)
-            {
-            case ItemDrops::GRENADE_REFILL:
-                this->a->weapons.grenades.add_ammo(10);
-                break;
-                
-            case ItemDrops::LASER_REFILL:
-                this->a->weapons.laser.add_ammo(20);
-                break;
-                
-            case ItemDrops::HEALTH_REFILL:
-                this->a->status.heal(50);
-                break;
-            }
+        case OBJECT_GRENADE_REFILL:
+            this->a->weapons.grenades.add_ammo(10);
+            break;
+            
+        case OBJECT_LASER_REFILL:
+            this->a->weapons.laser.add_ammo(20);
+            break;
+            
+        case OBJECT_HEALTH_REFILL:
+            this->a->status.heal(50);
             break;
 
-        case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_BLOCK_DROP:
-        case OBJ_TYPE_GEMSTONE:
+        case OBJECT_MEAT:
+        //case OBJECT_BLOCK_DROP:
+        //case OBJECT_GEMSTONE: // TODO -- restore types
             #if DC_SERVER
-            return this->inventory->add_action(item_id, item_type, subtype, 1);
+            return this->inventory->add_action(item_id, item_type, 1);
             #endif
             break;
             
@@ -597,11 +592,11 @@ bool Agent_status::gain_item(int item_id, Object_types item_type, int subtype)
     return can;
 }
 
-bool Agent_status::lose_item(Object_types item)
+bool Agent_status::lose_item(ObjectType item)
 {
     switch (item)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             if (owned_turrets <= 0)
             {
                 printf("WARNING -- Agent_status::lose_item -- no turrets to lose. id=%d\n", this->a->id);
@@ -610,7 +605,7 @@ bool Agent_status::lose_item(Object_types item)
             owned_turrets--;
             break;
             
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             if (owned_spawners <= 0)
             {
                 printf("WARNING -- Agent_status::lose_item -- no spawners to lose\n");
@@ -633,7 +628,7 @@ void Agent_status::send_coin_packet()
     #endif
 }
 
-bool Agent_status::can_purchase(Object_types obj)
+bool Agent_status::can_purchase(ObjectType obj)
 {
     unsigned int cost = get_object_cost(obj);
     return can_gain_item(obj) && can_purchase(cost);
@@ -644,7 +639,7 @@ bool Agent_status::can_purchase(unsigned int coins)
     return (coins <= this->coins);
 }
 
-bool Agent_status::purchase(Object_types obj)
+bool Agent_status::purchase(ObjectType obj)
 {
     if (!this->can_purchase(obj)) return false;
     unsigned int cost = get_object_cost(obj);
@@ -680,7 +675,7 @@ void Agent_status::tick()
         this->lifetime++;
 }
 
-void switch_agent_ownership(int item_id, Object_types item_type, int subtype, int owner, int new_owner)
+void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner)
 {
     Agent_state* a;
     if (owner != NO_AGENT)
@@ -693,6 +688,6 @@ void switch_agent_ownership(int item_id, Object_types item_type, int subtype, in
     {
         a = STATE::agent_list->get(new_owner);
         if (a != NULL)
-            a->status.gain_item(item_id, item_type, subtype);
+            a->status.gain_item(item_id, item_type);
     }
 }

@@ -15,7 +15,7 @@ namespace Monsters
 
 void monster_spawner_create(object_create_owner_team_index_StoC* msg)
 {
-    //MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->subtype, (int)msg->id);
+    //MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((ObjectType)msg->type, (int)msg->subtype, (int)msg->id);
     //if (s == NULL)
     //{
         //printf("WARNING monster_spawner_create() -- could not create monster_spawner %d\n", msg->id);
@@ -25,7 +25,7 @@ void monster_spawner_create(object_create_owner_team_index_StoC* msg)
     //s->set_team(msg->team);
     //s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
     //s->set_owner(msg->owner);
-    //s->born(0); // TODO
+    //s->born(); // TODO
     ////Sound::monster_spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
     //system_message->object_created(s);
 }
@@ -54,12 +54,12 @@ void MonsterSpawnerComponent::get_spawn_point(Vec3 position, float spawned_objec
     spawn_pt[1] = sy;
 }
 
-void MonsterSpawnerComponent::gain_child(Object_types type, int id)
+void MonsterSpawnerComponent::gain_child(ObjectType type, int id)
 {
     this->children++;
 }
 
-void MonsterSpawnerComponent::lose_child(Object_types type, int id)
+void MonsterSpawnerComponent::lose_child(ObjectType type, int id)
 {
     this->children--;
 }

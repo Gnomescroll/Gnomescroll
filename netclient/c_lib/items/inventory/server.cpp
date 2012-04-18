@@ -16,7 +16,6 @@ void InventoryContents::sendToClient(int inventory_id, int client_id)
         msg.inventory_id = inventory_id;
         msg.id = this->objects[i].item_id;
         msg.type = this->objects[i].item_type;
-        msg.subtype = this->objects[i].item_subtype;
         msg.stack = this->objects[i].stack.properties.count;
         msg.slot = i;
         msg.sendToClient(client_id);
@@ -30,7 +29,7 @@ void Inventory::sendToClientCreate(int client_id)
     inventory_create_StoC msg;
     ObjectState* state = this->state();
     inventory_create_message(&msg,
-        state->id, state->type, state->subtype, 
+        state->id, state->type, 
         this->contents.x, this->contents.y, this->get_owner()
     );
     msg.sendToClient(client_id);
@@ -44,7 +43,7 @@ void Inventory::broadcastCreate()
     inventory_create_StoC msg;
     ObjectState* state = this->state();
     inventory_create_message(&msg,
-        state->id, state->type, state->subtype,
+        state->id, state->type,
         this->contents.x, this->contents.y, this->get_owner()
     );
     msg.broadcast();
@@ -65,7 +64,7 @@ void Inventory::broadcastDeath()
     msg.broadcast();
 }
 
-void Inventory::sendToClientAdd(int id, Object_types type, int subtype, int stack_size, int slot)
+void Inventory::sendToClientAdd(int id, ObjectType type, int stack_size, int slot)
 {
     Agent_state* agent = ServerState::agent_list->get(this->get_owner());
     if (agent == NULL) return;
@@ -73,19 +72,17 @@ void Inventory::sendToClientAdd(int id, Object_types type, int subtype, int stac
     msg.inventory_id = this->_state.id;
     msg.id = id;
     msg.type = type;
-    msg.subtype = subtype;
     msg.stack = stack_size;
     msg.slot = slot;
     msg.sendToClient(agent->client_id);
 }
 
-void Inventory::broadcastAdd(int id, Object_types type, int subtype, int stack_size, int slot)
+void Inventory::broadcastAdd(int id, ObjectType type, int stack_size, int slot)
 {
     add_item_to_inventory_StoC msg;
     msg.inventory_id = this->_state.id;
     msg.id = id;
     msg.type = type;
-    msg.subtype = subtype;
     msg.stack = stack_size;
     msg.slot = slot;
     msg.broadcast();

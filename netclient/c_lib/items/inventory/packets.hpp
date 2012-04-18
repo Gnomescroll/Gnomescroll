@@ -7,7 +7,6 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
     public:
         uint16_t id;
         uint8_t type;
-        uint8_t subtype;
         uint8_t x,y;
         uint8_t owner;
 
@@ -15,7 +14,6 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
-            pack_u8(&subtype, buff, buff_n, pack);
             pack_u8(&x, buff, buff_n, pack);
             pack_u8(&y, buff, buff_n, pack);
             pack_u8(&owner, buff, buff_n, pack);
@@ -23,11 +21,10 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
         inline void handle();
 };
 
-void inventory_create_message(inventory_create_StoC* msg, int id, Object_types type, int subtype, int x, int y, int owner)
+void inventory_create_message(inventory_create_StoC* msg, int id, ObjectType type, int x, int y, int owner)
 {
     msg->id = id;
     msg->type = type;
-    msg->subtype = subtype;
     msg->x = x;
     msg->y = y;
     msg->owner = owner;
@@ -58,7 +55,6 @@ class add_item_to_inventory_StoC: public FixedSizeReliableNetPacketToClient<add_
         uint16_t inventory_id;
         uint16_t id;
         uint8_t type;
-        uint8_t subtype;
         uint8_t stack;
         uint8_t slot;
 
@@ -67,7 +63,6 @@ class add_item_to_inventory_StoC: public FixedSizeReliableNetPacketToClient<add_
         pack_u16(&inventory_id, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_u8(&subtype, buff, buff_n, pack);
         pack_u8(&stack, buff, buff_n, pack);
         pack_u8(&slot, buff, buff_n, pack);
     }
@@ -114,7 +109,6 @@ class add_item_to_inventory_CtoS: public FixedSizeReliableNetPacketToServer<add_
         uint8_t slot;
         uint16_t id;
         uint8_t type;
-        uint8_t subtype;
 
     inline void packet(char* buff, int* buff_n, bool pack)
     {
@@ -122,7 +116,6 @@ class add_item_to_inventory_CtoS: public FixedSizeReliableNetPacketToServer<add_
         pack_u8(&slot, buff, buff_n, pack);
         pack_u16(&id, buff, buff_n, pack);
         pack_u8(&type, buff, buff_n, pack);
-        pack_u8(&subtype, buff, buff_n, pack);
     }
     inline void handle();
 };

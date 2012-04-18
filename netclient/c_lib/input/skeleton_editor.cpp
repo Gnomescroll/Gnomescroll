@@ -7,7 +7,7 @@ namespace SkeletonEditor
 {
 bool rotate = false;
 bool use_skeleton = false;
-Object_types type = OBJ_TYPE_AGENT;
+ObjectType type = OBJECT_AGENT;
 int id = 0;
 int part = 0;
 VoxDat* vox_dat = NULL;
@@ -116,7 +116,7 @@ void raycast_to_part()
     bool voxel_hit = ClientState::voxel_hitscan_list->hitscan(
         x,y,z,
         vec[0], vec[1], vec[2],
-        -1, (Object_types)-1,
+        -1, (ObjectType)-1,
         collision_point, &vox_distance,
         &target
     );
@@ -127,37 +127,37 @@ void raycast_to_part()
 
     id = target.entity_id;
     part = target.part_id;
-    type = (Object_types)target.entity_type;
+    type = (ObjectType)target.entity_type;
 
     VoxDat* old = vox_dat;
     switch (type)
     {
-        case OBJ_TYPE_AGENT:
+        case OBJECT_AGENT:
             vox_dat = &agent_vox_dat;
             obj = ClientState::agent_list->get(id);
             if (obj==NULL) return;
             vox = ((Agent_state*)obj)->vox;
             break;
-        case OBJ_TYPE_BASE:
+        case OBJECT_BASE:
             vox_dat = &base_vox_dat;
             obj = ClientState::ctf->get_base(id+1);
             if (obj==NULL) return;
             vox = ((Base*)obj)->vox;
             break;
-        case OBJ_TYPE_FLAG:
+        case OBJECT_FLAG:
             vox_dat = &flag_vox_dat;
             obj = ClientState::ctf->get_flag(id+1);
             if (obj==NULL) return;
             vox = ((Flag*)obj)->vox;
             break;
 
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             GET_VOX_STUFF(Spawner)
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             GET_VOX_STUFF(Turret)
-        case OBJ_TYPE_SLIME:
+        case OBJECT_SLIME:
             GET_VOX_STUFF(Monsters::Slime)
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             GET_VOX_STUFF(Monsters::Box)
 
         default:

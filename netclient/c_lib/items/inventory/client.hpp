@@ -14,15 +14,15 @@
 #include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/items/constants.hpp>
 
-int get_icon_spritesheet_id(Object_types type, int subtype)
+int get_icon_spritesheet_id(ObjectType type)
 {
     const int ERROR_SPRITE = 0;
     switch (type)
     {
-        case OBJ_TYPE_REFILL:
-        case OBJ_TYPE_BLOCK_DROP:
-        case OBJ_TYPE_GEMSTONE:
-            return ItemDrops::get_object_type_sprite_index(type, subtype);
+        //case OBJECT_REFILL:
+        //case OBJECT_BLOCK_DROP:
+        //case OBJECT_GEMSTONE:
+            //return ItemDrops::get_object_type_sprite_index(type);
 
         default: return ERROR_SPRITE;
     }
@@ -42,7 +42,7 @@ class InventoryProperties: public BaseInventoryProperties, public SpriteProperti
         Inventory* inventory;
         float spacing; // render icon spacing
 
-    void load(int id, Object_types type, int subtype, int stack_size);
+    void load(int id, ObjectType type, int stack_size);
     void get_sprite_data(struct Draw::SpriteData* data);
         
     InventoryProperties()
@@ -131,13 +131,13 @@ class Inventory: public BaseInventoryClient
         msg.send();
     }
 
-    void add_action(int id, Object_types type, int subtype)
+    void add_action(int id, ObjectType type)
     {
         int slot = this->contents.get_empty_slot();
-        this->add_action(id, type, subtype, slot);
+        this->add_action(id, type, slot);
     }
     
-    void add_action(int id, Object_types type, int subtype, int slot)
+    void add_action(int id, ObjectType type, int slot)
     {
         bool can_add = this->can_add(type, slot);
         if (!can_add) return;
@@ -145,7 +145,6 @@ class Inventory: public BaseInventoryClient
         msg.inventory_id = this->_state.id;
         msg.id = id;
         msg.type = type;
-        msg.subtype = subtype;
         msg.slot = slot;
         msg.send();
     }
@@ -174,17 +173,17 @@ class Inventory: public BaseInventoryClient
     {
         return BaseInventoryClient::dimension_mismatch(x,y);
     }
-    bool can_add(Object_types type)
+    bool can_add(ObjectType type)
     {
         return BaseInventoryClient::can_add(type);
     }
-    bool can_add(Object_types type, int slot)
+    bool can_add(ObjectType type, int slot)
     {
         return BaseInventoryClient::can_add(type, slot);
     }
-    bool add(int id, Object_types type, int subtype, int stack_size, int slot)
+    bool add(int id, ObjectType type, int stack_size, int slot)
     {
-        return BaseInventoryClient::add(id, type, subtype, stack_size, slot);
+        return BaseInventoryClient::add(id, type, stack_size, slot);
     }
     bool remove(int slot)
     {

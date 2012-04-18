@@ -726,10 +726,10 @@ void ChatSystemMessage::object_destroyed(ObjectPolicyInterface* object)
     char* msg = NULL;
     switch (object->state()->type)
     {
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             msg = SystemMessage::spawner_destroyed((Spawner*)object);
             break;
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             //msg = SystemMessage::turret_destroyed((Turret*)object);
             break;
         default: return;
@@ -746,10 +746,10 @@ void ChatSystemMessage::object_created(ObjectPolicyInterface* object)
     char* msg = NULL;
     switch (object->state()->type)
     {
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             msg = SystemMessage::spawner_created((Spawner*)object);
             break;
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             //msg = SystemMessage::turret_created((Turret*)object);
             break;
         default: return;

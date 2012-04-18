@@ -14,7 +14,7 @@
 
 inline void object_create_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
+    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
     //if (obj == NULL) return;
     //obj->set_position(x,y,z);
     //obj->born(subtype);   // TODO
@@ -22,7 +22,7 @@ inline void object_create_StoC::handle()
 
 inline void object_create_momentum_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
+    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
     //if (obj == NULL) return;
     //obj->set_position(x,y,z);
     //obj->set_momentum(mx,my,mz);
@@ -31,7 +31,7 @@ inline void object_create_momentum_StoC::handle()
 
 inline void object_create_momentum_angles_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
+    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
     //if (obj == NULL) return;
     //obj->set_position(x,y,z);
     //obj->set_angles(theta, phi, 0);
@@ -40,7 +40,7 @@ inline void object_create_momentum_angles_StoC::handle()
 
 inline void object_create_owner_team_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
+    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
     //if (obj == NULL) return;
     //obj->set_position(x, y, z);
     //obj->set_team(team);
@@ -51,7 +51,7 @@ inline void object_create_owner_team_StoC::handle()
 
 inline void object_create_owner_team_index_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((Object_types)type, (int)subtype, (int)id);
+    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
     //if (obj == NULL) return;
     //obj->set_position(x, y, z);
     //obj->set_team(team);
@@ -65,14 +65,14 @@ inline void object_create_owner_team_index_StoC::handle()
 
 inline void object_state_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
 }
 
 inline void object_state_momentum_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
     obj->set_momentum(mx,my,mz);
@@ -80,7 +80,7 @@ inline void object_state_momentum_StoC::handle()
 
 inline void object_state_momentum_angles_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((Object_types)type, id);
+    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
     if (obj == NULL) return;
     obj->set_position(x,y,z);
     obj->set_momentum(mx,my,mz);
@@ -90,15 +90,15 @@ inline void object_state_momentum_angles_StoC::handle()
 /* Destruction */
 
 // use privately
-static inline void _destroy_object_handler(Object_types type, int id) __attribute((always_inline));
-static inline void _destroy_object_handler(Object_types type, int id)
+static inline void _destroy_object_handler(ObjectType type, int id) __attribute((always_inline));
+static inline void _destroy_object_handler(ObjectType type, int id)
 {
     ClientState::object_list->destroy(type, id);
 }
 
 inline void object_destroy_StoC::handle()
 {
-    _destroy_object_handler((Object_types)type, id);
+    _destroy_object_handler((ObjectType)type, id);
 }
 
 /* Actions */
@@ -108,7 +108,7 @@ inline void object_picked_up_StoC::handle()
     using ClientState::playerAgent_state;
     if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
         Sound::pickup_item();
-    _destroy_object_handler((Object_types)type, id);
+    _destroy_object_handler((ObjectType)type, id);
 }
 
 /* Hitscan */
@@ -117,11 +117,11 @@ inline void object_shot_object_StoC::handle()
 {
     switch (this->type)
     {
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             Monsters::box_shot_object(this);    // TODO -- replace handlers
             break;
             
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             turret_shot_object(this);
             break;
             
@@ -133,7 +133,7 @@ inline void object_shot_terrain_StoC::handle()
 {
     switch (this->type)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             turret_shot_terrain(this);
             break;
             
@@ -145,7 +145,7 @@ inline void object_shot_nothing_StoC::handle()
 {
     switch (this->type)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             turret_shot_nothing(this);
             break;
 

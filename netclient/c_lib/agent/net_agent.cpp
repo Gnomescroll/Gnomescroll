@@ -116,13 +116,13 @@ inline void agent_shot_object_StoC::handle()
     voxel[1] = vy;
     voxel[2] = vz;
     int voxel_blast_radius = 1;
-    if (target_type == OBJ_TYPE_AGENT)
+    if (target_type == OBJECT_AGENT)
     {
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
         voxel_blast_radius = 3;
     }
-    else if (target_type == OBJ_TYPE_SLIME)
+    else if (target_type == OBJECT_SLIME)
     {
         voxel_blast_radius = 2;
     }
@@ -169,13 +169,13 @@ inline void agent_melee_object_StoC::handle()
     voxel[1] = vy;
     voxel[2] = vz;
     int voxel_blast_radius = 1;
-    if (target_type == OBJ_TYPE_AGENT)
+    if (target_type == OBJECT_AGENT)
     {
         Agent_state* target = ClientState::agent_list->get(target_id);
         if (target->status.team == a->status.team) return;
         voxel_blast_radius = 3;
     }
-    else if (target_type == OBJ_TYPE_SLIME)
+    else if (target_type == OBJECT_SLIME)
     {
         voxel_blast_radius = 2;
     }
@@ -521,7 +521,7 @@ inline void spawn_location_StoC::handle()
 
 inline void alter_item_ownership_StoC::handle()
 {
-    ObjectPolicyInterface* obj = ClientState::object_list->get((Object_types)type, (int)id);
+    ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, (int)id);
     if (obj == NULL) return;
     obj->set_owner(owner);
 }
@@ -534,7 +534,7 @@ inline void destroy_voxel_StoC::handle()
 
 inline void inventory_StoC::handle()
 {
-    Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJ_TYPE_INVENTORY, 0, id);
+    Inventory* inventory = (Inventory*)ClientState::object_list->create(OBJECT_INVENTORY, id);
     if (inventory == NULL)
     {
         printf("WARNING: inventory_StoC::handle() -- failed to create inventory %d\n", id);
@@ -694,7 +694,7 @@ inline void hitscan_object_CtoS::handle()
 
     switch (type)
     {
-        case OBJ_TYPE_AGENT:
+        case OBJECT_AGENT:
             agent = ServerState::agent_list->get(id);
             if (agent == NULL || agent->vox == NULL) return;
             agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
@@ -706,12 +706,12 @@ inline void hitscan_object_CtoS::handle()
             destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
             break;
 
-        case OBJ_TYPE_SLIME:
-        case OBJ_TYPE_SPAWNER:
-        case OBJ_TYPE_TURRET:
-        case OBJ_TYPE_MONSTER_BOX:
-        case OBJ_TYPE_MONSTER_SPAWNER:
-            obj = ServerState::object_list->get((Object_types)type, id);
+        case OBJECT_SLIME:
+        case OBJECT_SPAWNER:
+        case OBJECT_TURRET:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_SPAWNER:
+            obj = ServerState::object_list->get((ObjectType)type, id);
             if (obj == NULL) return;
 
             if ((obj->get_team() == a->status.team && obj->get_owner() != NO_AGENT)
@@ -725,7 +725,7 @@ inline void hitscan_object_CtoS::handle()
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
 
-                if (type == OBJ_TYPE_SLIME)
+                if (type == OBJECT_SLIME)
                     a->status.kill_slime(); // TODO, de-type this
             }
             break;
@@ -840,7 +840,7 @@ inline void melee_object_CtoS::handle()
     
     switch (type)
     {
-        case OBJ_TYPE_AGENT:
+        case OBJECT_AGENT:
             agent = ServerState::agent_list->get(id);
             if (agent==NULL) return;
             // apply damage
@@ -848,12 +848,12 @@ inline void melee_object_CtoS::handle()
             destroy_object_voxel(agent->id, agent->type, part, voxel, 3);
             break;
 
-        case OBJ_TYPE_SLIME:
-        case OBJ_TYPE_SPAWNER:
-        case OBJ_TYPE_TURRET:
-        case OBJ_TYPE_MONSTER_BOX:
-        case OBJ_TYPE_MONSTER_SPAWNER:
-            obj = ServerState::object_list->get((Object_types)type, id);
+        case OBJECT_SLIME:
+        case OBJECT_SPAWNER:
+        case OBJECT_TURRET:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_SPAWNER:
+            obj = ServerState::object_list->get((ObjectType)type, id);
             if (obj == NULL) return;
 
             owner = obj->get_owner();
@@ -871,7 +871,7 @@ inline void melee_object_CtoS::handle()
                 int coins = get_kill_reward(obj, a->id, a->status.team);
                 a->status.add_coins(coins);
 
-                if (type == OBJ_TYPE_SLIME)
+                if (type == OBJECT_SLIME)
                     a->status.kill_slime(); // TODO, de-type this
             }
             break;
@@ -1011,7 +1011,7 @@ inline void agent_set_block_CtoS::handle()
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
 inline void place_spawner_CtoS::handle()
 {
-    const Object_types type = OBJ_TYPE_SPAWNER;
+    const ObjectType type = OBJECT_SPAWNER;
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
     {
@@ -1022,27 +1022,27 @@ inline void place_spawner_CtoS::handle()
     if (!a->status.can_purchase(type)) return;
     if (ServerState::object_list->full(type)) return;
     if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)z)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_SPAWNER, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)z)) return;
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_SPAWNER, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)new_z)) return;
 
-    Spawner* s = (Spawner*)ServerState::object_list->create(type, 0);
+    Spawner* s = (Spawner*)ServerState::object_list->create(type);
     if (s==NULL) return;
     s->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(s->state()->type);
     s->set_team(a->status.team);
     s->set_owner(a->id);
     ServerState::spawner_list->assign_team_index(s);
-    s->born(0); // TODO
+    s->born(); // TODO
 }
 
 inline void place_turret_CtoS::handle()
 {
-    const Object_types type = OBJ_TYPE_TURRET;
+    const ObjectType type = OBJECT_TURRET;
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL)
     {
@@ -1052,21 +1052,21 @@ inline void place_turret_CtoS::handle()
     if (a->status.team == 0) return;
     if (!a->status.can_purchase(type)) return;
     if (ServerState::object_list->full(type)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)z)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_SPAWNER, (int)x, (int)y, (int)z)) return;
     // zip down
     int new_z = t_map::get_highest_open_block(x,y);
     if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_TURRET, (int)x, (int)y, (int)new_z)) return;
-    if (ServerState::object_list->point_occupied_by_type(OBJ_TYPE_SPAWNER, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)new_z)) return;
+    if (ServerState::object_list->point_occupied_by_type(OBJECT_SPAWNER, (int)x, (int)y, (int)new_z)) return;
 
-    Turret* t = (Turret*)ServerState::object_list->create(type, 0);
+    Turret* t = (Turret*)ServerState::object_list->create(type);
     if (t==NULL) return;
     t->set_position(x+0.5f,y+0.5f,new_z);
     a->status.purchase(t->state()->type);
     t->set_team(a->status.team);
     t->set_owner(a->id);
-    t->born(0); // TODO
+    t->born(); // TODO
 }
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 

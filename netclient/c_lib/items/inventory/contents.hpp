@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 
 #include <c_lib/objects/components/stackable/components.hpp>
 
@@ -10,8 +10,7 @@ class BaseInventoryProperties
     public:
         StackableComponent stack;
         int item_id;
-        Object_types item_type;
-        int item_subtype;
+        ObjectType item_type;
         int slot;
 
     bool empty()
@@ -23,7 +22,7 @@ class BaseInventoryProperties
 
     BaseInventoryProperties()
     :
-    item_id(EMPTY_SLOT), item_type(OBJ_TYPE_NONE), item_subtype(SUBTYPE_NONE),
+    item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
     slot(-1)    // slot is set after allocation
     {
     }
@@ -135,13 +134,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
-    bool add(int id, Object_types type, int subtype, int stack_size, int slot)
+    bool add(int id, ObjectType type, int stack_size, int slot)
     {
         if (!this->can_add(slot))
             return false;
         if (this->objects[slot].empty() && id != EMPTY_SLOT)
             this->ct++;
-        this->objects[slot].load(id, type, subtype, stack_size);
+        this->objects[slot].load(id, type, stack_size);
         return true;
     }
 
@@ -157,7 +156,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
             return false;
         if (!this->objects[slot].empty())
             this->ct--;
-        this->objects[slot].load(EMPTY_SLOT, OBJ_TYPE_NONE, SUBTYPE_NONE, 1);
+        this->objects[slot].load(EMPTY_SLOT, OBJECT_NONE, 1);
         return true;
     }
 
@@ -167,8 +166,8 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
             return false;
         InventoryProperties itema = this->objects[slota];
         InventoryProperties* itemb = &this->objects[slotb];
-        this->objects[slota].load(itemb->item_id, itemb->item_type, itemb->item_subtype, itemb->stack.properties.count);
-        this->objects[slotb].load(itema.item_id, itema.item_type, itema.item_subtype, itema.stack.properties.count);
+        this->objects[slota].load(itemb->item_id, itemb->item_type, itemb->stack.properties.count);
+        this->objects[slotb].load(itema.item_id, itema.item_type, itema.stack.properties.count);
         return true;
     }
 

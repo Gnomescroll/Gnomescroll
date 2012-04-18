@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/voxel/voxel_volume.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 
@@ -36,7 +36,7 @@ class Voxel_model
         VoxDat* vox_dat;
 
         int n_parts;
-        void init_parts(int id, Object_types type, int subtype);
+        void init_parts(int id, ObjectType type);
 
         void set_draw(bool draw);
         void set_hitscan(bool hitscan);
@@ -67,7 +67,7 @@ class Voxel_model
 
         float largest_radius(); // temporary, until real body collision detection
 
-        Voxel_model(VoxDat* vox_dat, int id, Object_types type, int subtype);
-        Voxel_model(VoxDat* vox_dat, int id, Object_types type, int subtype, int team);
+        Voxel_model(VoxDat* vox_dat, int id, ObjectType type);
+        Voxel_model(VoxDat* vox_dat, int id, ObjectType type, int team);
         ~Voxel_model();
 };

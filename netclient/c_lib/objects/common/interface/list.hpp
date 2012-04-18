@@ -71,7 +71,7 @@ class GameObject_list
     public:
         const char* name() { return "GameObject"; }
 
-        void set_max_occupancy(Object_types type, int max_allowed)
+        void set_max_occupancy(ObjectType type, int max_allowed)
         {
             if (this->max_occupancy == NULL) return;
             if (type < 0 || type >= this->max_objects)
@@ -87,41 +87,41 @@ class GameObject_list
 
         void tick();
         void update();
-        bool full(Object_types type);
+        bool full(ObjectType type);
 
-        int get_index_start(Object_types type)
+        int get_index_start(ObjectType type)
         {
             if (type < 0 || type >= MAX_OBJECT_TYPE)
                 return 0;
             return this->index_start[type];
         }
-        int get_object_count(Object_types type)
+        int get_object_count(ObjectType type)
         {
             if (type < 0 || type >= MAX_OBJECT_TYPE)
                 return 0;
             return this->occupancy[type];
         }
-        int get_object_max(Object_types type)
+        int get_object_max(ObjectType type)
         {
             if (type < 0 || type >= MAX_OBJECT_TYPE)
                 return 0;
             return this->max_occupancy[type];
         }
-        ObjectPolicyInterface** get_object_array(Object_types type)
+        ObjectPolicyInterface** get_object_array(ObjectType type)
         {
             if (type < 0 || type >= MAX_OBJECT_TYPE)
                 return NULL;
             return this->objects[type];
         }
 
-        ObjectPolicyInterface* get(Object_types type, int id);
+        ObjectPolicyInterface* get(ObjectType type, int id);
 
-        ObjectPolicyInterface* create(Object_types type, int subtype);
-        ObjectPolicyInterface* create(Object_types type, int subtype, int id);
+        ObjectPolicyInterface* create(ObjectType type);
+        ObjectPolicyInterface* create(ObjectType type, int id);
 
-        void destroy(Object_types type, int id);
+        void destroy(ObjectType type, int id);
 
-        void send_to_client(Object_types type, int client_id);
+        void send_to_client(ObjectType type, int client_id);
 
         void print()
         {
@@ -135,11 +135,11 @@ class GameObject_list
         ObjectPolicyInterface** filtered_objects; // tmp array for filtering objects
         float* filtered_object_distances;
         int n_filtered;
-        bool point_occupied_by_type(Object_types type, int x, int y, int z);
+        bool point_occupied_by_type(ObjectType type, int x, int y, int z);
         int all_objects_within_sphere(float x, float y, float z, float radius);
-        int objects_within_sphere(const Object_types type, float x, float y, float z, float radius);
-        int objects_within_sphere(const Object_types* types, const int n_types, float x, float y, float z, float radius);
-        int filter_active_objects(const Object_types type);
+        int objects_within_sphere(const ObjectType type, float x, float y, float z, float radius);
+        int objects_within_sphere(const ObjectType* types, const int n_types, float x, float y, float z, float radius);
+        int filter_active_objects(const ObjectType type);
         
         ~GameObject_list()
         {

@@ -30,40 +30,40 @@
 //}
 
 // Note: not attached to GameObject_list
-ObjectPolicyInterface* create_object_of_type(Object_types type, int subtype, int id)
+ObjectPolicyInterface* create_object_of_type(ObjectType type, int id)
 {
     ObjectPolicyInterface* obj = NULL;
     switch (type)
     {
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             obj = new Turret(id);
             break;
-        case OBJ_TYPE_SPAWNER:
+        case OBJECT_SPAWNER:
             obj = new Spawner(id);
             break;
 
-        case OBJ_TYPE_MEAT:
-        case OBJ_TYPE_GEMSTONE:
-        case OBJ_TYPE_REFILL:
-            obj = new ItemDrops::PickupObjectSprite(id);  // TODO
-            break;
+        //case OBJECT_MEAT:
+        //case OBJECT_GEMSTONE:
+        //case OBJECT_REFILL:
+            //obj = new ItemDrops::PickupObjectSprite(id);  // TODO
+            //break;
 
-        case OBJ_TYPE_BLOCK_DROP:
-            obj = ItemDrops::create_block_drop(subtype, id);
-            break;
+        //case OBJECT_BLOCK_DROP:
+            //obj = ItemDrops::create_block_drop(subtype, id);
+            //break;
 
-        case OBJ_TYPE_INVENTORY:
+        case OBJECT_INVENTORY:
             //obj = create_inventory_of_type((InventoryTypes)subtype, id);
             obj = new Inventory(id);
             break;
 
-        case OBJ_TYPE_SLIME:
+        case OBJECT_SLIME:
             obj = new Monsters::Slime(id);
             break;
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             obj = new Monsters::Box(id);
             break;
-        case OBJ_TYPE_MONSTER_SPAWNER:
+        case OBJECT_MONSTER_SPAWNER:
             obj = new Monsters::MonsterSpawner(id);
             break;
             
@@ -80,7 +80,7 @@ void GameObject_list::tick()
     for (int type=0; type<this->max_objects; type++)
     {
         if (this->occupancy[type] <= 0) continue;
-        int max = this->get_object_max((Object_types)type);
+        int max = this->get_object_max((ObjectType)type);
         for (int i=0; i<max; i++)
         {
             obj = this->objects[type][i];
@@ -99,14 +99,14 @@ void GameObject_list::update()
     for (int type=0; type<this->max_objects; type++)
     {
         if (this->occupancy[type] == 0) continue;
-        int max = this->get_object_max((Object_types)type);
+        int max = this->get_object_max((ObjectType)type);
         for (int i=0; i<max; i++)
             if (this->objects[type][i] != NULL)
                 this->objects[type][i]->update();
     }
 }
 
-void GameObject_list::send_to_client(Object_types type, int client_id)
+void GameObject_list::send_to_client(ObjectType type, int client_id)
 {
     if (this->occupancy[type] == 0) return;
     int max = this->get_object_max(type);
@@ -120,14 +120,14 @@ void GameObject_list::send_to_client(Object_types type, int client_id)
     }
 }
 
-bool GameObject_list::full(Object_types type)
+bool GameObject_list::full(ObjectType type)
 {
     if (this->occupancy[type] >= this->max_occupancy[type])
         return true;
     return false;
 }
 
-void GameObject_list::destroy(Object_types type, int id)
+void GameObject_list::destroy(ObjectType type, int id)
 {
     ObjectPolicyInterface* obj = this->objects[type][id];
     if (obj == NULL) return;
@@ -142,7 +142,7 @@ void GameObject_list::destroy(Object_types type, int id)
     this->objects[type][id] = NULL;
 }
 
-bool GameObject_list::point_occupied_by_type(Object_types type, int x, int y, int z)
+bool GameObject_list::point_occupied_by_type(ObjectType type, int x, int y, int z)
 {   // TODO -- should be on spatial list
     if (this->occupancy[type] == 0) return false;
     int max = this->get_object_max(type);
@@ -207,7 +207,7 @@ int GameObject_list::all_objects_within_sphere(float x, float y, float z, float 
     return closest;
 }
 
-int GameObject_list::objects_within_sphere(const Object_types type, float x, float y, float z, float radius)
+int GameObject_list::objects_within_sphere(const ObjectType type, float x, float y, float z, float radius)
 {
     if (this->objects[type] == NULL) return 0;
     if (this->occupancy[type] == 0) return 0;
@@ -244,7 +244,7 @@ int GameObject_list::objects_within_sphere(const Object_types type, float x, flo
 }
 
 // array of types to filter
-int GameObject_list::objects_within_sphere(const Object_types* types, const int n_types, float x, float y, float z, float radius)
+int GameObject_list::objects_within_sphere(const ObjectType* types, const int n_types, float x, float y, float z, float radius)
 {
     const float radius_squared = radius*radius;
     int ct = 0;
@@ -256,7 +256,7 @@ int GameObject_list::objects_within_sphere(const Object_types* types, const int 
     for (int j=0; j<n_types; j++)
     {
         if (ct >= this->max_filtered) break;
-        Object_types type = types[j];
+        ObjectType type = types[j];
         if (this->objects[type] == NULL) continue;
         if (this->occupancy[type] == 0) continue;
         int max = this->max_occupancy[(int)type];
@@ -284,7 +284,7 @@ int GameObject_list::objects_within_sphere(const Object_types* types, const int 
     return closest;
 }
 
-int GameObject_list::filter_active_objects(const Object_types type)
+int GameObject_list::filter_active_objects(const ObjectType type)
 {
     this->n_filtered = 0;
     int ct = 0;
@@ -303,7 +303,7 @@ int GameObject_list::filter_active_objects(const Object_types type)
 
 /* Creation API */
 
-ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype)
+ObjectPolicyInterface* GameObject_list::create(ObjectType type)
 {
     if (this->full(type)) return NULL;
     int i;
@@ -316,31 +316,29 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype)
         if (this->objects[type][id] == NULL) break;
     }
     if (i >= max) return NULL;    // no slots found (went through all ids without breaking)
-    ObjectPolicyInterface* obj = create_object_of_type(type, subtype, id);
+    ObjectPolicyInterface* obj = create_object_of_type(type, id);
     if (obj == NULL) return NULL;
     this->objects[type][id] = obj;
     this->index_start[type] = id+1;
     this->occupancy[type] += 1;
     ObjectState* state = obj->state();
     state->type = type;
-    state->subtype = subtype;
     
     return obj;
 }
 
-ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype, int id)
+ObjectPolicyInterface* GameObject_list::create(ObjectType type, int id)
 {    
     ObjectPolicyInterface* obj = NULL;
     if (this->objects[type][id] == NULL)
     {   // available, create
-        obj = create_object_of_type(type, subtype, id);
+        obj = create_object_of_type(type, id);
         if (obj == NULL) return NULL;
 
         this->objects[type][id] = obj;
         this->occupancy[type] += 1;
         ObjectState* state = obj->state();
         state->type = type;
-        state->subtype = subtype;
     }
     else
         printf("%s_list: Cannot create object type %d, id %d is in use\n", name(), type, id);
@@ -348,7 +346,7 @@ ObjectPolicyInterface* GameObject_list::create(Object_types type, int subtype, i
 }
 
 /* Getter */
-ObjectPolicyInterface* GameObject_list::get(Object_types type, int id)
+ObjectPolicyInterface* GameObject_list::get(ObjectType type, int id)
 {
     int max = this->get_object_max(type);
     if (id < 0 || id >= max)
@@ -366,19 +364,19 @@ void init_gameobject_list_maximums(GameObject_list* list)
         printf("WARNING: init_gameobject_list_maximums() -- list is NULL\n");
         return;
     }
-    list->set_max_occupancy(OBJ_TYPE_SPAWNER, SPAWNER_MAX);
-    list->set_max_occupancy(OBJ_TYPE_TURRET, TURRET_MAX);
+    list->set_max_occupancy(OBJECT_SPAWNER, SPAWNER_MAX);
+    list->set_max_occupancy(OBJECT_TURRET, TURRET_MAX);
     
-    list->set_max_occupancy(OBJ_TYPE_INVENTORY, INVENTORY_MAX);
+    list->set_max_occupancy(OBJECT_INVENTORY, INVENTORY_MAX);
     
-    list->set_max_occupancy(OBJ_TYPE_REFILL, ItemDrops::REFILL_MAX);
-    list->set_max_occupancy(OBJ_TYPE_BLOCK_DROP, ItemDrops::BLOCK_DROP_MAX);
-    list->set_max_occupancy(OBJ_TYPE_GEMSTONE, ItemDrops::GEMSTONE_MAX);
-    list->set_max_occupancy(OBJ_TYPE_MEAT, ItemDrops::MEAT_MAX);
+    //list->set_max_occupancy(OBJECT_REFILL, ItemDrops::REFILL_MAX);
+    //list->set_max_occupancy(OBJECT_BLOCK_DROP, ItemDrops::BLOCK_DROP_MAX);
+    //list->set_max_occupancy(OBJECT_GEMSTONE, ItemDrops::GEMSTONE_MAX);
+    list->set_max_occupancy(OBJECT_MEAT, ItemDrops::MEAT_MAX);
 
     // mobs
-    list->set_max_occupancy(OBJ_TYPE_SLIME, Monsters::SLIME_MAX);
-    list->set_max_occupancy(OBJ_TYPE_MONSTER_BOX, Monsters::BOX_MAX);
-    list->set_max_occupancy(OBJ_TYPE_MONSTER_SPAWNER, Monsters::MONSTER_SPAWNER_MAX);
+    list->set_max_occupancy(OBJECT_SLIME, Monsters::SLIME_MAX);
+    list->set_max_occupancy(OBJECT_MONSTER_BOX, Monsters::BOX_MAX);
+    list->set_max_occupancy(OBJECT_MONSTER_SPAWNER, Monsters::MONSTER_SPAWNER_MAX);
 
 }
