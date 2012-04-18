@@ -188,7 +188,7 @@ int run()
         */
 
         ClientState::draw(); //deprecate this! WTF is this
-        
+
         t_item::draw();
         Animations::draw_insect_mob();
 
@@ -219,18 +219,18 @@ int run()
         Particles::blood_list->draw();
         Particles::end_particle_draw();
 
-
         poll_mouse();
         // draw animations
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
 
-
-
         // update mouse
         poll_mouse();
 
+        /*
+            Draw Hud
+        */
         if (Options::hud)
         {
             // switch to hud  projection
@@ -241,7 +241,8 @@ int run()
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
         }
-
+        
+        poll_mouse();
         // update sound
         Sound::update();
 
