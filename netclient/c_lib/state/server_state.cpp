@@ -179,12 +179,12 @@ namespace ServerState
             t_item::check_item_pickups();
         }
 
-        const int monster_spawners = 10;
-        const int monsters = 100;
-        const int slimes = 50;
-        Monsters::create_monsters_spawners(monster_spawners);
-        Monsters::spawn_monsters(monsters);
-        Monsters::populate_slimes(slimes);
+        //const int monster_spawners = 10;
+        //const int monsters = 100;
+        //const int slimes = 50;
+        //Monsters::create_monsters_spawners(monster_spawners);
+        //Monsters::spawn_monsters(monsters);
+        //Monsters::populate_slimes(slimes);
 
 
         ctf->check_agent_proximities();
