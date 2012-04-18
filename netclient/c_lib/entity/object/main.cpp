@@ -17,6 +17,9 @@ void init()
     
     // must specify maximum values for objects here
     object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
+    object_list->set_object_max(OBJECT_LASER_REFILL, 256);
+    object_list->set_object_max(OBJECT_GRENADE_REFILL, 256);
+    
     object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
 }
 
@@ -50,6 +53,10 @@ Object* create_switch(ObjectType type)
     {
         case OBJECT_HEALTH_REFILL:
             return create_health_refill();
+        case OBJECT_LASER_REFILL:
+            return create_laser_refill();
+        case OBJECT_GRENADE_REFILL:
+            return create_grenade_refill();
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
             //return create_soft_rock_block_drop();
@@ -76,6 +83,12 @@ void ready_switch(Object* object)
         case OBJECT_HEALTH_REFILL:
             ready_health_refill(object);
             break;
+        case OBJECT_LASER_REFILL:
+            ready_laser_refill(object);
+            break;
+        case OBJECT_GRENADE_REFILL:
+            ready_grenade_refill(object);
+            break;
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:
             //ready_soft_rock_block_drop(object);
@@ -94,6 +107,12 @@ void destroy_switch(Object* object)
     {
         case OBJECT_HEALTH_REFILL:
             die_health_refill(object);
+            break;
+        case OBJECT_LASER_REFILL:
+            die_laser_refill(object);
+            break;
+        case OBJECT_GRENADE_REFILL:
+            die_grenade_refill(object);
             break;
 
         case OBJECT_SOFT_ROCK_BLOCK_DROP:

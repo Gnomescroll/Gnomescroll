@@ -8,7 +8,7 @@ DONE
 move all network packets to entity/network
 DONE
 rewrite handlers to match new system
---owner/team/index remain
+DONE --but need to enable owner/team stuff once those components are defined
 
 migrate objects one per type to objects/
 migrate components as needed
