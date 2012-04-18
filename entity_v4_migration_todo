@@ -15,3 +15,27 @@ migrate components as needed
 gather object data from various switches
 test after each
 
+TODO:
+
+network components
+--wire existing objects
+team
+owner
+voxel_model
+animation
+spawner
+targeting
+
+turret
+spawner
+box
+slime
+monster spawner
+gems
+
+fill in data
+
+event queue?
+    -- reduces workload for chat,sound,animation triggers
+    -- especially those switched in packet handlers routing object shot object
+    ---- this might be solved now with entity system
