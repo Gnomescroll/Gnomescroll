@@ -135,6 +135,8 @@ int run()
 
         // dispatch
         NetClient::client_dispatch_network_events();
+        poll_mouse();
+
         NetClient::flush_to_net();
 
         Particles::prep_shrapnel();
@@ -159,14 +161,7 @@ int run()
         // switch to world projection
         world_projection();
 
-        // draw map
-        poll_mouse();
 
-        t_map::draw_map();
-
-
-        
-        poll_mouse();
 
         // draw client state
 
@@ -174,31 +169,38 @@ int run()
 
         poll_mouse();
         
-        t_mech::draw();
-        t_item::draw();
 
-        poll_mouse();
 
 
         /*
-            Skybox
+            Map
         */
-        Skybox::draw();
+        poll_mouse();
+        t_map::draw_map();
+        poll_mouse();
 
         /*
             Non-transparent
         */
 
+        t_item::draw();
         Animations::draw_insect_mob();
 
         /* 
             Alpha tested non-transparent
         */
 
+        t_mech::draw();
+
         begin_item_draw();
         Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->draw();
         end_item_draw();
+
+        /*
+            Skybox
+        */
+        Skybox::draw();
 
         /*
             Transparent
