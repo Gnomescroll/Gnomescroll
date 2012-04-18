@@ -5,6 +5,9 @@
 #include <c_lib/entity/component/component.hpp>
 #include <c_lib/entity/components/health.hpp>
 
+// TODO == move net packet
+#include <c_lib/objects/common/net/packets.hpp>
+
 namespace Components
 {
 

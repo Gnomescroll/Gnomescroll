@@ -7,6 +7,9 @@
 
 #include <c_lib/chat/interface.hpp>
 
+#include <c_lib/entity/objects.hpp>
+#include <c_lib/entity/components.hpp>
+
 namespace ServerState
 {
     Agent_list* agent_list = NULL;
@@ -187,6 +190,10 @@ namespace ServerState
         ctf->check_agent_proximities();
         ctf->update();
         ctf->tick();
+
+        Objects::tick();
+        Objects::harvest();
+        Objects::update();
     }
 
     void send_initial_game_state_to_client(int client_id)

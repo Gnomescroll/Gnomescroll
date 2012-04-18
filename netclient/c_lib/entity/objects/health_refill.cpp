@@ -32,7 +32,9 @@ Object* create_health_refill()
 
 void ready_health_refill(Object* object)
 {
-
+    #if DC_SERVER
+    // broadcast create
+    #endif
 }
 
 void die_health_refill(Object* object)
