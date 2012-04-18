@@ -18,13 +18,6 @@ namespace t_item
 
 #if DC_CLIENT
 
-inline void free_item_picked_up_StoC::handle()
-{
-    //printf("%d picked up by %d\n", id, agent_id);
-    // move item to inventory
-}
-
-
 inline void free_item_create_StoC::handle()
 {
     //printf("creating %d\n", id);
@@ -43,6 +36,32 @@ inline void free_item_destroy_StoC::handle()
 }
 
 
+inline void free_item_picked_up_StoC::handle()
+{
+    printf("free_item %d picked up by agent %d \n", id, agent_id);
+    /*
+        Item Pickup Sound
+    */
+
+    t_item::free_item_list->destroy(id);
+}
+
+
+/*
+    Inventory Item State Packets
+*/
+
+
+inline void item_create_StoC::handle()
+{
+// uint16_t item_id;
+// uint16_t item_type;
+// uint16_t inventory_id;
+}
+
+/*
+    Inventory
+*/
 
 inline void assign_agent_inventory_StoC::handle()
 {
@@ -60,9 +79,9 @@ inline void assign_agent_inventory_StoC::handle()
 
 #if DC_SERVER
 
-inline void free_item_picked_up_StoC::handle() {}
 inline void free_item_create_StoC::handle() {}
 inline void free_item_destroy_StoC::handle() {}
+inline void free_item_picked_up_StoC::handle() {}
 
 inline void assign_agent_inventory_StoC::handle() {}
 #endif

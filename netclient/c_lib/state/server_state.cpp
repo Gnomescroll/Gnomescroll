@@ -22,6 +22,50 @@ namespace ServerState
 
     CTF* ctf = NULL;
 
+/*
+    Map update function called from here
+
+    4 times per second per client.  Maybe too fast?
+*/
+    void server_tick()
+    {   
+        static unsigned int counter = 0;
+        counter++;
+    
+        t_map::t_map_send_map_chunks();  //every tick
+
+        if(counter % 15 == 0) 
+        {
+            agent_list->update_map_manager_positions();
+            t_map::t_map_manager_update();
+            t_map::t_map_sort_map_chunk_ques();
+        }
+
+        agent_list->update_models(); // sets skeleton
+        object_list->tick();
+        object_list->update();
+        Particles::grenade_list->tick();
+
+        t_item::tick();
+
+        if(counter % 10 == 0)
+        {
+            t_item::check_item_pickups();
+        }
+
+        const int monster_spawners = 10;
+        const int monsters = 100;
+        const int slimes = 50;
+        Monsters::create_monsters_spawners(monster_spawners);
+        Monsters::spawn_monsters(monsters);
+        Monsters::populate_slimes(slimes);
+
+
+        ctf->check_agent_proximities();
+        ctf->update();
+        ctf->tick();
+    }
+    
     void init_lists()
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
@@ -143,50 +187,6 @@ namespace ServerState
         // add all the coins
         if (agent != NULL)
             agent->status.add_coins(coins);
-    }
-
-/*
-    Map update function called from here
-
-    4 times per second per client.  Maybe too fast?
-*/
-    void server_tick()
-    {   
-        static unsigned int counter = 0;
-        counter++;
-    
-        t_map::t_map_send_map_chunks();  //every tick
-
-        if(counter % 15 == 0) 
-        {
-            agent_list->update_map_manager_positions();
-            t_map::t_map_manager_update();
-            t_map::t_map_sort_map_chunk_ques();
-        }
-
-        agent_list->update_models(); // sets skeleton
-        object_list->tick();
-        object_list->update();
-        Particles::grenade_list->tick();
-
-        t_item::tick();
-
-        if(counter % 10 == 0)
-        {
-            t_item::check_item_pickups();
-        }
-
-        const int monster_spawners = 10;
-        const int monsters = 100;
-        const int slimes = 50;
-        Monsters::create_monsters_spawners(monster_spawners);
-        Monsters::spawn_monsters(monsters);
-        Monsters::populate_slimes(slimes);
-
-
-        ctf->check_agent_proximities();
-        ctf->update();
-        ctf->tick();
     }
 
     void send_initial_game_state_to_client(int client_id)

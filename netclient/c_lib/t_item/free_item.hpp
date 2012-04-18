@@ -5,6 +5,10 @@
 #include <c_lib/t_item/client/texture.hpp>
 #endif
 
+#ifdef DC_SERVER
+    #include <c_lib/t_item/net/StoC.hpp>
+#endif
+
 #include <c_lib/physics/verlet_particle.hpp>
 //#include <c_lib/objects/components/spatial/components.hpp>
 
@@ -31,9 +35,6 @@ class Free_item //: public VerletComponent
         int type;
 
         int ttl;
-        int ttl_max;
-
-        float damp;
 
     void die();
         
@@ -41,7 +42,7 @@ class Free_item //: public VerletComponent
     {
         //this->verlet_bounce(this->damp);
         verlet.bounce_box(0.20);
-        this->ttl++;
+        this->ttl--;
     }
 
     void draw();
@@ -49,15 +50,15 @@ class Free_item //: public VerletComponent
     Free_item(int id)
     :
     id(id), type(type_NULL),
-    ttl(0), ttl_max(FREE_ITEM_TTL)
+    ttl(FREE_ITEM_TTL)
     {
         verlet.dampening = FREE_ITEM_DAMPENING;
-
-        type = rand() % 16;
     }
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
+        type = rand() % 16;
+
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
     }
@@ -176,12 +177,11 @@ void Free_item_list::tick()
         free_item = this->a[i];
 
         free_item->tick();
-        if (free_item->ttl >= free_item->ttl_max)
+        if (free_item->ttl <= 0)
         {
             #ifdef DC_SERVER
                 free_item->die();
                 this->destroy(free_item->id);
-
             #endif
         }
     }
@@ -190,18 +190,28 @@ void Free_item_list::tick()
 
 void Free_item_list::check_item_pickups()
 {
-/*
 #ifdef DC_SERVER
-    Free_item* free_item;
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        free_item = this->a[i];
+        Free_item* free_item = this->a[i];
 
+        const static float pick_up_distance = 0.5;
+        Agent_state* agent = nearest_agent_in_range(free_item->verlet.position, pick_up_distance);
 
+        if(agent == NULL) return;
+
+        int id = agent->id;
+
+        printf("agent %i picked up item %i \n", id, free_item->id);
+
+        free_item_picked_up_StoC p;
+        p.id = free_item->id;
+        p.agent_id = agent->id;
+        p.broadcast();
     }
 #endif
-*/
+
 }
 
 
