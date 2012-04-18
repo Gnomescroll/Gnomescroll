@@ -22,6 +22,7 @@ Object* create_switch(ObjectType type);
 Object* create_switch(ObjectType type, int id);
 void ready_switch(Object* object);
 void destroy_switch(Object* object);
+void destroy_switch(ObjectType type, int id);
 
 Object* get_object(ObjectType type, int id);
 

@@ -90,7 +90,6 @@ void ready_switch(Object* object)
 void destroy_switch(Object* object)
 {
     ObjectType type = object->type;
-    int id = object->id;
     switch (type)
     {
         case OBJECT_HEALTH_REFILL:
@@ -107,7 +106,15 @@ void destroy_switch(Object* object)
     }
     for (int i=0; i<object->n_components; i++)
         remove_component_from_object(object, object->components[i]);
+    int id = object->id;
     object_list->destroy(type, id);
+}
+
+void destroy_switch(ObjectType type, int id)
+{
+    Object* object = get_object(type, id);
+    if (object != NULL)
+        destroy_switch(object);
 }
 
 

@@ -11,6 +11,7 @@ Object* create_switch(ObjectType type);
 Object* create_switch(ObjectType type, int id);
 void ready_switch(Object* object);
 void destroy_switch(Object* object);
+void destroy_switch(ObjectType type, int id);
 Object* get_object(ObjectType type, int id);
 
 /* API */
@@ -38,6 +39,11 @@ void ready(Object* object)
 void destroy(Object* object)
 {
     destroy_switch(object);
+}
+
+void destroy(ObjectType type, int id)
+{
+    destroy_switch(type, id);
 }
 
 } // Objects

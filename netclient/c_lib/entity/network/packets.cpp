@@ -62,30 +62,69 @@ inline void object_create_momentum_angles_StoC::handle()
         physics->set_angles(vec3_init(theta, phi, 0));
     }
     Objects::ready(obj);
-
 }
 
 inline void object_create_owner_team_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_position(x, y, z);
-    //obj->set_team(team);
-    //obj->set_owner(owner);
-    //obj->born(subtype);
-    //system_message->object_created(obj);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+    //using Components::OwnerComponent;
+    //using Components::TeamComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+    }
+
+    //OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    //if (owner_component != NULL)
+    //{
+        //owner_component->set_owner(owner);
+    //}
+    
+    //TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    //if (team_component != NULL)
+    //{
+        //team_component->set_team(team);
+    //}
+    
+    Objects::ready(obj);
 }
 
 inline void object_create_owner_team_index_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_position(x, y, z);
-    //obj->set_team(team);
-    //obj->set_owner(owner);
-    //obj->set_team_index((unsigned int)team_index);
-    //obj->born(subtype);
-    //system_message->object_created(obj);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+    //using Components::OwnerComponent;
+    //using Components::IndexedTeamComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+    }
+
+    //OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    //if (owner_component != NULL)
+    //{
+        //owner_component->set_owner(owner);
+    //}
+    
+    //IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
+    //if (team_component != NULL)
+    //{
+        //team_component->set_team(team);
+        //team_component->set_team_index(team_index);
+    //}
+    
+    Objects::ready(obj);
 }
 
 /* State */
@@ -137,16 +176,9 @@ inline void object_state_momentum_angles_StoC::handle()
 
 /* Destruction */
 
-// use privately
-static inline void _destroy_object_handler(ObjectType type, int id) __attribute((always_inline));
-static inline void _destroy_object_handler(ObjectType type, int id)
-{
-    ClientState::object_list->destroy(type, id);
-}
-
 inline void object_destroy_StoC::handle()
 {
-    _destroy_object_handler((ObjectType)type, id);
+    Objects::destroy((ObjectType)type, id);
 }
 
 /* Actions */
@@ -156,7 +188,7 @@ inline void object_picked_up_StoC::handle()
     using ClientState::playerAgent_state;
     if (playerAgent_state.you != NULL && playerAgent_state.you->id == agent_id)
         Sound::pickup_item();
-    _destroy_object_handler((ObjectType)type, id);
+    Objects::destroy((ObjectType)type, id);
 }
 
 /* Hitscan */
