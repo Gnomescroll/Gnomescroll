@@ -16,3 +16,6 @@
 #include <c_lib/entity/component/component_list.cpp>
 #include <c_lib/entity/component/main.cpp>
 #include <c_lib/entity/components.cpp>
+
+#include <c_lib/entity/network/packets.cpp>
+#include <c_lib/entity/network/interfaces.cpp>

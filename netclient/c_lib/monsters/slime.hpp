@@ -3,8 +3,8 @@
 #include <c_lib/common/enum_types.hpp>
 #include <c_lib/monsters/constants.hpp>
 #include <c_lib/objects/components/include.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
-#include <c_lib/objects/common/net/interfaces.hpp>
+#include <c_lib/entity/network/packets.hpp>
+#include <c_lib/entity/network/interfaces.hpp>
 
 namespace Monsters {
 

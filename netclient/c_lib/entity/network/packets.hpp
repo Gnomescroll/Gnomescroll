@@ -3,144 +3,129 @@
 #include <net_lib/net.hpp>
 
 // Position
-class object_create_StoC_model
+class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_create_StoC>
 {
     public:
         uint8_t type;
-        uint8_t subtype;
+        uint16_t id;
+        //uint8_t team;
+        //uint8_t owner;
+        //uint8_t team_index;
+        float x,y,z;
+        //float mx,my,mz;
+        //float theta, phi, rho;
+        
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+// Position + owner,team
+class object_create_owner_team_StoC: public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>
+{
+    public:
+        uint8_t type;
+        uint16_t id;
+        uint8_t team;
+        uint8_t owner;
+        float x,y,z;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_u8(&owner, buff, buff_n, pack);
+        pack_u8(&team, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+// Position + owner,team,team_index
+class object_create_owner_team_index_StoC: public  FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>
+{
+    public:
+        uint8_t type;
         uint16_t id;
         uint8_t team;
         uint8_t owner;
         uint8_t team_index;
         float x,y,z;
-        float mx,my,mz;
-        float theta, phi, rho;
-        
-        inline virtual void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u8(&subtype, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_float(&x, buff, buff_n, pack);
-            pack_float(&y, buff, buff_n, pack);
-            pack_float(&z, buff, buff_n, pack);
-        }
-        virtual void handle();
-};
 
-// Concrete implementation
-class object_create_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_StoC>, public object_create_StoC_model
-{
-    public:
     inline void packet(char* buff, int* buff_n, bool pack)
     {
-        object_create_StoC_model::packet(buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_u8(&owner, buff, buff_n, pack);
+        pack_u8(&team, buff, buff_n, pack);
+        pack_u8(&team_index, buff, buff_n, pack);
     }
-    inline void handle() { object_create_StoC_model::handle(); }
-};
-
-// Position + owner,team
-class object_create_owner_team_StoC_model: public object_create_StoC_model
-{
-    public:
-        inline virtual void packet(char* buff, int* buff_n, bool pack)
-        {
-            object_create_StoC_model::packet(buff, buff_n, pack);
-            pack_u8(&owner, buff, buff_n, pack);
-            pack_u8(&team, buff, buff_n, pack);
-        }
-        virtual void handle();
-};
-
-// Concrete implementation
-class object_create_owner_team_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_owner_team_StoC>, public object_create_owner_team_StoC_model
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_owner_team_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline void handle() { object_create_owner_team_StoC_model::handle(); }
-};
-
-// Position + owner,team,team_index
-class object_create_owner_team_index_StoC_model: public object_create_owner_team_StoC_model
-{
-    public:
-        inline virtual void packet(char* buff, int* buff_n, bool pack)
-        {
-            object_create_owner_team_StoC_model::packet(buff, buff_n, pack);
-            pack_u8(&team_index, buff, buff_n, pack);
-        }
-        virtual void handle();
-};
-
-// Concrete implementation
-class object_create_owner_team_index_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_owner_team_index_StoC>, public object_create_owner_team_index_StoC_model
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_owner_team_index_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline void handle() { object_create_owner_team_index_StoC_model::handle(); }
+    inline void handle();
 };
 
 /* Position + Momentum */
 
-class object_create_momentum_StoC_model: public object_create_StoC_model
+class object_create_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>
 {
     public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
+        uint8_t type;
+        uint16_t id;
+        float x,y,z;
+        float mx,my,mz;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
     {
-        object_create_StoC_model::packet(buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
         pack_float(&mx, buff, buff_n, pack);
         pack_float(&my, buff, buff_n, pack);
         pack_float(&mz, buff, buff_n, pack);
     }
-    virtual void handle();
+    inline void handle();
 };
 
-// Concrete implementation
-class object_create_momentum_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_momentum_StoC>, public object_create_momentum_StoC_model
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline void handle() { object_create_momentum_StoC_model::handle(); }
-};
 
 /* Position + Momentum + Theta */
 
 // NOTE: only packs theta/phi for now
-class object_create_momentum_angles_StoC_model: public object_create_momentum_StoC_model
+class object_create_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_StoC>
 {
     public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
+        uint8_t type;
+        uint16_t id;
+        float x,y,z;
+        float mx,my,mz;
+        float theta, phi;
+
+    
+    inline void packet(char* buff, int* buff_n, bool pack)
     {
-        object_create_momentum_StoC_model::packet(buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&id, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+        pack_float(&mx, buff, buff_n, pack);
+        pack_float(&my, buff, buff_n, pack);
+        pack_float(&mz, buff, buff_n, pack);
         pack_float(&theta, buff, buff_n, pack);
         pack_float(&phi, buff, buff_n, pack);
     }
-    virtual void handle();
-};
-
-// Concrete implementation
-class object_create_momentum_angles_StoC:
-public FixedSizeReliableNetPacketToClient<object_create_momentum_angles_StoC>, public object_create_momentum_angles_StoC_model
-{
-    public:
-    inline void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_create_momentum_angles_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline void handle() { object_create_momentum_angles_StoC_model::handle(); }
+    inline void handle();
 };
 
 /* Destruction */
@@ -161,14 +146,14 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
 
 /* State */
 
-class object_state_StoC_model
+class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_StoC>
 {
     public:
         uint8_t id;
         uint8_t type;
         float x,y,z;
-        float mx,my,mz;
-        float theta, phi, rho;
+        //float mx,my,mz;
+        //float theta, phi, rho;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
@@ -178,67 +163,55 @@ class object_state_StoC_model
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);
         }
-        void handle();
+        inline void handle();
 };
 
-// concrete
-class object_state_StoC:
-public object_state_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_StoC>
+class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
 {
     public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_state_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline virtual void handle() { object_state_StoC_model::handle(); }
-};
-
-class object_state_momentum_StoC_model: public object_state_StoC_model
-{
-    public:
+        uint8_t id;
+        uint8_t type;
+        float x,y,z;
+        float mx,my,mz;
+    
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            object_state_StoC_model::packet(buff, buff_n, pack);
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
             pack_float(&mx, buff, buff_n, pack);
             pack_float(&my, buff, buff_n, pack);
             pack_float(&mz, buff, buff_n, pack);
         }
-        void handle();
-};
-// concrete
-class object_state_momentum_StoC:
-public object_state_momentum_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
-{
-    public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_state_momentum_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline virtual void handle() { object_state_momentum_StoC_model::handle(); }
+        inline void handle();
 };
 
 // NOTE: only packs theta/phi for now
-class object_state_momentum_angles_StoC_model: public object_state_momentum_StoC_model
+class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_angles_StoC>
 {
     public:
+        uint8_t id;
+        uint8_t type;
+        float x,y,z;
+        float mx,my,mz;
+        float theta, phi;
+    
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            object_state_momentum_StoC_model::packet(buff, buff_n, pack);
+            pack_u8(&id, buff, buff_n, pack);
+            pack_u8(&type, buff, buff_n, pack);
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&mx, buff, buff_n, pack);
+            pack_float(&my, buff, buff_n, pack);
+            pack_float(&mz, buff, buff_n, pack);
             pack_float(&theta, buff, buff_n, pack);
             pack_float(&phi, buff, buff_n, pack);
         }
-        void handle();
-};
-// concrete
-class object_state_momentum_angles_StoC:
-public object_state_momentum_angles_StoC_model, public FixedSizeReliableNetPacketToClient<object_state_momentum_angles_StoC>
-{
-    public:
-    inline virtual void packet(char* buff, int* buff_n, bool pack)
-    {
-        object_state_momentum_angles_StoC_model::packet(buff, buff_n, pack);
-    }
-    inline virtual void handle() { object_state_momentum_angles_StoC_model::handle(); }
+        inline void handle();
 };
 
 /* Actions */
@@ -338,7 +311,6 @@ class CreatePacket: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -369,7 +341,6 @@ class CreatePacketOwnerTeam: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -402,7 +373,6 @@ class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -436,7 +406,6 @@ class CreatePacketMomentum: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;
@@ -471,7 +440,6 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
             ObjectState* state = obj->state();
             msg->id = state->id;
             msg->type = state->type;
-            msg->subtype = state->subtype;
             Vec3 position = obj->get_position();
             msg->x = position.x;
             msg->y = position.y;

@@ -1,6 +1,6 @@
 #include "policy.hpp"
 
-#include <c_lib/objects/common/net/packets.hpp>
+#include <c_lib/entity/network/packets.hpp>
 
 namespace Objects
 {

@@ -4,7 +4,7 @@
 
 #include <c_lib/common/random.h>
 #include <c_lib/agent/net_agent.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
+#include <c_lib/entity/network/packets.hpp>
 #include <c_lib/t_map/t_map.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 

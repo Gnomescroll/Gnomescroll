@@ -14,3 +14,6 @@
 #include <c_lib/entity/component/component_list.hpp>
 #include <c_lib/entity/component/main.hpp>
 #include <c_lib/entity/components.hpp>
+
+#include <c_lib/entity/network/packets.hpp>
+#include <c_lib/entity/network/interfaces.hpp>

@@ -13,21 +13,21 @@ namespace Monsters
 
 #ifdef DC_CLIENT
 
-void monster_spawner_create(object_create_owner_team_index_StoC_model* msg)
+void monster_spawner_create(object_create_owner_team_index_StoC* msg)
 {
-    MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->subtype, (int)msg->id);
-    if (s == NULL)
-    {
-        printf("WARNING monster_spawner_create() -- could not create monster_spawner %d\n", msg->id);
-        return;
-    }
-    s->set_position(msg->x, msg->y, msg->z);
-    s->set_team(msg->team);
-    s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
-    s->set_owner(msg->owner);
-    s->born(0); // TODO
-    //Sound::monster_spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
-    system_message->object_created(s);
+    //MonsterSpawner* s = (MonsterSpawner*)ClientState::object_list->create((Object_types)msg->type, (int)msg->subtype, (int)msg->id);
+    //if (s == NULL)
+    //{
+        //printf("WARNING monster_spawner_create() -- could not create monster_spawner %d\n", msg->id);
+        //return;
+    //}
+    //s->set_position(msg->x, msg->y, msg->z);
+    //s->set_team(msg->team);
+    //s->set_team_index((unsigned int)msg->team_index); //overwrite with server authority
+    //s->set_owner(msg->owner);
+    //s->born(0); // TODO
+    ////Sound::monster_spawner_placed(msg->x, msg->y, msg->z, 0,0,0);
+    //system_message->object_created(s);
 }
 #endif
 

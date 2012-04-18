@@ -3,7 +3,7 @@
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/objects/common/interface/entity.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
+#include <c_lib/entity/network/packets.hpp>
 #include <c_lib/items/constants.hpp>
 #include <c_lib/objects/components/stackable/components.hpp>
 

@@ -11,13 +11,13 @@
 #include <c_lib/objects/common/api/born.hpp>
 #include <c_lib/objects/common/api/update.hpp>
 #include <c_lib/objects/common/api/tick.hpp>
-#include <c_lib/objects/common/net/packets.hpp>
+#include <c_lib/entity/network/packets.hpp>
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/monsters/slime.hpp>
 #include <c_lib/monsters/monster_spawner.hpp>
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/t_map/t_map.hpp>
-#include <c_lib/objects/common/net/interfaces.hpp>
+#include <c_lib/entity/network/interfaces.hpp>
 
 #if DC_SERVER
 //forward decl
