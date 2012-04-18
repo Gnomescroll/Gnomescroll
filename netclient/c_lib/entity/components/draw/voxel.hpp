@@ -102,7 +102,7 @@ class VoxelComponent: public DrawComponent
             this->orient_vectors();
         }
 
-    VoxelComponent(ComponentType type)
+    explicit VoxelComponent(ComponentType type)
     : DrawComponent(type),
     size(1.0f), theta(0.0f), phi(0.0f), dtheta_speed(0.0f), dphi_speed(0.0f)
     {}

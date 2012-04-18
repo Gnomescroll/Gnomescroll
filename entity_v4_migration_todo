@@ -35,7 +35,27 @@ gems
 
 fill in data
 
+
+==============
 event queue?
     -- reduces workload for chat,sound,animation triggers
     -- especially those switched in packet handlers routing object shot object
     ---- this might be solved now with entity system
+==============
+
+Future optimizations:
+
+preallocate objects
+--definitely faster; eliminates malloc of component array, nothing else different
+
+preallocate components -- load data from default model
+--not sure if faster than new, but probably is. depends on how much faster malloc loading defaults is
+
+use swaps on lists
+--minimize/eliminate iterating whole list
+
+static component lookup array per type
+--eliminates pointer dereferences required for finding component
+
+static has_tick has_update per type
+--avoids iterating entire batches of objects that will all be null in tick() or update()
