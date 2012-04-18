@@ -25,13 +25,13 @@
 
 ////and a ready function, called after creation and data loading (like setting position)
 
-//void ready_some_object(Object* refill)
+//void ready_some_object(Object* object)
 //{
     //// set voxel stuff if it has voxels
 //}
 
 ////and a die function, called right before removing the object from memory
-//void die_some_object(Object* refill)
+//void die_some_object(Object* object)
 //{
     //// any necessary teardown
 //}
@@ -65,14 +65,25 @@ Object* create_REPLACEME()
     return obj;
 }
 
-void ready_REPLACEME(Object* refill)
+void ready_REPLACEME(Object* object)
 {
 
 }
 
-void die_REPLACEME(Object* refill)
+void die_REPLACEME(Object* object)
 {
 
 }
+
+//void tick_REPLACEME(Object* object)
+//{
+
+//}
+
+//void update_REPLACEME(Object* object)
+//{
+
+//}
+
 
 } // Objects

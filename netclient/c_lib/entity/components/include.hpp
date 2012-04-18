@@ -10,3 +10,8 @@
 #include <c_lib/entity/components/draw.hpp>
 #include <c_lib/entity/components/draw/billboard_sprite.hpp>
 
+#include <c_lib/entity/components/pickup.hpp>
+
+#include <c_lib/entity/components/health.hpp>
+#include <c_lib/entity/components/health/hit_points.hpp>
+#include <c_lib/entity/components/health/ttl.hpp>

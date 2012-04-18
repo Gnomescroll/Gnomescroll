@@ -24,6 +24,9 @@
     #include <c_lib/common/enum_types.hpp>
     #include <c_lib/objects/common/interface/policy.hpp>
     #include <c_lib/state/server_state.hpp>
+    
+    #include <c_lib/entity/constants.hpp>
+    #include <c_lib/entity/objects.hpp>
 
     #include <c_lib/t_item/_interface.hpp>
 
@@ -113,6 +116,9 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
+    Objects::create(OBJECT_HEALTH_REFILL);
+    return;
+
     if (randf () < 0.5f)
     {
         const int n_items = 7;  // 7 Gemstones
@@ -176,7 +182,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 0
+#if 1
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else

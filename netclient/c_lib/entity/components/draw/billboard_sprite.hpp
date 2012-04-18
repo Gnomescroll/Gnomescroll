@@ -12,7 +12,7 @@ class BillboardSpriteComponent: public DrawComponent
         int sprite_index;
         float scale;
         
-        void draw();
+        void call();
 
     BillboardSpriteComponent()
     : DrawComponent(COMPONENT_BILLBOARD_SPRITE),

@@ -11,7 +11,7 @@
 namespace Components
 {
 
-void BillboardSpriteComponent::draw()
+void BillboardSpriteComponent::call()
 {
     #if DC_CLIENT
     PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);

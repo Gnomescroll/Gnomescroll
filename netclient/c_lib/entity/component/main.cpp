@@ -23,6 +23,11 @@ StackableComponentList* stackable_component_list = NULL;
 
 BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
 
+PickupComponentList* pickup_component_list = NULL;
+
+
+TTLHealthComponentList* ttl_health_component_list = NULL;
+HitPointsHealthComponentList* hit_points_health_component_list = NULL;
 
 /* ComponentList handler switches */
 
@@ -44,6 +49,15 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_BILLBOARD_SPRITE:
             return billboard_sprite_component_list->subscribe();
+
+        case COMPONENT_PICKUP:
+            return pickup_component_list->subscribe();
+
+        case COMPONENT_TTL:
+            return ttl_health_component_list->subscribe();
+
+        case COMPONENT_HIT_POINTS:
+            return hit_points_health_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -75,6 +89,18 @@ void release_switch(Component* component)
         case COMPONENT_BILLBOARD_SPRITE:
             billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
             break;
+
+        case COMPONENT_PICKUP:
+            pickup_component_list->unsubscribe((PickupComponent*)component);
+            break;
+
+        case COMPONENT_TTL:
+            ttl_health_component_list->unsubscribe((TTLHealthComponent*)component);
+            break;
+
+        case COMPONENT_HIT_POINTS:
+            hit_points_health_component_list->unsubscribe((HitPointsHealthComponent*)component);
+            break;
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
@@ -91,6 +117,11 @@ void init()
     stackable_component_list = new StackableComponentList;
 
     billboard_sprite_component_list = new BillboardSpriteComponentList;
+
+    pickup_component_list = new PickupComponentList;
+
+    ttl_health_component_list = new TTLHealthComponentList;
+    hit_points_health_component_list = new HitPointsHealthComponentList;
 }
 
 void teardown()
@@ -102,6 +133,11 @@ void teardown()
     if (stackable_component_list != NULL) delete stackable_component_list;
 
     if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
+
+    if (pickup_component_list != NULL) delete pickup_component_list;
+
+    if (ttl_health_component_list != NULL) delete ttl_health_component_list;
+    if (hit_points_health_component_list != NULL) delete hit_points_health_component_list;
 }
 
 } // Components

@@ -19,6 +19,8 @@ namespace Components
  */
 
 /* ComponentList typedefs */
+
+// TODO - move
  
 /* Physics */
 const int MAX_PHYSICS_COMPONENTS = 4096;
@@ -26,19 +28,8 @@ typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_
     PositionPhysicsComponentList;
 typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
-//typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
-    //VerletPhysicsComponentList;
-class VerletPhysicsComponentList:
-    public ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
-{
-    public:
-        void tick()
-        {
-            for (int i=0; i<this->max; i++)
-                if (this->components[i] != NULL)
-                    this->components[i]->verlet_bounce(1.0f);
-        }
-};
+typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
+    VerletPhysicsComponentList;
 
 /* Stackables */
 const int MAX_STACKABLE_COMPONENTS = 4096;
@@ -50,18 +41,22 @@ const int MAX_RENDERABLE_COMPONENTS = 4096;
 //typedef ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
     //BillboardSpriteComponentList;
 class BillboardSpriteComponentList:
-    public ComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
+    public CallableComponentList<BillboardSpriteComponent, COMPONENT_BILLBOARD_SPRITE, MAX_RENDERABLE_COMPONENTS>
 {
-    public:
-        void draw()
-        {
-            for (int i=0; i<this->max; i++)
-                if (this->components[i] != NULL)
-                    this->components[i]->draw();
-        }
 };
 
-    
+/* Pickup */
+const int MAX_PICKUP_COMPONENTS = 2048;
+typedef ComponentList<PickupComponent, COMPONENT_PICKUP, MAX_PICKUP_COMPONENTS>
+    PickupComponentList;
+
+/* Health */
+const int MAX_HEALTH_COMPONENTS = 4096;
+typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>
+    TTLHealthComponentList;
+typedef ComponentList<HitPointsHealthComponent, COMPONENT_HIT_POINTS, MAX_HEALTH_COMPONENTS>
+    HitPointsHealthComponentList;
+
 
 /* ComponentList declarations */
 
@@ -72,6 +67,11 @@ extern VerletPhysicsComponentList* verlet_physics_component_list;
 extern StackableComponentList* stackable_component_list;
 
 extern BillboardSpriteComponentList* billboard_sprite_component_list;
+
+extern PickupComponentList* pickup_component_list;
+
+extern TTLHealthComponentList* ttl_health_component_list;
+extern HitPointsHealthComponentList* hit_points_health_component_list;
 
 /* ComponentList handler switches */
 

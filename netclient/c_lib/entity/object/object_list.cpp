@@ -1,6 +1,8 @@
 #include "object_list.hpp"
 
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/object/object.hpp>
+#include <c_lib/entity/components/health.hpp>
 
 namespace Objects
 {
@@ -68,6 +70,56 @@ void ObjectList::init()
     this->indices = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->maximums = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->objects = (Object***)calloc(MAX_OBJECT_TYPES, sizeof(Object**));
+}
+
+void ObjectList::tick()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        if (this->objects[i] == NULL) continue;
+        //if (this->maximums[i] > 0 && this->objects[i][0]->tick == NULL) continue;
+        for (int j=0; j<this->maximums[i]; j++)
+        {
+            if (this->objects[i][j] == NULL) continue;
+            Object* obj = this->objects[i][j];
+            if (obj->tick != NULL)
+                obj->tick(obj);
+        }
+    }
+}
+
+void ObjectList::update()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        if (this->objects[i] == NULL) continue;
+        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
+        for (int j=0; j<this->maximums[i]; j++)
+        {
+            if (this->objects[i][j] == NULL) continue;
+            Object* obj = this->objects[i][j];
+            if (obj->update != NULL)
+                obj->update(obj);
+        }
+    }
+}
+
+void ObjectList::harvest()
+{
+    using Components::HealthComponent;
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        if (this->objects[i] == NULL) continue;
+        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
+        for (int j=0; j<this->maximums[i]; j++)
+        {
+            if (this->objects[i][j] == NULL) continue;
+            Object* obj = this->objects[i][j];
+            HealthComponent* health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+            if (health != NULL && health->is_dead())
+                Objects::destroy(obj);
+        }
+    }
 }
 
 ObjectList::~ObjectList()

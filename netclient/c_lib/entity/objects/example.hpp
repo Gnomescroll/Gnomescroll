@@ -33,6 +33,8 @@ class Object;
 Object* create_REPLACEME();
 void ready_REPLACEME(Object* object);
 void die_REPLACEME(Object* object);
+//void tick_REPLACEME(Object* object);
+//void update_REPLACEME(Object* object);
 
 } // Objects
 
