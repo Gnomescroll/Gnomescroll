@@ -61,6 +61,14 @@ Object* create_switch(ObjectType type)
     return NULL;
 }
 
+Object* create_switch(ObjectType type, int id)
+{
+    Object* object = create_switch(type);
+    if (object == NULL) return NULL;
+    object_list->set_object_id(object, id);
+    return object;
+}
+
 void ready_switch(Object* object)
 {
     switch (object->type)
@@ -102,5 +110,10 @@ void destroy_switch(Object* object)
     object_list->destroy(type, id);
 }
 
+
+Object* get_object(ObjectType type, int id)
+{
+    return object_list->get(type, id);
+}
 
 } // Objects

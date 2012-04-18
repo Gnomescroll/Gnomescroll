@@ -2,40 +2,67 @@
 
 #if DC_CLIENT
 
-#include <c_lib/sound/sound.hpp>
+//#include <c_lib/sound/sound.hpp>
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-#include <c_lib/items/turret.hpp>
-#include <c_lib/items/spawner.hpp>
-#include <c_lib/monsters/box.hpp>
+//#include <c_lib/items/turret.hpp>
+//#include <c_lib/items/spawner.hpp>
+//#include <c_lib/monsters/box.hpp>
+
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/objects.hpp>
 
 /* Construction */
 
 inline void object_create_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_position(x,y,z);
-    //obj->born(subtype);   // TODO
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+    }
+    Objects::ready(obj);
 }
 
 inline void object_create_momentum_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_position(x,y,z);
-    //obj->set_momentum(mx,my,mz);
-    //obj->born(subtype);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+    }
+    Objects::ready(obj);
 }
 
 inline void object_create_momentum_angles_StoC::handle()
 {
-    //ObjectPolicyInterface* obj = ClientState::object_list->create((ObjectType)type, (int)subtype, (int)id);
-    //if (obj == NULL) return;
-    //obj->set_position(x,y,z);
-    //obj->set_angles(theta, phi, 0);
-    //obj->born(subtype);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::create((ObjectType)type, id);
+    if (obj == NULL) return;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
+    Objects::ready(obj);
+
 }
 
 inline void object_create_owner_team_StoC::handle()
@@ -65,26 +92,47 @@ inline void object_create_owner_team_index_StoC::handle()
 
 inline void object_state_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
-    obj->set_position(x,y,z);
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+    }
 }
 
 inline void object_state_momentum_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
-    obj->set_position(x,y,z);
-    obj->set_momentum(mx,my,mz);
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+    }
 }
 
 inline void object_state_momentum_angles_StoC::handle()
 {
-    ObjectPolicyInterface* obj = STATE::object_list->get((ObjectType)type, id);
+    using Objects::Object;
+    using Components::PhysicsComponent;
+
+    Object* obj = Objects::get((ObjectType)type, id);
     if (obj == NULL) return;
-    obj->set_position(x,y,z);
-    obj->set_momentum(mx,my,mz);
-    obj->set_angles(theta, phi, 0);
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(vec3_init(x,y,z));
+        physics->set_momentum(vec3_init(mx,my,mz));
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
 }
 
 /* Destruction */

@@ -8,14 +8,9 @@
 namespace Objects
 {
 
-Object* create_health_refill()
-{
-    // initialize object
-    ObjectType type = OBJECT_HEALTH_REFILL;
-    Object* obj = object_list->create(type);
-    if (obj == NULL) return NULL;
-
-    // attach components
+// private
+static void set_health_refill_properties(Object* obj)
+{   // attach components
     //const int n_components = 3;
     const int n_components = 4;
     obj->init(n_components);
@@ -26,7 +21,15 @@ Object* create_health_refill()
 
     obj->tick = &tick_health_refill;
     //obj->update = NULL;
+}
 
+Object* create_health_refill()
+{
+    // initialize object
+    ObjectType type = OBJECT_HEALTH_REFILL;
+    Object* obj = object_list->create(type);
+    if (obj == NULL) return NULL;
+    set_health_refill_properties(obj);
     return obj;
 }
 

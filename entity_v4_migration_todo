@@ -1,7 +1,9 @@
 ENTITY MIGRATION TODO
 
 eliminate subtypes
+DONE
 rename Object_types to ObjectType
+DONE
 
 move all network packets to entity/network
 DONE
@@ -9,5 +11,6 @@ rewrite handlers to match new system
 
 migrate objects one per type to objects/
 migrate components as needed
+gather object data from various switches
 test after each
 
