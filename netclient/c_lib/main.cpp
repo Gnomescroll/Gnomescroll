@@ -189,12 +189,12 @@ int run()
             Transparent
         */
 
+        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
+
         begin_item_draw();
         Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->draw();
         end_item_draw();
-
-        Particles::draw_shrapnel();
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
