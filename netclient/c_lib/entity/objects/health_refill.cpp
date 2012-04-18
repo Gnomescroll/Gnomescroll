@@ -37,7 +37,11 @@ void ready_health_refill(Object* object)
 
 void die_health_refill(Object* object)
 {
-
+    #if DC_SERVER
+    using Components::PickupComponent;
+    PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
+    pickup->broadcast();
+    #endif
 }
 
 void tick_health_refill(Object* object)
@@ -50,11 +54,11 @@ void tick_health_refill(Object* object)
     VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);
     verlet->bounce();
 
-    //tickPickup(state, this->get_position(), &this->pickup);
+    #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
     pickup->tick(object);
+    #endif
 
-    //tickTTL(state);
     TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
     ttl->tick();
 }

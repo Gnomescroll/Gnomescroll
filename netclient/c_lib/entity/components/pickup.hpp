@@ -3,6 +3,7 @@
 #include <c_lib/agent/constants.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/component/component.hpp>
+#include <c_lib/entity/components/health.hpp>
 
 namespace Components
 {
@@ -29,7 +30,6 @@ class PickupComponent: public Component
 
         void tick(Object* object)
         {
-            #if DC_SERVER
             if (this->pickup_delay > 0)
             {
                 this->pickup_delay--;
@@ -41,15 +41,25 @@ class PickupComponent: public Component
             if (agent != NULL && agent->status.gain_item(object->id, (Object_types)object->type, 0))  // todo remove subtype
             {   // was picked up, die
                 this->was_picked_up(agent->id);
-                //HealthComponent* health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
-                //health->set_dead(true);
+                HealthComponent* health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+                health->die();
             }
-            #endif
+        }
+
+        void broadcast()
+        {
+            if (!this->picked_up || this->picked_up_by == NO_AGENT)
+                return;
+            object_picked_up_StoC msg;
+            msg.id = this->object->id;
+            msg.type = this->object->type;
+            msg.agent_id = this->picked_up_by;
+            msg.broadcast();
         }
 
     PickupComponent()
     : Component(COMPONENT_PICKUP, COMPONENT_INTERFACE_PICKUP),
-        pickup_delay(0), pickup_radius(1.0f),
+        pickup_delay(30), pickup_radius(1.0f),
         picked_up_by(NO_AGENT), picked_up(false)
     {}
 };

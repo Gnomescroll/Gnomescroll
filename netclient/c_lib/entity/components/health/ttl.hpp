@@ -15,6 +15,11 @@ class TTLHealthComponent: public HealthComponent
             return false;
         }
 
+        void die()
+        {
+            this->ttl = this->ttl_max;
+        }
+
         void tick()
         {
             if (this->ttl >= 0) // negative ttl means dont tick

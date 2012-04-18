@@ -18,6 +18,11 @@ class HitPointsHealthComponent: public HealthComponent
             return false;
         }
 
+        void die()
+        {
+            this->health = 0;
+        }
+
     HitPointsHealthComponent()
     : HealthComponent(COMPONENT_HIT_POINTS),
     health(100), max_health(100)

@@ -121,7 +121,7 @@ int run()
             Components::PhysicsComponent* state = (Components::PhysicsComponent*)refill->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             if (state != NULL)
             {
-                Vec3 position = ClientState::playerAgent_state.you->get_center();
+                Vec3 position = ClientState::playerAgent_state.you->get_position();
                 state->set_position(position);
                 Objects::ready(refill);
             }
