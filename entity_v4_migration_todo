@@ -21,7 +21,8 @@ network components MOVED
 --wire existing objects
 
 team    DONE
-owner
+owner   DONE
+
 voxel_model
 animation
 spawner
@@ -34,6 +35,7 @@ slime
 monster spawner
 gems
 
+attach network interfaces
 fill in data
 
 

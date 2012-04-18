@@ -11,3 +11,11 @@
 #include <c_lib/entity/objects/block_drops/hard_rock.hpp>
 #include <c_lib/entity/objects/block_drops/infected_rock.hpp>
 
+#include <c_lib/entity/objects/gemstones/malachite.hpp>
+#include <c_lib/entity/objects/gemstones/ruby.hpp>
+#include <c_lib/entity/objects/gemstones/turquoise.hpp>
+#include <c_lib/entity/objects/gemstones/silver.hpp>
+#include <c_lib/entity/objects/gemstones/amethyst.hpp>
+#include <c_lib/entity/objects/gemstones/jade.hpp>
+#include <c_lib/entity/objects/gemstones/onyx.hpp>
+

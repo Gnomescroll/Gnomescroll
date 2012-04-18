@@ -26,6 +26,14 @@ void init()
     object_list->set_object_max(OBJECT_MEDIUM_ROCK_BLOCK_DROP, 256);
     object_list->set_object_max(OBJECT_HARD_ROCK_BLOCK_DROP, 256);
     object_list->set_object_max(OBJECT_INFECTED_ROCK_BLOCK_DROP, 256);
+
+    object_list->set_object_max(OBJECT_GEMSTONE_MALACHITE, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_RUBY, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_TURQUOISE, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_SILVER, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_AMETHYST, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_JADE, 256);
+    object_list->set_object_max(OBJECT_GEMSTONE_ONYX, 256);
     
     object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
 }
@@ -77,6 +85,21 @@ Object* create_switch(ObjectType type)
             return create_hard_rock_block_drop();
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             return create_infected_rock_block_drop();
+
+        case OBJECT_GEMSTONE_MALACHITE:
+            return create_malachite_gemstone();
+        case OBJECT_GEMSTONE_RUBY:
+            return create_gemstone_ruby();
+        case OBJECT_GEMSTONE_TURQUOISE:
+            return create_gemstone_turquoise();
+        case OBJECT_GEMSTONE_SILVER:
+            return create_gemstone_silver();
+        case OBJECT_GEMSTONE_AMETHYST:
+            return create_gemstone_amethyst();
+        case OBJECT_GEMSTONE_JADE:
+            return create_gemstone_jade();
+        case OBJECT_GEMSTONE_ONYX:
+            return create_gemstone_onyx();
         
         default:
             printf("WARNING: creating unknown object type %d\n", type);
@@ -126,6 +149,28 @@ void ready_switch(Object* object)
             ready_infected_rock_block_drop(object);
             break;
 
+        case OBJECT_GEMSTONE_MALACHITE:
+            ready_malachite_gemstone(object);
+            break;
+        case OBJECT_GEMSTONE_RUBY:
+            ready_gemstone_ruby(object);
+            break;
+        case OBJECT_GEMSTONE_TURQUOISE:
+            ready_gemstone_turquoise(object);
+            break;
+        case OBJECT_GEMSTONE_SILVER:
+            ready_gemstone_silver(object);
+            break;
+        case OBJECT_GEMSTONE_AMETHYST:
+            ready_gemstone_amethyst(object);
+            break;
+        case OBJECT_GEMSTONE_JADE:
+            ready_gemstone_jade(object);
+            break;
+        case OBJECT_GEMSTONE_ONYX:
+            ready_gemstone_onyx(object);
+            break;
+
         default:
             printf("WARNING: birthing unknown object type %d\n", object->type);
             break;
@@ -164,6 +209,28 @@ void destroy_switch(Object* object)
             break;
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             die_infected_rock_block_drop(object);
+            break;
+
+        case OBJECT_GEMSTONE_MALACHITE:
+            die_malachite_gemstone(object);
+            break;
+        case OBJECT_GEMSTONE_RUBY:
+            die_gemstone_ruby(object);
+            break;
+        case OBJECT_GEMSTONE_TURQUOISE:
+            die_gemstone_turquoise(object);
+            break;
+        case OBJECT_GEMSTONE_SILVER:
+            die_gemstone_silver(object);
+            break;
+        case OBJECT_GEMSTONE_AMETHYST:
+            die_gemstone_amethyst(object);
+            break;
+        case OBJECT_GEMSTONE_JADE:
+            die_gemstone_jade(object);
+            break;
+        case OBJECT_GEMSTONE_ONYX:
+            die_gemstone_onyx(object);
             break;
         
         default:
