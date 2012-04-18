@@ -86,7 +86,7 @@ class Spawner: public SpawnerComponent, public VoxelComponent, public ObjectStat
         this->_state.cost = COST_SPAWNER;
         this->_state.reward = COST_SPAWNER;
         this->_state.coin_rule = COINS_ENEMIES | COINS_OWNER;
-        this->_state.type = OBJECT_SPAWNER;
+        this->_state.type = OBJECT_AGENT_SPAWNER;
         
         this->health.properties.health = SPAWNER_HEALTH;
 

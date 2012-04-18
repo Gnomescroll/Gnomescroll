@@ -473,7 +473,7 @@ void Agent_status::score_flag() {
 
         this->flag_captures++;
     }
-    const unsigned int coins = get_object_cost(OBJECT_SPAWNER) * 3;
+    const unsigned int coins = get_object_cost(OBJECT_AGENT_SPAWNER) * 3;
     this->add_coins(coins);
     this->has_flag = false;
 }
@@ -535,7 +535,7 @@ const bool Agent_status::can_gain_item(ObjectType item)
                 return false;
             break;
             
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
             if (owned_spawners >= AGENT_MAX_SPAWNERS)
                 return false;
             break;
@@ -563,7 +563,7 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             owned_turrets++;
             break;
             
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
             owned_spawners++;
             break;
 
@@ -605,7 +605,7 @@ bool Agent_status::lose_item(ObjectType item)
             owned_turrets--;
             break;
             
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
             if (owned_spawners <= 0)
             {
                 printf("WARNING -- Agent_status::lose_item -- no spawners to lose\n");

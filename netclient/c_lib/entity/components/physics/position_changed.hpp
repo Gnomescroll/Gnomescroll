@@ -7,7 +7,7 @@
 namespace Components
 {
 
-class PositionPhysicsComponent: public PhysicsComponent
+class PositionChangedPhysicsComponent: public PhysicsComponent
 {
     public:
         Vec3 position;
@@ -16,6 +16,7 @@ class PositionPhysicsComponent: public PhysicsComponent
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
+            if (vec3_equal(this->position, position)) return false;
             this->position = position;
             return true;
         }
@@ -26,12 +27,13 @@ class PositionPhysicsComponent: public PhysicsComponent
         Vec3 get_angles() { return this->angles; }
         bool set_angles(Vec3 angles)
         {
+            if (vec3_equal(this->angles, angles)) return false;
             this->angles = angles;
             return true;
         }
 
-    PositionPhysicsComponent()
-    : PhysicsComponent(COMPONENT_POSITION),
+    PositionChangedPhysicsComponent()
+    : PhysicsComponent(COMPONENT_POSITION_CHANGED),
     position(NULL_POSITION), angles(NULL_ANGLES)
     {}
 };

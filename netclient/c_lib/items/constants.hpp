@@ -16,7 +16,7 @@ unsigned int get_object_cost(ObjectType obj)
 {
     unsigned int cost;
     switch (obj) {
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
             cost = COST_SPAWNER;
             break;
         case OBJECT_TURRET:
@@ -217,7 +217,7 @@ int get_object_type_sprite_index(ObjectType type)
             //return MEAT_SPRITE_INDEX;
 
          ////Functional items
-        //case OBJECT_SPAWNER:
+        //case OBJECT_AGENT_SPAWNER:
             //return SPAWNER_SPRITE_INDEX;
         //case OBJECT_TURRET:
             //return TURRET_SPRITE_INDEX;

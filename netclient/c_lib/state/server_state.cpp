@@ -119,7 +119,7 @@ namespace ServerState
         // Spawners, Turrets etc
         const int filter_n_types = 5;
         const ObjectType filter_types[filter_n_types] = {
-            OBJECT_TURRET, OBJECT_SPAWNER,
+            OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
             OBJECT_SLIME, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
         };
         object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
@@ -202,7 +202,7 @@ namespace ServerState
         ctf->send_to_client(client_id);
 
         object_list->send_to_client(OBJECT_TURRET, client_id);
-        object_list->send_to_client(OBJECT_SPAWNER, client_id);
+        object_list->send_to_client(OBJECT_AGENT_SPAWNER, client_id);
         object_list->send_to_client(OBJECT_SLIME, client_id);
         object_list->send_to_client(OBJECT_MONSTER_BOX, client_id);
         object_list->send_to_client(OBJECT_MONSTER_SPAWNER, client_id);

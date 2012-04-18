@@ -151,7 +151,7 @@ void raycast_to_part()
             vox = ((Flag*)obj)->vox;
             break;
 
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
             GET_VOX_STUFF(Spawner)
         case OBJECT_TURRET:
             GET_VOX_STUFF(Turret)

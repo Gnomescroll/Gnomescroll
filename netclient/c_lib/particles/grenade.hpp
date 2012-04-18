@@ -67,7 +67,7 @@ int get_grenade_damage(ObjectType type)
 {
     switch (type)
     {
-        case OBJECT_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
         case OBJECT_MONSTER_SPAWNER:
             return GRENADE_SPAWNER_DAMAGE;
         case OBJECT_TURRET:

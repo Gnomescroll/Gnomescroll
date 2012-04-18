@@ -17,6 +17,8 @@ namespace Components
 
 PositionPhysicsComponentList* position_physics_component_list = NULL;
 PositionMomentumPhysicsComponentList* position_momentum_physics_component_list = NULL;
+PositionChangedPhysicsComponentList* position_changed_physics_component_list = NULL;
+PositionMomentumChangedPhysicsComponentList* position_momentum_changed_physics_component_list = NULL;
 VerletPhysicsComponentList* verlet_physics_component_list = NULL;
 
 StackableComponentList* stackable_component_list = NULL;
@@ -45,6 +47,10 @@ Component* get_switch(ComponentType type)
             return position_physics_component_list->subscribe();
         case COMPONENT_POSITION_MOMENTUM:
             return position_momentum_physics_component_list->subscribe();
+        case COMPONENT_POSITION_CHANGED:
+            return position_changed_physics_component_list->subscribe();
+        case COMPONENT_POSITION_MOMENTUM_CHANGED:
+            return position_momentum_changed_physics_component_list->subscribe();
         case COMPONENT_VERLET:
             return verlet_physics_component_list->subscribe();
             
@@ -90,6 +96,12 @@ void release_switch(Component* component)
             break;
         case COMPONENT_POSITION_MOMENTUM:
             position_momentum_physics_component_list->unsubscribe((PositionMomentumPhysicsComponent*)component);
+            break;
+        case COMPONENT_POSITION_CHANGED:
+            position_changed_physics_component_list->unsubscribe((PositionChangedPhysicsComponent*)component);
+            break;
+        case COMPONENT_POSITION_MOMENTUM:
+            position_momentum_changed_physics_component_list->unsubscribe((PositionMomentumChangedPhysicsComponent*)component);
             break;
         case COMPONENT_VERLET:
             verlet_physics_component_list->unsubscribe((VerletPhysicsComponent*)component);
@@ -141,6 +153,8 @@ void init()
 {
     position_physics_component_list = new PositionPhysicsComponentList;
     position_momentum_physics_component_list = new PositionMomentumPhysicsComponentList;
+    position_changed_physics_component_list = new PositionChangedPhysicsComponentList;
+    position_momentum_changed_physics_component_list = new PositionMomentumChangedPhysicsComponentList;
     verlet_physics_component_list = new VerletPhysicsComponentList;
 
     stackable_component_list = new StackableComponentList;
@@ -164,6 +178,8 @@ void teardown()
 {
     if (position_physics_component_list != NULL) delete position_physics_component_list;
     if (position_momentum_physics_component_list != NULL) delete position_momentum_physics_component_list;
+    if (position_changed_physics_component_list != NULL) delete position_changed_physics_component_list;
+    if (position_momentum_changed_physics_component_list != NULL) delete position_momentum_changed_physics_component_list;
     if (verlet_physics_component_list != NULL) delete  verlet_physics_component_list;
     
     if (stackable_component_list != NULL) delete stackable_component_list;

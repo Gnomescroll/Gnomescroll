@@ -28,6 +28,10 @@ typedef ComponentList<PositionPhysicsComponent, COMPONENT_POSITION, MAX_PHYSICS_
     PositionPhysicsComponentList;
 typedef ComponentList<PositionMomentumPhysicsComponent, COMPONENT_POSITION_MOMENTUM, MAX_PHYSICS_COMPONENTS>
     PositionMomentumPhysicsComponentList;
+typedef ComponentList<PositionChangedPhysicsComponent, COMPONENT_POSITION_CHANGED, MAX_PHYSICS_COMPONENTS>
+    PositionChangedPhysicsComponentList;
+typedef ComponentList<PositionMomentumChangedPhysicsComponent, COMPONENT_POSITION_MOMENTUM_CHANGED, MAX_PHYSICS_COMPONENTS>
+    PositionMomentumChangedPhysicsComponentList;
 typedef ComponentList<VerletPhysicsComponent, COMPONENT_VERLET, MAX_PHYSICS_COMPONENTS>
     VerletPhysicsComponentList;
 
@@ -78,6 +82,8 @@ typedef ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
 
 extern PositionPhysicsComponentList* position_physics_component_list;
 extern PositionMomentumPhysicsComponentList* position_momentum_physics_component_list;
+extern PositionChangedPhysicsComponentList* position_changed_physics_component_list;
+extern PositionMomentumChangedPhysicsComponentList* position_momentum_changed_physics_component_list;
 extern VerletPhysicsComponentList* verlet_physics_component_list;
 
 extern StackableComponentList* stackable_component_list;

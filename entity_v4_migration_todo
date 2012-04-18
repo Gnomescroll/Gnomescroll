@@ -33,7 +33,7 @@ spawner
 box
 slime
 monster spawner
-gems
+gems    DONE
 
 attach network interfaces
 fill in data
