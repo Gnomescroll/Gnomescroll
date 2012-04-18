@@ -3,7 +3,7 @@
 #include <c_lib/physics/common.hpp>
 #include <c_lib/physics/verlet.hpp>
 
-#include <c_lib/objects/components/spatial/components.hpp>
+//#include <c_lib/objects/components/spatial/components.hpp>
 
 namespace Particles
 {

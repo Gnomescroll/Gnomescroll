@@ -19,3 +19,4 @@
 
 #include <c_lib/entity/network/packets.cpp>
 #include <c_lib/entity/network/interfaces.cpp>
+#include <c_lib/entity/network/main.cpp>

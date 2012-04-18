@@ -2,7 +2,7 @@
 
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/monsters/constants.hpp>
-#include <c_lib/objects/components/include.hpp>
+//#include <c_lib/objects/components/include.hpp>
 #include <c_lib/entity/network/packets.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
 

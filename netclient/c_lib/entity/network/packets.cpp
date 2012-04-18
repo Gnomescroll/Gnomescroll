@@ -68,8 +68,8 @@ inline void object_create_owner_team_StoC::handle()
 {
     using Objects::Object;
     using Components::PhysicsComponent;
-    //using Components::OwnerComponent;
-    //using Components::TeamComponent;
+    using Components::OwnerComponent;
+    using Components::TeamComponent;
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
@@ -80,17 +80,17 @@ inline void object_create_owner_team_StoC::handle()
         physics->set_position(vec3_init(x,y,z));
     }
 
-    //OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    //if (owner_component != NULL)
-    //{
-        //owner_component->set_owner(owner);
-    //}
+    OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    if (owner_component != NULL)
+    {
+        owner_component->set_owner(owner);
+    }
     
-    //TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    //if (team_component != NULL)
-    //{
-        //team_component->set_team(team);
-    //}
+    TeamComponent* team_component = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    if (team_component != NULL)
+    {
+        team_component->set_team(team);
+    }
     
     Objects::ready(obj);
 }
@@ -99,8 +99,8 @@ inline void object_create_owner_team_index_StoC::handle()
 {
     using Objects::Object;
     using Components::PhysicsComponent;
-    //using Components::OwnerComponent;
-    //using Components::IndexedTeamComponent;
+    using Components::OwnerComponent;
+    using Components::IndexedTeamComponent;
 
     Object* obj = Objects::create((ObjectType)type, id);
     if (obj == NULL) return;
@@ -111,18 +111,18 @@ inline void object_create_owner_team_index_StoC::handle()
         physics->set_position(vec3_init(x,y,z));
     }
 
-    //OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-    //if (owner_component != NULL)
-    //{
-        //owner_component->set_owner(owner);
-    //}
+    OwnerComponent* owner_component = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    if (owner_component != NULL)
+    {
+        owner_component->set_owner(owner);
+    }
     
-    //IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
-    //if (team_component != NULL)
-    //{
-        //team_component->set_team(team);
-        //team_component->set_team_index(team_index);
-    //}
+    IndexedTeamComponent* team_component = (IndexedTeamComponent*)obj->get_component(COMPONENT_INDEXED_TEAM);
+    if (team_component != NULL)
+    {
+        team_component->set_team(team);
+        team_component->set_team_index(team_index);
+    }
     
     Objects::ready(obj);
 }

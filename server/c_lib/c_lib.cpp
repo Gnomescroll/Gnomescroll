@@ -64,8 +64,8 @@
 #include <c_lib/voxel/vox_dat_init.cpp>
 
 /* Object system */
-#include <c_lib/objects/common/include.cpp>
-#include <c_lib/objects/components/include.cpp>
+//#include <c_lib/objects/common/include.cpp>
+//#include <c_lib/objects/components/include.cpp>
 
 /* Entity system */
 #include <c_lib/entity/include.cpp>

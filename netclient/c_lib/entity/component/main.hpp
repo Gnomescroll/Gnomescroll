@@ -62,6 +62,18 @@ typedef ComponentList<TTLHealthComponent, COMPONENT_TTL, MAX_HEALTH_COMPONENTS>
 typedef ComponentList<HitPointsHealthComponent, COMPONENT_HIT_POINTS, MAX_HEALTH_COMPONENTS>
     HitPointsHealthComponentList;
 
+/* Team */
+const int MAX_TEAM_COMPONENTS = 1024;
+typedef ComponentList<TeamComponent, COMPONENT_TEAM, MAX_TEAM_COMPONENTS>
+    TeamComponentList;
+typedef ComponentList<IndexedTeamComponent, COMPONENT_INDEXED_TEAM, MAX_TEAM_COMPONENTS>
+    IndexedTeamComponentList;
+
+/* Owner */
+const int MAX_OWNER_COMPONENTS = 4096;
+typedef ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
+    OwnerComponentList;
+
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -78,6 +90,11 @@ extern PickupComponentList* pickup_component_list;
 
 extern TTLHealthComponentList* ttl_health_component_list;
 extern HitPointsHealthComponentList* hit_points_health_component_list;
+
+extern TeamComponentList* team_component_list;
+extern IndexedTeamComponentList* indexed_team_component_list;
+
+extern OwnerComponentList* owner_component_list;
 
 /* ComponentList handler switches */
 

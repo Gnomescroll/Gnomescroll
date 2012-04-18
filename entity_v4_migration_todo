@@ -17,9 +17,10 @@ test after each
 
 TODO:
 
-network components
+network components MOVED
 --wire existing objects
-team
+
+team    DONE
 owner
 voxel_model
 animation

@@ -17,3 +17,4 @@
 
 #include <c_lib/entity/network/packets.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
+#include <c_lib/entity/network/main.hpp>

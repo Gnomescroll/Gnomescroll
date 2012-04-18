@@ -30,6 +30,11 @@ PickupComponentList* pickup_component_list = NULL;
 TTLHealthComponentList* ttl_health_component_list = NULL;
 HitPointsHealthComponentList* hit_points_health_component_list = NULL;
 
+TeamComponentList* team_component_list = NULL;
+IndexedTeamComponentList* indexed_team_component_list = NULL;
+
+OwnerComponentList* owner_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -38,10 +43,8 @@ Component* get_switch(ComponentType type)
     {
         case COMPONENT_POSITION:
             return position_physics_component_list->subscribe();
-            
         case COMPONENT_POSITION_MOMENTUM:
             return position_momentum_physics_component_list->subscribe();
-            
         case COMPONENT_VERLET:
             return verlet_physics_component_list->subscribe();
             
@@ -50,10 +53,8 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_BILLBOARD_SPRITE:
             return billboard_sprite_component_list->subscribe();
-
         case COMPONENT_COLORED_VOXEL:
             return colored_voxel_component_list->subscribe();
-
         case COMPONENT_TEXTURED_VOXEL:
             return textured_voxel_component_list->subscribe();
 
@@ -62,9 +63,16 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_TTL:
             return ttl_health_component_list->subscribe();
-
         case COMPONENT_HIT_POINTS:
             return hit_points_health_component_list->subscribe();
+
+        case COMPONENT_TEAM:
+            return team_component_list->subscribe();
+        case COMPONENT_INDEXED_TEAM:
+            return indexed_team_component_list->subscribe();
+
+        case COMPONENT_OWNER:
+            return owner_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -80,11 +88,9 @@ void release_switch(Component* component)
         case COMPONENT_POSITION:
             position_physics_component_list->unsubscribe((PositionPhysicsComponent*)component);
             break;
-            
         case COMPONENT_POSITION_MOMENTUM:
             position_momentum_physics_component_list->unsubscribe((PositionMomentumPhysicsComponent*)component);
             break;
-
         case COMPONENT_VERLET:
             verlet_physics_component_list->unsubscribe((VerletPhysicsComponent*)component);
             break;
@@ -96,11 +102,9 @@ void release_switch(Component* component)
         case COMPONENT_BILLBOARD_SPRITE:
             billboard_sprite_component_list->unsubscribe((BillboardSpriteComponent*)component);
             break;
-
         case COMPONENT_COLORED_VOXEL:
             colored_voxel_component_list->unsubscribe((ColoredVoxelComponent*)component);
             break;
-
         case COMPONENT_TEXTURED_VOXEL:
             textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
             break;
@@ -112,11 +116,21 @@ void release_switch(Component* component)
         case COMPONENT_TTL:
             ttl_health_component_list->unsubscribe((TTLHealthComponent*)component);
             break;
-
         case COMPONENT_HIT_POINTS:
             hit_points_health_component_list->unsubscribe((HitPointsHealthComponent*)component);
             break;
             
+        case COMPONENT_TEAM:
+            team_component_list->unsubscribe(TeamComponent*)component);
+            break;
+        case COMPONENT_INDEXED_TEAM:
+            indexed_team_component_list->unsubscribe((IndexedTeamComponent*)component);
+            break;
+
+        case COMPONENT_OWNER:
+            owner_component_list->unsubscribe((OwnerComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -139,6 +153,11 @@ void init()
 
     ttl_health_component_list = new TTLHealthComponentList;
     hit_points_health_component_list = new HitPointsHealthComponentList;
+
+    team_component_list = new TeamComponentList;
+    indexed_team_component_list = new IndexedTeamComponentList;
+
+    owner_component_list = new OwnerComponentList;
 }
 
 void teardown()
@@ -157,6 +176,11 @@ void teardown()
 
     if (ttl_health_component_list != NULL) delete ttl_health_component_list;
     if (hit_points_health_component_list != NULL) delete hit_points_health_component_list;
+
+    if (team_component_list != NULL) delete team_component_list;
+    if (indexed_team_component_list != NULL) delete indexed_team_component_list;
+
+    if (owner_component_list != NULL) delete owner_component_list;
 }
 
 } // Components

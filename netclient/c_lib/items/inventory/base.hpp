@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/objects/common/interface/policy.hpp>
-#include <c_lib/objects/common/interface/interfaces.hpp>
+//#include <c_lib/objects/common/interface/policy.hpp>
+//#include <c_lib/objects/common/interface/interfaces.hpp>
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
 

@@ -17,6 +17,11 @@
 
 #include <c_lib/entity/components/pickup.cpp>
 
-#include <c_lib/entity/components/health.hpp>
-#include <c_lib/entity/components/health/hit_points.hpp>
-#include <c_lib/entity/components/health/ttl.hpp>
+#include <c_lib/entity/components/health.cpp>
+#include <c_lib/entity/components/health/hit_points.cpp>
+#include <c_lib/entity/components/health/ttl.cpp>
+
+#include <c_lib/entity/components/team.cpp>
+#include <c_lib/entity/components/team/indexed_team.cpp>
+
+#include <c_lib/entity/components/owner.cpp>

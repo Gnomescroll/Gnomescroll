@@ -11,7 +11,7 @@
 
 #include <c_lib/items/inventory/base.hpp>
 #include <c_lib/items/inventory/contents.hpp>
-#include <c_lib/objects/common/interface/policy.hpp>
+//#include <c_lib/objects/common/interface/policy.hpp>
 #include <c_lib/items/constants.hpp>
 
 int get_icon_spritesheet_id(ObjectType type)

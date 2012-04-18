@@ -18,3 +18,8 @@
 #include <c_lib/entity/components/health.hpp>
 #include <c_lib/entity/components/health/hit_points.hpp>
 #include <c_lib/entity/components/health/ttl.hpp>
+
+#include <c_lib/entity/components/team.hpp>
+#include <c_lib/entity/components/team/indexed_team.hpp>
+
+#include <c_lib/entity/components/owner.hpp>

@@ -2,7 +2,7 @@
 
 #include <c_lib/entity/constants.hpp>
 
-#include <c_lib/objects/components/stackable/components.hpp>
+//#include <c_lib/objects/components/stackable/components.hpp>
 
 const int EMPTY_SLOT = 65535;
 class BaseInventoryProperties

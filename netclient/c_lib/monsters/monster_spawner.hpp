@@ -3,8 +3,8 @@
 #include <c_lib/voxel/voxel_model.hpp>
 #include <c_lib/voxel/voxel_dat.hpp>
 #include <c_lib/entity/constants.hpp>
-#include <c_lib/objects/common/interface/entity.hpp>
-#include <c_lib/objects/common/api/include.hpp>
+//#include <c_lib/objects/common/interface/entity.hpp>
+//#include <c_lib/objects/common/api/include.hpp>
 #include <c_lib/entity/network/interfaces.hpp>
 
 namespace Monsters

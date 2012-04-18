@@ -2,16 +2,16 @@
 
 #include <c_lib/state/server_state.hpp>
 #include <c_lib/state/client_state.hpp>
-#include <c_lib/objects/common/interface/entity.hpp>
+//#include <c_lib/objects/common/interface/entity.hpp>
 #include <c_lib/entity/network/packets.hpp>
 #include <c_lib/items/constants.hpp>
-#include <c_lib/objects/components/stackable/components.hpp>
+//#include <c_lib/objects/components/stackable/components.hpp>
 
 //forward decl
 #if DC_CLIENT
-#include <c_lib/objects/components/sprite/sprite.hpp>
-#include <c_lib/objects/components/minivox/colored_minivox.hpp>
-#include <c_lib/objects/components/minivox/textured_minivox.hpp>
+//#include <c_lib/objects/components/sprite/sprite.hpp>
+//#include <c_lib/objects/components/minivox/colored_minivox.hpp>
+//#include <c_lib/objects/components/minivox/textured_minivox.hpp>
 #include <c_lib/draw/lists.hpp>
 #include <c_lib/t_map/glsl/texture.hpp>
 #endif

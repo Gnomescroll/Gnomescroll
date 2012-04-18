@@ -61,6 +61,11 @@ typedef enum
     COMPONENT_BILLBOARD_SPRITE,
     COMPONENT_COLORED_VOXEL,
     COMPONENT_TEXTURED_VOXEL,
+
+    COMPONENT_TEAM,
+    COMPONENT_INDEXED_TEAM,
+
+    COMPONENT_OWNER,
     
 } ComponentType;
 
@@ -74,6 +79,8 @@ typedef enum
     COMPONENT_INTERFACE_TICK,       // tick()
     COMPONENT_INTERFACE_PICKUP,
     COMPONENT_INTERFACE_HEALTH,     // is_dead()
+    COMPONENT_INTERFACE_TEAM,       // team getter/setter
+    COMPONENT_INTERFACE_OWNER,      // owner getter/setter
 } ComponentInterfaceType;
 
 //const Vec3 NULL_MOMENTUM = { 0,0,0 };
