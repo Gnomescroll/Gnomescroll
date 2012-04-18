@@ -164,7 +164,7 @@ int run()
 
         t_map::draw_map();
 
-        Animations::draw_insect_mob();
+
         
         poll_mouse();
 
@@ -184,6 +184,12 @@ int run()
             Skybox
         */
         Skybox::draw();
+
+        /*
+            Non-transparent
+        */
+
+        Animations::draw_insect_mob();
 
         /* 
             Alpha tested non-transparent
