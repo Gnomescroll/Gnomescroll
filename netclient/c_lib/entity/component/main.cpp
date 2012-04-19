@@ -1,5 +1,7 @@
 #include "main.hpp"
 
+#include <c_lib/entity/component/lists.hpp>
+
 namespace Components
 {
 
