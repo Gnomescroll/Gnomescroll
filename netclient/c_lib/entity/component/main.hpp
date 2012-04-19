@@ -83,6 +83,11 @@ const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
 typedef ComponentList<VoxelModelCompoent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>
     VoxelModelComponentList;
 
+/* Spawner */
+const int MAX_SPAWNER_COMPONENTS = 512;
+typedef ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_SPAWNER_COMPONENTS>
+    AgentSpawnerComponentList;
+
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -108,6 +113,8 @@ extern IndexedTeamComponentList* indexed_team_component_list;
 extern OwnerComponentList* owner_component_list;
 
 extern VoxelModelComponentList* voxel_model_component_list;
+
+extern AgentSpawnerComponentList* agent_spawner_component_list;
 
 /* ComponentList handler switches */
 

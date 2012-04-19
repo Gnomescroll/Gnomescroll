@@ -39,6 +39,8 @@ OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
 
+AgentSpawnerComponentList* agent_spawner_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -84,6 +86,9 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_VOXEL_MODEL:
             return voxel_model_component_list->subscribe();
+
+        case COMPONENT_AGENT_SPAWNER:
+            return agent_spawner_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -152,6 +157,10 @@ void release_switch(Component* component)
             voxel_model_component_list->unsubscribe((VoxelModelComponent*)component);
             break;
 
+        case COMPONENT_AGENT_SPAWNER:
+            agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -183,6 +192,8 @@ void init()
     owner_component_list = new OwnerComponentList;
 
     voxel_model_component_list = new VoxelModelComponentList;
+
+    agent_spawner_component_list = new AgentSpawnerComponentList;
 }
 
 void teardown()
@@ -210,6 +221,8 @@ void teardown()
     if (owner_component_list != NULL) delete owner_component_list;
 
     if (voxel_model_component_list != NULL) delete voxel_model_component_list;
+
+    if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
 }
 
 } // Components
