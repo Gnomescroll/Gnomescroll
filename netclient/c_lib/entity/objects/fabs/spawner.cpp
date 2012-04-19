@@ -6,17 +6,13 @@
 //#include <c_lib/entity/components/physics/verlet.hpp>
 //#include <c_lib/entity/components/draw/billboard_sprite.hpp>
 
-// TODO
-// changed() state component
-// voxel model component
-// spawner comonent
-
 namespace Objects
 {
 
 static void set_agent_spawner_properties(Object* object)
 {
     int n_components = 7;
+    object->init(n_components):
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     add_component_to_object(object, COMPONENT_DIMENSION);
     add_component_to_object(object, COMPONENT_VOXEL_MODEL);
@@ -42,18 +38,17 @@ Object* create_agent_spawner()
 void ready_agent_spawner(Object* object)
 {
     using Components::VoxelModelComponent;
-    using Components::IndexedTeamComponent;
-    typedef Components::PositionChangedPhysicsComponent PCP;
+    using Components::TeamComponent;
+    using Components::PhysicsComponent;
     
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    IndexedTeamComponent* team = (IndexedTeamComponent*)object->get_component(COMPONENT_INDEXED_TEAM);
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
 
-    Vec3 position = pcp->get_position();
-    Vec3 angles = pcp->get_angles();
+    Vec3 position = physics->get_position();
+    Vec3 angles = physics->get_angles();
     
-    vox->vox = bornTeamVox(vox->vox_dat, object->id, object->type, team->get_team);
+    vox->vox = bornTeamVox(vox->vox_dat, object->id, object->type, team->get_team());
     bornSetVox(vox->vox, vox->init_hitscan, vox->init_draw);
     bornUpdateFrozenVox(vox->vox, position, angles.x, angles.y);
 
@@ -76,7 +71,7 @@ void die_agent_spawner(Object* object)
 
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL)
     TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team);
+    if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team());
     //dieChatMessage(object);
 }
 

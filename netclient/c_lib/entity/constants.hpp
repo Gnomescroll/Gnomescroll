@@ -9,7 +9,7 @@ typedef enum
     OBJECT_AGENT,
 
     // mobs
-    OBJECT_SLIME,
+    OBJECT_MONSTER_BOMB,
     OBJECT_MONSTER_BOX,
     OBJECT_MONSTER_SPAWNER,
 
