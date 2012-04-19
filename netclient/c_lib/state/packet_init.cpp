@@ -200,17 +200,17 @@ void RegisterMessages() {
     request_remaining_state_CtoS::register_server_packet();
 
     // inventory
-    inventory_create_StoC::register_client_packet();
-    inventory_destroy_StoC::register_client_packet();
-    add_item_to_inventory_StoC::register_client_packet();
-    remove_item_from_inventory_StoC::register_client_packet();
-    swap_item_in_inventory_StoC::register_client_packet();
-    add_item_to_inventory_CtoS::register_server_packet();
-    remove_item_from_inventory_CtoS::register_server_packet();
-    swap_item_in_inventory_CtoS::register_server_packet();
+    //inventory_create_StoC::register_client_packet();
+    //inventory_destroy_StoC::register_client_packet();
+    //add_item_to_inventory_StoC::register_client_packet();
+    //remove_item_from_inventory_StoC::register_client_packet();
+    //swap_item_in_inventory_StoC::register_client_packet();
+    //add_item_to_inventory_CtoS::register_server_packet();
+    //remove_item_from_inventory_CtoS::register_server_packet();
+    //swap_item_in_inventory_CtoS::register_server_packet();
 
     // object/monster motion
-    object_choose_target_StoC::register_client_packet();
-    object_choose_destination_StoC::register_client_packet();
+    //object_choose_target_StoC::register_client_packet();
+    //object_choose_destination_StoC::register_client_packet();
 }
 }

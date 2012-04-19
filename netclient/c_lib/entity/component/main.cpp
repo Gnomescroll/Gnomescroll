@@ -39,7 +39,7 @@ OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
 
-MonsterSpawnerComponentList monster_spawner_component_list = NULL;
+MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
 AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 
 DimensionComponentList* dimension_component_list = NULL;
@@ -123,7 +123,7 @@ void release_switch(Component* component)
         case COMPONENT_POSITION_CHANGED:
             position_changed_physics_component_list->unsubscribe((PositionChangedPhysicsComponent*)component);
             break;
-        case COMPONENT_POSITION_MOMENTUM:
+        case COMPONENT_POSITION_MOMENTUM_CHANGED:
             position_momentum_changed_physics_component_list->unsubscribe((PositionMomentumChangedPhysicsComponent*)component);
             break;
         case COMPONENT_VERLET:
@@ -156,7 +156,7 @@ void release_switch(Component* component)
             break;
             
         case COMPONENT_TEAM:
-            team_component_list->unsubscribe(TeamComponent*)component);
+            team_component_list->unsubscribe((TeamComponent*)component);
             break;
         case COMPONENT_INDEXED_TEAM:
             indexed_team_component_list->unsubscribe((IndexedTeamComponent*)component);
@@ -181,7 +181,7 @@ void release_switch(Component* component)
             break;
 
         case COMPONENT_TARGETING:
-            targeting_component_list->unsubscribe(TargetingComponent*)component);
+            targeting_component_list->unsubscribe((TargetingComponent*)component);
             break;
 
         default:

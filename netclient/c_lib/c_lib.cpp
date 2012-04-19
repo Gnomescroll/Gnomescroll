@@ -70,7 +70,7 @@
 #include <c_lib/SDL/SDL_functions.c>
 
 /* Draw lists */
-#include <c_lib/draw/transparent.cpp>
+//#include <c_lib/draw/transparent.cpp>
 #include <c_lib/draw/draw.cpp>
 #include <c_lib/draw/lists.cpp>
 
@@ -111,7 +111,7 @@
 #include <c_lib/agent/agent_include.h>
 
 /* Monsters */
-#include <c_lib/monsters/monsters.cpp>
+//#include <c_lib/monsters/monsters.cpp>
 
 /* Weapons */
 #include <c_lib/weapons/weapons.cpp>
@@ -238,7 +238,7 @@ int init_c_lib() {
     Components::init();
 
     Objects::init_net_interfaces();
-    Objects::init_state_interfaces();
+    //Objects::init_state_interfaces();
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
@@ -335,7 +335,7 @@ void close_c_lib() {
     close_SDL();
 
     Objects::teardown_net_interfaces();
-    Objects::teardown_state_interfaces();
+    //Objects::teardown_state_interfaces();
 
     Objects::teardown();    // Entity system
     Components::teardown();

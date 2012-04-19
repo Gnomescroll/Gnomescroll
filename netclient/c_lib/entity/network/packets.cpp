@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 
-//#include <c_lib/sound/sound.hpp>
+#include <c_lib/sound/sound.hpp>
 
 #include <c_lib/agent/client/player_agent.hpp>
 
@@ -195,42 +195,42 @@ inline void object_picked_up_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
-    switch (this->type)
-    {
-        case OBJECT_MONSTER_BOX:
-            Monsters::box_shot_object(this);    // TODO -- replace handlers
-            break;
+    //switch (this->type)
+    //{
+        //case OBJECT_MONSTER_BOX:
+            //Monsters::box_shot_object(this);    // TODO -- replace handlers
+            //break;
             
-        case OBJECT_TURRET:
-            turret_shot_object(this);
-            break;
+        //case OBJECT_TURRET:
+            //turret_shot_object(this);
+            //break;
             
-        default:break;
-    }
+        //default:break;
+    //}
 }
 
 inline void object_shot_terrain_StoC::handle()
 {
-    switch (this->type)
-    {
-        case OBJECT_TURRET:
-            turret_shot_terrain(this);
-            break;
+    //switch (this->type)
+    //{
+        //case OBJECT_TURRET:
+            //turret_shot_terrain(this);
+            //break;
             
-        default:break;
-    }
+        //default:break;
+    //}
 }
 
 inline void object_shot_nothing_StoC::handle()
 {
-    switch (this->type)
-    {
-        case OBJECT_TURRET:
-            turret_shot_nothing(this);
-            break;
+    //switch (this->type)
+    //{
+        //case OBJECT_TURRET:
+            //turret_shot_nothing(this);
+            //break;
 
-        default:break;
-    }
+        //default:break;
+    //}
 }
 
 #endif

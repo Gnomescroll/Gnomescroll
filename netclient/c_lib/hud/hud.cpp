@@ -7,7 +7,7 @@
 #include <c_lib/input/handlers.hpp>
 #include <c_lib/options.hpp>
 #include <c_lib/common/profiling/frame_graph.hpp>
-#include <c_lib/draw/transparent.hpp>
+//#include <c_lib/draw/transparent.hpp>
 
 /* Configuration */
 namespace Hud
@@ -208,7 +208,7 @@ void draw_hud_textures()
     if (hud_draw_settings.inventory)
     {
         HudInventory::inventory->draw();
-        Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
+        //Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
         HudInventory::draw_selected_icon_mask();
     }
 
@@ -972,22 +972,22 @@ bool get_screen_inventory_row_col(int x, int y, int* row, int* col)
 
 void handle_left_mouse_click(int x, int y)
 {
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you == NULL) return;
+    //using ClientState::playerAgent_state;
+    //if (playerAgent_state.you == NULL) return;
 
-    int row,col;
-    if (get_screen_inventory_row_col(x,y, &row, &col))
-        playerAgent_state.you->status.inventory->select_slot(row, col);
+    //int row,col;
+    //if (get_screen_inventory_row_col(x,y, &row, &col))
+        //playerAgent_state.you->status.inventory->select_slot(row, col);
 }
 
 void handle_right_mouse_click(int x, int y)
 {
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you == NULL) return;
+    //using ClientState::playerAgent_state;
+    //if (playerAgent_state.you == NULL) return;
 
-    int row,col;
-    if (get_screen_inventory_row_col(x,y, &row, &col))
-        playerAgent_state.you->status.inventory->select_and_remove_action(row, col);
+    //int row,col;
+    //if (get_screen_inventory_row_col(x,y, &row, &col))
+        //playerAgent_state.you->status.inventory->select_and_remove_action(row, col);
 }
 
 }

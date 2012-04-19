@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/network/interfaces.hpp>
 
 //forward declaration
 namespace Components
@@ -15,10 +16,6 @@ using Components::Component;
 
 class Object
 {
-    private:
-        CreatePacketDelegate* create;
-        StatePacketDelegate* state;
-    
     public:
         int n_components;
         Component** components;
@@ -28,6 +25,9 @@ class Object
 
         void (*tick)(Object*);      // for physics
         void (*update)(Object*);    // for draw prep
+
+        CreatePacketDelegate* create;
+        StatePacketDelegate* state;
 
         // network
         void sendToClientCreate(int client_id)
@@ -58,10 +58,10 @@ class Object
     ~Object();
 
     explicit Object(int id):
-        create(NULL), state(NULL),
         n_components(0), components(NULL),
         id(id), type(OBJECT_NONE),
-        tick(NULL), update(NULL)
+        tick(NULL), update(NULL),
+        create(NULL), state(NULL)
     {}
 };
 

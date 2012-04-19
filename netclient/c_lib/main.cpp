@@ -180,7 +180,7 @@ int run()
         glBegin(GL_QUADS);
 
         Particles::colored_minivox_list->draw();
-        Draw::colored_minivox_list->draw();   // new entity system registries
+        //Draw::colored_minivox_list->draw();   // new entity system registries
         Components::colored_voxel_component_list->call();
         glEnd();
 
@@ -190,7 +190,7 @@ int run()
         glBegin(GL_QUADS);
 
         Particles::textured_minivox_list->draw();
-        Draw::textured_minivox_list->draw();
+        //Draw::textured_minivox_list->draw();
         Components::textured_voxel_component_list->call();
 
         glEnd();
@@ -218,7 +218,7 @@ int run()
         */
 
         begin_item_draw();
-        Draw::sprite_list->draw();
+        //Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->call();
         end_item_draw();
 

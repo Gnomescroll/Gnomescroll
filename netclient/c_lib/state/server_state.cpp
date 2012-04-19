@@ -16,36 +16,36 @@ namespace ServerState
 
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    SpawnerList* spawner_list = NULL;
-    OwnedList* owned_list = NULL;
+    //SpawnerList* spawner_list = NULL;
+    //OwnedList* owned_list = NULL;
     
     //Grenade_shrapnel_list* grenade_shrapnel_list;
 
-    GameObject_list* object_list;
+    //GameObject_list* object_list;
 
     CTF* ctf = NULL;
 
     void init_lists()
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
-        spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
-        owned_list = new OwnedList;
+        //spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
+        //owned_list = new OwnedList;
 
         //grenade_shrapnel_list = new Grenade_shrapnel_list;
 
         agent_list = new Agent_list;
-        object_list = new GameObject_list;
+        //object_list = new GameObject_list;
     }
 
     void teardown_lists()
     {
         // voxels
         delete agent_list;
-        delete object_list;
+        //delete object_list;
 
         delete voxel_hitscan_list; // must go last
-        delete spawner_list;
-        delete owned_list;
+        //delete spawner_list;
+        //delete owned_list;
     }
 
     //move this into interface
@@ -116,32 +116,32 @@ namespace ServerState
 
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
 
-        // Spawners, Turrets etc
-        const int filter_n_types = 5;
-        const ObjectType filter_types[filter_n_types] = {
-            OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
-            OBJECT_SLIME, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
-        };
-        object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
-        ObjectPolicyInterface* obj;
-        ObjectState* state;
-        for (int i=0; i<object_list->n_filtered; i++)
-        {
-            obj = object_list->filtered_objects[i];
-            if (obj == NULL) continue;
-            state = obj->state();
+        //// Spawners, Turrets etc
+        //const int filter_n_types = 5;
+        //const ObjectType filter_types[filter_n_types] = {
+            //OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
+            //OBJECT_SLIME, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
+        //};
+        //object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
+        //ObjectPolicyInterface* obj;
+        //ObjectState* state;
+        //for (int i=0; i<object_list->n_filtered; i++)
+        //{
+            //obj = object_list->filtered_objects[i];
+            //if (obj == NULL) continue;
+            //state = obj->state();
 
-            /* TODO */
-            // state->can_be_killed_by(type, id, team)
-            // apply teammate rules etc
-            if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
-              && obj->get_owner() != agent->id)
-                continue;
-            obj->take_damage(Particles::get_grenade_damage(state->type));
-            if (obj->did_die() && agent != NULL
-              && !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
-                coins += get_kill_reward(obj, agent->id, agent->status.team);
-        }
+            ///* TODO */
+            //// state->can_be_killed_by(type, id, team)
+            //// apply teammate rules etc
+            //if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
+              //&& obj->get_owner() != agent->id)
+                //continue;
+            //obj->take_damage(Particles::get_grenade_damage(state->type));
+            //if (obj->did_die() && agent != NULL
+              //&& !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
+                //coins += get_kill_reward(obj, agent->id, agent->status.team);
+        //}
 
         // add all the coins
         if (agent != NULL)
@@ -168,8 +168,8 @@ namespace ServerState
         }
 
         agent_list->update_models(); // sets skeleton
-        object_list->tick();
-        object_list->update();
+        //object_list->tick();
+        //object_list->update();
         Particles::grenade_list->tick();
 
         t_item::tick();
@@ -201,16 +201,16 @@ namespace ServerState
         agent_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
 
-        object_list->send_to_client(OBJECT_TURRET, client_id);
-        object_list->send_to_client(OBJECT_AGENT_SPAWNER, client_id);
-        object_list->send_to_client(OBJECT_SLIME, client_id);
-        object_list->send_to_client(OBJECT_MONSTER_BOX, client_id);
-        object_list->send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
+        //object_list->send_to_client(OBJECT_TURRET, client_id);
+        //object_list->send_to_client(OBJECT_AGENT_SPAWNER, client_id);
+        //object_list->send_to_client(OBJECT_SLIME, client_id);
+        //object_list->send_to_client(OBJECT_MONSTER_BOX, client_id);
+        //object_list->send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)
     {
-        object_list->send_to_client(OBJECT_INVENTORY, client_id);
+        //object_list->send_to_client(OBJECT_INVENTORY, client_id);
     }
 
     //move somewhere
@@ -262,7 +262,7 @@ namespace ServerState
 
     void revoke_ownership(int agent_id)
     {
-        owned_list->transfer_ownership(agent_id, NO_AGENT);
+        //owned_list->transfer_ownership(agent_id, NO_AGENT);
     }
 
 }

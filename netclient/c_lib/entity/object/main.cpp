@@ -89,17 +89,17 @@ Object* create_switch(ObjectType type)
         case OBJECT_GEMSTONE_MALACHITE:
             return create_malachite_gemstone();
         case OBJECT_GEMSTONE_RUBY:
-            return create_gemstone_ruby();
+            return create_ruby_gemstone();
         case OBJECT_GEMSTONE_TURQUOISE:
-            return create_gemstone_turquoise();
+            return create_turquoise_gemstone();
         case OBJECT_GEMSTONE_SILVER:
-            return create_gemstone_silver();
+            return create_silver_gemstone();
         case OBJECT_GEMSTONE_AMETHYST:
-            return create_gemstone_amethyst();
+            return create_amethyst_gemstone();
         case OBJECT_GEMSTONE_JADE:
-            return create_gemstone_jade();
+            return create_jade_gemstone();
         case OBJECT_GEMSTONE_ONYX:
-            return create_gemstone_onyx();
+            return create_onyx_gemstone();
         
         default:
             printf("WARNING: creating unknown object type %d\n", type);
@@ -153,22 +153,22 @@ void ready_switch(Object* object)
             ready_malachite_gemstone(object);
             break;
         case OBJECT_GEMSTONE_RUBY:
-            ready_gemstone_ruby(object);
+            ready_ruby_gemstone(object);
             break;
         case OBJECT_GEMSTONE_TURQUOISE:
-            ready_gemstone_turquoise(object);
+            ready_turquoise_gemstone(object);
             break;
         case OBJECT_GEMSTONE_SILVER:
-            ready_gemstone_silver(object);
+            ready_silver_gemstone(object);
             break;
         case OBJECT_GEMSTONE_AMETHYST:
-            ready_gemstone_amethyst(object);
+            ready_amethyst_gemstone(object);
             break;
         case OBJECT_GEMSTONE_JADE:
-            ready_gemstone_jade(object);
+            ready_jade_gemstone(object);
             break;
         case OBJECT_GEMSTONE_ONYX:
-            ready_gemstone_onyx(object);
+            ready_onyx_gemstone(object);
             break;
 
         default:
@@ -215,22 +215,22 @@ void destroy_switch(Object* object)
             die_malachite_gemstone(object);
             break;
         case OBJECT_GEMSTONE_RUBY:
-            die_gemstone_ruby(object);
+            die_ruby_gemstone(object);
             break;
         case OBJECT_GEMSTONE_TURQUOISE:
-            die_gemstone_turquoise(object);
+            die_turquoise_gemstone(object);
             break;
         case OBJECT_GEMSTONE_SILVER:
-            die_gemstone_silver(object);
+            die_silver_gemstone(object);
             break;
         case OBJECT_GEMSTONE_AMETHYST:
-            die_gemstone_amethyst(object);
+            die_amethyst_gemstone(object);
             break;
         case OBJECT_GEMSTONE_JADE:
-            die_gemstone_jade(object);
+            die_jade_gemstone(object);
             break;
         case OBJECT_GEMSTONE_ONYX:
-            die_gemstone_onyx(object);
+            die_onyx_gemstone(object);
             break;
         
         default:

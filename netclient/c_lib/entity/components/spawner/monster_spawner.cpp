@@ -15,9 +15,9 @@ void MonsterSpawnerComponent::get_spawn_point(Vec3 position, int spawned_object_
     sy = (sy < 0) ? 0 : sy;
 
     int h = (int)ceil(spawned_object_height);
-    spawn_point.x = sx;
-    spawn_point.y = sy;
-    spawn_point.z = t_map::get_highest_open_block((int)sx, (int)sy, h);
+    spawn_point->x = sx;
+    spawn_point->y = sy;
+    spawn_point->z = t_map::get_highest_open_block((int)sx, (int)sy, h);
 }
 
 void MonsterSpawnerComponent::gain_child(ObjectType type, int id)

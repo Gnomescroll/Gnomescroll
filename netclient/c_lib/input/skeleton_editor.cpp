@@ -88,6 +88,7 @@ void reset_part()
     vox->reset_skeleton();   
 }
 
+/*
 // use this macro in a case label to get correct type cast
 #define GET_VOX_STUFF(TYPE) \
 obj = ClientState::object_list->get(type, id); \
@@ -95,6 +96,7 @@ if (obj==NULL) return; \
 vox = ((TYPE*)obj)->voxel_properties.vox; \
 vox_dat = ((TYPE*)obj)->voxel_properties.vox_dat; \
 break;
+*/
 
 void raycast_to_part()
 {
@@ -151,14 +153,14 @@ void raycast_to_part()
             vox = ((Flag*)obj)->vox;
             break;
 
-        case OBJECT_AGENT_SPAWNER:
-            GET_VOX_STUFF(Spawner)
-        case OBJECT_TURRET:
-            GET_VOX_STUFF(Turret)
-        case OBJECT_SLIME:
-            GET_VOX_STUFF(Monsters::Slime)
-        case OBJECT_MONSTER_BOX:
-            GET_VOX_STUFF(Monsters::Box)
+        //case OBJECT_AGENT_SPAWNER:
+            //GET_VOX_STUFF(Spawner)
+        //case OBJECT_TURRET:
+            //GET_VOX_STUFF(Turret)
+        //case OBJECT_MONSTER_BOMB:
+            //GET_VOX_STUFF(Monsters::Slime)
+        //case OBJECT_MONSTER_BOX:
+            //GET_VOX_STUFF(Monsters::Box)
 
         default:
             printf("Skeleton_editor -- raycast_to_part() -- unhandled obj type %d\n", type);

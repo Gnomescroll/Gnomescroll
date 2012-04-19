@@ -210,13 +210,13 @@ void draw_icon_mask(float x, float y, float w, float h, float depth)
 // find a better place / way to do this
 void draw_selected_icon_mask()
 {
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you == NULL) return;
-    if (playerAgent_state.you->status.inventory == NULL) return;
-    if (!playerAgent_state.you->status.inventory->selected()) return;
-    Draw::SpriteData data;
-    playerAgent_state.you->status.inventory->get_selected_icon_render_data(&data);
-    draw_icon_mask(data.x, data.y, data.w, data.h, data.z);
+    //using ClientState::playerAgent_state;
+    //if (playerAgent_state.you == NULL) return;
+    //if (playerAgent_state.you->status.inventory == NULL) return;
+    //if (!playerAgent_state.you->status.inventory->selected()) return;
+    //Draw::SpriteData data;
+    //playerAgent_state.you->status.inventory->get_selected_icon_render_data(&data);
+    //draw_icon_mask(data.x, data.y, data.w, data.h, data.z);
 }
 
 

@@ -18,11 +18,6 @@ class IndexedTeamComponent: public TeamComponent
     : TeamComponent(COMPONENT_INDEXED_TEAM),
     team_index(TEAM_INDEX_NONE)
     {}
-
-    explicit TeamComponent(ObjectType type)
-    : Component(type, COMPONENT_INTERFACE_TEAM),
-    team_index(TEAM_INDEX_NONE)
-    {}
 };
 
 } // Objects

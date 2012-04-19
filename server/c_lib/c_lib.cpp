@@ -97,7 +97,7 @@
 #include <c_lib/weapons/packets.cpp>
 
 /* monsters */
-#include <c_lib/monsters/monsters.cpp>
+//#include <c_lib/monsters/monsters.cpp>
 
 /* chat */
 #include <c_lib/chat/globals.hpp>
@@ -138,7 +138,7 @@ int init_c_lib()
     Components::init();
 
     Objects::init_net_interfaces();
-    Objects::init_state_interfaces();
+    //Objects::init_state_interfaces();
 
     init_vox_dats();
     init_chat_server();
@@ -170,7 +170,7 @@ void close_c_lib()
     Particles::teardown_particles();
 
     Objects::teardown_net_interfaces();
-    Objects::teardown_state_interfaces();
+    //Objects::teardown_state_interfaces();
 
     Objects::teardown();    // Entity system
     Components::teardown();

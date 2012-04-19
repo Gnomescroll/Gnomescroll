@@ -460,44 +460,44 @@ void Agent_state::set_angles(float theta, float phi)
 
 void Agent_state::get_spawn_point(int* spawn)
 {
-    if (this->status.team == 0)
-    {
-        spawn[0] = map_dim.x/2;
-        spawn[1] = map_dim.y/2;
-        spawn[2] = map_dim.z - 1;
-        return;
-    }
+    //if (this->status.team == 0)
+    //{
+        //spawn[0] = map_dim.x/2;
+        //spawn[1] = map_dim.y/2;
+        //spawn[2] = map_dim.z - 1;
+        //return;
+    //}
 
-    int h = this->current_height_int();
-    Spawner *s = NULL;
+    //int h = this->current_height_int();
+    //Spawner *s = NULL;
     
-    if (this->status.spawner != BASE_SPAWN_ID)
-    {    // check that assigned spawner still exists, reassign if not
-        while ((s = (Spawner*)STATE::spawner_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
-        {
-            this->status.set_spawner();
-            if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
-        }
-    }
+    //if (this->status.spawner != BASE_SPAWN_ID)
+    //{    // check that assigned spawner still exists, reassign if not
+        //while ((s = (Spawner*)STATE::spawner_list->get_by_team_index(this->status.team, this->status.spawner)) == NULL)
+        //{
+            //this->status.set_spawner();
+            //if (this->status.spawner == BASE_SPAWN_ID) break;  // no spawners available
+        //}
+    //}
 
-    if (this->status.spawner == BASE_SPAWN_ID)
-    {   // spawner is base
-        STATE::ctf->get_base_spawn_point(this->status.team, h, spawn);
+    //if (this->status.spawner == BASE_SPAWN_ID)
+    //{   // spawner is base
+        //STATE::ctf->get_base_spawn_point(this->status.team, h, spawn);
 
-        // team is 0, or spawn get failed for some reason. spawn anywhere
-        if (spawn == NULL)
-        {
-            int x,y,z;
-            x = randrange(0, map_dim.x-1);
-            y = randrange(0, map_dim.y-1);
-            z = _get_highest_open_block(x,y, h);
-            spawn[0]=x;
-            spawn[1]=y;
-            spawn[2]=z;
-        }
-    }
-    else // spawner was found
-        s->get_spawn_point(s->get_position(), h, spawn);
+        //// team is 0, or spawn get failed for some reason. spawn anywhere
+        //if (spawn == NULL)
+        //{
+            //int x,y,z;
+            //x = randrange(0, map_dim.x-1);
+            //y = randrange(0, map_dim.y-1);
+            //z = _get_highest_open_block(x,y, h);
+            //spawn[0]=x;
+            //spawn[1]=y;
+            //spawn[2]=z;
+        //}
+    //}
+    //else // spawner was found
+        //s->get_spawn_point(s->get_position(), h, spawn);
 }
 
 void Agent_state::spawn_state()

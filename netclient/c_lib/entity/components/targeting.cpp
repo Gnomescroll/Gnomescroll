@@ -8,7 +8,7 @@ namespace Components
 
 /* Targeting */
 
-Agent_state* TargetingComponent::acquire_target(Agent_state* TargetingComponent::acquire_target(
+Agent_state* TargetingComponent::acquire_target(
     int id, ObjectType type, int team, float camera_z, Vec3 position, Vec3* firing_direction
 ) {    
     // lock on agent
@@ -22,14 +22,13 @@ Agent_state* TargetingComponent::acquire_target(Agent_state* TargetingComponent:
 }
 
 Agent_state* TargetingComponent::fire_on_target(
-    int id, ObjectType type, int team, float camera_z, Vec3 position,
+    int id, ObjectType type, int team, float camera_z, Vec3 position
 ) {    
     // lock on agent
     position.z = camera_z;
     Vec3 firing_direction;
     Agent_state* agent = this->acquire_target(
-        id, type, team, camera_z, position, this->accuracy_bias, this->sight_range,
-        this->attack_enemies, this->attack_random, &firing_direction
+        id, type, team, camera_z, position, &firing_direction
     );
     if (agent == NULL) return NULL;
 

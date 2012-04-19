@@ -2,6 +2,7 @@
 
 #ifdef DC_CLIENT
 #include <c_lib/chat/client.hpp>
+#include <c_lib/chat/interface.hpp>
 
 inline void TeamColor_StoC::handle()
 {

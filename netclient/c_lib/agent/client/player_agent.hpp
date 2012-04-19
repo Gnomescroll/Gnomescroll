@@ -4,7 +4,7 @@
 #include <c_lib/agent/agent_status.hpp>
 #include <c_lib/agent/client/player_agent_action.hpp>
 
-#include <c_lib/items/inventory/inventory.hpp>
+//#include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/state/client_state.hpp>
 
 enum active_camera_states {

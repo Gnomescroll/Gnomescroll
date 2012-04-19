@@ -2,6 +2,7 @@
 
 #include <c_lib/physics/common.hpp>
 #include <c_lib/physics/verlet.hpp>
+#include <c_lib/physics/verlet_particle.hpp>
 
 //#include <c_lib/objects/components/spatial/components.hpp>
 
@@ -20,7 +21,7 @@ namespace Particles
 class ParticleMotion
 {
     public:
-        VerletComponent verlet;
+        Verlet::VerletComponent verlet;
         int id;
         int ttl;
         int ttl_max;
@@ -29,7 +30,8 @@ class ParticleMotion
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
-            this->verlet.set_state(x,y,z,mx,my,mz);
+            verlet.position = vec3_init(x,y,z);
+            verlet.velocity = vec3_init(mx,my,mz);
         }
 
         void set_position(float x, float y, float z)

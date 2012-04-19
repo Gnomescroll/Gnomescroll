@@ -1,6 +1,6 @@
 #include "spawner.hpp"
 
-namespace Objects
+namespace Components
 {
 
 }; // Objects

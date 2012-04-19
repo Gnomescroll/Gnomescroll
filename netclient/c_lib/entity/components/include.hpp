@@ -32,3 +32,6 @@
 
 #include <c_lib/entity/components/voxel_model.hpp>
 
+#include <c_lib/entity/components/dimension.hpp>
+
+#include <c_lib/entity/components/targeting.hpp>

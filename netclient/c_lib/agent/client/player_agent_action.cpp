@@ -139,7 +139,7 @@ void PlayerAgent_action::hitscan_laser()
                 if (agent->status.team == this->p->you->status.team) break;
                 voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJECT_SLIME)
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
             {
                 voxel_blast_radius = 2;
             }
@@ -266,7 +266,7 @@ void PlayerAgent_action::hitscan_pick()
                 );
                 voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJECT_SLIME)
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
             {
                 voxel_blast_radius = 2;
             }
@@ -477,23 +477,23 @@ int PlayerAgent_action::select_block()
 
 void PlayerAgent_action::remove_selected_item_from_inventory()
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
+    //if (p->you == NULL) return;
+    //if (p->you->status.dead) return;
+    //if (p->you->status.team == 0) return;
 
-    Inventory* inv = this->p->you->status.inventory;
-    if (inv == NULL) return;
-    inv->remove_selected_action();
+    //Inventory* inv = this->p->you->status.inventory;
+    //if (inv == NULL) return;
+    //inv->remove_selected_action();
 }
 
 void PlayerAgent_action::add_item_to_inventory(int id, ObjectType type)
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
-    Inventory* inv = this->p->you->status.inventory;
-    if (inv == NULL) return;
-    inv->add_action(id,type);
+    //if (p->you == NULL) return;
+    //if (p->you->status.dead) return;
+    //if (p->you->status.team == 0) return;
+    //Inventory* inv = this->p->you->status.inventory;
+    //if (inv == NULL) return;
+    //inv->add_action(id,type);
 }
 
 void PlayerAgent_action::pickup_item()

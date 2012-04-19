@@ -19,7 +19,7 @@ class TeamComponent: public Component
     team(NO_TEAM)
     {}
 
-    explicit TeamComponent(ObjectType type)
+    explicit TeamComponent(ComponentType type)
     : Component(type, COMPONENT_INTERFACE_TEAM),
     team(NO_TEAM)
     {}

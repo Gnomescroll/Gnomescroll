@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/component/component.hpp>
+#include <c_lib/entity/components/spawner.hpp>
 
 namespace Components
 {

@@ -1,11 +1,12 @@
 #pragma once
 
 #include <c_lib/voxel/voxel_model.hpp>
+#include <c_lib/entity/component/component.hpp>
 
 namespace Components
 {
 
-class VoxelModelComponent
+class VoxelModelComponent: public Component
 {
     public:
         Voxel_model* vox;

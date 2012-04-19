@@ -414,9 +414,9 @@ class PickupObjectTexturedMinivox:
     }
 };
 
-ObjectPolicyInterface* create_block_drop(int subtype, int id)
+Object* create_block_drop(int subtype, int id)
 {
-    ObjectPolicyInterface* obj = NULL;
+    //ObjectPolicyInterface* obj = NULL;
     //switch (subtype)
     //{
         //case DIRT:
@@ -433,7 +433,9 @@ ObjectPolicyInterface* create_block_drop(int subtype, int id)
 
         //default: break;
     //}
-    return obj;
+    //return obj;
+
+    return NULL; // TODO -- remove
 
 }
 

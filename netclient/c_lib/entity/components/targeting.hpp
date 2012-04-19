@@ -36,7 +36,8 @@ class TargetingComponent: public Component
         Agent_state* fire_on_known_target(int id, ObjectType type, float camera_z, Vec3 position, Vec3 direction, Agent_state* agent);
 
     TargetingComponent()
-    : target_acquisition_probability(1.0f), fire_tick(0), fire_rate_limit(1),
+    : Component(COMPONENT_TARGETING, COMPONENT_INTERFACE_TARGETING),
+    target_acquisition_probability(1.0f), fire_tick(0), fire_rate_limit(1),
     accuracy_bias(0.0f), sight_range(10.0f), attack_enemies(true), attack_random(true)
     {}
 };

@@ -2,8 +2,9 @@
 
 #if DC_CLIENT
 
+#include <c_lib/agent/agent_list.hpp>
 #include <c_lib/items/items.hpp>
-#include <c_lib/monsters/monsters.hpp>
+//#include <c_lib/monsters/monsters.hpp>
 
 #include <c_lib/game/ctf.hpp>
 
@@ -21,10 +22,10 @@ namespace ClientState {
     //  property lists
     extern class  Voxel_render_list* voxel_render_list;
     extern class  Voxel_hitscan_list* voxel_hitscan_list;
-    extern class  SpawnerList* spawner_list;
-    extern class  OwnedList* owned_list;
+    //extern class  SpawnerList* spawner_list;
+    //extern class  OwnedList* owned_list;
 
-    extern class  GameObject_list* object_list;
+    //extern class  GameObject_list* object_list;
 
     extern class  CTF* ctf;
 

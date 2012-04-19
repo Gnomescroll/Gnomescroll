@@ -72,7 +72,7 @@ int get_grenade_damage(ObjectType type)
             return GRENADE_SPAWNER_DAMAGE;
         case OBJECT_TURRET:
             return GRENADE_TURRET_DAMAGE;
-        case OBJECT_SLIME:
+        case OBJECT_MONSTER_BOMB:
             return GRENADE_SLIME_DAMAGE;
         case OBJECT_MONSTER_BOX:
             return 1000;

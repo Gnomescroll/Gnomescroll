@@ -28,8 +28,12 @@
 
 #include <c_lib/entity/components/owner.cpp>
 
-#include <c_lib/entity/components/spawner.hpp>
-#include <c_lib/entity/components/spawner/agent_spawner.hpp>
-#include <c_lib/entity/components/spawner/monster_spawner.hpp>
+#include <c_lib/entity/components/spawner.cpp>
+#include <c_lib/entity/components/spawner/agent_spawner.cpp>
+#include <c_lib/entity/components/spawner/monster_spawner.cpp>
 
 #include <c_lib/entity/components/voxel_model.cpp>
+
+#include <c_lib/entity/components/dimension.hpp>
+
+#include <c_lib/entity/components/targeting.cpp>

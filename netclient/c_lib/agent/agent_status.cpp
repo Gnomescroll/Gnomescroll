@@ -44,59 +44,59 @@ flag_captures(0),
 coins(0),
 vox_crouched(false),
 base_restore_rate_limiter(0),
-lifetime(0),
-inventory(NULL)
+lifetime(0)//,
+//inventory(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
-    #if DC_SERVER
-    this->inventory = (Inventory*)ServerState::object_list->create(OBJECT_INVENTORY);
-    if (this->inventory != NULL)
-    {
-        this->inventory->set_owner(this->a->id);
-        this->inventory->init(8,4);
-    }
-    else
-        printf("ERROR: Agent_status::Agent_status() -- failed to create inventory\n");
-    #endif
+    //#if DC_SERVER
+    //this->inventory = (Inventory*)ServerState::object_list->create(OBJECT_INVENTORY);
+    //if (this->inventory != NULL)
+    //{
+        //this->inventory->set_owner(this->a->id);
+        //this->inventory->init(8,4);
+    //}
+    //else
+        //printf("ERROR: Agent_status::Agent_status() -- failed to create inventory\n");
+    //#endif
 }
 
 Agent_status::~Agent_status()
 {
-    #if DC_SERVER
-    ServerState::object_list->destroy(OBJECT_INVENTORY, this->inventory->state()->id);
-    #endif
+    //#if DC_SERVER
+    //ServerState::object_list->destroy(OBJECT_INVENTORY, this->inventory->state()->id);
+    //#endif
 }
 
 void Agent_status::set_spawner(int pt)
 {
-    if (pt != BASE_SPAWN_ID)
-    {   // check new spawner exists
-        if (!STATE::spawner_list->spawner_exists(this->team, pt))
-        {
-            if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
-                return;     // current spawner valid, leave it
-            else
-                pt = BASE_SPAWN_ID; // current spawner invalid, default to base
-        }
-    }
-    //printf("Setting spawner to %d\n", pt);
-    this->spawner = pt;
-    #ifdef DC_SERVER
-    spawn_location_StoC msg;
-    msg.pt = pt;
-    msg.sendToClient(this->a->id);
-    #endif
+    //if (pt != BASE_SPAWN_ID)
+    //{   // check new spawner exists
+        //if (!STATE::spawner_list->spawner_exists(this->team, pt))
+        //{
+            //if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
+                //return;     // current spawner valid, leave it
+            //else
+                //pt = BASE_SPAWN_ID; // current spawner invalid, default to base
+        //}
+    //}
+    ////printf("Setting spawner to %d\n", pt);
+    //this->spawner = pt;
+    //#ifdef DC_SERVER
+    //spawn_location_StoC msg;
+    //msg.pt = pt;
+    //msg.sendToClient(this->a->id);
+    //#endif
 }
 
 void Agent_status::set_spawner()
 {
-    int pt = STATE::spawner_list->get_random_spawner(this->team);
-    this->spawner = pt;
-    #ifdef DC_SERVER
-    spawn_location_StoC msg;
-    msg.pt = pt;
-    msg.sendToClient(this->a->id);
-    #endif
+    //int pt = STATE::spawner_list->get_random_spawner(this->team);
+    //this->spawner = pt;
+    //#ifdef DC_SERVER
+    //spawn_location_StoC msg;
+    //msg.pt = pt;
+    //msg.sendToClient(this->a->id);
+    //#endif
 }
 
 bool Agent_status::set_name(char* name)
@@ -244,7 +244,7 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    this->inventory->remove_all_action();
+    //this->inventory->remove_all_action();
     #endif
 
     return 1;
@@ -257,7 +257,7 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
         
     int killed = this->die();
     Agent_state* attacker;
-    Turret* turret;
+    //Turret* turret;
     if (killed)
     {
         switch (inflictor_type)
@@ -267,17 +267,17 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
                 if (attacker != NULL)
                     attacker->status.kill(this->a->id);
                 break;
-            case OBJECT_SLIME:
+            //case OBJECT_MONSTER_BOMB:
                 //Monsters::Slime* slime = STATE::slime_list->get(inflictor_id);
                 //if (slime != NULL) {}
-                break;
-            case OBJECT_TURRET:
-                turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
-                if (turret == NULL) break;
-                attacker = STATE::agent_list->get(turret->get_owner());
-                if (attacker != NULL)
-                    attacker->status.kill(this->a->id);
-                break;
+                //break;
+            //case OBJECT_TURRET:
+                //turret = (Turret*)STATE::object_list->get(inflictor_type, inflictor_id);
+                //if (turret == NULL) break;
+                //attacker = STATE::agent_list->get(turret->get_owner());
+                //if (attacker != NULL)
+                    //attacker->status.kill(this->a->id);
+                //break;
             default:
                 //printf("Agent_state::die -- OBJECT %d not handled\n", inflictor_type);
                 break;
@@ -293,7 +293,7 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
 
         // send conflict notification to clients
         agent_conflict_notification_StoC msg;
-        Turret* turret;
+        //Turret* turret;
         switch (inflictor_type)
         {
             case OBJECT_AGENT:
@@ -303,16 +303,16 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
                 msg.broadcast();
                 break;
 
-            case OBJECT_TURRET:
-                // lookup turret object, get owner, this will be the inflictor id
-                turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
-                if (turret == NULL) break;
-                inflictor_id = turret->get_owner();
-                msg.victim = this->a->id;
-                msg.attacker = inflictor_id;
-                msg.method = death_method;    // put headshot, grenades here
-                msg.broadcast();
-                break;
+            //case OBJECT_TURRET:
+                //// lookup turret object, get owner, this will be the inflictor id
+                //turret = (Turret*)ServerState::object_list->get(inflictor_type, inflictor_id);
+                //if (turret == NULL) break;
+                //inflictor_id = turret->get_owner();
+                //msg.victim = this->a->id;
+                //msg.attacker = inflictor_id;
+                //msg.method = death_method;    // put headshot, grenades here
+                //msg.broadcast();
+                //break;
 
             default: break;
         }
@@ -579,13 +579,13 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             this->a->status.heal(50);
             break;
 
-        case OBJECT_MEAT:
+        //case OBJECT_MEAT:
         //case OBJECT_BLOCK_DROP:
         //case OBJECT_GEMSTONE: // TODO -- restore types
-            #if DC_SERVER
-            return this->inventory->add_action(item_id, item_type, 1);
-            #endif
-            break;
+            //#if DC_SERVER
+            //return this->inventory->add_action(item_id, item_type, 1);
+            //#endif
+            //break;
             
         default: break;
     }

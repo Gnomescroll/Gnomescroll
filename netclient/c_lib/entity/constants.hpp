@@ -1,7 +1,5 @@
 #pragma once
 
-// todo - merge subtypes
-
 typedef enum
 {
     OBJECT_NONE,
@@ -102,4 +100,21 @@ typedef enum
     COMPONENT_INTERFACE_DIMENSION,
 } ComponentInterfaceType;
 
-//const Vec3 NULL_MOMENTUM = { 0,0,0 };
+
+/* NULL values
+ * TODO -- move
+ */
+
+#include <limits.h>
+#include <float.h>
+#include <c_lib/physics/vec3.hpp>
+
+const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
+const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.
+const unsigned int NULL_TEAM_INDEX = UINT_MAX;
+const int NULL_HEALTH = INT_MAX;
+const Vec3 NULL_POSITION = vec3_init(FLT_MAX,FLT_MAX,FLT_MAX);
+const Vec3 NULL_MOMENTUM = vec3_init(0,0,0);
+const Vec3 NULL_ANGLES = vec3_init(0,0,0);
+const float NULL_HEIGHT = 1.0f;
+

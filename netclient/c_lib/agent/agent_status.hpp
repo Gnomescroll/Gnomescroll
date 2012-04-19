@@ -3,7 +3,7 @@
 #include <c_lib/items/constants.hpp>
 #include <entity/constants.hpp>
 #include <c_lib/agent/constants.hpp>
-#include <c_lib/items/inventory/inventory.hpp>
+//#include <c_lib/items/inventory/inventory.hpp>
 
 void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 
@@ -52,7 +52,7 @@ class Agent_status {
 
         int lifetime;
 
-        Inventory* inventory;
+        //Inventory* inventory;
 
         void tick();
 
