@@ -123,10 +123,14 @@ void Shrapnel_list::draw()
 
     assert(particle_texture != 0);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
-    glEnable(GL_TEXTURE_2D);
+    glColor3ub(255,255,255);
+
+    //glEnable(GL_TEXTURE_2D);
+
+    glDisable(GL_TEXTURE_2D);
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
