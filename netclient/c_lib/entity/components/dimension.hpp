@@ -12,7 +12,8 @@ class DimensionComponent: public Component
         float height;
         float camera_height;
 
-        int get_height() { return this->height; }
+        float get_height() { return this->height; }
+        float get_camera_height() { return this->camera_height; }
         Vec3 get_camera_position();
 
     OwnerComponent()

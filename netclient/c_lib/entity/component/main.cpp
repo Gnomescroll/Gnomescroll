@@ -44,6 +44,8 @@ AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 
 DimensionComponentList* dimension_component_list = NULL;
 
+TargetingComponentList* targeting_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -97,6 +99,9 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_DIMENSION:
             return dimension_component_list->subscribe();
+
+        case COMPONENT_TARGETING:
+            return targeting_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -175,6 +180,10 @@ void release_switch(Component* component)
             dimension_component_list->unsubscribe((DimensionComponent*)component);
             break;
 
+        case COMPONENT_TARGETING:
+            targeting_component_list->unsubscribe(TargetingComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -211,6 +220,8 @@ void init()
     agent_spawner_component_list = new AgentSpawnerComponentList;
 
     dimension_component_list = new DimensionComponentList;
+
+    targeting_component_list = new TargetingComponentList;
 }
 
 void teardown()
@@ -243,6 +254,8 @@ void teardown()
     if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
 
     if (dimension_component_list != NULL) delete dimension_component_list;
+
+    if (targeting_component_list != NULL) delete targeting_component_list;
 }
 
 } // Components

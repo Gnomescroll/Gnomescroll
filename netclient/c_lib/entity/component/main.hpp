@@ -83,6 +83,11 @@ const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
 typedef ComponentList<VoxelModelComponent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>
     VoxelModelComponentList;
 
+/* Targeting */
+const int MAX_TARGETING_COMPONENTS = 2048;
+typedef ComponentList<TargetingComponent, COMPONENT_TARGETING, MAX_TARGETING_COMPONENTS>
+    TargetingComponentList;
+
 /* Spawner */
 
 // TODO - adapt correctly, then move
@@ -225,6 +230,8 @@ extern MonsterSpawnerComponentList monster_spawner_component_list;
 extern AgentSpawnerComponentList* agent_spawner_component_list;
 
 extern DimensionComponentList* dimension_component_list;
+
+extern TargetingComponentList* targeting_component_list;
 
 /* ComponentList handler switches */
 

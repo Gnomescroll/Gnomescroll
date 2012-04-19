@@ -27,11 +27,12 @@ changed state DONE
 
 voxel_model DONE (partly, should integrate the updates onto the component)
 
+explosion component --dieExplode
 animation   --wait
 agent spawner --partly
 monster spawner DONE
 dimension (height, camera_height) DONE
-targeting
+targeting   DONE
 
 turret
 spawner -- need to merge spawner list crap somewhere

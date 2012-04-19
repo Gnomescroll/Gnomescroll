@@ -53,7 +53,7 @@ void ready_agent_spawner(Object* object)
     Vec3 position = pcp->get_position();
     Vec3 angles = pcp->get_angles();
     
-    vox->vox = bornTeamVox(vox->vox_dat, object->id, object->type, team->team);
+    vox->vox = bornTeamVox(vox->vox_dat, object->id, object->type, team->get_team);
     bornSetVox(vox->vox, vox->init_hitscan, vox->init_draw);
     bornUpdateFrozenVox(vox->vox, position, angles.x, angles.y);
 
@@ -76,7 +76,7 @@ void die_agent_spawner(Object* object)
 
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL)
     TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->team);
+    if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team);
     //dieChatMessage(object);
 }
 
