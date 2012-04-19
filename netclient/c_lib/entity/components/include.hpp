@@ -27,8 +27,8 @@
 #include <c_lib/entity/components/owner.hpp>
 
 #include <c_lib/entity/components/spawner.hpp>
-#include <c_lib/entity/components/agent_spawner.hpp>
-#include <c_lib/entity/components/monster_spawner.hpp>
+#include <c_lib/entity/components/spawner/agent_spawner.hpp>
+#include <c_lib/entity/components/spawner/monster_spawner.hpp>
 
 #include <c_lib/entity/components/voxel_model.hpp>
 

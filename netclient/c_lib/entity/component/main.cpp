@@ -42,6 +42,8 @@ VoxelModelComponentList* voxel_model_component_list = NULL;
 MonsterSpawnerComponentList monster_spawner_component_list = NULL;
 AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 
+DimensionComponentList* dimension_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -92,6 +94,9 @@ Component* get_switch(ComponentType type)
             return monster_spawner_component_list->subscribe();
         case COMPONENT_AGENT_SPAWNER:
             return agent_spawner_component_list->subscribe();
+
+        case COMPONENT_DIMENSION:
+            return dimension_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -166,6 +171,10 @@ void release_switch(Component* component)
             agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
             break;
 
+        case COMPONENT_DIMENSION:
+            dimension_component_list->unsubscribe((DimensionComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -198,7 +207,10 @@ void init()
 
     voxel_model_component_list = new VoxelModelComponentList;
 
+    monster_spawner_component_list = new MonsterSpawnerComponentList;
     agent_spawner_component_list = new AgentSpawnerComponentList;
+
+    dimension_component_list = new DimensionComponentList;
 }
 
 void teardown()
@@ -227,7 +239,10 @@ void teardown()
 
     if (voxel_model_component_list != NULL) delete voxel_model_component_list;
 
+    if (monster_spawner_component_list != NULL) delete monster_spawner_component_list;
     if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
+
+    if (dimension_component_list != NULL) delete dimension_component_list;
 }
 
 } // Components

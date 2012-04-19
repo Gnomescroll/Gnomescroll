@@ -80,7 +80,7 @@ typedef ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
 
 /* Voxel Model */
 const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
-typedef ComponentList<VoxelModelCompoent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>
+typedef ComponentList<VoxelModelComponent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>
     VoxelModelComponentList;
 
 /* Spawner */
@@ -191,6 +191,10 @@ class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COM
     }
 }
 
+const int DIMENSION_COMPONENT_MAX = 4096;
+typedef ComponentList<DimensionComponent, COMPONENT_DIMENSION, DIMENSION_COMPONENT_MAX>
+    DimensionComponentList;
+
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -219,6 +223,8 @@ extern VoxelModelComponentList* voxel_model_component_list;
 
 extern MonsterSpawnerComponentList monster_spawner_component_list;
 extern AgentSpawnerComponentList* agent_spawner_component_list;
+
+extern DimensionComponentList* dimension_component_list;
 
 /* ComponentList handler switches */
 

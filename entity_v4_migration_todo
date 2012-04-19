@@ -29,9 +29,9 @@ voxel_model DONE (partly, should integrate the updates onto the component)
 
 animation   --wait
 agent spawner --partly
-monster spawner
+monster spawner DONE
+dimension (height, camera_height) DONE
 targeting
-height
 
 turret
 spawner -- need to merge spawner list crap somewhere
@@ -44,6 +44,9 @@ attach network interfaces
 fill in data
 
 move components lists out
+
+Save this stuff from objects.old:
+common/api/*
 
 ==============
 event queue?

@@ -5,7 +5,7 @@
 namespace Components
 {
 
-class VoxelComponent
+class VoxelModelComponent
 {
     public:
         Voxel_model* vox;
@@ -24,12 +24,12 @@ class VoxelComponent
         return this->vox->get_part(part)->get_center();
     }
     
-    ~VoxelComponent()
+    ~VoxelModelComponent()
     {
         if (this->vox != NULL) delete this->vox;
     }
 
-    VoxelComponent()
+    VoxelModelComponent()
     : Component(COMPONENT_VOXEL_MODEL, COMPONENT_INTERFACE_VOXEL_MODEL),
     vox(NULL), vox_dat(NULL),
     init_hitscan(false), init_draw(false), frozen_vox(false)
