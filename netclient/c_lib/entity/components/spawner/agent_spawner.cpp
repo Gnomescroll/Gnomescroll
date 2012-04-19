@@ -1,4 +1,4 @@
-#include "spawner.hpp"
+#include "agent_spawner.hpp"
 
 namespace Components
 {

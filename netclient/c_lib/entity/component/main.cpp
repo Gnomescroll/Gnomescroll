@@ -39,6 +39,7 @@ OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
 
+MonsterSpawnerComponentList monster_spawner_component_list = NULL;
 AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 
 /* ComponentList handler switches */
@@ -87,6 +88,8 @@ Component* get_switch(ComponentType type)
         case COMPONENT_VOXEL_MODEL:
             return voxel_model_component_list->subscribe();
 
+        case COMPONENT_MONSTER_SPAWNER:
+            return monster_spawner_component_list->subscribe();
         case COMPONENT_AGENT_SPAWNER:
             return agent_spawner_component_list->subscribe();
             
@@ -157,6 +160,8 @@ void release_switch(Component* component)
             voxel_model_component_list->unsubscribe((VoxelModelComponent*)component);
             break;
 
+        case COMPONENT_MONSTER_SPAWNER:
+            monster_spawner_component_list->unsubscribe((MonsterSpawnerComponent*)component);
         case COMPONENT_AGENT_SPAWNER:
             agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
             break;

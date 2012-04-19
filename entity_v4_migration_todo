@@ -28,8 +28,10 @@ changed state DONE
 voxel_model DONE (partly, should integrate the updates onto the component)
 
 animation   --wait
-spawner
+agent spawner --partly
+monster spawner
 targeting
+height
 
 turret
 spawner -- need to merge spawner list crap somewhere
@@ -41,6 +43,7 @@ gems    DONE
 attach network interfaces
 fill in data
 
+move components lists out
 
 ==============
 event queue?

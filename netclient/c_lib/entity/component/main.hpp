@@ -84,9 +84,112 @@ typedef ComponentList<VoxelModelCompoent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL
     VoxelModelComponentList;
 
 /* Spawner */
+
+// TODO - adapt correctly, then move
 const int MAX_SPAWNER_COMPONENTS = 512;
-typedef ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_SPAWNER_COMPONENTS>
-    AgentSpawnerComponentList;
+typedef ComponentList<MonsterSpawnerComponent, OBJECT_MONSTER_SPAWNER, MAX_SPAWNER_COMPONENTS>
+    MonsterSpawnerComponentList;
+class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_SPAWNER_COMPONENTS>
+{
+    bool SpawnerList::team_spawner_available(int team)
+    {
+        Object *s;
+        int n = 0;
+        for (int i=0; i<this->max; i++)
+        {
+            if (this->components[i] == NULL) continue;
+            s = this->components[i]->obj;
+            if (s == NULL) continue;
+            if (s->get_team() == team) n++;
+        }
+        return (n < this->max_per_team);
+    }
+
+    int SpawnerList::get_random_spawner(int team)
+    {
+        Object *s;
+        int objects[this->max_per_team+1];
+        int j=0;
+        for (int i=0; i<this->max; i++)
+        {   // filter down to team's objects
+            if (this->components[i] == NULL) continue;
+            s = this->components[i]->obj;
+            if (s == NULL) continue;
+            if (s->get_team() == team)
+                objects[j++] = s->get_team_index();
+        }
+        objects[j++] = BASE_SPAWN_ID;
+        return objects[randrange(0,j-1)];
+    }
+
+    // when objects player says "spawner 8" he may be on the other team
+    // we need to find the 8th spawner for his team
+    int SpawnerList::get_numbered_team_spawner(int team, int id)
+    {
+        Object *s;
+        for (int i=0; i<this->max; i++)
+        {
+            if (this->components[i] == NULL) continue;
+            s = this->components[i]->obj;
+            if (s == NULL) continue;
+            if (s->get_team() != team) continue;
+            if ((int)s->get_team_index() == id)
+                return s->state()->id;
+        }
+        return BASE_SPAWN_ID;
+    }
+
+    Object* SpawnerList::get_by_team_index(int team, int team_index)
+    {
+        Object *s;
+        for (int i=0; i<this->max; i++)
+        {
+            if (this->components[i] == NULL) continue;
+            s = this->components[i]->obj;
+            if (s == NULL) continue;
+            if (s->get_team() != team) continue;
+            if ((int)s->get_team_index() == team_index)
+                return s;
+        }
+        return NULL;
+    }
+
+    bool SpawnerList::spawner_exists(int team, int team_index)
+    {
+        if (this->get_by_team_index(team, team_index) != NULL)
+            return true;
+        return false;
+    }
+
+    void SpawnerList::assign_team_index(Object* spawner)
+    {   // pick an index for the spawner that is available, these are separate from
+        // id because each team's set of objects has its own indexing
+        // and objects may be destroyed; we dont want to renumber every time
+        // get smallest available team index
+        if (!this->max) return;
+        int* taken = (int*)calloc(this->max, sizeof(int));
+        int team_index = TEAM_INDEX_NONE;
+        Object* s;
+        for (int i=0; i<this->max; i++)
+        {
+            if (this->components[i] == NULL) continue;
+            s = this->components[i]->obj;
+            if (s == NULL) continue;
+            if (s->get_team() != spawner->get_team()) continue;
+            if (spawner->get_team_index() != TEAM_INDEX_NONE
+              && spawner->get_team_index() != 0)  // should never be 0, team_indexing starts at 1
+                taken[spawner->get_team_index() - 1] = 1;
+        }
+        for (int i=0; i<this->max; i++)
+            if (!taken[i])
+            {
+                team_index = i+1;
+                break;
+            }
+        spawner->set_team_index(team_index);
+        free(taken);
+    }
+}
 
 /* ComponentList declarations */
 
@@ -114,6 +217,7 @@ extern OwnerComponentList* owner_component_list;
 
 extern VoxelModelComponentList* voxel_model_component_list;
 
+extern MonsterSpawnerComponentList monster_spawner_component_list;
 extern AgentSpawnerComponentList* agent_spawner_component_list;
 
 /* ComponentList handler switches */

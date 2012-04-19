@@ -12,7 +12,7 @@ class AgentSpawnerComponent: public SpawnerComponent
         void get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point);
     
     AgentSpawnerComponent()
-    : Component(type, COMPONENT_INTERFACE_SPAWNER)
+    : SpawnerComponent(COMPONENT_AGENT_SPAWNER)
     {}
 };
 
