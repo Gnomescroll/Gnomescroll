@@ -3,19 +3,17 @@
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/component/component.hpp>
 
-namespace Objects
+namespace Components
 {
 
-class SpawnerComponent: public Component
+class AgentSpawnerComponent: public SpawnerComponent
 {
     public:
-        virtual void get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point) = 0;
+        void get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point);
     
-    explicit SpawnerComponent(ComponentType type)
+    AgentSpawnerComponent()
     : Component(type, COMPONENT_INTERFACE_SPAWNER)
     {}
-
-    virtual ~SpawnerComponent() {}
 };
 
 }; // Objects

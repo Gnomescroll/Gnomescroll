@@ -25,13 +25,14 @@ owner   DONE
 
 changed state DONE
 
-voxel_model
-animation
+voxel_model DONE (partly, should integrate the updates onto the component)
+
+animation   --wait
 spawner
 targeting
 
 turret
-spawner
+spawner -- need to merge spawner list crap somewhere
 box
 slime
 monster spawner

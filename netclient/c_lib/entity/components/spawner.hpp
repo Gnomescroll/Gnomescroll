@@ -3,7 +3,7 @@
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/component/component.hpp>
 
-namespace Objects
+namespace Components
 {
 
 class SpawnerComponent: public Component
