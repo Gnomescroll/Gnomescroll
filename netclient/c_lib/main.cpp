@@ -160,6 +160,8 @@ int run()
 
         frame_graph->frame_stage(2); // call draw functions
 
+        ClientState::update_for_draw();
+
         /*
             Start World Projetion
         */
@@ -211,25 +213,15 @@ int run()
         glEnd();
         glDisable(GL_TEXTURE_2D);
 
-        // transparent
-        Particles::billboard_text_list->draw();
-        
-
-        ClientState::draw(); //deprecate this! WTF is this
-
-        t_item::draw();
-        Animations::draw_insect_mob();
-
         /* 
             Alpha tested non-transparent
         */
 
         t_mech::draw();
 
-        begin_item_draw();
-        Draw::sprite_list->draw();
-        Components::billboard_sprite_component_list->draw();
-        end_item_draw();
+        //begin_item_draw();
+        //Draw::sprite_list->draw();
+        //end_item_draw();
 
         /*
             Skybox
@@ -239,6 +231,12 @@ int run()
         /*
             Transparent
         */
+
+        // transparent
+        Particles::billboard_text_list->draw();
+        
+        t_item::draw();
+        Animations::draw_insect_mob();
 
         Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
