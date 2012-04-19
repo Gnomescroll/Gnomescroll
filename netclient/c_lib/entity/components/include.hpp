@@ -25,3 +25,6 @@
 #include <c_lib/entity/components/team/indexed_team.hpp>
 
 #include <c_lib/entity/components/owner.hpp>
+
+#include <c_lib/entity/components/voxel_model.hpp>
+

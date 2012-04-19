@@ -37,6 +37,8 @@ IndexedTeamComponentList* indexed_team_component_list = NULL;
 
 OwnerComponentList* owner_component_list = NULL;
 
+VoxelModelComponentList* voxel_model_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -79,6 +81,9 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_OWNER:
             return owner_component_list->subscribe();
+
+        case COMPONENT_VOXEL_MODEL:
+            return voxel_model_component_list->subscribe();
             
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -143,6 +148,10 @@ void release_switch(Component* component)
             owner_component_list->unsubscribe((OwnerComponent*)component);
             break;
 
+        case COMPONENT_VOXEL_MODEL:
+            voxel_model_component_list->unsubscribe((VoxelModelComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -172,6 +181,8 @@ void init()
     indexed_team_component_list = new IndexedTeamComponentList;
 
     owner_component_list = new OwnerComponentList;
+
+    voxel_model_component_list = new VoxelModelComponentList;
 }
 
 void teardown()
@@ -197,6 +208,8 @@ void teardown()
     if (indexed_team_component_list != NULL) delete indexed_team_component_list;
 
     if (owner_component_list != NULL) delete owner_component_list;
+
+    if (voxel_model_component_list != NULL) delete voxel_model_component_list;
 }
 
 } // Components

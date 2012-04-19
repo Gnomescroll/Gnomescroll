@@ -27,3 +27,5 @@
 #include <c_lib/entity/components/team/indexed_team.cpp>
 
 #include <c_lib/entity/components/owner.cpp>
+
+#include <c_lib/entity/components/voxel_model.cpp>

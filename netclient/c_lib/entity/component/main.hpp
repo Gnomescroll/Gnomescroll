@@ -78,6 +78,11 @@ const int MAX_OWNER_COMPONENTS = 4096;
 typedef ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
     OwnerComponentList;
 
+/* Voxel Model */
+const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
+typedef ComponentList<VoxelModelCompoent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>
+    VoxelModelComponentList;
+
 /* ComponentList declarations */
 
 extern PositionPhysicsComponentList* position_physics_component_list;
@@ -101,6 +106,8 @@ extern TeamComponentList* team_component_list;
 extern IndexedTeamComponentList* indexed_team_component_list;
 
 extern OwnerComponentList* owner_component_list;
+
+extern VoxelModelComponentList* voxel_model_component_list;
 
 /* ComponentList handler switches */
 
