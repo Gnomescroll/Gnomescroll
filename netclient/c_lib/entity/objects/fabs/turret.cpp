@@ -23,6 +23,9 @@ static void set_turret_properties(Object* object)
 
     object->tick = &tick_turret;
     object->update = &update_turret;
+
+    obj->create = create_packet_owner_team;
+    obj->state = state_packet;
 }
 
 Object* create_turret()

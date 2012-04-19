@@ -18,6 +18,9 @@ static void set_stone_block_drop_properties(Object* obj)
     add_component_to_object(obj, COMPONENT_TTL);
 
     obj->tick = &tick_stone_block_drop;
+
+    obj->create = create_packet_momentum;
+    obj->state = state_packet_momentum;
 }
 
 Object* create_stone_block_drop()

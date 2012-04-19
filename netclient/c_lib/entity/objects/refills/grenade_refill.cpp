@@ -20,6 +20,9 @@ static void set_grenade_refill_properties(Object* obj)
 
     obj->tick = &tick_grenade_refill;
     //obj->update = NULL;
+
+    obj->create = create_packet_momentum;
+    obj->state = state_packet_momentum;
 }
 
 Object* create_grenade_refill()

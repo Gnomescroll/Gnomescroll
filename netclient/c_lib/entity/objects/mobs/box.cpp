@@ -19,6 +19,9 @@ static void set_mob_robot_box_properties(Object* object)
 
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
+
+    obj->create = create_packet_momentum_angles;
+    obj->state = state_packet_momentum_angles;
 }
 
 Object* create_mob_robot_box()

@@ -22,6 +22,9 @@ static void set_turquoise_gemstone_properties(Object* obj)
 
     obj->tick = &tick_turquoise_gemstone;
     //obj->update = NULL;
+
+    obj->create = create_packet_momentum;
+    obj->state = state_packet_momentum;
 }
 
 Object* create_turquoise_gemstone()

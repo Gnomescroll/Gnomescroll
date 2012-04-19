@@ -23,6 +23,9 @@ static void set_agent_spawner_properties(Object* object)
 
     object->tick = &tick_agent_spawner;
     object->update = &update_agent_spawner;
+
+    obj->create = create_packet_owner_team_index;
+    obj->state = state_packet;
 }
 
 Object* create_agent_spawner()

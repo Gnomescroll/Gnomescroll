@@ -21,6 +21,9 @@ static void set_laser_refill_properties(Object* obj)
 
     obj->tick = &tick_laser_refill;
     //obj->update = NULL;
+
+    obj->create = create_packet_momentum;
+    obj->state = state_packet_momentum;
 }
 
 Object* create_laser_refill()

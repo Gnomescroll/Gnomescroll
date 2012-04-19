@@ -19,6 +19,9 @@ static void set_mob_spawner_properties(Object* obj)
 
     obj->tick = &tick_mob_spawner;
     obj->update = &update_mob_spawner;
+
+    obj->create = create_packet;
+    obj->state = state_packet;
 }
 
 

@@ -18,6 +18,9 @@ static void set_mob_bomb_properties(Object* object)
 
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
+
+    obj->create = create_packet_momentum_angles;
+    obj->state = state_packet_momentum_angles;
 }
 
 Object* create_mob_bomb()
