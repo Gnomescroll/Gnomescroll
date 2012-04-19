@@ -11,22 +11,6 @@ namespace t_item
 /*
     Free Item
 */
-class free_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<free_item_picked_up_StoC>
-{
-    public:
-        uint8_t type;
-        uint16_t id;
-        uint8_t agent_id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&agent_id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
 class free_item_create_StoC: public FixedSizeReliableNetPacketToClient<free_item_create_StoC>
 {
     public:
@@ -63,8 +47,45 @@ class free_item_destroy_StoC: public FixedSizeReliableNetPacketToClient<free_ite
         inline void handle();
 };
 
+class free_item_picked_up_StoC: public FixedSizeReliableNetPacketToClient<free_item_picked_up_StoC>
+{
+    public:
+        //uint8_t type;
+        uint16_t id;
+        uint8_t agent_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            //pack_u8(&type, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&agent_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 /*
-    Inventory
+    Inventory Item State Packets
+*/
+
+class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
+{
+    public:
+        //uint8_t type;
+        uint16_t item_id;
+        uint16_t item_type;
+        uint16_t inventory_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&item_id, buff, buff_n, pack);
+            pack_u16(&item_type, buff, buff_n, pack);
+            pack_u16(&inventory_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+/*
+    Inventory State Packets
 */
 
 class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_inventory_StoC>

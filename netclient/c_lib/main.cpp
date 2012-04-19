@@ -133,11 +133,15 @@ int run()
 
         frame_graph->frame_stage(1); // misc stuff and network
 
-        // dispatch
+        /*
+            Networking
+        */
+        poll_mouse();
+
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
-        Particles::prep_shrapnel();
+
         // update mouse
         poll_mouse();
 
@@ -156,21 +160,32 @@ int run()
 
         frame_graph->frame_stage(2); // call draw functions
 
-        // switch to world projection
+        /*
+            Start World Projetion
+        */
         world_projection();
-
-        // draw map
-        poll_mouse();
-
-        t_map::draw_map();
-
-        Animations::draw_insect_mob();
-        
-        poll_mouse();
-
         // draw client state
 
-        ClientState::update_for_draw();
+
+        poll_mouse();
+
+        /*
+            Prep for draw
+        */
+        Animations::prep_insect_mob();
+        Particles::prep_shrapnel();
+
+        /*
+            Map
+        */
+
+        poll_mouse();
+        t_map::draw_map();
+        poll_mouse();
+
+        /*
+            Non-transparent
+        */
 
         ClientState::voxel_render_list->draw();
 
@@ -200,13 +215,21 @@ int run()
         Particles::billboard_text_list->draw();
         
 
-        poll_mouse();
-        
-        t_mech::draw();
+        ClientState::draw(); //deprecate this! WTF is this
+
         t_item::draw();
+        Animations::draw_insect_mob();
 
-        poll_mouse();
+        /* 
+            Alpha tested non-transparent
+        */
 
+        t_mech::draw();
+
+        begin_item_draw();
+        Draw::sprite_list->draw();
+        Components::billboard_sprite_component_list->draw();
+        end_item_draw();
 
         /*
             Skybox
@@ -217,18 +240,14 @@ int run()
             Transparent
         */
 
-        begin_item_draw();
+        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
         Components::billboard_sprite_component_list->call();
-        end_item_draw();
-
-        Particles::draw_shrapnel();
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
         Particles::blood_list->draw();
         Particles::end_particle_draw();
-
 
         poll_mouse();
         // draw animations
@@ -236,11 +255,12 @@ int run()
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
 
-
-
         // update mouse
         poll_mouse();
 
+        /*
+            Draw Hud
+        */
         if (Options::hud)
         {
             // switch to hud  projection
@@ -251,7 +271,8 @@ int run()
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
         }
-
+        
+        poll_mouse();
         // update sound
         Sound::update();
 

@@ -41,6 +41,9 @@ void state_teardown()
 void tick()
 {
     free_item_list->tick();
+#ifdef DC_SERVER
+    check_item_pickups();
+#endif
 }
 
 void draw()
@@ -101,9 +104,7 @@ void create_agent_inventory(int agent_id, int client_id)
 void delete_agent_inventory(int agent_id)
 {
     assert(AgentInventoryList[agent_id] != NO_AGENT);
-
     item_container_list->destroy(agent_id);
-    
     AgentInventoryList[agent_id] == NO_AGENT;
 }
 
