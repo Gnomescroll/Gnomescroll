@@ -73,24 +73,25 @@ void ready_turret(Object* object)
 
 void die_turret(Object* object)
 {
-    using Components::VoxelModelComponent;
-    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    Vec3 position = vox->get_center();
 
     #if DC_SERVER
-    using Components::OwnerComponent;
-    OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
+    using Components::OwnerComponent;
+    OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
 
-    explode->explode(position, owner->get_owner());
+    explode->explode();
     owner->revoke();
     object->broadcastDeath();    
     #endif
 
     #if DC_CLIENT
-    using Components::TeamComponent;
+    //using Components::VoxelModelComponent;
+    //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    //using Components::TeamComponent;
     //TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+
+    //Vec3 position = vox->get_center();
     //if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team());
     //dieChatMessage(object);
     #endif

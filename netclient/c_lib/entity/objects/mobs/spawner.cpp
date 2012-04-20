@@ -65,7 +65,7 @@ void die_mob_spawner(Object* object)
     #endif
     
     #if DC_SERVER
-    //object->broadcastDeath();
+    object->broadcastDeath();
     #endif
 }
 

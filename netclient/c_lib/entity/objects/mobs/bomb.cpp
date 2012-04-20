@@ -60,6 +60,9 @@ void die_mob_bomb(Object* object)
     #if DC_SERVER
     // drop item
     // explosion damage
+    using Components::ExplosionComponent;
+    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
+    explode->explode();
     object->broadcastDeath();
     #endif
 
