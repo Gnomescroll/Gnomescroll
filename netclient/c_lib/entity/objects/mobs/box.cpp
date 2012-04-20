@@ -45,12 +45,10 @@ void ready_mob_robot_box(Object* object)
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
     
-    vox->vox = bornVox(vox->vox_dat, object->id, object->type);
-    bornSetVox(vox->vox, vox->init_hitscan, vox->init_draw);
-    bornUpdateVox(vox->vox, position, angles.x, angles.y);
+    vox->ready(position, angles.x, angles.y);
 
     #if DC_SERVER
-    //object->broadcastCreate();
+    object->broadcastCreate();
     #endif
 }
 
@@ -80,7 +78,7 @@ void die_mob_robot_box(Object* object)
 // attach the rest on targeting
 
 #if DC_SERVER
-void client_tick_mob_robot_box()
+void server_tick_mob_robot_box(Object* object)
 {
     //// must stay on ground -- apply terrain collision
     //// wander randomly (TODO: network model with destinations)
@@ -235,7 +233,7 @@ void client_tick_mob_robot_box()
 #endif
 
 #if DC_CLIENT
-void client_tick_mob_robot_box()
+void client_tick_mob_robot_box(Object* object)
 {
     ////return;
     //if (this->locked_on_target)
@@ -314,8 +312,9 @@ void update_mob_robot_box(Object* object)
         (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    updateVox(vox->vox, pcp->get_position(), pcp->get_angles(), pcp->changed);
-    pcp->set_changed(false);    // reset changed state
+    Vec3 angles = physics->get_angles();
+    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
+    physics->changed = false;    // reset changed state
 }
 
 

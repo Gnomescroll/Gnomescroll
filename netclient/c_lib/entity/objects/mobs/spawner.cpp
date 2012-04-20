@@ -46,12 +46,11 @@ void ready_mob_spawner(Object* object)
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
     
-    vox->vox = bornVox(vox->vox_dat, object->id, object->type);
-    bornSetVox(vox->vox, vox->init_hitscan, vox->init_draw);
-    bornUpdateFrozenVox(vox->vox, position, angles.x, angles.y);
+    vox->ready(position, angles.x, angles.y);
+    vox->freeze();
 
     #if DC_SERVER
-    //object->broadcastCreate();
+    object->broadcastCreate();
     #endif
 }
 
@@ -72,19 +71,18 @@ void die_mob_spawner(Object* object)
 
 void tick_mob_spawner(Object* object)
 {
-    using Components::TargetingComponent;
-    using Components::TeamComponent;
-    using Components::DimensionComponent;
+    #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
     PCP* physics =
         (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
 
-    Vec3 position = pcp->get_position();
-    position.z = tickStayOnGround(position);
-    bool changed = pcp->set_position(position);
-    pcp->set_changed(changed);
+    Vec3 position = physics->get_position();
+    position.z = stick_to_terrain_surface(position);
+    bool changed = physics->set_position(position);
+    physics->changed = changed;
 
-    //if (changed) object->broadcastState();
+    if (changed) object->broadcastState();
+    #endif
 }
 
 void update_mob_spawner(Object* object)
@@ -96,8 +94,9 @@ void update_mob_spawner(Object* object)
         (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    updateFrozenVox(vox->vox, pcp->get_position(), pcp->get_angles(), pcp->changed);
-    pcp->set_changed(false);    // reset changed state
+    Vec3 angles = physics->get_angles();
+    vox->force_update(physics->get_position(), angles.x, angles.y, physics->changed);
+    physics->changed = false;    // reset changed state
 }
 
 

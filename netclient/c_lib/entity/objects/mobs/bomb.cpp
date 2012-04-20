@@ -36,7 +36,7 @@ Object* create_mob_bomb()
 void ready_mob_bomb(Object* object)
 {
     using Components::VoxelModelComponent;
-    typedef Components::PhysicsComponent;
+    using Components::PhysicsComponent;
     
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
     PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
@@ -44,12 +44,10 @@ void ready_mob_bomb(Object* object)
     Vec3 position = physics->get_position();
     Vec3 angles = physics->get_angles();
     
-    vox->vox = bornVox(vox->vox_dat, object->id, object->type);
-    bornSetVox(vox->vox, vox->init_hitscan, vox->init_draw);
-    bornUpdateVox(vox->vox, position, angles.x, angles.y);
+    vox->ready(position, angles.x, angles.y);
 
     #if DC_SERVER
-    //object->broadcastCreate();
+    object->broadcastCreate();
     #endif
 }
 
@@ -62,7 +60,7 @@ void die_mob_bomb(Object* object)
     #if DC_SERVER
     // drop item
     // explosion damage
-    //object->broadcastDeath();
+    object->broadcastDeath();
     #endif
 
 }
@@ -76,8 +74,8 @@ void tick_mob_bomb(Object* object)
     //Agent_state* agent;
     
     #if DC_SERVER
-    // die if near agent
-    // TODO -- proximity effect component
+     //die if near agent
+     //TODO -- proximity effect component
     //agent = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
     //if (agent != NULL)
     //{
@@ -103,7 +101,7 @@ void tick_mob_bomb(Object* object)
     #if DC_SERVER
     // TODO -- rate limited broadcast component
     //if (this->canSendState())
-        //this->broadcastState(); // send state packet every N ticks
+    object->broadcastState(); // send state packet every N ticks
     #endif
 
 }
@@ -117,8 +115,9 @@ void update_mob_bomb(Object* object)
         (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    updateVox(vox->vox, pcp->get_position(), pcp->get_angles(), pcp->changed);
-    pcp->set_changed(false);    // reset changed state
+    Vec3 angles = physics->get_angles();
+    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
+    physics->changed = false;    // reset changed state
 }
 
 
