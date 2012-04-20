@@ -57,6 +57,9 @@ inline void item_create_StoC::handle()
 // uint16_t item_id;
 // uint16_t item_type;
 // uint16_t inventory_id;
+// uint16_t inventory_slot;
+
+
 }
 
 /*

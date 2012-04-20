@@ -140,6 +140,21 @@ void create_free_item(int item_type,
 }
 
 
+void create_item(int inventory_id)
+{
+
+    
+}
+
+inline void item_create_StoC::handle()
+{
+// uint16_t item_id;
+// uint16_t item_type;
+// uint16_t inventory_id;
+// uint16_t inventory_slot;
+
+
+
 }
 
 

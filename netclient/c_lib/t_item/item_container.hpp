@@ -83,6 +83,17 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
             printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
         }
 
+        //create item, return slot
+        int create_item(int item_id)
+        {
+            int _slot = get_empty_slot();
+            int x = _slot % xdim;
+            int y = _slot / xdim;
+            assert(is_valid_grid_position(x,y));
+            slot[y*xdim + x] = item_id;
+            printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
+        }
+
        	void clear_slot(int x, int y)
         {
         	assert(is_valid_grid_position(x,y));

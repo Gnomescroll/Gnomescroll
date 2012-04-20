@@ -74,12 +74,14 @@ class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_St
         uint16_t item_id;
         uint16_t item_type;
         uint16_t inventory_id;
+        uint16_t inventory_slot;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&item_id, buff, buff_n, pack);
             pack_u16(&item_type, buff, buff_n, pack);
             pack_u16(&inventory_id, buff, buff_n, pack);
+            pack_u16(&inventory_slot, buff, buff_n, pack);
         }
         inline void handle();
 };

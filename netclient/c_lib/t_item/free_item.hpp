@@ -208,7 +208,53 @@ void Free_item_list::check_item_pickups()
         p.broadcast();
 
         t_item::free_item_list->destroy(free_item->id);
-    }
+
+
+        /*
+            Put item in agent inventory
+        */
+        assert(AgentInventoryList[agent->id] != NO_AGENT);
+
+        int inventory_id = AgentInventoryList[agent->id];
+        ItemContainer* ic = item_container_list.get(inventory_id)
+        
+        if(ic == 0)
+        {
+            printf("Free_item_list::check_item_pickups, item container null \n");
+            return;
+        }
+
+        int slot = ic->get_empty_slot();
+        if(slot == -1)
+        {
+            printf("Free_item_list::check_item_pickups, Agent inventory full: item deleted, fix \n");
+            return;
+        }
+
+        int item_type = rand()%12;
+
+        int slot = ic->create_item(item_type);   //insert item on server
+
+        class item_create_StoC p;
+        p.item_id = item_type;
+        p.item_type = item_type;
+        p.inventory_id = inventory_id;
+        p.inventory_slot = slot;
+
+        p.sendToClient(agent->id); //warning, assumes agent and player id are same
+
+/*
+item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
+{
+    public:
+        //uint8_t type;
+        uint16_t item_id;
+        uint16_t item_type;
+        uint16_t inventory_id;
+        uint16_t inventory_slot;
+
+}
+*/
 #endif
 
 }

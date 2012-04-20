@@ -62,7 +62,7 @@ void create_free_item(int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz);
 
-
+void create_item(int inventory_id);
 }
 
 #endif 
