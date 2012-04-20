@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/component/component.hpp>
 
@@ -13,6 +15,7 @@ class DimensionComponent: public Component
         float camera_height;
 
         float get_height() { return this->height; }
+        int get_integer_height() { return (int)ceil(this->height); }
         float get_camera_height() { return this->camera_height; }
         Vec3 get_camera_position();
 

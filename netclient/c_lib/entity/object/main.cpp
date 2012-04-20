@@ -333,9 +333,43 @@ bool full(ObjectType type)
 
 bool point_occupied_by_type(ObjectType type, int x, int y, int z)
 {
+    if (object_list->empty(type)) return false;
+
+    Object** objects = object_list->get_objects(type);
+    assert(objects != NULL);
+    int max = object_list->max(type);
+    assert(max > 0);
+    
+    using Components::PhysicsComponent;
+    using Components::DimensionComponent;
+
+    Object *obj;
+    int px,py,pz,height;
+    PhysicsComponent* physics;
+    DimensionComponent* dims;
+    
+    for (int i=0; i<max; i++)
+    {
+        obj = objects[i];
+        if (obj == NULL) continue;
+        
+        physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        assert(physics != NULL);
+        Vec3 position = physics->get_position();
+        px = (int)position.x;
+        py = (int)position.y;
+        if (px != x || py != y) continue;
+        pz = (int)position.z;
+
+        dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+        if (dims != NULL) height = dims->get_integer_height();
+        else height = 1;
+
+        for (int j=0; j<height; j++)
+            if (pz + j == z) return true;
+    }
+    
     return false;
 }
-
-
 
 } // Objects

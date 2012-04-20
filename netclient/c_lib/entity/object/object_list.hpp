@@ -21,19 +21,29 @@ class ObjectList
 
     public:
 
+        // misc
         void set_object_id(Object* object, int id);
 
+        // count accessors
         int count(ObjectType type);
         int max(ObjectType type);
+        bool empty(ObjectType type);
         bool full(ObjectType type);
 
+        // object accessors
         Object* get(ObjectType type, int id);
         void destroy(ObjectType type, int id);
         Object* create(ObjectType type);
         Object* create(ObjectType type, int id);
+
+        // objects accessors
+        Object** get_objects(ObjectType type);
+
+        // initializers
         void set_object_max(ObjectType type, int max);
         void init();
 
+        // standard tickers
         void tick();    // physics tick
         void update();  // draw state update
         void harvest(); // kill

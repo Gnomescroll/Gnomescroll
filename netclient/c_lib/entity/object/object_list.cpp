@@ -36,6 +36,11 @@ int ObjectList::max(ObjectType type)
     return this->maximums[type];
 }
 
+bool ObjectList::empty(ObjectType type)
+{
+    return (this->count(type) == 0);
+}
+
 bool ObjectList::full(ObjectType type)
 {
     return (this->count(type) >= this->max(type));
@@ -74,6 +79,13 @@ Object* ObjectList::create(ObjectType type, int id)
     this->objects[type][id]->type = type;
     this->indices[type] += 1;
     return this->objects[type][id];
+}
+
+Object** ObjectList::get_objects(ObjectType type)
+{
+    assert(type < MAX_OBJECT_TYPES);
+    assert(type >= 0);
+    return this->objects[type];
 }
 
 void ObjectList::set_object_max(ObjectType type, int max)
