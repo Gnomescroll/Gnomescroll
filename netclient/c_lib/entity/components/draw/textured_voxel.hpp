@@ -11,9 +11,6 @@ namespace Components
 class TexturedVoxelComponent: public VoxelComponent
 {
     private:
-        Vec3 forward;
-        Vec3 right;
-        Vec3 normal;
         float tx,ty;
         float pixel_margin;
         

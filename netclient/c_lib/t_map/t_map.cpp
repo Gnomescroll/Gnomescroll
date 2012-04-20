@@ -117,7 +117,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
     if (p > drop_probability) return;
 
     ObjectType type = OBJECT_NONE;
-    if (randf () < 1.0f)
+    if (randf () < 0.0f)
     {
         const int n_items = 7;  // 7 Gemstones
         const ObjectType items[n_items] = {
@@ -133,10 +133,10 @@ void block_spawn_items(int block_value, int x, int y, int z)
     }
     else
     {
-        const int n_items = 3;
+        const int n_items = 5;
         const ObjectType items[n_items] = {
-            //OBJECT_DIRT_BLOCK_DROP,
-            //OBJECT_STONE_BLOCK_DROP,
+            OBJECT_DIRT_BLOCK_DROP,
+            OBJECT_STONE_BLOCK_DROP,
             OBJECT_SOFT_ROCK_BLOCK_DROP,
             //OBJECT_MEDIUM_ROCK_BLOCK_DROP,
             OBJECT_HARD_ROCK_BLOCK_DROP,

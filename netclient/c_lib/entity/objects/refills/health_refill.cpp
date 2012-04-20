@@ -87,7 +87,7 @@ void tick_health_refill(Object* object)
 
     #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->tick(object);
+    pickup->tick();
     #endif
 
     TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);

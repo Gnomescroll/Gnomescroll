@@ -23,11 +23,27 @@ static void set_dirt_block_drop_properties(Object* object)
     object->init(n_components);
 
     #if DC_CLIENT
-    add_component_to_object(object, COMPONENT_COLORED_VOXEL);
+    using Components::ColoredVoxelComponent;
+    ColoredVoxelComponent* voxel = (ColoredVoxelComponent*)add_component_to_object(object, COMPONENT_COLORED_VOXEL);
+    voxel->color = DIRT_BLOCK_DROP_COLOR;
+    voxel->size = BLOCK_DROP_SIZE;
+    voxel->dtheta_speed = BLOCK_DROP_THETA_ROTATION_SPEED;
+    voxel->dphi_speed = BLOCK_DROP_PHI_ROTATION_SPEED;
     #endif
-    add_component_to_object(object, COMPONENT_VERLET);
-    add_component_to_object(object, COMPONENT_PICKUP);
-    add_component_to_object(object, COMPONENT_TTL);
+    
+    using Components::VerletPhysicsComponent;
+    using Components::PickupComponent;
+    using Components::TTLHealthComponent;
+    
+    VerletPhysicsComponent* physics = (VerletPhysicsComponent*)add_component_to_object(object, COMPONENT_VERLET);
+    physics->mass = BLOCK_DROP_MASS;
+    physics->damp = BLOCK_DROP_DAMP;
+    
+    PickupComponent* pickup = (PickupComponent*)add_component_to_object(object, COMPONENT_PICKUP);
+    pickup->pickup_radius = BLOCK_DROP_PICKUP_RADIUS;
+    
+    TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
+    health->ttl_max = BLOCK_DROP_TTL;
 
     object->tick = &tick_dirt_block_drop;
 
@@ -54,7 +70,7 @@ void ready_dirt_block_drop(Object* object)
     #endif
     
     #if DC_SERVER
-    // broadcast create
+    object->broadcastCreate();
     #endif
 }
 
@@ -88,7 +104,7 @@ void tick_dirt_block_drop(Object* object)
     // check for pickup
     #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->tick(object);
+    pickup->tick();
     #endif
 
     // increment ttl

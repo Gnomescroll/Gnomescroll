@@ -7,6 +7,7 @@
 #include <c_lib/entity/components/pickup.hpp>
 #if DC_CLIENT
 #include <c_lib/entity/components/draw/voxel.hpp>
+#include <c_lib/t_map/glsl/texture.hpp>
 #endif
 
 namespace Objects
@@ -23,12 +24,28 @@ static void set_hard_rock_block_drop_properties(Object* object)
     object->init(n_components);
 
     #if DC_CLIENT
-    add_component_to_object(object, COMPONENT_TEXTURED_VOXEL);
+    using Components::TexturedVoxelComponent;
+    TexturedVoxelComponent* voxel = (TexturedVoxelComponent*)add_component_to_object(object, COMPONENT_TEXTURED_VOXEL);
+    voxel->texture_index = t_map::get_cube_primary_texture_index((char*)"hard_rock");   // TODO -- use cached values
+    voxel->pixel_width = BLOCK_DROP_TEXTURE_PIXEL_WIDTH;
+    voxel->size = BLOCK_DROP_SIZE;
+    voxel->dtheta_speed = BLOCK_DROP_THETA_ROTATION_SPEED;
+    voxel->dphi_speed = BLOCK_DROP_PHI_ROTATION_SPEED;
     #endif
     
-    add_component_to_object(object, COMPONENT_VERLET);
-    add_component_to_object(object, COMPONENT_PICKUP);
-    add_component_to_object(object, COMPONENT_TTL);
+    using Components::VerletPhysicsComponent;
+    using Components::PickupComponent;
+    using Components::TTLHealthComponent;
+    
+    VerletPhysicsComponent* physics = (VerletPhysicsComponent*)add_component_to_object(object, COMPONENT_VERLET);
+    physics->mass = BLOCK_DROP_MASS;
+    physics->damp = BLOCK_DROP_DAMP;
+    
+    PickupComponent* pickup = (PickupComponent*)add_component_to_object(object, COMPONENT_PICKUP);
+    pickup->pickup_radius = BLOCK_DROP_PICKUP_RADIUS;
+    
+    TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
+    health->ttl_max = BLOCK_DROP_TTL;
 
     object->tick = &tick_hard_rock_block_drop;
 
@@ -55,7 +72,7 @@ void ready_hard_rock_block_drop(Object* object)
     #endif
     
     #if DC_SERVER
-    // broadcast create
+    object->broadcastCreate();
     #endif
 }
 
@@ -87,7 +104,7 @@ void tick_hard_rock_block_drop(Object* object)
 
     #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->tick(object);
+    pickup->tick();
     #endif
 
     TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);

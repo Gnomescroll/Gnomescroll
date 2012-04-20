@@ -75,10 +75,10 @@ class VoxelComponent: public DrawComponent
             this->orient_vectors();
         }
 
-        void delta_rotation(float dtheta, float dphi)
+        void delta_rotation(float dtheta_speed, float dphi_speed)
         {
-            this->theta += dtheta;
-            this->phi += dphi;
+            this->theta += dtheta_speed;
+            this->phi += dphi_speed;
             this->orient_vectors();
         }
 
