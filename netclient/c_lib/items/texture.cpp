@@ -6,6 +6,7 @@ GLuint item_texture;
 
 void begin_item_draw()
 {
+    GL_ASSERT(GL_TEXTURE_2D, true);
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.5);
     glBindTexture(GL_TEXTURE_2D, item_texture);

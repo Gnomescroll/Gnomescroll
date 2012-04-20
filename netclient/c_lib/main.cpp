@@ -235,13 +235,15 @@ int run()
         // transparent
         Particles::billboard_text_list->draw();
         
-        t_item::draw();
         Animations::draw_insect_mob();
 
         Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
         
         glEnable(GL_TEXTURE_2D);
+
+        t_item::draw();
+        
         begin_item_draw();
         Components::billboard_sprite_component_list->call();
         end_item_draw();
