@@ -61,8 +61,8 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         bool is_full()
         {
-            for(int i=0; i<slot_max; i++) { if(slot[i] == EMPTY_SLOT) return true; }
-            return false;
+            for(int i=0; i<slot_max; i++) { if(slot[i] == EMPTY_SLOT) return false; }
+            return true;
         }
 
         bool is_valid_grid_position(int x, int y)

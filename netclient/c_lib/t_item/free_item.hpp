@@ -226,7 +226,7 @@ void Free_item_list::check_item_pickups()
         }
 
         //int slot = ic->get_empty_slot();
-        if(! ic->is_full() )
+        if(ic->is_full() )
         {
             printf("Free_item_list::check_item_pickups, Agent inventory full: item deleted, fix \n");
             return;
