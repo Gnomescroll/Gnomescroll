@@ -46,6 +46,7 @@
 //physics
 #include <c_lib/physics/verlet.cpp>
 #include <c_lib/physics/verlet_particle.cpp>
+#include <c_lib/physics/motion.cpp>
 
 #include <c_lib/physics/common.cpp>
 
