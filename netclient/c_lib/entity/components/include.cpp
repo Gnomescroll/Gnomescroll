@@ -36,6 +36,10 @@
 
 #include <c_lib/entity/components/voxel_model.cpp>
 
-#include <c_lib/entity/components/dimension.hpp>
+#include <c_lib/entity/components/dimension.cpp>
 
 #include <c_lib/entity/components/targeting.cpp>
+
+#if DC_SERVER
+#include <c_lib/entity/components/explosion.cpp>
+#endif

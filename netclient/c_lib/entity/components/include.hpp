@@ -37,3 +37,7 @@
 #include <c_lib/entity/components/dimension.hpp>
 
 #include <c_lib/entity/components/targeting.hpp>
+
+#if DC_SERVER
+#include <c_lib/entity/components/explosion.hpp>
+#endif

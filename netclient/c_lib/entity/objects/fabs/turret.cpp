@@ -7,13 +7,21 @@
 #include <c_lib/entity/components/team.hpp>
 #include <c_lib/entity/components/owner.hpp>
 #include <c_lib/entity/components/voxel_model.hpp>
+#if DC_SERVER
+#include <c_lib/entity/components/explosion.hpp>
+#endif
 
 namespace Objects
 {
 
 static void set_turret_properties(Object* object)
 {
+    #if DC_SERVER
+    int n_components = 8;
+    #endif
+    #if DC_CLIENT
     int n_components = 7;
+    #endif
     object->init(n_components);
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     add_component_to_object(object, COMPONENT_DIMENSION);
@@ -22,6 +30,9 @@ static void set_turret_properties(Object* object)
     add_component_to_object(object, COMPONENT_TEAM);
     add_component_to_object(object, COMPONENT_TARGETING);
     add_component_to_object(object, COMPONENT_HIT_POINTS);
+    #if DC_SERVER
+    add_component_to_object(object, COMPONENT_EXPLOSION);
+    #endif
 
     object->tick = &tick_turret;
     object->update = &update_turret;
@@ -62,20 +73,23 @@ void ready_turret(Object* object)
 
 void die_turret(Object* object)
 {
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    Vec3 position = vox->get_center();
 
     #if DC_SERVER
     using Components::OwnerComponent;
-    object->broadcastDeath();    
     OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    using Components::ExplosionComponent;
+    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
+
+    explode->explode(position, owner->get_owner());
     owner->revoke();
-    //dieExplode(position, owner->get_owner()); // TODO -- explosion component
+    object->broadcastDeath();    
     #endif
 
     #if DC_CLIENT
-    using Components::VoxelModelComponent;
     using Components::TeamComponent;
-    
-    //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL)
     //TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     //if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team());
     //dieChatMessage(object);
