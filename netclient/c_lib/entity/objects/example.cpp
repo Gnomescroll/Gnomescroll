@@ -16,9 +16,9 @@
 
     //// attach components
     //const int n_components = 2;
-    //obj->init(n_components);
-    //add_component_to_object(obj, COMPONENT_PICKUP);
-    //add_component_to_object(obj, COMPONENT_POSITION_MOMENTUM_PHYSICS);
+    //object->init(n_components);
+    //add_component_to_object(object, COMPONENT_PICKUP);
+    //add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_PHYSICS);
 
     //return obj;
 //}
@@ -59,8 +59,8 @@ Object* create_REPLACEME()
 
     // attach components
     const int n_components = 1;
-    obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_NONE);
+    object->init(n_components);
+    add_component_to_object(object, COMPONENT_NONE);
 
     return obj;
 }

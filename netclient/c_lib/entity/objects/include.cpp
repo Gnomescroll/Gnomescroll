@@ -20,3 +20,11 @@
 #include <c_lib/entity/objects/gemstones/amethyst.cpp>
 #include <c_lib/entity/objects/gemstones/jade.cpp>
 #include <c_lib/entity/objects/gemstones/onyx.cpp>
+
+#include <c_lib/entity/objects/fabs/spawner.cpp>
+#include <c_lib/entity/objects/fabs/turret.cpp>
+
+#include <c_lib/entity/objects/mobs/bomb.cpp>
+#include <c_lib/entity/objects/mobs/box.cpp>
+#include <c_lib/entity/objects/mobs/spawner.cpp>
+

@@ -14,6 +14,10 @@ class OwnerComponent: public Component
         int get_owner() { return this->owner; }
         void set_owner(int owner) { this->owner = owner; }
 
+        #if DC_SERVER
+        void revoke();
+        #endif
+
     OwnerComponent()
     : Component(COMPONENT_OWNER, COMPONENT_INTERFACE_OWNER),
     owner(NO_AGENT)

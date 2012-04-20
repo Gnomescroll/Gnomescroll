@@ -7,21 +7,21 @@
 namespace Objects
 {
 
-static void set_mob_spawner_properties(Object* obj)
+static void set_mob_spawner_properties(Object* object)
 {
     const int n_components = 5;
-    object->init(n_components):
-    add_component_to_object(obj, COMPONENT_POSITION_CHANGED);
-    add_component_to_object(obj, COMPONENT_VOXEL_MODEL);
-    add_component_to_object(obj, COMPONENT_MONSTER_SPAWNER);
-    add_component_to_object(obj, COMPONENT_DIMENSION);
-    add_component_to_object(obj, COMPONENT_HIT_POINTS);
+    object->init(n_components);
+    add_component_to_object(object, COMPONENT_POSITION_CHANGED);
+    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
+    add_component_to_object(object, COMPONENT_DIMENSION);
+    add_component_to_object(object, COMPONENT_HIT_POINTS);
 
-    obj->tick = &tick_mob_spawner;
-    obj->update = &update_mob_spawner;
+    object->tick = &tick_mob_spawner;
+    object->update = &update_mob_spawner;
 
-    obj->create = create_packet;
-    obj->state = state_packet;
+    object->create = create_packet;
+    object->state = state_packet;
 }
 
 

@@ -4,26 +4,50 @@
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/physics/verlet.hpp>
+#include <c_lib/entity/components/draw/billboard_sprite.hpp>
+#include <c_lib/entity/components/pickup.hpp>
+#include <c_lib/entity/components/health/ttl.hpp>
 
 namespace Objects
 {
 
 // private
-static void set_health_refill_properties(Object* obj)
+static void set_health_refill_properties(Object* object)
 {   // attach components
-    //const int n_components = 3;
+    #if DC_CLIENT
     const int n_components = 4;
-    obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_BILLBOARD_SPRITE);
-    add_component_to_object(obj, COMPONENT_VERLET);
-    add_component_to_object(obj, COMPONENT_PICKUP);
-    add_component_to_object(obj, COMPONENT_TTL);
+    #endif
+    #if DC_SERVER
+    const int n_components = 3;
+    #endif
+    object->init(n_components);
 
-    obj->tick = &tick_health_refill;
-    //obj->update = NULL;
+    using Components::VerletPhysicsComponent;
+    using Components::PickupComponent;
+    using Components::TTLHealthComponent;
 
-    obj->create = create_packet_momentum;
-    obj->state = state_packet_momentum;
+    #if DC_CLIENT
+    using Components::BillboardSpriteComponent;
+    BillboardSpriteComponent* sprite = (BillboardSpriteComponent*)add_component_to_object(object, COMPONENT_BILLBOARD_SPRITE);
+    sprite->scale = REFILL_ITEM_SCALE;
+    sprite->sprite_index = HEALTH_REFILL_SPRITE_INDEX;
+    #endif
+
+    VerletPhysicsComponent* physics = (VerletPhysicsComponent*)add_component_to_object(object, COMPONENT_VERLET);
+    physics->mass = REFILL_ITEM_MASS;
+    physics->damp = REFILL_ITEM_DAMP;
+    
+    PickupComponent* pickup = (PickupComponent*)add_component_to_object(object, COMPONENT_PICKUP);
+    pickup->pickup_radius = REFILL_ITEM_PICKUP_RADIUS;
+    
+    TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
+    health->ttl_max = REFILL_ITEM_TTL;
+
+    object->tick = &tick_health_refill;
+    //object->update = NULL;
+
+    object->create = create_packet_momentum;
+    object->state = state_packet_momentum;
 }
 
 Object* create_health_refill()
@@ -39,7 +63,7 @@ Object* create_health_refill()
 void ready_health_refill(Object* object)
 {
     #if DC_SERVER
-    // broadcast create
+    object->broadcastCreate();
     #endif
 }
 

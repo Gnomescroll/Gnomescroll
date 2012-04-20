@@ -4,23 +4,36 @@
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/physics/verlet.hpp>
+#include <c_lib/entity/components/pickup.hpp>
+#if DC_CLIENT
+#include <c_lib/entity/components/draw/voxel.hpp>
+#endif
 
 namespace Objects
 {
     
-static void set_medium_rock_block_drop_properties(Object* obj)
+static void set_medium_rock_block_drop_properties(Object* object)
 {
+    #if DC_CLIENT
     const int n_components = 4;
-    obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_TEXTURED_VOXEL);
-    add_component_to_object(obj, COMPONENT_VERLET);
-    add_component_to_object(obj, COMPONENT_PICKUP);
-    add_component_to_object(obj, COMPONENT_TTL);
+    #endif
+    #if DC_SERVER
+    const int n_components = 3;
+    #endif
+    object->init(n_components);
 
-    obj->tick = &tick_medium_rock_block_drop;
+    #if DC_CLIENT
+    add_component_to_object(object, COMPONENT_TEXTURED_VOXEL);
+    #endif
+    
+    add_component_to_object(object, COMPONENT_VERLET);
+    add_component_to_object(object, COMPONENT_PICKUP);
+    add_component_to_object(object, COMPONENT_TTL);
 
-    obj->create = create_packet_momentum;
-    obj->state = state_packet_momentum;
+    object->tick = &tick_medium_rock_block_drop;
+
+    object->create = create_packet_momentum;
+    object->state = state_packet_momentum;
 }
 
 Object* create_medium_rock_block_drop()

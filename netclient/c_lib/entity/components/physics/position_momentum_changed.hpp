@@ -13,12 +13,14 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         Vec3 position;
         Vec3 momentum;
         Vec3 angles;
+        bool changed;
         
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
             if (vec3_equal(this->position, position)) return false;
             this->position = position;
+            this->changed = true;
             return true;
         }
 
@@ -27,6 +29,7 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         {
             if (vec3_equal(this->momentum, momentum)) return false;
             this->momentum = momentum;
+            this->changed = true;
             return true;
         }
 
@@ -35,14 +38,15 @@ class PositionMomentumChangedPhysicsComponent: public PhysicsComponent
         {
             if (vec3_equal(this->angles, angles)) return false;
             this->angles = angles;
+            this->changed = true;
             return true;
         }
 
-
     PositionMomentumChangedPhysicsComponent()
     : PhysicsComponent(COMPONENT_POSITION_MOMENTUM_CHANGED),
-    position(NULL_POSITION), momentum(NULL_MOMENTUM), angles(NULL_ANGLES)
+    position(NULL_POSITION), momentum(NULL_MOMENTUM), angles(NULL_ANGLES), changed(true)
     {}
+
 };
 
 

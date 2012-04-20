@@ -57,8 +57,8 @@ class Object
 
     ~Object();
 
-    explicit Object(int id):
-        n_components(0), components(NULL),
+    explicit Object(int id)
+    :   n_components(0), components(NULL),
         id(id), type(OBJECT_NONE),
         tick(NULL), update(NULL),
         create(NULL), state(NULL)

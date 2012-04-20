@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/draw.hpp>
 
@@ -22,3 +24,5 @@ class BillboardSpriteComponent: public DrawComponent
 };
     
 } // Components
+
+#endif

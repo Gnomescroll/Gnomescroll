@@ -4,27 +4,37 @@
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/physics/verlet.hpp>
+#if DC_CLIENT
 #include <c_lib/entity/components/draw/billboard_sprite.hpp>
+#endif
 
 namespace Objects
 {
 
 // private
-static void set_malachite_gemstone_properties(Object* obj)
+static void set_malachite_gemstone_properties(Object* object)
 {   // attach components
-    //const int n_components = 3;
+    #if DC_CLIENT
     const int n_components = 4;
-    obj->init(n_components);
-    add_component_to_object(obj, COMPONENT_BILLBOARD_SPRITE);
-    add_component_to_object(obj, COMPONENT_VERLET);
-    add_component_to_object(obj, COMPONENT_PICKUP);
-    add_component_to_object(obj, COMPONENT_TTL);
+    #endif
+    #if DC_SERVER
+    const int n_components = 3;
+    #endif
+    object->init(n_components);
 
-    obj->tick = &tick_malachite_gemstone;
-    //obj->update = NULL;
+    #if DC_CLIENT
+    add_component_to_object(object, COMPONENT_BILLBOARD_SPRITE);
+    #endif
+    
+    add_component_to_object(object, COMPONENT_VERLET);
+    add_component_to_object(object, COMPONENT_PICKUP);
+    add_component_to_object(object, COMPONENT_TTL);
 
-    obj->create = create_packet_momentum;
-    obj->state = state_packet_momentum;
+    object->tick = &tick_malachite_gemstone;
+    //object->update = NULL;
+
+    object->create = create_packet_momentum;
+    object->state = state_packet_momentum;
 }
 
 Object* create_malachite_gemstone()

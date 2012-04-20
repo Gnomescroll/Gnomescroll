@@ -13,16 +13,16 @@ class Object;
 class CreatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* obj, int client_id) = 0;
-        virtual void broadcast(Object* obj) = 0;
+        virtual void sendToClient(Object* object, int client_id) = 0;
+        virtual void broadcast(Object* object) = 0;
         virtual ~CreatePacketDelegate(){}
 };
 
 class StatePacketDelegate
 {
     public:
-        virtual void sendToClient(Object* obj, int client_id) = 0;
-        virtual void broadcast(Object* obj) = 0;
+        virtual void sendToClient(Object* object, int client_id) = 0;
+        virtual void broadcast(Object* object) = 0;
         virtual ~StatePacketDelegate(){}
 };
 
@@ -33,15 +33,15 @@ class StatePacketDelegate
 class CreatePacketNone: public CreatePacketDelegate
 {
     public:
-        void sendToClient(Object* obj, int client_id) {}
-        void broadcast(Object* obj) {}
+        void sendToClient(Object* object, int client_id) {}
+        void broadcast(Object* object) {}
 };
 
 class StatePacketNone: public StatePacketDelegate
 {
     public:
-        void sendToClient(Object* obj, int client_id) {}
-        void broadcast(Object* obj) {}
+        void sendToClient(Object* object, int client_id) {}
+        void broadcast(Object* object) {}
 };
 
 /* Concrete Delegates */
@@ -49,20 +49,20 @@ class StatePacketNone: public StatePacketDelegate
 class CreatePacket: public CreatePacketDelegate
 {
     private:
-        void message(Object* obj, object_create_StoC* msg);
+        void message(Object* object, object_create_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_create_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_create_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -70,20 +70,20 @@ class CreatePacket: public CreatePacketDelegate
 class CreatePacketOwnerTeam: public CreatePacketDelegate
 {
     private:
-        void message(Object* obj, object_create_owner_team_StoC* msg);
+        void message(Object* object, object_create_owner_team_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_create_owner_team_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_create_owner_team_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -91,20 +91,20 @@ class CreatePacketOwnerTeam: public CreatePacketDelegate
 class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
 {
     private:
-        void message(Object* obj, object_create_owner_team_index_StoC* msg);
+        void message(Object* object, object_create_owner_team_index_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_create_owner_team_index_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_create_owner_team_index_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -112,20 +112,20 @@ class CreatePacketOwnerTeamIndex: public CreatePacketDelegate
 class CreatePacketMomentum: public CreatePacketDelegate
 {
     private:
-        void message(Object* obj, object_create_momentum_StoC* msg);
+        void message(Object* object, object_create_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_create_momentum_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_create_momentum_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -133,20 +133,20 @@ class CreatePacketMomentum: public CreatePacketDelegate
 class CreatePacketMomentumAngles: public CreatePacketDelegate
 {
     private:
-        void message(Object* obj, object_create_momentum_angles_StoC* msg);
+        void message(Object* object, object_create_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_create_momentum_angles_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_create_momentum_angles_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -157,20 +157,20 @@ class CreatePacketMomentumAngles: public CreatePacketDelegate
 class StatePacket: public StatePacketDelegate
 {
     private:
-        void message(Object* obj, object_state_StoC* msg);
+        void message(Object* object, object_state_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_state_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_state_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -178,20 +178,20 @@ class StatePacket: public StatePacketDelegate
 class StatePacketMomentum: public StatePacketDelegate
 {
     private:
-        void message(Object* obj, object_state_momentum_StoC* msg);
+        void message(Object* object, object_state_momentum_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_state_momentum_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_state_momentum_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };
@@ -199,20 +199,20 @@ class StatePacketMomentum: public StatePacketDelegate
 class StatePacketMomentumAngles: public StatePacketDelegate
 {
     private:
-        void message(Object* obj, object_state_momentum_angles_StoC* msg);
+        void message(Object* object, object_state_momentum_angles_StoC* msg);
     
     public:
-        void sendToClient(Object* obj, int client_id)
+        void sendToClient(Object* object, int client_id)
         {
             object_state_momentum_angles_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.sendToClient(client_id);
         }
 
-        void broadcast(Object* obj)
+        void broadcast(Object* object)
         {
             object_state_momentum_angles_StoC msg;
-            this->message(obj, &msg);
+            this->message(object, &msg);
             msg.broadcast();
         }
 };

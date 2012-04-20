@@ -11,11 +11,13 @@
 #include <c_lib/entity/components/physics/position_momentum_changed.cpp>
 #include <c_lib/entity/components/physics/verlet.cpp>
 
+#if DC_CLIENT
 #include <c_lib/entity/components/draw.cpp>
 #include <c_lib/entity/components/draw/billboard_sprite.cpp>
 #include <c_lib/entity/components/draw/voxel.cpp>
 #include <c_lib/entity/components/draw/colored_voxel.cpp>
 #include <c_lib/entity/components/draw/textured_voxel.cpp>
+#endif
 
 #include <c_lib/entity/components/pickup.cpp>
 

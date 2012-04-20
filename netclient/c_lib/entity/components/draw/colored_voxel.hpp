@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/components/draw/voxel.hpp>
 
@@ -37,3 +39,5 @@ class ColoredVoxelComponent: public VoxelComponent
 };
     
 } // Components
+
+#endif

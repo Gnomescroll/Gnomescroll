@@ -1,4 +1,4 @@
-#include "robot_box.hpp"
+#include "box.hpp"
 
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
@@ -10,7 +10,7 @@ namespace Objects
 static void set_mob_robot_box_properties(Object* object)
 {
     const int n_components = 5;
-    object->init(n_components):
+    object->init(n_components);
     add_component_to_object(object, COMPONENT_VOXEL_MODEL);
     add_component_to_object(object, COMPONENT_HIT_POINTS);
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
@@ -20,8 +20,8 @@ static void set_mob_robot_box_properties(Object* object)
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
 
-    obj->create = create_packet_momentum_angles;
-    obj->state = state_packet_momentum_angles;
+    object->create = create_packet_momentum_angles;
+    object->state = state_packet_momentum_angles;
 }
 
 Object* create_mob_robot_box()

@@ -15,7 +15,8 @@ void tick();
 void update();
 void harvest();
 
-void add_component_to_object(Object* object, ComponentType type);
+class Component;
+Component* add_component_to_object(Object* object, ComponentType type);
 void remove_component_from_object(Object* object, Component* component);
 
 Object* create_switch(ObjectType type);

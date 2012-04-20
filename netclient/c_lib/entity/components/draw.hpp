@@ -1,5 +1,7 @@
 #pragma once
 
+#if DC_CLIENT
+
 #include <c_lib/entity/constants.hpp>
 
 namespace Components
@@ -18,3 +20,5 @@ class DrawComponent: public Component
 };
     
 } // Components
+
+#endif

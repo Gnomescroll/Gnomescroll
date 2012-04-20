@@ -10,7 +10,7 @@ namespace Objects
 static void set_mob_bomb_properties(Object* object)
 {
     const int n_components = 4;
-    object->init(n_components):
+    object->init(n_components);
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
     add_component_to_object(object, COMPONENT_DIMENSION);
     add_component_to_object(object, COMPONENT_VOXEL_MODEL);
@@ -19,8 +19,8 @@ static void set_mob_bomb_properties(Object* object)
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
 
-    obj->create = create_packet_momentum_angles;
-    obj->state = state_packet_momentum_angles;
+    object->create = create_packet_momentum_angles;
+    object->state = state_packet_momentum_angles;
 }
 
 Object* create_mob_bomb()
