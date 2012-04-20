@@ -54,29 +54,11 @@ class Main:
         print "Server Started"
 
         init_c_lib.init()
-        
-        init_c_lib.reset_seed(opts.seed)   # reset seed (opts.seed only meant for map gen)
-        if opts.map == "CAVE":
-            map_recipes.best_caves()
-        elif opts.map == 'NOISY':
-            map_recipes.noisy_height()
-        elif opts.map == 'TEST':
-            map_recipes.current_test()
-        else:
-            map_recipes.gen_map_simple()
-        init_c_lib.reset_seed(int(time.time()))   # reset seed (opts.seed only meant for map gen)
-
         init_c_lib.start()
         
         tick = 0
 
         while True:
-
-            if linux_term:
-                if linux_terminal.check_stdin():
-                    break
-
-            sl_c =0
 
             while True: #physics loop
                 tc = GET_TICK()
