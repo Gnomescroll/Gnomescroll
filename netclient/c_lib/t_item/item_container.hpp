@@ -47,7 +47,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
             slot = new ItemId[slot_max];
             for(int i=0; i<slot_max; i++) slot[i] = EMPTY_SLOT;
-            printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
+            //printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
         }
 
         void init_agent_inventory()
@@ -62,7 +62,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         bool is_full()
         {
-            printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
+            //printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
             for(int i=0; i<slot_max; i++) 
             {
                 printf("slot %i = %i \n", i, slot[i]);

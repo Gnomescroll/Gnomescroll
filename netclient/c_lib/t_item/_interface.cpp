@@ -159,6 +159,7 @@ void check_item_pickups()
         p2.inventory_slot = slot;
 
         p2.sendToClient(agent->id); //warning, assumes agent and player id are same
+        //p2.broadcast();
     }
 #endif
 }
