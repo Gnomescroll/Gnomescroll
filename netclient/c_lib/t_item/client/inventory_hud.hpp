@@ -1,6 +1,6 @@
 #pragma once
 
-using namespace t_item
+namespace t_item
 {
 
 
