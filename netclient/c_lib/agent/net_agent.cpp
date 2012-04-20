@@ -686,12 +686,22 @@ inline void hitscan_object_CtoS::handle()
     if (a->status.team == 0) return;
     if (!a->weapons.laser.fire()) return;
 
-    //const int agent_dmg = 25;
-    //const int obj_dmg = 25;
-
-    int voxel[3] = { vx,vy,vz };
     Agent_state* agent = NULL;
-    //ObjectPolicyInterface* obj = NULL;
+    const int obj_dmg = 50;
+    int voxel[3] = { vx,vy,vz };
+
+    using Objects::Object;
+    Object* obj = NULL;
+
+    using Components::OwnerComponent;
+    using Components::TeamComponent;
+    using Components::HealthComponent;
+    OwnerComponent* owner;
+    TeamComponent* team;
+    HealthComponent* health;
+    int owner_id = NO_AGENT;
+    int team_id = NO_TEAM;
+    bool died = true;   // assume hitting object kills it, unless object says otherwise
 
     switch (type)
     {
@@ -701,35 +711,46 @@ inline void hitscan_object_CtoS::handle()
             agent->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
             // apply damage
             agent->status.apply_hitscan_laser_damage_to_part(part, a->id, a->type);
-            //x = agent->s.x;
-            //y = agent->s.y;
-            //z = agent->s.z;
             destroy_object_voxel(agent->id, agent->type, part, voxel, 3);     
             break;
 
-        //case OBJECT_MONSTER_BOMB:
-        //case OBJECT_AGENT_SPAWNER:
-        //case OBJECT_TURRET:
-        //case OBJECT_MONSTER_BOX:
-        //case OBJECT_MONSTER_SPAWNER:
-            //obj = ServerState::object_list->get((ObjectType)type, id);
-            //if (obj == NULL) return;
+ 
+        case OBJECT_MONSTER_BOMB:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_TURRET:
+        case OBJECT_MONSTER_BOX:
+        case OBJECT_MONSTER_SPAWNER:
+            obj = Objects::get((ObjectType)type, id);
+            if (obj == NULL) return;
 
-            //if ((obj->get_team() == a->status.team && obj->get_owner() != NO_AGENT)
-              //&& obj->get_owner() != a->id) // TODO -- kill rule in ObjectState
-                //return; // teammates cant kill turrets
+            owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
+            if (owner != NULL) owner_id  = owner->get_owner();
 
-            //// apply damage
-            //obj->take_damage(obj_dmg);
-            //if (obj->did_die())
-            //{
-                //int coins = get_kill_reward(obj, a->id, a->status.team);
-                //a->status.add_coins(coins);
+            team = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
+            if (team != NULL) team_id =  team->get_team();
 
-                //if (type == OBJECT_MONSTER_BOMB)
-                    //a->status.kill_slime(); // TODO, de-type this
-            //}
-            //break;
+            if ((team_id == a->status.team && owner_id != NO_AGENT)
+              && owner_id != a->id)   // TODO -- kill rule per object?
+                return; // teammates cant kill turrets/spawners, unless object is unowned
+                
+            // apply damage
+            health = (HealthComponent*)obj->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+            if (health != NULL)
+            {
+                health->take_damage(obj_dmg);
+                died = health->did_die();
+            }
+
+            if (died)
+            {
+                // coins are deprecated, so just give them 50
+                a->status.add_coins(50);
+
+                if (obj->type == OBJECT_MONSTER_BOMB)
+                    a->status.kill_slime(); // TODO, de-type this
+            }
+            break;
+
         default:
             printf("hitscan_object_CtoS::handle -- Unknown object type %d\n", type);
             return;
