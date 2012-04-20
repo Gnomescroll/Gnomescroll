@@ -7,6 +7,7 @@
 
 #ifdef DC_SERVER
     #include <c_lib/t_item/net/StoC.hpp>
+    #include <c_lib/t_item/item_container.hpp>
 #endif
 
 #include <c_lib/physics/verlet_particle.hpp>
@@ -202,10 +203,10 @@ void Free_item_list::check_item_pickups()
 
         printf("agent %i picked up item %i \n", agent->id, free_item->id);
 
-        free_item_picked_up_StoC p;
-        p.id = free_item->id;
-        p.agent_id = agent->id;
-        p.broadcast();
+        free_item_picked_up_StoC p1;
+        p1.id = free_item->id;
+        p1.agent_id = agent->id;
+        p1.broadcast();
 
         t_item::free_item_list->destroy(free_item->id);
 
@@ -216,7 +217,7 @@ void Free_item_list::check_item_pickups()
         assert(AgentInventoryList[agent->id] != NO_AGENT);
 
         int inventory_id = AgentInventoryList[agent->id];
-        ItemContainer* ic = item_container_list.get(inventory_id)
+        ItemContainer* ic = item_container_list->get(inventory_id);
         
         if(ic == 0)
         {
@@ -224,8 +225,8 @@ void Free_item_list::check_item_pickups()
             return;
         }
 
-        int slot = ic->get_empty_slot();
-        if(slot == -1)
+        //int slot = ic->get_empty_slot();
+        if(! ic->is_full() )
         {
             printf("Free_item_list::check_item_pickups, Agent inventory full: item deleted, fix \n");
             return;
@@ -235,13 +236,16 @@ void Free_item_list::check_item_pickups()
 
         int slot = ic->create_item(item_type);   //insert item on server
 
-        class item_create_StoC p;
-        p.item_id = item_type;
-        p.item_type = item_type;
-        p.inventory_id = inventory_id;
-        p.inventory_slot = slot;
+        class item_create_StoC p2;
+        p2.item_id = item_type;
+        p2.item_type = item_type;
+        p2.inventory_id = inventory_id;
+        p2.inventory_slot = slot;
 
-        p.sendToClient(agent->id); //warning, assumes agent and player id are same
+        p2.sendToClient(agent->id); //warning, assumes agent and player id are same
+    }
+#endif
+}
 
 /*
 item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
@@ -255,10 +259,6 @@ item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
 
 }
 */
-#endif
-
-}
-
 
 /*
     int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);

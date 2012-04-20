@@ -59,7 +59,7 @@ inline void item_create_StoC::handle()
 // uint16_t inventory_id;
 // uint16_t inventory_slot;
 
-
+    printf("client received create packet message \n");
 }
 
 /*
@@ -85,6 +85,8 @@ inline void assign_agent_inventory_StoC::handle()
 inline void free_item_create_StoC::handle() {}
 inline void free_item_destroy_StoC::handle() {}
 inline void free_item_picked_up_StoC::handle() {}
+
+inline void item_create_StoC::handle() {}
 
 inline void assign_agent_inventory_StoC::handle() {}
 #endif

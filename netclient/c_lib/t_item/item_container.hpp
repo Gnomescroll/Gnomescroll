@@ -92,6 +92,8 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
             assert(is_valid_grid_position(x,y));
             slot[y*xdim + x] = item_id;
             printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
+
+            return _slot;
         }
 
        	void clear_slot(int x, int y)
@@ -114,7 +116,7 @@ namespace t_item
 
 const int ITEM_CONTAINER_MAX = 1024;
 
-class ItemContainerList: public Object_list<ItemContainer, FREE_ITEM_MAX>
+class ItemContainerList: public Object_list<ItemContainer, ITEM_CONTAINER_MAX>
 {
     private:
         const char* name() { return "ItemContainer"; }

@@ -130,7 +130,7 @@ void Shrapnel_list::draw()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D); //DEBUG
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -146,6 +146,7 @@ void Shrapnel_list::draw()
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
+    glEnable(GL_TEXTURE_2D); //DEBUG
 #endif
 }
 

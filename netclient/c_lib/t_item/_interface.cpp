@@ -120,7 +120,6 @@ void create_free_item(int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz)
 {
-    
     Free_item* f = free_item_list->create();
     if(f == NULL) return;
     f->init(x,y,z,vx,vy,vz);
@@ -137,25 +136,9 @@ void create_free_item(int item_type,
     p.mz = vz;
 
     p.broadcast();
-}
-
-
-void create_item(int inventory_id)
-{
-
-    
-}
-
-inline void item_create_StoC::handle()
-{
-// uint16_t item_id;
-// uint16_t item_type;
-// uint16_t inventory_id;
-// uint16_t inventory_slot;
-
-
 
 }
 
+}
 
 #endif 
