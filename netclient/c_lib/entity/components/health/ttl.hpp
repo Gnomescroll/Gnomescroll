@@ -8,6 +8,16 @@ class TTLHealthComponent: public HealthComponent
     public:
         int ttl;
         int ttl_max;
+
+        void take_damage(int dmg)
+        {
+            this->die(); // die on any strike
+        }
+
+        bool did_die()
+        {
+            return true;   // assume died under whatever circumstance. should only be used temporarily here
+        }
     
         bool is_dead()
         {

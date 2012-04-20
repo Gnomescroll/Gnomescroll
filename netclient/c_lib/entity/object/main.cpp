@@ -287,21 +287,21 @@ void destroy_switch(Object* object)
 
         // fabs
         case OBJECT_AGENT_SPAWNER:
-            ready_agent_spawner(object);
+            die_agent_spawner(object);
             break;
         case OBJECT_TURRET:
-            ready_turret(object);
+            die_turret(object);
             break;
 
         // mobs
         case OBJECT_MONSTER_SPAWNER:
-            ready_mob_spawner(object);
+            die_mob_spawner(object);
             break;
         case OBJECT_MONSTER_BOX:
-            ready_mob_robot_box(object);
+            die_mob_robot_box(object);
             break;
         case OBJECT_MONSTER_BOMB:
-            ready_mob_bomb(object);
+            die_mob_bomb(object);
             break;
 
         default:
