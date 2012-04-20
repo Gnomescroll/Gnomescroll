@@ -26,7 +26,7 @@ class PlayerAgent_action {
 
         void pickup_item(); // raycast to nearby item, add to inventory if found
         void remove_selected_item_from_inventory();  // TEMP (real method will take slot index)
-        void add_item_to_inventory(int id, Object_types type, int subtype);
+        void add_item_to_inventory(int id, ObjectType type);
 
         explicit PlayerAgent_action(PlayerAgent_state* player_agent);
 };

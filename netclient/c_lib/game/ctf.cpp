@@ -666,15 +666,15 @@ void CTF::set_team_color(
     #endif
 }
 
-void CTF::get_base_spawn_point(int team, int agent_height, int* spawn)
+void CTF::get_base_spawn_point(int team, int agent_height, Vec3* spawn)
 {
     switch (team)
     {
         case 1:
-            one.base->get_spawn_point(spawn, agent_height);
+            one.base->get_spawn_point(agent_height, spawn);
             break;
         case 2:
-            two.base->get_spawn_point(spawn, agent_height);
+            two.base->get_spawn_point(agent_height, spawn);
             break;
         case 0:
             spawn = NULL;

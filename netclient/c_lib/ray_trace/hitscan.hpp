@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/voxel/voxel_hitscan.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/physics/vec3.hpp>
 
 namespace Hitscan {
@@ -27,7 +27,7 @@ HitscanTargetTypes terrain(float x, float y, float z, float vx, float vy, float 
 
 HitscanTargetTypes hitscan_against_world(
     Vec3 p, Vec3 v,
-    int ignore_id, Object_types ignore_type,    // inputs
+    int ignore_id, ObjectType ignore_type,    // inputs
     struct Voxel_hitscan_target* target, float* vox_distance, float collision_point[3],
     int block_pos[3], int side[3], int* tile, float* block_distance // outputs
 );

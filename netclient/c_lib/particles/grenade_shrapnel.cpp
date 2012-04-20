@@ -48,7 +48,7 @@ void Grenade_shrapnel::tick()
         this->verlet_bounce(GRENADE_SHRAPNEL_DAMP);
 
         if (!voxel_hit) continue;
-        if (target.entity_type != OBJ_TYPE_AGENT)
+        if (target.entity_type != OBJECT_AGENT)
         {
             this->ttl = this->ttl_max;
             return;   // collided with a model we arent handling
@@ -73,7 +73,7 @@ void Grenade_shrapnel::tick()
         msg.broadcast();
 
         float dmg = base_dmg * ((float)(this->ttl+i)/((float)ttl_max+1));
-        a->status.apply_damage(dmg, this->owner, OBJ_TYPE_GRENADE);
+        a->status.apply_damage(dmg, this->owner, OBJECT_GRENADE);
         
         this->ttl = this->ttl_max;
         return;

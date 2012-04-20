@@ -6,7 +6,7 @@
 #include <c_lib/SDL/texture_loader.hpp>
 #include <c_lib/SDL/draw_functions.hpp>
 #include <c_lib/game/teams.hpp>
-#include <c_lib/items/spawner.hpp>
+//#include <c_lib/items/spawner.hpp>
 
 namespace HudMap
 {
@@ -591,7 +591,7 @@ void draw_team_text_icons(float z)
     if (!text_icons_inited) return;
     using ClientState::playerAgent_state;
     using ClientState::agent_list;
-    using ClientState::spawner_list;
+    //using ClientState::spawner_list;
     using ClientState::ctf;
     
     if (playerAgent_state.you == NULL || playerAgent_state.you->status.team == 0)
@@ -612,27 +612,27 @@ void draw_team_text_icons(float z)
         j++;
     }
 
-    SpawnerProperties* s;
-    for (int i=0; i<spawner_list->max; i++)
-    {
-        s = (SpawnerProperties*)spawner_list->objects[i];
-        if (s==NULL) continue;
-        unsigned int team_index = s->obj->get_team_index();
-        if (s->obj->get_team() != playerAgent_state.you->status.team) continue;
-        if (team_index <= 0 || team_index == TEAM_INDEX_NONE || team_index == NULL_TEAM_INDEX)
-            continue;
-        if ((int)team_index == playerAgent_state.you->status.spawner)
-            spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
-        else
-            spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
-        spawner[j]->update_formatted_string(1, team_index);
-        Vec3 p = s->obj->get_position();
-        world_to_map_screen_coordinates(p.x, p.y, &x, &y);
-        spawner[j]->set_position(x,y);
-        spawner[j]->set_depth(z);
-        spawner[j]->draw_centered();
-        j++;
-    }
+    //SpawnerProperties* s;
+    //for (int i=0; i<spawner_list->max; i++)
+    //{
+        //s = (SpawnerProperties*)spawner_list->objects[i];
+        //if (s==NULL) continue;
+        //unsigned int team_index = s->obj->get_team_index();
+        //if (s->obj->get_team() != playerAgent_state.you->status.team) continue;
+        //if (team_index <= 0 || team_index == TEAM_INDEX_NONE || team_index == NULL_TEAM_INDEX)
+            //continue;
+        //if ((int)team_index == playerAgent_state.you->status.spawner)
+            //spawner[j]->set_color(highlight.r, highlight.g, highlight.b);
+        //else
+            //spawner[j]->set_color(current_color.r, current_color.g, current_color.b);
+        //spawner[j]->update_formatted_string(1, team_index);
+        //Vec3 p = s->obj->get_position();
+        //world_to_map_screen_coordinates(p.x, p.y, &x, &y);
+        //spawner[j]->set_position(x,y);
+        //spawner[j]->set_depth(z);
+        //spawner[j]->draw_centered();
+        //j++;
+    //}
 
     Base* b = ctf->get_base(playerAgent_state.you->status.team);
     world_to_map_screen_coordinates(b->x, b->y, &x, &y);

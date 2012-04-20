@@ -1,7 +1,7 @@
 #pragma once
 
 #include <c_lib/ray_trace/ray_trace.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/defines.h>
 
 #include <c_lib/agent/agent_status.hpp>
@@ -58,7 +58,7 @@ class Agent_state {
         int snapshot_seq;
         int CS_seq; // <--current counter
 
-        void get_spawn_point(int* spawn);
+        void get_spawn_point(Vec3* spawn);
 
     public:    
         class AgentState s; //state current
@@ -69,7 +69,7 @@ class Agent_state {
 
         int inventory_id;
         
-        Object_types type;
+        ObjectType type;
         
         struct Agent_collision_box box;
 

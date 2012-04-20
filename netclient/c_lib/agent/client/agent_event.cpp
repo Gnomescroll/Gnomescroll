@@ -265,7 +265,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     float f[3];
     this->a->s.forward_vector(f);
 
-    if (type == OBJ_TYPE_AGENT)
+    if (type == OBJECT_AGENT)
     {
         Agent_state* agent = ClientState::agent_list->get(id);
         if (agent != NULL && agent->vox != NULL)

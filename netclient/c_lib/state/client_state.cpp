@@ -32,10 +32,10 @@ namespace ClientState {
 
     class Voxel_render_list* voxel_render_list;
     class Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    class SpawnerList* spawner_list = NULL;
-    class OwnedList* owned_list = NULL;
+    //class SpawnerList* spawner_list = NULL;
+    //class OwnedList* owned_list = NULL;
 
-    class GameObject_list* object_list;
+    //class GameObject_list* object_list;
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
@@ -51,10 +51,10 @@ namespace ClientState {
     {
         voxel_render_list = new Voxel_render_list;
         voxel_hitscan_list = new Voxel_hitscan_list;
-        spawner_list = new SpawnerList;
-        owned_list = new OwnedList;
+        //spawner_list = new SpawnerList;
+        //owned_list = new OwnedList;
         
-        object_list = new GameObject_list;
+        //object_list = new GameObject_list;
         agent_list = new Agent_list;
     }
 
@@ -62,7 +62,7 @@ namespace ClientState {
     {
         // voxel models
         delete agent_list;
-        delete object_list;
+        //delete object_list;
 
         // voxel lists
         // must go after all voxels
@@ -70,8 +70,8 @@ namespace ClientState {
         delete voxel_hitscan_list;
 
         // behaviour lists
-        delete spawner_list;
-        delete owned_list;
+        //delete spawner_list;
+        //delete owned_list;
     }
 
     static void init_ctf()
@@ -151,13 +151,12 @@ namespace ClientState {
         Particles::billboard_text_list->tick();
         Particles::billboard_text_hud_list->tick();
 
-        object_list->tick();
+        //object_list->tick();
     }
 
-    void draw()
+    void update_for_draw()
     {
-        printf("WHAT THE FUCK IS CALLING THIS FUNCTION\n");
-
+        //object_list->update();  // model updates
     }
 
     void send_identify_packet(char* name)

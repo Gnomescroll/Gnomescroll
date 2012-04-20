@@ -2,6 +2,10 @@
 
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/component/component.hpp>
+#include <c_lib/entity/network/packets.hpp>
+#include <c_lib/entity/components/draw/billboard_sprite.hpp>
+#include <c_lib/entity/components/pickup.hpp>
+#include <c_lib/entity/components/health/ttl.hpp>
 
 namespace Objects
 {
@@ -31,6 +35,14 @@ Component* Object::get_component_interface(ComponentInterfaceType interface)
         if (this->components[i]->interface == interface)
             return this->components[i];
     return NULL;
+}
+
+void Object::broadcastDeath()
+{
+    object_destroy_StoC msg;
+    msg.id = this->id;
+    msg.type = this->type;
+    msg.broadcast();
 }
 
 void Object::init(int n_components)

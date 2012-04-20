@@ -21,9 +21,12 @@
     /* Added for random drops */
     /* remove these includes after random drops are in separate file */
     #include <c_lib/common/random.h>
-    #include <c_lib/common/enum_types.hpp>
-    #include <c_lib/objects/common/interface/policy.hpp>
-    #include <c_lib/state/server_state.hpp>
+    #include <c_lib/physics/vec3.hpp>
+    #include <c_lib/entity/constants.hpp>
+    #include <c_lib/entity/objects.hpp>
+    #include <c_lib/entity/object/object.hpp>
+    #include <c_lib/entity/components.hpp>
+    #include <c_lib/entity/components/physics.hpp>
 
     #include <c_lib/t_item/_interface.hpp>
 
@@ -63,14 +66,14 @@ void init_t_map()
 
 }
 
-    #if DC_CLIENT
-    void init_for_draw()
-    {
-        printf("init for draw \n");
-        init_cache();
-        init_shaders();
-    }
-    #endif
+#if DC_CLIENT
+void init_for_draw()
+{
+    printf("init for draw \n");
+    init_cache();
+    init_shaders();
+}
+#endif
     
 void end_t_map()
 {
@@ -113,52 +116,47 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
-    if (randf () < 0.5f)
+    ObjectType type = OBJECT_NONE;
+    if (randf () < 0.0f)
     {
         const int n_items = 7;  // 7 Gemstones
-        const ItemDrops::PickupSpriteTypes items[n_items] = {
-            ItemDrops::MALACHITE,
-            ItemDrops::RUBY,
-            ItemDrops::TURQUOISE,
-            ItemDrops::SILVER,
-            ItemDrops::AMETHYST,
-            ItemDrops::JADE,
-            ItemDrops::ONYX
+        const ObjectType items[n_items] = {
+            OBJECT_GEMSTONE_MALACHITE,
+            OBJECT_GEMSTONE_RUBY,
+            OBJECT_GEMSTONE_TURQUOISE,
+            OBJECT_GEMSTONE_SILVER,
+            OBJECT_GEMSTONE_AMETHYST,
+            OBJECT_GEMSTONE_JADE,
+            OBJECT_GEMSTONE_ONYX,
         };
-        const float mom = 2.0f; // momentum
-        const Object_types type = OBJ_TYPE_GEMSTONE;
-        ItemDrops::PickupSpriteTypes subtype = items[randrange(0,n_items-1)];
-
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
-        if (obj != NULL)
-        {
-            obj->set_position(x+randf(),y+randf(), z+randf());
-            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(subtype); // TODO
-        }
+        type = items[randrange(0,n_items-1)];
     }
     else
     {
-        const int n_items = 3;
-        const ItemDrops::BlockDropSubtypes items[n_items] = {
-            //ItemDrops::DIRT,
-            //ItemDrops::STONE,
-            ItemDrops::SOFT_ROCK,
-            //ItemDrops::MEDIUM_ROCK,
-            ItemDrops::HARD_ROCK,
-            ItemDrops::INFECTED_ROCK,
+        const int n_items = 5;
+        const ObjectType items[n_items] = {
+            OBJECT_DIRT_BLOCK_DROP,
+            OBJECT_STONE_BLOCK_DROP,
+            OBJECT_SOFT_ROCK_BLOCK_DROP,
+            //OBJECT_MEDIUM_ROCK_BLOCK_DROP,
+            OBJECT_HARD_ROCK_BLOCK_DROP,
+            OBJECT_INFECTED_ROCK_BLOCK_DROP,
         };
-        const float mom = 2.0f;
-        const Object_types type = OBJ_TYPE_BLOCK_DROP;
-        ItemDrops::BlockDropSubtypes subtype  = items[randrange(0,n_items-1)];
-
-        ObjectPolicyInterface* obj = ServerState::object_list->create(type, subtype);
-        if (obj != NULL)
+        type  = items[randrange(0,n_items-1)];
+    }
+    
+    const float mom = 2.0f;
+    Objects::Object* obj = Objects::create(type);
+    if (obj != NULL)
+    {
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        if (physics != NULL)
         {
-            obj->set_position(x+randf(),y+randf(), z+randf());
-            obj->set_momentum((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-            obj->born(subtype); // TODO
+            physics->set_position(vec3_init(x+randf(), y+randf(), z+randf()));
+            physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
         }
+        Objects::ready(obj);
     }
 }
 
@@ -176,7 +174,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 0
+#if 1
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else

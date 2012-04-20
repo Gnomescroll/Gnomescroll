@@ -21,16 +21,23 @@ class ObjectList
 
     public:
 
+        void set_object_id(Object* object, int id);
+
         int count(ObjectType type);
         int max(ObjectType type);
         bool full(ObjectType type);
-        
+
+        Object* get(ObjectType type, int id);
         void destroy(ObjectType type, int id);
         Object* create(ObjectType type);
         Object* create(ObjectType type, int id);
         void set_object_max(ObjectType type, int max);
         void init();
 
+        void tick();    // physics tick
+        void update();  // draw state update
+        void harvest(); // kill
+        
     ~ObjectList();
 
     ObjectList()

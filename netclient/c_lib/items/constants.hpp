@@ -5,8 +5,29 @@
 */
 
 #include <c_lib/common/common.hpp>
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/game/game.hpp>
+
+// TODO - deprecate
+const int COST_SPAWNER = 5;
+const int COST_TURRET = 2;
+
+unsigned int get_object_cost(ObjectType obj)
+{
+    unsigned int cost;
+    switch (obj) {
+        case OBJECT_AGENT_SPAWNER:
+            cost = COST_SPAWNER;
+            break;
+        case OBJECT_TURRET:
+            cost = COST_TURRET;
+            break;
+        default:
+            printf("get_object_cost -- unknown obj type %d\n", obj);
+            return 0;
+    }
+    return cost;
+}
 
 // Spawners
 const int SPAWNER_SPAWN_RADIUS = 5;
@@ -105,15 +126,15 @@ const int BLOCK_DROP_SPRITE_INDEX = 0;
 const struct Color BLOCK_DROP_COLOR = { 255, 255, 255 };
 const float BLOCK_DROP_TEXTURED_PIXEL_WIDTH = 4;
 
-typedef enum
-{
-    DIRT,
-    STONE,
-    SOFT_ROCK,
-    MEDIUM_ROCK,
-    HARD_ROCK,
-    INFECTED_ROCK,
-} BlockDropSubtypes;
+//typedef enum
+//{
+    //DIRT,
+    //STONE,
+    //SOFT_ROCK,
+    //MEDIUM_ROCK,
+    //HARD_ROCK,
+    //INFECTED_ROCK,
+//} BlockDropSubtypes;
 
 const struct Color DIRT_COLOR = { 150, 98, 0 };
 const struct Color STONE_COLOR = { 140, 140, 140 };
@@ -145,64 +166,64 @@ const int MEAT_SPRITE_INDEX = 1;
 const int SPAWNER_SPRITE_INDEX = 6;
 const int TURRET_SPRITE_INDEX = 7;
 
-int get_object_type_sprite_index(Object_types type, int subtype)
+int get_object_type_sprite_index(ObjectType type)
 {
     const int ERROR_SPRITE = 48;    // BUG -- CANNOT SPECIFY 3rd row or higher textures
-    switch (type)
-    {
+    //switch (type)
+    //{
 
-        case OBJ_TYPE_BLOCK_DROP:
-            switch (subtype)
-            {
-                default: return ERROR_SPRITE;
-            }
-            break;
+        //case OBJECT_BLOCK_DROP:
+            //switch (subtype)
+            //{
+                //default: return ERROR_SPRITE;
+            //}
+            //break;
             
-        case OBJ_TYPE_GEMSTONE:
-            switch (subtype)
-            {
-                case MALACHITE:
-                    return MALACHITE_SPRITE_INDEX;
-                case RUBY:
-                    return RUBY_SPRITE_INDEX;
-                case TURQUOISE:
-                    return TURQUOISE_SPRITE_INDEX;
-                case SILVER:
-                    return SILVER_SPRITE_INDEX;
-                case AMETHYST:
-                    return AMETHYST_SPRITE_INDEX;
-                case JADE:
-                    return JADE_SPRITE_INDEX;
-                case ONYX:
-                    return ONYX_SPRITE_INDEX;
-                default: return ERROR_SPRITE;
-            }
-            break;
+        //case OBJECT_GEMSTONE:
+            //switch (subtype)
+            //{
+                //case MALACHITE:
+                    //return MALACHITE_SPRITE_INDEX;
+                //case RUBY:
+                    //return RUBY_SPRITE_INDEX;
+                //case TURQUOISE:
+                    //return TURQUOISE_SPRITE_INDEX;
+                //case SILVER:
+                    //return SILVER_SPRITE_INDEX;
+                //case AMETHYST:
+                    //return AMETHYST_SPRITE_INDEX;
+                //case JADE:
+                    //return JADE_SPRITE_INDEX;
+                //case ONYX:
+                    //return ONYX_SPRITE_INDEX;
+                //default: return ERROR_SPRITE;
+            //}
+            //break;
 
-        case OBJ_TYPE_REFILL:
-            switch (subtype)
-            {
-                case GRENADE_REFILL:
-                    return GRENADE_REFILL_SPRITE_INDEX;
-                case LASER_REFILL:
-                    return LASER_REFILL_SPRITE_INDEX;
-                case HEALTH_REFILL:
-                    return HEALTH_REFILL_SPRITE_INDEX;
-                default: return ERROR_SPRITE;
-            }
-            break;
+        //case OBJECT_REFILL:
+            //switch (subtype)
+            //{
+                //case GRENADE_REFILL:
+                    //return GRENADE_REFILL_SPRITE_INDEX;
+                //case LASER_REFILL:
+                    //return LASER_REFILL_SPRITE_INDEX;
+                //case HEALTH_REFILL:
+                    //return HEALTH_REFILL_SPRITE_INDEX;
+                //default: return ERROR_SPRITE;
+            //}
+            //break;
 
-        case OBJ_TYPE_MEAT:
-            return MEAT_SPRITE_INDEX;
+        //case OBJECT_MEAT:
+            //return MEAT_SPRITE_INDEX;
 
-         //Functional items
-        case OBJ_TYPE_SPAWNER:
-            return SPAWNER_SPRITE_INDEX;
-        case OBJ_TYPE_TURRET:
-            return TURRET_SPRITE_INDEX;
+         ////Functional items
+        //case OBJECT_AGENT_SPAWNER:
+            //return SPAWNER_SPRITE_INDEX;
+        //case OBJECT_TURRET:
+            //return TURRET_SPRITE_INDEX;
 
-        default: return ERROR_SPRITE;
-    }
+        //default: return ERROR_SPRITE;
+    //}
     return ERROR_SPRITE;
 }
 
@@ -219,7 +240,7 @@ typedef enum
     INVENTORY_TYPE_TMECH,
 } InventoryTypes;
 
-int get_max_stack_size(Object_types type, int subtype)
+int get_max_stack_size(ObjectType type)
 {
     return 1;
 }

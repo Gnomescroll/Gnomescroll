@@ -10,7 +10,7 @@
 
 //#include <c_lib/state/client_state.hpp>
 //#include <c_lib/state/server_state.hpp>
-#include <common/enum_types.hpp>
+#include <entity/constants.hpp>
 #include <c_lib/common/random.h>
 
 #include <c_lib/particles/_interface.hpp>
@@ -204,7 +204,7 @@ void Grenade::explode()
     ServerState::damage_objects_within_sphere(
         position.x, position.y, position.z,
         GRENADE_DAMAGE_RADIUS,
-        GRENADE_SPLASH_DAMAGE, this->owner, OBJ_TYPE_GRENADE, this->id
+        GRENADE_SPLASH_DAMAGE, this->owner, OBJECT_GRENADE, this->id
     );
 
     // create a bunch of grenade shrapnel particles

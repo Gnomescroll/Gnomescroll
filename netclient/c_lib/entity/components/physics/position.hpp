@@ -14,18 +14,20 @@ class PositionPhysicsComponent: public PhysicsComponent
         Vec3 angles;
         
         Vec3 get_position() { return this->position; }
-        void set_position(Vec3 position) { this->position = position; }
+        bool set_position(Vec3 position)
+        {
+            this->position = position;
+            return true;
+        }
 
         Vec3 get_momentum() { return NULL_MOMENTUM; }
-        void set_momentum(Vec3 momentum) {}
+        bool set_momentum(Vec3 momentum) { return false; }
 
         Vec3 get_angles() { return this->angles; }
-        void set_angles(Vec3 angles)
+        bool set_angles(Vec3 angles)
         {
-            //if (vec3_equal(this->angles, angles))
-                //return false;
             this->angles = angles;
-            //return true;
+            return true;
         }
 
     PositionPhysicsComponent()

@@ -75,7 +75,7 @@ void PlayerAgent_action::hitscan_laser()
 
     Hitscan::HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            pos, look, this->p->agent_id, OBJ_TYPE_AGENT,
+            pos, look, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
@@ -124,7 +124,7 @@ void PlayerAgent_action::hitscan_laser()
             look.z = collision_point[2] - origin[2];
             normalize_vector(&look);
 
-            if (target.entity_type == OBJ_TYPE_AGENT)
+            if (target.entity_type == OBJECT_AGENT)
             {
                 Animations::blood_spray(
                     collision_point[0], collision_point[1], collision_point[2],
@@ -139,7 +139,7 @@ void PlayerAgent_action::hitscan_laser()
                 if (agent->status.team == this->p->you->status.team) break;
                 voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJ_TYPE_SLIME)
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
             {
                 voxel_blast_radius = 2;
             }
@@ -214,7 +214,7 @@ void PlayerAgent_action::hitscan_pick()
 
     Hitscan::HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            pos, vec, this->p->agent_id, OBJ_TYPE_AGENT,
+            pos, vec, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
@@ -243,7 +243,7 @@ void PlayerAgent_action::hitscan_pick()
             obj_msg.vz = target.voxel[2];
             obj_msg.send();
 
-            if (target.entity_type == OBJ_TYPE_AGENT)
+            if (target.entity_type == OBJECT_AGENT)
             {
                 agent = ClientState::agent_list->get(target.entity_id);
                 if (agent==NULL)
@@ -266,7 +266,7 @@ void PlayerAgent_action::hitscan_pick()
                 );
                 voxel_blast_radius = 3;
             }
-            else if (target.entity_type == OBJ_TYPE_SLIME)
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
             {
                 voxel_blast_radius = 2;
             }
@@ -477,23 +477,23 @@ int PlayerAgent_action::select_block()
 
 void PlayerAgent_action::remove_selected_item_from_inventory()
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
+    //if (p->you == NULL) return;
+    //if (p->you->status.dead) return;
+    //if (p->you->status.team == 0) return;
 
-    Inventory* inv = this->p->you->status.inventory;
-    if (inv == NULL) return;
-    inv->remove_selected_action();
+    //Inventory* inv = this->p->you->status.inventory;
+    //if (inv == NULL) return;
+    //inv->remove_selected_action();
 }
 
-void PlayerAgent_action::add_item_to_inventory(int id, Object_types type, int subtype)
+void PlayerAgent_action::add_item_to_inventory(int id, ObjectType type)
 {
-    if (p->you == NULL) return;
-    if (p->you->status.dead) return;
-    if (p->you->status.team == 0) return;
-    Inventory* inv = this->p->you->status.inventory;
-    if (inv == NULL) return;
-    inv->add_action(id,type,subtype);
+    //if (p->you == NULL) return;
+    //if (p->you->status.dead) return;
+    //if (p->you->status.team == 0) return;
+    //Inventory* inv = this->p->you->status.inventory;
+    //if (inv == NULL) return;
+    //inv->add_action(id,type);
 }
 
 void PlayerAgent_action::pickup_item()
@@ -515,14 +515,14 @@ void PlayerAgent_action::pickup_item()
 
     Hitscan::HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            pos, vec, this->p->agent_id, OBJ_TYPE_AGENT,
+            pos, vec, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
 
     if (target_type != Hitscan::HITSCAN_TARGET_VOXEL) return;
     if (vox_distance > MELEE_PICK_MAX_DISTANCE) return;
-    this->add_item_to_inventory(target.entity_id, (Object_types)target.entity_type, target.entity_subtype);
+    this->add_item_to_inventory(target.entity_id, (ObjectType)target.entity_type);
 }
 
 PlayerAgent_action::PlayerAgent_action(PlayerAgent_state* player_agent)
