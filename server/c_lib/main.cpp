@@ -6,6 +6,10 @@ namespace Main
 
 void init()
 {
+	init_c_lib();
+	
+	NetServer::init_server(127,0,0,1, Options::port);
+	ServerState::start_game();
 
 }
 

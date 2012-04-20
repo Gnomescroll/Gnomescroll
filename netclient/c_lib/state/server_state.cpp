@@ -237,9 +237,9 @@ namespace ServerState
 
     void start_game()
     {
-        int address[4];
-        address_from_string(Options::ip_address, address);
-        NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
+        //int address[4];
+        //address_from_string(Options::ip_address, address);
+        //NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
     }
 
