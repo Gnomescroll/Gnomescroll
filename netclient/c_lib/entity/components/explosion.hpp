@@ -17,10 +17,11 @@ class ExplosionComponent: public Component
         bool suicidal; // if true, owner of exploding object will take damage
 
         void explode();
+        bool proximity_check(); // check if near agent; if so, die
 
     ExplosionComponent()
     : Component(COMPONENT_EXPLOSION, COMPONENT_INTERFACE_EXPLOSION),
-    radius(1.0f), damage(0), proximity_radius(1.0f)
+    radius(1.0f), damage(0), proximity_radius(1.0f), suicidal(false)
     {}
 };
 

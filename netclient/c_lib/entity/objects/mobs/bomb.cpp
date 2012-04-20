@@ -25,7 +25,6 @@ static void set_mob_bomb_properties(Object* object)
 
 Object* create_mob_bomb()
 {
-    // initialize object
     ObjectType type = OBJECT_MONSTER_BOMB;
     Object* obj = object_list->create(type);
     if (obj == NULL) return NULL;
@@ -78,13 +77,9 @@ void tick_mob_bomb(Object* object)
     
     #if DC_SERVER
      //die if near agent
-     //TODO -- proximity effect component
-    //agent = nearest_agent_in_range(position, this->_state.explosion_proximity_radius);
-    //if (agent != NULL)
-    //{
-        //this->health.properties.dead = true;
-        //return;
-    //}
+    using Components::ExplosionComponent;
+    ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
+    explode->proximity_check();
     #endif
     
     //// acquire target
