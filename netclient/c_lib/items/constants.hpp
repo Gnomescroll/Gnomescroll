@@ -14,19 +14,20 @@ const int COST_TURRET = 2;
 
 unsigned int get_object_cost(ObjectType obj)
 {
-    unsigned int cost;
-    switch (obj) {
-        case OBJECT_AGENT_SPAWNER:
-            cost = COST_SPAWNER;
-            break;
-        case OBJECT_TURRET:
-            cost = COST_TURRET;
-            break;
-        default:
-            printf("get_object_cost -- unknown obj type %d\n", obj);
-            return 0;
-    }
-    return cost;
+    return 0;
+    //unsigned int cost;
+    //switch (obj) {
+        //case OBJECT_AGENT_SPAWNER:
+            //cost = COST_SPAWNER;
+            //break;
+        //case OBJECT_TURRET:
+            //cost = COST_TURRET;
+            //break;
+        //default:
+            //printf("get_object_cost -- unknown obj type %d\n", obj);
+            //return 0;
+    //}
+    //return cost;
 }
 
 //// Spawners

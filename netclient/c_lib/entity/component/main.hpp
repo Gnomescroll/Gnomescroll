@@ -53,6 +53,9 @@ extern DimensionComponentList* dimension_component_list;
 
 extern TargetingComponentList* targeting_component_list;
 
+#if DC_SERVER
+extern ExplosionComponentList* explosion_component_list;
+#endif
 
 /* ComponentList handler switches */
 

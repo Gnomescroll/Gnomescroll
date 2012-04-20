@@ -1010,65 +1010,77 @@ inline void agent_set_block_CtoS::handle()
 }
 
 #define ITEM_PLACEMENT_Z_DIFF_LIMIT 3
+
+static Objects::Object* place_object_handler(ObjectType type, int x, int y, int z, int owner_id, int team_id)
+{
+    if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, z)) return NULL;
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, z)) return NULL;
+
+    // zip down
+    int new_z = t_map::get_highest_open_block(x,y);
+    if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return NULL;
+    if (Objects::point_occupied_by_type(OBJECT_TURRET, x, y, new_z)) return NULL;
+    if (Objects::point_occupied_by_type(OBJECT_AGENT_SPAWNER, x, y, new_z)) return NULL;
+
+    using Objects::Object;
+    Object* object = Objects::create(type);
+    if (object == NULL) return NULL;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL) physics->set_position(vec3_init(x+0.5f,y+0.5f,new_z));
+
+    using Components::TeamComponent;
+    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+    if (team != NULL) team->set_team(team_id);
+
+    using Components::OwnerComponent;
+    OwnerComponent* owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+    if (owner != NULL) owner->set_owner(owner_id);
+
+    return object;
+}
+
 inline void place_spawner_CtoS::handle()
 {
-    //const ObjectType type = OBJECT_AGENT_SPAWNER;
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a == NULL)
-    //{
-        //printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        //return;
-    //}
-    //if (a->status.team == 0) return;
-    //if (!a->status.can_purchase(type)) return;
-    //if (ServerState::object_list->full(type)) return;
-    //if (!ServerState::spawner_list->team_spawner_available(a->status.team)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_AGENT_SPAWNER, (int)x, (int)y, (int)z)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)z)) return;
-    //// zip down
-    //int new_z = t_map::get_highest_open_block(x,y);
-    //if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_AGENT_SPAWNER, (int)x, (int)y, (int)new_z)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)new_z)) return;
+    ObjectType type = OBJECT_AGENT_SPAWNER;
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL)
+    {
+        printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+    if (a->status.team == 0) return;
+    if (!a->status.can_purchase(type)) return;
+    if (!Components::agent_spawner_component_list->team_spawner_available(a->status.team)) return;
 
-    //Spawner* s = (Spawner*)ServerState::object_list->create(type);
-    //if (s==NULL) return;
-    //s->set_position(x+0.5f,y+0.5f,new_z);
-    //a->status.purchase(s->state()->type);
-    //s->set_team(a->status.team);
-    //s->set_owner(a->id);
-    //ServerState::spawner_list->assign_team_index(s);
-    //s->born(); // TODO
+    Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
+    if (obj == NULL) return;
+    Components::agent_spawner_component_list->assign_team_index(obj);
+    Objects::ready(obj);
+
+    a->status.purchase(obj->type);
 }
 
 inline void place_turret_CtoS::handle()
 {
-    //const ObjectType type = OBJECT_TURRET;
-    //Agent_state* a = NetServer::agents[client_id];
-    //if (a == NULL)
-    //{
-        //printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        //return;
-    //}
-    //if (a->status.team == 0) return;
-    //if (!a->status.can_purchase(type)) return;
-    //if (ServerState::object_list->full(type)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)z)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_AGENT_SPAWNER, (int)x, (int)y, (int)z)) return;
-    //// zip down
-    //int new_z = t_map::get_highest_open_block(x,y);
-    //if (z - new_z > ITEM_PLACEMENT_Z_DIFF_LIMIT || z - new_z < 0) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_TURRET, (int)x, (int)y, (int)new_z)) return;
-    //if (ServerState::object_list->point_occupied_by_type(OBJECT_AGENT_SPAWNER, (int)x, (int)y, (int)new_z)) return;
+    ObjectType type = OBJECT_TURRET;
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL)
+    {
+        printf("place_turret_CtoS:: Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        return;
+    }
+    if (a->status.team == 0) return;
+    if (!a->status.can_purchase(type)) return;
+    
+    Objects::Object* obj = place_object_handler(type, x,y,z, a->id, a->status.team);
+    if (obj == NULL) return;
+    Objects::ready(obj);
 
-    //Turret* t = (Turret*)ServerState::object_list->create(type);
-    //if (t==NULL) return;
-    //t->set_position(x+0.5f,y+0.5f,new_z);
-    //a->status.purchase(t->state()->type);
-    //t->set_team(a->status.team);
-    //t->set_owner(a->id);
-    //t->born(); // TODO
+    a->status.purchase(obj->type);
 }
+
 #undef ITEM_PLACEMENT_Z_DIFF_LIMIT
 
 inline void choose_spawn_location_CtoS::handle()

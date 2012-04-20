@@ -78,7 +78,6 @@ typedef ComponentList<TargetingComponent, COMPONENT_TARGETING, MAX_TARGETING_COM
 
 /* Spawner */
 
-// TODO - adapt correctly, then move
 const int MAX_MONSTER_SPAWNER_COMPONENTS = 512;
 typedef ComponentList<MonsterSpawnerComponent, COMPONENT_MONSTER_SPAWNER, MAX_MONSTER_SPAWNER_COMPONENTS>
     MonsterSpawnerComponentList;
@@ -86,5 +85,11 @@ typedef ComponentList<MonsterSpawnerComponent, COMPONENT_MONSTER_SPAWNER, MAX_MO
 const int DIMENSION_COMPONENT_MAX = 4096;
 typedef ComponentList<DimensionComponent, COMPONENT_DIMENSION, DIMENSION_COMPONENT_MAX>
     DimensionComponentList;
+
+#if DC_SERVER
+const int EXPLOSION_COMPONENT_MAX = 2048;
+typedef ComponentList<ExplosionComponent, COMPONENT_EXPLOSION, EXPLOSION_COMPONENT_MAX>
+    ExplosionComponentList;
+#endif
 
 } // Components

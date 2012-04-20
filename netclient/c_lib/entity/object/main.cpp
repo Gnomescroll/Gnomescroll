@@ -11,15 +11,17 @@ using Components::Component;
 ObjectList* object_list = NULL;
 
 void init()
-{
+{   // must specify maximum values for objects here
+
     object_list = new ObjectList;
     object_list->init();
     
-    // must specify maximum values for objects here
+    // refills
     object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
     object_list->set_object_max(OBJECT_LASER_REFILL, 256);
     object_list->set_object_max(OBJECT_GRENADE_REFILL, 256);
 
+    // block drops
     object_list->set_object_max(OBJECT_DIRT_BLOCK_DROP, 256);
     object_list->set_object_max(OBJECT_STONE_BLOCK_DROP, 256);
     object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
@@ -27,6 +29,7 @@ void init()
     object_list->set_object_max(OBJECT_HARD_ROCK_BLOCK_DROP, 256);
     object_list->set_object_max(OBJECT_INFECTED_ROCK_BLOCK_DROP, 256);
 
+    // gemstones
     object_list->set_object_max(OBJECT_GEMSTONE_MALACHITE, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_RUBY, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_TURQUOISE, 256);
@@ -35,7 +38,14 @@ void init()
     object_list->set_object_max(OBJECT_GEMSTONE_JADE, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_ONYX, 256);
     
-    object_list->set_object_max(OBJECT_SOFT_ROCK_BLOCK_DROP, 256);
+    // fabs
+    object_list->set_object_max(OBJECT_AGENT_SPAWNER, 256);
+    object_list->set_object_max(OBJECT_TURRET, 512);
+
+    // mobs
+    object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
+    object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
+    object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
 }
 
 void teardown()
@@ -66,6 +76,7 @@ Object* create_switch(ObjectType type)
 {
     switch (type)
     {
+        // refills
         case OBJECT_HEALTH_REFILL:
             return create_health_refill();
         case OBJECT_LASER_REFILL:
@@ -73,6 +84,7 @@ Object* create_switch(ObjectType type)
         case OBJECT_GRENADE_REFILL:
             return create_grenade_refill();
 
+        // block drops
         case OBJECT_DIRT_BLOCK_DROP:
             return create_dirt_block_drop();
         case OBJECT_STONE_BLOCK_DROP:
@@ -86,6 +98,7 @@ Object* create_switch(ObjectType type)
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             return create_infected_rock_block_drop();
 
+        // gemstones
         case OBJECT_GEMSTONE_MALACHITE:
             return create_malachite_gemstone();
         case OBJECT_GEMSTONE_RUBY:
@@ -100,6 +113,20 @@ Object* create_switch(ObjectType type)
             return create_jade_gemstone();
         case OBJECT_GEMSTONE_ONYX:
             return create_onyx_gemstone();
+
+        // fabs
+        case OBJECT_AGENT_SPAWNER:
+            return create_agent_spawner();
+        case OBJECT_TURRET:
+            return create_turret();
+
+        // mobs
+        case OBJECT_MONSTER_SPAWNER:
+            return create_mob_spawner();
+        case OBJECT_MONSTER_BOX:
+            return create_mob_robot_box();
+        case OBJECT_MONSTER_BOMB:
+            return create_mob_bomb();
         
         default:
             printf("WARNING: creating unknown object type %d\n", type);
@@ -120,6 +147,7 @@ void ready_switch(Object* object)
 {
     switch (object->type)
     {
+        // refills
         case OBJECT_HEALTH_REFILL:
             ready_health_refill(object);
             break;
@@ -130,6 +158,7 @@ void ready_switch(Object* object)
             ready_grenade_refill(object);
             break;
 
+        // block drops
         case OBJECT_DIRT_BLOCK_DROP:
             ready_dirt_block_drop(object);
             break;
@@ -149,6 +178,7 @@ void ready_switch(Object* object)
             ready_infected_rock_block_drop(object);
             break;
 
+        // gemstones
         case OBJECT_GEMSTONE_MALACHITE:
             ready_malachite_gemstone(object);
             break;
@@ -171,6 +201,25 @@ void ready_switch(Object* object)
             ready_onyx_gemstone(object);
             break;
 
+        // fabs
+        case OBJECT_AGENT_SPAWNER:
+            ready_agent_spawner(object);
+            break;
+        case OBJECT_TURRET:
+            ready_turret(object);
+            break;
+
+        // mobs
+        case OBJECT_MONSTER_SPAWNER:
+            ready_mob_spawner(object);
+            break;
+        case OBJECT_MONSTER_BOX:
+            ready_mob_robot_box(object);
+            break;
+        case OBJECT_MONSTER_BOMB:
+            ready_mob_bomb(object);
+            break;
+
         default:
             printf("WARNING: birthing unknown object type %d\n", object->type);
             break;
@@ -182,6 +231,7 @@ void destroy_switch(Object* object)
     ObjectType type = object->type;
     switch (type)
     {
+        // refills
         case OBJECT_HEALTH_REFILL:
             die_health_refill(object);
             break;
@@ -192,6 +242,7 @@ void destroy_switch(Object* object)
             die_grenade_refill(object);
             break;
 
+        // block drops
         case OBJECT_DIRT_BLOCK_DROP:
             die_dirt_block_drop(object);
             break;
@@ -211,6 +262,7 @@ void destroy_switch(Object* object)
             die_infected_rock_block_drop(object);
             break;
 
+        // gemstones
         case OBJECT_GEMSTONE_MALACHITE:
             die_malachite_gemstone(object);
             break;
@@ -232,7 +284,26 @@ void destroy_switch(Object* object)
         case OBJECT_GEMSTONE_ONYX:
             die_onyx_gemstone(object);
             break;
-        
+
+        // fabs
+        case OBJECT_AGENT_SPAWNER:
+            ready_agent_spawner(object);
+            break;
+        case OBJECT_TURRET:
+            ready_turret(object);
+            break;
+
+        // mobs
+        case OBJECT_MONSTER_SPAWNER:
+            ready_mob_spawner(object);
+            break;
+        case OBJECT_MONSTER_BOX:
+            ready_mob_robot_box(object);
+            break;
+        case OBJECT_MONSTER_BOMB:
+            ready_mob_bomb(object);
+            break;
+
         default:
             printf("WARNING: destroying unknown object type %d\n", type);
             break;
@@ -250,10 +321,21 @@ void destroy_switch(ObjectType type, int id)
         destroy_switch(object);
 }
 
-
 Object* get_object(ObjectType type, int id)
 {
     return object_list->get(type, id);
 }
+
+bool full(ObjectType type)
+{
+    return object_list->full(type);
+}
+
+bool point_occupied_by_type(ObjectType type, int x, int y, int z)
+{
+    return false;
+}
+
+
 
 } // Objects

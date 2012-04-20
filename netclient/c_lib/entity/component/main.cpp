@@ -50,6 +50,10 @@ DimensionComponentList* dimension_component_list = NULL;
 
 TargetingComponentList* targeting_component_list = NULL;
 
+#if DC_SERVER
+ExplosionComponentList* explosion_component_list = NULL;
+#endif
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -108,7 +112,12 @@ Component* get_switch(ComponentType type)
 
         case COMPONENT_TARGETING:
             return targeting_component_list->subscribe();
-            
+
+        #if DC_SERVER
+        case COMPONENT_EXPLOSION:
+            return explosion_component_list->subscribe();
+        #endif
+        
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
             return NULL;
@@ -192,6 +201,12 @@ void release_switch(Component* component)
             targeting_component_list->unsubscribe((TargetingComponent*)component);
             break;
 
+        #if DC_SERVER
+        case COMPONENT_EXPLOSION:
+            explosion_component_list->unsubscribe((ExplosionComponent*)component);
+            break;
+        #endif
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -232,6 +247,10 @@ void init()
     dimension_component_list = new DimensionComponentList;
 
     targeting_component_list = new TargetingComponentList;
+
+    #if DC_SERVER
+    explosion_component_list = new ExplosionComponentList;
+    #endif
 }
 
 void teardown()
@@ -268,6 +287,10 @@ void teardown()
     if (dimension_component_list != NULL) delete dimension_component_list;
 
     if (targeting_component_list != NULL) delete targeting_component_list;
+
+    #if DC_SERVER
+    if (explosion_component_list != NULL) delete explosion_component_list;
+    #endif
 }
 
 } // Components
