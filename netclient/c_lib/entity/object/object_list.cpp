@@ -90,6 +90,8 @@ Object** ObjectList::get_objects(ObjectType type)
 
 void ObjectList::set_object_max(ObjectType type, int max)
 {
+    assert(type < MAX_OBJECT_TYPES);
+    assert(type >= 0);
     this->maximums[type] = max;
     this->objects[type] = (Object**)calloc(max, sizeof(Object*));
 }
@@ -149,6 +151,21 @@ void ObjectList::harvest()
                 Objects::destroy(obj);
         }
     }
+}
+
+void ObjectList::send_to_client(ObjectType type, int client_id)
+{
+    assert(type < MAX_OBJECT_TYPES);
+    assert(type >= 0);
+    if (this->empty(type)) return;
+    Object** objects = this->get_objects(type);
+    assert(objects != NULL);
+    int max = this->max(type);
+    assert(max > 0);
+
+    for (int i=0; i<max; i++)
+        if (objects[i] != NULL)
+            objects[i]->sendToClientCreate(client_id);
 }
 
 ObjectList::~ObjectList()

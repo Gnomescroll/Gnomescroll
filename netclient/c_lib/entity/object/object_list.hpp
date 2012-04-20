@@ -47,6 +47,9 @@ class ObjectList
         void tick();    // physics tick
         void update();  // draw state update
         void harvest(); // kill
+
+        // network iterators
+        void send_to_client(ObjectType type, int client_id);
         
     ~ObjectList();
 

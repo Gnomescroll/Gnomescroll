@@ -27,6 +27,7 @@ void destroy_switch(ObjectType type, int id);
 
 Object* get_object(ObjectType type, int id);
 bool full(ObjectType type);
+void send_to_client(ObjectType type, int client_id);
 
 bool point_occupied_by_type(ObjectType type, int x, int y, int z);
 

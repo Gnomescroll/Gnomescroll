@@ -331,6 +331,11 @@ bool full(ObjectType type)
     return object_list->full(type);
 }
 
+void send_to_client(ObjectType type, int client_id)
+{
+    object_list->send_to_client(type, client_id);
+}
+
 bool point_occupied_by_type(ObjectType type, int x, int y, int z)
 {
     if (object_list->empty(type)) return false;

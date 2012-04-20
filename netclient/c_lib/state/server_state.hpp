@@ -13,15 +13,10 @@
 namespace ServerState
 {
     extern Agent_list* agent_list GNOMESCROLL_API;
-    
-    //extern Grenade_shrapnel_list* grenade_shrapnel_list;
-    
+        
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
-    //extern SpawnerList* spawner_list;
-    //extern OwnedList* owned_list;
-
-    //extern GameObject_list* object_list;
+    //extern Grenade_shrapnel_list* grenade_shrapnel_list;
 
     extern CTF* ctf GNOMESCROLL_API;
 

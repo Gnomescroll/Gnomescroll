@@ -16,12 +16,7 @@ namespace ServerState
 
 
     Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    //SpawnerList* spawner_list = NULL;
-    //OwnedList* owned_list = NULL;
-    
     //Grenade_shrapnel_list* grenade_shrapnel_list;
-
-    //GameObject_list* object_list;
 
     CTF* ctf = NULL;
 
@@ -45,9 +40,11 @@ namespace ServerState
         }
 
         agent_list->update_models(); // sets skeleton
-        //object_list->tick();
-        //object_list->update();
         Particles::grenade_list->tick();
+
+        Objects::tick();
+        Objects::harvest();
+        Objects::update();
 
         t_item::tick();
 
@@ -63,10 +60,6 @@ namespace ServerState
         //Monsters::spawn_monsters(monsters);
         //Monsters::populate_slimes(slimes);
 
-        Objects::tick();
-        Objects::harvest();
-        Objects::update();
-
         ctf->check_agent_proximities();
         ctf->update();
         ctf->tick();
@@ -75,24 +68,15 @@ namespace ServerState
     void init_lists()
     {
         voxel_hitscan_list = new Voxel_hitscan_list;
-        //spawner_list = new SpawnerList; // functions similar to Voxel_hitscan_list; objects must register with it
-        //owned_list = new OwnedList;
-
-        //grenade_shrapnel_list = new Grenade_shrapnel_list;
-
         agent_list = new Agent_list;
-        //object_list = new GameObject_list;
+        //grenade_shrapnel_list = new Grenade_shrapnel_list;
     }
 
     void teardown_lists()
     {
-        // voxels
+        //delete grenade_shrapnel_list;;
         delete agent_list;
-        //delete object_list;
-
         delete voxel_hitscan_list; // must go last
-        //delete spawner_list;
-        //delete owned_list;
     }
 
     //move this into interface
@@ -111,8 +95,7 @@ namespace ServerState
     //move this into interface
     static void teardown_ctf()
     {
-        if (ctf != NULL)
-            delete ctf;
+        if (ctf != NULL) delete ctf;
     }
 
     void init()
@@ -200,16 +183,16 @@ namespace ServerState
         agent_list->send_to_client(client_id);
         ctf->send_to_client(client_id);
 
-        //object_list->send_to_client(OBJECT_TURRET, client_id);
-        //object_list->send_to_client(OBJECT_AGENT_SPAWNER, client_id);
-        //object_list->send_to_client(OBJECT_SLIME, client_id);
-        //object_list->send_to_client(OBJECT_MONSTER_BOX, client_id);
-        //object_list->send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
+        Objects::send_to_client(OBJECT_TURRET, client_id);
+        Objects::send_to_client(OBJECT_AGENT_SPAWNER, client_id);
+        Objects::send_to_client(OBJECT_MONSTER_BOMB, client_id);
+        Objects::send_to_client(OBJECT_MONSTER_BOX, client_id);
+        Objects::send_to_client(OBJECT_MONSTER_SPAWNER, client_id);
     }
 
     void send_remainining_game_state_to_client(int client_id)
     {
-        //object_list->send_to_client(OBJECT_INVENTORY, client_id);
+        Objects::send_to_client(OBJECT_INVENTORY, client_id);
     }
 
     //move somewhere
