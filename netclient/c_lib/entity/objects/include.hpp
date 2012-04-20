@@ -22,12 +22,11 @@
 #include <c_lib/entity/objects/gemstones/jade.hpp>
 #include <c_lib/entity/objects/gemstones/onyx.hpp>
 
+#include <c_lib/entity/objects/fabs/constants.hpp>
 #include <c_lib/entity/objects/fabs/spawner.hpp>
 #include <c_lib/entity/objects/fabs/turret.hpp>
 
+#include <c_lib/entity/objects/mobs/constants.hpp>
 #include <c_lib/entity/objects/mobs/bomb.hpp>
 #include <c_lib/entity/objects/mobs/box.hpp>
 #include <c_lib/entity/objects/mobs/spawner.hpp>
-
-
-

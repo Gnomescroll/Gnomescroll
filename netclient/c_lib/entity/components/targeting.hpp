@@ -15,8 +15,8 @@ class TargetingComponent: public Component
 
         float accuracy_bias;
         float sight_range;
-        bool attack_enemies;
-        bool attack_random;
+        bool attacks_enemies;
+        bool attack_at_random;
 
         bool can_fire()
         {
@@ -38,7 +38,7 @@ class TargetingComponent: public Component
     TargetingComponent()
     : Component(COMPONENT_TARGETING, COMPONENT_INTERFACE_TARGETING),
     target_acquisition_probability(1.0f), fire_tick(0), fire_rate_limit(1),
-    accuracy_bias(0.0f), sight_range(10.0f), attack_enemies(true), attack_random(true)
+    accuracy_bias(0.0f), sight_range(10.0f), attacks_enemies(true), attack_at_random(true)
     {}
 };
 

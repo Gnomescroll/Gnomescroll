@@ -141,7 +141,7 @@ int init_c_lib()
     Objects::init_net_interfaces();
     //Objects::init_state_interfaces();
 
-    init_vox_dats();
+    VoxDats::init();
     init_chat_server();
 
     ServerState::init();

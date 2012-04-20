@@ -406,7 +406,7 @@ bool ChatInput::route_command()
                 return false;
         printlog(Log::CHAT, Log::Always, "Chat select spawner %d\n", spawner_team_index);
         if (spawner_team_index == 0)
-            spawner_team_index = BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
+            spawner_team_index = Components::BASE_SPAWN_ID; // 0 is "base", but maps to BASE_SPAWN_ID
         choose_spawn_location_CtoS msg;
         msg.id = spawner_team_index;
         msg.send();
@@ -416,7 +416,7 @@ bool ChatInput::route_command()
     if(!strcmp(cmd, (char*)"b") || !strcmp(cmd, (char*)"B") || !strcmp(cmd, (char*)"base"))
     {
         choose_spawn_location_CtoS msg;
-        msg.id = BASE_SPAWN_ID;
+        msg.id = Components::BASE_SPAWN_ID;
         msg.send();
         return true;
     }

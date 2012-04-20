@@ -5,6 +5,9 @@
 namespace Components
 {
 
+const int AGENT_SPAWNER_PER_TEAM = 9;
+const int BASE_SPAWN_ID = 255;
+
 const int MAX_AGENT_SPAWNER_COMPONENTS = 128;
 class AgentSpawnerComponentList: public ComponentList<AgentSpawnerComponent, COMPONENT_AGENT_SPAWNER, MAX_AGENT_SPAWNER_COMPONENTS>
 {

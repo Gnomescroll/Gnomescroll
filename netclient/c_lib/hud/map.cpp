@@ -102,7 +102,7 @@ static Text* base = NULL;
 static Text* flag = NULL;
 static Text* enemy_flag = NULL;
 static Text* ally[TEAM_MAX_PLAYERS] = {NULL};
-static Text* spawner[SPAWNER_MAX] = {NULL};
+static Text* spawner[Components::AGENT_SPAWNER_PER_TEAM] = {NULL};
 //static Text turret[MAX_TURRETS];
 
 static bool text_icons_inited = false;
@@ -134,16 +134,16 @@ void init_text_icons()
         ally[i]->set_text((char*)ally_symbol);
     }
         
-    char* SPAWNER_MAX_string = (char*)malloc(sizeof(char) * (10+1));
-    sprintf(SPAWNER_MAX_string, "%d", SPAWNER_MAX);
-    int len = strlen(SPAWNER_MAX_string);
-    for (int i=0; i<SPAWNER_MAX; i++)
+    char* spawner_max_string = (char*)malloc(sizeof(char) * (10+1));
+    sprintf(spawner_max_string, "%d", Components::AGENT_SPAWNER_PER_TEAM);
+    int len = strlen(spawner_max_string);
+    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM; i++)
     {
         spawner[i] = HudText::text_list->create();
         spawner[i]->set_format((char*)spawner_symbol);
         spawner[i]->set_format_extra_length(len - 1);
     }
-    free(SPAWNER_MAX_string);
+    free(spawner_max_string);
 
     text_icons_inited = true;
 }
@@ -160,7 +160,7 @@ static void set_team_icons_color(
     flag->set_color(r,g,b,a);
     for (int i=0; i<(int)TEAM_MAX_PLAYERS;
         ally[i++]->set_color(r,g,b,a));
-    for (int i=0; i<SPAWNER_MAX;
+    for (int i=0; i<Components::AGENT_SPAWNER_PER_TEAM;
         spawner[i++]->set_color(r,g,b,a));
 }
 
@@ -633,7 +633,8 @@ void draw_team_text_icons(float z)
         //spawner[j]->draw_centered();
         //j++;
     //}
-
+    
+    using Components::BASE_SPAWN_ID;
     Base* b = ctf->get_base(playerAgent_state.you->status.team);
     world_to_map_screen_coordinates(b->x, b->y, &x, &y);
     base->set_position(x,y);

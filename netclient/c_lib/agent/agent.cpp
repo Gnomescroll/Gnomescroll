@@ -467,6 +467,8 @@ void Agent_state::get_spawn_point(Vec3* spawn)
         spawn->z = map_dim.z - 1;
         return;
     }
+    
+    using Components::BASE_SPAWN_ID;
 
     int h = this->current_height_int();
     Components::AgentSpawnerComponent *s = NULL;
@@ -510,7 +512,7 @@ void Agent_state::spawn_state()
 
 void Agent_state::init_vox()
 {
-    this->vox = new Voxel_model(&agent_vox_dat, this->id, this->type);
+    this->vox = new Voxel_model(&VoxDats::agent, this->id, this->type);
     this->vox->set_hitscan(true);
     this->vox->register_hitscan();
 }
@@ -868,7 +870,7 @@ void Agent_state::update_model()
     }
 
     // other agents
-    VoxDat* vox_dat = &agent_vox_dat;
+    VoxDat* vox_dat = &VoxDats::agent;
     Vec3 center = this->vox->get_part(0)->get_center();
     float radius = this->vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
@@ -883,7 +885,7 @@ void Agent_state::update_model()
         this->event.bb->set_draw(true);
     if (this->crouched())
     {
-        vox_dat = &agent_vox_dat_crouched;
+        vox_dat = &VoxDats::agent_crouched;
         if (!this->status.vox_crouched)
         {
             this->vox->set_vox_dat(vox_dat);
@@ -901,7 +903,7 @@ void Agent_state::update_model()
         }
     }
     if (this->status.dead)
-        vox_dat = &agent_vox_dat_dead;
+        vox_dat = &VoxDats::agent_dead;
         
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
@@ -913,10 +915,10 @@ void Agent_state::update_model()
     #if DC_SERVER
     if (this->vox == NULL) return;
     this->vox->was_updated = false;
-    VoxDat* vox_dat = &agent_vox_dat;
+    VoxDat* vox_dat = &VoxDats::agent;
     if (this->crouched())
     {
-        vox_dat = &agent_vox_dat_crouched;
+        vox_dat = &VoxDats::agent_crouched;
         if (!this->status.vox_crouched)
         {
             this->vox->set_vox_dat(vox_dat);
@@ -934,7 +936,7 @@ void Agent_state::update_model()
         }
     }
     if (this->status.dead)
-        vox_dat = &agent_vox_dat_dead;
+        vox_dat = &VoxDats::agent_dead;
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();

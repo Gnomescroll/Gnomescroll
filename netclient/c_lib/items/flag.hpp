@@ -7,7 +7,6 @@
 const int N_FLAGS = N_TEAMS;
 
 const int FLAG_PART_NUM = 1;
-extern VoxDat flag_vox_dat;
 
 enum FLAG_PARTS {
     FLAG_PART_CLOTH

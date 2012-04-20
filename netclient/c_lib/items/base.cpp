@@ -2,8 +2,6 @@
 
 #include <c_lib/common/random.h>
 
-VoxDat base_vox_dat;
-
 void Base::set_position(float x, float y, float z)
 {
     this->x = x;
@@ -94,7 +92,7 @@ id(id), team(team),
 type(OBJECT_BASE),
 spawn_radius(BASE_SPAWN_RADIUS)
 {
-    this->vox = new Voxel_model(&base_vox_dat, id, type, team);
+    this->vox = new Voxel_model(&VoxDats::base, id, type, team);
     this->vox->set_hitscan(false);
     #if DC_CLIENT
     this->vox->set_draw(true);

@@ -109,7 +109,7 @@ void server_tick_mob_robot_box(Object* object)
             //state->id, state->type, this->get_team(), this->spatial.camera_z(),
             //this->get_position(),
             //state->accuracy_bias, state->sight_range,
-            //state->attack_enemies, state->attack_random,
+            //state->attacks_enemies, state->attack_at_random,
             //&direction
         //);
     //}

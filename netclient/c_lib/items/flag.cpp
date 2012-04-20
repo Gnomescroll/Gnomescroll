@@ -1,7 +1,5 @@
 #include "flag.hpp"
 
-VoxDat flag_vox_dat;
-
 void Flag::set_position(float x, float y, float z)
 {
     this->x = x;
@@ -18,7 +16,7 @@ id(id), team(team),
 type(OBJECT_FLAG),
 held(false)
 {
-    this->vox = new Voxel_model(&flag_vox_dat, id, type, team);
+    this->vox = new Voxel_model(&VoxDats::flag, id, type, team);
     this->vox->set_hitscan(false);
     #if DC_CLIENT
     this->vox->set_draw(true);

@@ -3,10 +3,6 @@
 #include <c_lib/voxel/voxel_model.hpp>
 #include <agent/agent_status.hpp>
 
-extern VoxDat agent_vox_dat;
-extern VoxDat agent_vox_dat_crouched;
-extern VoxDat agent_vox_dat_dead;
-
 enum AGENT_BODY_PARTS
 {
     AGENT_PART_TORSO,

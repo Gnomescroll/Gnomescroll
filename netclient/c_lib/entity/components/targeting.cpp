@@ -16,7 +16,7 @@ Agent_state* TargetingComponent::acquire_target(
     Agent_state* agent = Hitscan::lock_agent_target(
         position, firing_direction, team,
         this->sight_range, this->target_acquisition_probability,
-        this->attack_enemies, this->attack_random
+        this->attacks_enemies, this->attack_at_random
     );
     return agent;
 }

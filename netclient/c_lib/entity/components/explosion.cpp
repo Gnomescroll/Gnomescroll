@@ -24,7 +24,7 @@ void ExplosionComponent::explode()
     
     ServerState::damage_objects_within_sphere(
         position.x, position.y, position.z, this->radius, this->damage, owner_id,
-        this->object->type, this->object->id, this->suicidal
+        this->object->type, this->object->id, this->harms_owner
     );
 }
 

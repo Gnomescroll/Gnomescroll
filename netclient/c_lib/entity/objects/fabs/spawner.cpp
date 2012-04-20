@@ -4,10 +4,12 @@
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/objects/fabs/constants.hpp>
 #include <c_lib/entity/components/physics/position_changed.hpp>
 #include <c_lib/entity/components/team/indexed_team.hpp>
 #include <c_lib/entity/components/owner.hpp>
 #include <c_lib/entity/components/voxel_model.hpp>
+#include <c_lib/voxel/vox_dat_init.hpp>
 
 namespace Objects
 {
@@ -16,13 +18,29 @@ static void set_agent_spawner_properties(Object* object)
 {
     int n_components = 7;
     object->init(n_components);
-    add_component_to_object(object, COMPONENT_POSITION_CHANGED);
-    add_component_to_object(object, COMPONENT_DIMENSION);
-    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    
+    add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
     add_component_to_object(object, COMPONENT_OWNER);
     add_component_to_object(object, COMPONENT_INDEXED_TEAM);
-    add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    dims->height = AGENT_SPAWNER_HEIGHT;
+    
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    vox->vox_dat = &VoxDats::agent_spawner;
+    vox->init_hitscan = AGENT_SPAWNER_INIT_WITH_HITSCAN;
+    vox->init_draw = AGENT_SPAWNER_INIT_WITH_DRAW;
+
+    using Components::HitPointsHealthComponent;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    health->health = AGENT_SPAWNER_MAX_HEALTH;
+    health->max_health = AGENT_SPAWNER_MAX_HEALTH;
+
+    using Components::AgentSpawnerComponent;
+    AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
+    spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
 
     object->tick = &tick_agent_spawner;
     object->update = &update_agent_spawner;

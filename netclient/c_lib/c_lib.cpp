@@ -276,7 +276,7 @@ int init_c_lib() {
 
     ClientState::init();
 
-    init_vox_dats();
+    VoxDats::init();
     init_voxel_volume();
     
 

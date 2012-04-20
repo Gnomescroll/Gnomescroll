@@ -29,7 +29,7 @@ voxel_model_restore_throttle(0),
 health(AGENT_HEALTH),
 dead(false),
 respawn_countdown(RESPAWN_TICKS),
-spawner(BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
+spawner(Components::BASE_SPAWN_ID),  // -1 will mean default spawn point (base)
 kills(0),
 deaths(0),
 suicides(0),

@@ -7,6 +7,8 @@
 #include <c_lib/entity/components/team.hpp>
 #include <c_lib/entity/components/owner.hpp>
 #include <c_lib/entity/components/voxel_model.hpp>
+#include <c_lib/entity/objects/fabs/constants.hpp>
+#include <c_lib/t_map/t_map.hpp>
 #if DC_SERVER
 #include <c_lib/entity/components/explosion.hpp>
 #endif
@@ -23,15 +25,49 @@ static void set_turret_properties(Object* object)
     int n_components = 7;
     #endif
     object->init(n_components);
+    
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
-    add_component_to_object(object, COMPONENT_DIMENSION);
-    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
     add_component_to_object(object, COMPONENT_OWNER);
     add_component_to_object(object, COMPONENT_TEAM);
-    add_component_to_object(object, COMPONENT_TARGETING);
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    dims->height = TURRET_HEIGHT;
+    dims->camera_height = TURRET_CAMERA_HEIGHT;
+    
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    vox->vox_dat = &VoxDats::turret;
+    vox->init_hitscan = TURRET_INIT_WITH_HITSCAN;
+    vox->init_draw = TURRET_INIT_WITH_DRAW;
+
+    using Components::HitPointsHealthComponent;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    health->health = TURRET_MAX_HEALTH;
+    health->max_health = TURRET_MAX_HEALTH;
+    
+    using Components::TargetingComponent;
+    TargetingComponent* target = (TargetingComponent*)add_component_to_object(object, COMPONENT_TARGETING);
+    target->target_acquisition_probability = TURRET_TARGET_ACQUISITION_PROBABILITY;
+    target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
+    target->accuracy_bias = TURRET_ACCURACY_BIAS;
+    target->sight_range = TURRET_SIGHT_RANGE;
+    target->attacks_enemies = TURRET_ATTACKS_ENEMIES;
+    target->attack_at_random = TURRET_ATTACK_AT_RANDOM;
+    // we dont have ID yet, need to set that in the ready() call
+    target->attacker_properties.type = OBJECT_TURRET;
+    target->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
+    target->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
+    target->attacker_properties.voxel_damage_radius = TURRET_VOXEL_DAMAGE_RADIUS;
+    target->attacker_properties.agent_protection_duration = TURRET_AGENT_IMMUNITY_DURATION;
+    target->attacker_properties.terrain_modification_action = t_map::TMA_TURRET;
+
     #if DC_SERVER
-    add_component_to_object(object, COMPONENT_EXPLOSION);
+    using Components::ExplosionComponent;
+    ExplosionComponent* explode = (ExplosionComponent*)add_component_to_object(object, COMPONENT_EXPLOSION);
+    explode->radius = TURRET_EXPLOSION_RADIUS;
+    explode->damage = TURRET_EXPLOSION_DAMAGE;
+    explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
     #endif
 
     object->tick = &tick_turret;
@@ -52,6 +88,11 @@ Object* create_turret()
 
 void ready_turret(Object* object)
 {
+    // we have id now, set it on attack properties
+    using Components::TargetingComponent;
+    TargetingComponent* target = (TargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
+    target->attacker_properties.id = object->id;
+
     using Components::VoxelModelComponent;
     using Components::TeamComponent;
     using Components::PhysicsComponent;

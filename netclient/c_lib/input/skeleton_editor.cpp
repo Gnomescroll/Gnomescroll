@@ -135,19 +135,19 @@ void raycast_to_part()
     switch (type)
     {
         case OBJECT_AGENT:
-            vox_dat = &agent_vox_dat;
+            vox_dat = &VoxDats::agent;
             obj = ClientState::agent_list->get(id);
             if (obj==NULL) return;
             vox = ((Agent_state*)obj)->vox;
             break;
         case OBJECT_BASE:
-            vox_dat = &base_vox_dat;
+            vox_dat = &VoxDats::base;
             obj = ClientState::ctf->get_base(id+1);
             if (obj==NULL) return;
             vox = ((Base*)obj)->vox;
             break;
         case OBJECT_FLAG:
-            vox_dat = &flag_vox_dat;
+            vox_dat = &VoxDats::flag;
             obj = ClientState::ctf->get_flag(id+1);
             if (obj==NULL) return;
             vox = ((Flag*)obj)->vox;

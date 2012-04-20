@@ -132,7 +132,7 @@ void Agent_event::died()
             Sound::died();
         else
             Sound::died(a->s.x, a->s.y, a->s.z, 0,0,0);
-        this->a->vox->set_vox_dat(&agent_vox_dat_dead);
+        this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
     }
 }
@@ -148,7 +148,7 @@ void Agent_event::born()
         this->a->status.dead = false;
 
         // reset skeleton
-        VoxDat* vd = (this->a->crouched()) ? &agent_vox_dat_crouched : &agent_vox_dat;
+        VoxDat* vd = (this->a->crouched()) ? &VoxDats::agent_crouched : &VoxDats::agent;
         this->a->vox->set_vox_dat(vd);
         this->a->vox->reset_skeleton();
         // regenerate model
@@ -172,13 +172,13 @@ void Agent_event::set_spawner(int pt)
 
 void Agent_event::crouched()
 {
-    this->a->vox->set_vox_dat(&agent_vox_dat_crouched);
+    this->a->vox->set_vox_dat(&VoxDats::agent_crouched);
     this->a->vox->reset_skeleton();
 }
 
 void Agent_event::uncrouched()
 {
-    this->a->vox->set_vox_dat(&agent_vox_dat);
+    this->a->vox->set_vox_dat(&VoxDats::agent);
     this->a->vox->reset_skeleton();
 }
 

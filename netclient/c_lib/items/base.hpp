@@ -7,7 +7,6 @@
 const int N_BASES = N_TEAMS;
 
 const int BASE_PART_NUM = 1;
-extern VoxDat base_vox_dat;
 
 enum BASE_PARTS {
     BASE_PART_MAIN
