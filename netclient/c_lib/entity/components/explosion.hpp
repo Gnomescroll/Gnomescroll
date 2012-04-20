@@ -16,6 +16,7 @@ class ExplosionComponent: public Component
         float proximity_radius;
         bool suicidal; // if true, owner of exploding object will take damage
 
+        void explode(Vec3 position);
         void explode(Vec3 position, int owner);
 
     ExplosionComponent()
