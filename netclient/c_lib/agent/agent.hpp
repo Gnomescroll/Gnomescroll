@@ -58,7 +58,7 @@ class Agent_state {
         int snapshot_seq;
         int CS_seq; // <--current counter
 
-        void get_spawn_point(int* spawn);
+        void get_spawn_point(Vec3* spawn);
 
     public:    
         class AgentState s; //state current

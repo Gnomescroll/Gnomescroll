@@ -45,8 +45,8 @@ namespace ServerState
         }
 
         agent_list->update_models(); // sets skeleton
-        object_list->tick();
-        object_list->update();
+        //object_list->tick();
+        //object_list->update();
         Particles::grenade_list->tick();
 
         t_item::tick();
@@ -56,13 +56,16 @@ namespace ServerState
             t_item::check_item_pickups();
         }
 
-        const int monster_spawners = 10;
-        const int monsters = 100;
-        const int slimes = 50;
-        Monsters::create_monsters_spawners(monster_spawners);
-        Monsters::spawn_monsters(monsters);
-        Monsters::populate_slimes(slimes);
+        //const int monster_spawners = 10;
+        //const int monsters = 100;
+        //const int slimes = 50;
+        //Monsters::create_monsters_spawners(monster_spawners);
+        //Monsters::spawn_monsters(monsters);
+        //Monsters::populate_slimes(slimes);
 
+        Objects::tick();
+        Objects::harvest();
+        Objects::update();
 
         ctf->check_agent_proximities();
         ctf->update();
@@ -191,19 +194,7 @@ namespace ServerState
         if (agent != NULL)
             agent->status.add_coins(coins);
     }
-
-        //object_list->tick();
-        //object_list->update();
-        //const int monster_spawners = 10;
-        //const int monsters = 100;
-        //const int slimes = 50;
-        //Monsters::create_monsters_spawners(monster_spawners);
-        //Monsters::spawn_monsters(monsters);
-        //Monsters::populate_slimes(slimes);
-
-        Objects::tick();
-        Objects::harvest();
-        Objects::update();
+        
     void send_initial_game_state_to_client(int client_id)
     {
         agent_list->send_to_client(client_id);

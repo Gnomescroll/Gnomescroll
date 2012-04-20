@@ -1,10 +1,25 @@
 #include "monster_spawner.hpp"
 
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/entity/components/physics.hpp>
+
 namespace Components
 {
 
-void MonsterSpawnerComponent::get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point)
+void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* spawn_point)
 {
+
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL)
+    {
+        spawn_point->x = 0;
+        spawn_point->y = 0;
+        spawn_point->z = 0;
+        return;
+    }
+
+    Vec3 position = physics->get_position();
+    
     float sx,sy;
     sx = position.x + ((randf() * this->radius * 2) - this->radius);
     sx = (sx > map_dim.x - 1) ? map_dim.x - 1 : sx;

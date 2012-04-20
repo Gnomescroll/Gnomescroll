@@ -31,7 +31,7 @@ class Base {
         Voxel_model* vox;
 
         void set_position(float x, float y, float z);
-        void get_spawn_point(int *spawn, int agent_height);
+        void get_spawn_point(int agent_height, Vec3* spawn);
 
         void tick();
         void update(); // client side

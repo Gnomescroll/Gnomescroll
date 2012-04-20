@@ -1,7 +1,7 @@
 #include "agent_spawner_list.hpp"
 
-#include <c_lib/components/spawner/agent_spawner.hpp>
-#include <c_lib/components/team.hpp>
+#include <c_lib/entity/components/spawner/agent_spawner.hpp>
+#include <c_lib/entity/components/team.hpp>
 
 namespace Components
 {
@@ -14,8 +14,8 @@ bool AgentSpawnerComponentList::team_spawner_available(int team)
     {
         s = this->components[i];
         if (s == NULL) continue;
-        TeamComponent* team = (TeamComponent*)s->object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-        if (team != NULL && team->get_team() == team) n++;
+        TeamComponent* spawner_team = (TeamComponent*)s->object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+        if (spawner_team != NULL && spawner_team->get_team() == team) n++;
     }
     return (n < this->max_per_team);
 }
@@ -29,9 +29,9 @@ int AgentSpawnerComponentList::get_random_spawner(int team)
     {   // filter down to team's objects
         s = this->components[i];
         if (s == NULL) continue;
-        IndexedTeamComponent* team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
-        if (team != NULL && team->get_team() == team)
-            objects[j++] = team->get_team_index();
+        IndexedTeamComponent* spawner_team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
+        if (spawner_team != NULL && spawner_team->get_team() == team)
+            objects[j++] = spawner_team->get_team_index();
     }
     objects[j++] = BASE_SPAWN_ID;
     return objects[randrange(0,j-1)];
@@ -46,25 +46,25 @@ int AgentSpawnerComponentList::get_numbered_team_spawner(int team, int id)
     {
         s = this->components[i];
         if (s == NULL) continue;
-        IndexedTeamComponent* team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
-        if (team->get_team() != team) continue;
-        if ((int)team->get_team_index() == id)
+        IndexedTeamComponent* spawner_team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
+        if (spawner_team != NULL && spawner_team->get_team() != team) continue;
+        if ((int)spawner_team->get_team_index() == id)
             return s->object->id;
     }
     return BASE_SPAWN_ID;
 }
 
-Object* AgentSpawnerComponentList::get_by_team_index(int team, int team_index)
+AgentSpawnerComponent* AgentSpawnerComponentList::get_by_team_index(int team, int team_index)
 {
-    AgentSpawnerComponentList *s;
+    AgentSpawnerComponent *s;
     for (int i=0; i<this->max; i++)
     {
         s = this->components[i];
         if (s == NULL) continue;
-        IndexedTeamComponent* team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
-        if (team->get_team() != team) continue;
-        if ((int)team->get_team_index() == team_index)
-            return s->object;
+        IndexedTeamComponent* spawner_team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
+        if (spawner_team != NULL && spawner_team->get_team() != team) continue;
+        if ((int)spawner_team->get_team_index() == team_index)
+            return s;
     }
     return NULL;
 }
@@ -95,7 +95,7 @@ void AgentSpawnerComponentList::assign_team_index(Object* spawner)
         s = this->components[i];
         if (s == NULL) continue;
         IndexedTeamComponent* team = (IndexedTeamComponent*)s->object->get_component(COMPONENT_INDEXED_TEAM);
-        if (team->get_team() != spawner_team) continue;
+        if (team != NULL && team->get_team() != spawner_team) continue;
         taken[spawner_team_index - 1] = 1;
     }
     for (int i=0; i<this->max; i++)

@@ -1,12 +1,25 @@
 #include "agent_spawner.hpp"
 
 #include <c_lib/physics/vec3.hpp>
+#include <c_lib/entity/components/physics.hpp>
 
 namespace Components
 {
 
-void AgentSpawnerComponent::get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point)
+void AgentSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* spawn_point)
 {
+
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL)
+    {
+        spawn_point->x = 0;
+        spawn_point->y = 0;
+        spawn_point->z = 0;
+        return;
+    }
+
+    Vec3 position = physics->get_position();
+    
     int x,y;
     x = (int)position.x;
     y = (int)position.y;

@@ -10,7 +10,7 @@ class AgentSpawnerComponent: public SpawnerComponent
 {
     public:
         float radius;
-        void get_spawn_point(Vec3 position, int spawned_object_height, Vec3* spawn_point);
+        void get_spawn_point(int spawned_object_height, Vec3* spawn_point);
     
     AgentSpawnerComponent()
     : SpawnerComponent(COMPONENT_AGENT_SPAWNER),
