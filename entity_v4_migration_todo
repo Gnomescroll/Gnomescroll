@@ -49,6 +49,11 @@ move components lists out
 Save this stuff from objects.old:
 common/api/*
 
+REMAINING:
+animation component
+rate limited network updates
+events (chat, sound, shot)
+
 ==============
 event queue?
     -- reduces workload for chat,sound,animation triggers

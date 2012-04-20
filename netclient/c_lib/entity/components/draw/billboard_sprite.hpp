@@ -18,7 +18,7 @@ class BillboardSpriteComponent: public DrawComponent
 
     BillboardSpriteComponent()
     : DrawComponent(COMPONENT_BILLBOARD_SPRITE),
-    sprite_index(4), scale(1.0f)
+    sprite_index(0), scale(1.0f)
     {}
 
 };

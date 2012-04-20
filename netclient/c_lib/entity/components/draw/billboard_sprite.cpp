@@ -11,9 +11,9 @@ namespace Components
 void BillboardSpriteComponent::call()
 {
     #if DC_CLIENT
-    PhysicsComponent* state = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (state == NULL) return;
-    drawBillboardSprite(state->get_position(), this->sprite_index, this->scale);
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    drawBillboardSprite(physics->get_position(), this->sprite_index, this->scale);
     #endif
 }
 

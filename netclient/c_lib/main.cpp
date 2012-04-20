@@ -240,7 +240,11 @@ int run()
 
         Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
+        
+        glEnable(GL_TEXTURE_2D);
+        begin_item_draw();
         Components::billboard_sprite_component_list->call();
+        end_item_draw();
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
@@ -252,7 +256,8 @@ int run()
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
-
+        glDisable(GL_TEXTURE_2D);
+        
         // update mouse
         poll_mouse();
 

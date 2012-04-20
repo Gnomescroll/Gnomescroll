@@ -11,7 +11,7 @@ const float REFILL_ITEM_PICKUP_RADIUS = 1.5f;
 const int REFILL_ITEM_TTL = 30 * 12;
 
 // sprite
-const float REFILL_ITEM_SCALE = 0.5f;
+const float REFILL_ITEM_SCALE = 0.25f;
 
 const int GRENADE_REFILL_SPRITE_INDEX = 6;
 const int LASER_REFILL_SPRITE_INDEX = 7;
