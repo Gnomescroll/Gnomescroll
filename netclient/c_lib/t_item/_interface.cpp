@@ -61,10 +61,7 @@ CLIENT
 namespace t_item
 {
     int player_inventory_id = 0xffff;   //store id of player inventory
-
     class ItemContainer* player_inventory = NULL;
-
-
 }
 
 #endif 
@@ -78,7 +75,6 @@ namespace t_item
 {
 
 //const int NO_AGENT = 0xffff;
-
 
 void create_agent_inventory(int agent_id, int client_id)
 {
@@ -110,10 +106,61 @@ void delete_agent_inventory(int agent_id)
 
 void check_item_pickups()
 {
-    #ifdef DC_CLIENT
-        printf("Warning: check_item_pickups was called on client! OOPS\n");
-    #endif
-    free_item_list->check_item_pickups();
+#ifdef DC_SERVER
+    for (int i=0; i<free_item_list->n_max; i++)
+    {
+        if (free_item_list->a[i] == NULL) continue;
+        Free_item* free_item = free_item_list->a[i];
+
+        const static float pick_up_distance = 0.5;
+        Agent_state* agent = nearest_agent_in_range(free_item->verlet.position, pick_up_distance);
+
+        if(agent == NULL) continue;
+
+        printf("agent %i picked up item %i \n", agent->id, free_item->id);
+
+        free_item_picked_up_StoC p1;
+        p1.id = free_item->id;
+        p1.agent_id = agent->id;
+        p1.broadcast();
+
+        t_item::free_item_list->destroy(free_item->id);
+
+
+        /*
+            Put item in agent inventory
+        */
+        assert(AgentInventoryList[agent->id] != NO_AGENT);
+
+        int inventory_id = AgentInventoryList[agent->id];
+        ItemContainer* ic = item_container_list->get(inventory_id);
+        
+        if(ic == 0)
+        {
+            printf("t_item::check_item_pickups, item container null \n");
+            return;
+        }
+
+        //int slot = ic->get_empty_slot();
+        if( ic->is_full() )
+        {
+            printf("t_item::check_item_pickups, Agent inventory full: item deleted, fix \n");
+            return;
+        }
+
+        int item_type = rand()%12;
+
+        int slot = ic->create_item(item_type);   //insert item on server
+
+        class item_create_StoC p2;
+        p2.item_id = item_type;
+        p2.item_type = item_type;
+        p2.inventory_id = inventory_id;
+        p2.inventory_slot = slot;
+
+        p2.sendToClient(agent->id); //warning, assumes agent and player id are same
+    }
+#endif
 }
 
 void create_free_item(int item_type, 
@@ -136,7 +183,6 @@ void create_free_item(int item_type,
     p.mz = vz;
 
     p.broadcast();
-
 }
 
 }

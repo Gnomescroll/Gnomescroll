@@ -4,7 +4,8 @@
 
 #include <c_lib/objects/components/stackable/components.hpp>
 
-const int EMPTY_SLOT = 65535;
+const int EMPTY_SLOT = 0xffff; // ERROR: put this in a namespace please
+
 class BaseInventoryProperties
 {
     public:
