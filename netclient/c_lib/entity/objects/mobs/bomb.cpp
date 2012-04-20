@@ -3,6 +3,10 @@
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/objects/mobs/constants.hpp>
+#include <c_lib/entity/components/health.hpp>
+#include <c_lib/entity/components/dimension.hpp>
+#include <c_lib/entity/components/voxel_model.hpp>
 
 namespace Objects
 {
@@ -11,10 +15,23 @@ static void set_mob_bomb_properties(Object* object)
 {
     const int n_components = 4;
     object->init(n_components);
+    
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
-    add_component_to_object(object, COMPONENT_DIMENSION);
-    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    dims->height = MONSTER_BOMB_HEIGHT;
+
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    vox->vox_dat = &VoxDats::robot_bomb;
+    vox->init_hitscan = MONSTER_BOMB_INIT_WITH_HITSCAN;
+    vox->init_draw = MONSTER_BOMB_INIT_WITH_DRAW;
+
+    using Components::HitPointsHealthComponent;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    health->health = MONSTER_BOMB_MAX_HEALTH;
+    health->max_health = MONSTER_BOMB_MAX_HEALTH;
 
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;

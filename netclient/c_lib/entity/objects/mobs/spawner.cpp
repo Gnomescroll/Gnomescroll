@@ -3,6 +3,10 @@
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/objects/mobs/constants.hpp>
+#include <c_lib/entity/components/health.hpp>
+#include <c_lib/entity/components/dimension.hpp>
+#include <c_lib/entity/components/spawner/monster_spawner.hpp>
 
 namespace Objects
 {
@@ -11,11 +15,29 @@ static void set_mob_spawner_properties(Object* object)
 {
     const int n_components = 5;
     object->init(n_components);
+
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
-    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
-    add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
-    add_component_to_object(object, COMPONENT_DIMENSION);
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    dims->height = MONSTER_SPAWNER_HEIGHT;
+    
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    vox->vox_dat = &VoxDats::monster_spawner;
+    vox->init_hitscan = MONSTER_SPAWNER_INIT_WITH_HITSCAN;
+    vox->init_draw = MONSTER_SPAWNER_INIT_WITH_DRAW;
+
+    using Components::HitPointsHealthComponent;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    health->health = MONSTER_SPAWNER_MAX_HEALTH;
+    health->max_health = MONSTER_SPAWNER_MAX_HEALTH;
+
+    using Components::MonsterSpawnerComponent;
+    MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)add_component_to_object(object, COMPONENT_MONSTER_SPAWNER);
+    spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
+    spawner->max_children = MONSTER_SPAWNER_MAX_CHILDREN;
+    spawner->spawn_type = OBJECT_NONE; // allows any
 
     object->tick = &tick_mob_spawner;
     object->update = &update_mob_spawner;
@@ -23,7 +45,6 @@ static void set_mob_spawner_properties(Object* object)
     object->create = create_packet;
     object->state = state_packet;
 }
-
 
 Object* create_mob_spawner()
 {

@@ -49,7 +49,7 @@ unsigned int get_object_cost(ObjectType obj)
 //const float TURRET_CAMERA_HEIGHT = 1.6f;
 //const float TURRET_SIGHT_RANGE = 128.0f - 16.0f;
 //const int TURRET_FIRE_LIMIT = 45; // ticks
-//const int TURRET_BLOCK_DAMAGE = 8;
+//const int TURRET_TERRAIN_DAMAGE = 8;
 //const int TURRET_AGENT_DAMAGE = 10;
 //const float TURRET_TARGET_LOCK_CHANCE = 0.85f;  // likelihood of acquiring a target in view
 //const float TURRET_EXPLOSION_RADIUS = 2.0f;

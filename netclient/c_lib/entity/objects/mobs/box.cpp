@@ -3,6 +3,11 @@
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/entity/objects/mobs/constants.hpp>
+#include <c_lib/entity/components/health.hpp>
+#include <c_lib/entity/components/dimension.hpp>
+#include <c_lib/entity/components/voxel_model.hpp>
+#include <c_lib/entity/components/targeting.hpp>
 
 namespace Objects
 {
@@ -11,11 +16,39 @@ static void set_mob_robot_box_properties(Object* object)
 {
     const int n_components = 5;
     object->init(n_components);
-    add_component_to_object(object, COMPONENT_VOXEL_MODEL);
-    add_component_to_object(object, COMPONENT_HIT_POINTS);
+
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
-    add_component_to_object(object, COMPONENT_TARGETING);
-    add_component_to_object(object, COMPONENT_DIMENSION);
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
+    dims->height = MONSTER_BOX_HEIGHT;
+
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
+    vox->vox_dat = &VoxDats::robot_box;
+    vox->init_hitscan = MONSTER_BOX_INIT_WITH_HITSCAN;
+    vox->init_draw = MONSTER_BOX_INIT_WITH_DRAW;
+
+    using Components::HitPointsHealthComponent;
+    HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
+    health->health = MONSTER_BOX_MAX_HEALTH;
+    health->max_health = MONSTER_BOX_MAX_HEALTH;
+    
+    using Components::TargetingComponent;
+    TargetingComponent* target = (TargetingComponent*)add_component_to_object(object, COMPONENT_TARGETING);
+    target->target_acquisition_probability = MONSTER_BOX_TARGET_ACQUISITION_PROBABILITY;
+    target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
+    target->accuracy_bias = MONSTER_BOX_ACCURACY_BIAS;
+    target->sight_range = MONSTER_BOX_SIGHT_RANGE;
+    target->attacks_enemies = MONSTER_BOX_ATTACK_ONLY_ENEMIES;
+    target->attack_at_random = MONSTER_BOX_ATTACK_AT_RANDOM;
+    // we dont have ID yet, need to set that in the ready() call
+    target->attacker_properties.type = OBJECT_MONSTER_BOX;
+    target->attacker_properties.block_damage = MONSTER_BOX_TERRAIN_DAMAGE;
+    target->attacker_properties.agent_damage = MONSTER_BOX_AGENT_DAMAGE;
+    target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
+    target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
+    target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
 
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
@@ -26,7 +59,6 @@ static void set_mob_robot_box_properties(Object* object)
 
 Object* create_mob_robot_box()
 {
-    // initialize object
     ObjectType type = OBJECT_MONSTER_BOX;
     Object* obj = object_list->create(type);
     if (obj == NULL) return NULL;

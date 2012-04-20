@@ -52,11 +52,11 @@ static void set_turret_properties(Object* object)
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
     target->accuracy_bias = TURRET_ACCURACY_BIAS;
     target->sight_range = TURRET_SIGHT_RANGE;
-    target->attacks_enemies = TURRET_ATTACKS_ENEMIES;
+    target->attacks_enemies = TURRET_ATTACK_ONLY_ENEMIES;
     target->attack_at_random = TURRET_ATTACK_AT_RANDOM;
     // we dont have ID yet, need to set that in the ready() call
     target->attacker_properties.type = OBJECT_TURRET;
-    target->attacker_properties.block_damage = TURRET_BLOCK_DAMAGE;
+    target->attacker_properties.block_damage = TURRET_TERRAIN_DAMAGE;
     target->attacker_properties.agent_damage = TURRET_AGENT_DAMAGE;
     target->attacker_properties.voxel_damage_radius = TURRET_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = TURRET_AGENT_IMMUNITY_DURATION;
