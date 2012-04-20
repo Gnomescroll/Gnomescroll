@@ -27,9 +27,9 @@ changed state DONE
 
 voxel_model DONE (partly, should integrate the updates onto the component)
 
-explosion component --dieExplode
+explosion component DONE
 animation   --wait
-agent spawner --partly
+agent spawner DONE
 monster spawner DONE
 dimension (height, camera_height) DONE
 targeting   DONE
@@ -59,6 +59,16 @@ traveling component
 put more shit on targeting component (from box)
 move to target component?
 proximity component? merge with targeting?
+
+TODO in the morning:
+
+bomb/box/spawner metadata constants
+sort out targeting -- there's firing and motion target acquisition, probably dont want to completely merge (may want both on an object)
+get the bomb re-networked
+then finish knocking off pieces of box
+item drops
+rate limited packet interface?, like the rest of the packet interfaces
+--has state, needs to be allocated like a component anyway
 
 ==============
 event queue?
