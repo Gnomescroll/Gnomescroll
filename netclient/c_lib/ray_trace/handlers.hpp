@@ -17,7 +17,7 @@ struct HitscanTarget
 
     // voxel
     int id;
-    Object_types type;
+    ObjectType type;
     int part;
 
     // terrain
@@ -29,7 +29,7 @@ struct HitscanTarget
 struct AttackerProperties
 {
     int id;
-    Object_types type;
+    ObjectType type;
     int block_damage;
     int agent_damage;
     int voxel_damage_radius;
@@ -42,10 +42,10 @@ Agent_state* lock_agent_target(
     const bool enemies=false, const bool random=false
 );
 HitscanTarget shoot_at_agent(
-    Vec3 source, Vec3 firing_direction, int id, Object_types type,
+    Vec3 source, Vec3 firing_direction, int id, ObjectType type,
     Agent_state* agent, const float range
 );
 void handle_hitscan_target(HitscanTarget t, struct AttackerProperties p);
-void broadcast_object_fired(int id, Object_types type, HitscanTarget t);
+void broadcast_object_fired(int id, ObjectType type, HitscanTarget t);
 
 }   // Hitscan

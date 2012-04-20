@@ -601,11 +601,10 @@ void Voxel_volume::set_color(int x, int y, int z, unsigned char rgba[4])
     needs_vbo_update = true;
 }
 
-void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, short entity_subtype, short part_id)
+void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, short part_id)
 {
     this->vhe.entity_id = entity_id;
     this->vhe.entity_type = entity_type;
-    this->vhe.entity_subtype = entity_subtype;
     this->vhe.part_id = part_id;
     this->vhe.vv = this;
 }
@@ -705,26 +704,26 @@ inline void Voxel_volume::_set(unsigned int x, unsigned int y, unsigned int z, u
 
 static void destroy_object_voxel(int id, int type, int part, const int voxel[3])
 {
-    using Monsters::Slime;
+    //using Monsters::Slime;
     Agent_state* agent;
-    Slime* slime;
+    //Slime* slime;
     Voxel_volume* vv;
     switch (type)
     {
-        case OBJ_TYPE_AGENT:
+        case OBJECT_AGENT:
             agent = STATE::agent_list->get(id);
             if (agent == NULL || ((Agent_state*)agent)->vox == NULL) return;
             vv = ((Agent_state*)agent)->vox->get_part(part);
             if (vv == NULL) return;
             vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
             break;
-        case OBJ_TYPE_SLIME:
-            slime = (Slime*)STATE::object_list->get(OBJ_TYPE_SLIME, id);
-            if (slime == NULL || slime->voxel_properties.vox == NULL) return;
-            vv = slime->voxel_properties.vox->get_part(part);
-            if (vv == NULL) return;
-            vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
-            break;
+        //case OBJECT_MONSTER_BOMB:
+            //slime = (Slime*)STATE::object_list->get(OBJECT_MONSTER_BOMB, id);
+            //if (slime == NULL || slime->voxel_properties.vox == NULL) return;
+            //vv = slime->voxel_properties.vox->get_part(part);
+            //if (vv == NULL) return;
+            //vv->set(voxel[0], voxel[1], voxel[2],0,0,0,0);
+            //break;
         default: break;
     }
 }

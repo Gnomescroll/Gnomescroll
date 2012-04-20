@@ -1,30 +1,30 @@
 #include "lists.hpp"
 
-#include <c_lib/draw/transparent.hpp>
+//#include <c_lib/draw/transparent.hpp>
 
 namespace Draw
 {
 
-ColoredMinivoxList* colored_minivox_list = NULL;
-TexturedMinivoxList* textured_minivox_list = NULL;
-SpriteList* sprite_list = NULL;
+//ColoredMinivoxList* colored_minivox_list = NULL;
+//TexturedMinivoxList* textured_minivox_list = NULL;
+//SpriteList* sprite_list = NULL;
 
 void init()
 {
-    colored_minivox_list = new ColoredMinivoxList;
-    textured_minivox_list = new TexturedMinivoxList;
-    sprite_list = new SpriteList;
+    //colored_minivox_list = new ColoredMinivoxList;
+    //textured_minivox_list = new TexturedMinivoxList;
+    //sprite_list = new SpriteList;
 
-    init_spritesheets();
+    //init_spritesheets();
 }
 
 void teardown()
 {
-    delete colored_minivox_list;
-    delete textured_minivox_list;
-    delete sprite_list;
+    //delete colored_minivox_list;
+    //delete textured_minivox_list;
+    //delete sprite_list;
 
-    teardown_spritesheets();
+    //teardown_spritesheets();
 }
 
 } // Draw

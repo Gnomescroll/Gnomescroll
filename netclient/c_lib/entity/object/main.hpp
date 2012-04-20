@@ -11,11 +11,20 @@ extern ObjectList* object_list;
 void init();
 void teardown();
 
-void add_component_to_object(Object* object, ComponentType type);
+void tick();
+void update();
+void harvest();
+
+class Component;
+Component* add_component_to_object(Object* object, ComponentType type);
 void remove_component_from_object(Object* object, Component* component);
 
 Object* create_switch(ObjectType type);
+Object* create_switch(ObjectType type, int id);
 void ready_switch(Object* object);
 void destroy_switch(Object* object);
+void destroy_switch(ObjectType type, int id);
+
+Object* get_object(ObjectType type, int id);
 
 } // Objects

@@ -53,4 +53,16 @@ class ComponentList
     }
 };
 
+template <class Component, ComponentType TYPE, int SIZE>
+class CallableComponentList: public ComponentList<Component,TYPE,SIZE>
+{
+    public:
+        void call()
+        {
+            for (int i=0; i<this->max; i++)
+                if (this->components[i] != NULL)
+                    this->components[i]->call();
+        }
+};
+
 } // Components

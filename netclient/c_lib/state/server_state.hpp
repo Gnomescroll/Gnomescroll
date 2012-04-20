@@ -4,7 +4,7 @@
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/items/items.hpp>
 #include <c_lib/game/ctf.hpp>
-#include <c_lib/monsters/monsters.hpp>
+//#include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
 
 #include <c_lib/particles/grenade.hpp>
@@ -18,10 +18,10 @@ namespace ServerState
     
     // property lists
     extern Voxel_hitscan_list* voxel_hitscan_list;
-    extern SpawnerList* spawner_list;
-    extern OwnedList* owned_list;
+    //extern SpawnerList* spawner_list;
+    //extern OwnedList* owned_list;
 
-    extern GameObject_list* object_list;
+    //extern GameObject_list* object_list;
 
     extern CTF* ctf GNOMESCROLL_API;
 
@@ -33,7 +33,7 @@ namespace ServerState
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
         int dmg, int owner,
-        Object_types inflictor_type, int inflictor_id,
+        ObjectType inflictor_type, int inflictor_id,
         bool suicidal=true
     );
 

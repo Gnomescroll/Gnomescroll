@@ -14,22 +14,27 @@ class VerletPhysicsComponent: public PhysicsComponent
         Vec3 position;
         Vec3 velocity;
         float mass;
+        float damp;
 
-        
         Vec3 get_position() { return this->position; }
-        void set_position(Vec3 position) { this->position = position; }
+        bool set_position(Vec3 position)
+        {
+            this->position = position;
+            return true;
+        }
 
         Vec3 get_momentum()
         {
             return vec3_scalar_mult(this->velocity, this->mass);
         }
-        void set_momentum(Vec3 momentum)
+        bool set_momentum(Vec3 momentum)
         {
             this->velocity = vec3_scalar_mult(momentum, 1.0f/this->mass);
+            return true;
         }
 
         Vec3 get_angles() { return NULL_ANGLES; }
-        void set_angles(Vec3 angles) {}
+        bool set_angles(Vec3 angles) { return false; }
 
         /* Addition specialization */
 
@@ -46,21 +51,19 @@ class VerletPhysicsComponent: public PhysicsComponent
             this->set_momentum(momentum);
         }
 
-        bool verlet_bounce(float damp)
+        bool bounce()
         {
             return Verlet::bounce(
                 &this->position,
                 &this->velocity,
-                damp
+                this->damp
             );
         }
 
     VerletPhysicsComponent()
     : PhysicsComponent(COMPONENT_VERLET),
-    position(NULL_POSITION), velocity(NULL_MOMENTUM), mass(1.0f)
+    position(NULL_POSITION), velocity(NULL_MOMENTUM), mass(1.0f), damp(1.0f)
     {}
 };
-
-
 
 } // Components

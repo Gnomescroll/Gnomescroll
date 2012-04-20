@@ -6,7 +6,7 @@
 bool Voxel_hitscan_list::hitscan(
     const float x0, const float y0, const float z0, 
     const float x1, const float y1, const float z1,
-    int skip_id, Object_types skip_type, // skip player agent id
+    int skip_id, ObjectType skip_type, // skip player agent id
     float collision_point[3], float *distance,
     Voxel_hitscan_target* target
 )
@@ -91,7 +91,6 @@ void Voxel_hitscan_target::copy_vhe(Voxel_hitscan_element* vhe)
 {
     this->entity_id = vhe->entity_id;
     this->entity_type = vhe->entity_type;
-    this->entity_subtype = vhe->entity_subtype;
     this->part_id = vhe->part_id;
     this->vv = vhe->vv;
 }

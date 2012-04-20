@@ -9,7 +9,7 @@
 //#include <physics/mat4.hpp>
 #include <physics/affine.hpp>
 
-#include <c_lib/common/enum_types.hpp>
+#include <c_lib/entity/constants.hpp>
 
 #include <c_lib/input/handlers.hpp>
 
@@ -312,8 +312,8 @@ void Voxel_render_list::draw()
             printf("=== \n");
 
             
-            printf("entity= %d, entity_type= %d, entity_subype= %d, part_id= %d \n", 
-                vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.entity_subtype, vv->vhe.part_id);
+            printf("entity= %d, entity_type= %d, part_id= %d \n", 
+                vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
 
             printf("parent_world_matrix= \n");
             print_affine( *vv->parent_world_matrix );

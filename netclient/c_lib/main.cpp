@@ -108,12 +108,12 @@ int run()
             // update mouse
             poll_mouse();
 
-
-            Components::verlet_physics_component_list->tick();
+            Objects::tick();    // update physics state
 
             counter++;
         }
-
+        Objects::harvest(); // remove dead objects
+        Objects::update(); // update render state
         Animations::create_mining_laser_particle();
 
         //if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
@@ -122,7 +122,7 @@ int run()
             //Components::PhysicsComponent* state = (Components::PhysicsComponent*)refill->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             //if (state != NULL)
             //{
-                //Vec3 position = ClientState::playerAgent_state.you->get_center();
+                //Vec3 position = ClientState::playerAgent_state.you->get_position();
                 //state->set_position(position);
                 //Objects::ready(refill);
             //}
@@ -160,6 +160,8 @@ int run()
 
         frame_graph->frame_stage(2); // call draw functions
 
+        ClientState::update_for_draw();
+
         /*
             Start World Projetion
         */
@@ -187,47 +189,30 @@ int run()
             Non-transparent
         */
 
-        //ClientState::draw(); //deprecate this! WTF is this
+        ClientState::voxel_render_list->draw();
 
-        /*
-            Crap from ClientState::draw();
-        */
-        {
-            ClientState::agent_list->update_models();
-            ClientState::object_list->update();  // model updates
-            ClientState::voxel_render_list->draw();
+        // quads
+        glColor3ub(255,255,255);
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        glBegin(GL_QUADS);
 
-            // quads
-            glColor3ub(255,255,255);
-            GL_ASSERT(GL_DEPTH_TEST, true);
-            glBegin(GL_QUADS);
+        Particles::colored_minivox_list->draw();
+        //Draw::colored_minivox_list->draw();   // new entity system registries
+        Components::colored_voxel_component_list->call();
+        glEnd();
 
-            Particles::colored_minivox_list->draw();
-            Draw::colored_minivox_list->draw();   // new entity system registries
+        glColor3ub(255,255,255);
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
+        glBegin(GL_QUADS);
 
-            glEnd();
+        Particles::textured_minivox_list->draw();
+        //Draw::textured_minivox_list->draw();
+        Components::textured_voxel_component_list->call();
 
-            glColor3ub(255,255,255);
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
-            glBegin(GL_QUADS);
-
-            Particles::textured_minivox_list->draw();
-            Draw::textured_minivox_list->draw();
-
-            glEnd();
-            glDisable(GL_TEXTURE_2D);
-
-        
-            glEnable(GL_TEXTURE_2D);
-
-        }
-
-        /*
-            End of Crap
-        */
-        t_item::draw();
-        Animations::draw_insect_mob();
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+         
 
         /* 
             Alpha tested non-transparent
@@ -235,10 +220,9 @@ int run()
 
         t_mech::draw();
 
-        begin_item_draw();
-        Draw::sprite_list->draw();
-        Components::billboard_sprite_component_list->draw();
-        end_item_draw();
+        //begin_item_draw();
+        //Draw::sprite_list->draw();
+        //end_item_draw();
 
         /*
             Skybox
@@ -249,7 +233,21 @@ int run()
             Transparent
         */
 
+        // transparent
+        Particles::billboard_text_list->draw();
+        
+        Animations::draw_insect_mob();
+
         Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
+        //Draw::sprite_list->draw();
+        
+        glEnable(GL_TEXTURE_2D);
+
+        t_item::draw();
+        
+        begin_item_draw();
+        Components::billboard_sprite_component_list->call();
+        end_item_draw();
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
@@ -261,7 +259,8 @@ int run()
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
-
+        glDisable(GL_TEXTURE_2D);
+        
         Particles::billboard_text_list->draw();
 
         // update mouse

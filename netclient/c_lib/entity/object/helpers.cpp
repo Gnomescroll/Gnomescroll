@@ -10,11 +10,12 @@ using Components::Component;
     
 /* Object initialization helpers */
 
-void add_component_to_object(Object* object, ComponentType type)
+Component* add_component_to_object(Object* object, ComponentType type)
 {
     Component* component = Components::get(type);
     object->add_component(component);
     component->object = object;
+    return component;
 }
 
 void remove_component_from_object(Object* object, Component* component)

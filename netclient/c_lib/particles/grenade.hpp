@@ -63,18 +63,18 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
         Grenade_list() { print(); }
 };
  
-int get_grenade_damage(Object_types type)
+int get_grenade_damage(ObjectType type)
 {
     switch (type)
     {
-        case OBJ_TYPE_SPAWNER:
-        case OBJ_TYPE_MONSTER_SPAWNER:
+        case OBJECT_AGENT_SPAWNER:
+        case OBJECT_MONSTER_SPAWNER:
             return GRENADE_SPAWNER_DAMAGE;
-        case OBJ_TYPE_TURRET:
+        case OBJECT_TURRET:
             return GRENADE_TURRET_DAMAGE;
-        case OBJ_TYPE_SLIME:
+        case OBJECT_MONSTER_BOMB:
             return GRENADE_SLIME_DAMAGE;
-        case OBJ_TYPE_MONSTER_BOX:
+        case OBJECT_MONSTER_BOX:
             return 1000;
         default: return 0;
     }

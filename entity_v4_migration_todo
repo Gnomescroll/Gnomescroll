@@ -1,0 +1,85 @@
+ENTITY MIGRATION TODO
+
+eliminate subtypes
+DONE
+rename Object_types to ObjectType
+DONE
+
+move all network packets to entity/network
+DONE
+rewrite handlers to match new system
+DONE --but need to enable owner/team stuff once those components are defined
+
+migrate objects one per type to objects/
+migrate components as needed
+gather object data from various switches
+test after each
+
+TODO:
+
+network components MOVED
+--wire existing objects
+
+team    DONE
+owner   DONE
+
+changed state DONE
+
+voxel_model DONE (partly, should integrate the updates onto the component)
+
+explosion component --dieExplode
+animation   --wait
+agent spawner --partly
+monster spawner DONE
+dimension (height, camera_height) DONE
+targeting   DONE
+
+turret
+spawner -- need to merge spawner list crap somewhere
+box
+slime
+monster spawner
+gems    DONE
+
+attach network interfaces
+fill in data
+
+move components lists out
+
+Save this stuff from objects.old:
+common/api/*
+
+REMAINING:
+animation component
+rate limited network updates
+events (chat, sound, shot)
+item drop component -- or at least a file with those configs
+spawned_by/parent/child component
+traveling component
+put more shit on targeting component (from box)
+move to target component?
+proximity component? merge with targeting?
+
+==============
+event queue?
+    -- reduces workload for chat,sound,animation triggers
+    -- especially those switched in packet handlers routing object shot object
+    ---- this might be solved now with entity system
+==============
+
+Future optimizations:
+
+preallocate objects
+--definitely faster; eliminates malloc of component array, nothing else different
+
+preallocate components -- load data from default model
+--not sure if faster than new, but probably is. depends on how much faster malloc loading defaults is
+
+use swaps on lists
+--minimize/eliminate iterating whole list
+
+static component lookup array per type
+--eliminates pointer dereferences required for finding component
+
+static has_tick has_update per type
+--avoids iterating entire batches of objects that will all be null in tick() or update()
