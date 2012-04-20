@@ -116,35 +116,34 @@ void block_spawn_items(int block_value, int x, int y, int z)
     float p = randf();
     if (p > drop_probability) return;
 
-    ObjectType type = OBJECT_HEALTH_REFILL;
-    //ObjectType type = OBJECT_NONE;
-    //if (randf () < 0.0f)
-    //{
-        //const int n_items = 7;  // 7 Gemstones
-        //const ObjectType items[n_items] = {
-            //OBJECT_GEMSTONE_MALACHITE,
-            //OBJECT_GEMSTONE_RUBY,
-            //OBJECT_GEMSTONE_TURQUOISE,
-            //OBJECT_GEMSTONE_SILVER,
-            //OBJECT_GEMSTONE_AMETHYST,
-            //OBJECT_GEMSTONE_JADE,
-            //OBJECT_GEMSTONE_ONYX,
-        //};
-        //type = items[randrange(0,n_items-1)];
-    //}
-    //else
-    //{
-        //const int n_items = 3;
-        //const ObjectType items[n_items] = {
-            ////OBJECT_DIRT_BLOCK_DROP,
-            ////OBJECT_STONE_BLOCK_DROP,
-            //OBJECT_SOFT_ROCK_BLOCK_DROP,
-            ////OBJECT_MEDIUM_ROCK_BLOCK_DROP,
-            //OBJECT_HARD_ROCK_BLOCK_DROP,
-            //OBJECT_INFECTED_ROCK_BLOCK_DROP,
-        //};
-        //type  = items[randrange(0,n_items-1)];
-    //}
+    ObjectType type = OBJECT_NONE;
+    if (randf () < 1.0f)
+    {
+        const int n_items = 7;  // 7 Gemstones
+        const ObjectType items[n_items] = {
+            OBJECT_GEMSTONE_MALACHITE,
+            OBJECT_GEMSTONE_RUBY,
+            OBJECT_GEMSTONE_TURQUOISE,
+            OBJECT_GEMSTONE_SILVER,
+            OBJECT_GEMSTONE_AMETHYST,
+            OBJECT_GEMSTONE_JADE,
+            OBJECT_GEMSTONE_ONYX,
+        };
+        type = items[randrange(0,n_items-1)];
+    }
+    else
+    {
+        const int n_items = 3;
+        const ObjectType items[n_items] = {
+            //OBJECT_DIRT_BLOCK_DROP,
+            //OBJECT_STONE_BLOCK_DROP,
+            OBJECT_SOFT_ROCK_BLOCK_DROP,
+            //OBJECT_MEDIUM_ROCK_BLOCK_DROP,
+            OBJECT_HARD_ROCK_BLOCK_DROP,
+            OBJECT_INFECTED_ROCK_BLOCK_DROP,
+        };
+        type  = items[randrange(0,n_items-1)];
+    }
     
     const float mom = 2.0f;
     Objects::Object* obj = Objects::create(type);

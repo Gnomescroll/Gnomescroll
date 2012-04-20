@@ -1,5 +1,6 @@
 #include "turquoise.hpp"
 
+#include <c_lib/entity/objects/gemstones/constants.hpp>
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/constants.hpp>
@@ -23,12 +24,26 @@ static void set_turquoise_gemstone_properties(Object* object)
     object->init(n_components);
 
     #if DC_CLIENT
-    add_component_to_object(object, COMPONENT_BILLBOARD_SPRITE);
+    using Components::BillboardSpriteComponent;
+    BillboardSpriteComponent* sprite = (BillboardSpriteComponent*)add_component_to_object(object, COMPONENT_BILLBOARD_SPRITE);
+    sprite->sprite_index = TURQUOISE_GEMSTONE_SPRITE_INDEX;
+    sprite->scale = GEMSTONE_SCALE;
     #endif
+
+    using Components::VerletPhysicsComponent;
+    using Components::PickupComponent;
+    using Components::TTLHealthComponent;
     
-    add_component_to_object(object, COMPONENT_VERLET);
-    add_component_to_object(object, COMPONENT_PICKUP);
-    add_component_to_object(object, COMPONENT_TTL);
+    VerletPhysicsComponent* physics = (VerletPhysicsComponent*)add_component_to_object(object, COMPONENT_VERLET);
+    physics->mass = GEMSTONE_MASS;
+    physics->damp = GEMSTONE_DAMP;
+    
+    PickupComponent* pickup = (PickupComponent*)add_component_to_object(object, COMPONENT_PICKUP);
+    pickup->pickup_radius = GEMSTONE_PICKUP_RADIUS;
+    
+    TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
+    health->ttl_max = GEMSTONE_TTL;
+
 
     object->tick = &tick_turquoise_gemstone;
     //object->update = NULL;
@@ -50,7 +65,7 @@ Object* create_turquoise_gemstone()
 void ready_turquoise_gemstone(Object* object)
 {
     #if DC_SERVER
-    // broadcast create
+    object->broadcastCreate();
     #endif
 }
 

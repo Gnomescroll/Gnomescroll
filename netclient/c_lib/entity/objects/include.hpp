@@ -13,7 +13,7 @@
 #include <c_lib/entity/objects/block_drops/hard_rock.hpp>
 #include <c_lib/entity/objects/block_drops/infected_rock.hpp>
 
-//#include <c_lib/entity/objects/gemstones/constants.hpp>
+#include <c_lib/entity/objects/gemstones/constants.hpp>
 #include <c_lib/entity/objects/gemstones/malachite.hpp>
 #include <c_lib/entity/objects/gemstones/ruby.hpp>
 #include <c_lib/entity/objects/gemstones/turquoise.hpp>

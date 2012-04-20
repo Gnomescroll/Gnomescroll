@@ -53,6 +53,12 @@ REMAINING:
 animation component
 rate limited network updates
 events (chat, sound, shot)
+item drop component -- or at least a file with those configs
+spawned_by/parent/child component
+traveling component
+put more shit on targeting component (from box)
+move to target component?
+proximity component? merge with targeting?
 
 ==============
 event queue?
