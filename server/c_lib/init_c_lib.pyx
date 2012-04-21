@@ -1,30 +1,5 @@
 from libcpp cimport bool
 
-cdef extern from "c_lib.hpp":
-    int init_c_lib()
-    void close_c_lib()
-    void _set_seed(int seed)
-    
-def close():
-    close_c_lib()
-
-def init():
-    init_c_lib()
-
-def reset_seed(int seed):
-    _set_seed(seed)
-
-## net stuff
-cdef extern from "./net_lib/host.hpp" namespace "NetServer":
-    void dispatch_network_events()
-    void flush_to_net()
-
-def NetServerDispatchNetworkEvents():
-    dispatch_network_events()
-
-def NetServerFlushToNet():
-    flush_to_net()
-
 """
 Options
 """
@@ -55,51 +30,3 @@ def load_options(opts):
     set_seed(opts.seed)
     reset_seed(opts.seed)
     set_logger(opts.logger)
-
-#new functions
-cdef extern from "../c_lib/common/time/physics_timer.hpp":
-    void _START_CLOCK()
-    int _GET_TICK()
-    int _GET_MS_TIME()
-
-
-def START_CLOCK():
-    _START_CLOCK()
-
-def GET_TICK():
-    return _GET_TICK()
-
-def GET_MS_TIME():
-    return _GET_MS_TIME();
-
-"""
-Terrain map
-"""
-
-cdef extern from "../c_lib/t_map/t_map.hpp":
-    int _get(int x, int y, int z)
-    void _set(int x, int y, int z, int value)
-
-'''
-Part 1: State
-
-'''
-
-cpdef inline set(int x,int y, int z,int value):
-    _set(x,y,z,value)
-
-cpdef inline int get(int x, int y,int z):
-    return _get(x,y,z)
-
-'''
-    Init Stuff
-'''
-
-cdef extern from "./state/server_state.hpp" namespace "ServerState":
-    void server_tick()
-    void start_game()
-
-def tick_server_state():
-    server_tick();
-def start():
-    start_game()
