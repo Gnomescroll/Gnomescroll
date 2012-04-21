@@ -10,7 +10,6 @@ namespace Components
 class ExplosionComponent: public Component
 {
     public:
-
         float radius;
         int damage;
         float proximity_radius;

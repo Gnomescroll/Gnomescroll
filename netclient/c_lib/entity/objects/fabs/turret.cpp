@@ -46,8 +46,8 @@ static void set_turret_properties(Object* object)
     health->health = TURRET_MAX_HEALTH;
     health->max_health = TURRET_MAX_HEALTH;
     
-    using Components::TargetingComponent;
-    TargetingComponent* target = (TargetingComponent*)add_component_to_object(object, COMPONENT_TARGETING);
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
     target->target_acquisition_probability = TURRET_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
     target->accuracy_bias = TURRET_ACCURACY_BIAS;
@@ -89,8 +89,8 @@ Object* create_turret()
 void ready_turret(Object* object)
 {
     // we have id now, set it on attack properties
-    using Components::TargetingComponent;
-    TargetingComponent* target = (TargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
     target->attacker_properties.id = object->id;
 
     using Components::VoxelModelComponent;
@@ -141,7 +141,7 @@ void die_turret(Object* object)
 void tick_turret(Object* object)
 {
     #if DC_SERVER
-    using Components::TargetingComponent;
+    using Components::WeaponTargetingComponent;
     using Components::TeamComponent;
     using Components::DimensionComponent;
     typedef Components::PositionChangedPhysicsComponent PCP;
@@ -155,12 +155,14 @@ void tick_turret(Object* object)
     bool changed = physics->set_position(position);
     physics->changed = changed;
 
-    // shoot at enemy
-    TargetingComponent* targeting = (TargetingComponent*)object->get_component(COMPONENT_TARGETING);
-    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     DimensionComponent* dimension = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    position.z += dimension->get_camera_height();
+
+    // shoot at enemy
+    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+    TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
     if (targeting->can_fire())
-        targeting->fire_on_target(object->id, object->type, team->get_team(), dimension->get_camera_height(), position);
+        targeting->fire_on_target(position, team->get_team());
 
     if (changed) object->broadcastState();
     #endif

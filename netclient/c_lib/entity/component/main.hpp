@@ -51,7 +51,8 @@ extern AgentSpawnerComponentList* agent_spawner_component_list;
 
 extern DimensionComponentList* dimension_component_list;
 
-extern TargetingComponentList* targeting_component_list;
+extern WeaponTargetingComponentList* weapon_targeting_component_list;
+extern MotionTargetingComponentList* motion_targeting_component_list;
 
 #if DC_SERVER
 extern ExplosionComponentList* explosion_component_list;

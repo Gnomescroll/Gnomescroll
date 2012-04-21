@@ -2,6 +2,9 @@
 
 #include <c_lib/entity/component/component.hpp>
 
+// forward decl
+class Agent_state;
+
 namespace Components
 {
 
@@ -9,36 +12,17 @@ class TargetingComponent: public Component
 {
     public:
         float target_acquisition_probability;
-        int fire_tick;
-        int fire_rate_limit;
-        Hitscan::AttackerProperties attacker_properties;
-
-        float accuracy_bias;
         float sight_range;
-        bool attacks_enemies;
-        bool attack_at_random;
+        Agent_state* target;
+        bool locked_on_target;
 
-        bool can_fire()
-        {
-            this->fire_tick++;
-            if (this->fire_tick % this->fire_rate_limit == 0)
-                return true;
-            return false;
-        }
-        
-        void set_random_fire_tick()
-        {
-            this->fire_tick = randrange(0, fire_rate_limit);
-        }
-        
-        Agent_state* acquire_target(int id, ObjectType type, int team, float camera_z, Vec3 position, Vec3* firing_direction);
-        Agent_state* fire_on_target(int id, ObjectType type, int team, float camera_z, Vec3 position);
-        Agent_state* fire_on_known_target(int id, ObjectType type, float camera_z, Vec3 position, Vec3 direction, Agent_state* agent);
+        virtual Vec3 lock_target(Vec3 camera_position, int team) = 0;
+        virtual Vec3 lock_target(Vec3 camera_position) = 0;
 
-    TargetingComponent()
-    : Component(COMPONENT_TARGETING, COMPONENT_INTERFACE_TARGETING),
-    target_acquisition_probability(1.0f), fire_tick(0), fire_rate_limit(1),
-    accuracy_bias(0.0f), sight_range(10.0f), attacks_enemies(true), attack_at_random(true)
+    explicit TargetingComponent(ComponentType type)
+    : Component(type, COMPONENT_INTERFACE_TARGETING),
+    target_acquisition_probability(1.0f), sight_range(10.0f),
+    target(NULL), locked_on_target(false)
     {}
 };
 

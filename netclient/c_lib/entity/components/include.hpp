@@ -37,6 +37,8 @@
 #include <c_lib/entity/components/dimension.hpp>
 
 #include <c_lib/entity/components/targeting.hpp>
+#include <c_lib/entity/components/targeting/motion_targeting.hpp>
+#include <c_lib/entity/components/targeting/weapon_targeting.hpp>
 
 #if DC_SERVER
 #include <c_lib/entity/components/explosion.hpp>

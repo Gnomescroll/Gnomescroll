@@ -34,8 +34,8 @@ static void set_mob_robot_box_properties(Object* object)
     health->health = MONSTER_BOX_MAX_HEALTH;
     health->max_health = MONSTER_BOX_MAX_HEALTH;
     
-    using Components::TargetingComponent;
-    TargetingComponent* target = (TargetingComponent*)add_component_to_object(object, COMPONENT_TARGETING);
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
     target->target_acquisition_probability = MONSTER_BOX_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = MONSTER_BOX_FIRE_RATE_LIMIT;
     target->accuracy_bias = MONSTER_BOX_ACCURACY_BIAS;
@@ -68,6 +68,10 @@ Object* create_mob_robot_box()
 
 void ready_mob_robot_box(Object* object)
 {
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* target = (WeaponTargetingComponent*)object->get_component_interface(COMPONENT_INTERFACE_TARGETING);
+    target->attacker_properties.id = object->id;
+    
     using Components::VoxelModelComponent;
     using Components::PhysicsComponent;
     

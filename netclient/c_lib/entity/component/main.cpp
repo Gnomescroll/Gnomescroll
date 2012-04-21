@@ -48,7 +48,8 @@ AgentSpawnerComponentList* agent_spawner_component_list = NULL;
 
 DimensionComponentList* dimension_component_list = NULL;
 
-TargetingComponentList* targeting_component_list = NULL;
+WeaponTargetingComponentList* weapon_targeting_component_list = NULL;
+MotionTargetingComponentList* motion_targeting_component_list = NULL;
 
 #if DC_SERVER
 ExplosionComponentList* explosion_component_list = NULL;
@@ -110,8 +111,10 @@ Component* get_switch(ComponentType type)
         case COMPONENT_DIMENSION:
             return dimension_component_list->subscribe();
 
-        case COMPONENT_TARGETING:
-            return targeting_component_list->subscribe();
+        case COMPONENT_WEAPON_TARGETING:
+            return weapon_targeting_component_list->subscribe();
+        case COMPONENT_MOTION_TARGETING:
+            return motion_targeting_component_list->subscribe();
 
         #if DC_SERVER
         case COMPONENT_EXPLOSION:
@@ -197,8 +200,11 @@ void release_switch(Component* component)
             dimension_component_list->unsubscribe((DimensionComponent*)component);
             break;
 
-        case COMPONENT_TARGETING:
-            targeting_component_list->unsubscribe((TargetingComponent*)component);
+        case COMPONENT_WEAPON_TARGETING:
+            weapon_targeting_component_list->unsubscribe((WeaponTargetingComponent*)component);
+            break;
+        case COMPONENT_MOTION_TARGETING:
+            motion_targeting_component_list->unsubscribe((MotionTargetingComponent*)component);
             break;
 
         #if DC_SERVER
@@ -246,7 +252,8 @@ void init()
 
     dimension_component_list = new DimensionComponentList;
 
-    targeting_component_list = new TargetingComponentList;
+    weapon_targeting_component_list = new WeaponTargetingComponentList;
+    motion_targeting_component_list = new MotionTargetingComponentList;
 
     #if DC_SERVER
     explosion_component_list = new ExplosionComponentList;
@@ -286,7 +293,8 @@ void teardown()
 
     if (dimension_component_list != NULL) delete dimension_component_list;
 
-    if (targeting_component_list != NULL) delete targeting_component_list;
+    if (weapon_targeting_component_list != NULL) delete weapon_targeting_component_list;
+    if (motion_targeting_component_list != NULL) delete motion_targeting_component_list;
 
     #if DC_SERVER
     if (explosion_component_list != NULL) delete explosion_component_list;
