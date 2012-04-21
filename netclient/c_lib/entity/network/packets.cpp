@@ -4,6 +4,7 @@
 
 #include <c_lib/sound/sound.hpp>
 #include <c_lib/animations/_interface.hpp>
+#include <c_lib/animations/animations.hpp>
 
 #include <c_lib/agent/client/player_agent.hpp>
 
@@ -247,28 +248,62 @@ inline void object_shot_object_StoC::handle()
 
 inline void object_shot_terrain_StoC::handle()
 {
-    //switch (this->type)
-    //{
-        //case OBJECT_TURRET:
-            //turret_shot_terrain(this);
-            //break;
-            
-        //default:break;
-    //}
-    printf("shot terrain\n");
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    // get firing position of object
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) position.z += dims->get_camera_height();
+
+    Vec3 dest = vec3_init(this->x, this->y, this->z);
+    Vec3 v = vec3_sub(dest, position); 
+    normalize_vector(&v);
+    const float hitscan_effect_speed = 200.0f;
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    Animations::create_hitscan_effect(
+        position.x, position.y, position.z,
+        v.x, v.y, v.z
+    );
+
+    Animations::block_damage(
+        this->x, this->y, this->z, position.x, position.y, position.z,
+        this->cube, this->side
+    );
+    Animations::terrain_sparks(this->x, this->y, this->z);
+    Sound::laser_hit_block(this->x, this->y, this->z, 0,0,0);
+    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
 }
 
 inline void object_shot_nothing_StoC::handle()
 {
-    //switch (this->type)
-    //{
-        //case OBJECT_TURRET:
-            //turret_shot_nothing(this);
-            //break;
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
 
-        //default:break;
-    //}
-    printf("shot nothing\n");
+    // get firing position of object
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) position.z += dims->get_camera_height();
+
+    Vec3 v = vec3_init(this->x, this->y, this->z);
+    normalize_vector(&v);
+    const float hitscan_effect_speed = 200.0f;
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    Animations::create_hitscan_effect(
+        position.x, position.y, position.z,
+        v.x, v.y, v.z
+    );
+    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
 }
 #endif
 
