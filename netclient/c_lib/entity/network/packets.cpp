@@ -203,6 +203,7 @@ inline void object_shot_object_StoC::handle()
             
         //default:break;
     //}
+    printf("shot object\n");
 }
 
 inline void object_shot_terrain_StoC::handle()
@@ -215,6 +216,7 @@ inline void object_shot_terrain_StoC::handle()
             
         //default:break;
     //}
+    printf("shot terrain\n");
 }
 
 inline void object_shot_nothing_StoC::handle()
@@ -227,6 +229,7 @@ inline void object_shot_nothing_StoC::handle()
 
         //default:break;
     //}
+    printf("shot nothing\n");
 }
 #endif
 

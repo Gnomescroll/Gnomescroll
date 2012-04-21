@@ -160,8 +160,8 @@ void tick_turret(Object* object)
     // shoot at enemy
     WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
     TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    if (targeting->can_fire())
-        targeting->fire_on_target(position, team->get_team());
+    targeting->lock_target(position);
+    if (targeting->can_fire()) targeting->fire_on_target(position, team->get_team());
 
     if (changed) object->broadcastState();
     #endif

@@ -9,6 +9,11 @@ namespace Components
 
 /* Targeting */
 
+Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position)
+{
+    return this->lock_target(camera_position, NO_TEAM);
+}
+
 Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
     this->target = Hitscan::lock_agent_target(
@@ -18,11 +23,6 @@ Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
     );
     if (this->target != NULL) normalize_vector(&this->target_direction);
     return this->target_direction;
-}
-
-Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position)
-{
-    return this->lock_target(camera_position, NO_TEAM);
 }
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
