@@ -1,10 +1,15 @@
-#include "main.hpp"
+#pragma once
 
 #include <c_lib/common/time/physics_timer.hpp>
 
 namespace Main
 {
 
+//header
+void init();
+int run();
+
+//implementation
 
 void init()
 {
@@ -72,11 +77,11 @@ int run()
 
 		if(tc > 1)
 		{
-			printf("Warning:: %i ticks this frame")
+			printf("Warning:: %i ticks this frame", tc);
 		}
 		NetServer::dispatch_network_events();
 
-		usleep(1000)
+		usleep(1000);
 	}
 	close_c_lib();
     return 0;

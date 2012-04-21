@@ -44,7 +44,8 @@ def get_version():
 
 
 def options(opt):
-    opt.load('compiler_c compiler_cxx python cython')
+    #opt.load('compiler_c compiler_cxx python cython')
+    opt.load('compiler_c compiler_cxx')
 
 def configure(conf, add_flags=[], rm_flags=[], centos=False):
     OS = platform.system()
@@ -56,12 +57,12 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     else:
         conf.check_tool('gcc')
         conf.check_tool('g++')
-    conf.check_tool('python')
-    conf.check_tool('cython')
+    #conf.check_tool('python')
+    #conf.check_tool('cython')
     #conf.load('compiler_c compiler_cxx python cython')
 
-    conf.check_python_version((2,6,0))
-    conf.check_python_headers()
+    #conf.check_python_version((2,6,0))
+    #conf.check_python_headers()
 
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
@@ -107,7 +108,6 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
                 #mandatory=True)
 
     conf.env.INCLUDES = ['.', 'c_lib', 'net_lib', '/usr/local/include']
-    #conf.env.INCLUDES = ['.', 'c_lib', 'cube_lib']
     conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
 
     if OS == 'Darwin':
@@ -129,15 +129,16 @@ def build(bld):
     common_libraries = []
 
     ##attemping C++ build
-    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    bld(features='cxx cxxshlib',
-        source=['c_lib/c_lib.cpp',],
+    #bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    bld(features='cxx cxxprogram',
+        source=['main.cpp',],
         use=common_libraries+time_lib+['LUA'],
         lib=time_lib,
-        target='c_lib')
-    bld.env.CFLAGS.remove('-fvisibility=hidden')
+        target='run')
+    #bld.env.CFLAGS.remove('-fvisibility=hidden')
 
     # c_lib
+    '''
     bld(features='cxx cshlib pyext',
         source=['c_lib/init_c_lib.pyx'],
         use=common_libraries + ['c_lib'],
@@ -152,8 +153,9 @@ def build(bld):
         source=['c_lib/map_gen/map_gen.pyx'],
         use=common_libraries + ['c_lib'],
         target='c_lib.map_gen')
+    '''
 
-    # final
+    '''
     global target
     target = "run"
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
@@ -163,35 +165,18 @@ def build(bld):
         use=common_libraries,
         source='run.c',
         target=target)
-
+    '''
     # compile python files
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        import py_compile
-        py_compile.compile('run.py')
-        py_compile.compile('cube.py')
-        py_compile.compile('map_recipes.py')
-        py_compile.compile('args_server.py')
-        py_compile.compile('__init__.py')
-        py_compile.compile('linux_terminal.py')
-        py_compile.compile('opts.py')
-        py_compile.compile('default_settings.py')
+
 
     bld.add_post_fun(install_in_ext)
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        bld.add_post_fun(strip_symbols)
 
 def strip_symbols(ctx):
     OS = platform.system()
     if OS == 'Linux':
         print 'Stripping symbols'
-        subprocess.Popen(['strip', '-s', './ext/init_c_lib.so'])
-        subprocess.Popen(['strip', '-s', './ext/c_lib/map_gen.so'])
-        subprocess.Popen(['strip', '-s', './ext/c_lib/noise.so'])
-        subprocess.Popen(['strip', '-s', './build/c_lib.noise.so'])
-        subprocess.Popen(['strip', '-s', './build/c_lib.map_gen.so'])
-        subprocess.Popen(['strip', '-s', './build/init_c_lib.so'])
-        subprocess.Popen(['strip', '-s', './libc_lib.so'])
-
+        #subprocess.Popen(['strip', '-s', './ext/init_c_lib.so'])
+        
 
 def install_in_ext(ctx):
     global out
@@ -211,23 +196,6 @@ def install_in_ext(ctx):
         pass
         #print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
 
-    targets = [
-        'init_c_lib',
-        'c_lib.noise',
-        'c_lib.map_gen',
-    ]
-
-    for target in targets:
-        dest_path = target.replace('.', '/')
-        dest_path = './ext/' + ctx.env.pyext_PATTERN % dest_path
-        ensure_dir(os.path.dirname(dest_path))
-        try:
-            shutil.copy2(os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-        except:
-            pass
-            #print "Error: cannot copy %s to %s" % (os.path.join(out, ctx.env.pyext_PATTERN % target), dest_path)
-    make_dest_modules(ctx)
-
 
 def ensure_dir(path):
     try:
@@ -235,13 +203,6 @@ def ensure_dir(path):
     except OSError, e:
         if e.errno != errno.EEXIST:
             raise
-
-
-def make_dest_modules(ctx):
-    for root, dirs, files in os.walk('./ext/'):
-        with open(os.path.join(root, '__init__.py'), 'wb') as f:
-            f.close()
-
 
 
 '''
