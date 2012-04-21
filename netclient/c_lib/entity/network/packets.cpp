@@ -242,7 +242,7 @@ inline void object_shot_object_StoC::handle()
     }
 
     // todo -- sound event
-    //Sound::turret_shoot(pos.x, pos.y, t->spatial.camera_z(), 0,0,0);
+    Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
 }
 
 inline void object_shot_terrain_StoC::handle()
