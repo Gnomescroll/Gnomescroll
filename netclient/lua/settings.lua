@@ -7,9 +7,9 @@ require("lua_library");
 print("LuaJit: run_lua_test finished");
 
 if( options_table == nil) then
-    print "WTF\n"
+    print "WTF"
 else
-    print "WTF2\n"
+    print "WTF2"
 end
 
 
@@ -82,9 +82,9 @@ for key,value in pairs(options) do
             ffi.copy(str, options[key]);
             ffi.C.LUA_set_string_option(id, str);
         else
-            print("Set Options Error: type error\n"); 
+            print("Set Options Error: type error"); 
         end
     else
-        print("Set Options Error: option " .. key .. " does not exist \n");
+        print("Set Options Error: option " .. key .. " does not exist ");
     end
 end
