@@ -219,7 +219,10 @@ namespace ServerState
         NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
 
-        for (int i=0; i<50; i++)
+        // TESTING -- remove later
+        // creates some bombs on init
+        const int n_bombs = 50;
+        for (int i=0; i<n_bombs; i++)
         {
             Objects::Object* obj = Objects::create(OBJECT_MONSTER_BOMB);
             if (obj == NULL) break;
@@ -228,8 +231,6 @@ namespace ServerState
             position.x = randrange(0, map_dim.x-1);
             position.y = randrange(0, map_dim.y-1);
             position.z = t_map::get_highest_open_block(position.x, position.y);
-
-            vec3_print(position);
 
             using Components::PhysicsComponent;
             PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);

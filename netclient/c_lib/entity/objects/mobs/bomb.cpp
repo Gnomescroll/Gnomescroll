@@ -104,11 +104,10 @@ void die_mob_bomb(Object* object)
 
 void tick_mob_bomb(Object* object)
 {
-    //using Components::PhysicsComponent;
-
-    //PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    //Vec3 position = physics->get_position();
-    //Agent_state* agent;
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    Vec3 position = physics->get_position();
+    Agent_state* agent;
     
     #if DC_SERVER
      //die if near agent
@@ -116,20 +115,28 @@ void tick_mob_bomb(Object* object)
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
     explode->proximity_check();
     #endif
+
+    // need to acquire target
+    // triggered two ways:
+        // firing proximity range
+        // motion proximity range
+
+    // need to move to target (dont need component yet)
     
-    //// acquire target
-    //agent = nearest_agent_in_range(position, this->_state.motion_proximity_radius);
-    //if (agent == NULL) return;
-    //Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
+    // acquire target
+    agent = nearest_agent_in_range(position, MONSTER_BOMB_MOTION_PROXIMITY_RADIUS);
+    if (agent == NULL) return;
+    Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
 
-    //// face the target
-    //Vec3 angles = physics->get_angles();
-    //angles.x = tickOrientToPointTheta(agent_position, position); // only rotate in x
-    //this->set_angles(angles);
+    // face the target
+    Vec3 angles = physics->get_angles();
+    angles.x = orient_to_point(agent_position, position); // only rotate in x
+    physics->set_angles(angles);
 
-    //// move towards target
-    //position = tickMoveToPoint(agent_position, position, physics->get_momentum());       // vector between agent and slime
-    //physics->set_position(position); // move slime position by velocity
+    // move towards target
+    Vec3 momentum = vec3_init(MONSTER_BOMB_SPEED, MONSTER_BOMB_SPEED, MONSTER_BOMB_SPEED);   // todo
+    position = move_to_point(agent_position, position, momentum);       // vector between agent and slime
+    physics->set_position(position); // move slime position by velocity
 
     #if DC_SERVER
     // TODO -- rate limited broadcast component
