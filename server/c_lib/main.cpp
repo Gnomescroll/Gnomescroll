@@ -11,6 +11,9 @@ void init()
 {
     init_c_lib();
 
+    // generate map
+    _floor(512,512,0,32,1);
+
     NetServer::init_server(127,0,0,1, Options::port);
     ServerState::start_game();
 
