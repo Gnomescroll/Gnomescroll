@@ -143,9 +143,6 @@ int init_c_lib()
     VoxDats::init();
     init_chat_server();
 
-    ServerState::init();
-    Particles::init_particles();
-
     init_network();
 
     t_map::init_t_map();
@@ -153,28 +150,8 @@ int init_c_lib()
 
     t_item::state_init();
 
-
-    for (int i=0; i<50; i++)
-    {
-        Objects::Object* obj = Objects::create(OBJECT_MONSTER_BOMB);
-        if (obj == NULL) break;
-
-        Vec3 position;
-        position.x = randrange(0, map_dim.x-1);
-        position.y = randrange(0, map_dim.y-1);
-        position.z = t_map::get_highest_open_block(position.x, position.y);
-
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        if (physics == NULL)
-        {
-            Objects::ready(obj);    // sets id
-            Objects::destroy(obj);
-            break;
-        }
-        physics->set_position(position);
-        Objects::ready(obj);
-    }
+    ServerState::init();
+    Particles::init_particles();
 
     return 0;
 } 

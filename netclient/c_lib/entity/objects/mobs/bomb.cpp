@@ -7,13 +7,22 @@
 #include <c_lib/entity/components/health.hpp>
 #include <c_lib/entity/components/dimension.hpp>
 #include <c_lib/entity/components/voxel_model.hpp>
+#if DC_SERVER
+#include <c_lib/entity/components/explosion.hpp>
+#endif
 
 namespace Objects
 {
 
 static void set_mob_bomb_properties(Object* object)
 {
+    #if DC_SERVER
     const int n_components = 5;
+    #endif
+    #if DC_CLIENT
+    const int n_components = 4;
+    #endif
+    
     object->init(n_components);
     
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
@@ -33,12 +42,14 @@ static void set_mob_bomb_properties(Object* object)
     health->health = MONSTER_BOMB_MAX_HEALTH;
     health->max_health = MONSTER_BOMB_MAX_HEALTH;
 
+    #if DC_SERVER
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)add_component_to_object(object, COMPONENT_EXPLOSION);
     explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
     explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
     explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
-
+    #endif
+    
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
 

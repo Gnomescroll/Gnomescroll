@@ -150,33 +150,6 @@ namespace ServerState
         if (agent != NULL)
             agent->status.add_coins(coins);
 
-        //// Spawners, Turrets etc
-        //const int filter_n_types = 5;
-        //const ObjectType filter_types[filter_n_types] = {
-            //OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
-            //OBJECT_SLIME, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
-        //};
-        //object_list->objects_within_sphere(filter_types, filter_n_types, x,y,z, radius);
-        //ObjectPolicyInterface* obj;
-        //ObjectState* state;
-        //for (int i=0; i<object_list->n_filtered; i++)
-        //{
-            //obj = object_list->filtered_objects[i];
-            //if (obj == NULL) continue;
-            //state = obj->state();
-
-            ///* TODO */
-            //// state->can_be_killed_by(type, id, team)
-            //// apply teammate rules etc
-            //if ((obj->get_team() == agent->status.team && obj->get_owner() != NO_AGENT)
-              //&& obj->get_owner() != agent->id)
-                //continue;
-            //obj->take_damage(Particles::get_grenade_damage(state->type));
-            //if (obj->did_die() && agent != NULL
-              //&& !(state->type == inflictor_type && state->id == inflictor_id)) // obj is not self
-                //coins += get_kill_reward(obj, agent->id, agent->status.team);
-        //}
-
         Vec3 position = vec3_init(x,y,z);
 
         const int n_team_types = 2;
@@ -245,6 +218,30 @@ namespace ServerState
         address_from_string(Options::ip_address, address);
         NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
+
+        for (int i=0; i<50; i++)
+        {
+            Objects::Object* obj = Objects::create(OBJECT_MONSTER_BOMB);
+            if (obj == NULL) break;
+
+            Vec3 position;
+            position.x = randrange(0, map_dim.x-1);
+            position.y = randrange(0, map_dim.y-1);
+            position.z = t_map::get_highest_open_block(position.x, position.y);
+
+            vec3_print(position);
+
+            using Components::PhysicsComponent;
+            PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+            if (physics == NULL)
+            {
+                Objects::ready(obj);    // sets id
+                Objects::destroy(obj);
+                break;
+            }
+            physics->set_position(position);
+            Objects::ready(obj);
+        }
     }
 
     void agent_disconnect(int agent_id)
