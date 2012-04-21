@@ -54,7 +54,7 @@ void init()
 
 int run()
 {
-	int tick = 0;
+	//int tick = 0;
 	int tc;
     while (1)
     {

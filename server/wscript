@@ -44,7 +44,6 @@ def get_version():
 
 
 def options(opt):
-    #opt.load('compiler_c compiler_cxx python cython')
     opt.load('compiler_c compiler_cxx')
 
 def configure(conf, add_flags=[], rm_flags=[], centos=False):
@@ -57,12 +56,8 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
     else:
         conf.check_tool('gcc')
         conf.check_tool('g++')
-    #conf.check_tool('python')
-    #conf.check_tool('cython')
-    #conf.load('compiler_c compiler_cxx python cython')
 
-    #conf.check_python_version((2,6,0))
-    #conf.check_python_headers()
+    conf.load('compiler_c compiler_cxx')
 
     conf.cc_add_flags()     #"-g"
     conf.link_add_flags()   #"-g"
@@ -114,46 +109,26 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
         conf.env.ARCH = ['x86_64', 'i386']
 
 def build(bld):
-
     OS = platform.system()
-
     if OS != 'Windows':
         time_lib = ['rt']
     else:
         time_lib = []
-
     if OS == "Darwin":
         time_lib = []
 
-    #common_libraries = ['GL', 'SDL', 'SDL_image']
     common_libraries = []
 
     ##attemping C++ build
     #bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    
     bld(features='cxx cxxprogram',
         source=['main.cpp',],
         use=common_libraries+time_lib+['LUA'],
         lib=time_lib,
         target='run')
+
     #bld.env.CFLAGS.remove('-fvisibility=hidden')
-
-    # c_lib
-    '''
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/init_c_lib.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='init_c_lib')
-
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/map_gen/noise.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.noise')
-        
-    bld(features='cxx cshlib pyext',
-        source=['c_lib/map_gen/map_gen.pyx'],
-        use=common_libraries + ['c_lib'],
-        target='c_lib.map_gen')
-    '''
 
     '''
     global target
@@ -166,8 +141,6 @@ def build(bld):
         source='run.c',
         target=target)
     '''
-    # compile python files
-
 
     bld.add_post_fun(install_in_ext)
 
@@ -195,14 +168,6 @@ def install_in_ext(ctx):
     except:
         pass
         #print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
-
-
-def ensure_dir(path):
-    try:
-        os.makedirs(path)
-    except OSError, e:
-        if e.errno != errno.EEXIST:
-            raise
 
 
 '''

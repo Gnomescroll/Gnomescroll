@@ -130,6 +130,8 @@ int init_c_lib()
     }
     Log::init();
 
+    LUA::load_options(); //load game options
+    
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand(time(NULL));
