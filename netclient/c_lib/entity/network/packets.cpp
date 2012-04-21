@@ -6,10 +6,6 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-//#include <c_lib/items/turret.hpp>
-//#include <c_lib/items/spawner.hpp>
-//#include <c_lib/monsters/box.hpp>
-
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/entity/objects.hpp>
@@ -232,7 +228,6 @@ inline void object_shot_nothing_StoC::handle()
         //default:break;
     //}
 }
-
 #endif
 
 #if DC_SERVER

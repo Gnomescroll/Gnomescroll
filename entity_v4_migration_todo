@@ -63,9 +63,10 @@ proximity component? merge with targeting?
 ==============
 TODO in the morning:
 
+fix turret attacking
+    -- need to abstract those turret_shot functions
 make component for target box motion
 spawned/child component
-fix turret attacking
 
 item drops
 rate limited packet interface?, like the rest of the packet interfaces
