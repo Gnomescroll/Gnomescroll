@@ -13,7 +13,7 @@ namespace Objects
 
 static void set_mob_bomb_properties(Object* object)
 {
-    const int n_components = 4;
+    const int n_components = 5;
     object->init(n_components);
     
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
@@ -32,6 +32,12 @@ static void set_mob_bomb_properties(Object* object)
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = MONSTER_BOMB_MAX_HEALTH;
     health->max_health = MONSTER_BOMB_MAX_HEALTH;
+
+    using Components::ExplosionComponent;
+    ExplosionComponent* explode = (ExplosionComponent*)add_component_to_object(object, COMPONENT_EXPLOSION);
+    explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
+    explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
+    explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
 
     object->tick = &tick_mob_bomb;
     object->update = &update_mob_bomb;
@@ -75,6 +81,7 @@ void die_mob_bomb(Object* object)
 
     #if DC_SERVER
     // drop item
+    
     // explosion damage
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);

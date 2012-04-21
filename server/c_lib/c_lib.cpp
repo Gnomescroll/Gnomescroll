@@ -139,7 +139,6 @@ int init_c_lib()
     Components::init();
 
     Objects::init_net_interfaces();
-    //Objects::init_state_interfaces();
 
     VoxDats::init();
     init_chat_server();
@@ -147,13 +146,35 @@ int init_c_lib()
     ServerState::init();
     Particles::init_particles();
 
-
     init_network();
 
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
 
     t_item::state_init();
+
+
+    for (int i=0; i<50; i++)
+    {
+        Objects::Object* obj = Objects::create(OBJECT_MONSTER_BOMB);
+        if (obj == NULL) break;
+
+        Vec3 position;
+        position.x = randrange(0, map_dim.x-1);
+        position.y = randrange(0, map_dim.y-1);
+        position.z = t_map::get_highest_open_block(position.x, position.y);
+
+        using Components::PhysicsComponent;
+        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+        if (physics == NULL)
+        {
+            Objects::ready(obj);    // sets id
+            Objects::destroy(obj);
+            break;
+        }
+        physics->set_position(position);
+        Objects::ready(obj);
+    }
 
     return 0;
 } 
@@ -171,7 +192,6 @@ void close_c_lib()
     Particles::teardown_particles();
 
     Objects::teardown_net_interfaces();
-    //Objects::teardown_state_interfaces();
 
     Objects::teardown();    // Entity system
     Components::teardown();
