@@ -84,3 +84,4 @@ gnomescroll_server
 gnomescroll_client
 
 ./client
+./server

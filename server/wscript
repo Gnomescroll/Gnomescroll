@@ -166,11 +166,11 @@ def install_bin(ctx):
             shutil.copy2(os.path.join(out, run_target), './' + run_dest)
         except Exception, e:
             pass
-        if OS == 'Linux':
-            try:
-                shutil.copy2('./run', './server')
-            except Exception, e:
-                pass
+        #if OS == 'Linux':
+            #try:
+                #shutil.copy2('./run', './gs_server')
+            #except Exception, e:
+                #pass
     except Exception, e:
         print "error copying binaries to ./"
         print e
