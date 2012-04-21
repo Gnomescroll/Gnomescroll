@@ -8,8 +8,6 @@ namespace Components
 class WeaponTargetingComponent: public TargetingComponent
 {
     public:
-        Vec3 target_direction;
-    
         int fire_tick;
         int fire_rate_limit;
         Hitscan::AttackerProperties attacker_properties;

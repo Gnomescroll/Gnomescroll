@@ -11,9 +11,13 @@ namespace Components
 class TargetingComponent: public Component
 {
     public:
+        // data
         float target_acquisition_probability;
         float sight_range;
+
+        // state
         Agent_state* target;
+        Vec3 target_direction;
         bool locked_on_target;
 
         virtual Vec3 lock_target(Vec3 camera_position, int team) = 0;

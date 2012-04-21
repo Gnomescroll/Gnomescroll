@@ -17,10 +17,10 @@ namespace Objects
 static void set_mob_bomb_properties(Object* object)
 {
     #if DC_SERVER
-    const int n_components = 5;
+    const int n_components = 6;
     #endif
     #if DC_CLIENT
-    const int n_components = 4;
+    const int n_components = 5;
     #endif
     
     object->init(n_components);
@@ -41,6 +41,11 @@ static void set_mob_bomb_properties(Object* object)
     HitPointsHealthComponent* health = (HitPointsHealthComponent*)add_component_to_object(object, COMPONENT_HIT_POINTS);
     health->health = MONSTER_BOMB_MAX_HEALTH;
     health->max_health = MONSTER_BOMB_MAX_HEALTH;
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* target = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
+    target->target_acquisition_probability = 1.0f;
+    target->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
 
     #if DC_SERVER
     using Components::ExplosionComponent;
@@ -104,11 +109,6 @@ void die_mob_bomb(Object* object)
 
 void tick_mob_bomb(Object* object)
 {
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    Vec3 position = physics->get_position();
-    Agent_state* agent;
-    
     #if DC_SERVER
      //die if near agent
     using Components::ExplosionComponent;
@@ -116,27 +116,31 @@ void tick_mob_bomb(Object* object)
     explode->proximity_check();
     #endif
 
-    // need to acquire target
-    // triggered two ways:
-        // firing proximity range
-        // motion proximity range
-
-    // need to move to target (dont need component yet)
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    Vec3 position = physics->get_position();
     
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* target = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
+
     // acquire target
-    agent = nearest_agent_in_range(position, MONSTER_BOMB_MOTION_PROXIMITY_RADIUS);
-    if (agent == NULL) return;
-    Vec3 agent_position = vec3_init(agent->s.x, agent->s.y, agent->s.z);
+    target->lock_target(position);
+    if (!target->locked_on_target) return;
 
-    // face the target
-    Vec3 angles = physics->get_angles();
-    angles.x = orient_to_point(agent_position, position); // only rotate in x
-    physics->set_angles(angles);
+    // move to target
+    if (target->locked_on_target)
+    {
+        // face the target
+        target->orient_to_target(position);
+        
+        Vec3 angles = physics->get_angles();
+        angles.x = vec3_to_theta(target->target_direction); // only rotate in x
+        physics->set_angles(angles);
 
-    // move towards target
-    Vec3 momentum = vec3_init(MONSTER_BOMB_SPEED, MONSTER_BOMB_SPEED, MONSTER_BOMB_SPEED);   // todo
-    position = move_to_point(agent_position, position, momentum);       // vector between agent and slime
-    physics->set_position(position); // move slime position by velocity
+        // move towards target
+        position = vec3_add(position, vec3_scalar_mult(target->target_direction, MONSTER_BOMB_SPEED));
+        physics->set_position(position); // move slime position by velocity
+    }
 
     #if DC_SERVER
     // TODO -- rate limited broadcast component

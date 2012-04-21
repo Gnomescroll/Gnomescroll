@@ -146,8 +146,7 @@ void tick_turret(Object* object)
     using Components::DimensionComponent;
     typedef Components::PositionChangedPhysicsComponent PCP;
 
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
 
     // adjust to terrain changes
     Vec3 position = physics->get_position();
@@ -173,8 +172,7 @@ void update_turret(Object* object)
     typedef Components::PositionChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();

@@ -28,8 +28,10 @@ const float MONSTER_BOMB_EXPLOSION_RADIUS = 4.0f;
 const int MONSTER_BOMB_EXPLOSION_DAMAGE = 35;
 const float MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS = 1.0f;
 
-// motion
+// targeting
 const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
+
+// motion
 const float MONSTER_BOMB_SPEED = 0.25f;
 
 // animations
