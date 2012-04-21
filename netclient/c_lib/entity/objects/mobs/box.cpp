@@ -22,6 +22,7 @@ static void set_mob_robot_box_properties(Object* object)
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)add_component_to_object(object, COMPONENT_DIMENSION);
     dims->height = MONSTER_BOX_HEIGHT;
+    dims->camera_height = MONSTER_BOX_CAMERA_HEIGHT;
 
     using Components::VoxelModelComponent;
     VoxelModelComponent* vox = (VoxelModelComponent*)add_component_to_object(object, COMPONENT_VOXEL_MODEL);
@@ -116,83 +117,77 @@ void die_mob_robot_box(Object* object)
 #if DC_SERVER
 void server_tick_mob_robot_box(Object* object)
 {
-    //// must stay on ground -- apply terrain collision
-    //// wander randomly (TODO: network model with destinations)
-    //// TODO -- aggro component
+    // must stay on ground -- apply terrain collision
+    // wander randomly (TODO: network model with destinations)
+    // TODO -- aggro component
 
-    //// save current target state, will use this to decide if need to send packet
-    //bool was_on_target = this->locked_on_target;
-    //int old_target_id = this->target_id;
-    //int old_target_type = this->target_type;
+    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    Vec3 position = physics->get_position();
     
-    //Agent_state* agent = NULL;
-    //if (this->locked_on_target)
-    //{   // target locked
-        //// check target still exists
-        //if (this->target_type == OBJECT_AGENT)
-            //agent = STATE::agent_list->get(this->target_id);
-        //if (agent == NULL
-        //|| vec3_distance_squared(agent->get_center(), this->get_center(BOX_PART_BODY)) > this->speed*this->speed)
-            //this->locked_on_target = false;
-    //}
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    position.z += dims->get_camera_height();
+    
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
 
-    //if (!this->locked_on_target)
-    //{   // no target found
-        //// look for target
-        //ObjectState* state = this->state();
-        //Vec3 direction;
-        //agent = this->acquire_target(
-            //state->id, state->type, this->get_team(), this->spatial.camera_z(),
-            //this->get_position(),
-            //state->accuracy_bias, state->sight_range,
-            //state->attacks_enemies, state->attack_at_random,
-            //&direction
-        //);
-    //}
+    // save current target state, will use targeting to decide if need to send packet
+    bool was_on_target = targeting->locked_on_target;
+    int old_target_id = targeting->target_id;
+    int old_target_type = targeting->target_type;
+    
+    Agent_state* agent = NULL;
+    if (targeting->locked_on_target)
+    {   // target locked
+        // check target still exists
+        if (targeting->target_type == OBJECT_AGENT)
+            agent = STATE::agent_list->get(targeting->target_id);
+        if (agent == NULL
+        || vec3_distance_squared(agent->get_center(), position) > targeting->sight_range*targeting->sight_range)
+            targeting->locked_on_target = false;
+    }
 
-    //if (agent != NULL)
-    //{   // target found
-        //// lock target
-        //this->locked_on_target = true;
+    if (!targeting->locked_on_target)
+    {   // no target found
+        // look for target
+        targeting->lock_target(position);
+    }
+
+    if (targeting->target_type != OBJECT_NONE)
+    {   // target found
+        // lock target
+        targeting->locked_on_target = true;
         //this->en_route = false;
 
-        //this->target_id = agent->id;
-        //this->target_type = OBJECT_AGENT;
-
-        //// send target packet
-        //if (!was_on_target || old_target_id != this->target_id || old_target_type != this->target_type)
-        //{
-            //object_choose_target_StoC msg;
-            //msg.id = this->_state.id;
-            //msg.type = this->_state.type;
-            //msg.target_id = this->target_id;
-            //msg.target_type = this->target_type;
-            //msg.broadcast();
-        //}
-    //}
+        // send target packet
+        if (!was_on_target || old_target_id != targeting->target_id || old_target_type != targeting->target_type)
+        {
+            targeting->broadcast_target_choice();
+        }
+    }
     
-    //if (this->locked_on_target)
-    //{   // target is locked
-        //// face target
-        //Vec3 direction = vec3_sub(agent->get_center(), this->get_center(BOX_PART_BODY));
-        //if (vec3_length(direction))
-        //{
-            //normalize_vector(&direction);
-            //float theta,phi;
-            //vec3_to_angles(direction, &theta, &phi);
-            //this->set_angles(theta, phi, 0);
-            //this->direction = direction;
-        //}
+    if (targeting->locked_on_target)
+    {   // target is locked
+        // face target
+        if (agent != NULL) // TODO -- multiple target
+        {
+            Vec3 direction = vec3_sub(agent->get_center(), position);
+            if (vec3_length(direction))
+            {
+                normalize_vector(&direction);
+                float theta,phi;
+                vec3_to_angles(direction, &theta, &phi);
+                physics->set_angles(vec3_init(theta, phi, 0));
+                targeting->target_direction = direction;
+            }
 
-        //if (this->can_fire())
-        //{
-            //ObjectState* state = this->state();
-            //this->fire_on_known_target(
-                //state->id, state->type, this->spatial.camera_z(), this->get_position(),
-                //this->direction, state->accuracy_bias, state->sight_range, agent
-            //);
-        //}
-    //}
+            if (targeting->can_fire())
+            {
+                targeting->fire_on_target(position);
+            }
+        }
+    }
     //else if (this->en_route)
     //{   // face destination
         //float theta, phi;
@@ -271,26 +266,35 @@ void server_tick_mob_robot_box(Object* object)
 #if DC_CLIENT
 void client_tick_mob_robot_box(Object* object)
 {
-    //if (this->locked_on_target)
-    //{   // target locked
-        //if (this->target_type != OBJECT_AGENT) return;    // TODO -- more objects
-        //Agent_state* agent = ClientState::agent_list->get(this->target_id);
-        //if (agent == NULL) return;
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+
+    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     
-        //// face target
-        //Vec3 agent_position = agent->get_center();
-        //Vec3 position = this->get_center(BOX_PART_BODY);
-        //Vec3 direction = vec3_sub(agent_position, position);
-        //if (vec3_length(direction))
-        //{
-            //float theta,phi;
-            //normalize_vector(&direction);
-            //this->direction = direction;
-            //vec3_to_angles(direction, &theta, &phi);
-            //this->set_angles(theta, phi, 0);
-        //}
-        //return; // do nothing else
-    //}
+    if (targeting->locked_on_target)
+    {   // target locked
+        if (targeting->target_type != OBJECT_AGENT) return;    // TODO -- more objects
+        Agent_state* agent = ClientState::agent_list->get(targeting->target_id);
+        if (agent == NULL) return;
+        Vec3 agent_position = agent->get_center();
+
+        using Components::VoxelModelComponent;
+        VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component(COMPONENT_VOXEL_MODEL);
+        
+        // face target
+        Vec3 position = vox->get_center();
+        Vec3 direction = vec3_sub(agent_position, position);
+        if (vec3_length(direction))
+        {
+            float theta,phi;
+            normalize_vector(&direction);
+            targeting->target_direction = direction;
+            vec3_to_angles(direction, &theta, &phi);
+            physics->set_angles(vec3_init(theta, phi, 0));
+        }
+        return; // do nothing else
+    }
 
     //if (!this->at_destination)
     //{   // check if at destination
@@ -343,8 +347,7 @@ void update_mob_robot_box(Object* object)
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();

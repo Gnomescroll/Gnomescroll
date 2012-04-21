@@ -116,8 +116,8 @@ void tick_mob_bomb(Object* object)
     explode->proximity_check();
     #endif
 
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    typedef Components::PositionMomentumChangedPhysicsComponent PCP;
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     Vec3 position = physics->get_position();
     
     using Components::MotionTargetingComponent;
@@ -125,7 +125,7 @@ void tick_mob_bomb(Object* object)
 
     // acquire target
     target->lock_target(position);
-    if (target->target == NULL) return;
+    if (target->target_type == OBJECT_NONE) return;
 
     // face the target
     target->orient_to_target(position);    
@@ -140,7 +140,8 @@ void tick_mob_bomb(Object* object)
     #if DC_SERVER
     // TODO -- rate limited broadcast component
     //if (this->canSendState())
-    object->broadcastState(); // send state packet every N ticks
+    if (physics->changed)
+        object->broadcastState(); // send state packet every N ticks
     #endif
 
 }

@@ -8,25 +8,35 @@ namespace Components
 
 /* Targeting */
 
-Vec3 MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
+void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
-    this->target = Hitscan::lock_agent_target(
+    Agent_state* target;
+    target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction, team,
         this->sight_range, this->target_acquisition_probability,
         true, false
     );
-    return this->target_direction;
+    if (target == NULL)
+    {
+        this->target_type = OBJECT_NONE;
+        return;
+    }
+    this->target_type = OBJECT_AGENT;
+    this->target_id = target->id;
 }
 
-Vec3 MotionTargetingComponent::lock_target(Vec3 camera_position)
+void MotionTargetingComponent::lock_target(Vec3 camera_position)
 {
-    return this->lock_target(camera_position, NO_TEAM);
+    this->lock_target(camera_position, NO_TEAM);
 }
 
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
 {
-    if (this->target == NULL) return;
-    Vec3 target_position = vec3_init(this->target->s.x, this->target->s.y, this->target->s.z);
+    if (this->target_type == OBJECT_NONE) return;
+    if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    if (target == NULL) return;
+    Vec3 target_position = vec3_init(target->s.x, target->s.y, target->s.z);
     this->target_direction = vec3_sub(target_position, camera_position);
     normalize_vector(&this->target_direction);
 }

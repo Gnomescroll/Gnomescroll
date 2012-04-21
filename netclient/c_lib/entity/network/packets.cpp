@@ -306,6 +306,39 @@ inline void object_shot_nothing_StoC::handle()
     );
     Sound::turret_shoot(position.x, position.y, position.z, 0,0,0);
 }
+
+inline void object_choose_target_StoC::handle()
+{
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+
+    // TODO -- query destination
+    //box->en_route = false;  // cancel all motion
+
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    if (weapon != NULL)
+    {
+        weapon->target_id = this->target_id;    // set target
+        weapon->target_type = (ObjectType)this->target_type;
+        weapon->locked_on_target = true;   // flag target lock
+    }
+}
+
+inline void object_choose_destination_StoC::handle()
+{
+    //using Monsters::Box;
+    //ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, id);
+    //if (obj == NULL) return;
+    //switch (type)
+    //{
+        //case OBJECT_MONSTER_BOX:
+            //box_chose_destination((Box*)obj, this);
+            //break;
+        //default: return;
+    //}
+}
+
 #endif
 
 #if DC_SERVER
@@ -322,4 +355,6 @@ inline void object_state_momentum_angles_StoC::handle() {}
 inline void object_shot_object_StoC::handle() {}
 inline void object_shot_terrain_StoC::handle() {}
 inline void object_shot_nothing_StoC::handle() {}
+inline void object_choose_target_StoC::handle() {}
+inline void object_choose_destination_StoC::handle() {}
 #endif

@@ -16,6 +16,8 @@ class WeaponTargetingComponent: public TargetingComponent
         bool attacks_enemies;
         bool attack_at_random;
 
+        bool locked_on_target;
+
         bool can_fire()
         {
             this->fire_tick++;
@@ -32,8 +34,10 @@ class WeaponTargetingComponent: public TargetingComponent
         bool fire_on_target(Vec3 camera_position, int team);
         bool fire_on_target(Vec3 camera_position);
 
-        Vec3 lock_target(Vec3 camera_position);
-        Vec3 lock_target(Vec3 camera_position, int team);
+        void broadcast_target_choice();
+
+        void lock_target(Vec3 camera_position);
+        void lock_target(Vec3 camera_position, int team);
 
     WeaponTargetingComponent()
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),

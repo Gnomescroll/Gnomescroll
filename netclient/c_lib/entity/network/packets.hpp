@@ -216,6 +216,8 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
 
 /* Actions */
 
+/* Pickup */
+
 class object_picked_up_StoC: public FixedSizeReliableNetPacketToClient<object_picked_up_StoC>
 {
     public:
@@ -231,6 +233,8 @@ class object_picked_up_StoC: public FixedSizeReliableNetPacketToClient<object_pi
         }
         inline void handle();
 };
+
+/* Shooting */
 
 class object_shot_object_StoC: public FixedSizeNetPacketToClient<object_shot_object_StoC>
 {
@@ -297,3 +301,44 @@ class object_shot_nothing_StoC: public FixedSizeNetPacketToClient<object_shot_no
     }
     inline void handle();
 };
+
+/* Targeting */
+
+class object_choose_target_StoC: public FixedSizeReliableNetPacketToClient<object_choose_target_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t target_id;
+        uint8_t target_type;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&target_id, buff, buff_n, pack);
+        pack_u8(&target_type, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+class object_choose_destination_StoC: public FixedSizeReliableNetPacketToClient<object_choose_destination_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t type;
+        uint16_t ticks;
+        float x,y,z;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&id, buff, buff_n, pack);
+        pack_u8(&type, buff, buff_n, pack);
+        pack_u16(&ticks, buff, buff_n, pack);
+        pack_float(&x, buff, buff_n, pack);
+        pack_float(&y, buff, buff_n, pack);
+        pack_float(&z, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+

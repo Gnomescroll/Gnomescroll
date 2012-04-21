@@ -9,20 +9,29 @@ namespace Components
 
 /* Targeting */
 
-Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position)
+void WeaponTargetingComponent::lock_target(Vec3 camera_position)
 {
-    return this->lock_target(camera_position, NO_TEAM);
+    this->lock_target(camera_position, NO_TEAM);
 }
 
-Vec3 WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
+void WeaponTargetingComponent::lock_target(Vec3 camera_position, int team)
 {   // lock on agent
-    this->target = Hitscan::lock_agent_target(
+    Agent_state* target;
+    target = Hitscan::lock_agent_target(
         camera_position, &this->target_direction, team,
         this->sight_range, this->target_acquisition_probability,
         this->attacks_enemies, this->attack_at_random
     );
-    if (this->target != NULL) normalize_vector(&this->target_direction);
-    return this->target_direction;
+    if (target == NULL)
+    {
+        this->target_type = OBJECT_NONE;
+        this->locked_on_target = false;
+        return;
+    }
+    this->target_type = OBJECT_AGENT;
+    this->target_id = target->id;
+    this->locked_on_target = true;
+    normalize_vector(&this->target_direction);
 }
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
@@ -32,16 +41,19 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position)
 
 bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
 {
-    if (this->target == NULL) return false;
+    if (this->target_type == OBJECT_NONE) return false;
+    if (this->target_type != OBJECT_AGENT) return false;    // todo -- target all types
     
     Vec3 direction;
     if (this->accuracy_bias)    // apply bias
         direction = vec3_bias_random(this->target_direction, this->accuracy_bias);
 
     // get target
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    if (target == NULL) return false;
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         camera_position, direction, this->object->id, this->object->type,
-        this->target, this->sight_range
+        target, this->sight_range
     );
 
     // let handle target hit based on attacker properties
@@ -56,6 +68,16 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
     
     if (t.hitscan == Hitscan::HITSCAN_TARGET_VOXEL) return true;
     return false;
+}
+
+void WeaponTargetingComponent::broadcast_target_choice()
+{
+    object_choose_target_StoC msg;
+    msg.id = this->object->id;
+    msg.type = this->object->type;
+    msg.target_id = this->target_id;
+    msg.target_type = this->target_type;
+    msg.broadcast();
 }
 
 } // Objects

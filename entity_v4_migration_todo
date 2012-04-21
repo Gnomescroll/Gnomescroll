@@ -65,12 +65,16 @@ TODO in the morning:
 
 fix turret attacking
     -- need to abstract those turret_shot functions
+DONE
+
 make component for target box motion
 spawned/child component
 
 item drops
 rate limited packet interface?, like the rest of the packet interfaces
 --has state, needs to be allocated like a component anyway
+
+animation component
 
 ==============
 event queue?
