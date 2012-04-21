@@ -118,7 +118,7 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner,
+        int damage, int owner,
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal   // defaults to true; if not suicidal, agent's with id==owner will be skipped
     )
@@ -140,11 +140,15 @@ namespace ServerState
             if (a == NULL) continue;
             if (!suicidal && a->id == owner) continue;
             if (!a->point_can_cast(x, y, z, radius)) continue;  // cheap terrain cover check
-            dmg *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
-            a->status.apply_damage(dmg, owner, inflictor_type);
+            damage *= gaussian_value(blast_mean, blast_stddev, agent_list->filtered_object_distances[i] / radius);
+            a->status.apply_damage(damage, owner, inflictor_type);
         }
 
         if (agent == NULL) return; // return here; turrets/spawners are team items and we need to know the agent's team
+
+        // add all the coins
+        if (agent != NULL)
+            agent->status.add_coins(coins);
 
         //// Spawners, Turrets etc
         //const int filter_n_types = 5;
@@ -173,9 +177,20 @@ namespace ServerState
                 //coins += get_kill_reward(obj, agent->id, agent->status.team);
         //}
 
-        // add all the coins
-        if (agent != NULL)
-            agent->status.add_coins(coins);
+        Vec3 position = vec3_init(x,y,z);
+
+        const int n_team_types = 2;
+        const ObjectType team_types[n_team_types] = {
+            OBJECT_TURRET, OBJECT_AGENT_SPAWNER,
+        };
+        Objects::damage_team_objects_within_sphere(team_types, n_team_types, position, radius, damage, agent->status.team, agent->id);
+
+        const int n_types = 3;
+        const ObjectType types[n_types] = {
+            OBJECT_MONSTER_BOMB, OBJECT_MONSTER_BOX, OBJECT_MONSTER_SPAWNER,
+        };
+        Objects::damage_objects_within_sphere(types, n_types, position, radius, damage);
+
     }
         
     void send_initial_game_state_to_client(int client_id)

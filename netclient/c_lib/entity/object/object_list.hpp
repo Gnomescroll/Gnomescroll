@@ -56,7 +56,6 @@ class ObjectList
     ObjectList()
     : indices(NULL), maximums(NULL), objects(NULL)
     {}
-
 };
 
 } // Objects

@@ -2,6 +2,7 @@
 
 #include <c_lib/entity/components.hpp>
 #include <c_lib/entity/object/helpers.hpp>
+#include <c_lib/entity/object/filter.hpp>
 
 namespace Objects
 {
@@ -9,9 +10,13 @@ namespace Objects
 using Components::Component;
 
 ObjectList* object_list = NULL;
+ObjectListFilter* filter = NULL;
 
 void init()
 {   // must specify maximum values for objects here
+
+    filter = new ObjectListFilter;
+    filter->init();
 
     object_list = new ObjectList;
     object_list->init();
@@ -51,6 +56,7 @@ void init()
 void teardown()
 {
     if (object_list != NULL) delete object_list;
+    if (filter != NULL) delete filter;
 }
 
 /* Iterators */
@@ -375,6 +381,62 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
     }
     
     return false;
+}
+
+void damage_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage)
+{
+    Object* object;
+
+    using Components::HealthComponent;
+    HealthComponent* health;
+
+    int count = filter->within_sphere(object_list, types, n_types, position, radius);
+    for (int i=0; i<count; i++)
+    {
+        object = filter->objects[i];
+
+        health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        if (health != NULL) health->take_damage(damage);
+    }
+}
+
+void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec3 position, float radius, int damage, int inflictor_team, int inflictor_id)
+{
+    Object* object;
+
+    using Components::HealthComponent;
+    HealthComponent* health;
+
+    using Components::TeamComponent;
+    TeamComponent* team;
+    int team_id;
+    
+    using Components::OwnerComponent;
+    OwnerComponent* owner;    
+    int owner_id;
+    
+    int count = filter->within_sphere(object_list, types, n_types, position, radius);
+    for (int i=0; i<count; i++)
+    {
+        object = filter->objects[i];
+
+        health = (HealthComponent*)object->get_component_interface(COMPONENT_INTERFACE_HEALTH);
+        if (health == NULL) continue;
+
+        team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+        if (team != NULL) team_id = team->get_team();
+        else team_id = NO_TEAM;
+
+        owner = (OwnerComponent*)object->get_component_interface(COMPONENT_INTERFACE_OWNER);
+        if (owner != NULL) owner_id = owner->get_owner();
+        else owner_id = NO_AGENT;
+        
+        if ((team_id == inflictor_team && owner_id != NO_AGENT)
+            && owner_id != inflictor_id)
+            continue;
+
+        health->take_damage(damage);
+    }
 }
 
 } // Objects

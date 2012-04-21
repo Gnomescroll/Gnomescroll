@@ -5,6 +5,7 @@
 #include <c_lib/entity/objects/include.hpp>
 #include <c_lib/entity/object/object.hpp>
 #include <c_lib/entity/object/object_list.hpp>
+#include <c_lib/entity/object/filter.hpp>
 #include <c_lib/entity/object/helpers.hpp>
 #include <c_lib/entity/object/main.hpp>
 #include <c_lib/entity/objects.hpp>

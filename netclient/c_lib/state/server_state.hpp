@@ -27,7 +27,7 @@ namespace ServerState
 
     void damage_objects_within_sphere(
         float x, float y, float z, float radius,
-        int dmg, int owner,
+        int damage, int owner,
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal=true
     );
