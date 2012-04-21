@@ -15,7 +15,6 @@ Vec3 MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
         this->sight_range, this->target_acquisition_probability,
         true, false
     );
-    if (this->target != NULL) this->locked_on_target = true;
     return this->target_direction;
 }
 

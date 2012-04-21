@@ -60,12 +60,13 @@ put more shit on targeting component (from box)
 move to target component?
 proximity component? merge with targeting?
 
+==============
 TODO in the morning:
 
-bomb/box/spawner metadata constants
-sort out targeting -- there's firing and motion target acquisition, probably dont want to completely merge (may want both on an object)
-get the bomb re-networked
-then finish knocking off pieces of box
+make component for target box motion
+spawned/child component
+fix turret attacking
+
 item drops
 rate limited packet interface?, like the rest of the packet interfaces
 --has state, needs to be allocated like a component anyway

@@ -125,22 +125,17 @@ void tick_mob_bomb(Object* object)
 
     // acquire target
     target->lock_target(position);
-    if (!target->locked_on_target) return;
+    if (target->target == NULL) return;
 
-    // move to target
-    if (target->locked_on_target)
-    {
-        // face the target
-        target->orient_to_target(position);
-        
-        Vec3 angles = physics->get_angles();
-        angles.x = vec3_to_theta(target->target_direction); // only rotate in x
-        physics->set_angles(angles);
+    // face the target
+    target->orient_to_target(position);    
+    Vec3 angles = physics->get_angles();
+    angles.x = vec3_to_theta(target->target_direction); // only rotate in x
+    physics->set_angles(angles);
 
-        // move towards target
-        position = vec3_add(position, vec3_scalar_mult(target->target_direction, MONSTER_BOMB_SPEED));
-        physics->set_position(position); // move slime position by velocity
-    }
+    // move towards target
+    position = vec3_add(position, vec3_scalar_mult(target->target_direction, MONSTER_BOMB_SPEED));
+    physics->set_position(position); // move slime position by velocity
 
     #if DC_SERVER
     // TODO -- rate limited broadcast component
