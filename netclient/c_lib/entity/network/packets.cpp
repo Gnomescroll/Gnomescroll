@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <c_lib/sound/sound.hpp>
+#include <c_lib/animations/_interface.hpp>
 
 #include <c_lib/agent/client/player_agent.hpp>
 
@@ -191,19 +192,57 @@ inline void object_picked_up_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
-    //switch (this->type)
-    //{
-        //case OBJECT_MONSTER_BOX:
-            //Monsters::box_shot_object(this);    // TODO -- replace handlers
-            //break;
-            
-        //case OBJECT_TURRET:
-            //turret_shot_object(this);
-            //break;
-            
-        //default:break;
-    //}
-    printf("shot object\n");
+    if (this->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
+
+    // get firing object
+    Objects::Object* obj = Objects::get((ObjectType)this->type, (int)this->id);
+    if (obj == NULL) return;
+
+    // get firing position of object
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    Vec3 position = physics->get_position();
+
+    using Components::DimensionComponent;
+    DimensionComponent* dims = (DimensionComponent*)obj->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
+    if (dims != NULL) position.z += dims->get_camera_height();
+
+    // get target
+    Agent_state* a = ClientState::agent_list->get(this->target_id);
+    if (a == NULL || a->vox == NULL) return;
+    // update the model, in case it is out of date.
+    // not all models are update all the time
+    // later, use the was_updated flag (make sure it is being set correctly in agent vox update) TODO
+    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    Voxel_volume* vv = a->vox->get_part(this->target_part);
+    if (vv == NULL) return;
+    Vec3 dest = vv->get_center();
+
+    // laser animation
+    const float hitscan_effect_speed = 200.0f;
+    Vec3 v = vec3_sub(dest, position);
+    normalize_vector(&v);
+    v = vec3_scalar_mult(v, hitscan_effect_speed);
+    Animations::create_hitscan_effect(
+        position.x, position.y, position.z,
+        v.x, v.y, v.z
+    );
+
+    // destroy model
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    if (weapon != NULL)
+    {
+        int voxel[3] = { this->voxel_x, this->voxel_y, this->voxel_z };
+        destroy_object_voxel(
+            this->target_id, this->target_type, this->target_part,
+            voxel, weapon->attacker_properties.voxel_damage_radius
+        );
+    }
+
+    // todo -- sound event
+    //Sound::turret_shoot(pos.x, pos.y, t->spatial.camera_z(), 0,0,0);
 }
 
 inline void object_shot_terrain_StoC::handle()
