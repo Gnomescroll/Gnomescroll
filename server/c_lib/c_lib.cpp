@@ -117,6 +117,8 @@
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/server_state.cpp>
 
+#include <c_lib/main.cpp>
+
 //page size
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);

@@ -120,29 +120,18 @@ def build(bld):
     common_libraries = []
 
     ##attemping C++ build
-    #bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    
+    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
     bld(features='cxx cxxprogram',
-        source=['main.cpp',],
+        source=['run.cpp',],
         use=common_libraries+time_lib+['LUA'],
         lib=time_lib,
         target='run')
+    bld.env.CFLAGS.remove('-fvisibility=hidden')
 
-    #bld.env.CFLAGS.remove('-fvisibility=hidden')
-
-    '''
-    global target
-    target = "run"
+    bld.add_post_fun(install_bin)
     if '-DPRODUCTION=1' in bld.env.CFLAGS:
-        target = "gnomescroll_server"
-    bld(features='c cprogram pyembed',
-        #use=common_libraries+time_lib + ['c_lib'],
-        use=common_libraries,
-        source='run.c',
-        target=target)
-    '''
+        bld.add_post_fun(strip_symbols)
 
-    bld.add_post_fun(install_in_ext)
 
 def strip_symbols(ctx):
     OS = platform.system()
@@ -151,23 +140,42 @@ def strip_symbols(ctx):
         #subprocess.Popen(['strip', '-s', './ext/init_c_lib.so'])
         
 
-def install_in_ext(ctx):
+def install_bin(ctx):
     global out
-    global target
-    # Hax to install files into ./ext/, after build
+    OS = platform.system()
 
-    try:
-        run_target = ctx.env.cprogram_PATTERN % target
-        shutil.copy2(os.path.join(out, run_target), './' + run_target)
-    except:
+    try:    # installs binary to ./run and ./client
+        run_target = 'run'
+        if OS == 'Windows':
+            run_dest = 'run.exe'
+        else:
+            run_dest = 'run'
+        try:
+            shutil.copy2(os.path.join(out, run_target), './' + run_dest)
+        except Exception, e:
+            pass
+        if OS == 'Linux':
+            try:
+                shutil.copy2('./run', './client')
+            except Exception, e:
+                pass
+    except Exception, e:
+        print "error copying binaries to ./"
+        print e
         pass
-
+        
     try:
         c_lib_target = ctx.env.cshlib_PATTERN % 'c_lib'
         shutil.copy2(os.path.join(out, c_lib_target), './' + c_lib_target)
-    except:
+    except Exception, e:
         pass
-        #print "Error: cannot copy %s to %s" % (c_lib_target, os.path.join(out, c_lib_target))
+
+def ensure_dir(path):
+    try:
+        os.makedirs(path)
+    except OSError, e:
+        if e.errno != errno.EEXIST:
+            raise
 
 
 '''

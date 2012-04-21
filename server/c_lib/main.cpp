@@ -1,22 +1,18 @@
-#pragma once
+#include "main.hpp"
 
 #include <c_lib/common/time/physics_timer.hpp>
 
 namespace Main
 {
 
-//header
-void init();
-int run();
-
 //implementation
 
 void init()
 {
-	init_c_lib();
+    init_c_lib();
 
-	NetServer::init_server(127,0,0,1, Options::port);
-	ServerState::start_game();
+    NetServer::init_server(127,0,0,1, Options::port);
+    ServerState::start_game();
 
 }
 
@@ -54,36 +50,36 @@ void init()
 
 int run()
 {
-	//int tick = 0;
-	int tc;
+    //int tick = 0;
+    int tc;
     while (1)
     {
-    	tc = 0;
-    	while(1)
-    	{
-    		int ti = _GET_TICK();
-    		if(ti == 0 || tc > 1) break;
-			
-    		ServerState::server_tick();
+        tc = 0;
+        while(1)
+        {
+            int ti = _GET_TICK();
+            if(ti == 0 || tc > 1) break;
+            
+            ServerState::server_tick();
 
-    		tc++;
-			break;
-		}
+            tc++;
+            break;
+        }
 
-		if(tc > 0)
-		{
-    		NetServer::flush_to_net();
-		}
+        if(tc > 0)
+        {
+            NetServer::flush_to_net();
+        }
 
-		if(tc > 1)
-		{
-			printf("Warning:: %i ticks this frame", tc);
-		}
-		NetServer::dispatch_network_events();
+        if(tc > 1)
+        {
+            printf("Warning:: %i ticks this frame", tc);
+        }
+        NetServer::dispatch_network_events();
 
-		usleep(1000);
-	}
-	close_c_lib();
+        usleep(1000);
+    }
+    close_c_lib();
     return 0;
 }
 
