@@ -257,7 +257,8 @@ namespace ServerState
 
     void revoke_ownership(int agent_id)
     {
-        //owned_list->transfer_ownership(agent_id, NO_AGENT);
+        printf("revoking ownership\n");
+        Components::owner_component_list->revoke(agent_id);
     }
 
 }

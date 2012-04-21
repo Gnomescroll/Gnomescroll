@@ -61,11 +61,6 @@ typedef ComponentList<TeamComponent, COMPONENT_TEAM, MAX_TEAM_COMPONENTS>
 typedef ComponentList<IndexedTeamComponent, COMPONENT_INDEXED_TEAM, MAX_TEAM_COMPONENTS>
     IndexedTeamComponentList;
 
-/* Owner */
-const int MAX_OWNER_COMPONENTS = 4096;
-typedef ComponentList<OwnerComponent, COMPONENT_OWNER, MAX_OWNER_COMPONENTS>
-    OwnerComponentList;
-
 /* Voxel Model */
 const int MAX_VOXEL_MODEL_COMPONENTS = 1024;
 typedef ComponentList<VoxelModelComponent, COMPONENT_VOXEL_MODEL, MAX_VOXEL_MODEL_COMPONENTS>

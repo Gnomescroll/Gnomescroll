@@ -17,6 +17,7 @@
 #include <c_lib/entity/component/component_list.cpp>
 #include <c_lib/entity/component/lists.cpp>
 #include <c_lib/entity/component/lists/agent_spawner_list.cpp>
+#include <c_lib/entity/component/lists/owner_list.cpp>
 #include <c_lib/entity/component/main.cpp>
 #include <c_lib/entity/components.cpp>
 
