@@ -43,9 +43,10 @@ static void set_mob_bomb_properties(Object* object)
     health->max_health = MONSTER_BOMB_MAX_HEALTH;
 
     using Components::MotionTargetingComponent;
-    MotionTargetingComponent* target = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
-    target->target_acquisition_probability = 1.0f;
-    target->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
+    motion->target_acquisition_probability = 1.0f;
+    motion->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
+    motion->speed = MONSTER_BOMB_SPEED;
 
     #if DC_SERVER
     using Components::ExplosionComponent;
@@ -121,20 +122,20 @@ void tick_mob_bomb(Object* object)
     Vec3 position = physics->get_position();
     
     using Components::MotionTargetingComponent;
-    MotionTargetingComponent* target = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
 
     // acquire target
-    target->lock_target(position);
-    if (target->target_type == OBJECT_NONE) return;
+    motion->lock_target(position);
+    if (motion->target_type == OBJECT_NONE) return;
 
     // face the target
-    target->orient_to_target(position);    
+    motion->orient_to_target(position);    
     Vec3 angles = physics->get_angles();
-    angles.x = vec3_to_theta(target->target_direction); // only rotate in x
+    angles.x = vec3_to_theta(motion->target_direction); // only rotate in x
     physics->set_angles(angles);
 
     // move towards target
-    position = vec3_add(position, vec3_scalar_mult(target->target_direction, MONSTER_BOMB_SPEED));
+    position = vec3_add(position, vec3_scalar_mult(motion->target_direction, motion->speed));
     physics->set_position(position); // move slime position by velocity
 
     #if DC_SERVER

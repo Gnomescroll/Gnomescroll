@@ -9,6 +9,12 @@ class MotionTargetingComponent: public TargetingComponent
 {
     public:
 
+        Vec3 destination;
+        bool at_destination;
+        bool en_route;
+        int ticks_to_destination;
+        float speed;
+
         void lock_target(Vec3 camera_position);
         void lock_target(Vec3 camera_position, int team);
 
