@@ -18,7 +18,7 @@
 #include <c_lib/common/common.cpp>
 #include <c_lib/common/quicksort.hpp>
 #include <c_lib/common/files.cpp>
-
+ 
 // logging
 #include <c_lib/common/logger.cpp>
 
@@ -37,12 +37,12 @@
 #include <c_lib/t_map/server/map_manager_class.cpp>
 #include <c_lib/t_map/server/manager.cpp>
 #include <c_lib/t_map/server/map_chunk_history.cpp>
-
+ 
 //ray tracing
 #include <c_lib/ray_trace/ray_trace.cpp>
 #include <c_lib/ray_trace/hitscan.cpp>
 #include <c_lib/ray_trace/handlers.cpp>
-
+ 
 //physics
 #include <c_lib/physics/verlet.cpp>
 #include <c_lib/physics/verlet_particle.cpp>
@@ -131,6 +131,8 @@ int init_c_lib()
     }
     Log::init();
 
+    LUA::load_options(); //load game options
+    
     //printf("System page size= %li \n", sysconf(_SC_PAGESIZE) );
     printf("Server init\n");
     srand(time(NULL));
