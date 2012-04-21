@@ -25,6 +25,7 @@ void turret_shot_object(object_shot_object_StoC* msg)
     Agent_state* a = ClientState::agent_list->get(msg->target_id);
     if (a == NULL || a->vox == NULL) return;
     a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);   // TODO: why is model being updated?
+                                                                        // (to match networked state. not all skeletons will be current at this point)
     Voxel_volume* vv = a->vox->get_part(msg->target_part);
     if (vv == NULL) return;
 
