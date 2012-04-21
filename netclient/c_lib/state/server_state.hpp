@@ -1,5 +1,5 @@
 #pragma once
-#ifdef DC_SERVER
+#if DC_SERVER
 
 #include <c_lib/agent/agent_list.hpp>
 #include <c_lib/items/items.hpp>

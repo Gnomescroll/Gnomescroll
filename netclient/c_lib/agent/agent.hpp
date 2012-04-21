@@ -8,7 +8,7 @@
 #include <c_lib/agent/agent_vox.hpp>
 #include <c_lib/agent/agent_weapons.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/agent/client/agent_event.hpp>
 #endif
 
@@ -77,7 +77,7 @@ class Agent_state {
         class Agent_weapons weapons;
 
         class Voxel_model* vox;
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         Agent_event event;
         #endif
 
@@ -118,7 +118,9 @@ class Agent_state {
         void draw();
         void update_model();
         void update_legs();
+        #if DC_CLIENT
         bool is_you();
+        #endif
 
         bool point_can_cast(float x, float y, float z, float max_dist);  // checks if a point can raycast to some area of the agent box, or if the terrain prevents it
 

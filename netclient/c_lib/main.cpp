@@ -114,6 +114,7 @@ int run()
         }
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
+        ClientState::update_for_draw();
         Animations::create_mining_laser_particle();
 
         //if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
@@ -159,8 +160,6 @@ int run()
         poll_mouse();
 
         frame_graph->frame_stage(2); // call draw functions
-
-        ClientState::update_for_draw();
 
         /*
             Start World Projetion

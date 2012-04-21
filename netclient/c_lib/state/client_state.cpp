@@ -150,13 +150,11 @@ namespace ClientState {
         Particles::textured_minivox_list->tick();
         Particles::billboard_text_list->tick();
         Particles::billboard_text_hud_list->tick();
-
-        //object_list->tick();
     }
 
     void update_for_draw()
     {
-        //object_list->update();  // model updates
+        agent_list->update_models();
     }
 
     void send_identify_packet(char* name)

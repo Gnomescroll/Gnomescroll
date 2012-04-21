@@ -215,6 +215,7 @@ inline void object_shot_object_StoC::handle()
     // update the model, in case it is out of date.
     // not all models are update all the time
     // later, use the was_updated flag (make sure it is being set correctly in agent vox update) TODO
+    a->vox->was_updated = false;
     a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
     Voxel_volume* vv = a->vox->get_part(this->target_part);
     if (vv == NULL) return;

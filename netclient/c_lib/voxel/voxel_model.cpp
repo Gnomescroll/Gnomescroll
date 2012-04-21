@@ -7,7 +7,7 @@
 #include <common/random.h>
 
 // forward declarations
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/voxel/voxel_render.hpp>
 namespace ClientState {
     extern Voxel_render_list* voxel_render_list;
@@ -15,7 +15,7 @@ namespace ClientState {
     int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
 }
 #endif
-#ifdef DC_SERVER
+#if DC_SERVER
 namespace ServerState {
     extern Voxel_hitscan_list* voxel_hitscan_list;
 }
@@ -311,9 +311,9 @@ void Voxel_model::init_parts(int id, ObjectType type)
         vv->init(x,y,z, vp->vox_size);
         vv->set_hitscan_properties(id, type, i);
 
-        //#ifdef DC_CLIENT
+        //#if DC_CLIENT
         this->set_part_color(i);
-        #ifdef DC_CLIENT
+        #if DC_CLIENT
         ClientState::voxel_render_list->register_voxel_volume(vv);
         #endif
     }
@@ -321,7 +321,7 @@ void Voxel_model::init_parts(int id, ObjectType type)
 
 void Voxel_model::update_team_color(int team)
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     unsigned char team_r, team_g, team_b;
     int ret = ClientState::ctf->get_team_color(team, &team_r, &team_g, &team_b);
     if (ret) return;
@@ -332,7 +332,7 @@ void Voxel_model::update_team_color(int team)
 
 void Voxel_model::set_part_team_color(int part_num, unsigned char team_r, unsigned char team_g, unsigned char team_b)
 {   // VERIFIED
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
     // if team base color is 0,0,0 abort. this means team base color was not set. 0,0,0 is reserved for empty voxels
     if (vp->colors.team_r == 0
@@ -378,7 +378,7 @@ void Voxel_model::set_part_team_color(int part_num, unsigned char team_r, unsign
 
 void Voxel_model::set_part_color(int part_num)
 {
-    //#ifdef DC_CLIENT
+    //#if DC_CLIENT
     VoxPart *vp = vox_dat->vox_part[part_num];
     Voxel_volume* vv = &(this->vv[part_num]);
     int x,y,z;

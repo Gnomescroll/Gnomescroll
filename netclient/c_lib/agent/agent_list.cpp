@@ -1,6 +1,6 @@
 #include "agent_list.hpp"
 
-#ifdef DC_SERVER
+#if DC_SERVER
     #include <c_lib/t_map/server/manager.hpp>
 #endif
 #include <c_lib/physics/common.hpp>
@@ -16,7 +16,7 @@ const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 
 void Agent_list::update_map_manager_positions()
 {
-#ifdef DC_SERVER
+#if DC_SERVER
     Agent_state* agent;
     for(int i=0; i<n_max; i++)
     {
@@ -213,7 +213,7 @@ void Agent_list::check_if_at_base()
     }
 }
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 void Agent_list::update_team_colors()
 {
     if (ClientState::ctf == NULL) return;

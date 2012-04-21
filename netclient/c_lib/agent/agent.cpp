@@ -1,6 +1,6 @@
 #include "agent.hpp"
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/compat_gl.h>
 #endif
 
@@ -9,7 +9,7 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/agent_physics.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/agent/client/agent_draw.hpp>
 #include <c_lib/agent/client/player_agent.hpp>
 #endif
@@ -62,15 +62,13 @@ Vec3 AgentState::forward_vector()
     return vec3_init(f[0], f[1], f[2]);
 }
 
+#if DC_CLIENT
 bool Agent_state::is_you()
 {
-    bool is = false;
-    #ifdef DC_CLIENT
-    if (id == ClientState::playerAgent_state.agent_id)
-        is = true;
-    #endif
-    return is;
+    if (id == ClientState::playerAgent_state.agent_id) return true;
+    return false;
 }
+#endif
 
 void Agent_state::teleport(float x,float y,float z)
 {
@@ -137,7 +135,7 @@ void Agent_state::tick()
         }
     }
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     const float Z_DEATH_ZONE = -200.0f;
     if (!this->status.dead && this->s.z < Z_DEATH_ZONE)
         this->status.die(this->id, OBJECT_AGENT, DEATH_BELOW_MAP);
@@ -361,7 +359,7 @@ void Agent_state::handle_control_state(int seq, int cs, float theta, float phi) 
     //printf("2 seq: %i \n", seq);
     //printf("2 CS_seq: %i \n", CS_seq);
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     
     if (client_id != -1) 
     {
@@ -432,7 +430,7 @@ void Agent_state::handle_state_snapshot(int seq, float theta, float phi, float x
 
     s = state_snapshot;
 
-    //#ifdef DC_CLIENT
+    //#if DC_CLIENT
     //AgentDraw::add_snapshot_to_history(this);
     //#endif
 
@@ -520,7 +518,7 @@ void Agent_state::init_vox()
 Agent_state::Agent_state(int id)
 :
 id (id), type(OBJECT_AGENT), status(this), weapons(this)
-#ifdef DC_CLIENT
+#if DC_CLIENT
 , event(this)
 #endif
 {
@@ -552,7 +550,7 @@ id (id), type(OBJECT_AGENT), status(this), weapons(this)
     // add to NetServer pool
     //NetServer::assign_agent_to_client(this->client_id, this);
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
@@ -566,7 +564,7 @@ id (id), type(OBJECT_AGENT), status(this), weapons(this)
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
 id(id), type(OBJECT_AGENT), status(this), weapons(this)
-#ifdef DC_CLIENT
+#if DC_CLIENT
 , event(this)
 #endif
 {
@@ -596,7 +594,7 @@ id(id), type(OBJECT_AGENT), status(this), weapons(this)
 
     client_id = id;
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;
@@ -609,7 +607,7 @@ id(id), type(OBJECT_AGENT), status(this), weapons(this)
 
 Agent_state::~Agent_state()
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     agent_destroy_StoC msg;
     msg.id = id;
     msg.broadcast();
@@ -698,8 +696,8 @@ int Agent_state::get_facing_block_type()
     Vec3 f;
     float x,y,z;
     
-#ifdef DC_CLIENT
-    if (ClientState::playerAgent_state.you == this)
+    #if DC_CLIENT
+    if (this->is_you())
     {   // if you, use camera / player agent state instead.
         f = agent_camera->forward_vector();
         x = ClientState::playerAgent_state.camera_state.x;
@@ -707,7 +705,7 @@ int Agent_state::get_facing_block_type()
         z = ClientState::playerAgent_state.camera_z();
     }
     else
-#endif
+    #endif
     {
         f = this->s.forward_vector();
         x = this->s.x;

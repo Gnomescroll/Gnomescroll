@@ -55,7 +55,7 @@ options.ping_update_interval = 500
 
 -- sound settings --
 options.sound = true
-options.sfx = 100
+options.sfx = 50
 options.music = 100
 
 
