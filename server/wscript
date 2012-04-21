@@ -46,48 +46,61 @@ def get_version():
 def options(opt):
     opt.load('compiler_c compiler_cxx')
 
-def configure(conf, add_flags=[], rm_flags=[], centos=False):
+def configure(conf, add_flags=[], rm_flags=[]):
     OS = platform.system()
     conf.env.os = OS
 
-    if centos:
-        conf.check_tool('gcc44')
-        conf.check_tool('g++44')
-    else:
-        conf.check_tool('gcc')
-        conf.check_tool('g++')
+    #conf.check_tool('gcc')
+    conf.check_tool('g++')
 
-    conf.load('compiler_c compiler_cxx')
+    #conf.load('compiler_c compiler_cxx')
 
-    conf.cc_add_flags()     #"-g"
-    conf.link_add_flags()   #"-g"
+    #conf.cc_add_flags()     #"-g"
+    #conf.link_add_flags()   #"-g"
 
+    cxxflags = []
     if OS == 'Windows':
-        cflags = ['-g', '-fpermissive', '-static-libgcc']
+        cxxflags += ['-g', '-fpermissive', '-static-libgcc']
     else:
-        cflags = ['-ggdb','-fPIC']
+        cxxflags += ['-ggdb','-fPIC']
+
+    if OS == 'Darwin':
+        cxxflags += ['-s']
 
     version = get_version()
 
-    extra_options = ['-Wall','-DDC_SERVER=1', '-fno-exceptions', '-Winline', '-Wno-switch-enum', '-Wno-switch', '-DGNOMESCROLL_DSO_EXPORTS=1', '-DGNOMESCROLL_DSO=1', '-DDC_VERSION=%d' % (version,)]
-    cflags += extra_options
+    extra_options = [
+        '-Wall',
+        '-DDC_SERVER=1',
+         '-fno-exceptions',
+         '-Winline',
+         '-Wno-switch-enum',
+         '-Wno-switch',
+         '-DGNOMESCROLL_DSO_EXPORTS=1',
+         '-DGNOMESCROLL_DSO=1',
+         '-DDC_VERSION=%d' % (version,)
+    ]
+    
+    cxxflags += extra_options
 
-    cflags += [c for c in add_flags if c not in cflags]
-    cflags = [c for c in cflags if c not in rm_flags]
+    cxxflags += [c for c in add_flags if c not in cxxflags]
+    cxxflags = [c for c in cxxflags if c not in rm_flags]
 
-    conf.env.append_value('CFLAGS', cflags)
-    conf.env.append_value('CXXFLAGS', cflags)
+    conf.env.append_value('CXXFLAGS', cxxflags)
 
-    conf.env.append_value("LINKFLAGS", "-lz")
+    #conf.env.append_value("LINKFLAGS", "-lz") ??
 
-    if OS == 'Linux':
-        conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
-
+    #    #'-Wl', '--export-dynamic'  to export symbols from exe to shared libaries
     if OS == 'Windows':
-        pass
+        conf.env.append_value("LINKFLAGS", "-lmingw32")
         conf.env.append_value("LINKFLAGS", "-lwsock32")
         conf.env.append_value("LINKFLAGS", "-lws2_32")
         conf.env.append_value("LINKFLAGS", "-lwinmm")
+
+    if OS == 'Linux':
+        conf.env.append_value("LINKFLAGS", "-lrt") #64 bit support
+    if OS != 'Windows':
+        conf.env.append_value("LINKFLAGS", "-rdynamic") #64 bit support
 
     conf.check(header_name='lua.h',
            lib='luajit-5.1', #'lua5.1',
@@ -102,11 +115,8 @@ def configure(conf, add_flags=[], rm_flags=[], centos=False):
                 #use="noise",
                 #mandatory=True)
 
-    conf.env.INCLUDES = ['.', 'c_lib', 'net_lib', '/usr/local/include']
+    conf.env.INCLUDES = ['.', 'c_lib', 'net_lib', '/usr/local/include'] + ['/usr/include']
     conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
-
-    if OS == 'Darwin':
-        conf.env.ARCH = ['x86_64', 'i386']
 
 def build(bld):
     OS = platform.system()
@@ -120,16 +130,18 @@ def build(bld):
     common_libraries = []
 
     ##attemping C++ build
-    bld.env.CFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
-    bld(features='cxx cxxprogram',
-        source=['run.cpp',],
-        use=common_libraries+time_lib+['LUA'],
-        lib=time_lib,
-        target='run')
-    bld.env.CFLAGS.remove('-fvisibility=hidden')
+    bld.env.CXXFLAGS.append('-fvisibility=hidden')    #hide most dso symbols for libc_lib
+    bld(
+        features = 'cxx cxxprogram',
+        source = ['run.cpp',],
+        use = common_libraries+time_lib+['LUA'],
+        lib = time_lib,
+        target = 'run'
+    )
+    bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
         bld.add_post_fun(strip_symbols)
 
 
@@ -156,7 +168,7 @@ def install_bin(ctx):
             pass
         if OS == 'Linux':
             try:
-                shutil.copy2('./run', './client')
+                shutil.copy2('./run', './server')
             except Exception, e:
                 pass
     except Exception, e:
@@ -204,10 +216,6 @@ class linux_production_ctx(ConfigurationContext):
 class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
-        
-#class centos64_production_ctx(ConfigurationContext):
-    #cmd = 'centos64'
-    #fun = 'centos64'
 
 class multicore_ctx(ConfigurationContext):
     cmd = 'multicore'
@@ -226,9 +234,6 @@ def linux(ctx):
 def linux64(ctx):
     production(ctx, add=['-m64', '-shared-libgcc'])
     
-#def centos64(ctx):
-    #production(ctx, add=['-m64', '-shared-libgcc'], centos=True)
-
 def optimized(ctx):
     configure(ctx)
     ctx.env.CFLAGS.append('-O3')
@@ -254,6 +259,6 @@ class production_ctx(ConfigurationContext):
     cmd = 'production'
     fun = 'production'
 
-def production(ctx, add=[], rm=[], centos=False):
-    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'], centos=centos)
+def production(ctx, add=[], rm=[]):
+    configure(ctx, add_flags=add+['-DPRODUCTION=1', '-O3', '-Winline', '-O3'], rm_flags=rm+['-ggdb', '-g'])
 

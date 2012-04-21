@@ -256,7 +256,7 @@ def build(bld):
     bld.env.CXXFLAGS.remove('-fvisibility=hidden')
 
     bld.add_post_fun(install_bin)
-    if '-DPRODUCTION=1' in bld.env.CFLAGS:
+    if '-DPRODUCTION=1' in bld.env.CXXFLAGS:
         bld.add_post_fun(strip_symbols)
 
 
