@@ -267,7 +267,6 @@ void server_tick_mob_robot_box(Object* object)
 #if DC_CLIENT
 void client_tick_mob_robot_box(Object* object)
 {
-    ////return;
     //if (this->locked_on_target)
     //{   // target locked
         //if (this->target_type != OBJECT_AGENT) return;    // TODO -- more objects
