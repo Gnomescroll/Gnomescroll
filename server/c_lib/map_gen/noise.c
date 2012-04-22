@@ -3,6 +3,8 @@
 
 #include "noise_util.cpp"
 
+float* noisemap = NULL;
+
 static int heightmap_tile = 0;
 
 int seed_noise(int seed) {
@@ -380,19 +382,18 @@ void set_noise_scale(float xscale, float yscale, float zscale) {
     printf("Noise scale: %0.2f %0.2f %0.2f\n", xnoise_scale, ynoise_scale, znoise_scale);
 }
 
-float* noise_init(int x, int y, int z) {
+float* noise_init(int x, int y, int z)
+{
     printf("Initializing noisemap with size %d %d %d\n", x,y,z);
-    if (! noisemap_inited) {
-        noisemap = (float*)malloc(sizeof(float)*x*y*z);
-        noisemap_inited = 1;
-    }
+    static inited = 0;
+    if (inited++) return noisemap;
+    noisemap = (float*)malloc(sizeof(float)*x*y*z);
     return noisemap;
 }
 
-void noise_destroy() {
-    if (noisemap != NULL) {
-        free(noisemap);
-    }
+void noise_destroy()
+{
+    if (noisemap != NULL) free(noisemap);
 }
 
 #include "perlin.c"
