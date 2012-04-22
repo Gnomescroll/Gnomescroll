@@ -40,6 +40,11 @@ class ColoredVoxelComponentList:
 class TexturedVoxelComponentList:
     public CallableComponentList<TexturedVoxelComponent, COMPONENT_TEXTURED_VOXEL, MAX_RENDERABLE_COMPONENTS>
 {};
+
+/* Animations */
+const int MAX_ANIMATION_COMPONENTS = 1024;
+typedef ComponentList<AnimationComponent, COMPONENT_VOXEL_ANIMATION, MAX_ANIMATION_COMPONENTS>
+    AnimationComponentList;
 #endif
 
 /* Pickup */

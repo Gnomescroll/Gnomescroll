@@ -15,6 +15,8 @@
 #include <c_lib/entity/components/draw/voxel.hpp>
 #include <c_lib/entity/components/draw/colored_voxel.hpp>
 #include <c_lib/entity/components/draw/textured_voxel.hpp>
+
+#include <c_lib/entity/components/animation.hpp>
 #endif
 
 #include <c_lib/entity/components/pickup.hpp>

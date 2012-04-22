@@ -29,6 +29,8 @@ StackableComponentList* stackable_component_list = NULL;
 BillboardSpriteComponentList* billboard_sprite_component_list = NULL;
 ColoredVoxelComponentList* colored_voxel_component_list = NULL;
 TexturedVoxelComponentList* textured_voxel_component_list = NULL;
+
+AnimationComponentList* animation_component_list = NULL;
 #endif
 
 PickupComponentList* pickup_component_list = NULL;
@@ -84,6 +86,9 @@ Component* get_switch(ComponentType type)
             return colored_voxel_component_list->subscribe();
         case COMPONENT_TEXTURED_VOXEL:
             return textured_voxel_component_list->subscribe();
+
+        case COMPONENT_VOXEL_ANIMATION:
+            return animation_component_list->subscribe();
         #endif
 
         case COMPONENT_PICKUP:
@@ -167,6 +172,10 @@ void release_switch(Component* component)
         case COMPONENT_TEXTURED_VOXEL:
             textured_voxel_component_list->unsubscribe((TexturedVoxelComponent*)component);
             break;
+
+        case COMPONENT_VOXEL_ANIMATION:
+            animation_component_list->unsubscribe((AnimationComponent*)component);
+            break;
         #endif
 
         case COMPONENT_PICKUP:
@@ -243,6 +252,8 @@ void init()
     billboard_sprite_component_list = new BillboardSpriteComponentList;
     colored_voxel_component_list = new ColoredVoxelComponentList;
     textured_voxel_component_list = new TexturedVoxelComponentList;
+
+    animation_component_list = new AnimationComponentList;
     #endif
     
     pickup_component_list = new PickupComponentList;
@@ -286,6 +297,8 @@ void teardown()
     if (billboard_sprite_component_list != NULL) delete billboard_sprite_component_list;
     if (colored_voxel_component_list != NULL) delete colored_voxel_component_list;
     if (textured_voxel_component_list != NULL) delete textured_voxel_component_list;
+
+    if (animation_component_list != NULL) delete animation_component_list;
     #endif
 
     if (pickup_component_list != NULL) delete pickup_component_list;

@@ -32,6 +32,8 @@ extern StackableComponentList* stackable_component_list;
 extern BillboardSpriteComponentList* billboard_sprite_component_list;
 extern ColoredVoxelComponentList* colored_voxel_component_list;
 extern TexturedVoxelComponentList* textured_voxel_component_list;
+
+extern AnimationComponentList* animation_component_list;
 #endif
 
 extern PickupComponentList* pickup_component_list;
