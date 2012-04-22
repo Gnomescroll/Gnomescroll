@@ -14,6 +14,29 @@
 namespace Objects
 {
 
+//static void init_agent_spawner()
+//{
+    //ObjectData* data = object_data->get(OBJECT_AGENT_SPAWNER);
+
+    //#if DC_SERVER
+    //int n_components = 7;
+    //#endif
+    //#if DC_CLIENT
+    //int n_components = 8;
+    //#endif
+    //data->set_components(n_components);
+
+    //add_component_to_object(data, COMPONENT_POSITION_CHANGED);
+
+    //// data repository
+    //// on app init, init repo
+    //// call inits for all the objects
+    //// will allocate the component type buffer
+    //// attach types to component type buffer
+
+    //// then, using repo data, preallocate all Object::component buffers
+//}
+
 static void set_agent_spawner_properties(Object* object)
 {
     #if DC_SERVER

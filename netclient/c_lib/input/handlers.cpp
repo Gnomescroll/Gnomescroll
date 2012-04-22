@@ -295,7 +295,7 @@ void inventory_key_down_handler(SDL_Event* event)
 {
     switch (event->key.keysym.sym)
     {
-        case SDLK_i:
+        case SDLK_e:
         case SDLK_ESCAPE:
             toggle_inventory();
             break;
@@ -671,7 +671,7 @@ void key_down_handler(SDL_Event* event)
                 toggle_graphs();
                 break;
 
-            case SDLK_i:
+            case SDLK_e:
                 toggle_inventory();
                 break;
 
