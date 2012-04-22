@@ -161,8 +161,7 @@ void tick_mob_bomb(Object* object)
     // send packet if physical state changed
     if (physics->changed) object->broadcastState();
     else
-    {
-        // send packet once per second anyway
+    {   // send packet once per second anyway
         using Components::RateLimitComponent;
         RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
         if (limiter->allowed()) object->broadcastState();
