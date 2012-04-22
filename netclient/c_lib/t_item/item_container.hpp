@@ -5,7 +5,7 @@ namespace t_item
 {
 
 
-typedef int ItemId ;
+typedef int ItemId;
 
 const int EMPTY_SLOT = 0xffff;
 

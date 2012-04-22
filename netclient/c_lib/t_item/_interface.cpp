@@ -8,7 +8,9 @@
 
 #include <c_lib/t_item/net/StoC.hpp>
 
+#if DC_CLIENT
 #include <c_lib/input/handlers.hpp>
+#endif
 
 namespace t_item
 {
@@ -50,10 +52,12 @@ void tick()
 
 void draw()
 {
+    #if DC_CLIENT
     free_item_list->draw();
 
     //if (input_state.inventory)
         //draw_inventory();
+    #endif
 }
 
 }
