@@ -2,7 +2,7 @@
 
 
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/t_item/_interface.hpp>
 
 //#include <c_lib/animations/insect_mob.hpp>
@@ -68,8 +68,8 @@ inline void item_create_StoC::handle()
 
 inline void assign_agent_inventory_StoC::handle()
 {
-	t_item::player_inventory_id = inventory_id;
-	printf("Player %i assigned inventory id %i \n", agent_id, inventory_id);
+    t_item::player_inventory_id = inventory_id;
+    printf("Player %i assigned inventory id %i \n", agent_id, inventory_id);
 
     ItemContainer* ic = item_container_list->create(inventory_id);
     ic->init_agent_inventory();

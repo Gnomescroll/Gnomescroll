@@ -8,7 +8,7 @@ namespace t_item
 
 void Free_item::die()
 {
-#ifdef DC_SERVER
+#if DC_SERVER
     class free_item_destroy_StoC msg;
     msg.id = this->id;
     msg.type = this->type;

@@ -43,7 +43,7 @@ void state_teardown()
 void tick()
 {
     free_item_list->tick();
-#ifdef DC_SERVER
+#if DC_SERVER
     check_item_pickups();
 #endif
 }
@@ -61,7 +61,7 @@ void draw()
 /*
 CLIENT
 */
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 namespace t_item
 {
@@ -74,7 +74,7 @@ namespace t_item
 /*
 SERVER
 */
-#ifdef DC_SERVER
+#if DC_SERVER
 
 namespace t_item
 {
@@ -111,7 +111,7 @@ void delete_agent_inventory(int agent_id)
 
 void check_item_pickups()
 {
-#ifdef DC_SERVER
+#if DC_SERVER
     for (int i=0; i<free_item_list->n_max; i++)
     {
         if (free_item_list->a[i] == NULL) continue;

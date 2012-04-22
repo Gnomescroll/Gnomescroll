@@ -3,7 +3,7 @@
 /*
     Client
 */
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 #include <c_lib/t_item/_interface.cpp>
 
@@ -23,7 +23,7 @@
     Server
 */
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 #include <c_lib/t_item/_interface.cpp>
 

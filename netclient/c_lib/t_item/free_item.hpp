@@ -1,11 +1,11 @@
 #pragma once
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <c_lib/common/gl_assert.hpp>
 #include <c_lib/t_item/client/texture.hpp>
 #endif
 
-#ifdef DC_SERVER
+#if DC_SERVER
     #include <c_lib/t_item/net/StoC.hpp>
     #include <c_lib/t_item/item_container.hpp>
 #endif
@@ -67,7 +67,7 @@ class Free_item //: public VerletComponent
 
 void Free_item::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     const float scale = 0.25;
     const float h = 0.35;
 
@@ -118,7 +118,7 @@ void Free_item::draw()
 
 #include <c_lib/template/object_list.hpp>
 
-#ifdef DC_SERVER
+#if DC_SERVER
 #include <c_lib/state/server_state.hpp>
 #endif
 
@@ -142,7 +142,7 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 
 void Free_item_list::draw()
 {
-#ifdef DC_CLIENT
+#if DC_CLIENT
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
@@ -179,7 +179,7 @@ void Free_item_list::tick()
         free_item->tick();
         if (free_item->ttl <= 0)
         {
-            #ifdef DC_SERVER
+            #if DC_SERVER
                 free_item->die();
                 this->destroy(free_item->id);
             #endif

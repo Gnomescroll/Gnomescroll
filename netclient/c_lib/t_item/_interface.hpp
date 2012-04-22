@@ -28,7 +28,7 @@ void create_free_item(int item_type,
 /*
 CLIENT
 */
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 namespace t_item
 {
@@ -44,7 +44,7 @@ namespace t_item
 /*
 SERVER
 */
-#ifdef DC_SERVER
+#if DC_SERVER
 
 namespace t_item
 {
