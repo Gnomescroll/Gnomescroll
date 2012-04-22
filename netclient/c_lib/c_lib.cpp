@@ -155,6 +155,9 @@
 /* items */
 #include <c_lib/t_item/_include.hpp>
 
+/* hud */
+#include <c_lib/t_hud/_include.hpp>
+
 /* camera */
 #include <c_lib/camera/camera.cpp>
 #include <c_lib/camera/fulstrum_test.cpp>
@@ -256,6 +259,8 @@ int init_c_lib() {
     t_item::state_init();
     t_item::draw_init();
 
+    t_hud::draw_init();
+
     t_mech::draw_init();
     //t_mech::state_init();
 
@@ -306,6 +311,7 @@ void close_c_lib() {
     t_item::state_teardown();
     t_item::draw_teardown();
 
+    t_hud::draw_teardown();
     t_mech::draw_teardown();
     //t_mech::state_teardown();
 
