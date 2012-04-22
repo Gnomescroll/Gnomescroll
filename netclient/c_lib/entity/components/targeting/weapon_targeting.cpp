@@ -45,13 +45,16 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
     if (this->target_type == OBJECT_NONE) return false;
     if (this->target_type != OBJECT_AGENT) return false;    // todo -- target all types
     
-    Vec3 direction;
-    if (this->accuracy_bias)    // apply bias
-        direction = vec3_bias_random(this->target_direction, this->accuracy_bias);
-
     // get target
     Agent_state* target = STATE::agent_list->get(this->target_id);
     if (target == NULL) return false;
+
+    // aim at target
+    this->orient_to_random_target_part(camera_position);
+    Vec3 direction = this->target_direction;
+    if (this->uses_bias)    // apply bias
+        direction = vec3_bias_random(this->target_direction, this->accuracy_bias);
+
     Hitscan::HitscanTarget t = Hitscan::shoot_at_agent(
         camera_position, direction, this->object->id, this->object->type,
         target, this->sight_range
@@ -69,6 +72,18 @@ bool WeaponTargetingComponent::fire_on_target(Vec3 camera_position, int team)
     
     if (t.hitscan == Hitscan::HITSCAN_TARGET_VOXEL) return true;
     return false;
+}
+
+void WeaponTargetingComponent::orient_to_random_target_part(Vec3 camera_position)
+{
+    if (this->target_type == OBJECT_NONE) return;
+    if (this->target_type != OBJECT_AGENT) return;  //  todo -- target all types
+    Agent_state* target = STATE::agent_list->get(this->target_id);
+    if (target == NULL || target->vox == NULL) return;
+    int part = randrange(0, target->vox->n_parts-1);
+    Vec3 target_position = target->vox->get_center(part);
+    this->target_direction = vec3_sub(target_position, camera_position);
+    normalize_vector(&this->target_direction);
 }
 
 void WeaponTargetingComponent::broadcast_target_choice()

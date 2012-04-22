@@ -193,6 +193,7 @@ inline void object_picked_up_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
+    printf("shot object\n");
     if (this->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
 
     // get firing object
@@ -249,6 +250,7 @@ inline void object_shot_object_StoC::handle()
 
 inline void object_shot_terrain_StoC::handle()
 {
+    printf("shot terrain\n");
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
@@ -283,6 +285,7 @@ inline void object_shot_terrain_StoC::handle()
 
 inline void object_shot_nothing_StoC::handle()
 {
+    printf("shot nothing\n");
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
@@ -312,10 +315,6 @@ inline void object_choose_target_StoC::handle()
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
-    using Components::MotionTargetingComponent;
-    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
-    if (motion != NULL) motion->en_route = false;  // cancel all motion
-
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
     if (weapon != NULL)
@@ -324,6 +323,10 @@ inline void object_choose_target_StoC::handle()
         weapon->target_type = (ObjectType)this->target_type;
         weapon->locked_on_target = true;   // flag target lock
     }
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+    if (motion != NULL) motion->en_route = false;  // cancel all motion
 }
 
 inline void object_choose_destination_StoC::handle()

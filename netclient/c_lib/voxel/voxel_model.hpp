@@ -63,6 +63,8 @@ class Voxel_model
 
         Voxel_volume* vv;
 
+        Vec3 get_center();
+        Vec3 get_center(int part);
         Voxel_volume* get_part(int part);
 
         float largest_radius(); // temporary, until real body collision detection

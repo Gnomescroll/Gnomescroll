@@ -863,8 +863,7 @@ void Agent_state::update_model()
     {   // your agent
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
-        // dont update here, only update on demand (e.g. an object_shot_object packet)
-        //this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
+        this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
         return;
     }
 

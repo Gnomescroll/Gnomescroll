@@ -558,6 +558,19 @@ Voxel_volume* Voxel_model::get_part(int part)
     return &this->vv[part];
 }
 
+Vec3 Voxel_model::get_center()
+{
+    assert(this->n_parts > 0);
+    return this->get_part(0)->get_center();
+}
+
+Vec3 Voxel_model::get_center(int part)
+{
+    assert(part < this->n_parts);
+    assert(part >= 0);
+    return this->get_part(part)->get_center();
+}
+
 Affine* Voxel_model::get_node(int node)
 {
     if (node < 0 || node >= this->n_skeleton_nodes)

@@ -12,6 +12,7 @@ class WeaponTargetingComponent: public TargetingComponent
         int fire_rate_limit;
         Hitscan::AttackerProperties attacker_properties;
 
+        bool uses_bias;
         float accuracy_bias;
         bool attacks_enemies;
         bool attack_at_random;
@@ -34,6 +35,8 @@ class WeaponTargetingComponent: public TargetingComponent
         bool fire_on_target(Vec3 camera_position, int team);
         bool fire_on_target(Vec3 camera_position);
 
+        void orient_to_random_target_part(Vec3 camera_position);
+        
         void broadcast_target_choice();
 
         void lock_target(Vec3 camera_position);
@@ -41,7 +44,7 @@ class WeaponTargetingComponent: public TargetingComponent
 
     WeaponTargetingComponent()
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),
-    fire_tick(0), fire_rate_limit(1), accuracy_bias(0.0f),
+    fire_tick(0), fire_rate_limit(1), uses_bias(false), accuracy_bias(0.0f),
     attacks_enemies(true), attack_at_random(true)
     {}
 };

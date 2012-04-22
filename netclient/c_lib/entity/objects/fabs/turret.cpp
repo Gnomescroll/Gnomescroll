@@ -50,6 +50,7 @@ static void set_turret_properties(Object* object)
     WeaponTargetingComponent* target = (WeaponTargetingComponent*)add_component_to_object(object, COMPONENT_WEAPON_TARGETING);
     target->target_acquisition_probability = TURRET_TARGET_ACQUISITION_PROBABILITY;
     target->fire_rate_limit = TURRET_FIRE_RATE_LIMIT;
+    target->uses_bias = TURRET_USES_BIAS;
     target->accuracy_bias = TURRET_ACCURACY_BIAS;
     target->sight_range = TURRET_SIGHT_RANGE;
     target->attacks_enemies = TURRET_ATTACK_ONLY_ENEMIES;
