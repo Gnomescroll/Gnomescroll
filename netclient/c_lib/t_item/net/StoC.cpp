@@ -59,7 +59,8 @@ inline void item_create_StoC::handle()
 // uint16_t inventory_id;
 // uint16_t inventory_slot;
 
-    printf("client received create packet message \n");
+    printf("Item Creation: item_id= %i, item_type= %i inventory_id= %i, inventory_slow= %i \n",
+        item_id, item_type, inventory_id, inventory_slot );
 }
 
 /*
