@@ -13,11 +13,16 @@ class ObjectDataList
     private:
         // keep track of component type buffers for 
         ComponentType** component_types;
+        int* expected_component_sizes;
+        int* component_sizes;
         
     public:
 
+        void set_components(ObjectType type, int n_components);
+        void attach_component(ObjectType type, ComponentType component);
         
         void init();
+        void sanity_check();
 
     ~ObjectDataList();
 

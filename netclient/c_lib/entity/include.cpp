@@ -7,6 +7,7 @@
 #include <c_lib/entity/objects/include.cpp>
 #include <c_lib/entity/object/object.cpp>
 #include <c_lib/entity/object/object_list.cpp>
+#include <c_lib/entity/object/object_data_list.cpp>
 #include <c_lib/entity/object/filter.cpp>
 #include <c_lib/entity/object/helpers.cpp>
 #include <c_lib/entity/object/main.cpp>

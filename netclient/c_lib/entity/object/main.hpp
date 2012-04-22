@@ -7,6 +7,7 @@ namespace Objects
 {
 
 extern ObjectList* object_list;
+extern ObjectDataList* object_data;
 extern ObjectListFilter* filter;
 
 void init();

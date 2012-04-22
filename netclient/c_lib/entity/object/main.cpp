@@ -10,7 +10,13 @@ namespace Objects
 using Components::Component;
 
 ObjectList* object_list = NULL;
+ObjectDataList* object_data = NULL;
 ObjectListFilter* filter = NULL;
+
+void load_object_data()
+{
+    //load_agent_spawner_data();
+}
 
 void init()
 {   // must specify maximum values for objects here
@@ -18,8 +24,13 @@ void init()
     filter = new ObjectListFilter;
     filter->init();
 
+    object_data = new ObjectDataList;
+    object_data->init();
+    load_object_data();
+    
     object_list = new ObjectList;
     object_list->init();
+    //object_list->init(object_data);
     
     // refills
     object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
@@ -56,6 +67,7 @@ void init()
 void teardown()
 {
     if (object_list != NULL) delete object_list;
+    if (object_data != NULL) delete object_data;
     if (filter != NULL) delete filter;
 }
 

@@ -1,27 +1,49 @@
 #include "object_list.hpp"
 
 #include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/components/health.hpp>
 
 namespace Objects
 {
 
-void ObjectList::init()
+void ObjectDataList::set_components(ObjectType type, int n_components)
 {
-    this->component_types = (ComponentType*)calloc(MAX_OBJECT_TYPES * sizeof(ComponentType));
+    this->component_types[type] = (ComponentType*)malloc(n_components * sizeof(ComponentType));
+    this->expected_component_sizes[type] = n_components;
 }
 
-ObjectList::~ObjectList()
+void ObjectDataList::attach_component(ObjectType type, ComponentType component)
+{
+    int index = this->component_sizes[type];
+    this->component_types[type][index] = component;
+    this->component_sizes[type] += 1;
+}
+
+void ObjectDataList::init()
+{
+    this->component_types = (ComponentType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentType*));
+    this->expected_component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
+    this->component_sizes = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
+}
+
+void ObjectDataList::sanity_check()
+{
+    for (int i=0; i<MAX_OBJECT_TYPES; i++)
+        assert(this->expected_component_sizes[i] == this->component_sizes[i]);
+}
+
+ObjectDataList::~ObjectDataList()
 {
     if (this->component_types != NULL)
     {
         for (int i=0; i<MAX_OBJECT_TYPES; i++)
             if (this->component_types[i] != NULL)
-                free(this->component_types[i];
+                free(this->component_types[i]);
 
         free(component_types);
     }
+
+    if (this->expected_component_sizes != NULL) free(this->expected_component_sizes);
+    if (this->component_sizes != NULL) free(this->component_sizes);
 }
 
 } // Objects
