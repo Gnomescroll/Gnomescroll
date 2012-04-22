@@ -439,4 +439,28 @@ void damage_team_objects_within_sphere(const ObjectType* types, int n_types, Vec
     }
 }
 
+void spawn_mobs()
+{   // fill all monster spawner capacity
+    const ObjectType type = OBJECT_MONSTER_SPAWNER;
+    const ObjectType spawn_type = OBJECT_MONSTER_BOX;
+    if (object_list->empty(type)) return;
+    Object** objects = object_list->get_objects(type);
+    assert(objects != NULL);
+    int max = object_list->max(type);
+    assert(max > 0);
+    Object* obj;
+    Object* child;
+    using Components::MonsterSpawnerComponent;
+    MonsterSpawnerComponent* spawner;
+    for (int i=0; i<max; i++)
+    {
+        obj = objects[i];
+        if (obj == NULL) continue;
+        spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
+        assert(spawner != NULL);
+        child = spawner->spawn_child(spawn_type);
+        if (child != NULL) Objects::ready(child);
+    }
+}
+
 } // Objects

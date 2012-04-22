@@ -46,6 +46,8 @@ namespace ServerState
         Objects::harvest();
         Objects::update();
 
+        Objects::spawn_mobs();
+
         t_item::tick();
 
         if(counter % 10 == 0)
@@ -221,8 +223,8 @@ namespace ServerState
 
         // TESTING -- remove later
         // creates some bombs on init
-        const int n_bombs = 50;
-        const ObjectType mob_type = OBJECT_MONSTER_BOX;
+        const int n_bombs = 10;
+        const ObjectType mob_type = OBJECT_MONSTER_SPAWNER;
         for (int i=0; i<n_bombs; i++)
         {
             Objects::Object* obj = Objects::create(mob_type);

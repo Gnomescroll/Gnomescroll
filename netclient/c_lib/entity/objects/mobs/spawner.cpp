@@ -94,8 +94,7 @@ void tick_mob_spawner(Object* object)
 {
     #if DC_SERVER
     typedef Components::PositionChangedPhysicsComponent PCP;
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_CHANGED);
 
     Vec3 position = physics->get_position();
     position.z = stick_to_terrain_surface(position);

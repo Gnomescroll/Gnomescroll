@@ -10,6 +10,7 @@ class Object;
 
 bool full(ObjectType type);
 bool point_occupied_by_type(ObjectType type, int x, int y, int z);
+void spawn_mobs();
 
 /* API */
 
