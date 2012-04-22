@@ -48,7 +48,7 @@ class Free_item //: public VerletComponent
 
     void draw();
 
-    Free_item(int id)
+    explicit Free_item(int id)
     :
     id(id), type(type_NULL),
     ttl(FREE_ITEM_TTL)
@@ -186,30 +186,5 @@ void Free_item_list::tick()
         }
     }
 }
-
-
-//void Free_item_list::check_item_pickups()
-//{
-//}
-
-/*
-item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
-{
-    public:
-        //uint8_t type;
-        uint16_t item_id;
-        uint16_t item_type;
-        uint16_t inventory_id;
-        uint16_t inventory_slot;
-
-}
-*/
-
-/*
-    int n = STATE::agent_list->objects_within_sphere(p.x, p.y, p.z, radius);
-    if (n > 0)
-    ServerState::agent_list->filtered_objects[0]->id;
-*/
-
 
 }
