@@ -20,7 +20,7 @@ static void set_mob_robot_box_properties(Object* object)
     const int n_components = 7;
     #endif
     #if DC_CLIENT
-    const int n_components = 6;
+    const int n_components = 7;
     #endif
     object->init(n_components);
 
@@ -66,6 +66,15 @@ static void set_mob_robot_box_properties(Object* object)
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
     motion->speed = MONSTER_BOX_SPEED;
 
+    #if DC_CLIENT
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    anim->color = MONSTER_BOX_ANIMATION_COLOR;
+    anim->count = MONSTER_BOX_ANIMATION_COUNT;
+    //anim->count_max = MONSTER_BOX_ANIMATION_COUNT_MAX;
+    anim->size = MONSTER_BOX_ANIMATION_SIZE;
+    #endif
+
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
 
@@ -106,10 +115,6 @@ void ready_mob_robot_box(Object* object)
 
 void die_mob_robot_box(Object* object)
 {
-    #if DC_CLIENT
-    // animation explode
-    #endif
-
     #if DC_SERVER
     //boxDropItem(); -- todo, item drop component
     object->broadcastDeath();
@@ -117,6 +122,18 @@ void die_mob_robot_box(Object* object)
     using Components::SpawnChildComponent;
     SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
     if (child != NULL) child->notify_parent_of_death();
+    #endif
+
+    #if DC_CLIENT
+    // explosion animation
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox->vox != NULL)
+    {
+        using Components::AnimationComponent;
+        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        anim->explode(vox->get_center());
+    }
     #endif
 }
 

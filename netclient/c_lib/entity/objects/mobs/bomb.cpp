@@ -20,7 +20,7 @@ static void set_mob_bomb_properties(Object* object)
     const int n_components = 6;
     #endif
     #if DC_CLIENT
-    const int n_components = 5;
+    const int n_components = 6;
     #endif
     
     object->init(n_components);
@@ -53,6 +53,15 @@ static void set_mob_bomb_properties(Object* object)
     explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
     explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
     explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
+    #endif
+
+    #if DC_CLIENT
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    anim->color = MONSTER_BOMB_ANIMATION_COLOR;
+    anim->count = MONSTER_BOMB_ANIMATION_COUNT;
+    anim->count_max = MONSTER_BOMB_ANIMATION_COUNT_MAX;
+    anim->size = MONSTER_BOMB_ANIMATION_SIZE;
     #endif
     
     object->tick = &tick_mob_bomb;
@@ -91,10 +100,6 @@ void ready_mob_bomb(Object* object)
 
 void die_mob_bomb(Object* object)
 {
-    #if DC_CLIENT
-    // voxel animation
-    #endif
-
     #if DC_SERVER
     // drop item
     
@@ -105,6 +110,17 @@ void die_mob_bomb(Object* object)
     object->broadcastDeath();
     #endif
 
+    #if DC_CLIENT
+    // explosion animation
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox->vox != NULL)
+    {
+        using Components::AnimationComponent;
+        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        anim->explode_random(vox->get_center());
+    }
+    #endif
 }
 
 void tick_mob_bomb(Object* object)

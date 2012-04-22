@@ -13,7 +13,12 @@ namespace Objects
 
 static void set_mob_spawner_properties(Object* object)
 {
+    #if DC_SERVER
     const int n_components = 5;
+    #endif
+    #if DC_CLIENT
+    const int n_components = 6;
+    #endif
     object->init(n_components);
 
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
@@ -38,6 +43,15 @@ static void set_mob_spawner_properties(Object* object)
     spawner->radius = MONSTER_SPAWNER_SPAWN_RADIUS;
     spawner->max_children = MONSTER_SPAWNER_MAX_CHILDREN;
     spawner->spawn_type = OBJECT_NONE; // allows any
+
+    #if DC_CLIENT
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    anim->color = MONSTER_SPAWNER_ANIMATION_COLOR;
+    anim->count = MONSTER_SPAWNER_ANIMATION_COUNT;
+    //anim->count_max = MONSTER_SPAWNER_ANIMATION_COUNT_MAX;
+    anim->size = MONSTER_SPAWNER_ANIMATION_SIZE;
+    #endif
 
     object->tick = &tick_mob_spawner;
     object->update = &update_mob_spawner;
@@ -77,16 +91,20 @@ void ready_mob_spawner(Object* object)
 
 void die_mob_spawner(Object* object)
 {
-    #if DC_CLIENT
-    //using Components::VoxelModelComponent;
-    //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    //Vec3 position = vox->get_center();
-    //animation->voxel_explode(position);   // TODO - animation component
-    //dieChatMessage(object);
-    #endif
-    
     #if DC_SERVER
     object->broadcastDeath();
+    #endif
+
+    #if DC_CLIENT
+    // explosion animation
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox->vox != NULL)
+    {
+        using Components::AnimationComponent;
+        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        anim->explode(vox->get_center());
+    }
     #endif
 }
 

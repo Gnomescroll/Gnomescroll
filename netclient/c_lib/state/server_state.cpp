@@ -216,13 +216,10 @@ namespace ServerState
 
     void start_game()
     {
-        //int address[4];
-        //address_from_string(Options::ip_address, address);
-        //NetServer::init_server(address[0], address[1], address[2], address[3], Options::port);
         ctf->start();
 
         // TESTING -- remove later
-        // creates some bombs on init
+        // creates mob spawners
         const int n_bombs = 10;
         const ObjectType mob_type = OBJECT_MONSTER_SPAWNER;
         for (int i=0; i<n_bombs; i++)
