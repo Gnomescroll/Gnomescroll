@@ -1,4 +1,4 @@
-#include "c_lib.hpp"
+#pragma once
 
 #include <defines.h>
 
@@ -117,7 +117,7 @@
 #include <c_lib/state/packet_init.cpp>
 #include <c_lib/state/server_state.cpp>
 
-#include <c_lib/main.cpp>
+//#include <c_lib/main.cpp>
 
 //page size
 #include <unistd.h>

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DC_CLIENT
     #define DC_CLIENT
 #endif
@@ -213,7 +215,7 @@
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
-#include <c_lib/main.cpp>
+//#include <c_lib/main.cpp>
 
 /*
     init_t_map()

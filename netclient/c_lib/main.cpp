@@ -1,3 +1,5 @@
+#pragma once
+
 #include <defines.h>
 
 #include <c_lib/state/client_state.hpp>
