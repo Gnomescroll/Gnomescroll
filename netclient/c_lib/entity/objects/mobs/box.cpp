@@ -65,6 +65,8 @@ static void set_mob_robot_box_properties(Object* object)
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
     motion->speed = MONSTER_BOX_SPEED;
+    motion->max_z_down = MONSTER_BOX_MOTION_MAX_Z_DOWN;
+    motion->max_z_up = MONSTER_BOX_MOTION_MAX_Z_UP;
 
     #if DC_CLIENT
     using Components::AnimationComponent;
@@ -137,44 +139,6 @@ void die_mob_robot_box(Object* object)
     #endif
 }
 
-/* MAJOR TODO */
-// migrate all data tacked on to Monsters::Box into a component
-// traveling component
-// attach the rest on weapon
-
-
-bool moveBox(Vec3 position, Vec3 direction, float speed, Vec3* new_position, Vec3* new_momentum)
-{
-    // attempt to move to location defined by direction * speed
-    // if z_level diff too high, set momentum 0, copy position, return
-    // else calculate new destination, reorient direction, multiply by speed, and set to new_momentum
-    // add new_momentum to position to get new_position
-
-    // assumes direction is normalized
-    const int max_z_level_diff_up = 4; // maximum height to climb up
-    const int max_z_level_diff_down = -8; // maximum height to climb down
-
-    //printf("direction %0.2f,%0.2f,%0.2f\n", direction.x, direction.y, direction.z);
-    Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
-    int z = t_map::get_highest_open_block(move_to.x, move_to.y);
-
-    float z_diff = position.z - z;
-    if (z_diff > max_z_level_diff_up || z_diff < max_z_level_diff_down)
-    {   // cant move
-    //printf("cant move\n");
-        *new_position = position;
-        *new_momentum = vec3_init(0,0,0);
-        return false;
-    }
-
-    move_to.z = z;
-    Vec3 new_direction = vec3_sub(move_to, position);
-    normalize_vector(&new_direction);
-    *new_momentum = vec3_scalar_mult(new_direction, speed);
-    *new_position = vec3_add(position, *new_momentum);
-    return true;
-}
-
 #if DC_SERVER
 void server_tick_mob_robot_box(Object* object)
 {    
@@ -184,7 +148,7 @@ void server_tick_mob_robot_box(Object* object)
 
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
-    Vec3 position = physics->get_position();
+    const Vec3 position = physics->get_position();
     Vec3 camera_position = position;
     
     using Components::DimensionComponent;
@@ -297,11 +261,12 @@ void server_tick_mob_robot_box(Object* object)
 
     if (motion->en_route)
     {   // move towards destination
-        Vec3 new_position;
-        Vec3 new_momentum;
-        motion->en_route = moveBox(position, motion->target_direction, motion->speed, &new_position, &new_momentum);
-        physics->set_position(new_position);
-        physics->set_momentum(new_momentum);
+        motion->move_on_surface();
+
+        // face in direction of movement
+        float theta, phi;
+        vec3_to_angles(motion->target_direction, &theta, &phi);
+        physics->set_angles(vec3_init(theta, phi, 0));
     }
 
     //if (physics->changed)
@@ -360,18 +325,7 @@ void client_tick_mob_robot_box(Object* object)
 
     if (motion->en_route)
     {   // move towards destination
-        Vec3 position;
-        Vec3 momentum;
-        motion->en_route = moveBox(physics->get_position(), motion->target_direction, motion->speed, &position, &momentum);
-        physics->set_position(position);
-        physics->set_momentum(momentum);
-
-        if (vec3_length(momentum))
-        {
-            momentum.z = 0;
-            normalize_vector(&momentum);
-            motion->target_direction = momentum;
-        }
+        motion->move_on_surface();
 
         // face in direction of movement
         float theta, phi;

@@ -79,6 +79,8 @@ const float MONSTER_BOX_ANIMATION_SIZE = 0.2f;
 const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;
 const float MONSTER_BOX_SPEED = 0.2f;
 const int MONSTER_BOX_WALK_RANGE = 30;
+const int MONSTER_BOX_MOTION_MAX_Z_DOWN = 4;
+const int MONSTER_BOX_MOTION_MAX_Z_UP = 3;
 
 
 /* Monster spawners */

@@ -1,5 +1,7 @@
 #include "motion_targeting.hpp"
 
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/physics/motion.hpp>
 #include <c_lib/ray_trace/hitscan.hpp>
 #include <c_lib/ray_trace/handlers.hpp>
 #include <c_lib/entity/network/packets.hpp>
@@ -42,10 +44,43 @@ void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
     normalize_vector(&this->target_direction);
 }
 
-void MotionTargetingComponent::lock_target_destination(Vec3 camera_position)
-{
+//void MotionTargetingComponent::lock_target_destination(Vec3 camera_position)
+//{
     
+//}
+
+// adjusts position & momentum by moving over the terrain surface
+bool MotionTargetingComponent::move_on_surface()
+{
+    // get physics data
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    assert(physics != NULL);
+
+    // adjust position/momentum by moving along terrain surface
+    Vec3 new_position;
+    Vec3 new_momentum;
+    bool moved = move_along_terrain_surface(
+        physics->get_position(), this->target_direction, this->speed,
+        //position, physics->get_momentum(), this->speed,
+        this->max_z_down, this->max_z_up,
+        &new_position, &new_momentum
+    );
+    physics->set_position(new_position);
+    physics->set_momentum(new_momentum);
+
+    if (vec3_length(new_momentum))
+    {   // update target direction
+        new_momentum.z = 0;
+        normalize_vector(&new_momentum);
+        this->target_direction = new_momentum;
+    }
+
+    // set en_route if we are in motion
+    this->en_route = moved;    
+    return moved;
 }
+
 
 void MotionTargetingComponent::broadcast_destination()
 {
