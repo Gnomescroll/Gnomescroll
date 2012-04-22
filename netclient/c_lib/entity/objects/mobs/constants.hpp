@@ -39,6 +39,7 @@ const struct Color MONSTER_BOMB_ANIMATION_COLOR = { 31,223,223 };
 const int MONSTER_BOMB_ANIMATION_COUNT = 50;
 const int MONSTER_BOMB_ANIMATION_COUNT_MAX = 100;
 const float MONSTER_BOMB_ANIMATION_SIZE = 0.7f;
+const float MONSTER_BOMB_ANIMATION_FORCE = 20.0f;
 
 // state broadcast rate
 const int MONSTER_BOMB_BROADCAST_RATE = 30; // once every 30 ticks
@@ -74,6 +75,7 @@ const struct Color MONSTER_BOX_ANIMATION_COLOR = { 223,31,31 };
 const int MONSTER_BOX_ANIMATION_COUNT = 5*5*5;
 //const int MONSTER_BOX_ANIMATION_COUNT_MAX = 5*5*5;
 const float MONSTER_BOX_ANIMATION_SIZE = 0.2f;
+const float MONSTER_BOX_ANIMATION_FORCE = 20.0f;
 
 // motion??
 const float MONSTER_BOX_MOTION_SIGHT_RANGE = 50.0f;

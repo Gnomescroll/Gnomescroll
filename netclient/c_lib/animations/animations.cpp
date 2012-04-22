@@ -266,12 +266,9 @@ void terrain_sparks(float x, float y, float z)
     }
 }
 
-void voxel_explode(Vec3 position, int count, float size, struct Color color)
+void voxel_explode(Vec3 position, int count, float size, float force, struct Color color)
 {
     if (!Options::animations) return;
-    
-    float vx,vy,vz;
-    vx=vy=vz=20.0f;
     
     float cx,cy,cz;
     float cvx,cvy,cvz;
@@ -286,9 +283,9 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
         cx = position.x + ((randf() - 0.5f) / 20.0f);
         cy = position.y + ((randf() - 0.5f) / 20.0f);
         cz = position.z + ((randf() - 0.5f) / 20.0f);
-        cvx = vx * (randf() - 0.5f);
-        cvy = vy * (randf() - 0.5f);
-        cvz = vz * (randf() - 0.5f);
+        cvx = force * (randf() - 0.5f);
+        cvy = force * (randf() - 0.5f);
+        cvz = force * (randf() - 0.5f);
 
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
@@ -306,30 +303,30 @@ void voxel_explode(Vec3 position, int count, float size, struct Color color)
 }
 
 // will generate random count between count_min and count_max
-void voxel_explode(Vec3 position, int count_min, int count_max, float size, struct Color color)
+void voxel_explode(Vec3 position, int count_min, int count_max, float size, float force, struct Color color)
 {
     if (!Options::animations) return;
     
     int count = randrange(count_min, count_max);
-    voxel_explode(position, count, size, color);
+    voxel_explode(position, count, size, force, color);
 }
 
-void voxel_explode_team(Vec3 position, int count, float size, int team)
+void voxel_explode_team(Vec3 position, int count, float size, float force, int team)
 {
     if (!Options::animations) return;
     
     struct Color color;
     ClientState::ctf->get_team_color(team, &color.r, &color.g, &color.b);
 
-    voxel_explode(position, count, size, color);
+    voxel_explode(position, count, size, force, color);
 }
 
-void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, int team)
+void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, float force, int team)
 {
     if (!Options::animations) return;
 
     int count = randrange(count_min, count_max);
-    voxel_explode_team(position, count, size, team);
+    voxel_explode_team(position, count, size, force, team);
 }
 
 

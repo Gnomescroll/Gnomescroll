@@ -15,6 +15,7 @@ class AnimationComponent: public Component
         int count;
         int count_max;
         float size;
+        float force;
         struct Color color;
 
     void explode(Vec3 position);
@@ -24,7 +25,7 @@ class AnimationComponent: public Component
 
     AnimationComponent()
     : Component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION),
-    count(10), count_max(10), size(0.5f)
+    count(10), count_max(10), size(0.5f), force(20.0f)
     {   // dont set color
     }
 };

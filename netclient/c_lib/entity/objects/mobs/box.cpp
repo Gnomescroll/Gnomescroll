@@ -75,6 +75,7 @@ static void set_mob_robot_box_properties(Object* object)
     anim->count = MONSTER_BOX_ANIMATION_COUNT;
     //anim->count_max = MONSTER_BOX_ANIMATION_COUNT_MAX;
     anim->size = MONSTER_BOX_ANIMATION_SIZE;
+    anim->force = MONSTER_BOX_ANIMATION_FORCE;
     #endif
 
     object->tick = &tick_mob_robot_box;

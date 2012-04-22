@@ -53,6 +53,7 @@ static void set_agent_spawner_properties(Object* object)
     anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
     anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
     anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
+    anim->force = AGENT_SPAWNER_ANIMATION_FORCE;
     #endif
 
     object->tick = &tick_agent_spawner;

@@ -77,6 +77,7 @@ static void set_turret_properties(Object* object)
     anim->count = TURRET_ANIMATION_COUNT;
     anim->count_max = TURRET_ANIMATION_COUNT_MAX;
     anim->size = TURRET_ANIMATION_SIZE;
+    anim->force = TURRET_ANIMATION_FORCE;
     #endif
 
     object->tick = &tick_turret;
