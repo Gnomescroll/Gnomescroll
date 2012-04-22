@@ -50,15 +50,18 @@ void tick()
 #endif
 }
 
+#if DC_CLIENT
 void draw()
 {
-    #if DC_CLIENT
     free_item_list->draw();
 
     //if (input_state.inventory)
         //draw_inventory();
-    #endif
+
 }
+
+
+#endif
 
 }
  

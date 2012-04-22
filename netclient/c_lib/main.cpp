@@ -1,4 +1,6 @@
-#include "main.hpp"
+#pragma once
+
+#include <defines.h>
 
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/SDL_functions.h>
@@ -277,6 +279,8 @@ int run()
             Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
+
+            t_hud::draw_hud();
         }
 
         poll_mouse();
