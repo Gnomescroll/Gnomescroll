@@ -1,5 +1,5 @@
 #include <c_lib/c_lib.cpp>
-#include <c_lib/main.hpp>
+#include <c_lib/main.cpp>
 #include <c_lib/common/lua/lua.hpp>
 
 int main(int argc, char** argv)
