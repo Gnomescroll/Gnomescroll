@@ -16,7 +16,12 @@ namespace Objects
 
 static void set_agent_spawner_properties(Object* object)
 {
+    #if DC_SERVER
     int n_components = 7;
+    #endif
+    #if DC_CLIENT
+    int n_components = 8;
+    #endif
     object->init(n_components);
     
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
@@ -41,6 +46,14 @@ static void set_agent_spawner_properties(Object* object)
     using Components::AgentSpawnerComponent;
     AgentSpawnerComponent* spawner = (AgentSpawnerComponent*)add_component_to_object(object, COMPONENT_AGENT_SPAWNER);
     spawner->radius = AGENT_SPAWNER_SPAWN_RADIUS;
+
+    #if DC_CLIENT
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    anim->count = AGENT_SPAWNER_ANIMATION_COUNT;
+    anim->count_max = AGENT_SPAWNER_ANIMATION_COUNT_MAX;
+    anim->size = AGENT_SPAWNER_ANIMATION_SIZE;
+    #endif
 
     object->tick = &tick_agent_spawner;
     object->update = &update_agent_spawner;
@@ -89,12 +102,18 @@ void die_agent_spawner(Object* object)
     #endif
 
     #if DC_CLIENT
+    // explosion animation
     using Components::VoxelModelComponent;
-    using Components::TeamComponent;
-    
-    //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL)
-    //TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-    //if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team());
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox->vox != NULL)
+    {
+        using Components::TeamComponent;
+        TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+        using Components::AnimationComponent;
+        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        anim->explode_team_random(vox->get_center(), team->get_team());
+    }
+
     //dieChatMessage(object);
     #endif
 }

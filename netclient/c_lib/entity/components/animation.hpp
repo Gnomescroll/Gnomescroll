@@ -12,17 +12,19 @@ namespace Components
 class AnimationComponent: public Component
 {
     public:
-        int animation_count;
-        int animation_count_max;
-        float animation_size;
-        struct Color animation_color;
+        int count;
+        int count_max;
+        float size;
+        struct Color color;
 
     void explode(Vec3 position);
     void explode_random(Vec3 position);
+    void explode_team(Vec3 position, int team);
+    void explode_team_random(Vec3 position, int team);
 
     AnimationComponent()
     : Component(COMPONENT_VOXEL_ANIMATION, COMPONENT_INTERFACE_ANIMATION),
-    animation_count(10), animation_count_max(10), animation_size(0.5f)
+    count(10), count_max(10), size(0.5f)
     {   // dont set color
     }
 };

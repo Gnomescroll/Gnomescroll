@@ -269,6 +269,7 @@ void terrain_sparks(float x, float y, float z)
 void voxel_explode(Vec3 position, int count, float size, struct Color color)
 {
     if (!Options::animations) return;
+    
     float vx,vy,vz;
     vx=vy=vz=20.0f;
     
@@ -313,40 +314,24 @@ void voxel_explode(Vec3 position, int count_min, int count_max, float size, stru
     voxel_explode(position, count, size, color);
 }
 
-void team_item_explode(Vec3 p, int team)
+void voxel_explode_team(Vec3 position, int count, float size, int team)
 {
     if (!Options::animations) return;
-    unsigned char r=255,g=255,b=255;
-    ClientState::ctf->get_team_color(team, &r, &g, &b);
-    int n = randrange(35,50);
-    const float momentum = 5.0f;
-    const Vec3 v = vec3_init(momentum, momentum, momentum);
-    Vec3 c,cv;
-    float theta,phi;
-    float dtheta, dphi;
-    int ttl;
-    Particles::ColoredMinivox* minivox;
+    
+    struct Color color;
+    ClientState::ctf->get_team_color(team, &color.r, &color.g, &color.b);
 
-    for (int i=0; i<n; i++)
-    {
-        ttl = randrange(50,80);
-        c = vec3_scalar_add(p, (randf() - 0.5f) / 5.0f);
-        cv = vec3_mult(v, vec3_init(randf() - 0.5f, randf() - 0.5f, randf() - 0.5f));
-
-        theta = randf() * PI * 2;
-        phi = randf() * PI * 2;
-        dtheta = randf() * 0.05f;
-        dphi = randf() * 0.05f;
-
-        minivox = Particles::colored_minivox_list->create(c.x, c.y, c.z, cv.x, cv.y, cv.z);
-        if (minivox == NULL) return;
-        minivox->set_color(r,g,b);
-        minivox->set_ttl(ttl);
-        minivox->set_spin(dtheta, dphi);
-        minivox->set_angles(theta, phi);
-        minivox->set_size(0.1f);
-    }
+    voxel_explode(position, count, size, color);
 }
+
+void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, int team)
+{
+    if (!Options::animations) return;
+
+    int count = randrange(count_min, count_max);
+    voxel_explode_team(position, count, size, team);
+}
+
 
 void agent_bleed(float x, float y, float z)
 {

@@ -22,7 +22,7 @@ static void set_turret_properties(Object* object)
     int n_components = 8;
     #endif
     #if DC_CLIENT
-    int n_components = 7;
+    int n_components = 8;
     #endif
     object->init(n_components);
     
@@ -71,6 +71,14 @@ static void set_turret_properties(Object* object)
     explode->harms_owner = TURRET_EXPLOSION_HARMS_OWNER;
     #endif
 
+    #if DC_CLIENT
+    using Components::AnimationComponent;
+    AnimationComponent* anim = (AnimationComponent*)add_component_to_object(object, COMPONENT_VOXEL_ANIMATION);
+    anim->count = TURRET_ANIMATION_COUNT;
+    anim->count_max = TURRET_ANIMATION_COUNT_MAX;
+    anim->size = TURRET_ANIMATION_SIZE;
+    #endif
+
     object->tick = &tick_turret;
     object->update = &update_turret;
 
@@ -115,7 +123,6 @@ void ready_turret(Object* object)
 
 void die_turret(Object* object)
 {
-
     #if DC_SERVER
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
@@ -128,13 +135,18 @@ void die_turret(Object* object)
     #endif
 
     #if DC_CLIENT
-    //using Components::VoxelModelComponent;
-    //VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
-    //using Components::TeamComponent;
-    //TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
-
-    //Vec3 position = vox->get_center();
-    //if (vox->vox != NULL) dieTeamItemAnimation(vox->get_center(), team->get_team());
+    // explosion animation
+    using Components::VoxelModelComponent;
+    VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
+    if (vox->vox != NULL)
+    {
+        using Components::TeamComponent;
+        TeamComponent* team = (TeamComponent*)object->get_component_interface(COMPONENT_INTERFACE_TEAM);
+        using Components::AnimationComponent;
+        AnimationComponent* anim = (AnimationComponent*)object->get_component_interface(COMPONENT_INTERFACE_ANIMATION);
+        anim->explode_team_random(vox->get_center(), team->get_team());
+    }
+    
     //dieChatMessage(object);
     #endif
 }

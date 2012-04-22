@@ -18,6 +18,11 @@ const float AGENT_SPAWNER_SPAWN_RADIUS = 5.0f;
 // health
 const int AGENT_SPAWNER_MAX_HEALTH = 200;
 
+// animation
+const int AGENT_SPAWNER_ANIMATION_COUNT = 35;
+const int AGENT_SPAWNER_ANIMATION_COUNT_MAX = 50;
+const float AGENT_SPAWNER_ANIMATION_SIZE = 0.1f;
+
 /* Turret */
 
 // dimensions
@@ -48,5 +53,10 @@ const int TURRET_VOXEL_DAMAGE_RADIUS = 1;
 const float TURRET_EXPLOSION_RADIUS = 2.0f;
 const int TURRET_EXPLOSION_DAMAGE = 40;
 const bool TURRET_EXPLOSION_HARMS_OWNER = false;
+
+// animation
+const int TURRET_ANIMATION_COUNT = 35;
+const int TURRET_ANIMATION_COUNT_MAX = 50;
+const float TURRET_ANIMATION_SIZE = 0.1f;
 
 } // Objects

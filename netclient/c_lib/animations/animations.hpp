@@ -22,14 +22,16 @@ void terrain_sparks(float x, float y, float z);
 
 void grenade_explode(float x, float y, float z);
 
-void team_item_explode(Vec3 p, int team);
-
 void agent_bleed(float x, float y, float z);
 void blood_spray(float x, float y, float z, float ix, float iy, float iz);  // pos, incident vector
 
 void voxel_explode(Vec3 position, int count, float size, struct Color color);
 // will generate random count between count_min and count_max
 void voxel_explode(Vec3 position, int count_min, int count_max, float size, struct Color color);
+
+void voxel_explode_team(Vec3 position, int count, float size, int team);
+void voxel_explode_team(Vec3 position, int count_min, int count_max, float size, int team);
+
 
 //void animations_draw();
 }
