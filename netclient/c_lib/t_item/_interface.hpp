@@ -50,7 +50,7 @@ namespace t_item
 {
 
 const int NO_AGENT = 0xffff;
-extern int INVENTORY_AGENTList[256];
+extern int AgentInventoryList[256];
 
 
 void create_agent_inventory(int agent_id, int client_id);

@@ -19,7 +19,7 @@ Free_item_list* free_item_list = NULL;
 ItemContainerList* item_container_list = NULL;
 ItemList* item_list = NULL;
 
-int INVENTORY_AGENTList[256];
+int AgentInventoryList[256];
 
 void state_init()
 {
@@ -32,7 +32,7 @@ void state_init()
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
-    for(int i=0; i<256; i++) INVENTORY_AGENTList[i] = NO_AGENT;
+    for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
 }
 
 void state_teardown()
@@ -90,10 +90,10 @@ void create_agent_inventory(int agent_id, int client_id)
     ItemContainer* ic = item_container_list->create();
     ic->init_agent_inventory();
 
-    assert(INVENTORY_AGENTList[agent_id] == NO_AGENT);
+    assert(AgentInventoryList[agent_id] == NO_AGENT);
     assert((agent_id < 255) && (agent_id > 0));
 
-    INVENTORY_AGENTList[agent_id] = ic->id;
+    AgentInventoryList[agent_id] = ic->id;
     
     Agent_state* a = ServerState::agent_list->get(agent_id);
     a->inventory_id = ic->id;
@@ -108,9 +108,9 @@ void create_agent_inventory(int agent_id, int client_id)
 
 void delete_agent_inventory(int agent_id)
 {
-    assert(INVENTORY_AGENTList[agent_id] != NO_AGENT);
+    assert(AgentInventoryList[agent_id] != NO_AGENT);
     item_container_list->destroy(agent_id);
-    INVENTORY_AGENTList[agent_id] == NO_AGENT;
+    AgentInventoryList[agent_id] == NO_AGENT;
 }
 
 void check_item_pickups()
@@ -139,9 +139,9 @@ void check_item_pickups()
         /*
             Put item in agent inventory
         */
-        assert(INVENTORY_AGENTList[agent->id] != NO_AGENT);
+        assert(AgentInventoryList[agent->id] != NO_AGENT);
 
-        int inventory_id = INVENTORY_AGENTList[agent->id];
+        int inventory_id = AgentInventoryList[agent->id];
         ItemContainer* ic = item_container_list->get(inventory_id);
         
         if(ic == 0)
