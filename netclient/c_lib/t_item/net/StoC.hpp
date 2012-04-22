@@ -104,5 +104,40 @@ class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<ass
         inline void handle();
 };
 
+/* actions */
+class swap_within_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_within_inventory_StoC>
+{
+    public:
+        uint16_t id;
+        uint8_t slota;
+        uint8_t slotb;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&id, buff, buff_n, pack);
+            pack_u8(&slota, buff, buff_n, pack);
+            pack_u8(&slotb, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+/* actions */
+class swap_between_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_between_inventory_StoC>
+{
+    public:
+        uint16_t ida;
+        uint8_t slota;
+        uint16_t idb;
+        uint8_t slotb;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&ida, buff, buff_n, pack);
+            pack_u8(&slota, buff, buff_n, pack);
+            pack_u16(&idb, buff, buff_n, pack);
+            pack_u8(&slotb, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 }

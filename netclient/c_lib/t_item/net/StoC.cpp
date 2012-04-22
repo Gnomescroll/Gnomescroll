@@ -78,6 +78,28 @@ inline void assign_agent_inventory_StoC::handle()
 }
 
 
+inline void swap_within_inventory_StoC::handle()
+{
+    //ItemContainer* inventory = item_container_list->get(id);
+    //if (inventory == NULL) return;
+    //inventory->swap(slota, slotb);
+}
+
+inline void swap_between_inventory_StoC::handle()
+{
+    //ItemContainer* inventorya = item_container_list->get(ida);
+    //if (inventorya == NULL) return;
+    //ItemContainer* inventoryb = item_container_list->get(idb);
+    //if (inventoryb == NULL) return;
+
+    //if (inventorya->can_remove(slota) && inventoryb->can_add(slota))
+    //{
+        //ItemId i = inventorya->remove(slota);
+        //inventoryb->add(i, slotb);
+    //}
+}
+
+
 #endif
 
 #if DC_SERVER
@@ -89,6 +111,9 @@ inline void free_item_picked_up_StoC::handle() {}
 inline void item_create_StoC::handle() {}
 
 inline void assign_agent_inventory_StoC::handle() {}
+
+inline void swap_within_inventory_StoC::handle() {}
+inline void swap_between_inventory_StoC::handle() {}
 #endif
 
 }
