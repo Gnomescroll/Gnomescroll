@@ -65,7 +65,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
             //printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
             for(int i=0; i<slot_max; i++) 
             {
-                printf("slot %i = %i \n", i, slot[i]);
+                //printf("slot %i = %i \n", i, slot[i]);
                 if(slot[i] == EMPTY_SLOT) 
                     return false; 
             }
