@@ -40,11 +40,9 @@ namespace t_map
         if (cube == 0) cube = 255;  // use error cube
         return cube;
     }
-
     
     void get_random_pixel(int cube_id, int side, unsigned char* r, unsigned char* g, unsigned char* b, unsigned char* a);
     void get_texture_pixel(int px, int py, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a);
-    
 }
 
 extern "C"
