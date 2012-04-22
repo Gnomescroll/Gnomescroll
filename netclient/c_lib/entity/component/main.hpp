@@ -62,6 +62,8 @@ extern MotionTargetingComponentList* motion_targeting_component_list;
 extern ExplosionComponentList* explosion_component_list;
 #endif
 
+extern RateLimitComponentList* rate_limit_component_list;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type);

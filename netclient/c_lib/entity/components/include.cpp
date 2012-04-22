@@ -49,3 +49,5 @@
 #if DC_SERVER
 #include <c_lib/entity/components/explosion.cpp>
 #endif
+
+#include <c_lib/entity/components/rate_limit.cpp>

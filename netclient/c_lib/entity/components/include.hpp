@@ -47,3 +47,5 @@
 #if DC_SERVER
 #include <c_lib/entity/components/explosion.hpp>
 #endif
+
+#include <c_lib/entity/components/rate_limit.hpp>

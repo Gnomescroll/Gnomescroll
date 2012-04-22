@@ -96,9 +96,15 @@ typedef ComponentList<DimensionComponent, COMPONENT_DIMENSION, DIMENSION_COMPONE
     DimensionComponentList;
 
 #if DC_SERVER
+/* Damaging Explosion */
 const int EXPLOSION_COMPONENT_MAX = 2048;
 typedef ComponentList<ExplosionComponent, COMPONENT_EXPLOSION, EXPLOSION_COMPONENT_MAX>
     ExplosionComponentList;
 #endif
+
+/* Rate Limiting */
+const int RATE_LIMIT_COMPONENT_MAX = 4096;
+typedef ComponentList<RateLimitComponent, COMPONENT_RATE_LIMIT, RATE_LIMIT_COMPONENT_MAX>
+    RateLimitComponentList;
 
 } // Components

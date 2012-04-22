@@ -59,6 +59,8 @@ MotionTargetingComponentList* motion_targeting_component_list = NULL;
 ExplosionComponentList* explosion_component_list = NULL;
 #endif
 
+RateLimitComponentList* rate_limit_component_list = NULL;
+
 /* ComponentList handler switches */
 
 Component* get_switch(ComponentType type)
@@ -130,6 +132,9 @@ Component* get_switch(ComponentType type)
         case COMPONENT_EXPLOSION:
             return explosion_component_list->subscribe();
         #endif
+
+        case COMPONENT_RATE_LIMIT:
+            return rate_limit_component_list->subscribe();
         
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", type);
@@ -232,6 +237,10 @@ void release_switch(Component* component)
             break;
         #endif
 
+        case COMPONENT_RATE_LIMIT:
+            rate_limit_component_list->unsubscribe((RateLimitComponent*)component);
+            break;
+
         default:
             printf("ERROR: Component::get() -- unknown ComponentType %d\n", component->type);
             break;
@@ -281,6 +290,8 @@ void init()
     #if DC_SERVER
     explosion_component_list = new ExplosionComponentList;
     #endif
+
+    rate_limit_component_list = new RateLimitComponentList;
 }
 
 void teardown()
@@ -326,6 +337,8 @@ void teardown()
     #if DC_SERVER
     if (explosion_component_list != NULL) delete explosion_component_list;
     #endif
+
+    if (rate_limit_component_list != NULL) delete rate_limit_component_list;
 }
 
 } // Components

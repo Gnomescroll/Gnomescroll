@@ -85,7 +85,8 @@ typedef enum
     COMPONENT_DIMENSION,
 
     COMPONENT_EXPLOSION,
-    
+
+    COMPONENT_RATE_LIMIT,
 } ComponentType;
 
 typedef enum
@@ -109,6 +110,7 @@ typedef enum
     COMPONENT_INTERFACE_TARGETING,
     COMPONENT_INTERFACE_DIMENSION,
     COMPONENT_INTERFACE_EXPLOSION,
+    COMPONENT_INTERFACE_RATE_LIMIT,
 } ComponentInterfaceType;
 
 
