@@ -154,10 +154,6 @@ int init_c_lib()
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
 
-    MapGen::init();
-    MapRecipes::simple_map();
-    MapGen::teardown();
-
     t_item::state_init();
 
     ServerState::init();

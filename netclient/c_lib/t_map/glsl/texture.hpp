@@ -36,7 +36,9 @@ namespace t_map
     {
         int id = get_cube_id(name);
         const int primary_side = 0; // TODO?
-        return get_cube_side_texture(id, primary_side);
+        int cube = get_cube_side_texture(id, primary_side);
+        if (cube == 0) cube = 255;  // use error cube
+        return cube;
     }
 
     

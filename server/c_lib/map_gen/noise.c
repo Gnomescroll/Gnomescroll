@@ -385,7 +385,7 @@ void set_noise_scale(float xscale, float yscale, float zscale) {
 float* noise_init(int x, int y, int z)
 {
     printf("Initializing noisemap with size %d %d %d\n", x,y,z);
-    static inited = 0;
+    static int inited = 0;
     if (inited++) return noisemap;
     noisemap = (float*)malloc(sizeof(float)*x*y*z);
     return noisemap;
@@ -394,6 +394,7 @@ float* noise_init(int x, int y, int z)
 void noise_destroy()
 {
     if (noisemap != NULL) free(noisemap);
+    noisemap = NULL;
 }
 
 #include "perlin.c"

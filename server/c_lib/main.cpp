@@ -1,6 +1,8 @@
 #pragma once
 
 #include <c_lib/common/time/physics_timer.hpp>
+#include <c_lib/map_gen/map_generator.hpp>
+#include <c_lib/map_gen/recipes.hpp>
 
 namespace Main
 {
@@ -12,7 +14,11 @@ void init()
     init_c_lib();
 
     // generate floor map
-    _floor(512,512,0,32,1);
+    //_floor(512,512,0,32,1);
+
+    MapGen::init();
+    MapRecipes::simple_map();
+    MapGen::teardown();
 
     NetServer::init_server(127,0,0,1, Options::port);
     ServerState::start_game();
