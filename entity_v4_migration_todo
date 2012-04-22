@@ -68,13 +68,22 @@ fix turret attacking
 DONE
 
 make component for target box motion
-spawned/child component
+DONE
 
-item drops
+spawned/child component
+DONE
+
+item drops CANCELLED
 rate limited packet interface?, like the rest of the packet interfaces
 --has state, needs to be allocated like a component anyway
+DONE
 
 animation component
+DONE
+
+REMANING:
+handling sound/chat events
+basic optimizations
 
 ==============
 event queue?
