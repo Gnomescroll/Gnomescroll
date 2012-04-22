@@ -8,13 +8,15 @@
 #include <c_lib/entity/components/dimension.hpp>
 #include <c_lib/entity/components/voxel_model.hpp>
 #include <c_lib/entity/components/targeting.hpp>
+#include <c_lib/entity/components/targeting/weapon_targeting.hpp>
+#include <c_lib/entity/components/targeting/motion_targeting.hpp>
 
 namespace Objects
 {
 
 static void set_mob_robot_box_properties(Object* object)
 {
-    const int n_components = 5;
+    const int n_components = 6;
     object->init(n_components);
 
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
@@ -50,6 +52,10 @@ static void set_mob_robot_box_properties(Object* object)
     target->attacker_properties.voxel_damage_radius = MONSTER_BOX_VOXEL_DAMAGE_RADIUS;
     target->attacker_properties.agent_protection_duration = MONSTER_BOX_AGENT_IMMUNITY_DURATION;
     target->attacker_properties.terrain_modification_action = t_map::TMA_MONSTER_BOX;
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
+    motion->speed = MONSTER_BOX_SPEED;
 
     object->tick = &tick_mob_robot_box;
     object->update = &update_mob_robot_box;
@@ -112,11 +118,44 @@ void die_mob_robot_box(Object* object)
 /* MAJOR TODO */
 // migrate all data tacked on to Monsters::Box into a component
 // traveling component
-// attach the rest on targeting
+// attach the rest on weapon
+
+
+bool moveBox(Vec3 position, Vec3 direction, float speed, Vec3* new_position, Vec3* new_momentum)
+{
+    // attempt to move to location defined by direction * speed
+    // if z_level diff too high, set momentum 0, copy position, return
+    // else calculate new destination, reorient direction, multiply by speed, and set to new_momentum
+    // add new_momentum to position to get new_position
+
+    // assumes direction is normalized
+    const int max_z_level_diff_up = 4; // maximum height to climb up
+    const int max_z_level_diff_down = -8; // maximum height to climb down
+
+    //printf("direction %0.2f,%0.2f,%0.2f\n", direction.x, direction.y, direction.z);
+    Vec3 move_to = vec3_add(position, vec3_scalar_mult(direction, speed));
+    int z = t_map::get_highest_open_block(move_to.x, move_to.y);
+
+    float z_diff = position.z - z;
+    if (z_diff > max_z_level_diff_up || z_diff < max_z_level_diff_down)
+    {   // cant move
+    //printf("cant move\n");
+        *new_position = position;
+        *new_momentum = vec3_init(0,0,0);
+        return false;
+    }
+
+    move_to.z = z;
+    Vec3 new_direction = vec3_sub(move_to, position);
+    normalize_vector(&new_direction);
+    *new_momentum = vec3_scalar_mult(new_direction, speed);
+    *new_position = vec3_add(position, *new_momentum);
+    return true;
+}
 
 #if DC_SERVER
 void server_tick_mob_robot_box(Object* object)
-{
+{    
     // must stay on ground -- apply terrain collision
     // wander randomly (TODO: network model with destinations)
     // TODO -- aggro component
@@ -124,142 +163,129 @@ void server_tick_mob_robot_box(Object* object)
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     Vec3 position = physics->get_position();
+    Vec3 camera_position = position;
     
     using Components::DimensionComponent;
     DimensionComponent* dims = (DimensionComponent*)object->get_component_interface(COMPONENT_INTERFACE_DIMENSION);
-    position.z += dims->get_camera_height();
+    camera_position.z += dims->get_camera_height();
     
     using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
 
-    // save current target state, will use targeting to decide if need to send packet
-    bool was_on_target = targeting->locked_on_target;
-    int old_target_id = targeting->target_id;
-    int old_target_type = targeting->target_type;
+    // save current target state, will use weapon to decide if need to send packet
+    bool was_on_target = weapon->locked_on_target;
+    int old_target_id = weapon->target_id;
+    int old_target_type = weapon->target_type;
     
     Agent_state* agent = NULL;
-    if (targeting->locked_on_target)
+    if (weapon->locked_on_target)
     {   // target locked
         // check target still exists
-        if (targeting->target_type == OBJECT_AGENT)
-            agent = STATE::agent_list->get(targeting->target_id);
+        if (weapon->target_type == OBJECT_AGENT)
+            agent = STATE::agent_list->get(weapon->target_id);
         if (agent == NULL
-        || vec3_distance_squared(agent->get_center(), position) > targeting->sight_range*targeting->sight_range)
-            targeting->locked_on_target = false;
+        || vec3_distance_squared(agent->get_center(), camera_position) > weapon->sight_range*weapon->sight_range)
+            weapon->locked_on_target = false;
     }
 
-    if (!targeting->locked_on_target)
+    if (!weapon->locked_on_target)
     {   // no target found
         // look for target
-        targeting->lock_target(position);
+        weapon->lock_target(position);
     }
 
-    if (targeting->target_type != OBJECT_NONE)
+    if (weapon->target_type != OBJECT_NONE)
     {   // target found
         // lock target
-        targeting->locked_on_target = true;
-        //this->en_route = false;
+        weapon->locked_on_target = true;
+        motion->en_route = false;
 
         // send target packet
-        if (!was_on_target || old_target_id != targeting->target_id || old_target_type != targeting->target_type)
-        {
-            targeting->broadcast_target_choice();
-        }
+        if (!was_on_target || old_target_id != weapon->target_id || old_target_type != weapon->target_type)
+            weapon->broadcast_target_choice();
     }
     
-    if (targeting->locked_on_target)
+    if (weapon->locked_on_target)
     {   // target is locked
         // face target
         if (agent != NULL) // TODO -- multiple target
         {
-            Vec3 direction = vec3_sub(agent->get_center(), position);
-            if (vec3_length(direction))
+            if (vec3_length(weapon->target_direction))
             {
-                normalize_vector(&direction);
                 float theta,phi;
-                vec3_to_angles(direction, &theta, &phi);
+                vec3_to_angles(weapon->target_direction, &theta, &phi);
                 physics->set_angles(vec3_init(theta, phi, 0));
-                targeting->target_direction = direction;
             }
-
-            if (targeting->can_fire())
-            {
-                targeting->fire_on_target(position);
-            }
+            if (weapon->can_fire())
+                weapon->fire_on_target(camera_position);
         }
     }
-    //else if (this->en_route)
-    //{   // face destination
-        //float theta, phi;
-        //vec3_to_angles(this->direction, &theta, &phi);
-        //this->set_angles(theta, phi, 0);
-    //}
+    else if (motion->en_route)
+    {   // face destination
+        float theta, phi;
+        vec3_to_angles(motion->target_direction, &theta, &phi);
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
 
-    //if (!this->en_route && !this->locked_on_target)
-    //{   // no destination, no target
-        //// choose destination
-        //const int walk_len = BOX_WALK_RANGE;
-        //int dx = randrange(0,walk_len) - walk_len/2;
-        //int dy = randrange(0,walk_len) - walk_len/2;
-        //this->destination = vec3_add(this->get_position(), vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
-        //// clamp
-        //if (this->destination.x < 0) this->destination.x = 0;
-        //if (this->destination.x >= map_dim.x) this->destination.x = map_dim.x -1;
-        //if (this->destination.y < 0) this->destination.y = 0;
-        //if (this->destination.y >= map_dim.y) this->destination.y = map_dim.y -1;
-        //this->destination.z = (float)t_map::get_highest_open_block(this->destination.x,this->destination.y);
-        //if (this->destination.z < 0) this->destination.z = 0;
+    if (!motion->en_route && !weapon->locked_on_target)
+    {   // no destination, no target
+        // choose destination
+        Vec3 destination;
+        const int walk_len = MONSTER_BOX_WALK_RANGE;
+        int dx = randrange(0,walk_len) - walk_len/2;
+        int dy = randrange(0,walk_len) - walk_len/2;
+        destination = vec3_add(position, vec3_init(((float)dx)+randf(), ((float)dy)+randf(),0));
+        // clamp
+        if (destination.x < 0) destination.x = 0;
+        if (destination.x >= map_dim.x) destination.x = map_dim.x -1;
+        if (destination.y < 0) destination.y = 0;
+        if (destination.y >= map_dim.y) destination.y = map_dim.y -1;
+        destination.z = (float)t_map::get_highest_open_block(destination.x,destination.y);
+        if (destination.z < 0) destination.z = 0;
 
-        //this->en_route = true;
-        //this->at_destination = false;
+        motion->destination = destination;
+
+        motion->en_route = true;
+        motion->at_destination = false;
         
-        //Vec3 direction = vec3_sub(this->destination, this->get_position());
-        //float len = vec3_length(direction);
-        //this->ticks_to_destination = (int)ceil(len/this->speed);
-        //if (len)
-        //{
-            //direction.z = 0;
-            //normalize_vector(&direction);
-            //this->direction = direction;
-        //}
+        Vec3 direction = vec3_sub(motion->destination, position);
+        float len = vec3_length(direction);
+        motion->ticks_to_destination = (int)ceil(len/motion->speed);
+        if (len)
+        {
+            direction.z = 0;
+            normalize_vector(&direction);
+            motion->target_direction = direction;
+        }
+        motion->broadcast_destination();
+    }
 
-        //// send destination packet
-        //// TODO
-        //object_choose_destination_StoC msg;
-        //msg.x = destination.x;
-        //msg.y = destination.y;
-        //msg.z = destination.z;
-        //msg.id = this->_state.id;
-        //msg.type = this->_state.type;
-        //msg.ticks = this->ticks_to_destination;
-        //msg.broadcast();
-        //// TODO
-    //}
+    if (!motion->at_destination)
+    {   // check if at destination
+        float dist = vec3_distance_squared(motion->destination, position);
+        if (dist < 1.0f)    // TODO Margin
+        {
+            motion->en_route = false;
+            motion->at_destination = true;
+            physics->set_momentum(vec3_init(0,0,0));
+        }
+    }
 
-    //if (!this->at_destination)
-    //{   // check if at destination
-        //float dist = vec3_distance_squared(this->destination, this->get_position());
-        //if (dist < 1.0f)    // TODO Margin
-        //{
-            //this->en_route = false;
-            //this->at_destination = true;
-            //this->set_momentum(0,0,0);
-        //}
-    //}
+    if (motion->en_route)
+    {   // move towards destination
+        Vec3 new_position;
+        Vec3 new_momentum;
+        motion->en_route = moveBox(position, motion->target_direction, motion->speed, &new_position, &new_momentum);
+        physics->set_position(new_position);
+        physics->set_momentum(new_momentum);
+    }
 
-    //if (this->en_route)
-    //{   // move towards destination
-        //Vec3 position;
-        //Vec3 momentum;
-        //this->en_route = moveBox(this->get_position(), this->direction, this->speed, &position, &momentum);
-        //this->set_position(position.x, position.y, position.z);
-        //this->set_momentum(momentum.x, momentum.y, momentum.z);
-    //}
-
-    ////if (this->spatial.properties.changed)
-        ////this->broadcastState(); // send state packet if state changed
-    ////else if (this->canSendState())
-        ////this->broadcastState(); // send state packet every N ticks
+    //if (physics->changed)
+        //object->broadcastState(); // send state packet if state changed
+    //else if (this->canSendState())
+        //object->broadcastState(); // send state packet every N ticks
 }
 #endif
 
@@ -267,15 +293,18 @@ void server_tick_mob_robot_box(Object* object)
 void client_tick_mob_robot_box(Object* object)
 {
     using Components::WeaponTargetingComponent;
-    WeaponTargetingComponent* targeting = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
+
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)object->get_component(COMPONENT_MOTION_TARGETING);
 
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     
-    if (targeting->locked_on_target)
+    if (weapon->locked_on_target)
     {   // target locked
-        if (targeting->target_type != OBJECT_AGENT) return;    // TODO -- more objects
-        Agent_state* agent = ClientState::agent_list->get(targeting->target_id);
+        if (weapon->target_type != OBJECT_AGENT) return;    // TODO -- more objects
+        Agent_state* agent = ClientState::agent_list->get(weapon->target_id);
         if (agent == NULL) return;
         Vec3 agent_position = agent->get_center();
 
@@ -289,44 +318,44 @@ void client_tick_mob_robot_box(Object* object)
         {
             float theta,phi;
             normalize_vector(&direction);
-            targeting->target_direction = direction;
+            weapon->target_direction = direction;
             vec3_to_angles(direction, &theta, &phi);
             physics->set_angles(vec3_init(theta, phi, 0));
         }
         return; // do nothing else
     }
 
-    //if (!this->at_destination)
-    //{   // check if at destination
-        //float dist = vec3_distance_squared(this->destination, this->get_position());
-        //if (dist < 1.0f)    // TODO Margin
-        //{   // at destination, stop
-            //this->en_route = false;
-            //this->at_destination = true;
-            //this->set_momentum(0,0,0);
-        //}
-    //}
+    if (!motion->at_destination)
+    {   // check if at destination
+        float dist = vec3_distance_squared(motion->destination, physics->get_position());
+        if (dist < 1.0f)    // TODO Margin
+        {   // at destination, stop
+            motion->en_route = false;
+            motion->at_destination = true;
+            physics->set_momentum(vec3_init(0,0,0));
+        }
+    }
 
-    //if (this->en_route)
-    //{   // move towards destination
-        //Vec3 position;
-        //Vec3 momentum;
-        //this->en_route = moveBox(this->get_position(), this->direction, this->speed, &position, &momentum);
-        //this->set_position(position.x, position.y, position.z);
-        //this->set_momentum(momentum.x, momentum.y, momentum.z);
+    if (motion->en_route)
+    {   // move towards destination
+        Vec3 position;
+        Vec3 momentum;
+        motion->en_route = moveBox(physics->get_position(), motion->target_direction, motion->speed, &position, &momentum);
+        physics->set_position(position);
+        physics->set_momentum(momentum);
 
-        //if (vec3_length(momentum))
-        //{
-            //momentum.z = 0;
-            //normalize_vector(&momentum);
-            //this->direction = momentum;
-        //}
+        if (vec3_length(momentum))
+        {
+            momentum.z = 0;
+            normalize_vector(&momentum);
+            motion->target_direction = momentum;
+        }
 
-        //// face in direction of movement
-        //float theta, phi;
-        //vec3_to_angles(this->direction, &theta, &phi);
-        //this->set_angles(theta, phi, 0);
-    //}
+        // face in direction of movement
+        float theta, phi;
+        vec3_to_angles(motion->target_direction, &theta, &phi);
+        physics->set_angles(vec3_init(theta, phi, 0));
+    }
 
 }
 #endif

@@ -312,8 +312,9 @@ inline void object_choose_target_StoC::handle()
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
-    // TODO -- query destination
-    //box->en_route = false;  // cancel all motion
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+    if (motion != NULL) motion->en_route = false;  // cancel all motion
 
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
@@ -327,16 +328,47 @@ inline void object_choose_target_StoC::handle()
 
 inline void object_choose_destination_StoC::handle()
 {
-    //using Monsters::Box;
-    //ObjectPolicyInterface* obj = ClientState::object_list->get((ObjectType)type, id);
-    //if (obj == NULL) return;
-    //switch (type)
-    //{
-        //case OBJECT_MONSTER_BOX:
-            //box_chose_destination((Box*)obj, this);
-            //break;
-        //default: return;
-    //}
+    Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
+    if (obj == NULL) return;
+    
+    using Components::MotionTargetingComponent;
+    MotionTargetingComponent* motion = (MotionTargetingComponent*)obj->get_component(COMPONENT_MOTION_TARGETING);
+    if (motion == NULL) return;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics == NULL) return;
+    
+    motion->destination = vec3_init(this->x, this->y, this->z);
+    motion->ticks_to_destination = this->ticks;
+
+    // set momentum from destination :: TODO MOVE
+    Vec3 direction = vec3_sub(motion->destination, physics->get_position());
+    if (this->ticks)
+    {
+        float len = vec3_length(direction);
+        float speed = len / ((float)this->ticks);
+        motion->speed = speed;
+        motion->at_destination = false;
+        motion->en_route = true;
+        if (len)
+        {
+            normalize_vector(&direction);
+            motion->target_direction = direction;
+        }
+    }
+    else
+    {   // no ticks is equivalent to a teleport
+        physics->set_position(motion->destination);
+        motion->speed = 0.0f;
+        motion->at_destination = true;
+        motion->en_route = false;
+    }
+
+    // cancel target
+    using Components::WeaponTargetingComponent;
+    WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)obj->get_component(COMPONENT_WEAPON_TARGETING);
+    if (weapon != NULL) weapon->locked_on_target = false;
 }
 
 #endif

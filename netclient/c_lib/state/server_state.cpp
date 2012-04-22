@@ -222,7 +222,7 @@ namespace ServerState
         // TESTING -- remove later
         // creates some bombs on init
         const int n_bombs = 50;
-        const ObjectType mob_type = OBJECT_MONSTER_BOMB;
+        const ObjectType mob_type = OBJECT_MONSTER_BOX;
         for (int i=0; i<n_bombs; i++)
         {
             Objects::Object* obj = Objects::create(mob_type);

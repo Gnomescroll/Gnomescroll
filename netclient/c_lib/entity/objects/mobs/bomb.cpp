@@ -44,7 +44,6 @@ static void set_mob_bomb_properties(Object* object)
 
     using Components::MotionTargetingComponent;
     MotionTargetingComponent* motion = (MotionTargetingComponent*)add_component_to_object(object, COMPONENT_MOTION_TARGETING);
-    motion->target_acquisition_probability = 1.0f;
     motion->sight_range = MONSTER_BOMB_MOTION_PROXIMITY_RADIUS;
     motion->speed = MONSTER_BOMB_SPEED;
 
