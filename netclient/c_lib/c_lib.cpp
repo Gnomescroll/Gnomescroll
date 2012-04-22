@@ -2,8 +2,6 @@
     #define DC_CLIENT
 #endif
 
-#include <c_lib.hpp>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

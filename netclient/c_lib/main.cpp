@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include <defines.h>
 
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/SDL/SDL_functions.h>
