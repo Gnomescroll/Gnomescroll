@@ -34,6 +34,8 @@
 #include <c_lib/entity/components/spawner/agent_spawner.cpp>
 #include <c_lib/entity/components/spawner/monster_spawner.cpp>
 
+#include <c_lib/entity/components/spawn_child.cpp>
+
 #include <c_lib/entity/components/voxel_model.cpp>
 
 #include <c_lib/entity/components/dimension.cpp>

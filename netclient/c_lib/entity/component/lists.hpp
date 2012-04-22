@@ -79,6 +79,13 @@ const int MAX_MONSTER_SPAWNER_COMPONENTS = 512;
 typedef ComponentList<MonsterSpawnerComponent, COMPONENT_MONSTER_SPAWNER, MAX_MONSTER_SPAWNER_COMPONENTS>
     MonsterSpawnerComponentList;
 
+/* Spawn Child */
+const int MAX_SPAWN_CHILD_COMPONENTS = 4096;
+typedef ComponentList<SpawnChildComponent, COMPONENT_SPAWN_CHILD, MAX_SPAWN_CHILD_COMPONENTS>
+    SpawnChildComponentList;
+
+/* Dimensions */
+
 const int DIMENSION_COMPONENT_MAX = 4096;
 typedef ComponentList<DimensionComponent, COMPONENT_DIMENSION, DIMENSION_COMPONENT_MAX>
     DimensionComponentList;

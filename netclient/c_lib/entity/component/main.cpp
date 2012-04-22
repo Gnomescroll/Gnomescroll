@@ -43,8 +43,10 @@ OwnerComponentList* owner_component_list = NULL;
 
 VoxelModelComponentList* voxel_model_component_list = NULL;
 
-MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
 AgentSpawnerComponentList* agent_spawner_component_list = NULL;
+MonsterSpawnerComponentList* monster_spawner_component_list = NULL;
+
+SpawnChildComponentList* spawn_child_component_list = NULL;
 
 DimensionComponentList* dimension_component_list = NULL;
 
@@ -103,10 +105,13 @@ Component* get_switch(ComponentType type)
         case COMPONENT_VOXEL_MODEL:
             return voxel_model_component_list->subscribe();
 
-        case COMPONENT_MONSTER_SPAWNER:
-            return monster_spawner_component_list->subscribe();
         case COMPONENT_AGENT_SPAWNER:
             return agent_spawner_component_list->subscribe();
+        case COMPONENT_MONSTER_SPAWNER:
+            return monster_spawner_component_list->subscribe();
+
+        case COMPONENT_SPAWN_CHILD:
+            return spawn_child_component_list->subscribe();
 
         case COMPONENT_DIMENSION:
             return dimension_component_list->subscribe();
@@ -190,10 +195,15 @@ void release_switch(Component* component)
             voxel_model_component_list->unsubscribe((VoxelModelComponent*)component);
             break;
 
-        case COMPONENT_MONSTER_SPAWNER:
-            monster_spawner_component_list->unsubscribe((MonsterSpawnerComponent*)component);
         case COMPONENT_AGENT_SPAWNER:
             agent_spawner_component_list->unsubscribe((AgentSpawnerComponent*)component);
+            break;
+        case COMPONENT_MONSTER_SPAWNER:
+            monster_spawner_component_list->unsubscribe((MonsterSpawnerComponent*)component);
+            break;
+
+        case COMPONENT_SPAWN_CHILD:
+            spawn_child_component_list->unsubscribe((SpawnChildComponent*)component);
             break;
 
         case COMPONENT_DIMENSION:
@@ -247,8 +257,10 @@ void init()
 
     voxel_model_component_list = new VoxelModelComponentList;
 
-    monster_spawner_component_list = new MonsterSpawnerComponentList;
     agent_spawner_component_list = new AgentSpawnerComponentList;
+    monster_spawner_component_list = new MonsterSpawnerComponentList;
+
+    spawn_child_component_list = new SpawnChildComponentList;
 
     dimension_component_list = new DimensionComponentList;
 
@@ -288,8 +300,10 @@ void teardown()
 
     if (voxel_model_component_list != NULL) delete voxel_model_component_list;
 
-    if (monster_spawner_component_list != NULL) delete monster_spawner_component_list;
     if (agent_spawner_component_list != NULL) delete agent_spawner_component_list;
+    if (monster_spawner_component_list != NULL) delete monster_spawner_component_list;
+
+    if (spawn_child_component_list != NULL) delete spawn_child_component_list;
 
     if (dimension_component_list != NULL) delete dimension_component_list;
 

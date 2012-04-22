@@ -15,7 +15,7 @@ class MonsterSpawnerComponent: public SpawnerComponent
         int children;
 
         bool full() { return (this->children >= this->max_children); }
-        void gain_child(ObjectType type, int id);
+        void spawn_child();
         void lose_child(ObjectType type, int id);
         void get_spawn_point(int spawned_object_height, Vec3* spawn_point);
         

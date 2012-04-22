@@ -193,7 +193,6 @@ inline void object_picked_up_StoC::handle()
 
 inline void object_shot_object_StoC::handle()
 {
-    printf("shot object\n");
     if (this->target_type != OBJECT_AGENT) return; // remove this once turret can attack other objects
 
     // get firing object
@@ -250,7 +249,6 @@ inline void object_shot_object_StoC::handle()
 
 inline void object_shot_terrain_StoC::handle()
 {
-    printf("shot terrain\n");
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 
@@ -285,7 +283,6 @@ inline void object_shot_terrain_StoC::handle()
 
 inline void object_shot_nothing_StoC::handle()
 {
-    printf("shot nothing\n");
     Objects::Object* obj = Objects::get((ObjectType)this->type, this->id);
     if (obj == NULL) return;
 

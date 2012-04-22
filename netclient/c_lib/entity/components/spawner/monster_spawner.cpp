@@ -8,7 +8,6 @@ namespace Components
 
 void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* spawn_point)
 {
-
     PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
     if (physics == NULL)
     {
@@ -35,8 +34,16 @@ void MonsterSpawnerComponent::get_spawn_point(int spawned_object_height, Vec3* s
     spawn_point->z = t_map::get_highest_open_block((int)sx, (int)sy, h);
 }
 
-void MonsterSpawnerComponent::gain_child(ObjectType type, int id)
+void MonsterSpawnerComponent::spawn_child()
 {
+    Object* object = Objects::create(this->spawn_type);
+    if (object == NULL) return;
+
+    using Components::SpawnChildComponent;
+    SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
+    if (child == NULL) return;
+    child->assign_parent(this->object->type, this->object->id);
+    
     this->children++;
 }
 

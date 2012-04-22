@@ -16,9 +16,17 @@ namespace Objects
 
 static void set_mob_robot_box_properties(Object* object)
 {
+    #if DC_SERVER
+    const int n_components = 7;
+    #endif
+    #if DC_CLIENT
     const int n_components = 6;
+    #endif
     object->init(n_components);
 
+    #if DC_SERVER
+    add_component_to_object(object, COMPONENT_SPAWN_CHILD);
+    #endif
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
 
     using Components::DimensionComponent;
@@ -105,14 +113,10 @@ void die_mob_robot_box(Object* object)
     #if DC_SERVER
     //boxDropItem(); -- todo, item drop component
     object->broadcastDeath();
-    // TODO -- spawned_by/parent/child component
-    //Object* spawner = object_list->get(OBJECT_MONSTER_SPAWNER, spawned->spawner);
-    //if (spawner != NULL)
-    //{
-        //using Components::MonsterSpawnerComponent;
-        //MonsterSpawnerComponent* spawn = (MonsterSpawnerComponent*)spawner->get_component(COMPONENT_MONSTER_SPAWNER);
-        //spawn->lose_child(object->type, object->id);
-    //}
+
+    using Components::SpawnChildComponent;
+    SpawnChildComponent* child = (SpawnChildComponent*)object->get_component(COMPONENT_SPAWN_CHILD);
+    if (child != NULL) child->notify_parent_of_death();
     #endif
 }
 

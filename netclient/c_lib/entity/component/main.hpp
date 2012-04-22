@@ -46,8 +46,10 @@ extern OwnerComponentList* owner_component_list;
 
 extern VoxelModelComponentList* voxel_model_component_list;
 
-extern MonsterSpawnerComponentList* monster_spawner_component_list;
 extern AgentSpawnerComponentList* agent_spawner_component_list;
+extern MonsterSpawnerComponentList* monster_spawner_component_list;
+
+extern SpawnChildComponentList* spawn_child_component_list;
 
 extern DimensionComponentList* dimension_component_list;
 
