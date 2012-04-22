@@ -50,6 +50,7 @@ void tick()
 #endif
 }
 
+#if DC_CLIENT
 void draw()
 {
     #if DC_CLIENT
@@ -57,8 +58,16 @@ void draw()
 
     //if (input_state.inventory)
         //draw_inventory();
-    #endif
+
 }
+
+void draw_hud()
+{
+    //if (input_state.inventory)
+        //draw_inventory();
+}
+
+#endif
 
 }
  

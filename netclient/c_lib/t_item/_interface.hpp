@@ -14,7 +14,6 @@ void state_init();
 void state_teardown();
 
 void tick();
-void draw();
 
 void check_item_pickups();
 
@@ -29,6 +28,9 @@ void create_free_item(int item_type,
 CLIENT
 */
 #if DC_CLIENT
+
+void draw();
+void draw_hud();
 
 namespace t_item
 {
