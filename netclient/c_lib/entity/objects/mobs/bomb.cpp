@@ -17,7 +17,7 @@ namespace Objects
 static void set_mob_bomb_properties(Object* object)
 {
     #if DC_SERVER
-    const int n_components = 6;
+    const int n_components = 7;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
@@ -53,6 +53,10 @@ static void set_mob_bomb_properties(Object* object)
     explode->radius = MONSTER_BOMB_EXPLOSION_RADIUS;
     explode->proximity_radius = MONSTER_BOMB_EXPLOSION_PROXIMITY_RADIUS;
     explode->damage = MONSTER_BOMB_EXPLOSION_DAMAGE;
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)add_component_to_object(object, COMPONENT_RATE_LIMIT);
+    limiter->limit = MONSTER_BOMB_BROADCAST_RATE;
     #endif
 
     #if DC_CLIENT
@@ -154,12 +158,16 @@ void tick_mob_bomb(Object* object)
     physics->set_position(position); // move slime position by velocity
 
     #if DC_SERVER
-    // TODO -- rate limited broadcast component
-    //if (this->canSendState())
-    if (physics->changed)
-        object->broadcastState(); // send state packet every N ticks
+    // send packet if physical state changed
+    if (physics->changed) object->broadcastState();
+    else
+    {
+        // send packet once per second anyway
+        using Components::RateLimitComponent;
+        RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+        if (limiter->allowed()) object->broadcastState();
+    }
     #endif
-
 }
 
 void update_mob_bomb(Object* object)

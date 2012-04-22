@@ -104,7 +104,8 @@ typedef ComponentList<ExplosionComponent, COMPONENT_EXPLOSION, EXPLOSION_COMPONE
 
 /* Rate Limiting */
 const int RATE_LIMIT_COMPONENT_MAX = 4096;
-typedef ComponentList<RateLimitComponent, COMPONENT_RATE_LIMIT, RATE_LIMIT_COMPONENT_MAX>
-    RateLimitComponentList;
+class RateLimitComponentList:
+    public CallableComponentList<RateLimitComponent, COMPONENT_RATE_LIMIT, RATE_LIMIT_COMPONENT_MAX>
+{};
 
 } // Components

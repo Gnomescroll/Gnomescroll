@@ -48,6 +48,8 @@ namespace ServerState
 
         Objects::spawn_mobs();
 
+        Components::rate_limit_component_list->call(); // advance rate limiter ticks
+
         t_item::tick();
 
         if(counter % 10 == 0)
@@ -220,8 +222,9 @@ namespace ServerState
 
         // TESTING -- remove later
         // creates mob spawners
-        const int n_bombs = 10;
-        const ObjectType mob_type = OBJECT_MONSTER_SPAWNER;
+        const int n_bombs = 100;
+        //const ObjectType mob_type = OBJECT_MONSTER_SPAWNER;
+        const ObjectType mob_type = OBJECT_MONSTER_BOMB;
         for (int i=0; i<n_bombs; i++)
         {
             Objects::Object* obj = Objects::create(mob_type);
