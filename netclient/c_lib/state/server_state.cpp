@@ -216,18 +216,12 @@ namespace ServerState
         msg.broadcast();
     }
 
-    void start_game()
+    // TODO -- move this test/convenince method
+    void spawn_monsters(ObjectType type, int n)
     {
-        ctf->start();
-
-        // TESTING -- remove later
-        // creates mob spawners
-        const int n_bombs = 100;
-        //const ObjectType mob_type = OBJECT_MONSTER_SPAWNER;
-        const ObjectType mob_type = OBJECT_MONSTER_BOMB;
-        for (int i=0; i<n_bombs; i++)
+        for (int i=0; i<n; i++)
         {
-            Objects::Object* obj = Objects::create(mob_type);
+            Objects::Object* obj = Objects::create(type);
             if (obj == NULL) break;
 
             Vec3 position;
@@ -246,6 +240,16 @@ namespace ServerState
             physics->set_position(position);
             Objects::ready(obj);
         }
+    }
+
+    void start_game()
+    {
+        ctf->start();
+
+        // TESTING -- remove later
+        // creates mob spawners
+        spawn_monsters(OBJECT_MONSTER_BOMB, 100);
+        spawn_monsters(OBJECT_MONSTER_SPAWNER, 12);
     }
 
     void agent_disconnect(int agent_id)
