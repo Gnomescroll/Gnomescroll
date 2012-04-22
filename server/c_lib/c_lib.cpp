@@ -111,6 +111,8 @@
 #include <c_lib/map_gen/hopcroft-karp.cpp>
 #endif
 #include <c_lib/map_gen/noise.c>
+#include <c_lib/map_gen/map_generator.cpp>
+#include <c_lib/map_gen/recipes.cpp>
 
 #include <net_lib/net_lib.h>
 

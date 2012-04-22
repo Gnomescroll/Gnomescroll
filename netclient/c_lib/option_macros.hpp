@@ -7,6 +7,9 @@
 #define OPT_INT_HEADER(NAME)\
 extern int NAME;
 
+#define OPT_UINT_HEADER(NAME)\
+extern unsigned int NAME;
+
 #define OPT_BOOL_HEADER(NAME)\
 extern bool NAME;
 
@@ -22,6 +25,9 @@ extern char* NAME;
 #define OPT_INT(NAME, DEFAULT)\
 int NAME = DEFAULT;
 
+#define OPT_UINT(NAME, DEFAULT)\
+unsigned int NAME = DEFAULT;
+
 #define OPT_BOOL(NAME, DEFAULT)\
 bool NAME = DEFAULT;
 
@@ -35,6 +41,9 @@ char* NAME = (char*) DEFAULT;
 
 #define OPT_INT_REGISTER(NAME)\
 LUA::register_int_option( #NAME, & NAME );
+
+#define OPT_UINT_REGISTER(NAME)\
+LUA::register_uint_option( #NAME, & NAME );
 
 #define OPT_BOOL_REGISTER(NAME)\
 LUA::register_bool_option( #NAME, & NAME );

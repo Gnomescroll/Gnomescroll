@@ -169,7 +169,13 @@ namespace LUA
 
 lua_State* LUA_options_table = NULL;
 
+#if DC_CLIENT
 const char* default_options_file = "./lua/settings.lua";
+#endif
+#if DC_SERVER
+const char* default_options_file = "./lua/settings_server.lua";
+#endif
+
 char* options_file = NULL;
 
 void set_options_file(char* path)
@@ -275,6 +281,36 @@ void register_int_option(const char* name, int* var)
 
     LUA_int_option_index++;
     if(LUA_int_option_index >= 256)
+    {
+        printf("LUA OPTION ERROR\n");
+        abort();
+    }
+}
+
+int LUA_uint_option_index = 0;
+unsigned int* LUA_uint_option_table[256] = {0};
+
+void register_uint_option(const char* name, unsigned int* var)
+{
+    LUA_uint_option_table[LUA_uint_option_index] = var;
+    lua_State *L = LUA_options_table;
+
+    lua_pushstring(L, name);    //key
+
+    lua_createtable(L, 0, 2);   //value
+
+        lua_pushstring(L, "id");
+        lua_pushnumber(L, LUA_uint_option_index);
+        lua_rawset(L, -3);
+
+        lua_pushstring(L, "type");
+        lua_pushstring(L, "uint");
+        lua_rawset(L, -3);
+
+    lua_rawset(L, -3);          //create table
+
+    LUA_uint_option_index++;
+    if(LUA_uint_option_index >= 256)
     {
         printf("LUA OPTION ERROR\n");
         abort();
@@ -391,6 +427,17 @@ extern "C"
             abort();
         }
         *LUA::LUA_int_option_table[option_id] = value;
+    }
+
+    void LUA_set_uint_option(int option_id, unsigned int value)
+    {
+
+        if(LUA::LUA_uint_option_table[option_id] == NULL)
+        {
+            printf("LUA_set_uint_option: error \n");
+            abort();
+        }
+        *LUA::LUA_uint_option_table[option_id] = value;
     }
 
     void LUA_set_bool_option(int option_id, int value)
