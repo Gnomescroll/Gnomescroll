@@ -41,8 +41,8 @@ class ItemGrid
 		xoff = 0;
 		yoff = 0;
 
-		xinc = 4;
-		yinc = 4;
+		xinc = 2;
+		yinc = 2;
 	}
 
 	void draw_slot(float x, float y)
@@ -73,6 +73,23 @@ class ItemGrid
 
 	void draw(int _x, int _y)
 	{
+
+		glDisable(GL_TEXTURE_2D);
+	    glColor3ub(128, 128, 128);
+    	glBegin(GL_QUADS);
+
+    	const float z = -0.6;
+    	const float w = (xinc* (xdim+1)) + xdim*_slot_size;
+    	const float h = (yinc* (ydim+1)) + ydim*_slot_size;
+
+		glVertex3f(_x, _y, z);
+		glVertex3f(_x+w, _y, z);
+		glVertex3f(_x+w, _y-h, z);
+		glVertex3f(_x, _y-h, z);
+
+    	glEnd();
+
+
 	    glEnable(GL_TEXTURE_2D);
 	    glBindTexture( GL_TEXTURE_2D, ItemGridSlotTexture );
 	    glEnable(GL_BLEND);
@@ -82,6 +99,21 @@ class ItemGrid
     	glBegin(GL_QUADS);
 
 
+    	for(int i=0; i<xdim; i++)
+    	{
+
+	    	for(int j=0; j<ydim; j++)
+    		{
+    			if(i == 0 && j == 0) continue;
+
+    			draw_slot(_x + i*_slot_size+(i+1)*xinc, _y - ( (ydim-j)*_slot_size+ ((ydim-j)+1)*yinc ) );
+    			//draw_slot(_x + i*_slot_size+(i+1)*xinc, _y - (ydim-(j+1)*_slot_size+ ((ydim-(j+1)+1)*yinc) ));
+    		
+				draw_slot(_x + i*_slot_size+(i+1)*xinc, _y - ( j*_slot_size+ (j+1)*yinc ) );
+
+    		}
+
+    	}
 
     	glEnd();
 
