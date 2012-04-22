@@ -1,4 +1,4 @@
-#include "main.hpp"
+#pragma once
 
 #include <c_lib/common/time/physics_timer.hpp>
 
@@ -18,38 +18,6 @@ void init()
     ServerState::start_game();
 
 }
-
-/*
-    tick = 0
-
-    while True:
-
-        while True: #physics loop
-            tc = GET_TICK()
-            if tc == 0 or sl_c > 1: #net out
-                sl_c+=1
-                break
-
-            init_c_lib.tick_server_state()
-
-            tick+=1
-
-            NetServerFlushToNet()
-
-        if sl_c > 0:
-            while GET_TICK() != 0:
-                sl_c+=1
-        #if sl_c > 1:
-            #print "Physics: %i ticks this frame" % (sl_c)
-        
-
-        NetServerDispatchNetworkEvents()
-        
-
-        time.sleep(0.001)
-
-    init_c_lib.close()
-*/
 
 int run()
 {
