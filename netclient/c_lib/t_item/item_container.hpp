@@ -9,18 +9,18 @@ typedef int ItemId ;
 
 const int EMPTY_SLOT = 0xffff;
 
-enum ItemContainerType
+typedef enum
 {
-	AgentInventory,
-	//BlockInventory,
-	//Bag
-};
+    INVENTORY_AGENT,
+    //INVENTORY_BLOCK,
+    //INVENTORY_BAG,
+} ItemContainerType;
 
 class ItemContainer // dont use behaviour list unless doing the registration model
 {
     public:
 
-    	int id;
+        int id;
 
         int xdim;
         int ydim;
@@ -33,7 +33,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
         ItemContainer(int _id)
         {
             id = _id;
-        	slot = NULL;
+            slot = NULL;
         }
 
         void init(ItemContainerType type, int _xdim, int _ydim)
@@ -52,13 +52,13 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         void init_agent_inventory()
         {
-            this->init(AgentInventory, 18, 12);
+            this->init(INVENTORY_AGENT, 18, 12);
         }
 
-	    ~ItemContainer()
-	    {
-	       delete[] slot;
-	    }
+        ~ItemContainer()
+        {
+           delete[] slot;
+        }
 
         bool is_full()
         {
@@ -92,8 +92,8 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         void insert_item(int item_id, int x, int y)
         {
-        	assert(is_valid_grid_position(x,y));
-        	slot[y*xdim + x] = item_id;
+            assert(is_valid_grid_position(x,y));
+            slot[y*xdim + x] = item_id;
             printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
         }
 
@@ -110,9 +110,9 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
             return _slot;
         }
 
-       	void clear_slot(int x, int y)
+        void clear_slot(int x, int y)
         {
-        	assert(is_valid_grid_position(x,y));
+            assert(is_valid_grid_position(x,y));
             slot[y*xdim + x] = EMPTY_SLOT;
         }
 /*

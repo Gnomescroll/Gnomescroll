@@ -19,7 +19,7 @@ void draw();
 void check_item_pickups();
 
 void create_free_item(int item_type, 
-	float x, float y, float z,
+    float x, float y, float z,
  float vx, float vy, float vz);
 
 
@@ -32,7 +32,7 @@ CLIENT
 
 namespace t_item
 {
-	extern int player_inventory_id;
+    extern int player_inventory_id;
     extern class ItemContainer* player_inventory;
 
 }
@@ -50,7 +50,7 @@ namespace t_item
 {
 
 const int NO_AGENT = 0xffff;
-extern int AgentInventoryList[256];
+extern int INVENTORY_AGENTList[256];
 
 
 void create_agent_inventory(int agent_id, int client_id);
