@@ -55,6 +55,12 @@ class Inventory: public BaseInventoryServer
         }
     }
 
+    InventoryProperties* get_slot_item(int slot)
+    {
+        if (!this->contents.is_valid_slot(slot)) return NULL;
+        return &this->contents.objects[slot];
+    }
+
     InventoryProperties* get(int slot)
     {
         return this->contents.get(slot);
@@ -120,6 +126,12 @@ class Inventory: public BaseInventoryServer
     {
         return BaseInventoryServer::can_add(type);
     }
+
+    bool can_add(ObjectType type, int slot)
+    {
+        return BaseInventoryServer::can_add(type, slot);
+    }
+    
     bool can_remove(int slot)
     {
         return BaseInventoryServer::can_remove(slot);

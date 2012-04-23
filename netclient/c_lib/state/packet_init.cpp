@@ -214,9 +214,13 @@ void RegisterMessages() {
     add_item_to_inventory_StoC::register_client_packet();
     remove_item_from_inventory_StoC::register_client_packet();
     swap_item_in_inventory_StoC::register_client_packet();
+    swap_item_between_inventory_StoC::register_client_packet();
+
+    // client actions
     add_item_to_inventory_CtoS::register_server_packet();
     remove_item_from_inventory_CtoS::register_server_packet();
     swap_item_in_inventory_CtoS::register_server_packet();
+    swap_item_between_inventory_CtoS::register_server_packet();
 }
 
 }
