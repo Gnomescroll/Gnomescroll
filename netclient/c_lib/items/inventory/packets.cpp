@@ -70,10 +70,15 @@ inline void swap_item_in_inventory_StoC::handle()
     //printf("swapped slots %d,%d in inventory %d\n", slota, slotb, inventory_id);
 }
 
+inline void swap_item_between_inventory_StoC::handle()
+{
+
+}
+
 inline void add_item_to_inventory_CtoS::handle() {}
 inline void remove_item_from_inventory_CtoS::handle() {}
 inline void swap_item_in_inventory_CtoS::handle() {}
-
+inline void swap_item_between_inventory_CtoS::handle() {}
 #endif
 
 #if DC_SERVER
@@ -82,6 +87,7 @@ inline void inventory_destroy_StoC::handle() {}
 inline void add_item_to_inventory_StoC::handle() {}
 inline void remove_item_from_inventory_StoC::handle() {}
 inline void swap_item_in_inventory_StoC::handle() {}
+inline void swap_item_between_inventory_StoC::handle() {}
 
 inline void add_item_to_inventory_CtoS::handle()
 {
@@ -145,6 +151,11 @@ inline void swap_item_in_inventory_CtoS::handle()
     if (inv == NULL) return;
     if (inv->owner != agent->id) return;
     inv->swap_action(slota, slotb);
+}
+
+inline void swap_item_between_inventory_CtoS::handle()
+{
+
 }
 
 #endif

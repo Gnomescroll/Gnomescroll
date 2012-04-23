@@ -99,6 +99,25 @@ class swap_item_in_inventory_StoC: public FixedSizeReliableNetPacketToClient<swa
     inline void handle();
 };
 
+class swap_item_between_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_item_between_inventory_StoC>
+{
+    public:
+        uint16_t inventorya;
+        uint8_t slota;
+        uint16_t inventoryb;
+        uint8_t slotb;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventorya, buff, buff_n, pack);
+        pack_u8(&slota, buff, buff_n, pack);
+        pack_u16(&inventoryb, buff, buff_n, pack);
+        pack_u8(&slotb, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+
 
 /* CtoS */
 
@@ -153,3 +172,23 @@ class swap_item_in_inventory_CtoS: public FixedSizeReliableNetPacketToServer<swa
     }
     inline void handle();
 };
+
+class swap_item_between_inventory_CtoS: public FixedSizeReliableNetPacketToServer<swap_item_between_inventory_CtoS>
+{
+    public:
+        uint16_t inventorya;
+        uint8_t slota;
+        uint16_t inventoryb;
+        uint8_t slotb;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventorya, buff, buff_n, pack);
+        pack_u8(&slota, buff, buff_n, pack);
+        pack_u16(&inventoryb, buff, buff_n, pack);
+        pack_u8(&slotb, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+
