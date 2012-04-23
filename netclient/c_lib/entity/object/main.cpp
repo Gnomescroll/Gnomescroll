@@ -488,6 +488,8 @@ void spawn_mobs()
     if (object_list->empty(type)) return;
     Object** objects = object_list->get_objects(type);
     assert(objects != NULL);
+    char* used = object_list->get_used(type);;\
+    assert(used != NULL);
     int max = object_list->max(type);
     assert(max > 0);
     Object* obj;
@@ -496,8 +498,8 @@ void spawn_mobs()
     MonsterSpawnerComponent* spawner;
     for (int i=0; i<max; i++)
     {
+        if (!used[i]) continue;
         obj = objects[i];
-        if (obj == NULL) continue;
         spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
         assert(spawner != NULL);
         child = spawner->spawn_child(spawn_type);

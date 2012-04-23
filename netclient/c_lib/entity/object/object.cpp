@@ -45,6 +45,7 @@ void Object::broadcastDeath()
 void Object::init(int n_components)
 {
     this->components = (Component**)calloc(n_components, sizeof(Component*));
+    this->n_components = n_components;
 }
 
 Object::~Object()

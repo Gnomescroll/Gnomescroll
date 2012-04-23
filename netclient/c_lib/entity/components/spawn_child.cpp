@@ -10,7 +10,7 @@ void SpawnChildComponent::notify_parent_of_death()
 
     using Components::SpawnerComponent;
     MonsterSpawnerComponent* spawner = (MonsterSpawnerComponent*)obj->get_component(COMPONENT_MONSTER_SPAWNER);
-    assert(spawner != NULL);
+    if (spawner == NULL) return;
     spawner->lose_child(this->object->type, this->object->id);
 }
 

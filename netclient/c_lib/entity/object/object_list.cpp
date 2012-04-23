@@ -12,7 +12,7 @@ int ObjectList::get_free_id(ObjectType type)
 {
     if (this->objects[type] == NULL) return -1;
     for (int i=0; i<this->maximums[type]; i++)
-        if (!this->used[type]) return i;
+        if (!this->used[type][i]) return i;
     return -1;
 }
 
@@ -25,7 +25,6 @@ void ObjectList::set_object_id(Object* object, int id)
     this->objects[type][id] = object;
     object->id = id;
 }
-
 
 int ObjectList::count(ObjectType type)
 {
@@ -65,6 +64,7 @@ Object* ObjectList::get(ObjectType type, int id)
 Object* ObjectList::create(ObjectType type)
 {
     int id = this->get_free_id(type);
+    assert(id >= 0);
     return this->create(type, id);
 }
 
