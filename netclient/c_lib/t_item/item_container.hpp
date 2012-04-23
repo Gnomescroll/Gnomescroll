@@ -16,7 +16,7 @@ typedef enum
     //INVENTORY_BAG,
 } ItemContainerType;
 
-class ItemContainer // dont use behaviour list unless doing the registration model
+class ItemContainer
 {
     public:
 
