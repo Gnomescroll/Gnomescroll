@@ -11,6 +11,19 @@ namespace Items
 
 InventoryList* inventory_list = NULL;
 
+Inventory* render_inventory = NULL; // current inventory selected for rendering
+
+void begin_render(Inventory* inventory)
+{
+    render_inventory = inventory;
+}
+
+void end_render()
+{
+    render_inventory = NULL;
+}
+
+
 void init()
 {
     assert(inventory_list == NULL);
@@ -59,7 +72,7 @@ Inventory* create_inventory(ObjectType type)
 #if DC_CLIENT
 Inventory* create_inventory(ObjectType type, int id)
 {
-    printf("creating inventory %d,%d\n", type, id);
+    printf("creating inventory %d\n", id);
     Inventory* inventory = inventory_list->create(id);
     inventory->type = type;
     // REMINDER: function calling this one must init inventory size

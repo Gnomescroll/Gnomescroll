@@ -19,6 +19,7 @@ void init()
     MapGen::init();
     MapRecipes::simple_map();
     MapGen::teardown();
+    srand(time(NULL));
 
     NetServer::init_server(127,0,0,1, Options::port);
     ServerState::start_game();

@@ -12,6 +12,11 @@ class InventoryList;
 
 extern InventoryList* inventory_list;
 
+extern Inventory* render_inventory; // current inventory selected for rendering
+
+void begin_render(Inventory* inventory);
+void end_render();
+
 #if DC_SERVER
 Inventory* create_inventory(ObjectType inventory_type);
 #endif
