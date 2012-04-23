@@ -1,6 +1,7 @@
 #include "_interface.hpp"
 
 #include <c_lib/t_hud/item_grid.hpp>
+#include <c_lib/t_hud/inventory_hud.hpp>
 
 namespace t_hud
 {
@@ -19,8 +20,9 @@ void draw_hud()
 {
     if (!input_state.inventory) return;
 
-    static ItemGrid g;
-    g.draw(300,300);
+    draw_inventory_hud();
+    //static ItemGrid g;
+    //g.draw(300,300);
 }
 
 
