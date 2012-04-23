@@ -7,6 +7,9 @@
 namespace t_hud
 {
 
+/*
+	Init
+*/
 void draw_init()
 {
     init_item_grid();
@@ -16,7 +19,24 @@ void draw_teardown()
 {
 
 }
+/*
+	Input Handling
+*/
 
+
+void handle_click(int x, int y, int button)
+{
+
+}
+
+void set_mouse_position(int x, int y)
+{
+	
+}
+
+/*
+	Drawing
+*/
 void draw_hud()
 {
     if (!input_state.inventory) return;

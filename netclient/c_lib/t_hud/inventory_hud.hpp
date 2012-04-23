@@ -111,19 +111,6 @@ void draw_inventory_hud()
 		const float tx_max = tx_min + 1.0/8.0;
 		const float ty_max = ty_min + 1.0/8.0;
 
-/*
-		glTexCoord2f( tx_min, ty_max );
-		glVertex3f(x,y+w, z);
-
-		glTexCoord2f( tx_max, ty_max );
-		glVertex3f(x+w, y+w ,z);
-	        
-		glTexCoord2f( tx_max, ty_min );
-		glVertex3f(x+w, y, z);
-
-		glTexCoord2f( tx_min, ty_min );
-		glVertex3f(x, y, z);
-*/
 		glTexCoord2f( tx_min, ty_min );
 		glVertex3f(x,y+w, z);
 
