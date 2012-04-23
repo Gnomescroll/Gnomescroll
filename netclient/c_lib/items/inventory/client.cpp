@@ -26,19 +26,22 @@ void Inventory::get_selected_icon_render_data(Draw::SpriteData* data)
     if (!this->selected()) return;
 
     InventoryProperties icon = this->contents.objects[0];
-    
-    float x = HudInventory::inventory->x;// + (icon.spacing/4);
-    float y = HudInventory::inventory->y + HudInventory::inventory->height - icon.spacing; // need to subtract our height
+
+    HudInventory::InventoryRender* render = Items::get_render_inventory();
+    if (render == NULL) return;
+    float x = render->x;// + (icon.spacing/4);
+    float y = render->y + render->height - icon.spacing; // need to subtract our height
     data->x = x + icon.spacing * (this->selected_slot % this->width());
     data->y = y - icon.spacing * (this->selected_slot / this->width());
-    data->z = HudInventory::inventory->z + 0.01 + 0.01;
+    data->z = render->z + 0.01 + 0.01;
     data->w = icon.spacing;
     data->h = icon.spacing;
 }
 
 
 Inventory::Inventory(int id)
-: BaseInventory(id), selected_slot(-1)
+: BaseInventory(id),
+selected_slot(-1), hud(HUD_ELEMENT_NONE)
 {
 }
 

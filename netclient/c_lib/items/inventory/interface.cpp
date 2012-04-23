@@ -4,6 +4,10 @@
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/inventory/list.hpp>
 
+#if DC_CLIENT
+#include <c_lib/hud/inventory.hpp>
+#endif
+
 namespace Items
 {
 
@@ -13,21 +17,6 @@ Inventory* agent_inventory = NULL;
 Inventory* agent_toolbelt = NULL;
 Inventory* nanite_inventory = NULL;
 Inventory* craft_bench_inventory = NULL;
-
-/* Render controller */
-
-Inventory* current_render_inventory = NULL; // current inventory selected for rendering
-
-void set_render_inventory(Inventory* inventory)
-{
-    current_render_inventory = inventory;
-}
-
-void unset_render_inventory()
-{
-    current_render_inventory = NULL;
-}
-
 
 /* CRUD */
 
@@ -103,5 +92,29 @@ void destroy_inventory(int id)
 {
     inventory_list->destroy(id);
 }
-    
+
+
+#if DC_CLIENT
+/* Render controller */
+
+Inventory* current_render_inventory = NULL; // current inventory selected for rendering
+
+void set_render_inventory(Inventory* inventory)
+{
+    current_render_inventory = inventory;
+}
+
+void unset_render_inventory()
+{
+    current_render_inventory = NULL;
+}
+
+HudInventory::InventoryRender* get_render_inventory()
+{
+    if (current_render_inventory == NULL) return NULL;
+    return HudInventory::get_inventory_hud_element(current_render_inventory->hud);
+}
+#endif
+
+
 }   // Items

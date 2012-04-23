@@ -939,35 +939,4 @@ Scoreboard::~Scoreboard()
     }    
 }
 
-//  TODO -- move to own subsystem
-bool get_screen_inventory_row_col(int x, int y, int* row, int* col)
-{
-    using HudInventory::inventory;
-    
-    // check if intersect inventory (only thing we care about right now)
-    if (point_in_rect(x,y, inventory->x, inventory->y, inventory->width, inventory->height))
-    {  // check if point in an inventory icon's rect
-        // shift coordinates to 0,0 inventory relative
-        x -= inventory->x;
-        y -= inventory->y;
-
-        // divide point by slot width/height
-        //  TODO -- get icon height/width from inventory object
-        const int icon_width = 32;
-        const int icon_height = 32;
-        *col = x/icon_width;
-        *row = y/icon_height;
-
-        // invert rows, since we draw top->bottom but coordinates are bottom->top
-        // TODO -- get rows,cols from inventory objects
-        //const int cols = 8;
-        //const int rows = 4;
-        //row = rows - row; // invert
-
-        //printf("row,col %d,%d\n", row, col);
-        return true;
-    }
-    return false;
-}
-
 }

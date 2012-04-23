@@ -1,5 +1,6 @@
 #pragma once
 
+#include <c_lib/hud/constants.hpp>
 #include <c_lib/hud/text.hpp>
 
 namespace Hud
