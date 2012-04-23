@@ -16,37 +16,43 @@ int ObjectList::get_free_id(ObjectType type)
     return -1;
 }
 
+void ObjectList::set_object_id(Object* object)
+{
+    int id = this->get_free_id(object->type);
+    this->set_object_id(object, id);
+}
+
 void ObjectList::set_object_id(Object* object, int id)
 {
     ObjectType type = object->type;
-    if (object->id >= 0)    // swap from current
-        this->objects[type][object->id] = NULL;
-    if (this->objects[type][id] != NULL)
-    {
-        printf("ERROR -- Object_list::set_object_id -- putting object in occupied slot\n");
-        assert(false);
-        return;
-    }
+    assert(this->used[type][id] == 0);
+
+    // swap from staging slot
+    int max = this->max(type);
+    assert(max > 0);
+    this->objects[type][max-1] = this->objects[type][id];
     this->objects[type][id] = object;
     object->id = id;
+    this->used[type][id] = 1;
+    this->indices[type] += 1;
 }
 
-int ObjectList::count(ObjectType type)
+inline int ObjectList::count(ObjectType type)
 {
     return this->indices[type];
 }
 
-int ObjectList::max(ObjectType type)
+inline int ObjectList::max(ObjectType type)
 {
     return this->maximums[type];
 }
 
-bool ObjectList::empty(ObjectType type)
+inline bool ObjectList::empty(ObjectType type)
 {
     return (this->count(type) == 0);
 }
 
-bool ObjectList::full(ObjectType type)
+inline bool ObjectList::full(ObjectType type)
 {
     return (this->count(type) >= this->max(type));
 }
@@ -55,9 +61,9 @@ void ObjectList::destroy(ObjectType type, int id)
 {
     if (this->used[type] == NULL) return;
     if (!this->used[type][id]) return;
-    //delete this->objects[type][id];
     this->used[type][id] = 0;
     this->indices[type] -= 1;
+    if (type == OBJECT_MONSTER_BOMB) printf("Destroyed %d\n", id);
 }
 
 Object* ObjectList::get(ObjectType type, int id)
@@ -68,23 +74,8 @@ Object* ObjectList::get(ObjectType type, int id)
 
 Object* ObjectList::create(ObjectType type)
 {
-    int id = this->get_free_id(type);
-    assert(id >= 0);
-    return this->create(type, id);
-}
-
-Object* ObjectList::create(ObjectType type, int id)
-{
-    if (this->used[type] == NULL) return NULL;
-    if (this->used[type][id])
-    {
-        //printf("WARNING: ObjectList::create() -- object %d,%d in use\n", type, id);
-        return NULL;
-    }
-    //this->objects[type][id] = new Object(id);
-    //this->objects[type][id]->type = type;
-    this->indices[type] += 1;
-    this->used[type][id] = 1;
+    if (this->maximums[type] <= 0) return NULL;
+    int id = this->maximums[type] - 1;
     return this->objects[type][id];
 }
 
@@ -106,9 +97,10 @@ void ObjectList::set_object_max(ObjectType type, int max)
 {
     assert(type < MAX_OBJECT_TYPES);
     assert(type >= 0);
-    this->maximums[type] = max;
+    this->maximums[type] = max-1;
     this->objects[type] = (Object**)calloc(max, sizeof(Object*));
     this->used[type] = (char*)calloc(max, sizeof(char));
+    this->used[type][max-1] = 1;    // reserve last slot for staging data / null ids
 }
 
 void ObjectList::load_object_data(ObjectDataList* data)

@@ -33,6 +33,8 @@ const float MONSTER_BOMB_MOTION_PROXIMITY_RADIUS = 15.0f;
 
 // motion
 const float MONSTER_BOMB_SPEED = 0.25f;
+const int MONSTER_BOMB_MOTION_MAX_Z_DOWN = 5;
+const int MONSTER_BOMB_MOTION_MAX_Z_UP = 5;
 
 // animations
 const struct Color MONSTER_BOMB_ANIMATION_COLOR = { 31,223,223 };

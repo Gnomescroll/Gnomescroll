@@ -5,16 +5,6 @@
 namespace Objects
 {
 
-Object* create(ObjectType type)
-{
-    return create_switch(type);
-}
-
-Object* create(ObjectType type, int id)
-{
-    return create_switch(type, id);
-}
-
 Object* get(ObjectType type, int id)
 {
     return get_object(type,id);

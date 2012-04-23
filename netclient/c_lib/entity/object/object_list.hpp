@@ -24,13 +24,14 @@ class ObjectList
     public:
 
         // misc
+        void set_object_id(Object* object);
         void set_object_id(Object* object, int id);
 
         // count accessors
-        int count(ObjectType type);
-        int max(ObjectType type);
-        bool empty(ObjectType type);
-        bool full(ObjectType type);
+        inline int count(ObjectType type);
+        inline int max(ObjectType type);
+        inline bool empty(ObjectType type);
+        inline bool full(ObjectType type);
 
         // object accessors
         Object* get(ObjectType type, int id);

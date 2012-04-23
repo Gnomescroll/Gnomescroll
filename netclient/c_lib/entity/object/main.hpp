@@ -21,8 +21,8 @@ class Component;
 Component* add_component_to_object(Object* object, ComponentType type);
 void release_object_components(Object* object);
 
-Object* create_switch(ObjectType type);
-Object* create_switch(ObjectType type, int id);
+Object* create(ObjectType type);
+Object* create(ObjectType type, int id);
 void ready_switch(Object* object);
 void destroy_switch(Object* object);
 void destroy_switch(ObjectType type, int id);

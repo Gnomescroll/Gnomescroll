@@ -23,8 +23,7 @@ Component* add_component_to_object(Object* object, ComponentType type)
 
 void release_object_components(Object* object)
 {
-    int count = object_data->get_component_count(object->type);
-    for (int i=0; i<count; i++)
+    for (int i=0; i<object->n_components; i++)
     {
         object->components[i]->object = NULL;
         Components::release(object->components[i]);

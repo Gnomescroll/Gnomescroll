@@ -121,7 +121,7 @@ void harvest()
 
 /* Underlying API handlers */
 
-Object* create_switch(ObjectType type)
+static Object* create_switch(ObjectType type)
 {
     switch (type)
     {
@@ -184,7 +184,15 @@ Object* create_switch(ObjectType type)
     return NULL;
 }
 
-Object* create_switch(ObjectType type, int id)
+Object* create(ObjectType type)
+{
+    Object* object = create_switch(type);
+    if (object == NULL) return NULL;
+    object_list->set_object_id(object);
+    return object;
+}
+
+Object* create(ObjectType type, int id)
 {
     Object* object = create_switch(type);
     if (object == NULL) return NULL;
