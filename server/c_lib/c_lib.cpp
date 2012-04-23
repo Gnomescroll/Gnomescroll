@@ -64,10 +64,6 @@
 #include <c_lib/voxel/voxel_loader.cpp> 
 #include <c_lib/voxel/vox_dat_init.cpp>
 
-/* Object system */
-//#include <c_lib/objects/common/include.cpp>
-//#include <c_lib/objects/components/include.cpp>
-
 /* Entity system */
 #include <c_lib/entity/include.cpp>
 
@@ -77,6 +73,7 @@
 /* Items */
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
+#include <c_lib/items/inventory/include.cpp>
 
 /* mechanisms */
 #include <c_lib/t_mech/_include.hpp>
@@ -155,6 +152,7 @@ int init_c_lib()
     lua_load_block_dat(); /* Load Block Dat */
 
     t_item::state_init();
+    Items::init();
 
     ServerState::init();
     Particles::init_particles();
@@ -171,6 +169,7 @@ void close_c_lib()
 
     teardown_chat_server();
 
+    Items::teardown();
     ServerState::teardown();
     Particles::teardown_particles();
 

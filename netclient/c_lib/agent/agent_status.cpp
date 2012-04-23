@@ -2,7 +2,9 @@
 
 #include <math.h>
 
-#ifdef DC_SERVER
+#include <c_lib/items/inventory/include.hpp>
+
+#if DC_SERVER
 #include <chat/server.hpp>
 #include <c_lib/chat/interface.hpp>
 #endif
@@ -44,64 +46,84 @@ flag_captures(0),
 coins(0),
 vox_crouched(false),
 base_restore_rate_limiter(0),
-lifetime(0)//,
-//inventory(NULL)
+lifetime(0),
+inventory(NULL),
+toolbelt(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
-    //#if DC_SERVER
-    //this->inventory = (Inventory*)ServerState::object_list->create(OBJECT_INVENTORY);
-    //if (this->inventory != NULL)
-    //{
-        //this->inventory->set_owner(this->a->id);
-        //this->inventory->init(8,4);
-    //}
-    //else
-        //printf("ERROR: Agent_status::Agent_status() -- failed to create inventory\n");
-    //#endif
+    #if DC_SERVER
+    this->load_inventories();
+    #endif
 }
 
 Agent_status::~Agent_status()
 {
-    //#if DC_SERVER
-    //ServerState::object_list->destroy(OBJECT_INVENTORY, this->inventory->state()->id);
-    //#endif
+    #if DC_SERVER
+    assert(this->inventory != NULL);
+    Items::destroy_inventory(this->inventory);
+    assert(this->toolbelt != NULL);
+    Items::destroy_inventory(this->toolbelt);
+    #endif
 }
+
+#if DC_SERVER
+void Agent_status::load_inventories()
+{   // get inventories from inventory repo
+    this->inventory = Items::create_inventory(OBJECT_AGENT_INVENTORY);
+    assert(this->inventory != NULL);
+    this->inventory->owner = this->a->id;
+    this->toolbelt = Items::create_inventory(OBJECT_AGENT_TOOLBELT);
+    assert(this->toolbelt != NULL);
+    this->toolbelt->owner = this->a->id;
+}
+
+void Agent_status::send_inventories_to_client()
+{
+    assert(this->inventory != NULL);
+    this->inventory->sendToClientCreate(this->a->id);
+    assert(this->toolbelt != NULL);
+    this->toolbelt->sendToClientCreate(this->a->id);
+}
+#endif
 
 void Agent_status::set_spawner(int pt)
 {
-    //if (pt != BASE_SPAWN_ID)
-    //{   // check new spawner exists
-        //if (!STATE::spawner_list->spawner_exists(this->team, pt))
-        //{
-            //if (STATE::spawner_list->spawner_exists(this->team, this->spawner))
-                //return;     // current spawner valid, leave it
-            //else
-                //pt = BASE_SPAWN_ID; // current spawner invalid, default to base
-        //}
-    //}
-    ////printf("Setting spawner to %d\n", pt);
-    //this->spawner = pt;
-    //#ifdef DC_SERVER
-    //spawn_location_StoC msg;
-    //msg.pt = pt;
-    //msg.sendToClient(this->a->id);
-    //#endif
+    using Components::agent_spawner_component_list;
+    using Components::BASE_SPAWN_ID;
+    
+    if (pt != BASE_SPAWN_ID)
+    {   // check new spawner exists
+        if (!agent_spawner_component_list->spawner_exists(this->team, pt))
+        {
+            if (agent_spawner_component_list->spawner_exists(this->team, this->spawner))
+                return;     // current spawner valid, leave it
+            else
+                pt = BASE_SPAWN_ID; // current spawner invalid, default to base
+        }
+    }
+    //printf("Setting spawner to %d\n", pt);
+    this->spawner = pt;
+    #if DC_SERVER
+    spawn_location_StoC msg;
+    msg.pt = pt;
+    msg.sendToClient(this->a->id);
+    #endif
 }
 
 void Agent_status::set_spawner()
 {
-    //int pt = STATE::spawner_list->get_random_spawner(this->team);
-    //this->spawner = pt;
-    //#ifdef DC_SERVER
-    //spawn_location_StoC msg;
-    //msg.pt = pt;
-    //msg.sendToClient(this->a->id);
-    //#endif
+    int pt = Components::agent_spawner_component_list->get_random_spawner(this->team);
+    this->spawner = pt;
+    #if DC_SERVER
+    spawn_location_StoC msg;
+    msg.pt = pt;
+    msg.sendToClient(this->a->id);
+    #endif
 }
 
 bool Agent_status::set_name(char* name)
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     if (strcmp(AGENT_UNDEFINED_NAME, name) == 0)    // cant be the undefined holder
         return false;
     if (name[0] == '\0')                            // no empties
@@ -114,7 +136,7 @@ bool Agent_status::set_name(char* name)
     bool new_name = (strcmp(this->name, name) == 0) ? false : true;
 
     strcpy(this->name, name);
-    #ifdef DC_SERVER
+    #if DC_SERVER
     agent_name_StoC msg;
     msg.id = this->a->id;
     strcpy(msg.name, this->name);
@@ -126,7 +148,7 @@ bool Agent_status::set_name(char* name)
 
 void Agent_status::check_missing_name()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     if (strcmp(name, AGENT_UNDEFINED_NAME) == 0)
     {
         request_agent_name_CtoS msg;
@@ -283,7 +305,7 @@ int Agent_status::die(int inflictor_id, ObjectType inflictor_type, AgentDeathMet
                 break;
         }
 
-        #ifdef DC_SERVER
+        #if DC_SERVER
         // drop any items (FLAG)
         if (this->has_flag)
         {
@@ -482,7 +504,7 @@ void Agent_status::set_team(int team)
 {
     if (team == this->team) return;
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     // am i leaving old team?
     chat_server->player_join_team(this->a->id, this->team, team);
     #endif
@@ -492,7 +514,7 @@ void Agent_status::set_team(int team)
         this->respawn_countdown = 0;
     this->team = team;
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     this->set_spawner();    // choose new spawn point
     ServerState::revoke_ownership(this->a->id); // revoke ownership of items
 
@@ -509,14 +531,14 @@ void Agent_status::add_coins(unsigned int coins)
 {
     if (coins==0) return;
     this->coins += coins;
-    #ifdef DC_SERVER
+    #if DC_SERVER
     this->send_coin_packet();
     #endif
 }
 
 void Agent_status::spend_coins(unsigned int coins, ObjectType item)
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     if (coins==0) return;
     if (item >= 0 && !can_gain_item(item)) return;
     this->coins -= coins;
@@ -621,7 +643,7 @@ bool Agent_status::lose_item(ObjectType item)
 
 void Agent_status::send_coin_packet()
 {
-    #ifdef DC_SERVER
+    #if DC_SERVER
     agent_coins_StoC msg;
     msg.coins = this->coins;
     msg.sendToClient(this->a->id);
@@ -649,7 +671,7 @@ bool Agent_status::purchase(ObjectType obj)
 
 void Agent_status::check_if_at_base()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if (ClientState::ctf != NULL
       && ClientState::ctf->is_at_base(
         this->a->status.team,
@@ -664,7 +686,7 @@ void Agent_status::check_if_at_base()
                 this->a->vox->restore(this->a->status.team);
         }
     }
-#endif
+    #endif
 }
 
 void Agent_status::tick()
