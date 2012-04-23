@@ -24,8 +24,9 @@ inline void inventory_create_StoC::handle()
         printf("WARNING: inventory_create_StoC::handle() inventory %d type mismatch: %d (local) %d (remote)\n", id, obj->type, this->type);
 
     obj->owner = owner;
-    #if DC_CLIENT   // TODO
-    attach_inventory_to_owner(obj, owner);
+    #if DC_CLIENT
+    attach_inventory_to_owner(obj);
+    attach_inventory_to_interface(obj);
     #endif
 }
 

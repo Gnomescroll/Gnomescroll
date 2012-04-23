@@ -4,25 +4,23 @@
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/inventory/list.hpp>
 
-/* CRUD interface for inventories */
+#if DC_CLIENT
+#include <c_lib/hud/inventory.hpp>
+#endif
 
 namespace Items
 {
 
+// these will hold copies of the agent_status inventory pointers
+// they will be assigned on creation from server
+Inventory* agent_inventory = NULL;
+Inventory* agent_toolbelt = NULL;
+Inventory* nanite_inventory = NULL;
+Inventory* craft_bench_inventory = NULL;
+
+/* CRUD */
+
 InventoryList* inventory_list = NULL;
-
-Inventory* render_inventory = NULL; // current inventory selected for rendering
-
-void begin_render(Inventory* inventory)
-{
-    render_inventory = inventory;
-}
-
-void end_render()
-{
-    render_inventory = NULL;
-}
-
 
 void init()
 {
@@ -94,5 +92,29 @@ void destroy_inventory(int id)
 {
     inventory_list->destroy(id);
 }
-    
+
+
+#if DC_CLIENT
+/* Render controller */
+
+Inventory* current_render_inventory = NULL; // current inventory selected for rendering
+
+void set_render_inventory(Inventory* inventory)
+{
+    current_render_inventory = inventory;
+}
+
+void unset_render_inventory()
+{
+    current_render_inventory = NULL;
+}
+
+HudInventory::InventoryRender* get_render_inventory()
+{
+    if (current_render_inventory == NULL) return NULL;
+    return HudInventory::get_inventory_hud_element(current_render_inventory->hud);
+}
+#endif
+
+
 }   // Items
