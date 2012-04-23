@@ -52,7 +52,7 @@ toolbelt(NULL)
 {
     strcpy(this->name, AGENT_UNDEFINED_NAME);
     #if DC_SERVER
-    this->retrieve_inventories();
+    this->load_inventories();
     #endif
 }
 
@@ -67,7 +67,7 @@ Agent_status::~Agent_status()
 }
 
 #if DC_SERVER
-void Agent_status::retrieve_inventories()
+void Agent_status::load_inventories()
 {   // get inventories from inventory repo
     this->inventory = Items::create_inventory(OBJECT_AGENT_INVENTORY);
     assert(this->inventory != NULL);

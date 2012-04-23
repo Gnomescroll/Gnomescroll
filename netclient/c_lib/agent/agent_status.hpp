@@ -61,7 +61,7 @@ class Agent_status {
         void check_missing_name();
 
         #if DC_SERVER
-        void retrieve_inventories();
+        void load_inventories();
         void send_inventories_to_client();
         #endif
         

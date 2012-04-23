@@ -62,7 +62,7 @@ Inventory* create_inventory(ObjectType type, int id)
     printf("creating inventory %d,%d\n", type, id);
     Inventory* inventory = inventory_list->create(id);
     inventory->type = type;
-    init_inventory_dimensions(inventory);
+    // REMINDER: function calling this one must init inventory size
     return inventory;
 }
 #endif

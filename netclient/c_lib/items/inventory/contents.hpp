@@ -81,6 +81,7 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
 
     void init(int x, int y)
     {
+        printf("init contents %d,%d\n", x,y);
         if (objects != NULL)
         {
             printf("WARNING: Inventory::init() -- objects is not NULL\n");
