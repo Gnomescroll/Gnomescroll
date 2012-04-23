@@ -134,8 +134,8 @@ void ObjectList::tick()
         {
             if (!this->used[i][j]) continue;
             Object* obj = this->objects[i][j];
-            if (obj->tick != NULL)
-                obj->tick(obj);
+            if (obj->tick == NULL) break;   // none of these objects will have tick()
+            obj->tick(obj);
         }
     }
 }
@@ -150,8 +150,8 @@ void ObjectList::update()
         {
             if (!this->used[i][j]) continue;
             Object* obj = this->objects[i][j];
-            if (obj->update != NULL)
-                obj->update(obj);
+            if (obj->update == NULL) break;
+            obj->update(obj);
         }
     }
 }
