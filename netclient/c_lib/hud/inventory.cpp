@@ -134,6 +134,11 @@ namespace HudInventory
 
 void Inventory::draw()
 {
+
+    return;
+    /*
+        Debug
+    */
     if (!this->inited) return;
     if (!this->inventory_background_texture) return;
     
