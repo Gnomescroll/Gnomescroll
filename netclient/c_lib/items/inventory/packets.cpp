@@ -36,7 +36,7 @@ inline void inventory_destroy_StoC::handle()
 
 inline void add_item_to_inventory_StoC::handle()
 {
-    Inventory* obj = Items::get_inventory(this->id);
+    Inventory* obj = Items::get_inventory(this->inventory_id);
     if (obj == NULL)
     {
         printf("WARNING: add_item_to_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
@@ -104,7 +104,7 @@ inline void add_item_to_inventory_CtoS::handle()
         printf("add_item_to_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
         return;
     }
-    Inventory* inv = Items::get_inventory(this->id);
+    Inventory* inv = Items::get_inventory(this->inventory_id);
     if (inv == NULL) return;
     if (inv->owner != agent->id) return;
     //ObjectPolicyInterface* obj = ServerState::object_list->get((ObjectType)type, id);

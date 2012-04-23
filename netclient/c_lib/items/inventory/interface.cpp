@@ -59,7 +59,7 @@ Inventory* create_inventory(ObjectType type)
 #if DC_CLIENT
 Inventory* create_inventory(ObjectType type, int id)
 {
-    printf("creating inventory %d,%d\n", type, id);
+    printf("creating inventory %d\n", id);
     Inventory* inventory = inventory_list->create(id);
     inventory->type = type;
     // REMINDER: function calling this one must init inventory size
