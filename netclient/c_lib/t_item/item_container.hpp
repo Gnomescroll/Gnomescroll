@@ -52,7 +52,7 @@ class ItemContainer // dont use behaviour list unless doing the registration mod
 
         void init_agent_inventory()
         {
-            this->init(INVENTORY_AGENT, 18, 12);
+            this->init(INVENTORY_AGENT, 6, 3);
         }
 
         ~ItemContainer()
