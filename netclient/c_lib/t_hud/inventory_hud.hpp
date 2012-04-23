@@ -44,12 +44,12 @@ void draw_inventory_hud()
 	}
 
 
-	glColor4ub(50, 50, 50, 50);
+	glColor4ub(255, 50, 50, 50);
 
 	glBegin(GL_QUADS);
 
-	for(int i=6; i<6; i++)
-	for(int j=3; j<3; j++)
+	for(int i=0; i<xdim; i++)
+	for(int j=0; j<ydim; j++)
 	{
 	
 		float x = inventory_hud_x_off + border + i*(inc+slot_size);
@@ -67,6 +67,9 @@ void draw_inventory_hud()
 	glEnable(GL_TEXTURE_2D);
 
 	glEnable(GL_DEPTH_TEST); // move this somewhere
+	glDisable(GL_BLEND);
+
+	glColor4ub(255, 255, 255, 255);
 
 }
 
