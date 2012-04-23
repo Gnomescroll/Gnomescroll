@@ -96,6 +96,7 @@ Future optimizations:
 
 preallocate objects
 --definitely faster; eliminates malloc of component array, nothing else different
+DONE
 
 preallocate components -- load data from default model
 --not sure if faster than new, but probably is. depends on how much faster malloc loading defaults is
@@ -103,8 +104,12 @@ preallocate components -- load data from default model
 use swaps on lists
 --minimize/eliminate iterating whole list
 
-static component lookup array per type
+not optimization but related:
+    use staging buffer for objects instead of stuffing at the end of the buffer array
+
+static component&interface lookup array per type
 --eliminates pointer dereferences required for finding component
+DONE
 
 static has_tick has_update per type
 --avoids iterating entire batches of objects that will all be null in tick() or update()

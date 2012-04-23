@@ -16,6 +16,7 @@ class ObjectList
         int* indices;
         int* maximums;
         char** used;
+        Object** staging_objects;
         Object*** objects;
         
         int get_free_id(ObjectType type);
@@ -58,7 +59,7 @@ class ObjectList
     ~ObjectList();
 
     ObjectList()
-    : indices(NULL), maximums(NULL), objects(NULL)
+    : indices(NULL), maximums(NULL), staging_objects(NULL), objects(NULL)
     {}
 };
 
