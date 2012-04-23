@@ -170,7 +170,6 @@ void RegisterMessages() {
     object_create_owner_team_index_StoC::register_client_packet();
 
     object_create_momentum_StoC::register_client_packet();
-
     object_create_momentum_angles_StoC::register_client_packet();
     
     object_destroy_StoC::register_client_packet();

@@ -181,6 +181,7 @@
 
 /* input */
 #include <c_lib/input/input.cpp>
+#include <c_lib/input/hud.cpp>
 #include <c_lib/input/handlers.cpp>
 #include <c_lib/input/skeleton_editor.cpp>
 

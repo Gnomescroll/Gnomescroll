@@ -21,7 +21,12 @@ void ObjectList::set_object_id(Object* object, int id)
     ObjectType type = object->type;
     if (object->id >= 0)    // swap from current
         this->objects[type][object->id] = NULL;
-    if (this->objects[type][id] != NULL) printf("WARNING -- Object_list::set_object_id -- putting object in occupied slot. Memory leak will occur\n");
+    if (this->objects[type][id] != NULL)
+    {
+        printf("ERROR -- Object_list::set_object_id -- putting object in occupied slot\n");
+        assert(false);
+        return;
+    }
     this->objects[type][id] = object;
     object->id = id;
 }

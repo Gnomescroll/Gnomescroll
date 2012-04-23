@@ -149,7 +149,7 @@ class object_destroy_StoC: public FixedSizeReliableNetPacketToClient<object_dest
 class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_StoC>
 {
     public:
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
         float x,y,z;
         //float mx,my,mz;
@@ -157,7 +157,7 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -169,14 +169,14 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
 class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_StoC>
 {
     public:
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
         float x,y,z;
         float mx,my,mz;
     
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
@@ -192,7 +192,7 @@ class object_state_momentum_StoC: public FixedSizeReliableNetPacketToClient<obje
 class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClient<object_state_momentum_angles_StoC>
 {
     public:
-        uint8_t id;
+        uint16_t id;
         uint8_t type;
         float x,y,z;
         float mx,my,mz;
@@ -200,7 +200,7 @@ class object_state_momentum_angles_StoC: public FixedSizeReliableNetPacketToClie
     
         inline void packet(char* buff, int* buff_n, bool pack) 
         {
-            pack_u8(&id, buff, buff_n, pack);
+            pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);

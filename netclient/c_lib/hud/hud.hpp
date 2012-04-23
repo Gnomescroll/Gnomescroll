@@ -112,7 +112,4 @@ void set_hud_fps_display(float fps_val);
 void update_hud_draw_settings();
 void draw_hud();
 
-// TODO -- move to own subsystem
-void handle_left_mouse_click(int x, int y);
-
 }

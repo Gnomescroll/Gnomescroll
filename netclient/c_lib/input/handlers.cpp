@@ -330,11 +330,11 @@ void inventory_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            Hud::handle_left_mouse_click(x,y);
+            hud_handle_left_mouse_click(x,y);
             break;
 
         case SDL_BUTTON_RIGHT:
-            Hud::handle_right_mouse_click(x,y);
+            hud_handle_right_mouse_click(x,y);
             break;
 
         default: break;
