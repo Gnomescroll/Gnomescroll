@@ -64,9 +64,23 @@ void attach_inventory_to_owner(Inventory* inventory, int owner)
         printf("WARNING: Inventory::attach_to_owner() -- agent %d not found\n", owner);
         return;
     }
-    if (a->status.inventory != NULL)
-        printf("WARNING: reassigned agent inventory\n");
-    a->status.inventory = inventory;
+
+    switch (inventory->type)
+    {
+        case OBJECT_AGENT_INVENTORY:
+            if (a->status.inventory != NULL)
+                printf("WARNING: reassigned agent inventory\n");
+            a->status.inventory = inventory;
+            break;
+        case OBJECT_AGENT_TOOLBELT:
+            if (a->status.toolbelt != NULL)
+                printf("WARNING: reassigned agent toobelt\n");
+            a->status.toolbelt = inventory;
+            break;
+        default:
+            printf("WARNING:: attach_inventory_to_owner() -- unhandled inventory type %d\n", inventory->type);
+            break;
+    }
 }
 
 #endif

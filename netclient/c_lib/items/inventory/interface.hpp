@@ -24,6 +24,4 @@ Inventory* get_inventory(int id);
 void destroy_inventory(Inventory* inventory);
 void destroy_inventory(int id);
 
-void swap_test();
-
 }   // Items

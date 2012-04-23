@@ -80,7 +80,6 @@ inline void swap_item_between_inventory_StoC::handle()
     InventoryProperties* item = inva->get_slot_item(slota);
     invb->add(item->item_id, item->item_type, item->stack.count, slotb);
     inva->remove(slota);
-
 }
 
 inline void add_item_to_inventory_CtoS::handle() {}
@@ -181,8 +180,8 @@ inline void swap_item_between_inventory_CtoS::handle()
     InventoryProperties* item = inva->get_slot_item(slota);
     if (!invb->can_add(item->item_type, slotb)) return;
 
-    invb->add_action(item->item_id, item->item_type, item->stack.count, slotb);
-    inva->remove_action(slota);
+    invb->add_silent(item->item_id, item->item_type, item->stack.count, slotb);
+    inva->remove_silent(slota);
 
     swap_item_between_inventory_StoC msg;
     msg.inventorya = inventorya;

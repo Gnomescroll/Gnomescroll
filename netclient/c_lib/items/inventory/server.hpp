@@ -66,6 +66,12 @@ class Inventory: public BaseInventoryServer
         return this->contents.get(slot);
     }
 
+    // no broadcast
+    bool remove_silent(int slot)
+    {
+        return this->remove(slot);
+    }
+
     bool remove_action(int slot)
     {
         bool removed = this->remove(slot);
@@ -75,6 +81,12 @@ class Inventory: public BaseInventoryServer
         else
             this->broadcastRemove(slot);
         return true;
+    }
+
+    // no broadcast
+    bool add_silent(int id, ObjectType type, int stack_size, int slot)
+    {
+        return this->add(id, type, slot);
     }
 
     bool add_action(int id, ObjectType type, int stack_size, int slot)

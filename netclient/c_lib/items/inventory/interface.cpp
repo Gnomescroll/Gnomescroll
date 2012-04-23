@@ -81,18 +81,5 @@ void destroy_inventory(int id)
 {
     inventory_list->destroy(id);
 }
-
-void swap_test()
-{
-    using ClientState::playerAgent_state;
-    if (playerAgent_state.you == NULL) return;
-    swap_item_between_inventory_CtoS msg;
-    msg.inventorya = playerAgent_state.you->status.inventory->id;
-    msg.inventoryb = playerAgent_state.you->status.toolbelt->id;
-    msg.slota = 0;
-    msg.slotb = 0;
-    msg.send();
-}
-
     
 }   // Items
