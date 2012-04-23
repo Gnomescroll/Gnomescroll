@@ -138,10 +138,9 @@ int init_c_lib()
     printf("Server init\n");
     srand(time(NULL));
 
-    Objects::init();    // Entity system
     Components::init();
-
     Objects::init_net_interfaces();
+    Objects::init();    // Entity system
 
     VoxDats::init();
     init_chat_server();
@@ -173,9 +172,8 @@ void close_c_lib()
     ServerState::teardown();
     Particles::teardown_particles();
 
-    Objects::teardown_net_interfaces();
-
     Objects::teardown();    // Entity system
+    Objects::teardown_net_interfaces();
     Components::teardown();
 
     printf("Server closed\n"); 

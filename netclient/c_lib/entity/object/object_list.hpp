@@ -9,7 +9,6 @@ class ObjectDataList;
 
 /* Management */
 
-const int MAX_OBJECT_TYPES = 256;
 class ObjectList
 {
     private:

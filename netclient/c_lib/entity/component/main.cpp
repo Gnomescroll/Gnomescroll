@@ -247,7 +247,7 @@ void release_switch(Component* component)
     }
 }
 
-void init()
+void init_components()
 {
     position_physics_component_list = new PositionPhysicsComponentList;
     position_momentum_physics_component_list = new PositionMomentumPhysicsComponentList;
@@ -294,7 +294,7 @@ void init()
     rate_limit_component_list = new RateLimitComponentList;
 }
 
-void teardown()
+void teardown_components()
 {
     if (position_physics_component_list != NULL) delete position_physics_component_list;
     if (position_momentum_physics_component_list != NULL) delete position_momentum_physics_component_list;

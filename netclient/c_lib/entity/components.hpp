@@ -22,4 +22,9 @@ void release(Component* component)
     release_switch(component);
 }
 
+ComponentInterfaceType get_interface_for_component(ComponentType component);
+
+void init();
+void teardown();
+
 } // Components

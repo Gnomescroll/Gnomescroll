@@ -238,11 +238,9 @@ int init_c_lib() {
     LUA::load_options(); //load game options
     srand(time(NULL));   // seed the RNG
 
-    Objects::init();    // Entity system
     Components::init();
-
     Objects::init_net_interfaces();
-    //Objects::init_state_interfaces();
+    Objects::init();    // Entity system
 
     _set_resolution(Options::width, Options::height, Options::fullscreen);
     init_video();
@@ -343,11 +341,9 @@ void close_c_lib() {
     Sound::close();
     close_SDL();
 
-    Objects::teardown_net_interfaces();
-    //Objects::teardown_state_interfaces();
-
     Objects::teardown();    // Entity system
     Components::teardown();
+    Objects::teardown_net_interfaces();
 
     printf("Game closed\n");
 
