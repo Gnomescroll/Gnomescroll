@@ -142,15 +142,14 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 
 void Free_item_list::draw()
 {
-    printf("drwa\n");
 #if DC_CLIENT
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
     GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, true);
+    GL_ASSERT(GL_BLEND, false);
 
-    assert(ItemSheetTexture != 0);
+    //assert(ItemSheetTexture != 0);
 
     glEnable(GL_ALPHA_TEST);
 
