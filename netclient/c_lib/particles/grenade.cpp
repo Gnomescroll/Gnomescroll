@@ -95,16 +95,6 @@ owner(-1)
     this->init();
 }
 
-Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z,mx,my,mz, GRENADE_MASS),
-BillboardSprite(),
-bounce_count(0),
-owner(-1)
-{
-    this->init();
-}
-
 Grenade::~Grenade()
 {
     #if DC_CLIENT

@@ -30,8 +30,10 @@ class ParticleMotion
 
         void set_state(float x, float y, float z, float mx, float my, float mz)
         {
-            verlet.position = vec3_init(x,y,z);
-            verlet.velocity = vec3_init(mx,my,mz);
+            //verlet.position = vec3_init(x,y,z);
+            //verlet.velocity = vec3_init(mx,my,mz);
+
+            this->verlet.set_state(x,y,z,mx,my,mz);
         }
 
         void set_position(float x, float y, float z)

@@ -42,7 +42,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
         #endif
         
         explicit Grenade(int id);
-        Grenade(int id, float x, float y, float z, float mx, float my, float mz);
+        explicit Grenade();
         ~Grenade();
 };
 
