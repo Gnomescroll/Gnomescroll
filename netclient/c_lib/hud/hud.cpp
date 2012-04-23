@@ -205,12 +205,12 @@ void draw_hud_textures()
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
 
-    if (hud_draw_settings.inventory)
-    {
-        HudInventory::inventory->draw();
-        //Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
-        HudInventory::draw_selected_icon_mask();
-    }
+    //if (hud_draw_settings.inventory)
+    //{
+    //    HudInventory::inventory->draw();
+    //    //Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->draw();
+    //    HudInventory::draw_selected_icon_mask();
+    //}
 
     if (hud_draw_settings.equipment)
         HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
