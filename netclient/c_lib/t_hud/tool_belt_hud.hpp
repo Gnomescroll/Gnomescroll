@@ -18,7 +18,7 @@ void draw_toolbelt_hud()
 	float inc2 = 2; //outer border
 	float slot_size = 32;
 
-	int xdim = 6;
+	int xdim = 10;
 	int ydim = 1;
 
 	glDisable(GL_DEPTH_TEST); // move this somewhere
@@ -26,6 +26,7 @@ void draw_toolbelt_hud()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+/*
 	glColor4ub(50, 50, 50, 64);
 
 	{
@@ -43,7 +44,7 @@ void draw_toolbelt_hud()
 
 		glEnd();
 	}
-
+*/
 	glBegin(GL_QUADS);
 
 	glColor4ub(50, 50, 50, 128);

@@ -26,6 +26,8 @@ void draw_inventory_hud()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+/*
 	glColor4ub(50, 50, 50, 64);
 
 	{
@@ -43,7 +45,7 @@ void draw_inventory_hud()
 
 		glEnd();
 	}
-
+*/
 	glBegin(GL_QUADS);
 
 	glColor4ub(50, 50, 50, 128);
@@ -79,10 +81,67 @@ void draw_inventory_hud()
 
 	glEnable(GL_TEXTURE_2D);
 
+	glColor4ub(255, 255, 255, 255);
+
+
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glColor3ub(255, 255, 255);
+
+	glBegin(GL_QUADS);
+
+	//const float z = -0.5;
+	//const float w = slot_size;
+
+	for(int i=0; i<xdim; i++)
+    for(int j=0; j<ydim; j++)
+	{
+		if(i == 0 && j == 0) continue;
+
+		const float x = inventory_hud_x_off + border + i*(inc+slot_size);
+		const float y = inventory_hud_y_off + border + j*(inc+slot_size);
+
+		const int tex_id = rand()%40;
+
+		const float tx_min = (1.0/8.0)*(tex_id % 8);
+		const float ty_min = (1.0/8.0)*(tex_id / 8);
+		const float tx_max = tx_min + 1.0/8.0;
+		const float ty_max = ty_min + 1.0/8.0;
+
+/*
+		glTexCoord2f( tx_min, ty_max );
+		glVertex3f(x,y+w, z);
+
+		glTexCoord2f( tx_max, ty_max );
+		glVertex3f(x+w, y+w ,z);
+	        
+		glTexCoord2f( tx_max, ty_min );
+		glVertex3f(x+w, y, z);
+
+		glTexCoord2f( tx_min, ty_min );
+		glVertex3f(x, y, z);
+*/
+		glTexCoord2f( tx_min, ty_min );
+		glVertex3f(x,y+w, z);
+
+		glTexCoord2f( tx_max, ty_min );
+		glVertex3f(x+w, y+w ,z);
+	        
+		glTexCoord2f( tx_max, ty_max );
+		glVertex3f(x+w, y, z);
+
+		glTexCoord2f( tx_min, ty_max );
+		glVertex3f(x, y, z);
+
+	}
+
+	glEnd();
+
 	glEnable(GL_DEPTH_TEST); // move this somewhere
 	glDisable(GL_BLEND);
-
-	glColor4ub(255, 255, 255, 255);
 
 }
 

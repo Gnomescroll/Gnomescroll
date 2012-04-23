@@ -19,7 +19,7 @@ void init_item_grid()
     GLuint format = GL_RGBA;
 
 	// Texture 1
-    s = create_surface_from_file((char*) "media/sprites/i01_256.png");
+    s = create_surface_from_file((char*) "media/sprites/i00.png");
 
     if(s == NULL)
     {
