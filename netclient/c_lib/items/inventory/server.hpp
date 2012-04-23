@@ -11,37 +11,7 @@
 
 #include <c_lib/items/inventory/inventory.hpp>
 
-class InventoryProperties;
-
-class InventoryContents: public BaseInventoryContents<InventoryProperties>
-{
-    public:
-        void sendToClient(int inventory_id, int client_id);
-};
-
-typedef BaseInventory<InventoryContents> BaseInventoryServer;
-
-
-class InventoryProperties: public BaseInventoryProperties
-{
-    public:
-            
-        void load(int id, ObjectType type, int stack_size)
-        {
-            this->item_id = id;
-            this->item_type = type;
-            this->stack.count = stack_size;
-            this->stack.max = get_max_stack_size(type);
-            //printf("Loaded inventory item %d,%d\n", id,type);
-        }
-        
-    InventoryProperties()
-    :
-    BaseInventoryProperties()
-    {}
-};
-
-class Inventory: public BaseInventoryServer
+class Inventory: public BaseInventory
 {
     public:
 
@@ -131,22 +101,22 @@ class Inventory: public BaseInventoryServer
     /* Expose Inventory API here */
     void init(int x, int y)
     {
-        BaseInventoryServer::init(x,y);
+        BaseInventory::init(x,y);
     }
     
     bool can_add(ObjectType type)
     {
-        return BaseInventoryServer::can_add(type);
+        return BaseInventory::can_add(type);
     }
 
     bool can_add(ObjectType type, int slot)
     {
-        return BaseInventoryServer::can_add(type, slot);
+        return BaseInventory::can_add(type, slot);
     }
     
     bool can_remove(int slot)
     {
-        return BaseInventoryServer::can_remove(slot);
+        return BaseInventory::can_remove(slot);
     }
     
     void sendToClientCreate(int client_id);
@@ -162,7 +132,7 @@ class Inventory: public BaseInventoryServer
     void broadcastSwap(int slota, int slotb);
 
     Inventory(int id)
-    : BaseInventoryServer(id)
+    : BaseInventory(id)
     {}
 };
 

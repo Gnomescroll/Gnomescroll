@@ -2,26 +2,6 @@
 
 #if DC_SERVER
 
-/* Network interfaces */
-
-/* Contents */
-
-void InventoryContents::sendToClient(int inventory_id, int client_id)
-{
-    for (int i=0; i<this->max; i++)
-    {
-        if (this->objects[i].item_id == EMPTY_SLOT)
-            continue;
-        add_item_to_inventory_StoC msg;
-        msg.inventory_id = inventory_id;
-        msg.id = this->objects[i].item_id;
-        msg.type = this->objects[i].item_type;
-        msg.stack = this->objects[i].stack.count;
-        msg.slot = i;
-        msg.sendToClient(client_id);
-    }
-}
-
 /* Inventory */
 
 void Inventory::sendToClientCreate(int client_id)

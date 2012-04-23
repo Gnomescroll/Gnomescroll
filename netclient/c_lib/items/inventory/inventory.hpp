@@ -5,7 +5,6 @@
 #include <c_lib/items/inventory/contents.hpp>
 
 // wrap InventoryContents into a game object
-template <class InventoryContents>
 class BaseInventory
 {
     protected:
@@ -96,14 +95,14 @@ class BaseInventory
             return this->contents.y;
         }
 
-    BaseInventory<InventoryContents>(int id)
+    BaseInventory(int id)
     : id(id), type(OBJECT_NONE), owner(NO_AGENT)
     {
         // remember to assign type after creation
         // also, owner if applicable
     }
 
-    ~BaseInventory<InventoryContents>()
+    ~BaseInventory()
     {
     }
 

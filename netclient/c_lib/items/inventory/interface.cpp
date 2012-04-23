@@ -11,6 +11,19 @@ namespace Items
 
 InventoryList* inventory_list = NULL;
 
+Inventory* render_inventory = NULL; // current inventory selected for rendering
+
+void begin_render(Inventory* inventory)
+{
+    render_inventory = inventory;
+}
+
+void end_render()
+{
+    render_inventory = NULL;
+}
+
+
 void init()
 {
     assert(inventory_list == NULL);

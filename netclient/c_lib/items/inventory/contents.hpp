@@ -9,33 +9,47 @@ typedef struct Stack
 } Stack;
 
 const int EMPTY_SLOT = 65535;
-class BaseInventoryProperties
+class InventoryProperties
 {
     public:
-        //StackableComponent stack;
         int item_id;
         ObjectType item_type;
         int slot;
         Stack stack;
 
-    bool empty()
-    {
-        if (this->item_id == EMPTY_SLOT) return true;
-        return false;
-    }
+        bool empty()
+        {
+            if (this->item_id == EMPTY_SLOT) return true;
+            return false;
+        }
 
-    BaseInventoryProperties()
+        void load(int id, ObjectType type, int stack_size);
+
+
+        #if DC_CLIENT
+        // render data
+        float spacing; // render icon spacing
+        float scale;
+        float sprite_index;
+
+        void get_sprite_data(struct Draw::SpriteData* data);
+        #endif
+
+    InventoryProperties()
     :
     item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
     slot(-1)    // slot is set after allocation
+    #if DC_CLIENT
+    , spacing(32.0f), scale(2.0f), sprite_index(0)
+    #endif
     {
         this->stack.max = 1;
         this->stack.count = 0;
     }
 };
 
-template <class InventoryProperties>
-class BaseInventoryContents // dont use behaviour list unless doing the registration model
+
+class InventoryContents // dont use behaviour list unless doing the registration model
 {
     public:
         InventoryProperties* objects;
@@ -180,6 +194,10 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return true;
     }
 
+    #if DC_SERVER
+    void sendToClient(int inventory_id, int client_id);
+    #endif
+
     InventoryProperties* item_at_slot(int x, int y)
     {
         if (!this->is_valid_grid_position(x,y))
@@ -188,13 +206,13 @@ class BaseInventoryContents // dont use behaviour list unless doing the registra
         return &this->objects[slot];
     }
 
-    ~BaseInventoryContents<InventoryProperties>()
+    ~InventoryContents()
     {
         if (this->objects != NULL)
             delete[] this->objects;
     }
 
-    BaseInventoryContents<InventoryProperties>()
+    InventoryContents()
     :
     objects(NULL),
     x(0), y(0), max(0), count(0)
