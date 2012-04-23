@@ -41,6 +41,7 @@ class InventoryProperties: public BaseInventoryProperties
         Inventory* inventory;
         float spacing; // render icon spacing
         float scale;
+        float sprite_index;
 
     void load(int id, ObjectType type, int stack_size);
     void get_sprite_data(struct Draw::SpriteData* data);
@@ -198,7 +199,7 @@ class Inventory: public BaseInventoryClient
             this->contents.objects[i].inventory = this;
     }
 
-    explicit Inventory(int id);
+    Inventory(int id);
 };
 
 #endif

@@ -3,11 +3,11 @@
 #include <c_lib/items/constants.hpp>
 #include <entity/constants.hpp>
 #include <c_lib/agent/constants.hpp>
-//#include <c_lib/items/inventory/inventory.hpp>
 
 void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 
 class Agent_state;  // forward declaration
+class Inventory;
 
 // Use for:
 // All agents server side
@@ -52,12 +52,18 @@ class Agent_status {
 
         int lifetime;
 
-        //Inventory* inventory;
+        Inventory* inventory;
+        Inventory* toolbelt;
 
         void tick();
 
         bool set_name(char* n); // return true if the new name is different
         void check_missing_name();
+
+        #if DC_SERVER
+        void retrieve_inventories();
+        void send_inventories_to_client();
+        #endif
         
         void set_spawner(int pt);
         void set_spawner();

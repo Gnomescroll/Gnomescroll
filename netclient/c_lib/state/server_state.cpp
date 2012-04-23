@@ -184,7 +184,15 @@ namespace ServerState
 
     void send_remainining_game_state_to_client(int client_id)
     {
-        Objects::send_to_client(OBJECT_INVENTORY, client_id);
+        // inventory is not in entity system, so these have no effect
+        Objects::send_to_client(OBJECT_AGENT_INVENTORY, client_id);
+        Objects::send_to_client(OBJECT_AGENT_TOOLBELT, client_id);
+        Objects::send_to_client(OBJECT_NANITE_INVENTORY, client_id);
+        Objects::send_to_client(OBJECT_CRAFTING_BENCH, client_id);
+
+        Agent_state* agent = agent_list->get(client_id);
+        if (agent == NULL) return;
+        agent->status.send_inventories_to_client();
     }
 
     //move somewhere

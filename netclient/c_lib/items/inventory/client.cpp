@@ -2,39 +2,23 @@
 
 #if DC_CLIENT
 
-#include <c_lib/draw/transparent.hpp>
 #include <c_lib/hud/inventory.hpp>
-
-void register_inventory_item_draw_list(InventoryProperties* property)
-{
-    Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->register_object(property);
-}
-
-void unregister_inventory_item_draw_list(InventoryProperties* property)
-{
-    Draw::draw_lists->get(Draw::ITEM_DRAW_LIST)->unregister_object(property);
-}
 
 void InventoryProperties::load(int id, ObjectType type, int stack_size)
 {
-    bool new_icon = (id != this->item_id || type != this->item_type);
-    if (this->item_id != EMPTY_SLOT && new_icon)
-        unregister_inventory_item_draw_list(this);
     if (type != this->item_type)
     {
-        this->sprite_index = get_icon_spritesheet_id(type);
+        //this->sprite_index = get_icon_spritesheet_id(type);
         // MAJO TODO -- HACK
         // hud icon spritesheet is 8x8 but rendered particle spritesheet is 16x16 -- but using same indexes
         // (should be using same sheet)
-        if (this->sprite_index >= 8)
-            this->sprite_index -= 8 * this->sprite_index/16;
+        //if (this->sprite_index >= 8)
+            //this->sprite_index -= 8 * this->sprite_index/16;
     }
     this->item_id = id;
     this->item_type = type;
-    this->stack.properties.count = stack_size;
-    this->stack.properties.max = get_max_stack_size(type);
-    if (id != EMPTY_SLOT && new_icon)   // set to new
-        register_inventory_item_draw_list(this);
+    this->stack.count = stack_size;
+    this->stack.max = get_max_stack_size(type);
     //printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);
 }
 

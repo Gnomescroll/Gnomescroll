@@ -277,6 +277,7 @@ int init_c_lib() {
     //vn::init();
 
     ClientState::init();
+    Items::init();
 
     VoxDats::init();
     init_voxel_volume();
@@ -324,6 +325,7 @@ void close_c_lib() {
     HudFont::teardown();
     teardown_chat_client();
 
+    Items::teardown();
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();

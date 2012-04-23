@@ -1,5 +1,6 @@
 #pragma once
 
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/items/inventory/packets.hpp>
 #include <c_lib/items/inventory/contents.hpp>
 
@@ -9,8 +10,6 @@ class BaseInventory
 {
     protected:
         InventoryContents contents;
-        int id;
-        int owner;
         
         void init(int x, int y)
         {
@@ -83,6 +82,9 @@ class BaseInventory
         }
 
     public:
+        int id;
+        ObjectType type;
+        int owner;
 
         int width()
         {
@@ -94,9 +96,11 @@ class BaseInventory
             return this->contents.y;
         }
 
-    explicit BaseInventory<InventoryContents>(int id)
-    : id(id), owner(NO_AGENT)
+    BaseInventory<InventoryContents>(int id)
+    : id(id), type(OBJECT_NONE), owner(NO_AGENT)
     {
+        // remember to assign type after creation
+        // also, owner if applicable
     }
 
     ~BaseInventory<InventoryContents>()

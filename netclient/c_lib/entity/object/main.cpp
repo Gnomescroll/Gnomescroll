@@ -390,6 +390,8 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
 
     Object** objects = object_list->get_objects(type);
     assert(objects != NULL);
+    char* used = object_list->get_used(type);
+    assert(used != NULL);
     int max = object_list->max(type);
     assert(max > 0);
     
@@ -403,8 +405,8 @@ bool point_occupied_by_type(ObjectType type, int x, int y, int z)
     
     for (int i=0; i<max; i++)
     {
+        if (!used[i]) continue;
         obj = objects[i];
-        if (obj == NULL) continue;
         
         physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         assert(physics != NULL);

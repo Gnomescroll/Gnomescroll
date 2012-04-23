@@ -152,6 +152,7 @@ int init_c_lib()
     lua_load_block_dat(); /* Load Block Dat */
 
     t_item::state_init();
+    Items::init();
 
     ServerState::init();
     Particles::init_particles();
@@ -168,6 +169,7 @@ void close_c_lib()
 
     teardown_chat_server();
 
+    Items::teardown();
     ServerState::teardown();
     Particles::teardown_particles();
 

@@ -16,12 +16,11 @@ class BaseInventoryProperties
         int item_id;
         ObjectType item_type;
         int slot;
-        struct Stack stack;
+        Stack stack;
 
     bool empty()
     {
-        if (this->item_id == EMPTY_SLOT)
-            return true;
+        if (this->item_id == EMPTY_SLOT) return true;
         return false;
     }
 
@@ -30,6 +29,8 @@ class BaseInventoryProperties
     item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
     slot(-1)    // slot is set after allocation
     {
+        this->stack.max = 1;
+        this->stack.count = 0;
     }
 };
 

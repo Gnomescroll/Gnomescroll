@@ -38,8 +38,7 @@ class InventoryProperties: public BaseInventoryProperties
     InventoryProperties()
     :
     BaseInventoryProperties()
-    {
-    }
+    {}
 };
 
 class Inventory: public BaseInventoryServer
@@ -138,9 +137,9 @@ class Inventory: public BaseInventoryServer
     void sendToClientSwap(int slota, int slotb);
     void broadcastSwap(int slota, int slotb);
 
-    
-    explicit Inventory(int id)
-    : BaseInventoryServer(id) {}
+    Inventory(int id)
+    : BaseInventoryServer(id)
+    {}
 };
 
 #endif
