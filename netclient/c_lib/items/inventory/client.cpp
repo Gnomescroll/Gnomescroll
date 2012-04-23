@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <c_lib/hud/inventory.hpp>
+#include <c_lib/items/inventory/interface.hpp>
 
 /* Inventory */
 
@@ -41,14 +42,10 @@ Inventory::Inventory(int id)
 {
 }
 
-void attach_inventory_to_owner(Inventory* inventory, int owner)
+void attach_inventory_to_owner(Inventory* inventory)
 {
-    Agent_state* a = STATE::agent_list->get(owner);
-    if (a == NULL)
-    {
-        printf("WARNING: Inventory::attach_to_owner() -- agent %d not found\n", owner);
-        return;
-    }
+    Agent_state* a = STATE::agent_list->get(inventory->owner);
+    if (a == NULL) return;
 
     switch (inventory->type)
     {
@@ -64,6 +61,32 @@ void attach_inventory_to_owner(Inventory* inventory, int owner)
             break;
         default:
             printf("WARNING:: attach_inventory_to_owner() -- unhandled inventory type %d\n", inventory->type);
+            break;
+    }
+}
+
+void attach_inventory_to_interface(Inventory* inventory)
+{
+    Agent_state* a = STATE::agent_list->get(inventory->owner);
+    if (a == NULL) return;
+    if (a != ClientState::playerAgent_state.you) return;
+    
+    switch (inventory->type)
+    {
+        case OBJECT_AGENT_INVENTORY:
+            Items::agent_inventory = inventory;
+            break;
+        case OBJECT_AGENT_TOOLBELT:
+            Items::agent_toolbelt = inventory;
+            break;
+        case OBJECT_NANITE_INVENTORY:
+            Items::nanite_inventory = inventory;
+            break;
+        case OBJECT_CRAFTING_BENCH:
+            Items::craft_bench_inventory = inventory;
+            break;
+        default:
+            printf("WARNING:: attach_inventory_to_interface() -- unhandled inventory type %d\n", inventory->type);
             break;
     }
 }

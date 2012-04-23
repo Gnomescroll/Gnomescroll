@@ -4,25 +4,34 @@
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/inventory/list.hpp>
 
-/* CRUD interface for inventories */
-
 namespace Items
 {
 
+// these will hold copies of the agent_status inventory pointers
+// they will be assigned on creation from server
+Inventory* agent_inventory = NULL;
+Inventory* agent_toolbelt = NULL;
+Inventory* nanite_inventory = NULL;
+Inventory* craft_bench_inventory = NULL;
+
+/* Render controller */
+
+Inventory* current_render_inventory = NULL; // current inventory selected for rendering
+
+void set_render_inventory(Inventory* inventory)
+{
+    current_render_inventory = inventory;
+}
+
+void unset_render_inventory()
+{
+    current_render_inventory = NULL;
+}
+
+
+/* CRUD */
+
 InventoryList* inventory_list = NULL;
-
-Inventory* render_inventory = NULL; // current inventory selected for rendering
-
-void begin_render(Inventory* inventory)
-{
-    render_inventory = inventory;
-}
-
-void end_render()
-{
-    render_inventory = NULL;
-}
-
 
 void init()
 {

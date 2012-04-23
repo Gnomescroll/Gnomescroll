@@ -8,6 +8,13 @@ void hud_handle_left_mouse_click(int x, int y)
     int row,col;
     if (Hud::get_screen_inventory_row_col(x,y, &row, &col))
         playerAgent_state.you->status.inventory->select_slot(row, col);
+
+    // iterate inventories on screen
+    // check for collision
+    // take the one with the most negative z level
+
+    // pass to inventory intersection handler
+
 }
 
 void hud_handle_right_mouse_click(int x, int y)
