@@ -11,7 +11,7 @@
 #endif
 
 #include <c_lib/physics/verlet_particle.hpp>
-//#include <c_lib/objects/components/spatial/components.hpp>
+#include <c_lib/entity/constants.hpp>
 
 namespace t_item
 {
@@ -21,11 +21,6 @@ using VerletParticle::VerletParticle;
 const int FREE_ITEM_TTL = 300; // 10 seconds
 const float FREE_ITEM_DAMPENING = 0.5;
 
-typedef enum
-{
-    type_NULL = 255,
-} T_ItemTypes;
-
 class Free_item //: public VerletComponent
 {
     private:
@@ -33,7 +28,7 @@ class Free_item //: public VerletComponent
         VerletParticle verlet;
 
         int id;
-        int type;
+        ObjectType type;
 
         int ttl;
 
@@ -49,16 +44,14 @@ class Free_item //: public VerletComponent
     void draw();
 
     explicit Free_item(int id)
-    :
-    id(id), type(type_NULL),
-    ttl(FREE_ITEM_TTL)
+    : id(id), type(OBJECT_NONE), ttl(FREE_ITEM_TTL)
     {
         verlet.dampening = FREE_ITEM_DAMPENING;
     }
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
-        type = rand() % 16;
+        this->type = (ObjectType)(rand() % 16);
 
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
@@ -67,7 +60,7 @@ class Free_item //: public VerletComponent
 
 void Free_item::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     const float scale = 0.25;
     const float h = 0.35;
 
@@ -106,8 +99,7 @@ void Free_item::draw()
     p = vec3_add(position, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z+h);
-
-#endif
+    #endif
 }
 
 }
@@ -142,7 +134,7 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
 
 void Free_item_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
@@ -166,9 +158,7 @@ void Free_item_list::draw()
     glEnd();
 
     glDisable(GL_ALPHA_TEST);
-
-
-#endif
+    #endif
 }
 
 void Free_item_list::tick()
@@ -183,8 +173,8 @@ void Free_item_list::tick()
         if (free_item->ttl <= 0)
         {
             #if DC_SERVER
-                free_item->die();
-                this->destroy(free_item->id);
+            free_item->die();
+            this->destroy(free_item->id);
             #endif
         }
     }
