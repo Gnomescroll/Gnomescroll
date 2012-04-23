@@ -45,7 +45,7 @@ class WeaponTargetingComponent: public TargetingComponent
     WeaponTargetingComponent()
     : TargetingComponent(COMPONENT_WEAPON_TARGETING),
     fire_tick(0), fire_rate_limit(1), uses_bias(false), accuracy_bias(0.0f),
-    attacks_enemies(true), attack_at_random(true)
+    attacks_enemies(true), attack_at_random(true), locked_on_target(false)
     {}
 };
 

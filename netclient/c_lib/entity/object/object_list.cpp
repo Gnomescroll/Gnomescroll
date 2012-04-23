@@ -93,6 +93,9 @@ void ObjectList::set_object_max(ObjectType type, int max)
 {
     assert(type < MAX_OBJECT_TYPES);
     assert(type >= 0);
+    assert(this->maximums[type] == 0);
+    assert(this->objects[type] == NULL);
+    assert(this->used[type] == NULL);
     this->maximums[type] = max;
     this->objects[type] = (Object**)calloc(max, sizeof(Object*));
     this->used[type] = (char*)calloc(max, sizeof(char));
@@ -129,7 +132,6 @@ void ObjectList::tick()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->tick == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
@@ -145,7 +147,6 @@ void ObjectList::update()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
@@ -162,7 +163,6 @@ void ObjectList::harvest()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;

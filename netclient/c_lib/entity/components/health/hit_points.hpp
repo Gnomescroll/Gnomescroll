@@ -43,7 +43,7 @@ class HitPointsHealthComponent: public HealthComponent
 
     HitPointsHealthComponent()
     : HealthComponent(COMPONENT_HIT_POINTS),
-    health(100), max_health(100)
+    died(false), health(100), max_health(100)
     {}
 };
 
