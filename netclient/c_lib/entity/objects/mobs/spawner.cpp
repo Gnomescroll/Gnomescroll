@@ -11,16 +11,32 @@
 namespace Objects
 {
 
-static void set_mob_spawner_properties(Object* object)
+void load_mob_spawner_data()
 {
+    ObjectType type = OBJECT_MONSTER_SPAWNER;
+    
     #if DC_SERVER
     const int n_components = 5;
     #endif
     #if DC_CLIENT
     const int n_components = 6;
     #endif
-    object->init(n_components);
+    
+    object_data->set_components(type, n_components);
 
+    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);
+    object_data->attach_component(type, COMPONENT_DIMENSION);
+    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    object_data->attach_component(type, COMPONENT_MONSTER_SPAWNER);
+
+    #if DC_CLIENT
+    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    #endif
+}
+
+static void set_mob_spawner_properties(Object* object)
+{
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
 
     using Components::DimensionComponent;

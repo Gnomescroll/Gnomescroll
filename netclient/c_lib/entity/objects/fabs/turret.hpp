@@ -6,6 +6,7 @@ namespace Objects
 // forward decl
 class Object;
 
+void load_turret_data();
 Object* create_turret();
 void ready_turret(Object* object);
 void die_turret(Object* object);

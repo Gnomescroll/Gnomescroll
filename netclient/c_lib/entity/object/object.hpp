@@ -49,7 +49,7 @@ class Object
         void broadcastDeath();
 
         // components
-        void add_component(Component* component);
+        void add_component(int slot, Component* component);
         Component* get_component(ComponentType type);
         Component* get_component_interface(ComponentInterfaceType interface);
 

@@ -19,7 +19,7 @@ void harvest();
 
 class Component;
 Component* add_component_to_object(Object* object, ComponentType type);
-void remove_component_from_object(Object* object, Component* component);
+void release_object_components(Object* object);
 
 Object* create_switch(ObjectType type);
 Object* create_switch(ObjectType type, int id);

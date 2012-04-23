@@ -2,6 +2,8 @@
 
 #include <c_lib/entity/component/component.hpp>
 #include <c_lib/entity/component/main.hpp>
+#include <c_lib/entity/object/object_data_list.hpp>
+#include <c_lib/entity/object/main.hpp>
 
 namespace Objects
 {
@@ -13,15 +15,21 @@ using Components::Component;
 Component* add_component_to_object(Object* object, ComponentType type)
 {
     Component* component = Components::get(type);
-    object->add_component(component);
+    int slot = object_data->get_component_slot(object->type, type);
+    object->add_component(slot, component);
     component->object = object;
     return component;
 }
 
-void remove_component_from_object(Object* object, Component* component)
+void release_object_components(Object* object)
 {
-    component->object = NULL;
-    Components::release(component);
+    int count = object_data->get_component_count(object->type);
+    for (int i=0; i<count; i++)
+    {
+        object->components[i]->object = NULL;
+        Components::release(object->components[i]);
+        object->components[i] = NULL;
+    }
 }
 
 } // Objects

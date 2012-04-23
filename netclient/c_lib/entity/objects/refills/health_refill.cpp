@@ -11,6 +11,12 @@
 namespace Objects
 {
 
+void load_health_refill_data()
+{
+    load_refill_data(OBJECT_HEALTH_REFILL);
+}
+
+
 // private
 static void set_health_refill_properties(Object* object)
 {   // attach components

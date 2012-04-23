@@ -16,16 +16,38 @@
 namespace Objects
 {
 
-static void set_turret_properties(Object* object)
+void load_turret_data()
 {
+    ObjectType type = OBJECT_TURRET;
+
     #if DC_SERVER
     int n_components = 8;
     #endif
     #if DC_CLIENT
     int n_components = 8;
     #endif
-    object->init(n_components);
-    
+
+    object_data->set_components(type, n_components);
+
+    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    object_data->attach_component(type, COMPONENT_OWNER);
+    object_data->attach_component(type, COMPONENT_TEAM);
+    object_data->attach_component(type, COMPONENT_DIMENSION);
+    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    object_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
+
+    #if DC_SERVER
+    object_data->attach_component(type, COMPONENT_EXPLOSION);
+    #endif
+
+    #if DC_CLIENT
+    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    #endif
+}
+
+static void set_turret_properties(Object* object)
+{
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);
     add_component_to_object(object, COMPONENT_OWNER);
     add_component_to_object(object, COMPONENT_TEAM);

@@ -12,16 +12,14 @@
 namespace Objects
 {
 
+void load_jade_gemstone_data()
+{
+    load_gemstone_data(OBJECT_GEMSTONE_JADE);
+}
+
 // private
 static void set_jade_gemstone_properties(Object* object)
 {   // attach components
-    #if DC_CLIENT
-    const int n_components = 4;
-    #endif
-    #if DC_SERVER
-    const int n_components = 3;
-    #endif
-    object->init(n_components);
 
     #if DC_CLIENT
     using Components::BillboardSpriteComponent;

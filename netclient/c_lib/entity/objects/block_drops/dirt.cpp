@@ -12,16 +12,13 @@
 namespace Objects
 {
 
+void load_dirt_block_drop_data()
+{
+    load_block_drop_data(OBJECT_DIRT_BLOCK_DROP);
+}
+
 static void set_dirt_block_drop_properties(Object* object)
 {
-    #if DC_CLIENT
-    const int n_components = 4;
-    #endif
-    #if DC_SERVER
-    const int n_components = 3;
-    #endif
-    object->init(n_components);
-
     #if DC_CLIENT
     using Components::ColoredVoxelComponent;
     ColoredVoxelComponent* voxel = (ColoredVoxelComponent*)add_component_to_object(object, COMPONENT_COLORED_VOXEL);

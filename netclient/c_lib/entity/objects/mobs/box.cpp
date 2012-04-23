@@ -14,19 +14,36 @@
 namespace Objects
 {
 
-static void set_mob_robot_box_properties(Object* object)
+void load_mob_robot_box_data()
 {
+    ObjectType type = OBJECT_MONSTER_BOX;
+    
     #if DC_SERVER
     const int n_components = 7;
     #endif
     #if DC_CLIENT
     const int n_components = 7;
     #endif
-    object->init(n_components);
+    
+    object_data->set_components(type, n_components);
+
+    object_data->attach_component(type, COMPONENT_POSITION_MOMENTUM_CHANGED);
+    object_data->attach_component(type, COMPONENT_DIMENSION);
+    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    object_data->attach_component(type, COMPONENT_WEAPON_TARGETING);
+    object_data->attach_component(type, COMPONENT_MOTION_TARGETING);
 
     #if DC_SERVER
-    add_component_to_object(object, COMPONENT_SPAWN_CHILD);
+    object_data->attach_component(type, COMPONENT_SPAWN_CHILD);
     #endif
+    #if DC_CLIENT
+    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    #endif
+}
+
+static void set_mob_robot_box_properties(Object* object)
+{
     add_component_to_object(object, COMPONENT_POSITION_MOMENTUM_CHANGED);
 
     using Components::DimensionComponent;
@@ -67,6 +84,10 @@ static void set_mob_robot_box_properties(Object* object)
     motion->speed = MONSTER_BOX_SPEED;
     motion->max_z_down = MONSTER_BOX_MOTION_MAX_Z_DOWN;
     motion->max_z_up = MONSTER_BOX_MOTION_MAX_Z_UP;
+
+    #if DC_SERVER
+    add_component_to_object(object, COMPONENT_SPAWN_CHILD);
+    #endif
 
     #if DC_CLIENT
     using Components::AnimationComponent;

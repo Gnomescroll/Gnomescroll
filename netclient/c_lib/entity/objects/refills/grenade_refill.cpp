@@ -8,6 +8,11 @@
 namespace Objects
 {
 
+void load_grenade_refill_data()
+{
+    load_refill_data(OBJECT_GRENADE_REFILL);
+}
+
 // private
 static void set_grenade_refill_properties(Object* object)
 {   // attach components

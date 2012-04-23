@@ -6,6 +6,7 @@ namespace Objects
 // forward decl
 class Object;
 
+void load_mob_robot_box_data();
 Object* create_mob_robot_box();
 void ready_mob_robot_box(Object* object);
 void die_mob_robot_box(Object* object);

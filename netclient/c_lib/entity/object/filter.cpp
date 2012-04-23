@@ -9,6 +9,8 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
 
     Object** objects = list->get_objects(type);
     assert(objects != NULL);
+    char* used = list->get_used(type);
+    assert(used != NULL);
     int max = list->max(type);
     assert(max >= 0);
     
@@ -24,8 +26,8 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType type, Vec
     
     for (int i=0; i<max; i++)
     {
+        if (!used[i]) continue;
         object = objects[i];
-        if (object == NULL) continue;
 
         physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
         dist = vec3_distance_squared(position, physics->get_position());
@@ -52,6 +54,8 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
     float dist;
     float min_dist = 10000000.0f;
 
+    int max;
+    char* used;
     Object** objects;
     Object* object;
 
@@ -66,14 +70,16 @@ int ObjectListFilter::within_sphere(ObjectList* list, const ObjectType* types, c
         if (list->empty(type)) continue;
         objects = list->get_objects(type);
         assert(objects != NULL);
+        used = list->get_used(type);
+        assert(used != NULL);
         max = list->max(type);
         assert(max > 0);
 
         for (int i=0; i<max; i++)
         {
+            if (!used[i]) continue;
             object = objects[i];
-            if (object == NULL) continue;
-
+            
             physics = (PhysicsComponent*)object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
             dist = vec3_distance_squared(position, physics->get_position());
             

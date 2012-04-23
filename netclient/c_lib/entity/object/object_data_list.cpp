@@ -18,6 +18,21 @@ void ObjectDataList::attach_component(ObjectType type, ComponentType component)
     this->component_sizes[type] += 1;
 }
 
+inline int ObjectDataList::get_component_count(ObjectType type)
+{
+    return this->component_sizes[type];
+}
+
+inline int ObjectDataList::get_component_slot(ObjectType type, ComponentType component)
+{
+    for (int i=0; i<this->component_sizes[type]; i++)
+        if (this->component_types[type][i] == component)
+            return i;
+    printf("ObjectDataList::get_component_slot() -- Did not find component %d for object type %d\n", component, type);
+    assert(false);
+    return -1;
+}
+
 void ObjectDataList::init()
 {
     this->component_types = (ComponentType**)calloc(MAX_OBJECT_TYPES, sizeof(ComponentType*));

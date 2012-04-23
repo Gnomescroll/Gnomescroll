@@ -14,39 +14,34 @@
 namespace Objects
 {
 
-//static void init_agent_spawner()
-//{
-    //ObjectData* data = object_data->get(OBJECT_AGENT_SPAWNER);
-
-    //#if DC_SERVER
-    //int n_components = 7;
-    //#endif
-    //#if DC_CLIENT
-    //int n_components = 8;
-    //#endif
-    //data->set_components(n_components);
-
-    //add_component_to_object(data, COMPONENT_POSITION_CHANGED);
-
-    //// data repository
-    //// on app init, init repo
-    //// call inits for all the objects
-    //// will allocate the component type buffer
-    //// attach types to component type buffer
-
-    //// then, using repo data, preallocate all Object::component buffers
-//}
-
-static void set_agent_spawner_properties(Object* object)
+void load_agent_spawner_data()
 {
+    ObjectType type = OBJECT_AGENT_SPAWNER;
+
     #if DC_SERVER
     int n_components = 7;
     #endif
     #if DC_CLIENT
     int n_components = 8;
     #endif
-    object->init(n_components);
-    
+
+    object_data->set_components(type, n_components);
+
+    object_data->attach_component(type, COMPONENT_POSITION_CHANGED);    
+    object_data->attach_component(type, COMPONENT_OWNER);
+    object_data->attach_component(type, COMPONENT_INDEXED_TEAM);
+    object_data->attach_component(type, COMPONENT_DIMENSION);
+    object_data->attach_component(type, COMPONENT_VOXEL_MODEL);
+    object_data->attach_component(type, COMPONENT_HIT_POINTS);
+    object_data->attach_component(type, COMPONENT_AGENT_SPAWNER);
+
+    #if DC_CLIENT
+    object_data->attach_component(type, COMPONENT_VOXEL_ANIMATION);
+    #endif
+}
+
+static void set_agent_spawner_properties(Object* object)
+{
     add_component_to_object(object, COMPONENT_POSITION_CHANGED);    
     add_component_to_object(object, COMPONENT_OWNER);
     add_component_to_object(object, COMPONENT_INDEXED_TEAM);

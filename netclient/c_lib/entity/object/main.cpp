@@ -15,7 +15,36 @@ ObjectListFilter* filter = NULL;
 
 void load_object_data()
 {
-    //load_agent_spawner_data();
+    // refills
+    load_health_refill_data();
+    load_laser_refill_data();
+    load_grenade_refill_data();
+
+    // block drops
+    load_dirt_block_drop_data();
+    load_stone_block_drop_data();
+    load_soft_rock_block_drop_data();
+    load_medium_rock_block_drop_data();
+    load_hard_rock_block_drop_data();
+    load_infected_rock_block_drop_data();
+
+    // gemstones
+    load_malachite_gemstone_data();
+    load_ruby_gemstone_data();
+    load_turquoise_gemstone_data();
+    load_silver_gemstone_data();
+    load_amethyst_gemstone_data();
+    load_jade_gemstone_data();
+    load_onyx_gemstone_data();
+
+    // fabs
+    load_agent_spawner_data();
+    load_turret_data();
+
+    // mobs
+    load_mob_spawner_data();
+    load_mob_robot_box_data();
+    load_mob_bomb_data();
 }
 
 void init()
@@ -23,14 +52,9 @@ void init()
 
     filter = new ObjectListFilter;
     filter->init();
-
-    object_data = new ObjectDataList;
-    object_data->init();
-    load_object_data();
     
     object_list = new ObjectList;
     object_list->init();
-    //object_list->init(object_data);
     
     // refills
     object_list->set_object_max(OBJECT_HEALTH_REFILL, 256);
@@ -62,6 +86,13 @@ void init()
     object_list->set_object_max(OBJECT_MONSTER_SPAWNER, 64);
     object_list->set_object_max(OBJECT_MONSTER_BOX, 1024);
     object_list->set_object_max(OBJECT_MONSTER_BOMB, 512);
+
+    object_data = new ObjectDataList;
+    object_data->init();
+    load_object_data();
+    object_data->sanity_check();
+
+    object_list->load_object_data(object_data);
 }
 
 void teardown()
@@ -326,8 +357,7 @@ void destroy_switch(Object* object)
             printf("WARNING: destroying unknown object type %d\n", type);
             break;
     }
-    for (int i=0; i<object->n_components; i++)
-        remove_component_from_object(object, object->components[i]);
+    release_object_components(object);
     int id = object->id;
     object_list->destroy(type, id);
 }

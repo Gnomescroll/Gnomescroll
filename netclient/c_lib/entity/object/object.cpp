@@ -12,21 +12,18 @@ namespace Objects
 
 using Components::Component;
 
-void Object::add_component(Component* component)
+void Object::add_component(int slot, Component* component)
 {
-    // retrieve component of type from pool
-    // call subscribe
-    this->components[this->n_components++] = component;
+    assert(this->components[slot] == NULL);
+    this->components[slot] = component;
 }
 
 // returns component of type if available
 // must cast to desired component manually
 Component* Object::get_component(ComponentType type)
 {
-    for (int i=0; i<this->n_components; i++)
-        if (this->components[i]->type == type)
-            return this->components[i];
-    return NULL;
+    int slot = object_data->get_component_slot(this->type, type);
+    return this->components[slot];
 }
 
 Component* Object::get_component_interface(ComponentInterfaceType interface)
@@ -47,7 +44,7 @@ void Object::broadcastDeath()
 
 void Object::init(int n_components)
 {
-    this->components = (Component**)malloc(n_components * sizeof(Component*));
+    this->components = (Component**)calloc(n_components, sizeof(Component*));
 }
 
 Object::~Object()

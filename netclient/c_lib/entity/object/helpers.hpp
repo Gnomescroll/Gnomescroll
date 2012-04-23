@@ -7,9 +7,8 @@ namespace Objects
 
 //forward declarations
 class Object;
-class Component;
 
 Component* add_component_to_object(Object* object, ComponentType type);
-void remove_component_from_object(Object* object, Component* component);
+void release_object_components(Object* object);
 
 } // Objects

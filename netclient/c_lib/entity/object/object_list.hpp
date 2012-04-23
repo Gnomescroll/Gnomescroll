@@ -5,6 +5,7 @@ namespace Objects
 
 //forward decl
 class Object;
+class ObjectDataList;
 
 /* Management */
 
@@ -15,6 +16,7 @@ class ObjectList
         // keep a counters for individual object indices
         int* indices;
         int* maximums;
+        char** used;
         Object*** objects;
         
         int get_free_id(ObjectType type);
@@ -38,9 +40,11 @@ class ObjectList
 
         // objects accessors
         Object** get_objects(ObjectType type);
+        char* get_used(ObjectType type);
 
         // initializers
         void set_object_max(ObjectType type, int max);
+        void load_object_data(ObjectDataList* data);
         void init();
 
         // standard tickers

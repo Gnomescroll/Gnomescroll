@@ -13,16 +13,13 @@
 namespace Objects
 {
 
+void load_soft_rock_block_drop_data()
+{
+    load_block_drop_data(OBJECT_SOFT_ROCK_BLOCK_DROP);
+}
+
 static void set_soft_rock_block_drop_properties(Object* object)
 {
-    #if DC_CLIENT
-    const int n_components = 4;
-    #endif
-    #if DC_SERVER
-    const int n_components = 3;
-    #endif
-    object->init(n_components);
-
     #if DC_CLIENT
     using Components::TexturedVoxelComponent;
     TexturedVoxelComponent* voxel = (TexturedVoxelComponent*)add_component_to_object(object, COMPONENT_TEXTURED_VOXEL);

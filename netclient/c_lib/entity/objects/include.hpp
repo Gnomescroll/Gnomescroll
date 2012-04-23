@@ -1,11 +1,13 @@
 #pragma once
 
 #include <c_lib/entity/objects/refills/constants.hpp>
+#include <c_lib/entity/objects/refills/common.hpp>
 #include <c_lib/entity/objects/refills/health_refill.hpp>
 #include <c_lib/entity/objects/refills/laser_refill.hpp>
 #include <c_lib/entity/objects/refills/grenade_refill.hpp>
 
 #include <c_lib/entity/objects/block_drops/constants.hpp>
+#include <c_lib/entity/objects/block_drops/common.hpp>
 #include <c_lib/entity/objects/block_drops/dirt.hpp>
 #include <c_lib/entity/objects/block_drops/stone.hpp>
 #include <c_lib/entity/objects/block_drops/soft_rock.hpp>
@@ -14,6 +16,7 @@
 #include <c_lib/entity/objects/block_drops/infected_rock.hpp>
 
 #include <c_lib/entity/objects/gemstones/constants.hpp>
+#include <c_lib/entity/objects/gemstones/common.hpp>
 #include <c_lib/entity/objects/gemstones/malachite.hpp>
 #include <c_lib/entity/objects/gemstones/ruby.hpp>
 #include <c_lib/entity/objects/gemstones/turquoise.hpp>

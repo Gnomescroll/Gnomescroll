@@ -11,6 +11,12 @@
 namespace Objects
 {
 
+void load_laser_refill_data()
+{
+    load_refill_data(OBJECT_LASER_REFILL);
+}
+
+
 // private
 static void set_laser_refill_properties(Object* object)
 {   // attach components

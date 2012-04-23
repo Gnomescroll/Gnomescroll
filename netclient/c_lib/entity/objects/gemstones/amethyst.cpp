@@ -12,17 +12,14 @@
 namespace Objects
 {
 
+void load_amethyst_gemstone_data()
+{
+    load_gemstone_data(OBJECT_GEMSTONE_AMETHYST);
+}
+
 // private
 static void set_amethyst_gemstone_properties(Object* object)
 {   // attach components
-    #if DC_CLIENT
-    const int n_components = 4;
-    #endif
-    #if DC_SERVER
-    const int n_components = 3;
-    #endif
-    object->init(n_components);
-    
     #if DC_CLIENT
     using Components::BillboardSpriteComponent;
     BillboardSpriteComponent* sprite = (BillboardSpriteComponent*)add_component_to_object(object, COMPONENT_BILLBOARD_SPRITE);

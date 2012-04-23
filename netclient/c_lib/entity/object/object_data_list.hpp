@@ -20,6 +20,8 @@ class ObjectDataList
 
         void set_components(ObjectType type, int n_components);
         void attach_component(ObjectType type, ComponentType component);
+        inline int get_component_count(ObjectType type);
+        inline int get_component_slot(ObjectType type, ComponentType component);
         
         void init();
         void sanity_check();
