@@ -72,6 +72,14 @@ inline void swap_item_in_inventory_StoC::handle()
 
 inline void swap_item_between_inventory_StoC::handle()
 {
+    Inventory* inva = Items::get_inventory(this->inventorya);
+    if (inva == NULL) return;
+    Inventory* invb = Items::get_inventory(this->inventoryb);
+    if (invb == NULL) return;
+
+    InventoryProperties* item = inva->get_slot_item(slota);
+    invb->add(item->item_id, item->item_type, item->stack.count, slotb);
+    inva->remove(slota);
 
 }
 
@@ -155,7 +163,33 @@ inline void swap_item_in_inventory_CtoS::handle()
 
 inline void swap_item_between_inventory_CtoS::handle()
 {
+    Agent_state* agent = NetServer::agents[client_id];
+    if (agent == NULL)
+    {
+        printf("swap_item_between_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
+        return;
+    }
+    
+    Inventory* inva = Items::get_inventory(this->inventorya);
+    if (inva == NULL) return;
+    if (inva->owner != agent->id) return;
+    Inventory* invb = Items::get_inventory(this->inventoryb);
+    if (invb == NULL) return;
+    if (invb->owner != agent->id) return;
 
+    if (!inva->can_remove(slota)) return;
+    InventoryProperties* item = inva->get_slot_item(slota);
+    if (!invb->can_add(item->item_type, slotb)) return;
+
+    invb->add_action(item->item_id, item->item_type, item->stack.count, slotb);
+    inva->remove_action(slota);
+
+    swap_item_between_inventory_StoC msg;
+    msg.inventorya = inventorya;
+    msg.slota = slota;
+    msg.inventoryb = inventoryb;
+    msg.slotb = slotb;
+    msg.sendToClient(client_id);
 }
 
 #endif
