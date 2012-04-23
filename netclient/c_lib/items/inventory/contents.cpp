@@ -46,17 +46,18 @@ void InventoryProperties::load(int id, ObjectType type, int stack_size)
     //printf("Loaded inventory item %d,%d\n", this->item_id, this->item_type);
 }
 
+// TODO:: will not need this
 void InventoryProperties::get_sprite_data(struct Draw::SpriteData* data)
 {
-    using HudInventory::inventory;
-    using Items::render_inventory;
-    assert(render_inventory != NULL);
+    using Items::current_render_inventory;
+    HudInventory::InventoryRender* render = Items::get_render_inventory();
+    if (render == NULL) return;
     
     data->index = this->sprite_index;
-    float x = inventory->x + (this->spacing/4);
-    float y = inventory->y + inventory->height - 3*(this->spacing/4); // need to subtract our height
-    data->x = x + this->spacing * (slot % render_inventory->width());
-    data->y = y - this->spacing * (slot / render_inventory->width());
-    data->z = HudInventory::inventory->z + 0.01;
+    float x = render->x + (this->spacing/4);
+    float y = render->y + render->height - 3*(this->spacing/4); // need to subtract our height
+    data->x = x + this->spacing * (slot % current_render_inventory->width());
+    data->y = y - this->spacing * (slot / current_render_inventory->width());
+    data->z = render->z + 0.01;
 }
 #endif
