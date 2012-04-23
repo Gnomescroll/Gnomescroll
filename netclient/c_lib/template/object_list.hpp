@@ -42,21 +42,12 @@ class Object_list {
         
         Object_state* get_or_create(int id);
 
-        Object_state* create(float x, float y, float z);
-        Object_state* create(int id, float x, float y, float z);
-        Object_state* create(float x, float y, float z, float vx, float vy, float vz);
-        Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
-
-
         bool contains(int id);
         bool full();
 
         int get_free_id();
         
         void destroy(int _id);
-
-        //void draw();    //overide in template specilization on client
-        //void draw(int all);
 
         void where();
         void print();
@@ -207,69 +198,6 @@ Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
     return obj;
 }
 
-
-/*
-    Particle function stuff
-*/
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z) {
-    int i;
-    int id;
-    for(i=0; i<n_max;i++) {
-        id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if (i == n_max) return NULL;    // full
-    a[id] = new Object_state(id, x,y,z);
-    num++;
-    id_c = id+1;
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y, float z) {
-    if (a[id] == NULL)
-    {
-        a[id] = new Object_state(id, x,y,z);
-        num++;
-        return a[id];
-    }
-    else
-    {
-        printf("%s_list: Cannot create object from id. id %d is in use\n", name(), id);
-        return NULL;
-    }
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z, float vx, float vy, float vz) {
-    int i;
-    int id;
-    for(i=0; i<n_max;i++) {
-        id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if (i == n_max) return NULL;    // full
-    a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-    num++;
-    id_c = id+1;
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y, float z, float vx, float vy, float vz) {
-
-    if(a[id] == NULL) {
-        a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-        num++;
-        return a[id];
-    } else {
-        printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
-        return NULL;
-    }
-}
-
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::contains(int id) {
     //where();
@@ -294,34 +222,6 @@ void Object_list<Object_state, max_n>::destroy(int id)
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
-/*
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::draw() {
-    
-    #ifdef DC_CLIENT
-    // actual implementation will only draw ids from a global to_draw list
-    int i;
-    for (i=0; i<n_max;i++) {
-        if (a[i]==NULL) continue;
-        a[i]->draw();
-    }
-    #endif
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::draw(int all) {
-    
-    #ifdef DC_CLIENT
-    if (!all) return;
-    int i;
-    for (i=0; i<n_max;i++) {
-        if (a[i]==NULL) continue;
-        a[i]->draw();
-    }
-    #endif
-}
-*/
-
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::full()
 {
