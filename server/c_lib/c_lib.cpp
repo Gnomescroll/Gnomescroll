@@ -64,10 +64,6 @@
 #include <c_lib/voxel/voxel_loader.cpp> 
 #include <c_lib/voxel/vox_dat_init.cpp>
 
-/* Object system */
-//#include <c_lib/objects/common/include.cpp>
-//#include <c_lib/objects/components/include.cpp>
-
 /* Entity system */
 #include <c_lib/entity/include.cpp>
 
@@ -77,6 +73,7 @@
 /* Items */
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
+#include <c_lib/items/inventory/include.cpp>
 
 /* mechanisms */
 #include <c_lib/t_mech/_include.hpp>
