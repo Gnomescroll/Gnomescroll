@@ -418,6 +418,11 @@ void inventory_mouse_motion_handler(SDL_Event* event)
     //printf("Motion x,y: %d,%d\n", e.x, e.y);
     //printf("Motion xrel,yrel: %d,%d\n", e.xrel, e.yrel);
 
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+    //printf("X,Y %d,%d\n", x, y);
+
+    t_hud::mouse_motion(x,y);
 }
 
 
