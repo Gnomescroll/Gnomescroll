@@ -20,6 +20,7 @@ ItemContainerList* item_container_list = NULL;
 ItemList* item_list = NULL;
 
 int AgentInventoryList[256];
+int AgentToolbarList[256];
 
 void state_init()
 {
@@ -33,6 +34,7 @@ void state_init()
     item_list = new ItemList;
 
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
+    for(int i=0; i<256; i++) AgentToolbarList[i] = NO_AGENT;
 }
 
 void state_teardown()
