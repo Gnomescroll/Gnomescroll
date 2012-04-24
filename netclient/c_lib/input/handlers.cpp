@@ -317,6 +317,24 @@ void inventory_key_down_handler(SDL_Event* event)
     }
 }
 
+void inventory_key_up_handler(SDL_Event* event)
+{
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            t_hud::left_mouse_up(x,y);
+            break;
+        case SDL_BUTTON_RIGHT:
+            t_hud::right_mouse_up(x,y);
+            break;
+
+        default: break;
+    }
+}
+
 void inventory_mouse_down_handler(SDL_Event* event)
 {
     // check intersection with any slots
@@ -353,25 +371,41 @@ void inventory_mouse_down_handler(SDL_Event* event)
     }
 }
 
-void inventory_key_up_handler(SDL_Event* event)
+void inventory_mouse_up_handler(SDL_Event* event)
 {
+    // check intersection with any slots
+
+    //SDL_MouseButtonEvent e = event->button;
+    //printf("Button type: %d\n", e.type);
+    //printf("Button which: %d\n", e.which);
+    //printf("Button button: %d\n", e.button);
+    //printf("Button state: %d\n", e.state);
+    //printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
+
+    // gets correct mouse pixels
     int x,y;
     SDL_GetMouseState(&x, &y);
+    //printf("GetMouseState x,y: %d,%d\n", x,y);
 
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
+            // notfiy hud, which will update "selected" state etc
             t_hud::left_mouse_up(x,y);
+            // notify inventory model that input state may have changed
+            Items::inventory_input_event();
             break;
+
         case SDL_BUTTON_RIGHT:
+            // notfiy hud, which will update "selected" state etc
             t_hud::right_mouse_up(x,y);
+            // notify inventory model that input state may have changed
+            Items::inventory_input_event();
             break;
 
         default: break;
     }
 }
-
-void inventory_mouse_up_handler(SDL_Event* event){}
 
 void inventory_mouse_motion_handler(SDL_Event* event)
 {
