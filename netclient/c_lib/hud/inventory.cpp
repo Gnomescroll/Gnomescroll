@@ -8,18 +8,17 @@ namespace HudInventory
     
 void InventoryRender::draw()
 {
-    if (!this->inited) return;
-    if (!this->inventory_background_texture) return;
+    if (!this->background_texture) return;
     
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->inventory_background_texture);
+    glBindTexture(GL_TEXTURE_2D, this->background_texture);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    draw_bound_texture(this->x, this->y, this->width, this->height, this->z);
+    draw_bound_texture(this->x, this->y, this->w, this->h, this->z);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -33,26 +32,14 @@ void InventoryRender::set_position(float x, float y)
 
 void InventoryRender::init()
 {
-    if (this->inited) return;
-
     char* bg_path = (char*)"./media/texture/hud/inventory2.png";
-    int ret = create_texture_from_file(bg_path, &this->inventory_background_texture);
+    int ret = create_texture_from_file(bg_path, &this->background_texture);
     if (ret)
     {
         printf("ERROR: Failed to load InventoryRender texture %s\n", bg_path);
         return;
     }
-    this->inited = true;
 }
-
-InventoryRender::InventoryRender()
-:
-inited(false),
-visible(false),
-x(0),y(0), z(-0.5f),
-inventory_background_texture(0),
-width(256.0f),height(128.0f) // todo
-{}
 
 GLuint icon_mask_texture = 0;
 
@@ -103,13 +90,16 @@ void init()
     agent_toolbelt = new InventoryRender;
     agent_toolbelt->init();
     agent_toolbelt->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
-    
+
+    // todo -- nannites, craft bench
 }
 
 void teardown()
 {
     delete agent_inventory;
     delete agent_toolbelt;
+
+    // todo -- nannites, craft bench
 }
 
 InventoryRender* get_inventory_hud_element(HudElementType type)
@@ -122,12 +112,12 @@ InventoryRender* get_inventory_hud_element(HudElementType type)
         case HUD_ELEMENT_AGENT_TOOLBELT:
             return agent_toolbelt;
             break;
-        case HUD_ELEMENT_NANITE_INVENTORY:
-            return nanite_inventory;
-            break;
-        case HUD_ELEMENT_CRAFTING_BENCH:
-            return craft_bench_inventory;
-            break;
+        //case HUD_ELEMENT_NANITE_INVENTORY:
+            //return nanite_inventory;
+            //break;
+        //case HUD_ELEMENT_CRAFTING_BENCH:
+            //return craft_bench_inventory;
+            //break;
             
         default:
             printf("WARNING: get_inventory_hud_element -- invalid type %d\n", type);
@@ -142,8 +132,8 @@ void get_screen_inventory_row_col(InventoryRender* inventory, int x, int y, int*
     x -= inventory->x;
     y -= inventory->y;
 
-    // divide point by slot width/height
-    //  TODO -- get icon height/width from inventory object
+    // divide point by slot w/h
+    //  TODO -- get icon h/w from inventory object
     const int icon_width = 32;
     const int icon_height = 32;
     *col = x/icon_width;

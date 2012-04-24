@@ -8,7 +8,7 @@ namespace t_hud
 {
 
 /*
-	Init
+    Init
 */
 void draw_init()
 {
@@ -20,7 +20,7 @@ void draw_teardown()
 
 }
 /*
-	Input Handling
+    Input Handling
 */
 
 
@@ -36,9 +36,12 @@ void disable_inventory_hud()
 
 
 
-void handle_click(int x, int y, int button)
+void handle_left_mouse_click(int x, int y)
 {
+}
 
+void handle_right_mouse_click(int x, int y)
+{
 }
 
 void set_mouse_position(int x, int y)
@@ -47,7 +50,7 @@ void set_mouse_position(int x, int y)
 }
 
 /*
-	Drawing
+    Drawing
 */
 void draw_hud()
 {

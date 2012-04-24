@@ -9,7 +9,7 @@ typedef struct Stack
 } Stack;
 
 const int EMPTY_SLOT = 65535;
-class InventoryProperties
+class InventorySlot
 {
     public:
         int item_id;
@@ -28,19 +28,15 @@ class InventoryProperties
 
         #if DC_CLIENT
         // render data
-        float spacing; // render icon spacing
-        float scale;
-        float sprite_index;
-
-        void get_sprite_data(struct Draw::SpriteData* data);
+        int sprite_index;
         #endif
 
-    InventoryProperties()
+    InventorySlot()
     :
     item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
     slot(-1)    // slot is set after allocation
     #if DC_CLIENT
-    , spacing(32.0f), scale(2.0f), sprite_index(0)
+    , sprite_index(0)
     #endif
     {
         this->stack.max = 1;
@@ -52,7 +48,7 @@ class InventoryProperties
 class InventoryContents // dont use behaviour list unless doing the registration model
 {
     public:
-        InventoryProperties* objects;
+        InventorySlot* objects;
         int x,y;
         int max;
         int count;
@@ -109,12 +105,12 @@ class InventoryContents // dont use behaviour list unless doing the registration
             printf("ERROR: Inventory::init() -- dimension %d is <=0: x,y = %d,%d\n", this->max, x,y);
             return;
         }
-        this->objects = new InventoryProperties[this->max];
+        this->objects = new InventorySlot[this->max];
         for (int i=0; i<this->max; i++)
             this->objects[i].slot = i;
     }
 
-    InventoryProperties* get(int slot)
+    InventorySlot* get(int slot)
     {
         if (!this->is_valid_slot(slot))
             return NULL;
@@ -185,8 +181,8 @@ class InventoryContents // dont use behaviour list unless doing the registration
     {
         if (!this->can_swap(slota, slotb))
             return false;
-        InventoryProperties itema = this->objects[slota];
-        InventoryProperties* itemb = &this->objects[slotb];
+        InventorySlot itema = this->objects[slota];
+        InventorySlot* itemb = &this->objects[slotb];
         //this->objects[slota].load(itemb->item_id, itemb->item_type, itemb->stack.properties.count);
         //this->objects[slotb].load(itema.item_id, itema.item_type, itema.stack.properties.count);
         this->objects[slota].load(itemb->item_id, itemb->item_type, 1);
@@ -198,7 +194,7 @@ class InventoryContents // dont use behaviour list unless doing the registration
     void sendToClient(int inventory_id, int client_id);
     #endif
 
-    InventoryProperties* item_at_slot(int x, int y)
+    InventorySlot* item_at_slot(int x, int y)
     {
         if (!this->is_valid_grid_position(x,y))
             return NULL;

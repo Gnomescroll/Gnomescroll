@@ -8,21 +8,34 @@ namespace HudInventory
 class InventoryRender
 {
     public:
-        bool inited;
-        bool visible;
+        bool visible;       // render state
+        
         float x,y;
         float z;
+        float w,h;          // screen dimensions of panel
+
+        float border;       // border around entire panel
+        float icon_spacing; // spacing between slot icons
+        float icon_border;  // border around a slot icon
+
+        float slot_size;    // pixel dimension
+        int xdim,ydim;  // slot dimensions
         
-        //GLuint item_sheet_texture;
-        //GLuint item_slot_texture;
-        GLuint inventory_background_texture;
-        float width,height;
+        GLuint background_texture;
 
         void set_position(float x, float y);
         void init();
         void draw();
 
-        InventoryRender();
+    InventoryRender()
+    :   visible(false),
+        x(0),y(0), z(-0.5f),
+        w(0), h(0),
+        border(16.0f), icon_spacing(8.0f), icon_border(2.0f),
+        slot_size(32.0f),
+        xdim(0), ydim(0),
+        background_texture(0)
+    {}
 };
 
 extern InventoryRender* agent_inventory;

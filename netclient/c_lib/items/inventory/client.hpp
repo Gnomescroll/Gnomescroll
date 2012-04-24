@@ -20,13 +20,13 @@ class Inventory: public BaseInventory
     int selected_slot;
     HudElementType hud;
 
-    InventoryProperties* selected_item()
+    InventorySlot* selected_item()
     {
         if (this->selected_slot < 0) return NULL;
         return get_slot_item(this->selected_slot);
     }
     
-    InventoryProperties* get_slot_item(int slot)
+    InventorySlot* get_slot_item(int slot)
     {
         if (!this->contents.is_valid_slot(slot)) return NULL;
         return &this->contents.objects[slot];
@@ -47,7 +47,7 @@ class Inventory: public BaseInventory
         }
 
         // only select if not empty
-        InventoryProperties* item = this->get_slot_item(slot);
+        InventorySlot* item = this->get_slot_item(slot);
         if (item != NULL && !item->empty())
             this->selected_slot = slot;
         
@@ -73,8 +73,6 @@ class Inventory: public BaseInventory
         //printf("slot %d\n", this->selected_slot);
         return (this->selected_slot >= 0);
     }
-
-    void get_selected_icon_render_data(Draw::SpriteData* data);
 
     void remove_selected_action()
     {
