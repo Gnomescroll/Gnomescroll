@@ -317,8 +317,6 @@ void inventory_key_down_handler(SDL_Event* event)
     }
 }
 
-void inventory_key_up_handler(SDL_Event* event){}
-
 void inventory_mouse_down_handler(SDL_Event* event)
 {
     // check intersection with any slots
@@ -339,16 +337,34 @@ void inventory_mouse_down_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             // notfiy hud, which will update "selected" state etc
-            t_hud::handle_left_mouse_click(x,y);
+            t_hud::left_mouse_down(x,y);
             // notify inventory model that input state may have changed
             Items::inventory_input_event();
             break;
 
         case SDL_BUTTON_RIGHT:
             // notfiy hud, which will update "selected" state etc
-            t_hud::handle_right_mouse_click(x,y);
+            t_hud::right_mouse_down(x,y);
             // notify inventory model that input state may have changed
             Items::inventory_input_event();
+            break;
+
+        default: break;
+    }
+}
+
+void inventory_key_up_handler(SDL_Event* event)
+{
+    int x,y;
+    SDL_GetMouseState(&x, &y);
+
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            t_hud::left_mouse_up(x,y);
+            break;
+        case SDL_BUTTON_RIGHT:
+            t_hud::right_mouse_up(x,y);
             break;
 
         default: break;

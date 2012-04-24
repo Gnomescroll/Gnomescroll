@@ -8,19 +8,26 @@ namespace t_hud
 int toolbelt_hud_x_off = 300;
 int toolbelt_hud_y_off = 100;
 
+float toolbelt_hud_border = 16;
+float toolbelt_hud_inc = 8;
+float toolbelt_hud_inc2 = 2; //outer border
+float toolbelt_hud_slot_size = 32;
 
+int toolbelt_hud_xdim = 9;
+int toolbelt_hud_ydim = 1;
 
 void draw_toolbelt_hud()
 {
 	float z = -0.5;
 	float w = 32;
-	float border = 16;
-	float inc = 8;
-	float inc2 = 2; //outer border
-	float slot_size = 32;
 
-	int xdim = 10;
-	int ydim = 1;
+	float border = toolbelt_hud_border;
+	float inc = toolbelt_hud_inc;
+	float inc2 = toolbelt_hud_inc2; //outer border
+	float slot_size = toolbelt_hud_slot_size;
+
+	int xdim = toolbelt_hud_xdim;
+	int ydim = toolbelt_hud_ydim;
 
 	glDisable(GL_DEPTH_TEST); // move this somewhere
 	glDisable(GL_TEXTURE_2D);

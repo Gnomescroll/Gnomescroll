@@ -9,19 +9,28 @@ namespace t_hud
 int inventory_hud_x_off = 300;
 int inventory_hud_y_off = 300;
 
+float inventory_hud_border = 16;
+float inventory_hud_inc = 8;  //border between slots
+float inventory_hud_inc2 = 2; //outer border
+float inventory_hud_slot_size = 32;
+
+int inventory_hud_xdim = 6;
+int inventory_hud_ydim = 3;
+
 
 
 void draw_inventory_hud()
 {
 	float z = -0.5;
 	float w = 32;
-	float border = 16;
-	float inc = 8;
-	float inc2 = 2; //outer border
-	float slot_size = 32;
 
-	int xdim = 6;
-	int ydim = 3;
+	float border = inventory_hud_border;
+	float inc = inventory_hud_inc;
+	float inc2 = inventory_hud_inc2; //outer border
+	float slot_size = inventory_hud_slot_size;
+
+	int xdim = inventory_hud_xdim = 6;
+	int ydim = inventory_hud_ydim = 3;
 
 	glDisable(GL_DEPTH_TEST); // move this somewhere
 	glDisable(GL_TEXTURE_2D);
