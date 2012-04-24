@@ -409,8 +409,6 @@ void inventory_mouse_up_handler(SDL_Event* event)
 
 void inventory_mouse_motion_handler(SDL_Event* event)
 {
-    // trap mouse?
-
     //SDL_MouseMotionEvent e = event->motion;
 
     //printf("Motion type: %d\n", e.type);
@@ -423,6 +421,8 @@ void inventory_mouse_motion_handler(SDL_Event* event)
     //printf("X,Y %d,%d\n", x, y);
 
     t_hud::mouse_motion(x,y);
+
+    /* Coordinates start at TOP LEFT */
 }
 
 
