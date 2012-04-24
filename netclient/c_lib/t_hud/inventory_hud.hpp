@@ -9,28 +9,96 @@ namespace t_hud
 int inventory_hud_x_off = 300;
 int inventory_hud_y_off = 300;
 
-float inventory_hud_border = 16;
-float inventory_hud_inc = 8;  //border between slots
-float inventory_hud_inc2 = 2; //outer border
-float inventory_hud_slot_size = 32;
+const float inventory_hud_border = 16; //invisble border
 
-int inventory_hud_xdim = 6;
-int inventory_hud_ydim = 3;
+const float inventory_hud_inc1 = 8;  //border between slots
+const float inventory_hud_inc2 = 2; //outer border
+const float inventory_hud_slot_size = 32;
+
+const int inventory_hud_xdim = 6;
+const int inventory_hud_ydim = 3;
 
 
+bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
+{
+
+	const float xoff = inventory_hud_x_off;
+	const float yoff = inventory_hud_y_off;
+
+	const float border = inventory_hud_border;
+	const float inc1 = inventory_hud_inc1;	//border around slots
+	//const float inc2 = inventory_hud_inc2; //outer border
+	const float slot_size = inventory_hud_slot_size;
+
+	const int xdim = inventory_hud_xdim; // 6;
+	const int ydim = inventory_hud_ydim; // 3;
+
+	float width = 2*border + xdim*(inc1+slot_size);
+	float height = 2*border + ydim*(inc1+slot_size);
+
+	if(x < xoff)
+	{
+		printf("1 to left of border \n");
+		return false;
+	}
+	if(x > xoff + width)
+	{
+		printf("1 to right of border \n");
+		return false;
+	}
+
+	if(y < yoff)
+	{
+		printf("1 above border \n");
+		return false;
+	}
+	if(y > yoff + height)
+	{
+		printf("1 below border \n");
+		return false;
+	}
+
+	int xs, xy;
+
+	if(x < xoff + border )
+	{
+		printf("2 to left of border \n");
+		return false;
+	}
+	if(x > xoff + width - border )
+	{
+		printf("2 to right of border \n");
+		return false;
+	}
+
+	if(y < yoff + border )
+	{
+		printf("2 above border \n");
+		return false;
+	}
+	if(y > yoff + height - border )
+	{
+		printf("2 below border \n");
+		return false;
+	}
+
+	printf("in border: \n");
+
+	return true;
+}
 
 void draw_inventory_hud()
 {
 	float z = -0.5;
 	float w = 32;
 
-	float border = inventory_hud_border;
-	float inc = inventory_hud_inc;
-	float inc2 = inventory_hud_inc2; //outer border
-	float slot_size = inventory_hud_slot_size;
+	const float border = inventory_hud_border;
+	const float inc1 = inventory_hud_inc1;
+	const float inc2 = inventory_hud_inc2; //outer border
+	const float slot_size = inventory_hud_slot_size;
 
-	int xdim = inventory_hud_xdim = 6;
-	int ydim = inventory_hud_ydim = 3;
+	const int xdim = inventory_hud_xdim; // 6;
+	const int ydim = inventory_hud_ydim; // 3;
 
 	glDisable(GL_DEPTH_TEST); // move this somewhere
 	glDisable(GL_TEXTURE_2D);
@@ -64,8 +132,8 @@ void draw_inventory_hud()
 	for(int i=0; i<xdim; i++)
 	for(int j=0; j<ydim; j++)
 	{
-		float x = inventory_hud_x_off + border + i*(inc+slot_size);
-		float y = inventory_hud_y_off + border + j*(inc+slot_size);
+		float x = inventory_hud_x_off + border + i*(inc1+slot_size);
+		float y = inventory_hud_y_off + border + j*(inc1+slot_size);
 
 		glVertex3f(x-inc2,y+w+inc2, z);
 		glVertex3f(x+w+inc2, y+w+inc2 ,z);
@@ -79,8 +147,8 @@ void draw_inventory_hud()
 	for(int j=0; j<ydim; j++)
 	{
 	
-		float x = inventory_hud_x_off + border + i*(inc+slot_size);
-		float y = inventory_hud_y_off + border + j*(inc+slot_size);
+		float x = inventory_hud_x_off + border + i*(inc1+slot_size);
+		float y = inventory_hud_y_off + border + j*(inc1+slot_size);
 
 		glVertex3f(x,y+w, z);
 		glVertex3f(x+w, y+w ,z);
@@ -112,8 +180,8 @@ void draw_inventory_hud()
 	{
 		if(i == 0 && j == 0) continue;
 
-		const float x = inventory_hud_x_off + border + i*(inc+slot_size);
-		const float y = inventory_hud_y_off + border + j*(inc+slot_size);
+		const float x = inventory_hud_x_off + border + i*(inc1+slot_size);
+		const float y = inventory_hud_y_off + border + j*(inc1+slot_size);
 
 		const int tex_id = rand()%40;
 

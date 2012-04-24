@@ -36,28 +36,30 @@ void disable_inventory_hud()
 
 void mouse_motion(int x, int y)
 {
-	printf("t_item::mouse_motion x,y= %i %i \n", x,y);
+	//printf("t_item::mouse_motion x,y= %i %i \n", x,y);
 }
 
 void left_mouse_down(int x, int y)
 {
-	printf("t_item::left_mouse_down \n");
+	//printf("t_item::left_mouse_down \n");
+	int ox,oy;
+	inventory_hud_mouse_to_slot( x,y, &ox,&oy);
 }
 
 void left_mouse_up(int x, int y)
 {
-	printf("t_item::left_mouse_up \n");
+	//printf("t_item::left_mouse_up \n");
 
 }
 
 void right_mouse_down(int x, int y)
 {
-	printf("t_item::right_mouse_down \n");
+	//printf("t_item::right_mouse_down \n");
 }
 
 void right_mouse_up(int x, int y)
 {
-	printf("t_item::right_mouse_up \n");
+	//printf("t_item::right_mouse_up \n");
 
 }
 
