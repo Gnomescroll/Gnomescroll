@@ -25,13 +25,13 @@ class Inventory: public BaseInventory
         }
     }
 
-    InventoryProperties* get_slot_item(int slot)
+    InventorySlot* get_slot_item(int slot)
     {
         if (!this->contents.is_valid_slot(slot)) return NULL;
         return &this->contents.objects[slot];
     }
 
-    InventoryProperties* get(int slot)
+    InventorySlot* get(int slot)
     {
         return this->contents.get(slot);
     }
@@ -131,7 +131,7 @@ class Inventory: public BaseInventory
     void sendToClientSwap(int slota, int slotb);
     void broadcastSwap(int slota, int slotb);
 
-    Inventory(int id)
+    explicit Inventory(int id)
     : BaseInventory(id)
     {}
 };

@@ -12,8 +12,10 @@ Input Handling
 void enable_inventory_hud();
 void disable_inventory_hud();
 
-void handle_click(int x, int y, int button, bool down);
-void set_mouse_position(int x, int y);
+void handle_left_mouse_click(int x, int y);
+void handle_right_mouse_click(int x, int y);
+void set_mouse_position(int x, int y);  // why?
+
 /*
 Init
 */

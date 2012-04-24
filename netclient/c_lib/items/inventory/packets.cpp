@@ -25,8 +25,7 @@ inline void inventory_create_StoC::handle()
 
     obj->owner = owner;
     #if DC_CLIENT
-    attach_inventory_to_owner(obj);
-    attach_inventory_to_interface(obj);
+    Items::received_inventory_handler(obj);
     #endif
 }
 
@@ -78,7 +77,7 @@ inline void swap_item_between_inventory_StoC::handle()
     Inventory* invb = Items::get_inventory(this->inventoryb);
     if (invb == NULL) return;
 
-    InventoryProperties* item = inva->get_slot_item(slota);
+    InventorySlot* item = inva->get_slot_item(slota);
     invb->add(item->item_id, item->item_type, item->stack.count, slotb);
     inva->remove(slota);
 }
@@ -127,7 +126,7 @@ inline void remove_item_from_inventory_CtoS::handle()
     if (inv->owner != agent->id) return;
     if (!inv->can_remove((int)slot)) return;
     
-    //InventoryProperties* item = inv->get(slot);
+    //InventorySlot* item = inv->get(slot);
     //if (item == NULL) return;
     //if (!item->empty())
     //{   // create new item
@@ -178,7 +177,7 @@ inline void swap_item_between_inventory_CtoS::handle()
     if (invb->owner != agent->id) return;
 
     if (!inva->can_remove(slota)) return;
-    InventoryProperties* item = inva->get_slot_item(slota);
+    InventorySlot* item = inva->get_slot_item(slota);
     if (!invb->can_add(item->item_type, slotb)) return;
 
     invb->add_silent(item->item_id, item->item_type, item->stack.count, slotb);

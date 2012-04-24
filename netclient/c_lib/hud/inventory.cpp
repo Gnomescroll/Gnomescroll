@@ -5,21 +5,45 @@
 
 namespace HudInventory
 {
+
+static const char* agent_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* agent_toolbelt_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* nanite_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* craft_bench_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+
+static const char* get_inventory_texture_path(HudElementType type)
+{
+    switch (type)
+    {
+        case HUD_ELEMENT_AGENT_INVENTORY:
+            return agent_inventory_texture_path;
+        case HUD_ELEMENT_AGENT_TOOLBELT:
+            return agent_toolbelt_texture_path;
+        case HUD_ELEMENT_NANITE_INVENTORY:
+            return nanite_inventory_texture_path;
+        case HUD_ELEMENT_CRAFTING_BENCH:
+            return craft_bench_inventory_texture_path;
+        default:
+            printf("ERROR: -- get_inventory_texture_path -- unknown HudElementType %d\n", type);
+            assert(false);
+            return (char*)"";
+    }
+    return (char*)"";
+}
     
 void InventoryRender::draw()
 {
-    if (!this->inited) return;
-    if (!this->inventory_background_texture) return;
+    if (!this->background_texture) return;
     
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, this->inventory_background_texture);
+    glBindTexture(GL_TEXTURE_2D, this->background_texture);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    draw_bound_texture(this->x, this->y, this->width, this->height, this->z);
+    draw_bound_texture(this->x, this->y, this->w, this->h, this->z);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
@@ -31,28 +55,36 @@ void InventoryRender::set_position(float x, float y)
     this->y = y;
 }
 
-void InventoryRender::init()
+int InventoryRender::get_slot_at(int x, int y)
 {
-    if (this->inited) return;
+    // check if point in an inventory icon's rect
+    // shift coordinates to 0,0 this relative
+    x -= this->x + ((int)this->border);
+    y -= this->y + ((int)this->border);
 
-    char* bg_path = (char*)"./media/texture/hud/inventory2.png";
-    int ret = create_texture_from_file(bg_path, &this->inventory_background_texture);
-    if (ret)
-    {
-        printf("ERROR: Failed to load InventoryRender texture %s\n", bg_path);
-        return;
-    }
-    this->inited = true;
+    // divide point by slot dim
+    int step = this->slot_size + this->icon_border + this->icon_spacing;
+    int col = x/step;
+    int row = y/step;
+
+    // calculate slot position
+    int slot = (row * this->xdim) + col;
+    this->active_slot = slot;
+
+    return slot;
 }
 
-InventoryRender::InventoryRender()
-:
-inited(false),
-visible(false),
-x(0),y(0), z(-0.5f),
-inventory_background_texture(0),
-width(256.0f),height(128.0f) // todo
-{}
+void InventoryRender::init()
+{
+    const char* path = get_inventory_texture_path(this->type);
+    int ret = create_texture_from_file((char*)path, &this->background_texture);
+    if (ret)
+    {
+        printf("ERROR: Failed to load InventoryRender texture %s\n", path);
+        assert(ret == 0);
+        return;
+    }
+}
 
 GLuint icon_mask_texture = 0;
 
@@ -97,19 +129,25 @@ void init()
     if (ret) printf("ERROR: Failed to load InventoryRender icon mask %s\n", icon_mask_path);
     
     agent_inventory = new InventoryRender;
+    agent_inventory->type = HUD_ELEMENT_AGENT_INVENTORY;
     agent_inventory->init();
     agent_inventory->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
     
     agent_toolbelt = new InventoryRender;
+    agent_toolbelt->type = HUD_ELEMENT_AGENT_TOOLBELT;
     agent_toolbelt->init();
     agent_toolbelt->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
+    agent_toolbelt->visible = true; // always visible
     
+    // todo -- nannites, craft bench
 }
 
 void teardown()
 {
     delete agent_inventory;
     delete agent_toolbelt;
+
+    // todo -- nannites, craft bench
 }
 
 InventoryRender* get_inventory_hud_element(HudElementType type)
@@ -118,42 +156,20 @@ InventoryRender* get_inventory_hud_element(HudElementType type)
     {
         case HUD_ELEMENT_AGENT_INVENTORY:
             return agent_inventory;
-            break;
         case HUD_ELEMENT_AGENT_TOOLBELT:
             return agent_toolbelt;
-            break;
-        case HUD_ELEMENT_NANITE_INVENTORY:
-            return nanite_inventory;
-            break;
-        case HUD_ELEMENT_CRAFTING_BENCH:
-            return craft_bench_inventory;
-            break;
+        //case HUD_ELEMENT_NANITE_INVENTORY:
+            //return nanite_inventory;
+        //case HUD_ELEMENT_CRAFTING_BENCH:
+            //return craft_bench_inventory;
             
         default:
             printf("WARNING: get_inventory_hud_element -- invalid type %d\n", type);
-            assert(false);
+            assert(type == HUD_ELEMENT_AGENT_INVENTORY || type == HUD_ELEMENT_AGENT_TOOLBELT);
+            break;
     }
+    return NULL;
 }
 
-void get_screen_inventory_row_col(InventoryRender* inventory, int x, int y, int* row, int* col)
-{
-    // check if point in an inventory icon's rect
-    // shift coordinates to 0,0 inventory relative
-    x -= inventory->x;
-    y -= inventory->y;
-
-    // divide point by slot width/height
-    //  TODO -- get icon height/width from inventory object
-    const int icon_width = 32;
-    const int icon_height = 32;
-    *col = x/icon_width;
-    *row = y/icon_height;
-
-    // invert rows, since we draw top->bottom but coordinates are bottom->top
-    // TODO -- get rows,cols from inventory objects
-    //const int cols = 8;
-    //const int rows = 4;
-    //row = rows - row; // invert
-}
 
 }
