@@ -24,12 +24,17 @@ void toggle_help_menu()
 void toggle_inventory()
 {
     input_state.inventory = (!input_state.inventory);
-    if (input_state.inventory) SDL_ShowCursor(1);
-    if (!input_state.inventory)
+    if (input_state.inventory)
+    {
+        t_hud::enable_inventory_hud();
+        SDL_ShowCursor(1);
+    }
+    else
     {   // unset selected inventory slot on close
         //using ClientState::playerAgent_state;
         //if (playerAgent_state.you != NULL)
             //playerAgent_state.you->status.inventory->unselect_slot();
+        t_hud::disable_inventory_hud();
     }
 }
 
@@ -330,11 +335,17 @@ void inventory_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            hud_handle_left_mouse_click(x,y);
+            // notfiy hud, which will update "selected" state etc
+            t_hud::handle_left_mouse_click(x,y);
+            // notify inventory model that input state may have changed
+            Items::inventory_input_event();
             break;
 
         case SDL_BUTTON_RIGHT:
-            hud_handle_right_mouse_click(x,y);
+            // notfiy hud, which will update "selected" state etc
+            t_hud::handle_right_mouse_click(x,y);
+            // notify inventory model that input state may have changed
+            Items::inventory_input_event();
             break;
 
         default: break;

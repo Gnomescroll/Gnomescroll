@@ -1,12 +1,5 @@
 #pragma once
 
-// TODO:
-
-/*  Keep adding various interfaces here (t_mech, t_map, agent etc)
- *  When time is right, create client/ folder and split interfaces
- *
- */
-
 #if DC_CLIENT
 
 #include <c_lib/hud/constants.hpp>
@@ -156,7 +149,11 @@ class Inventory: public BaseInventory
         BaseInventory::init(x,y);
     }
 
-    Inventory(int id);
+    explicit Inventory(int id)
+    : BaseInventory(id),
+    selected_slot(-1), hud(HUD_ELEMENT_NONE)
+    {
+    }
 };
 
 #endif

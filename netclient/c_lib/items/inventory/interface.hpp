@@ -38,12 +38,8 @@ void destroy_inventory(Inventory* inventory);
 void destroy_inventory(int id);
 
 #if DC_CLIENT
-// render controller
-extern Inventory* current_render_inventory; // current inventory selected for rendering
-HudInventory::InventoryRender* get_render_inventory();
-
-void set_render_inventory(Inventory* inventory);
-void unset_render_inventory();
+// call at the end of relevant input events
+void inventory_input_event();
 #endif
 
 }   // Items

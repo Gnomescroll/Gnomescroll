@@ -5,6 +5,31 @@
 
 namespace HudInventory
 {
+
+static const char* agent_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* agent_toolbelt_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* nanite_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+static const char* craft_bench_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+
+static const char* get_inventory_texture_path(HudElementType type)
+{
+    switch (type)
+    {
+        case HUD_ELEMENT_AGENT_INVENTORY:
+            return agent_inventory_texture_path;
+        case HUD_ELEMENT_AGENT_TOOLBELT:
+            return agent_toolbelt_texture_path;
+        case HUD_ELEMENT_NANITE_INVENTORY:
+            return nanite_inventory_texture_path;
+        case HUD_ELEMENT_CRAFTING_BENCH:
+            return craft_bench_inventory_texture_path;
+        default:
+            printf("ERROR: -- get_inventory_texture_path -- unknown HudElementType %d\n", type);
+            assert(false);
+            return (char*)"";
+    }
+    return (char*)"";
+}
     
 void InventoryRender::draw()
 {
@@ -30,13 +55,33 @@ void InventoryRender::set_position(float x, float y)
     this->y = y;
 }
 
+int InventoryRender::get_slot_at(int x, int y)
+{
+    // check if point in an inventory icon's rect
+    // shift coordinates to 0,0 this relative
+    x -= this->x + ((int)this->border);
+    y -= this->y + ((int)this->border);
+
+    // divide point by slot dim
+    int step = this->slot_size + this->icon_border + this->icon_spacing;
+    int col = x/step;
+    int row = y/step;
+
+    // calculate slot position
+    int slot = (row * this->xdim) + col;
+    this->active_slot = slot;
+
+    return slot;
+}
+
 void InventoryRender::init()
 {
-    char* bg_path = (char*)"./media/texture/hud/inventory2.png";
-    int ret = create_texture_from_file(bg_path, &this->background_texture);
+    const char* path = get_inventory_texture_path(this->type);
+    int ret = create_texture_from_file((char*)path, &this->background_texture);
     if (ret)
     {
-        printf("ERROR: Failed to load InventoryRender texture %s\n", bg_path);
+        printf("ERROR: Failed to load InventoryRender texture %s\n", path);
+        assert(ret == 0);
         return;
     }
 }
@@ -84,13 +129,16 @@ void init()
     if (ret) printf("ERROR: Failed to load InventoryRender icon mask %s\n", icon_mask_path);
     
     agent_inventory = new InventoryRender;
+    agent_inventory->type = HUD_ELEMENT_AGENT_INVENTORY;
     agent_inventory->init();
     agent_inventory->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
     
     agent_toolbelt = new InventoryRender;
+    agent_toolbelt->type = HUD_ELEMENT_AGENT_TOOLBELT;
     agent_toolbelt->init();
     agent_toolbelt->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
-
+    agent_toolbelt->visible = true; // always visible
+    
     // todo -- nannites, craft bench
 }
 
@@ -108,42 +156,20 @@ InventoryRender* get_inventory_hud_element(HudElementType type)
     {
         case HUD_ELEMENT_AGENT_INVENTORY:
             return agent_inventory;
-            break;
         case HUD_ELEMENT_AGENT_TOOLBELT:
             return agent_toolbelt;
-            break;
         //case HUD_ELEMENT_NANITE_INVENTORY:
             //return nanite_inventory;
-            //break;
         //case HUD_ELEMENT_CRAFTING_BENCH:
             //return craft_bench_inventory;
-            //break;
             
         default:
             printf("WARNING: get_inventory_hud_element -- invalid type %d\n", type);
-            assert(false);
+            assert(type == HUD_ELEMENT_AGENT_INVENTORY || type == HUD_ELEMENT_AGENT_TOOLBELT);
+            break;
     }
+    return NULL;
 }
 
-void get_screen_inventory_row_col(InventoryRender* inventory, int x, int y, int* row, int* col)
-{
-    // check if point in an inventory icon's rect
-    // shift coordinates to 0,0 inventory relative
-    x -= inventory->x;
-    y -= inventory->y;
-
-    // divide point by slot w/h
-    //  TODO -- get icon h/w from inventory object
-    const int icon_width = 32;
-    const int icon_height = 32;
-    *col = x/icon_width;
-    *row = y/icon_height;
-
-    // invert rows, since we draw top->bottom but coordinates are bottom->top
-    // TODO -- get rows,cols from inventory objects
-    //const int cols = 8;
-    //const int rows = 4;
-    //row = rows - row; // invert
-}
 
 }

@@ -5,6 +5,7 @@
 
 #if DC_CLIENT
 #include <c_lib/items/inventory/client.cpp>
+#include <c_lib/items/inventory/handlers.cpp>
 #endif
 
 #if DC_SERVER

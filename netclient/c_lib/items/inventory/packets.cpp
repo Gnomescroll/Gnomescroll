@@ -25,8 +25,7 @@ inline void inventory_create_StoC::handle()
 
     obj->owner = owner;
     #if DC_CLIENT
-    attach_inventory_to_owner(obj);
-    attach_inventory_to_interface(obj);
+    Items::received_inventory_handler(obj);
     #endif
 }
 

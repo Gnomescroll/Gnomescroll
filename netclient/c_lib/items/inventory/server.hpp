@@ -131,7 +131,7 @@ class Inventory: public BaseInventory
     void sendToClientSwap(int slota, int slotb);
     void broadcastSwap(int slota, int slotb);
 
-    Inventory(int id)
+    explicit Inventory(int id)
     : BaseInventory(id)
     {}
 };

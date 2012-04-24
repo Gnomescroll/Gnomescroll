@@ -95,25 +95,6 @@ void destroy_inventory(int id)
 
 
 #if DC_CLIENT
-/* Render controller */
-
-Inventory* current_render_inventory = NULL; // current inventory selected for rendering
-
-void set_render_inventory(Inventory* inventory)
-{
-    current_render_inventory = inventory;
-}
-
-void unset_render_inventory()
-{
-    current_render_inventory = NULL;
-}
-
-HudInventory::InventoryRender* get_render_inventory()
-{
-    if (current_render_inventory == NULL) return NULL;
-    return HudInventory::get_inventory_hud_element(current_render_inventory->hud);
-}
 #endif
 
 
