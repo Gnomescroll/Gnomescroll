@@ -39,6 +39,7 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 	float width = 2*border + xdim*slot_size +(xdim-1)*inc1;
 	float height = 2*border + ydim*slot_size + (ydim-1)*inc1;
 
+#if 0
 	if(x < xoff)
 	{
 		printf("1 to left of border \n");
@@ -82,17 +83,18 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 		printf("2 above border \n");
 		return false;
 	}
+#else 
+	if(x < xoff || x > xoff + width) return false;
+	if(y < yoff || y > yoff + height) return false;
+	if(x < xoff + border ||x > xoff + width - border ) return false;
+	if(y < yoff + border ||y > yoff + height - border ) return false;
+#endif
 
-	int xs, ys;
+	*xslot = (x - (xoff + border))  / (inc1 + slot_size);
+	*yslot = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
 
-	xs = (x - (xoff + border))  / (inc1 + slot_size);
-	ys = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
+	printf("in border: slot %i, %i \n", *xslot, *yslot);
 
-	printf("in border: slot %i, %i \n", xs,ys);
-
-	*xslot = xs;
-	*yslot = ys;
-	
 	return true;
 }
 
