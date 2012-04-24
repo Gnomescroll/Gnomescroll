@@ -111,14 +111,27 @@ void create_agent_inventory(int agent_id, int client_id)
 
 void delete_agent_inventory(int agent_id)
 {
+    int inventory_id = AgentInventoryList[agent_id];
     assert(AgentInventoryList[agent_id] != NO_AGENT);
-    item_container_list->destroy(agent_id);
-    AgentInventoryList[agent_id] == NO_AGENT;
+    assert(item_container_list->get(inventory_id) != NULL);
+
+    item_container_list->destroy(inventory_id);
+    AgentInventoryList[agent_id] = NO_AGENT;
+}
+
+void create_agent_toolbar(int agent_id, int client_id)
+{
+    printf("inplement: t_item::create_agent_toolbar \n");
+}
+
+void delete_agent_toolbar(int agent_id)
+{
+    printf("inplement: t_item::delete_agent_toolbar \n");
 }
 
 void check_item_pickups()
 {
-#if DC_SERVER
+
     for (int i=0; i<free_item_list->n_max; i++)
     {
         if (free_item_list->a[i] == NULL) continue;
@@ -173,7 +186,7 @@ void check_item_pickups()
         p2.sendToClient(agent->id); //warning, assumes agent and player id are same
         //p2.broadcast();
     }
-#endif
+
 }
 
 void create_free_item(int item_type, 

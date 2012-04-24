@@ -16,7 +16,7 @@ void draw_init()
 
 void draw_teardown()
 {
-
+	teardown_texture();
 }
 /*
     Input Handling

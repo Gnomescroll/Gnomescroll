@@ -63,7 +63,7 @@ void init_texture()
 
 }
 
-void tear_down_texture()
+void teardown_texture()
 {
 
 
