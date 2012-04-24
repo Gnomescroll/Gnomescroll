@@ -35,7 +35,7 @@ void disable_inventory_hud()
 
 
 
-void handle_click(int x, int y, int button)
+void handle_click(int x, int y, int button, bool down)
 {
 
 }
