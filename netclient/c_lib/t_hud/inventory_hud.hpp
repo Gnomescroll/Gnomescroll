@@ -2,9 +2,10 @@
 
 #include <c_lib/t_hud/texture.hpp>
 
+#include <c_lib/SDL/SDL_functions.h>
+
 namespace t_hud
 {
-
 
 int inventory_hud_x_off = 300;
 int inventory_hud_y_off = 300;
@@ -22,6 +23,8 @@ const int inventory_hud_ydim = 3;
 bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 {
 
+	y = _yres - y;
+
 	const float xoff = inventory_hud_x_off;
 	const float yoff = inventory_hud_y_off;
 
@@ -33,8 +36,8 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 	const int xdim = inventory_hud_xdim; // 6;
 	const int ydim = inventory_hud_ydim; // 3;
 
-	float width = 2*border + xdim*(inc1+slot_size);
-	float height = 2*border + ydim*(inc1+slot_size);
+	float width = 2*border + xdim*slot_size +(xdim-1)*inc1;
+	float height = 2*border + ydim*slot_size + (ydim-1)*inc1;
 
 	if(x < xoff)
 	{
@@ -49,16 +52,16 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 
 	if(y < yoff)
 	{
-		printf("1 above border \n");
+		printf("1 below border \n");
 		return false;
 	}
 	if(y > yoff + height)
 	{
-		printf("1 below border \n");
+		printf("1 above border \n");
 		return false;
 	}
 
-	int xs, xy;
+	//int xs, xy;
 
 	if(x < xoff + border )
 	{
@@ -73,12 +76,12 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 
 	if(y < yoff + border )
 	{
-		printf("2 above border \n");
+		printf("2 below border \n");
 		return false;
 	}
 	if(y > yoff + height - border )
 	{
-		printf("2 below border \n");
+		printf("2 above border \n");
 		return false;
 	}
 
@@ -106,14 +109,14 @@ void draw_inventory_hud()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-/*
-	glColor4ub(50, 50, 50, 64);
+#if 1
+	glColor4ub(0, 0, 50, 64);
 
 	{
 		float x = inventory_hud_x_off;
 		float y = inventory_hud_y_off;
-		float w = 2*border + xdim*slot_size+ (xdim-1)*inc;
-		float h = 2*border + ydim*slot_size+ (ydim-1)*inc;
+		float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
+		float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
 
 	    glBegin(GL_QUADS);
 
@@ -123,8 +126,10 @@ void draw_inventory_hud()
 		glVertex3f(x, y, z);
 
 		glEnd();
+
 	}
-*/
+#endif
+
 	glBegin(GL_QUADS);
 
 	glColor4ub(50, 50, 50, 128);
