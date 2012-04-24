@@ -61,8 +61,6 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 		return false;
 	}
 
-	//int xs, xy;
-
 	if(x < xoff + border )
 	{
 		printf("2 to left of border \n");
@@ -85,8 +83,16 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 		return false;
 	}
 
-	printf("in border: \n");
+	int xs, ys;
 
+	xs = (x - (xoff + border))  / (inc1 + slot_size);
+	ys = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
+
+	printf("in border: slot %i, %i \n", xs,ys);
+
+	*xslot = xs;
+	*yslot = ys;
+	
 	return true;
 }
 
