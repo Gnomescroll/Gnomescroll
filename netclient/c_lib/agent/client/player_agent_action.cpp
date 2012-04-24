@@ -342,7 +342,8 @@ void PlayerAgent_action::throw_grenade()
     f[0] *= PLAYER_ARM_FORCE;
     f[1] *= PLAYER_ARM_FORCE;
     f[2] *= PLAYER_ARM_FORCE;
-    Particles::Grenade* g = Particles::grenade_list->create(x,y,z, f[0], f[1], f[2]);
+    Particles::Grenade* g = Particles::grenade_list->create();
+    g->set_state(x,y,z, f[0], f[1], f[2]);
     if (g==NULL) return;
     g->owner = this->p->agent_id;
     

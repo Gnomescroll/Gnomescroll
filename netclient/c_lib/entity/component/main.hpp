@@ -69,4 +69,7 @@ extern RateLimitComponentList* rate_limit_component_list;
 Component* get_switch(ComponentType type);
 void release_switch(Component* component);
 
+void init_components();
+void teardown_components();
+
 } // Components

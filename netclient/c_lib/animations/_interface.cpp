@@ -22,7 +22,7 @@ void init()
     hitscan_laser_effect_list = new HitscanLaserEffect_list;
     mining_laser_effect_list = new MiningLaserEffect_list;
 
-	insect_mob_list = new Insect_mob_list;
+    insect_mob_list = new Insect_mob_list;
 
     Animations::init_hitscan();
     Animations::init_hitscan_laser();
@@ -35,7 +35,7 @@ void init()
 
 void teardown()
 {
-	delete insect_mob_list;
+    delete insect_mob_list;
 
     delete hitscan_effect_list;
     delete hitscan_laser_effect_list;
@@ -68,7 +68,7 @@ void prep_insect_mob()
 
 void draw_insect_mob()
 {
-	insect_mob_list->draw();
+    insect_mob_list->draw();
 }
 
 void draw_hitscan_effect()
@@ -154,7 +154,8 @@ ml->init(x13+ hvv*randf(),y13+ hvv*randf(),z13+5.0, hv*randf() - hv/2, hv* randf
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz)
 {
-	hitscan_effect_list->create(x,y,z,vx,vy,vz);
+    HitscanEffect* he = hitscan_effect_list->create();
+    he->set_state(x,y,z,vx,vy,vz);
 }
 
 }

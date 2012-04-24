@@ -68,7 +68,9 @@ inline void grenade_StoC::handle()
 {
     #if DC_CLIENT
     if (owner == ClientState::playerAgent_state.agent_id) return;
-    Grenade* g = Particles::grenade_list->create(x, y, z, mx, my, mz);
+    Grenade* g = Particles::grenade_list->create();
+    if (g == NULL) return;
+    g->set_state(x, y, z, mx, my, mz);
     g->owner = owner;
     g->ttl_max = (int)ttl_max;
     g->type = (int)type;
@@ -86,16 +88,6 @@ void Grenade::init()
 Grenade::Grenade(int id)
 :
 ParticleMotion(id, 0,0,0,0,0,0, GRENADE_MASS),
-BillboardSprite(),
-bounce_count(0),
-owner(-1)
-{
-    this->init();
-}
-
-Grenade::Grenade(int id, float x, float y, float z, float mx, float my, float mz)
-:
-ParticleMotion(id, x,y,z,mx,my,mz, GRENADE_MASS),
 BillboardSprite(),
 bounce_count(0),
 owner(-1)

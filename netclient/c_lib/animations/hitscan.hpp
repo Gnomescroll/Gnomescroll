@@ -23,9 +23,14 @@ class HitscanEffect
     inline void draw(float delta, Vec3 camera) __attribute((always_inline));
     void tick();
 
+    void set_state(float x, float y, float z, float vx, float vy, float vz)
+    {
+        this->x = x; this->y = y; this->z = z;
+        this->vx = vx; this->vy = vy; this->vz = vz;
+    }
+
     explicit HitscanEffect(int id);
-    HitscanEffect(float x, float y, float z, float vx, float vy, float vz);
-    HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz);
+    HitscanEffect();
 };
 
 class HitscanEffect_list: public Object_list<HitscanEffect>

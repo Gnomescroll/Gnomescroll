@@ -62,7 +62,7 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = Particles::billboard_text_hud_list->create(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        this->bb = Particles::billboard_text_hud_list->create();
         if (this->bb == NULL) return;
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
@@ -78,12 +78,14 @@ void Agent_event::display_name()
 void Agent_event::took_damage(int dmg)
 {
     Particles::BillboardText* b = Particles::billboard_text_list->create(
+    );
+    if (b==NULL) return;
+    b->set_state(
         a->s.x + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.y + (randf()*(a->box.box_r*2) - a->box.box_r),
         a->s.z + a->current_height(),
         0.0f,0.0f, 8.0f
     );
-    if (b==NULL) return;
     b->set_color(255,10,10, 255);   // red
     char txt[10+1];
     sprintf(txt, "%d", dmg);

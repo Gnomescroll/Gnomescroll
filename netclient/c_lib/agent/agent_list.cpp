@@ -65,6 +65,76 @@ void Agent_list::quicksort_team(int beg, int end)
     }
 }
 
+/* quicksorts */
+
+void Agent_list::swap_object_state(Agent_state **a, Agent_state **b)
+{Agent_state* t=*a; *a=*b; *b=t;}
+
+void Agent_list::swap_float(float *a, float *b)
+{float t=*a; *a=*b; *b=t;}
+
+void Agent_list::quicksort_distance_asc(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        float dist = this->filtered_object_distances[beg];
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            if (this->filtered_object_distances[l] <= dist)
+                l++;
+            else {
+                swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
+            }
+        }
+        swap_float(&this->filtered_object_distances[--l], &this->filtered_object_distances[beg]);
+        swap_object_state(&this->filtered_objects[l], &this->filtered_objects[beg]);
+        quicksort_distance_asc(beg, l);
+        quicksort_distance_asc(r, end);
+    }
+}
+
+void Agent_list::quicksort_distance_desc(int beg, int end)
+{
+    if (end > beg + 1)
+    {
+        float dist = this->filtered_object_distances[beg];
+        int l = beg + 1, r = end;
+        while (l < r)
+        {
+            if (this->filtered_object_distances[l] >= dist)
+                l++;
+            else {
+                swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
+                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
+            }
+        }
+        swap_float(&this->filtered_object_distances[--l], &this->filtered_object_distances[beg]);
+        swap_object_state(&this->filtered_objects[l], &this->filtered_objects[beg]);
+        quicksort_distance_desc(beg, l);
+        quicksort_distance_desc(r, end);
+    }
+}
+
+void Agent_list::sort_filtered_objects_by_distance(bool ascending)
+{
+    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
+    else this->quicksort_distance_desc(0, this->n_filtered);
+}
+
+void Agent_list::filter_none()
+{   // moves all non null objects to the filtered list
+    int c = 0;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->filtered_objects[c++] = this->a[i];
+    }
+    this->n_filtered = c;
+}
+
+
 void Agent_list::send_to_client(int client_id) {
     int i;
     for (i=0; i<AGENT_MAX; i++) {
@@ -243,6 +313,8 @@ Agent_list::Agent_list()
 :
 check_name_interval(0)
 {
+    this->filtered_objects = (Agent_state**)calloc(this->n_max, sizeof(Agent_state*));
+    this->filtered_object_distances = (float*)calloc(this->n_max, sizeof(float));
     print();
 }
 

@@ -640,6 +640,19 @@ void ChatMessageList::sort_by_most_recent()
     this->quicksort_timestamp_desc(0, this->n_filtered);
 }
 
+void ChatMessageList::filter_none()
+{   // moves all non null objects to the filtered list
+    int c = 0;
+    for (int i=0; i<this->n_max; i++)
+    {
+        if (this->a[i] == NULL) continue;
+        this->filtered_objects[c++] = this->a[i];
+    }
+    this->n_filtered = c;
+}
+
+
+
 /* ChatSystemMessage */
 // collection of methods
 

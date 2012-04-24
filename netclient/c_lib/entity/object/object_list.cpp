@@ -28,9 +28,8 @@ void ObjectList::set_object_id(Object* object, int id)
     assert(this->used[type][id] == 0);
 
     // swap from staging slot
-    int max = this->max(type);
-    assert(max > 0);
-    this->objects[type][max-1] = this->objects[type][id];
+    this->staging_objects[type] = this->objects[type][id];
+    this->staging_objects[type]->id = -1;
     this->objects[type][id] = object;
     object->id = id;
     this->used[type][id] = 1;
@@ -63,7 +62,6 @@ void ObjectList::destroy(ObjectType type, int id)
     if (!this->used[type][id]) return;
     this->used[type][id] = 0;
     this->indices[type] -= 1;
-    if (type == OBJECT_MONSTER_BOMB) printf("Destroyed %d\n", id);
 }
 
 Object* ObjectList::get(ObjectType type, int id)
@@ -74,9 +72,7 @@ Object* ObjectList::get(ObjectType type, int id)
 
 Object* ObjectList::create(ObjectType type)
 {
-    if (this->maximums[type] <= 0) return NULL;
-    int id = this->maximums[type] - 1;
-    return this->objects[type][id];
+    return this->staging_objects[type];
 }
 
 Object** ObjectList::get_objects(ObjectType type)
@@ -97,21 +93,29 @@ void ObjectList::set_object_max(ObjectType type, int max)
 {
     assert(type < MAX_OBJECT_TYPES);
     assert(type >= 0);
-    this->maximums[type] = max-1;
+    assert(this->maximums[type] == 0);
+    assert(this->objects[type] == NULL);
+    assert(this->used[type] == NULL);
+    this->maximums[type] = max;
     this->objects[type] = (Object**)calloc(max, sizeof(Object*));
     this->used[type] = (char*)calloc(max, sizeof(char));
-    this->used[type][max-1] = 1;    // reserve last slot for staging data / null ids
 }
 
 void ObjectList::load_object_data(ObjectDataList* data)
 {   // preallocate component pointer buffers
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
+    {
+        int n_components = data->get_component_count((ObjectType)i);
         for (int j=0; j<this->maximums[i]; j++)
         {
             this->objects[i][j] = new Object(j);
-            this->objects[i][j]->init(data->get_component_count((ObjectType)i));
+            this->objects[i][j]->init(n_components);
             this->objects[i][j]->type = (ObjectType)i;
         }
+        this->staging_objects[i] = new Object(-1);
+        this->staging_objects[i]->init(n_components);
+        this->staging_objects[i]->type = (ObjectType)i;
+    }
 }
 
 void ObjectList::init()
@@ -119,6 +123,7 @@ void ObjectList::init()
     this->indices = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->maximums = (int*)calloc(MAX_OBJECT_TYPES, sizeof(int));
     this->used = (char**)calloc(MAX_OBJECT_TYPES, sizeof(char*));
+    this->staging_objects = (Object**)calloc(MAX_OBJECT_TYPES, sizeof(Object*));
     this->objects = (Object***)calloc(MAX_OBJECT_TYPES, sizeof(Object**));
 }
 
@@ -127,13 +132,12 @@ void ObjectList::tick()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->tick == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
             Object* obj = this->objects[i][j];
-            if (obj->tick != NULL)
-                obj->tick(obj);
+            if (obj->tick == NULL) break;   // none of these objects will have tick()
+            obj->tick(obj);
         }
     }
 }
@@ -143,13 +147,12 @@ void ObjectList::update()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
             Object* obj = this->objects[i][j];
-            if (obj->update != NULL)
-                obj->update(obj);
+            if (obj->update == NULL) break;
+            obj->update(obj);
         }
     }
 }
@@ -160,7 +163,6 @@ void ObjectList::harvest()
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
         if (this->used[i] == NULL) continue;
-        //if (this->maximums[i] > 0 && this->objects[i][0]->update == NULL) continue;
         for (int j=0; j<this->maximums[i]; j++)
         {
             if (!this->used[i][j]) continue;
@@ -198,6 +200,11 @@ ObjectList::~ObjectList()
                     
         free(this->objects);
     }
+
+    if (this->staging_objects != NULL)
+        for (int i=0; i<MAX_OBJECT_TYPES; i++)
+            if (this->staging_objects[i] != NULL)
+                delete this->staging_objects[i];
     
     if (this->indices != NULL) free(this->indices);
     if (this->maximums != NULL) free(this->maximums);

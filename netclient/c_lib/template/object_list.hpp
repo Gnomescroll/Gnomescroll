@@ -20,12 +20,6 @@ class Object_list {
 
     protected:
         int id_c;
-
-        // quicksort helpers
-        void quicksort_distance_asc(int beg, int end);
-        void quicksort_distance_desc(int beg, int end);
-        void swap_object_state(Object_state **a, Object_state **b);
-        void swap_float(float *a, float *b);
         
     public:
         static const int n_max = max_n;
@@ -42,12 +36,6 @@ class Object_list {
         
         Object_state* get_or_create(int id);
 
-        Object_state* create(float x, float y, float z);
-        Object_state* create(int id, float x, float y, float z);
-        Object_state* create(float x, float y, float z, float vx, float vy, float vz);
-        Object_state* create(int id, float x, float y, float z, float vx, float vy, float vz);
-
-
         bool contains(int id);
         bool full();
 
@@ -55,22 +43,10 @@ class Object_list {
         
         void destroy(int _id);
 
-        //void draw();    //overide in template specilization on client
-        //void draw(int all);
-
         void where();
         void print();
         void print_members();
 
-        // filtering
-        Object_state** filtered_objects; // tmp array for filtering objects
-        float* filtered_object_distances;
-        int n_filtered;
-
-        void filter_none(); // copies pointers/null into filtered list, unchanged
-        int objects_within_sphere(float x, float y, float z, float radius);
-        void objects_in_cone(float x, float y, float z, float vx, float vy, float vz, float theta);   // origin, direction, cone threshold
-        void sort_filtered_objects_by_distance(bool ascending=true);
 };
 
 //template <class T>
@@ -83,8 +59,6 @@ id_c(0),
 num(0)
 {
     this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
-    this->filtered_objects = (Object_state**)calloc(max_n, sizeof(Object_state*));
-    this->filtered_object_distances = (float*)calloc(max_n, sizeof(float));
     //where();
 }
 
@@ -107,10 +81,6 @@ Object_list<Object_state, max_n>::~Object_list()
         }
         free(this->a);
     }
-    if (this->filtered_objects != NULL)
-        free(this->filtered_objects);
-    if (this->filtered_object_distances != NULL)
-        free(this->filtered_object_distances);
 }
 
 template <class Object_state, int max_n>
@@ -207,69 +177,6 @@ Object_state* Object_list<Object_state, max_n>::get_or_create(int id) {
     return obj;
 }
 
-
-/*
-    Particle function stuff
-*/
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z) {
-    int i;
-    int id;
-    for(i=0; i<n_max;i++) {
-        id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if (i == n_max) return NULL;    // full
-    a[id] = new Object_state(id, x,y,z);
-    num++;
-    id_c = id+1;
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y, float z) {
-    if (a[id] == NULL)
-    {
-        a[id] = new Object_state(id, x,y,z);
-        num++;
-        return a[id];
-    }
-    else
-    {
-        printf("%s_list: Cannot create object from id. id %d is in use\n", name(), id);
-        return NULL;
-    }
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(float x, float y, float z, float vx, float vy, float vz) {
-    int i;
-    int id;
-    for(i=0; i<n_max;i++) {
-        id = (i+id_c)%n_max;
-        if(a[id] == NULL) break;
-    }
-    if (i == n_max) return NULL;    // full
-    a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-    num++;
-    id_c = id+1;
-    return a[id];
-}
-
-template <class Object_state, int max_n>
-Object_state* Object_list<Object_state, max_n>::create(int id, float x, float y, float z, float vx, float vy, float vz) {
-
-    if(a[id] == NULL) {
-        a[id] = new Object_state(id, x,y,z, vx,vy,vz);
-        num++;
-        return a[id];
-    } else {
-        printf("%s_list: Cannot Create object from id; id is in use: %i\n", name(), id);
-        return NULL;
-    }
-}
-
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::contains(int id) {
     //where();
@@ -294,184 +201,9 @@ void Object_list<Object_state, max_n>::destroy(int id)
     //printf("%s_list: Deleted object %i\n",name(), id);
 }
  
-/*
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::draw() {
-    
-    #ifdef DC_CLIENT
-    // actual implementation will only draw ids from a global to_draw list
-    int i;
-    for (i=0; i<n_max;i++) {
-        if (a[i]==NULL) continue;
-        a[i]->draw();
-    }
-    #endif
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::draw(int all) {
-    
-    #ifdef DC_CLIENT
-    if (!all) return;
-    int i;
-    for (i=0; i<n_max;i++) {
-        if (a[i]==NULL) continue;
-        a[i]->draw();
-    }
-    #endif
-}
-*/
-
 template <class Object_state, int max_n>
 bool Object_list<Object_state, max_n>::full()
 {
     if (this->num > max_n) printf("WARNING: Objet_list -- Num %d exceeds max_n %d\n", num, max_n);
     return (this->num >= max_n);
-}
-
-
-/* quicksorts */
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::swap_object_state(Object_state **a, Object_state **b)
-{Object_state* t=*a; *a=*b; *b=t;}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::swap_float(float *a, float *b)
-{float t=*a; *a=*b; *b=t;}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::quicksort_distance_asc(int beg, int end)
-{
-    if (end > beg + 1)
-    {
-        float dist = this->filtered_object_distances[beg];
-        int l = beg + 1, r = end;
-        while (l < r)
-        {
-            if (this->filtered_object_distances[l] <= dist)
-                l++;
-            else {
-                swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
-                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
-            }
-        }
-        swap_float(&this->filtered_object_distances[--l], &this->filtered_object_distances[beg]);
-        swap_object_state(&this->filtered_objects[l], &this->filtered_objects[beg]);
-        quicksort_distance_asc(beg, l);
-        quicksort_distance_asc(r, end);
-    }
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::quicksort_distance_desc(int beg, int end)
-{
-    if (end > beg + 1)
-    {
-        float dist = this->filtered_object_distances[beg];
-        int l = beg + 1, r = end;
-        while (l < r)
-        {
-            if (this->filtered_object_distances[l] >= dist)
-                l++;
-            else {
-                swap_float(&this->filtered_object_distances[l], &this->filtered_object_distances[--r]);
-                swap_object_state(&this->filtered_objects[l], &this->filtered_objects[r]);
-            }
-        }
-        swap_float(&this->filtered_object_distances[--l], &this->filtered_object_distances[beg]);
-        swap_object_state(&this->filtered_objects[l], &this->filtered_objects[beg]);
-        quicksort_distance_desc(beg, l);
-        quicksort_distance_desc(r, end);
-    }
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::sort_filtered_objects_by_distance(bool ascending)
-{
-    if (ascending) this->quicksort_distance_asc(0, this->n_filtered);
-    else this->quicksort_distance_desc(0, this->n_filtered);
-}
-
-template <class Object_state, int max_n>
-int Object_list<Object_state, max_n>::objects_within_sphere(
-    float x, float y, float z, float radius
-)
-{
-    const float radius_squared = radius*radius;
-    int ct = 0;
-    float dist;
-    float min_dist = 10000000.0f;
-    int closest = -1;
-    int i;
-    for (i=0; i<max_n; i++)
-    {
-        if (a[i] == NULL) continue;
-        dist = distancef_squared(x,y,z, a[i]->x, a[i]->y, a[i]->z);
-        if (dist < radius_squared)
-        {
-            // agent in sphere
-            filtered_objects[ct] = a[i];
-            filtered_object_distances[ct] = dist;
-            if (dist < min_dist)
-            {
-                min_dist = dist;
-                closest = ct;
-            }
-            ct++;            
-        }
-    }
-    this->n_filtered = ct;
-    return closest;
-}
-
-// origin, direction, cone threshold
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::objects_in_cone(
-    float x, float y, float z, float vx, float vy, float vz, float theta
-)
-{
-    int ct = 0;
-    float ax,ay,az;
-    float ip;
-    float arc;
-
-    float len = sqrt(vx*vx + vy*vy + vz*vz);
-    vx /= len;
-    vy /= len;
-    vz /= len;
-    for (int i=0; i<max_n; i++)
-    {
-        Object_state* a = this->a[i];
-        if (a == NULL) continue;
-
-        ax = a->x - x;
-        ay = a->y - y;
-        az = a->z - z;
-
-        len = sqrt(ax*ax + ay*ay + az*az);
-        ax /= len;
-        ay /= len;
-        az /= len;
-
-        ip = ax*vx + ay*vy + az*vz;
-        arc = abs(acos(ip));
-
-        if (arc < theta)
-            filtered_objects[ct++] = a;
-    }
-
-    this->n_filtered = ct;
-}
-
-template <class Object_state, int max_n>
-void Object_list<Object_state, max_n>::filter_none()
-{   // moves all non null objects to the filtered list
-    int c = 0;
-    for (int i=0; i<max_n; i++)
-    {
-        if (this->a[i] == NULL) continue;
-        this->filtered_objects[c++] = this->a[i];
-    }
-    this->n_filtered = c;
 }

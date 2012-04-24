@@ -724,10 +724,10 @@ inline void hitscan_object_CtoS::handle()
             if (obj == NULL) return;
 
             owner = (OwnerComponent*)obj->get_component_interface(COMPONENT_INTERFACE_OWNER);
-            if (owner != NULL) owner_id  = owner->get_owner();
+            if (owner != NULL) owner_id = owner->get_owner();
 
             team = (TeamComponent*)obj->get_component_interface(COMPONENT_INTERFACE_TEAM);
-            if (team != NULL) team_id =  team->get_team();
+            if (team != NULL) team_id = team->get_team();
 
             if ((team_id == a->status.team && owner_id != NO_AGENT)
               && owner_id != a->id)   // TODO -- kill rule per object?
@@ -965,8 +965,9 @@ inline void ThrowGrenade_CtoS::handle()
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
     n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
-    Particles::Grenade* g = Particles::grenade_list->create(x,y,z, n.x, n.y, n.z);
+    Particles::Grenade* g = Particles::grenade_list->create();
     if (g==NULL) return;
+    g->set_state(x,y,z, n.x, n.y, n.z);
     g->owner = a->id;
     g->broadcast();
 }

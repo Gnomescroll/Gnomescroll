@@ -48,8 +48,9 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 
         side = randrange(0,5);
         tex_id = t_map::get_cube_side_texture(cube_id, side);
-        minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::textured_minivox_list->create();
         if (minivox == NULL) return;
+        minivox->set_state(nx,ny,nz, vx,vy,vz);
         //minivox->set_color(r,g,b);
         ttl = randrange(20,40);
         minivox->set_ttl(ttl);
@@ -143,8 +144,9 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
         
-        minivox = Particles::textured_minivox_list->create(nx,ny,nz, vx,vy,vz);
+        minivox = Particles::textured_minivox_list->create();
         if (minivox == NULL) return;
+        minivox->set_state(nx,ny,nz, vx,vy,vz);
         minivox->set_texture(tex_id, 2);
         ttl = randrange(15,25);
         minivox->set_ttl(ttl);
@@ -292,13 +294,14 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
 
-        minivox = Particles::colored_minivox_list->create(cx,cy,cz, cvx,cvy,cvz);
+        minivox = Particles::colored_minivox_list->create();
         if (minivox == NULL) return;
+        minivox->set_size(size);
+        minivox->set_state(cx,cy,cz, cvx,cvy,cvz);
         minivox->set_color(color.r, color.g, color.b);//sky blue
         minivox->set_ttl(ttl);
         minivox->set_spin(dtheta, dphi);
         minivox->set_angles(theta, phi);
-        minivox->set_size(size);
     }
 }
 
@@ -354,8 +357,9 @@ void agent_bleed(float x, float y, float z)
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        b = Particles::blood_list->create(nx,ny,nz, vx,vy,vz);
+        b = Particles::blood_list->create();
         if (b==NULL) return;
+        b->set_state(nx,ny,nz, vx,vy,vz);
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
         b->ttl_max = ttl;
     }
@@ -389,8 +393,9 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
-        b = Particles::blood_list->create(x,y,z, v.x*speed, v.y*speed, v.z*speed);
+        b = Particles::blood_list->create();
         if (b == NULL) return;
+        b->set_state(x,y,z, v.x*speed, v.y*speed, v.z*speed);
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
         b->ttl_max = ttl;
     }

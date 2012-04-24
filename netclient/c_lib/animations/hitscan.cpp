@@ -34,18 +34,8 @@ id(id),
 ttl(hitscan_laser_ttl)
 {}
 
-HitscanEffect::HitscanEffect(float x, float y, float z, float vx, float vy, float vz)
+HitscanEffect::HitscanEffect()
 :
-x(x), y(y), z(z),
-vx(vx), vy(vy), vz(vz),
-ttl(hitscan_laser_ttl)
-{}
-
-HitscanEffect::HitscanEffect(int id, float x, float y, float z, float vx, float vy, float vz)
-:
-id(id),
-x(x), y(y), z(z),
-vx(vx), vy(vy), vz(vz),
 ttl(hitscan_laser_ttl)
 {}
 
@@ -212,7 +202,7 @@ void HitscanEffect_list::tick()
 {
     //const int debug = 1;
     const int debug = 0;
-
+    HitscanEffect* he;
     if(debug)
     {
         static int frame = 0;
@@ -224,7 +214,8 @@ void HitscanEffect_list::tick()
             float vx = vm*(float)rand()/(float)RAND_MAX;
             float vy = 160.0;
             float vz = vm*(float)rand()/(float)RAND_MAX;
-            hitscan_effect_list->create(32.0, 32.0, 64.0, vx, vy, vz);
+            he = hitscan_effect_list->create();
+            he->set_state(32.0, 32.0, 64.0, vx, vy, vz);
         }
 
     }
