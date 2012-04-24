@@ -8,6 +8,8 @@
 //toggling graphics settings
 #include <c_lib/t_map/glsl/shader.hpp>
 
+#include <c_lib/t_hud/_interface.hpp>
+
 InputState input_state;
 
 // triggers
@@ -24,9 +26,15 @@ void toggle_help_menu()
 void toggle_inventory()
 {
     input_state.inventory = (!input_state.inventory);
-    if (input_state.inventory) SDL_ShowCursor(1);
+    if (input_state.inventory)
+    {
+        SDL_ShowCursor(1);
+        t_hud::enable_inventory_hud();
+    }
     if (!input_state.inventory)
-    {   // unset selected inventory slot on close
+    {
+        t_hud::disable_inventory_hud();
+       // unset selected inventory slot on close
         //using ClientState::playerAgent_state;
         //if (playerAgent_state.you != NULL)
             //playerAgent_state.you->status.inventory->unselect_slot();

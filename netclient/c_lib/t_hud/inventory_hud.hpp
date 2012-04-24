@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/t_hud/texture.hpp>
+
 namespace t_hud
 {
 

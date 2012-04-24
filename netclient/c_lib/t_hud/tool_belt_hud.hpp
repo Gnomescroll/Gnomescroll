@@ -1,7 +1,8 @@
 #pragma once
 
-namespace t_hud
+#include <c_lib/t_hud/texture.hpp>
 
+namespace t_hud
 {
 
 int toolbelt_hud_x_off = 300;

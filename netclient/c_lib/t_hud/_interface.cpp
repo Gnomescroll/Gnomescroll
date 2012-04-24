@@ -12,7 +12,7 @@ namespace t_hud
 */
 void draw_init()
 {
-    init_item_grid();
+	init_texture();
 }
 
 void draw_teardown()
@@ -26,12 +26,12 @@ void draw_teardown()
 
 void enable_inventory_hud()
 {
-
+	printf("t_item::enable_inventory_hud \n");
 }
 
 void disable_inventory_hud()
 {
-
+	printf("t_item::disable_inventory_hud \n");
 }
 
 
