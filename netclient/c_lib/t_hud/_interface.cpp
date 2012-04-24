@@ -1,6 +1,5 @@
 #include "_interface.hpp"
 
-#include <c_lib/t_hud/item_grid.hpp>
 #include <c_lib/t_hud/inventory_hud.hpp>
 #include <c_lib/t_hud/tool_belt_hud.hpp>
 
