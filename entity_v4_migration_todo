@@ -113,8 +113,4 @@ static component&interface lookup array per type
 --eliminates pointer dereferences required for finding component
 DONE
 
-static has_tick has_update per type
---avoids iterating entire batches of objects that will all be null in tick() or update()
---stick it in object_data
-
 PROFILING
