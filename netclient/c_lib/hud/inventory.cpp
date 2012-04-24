@@ -34,7 +34,7 @@ static const char* get_inventory_texture_path(HudElementType type)
 void InventoryRender::draw()
 {
     if (!this->background_texture) return;
-    
+
     glColor3ub(255,255,255);
 
     glEnable(GL_TEXTURE_2D);
@@ -130,6 +130,8 @@ void init()
     
     agent_inventory = new InventoryRender;
     agent_inventory->type = HUD_ELEMENT_AGENT_INVENTORY;
+    agent_inventory->w = 256.0f;
+    agent_inventory->h = 128.0f;
     agent_inventory->init();
     agent_inventory->set_position(_xresf/2 - 128.0f, _yresf/2 - 64.0f);
     
