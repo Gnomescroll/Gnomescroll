@@ -33,9 +33,10 @@ void disable_inventory_hud()
 	printf("t_item::disable_inventory_hud \n");
 }
 
-void mouse_motion(int x, int y, int dx, int dy)
-{
 
+void mouse_motion(int x, int y)
+{
+	printf("t_item::mouse_motion x,y= %i %i \n", x,y);
 }
 
 void left_mouse_down(int x, int y)
