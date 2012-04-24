@@ -33,6 +33,7 @@ static const char* get_inventory_texture_path(HudElementType type)
     
 void InventoryRender::draw()
 {
+    if (!this->visible) return;
     if (!this->background_texture) return;
 
     glColor3ub(255,255,255);
