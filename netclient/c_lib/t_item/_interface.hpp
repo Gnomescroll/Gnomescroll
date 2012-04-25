@@ -29,15 +29,18 @@ CLIENT
 */
 #if DC_CLIENT
 
-void draw();
-void draw_hud();
-
 namespace t_item
 {
     extern int player_inventory_id;
     extern class ItemContainer* player_inventory;
-
 }
+
+void draw();
+//move item within inventory
+//void move_item(int inventory_id, int slot1, int slot2);
+
+//move item
+void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2);
 
 #endif 
 
