@@ -7,6 +7,9 @@
 namespace t_hud
 {
 
+AgentInventoryUI* agent_inventory;
+AgentToolbeltUI* agent_toolbelt;
+
 /*
     Init
 */
@@ -172,8 +175,8 @@ void init()
     agent_inventory->yoff = 100.0f;
 
     agent_toolbelt = new AgentToolbeltUI;
-    agent_inventory->xoff = 300.0f;
-    agent_inventory->yoff = 100.0f;
+    agent_toolbelt->xoff = 500.0f;
+    agent_toolbelt->yoff = 500.0f;
 }
 
 void teardown()

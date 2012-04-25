@@ -3,6 +3,9 @@
 namespace t_hud
 {
 
+extern AgentInventoryUI* agent_inventory;
+extern AgentToolbeltUI* agent_toolbelt;
+
 /*
     Hud UI state
 */
