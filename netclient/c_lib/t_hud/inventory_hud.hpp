@@ -101,7 +101,7 @@ void AgentInventoryUI::draw()
     for(int j=0; j<ydim; j++)
     {
     
-        float x = yoff + border + i*(inc1+slot_size);
+        float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
         glVertex2f(x,y+w);

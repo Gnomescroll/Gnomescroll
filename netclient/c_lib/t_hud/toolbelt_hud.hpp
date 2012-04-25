@@ -15,8 +15,8 @@ class AgentToolbeltUI : public UIElement
 
     static const float slot_size = 32;    // pixel dimension
 
-    static const int xdim = 1;    // slot dimensions
-    static const int ydim = 9;
+    static const int xdim = 9;    // slot dimensions
+    static const int ydim = 1;
 
 
     void init() {}
@@ -159,7 +159,7 @@ void AgentToolbeltUI::draw()
     if(this->selected_slot != NULL_SLOT)
     {   
         int slotx = this->selected_slot % xdim;
-        int sloty = this->selected_slot / xdim;
+        int sloty = ydim - (this->selected_slot / xdim);
         const float x = xoff + border + slotx*(inc1+slot_size);
         const float y = _yresf - (yoff + border + (ydim-sloty)*(inc1+slot_size));
 
