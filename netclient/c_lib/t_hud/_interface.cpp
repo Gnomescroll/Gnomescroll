@@ -158,8 +158,8 @@ void draw_hud()
 {
     if (!hud_enabled) return;
 
-    draw_agent_inventory();
-    draw_toolbelt();
+    agent_inventory->draw();
+    agent_toolbelt->draw();
 
     //static ItemGrid g;
     //g.draw(300,300);
