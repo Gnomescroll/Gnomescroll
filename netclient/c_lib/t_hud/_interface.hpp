@@ -5,7 +5,6 @@ namespace t_hud
 
 extern class AgentInventoryUI* agent_inventory;
 extern class AgentToolbeltUI* agent_toolbelt;
-class AgentToolbeltUI;
 
 
 /*
