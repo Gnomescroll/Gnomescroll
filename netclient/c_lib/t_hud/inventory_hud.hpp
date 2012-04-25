@@ -86,14 +86,17 @@ bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
 #else 
 	if(x < xoff || x > xoff + width) return false;
 	if(y < yoff || y > yoff + height) return false;
-	if(x < xoff + border ||x > xoff + width - border ) return false;
-	if(y < yoff + border ||y > yoff + height - border ) return false;
+	if(x < xoff + border || x > xoff + width - border ) return false;
+	if(y < yoff + border || y > yoff + height - border ) return false;
 #endif
+
+	//*xslot = (x - (xoff + border))  / (inc1 + slot_size);
+	//*yslot = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
 
 	*xslot = (x - (xoff + border))  / (inc1 + slot_size);
 	*yslot = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
 
-	printf("in border: slot %i, %i \n", *xslot, *yslot);
+	printf("inventory: slot %i, %i \n", *xslot, *yslot);
 
 	return true;
 }
@@ -117,7 +120,7 @@ void draw_inventory_hud()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#if 1
+#if 0
 	glColor4ub(0, 0, 50, 64);
 
 	{
