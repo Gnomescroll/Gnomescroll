@@ -199,6 +199,8 @@ void RegisterMessages() {
     t_item::item_create_StoC::register_client_packet();;
     
     t_item::assign_agent_inventory_StoC::register_client_packet();
+    t_item::assign_agent_toolbelt_StoC::register_client_packet();
+    t_item::assign_agent_nanite_StoC::register_client_packet();
 
     t_item::swap_within_inventory_StoC::register_client_packet();
     t_item::swap_between_inventory_StoC::register_client_packet();
