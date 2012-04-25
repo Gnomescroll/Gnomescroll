@@ -5,7 +5,6 @@ namespace t_hud
 
 InventoryUI* agent_toolbelt = NULL;
 
-
 void init_agent_toolbelt_ui()
 {
     assert(agent_toolbelt == NULL);
@@ -18,9 +17,5 @@ void init_agent_toolbelt_ui()
     agent_toolbelt->xdim = 9;
     agent_toolbelt->ydim = 1;
 }
-
-
-
-
 
 }
