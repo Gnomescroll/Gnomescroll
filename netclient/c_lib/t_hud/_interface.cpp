@@ -43,7 +43,7 @@ static UIElement* active_inventory = NULL;
 static UIElement* get_inventory_and_slot(int x, int y, int* slot)
 {
     // track topmost clicked inventory
-    float closest = 100000.0f;
+    //float closest = 100000.0f;
     UIElement* closest_inventory = NULL;
     int closest_slot = NULL_SLOT;
 
@@ -65,8 +65,8 @@ static UIElement* get_inventory_and_slot(int x, int y, int* slot)
         if (inventory == NULL) continue;
         slot_tmp = inventory->get_slot_at(x,y);
         if (slot_tmp == NULL_SLOT) continue;
-        if (inventory->z > closest) continue;
-        closest = inventory->z;
+        //if (inventory->z > closest) continue;
+        //closest = inventory->z;
         closest_inventory = inventory;
         closest_slot = slot_tmp;
     }

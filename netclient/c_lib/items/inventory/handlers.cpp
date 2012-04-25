@@ -17,11 +17,11 @@ namespace Items
 
 static void copy_data_to_render(Inventory* inventory)
 {
-    t_hud::UIElement* render = t_hud::get_inventory_hud_element(inventory->hud);
-    assert(render != NULL);
-    render->xdim = inventory->width();
-    render->ydim = inventory->height();
-    render->inventory_id = inventory->id;
+    //t_hud::UIElement* render = t_hud::get_inventory_hud_element(inventory->hud);
+    //assert(render != NULL);
+    //render->xdim = inventory->width();
+    //render->ydim = inventory->height();
+    //render->inventory_id = inventory->id;
 }
 
 static void agent_inventory_received(Inventory* inventory)
