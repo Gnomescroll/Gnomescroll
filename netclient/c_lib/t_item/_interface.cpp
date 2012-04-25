@@ -72,8 +72,13 @@ CLIENT
 
 namespace t_item
 {
-    int player_inventory_id = 0xffff;   //store id of player inventory
+    int player_inventory_id = -1;   //store id of player inventory
+    int player_inventory_id = -1;   //store id of player inventory
+    int player_inventory_id = -1;   //store id of player inventory
+
     class ItemContainer* player_inventory = NULL;
+    class ItemContainer* player_toolbar = NULL;
+    class ItemContainer* player_nanite = NULL;
 }
 
 //move item within inventory
