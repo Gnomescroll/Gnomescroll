@@ -74,6 +74,8 @@ inline void assign_agent_inventory_StoC::handle()
     ic->init_agent_inventory();
 
     t_item::player_inventory = ic;
+    t_item::player_toolbelt_id = inventory_id;
+    
     t_hud::inventory_id = inventory_id;
 }
 
@@ -86,6 +88,8 @@ inline void assign_agent_toolbelt_StoC::handle()
     ic->init_agent_toolbelt();
 
     t_item::player_toolbelt = ic;
+    t_item::player_toolbelt_id = inventory_id;
+
     t_hud::toolbelt_id = inventory_id;
 }
 
@@ -98,6 +102,8 @@ inline void assign_agent_nanite_StoC::handle()
     ic->init_agent_nanite();
 
     t_item::player_nanite = ic;
+    t_item::player_nanite_id = inventory_id;
+
     t_hud::nanite_id = inventory_id;
 }
 

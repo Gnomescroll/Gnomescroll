@@ -73,8 +73,8 @@ CLIENT
 namespace t_item
 {
     int player_inventory_id = -1;   //store id of player inventory
-    int player_inventory_id = -1;   //store id of player inventory
-    int player_inventory_id = -1;   //store id of player inventory
+    int player_toolbar_id = -1;   //store id of player inventory
+    int player_nanite_id = -1;   //store id of player inventory
 
     class ItemContainer* player_inventory = NULL;
     class ItemContainer* player_toolbar = NULL;

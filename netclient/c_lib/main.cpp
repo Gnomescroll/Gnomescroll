@@ -234,7 +234,6 @@ int run()
             Transparent
         */
 
-        // transparent
         Particles::billboard_text_list->draw();
         
         Animations::draw_insect_mob();
