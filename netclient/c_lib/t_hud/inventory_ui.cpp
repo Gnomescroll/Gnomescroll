@@ -1,5 +1,9 @@
 #include "inventory_ui.hpp"
 
+#include <c_lib/physics/common.hpp>
+
+#include <c_lib/t_hud/constants.hpp>
+
 #include <c_lib/t_hud/inventory_hud.hpp>
 #include <c_lib/t_hud/tool_belt_hud.hpp>
 
@@ -8,23 +12,21 @@ namespace t_hud
 
 int InventoryUI::get_slot_at(int px, int py)
 {
-    // invert for top-left origin
-    y = _yres - y;
+    px -= this->x + this->border;
+    py -= this->y - this->border;
 
-    float width = 2*border + xdim*slot_size +(xdim-1)*icon_spacing;
-    float height = 2*border + ydim*slot_size + (ydim-1)*icon_spacing;
+    float width  = xdim*slot_size + (xdim-1)*icon_spacing;
+    float height = ydim*slot_size + (ydim-1)*icon_spacing;
 
-    if (px < x || px > x + width) return false;
-    if (py < y || py > y + height) return false;
-    if (px < x + border || px > x + width - border) return false;
-    if (py < y + border || py > y + height - border) return false;
+    if (px < 0 || px > width)  return NULL_SLOT;
+    if (py < 0 || py > height) return NULL_SLOT;
 
-    int xslot = (px - (x + border))  / (icon_spacing + slot_size);
-    int yslot = ydim - ((py - (y + border)) / (icon_spacing + slot_size));
+    int xslot = px / (icon_spacing + slot_size);
+    int yslot = py / (icon_spacing + slot_size);
 
     int slot = yslot * this->xdim + xslot;
     
-    printf("inventory: slot %i, %i: %d \n", xslot, yslot, slot);
+    //printf("inventory: slot %d, %d\n", xslot, yslot);
 
     return slot;
 }
@@ -41,26 +43,26 @@ void InventoryUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#if 0
-    glColor4ub(0, 0, 50, 64);
+//#if 0
+    //glColor4ub(0, 0, 50, 64);
 
-    {
-        float x = inventory_hud_x_off;
-        float y = inventory_hud_y_off;
-        float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
-        float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
+    //{
+        //float x = inventory_hud_x_off;
+        //float y = inventory_hud_y_off;
+        //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
+        //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
 
-        glBegin(GL_QUADS);
+        //glBegin(GL_QUADS);
 
-        glVertex3f(x, y+h, z);
-        glVertex3f(x+w, y+h ,z);
-        glVertex3f(x+w, y, z);
-        glVertex3f(x, y, z);
+        //glVertex3f(x, y+h, z);
+        //glVertex3f(x+w, y+h ,z);
+        //glVertex3f(x+w, y, z);
+        //glVertex3f(x, y, z);
 
-        glEnd();
+        //glEnd();
 
-    }
-#endif
+    //}
+//#endif
 
     glBegin(GL_QUADS);
 
@@ -70,7 +72,7 @@ void InventoryUI::draw()
     for(int j=0; j<ydim; j++)
     {
         float x = this->x + border + i*(inc1+slot_size);
-        float y = this->y + border + j*(inc1+slot_size);
+        float y = _yresf - (this->y + border + j*(inc1+slot_size));
 
         glVertex3f(x-inc2,y+w+inc2, z);
         glVertex3f(x+w+inc2, y+w+inc2 ,z);
@@ -85,7 +87,7 @@ void InventoryUI::draw()
     {
     
         float x = this->x + border + i*(inc1+slot_size);
-        float y = this->y + border + j*(inc1+slot_size);
+        float y = _yresf - (this->y + border + j*(inc1+slot_size));
 
         glVertex3f(x,y+w, z);
         glVertex3f(x+w, y+w ,z);
@@ -109,16 +111,13 @@ void InventoryUI::draw()
 
     glBegin(GL_QUADS);
 
-    //const float z = -0.5;
-    //const float w = slot_size;
-
     for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
     {
         if(i == 0 && j == 0) continue;
 
         const float x = this->x + border + i*(inc1+slot_size);
-        const float y = this->y + border + j*(inc1+slot_size);
+        const float y = _yresf - (this->y + border + j*(inc1+slot_size));
 
         const int tex_id = rand()%40;
 
