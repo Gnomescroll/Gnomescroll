@@ -232,9 +232,9 @@ void draw_inventory_hud()
 		const float x = inventory_hud_x_off + border + selected_slot_x*(inc1+slot_size);
 		const float y = inventory_hud_y_off + border + (ydim-1-selected_slot_y)*(inc1+slot_size);
 
-		const float b = 2.0;
+		const float b = 2 + inc2;
 
-		glColor4ub(0, 128+64, 0, 128);
+		glColor4ub(0, 0, 128+64, 255);
 		glLineWidth(2.0);
 
 		glBegin(GL_LINES);
