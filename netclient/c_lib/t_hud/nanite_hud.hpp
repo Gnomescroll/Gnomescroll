@@ -3,7 +3,7 @@
 namespace t_hud
 {
 
-class AgentToolbelt : public UIelement
+class AgentNanite : public UIelement
 {
     public:
 
@@ -25,12 +25,12 @@ class AgentToolbelt : public UIelement
 };
 
 
-bool AgentToolbelt::get_slot_at(int px, int py, int* slotx, int* sloty)
+bool AgentNanite::get_slot_at(int px, int py, int* slotx, int* sloty)
 {
     return false;
 }
 
-void AgentToolbelt::draw()
+void AgentNanite::draw()
 {
     const float w = slot_size;
 
@@ -171,14 +171,4 @@ void AgentToolbelt::draw()
     glColor4ub(255, 255, 255, 255);
 }
 
-AgentToolbelt* agent_toolbelt = NULL;
-
-void init_agent_toolbelt_ui()
-{
-    assert(agent_toolbelt == NULL);
-    agent_toolbelt = new AgentToolbelt;
-
-    agent_toolbelt->x = 500.0f;
-    agent_toolbelt->y = 500.0f;
-}
 }
