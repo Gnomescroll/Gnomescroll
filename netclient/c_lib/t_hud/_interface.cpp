@@ -186,7 +186,10 @@ void init()
 
 void teardown()
 {
-    teardown_inventory_ui();
+    if (agent_inventory != NULL) delete agent_inventory;
+    if (agent_toolbelt != NULL) delete agent_toolbelt;
+    if (nanite_inventory != NULL) delete nanite_inventory;
+    if (craft_bench_inventory != NULL) delete craft_bench_inventory;
 }
 
 
