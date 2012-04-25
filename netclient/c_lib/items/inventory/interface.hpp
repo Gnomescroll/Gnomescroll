@@ -39,7 +39,7 @@ void destroy_inventory(int id);
 
 #if DC_CLIENT
 // call at the end of relevant input events
-void inventory_input_event();
+void process_inventory_events();
 #endif
 
 }   // Items

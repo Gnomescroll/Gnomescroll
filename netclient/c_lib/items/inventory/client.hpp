@@ -136,6 +136,10 @@ class Inventory: public BaseInventory
     {
         return BaseInventory::add(id, type, stack_size, slot);
     }
+    bool can_remove(int slot)
+    {
+        return BaseInventory::can_remove(slot);
+    }
     bool remove(int slot)
     {
         return BaseInventory::remove(slot);

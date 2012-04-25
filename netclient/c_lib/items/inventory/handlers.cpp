@@ -12,6 +12,8 @@
 namespace Items
 {
 
+/* Network events */
+
 static void agent_inventory_received(Inventory* inventory)
 {
     // get owner, for attaching
@@ -123,29 +125,76 @@ void received_inventory_handler(Inventory* inventory)
     }
 }
 
-void inventory_input_event()
+/* Input Events */
+
+void remove_event(int inventory_id, int slot)
 {
-    // inspect InventoryInputEvent, route based on that
+    // get inventory
 
-    //const int n_inventories = 4;
-    //Inventory* inventories[n_inventories] = {
-        //agent_inventory,
-        //agent_toolbelt,
-        //nanite_inventory,
-        //craft_bench_inventory,
-    //};
+    Inventory* inv = Items::get_inventory(inventory_id);
+    if (inv == NULL) return;
 
-    //Inventory* inventory;
-    //HudInventory::InventoryRender* render;
-    //for (int i=0; i<n_inventories; i++)
-    //{
-        //inventory = inventories[i];
-        //if (inventory == NULL) continue;
-        //render = HudInventory::get_inventory_hud_element(inventory->hud);
-        //if (render == NULL) continue;
-        //inventory->select_slot(render->active_slot);
-    //}
+    inv->remove_action(slot);
+}
 
+void swap_within_event(int inventory_id, int slota, int slotb)
+{
+    Inventory* inv = Items::get_inventory(inventory_id);
+    if (inv == NULL) return;
+
+    inv->swap_action(slota, slotb);
+}
+
+void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slotb)
+{
+    Inventory* inva = Items::get_inventory(inventory_ida);
+    if (inva == NULL) return;
+    Inventory* invb = Items::get_inventory(inventory_idb);
+    if (invb == NULL) return;
+
+    if (!inva->can_remove(slota)) return;
+    InventorySlot* item = inva->get_slot_item(slota);
+    if (item == NULL) return;
+    if (!invb->can_add(item->item_type)) return;
+
+    swap_item_between_inventory_CtoS msg;
+    msg.inventorya = inventory_ida;
+    msg.slota = slota;
+    msg.inventoryb = inventory_idb;
+    msg.slotb = slotb;
+    msg.send();
+}
+
+void process_inventory_events()
+{
+    using t_hud::inventory_input_event;
+    
+    switch (inventory_input_event.type)
+    {
+        case t_hud::INVENTORY_INPUT_EVENT_NONE:
+            break;
+
+        case t_hud::INVENTORY_INPUT_EVENT_REMOVE:
+            remove_event(inventory_input_event.inventory, inventory_input_event.slot);
+            break;
+
+        case t_hud::INVENTORY_INPUT_EVENT_SWAP_WITHIN:
+            swap_within_event(
+                inventory_input_event.inventory, inventory_input_event.slot,
+                inventory_input_event.slot_b);
+            break;
+
+        case t_hud::INVENTORY_INPUT_EVENT_SWAP_BETWEEN:
+            swap_between_event(
+                inventory_input_event.inventory, inventory_input_event.slot,
+                inventory_input_event.inventory_b, inventory_input_event.slot_b);
+            break;
+
+        default:
+            printf("unhandled inventory input event type\n");
+            assert(false);
+            break;
+    }
 }
 
 } // Items
