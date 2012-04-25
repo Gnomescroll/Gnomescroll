@@ -1,4 +1,4 @@
-#include "inventory_ui.hpp"
+#include "ui_element.hpp"
 
 #include <c_lib/physics/common.hpp>
 
@@ -10,6 +10,7 @@
 namespace t_hud
 {
 
+/*
 int InventoryUI::get_slot_at(int px, int py)
 {
     px -= this->x + this->border;
@@ -74,5 +75,6 @@ InventoryUI* get_inventory_hud_element(HudElementType type)
     }
     return NULL;
 }
+*/
 
 } // t_hud

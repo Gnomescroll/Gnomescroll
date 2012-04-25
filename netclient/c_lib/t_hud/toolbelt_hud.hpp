@@ -30,6 +30,26 @@ class AgentToolbelt : public UIelement
 bool AgentToolbelt::get_slot_at(int px, int py, int* slotx, int* sloty)
 {
     return false;
+
+/*
+    px -= this->x + this->border;
+    py -= this->y - this->border;
+
+    float width  = xdim*slot_size + (xdim-1)*icon_spacing;
+    float height = ydim*slot_size + (ydim-1)*icon_spacing;
+
+    if (px < 0 || px > width)  return NULL_SLOT;
+    if (py < 0 || py > height) return NULL_SLOT;
+
+    int xslot = px / (icon_spacing + slot_size);
+    int yslot = py / (icon_spacing + slot_size);
+
+    int slot = yslot * this->xdim + xslot;
+    
+    //printf("inventory: slot %d, %d\n", xslot, yslot);
+
+    return slot;
+*/
 }
 
 void AgentToolbelt::draw()
