@@ -6,7 +6,7 @@
 
 #include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/event.hpp>
-#include <c_lib/t_hud/inventory_ui.hpp>
+#include <c_lib/t_hud/ui_element.hpp>
 #include <c_lib/items/inventory/interface.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
@@ -17,7 +17,7 @@ namespace Items
 
 static void copy_data_to_render(Inventory* inventory)
 {
-    t_hud::InventoryUI* render = t_hud::get_inventory_hud_element(inventory->hud);
+    t_hud::UIElement* render = t_hud::get_inventory_hud_element(inventory->hud);
     assert(render != NULL);
     render->xdim = inventory->width();
     render->ydim = inventory->height();

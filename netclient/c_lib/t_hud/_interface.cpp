@@ -38,18 +38,18 @@ void disable_inventory_hud()
 }
 
 static int active_slot = NULL_SLOT;
-static InventoryUI* active_inventory = NULL;
+static UIElement* active_inventory = NULL;
 
-static InventoryUI* get_inventory_and_slot(int x, int y, int* slot)
+static UIElement* get_inventory_and_slot(int x, int y, int* slot)
 {
     // track topmost clicked inventory
     float closest = 100000.0f;
-    InventoryUI* closest_inventory = NULL;
+    UIElement* closest_inventory = NULL;
     int closest_slot = NULL_SLOT;
 
     // set up inventory array
     const int n_inventories = 4;
-    InventoryUI* inventories[n_inventories] = {
+    UIElement* inventories[n_inventories] = {
         agent_inventory,
         agent_toolbelt,
         nanite_inventory,
@@ -57,7 +57,7 @@ static InventoryUI* get_inventory_and_slot(int x, int y, int* slot)
     };
 
     // get topmost inventory click
-    InventoryUI* inventory;
+    UIElement* inventory;
     int slot_tmp;
     for (int i=0; i<n_inventories; i++)
     {
@@ -104,7 +104,7 @@ void left_mouse_up(int x, int y)
 
     // detect click
     int slot;
-    InventoryUI* inventory = get_inventory_and_slot(x,y, &slot);
+    UIElement* inventory = get_inventory_and_slot(x,y, &slot);
 
     // decide swap event
     InventoryInputEventType event_type = INVENTORY_INPUT_EVENT_NONE;
