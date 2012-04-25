@@ -112,8 +112,6 @@ void draw_toolbelt()
     for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
     {
-        //if(i == 0 && j == 0) continue;
-
         int slot = j * render->xdim + i;
         if (contents[slot].item_id == EMPTY_SLOT) continue;
         int tex_id = contents[slot].sprite_index;
@@ -128,7 +126,7 @@ void draw_toolbelt()
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x,y+w);
-        
+
         glTexCoord2f( tx_max, ty_min );
         glVertex2f(x+w, y+w);
             
@@ -137,7 +135,6 @@ void draw_toolbelt()
 
         glTexCoord2f( tx_min, ty_max );
         glVertex2f(x, y);
-
     }
 
     glEnd();
