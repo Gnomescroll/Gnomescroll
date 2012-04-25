@@ -111,7 +111,7 @@ void AgentInventoryUI::draw()
         if (contents[slot].item_id == EMPTY_SLOT) continue;
         int tex_id = contents[slot].sprite_index;
 
-        const float x = render->x + border + i*(inc1+slot_size);
+        const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (ydim + border + j*(inc1+slot_size));
 
         const float tx_min = (1.0/8.0)*(tex_id % 8);
