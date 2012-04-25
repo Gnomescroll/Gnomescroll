@@ -77,16 +77,16 @@ inline void assign_agent_inventory_StoC::handle()
     t_hud::inventory_id = inventory_id;
 }
 
-inline void assign_agent_toolbar_StoC::handle()
+inline void assign_agent_toolbelt_StoC::handle()
 {
     t_item::player_inventory_id = inventory_id;
     printf("Player %i assigned toolbar id %i \n", agent_id, inventory_id);
 
     ItemContainer* ic = item_container_list->create(inventory_id);
-    ic->init_agent_toolbar();
+    ic->init_agent_toolbelt();
 
-    t_item::player_toolbar = ic;
-    t_hud::toolbar_id = inventory_id;
+    t_item::player_toolbelt = ic;
+    t_hud::toolbelt_id = inventory_id;
 }
 
 inline void assign_agent_nanite_StoC::handle()
@@ -135,7 +135,7 @@ inline void free_item_picked_up_StoC::handle() {}
 inline void item_create_StoC::handle() {}
 
 inline void assign_agent_inventory_StoC::handle() {}
-inline void assign_agent_toolbar_StoC::handle() {}
+inline void assign_agent_toolbelt_StoC::handle() {}
 inline void assign_agent_nanite_StoC::handle() {}
 
 inline void swap_within_inventory_StoC::handle() {}

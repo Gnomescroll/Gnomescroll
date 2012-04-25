@@ -56,7 +56,7 @@ class ItemContainer
             this->init(AGENT_INVENTORY, 6, 3);
         }
 
-        void init_agent_toolelt()
+        void init_agent_toolbelt()
         {
             this->init(AGENT_TOOLBELT, 10, 1);
         }

@@ -104,7 +104,7 @@ class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<ass
         inline void handle();
 };
 
-class assign_agent_toolbar_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_toolbar_StoC>
+class assign_agent_toolbelt_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_toolbelt_StoC>
 {
     public:
         uint8_t agent_id;
