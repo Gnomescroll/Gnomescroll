@@ -104,6 +104,34 @@ class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<ass
         inline void handle();
 };
 
+class assign_agent_toolbar_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_toolbar_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint16_t inventory_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u16(&inventory_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class assign_agent_nanite_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_nanite_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint16_t inventory_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u16(&inventory_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 /* actions */
 class swap_within_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_within_inventory_StoC>
 {

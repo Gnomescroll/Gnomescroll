@@ -33,6 +33,8 @@ namespace t_item
 {
     extern int player_inventory_id;
     extern class ItemContainer* player_inventory;
+    extern class ItemContainer* player_toolbar;
+    extern class ItemContainer* player_nanite;
 }
 
 void draw();
