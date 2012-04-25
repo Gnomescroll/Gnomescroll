@@ -119,35 +119,6 @@ class Inventory: public BaseInventory
         this->remove_action(slot);
     }
 
-    /* Expose API here */
-    bool dimension_mismatch(int x, int y)
-    {
-        return BaseInventory::dimension_mismatch(x,y);
-    }
-    bool can_add(ObjectType type)
-    {
-        return BaseInventory::can_add(type);
-    }
-    bool can_add(ObjectType type, int slot)
-    {
-        return BaseInventory::can_add(type, slot);
-    }
-    bool add(int id, ObjectType type, int stack_size, int slot)
-    {
-        return BaseInventory::add(id, type, stack_size, slot);
-    }
-    bool can_remove(int slot)
-    {
-        return BaseInventory::can_remove(slot);
-    }
-    bool remove(int slot)
-    {
-        return BaseInventory::remove(slot);
-    }
-    bool swap(int slota, int slotb)
-    {
-        return BaseInventory::swap(slota, slotb);
-    }
     void init(int x, int y)
     {
         BaseInventory::init(x,y);
