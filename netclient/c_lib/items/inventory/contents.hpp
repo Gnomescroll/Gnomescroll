@@ -135,9 +135,9 @@ class InventoryContents // dont use behaviour list unless doing the registration
     bool can_remove(int slot)
     {
         if (!this->is_valid_slot(slot))
-            return false;
+            {printf("slot %d invalid\n", slot); return false; }
         if (this->objects[slot].empty())
-            return false;
+            { printf("empty\n"); return false;}
         return true;
     }
 

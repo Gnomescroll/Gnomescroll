@@ -6,7 +6,7 @@
 
 #include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/event.hpp>
-#include <c_lib/t_hud/inventory_ui.hpp>
+#include <c_lib/t_hud/ui_element.hpp>
 #include <c_lib/items/inventory/interface.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
@@ -17,7 +17,7 @@ namespace Items
 
 static void copy_data_to_render(Inventory* inventory)
 {
-    t_hud::InventoryUI* render = t_hud::get_inventory_hud_element(inventory->hud);
+    t_hud::UIElement* render = t_hud::get_inventory_hud_element(inventory->hud);
     assert(render != NULL);
     render->xdim = inventory->width();
     render->ydim = inventory->height();
@@ -144,15 +144,21 @@ void swap_within_event(int inventory_id, int slota, int slotb)
 
 void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slotb)
 {
+    printf("?");
     Inventory* inva = Items::get_inventory(inventory_ida);
     if (inva == NULL) return;
     Inventory* invb = Items::get_inventory(inventory_idb);
     if (invb == NULL) return;
 
+    printf(" FOUND ");
+
     if (!inva->can_remove(slota)) return;
+    printf(" CAN_A ");
     InventorySlot* item = inva->get_slot_item(slota);
     if (item == NULL) return;
+    printf(" ITEM ");
     if (!invb->can_add(item->item_type)) return;
+    printf(" CAN_B ");
 
     swap_item_between_inventory_CtoS msg;
     msg.inventorya = inventory_ida;
@@ -160,6 +166,9 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
     msg.inventoryb = inventory_idb;
     msg.slotb = slotb;
     msg.send();
+    printf(" SENT\n");
+    printf("%d->%d\n", inventory_ida, inventory_idb);
+    printf("%d->%d\n", slota, slotb);
 }
 
 void process_inventory_events()

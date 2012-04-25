@@ -79,7 +79,7 @@ void Agent_status::load_inventories()
     this->toolbelt = Items::create_inventory(OBJECT_AGENT_TOOLBELT);
     assert(this->toolbelt != NULL);
     this->toolbelt->owner = this->a->id;
-    this->inventory->add_action(1, OBJECT_GEMSTONE_AMETHYST, 1, 1);
+    this->toolbelt->add_action(1, OBJECT_GEMSTONE_AMETHYST, 1, 5);
     
 }
 

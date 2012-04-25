@@ -10,7 +10,7 @@ namespace t_hud
 {
 
 
-class AgentInventoryUI : public UIelement
+class AgentInventoryUI : public UIElement
 {
     public:
 
@@ -159,9 +159,9 @@ void AgentInventoryUI::draw()
     // draw border highlight
     if(this->selected_slot != NULL_SLOT)
     {   
-        int slotx = render->selected_slot % xdim;
-        int sloty = ydim - (render->selected_slot / xdim);
-        const float x = render->x + border + slotx*(inc1+slot_size);
+        int slotx = this->selected_slot % xdim;
+        int sloty = ydim - (this->selected_slot / xdim);
+        const float x = this->x + border + slotx*(inc1+slot_size);
         const float y = _yresf - (ydim + border + (ydim-sloty)*(inc1+slot_size));
 
         const float b = 2 + inc2;

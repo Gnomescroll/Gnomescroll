@@ -116,9 +116,9 @@ void draw_selected_icon_mask()
     //using ClientState::playerAgent_state;
     //if (playerAgent_state.you == NULL) return;
     //if (playerAgent_state.you->status.InventoryRender == NULL) return;
-    //if (!playerAgent_state.you->status.InventoryRender->selected()) return;
+    //if (!playerAgent_state.you->status.Inventorythis->selected()) return;
     //Draw::SpriteData data;
-    //playerAgent_state.you->status.InventoryRender->get_selected_icon_render_data(&data);
+    //playerAgent_state.you->status.Inventorythis->get_selected_icon_render_data(&data);
     //draw_icon_mask(data.x, data.y, data.w, data.h, data.z);
 }
 
