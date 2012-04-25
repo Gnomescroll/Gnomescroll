@@ -38,7 +38,7 @@ namespace t_item
     extern class ItemContainer* player_inventory;
     extern class ItemContainer* player_toolbelt;
     extern class ItemContainer* player_nanite;
-}
+
 
 void draw();
 //move item within inventory
@@ -46,6 +46,8 @@ void draw();
 
 //move item
 void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2);
+
+}
 
 #endif 
 

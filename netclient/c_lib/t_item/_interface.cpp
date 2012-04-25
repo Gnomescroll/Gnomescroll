@@ -59,8 +59,6 @@ void draw()
 {
     free_item_list->draw();
 }
-
-
 #endif
 
 }
@@ -73,13 +71,13 @@ CLIENT
 namespace t_item
 {
     int player_inventory_id = -1;   //store id of player inventory
-    int player_toolbar_id = -1;   //store id of player inventory
+    int player_toolbelt_id = -1;   //store id of player inventory
     int player_nanite_id = -1;   //store id of player inventory
 
     class ItemContainer* player_inventory = NULL;
-    class ItemContainer* player_toolbar = NULL;
+    class ItemContainer* player_toolbelt = NULL;
     class ItemContainer* player_nanite = NULL;
-}
+
 
 //move item within inventory
 //void move_item(int inventory_id, int slot1, int slot2) {}
@@ -92,6 +90,7 @@ void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2)
 */
 }
 
+}
 #endif 
 
 /*

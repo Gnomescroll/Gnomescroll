@@ -5,9 +5,9 @@
 #if DC_CLIENT
 
 #include <c_lib/t_item/_interface.hpp>
-#include <c_lib/animations/_interface.hpp>
 #include <c_lib/t_hud/_interface.hpp>
 
+//#include <c_lib/animations/_interface.hpp>
 #endif
 
 namespace t_item
@@ -75,7 +75,7 @@ inline void assign_agent_inventory_StoC::handle()
 
     t_item::player_inventory = ic;
     t_item::player_toolbelt_id = inventory_id;
-    
+
     t_hud::inventory_id = inventory_id;
 }
 
