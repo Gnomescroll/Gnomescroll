@@ -52,6 +52,7 @@ static void init_inventory_dimensions(Inventory* inventory)
             
         default:
             printf("WARNING: Items::create_inventory() -- unknown inventory type %d\n", inventory->type);
+            assert(false);
             break;
     }
 }

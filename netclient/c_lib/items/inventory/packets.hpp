@@ -7,26 +7,21 @@ class inventory_create_StoC: public FixedSizeReliableNetPacketToClient<inventory
     public:
         uint16_t id;
         uint8_t type;
-        uint8_t x,y;
         uint8_t owner;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&type, buff, buff_n, pack);
-            pack_u8(&x, buff, buff_n, pack);
-            pack_u8(&y, buff, buff_n, pack);
             pack_u8(&owner, buff, buff_n, pack);
         }
         inline void handle();
 };
 
-void inventory_create_message(inventory_create_StoC* msg, int id, ObjectType type, int x, int y, int owner)
+void inventory_create_message(inventory_create_StoC* msg, int id, ObjectType type, int owner)
 {
     msg->id = id;
     msg->type = type;
-    msg->x = x;
-    msg->y = y;
     msg->owner = owner;
 }
 

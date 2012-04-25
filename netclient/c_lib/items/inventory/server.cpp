@@ -7,10 +7,7 @@
 void Inventory::sendToClientCreate(int client_id)
 {
     inventory_create_StoC msg;
-    inventory_create_message(&msg,
-        this->id, this->type, 
-        this->contents.x, this->contents.y, owner
-    );
+    inventory_create_message(&msg, this->id, this->type, owner);
     msg.sendToClient(client_id);
 
     // send create packets for everything in the inventory
@@ -20,10 +17,7 @@ void Inventory::sendToClientCreate(int client_id)
 void Inventory::broadcastCreate()
 {
     inventory_create_StoC msg;
-    inventory_create_message(&msg,
-        this->id, this->type,
-        this->contents.x, this->contents.y, owner
-    );
+    inventory_create_message(&msg, this->id, this->type, owner);
     msg.broadcast();
 }
 

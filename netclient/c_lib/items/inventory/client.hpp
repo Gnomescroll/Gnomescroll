@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <c_lib/t_hud/constants.hpp>
+#include <c_lib/items/inventory/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/constants.hpp>
 

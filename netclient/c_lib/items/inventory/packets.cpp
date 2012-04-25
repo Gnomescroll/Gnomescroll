@@ -16,10 +16,8 @@ inline void inventory_create_StoC::handle()
             printf("WARNING: inventory_create_StoC::handle() -- failed to create inventory %d\n", id);
             return;
         }
-        obj->init(x,y);
+        Items::init_inventory_dimensions(obj);
     }
-    else if (obj->dimension_mismatch(x,y))
-        printf("WARNING: inventory_create_StoC::handle() inventory %d known but dimension mismatch\n", id);
     else if (obj->type != this->type)
         printf("WARNING: inventory_create_StoC::handle() inventory %d type mismatch: %d (local) %d (remote)\n", id, obj->type, this->type);
 
