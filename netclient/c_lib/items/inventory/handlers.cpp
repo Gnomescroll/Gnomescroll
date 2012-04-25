@@ -124,9 +124,7 @@ void received_inventory_handler(Inventory* inventory)
 
 void inventory_input_event()
 {
-
     // inspect InventoryInputEvent, route based on that
-
 
     //const int n_inventories = 4;
     //Inventory* inventories[n_inventories] = {
