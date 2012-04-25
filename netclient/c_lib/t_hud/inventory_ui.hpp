@@ -29,7 +29,6 @@ class InventoryUI
         
         void set_position(float x, float y);
         void init();
-        void draw();
 
         int get_slot_at(int px, int py);
 

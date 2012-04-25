@@ -13,5 +13,7 @@ extern InventoryUI* agent_inventory;
 
 void init_agent_inventory_ui();
 
+void draw_agent_inventory();
+
 
 }
