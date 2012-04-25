@@ -21,6 +21,7 @@ ItemList* item_list = NULL;
 
 int AgentInventoryList[256];
 int AgentToolbarList[256];
+int AgentNaniteList[256];
 
 void state_init()
 {
@@ -35,6 +36,7 @@ void state_init()
 
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentToolbarList[i] = NO_AGENT;
+    for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;
 }
 
 void state_teardown()
@@ -97,6 +99,9 @@ namespace t_item
 
 //const int NO_AGENT = 0xffff;
 
+/*
+    Inventory
+*/
 void create_agent_inventory(int agent_id, int client_id)
 {
     ItemContainer* ic = item_container_list->create();
@@ -110,12 +115,12 @@ void create_agent_inventory(int agent_id, int client_id)
     Agent_state* a = ServerState::agent_list->get(agent_id);
     a->inventory_id = ic->id;
 
-    assign_agent_inventory_StoC p;
+    class assign_agent_inventory_StoC p;
     p.inventory_id = ic->id;
     p.agent_id = agent_id;
     p.sendToClient(client_id);
 
-    printf("Sending inventory to client %i \n", client_id);
+    printf("Sending inventory id to client %i \n", client_id);
 }
 
 void delete_agent_inventory(int agent_id)
@@ -128,15 +133,54 @@ void delete_agent_inventory(int agent_id)
     AgentInventoryList[agent_id] = NO_AGENT;
 }
 
+/*
+    Toolbar
+*/
 void create_agent_toolbar(int agent_id, int client_id)
 {
-    printf("inplement: t_item::create_agent_toolbar \n");
+    ItemContainer* ic = item_container_list->create();
+    ic->init_agent_toolbar();
+
+    assert(AgentToolbarList[agent_id] == NO_AGENT);
+    assert((agent_id < 255) && (agent_id > 0));
+
+    AgentToolbarList[agent_id] = ic->id;
+    
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    a->toolbar_id = ic->id;
+
+    class assign_agent_toolbar_StoC p;
+    p.toolbar_id = ic->id;
+    p.agent_id = agent_id;
+    p.sendToClient(client_id);
+
+    printf("Sending toolbar id to client %i \n", client_id);
 }
 
 void delete_agent_toolbar(int agent_id)
 {
-    printf("inplement: t_item::delete_agent_toolbar \n");
+    int inventory_id = AgentToolbarList[agent_id];
+    assert(AgentToolbarList[agent_id] != NO_AGENT);
+    assert(item_container_list->get(inventory_id) != NULL);
+
+    item_container_list->destroy(inventory_id);
+    AgentToolbarList[agent_id] = NO_AGENT;
 }
+
+
+/*
+    Nanite
+*/
+void create_agent_nanite(int agent_id, int client_id)
+{
+    printf("inplement: t_item::create_agent_nanite \n");
+}
+
+void delete_agent_nanite(int agent_id)
+{
+    printf("inplement: t_item::delete_agent_nanite \n");
+}
+
 
 void check_item_pickups()
 {

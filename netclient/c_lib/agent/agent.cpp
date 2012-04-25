@@ -523,6 +523,8 @@ id (id), type(OBJECT_AGENT), status(this), weapons(this)
 #endif
 {
     inventory_id = -1;
+    toolbar_id = -1;
+    nanite_id = -1;
 
     set_state(16.5f, 16.5f, 16.5f, 0.0f, 0.0f, 0.0f);
     set_angles(0.5f, 0.0f);

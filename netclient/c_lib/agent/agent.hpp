@@ -68,6 +68,8 @@ class Agent_state {
         int client_id;
 
         int inventory_id;
+        int toolbar_id;
+        int nanite_id;
         
         ObjectType type;
         

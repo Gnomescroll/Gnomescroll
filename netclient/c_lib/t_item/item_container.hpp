@@ -12,6 +12,7 @@ const int EMPTY_SLOT = 0xffff;
 typedef enum
 {
     INVENTORY_AGENT,
+    TOOLBAR_AGENT
     //INVENTORY_BLOCK,
     //INVENTORY_BAG,
 } ItemContainerType;
@@ -53,6 +54,11 @@ class ItemContainer
         void init_agent_inventory()
         {
             this->init(INVENTORY_AGENT, 6, 3);
+        }
+
+        void init_agent_push()
+        {
+            this->init(TOOLBAR_AGENT, 10, 1);
         }
 
         ~ItemContainer()
