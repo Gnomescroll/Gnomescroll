@@ -5,7 +5,7 @@
 namespace t_hud
 {
 
-class AgentToolbelt : public UIElement
+class AgentToolbeltUI : public UIElement
 {
     public:
 
@@ -27,7 +27,7 @@ class AgentToolbelt : public UIElement
 };
 
 
-int AgentToolbelt::get_slot_at(int px, int py);
+int AgentToolbeltUI::get_slot_at(int px, int py)
 {
     px -= xoff + border;
     py -= yoff - border;
@@ -46,7 +46,7 @@ int AgentToolbelt::get_slot_at(int px, int py);
     return slot;
 }
 
-void AgentToolbelt::draw()
+void AgentToolbeltUI::draw()
 {
     const float w = slot_size;
 

@@ -10,6 +10,11 @@ namespace t_hud
 AgentInventoryUI* agent_inventory;
 AgentToolbeltUI* agent_toolbelt;
 
+// TODO -- TMP -- replace witha ctual types
+AgentInventoryUI* nanite_inventory;
+AgentInventoryUI* craft_bench_inventory;
+
+
 /*
     Init
 */

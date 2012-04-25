@@ -10,6 +10,11 @@ class AgentToolbeltUI;
 extern AgentInventoryUI* agent_inventory;
 extern AgentToolbeltUI* agent_toolbelt;
 
+// TODO -- TMP -- replace witha ctual types
+extern AgentInventoryUI* nanite_inventory;
+extern AgentInventoryUI* craft_bench_inventory;
+
+
 /*
     Hud UI state
 */
