@@ -7,8 +7,8 @@
 namespace t_hud
 {
 
-AgentInventoryUI* agent_inventory;
-AgentToolbeltUI* agent_toolbelt;
+class AgentInventoryUI* agent_inventory;
+class AgentToolbeltUI* agent_toolbelt;
 
 // TODO -- TMP -- replace witha ctual types
 AgentInventoryUI* nanite_inventory;

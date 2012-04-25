@@ -3,12 +3,9 @@
 namespace t_hud
 {
 
-//forward decl
-class AgentInventoryUI;
-class AgentToolbeltUI;
+extern class AgentInventoryUI* agent_inventory;
+extern class AgentToolbeltUI* agent_toolbelt;
 
-extern AgentInventoryUI* agent_inventory;
-extern AgentToolbeltUI* agent_toolbelt;
 
 // TODO -- TMP -- replace witha ctual types
 extern AgentInventoryUI* nanite_inventory;
