@@ -45,10 +45,10 @@ void draw_agent_inventory()
 
         //glBegin(GL_QUADS);
 
-        //glVertex3f(x, y+h, z);
-        //glVertex3f(x+w, y+h ,z);
-        //glVertex3f(x+w, y, z);
-        //glVertex3f(x, y, z);
+        //glVertex2f(x, y+h, z);
+        //glVertex2f(x+w, y+h ,z);
+        //glVertex2f(x+w, y, z);
+        //glVertex2f(x, y, z);
 
         //glEnd();
 
@@ -62,7 +62,7 @@ void draw_agent_inventory()
     int xdim = render->xdim;
     int ydim = render->ydim;
     float slot_size = render->slot_size;
-    float z = render->z;
+    //float z = render->z;
     float border = render->border;
 
     for(int i=0; i<xdim; i++)
@@ -71,10 +71,10 @@ void draw_agent_inventory()
         float x = render->x + border + i*(inc1+slot_size);
         float y = _yresf - (render->y + border + j*(inc1+slot_size));
 
-        glVertex3f(x-inc2,y+w+inc2, z);
-        glVertex3f(x+w+inc2, y+w+inc2 ,z);
-        glVertex3f(x+w+inc2, y-inc2, z);
-        glVertex3f(x-inc2, y-inc2, z);
+        glVertex2f(x-inc2,y+w+inc2);
+        glVertex2f(x+w+inc2, y+w+inc2);
+        glVertex2f(x+w+inc2, y-inc2);
+        glVertex2f(x-inc2, y-inc2);
     }
 
     glColor4ub(50, 50, 50, 64);
@@ -86,10 +86,10 @@ void draw_agent_inventory()
         float x = render->x + border + i*(inc1+slot_size);
         float y = _yresf - (render->y + border + j*(inc1+slot_size));
 
-        glVertex3f(x,y+w, z);
-        glVertex3f(x+w, y+w ,z);
-        glVertex3f(x+w, y, z);
-        glVertex3f(x, y, z);
+        glVertex2f(x,y+w);
+        glVertex2f(x+w, y+w);
+        glVertex2f(x+w, y);
+        glVertex2f(x, y);
     }
 
     glEnd();
@@ -129,16 +129,16 @@ void draw_agent_inventory()
         const float ty_max = ty_min + 1.0/8.0;
 
         glTexCoord2f( tx_min, ty_min );
-        glVertex3f(x,y+w, z);
+        glVertex2f(x,y+w);
 
         glTexCoord2f( tx_max, ty_min );
-        glVertex3f(x+w, y+w ,z);
+        glVertex2f(x+w, y+w );
             
         glTexCoord2f( tx_max, ty_max );
-        glVertex3f(x+w, y, z);
+        glVertex2f(x+w, y);
 
         glTexCoord2f( tx_min, ty_max );
-        glVertex3f(x, y, z);
+        glVertex2f(x, y);
 
     }
 
@@ -164,26 +164,21 @@ void draw_agent_inventory()
 
         glBegin(GL_LINES);
 
-        // top left, clockwise
-        
-        glVertex3f(x-b, y+w+b, z);
-        glVertex3f(x+w+b, y+w+b, z);
+        glVertex2f(x-b, y+w+b);
+        glVertex2f(x+w+b, y+w+b);
 
-        glVertex3f(x+w+b, y+w+b, z);
-        glVertex3f(x+w+b, y-b, z);
+        glVertex2f(x+w+b, y+w+b);
+        glVertex2f(x+w+b, y-b);
 
-        glVertex3f(x+w+b, y-b, z);
-        glVertex3f(x-b, y-b, z);
+        glVertex2f(x+w+b, y-b);
+        glVertex2f(x-b, y-b);
 
-        glVertex3f(x-b, y-b, z);
-        glVertex3f(x-b, y+w+b, z);
+        glVertex2f(x-b, y-b);
+        glVertex2f(x-b, y+w+b);
 
         glEnd();
-        //extern int selected_slot_x;
-        //extern int selected_slot_y;)
 
         glLineWidth(1.0);
-
 
     }
 
