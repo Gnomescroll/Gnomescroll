@@ -31,7 +31,7 @@ class AgentInventoryUI : public UIElement
 };
 
 
-int AgentInventoryUI::get_slot_at(int px, int py);
+int AgentInventoryUI::get_slot_at(int px, int py)
 {
     px -= xoff + border;
     py -= yoff - border;
