@@ -26,6 +26,8 @@ class UIelement
         virtual void init() = 0;
         virtual void draw() = 0;
         virtual bool get_slot_at(int px, int py, int* slotx, int* sloty) = 0;
+
+        virtual ~UIelement(){}
 };
 
 class InventoryUI
