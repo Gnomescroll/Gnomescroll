@@ -27,7 +27,7 @@ class AgentToolbelt : public UIElement
 };
 
 
-bool AgentToolbelt::get_slot_at(int px, int py);
+int AgentToolbelt::get_slot_at(int px, int py);
 {
     px -= xoff + border;
     py -= yoff - border;
