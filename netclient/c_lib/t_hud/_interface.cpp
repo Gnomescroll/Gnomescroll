@@ -1,5 +1,6 @@
 #include "_interface.hpp"
 
+#include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/inventory_hud.hpp>
 #include <c_lib/t_hud/toolbelt_hud.hpp>
 
@@ -19,84 +20,137 @@ int selected_slot_y = 0;
 */
 void draw_init()
 {
-	init_texture();
+    init_texture();
 }
 
 void draw_teardown()
 {
-	teardown_texture();
+    teardown_texture();
 }
 /*
     Input Handling
 */
 
-
+static bool hud_enabled = false;
 void enable_inventory_hud()
 {
-	printf("t_item::enable_inventory_hud \n");
+    hud_enabled = true;
 }
 
 void disable_inventory_hud()
 {
-	selected_slot_inventory = -1;
-	printf("t_item::disable_inventory_hud \n");
+    hud_enabled = false;
+}
+
+static int active_slot = NULL_SLOT;
+static InventoryUI* active_inventory = NULL;
+
+static InventoryUI* get_inventory_and_slot(int x, int y, int* slot)
+{
+    // track topmost clicked inventory
+    float closest = 100000.0f;
+    InventoryUI* closest_inventory = NULL;
+    int closest_slot = NULL_SLOT;
+
+    // set up inventory array
+    const int n_inventories = 4;
+    InventoryUI* inventories[n_inventories] = {
+        agent_inventory,
+        agent_toolbelt,
+        nanite_inventory,
+        craft_bench_inventory,
+    };
+
+    // get topmost inventory click
+    InventoryUI* inventory;
+    int slot_tmp;
+    for (int i=0; i<n_inventories; i++)
+    {
+        inventory = inventories[i];
+        if (inventory == NULL) continue;
+        slot_tmp = inventory->get_slot_at(x,y);
+        if (slot_tmp == NULL_SLOT) continue;
+        if (inventory->z > closest) continue;
+        closest = inventory->z;
+        closest_inventory = inventory;
+        closest_slot = slot_tmp;
+    }
+
+    *slot = closest_slot;
+    return closest_inventory;
 }
 
 
 void mouse_motion(int x, int y)
 {
-	//printf("t_item::mouse_motion x,y= %i %i \n", x,y);
+    //printf("t_item::mouse_motion x,y= %i %i \n", x,y);
+
+    // if slot selected
+    // draw that slot's icon at cursor
+
+    
 }
 
 void left_mouse_down(int x, int y)
 {
-	//printf("t_item::left_mouse_down \n");
-	int ox,oy;
+    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
 
-	//inventory click event
-	if( inventory_hud_mouse_to_slot( x,y, &ox,&oy) )
-	{
-		if(inventory_id == -1)
-		{
-			printf("ERROR: inventory_id is -1 in t_hud \n");
-			return;
-		}
-
-		selected_slot_inventory = inventory_id;
-		selected_slot_x = ox;
-		selected_slot_y = oy;
-	}
-
-	//toolbar click event
-	if( toolbelt_hud_mouse_to_slot( x,y, &ox,&oy) )
-	{
-		if(toolbelt_id == -1)
-		{
-			printf("ERROR: inventory_id is -1 in t_hud \n");
-			return;
-		}
-
-		selected_slot_inventory = toolbelt_id;
-		selected_slot_x = ox;
-		selected_slot_y = oy;
-	}
+    // set active slot/inventory
+    active_inventory = get_inventory_and_slot(x,y, &active_slot);
 }
 
 void left_mouse_up(int x, int y)
 {
-	//printf("t_item::left_mouse_up \n");
+    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
 
+    if (active_inventory == NULL) return;
+
+    // detect click
+    int slot;
+    InventoryUI* inventory = get_inventory_and_slot(x,y, &slot);
+
+    // decide swap event
+    InventoryInputEventType event_type = INVENTORY_INPUT_EVENT_NONE;
+    if (slot == NULL_SLOT || inventory == NULL)     // clicked outside inventory UIs
+        event_type = INVENTORY_INPUT_EVENT_REMOVE;
+    else
+    {   // clicked in an inventory
+        if (active_inventory == inventory) event_type = INVENTORY_INPUT_EVENT_SWAP_WITHIN;
+        else event_type = INVENTORY_INPUT_EVENT_SWAP_BETWEEN;
+    }
+    
+    inventory_input_event.type = event_type;
+    inventory_input_event.inventory = active_inventory->inventory_id;
+    inventory_input_event.slot = active_slot;
+
+    if (inventory != NULL)
+        inventory_input_event.inventory_b = inventory->inventory_id;
+    if (slot != NULL_SLOT)
+        inventory_input_event.slot_b = slot;
+
+    // reset actives
+    active_inventory = NULL;
+    active_slot = NULL_SLOT;
 }
 
 void right_mouse_down(int x, int y)
 {
-	//printf("t_item::right_mouse_down \n");
+    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
+
+    // lock slot
 }
 
 void right_mouse_up(int x, int y)
 {
-	//printf("t_item::right_mouse_up \n");
+    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
 
+    // if slot matches locked slot,
+    // remove
+}
+
+void null_input_event()
+{
+    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
 }
 
 /*
@@ -104,13 +158,34 @@ void right_mouse_up(int x, int y)
 */
 void draw_hud()
 {
-    if (!input_state.inventory) return;
+    if (!hud_enabled) return;
 
-    draw_inventory_hud();
-    draw_toolbelt_hud();
+
+    agent_inventory->draw();
+    agent_toolbelt->draw();
+    //nanite_inventory->draw();
+    //craft_bench_inventory->draw();
+
     //static ItemGrid g;
     //g.draw(300,300);
 }
+
+
+/* Main init/teardown */
+
+void init()
+{
+    init_agent_inventory_ui();
+    init_agent_toolbelt_ui();
+    init_nanite_inventory_ui();
+    init_craft_bench_inventory_ui();
+}
+
+void teardown()
+{
+    teardown_inventory_ui();
+}
+
 
 
 }

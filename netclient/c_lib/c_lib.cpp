@@ -257,6 +257,7 @@ int init_c_lib() {
     t_item::state_init();
     t_item::draw_init();
 
+    t_hud::init();
     t_hud::draw_init();
 
     t_mech::draw_init();
@@ -311,6 +312,7 @@ void close_c_lib() {
     t_item::draw_teardown();
 
     t_hud::draw_teardown();
+    t_hud::teardown();
     t_mech::draw_teardown();
     //t_mech::state_teardown();
 

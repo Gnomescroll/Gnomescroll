@@ -1,7 +1,6 @@
 #pragma once
 
 namespace t_hud
-
 {
 
 extern SDL_Surface* ItemSheetSurface;

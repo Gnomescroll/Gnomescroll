@@ -12,18 +12,19 @@ unsigned int ItemGridSlotTexture;
 void init_texture()
 {
 
-	SDL_Surface* s;
+    SDL_Surface* s;
 
     GLuint internalFormat = GL_RGBA; //GL_RGBA;
     GLuint format = GL_RGBA;
 
-	// Texture 1
+    // Texture 1
     s = create_surface_from_file((char*) "media/sprites/i00.png");
 
     if(s == NULL)
     {
         printf("t_hud: ItemSheetTexture spritesheet load error\n");
-        abort();
+        assert(s != NULL);
+        return;
     }
  
     glEnable(GL_TEXTURE_2D);
@@ -39,13 +40,14 @@ void init_texture()
 
     ItemSheetSurface = s;
 
-	// Texture 2
+    // Texture 2
     s = create_surface_from_file((char*) "media/sprites/inventory_slots.png");
     
     if(s == NULL)
     {
         printf("t_hud: ItemGridTileTexture spritesheet load error\n");
-        abort();
+        assert(s != NULL);
+        return;
     }
  
     glEnable(GL_TEXTURE_2D);

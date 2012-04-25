@@ -4,12 +4,25 @@
 
 #if DC_CLIENT
 
-#include <c_lib/hud/inventory.hpp>
+#include <c_lib/t_hud/constants.hpp>
+#include <c_lib/t_hud/event.hpp>
+#include <c_lib/t_hud/inventory_ui.hpp>
 #include <c_lib/items/inventory/interface.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
 namespace Items
 {
+
+/* Network events */
+
+static void copy_data_to_render(Inventory* inventory)
+{
+    t_hud::InventoryUI* render = t_hud::get_inventory_hud_element(inventory->hud);
+    assert(render != NULL);
+    render->xdim = inventory->width();
+    render->ydim = inventory->height();
+    render->inventory_id = inventory->id;
+}
 
 static void agent_inventory_received(Inventory* inventory)
 {
@@ -26,14 +39,11 @@ static void agent_inventory_received(Inventory* inventory)
     Items::agent_inventory = inventory;
 
     // set hud element enum
-    HudElementType hud = HUD_ELEMENT_AGENT_INVENTORY;
+    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_AGENT_INVENTORY;
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    HudInventory::InventoryRender* render = HudInventory::get_inventory_hud_element(hud);
-    assert(render != NULL);
-    render->xdim = inventory->width();
-    render->ydim = inventory->height();
+    copy_data_to_render(inventory);
 }
 
 static void agent_toolbelt_received(Inventory* inventory)
@@ -51,14 +61,11 @@ static void agent_toolbelt_received(Inventory* inventory)
     Items::agent_toolbelt = inventory;
 
     // set hud element enum
-    HudElementType hud = HUD_ELEMENT_AGENT_TOOLBELT;
+    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_AGENT_TOOLBELT;
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    HudInventory::InventoryRender* render = HudInventory::get_inventory_hud_element(hud);
-    assert(render != NULL);
-    render->xdim = inventory->width();
-    render->ydim = inventory->height();
+    copy_data_to_render(inventory);
 }
 
 static void nanite_inventory_received(Inventory* inventory)
@@ -67,14 +74,11 @@ static void nanite_inventory_received(Inventory* inventory)
     Items::nanite_inventory = inventory;
 
     // set hud element enum
-    HudElementType hud = HUD_ELEMENT_NANITE_INVENTORY;
+    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_NANITE_INVENTORY;
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    HudInventory::InventoryRender* render = HudInventory::get_inventory_hud_element(hud);
-    assert(render != NULL);
-    render->xdim = inventory->width();
-    render->ydim = inventory->height();
+    copy_data_to_render(inventory);
 }
 
 static void craft_bench_inventory_received(Inventory* inventory)
@@ -83,14 +87,11 @@ static void craft_bench_inventory_received(Inventory* inventory)
     Items::nanite_inventory = inventory;
 
     // set hud element enum
-    HudElementType hud = HUD_ELEMENT_NANITE_INVENTORY;
+    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_NANITE_INVENTORY;
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    HudInventory::InventoryRender* render = HudInventory::get_inventory_hud_element(hud);
-    assert(render != NULL);
-    render->xdim = inventory->width();
-    render->ydim = inventory->height();
+    copy_data_to_render(inventory);
 }
 
 // trigger on network create inventory
@@ -122,30 +123,75 @@ void received_inventory_handler(Inventory* inventory)
     }
 }
 
-void inventory_input_event()
+/* Input Events */
+
+void remove_event(int inventory_id, int slot)
 {
-    // query render element associated with each inventory
-    // update selected status
+    // get inventory
+    Inventory* inv = Items::get_inventory(inventory_id);
+    if (inv == NULL) return;
 
-    const int n_inventories = 4;
-    Inventory* inventories[n_inventories] = {
-        agent_inventory,
-        agent_toolbelt,
-        nanite_inventory,
-        craft_bench_inventory,
-    };
+    inv->remove_action(slot);
+}
 
-    Inventory* inventory;
-    HudInventory::InventoryRender* render;
-    for (int i=0; i<n_inventories; i++)
+void swap_within_event(int inventory_id, int slota, int slotb)
+{
+    Inventory* inv = Items::get_inventory(inventory_id);
+    if (inv == NULL) return;
+
+    inv->swap_action(slota, slotb);
+}
+
+void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slotb)
+{
+    Inventory* inva = Items::get_inventory(inventory_ida);
+    if (inva == NULL) return;
+    Inventory* invb = Items::get_inventory(inventory_idb);
+    if (invb == NULL) return;
+
+    if (!inva->can_remove(slota)) return;
+    InventorySlot* item = inva->get_slot_item(slota);
+    if (item == NULL) return;
+    if (!invb->can_add(item->item_type)) return;
+
+    swap_item_between_inventory_CtoS msg;
+    msg.inventorya = inventory_ida;
+    msg.slota = slota;
+    msg.inventoryb = inventory_idb;
+    msg.slotb = slotb;
+    msg.send();
+}
+
+void process_inventory_events()
+{
+    using t_hud::inventory_input_event;
+    
+    switch (inventory_input_event.type)
     {
-        inventory = inventories[i];
-        if (inventory == NULL) continue;
-        render = HudInventory::get_inventory_hud_element(inventory->hud);
-        if (render == NULL) continue;
-        inventory->select_slot(render->active_slot);
-    }
+        case t_hud::INVENTORY_INPUT_EVENT_NONE:
+            break;
 
+        case t_hud::INVENTORY_INPUT_EVENT_REMOVE:
+            remove_event(inventory_input_event.inventory, inventory_input_event.slot);
+            break;
+
+        case t_hud::INVENTORY_INPUT_EVENT_SWAP_WITHIN:
+            swap_within_event(
+                inventory_input_event.inventory, inventory_input_event.slot,
+                inventory_input_event.slot_b);
+            break;
+
+        case t_hud::INVENTORY_INPUT_EVENT_SWAP_BETWEEN:
+            swap_between_event(
+                inventory_input_event.inventory, inventory_input_event.slot,
+                inventory_input_event.inventory_b, inventory_input_event.slot_b);
+            break;
+
+        default:
+            printf("unhandled inventory input event type\n");
+            assert(false);
+            break;
+    }
 }
 
 } // Items

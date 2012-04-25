@@ -1,14 +1,14 @@
 #pragma once
 
-#include <c_lib/hud/constants.hpp>
+#include <c_lib/t_hud/constants.hpp>
 
-namespace HudInventory
+namespace t_hud
 {
 
-class InventoryRender
+class InventoryUI
 {
     public:
-        //HudElementType type;
+        HudElementType type;
         bool visible;       // render state
         
         float x,y;
@@ -20,6 +20,9 @@ class InventoryRender
         float icon_border;  // border around a slot icon
 
         float slot_size;    // pixel dimension
+
+        // this data is mirrored in the Items::Inventory
+        int inventory_id;
         int xdim,ydim;  // slot dimensions
 
         int active_slot;
@@ -30,29 +33,29 @@ class InventoryRender
         void init();
         void draw();
 
-        int get_slot_at(int x, int y);
+        int get_slot_at(int px, int py);
 
-    InventoryRender()
-    :   visible(false),
+    InventoryUI()
+    :   type(HUD_ELEMENT_NONE),
+        visible(false),
         x(0),y(0), z(-0.5f),
         w(0), h(0),
         border(16.0f), icon_spacing(8.0f), icon_border(2.0f),
         slot_size(32.0f),
+        inventory_id(-1),
         xdim(0), ydim(0),
         background_texture(0)
     {}
 };
 
-extern InventoryRender* agent_inventory;
-extern InventoryRender* agent_toolbelt;
-extern InventoryRender* nanite_inventory;
-extern InventoryRender* craft_bench_inventory;
+extern InventoryUI* nanite_inventory;
+extern InventoryUI* craft_bench_inventory;
 
-void draw_icon_mask(float x, float y, float w, float h, float depth);
-void draw_selected_icon_mask();
-void init();
-void teardown();
+void init_nanite_inventory_ui();
+void init_craft_bench_inventory_ui();
 
-//InventoryRender* get_inventory_hud_element(HudElementType type);
+void teardown_inventory_ui();
 
-}
+InventoryUI* get_inventory_hud_element(HudElementType type);
+
+} // t_hud

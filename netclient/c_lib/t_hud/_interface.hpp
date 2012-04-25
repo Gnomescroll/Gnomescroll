@@ -37,10 +37,14 @@ void left_mouse_up(int x, int y);
 void right_mouse_down(int x, int y);
 void right_mouse_up(int x, int y);
 
+void null_input_event();
 
 /*
 Init
 */
+void init();
+void teardown();
+
 void draw_init();
 void draw_teardown();
 

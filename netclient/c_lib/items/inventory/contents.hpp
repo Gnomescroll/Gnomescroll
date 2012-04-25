@@ -25,7 +25,6 @@ class InventorySlot
 
         void load(int id, ObjectType type, int stack_size);
 
-
         #if DC_CLIENT
         // render data
         int sprite_index;
