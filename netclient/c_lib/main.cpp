@@ -279,7 +279,6 @@ int run()
             Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
-
             t_hud::draw_hud();
         }
 

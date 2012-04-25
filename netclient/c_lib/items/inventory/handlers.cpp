@@ -124,27 +124,28 @@ void received_inventory_handler(Inventory* inventory)
 
 void inventory_input_event()
 {
-    // query render element associated with each inventory
-    // update selected status
 
-    const int n_inventories = 4;
-    Inventory* inventories[n_inventories] = {
-        agent_inventory,
-        agent_toolbelt,
-        nanite_inventory,
-        craft_bench_inventory,
-    };
+    // inspect InventoryInputEvent, route based on that
 
-    Inventory* inventory;
-    HudInventory::InventoryRender* render;
-    for (int i=0; i<n_inventories; i++)
-    {
-        inventory = inventories[i];
-        if (inventory == NULL) continue;
-        render = HudInventory::get_inventory_hud_element(inventory->hud);
-        if (render == NULL) continue;
-        inventory->select_slot(render->active_slot);
-    }
+
+    //const int n_inventories = 4;
+    //Inventory* inventories[n_inventories] = {
+        //agent_inventory,
+        //agent_toolbelt,
+        //nanite_inventory,
+        //craft_bench_inventory,
+    //};
+
+    //Inventory* inventory;
+    //HudInventory::InventoryRender* render;
+    //for (int i=0; i<n_inventories; i++)
+    //{
+        //inventory = inventories[i];
+        //if (inventory == NULL) continue;
+        //render = HudInventory::get_inventory_hud_element(inventory->hud);
+        //if (render == NULL) continue;
+        //inventory->select_slot(render->active_slot);
+    //}
 
 }
 
