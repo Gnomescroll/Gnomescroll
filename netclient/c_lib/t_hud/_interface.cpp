@@ -89,6 +89,8 @@ void left_mouse_down(int x, int y)
 
     // set active slot/inventory
     active_inventory = get_inventory_and_slot(x,y, &active_slot);
+    if (active_inventory == NULL) return;
+    active_inventory->selected_slot = active_slot;
 }
 
 void left_mouse_up(int x, int y)
@@ -121,6 +123,7 @@ void left_mouse_up(int x, int y)
         inventory_input_event.slot_b = slot;
 
     // reset actives
+    active_inventory->selected_slot = NULL_SLOT;
     active_inventory = NULL;
     active_slot = NULL_SLOT;
 }

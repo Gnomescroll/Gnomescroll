@@ -153,12 +153,12 @@ void InventoryUI::draw()
     glDisable(GL_TEXTURE_2D);
 
     // draw border highlight
-    if(this->selected_slot == inventory_id)
+    if(this->selected_slot != NULL_SLOT)
     {   
         int slotx = this->selected_slot % this->xdim;
-        int sloty = this->selected_slot / this->xdim;
+        int sloty = this->ydim - (this->selected_slot / this->xdim);
         const float x = this->x + border + slotx*(inc1+slot_size);
-        const float y = _yresf - (this->y + border + (ydim-1-sloty)*(inc1+slot_size));
+        const float y = _yresf - (this->y + border + (ydim-sloty)*(inc1+slot_size));
 
         const float b = 2 + inc2;
 
@@ -167,6 +167,8 @@ void InventoryUI::draw()
 
         glBegin(GL_LINES);
 
+        // top left, clockwise
+        
         glVertex3f(x-b, y+w+b, z);
         glVertex3f(x+w+b, y+w+b, z);
 
