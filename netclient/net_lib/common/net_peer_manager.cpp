@@ -58,7 +58,8 @@ void NetPeerManager::init(int client_id)
     add_player_to_chat(client_id);
 
     t_item::create_agent_inventory(client_id, client_id); //set player inventory
-    t_item::create_agent_toolbar(client_id, client_id); //set player inventory
+    t_item::create_agent_toolbelt(client_id, client_id); //set player inventory
+    t_item::create_agent_nanite(client_id, client_id); //set player inventory
 }
 
 void NetPeerManager::ready()
@@ -113,7 +114,8 @@ void NetPeerManager::send_remaining_state()
 void NetPeerManager::teardown()
 {
     t_item::delete_agent_inventory(this->client_id); //set player inventory
-    t_item::delete_agent_toolbar(this->client_id); //set player inventory
+    t_item::delete_agent_toolbelt(this->client_id); //set player inventory
+    t_item::delete_agent_nanite(this->client_id); //set player inventory
 
     ServerState::agent_disconnect(this->client_id);
     t_map::t_map_manager_teardown(this->client_id);   //setup t_map_manager
