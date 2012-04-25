@@ -3,12 +3,10 @@
 namespace t_hud
 {
 
-//forward decl
-class AgentInventoryUI;
+extern class AgentInventoryUI* agent_inventory;
+extern class AgentToolbeltUI* agent_toolbelt;
 class AgentToolbeltUI;
 
-extern AgentInventoryUI* agent_inventory;
-extern AgentToolbeltUI* agent_toolbelt;
 
 /*
     Hud UI state
