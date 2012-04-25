@@ -155,7 +155,7 @@ void AgentNanite::draw()
     {   
         int slotx = this->selected_slot % xdim;
         int sloty = ydim - (this->selected_slot / xdim);
-        const float x = this->x + border + slotx*(inc1+slot_size);
+        const float x = xoff + border + slotx*(inc1+slot_size);
         const float y = _yresf - (ydim + border + (ydim-sloty)*(inc1+slot_size));
 
         const float b = 2 + inc2;
