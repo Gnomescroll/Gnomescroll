@@ -1,5 +1,6 @@
 #include "_interface.hpp"
 
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/inventory_hud.hpp>
 #include <c_lib/t_hud/toolbelt_hud.hpp>
@@ -168,6 +169,29 @@ void draw_hud()
 
     //static ItemGrid g;
     //g.draw(300,300);
+}
+
+
+void network_inventory_assignment(ObjectType type, int id)
+{
+    switch (type)
+    {
+        case OBJECT_AGENT_INVENTORY:
+            agent_inventory->inventory_id = id;
+            break;
+        case OBJECT_AGENT_TOOLBELT:
+            agent_toolbelt->inventory_id = id;
+            break;
+        case OBJECT_NANITE_INVENTORY:
+            nanite_inventory->inventory_id = id;
+            break;
+        case OBJECT_CRAFTING_BENCH:
+            craft_bench_inventory->inventory_id = id;
+            break;
+        default:
+            printf("WARNING -- network_inventory_assignment -- invalid inventory type %d\n", type);
+            break;
+    }
 }
 
 

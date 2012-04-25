@@ -6,7 +6,7 @@
 
 #include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/event.hpp>
-#include <c_lib/t_hud/ui_element.hpp>
+#include <c_lib/t_hud/_interface.hpp>
 #include <c_lib/items/inventory/interface.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
@@ -14,15 +14,6 @@ namespace Items
 {
 
 /* Network events */
-
-static void copy_data_to_render(Inventory* inventory)
-{
-    //t_hud::UIElement* render = t_hud::get_inventory_hud_element(inventory->hud);
-    //assert(render != NULL);
-    //render->xdim = inventory->width();
-    //render->ydim = inventory->height();
-    //render->inventory_id = inventory->id;
-}
 
 static void agent_inventory_received(Inventory* inventory)
 {
@@ -43,7 +34,7 @@ static void agent_inventory_received(Inventory* inventory)
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    copy_data_to_render(inventory);
+    t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
 
 static void agent_toolbelt_received(Inventory* inventory)
@@ -65,7 +56,7 @@ static void agent_toolbelt_received(Inventory* inventory)
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    copy_data_to_render(inventory);
+    t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
 
 static void nanite_inventory_received(Inventory* inventory)
@@ -78,7 +69,7 @@ static void nanite_inventory_received(Inventory* inventory)
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    copy_data_to_render(inventory);
+    t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
 
 static void craft_bench_inventory_received(Inventory* inventory)
@@ -91,7 +82,7 @@ static void craft_bench_inventory_received(Inventory* inventory)
     inventory->hud = hud;
 
     // copy metadata to hud inventory element
-    copy_data_to_render(inventory);
+    t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
 
 // trigger on network create inventory

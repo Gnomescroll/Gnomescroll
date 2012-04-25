@@ -41,6 +41,8 @@ void right_mouse_up(int x, int y);
 
 void null_input_event();
 
+void network_inventory_assignment(ObjectType type, int id);
+
 /*
 Init
 */
