@@ -5,8 +5,17 @@ namespace t_item
 
 class Item
 {
+	public:
 
+	int id;
+	int item_type; //stack, laser, mining_laser
+	int item_type_id;
 
+	Item()
+	{
+		item_type = 0;
+		item_type_id = 0;
+	}
 
 };
 

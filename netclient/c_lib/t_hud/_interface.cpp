@@ -44,6 +44,7 @@ void left_mouse_down(int x, int y)
     //printf("t_item::left_mouse_down \n");
     int ox,oy;
     inventory_hud_mouse_to_slot( x,y, &ox,&oy);
+	toolbelt_hud_mouse_to_slot( x,y, &ox,&oy);
 }
 
 void left_mouse_up(int x, int y)

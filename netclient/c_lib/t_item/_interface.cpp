@@ -56,10 +56,6 @@ void tick()
 void draw()
 {
     free_item_list->draw();
-
-    //if (input_state.inventory)
-        //draw_inventory();
-
 }
 
 
@@ -76,6 +72,17 @@ namespace t_item
 {
     int player_inventory_id = 0xffff;   //store id of player inventory
     class ItemContainer* player_inventory = NULL;
+}
+
+//move item within inventory
+//void move_item(int inventory_id, int slot1, int slot2) {}
+
+//move item
+void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2)
+{
+/*
+    Fill in
+*/
 }
 
 #endif 
