@@ -95,6 +95,12 @@ class BaseInventory
             return this->contents.y;
         }
 
+        InventorySlot* get_slots_array()
+        {
+            return this->contents.objects;
+        }
+
+
     BaseInventory(int id)
     : id(id), type(OBJECT_NONE), owner(NO_AGENT)
     {

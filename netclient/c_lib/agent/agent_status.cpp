@@ -75,7 +75,6 @@ void Agent_status::load_inventories()
 
     // TODO
     bool added = this->inventory->add_action(0, OBJECT_GEMSTONE_AMETHYST, 1, 0);
-    if (!added) printf("failed to add test item\n");
     
     this->toolbelt = Items::create_inventory(OBJECT_AGENT_TOOLBELT);
     assert(this->toolbelt != NULL);

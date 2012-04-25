@@ -42,4 +42,7 @@ void destroy_inventory(int id);
 void process_inventory_events();
 #endif
 
+InventorySlot* get_inventory_contents(int id);
+
+
 }   // Items

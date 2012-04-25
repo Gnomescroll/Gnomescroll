@@ -94,6 +94,13 @@ void destroy_inventory(int id)
 }
 
 
+InventorySlot* get_inventory_contents(int id)
+{
+    Inventory* inv = inventory_list->get(id);
+    if (inv == NULL) return NULL;
+    return inv->get_slots_array();
+}
+
 #if DC_CLIENT
 #endif
 

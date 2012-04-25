@@ -49,7 +49,7 @@ class ComponentList
     
     ~ComponentList<Component,TYPE,SIZE>()
     { 
-        if (this->components != NULL) delete this->components;
+        if (this->components != NULL) free(this->components);
     }
 };
 

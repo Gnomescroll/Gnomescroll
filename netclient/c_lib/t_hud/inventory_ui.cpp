@@ -109,6 +109,9 @@ void InventoryUI::draw()
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //glColor3ub(255, 255, 255);
 
+    InventorySlot* contents = Items::get_inventory_contents(this->inventory_id);
+    if (contents == NULL) return;
+
     glBegin(GL_QUADS);
 
     for(int i=0; i<xdim; i++)
@@ -116,10 +119,12 @@ void InventoryUI::draw()
     {
         //if(i == 0 && j == 0) continue;
 
+        int slot = j * this->xdim + i;
+        if (contents[slot].item_id == EMPTY_SLOT) continue;
+        int tex_id = contents[slot].sprite_index;
+
         const float x = this->x + border + i*(inc1+slot_size);
         const float y = _yresf - (this->y + border + j*(inc1+slot_size));
-
-        const int tex_id = rand()%40;
 
         const float tx_min = (1.0/8.0)*(tex_id % 8);
         const float ty_min = (1.0/8.0)*(tex_id / 8);
