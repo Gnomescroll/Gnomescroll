@@ -1,4 +1,6 @@
 
+#include <c_lib/t_hud/event.cpp>
+
 #include <c_lib/t_hud/texture.cpp>
 
 #include <c_lib/t_hud/inventory_hud.cpp>
