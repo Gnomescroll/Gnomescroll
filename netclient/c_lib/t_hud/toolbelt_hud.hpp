@@ -123,6 +123,7 @@ void draw_toolbelt_hud()
 	TSTART
 */
 
+	glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
     //glEnable(GL_BLEND);
@@ -131,14 +132,9 @@ void draw_toolbelt_hud()
 
 	glBegin(GL_QUADS);
 
-	//const float z = -0.5;
-	//const float w = slot_size;
-
 	for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
 	{
-		if(i == 0 && j == 0) continue;
-
 		const float x = toolbelt_hud_x_off + border + i*(inc1+slot_size);
 		const float y = toolbelt_hud_y_off + border + j*(inc1+slot_size);
 
@@ -160,16 +156,14 @@ void draw_toolbelt_hud()
 
 		glTexCoord2f( tx_min, ty_max );
 		glVertex3f(x, y, z);
-
 	}
 
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
 
-	if(selected_slot_inventory == inventory_id)
+	if(selected_slot_inventory == toolbelt_id)
 	{	
-
 		const float x = toolbelt_hud_x_off + border + selected_slot_x*(inc1+slot_size);
 		const float y = toolbelt_hud_y_off + border + (ydim-1-selected_slot_y)*(inc1+slot_size);
 

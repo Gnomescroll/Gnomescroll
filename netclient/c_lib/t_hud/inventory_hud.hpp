@@ -196,7 +196,7 @@ void draw_inventory_hud()
 	for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
 	{
-		if(i == 0 && j == 0) continue;
+		//if(i == 0 && j == 0) continue;
 
 		const float x = inventory_hud_x_off + border + i*(inc1+slot_size);
 		const float y = inventory_hud_y_off + border + j*(inc1+slot_size);
