@@ -167,10 +167,13 @@ void draw_hud()
 
 void init()
 {
-    init_agent_inventory_ui();
-    init_agent_toolbelt_ui();
-    init_nanite_inventory_ui();
-    init_craft_bench_inventory_ui();
+    agent_inventory = new AgentInventoryUI;
+    agent_inventory->xoff = 300.0f;
+    agent_inventory->yoff = 100.0f;
+
+    agent_toolbelt = new AgentToolbeltUI;
+    agent_inventory->xoff = 300.0f;
+    agent_inventory->yoff = 100.0f;
 }
 
 void teardown()
