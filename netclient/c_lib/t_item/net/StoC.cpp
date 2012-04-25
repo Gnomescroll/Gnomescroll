@@ -3,13 +3,11 @@
 
 
 #if DC_CLIENT
+
 #include <c_lib/t_item/_interface.hpp>
-
-//#include <c_lib/animations/insect_mob.hpp>
-
 #include <c_lib/animations/_interface.hpp>
+#include <c_lib/t_hud/_interface.hpp>
 
-//#include <c_lib/t_item/client/_interface.hpp>
 #endif
 
 namespace t_item
@@ -76,6 +74,7 @@ inline void assign_agent_inventory_StoC::handle()
     ic->init_agent_inventory();
 
     t_item::player_inventory = ic;
+    t_hud::inventory_id = inventory_id;
 }
 
 

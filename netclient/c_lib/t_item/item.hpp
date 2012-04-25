@@ -9,12 +9,14 @@ class Item
 
 	int id;
 	int item_type; //stack, laser, mining_laser
-	int item_type_id;
+	int parent_object;
+	
+	int sprite_index;
 
 	Item()
 	{
 		item_type = 0;
-		item_type_id = 0;
+		sprite_index = rand()%32;
 	}
 
 };

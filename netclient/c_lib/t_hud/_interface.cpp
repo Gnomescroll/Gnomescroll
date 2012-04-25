@@ -6,6 +6,13 @@
 namespace t_hud
 {
 
+int inventory_id = -1;
+int toolbelt_id = -1;
+
+int selected_slot_inventory = -1;
+int selected_slot_x = 0;
+int selected_slot_y = 0;
+
 /*
     Init
 */
@@ -30,6 +37,7 @@ void enable_inventory_hud()
 
 void disable_inventory_hud()
 {
+	selected_slot_inventory = -1;
 	printf("t_item::disable_inventory_hud \n");
 }
 
@@ -43,8 +51,34 @@ void left_mouse_down(int x, int y)
 {
 	//printf("t_item::left_mouse_down \n");
 	int ox,oy;
-	inventory_hud_mouse_to_slot( x,y, &ox,&oy);
-	toolbelt_hud_mouse_to_slot( x,y, &ox,&oy);
+
+	//inventory click event
+	if( inventory_hud_mouse_to_slot( x,y, &ox,&oy) )
+	{
+		if(inventory_id == -1)
+		{
+			printf("ERROR: inventory_id is -1 in t_hud \n");
+			return;
+		}
+
+		selected_slot_inventory = inventory_id;
+		selected_slot_x = ox;
+		selected_slot_y = oy;
+	}
+
+	//toolbar click event
+	if( toolbelt_hud_mouse_to_slot( x,y, &ox,&oy) )
+	{
+		if(toolbelt_id == -1)
+		{
+			printf("ERROR: inventory_id is -1 in t_hud \n");
+			return;
+		}
+
+		selected_slot_inventory = toolbelt_id;
+		selected_slot_x = ox;
+		selected_slot_y = oy;
+	}
 }
 
 void left_mouse_up(int x, int y)

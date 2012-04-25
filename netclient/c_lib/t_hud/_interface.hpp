@@ -3,6 +3,16 @@
 namespace t_hud
 {
 
+/*
+	Hud UI state
+*/
+extern int inventory_id;
+extern int toolbelt_id;
+
+extern int selected_slot_inventory;
+extern int selected_slot_x;
+extern int selected_slot_y;
+
 void draw_hud();
 
 /*
