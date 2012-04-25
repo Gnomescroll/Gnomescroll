@@ -129,13 +129,19 @@ void ObjectList::init()
 
 void ObjectList::tick()
 {
+    char* used;
+    int max;
+    Object** objects;
     for (int i=0; i<MAX_OBJECT_TYPES; i++)
     {
-        if (this->used[i] == NULL) continue;
-        for (int j=0; j<this->maximums[i]; j++)
+        used = this->used[i];
+        if (used == NULL) continue;
+        max = this->maximums[i];
+        objects = this->objects[i];
+        for (int j=0; j<max; j++)
         {
-            if (!this->used[i][j]) continue;
-            Object* obj = this->objects[i][j];
+            if (!used[j]) continue;
+            Object* obj = objects[j];
             if (obj->tick == NULL) break;   // none of these objects will have tick()
             obj->tick(obj);
         }

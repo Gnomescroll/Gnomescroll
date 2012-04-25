@@ -74,7 +74,7 @@ void Agent_status::load_inventories()
     this->inventory->owner = this->a->id;
 
     // TODO
-    bool added = this->inventory->add_action(0, OBJECT_GEMSTONE_AMETHYST, 1, 0);
+    this->inventory->add_action(0, OBJECT_GEMSTONE_AMETHYST, 1, 0);
     
     this->toolbelt = Items::create_inventory(OBJECT_AGENT_TOOLBELT);
     assert(this->toolbelt != NULL);

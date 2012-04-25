@@ -3,13 +3,7 @@
 namespace Objects
 {
 
-// rate limit??
-const int MONSTER_BROADCAST_INTERVAL = 30;
-
-
 /* Robot Bomb */
-
-
 
 /* Common/Defaults */
 
