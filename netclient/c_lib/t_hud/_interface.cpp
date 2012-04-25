@@ -116,7 +116,7 @@ void draw_hud()
 
 
     agent_inventory->draw();
-    //agent_toolbelt->draw();
+    agent_toolbelt->draw();
     //nanite_inventory->draw();
     //craft_bench_inventory->draw();
 
