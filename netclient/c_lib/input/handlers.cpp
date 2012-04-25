@@ -354,21 +354,18 @@ void inventory_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            // notfiy hud, which will update "selected" state etc
             t_hud::left_mouse_down(x,y);
-            // notify inventory model that input state may have changed
-            Items::process_inventory_events();
             break;
 
         case SDL_BUTTON_RIGHT:
-            // notfiy hud, which will update "selected" state etc
             t_hud::right_mouse_down(x,y);
-            // notify inventory model that input state may have changed
-            Items::process_inventory_events();
             break;
 
-        default: break;
+        default:
+            t_hud::null_input_event();
     }
+    // notify inventory model that input state may have changed
+    Items::process_inventory_events();
 }
 
 void inventory_mouse_up_handler(SDL_Event* event)
@@ -390,21 +387,19 @@ void inventory_mouse_up_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            // notfiy hud, which will update "selected" state etc
             t_hud::left_mouse_up(x,y);
-            // notify inventory model that input state may have changed
-            Items::process_inventory_events();
             break;
 
         case SDL_BUTTON_RIGHT:
-            // notfiy hud, which will update "selected" state etc
             t_hud::right_mouse_up(x,y);
-            // notify inventory model that input state may have changed
-            Items::process_inventory_events();
             break;
 
-        default: break;
+        default:
+            t_hud::null_input_event();
+            break;
     }
+    // notify inventory model that input state may have changed
+    Items::process_inventory_events();
 }
 
 void inventory_mouse_motion_handler(SDL_Event* event)
