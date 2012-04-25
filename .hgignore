@@ -85,3 +85,5 @@ gnomescroll_client
 
 ./client
 ./server
+
+gmon.out
