@@ -10,8 +10,8 @@ class AgentToolbeltUI : public UIElement
     public:
 
     static const float border = 16;       // border around entire panel
-    static const float inc1 = 8; // spacing between slot icons
-    static const float inc2 = 2;  // border around a slot icon
+    static const float icon_spacing = 8; // spacing between slot icons
+    static const float icon_border = 2;  // border around a slot icon
 
     static const float slot_size = 32;    // pixel dimension
 
@@ -32,14 +32,14 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
     px -= xoff + border;
     py -= yoff - border;
 
-    float width  = xdim*slot_size + (xdim-1)*inc1;
-    float height = ydim*slot_size + (ydim-1)*inc1;
+    float width  = xdim*slot_size + (xdim-1)*icon_spacing;
+    float height = ydim*slot_size + (ydim-1)*icon_spacing;
 
     if (px < 0 || px > width)  return -1;
     if (py < 0 || py > height) return -1;
 
-    int xslot = px / (inc1 + slot_size);
-    int yslot = py / (inc1 + slot_size);
+    int xslot = px / (icon_spacing + slot_size);
+    int yslot = py / (icon_spacing + slot_size);
 
     int slot = yslot * this->xdim + xslot;
     
@@ -49,6 +49,9 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
 void AgentToolbeltUI::draw()
 {
     const float w = slot_size;
+
+    const float inc1 = this->icon_spacing;
+    const float inc2 = this->icon_border;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_TEXTURE_2D);
@@ -98,7 +101,7 @@ void AgentToolbeltUI::draw()
     {
     
         float x = yoff + border + i*(inc1+slot_size);
-        float y = _yresf - (ydim + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -125,7 +128,7 @@ void AgentToolbeltUI::draw()
         int tex_id = contents[slot].sprite_index;
 
         const float x = xoff + border + i*(inc1+slot_size);
-        const float y = _yresf - (ydim + border + j*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
         const float tx_min = (1.0/8.0)*(tex_id % 8);
         const float ty_min = (1.0/8.0)*(tex_id / 8);
@@ -156,9 +159,9 @@ void AgentToolbeltUI::draw()
     if(this->selected_slot != NULL_SLOT)
     {   
         int slotx = this->selected_slot % xdim;
-        int sloty = ydim - (this->selected_slot / xdim);
+        int sloty = this->selected_slot / xdim;
         const float x = xoff + border + slotx*(inc1+slot_size);
-        const float y = _yresf - (ydim + border + (ydim-sloty)*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + (ydim-sloty)*(inc1+slot_size));
 
         const float b = 2 + inc2;
 

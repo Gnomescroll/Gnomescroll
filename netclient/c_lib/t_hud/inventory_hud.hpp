@@ -102,7 +102,7 @@ void AgentInventoryUI::draw()
     {
     
         float x = yoff + border + i*(inc1+slot_size);
-        float y = _yresf - (ydim + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -129,7 +129,7 @@ void AgentInventoryUI::draw()
         int tex_id = contents[slot].sprite_index;
 
         const float x = xoff + border + i*(inc1+slot_size);
-        const float y = _yresf - (ydim + border + j*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
         const float tx_min = (1.0/8.0)*(tex_id % 8);
         const float ty_min = (1.0/8.0)*(tex_id / 8);
@@ -162,7 +162,7 @@ void AgentInventoryUI::draw()
         int slotx = this->selected_slot % xdim;
         int sloty = ydim - (this->selected_slot / xdim);
         const float x = xoff + border + slotx*(inc1+slot_size);
-        const float y = _yresf - (ydim + border + (ydim-sloty)*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + (ydim-sloty)*(inc1+slot_size));
 
         const float b = 2 + inc2;
 
