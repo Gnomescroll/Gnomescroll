@@ -7,226 +7,91 @@
 namespace t_hud
 {
 
-int inventory_hud_x_off = 300;
-int inventory_hud_y_off = 300;
-float inventory_hud_z = -0.5;
 
-const float inventory_hud_border = 16; //invisble border
-
-const float inventory_hud_inc1 = 8;  //border between slots
-const float inventory_hud_inc2 = 2; //outer border
-const float inventory_hud_slot_size = 32;
-
-const int inventory_hud_xdim = 6;
-const int inventory_hud_ydim = 3;
-
-
-bool inventory_hud_mouse_to_slot(int x, int y, int* xslot, int* yslot)
+class InventoryUI
 {
+    public:
+        HudElementType type;
+        bool visible;       // render state
+        
+        float x,y;
+        float z;
+        float w,h;          // screen dimensions of panel
 
-    y = _yres - y;
+        float border;       // border around entire panel
+        float icon_spacing; // spacing between slot icons
+        float icon_border;  // border around a slot icon
 
-    const float xoff = inventory_hud_x_off;
-    const float yoff = inventory_hud_y_off;
+        float slot_size;    // pixel dimension
+        int xdim,ydim;  // slot dimensions
 
-    const float border = inventory_hud_border;
-    const float inc1 = inventory_hud_inc1;  //border around slots
-    //const float inc2 = inventory_hud_inc2; //outer border
-    const float slot_size = inventory_hud_slot_size;
+        int active_slot;
+        
+        GLuint background_texture;
 
-    const int xdim = inventory_hud_xdim; // 6;
-    const int ydim = inventory_hud_ydim; // 3;
+        void set_position(float x, float y);
+        void init();
+        void draw();
 
-    float width = 2*border + xdim*slot_size +(xdim-1)*inc1;
-    float height = 2*border + ydim*slot_size + (ydim-1)*inc1;
+        int get_slot_at(int px, int py);
 
-#if 0
-    if(x < xoff)
-    {
-        printf("1 to left of border \n");
-        return false;
-    }
-    if(x > xoff + width)
-    {
-        printf("1 to right of border \n");
-        return false;
-    }
+    InventoryUI()
+    :   type(HUD_ELEMENT_NONE),
+        visible(false),
+        x(0),y(0), z(-0.5f),
+        w(0), h(0),
+        border(16.0f), icon_spacing(8.0f), icon_border(2.0f),
+        slot_size(32.0f),
+        xdim(0), ydim(0),
+        background_texture(0)
+    {}
+};
 
-    if(y < yoff)
-    {
-        printf("1 below border \n");
-        return false;
-    }
-    if(y > yoff + height)
-    {
-        printf("1 above border \n");
-        return false;
-    }
 
-    if(x < xoff + border )
-    {
-        printf("2 to left of border \n");
-        return false;
-    }
-    if(x > xoff + width - border )
-    {
-        printf("2 to right of border \n");
-        return false;
-    }
 
-    if(y < yoff + border )
-    {
-        printf("2 below border \n");
-        return false;
-    }
-    if(y > yoff + height - border )
-    {
-        printf("2 above border \n");
-        return false;
-    }
-#else 
-    if(x < xoff || x > xoff + width) return false;
-    if(y < yoff || y > yoff + height) return false;
-    if(x < xoff + border || x > xoff + width - border ) return false;
-    if(y < yoff + border || y > yoff + height - border ) return false;
-#endif
+extern InventoryUI* agent_inventory;
+extern InventoryUI* agent_toolbelt;
+extern InventoryUI* nanite_inventory;
+extern InventoryUI* craft_bench_inventory;
 
-    //*xslot = (x - (xoff + border))  / (inc1 + slot_size);
-    //*yslot = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
+void init_agent_inventory_ui()
+{
+    assert(agent_inventory == NULL);
+    agent_inventory = new InventoryUI;
 
-    *xslot = (x - (xoff + border))  / (inc1 + slot_size);
-    *yslot = ydim - ((y - (yoff + border)) / (inc1 + slot_size));
+    agent_inventory->x = 300.0f;
+    agent_inventory->y = 300.0f;
 
-    printf("inventory: slot %i, %i \n", *xslot, *yslot);
-
-    return true;
+    // these will be received from network
+    agent_inventory->xdim = 6;
+    agent_inventory->ydim = 3;
 }
 
-void draw_inventory_hud()
+void init_agent_toolbelt_ui()
 {
-    float z = inventory_hud_z;
-    float w = 32;
+    assert(agent_toolbelt == NULL);
+    agent_inventory = new InventoryUI;
 
-    const float border = inventory_hud_border;
-    const float inc1 = inventory_hud_inc1;
-    const float inc2 = inventory_hud_inc2; //outer border
-    const float slot_size = inventory_hud_slot_size;
+    agent_inventory->x = 300.0f;
+    agent_inventory->y = 300.0f;
 
-    const int xdim = inventory_hud_xdim; // 6;
-    const int ydim = inventory_hud_ydim; // 3;
-
-    glDisable(GL_DEPTH_TEST); // move this somewhere
-    glDisable(GL_TEXTURE_2D);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-#if 0
-    glColor4ub(0, 0, 50, 64);
-
-    {
-        float x = inventory_hud_x_off;
-        float y = inventory_hud_y_off;
-        float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
-        float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
-
-        glBegin(GL_QUADS);
-
-        glVertex3f(x, y+h, z);
-        glVertex3f(x+w, y+h ,z);
-        glVertex3f(x+w, y, z);
-        glVertex3f(x, y, z);
-
-        glEnd();
-
-    }
-#endif
-
-    glBegin(GL_QUADS);
-
-    glColor4ub(50, 50, 50, 128);
-
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
-    {
-        float x = inventory_hud_x_off + border + i*(inc1+slot_size);
-        float y = inventory_hud_y_off + border + j*(inc1+slot_size);
-
-        glVertex3f(x-inc2,y+w+inc2, z);
-        glVertex3f(x+w+inc2, y+w+inc2 ,z);
-        glVertex3f(x+w+inc2, y-inc2, z);
-        glVertex3f(x-inc2, y-inc2, z);
-    }
-
-    glColor4ub(50, 50, 50, 64);
-
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
-    {
-    
-        float x = inventory_hud_x_off + border + i*(inc1+slot_size);
-        float y = inventory_hud_y_off + border + j*(inc1+slot_size);
-
-        glVertex3f(x,y+w, z);
-        glVertex3f(x+w, y+w ,z);
-        glVertex3f(x+w, y, z);
-        glVertex3f(x, y, z);
-    }
-
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-
-    glColor4ub(255, 255, 255, 255);
-
-
-
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glColor3ub(255, 255, 255);
-
-    glBegin(GL_QUADS);
-
-    //const float z = -0.5;
-    //const float w = slot_size;
-
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
-    {
-        if(i == 0 && j == 0) continue;
-
-        const float x = inventory_hud_x_off + border + i*(inc1+slot_size);
-        const float y = inventory_hud_y_off + border + j*(inc1+slot_size);
-
-        const int tex_id = rand()%40;
-
-        const float tx_min = (1.0/8.0)*(tex_id % 8);
-        const float ty_min = (1.0/8.0)*(tex_id / 8);
-        const float tx_max = tx_min + 1.0/8.0;
-        const float ty_max = ty_min + 1.0/8.0;
-
-        glTexCoord2f( tx_min, ty_min );
-        glVertex3f(x,y+w, z);
-
-        glTexCoord2f( tx_max, ty_min );
-        glVertex3f(x+w, y+w ,z);
-            
-        glTexCoord2f( tx_max, ty_max );
-        glVertex3f(x+w, y, z);
-
-        glTexCoord2f( tx_min, ty_max );
-        glVertex3f(x, y, z);
-
-    }
-
-    glEnd();
-
-    glEnable(GL_DEPTH_TEST); // move this somewhere
-    glDisable(GL_BLEND);
-
+    // these will be received from network
+    agent_inventory->xdim = 6;
+    agent_inventory->ydim = 3;
 }
 
-    
+void init_nanite_inventory_ui()
+{}
+
+void init_craft_bench_inventory_ui()
+{}
+
+void teardown_inventory_ui()
+{
+    if (agent_inventory != NULL) delete agent_inventory;
+    if (agent_toolbelt != NULL) delete agent_toolbelt;
+    if (nanite_inventory != NULL) delete nanite_inventory;
+    if (craft_bench_inventory != NULL) delete craft_bench_inventory;
+}
+
 }

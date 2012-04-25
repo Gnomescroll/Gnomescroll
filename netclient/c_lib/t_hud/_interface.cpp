@@ -68,10 +68,10 @@ void mouse_motion(int x, int y)
 
 void left_mouse_down(int x, int y)
 {
-    //printf("t_item::left_mouse_down \n");
-    int ox,oy;
-    inventory_hud_mouse_to_slot( x,y, &ox,&oy);
-    toolbelt_hud_mouse_to_slot( x,y, &ox,&oy);
+    ////printf("t_item::left_mouse_down \n");
+    //int ox,oy;
+    //inventory_hud_mouse_to_slot( x,y, &ox,&oy);
+    //toolbelt_hud_mouse_to_slot( x,y, &ox,&oy);
 
     // select slot internally
 }
@@ -114,11 +114,32 @@ void draw_hud()
 {
     if (!hud_enabled) return;
 
-    draw_inventory_hud();
-    draw_toolbelt_hud();
+
+    agent_inventory->draw();
+    //agent_toolbelt->draw();
+    //nanite_inventory->draw();
+    //craft_bench_inventory->draw();
+
     //static ItemGrid g;
     //g.draw(300,300);
 }
+
+
+/* Main init/teardown */
+
+void init()
+{
+    init_agent_inventory_ui();
+    init_agent_toolbelt_ui();
+    init_nanite_inventory_ui();
+    init_craft_bench_inventory_ui();
+}
+
+void teardown()
+{
+    teardown_inventory_ui();
+}
+
 
 
 }

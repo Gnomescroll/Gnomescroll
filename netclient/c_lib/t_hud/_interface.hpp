@@ -31,6 +31,9 @@ void null_input_event();
 /*
 Init
 */
+void init();
+void teardown();
+
 void draw_init();
 void draw_teardown();
 
