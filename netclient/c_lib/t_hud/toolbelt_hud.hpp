@@ -22,21 +22,18 @@ class AgentToolbelt : public UIelement
     void init() {}
     void draw();
 
-    bool get_slot_at(int px, int py, int* slotx, int* sloty);
+    int get_slot_at(int px, int py);
 
 };
 
 
-bool AgentToolbelt::get_slot_at(int px, int py, int* slotx, int* sloty)
+bool AgentToolbelt::get_slot_at(int px, int py);
 {
-    return false;
+    px -= xoff + border;
+    py -= yoff - border;
 
-/*
-    px -= this->x + this->border;
-    py -= this->y - this->border;
-
-    float width  = xdim*slot_size + (xdim-1)*icon_spacing;
-    float height = ydim*slot_size + (ydim-1)*icon_spacing;
+    float width  = xdim*slot_size + (xdim-1)*inc1;
+    float height = ydim*slot_size + (ydim-1)*inc1;
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
@@ -46,10 +43,7 @@ bool AgentToolbelt::get_slot_at(int px, int py, int* slotx, int* sloty)
 
     int slot = yslot * this->xdim + xslot;
     
-    //printf("inventory: slot %d, %d\n", xslot, yslot);
-
     return slot;
-*/
 }
 
 void AgentToolbelt::draw()
