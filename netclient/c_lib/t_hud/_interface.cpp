@@ -1,13 +1,14 @@
 #include "_interface.hpp"
 
 #include <c_lib/t_hud/inventory_hud.hpp>
-#include <c_lib/t_hud/tool_belt_hud.hpp>
+#include <c_lib/t_hud/toolbelt_hud.hpp>
 
 namespace t_hud
 {
 
 int inventory_id = -1;
 int toolbelt_id = -1;
+int nanite_id = -1;
 
 int selected_slot_inventory = -1;
 int selected_slot_x = 0;

@@ -33,7 +33,7 @@ namespace t_item
 {
     extern int player_inventory_id;
     extern class ItemContainer* player_inventory;
-    extern class ItemContainer* player_toolbar;
+    extern class ItemContainer* player_toolbelt;
     extern class ItemContainer* player_nanite;
 }
 
@@ -58,7 +58,8 @@ namespace t_item
 
 const int NO_AGENT = 0xffff;
 extern int AgentInventoryList[256];
-
+extern int AgentToolbeltList[256];
+extern int AgentNaniteList[256];
 
 void create_agent_inventory(int agent_id, int client_id);
 void delete_agent_inventory(int agent_id);

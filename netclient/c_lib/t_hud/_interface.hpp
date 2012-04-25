@@ -8,6 +8,7 @@ namespace t_hud
 */
 extern int inventory_id;
 extern int toolbelt_id;
+extern int nanite_id;
 
 extern int selected_slot_inventory;
 extern int selected_slot_x;
