@@ -136,35 +136,35 @@ void delete_agent_inventory(int agent_id)
 /*
     Toolbar
 */
-void create_agent_toolbar(int agent_id, int client_id)
+void create_agent_toolbelt(int agent_id, int client_id)
 {
     ItemContainer* ic = item_container_list->create();
-    ic->init_agent_toolbar();
+    ic->init_agent_toolbelt();
 
-    assert(AgentToolbarList[agent_id] == NO_AGENT);
+    assert(AgentToolbeltList[agent_id] == NO_AGENT);
     assert((agent_id < 255) && (agent_id > 0));
 
-    AgentToolbarList[agent_id] = ic->id;
+    AgentToolbeltList[agent_id] = ic->id;
     
     Agent_state* a = ServerState::agent_list->get(agent_id);
     a->toolbar_id = ic->id;
 
-    class assign_agent_toolbar_StoC p;
-    p.toolbar_id = ic->id;
+    class assign_agent_toolbelt_StoC p;
+    p.inventory_id = ic->id;
     p.agent_id = agent_id;
     p.sendToClient(client_id);
 
     printf("Sending toolbar id to client %i \n", client_id);
 }
 
-void delete_agent_toolbar(int agent_id)
+void delete_agent_toolbelt(int agent_id)
 {
-    int inventory_id = AgentToolbarList[agent_id];
-    assert(AgentToolbarList[agent_id] != NO_AGENT);
+    int inventory_id = AgentToolbeltList[agent_id];
+    assert(AgentToolbeltList[agent_id] != NO_AGENT);
     assert(item_container_list->get(inventory_id) != NULL);
 
     item_container_list->destroy(inventory_id);
-    AgentToolbarList[agent_id] = NO_AGENT;
+    AgentToolbeltList[agent_id] = NO_AGENT;
 }
 
 
