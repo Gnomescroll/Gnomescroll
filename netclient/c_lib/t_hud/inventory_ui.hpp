@@ -15,8 +15,13 @@ class UIelement
         float yoff;
 
         int inventory_id;
+        int selected_slot; //how is this set?
 
-        void set_position(float x, float y);
+        void set_position(float x, float y)
+        {
+                xoff = x;
+                yoff = y;
+        }
 
         virtual void init() = 0;
         virtual void draw() = 0;
