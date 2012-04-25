@@ -15,6 +15,26 @@ class BaseInventory
             this->contents.init(x,y);
         }
 
+    public:
+        int id;
+        ObjectType type;
+        int owner;
+
+        int width()
+        {
+            return this->contents.x;
+        }
+
+        int height ()
+        {
+            return this->contents.y;
+        }
+
+        InventorySlot* get_slots_array()
+        {
+            return this->contents.objects;
+        }
+
         bool type_allowed(ObjectType type)
         {   // Restrict types here
             if (type == OBJECT_AGENT
@@ -79,27 +99,6 @@ class BaseInventory
             bool swapped = this->contents.swap(slota, slotb);
             return swapped;
         }
-
-    public:
-        int id;
-        ObjectType type;
-        int owner;
-
-        int width()
-        {
-            return this->contents.x;
-        }
-
-        int height ()
-        {
-            return this->contents.y;
-        }
-
-        InventorySlot* get_slots_array()
-        {
-            return this->contents.objects;
-        }
-
 
     BaseInventory(int id)
     : id(id), type(OBJECT_NONE), owner(NO_AGENT)

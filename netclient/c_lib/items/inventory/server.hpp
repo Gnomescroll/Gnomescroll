@@ -61,7 +61,7 @@ class Inventory: public BaseInventory
 
     bool add_action(int id, ObjectType type, int stack_size, int slot)
     {
-        bool added = this->add(id, type, slot);
+        bool added = this->add(id, type, stack_size, slot);
         if (!added) return false;
         if (owner != NO_AGENT)
             this->sendToClientAdd(id, type, stack_size, slot);
@@ -98,25 +98,9 @@ class Inventory: public BaseInventory
         this->contents.sendToClient(this->id, client_id);
     }
 
-    /* Expose Inventory API here */
     void init(int x, int y)
     {
         BaseInventory::init(x,y);
-    }
-    
-    bool can_add(ObjectType type)
-    {
-        return BaseInventory::can_add(type);
-    }
-
-    bool can_add(ObjectType type, int slot)
-    {
-        return BaseInventory::can_add(type, slot);
-    }
-    
-    bool can_remove(int slot)
-    {
-        return BaseInventory::can_remove(slot);
     }
     
     void sendToClientCreate(int client_id);
