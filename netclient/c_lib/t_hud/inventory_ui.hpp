@@ -5,6 +5,22 @@
 namespace t_hud
 {
 
+
+class UIelement
+{
+        public:
+
+        bool visible;
+        float xoff;
+        float yoff;
+
+        int inventory_id;
+
+        virtual void init() = 0;
+        void set_position(float x, float y);
+        virtual bool get_slot_at(int px, int py, int* slotx, int* sloty) = 0;
+};
+
 class InventoryUI
 {
     public:

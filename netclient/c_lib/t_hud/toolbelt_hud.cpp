@@ -33,26 +33,25 @@ void draw_toolbelt()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//#if 0
-    //glColor4ub(0, 0, 50, 64);
+#if 0
+    glColor4ub(0, 0, 50, 64);
+    {
+        float x = inventory_hud_x_off;
+        float y = inventory_hud_y_off;
+        float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
+        float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
 
-    //{
-        //float x = inventory_hud_x_off;
-        //float y = inventory_hud_y_off;
-        //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
-        //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
+        glBegin(GL_QUADS);
 
-        //glBegin(GL_QUADS);
+        glVertex3f(x, y+h, z);
+        glVertex3f(x+w, y+h ,z);
+        glVertex3f(x+w, y, z);
+        glVertex3f(x, y, z);
 
-        //glVertex3f(x, y+h, z);
-        //glVertex3f(x+w, y+h ,z);
-        //glVertex3f(x+w, y, z);
-        //glVertex3f(x, y, z);
+        glEnd();
 
-        //glEnd();
-
-    //}
-//#endif
+    }
+#endif
 
     glBegin(GL_QUADS);
 
