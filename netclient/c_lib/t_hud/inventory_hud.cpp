@@ -13,12 +13,10 @@ void init_agent_inventory_ui()
     agent_inventory->x = 300.0f;
     agent_inventory->y = 100.0f;
 
-    // these will be received from network
+    // these are received from network
     agent_inventory->xdim = 6;
     agent_inventory->ydim = 3;
 
-    // TMP TODO TMP
-    agent_inventory->inventory_id = 0;
 }
 
     

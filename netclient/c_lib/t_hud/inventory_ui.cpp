@@ -5,7 +5,7 @@
 #include <c_lib/t_hud/constants.hpp>
 
 #include <c_lib/t_hud/inventory_hud.hpp>
-#include <c_lib/t_hud/tool_belt_hud.hpp>
+#include <c_lib/t_hud/toolbelt_hud.hpp>
 
 namespace t_hud
 {
@@ -114,7 +114,7 @@ void InventoryUI::draw()
     for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
     {
-        if(i == 0 && j == 0) continue;
+        //if(i == 0 && j == 0) continue;
 
         const float x = this->x + border + i*(inc1+slot_size);
         const float y = _yresf - (this->y + border + j*(inc1+slot_size));
@@ -144,6 +144,47 @@ void InventoryUI::draw()
 
     glEnable(GL_DEPTH_TEST); // move this somewhere
     glDisable(GL_BLEND);
+
+    glDisable(GL_TEXTURE_2D);
+
+    // draw border highlight
+    if(this->selected_slot == inventory_id)
+    {   
+        int slotx = this->selected_slot % this->xdim;
+        int sloty = this->selected_slot / this->xdim;
+        const float x = this->x + border + slotx*(inc1+slot_size);
+        const float y = _yresf - (this->y + border + (ydim-1-sloty)*(inc1+slot_size));
+
+        const float b = 2 + inc2;
+
+        glColor4ub(0, 0, 128+64, 255);
+        glLineWidth(2.0);
+
+        glBegin(GL_LINES);
+
+        glVertex3f(x-b, y+w+b, z);
+        glVertex3f(x+w+b, y+w+b, z);
+
+        glVertex3f(x+w+b, y+w+b, z);
+        glVertex3f(x+w+b, y-b, z);
+
+        glVertex3f(x+w+b, y-b, z);
+        glVertex3f(x-b, y-b, z);
+
+        glVertex3f(x-b, y-b, z);
+        glVertex3f(x-b, y+w+b, z);
+
+        glEnd();
+        //extern int selected_slot_x;
+        //extern int selected_slot_y;)
+
+        glLineWidth(1.0);
+
+
+    }
+
+
+    glColor4ub(255, 255, 255, 255);
 
 }
 

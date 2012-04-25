@@ -6,10 +6,10 @@
 namespace HudInventory
 {
 
-static const char* agent_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
-static const char* agent_toolbelt_texture_path = (char*)"./media/texture/hud/inventory2.png";
-static const char* nanite_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
-static const char* craft_bench_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+//static const char* agent_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+//static const char* agent_toolbelt_texture_path = (char*)"./media/texture/hud/inventory2.png";
+//static const char* nanite_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
+//static const char* craft_bench_inventory_texture_path = (char*)"./media/texture/hud/inventory2.png";
 
 //static const char* get_inventory_texture_path(HudElementType type)
 //{

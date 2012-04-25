@@ -7,14 +7,6 @@
 namespace t_hud
 {
 
-int inventory_id = -1;
-int toolbelt_id = -1;
-int nanite_id = -1;
-
-int selected_slot_inventory = -1;
-int selected_slot_x = 0;
-int selected_slot_y = 0;
-
 /*
     Init
 */

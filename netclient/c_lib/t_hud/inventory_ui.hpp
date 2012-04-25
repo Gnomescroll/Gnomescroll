@@ -25,10 +25,8 @@ class InventoryUI
         int inventory_id;
         int xdim,ydim;  // slot dimensions
 
-        int active_slot;
+        int selected_slot;
         
-        GLuint background_texture;
-
         void set_position(float x, float y);
         void init();
         void draw();
@@ -44,7 +42,7 @@ class InventoryUI
         slot_size(32.0f),
         inventory_id(-1),
         xdim(0), ydim(0),
-        background_texture(0)
+        selected_slot(NULL_SLOT)
     {}
 };
 
