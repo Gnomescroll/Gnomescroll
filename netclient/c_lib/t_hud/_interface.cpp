@@ -97,14 +97,6 @@ void left_mouse_up(int x, int y)
 
     if (active_inventory == NULL) return;
 
-    //printf("t_item::left_mouse_up \n");
-
-    // detect inventory element
-    // if none, remove
-    // else
-    //  compare to left mouse down
-    // swap between/within
-
     // detect click
     int slot;
     InventoryUI* inventory = get_inventory_and_slot(x,y, &slot);
@@ -127,8 +119,6 @@ void left_mouse_up(int x, int y)
         inventory_input_event.inventory_b = inventory->inventory_id;
     if (slot != NULL_SLOT)
         inventory_input_event.slot_b = slot;
-
-    printf("Event: %d\n", inventory_input_event.type);
 
     // reset actives
     active_inventory = NULL;

@@ -8,7 +8,7 @@ namespace HudInventory
 class InventoryRender
 {
     public:
-        HudElementType type;
+        //HudElementType type;
         bool visible;       // render state
         
         float x,y;
@@ -53,6 +53,6 @@ void draw_selected_icon_mask();
 void init();
 void teardown();
 
-InventoryRender* get_inventory_hud_element(HudElementType type);
+//InventoryRender* get_inventory_hud_element(HudElementType type);
 
 }

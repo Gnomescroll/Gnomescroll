@@ -170,4 +170,25 @@ void teardown_inventory_ui()
     if (craft_bench_inventory != NULL) delete craft_bench_inventory;
 }
 
+InventoryUI* get_inventory_hud_element(HudElementType type)
+{
+    switch (type)
+    {
+        case HUD_ELEMENT_AGENT_INVENTORY:
+            return agent_inventory;
+        case HUD_ELEMENT_AGENT_TOOLBELT:
+            return agent_toolbelt;
+        case HUD_ELEMENT_NANITE_INVENTORY:
+            return nanite_inventory;
+        case HUD_ELEMENT_CRAFTING_BENCH:
+            return craft_bench_inventory;
+            
+        default:
+            printf("WARNING: get_inventory_hud_element -- invalid type %d\n", type);
+            assert(false);
+            break;
+    }
+    return NULL;
+}
+
 } // t_hud

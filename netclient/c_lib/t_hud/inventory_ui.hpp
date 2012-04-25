@@ -1,5 +1,7 @@
 #pragma once
 
+#include <c_lib/t_hud/constants.hpp>
+
 namespace t_hud
 {
 
@@ -54,5 +56,6 @@ void init_craft_bench_inventory_ui();
 
 void teardown_inventory_ui();
 
+InventoryUI* get_inventory_hud_element(HudElementType type);
 
 } // t_hud

@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 
-#include <c_lib/hud/constants.hpp>
+#include <c_lib/t_hud/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/constants.hpp>
 
@@ -11,7 +11,7 @@ class Inventory: public BaseInventory
     public:
 
     int selected_slot;
-    HudElementType hud;
+    t_hud::HudElementType hud;
 
     InventorySlot* selected_item()
     {
@@ -155,7 +155,7 @@ class Inventory: public BaseInventory
 
     explicit Inventory(int id)
     : BaseInventory(id),
-    selected_slot(-1), hud(HUD_ELEMENT_NONE)
+    selected_slot(-1), hud(t_hud::HUD_ELEMENT_NONE)
     {
     }
 };

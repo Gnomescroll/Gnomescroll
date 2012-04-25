@@ -1,7 +1,7 @@
 #pragma once
 
-const int AGENT_INVENTORY_X = 12;
-const int AGENT_INVENTORY_Y = 8;
+const int AGENT_INVENTORY_X = 6;
+const int AGENT_INVENTORY_Y = 3;
 
 const int AGENT_TOOLBELT_X = 10;
 const int AGENT_TOOLBELT_Y = 1;
