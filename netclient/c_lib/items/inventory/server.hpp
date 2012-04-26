@@ -56,7 +56,7 @@ class Inventory: public BaseInventory
     // no broadcast
     bool add_silent(int id, ObjectType type, int stack_size, int slot)
     {
-        return this->add(id, type, slot);
+        return this->add(id, type, stack_size, slot);
     }
 
     bool add_action(int id, ObjectType type, int stack_size, int slot)

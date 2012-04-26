@@ -188,8 +188,12 @@ inline void swap_item_between_inventory_CtoS::handle()
     if (!inva->can_remove(slota)) return;
     printf("can remove\n");
     InventorySlot* item = inva->get_slot_item(slota);
+    item->print();
     if (!invb->can_add(item->item_type, slotb)) return;
+    InventorySlot* itemb = invb->get_slot_item(slotb);
+    itemb->print();
     printf("can add\n");
+
     
     if (!invb->add_silent(item->item_id, item->item_type, item->stack.count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
     if (!inva->remove_silent(slota)) printf("ERROR REMOVING ITEM!!\n");
