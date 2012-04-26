@@ -18,9 +18,4 @@ ttl(0)
     this->set_momentum(mx,my,mz);
 }
 
-EventParticleMotion::EventParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass)
-:
-ParticleMotion(id, x,y,z,mx,my,mz, mass)
-{}
-
 }

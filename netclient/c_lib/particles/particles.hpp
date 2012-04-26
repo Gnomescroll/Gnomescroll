@@ -73,26 +73,4 @@ class ParticleMotion
         ~ParticleMotion(){}
 };
 
-class EventParticleMotion: public ParticleMotion
-{
-    public:
-        int event_ttl;
-
-        EventParticleMotion(int id, float x, float y, float z, float mx, float my, float mz, float mass);
-        ~EventParticleMotion(){}
-};
-
-//const int PARTICLES_MAX = 8192;
-//class Particle_list: public Object_list<Particle, PARTICLES_MAX>
-//{
-    //private:
-        //const char* name() { return "Shrapnel"; }
-    //public:
-        //void draw();
-        //void tick();
-
-        //Shrapnel_list() { print_list((char*)this->name(), this); }
-//};
-
-
 }

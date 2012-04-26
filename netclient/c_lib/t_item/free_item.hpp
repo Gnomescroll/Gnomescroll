@@ -14,6 +14,13 @@
 namespace t_item
 {
 
+extern SDL_Surface* ItemSheetSurface;
+extern unsigned int ItemSheetTexture;
+
+void draw_init();
+void draw_teardown();
+
+
 using VerletParticle::VerletParticle;
 
 const int ITEM_PARTICLE_TTL = 300; // 10 seconds
@@ -26,6 +33,7 @@ class ItemParticle //: public VerletComponent
 
         int id;
         int item_id
+        int sprite_index;
 
         int ttl;
 
@@ -48,7 +56,7 @@ class ItemParticle //: public VerletComponent
 
     void init(float x, float y, float z, float mx, float my, float mz)
     {
-        this->type = (ObjectType)(rand() % 16);
+        this->sprite_index = (rand() % 16);
 
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
