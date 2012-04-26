@@ -110,6 +110,29 @@ void AgentInventoryUI::draw()
         glVertex2f(x, y);
     }
 
+    // draw hover highlight
+    glColor4ub(160, 160, 160, 128 + 64);
+    int hover_slot = NULL_SLOT;
+    if (active_inventory != NULL)
+        hover_slot = this->get_slot_at(mouse_x, mouse_y);
+
+    bool different_inventory = active_inventory == NULL || active_inventory->inventory_id != this->inventory_id;
+    bool different_slot = different_inventory || hover_slot != active_slot;
+
+    if (different_slot && hover_slot != NULL_SLOT)
+    {
+        int i = hover_slot % this->xdim;
+        int j = hover_slot / this->xdim;
+        
+        float x = xoff + border + i*(inc1+slot_size);
+        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+
+        glVertex2f(x,y+w);
+        glVertex2f(x+w, y+w);
+        glVertex2f(x+w, y);
+        glVertex2f(x, y);
+    }
+
     glEnd();
 
     glColor4ub(255, 255, 255, 255);
