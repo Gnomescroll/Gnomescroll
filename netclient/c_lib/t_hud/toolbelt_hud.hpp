@@ -22,10 +22,6 @@ class AgentToolbeltUI : public UIElement
     void init() {}
     void draw();
 
-    void draw_background();
-    void draw_slots();
-    void draw_selected_slot();
-
     int get_slot_at(int px, int py);
 
 };
@@ -50,16 +46,14 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
     return slot;
 }
 
-void AgentToolbeltUI::draw(){}
-
-void AgentToolbeltUI::draw_background()
+void AgentToolbeltUI::draw()
 {
     const float w = slot_size;
 
-    //glDisable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_TEXTURE_2D);
 
-    //glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 //#if 0
@@ -136,11 +130,6 @@ void AgentToolbeltUI::draw_background()
     }
 
     glEnd();
-}
-
-void AgentToolbeltUI::draw_slots()
-{
-    const float w = slot_size;    
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -191,15 +180,9 @@ void AgentToolbeltUI::draw_slots()
 
     glEnd();
 
-    //glEnable(GL_DEPTH_TEST); // move render somewhere
-    //glDisable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
-
-}
-
-void AgentToolbeltUI::draw_selected_slot()
-{
-    const float w = slot_size;    
 
     // draw border highlight
     if(this->selected_slot != NULL_SLOT)

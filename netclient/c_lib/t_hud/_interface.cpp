@@ -221,20 +221,10 @@ void draw_hud()
 {
     if (!hud_enabled) return;
 
-    glDisable(GL_DEPTH_TEST); // move render somewhere
-    glEnable(GL_BLEND);
-
-    agent_inventory->draw_background();
-    agent_toolbelt->draw_background();
-
-    agent_inventory->draw_slots();
-    agent_toolbelt->draw_slots();
-
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
-    
-    agent_inventory->draw_selected_slot();
-    agent_toolbelt->draw_selected_slot();
+    agent_inventory->draw();
+    agent_toolbelt->draw();
+    //nanite_inventory->draw();
+    //craft_bench_inventory->draw();
 
     draw_grabbed_icon();
 }
