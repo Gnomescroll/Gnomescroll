@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/option_macros.hpp>
+#include <c_lib/common/option_macros.hpp>
 
 namespace Options
 {

@@ -9,7 +9,7 @@
 #include <c_lib/common/compression/miniz.c>
 
 //options
-#include <c_lib/option_macros.hpp>
+#include <c_lib/common/option_macros.hpp>
 #include <c_lib/options.cpp>
  
 //utility
