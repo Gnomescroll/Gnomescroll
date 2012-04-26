@@ -59,16 +59,20 @@ toolbelt(NULL)
 Agent_status::~Agent_status()
 {
     #if DC_SERVER
+    /*
     assert(this->inventory != NULL);
     Items::destroy_inventory(this->inventory);
     assert(this->toolbelt != NULL);
     Items::destroy_inventory(this->toolbelt);
+    */
     #endif
 }
 
 #if DC_SERVER
 void Agent_status::load_inventories()
 {   // get inventories from inventory repo
+    
+/*
     this->inventory = Items::create_inventory(OBJECT_AGENT_INVENTORY);
     assert(this->inventory != NULL);
     this->inventory->owner = this->a->id;
@@ -80,15 +84,17 @@ void Agent_status::load_inventories()
     assert(this->toolbelt != NULL);
     this->toolbelt->owner = this->a->id;
     this->toolbelt->add_action(1, OBJECT_GEMSTONE_AMETHYST, 1, 5);
-    
+*/  
 }
 
 void Agent_status::send_inventories_to_client()
 {
+/*
     assert(this->inventory != NULL);
     this->inventory->sendToClientCreate(this->a->id);
     assert(this->toolbelt != NULL);
     this->toolbelt->sendToClientCreate(this->a->id);
+*/
 }
 #endif
 
@@ -272,8 +278,8 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    this->inventory->remove_all_action();
-    this->toolbelt->remove_all_action();
+    //this->inventory->remove_all_action();
+    //this->toolbelt->remove_all_action();
     #endif
 
     return 1;
@@ -617,7 +623,10 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
 #if DC_SERVER
 bool Agent_status::gain_stack_item(ObjectType type, int id, int stack_size)
 {
+/*
     return this->inventory->auto_add_action(id, type, stack_size);
+*/
+    return false;
 }
 #endif
 

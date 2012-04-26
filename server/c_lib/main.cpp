@@ -54,7 +54,7 @@ void tick()
 
     if(counter % 10 == 0)
     {
-        t_item::check_item_pickups();
+        //item::check_item_pickups();
     }
 
     //const int monster_spawners = 10;
