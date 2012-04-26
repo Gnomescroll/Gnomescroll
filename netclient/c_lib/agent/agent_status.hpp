@@ -101,6 +101,9 @@ class Agent_status {
         // item stuff
         const bool can_gain_item(ObjectType item);
         bool gain_item(int item_id, ObjectType item);
+        #if DC_SERVER
+        bool gain_stack_item(ObjectType type, int id, int stack_size);
+        #endif
         bool lose_item(ObjectType item);
 
         explicit Agent_status(Agent_state* a);

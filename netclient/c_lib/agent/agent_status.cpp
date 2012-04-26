@@ -608,22 +608,18 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             this->a->status.heal(50);
             break;
 
-        //case OBJECT_MEAT:
-        //case OBJECT_BLOCK_DROP:
-        //case OBJECT_GEMSTONE: // TODO -- restore types
-            //#if DC_SERVER
-            //return this->inventory->add_action(item_id, item_type, 1);
-            //#endif
-            //break;
-            
         default:
-            #if DC_SERVER
-            return this->inventory->add_action(item_id, item_type, 1);
-            #endif
             break;
     }
     return can;
 }
+
+#if DC_SERVER
+bool Agent_status::gain_stack_item(ObjectType type, int id, int stack_size)
+{
+    return this->inventory->add_action(id, type, stack_size);
+}
+#endif
 
 bool Agent_status::lose_item(ObjectType item)
 {
