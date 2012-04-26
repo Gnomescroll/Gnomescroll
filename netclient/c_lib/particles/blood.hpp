@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Particles
+namespace Particle
 {
 
 #define BLOOD_MAX 4096
@@ -24,7 +24,7 @@ class Blood: public ParticleMotion, public BillboardSprite
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class Blood_list: public Object_list<Blood, BLOOD_MAX>

@@ -1,6 +1,6 @@
 #include "particles.hpp"
 
-namespace Particles
+namespace Particle
 {
 
 void ParticleMotion::set_ttl(int ttl)

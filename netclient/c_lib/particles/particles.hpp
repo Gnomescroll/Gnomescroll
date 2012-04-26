@@ -6,7 +6,7 @@
 
 //#include <c_lib/objects/components/spatial/components.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 //class Particle

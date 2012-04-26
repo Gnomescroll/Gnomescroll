@@ -198,7 +198,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
             x+0.5f+randf(), y+0.5f+randf(), z+0.5f+randf(), 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     */
-        Particles::create_item_particle(0, 
+        Particle::create_item_particle(0, 
             _x, _y, _z, 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 

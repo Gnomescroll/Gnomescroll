@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -25,7 +25,7 @@ class Grenade_shrapnel: public ParticleMotion
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 

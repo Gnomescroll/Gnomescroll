@@ -5,7 +5,7 @@
 #include <c_lib/t_item/_interface.hpp>
 #endif
 
-namespace Particles
+namespace Particle
 {
 
 

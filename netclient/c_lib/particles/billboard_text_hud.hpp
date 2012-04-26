@@ -3,7 +3,7 @@
 #include <particles/particles.hpp>
 #include <hud/text.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 #define BILLBOARD_TEXT_HUD_MAX 1024
@@ -37,7 +37,7 @@ class BillboardTextHud: public ParticleMotion
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT_HUD_MAX>

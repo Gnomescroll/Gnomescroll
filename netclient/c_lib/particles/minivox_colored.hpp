@@ -3,7 +3,7 @@
 #include <physics/common.hpp>
 #include <c_lib/voxel/common.h>
 
-namespace Particles
+namespace Particle
 {
 
 #define MINIVOX_MAX 4096
@@ -52,7 +52,7 @@ class ColoredMinivox: public ParticleMotion
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class ColoredMinivox_list: public Object_list<ColoredMinivox, MINIVOX_MAX>

@@ -39,7 +39,7 @@ namespace ServerState
         }
 
         agent_list->update_models(); // sets skeleton
-        Particles::grenade_list->tick();
+        Particle::grenade_list->tick();
 
         Objects::tick();
         Objects::harvest();

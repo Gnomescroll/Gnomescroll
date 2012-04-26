@@ -5,7 +5,7 @@
 
 #include <c_lib/particles/minivox_colored.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class TexturedMinivox: public ParticleMotion
@@ -46,7 +46,7 @@ class TexturedMinivox: public ParticleMotion
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class TexturedMinivox_list: public Object_list<TexturedMinivox, MINIVOX_MAX>

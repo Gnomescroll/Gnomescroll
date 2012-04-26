@@ -379,7 +379,7 @@ void draw_hud()
     // so i moved the list draw call out
     
     start_font_draw();
-    Particles::billboard_text_hud_list->draw();
+    Particle::billboard_text_hud_list->draw();
     end_font_draw();
 
     draw_hud_textures();

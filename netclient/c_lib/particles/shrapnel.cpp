@@ -3,7 +3,7 @@
 #include <physics/vec3.hpp>
 #include <c_lib/animations/common.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 using Animations::VertexElementList1;

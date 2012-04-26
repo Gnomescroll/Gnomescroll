@@ -2,7 +2,7 @@
 
 #include <c_lib/particles/net/StoC.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 #ifdef DC_CLIENT

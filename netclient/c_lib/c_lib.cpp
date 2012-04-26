@@ -261,7 +261,7 @@ int init_c_lib() {
     t_mech::draw_init();
     //t_mech::state_init();
 
-    Particles::init_particles();
+    Particle::init_particles();
 
     Skybox::init();
     //Sound::test();
@@ -290,7 +290,7 @@ int init_c_lib() {
     init_handlers();
     init_cameras();
     init_chat_client();
-    Particles::draw_init();
+    Particle::draw_init();
     init_item_texture();
 
     ClientState::init_ctf();
@@ -314,7 +314,7 @@ void close_c_lib() {
     t_mech::draw_teardown();
     //t_mech::state_teardown();
 
-    Particles::teardown_particles();
+    Particle::teardown_particles();
 
     Skybox::teardown();
 

@@ -8,7 +8,7 @@
 #include <camera/camera.hpp>
 #include <c_lib/hud/font.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -92,7 +92,7 @@ void BillboardTextHud::draw()
 
 /* BillboardTextHud list */
 
-namespace Particles
+namespace Particle
 {
 
 void BillboardTextHud_list::tick() {

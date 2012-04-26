@@ -965,7 +965,7 @@ inline void ThrowGrenade_CtoS::handle()
     static const float PLAYER_ARM_FORCE = 15.0f; // load from dat later
     //create grenade
     n = vec3_scalar_mult(n, PLAYER_ARM_FORCE);
-    Particles::Grenade* g = Particles::grenade_list->create();
+    Particle::Grenade* g = Particle::grenade_list->create();
     if (g==NULL) return;
     g->set_state(x,y,z, n.x, n.y, n.z);
     g->owner = a->id;

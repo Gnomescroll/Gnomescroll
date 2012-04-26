@@ -52,10 +52,10 @@ void RegisterMessages() {
     agent_set_block_CtoS::register_server_packet();
 
     // particle system messages
-    Particles::grenade_StoC::register_client_packet();
-    Particles::item_particle_create_StoC::register_client_packet();
-    Particles::item_particle_destroy_StoC::register_client_packet();
-    Particles::item_particle_picked_up_StoC::register_client_packet();
+    Particle::grenade_StoC::register_client_packet();
+    Particle::item_particle_create_StoC::register_client_packet();
+    Particle::item_particle_destroy_StoC::register_client_packet();
+    Particle::item_particle_picked_up_StoC::register_client_packet();
 
     /* t_item*/
     t_item::free_item_create_StoC::register_client_packet();

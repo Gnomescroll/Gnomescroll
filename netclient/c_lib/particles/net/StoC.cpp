@@ -5,7 +5,7 @@
 //#include <c_lib/t_hud/_interface.hpp>
 #endif
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -15,7 +15,7 @@ inline void item_particle_create_StoC::handle()
 {
     printf("item_particle: creating %d \n", id);
 
-    ItemParticle* ip = Particles::item_particle_list->create(id);
+    ItemParticle* ip = Particle::item_particle_list->create(id);
     if(ip == NULL) return;
     ip->init(x,y,z,mx,my,mz);
 }
@@ -24,7 +24,7 @@ inline void item_particle_destroy_StoC::handle()
 {
     printf("item_particle: destroying %d \n", id);
     // destroy item via list
-    Particles::item_particle_list->destroy(id);
+    Particle::item_particle_list->destroy(id);
 }
 
 
@@ -34,7 +34,7 @@ inline void item_particle_picked_up_StoC::handle()
     /*
         Item Pickup Sound
     */
-    Particles::item_particle_list->destroy(id);
+    Particle::item_particle_list->destroy(id);
 }
 
 #endif

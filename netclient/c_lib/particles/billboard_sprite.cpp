@@ -1,7 +1,7 @@
 
 #include "billboard_sprite.hpp"
 
-namespace Particles
+namespace Particle
 {
 
 void BillboardSprite::draw(Vec3 v)

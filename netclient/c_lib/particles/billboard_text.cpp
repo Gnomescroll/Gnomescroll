@@ -9,7 +9,7 @@
 #include <c_lib/hud/font.hpp>
 #include <c_lib/hud/text.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -191,7 +191,7 @@ void BillboardText::draw()
 
 /* BillboardText list */
 
-namespace Particles
+namespace Particle
 {
 
 void BillboardText_list::tick()

@@ -9,7 +9,7 @@
 #include <voxel/common_data.h>
 #include <c_lib/physics/ray_trace/ray_trace.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 TexturedMinivox::TexturedMinivox(int id)

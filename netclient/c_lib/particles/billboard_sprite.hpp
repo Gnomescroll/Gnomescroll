@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Particles
+namespace Particle
 {
 
 #if DC_CLIENT

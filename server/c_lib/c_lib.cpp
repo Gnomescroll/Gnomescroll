@@ -157,7 +157,7 @@ int init_c_lib()
     Items::init();
 
     ServerState::init();
-    Particles::init_particles();
+    Particle::init_particles();
 
     return 0;
 } 
@@ -173,7 +173,7 @@ void close_c_lib()
 
     Items::teardown();
     ServerState::teardown();
-    Particles::teardown_particles();
+    Particle::teardown_particles();
 
     Objects::teardown();    // Entity system
     Objects::teardown_net_interfaces();

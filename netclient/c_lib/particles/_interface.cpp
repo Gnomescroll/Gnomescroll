@@ -27,7 +27,7 @@
 #endif
 
 
-namespace Particles
+namespace Particle
 {
 
 class Grenade_list* grenade_list = NULL;
@@ -61,7 +61,7 @@ void init_particles()
     billboard_text_list = new BillboardText_list;
     billboard_text_hud_list = new BillboardTextHud_list;
 
-    Particles::init_shrapnel();
+    Particle::init_shrapnel();
 #endif
 
 #if DC_SERVER
@@ -84,7 +84,7 @@ void teardown_particles()
     delete billboard_text_list;
     delete billboard_text_hud_list;
 
-    Particles::teardown_shrapnel();
+    Particle::teardown_shrapnel();
 #endif
 
 #if DC_SERVER

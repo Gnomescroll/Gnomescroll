@@ -11,7 +11,7 @@
 
 #include <c_lib/physics/verlet_particle.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 #ifdef DC_CLIENT
@@ -114,7 +114,7 @@ void ItemParticle::draw()
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 const int ITEM_PARTICLE_MAX = 1024;

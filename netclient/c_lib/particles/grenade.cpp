@@ -19,7 +19,7 @@
 /* properties */
 
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -68,7 +68,7 @@ inline void grenade_StoC::handle()
 {
     #if DC_CLIENT
     if (owner == ClientState::playerAgent_state.agent_id) return;
-    Grenade* g = Particles::grenade_list->create();
+    Grenade* g = Particle::grenade_list->create();
     if (g == NULL) return;
     g->set_state(x, y, z, mx, my, mz);
     g->owner = owner;

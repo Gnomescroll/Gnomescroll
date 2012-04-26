@@ -9,7 +9,7 @@
 #include <c_lib/physics/ray_trace/ray_trace.hpp>
 
 
-namespace Particles
+namespace Particle
 {
 
 ColoredMinivox::ColoredMinivox(int id)

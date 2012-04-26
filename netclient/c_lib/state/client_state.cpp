@@ -143,13 +143,13 @@ namespace ClientState {
 
     void tick()
     {
-        Particles::grenade_list->tick();
-        Particles::shrapnel_list->tick();
-        Particles::blood_list->tick();
-        Particles::colored_minivox_list->tick();
-        Particles::textured_minivox_list->tick();
-        Particles::billboard_text_list->tick();
-        Particles::billboard_text_hud_list->tick();
+        Particle::grenade_list->tick();
+        Particle::shrapnel_list->tick();
+        Particle::blood_list->tick();
+        Particle::colored_minivox_list->tick();
+        Particle::textured_minivox_list->tick();
+        Particle::billboard_text_list->tick();
+        Particle::billboard_text_hud_list->tick();
     }
 
     void update_for_draw()

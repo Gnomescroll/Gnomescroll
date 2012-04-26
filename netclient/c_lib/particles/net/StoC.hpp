@@ -5,7 +5,7 @@
 //#include <net_lib/t_item/net/CtoSs.hpp>
 //#include <c_lib/t_item/free_item.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 /*

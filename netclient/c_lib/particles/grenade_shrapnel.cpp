@@ -3,7 +3,7 @@
 #include <physics/common.hpp>
 #include <c_lib/agent/net_agent.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -84,7 +84,7 @@ void Grenade_shrapnel::tick()
 
 /* Grenade_shrapnel list */
 
-namespace Particles
+namespace Particle
 {
 
 void Grenade_shrapnel_list::tick()

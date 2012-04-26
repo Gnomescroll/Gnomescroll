@@ -62,7 +62,7 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = Particles::billboard_text_hud_list->create();
+        this->bb = Particle::billboard_text_hud_list->create();
         if (this->bb == NULL) return;
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
@@ -77,7 +77,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
-    Particles::BillboardText* b = Particles::billboard_text_list->create(
+    Particle::BillboardText* b = Particle::billboard_text_list->create(
     );
     if (b==NULL) return;
     b->set_state(

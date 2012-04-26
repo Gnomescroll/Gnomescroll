@@ -6,7 +6,7 @@
 
 #include <c_lib/particles/particles.hpp>
 #include <c_lib/particles/billboard_sprite.hpp>
-namespace Particles
+namespace Particle
 {
 
 
@@ -48,7 +48,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
 
 }
 
-namespace Particles
+namespace Particle
 {
 
 #include <c_lib/common/template/object_list.hpp>

@@ -176,7 +176,7 @@ int run()
             Prep for draw
         */
         Animations::prep_insect_mob();
-        Particles::prep_shrapnel();
+        Particle::prep_shrapnel();
 
         /*
             Map
@@ -197,7 +197,7 @@ int run()
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
-        Particles::colored_minivox_list->draw();
+        Particle::colored_minivox_list->draw();
         //Draw::colored_minivox_list->draw();   // new entity system registries
         Components::colored_voxel_component_list->call();
         glEnd();
@@ -207,7 +207,7 @@ int run()
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
         glBegin(GL_QUADS);
 
-        Particles::textured_minivox_list->draw();
+        Particle::textured_minivox_list->draw();
         //Draw::textured_minivox_list->draw();
         Components::textured_voxel_component_list->call();
 
@@ -234,26 +234,26 @@ int run()
             Transparent
         */
 
-        Particles::billboard_text_list->draw();
+        Particle::billboard_text_list->draw();
         
         Animations::draw_insect_mob();
 
-        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
+        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
         
         glEnable(GL_TEXTURE_2D);
 
         //t_item::draw();
         
-        Particles::item_particle_list->draw();
+        Particle::item_particle_list->draw();
         //begin_item_draw();
         //Components::billboard_sprite_component_list->call();
         //end_item_draw();
 
-        Particles::begin_particle_draw();
-        Particles::grenade_list->draw();
-        Particles::blood_list->draw();
-        Particles::end_particle_draw();
+        Particle::begin_particle_draw();
+        Particle::grenade_list->draw();
+        Particle::blood_list->draw();
+        Particle::end_particle_draw();
 
         poll_mouse();
         // draw animations
@@ -262,7 +262,7 @@ int run()
         Animations::draw_mining_laser_effect();
         glDisable(GL_TEXTURE_2D);
         
-        Particles::billboard_text_list->draw();
+        Particle::billboard_text_list->draw();
 
         // update mouse
         poll_mouse();

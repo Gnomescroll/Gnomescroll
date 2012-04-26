@@ -8,7 +8,7 @@
 #define BILLBOARD_TEXT_DAMP 0.2f
 #define BILLBOARD_TEXT_TEXTURE_SCALE 0.2f
 
-namespace Particles
+namespace Particle
 {
 
 
@@ -42,7 +42,7 @@ class BillboardText: public ParticleMotion
 
 #include <c_lib/common/template/object_list.hpp>
 
-namespace Particles
+namespace Particle
 {
 
 class BillboardText_list: public Object_list<BillboardText, BILLBOARD_TEXT_MAX>
