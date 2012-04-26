@@ -7,28 +7,25 @@
 
 #if DC_SERVER
     #include <c_lib/t_item/net/StoC.hpp>
-    #include <c_lib/t_item/item_container.hpp>
 #endif
 
 #include <c_lib/physics/verlet_particle.hpp>
-#include <c_lib/entity/constants.hpp>
 
 namespace t_item
 {
 
 using VerletParticle::VerletParticle;
 
-const int FREE_ITEM_TTL = 300; // 10 seconds
-const float FREE_ITEM_DAMPENING = 0.5;
+const int ITEM_PARTICLE_TTL = 300; // 10 seconds
+const float ITEM_PARTICLE_DAMPENING = 0.5;
 
-class Free_item //: public VerletComponent
+class ItemParticle //: public VerletComponent
 {
-    private:
     public:
         VerletParticle verlet;
 
         int id;
-        ObjectType type;
+        int item_id
 
         int ttl;
 
@@ -43,10 +40,10 @@ class Free_item //: public VerletComponent
 
     void draw();
 
-    explicit Free_item(int id)
-    : id(id), type(OBJECT_NONE), ttl(FREE_ITEM_TTL)
+    explicit ItemParticle(int id)
+    : id(id), ttl(ITEM_PARTICLE_TTL)
     {
-        verlet.dampening = FREE_ITEM_DAMPENING;
+        verlet.dampening = ITEM_PARTICLE_DAMPENING;
     }
 
     void init(float x, float y, float z, float mx, float my, float mz)
@@ -58,7 +55,7 @@ class Free_item //: public VerletComponent
     }
 };
 
-void Free_item::draw()
+void ItemParticle::draw()
 {
     #if DC_CLIENT
     const float scale = 0.25;
@@ -110,21 +107,17 @@ void Free_item::draw()
 
 #include <c_lib/template/object_list.hpp>
 
-#if DC_SERVER
-#include <c_lib/state/server_state.hpp>
-#endif
-
 namespace t_item
 {
 
-const int FREE_ITEM_MAX = 1024;
+const int ITEM_PARTICLE_MAX = 1024;
 
-class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
+class ItemParticle_list: public Object_list<ItemParticle, ITEM_PARTICLE_MAX>
 {
     private:
-        const char* name() { return "Free_item"; }
+        const char* name() { return "ItemParticle"; }
     public:
-        Free_item_list() { print_list((char*)this->name(), this); }
+        ItemParticle_list() { print_list((char*)this->name(), this); }
 
         void draw();
         void tick();
@@ -132,7 +125,7 @@ class Free_item_list: public Object_list<Free_item, FREE_ITEM_MAX>
         void check_item_pickups();
 };
 
-void Free_item_list::draw()
+void ItemParticle_list::draw()
 {
     #if DC_CLIENT
     glColor3ub(255,255,255);
@@ -161,20 +154,20 @@ void Free_item_list::draw()
     #endif
 }
 
-void Free_item_list::tick()
+void ItemParticle_list::tick()
 {
-    Free_item* free_item;
+    ItemParticle* ip;
     for (int i=0; i<this->n_max; i++)
     {
         if (this->a[i] == NULL) continue;
-        free_item = this->a[i];
+        ip = this->a[i];
 
-        free_item->tick();
-        if (free_item->ttl <= 0)
+        ip->tick();
+        if (ip->ttl <= 0)
         {
             #if DC_SERVER
-            free_item->die();
-            this->destroy(free_item->id);
+            ip->die();
+            this->destroy(ip->id);
             #endif
         }
     }
