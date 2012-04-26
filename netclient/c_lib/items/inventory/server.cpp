@@ -14,7 +14,7 @@ void Inventory::sendContentsToClient(int client_id)
         msg.inventory_id = this->id;
         msg.id = this->objects[i].item_id;
         msg.type = this->objects[i].item_type;
-        msg.stack = this->objects[i].stack.count;
+        msg.stack = this->objects[i].count;
         msg.slot = i;
         msg.sendToClient(client_id);
     }

@@ -2,12 +2,6 @@
 
 #include <c_lib/entity/constants.hpp>
 
-typedef struct Stack
-{
-    int count;
-    int max;
-} Stack;
-
 const int EMPTY_SLOT = 65535;
 class InventorySlot
 {
@@ -15,7 +9,7 @@ class InventorySlot
         int item_id;
         ObjectType item_type;
         int slot;
-        Stack stack;
+        int count;
 
         bool empty()
         {
@@ -38,12 +32,11 @@ class InventorySlot
     InventorySlot()
     :
     item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
-    slot(-1)    // slot is set after allocation
+    slot(-1),    // slot is set after allocation
+    count(1)
     #if DC_CLIENT
     , sprite_index(0)
     #endif
     {
-        this->stack.max = 1;
-        this->stack.count = 0;
     }
 };

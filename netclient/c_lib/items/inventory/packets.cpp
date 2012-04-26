@@ -42,7 +42,7 @@ inline void add_item_to_inventory_StoC::handle()
         printf("WARNING: add_item_to_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
         return;
     }
-    obj->add(id, (ObjectType)type, stack, slot); /// TODO -- GET STACK MAX FROM ITEM_TYPE
+    obj->add(id, (ObjectType)type, stack, slot);
 }
 
 inline void remove_item_from_inventory_StoC::handle()
@@ -75,7 +75,7 @@ inline void swap_item_between_inventory_StoC::handle()
     if (invb == NULL) return;
 
     InventorySlot* item = inva->get_item(slota);
-    invb->add(item->item_id, item->item_type, item->stack.count, slotb);
+    invb->add(item->item_id, item->item_type, item->count, slotb);
     inva->remove(slota);
 }
 
@@ -188,7 +188,7 @@ inline void swap_item_between_inventory_CtoS::handle()
     InventorySlot* item = inva->get_item(slota);
     if (!invb->can_add(item->item_type, slotb)) return;
 
-    if (!invb->add(item->item_id, item->item_type, item->stack.count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
+    if (!invb->add(item->item_id, item->item_type, item->count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
     if (!inva->remove(slota)) printf("ERROR REMOVING ITEM!!\n");
 
     swap_item_between_inventory_StoC msg;
