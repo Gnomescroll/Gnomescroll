@@ -217,30 +217,6 @@ void check_item_pickups()
 #endif
 }
 
-void create_item_particle(int item_type, 
-    float x, float y, float z, 
-    float vx, float vy, float vz)
-{
-#if 0
-    Free_item* f = item_particle_list->create();
-    if(f == NULL) return;
-    f->init(x,y,z,vx,vy,vz);
-
-    class item_particle_create_StoC p;
-
-    p.type = 0;
-    p.id = f->id;
-    p.x = x;
-    p.y = y;
-    p.z = z;
-    p.mx = vx;
-    p.my = vy;
-    p.mz = vz;
-
-    p.broadcast();
-#endif
-}
-
 }
 
 #endif 

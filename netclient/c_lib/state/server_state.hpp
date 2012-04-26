@@ -31,8 +31,6 @@ namespace ServerState
         bool suicidal=true
     );
 
-    void server_tick() GNOMESCROLL_API;
-
     void send_initial_game_state_to_client(int client_id);
     void send_remainining_game_state_to_client(int client_id);
 

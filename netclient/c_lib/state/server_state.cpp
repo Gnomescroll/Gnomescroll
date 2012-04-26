@@ -24,12 +24,6 @@ namespace ServerState
 
     4 times per second per client.  Maybe too fast?
 */
-    void server_tick()
-    {   
-        static unsigned int counter = 0;
-        counter++;
-    
-    }
     
     void init_lists()
     {

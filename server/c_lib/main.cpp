@@ -26,7 +26,7 @@ void init()
 
 }
 
-int tick()
+void tick()
 {
     static int counter = 0; counter ++;
 
@@ -73,7 +73,7 @@ int run()
 {
     //int tick = 0;
     int tc;
-    
+
     while (1)
     {
         tc = 0;
