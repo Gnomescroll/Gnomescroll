@@ -218,6 +218,7 @@ void RegisterMessages() {
     swap_item_between_inventory_StoC::register_client_packet();
     merge_stack_in_inventory_StoC::register_client_packet();
     merge_stack_between_inventory_StoC::register_client_packet();
+    set_stack_inventory_StoC::register_client_packet();
 
     // client actions
     add_item_to_inventory_CtoS::register_server_packet();

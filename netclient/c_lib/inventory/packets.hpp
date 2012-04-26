@@ -150,6 +150,23 @@ class merge_stack_between_inventory_StoC: public FixedSizeReliableNetPacketToCli
     inline void handle();
 };
 
+class set_stack_inventory_StoC: public FixedSizeReliableNetPacketToClient<set_stack_inventory_StoC>
+{
+    public:
+        uint16_t inventory_id;
+        uint8_t slot;
+        uint8_t count;
+
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+        pack_u16(&inventory_id, buff, buff_n, pack);
+        pack_u8(&slot, buff, buff_n, pack);
+        pack_u8(&count, buff, buff_n, pack);
+    }
+    inline void handle();
+};
+
+
 
 /* CtoS */
 
@@ -257,5 +274,4 @@ class merge_stack_between_inventory_CtoS: public FixedSizeReliableNetPacketToSer
     }
     inline void handle();
 };
-
 

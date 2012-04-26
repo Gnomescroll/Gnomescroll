@@ -148,5 +148,26 @@ void Inventory::broadcastMergeStack(int slota, int slotb, int count)
     msg.broadcast();
 }
 
+void Inventory::sendToClientSetStack(int slot, int count)
+{
+    Agent_state* agent = ServerState::agent_list->get(this->owner);
+    if (agent == NULL) return;
+    set_stack_inventory_StoC msg;
+    msg.inventory_id = this->id;
+    msg.slot = slot;
+    msg.count = count;
+    msg.sendToClient(agent->client_id);
+}
+
+void Inventory::broadcastSetStack(int slot, int count)
+{
+    set_stack_inventory_StoC msg;
+    msg.inventory_id = this->id;
+    msg.slot = slot;
+    msg.count = count;
+    msg.broadcast();
+}
+
+
 
 #endif

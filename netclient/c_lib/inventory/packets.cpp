@@ -101,12 +101,20 @@ inline void merge_stack_between_inventory_StoC::handle()
     inva->remove_stack(slota, count);
 }
 
+inline void set_stack_inventory_StoC::handle()
+{
+    Inventory* inv = Items::get_inventory(this->inventory_id);
+    if (inv == NULL) return;
+    inv->set_stack(slot, count);
+}
+
 inline void add_item_to_inventory_CtoS::handle() {}
 inline void remove_item_from_inventory_CtoS::handle() {}
 inline void swap_item_in_inventory_CtoS::handle() {}
 inline void swap_item_between_inventory_CtoS::handle() {}
 inline void merge_stack_in_inventory_CtoS::handle() {}
 inline void merge_stack_between_inventory_CtoS::handle() {}
+
 #endif
 
 #if DC_SERVER
@@ -118,6 +126,7 @@ inline void swap_item_in_inventory_StoC::handle() {}
 inline void swap_item_between_inventory_StoC::handle() {}
 inline void merge_stack_in_inventory_StoC::handle() {}
 inline void merge_stack_between_inventory_StoC::handle() {}
+inline void set_stack_inventory_StoC::handle() {}
 
 inline void add_item_to_inventory_CtoS::handle()
 {
@@ -130,8 +139,6 @@ inline void add_item_to_inventory_CtoS::handle()
     Inventory* inv = Items::get_inventory(this->inventory_id);
     if (inv == NULL) return;
     if (inv->owner != agent->id) return;
-    //ObjectPolicyInterface* obj = ServerState::object_list->get((ObjectType)type, id);
-    //if (obj == NULL) return;    // TODO -- make sure this object will exist in this use case!!
     const int stack_size = 1;
     inv->add_action(id, (ObjectType)type, stack_size, slot);
 }

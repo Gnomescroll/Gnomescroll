@@ -617,7 +617,7 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
 #if DC_SERVER
 bool Agent_status::gain_stack_item(ObjectType type, int id, int stack_size)
 {
-    return this->inventory->add_action(id, type, stack_size);
+    return this->inventory->auto_add_action(id, type, stack_size);
 }
 #endif
 

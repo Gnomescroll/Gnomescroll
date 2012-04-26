@@ -15,16 +15,30 @@ class Inventory: public BaseInventory
 {
     public:
 
-        bool add_action(int id, ObjectType type, int stack_size)
+        bool auto_add_action(int id, ObjectType type, int stack_size)
         {
-            int slot = this->get_empty_slot();
-            bool added = this->add_action(id, type, stack_size, slot);
-            if (!added) return false;
-            if (owner != NO_AGENT)
-                this->sendToClientAdd(id, type, stack_size, slot);
+            int slot = this->get_slot_for_stack(type, stack_size);
+
+            if (this->is_valid_slot(slot))
+            {   // add to a stack
+                this->add_stack(slot, stack_size);
+                stack_size = this->objects[slot].count;
+                if (owner != NO_AGENT)
+                    this->sendToClientSetStack(slot, stack_size);
+                else
+                    this->broadcastSetStack(slot, stack_size);
+            }
             else
-                this->broadcastAdd(id, type, stack_size, slot);
-            return added;
+            {   // add normally
+                slot = this->get_empty_slot();
+                if (slot < 0) return false;
+                this->add(id, type, stack_size, slot);
+                if (owner != NO_AGENT)
+                    this->sendToClientAdd(id, type, stack_size, slot);
+                else
+                    this->broadcastAdd(id, type, stack_size, slot);
+            }
+            return true;
         }
 
         bool add_action(int id, ObjectType type, int stack_size, int slot)
@@ -35,7 +49,7 @@ class Inventory: public BaseInventory
                 this->sendToClientAdd(id, type, stack_size, slot);
             else
                 this->broadcastAdd(id, type, stack_size, slot);
-            return added;
+            return true;
         }
 
         bool remove_action(int slot)
@@ -91,6 +105,8 @@ class Inventory: public BaseInventory
         void broadcastSwap(int slota, int slotb);
         void sendToClientMergeStack(int slota, int slotb, int count);
         void broadcastMergeStack(int slota, int slotb, int count);
+        void sendToClientSetStack(int slot, int count);
+        void broadcastSetStack(int slot, int count);
 
     explicit Inventory(int id)
     : BaseInventory(id)

@@ -118,8 +118,7 @@ void swap_within_event(int inventory_id, int slota, int slotb)
     InventorySlot* itemb = inv->get_item(slotb);
     assert(itema != NULL && itemb != NULL);
 
-    const int STACK_MAX = 5;
-    int stack_space = STACK_MAX - itemb->count;
+    int stack_space = STACK_SIZE_MAX - itemb->count;
     int stack_avail = itema->count;
     int count = (stack_avail > stack_space) ? stack_space : stack_avail;
 
@@ -145,8 +144,7 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
     InventorySlot* itemb = invb->get_item(slotb);
     assert(itema != NULL && itemb != NULL);
 
-    const int STACK_MAX = 5;
-    int stack_space = STACK_MAX - itemb->count;
+    int stack_space = STACK_SIZE_MAX - itemb->count;
     int stack_avail = itema->count;
     int count = (stack_avail > stack_space) ? stack_space : stack_avail;
     if (stack_avail && stack_space > 0                             // there is room to merge

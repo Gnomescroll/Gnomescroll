@@ -1,6 +1,7 @@
 #pragma once
 
 #include <c_lib/entity/constants.hpp>
+#include <c_lib/inventory/constants.hpp>
 #include <c_lib/inventory/packets.hpp>
 #include <c_lib/inventory/slot.hpp>
 
@@ -50,6 +51,20 @@ class BaseInventory
             for (int i=0; i<this->max; i++)
                 if (this->objects[i].empty())
                     return i;
+            return -1;
+        }
+
+        // returns slot to stack on if exists
+        int get_slot_for_stack(ObjectType type, int stack_size)
+        {
+            // look for matching
+            for (int i=0; i<this->max; i++)
+            {
+                if (this->objects[i].empty()) continue;
+                if (this->objects[i].item_type != type) continue;
+                int avail = STACK_SIZE_MAX - this->objects[i].count;
+                if (stack_size <= avail) return i;
+            }
             return -1;
         }
 
@@ -108,6 +123,14 @@ class BaseInventory
             if (!this->objects[slot].empty()) return false;
             return true;
         }
+        
+        bool can_add(ObjectType type, int slot, int stack_size)
+        {
+            if (!this->type_allowed(type)) return false;
+            if (!this->is_valid_slot(slot)) return false;
+            if (!this->objects[slot].empty()) return false;
+            return true;
+        }
 
         bool can_remove(int slot)
         {
@@ -141,8 +164,7 @@ class BaseInventory
             if (item->item_type != type) return false; // only merge same type items
             // TODO -- check stack maximum allowed
             // assume 64
-            const int STACK_MAX = 5;
-            if (item->count + count > STACK_MAX) return false;
+            if (item->count + count > STACK_SIZE_MAX) return false;
             return true;
         }
 
@@ -154,13 +176,6 @@ class BaseInventory
         }
 
         /* State transactions */
-
-        bool add(int id, ObjectType type, int stack_size)
-        {
-            int slot = this->get_empty_slot();
-            if (slot < 0) return false;
-            return this->add(id, type, stack_size, slot);
-        }
 
         bool add(int id, ObjectType type, int stack_size, int slot)
         {
@@ -202,6 +217,14 @@ class BaseInventory
             if (!this->is_valid_slot(slotb)) return false;
             this->add_stack(slotb, stack_size);
             this->remove_stack(slota, stack_size);
+            return true;
+        }
+
+        bool set_stack(int slot, int stack_size)
+        {
+            if (!this->is_valid_slot(slot)) return false;
+            if (stack_size <= 0) return false;
+            this->objects[slot].count = stack_size;
             return true;
         }
 

@@ -11,3 +11,6 @@ const int CRAFTING_BENCH_Y = 4;
 
 const int NANITE_INVENTORY_X = 2;
 const int NANITE_INVENTORY_Y = 1;
+
+
+const int STACK_SIZE_MAX = 5;
