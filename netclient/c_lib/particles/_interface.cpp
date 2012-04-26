@@ -4,6 +4,8 @@
 #include <c_lib/particles/grenade.hpp>
 #include <c_lib/particles/item_particle.hpp>
 
+#include <c_lib/particles/net/StoC.hpp>
+
 #if DC_CLIENT
 #include <c_lib/particles/shrapnel.hpp>
 #include <c_lib/particles/blood.hpp>
@@ -97,17 +99,13 @@ GLuint particle_texture = 0;
 
 void draw_init() 
 {
-    int i = create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
-    if (i)
-    {
-        printf("Particles::init_for_draw failed with code %d\n", i);
-    }
+    init_item_particle();
+    create_texture_from_file((char*) "./media/texture/particles_01.png", &particle_texture);
 }
 
 void draw_teardown()
 {
-
-
+    teardown_item_particle();
 }
 
 void begin_particle_draw()
@@ -156,18 +154,18 @@ class ItemParticle* create_item_particle(int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz)
 {
-    ip* f = item_particle_list->create();
-    if(f == NULL)
+    ItemParticle* ip = item_particle_list->create();
+    if(ip == NULL)
     { 
         printf("Error: cannot create item particle \n");
-        return; 
+        return NULL; 
     }
-    f->init(x,y,z,vx,vy,vz);
+    ip->init(x,y,z,vx,vy,vz);
 
     class item_particle_create_StoC p;
 
     p.type = 0;
-    p.id = f->id;
+    p.id = ip->id;
     p.x = x;
     p.y = y;
     p.z = z;
@@ -176,6 +174,8 @@ class ItemParticle* create_item_particle(int item_type,
     p.mz = vz;
 
     p.broadcast();
+
+    return ip;
 }
 
 #endif

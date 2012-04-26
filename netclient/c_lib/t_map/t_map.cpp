@@ -23,11 +23,15 @@
     #include <c_lib/common/random.h>
     #include <c_lib/physics/vec3.hpp>
 
+    #include <c_lib/particles/_interface.hpp>
+
+/*
     #include <c_lib/entity/constants.hpp>
     #include <c_lib/entity/objects.hpp>
     #include <c_lib/entity/object/object.hpp>
     #include <c_lib/entity/components.hpp>
     #include <c_lib/entity/components/physics.hpp>
+*/
 
     //#include <c_lib/t_item/_interface.hpp>
 
@@ -113,6 +117,7 @@ int apply_damage(int x, int y, int z, int dmg)
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)
 {
+#if 0
     //const float drop_probability = 0.3f;
     const float drop_probability = 1.0f;
     float p = randf();
@@ -159,6 +164,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
     }
     Objects::ready(obj);
+#endif
 }
 
 // apply block damage & broadcast the update to client
@@ -174,9 +180,8 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.val = res;
     msg.action = action;
     msg.broadcast();
-#if 1
 
-#if 1
+#if 0
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else
@@ -193,14 +198,13 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
             x+0.5f+randf(), y+0.5f+randf(), z+0.5f+randf(), 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     */
-        t_item::create_free_item(0, 
+        Particles::create_item_particle(0, 
             _x, _y, _z, 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 
     }
 #endif
 
-#endif
 
 }
 #endif

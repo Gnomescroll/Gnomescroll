@@ -22,8 +22,7 @@ static void agent_inventory_received(Inventory* inventory)
     assert(a != NULL); // this function should not be called if the owner did not exist
 
     // attach to agent status
-    if (a->status.inventory != NULL)
-        printf("WARNING: reassigned agent inventory\n");
+    if (a->status.inventory != NULL) printf("WARNING: reassigned agent inventory\n");
     a->status.inventory = inventory;
 
     // attach to global pointer
@@ -121,14 +120,14 @@ void swap_within_event(int inventory_id, int slota, int slotb)
 
     const int STACK_MAX = 5;
     int stack_space = STACK_MAX - itemb->count;
-    if (stack_space > 0                             // there is room to merge
+    int stack_avail = itema->count;
+    int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+
+    if (stack_avail && stack_space > 0                // there is room to merge
         && !itema->empty() && !itemb->empty()       // neither are empty
         && itema->item_type == itemb->item_type     // items match
-    ) {   // merge
-        int stack_avail = itema->count;
-        int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+    )   // merge
         inv->merge_stack_action(slota, slotb, count);
-    }  
     else   // swap
         inv->swap_action(slota, slotb);
 }
@@ -148,13 +147,12 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
 
     const int STACK_MAX = 5;
     int stack_space = STACK_MAX - itemb->count;
-    if (stack_space > 0                             // there is room to merge
+    int stack_avail = itema->count;
+    int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+    if (stack_avail && stack_space > 0                             // there is room to merge
         && !itema->empty() && !itemb->empty()       // neither are empty
         && itema->item_type == itemb->item_type     // items match
     ) {   // merge
-        int stack_avail = itema->count;
-        int count = (stack_avail > stack_space) ? stack_space : stack_avail;
-
         if (!invb->can_add_stack(itema->item_type, slotb, count)) return;
         if (!inva->can_remove_stack(slota, count)) return;
 

@@ -8,11 +8,6 @@
 namespace Objects
 {
 
-void load_grenade_refill_data()
-{
-    load_refill_data(OBJECT_GRENADE_REFILL);
-}
-
 // private
 static void set_grenade_refill_properties(Object* object)
 {   // attach components
@@ -45,61 +40,16 @@ static void set_grenade_refill_properties(Object* object)
     TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
     health->ttl_max = REFILL_ITEM_TTL;
 
-    object->tick = &tick_grenade_refill;
+    object->tick = &tick_pickup_sprite;
     //object->update = NULL;
 
     object->create = create_packet_momentum;
     object->state = state_packet_momentum;
 }
 
-Object* create_grenade_refill()
+void create_grenade_refill(Object* object)
 {
-    // initialize object
-    ObjectType type = OBJECT_GRENADE_REFILL;
-    Object* obj = object_list->create(type);
-    if (obj == NULL) return NULL;
-    set_grenade_refill_properties(obj);
-    return obj;
+    set_grenade_refill_properties(object);
 }
-
-void ready_grenade_refill(Object* object)
-{
-    #if DC_SERVER
-    object->broadcastCreate();
-    #endif
-}
-
-void die_grenade_refill(Object* object)
-{
-    #if DC_SERVER
-    using Components::PickupComponent;
-    PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->broadcast();
-    #endif
-}
-
-void tick_grenade_refill(Object* object)
-{
-    using Components::VerletPhysicsComponent;
-    using Components::PickupComponent;
-    using Components::TTLHealthComponent;
-    
-    // update for physics
-    VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);
-    verlet->bounce();
-
-    #if DC_SERVER
-    PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->tick();
-    #endif
-
-    TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
-    ttl->tick();
-}
-
-//void update_grenade_refill(Object* object)
-//{
-    // update for draw
-//}
 
 } // Objects

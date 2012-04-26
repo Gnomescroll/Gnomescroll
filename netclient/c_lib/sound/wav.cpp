@@ -184,7 +184,7 @@ bool read_wav_data(FILE* f, WavData* data, unsigned char** buffer)
         if (read != 4)
             return false;
 
-        printf("subchunk label= %s\n", metadata.buffer);
+        //printf("subchunk label= %s\n", metadata.buffer);
 
         if (strcmp(metadata.buffer, "data") == 0)
             break;

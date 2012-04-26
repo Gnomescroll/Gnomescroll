@@ -1,6 +1,6 @@
 #include "item_particle.hpp"
 
-#include <c_lib/t_item/net/StoC.hpp>
+#include <c_lib/particles/net/StoC.hpp>
 
 namespace Particles
 {
@@ -48,7 +48,7 @@ void teardown_item_particle()
 void ItemParticle::die()
 {
     #if DC_SERVER
-    class free_item_destroy_StoC msg;
+    class item_particle_destroy_StoC msg;
     msg.id = this->id;
     msg.broadcast();
     #endif
