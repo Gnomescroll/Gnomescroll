@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace t_item
+namespace Item
 {
 
 
@@ -135,7 +135,7 @@ class ItemContainer
 
 #include <c_lib/template/object_list.hpp>
 
-namespace t_item
+namespace Item
 {
 
 const int ITEM_CONTAINER_MAX = 1024;

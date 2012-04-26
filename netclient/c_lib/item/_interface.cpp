@@ -1,18 +1,18 @@
 #include "_interface.hpp"
 
-//#include <c_lib/t_item/list.hpp>
+//#include <c_lib/item/list.hpp>
 
-//#include <c_lib/t_item/free_item.hpp>
-#include <c_lib/t_item/item_container.hpp>
-#include <c_lib/t_item/item.hpp>
+//#include <c_lib/item/free_item.hpp>
+#include <c_lib/item/item_container.hpp>
+#include <c_lib/item/item.hpp>
 
-#include <c_lib/t_item/net/StoC.hpp>
+#include <c_lib/item/net/StoC.hpp>
 
 #if DC_CLIENT
 #include <c_lib/input/handlers.hpp>
 #endif
 
-namespace t_item
+namespace Item
 {
 
 //Free_item_list* free_item_list = NULL;
@@ -48,7 +48,7 @@ CLIENT
 */
 #if DC_CLIENT
 
-namespace t_item
+namespace Item
 {
     int player_inventory_id = -1;   //store id of player inventory
     int player_toolbelt_id = -1;   //store id of player inventory
@@ -78,7 +78,7 @@ SERVER
 */
 #if DC_SERVER
 
-namespace t_item
+namespace Item
 {
 
 //const int NO_AGENT = 0xffff;
@@ -157,12 +157,12 @@ void delete_agent_toolbelt(int agent_id)
 */
 void create_agent_nanite(int agent_id, int client_id)
 {
-    printf("inplement: t_item::create_agent_nanite \n");
+    printf("inplement: item::create_agent_nanite \n");
 }
 
 void delete_agent_nanite(int agent_id)
 {
-    printf("inplement: t_item::delete_agent_nanite \n");
+    printf("inplement: item::delete_agent_nanite \n");
 }
 
 
@@ -186,7 +186,7 @@ void check_item_pickups()
         p1.agent_id = agent->id;
         p1.broadcast();
 
-        t_item::item_particle_list->destroy(item_particle->id);
+        item::item_particle_list->destroy(item_particle->id);
 
 
         /*
@@ -199,14 +199,14 @@ void check_item_pickups()
         
         if(ic == 0)
         {
-            printf("t_item::check_item_pickups, item container null \n");
+            printf("item::check_item_pickups, item container null \n");
             return;
         }
 
         //int slot = ic->get_empty_slot();
         if( ic->is_full() )
         {
-            printf("t_item::check_item_pickups, Agent inventory full: item deleted, fix \n");
+            printf("item::check_item_pickups, Agent inventory full: item deleted, fix \n");
             return;
         }
 

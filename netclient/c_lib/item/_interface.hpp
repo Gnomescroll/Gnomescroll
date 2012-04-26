@@ -2,7 +2,7 @@
 
 
 
-namespace t_item
+namespace Item
 {
 
 
@@ -27,7 +27,7 @@ CLIENT
 */
 #if DC_CLIENT
 
-namespace t_item
+namespace Item
 {
     extern int player_inventory_id;
     extern int player_toolbelt_id;
@@ -56,7 +56,7 @@ SERVER
 */
 #if DC_SERVER
 
-namespace t_item
+namespace Item
 {
 
 const int NO_AGENT = 0xffff;

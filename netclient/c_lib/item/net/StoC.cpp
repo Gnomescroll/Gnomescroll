@@ -10,7 +10,7 @@
 //#include <c_lib/animations/_interface.hpp>
 #endif
 
-namespace t_item
+namespace Item
 {
 
 
