@@ -121,19 +121,17 @@ void swap_within_event(int inventory_id, int slota, int slotb)
     assert(itema != NULL && itemb != NULL);
 
     const int STACK_MAX = 64;
-    if (!itema->empty() && itema->item_type == itemb->item_type)
-    {   // attempt merge
-        int stack_space = STACK_MAX - itema->count;
-        if (stack_space > 0)
-        {   // merging
-            int stack_avail = itemb->count;
-            int count = (stack_avail > stack_space) ? stack_space : stack_avail;
-            inv->merge_stack_action(slota, slotb, count);
-            return;
-        }
-    }
-    // else
-    inv->swap_action(slota, slotb);
+    int stack_space = STACK_MAX - itemb->count;
+    if (stack_space > 0                             // there is room to merge
+        && !itema->empty() && !itemb->empty()       // neither are empty
+        && itema->item_type == itemb->item_type     // items match
+    ) {   // merge
+        int stack_avail = itema->count;
+        int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+        inv->merge_stack_action(slota, slotb, count);
+    }  
+    else   // swap
+        inv->swap_action(slota, slotb);
 }
 
 void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slotb)
@@ -143,18 +141,44 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
     Inventory* invb = Items::get_inventory(inventory_idb);
     if (invb == NULL) return;
 
+    // decide if a swap or a merge
 
-    if (!inva->can_remove(slota)) return;
-    InventorySlot* item = inva->get_item(slota);
-    if (item == NULL) return;
-    if (!invb->can_add(item->item_type)) return;
+    InventorySlot* itema = inva->get_item(slota);
+    InventorySlot* itemb = invb->get_item(slotb);
+    assert(itema != NULL && itemb != NULL);
 
-    swap_item_between_inventory_CtoS msg;
-    msg.inventorya = inventory_ida;
-    msg.slota = slota;
-    msg.inventoryb = inventory_idb;
-    msg.slotb = slotb;
-    msg.send();
+    const int STACK_MAX = 64;
+    int stack_space = STACK_MAX - itemb->count;
+    if (stack_space > 0                             // there is room to merge
+        && !itema->empty() && !itemb->empty()       // neither are empty
+        && itema->item_type == itemb->item_type     // items match
+    ) {   // merge
+        int stack_avail = itema->count;
+        int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+
+        if (!invb->can_add_stack(itema->item_type, slotb, count)) return;
+        if (!inva->can_remove_stack(slota, count)) return;
+
+        merge_stack_between_inventory_CtoS msg;
+        msg.inventorya = inventory_ida;
+        msg.slota = slota;
+        msg.inventoryb = inventory_idb;
+        msg.slotb = slotb;
+        msg.count = count;
+        msg.send();
+    }  
+    else
+    {
+        if (!inva->can_remove(slota)) return;
+        if (!invb->can_add(itema->item_type)) return;
+
+        swap_item_between_inventory_CtoS msg;
+        msg.inventorya = inventory_ida;
+        msg.slota = slota;
+        msg.inventoryb = inventory_idb;
+        msg.slotb = slotb;
+        msg.send();
+    }
 }
 
 void process_inventory_events()
