@@ -131,10 +131,15 @@ void AgentInventoryUI::draw()
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
-        const float tx_min = (1.0/8.0)*(tex_id % 8);
-        const float ty_min = (1.0/8.0)*(tex_id / 8);
-        const float tx_max = tx_min + 1.0/8.0;
-        const float ty_max = ty_min + 1.0/8.0;
+        //const float iw = 8.0f; // icon_width
+        //const int iiw = 8; // integer icon width
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+        
+        const float tx_min = (1.0/iw)*(tex_id % iiw);
+        const float ty_min = (1.0/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
 
         glTexCoord2f( tx_min, ty_min );
         glVertex2f(x,y+w);

@@ -18,7 +18,8 @@ void init_texture()
     GLuint format = GL_RGBA;
 
     // Texture 1
-    s = create_surface_from_file((char*) "media/sprites/i00.png");
+    //s = create_surface_from_file((char*) "media/sprites/i00.png");    // this is 8x8
+    s = create_surface_from_file((char*) "media/sprites/i01_256.png");      // this is 16x16
 
     if(s == NULL)
     {
