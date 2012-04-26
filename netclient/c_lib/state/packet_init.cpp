@@ -10,11 +10,11 @@
 #include <t_map/net/t_CtoS.hpp>
 #include <t_map/net/t_StoC.hpp>
 
-#include <t_item/net/CtoS.hpp>
-#include <t_item/net/StoC.hpp>
-
 #include <particle/net/CtoS.hpp>
 #include <particle/net/StoC.hpp>
+
+#include <item/net/CtoS.hpp>
+#include <item/net/StoC.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
@@ -57,20 +57,17 @@ void RegisterMessages() {
     Particle::item_particle_destroy_StoC::register_client_packet();
     Particle::item_particle_picked_up_StoC::register_client_packet();
 
-    /* t_item*/
-    t_item::free_item_create_StoC::register_client_packet();
-    t_item::free_item_destroy_StoC::register_client_packet();
-    t_item::free_item_picked_up_StoC::register_client_packet();
-
-    t_item::item_create_StoC::register_client_packet();;
+    /* item*/
+/*
+    item::item_create_StoC::register_client_packet();;
     
-    t_item::assign_agent_inventory_StoC::register_client_packet();
-    t_item::assign_agent_toolbelt_StoC::register_client_packet();
-    t_item::assign_agent_nanite_StoC::register_client_packet();
+    item::assign_agent_inventory_StoC::register_client_packet();
+    item::assign_agent_toolbelt_StoC::register_client_packet();
+    item::assign_agent_nanite_StoC::register_client_packet();
 
-    t_item::swap_within_inventory_StoC::register_client_packet();
-    t_item::swap_between_inventory_StoC::register_client_packet();
-
+    item::swap_within_inventory_StoC::register_client_packet();
+    item::swap_between_inventory_StoC::register_client_packet();
+*/
     /*
         Map Messages
     */
@@ -212,6 +209,7 @@ void RegisterMessages() {
     request_remaining_state_CtoS::register_server_packet();
 
      //inventory
+    /*
     inventory_create_StoC::register_client_packet();
     inventory_destroy_StoC::register_client_packet();
     add_item_to_inventory_StoC::register_client_packet();
@@ -221,14 +219,17 @@ void RegisterMessages() {
     merge_stack_in_inventory_StoC::register_client_packet();
     merge_stack_between_inventory_StoC::register_client_packet();
     set_stack_inventory_StoC::register_client_packet();
+    */
 
     // client actions
+    /*
     add_item_to_inventory_CtoS::register_server_packet();
     remove_item_from_inventory_CtoS::register_server_packet();
     swap_item_in_inventory_CtoS::register_server_packet();
     swap_item_between_inventory_CtoS::register_server_packet();
     merge_stack_in_inventory_CtoS::register_server_packet();
     merge_stack_between_inventory_CtoS::register_server_packet();
+    */
 }
 
 }

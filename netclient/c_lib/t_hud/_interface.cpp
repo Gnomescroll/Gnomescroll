@@ -13,24 +13,13 @@ class AgentInventoryUI* agent_inventory;
 class AgentToolbeltUI* agent_toolbelt;
 
 // TODO -- TMP -- replace witha ctual types
-class AgentNanite* nanite_inventory;
+class AgentNaniteUI* nanite_inventory;
 class AgentInventoryUI* craft_bench_inventory;
 
 float mouse_x;
 float mouse_y;
 
-/*
-    Init
-*/
-void draw_init()
-{
-    init_texture();
-}
 
-void draw_teardown()
-{
-    teardown_texture();
-}
 /*
     Input Handling
 */
@@ -164,6 +153,7 @@ void null_input_event()
 
 static void draw_grabbed_icon()
 {
+#if 0
     if (active_slot == NULL_SLOT) return;
     if (active_inventory == NULL) return;
     InventorySlot* contents = Items::get_inventory_contents(active_inventory->inventory_id);
@@ -214,6 +204,7 @@ static void draw_grabbed_icon()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
+#endif
 }
 
 
@@ -255,6 +246,11 @@ void network_inventory_assignment(ObjectType type, int id)
 
 /* Main init/teardown */
 
+/*
+    Init
+*/
+
+
 void init()
 {
     agent_inventory = new AgentInventoryUI;
@@ -267,7 +263,7 @@ void init()
     agent_toolbelt->yoff = 500.0f;
     agent_toolbelt->init();
 
-    nanite_inventory = new AgentNanite;
+    nanite_inventory = new AgentNaniteUI;
     nanite_inventory->xoff = 0.0f;
     nanite_inventory->yoff = 0.0f;
     nanite_inventory->init();
@@ -281,6 +277,18 @@ void teardown()
     if (craft_bench_inventory != NULL) delete craft_bench_inventory;
 }
 
+#if DC_CLIENT
 
+void draw_init()
+{
+    init_texture();
+}
+
+void draw_teardown()
+{
+    teardown_texture();
+}
+
+#endif
 
 }

@@ -6,7 +6,7 @@
 
 class BaseInventory;
 class Agent_state;
-namespace Items
+namespace items
 {
 void init_inventory_dimensions(BaseInventory* inventory);
 void move_inventory_item_to_world(Agent_state* agent, InventorySlot* item);

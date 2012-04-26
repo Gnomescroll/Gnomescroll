@@ -2,7 +2,7 @@
 
 /* CRUD interface for inventories */
 
-namespace Items
+namespace items
 {
 
 // these will hold copies of the agent_status inventory pointers

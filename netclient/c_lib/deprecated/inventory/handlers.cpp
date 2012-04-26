@@ -10,7 +10,7 @@
 #include <inventory/interface.hpp>
 #include <inventory/inventory.hpp>
 
-namespace Items
+namespace items
 {
 
 /* Network events */

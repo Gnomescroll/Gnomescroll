@@ -2,7 +2,7 @@
 
 #include <net_lib/net.hpp>
 
-namespace Item
+namespace item
 {
 /*
 class t_item_pick_up_CtoS: public FixedSizeReliableNetPacketToServer<t_item_pick_up_CtoS>

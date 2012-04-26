@@ -7,7 +7,7 @@
 // forward decl
 class Inventory;
 
-namespace Items
+namespace items
 {
 
 // call this on netowrk inventory create

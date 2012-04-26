@@ -10,7 +10,7 @@
 #include <inventory/server.hpp>
 #endif
 
-namespace Items
+namespace items
 {
 
 // these will hold copies of the agent_status inventory pointers

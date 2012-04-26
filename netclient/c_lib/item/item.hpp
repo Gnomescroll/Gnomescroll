@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Item
+namespace item
 {
 
 class Item
@@ -8,14 +8,21 @@ class Item
     public:
 
     int id;
-    int item_type; //stack, laser, mining_laser
-    int parent_object;
+    int type; //stack, laser, mining_laser
+    int item_id;
     
-    int sprite_index;
+    int sprite_index; //temp
+
+    int durability;
+    int stack_size;
+    //int sprite_index;
 
     Item()
     {
-        item_type = 0;
+        type = 0;
+        item_id = 0;
+        durability = -1;
+        stack_size = -1;
         sprite_index = rand()%32;
     }
 
@@ -23,9 +30,9 @@ class Item
 
 }
 
-#include <template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
-namespace Item
+namespace item
 {
 
 const int ITEM_LIST_MAX = 1024;

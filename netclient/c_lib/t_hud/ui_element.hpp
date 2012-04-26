@@ -36,9 +36,7 @@ class UIElement
         stack_numbers(NULL)
         {}
     
-        virtual ~UIElement()
-        {
-        } // required of all ABCs
+        virtual ~UIElement() {} //abc virtual deconstructor
 };
 
 } // t_hud

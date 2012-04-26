@@ -74,6 +74,8 @@ int AgentInventoryUI::get_slot_at(int px, int py)
 
 void AgentInventoryUI::draw()
 {
+
+#if 0
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -278,7 +280,7 @@ void AgentInventoryUI::draw()
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
-    
+#endif
 }
 
 

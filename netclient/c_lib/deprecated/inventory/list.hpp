@@ -4,7 +4,7 @@
 
 #include <inventory/inventory.hpp>
 
-namespace Items
+namespace items
 {
 
 const int MAX_INVENTORY = 512;

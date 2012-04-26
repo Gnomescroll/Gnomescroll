@@ -74,13 +74,11 @@
 /* Items */
 #include <game/constants.hpp>
 
-#include <inventory/_include.hpp>
-
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
-/* t_item */
-#include <t_item/_include.hpp>
+/* item */
+#include <item/_include.hpp>
 
 /* Game modes */
 #include <game/flag.cpp>
@@ -153,8 +151,7 @@ int init_c_lib()
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
 
-    t_item::state_init();
-    Items::init();
+    item::init();
 
     ServerState::init();
     Particle::init_particles();
@@ -167,11 +164,10 @@ void close_c_lib()
     printf("Server closing...\n");
 
     t_map::end_t_map();
-    t_item::state_teardown();
+    item::teardown();
 
     teardown_chat_server();
 
-    Items::teardown();
     ServerState::teardown();
     Particle::teardown_particles();
 

@@ -2,7 +2,7 @@
 
 #include <agent/agent.hpp>
 
-namespace Items
+namespace items
 {
 
 void init_inventory_dimensions(class BaseInventory* inventory)

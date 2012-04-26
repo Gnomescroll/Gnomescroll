@@ -92,8 +92,6 @@
 /* Items */
 #include <game/constants.hpp>
 
-#include <inventory/_include.hpp>
-
 /* Skybox */
 #include <camera/skybox/skybox.cpp>
 
@@ -150,7 +148,7 @@
 #include <t_mech/_include.hpp>
 
 /* items */
-#include <t_item/_include.hpp>
+#include <item/_include.hpp>
 
 /* hud */
 #include <t_hud/_include.hpp>
@@ -252,8 +250,7 @@ int init_c_lib() {
     lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
-    t_item::state_init();
-    //t_item::draw_init();
+    item::init();
 
     t_hud::init();
     t_hud::draw_init();
@@ -277,7 +274,6 @@ int init_c_lib() {
     //vn::init();
 
     ClientState::init();
-    Items::init();
 
     VoxDats::init();
     init_voxel_volume();
@@ -306,8 +302,7 @@ void close_c_lib() {
  
     t_map::end_t_map();
 
-    //t_item::state_teardown();
-    //t_item::draw_teardown();
+    item::teardown();
 
     t_hud::draw_teardown();
     t_hud::teardown();
@@ -326,7 +321,6 @@ void close_c_lib() {
     HudFont::teardown();
     teardown_chat_client();
 
-    Items::teardown();
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();

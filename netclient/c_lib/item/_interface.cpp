@@ -12,7 +12,7 @@
 #include <item/net/StoC.hpp>
 #endif
 
-namespace Item
+namespace item
 {
 
 ItemContainerList* item_container_list = NULL;
@@ -20,19 +20,19 @@ ItemList* item_list = NULL;
 
 int AgentInventoryList[256];
 int AgentToolbeltList[256];
-int AgentNaniteList[256];
+int AgentNaniteUIList[256];
 
-void state_init()
+void init()
 {
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentToolbeltList[i] = NO_AGENT;
-    for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;
+    for(int i=0; i<256; i++) AgentNaniteUIList[i] = NO_AGENT;
 }
 
-void state_teardown()
+void teardown()
 {
     //if (free_item_list != NULL) delete free_item_list;
     if (item_container_list != NULL) delete item_container_list;
@@ -46,7 +46,7 @@ CLIENT
 */
 #if DC_CLIENT
 
-namespace Item
+namespace item
 {
     int player_inventory_id = -1;   //store id of player inventory
     int player_toolbelt_id = -1;   //store id of player inventory
@@ -72,7 +72,7 @@ SERVER
 */
 #if DC_SERVER
 
-namespace Item
+namespace item
 {
 
 /*

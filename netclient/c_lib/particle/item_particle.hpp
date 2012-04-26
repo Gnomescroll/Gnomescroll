@@ -2,7 +2,6 @@
 
 #if DC_CLIENT
 #include <common/gl_assert.hpp>
-#include <t_item/client/texture.hpp>
 #endif
 
 #if DC_SERVER

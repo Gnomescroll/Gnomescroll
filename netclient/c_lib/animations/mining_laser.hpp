@@ -2,7 +2,6 @@
 
 #ifdef DC_CLIENT
 #include <common/gl_assert.hpp>
-#include <t_item/client/texture.hpp>
 #endif
 
 #include <physics/vec3.hpp>

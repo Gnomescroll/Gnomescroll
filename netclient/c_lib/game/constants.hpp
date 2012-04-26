@@ -58,7 +58,7 @@ unsigned int get_object_cost(ObjectType obj)
 //const float TURRET_LASER_BIAS = 1.0f;
 
 //refills
-namespace ItemDrops
+namespace itemDrops
 {
 
 typedef enum

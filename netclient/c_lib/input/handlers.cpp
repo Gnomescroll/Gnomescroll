@@ -364,8 +364,6 @@ void inventory_mouse_down_handler(SDL_Event* event)
         default:
             t_hud::null_input_event();
     }
-    // notify inventory model that input state may have changed
-    Items::process_inventory_events();
 }
 
 void inventory_mouse_up_handler(SDL_Event* event)
@@ -399,7 +397,6 @@ void inventory_mouse_up_handler(SDL_Event* event)
             break;
     }
     // notify inventory model that input state may have changed
-    Items::process_inventory_events();
 }
 
 void inventory_mouse_motion_handler(SDL_Event* event)

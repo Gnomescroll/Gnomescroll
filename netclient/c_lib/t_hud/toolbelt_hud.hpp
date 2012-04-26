@@ -69,6 +69,7 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
 
 void AgentToolbeltUI::draw()
 {
+#if 0
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -272,7 +273,7 @@ void AgentToolbeltUI::draw()
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
-
+#endif
 }
 
 

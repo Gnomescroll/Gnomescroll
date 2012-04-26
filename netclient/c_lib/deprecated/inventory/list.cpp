@@ -1,6 +1,6 @@
 #include "inventory.hpp"
 
-namespace Items
+namespace items
 {
 
 }   // Items

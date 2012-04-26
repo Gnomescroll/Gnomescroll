@@ -3,7 +3,7 @@
 namespace t_hud
 {
 
-class AgentNanite : public UIElement
+class AgentNaniteUI : public UIElement
 {
     public:
 
@@ -25,7 +25,7 @@ class AgentNanite : public UIElement
 };
 
 
-int AgentNanite::get_slot_at(int px, int py)
+int AgentNaniteUI::get_slot_at(int px, int py)
 {
     px -= xoff + border;
     py -= yoff - border;
@@ -44,8 +44,9 @@ int AgentNanite::get_slot_at(int px, int py)
     return slot;
 }
 
-void AgentNanite::draw()
+void AgentNaniteUI::draw()
 {
+#if 0
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -183,6 +184,7 @@ void AgentNanite::draw()
     }
 
     glColor4ub(255, 255, 255, 255);
+#endif
 }
 
 }
