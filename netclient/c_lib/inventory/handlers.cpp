@@ -22,8 +22,7 @@ static void agent_inventory_received(Inventory* inventory)
     assert(a != NULL); // this function should not be called if the owner did not exist
 
     // attach to agent status
-    if (a->status.inventory != NULL)
-        printf("WARNING: reassigned agent inventory\n");
+    if (a->status.inventory != NULL) printf("WARNING: reassigned agent inventory\n");
     a->status.inventory = inventory;
 
     // attach to global pointer

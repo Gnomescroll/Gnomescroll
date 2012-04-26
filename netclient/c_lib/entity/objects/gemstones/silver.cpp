@@ -12,11 +12,6 @@
 namespace Objects
 {
 
-void load_silver_gemstone_data()
-{
-    load_gemstone_data(OBJECT_GEMSTONE_SILVER);
-}
-
 // private
 static void set_silver_gemstone_properties(Object* object)
 {   // attach components
@@ -46,62 +41,16 @@ static void set_silver_gemstone_properties(Object* object)
     StackableComponent* stack = (StackableComponent*)add_component_to_object(object, COMPONENT_STACKABLE);
     stack->max = GEMSTONE_STACK_MAX;
 
-    object->tick = &tick_silver_gemstone;
+    object->tick = &tick_pickup_sprite;
     //object->update = NULL;
 
     object->create = create_packet_momentum;
     object->state = state_packet_momentum;
 }
 
-Object* create_silver_gemstone()
+void create_silver_gemstone(Object* object)
 {
-    // initialize object
-    ObjectType type = OBJECT_GEMSTONE_SILVER;
-    Object* obj = object_list->create(type);
-    if (obj == NULL) return NULL;
-    set_silver_gemstone_properties(obj);
-    return obj;
+    set_silver_gemstone_properties(object);
 }
-
-void ready_silver_gemstone(Object* object)
-{
-    #if DC_SERVER
-    object->broadcastCreate();
-    #endif
-}
-
-void die_silver_gemstone(Object* object)
-{
-    #if DC_SERVER
-    using Components::PickupComponent;
-    PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    if (pickup->picked_up) pickup->broadcast();
-    else object->broadcastDeath();
-    #endif
-}
-
-void tick_silver_gemstone(Object* object)
-{
-    using Components::VerletPhysicsComponent;
-    using Components::PickupComponent;
-    using Components::TTLHealthComponent;
-    
-    // update for physics
-    VerletPhysicsComponent* verlet = (VerletPhysicsComponent*)object->get_component(COMPONENT_VERLET);
-    verlet->bounce();
-
-    #if DC_SERVER
-    PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->tick();
-
-    TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
-    ttl->tick();
-    #endif
-}
-
-//void update_silver_gemstone(Object* object)
-//{
-    // update for draw
-//}
 
 } // Objects

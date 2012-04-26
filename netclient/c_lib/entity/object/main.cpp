@@ -16,9 +16,17 @@ ObjectListFilter* filter = NULL;
 void load_object_data()
 {
     // refills
-    load_health_refill_data();
-    load_laser_refill_data();
-    load_grenade_refill_data();
+    load_pickup_sprite_data(OBJECT_HEALTH_REFILL);
+    load_pickup_sprite_data(OBJECT_LASER_REFILL);
+    load_pickup_sprite_data(OBJECT_GRENADE_REFILL);
+    // gemstones
+    load_pickup_sprite_data(OBJECT_GEMSTONE_MALACHITE);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_RUBY);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_TURQUOISE);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_SILVER);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_AMETHYST);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_JADE);
+    load_pickup_sprite_data(OBJECT_GEMSTONE_ONYX);
 
     // block drops
     load_dirt_block_drop_data();
@@ -27,15 +35,6 @@ void load_object_data()
     load_medium_rock_block_drop_data();
     load_hard_rock_block_drop_data();
     load_infected_rock_block_drop_data();
-
-    // gemstones
-    load_malachite_gemstone_data();
-    load_ruby_gemstone_data();
-    load_turquoise_gemstone_data();
-    load_silver_gemstone_data();
-    load_amethyst_gemstone_data();
-    load_jade_gemstone_data();
-    load_onyx_gemstone_data();
 
     // fabs
     load_agent_spawner_data();
@@ -127,11 +126,17 @@ static Object* create_switch(ObjectType type)
     {
         // refills
         case OBJECT_HEALTH_REFILL:
-            return create_health_refill();
         case OBJECT_LASER_REFILL:
-            return create_laser_refill();
         case OBJECT_GRENADE_REFILL:
-            return create_grenade_refill();
+        // gemstones
+        case OBJECT_GEMSTONE_MALACHITE:
+        case OBJECT_GEMSTONE_RUBY:
+        case OBJECT_GEMSTONE_TURQUOISE:
+        case OBJECT_GEMSTONE_SILVER:
+        case OBJECT_GEMSTONE_AMETHYST:
+        case OBJECT_GEMSTONE_JADE:
+        case OBJECT_GEMSTONE_ONYX:
+            return create_pickup_sprite(type);
 
         // block drops
         case OBJECT_DIRT_BLOCK_DROP:
@@ -146,22 +151,6 @@ static Object* create_switch(ObjectType type)
             return create_hard_rock_block_drop();
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             return create_infected_rock_block_drop();
-
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-            return create_malachite_gemstone();
-        case OBJECT_GEMSTONE_RUBY:
-            return create_ruby_gemstone();
-        case OBJECT_GEMSTONE_TURQUOISE:
-            return create_turquoise_gemstone();
-        case OBJECT_GEMSTONE_SILVER:
-            return create_silver_gemstone();
-        case OBJECT_GEMSTONE_AMETHYST:
-            return create_amethyst_gemstone();
-        case OBJECT_GEMSTONE_JADE:
-            return create_jade_gemstone();
-        case OBJECT_GEMSTONE_ONYX:
-            return create_onyx_gemstone();
 
         // fabs
         case OBJECT_AGENT_SPAWNER:
@@ -206,14 +195,17 @@ void ready_switch(Object* object)
     {
         // refills
         case OBJECT_HEALTH_REFILL:
-            ready_health_refill(object);
-            break;
         case OBJECT_LASER_REFILL:
-            ready_laser_refill(object);
-            break;
         case OBJECT_GRENADE_REFILL:
-            ready_grenade_refill(object);
-            break;
+        // gemstones
+        case OBJECT_GEMSTONE_MALACHITE:
+        case OBJECT_GEMSTONE_RUBY:
+        case OBJECT_GEMSTONE_TURQUOISE:
+        case OBJECT_GEMSTONE_SILVER:
+        case OBJECT_GEMSTONE_AMETHYST:
+        case OBJECT_GEMSTONE_JADE:
+        case OBJECT_GEMSTONE_ONYX:
+            return ready_pickup_sprite(object);
 
         // block drops
         case OBJECT_DIRT_BLOCK_DROP:
@@ -233,29 +225,6 @@ void ready_switch(Object* object)
             break;
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             ready_infected_rock_block_drop(object);
-            break;
-
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-            ready_malachite_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_RUBY:
-            ready_ruby_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_TURQUOISE:
-            ready_turquoise_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_SILVER:
-            ready_silver_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_AMETHYST:
-            ready_amethyst_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_JADE:
-            ready_jade_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_ONYX:
-            ready_onyx_gemstone(object);
             break;
 
         // fabs
@@ -290,14 +259,17 @@ void destroy_switch(Object* object)
     {
         // refills
         case OBJECT_HEALTH_REFILL:
-            die_health_refill(object);
-            break;
         case OBJECT_LASER_REFILL:
-            die_laser_refill(object);
-            break;
         case OBJECT_GRENADE_REFILL:
-            die_grenade_refill(object);
-            break;
+        // gemstones
+        case OBJECT_GEMSTONE_MALACHITE:
+        case OBJECT_GEMSTONE_RUBY:
+        case OBJECT_GEMSTONE_TURQUOISE:
+        case OBJECT_GEMSTONE_SILVER:
+        case OBJECT_GEMSTONE_AMETHYST:
+        case OBJECT_GEMSTONE_JADE:
+        case OBJECT_GEMSTONE_ONYX:
+            return die_pickup_sprite(object);
 
         // block drops
         case OBJECT_DIRT_BLOCK_DROP:
@@ -317,29 +289,6 @@ void destroy_switch(Object* object)
             break;
         case OBJECT_INFECTED_ROCK_BLOCK_DROP:
             die_infected_rock_block_drop(object);
-            break;
-
-        // gemstones
-        case OBJECT_GEMSTONE_MALACHITE:
-            die_malachite_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_RUBY:
-            die_ruby_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_TURQUOISE:
-            die_turquoise_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_SILVER:
-            die_silver_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_AMETHYST:
-            die_amethyst_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_JADE:
-            die_jade_gemstone(object);
-            break;
-        case OBJECT_GEMSTONE_ONYX:
-            die_onyx_gemstone(object);
             break;
 
         // fabs
