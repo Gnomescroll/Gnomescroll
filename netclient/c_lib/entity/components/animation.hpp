@@ -2,9 +2,9 @@
 
 #if DC_CLIENT
 
-#include <c_lib/common/common.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/component/component.hpp>
+#include <common/common.hpp>
+#include <entity/constants.hpp>
+#include <entity/component/component.hpp>
 
 namespace Components
 {

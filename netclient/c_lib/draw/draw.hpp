@@ -1,12 +1,12 @@
 #pragma once
 
 #if DC_CLIENT
-#include <c_lib/camera/camera.hpp>
-#include <c_lib/camera/fulstrum_test.hpp>
+#include <camera/camera.hpp>
+#include <camera/fulstrum_test.hpp>
 #endif
 
-#include <c_lib/common/common.hpp>
-#include <c_lib/voxel/common_data.h>
+#include <common/common.hpp>
+#include <voxel/common_data.h>
 
 void drawAxialBillboardSprite(Vec3 position, int texture_index, float texture_scale)
 {

@@ -1,8 +1,8 @@
 #pragma once
 #pragma GCC diagnostic ignored "-Wunused-function"
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/mat3.hpp>
+#include <physics/vec3.hpp>
+#include <physics/mat3.hpp>
 
 struct Affine {
     union

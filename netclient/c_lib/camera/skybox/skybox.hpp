@@ -1,9 +1,9 @@
 #pragma once
 
-#include <c_lib/SDL/texture_loader.hpp>
+#include <SDL/texture_loader.hpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/camera/camera.hpp>
+#include <physics/vec3.hpp>
+#include <camera/camera.hpp>
 
 namespace Skybox
 {

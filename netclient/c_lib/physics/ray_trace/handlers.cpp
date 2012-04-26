@@ -1,9 +1,9 @@
 #include "handlers.hpp"
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/entity/network/packets.hpp>
+#include <state/client_state.hpp>
+#include <state/server_state.hpp>
+#include <agent/agent.hpp>
+#include <entity/network/packets.hpp>
 
 namespace Hitscan
 {

@@ -17,9 +17,9 @@
 
 */
 
-//#include <c_lib/t_map/t_map_class.hpp>
-//#include <c_lib/t_map/net/t_StoC.hpp>
-#include <c_lib/t_map/common/map_element.hpp>
+//#include <t_map/t_map_class.hpp>
+//#include <t_map/net/t_StoC.hpp>
+#include <t_map/common/map_element.hpp>
 
 namespace t_map
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/time/physics_timer.hpp>
+#include <common/time/physics_timer.hpp>
 
 void update_current_netpeer_time();
 void NP_print_delta();

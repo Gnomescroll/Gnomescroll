@@ -12,7 +12,7 @@ void InventorySlot::load(int id, ObjectType type, int stack_size)
 
 #if DC_CLIENT
 
-#include <c_lib/entity/objects/gemstones/constants.hpp>
+#include <entity/objects/gemstones/constants.hpp>
 
 // TODO -- move
 

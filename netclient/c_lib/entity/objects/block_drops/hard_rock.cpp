@@ -1,13 +1,13 @@
 #include "hard_rock.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/physics/verlet.hpp>
-#include <c_lib/entity/components/pickup.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/components/physics/verlet.hpp>
+#include <entity/components/pickup.hpp>
 #if DC_CLIENT
-#include <c_lib/entity/components/draw/voxel.hpp>
-#include <c_lib/t_map/glsl/texture.hpp>
+#include <entity/components/draw/voxel.hpp>
+#include <t_map/glsl/texture.hpp>
 #endif
 
 namespace Objects

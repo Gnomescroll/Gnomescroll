@@ -1,12 +1,12 @@
 #include "ruby.hpp"
 
-#include <c_lib/entity/objects/gemstones/constants.hpp>
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/physics/verlet.hpp>
+#include <entity/objects/gemstones/constants.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/components/physics/verlet.hpp>
 #if DC_CLIENT
-#include <c_lib/entity/components/draw/billboard_sprite.hpp>
+#include <entity/components/draw/billboard_sprite.hpp>
 #endif
 
 namespace Objects

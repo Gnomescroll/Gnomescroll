@@ -1,15 +1,15 @@
 #include "box.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/objects/mobs/constants.hpp>
-#include <c_lib/entity/components/health.hpp>
-#include <c_lib/entity/components/dimension.hpp>
-#include <c_lib/entity/components/voxel_model.hpp>
-#include <c_lib/entity/components/targeting.hpp>
-#include <c_lib/entity/components/targeting/weapon_targeting.hpp>
-#include <c_lib/entity/components/targeting/motion_targeting.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/objects/mobs/constants.hpp>
+#include <entity/components/health.hpp>
+#include <entity/components/dimension.hpp>
+#include <entity/components/voxel_model.hpp>
+#include <entity/components/targeting.hpp>
+#include <entity/components/targeting/weapon_targeting.hpp>
+#include <entity/components/targeting/motion_targeting.hpp>
 
 namespace Objects
 {

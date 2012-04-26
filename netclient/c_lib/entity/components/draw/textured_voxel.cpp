@@ -2,8 +2,8 @@
 
 #if DC_CLIENT
 
-#include <c_lib/draw/draw.hpp>
-#include <c_lib/entity/components/physics.hpp>
+#include <draw/draw.hpp>
+#include <entity/components/physics.hpp>
 
 namespace Components
 {

@@ -1,10 +1,10 @@
 #include "motion_targeting.hpp"
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/motion.hpp>
-#include <c_lib/physics/ray_trace/hitscan.hpp>
-#include <c_lib/physics/ray_trace/handlers.hpp>
-#include <c_lib/entity/network/packets.hpp>
+#include <physics/vec3.hpp>
+#include <physics/motion.hpp>
+#include <physics/ray_trace/hitscan.hpp>
+#include <physics/ray_trace/handlers.hpp>
+#include <entity/network/packets.hpp>
 
 namespace Components
 {

@@ -1,6 +1,6 @@
 #include "objects.hpp"
 
-#include <c_lib/entity/object/main.hpp>
+#include <entity/object/main.hpp>
 
 namespace Objects
 {

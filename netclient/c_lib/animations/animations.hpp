@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/t_map/t_map.hpp>
-#include <c_lib/common/common.hpp>
-#include <c_lib/physics/vec3.hpp>
+#include <t_map/t_map.hpp>
+#include <common/common.hpp>
+#include <physics/vec3.hpp>
 
 namespace Animations {
 

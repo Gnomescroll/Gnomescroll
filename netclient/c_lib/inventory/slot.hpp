@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/entity/constants.hpp>
+#include <entity/constants.hpp>
 
 const int EMPTY_SLOT = 65535;
 class InventorySlot

@@ -10,8 +10,8 @@ namespace t_map
 
 #ifdef DC_CLIENT
 
-#include <c_lib/animations/animations.hpp>
-#include <c_lib/common/random.h>
+#include <animations/animations.hpp>
+#include <common/random.h>
 #include <sound/triggers.hpp>
 
 

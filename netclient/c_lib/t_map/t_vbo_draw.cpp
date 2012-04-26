@@ -1,15 +1,15 @@
 #include "t_vbo_draw.hpp"
 
-#include <c_lib/t_map/glsl/shader.hpp>
-#include <c_lib/t_map/glsl/texture.hpp>
+#include <t_map/glsl/shader.hpp>
+#include <t_map/glsl/texture.hpp>
 
-#include <c_lib/camera/camera.hpp>
-#include <c_lib/camera/fulstrum_test.hpp>
+#include <camera/camera.hpp>
+#include <camera/fulstrum_test.hpp>
 
-#include <c_lib/t_map/glsl/settings.hpp>
+#include <t_map/glsl/settings.hpp>
 
 
-#include <c_lib/common/qsort.h>
+#include <common/qsort.h>
 
 namespace t_map
 {

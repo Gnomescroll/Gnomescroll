@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 
-#include <c_lib/entity/constants.hpp>
+#include <entity/constants.hpp>
 
 namespace Components
 {

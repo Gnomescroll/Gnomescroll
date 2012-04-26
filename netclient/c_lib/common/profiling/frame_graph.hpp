@@ -3,8 +3,8 @@
 int FRAME_RATE_THOTTLE_ENABLED = 1;
 int FRAME_RATE_THOTTLE_TARGET = 15; //ms for 60, 33 for 30
 
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/input/input.hpp>
+#include <common/time/physics_timer.hpp>
+#include <input/input.hpp>
 
 namespace Profiling
 {

@@ -1,7 +1,7 @@
 #include "infected_rock.hpp"
 
-#include <c_lib/entity/object/object_data_list.hpp>
-#include <c_lib/entity/object/main.hpp>
+#include <entity/object/object_data_list.hpp>
+#include <entity/object/main.hpp>
 
 namespace Objects
 {

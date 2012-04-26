@@ -1,10 +1,10 @@
 #include "_interface.hpp"
 
-#include <c_lib/animations/insect_mob.hpp>
+#include <animations/insect_mob.hpp>
 
-#include <c_lib/animations/hitscan.hpp>
-#include <c_lib/animations/hitscan_laser.hpp>
-#include <c_lib/animations/mining_laser.hpp>
+#include <animations/hitscan.hpp>
+#include <animations/hitscan_laser.hpp>
+#include <animations/mining_laser.hpp>
 
 namespace Animations 
 {

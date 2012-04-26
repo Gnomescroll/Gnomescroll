@@ -2,7 +2,7 @@
 
 #if DC_SERVER
 
-#include <c_lib/agent/agent.hpp>
+#include <agent/agent.hpp>
 
 /* Inventory */
 

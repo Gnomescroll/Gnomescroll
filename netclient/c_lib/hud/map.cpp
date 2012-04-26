@@ -1,12 +1,12 @@
 #include "map.hpp"
 
-#include <c_lib/common/common.hpp>
-#include <c_lib/t_map/t_map.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/SDL/texture_loader.hpp>
-#include <c_lib/SDL/draw_functions.hpp>
-#include <c_lib/game/teams.hpp>
-//#include <c_lib/items/spawner.hpp>
+#include <common/common.hpp>
+#include <t_map/t_map.hpp>
+#include <state/client_state.hpp>
+#include <SDL/texture_loader.hpp>
+#include <SDL/draw_functions.hpp>
+#include <game/teams.hpp>
+//#include <items/spawner.hpp>
 
 namespace HudMap
 {

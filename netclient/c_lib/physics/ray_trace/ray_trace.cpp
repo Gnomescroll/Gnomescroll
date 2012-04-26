@@ -8,9 +8,9 @@
 #include <t_map/t_map.hpp>
 #include <t_map/t_properties.hpp>
 
-#include <c_lib/physics/common.hpp>
+#include <physics/common.hpp>
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 static inline int collision_check(int x, int y, int z) {
     return isSolid(x,y,z);

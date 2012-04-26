@@ -5,7 +5,7 @@
 
 int seed_max = INT_MAX;
 
-#include <c_lib/t_map/t_map.hpp>
+#include <t_map/t_map.hpp>
 
 typedef union f3 {
     float xyz[3];

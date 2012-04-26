@@ -9,7 +9,7 @@
 
 #if DC_SERVER
 
-#include <c_lib/inventory/inventory.hpp>
+#include <inventory/inventory.hpp>
 
 class Inventory: public BaseInventory
 {

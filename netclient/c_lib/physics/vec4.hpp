@@ -3,9 +3,9 @@
 
 #include <math.h>
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
-#include <c_lib/physics/constants.hpp>
+#include <physics/constants.hpp>
 
 #define PI 3.14159265
 

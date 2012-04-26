@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/game/game.hpp>
-#include <c_lib/game/flag.hpp>
-#include <c_lib/game/base.hpp>
+#include <game/game.hpp>
+#include <game/flag.hpp>
+#include <game/base.hpp>
 
 const unsigned int TEAM_NAME_MAX_LENGTH = 31;
 const unsigned int TEAM_MAX_PLAYERS = GAME_MAX_PLAYERS;

@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <c_lib/SDL/draw_functions.hpp>
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/agent_weapons.hpp>
-#include <c_lib/weapons/weapons.hpp>
+#include <SDL/draw_functions.hpp>
+#include <agent/agent.hpp>
+#include <agent/agent_weapons.hpp>
+#include <weapons/weapons.hpp>
 
-#include <c_lib/t_map/glsl/texture.hpp>
+#include <t_map/glsl/texture.hpp>
 
 namespace HudCubeSelector
 {

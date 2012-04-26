@@ -6,30 +6,34 @@
 #include "t_map_class.hpp"
 
 #if DC_CLIENT
-    #include <c_lib/t_map/glsl/cache.hpp>
-    #include <c_lib/t_map/glsl/texture.hpp>
-    #include <c_lib/t_map/glsl/shader.hpp>
+    #include <t_map/glsl/cache.hpp>
+    #include <t_map/glsl/texture.hpp>
+    #include <t_map/glsl/shader.hpp>
 
-    #include <c_lib/t_map/net/t_StoC.hpp>
+    #include <t_map/net/t_StoC.hpp>
 #endif
 
 #if DC_SERVER
-    #include <c_lib/t_map/server/manager.hpp>
-    #include <c_lib/t_map/server/map_chunk_history.hpp>
-    #include <c_lib/t_map/net/t_StoC.hpp>
+    #include <t_map/server/manager.hpp>
+    #include <t_map/server/map_chunk_history.hpp>
+    #include <t_map/net/t_StoC.hpp>
 
     /* Added for random drops */
     /* remove these includes after random drops are in separate file */
-    #include <c_lib/common/random.h>
-    #include <c_lib/physics/vec3.hpp>
+    #include <common/random.h>
+    #include <physics/vec3.hpp>
 
-    #include <c_lib/entity/constants.hpp>
-    #include <c_lib/entity/objects.hpp>
-    #include <c_lib/entity/object/object.hpp>
-    #include <c_lib/entity/components.hpp>
-    #include <c_lib/entity/components/physics.hpp>
+    #include <particle/_interface.hpp>
 
-    //#include <c_lib/t_item/_interface.hpp>
+/*
+    #include <entity/constants.hpp>
+    #include <entity/objects.hpp>
+    #include <entity/object/object.hpp>
+    #include <entity/components.hpp>
+    #include <entity/components/physics.hpp>
+*/
+
+    //#include <t_item/_interface.hpp>
 
 #endif
 
@@ -108,11 +112,12 @@ int apply_damage(int x, int y, int z, int dmg)
 
 #if DC_SERVER
 
-//#include <c_lib/t_item/_interface.hpp>
+//#include <t_item/_interface.hpp>
 
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)
 {
+#if 0
     //const float drop_probability = 0.3f;
     const float drop_probability = 1.0f;
     float p = randf();
@@ -159,6 +164,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
     }
     Objects::ready(obj);
+#endif
 }
 
 // apply block damage & broadcast the update to client
@@ -174,9 +180,8 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.val = res;
     msg.action = action;
     msg.broadcast();
-#if 1
 
-#if 1
+#if 0
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else
@@ -193,14 +198,13 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
             x+0.5f+randf(), y+0.5f+randf(), z+0.5f+randf(), 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     */
-        t_item::create_free_item(0, 
+        Particle::create_item_particle(0, 
             _x, _y, _z, 
             (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 
     }
 #endif
 
-#endif
 
 }
 #endif

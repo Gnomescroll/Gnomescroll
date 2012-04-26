@@ -2,7 +2,7 @@
 
 #include <compat_gl.h>
 
-#include <c_lib/options.hpp>
+#include <options.hpp>
 
 namespace HudFont
 {

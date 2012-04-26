@@ -1,7 +1,7 @@
 #include "voxel_render.hpp"
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/camera/fulstrum_test.hpp>
+#include <state/client_state.hpp>
+#include <camera/fulstrum_test.hpp>
 
 #include <physics/vec3.hpp>
 #include <physics/vec4.hpp>
@@ -9,9 +9,9 @@
 //#include <physics/mat4.hpp>
 #include <physics/affine.hpp>
 
-#include <c_lib/entity/constants.hpp>
+#include <entity/constants.hpp>
 
-#include <c_lib/input/handlers.hpp>
+#include <input/handlers.hpp>
 
 const int VOXEL_RENDER_LIST_SIZE = 1024;
 

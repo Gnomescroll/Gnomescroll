@@ -1,22 +1,22 @@
 #include "agent.hpp"
 
 #if DC_CLIENT
-#include <c_lib/compat_gl.h>
+#include <compat_gl.h>
 #endif
 
 #include <agent/agent_vox.hpp>
 
-#include <c_lib/agent/net_agent.hpp>
-#include <c_lib/agent/agent_physics.hpp>
+#include <agent/net_agent.hpp>
+#include <agent/agent_physics.hpp>
 
 #if DC_CLIENT
-#include <c_lib/agent/client/agent_draw.hpp>
-#include <c_lib/agent/client/player_agent.hpp>
+#include <agent/client/agent_draw.hpp>
+#include <agent/client/player_agent.hpp>
 #endif
 
-#include <c_lib/defines.h>
+#include <defines.h>
 #include <math.h>
-#include <c_lib/common/random.h>
+#include <common/random.h>
 
 AgentState::AgentState()
 :

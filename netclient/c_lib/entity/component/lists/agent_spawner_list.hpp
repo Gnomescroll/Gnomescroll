@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/entity/component/component_list.hpp>
+#include <entity/component/component_list.hpp>
 
 namespace Components
 {

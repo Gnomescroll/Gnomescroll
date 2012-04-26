@@ -2,10 +2,10 @@
 
 #include <net_lib/global.hpp>
 
-#include <c_lib/t_map/t_map.hpp>
+#include <t_map/t_map.hpp>
 
-#include <c_lib/t_map/server/map_manager_class.hpp>
-#include <c_lib/t_map/server/map_chunk_history.hpp>
+#include <t_map/server/map_manager_class.hpp>
+#include <t_map/server/map_chunk_history.hpp>
 
 namespace t_map
 {

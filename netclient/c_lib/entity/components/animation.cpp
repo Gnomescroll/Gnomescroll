@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 
-#include <c_lib/animations/animations.hpp>
+#include <animations/animations.hpp>
 
 namespace Components
 {

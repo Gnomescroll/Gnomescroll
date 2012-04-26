@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/common.hpp>
+#include <common/common.hpp>
 
 namespace Objects
 {

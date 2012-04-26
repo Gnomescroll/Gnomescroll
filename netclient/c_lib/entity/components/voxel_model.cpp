@@ -1,7 +1,7 @@
 #include "voxel_model.hpp"
 
 #if DC_CLIENT
-#include <c_lib/input/handlers.hpp>
+#include <input/handlers.hpp>
 #endif
 
 namespace Components

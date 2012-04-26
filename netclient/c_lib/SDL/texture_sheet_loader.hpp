@@ -3,7 +3,7 @@
 namespace TextureSheetLoader
 {
 
-#include <c_lib/SDL/texture_loader.hpp>
+#include <SDL/texture_loader.hpp>
 
 class TextureSheet
 {

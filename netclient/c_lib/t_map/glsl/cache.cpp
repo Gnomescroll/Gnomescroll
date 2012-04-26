@@ -1,9 +1,9 @@
 #include "cache.hpp"
 
-#include <c_lib/t_map/t_properties.hpp>
+#include <t_map/t_properties.hpp>
 
-#include <c_lib/t_map/glsl/texture.hpp>
-#include <c_lib/t_map/glsl/structs.hpp>
+#include <t_map/glsl/texture.hpp>
+#include <t_map/glsl/structs.hpp>
 
 /*
     Deprecate the Quad Cache

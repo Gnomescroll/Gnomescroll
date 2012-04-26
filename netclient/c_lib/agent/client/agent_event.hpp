@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/particles/billboard_text_hud.hpp>
+#include <particle/billboard_text_hud.hpp>
 
 class Agent_state;
 
@@ -11,7 +11,7 @@ class Agent_event {
         bool first_time_receiving_coins;
     public:
 
-        class Particles::BillboardTextHud* bb;
+        class Particle::BillboardTextHud* bb;
         void display_name();
         void hide_name();
 

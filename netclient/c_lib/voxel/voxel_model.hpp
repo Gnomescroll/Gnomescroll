@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/voxel/voxel_volume.hpp>
-#include <c_lib/voxel/voxel_dat.hpp>
+#include <entity/constants.hpp>
+#include <voxel/voxel_volume.hpp>
+#include <voxel/voxel_dat.hpp>
 
 class Voxel_model 
 {

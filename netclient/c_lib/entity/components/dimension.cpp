@@ -1,7 +1,7 @@
 #include "dimension.hpp"
 
-#include <c_lib/entity/components/physics.hpp>
-#include <c_lib/entity/object/object.hpp>
+#include <entity/components/physics.hpp>
+#include <entity/object/object.hpp>
 
 namespace Components
 {

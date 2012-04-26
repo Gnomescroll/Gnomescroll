@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/object_list.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/object_list.hpp>
 
 namespace Objects
 {

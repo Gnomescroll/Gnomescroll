@@ -1,18 +1,18 @@
 #include "player_agent_action.hpp"
 
-#include <c_lib/physics/ray_trace/hitscan.hpp>
+#include <physics/ray_trace/hitscan.hpp>
 
-#include <c_lib/agent/net_agent.hpp>
+#include <agent/net_agent.hpp>
 #include <sound/triggers.hpp>
 
-#include <c_lib/particles/_include.hpp>
-#include <c_lib/particles/grenade.hpp>
+#include <particle/_include.hpp>
+#include <particle/grenade.hpp>
 
-#include <c_lib/animations/_interface.hpp>
+#include <animations/_interface.hpp>
 
 //stuff
 
-//#include <c_lib/t_map/net/t_CtoS.hpp>
+//#include <t_map/net/t_CtoS.hpp>
 
 #define BLOCK_PICK_MAX_DISTANCE 4.0f
 #define MELEE_PICK_MAX_DISTANCE 2.7f
@@ -341,7 +341,7 @@ void PlayerAgent_action::throw_grenade()
     f[0] *= PLAYER_ARM_FORCE;
     f[1] *= PLAYER_ARM_FORCE;
     f[2] *= PLAYER_ARM_FORCE;
-    Particles::Grenade* g = Particles::grenade_list->create();
+    Particle::Grenade* g = Particle::grenade_list->create();
     g->set_state(x,y,z, f[0], f[1], f[2]);
     if (g==NULL) return;
     g->owner = this->p->agent_id;

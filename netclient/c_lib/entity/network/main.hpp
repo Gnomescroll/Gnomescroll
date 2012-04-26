@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/entity/network/interfaces.hpp>
+#include <entity/network/interfaces.hpp>
 
 namespace Objects
 {

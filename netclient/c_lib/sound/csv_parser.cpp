@@ -1,6 +1,6 @@
 #include "csv_parser.hpp"
 
-#include <c_lib/sound/triggers.hpp>
+#include <sound/triggers.hpp>
 
 namespace Sound
 {

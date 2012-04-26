@@ -1,6 +1,6 @@
 #include "weapons.hpp"
 
-#include <c_lib/weapons/packets.hpp>
+#include <weapons/packets.hpp>
 
 namespace Weapons {
 

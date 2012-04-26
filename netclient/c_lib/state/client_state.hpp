@@ -2,10 +2,10 @@
 
 #if DC_CLIENT
 
-#include <c_lib/agent/agent_list.hpp>
-//#include <c_lib/monsters/monsters.hpp>
+#include <agent/agent_list.hpp>
+//#include <monsters/monsters.hpp>
 
-#include <c_lib/game/ctf.hpp>
+#include <game/ctf.hpp>
 
 class PlayerAgent_state; //forward declaration
 

@@ -1,25 +1,25 @@
 #pragma once
 
-#include <c_lib/entity/constants.hpp>
+#include <entity/constants.hpp>
 
-#include <c_lib/entity/objects/include.hpp>
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/object_list.hpp>
-#include <c_lib/entity/object/object_data_list.hpp>
-#include <c_lib/entity/object/filter.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/object/main.hpp>
-#include <c_lib/entity/objects.hpp>
+#include <entity/objects/include.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/object_list.hpp>
+#include <entity/object/object_data_list.hpp>
+#include <entity/object/filter.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/object/main.hpp>
+#include <entity/objects.hpp>
 
-#include <c_lib/entity/components/include.hpp>
-#include <c_lib/entity/component/component.hpp>
-#include <c_lib/entity/component/component_list.hpp>
-#include <c_lib/entity/component/lists.hpp>
-#include <c_lib/entity/component/lists/agent_spawner_list.hpp>
-#include <c_lib/entity/component/lists/owner_list.hpp>
-#include <c_lib/entity/component/main.hpp>
-#include <c_lib/entity/components.hpp>
+#include <entity/components/include.hpp>
+#include <entity/component/component.hpp>
+#include <entity/component/component_list.hpp>
+#include <entity/component/lists.hpp>
+#include <entity/component/lists/agent_spawner_list.hpp>
+#include <entity/component/lists/owner_list.hpp>
+#include <entity/component/main.hpp>
+#include <entity/components.hpp>
 
-#include <c_lib/entity/network/packets.hpp>
-#include <c_lib/entity/network/interfaces.hpp>
-#include <c_lib/entity/network/main.hpp>
+#include <entity/network/packets.hpp>
+#include <entity/network/interfaces.hpp>
+#include <entity/network/main.hpp>

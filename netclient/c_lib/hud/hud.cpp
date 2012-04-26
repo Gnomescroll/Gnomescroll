@@ -1,12 +1,12 @@
 #include "hud.hpp"
 
-#include <c_lib/hud/reticle.hpp>
-#include <c_lib/hud/cube_selector.hpp>
-#include <c_lib/hud/font.hpp>
-#include <c_lib/input/handlers.hpp>
-#include <c_lib/options.hpp>
-#include <c_lib/common/profiling/frame_graph.hpp>
-//#include <c_lib/draw/transparent.hpp>
+#include <hud/reticle.hpp>
+#include <hud/cube_selector.hpp>
+#include <hud/font.hpp>
+#include <input/handlers.hpp>
+#include <options.hpp>
+#include <common/profiling/frame_graph.hpp>
+//#include <draw/transparent.hpp>
 
 /* Configuration */
 namespace Hud
@@ -379,7 +379,7 @@ void draw_hud()
     // so i moved the list draw call out
     
     start_font_draw();
-    Particles::billboard_text_hud_list->draw();
+    Particle::billboard_text_hud_list->draw();
     end_font_draw();
 
     draw_hud_textures();

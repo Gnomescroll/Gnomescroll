@@ -1,8 +1,8 @@
 #pragma once
 
 #if DC_CLIENT
-    #include <c_lib/camera/camera.hpp>
-    #include <c_lib/physics/ray_trace/hitscan.hpp>
+    #include <camera/camera.hpp>
+    #include <physics/ray_trace/hitscan.hpp>
 #endif
 
 namespace t_mech

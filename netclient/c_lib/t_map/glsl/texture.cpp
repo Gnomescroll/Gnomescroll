@@ -1,6 +1,6 @@
 #include "texture.hpp"
 
-#include <c_lib/SDL/texture_sheet_loader.hpp>
+#include <SDL/texture_sheet_loader.hpp>
 
 namespace t_map
 {

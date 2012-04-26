@@ -2,23 +2,23 @@
 
 #if DC_CLIENT
 
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/game/ctf.hpp>
-#include <c_lib/voxel/voxel_render.hpp>
+#include <agent/agent_list.hpp>
+#include <game/ctf.hpp>
+#include <voxel/voxel_render.hpp>
 
-//#include <c_lib/animations/hitscan.hpp>
-//#include <c_lib/animations/hitscan_laser.hpp>
-#include <c_lib/hud/text.hpp>
+//#include <animations/hitscan.hpp>
+//#include <animations/hitscan_laser.hpp>
+#include <hud/text.hpp>
 
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/net_agent.hpp>
+#include <agent/agent.hpp>
+#include <agent/net_agent.hpp>
 
-#include <c_lib/agent/client/player_agent.hpp>
+#include <agent/client/player_agent.hpp>
 
-#include <c_lib/particles/_interface.hpp>
+#include <particle/_interface.hpp>
 
 #if USE_OPENAL
-#include <c_lib/sound/openal.hpp>
+#include <sound/openal.hpp>
 #endif
 
 const int GAME_OBJECT_MAX = 4096 * 4;
@@ -143,13 +143,15 @@ namespace ClientState {
 
     void tick()
     {
-        Particles::grenade_list->tick();
-        Particles::shrapnel_list->tick();
-        Particles::blood_list->tick();
-        Particles::colored_minivox_list->tick();
-        Particles::textured_minivox_list->tick();
-        Particles::billboard_text_list->tick();
-        Particles::billboard_text_hud_list->tick();
+        Particle::grenade_list->tick();
+        Particle::item_particle_list->tick();
+
+        Particle::shrapnel_list->tick();
+        Particle::blood_list->tick();
+        Particle::colored_minivox_list->tick();
+        Particle::textured_minivox_list->tick();
+        Particle::billboard_text_list->tick();
+        Particle::billboard_text_hud_list->tick();
     }
 
     void update_for_draw()

@@ -1,7 +1,7 @@
 #include "monster_spawner.hpp"
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/entity/components/physics.hpp>
+#include <physics/vec3.hpp>
+#include <entity/components/physics.hpp>
 
 namespace Components
 {

@@ -2,24 +2,24 @@
 
 #include <defines.h>
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/SDL/SDL_functions.h>
-#include <c_lib/sound/sound.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/camera/camera.hpp>
-#include <c_lib/camera/skybox/skybox.hpp>
-#include <c_lib/animations/animations.hpp>
+#include <state/client_state.hpp>
+#include <SDL/SDL_functions.h>
+#include <sound/sound.hpp>
+#include <state/client_state.hpp>
+#include <camera/camera.hpp>
+#include <camera/skybox/skybox.hpp>
+#include <animations/animations.hpp>
 #include <net_lib/host.hpp>
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/t_map/t_vbo.hpp>
-#include <c_lib/options.hpp>
-#include <c_lib/common/common.hpp>
+#include <common/time/physics_timer.hpp>
+#include <t_map/t_vbo.hpp>
+#include <options.hpp>
+#include <common/common.hpp>
 
-#include <c_lib/entity/objects.hpp>
+#include <entity/objects.hpp>
 
-#include <c_lib/common/profiling/frame_graph.hpp>
+#include <common/profiling/frame_graph.hpp>
 
-//#include <c_lib/t_mech/draw.hpp>
+//#include <t_mech/draw.hpp>
 
 bool _quit = false;
 
@@ -68,7 +68,7 @@ int run()
     // update mouse
 
     poll_mouse();
-
+ 
     int counter = 0;
 
     while (!input_state.quit)
@@ -176,7 +176,7 @@ int run()
             Prep for draw
         */
         Animations::prep_insect_mob();
-        Particles::prep_shrapnel();
+        Particle::prep_shrapnel();
 
         /*
             Map
@@ -197,7 +197,7 @@ int run()
         GL_ASSERT(GL_DEPTH_TEST, true);
         glBegin(GL_QUADS);
 
-        Particles::colored_minivox_list->draw();
+        Particle::colored_minivox_list->draw();
         //Draw::colored_minivox_list->draw();   // new entity system registries
         Components::colored_voxel_component_list->call();
         glEnd();
@@ -207,7 +207,7 @@ int run()
         glBindTexture(GL_TEXTURE_2D, t_map::block_textures_normal);
         glBegin(GL_QUADS);
 
-        Particles::textured_minivox_list->draw();
+        Particle::textured_minivox_list->draw();
         //Draw::textured_minivox_list->draw();
         Components::textured_voxel_component_list->call();
 
@@ -234,25 +234,26 @@ int run()
             Transparent
         */
 
-        Particles::billboard_text_list->draw();
+        Particle::billboard_text_list->draw();
         
         Animations::draw_insect_mob();
 
-        Particles::draw_shrapnel(); //new style particles do not go in "begin particles"
+        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         //Draw::sprite_list->draw();
         
         glEnable(GL_TEXTURE_2D);
 
         //t_item::draw();
         
-        begin_item_draw();
-        Components::billboard_sprite_component_list->call();
-        end_item_draw();
+        Particle::item_particle_list->draw();
+        //begin_item_draw();
+        //Components::billboard_sprite_component_list->call();
+        //end_item_draw();
 
-        Particles::begin_particle_draw();
-        Particles::grenade_list->draw();
-        Particles::blood_list->draw();
-        Particles::end_particle_draw();
+        Particle::begin_particle_draw();
+        Particle::grenade_list->draw();
+        Particle::blood_list->draw();
+        Particle::end_particle_draw();
 
         poll_mouse();
         // draw animations
@@ -261,7 +262,7 @@ int run()
         Animations::draw_mining_laser_effect();
         glDisable(GL_TEXTURE_2D);
         
-        Particles::billboard_text_list->draw();
+        Particle::billboard_text_list->draw();
 
         // update mouse
         poll_mouse();

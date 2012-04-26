@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/game/game.hpp>
-#include <c_lib/game/teams.hpp>
+#include <game/game.hpp>
+#include <game/teams.hpp>
 
 class CTF {
     private:

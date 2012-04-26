@@ -1,9 +1,9 @@
 #include "object_list.hpp"
 
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/components/health.hpp>
-#include <c_lib/entity/object/object_data_list.hpp>
+#include <entity/constants.hpp>
+#include <entity/object/object.hpp>
+#include <entity/components/health.hpp>
+#include <entity/object/object_data_list.hpp>
 
 namespace Objects
 {

@@ -4,16 +4,16 @@
 
 #ifdef DC_CLIENT
 
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/physics/ray_trace/ray_trace.hpp>
-#include <c_lib/sound/sound.hpp>
+#include <agent/agent.hpp>
+#include <physics/ray_trace/ray_trace.hpp>
+#include <sound/sound.hpp>
 
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/input/handlers.hpp>
+#include <common/time/physics_timer.hpp>
+#include <state/client_state.hpp>
+#include <input/handlers.hpp>
 
-//#include <c_lib/chat/client.hpp>
-#include <c_lib/chat/interface.hpp>
+//#include <chat/client.hpp>
+#include <chat/interface.hpp>
 
 void PlayerAgent_state::set_PlayerAgent_id(int id) {
     this->you = ClientState::agent_list->get(id);

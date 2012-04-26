@@ -1,8 +1,8 @@
 #include "main.hpp"
 
-#include <c_lib/entity/components.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/object/filter.hpp>
+#include <entity/components.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/object/filter.hpp>
 
 namespace Objects
 {

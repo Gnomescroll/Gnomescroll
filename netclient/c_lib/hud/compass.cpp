@@ -1,7 +1,7 @@
 #include "compass.hpp"
 
 #include <math.h>
-#include <c_lib/common/common.hpp>
+#include <common/common.hpp>
 
 namespace Compass {
 

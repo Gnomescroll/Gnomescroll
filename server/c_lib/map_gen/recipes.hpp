@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/map_gen/map_generator.hpp>
+#include <map_gen/map_generator.hpp>
 
 namespace MapRecipes
 {

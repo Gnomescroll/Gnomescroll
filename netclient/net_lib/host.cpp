@@ -7,10 +7,10 @@
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/message_handler.h>
 
-#include <c_lib/agent/net_agent.hpp>
-#include <c_lib/state/packet_init.hpp>
-#include <c_lib/options.hpp>
-#include <c_lib/state/client_state.hpp>
+#include <agent/net_agent.hpp>
+#include <state/packet_init.hpp>
+#include <options.hpp>
+#include <state/client_state.hpp>
 
 const int DEFAULT_PORT = 4096;
 

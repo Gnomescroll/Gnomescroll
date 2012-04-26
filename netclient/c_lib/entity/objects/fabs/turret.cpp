@@ -1,16 +1,16 @@
 #include "spawner.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/physics/position_changed.hpp>
-#include <c_lib/entity/components/team.hpp>
-#include <c_lib/entity/components/owner.hpp>
-#include <c_lib/entity/components/voxel_model.hpp>
-#include <c_lib/entity/objects/fabs/constants.hpp>
-#include <c_lib/t_map/t_map.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/components/physics/position_changed.hpp>
+#include <entity/components/team.hpp>
+#include <entity/components/owner.hpp>
+#include <entity/components/voxel_model.hpp>
+#include <entity/objects/fabs/constants.hpp>
+#include <t_map/t_map.hpp>
 #if DC_SERVER
-#include <c_lib/entity/components/explosion.hpp>
+#include <entity/components/explosion.hpp>
 #endif
 
 namespace Objects

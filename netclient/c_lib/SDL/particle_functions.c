@@ -1,6 +1,6 @@
 #include "particle_functions.h"
 
-#include <c_lib/camera/camera.hpp>
+#include <camera/camera.hpp>
 
 static GLuint shader_program_1;
 

@@ -7,7 +7,7 @@
 
 #ifdef DC_SERVER
 
-#include <c_lib/chat/server.hpp>
+#include <chat/server.hpp>
 
 /* globals */
 extern ChatServer* chat_server;
@@ -26,7 +26,7 @@ void remove_player_from_chat(int client_id);
 
 #ifdef DC_CLIENT
 
-#include <c_lib/chat/client.hpp>
+#include <chat/client.hpp>
 	
 extern ChatMessageList* chat_message_list;
 extern ChatClient* chat_client;

@@ -1,16 +1,16 @@
 #include "agent_event.hpp"
 
-#include <c_lib/particles/billboard_text_hud.hpp>
+#include <particle/billboard_text_hud.hpp>
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/sound/triggers.hpp>
+#include <state/client_state.hpp>
+#include <sound/triggers.hpp>
 #include <chat/client.hpp>
 #include <hud/map.hpp>
 
-#include <c_lib/particles/_include.hpp>
+#include <particle/_include.hpp>
 
-#include <c_lib/animations/_interface.hpp>
-#include <c_lib/animations/animations.hpp>
+#include <animations/_interface.hpp>
+#include <animations/animations.hpp>
 
 void Agent_event::name_changed(char* old_name)
 {
@@ -62,7 +62,7 @@ void Agent_event::display_name()
     if (this->a->status.dead) return;
     if (this->bb == NULL)
     {
-        this->bb = Particles::billboard_text_hud_list->create();
+        this->bb = Particle::billboard_text_hud_list->create();
         if (this->bb == NULL) return;
         this->bb->set_ttl(-1000);          // dont die
         this->bb->set_text(this->a->status.name);
@@ -77,7 +77,7 @@ void Agent_event::display_name()
 // side effects of taking damage. dont modify health/death here
 void Agent_event::took_damage(int dmg)
 {
-    Particles::BillboardText* b = Particles::billboard_text_list->create(
+    Particle::BillboardText* b = Particle::billboard_text_list->create(
     );
     if (b==NULL) return;
     b->set_state(

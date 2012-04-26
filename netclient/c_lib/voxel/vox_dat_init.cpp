@@ -1,6 +1,6 @@
 #include "vox_dat_init.hpp"
 
-#include <c_lib/voxel/voxel_loader.hpp>
+#include <voxel/voxel_loader.hpp>
 
 
 namespace VoxDats

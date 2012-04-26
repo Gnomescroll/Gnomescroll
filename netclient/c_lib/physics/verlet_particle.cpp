@@ -1,6 +1,6 @@
 #include "verlet_particle.hpp"
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 #include <t_map/t_properties.hpp>
 

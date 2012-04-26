@@ -1,10 +1,10 @@
 #include "_interface.hpp"
 
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/t_hud/constants.hpp>
-#include <c_lib/t_hud/inventory_hud.hpp>
-#include <c_lib/t_hud/toolbelt_hud.hpp>
-#include <c_lib/t_hud/nanite_hud.hpp>
+#include <entity/constants.hpp>
+#include <t_hud/constants.hpp>
+#include <t_hud/inventory_hud.hpp>
+#include <t_hud/toolbelt_hud.hpp>
+#include <t_hud/nanite_hud.hpp>
 
 namespace t_hud
 {

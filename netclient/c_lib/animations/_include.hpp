@@ -2,15 +2,15 @@
 
 #if DC_CLIENT
 
-#include <c_lib/animations/_interface.cpp>
+#include <animations/_interface.cpp>
 
-#include <c_lib/animations/animations.cpp>
-#include <c_lib/animations/hitscan.cpp>
-#include <c_lib/animations/hitscan_laser.cpp>
+#include <animations/animations.cpp>
+#include <animations/hitscan.cpp>
+#include <animations/hitscan_laser.cpp>
 
-#include <c_lib/animations/mining_laser.cpp>
+#include <animations/mining_laser.cpp>
 
-#include <c_lib/animations/insect_mob.cpp>
+#include <animations/insect_mob.cpp>
 #endif
 
 

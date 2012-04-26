@@ -1,18 +1,18 @@
 #include "animations.hpp"
 
-#include <c_lib/options.hpp>
-//#include <c_lib/particles/particle_lib.hpp>
-#include <c_lib/common/random.h>
-#include <c_lib/state/client_state.hpp>
+#include <options.hpp>
+//#include <particle/particle_lib.hpp>
+#include <common/random.h>
+#include <state/client_state.hpp>
 
-//#include <c_lib/physics/matrix.hpp>
+//#include <physics/matrix.hpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/mat3.hpp>
+#include <physics/vec3.hpp>
+#include <physics/mat3.hpp>
 
-#include <c_lib/particles/_include.hpp>
-#include <c_lib/particles/shrapnel.hpp>
-#include <c_lib/particles/blood.hpp>
+#include <particle/_include.hpp>
+#include <particle/shrapnel.hpp>
+#include <particle/blood.hpp>
 
 
 namespace Animations {
@@ -31,7 +31,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 
     float theta,phi;
 
-    Particles::TexturedMinivox* minivox;
+    Particle::TexturedMinivox* minivox;
     
     for (int i=0; i < n; i++)
     {
@@ -48,7 +48,7 @@ void block_crumble(float x, float y, float z, int n, int cube_id, float momentum
 
         side = randrange(0,5);
         tex_id = t_map::get_cube_side_texture(cube_id, side);
-        minivox = Particles::textured_minivox_list->create();
+        minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         minivox->set_state(nx,ny,nz, vx,vy,vz);
         //minivox->set_color(r,g,b);
@@ -120,7 +120,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
     side[1] = (side[1]) ? 0 : 1;
     side[2] = (side[2]) ? 0 : 1;
 
-    Particles::TexturedMinivox* minivox;
+    Particle::TexturedMinivox* minivox;
 
     float vx,vy,vz;
     float nx,ny,nz;
@@ -144,7 +144,7 @@ void block_damage(float x, float y, float z, float ix, float iy, float iz, int c
         theta = randf() * PI * 2;
         phi = randf() * PI * 2;
         
-        minivox = Particles::textured_minivox_list->create();
+        minivox = Particle::textured_minivox_list->create();
         if (minivox == NULL) return;
         minivox->set_state(nx,ny,nz, vx,vy,vz);
         minivox->set_texture(tex_id, 2);
@@ -201,7 +201,7 @@ void grenade_explode(float x, float y, float z)
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    Particles::Shrapnel *s;
+    Particle::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
         cx = x + ((randf() - 0.5f) / 20.0f);
@@ -210,7 +210,7 @@ void grenade_explode(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = Particles::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
+        s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s == NULL) return;
         s->ttl = randrange(15,25);
     }
@@ -222,13 +222,13 @@ void grenade_explode(float x, float y, float z)
 
     //const float vel = 30.0f;
 
-    //Particles::Shrapnel* g;
+    //Particle::Shrapnel* g;
     //Vec3 cv;
     
     //for (int i=0; i<26; i++)
     //{
         //cv = vec3_scalar_mult(gvset[i], vel);
-        //g = Particles::shrapnel_list->create(
+        //g = Particle::shrapnel_list->create(
             //x, y, z,
             //cv.x, cv.y, cv.z
         //);
@@ -251,7 +251,7 @@ void terrain_sparks(float x, float y, float z)
     float cx,cy,cz;
     float cvx,cvy,cvz;
 
-    Particles::Shrapnel *s;
+    Particle::Shrapnel *s;
     for (int i=0; i<n; i++)
     {
         cx = x + ((randf() - 0.5f) / 20.0f);
@@ -260,7 +260,7 @@ void terrain_sparks(float x, float y, float z)
         cvx = vx * (randf() - 0.5f);
         cvy = vy * (randf() - 0.5f);
         cvz = vz * (randf() - 0.5f);
-        s = Particles::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
+        s = Particle::create_shrapnel(cx, cy, cz, cvx, cvy, cvz);
         if (s==NULL) return;
         s->ttl = randrange(8,15);
         s->scale = 0.05;
@@ -277,7 +277,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
     float theta, phi;
     float dtheta, dphi;
 
-    Particles::ColoredMinivox* minivox;
+    Particle::ColoredMinivox* minivox;
     int ttl;
     for (int i=0; i<count; i++)
     {
@@ -294,7 +294,7 @@ void voxel_explode(Vec3 position, int count, float size, float force, struct Col
         dtheta = randf() * 0.01f;
         dphi = randf() * 0.01f;
 
-        minivox = Particles::colored_minivox_list->create();
+        minivox = Particle::colored_minivox_list->create();
         if (minivox == NULL) return;
         minivox->set_size(size);
         minivox->set_state(cx,cy,cz, cvx,cvy,cvz);
@@ -346,7 +346,7 @@ void agent_bleed(float x, float y, float z)
 
     int n = randrange(50,70);
     int ttl;
-    Particles::Blood *b;
+    Particle::Blood *b;
     for (int i=0; i<n; i++) {
 
         nx = x + randf() -0.5f;
@@ -357,7 +357,7 @@ void agent_bleed(float x, float y, float z)
         vy = _vy*(randf() -0.5f);
         vz = _vz*(randf() -0.5f);
 
-        b = Particles::blood_list->create();
+        b = Particle::blood_list->create();
         if (b==NULL) return;
         b->set_state(nx,ny,nz, vx,vy,vz);
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);
@@ -381,7 +381,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
     const float base_speed = 1.0f;
     float speed;
     const float arc = 48.0f;
-    Particles::Blood *b;
+    Particle::Blood *b;
     int ttl;
     for (int i=0; i<n; i++)
     {
@@ -393,7 +393,7 @@ void blood_spray(float x, float y, float z, float ix, float iy, float iz)  // po
 
         speed = (randf() + 0.5) * randrange(0,2);
         speed *= base_speed;
-        b = Particles::blood_list->create();
+        b = Particle::blood_list->create();
         if (b == NULL) return;
         b->set_state(x,y,z, v.x*speed, v.y*speed, v.z*speed);
         ttl = randrange(b->ttl_max - 5, b->ttl_max + 5);

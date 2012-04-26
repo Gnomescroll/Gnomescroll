@@ -1,13 +1,13 @@
 #pragma once
 #if DC_SERVER
 
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/game/ctf.hpp>
-//#include <c_lib/monsters/monsters.hpp>
-#include <c_lib/voxel/voxel_hitscan.hpp>
+#include <agent/agent_list.hpp>
+#include <game/ctf.hpp>
+//#include <monsters/monsters.hpp>
+#include <voxel/voxel_hitscan.hpp>
 
-#include <c_lib/particles/grenade.hpp>
-//#include <c_lib/particles/cspray.hpp>
+#include <particle/grenade.hpp>
+//#include <particle/cspray.hpp>
 
 namespace ServerState
 {
@@ -30,8 +30,6 @@ namespace ServerState
         ObjectType inflictor_type, int inflictor_id,
         bool suicidal=true
     );
-
-    void server_tick() GNOMESCROLL_API;
 
     void send_initial_game_state_to_client(int client_id);
     void send_remainining_game_state_to_client(int client_id);

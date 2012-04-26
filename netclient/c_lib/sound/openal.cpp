@@ -1,6 +1,6 @@
 #include "openal.hpp"
 
-#include <c_lib/sound/sound.hpp>
+#include <sound/sound.hpp>
 //#include <AL/al.h>
 //#include <AL/alc.h>
 #include <compat_al.h>

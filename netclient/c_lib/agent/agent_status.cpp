@@ -2,11 +2,11 @@
 
 #include <math.h>
 
-//#include <c_lib/inventory/include.hpp>
+//#include <inventory/include.hpp>
 
 #if DC_SERVER
 #include <chat/server.hpp>
-#include <c_lib/chat/interface.hpp>
+#include <chat/interface.hpp>
 #endif
 
 /*

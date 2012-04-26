@@ -1,15 +1,15 @@
 #include "_interface.hpp"
 
-//#include <c_lib/t_item/list.hpp>
+//#include <t_item/list.hpp>
 
-//#include <c_lib/t_item/free_item.hpp>
-#include <c_lib/t_item/item_container.hpp>
-#include <c_lib/t_item/item.hpp>
+//#include <t_item/free_item.hpp>
+#include <t_item/item_container.hpp>
+#include <t_item/item.hpp>
 
-#include <c_lib/t_item/net/StoC.hpp>
+#include <t_item/net/StoC.hpp>
 
 #if DC_CLIENT
-#include <c_lib/input/handlers.hpp>
+#include <input/handlers.hpp>
 #endif
 
 namespace t_item

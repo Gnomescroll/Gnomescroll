@@ -1,6 +1,6 @@
 #include "items.hpp"
 
-#include <c_lib/SDL/texture_loader.hpp>
+#include <SDL/texture_loader.hpp>
 
 GLuint item_texture;
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/template/object_list.hpp>
+#include <template/object_list.hpp>
 
-#include <c_lib/common/random.h>
+#include <common/random.h>
 
 namespace Dragon {
 

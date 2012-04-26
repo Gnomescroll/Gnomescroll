@@ -134,7 +134,7 @@ typedef enum
 
 #include <limits.h>
 #include <float.h>
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 const int NULL_OWNER = INT_MAX; // owners are ids of agents. they will never be INT_MAX
 const int NULL_TEAM = SHRT_MAX;  // team ids. will never be SHRT_MAX.

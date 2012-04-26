@@ -1,7 +1,7 @@
 #include "equipment.hpp"
 
-#include <c_lib/SDL/texture_loader.hpp>
-#include <c_lib/SDL/SDL_functions.h>
+#include <SDL/texture_loader.hpp>
+#include <SDL/SDL_functions.h>
 
 namespace HudEquipment {
 
