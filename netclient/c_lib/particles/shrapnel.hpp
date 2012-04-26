@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/template/simple_object_list.hpp>
+#include <c_lib/common/template/simple_object_list.hpp>
 #include <c_lib/physics/verlet_particle.hpp>
 
 namespace Particles

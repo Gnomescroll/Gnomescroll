@@ -51,7 +51,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
 namespace Particles
 {
 
-#include <c_lib/template/object_list.hpp>
+#include <c_lib/common/template/object_list.hpp>
 class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 {
     private:

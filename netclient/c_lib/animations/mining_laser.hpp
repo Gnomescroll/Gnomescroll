@@ -42,7 +42,7 @@ void init_mining_laser()
 
 void teardown_mining_laser()
 {
-	delete mining_laser_vlist;
+    delete mining_laser_vlist;
 }
 
 void init_mining_laser_texture()
@@ -103,10 +103,10 @@ class MiningLaser
     void init(float x, float y, float z, float mx, float my, float mz)
     {
 
-    	ttl = MINING_LASER_TTL;
+        ttl = MINING_LASER_TTL;
 
-    	type = 0+rand()%4;
-    	verlet.dampening = MINING_LASER_DAMPENING;
+        type = 0+rand()%4;
+        verlet.dampening = MINING_LASER_DAMPENING;
 
         verlet.position = vec3_init(x,y,z);
         verlet.velocity = vec3_init(mx,my,mz);
@@ -120,50 +120,50 @@ class MiningLaser
         if( verlet.bool_no_gravity() ) ttl = 0;
         
         //verlet.bounce_box_no_gravity(0.125)
-    	//verlet.radial(rx, ry);
+        //verlet.radial(rx, ry);
 
         this->ttl--;
     }
 
     void prep(Vec3 cam)
     {
-	    const float scale = 0.25;
-	    const float _h = scale / 2;
+        const float scale = 0.25;
+        const float _h = scale / 2;
 
-	    Vec3 up = vec3_init(
-	        model_view_matrix[0]*scale,
-	        model_view_matrix[4]*scale,
-	        model_view_matrix[8]*scale
-	    );
-	    Vec3 right = vec3_init(
-	        model_view_matrix[1]*scale,
-	        model_view_matrix[5]*scale,
-	        model_view_matrix[9]*scale
-	    );
+        Vec3 up = vec3_init(
+            model_view_matrix[0]*scale,
+            model_view_matrix[4]*scale,
+            model_view_matrix[8]*scale
+        );
+        Vec3 right = vec3_init(
+            model_view_matrix[1]*scale,
+            model_view_matrix[5]*scale,
+            model_view_matrix[9]*scale
+        );
 
-	    int texture_index = this->type;
-	    //int texture_index = 4;
+        int texture_index = this->type;
+        //int texture_index = 4;
 
-	    float tx_min, tx_max, ty_min, ty_max;
-	    tx_min = (float)(texture_index%4)* (1.0/4.0);
-	    tx_max = tx_min + (1.0/4.0);
-	    ty_min = (float)(texture_index/4)* (1.0/4.0);
-	    ty_max = ty_min + (1.0/4.0);
+        float tx_min, tx_max, ty_min, ty_max;
+        tx_min = (float)(texture_index%4)* (1.0/4.0);
+        tx_max = tx_min + (1.0/4.0);
+        ty_min = (float)(texture_index/4)* (1.0/4.0);
+        ty_max = ty_min + (1.0/4.0);
 
-	    Vec3 position = verlet.position;
-	    position.z += _h;
+        Vec3 position = verlet.position;
+        position.z += _h;
 
-	    Vec3 p = vec3_sub(position, vec3_add(right, up));
-		mining_laser_vlist->push_vertex(p, tx_min,ty_max);
+        Vec3 p = vec3_sub(position, vec3_add(right, up));
+        mining_laser_vlist->push_vertex(p, tx_min,ty_max);
 
-	    p = vec3_add(position, vec3_sub(up, right));
-	    mining_laser_vlist->push_vertex(p, tx_max,ty_max);
+        p = vec3_add(position, vec3_sub(up, right));
+        mining_laser_vlist->push_vertex(p, tx_max,ty_max);
 
-	    p = vec3_add(position, vec3_add(up, right));
-	    mining_laser_vlist->push_vertex(p, tx_max,ty_min);
+        p = vec3_add(position, vec3_add(up, right));
+        mining_laser_vlist->push_vertex(p, tx_max,ty_min);
 
-	    p = vec3_add(position, vec3_sub(right, up));
-	    mining_laser_vlist->push_vertex(p, tx_min,ty_min);
+        p = vec3_add(position, vec3_sub(right, up));
+        mining_laser_vlist->push_vertex(p, tx_min,ty_min);
 
     }
 
@@ -171,7 +171,7 @@ class MiningLaser
 
 }
 
-#include <c_lib/template/object_list.hpp>
+#include <c_lib/common/template/object_list.hpp>
 
 namespace Animations 
 {
@@ -195,9 +195,9 @@ class MiningLaserEffect_list: public Simple_object_list<MiningLaser, MINING_LASE
 
 void MiningLaserEffect_list::prep()
 {
-	//mining_laser_vlist->reset_index();
+    //mining_laser_vlist->reset_index();
 
-	Vec3 cam = vec3_init(current_camera->x, current_camera->y, current_camera->z);
+    Vec3 cam = vec3_init(current_camera->x, current_camera->y, current_camera->z);
     for (int i=0; i<this->num; i++)
     {
         this->a[i].prep(cam);
@@ -210,18 +210,18 @@ void MiningLaserEffect_list::prep()
 void MiningLaserEffect_list::draw()
 {
 
-	if(mining_laser_vlist->vertex_number == 0) return;
-	const static unsigned int stride = sizeof(struct vertexElement1);
+    if(mining_laser_vlist->vertex_number == 0) return;
+    const static unsigned int stride = sizeof(struct vertexElement1);
 
-	assert(mining_laser_vlist->VBO != 0);
+    assert(mining_laser_vlist->VBO != 0);
 
-	//printf("%i \n", mining_laser_vlist->vlist_index);
+    //printf("%i \n", mining_laser_vlist->vlist_index);
 
     //glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vbo);
     //glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, NULL, GL_DYNAMIC_DRAW);
     //glBufferData(GL_ARRAY_BUFFER, mining_laser_vlist->vlist_index*stride, mining_laser_vlist->vlist, GL_DYNAMIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vlist->VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mining_laser_vlist->VBO);
 
     glEnable(GL_BLEND);
     glDepthMask(GL_FALSE);
@@ -262,11 +262,11 @@ void MiningLaserEffect_list::tick()
     {
         a[i].tick();
 
-	    if (a[i].ttl <= 0 )
-	    {
-	    	this->destroy(a[i].id);
-	        //printf("destroy \n");
-	    }
+        if (a[i].ttl <= 0 )
+        {
+            this->destroy(a[i].id);
+            //printf("destroy \n");
+        }
 
     }
 }

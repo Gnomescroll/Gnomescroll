@@ -2,7 +2,7 @@
 
 #include <c_lib/agent/agent.hpp>
 #include <c_lib/physics/vec3.hpp>
-#include <c_lib/template/object_list.hpp>
+#include <c_lib/common/template/object_list.hpp>
 
 class Agent_list: public Object_list<Agent_state,AGENT_MAX>
 {

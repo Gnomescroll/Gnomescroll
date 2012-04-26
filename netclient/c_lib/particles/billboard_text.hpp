@@ -40,7 +40,7 @@ class BillboardText: public ParticleMotion
 
 }
 
-#include <c_lib/template/object_list.hpp>
+#include <c_lib/common/template/object_list.hpp>
 
 namespace Particles
 {

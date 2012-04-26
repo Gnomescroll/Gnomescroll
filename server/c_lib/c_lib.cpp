@@ -16,6 +16,9 @@
 #include <c_lib/common/time/physics_timer.cpp>
 #include <c_lib/common/common.cpp>
 #include <c_lib/common/files.cpp>
+#include <c_lib/common/template/object_list.hpp>
+#include <c_lib/common/template/simple_object_list.hpp>
+#include <c_lib/common/template/object_pool.hpp>
  
 // logging
 #include <c_lib/common/logger.cpp>
