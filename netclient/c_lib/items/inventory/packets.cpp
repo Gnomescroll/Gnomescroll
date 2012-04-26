@@ -173,6 +173,10 @@ inline void remove_item_from_inventory_CtoS::handle()
             PickupComponent* pickup = (PickupComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PICKUP);
             if (pickup != NULL) pickup->was_dropped();
 
+            using Components::StackableComponent;
+            StackableComponent* stack = (StackableComponent*)obj->get_component_interface(COMPONENT_INTERFACE_STACKABLE);
+            if (stack != NULL) stack->count = item->count;
+
             Objects::ready(obj);
         }
     }
