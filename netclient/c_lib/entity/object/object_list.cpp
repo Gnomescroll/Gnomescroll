@@ -24,8 +24,10 @@ void ObjectList::set_object_id(Object* object)
 
 void ObjectList::set_object_id(Object* object, int id)
 {
+    if (id < 0) return;
     ObjectType type = object->type;
     assert(this->used[type][id] == 0);
+    assert(id < this->max(type));
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
@@ -59,7 +61,7 @@ inline bool ObjectList::full(ObjectType type)
 void ObjectList::destroy(ObjectType type, int id)
 {
     if (this->used[type] == NULL) return;
-    if (!this->used[type][id]) return;
+    assert(this->used[type][id]);
     this->used[type][id] = 0;
     this->indices[type] -= 1;
 }
@@ -72,6 +74,7 @@ Object* ObjectList::get(ObjectType type, int id)
 
 Object* ObjectList::create(ObjectType type)
 {
+    if (this->full(type)) return NULL;
     return this->staging_objects[type];
 }
 

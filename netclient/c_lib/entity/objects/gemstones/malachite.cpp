@@ -76,6 +76,7 @@ void die_malachite_gemstone(Object* object)
     using Components::PickupComponent;
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
     pickup->broadcast();
+    object->broadcastDeath();
     #endif
 }
 
@@ -92,10 +93,10 @@ void tick_malachite_gemstone(Object* object)
     #if DC_SERVER
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
     pickup->tick();
-    #endif
 
     TTLHealthComponent* ttl = (TTLHealthComponent*)object->get_component(COMPONENT_TTL);
     ttl->tick();
+    #endif
 }
 
 //void update_malachite_gemstone(Object* object)
