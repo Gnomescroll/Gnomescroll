@@ -1,6 +1,6 @@
 #include "inventory.hpp"
 
-#include <c_lib/agent/agent.hpp>
+#include <agent/agent.hpp>
 
 namespace Items
 {

@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 static struct
 {

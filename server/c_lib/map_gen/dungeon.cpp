@@ -1,9 +1,9 @@
 #include "dungeon.hpp"
 
-#include <c_lib/t_map/t_map.hpp>
-#include <c_lib/map_gen/features.h>
+#include <t_map/t_map.hpp>
+#include <map_gen/features.h>
 #include <math.h>
-#include <c_lib/common/random.h>
+#include <common/random.h>
 
 #include "hopcroft-karp.cpp"
 

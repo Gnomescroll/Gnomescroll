@@ -2,11 +2,11 @@
 
 #if DC_SERVER
 
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/entity/components/physics.hpp>
-#include <c_lib/entity/components/owner.hpp>
+#include <state/server_state.hpp>
+#include <agent/agent.hpp>
+#include <agent/agent_list.hpp>
+#include <entity/components/physics.hpp>
+#include <entity/components/owner.hpp>
 
 namespace Components
 {

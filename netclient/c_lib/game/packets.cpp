@@ -1,8 +1,8 @@
 #include "packets.hpp"
 
 #ifdef DC_CLIENT
-#include <c_lib/chat/client.hpp>
-#include <c_lib/chat/interface.hpp>
+#include <chat/client.hpp>
+#include <chat/interface.hpp>
 
 inline void TeamColor_StoC::handle()
 {

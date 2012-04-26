@@ -1,6 +1,6 @@
 #include "map_generator.hpp"
 
-#include <c_lib/t_map/glsl/texture.hpp>
+#include <t_map/glsl/texture.hpp>
 
 namespace MapGen
 {

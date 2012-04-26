@@ -1,6 +1,6 @@
 #include "teams.hpp"
 
-#include <c_lib/game/packets.hpp>
+#include <game/packets.hpp>
 
 Team::Team()
 :

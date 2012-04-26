@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/game/constants.hpp>
+#include <game/constants.hpp>
 #include <entity/constants.hpp>
-#include <c_lib/agent/constants.hpp>
+#include <agent/constants.hpp>
 
 void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 

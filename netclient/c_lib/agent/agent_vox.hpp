@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/voxel/voxel_model.hpp>
+#include <voxel/voxel_model.hpp>
 #include <agent/agent_status.hpp>
 
 enum AGENT_BODY_PARTS

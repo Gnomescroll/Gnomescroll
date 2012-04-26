@@ -1,12 +1,12 @@
 #include "./camera.hpp"
 
-#include <c_lib/camera/fulstrum_test.hpp>
+#include <camera/fulstrum_test.hpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/mat3.hpp>
+#include <physics/vec3.hpp>
+#include <physics/mat3.hpp>
 
-#include <c_lib/input/input.hpp>
-#include <c_lib/voxel/voxel_loader.hpp>
+#include <input/input.hpp>
+#include <voxel/voxel_loader.hpp>
 
 extern float _xresf;
 extern float _yresf;

@@ -1,51 +1,51 @@
 #pragma once
 
-#include <c_lib/entity/components/stackable.hpp>
+#include <entity/components/stackable.hpp>
 
-#include <c_lib/entity/components/physics.hpp>
-#include <c_lib/entity/components/physics/position.hpp>
-#include <c_lib/entity/components/physics/position_momentum.hpp>
-#include <c_lib/entity/components/physics/position_changed.hpp>
-#include <c_lib/entity/components/physics/position_momentum_changed.hpp>
-#include <c_lib/entity/components/physics/verlet.hpp>
+#include <entity/components/physics.hpp>
+#include <entity/components/physics/position.hpp>
+#include <entity/components/physics/position_momentum.hpp>
+#include <entity/components/physics/position_changed.hpp>
+#include <entity/components/physics/position_momentum_changed.hpp>
+#include <entity/components/physics/verlet.hpp>
 
 #if DC_CLIENT
-#include <c_lib/entity/components/draw.hpp>
-#include <c_lib/entity/components/draw/billboard_sprite.hpp>
-#include <c_lib/entity/components/draw/voxel.hpp>
-#include <c_lib/entity/components/draw/colored_voxel.hpp>
-#include <c_lib/entity/components/draw/textured_voxel.hpp>
+#include <entity/components/draw.hpp>
+#include <entity/components/draw/billboard_sprite.hpp>
+#include <entity/components/draw/voxel.hpp>
+#include <entity/components/draw/colored_voxel.hpp>
+#include <entity/components/draw/textured_voxel.hpp>
 
-#include <c_lib/entity/components/animation.hpp>
+#include <entity/components/animation.hpp>
 #endif
 
-#include <c_lib/entity/components/pickup.hpp>
+#include <entity/components/pickup.hpp>
 
-#include <c_lib/entity/components/health.hpp>
-#include <c_lib/entity/components/health/hit_points.hpp>
-#include <c_lib/entity/components/health/ttl.hpp>
+#include <entity/components/health.hpp>
+#include <entity/components/health/hit_points.hpp>
+#include <entity/components/health/ttl.hpp>
 
-#include <c_lib/entity/components/team.hpp>
-#include <c_lib/entity/components/team/indexed_team.hpp>
+#include <entity/components/team.hpp>
+#include <entity/components/team/indexed_team.hpp>
 
-#include <c_lib/entity/components/owner.hpp>
+#include <entity/components/owner.hpp>
 
-#include <c_lib/entity/components/spawner.hpp>
-#include <c_lib/entity/components/spawner/agent_spawner.hpp>
-#include <c_lib/entity/components/spawner/monster_spawner.hpp>
+#include <entity/components/spawner.hpp>
+#include <entity/components/spawner/agent_spawner.hpp>
+#include <entity/components/spawner/monster_spawner.hpp>
 
-#include <c_lib/entity/components/spawn_child.hpp>
+#include <entity/components/spawn_child.hpp>
 
-#include <c_lib/entity/components/voxel_model.hpp>
+#include <entity/components/voxel_model.hpp>
 
-#include <c_lib/entity/components/dimension.hpp>
+#include <entity/components/dimension.hpp>
 
-#include <c_lib/entity/components/targeting.hpp>
-#include <c_lib/entity/components/targeting/motion_targeting.hpp>
-#include <c_lib/entity/components/targeting/weapon_targeting.hpp>
+#include <entity/components/targeting.hpp>
+#include <entity/components/targeting/motion_targeting.hpp>
+#include <entity/components/targeting/weapon_targeting.hpp>
 
 #if DC_SERVER
-#include <c_lib/entity/components/explosion.hpp>
+#include <entity/components/explosion.hpp>
 #endif
 
-#include <c_lib/entity/components/rate_limit.hpp>
+#include <entity/components/rate_limit.hpp>

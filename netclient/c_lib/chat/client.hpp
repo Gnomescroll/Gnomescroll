@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/chat/globals.hpp>
-#include <c_lib/chat/packets.hpp>
+#include <chat/globals.hpp>
+#include <chat/packets.hpp>
 
 const int CHAT_BUFFER_SIZE = CHAT_MESSAGE_SIZE_MAX;
 const int CHAT_CLIENT_INPUT_HISTORY_MAX = 20;

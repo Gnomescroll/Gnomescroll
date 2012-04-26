@@ -1,9 +1,9 @@
 #pragma once
 
 #include <physics/common.hpp>
-#include <c_lib/voxel/common.h>
+#include <voxel/common.h>
 
-#include <c_lib/particle/minivox_colored.hpp>
+#include <particle/minivox_colored.hpp>
 
 namespace Particle
 {
@@ -44,7 +44,7 @@ class TexturedMinivox: public ParticleMotion
 
 }
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Particle
 {

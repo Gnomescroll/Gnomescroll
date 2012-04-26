@@ -1,7 +1,7 @@
 #include "grenade_shrapnel.hpp"
 
 #include <physics/common.hpp>
-#include <c_lib/agent/net_agent.hpp>
+#include <agent/net_agent.hpp>
 
 namespace Particle
 {

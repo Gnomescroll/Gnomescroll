@@ -1,7 +1,7 @@
 #include "input.hpp"
 
-#include <c_lib/SDL/SDL_functions.h>
-#include <c_lib/input/handlers.hpp>
+#include <SDL/SDL_functions.h>
+#include <input/handlers.hpp>
 
 static SDL_Event Event;
 
@@ -50,7 +50,7 @@ void unbind_mouse()
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
-//#include <c_lib/common/lua/lua.hpp>
+//#include <common/lua/lua.hpp>
 
 int process_events()
 {

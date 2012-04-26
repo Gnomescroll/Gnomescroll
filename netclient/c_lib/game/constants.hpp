@@ -4,9 +4,9 @@
     #defines, constants for items
 */
 
-#include <c_lib/common/common.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/game/game.hpp>
+#include <common/common.hpp>
+#include <entity/constants.hpp>
+#include <game/game.hpp>
 
 // TODO - deprecate
 const int COST_SPAWNER = 5;

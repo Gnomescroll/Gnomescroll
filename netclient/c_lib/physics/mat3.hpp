@@ -2,8 +2,8 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/vec4.hpp>
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
 
 #include <math.h>
 

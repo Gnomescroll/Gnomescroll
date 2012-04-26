@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/common/template/object_pool.hpp>
+#include <common/template/object_pool.hpp>
 
 #include <string.h>
 

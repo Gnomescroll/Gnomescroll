@@ -1,15 +1,15 @@
 #pragma once
 
-#include <c_lib/physics/ray_trace/ray_trace.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/defines.h>
+#include <physics/ray_trace/ray_trace.hpp>
+#include <entity/constants.hpp>
+#include <defines.h>
 
-#include <c_lib/agent/agent_status.hpp>
-#include <c_lib/agent/agent_vox.hpp>
-#include <c_lib/agent/agent_weapons.hpp>
+#include <agent/agent_status.hpp>
+#include <agent/agent_vox.hpp>
+#include <agent/agent_weapons.hpp>
 
 #if DC_CLIENT
-#include <c_lib/agent/client/agent_event.hpp>
+#include <agent/client/agent_event.hpp>
 #endif
 
 //store last network messsage

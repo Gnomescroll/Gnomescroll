@@ -1,12 +1,12 @@
 #pragma once
 
-#include <c_lib/agent/constants.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/component/component.hpp>
-#include <c_lib/entity/components/health.hpp>
+#include <agent/constants.hpp>
+#include <entity/constants.hpp>
+#include <entity/component/component.hpp>
+#include <entity/components/health.hpp>
 
 // TODO == move net packet
-#include <c_lib/entity/network/packets.hpp>
+#include <entity/network/packets.hpp>
 
 namespace Components
 {

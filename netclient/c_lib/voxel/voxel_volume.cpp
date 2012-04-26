@@ -1,7 +1,7 @@
 #include "voxel_volume.hpp"
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/state/server_state.hpp>
+#include <state/client_state.hpp>
+#include <state/server_state.hpp>
 #include <voxel/constants.hpp>
 
 #ifdef DC_CLIENT

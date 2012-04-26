@@ -6,7 +6,7 @@
 #include <hud/text.hpp>
 #include <SDL/SDL_functions.h>
 #include <camera/camera.hpp>
-#include <c_lib/hud/font.hpp>
+#include <hud/font.hpp>
 
 namespace Particle
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/physics/ray_trace/hitscan.hpp>
-#include <c_lib/t_map/t_map.hpp>
+#include <physics/ray_trace/hitscan.hpp>
+#include <t_map/t_map.hpp>
 
 //forward decl
 class Agent_state;

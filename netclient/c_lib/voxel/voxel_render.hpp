@@ -4,7 +4,7 @@
 
 #include <voxel/voxel_volume.hpp>
 
-#include <c_lib/SDL/shader_loader.hpp>
+#include <SDL/shader_loader.hpp>
 
 //#include <physics/vector4.hpp>
 

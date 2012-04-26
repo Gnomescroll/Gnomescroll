@@ -43,9 +43,9 @@
 
 #include "REPLACEME.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
 
 namespace Objects
 {

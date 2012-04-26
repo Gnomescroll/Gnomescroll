@@ -1,7 +1,7 @@
 #include "shrapnel.hpp"
 
 #include <physics/vec3.hpp>
-#include <c_lib/animations/common.hpp>
+#include <animations/common.hpp>
 
 namespace Particle
 {

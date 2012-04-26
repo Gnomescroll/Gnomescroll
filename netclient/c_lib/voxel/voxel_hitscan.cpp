@@ -1,7 +1,7 @@
 #include "voxel_hitscan.hpp"
 
-#include <c_lib/physics/ray_trace/hitscan.hpp>
-#include <c_lib/physics/ray_trace/ray_trace.hpp>
+#include <physics/ray_trace/hitscan.hpp>
+#include <physics/ray_trace/ray_trace.hpp>
 
 bool Voxel_hitscan_list::hitscan(
     const float x0, const float y0, const float z0, 

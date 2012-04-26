@@ -1,15 +1,15 @@
 #include "ctf.hpp"
 
-#include <c_lib/t_map/t_map.hpp>
-//#include <c_lib/agent/player_agent.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/game/packets.hpp>
+#include <t_map/t_map.hpp>
+//#include <agent/player_agent.hpp>
+#include <state/client_state.hpp>
+#include <game/packets.hpp>
 #include <common/random.h>
-#include <c_lib/options.hpp>
+#include <options.hpp>
 
 #ifdef DC_CLIENT
-#include <c_lib/hud/map.hpp>
-#include <c_lib/hud/compass.hpp>
+#include <hud/map.hpp>
+#include <hud/compass.hpp>
 #endif
 
 CTF::CTF()

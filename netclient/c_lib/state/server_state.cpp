@@ -1,13 +1,13 @@
 #include "server_state.hpp"
 
-#include <c_lib/agent/agent.hpp>
+#include <agent/agent.hpp>
 
-#include <c_lib/game/ctf.hpp>
+#include <game/ctf.hpp>
 
-#include <c_lib/chat/interface.hpp>
+#include <chat/interface.hpp>
 
-#include <c_lib/entity/objects.hpp>
-#include <c_lib/entity/components.hpp>
+#include <entity/objects.hpp>
+#include <entity/components.hpp>
 
 namespace ServerState
 {

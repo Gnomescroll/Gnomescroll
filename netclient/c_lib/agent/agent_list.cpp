@@ -1,11 +1,11 @@
 #include "agent_list.hpp"
 
 #if DC_SERVER
-    #include <c_lib/t_map/server/manager.hpp>
+    #include <t_map/server/manager.hpp>
 #endif
-#include <c_lib/physics/common.hpp>
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/state/client_state.hpp>
+#include <physics/common.hpp>
+#include <state/server_state.hpp>
+#include <state/client_state.hpp>
 
 /*
     Warning: using agent position for map loading

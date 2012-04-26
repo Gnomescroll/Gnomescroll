@@ -1,6 +1,6 @@
 #include "object_list.hpp"
 
-#include <c_lib/entity/constants.hpp>
+#include <entity/constants.hpp>
 
 namespace Objects
 {

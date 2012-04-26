@@ -2,7 +2,7 @@
 
 #if DC_SERVER
 
-#include <c_lib/entity/component/component.hpp>
+#include <entity/component/component.hpp>
 
 namespace Components
 {

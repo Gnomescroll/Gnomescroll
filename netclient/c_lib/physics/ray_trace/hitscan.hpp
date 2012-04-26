@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/voxel/voxel_hitscan.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/physics/vec3.hpp>
+#include <voxel/voxel_hitscan.hpp>
+#include <entity/constants.hpp>
+#include <physics/vec3.hpp>
 
 namespace Hitscan {
     

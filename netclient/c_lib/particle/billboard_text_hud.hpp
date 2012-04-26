@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/particle/particles.hpp>
-#include <c_lib/hud/text.hpp>
+#include <particle/particles.hpp>
+#include <hud/text.hpp>
 
 namespace Particle
 {
@@ -35,7 +35,7 @@ class BillboardTextHud: public ParticleMotion
 
 }
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Particle
 {

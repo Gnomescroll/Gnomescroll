@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
-#include <c_lib/inventory/inventory.hpp>
+#include <inventory/inventory.hpp>
 
 namespace Items
 {

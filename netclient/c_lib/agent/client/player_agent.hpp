@@ -1,11 +1,11 @@
 #pragma once
 
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/agent_status.hpp>
-#include <c_lib/agent/client/player_agent_action.hpp>
+#include <agent/agent.hpp>
+#include <agent/agent_status.hpp>
+#include <agent/client/player_agent_action.hpp>
 
-//#include <c_lib/inventory/inventory.hpp>
-#include <c_lib/state/client_state.hpp>
+//#include <inventory/inventory.hpp>
+#include <state/client_state.hpp>
 
 enum active_camera_states {
     net_agent = 0,

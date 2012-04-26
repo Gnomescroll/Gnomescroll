@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/common/option_macros.hpp>
+#include <common/option_macros.hpp>
 
-#include <c_lib/common/lua/lua.hpp>
+#include <common/lua/lua.hpp>
 
 namespace Options
 {

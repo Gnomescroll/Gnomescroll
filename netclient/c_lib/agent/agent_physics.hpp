@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/agent/agent.hpp>
+#include <agent/agent.hpp>
 
 bool agent_collides_terrain(Agent_state* a);
 inline bool can_stand_up(float box_r, float box_h, float x, float y, float z);

@@ -2,7 +2,7 @@
 
 #include <net_lib/net.hpp>
 
-#include <c_lib/agent/agent_status.hpp>
+#include <agent/agent_status.hpp>
 /*
  *  Player Agent Packets
 */

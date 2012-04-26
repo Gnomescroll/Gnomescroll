@@ -1,7 +1,7 @@
 #pragma once
 
 #include <entity/constants.hpp>
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 #define VOXEL_HITSCAN_LIST_SIZE 1024
 

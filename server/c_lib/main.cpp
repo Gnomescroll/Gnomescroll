@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/map_gen/map_generator.hpp>
-#include <c_lib/map_gen/recipes.hpp>
+#include <common/time/physics_timer.hpp>
+#include <map_gen/map_generator.hpp>
+#include <map_gen/recipes.hpp>
 
 namespace Main
 {

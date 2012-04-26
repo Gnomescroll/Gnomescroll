@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
-#include <c_lib/animations/common.hpp>
+#include <animations/common.hpp>
 
 namespace Animations 
 {
@@ -237,7 +237,7 @@ class InsectMob
 
 }
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Animations 
 {

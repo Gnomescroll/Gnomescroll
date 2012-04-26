@@ -1,9 +1,9 @@
 #pragma once
 
 #include <defines.h>
-#include <c_lib/t_map/constants.hpp>
+#include <t_map/constants.hpp>
 
-#include <c_lib/t_map/t_map_class.hpp>
+#include <t_map/t_map_class.hpp>
 
 struct MapDimension
 {
@@ -12,7 +12,7 @@ struct MapDimension
 
 extern struct MapDimension map_dim;
 
-#include <c_lib/t_map/common/map_element.hpp>
+#include <t_map/common/map_element.hpp>
 
 namespace t_map
 {

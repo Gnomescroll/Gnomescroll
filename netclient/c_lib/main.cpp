@@ -2,24 +2,24 @@
 
 #include <defines.h>
 
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/SDL/SDL_functions.h>
-#include <c_lib/sound/sound.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/camera/camera.hpp>
-#include <c_lib/camera/skybox/skybox.hpp>
-#include <c_lib/animations/animations.hpp>
+#include <state/client_state.hpp>
+#include <SDL/SDL_functions.h>
+#include <sound/sound.hpp>
+#include <state/client_state.hpp>
+#include <camera/camera.hpp>
+#include <camera/skybox/skybox.hpp>
+#include <animations/animations.hpp>
 #include <net_lib/host.hpp>
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/t_map/t_vbo.hpp>
-#include <c_lib/options.hpp>
-#include <c_lib/common/common.hpp>
+#include <common/time/physics_timer.hpp>
+#include <t_map/t_vbo.hpp>
+#include <options.hpp>
+#include <common/common.hpp>
 
-#include <c_lib/entity/objects.hpp>
+#include <entity/objects.hpp>
 
-#include <c_lib/common/profiling/frame_graph.hpp>
+#include <common/profiling/frame_graph.hpp>
 
-//#include <c_lib/t_mech/draw.hpp>
+//#include <t_mech/draw.hpp>
 
 bool _quit = false;
 

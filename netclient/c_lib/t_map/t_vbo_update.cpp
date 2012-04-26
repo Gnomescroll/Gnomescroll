@@ -1,8 +1,8 @@
 #include "t_vbo_update.hpp"
 
-#include <c_lib/t_map/glsl/structs.hpp>
-#include <c_lib/t_map/glsl/cache.hpp>
-#include <c_lib/t_map/glsl/hash_functions.hpp>
+#include <t_map/glsl/structs.hpp>
+#include <t_map/glsl/cache.hpp>
+#include <t_map/glsl/hash_functions.hpp>
 
 #include "t_map_class.hpp"
 #include "t_vbo_update.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/hud/constants.hpp>
-#include <c_lib/hud/text.hpp>
+#include <hud/constants.hpp>
+#include <hud/text.hpp>
 
 namespace Hud
 {

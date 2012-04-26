@@ -1,12 +1,12 @@
 #include "hitscan_laser.hpp"
 
-#include <c_lib/state/client_state.hpp>
+#include <state/client_state.hpp>
 #include <stdlib.h>
 
-#include <c_lib/camera/camera.hpp>
+#include <camera/camera.hpp>
 
 #include <compat_gl.h>
-#include <c_lib/SDL/texture_loader.hpp>
+#include <SDL/texture_loader.hpp>
 
 /*
  *

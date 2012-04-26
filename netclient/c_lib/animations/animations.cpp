@@ -1,18 +1,18 @@
 #include "animations.hpp"
 
-#include <c_lib/options.hpp>
-//#include <c_lib/particle/particle_lib.hpp>
-#include <c_lib/common/random.h>
-#include <c_lib/state/client_state.hpp>
+#include <options.hpp>
+//#include <particle/particle_lib.hpp>
+#include <common/random.h>
+#include <state/client_state.hpp>
 
-//#include <c_lib/physics/matrix.hpp>
+//#include <physics/matrix.hpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/mat3.hpp>
+#include <physics/vec3.hpp>
+#include <physics/mat3.hpp>
 
-#include <c_lib/particle/_include.hpp>
-#include <c_lib/particle/shrapnel.hpp>
-#include <c_lib/particle/blood.hpp>
+#include <particle/_include.hpp>
+#include <particle/shrapnel.hpp>
+#include <particle/blood.hpp>
 
 
 namespace Animations {

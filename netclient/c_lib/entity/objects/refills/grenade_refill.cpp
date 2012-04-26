@@ -1,9 +1,9 @@
 #include "grenade_refill.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/physics/verlet.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/components/physics/verlet.hpp>
 
 namespace Objects
 {

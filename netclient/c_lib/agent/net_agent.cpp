@@ -1,22 +1,22 @@
 #include "net_agent.hpp"
 
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/state/client_state.hpp>
-#include <c_lib/defines.h>
-#include <c_lib/weapons/weapons.hpp>
-//#include <c_lib/monsters/monsters.hpp>
-//#include <c_lib/inventory/inventory.hpp>
+#include <agent/agent.hpp>
+#include <state/server_state.hpp>
+#include <state/client_state.hpp>
+#include <defines.h>
+#include <weapons/weapons.hpp>
+//#include <monsters/monsters.hpp>
+//#include <inventory/inventory.hpp>
 
 #if DC_CLIENT
-#include <c_lib/common/time/physics_timer.hpp>
-#include <c_lib/chat/client.hpp>
-#include <c_lib/chat/interface.hpp>
+#include <common/time/physics_timer.hpp>
+#include <chat/client.hpp>
+#include <chat/interface.hpp>
 #endif
 
 #if DC_SERVER
-#include <c_lib/t_map/t_map.hpp>
-#include <c_lib/physics/ray_trace/ray_trace.hpp>
+#include <t_map/t_map.hpp>
+#include <physics/ray_trace/ray_trace.hpp>
 #endif
 
 

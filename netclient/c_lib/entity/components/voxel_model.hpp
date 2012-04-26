@@ -1,7 +1,7 @@
 #pragma once
 
-#include <c_lib/voxel/voxel_model.hpp>
-#include <c_lib/entity/component/component.hpp>
+#include <voxel/voxel_model.hpp>
+#include <entity/component/component.hpp>
 
 namespace Components
 {

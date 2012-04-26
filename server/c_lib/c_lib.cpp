@@ -6,120 +6,120 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <c_lib/common/compression/miniz.c>
+#include <common/compression/miniz.c>
 
 //options
-#include <c_lib/common/option_macros.hpp>
-#include <c_lib/options.cpp>
+#include <common/option_macros.hpp>
+#include <options.cpp>
  
 //utility
-#include <c_lib/common/time/physics_timer.cpp>
-#include <c_lib/common/common.cpp>
-#include <c_lib/common/files.cpp>
-#include <c_lib/common/template/object_list.hpp>
-#include <c_lib/common/template/simple_object_list.hpp>
-#include <c_lib/common/template/object_pool.hpp>
+#include <common/time/physics_timer.cpp>
+#include <common/common.cpp>
+#include <common/files.cpp>
+#include <common/template/object_list.hpp>
+#include <common/template/simple_object_list.hpp>
+#include <common/template/object_pool.hpp>
  
 // logging
-#include <c_lib/common/logger.cpp>
+#include <common/logger.cpp>
 
 // LUA 
-#include <c_lib/common/lua/lua.cpp>
+#include <common/lua/lua.cpp>
 
 //map 
-#include <c_lib/t_map/constants.hpp>
-#include <c_lib/t_map/t_map_class.cpp>
-#include <c_lib/t_map/t_map.cpp>
-#include <c_lib/t_map/t_properties.cpp>
+#include <t_map/constants.hpp>
+#include <t_map/t_map_class.cpp>
+#include <t_map/t_map.cpp>
+#include <t_map/t_properties.cpp>
 
-#include <c_lib/t_map/net/t_CtoS.cpp>
-#include <c_lib/t_map/net/t_StoC.cpp>
+#include <t_map/net/t_CtoS.cpp>
+#include <t_map/net/t_StoC.cpp>
 
-#include <c_lib/t_map/server/map_manager_class.cpp>
-#include <c_lib/t_map/server/manager.cpp>
-#include <c_lib/t_map/server/map_chunk_history.cpp>
+#include <t_map/server/map_manager_class.cpp>
+#include <t_map/server/manager.cpp>
+#include <t_map/server/map_chunk_history.cpp>
 
 //ray tracing
-#include <c_lib/physics/ray_trace/ray_trace.cpp>
-#include <c_lib/physics/ray_trace/hitscan.cpp>
-#include <c_lib/physics/ray_trace/handlers.cpp>
+#include <physics/ray_trace/ray_trace.cpp>
+#include <physics/ray_trace/hitscan.cpp>
+#include <physics/ray_trace/handlers.cpp>
  
 //physics
-#include <c_lib/physics/verlet.cpp>
-#include <c_lib/physics/verlet_particle.cpp>
-#include <c_lib/physics/motion.cpp>
+#include <physics/verlet.cpp>
+#include <physics/verlet_particle.cpp>
+#include <physics/motion.cpp>
 
-#include <c_lib/physics/common.cpp>
+#include <physics/common.cpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/vec4.hpp>
-#include <c_lib/physics/mat3.hpp>
-#include <c_lib/physics/mat4.hpp>
-#include <c_lib/physics/affine.hpp>
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
+#include <physics/mat3.hpp>
+#include <physics/mat4.hpp>
+#include <physics/affine.hpp>
  
 /* Voxel Models */
-#include <c_lib/voxel/voxel_volume.cpp>
-#include <c_lib/voxel/voxel_hitscan.cpp>
-#include <c_lib/voxel/voxel_dat.cpp>
-#include <c_lib/voxel/voxel_model.cpp>
-#include <c_lib/voxel/voxel_loader.cpp> 
-#include <c_lib/voxel/vox_dat_init.cpp>
+#include <voxel/voxel_volume.cpp>
+#include <voxel/voxel_hitscan.cpp>
+#include <voxel/voxel_dat.cpp>
+#include <voxel/voxel_model.cpp>
+#include <voxel/voxel_loader.cpp> 
+#include <voxel/vox_dat_init.cpp>
 
 /* Entity system */
-#include <c_lib/entity/include.cpp>
+#include <entity/include.cpp>
 
 /* Particles */
-#include <c_lib/particles/_include.hpp>
+#include <particle/_include.hpp>
 
 /* Items */
-#include <c_lib/game/constants.hpp>
+#include <game/constants.hpp>
 
-#include <c_lib/inventory/_include.hpp>
+#include <inventory/_include.hpp>
 
 /* mechanisms */
-#include <c_lib/t_mech/_include.hpp>
+#include <t_mech/_include.hpp>
 
 /* t_item */
-#include <c_lib/t_item/_include.hpp>
+#include <t_item/_include.hpp>
 
 /* Game modes */
-#include <c_lib/game/flag.cpp>
-#include <c_lib/game/base.cpp>
-#include <c_lib/game/game.cpp>
-#include <c_lib/game/ctf.cpp>
-#include <c_lib/game/teams.cpp> 
-#include <c_lib/game/packets.cpp>
+#include <game/flag.cpp>
+#include <game/base.cpp>
+#include <game/game.cpp>
+#include <game/ctf.cpp>
+#include <game/teams.cpp> 
+#include <game/packets.cpp>
 
 /* Agents */
 #include "./agent/agent_include.h"
 
 /* Weapons */
-#include <c_lib/weapons/weapons.cpp>
-#include <c_lib/weapons/packets.cpp>
+#include <weapons/weapons.cpp>
+#include <weapons/packets.cpp>
 
 /* monsters */
-//#include <c_lib/monsters/monsters.cpp>
+//#include <monsters/monsters.cpp>
 
 /* chat */
-#include <c_lib/chat/globals.hpp>
-#include <c_lib/chat/packets.cpp>
-#include <c_lib/chat/server.cpp>
-#include <c_lib/chat/interface.cpp>
+#include <chat/globals.hpp>
+#include <chat/packets.cpp>
+#include <chat/server.cpp>
+#include <chat/interface.cpp>
 
 /* dungeon/L system/noise */
 #ifdef DUNGEON
-#include <c_lib/map_gen/hopcroft-karp.cpp>
+#include <map_gen/hopcroft-karp.cpp>
 #endif
-#include <c_lib/map_gen/noise.c>
-#include <c_lib/map_gen/map_generator.cpp>
-#include <c_lib/map_gen/recipes.cpp>
+#include <map_gen/noise.c>
+#include <map_gen/map_generator.cpp>
+#include <map_gen/recipes.cpp>
 
 #include <net_lib/net_lib.h>
 
-#include <c_lib/state/packet_init.cpp>
-#include <c_lib/state/server_state.cpp>
+#include <state/packet_init.cpp>
+#include <state/server_state.cpp>
 
-//#include <c_lib/main.cpp>
+//#include <main.cpp>
 
 //page size
 #include <unistd.h>

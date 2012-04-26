@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
 
-#include <c_lib/inventory/inventory.hpp>
+#include <inventory/inventory.hpp>
 
 class Inventory: public BaseInventory
 {

@@ -1,9 +1,9 @@
 #include "owner.hpp"
 
-#include <c_lib/agent/constants.hpp>
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/state/server_state.hpp>
+#include <agent/constants.hpp>
+#include <agent/agent.hpp>
+#include <agent/agent_list.hpp>
+#include <state/server_state.hpp>
 
 namespace Components
 {

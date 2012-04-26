@@ -3,7 +3,7 @@
 #include <compat_gl.h>
 #include <math.h>
 
-#include <c_lib/SDL/shader_loader.hpp>
+#include <SDL/shader_loader.hpp>
 
 // Note: Don't load surfaces via arguments, you must return SDL_Surface*
 

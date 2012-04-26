@@ -6,9 +6,9 @@
 #include <input/skeleton_editor.hpp>
 
 //toggling graphics settings
-#include <c_lib/t_map/glsl/shader.hpp>
+#include <t_map/glsl/shader.hpp>
 
-#include <c_lib/t_hud/_interface.hpp>
+#include <t_hud/_interface.hpp>
 
 InputState input_state;
 
@@ -423,10 +423,10 @@ void inventory_mouse_motion_handler(SDL_Event* event)
 
 /* Agent */
 
-#include <c_lib/common/lua/lua.hpp>
+#include <common/lua/lua.hpp>
 //lua_load_map_tiles();
 
-#include <c_lib/t_mech/state.hpp>
+#include <t_mech/state.hpp>
 
 void agent_key_down_handler(SDL_Event* event)
 {

@@ -2,10 +2,10 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 #include <math.h>
-#include <c_lib/common/random.h>
-#include <c_lib/physics/common.hpp>
+#include <common/random.h>
+#include <physics/common.hpp>
 
-#include <c_lib/physics/constants.hpp>
+#include <physics/constants.hpp>
 
 #define PI 3.14159265
 

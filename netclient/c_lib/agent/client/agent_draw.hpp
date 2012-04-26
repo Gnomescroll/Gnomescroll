@@ -3,10 +3,10 @@
 #include <math.h>
 
 #ifdef DC_CLIENT
-#include <c_lib/compat_gl.h>
+#include <compat_gl.h>
 
-#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/agent_vox.hpp>
+#include <agent/agent.hpp>
+#include <agent/agent_vox.hpp>
 
 namespace AgentDraw {
 

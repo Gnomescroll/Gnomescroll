@@ -1,7 +1,7 @@
 #include "owner_list.hpp"
 
-#include <c_lib/agent/constants.hpp>
-#include <c_lib/entity/components/owner.hpp>
+#include <agent/constants.hpp>
+#include <entity/components/owner.hpp>
 
 namespace Components
 {

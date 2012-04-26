@@ -5,8 +5,8 @@
 */
 #ifdef DC_CLIENT
 
-#include <c_lib/t_mech/state.cpp>
-#include <c_lib/t_mech/draw.cpp>
+#include <t_mech/state.cpp>
+#include <t_mech/draw.cpp>
 
 #endif
 
@@ -16,6 +16,6 @@
 
 #ifdef DC_SERVER
 
-#include <c_lib/t_mech/state.cpp>
+#include <t_mech/state.cpp>
 	
 #endif

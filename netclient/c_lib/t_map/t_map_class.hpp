@@ -1,11 +1,11 @@
 #pragma once
 
-#include <c_lib/t_map/constants.hpp>
+#include <t_map/constants.hpp>
 
 namespace t_map
 {
 
-#include <c_lib/t_map/common/map_element.hpp>
+#include <t_map/common/map_element.hpp>
 
 /*
     Optimization parameters

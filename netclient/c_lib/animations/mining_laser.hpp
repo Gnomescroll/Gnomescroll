@@ -1,14 +1,14 @@
 #pragma once
 
 #ifdef DC_CLIENT
-#include <c_lib/common/gl_assert.hpp>
-#include <c_lib/t_item/client/texture.hpp>
+#include <common/gl_assert.hpp>
+#include <t_item/client/texture.hpp>
 #endif
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/animations/common.hpp>
+#include <physics/vec3.hpp>
+#include <animations/common.hpp>
 
-#include <c_lib/physics/verlet_particle.hpp>
+#include <physics/verlet_particle.hpp>
 
 namespace Animations 
 {
@@ -171,7 +171,7 @@ class MiningLaser
 
 }
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 
 namespace Animations 
 {

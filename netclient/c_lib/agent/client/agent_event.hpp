@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/particle/billboard_text_hud.hpp>
+#include <particle/billboard_text_hud.hpp>
 
 class Agent_state;
 

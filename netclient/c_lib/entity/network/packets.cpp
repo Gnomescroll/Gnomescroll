@@ -2,15 +2,15 @@
 
 #if DC_CLIENT
 
-#include <c_lib/sound/sound.hpp>
-#include <c_lib/animations/_interface.hpp>
-#include <c_lib/animations/animations.hpp>
+#include <sound/sound.hpp>
+#include <animations/_interface.hpp>
+#include <animations/animations.hpp>
 
-#include <c_lib/agent/client/player_agent.hpp>
+#include <agent/client/player_agent.hpp>
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/objects.hpp>
+#include <physics/vec3.hpp>
+#include <entity/constants.hpp>
+#include <entity/objects.hpp>
 
 /* Construction */
 

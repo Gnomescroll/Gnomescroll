@@ -1,14 +1,14 @@
 #include "bomb.hpp"
 
-#include <c_lib/entity/object/object.hpp>
-#include <c_lib/entity/object/helpers.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/objects/mobs/constants.hpp>
-#include <c_lib/entity/components/health.hpp>
-#include <c_lib/entity/components/dimension.hpp>
-#include <c_lib/entity/components/voxel_model.hpp>
+#include <entity/object/object.hpp>
+#include <entity/object/helpers.hpp>
+#include <entity/constants.hpp>
+#include <entity/objects/mobs/constants.hpp>
+#include <entity/components/health.hpp>
+#include <entity/components/dimension.hpp>
+#include <entity/components/voxel_model.hpp>
 #if DC_SERVER
-#include <c_lib/entity/components/explosion.hpp>
+#include <entity/components/explosion.hpp>
 #endif
 
 namespace Objects

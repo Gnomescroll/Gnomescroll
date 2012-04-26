@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/physics/vec3.hpp>
+#include <physics/vec3.hpp>
 
 namespace Verlet
 {

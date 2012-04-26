@@ -1,13 +1,13 @@
 #pragma once
 #if DC_SERVER
 
-#include <c_lib/agent/agent_list.hpp>
-#include <c_lib/game/ctf.hpp>
-//#include <c_lib/monsters/monsters.hpp>
-#include <c_lib/voxel/voxel_hitscan.hpp>
+#include <agent/agent_list.hpp>
+#include <game/ctf.hpp>
+//#include <monsters/monsters.hpp>
+#include <voxel/voxel_hitscan.hpp>
 
-#include <c_lib/particle/grenade.hpp>
-//#include <c_lib/particle/cspray.hpp>
+#include <particle/grenade.hpp>
+//#include <particle/cspray.hpp>
 
 namespace ServerState
 {

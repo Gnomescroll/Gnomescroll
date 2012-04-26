@@ -2,16 +2,16 @@
 
 
 #include <net_lib/global.hpp>
-#include <c_lib/state/server_state.hpp>
-#include <c_lib/t_map/server/manager.hpp>
+#include <state/server_state.hpp>
+#include <t_map/server/manager.hpp>
 
-#include <c_lib/chat/interface.hpp>
+#include <chat/interface.hpp>
 
-//#include <c_lib/agent/agent.hpp>
-#include <c_lib/agent/net_agent.hpp>
+//#include <agent/agent.hpp>
+#include <agent/net_agent.hpp>
 
 
-#include <c_lib/t_item/_interface.hpp>
+#include <t_item/_interface.hpp>
 
 /*
     Utility Functions

@@ -1,11 +1,11 @@
 #pragma once
 
 #if DC_CLIENT
-#include <c_lib/agent/client/player_agent.hpp>
+#include <agent/client/player_agent.hpp>
 #endif
 
-#include <c_lib/particle/particles.hpp>
-#include <c_lib/particle/billboard_sprite.hpp>
+#include <particle/particles.hpp>
+#include <particle/billboard_sprite.hpp>
 namespace Particle
 {
 
@@ -51,7 +51,7 @@ class Grenade: public ParticleMotion, public BillboardSprite
 namespace Particle
 {
 
-#include <c_lib/common/template/object_list.hpp>
+#include <common/template/object_list.hpp>
 class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
 {
     private:

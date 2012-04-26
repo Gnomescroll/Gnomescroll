@@ -1,9 +1,9 @@
 #include "shader.hpp"
 
-#include <c_lib/t_map/glsl/settings.hpp>
-#include <c_lib/t_map/glsl/texture.hpp>
+#include <t_map/glsl/settings.hpp>
+#include <t_map/glsl/texture.hpp>
 
-#include <c_lib/SDL/texture_sheet_loader.hpp>
+#include <SDL/texture_sheet_loader.hpp>
 
 /*
 In GL 3.0, GL_GENERATE_MIPMAP is deprecated, and in 3.1 and above, it was removed. 

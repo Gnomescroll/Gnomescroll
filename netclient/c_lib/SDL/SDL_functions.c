@@ -7,7 +7,7 @@
 #endif
 
 //#ifdef linux
-//    #include <c_lib/SDL/IMG_savepng.h>
+//    #include <SDL/IMG_savepng.h>
 //#endif
 /*
     Example code from

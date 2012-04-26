@@ -1,15 +1,15 @@
 #pragma once
 
-#include <c_lib/options.hpp>
-#include <c_lib/t_map/t_map.hpp>
-#include <c_lib/map_gen/noise.h>
-#include <c_lib/map_gen/perlin.h>
-#include <c_lib/map_gen/simplex.h>
-#include <c_lib/map_gen/ridged_mf.h>
-#include <c_lib/map_gen/interpolator.h>
-#include <c_lib/map_gen/perturb.h>
-#include <c_lib/map_gen/gradient.h>
-#include <c_lib/map_gen/features.h>
+#include <options.hpp>
+#include <t_map/t_map.hpp>
+#include <map_gen/noise.h>
+#include <map_gen/perlin.h>
+#include <map_gen/simplex.h>
+#include <map_gen/ridged_mf.h>
+#include <map_gen/interpolator.h>
+#include <map_gen/perturb.h>
+#include <map_gen/gradient.h>
+#include <map_gen/features.h>
 
 namespace MapGen
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/game/game.hpp>
+#include <game/game.hpp>
 #include <voxel/voxel_model.hpp>
 #include <entity/constants.hpp>
 

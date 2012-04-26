@@ -1,9 +1,9 @@
 #include "helpers.hpp"
 
-#include <c_lib/entity/component/component.hpp>
-#include <c_lib/entity/component/main.hpp>
-#include <c_lib/entity/object/object_data_list.hpp>
-#include <c_lib/entity/object/main.hpp>
+#include <entity/component/component.hpp>
+#include <entity/component/main.hpp>
+#include <entity/object/object_data_list.hpp>
+#include <entity/object/main.hpp>
 
 namespace Objects
 {

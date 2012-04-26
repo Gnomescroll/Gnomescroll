@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <ctype.h>
 
-#include <c_lib/common/logger.hpp>
+#include <common/logger.hpp>
 
 /* ChatMessage */
 

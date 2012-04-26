@@ -2,13 +2,13 @@
 
 #include <physics/affine.hpp>
 
-#include <c_lib/voxel/voxel_hitscan.hpp>
+#include <voxel/voxel_hitscan.hpp>
 #include <defines.h>
 #include <common/random.h>
 
 // forward declarations
 #if DC_CLIENT
-#include <c_lib/voxel/voxel_render.hpp>
+#include <voxel/voxel_render.hpp>
 namespace ClientState {
     extern Voxel_render_list* voxel_render_list;
     extern Voxel_hitscan_list* voxel_hitscan_list;

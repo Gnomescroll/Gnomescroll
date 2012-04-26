@@ -1,6 +1,6 @@
 #include "item_particle.hpp"
 
-#include <c_lib/particle/net/StoC.hpp>
+#include <particle/net/StoC.hpp>
 
 namespace Particle
 {

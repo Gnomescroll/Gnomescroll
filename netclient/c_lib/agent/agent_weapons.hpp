@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/weapons/weapons.hpp>
+#include <weapons/weapons.hpp>
 
 class Agent_state;  // forward declaration
 

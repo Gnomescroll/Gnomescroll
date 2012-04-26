@@ -1,6 +1,6 @@
 #include "base.hpp"
 
-#include <c_lib/common/random.h>
+#include <common/random.h>
 
 void Base::set_position(float x, float y, float z)
 {

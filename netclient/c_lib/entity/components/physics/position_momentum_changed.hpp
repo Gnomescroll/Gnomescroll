@@ -1,8 +1,8 @@
 #pragma once
 
-#include <c_lib/physics/common.hpp>
-#include <c_lib/entity/constants.hpp>
-#include <c_lib/entity/components/physics.hpp>
+#include <physics/common.hpp>
+#include <entity/constants.hpp>
+#include <entity/components/physics.hpp>
 
 namespace Components
 {

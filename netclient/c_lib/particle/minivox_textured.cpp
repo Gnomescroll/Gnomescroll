@@ -2,12 +2,12 @@
 
 #if DC_CLIENT
 #include <compat_gl.h>
-#include <c_lib/t_map/glsl/texture.hpp>
-#include <c_lib/camera/fulstrum_test.hpp>
+#include <t_map/glsl/texture.hpp>
+#include <camera/fulstrum_test.hpp>
 #endif
 
-#include <c_lib/voxel/common_data.h>
-#include <c_lib/physics/ray_trace/ray_trace.hpp>
+#include <voxel/common_data.h>
+#include <physics/ray_trace/ray_trace.hpp>
 
 namespace Particle
 {

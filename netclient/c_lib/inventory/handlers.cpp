@@ -4,11 +4,11 @@
 
 #if DC_CLIENT
 
-#include <c_lib/t_hud/_interface.hpp>
-#include <c_lib/t_hud/event.hpp>
+#include <t_hud/_interface.hpp>
+#include <t_hud/event.hpp>
 
-#include <c_lib/inventory/interface.hpp>
-#include <c_lib/inventory/inventory.hpp>
+#include <inventory/interface.hpp>
+#include <inventory/inventory.hpp>
 
 namespace Items
 {

@@ -1,29 +1,29 @@
 #include "_interface.hpp"
 
-//c#include <c_lib/particle/cspray.hpp>
-#include <c_lib/particle/grenade.hpp>
-#include <c_lib/particle/item_particle.hpp>
+//c#include <particle/cspray.hpp>
+#include <particle/grenade.hpp>
+#include <particle/item_particle.hpp>
 
-#include <c_lib/particle/net/StoC.hpp>
+#include <particle/net/StoC.hpp>
 
 #if DC_CLIENT
-#include <c_lib/particle/shrapnel.hpp>
-#include <c_lib/particle/blood.hpp>
-#include <c_lib/particle/minivox_colored.hpp>
-#include <c_lib/particle/minivox_textured.hpp>
-#include <c_lib/particle/billboard_text.hpp>
-#include <c_lib/particle/billboard_text_hud.hpp>
-#include <c_lib/particle/billboard_sprite.hpp>
+#include <particle/shrapnel.hpp>
+#include <particle/blood.hpp>
+#include <particle/minivox_colored.hpp>
+#include <particle/minivox_textured.hpp>
+#include <particle/billboard_text.hpp>
+#include <particle/billboard_text_hud.hpp>
+#include <particle/billboard_sprite.hpp>
 
 #include <compat_gl.h>
-#include <c_lib/SDL/texture_loader.hpp>
-//#include <c_lib/camera/camera.hpp>
+#include <SDL/texture_loader.hpp>
+//#include <camera/camera.hpp>
 
-//#include <c_lib/SDL/draw_functions.hpp>
+//#include <SDL/draw_functions.hpp>
 #endif 
 
 #if DC_SERVER
-#include <c_lib/particle/grenade_shrapnel.hpp>
+#include <particle/grenade_shrapnel.hpp>
 #endif
 
 

@@ -1,9 +1,9 @@
 #include "v.hpp"
 
 #include <libnoise/noise.h>
-#include <c_lib/SDL/draw_functions.h>
-#include <c_lib/SDL/SDL_functions.h>
-#include <c_lib/SDL/pngfuncs.h>
+#include <SDL/draw_functions.h>
+#include <SDL/SDL_functions.h>
+#include <SDL/pngfuncs.h>
 
 namespace vn {
 

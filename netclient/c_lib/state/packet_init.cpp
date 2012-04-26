@@ -2,21 +2,21 @@
 
 //#include <net_lib/common/message_handler.h>
 
-#include <c_lib/game/packets.hpp>
+#include <game/packets.hpp>
 
-#include <c_lib/agent/net_agent.hpp>
-#include <c_lib/agent/client/player_agent.hpp>
+#include <agent/net_agent.hpp>
+#include <agent/client/player_agent.hpp>
 
-#include <c_lib/t_map/net/t_CtoS.hpp>
-#include <c_lib/t_map/net/t_StoC.hpp>
+#include <t_map/net/t_CtoS.hpp>
+#include <t_map/net/t_StoC.hpp>
 
-#include <c_lib/t_item/net/CtoS.hpp>
-#include <c_lib/t_item/net/StoC.hpp>
+#include <t_item/net/CtoS.hpp>
+#include <t_item/net/StoC.hpp>
 
-#include <c_lib/particle/net/CtoS.hpp>
-#include <c_lib/particle/net/StoC.hpp>
+#include <particle/net/CtoS.hpp>
+#include <particle/net/StoC.hpp>
 
-#include <c_lib/particle/grenade.hpp> // move into net folder in particles
+#include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 

@@ -4,10 +4,10 @@
 
 #if DC_CLIENT
 
-#include <c_lib/t_item/_interface.hpp>
-#include <c_lib/t_hud/_interface.hpp>
+#include <t_item/_interface.hpp>
+#include <t_hud/_interface.hpp>
 
-//#include <c_lib/animations/_interface.hpp>
+//#include <animations/_interface.hpp>
 #endif
 
 namespace Item

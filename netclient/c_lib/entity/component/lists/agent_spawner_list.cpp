@@ -1,7 +1,7 @@
 #include "agent_spawner_list.hpp"
 
-#include <c_lib/entity/components/spawner/agent_spawner.hpp>
-#include <c_lib/entity/components/team.hpp>
+#include <entity/components/spawner/agent_spawner.hpp>
+#include <entity/components/team.hpp>
 
 namespace Components
 {

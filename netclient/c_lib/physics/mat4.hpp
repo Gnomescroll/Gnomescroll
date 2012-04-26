@@ -2,9 +2,9 @@
 #pragma GCC diagnostic ignored "-Wunused-function"
 
 
-#include <c_lib/physics/vec3.hpp>
-#include <c_lib/physics/vec4.hpp>
-#include <c_lib/physics/mat3.hpp>
+#include <physics/vec3.hpp>
+#include <physics/vec4.hpp>
+#include <physics/mat3.hpp>
 
 //note that c uses row major order
 //glsl uses column major order
