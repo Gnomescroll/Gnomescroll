@@ -2,6 +2,8 @@
 
 #include <c_lib/items/inventory/_interface.hpp>
 
+#include <c_lib/items/inventory/handlers.hpp>
+
 /* Packets */
 
 #if DC_CLIENT

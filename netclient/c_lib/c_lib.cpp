@@ -183,7 +183,6 @@
 
 /* input */
 #include <c_lib/input/input.cpp>
-#include <c_lib/input/hud.cpp>
 #include <c_lib/input/handlers.cpp>
 #include <c_lib/input/skeleton_editor.cpp>
 
@@ -271,7 +270,7 @@ int init_c_lib() {
     HudText::init();
     HudFont::init();
     HudMap::init();
-    HudInventory::init();
+
     HudEquipment::init();
     HudReticle::init();
     Compass::init();
@@ -332,7 +331,6 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
-    HudInventory::teardown();
     teardown_item_texture();
     Draw::teardown();
     

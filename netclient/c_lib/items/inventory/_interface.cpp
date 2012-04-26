@@ -4,6 +4,14 @@
 #include <c_lib/items/inventory/inventory.hpp>
 #include <c_lib/items/inventory/contents.hpp>
 
+#ifdef DC_CLIENT
+#include <c_lib/items/inventory/client.hpp>
+#endif
+
+#ifdef DC_SERVER
+#include <c_lib/items/inventory/server.hpp>
+#endif
+
 namespace Items
 {
 

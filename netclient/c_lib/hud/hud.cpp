@@ -206,9 +206,9 @@ void draw_hud_textures()
 
     if (hud_draw_settings.inventory)
     {
-        HudInventory::agent_inventory->draw();
-        HudInventory::agent_toolbelt->draw();
-        HudInventory::draw_selected_icon_mask();
+        //HudInventory::agent_inventory->draw();
+        //HudInventory::agent_toolbelt->draw();
+        //HudInventory::draw_selected_icon_mask();
     }
 
     if (hud_draw_settings.equipment)
