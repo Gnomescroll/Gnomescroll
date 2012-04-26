@@ -50,8 +50,6 @@ namespace ServerState
 
         Components::rate_limit_component_list->call(); // advance rate limiter ticks
 
-        t_item::tick();
-
         if(counter % 10 == 0)
         {
             t_item::check_item_pickups();
