@@ -17,23 +17,15 @@ class Inventory: public BaseInventory
 
     void remove_all_action()
     {
-        for (int i=0; i<this->contents.max; i++)
-        {
-            if (this->contents.objects[i].item_id == EMPTY_SLOT)
-                continue;
-            this->remove_action(i);
-        }
+        for (int i=0; i<this->max; i++)
+            if (this->objects[i].item_id != EMPTY_SLOT)
+                this->remove_action(i);
     }
 
     InventorySlot* get_slot_item(int slot)
     {
-        if (!this->contents.is_valid_slot(slot)) return NULL;
-        return &this->contents.objects[slot];
-    }
-
-    InventorySlot* get(int slot)
-    {
-        return this->contents.get(slot);
+        if (!this->is_valid_slot(slot)) return NULL;
+        return &this->objects[slot];
     }
 
     // no broadcast
@@ -72,7 +64,7 @@ class Inventory: public BaseInventory
 
     bool add_action(int id, ObjectType type, int stack_size)
     {
-        int slot = this->contents.get_empty_slot();
+        int slot = this->get_empty_slot();
         bool added = this->add_action(id, type, stack_size, slot);
         if (!added) return false;
         if (owner != NO_AGENT)
@@ -93,16 +85,8 @@ class Inventory: public BaseInventory
     }
 
     /* Network API */
-    void sendContentsToClient(int client_id)
-    {
-        this->contents.sendToClient(this->id, client_id);
-    }
+    void sendContentsToClient(int client_id);
 
-    void init(int x, int y)
-    {
-        BaseInventory::init(x,y);
-    }
-    
     void sendToClientCreate(int client_id);
     void broadcastCreate();
     void sendToClientState(int client_id);

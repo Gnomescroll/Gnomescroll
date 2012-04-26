@@ -4,7 +4,6 @@
 
 #if DC_CLIENT
 
-#include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/event.hpp>
 #include <c_lib/t_hud/_interface.hpp>
 #include <c_lib/items/inventory/interface.hpp>
@@ -29,10 +28,6 @@ static void agent_inventory_received(Inventory* inventory)
     // attach to global pointer
     Items::agent_inventory = inventory;
 
-    // set hud element enum
-    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_AGENT_INVENTORY;
-    inventory->hud = hud;
-
     // copy metadata to hud inventory element
     t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
@@ -51,10 +46,6 @@ static void agent_toolbelt_received(Inventory* inventory)
     // attach to global pointer
     Items::agent_toolbelt = inventory;
 
-    // set hud element enum
-    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_AGENT_TOOLBELT;
-    inventory->hud = hud;
-
     // copy metadata to hud inventory element
     t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
@@ -64,10 +55,6 @@ static void nanite_inventory_received(Inventory* inventory)
     // attach to global pointer
     Items::nanite_inventory = inventory;
 
-    // set hud element enum
-    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_NANITE_INVENTORY;
-    inventory->hud = hud;
-
     // copy metadata to hud inventory element
     t_hud::network_inventory_assignment(inventory->type, inventory->id);
 }
@@ -76,10 +63,6 @@ static void craft_bench_inventory_received(Inventory* inventory)
 {
     // attach to global pointer
     Items::nanite_inventory = inventory;
-
-    // set hud element enum
-    t_hud::HudElementType hud = t_hud::HUD_ELEMENT_NANITE_INVENTORY;
-    inventory->hud = hud;
 
     // copy metadata to hud inventory element
     t_hud::network_inventory_assignment(inventory->type, inventory->id);
@@ -135,21 +118,16 @@ void swap_within_event(int inventory_id, int slota, int slotb)
 
 void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slotb)
 {
-    printf("?");
     Inventory* inva = Items::get_inventory(inventory_ida);
     if (inva == NULL) return;
     Inventory* invb = Items::get_inventory(inventory_idb);
     if (invb == NULL) return;
 
-    printf(" FOUND ");
 
     if (!inva->can_remove(slota)) return;
-    printf(" CAN_A ");
     InventorySlot* item = inva->get_slot_item(slota);
     if (item == NULL) return;
-    printf(" ITEM ");
     if (!invb->can_add(item->item_type)) return;
-    printf(" CAN_B ");
 
     swap_item_between_inventory_CtoS msg;
     msg.inventorya = inventory_ida;
@@ -157,9 +135,6 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
     msg.inventoryb = inventory_idb;
     msg.slotb = slotb;
     msg.send();
-    printf(" SENT\n");
-    printf("%d->%d\n", inventory_ida, inventory_idb);
-    printf("%d->%d\n", slota, slotb);
 }
 
 void process_inventory_events()

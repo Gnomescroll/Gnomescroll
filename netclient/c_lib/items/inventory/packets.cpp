@@ -41,7 +41,6 @@ inline void add_item_to_inventory_StoC::handle()
         return;
     }
     obj->add(id, (ObjectType)type, stack, slot); /// TODO -- GET STACK MAX FROM ITEM_TYPE
-    //printf("added item %d,%d to inventory slot %d\n", id, type, slot);
 }
 
 inline void remove_item_from_inventory_StoC::handle()
@@ -53,9 +52,6 @@ inline void remove_item_from_inventory_StoC::handle()
         return;
     }
     obj->remove(slot);
-    //printf("removed item from inventory slot %d\n", slot);
-
-    printf("remove\n");
 }
 
 inline void swap_item_in_inventory_StoC::handle()
@@ -67,9 +63,6 @@ inline void swap_item_in_inventory_StoC::handle()
         return;
     }
     obj->swap(slota, slotb);
-    //printf("swapped slots %d,%d in inventory %d\n", slota, slotb, inventory_id);
-
-    printf("swap within\n");
 }
 
 inline void swap_item_between_inventory_StoC::handle()
@@ -82,8 +75,6 @@ inline void swap_item_between_inventory_StoC::handle()
     InventorySlot* item = inva->get_slot_item(slota);
     invb->add(item->item_id, item->item_type, item->stack.count, slotb);
     inva->remove(slota);
-
-    printf("swap between\n");
 }
 
 inline void add_item_to_inventory_CtoS::handle() {}
@@ -147,13 +138,10 @@ inline void remove_item_from_inventory_CtoS::handle()
     //}
 
     if (!inv->remove_action(slot)) printf("ERROR: inventory remove_action failed to occur -- but can_remove() had passed\n");
-
-    printf("remove\n");
 }
 
 inline void swap_item_in_inventory_CtoS::handle()
 {
-    printf("Received swap slot: invid %d slota %d slotb %d\n", inventory_id, slota, slotb);
     Agent_state* agent = NetServer::agents[client_id];
     if (agent == NULL)
     {
@@ -164,12 +152,10 @@ inline void swap_item_in_inventory_CtoS::handle()
     if (inv == NULL) return;
     if (inv->owner != agent->id) return;
     inv->swap_action(slota, slotb);
-    printf("swap within\n");
 }
 
 inline void swap_item_between_inventory_CtoS::handle()
 {
-    printf("?");
     Agent_state* agent = NetServer::agents[client_id];
     if (agent == NULL)
     {
@@ -183,17 +169,10 @@ inline void swap_item_between_inventory_CtoS::handle()
     Inventory* invb = Items::get_inventory(this->inventoryb);
     if (invb == NULL) return;
     if (invb->owner != agent->id) return;
-    printf("owned/exists\n");
 
     if (!inva->can_remove(slota)) return;
-    printf("can remove\n");
     InventorySlot* item = inva->get_slot_item(slota);
-    item->print();
     if (!invb->can_add(item->item_type, slotb)) return;
-    InventorySlot* itemb = invb->get_slot_item(slotb);
-    itemb->print();
-    printf("can add\n");
-
     
     if (!invb->add_silent(item->item_id, item->item_type, item->stack.count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
     if (!inva->remove_silent(slota)) printf("ERROR REMOVING ITEM!!\n");
@@ -204,8 +183,6 @@ inline void swap_item_between_inventory_CtoS::handle()
     msg.inventoryb = inventoryb;
     msg.slotb = slotb;
     msg.sendToClient(client_id);
-
-    printf("swap between\n");
 }
 
 #endif
