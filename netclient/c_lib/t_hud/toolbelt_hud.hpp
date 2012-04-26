@@ -120,10 +120,15 @@ void AgentToolbeltUI::draw()
 
     glBegin(GL_QUADS);
 
+    int skip_slot = NULL_SLOT;
+    if (active_inventory != NULL && this->inventory_id == active_inventory->inventory_id)
+        skip_slot = active_slot;
+
     for(int i=0; i<xdim; i++)
     for(int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
+        if (slot == skip_slot) continue;
         if (contents[slot].item_id == EMPTY_SLOT) continue;
         int tex_id = contents[slot].sprite_index;
 
@@ -152,6 +157,40 @@ void AgentToolbeltUI::draw()
         glTexCoord2f( tx_min, ty_max );
         glVertex2f(x, y);
     }
+
+
+    // draw grabbed icon
+    if (skip_slot != NULL_SLOT && contents[skip_slot].item_id != EMPTY_SLOT)
+    {
+        // center icon on mouse position
+        const float x = mouse_x - (slot_size / 2);
+        const float y = _yresf - (mouse_y + (slot_size / 2));
+        
+        int tex_id = contents[skip_slot].sprite_index;
+
+        //const float iw = 8.0f; // icon_width
+        //const int iiw = 8; // integer icon width
+        const float iw = 16.0f; // icon_width
+        const int iiw = 16; // integer icon width
+        
+        const float tx_min = (1.0/iw)*(tex_id % iiw);
+        const float ty_min = (1.0/iw)*(tex_id / iiw);
+        const float tx_max = tx_min + 1.0/iw;
+        const float ty_max = ty_min + 1.0/iw;
+
+        glTexCoord2f( tx_min, ty_min );
+        glVertex2f(x,y+w);
+
+        glTexCoord2f( tx_max, ty_min );
+        glVertex2f(x+w, y+w );
+            
+        glTexCoord2f( tx_max, ty_max );
+        glVertex2f(x+w, y);
+
+        glTexCoord2f( tx_min, ty_max );
+        glVertex2f(x, y);
+    }
+
 
     glEnd();
 

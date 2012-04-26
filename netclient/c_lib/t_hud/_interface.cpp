@@ -167,7 +167,7 @@ void draw_hud()
 
     agent_inventory->draw();
     agent_toolbelt->draw();
-    nanite_inventory->draw();
+    //nanite_inventory->draw();
     //static ItemGrid g;
     //g.draw(300,300);
 }
