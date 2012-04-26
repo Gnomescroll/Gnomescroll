@@ -118,6 +118,7 @@ inline void remove_item_from_inventory_CtoS::handle()
         printf("remove_item_from_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
         return;
     }
+    
     Inventory* inv = Items::get_inventory(this->inventory_id);
     if (inv == NULL) return;
     if (inv->owner != agent->id) return;
@@ -144,8 +145,7 @@ inline void remove_item_from_inventory_CtoS::handle()
 
             using Components::PickupComponent;
             PickupComponent* pickup = (PickupComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PICKUP);
-            if (pickup != NULL)
-                pickup->was_dropped();
+            if (pickup != NULL) pickup->was_dropped();
 
             Objects::ready(obj);
         }

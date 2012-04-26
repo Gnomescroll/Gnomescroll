@@ -16,6 +16,8 @@ class AgentToolbeltUI* agent_toolbelt;
 class AgentNanite* nanite_inventory;
 class AgentInventoryUI* craft_bench_inventory;
 
+float mouse_x;
+float mouse_y;
 
 /*
     Init
@@ -44,13 +46,12 @@ void disable_inventory_hud()
     hud_enabled = false;
 }
 
-static int active_slot = NULL_SLOT;
-static UIElement* active_inventory = NULL;
+int active_slot = NULL_SLOT;
+UIElement* active_inventory = NULL;
 
 static UIElement* get_inventory_and_slot(int x, int y, int* slot)
 {
     // track topmost clicked inventory
-    //float closest = 100000.0f;
     UIElement* closest_inventory = NULL;
     int closest_slot = NULL_SLOT;
 
@@ -72,8 +73,6 @@ static UIElement* get_inventory_and_slot(int x, int y, int* slot)
         if (inventory == NULL) continue;
         slot_tmp = inventory->get_slot_at(x,y);
         if (slot_tmp == NULL_SLOT) continue;
-        //if (inventory->z > closest) continue;
-        //closest = inventory->z;
         closest_inventory = inventory;
         closest_slot = slot_tmp;
     }
@@ -90,7 +89,8 @@ void mouse_motion(int x, int y)
     // if slot selected
     // draw that slot's icon at cursor
 
-    
+    mouse_x = x;
+    mouse_y = y;
 }
 
 void left_mouse_down(int x, int y)

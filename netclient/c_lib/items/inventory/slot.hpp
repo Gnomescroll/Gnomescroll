@@ -32,7 +32,7 @@ class InventorySlot
 
         void print()
         {
-            printf("Slot %d,%d,%d\n", this->item_id, this->item_type, this->slot);
+            printf("Slot %d, item_id %d, item_type %d\n", this->slot, this->item_id, this->item_type);
         }
 
     InventorySlot()

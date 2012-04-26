@@ -3,6 +3,12 @@
 namespace t_hud
 {
 
+// UI state
+extern int active_slot;
+extern class UIElement* active_inventory;
+extern float mouse_x;
+extern float mouse_y;
+
 extern class AgentInventoryUI* agent_inventory;
 extern class AgentToolbeltUI* agent_toolbelt;
 
