@@ -165,8 +165,21 @@ void draw_hud()
 {
     if (!hud_enabled) return;
 
-    agent_inventory->draw();
-    agent_toolbelt->draw();
+    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_BLEND);
+
+    agent_inventory->draw_background();
+    agent_toolbelt->draw_background();
+
+    agent_inventory->draw_slots();
+    agent_toolbelt->draw_slots();
+
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
+    
+    agent_inventory->draw_selected_slot();
+    agent_toolbelt->draw_selected_slot();
+    
     //nanite_inventory->draw();
     //static ItemGrid g;
     //g.draw(300,300);

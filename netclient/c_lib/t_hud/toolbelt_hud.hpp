@@ -10,8 +10,8 @@ class AgentToolbeltUI : public UIElement
     public:
 
     static const float border = 16;       // border around entire panel
-    static const float icon_spacing = 8; // spacing between slot icons
-    static const float icon_border = 2;  // border around a slot icon
+    static const float inc1 = 8; // spacing between slot icons
+    static const float inc2 = 2;  // border around a slot icon
 
     static const float slot_size = 32;    // pixel dimension
 
@@ -21,6 +21,10 @@ class AgentToolbeltUI : public UIElement
 
     void init() {}
     void draw();
+
+    void draw_background();
+    void draw_slots();
+    void draw_selected_slot();
 
     int get_slot_at(int px, int py);
 
@@ -32,31 +36,30 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
     px -= xoff + border;
     py -= yoff - border;
 
-    float width  = xdim*slot_size + (xdim-1)*icon_spacing;
-    float height = ydim*slot_size + (ydim-1)*icon_spacing;
+    float width  = xdim*slot_size + (xdim-1)*inc1;
+    float height = ydim*slot_size + (ydim-1)*inc1;
 
     if (px < 0 || px > width)  return -1;
     if (py < 0 || py > height) return -1;
 
-    int xslot = px / (icon_spacing + slot_size);
-    int yslot = py / (icon_spacing + slot_size);
+    int xslot = px / (inc1 + slot_size);
+    int yslot = py / (inc1 + slot_size);
 
     int slot = yslot * this->xdim + xslot;
     
     return slot;
 }
 
-void AgentToolbeltUI::draw()
+void AgentToolbeltUI::draw(){}
+
+void AgentToolbeltUI::draw_background()
 {
     const float w = slot_size;
 
-    const float inc1 = this->icon_spacing;
-    const float inc2 = this->icon_border;
-
-    glDisable(GL_DEPTH_TEST); // move render somewhere
+    //glDisable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_TEXTURE_2D);
 
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 //#if 0
@@ -133,6 +136,11 @@ void AgentToolbeltUI::draw()
     }
 
     glEnd();
+}
+
+void AgentToolbeltUI::draw_slots()
+{
+    const float w = slot_size;    
 
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
@@ -214,13 +222,17 @@ void AgentToolbeltUI::draw()
         glVertex2f(x, y);
     }
 
-
     glEnd();
 
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
-
+    //glEnable(GL_DEPTH_TEST); // move render somewhere
+    //glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+
+}
+
+void AgentToolbeltUI::draw_selected_slot()
+{
+    const float w = slot_size;    
 
     // draw border highlight
     if(this->selected_slot != NULL_SLOT)
