@@ -68,6 +68,7 @@ class Text
         void draw_character_rotated(float theta);   // draws as single character. glyph alignment offset not used
 
         explicit Text(int id);
+        Text();
         ~Text();
 };
 

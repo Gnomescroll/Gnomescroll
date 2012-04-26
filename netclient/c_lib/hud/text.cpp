@@ -351,6 +351,26 @@ refx(0),refy(0)
     this->reset_alignment();
 }
 
+Text::Text()
+:
+width(10),height(10),
+text_len(0),
+format_len(0),
+formatted_extra_len(0),
+id(-1),
+inited(false),
+depth(-1.0),
+scale(1.0),
+formatted(false),
+r(255),g(255),b(255),a(255),
+text(NULL),
+format(NULL),
+x(0), y(0),
+refx(0),refy(0)
+{
+    this->reset_alignment();
+}
+
 Text::~Text()
 {
     if (this->text != NULL)

@@ -260,14 +260,17 @@ void init()
     agent_inventory = new AgentInventoryUI;
     agent_inventory->xoff = 300.0f;
     agent_inventory->yoff = 100.0f;
+    agent_inventory->init();
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->xoff = 500.0f;
     agent_toolbelt->yoff = 500.0f;
+    agent_toolbelt->init();
 
     nanite_inventory = new AgentNanite;
     nanite_inventory->xoff = 0.0f;
     nanite_inventory->yoff = 0.0f;
+    nanite_inventory->init();
 }
 
 void teardown()

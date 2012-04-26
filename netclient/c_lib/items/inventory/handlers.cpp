@@ -40,8 +40,7 @@ static void agent_toolbelt_received(Inventory* inventory)
     assert(a != NULL); // this function should not be called if the owner did not exist
 
     // attach to agent status
-    if (a->status.toolbelt != NULL)
-        printf("WARNING: reassigned agent inventory\n");
+    if (a->status.toolbelt != NULL) printf("WARNING: reassigned agent inventory\n");
     a->status.toolbelt = inventory;
 
     // attach to global pointer
