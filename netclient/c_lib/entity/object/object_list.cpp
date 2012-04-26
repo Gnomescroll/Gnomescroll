@@ -19,7 +19,7 @@ int ObjectList::get_free_id(ObjectType type)
 void ObjectList::set_object_id(Object* object)
 {
     int id = this->get_free_id(object->type);
-    if (id < 0) return;
+    if (id < 0) { printf("WARNING: no free ids\n"); return; }
     this->set_object_id(object, id);
 }
 

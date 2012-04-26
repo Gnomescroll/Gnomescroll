@@ -75,8 +75,8 @@ void die_malachite_gemstone(Object* object)
     #if DC_SERVER
     using Components::PickupComponent;
     PickupComponent* pickup = (PickupComponent*)object->get_component(COMPONENT_PICKUP);
-    pickup->broadcast();
-    object->broadcastDeath();
+    if (pickup->picked_up) pickup->broadcast();
+    else object->broadcastDeath();
     #endif
 }
 
