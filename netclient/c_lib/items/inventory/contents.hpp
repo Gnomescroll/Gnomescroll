@@ -30,6 +30,11 @@ class InventorySlot
         int sprite_index;
         #endif
 
+        void print()
+        {
+            printf("Slot %d,%d,%d\n", this->item_id, this->item_type, this->slot);
+        }
+
     InventorySlot()
     :
     item_id(EMPTY_SLOT), item_type(OBJECT_NONE),
