@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdlib>
+#include <stdlib.h>
 
 inline int randrange(int min, int max) {
     return rand() % (max - min + 1) + min;

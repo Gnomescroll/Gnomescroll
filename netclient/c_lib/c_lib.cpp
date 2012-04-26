@@ -26,7 +26,7 @@
 #include <c_lib/template/object_pool.hpp>
 
 /* configuration options */
-#include <c_lib/option_macros.hpp>
+#include <c_lib/common/option_macros.hpp>
 #include <c_lib/options.cpp>
 
 /* Network */
