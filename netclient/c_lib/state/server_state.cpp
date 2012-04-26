@@ -29,41 +29,6 @@ namespace ServerState
         static unsigned int counter = 0;
         counter++;
     
-        t_map::t_map_send_map_chunks();  //every tick
-
-        if(counter % 15 == 0) 
-        {
-            agent_list->update_map_manager_positions();
-            t_map::t_map_manager_update();
-            t_map::t_map_sort_map_chunk_ques();
-        }
-
-        agent_list->update_models(); // sets skeleton
-        Particle::grenade_list->tick();
-
-        Objects::tick();
-        Objects::harvest();
-        Objects::update();
-
-        Objects::spawn_mobs();
-
-        Components::rate_limit_component_list->call(); // advance rate limiter ticks
-
-        if(counter % 10 == 0)
-        {
-            t_item::check_item_pickups();
-        }
-
-        //const int monster_spawners = 10;
-        //const int monsters = 100;
-        //const int slimes = 50;
-        //Monsters::create_monsters_spawners(monster_spawners);
-        //Monsters::spawn_monsters(monsters);
-        //Monsters::populate_slimes(slimes);
-
-        ctf->check_agent_proximities();
-        ctf->update();
-        ctf->tick();
     }
     
     void init_lists()

@@ -26,10 +26,54 @@ void init()
 
 }
 
+int tick()
+{
+    static int counter = 0; counter ++;
+
+    t_map::t_map_send_map_chunks();  //every tick
+
+    if(counter % 15 == 0) 
+    {
+        ServerState::agent_list->update_map_manager_positions();
+        t_map::t_map_manager_update();
+        t_map::t_map_sort_map_chunk_ques();
+    }
+
+    ServerState::agent_list->update_models(); // sets skeleton
+    
+    Particle::grenade_list->tick();
+    Particle::item_particle_list->tick();
+
+    Objects::tick();
+    Objects::harvest();
+    Objects::update();
+
+    Objects::spawn_mobs();
+
+    Components::rate_limit_component_list->call(); // advance rate limiter ticks
+
+    if(counter % 10 == 0)
+    {
+        t_item::check_item_pickups();
+    }
+
+    //const int monster_spawners = 10;
+    //const int monsters = 100;
+    //const int slimes = 50;
+    //Monsters::create_monsters_spawners(monster_spawners);
+    //Monsters::spawn_monsters(monsters);
+    //Monsters::populate_slimes(slimes);
+
+    ServerState::ctf->check_agent_proximities();
+    ServerState::ctf->update();
+    ServerState::ctf->tick();          
+}
+
 int run()
 {
     //int tick = 0;
     int tc;
+    
     while (1)
     {
         tc = 0;
@@ -37,8 +81,8 @@ int run()
         {
             int ti = _GET_TICK();
             if(ti == 0 || tc > 1) break;
-            
-            ServerState::server_tick();
+
+            tick();
 
             tc++;
             break;
