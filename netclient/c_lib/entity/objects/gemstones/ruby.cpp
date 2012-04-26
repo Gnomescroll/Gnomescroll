@@ -31,7 +31,8 @@ static void set_ruby_gemstone_properties(Object* object)
     using Components::VerletPhysicsComponent;
     using Components::PickupComponent;
     using Components::TTLHealthComponent;
-    
+    using Components::StackableComponent;
+
     VerletPhysicsComponent* physics = (VerletPhysicsComponent*)add_component_to_object(object, COMPONENT_VERLET);
     physics->mass = GEMSTONE_MASS;
     physics->damp = GEMSTONE_DAMP;
@@ -42,6 +43,8 @@ static void set_ruby_gemstone_properties(Object* object)
     TTLHealthComponent* health = (TTLHealthComponent*)add_component_to_object(object, COMPONENT_TTL);
     health->ttl_max = GEMSTONE_TTL;
 
+    StackableComponent* stack = (StackableComponent*)add_component_to_object(object, COMPONENT_STACKABLE);
+    stack->max = GEMSTONE_STACK_MAX;
 
     object->tick = &tick_ruby_gemstone;
     //object->update = NULL;

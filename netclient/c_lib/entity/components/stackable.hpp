@@ -16,7 +16,7 @@ class StackableComponent: public Component
         
     StackableComponent()
     : Component(COMPONENT_STACKABLE, COMPONENT_INTERFACE_STACKABLE),
-        max(10), size(1)
+        max(1), size(1)
     {}
 };
 

@@ -16,6 +16,9 @@ const float GEMSTONE_DAMP = 0.35f;
 // sprite
 const float GEMSTONE_SCALE = 0.25f;
 
+// stacking
+const int GEMSTONE_STACK_MAX = 20;
+
 // sprite indices
 const int MALACHITE_GEMSTONE_SPRITE_INDEX = 0;
 const int RUBY_GEMSTONE_SPRITE_INDEX = 2;

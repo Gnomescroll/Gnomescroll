@@ -9,10 +9,10 @@ namespace Objects
 void load_gemstone_data(ObjectType type)
 {
     #if DC_SERVER
-    const int n_components = 3;
+    const int n_components = 4;
     #endif
     #if DC_CLIENT
-    const int n_components = 4;
+    const int n_components = 5;
     #endif
 
     object_data->set_components(type, n_components);
@@ -20,6 +20,7 @@ void load_gemstone_data(ObjectType type)
     object_data->attach_component(type, COMPONENT_VERLET);
     object_data->attach_component(type, COMPONENT_PICKUP);
     object_data->attach_component(type, COMPONENT_TTL);
+    object_data->attach_component(type, COMPONENT_STACKABLE);
 
     #if DC_CLIENT
     object_data->attach_component(type, COMPONENT_BILLBOARD_SPRITE);
