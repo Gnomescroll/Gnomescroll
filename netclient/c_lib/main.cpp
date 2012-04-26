@@ -100,7 +100,7 @@ int run()
             // tick client state
             ClientState::tick(); 
 
-            t_item::tick();
+            //t_item::tick();
 
             //if(counter % 10 == 0) t_item::check_item_pickups();
 
@@ -243,7 +243,7 @@ int run()
         
         glEnable(GL_TEXTURE_2D);
 
-        t_item::draw();
+        //t_item::draw();
         
         begin_item_draw();
         Components::billboard_sprite_component_list->call();

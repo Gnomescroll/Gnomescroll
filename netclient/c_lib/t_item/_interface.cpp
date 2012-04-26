@@ -2,7 +2,7 @@
 
 //#include <c_lib/t_item/list.hpp>
 
-#include <c_lib/t_item/free_item.hpp>
+//#include <c_lib/t_item/free_item.hpp>
 #include <c_lib/t_item/item_container.hpp>
 #include <c_lib/t_item/item.hpp>
 
@@ -15,7 +15,7 @@
 namespace t_item
 {
 
-Free_item_list* free_item_list = NULL;
+//Free_item_list* free_item_list = NULL;
 ItemContainerList* item_container_list = NULL;
 ItemList* item_list = NULL;
 
@@ -25,12 +25,7 @@ int AgentNaniteList[256];
 
 void state_init()
 {
-    if (free_item_list != NULL)
-    {
-        printf("WARNING: attempt to call t_item::state_init() more than once\n");
-        return;
-    }
-    free_item_list = new Free_item_list;
+    //free_item_list = new Free_item_list;
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
@@ -41,25 +36,10 @@ void state_init()
 
 void state_teardown()
 {
-    if (free_item_list != NULL) delete free_item_list;
+    //if (free_item_list != NULL) delete free_item_list;
     if (item_container_list != NULL) delete item_container_list;
     if (item_list != NULL) delete item_list;
 }
- 
-void tick()
-{
-    free_item_list->tick();
-#if DC_SERVER
-    check_item_pickups();
-#endif
-}
-
-#if DC_CLIENT
-void draw()
-{
-    free_item_list->draw();
-}
-#endif
 
 }
  
@@ -188,25 +168,25 @@ void delete_agent_nanite(int agent_id)
 
 void check_item_pickups()
 {
-
+#if 0
     for (int i=0; i<free_item_list->n_max; i++)
     {
         if (free_item_list->a[i] == NULL) continue;
-        Free_item* free_item = free_item_list->a[i];
+        * item_particle = item_particle_list->a[i];
 
         const static float pick_up_distance = 0.5;
-        Agent_state* agent = nearest_agent_in_range(free_item->verlet.position, pick_up_distance);
+        Agent_state* agent = nearest_agent_in_range(item_particle->verlet.position, pick_up_distance);
 
         if(agent == NULL) continue;
 
-        printf("agent %i picked up item %i \n", agent->id, free_item->id);
+        printf("agent %i picked up item %i \n", agent->id, item_particle->id);
 
-        free_item_picked_up_StoC p1;
-        p1.id = free_item->id;
+        item_particle_picked_up_StoC p1;
+        p1.id = item_particle->id;
         p1.agent_id = agent->id;
         p1.broadcast();
 
-        t_item::free_item_list->destroy(free_item->id);
+        t_item::item_particle_list->destroy(item_particle->id);
 
 
         /*
@@ -243,18 +223,19 @@ void check_item_pickups()
         p2.sendToClient(agent->id); //warning, assumes agent and player id are same
         //p2.broadcast();
     }
-
+#endif
 }
 
-void create_free_item(int item_type, 
+void create_item_particle(int item_type, 
     float x, float y, float z, 
     float vx, float vy, float vz)
 {
-    Free_item* f = free_item_list->create();
+#if 0
+    Free_item* f = item_particle_list->create();
     if(f == NULL) return;
     f->init(x,y,z,vx,vy,vz);
 
-    class free_item_create_StoC p;
+    class item_particle_create_StoC p;
 
     p.type = 0;
     p.id = f->id;
@@ -266,6 +247,7 @@ void create_free_item(int item_type,
     p.mz = vz;
 
     p.broadcast();
+#endif
 }
 
 }

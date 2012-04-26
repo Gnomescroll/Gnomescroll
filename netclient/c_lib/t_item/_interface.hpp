@@ -6,14 +6,12 @@ namespace t_item
 {
 
 
-extern class Free_item_list* free_item_list;
+//extern class Free_item_list* free_item_list;
 extern class ItemContainerList* item_container_list;
 extern class ItemList* item_list;
 
 void state_init();
 void state_teardown();
-
-void tick();
 
 void check_item_pickups();
 
@@ -40,7 +38,7 @@ namespace t_item
     extern class ItemContainer* player_nanite;
 
 
-void draw();
+//void draw();
 //move item within inventory
 //void move_item(int inventory_id, int slot1, int slot2);
 

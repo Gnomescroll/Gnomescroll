@@ -20,17 +20,18 @@ inline void free_item_create_StoC::handle()
 {
     //printf("creating %d\n", id);
     // create item via list
-    Free_item* f = t_item::free_item_list->create(id);
-    f->init(x,y,z,mx,my,mz);
+    
+    //Free_item* f = t_item::free_item_list->create(id);
+    //f->init(x,y,z,mx,my,mz);
 
-    Animations::spawn_insect_mob(x,y,z);
+    //Animations::spawn_insect_mob(x,y,z);
 }
 
 inline void free_item_destroy_StoC::handle()
 {
     //printf("destroying %d\n", id);
     // destroy item via list
-    t_item::free_item_list->destroy(id);
+    //t_item::free_item_list->destroy(id);
 }
 
 
@@ -41,7 +42,7 @@ inline void free_item_picked_up_StoC::handle()
         Item Pickup Sound
     */
 
-    t_item::free_item_list->destroy(id);
+   // t_item::free_item_list->destroy(id);
 }
 
 

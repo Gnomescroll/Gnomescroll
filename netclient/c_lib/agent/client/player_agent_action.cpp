@@ -2,7 +2,6 @@
 
 #include <c_lib/ray_trace/hitscan.hpp>
 
-#include <common/enum_types.hpp>
 #include <c_lib/agent/net_agent.hpp>
 #include <sound/triggers.hpp>
 

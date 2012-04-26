@@ -33,11 +33,8 @@
 #include <net_lib/net_lib.h>
 
 //utility
-#include <c_lib/common/macros.hpp>
 #include <c_lib/common/gl_assert.hpp>
-#include <c_lib/common/enum_types.hpp>
 #include <c_lib/common/common.cpp>
-#include <c_lib/common/quicksort.hpp>
 #include <c_lib/common/files.cpp>
 
 // logging
@@ -254,7 +251,7 @@ int init_c_lib() {
     t_map::init_for_draw();
 
     t_item::state_init();
-    t_item::draw_init();
+    //t_item::draw_init();
 
     t_hud::init();
     t_hud::draw_init();
@@ -307,8 +304,8 @@ void close_c_lib() {
  
     t_map::end_t_map();
 
-    t_item::state_teardown();
-    t_item::draw_teardown();
+    //t_item::state_teardown();
+    //t_item::draw_teardown();
 
     t_hud::draw_teardown();
     t_hud::teardown();
