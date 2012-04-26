@@ -73,7 +73,8 @@
 /* Items */
 #include <c_lib/items/constants.hpp>
 #include <c_lib/items/items.cpp>
-#include <c_lib/items/inventory/include.cpp>
+
+#include <c_lib/items/inventory/_include.hpp>
 
 /* mechanisms */
 #include <c_lib/t_mech/_include.hpp>
