@@ -38,14 +38,6 @@ void Inventory::broadcastCreate()
     msg.broadcast();
 }
 
-void Inventory::sendToClientState(int client_id)
-{
-}
-
-void Inventory::broadcastState()
-{
-}
-
 void Inventory::broadcastDeath()
 {
     inventory_destroy_StoC msg;

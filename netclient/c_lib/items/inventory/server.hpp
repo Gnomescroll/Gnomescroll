@@ -68,13 +68,16 @@ class Inventory: public BaseInventory
         }
 
         /* Network API */
-        void sendContentsToClient(int client_id);
 
+        // create, delete
         void sendToClientCreate(int client_id);
         void broadcastCreate();
-        void sendToClientState(int client_id);
-        void broadcastState();
         void broadcastDeath();
+
+        // contents
+        void sendContentsToClient(int client_id);
+
+        // actions/events
         void sendToClientAdd(int id, ObjectType type, int stack_size, int slot);
         void broadcastAdd(int id, ObjectType type, int stack_size, int slot);
         void sendToClientRemove(int slot);
