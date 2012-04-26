@@ -41,7 +41,7 @@ class HitscanEffect_list: public Object_list<HitscanEffect>
         void draw();
         void tick();
 
-        HitscanEffect_list() { print(); }
+        HitscanEffect_list() { print_list((char*)this->name(), this); }
 };
 
 }

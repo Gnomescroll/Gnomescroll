@@ -60,7 +60,7 @@ class Grenade_list: public Object_list<Grenade, GRENADE_MAX>
         void draw();
         void tick();
 
-        Grenade_list() { print(); }
+        Grenade_list() { print_list((char*)this->name(), this); }
 };
  
 int get_grenade_damage(ObjectType type)

@@ -91,7 +91,7 @@ class EventParticleMotion: public ParticleMotion
         //void draw();
         //void tick();
 
-        //Shrapnel_list() { print(); }
+        //Shrapnel_list() { print_list((char*)this->name(), this); }
 //};
 
 

@@ -151,7 +151,7 @@ class ChatMessageList: public Object_list<ChatMessage, (CHAT_CLIENT_MESSAGE_HIST
         {
             this->filtered_objects = (ChatMessage**)calloc(this->n_max, sizeof(ChatMessage*));
             this->filtered_object_distances = (float*)calloc(this->n_max, sizeof(float));
-            print();
+            print_list((char*)this->name(), this);
         }
 
         ~ChatMessageList()

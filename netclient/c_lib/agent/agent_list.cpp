@@ -315,7 +315,7 @@ check_name_interval(0)
 {
     this->filtered_objects = (Agent_state**)calloc(this->n_max, sizeof(Agent_state*));
     this->filtered_object_distances = (float*)calloc(this->n_max, sizeof(float));
-    print();
+    print_list((char*)this->name(), this);
 }
 
 Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)

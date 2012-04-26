@@ -36,7 +36,7 @@ class Grenade_shrapnel_list: public Object_list<Grenade_shrapnel, GRENADE_SHRAPN
     public:
         void tick();
 
-        Grenade_shrapnel_list() { print(); }
+        Grenade_shrapnel_list() { print_list((char*)this->name(), this); }
 };
     
 }

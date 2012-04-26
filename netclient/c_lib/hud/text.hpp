@@ -80,7 +80,7 @@ class Text_list: public Object_list<Text,TEXT_MAX>
         const char* name() { return "Text"; }
 
     public:
-        Text_list() { print(); }
+        Text_list() { print_list((char*)this->name(), this); }
 };
 
 extern Text_list* text_list;

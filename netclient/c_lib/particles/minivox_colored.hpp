@@ -63,7 +63,7 @@ class ColoredMinivox_list: public Object_list<ColoredMinivox, MINIVOX_MAX>
         void draw();
         void tick();
 
-        ColoredMinivox_list() { print(); }
+        ColoredMinivox_list() { print_list((char*)this->name(), this); }
 };
     
 }

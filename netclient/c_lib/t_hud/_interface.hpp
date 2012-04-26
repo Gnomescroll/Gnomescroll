@@ -8,8 +8,8 @@ extern class AgentToolbeltUI* agent_toolbelt;
 
 
 // TODO -- TMP -- replace witha ctual types
-extern AgentInventoryUI* nanite_inventory;
-extern AgentInventoryUI* craft_bench_inventory;
+extern class AgentNanite* nanite_inventory;
+extern class AgentInventoryUI* craft_bench_inventory;
 
 
 /*

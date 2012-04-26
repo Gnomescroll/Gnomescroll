@@ -4,6 +4,7 @@
 #include <c_lib/t_hud/constants.hpp>
 #include <c_lib/t_hud/inventory_hud.hpp>
 #include <c_lib/t_hud/toolbelt_hud.hpp>
+#include <c_lib/t_hud/nanite_hud.hpp>
 
 namespace t_hud
 {
@@ -12,8 +13,8 @@ class AgentInventoryUI* agent_inventory;
 class AgentToolbeltUI* agent_toolbelt;
 
 // TODO -- TMP -- replace witha ctual types
-AgentInventoryUI* nanite_inventory;
-AgentInventoryUI* craft_bench_inventory;
+class AgentNanite* nanite_inventory;
+class AgentInventoryUI* craft_bench_inventory;
 
 
 /*
@@ -166,7 +167,7 @@ void draw_hud()
 
     agent_inventory->draw();
     agent_toolbelt->draw();
-
+    nanite_inventory->draw();
     //static ItemGrid g;
     //g.draw(300,300);
 }
@@ -206,6 +207,10 @@ void init()
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->xoff = 500.0f;
     agent_toolbelt->yoff = 500.0f;
+
+    nanite_inventory = new AgentNanite;
+    nanite_inventory->xoff = 0.0f;
+    nanite_inventory->yoff = 0.0f;
 }
 
 void teardown()

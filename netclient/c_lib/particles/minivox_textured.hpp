@@ -57,7 +57,7 @@ class TexturedMinivox_list: public Object_list<TexturedMinivox, MINIVOX_MAX>
         void draw();
         void tick();
 
-        TexturedMinivox_list() { print(); }
+        TexturedMinivox_list() { print_list((char*)this->name(), this); }
 };
     
 }

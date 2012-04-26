@@ -48,7 +48,7 @@ class BillboardTextHud_list: public Object_list<BillboardTextHud, BILLBOARD_TEXT
         void draw();
         void tick();
 
-        BillboardTextHud_list() { print(); }
+        BillboardTextHud_list() { print_list((char*)this->name(), this); }
 };
 
 }

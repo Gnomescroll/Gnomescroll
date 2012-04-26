@@ -145,7 +145,7 @@ class ItemContainerList: public Object_list<ItemContainer, ITEM_CONTAINER_MAX>
     private:
         const char* name() { return "ItemContainer"; }
     public:
-        ItemContainerList() { print(); }
+        ItemContainerList() { print_list((char*)this->name(), this); }
 };
 
 }

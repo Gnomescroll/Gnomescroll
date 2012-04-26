@@ -10,13 +10,18 @@
  
 #include <c_lib/common/common.hpp>
 #include <c_lib/physics/common.hpp>
- 
+
 #define OBJECT_LIST_DEBUG 0
+
+void print_list(char* name, void* ptr)
+{
+    printf("%s list instantiated at %p\n", name, ptr);
+}
 
 template <class Object_state, int max_n=1024>
 class Object_list {
     private:
-        virtual const char* name() = 0;
+        const char* name() { return "Object"; }
 
     protected:
         int id_c;
@@ -44,7 +49,6 @@ class Object_list {
         void destroy(int _id);
 
         void where();
-        void print();
         void print_members();
 
 };
@@ -60,13 +64,6 @@ num(0)
 {
     this->a = (Object_state**)calloc(max_n, sizeof(Object_state*));
     //where();
-}
-
-template <class Object_state, int max_n> 
-void Object_list<Object_state, max_n>::print()
-{
-    const char* n = this->name();
-    printf("%s list instantiated at %p\n", n, this);
 }
 
 template <class Object_state, int max_n> 
@@ -94,7 +91,7 @@ Object_state* Object_list<Object_state, max_n>::get(int id)
 {
     //where();
     if((id < 0) || (id >= n_max)) {
-        printf("%s id error: id=%i\n", name() ,id);
+        //printf("%s id error: id=%i\n", name() ,id);
         //if (id != NO_AGENT) // TODO 
         //    print_trace();
         return NULL;

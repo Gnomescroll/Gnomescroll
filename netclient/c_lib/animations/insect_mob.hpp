@@ -251,7 +251,7 @@ class Insect_mob_list: public Object_list<InsectMob, INSECT_MOB_MAX>
 
         bool needs_update;
     public:
-        Insect_mob_list() { print(); needs_update = true;}
+        Insect_mob_list() { print_list((char*)this->name(), this); needs_update = true;}
 
         void prep();
         void draw();

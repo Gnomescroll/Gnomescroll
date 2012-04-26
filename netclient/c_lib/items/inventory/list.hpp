@@ -15,7 +15,7 @@ class InventoryList: public Object_list<Inventory, MAX_INVENTORY>
     public:
     
     ~InventoryList() {}
-    InventoryList() { print(); }
+    InventoryList() { print_list((char*)this->name(), this); }
 };
 
 }   // Items

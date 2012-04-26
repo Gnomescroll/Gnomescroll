@@ -35,7 +35,7 @@ class Blood_list: public Object_list<Blood, BLOOD_MAX>
         void draw();
         void tick();
 
-    Blood_list() { print(); }
+    Blood_list() { print_list((char*)this->name(), this); }
 };
     
 }
