@@ -37,9 +37,9 @@
 #include <c_lib/t_map/server/map_chunk_history.cpp>
 
 //ray tracing
-#include <c_lib/ray_trace/ray_trace.cpp>
-#include <c_lib/ray_trace/hitscan.cpp>
-#include <c_lib/ray_trace/handlers.cpp>
+#include <c_lib/physics/ray_trace/ray_trace.cpp>
+#include <c_lib/physics/ray_trace/hitscan.cpp>
+#include <c_lib/physics/ray_trace/handlers.cpp>
  
 //physics
 #include <c_lib/physics/verlet.cpp>

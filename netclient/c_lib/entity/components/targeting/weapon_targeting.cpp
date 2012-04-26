@@ -1,7 +1,7 @@
 #include "weapon_targeting.hpp"
 
-#include <c_lib/ray_trace/hitscan.hpp>
-#include <c_lib/ray_trace/handlers.hpp>
+#include <c_lib/physics/ray_trace/hitscan.hpp>
+#include <c_lib/physics/ray_trace/handlers.hpp>
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/entity/network/packets.hpp>
 

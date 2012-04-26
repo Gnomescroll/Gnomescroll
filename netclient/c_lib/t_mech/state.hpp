@@ -2,7 +2,7 @@
 
 #if DC_CLIENT
     #include <c_lib/camera/camera.hpp>
-    #include <c_lib/ray_trace/hitscan.hpp>
+    #include <c_lib/physics/ray_trace/hitscan.hpp>
 #endif
 
 namespace t_mech

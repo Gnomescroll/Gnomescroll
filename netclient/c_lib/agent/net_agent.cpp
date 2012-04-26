@@ -16,7 +16,7 @@
 
 #if DC_SERVER
 #include <c_lib/t_map/t_map.hpp>
-#include <c_lib/ray_trace/ray_trace.hpp>
+#include <c_lib/physics/ray_trace/ray_trace.hpp>
 #endif
 
 

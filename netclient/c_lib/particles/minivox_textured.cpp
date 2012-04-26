@@ -7,7 +7,7 @@
 #endif
 
 #include <voxel/common_data.h>
-#include <ray_trace/ray_trace.hpp>
+#include <c_lib/physics/ray_trace/ray_trace.hpp>
 
 namespace Particles
 {

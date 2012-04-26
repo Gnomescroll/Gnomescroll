@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/ray_trace/ray_trace.hpp>
+#include <c_lib/physics/ray_trace/ray_trace.hpp>
 #include <c_lib/entity/constants.hpp>
 #include <c_lib/defines.h>
 

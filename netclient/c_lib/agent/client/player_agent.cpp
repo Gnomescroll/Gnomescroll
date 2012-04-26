@@ -5,7 +5,7 @@
 #ifdef DC_CLIENT
 
 #include <c_lib/agent/agent.hpp>
-#include <c_lib/ray_trace/ray_trace.hpp>
+#include <c_lib/physics/ray_trace/ray_trace.hpp>
 #include <c_lib/sound/sound.hpp>
 
 #include <c_lib/common/time/physics_timer.hpp>
