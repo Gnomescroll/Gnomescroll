@@ -188,8 +188,8 @@ class BaseInventory
             if (!this->can_swap(slota, slotb)) return false;
             InventorySlot itema = this->objects[slota];
             InventorySlot* itemb = &this->objects[slotb];
-            this->objects[slota].load(itemb->item_id, itemb->item_type, 1);
-            this->objects[slotb].load(itema.item_id, itema.item_type, 1);
+            this->objects[slota].load(itemb->item_id, itemb->item_type, itemb->count);
+            this->objects[slotb].load(itema.item_id, itema.item_type, itema.count);
             return true;
         }
 

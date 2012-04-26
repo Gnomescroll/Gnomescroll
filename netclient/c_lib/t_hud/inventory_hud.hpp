@@ -262,7 +262,7 @@ void AgentInventoryUI::draw()
     for (int i=0; i<this->xdim; i++)
     for (int j=0; j<this->ydim; j++)
     {
-        const int slot = j * this->xdim + j;
+        const int slot = j * this->xdim + i;
         int count = contents[slot].count;
         if (count <= 1) continue;
         assert(count < 100); // the string is only large enough to hold "99"
