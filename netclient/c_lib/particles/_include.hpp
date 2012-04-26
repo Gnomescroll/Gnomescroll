@@ -25,28 +25,7 @@
 #include <c_lib/particles/grenade_shrapnel.cpp>
 #endif
 
+#include <c_lib/particles/net/StoC.cpp>
+#include <c_lib/particles/net/CtoS.cpp>
+
 #include <c_lib/particles/_interface.cpp>
-
-#if 0
-
-/* objects */
-#include "./particles/particles.hpp"
-#include "./particles/textures.hpp"
-
-#if DC_CLIENT
-//#include "./particles/circuit_tree.hpp"
-#include "./particles/shrapnel.hpp"
-#include "./particles/blood.hpp"
-#include "./particles/minivox.hpp"
-#include "./particles/billboard_text.hpp"
-#include "./particles/billboard_text_hud.hpp"
-#endif
-
-#include "./particles/grenade.hpp"
-//#include "./particles/neutron.hpp"
-#include "./particles/cspray.hpp"
-
-#if DC_SERVER
-#include "./particles/grenade_shrapnel.hpp"
-#endif
-#endif
