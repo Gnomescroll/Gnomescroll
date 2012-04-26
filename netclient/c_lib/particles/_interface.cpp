@@ -148,8 +148,38 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
     s->init(x,y,z, vx,vy,vz);
     return s;
 }
+#endif
+
+#if DC_SERVER
+
+class ItemParticle* create_item_particle(int item_type, 
+    float x, float y, float z, 
+    float vx, float vy, float vz)
+{
+    ip* f = item_particle_list->create();
+    if(f == NULL)
+    { 
+        printf("Error: cannot create item particle \n");
+        return; 
+    }
+    f->init(x,y,z,vx,vy,vz);
+
+    class item_particle_create_StoC p;
+
+    p.type = 0;
+    p.id = f->id;
+    p.x = x;
+    p.y = y;
+    p.z = z;
+    p.mx = vx;
+    p.my = vy;
+    p.mz = vz;
+
+    p.broadcast();
+}
 
 #endif
+
 
 
 }

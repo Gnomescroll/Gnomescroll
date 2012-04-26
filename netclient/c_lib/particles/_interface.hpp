@@ -43,8 +43,15 @@ void teardown_particles();
 void prep_shrapnel();
 void draw_shrapnel();
 
-
 class Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz);
+#endif
+
+#if DC_SERVER
+
+class ItemParticle* create_item_particle(int item_type, 
+    float x, float y, float z, 
+    float vx, float vy, float vz);
 
 #endif
+
 }

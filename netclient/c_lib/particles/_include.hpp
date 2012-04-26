@@ -8,7 +8,9 @@
 #include <c_lib/particles/particles.cpp>
 
 #include <c_lib/particles/grenade.cpp>
+
 #include <c_lib/particles/item_particle.cpp>
+#include <c_lib/particles/item_vox.cpp>
 
 #if DC_CLIENT
 
