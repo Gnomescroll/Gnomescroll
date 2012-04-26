@@ -3,7 +3,6 @@
 #if DC_CLIENT
 
 #include <c_lib/agent/agent_list.hpp>
-#include <c_lib/items/items.hpp>
 //#include <c_lib/monsters/monsters.hpp>
 
 #include <c_lib/game/ctf.hpp>

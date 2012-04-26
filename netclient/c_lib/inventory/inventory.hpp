@@ -1,8 +1,8 @@
 #pragma once
 
 #include <c_lib/entity/constants.hpp>
-#include <c_lib/items/inventory/packets.hpp>
-#include <c_lib/items/inventory/slot.hpp>
+#include <c_lib/inventory/packets.hpp>
+#include <c_lib/inventory/slot.hpp>
 
 class BaseInventory;
 class Agent_state;

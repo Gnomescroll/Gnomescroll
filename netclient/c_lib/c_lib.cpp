@@ -70,6 +70,7 @@
 /* Draw lists */
 #include <c_lib/draw/constants.hpp>
 #include <c_lib/draw/draw.cpp>
+#include <c_lib/draw/items.cpp>
 #include <c_lib/draw/lists.cpp>
 
 /* Voxel Models */
@@ -89,15 +90,16 @@
 #include <c_lib/particles/_include.hpp>
 
 /* Items */
-#include <c_lib/items/constants.hpp>
-#include <c_lib/items/items.cpp>
+#include <c_lib/game/constants.hpp>
 
-#include <c_lib/items/inventory/_include.hpp>
+#include <c_lib/inventory/_include.hpp>
 
 /* Skybox */
 #include <c_lib/camera/skybox/skybox.cpp>
 
 /* Game Stuff */
+#include <c_lib/game/flag.cpp>
+#include <c_lib/game/base.cpp>
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/teams.cpp>
 #include <c_lib/game/ctf.cpp>

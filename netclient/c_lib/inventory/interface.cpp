@@ -1,13 +1,13 @@
 #include "interface.hpp"
 
-#include <c_lib/items/inventory/constants.hpp>
-#include <c_lib/items/inventory/inventory.hpp>
-#include <c_lib/items/inventory/list.hpp>
+#include <c_lib/inventory/constants.hpp>
+#include <c_lib/inventory/inventory.hpp>
+#include <c_lib/inventory/list.hpp>
 #if DC_CLIENT
-#include <c_lib/items/inventory/client.hpp>
+#include <c_lib/inventory/client.hpp>
 #endif
 #if DC_SERVER
-#include <c_lib/items/inventory/server.hpp>
+#include <c_lib/inventory/server.hpp>
 #endif
 
 namespace Items

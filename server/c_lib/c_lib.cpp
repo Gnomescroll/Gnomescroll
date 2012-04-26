@@ -72,10 +72,9 @@
 #include <c_lib/particles/_include.hpp>
 
 /* Items */
-#include <c_lib/items/constants.hpp>
-#include <c_lib/items/items.cpp>
+#include <c_lib/game/constants.hpp>
 
-#include <c_lib/items/inventory/_include.hpp>
+#include <c_lib/inventory/_include.hpp>
 
 /* mechanisms */
 #include <c_lib/t_mech/_include.hpp>
@@ -84,6 +83,8 @@
 #include <c_lib/t_item/_include.hpp>
 
 /* Game modes */
+#include <c_lib/game/flag.cpp>
+#include <c_lib/game/base.cpp>
 #include <c_lib/game/game.cpp>
 #include <c_lib/game/ctf.cpp>
 #include <c_lib/game/teams.cpp> 

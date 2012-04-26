@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-//#include <c_lib/items/inventory/include.hpp>
+//#include <c_lib/inventory/include.hpp>
 
 #if DC_SERVER
 #include <chat/server.hpp>

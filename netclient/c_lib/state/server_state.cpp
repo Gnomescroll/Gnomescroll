@@ -3,7 +3,6 @@
 #include <c_lib/agent/agent.hpp>
 
 #include <c_lib/game/ctf.hpp>
-#include <c_lib/items/items.hpp>
 
 #include <c_lib/chat/interface.hpp>
 

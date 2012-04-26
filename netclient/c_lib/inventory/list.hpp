@@ -2,7 +2,7 @@
 
 #include <c_lib/common/template/object_list.hpp>
 
-#include <c_lib/items/inventory/inventory.hpp>
+#include <c_lib/inventory/inventory.hpp>
 
 namespace Items
 {

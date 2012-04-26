@@ -1,8 +1,8 @@
 #include "packets.hpp"
 
-#include <c_lib/items/inventory/interface.hpp>
+#include <c_lib/inventory/interface.hpp>
 
-#include <c_lib/items/inventory/handlers.hpp>
+#include <c_lib/inventory/handlers.hpp>
 
 /* Packets */
 

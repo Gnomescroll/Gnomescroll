@@ -1,6 +1,6 @@
 #pragma once
 
-#include <c_lib/items/constants.hpp>
+#include <c_lib/game/constants.hpp>
 #include <entity/constants.hpp>
 #include <c_lib/agent/constants.hpp>
 
