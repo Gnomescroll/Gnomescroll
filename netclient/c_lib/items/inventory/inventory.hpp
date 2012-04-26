@@ -121,6 +121,26 @@ class BaseInventory
             return true;
         }
 
+        bool can_add_stack(ObjectType type, int slot, int count)
+        {
+            if (!this->type_allowed(type)) return false;
+            if (!this->is_valid_slot(slot)) return false;
+            InventorySlot* item = &this->objects[slot];
+            if (item->item_type != type) return false; // only merge same type items
+            // TODO -- check stack maximum allowed
+            // assume 64
+            const int STACK_MAX = 64;
+            if (item->count + count > STACK_MAX) return false;
+            return true;
+        }
+
+        bool can_remove_stack(int slot, int count)
+        {
+            if (!this->is_valid_slot(slot)) return false;
+            if (this->objects[slot].count < count) return false;
+            return true;
+        }
+
         /* State transactions */
 
         bool add(int id, ObjectType type, int stack_size)
@@ -163,6 +183,30 @@ class BaseInventory
             return true;
         }
 
+        // move count from slota to slotb
+        bool merge_stack(int slota, int slotb, int stack_size)
+        {
+            if (!this->is_valid_slot(slota)) return false;
+            if (!this->is_valid_slot(slotb)) return false;
+            this->add_stack(slotb, stack_size);
+            this->remove_stack(slota, stack_size);
+            return true;
+        }
+
+        bool add_stack(int slot, int stack_size)
+        {
+            if (!this->is_valid_slot(slot)) return false;
+            this->objects[slot].count += stack_size;
+            return true;
+        }
+
+        bool remove_stack(int slot, int stack_size)
+        {
+            if (!this->is_valid_slot(slot)) return false;
+            this->objects[slot].count -= count;
+            if (this->objects[slot].count <= 0) this->remove(slot);
+            return true;
+        }
 
         /* initializers */
 

@@ -79,10 +79,34 @@ inline void swap_item_between_inventory_StoC::handle()
     inva->remove(slota);
 }
 
+inline void merge_stack_in_inventory_StoC::handle()
+{
+    Inventory* obj = Items::get_inventory(this->inventory_id);
+    if (obj == NULL)
+    {
+        printf("WARNING: merge_stack_in_inventory_StoC::handle() -- inventory %d not found\n", inventory_id);
+        return;
+    }
+    obj->merge_stack(slota, slotb, count);
+}
+
+inline void merge_stack_between_inventory_StoC::handle()
+{
+    Inventory* inva = Items::get_inventory(this->inventorya);
+    if (inva == NULL) return;
+    Inventory* invb = Items::get_inventory(this->inventoryb);
+    if (invb == NULL) return;
+
+    invb->add_stack(slotb, count);
+    inva->remove_stack(slota, count);
+}
+
 inline void add_item_to_inventory_CtoS::handle() {}
 inline void remove_item_from_inventory_CtoS::handle() {}
 inline void swap_item_in_inventory_CtoS::handle() {}
 inline void swap_item_between_inventory_CtoS::handle() {}
+inline void merge_stack_in_inventory_CtoS::handle() {}
+inline void merge_stack_between_inventory_CtoS::handle() {}
 #endif
 
 #if DC_SERVER
@@ -92,6 +116,8 @@ inline void add_item_to_inventory_StoC::handle() {}
 inline void remove_item_from_inventory_StoC::handle() {}
 inline void swap_item_in_inventory_StoC::handle() {}
 inline void swap_item_between_inventory_StoC::handle() {}
+inline void merge_stack_in_inventory_StoC::handle() {}
+inline void merge_stack_between_inventory_StoC::handle() {}
 
 inline void add_item_to_inventory_CtoS::handle()
 {
@@ -196,6 +222,53 @@ inline void swap_item_between_inventory_CtoS::handle()
     msg.slota = slota;
     msg.inventoryb = inventoryb;
     msg.slotb = slotb;
+    msg.sendToClient(client_id);
+}
+
+inline void merge_stack_in_inventory_CtoS::handle()
+{
+    Agent_state* agent = NetServer::agents[client_id];
+    if (agent == NULL)
+    {
+        printf("merge_stack_in_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
+        return;
+    }
+
+    Inventory* inv = Items::get_inventory(this->inventory_id);
+    if (inv == NULL) return;
+    if (inv->owner != agent->id) return;
+    inv->merge_stack_action(slota, slotb, count);
+}
+
+inline void merge_stack_between_inventory_CtoS::handle()
+{
+    Agent_state* agent = NetServer::agents[client_id];
+    if (agent == NULL)
+    {
+        printf("merge_stack_between_inventory_CtoS::handle() -- agent not found for client %d\n", client_id);
+        return;
+    }
+
+    Inventory* inva = Items::get_inventory(this->inventorya);
+    if (inva == NULL) return;
+    if (inva->owner != agent->id) return;
+    Inventory* invb = Items::get_inventory(this->inventoryb);
+    if (invb == NULL) return;
+    if (invb->owner != agent->id) return;
+
+    if (!inva->can_remove_stack(slota, count)) return;
+    InventorySlot* item = inva->get_item(slota);
+    if (!invb->can_add_stack(item->item_type, slotb, count)) return;
+
+    if (!invb->add_stack(slotb, count)) printf("ERROR ADDING NEW STACK!!\n");
+    if (!inva->remove_stack(slota, count)) printf("ERROR  REMOVING_STACK!!\n");
+
+    merge_stack_between_inventory_StoC msg;
+    msg.inventorya = inventorya;
+    msg.slota = slota;
+    msg.inventoryb = inventoryb;
+    msg.slotb = slotb;
+    msg.count = count;
     msg.sendToClient(client_id);
 }
 

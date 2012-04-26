@@ -105,7 +105,29 @@ void Inventory::broadcastSwap(int slota, int slotb)
     msg.slota = slota;
     msg.slotb = slotb;
     msg.broadcast();
-
 }
+
+void Inventory::sendToClientMergeStack(int slota, int slotb, int count)
+{
+    Agent_state* agent = ServerState::agent_list->get(this->owner);
+    if (agent == NULL) return;
+    merge_stack_in_inventory_StoC msg;
+    msg.inventory_id = this->id;
+    msg.slota = slota;
+    msg.slotb = slotb;
+    msg.count = count;
+    msg.sendToClient(agent->client_id);
+}
+
+void Inventory::broadcastMergeStack(int slota, int slotb, int count)
+{
+    merge_stack_in_inventory_StoC msg;
+    msg.inventory_id = this->id;
+    msg.slota = slota;
+    msg.slotb = slotb;
+    msg.count = count;
+    msg.broadcast();
+}
+
 
 #endif

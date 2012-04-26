@@ -67,6 +67,16 @@ class Inventory: public BaseInventory
             return swapped;
         }
 
+        bool merge_stack_action(int slota, int slotb, int count)
+        {
+            bool merged = this->merge_stack(slota, slotb, count);
+            if (owner != NO_AGENT)
+                this->sendToClientMergeStack(slota, slotb, count);
+            else
+                this->broadcastMergeStack(slota, slotb, count);
+            return merged;
+        }
+
         /* Network API */
 
         // create, delete
@@ -84,6 +94,8 @@ class Inventory: public BaseInventory
         void broadcastRemove(int slot);
         void sendToClientSwap(int slota, int slotb);
         void broadcastSwap(int slota, int slotb);
+        void sendToClientMergeStack(int slota, int slotb, int count);
+        void broadcastMergeStack(int slota, int slotb, int count);
 
     explicit Inventory(int id)
     : BaseInventory(id)
