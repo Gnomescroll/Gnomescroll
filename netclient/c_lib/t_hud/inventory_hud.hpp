@@ -23,6 +23,10 @@ class AgentInventoryUI : public UIElement
     static const int xdim = 6;    // slot dimensions
     static const int ydim = 3;
 
+    void draw();
+
+    int get_slot_at(int px, int py);
+
     void init()
     {
         assert(this->stack_numbers == NULL);
@@ -43,14 +47,12 @@ class AgentInventoryUI : public UIElement
         }
     }
     
-    void draw();
-
-    int get_slot_at(int px, int py);
-
     ~AgentInventoryUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
+
+
 };
 
 

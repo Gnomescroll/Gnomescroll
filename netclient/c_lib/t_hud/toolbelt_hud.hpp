@@ -18,12 +18,34 @@ class AgentToolbeltUI : public UIElement
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;
 
-
-    void init() {}
     void draw();
 
     int get_slot_at(int px, int py);
 
+    void init()
+    {
+        assert(this->stack_numbers == NULL);
+        
+        // create HudText objects needed for stack rendering
+        int max = xdim * ydim;
+        this->stack_numbers = new HudText::Text[max];
+
+        const int STACK_COUNT_MAX_LENGTH = 2;   // 99
+        for (int i=0; i<max; i++)
+        {
+            HudText::Text* t = &this->stack_numbers[i];
+            //t->set_text((char*) "");
+            t->set_format((char*) "%d");
+            t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+            t->set_color(255,255,255,255);
+            t->set_depth(-0.1f);
+        }
+    }
+    
+    ~AgentToolbeltUI()
+    {
+        if (this->stack_numbers != NULL) delete[] this->stack_numbers;
+    }
 };
 
 
@@ -217,6 +239,41 @@ void AgentToolbeltUI::draw()
     }
 
     glColor4ub(255, 255, 255, 255);
+
+
+
+
+    /*
+     * Draw stack numbers
+     */
+
+    HudFont::start_font_draw();
+    const int font_size = 12;
+    HudFont::set_properties(font_size);
+    HudFont::set_texture();
+
+    HudText::Text* text;
+    for (int i=0; i<this->xdim; i++)
+    for (int j=0; j<this->ydim; j++)
+    {
+        const int slot = j * this->xdim + i;
+        int count = contents[slot].count;
+        if (count <= 1) continue;
+        assert(count < 100); // the string is only large enough to hold "99"
+        
+        float x = xoff + border + i*(inc1+slot_size);
+        x += slot_size - font_size/2;
+        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        y += font_size/2;
+
+        text = &this->stack_numbers[slot];
+        text->update_formatted_string(1, count);
+        text->set_position(x,y);
+        text->draw();
+    }
+    HudFont::reset_default();
+    HudFont::end_font_draw();
+
 }
 
 
