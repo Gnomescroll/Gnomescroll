@@ -166,7 +166,6 @@ void block_spawn_items(int block_value, int x, int y, int z)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-#if 0
     int res = apply_damage(x,y,z, dmg);
     if (res != 0) return;
 
@@ -177,6 +176,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.val = res;
     msg.action = action;
     msg.broadcast();
+#if 0
 
 #if 1
     int block_value = get(x,y,z);
