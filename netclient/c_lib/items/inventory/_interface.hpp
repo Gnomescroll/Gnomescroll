@@ -22,8 +22,7 @@ extern Inventory* craft_bench_inventory;
 /* CRUD */
 
 //forward decl
-class InventoryList;
-extern InventoryList* inventory_list;
+extern class InventoryList* inventory_list;
 
 #if DC_SERVER
 Inventory* create_inventory(ObjectType inventory_type);

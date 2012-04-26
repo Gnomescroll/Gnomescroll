@@ -1,6 +1,6 @@
 #include "packets.hpp"
 
-#include <c_lib/items/inventory/interface.hpp>
+#include <c_lib/items/inventory/_interface.hpp>
 
 /* Packets */
 

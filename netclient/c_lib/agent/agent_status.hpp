@@ -6,9 +6,6 @@
 
 void switch_agent_ownership(int item_id, ObjectType item_type, int owner, int new_owner);
 
-class Agent_state;  // forward declaration
-class Inventory;
-
 // Use for:
 // All agents server side
 // All non-player agents client side.
@@ -52,8 +49,8 @@ class Agent_status {
 
         int lifetime;
 
-        Inventory* inventory;
-        Inventory* toolbelt;
+        class Inventory* inventory;
+        class Inventory* toolbelt;
 
         void tick();
 

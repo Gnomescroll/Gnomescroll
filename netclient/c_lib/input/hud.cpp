@@ -1,6 +1,6 @@
 #include "hud.hpp"
 
-#include <c_lib/items/inventory/include.hpp>
+//#include <c_lib/items/inventory/include.hpp>
 
 static bool point_in_inventory(int x, int y, HudInventory::InventoryRender* inventory)
 {
