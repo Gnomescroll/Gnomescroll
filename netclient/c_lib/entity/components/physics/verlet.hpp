@@ -15,7 +15,8 @@ class VerletPhysicsComponent: public PhysicsComponent
         Vec3 velocity;
         float mass;
         float damp;
-
+        float box_radius;
+        
         Vec3 get_position() { return this->position; }
         bool set_position(Vec3 position)
         {
@@ -53,6 +54,7 @@ class VerletPhysicsComponent: public PhysicsComponent
 
         bool bounce()
         {
+            return this->bounce_box();
             return Verlet::bounce(
                 &this->position,
                 &this->velocity,
@@ -60,9 +62,20 @@ class VerletPhysicsComponent: public PhysicsComponent
             );
         }
 
+        bool bounce_box()
+        {
+            return Verlet::bounce_box(
+                &this->position,
+                &this->velocity,
+                this->damp,
+                this->box_radius
+            );
+        }
+
     VerletPhysicsComponent()
     : PhysicsComponent(COMPONENT_VERLET),
-    position(NULL_POSITION), velocity(NULL_MOMENTUM), mass(1.0f), damp(1.0f)
+    position(NULL_POSITION), velocity(NULL_MOMENTUM),
+    mass(1.0f), damp(1.0f), box_radius(0.1f)
     {}
 };
 

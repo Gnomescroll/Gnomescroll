@@ -15,7 +15,7 @@ namespace Objects
 
 void load_infected_rock_block_drop_data()
 {
-    load_block_drop_data(OBJECT_INFECTED_ROCK_BLOCK_DROP);
+    load_textured_voxel_block_drop_data(OBJECT_INFECTED_ROCK_BLOCK_DROP);
 }
 
 

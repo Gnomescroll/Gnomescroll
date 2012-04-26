@@ -15,7 +15,7 @@ namespace Objects
 
 void load_hard_rock_block_drop_data()
 {
-    load_block_drop_data(OBJECT_HARD_ROCK_BLOCK_DROP);
+    load_textured_voxel_block_drop_data(OBJECT_HARD_ROCK_BLOCK_DROP);
 }
 
 

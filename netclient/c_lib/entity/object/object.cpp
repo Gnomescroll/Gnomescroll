@@ -14,9 +14,9 @@ using Components::Component;
 
 void Object::add_component(int slot, Component* component)
 {
-    assert(this->components[slot] == NULL);
     assert(slot >= 0);
     assert(slot < this->n_components);
+    assert(this->components[slot] == NULL);
     this->components[slot] = component;
 }
 

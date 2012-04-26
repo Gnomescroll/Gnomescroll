@@ -14,7 +14,7 @@ namespace Objects
 
 void load_dirt_block_drop_data()
 {
-    load_block_drop_data(OBJECT_DIRT_BLOCK_DROP);
+    load_colored_voxel_block_drop_data(OBJECT_DIRT_BLOCK_DROP);
 }
 
 static void set_dirt_block_drop_properties(Object* object)

@@ -112,7 +112,7 @@ int apply_damage(int x, int y, int z, int dmg)
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)
 {
-    const float drop_probability = 1.0f;
+    const float drop_probability = 0.3f;
     float p = randf();
     if (p > drop_probability) return;
 
@@ -147,17 +147,16 @@ void block_spawn_items(int block_value, int x, int y, int z)
     
     const float mom = 2.0f;
     Objects::Object* obj = Objects::create(type);
-    if (obj != NULL)
+    if (obj == NULL) return;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
     {
-        using Components::PhysicsComponent;
-        PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-        if (physics != NULL)
-        {
-            physics->set_position(vec3_init(x+randf(), y+randf(), z+randf()));
-            physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
-        }
-        Objects::ready(obj);
+        physics->set_position(vec3_init(x+randf(), y+randf(), z+randf()));
+        physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
     }
+    Objects::ready(obj);
 }
 
 // apply block damage & broadcast the update to client
@@ -174,7 +173,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 0
+#if 1
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
 #else

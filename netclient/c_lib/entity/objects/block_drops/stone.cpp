@@ -14,7 +14,7 @@ namespace Objects
 
 void load_stone_block_drop_data()
 {
-    load_block_drop_data(OBJECT_STONE_BLOCK_DROP);
+    load_colored_voxel_block_drop_data(OBJECT_STONE_BLOCK_DROP);
 }
 
 static void set_stone_block_drop_properties(Object* object)

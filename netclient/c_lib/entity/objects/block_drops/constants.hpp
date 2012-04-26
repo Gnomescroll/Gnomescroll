@@ -19,7 +19,8 @@ const float BLOCK_DROP_DAMP = 0.35f;
 const float BLOCK_DROP_SIZE = 0.25f;
 
 // voxel animation rotation
-const float BLOCK_DROP_THETA_ROTATION_SPEED = 0.02f;
+//const float BLOCK_DROP_THETA_ROTATION_SPEED = 0.02f;
+const float BLOCK_DROP_THETA_ROTATION_SPEED = 0.00f;
 const float BLOCK_DROP_PHI_ROTATION_SPEED = 0.0f;
 
 // colored voxel

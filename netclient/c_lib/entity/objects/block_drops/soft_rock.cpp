@@ -15,7 +15,7 @@ namespace Objects
 
 void load_soft_rock_block_drop_data()
 {
-    load_block_drop_data(OBJECT_SOFT_ROCK_BLOCK_DROP);
+    load_textured_voxel_block_drop_data(OBJECT_SOFT_ROCK_BLOCK_DROP);
 }
 
 static void set_soft_rock_block_drop_properties(Object* object)

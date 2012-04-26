@@ -5,7 +5,8 @@
 namespace Objects
 {
 
-void load_block_drop_data(ObjectType type);
+void load_colored_voxel_block_drop_data(ObjectType type);
+void load_textured_voxel_block_drop_data(ObjectType type);
 
 } // Objects
 

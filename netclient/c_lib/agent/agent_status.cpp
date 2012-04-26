@@ -615,7 +615,11 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             //#endif
             //break;
             
-        default: break;
+        default:
+            #if DC_SERVER
+            return this->inventory->add_action(item_id, item_type, 1);
+            #endif
+            break;
     }
     return can;
 }
