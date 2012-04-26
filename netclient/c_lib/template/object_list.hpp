@@ -53,9 +53,6 @@ class Object_list {
 
 };
 
-//template <class T>
-//Stack<T>::Stack(int s)
-
 template <class Object_state, int max_n> 
 Object_list<Object_state, max_n>::Object_list()
 :
