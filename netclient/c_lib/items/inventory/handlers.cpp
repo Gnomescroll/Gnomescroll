@@ -7,7 +7,7 @@
 #include <c_lib/t_hud/_interface.hpp>
 #include <c_lib/t_hud/event.hpp>
 
-#include <c_lib/items/inventory/_interface.hpp>
+#include <c_lib/items/inventory/interface.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
 
 namespace Items

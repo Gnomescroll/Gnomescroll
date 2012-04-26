@@ -3,7 +3,7 @@
 
 /* Inventory Property, to use in an object */
 
-#include <c_lib/items/inventory/_interface.cpp>
+#include <c_lib/items/inventory/interface.cpp>
 #include <c_lib/items/inventory/contents.cpp>
 #include <c_lib/items/inventory/packets.cpp>
 
