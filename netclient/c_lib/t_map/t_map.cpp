@@ -23,7 +23,7 @@
     #include <c_lib/common/random.h>
     #include <c_lib/physics/vec3.hpp>
 
-    #include <c_lib/particles/_interface.hpp>
+    #include <c_lib/particle/_interface.hpp>
 
 /*
     #include <c_lib/entity/constants.hpp>

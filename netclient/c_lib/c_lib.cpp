@@ -86,8 +86,8 @@
 #include <c_lib/entity/include.cpp>
 
 /* particles */
-//#include <c_lib/particles/particle_lib.cpp>
-#include <c_lib/particles/_include.hpp>
+//#include <c_lib/particle/particle_lib.cpp>
+#include <c_lib/particle/_include.hpp>
 
 /* Items */
 #include <c_lib/game/constants.hpp>

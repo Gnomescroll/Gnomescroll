@@ -1,11 +1,11 @@
 #include "billboard_text.hpp"
 
 #include <c_lib/physics/ray_trace/ray_trace.hpp>
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.hpp>
-#include <hud/text.hpp>
-#include <SDL/SDL_functions.h>
-#include <camera/camera.hpp>
+#include <c_lib/t_map/t_map.hpp>
+#include <c_lib/t_map/t_properties.hpp>
+#include <c_lib/hud/text.hpp>
+#include <c_lib/SDL/SDL_functions.h>
+#include <c_lib/camera/camera.hpp>
 #include <c_lib/hud/font.hpp>
 #include <c_lib/hud/text.hpp>
 

@@ -2,18 +2,18 @@
 
 #if DC_CLIENT
 #include <c_lib/animations/animations.hpp>
-#include <sound/triggers.hpp>
+#include <c_lib/sound/triggers.hpp>
 #endif
 
-#include <t_map/t_map.hpp>
-#include <t_map/t_properties.hpp>
+#include <c_lib/t_map/t_map.hpp>
+#include <c_lib/t_map/t_properties.hpp>
 
 //#include <c_lib/state/client_state.hpp>
 //#include <c_lib/state/server_state.hpp>
-#include <entity/constants.hpp>
+#include <c_lib/entity/constants.hpp>
 #include <c_lib/common/random.h>
 
-#include <c_lib/particles/_interface.hpp>
+#include <c_lib/particle/_interface.hpp>
 
 #include <net_lib/net.hpp>
 /* properties */

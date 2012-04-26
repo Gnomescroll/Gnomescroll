@@ -1,6 +1,6 @@
 #pragma once
 
-#include <particles/particles.hpp>
+#include <particle/particles.hpp>
 
 #define BILLBOARD_TEXT_MAX 1024
 #define BILLBOARD_TEXT_TTL 300

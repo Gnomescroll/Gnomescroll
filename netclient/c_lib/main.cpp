@@ -68,7 +68,7 @@ int run()
     // update mouse
 
     poll_mouse();
-
+ 
     int counter = 0;
 
     while (!input_state.quit)

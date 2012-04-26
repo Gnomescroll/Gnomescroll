@@ -1,7 +1,7 @@
 #pragma once
 
-#include <particles/particles.hpp>
-#include <hud/text.hpp>
+#include <c_lib/particle/particles.hpp>
+#include <c_lib/hud/text.hpp>
 
 namespace Particle
 {

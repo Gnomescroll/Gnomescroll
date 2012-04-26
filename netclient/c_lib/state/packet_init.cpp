@@ -13,10 +13,10 @@
 #include <c_lib/t_item/net/CtoS.hpp>
 #include <c_lib/t_item/net/StoC.hpp>
 
-#include <c_lib/particles/net/CtoS.hpp>
-#include <c_lib/particles/net/StoC.hpp>
+#include <c_lib/particle/net/CtoS.hpp>
+#include <c_lib/particle/net/StoC.hpp>
 
-#include <c_lib/particles/grenade.hpp> // move into net folder in particles
+#include <c_lib/particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 

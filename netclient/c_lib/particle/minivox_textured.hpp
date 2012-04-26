@@ -3,7 +3,7 @@
 #include <physics/common.hpp>
 #include <c_lib/voxel/common.h>
 
-#include <c_lib/particles/minivox_colored.hpp>
+#include <c_lib/particle/minivox_colored.hpp>
 
 namespace Particle
 {

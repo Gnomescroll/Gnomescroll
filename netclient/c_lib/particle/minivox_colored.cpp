@@ -5,7 +5,7 @@
 #include <c_lib/camera/fulstrum_test.hpp>
 #endif
 
-#include <voxel/common_data.h>
+#include <c_lib/voxel/common_data.h>
 #include <c_lib/physics/ray_trace/ray_trace.hpp>
 
 

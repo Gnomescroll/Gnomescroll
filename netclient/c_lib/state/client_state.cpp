@@ -15,7 +15,7 @@
 
 #include <c_lib/agent/client/player_agent.hpp>
 
-#include <c_lib/particles/_interface.hpp>
+#include <c_lib/particle/_interface.hpp>
 
 #if USE_OPENAL
 #include <c_lib/sound/openal.hpp>

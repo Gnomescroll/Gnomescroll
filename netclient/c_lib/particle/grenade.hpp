@@ -4,8 +4,8 @@
 #include <c_lib/agent/client/player_agent.hpp>
 #endif
 
-#include <c_lib/particles/particles.hpp>
-#include <c_lib/particles/billboard_sprite.hpp>
+#include <c_lib/particle/particles.hpp>
+#include <c_lib/particle/billboard_sprite.hpp>
 namespace Particle
 {
 

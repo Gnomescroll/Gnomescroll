@@ -3,13 +3,13 @@
 //#include <c_lib/item/list.hpp>
 
 //#include <c_lib/item/free_item.hpp>
-#include <c_lib/item/item_container.hpp>
-#include <c_lib/item/item.hpp>
+#include <item/item_container.hpp>
+#include <item/item.hpp>
 
-#include <c_lib/item/net/StoC.hpp>
+#include <item/net/StoC.hpp>
 
 #if DC_CLIENT
-#include <c_lib/input/handlers.hpp>
+#include <input/handlers.hpp>
 #endif
 
 namespace Item

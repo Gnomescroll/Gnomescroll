@@ -5,8 +5,8 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <sound/triggers.hpp>
 
-#include <c_lib/particles/_include.hpp>
-#include <c_lib/particles/grenade.hpp>
+#include <c_lib/particle/_include.hpp>
+#include <c_lib/particle/grenade.hpp>
 
 #include <c_lib/animations/_interface.hpp>
 

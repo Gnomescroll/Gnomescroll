@@ -6,8 +6,8 @@
 //#include <c_lib/monsters/monsters.hpp>
 #include <c_lib/voxel/voxel_hitscan.hpp>
 
-#include <c_lib/particles/grenade.hpp>
-//#include <c_lib/particles/cspray.hpp>
+#include <c_lib/particle/grenade.hpp>
+//#include <c_lib/particle/cspray.hpp>
 
 namespace ServerState
 {

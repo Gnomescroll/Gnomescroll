@@ -1,13 +1,13 @@
 #include "agent_event.hpp"
 
-#include <c_lib/particles/billboard_text_hud.hpp>
+#include <c_lib/particle/billboard_text_hud.hpp>
 
 #include <c_lib/state/client_state.hpp>
 #include <c_lib/sound/triggers.hpp>
 #include <chat/client.hpp>
 #include <hud/map.hpp>
 
-#include <c_lib/particles/_include.hpp>
+#include <c_lib/particle/_include.hpp>
 
 #include <c_lib/animations/_interface.hpp>
 #include <c_lib/animations/animations.hpp>

@@ -1,7 +1,7 @@
 #include "animations.hpp"
 
 #include <c_lib/options.hpp>
-//#include <c_lib/particles/particle_lib.hpp>
+//#include <c_lib/particle/particle_lib.hpp>
 #include <c_lib/common/random.h>
 #include <c_lib/state/client_state.hpp>
 
@@ -10,9 +10,9 @@
 #include <c_lib/physics/vec3.hpp>
 #include <c_lib/physics/mat3.hpp>
 
-#include <c_lib/particles/_include.hpp>
-#include <c_lib/particles/shrapnel.hpp>
-#include <c_lib/particles/blood.hpp>
+#include <c_lib/particle/_include.hpp>
+#include <c_lib/particle/shrapnel.hpp>
+#include <c_lib/particle/blood.hpp>
 
 
 namespace Animations {

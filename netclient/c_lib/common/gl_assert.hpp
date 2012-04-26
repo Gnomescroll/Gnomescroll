@@ -8,7 +8,7 @@ This prints error/line when gl assertion fails
 example:
 
 GL_ASSERT(GL_DEPTH_TEST, true);
-GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particles/minivox.cpp, line 183
+GL_ASSERT error: /home/atomos/dc_mmo/netclient/c_lib/./particle/minivox.cpp, line 183
 */
 
 

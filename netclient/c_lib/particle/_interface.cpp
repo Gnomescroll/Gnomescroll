@@ -1,19 +1,19 @@
 #include "_interface.hpp"
 
-//c#include <c_lib/particles/cspray.hpp>
-#include <c_lib/particles/grenade.hpp>
-#include <c_lib/particles/item_particle.hpp>
+//c#include <c_lib/particle/cspray.hpp>
+#include <c_lib/particle/grenade.hpp>
+#include <c_lib/particle/item_particle.hpp>
 
-#include <c_lib/particles/net/StoC.hpp>
+#include <c_lib/particle/net/StoC.hpp>
 
 #if DC_CLIENT
-#include <c_lib/particles/shrapnel.hpp>
-#include <c_lib/particles/blood.hpp>
-#include <c_lib/particles/minivox_colored.hpp>
-#include <c_lib/particles/minivox_textured.hpp>
-#include <c_lib/particles/billboard_text.hpp>
-#include <c_lib/particles/billboard_text_hud.hpp>
-#include <c_lib/particles/billboard_sprite.hpp>
+#include <c_lib/particle/shrapnel.hpp>
+#include <c_lib/particle/blood.hpp>
+#include <c_lib/particle/minivox_colored.hpp>
+#include <c_lib/particle/minivox_textured.hpp>
+#include <c_lib/particle/billboard_text.hpp>
+#include <c_lib/particle/billboard_text_hud.hpp>
+#include <c_lib/particle/billboard_sprite.hpp>
 
 #include <compat_gl.h>
 #include <c_lib/SDL/texture_loader.hpp>
@@ -23,7 +23,7 @@
 #endif 
 
 #if DC_SERVER
-#include <c_lib/particles/grenade_shrapnel.hpp>
+#include <c_lib/particle/grenade_shrapnel.hpp>
 #endif
 
 
