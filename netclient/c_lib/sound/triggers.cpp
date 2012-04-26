@@ -83,7 +83,7 @@ bool set_soundfile(int snd_id, char* fn, char* file)
 
     load_sound(snd);
 
-    printf("Set sound trigger: %s -> %s\n", fn, file);
+    //printf("Set sound trigger: %s -> %s\n", fn, file);
 
     return true;
 }
@@ -110,8 +110,8 @@ void set_soundfile_properties(
     s->reference_distance = reference_distance;
     s->minimum_gain = minimum_gain;
     s->maximum_gain = maximum_gain;
-    printf("set properties: ");
-    printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
+    //printf("set properties: ");
+    //printf("%0.2f, %0.2f, %0.2f, %0.2f, %0.2f, %0.2f\n", pitch, gain, max_distance, reference_distance, minimum_gain, maximum_gain);
 }
 
 void teardown_triggers()
