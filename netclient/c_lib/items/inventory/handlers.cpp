@@ -114,6 +114,25 @@ void swap_within_event(int inventory_id, int slota, int slotb)
     Inventory* inv = Items::get_inventory(inventory_id);
     if (inv == NULL) return;
 
+    // decide if a swap or a merge
+
+    InventorySlot* itema = inv->get_item(slota);
+    InventorySlot* itemb = inv->get_item(slotb);
+    assert(itema != NULL && itemb != NULL);
+
+    const int STACK_MAX = 64;
+    if (!itema->empty() && itema->item_type == itemb->item_type)
+    {   // attempt merge
+        int stack_space = STACK_MAX - itema->count;
+        if (stack_space > 0)
+        {   // merging
+            int stack_avail = itemb->count;
+            int count = (stack_avail > stack_space) ? stack_space : stack_avail;
+            inv->merge_stack_action(slota, slotb, count);
+            return;
+        }
+    }
+    // else
     inv->swap_action(slota, slotb);
 }
 

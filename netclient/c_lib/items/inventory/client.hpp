@@ -48,6 +48,19 @@ class Inventory: public BaseInventory
             return swapped;
         }
 
+        bool merge_stack_action(int slota, int slotb, int count)
+        {
+            bool merged = this->can_merge_stack(slota, slotb, count);
+            if (!merged) return false;
+            merge_stack_in_inventory_CtoS msg;
+            msg.inventory_id = this->id;
+            msg.slota = slota;
+            msg.slotb = slotb;
+            msg.count = count;
+            msg.send();
+            return merged;
+        }
+
     explicit Inventory(int id)
     : BaseInventory(id)
     {}

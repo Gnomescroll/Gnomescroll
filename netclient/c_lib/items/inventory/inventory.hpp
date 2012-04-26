@@ -121,6 +121,16 @@ class BaseInventory
             return true;
         }
 
+        bool can_merge_stack(int slota, int slotb, int count)
+        {
+            InventorySlot* item = this->get_item(slota);
+            if (item == NULL) return false;
+            bool can_add = this->can_add_stack(item->item_type, slotb, count);
+            if (!can_add) return false;
+            bool can_remove = this->can_remove_stack(slota, count);
+            return can_remove;
+        }
+
         bool can_add_stack(ObjectType type, int slot, int count)
         {
             if (!this->type_allowed(type)) return false;
