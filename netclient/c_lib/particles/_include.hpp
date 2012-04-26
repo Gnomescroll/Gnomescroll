@@ -11,8 +11,6 @@
 #include <c_lib/particles/item_particle.cpp>
 
 #if DC_CLIENT
-#include <c_lib/particles/textures.cpp>
-
 
 #include <c_lib/particles/shrapnel.cpp>
 #include <c_lib/particles/blood.cpp>

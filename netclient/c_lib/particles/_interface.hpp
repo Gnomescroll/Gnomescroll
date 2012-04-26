@@ -3,6 +3,18 @@
 namespace Particles
 {
 
+#ifdef DC_CLIENT
+
+extern GLuint particle_texture;
+
+void draw_init();
+void draw_teardown();
+
+void begin_particle_draw();
+void end_particle_draw();
+
+#endif
+
 //extern class Cspray_list* cspray_list;
 extern class Grenade_list* grenade_list;
 extern class ItemParticle_list* item_particle_list;
