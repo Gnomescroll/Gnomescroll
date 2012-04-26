@@ -7,17 +7,16 @@
 #include <c_lib/agent/net_agent.hpp>
 #include <c_lib/agent/client/player_agent.hpp>
 
-//#include <c_lib/particles/particle_lib.hpp>
-//#include <c_lib/particles/cspray.hpp>
-#include <c_lib/particles/grenade.hpp>
-
-
 #include <c_lib/t_map/net/t_CtoS.hpp>
 #include <c_lib/t_map/net/t_StoC.hpp>
 
 #include <c_lib/t_item/net/CtoS.hpp>
 #include <c_lib/t_item/net/StoC.hpp>
 
+#include <c_lib/particles/net/CtoS.hpp>
+#include <c_lib/particles/net/StoC.hpp>
+
+#include <c_lib/particles/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
 
@@ -39,9 +38,6 @@ void RegisterMessages() {
     Agent_cs_CtoS::register_server_packet();
     Agent_cs_StoC::register_client_packet();
 
-    // grenade creation
-    Particles::grenade_StoC::register_client_packet();
-
     // agent took damage indicator
     agent_damage_StoC::register_client_packet();
     // player health update
@@ -54,6 +50,26 @@ void RegisterMessages() {
     client_disconnected_StoC::register_client_packet();
     
     agent_set_block_CtoS::register_server_packet();
+
+    // particle system messages
+    Particles::grenade_StoC::register_client_packet();
+    Particles::item_particle_create_StoC::register_client_packet();
+    Particles::item_particle_destroy_StoC::register_client_packet();
+    Particles::item_particle_picked_up_StoC::register_client_packet();
+
+    /* t_item*/
+    t_item::free_item_create_StoC::register_client_packet();
+    t_item::free_item_destroy_StoC::register_client_packet();
+    t_item::free_item_picked_up_StoC::register_client_packet();
+
+    t_item::item_create_StoC::register_client_packet();;
+    
+    t_item::assign_agent_inventory_StoC::register_client_packet();
+    t_item::assign_agent_toolbelt_StoC::register_client_packet();
+    t_item::assign_agent_nanite_StoC::register_client_packet();
+
+    t_item::swap_within_inventory_StoC::register_client_packet();
+    t_item::swap_between_inventory_StoC::register_client_packet();
 
     /*
         Map Messages
@@ -190,20 +206,6 @@ void RegisterMessages() {
     object_choose_target_StoC::register_client_packet();
     object_choose_destination_StoC::register_client_packet();
 
-
-    /* t_item*/
-    t_item::free_item_create_StoC::register_client_packet();
-    t_item::free_item_destroy_StoC::register_client_packet();
-    t_item::free_item_picked_up_StoC::register_client_packet();
-
-    t_item::item_create_StoC::register_client_packet();;
-    
-    t_item::assign_agent_inventory_StoC::register_client_packet();
-    t_item::assign_agent_toolbelt_StoC::register_client_packet();
-    t_item::assign_agent_nanite_StoC::register_client_packet();
-
-    t_item::swap_within_inventory_StoC::register_client_packet();
-    t_item::swap_between_inventory_StoC::register_client_packet();
 
     /* init phase */
 

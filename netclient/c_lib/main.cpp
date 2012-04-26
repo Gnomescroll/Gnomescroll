@@ -245,9 +245,10 @@ int run()
 
         //t_item::draw();
         
-        begin_item_draw();
-        Components::billboard_sprite_component_list->call();
-        end_item_draw();
+        Particles::item_particle_list->draw();
+        //begin_item_draw();
+        //Components::billboard_sprite_component_list->call();
+        //end_item_draw();
 
         Particles::begin_particle_draw();
         Particles::grenade_list->draw();
