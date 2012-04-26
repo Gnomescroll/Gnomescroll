@@ -205,7 +205,8 @@ void ready_switch(Object* object)
         case OBJECT_GEMSTONE_AMETHYST:
         case OBJECT_GEMSTONE_JADE:
         case OBJECT_GEMSTONE_ONYX:
-            return ready_pickup_sprite(object);
+            ready_pickup_sprite(object);
+            break;
 
         // block drops
         case OBJECT_DIRT_BLOCK_DROP:
@@ -269,7 +270,8 @@ void destroy_switch(Object* object)
         case OBJECT_GEMSTONE_AMETHYST:
         case OBJECT_GEMSTONE_JADE:
         case OBJECT_GEMSTONE_ONYX:
-            return die_pickup_sprite(object);
+            die_pickup_sprite(object);
+            break;
 
         // block drops
         case OBJECT_DIRT_BLOCK_DROP:

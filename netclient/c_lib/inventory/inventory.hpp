@@ -215,7 +215,7 @@ class BaseInventory
         bool remove_stack(int slot, int stack_size)
         {
             if (!this->is_valid_slot(slot)) return false;
-            this->objects[slot].count -= count;
+            this->objects[slot].count -= stack_size;
             if (this->objects[slot].count <= 0) this->remove(slot);
             return true;
         }
