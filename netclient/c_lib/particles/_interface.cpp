@@ -2,6 +2,7 @@
 
 //c#include <c_lib/particles/cspray.hpp>
 #include <c_lib/particles/grenade.hpp>
+#include <c_lib/particles/item_particle.hpp>
 
 #if DC_CLIENT
 #include <c_lib/particles/shrapnel.hpp>
@@ -22,7 +23,7 @@ namespace Particles
 {
 
 class Grenade_list* grenade_list = NULL;
-class Cspray_list* cspray_list = NULL;
+class ItemParticle_list* item_particle_list = NULL;
 
 
 #if DC_CLIENT
@@ -40,13 +41,13 @@ class Grenade_shrapnel_list* grenade_shrapnel_list = NULL;
 
 void init_particles()
 {
-    //cspray_list = new Cspray_list;
     grenade_list = new Grenade_list;
+    item_particle_list = new ItemParticle_list;
 
 #if DC_CLIENT
     shrapnel_list = new Shrapnel_list;
     blood_list = new Blood_list;
-    //neutron_list = new Neutron_list;
+
     colored_minivox_list = new ColoredMinivox_list;
     textured_minivox_list = new TexturedMinivox_list;
     billboard_text_list = new BillboardText_list;
@@ -64,8 +65,8 @@ void init_particles()
 
 void teardown_particles()
 {
-    //delete cspray_list;
     delete grenade_list;
+    delete item_particle_list;
 
 #if DC_CLIENT
     delete shrapnel_list;
@@ -76,7 +77,6 @@ void teardown_particles()
     delete billboard_text_hud_list;
 
     Particles::teardown_shrapnel();
-
 #endif
 
 #if DC_SERVER

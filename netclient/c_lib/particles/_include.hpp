@@ -8,7 +8,7 @@
 #include <c_lib/particles/particles.cpp>
 
 #include <c_lib/particles/grenade.cpp>
-//#include <c_lib/particles/cspray.cpp>
+#include <c_lib/particles/item_particle.cpp>
 
 #if DC_CLIENT
 #include <c_lib/particles/textures.cpp>

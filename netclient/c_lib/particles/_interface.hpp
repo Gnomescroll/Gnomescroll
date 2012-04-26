@@ -5,6 +5,7 @@ namespace Particles
 
 //extern class Cspray_list* cspray_list;
 extern class Grenade_list* grenade_list;
+extern class ItemParticle_list* item_particle_list;
 
 #if DC_CLIENT
 
