@@ -141,7 +141,7 @@ class BaseInventory
             if (item->item_type != type) return false; // only merge same type items
             // TODO -- check stack maximum allowed
             // assume 64
-            const int STACK_MAX = 64;
+            const int STACK_MAX = 5;
             if (item->count + count > STACK_MAX) return false;
             return true;
         }

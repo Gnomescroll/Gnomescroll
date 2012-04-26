@@ -58,8 +58,7 @@ class PickupComponent: public Component
 
         void broadcast()
         {
-            if (!this->picked_up || this->picked_up_by == NO_AGENT)
-                return;
+            if (!this->picked_up || this->picked_up_by == NO_AGENT) return;
             object_picked_up_StoC msg;
             msg.id = this->object->id;
             msg.type = this->object->type;

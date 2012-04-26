@@ -19,6 +19,7 @@ int ObjectList::get_free_id(ObjectType type)
 void ObjectList::set_object_id(Object* object)
 {
     int id = this->get_free_id(object->type);
+    if (id < 0) { printf("WARNING: no free ids\n"); return; }
     this->set_object_id(object, id);
 }
 
@@ -26,6 +27,8 @@ void ObjectList::set_object_id(Object* object, int id)
 {
     ObjectType type = object->type;
     assert(this->used[type][id] == 0);
+    assert(id >= 0);
+    assert(id < this->max(type));
 
     // swap from staging slot
     this->staging_objects[type] = this->objects[type][id];
@@ -59,7 +62,7 @@ inline bool ObjectList::full(ObjectType type)
 void ObjectList::destroy(ObjectType type, int id)
 {
     if (this->used[type] == NULL) return;
-    if (!this->used[type][id]) return;
+    assert(this->used[type][id]);
     this->used[type][id] = 0;
     this->indices[type] -= 1;
 }
@@ -72,6 +75,7 @@ Object* ObjectList::get(ObjectType type, int id)
 
 Object* ObjectList::create(ObjectType type)
 {
+    if (this->full(type)) return NULL;
     return this->staging_objects[type];
 }
 
