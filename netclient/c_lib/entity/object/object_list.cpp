@@ -19,14 +19,15 @@ int ObjectList::get_free_id(ObjectType type)
 void ObjectList::set_object_id(Object* object)
 {
     int id = this->get_free_id(object->type);
+    if (id < 0) return;
     this->set_object_id(object, id);
 }
 
 void ObjectList::set_object_id(Object* object, int id)
 {
-    if (id < 0) return;
     ObjectType type = object->type;
     assert(this->used[type][id] == 0);
+    assert(id >= 0);
     assert(id < this->max(type));
 
     // swap from staging slot

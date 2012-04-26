@@ -70,7 +70,7 @@ void init()
     object_list->set_object_max(OBJECT_INFECTED_ROCK_BLOCK_DROP, 256);
 
     // gemstones
-    object_list->set_object_max(OBJECT_GEMSTONE_MALACHITE, 10);
+    object_list->set_object_max(OBJECT_GEMSTONE_MALACHITE, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_RUBY, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_TURQUOISE, 256);
     object_list->set_object_max(OBJECT_GEMSTONE_SILVER, 256);
