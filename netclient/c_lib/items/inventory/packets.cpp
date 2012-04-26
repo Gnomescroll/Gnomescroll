@@ -152,34 +152,7 @@ inline void remove_item_from_inventory_CtoS::handle()
     
     InventorySlot* item = inv->get_item(slot);
     if (item == NULL) return;
-    if (!item->empty())
-    {   // create new item
-        Objects::Object* obj = Objects::create(item->item_type);
-        if (obj != NULL)
-        {
-            Vec3 position = agent->get_center();
-            const float velocity = 1.0f;
-            Vec3 forward = vec3_scalar_mult(agent->s.forward_vector(), velocity);
-
-            using Components::PhysicsComponent;
-            PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            if (physics != NULL)
-            {
-                physics->set_position(position);
-                physics->set_momentum(forward);
-            }
-
-            using Components::PickupComponent;
-            PickupComponent* pickup = (PickupComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PICKUP);
-            if (pickup != NULL) pickup->was_dropped();
-
-            using Components::StackableComponent;
-            StackableComponent* stack = (StackableComponent*)obj->get_component_interface(COMPONENT_INTERFACE_STACKABLE);
-            if (stack != NULL) stack->count = item->count;
-
-            Objects::ready(obj);
-        }
-    }
+    Items::move_inventory_item_to_world(agent, item);
 
     if (!inv->remove_action(slot)) printf("ERROR: inventory remove_action failed to occur -- but can_remove() had passed\n");
 }

@@ -272,7 +272,8 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
-    //this->inventory->remove_all_action();
+    this->inventory->remove_all_action();
+    this->toolbelt->remove_all_action();
     #endif
 
     return 1;

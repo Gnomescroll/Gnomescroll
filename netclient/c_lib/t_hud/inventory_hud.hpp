@@ -39,7 +39,6 @@ class AgentInventoryUI : public UIElement
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stack_numbers[i];
-            //t->set_text((char*) "");
             t->set_format((char*) "%d");
             t->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
             t->set_color(255,255,255,255);
@@ -51,8 +50,6 @@ class AgentInventoryUI : public UIElement
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
-
-
 };
 
 

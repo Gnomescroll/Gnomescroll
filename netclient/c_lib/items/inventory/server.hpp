@@ -50,12 +50,7 @@ class Inventory: public BaseInventory
         }
 
         // dumps contents
-        void remove_all_action()
-        {
-            for (int i=0; i<this->max; i++)
-                if (this->objects[i].item_id != EMPTY_SLOT)
-                    this->remove_action(i);
-        }
+        void remove_all_action();
 
         bool swap_action(int slota, int slotb)
         {

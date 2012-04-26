@@ -2,7 +2,26 @@
 
 #if DC_SERVER
 
+#include <c_lib/agent/agent.hpp>
+
 /* Inventory */
+
+// dumps contents
+void Inventory::remove_all_action()
+{
+    Agent_state* agent = ServerState::agent_list->get(this->owner);
+    if (agent == NULL) return;  // TODO -- get inventory state other ways
+    
+    for (int i=0; i<this->max; i++)
+    {
+        if (this->objects[i].item_id == EMPTY_SLOT) continue;
+        InventorySlot* item = this->get_item(i);
+        assert(item != NULL);
+        if (!this->can_remove(i)) continue;
+        Items::move_inventory_item_to_world(agent, item);
+        this->remove_action(i);
+    }
+}
 
 void Inventory::sendContentsToClient(int client_id)
 {

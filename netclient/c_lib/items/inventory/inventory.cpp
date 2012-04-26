@@ -1,5 +1,7 @@
 #include "inventory.hpp"
 
+#include <c_lib/agent/agent.hpp>
+
 namespace Items
 {
 
@@ -26,5 +28,38 @@ void init_inventory_dimensions(class BaseInventory* inventory)
             break;
     }
 }
+
+void move_inventory_item_to_world(Agent_state* agent, InventorySlot* item)
+{
+    assert(item != NULL);
+    if (item->empty()) return;
+    Objects::Object* obj = Objects::create(item->item_type);
+    if (obj == NULL) return;
+
+    Vec3 position = agent->get_center();
+    float velocity = 1.0f + ((randf() - 0.5f) / 20.0f);
+    Vec3 forward = vec3_scalar_mult(agent->s.forward_vector(), velocity);
+    float bias = randf() / 100.0f;
+    forward = vec3_bias(forward, bias);
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    if (physics != NULL)
+    {
+        physics->set_position(position);
+        physics->set_momentum(forward);
+    }
+
+    using Components::PickupComponent;
+    PickupComponent* pickup = (PickupComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PICKUP);
+    if (pickup != NULL) pickup->was_dropped();
+
+    using Components::StackableComponent;
+    StackableComponent* stack = (StackableComponent*)obj->get_component_interface(COMPONENT_INTERFACE_STACKABLE);
+    if (stack != NULL) stack->count = item->count;
+
+    Objects::ready(obj);
+}
+
 
 } // Items
