@@ -194,38 +194,6 @@ void AgentInventoryUI::draw_slots()
         glVertex2f(x, y);
     }
 
-    // draw grabbed icon
-    if (skip_slot != NULL_SLOT && contents[skip_slot].item_id != EMPTY_SLOT)
-    {
-        // center icon on mouse position
-        const float x = mouse_x - (w / 2);
-        const float y = _yresf - (mouse_y + (w / 2));
-        
-        int tex_id = contents[skip_slot].sprite_index;
-
-        //const float iw = 8.0f; // icon_width
-        //const int iiw = 8; // integer icon width
-        const float iw = 16.0f; // icon_width
-        const int iiw = 16; // integer icon width
-        
-        const float tx_min = (1.0/iw)*(tex_id % iiw);
-        const float ty_min = (1.0/iw)*(tex_id / iiw);
-        const float tx_max = tx_min + 1.0/iw;
-        const float ty_max = ty_min + 1.0/iw;
-
-        glTexCoord2f( tx_min, ty_min );
-        glVertex2f(x,y+w);
-
-        glTexCoord2f( tx_max, ty_min );
-        glVertex2f(x+w, y+w );
-            
-        glTexCoord2f( tx_max, ty_max );
-        glVertex2f(x+w, y);
-
-        glTexCoord2f( tx_min, ty_max );
-        glVertex2f(x, y);
-    }
-    
     glEnd();
 
     //glEnable(GL_DEPTH_TEST); // move render somewhere

@@ -161,6 +161,62 @@ void null_input_event()
 /*
     Drawing
 */
+
+static void draw_grabbed_icon()
+{
+    if (active_slot == NULL_SLOT) return;
+    if (active_inventory == NULL) return;
+    InventorySlot* contents = Items::get_inventory_contents(active_inventory->inventory_id);
+    if (contents == NULL) return;
+    if (contents[active_slot].empty()) return;
+
+    glDisable(GL_DEPTH_TEST); // move render somewhere
+    glEnable(GL_BLEND);
+
+    glColor4ub(255, 255, 255, 255);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
+
+    glBegin(GL_QUADS);
+    
+    const float w = 32;
+
+    // center icon on mouse position
+    const float x = mouse_x - (w / 2);
+    const float y = _yresf - (mouse_y + (w / 2));
+    
+    int tex_id = contents[active_slot].sprite_index;
+
+    //const float iw = 8.0f; // icon_width
+    //const int iiw = 8; // integer icon width
+    const float iw = 16.0f; // icon_width
+    const int iiw = 16; // integer icon width
+    
+    const float tx_min = (1.0/iw)*(tex_id % iiw);
+    const float ty_min = (1.0/iw)*(tex_id / iiw);
+    const float tx_max = tx_min + 1.0/iw;
+    const float ty_max = ty_min + 1.0/iw;
+
+    glTexCoord2f( tx_min, ty_min );
+    glVertex2f(x,y+w);
+
+    glTexCoord2f( tx_max, ty_min );
+    glVertex2f(x+w, y+w );
+        
+    glTexCoord2f( tx_max, ty_max );
+    glVertex2f(x+w, y);
+
+    glTexCoord2f( tx_min, ty_max );
+    glVertex2f(x, y);
+
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
+}
+
+
 void draw_hud()
 {
     if (!hud_enabled) return;
@@ -179,10 +235,8 @@ void draw_hud()
     
     agent_inventory->draw_selected_slot();
     agent_toolbelt->draw_selected_slot();
-    
-    //nanite_inventory->draw();
-    //static ItemGrid g;
-    //g.draw(300,300);
+
+    draw_grabbed_icon();
 }
 
 
