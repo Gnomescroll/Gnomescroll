@@ -1,21 +1,20 @@
 #include "_interface.hpp"
 
-//#include <item/list.hpp>
 
-//#include <item/free_item.hpp>
 #include <item/item_container.hpp>
 #include <item/item.hpp>
-
-#include <item/net/StoC.hpp>
 
 #if DC_CLIENT
 #include <input/handlers.hpp>
 #endif
 
+#if DC_SERVER
+#include <item/net/StoC.hpp>
+#endif
+
 namespace Item
 {
 
-//Free_item_list* free_item_list = NULL;
 ItemContainerList* item_container_list = NULL;
 ItemList* item_list = NULL;
 
@@ -25,7 +24,6 @@ int AgentNaniteList[256];
 
 void state_init()
 {
-    //free_item_list = new Free_item_list;
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
@@ -58,10 +56,6 @@ namespace Item
     class ItemContainer* player_toolbelt = NULL;
     class ItemContainer* player_nanite = NULL;
 
-
-//move item within inventory
-//void move_item(int inventory_id, int slot1, int slot2) {}
-
 //move item
 void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2)
 {
@@ -80,8 +74,6 @@ SERVER
 
 namespace Item
 {
-
-//const int NO_AGENT = 0xffff;
 
 /*
     Inventory
@@ -138,7 +130,6 @@ void create_agent_toolbelt(int agent_id, int client_id)
     p.agent_id = agent_id;
     p.sendToClient(client_id);
 
-    printf("Sending toolbar id to client %i \n", client_id);
 }
 
 void delete_agent_toolbelt(int agent_id)

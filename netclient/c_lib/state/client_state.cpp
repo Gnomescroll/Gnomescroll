@@ -144,6 +144,8 @@ namespace ClientState {
     void tick()
     {
         Particle::grenade_list->tick();
+        Particle::item_particle_list->tick();
+
         Particle::shrapnel_list->tick();
         Particle::blood_list->tick();
         Particle::colored_minivox_list->tick();
