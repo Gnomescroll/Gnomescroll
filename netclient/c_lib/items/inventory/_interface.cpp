@@ -2,10 +2,7 @@
 
 #include <c_lib/items/inventory/constants.hpp>
 #include <c_lib/items/inventory/inventory.hpp>
-
-#if DC_CLIENT
-#include <c_lib/hud/inventory.hpp>
-#endif
+#include <c_lib/items/inventory/contents.hpp>
 
 namespace Items
 {

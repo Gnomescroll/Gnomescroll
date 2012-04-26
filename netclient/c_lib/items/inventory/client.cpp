@@ -2,7 +2,6 @@
 
 #if DC_CLIENT
 
-#include <c_lib/hud/inventory.hpp>
 #include <c_lib/items/inventory/_interface.hpp>
 
 /* Inventory */

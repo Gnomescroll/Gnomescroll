@@ -2,7 +2,6 @@
 
 #include <c_lib/hud/reticle.hpp>
 #include <c_lib/hud/cube_selector.hpp>
-#include <c_lib/hud/inventory.hpp>
 #include <c_lib/hud/font.hpp>
 #include <c_lib/input/handlers.hpp>
 #include <c_lib/options.hpp>

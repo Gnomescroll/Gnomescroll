@@ -173,7 +173,6 @@
 
 #include <c_lib/hud/reticle.cpp>
 #include <c_lib/hud/cube_selector.cpp>
-#include <c_lib/hud/inventory.cpp>
 #include <c_lib/hud/font.cpp>
 
 #include <c_lib/hud/text.cpp>
