@@ -15,89 +15,72 @@ class Inventory: public BaseInventory
 {
     public:
 
-    void remove_all_action()
-    {
-        for (int i=0; i<this->max; i++)
-            if (this->objects[i].item_id != EMPTY_SLOT)
-                this->remove_action(i);
-    }
+        bool add_action(int id, ObjectType type, int stack_size)
+        {
+            int slot = this->get_empty_slot();
+            bool added = this->add_action(id, type, stack_size, slot);
+            if (!added) return false;
+            if (owner != NO_AGENT)
+                this->sendToClientAdd(id, type, stack_size, slot);
+            else
+                this->broadcastAdd(id, type, stack_size, slot);
+            return added;
+        }
 
-    InventorySlot* get_slot_item(int slot)
-    {
-        if (!this->is_valid_slot(slot)) return NULL;
-        return &this->objects[slot];
-    }
+        bool add_action(int id, ObjectType type, int stack_size, int slot)
+        {
+            bool added = this->add(id, type, stack_size, slot);
+            if (!added) return false;
+            if (owner != NO_AGENT)
+                this->sendToClientAdd(id, type, stack_size, slot);
+            else
+                this->broadcastAdd(id, type, stack_size, slot);
+            return added;
+        }
 
-    // no broadcast
-    bool remove_silent(int slot)
-    {
-        return this->remove(slot);
-    }
+        bool remove_action(int slot)
+        {
+            bool removed = this->remove(slot);
+            if (!removed) return false;
+            if (owner != NO_AGENT)
+                this->sendToClientRemove(slot);
+            else
+                this->broadcastRemove(slot);
+            return true;
+        }
 
-    bool remove_action(int slot)
-    {
-        bool removed = this->remove(slot);
-        if (!removed) return false;
-        if (owner != NO_AGENT)
-            this->sendToClientRemove(slot);
-        else
-            this->broadcastRemove(slot);
-        return true;
-    }
+        // dumps contents
+        void remove_all_action()
+        {
+            for (int i=0; i<this->max; i++)
+                if (this->objects[i].item_id != EMPTY_SLOT)
+                    this->remove_action(i);
+        }
 
-    // no broadcast
-    bool add_silent(int id, ObjectType type, int stack_size, int slot)
-    {
-        return this->add(id, type, stack_size, slot);
-    }
+        bool swap_action(int slota, int slotb)
+        {
+            bool swapped = this->swap(slota, slotb);
+            if (owner != NO_AGENT)
+                this->sendToClientSwap(slota, slotb);
+            else
+                this->broadcastSwap(slota, slotb);
+            return swapped;
+        }
 
-    bool add_action(int id, ObjectType type, int stack_size, int slot)
-    {
-        bool added = this->add(id, type, stack_size, slot);
-        if (!added) return false;
-        if (owner != NO_AGENT)
-            this->sendToClientAdd(id, type, stack_size, slot);
-        else
-            this->broadcastAdd(id, type, stack_size, slot);
-        return added;
-    }
+        /* Network API */
+        void sendContentsToClient(int client_id);
 
-    bool add_action(int id, ObjectType type, int stack_size)
-    {
-        int slot = this->get_empty_slot();
-        bool added = this->add_action(id, type, stack_size, slot);
-        if (!added) return false;
-        if (owner != NO_AGENT)
-            this->sendToClientAdd(id, type, stack_size, slot);
-        else
-            this->broadcastAdd(id, type, stack_size, slot);
-        return added;
-    }
-
-    bool swap_action(int slota, int slotb)
-    {
-        bool swapped = this->swap(slota, slotb);
-        if (owner != NO_AGENT)
-            this->sendToClientSwap(slota, slotb);
-        else
-            this->broadcastSwap(slota, slotb);
-        return swapped;
-    }
-
-    /* Network API */
-    void sendContentsToClient(int client_id);
-
-    void sendToClientCreate(int client_id);
-    void broadcastCreate();
-    void sendToClientState(int client_id);
-    void broadcastState();
-    void broadcastDeath();
-    void sendToClientAdd(int id, ObjectType type, int stack_size, int slot);
-    void broadcastAdd(int id, ObjectType type, int stack_size, int slot);
-    void sendToClientRemove(int slot);
-    void broadcastRemove(int slot);
-    void sendToClientSwap(int slota, int slotb);
-    void broadcastSwap(int slota, int slotb);
+        void sendToClientCreate(int client_id);
+        void broadcastCreate();
+        void sendToClientState(int client_id);
+        void broadcastState();
+        void broadcastDeath();
+        void sendToClientAdd(int id, ObjectType type, int stack_size, int slot);
+        void broadcastAdd(int id, ObjectType type, int stack_size, int slot);
+        void sendToClientRemove(int slot);
+        void broadcastRemove(int slot);
+        void sendToClientSwap(int slota, int slotb);
+        void broadcastSwap(int slota, int slotb);
 
     explicit Inventory(int id)
     : BaseInventory(id)

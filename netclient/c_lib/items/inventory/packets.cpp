@@ -74,7 +74,7 @@ inline void swap_item_between_inventory_StoC::handle()
     Inventory* invb = Items::get_inventory(this->inventoryb);
     if (invb == NULL) return;
 
-    InventorySlot* item = inva->get_slot_item(slota);
+    InventorySlot* item = inva->get_item(slota);
     invb->add(item->item_id, item->item_type, item->stack.count, slotb);
     inva->remove(slota);
 }
@@ -173,11 +173,11 @@ inline void swap_item_between_inventory_CtoS::handle()
     if (invb->owner != agent->id) return;
 
     if (!inva->can_remove(slota)) return;
-    InventorySlot* item = inva->get_slot_item(slota);
+    InventorySlot* item = inva->get_item(slota);
     if (!invb->can_add(item->item_type, slotb)) return;
     
-    if (!invb->add_silent(item->item_id, item->item_type, item->stack.count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
-    if (!inva->remove_silent(slota)) printf("ERROR REMOVING ITEM!!\n");
+    if (!invb->add(item->item_id, item->item_type, item->stack.count, slotb)) printf("ERROR ADDING NEW ITEM!!\n");
+    if (!inva->remove(slota)) printf("ERROR REMOVING ITEM!!\n");
 
     swap_item_between_inventory_StoC msg;
     msg.inventorya = inventorya;

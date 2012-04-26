@@ -1,4 +1,4 @@
-#include "contents.hpp"
+#include "slot.hpp"
 
 #if DC_SERVER
 void InventorySlot::load(int id, ObjectType type, int stack_size)

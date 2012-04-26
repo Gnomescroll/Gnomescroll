@@ -2,13 +2,6 @@
 
 /* CRUD interface for inventories */
 
-class Inventory;
-#if DC_CLIENT
-namespace HudInventory {
-    class InventoryRender; // forward decl
-}
-#endif
-
 namespace Items
 {
 

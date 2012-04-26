@@ -126,7 +126,7 @@ void swap_between_event(int inventory_ida, int slota, int inventory_idb, int slo
 
 
     if (!inva->can_remove(slota)) return;
-    InventorySlot* item = inva->get_slot_item(slota);
+    InventorySlot* item = inva->get_item(slota);
     if (item == NULL) return;
     if (!invb->can_add(item->item_type)) return;
 
