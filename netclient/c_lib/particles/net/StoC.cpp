@@ -1,8 +1,8 @@
 #include "StoC.hpp"
 
 #if DC_CLIENT
-#include <c_lib/t_item/_interface.hpp>
-#include <c_lib/t_hud/_interface.hpp>
+#include <c_lib/particles/_interface.hpp>
+//#include <c_lib/t_hud/_interface.hpp>
 #endif
 
 namespace Particles
