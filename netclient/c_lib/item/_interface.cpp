@@ -20,7 +20,7 @@ void init()
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
-    #ifdef DC_SERVER
+    #if DC_SERVER
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentToolbeltList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;

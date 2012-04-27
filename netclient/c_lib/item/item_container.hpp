@@ -3,145 +3,90 @@
 #include <item/data/enum.hpp>
 #include <item/data/constant.hpp>
 
-#ifdef DC_SERVER
-#include <item/net/StoC.hpp>
-#endif
-
 namespace item
 {
 
 void init_container(class ItemContainer* container, ItemContainerType type);
 
-typedef int ItemId;
+#if DC_SERVER
+//  tell client to assign container to an agent
+void send_container_assign(class ItemContainer* container, int client_id);
+void send_container_create(class ItemContainer* container, int client_id);
+void send_container_delete(class ItemContainer* container, int client_id);
+#endif
 
-const int EMPTY_SLOT = 0xffff;
+typedef int ItemID;
+const int EMPTY_SLOT = 0xffff;      // value of empty slot
+const int NULL_SLOT = -1;           // invalid slot number
 
 class ItemContainer
 {
     public:
-
         int id;
+        ItemContainerType type;
 
         int xdim;
         int ydim;
 
         int slot_max;
         int slot_count;
-        ItemContainerType container_type;
-
-        ItemId* slot;
+        ItemID* slot;
 
         bool is_full()
         {
             assert(this->slot_count <= this->slot_max);
-            if (this->slot_count >= this->slot_max) return false;
-            return true;
+            assert(this->slot_count >= 0);
+            return (this->slot_count >= this->slot_max);
         }
 
-        bool is_valid_grid_position(int x, int y)
+        bool is_valid_grid_position(int slot)
         {
-            return (x < 0 || x >= xdim || y < 0 || y >= ydim) ? false : true;
-        }
-
-        bool is_valid_grid_position(int _slot)
-        {
-            int x = _slot % xdim;
-            int y = _slot / xdim;
-            return (x < 0 || x >= xdim || y < 0 || y >= ydim) ? false : true;
+            return (slot >= 0 && slot < this->slot_max);
         }
 
         int get_empty_slot()
         {
-            for(int i=0; i<slot_max; i++) { if(slot[i] == EMPTY_SLOT) return i; }
-            return -1;
+            for(int i=0; i<this->slot_max; i++)
+                if (this->slot[i] == EMPTY_SLOT)
+                    return i;
+            return NULL_SLOT;
         }
 
-        void insert_item(int item_id, int x, int y)
+        void insert_item(int item_id, int slot)
         {
-            assert(is_valid_grid_position(x,y));
-            slot[y*xdim + x] = item_id;
-            printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
+            this->slot[slot] = item_id;
+            this->slot_count++;
         }
 
-        //create item, return slot
-        int create_item(int item_id)
+        void remove_item(int slot)
         {
-            int slot = this->get_empty_slot();
-            int x = slot % this->xdim;
-            int y = slot / this->xdim;
-            assert(this->is_valid_grid_position(x,y));
-            this->slot[y*this->xdim + x] = item_id;
-            printf("inserted item %d at %d,%d in inventory %d \n", item_id, x, y, id);
-
-            return slot;
+            this->slot[slot] = EMPTY_SLOT;
         }
-
-        void clear_slot(int x, int y)
-        {
-            assert(is_valid_grid_position(x,y));
-            slot[y*xdim + x] = EMPTY_SLOT;
-        }
-
-        /* network shit */
-        #if DC_SERVER
-        void net_create(int client_id)
-        {
-            class create_item_container_StoC p;
-            p.container_id = this->id;
-            p.container_type = this->container_type;
-            p.agent_id = client_id;
-            p.sendToClient(client_id);
-        }
-
-        void net_delete(int client_id)
-        {
-            class delete_item_container_StoC p;
-            p.container_id = this->id;
-            p.container_type = this->container_type;
-            p.agent_id = client_id;
-            p.sendToClient(client_id);
-        }
-
-        //assign to an agent
-        void net_assign(int client_id)
-        {
-            class assign_item_container_StoC p;
-            p.container_id = this->id;
-            p.container_type = this->container_type;
-            p.agent_id = client_id;
-            p.sendToClient(client_id);
-        }
-        #endif
 
         /* initializers */
 
-        void init(ItemContainerType type, int _xdim, int _ydim)
+        void init(ItemContainerType type, int xdim, int ydim)
         {
-            container_type = type;
-
-            xdim = _xdim;
-            ydim = _ydim;
-
-            slot_max = xdim*ydim;
-
-            slot = new ItemId[slot_max];
-            for(int i=0; i<slot_max; i++) slot[i] = EMPTY_SLOT;
-            //printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
+            this->type = type;
+            this->xdim = xdim;
+            this->ydim = ydim;
+            this->slot_max = xdim*ydim;
+            this->slot = new ItemID[this->slot_max];
+            for(int i=0; i<this->slot_max; this->slot[i++] = EMPTY_SLOT);
         }
 
         ~ItemContainer()
         {
-           if (slot != NULL) delete[] slot;
+           if (this->slot != NULL) delete[] this->slot;
         }
 
         ItemContainer(int id)
-        : id(id), xdim(0), ydim(0),
-        slot_max(0), slot_count(0), container_type(CONTAINER_TYPE_NONE),
-        slot(NULL)
+        : id(id), type(CONTAINER_TYPE_NONE),
+        xdim(0), ydim(0),
+        slot_max(0), slot_count(0), slot(NULL)
         {}
 };
 
- 
 }
 
 #include <common/template/object_list.hpp>

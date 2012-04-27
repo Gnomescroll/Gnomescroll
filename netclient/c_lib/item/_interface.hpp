@@ -30,7 +30,7 @@ namespace item
 SERVER
 */
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 namespace item
 {
