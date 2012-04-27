@@ -22,7 +22,7 @@
 //#include <t_mech/draw.hpp>
 
 bool _quit = false;
-
+ 
 namespace Main
 {
 
@@ -50,7 +50,7 @@ void init()
     address_from_string(Options::server, address);
     NetClient::client_connect_to(address[0], address[1], address[2], address[3], Options::port);
 }
-
+ 
 int run()
 {
     t_gen::test();
