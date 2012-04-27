@@ -81,7 +81,7 @@
 
 /* Terrain Generator */
 
-#include <t_gen/_include.hpp>
+//#include <t_gen/_include.hpp>
 
 /* item */
 #include <item/_include.hpp>

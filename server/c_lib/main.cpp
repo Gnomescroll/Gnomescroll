@@ -4,7 +4,7 @@
 #include <map_gen/map_generator.hpp>
 #include <map_gen/recipes.hpp>
 
-#include <t_gen/_interface.hpp>
+//#include <t_gen/_interface.hpp>
 
 namespace Main
 {
@@ -17,10 +17,12 @@ void init()
     //_floor(512,512,0,32,1);
 
     srand(time(NULL));
-    //MapGen::init();
-    //MapRecipes::simple_map();
-    //MapGen::teardown();
-    t_gen::gen_map();
+    
+    MapGen::init();
+    MapRecipes::simple_map();
+    MapGen::teardown();
+    
+    //t_gen::gen_map();
 
     NetServer::init_server(127,0,0,1, Options::port);
     ServerState::start_game();
