@@ -25,6 +25,7 @@
 
     #include <particle/_interface.hpp>
 
+    #include <item/_interface.hpp>
 /*
     #include <entity/constants.hpp>
     #include <entity/objects.hpp>
@@ -117,7 +118,7 @@ int apply_damage(int x, int y, int z, int dmg)
 // TODO: MOVE
 void block_spawn_items(int block_value, int x, int y, int z)
 {
-#if 0
+    /*
     //const float drop_probability = 0.3f;
     const float drop_probability = 1.0f;
     float p = randf();
@@ -164,7 +165,7 @@ void block_spawn_items(int block_value, int x, int y, int z)
         physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
     }
     Objects::ready(obj);
-#endif
+    //*/
 }
 
 // apply block damage & broadcast the update to client
@@ -181,30 +182,20 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-#if 0
+    /*
     int block_value = get(x,y,z);
     block_spawn_items(block_value, x,y,z);
-#else
+    //*/
+    
     const float mom = 2.0f;
-
     float p = randf();
     if (p < 0.3)
     {
-        float _x = (float)x + 0.5f + randf()/3;
-        float _y = (float)y + 0.5f + randf()/3;
-        float _z = (float)z + 0.05f; 
-    /*
-        t_item::create_free_item(0, 
-            x+0.5f+randf(), y+0.5f+randf(), z+0.5f+randf(), 
-            (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-    */
-        Particle::create_item_particle(0, 
-            _x, _y, _z, 
-            (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
-
+        x = (float)x + 0.5f + randf()/3;
+        y = (float)y + 0.5f + randf()/3;
+        z = (float)z + 0.05f; 
+        Item::create_item_particle(0, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     }
-#endif
-
 
 }
 #endif

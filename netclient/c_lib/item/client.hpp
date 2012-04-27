@@ -5,18 +5,9 @@
 namespace Item
 {
 
-// 3 packets, for actions
-// container_action_alpha_CtoS
-// container_action_beta_CtoS
-// failure_StoC
-
-// 2 packets, for state in shared containers
-// container_remove_item_StoC
-// container_add_item_StoC
-
 static uint16_t container_event_id = 0;
 
-void send_container_alpha_action(int inventory_id, int slot)
+static void send_container_alpha_action(int inventory_id, int slot)
 {
     container_event_id += 1;
     container_action_alpha_CtoS msg;
@@ -26,7 +17,7 @@ void send_container_alpha_action(int inventory_id, int slot)
     msg.send();
 }
 
-void send_container_beta_action(int inventory_id, int slot)
+static void send_container_beta_action(int inventory_id, int slot)
 {
     container_event_id += 1;
     container_action_beta_CtoS msg;
