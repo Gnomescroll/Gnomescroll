@@ -95,7 +95,7 @@
 #include <game/packets.cpp>
 
 /* Agents */
-#include "./agent/agent_include.h"
+#include <agent/agent_include.h>
 
 /* Weapons */
 #include <weapons/weapons.cpp>
