@@ -634,6 +634,7 @@ inline void Agent_cs_CtoS::handle()
     /*
         Client should send last 2 control states each packet, must handle redundant control state properly
     */
+        
     Agent_cs_StoC M;
     M.id = A->id;
     M.seq = seq;
