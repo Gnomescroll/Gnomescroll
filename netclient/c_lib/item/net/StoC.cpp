@@ -38,12 +38,18 @@ inline void item_create_StoC::handle()
 
 inline void create_item_container_StoC::handle()
 {
-
+    ItemContainer* ic = item_container_list->create(container_id);
+    ic->init_container( (ItemContainerType) container_type);
 }
 
 inline void delete_item_container_StoC::handle()
 {
-
+    if(item_container_list->get(container_id) == NULL)
+    {
+        printf("Error: delete_item_container_StoC::handle, %i does not exist \n", container_id);
+        return;
+    }
+    item_container_list->destroy(container_id);
 }
 
 inline void assign_item_container_StoC::handle()

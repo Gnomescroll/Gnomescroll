@@ -66,7 +66,7 @@ void tick()
     ServerState::ctf->update();
     ServerState::ctf->tick();          
 }
-
+ 
 int run()
 {
     //int tick = 0;

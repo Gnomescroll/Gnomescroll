@@ -58,6 +58,24 @@ class ItemContainer
             //printf("EMPTY_SLOT = %i \n", EMPTY_SLOT);
         }
 
+        void init_container(ItemContainerType type)
+        {
+            switch (type)
+            {
+                case AGENT_INVENTORY:
+                    init_agent_inventory();
+                    break;
+                case AGENT_TOOLBELT:
+                    void init_agent_toolbelt();
+                    break;
+                case AGENT_NANITE:
+                    void init_agent_nanite();
+                    break;
+                default:
+                    assert(false);
+                    break;
+            }
+        }
         void init_agent_inventory()
         {
             this->init(AGENT_INVENTORY, AGENT_INVENTORY_X, AGENT_INVENTORY_Y);
