@@ -31,51 +31,65 @@ class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_St
         inline void handle();
 };
 
+
+/*
+    Container creation and subscription
+*/
+class create_item_container_StoC: public FixedSizeReliableNetPacketToClient<create_item_container_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint16_t container_id;
+        uint8_t container_type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&container_type, buff, buff_n, pack);
+
+        }
+        inline void handle();
+};
+
+class delete_item_container_StoC: public FixedSizeReliableNetPacketToClient<delete_item_container_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint16_t container_id;
+        uint8_t container_type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&container_type, buff, buff_n, pack);
+
+        }
+        inline void handle();
+};
+
+class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assign_item_container_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint16_t container_id;
+        uint8_t container_type;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&container_type, buff, buff_n, pack);
+
+        }
+        inline void handle();
+};
+
 /*
     Inventory State Packets
 */
 
-class assign_agent_inventory_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_inventory_StoC>
-{
-    public:
-        uint8_t agent_id;
-        uint16_t inventory_id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&agent_id, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-class assign_agent_toolbelt_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_toolbelt_StoC>
-{
-    public:
-        uint8_t agent_id;
-        uint16_t inventory_id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&agent_id, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-class assign_agent_nanite_StoC: public FixedSizeReliableNetPacketToClient<assign_agent_nanite_StoC>
-{
-    public:
-        uint8_t agent_id;
-        uint16_t inventory_id;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&agent_id, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-        }
-        inline void handle();
-};
 
 /* actions */
 class swap_within_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_within_inventory_StoC>

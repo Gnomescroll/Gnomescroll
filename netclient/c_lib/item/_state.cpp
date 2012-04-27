@@ -1,10 +1,7 @@
 #include "_state.hpp"
 
-
-
 namespace item
 {
-
 
 //Common
 ItemContainerList* item_container_list = NULL;

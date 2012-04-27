@@ -1,5 +1,9 @@
 #pragma once
 
+#include <item/data/constant.hpp>
+#include <item/data/enum.hpp>
+#include <item/data/struct.hpp>
+
 /*
     Client
 */

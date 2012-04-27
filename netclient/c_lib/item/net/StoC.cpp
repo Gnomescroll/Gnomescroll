@@ -33,9 +33,29 @@ inline void item_create_StoC::handle()
 }
 
 /*
+    Container creation and subscription
+*/
+
+inline void create_item_container_StoC::handle()
+{
+
+}
+
+inline void delete_item_container_StoC::handle()
+{
+
+}
+
+inline void assign_item_container_StoC::handle()
+{
+
+}
+
+/*
     Inventory
 */
 
+#if 0
 inline void assign_agent_inventory_StoC::handle()
 {
 /*
@@ -82,7 +102,7 @@ inline void assign_agent_nanite_StoC::handle()
     //t_hud::nanite_id = inventory_id;
 */
 }
-
+#endif
 
 inline void swap_within_inventory_StoC::handle()
 {

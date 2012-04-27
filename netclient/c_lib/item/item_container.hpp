@@ -1,5 +1,11 @@
 #pragma once
 
+#include <item/data/enum.hpp>
+#include <item/data/constant.hpp>
+
+#ifdef DC_SERVER
+#include <item/net/StoC.hpp>
+#endif
 
 namespace item
 {
@@ -9,13 +15,14 @@ typedef int ItemId;
 
 const int EMPTY_SLOT = 0xffff;
 
+/*
 typedef enum
 {
     AGENT_INVENTORY,
     AGENT_TOOLBELT,
     AGENT_NANITE
-    //INVENTORY_BAG,
 } ItemContainerType;
+*/
 
 class ItemContainer
 {
@@ -27,7 +34,7 @@ class ItemContainer
         int ydim;
 
         int slot_max;
-        int container_type;
+        ItemContainerType container_type;
 
         ItemId* slot;
 
@@ -53,24 +60,53 @@ class ItemContainer
 
         void init_agent_inventory()
         {
-            this->init(AGENT_INVENTORY, 6, 3);
+            this->init(AGENT_INVENTORY, AGENT_INVENTORY_X, AGENT_INVENTORY_Y);
         }
 
         void init_agent_toolbelt()
         {
-            this->init(AGENT_TOOLBELT, 10, 1);
+            this->init(AGENT_TOOLBELT, AGENT_TOOLBELT_X, AGENT_TOOLBELT_Y);
         }
 
         void init_agent_nanite()
         {
-            this->init(AGENT_NANITE, 3, 4);
+            this->init(AGENT_NANITE, AGENT_NANITE_X, AGENT_NANITE_Y);
         }
-
 
         ~ItemContainer()
         {
            delete[] slot;
         }
+
+#if DC_SERVER
+        void net_create(int client_id)
+        {
+            class create_item_container_StoC p;
+            p.inventory_id = this->id;
+            p.inventory_type = this->container_type;
+            p.agent_id = client_id;
+            p.sendToClient(client_id);
+        }
+
+        void net_delete(int client_id)
+        {
+            class delete_item_container_StoC p;
+            p.inventory_id = this->id;
+            p.inventory_type = this->container_type;
+            p.agent_id = client_id;
+            p.sendToClient(client_id);
+        }
+
+        //assign to an agent
+        void net_assign(int client_id)
+        {
+            class assign_item_container_StoC p;
+            p.inventory_id = this->id;
+            p.inventory_type = this->container_type;
+            p.agent_id = client_id;
+            p.sendToClient(client_id);
+        }
+#endif
 
         bool is_full()
         {
