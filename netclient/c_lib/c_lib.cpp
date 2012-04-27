@@ -206,13 +206,13 @@
 
 //#include <unistd.h>
 
-void init_c_lib() 
+int init_c_lib() 
 {
     static int inited = 0;
     if (inited++)
     {
         printf("WARNING: Attempt to init c_lib more than once\n");
-        return;
+        return 0;
     }
     Log::init();
     printf("init c_lib\n");
@@ -279,6 +279,7 @@ void init_c_lib()
     
     Animations::init();
 
+    return 0;
 }
 
 void close_c_lib() {
