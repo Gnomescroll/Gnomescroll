@@ -101,7 +101,6 @@ void check_item_pickups()
     using Particle::item_particle_list;
     using Particle::item_particle_picked_up_StoC;
     
-    ///*
     for (int i=0; i<item_particle_list->n_max; i++)
     {
         if (item_particle_list->a[i] == NULL) continue;
@@ -111,10 +110,7 @@ void check_item_pickups()
     
         const static float pick_up_distance = 1.0f;
         Agent_state* agent = nearest_agent_in_range(item_particle->verlet.position, pick_up_distance);
-        printf("checked\n");
         if (agent == NULL) continue;
-
-        printf("picking up\n");
 
         item_particle_picked_up_StoC pickup_msg;
         pickup_msg.id = item_particle->id;
@@ -137,7 +133,6 @@ void check_item_pickups()
         create_msg.inventory_slot = slot;
         create_msg.sendToClient(agent->client_id);
     }
-    //*/
 }
 
 }
