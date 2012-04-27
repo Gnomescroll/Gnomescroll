@@ -8,27 +8,39 @@
 namespace Item
 {
 
+#if DC_CLIENT
 
-#if DC_SERVER
+//inline void move_item_to_hand_CtoS::handle() {} 
+//inline void drop_item_from_hand_CtoS::handle() {}
 
-inline void move_item_to_hand_CtoS::handle() 
-{
 
-}
-
-inline void drop_item_from_hand_CtoS::handle() 
-{
-
-}
+inline void container_action_alpha_CtoS::handle() {}
+inline void container_action_beta_CtoS::handle() {}
 
 #endif
 
 
+#if DC_SERVER
 
-#if DC_CLIENT
+//inline void move_item_to_hand_CtoS::handle() 
+//{
 
-inline void move_item_to_hand_CtoS::handle() {} 
-inline void drop_item_from_hand_CtoS::handle() {}
+//}
+
+//inline void drop_item_from_hand_CtoS::handle() 
+//{
+
+//}
+
+inline void container_action_alpha_CtoS::handle()
+{
+
+}
+
+inline void container_action_beta_CtoS::handle()
+{
+
+}
 
 #endif
 

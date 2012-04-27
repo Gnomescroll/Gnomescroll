@@ -10,10 +10,3 @@ typedef enum
 //    AGENT_BAG,
 //    CRAFTING_BENCH
 } ItemContainerType;
-
-enum ItemType
-{
-    Resource,
-    HitscanWeapon,
-    MiningLaser
-};

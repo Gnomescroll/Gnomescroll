@@ -15,10 +15,6 @@ void send_container_create(class ItemContainer* container, int client_id);
 void send_container_delete(class ItemContainer* container, int client_id);
 #endif
 
-typedef int ItemID;
-const int EMPTY_SLOT = 0xffff;      // value of empty slot
-const int NULL_SLOT = -1;           // invalid slot number
-
 class ItemContainer
 {
     public:
@@ -51,13 +47,13 @@ class ItemContainer
             return NULL_SLOT;
         }
 
-        int get_item(int slot)
+        ItemID get_item(int slot)
         {
             assert(this->is_valid_slot(slot));
             return this->slot[slot];
         }
 
-        void insert_item(int item_id, int slot)
+        void insert_item(int slot, ItemID item_id)
         {
             assert(this->is_valid_slot(slot));
             this->slot[slot] = item_id;

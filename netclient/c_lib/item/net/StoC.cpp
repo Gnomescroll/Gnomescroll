@@ -85,12 +85,17 @@ inline void assign_item_container_StoC::handle()
     Inventory
 */
 
-inline void move_item_to_hand_StoC::handle() 
-{
+//inline void move_item_to_hand_StoC::handle() 
+//{
 
-} 
+//} 
 
-inline void drop_item_from_hand_StoC::handle() 
+//inline void drop_item_from_hand_StoC::handle() 
+//{
+
+//}
+
+inline void container_action_failed_StoC::handle()
 {
 
 }
@@ -106,8 +111,10 @@ inline void assign_item_container_StoC::handle() {}
 
 inline void create_item_StoC::handle() {}
 
-inline void move_item_to_hand_StoC::handle() {}  //item, inventory to_hand
-inline void drop_item_from_hand_StoC::handle() {}     //hand to 
+//inline void move_item_to_hand_StoC::handle() {}  //item, inventory to_hand
+//inline void drop_item_from_hand_StoC::handle() {}     //hand to 
+
+inline void container_action_failed_StoC::handle() {}
 
 #endif
 

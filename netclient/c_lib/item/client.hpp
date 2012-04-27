@@ -171,17 +171,45 @@ namespace Item
     //}
 //}
 
+// 3 packets, for actions
+// container_action_alpha_CtoS
+// container_action_beta_CtoS
+// failure_StoC
+
+// 2 packets, for state in shared containers
+// container_remove_item_StoC
+// container_add_item_StoC
+
+static uint16_t container_event_id = 0;
+
+void send_container_action_alpha()
+{
+    container_event_id += 1;
+    container_action_alpha_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.send();
+}
+
+void send_container_action_beta()
+{
+    container_event_id += 1;
+    container_action_beta_CtoS msg;
+    msg.event_id = container_event_id;
+    msg.send();
+}
+
 void mouse_left_click_handler(int id, int slot)
 {
     if (slot == NULL_SLOT || id < 0) return;
     ItemContainer* container = get_container(id);
     if (container == NULL) return;
 
-    // if hand empty
-    // attempt to pick up
+    ItemID slot_item = container->get_item(slot);
+    bool something_happened = false;
 
+    // if hand empty
+        // pick up
     // else
-    // attempt to drop
         // if slot empty
             // move to slot
         // else
@@ -193,6 +221,41 @@ void mouse_left_click_handler(int id, int slot)
                         // swap
                     // else
                         // move avail stack amt from hand stack
+                        
+    // hand is empty
+    if (player_hand == NULL_ITEM)
+    {
+        // slot is occupied
+        if (slot_item != NULL_ITEM)
+        {   // SLOT -> HAND
+            // remove slot item
+            container->remove_item(slot);
+            // put in hand
+            player_hand = slot_item;
+            something_happened = true;
+        }
+    }
+    // hand holding item
+    else
+    {
+        // slot is empty
+        if (slot_item == NULL_ITEM)
+        {   // HAND -> SLOT
+            // put hand item in slot
+            container->insert_item(slot, player_hand);
+            // remove item from hand
+            player_hand = NULL_ITEM;
+            something_happened = true;
+        }
+        // slot is occupied
+        else
+        {
+            // do stack stuff
+        }
+    }
+
+    // send packet
+    if (something_happened) send_container_action_alpha();
 }
 
 void mouse_right_click_handler(int id, int slot)
@@ -200,6 +263,9 @@ void mouse_right_click_handler(int id, int slot)
     if (slot == NULL_SLOT || id < 0) return;
     ItemContainer* container = get_container(id);
     if (container == NULL) return;
+
+    ItemID slot_item = container->get_item(slot);
+    bool something_happened = false;
 
     // if hand empty
     // do nothing [minecraft splits stacks]
@@ -212,7 +278,22 @@ void mouse_right_click_handler(int id, int slot)
             // place 1 unit from stack in slot
             // if 0 units remain
                 // remove from hand
-        
+
+    if (player_hand == NULL_ITEM)
+    {
+        // do nothing
+        // Minecraft would split a stack here
+    }
+    else
+    {
+        // slot is empty
+        if (slot_item == NULL_ITEM)
+        {
+            // place 1 stack unit in slot
+        }
+    }
+
+    if (something_happened) send_container_action_beta();
 }
 
 }

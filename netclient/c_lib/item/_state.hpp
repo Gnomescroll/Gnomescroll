@@ -18,7 +18,7 @@ extern int player_nanite_id;
 extern class ItemContainer* player_inventory;
 extern class ItemContainer* player_toolbelt;
 extern class ItemContainer* player_nanite;
-
+extern ItemID player_hand;
 #endif
 
 // Server

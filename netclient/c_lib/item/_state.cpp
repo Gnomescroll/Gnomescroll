@@ -18,6 +18,7 @@ int player_nanite_id = -1;   //store id of player inventory
 class ItemContainer* player_inventory = NULL;
 class ItemContainer* player_toolbelt = NULL;
 class ItemContainer* player_nanite = NULL;
+ItemID player_hand = NULL_ITEM;
 
 #endif
 

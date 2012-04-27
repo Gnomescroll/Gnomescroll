@@ -114,39 +114,52 @@ class create_item_StoC: public FixedSizeReliableNetPacketToClient<create_item_St
 
 /* actions */
 
-class move_item_to_hand_StoC: public FixedSizeReliableNetPacketToClient<move_item_to_hand_StoC>
+//class move_item_to_hand_StoC: public FixedSizeReliableNetPacketToClient<move_item_to_hand_StoC>
+//{
+    //public:
+        //uint16_t id;
+        //uint8_t slota;
+        //uint8_t slotb;
+
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u16(&id, buff, buff_n, pack);
+            //pack_u8(&slota, buff, buff_n, pack);
+            //pack_u8(&slotb, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+///* actions */
+//class drop_item_from_hand_StoC: public FixedSizeReliableNetPacketToClient<drop_item_from_hand_StoC>
+//{
+    //public:
+        //uint16_t ida;
+        //uint8_t slota;
+        //uint16_t idb;
+        //uint8_t slotb;
+
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u16(&ida, buff, buff_n, pack);
+            //pack_u8(&slota, buff, buff_n, pack);
+            //pack_u16(&idb, buff, buff_n, pack);
+            //pack_u8(&slotb, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
+
+class container_action_failed_StoC: public FixedSizeReliableNetPacketToClient<container_action_failed_StoC>
 {
     public:
-        uint16_t id;
-        uint8_t slota;
-        uint8_t slotb;
+        uint16_t event_id;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
-            pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&slota, buff, buff_n, pack);
-            pack_u8(&slotb, buff, buff_n, pack);
+            pack_u16(&event_id, buff, buff_n, pack);
         }
         inline void handle();
 };
 
-/* actions */
-class drop_item_from_hand_StoC: public FixedSizeReliableNetPacketToClient<drop_item_from_hand_StoC>
-{
-    public:
-        uint16_t ida;
-        uint8_t slota;
-        uint16_t idb;
-        uint8_t slotb;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&ida, buff, buff_n, pack);
-            pack_u8(&slota, buff, buff_n, pack);
-            pack_u16(&idb, buff, buff_n, pack);
-            pack_u8(&slotb, buff, buff_n, pack);
-        }
-        inline void handle();
-};
 
 }

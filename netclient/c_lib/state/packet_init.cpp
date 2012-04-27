@@ -230,6 +230,12 @@ void RegisterMessages() {
     merge_stack_in_inventory_CtoS::register_server_packet();
     merge_stack_between_inventory_CtoS::register_server_packet();
     */
+    
+    // container
+    Item::container_action_alpha_CtoS::register_server_packet();
+    Item::container_action_beta_CtoS::register_server_packet();
+
+    Item::container_action_failed_StoC::register_client_packet();
 }
 
 }
