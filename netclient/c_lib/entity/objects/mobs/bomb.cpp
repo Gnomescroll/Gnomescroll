@@ -177,18 +177,19 @@ void tick_mob_bomb(Object* object)
     physics->set_angles(angles);
 
     // move towards target
-    position = vec3_add(position, vec3_scalar_mult(motion->target_direction, motion->speed));
-    physics->set_position(position); // move slime position by velocity
+    //position = vec3_add(position, vec3_scalar_mult(motion->target_direction, motion->speed));
+    //physics->set_position(position); // move slime position by velocity
+    motion->move_on_surface();
 
     #if DC_SERVER
-    // send packet if physical state changed
-    if (physics->changed) object->broadcastState();
-    else
-    {   // send packet once per second anyway
+    //// send packet if physical state changed
+    //if (physics->changed) object->broadcastState();
+    //else
+    //{   // send packet once per second anyway
         using Components::RateLimitComponent;
         RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
         if (limiter->allowed()) object->broadcastState();
-    }
+    //}
     #endif
 }
 
@@ -197,8 +198,7 @@ void update_mob_bomb(Object* object)
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
-    PCP* physics =
-        (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
+    PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
     Vec3 angles = physics->get_angles();

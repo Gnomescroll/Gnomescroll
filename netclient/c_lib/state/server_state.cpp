@@ -212,7 +212,7 @@ namespace ServerState
 
         // TESTING -- remove later
         // creates mob spawners
-        //spawn_monsters(OBJECT_MONSTER_BOMB, 100);
+        spawn_monsters(OBJECT_MONSTER_BOMB, 100);
         //spawn_monsters(OBJECT_MONSTER_SPAWNER, 12);
     }
 
