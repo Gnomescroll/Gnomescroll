@@ -1,48 +1,35 @@
 #include "CtoS.hpp"
 
-#if DC_SERVER
-#include <state/server_state.hpp>
-#include <item/_interface.hpp>
-#endif
+#if DC_CLIENT
 
 namespace Item
 {
 
-#if DC_CLIENT
-
-//inline void move_item_to_hand_CtoS::handle() {} 
-//inline void drop_item_from_hand_CtoS::handle() {}
-
-
+// dummies
 inline void container_action_alpha_CtoS::handle() {}
 inline void container_action_beta_CtoS::handle() {}
 
+} // Item
 #endif
 
 
 #if DC_SERVER
 
-//inline void move_item_to_hand_CtoS::handle() 
-//{
+#include <state/server_state.hpp>
+#include <item/_interface.hpp>
 
-//}
-
-//inline void drop_item_from_hand_CtoS::handle() 
-//{
-
-//}
+namespace Item
+{
 
 inline void container_action_alpha_CtoS::handle()
 {
-
+    // check if failed
 }
 
 inline void container_action_beta_CtoS::handle()
 {
-
+    // check if failed
 }
 
+} // Item
 #endif
-
-
-}

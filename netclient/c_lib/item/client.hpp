@@ -182,7 +182,7 @@ namespace Item
 
 static uint16_t container_event_id = 0;
 
-void send_container_action_alpha()
+void send_container_alpha_action()
 {
     container_event_id += 1;
     container_action_alpha_CtoS msg;
@@ -190,7 +190,7 @@ void send_container_action_alpha()
     msg.send();
 }
 
-void send_container_action_beta()
+void send_container_beta_action()
 {
     container_event_id += 1;
     container_action_beta_CtoS msg;
@@ -198,11 +198,11 @@ void send_container_action_beta()
     msg.send();
 }
 
-void mouse_left_click_handler(int id, int slot)
+bool alpha_action_decision_tree(int id, int slot)
 {
-    if (slot == NULL_SLOT || id < 0) return;
+    if (slot == NULL_SLOT || id < 0) return false;
     ItemContainer* container = get_container(id);
-    if (container == NULL) return;
+    if (container == NULL) return false;
 
     ItemID slot_item = container->get_item(slot);
     bool something_happened = false;
@@ -255,16 +255,17 @@ void mouse_left_click_handler(int id, int slot)
     }
 
     // send packet
-    if (something_happened) send_container_action_alpha();
+    return something_happened;
 }
 
-void mouse_right_click_handler(int id, int slot)
+bool beta_action_decision_tree(int id, int slot)
 {
-    if (slot == NULL_SLOT || id < 0) return;
+    if (slot == NULL_SLOT || id < 0) return false;
     ItemContainer* container = get_container(id);
-    if (container == NULL) return;
+    if (container == NULL) return false;
 
     ItemID slot_item = container->get_item(slot);
+
     bool something_happened = false;
 
     // if hand empty
@@ -293,7 +294,19 @@ void mouse_right_click_handler(int id, int slot)
         }
     }
 
-    if (something_happened) send_container_action_beta();
+    return something_happened;
+}
+
+void mouse_left_click_handler(int id, int slot)
+{
+    bool something_happened = alpha_action_decision_tree(id, slot);
+    if (something_happened) send_container_alpha_action();
+}
+
+void mouse_right_click_handler(int id, int slot)
+{
+    bool something_happened = beta_action_decision_tree(id, slot);
+    if (something_happened) send_container_beta_action();
 }
 
 }

@@ -9,11 +9,29 @@
 namespace Item
 {
 
+// Item
+class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
+{
+    public:
+        //uint8_t type;
+        uint16_t item_id;
+        uint16_t item_type;
+        uint16_t inventory_id;
+        uint16_t inventory_slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&item_id, buff, buff_n, pack);
+            pack_u16(&item_type, buff, buff_n, pack);
+            pack_u16(&inventory_id, buff, buff_n, pack);
+            pack_u16(&inventory_slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 
-/*
-    Container creation and subscription
-*/
+// Container
+
 class create_item_container_StoC: public FixedSizeReliableNetPacketToClient<create_item_container_StoC>
 {
     public:
@@ -65,89 +83,8 @@ class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assi
         inline void handle();
 };
 
-/*
-    Inventory State Packets
-*/
 
-class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
-{
-    public:
-        //uint8_t type;
-        uint16_t item_id;
-        uint16_t item_type;
-        uint16_t inventory_id;
-        uint16_t inventory_slot;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&item_id, buff, buff_n, pack);
-            pack_u16(&item_type, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-            pack_u16(&inventory_slot, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-/*
-    Inventory Item State Packets
-*/
-
-class create_item_StoC: public FixedSizeReliableNetPacketToClient<create_item_StoC>
-{
-    public:
-        //uint8_t type;
-        uint16_t item_id;
-        uint16_t item_type;
-        uint16_t inventory_id;
-        uint16_t inventory_slot;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&item_id, buff, buff_n, pack);
-            pack_u16(&item_type, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-            pack_u16(&inventory_slot, buff, buff_n, pack);
-        }
-        inline void handle();
-};
-
-
-/* actions */
-
-//class move_item_to_hand_StoC: public FixedSizeReliableNetPacketToClient<move_item_to_hand_StoC>
-//{
-    //public:
-        //uint16_t id;
-        //uint8_t slota;
-        //uint8_t slotb;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u16(&id, buff, buff_n, pack);
-            //pack_u8(&slota, buff, buff_n, pack);
-            //pack_u8(&slotb, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
-
-///* actions */
-//class drop_item_from_hand_StoC: public FixedSizeReliableNetPacketToClient<drop_item_from_hand_StoC>
-//{
-    //public:
-        //uint16_t ida;
-        //uint8_t slota;
-        //uint16_t idb;
-        //uint8_t slotb;
-
-        //inline void packet(char* buff, int* buff_n, bool pack)
-        //{
-            //pack_u16(&ida, buff, buff_n, pack);
-            //pack_u8(&slota, buff, buff_n, pack);
-            //pack_u16(&idb, buff, buff_n, pack);
-            //pack_u8(&slotb, buff, buff_n, pack);
-        //}
-        //inline void handle();
-//};
+// Container Action
 
 class container_action_failed_StoC: public FixedSizeReliableNetPacketToClient<container_action_failed_StoC>
 {
