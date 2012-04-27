@@ -82,6 +82,7 @@ void NetPeerManager::ready()
     if (!a->status.identified) return;
 
     this->loaded = true;
+    Item::assign_containers_to_agent(a->id, this->client_id);
     ServerState::send_initial_game_state_to_client(this->client_id);
     printf("loaded\n");
 

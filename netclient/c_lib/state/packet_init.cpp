@@ -57,17 +57,6 @@ void RegisterMessages() {
     Particle::item_particle_destroy_StoC::register_client_packet();
     Particle::item_particle_picked_up_StoC::register_client_packet();
 
-    /* item*/
-/*
-    item::item_create_StoC::register_client_packet();;
-    
-    item::assign_agent_inventory_StoC::register_client_packet();
-    item::assign_agent_toolbelt_StoC::register_client_packet();
-    item::assign_agent_nanite_StoC::register_client_packet();
-
-    item::swap_within_inventory_StoC::register_client_packet();
-    item::swap_between_inventory_StoC::register_client_packet();
-*/
     /*
         Map Messages
     */
@@ -231,13 +220,25 @@ void RegisterMessages() {
     merge_stack_between_inventory_CtoS::register_server_packet();
     */
     
-    // container
+    // item
+    Item::item_create_StoC::register_client_packet();
+    Item::item_destroy_StoC::register_client_packet();
+
+    // container state
+    Item::create_item_container_StoC::register_client_packet();
+    Item::delete_item_container_StoC::register_client_packet();
+    Item::assign_item_container_StoC::register_client_packet();
+
+    // container actions
     Item::container_action_alpha_CtoS::register_server_packet();
     Item::container_action_beta_CtoS::register_server_packet();
 
     Item::container_action_failed_StoC::register_client_packet();
     Item::insert_item_in_container_StoC::register_client_packet();
     Item::remove_item_from_container_StoC::register_client_packet();
+
+    
+
 }
 
 }

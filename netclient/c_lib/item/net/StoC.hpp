@@ -29,6 +29,18 @@ class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_St
         inline void handle();
 };
 
+// Item
+class item_destroy_StoC: public FixedSizeReliableNetPacketToClient<item_destroy_StoC>
+{
+    public:
+        uint16_t item_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
 
 // Container
 

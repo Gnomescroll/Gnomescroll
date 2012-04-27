@@ -22,9 +22,9 @@ void init()
     agent_inventory_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
-    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list[i] = NO_AGENT;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NO_AGENT;
-    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NO_AGENT;
+    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list[i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
     #endif
 }
 
@@ -72,6 +72,19 @@ Item* create_item_particle(int item_type, ItemID item_id, float x, float y, floa
     return item;
 }
 
+ItemID* get_container_contents(int container_id)
+{
+    ItemContainer* container = item_container_list->get(container_id);
+    if (container == NULL) return NULL;
+    return container->slot;
+}
+
+int get_sprite_index(int item_id)
+{
+    return id_to_sprite(item_id);
+}
+
+
 }
 #endif 
 
@@ -80,6 +93,35 @@ Item* create_item_particle(int item_type, ItemID item_id, float x, float y, floa
 
 namespace Item
 {
+
+void assign_containers_to_agent(int agent_id, int client_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    
+    ItemContainer* agent_container = item_container_list->create();
+    assert(agent_container != NULL);
+    assert(agent_inventory_list[agent_id] == NULL_ITEM);
+    agent_inventory_list[agent_id] = agent_container->id;
+    init_container(agent_container, AGENT_INVENTORY);
+    send_container_create(agent_container, client_id);
+    send_container_assign(agent_container, client_id);
+    
+    ItemContainer* agent_toolbelt = item_container_list->create();
+    assert(agent_toolbelt != NULL);
+    assert(agent_toolbelt_list[agent_id] == NULL_ITEM);
+    agent_toolbelt_list[agent_id] = agent_toolbelt->id;
+    init_container(agent_toolbelt, AGENT_TOOLBELT);
+    send_container_create(agent_toolbelt, client_id);
+    send_container_assign(agent_toolbelt, client_id);
+    
+    ItemContainer* agent_nanite = item_container_list->create();
+    assert(agent_nanite != NULL);
+    assert(agent_nanite_list[agent_id] == NULL_ITEM);
+    agent_nanite_list[agent_id] = agent_nanite->id;
+    init_container(agent_nanite, AGENT_NANITE);
+    send_container_create(agent_nanite, client_id);
+    send_container_assign(agent_nanite, client_id);    
+}
 
 
 Item* create_item(int item_type)

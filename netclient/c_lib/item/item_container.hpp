@@ -54,7 +54,7 @@ class ItemContainer
         int get_empty_slot()
         {
             for (int i=0; i<this->slot_max; i++)
-                if (this->slot[i] == EMPTY_SLOT)
+                if (this->slot[i] == NULL_ITEM)
                     return i;
             return NULL_SLOT;
         }
@@ -67,6 +67,7 @@ class ItemContainer
 
         void insert_item(int slot, ItemID item_id)
         {
+            assert(item_id != NULL_ITEM);
             assert(this->is_valid_slot(slot));
             this->slot[slot] = item_id;
             this->slot_count++;
@@ -75,7 +76,7 @@ class ItemContainer
         void remove_item(int slot)
         {
             assert(this->is_valid_slot(slot));
-            this->slot[slot] = EMPTY_SLOT;
+            this->slot[slot] = NULL_ITEM;
             this->slot_count--;
         }
 
@@ -88,7 +89,7 @@ class ItemContainer
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
             this->slot = new ItemID[this->slot_max];
-            for (int i=0; i<this->slot_max; this->slot[i++] = EMPTY_SLOT);
+            for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
         ~ItemContainer()

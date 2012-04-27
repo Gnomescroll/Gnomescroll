@@ -2,7 +2,6 @@
 
 const ItemID NULL_ITEM = -1;        // invalid item id
 const int NULL_SLOT = -1;           // invalid slot value
-const int EMPTY_SLOT = 0xffff;      // value of empty slot
 
 const int AGENT_INVENTORY_X = 6;
 const int AGENT_INVENTORY_Y = 3;

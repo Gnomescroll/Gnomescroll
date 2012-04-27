@@ -12,6 +12,16 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
+    Item* item = item_list->get_or_create_type(item_type, (ItemID)item_id);
+    if (item == NULL) return;
+    ItemContainer* container = get_container(inventory_id);
+    if (container == NULL) return;
+    container->insert_item(inventory_slot, item->id);
+}
+
+inline void item_destroy_StoC::handle()
+{
+    item_list->destroy(item_id);
 }
 
 // Containers
@@ -31,7 +41,7 @@ inline void assign_item_container_StoC::handle()
 {
     ItemContainer* ic = item_container_list->get(container_id);
     ASSERT_NOT_NULL(ic);
-    ItemContainerType type = (ItemContainerType) container_type;
+    ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
         case AGENT_INVENTORY:
@@ -48,9 +58,9 @@ inline void assign_item_container_StoC::handle()
             break;
         default:
             assert(false);
-            break;
+            return;
     }
-
+    t_hud::set_container_id(type, container_id);
 }
 
 // Container item
@@ -88,7 +98,8 @@ namespace Item
 // dummies
 
 inline void item_create_StoC::handle() {}
-    
+inline void item_destroy_StoC::handle() {}
+
 inline void create_item_container_StoC::handle() {}
 inline void delete_item_container_StoC::handle() {}
 inline void assign_item_container_StoC::handle() {}

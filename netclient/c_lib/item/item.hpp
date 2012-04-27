@@ -60,6 +60,14 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             item->type = item_type;
             return item;
         }
+        
+        Item* get_or_create_type(int item_type, int item_id)
+        {
+            Item* item = this->get_or_create(item_id);
+            if (item == NULL) return NULL;
+            item->type = item_type;
+            return item;
+        }
 
         void draw() {}
         void tick() {}

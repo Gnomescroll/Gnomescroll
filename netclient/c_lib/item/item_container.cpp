@@ -160,29 +160,29 @@ bool beta_action_decision_tree(int client_id, int id, int slot)
 //  tell client to assign container to an agent
 void send_container_assign(class ItemContainer* container, int client_id)
 {
-    class assign_item_container_StoC p;
-    p.container_id = container->id;
-    p.container_type = container->type;
-    p.agent_id = client_id;
-    p.sendToClient(client_id);
+    class assign_item_container_StoC msg;
+    msg.container_id = container->id;
+    msg.container_type = container->type;
+    msg.agent_id = client_id;
+    msg.sendToClient(client_id);
 }
 
 void send_container_create(class ItemContainer* container, int client_id)
 {
-    class create_item_container_StoC p;
-    p.container_id = container->id;
-    p.container_type = container->type;
-    p.agent_id = client_id;
-    p.sendToClient(client_id);
+    class create_item_container_StoC msg;
+    msg.container_id = container->id;
+    msg.container_type = container->type;
+    msg.agent_id = client_id;
+    msg.sendToClient(client_id);
 }
 
 void send_container_delete(class ItemContainer* container, int client_id)
 {
-    class delete_item_container_StoC p;
-    p.container_id = container->id;
-    p.container_type = container->type;
-    p.agent_id = client_id;
-    p.sendToClient(client_id);
+    class delete_item_container_StoC msg;
+    msg.container_id = container->id;
+    msg.container_type = container->type;
+    msg.agent_id = client_id;
+    msg.sendToClient(client_id);
 }
 
 #endif
