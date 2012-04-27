@@ -17,7 +17,8 @@ class Item
     int stack_size;
     //int sprite_index;
 
-    Item()
+    explicit Item(int id)
+    : id(id)
     {
         type = 0;
         item_id = 0;
@@ -43,6 +44,22 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         const char* name() { return "Item"; }
     public:
         ItemList() { print_list((char*)this->name(), this); }
+
+        Item* create_type(int item_type)
+        {
+            Item* item = this->create();
+            if (item == NULL) return NULL;
+            item->type = item_type;
+            return item;
+        }
+        
+        Item* create_type(int item_type, int item_id)
+        {
+            Item* item = this->create(item_id);
+            if (item == NULL) return NULL;
+            item->type = item_type;
+            return item;
+        }
 
         void draw() {}
         void tick() {}

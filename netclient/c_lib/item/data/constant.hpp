@@ -1,7 +1,5 @@
 #pragma once
 
-typedef int ItemID;
-
 const ItemID NULL_ITEM = -1;        // invalid item id
 const int NULL_SLOT = -1;           // invalid slot value
 const int EMPTY_SLOT = 0xffff;      // value of empty slot
