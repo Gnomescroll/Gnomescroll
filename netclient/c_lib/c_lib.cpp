@@ -20,7 +20,7 @@
 #include <common/compression/miniz.c>
 
 /* Templates */
-
+ 
 #include <common/template/object_list.hpp>
 #include <common/template/simple_object_list.hpp>
 #include <common/template/object_pool.hpp>

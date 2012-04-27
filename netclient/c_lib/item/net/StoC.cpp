@@ -4,11 +4,12 @@
 
 #if DC_CLIENT
 
-#include <item/_interface.hpp>
+//#include <item/_interface.hpp>
+#include <item/_state.hpp>
 #include <t_hud/_interface.hpp>
 
-//#include <animations/_interface.hpp>
 #endif
+
 
 namespace item
 {
@@ -58,13 +59,16 @@ inline void assign_item_container_StoC::handle()
     switch (type)
     {
         case AGENT_INVENTORY:
-            
+            item::player_inventory_id = container_id;
+            item::player_inventory = ic;
             break;
         case AGENT_TOOLBELT:
-            
+            item::player_toolbelt_id = container_id;
+            item::player_toolbelt = ic;
             break;
         case AGENT_NANITE:
-            
+            item::player_nanite_id = container_id;
+            item::player_nanite = ic;
             break;
         default:
             assert(false);
