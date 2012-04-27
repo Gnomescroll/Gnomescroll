@@ -79,6 +79,10 @@
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
+/* Terrain Generator */
+
+#include <t_gen/_include.hpp>
+
 /* item */
 #include <item/_include.hpp>
 

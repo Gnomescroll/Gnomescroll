@@ -1,24 +1,11 @@
 #include "_interface.hpp"
 
 #include <t_gen/twister.hpp>
+#include <t_map/t_map.hpp>
 
+#if DC_CLIENT
 #include <SDL/texture_loader.hpp>
-
-/*
-	int i;
-    unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
-    init_by_array(init, length);
-    printf("1000 outputs of genrand_int32()\n");
-    for (i=0; i<1000; i++) {
-      printf("%10lu ", genrand_int32());
-      if (i%5==4) printf("\n");
-    }
-    printf("\n1000 outputs of genrand_real2()\n");
-    for (i=0; i<1000; i++) {
-      printf("%10.8f ", genrand_real2());
-      if (i%5==4) printf("\n");
-    }
-*/
+#endif
 
 namespace t_gen
 {
@@ -114,6 +101,7 @@ void convolve(float* in, float* out, int xdim, int ydim)
 
 void save_png(const char* filename, float*in, int xres, int yres)
 {
+#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,"./screenshot/%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -181,11 +169,12 @@ void save_png(const char* filename, float*in, int xres, int yres)
     pFile = fopen ( FileName , "wb" );
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
+#endif
 }
 
 void test()
 {
-
+#if DC_CLIENT
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
     init_by_array(init, length);
 
@@ -223,7 +212,9 @@ void test()
     convolve(in,out, xres,yres);
 
 
- 	save_png("5001", out, xres, yres);
+ 	save_png("001", out, xres, yres);
+
+#endif
 }
 
 
@@ -267,7 +258,24 @@ void gen_map()
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
 
+#if DC_CLIENT
 	save_png("5001", out, xres, yres);
+#endif
+
+#if DC_SERVER
+	int max_height_diff = 64;
+	int baseline = 64;
+
+	const int value = 1;
+    for(int i=0; i < xres; i++) 
+    for(int j=0; j < yres; j++) 
+    {
+		int z = baseline + out[xres*j+i]*max_height_diff;
+		t_map::set(i,j,z, value);
+
+	}
+
+#endif
 }
 
 }
