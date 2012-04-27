@@ -212,7 +212,7 @@ void init_c_lib()
     if (inited++)
     {
         printf("WARNING: Attempt to init c_lib more than once\n");
-        return 1;
+        return;
     }
     Log::init();
     printf("init c_lib\n");
@@ -279,7 +279,7 @@ void init_c_lib()
     
     Animations::init();
 
- 
+}
 
 void close_c_lib() {
     printf("Closing game...\n");
