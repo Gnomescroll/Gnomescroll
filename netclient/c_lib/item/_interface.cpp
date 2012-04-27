@@ -4,9 +4,9 @@
 #include <item/item_container.hpp>
 #include <item/item.hpp>
 
-#if DC_CLIENT
-#include <input/handlers.hpp>
-#endif
+#include <item/_state.hpp>
+
+
 
 #if DC_SERVER
 #include <item/net/StoC.hpp>
@@ -15,26 +15,20 @@
 namespace item
 {
 
-ItemContainerList* item_container_list = NULL;
-ItemList* item_list = NULL;
-
-int AgentInventoryList[256];
-int AgentToolbeltList[256];
-int AgentNaniteList[256];
-
 void init()
 {
     item_container_list = new ItemContainerList;
     item_list = new ItemList;
 
+    #ifdef DC_SERVER
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentToolbeltList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;
+    #endif
 }
 
 void teardown()
 {
-    //if (free_item_list != NULL) delete free_item_list;
     if (item_container_list != NULL) delete item_container_list;
     if (item_list != NULL) delete item_list;
 }
@@ -48,13 +42,7 @@ CLIENT
 
 namespace item
 {
-    int player_inventory_id = -1;   //store id of player inventory
-    int player_toolbelt_id = -1;   //store id of player inventory
-    int player_nanite_id = -1;   //store id of player inventory
 
-    class ItemContainer* player_inventory = NULL;
-    class ItemContainer* player_toolbelt = NULL;
-    class ItemContainer* player_nanite = NULL;
 
 //move item
 void move_item(int inventory_id1, int inventory_id2, int slot1, int slot2)

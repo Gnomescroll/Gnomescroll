@@ -7,8 +7,6 @@
 namespace Main
 {
 
-//implementation
-
 void init()
 {
     init_c_lib();
