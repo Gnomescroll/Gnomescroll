@@ -8,6 +8,8 @@
 
 #include <common/compression/miniz.c>
 
+#include <common/list_assert.hpp>
+
 //options
 #include <common/option_macros.hpp>
 #include <options.cpp>

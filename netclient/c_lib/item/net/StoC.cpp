@@ -44,16 +44,32 @@ inline void create_item_container_StoC::handle()
 
 inline void delete_item_container_StoC::handle()
 {
-    if(item_container_list->get(container_id) == NULL)
-    {
-        printf("Error: delete_item_container_StoC::handle, %i does not exist \n", container_id);
-        return;
-    }
     item_container_list->destroy(container_id);
 }
 
+//container assigned to agent
 inline void assign_item_container_StoC::handle()
 {
+    ItemContainer* ic = item_container_list->get(container_id);
+    ASSERT_NOT_NULL(ic);
+
+    ItemContainerType type = (ItemContainerType) container_type;
+
+    switch (type)
+    {
+        case AGENT_INVENTORY:
+            
+            break;
+        case AGENT_TOOLBELT:
+            
+            break;
+        case AGENT_NANITE:
+            
+            break;
+        default:
+            assert(false);
+            break;
+    }
 
 }
 

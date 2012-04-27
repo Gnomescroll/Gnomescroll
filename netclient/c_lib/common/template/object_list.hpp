@@ -8,8 +8,8 @@
  * void server_tick();
  */
  
-#include <common/common.hpp>
-#include <physics/common.hpp>
+//#include <common/common.hpp>
+//#include <physics/common.hpp>
 
 #define OBJECT_LIST_DEBUG 0
 
