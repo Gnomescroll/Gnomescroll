@@ -59,7 +59,7 @@ inline void assign_item_container_StoC::handle()
     switch (type)
     {
         case AGENT_INVENTORY:
-            item::player_inventory_id = container_id;code
+            item::player_inventory_id = container_id;
             item::player_inventory = ic;
             break;
         case AGENT_TOOLBELT:
