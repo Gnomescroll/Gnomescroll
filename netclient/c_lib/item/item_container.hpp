@@ -6,9 +6,21 @@
 namespace Item
 {
 
+// init
 void init_container(class ItemContainer* container, ItemContainerType type);
 
+#if DC_CLIENT
+// transactions
+bool alpha_action_decision_tree(int id, int slot);
+bool beta_action_decision_tree(int id, int slot);
+#endif
+
 #if DC_SERVER
+// transactions
+bool alpha_action_decision_tree(int client_id, int id, int slot);
+bool beta_action_decision_tree(int client_id, int id, int slot);
+
+//network
 //  tell client to assign container to an agent
 void send_container_assign(class ItemContainer* container, int client_id);
 void send_container_create(class ItemContainer* container, int client_id);

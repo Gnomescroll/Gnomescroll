@@ -58,6 +58,7 @@ inline void assign_item_container_StoC::handle()
 inline void container_action_failed_StoC::handle()
 {
     // copy network state to render state
+    printf("Event %d failed!\n", event_id);
 }
 
 } // Item
