@@ -192,7 +192,6 @@
 #include <sound/sound.cpp>
 
 /* chat */
-//#include <chat/globals.hpp>
 #include <chat/packets.cpp>
 #include <chat/client.cpp>
 
@@ -205,24 +204,10 @@
 #include <state/client_state.cpp>
 #include <state/packet_init.cpp>
 
-//#include <SDL/pngfuncs.c>
-//#include <SDL/v.cpp>
+//#include <unistd.h>
 
-//page size
-#include <unistd.h>
-//(size_t) sysconf(_SC_PAGESIZE);
-
-//#include <main.cpp>
-
-/*
-    init_t_map()
-    init_cube_properties()
-    init_cube_side_texture()
-    set_hud_cube_selector()
-    init_for_draw()
-*/
-
-int init_c_lib() {
+void init_c_lib() 
+{
     static int inited = 0;
     if (inited++)
     {
@@ -294,8 +279,6 @@ int init_c_lib() {
     
     Animations::init();
 
-    return 0;
-}
  
 
 void close_c_lib() {
