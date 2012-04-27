@@ -7,38 +7,95 @@
 namespace t_gen
 {
 
+//xdim/ydim might be odd
 void init_gaussian_kernel(float* kernel, int xdim, int ydim)
 {
-	kernel = new float[xdim*ydim];
+	const double k = 1.0; //normalization constant
 
-	for(int i=0; i<xdim*ydim; i++) kernel[i] = 0;
+	for(int i=0; i<xdim*ydim; i++) kernel[i] = 0.0;
 
-	//populate
+	const float h = ((float) xdim) / 2.0;
+	const float w = ((float) ydim) / 2.0;
+
+	double tmp[xdim][ydim];
+	double _i,_j;
+	for(int i=0; i < xdim; i++)
+	{
+		_j = 0.0;
+		for(int j=0; j < ydim; j++)
+		{
+			float a = (_i-w)*(_i-w);
+			float b = (_j-h)*(_j-h);
+			tmp[i][j] = exp(-1*(a+b));
+		
+			_j += 1.0;
+		}
+		_i += 1.0;
+	}
+
+	double sum = 0.0;
+	for(int i=0; i < xdim; i++)
+	for(int j=0; j < ydim; j++)
+	{
+		sum += tmp[i][j];
+	}
+
+	double average = sum / ((float) xdim*ydim);
+
+	for(int i=0; i < xdim; i++)
+	for(int j=0; j < ydim; j++)
+	{
+		kernel[xdim*j + i] = (float) ( k*(tmp[i][j] / average) );
+	}
+
+/*
+	for(int i=0; i < xdim; ++i)
+	for(int j=0; j < ydim; ++j)
+	{
+		kernel[xdim*j + i] = 1.0;
+	}
+*/
+
+/*
+	sum = 0.0;
+
+	for(int i=0; i < xdim; ++i)
+	for(int j=0; j < ydim; ++j)
+	{
+		sum += kernel[xdim*j + i];
+	}
+	//printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim*ydim) ));
+*/
 }
 
-void convolve(int* in, int* out, int kCols, int kRows)
+void convolve(float* in, float* out, int xdim, int ydim)
 {
-	const int kCols = 16;
-	const int kRows = 16;
+	const int kCols = 33;
+	const int kRows = 33;
 
-	float* kernel;
+	const int kCenterX = (kCols-1) / 2;
+	const int kCenterY = (kRows-1) / 2;
 
-	init_gaussian_kernel(kernel, kCols, kRows);
+	float kernel[kCols][kRows];
 
-	int kCenterX = kCols / 2;
-	int kCenterY = kRows / 2;
+	init_gaussian_kernel( (float*) kernel, kCols, kRows);
 
-	for(i=0; i < rows; ++i)              // rows
+
+
+	int mm, nn;
+	int ii,jj;
+
+	for(int i=0; i < xdim; i++)              // rows
 	{
-	    for(j=0; j < cols; ++j)          // columns
+	    for(int j=0; j < ydim; j++)          // columns
 	    {
-	        sum = 0;                     // init to 0 before sum
-
-	        for(m=0; m < kRows; ++m)     // kernel rows
+	        //sum = 0;                     // init to 0 before sum
+	    	out[xdim*j+i] = 0.0;
+	        for(int m=0; m < kRows; m++)     // kernel rows
 	        {
 	            mm = kRows - 1 - m;      // row index of flipped kernel
 
-	            for(n=0; n < kCols; ++n) // kernel columns
+	            for(int n=0; n < kCols; n++) // kernel columns
 	            {
 	                nn = kCols - 1 - n;  // column index of flipped kernel
 
@@ -47,8 +104,11 @@ void convolve(int* in, int* out, int kCols, int kRows)
 	                jj = j + (n - kCenterX);
 
 	                // ignore input samples which are out of bound
-	                if( ii >= 0 && ii < rows && jj >= 0 && jj < cols )
-	                out[i][j] += in[ii][jj] * kernel[mm][nn];
+	                if( ii >= 0 && ii < xdim && jj >= 0 && jj < ydim )
+	                {
+	                	out[xdim*j+i] += in[xdim*jj+ii] * kernel[mm][nn];
+	                }
+	                //out[xdim*j+i] += in[xdim*ii+jj] * kernel[mm][nn];
 	            }
 	        }
 	    }
@@ -78,16 +138,24 @@ void test()
     int xres = 256;
     int yres = 256;
 
-    //SDL_Surface* surface = create_surface_from_nothing(256,256);
+    float* in = new float[xres*yres];
+    float* out = new float[xres*yres];
+
+    for(int i=0; i < xres; i++) 
+    for(int j=0; j < yres; j++) 
+    {
+    	in[j*xres+i] = genrand_real2();
+    }
+
+    convolve(in,out, xres,yres);
+    convolve(out,in, xres,yres);
+
+    out = in;
+    //convolve(in,out, xres,yres);
 
     char FileName[128];
 
     sprintf(FileName,"./screenshot/%d.png",  (int) 500 );
-
-    //printf("Screenshot: %s \n", (char*) );
-
-    //SDL_Surface *surface = SDL_CreateRGBSurface(SDL_SWSURFACE, xres, yres,
-    //                                               32, 0x0000ff, 0x00ff00, 0xff0000, 0x000000);
 
     char* PBUFFER = (char*) malloc(4*xres*yres);
 
@@ -96,7 +164,8 @@ void test()
     for(int j=0; j < yres; j++) {
     	int index = 4*(j*xres + i);
 
-    	int v = genrand_int32() % 256;
+    	//int v = genrand_int32() % 256;
+    	int v = 255*out[j*xres+i];
     	PBUFFER[index+0] = v;
     	PBUFFER[index+1] = v;
     	PBUFFER[index+2] = v;
