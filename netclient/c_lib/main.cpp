@@ -53,6 +53,8 @@ void init()
 
 int run()
 {
+    t_gen::test();
+
     using Profiling::frame_graph;
     Profiling::init_frame_graph();
 
