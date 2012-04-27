@@ -212,7 +212,7 @@ int init_c_lib()
     if (inited++)
     {
         printf("WARNING: Attempt to init c_lib more than once\n");
-        return;
+        return 0;
     }
     Log::init();
     printf("init c_lib\n");
