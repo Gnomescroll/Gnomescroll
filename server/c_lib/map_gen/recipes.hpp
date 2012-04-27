@@ -12,7 +12,7 @@ void simple_map()
     generator->max_size();
     //generator->size(512, 512, 128);
     //generator->tile((char*)"holy_stone");
-    generator->tile(23);
+    generator->tile(54);
     generator->interpolate(4,4,1);
     generator->scale(4.0f, 4.0f, 1.0f);
     generator->enable_heightmap(20, 30);

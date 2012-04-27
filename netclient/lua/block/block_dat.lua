@@ -268,9 +268,9 @@ b.hud = hud(56+6, b.texture.n);
 
 
 
-b = NewSolidBlock(51, "mars0");
-b.texture = iso_texture(t01,1,9);
-b.hud = hud(56-16+7, b.texture.n);
+--b = NewSolidBlock(51, "mars0");
+--b.texture = iso_texture(t01,1,9);
+--b.hud = hud(56-16+7, b.texture.n);
 
 b = NewSolidBlock(52, "mars1");
 b.texture = iso_texture(t01,2,9);
@@ -280,6 +280,12 @@ b = NewSolidBlock(53, "mars2");
 b.texture = iso_texture(t01,3,9);
 b.hud = hud(56+7, b.texture.n);
 
+
+b = NewSolidBlock(54, "srs1");
+b.texture = iso_texture(t01,4,10);
+b.texture.t = register_texture(t01,3,10);
+b.texture.b = register_texture(t01,5,10);
+b.hud = hud(56-16+7, b.texture.n);
 
 print("map_load_tiles: done");
 
