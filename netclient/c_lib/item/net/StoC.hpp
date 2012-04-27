@@ -2,35 +2,13 @@
 
 #include <net_lib/net.hpp>
 
-//#include <net_lib/t_item/net/CtoSs.hpp>
+//#include <net_lib/t_item/net/StoCs.hpp>
 //#include <t_item/free_item.hpp>
 
 
 namespace item
 {
 
-/*
-    Inventory Item State Packets
-*/
-
-class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
-{
-    public:
-        //uint8_t type;
-        uint16_t item_id;
-        uint16_t item_type;
-        uint16_t inventory_id;
-        uint16_t inventory_slot;
-
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u16(&item_id, buff, buff_n, pack);
-            pack_u16(&item_type, buff, buff_n, pack);
-            pack_u16(&inventory_id, buff, buff_n, pack);
-            pack_u16(&inventory_slot, buff, buff_n, pack);
-        }
-        inline void handle();
-};
 
 
 /*
@@ -92,8 +70,33 @@ class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assi
 */
 
 
+/*
+    Inventory Item State Packets
+*/
+
+class item_create_StoC: public FixedSizeReliableNetPacketToClient<item_create_StoC>
+{
+    public:
+        //uint8_t type;
+        uint16_t item_id;
+        uint16_t item_type;
+        uint16_t inventory_id;
+        uint16_t inventory_slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&item_id, buff, buff_n, pack);
+            pack_u16(&item_type, buff, buff_n, pack);
+            pack_u16(&inventory_id, buff, buff_n, pack);
+            pack_u16(&inventory_slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
 /* actions */
-class swap_within_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_within_inventory_StoC>
+
+class move_item_to_hand_StoC: public FixedSizeReliableNetPacketToClient<move_item_to_hand_StoC>
 {
     public:
         uint16_t id;
@@ -110,7 +113,7 @@ class swap_within_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap
 };
 
 /* actions */
-class swap_between_inventory_StoC: public FixedSizeReliableNetPacketToClient<swap_between_inventory_StoC>
+class drop_item_from_hand_StoC: public FixedSizeReliableNetPacketToClient<drop_item_from_hand_StoC>
 {
     public:
         uint16_t ida;
