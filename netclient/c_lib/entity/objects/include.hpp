@@ -7,6 +7,7 @@
 
 #include <entity/objects/pickup_sprite.hpp>
 
+/*
 #include <entity/objects/gemstones/constants.hpp>
 #include <entity/objects/gemstones/malachite.hpp>
 #include <entity/objects/gemstones/ruby.hpp>
@@ -24,6 +25,7 @@
 #include <entity/objects/block_drops/medium_rock.hpp>
 #include <entity/objects/block_drops/hard_rock.hpp>
 #include <entity/objects/block_drops/infected_rock.hpp>
+*/
 
 #include <entity/objects/fabs/constants.hpp>
 #include <entity/objects/fabs/spawner.hpp>

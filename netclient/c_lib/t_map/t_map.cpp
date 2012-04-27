@@ -18,23 +18,12 @@
     #include <t_map/server/map_chunk_history.hpp>
     #include <t_map/net/t_StoC.hpp>
 
-    /* Added for random drops */
-    /* remove these includes after random drops are in separate file */
     #include <common/random.h>
     #include <physics/vec3.hpp>
 
     #include <particle/_interface.hpp>
 
     #include <item/_interface.hpp>
-/*
-    #include <entity/constants.hpp>
-    #include <entity/objects.hpp>
-    #include <entity/object/object.hpp>
-    #include <entity/components.hpp>
-    #include <entity/components/physics.hpp>
-*/
-
-    //#include <t_item/_interface.hpp>
 
 #endif
 
@@ -182,11 +171,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.action = action;
     msg.broadcast();
 
-    /*
-    int block_value = get(x,y,z);
-    block_spawn_items(block_value, x,y,z);
-    //*/
-    
+
     const float mom = 2.0f;
     float p = randf();
     if (p < 0.3)

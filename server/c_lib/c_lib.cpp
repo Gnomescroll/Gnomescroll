@@ -79,6 +79,11 @@
 /* mechanisms */
 #include <t_mech/_include.hpp>
 
+/* Terrain Generator */
+
+#include <t_gen/_include.hpp>
+
+
 /* item */
 #include <item/_include.hpp>
 
@@ -91,7 +96,7 @@
 #include <game/packets.cpp>
 
 /* Agents */
-#include "./agent/agent_include.h"
+#include <agent/agent_include.h>
 
 /* Weapons */
 #include <weapons/weapons.cpp>
@@ -120,7 +125,7 @@
 #include <state/server_state.cpp>
 
 //#include <main.cpp>
-
+ 
 //page size
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
