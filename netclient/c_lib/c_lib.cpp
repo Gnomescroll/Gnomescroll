@@ -206,7 +206,7 @@
 
 //#include <unistd.h>
 
-void init_c_lib() 
+int init_c_lib() 
 {
     static int inited = 0;
     if (inited++)
@@ -279,6 +279,8 @@ void init_c_lib()
     
     Animations::init();
 
+    return 0;
+}
  
 
 void close_c_lib() {
