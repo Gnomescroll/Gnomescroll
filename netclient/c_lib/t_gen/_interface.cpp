@@ -8,34 +8,30 @@ namespace t_gen
 {
 
 //xdim/ydim might be odd
-void init_gaussian_kernel(float* kernel, int xdim, int ydim)
+void init_gaussian_kernel(float* kernel, int dim)
 {
 	const double k = 1.0; //normalization constant
 
-	for(int i=0; i<xdim*ydim; i++) kernel[i] = 0.0;
+	for(int i=0; i<xdim; i++) kernel[i] = 0.0;
 
-	const float h = ((float) xdim) / 2.0;
-	const float w = ((float) ydim) / 2.0;
+	const float m = ((float) xdim) / 2.0;
 
-	double tmp[xdim][ydim];
-	double _i,_j;
+	double tmp[dim];
+
+	double _i = 0.0;
 	for(int i=0; i < xdim; i++)
 	{
-		_j = 0.0;
-		for(int j=0; j < ydim; j++)
-		{
-			float a = (_i-w)*(_i-w);
-			float b = (_j-h)*(_j-h);
-			tmp[i][j] = exp(-1*(a+b));
-		
-			_j += 1.0;
-		}
+
+		float a = (m-_i)*(m-_i);
+		tmp[i][j] = exp(-1*a+b);
 		_i += 1.0;
 	}
 
+	//for(int i=0; i < xdim; ++i) kernel[i] = 1.0;
+
+
 	double sum = 0.0;
 	for(int i=0; i < xdim; i++)
-	for(int j=0; j < ydim; j++)
 	{
 		sum += tmp[i][j];
 	}
@@ -43,76 +39,52 @@ void init_gaussian_kernel(float* kernel, int xdim, int ydim)
 	double average = sum / ((float) xdim*ydim);
 
 	for(int i=0; i < xdim; i++)
-	for(int j=0; j < ydim; j++)
 	{
-		kernel[xdim*j + i] = (float) ( k*(tmp[i][j] / average) );
+		kernel[i] = (float) ( k*tmp[i] / average );
 	}
 
-/*
-	for(int i=0; i < xdim; ++i)
-	for(int j=0; j < ydim; ++j)
-	{
-		kernel[xdim*j + i] = 1.0;
-	}
-*/
 
-/*
 	sum = 0.0;
-
 	for(int i=0; i < xdim; ++i)
-	for(int j=0; j < ydim; ++j)
 	{
 		sum += kernel[xdim*j + i];
 	}
 	//printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim*ydim) ));
-*/
+
 }
 
 void convolve(float* in, float* out, int xdim, int ydim)
 {
-	const int kCols = 33;
-	const int kRows = 33;
+	const int kdim = 5;
+	const int kCenter = (kdim-1) / 2;
 
-	const int kCenterX = (kCols-1) / 2;
-	const int kCenterY = (kRows-1) / 2;
+	float kernel[kdim];
 
-	float kernel[kCols][kRows];
-
-	init_gaussian_kernel( (float*) kernel, kCols, kRows);
-
-
+	init_gaussian_kernel( (float*) kernel, kdim);
 
 	int mm, nn;
-	int ii,jj;
+	int ii, jj;
 
-	for(int i=0; i < xdim; i++)              // rows
+	for(int i=0; i < xdim; i++)
+	for(int j=0; j < ydim; j++)
 	{
-	    for(int j=0; j < ydim; j++)          // columns
-	    {
-	        //sum = 0;                     // init to 0 before sum
-	    	out[xdim*j+i] = 0.0;
-	        for(int m=0; m < kRows; m++)     // kernel rows
-	        {
-	            mm = kRows - 1 - m;      // row index of flipped kernel
+    	out[xdim*j+i] = 0.0;
+        for(int m=0; m < kRows; m++)
+		for(int n=0; n < kCols; n++)
+            {
+                ii = i + (m - kCenter);
 
-	            for(int n=0; n < kCols; n++) // kernel columns
-	            {
-	                nn = kCols - 1 - n;  // column index of flipped kernel
 
-	                // index of input signal, used for checking boundary
-	                ii = i + (m - kCenterY);
-	                jj = j + (n - kCenterX);
+                // ignore input samples which are out of bound
+                if( ii >= 0 && ii < xdim && jj >= 0 && jj < ydim )
+                {
+                	out[xdim*j+i] += in[xdim*jj+ii] * kernel[mm][nn];
+                }
 
-	                // ignore input samples which are out of bound
-	                if( ii >= 0 && ii < xdim && jj >= 0 && jj < ydim )
-	                {
-	                	out[xdim*j+i] += in[xdim*jj+ii] * kernel[mm][nn];
-	                }
-	                //out[xdim*j+i] += in[xdim*ii+jj] * kernel[mm][nn];
-	            }
-	        }
-	    }
+            }
+        }
 	}
+
 }
 
 void test()
@@ -149,9 +121,7 @@ void test()
 
     convolve(in,out, xres,yres);
     convolve(out,in, xres,yres);
-
-    out = in;
-    //convolve(in,out, xres,yres);
+    convolve(in,out, xres,yres);
 
     char FileName[128];
 
