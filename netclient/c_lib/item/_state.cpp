@@ -1,6 +1,6 @@
 #include "_state.hpp"
 
-namespace item
+namespace Item
 {
 
 //Common

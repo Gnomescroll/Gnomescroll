@@ -1,6 +1,6 @@
 #pragma once
 
-namespace item
+namespace Item
 {
 
 class Item
@@ -32,7 +32,7 @@ class Item
 
 #include <common/template/object_list.hpp>
 
-namespace item
+namespace Item
 {
 
 const int ITEM_LIST_MAX = 1024;

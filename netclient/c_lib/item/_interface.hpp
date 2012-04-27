@@ -2,11 +2,12 @@
 
 
 
-namespace item
+namespace Item
 {
 
 void init();
 void teardown();
+class ItemContainer* get_container(int id);
 
 }
 
@@ -15,7 +16,7 @@ CLIENT
 */
 #if DC_CLIENT
 
-namespace item
+namespace Item
 {
 
 
@@ -32,7 +33,7 @@ SERVER
 
 #if DC_SERVER
 
-namespace item
+namespace Item
 {
 
 void check_item_pickups();

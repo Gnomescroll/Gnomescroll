@@ -2,7 +2,7 @@
 
 #include <net_lib/net.hpp>
 
-namespace item
+namespace Item
 {
 
 class move_item_to_hand_CtoS: public FixedSizeReliableNetPacketToServer<move_item_to_hand_CtoS>

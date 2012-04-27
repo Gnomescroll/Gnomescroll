@@ -5,7 +5,7 @@
 #include <item/_interface.hpp>
 #endif
 
-namespace item
+namespace Item
 {
 
 

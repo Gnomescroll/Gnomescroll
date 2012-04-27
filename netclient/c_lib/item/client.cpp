@@ -1,6 +1,10 @@
 #include "client.hpp"
 
-namespace item
+#if DC_CLIENT
+
+namespace Item
 {
 
 }
+
+#endif

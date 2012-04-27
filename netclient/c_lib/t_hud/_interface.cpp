@@ -9,12 +9,12 @@
 namespace t_hud
 {
 
-class AgentInventoryUI* agent_inventory;
+class AgentInventoryUI* agent_container;
 class AgentToolbeltUI* agent_toolbelt;
 
 // TODO -- TMP -- replace witha ctual types
-class AgentNaniteUI* nanite_inventory;
-class AgentInventoryUI* craft_bench_inventory;
+class AgentNaniteUI* nanite_container;
+class AgentInventoryUI* craft_bench_container;
 
 float mouse_x;
 float mouse_y;
@@ -25,126 +25,103 @@ float mouse_y;
 */
 
 static bool hud_enabled = false;
-void enable_inventory_hud()
+void enable_container_hud()
 {
     hud_enabled = true;
 }
 
-void disable_inventory_hud()
+void disable_container_hud()
 {
     hud_enabled = false;
 }
 
 int active_slot = NULL_SLOT;
-UIElement* active_inventory = NULL;
+UIElement* active_container = NULL;
 
-static UIElement* get_inventory_and_slot(int x, int y, int* slot)
+static UIElement* get_container_and_slot(int x, int y, int* slot)
 {
-    // track topmost clicked inventory
-    UIElement* closest_inventory = NULL;
+    // track topmost clicked container
+    UIElement* closest_container = NULL;
     int closest_slot = NULL_SLOT;
 
-    // set up inventory array
+    // set up container array
     const int n_inventories = 4;
     UIElement* inventories[n_inventories] = {
-        agent_inventory,
+        agent_container,
         agent_toolbelt,
-        nanite_inventory,
-        craft_bench_inventory,
+        nanite_container,
+        craft_bench_container,
     };
 
-    // get topmost inventory click
-    UIElement* inventory;
+    // get topmost container click
+    UIElement* container;
     int slot_tmp;
     for (int i=0; i<n_inventories; i++)
     {
-        inventory = inventories[i];
-        if (inventory == NULL) continue;
-        slot_tmp = inventory->get_slot_at(x,y);
+        container = inventories[i];
+        if (container == NULL) continue;
+        slot_tmp = container->get_slot_at(x,y);
         if (slot_tmp == NULL_SLOT) continue;
-        closest_inventory = inventory;
+        closest_container = container;
         closest_slot = slot_tmp;
     }
 
     *slot = closest_slot;
-    return closest_inventory;
+    return closest_container;
 }
 
 
-void mouse_motion(int x, int y)
+static ContainerInputEvent process_event(int x, int y)
 {
-    //printf("t_item::mouse_motion x,y= %i %i \n", x,y);
-
-    // if slot selected
-    // draw that slot's icon at cursor
-
-    mouse_x = x;
-    mouse_y = y;
-}
-
-void left_mouse_down(int x, int y)
-{
-    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
-
-    // set active slot/inventory
-    active_inventory = get_inventory_and_slot(x,y, &active_slot);
-    if (active_inventory == NULL) return;
-    active_inventory->selected_slot = active_slot;
-}
-
-void left_mouse_up(int x, int y)
-{
-    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
-
-    if (active_inventory == NULL) return;
-
     // detect click
     int slot;
-    UIElement* inventory = get_inventory_and_slot(x,y, &slot);
+    UIElement* container = get_container_and_slot(x,y, &slot);
 
-    // decide swap event
-    InventoryInputEventType event_type = INVENTORY_INPUT_EVENT_NONE;
-    if (slot == NULL_SLOT || inventory == NULL)     // clicked outside inventory UIs
-        event_type = INVENTORY_INPUT_EVENT_REMOVE;
-    else
-    {   // clicked in an inventory
-        if (active_inventory == inventory) event_type = INVENTORY_INPUT_EVENT_SWAP_WITHIN;
-        else event_type = INVENTORY_INPUT_EVENT_SWAP_BETWEEN;
-    }
+    int container_id = -1;
+    if (container != NULL) container_id = container->container_id;
     
-    inventory_input_event.type = event_type;
-    inventory_input_event.inventory = active_inventory->inventory_id;
-    inventory_input_event.slot = active_slot;
-
-    if (inventory != NULL)
-        inventory_input_event.inventory_b = inventory->inventory_id;
-    if (slot != NULL_SLOT)
-        inventory_input_event.slot_b = slot;
-
-    // reset actives
-    active_inventory->selected_slot = NULL_SLOT;
-    active_inventory = NULL;
-    active_slot = NULL_SLOT;
+    ContainerInputEvent event;
+    event.container_id = container_id;
+    event.slot = slot;
+    return event;
 }
 
-void right_mouse_down(int x, int y)
-{
-    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
+ContainerInputEvent null_event = {
+    CONTAINER_MOUSE_CLICK_NONE,
+    -1,         // null container id
+    NULL_SLOT   // null slot
+};
 
-    // lock slot
+ContainerInputEvent left_mouse_down(int x, int y)
+{
+    return null_event;
 }
 
-void right_mouse_up(int x, int y)
+ContainerInputEvent left_mouse_up(int x, int y)
 {
-    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
-
-    // if slot matches locked slot,
-    // remove
+    ContainerInputEvent event = process_event(x,y);
+    event.button = CONTAINER_MOUSE_CLICK_NONE;
+    return event;
 }
 
-void null_input_event()
+ContainerInputEvent right_mouse_down(int x, int y)
 {
-    inventory_input_event.type = INVENTORY_INPUT_EVENT_NONE;
+    return null_event;
+}
+
+ContainerInputEvent right_mouse_up(int x, int y)
+{
+    ContainerInputEvent event = process_event(x,y);
+    event.button = CONTAINER_MOUSE_CLICK_RIGHT;    
+    return event;
+}
+
+ContainerInputEvent mouse_motion(int x, int y)
+{
+    mouse_x = x;
+    mouse_y = y;
+
+    return null_event;
 }
 
 /*
@@ -155,8 +132,8 @@ static void draw_grabbed_icon()
 {
 #if 0
     if (active_slot == NULL_SLOT) return;
-    if (active_inventory == NULL) return;
-    InventorySlot* contents = Items::get_inventory_contents(active_inventory->inventory_id);
+    if (active_container == NULL) return;
+    InventorySlot* contents = Items::get_container_contents(active_container->container_id);
     if (contents == NULL) return;
     if (contents[active_slot].empty()) return;
 
@@ -212,33 +189,33 @@ void draw_hud()
 {
     if (!hud_enabled) return;
 
-    agent_inventory->draw();
+    agent_container->draw();
     agent_toolbelt->draw();
-    //nanite_inventory->draw();
-    //craft_bench_inventory->draw();
+    //nanite_container->draw();
+    //craft_bench_container->draw();
 
     draw_grabbed_icon();
 }
 
 
-void network_inventory_assignment(ObjectType type, int id)
+void network_container_assignment(ObjectType type, int id)
 {
     switch (type)
     {
         case OBJECT_AGENT_INVENTORY:
-            agent_inventory->inventory_id = id;
+            agent_container->container_id = id;
             break;
         case OBJECT_AGENT_TOOLBELT:
-            agent_toolbelt->inventory_id = id;
+            agent_toolbelt->container_id = id;
             break;
         case OBJECT_NANITE_INVENTORY:
-            nanite_inventory->inventory_id = id;
+            nanite_container->container_id = id;
             break;
         case OBJECT_CRAFTING_BENCH:
-            craft_bench_inventory->inventory_id = id;
+            craft_bench_container->container_id = id;
             break;
         default:
-            printf("WARNING -- network_inventory_assignment -- invalid inventory type %d\n", type);
+            printf("WARNING -- network_container_assignment -- invalid container type %d\n", type);
             break;
     }
 }
@@ -253,28 +230,28 @@ void network_inventory_assignment(ObjectType type, int id)
 
 void init()
 {
-    agent_inventory = new AgentInventoryUI;
-    agent_inventory->xoff = 300.0f;
-    agent_inventory->yoff = 100.0f;
-    agent_inventory->init();
+    agent_container = new AgentInventoryUI;
+    agent_container->xoff = 300.0f;
+    agent_container->yoff = 100.0f;
+    agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->xoff = 500.0f;
     agent_toolbelt->yoff = 500.0f;
     agent_toolbelt->init();
 
-    nanite_inventory = new AgentNaniteUI;
-    nanite_inventory->xoff = 0.0f;
-    nanite_inventory->yoff = 0.0f;
-    nanite_inventory->init();
+    nanite_container = new AgentNaniteUI;
+    nanite_container->xoff = 0.0f;
+    nanite_container->yoff = 0.0f;
+    nanite_container->init();
 }
 
 void teardown()
 {
-    if (agent_inventory != NULL) delete agent_inventory;
+    if (agent_container != NULL) delete agent_container;
     if (agent_toolbelt != NULL) delete agent_toolbelt;
-    if (nanite_inventory != NULL) delete nanite_inventory;
-    if (craft_bench_inventory != NULL) delete craft_bench_inventory;
+    if (nanite_container != NULL) delete nanite_container;
+    if (craft_bench_container != NULL) delete craft_bench_container;
 }
 
 #if DC_CLIENT

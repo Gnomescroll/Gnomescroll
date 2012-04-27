@@ -3,7 +3,7 @@
 #include <item/data/enum.hpp>
 #include <item/data/constant.hpp>
 
-namespace item
+namespace Item
 {
 
 void init_container(class ItemContainer* container, ItemContainerType type);
@@ -99,7 +99,7 @@ class ItemContainer
 
 #include <common/template/object_list.hpp>
 
-namespace item
+namespace Item
 {
 
 const int ITEM_CONTAINER_MAX = 1024;

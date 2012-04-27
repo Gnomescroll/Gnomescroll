@@ -236,7 +236,7 @@ int init_c_lib()
     lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
-    item::init();
+    Item::init();
 
     t_hud::init();
     t_hud::draw_init();
@@ -287,7 +287,7 @@ void close_c_lib() {
  
     t_map::end_t_map();
 
-    item::teardown();
+    Item::teardown();
 
     t_hud::draw_teardown();
     t_hud::teardown();

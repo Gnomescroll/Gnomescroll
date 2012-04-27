@@ -23,21 +23,21 @@ void toggle_help_menu()
     input_state.help_menu = (!input_state.help_menu);
 }
 
-void toggle_inventory()
+void toggle_container()
 {
     input_state.inventory = (!input_state.inventory);
     if (input_state.inventory)
     {
-        t_hud::enable_inventory_hud();
+        t_hud::enable_container_hud();
         SDL_ShowCursor(1);
     }
     else
     {
-       // unset selected inventory slot on close
+       // unset selected container slot on close
         //using ClientState::playerAgent_state;
         //if (playerAgent_state.you != NULL)
             //playerAgent_state.you->status.inventory->unselect_slot();
-        t_hud::disable_inventory_hud();
+        t_hud::disable_container_hud();
     }
 }
 
@@ -297,45 +297,26 @@ void chat_mouse_down_handler(SDL_Event* event){}
 void chat_mouse_up_handler(SDL_Event* event){}
 void chat_mouse_motion_handler(SDL_Event* event){}
 
-/* Inventory / HUD */
+/* Container / HUD */
 
-void inventory_key_down_handler(SDL_Event* event)
+void container_key_down_handler(SDL_Event* event)
 {
     switch (event->key.keysym.sym)
     {
         case SDLK_e:
         case SDLK_ESCAPE:
-            toggle_inventory();
+            toggle_container();
             break;
-
-        // TEMPORARY -- TESTING ONLY -- REMOVE WHEN DONE
-        //case SDLK_j:
-            //ClientState::playerAgent_state.action.remove_selected_item_from_inventory();
-            //break;
 
         default: break;
     }
 }
 
-void inventory_key_up_handler(SDL_Event* event)
+void container_key_up_handler(SDL_Event* event)
 {
-    int x,y;
-    SDL_GetMouseState(&x, &y);
-
-    switch (event->button.button)
-    {
-        case SDL_BUTTON_LEFT:
-            t_hud::left_mouse_up(x,y);
-            break;
-        case SDL_BUTTON_RIGHT:
-            t_hud::right_mouse_up(x,y);
-            break;
-
-        default: break;
-    }
 }
 
-void inventory_mouse_down_handler(SDL_Event* event)
+void container_mouse_down_handler(SDL_Event* event)
 {
     // check intersection with any slots
 
@@ -351,22 +332,25 @@ void inventory_mouse_down_handler(SDL_Event* event)
     SDL_GetMouseState(&x, &y);
     //printf("GetMouseState x,y: %d,%d\n", x,y);
 
+    t_hud::ContainerInputEvent container_event;
+
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            t_hud::left_mouse_down(x,y);
+            container_event = t_hud::left_mouse_down(x,y);
             break;
 
         case SDL_BUTTON_RIGHT:
-            t_hud::right_mouse_down(x,y);
+            container_event = t_hud::right_mouse_down(x,y);
             break;
 
         default:
-            t_hud::null_input_event();
+            return;
     }
+    Item::process_container_hud_events(container_event);
 }
 
-void inventory_mouse_up_handler(SDL_Event* event)
+void container_mouse_up_handler(SDL_Event* event)
 {
     // check intersection with any slots
 
@@ -382,24 +366,25 @@ void inventory_mouse_up_handler(SDL_Event* event)
     SDL_GetMouseState(&x, &y);
     //printf("GetMouseState x,y: %d,%d\n", x,y);
 
+    t_hud::ContainerInputEvent container_event;
+
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            t_hud::left_mouse_up(x,y);
+            container_event = t_hud::left_mouse_up(x,y);
             break;
 
         case SDL_BUTTON_RIGHT:
-            t_hud::right_mouse_up(x,y);
+            container_event = t_hud::right_mouse_up(x,y);
             break;
 
         default:
-            t_hud::null_input_event();
-            break;
+            return;
     }
-    // notify inventory model that input state may have changed
+    Item::process_container_hud_events(container_event);
 }
 
-void inventory_mouse_motion_handler(SDL_Event* event)
+void container_mouse_motion_handler(SDL_Event* event)
 {
     //SDL_MouseMotionEvent e = event->motion;
 
@@ -412,9 +397,8 @@ void inventory_mouse_motion_handler(SDL_Event* event)
     SDL_GetMouseState(&x, &y);
     //printf("X,Y %d,%d\n", x, y);
 
-    t_hud::mouse_motion(x,y);
-
     /* Coordinates start at TOP LEFT */
+    t_hud::mouse_motion(x,y);
 }
 
 
@@ -640,7 +624,7 @@ void key_down_handler(SDL_Event* event)
     }
 
     if (input_state.inventory)
-        inventory_key_down_handler(event);
+        container_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
     else
@@ -733,7 +717,7 @@ void key_down_handler(SDL_Event* event)
                 break;
 
             case SDLK_e:
-                toggle_inventory();
+                toggle_container();
                 break;
 
             case SDLK_ESCAPE:
@@ -817,7 +801,7 @@ void key_up_handler(SDL_Event* event)
     }
 
     if (input_state.inventory)
-        inventory_key_up_handler(event);
+        container_key_up_handler(event);
     else if (input_state.chat)
         chat_key_up_handler(event);
     else
@@ -873,7 +857,7 @@ void mouse_button_down_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
     if (input_state.inventory)
-        inventory_mouse_down_handler(event);
+        container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
     else
@@ -899,7 +883,7 @@ void mouse_button_up_handler(SDL_Event* event)
     // chat doesnt affect mouse
 
     if (input_state.inventory)
-        inventory_mouse_up_handler(event);
+        container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
     else
@@ -919,7 +903,7 @@ void mouse_motion_handler(SDL_Event* event)
     if (input_state.inventory)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
-        inventory_mouse_motion_handler(event);
+        container_mouse_motion_handler(event);
     }
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_motion_handler(event);

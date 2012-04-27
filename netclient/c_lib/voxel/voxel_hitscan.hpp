@@ -3,7 +3,7 @@
 #include <entity/constants.hpp>
 #include <physics/vec3.hpp>
 
-#define VOXEL_HITSCAN_LIST_SIZE 1024
+const int VOXEL_HITSCAN_LIST_SIZE = 1024;
 
 /*
     Create list template later

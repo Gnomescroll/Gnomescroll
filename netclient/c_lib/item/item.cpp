@@ -1,6 +1,6 @@
 #include "item.hpp"
 
-namespace item
+namespace Item
 {
 
 }
