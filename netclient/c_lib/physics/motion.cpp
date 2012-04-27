@@ -1,7 +1,7 @@
 #include "motion.hpp"
 
-#include <physics/vec3.hpp>
-#include <t_map/t_map.hpp>
+#include <c_lib/physics/vec3.hpp>
+#include <c_lib/t_map/t_map.hpp>
 
 int stick_to_terrain_surface(Vec3 position)
 {   // fall/climb with terrain
@@ -62,6 +62,7 @@ void orient_to_point(Vec3 dest, Vec3 origin, float* theta, float* phi)
  *
  * returns false if position was left unchanged
  */
+#define FLOAT_ERROR_MARGIN 0.005f
 bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, float max_z_down, float max_z_up, Vec3* new_position, Vec3* new_momentum)
 {
     // attempt to move to location defined by direction * speed
@@ -86,10 +87,18 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
 
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
-    normalize_vector(&new_direction);
-    new_direction = vec3_scalar_mult(new_direction, speed);
-    *new_position = vec3_add(position, new_direction);
-    *new_momentum = new_direction;
+    float len = vec3_length_squared(new_direction);
+    if (len < FLOAT_ERROR_MARGIN*FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
+    else normalize_vector(&new_direction);
+
+    *new_momentum = vec3_scalar_mult(new_direction, speed);
+    position = vec3_add(position, *new_momentum);
+
+    new_direction.z = 0;
+    float xy_len = vec3_length_squared(new_direction);
+    if (xy_len < (speed*speed)/2) position.z = z;
+    *new_position = position;
+    
     return true;
 }
 
@@ -111,9 +120,16 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, Vec3
 
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
-    normalize_vector(&new_direction);
-    *new_momentum = vec3_scalar_mult(new_direction, speed);
-    *new_position = vec3_add(position, *new_momentum);
+    float len = vec3_length(new_direction);
+    if (len < FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
+    else normalize_vector(&new_direction);
+    new_direction = vec3_scalar_mult(new_direction, speed);
+
+    position = vec3_add(position, new_direction);
+    position.z = z;
+    *new_position = position;
+    *new_momentum = new_direction;
+
     return true;
 }
-
+#undef FLOAT_ERROR_MARGIN

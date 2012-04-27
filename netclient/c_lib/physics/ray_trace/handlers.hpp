@@ -41,6 +41,10 @@ Agent_state* lock_agent_target(
     const float range, const float acquisition_probability,
     const bool enemies=false, const bool random=false
 );
+
+Agent_state* lock_agent_target(Vec3 firing_position, Vec3* firing_direction,const float range);
+
+
 HitscanTarget shoot_at_agent(
     Vec3 source, Vec3 firing_direction, int id, ObjectType type,
     Agent_state* agent, const float range

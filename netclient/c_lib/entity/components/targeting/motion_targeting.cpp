@@ -30,7 +30,15 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
 {
-    this->lock_target(camera_position, NO_TEAM);
+    Agent_state* target;
+    target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
+    if (target == NULL)
+    {
+        this->target_type = OBJECT_NONE;
+        return;
+    }
+    this->target_type = OBJECT_AGENT;
+    this->target_id = target->id;
 }
 
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -60,9 +68,9 @@ bool MotionTargetingComponent::move_on_surface()
     // adjust position/momentum by moving along terrain surface
     Vec3 new_position;
     Vec3 new_momentum;
+    Vec3 motion_direction = vec3_init(this->target_direction.x, this->target_direction.y, 0);
     bool moved = move_along_terrain_surface(
-        physics->get_position(), this->target_direction, this->speed,
-        //position, physics->get_momentum(), this->speed,
+        physics->get_position(), motion_direction, this->speed,
         this->max_z_down, this->max_z_up,
         &new_position, &new_momentum
     );
