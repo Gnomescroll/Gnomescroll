@@ -6,6 +6,20 @@
 Interactive Blocks
 http://www.youtube.com/watch?v=yIxJVWdOCB8&feature=related
 
+
+!!!
+Noise is a mapping from Rn to R - you input an n-dimensional point with real coordinates, and it returns a real value. Currently the most common uses are for n=1, n=2, and n=3. The first is used for animation, the second for cheap texture hacks, and the third for less-cheap texture hacks. Noise over R4 is also very useful for time-varying solid textures, as I'll show later.
+
+A 3d space, created from slive of 4d perlin, that changes over time.  Constantly shifting.  Blocks are added and removed at boundries (probability of erosion at surface based upon function).  Nothing permament.  Constantly shifting.
+
+
+!!!
+Better noise functions:
+
+> Noise is band-limited - almost all of its energy (when looked at as a signal) is concentrated in a small part of the frequency spectrum. High frequencies (visually small details) and low frequencies (large shapes) contribute very little energy. Its appearance is similar to what you'd get if you took a big block of random values and blurred it (ie: convolved with a gaussian kernel). Although that would be quite expensive to compute.
+
+Use random values and vary kernel to control noise
+
 !!!
 I need a linux block 12/03/2011 12:30:45 AM
 that runs linux
