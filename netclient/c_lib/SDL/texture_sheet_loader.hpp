@@ -133,5 +133,4 @@ extern "C"
     void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index) GNOMESCROLL_API;
 
     void LUA_save_cube_texture() GNOMESCROLL_API;
-
 }

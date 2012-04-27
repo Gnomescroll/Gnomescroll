@@ -16,6 +16,7 @@
 #include "compat_gl.h"
 #include "compat_al.h"
 
+
 /* Compression */
 #include <common/compression/miniz.c>
 
@@ -144,6 +145,9 @@
 
 #include <t_map/net/t_CtoS.cpp>
 #include <t_map/net/t_StoC.cpp>
+
+
+#include <t_gen/_include.hpp>
 
 /* mechanisms */
 #include <t_mech/_include.hpp>

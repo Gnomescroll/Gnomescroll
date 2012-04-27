@@ -86,7 +86,7 @@ Object* create_pickup_sprite(ObjectType type)
         case OBJECT_LASER_REFILL:
             create_laser_refill(obj);
             break;
-
+/*
         // gemstones
         case OBJECT_GEMSTONE_MALACHITE:
             create_malachite_gemstone(obj);
@@ -109,7 +109,7 @@ Object* create_pickup_sprite(ObjectType type)
         case OBJECT_GEMSTONE_ONYX:
             create_onyx_gemstone(obj);
             break;
-
+*/
         default:
             printf("create_pickup_sprite() -- type %d not handled\n", type);
             assert(false);
