@@ -8,82 +8,91 @@ namespace t_gen
 {
 
 //xdim/ydim might be odd
-void init_gaussian_kernel(float* kernel, int dim)
+void init_gaussian_kernel(float* kernel, int xdim)
 {
 	const double k = 1.0; //normalization constant
 
 	for(int i=0; i<xdim; i++) kernel[i] = 0.0;
 
-	const float m = ((float) xdim) / 2.0;
+	const float m = (xdim-1)/2;
 
-	double tmp[dim];
+	double tmp[xdim];
 
 	double _i = 0.0;
 	for(int i=0; i < xdim; i++)
 	{
-
 		float a = (m-_i)*(m-_i);
-		tmp[i][j] = exp(-1*a+b);
+		tmp[i] = exp(-1.0*a);
 		_i += 1.0;
 	}
 
 	//for(int i=0; i < xdim; ++i) kernel[i] = 1.0;
 
-
 	double sum = 0.0;
 	for(int i=0; i < xdim; i++)
 	{
-		sum += tmp[i][j];
+		sum += tmp[i];
 	}
 
-	double average = sum / ((float) xdim*ydim);
+	//double average = sum / ((float) xdim);
 
 	for(int i=0; i < xdim; i++)
 	{
-		kernel[i] = (float) ( k*tmp[i] / average );
+		kernel[i] = (float) ( k*tmp[i] / sum  );
 	}
-
 
 	sum = 0.0;
 	for(int i=0; i < xdim; ++i)
 	{
-		sum += kernel[xdim*j + i];
+		sum += kernel[i];
 	}
-	//printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim*ydim) ));
+	printf("kernel: sum= %f average= %f \n", sum, (sum /((float) xdim) ));
 
 }
 
 void convolve(float* in, float* out, int xdim, int ydim)
 {
 	const int kdim = 5;
-	const int kCenter = (kdim-1) / 2;
+	const int kcen = (kdim-1) / 2;
 
 	float kernel[kdim];
 
 	init_gaussian_kernel( (float*) kernel, kdim);
 
-	int mm, nn;
 	int ii, jj;
 
 	for(int i=0; i < xdim; i++)
 	for(int j=0; j < ydim; j++)
 	{
-    	out[xdim*j+i] = 0.0;
-        for(int m=0; m < kRows; m++)
-		for(int n=0; n < kCols; n++)
+    	float sum = 0.0;
+		for(int n=0; n < kdim; n++)
+        {
+            ii = i + (n - kcen);
+            if( ii >= 0 && ii < xdim) // ignore input samples which are out of bound
             {
-                ii = i + (m - kCenter);
-
-
-                // ignore input samples which are out of bound
-                if( ii >= 0 && ii < xdim && jj >= 0 && jj < ydim )
-                {
-                	out[xdim*j+i] += in[xdim*jj+ii] * kernel[mm][nn];
-                }
-
+            	sum += in[xdim*j+ii] * kernel[n];
             }
         }
+        out[xdim*j+i] = sum;
 	}
+
+	for(int i=0; i < xdim; i++)
+	for(int j=0; j < ydim; j++)
+	{
+    	float sum = 0.0;
+		for(int n=0; n < kdim; n++)
+        {
+            jj = j + (n - kcen);
+            if( jj >= 0 && jj < ydim) // ignore input samples which are out of bound
+            {
+            	sum += out[xdim*jj+i] * kernel[n];
+            }
+        }
+        out[xdim*j+i] = sum;
+	}
+
+// && jj >= 0 && jj < ydim 
+
 
 }
 
@@ -113,32 +122,65 @@ void test()
     float* in = new float[xres*yres];
     float* out = new float[xres*yres];
 
+    for(int i=0; i < xres*yres; i++) in[i] = 0.0;
+    for(int i=0; i < xres*yres; i++) out[i] = 0.0;
+
     for(int i=0; i < xres; i++) 
     for(int j=0; j < yres; j++) 
     {
+    	//in[j*xres+i] = randf(); //genrand_real2();
     	in[j*xres+i] = genrand_real2();
+
+		out[j*xres+i] = 0.0;
+    	if((j+i) % 2 == 0) out[j*xres+i] = 1.0;
     }
 
-    convolve(in,out, xres,yres);
+   	convolve(in,out, xres,yres);
+
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
 
+    convolve(out,in, xres,yres);
+    convolve(in,out, xres,yres);
+
+    convolve(out,in, xres,yres);
+    convolve(in,out, xres,yres);
+
+    convolve(out,in, xres,yres);
+    convolve(in,out, xres,yres);
+
+
     char FileName[128];
-
     sprintf(FileName,"./screenshot/%d.png",  (int) 500 );
-
     char* PBUFFER = (char*) malloc(4*xres*yres);
 
+    static unsigned char gamma_correction[256];
+
+    for(int i=0; i< 256; i++)
+    {
+        float intensity = ((float) i) / 255;
+        intensity = pow(intensity, 1.0/2.2)*255;
+        gamma_correction[i] = (unsigned char)((int) intensity);
+
+        //printf("gamma = %i= %f  \n",i,  intensity);
+    }
 
     for(int i=0; i < xres; i++) 
     for(int j=0; j < yres; j++) {
     	int index = 4*(j*xres + i);
 
     	//int v = genrand_int32() % 256;
-    	int v = 255*out[j*xres+i];
-    	PBUFFER[index+0] = v;
-    	PBUFFER[index+1] = v;
-    	PBUFFER[index+2] = v;
+
+    	float _v = out[j*xres+i];
+
+    	if( _v < 0.0) _v = 0.0;
+    	if( _v > 1.0) _v = 1.0;
+    	unsigned char v = ((int) 255.0*_v );
+    	unsigned char v2 = gamma_correction[v];
+    	//if(v2 != 0 ) printf("v2= %i \n", v2);
+    	PBUFFER[index+0] = v2;
+    	PBUFFER[index+1] = v2;
+    	PBUFFER[index+2] = v2;
     	PBUFFER[index+3] = 255;
     }
     //char* PBUFFER = (char*) surface->pixels;
