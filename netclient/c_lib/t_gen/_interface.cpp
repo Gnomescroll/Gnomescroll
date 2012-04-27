@@ -99,9 +99,9 @@ void convolve(float* in, float* out, int xdim, int ydim)
 
 }
 
+#if DC_CLIENT
 void save_png(const char* filename, float*in, int xres, int yres)
 {
-#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,"./screenshot/%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -169,8 +169,8 @@ void save_png(const char* filename, float*in, int xres, int yres)
     pFile = fopen ( FileName , "wb" );
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
-#endif
 }
+#endif
 
 void test()
 {
@@ -213,10 +213,8 @@ void test()
 
 
  	save_png("001", out, xres, yres);
-
 #endif
 }
-
 
 void gen_map()
 {
@@ -263,6 +261,7 @@ void gen_map()
 #endif
 
 #if DC_SERVER
+
 	int max_height_diff = 64;
 	int baseline = 64;
 
@@ -272,7 +271,6 @@ void gen_map()
     {
 		int z = baseline + out[xres*j+i]*max_height_diff;
 		t_map::set(i,j,z, value);
-
 	}
 
 #endif
