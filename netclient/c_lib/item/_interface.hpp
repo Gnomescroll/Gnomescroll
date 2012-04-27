@@ -62,7 +62,7 @@ namespace item
 const int NO_AGENT = 0xffff;
 extern int AgentInventoryList[256];
 extern int AgentToolbeltList[256];
-extern int AgentNaniteUIList[256];
+extern int AgentNaniteList[256];
 
 void create_agent_inventory(int agent_id, int client_id);
 void delete_agent_inventory(int agent_id);

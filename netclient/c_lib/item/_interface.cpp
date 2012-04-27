@@ -20,7 +20,7 @@ ItemList* item_list = NULL;
 
 int AgentInventoryList[256];
 int AgentToolbeltList[256];
-int AgentNaniteUIList[256];
+int AgentNaniteList[256];
 
 void init()
 {
@@ -29,7 +29,7 @@ void init()
 
     for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
     for(int i=0; i<256; i++) AgentToolbeltList[i] = NO_AGENT;
-    for(int i=0; i<256; i++) AgentNaniteUIList[i] = NO_AGENT;
+    for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;
 }
 
 void teardown()
