@@ -21,9 +21,12 @@ void init()
     item_list = new ItemList;
 
     #if DC_SERVER
-    for(int i=0; i<256; i++) AgentInventoryList[i] = NO_AGENT;
-    for(int i=0; i<256; i++) AgentToolbeltList[i] = NO_AGENT;
-    for(int i=0; i<256; i++) AgentNaniteList[i] = NO_AGENT;
+    agent_inventory_list = (int*)malloc(AGENTS_MAX, sizeof(int));
+    agent_toolbelt_list = (int*)malloc(AGENTS_MAX, sizeof(int));
+    agent_nanite_list = (int*)malloc(AGENTS_MAX, sizeof(int));
+    for (int i=0; i<256; i++) agent_inventory_list[i] = NO_AGENT;
+    for (int i=0; i<256; i++) agent_toolbelt_list[i] = NO_AGENT;
+    for (int i=0; i<256; i++) agent_nanite_list[i] = NO_AGENT;
     #endif
 }
 
@@ -31,6 +34,11 @@ void teardown()
 {
     if (item_container_list != NULL) delete item_container_list;
     if (item_list != NULL) delete item_list;
+
+    if (agent_inventory_list != NULL) free(agent_inventory_list);
+    if (agent_toolbelt_list != NULL) free(agent_toolbelt_list);
+    if (agent_nanite_list != NULL) free(agent_nanite_list);
+    
 }
 
 }
@@ -80,7 +88,7 @@ void check_item_pickups()
         const static float pick_up_distance = 0.5;
         Agent_state* agent = nearest_agent_in_range(item_particle->verlet.position, pick_up_distance);
 
-        if(agent == NULL) continue;
+        if (agent == NULL) continue;
 
         printf("agent %i picked up item %i \n", agent->id, item_particle->id);
 
@@ -95,19 +103,19 @@ void check_item_pickups()
         /*
             Put item in agent inventory
         */
-        assert(AgentInventoryList[agent->id] != NO_AGENT);
+        assert(agent_inventory_list[agent->id] != NO_AGENT);
 
-        int inventory_id = AgentInventoryList[agent->id];
+        int inventory_id = agent_inventory_list[agent->id];
         ItemContainer* ic = item_container_list->get(inventory_id);
         
-        if(ic == 0)
+        if (ic == 0)
         {
             printf("item::check_item_pickups, item container null \n");
             return;
         }
 
         //int slot = ic->get_empty_slot();
-        if( ic->is_full() )
+        if ( ic->is_full() )
         {
             printf("item::check_item_pickups, Agent inventory full: item deleted, fix \n");
             return;

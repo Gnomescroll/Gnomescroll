@@ -25,10 +25,10 @@ class ItemContainer* player_nanite = NULL;
 //Server
 #if DC_SERVER
 
-int AgentInventoryList[256];
-int AgentToolbeltList[256];
-int AgentNaniteList[256];
-int AgentItemInHand[256];
+int* agent_inventory_list = NULL;
+int* agent_toolbelt_list = NULL;
+int* agent_nanite_list = NULL;
+int* agent_hand_list = NULL;
 
 #endif
 

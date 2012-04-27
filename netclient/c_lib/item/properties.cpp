@@ -9,8 +9,8 @@ int sprite_array[MAX_ITEMS]; //maps item id to sprite
 
 int id_to_sprite(int id)
 {
-	if( id >= MAX_ITEMS || id < 0) assert(false);
-	return sprite_array[id];
+    assert(id < MAX_ITEMS && id > 0);
+    return sprite_array[id];
 }
 /*
 Names
@@ -24,8 +24,8 @@ int item_name_index[MAX_ITEMS];
 /*
 struct cubeProperties* get_cube(int id)
 {
-    if(id < 0) printf("get_cube: error id less than zero \n");
-    if(id >= MAX_ITEMS ) printf("get_cube: error id exceeds MAX_ITEMS \n");
+    if (id < 0) printf("get_cube: error id less than zero \n");
+    if (id >= MAX_ITEMS ) printf("get_cube: error id exceeds MAX_ITEMS \n");
     return &cube_list[id];
 }
 */
@@ -34,15 +34,15 @@ void set_item_name(int id, char* name, int length)
 {
     static int index = 0;
 
-    if(length >= 64)
+    if (length >= 64)
     {
         printf("Error: %s, name length greater than 63 characters \n", __func__ );
         return;
     }
 
-    if(id < 0 || id >= MAX_ITEMS)
+    if (id < 0 || id >= MAX_ITEMS)
     {
-		printf("Error: out of bounds, %s \n", __func__);
+        printf("Error: out of bounds, %s \n", __func__);
         return;
     }
 
@@ -56,7 +56,7 @@ void set_item_name(int id, char* name, int length)
 
 char* get_item_name(int id)
 {
-    if(id < 0 || id >= MAX_ITEMS)
+    if (id < 0 || id >= MAX_ITEMS)
     {
         printf("Error:  %s, item id error \n",  __func__);
         return NULL;

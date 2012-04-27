@@ -21,7 +21,7 @@ void init_texture()
     //s = create_surface_from_file((char*) "media/sprites/i00.png");    // this is 8x8
     s = create_surface_from_file((char*) "media/sprites/i01_256.png");      // this is 16x16
 
-    if(s == NULL)
+    if (s == NULL)
     {
         printf("t_hud: ItemSheetTexture spritesheet load error\n");
         assert(s != NULL);
@@ -44,7 +44,7 @@ void init_texture()
     // Texture 2
     s = create_surface_from_file((char*) "media/sprites/inventory_slots.png");
     
-    if(s == NULL)
+    if (s == NULL)
     {
         printf("t_hud: ItemGridTileTexture spritesheet load error\n");
         assert(s != NULL);

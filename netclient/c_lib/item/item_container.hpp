@@ -34,33 +34,41 @@ class ItemContainer
 
         bool is_full()
         {
-            assert(this->slot_count <= this->slot_max);
-            assert(this->slot_count >= 0);
+            assert(this->slot_count <= this->slot_max && this->slot_count >= 0);
             return (this->slot_count >= this->slot_max);
         }
 
-        bool is_valid_grid_position(int slot)
+        bool is_valid_slot(int slot)
         {
             return (slot >= 0 && slot < this->slot_max);
         }
 
         int get_empty_slot()
         {
-            for(int i=0; i<this->slot_max; i++)
+            for (int i=0; i<this->slot_max; i++)
                 if (this->slot[i] == EMPTY_SLOT)
                     return i;
             return NULL_SLOT;
         }
 
+        int get_item(int slot)
+        {
+            assert(this->is_valid_slot(slot));
+            return this->slot[slot];
+        }
+
         void insert_item(int item_id, int slot)
         {
+            assert(this->is_valid_slot(slot));
             this->slot[slot] = item_id;
             this->slot_count++;
         }
 
         void remove_item(int slot)
         {
+            assert(this->is_valid_slot(slot));
             this->slot[slot] = EMPTY_SLOT;
+            this->slot_count--;
         }
 
         /* initializers */
@@ -72,7 +80,7 @@ class ItemContainer
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
             this->slot = new ItemID[this->slot_max];
-            for(int i=0; i<this->slot_max; this->slot[i++] = EMPTY_SLOT);
+            for (int i=0; i<this->slot_max; this->slot[i++] = EMPTY_SLOT);
         }
 
         ~ItemContainer()

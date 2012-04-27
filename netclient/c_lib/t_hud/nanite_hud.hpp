@@ -78,8 +78,8 @@ void AgentNaniteUI::draw()
 
     glBegin(GL_QUADS);
     glColor4ub(50, 50, 50, 128);
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + j*(inc1+slot_size));
@@ -92,8 +92,8 @@ void AgentNaniteUI::draw()
 
     glColor4ub(50, 50, 50, 64);
 
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
     
         float x = yoff + border + i*(inc1+slot_size);
@@ -116,8 +116,8 @@ void AgentNaniteUI::draw()
 
     glBegin(GL_QUADS);
 
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
         if (contents[slot].item_id == EMPTY_SLOT) continue;
@@ -152,7 +152,7 @@ void AgentNaniteUI::draw()
     glDisable(GL_TEXTURE_2D);
 
     // draw border highlight
-    if(this->selected_slot != NULL_SLOT)
+    if (this->selected_slot != NULL_SLOT)
     {   
         int slotx = this->selected_slot % xdim;
         int sloty = ydim - (this->selected_slot / xdim);
