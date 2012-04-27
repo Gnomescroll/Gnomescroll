@@ -151,8 +151,8 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 class ItemParticle* create_item_particle(
     int item_id, 
     float x, float y, float z, 
-    float vx, float vy, float vz)
-{
+    float vx, float vy, float vz
+) {
     ItemParticle* ip = item_particle_list->create();
     if (ip == NULL) return NULL; 
     ip->init(x,y,z,vx,vy,vz);
@@ -172,6 +172,10 @@ class ItemParticle* create_item_particle(
     return ip;
 }
 
+void destroy(int particle_id)
+{
+    item_particle_list->destroy(particle_id);
+}
 
 
 }

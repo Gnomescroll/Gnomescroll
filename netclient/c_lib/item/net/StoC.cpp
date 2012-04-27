@@ -53,6 +53,22 @@ inline void assign_item_container_StoC::handle()
 
 }
 
+// Container item
+
+inline void insert_item_in_container_StoC::handle()
+{
+    ItemContainer* ic = item_container_list->get(container_id);
+    ASSERT_NOT_NULL(ic);
+    ic->insert_item(slot, (ItemID)item_id);
+}
+
+inline void remove_item_from_container_StoC::handle()
+{
+    ItemContainer* ic = item_container_list->get(container_id);
+    ASSERT_NOT_NULL(ic);
+    ic->remove_item(slot);
+}
+
 // Action
 
 inline void container_action_failed_StoC::handle()
@@ -76,6 +92,9 @@ inline void item_create_StoC::handle() {}
 inline void create_item_container_StoC::handle() {}
 inline void delete_item_container_StoC::handle() {}
 inline void assign_item_container_StoC::handle() {}
+
+inline void insert_item_in_container_StoC::handle() {}
+inline void remove_item_from_container_StoC::handle() {}
 
 inline void container_action_failed_StoC::handle() {}
 

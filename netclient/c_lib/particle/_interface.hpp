@@ -28,6 +28,8 @@ class ItemParticle* create_item_particle(
     float vx, float vy, float vz
 );
 
+void destroy(int particle_id);
+
 #if DC_CLIENT
 class Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float vz);
 #endif

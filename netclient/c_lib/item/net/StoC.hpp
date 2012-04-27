@@ -83,6 +83,37 @@ class assign_item_container_StoC: public FixedSizeReliableNetPacketToClient<assi
         inline void handle();
 };
 
+// Container Item
+class insert_item_in_container_StoC: public FixedSizeReliableNetPacketToClient<insert_item_in_container_StoC>
+{
+    public:
+        uint16_t container_id;
+        uint16_t item_id;
+        uint8_t slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u16(&item_id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class remove_item_from_container_StoC: public FixedSizeReliableNetPacketToClient<remove_item_from_container_StoC>
+{
+    public:
+        uint16_t container_id;
+        uint8_t slot;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&container_id, buff, buff_n, pack);
+            pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
 
 // Container Action
 
