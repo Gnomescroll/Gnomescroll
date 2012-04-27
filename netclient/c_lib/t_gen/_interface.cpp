@@ -1,7 +1,7 @@
 #include "_interface.hpp"
 
 #include <t_gen/twister.hpp>
-#include <t_map/t_map.hpp>
+//#include <t_map/t_map.hpp>
 
 #if DC_CLIENT
 #include <SDL/texture_loader.hpp>
@@ -99,9 +99,10 @@ void convolve(float* in, float* out, int xdim, int ydim)
 
 }
 
-#if DC_CLIENT
+
 void save_png(const char* filename, float*in, int xres, int yres)
 {
+#if DC_CLIENT
     char FileName[128];
     sprintf(FileName,"./screenshot/%s.png", (char*) filename);
     char* PBUFFER = (char*) malloc(4*xres*yres);
@@ -169,17 +170,17 @@ void save_png(const char* filename, float*in, int xres, int yres)
     pFile = fopen ( FileName , "wb" );
     fwrite (PNG_IMAGE , 1 , png_size, pFile );
     fclose (pFile);
-}
 #endif
+}
+
 
 void test()
 {
-#if DC_CLIENT
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
     init_by_array(init, length);
 
-    int xres = 256;
-    int yres = 256;
+    int xres = 512;
+    int yres = 512;
 
     float* in = new float[xres*yres];
     float* out = new float[xres*yres];
@@ -213,7 +214,7 @@ void test()
 
 
  	save_png("001", out, xres, yres);
-#endif
+
 }
 
 void gen_map()
@@ -243,7 +244,7 @@ void gen_map()
     }
 
    	convolve(in,out, xres,yres);
-
+/*
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
 
@@ -255,10 +256,9 @@ void gen_map()
 
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
-
-#if DC_CLIENT
+*/
 	save_png("5001", out, xres, yres);
-#endif
+
 
 #if DC_SERVER
 
@@ -274,6 +274,7 @@ void gen_map()
 	}
 
 #endif
+
 }
 
 }
