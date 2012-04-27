@@ -241,6 +241,13 @@ float vec3_length(struct Vec3 v)
     return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
+float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
+
+float vec3_length_squared(struct Vec3 v) 
+{
+    return v.x*v.x + v.y*v.y + v.z*v.z;
+}
+
 static float vec3_distance(struct Vec3 v) __attribute((always_inline));
 float vec3_distance(struct Vec3 v1, struct Vec3 v2)
 {

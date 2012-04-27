@@ -87,15 +87,18 @@ bool move_along_terrain_surface(Vec3 position, Vec3 direction, float speed, floa
 
     move_to.z = z;
     Vec3 new_direction = vec3_sub(move_to, position);
-    float len = vec3_length(new_direction);
-    if (len < FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
+    float len = vec3_length_squared(new_direction);
+    if (len < FLOAT_ERROR_MARGIN*FLOAT_ERROR_MARGIN) new_direction = vec3_init(0,0,0);
     else normalize_vector(&new_direction);
-    new_direction = vec3_scalar_mult(new_direction, speed);
 
-    position = vec3_add(position, new_direction);
-    position.z = z;
+    *new_momentum = vec3_scalar_mult(new_direction, speed);
+    position = vec3_add(position, *new_momentum);
+
+    new_direction.z = 0;
+    float xy_len = vec3_length_squared(new_direction);
+    if (xy_len < (speed*speed)/2) position.z = z;
     *new_position = position;
-    *new_momentum = new_direction;
+    
     return true;
 }
 
