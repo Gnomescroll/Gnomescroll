@@ -132,9 +132,9 @@ inline void swap_between_inventory_StoC::handle()
 
 inline void item_create_StoC::handle() {}
 
-inline void assign_agent_inventory_StoC::handle() {}
-inline void assign_agent_toolbelt_StoC::handle() {}
-inline void assign_agent_nanite_StoC::handle() {}
+inline void create_item_container_StoC::handle() {}
+inline void delete_item_container_StoC::handle() {}
+inline void assign_item_container_StoC::handle() {}
 
 inline void swap_within_inventory_StoC::handle() {}
 inline void swap_between_inventory_StoC::handle() {}

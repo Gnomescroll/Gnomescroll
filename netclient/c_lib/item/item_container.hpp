@@ -82,8 +82,8 @@ class ItemContainer
         void net_create(int client_id)
         {
             class create_item_container_StoC p;
-            p.inventory_id = this->id;
-            p.inventory_type = this->container_type;
+            p.container_id = this->id;
+            p.container_type = this->container_type;
             p.agent_id = client_id;
             p.sendToClient(client_id);
         }
@@ -91,8 +91,8 @@ class ItemContainer
         void net_delete(int client_id)
         {
             class delete_item_container_StoC p;
-            p.inventory_id = this->id;
-            p.inventory_type = this->container_type;
+            p.container_id = this->id;
+            p.container_type = this->container_type;
             p.agent_id = client_id;
             p.sendToClient(client_id);
         }
@@ -101,8 +101,8 @@ class ItemContainer
         void net_assign(int client_id)
         {
             class assign_item_container_StoC p;
-            p.inventory_id = this->id;
-            p.inventory_type = this->container_type;
+            p.container_id = this->id;
+            p.container_type = this->container_type;
             p.agent_id = client_id;
             p.sendToClient(client_id);
         }
