@@ -40,7 +40,7 @@ inline void item_create_StoC::handle()
 inline void create_item_container_StoC::handle()
 {
     ItemContainer* ic = item_container_list->create(container_id);
-    ic->init_container( (ItemContainerType) container_type);
+    init_container(ic, (ItemContainerType)container_type);
 }
 
 inline void delete_item_container_StoC::handle()

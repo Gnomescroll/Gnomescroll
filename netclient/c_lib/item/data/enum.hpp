@@ -3,6 +3,7 @@
 
 typedef enum
 {
+    CONTAINER_TYPE_NONE,
     AGENT_INVENTORY,
     AGENT_TOOLBELT,
     AGENT_NANITE,
@@ -12,7 +13,7 @@ typedef enum
 
 enum ItemType
 {
-	Resource,
-	HitscanWeapon,
-	MiningLaser
+    Resource,
+    HitscanWeapon,
+    MiningLaser
 };
