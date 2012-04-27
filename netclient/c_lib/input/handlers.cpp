@@ -338,16 +338,17 @@ void container_mouse_down_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_down(x,y);
+            Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
             break;
 
         case SDL_BUTTON_RIGHT:
             container_event = t_hud::right_mouse_down(x,y);
+            Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
             break;
 
         default:
             return;
     }
-    Item::process_container_hud_events(container_event);
 }
 
 void container_mouse_up_handler(SDL_Event* event)
@@ -372,16 +373,17 @@ void container_mouse_up_handler(SDL_Event* event)
     {
         case SDL_BUTTON_LEFT:
             container_event = t_hud::left_mouse_up(x,y);
+            Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
             break;
 
         case SDL_BUTTON_RIGHT:
             container_event = t_hud::right_mouse_up(x,y);
+            Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
             break;
 
         default:
             return;
     }
-    Item::process_container_hud_events(container_event);
 }
 
 void container_mouse_motion_handler(SDL_Event* event)

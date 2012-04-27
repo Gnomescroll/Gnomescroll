@@ -71,7 +71,7 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
 }
 
 
-static ContainerInputEvent process_event(int x, int y)
+static ContainerInputEvent get_container_hud_ui_event(int x, int y)
 {
     // detect click
     int slot;
@@ -87,7 +87,6 @@ static ContainerInputEvent process_event(int x, int y)
 }
 
 ContainerInputEvent null_event = {
-    CONTAINER_MOUSE_CLICK_NONE,
     -1,         // null container id
     NULL_SLOT   // null slot
 };
@@ -99,9 +98,7 @@ ContainerInputEvent left_mouse_down(int x, int y)
 
 ContainerInputEvent left_mouse_up(int x, int y)
 {
-    ContainerInputEvent event = process_event(x,y);
-    event.button = CONTAINER_MOUSE_CLICK_NONE;
-    return event;
+    return get_container_hud_ui_event(x,y);
 }
 
 ContainerInputEvent right_mouse_down(int x, int y)
@@ -111,16 +108,13 @@ ContainerInputEvent right_mouse_down(int x, int y)
 
 ContainerInputEvent right_mouse_up(int x, int y)
 {
-    ContainerInputEvent event = process_event(x,y);
-    event.button = CONTAINER_MOUSE_CLICK_RIGHT;    
-    return event;
+    return get_container_hud_ui_event(x,y);
 }
 
 ContainerInputEvent mouse_motion(int x, int y)
 {
     mouse_x = x;
     mouse_y = y;
-
     return null_event;
 }
 

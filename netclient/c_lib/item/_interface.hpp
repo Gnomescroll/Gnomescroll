@@ -19,7 +19,8 @@ CLIENT
 namespace Item
 {
 
-
+void mouse_right_click_handler(int id, int slot);
+void mouse_left_click_handler(int id, int slot);
 
 }
 

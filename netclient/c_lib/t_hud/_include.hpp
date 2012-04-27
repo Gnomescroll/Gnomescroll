@@ -1,8 +1,6 @@
 
 #include <t_hud/constants.hpp>
 
-#include <t_hud/event.cpp>
-
 #include <t_hud/texture.cpp>
 
 #include <t_hud/ui_element.cpp>

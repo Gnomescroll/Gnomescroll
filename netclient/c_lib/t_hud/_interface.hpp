@@ -3,16 +3,8 @@
 namespace t_hud
 {
 
-typedef enum
-{
-    CONTAINER_MOUSE_CLICK_NONE,
-    CONTAINER_MOUSE_CLICK_LEFT,
-    CONTAINER_MOUSE_CLICK_RIGHT,
-} ContainerInputEventButton;
-
 typedef struct
 {
-    ContainerInputEventButton button;
     int container_id;
     int slot;
 } ContainerInputEvent;

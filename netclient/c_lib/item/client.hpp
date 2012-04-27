@@ -215,22 +215,6 @@ void mouse_right_click_handler(int id, int slot)
         
 }
 
-void process_container_hud_events(t_hud::ContainerInputEvent event)
-{
-    switch (event.button)
-    {
-        case t_hud::CONTAINER_MOUSE_CLICK_LEFT:
-            mouse_left_click_handler(event.container_id, event.slot);
-            break;
-        case t_hud::CONTAINER_MOUSE_CLICK_RIGHT:
-            mouse_right_click_handler(event.container_id, event.slot);
-            break;
-        default: break;
-    }
-    #undef event
-}
-
-
 }
 
 #endif
