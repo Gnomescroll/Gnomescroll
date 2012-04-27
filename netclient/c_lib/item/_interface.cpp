@@ -16,27 +16,27 @@ namespace Item
 void init()
 {
     item_container_list = new ItemContainerList;
-    item_list = new ItemList;
+    item_list           = new ItemList;
 
     #if DC_SERVER
     agent_inventory_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
     for (int i=0; i<AGENT_MAX; i++) agent_inventory_list[i] = NO_AGENT;
-    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list[i]  = NO_AGENT;
-    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list[i]    = NO_AGENT;
+    for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NO_AGENT;
+    for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NO_AGENT;
     #endif
 }
 
 void teardown()
 {
     if (item_container_list != NULL) delete item_container_list;
-    if (item_list != NULL) delete item_list;
+    if (item_list           != NULL) delete item_list;
 
     #if DC_SERVER
     if (agent_inventory_list != NULL) free(agent_inventory_list);
-    if (agent_toolbelt_list != NULL) free(agent_toolbelt_list);
-    if (agent_nanite_list != NULL) free(agent_nanite_list);
+    if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
+    if (agent_nanite_list    != NULL) free(agent_nanite_list);
     #endif
 }
 
@@ -45,6 +45,11 @@ ItemContainer* get_container(int id)
 {
     assert(item_container_list != NULL);
     return item_container_list->get(id);
+}
+
+Item* get_item(int id)
+{
+    return item_list->get(id);
 }
 
 }

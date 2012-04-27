@@ -37,7 +37,7 @@ namespace Item
 
 const int ITEM_LIST_MAX = 1024;
 
-class ItemList: public Object_list<ItemContainer, ITEM_LIST_MAX>
+class ItemList: public Object_list<Item, ITEM_LIST_MAX>
 {
     private:
         const char* name() { return "Item"; }
