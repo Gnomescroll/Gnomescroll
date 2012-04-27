@@ -107,8 +107,8 @@ void AgentInventoryUI::draw()
 
     glBegin(GL_QUADS);
     glColor4ub(50, 50, 50, 128);
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + j*(inc1+slot_size));
@@ -121,8 +121,8 @@ void AgentInventoryUI::draw()
 
     glColor4ub(50, 50, 50, 64);
 
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
     
         float x = xoff + border + i*(inc1+slot_size);
@@ -172,8 +172,8 @@ void AgentInventoryUI::draw()
     if (active_inventory != NULL && this->inventory_id == active_inventory->inventory_id)
         skip_slot = active_slot;
 
-    for(int i=0; i<xdim; i++)
-    for(int j=0; j<ydim; j++)
+    for (int i=0; i<xdim; i++)
+    for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
         if (slot == skip_slot) continue;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace item
+namespace Item
 {
 
 // Common
@@ -24,10 +24,10 @@ extern class ItemContainer* player_nanite;
 // Server
 #if DC_SERVER
 
-extern int AgentInventoryList[256];
-extern int AgentToolbeltList[256];
-extern int AgentNaniteList[256];
-extern int AgentItemInHand[256];
+extern int* agent_inventory_list;
+extern int* agent_toolbelt_list;
+extern int* agent_nanite_list;
+extern int* agent_hand_list;
 
 #endif
 

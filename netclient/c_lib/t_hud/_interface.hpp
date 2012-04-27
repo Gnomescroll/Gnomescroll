@@ -3,6 +3,12 @@
 namespace t_hud
 {
 
+typedef struct
+{
+    int container_id;
+    int slot;
+} ContainerInputEvent;
+
 // UI state
 extern int active_slot;
 extern class UIElement* active_inventory;
@@ -38,14 +44,12 @@ void disable_inventory_hud();
 //void set_mouse_position(int x, int y);  // why?
 //for dragging
 
-void mouse_motion(int x, int y);
-
-void left_mouse_down(int x, int y);
-void left_mouse_up(int x, int y);
-void right_mouse_down(int x, int y);
-void right_mouse_up(int x, int y);
-
-void null_input_event();
+ContainerInputEvent left_mouse_down(int x, int y);
+ContainerInputEvent left_mouse_up(int x, int y);
+ContainerInputEvent right_mouse_down(int x, int y);
+ContainerInputEvent right_mouse_up(int x, int y);
+ContainerInputEvent mouse_motion(int x, int y);
+ContainerInputEvent null_input_event();
 
 void network_inventory_assignment(ObjectType type, int id);
 

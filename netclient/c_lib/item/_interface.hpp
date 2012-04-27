@@ -2,11 +2,12 @@
 
 
 
-namespace item
+namespace Item
 {
 
 void init();
 void teardown();
+class ItemContainer* get_container(int id);
 
 }
 
@@ -15,10 +16,11 @@ CLIENT
 */
 #if DC_CLIENT
 
-namespace item
+namespace Item
 {
 
-
+void mouse_right_click_handler(int id, int slot);
+void mouse_left_click_handler(int id, int slot);
 
 }
 
@@ -30,9 +32,9 @@ namespace item
 SERVER
 */
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
-namespace item
+namespace Item
 {
 
 void check_item_pickups();

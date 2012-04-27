@@ -8,6 +8,7 @@
 
 #include <entity/objects/pickup_sprite.cpp>
 
+/*
 #include <entity/objects/gemstones/malachite.cpp>
 #include <entity/objects/gemstones/ruby.cpp>
 #include <entity/objects/gemstones/turquoise.cpp>
@@ -23,6 +24,7 @@
 #include <entity/objects/block_drops/medium_rock.cpp>
 #include <entity/objects/block_drops/hard_rock.cpp>
 #include <entity/objects/block_drops/infected_rock.cpp>
+*/
 
 #include <entity/objects/fabs/spawner.cpp>
 #include <entity/objects/fabs/turret.cpp>

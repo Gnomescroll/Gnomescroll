@@ -11,7 +11,7 @@
 #endif
 
 
-namespace item
+namespace Item
 {
 
 
@@ -40,7 +40,7 @@ inline void item_create_StoC::handle()
 inline void create_item_container_StoC::handle()
 {
     ItemContainer* ic = item_container_list->create(container_id);
-    ic->init_container( (ItemContainerType) container_type);
+    init_container(ic, (ItemContainerType)container_type);
 }
 
 inline void delete_item_container_StoC::handle()
@@ -59,16 +59,16 @@ inline void assign_item_container_StoC::handle()
     switch (type)
     {
         case AGENT_INVENTORY:
-            item::player_inventory_id = container_id;
-            item::player_inventory = ic;
+            player_inventory_id = container_id;
+            player_inventory = ic;
             break;
         case AGENT_TOOLBELT:
-            item::player_toolbelt_id = container_id;
-            item::player_toolbelt = ic;
+            player_toolbelt_id = container_id;
+            player_toolbelt = ic;
             break;
         case AGENT_NANITE:
-            item::player_nanite_id = container_id;
-            item::player_nanite = ic;
+            player_nanite_id = container_id;
+            player_nanite = ic;
             break;
         default:
             assert(false);

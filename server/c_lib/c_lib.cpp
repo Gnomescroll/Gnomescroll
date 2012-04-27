@@ -153,7 +153,7 @@ int init_c_lib()
     t_map::init_t_map();
     lua_load_block_dat(); /* Load Block Dat */
 
-    item::init();
+    Item::init();
 
     ServerState::init();
     Particle::init_particles();
@@ -166,7 +166,7 @@ void close_c_lib()
     printf("Server closing...\n");
 
     t_map::end_t_map();
-    item::teardown();
+    Item::teardown();
 
     teardown_chat_server();
 
