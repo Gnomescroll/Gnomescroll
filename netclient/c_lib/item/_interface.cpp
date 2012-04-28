@@ -22,9 +22,11 @@ void init()
     agent_inventory_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list      = (int*)malloc(AGENT_MAX * sizeof(int));
     for (int i=0; i<AGENT_MAX; i++) agent_inventory_list[i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_hand_list     [i] = NULL_ITEM;
     #endif
 }
 
@@ -37,6 +39,7 @@ void teardown()
     if (agent_inventory_list != NULL) free(agent_inventory_list);
     if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list    != NULL) free(agent_nanite_list);
+    if (agent_hand_list      != NULL) free(agent_hand_list);
     #endif
 }
 

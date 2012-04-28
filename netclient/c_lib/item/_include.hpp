@@ -16,21 +16,12 @@
 #include <item/_interface.cpp>
 
 
-/*
-    Client
-*/
+// Client
 #if DC_CLIENT
-
 #include <item/client.cpp>
-
 #endif
 
-/*
-    Server
-*/
-
+// Server
 #if DC_SERVER
-
 #include <item/server.cpp>
-
 #endif

@@ -44,6 +44,7 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
     ItemID hand_item = player_hand;
     #endif
     #if DC_SERVER
+    assert(agent_hand_list != NULL);
     ItemID hand_item = agent_hand_list[client_id];
     #endif
 
@@ -96,6 +97,10 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
             // do stack stuff
         }
     }
+
+    #if DC_SERVER
+    agent_hand_list[client_id] = hand_item;
+    #endif
 
     // send packet
     return something_happened;
