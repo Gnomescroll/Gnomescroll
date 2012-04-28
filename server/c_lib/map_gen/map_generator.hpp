@@ -86,13 +86,7 @@ class Generator
         this->repeat_z = z;
     }
 
-    void size(int x, int y, int z)
-    {
-        this->x = x;
-        this->y = y;
-        this->z = z;
-    }
-
+    void size(int x, int y, int z);
     void max_size() // use largest size available
     {
         this->x = map_dim.x;
