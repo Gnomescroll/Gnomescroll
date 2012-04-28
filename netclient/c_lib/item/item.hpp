@@ -41,6 +41,16 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
     public:
         ItemList() { print_list((char*)this->name(), this); }
 
+        #if DC_CLIENT
+        Item* create()
+        {
+            printf("must create item with id\n");
+            assert(false);
+            return NULL;
+        }
+        #endif
+
+        #if DC_SERVER
         Item* create_type(int item_type)
         {
             Item* item = this->create();
@@ -48,10 +58,11 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             item->type = item_type;
             return item;
         }
+        #endif
         
         Item* create_type(int item_type, int item_id)
         {
-            Item* item = this->create(item_id);
+            Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->type = item_type;
             return item;

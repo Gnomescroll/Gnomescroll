@@ -324,12 +324,32 @@ Agent_state* nearest_agent_in_range(const Vec3 position, const float radius)
     while (i < n)
     {   // skip all viewing agents
         agent = agent_list->filtered_objects[i];
-        if (agent != NULL && agent->status.team != NO_TEAM) break;
+        assert(agent != NULL);
+        if (agent->status.team != NO_TEAM) break;
         i++;
     }
     if (i >= n) agent = NULL;
     return agent;
 }
+
+Agent_state* nearest_living_agent_in_range(const Vec3 position, const float radius)
+{
+    using STATE::agent_list;
+    int n = agent_list->objects_within_sphere(position.x, position.y, position.z, radius);
+    if (n <= 0) return NULL;
+    Agent_state* agent = NULL;
+    int i=0;
+    while (i < n)
+    {   // skip all viewing agents
+        agent = agent_list->filtered_objects[i];
+        assert(agent != NULL);
+        if (!agent->status.dead && agent->status.team != NO_TEAM) break;
+        i++;
+    }
+    if (i >= n) agent = NULL;
+    return agent;
+}
+
 
 Agent_state* random_agent_in_range(const Vec3 position, const float radius)
 {

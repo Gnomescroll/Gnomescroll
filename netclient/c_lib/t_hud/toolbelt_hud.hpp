@@ -69,7 +69,6 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
 
 void AgentToolbeltUI::draw()
 {
-#if 0
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -100,7 +99,7 @@ void AgentToolbeltUI::draw()
 //#endif
 
     glBegin(GL_QUADS);
-    glColor4ub(50, 50, 50, 128);
+    glColor4ub(80, 80, 80, 128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -113,7 +112,7 @@ void AgentToolbeltUI::draw()
         glVertex2f(x-inc2, y-inc2);
     }
 
-    glColor4ub(50, 50, 50, 64);
+    glColor4ub(80, 80, 80, 128);
 
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
@@ -131,10 +130,10 @@ void AgentToolbeltUI::draw()
     // draw hover highlight
     glColor4ub(160, 160, 160, 128 + 64);
     int hover_slot = NULL_SLOT;
-    if (active_inventory != NULL)
+    if (active_container != NULL)
         hover_slot = this->get_slot_at(mouse_x, mouse_y);
 
-    bool different_inventory = active_inventory == NULL || active_inventory->inventory_id != this->inventory_id;
+    bool different_inventory = active_container == NULL || active_container->container_id != this->container_id;
     bool different_slot = different_inventory || hover_slot != active_slot;
 
     if (different_slot && hover_slot != NULL_SLOT)
@@ -157,13 +156,13 @@ void AgentToolbeltUI::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
 
-    InventorySlot* contents = Items::get_inventory_contents(this->inventory_id);
+    ItemID* contents = Item::get_container_contents(this->container_id);
     if (contents == NULL) return;
 
     glBegin(GL_QUADS);
 
     int skip_slot = NULL_SLOT;
-    if (active_inventory != NULL && this->inventory_id == active_inventory->inventory_id)
+    if (active_container != NULL && this->container_id == active_container->container_id)
         skip_slot = active_slot;
 
     for (int i=0; i<xdim; i++)
@@ -171,9 +170,8 @@ void AgentToolbeltUI::draw()
     {
         int slot = j * xdim + i;
         if (slot == skip_slot) continue;
-        if (contents[slot].item_id == EMPTY_SLOT) continue;
-        int tex_id = contents[slot].sprite_index;
-
+        if (contents[slot] == NULL_ITEM) continue;
+        int tex_id = Item::get_sprite_index(contents[slot]);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
@@ -204,8 +202,9 @@ void AgentToolbeltUI::draw()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
 
+    glDisable(GL_TEXTURE_2D);
+    
     // draw border highlight
     if (this->selected_slot != NULL_SLOT)
     {   
@@ -240,40 +239,36 @@ void AgentToolbeltUI::draw()
 
     glColor4ub(255, 255, 255, 255);
 
-
-
-
     /*
      * Draw stack numbers
      */
 
-    HudFont::start_font_draw();
-    const int font_size = 12;
-    HudFont::set_properties(font_size);
-    HudFont::set_texture();
+    //HudFont::start_font_draw();
+    //const int font_size = 12;
+    //HudFont::set_properties(font_size);
+    //HudFont::set_texture();
 
-    HudText::Text* text;
-    for (int i=0; i<this->xdim; i++)
-    for (int j=0; j<this->ydim; j++)
-    {
-        const int slot = j * this->xdim + i;
-        int count = contents[slot].count;
-        if (count <= 1) continue;
-        assert(count < 100); // the string is only large enough to hold "99"
+    //HudText::Text* text;
+    //for (int i=0; i<this->xdim; i++)
+    //for (int j=0; j<this->ydim; j++)
+    //{
+        //const int slot = j * this->xdim + i;
+        //int count = contents[slot].count;
+        //if (count <= 1) continue;
+        //assert(count < 100); // the string is only large enough to hold "99"
         
-        float x = xoff + border + i*(inc1+slot_size);
-        x += slot_size - font_size/2;
-        float y = _yresf - (yoff + border + j*(inc1+slot_size));
-        y += font_size/2;
+        //float x = xoff + border + i*(inc1+slot_size);
+        //x += slot_size - font_size/2;
+        //float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        //y += font_size/2;
 
-        text = &this->stack_numbers[slot];
-        text->update_formatted_string(1, count);
-        text->set_position(x,y);
-        text->draw();
-    }
-    HudFont::reset_default();
-    HudFont::end_font_draw();
-#endif
+        //text = &this->stack_numbers[slot];
+        //text->update_formatted_string(1, count);
+        //text->set_position(x,y);
+        //text->draw();
+    //}
+    //HudFont::reset_default();
+    //HudFont::end_font_draw();
 }
 
 

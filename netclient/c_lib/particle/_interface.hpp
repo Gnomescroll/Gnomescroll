@@ -22,11 +22,20 @@ extern class  BillboardTextHud_list* billboard_text_hud_list;
 extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 #endif
 
+#if DC_CLIENT
+class ItemParticle* create_item_particle(
+    int particle_id, int item_id,
+    float x, float y, float z, 
+    float vx, float vy, float vz
+);
+#endif
+#if DC_SERVER
 class ItemParticle* create_item_particle(
     int item_id,
     float x, float y, float z, 
     float vx, float vy, float vz
 );
+#endif
 
 void destroy(int particle_id);
 

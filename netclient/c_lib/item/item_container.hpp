@@ -119,6 +119,20 @@ class ItemContainerList: public Object_list<ItemContainer, ITEM_CONTAINER_MAX>
         const char* name() { return "ItemContainer"; }
     public:
         ItemContainerList() { print_list((char*)this->name(), this); }
+
+        #if DC_CLIENT
+        ItemContainer* create()
+        {
+            printf("must create item container with id\n");
+            assert(false);
+            return NULL;
+        }
+
+        ItemContainer* create(int id)
+        {
+            return Object_list<ItemContainer, ITEM_CONTAINER_MAX>::create(id);
+        }
+        #endif
 };
 
 }

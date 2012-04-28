@@ -39,12 +39,10 @@ class item_particle_destroy_StoC: public FixedSizeReliableNetPacketToClient<item
 {
     public:
         uint16_t id;
-        uint8_t type;
 
         inline void packet(char* buff, int* buff_n, bool pack)
         {
             pack_u16(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
         }
         inline void handle();
 };

@@ -52,12 +52,12 @@ ItemContainer* get_container(int id)
     return item_container_list->get(id);
 }
 
-Item* get_item(int id)
+Item* get_item(ItemID id)
 {
     return item_list->get(id);
 }
 
-int get_item_type(int id)
+int get_item_type(ItemID id)
 {
     Item* item = get_item(id);
     if (item == NULL) return NULL_ITEM_TYPE;
@@ -76,11 +76,11 @@ Item* create_item(int item_type, ItemID item_id)
     return item_list->create_type(item_type, item_id);
 }
 
-Item* create_item_particle(int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz)
+Item* create_item_particle(int particle_id, int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz)
 {
     Item* item = create_item(item_type, item_id);
     if (item == NULL) return NULL;
-    Particle::create_item_particle(item->id, x,y,z,vx,vy,vz);
+    Particle::create_item_particle(particle_id, item->id, x,y,z,vx,vy,vz);
     return item;
 }
 
@@ -162,7 +162,7 @@ void check_item_pickups()
         assert(item != NULL);
     
         const static float pick_up_distance = 1.0f;
-        Agent_state* agent = nearest_agent_in_range(item_particle->verlet.position, pick_up_distance);
+        Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
         item_particle_picked_up_StoC pickup_msg;

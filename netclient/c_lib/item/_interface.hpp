@@ -8,8 +8,8 @@ namespace Item
 void init();
 void teardown();
 class ItemContainer* get_container(int id);
-class Item* get_item(int id);
-int get_item_type(int id);
+class Item* get_item(ItemID id);
+int get_item_type(ItemID id);
 }
 
 /*
@@ -21,7 +21,7 @@ namespace Item
 {
 
 class Item* create_item(int item_type, ItemID item_id);
-class Item* create_item_particle(int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz);
+class Item* create_item_particle(int particle_id, int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz);
 
 void mouse_right_click_handler(int id, int slot);
 void mouse_left_click_handler(int id, int slot);

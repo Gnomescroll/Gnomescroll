@@ -148,12 +148,23 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 }
 #endif
 
+
+#if DC_CLIENT
 class ItemParticle* create_item_particle(
-    int item_id, 
+    int particle_id, int item_id,
+    float x, float y, float z, 
+    float vx, float vy, float vz
+) {
+    ItemParticle* ip = item_particle_list->create(particle_id);
+#endif
+#if DC_SERVER
+class ItemParticle* create_item_particle(
+    int item_id,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create();
+#endif
     if (ip == NULL) return NULL; 
     ip->init(x,y,z,vx,vy,vz);
     ip->item_id = item_id;

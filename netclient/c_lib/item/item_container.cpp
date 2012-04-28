@@ -65,12 +65,14 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
                         // swap
                     // else
                         // move avail stack amt from hand stack
+
+    printf("hand,slot %d,%d\n", hand_item, slot_item);
                         
-    // hand is empty
     if (hand_item == NULL_ITEM)
+    // hand is empty
     {
-        // slot is occupied
         if (slot_item != NULL_ITEM)
+        // slot is occupied
         {   // SLOT -> HAND
             // remove slot item
             container->remove_item(slot);
@@ -82,8 +84,8 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
     // hand holding item
     else
     {
-        // slot is empty
         if (slot_item == NULL_ITEM)
+        // slot is empty
         {   // HAND -> SLOT
             // put hand item in slot
             container->insert_item(slot, hand_item);
@@ -91,10 +93,21 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
             hand_item = NULL_ITEM;
             something_happened = true;
         }
-        // slot is occupied
         else
+        // slot is occupied
         {
-            // do stack stuff
+            if (get_item_type(slot_item) == hand_item)
+            // types are the same
+            {
+                // do stack stuff
+            }
+            else
+            // types are different
+            {   // SWAP
+                container->insert_item(slot, hand_item);
+                hand_item = slot_item;
+                something_happened = true;
+            }
         }
     }
 
