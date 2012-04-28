@@ -17,7 +17,7 @@ extern "C"
 
         //blit texture stat for stack
 
-        SDL_Surface* s = TextureSheetLoader::CubeTextureSheetList->textures[sheet_id]->surface;
+        SDL_Surface* s = TextureSheetLoader::CubeTextureSheetList->textures[sheet_id];
         
         SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
         Uint32* CubeTextureStack = (Uint32*) TextureSheetLoader::CubeTextureStack;
