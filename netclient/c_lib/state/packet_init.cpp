@@ -33,6 +33,8 @@ void RegisterMessages() {
     Agent_teleport_message::register_client_packet();
     //Agent_control_state_to_client_message::register_client_packet();
 
+    agent_camera_state_CtoS::register_server_packet();
+
     SendClientId_StoC::register_client_packet();
     
     Agent_cs_CtoS::register_server_packet();

@@ -185,6 +185,20 @@ namespace ClientState {
         update_agent_camera();
     }
 
+    void send_camera_state()
+    {
+        if (current_camera == NULL) return;
+        if (playerAgent_state.you == NULL) return;
+        agent_camera_state_CtoS msg;
+        msg.id = playerAgent_state.you->client_id;
+        msg.x = current_camera->x;
+        msg.y = current_camera->y;
+        msg.z = current_camera->z;
+        msg.theta = current_camera->theta;
+        msg.phi = current_camera->phi;
+        msg.send();
+    }
+
     void send_ping()
     {
         int n = _GET_MS_TIME();

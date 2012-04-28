@@ -63,6 +63,9 @@ class Agent_state {
     public:    
         class AgentState s; //state current
         class AgentState state_snapshot;
+        #if DC_SERVER
+        class AgentState camera;    // agent's camera state, sent by client
+        #endif
 
         int id;
         int client_id;

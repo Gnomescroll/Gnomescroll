@@ -62,7 +62,8 @@ class Generator
     int reverse_baseline;
     int reverse_maxheight;
     int reverse_minheight;
-    
+
+    // this is the base tile to stack a heightmap on top of
     bool use_heightmap_tile;
     int heightmap_tile;
     
@@ -140,8 +141,8 @@ class Generator
     void enable_heightmap(int baseline, int maxheight, int tile)
     {
         this->enable_heightmap(baseline, maxheight);
-        this->heightmap_tile = tile;
-        this->use_heightmap_tile = true;
+        //this->heightmap_tile = tile;
+        //this->use_heightmap_tile = true;
     }
 
     void enable_reverse_heightmap(int baseline, int  maxheight, int minheight, int tile)
@@ -155,8 +156,8 @@ class Generator
         this->reverse_baseline = baseline;
         this->reverse_maxheight = maxheight;
         this->reverse_minheight = minheight;
-        this->heightmap_tile = tile;
-        this->use_heightmap_tile = true;
+        //this->heightmap_tile = tile;
+        //this->use_heightmap_tile = true;
     }
 
     void density(float threshold)

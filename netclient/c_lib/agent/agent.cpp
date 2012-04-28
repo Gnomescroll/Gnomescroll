@@ -593,10 +593,13 @@ id(id), type(OBJECT_AGENT), status(this), weapons(this)
         cs[i].phi = 0;
     }
 
-
     client_id = id;
 
     #if DC_SERVER
+    this->camera.vx = 0;
+    this->camera.vy = 0;
+    this->camera.vz = 0;
+
     agent_create_StoC msg;
     msg.id = id;
     msg.team = this->status.team;

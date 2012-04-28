@@ -568,6 +568,7 @@ inline void ping_reliable_CtoS::handle(){}
 inline void choose_spawn_location_CtoS::handle(){}
 inline void request_agent_name_CtoS::handle(){}
 inline void request_remaining_state_CtoS::handle() {}
+inline void agent_camera_state_CtoS::handle() {}
 #endif
 
 // Client -> Server handlers
@@ -1227,5 +1228,18 @@ inline void request_remaining_state_CtoS::handle()
     }
     client->send_remaining_state();
 }
+
+inline void agent_camera_state_CtoS::handle()
+{
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
+    if (a->id != id) return;
+    a->camera.x = x;
+    a->camera.y = y;
+    a->camera.z = z;
+    a->camera.theta = theta;
+    a->camera.phi = phi;
+}
+
 
 #endif

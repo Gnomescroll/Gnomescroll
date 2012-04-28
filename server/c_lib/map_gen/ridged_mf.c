@@ -134,7 +134,6 @@ void rmf_perlin3_fill(int x, int y, int z, int repeatx, int repeaty, int repeatz
             for (k=0; k<z; k++) {
                 h = rmf_perlin3(((float)(i+1)/fx)*xnoise_scale,((float)(j+1)/fy)*ynoise_scale,((float)(k+1)/fz)*znoise_scale, repeatx, repeaty, repeatz, base);
                 noisemap[i + x*j + x*y*k] = h;
-                printf("%0.2f\n",h);
             }
         }
     }

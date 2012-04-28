@@ -115,6 +115,8 @@ int run()
 
             Objects::tick();    // update physics state
 
+            if (counter % 30 == 0) ClientState::send_camera_state();
+
             counter++;
         }
         Objects::harvest(); // remove dead objects

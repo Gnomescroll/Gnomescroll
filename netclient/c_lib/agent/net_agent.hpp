@@ -91,6 +91,26 @@ class Agent_state_message: public FixedSizeNetPacketToClient<Agent_state_message
         inline void handle();
 };
 
+class agent_camera_state_CtoS: public FixedSizeReliableNetPacketToServer<agent_camera_state_CtoS>
+{
+    public:
+        uint8_t id;
+        float x,y,z;
+        float theta, phi;
+
+        inline void packet(char* buff, int* buff_n, bool pack) 
+        {
+            pack_u8(&id, buff, buff_n, pack);   //assume id is 1 byte
+            pack_float(&x, buff, buff_n, pack);
+            pack_float(&y, buff, buff_n, pack);
+            pack_float(&z, buff, buff_n, pack);
+            pack_float(&theta, buff, buff_n, pack);
+            pack_float(&phi, buff, buff_n, pack);
+        }
+
+        inline void handle();
+};
+
 class Agent_teleport_message: public FixedSizeReliableNetPacketToClient<Agent_teleport_message>
 {
     public:

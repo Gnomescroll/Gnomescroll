@@ -52,18 +52,10 @@ void set_terrain_density(int x, int y, int z, float threshold, int tile) {
     cutoff = percentile_cutoff_calculation(threshold, noisemap, x*y*z);
 
     // set terrain
-    int i,j,k,index;
-    for (i=0; i<x; i++) {
-        for (j=0; j<y; j++) {
-            for (k=0; k<z; k++) {
-                index = i + x*j + x*y*k;
-                if (noisemap[index] > cutoff) {
-                    _set(i,j,k, tile);
-                }
-            }
-        }
-    }
-
+    for (int i=0; i<x; i++)
+    for (int j=0; j<y; j++)
+    for (int k=0; k<z; k++)
+        if (noisemap[i + x*j + x*y*k] > cutoff) _set(i,j,k, tile);
 }
 
 void set_terrain_height(int x, int y, int z, int baseline, int maxheight, int tile) {

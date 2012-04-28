@@ -20,7 +20,9 @@ class Agent_list: public Object_list<Agent_state,AGENT_MAX>
         int check_name_interval;
         
     public:
+        #if DC_SERVER
         void update_map_manager_positions();
+        #endif
 
         void update_models();
 

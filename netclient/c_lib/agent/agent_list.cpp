@@ -14,18 +14,14 @@
 
 const int CHECK_MISSING_NAME_INTERVAL = 30 * 6; // ~ once every 6 seconds
 
+#if DC_SERVER
 void Agent_list::update_map_manager_positions()
 {
-#if DC_SERVER
-    Agent_state* agent;
     for(int i=0; i<n_max; i++)
-    {
-        agent = a[i];
-        if (agent == NULL) continue;
-        t_map::t_map_manager_update_client_position(i, agent->s.x, agent->s.y);
-    }
-#endif
+        if (this->a[i] != NULL)
+            t_map::t_map_manager_update_client_position(i, this->a[i]->camera.x, this->a[i]->camera.y);
 }
+#endif
 
 /* Agent list */
 

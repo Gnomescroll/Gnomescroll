@@ -51,6 +51,7 @@ namespace ClientState {
 
     void send_identify_packet(char* name);
     void update_camera();
+    void send_camera_state();
 
 }
 #endif
