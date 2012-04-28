@@ -10,11 +10,14 @@
 namespace t_gen
 {
 
+float noise_map_2d_float[512*512  + 1];
+unsigned char noise_map_2d_char[512*512  + 1];
+
 //xdim/ydim might be odd
 void init_gaussian_kernel(float* kernel, int xdim)
 {
 	const double k = 1.0; //normalization constant
-    const double sigma = 20.0; //standard deviation
+    const double sigma = 1.0; //standard deviation
 
 	for(int i=0; i<xdim; i++) kernel[i] = 0.0;
 
@@ -56,7 +59,7 @@ void init_gaussian_kernel(float* kernel, int xdim)
 
 void convolve(float* in, float* out, int xdim, int ydim)
 {
-	const int kdim = 71;
+	const int kdim = 5;
 	const int kcen = (kdim-1) / 2;
 
 	float kernel[kdim];
@@ -225,8 +228,8 @@ void gen_map()
     unsigned long init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
     init_by_array(init, length);
 
-    int xres = 256;
-    int yres = 256;
+    int xres = 512;
+    int yres = 512;
 
     float* in = new float[xres*yres];
     float* out = new float[xres*yres];
@@ -240,12 +243,17 @@ void gen_map()
     	//in[j*xres+i] = randf(); //genrand_real2();
     	in[j*xres+i] = genrand_real2();
 
-		out[j*xres+i] = 0.0;
-    	if((j+i) % 2 == 0) out[j*xres+i] = 1.0;
+		//out[j*xres+i] = 0.0;
+    	//if((j+i) % 2 == 0) out[j*xres+i] = 1.0;
+
+        out[j*xres+i] = genrand_real2();
+
     }
 
    	convolve(in,out, xres,yres);
 /*
+    convolve(in, out, xres,yres);
+
     convolve(out,in, xres,yres);
     convolve(in,out, xres,yres);
 
@@ -259,6 +267,42 @@ void gen_map()
     convolve(in,out, xres,yres);
 */
 	save_png("5001", out, xres, yres);
+
+
+    double num = 0;
+    double sum = 0;
+    for(int i=0; i < xres; i++) 
+    for(int j=0; j < yres; j++) 
+    {
+        sum += out[yres*j+i];
+        num += 1.0;
+    }
+
+    printf("noise map average= %f \n", (float) sum/num);
+    
+
+
+    //float scale = 0.7;
+    for(int i=0; i < xres; i++) 
+    for(int j=0; j < yres; j++) 
+    {
+        noise_map_2d_float[512*j+i] = 0.5 + (1.0 - 0.5) *out[512*j + i];
+    }
+
+    for(int i=0; i < xres; i++) 
+    for(int j=0; j < yres; j++) 
+    {
+
+        float _v = noise_map_2d_float[j*xres+i];
+
+        if( _v < 0.0) _v = 0.0;
+        if( _v > 1.0) _v = 1.0;
+
+        unsigned char v = ((int) 255.0*_v );
+
+        noise_map_2d_char[512*j+i] = v;
+    }
+
 
 
 #if DC_SERVER
