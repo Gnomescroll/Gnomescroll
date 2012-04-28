@@ -98,6 +98,9 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
         }
     }
 
+    #if DC_CLIENT
+    player_hand = hand_item;
+    #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
     #endif

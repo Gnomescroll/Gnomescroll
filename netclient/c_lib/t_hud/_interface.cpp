@@ -141,11 +141,13 @@ ContainerInputEvent mouse_motion(int x, int y)
 
 static void draw_grabbed_icon()
 {
-    if (active_slot == NULL_SLOT) return;
-    if (active_container == NULL) return;
-    ItemID* contents = Item::get_container_contents(active_container->container_id);
-    if (contents == NULL) return;
-    if (contents[active_slot] == NULL_ITEM) return;
+    //if (active_slot == NULL_SLOT) return;
+    //if (active_container == NULL) return;
+    //ItemID* contents = Item::get_container_contents(active_container->container_id);
+    //if (contents == NULL) return;
+    //if (contents[active_slot] == NULL_ITEM) return;
+
+    if (Item::player_hand == NULL_ITEM) return;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);
@@ -162,7 +164,8 @@ static void draw_grabbed_icon()
     const float x = mouse_x - (w / 2);
     const float y = _yresf - (mouse_y + (w / 2));
     
-    int tex_id = Item::get_sprite_index(contents[active_slot]);
+    //int tex_id = Item::get_sprite_index(contents[active_slot]);
+    int tex_id = Item::get_sprite_index(Item::player_hand);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width
@@ -207,27 +210,27 @@ void draw_hud()
 }
 
 
-void network_container_assignment(ObjectType type, int id)
-{
-    switch (type)
-    {
-        case OBJECT_AGENT_INVENTORY:
-            agent_container->container_id = id;
-            break;
-        case OBJECT_AGENT_TOOLBELT:
-            agent_toolbelt->container_id = id;
-            break;
-        case OBJECT_NANITE_INVENTORY:
-            nanite_container->container_id = id;
-            break;
-        case OBJECT_CRAFTING_BENCH:
-            craft_bench_container->container_id = id;
-            break;
-        default:
-            printf("WARNING -- network_container_assignment -- invalid container type %d\n", type);
-            break;
-    }
-}
+//void network_container_assignment(ObjectType type, int id)
+//{
+    //switch (type)
+    //{
+        //case OBJECT_AGENT_INVENTORY:
+            //agent_container->container_id = id;
+            //break;
+        //case OBJECT_AGENT_TOOLBELT:
+            //agent_toolbelt->container_id = id;
+            //break;
+        //case OBJECT_NANITE_INVENTORY:
+            //nanite_container->container_id = id;
+            //break;
+        //case OBJECT_CRAFTING_BENCH:
+            //craft_bench_container->container_id = id;
+            //break;
+        //default:
+            //printf("WARNING -- network_container_assignment -- invalid container type %d\n", type);
+            //break;
+    //}
+//}
 
 
 /* Main init/teardown */

@@ -97,33 +97,28 @@ int get_sprite_index(int item_id)
 namespace Item
 {
 
+static void assign_container_to_agent(ItemContainer* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
+{
+    assert(container != NULL);
+    assert(container_list[agent_id] == NULL_ITEM);
+    container_list[agent_id] = container->id;
+    init_container(container, type);
+    send_container_create(container, client_id);
+    send_container_assign(container, client_id);
+}
+
 void assign_containers_to_agent(int agent_id, int client_id)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
     
     ItemContainer* agent_container = item_container_list->create();
-    assert(agent_container != NULL);
-    assert(agent_inventory_list[agent_id] == NULL_ITEM);
-    agent_inventory_list[agent_id] = agent_container->id;
-    init_container(agent_container, AGENT_INVENTORY);
-    send_container_create(agent_container, client_id);
-    send_container_assign(agent_container, client_id);
+    assign_container_to_agent(agent_container, AGENT_INVENTORY, agent_inventory_list, agent_id, client_id);
     
     ItemContainer* agent_toolbelt = item_container_list->create();
-    assert(agent_toolbelt != NULL);
-    assert(agent_toolbelt_list[agent_id] == NULL_ITEM);
-    agent_toolbelt_list[agent_id] = agent_toolbelt->id;
-    init_container(agent_toolbelt, AGENT_TOOLBELT);
-    send_container_create(agent_toolbelt, client_id);
-    send_container_assign(agent_toolbelt, client_id);
+    assign_container_to_agent(agent_toolbelt, AGENT_TOOLBELT, agent_toolbelt_list, agent_id, client_id);
     
     ItemContainer* agent_nanite = item_container_list->create();
-    assert(agent_nanite != NULL);
-    assert(agent_nanite_list[agent_id] == NULL_ITEM);
-    agent_nanite_list[agent_id] = agent_nanite->id;
-    init_container(agent_nanite, AGENT_NANITE);
-    send_container_create(agent_nanite, client_id);
-    send_container_assign(agent_nanite, client_id);    
+    assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
 }
 
 
