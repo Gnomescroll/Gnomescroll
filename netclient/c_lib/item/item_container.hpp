@@ -17,8 +17,8 @@ bool beta_action_decision_tree(int id, int slot);
 
 #if DC_SERVER
 // transactions
-bool alpha_action_decision_tree(int client_id, int id, int slot);
-bool beta_action_decision_tree(int client_id, int id, int slot);
+bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
 //network
 //  tell client to assign container to an agent

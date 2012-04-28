@@ -13,7 +13,7 @@ namespace Particle
 #if DC_CLIENT
 inline void item_particle_create_StoC::handle()
 {
-    Item::create_item_particle(id, item_type, (ItemID)item_id, x,y,z,mx,my,mz);
+    Particle::create_item_particle(id, item_type, x,y,z,mx,my,mz);
 }
 
 inline void item_particle_destroy_StoC::handle()

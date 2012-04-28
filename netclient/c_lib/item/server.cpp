@@ -5,7 +5,7 @@
 namespace Item
 {
 
-void broadcast_item_create(int item_id)
+void broadcast_item_create(ItemID item_id)
 {
     Item* item = get_item(item_id);
     if (item == NULL) return;
@@ -18,7 +18,7 @@ void broadcast_item_create(int item_id)
     msg.broadcast();
 }
 
-Item* send_item_create(int client_id, int item_id)
+Item* send_item_create(int client_id, ItemID item_id)
 {
     Item* item = get_item(item_id);
     if (item == NULL) return NULL;
@@ -32,7 +32,7 @@ Item* send_item_create(int client_id, int item_id)
     return item;
 }
 
-void send_container_item_create(int client_id, int item_id, int container_id, int slot)
+void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot)
 {
     Item* item = send_item_create(client_id, item_id);
     if (item == NULL) return;
@@ -43,6 +43,14 @@ void send_container_item_create(int client_id, int item_id, int container_id, in
     msg.slot = slot;
     msg.sendToClient(client_id);
 }
+
+void broadcast_item_destroy(int client_id, ItemID item_id)
+{
+    item_destroy_StoC msg;
+    msg.item_id = item_id;
+    msg.sendToClient(client_id);
+}
+
 
 }
 

@@ -33,12 +33,10 @@ void init_container(ItemContainer* container, ItemContainerType type)
 bool alpha_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-bool alpha_action_decision_tree(int client_id, int id, int slot)
+bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
-    if (slot == NULL_SLOT || id < 0) return false;
-    ItemContainer* container = get_container(id);
-    if (container == NULL) return false;
+    bool something_happened = false;
 
     #if DC_CLIENT
     ItemID hand_item = player_hand;
@@ -48,65 +46,86 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
     ItemID hand_item = agent_hand_list[client_id];
     #endif
 
-    ItemID slot_item = container->get_item(slot);
-    bool something_happened = false;
-
-    // if hand empty
-        // pick up
-    // else
-        // if slot empty
-            // move to slot
-        // else
-            // if slot type matches hand type
-                // if hand stack < available stack
-                    // move hand stack onto slot
-                // else
-                    // if avail stack == 0
-                        // swap
-                    // else
-                        // move avail stack amt from hand stack
-
-    printf("hand,slot %d,%d\n", hand_item, slot_item);
-                        
-    if (hand_item == NULL_ITEM)
-    // hand is empty
+    // click outside container
+    if (id == NULL_CONTAINER)
     {
-        if (slot_item != NULL_ITEM)
-        // slot is occupied
-        {   // SLOT -> HAND
-            // remove slot item
-            container->remove_item(slot);
-            // put in hand
-            hand_item = slot_item;
-            something_happened = true;
-        }
-    }
-    // hand holding item
-    else
-    {
-        if (slot_item == NULL_ITEM)
-        // slot is empty
-        {   // HAND -> SLOT
-            // put hand item in slot
-            container->insert_item(slot, hand_item);
-            // remove item from hand
+        if (hand_item != NULL_ITEM)
+        {   // remove
+            #if DC_SERVER
+            throw_item(agent_id, hand_item);
+            #endif
             hand_item = NULL_ITEM;
             something_happened = true;
         }
-        else
-        // slot is occupied
+    }
+    else
+    // click inside container
+    {
+        // client was inside container, but not a slot
+        // do nothing
+        if (slot < 0 || slot == NULL_SLOT) return false;
+
+        // get container
+        ItemContainer* container = get_container(id);
+        assert(container != NULL);
+
+        ItemID slot_item = container->get_item(slot);
+
+        // if hand empty
+            // pick up
+        // else
+            // if slot empty
+                // move to slot
+            // else
+                // if slot type matches hand type
+                    // if hand stack < available stack
+                        // move hand stack onto slot
+                    // else
+                        // if avail stack == 0
+                            // swap
+                        // else
+                            // move avail stack amt from hand stack
+
+        if (hand_item == NULL_ITEM)
+        // hand is empty
         {
-            if (get_item_type(slot_item) == hand_item)
-            // types are the same
-            {
-                // do stack stuff
-            }
-            else
-            // types are different
-            {   // SWAP
-                container->insert_item(slot, hand_item);
+            if (slot_item != NULL_ITEM)
+            // slot is occupied
+            {   // SLOT -> HAND
+                // remove slot item
+                container->remove_item(slot);
+                // put in hand
                 hand_item = slot_item;
                 something_happened = true;
+            }
+        }
+        // hand holding item
+        else
+        {
+            if (slot_item == NULL_ITEM)
+            // slot is empty
+            {   // HAND -> SLOT
+                // put hand item in slot
+                container->insert_item(slot, hand_item);
+                // remove item from hand
+                hand_item = NULL_ITEM;
+                something_happened = true;
+            }
+            else
+            // slot is occupied
+            {
+                if (get_item_type(slot_item) == hand_item)
+                // types are the same
+                {
+                    // do stack stuff
+                }
+                else
+                // types are different
+                {   // SWAP
+                    container->insert_item(slot, hand_item);
+                    hand_item = slot_item;
+                    something_happened = true;
+                }
             }
         }
     }
@@ -126,7 +145,7 @@ bool alpha_action_decision_tree(int client_id, int id, int slot)
 bool beta_action_decision_tree(int id, int slot)
 #endif
 #if DC_SERVER
-bool beta_action_decision_tree(int client_id, int id, int slot)
+bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
 #endif
 {
     if (slot == NULL_SLOT || id < 0) return false;

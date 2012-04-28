@@ -30,21 +30,26 @@ class ItemParticle //: public VerletComponent
         VerletParticle::VerletParticle verlet;
 
         int id;
-        int item_id;
-        int sprite_index;
-
+        int item_type;
+        #if DC_SERVER
+        ItemID item_id;
+        #endif
+        
         int ttl;
 
-    void die();
-        
-    void tick()
-    {
-        //this->verlet_bounce(this->damp);
-        verlet.bounce_box(0.20);
-        this->ttl--;
-    }
+        #if DC_CLIENT
+        int sprite_index;
+        void draw();
+        #endif
 
-    void draw();
+        void die();
+            
+        void tick()
+        {
+            //this->verlet_bounce(this->damp);
+            verlet.bounce_box(0.20);
+            this->ttl--;
+        }
 
     explicit ItemParticle(int id)
     : id(id), ttl(ITEM_PARTICLE_TTL)
@@ -52,18 +57,17 @@ class ItemParticle //: public VerletComponent
         verlet.dampening = ITEM_PARTICLE_DAMPENING;
     }
 
-    void init(float x, float y, float z, float mx, float my, float mz)
-    {
-        this->sprite_index = (rand() % 16);
-
-        verlet.position = vec3_init(x,y,z);
-        verlet.velocity = vec3_init(mx,my,mz);
-    }
+    #if DC_CLIENT
+    void init(int item_type, float x, float y, float z, float mx, float my, float mz);
+    #endif
+    #if DC_SERVER
+    void init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz);
+    #endif
 };
 
+#if DC_CLIENT
 void ItemParticle::draw()
 {
-#if DC_CLIENT
     const float scale = 0.25;
     const float h = 0.35;
 
@@ -102,8 +106,8 @@ void ItemParticle::draw()
     p = vec3_add(position, vec3_sub(right, up));
     glTexCoord2f(tx_min,ty_min);
     glVertex3f(p.x, p.y, p.z+h);
-#endif
 }
+#endif
 
 }
 

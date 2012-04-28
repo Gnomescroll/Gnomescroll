@@ -171,7 +171,7 @@ void AgentToolbeltUI::draw()
         int slot = j * xdim + i;
         if (slot == skip_slot) continue;
         if (contents[slot] == NULL_ITEM) continue;
-        int tex_id = Item::get_sprite_index(contents[slot]);
+        int tex_id = Item::get_sprite_index_for_id(contents[slot]);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 

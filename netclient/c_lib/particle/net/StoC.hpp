@@ -16,7 +16,6 @@ class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_
     public:
         uint16_t id;
         uint8_t item_type;
-        uint16_t item_id;
         float x,y,z;
         float mx,my,mz;
         
@@ -24,7 +23,6 @@ class item_particle_create_StoC: public FixedSizeReliableNetPacketToClient<item_
         {
             pack_u16(&id, buff, buff_n, pack);
             pack_u8(&item_type, buff, buff_n, pack);
-            pack_u16(&item_id, buff, buff_n, pack);
             pack_float(&x, buff, buff_n, pack);
             pack_float(&y, buff, buff_n, pack);
             pack_float(&z, buff, buff_n, pack);

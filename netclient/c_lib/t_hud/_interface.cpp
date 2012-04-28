@@ -94,7 +94,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     int slot;
     UIElement* container = get_container_and_slot(x,y, &slot);
 
-    int container_id = -1;
+    int container_id = NULL_CONTAINER;
     if (container != NULL) container_id = container->container_id;
     
     ContainerInputEvent event;
@@ -164,8 +164,7 @@ static void draw_grabbed_icon()
     const float x = mouse_x - (w / 2);
     const float y = _yresf - (mouse_y + (w / 2));
     
-    //int tex_id = Item::get_sprite_index(contents[active_slot]);
-    int tex_id = Item::get_sprite_index(Item::player_hand);
+    int tex_id = Item::get_sprite_index_for_id(Item::player_hand);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width

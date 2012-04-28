@@ -5,6 +5,7 @@
 #include <particle/item_particle.hpp>
 
 #include <particle/net/StoC.hpp>
+#include <item/data/constant.hpp>
 
 #if DC_CLIENT
 #include <particle/shrapnel.hpp>
@@ -150,38 +151,49 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 
 
 #if DC_CLIENT
-class ItemParticle* create_item_particle(
-    int particle_id, int item_id,
+int create_item_particle(
+    int particle_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create(particle_id);
+    if (ip == NULL) return NULL_PARTICLE; 
+    ip->init(item_type, x,y,z,vx,vy,vz);
+    return ip->id;
+}
 #endif
+
 #if DC_SERVER
-class ItemParticle* create_item_particle(
-    int item_id,
+int create_item_particle(
+    ItemID item_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create();
-#endif
-    if (ip == NULL) return NULL; 
-    ip->init(x,y,z,vx,vy,vz);
-    ip->item_id = item_id;
-
-    class item_particle_create_StoC msg;
-    msg.id = ip->id;
-    msg.item_id = item_id;
-    msg.x = x;
-    msg.y = y;
-    msg.z = z;
-    msg.mx = vx;
-    msg.my = vy;
-    msg.mz = vz;
-    msg.broadcast();
-
-    return ip;
+    if (ip == NULL) return NULL_PARTICLE; 
+    ip->init(item_id, item_type, x,y,z,vx,vy,vz);
+    return ip->id;
 }
+#endif
+
+#if DC_SERVER
+void broadcast_particle_item_create(int particle_id)
+{
+    ItemParticle* particle = item_particle_list->get(particle_id);
+    assert(particle != NULL);
+
+    item_particle_create_StoC msg;
+    msg.id = particle->id;
+    msg.item_type = particle->item_type;
+    msg.x = particle->verlet.position.x;
+    msg.y = particle->verlet.position.y;
+    msg.z = particle->verlet.position.z;
+    msg.mx = particle->verlet.velocity.x;
+    msg.my = particle->verlet.velocity.y;
+    msg.mz = particle->verlet.velocity.z;
+    msg.broadcast();
+}
+#endif
 
 void destroy(int particle_id)
 {

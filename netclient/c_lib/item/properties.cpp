@@ -10,11 +10,19 @@ const int MAX_ITEMS = 256;
 const int ERROR_SPRITE = 48;
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 
-int get_sprite_index(int id)
+int get_sprite_index_for_id(ItemID id)
 {
     assert(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
+    assert(type >= 0 && type < MAX_ITEMS);
+    return sprite_array[type];
+}
+
+int get_sprite_index_for_type(int type)
+{
+    if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
+    assert(type >= 0 && type < MAX_ITEMS);
     return sprite_array[type];
 }
 

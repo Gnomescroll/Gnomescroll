@@ -9,6 +9,7 @@ void init();
 void teardown();
 class ItemContainer* get_container(int id);
 class Item* get_item(ItemID id);
+//class Item* get_or_create_item(int item_type, ItemID item_id);
 int get_item_type(ItemID id);
 }
 
@@ -21,15 +22,15 @@ namespace Item
 {
 
 class Item* create_item(int item_type, ItemID item_id);
-class Item* create_item_particle(int particle_id, int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz);
 
 void mouse_right_click_handler(int id, int slot);
 void mouse_left_click_handler(int id, int slot);
 
 ItemID* get_container_contents(int container_id);
-int get_sprite_index(int item_id);
-}
+int get_sprite_index_for_id(ItemID item_id);
+int get_sprite_index_for_type(int item_type);
 
+}
 #endif 
 
 
@@ -50,6 +51,8 @@ class Item* create_item(int item_type);
 class Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz);
 
 void check_item_pickups();
+void throw_item(int agent_id, ItemID item_id);
+
 }
 #endif
 

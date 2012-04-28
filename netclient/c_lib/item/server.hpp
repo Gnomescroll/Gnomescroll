@@ -5,9 +5,10 @@
 namespace Item
 {
 
-void broadcast_item_create(int item_id);
-class Item* send_item_create(int client_id, int item_id);
-void send_container_item_create(int client_id, int item_id, int container_id, int slot);
+void broadcast_item_create(ItemID item_id);
+void broadcast_item_destroy(int client_id, ItemID item_id);
+class Item* send_item_create(int client_id, ItemID item_id);
+void send_container_item_create(int client_id, ItemID item_id, int container_id, int slot);
 
 // packets
 void send_container_failed_action(int client_id, int event_id)

@@ -76,14 +76,6 @@ Item* create_item(int item_type, ItemID item_id)
     return item_list->create_type(item_type, item_id);
 }
 
-Item* create_item_particle(int particle_id, int item_type, ItemID item_id, float x, float y, float z, float vx, float vy, float vz)
-{
-    Item* item = create_item(item_type, item_id);
-    if (item == NULL) return NULL;
-    Particle::create_item_particle(particle_id, item->id, x,y,z,vx,vy,vz);
-    return item;
-}
-
 ItemID* get_container_contents(int container_id)
 {
     ItemContainer* container = item_container_list->get(container_id);
@@ -135,16 +127,18 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
 Item* create_item(int item_type)
 {
+    // TODO -- dont override type
+    item_type = randrange(0,7);
     return item_list->create_type(item_type);
 }
 
 Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz)
-{
-    item_type = randrange(0,7);
-    
+{    
     Item* item = create_item(item_type);
     if (item == NULL) return NULL;
-    Particle::create_item_particle(item->id, x,y,z,vx,vy,vz);
+    int particle_id = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    if (particle_id == NULL_PARTICLE) return item;
+    Particle::broadcast_particle_item_create(particle_id);
     return item;
 }
 
@@ -180,6 +174,39 @@ void check_item_pickups()
 
         send_container_item_create(agent->client_id, item->id, ic->id, slot);
     }
+}
+
+void throw_item(int agent_id, ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+    Agent_state* a = ServerState::agent_list->get(agent_id);
+    if (a == NULL) return;
+
+    Item* item = get_item(item_id);
+    if (item == NULL) return;
+
+    broadcast_item_destroy(a->client_id, item->id);
+
+    Vec3 position = a->get_center();
+    float x = position.x;
+    float y = position.y;
+    float z = position.z;
+
+    const float mom = 2.0f;
+    Vec3 force = a->s.forward_vector();
+    force.z = 0;
+    normalize_vector(&force);
+    force = vec3_scalar_mult(force, mom);
+    force = vec3_bias(force, (randf()-0.5f) * 30);
+    float vx = force.x;
+    float vy = force.y;
+    float vz = force.z;
+
+    // create particle
+    int particle_id = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    if (particle_id == NULL_PARTICLE) return;
+    Particle::broadcast_particle_item_create(particle_id);
+
 }
 
 }

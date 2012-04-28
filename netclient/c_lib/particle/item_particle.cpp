@@ -1,6 +1,7 @@
 #include "item_particle.hpp"
 
 #include <particle/net/StoC.hpp>
+#include <item/_interface.hpp>
 
 namespace Particle
 {
@@ -52,6 +53,24 @@ void ItemParticle::die()
     msg.id = this->id;
     msg.broadcast();
     #endif
+}
+
+#if DC_CLIENT
+void ItemParticle::init(int item_type, float x, float y, float z, float mx, float my, float mz)
+#endif
+#if DC_SERVER
+void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz)
+#endif
+{
+    this->item_type = item_type;
+    #if DC_CLIENT
+    this->sprite_index = Item::get_sprite_index_for_type(item_type);
+    #endif
+    #if DC_SERVER
+    this->item_id = item_id;
+    #endif
+    verlet.position = vec3_init(x,y,z);
+    verlet.velocity = vec3_init(mx,my,mz);
 }
 
 
