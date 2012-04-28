@@ -90,7 +90,7 @@ static inline int _is_occluded_transparent(int x,int y,int z, int side_num, int 
     return isActive(tile_id);
 }
 
-#define AO_DEBUG 1
+#define AO_DEBUG 0
 
 static inline void _set_quad_local_ambient_occlusion(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
@@ -152,7 +152,7 @@ const char _pallet[ 3*(_pallet_num+1) ] =
 };
 
 
-static inline void _set_quad_color(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+static inline void _set_quad_color_default(struct Vertex* v_list, int offset, int x, int y, int z, int side)
 {
     int index = 3*((hash_function4(x, y, z) % _pallet_num)+1) ;
 
@@ -171,9 +171,48 @@ static inline void _set_quad_color(struct Vertex* v_list, int offset, int x, int
     }
 }
 
+static inline void _set_quad_color_flat(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+    
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].color = 0xffffffff;
+        //v_list[offset+i].r = _ce.r;
+        //v_list[offset+i].g = _ce.g;
+        //v_list[offset+i].b = _ce.b;
+    }
+}
+
+static inline void _set_quad_color_perlin(struct Vertex* v_list, int offset, int x, int y, int z, int side)
+{
+
+    int index[4];
+    //4th element is side+vertex index
+    index[0] = 3*((hash_function_perlin(x, y, z, 3*(4*side+0) ) % _pallet_num)+1) ;
+    index[1] = 3*((hash_function_perlin(x, y, z, 3*(4*side+1) ) % _pallet_num)+1) ;
+    index[2] = 3*((hash_function_perlin(x, y, z, 3*(4*side+2) )% _pallet_num)+1) ;
+    index[3] = 3*((hash_function_perlin(x, y, z, 3*(4*side+3) )% _pallet_num)+1) ;
+
+    for(int i=0 ;i <4; i++)
+    {
+        v_list[offset+i].r = _pallet[index[i]+0];
+        v_list[offset+i].g = _pallet[index[i]+1];
+        v_list[offset+i].b = _pallet[index[i]+2];
+    }
+
+/*
+    for(int i=0 ;i <4; i++)
+    {
+        unsigned char color = hash_function_perlin2(x, y, z, 3*(4*side+i) );
+        v_list[offset+i].r = 255;
+        v_list[offset+i].g = 255;
+        v_list[offset+i].b = color;
+    }
+*/
+}
+
 static const unsigned char _0 = 0;
 static const unsigned char _1 = 1;
-
 
 const struct TextureElement texElementArray[4] =
 {
@@ -194,11 +233,12 @@ static const struct PositionElement _v_index[4*6] =
     {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
 };
 
-#define USE_QUAD_CACHE 0
 
 /*
     Test this!
 */
+
+#define USE_QUAD_CACHE 1
 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
 {
@@ -235,7 +275,23 @@ static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, in
         }
     }
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
-    _set_quad_color(v_list, offset, x, y, z, side);
+    //_set_quad_color(v_list, offset, x, y, z, side);
+
+    switch( t_map::cube_list[tile_id].color_type )
+    {
+        case 1:
+            _set_quad_color_default(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 0:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            break;
+        default:
+            break;
+    }  
+
 }
 
 
@@ -251,7 +307,7 @@ const struct TextureElement texElementArray2[4] =
     {{{_12,_02,0,0}}}
 };
 
-#define USE_QUAD_CACHE_COMPATIBABILITY 1
+#define USE_QUAD_CACHE_COMPATIBABILITY 0
 
 //quad_cache_comptability[cube_id*6*4 +4*side + 3]
 
@@ -305,7 +361,22 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
         }
     }
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
-    _set_quad_color(v_list, offset, x, y, z, side);
+
+
+    switch( t_map::cube_list[tile_id].color_type )
+    {
+        case 0:
+            _set_quad_color_default(v_list, offset, x, y, z, side);
+            break;
+        case 1:
+            _set_quad_color_flat(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color_perlin(v_list, offset, x, y, z, side);
+            break;
+        default:
+            break;
+    }    
 }
 
 

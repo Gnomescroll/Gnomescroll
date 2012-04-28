@@ -31,3 +31,42 @@ static inline int hash_function4(int x,int y,int z)
     v ^= v >> 4;
     return v;
 }
+
+
+
+static const int _vi2[3*4*6] = 
+{
+    1,1,1, 0,1,1, 0,0,1, 1,0,1, //top
+    0,1,0, 1,1,0, 1,0,0, 0,0,0, //bottom
+    1,0,1, 1,0,0, 1,1,0, 1,1,1, //north
+    0,1,1, 0,1,0, 0,0,0, 0,0,1, //south
+    1,1,1, 1,1,0, 0,1,0, 0,1,1, //west
+    0,0,1, 0,0,0, 1,0,0, 1,0,1  //east
+};
+
+
+static inline int hash_function_perlin(int x,int y,int z, int index)
+{
+    x += _vi2[index+0];
+    y += _vi2[index+1];
+    z += _vi2[index+2];
+
+    unsigned int v = ((x*967 + y)*337 + 17*z);
+    v ^= v >> 16;
+    v ^= v >> 8;
+    v ^= v >> 4;
+    return v;
+}
+
+#include <t_gen/_interface.hpp>
+
+static inline int hash_function_perlin2(int x,int y,int z, int index)
+{
+    x += _vi2[index+0];
+    y += _vi2[index+1];
+    z += _vi2[index+2];
+
+    float value = t_gen::noise_map_2d_char[512*y+x];
+
+    return value;
+}

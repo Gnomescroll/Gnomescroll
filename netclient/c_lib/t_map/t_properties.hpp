@@ -16,7 +16,7 @@ struct cubeProperties
     bool reserved8;
 
     unsigned char max_damage;
-
+    unsigned char color_type; //flat, discrete and perlin
     //bool solid;
     //bool gravity;
 };
@@ -58,7 +58,8 @@ extern "C"
 {
     void LUA_set_block_properties(int id, int active, int solid, int occludes, int transparent) GNOMESCROLL_API;
     void LUA_set_block_max_damage(int id, int max_damage) GNOMESCROLL_API;
-    
+    void LUA_set_block_color_type(int id, int color_type) GNOMESCROLL_API;
+
     void LUA_set_block_name(int id, char* name, int length) GNOMESCROLL_API;
 }
 

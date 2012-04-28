@@ -118,6 +118,11 @@ extern "C"
         t_map::cube_list[id].max_damage = max_damage;
     }
 
+    void LUA_set_block_color_type(int id, int color_type)
+    {
+        t_map::cube_list[id].color_type = color_type;
+    }
+
     void LUA_set_block_name(int id, char* name, int length)
     {
         t_map::set_cube_name(id, name, length);
