@@ -1,6 +1,6 @@
 #include "properties.hpp"
 
-namespace t_item
+namespace Item
 {
 
 const int MAX_ITEMS = 256;
@@ -9,7 +9,7 @@ int sprite_array[MAX_ITEMS]; //maps item id to sprite
 
 int id_to_sprite(int id)
 {
-    assert(id < MAX_ITEMS && id > 0);
+    assert(id < MAX_ITEMS && id >= 0);
     return sprite_array[id];
 }
 /*

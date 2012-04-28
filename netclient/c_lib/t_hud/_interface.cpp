@@ -11,13 +11,28 @@ namespace t_hud
 
 class AgentInventoryUI* agent_container;
 class AgentToolbeltUI* agent_toolbelt;
-
 // TODO -- TMP -- replace witha ctual types
 class AgentNaniteUI* nanite_container;
 class AgentInventoryUI* craft_bench_container;
 
-float mouse_x;
-float mouse_y;
+void set_container_id(ItemContainerType container_type, int container_id)
+{
+    switch (container_type)
+    {
+        case AGENT_INVENTORY:
+            agent_container->container_id = container_id;
+            break;
+        case AGENT_TOOLBELT:
+            agent_toolbelt->container_id = container_id;
+            break;
+        case AGENT_NANITE:
+            nanite_container->container_id = container_id;
+            break;
+        default:
+            assert(false);
+            return;
+    }
+}
 
 
 /*
@@ -25,6 +40,11 @@ float mouse_y;
 */
 
 static bool hud_enabled = false;
+int active_slot = NULL_SLOT;
+UIElement* active_container = NULL;
+float mouse_x;
+float mouse_y;
+
 void enable_container_hud()
 {
     hud_enabled = true;
@@ -34,9 +54,6 @@ void disable_container_hud()
 {
     hud_enabled = false;
 }
-
-int active_slot = NULL_SLOT;
-UIElement* active_container = NULL;
 
 static UIElement* get_container_and_slot(int x, int y, int* slot)
 {
@@ -124,12 +141,11 @@ ContainerInputEvent mouse_motion(int x, int y)
 
 static void draw_grabbed_icon()
 {
-#if 0
     if (active_slot == NULL_SLOT) return;
     if (active_container == NULL) return;
-    InventorySlot* contents = Items::get_container_contents(active_container->container_id);
+    ItemID* contents = Item::get_container_contents(active_container->container_id);
     if (contents == NULL) return;
-    if (contents[active_slot].empty()) return;
+    if (contents[active_slot] == NULL_ITEM) return;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);
@@ -146,7 +162,7 @@ static void draw_grabbed_icon()
     const float x = mouse_x - (w / 2);
     const float y = _yresf - (mouse_y + (w / 2));
     
-    int tex_id = contents[active_slot].sprite_index;
+    int tex_id = Item::get_sprite_index(contents[active_slot]);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width
@@ -175,7 +191,6 @@ static void draw_grabbed_icon()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-#endif
 }
 
 
