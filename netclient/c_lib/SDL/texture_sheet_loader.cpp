@@ -13,6 +13,8 @@ extern "C"
 {
     void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index)
     {
+        CubeTextureSheetList->blit(sheet_id, source_x, source_y, dest_index);
+        return;
         //const int tex_size = 32;
 
         //blit texture stat for stack
