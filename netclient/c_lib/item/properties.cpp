@@ -1,13 +1,12 @@
 #include "properties.hpp"
 
 #include <item/_interface.hpp>
+#include <item/data/constant.hpp>
 
 namespace Item
 {
 
-const int MAX_ITEMS = 256;
 
-const int ERROR_SPRITE = 48;
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 
 int get_sprite_index_for_id(ItemID id)

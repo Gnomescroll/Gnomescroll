@@ -21,8 +21,10 @@ void init_item_particle();
 void teardown_item_particle();
 #endif
 
-const int ITEM_PARTICLE_TTL = 300; // 10 seconds
+const int ITEM_PARTICLE_TTL = 30 * 12; // 12 seconds
 const float ITEM_PARTICLE_DAMPENING = 0.5;
+
+const int PICKUP_PREVENTION_DELAY = 30 * 4; // 4 seconds
 
 class ItemParticle //: public VerletComponent
 {
@@ -35,27 +37,42 @@ class ItemParticle //: public VerletComponent
         ItemID item_id;
         #endif
         
-        int ttl;
-
+        // render stuff
         #if DC_CLIENT
         int sprite_index;
         void draw();
         #endif
 
-        void die();
-            
+        // pickup stuff
+        #if DC_SERVER
+        int pickup_prevention;
+        bool was_picked_up;
+        
+        void picked_up(int agent_id);
+        bool can_be_picked_up()
+        {
+            return (this->pickup_prevention <= 0);
+        }
+        void lock_pickup()
+        {
+            this->pickup_prevention = PICKUP_PREVENTION_DELAY;
+        }
+        #endif
+
+        int ttl;
         void tick()
         {
             //this->verlet_bounce(this->damp);
             verlet.bounce_box(0.20);
             this->ttl--;
+            #if DC_SERVER
+            this->pickup_prevention--;
+            #endif
         }
 
-    explicit ItemParticle(int id)
-    : id(id), ttl(ITEM_PARTICLE_TTL)
-    {
-        verlet.dampening = ITEM_PARTICLE_DAMPENING;
-    }
+        void die();
+
+    explicit ItemParticle(int id);
 
     #if DC_CLIENT
     void init(int item_type, float x, float y, float z, float mx, float my, float mz);

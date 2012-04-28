@@ -2,6 +2,7 @@
 
 #include <particle/net/StoC.hpp>
 #include <item/_interface.hpp>
+#include <item/data/constant.hpp>
 
 namespace Particle
 {
@@ -49,6 +50,7 @@ void teardown_item_particle()
 void ItemParticle::die()
 {
     #if DC_SERVER
+    if (this->was_picked_up) return; // already send a packet
     class item_particle_destroy_StoC msg;
     msg.id = this->id;
     msg.broadcast();
@@ -71,6 +73,34 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     #endif
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
+}
+
+#if DC_SERVER
+void ItemParticle::picked_up(int agent_id)
+{
+    this->ttl = 0;
+    this->was_picked_up = true;
+    item_particle_picked_up_StoC msg;
+    msg.id = this->id;
+    msg.agent_id = agent_id;
+    msg.broadcast();
+}
+#endif
+
+ItemParticle::ItemParticle(int id)
+:   id(id),
+    item_type(NULL_ITEM_TYPE),
+    #if DC_SERVER
+    item_id(NULL_ITEM),
+    pickup_prevention(0),
+    was_picked_up(false),
+    #endif
+    #if DC_CLIENT
+    sprite_index(ERROR_SPRITE),
+    #endif
+    ttl(ITEM_PARTICLE_TTL)
+{
+    verlet.dampening = ITEM_PARTICLE_DAMPENING;
 }
 
 

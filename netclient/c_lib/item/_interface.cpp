@@ -136,9 +136,9 @@ Item* create_item_particle(int item_type, float x, float y, float z, float vx, f
 {    
     Item* item = create_item(item_type);
     if (item == NULL) return NULL;
-    int particle_id = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    if (particle_id == NULL_PARTICLE) return item;
-    Particle::broadcast_particle_item_create(particle_id);
+    Particle::ItemParticle* particle = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    if (particle == NULL) return item;
+    Particle::broadcast_particle_item_create(particle->id);
     return item;
 }
 
@@ -152,6 +152,7 @@ void check_item_pickups()
     {
         if (item_particle_list->a[i] == NULL) continue;
         ItemParticle* item_particle = item_particle_list->a[i];
+        if (!item_particle->can_be_picked_up()) continue;
         Item* item = get_item(item_particle->item_id);
         assert(item != NULL);
     
@@ -159,12 +160,7 @@ void check_item_pickups()
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
-        item_particle_picked_up_StoC pickup_msg;
-        pickup_msg.id = item_particle->id;
-        pickup_msg.agent_id = agent->id;
-        pickup_msg.broadcast();
-
-        item_particle_list->destroy(item_particle->id);
+        item_particle->picked_up(agent->id);
 
         ItemContainer* ic = get_agent_container(agent->id);
         if (ic == NULL) return;
@@ -203,10 +199,10 @@ void throw_item(int agent_id, ItemID item_id)
     float vz = force.z;
 
     // create particle
-    int particle_id = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    if (particle_id == NULL_PARTICLE) return;
-    Particle::broadcast_particle_item_create(particle_id);
-
+    Particle::ItemParticle* particle = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
+    if (particle == NULL) return;
+    Particle::broadcast_particle_item_create(particle->id);
+    particle->lock_pickup();
 }
 
 }

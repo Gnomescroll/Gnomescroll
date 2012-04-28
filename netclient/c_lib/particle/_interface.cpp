@@ -151,28 +151,28 @@ Shrapnel* create_shrapnel(float x, float y, float z, float vx, float vy, float v
 
 
 #if DC_CLIENT
-int create_item_particle(
+ItemParticle* create_item_particle(
     int particle_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create(particle_id);
-    if (ip == NULL) return NULL_PARTICLE; 
+    if (ip == NULL) return NULL; 
     ip->init(item_type, x,y,z,vx,vy,vz);
-    return ip->id;
+    return ip;
 }
 #endif
 
 #if DC_SERVER
-int create_item_particle(
+ItemParticle* create_item_particle(
     ItemID item_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create();
-    if (ip == NULL) return NULL_PARTICLE; 
+    if (ip == NULL) return NULL; 
     ip->init(item_id, item_type, x,y,z,vx,vy,vz);
-    return ip->id;
+    return ip;
 }
 #endif
 

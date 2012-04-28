@@ -23,14 +23,14 @@ extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
 #endif
 
 #if DC_CLIENT
-int create_item_particle(
+class ItemParticle* create_item_particle(
     int particle_id, int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
 );
 #endif
 #if DC_SERVER
-int create_item_particle(
+class ItemParticle* create_item_particle(
     int item_type,
     float x, float y, float z, 
     float vx, float vy, float vz
