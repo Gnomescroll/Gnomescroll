@@ -91,7 +91,10 @@ class TextureSheetList
         {
             struct TileMeta m = meta[i];
             if(m.texture_sheet == sheet_id && m.xpos == source_x && m.ypos == source_y)
+            {
+                printf("!!! Sprite \n");
                 return i;
+            }
         }
 
         //increment and store
@@ -104,12 +107,18 @@ class TextureSheetList
         int INDEX = tile_num;
         tile_num++;
 
-        SDL_Surface* source_texture = this->textures[sheet_id];
-        SDL_Surface* s = this->texture_sheet;
+        /*
+
+        */
+
+        SDL_Surface* s = this->textures[sheet_id];
+        
+        //SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
+        Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
 
         if( source_x* 16 >= s->w || source_y* 16 >= s->h )
         {
-            printf("Error: TextureSheetList::blit, texture out of bounds \n");
+            printf("Error: LUA_blit_cube_texture, texture out of bounds \n");
             return 255;
         }
 
@@ -117,13 +126,13 @@ class TextureSheetList
         Uint32 pix; 
 
         int s_lock = SDL_MUSTLOCK(s);
-        int c_lock = SDL_MUSTLOCK(source_texture);
+        int c_lock = SDL_MUSTLOCK( texture_sheet);
 
         if(s_lock) SDL_LockSurface(s);
-        if(c_lock) SDL_LockSurface(source_texture);
+        if(c_lock) SDL_LockSurface( texture_sheet);
 
-        Uint32* Pixels1 = (Uint32*) texture_stack;
-        Uint32* Pixels2 = (Uint32*) source_texture->pixels;
+        Uint32* Pixels1 = (Uint32*) CubeTextureStack;
+        Uint32* Pixels2 = (Uint32*) texture_sheet->pixels;
 
         int dest_x = index % 16;
         int dest_y = index / 16;
@@ -137,9 +146,12 @@ class TextureSheetList
             Pixels2[ 512*( (dest_y*32 + j) ) + (32*dest_x + i) ] = pix;
         }
 
-        if(c_lock) SDL_UnlockSurface(source_texture);
+        if(c_lock) SDL_UnlockSurface( texture_sheet);
         if(s_lock) SDL_UnlockSurface(s);
 
+        /*
+
+        */
         return INDEX;
     }
 };

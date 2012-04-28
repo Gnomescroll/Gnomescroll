@@ -10,7 +10,9 @@ int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int id_to_sprite(int id)
 {
     assert(id < MAX_ITEMS && id >= 0);
-    return sprite_array[id];
+
+    return id;
+    //return sprite_array[id];
 }
 /*
 Names

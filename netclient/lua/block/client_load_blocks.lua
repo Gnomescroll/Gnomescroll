@@ -71,5 +71,5 @@ for id, block in pairs(block_id_table) do
 	end
 end
 
---ffi.C.LUA_save_cube_texture();
+ffi.C.LUA_save_cube_texture();
 
