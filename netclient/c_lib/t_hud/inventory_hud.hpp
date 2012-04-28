@@ -102,7 +102,7 @@ void AgentInventoryUI::draw()
 //#endif
 
     glBegin(GL_QUADS);
-    glColor4ub(50, 50, 50, 128);
+    glColor4ub(80, 80, 80, 128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -115,7 +115,7 @@ void AgentInventoryUI::draw()
         glVertex2f(x-inc2, y-inc2);
     }
 
-    glColor4ub(50, 50, 50, 64);
+    glColor4ub(80, 80, 80, 128);
 
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
