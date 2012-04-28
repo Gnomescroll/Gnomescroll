@@ -8,12 +8,7 @@ class object_create_StoC: public FixedSizeReliableNetPacketToClient<object_creat
     public:
         uint8_t type;
         uint16_t id;
-        //uint8_t team;
-        //uint8_t owner;
-        //uint8_t team_index;
         float x,y,z;
-        //float mx,my,mz;
-        //float theta, phi, rho;
         
     inline void packet(char* buff, int* buff_n, bool pack)
     {
@@ -152,8 +147,6 @@ class object_state_StoC: public FixedSizeReliableNetPacketToClient<object_state_
         uint16_t id;
         uint8_t type;
         float x,y,z;
-        //float mx,my,mz;
-        //float theta, phi, rho;
 
         inline void packet(char* buff, int* buff_n, bool pack) 
         {

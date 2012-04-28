@@ -157,6 +157,10 @@ void tick_mob_bomb(Object* object)
     using Components::ExplosionComponent;
     ExplosionComponent* explode = (ExplosionComponent*)object->get_component_interface(COMPONENT_INTERFACE_EXPLOSION);
     explode->proximity_check();
+
+    using Components::RateLimitComponent;
+    RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
+    if (limiter->allowed()) object->broadcastState();
     #endif
 
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
@@ -180,17 +184,6 @@ void tick_mob_bomb(Object* object)
     //position = vec3_add(position, vec3_scalar_mult(motion->target_direction, motion->speed));
     //physics->set_position(position); // move slime position by velocity
     motion->move_on_surface();
-
-    #if DC_SERVER
-    //// send packet if physical state changed
-    //if (physics->changed) object->broadcastState();
-    //else
-    //{   // send packet once per second anyway
-        using Components::RateLimitComponent;
-        RateLimitComponent* limiter = (RateLimitComponent*)object->get_component_interface(COMPONENT_INTERFACE_RATE_LIMIT);
-        if (limiter->allowed()) object->broadcastState();
-    //}
-    #endif
 }
 
 void update_mob_bomb(Object* object)
