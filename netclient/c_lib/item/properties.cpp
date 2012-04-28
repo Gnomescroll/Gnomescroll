@@ -1,23 +1,37 @@
 #include "properties.hpp"
 
+#include <item/_interface.hpp>
+
 namespace Item
 {
 
 const int MAX_ITEMS = 256;
 
+const int ERROR_SPRITE = 48;
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 
-int id_to_sprite(int id)
+int get_sprite_index(int id)
 {
     assert(id < MAX_ITEMS && id >= 0);
-    return sprite_array[id];
+    int type = get_item_type(id);
+    if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
+    return sprite_array[type];
+}
+
+void set_sprite_ids()
+{
+    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
+    for (int i=0; i<8; i++) sprite_array[i] = i;
+    for (int i=16; i<24; i++) sprite_array[i] = i;
+    for (int i=32; i<40; i++) sprite_array[i] = i;
 }
 /*
 Names
 */
 
 
-char item_names[MAX_ITEMS*64];
+const int ITEM_NAME_MAX_LENGTH = 64;
+char item_names[MAX_ITEMS*ITEM_NAME_MAX_LENGTH];
 int item_name_index[MAX_ITEMS];
 
 
@@ -32,36 +46,28 @@ struct cubeProperties* get_cube(int id)
 
 void set_item_name(int id, char* name, int length)
 {
-    static int index = 0;
-
-    if (length >= 64)
+    assert(length > 0);
+    assert(id < 0 || id >= MAX_ITEMS);
+    
+    if (length >= ITEM_NAME_MAX_LENGTH)
     {
         printf("Error: %s, name length greater than 63 characters \n", __func__ );
-        return;
+        assert(length < ITEM_NAME_MAX_LENGTH);
     }
 
-    if (id < 0 || id >= MAX_ITEMS)
-    {
-        printf("Error: out of bounds, %s \n", __func__);
-        return;
-    }
+    static int index = 0;
 
     item_name_index[id] = index;
 
     memcpy(item_names+index, name, length);
     index += length;
-    item_names[index] = 0x00;
+    item_names[index] = '\0';
     index++;
 }
 
 char* get_item_name(int id)
 {
-    if (id < 0 || id >= MAX_ITEMS)
-    {
-        printf("Error:  %s, item id error \n",  __func__);
-        return NULL;
-    }
-
+    assert(id < 0 || id >= MAX_ITEMS);
     return (item_names + item_name_index[id]);
 }
 

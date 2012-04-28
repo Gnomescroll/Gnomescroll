@@ -8,6 +8,8 @@ namespace Item
 void init();
 void teardown();
 class ItemContainer* get_container(int id);
+class Item* get_item(int id);
+int get_item_type(int id);
 
 }
 

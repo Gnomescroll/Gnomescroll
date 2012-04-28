@@ -18,6 +18,8 @@ void init()
     item_container_list = new ItemContainerList;
     item_list           = new ItemList;
 
+    set_sprite_ids();
+
     #if DC_SERVER
     agent_inventory_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
@@ -55,6 +57,13 @@ Item* get_item(int id)
     return item_list->get(id);
 }
 
+int get_item_type(int id)
+{
+    Item* item = get_item(id);
+    if (item == NULL) return NULL_ITEM_TYPE;
+    return item->type;
+}
+
 }
  
 // Client
@@ -81,12 +90,6 @@ ItemID* get_container_contents(int container_id)
     if (container == NULL) return NULL;
     return container->slot;
 }
-
-int get_sprite_index(int item_id)
-{
-    return id_to_sprite(item_id);
-}
-
 
 }
 #endif 
@@ -129,6 +132,8 @@ Item* create_item(int item_type)
 
 Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz)
 {
+    item_type = randrange(0,7);
+    
     Item* item = create_item(item_type);
     if (item == NULL) return NULL;
     Particle::create_item_particle(item->id, x,y,z,vx,vy,vz);
@@ -163,11 +168,11 @@ void check_item_pickups()
         ItemContainer* ic = item_container_list->get(inventory_id);
         if (ic == NULL) return;
 
-        int slot = auto_add_item_to_container(ic, item->item_id);   //insert item on server
+        int slot = auto_add_item_to_container(ic, item->id);   //insert item on server
         if (slot == NULL_SLOT) return;
 
         class item_create_StoC create_msg;
-        create_msg.item_id = item->item_id;
+        create_msg.item_id = item->id;
         create_msg.item_type = item->type;
         create_msg.inventory_id = inventory_id;
         create_msg.inventory_slot = slot;

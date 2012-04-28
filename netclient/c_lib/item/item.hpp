@@ -7,25 +7,21 @@ class Item
 {
     public:
 
-    int id;
-    int type; //stack, laser, mining_laser
-    int item_id;
+    ItemID id;
+    int group; //stack, laser, mining_laser
+    int type;  // stone_block, dirt_block, mining_laser_beta,
     
-    int sprite_index; //temp
-
     int durability;
     int stack_size;
     //int sprite_index;
 
     explicit Item(int id)
-    : id(id)
-    {
-        type = 0;
-        item_id = 0;
-        durability = -1;
-        stack_size = -1;
-        sprite_index = rand()%32;
-    }
+    :   id((ItemID)id),
+        group(NULL_ITEM_GROUP),
+        type(NULL_ITEM_TYPE),
+        durability(NULL_DURABILITY),
+        stack_size(1)
+    {}
 
 };
 
