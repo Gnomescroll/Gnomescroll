@@ -21,11 +21,11 @@ void init()
     set_sprite_ids();
 
     #if DC_SERVER
-    agent_inventory_list = (int*)malloc(AGENT_MAX * sizeof(int));
+    agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_hand_list      = (int*)malloc(AGENT_MAX * sizeof(int));
-    for (int i=0; i<AGENT_MAX; i++) agent_inventory_list[i] = NULL_ITEM;
+    for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list     [i] = NULL_ITEM;
@@ -38,7 +38,7 @@ void teardown()
     if (item_list           != NULL) delete item_list;
 
     #if DC_SERVER
-    if (agent_inventory_list != NULL) free(agent_inventory_list);
+    if (agent_container_list != NULL) free(agent_container_list);
     if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
     if (agent_nanite_list    != NULL) free(agent_nanite_list);
     if (agent_hand_list      != NULL) free(agent_hand_list);
@@ -100,6 +100,14 @@ ItemID* get_container_contents(int container_id)
 namespace Item
 {
 
+    
+ItemContainer* get_agent_container(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    int container_id = agent_container_list[agent_id];
+    return item_container_list->get(container_id);
+}
+
 static void assign_container_to_agent(ItemContainer* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
 {
     assert(container != NULL);
@@ -115,7 +123,7 @@ void assign_containers_to_agent(int agent_id, int client_id)
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
     
     ItemContainer* agent_container = item_container_list->create();
-    assign_container_to_agent(agent_container, AGENT_INVENTORY, agent_inventory_list, agent_id, client_id);
+    assign_container_to_agent(agent_container, AGENT_CONTAINER, agent_container_list, agent_id, client_id);
     
     ItemContainer* agent_toolbelt = item_container_list->create();
     assign_container_to_agent(agent_toolbelt, AGENT_TOOLBELT, agent_toolbelt_list, agent_id, client_id);
@@ -164,19 +172,13 @@ void check_item_pickups()
 
         item_particle_list->destroy(item_particle->id);
 
-        int inventory_id = agent_inventory_list[agent->id];
-        ItemContainer* ic = item_container_list->get(inventory_id);
+        ItemContainer* ic = get_agent_container(agent->id);
         if (ic == NULL) return;
 
         int slot = auto_add_item_to_container(ic, item->id);   //insert item on server
         if (slot == NULL_SLOT) return;
 
-        class item_create_StoC create_msg;
-        create_msg.item_id = item->id;
-        create_msg.item_type = item->type;
-        create_msg.inventory_id = inventory_id;
-        create_msg.inventory_slot = slot;
-        create_msg.sendToClient(agent->client_id);
+        send_container_item_create(agent->client_id, item->id, ic->id, slot);
     }
 }
 

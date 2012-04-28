@@ -10,7 +10,6 @@ void teardown();
 class ItemContainer* get_container(int id);
 class Item* get_item(int id);
 int get_item_type(int id);
-
 }
 
 /*
@@ -44,6 +43,7 @@ SERVER
 namespace Item
 {
 
+class ItemContainer* get_agent_container(int agent_id);
 void assign_container_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);

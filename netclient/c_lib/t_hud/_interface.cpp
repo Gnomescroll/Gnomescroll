@@ -19,7 +19,7 @@ void set_container_id(ItemContainerType container_type, int container_id)
 {
     switch (container_type)
     {
-        case AGENT_INVENTORY:
+        case AGENT_CONTAINER:
             agent_container->container_id = container_id;
             break;
         case AGENT_TOOLBELT:

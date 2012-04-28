@@ -6,8 +6,8 @@ const int NULL_ITEM_GROUP = 0xff;
 const int NULL_ITEM_TYPE = 0xff;
 const int NULL_DURABILITY = -1;
 
-const int AGENT_INVENTORY_X = 6;
-const int AGENT_INVENTORY_Y = 3;
+const int AGENT_CONTAINER_X = 6;
+const int AGENT_CONTAINER_Y = 3;
 
 const int AGENT_TOOLBELT_X = 9;
 const int AGENT_TOOLBELT_Y = 1;

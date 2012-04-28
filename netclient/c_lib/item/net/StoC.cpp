@@ -12,11 +12,8 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
-    Item* item = item_list->get_or_create_type(item_type, (ItemID)item_id);
+    Item* item = item_list->get_or_create_type(type, (ItemID)id);
     if (item == NULL) return;
-    ItemContainer* container = get_container(inventory_id);
-    if (container == NULL) return;
-    container->insert_item(inventory_slot, item->id);
 }
 
 inline void item_destroy_StoC::handle()
@@ -44,9 +41,9 @@ inline void assign_item_container_StoC::handle()
     ItemContainerType type = (ItemContainerType)container_type;
     switch (type)
     {
-        case AGENT_INVENTORY:
-            player_inventory_id = container_id;
-            player_inventory = ic;
+        case AGENT_CONTAINER:
+            player_container_id = container_id;
+            player_container = ic;
             break;
         case AGENT_TOOLBELT:
             player_toolbelt_id = container_id;

@@ -7,22 +7,22 @@ namespace Item
 
 static uint16_t container_event_id = 0;
 
-static void send_container_alpha_action(int inventory_id, int slot)
+static void send_container_alpha_action(int container_id, int slot)
 {
     container_event_id += 1;
     container_action_alpha_CtoS msg;
     msg.event_id = container_event_id;
-    msg.inventory_id = inventory_id;
+    msg.container_id = container_id;
     msg.slot = slot;
     msg.send();
 }
 
-static void send_container_beta_action(int inventory_id, int slot)
+static void send_container_beta_action(int container_id, int slot)
 {
     container_event_id += 1;
     container_action_beta_CtoS msg;
     msg.event_id = container_event_id;
-    msg.inventory_id = inventory_id;
+    msg.container_id = container_id;
     msg.slot = slot;
     msg.send();
 }

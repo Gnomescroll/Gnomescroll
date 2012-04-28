@@ -5,6 +5,10 @@
 namespace Item
 {
 
+void broadcast_item_create(int item_id);
+class Item* send_item_create(int client_id, int item_id);
+void send_container_item_create(int client_id, int item_id, int container_id, int slot);
+
 // packets
 void send_container_failed_action(int client_id, int event_id)
 {
@@ -18,7 +22,7 @@ int auto_add_item_to_container(ItemContainer* container, ItemID item_id)
 {
     assert(container != NULL);
 
-    // if can stack with item in inventory
+    // if can stack with item in container
     // stack with it
     // else
     // add to empty slot
