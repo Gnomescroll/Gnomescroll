@@ -12,49 +12,24 @@ bl_ffi = require("ffi")
 
 bl_ffi.cdef[[
 int LUA_load_cube_texture_sheet(char* filename);
-void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index);
+int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y);
 
 void load_cube_texture_sprite_sheet(char*, int pos);
 ]]
 
 prefix = "media/sprites/";
 
-function load_texture_sheet(filename)
-  --print("load_texture_sheet: ", filename);
-  local str = bl_ffi.new("char[128]");
+local str = bl_ffi.new("char[128]");
+function register_spritesheet(filename)
   bl_ffi.copy(str, prefix .. filename);
-  return bl_ffi.C.LUA_load_cube_texture_sheet(str);
-end
-
-
--- Spritesheet loader
-spritesheet_name_to_id = {};
-spritesheet_id_to_name = {};
-
-function register_spritesheet(spritesheet)
-  if(spritesheet_name_to_id[spritesheet] ) then 
-    return  spritesheet_name_to_id[spritesheet]
-  end
-
-  local id = load_texture_sheet(spritesheet);
-  spritesheet_name_to_id[spritesheet] = id;
-  spritesheet_id_to_name[id] = spritesheet;
-
-  --print("textured sheet loaded: " .. spritesheet .. " id= " .. id )
+  id =  bl_ffi.C.LUA_load_cube_texture_sheet(str);
+  print("registered spritesheet: " .. filename .. " id=" .. id);
   return id
 end
 
--- texture loader
-
-texture_id_counter = 0;
-texture_id_table = {};
-
-texture_look_up_table = {}
-
-
----register a texture on a spritesheet
 function register_texture(spritesheet, xpos, ypos)
-  --local sindex = register_spritesheet(spritesheet);
+  assert(xpos ~= nil)
+  assert(ypos ~= nil)
 
   xpos = xpos -1
   ypos = ypos -1
@@ -62,24 +37,19 @@ function register_texture(spritesheet, xpos, ypos)
   assert(xpos >= 0);
   assert(ypos >= 0);
 
-  sindex = spritesheet
-  local index = string.format("%s_%i_%i", spritesheet, xpos, ypos)
-
-  if(texture_look_up_table[index]) then
-    --print("register texture: index found: " .. index .. " id= " .. texture_look_up_table[index])
-    return texture_look_up_table[index]
+  if(spritesheet == nil) then
+    error("WTF")
   end
 
-  local id = texture_id_counter;
-  --print("registered texture: " .. index .. " id=" .. id);
-
-  bl_ffi.C.LUA_blit_cube_texture(sindex, xpos, ypos, id)
-
-  texture_look_up_table[index] = id;
-  texture_id_counter = texture_id_counter + 1;
-  return id;
+  id = bl_ffi.C.LUA_blit_cube_texture(spritesheet, xpos, ypos)
+  --print( "registered texture: " .. id .. " id=" .. id )
+  return id
 end
 
+function texture_alias(spritesheet, xpos, ypos)
+  --print( "register texture alias: ".. spritesheet .. " " .. xpos .. " " .. ypos );
+  return register_texture(spritesheet, xpos, ypos)
+end
 
 --- hud stuff
 
@@ -88,10 +58,4 @@ function hud( pos, tex, xpos, ypos)
     return { pos=pos, tex=tex }
   end
   return { pos=pos, tex=register_texture(tex,xpos,ypos) };
-end
-
---- texture stuff
-
-function texture_alias(spritesheet, xpos, ypos)
-  return register_texture(spritesheet, xpos, ypos)
 end

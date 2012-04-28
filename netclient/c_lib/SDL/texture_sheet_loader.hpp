@@ -79,7 +79,7 @@ class TextureSheetList
     }
 
     //blit to sheet or return texture id
-    int blit(int sheet_id, int source_x, int source_y, int dest_index)
+    int blit(int sheet_id, int source_x, int source_y)
     {
         if(sheet_id >= texture_num)
         {
@@ -122,7 +122,7 @@ class TextureSheetList
             return 255;
         }
 
-        int index = (dest_index % 16) + 16*(dest_index/16);
+        int index = (INDEX % 16) + 16*(INDEX/16);
         Uint32 pix; 
 
         int s_lock = SDL_MUSTLOCK(s);
@@ -181,7 +181,7 @@ extern "C"
 {
     int LUA_load_cube_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
 
-    void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index) GNOMESCROLL_API;
+    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y) GNOMESCROLL_API;
 
     void LUA_save_cube_texture() GNOMESCROLL_API;
 }

@@ -33,8 +33,15 @@ function iso_texture(spritesheet, xpos, ypos)
     if (type(spritesheet) == "number" and xpos == nil and ypos == nil) then
         id = spritesheet
     else
-        if(not xpos or not ypos) then error("iso_texture: xpos or ypos not set!") end
-        id = register_texture(spritesheet, xpos, ypos)
+        if(not xpos or not ypos)  then 
+            id = spritesheet
+            if(spritesheet == nil) then
+                error("iso_texture: null value!")
+            end
+        else
+            print("iso texture: spritesheet=" .. spritesheet .. " xpos,ypos=" .. xpos .. " " .. ypos)
+            id = register_texture(spritesheet, xpos, ypos)
+        end
     end
     return  { t = id, b = id, n = id, s = id, w = id, e = id };
 end
@@ -49,16 +56,22 @@ end
 t00 = register_spritesheet("t00.png")
 t01 = register_spritesheet("t01.png")
 
+if(t00 == nil or t01 == nil) then
+    error("WTF")
+end
 --alias texture
 error_block = texture_alias(t00,1,1)
-black_blow = texture_alias(t00,4,2)
-stone_block = texture_alias(t00,1,3)
+
+if(error_block == nil) then
+    error("WTF")
+end
 
 
+--Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
-
-
-Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
+b = NewSolidBlock(255, "error_block"); -- id, name
+b.texture = iso_texture(error_block);
+--b.hud = hud(0, error_block);
 
 
 --- Classic Blocks ---

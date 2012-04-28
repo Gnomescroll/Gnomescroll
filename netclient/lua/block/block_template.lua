@@ -38,7 +38,7 @@ transparent = 1
 BlockHud =
 {
 pos = nil,
-tex = 0,
+tex = nil,
 }
 
 function BlockHud:new ()
@@ -69,7 +69,7 @@ Block =
   name = nil,
   properties = nil,
   max_damage = default_max_damage, --default max damage
-  texture = nil,
+  texture = {t = 0, b = 0, n = 0, s = 0, w = 0, e = 0},
   hud = BlockHudDefault
 }
 

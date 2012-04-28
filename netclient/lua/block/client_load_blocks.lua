@@ -23,9 +23,9 @@ void LUA_set_block_name(int id, char* name, int length);
 ]]
 
 
+local str = ffi.new("char[64]");
 function set_block_name(id, name)
   --ssprint("block_name: " .. id .. " = " .. name);
-  local str = ffi.new("char[64]");
   ffi.copy(str, name);
   ffi.C.LUA_set_block_name(id, str, string.len(name) );
 end
