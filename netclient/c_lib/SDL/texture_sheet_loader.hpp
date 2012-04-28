@@ -11,26 +11,7 @@ struct TileMeta
     int xpos;
     int ypos;
 };
-/*
-class TextureSheet
-{
-    public:
-    SDL_Surface* surface;
-    GLuint id; //opengl
 
-    TextureSheet()
-    {
-        id = 0;
-        surface = NULL;
-    }
-
-    ~TextureSheet()
-    {
-        if (surface != NULL)
-            SDL_FreeSurface(surface);
-    }
-};
-*/
 const int TEXTURE_SHEET_LIST_MAX = 64;
 
 class TextureSheetList
@@ -97,16 +78,73 @@ class TextureSheetList
         }
     }
 
-    void blit(SDL_Surface* destination, int tile_dim, int tile_xindex, int tile_yindex, int texture_sheet_index)
+    //blit to sheet or return texture id
+    int blit(int sheet_id, int source_x, int source_y, int dest_index)
     {
-        //TextureSheet* ts = textures[texture_sheet_index];
+        if(sheet_id >= texture_num)
+        {
+            printf("Error: TextureSheetList::blit error!!! FIX \n");
+            return 255;
+        }    
+        //check to see if already loaded
+        for(int i=0; i<tile_num; i++)
+        {
+            struct TileMeta m = meta[i];
+            if(m.texture_sheet == sheet_id && m.xpos == source_x && m.ypos == source_y)
+                return i;
+        }
 
+        //increment and store
+        struct TileMeta m;
+        m.texture_sheet = sheet_id;
+        m.xpos = source_x;
+        m.ypos = source_y;
 
+        meta[tile_num] = m;
+        int INDEX = tile_num;
+        tile_num++;
+
+        SDL_Surface* source_texture = this->textures[sheet_id];
+        SDL_Surface* s = this->texture_sheet;
+
+        if( source_x* 16 >= s->w || source_y* 16 >= s->h )
+        {
+            printf("Error: TextureSheetList::blit, texture out of bounds \n");
+            return 255;
+        }
+
+        int index = (dest_index % 16) + 16*(dest_index/16);
+        Uint32 pix; 
+
+        int s_lock = SDL_MUSTLOCK(s);
+        int c_lock = SDL_MUSTLOCK(source_texture);
+
+        if(s_lock) SDL_LockSurface(s);
+        if(c_lock) SDL_LockSurface(source_texture);
+
+        Uint32* Pixels1 = (Uint32*) texture_stack;
+        Uint32* Pixels2 = (Uint32*) source_texture->pixels;
+
+        int dest_x = index % 16;
+        int dest_y = index / 16;
+
+        for(int i=0; i < 32; i++)
+        for(int j=0; j < 32; j++) 
+        {
+            pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
+            
+            Pixels1[ 32*32*index + (j*32+i) ] = pix;
+            Pixels2[ 512*( (dest_y*32 + j) ) + (32*dest_x + i) ] = pix;
+        }
+
+        if(c_lock) SDL_UnlockSurface(source_texture);
+        if(s_lock) SDL_UnlockSurface(s);
+
+        return INDEX;
     }
 };
 
 TextureSheetList* CubeTextureSheetList = NULL;
-//TextureSheetList CubeSelectorTextureSheetList;
 
 static const int CUBE_TEXTURE_SIZE = 512;
 
@@ -116,15 +154,13 @@ unsigned int* CubeTextureStack = NULL;
 void init()
 {
     CubeTextureSheetList = new TextureSheetList(32);
-    CubeTextureStack = (unsigned int*) malloc(4*CUBE_TEXTURE_SIZE*CUBE_TEXTURE_SIZE);
-    CubeTexture = create_surface_from_nothing(CUBE_TEXTURE_SIZE, CUBE_TEXTURE_SIZE);
+    CubeTextureStack = CubeTextureSheetList->texture_stack;
+    CubeTexture = CubeTextureSheetList->texture_sheet;
 }
 
 void teardown()
 {
     delete CubeTextureSheetList;
-    SDL_FreeSurface(CubeTexture);
-    free(CubeTextureStack);
 }
 
 }
