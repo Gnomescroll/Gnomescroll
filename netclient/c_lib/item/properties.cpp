@@ -14,6 +14,7 @@ int get_sprite_index(int id)
 {
     assert(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
+    return id;
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
     return sprite_array[type];
 }
