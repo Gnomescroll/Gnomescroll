@@ -14,6 +14,7 @@ namespace t_gen
 void init_gaussian_kernel(float* kernel, int xdim)
 {
 	const double k = 1.0; //normalization constant
+    const double sigma = 20.0; //standard deviation
 
 	for(int i=0; i<xdim; i++) kernel[i] = 0.0;
 
@@ -25,7 +26,7 @@ void init_gaussian_kernel(float* kernel, int xdim)
 	for(int i=0; i < xdim; i++)
 	{
 		float a = (m-_i)*(m-_i);
-		tmp[i] = exp(-1.0*a);
+		tmp[i] = exp(-1.0*a/sigma);
 		_i += 1.0;
 	}
 
@@ -55,7 +56,7 @@ void init_gaussian_kernel(float* kernel, int xdim)
 
 void convolve(float* in, float* out, int xdim, int ydim)
 {
-	const int kdim = 5;
+	const int kdim = 71;
 	const int kcen = (kdim-1) / 2;
 
 	float kernel[kdim];

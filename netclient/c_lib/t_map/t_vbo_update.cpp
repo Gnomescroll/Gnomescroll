@@ -194,11 +194,12 @@ static const struct PositionElement _v_index[4*6] =
     {{{0,0,1,0}}} , {{{0,0,0,0}}} , {{{1,0,0,0}}} , {{{1,0,1,0}}}  //east
 };
 
-#define USE_QUAD_CACHE 0
 
 /*
     Test this!
 */
+
+#define USE_QUAD_CACHE 1
 
 static inline void add_quad2(struct Vertex* v_list, int offset, int x, int y, int z, int side, int tile_id) 
 {
@@ -305,7 +306,22 @@ static inline void add_quad_comptability(struct Vertex* v_list, int offset, int 
         }
     }
     _set_quad_local_ambient_occlusion(v_list, offset, x, y, z, side);
-    _set_quad_color(v_list, offset, x, y, z, side);
+
+
+    switch( t_map::cube_list[tile_id].color_type )
+    {
+        case 0:
+            _set_quad_color(v_list, offset, x, y, z, side);
+            break;
+        case 1:
+            _set_quad_color(v_list, offset, x, y, z, side);
+            break;
+        case 2:
+            _set_quad_color(v_list, offset, x, y, z, side);
+            break;
+        default:
+            break;
+    }    
 }
 
 
