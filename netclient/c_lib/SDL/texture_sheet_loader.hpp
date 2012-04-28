@@ -5,23 +5,11 @@ namespace TextureSheetLoader
 
 #include <SDL/texture_loader.hpp>
 
-class TextureSheet
+struct TileMeta
 {
-    public:
-    SDL_Surface* surface;
-    GLuint id; //opengl
-
-    TextureSheet()
-    {
-        id = 0;
-        surface = NULL;
-    }
-
-    ~TextureSheet()
-    {
-        if (surface != NULL)
-            SDL_FreeSurface(surface);
-    }
+    int texture_sheet;
+    int xpos;
+    int ypos;
 };
 
 const int TEXTURE_SHEET_LIST_MAX = 64;
@@ -30,37 +18,45 @@ class TextureSheetList
 {
     public:
 
+    int TILE_SIZE;
     int tile_dim; //x/y dimension of each tile
 
     int texture_num;
-    TextureSheet* textures[TEXTURE_SHEET_LIST_MAX];
+    int tile_num;
+    
+    SDL_Surface* textures[TEXTURE_SHEET_LIST_MAX]; //replace with surfaces
 
-    TextureSheetList()
+    struct TileMeta meta[256];
+
+    SDL_Surface* texture_sheet;  //for 2d array
+    unsigned int* texture_stack; //for 3d arrays
+
+    TextureSheetList(int tile_size)
     {
+        TILE_SIZE = tile_size;
         for(int i=0; i<TEXTURE_SHEET_LIST_MAX; i++) textures[i] = NULL;
         texture_num=0;
+        tile_num=0;
+
+        texture_sheet = create_surface_from_nothing(16*TILE_SIZE, 16*TILE_SIZE);
+        texture_stack = (unsigned int*) malloc(256*TILE_SIZE*TILE_SIZE);
     }
 
     ~TextureSheetList()
     {
-        for (int i=0; i<TEXTURE_SHEET_LIST_MAX; i++) this->delete_texture(i);
+        for (int i=0; i<TEXTURE_SHEET_LIST_MAX; i++)
+        {
+            if (this->textures[i] != NULL) SDL_FreeSurface(textures[i]);
+        }
     }
 
     int load_texture(char* filename)
     {
-        //load texture
-        if(texture_num == TEXTURE_SHEET_LIST_MAX)
-        {
-            printf("TextureSheetList Error: max texture sheets reached\n");
-            return -1;
-        }
-
         int id = texture_num;
 
-        textures[texture_num] = new TextureSheet;
-        textures[texture_num]->surface = _load_image(filename);
+        textures[texture_num]= _load_image(filename);
 
-        if(textures[texture_num]->surface == 0)
+        if(textures[texture_num] == NULL)
         {
             printf("TextureSheetList: loading spritesheet %s failed \n", filename);
             return 0;
@@ -68,41 +64,99 @@ class TextureSheetList
 
         texture_num++;
         return id;
-
     }
 
     int reload_texture(int id, char* filename)
     {
-        delete textures[id];
-        
-        textures[id] = new TextureSheet;
-        textures[id]->surface = _load_image(filename);
+        SDL_FreeSurface(textures[id]);
+        textures[id] = _load_image(filename);
 
-        if(textures[texture_num]->surface == 0)
+        if(textures[texture_num] == NULL)
         {
             printf("TextureSheetList: reloading spritesheet %s failed \n", filename);
             return 0;
         }
     }
 
-    void delete_texture(int id)
+    //blit to sheet or return texture id
+    int blit(int sheet_id, int source_x, int source_y)
     {
-        if (this->textures[id] == NULL)
-            return;
-        delete this->textures[id];
-        this->textures[id] = NULL;
-    }
+        if(sheet_id >= texture_num)
+        {
+            printf("Error: TextureSheetList::blit error!!! FIX \n");
+            return 255;
+        }    
+        //check to see if already loaded
+        for(int i=0; i<tile_num; i++)
+        {
+            struct TileMeta m = meta[i];
+            if(m.texture_sheet == sheet_id && m.xpos == source_x && m.ypos == source_y)
+            {
+                printf("!!! Sprite \n");
+                return i;
+            }
+        }
 
-    void blit(SDL_Surface* destination, int tile_dim, int tile_xindex, int tile_yindex, int texture_sheet_index)
-    {
-        //TextureSheet* ts = textures[texture_sheet_index];
+        //increment and store
+        struct TileMeta m;
+        m.texture_sheet = sheet_id;
+        m.xpos = source_x;
+        m.ypos = source_y;
 
+        meta[tile_num] = m;
+        int INDEX = tile_num;
+        tile_num++;
 
+        /*
+
+        */
+
+        SDL_Surface* s = this->textures[sheet_id];
+        
+        //SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
+        Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
+
+        if( source_x* 16 >= s->w || source_y* 16 >= s->h )
+        {
+            printf("Error: LUA_blit_cube_texture, texture out of bounds \n");
+            return 255;
+        }
+
+        int index = (INDEX % 16) + 16*(INDEX/16);
+        Uint32 pix; 
+
+        int s_lock = SDL_MUSTLOCK(s);
+        int c_lock = SDL_MUSTLOCK( texture_sheet);
+
+        if(s_lock) SDL_LockSurface(s);
+        if(c_lock) SDL_LockSurface( texture_sheet);
+
+        Uint32* Pixels1 = (Uint32*) CubeTextureStack;
+        Uint32* Pixels2 = (Uint32*) texture_sheet->pixels;
+
+        int dest_x = index % 16;
+        int dest_y = index / 16;
+
+        for(int i=0; i < 32; i++)
+        for(int j=0; j < 32; j++) 
+        {
+            pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
+            
+            Pixels1[ 32*32*index + (j*32+i) ] = pix;
+            Pixels2[ 512*( (dest_y*32 + j) ) + (32*dest_x + i) ] = pix;
+        }
+
+        if(c_lock) SDL_UnlockSurface( texture_sheet);
+        if(s_lock) SDL_UnlockSurface(s);
+
+        /*
+
+        */
+        return INDEX;
     }
 };
 
 TextureSheetList* CubeTextureSheetList = NULL;
-//TextureSheetList CubeSelectorTextureSheetList;
 
 static const int CUBE_TEXTURE_SIZE = 512;
 
@@ -111,17 +165,14 @@ unsigned int* CubeTextureStack = NULL;
 
 void init()
 {
-    CubeTextureSheetList = new TextureSheetList;
-    CubeTextureStack = (unsigned int*) malloc(4*CUBE_TEXTURE_SIZE*CUBE_TEXTURE_SIZE);
-    CubeTexture = create_surface_from_nothing(CUBE_TEXTURE_SIZE, CUBE_TEXTURE_SIZE);
-
+    CubeTextureSheetList = new TextureSheetList(32);
+    CubeTextureStack = CubeTextureSheetList->texture_stack;
+    CubeTexture = CubeTextureSheetList->texture_sheet;
 }
 
 void teardown()
 {
     delete CubeTextureSheetList;
-    SDL_FreeSurface(CubeTexture);
-    free(CubeTextureStack);
 }
 
 }
@@ -130,7 +181,7 @@ extern "C"
 {
     int LUA_load_cube_texture_sheet(char* filename) GNOMESCROLL_API; //LUA_API;
 
-    void LUA_blit_cube_texture(int sheet_id, int source_x, int source_y, int dest_index) GNOMESCROLL_API;
+    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y) GNOMESCROLL_API;
 
     void LUA_save_cube_texture() GNOMESCROLL_API;
 }
