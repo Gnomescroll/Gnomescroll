@@ -10,3 +10,9 @@ typedef enum
 //    AGENT_BAG,
 //    CRAFTING_BENCH
 } ItemContainerType;
+
+typedef enum
+{
+    NULL_ITEM = -1,
+    MAX_ITEM = 0xffff   // force enum to be large enough
+} ItemID;

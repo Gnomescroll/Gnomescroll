@@ -4,6 +4,10 @@
 #include <item/_interface.hpp>
 #include <item/_state.hpp>
 
+#if DC_SERVER
+#include <item/server.hpp>
+#endif
+
 namespace Item
 {
 
@@ -114,10 +118,48 @@ bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
             else
             // slot is occupied
             {
-                if (get_item_type(slot_item) == hand_item)
+                if (get_item_type(slot_item) == get_item_type(hand_item))
                 // types are the same
                 {
-                    // do stack stuff
+                    int hand_stack_size = get_stack_size(hand_item);
+                    int slot_stack_space = get_stack_space(slot_item);
+                    // hand stack will fit entirely in slot
+                    if (hand_stack_size <= slot_stack_space)
+                    {   // FULL STACK MERGE
+                        // add stacks
+                        merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
+                        #if DC_SERVER
+                        // update dest
+                        broadcast_item_state(slot_item);
+                        // destroy src
+                        destroy_item(hand_item);
+                        #endif
+                        hand_item = NULL_ITEM;
+                        something_happened = true;
+                    }
+                    else
+                    // stacks will not completely merge
+                    {
+                        if (slot_stack_space == 0)
+                        // the stack is full
+                        {  // SWAP
+                            container->insert_item(slot, hand_item);
+                            hand_item = slot_item;
+                            something_happened = true;
+                        }
+                        else
+                        // some of the hand stack will fit in the slot
+                        {   // PARTIAL STACK MERGE
+                            merge_item_stack(hand_item, slot_item, slot_stack_space);
+                            #if DC_SERVER
+                            // update items
+                            broadcast_item_state(slot_item);
+                            broadcast_item_state(hand_item);
+                            #endif
+                            // hand item unchanged
+                            something_happened = true;
+                        }
+                    }
                 }
                 else
                 // types are different

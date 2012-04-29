@@ -40,8 +40,6 @@ void set_container_id(ItemContainerType container_type, int container_id)
 */
 
 static bool hud_enabled = false;
-int active_slot = NULL_SLOT;
-UIElement* active_container = NULL;
 float mouse_x;
 float mouse_y;
 
@@ -103,7 +101,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     return event;
 }
 
-ContainerInputEvent null_event = {
+static ContainerInputEvent null_event = {
     -1,         // null container id
     NULL_SLOT   // null slot
 };
@@ -141,12 +139,6 @@ ContainerInputEvent mouse_motion(int x, int y)
 
 static void draw_grabbed_icon()
 {
-    //if (active_slot == NULL_SLOT) return;
-    //if (active_container == NULL) return;
-    //ItemID* contents = Item::get_container_contents(active_container->container_id);
-    //if (contents == NULL) return;
-    //if (contents[active_slot] == NULL_ITEM) return;
-
     if (Item::player_hand == NULL_ITEM) return;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere

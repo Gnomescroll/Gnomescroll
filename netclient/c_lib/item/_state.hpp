@@ -27,7 +27,7 @@ extern ItemID player_hand;
 extern int* agent_container_list;
 extern int* agent_toolbelt_list;
 extern int* agent_nanite_list;
-extern int* agent_hand_list;
+extern ItemID* agent_hand_list;
 
 #endif
 

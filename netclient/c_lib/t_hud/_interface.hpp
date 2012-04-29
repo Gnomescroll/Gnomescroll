@@ -12,9 +12,6 @@ extern class AgentInventoryUI* craft_bench_inventory;
 
 void set_container_id(ItemContainerType container_type, int container_id);
 
-
-extern int active_slot;
-extern class UIElement* active_container;
 extern float mouse_x;
 extern float mouse_y;
 

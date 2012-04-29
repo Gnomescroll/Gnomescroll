@@ -99,13 +99,11 @@ void ItemParticle::draw()
         model_view_matrix[9]*scale
     );
 
-    const int texture_index = sprite_index;
-
     float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(texture_index%8)* (1.0/8.0);
-    tx_max = tx_min + (1.0/8.0);
-    ty_min = (float)(texture_index/8)* (1.0/8.0);
-    ty_max = ty_min + (1.0/8.0);
+    tx_min = (float)(this->sprite_index%16)* (1.0/16.0);
+    tx_max = tx_min + (1.0/16.0);
+    ty_min = (float)(this->sprite_index/16)* (1.0/16.0);
+    ty_max = ty_min + (1.0/16.0);
 
     Vec3 position = verlet.position;
     Vec3 p = vec3_sub(position, vec3_add(right, up));

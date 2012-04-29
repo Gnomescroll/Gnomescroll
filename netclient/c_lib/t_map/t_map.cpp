@@ -102,60 +102,6 @@ int apply_damage(int x, int y, int z, int dmg)
 
 #if DC_SERVER
 
-//#include <t_item/_interface.hpp>
-
-// TODO: MOVE
-void block_spawn_items(int block_value, int x, int y, int z)
-{
-    /*
-    //const float drop_probability = 0.3f;
-    const float drop_probability = 1.0f;
-    float p = randf();
-    if (p > drop_probability) return;
-
-    ObjectType type = OBJECT_NONE;
-    if (randf () < 1.5f)
-    {
-        const int n_items = 7;  // 7 Gemstones
-        const ObjectType items[n_items] = {
-            OBJECT_GEMSTONE_MALACHITE,
-            OBJECT_GEMSTONE_RUBY,
-            OBJECT_GEMSTONE_TURQUOISE,
-            OBJECT_GEMSTONE_SILVER,
-            OBJECT_GEMSTONE_AMETHYST,
-            OBJECT_GEMSTONE_JADE,
-            OBJECT_GEMSTONE_ONYX,
-        };
-        type = items[randrange(0,n_items-1)];
-    }
-    else
-    {
-        const int n_items = 5;
-        const ObjectType items[n_items] = {
-            OBJECT_DIRT_BLOCK_DROP,
-            OBJECT_STONE_BLOCK_DROP,
-            OBJECT_SOFT_ROCK_BLOCK_DROP,
-            //OBJECT_MEDIUM_ROCK_BLOCK_DROP,
-            OBJECT_HARD_ROCK_BLOCK_DROP,
-            OBJECT_INFECTED_ROCK_BLOCK_DROP,
-        };
-        type  = items[randrange(0,n_items-1)];
-    }
-    
-    const float mom = 2.0f;
-    Objects::Object* obj = Objects::create(type);
-    if (obj == NULL) return;
-
-    using Components::PhysicsComponent;
-    PhysicsComponent* physics = (PhysicsComponent*)obj->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-    if (physics != NULL)
-    {
-        physics->set_position(vec3_init(x+randf(), y+randf(), z+randf()));
-        physics->set_momentum(vec3_init((randf()-0.5f)*mom, (randf()-0.5f)*mom, mom));
-    }
-    Objects::ready(obj);
-    //*/
-}
 
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
@@ -178,8 +124,9 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     {
         x = (float)x + 0.5f + randf()/3;
         y = (float)y + 0.5f + randf()/3;
-        z = (float)z + 0.05f; 
-        Item::create_item_particle(0, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+        z = (float)z + 0.05f;
+        int type = randrange(0,7);
+        Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     }
 
 }

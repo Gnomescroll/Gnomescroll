@@ -1,6 +1,8 @@
 #pragma once
 
-typedef int ItemID;
+//typedef int ItemID;
+
+#include <item/data/enum.hpp>
 
 namespace Item
 {
@@ -11,6 +13,14 @@ class ItemContainer* get_container(int id);
 class Item* get_item(ItemID id);
 //class Item* get_or_create_item(int item_type, ItemID item_id);
 int get_item_type(ItemID id);
+int get_stack_size(ItemID id);  // space used in a stack
+int get_stack_space(ItemID id); // space left in a stack
+
+void destroy_item(ItemID id);
+
+void merge_item_stack(ItemID src, ItemID dest);
+void merge_item_stack(ItemID src, ItemID dest, int amount);
+
 }
 
 /*
@@ -44,7 +54,7 @@ SERVER
 namespace Item
 {
 
-class ItemContainer* get_agent_container(int agent_id);
+int get_agent_container(int agent_id);
 void assign_container_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);
