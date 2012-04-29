@@ -12,6 +12,11 @@ Noise is a mapping from Rn to R - you input an n-dimensional point with real coo
 
 A 3d space, created from slive of 4d perlin, that changes over time.  Constantly shifting.  Blocks are added and removed at boundries (probability of erosion at surface based upon function).  Nothing permament.  Constantly shifting.
 
+!!!
+In Star Wars Galaxies, surveyors locate deposits of chemicals and minerals across different planets. To harvest these resources in bulk, surveyors must purchase mining installations from architects.
+Alternatively, surveyors can choose to sell the locations of rich deposits (i.e. the information itself) to miners rather than harvesting the resources themselves. Surveyors who choose to harvest resources may then become resource brokers who market those resources to artisans and manufacturers who need those resources to produce goods. Combat, medical or fashion goods then are sold on the open market and bought by mercenaries, doctors and other members of the general public.
+
+!!! Add "prospecting skill" for finding minerals
 
 !!!
 Better noise functions:

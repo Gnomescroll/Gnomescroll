@@ -116,7 +116,7 @@ class TextureSheetList
         //SDL_Surface* CubeTexture = TextureSheetLoader::CubeTexture;
         Uint32* CubeTextureStack = (Uint32*) this->texture_stack;
 
-        if( source_x* 16 >= s->w || source_y* 16 >= s->h )
+        if( source_x* TILE_SIZE >= s->w || source_y* TILE_SIZE >= s->h )
         {
             printf("Error: LUA_blit_cube_texture, texture out of bounds \n");
             return 255;
@@ -137,13 +137,13 @@ class TextureSheetList
         int dest_x = index % 16;
         int dest_y = index / 16;
 
-        for(int i=0; i < 32; i++)
-        for(int j=0; j < 32; j++) 
+        for(int i=0; i < TILE_SIZE; i++)
+        for(int j=0; j < TILE_SIZE; j++) 
         {
-            pix = ((Uint32*) s->pixels)[ s->w*(j+32*source_y) + (i+32*source_x) ];
+            pix = ((Uint32*) s->pixels)[ s->w*(j+TILE_SIZE*source_y) + (i+TILE_SIZE*source_x) ];
             
-            Pixels1[ 32*32*index + (j*32+i) ] = pix;
-            Pixels2[ 512*( (dest_y*32 + j) ) + (32*dest_x + i) ] = pix;
+            Pixels1[ TILE_SIZE*TILE_SIZE*index + (j*TILE_SIZE+i) ] = pix;
+            Pixels2[ (16*TILE_SIZE)*( (dest_y*TILE_SIZE + j) ) + (TILE_SIZE*dest_x + i) ] = pix;
         }
 
         if(c_lock) SDL_UnlockSurface( texture_sheet);

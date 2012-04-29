@@ -56,16 +56,8 @@ end
 t00 = register_spritesheet("t00.png")
 t01 = register_spritesheet("t01.png")
 
-if(t00 == nil or t01 == nil) then
-    error("WTF")
-end
 --alias texture
 error_block = texture_alias(t00,1,1)
-
-if(error_block == nil) then
-    error("WTF")
-end
-
 
 --Block:new1(0, "empty", EmptyBlockProperty, iso_texture(error_block), NoHud);
 
