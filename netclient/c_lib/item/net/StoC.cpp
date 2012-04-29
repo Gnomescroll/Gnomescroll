@@ -17,7 +17,6 @@ inline void item_create_StoC::handle()
     item->group = group;
     item->durability = durability;
     item->stack_size = stack_size;
-    printf("Create item type %d\n", type);
 }
 
 inline void item_destroy_StoC::handle()
@@ -31,7 +30,6 @@ inline void item_state_StoC::handle()
     if (item == NULL) return;
     item->durability = durability;
     item->stack_size = stack_size;
-    printf("stack size state: %d\n", stack_size);
 }
 
 // Containers
