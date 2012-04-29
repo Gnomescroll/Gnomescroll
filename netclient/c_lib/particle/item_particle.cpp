@@ -2,7 +2,8 @@
 
 #include <particle/net/StoC.hpp>
 #include <item/_interface.hpp>
-#include <item/data/constant.hpp>
+
+#include <item/common/constant.hpp>
 
 namespace Particle
 {

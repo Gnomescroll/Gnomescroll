@@ -14,11 +14,12 @@ typedef enum
 } ItemGroups;
 */
 
-#include <c_lib/item/data/enum.hpp>
+#include <c_lib/item/common/enum.hpp>
 
 #ifdef DC_CLIENT
 #include <c_lib/SDL/texture_sheet_loader.hpp>
 #endif
+
 namespace Item
 {
 
@@ -67,7 +68,9 @@ void load_item_dat()
 	item_def(2, IG_RESOURCE , "TEST_RESOURCE3");
 	sprite_def(t00, 0,2);
 
+#ifdef DC_CLIENT
 	LUA_save_item_texture();
+#endif
 }
 
 }

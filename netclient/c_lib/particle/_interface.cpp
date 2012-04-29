@@ -5,7 +5,7 @@
 #include <particle/item_particle.hpp>
 
 #include <particle/net/StoC.hpp>
-#include <item/data/constant.hpp>
+//#include <item/data/constant.hpp>
 
 #if DC_CLIENT
 #include <particle/shrapnel.hpp>
