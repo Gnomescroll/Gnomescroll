@@ -13,7 +13,6 @@ class Item
     
     int durability;
     int stack_size;
-    //int sprite_index;
 
     explicit Item(int id)
     :   id((ItemID)id),
