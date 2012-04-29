@@ -209,8 +209,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)
 
-    conf.env.INCLUDES += ['./','c_lib', 'vox_lib', './net_lib'] + ['/usr/include']
-    conf.env.RPATH = ['.', '..', './ext/', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
+    conf.env.INCLUDES += ['./','c_lib', './net_lib'] + ['/usr/include']
+    conf.env.RPATH = ['.', '..', '\$ORIGIN/../lib', '\$ORIGIN/../lib', '/lib', '/usr/lib', '/usr/local/lib']
     
 def build(bld):
     OS = platform.system()
