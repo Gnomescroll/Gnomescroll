@@ -15,6 +15,7 @@ class Item* get_item(ItemID id);
 int get_item_type(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
+int get_stack_max(int item_type);
 
 void destroy_item(ItemID id);
 

@@ -80,6 +80,8 @@ int get_stack_space(ItemID id)
     return stack_space;
 }
 
+int get_stack_max(int item_type) { return STACK_SIZE_MAX; }
+
 void destroy_item(ItemID id)
 {
     item_list->destroy(id);
