@@ -12,16 +12,26 @@ namespace Item
 
 inline void item_create_StoC::handle()
 {
-    Item* item = item_list->get_or_create_type(type, (ItemID)id);
+    Item* item = item_list->create_type(type, (ItemID)id);
     if (item == NULL) return;
     item->group = group;
     item->durability = durability;
     item->stack_size = stack_size;
+    printf("Create item type %d\n", type);
 }
 
 inline void item_destroy_StoC::handle()
 {
-    item_list->destroy(item_id);
+    item_list->destroy(id);
+}
+
+inline void item_state_StoC::handle()
+{
+    Item* item = item_list->get((ItemID)id);
+    if (item == NULL) return;
+    item->durability = durability;
+    item->stack_size = stack_size;
+    printf("stack size state: %d\n", stack_size);
 }
 
 // Containers
@@ -84,7 +94,7 @@ inline void remove_item_from_container_StoC::handle()
 inline void container_action_failed_StoC::handle()
 {
     // copy network state to render state
-    printf("Event %d failed!\n", event_id);
+    printf("Container event %d failed!\n", event_id);
 }
 
 } // Item
@@ -99,6 +109,7 @@ namespace Item
 
 inline void item_create_StoC::handle() {}
 inline void item_destroy_StoC::handle() {}
+inline void item_state_StoC::handle() {}
 
 inline void create_item_container_StoC::handle() {}
 inline void delete_item_container_StoC::handle() {}

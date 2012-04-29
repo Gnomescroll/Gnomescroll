@@ -51,6 +51,18 @@ class ItemContainer
             return (slot >= 0 && slot < this->slot_max);
         }
 
+        int get_stackable_slot(int item_type, int stack_size)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (this->slot[i] == NULL_ITEM) continue;
+                if (get_item_type(this->slot[i]) == item_type   // stacks
+                && get_stack_space(this->slot[i]) >= stack_size) // stack will fit
+                    return i;
+            }
+            return NULL_SLOT;
+        }
+
         int get_empty_slot()
         {
             for (int i=0; i<this->slot_max; i++)

@@ -15,7 +15,7 @@ unsigned int ItemSheetTexture = 0;
 void init_item_particle()
 {
 
-    SDL_Surface* s = create_surface_from_file((char*) "media/sprites/i00.png");
+    SDL_Surface* s = create_surface_from_file((char*) "media/sprites/i01_256.png");
     if(s == NULL)
     {
         printf("t_item: spritesheet load error\n");

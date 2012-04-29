@@ -29,7 +29,7 @@ ItemID player_hand = NULL_ITEM;
 int* agent_container_list = NULL;
 int* agent_toolbelt_list = NULL;
 int* agent_nanite_list = NULL;
-int* agent_hand_list = NULL;
+ItemID* agent_hand_list = NULL;
 
 #endif
 

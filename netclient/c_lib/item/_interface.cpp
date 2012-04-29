@@ -24,7 +24,7 @@ void init()
     agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_toolbelt_list  = (int*)malloc(AGENT_MAX * sizeof(int));
     agent_nanite_list    = (int*)malloc(AGENT_MAX * sizeof(int));
-    agent_hand_list      = (int*)malloc(AGENT_MAX * sizeof(int));
+    agent_hand_list      = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
     for (int i=0; i<AGENT_MAX; i++) agent_container_list[i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_toolbelt_list [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
@@ -64,6 +64,58 @@ int get_item_type(ItemID id)
     return item->type;
 }
 
+int get_stack_size(ItemID id)
+{   // space used in a stack
+    Item* item = get_item(id);
+    assert(item != NULL);
+    return item->stack_size;
+}
+
+int get_stack_space(ItemID id)
+{   // space left in a stack
+    Item* item = get_item(id);
+    assert(item != NULL);
+    int stack_space = STACK_SIZE_MAX - item->stack_size;
+    assert(stack_space >= 0);
+    return stack_space;
+}
+
+void destroy_item(ItemID id)
+{
+    item_list->destroy(id);
+}
+
+void merge_item_stack(ItemID src, ItemID dest)
+{
+    Item* src_item = get_item(src);
+    assert(src_item != NULL);
+    Item* dest_item = get_item(dest);
+    assert(dest_item != NULL);
+
+    // add src's stack to dest
+    dest_item->stack_size += src_item->stack_size;
+    assert(dest_item->stack_size <= STACK_SIZE_MAX);
+}
+
+void merge_item_stack(ItemID src, ItemID dest, int amount)
+{
+    assert(amount > 0);
+    
+    Item* src_item = get_item(src);
+    assert(src_item != NULL);
+    Item* dest_item = get_item(dest);
+    assert(dest_item != NULL);
+
+    // add src's stack to dest
+    dest_item->stack_size += amount;
+    assert(dest_item->stack_size <= STACK_SIZE_MAX);
+    
+    // remove from src
+    src_item->stack_size -= amount;
+    assert(src_item->stack_size >= 1);
+}
+
+
 }
  
 // Client
@@ -93,11 +145,10 @@ namespace Item
 {
 
     
-ItemContainer* get_agent_container(int agent_id)
+int get_agent_container(int agent_id)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
-    int container_id = agent_container_list[agent_id];
-    return item_container_list->get(container_id);
+    return agent_container_list[agent_id];
 }
 
 static void assign_container_to_agent(ItemContainer* container, ItemContainerType type, int* container_list, int agent_id, int client_id)
@@ -127,8 +178,6 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
 Item* create_item(int item_type)
 {
-    // TODO -- dont override type
-    item_type = randrange(0,7);
     return item_list->create_type(item_type);
 }
 
@@ -160,15 +209,15 @@ void check_item_pickups()
         Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
         if (agent == NULL) continue;
 
-        item_particle->picked_up(agent->id);
+        int container_id = get_agent_container(agent->id);
+        if (container_id == NULL_CONTAINER) return;
 
-        ItemContainer* ic = get_agent_container(agent->id);
-        if (ic == NULL) return;
-
-        int slot = auto_add_item_to_container(ic, item->id);   //insert item on server
+        // get slot for placing in container
+        int slot = auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
         if (slot == NULL_SLOT) return;
 
-        send_container_item_create(agent->client_id, item->id, ic->id, slot);
+        // update particle
+        item_particle->picked_up(agent->id);
     }
 }
 
@@ -181,7 +230,7 @@ void throw_item(int agent_id, ItemID item_id)
     Item* item = get_item(item_id);
     if (item == NULL) return;
 
-    broadcast_item_destroy(a->client_id, item->id);
+    broadcast_item_destroy(item->id);
 
     Vec3 position = a->get_center();
     float x = position.x;

@@ -68,10 +68,6 @@ b.texture = iso_texture(error_block);
 
 --- Classic Blocks ---
 
-b = NewSolidBlock(255, "error_block"); -- id, name
-b.texture = iso_texture(error_block);
---b.hud = hud(0, error_block);
-
 b = NewSolidBlock(1, "lava");
 b.texture = iso_texture(t00,2,1);
 b.hud = hud(0+0, b.texture.n);

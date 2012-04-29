@@ -13,6 +13,7 @@ namespace Particle
 #if DC_CLIENT
 inline void item_particle_create_StoC::handle()
 {
+    printf("Create particle type %d\n", item_type);
     Particle::create_item_particle(id, item_type, x,y,z,mx,my,mz);
 }
 

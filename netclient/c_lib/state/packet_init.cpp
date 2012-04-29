@@ -224,6 +224,7 @@ void RegisterMessages() {
     
     // item
     Item::item_create_StoC::register_client_packet();
+    Item::item_state_StoC::register_client_packet();
     Item::item_destroy_StoC::register_client_packet();
 
     // container state

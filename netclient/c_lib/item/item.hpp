@@ -7,12 +7,16 @@ class Item
 {
     public:
 
-    ItemID id;
-    int group; //stack, laser, mining_laser
-    int type;  // stone_block, dirt_block, mining_laser_beta,
-    
-    int durability;
-    int stack_size;
+        ItemID id;
+        int group; //stack, laser, mining_laser
+        int type;  // stone_block, dirt_block, mining_laser_beta,
+        
+        int durability;
+        int stack_size;
+
+    #if DC_SERVER
+    ~Item();
+    #endif
 
     explicit Item(int id)
     :   id((ItemID)id),
@@ -40,12 +44,22 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
     public:
         ItemList() { print_list((char*)this->name(), this); }
 
-        #if DC_CLIENT
+        #if DC_CLIENT && !PRODUCTION
         Item* create()
         {
             printf("must create item with id\n");
             assert(false);
             return NULL;
+        }
+        #endif
+
+        #if DC_CLIENT
+        Item* create_type(int item_type, ItemID item_id)
+        {
+            Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
+            if (item == NULL) return NULL;
+            item->type = item_type;
+            return item;
         }
         #endif
 
@@ -58,22 +72,6 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             return item;
         }
         #endif
-        
-        Item* create_type(int item_type, int item_id)
-        {
-            Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
-            if (item == NULL) return NULL;
-            item->type = item_type;
-            return item;
-        }
-        
-        Item* get_or_create_type(int item_type, int item_id)
-        {
-            Item* item = this->get_or_create(item_id);
-            if (item == NULL) return NULL;
-            item->type = item_type;
-            return item;
-        }
 
         void draw() {}
         void tick() {}

@@ -13,7 +13,6 @@ int get_sprite_index_for_id(ItemID id)
 {
     assert(id < MAX_ITEMS && id >= 0);
     int type = get_item_type(id);
-    return id;
     if (type == NULL_ITEM_TYPE) return ERROR_SPRITE;
     assert(type >= 0 && type < MAX_ITEMS);
     return sprite_array[type];
