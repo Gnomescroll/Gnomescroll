@@ -165,14 +165,15 @@ extern "C"
 {
     //CUBE API
     //returns destination index
-    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
-    {
-        return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
-    }
 
     int LUA_load_cube_texture_sheet(char* filename)
     {
         return TextureSheetLoader::CubeTextureSheetLoader->load_texture(filename);
+    }
+
+    int LUA_blit_cube_texture(int sheet_id, int source_x, int source_y)
+    {
+        return TextureSheetLoader::CubeTextureSheetLoader->blit(sheet_id, source_x, source_y);
     }
 
     void LUA_save_cube_texture()
@@ -181,14 +182,14 @@ extern "C"
     }
 
     //Item API
+    int LUA_load_item_texture_sheet(char* filename)
+    {
+        return TextureSheetLoader::ItemTextureSheetLoader->load_texture( (char*) filename);
+    }
+
     int LUA_blit_item_texture(int sheet_id, int source_x, int source_y)
     {
         return TextureSheetLoader::ItemTextureSheetLoader->blit(sheet_id, source_x, source_y);
-    }
-
-    int LUA_load_item_texture_sheet(char* filename)
-    {
-        return TextureSheetLoader::ItemTextureSheetLoader->load_texture(filename);
     }
 
     void LUA_save_item_texture()

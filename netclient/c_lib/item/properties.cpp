@@ -8,7 +8,13 @@ namespace Item
 
 
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
+int group_array[MAX_ITEMS];
 
+void init_properties()
+{
+    for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
+    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = 0);
+}
 int get_sprite_index_for_id(ItemID id)
 {
     assert(id < MAX_ITEMS && id >= 0);
@@ -25,6 +31,7 @@ int get_sprite_index_for_type(int type)
     return sprite_array[type];
 }
 
+/*
 void set_sprite_ids()
 {
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
@@ -32,6 +39,7 @@ void set_sprite_ids()
     for (int i=16; i<24; i++) sprite_array[i] = i;
     for (int i=32; i<40; i++) sprite_array[i] = i;
 }
+*/
 /*
 Names
 */

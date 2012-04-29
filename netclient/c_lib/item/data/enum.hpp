@@ -1,4 +1,3 @@
-
 #pragma once
 
 typedef enum
@@ -16,3 +15,23 @@ typedef enum
     NULL_ITEM = -1,
     MAX_ITEM = 0xffff   // force enum to be large enough
 } ItemID;
+
+/*
+typedef enum
+{
+    ERROR_TYPE,
+    GENERIC_TYPE, //does nothing, resources, stackable
+    GUN,
+    MINING_LASER
+} ItemTypes;
+*/
+
+typedef enum
+{
+    IG_ERROR,
+    IG_RESOURCE, 	//does nothing, resources, stackable
+    IG_PLACER, 	//consumed to create block
+    IG_WEAPON,
+    IG_MINING_LASER,
+
+} ItemGroups;

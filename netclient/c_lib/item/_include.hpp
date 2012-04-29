@@ -4,7 +4,6 @@
 #include <item/data/enum.hpp>
 #include <item/data/struct.hpp>
 
-
 #include <item/properties.cpp>
 #include <item/item_container.cpp>
 #include <item/item.cpp>
@@ -15,6 +14,7 @@
 #include <item/_state.cpp>
 #include <item/_interface.cpp>
 
+#include <item/data/config.hpp>
 
 // Client
 #if DC_CLIENT
