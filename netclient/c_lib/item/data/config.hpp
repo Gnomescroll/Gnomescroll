@@ -4,11 +4,12 @@
 /*
 typedef enum
 {
-    ERROR_TYPE,
-    RESOURCE, 	//does nothing, resources, stackable
-    PLACER, 	//consumed to create block
-    WEAPON,
-    MINING_LASER,
+    IG_ERROR,
+    IG_RESOURCE, 	//does nothing, resources, stackable
+    IG_PLACER, 	//consumed to create block
+    IG_HITSCAN_WEAPON,
+    IG_MELEE_WEAPON,
+    IG_MINING_LASER,
 
 } ItemGroups;
 */
@@ -61,14 +62,12 @@ void load_item_dat()
 	sprite_def(t00, 0,0);
 
 	item_def(1, IG_RESOURCE , "TEST_RESOURCE2");
-	sprite_def(t00, 0,0);
+	sprite_def(t00, 1,0);
 
 	item_def(2, IG_RESOURCE , "TEST_RESOURCE3");
-	sprite_def(t00, 0,0);
+	sprite_def(t00, 0,2);
 
 	LUA_save_item_texture();
-
-
 }
 
 }
