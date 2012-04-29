@@ -4,7 +4,6 @@
 
 /* objects */
 
-//#include <particle/_interface.hpp>
 #include <particle/particles.cpp>
 
 #include <particle/grenade.cpp>
