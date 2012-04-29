@@ -11,6 +11,7 @@ namespace Item
 
 class ItemContainerUI
 {
+    public:
         int id;
         ItemContainerType type;
 

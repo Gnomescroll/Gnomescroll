@@ -37,6 +37,12 @@ void teardown()
     if (item_container_list != NULL) delete item_container_list;
     if (item_list           != NULL) delete item_list;
 
+    #if DC_CLIENT
+    if (player_container_ui != NULL) delete player_container_ui;
+    if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
+    if (player_nanite_ui    != NULL) delete player_nanite_ui;
+    #endif
+    
     #if DC_SERVER
     if (agent_container_list != NULL) free(agent_container_list);
     if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);

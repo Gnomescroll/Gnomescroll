@@ -18,6 +18,9 @@ extern int player_nanite_id;
 extern class ItemContainer* player_container;
 extern class ItemContainer* player_toolbelt;
 extern class ItemContainer* player_nanite;
+extern class ItemContainerUI* player_container_ui;
+extern class ItemContainerUI* player_toolbelt_ui;
+extern class ItemContainerUI* player_nanite_ui;
 extern ItemID player_hand;
 #endif
 

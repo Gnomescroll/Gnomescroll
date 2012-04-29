@@ -3,6 +3,7 @@
 #if DC_CLIENT
 
 #include <item/_state.hpp>
+#include <item/client_item_container.hpp>
 #include <t_hud/_interface.hpp>
 
 namespace Item
@@ -55,14 +56,23 @@ inline void assign_item_container_StoC::handle()
         case AGENT_CONTAINER:
             player_container_id = container_id;
             player_container = ic;
+            if (player_container_ui != NULL) delete player_container_ui;
+            player_container_ui = new ItemContainerUI(ic->id);
+            player_container_ui->init(ic->type, ic->xdim, ic->ydim);
             break;
         case AGENT_TOOLBELT:
             player_toolbelt_id = container_id;
             player_toolbelt = ic;
+            if (player_toolbelt_ui != NULL) delete player_toolbelt_ui;
+            player_toolbelt_ui = new ItemContainerUI(ic->id);
+            player_toolbelt_ui->init(ic->type, ic->xdim, ic->ydim);
             break;
         case AGENT_NANITE:
             player_nanite_id = container_id;
             player_nanite = ic;
+            if (player_nanite_ui != NULL) delete player_nanite_ui;
+            player_nanite_ui = new ItemContainerUI(ic->id);
+            player_nanite_ui->init(ic->type, ic->xdim, ic->ydim);
             break;
         default:
             assert(false);
