@@ -14,6 +14,9 @@ inline void item_create_StoC::handle()
 {
     Item* item = item_list->get_or_create_type(type, (ItemID)id);
     if (item == NULL) return;
+    item->group = group;
+    item->durability = durability;
+    item->stack_size = stack_size;
 }
 
 inline void item_destroy_StoC::handle()
