@@ -25,4 +25,4 @@
 #include <t_map/server/map_chunk_history.cpp>
 #endif
 
-#include <t_map/data/config.hpp>
+#include <t_map/config/config.hpp>
