@@ -55,13 +55,13 @@ class ItemContainerUI
             return NULL_SLOT;
         }
 
-        int get_item_stack(int slot)
+        int get_slot_stack(int slot)
         {
             assert(this->is_valid_slot(slot));
             return this->slot_stack[slot];
         }
 
-        int get_item_type(int slot)
+        int get_slot_type(int slot)
         {
             assert(this->is_valid_slot(slot));
             return this->slot_type[slot];
@@ -86,6 +86,23 @@ class ItemContainerUI
         }
 
         /* initializers */
+
+        void load_data(ItemID* slots)
+        {
+            for (int i=0; i<this->slot_max; i++)
+            {
+                if (slots[i] == NULL_ITEM)
+                {
+                    this->slot_type[i] = NULL_ITEM_TYPE;
+                    this->slot_stack[i] = 1;
+                }
+                else
+                {
+                    this->slot_type[i] = get_item_type(slots[i]);
+                    this->slot_stack[i] = get_stack_size(slots[i]);
+                }
+            }
+        }
 
         void init(ItemContainerType type, int xdim, int ydim)
         {

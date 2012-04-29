@@ -139,7 +139,7 @@ ContainerInputEvent mouse_motion(int x, int y)
 
 static void draw_grabbed_icon()
 {
-    if (Item::player_hand == NULL_ITEM) return;
+    if (Item::player_hand_type_ui == NULL_ITEM_TYPE) return;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);
@@ -156,7 +156,7 @@ static void draw_grabbed_icon()
     const float x = mouse_x - (w / 2);
     const float y = _yresf - (mouse_y + (w / 2));
     
-    int tex_id = Item::get_sprite_index_for_id(Item::player_hand);
+    int tex_id = Item::get_sprite_index_for_type(Item::player_hand_type_ui);
 
     //const float iw = 8.0f; // icon_width
     //const int iiw = 8; // integer icon width

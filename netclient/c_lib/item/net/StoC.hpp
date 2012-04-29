@@ -129,6 +129,7 @@ class insert_item_in_container_StoC: public FixedSizeReliableNetPacketToClient<i
         inline void handle();
 };
 
+
 class remove_item_from_container_StoC: public FixedSizeReliableNetPacketToClient<remove_item_from_container_StoC>
 {
     public:
@@ -139,6 +140,28 @@ class remove_item_from_container_StoC: public FixedSizeReliableNetPacketToClient
         {
             pack_u16(&container_id, buff, buff_n, pack);
             pack_u8(&slot, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class insert_item_in_hand_StoC: public FixedSizeReliableNetPacketToClient<insert_item_in_hand_StoC>
+{
+    public:
+        uint16_t item_id;
+
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u16(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
+class remove_item_from_hand_StoC: public FixedSizeReliableNetPacketToClient<remove_item_from_hand_StoC>
+{
+    public:
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
         }
         inline void handle();
 };

@@ -150,8 +150,10 @@ void AgentToolbeltUI::draw()
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
 
-    ItemID* contents = Item::get_container_contents(this->container_id);
-    if (contents == NULL) return;
+    int* slot_types = Item::get_container_ui_types(this->container_id);
+    int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
+    if (slot_types == NULL) return;
+    assert(slot_stacks != NULL);
 
     glBegin(GL_QUADS);
 
@@ -159,8 +161,8 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<ydim; j++)
     {
         int slot = j * xdim + i;
-        if (contents[slot] == NULL_ITEM) continue;
-        int tex_id = Item::get_sprite_index_for_id(contents[slot]);
+        if (slot_types[slot] == NULL_ITEM_TYPE) continue;
+        int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
         const float x = xoff + border + i*(inc1+slot_size);
         const float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
@@ -242,8 +244,7 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        if (contents[slot] == NULL_ITEM) continue;
-        int count = Item::get_stack_size(contents[slot]);
+        int count = slot_stacks[slot];
         if (count <= 1) continue;
         assert(count < 100); // the string is only large enough to hold "99"
         

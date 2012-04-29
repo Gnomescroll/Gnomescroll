@@ -38,6 +38,21 @@ void send_container_remove(int client_id, int container_id, int slot)
     msg.sendToClient(client_id);
 }
 
+void send_hand_insert(int client_id, ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+
+    insert_item_in_hand_StoC msg;
+    msg.item_id = item_id;
+    msg.sendToClient(client_id);
+}
+
+void send_hand_remove(int client_id)
+{
+    remove_item_from_hand_StoC msg;
+    msg.sendToClient(client_id);
+}
+
 void send_container_failed_action(int client_id, int event_id)
 {
     container_action_failed_StoC msg;
