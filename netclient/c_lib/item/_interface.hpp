@@ -2,7 +2,7 @@
 
 //typedef int ItemID;
 
-#include <item/data/enum.hpp>
+#include <item/common/enum.hpp>
 
 namespace Item
 {

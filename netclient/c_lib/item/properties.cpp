@@ -1,7 +1,7 @@
 #include "properties.hpp"
 
 #include <item/_interface.hpp>
-#include <item/data/constant.hpp>
+#include <item/common/constant.hpp>
 
 namespace Item
 {
