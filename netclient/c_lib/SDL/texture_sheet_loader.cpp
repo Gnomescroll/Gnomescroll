@@ -69,7 +69,7 @@ int TextureSheetLoader::blit(int sheet_id, int source_x, int source_y)
         struct TileMeta m = meta[i];
         if(m.texture_sheet == sheet_id && m.xpos == source_x && m.ypos == source_y)
         {
-            printf("!!! Sprite \n");
+            //printf("TextureSheetLoader::blit \n");
             return i;
         }
     }

@@ -203,8 +203,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
         conf.check(header_name='lua.h',
                    lib='luajit-5.1', #'lua5.1',
                    use='luajit-5.1', #'lua5.1',
-                   libpath=lua_lib_path,
-                   includes=lua_include_path,
+                   libpath= '/usr/local/Cellar/luajit/2.0.0-beta9/include/luajit-2.0',
+                   includes= '/usr/local/Cellar/luajit/2.0.0-beta9/include/luajit-2.0',
                    uselib_store='LUA',
                    fragment='#include <lua.hpp>' + MAIN_TEST_CODE,
                    mandatory=True)

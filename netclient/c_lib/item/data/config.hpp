@@ -36,7 +36,12 @@ void item_def(int id, int group, const char* name)
 {
 	_current_item_id = id;
 
-	if(group_array[id] != IG_ERROR) assert(false);
+	if(group_array[id] != IG_ERROR)
+	{
+		printf("ITEM DAT ERROR: item id conflict, id= %i \n", id);
+		abort();
+	}
+
 	group_array[id] = group; //check
 }
 
@@ -50,7 +55,7 @@ void sprite_def(int spritesheet, int xpos, int ypos)
 
 void load_item_dat()
 {
-	int t00 = texture_alias("./media/sprite/i00.png");
+	int t00 = texture_alias("media/sprites/i00.png");
 
 	item_def(0, IG_RESOURCE , "TEST_RESOURCE1");
 	sprite_def(t00, 0,0);
