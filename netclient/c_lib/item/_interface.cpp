@@ -87,6 +87,9 @@ void destroy_item(ItemID id)
 
 void merge_item_stack(ItemID src, ItemID dest)
 {
+    assert(src != NULL_ITEM);
+    assert(dest != NULL_ITEM);
+
     Item* src_item = get_item(src);
     assert(src_item != NULL);
     Item* dest_item = get_item(dest);
@@ -99,6 +102,8 @@ void merge_item_stack(ItemID src, ItemID dest)
 
 void merge_item_stack(ItemID src, ItemID dest, int amount)
 {
+    assert(src != NULL_ITEM);
+    assert(dest != NULL_ITEM);
     assert(amount > 0);
     
     Item* src_item = get_item(src);
@@ -123,8 +128,8 @@ ItemID split_item_stack(ItemID src, int amount)
 
     Item* src_item = get_item(src);
     assert(src_item != NULL);
-    assert(amount < src_item->stack_size);
     src_item->stack_size -= amount;
+    assert(src_item->stack_size >= 1);
 
     Item* new_item = create_item(src_item->type);
     new_item->stack_size = amount;

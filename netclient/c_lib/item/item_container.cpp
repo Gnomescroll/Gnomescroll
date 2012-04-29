@@ -242,6 +242,7 @@ bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
     // hand is holding something
     {
         int hand_stack_size = get_stack_size(hand_item);
+        assert(hand_stack_size >= 1);
         if (slot_item == NULL_ITEM)
         // slot is empty
         {
@@ -298,7 +299,7 @@ bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
                     // hand has >1 stack
                     {
                         #if DC_SERVER
-                        merge_item_stack(hand_item, slot_item, hand_stack_size);
+                        merge_item_stack(hand_item, slot_item, 1);
                         // update items
                         broadcast_item_state(slot_item);
                         broadcast_item_state(hand_item);
