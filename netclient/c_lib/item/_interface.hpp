@@ -21,6 +21,10 @@ void destroy_item(ItemID id);
 void merge_item_stack(ItemID src, ItemID dest);
 void merge_item_stack(ItemID src, ItemID dest, int amount);
 
+#if DC_SERVER
+ItemID split_item_stack(ItemID src, int amount);
+#endif
+
 }
 
 /*

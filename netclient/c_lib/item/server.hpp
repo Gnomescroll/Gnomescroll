@@ -28,6 +28,16 @@ void send_container_insert(int client_id, ItemID item_id, int container_id, int 
     msg.sendToClient(client_id);
 }
 
+void send_container_remove(int client_id, int container_id, int slot)
+{
+    assert(container_id != NULL_CONTAINER);
+    assert(slot != NULL_SLOT);
+    remove_item_from_container_StoC msg;
+    msg.container_id = container_id;
+    msg.slot = slot;
+    msg.sendToClient(client_id);
+}
+
 void send_container_failed_action(int client_id, int event_id)
 {
     container_action_failed_StoC msg;

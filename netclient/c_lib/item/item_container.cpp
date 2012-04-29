@@ -98,6 +98,9 @@ bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
             {   // SLOT -> HAND
                 // remove slot item
                 container->remove_item(slot);
+                #if DC_SERVER
+                send_container_remove(client_id, container->id, slot);
+                #endif
                 // put in hand
                 hand_item = slot_item;
                 something_happened = true;
@@ -111,6 +114,9 @@ bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
             {   // HAND -> SLOT
                 // put hand item in slot
                 container->insert_item(slot, hand_item);
+                #if DC_SERVER
+                send_container_insert(client_id, hand_item, container->id, slot);
+                #endif
                 // remove item from hand
                 hand_item = NULL_ITEM;
                 something_happened = true;
@@ -144,6 +150,9 @@ bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
                         // the stack is full
                         {  // SWAP
                             container->insert_item(slot, hand_item);
+                            #if DC_SERVER
+                            send_container_insert(client_id, hand_item, container->id, slot);
+                            #endif
                             hand_item = slot_item;
                             something_happened = true;
                         }
@@ -165,6 +174,9 @@ bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot)
                 // types are different
                 {   // SWAP
                     container->insert_item(slot, hand_item);
+                    #if DC_SERVER
+                    send_container_insert(client_id, hand_item, container->id, slot);
+                    #endif
                     hand_item = slot_item;
                     something_happened = true;
                 }
@@ -209,27 +221,102 @@ bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot)
     // do nothing [minecraft splits stacks]
     // else
         // if slot empty
-            // place 1 unit in slot
-            // if 0 units remain
-                // remove from hand
+            // if stack is 1
+                // place item in slot
+            // else
+                // place 1 unit in slot
         // if hand item stacks with slot item
             // place 1 unit from stack in slot
             // if 0 units remain
                 // remove from hand
 
     if (hand_item == NULL_ITEM)
+    // hand is empty
     {
         // do nothing
         // Minecraft would split a stack here
+
+        // CREATES NEW ITEM
     }
     else
+    // hand is holding something
     {
-        // slot is empty
+        int hand_stack_size = get_stack_size(hand_item);
         if (slot_item == NULL_ITEM)
+        // slot is empty
         {
             // place 1 stack unit in slot
+            if (hand_stack_size == 1)
+            // only 1 in stack, do simple insert
+            {
+                container->insert_item(slot, hand_item);
+                #if DC_SERVER
+                send_container_insert(client_id, hand_item, container->id, slot);
+                #endif
+                hand_item = NULL_ITEM;
+                something_happened = true;
+            }
+            else
+            // must split stack
+            {
+                #if DC_SERVER
+                ItemID new_item = split_item_stack(hand_item, 1);   // THIS POSES PROBLEM FOR CLIENT PREDICTION --
+                container->insert_item(slot, new_item);             // CREATES NEW ITEM
+                broadcast_item_state(hand_item);
+                broadcast_item_create(new_item);
+                send_container_insert(client_id, new_item, container->id, slot);
+                #endif
+                // hand item is unchanged
+                something_happened = true;
+            }
+        }
+        else
+        // slot is occupied
+        {
+            if (get_item_type(slot_item) == get_item_type(hand_item))
+            // types are the same
+            {
+                int slot_stack_space = get_stack_space(slot_item);
+                if (slot_stack_space > 0)
+                // item can stack 1
+                {
+                    something_happened = true;
+                    if (hand_stack_size == 1)
+                    // hand only had one
+                    {
+                        #if DC_SERVER
+                        merge_item_stack(hand_item, slot_item);
+                        // update dest
+                        broadcast_item_state(slot_item);
+                        // destroy src
+                        destroy_item(hand_item);
+                        #endif
+                        hand_item = NULL_ITEM;
+                        something_happened = true;
+                    }
+                    else
+                    // hand has >1 stack
+                    {
+                        #if DC_SERVER
+                        merge_item_stack(hand_item, slot_item, hand_stack_size);
+                        // update items
+                        broadcast_item_state(slot_item);
+                        broadcast_item_state(hand_item);
+                        #endif
+                        // hand item unchanged
+                        something_happened = true;
+                    }
+                }
+            }
         }
     }
+
+    #if DC_CLIENT
+    player_hand = hand_item;
+    #endif
+    #if DC_SERVER
+    agent_hand_list[client_id] = hand_item;
+    #endif
 
     return something_happened;
 }

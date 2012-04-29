@@ -115,6 +115,22 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     assert(src_item->stack_size >= 1);
 }
 
+#if DC_SERVER
+ItemID split_item_stack(ItemID src, int amount)
+{
+    assert(src != NULL_ITEM);
+    assert(amount >= 1);
+
+    Item* src_item = get_item(src);
+    assert(src_item != NULL);
+    assert(amount < src_item->stack_size);
+    src_item->stack_size -= amount;
+
+    Item* new_item = create_item(src_item->type);
+    new_item->stack_size = amount;
+    return new_item->id;
+}
+#endif
 
 }
  
