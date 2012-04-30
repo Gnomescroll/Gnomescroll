@@ -39,7 +39,7 @@ void load_item_dat()
     //int error_sprite = sprite_alias(i0, 4, 1);
 
     item_def(0, IG_ERROR , "error_item");
-    sprite_def(i0, 4, 1);
+    sprite_def(i0, 4,1);
 
     item_def(1, IG_PLACER , "regolith");
     sprite_def(i1, 2,3);
@@ -54,13 +54,13 @@ void load_item_dat()
     sprite_def(i0, 1,5);
 
     item_def(5, IG_HITSCAN_WEAPON , "laser_rifle");
-    sprite_def(i0, 1,1);
+    sprite_def(i0, 3,7);
 
     item_def(6, IG_MELEE_WEAPON , "copper_shovel");
     sprite_def(i1, 1,1);
 
     item_def(7, IG_MINING_LASER , "mining_laser");
-    sprite_def(i1, 3, 8);
+    sprite_def(i0, 3,5);
 
     #if DC_CLIENT
     LUA_save_item_texture();
