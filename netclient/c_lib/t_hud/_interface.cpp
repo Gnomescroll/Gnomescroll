@@ -137,6 +137,9 @@ ContainerInputEvent mouse_motion(int x, int y)
     Drawing
 */
 
+static HudText::Text* grabbed_icon_stack_text = NULL;
+
+
 static void draw_grabbed_icon()
 {
     if (Item::player_hand_type_ui == NULL_ITEM_TYPE) return;
@@ -153,8 +156,8 @@ static void draw_grabbed_icon()
     const float w = 32;
 
     // center icon on mouse position
-    const float x = mouse_x - (w / 2);
-    const float y = _yresf - (mouse_y + (w / 2));
+    float x = mouse_x - (w / 2);
+    float y = _yresf - (mouse_y + (w / 2));
     
     int tex_id = Item::get_sprite_index_for_type(Item::player_hand_type_ui);
 
@@ -185,6 +188,26 @@ static void draw_grabbed_icon()
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
+
+    // Draw stack numbers
+    if (grabbed_icon_stack_text == NULL) return;
+    //if (Item::player_hand_stack_ui <= 1) return;
+    assert(Item::player_hand_stack_ui < 100);   // string only fits 99
+
+    HudFont::start_font_draw();
+    const int font_size = 12;
+    HudFont::set_properties(font_size);
+    HudFont::set_texture();
+
+    // calc posuition
+    x = x + (w/2) + font_size;
+    y = y + (w/2) - font_size;
+    grabbed_icon_stack_text->update_formatted_string(1, Item::player_hand_stack_ui);
+    grabbed_icon_stack_text->set_position(x,y);
+    grabbed_icon_stack_text->draw();
+
+    HudFont::reset_default();
+    HudFont::end_font_draw();
 }
 
 
@@ -199,30 +222,6 @@ void draw_hud()
 
     draw_grabbed_icon();
 }
-
-
-//void network_container_assignment(ObjectType type, int id)
-//{
-    //switch (type)
-    //{
-        //case OBJECT_AGENT_INVENTORY:
-            //agent_container->container_id = id;
-            //break;
-        //case OBJECT_AGENT_TOOLBELT:
-            //agent_toolbelt->container_id = id;
-            //break;
-        //case OBJECT_NANITE_INVENTORY:
-            //nanite_container->container_id = id;
-            //break;
-        //case OBJECT_CRAFTING_BENCH:
-            //craft_bench_container->container_id = id;
-            //break;
-        //default:
-            //printf("WARNING -- network_container_assignment -- invalid container type %d\n", type);
-            //break;
-    //}
-//}
-
 
 /* Main init/teardown */
 
@@ -247,6 +246,12 @@ void init()
     nanite_container->xoff = 0.0f;
     nanite_container->yoff = 0.0f;
     nanite_container->init();
+
+    grabbed_icon_stack_text = new HudText::Text;
+    grabbed_icon_stack_text->set_format((char*) "%d");
+    grabbed_icon_stack_text->set_format_extra_length(STACK_COUNT_MAX_LENGTH + 1 - 2);
+    grabbed_icon_stack_text->set_color(255,255,255,255);
+    grabbed_icon_stack_text->set_depth(-0.1f);
 }
 
 void teardown()
@@ -255,6 +260,8 @@ void teardown()
     if (agent_toolbelt != NULL) delete agent_toolbelt;
     if (nanite_container != NULL) delete nanite_container;
     if (craft_bench_container != NULL) delete craft_bench_container;
+
+    if (grabbed_icon_stack_text != NULL) delete grabbed_icon_stack_text;
 }
 
 #if DC_CLIENT

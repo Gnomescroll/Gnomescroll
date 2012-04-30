@@ -10,7 +10,6 @@ int container_event[CONTAINER_EVENT_MAX];
 
 static void send_container_alpha_action(ContainerActionType action, int container_id, int slot)
 {
-    assert(container_id != NULL_CONTAINER);
     assert(action != CONTAINER_ACTION_NONE);
     
     container_event_id += 1;

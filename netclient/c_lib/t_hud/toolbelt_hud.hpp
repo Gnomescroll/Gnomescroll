@@ -30,7 +30,6 @@ class AgentToolbeltUI : public UIElement
         int max = xdim * ydim;
         this->stack_numbers = new HudText::Text[max];
 
-        const int STACK_COUNT_MAX_LENGTH = 2;   // 99
         for (int i=0; i<max; i++)
         {
             HudText::Text* t = &this->stack_numbers[i];
