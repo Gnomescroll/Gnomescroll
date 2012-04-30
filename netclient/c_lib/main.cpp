@@ -14,6 +14,7 @@
 #include <t_map/t_vbo.hpp>
 #include <options.hpp>
 #include <common/common.hpp>
+#include <global.hpp>
 
 #include <entity/objects.hpp>
 
@@ -72,8 +73,6 @@ int run()
 
     poll_mouse();
  
-    int counter = 0;
-
     while (!input_state.quit)
     {
         if(_quit) break;
@@ -91,6 +90,7 @@ int run()
             if (tick_count == 0 || physics_ticks > 0)
                 break;
             physics_ticks++;
+            Global::tick += 1;
 
             // input
             process_events();
@@ -105,7 +105,7 @@ int run()
 
             //t_item::tick();
 
-            //if(counter % 10 == 0) t_item::check_item_pickups();
+            //if(Global::tick % 10 == 0) t_item::check_item_pickups();
 
             // update sound listener
             ClientState::playerAgent_state.update_sound();
@@ -115,9 +115,7 @@ int run()
 
             Objects::tick();    // update physics state
 
-            if (counter % 30 == 0) ClientState::send_camera_state();
-
-            counter++;
+            if (Global::tick % 30 == 0) ClientState::send_camera_state();
         }
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
@@ -348,6 +346,7 @@ int run()
         // update mouse
         poll_mouse();
 
+        Global::frame += 1;
     }
 
     Profiling::teardown_frame_graph();

@@ -20,6 +20,9 @@
 /* Compression */
 #include <common/compression/miniz.c>
 
+/* Global (tick, frame) */
+#include <global.cpp>
+
 /* Templates */
  
 #include <common/template/object_list.hpp>

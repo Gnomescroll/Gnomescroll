@@ -28,7 +28,9 @@ struct InputState
     bool quit;
 
     bool ignore_mouse_motion;
-
+    int last_mouse_button_down_event_frame;
+    int last_mouse_button_up_event_frame;
+    
     InputStateMode input_mode;
     InputStateMode camera_mode;
 
