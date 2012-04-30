@@ -134,23 +134,6 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
     assert(src_item->stack_size >= 1);
 }
 
-#if DC_SERVER
-ItemID split_item_stack(ItemID src, int amount)
-{
-    assert(src != NULL_ITEM);
-    assert(amount >= 1);
-
-    Item* src_item = get_item(src);
-    assert(src_item != NULL);
-    src_item->stack_size -= amount;
-    assert(src_item->stack_size >= 1);
-
-    Item* new_item = create_item(src_item->type);
-    new_item->stack_size = amount;
-    return new_item->id;
-}
-#endif
-
 }
  
 // Client
@@ -222,6 +205,46 @@ int* get_container_ui_stacks(int container_id)
 
 namespace Item
 {
+
+ItemID split_item_stack(ItemID src, int amount)
+{
+    assert(src != NULL_ITEM);
+    assert(amount >= 1);
+
+    Item* src_item = get_item(src);
+    assert(src_item != NULL);
+    src_item->stack_size -= amount;
+    assert(src_item->stack_size >= 1);
+
+    Item* new_item = create_item(src_item->type);
+    new_item->stack_size = amount;
+    return new_item->id;
+}
+
+ItemID split_item_stack_in_half(ItemID src)
+{
+    assert(src != NULL_ITEM);
+
+    Item* src_item = get_item(src);
+    assert(src_item != NULL);
+    int split_amount = src_item->stack_size / 2;
+    assert(split_amount >= 1);  // Do not call this function for a stack with only 1 (cannot split)
+    src_item->stack_size -= split_amount;
+
+    Item* new_item = create_item(src_item->type);
+    new_item->stack_size = split_amount;
+    return new_item->id;
+}
+bool agent_owns_container(int agent_id, int container_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    if (container_id == NULL_CONTAINER) return false;
+    if (agent_container_list[agent_id] == container_id) return true;
+    if (agent_toolbelt_list[agent_id] == container_id) return true;
+    if (agent_nanite_list[agent_id] == container_id) return true;
+    return false;
+}
+
 
 ItemID get_agent_hand(int agent_id)
 {

@@ -290,7 +290,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     ItemID slot_item = container->get_item(slot);
     bool slot_empty = (slot_item == NULL_ITEM);
     int slot_item_type = get_item_type(slot_item);
-    //int slot_item_stack = get_stack_size(slot_item);
+    int slot_item_stack = get_stack_size(slot_item);
     int slot_item_space = get_stack_space(slot_item);
 
     ItemID hand_item = get_agent_hand(agent_id);
@@ -300,7 +300,9 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     #endif
 
     // if hand empty
-    // do nothing [minecraft splits stacks]
+        // if slot not empty
+            // if slot stack > 1 (can split)
+                // split stack, rounded up
     // else
         // if slot empty
             // if stack is 1
@@ -315,10 +317,30 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     if (hand_empty)
     // hand is empty
     {
-        // do nothing
-        // Minecraft would split a stack here
-
-        // CREATES NEW ITEM
+        if (!slot_empty)
+        // slot is occupied
+        {
+            if  (slot_item_stack > 1)
+            // stack can split
+            {
+                // split stack, rounded down
+                #if DC_CLIENT
+                hand_item_type = slot_item_type;
+                hand_item_stack = slot_item_stack / 2;
+                container->insert_item(slot, slot_item_type, slot_item_stack - hand_item_stack);
+                // slot item type unchanged
+                #endif
+                #if DC_SERVER
+                ItemID new_item = split_item_stack_in_half(slot_item);
+                hand_item = new_item;
+                // slot id is unchanged
+                broadcast_item_state(slot_item);
+                broadcast_item_create(new_item);
+                send_hand_insert(client_id, new_item);
+                #endif
+                action = PARTIAL_SLOT_TO_EMPTY_HAND;
+            }
+        }
     }
     else
     // hand is holding something
@@ -359,8 +381,8 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 broadcast_item_state(hand_item);
                 broadcast_item_create(new_item);
                 send_container_insert(client_id, new_item, container->id, slot);
-                #endif
                 // hand item id is unchanged
+                #endif
                 action = PARTIAL_HAND_TO_EMPTY_SLOT;
             }
         }

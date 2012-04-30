@@ -21,11 +21,6 @@ void destroy_item(ItemID id);
 
 void merge_item_stack(ItemID src, ItemID dest);
 void merge_item_stack(ItemID src, ItemID dest, int amount);
-
-#if DC_SERVER
-ItemID split_item_stack(ItemID src, int amount);
-#endif
-
 }
 
 /*
@@ -64,6 +59,10 @@ SERVER
 
 namespace Item
 {
+
+ItemID split_item_stack(ItemID src, int amount);
+ItemID split_item_stack_in_half(ItemID src);
+bool agent_owns_container(int agent_id, int container_id);
 
 ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
