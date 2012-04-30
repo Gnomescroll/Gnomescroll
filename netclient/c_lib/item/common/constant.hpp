@@ -1,6 +1,6 @@
 #pragma once
 
-const int NULL_SLOT = -1;           // invalid slot value
+const int NULL_SLOT = 0xff;           // invalid slot value
 const int NULL_ITEM_GROUP = 0xff;
 const int NULL_ITEM_TYPE = 0xff;
 const int NULL_DURABILITY = 0xffff;

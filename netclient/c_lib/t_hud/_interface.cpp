@@ -102,7 +102,7 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
 }
 
 static ContainerInputEvent null_event = {
-    -1,         // null container id
+    NULL_CONTAINER,         // null container id
     NULL_SLOT   // null slot
 };
 

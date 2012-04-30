@@ -55,8 +55,8 @@ int AgentToolbeltUI::get_slot_at(int px, int py)
     float width  = xdim*slot_size + (xdim-1)*inc1;
     float height = ydim*slot_size + (ydim-1)*inc1;
 
-    if (px < 0 || px > width)  return -1;
-    if (py < 0 || py > height) return -1;
+    if (px < 0 || px > width)  return NULL_SLOT;
+    if (py < 0 || py > height) return NULL_SLOT;
 
     int xslot = px / (inc1 + slot_size);
     int yslot = py / (inc1 + slot_size);

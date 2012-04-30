@@ -110,6 +110,7 @@ class ItemContainerUI
             this->xdim = xdim;
             this->ydim = ydim;
             this->slot_max = xdim*ydim;
+            assert(this->slot_max < NULL_SLOT);
             this->slot_type = new int[this->slot_max];
             this->slot_stack = new int[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
