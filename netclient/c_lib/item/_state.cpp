@@ -20,6 +20,12 @@ class ItemContainer* player_toolbelt = NULL;
 class ItemContainer* player_nanite = NULL;
 ItemID player_hand = NULL_ITEM;
 
+class ItemContainerUI* player_container_ui = NULL;
+class ItemContainerUI* player_toolbelt_ui = NULL;
+class ItemContainerUI* player_nanite_ui = NULL;
+int player_hand_type_ui = NULL_ITEM_TYPE;
+int player_hand_stack_ui = 1;
+
 #endif
 
 

@@ -19,6 +19,7 @@
 // Client
 #if DC_CLIENT
 #include <item/client.cpp>
+#include <item/client_item_container.cpp>
 #endif
 
 // Server

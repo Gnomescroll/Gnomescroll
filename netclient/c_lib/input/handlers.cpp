@@ -318,37 +318,37 @@ void container_key_up_handler(SDL_Event* event)
 
 void container_mouse_down_handler(SDL_Event* event)
 {
-    // check intersection with any slots
+    //// check intersection with any slots
 
-    //SDL_MouseButtonEvent e = event->button;
-    //printf("Button type: %d\n", e.type);
-    //printf("Button which: %d\n", e.which);
-    //printf("Button button: %d\n", e.button);
-    //printf("Button state: %d\n", e.state);
-    //printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
+    ////SDL_MouseButtonEvent e = event->button;
+    ////printf("Button type: %d\n", e.type);
+    ////printf("Button which: %d\n", e.which);
+    ////printf("Button button: %d\n", e.button);
+    ////printf("Button state: %d\n", e.state);
+    ////printf("Button x,y: %d,%d\n", e.x, e.y);  // reports 0,0 no matter what the mouse grab state is
 
-    // gets correct mouse pixels
-    int x,y;
-    SDL_GetMouseState(&x, &y);
-    //printf("GetMouseState x,y: %d,%d\n", x,y);
+    //// gets correct mouse pixels
+    //int x,y;
+    //SDL_GetMouseState(&x, &y);
+    ////printf("GetMouseState x,y: %d,%d\n", x,y);
 
-    t_hud::ContainerInputEvent container_event;
+    //t_hud::ContainerInputEvent container_event;
 
-    switch (event->button.button)
-    {
-        case SDL_BUTTON_LEFT:
-            container_event = t_hud::left_mouse_down(x,y);
-            Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
-            break;
+    //switch (event->button.button)
+    //{
+        //case SDL_BUTTON_LEFT:
+            //container_event = t_hud::left_mouse_down(x,y);
+            //Item::mouse_left_click_handler(container_event.container_id, container_event.slot);
+            //break;
 
-        case SDL_BUTTON_RIGHT:
-            container_event = t_hud::right_mouse_down(x,y);
-            Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
-            break;
+        //case SDL_BUTTON_RIGHT:
+            //container_event = t_hud::right_mouse_down(x,y);
+            //Item::mouse_right_click_handler(container_event.container_id, container_event.slot);
+            //break;
 
-        default:
-            return;
-    }
+        //default:
+            //return;
+    //}
 }
 
 void container_mouse_up_handler(SDL_Event* event)

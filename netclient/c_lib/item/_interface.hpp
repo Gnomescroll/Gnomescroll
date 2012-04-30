@@ -15,6 +15,7 @@ class Item* get_item(ItemID id);
 int get_item_type(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
+int get_stack_max(int item_type);
 
 void destroy_item(ItemID id);
 
@@ -35,6 +36,9 @@ CLIENT
 namespace Item
 {
 
+int get_event_container_id(int event_id);
+class ItemContainerUI* get_container_ui(int container_id);
+
 class Item* create_item(int item_type, ItemID item_id);
 
 void mouse_right_click_handler(int id, int slot);
@@ -43,7 +47,8 @@ void mouse_left_click_handler(int id, int slot);
 ItemID* get_container_contents(int container_id);
 int get_sprite_index_for_id(ItemID item_id);
 int get_sprite_index_for_type(int item_type);
-
+int* get_container_ui_types(int container_id);
+int* get_container_ui_stacks(int container_id);
 }
 #endif 
 
@@ -58,6 +63,7 @@ SERVER
 namespace Item
 {
 
+ItemID get_agent_hand(int agent_id);
 int get_agent_container(int agent_id);
 void assign_container_to_agent(int agent_id, int client_id);
 

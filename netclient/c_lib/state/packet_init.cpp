@@ -239,9 +239,8 @@ void RegisterMessages() {
     Item::container_action_failed_StoC::register_client_packet();
     Item::insert_item_in_container_StoC::register_client_packet();
     Item::remove_item_from_container_StoC::register_client_packet();
-
-    
-
+    Item::insert_item_in_hand_StoC::register_client_packet();
+    Item::remove_item_from_hand_StoC::register_client_packet();
 }
 
 }

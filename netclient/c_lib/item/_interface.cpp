@@ -10,6 +10,10 @@
 #include <item/net/StoC.hpp>
 #endif
 
+#if DC_CLIENT
+#include <item/client.hpp>
+#endif
+
 namespace Item
 {
 
@@ -37,6 +41,12 @@ void teardown()
     if (item_container_list != NULL) delete item_container_list;
     if (item_list           != NULL) delete item_list;
 
+    #if DC_CLIENT
+    if (player_container_ui != NULL) delete player_container_ui;
+    if (player_toolbelt_ui  != NULL) delete player_toolbelt_ui;
+    if (player_nanite_ui    != NULL) delete player_nanite_ui;
+    #endif
+    
     #if DC_SERVER
     if (agent_container_list != NULL) free(agent_container_list);
     if (agent_toolbelt_list  != NULL) free(agent_toolbelt_list);
@@ -66,6 +76,7 @@ int get_item_type(ItemID id)
 
 int get_stack_size(ItemID id)
 {   // space used in a stack
+    if (id == NULL_ITEM) return 1;
     Item* item = get_item(id);
     assert(item != NULL);
     return item->stack_size;
@@ -73,12 +84,15 @@ int get_stack_size(ItemID id)
 
 int get_stack_space(ItemID id)
 {   // space left in a stack
+    if (id == NULL_ITEM) return 0;
     Item* item = get_item(id);
     assert(item != NULL);
     int stack_space = STACK_SIZE_MAX - item->stack_size;
     assert(stack_space >= 0);
     return stack_space;
 }
+
+int get_stack_max(int item_type) { return STACK_SIZE_MAX; }
 
 void destroy_item(ItemID id)
 {
@@ -144,6 +158,21 @@ ItemID split_item_stack(ItemID src, int amount)
 namespace Item
 {
 
+int get_event_container_id(int event_id)
+{
+    assert(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);
+    return container_event[event_id];
+}
+
+ItemContainerUI* get_container_ui(int container_id)
+{
+    assert(container_id != NULL_CONTAINER);
+    if (player_container_ui != NULL && player_container_ui->id == container_id) return player_container_ui;
+    if (player_toolbelt_ui  != NULL && player_toolbelt_ui->id  == container_id) return player_toolbelt_ui;
+    if (player_nanite_ui    != NULL && player_nanite_ui->id    == container_id) return player_nanite_ui;
+    return NULL;
+}
+
 Item* create_item(int item_type, ItemID item_id)
 {
     return item_list->create_type(item_type, item_id);
@@ -156,6 +185,20 @@ ItemID* get_container_contents(int container_id)
     return container->slot;
 }
 
+int* get_container_ui_types(int container_id)
+{
+    ItemContainerUI* container = get_container_ui(container_id);
+    if (container == NULL) return NULL;
+    return container->slot_type;
+}
+
+int* get_container_ui_stacks(int container_id)
+{
+    ItemContainerUI* container = get_container_ui(container_id);
+    if (container == NULL) return NULL;
+    return container->slot_stack;
+}
+
 }
 #endif 
 
@@ -165,6 +208,12 @@ ItemID* get_container_contents(int container_id)
 namespace Item
 {
 
+ItemID get_agent_hand(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    assert(agent_hand_list != NULL);
+    return agent_hand_list[agent_id];
+}
     
 int get_agent_container(int agent_id)
 {

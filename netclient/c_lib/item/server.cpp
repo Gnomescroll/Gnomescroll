@@ -102,6 +102,7 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
         assert(slot_item_id != NULL_ITEM);
         merge_item_stack(item_id, slot_item_id);
         send_item_state(client_id, slot_item_id);
+        send_container_insert(client_id, slot_item_id, container_id, slot);
     }
     return slot;
 }

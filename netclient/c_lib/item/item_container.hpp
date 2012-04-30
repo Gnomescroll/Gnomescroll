@@ -11,14 +11,14 @@ void init_container(class ItemContainer* container, ItemContainerType type);
 
 #if DC_CLIENT
 // transactions
-bool alpha_action_decision_tree(int id, int slot);
-bool beta_action_decision_tree(int id, int slot);
+ContainerActionType alpha_action_decision_tree(int id, int slot);
+ContainerActionType beta_action_decision_tree(int id, int slot);
 #endif
 
 #if DC_SERVER
 // transactions
-bool alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
-bool beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int id, int slot);
+ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int id, int slot);
 
 //network
 //  tell client to assign container to an agent

@@ -19,6 +19,12 @@ extern class ItemContainer* player_container;
 extern class ItemContainer* player_toolbelt;
 extern class ItemContainer* player_nanite;
 extern ItemID player_hand;
+
+extern class ItemContainerUI* player_container_ui;
+extern class ItemContainerUI* player_toolbelt_ui;
+extern class ItemContainerUI* player_nanite_ui;
+extern int player_hand_type_ui;
+extern int player_hand_stack_ui;
 #endif
 
 // Server
