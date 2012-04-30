@@ -158,6 +158,21 @@ ItemID split_item_stack(ItemID src, int amount)
 namespace Item
 {
 
+void open_container()
+{
+    // copy state to ui
+    if (player_container == NULL) return;
+    if (player_container_ui == NULL) return;
+    player_container_ui->load_data(player_container->slot);
+}
+
+void close_container()
+{
+    // attempt throw
+    mouse_left_click_handler(NULL_CONTAINER, NULL_SLOT);
+}
+
+
 int get_event_container_id(int event_id)
 {
     assert(event_id >= 0 && event_id < CONTAINER_EVENT_MAX);

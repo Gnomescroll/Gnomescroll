@@ -13,7 +13,7 @@ struct InputState
 {
     bool mouse_bound;
     bool help_menu;
-    bool inventory;
+    bool container;
     bool scoreboard;
     bool map;
     bool chat;
@@ -52,7 +52,7 @@ void key_state_handler(Uint8 *keystate, int numkeys);
 // triggers
 void toggle_mouse_bind();
 void toggle_help_menu();
-void toggle_inventory();
+void toggle_container();
 void toggle_scoreboard();
 void toggle_map();
 void toggle_chat();

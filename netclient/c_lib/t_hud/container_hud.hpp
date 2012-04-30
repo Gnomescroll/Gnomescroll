@@ -7,7 +7,7 @@
 namespace t_hud
 {
 
-class AgentInventoryUI : public UIElement
+class AgentContainerUI : public UIElement
 {
     public:
 
@@ -42,14 +42,14 @@ class AgentInventoryUI : public UIElement
         }
     }
     
-    ~AgentInventoryUI()
+    ~AgentContainerUI()
     {
         if (this->stack_numbers != NULL) delete[] this->stack_numbers;
     }
 };
 
 
-int AgentInventoryUI::get_slot_at(int px, int py)
+int AgentContainerUI::get_slot_at(int px, int py)
 {
     px -= xoff + border;
     py -= yoff - border;
@@ -68,7 +68,7 @@ int AgentInventoryUI::get_slot_at(int px, int py)
     return slot;
 }
 
-void AgentInventoryUI::draw()
+void AgentContainerUI::draw()
 {
 
     const float w = slot_size;
@@ -83,8 +83,8 @@ void AgentInventoryUI::draw()
     //glColor4ub(0, 0, 50, 64);
 
     //{
-        //float x = inventory_hud_x_off;
-        //float y = inventory_hud_y_off;
+        //float x = container_hud_x_off;
+        //float y = container_hud_y_off;
         //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
         //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
 

@@ -2,18 +2,18 @@
 
 #include <entity/constants.hpp>
 #include <t_hud/constants.hpp>
-#include <t_hud/inventory_hud.hpp>
+#include <t_hud/container_hud.hpp>
 #include <t_hud/toolbelt_hud.hpp>
 #include <t_hud/nanite_hud.hpp>
 
 namespace t_hud
 {
 
-class AgentInventoryUI* agent_container;
+class AgentContainerUI* agent_container;
 class AgentToolbeltUI* agent_toolbelt;
 // TODO -- TMP -- replace witha ctual types
 class AgentNaniteUI* nanite_container;
-class AgentInventoryUI* craft_bench_container;
+class AgentContainerUI* craft_bench_container;
 
 void set_container_id(ItemContainerType container_type, int container_id)
 {
@@ -232,7 +232,7 @@ void draw_hud()
 
 void init()
 {
-    agent_container = new AgentInventoryUI;
+    agent_container = new AgentContainerUI;
     agent_container->xoff = 300.0f;
     agent_container->yoff = 100.0f;
     agent_container->init();

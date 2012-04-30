@@ -4,11 +4,11 @@ namespace t_hud
 {
 
 // UI State
-extern class AgentInventoryUI* agent_inventory;
+extern class AgentContainerUI* agent_container;
 extern class AgentToolbeltUI* agent_toolbelt;
 // TODO -- TMP -- replace witha ctual types
-extern class AgentNaniteUI* nanite_inventory;
-extern class AgentInventoryUI* craft_bench_inventory;
+extern class AgentNaniteUI* nanite_container;
+extern class AgentContainerUI* craft_bench_container;
 
 void set_container_id(ItemContainerType container_type, int container_id);
 
@@ -22,8 +22,8 @@ typedef struct
     int slot;
 } ContainerInputEvent;
 
-void enable_inventory_hud();
-void disable_inventory_hud();
+void enable_container_hud();
+void disable_container_hud();
 
 ContainerInputEvent left_mouse_down(int x, int y);
 ContainerInputEvent left_mouse_up(int x, int y);
@@ -33,7 +33,7 @@ ContainerInputEvent mouse_motion(int x, int y);
 ContainerInputEvent null_input_event();
 
 // network
-void network_inventory_assignment(ObjectType type, int id);
+void network_container_assignment(ObjectType type, int id);
 
 // Init
 void init();

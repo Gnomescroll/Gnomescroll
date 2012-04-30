@@ -1,6 +1,5 @@
 #pragma once
 
-//const ItemID NULL_ITEM = -1;        // invalid item id
 const int NULL_SLOT = -1;           // invalid slot value
 const int NULL_ITEM_GROUP = 0xff;
 const int NULL_ITEM_TYPE = 0xff;

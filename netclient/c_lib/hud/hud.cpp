@@ -67,7 +67,6 @@ static struct HudDrawSettings
 {
     bool zoom;
     bool cube_selector;
-    bool inventory;
     bool help;
     bool connected;
     bool version_match;
@@ -111,7 +110,6 @@ void update_hud_draw_settings()
         (ClientState::playerAgent_state.you != NULL
       && ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
-    hud_draw_settings.inventory = input_state.inventory;
     hud_draw_settings.help = input_state.help_menu;
 
     hud_draw_settings.dead = (
@@ -203,13 +201,6 @@ void draw_hud_textures()
 
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
-
-    if (hud_draw_settings.inventory)
-    {
-        //HudInventory::agent_inventory->draw();
-        //HudInventory::agent_toolbelt->draw();
-        //HudInventory::draw_selected_icon_mask();
-    }
 
     if (hud_draw_settings.equipment)
         HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);

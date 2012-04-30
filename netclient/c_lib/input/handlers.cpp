@@ -25,19 +25,17 @@ void toggle_help_menu()
 
 void toggle_container()
 {
-    input_state.inventory = (!input_state.inventory);
-    if (input_state.inventory)
+    input_state.container = (!input_state.container);
+    if (input_state.container)
     {
         t_hud::enable_container_hud();
+        Item::open_container();
         SDL_ShowCursor(1);
     }
     else
     {
-       // unset selected container slot on close
-        //using ClientState::playerAgent_state;
-        //if (playerAgent_state.you != NULL)
-            //playerAgent_state.you->status.inventory->unselect_slot();
         t_hud::disable_container_hud();
+        Item::close_container();
     }
 }
 
@@ -159,7 +157,7 @@ void init_handlers()
     #endif
 
     input_state.help_menu = false;
-    input_state.inventory = false;
+    input_state.container = false;
     input_state.scoreboard = false;
     input_state.map = false;
     input_state.chat = false;
@@ -625,7 +623,7 @@ void key_down_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.inventory)
+    if (input_state.container)
         container_key_down_handler(event);
     else if (input_state.chat)
         chat_key_down_handler(event);
@@ -802,7 +800,7 @@ void key_up_handler(SDL_Event* event)
         return;
     }
 
-    if (input_state.inventory)
+    if (input_state.container)
         container_key_up_handler(event);
     else if (input_state.chat)
         chat_key_up_handler(event);
@@ -858,7 +856,7 @@ void mouse_button_down_handler(SDL_Event* event)
     }
 
     // chat doesnt affect mouse
-    if (input_state.inventory)
+    if (input_state.container)
         container_mouse_down_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_down_handler(event);
@@ -884,7 +882,7 @@ void mouse_button_up_handler(SDL_Event* event)
 
     // chat doesnt affect mouse
 
-    if (input_state.inventory)
+    if (input_state.container)
         container_mouse_up_handler(event);
     else if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_mouse_up_handler(event);
@@ -902,7 +900,7 @@ void mouse_motion_handler(SDL_Event* event)
 {
     // chat doesnt affect mouse
 
-    if (input_state.inventory)
+    if (input_state.container)
     {
         SDL_ShowCursor(1);  // always show cursor (until we have our own cursor)
         container_mouse_motion_handler(event);

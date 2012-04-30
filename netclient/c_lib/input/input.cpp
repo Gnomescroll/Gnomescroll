@@ -39,7 +39,7 @@ int get_key_state() {
 
 void bind_mouse()
 {
-    if (!input_state.inventory)
+    if (!input_state.container)
         SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 }
@@ -330,7 +330,7 @@ void apply_camera_physics()
 
 void poll_mouse()
 {
-    if (input_state.inventory) return;
+    if (input_state.container) return;
     
     int current_time = _GET_MS_TIME();
 

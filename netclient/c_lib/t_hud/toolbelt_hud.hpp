@@ -80,8 +80,8 @@ void AgentToolbeltUI::draw()
     //glColor4ub(0, 0, 50, 64);
 
     //{
-        //float x = inventory_hud_x_off;
-        //float y = inventory_hud_y_off;
+        //float x = container_hud_x_off;
+        //float y = container_hud_y_off;
         //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
         //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
 
