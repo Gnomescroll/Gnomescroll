@@ -3,7 +3,6 @@
 #if DC_CLIENT
 #include <particle/_interface.hpp>
 #include <item/_interface.hpp>
-#include <item/data/constant.hpp>
 #include <sound/sound.hpp>
 #endif
 

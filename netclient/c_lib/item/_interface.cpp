@@ -22,7 +22,7 @@ void init()
     item_container_list = new ItemContainerList;
     item_list           = new ItemList;
 
-    set_sprite_ids();
+    //set_sprite_ids();
 
     #if DC_SERVER
     agent_container_list = (int*)malloc(AGENT_MAX * sizeof(int));

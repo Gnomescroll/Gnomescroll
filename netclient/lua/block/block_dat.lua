@@ -39,7 +39,7 @@ function iso_texture(spritesheet, xpos, ypos)
                 error("iso_texture: null value!")
             end
         else
-            print("iso texture: spritesheet=" .. spritesheet .. " xpos,ypos=" .. xpos .. " " .. ypos)
+           -- print("iso texture: spritesheet=" .. spritesheet .. " xpos,ypos=" .. xpos .. " " .. ypos)
             id = register_texture(spritesheet, xpos, ypos)
         end
     end

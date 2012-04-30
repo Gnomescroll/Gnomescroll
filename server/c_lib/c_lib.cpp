@@ -29,17 +29,8 @@
 #include <common/lua/lua.cpp>
 
 //map 
-#include <t_map/constants.hpp>
-#include <t_map/t_map_class.cpp>
-#include <t_map/t_map.cpp>
-#include <t_map/t_properties.cpp>
 
-#include <t_map/net/t_CtoS.cpp>
-#include <t_map/net/t_StoC.cpp>
-
-#include <t_map/server/map_manager_class.cpp>
-#include <t_map/server/manager.cpp>
-#include <t_map/server/map_chunk_history.cpp>
+#include <t_map/_include.hpp>
  
 //ray tracing
 #include <physics/ray_trace/ray_trace.cpp>

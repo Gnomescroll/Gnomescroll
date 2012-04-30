@@ -130,21 +130,8 @@
 
 /* map */
 
-#include <t_map/constants.hpp>
-#include <t_map/t_map_class.cpp>
-#include <t_map/t_map.cpp>
-#include <t_map/t_properties.cpp>
+#include <t_map/_include.hpp>
 
-#include <t_map/t_vbo.cpp>
-#include <t_map/t_vbo_draw.cpp>
-#include <t_map/t_vbo_update.cpp>
-
-#include <t_map/glsl/cache.cpp>
-#include <t_map/glsl/shader.cpp>
-#include <t_map/glsl/texture.cpp>
-
-#include <t_map/net/t_CtoS.cpp>
-#include <t_map/net/t_StoC.cpp>
 
 
 #include <t_gen/_include.hpp>
@@ -241,6 +228,8 @@ int init_c_lib()
     t_map::init_for_draw();
 
     Item::init();
+    Item::init_properties();
+    Item::load_item_dat();
 
     t_hud::init();
     t_hud::draw_init();

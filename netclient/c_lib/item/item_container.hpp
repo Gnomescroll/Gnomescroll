@@ -1,7 +1,7 @@
 #pragma once
 
-#include <item/data/enum.hpp>
-#include <item/data/constant.hpp>
+#include <item/common/enum.hpp>
+#include <item/common/constant.hpp>
 
 namespace Item
 {

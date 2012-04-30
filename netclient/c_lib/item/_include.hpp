@@ -1,9 +1,8 @@
 #pragma once
 
-#include <item/data/constant.hpp>
-#include <item/data/enum.hpp>
-#include <item/data/struct.hpp>
-
+#include <item/common/constant.hpp>
+#include <item/common/enum.hpp>
+#include <item/common/struct.hpp>
 
 #include <item/properties.cpp>
 #include <item/item_container.cpp>
@@ -15,6 +14,7 @@
 #include <item/_state.cpp>
 #include <item/_interface.cpp>
 
+#include <item/config/config.hpp>
 
 // Client
 #if DC_CLIENT

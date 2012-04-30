@@ -78,6 +78,12 @@ void set_cube_name(int id, char* name, int length)
     index++;
 }
 
+void set_cube_name(int id, char* name)
+{
+    int length = strlen(name);
+    set_cube_name(id, name, length);
+}
+
 char* get_cube_name(int id)
 {
     if(id < 0 || id >= MAX_CUBES)

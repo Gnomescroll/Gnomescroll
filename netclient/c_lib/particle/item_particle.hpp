@@ -4,10 +4,6 @@
 #include <common/gl_assert.hpp>
 #endif
 
-#if DC_SERVER
-    //#include <t_item/net/StoC.hpp>
-#endif
-
 #include <physics/verlet_particle.hpp>
 
 namespace Particle
@@ -81,48 +77,6 @@ class ItemParticle //: public VerletComponent
     void init(ItemID item_id, int item_type, float x, float y, float z, float mx, float my, float mz);
     #endif
 };
-
-#if DC_CLIENT
-void ItemParticle::draw()
-{
-    const float scale = 0.25;
-    const float h = 0.35;
-
-    Vec3 up = vec3_init(
-        model_view_matrix[0]*scale,
-        model_view_matrix[4]*scale,
-        model_view_matrix[8]*scale
-    );
-    Vec3 right = vec3_init(
-        model_view_matrix[1]*scale,
-        model_view_matrix[5]*scale,
-        model_view_matrix[9]*scale
-    );
-
-    float tx_min, tx_max, ty_min, ty_max;
-    tx_min = (float)(this->sprite_index%16)* (1.0/16.0);
-    tx_max = tx_min + (1.0/16.0);
-    ty_min = (float)(this->sprite_index/16)* (1.0/16.0);
-    ty_max = ty_min + (1.0/16.0);
-
-    Vec3 position = verlet.position;
-    Vec3 p = vec3_sub(position, vec3_add(right, up));
-    glTexCoord2f(tx_min,ty_max);
-    glVertex3f(p.x, p.y, p.z+h);
-
-    p = vec3_add(position, vec3_sub(up, right));
-    glTexCoord2f(tx_max,ty_max);
-    glVertex3f(p.x, p.y, p.z+h);
-
-    p = vec3_add(position, vec3_add(up, right));
-    glTexCoord2f(tx_max,ty_min);
-    glVertex3f(p.x, p.y, p.z+h);
-
-    p = vec3_add(position, vec3_sub(right, up));
-    glTexCoord2f(tx_min,ty_min);
-    glVertex3f(p.x, p.y, p.z+h);
-}
-#endif
 
 }
 
