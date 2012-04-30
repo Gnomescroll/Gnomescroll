@@ -12,8 +12,8 @@ int group_array[MAX_ITEMS];
 
 void init_properties()
 {
+    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
     for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
-    for (int i=0; i<MAX_ITEMS; sprite_array[i++] = 0);
 }
 int get_sprite_index_for_id(ItemID id)
 {
