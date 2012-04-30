@@ -238,8 +238,8 @@ void init()
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
-    agent_toolbelt->xoff = 500.0f;
-    agent_toolbelt->yoff = 500.0f;
+    agent_toolbelt->xoff = (_xresf - (agent_toolbelt->border*agent_toolbelt->xdim + agent_toolbelt->inc1*(agent_toolbelt->xdim-1) + agent_toolbelt->border*2))/2;
+    agent_toolbelt->yoff = _yresf - (agent_toolbelt->border + agent_toolbelt->inc2);
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;
