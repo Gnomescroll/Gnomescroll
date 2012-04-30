@@ -27,6 +27,8 @@ struct InputState
     bool confirm_quit;
     bool quit;
 
+    bool ignore_mouse_motion;
+
     InputStateMode input_mode;
     InputStateMode camera_mode;
 

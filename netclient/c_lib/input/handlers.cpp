@@ -34,6 +34,7 @@ void toggle_container()
     }
     else
     {
+        input_state.ignore_mouse_motion = true;
         t_hud::disable_container_hud();
         Item::close_container();
     }
@@ -167,6 +168,8 @@ void init_handlers()
 
     input_state.can_jump = true;
     input_state.quit = false;
+
+    input_state.ignore_mouse_motion = false;
 
     // options
     input_state.invert_mouse = false;
@@ -899,6 +902,12 @@ void mouse_button_up_handler(SDL_Event* event)
 void mouse_motion_handler(SDL_Event* event)
 {
     // chat doesnt affect mouse
+
+    if (input_state.ignore_mouse_motion)
+    {
+        input_state.ignore_mouse_motion = false;
+        return;
+    }
 
     if (input_state.container)
     {

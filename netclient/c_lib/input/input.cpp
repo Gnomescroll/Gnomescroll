@@ -230,7 +230,8 @@ static float y_sensitivity = 1 / (2*3.1415*DEFAULT_Y_SENSITIVITY_COEFFICIENT);
 static const float dampening = DEFAULT_DAMPENING;
 static float linear_sensitivity = 1 / (2 * 3.14159 * DEFAULT_LINEAR_SENSITIVITY_COEFFICIENT* DEFAULT_SENSITIVITY_OPTION);
 
-static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[1000];
+static const int MOUSE_MOVEMENT_ARRAY_INDEX_MAX = 1000;
+static struct MOUSE_MOVEMENT MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX_MAX];
 static int MOUSE_MOVEMENT_ARRAY_INDEX = 0;
 
 /*
@@ -253,7 +254,7 @@ void apply_camera_physics()
         printf("1 apply_camera_physics: Warning: ERROR!! timer error\n");
     }
 
-    long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
+    //long _start_time = LAST_MOUSE_MOVEMENT_TIME; //debug
     
     const float cfactor = 1.0/33.3333;
     float _dampening = pow(dampening, cfactor); // dampening per frame
@@ -305,7 +306,8 @@ void apply_camera_physics()
         LAST_MOUSE_MOVEMENT_TIME++;
     }
     LAST_MOUSE_MOVEMENT_TIME--;
-    
+
+    /*
     if(index != MOUSE_MOVEMENT_ARRAY_INDEX)
     {
         printf("apply_camera_physics, error: index= %i MOUSE_MOVEMENT_ARRAY_INDEX= %i \n", index, MOUSE_MOVEMENT_ARRAY_INDEX);
@@ -319,6 +321,7 @@ void apply_camera_physics()
         }
         printf("end error\n");
     }
+    //*/
 
     if (input_state.input_mode == INPUT_STATE_AGENT)
         agent_camera->pan(accum_vx+accum_dx, accum_vy+accum_dy);
@@ -331,6 +334,14 @@ void apply_camera_physics()
 void poll_mouse()
 {
     if (input_state.container) return;
+    if (input_state.ignore_mouse_motion)
+    {
+        // flush mouse buffer
+        MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dx = 0;
+        MOUSE_MOVEMENT_ARRAY[MOUSE_MOVEMENT_ARRAY_INDEX].dy = 0;
+        MOUSE_MOVEMENT_ARRAY_INDEX++;
+        return;
+    }
     
     int current_time = _GET_MS_TIME();
 
