@@ -434,7 +434,7 @@ void agent_key_down_handler(SDL_Event* event)
             break;
 
         case SDLK_r:
-            ClientState::playerAgent_state.action.reload();
+            //ClientState::playerAgent_state.action.reload();
             break;
         
         case SDLK_LEFT:
@@ -450,38 +450,34 @@ void agent_key_down_handler(SDL_Event* event)
             HudCubeSelector::cube_selector.down();
             break;
 
-        case SDLK_1:
-            if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
-            break;
-        case SDLK_2:
-            if (ClientState::playerAgent_state.action.switch_weapon(2-1)) agent_camera->unzoom();
-            break;
-        case SDLK_3:
-            if (ClientState::playerAgent_state.action.switch_weapon(3-1)) agent_camera->unzoom();
-            break;
-        case SDLK_4:
-            if (ClientState::playerAgent_state.action.switch_weapon(4-1)) agent_camera->unzoom();
-            break;
-        case SDLK_5:
-            if (ClientState::playerAgent_state.action.switch_weapon(5-1)) agent_camera->unzoom();
-            break;
-        case SDLK_6:
-            if (ClientState::playerAgent_state.action.switch_weapon(6-1)) agent_camera->unzoom();
-            break;
-        case SDLK_7:
-            if (ClientState::playerAgent_state.action.switch_weapon(7-1)) agent_camera->unzoom();
-            break;
-        case SDLK_8:
-            if (ClientState::playerAgent_state.action.switch_weapon(8-1)) agent_camera->unzoom();
-            break;
-        /*
-        case SDLK_9:
-            if (ClientState::playerAgent_state.action.switch_weapon(9-1)) agent_camera->unzoom();
-            break;
-        case SDLK_0:
-            if (ClientState::playerAgent_state.action.switch_weapon(10-1)) agent_camera->unzoom();
-            break;
-        */
+        //case SDLK_1:
+            //if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_2:
+            //if (ClientState::playerAgent_state.action.switch_weapon(2-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_3:
+            //if (ClientState::playerAgent_state.action.switch_weapon(3-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_4:
+            //if (ClientState::playerAgent_state.action.switch_weapon(4-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_5:
+            //if (ClientState::playerAgent_state.action.switch_weapon(5-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_6:
+            //if (ClientState::playerAgent_state.action.switch_weapon(6-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_7:
+            //if (ClientState::playerAgent_state.action.switch_weapon(7-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_8:
+            //if (ClientState::playerAgent_state.action.switch_weapon(8-1)) agent_camera->unzoom();
+            //break;
+        //case SDLK_9:
+            //if (ClientState::playerAgent_state.action.switch_weapon(9-1)) agent_camera->unzoom();
+            //break;
+            
         default: break;
     }
 
@@ -507,34 +503,33 @@ void agent_mouse_down_handler(SDL_Event* event)
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            p->action.fire();
+            //p->action.fire();
             break;
 
         case SDL_BUTTON_RIGHT:
-
-            if (p->you->weapons.can_zoom())
-                agent_camera->toggle_zoom();
-            if (p->you->weapons.active == Weapons::TYPE_block_applier)
-            {
-                int block = p->action.select_block();
-                if (block)
-                    HudCubeSelector::cube_selector.set_active_id(block);
-            }
-            else if (p->you->weapons.active == Weapons::TYPE_block_pick)
-                p->action.pickup_item();
+            //if (p->you->weapons.can_zoom())
+                //agent_camera->toggle_zoom();
+            //if (p->you->weapons.active == Weapons::TYPE_block_applier)
+            //{
+                //int block = p->action.select_block();
+                //if (block)
+                    //HudCubeSelector::cube_selector.set_active_id(block);
+            //}
+            //else if (p->you->weapons.active == Weapons::TYPE_block_pick)
+                //p->action.pickup_item();
             break;
 
         case SDL_BUTTON_MIDDLE:
             // nothing
             break;
 
-        case 4: // scroll up
-            if (p->action.switch_weapon(-1)) agent_camera->unzoom();
-            break;
+        //case 4: // scroll up
+            //if (p->action.switch_weapon(-1)) agent_camera->unzoom();
+            //break;
 
-        case 5: // scroll down
-            if (p->action.switch_weapon(-2)) agent_camera->unzoom();
-            break;
+        //case 5: // scroll down
+            //if (p->action.switch_weapon(-2)) agent_camera->unzoom();
+            //break;
 
         default: break;
     }

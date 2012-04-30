@@ -106,9 +106,9 @@ void update_hud_draw_settings()
     
     hud_draw_settings.draw = input_state.hud;
     hud_draw_settings.zoom = current_camera->zoomed;
-    hud_draw_settings.cube_selector =
-        (ClientState::playerAgent_state.you != NULL
-      && ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
+    hud_draw_settings.cube_selector = false;
+        //(ClientState::playerAgent_state.you != NULL
+      //&& ClientState::playerAgent_state.you->weapons.active == Weapons::TYPE_block_applier);
 
     hud_draw_settings.help = input_state.help_menu;
 
@@ -143,8 +143,8 @@ void update_hud_draw_settings()
     if (ClientState::playerAgent_state.you != NULL)
     {
         hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
-        if (hud_draw_settings.equipment)
-            hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
+        //if (hud_draw_settings.equipment)
+            //hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
     }
 
     hud_draw_settings.compass = true;
@@ -345,8 +345,8 @@ void draw_hud_text()
                 //hud->health->update_formatted_string(2, health, max_health);
                 hud->health->update_formatted_string(2, health);
 
-                char* weapon_string = a->weapons.hud_display();
-                hud->weapon->update_formatted_string(1, weapon_string);
+                //char* weapon_string = a->weapons.hud_display();
+                //hud->weapon->update_formatted_string(1, weapon_string);
             }
         }
         else

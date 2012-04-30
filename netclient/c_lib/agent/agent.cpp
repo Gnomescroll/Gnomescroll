@@ -517,7 +517,7 @@ void Agent_state::init_vox()
 
 Agent_state::Agent_state(int id)
 :
-id (id), type(OBJECT_AGENT), status(this), weapons(this)
+id (id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
 #endif
@@ -565,7 +565,7 @@ id (id), type(OBJECT_AGENT), status(this), weapons(this)
 
 Agent_state::Agent_state(int id, float x, float y, float z, float vx, float vy, float vz)
 :
-id(id), type(OBJECT_AGENT), status(this), weapons(this)
+id(id), type(OBJECT_AGENT), status(this)
 #if DC_CLIENT
 , event(this)
 #endif

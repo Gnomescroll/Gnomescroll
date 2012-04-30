@@ -7,8 +7,8 @@
 
 #include <SDL/draw_functions.hpp>
 #include <agent/agent.hpp>
-#include <agent/agent_weapons.hpp>
-#include <weapons/weapons.hpp>
+//#include <agent/agent_weapons.hpp>
+//#include <weapons/weapons.hpp>
 
 #include <t_map/glsl/texture.hpp>
 
@@ -78,7 +78,7 @@ void CubeSelector::set_active_id(int id)
 void CubeSelector::update_block_applier()
 {
     if (ClientState::playerAgent_state.you == NULL) return;
-    ClientState::playerAgent_state.you->weapons.blocks.set_block(this->get_active_id());
+    //ClientState::playerAgent_state.you->weapons.blocks.set_block(this->get_active_id());
 }
 
 void CubeSelector::draw()

@@ -185,7 +185,7 @@ void Agent_event::uncrouched()
 }
 
 void Agent_event::reload_weapon(int type) {
-    if (! a->weapons.is_active(type)) return;
+    //if (! a->weapons.is_active(type)) return;
     Sound::reload(a->s.x, a->s.y, a->s.z, 0,0,0);
     // play reload animation/sound for the weapon
 }

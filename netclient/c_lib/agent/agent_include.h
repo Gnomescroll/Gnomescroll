@@ -5,7 +5,7 @@
 #include <agent/agent_list.cpp>
 #include <agent/net_agent.cpp>
 #include <agent/agent_status.cpp>
-#include <agent/agent_weapons.cpp>
+//#include <agent/agent_weapons.cpp>
 #include <agent/agent_vox.cpp>
 #include <agent/agent_physics.cpp>
 

@@ -592,57 +592,57 @@ class AgentSuicides_StoC: public FixedSizeReliableNetPacketToClient<AgentSuicide
         inline void handle();
 };
 
-class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentActiveWeapon_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t slot;
+//class AgentActiveWeapon_StoC:  public FixedSizeReliableNetPacketToClient<AgentActiveWeapon_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t slot;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&slot, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&slot, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
-class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
-{
-    public:
-        uint8_t slot;
+//class AgentActiveWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentActiveWeapon_CtoS>
+//{
+    //public:
+        //uint8_t slot;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&slot, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&slot, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
-class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentReloadWeapon_StoC>
-{
-    public:
-        uint8_t id;
-        uint8_t type;
+//class AgentReloadWeapon_StoC: public FixedSizeReliableNetPacketToClient<AgentReloadWeapon_StoC>
+//{
+    //public:
+        //uint8_t id;
+        //uint8_t type;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&id, buff, buff_n, pack);
-            pack_u8(&type, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&id, buff, buff_n, pack);
+            //pack_u8(&type, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
-class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
-{
-    public:
-        uint8_t type;
+//class AgentReloadWeapon_CtoS: public FixedSizeReliableNetPacketToServer<AgentReloadWeapon_CtoS>
+//{
+    //public:
+        //uint8_t type;
 
-        inline void packet(char* buff, int* buff_n, bool pack)
-        {
-            pack_u8(&type, buff, buff_n, pack);
-        }
-        inline void handle();
-};
+        //inline void packet(char* buff, int* buff_n, bool pack)
+        //{
+            //pack_u8(&type, buff, buff_n, pack);
+        //}
+        //inline void handle();
+//};
 
 class agent_set_block_CtoS: public FixedSizeNetPacketToServer<agent_set_block_CtoS>
 {

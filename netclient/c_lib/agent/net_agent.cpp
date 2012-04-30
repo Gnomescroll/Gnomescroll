@@ -4,7 +4,7 @@
 #include <state/server_state.hpp>
 #include <state/client_state.hpp>
 #include <defines.h>
-#include <weapons/weapons.hpp>
+//#include <weapons/weapons.hpp>
 //#include <monsters/monsters.hpp>
 //#include <inventory/inventory.hpp>
 
@@ -327,34 +327,34 @@ inline void AgentSuicides_StoC::handle()
     a->status.suicides = suicides;
 }
 
-inline void AgentActiveWeapon_StoC::handle()
-{
-    Agent_state* a =  ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
-    //a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
-    a->weapons.active = slot;
-}
+//inline void AgentActiveWeapon_StoC::handle()
+//{
+    //Agent_state* a =  ClientState::agent_list->get(id);
+    //if (a == NULL)
+    //{
+        //printf("Agent %d not found. message_id=%d\n", id, message_id);
+        //return;
+    //}
+    ////a->weapons.set_active(slot);  // dont use! will end up in recursive packet chain
+    ////a->weapons.active = slot;
+//}
 
-inline void AgentReloadWeapon_StoC::handle()
-{
-    Agent_state* a = ClientState::agent_list->get(id);
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
+//inline void AgentReloadWeapon_StoC::handle()
+//{
+    //Agent_state* a = ClientState::agent_list->get(id);
+    //if (a == NULL)
+    //{
+        //printf("Agent %d not found. message_id=%d\n", id, message_id);
+        //return;
+    //}
 
-    if (a == NULL)
-    {
-        printf("Agent %d not found. message_id=%d\n", id, message_id);
-        return;
-    }
-    a->event.reload_weapon(type);
-}
+    //if (a == NULL)
+    //{
+        //printf("Agent %d not found. message_id=%d\n", id, message_id);
+        //return;
+    //}
+    //a->event.reload_weapon(type);
+//}
 
 inline void agent_coins_StoC::handle()
 {
@@ -555,8 +555,8 @@ inline void hitscan_object_CtoS::handle() {}
 inline void hitscan_block_CtoS::handle() {}
 inline void hitscan_none_CtoS::handle() {}
 inline void ThrowGrenade_CtoS::handle(){}
-inline void AgentActiveWeapon_CtoS::handle() {}
-inline void AgentReloadWeapon_CtoS::handle(){}
+//inline void AgentActiveWeapon_CtoS::handle() {}
+//inline void AgentReloadWeapon_CtoS::handle(){}
 inline void agent_set_block_CtoS::handle() {}
 inline void place_spawner_CtoS::handle(){}
 inline void place_turret_CtoS::handle(){}
@@ -595,8 +595,8 @@ inline void agent_dead_StoC::handle() {}
 inline void agent_create_StoC::handle() {}
 inline void agent_destroy_StoC::handle() {}
 inline void PlayerAgent_id_StoC::handle() {}
-inline void AgentActiveWeapon_StoC::handle() {}
-inline void AgentReloadWeapon_StoC::handle() {}
+//inline void AgentActiveWeapon_StoC::handle() {}
+//inline void AgentReloadWeapon_StoC::handle() {}
 inline void agent_name_StoC::handle() {}
 inline void agent_coins_StoC::handle() {}
 inline void identified_StoC::handle(){}
@@ -664,7 +664,7 @@ inline void hit_block_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.pick.fire()) return;
+    //if (!a->weapons.pick.fire()) return;
     agent_hit_block_StoC msg;
     msg.id = a->id;
     msg.x = x;
@@ -686,7 +686,7 @@ inline void hitscan_object_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.laser.fire()) return;
+    //if (!a->weapons.laser.fire()) return;
 
     Agent_state* agent = NULL;
     const int obj_dmg = 50;
@@ -783,7 +783,7 @@ inline void hitscan_block_CtoS::handle()
     #endif
 
     if (a->status.team == 0) return;
-    if (!a->weapons.laser.fire()) return;
+    //if (!a->weapons.laser.fire()) return;
 
     // get collision point on block surface (MOVE THIS TO A BETTER SPOT)
     // send to clients
@@ -838,7 +838,7 @@ inline void hitscan_none_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.laser.fire()) return;
+    //if (!a->weapons.laser.fire()) return;
     agent_shot_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -853,7 +853,7 @@ inline void melee_object_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.pick.fire()) return;
+    //if (!a->weapons.pick.fire()) return;
 
     Agent_state* agent = NULL;
     const int obj_dmg = 50;
@@ -942,7 +942,7 @@ inline void melee_none_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.pick.fire()) return;
+    //if (!a->weapons.pick.fire()) return;
     agent_melee_nothing_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -957,7 +957,7 @@ inline void ThrowGrenade_CtoS::handle()
         return;
     }
     if (a->status.team == 0) return;
-    if (!a->weapons.grenades.fire()) return;
+    //if (!a->weapons.grenades.fire()) return;
     agent_threw_grenade_StoC msg;
     msg.id = a->id;
     msg.broadcast();
@@ -974,34 +974,34 @@ inline void ThrowGrenade_CtoS::handle()
     g->broadcast();
 }
 
-inline void AgentActiveWeapon_CtoS::handle()
-{
-    Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
-    if (a->status.team == 0) return;
-    a->weapons.set_active(slot);
-}
+//inline void AgentActiveWeapon_CtoS::handle()
+//{
+    //Agent_state* a = NetServer::agents[client_id];
+    //if (a == NULL)
+    //{
+        //printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        //return;
+    //}
+    //if (a->status.team == 0) return;
+    ////a->weapons.set_active(slot);
+//}
 
-inline void AgentReloadWeapon_CtoS::handle()
-{
-    Agent_state* a = NetServer::agents[client_id];
-    if (a == NULL)
-    {
-        printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
-        return;
-    }
-    if (a->status.team == 0) return;
-    a->weapons.reload(type);
-    // forward action
-    AgentReloadWeapon_StoC msg;
-    msg.id = a->id;
-    msg.type = type;
-    msg.broadcast();
-}
+//inline void AgentReloadWeapon_CtoS::handle()
+//{
+    //Agent_state* a = NetServer::agents[client_id];
+    //if (a == NULL)
+    //{
+        //printf("Agent not found for client %d. message_id=%d\n", client_id, message_id);
+        //return;
+    //}
+    //if (a->status.team == 0) return;
+    ////a->weapons.reload(type);
+    //// forward action
+    //AgentReloadWeapon_StoC msg;
+    //msg.id = a->id;
+    //msg.type = type;
+    //msg.broadcast();
+//}
 
 inline void agent_set_block_CtoS::handle()
 {
@@ -1013,7 +1013,7 @@ inline void agent_set_block_CtoS::handle()
     }
     // fire block applier
     if (a->status.team == 0) return;
-    if (!a->weapons.blocks.can_fire()) return;
+    //if (!a->weapons.blocks.can_fire()) return;
     
     // do block place checks here later
     // problem is, fire/(decrement ammo) packet is separate, and isnt aware of this failure
@@ -1044,7 +1044,7 @@ inline void agent_set_block_CtoS::handle()
     if (!collides)
     {
         _set_broadcast(x,y,z, val);
-        a->weapons.blocks.fire();
+        //a->weapons.blocks.fire();
         agent_placed_block_StoC msg;
         msg.id = a->id;
         msg.broadcast();

@@ -6,7 +6,7 @@
 
 #include <agent/agent_status.hpp>
 #include <agent/agent_vox.hpp>
-#include <agent/agent_weapons.hpp>
+//#include <agent/agent_weapons.hpp>
 
 #if DC_CLIENT
 #include <agent/client/agent_event.hpp>
@@ -79,7 +79,7 @@ class Agent_state {
         struct Agent_collision_box box;
 
         class Agent_status status;
-        class Agent_weapons weapons;
+        //class Agent_weapons weapons;
 
         class Voxel_model* vox;
         #if DC_CLIENT

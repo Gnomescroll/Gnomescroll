@@ -2,112 +2,112 @@
 
 namespace Weapons {
 
-typedef enum {
-    TYPE_hitscan_laser,
-    TYPE_block_pick,
-    TYPE_block_applier,
-    TYPE_grenade_thrower,
-    TYPE_spawner_placer,
-    TYPE_turret_placer
-} weapon_type;
-
 const int WEAPON_HUD_STRING_MAX = 31;
 
-class Weapon {
-    protected:
-        char* clip_str;
-        char* clip_size_str;
-        char* ammo_str;
-        char* max_ammo_str;
+//typedef enum {
+    //TYPE_hitscan_laser,
+    //TYPE_block_pick,
+    //TYPE_block_applier,
+    //TYPE_grenade_thrower,
+    //TYPE_spawner_placer,
+    //TYPE_turret_placer
+//} weapon_type;
 
-    public:
-        int max_ammo;
-        int speed;
+//class Weapon {
+    //protected:
+        //char* clip_str;
+        //char* clip_size_str;
+        //char* ammo_str;
+        //char* max_ammo_str;
 
-        int id;
-        int owner;
-        int type;
+    //public:
+        //int max_ammo;
+        //int speed;
 
-        int ammo;
+        //int id;
+        //int owner;
+        //int type;
 
-        bool scope;
+        //int ammo;
 
-        char* hud_string;
+        //bool scope;
 
-        void add_ammo(int n);
-        void restore_ammo();
+        //char* hud_string;
 
-        explicit Weapon(weapon_type type);
-        ~Weapon();
-};
+        //void add_ammo(int n);
+        //void restore_ammo();
 
-class HitscanLaser: public Weapon {        
-    public:
-        int clip_size;
-        int clip;
+        //explicit Weapon(weapon_type type);
+        //~Weapon();
+//};
 
-        bool fire();
-        void reload();
-        void restore_ammo();
-        char* hud_display();
+//class HitscanLaser: public Weapon {        
+    //public:
+        //int clip_size;
+        //int clip;
 
-        HitscanLaser();
-        ~HitscanLaser();
-};
+        //bool fire();
+        //void reload();
+        //void restore_ammo();
+        //char* hud_display();
 
-class BlockApplier: public Weapon {
-    public:
-        int block;
+        //HitscanLaser();
+        //~HitscanLaser();
+//};
 
-        void set_block(int id);
-        bool can_fire();
-        bool fire();
-        char* hud_display();
+//class BlockApplier: public Weapon {
+    //public:
+        //int block;
 
-        BlockApplier();
-        ~BlockApplier();
-};
+        //void set_block(int id);
+        //bool can_fire();
+        //bool fire();
+        //char* hud_display();
 
-class BlockPick: public Weapon {
+        //BlockApplier();
+        //~BlockApplier();
+//};
 
-    public:
-        bool fire();
+//class BlockPick: public Weapon {
 
-        char* hud_display();
-        BlockPick();
-        ~BlockPick();
-};
+    //public:
+        //bool fire();
 
-class GrenadeThrower: public Weapon {
+        //char* hud_display();
+        //BlockPick();
+        //~BlockPick();
+//};
 
-    public:
-        bool fire();
+//class GrenadeThrower: public Weapon {
 
-        char* hud_display();
-        GrenadeThrower();
-        ~GrenadeThrower();
-};
+    //public:
+        //bool fire();
 
-// TODO -- one weapon to synthesize items with
-// TEMP
-class SpawnerPlacer: public Weapon
-{
-    public:
-        bool fire();
+        //char* hud_display();
+        //GrenadeThrower();
+        //~GrenadeThrower();
+//};
 
-        char* hud_display();
-        SpawnerPlacer();
-        ~SpawnerPlacer();
-};
+//// TODO -- one weapon to synthesize items with
+//// TEMP
+//class SpawnerPlacer: public Weapon
+//{
+    //public:
+        //bool fire();
 
-class TurretPlacer: public Weapon
-{
-    public:
-        bool fire();
+        //char* hud_display();
+        //SpawnerPlacer();
+        //~SpawnerPlacer();
+//};
 
-        char* hud_display();
-        TurretPlacer();
-        ~TurretPlacer();
-};
+//class TurretPlacer: public Weapon
+//{
+    //public:
+        //bool fire();
+
+        //char* hud_display();
+        //TurretPlacer();
+        //~TurretPlacer();
+//};
 
 }

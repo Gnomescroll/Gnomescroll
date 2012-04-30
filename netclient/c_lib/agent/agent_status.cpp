@@ -436,7 +436,7 @@ void Agent_status::respawn() {
     // restore health
     this->restore_health();
     // restore ammo
-    this->a->weapons.restore_ammo();
+    //this->a->weapons.restore_ammo();
     
     // revive
     dead = false;
@@ -476,7 +476,7 @@ void Agent_status::at_base()
     this->base_restore_rate_limiter++;
     if (this->base_restore_rate_limiter % AGENT_BASE_PROXIMITY_EFFECT_RATE != 0) return;
     this->restore_health();
-    this->a->weapons.restore_ammo();
+    //this->a->weapons.restore_ammo();
 }
 
 bool Agent_status::pickup_flag() {
@@ -602,14 +602,6 @@ bool Agent_status::gain_item(int item_id, ObjectType item_type)
             owned_spawners++;
             break;
 
-        case OBJECT_GRENADE_REFILL:
-            this->a->weapons.grenades.add_ammo(10);
-            break;
-            
-        case OBJECT_LASER_REFILL:
-            this->a->weapons.laser.add_ammo(20);
-            break;
-            
         case OBJECT_HEALTH_REFILL:
             this->a->status.heal(50);
             break;
