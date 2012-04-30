@@ -21,20 +21,25 @@ static void send_container_alpha_action(ContainerActionType action, int containe
     msg.action = action;
 
     msg.container_id = container_id;
+    msg.slot = slot;
 
     msg.hand_type = player_hand_type_ui;
     msg.hand_stack = player_hand_stack_ui;
 
-    if (action != FULL_HAND_TO_WORLD)
+    if (action == FULL_HAND_TO_WORLD)
     {
-        msg.slot = slot;
-
+        msg.slot_type = NULL_ITEM_TYPE;
+        msg.slot_stack = 1;
+    }
+    else
+    {
         ItemContainerUI* container = get_container_ui(container_id);
         assert(container != NULL);
 
         msg.slot_type = container->get_slot_type(slot);
         msg.slot_stack = container->get_slot_stack(slot);    
     }
+
     msg.send();
 }
 
@@ -52,14 +57,18 @@ static void send_container_beta_action(ContainerActionType action, int container
     msg.action = action;
 
     msg.container_id = container_id;
+    msg.slot = slot;
     
     msg.hand_type = player_hand_type_ui;
     msg.hand_stack = player_hand_stack_ui;
 
-    if (action != FULL_HAND_TO_WORLD)
+    if (action == FULL_HAND_TO_WORLD)
     {
-        msg.slot = slot;
-
+        msg.slot_type = NULL_ITEM_TYPE;
+        msg.slot_stack = 1;
+    }
+    else
+    {
         ItemContainerUI* container = get_container_ui(container_id);
         assert(container != NULL);
 
