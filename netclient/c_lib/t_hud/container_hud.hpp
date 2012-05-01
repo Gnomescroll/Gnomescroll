@@ -11,7 +11,8 @@ class AgentContainerUI : public UIElement
 {
     public:
 
-    static const float border = 16;       // border around entire panel
+    //static const float border = 16;       // border around entire panel
+    static const float border = 0;       // border around entire panel
     static const float inc1 = 8; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 

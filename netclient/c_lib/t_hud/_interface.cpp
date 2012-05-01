@@ -279,9 +279,10 @@ void init()
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
-    agent_toolbelt->xoff = (_xresf - (agent_toolbelt->border*agent_toolbelt->xdim + agent_toolbelt->inc1*(agent_toolbelt->xdim-1) + agent_toolbelt->border*2))/2;
+    agent_toolbelt->xoff = (_xresf - agent_toolbelt->width()) / 2;
     //agent_toolbelt->yoff = _yresf - (agent_toolbelt->border + agent_toolbelt->inc2);
-    agent_toolbelt->yoff = _yresf - (agent_toolbelt->slot_size);
+    agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
+    //printf("toolbelt height = %d\n", agent_toolbelt->height());
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;

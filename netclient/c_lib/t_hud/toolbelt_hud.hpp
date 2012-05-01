@@ -9,7 +9,8 @@ class AgentToolbeltUI : public UIElement
 {
     public:
 
-    static const float border = 16;       // border around entire panel
+    //static const float border = 16;       // border around entire panel
+    static const float border = 0;       // border around entire panel
     static const float inc1 = 8; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 
@@ -17,6 +18,16 @@ class AgentToolbeltUI : public UIElement
 
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;
+
+    int width()
+    {
+        return xdim*slot_size + (xdim-1)*inc1 + border*2;
+    }
+
+    int height()
+    {
+        return ydim*slot_size + (ydim-1)*inc1 + border * 2;
+    }
 
     int selected_slot;
 
@@ -122,7 +133,6 @@ void AgentToolbeltUI::draw()
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
-    
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + j*(inc1+slot_size));
 
@@ -141,7 +151,7 @@ void AgentToolbeltUI::draw()
         int j = hover_slot / this->xdim;
         
         float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff - border + j*(inc1+slot_size));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
