@@ -45,14 +45,14 @@ static const char fps_format[] = "%3.2f";
 static const char ping_format[] = "%dms";
 
 static const char no_agent_text[] = "No Agent Assigned";
-static const char agent_viewer_text[] = "Viewer Mode";
+//static const char agent_viewer_text[] = "Viewer Mode";
 static const char coins_format[] = "$%d";
 static const char health_format[] = "HP %d";
-static const char weapon_format[] = "%s";
+//static const char weapon_format[] = "%s";
 
-static const char compass_format[] = "Target:\n%s";
-static const char compass_enemy_flag[] = "Enemy Flag";
-static const char compass_friendy_base[] = "Friendly Base";
+//static const char compass_format[] = "Target:\n%s";
+//static const char compass_enemy_flag[] = "Enemy Flag";
+//static const char compass_friendy_base[] = "Friendly Base";
 
 static const char confirm_quit_text[] = "Really quit? Y/N";
 
@@ -279,23 +279,23 @@ void draw_hud_text()
         return;
     }
 
-    if (hud_draw_settings.compass)
-    {
-        char* compass_text;
-        if (ClientState::playerAgent_state.you == NULL)
-            compass_text = (char*)"";
-        else
-        {
-            if (ClientState::playerAgent_state.you->status.has_flag)
-                compass_text = (char*)compass_friendy_base;
-            else
-                compass_text = (char*)compass_enemy_flag;
-        }
-        hud->compass->update_formatted_string(1, compass_text);
-        int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
-        hud->compass->set_position(compass_x, _yresf);
-        hud->compass->draw();
-    }
+    //if (hud_draw_settings.compass)
+    //{
+        //char* compass_text;
+        //if (ClientState::playerAgent_state.you == NULL)
+            //compass_text = (char*)"";
+        //else
+        //{
+            //if (ClientState::playerAgent_state.you->status.has_flag)
+                //compass_text = (char*)compass_friendy_base;
+            //else
+                //compass_text = (char*)compass_enemy_flag;
+        //}
+        //hud->compass->update_formatted_string(1, compass_text);
+        //int compass_x = _xres - (128+10)*0.5 - hud->compass->get_width();
+        //hud->compass->set_position(compass_x, _yresf);
+        //hud->compass->draw();
+    //}
 
     if (hud_draw_settings.fps)
     {
@@ -444,12 +444,12 @@ void HUD::init()
     //weapon->set_color(255,10,10,255);
     //weapon->set_position(2, _yresf - (line_height + 16));
     
-    compass = HudText::text_list->create();
-    compass->set_text((char*)"");
-    compass->set_format((char*) compass_format);
-    compass->set_format_extra_length(30);   // arbitrarily big enough
-    compass->set_color(255,10,10,255);
-    compass->set_position(_xresf, _yresf);
+    //compass = HudText::text_list->create();
+    //compass->set_text((char*)"");
+    //compass->set_format((char*) compass_format);
+    //compass->set_format_extra_length(30);   // arbitrarily big enough
+    //compass->set_color(255,10,10,255);
+    //compass->set_position(_xresf, _yresf);
 
     confirm_quit = HudText::text_list->create();
     confirm_quit->set_text((char*)confirm_quit_text);
@@ -477,7 +477,7 @@ reliable_ping(NULL),
 coins(NULL),
 health(NULL),
 //weapon(NULL),
-compass(NULL),
+//compass(NULL),
 confirm_quit(NULL),
 scoreboard(NULL),
 chat(NULL)
@@ -503,8 +503,8 @@ HUD::~HUD()
         HudText::text_list->destroy(health->id);
     //if (weapon != NULL)
         //HudText::text_list->destroy(weapon->id);
-    if (compass != NULL)
-        HudText::text_list->destroy(compass->id);
+    //if (compass != NULL)
+        //HudText::text_list->destroy(compass->id);
     if (confirm_quit != NULL)
         HudText::text_list->destroy(confirm_quit->id);
     if (scoreboard != NULL)

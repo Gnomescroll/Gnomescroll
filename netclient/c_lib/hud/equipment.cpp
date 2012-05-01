@@ -103,14 +103,14 @@ void set_slot_icon(int slot, int icon_id) {
 
 
 void init() {
-    init_surface();
+    //init_surface();
 
-    set_slot_icon(0, 3); // laser
-    set_slot_icon(1, 1); // pick
-    set_slot_icon(2, 2); // block applier
-    set_slot_icon(3, 4); // grenades
-    set_slot_icon(4, 5); // spawner
-    set_slot_icon(5, 6); // turret
+    //set_slot_icon(0, 3); // laser
+    //set_slot_icon(1, 1); // pick
+    //set_slot_icon(2, 2); // block applier
+    //set_slot_icon(3, 4); // grenades
+    //set_slot_icon(4, 5); // spawner
+    //set_slot_icon(5, 6); // turret
 }
 
 int get_equipment_slot_icon(int slot) {

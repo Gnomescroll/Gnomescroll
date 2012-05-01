@@ -7,7 +7,7 @@ namespace Compass {
 
 static char file[] = "media/texture/compass.png";
 
-static const float scale = 0.5f;
+static const float scale = 1.0f;
 static const int x_margin = 4;
 static const int y_margin = 4;
 
