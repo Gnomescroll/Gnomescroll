@@ -44,4 +44,9 @@ typedef enum
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,
-} ItemGroups;
+} ItemGroup;
+
+typedef enum
+{
+    ITEM_GRENADE_LAUNCHER,
+} ItemType;
