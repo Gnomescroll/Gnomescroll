@@ -13,8 +13,8 @@ class PlayerAgent_action {
     public:
     
         //void fire();
-        //void hitscan_laser();
-        //void hitscan_pick();
+        void hitscan_laser();
+        void hitscan_pick();
         //void set_block();
         //bool switch_weapon(int i);
         //void reload();

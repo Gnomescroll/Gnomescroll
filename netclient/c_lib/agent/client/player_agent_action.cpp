@@ -55,259 +55,259 @@
     //}
 //}
 
-//void PlayerAgent_action::hitscan_laser()
-//{
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
+void PlayerAgent_action::hitscan_laser()
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
 
-    //Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
-    //Vec3 look = agent_camera->forward_vector();
+    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    Vec3 look = agent_camera->forward_vector();
 
-    //struct Voxel_hitscan_target target;
-    //float vox_distance;
-    //float collision_point[3];
-    //int block_pos[3];
-    //int side[3];
-    //int tile;
-    //float block_distance;
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
 
-    //Hitscan::HitscanTargetTypes target_type =
-        //Hitscan::hitscan_against_world(
-            //pos, look, this->p->agent_id, OBJECT_AGENT,
-            //&target, &vox_distance, collision_point,
-            //block_pos, side, &tile, &block_distance
-        //);
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, look, this->p->agent_id, OBJECT_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
 
-    //// for hitscan animation:
-    //// readjust the vector so that the translated position points to target
-    //// get the right vector for translating the hitscan laser anim
-    //normalize_vector(&look);
-    //Vec3 up = vec3_init(0,0,1);
-    //Vec3 right = vec3_cross(look, up);
-    //normalize_vector(&right);
+    // for hitscan animation:
+    // readjust the vector so that the translated position points to target
+    // get the right vector for translating the hitscan laser anim
+    normalize_vector(&look);
+    Vec3 up = vec3_init(0,0,1);
+    Vec3 right = vec3_cross(look, up);
+    normalize_vector(&right);
 
-    //// magic offset numbers found by rotating the laser to the right spot
-    //// fixed in the bottom right corner
-    //const float dxy = 0.14;
-    //const float dz = -0.13;
+    // magic offset numbers found by rotating the laser to the right spot
+    // fixed in the bottom right corner
+    const float dxy = 0.14;
+    const float dz = -0.13;
 
-    //// animation origin
-    //float origin[3];
-    //origin[0] = pos.x + dxy * right.x;
-    //origin[1] = pos.y + dxy * right.y;
-    //origin[2] = pos.z + dz;
+    // animation origin
+    float origin[3];
+    origin[0] = pos.x + dxy * right.x;
+    origin[1] = pos.y + dxy * right.y;
+    origin[2] = pos.z + dz;
 
-    //// send packet
-    //hitscan_block_CtoS block_msg;
-    //hitscan_none_CtoS none_msg;
-    //hitscan_object_CtoS obj_msg;
+    // send packet
+    hitscan_block_CtoS block_msg;
+    hitscan_none_CtoS none_msg;
+    hitscan_object_CtoS obj_msg;
 
-    //Agent_state* agent;
-    //int voxel_blast_radius = 1;
+    Agent_state* agent;
+    int voxel_blast_radius = 1;
     
-    //switch (target_type)
-    //{
-        //case Hitscan::HITSCAN_TARGET_VOXEL:
-            //obj_msg.id = target.entity_id;
-            //obj_msg.type = target.entity_type;
-            //obj_msg.part = target.part_id;
-            //obj_msg.vx = target.voxel[0];
-            //obj_msg.vy = target.voxel[1];
-            //obj_msg.vz = target.voxel[2];
-            //obj_msg.send();
+    switch (target_type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            obj_msg.id = target.entity_id;
+            obj_msg.type = target.entity_type;
+            obj_msg.part = target.part_id;
+            obj_msg.vx = target.voxel[0];
+            obj_msg.vy = target.voxel[1];
+            obj_msg.vz = target.voxel[2];
+            obj_msg.send();
 
-            //// subtract the collision point from the origin to get the new vector for animation
-            //look.x = collision_point[0] - origin[0];
-            //look.y = collision_point[1] - origin[1];
-            //look.z = collision_point[2] - origin[2];
-            //normalize_vector(&look);
+            // subtract the collision point from the origin to get the new vector for animation
+            look.x = collision_point[0] - origin[0];
+            look.y = collision_point[1] - origin[1];
+            look.z = collision_point[2] - origin[2];
+            normalize_vector(&look);
 
-            //if (target.entity_type == OBJECT_AGENT)
-            //{
-                //Animations::blood_spray(
-                    //collision_point[0], collision_point[1], collision_point[2],
-                    //look.x, look.y, look.z
-                //);
-                //Sound::laser_hit_agent(
-                    //collision_point[0], collision_point[1], collision_point[2],
-                    //0,0,0
-                //);
-                //agent = ClientState::agent_list->get(target.entity_id);
-                //if (agent==NULL) break;
-                //if (agent->status.team == this->p->you->status.team) break;
-                //voxel_blast_radius = 3;
-            //}
-            //else if (target.entity_type == OBJECT_MONSTER_BOMB)
-            //{
-                //voxel_blast_radius = 2;
-            //}
-            //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
-            //break;
+            if (target.entity_type == OBJECT_AGENT)
+            {
+                Animations::blood_spray(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    look.x, look.y, look.z
+                );
+                Sound::laser_hit_agent(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    0,0,0
+                );
+                agent = ClientState::agent_list->get(target.entity_id);
+                if (agent==NULL) break;
+                if (agent->status.team == this->p->you->status.team) break;
+                voxel_blast_radius = 3;
+            }
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
+            {
+                voxel_blast_radius = 2;
+            }
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+            break;
 
-        //case Hitscan::HITSCAN_TARGET_BLOCK:            
-            //block_msg.x = block_pos[0];
-            //block_msg.y = block_pos[1];
-            //block_msg.z = block_pos[2];
-            //block_msg.send();
+        case Hitscan::HITSCAN_TARGET_BLOCK:            
+            block_msg.x = block_pos[0];
+            block_msg.y = block_pos[1];
+            block_msg.z = block_pos[2];
+            block_msg.send();
 
-            //// multiply look vector by distance to collision
-            //look = vec3_scalar_mult(look, block_distance);
-            //// add agent position, now we have collision point
-            //look = vec3_add(look, pos);
-            //// copy this to collision_point, for block damage animation
-            //collision_point[0] = look.x;
-            //collision_point[1] = look.y;
-            //collision_point[2] = look.z;
-            //// subtract translated animation origin from collision point (vec) to get new vector
-            //look.x -= origin[0];
-            //look.y -= origin[1];
-            //look.z -= origin[2];
-            //normalize_vector(&look);
+            // multiply look vector by distance to collision
+            look = vec3_scalar_mult(look, block_distance);
+            // add agent position, now we have collision point
+            look = vec3_add(look, pos);
+            // copy this to collision_point, for block damage animation
+            collision_point[0] = look.x;
+            collision_point[1] = look.y;
+            collision_point[2] = look.z;
+            // subtract translated animation origin from collision point (vec) to get new vector
+            look.x -= origin[0];
+            look.y -= origin[1];
+            look.z -= origin[2];
+            normalize_vector(&look);
 
-            //Animations::block_damage(
-                //collision_point[0], collision_point[1], collision_point[2],
-                //look.x, look.y, look.z,
-                //tile, side
-            //);
-            //Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
-            //Sound::laser_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            Animations::block_damage(
+                collision_point[0], collision_point[1], collision_point[2],
+                look.x, look.y, look.z,
+                tile, side
+            );
+            Animations::terrain_sparks(collision_point[0], collision_point[1], collision_point[2]);
+            Sound::laser_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
-            //break;
+            break;
             
-        //case Hitscan::HITSCAN_TARGET_NONE:
-            //// for no target, leave translated animation origin
-            //none_msg.send();    // server will know to forward a fire weapon packet
-            //break;
-        //default:
-            //break;
-    //}
+        case Hitscan::HITSCAN_TARGET_NONE:
+            // for no target, leave translated animation origin
+            none_msg.send();    // server will know to forward a fire weapon packet
+            break;
+        default:
+            break;
+    }
 
-    //Sound::fire_laser();
+    Sound::fire_laser();
 
-    //// play laser anim (client viewport)
-    //const float hitscan_speed = 200.0f;
-    //look = vec3_scalar_mult(look, hitscan_speed);
-    //Animations::create_hitscan_effect(
-        //origin[0], origin[1], origin[2],
-        //look.x, look.y, look.z
-    //);
-//}
+    // play laser anim (client viewport)
+    const float hitscan_speed = 200.0f;
+    look = vec3_scalar_mult(look, hitscan_speed);
+    Animations::create_hitscan_effect(
+        origin[0], origin[1], origin[2],
+        look.x, look.y, look.z
+    );
+}
 
-//void PlayerAgent_action::hitscan_pick()
-//{
-    //if (p->you == NULL) return;
-    //if (p->you->status.dead) return;
-    //if (p->you->status.team == 0) return;
+void PlayerAgent_action::hitscan_pick()
+{
+    if (p->you == NULL) return;
+    if (p->you->status.dead) return;
+    if (p->you->status.team == 0) return;
 
-    //Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
-    //Vec3 vec = agent_camera->forward_vector();
+    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    Vec3 vec = agent_camera->forward_vector();
 
-    //struct Voxel_hitscan_target target;
-    //float vox_distance;
-    //float collision_point[3];
-    //int block_pos[3];
-    //int side[3];
-    //int tile;
-    //float block_distance;
+    struct Voxel_hitscan_target target;
+    float vox_distance;
+    float collision_point[3];
+    int block_pos[3];
+    int side[3];
+    int tile;
+    float block_distance;
 
-    //Hitscan::HitscanTargetTypes target_type =
-        //Hitscan::hitscan_against_world(
-            //pos, vec, this->p->agent_id, OBJECT_AGENT,
-            //&target, &vox_distance, collision_point,
-            //block_pos, side, &tile, &block_distance
-        //);
+    Hitscan::HitscanTargetTypes target_type =
+        Hitscan::hitscan_against_world(
+            pos, vec, this->p->agent_id, OBJECT_AGENT,
+            &target, &vox_distance, collision_point,
+            block_pos, side, &tile, &block_distance
+        );
 
-    //// send packet
-    //hit_block_CtoS block_msg;
-    //melee_object_CtoS obj_msg;
+    // send packet
+    hit_block_CtoS block_msg;
+    melee_object_CtoS obj_msg;
 
-    //Agent_state* agent;
-    //int voxel_blast_radius = 1;
+    Agent_state* agent;
+    int voxel_blast_radius = 1;
 
-    //switch (target_type)
-    //{
-        //case Hitscan::HITSCAN_TARGET_VOXEL:
-            //if (vox_distance > MELEE_PICK_MAX_DISTANCE)
-            //{
-                //target_type = Hitscan::HITSCAN_TARGET_NONE;
-                //break;
-            //}
+    switch (target_type)
+    {
+        case Hitscan::HITSCAN_TARGET_VOXEL:
+            if (vox_distance > MELEE_PICK_MAX_DISTANCE)
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
         
-            //obj_msg.id = target.entity_id;
-            //obj_msg.type = target.entity_type;
-            //obj_msg.part = target.part_id;
-            //obj_msg.vx = target.voxel[0];
-            //obj_msg.vy = target.voxel[1];
-            //obj_msg.vz = target.voxel[2];
-            //obj_msg.send();
+            obj_msg.id = target.entity_id;
+            obj_msg.type = target.entity_type;
+            obj_msg.part = target.part_id;
+            obj_msg.vx = target.voxel[0];
+            obj_msg.vy = target.voxel[1];
+            obj_msg.vz = target.voxel[2];
+            obj_msg.send();
 
-            //if (target.entity_type == OBJECT_AGENT)
-            //{
-                //agent = ClientState::agent_list->get(target.entity_id);
-                //if (agent==NULL)
-                //{
-                    //target_type = Hitscan::HITSCAN_TARGET_NONE;
-                    //break;
-                //}
-                //if (agent->status.team == this->p->you->status.team)
-                //{
-                    //target_type = Hitscan::HITSCAN_TARGET_NONE;
-                    //break;
-                //}
-                //Animations::blood_spray(
-                    //collision_point[0], collision_point[1], collision_point[2],
-                    //vec.x, vec.y, vec.z
-                //);
-                //Sound::pick_hit_agent(
-                    //collision_point[0], collision_point[1], collision_point[2],
-                    //0,0,0
-                //);
-                //voxel_blast_radius = 3;
-            //}
-            //else if (target.entity_type == OBJECT_MONSTER_BOMB)
-            //{
-                //voxel_blast_radius = 2;
-            //}
-            //destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
-            //break;
+            if (target.entity_type == OBJECT_AGENT)
+            {
+                agent = ClientState::agent_list->get(target.entity_id);
+                if (agent==NULL)
+                {
+                    target_type = Hitscan::HITSCAN_TARGET_NONE;
+                    break;
+                }
+                if (agent->status.team == this->p->you->status.team)
+                {
+                    target_type = Hitscan::HITSCAN_TARGET_NONE;
+                    break;
+                }
+                Animations::blood_spray(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    vec.x, vec.y, vec.z
+                );
+                Sound::pick_hit_agent(
+                    collision_point[0], collision_point[1], collision_point[2],
+                    0,0,0
+                );
+                voxel_blast_radius = 3;
+            }
+            else if (target.entity_type == OBJECT_MONSTER_BOMB)
+            {
+                voxel_blast_radius = 2;
+            }
+            destroy_object_voxel(target.entity_id, target.entity_type, target.part_id, target.voxel, voxel_blast_radius);
+            break;
 
-        //case Hitscan::HITSCAN_TARGET_BLOCK:
-            //if (block_distance > BLOCK_PICK_MAX_DISTANCE)
-            //{
-                //target_type = Hitscan::HITSCAN_TARGET_NONE;
-                //break;
-            //}
-            //block_msg.x = block_pos[0];
-            //block_msg.y = block_pos[1];
-            //block_msg.z = block_pos[2];
-            //block_msg.send();
+        case Hitscan::HITSCAN_TARGET_BLOCK:
+            if (block_distance > BLOCK_PICK_MAX_DISTANCE)
+            {
+                target_type = Hitscan::HITSCAN_TARGET_NONE;
+                break;
+            }
+            block_msg.x = block_pos[0];
+            block_msg.y = block_pos[1];
+            block_msg.z = block_pos[2];
+            block_msg.send();
 
-            //collision_point[0] = pos.x + vec.x * block_distance;
-            //collision_point[1] = pos.y + vec.y * block_distance;
-            //collision_point[2] = pos.z + vec.z * block_distance;
+            collision_point[0] = pos.x + vec.x * block_distance;
+            collision_point[1] = pos.y + vec.y * block_distance;
+            collision_point[2] = pos.z + vec.z * block_distance;
 
-            //Animations::block_damage(
-                //collision_point[0], collision_point[1], collision_point[2],
-                //vec.x, vec.y, vec.z,
-                //tile, side
-            //);
-            //Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
+            Animations::block_damage(
+                collision_point[0], collision_point[1], collision_point[2],
+                vec.x, vec.y, vec.z,
+                tile, side
+            );
+            Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
             
-            //break;
+            break;
             
-        //default:
-            //break;
-    //}
+        default:
+            break;
+    }
 
-    //if (target_type == Hitscan::HITSCAN_TARGET_NONE)
-    //{
-        //melee_none_CtoS none_msg;
-        //none_msg.send();
-    //}
+    if (target_type == Hitscan::HITSCAN_TARGET_NONE)
+    {
+        melee_none_CtoS none_msg;
+        none_msg.send();
+    }
 
-    ////Sound::pick_swung();
-//}
+    //Sound::pick_swung();
+}
 
 //void PlayerAgent_action::set_block()
 //{

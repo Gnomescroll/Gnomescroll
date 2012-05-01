@@ -15,6 +15,12 @@ bool toolbelt_item_alpha_action()
     int item_type = Item::get_item_type(item_id);
     switch (item_type)
     {
+        case 5:
+            ClientState::playerAgent_state.action.hitscan_laser();
+            break;
+        case 7:
+            ClientState::playerAgent_state.action.hitscan_pick();
+            break;
         case 8: // todo -- use string names
             // player agent action throw grenade
             ClientState::playerAgent_state.action.throw_grenade();
