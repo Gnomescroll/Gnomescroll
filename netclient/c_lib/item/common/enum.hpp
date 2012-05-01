@@ -12,8 +12,7 @@ typedef enum
 
 typedef enum
 {
-    NULL_ITEM = -1,
-    MAX_ITEM = 0xffff   // force enum to be large enough
+    NULL_ITEM = 0xffff,
 } ItemID;
 
 typedef enum
@@ -40,8 +39,8 @@ typedef enum
 typedef enum
 {
     IG_ERROR,
-    IG_RESOURCE, 	//does nothing, resources, stackable
-    IG_PLACER, 	//consumed to create block
+    IG_RESOURCE,    //does nothing, resources, stackable
+    IG_PLACER,  //consumed to create block
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,

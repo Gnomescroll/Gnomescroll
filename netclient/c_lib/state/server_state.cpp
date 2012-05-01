@@ -181,6 +181,16 @@ namespace ServerState
     }
 
     // TODO -- move this test/convenince method
+    void spawn_items(int n)
+    {
+        int type = randrange(1,7);
+        float x = randf() * map_dim.x;
+        float y = randf() * map_dim.y;
+        float z = 128.0f;
+        Item::create_item_particle(type, x,y,z, 0,0,-3);
+    }
+
+    // TODO -- move this test/convenince method
     void spawn_monsters(ObjectType type, int n)
     {
         for (int i=0; i<n; i++)

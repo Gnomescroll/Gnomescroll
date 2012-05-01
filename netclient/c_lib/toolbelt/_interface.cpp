@@ -47,16 +47,22 @@ void toolbelt_item_selected_event(int container_id, int slot)
 void left_trigger_event()
 {
     // fire
+    toolbelt_item_alpha_action();
+    send_alpha_action_packet();
 }
 
 void right_trigger_event()
 {
     // zoom
+    bool something_happened = toolbelt_item_beta_action();
+    if (something_happened) send_beta_action_packet();
 }
 
 void reload_event()
 {
     // reload
+    bool something_happened = toolbelt_item_reload_action();
+    if (something_happened) send_reload_action_packet();
 }
 
 

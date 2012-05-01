@@ -69,7 +69,9 @@ void tick()
 
     ServerState::ctf->check_agent_proximities();
     ServerState::ctf->update();
-    ServerState::ctf->tick();          
+    ServerState::ctf->tick();
+
+    ServerState::spawn_items(2);
 }
  
 int run()

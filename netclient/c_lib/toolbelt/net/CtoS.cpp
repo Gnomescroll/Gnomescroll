@@ -25,7 +25,6 @@ inline void toolbelt_set_slot_CtoS::handle()
     set_agent_toolbelt_slot(a->id, slot);
 
     ItemID item_id = get_agent_selected_item(a->id);
-    if (item_id == NULL_ITEM) return;
     broadcast_agent_set_active_item_packet(a->id, item_id);
 }
 
@@ -35,7 +34,6 @@ inline void toolbelt_alpha_action_CtoS::handle()
     if (a == NULL) return;
 
     ItemID item_id = get_agent_selected_item(a->id);
-    if (item_id == NULL_ITEM) return;
     broadcast_agent_toolbelt_alpha_action_packet(a->id, item_id);
 }
 
@@ -58,7 +56,6 @@ inline void toolbelt_reload_action_CtoS::handle()
     if (item_id == NULL_ITEM) return;
     broadcast_agent_toolbelt_item_reload_packet(a->id, item_id);
 }
-
 
 #endif
 
