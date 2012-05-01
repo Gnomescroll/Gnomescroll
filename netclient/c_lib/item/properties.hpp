@@ -5,6 +5,7 @@ namespace t_item
 
 extern int sprite_array[MAX_ITEMS];
 extern int type_array[MAX_ITEMS];
+extern class ItemAttribute* item_attribute_array;
 
 void init_properties();
 

@@ -231,7 +231,6 @@ int init_c_lib()
     t_map::init_for_draw();
 
     Item::init();
-    Item::init_properties();
     Item::load_item_dat();
 
     Toolbelt::init();
