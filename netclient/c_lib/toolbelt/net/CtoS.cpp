@@ -22,10 +22,10 @@ inline void toolbelt_set_slot_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    set_agent_toolbelt_slot(a->id, slot);
+    bool item_changed = set_agent_toolbelt_slot(a->id, slot);
 
     ItemID item_id = get_agent_selected_item(a->id);
-    broadcast_agent_set_active_item_packet(a->id, item_id);
+    if (item_changed) broadcast_agent_set_active_item_packet(a->id, item_id);
 }
 
 inline void toolbelt_alpha_action_CtoS::handle() 

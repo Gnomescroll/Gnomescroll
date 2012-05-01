@@ -14,6 +14,7 @@ extern int toolbelt_id;
 // Server
 #if DC_SERVER
 extern int* agent_selected_slot;
+extern ItemID* agent_selected_item;
 #endif
 
 }

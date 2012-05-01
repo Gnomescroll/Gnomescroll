@@ -171,6 +171,13 @@ ItemContainerUI* get_container_ui(int container_id)
     return NULL;
 }
 
+ItemID get_toolbelt_item(int slot)
+{
+    assert(player_toolbelt != NULL);
+    assert(slot >= 0 && slot < player_toolbelt->xdim);
+    return player_toolbelt->get_item(slot);
+}
+
 Item* create_item(int item_type, ItemID item_id)
 {
     return item_list->create_type(item_type, item_id);

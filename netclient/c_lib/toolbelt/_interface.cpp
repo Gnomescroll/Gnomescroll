@@ -11,7 +11,9 @@ void init()
 
     #if DC_SERVER
     assert(agent_selected_slot == NULL);
+    assert(agent_selected_item == NULL);
     agent_selected_slot = (int*)calloc(AGENT_MAX, sizeof(int));
+    agent_selected_item = (ItemID*)calloc(AGENT_MAX, sizeof(ItemID));
     #endif
 }
 
@@ -21,6 +23,7 @@ void teardown()
     #endif
     #if DC_SERVER
     if (agent_selected_slot != NULL) free(agent_selected_slot);
+    if (agent_selected_item != NULL) free(agent_selected_item);
     #endif
 }
 
@@ -76,16 +79,18 @@ namespace Toolbelt
 ItemID get_agent_selected_item(int agent_id)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
-    int slot = agent_selected_slot[agent_id];
-    if (slot == NULL_SLOT) return NULL_ITEM;
-    return Item::get_agent_toolbelt_item(agent_id, slot);
+    return agent_selected_item[agent_id];
 }
 
-void set_agent_toolbelt_slot(int agent_id, int slot)
+bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
     assert(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
     agent_selected_slot[agent_id] = slot;
+    ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);
+    if (item_id == agent_selected_item[agent_id]) return false;
+    agent_selected_item[agent_id] = item_id;
+    return true;
 }
 
 } // Toolbelt

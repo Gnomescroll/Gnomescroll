@@ -36,6 +36,7 @@ void close_container();
 
 int get_event_container_id(int event_id);
 class ItemContainerUI* get_container_ui(int container_id);
+ItemID get_toolbelt_item(int slot);
 
 class Item* create_item(int item_type, ItemID item_id);
 

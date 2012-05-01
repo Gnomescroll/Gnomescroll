@@ -14,6 +14,7 @@ int toolbelt_id = NULL_CONTAINER;
 //Server
 #if DC_SERVER
 int* agent_selected_slot = NULL;
+ItemID* agent_selected_item = NULL;
 #endif
 
 }
