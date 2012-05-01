@@ -11,6 +11,9 @@ class PlayerAgent_state; //forward declaration
 
 namespace ClientState {
 
+    extern int tick_id;
+    extern int frame_id;
+
     extern PlayerAgent_state playerAgent_state;
     /* SINGLETONS
      * Make sure to extern declare* in cython_imports

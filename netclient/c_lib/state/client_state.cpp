@@ -25,6 +25,9 @@ const int GAME_OBJECT_MAX = 4096 * 4;
 
 namespace ClientState {
 
+    int tick_id = 0;
+    int frame_id = 0;
+
     //using Animations::HitscanEffect_list;
     //using Animations::HitscanLaserEffect_list;
 

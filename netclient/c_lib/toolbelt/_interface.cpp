@@ -13,7 +13,8 @@ void init()
     assert(agent_selected_slot == NULL);
     assert(agent_selected_item == NULL);
     agent_selected_slot = (int*)calloc(AGENT_MAX, sizeof(int));
-    agent_selected_item = (ItemID*)calloc(AGENT_MAX, sizeof(ItemID));
+    agent_selected_item = (ItemID*)malloc(AGENT_MAX * sizeof(ItemID));
+    for (int i=0; i<AGENT_MAX; agent_selected_item[i++] = NULL_ITEM);
     #endif
 }
 
@@ -75,6 +76,24 @@ void reload_event()
 #if DC_SERVER
 namespace Toolbelt
 {
+
+void update_toolbelt_items()
+{
+    assert(agent_selected_item != NULL);
+    assert(agent_selected_slot != NULL);
+    // make sure agent_selected_item is current
+    // if any discrepancies exist, send a set_selected_item packet
+    for (int agent_id=0; agent_id<AGENT_MAX; agent_id++)
+    {
+        int slot = agent_selected_slot[agent_id];
+        ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);
+        if (item_id != agent_selected_item[agent_id])
+        {
+            agent_selected_item[agent_id] = item_id;
+            broadcast_agent_set_active_item_packet(agent_id, item_id);
+        }
+    }
+}
 
 ItemID get_agent_selected_item(int agent_id)
 {

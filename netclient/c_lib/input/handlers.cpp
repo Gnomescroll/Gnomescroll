@@ -10,8 +10,6 @@
 
 #include <t_hud/_interface.hpp>
 
-#include <global.hpp>
-
 InputState input_state;
 
 // triggers
@@ -853,8 +851,8 @@ void key_up_handler(SDL_Event* event)
 // mouse down
 void mouse_button_down_handler(SDL_Event* event)
 {
-    if (input_state.last_mouse_button_down_event_frame == Global::frame) return;
-    input_state.last_mouse_button_down_event_frame = Global::frame;
+    if (input_state.last_mouse_button_down_event_frame == ClientState::frame_id) return;
+    input_state.last_mouse_button_down_event_frame = ClientState::frame_id;
     if (input_state.skeleton_editor)
     {
         SkeletonEditor::mouse_button_down_handler(event);
@@ -879,8 +877,8 @@ void mouse_button_down_handler(SDL_Event* event)
 // mouse up
 void mouse_button_up_handler(SDL_Event* event)
 {
-    if (input_state.last_mouse_button_up_event_frame == Global::frame) return;
-    input_state.last_mouse_button_up_event_frame = Global::frame;
+    if (input_state.last_mouse_button_up_event_frame == ClientState::frame_id) return;
+    input_state.last_mouse_button_up_event_frame = ClientState::frame_id;
     if (input_state.skeleton_editor)
     {
         SkeletonEditor::mouse_button_up_handler(event);
