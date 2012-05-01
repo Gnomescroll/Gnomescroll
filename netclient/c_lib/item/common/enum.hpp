@@ -46,7 +46,4 @@ typedef enum
     IG_MINING_LASER,
 } ItemGroup;
 
-typedef enum
-{
-    ITEM_GRENADE_LAUNCHER,
-} ItemType;
+/* No typedef for ItemType, use string names */
