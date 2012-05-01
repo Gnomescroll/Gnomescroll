@@ -1,0 +1,16 @@
+fill out some types/sprites for actions items:
+mining laser
+rifle
+grenades
+
+Put a GRENADE item in toolbelt on init
+use the blue pod sprite
+wire up firing shit to grenades
+
+then get:
+laser rifle
+mining laser
+block placers
+
+integrate with data system
+add rate limiting etc
