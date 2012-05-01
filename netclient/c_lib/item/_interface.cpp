@@ -34,6 +34,8 @@ void init()
     for (int i=0; i<AGENT_MAX; i++) agent_nanite_list   [i] = NULL_ITEM;
     for (int i=0; i<AGENT_MAX; i++) agent_hand_list     [i] = NULL_ITEM;
     #endif
+
+    init_properties();
 }
 
 void teardown()
@@ -53,6 +55,8 @@ void teardown()
     if (agent_nanite_list    != NULL) free(agent_nanite_list);
     if (agent_hand_list      != NULL) free(agent_hand_list);
     #endif
+
+    tear_down_properties();
 }
 
 

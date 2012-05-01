@@ -2,6 +2,7 @@
 
 #include <item/_interface.hpp>
 #include <item/common/constant.hpp>
+#include <item/common/struct.hpp>
 
 namespace Item
 {
@@ -9,12 +10,21 @@ namespace Item
 
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
+class ItemAttribute* item_attribute_array;
 
 void init_properties()
 {
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
     for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
+
+    item_attribute_array = new ItemAttribute[MAX_ITEMS];
 }
+
+void tear_down_properties()
+{
+    delete[] item_attribute_array;
+}
+
 int get_sprite_index_for_id(ItemID id)
 {
     assert(id < MAX_ITEMS && id >= 0);

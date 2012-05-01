@@ -14,6 +14,28 @@ typedef enum
 } ItemGroups;
 */
 
+/*
+	int item_group_type;
+	
+	//IG_PLACER
+	char* placer_block_type;	//type of block that it creates
+
+	//IG_HITSCAN_WEAPON
+	int hitscan_fire_cooldown;		// ms per bullet
+	int hitscan_damage; 			// damage
+	int hitscan_max_ammo;			// max ammo
+	int hitscan_bullet_effect_enum;	// bullet effect
+
+	//IG_MELEE_WEAPON
+	int melee_fire_cooldown;
+	int melee_damage;
+
+	//IG_MINING_LASER
+	int mining_fire_cooldown;
+	int mining_damage;
+	int mining_block_damage;
+*/
+
 #include <c_lib/item/common/enum.hpp>
 
 #if DC_CLIENT
@@ -29,12 +51,12 @@ void sprite_def(int spritesheet, int xpos, int ypos);
 void sprite_def(int alias);
 int sprite_alias(int spritesheet, int xpos, int ypos);
 
+class ItemAttribute s;
 
 void load_item_dat()
 {
     int i0 = texture_alias("media/sprites/i00.png");
     int i1 = texture_alias("media/sprites/i01.png");
-    //int w1 = texture_alias("media/sprites/w01.png");
 
     //int error_sprite = sprite_alias(i0, 4, 1);
 
@@ -72,25 +94,30 @@ void load_item_dat()
 
 namespace Item
 {
-#if DC_CLIENT
 
 int _current_item_id = 0;
-
-int texture_alias(const char* spritesheet)
-{
-    return LUA_load_item_texture_sheet((char*) spritesheet);
-}
 
 void item_def(int id, int group, const char* name)
 {
     _current_item_id = id;
 
+    s.init(group);
+    
     if(group_array[id] != IG_ERROR)
     {
         printf("ITEM CONFIG ERROR: item id conflict, id= %i \n", id);
         abort();
     }
     group_array[id] = group; //check
+
+    
+}
+
+#if DC_CLIENT
+
+int texture_alias(const char* spritesheet)
+{
+    return LUA_load_item_texture_sheet((char*) spritesheet);
 }
 
 void sprite_def(int spritesheet, int ypos, int xpos)
@@ -112,6 +139,7 @@ void sprite_def(int alias)
 {
     sprite_array[_current_item_id] = alias;
 }
+
 int sprite_alias(int spritesheet, int ypos, int xpos)
 {
     ypos -= 1;
@@ -126,11 +154,9 @@ int sprite_alias(int spritesheet, int ypos, int xpos)
 }
 #else
 int texture_alias(const char* spritesheet) {return 0;}
-void item_def(int id, int group, const char* name) {}
 void sprite_def(int spritesheet, int xpos, int ypos) {}
 void sprite_def(int alias) {}
 int sprite_alias(int spritesheet, int xpos, int ypos) { return 0; }
-
 #endif
 
 }
