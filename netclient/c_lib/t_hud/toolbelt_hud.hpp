@@ -21,12 +21,12 @@ class AgentToolbeltUI : public UIElement
 
     int width()
     {
-        return xdim*slot_size + (xdim-1)*inc1 + border*2;
+        return xdim*slot_size + xdim*inc1 + inc2*2;
     }
 
     int height()
     {
-        return ydim*slot_size + (ydim-1)*inc1 + border * 2;
+        return ydim*slot_size + ydim*inc1 + inc2*2;
     }
 
     int selected_slot;
@@ -66,11 +66,11 @@ class AgentToolbeltUI : public UIElement
 
 int AgentToolbeltUI::get_slot_at(int px, int py)
 {
-    px -= xoff + border;
-    py -= yoff - border;
+    px -= xoff - border - inc1/2;
+    py -= yoff + border + inc1/2;
 
-    float width  = xdim*slot_size + (xdim-1)*inc1;
-    float height = ydim*slot_size + (ydim-1)*inc1;
+    float width  = xdim*slot_size + (xdim-1)*inc1 + inc2*2;
+    float height = ydim*slot_size + (ydim-1)*inc1 + inc2*2;
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
@@ -120,7 +120,7 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<ydim; j++)
     {
         float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
         glVertex2f(x-inc2,y+w+inc2);
         glVertex2f(x+w+inc2, y+w+inc2);
@@ -134,7 +134,7 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<ydim; j++)
     {
         float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -151,7 +151,7 @@ void AgentToolbeltUI::draw()
         int j = hover_slot / this->xdim;
         
         float x = xoff + border + i*(inc1+slot_size);
-        float y = _yresf - (yoff - border + j*(inc1+slot_size));
+        float y = _yresf - (yoff - border + (j+1)*(inc1+slot_size));
 
         glVertex2f(x,y+w);
         glVertex2f(x+w, y+w);
@@ -179,7 +179,7 @@ void AgentToolbeltUI::draw()
         if (slot_types[slot] == NULL_ITEM_TYPE) continue;
         int tex_id = Item::get_sprite_index_for_type(slot_types[slot]);
         const float x = xoff + border + i*(inc1+slot_size);
-        const float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
         //const float iw = 8.0f; // icon_width
         //const int iiw = 8; // integer icon width
@@ -217,9 +217,9 @@ void AgentToolbeltUI::draw()
         int slotx = this->selected_slot % xdim;
         int sloty = ydim - (this->selected_slot / xdim);
         const float x = xoff + border + slotx*(inc1+slot_size);
-        const float y = _yresf - (yoff + border + (ydim-sloty)*(inc1+slot_size));
+        const float y = _yresf - (yoff + border + (ydim-sloty+1)*(inc1+slot_size));
 
-        const float b = 2 + inc2;
+        const float b = inc2;
 
         glColor4ub(0, 0, 128+64, 255);
         glLineWidth(2.0);
@@ -265,7 +265,7 @@ void AgentToolbeltUI::draw()
         
         float x = xoff + border + i*(inc1+slot_size);
         x += slot_size - font_size/2;
-        float y = _yresf - (yoff + border + j*(inc1+slot_size));
+        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
         y += font_size/2;
 
         text = &this->stack_numbers[slot];

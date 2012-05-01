@@ -21,15 +21,16 @@ void destroy_item(ItemID id);
 
 void merge_item_stack(ItemID src, ItemID dest);
 void merge_item_stack(ItemID src, ItemID dest, int amount);
+
 }
 
 /*
 CLIENT
 */
 #if DC_CLIENT
-
 namespace Item
 {
+    
 void open_container();
 void close_container();
 
@@ -46,6 +47,7 @@ int get_sprite_index_for_id(ItemID item_id);
 int get_sprite_index_for_type(int item_type);
 int* get_container_ui_types(int container_id);
 int* get_container_ui_stacks(int container_id);
+
 }
 #endif 
 
@@ -56,7 +58,6 @@ SERVER
 */
 
 #if DC_SERVER
-
 namespace Item
 {
 
