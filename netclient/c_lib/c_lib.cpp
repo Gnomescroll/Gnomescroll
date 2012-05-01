@@ -145,6 +145,9 @@
 /* items */
 #include <item/_include.hpp>
 
+/* toobelt */
+#include <toolbelt/_include.hpp>
+
 /* hud */
 #include <t_hud/_include.hpp>
 
@@ -234,6 +237,8 @@ int init_c_lib()
     Item::init_properties();
     Item::load_item_dat();
 
+    Toolbelt::init();
+
     t_hud::init();
     t_hud::draw_init();
 
@@ -284,6 +289,7 @@ void close_c_lib() {
     t_map::end_t_map();
 
     Item::teardown();
+    Toolbelt::teardown();
 
     t_hud::draw_teardown();
     t_hud::teardown();

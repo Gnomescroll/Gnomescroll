@@ -198,42 +198,7 @@ void AgentContainerUI::draw()
 
     glDisable(GL_TEXTURE_2D);
     
-    // draw border highlight
-    if (this->selected_slot != NULL_SLOT)
-    {   
-        int slotx = this->selected_slot % xdim;
-        int sloty = ydim - (this->selected_slot / xdim);
-        const float x = xoff + border + slotx*(inc1+slot_size);
-        const float y = _yresf - (yoff + border + (ydim-sloty)*(inc1+slot_size));
-
-        const float b = 2 + inc2;
-
-        glColor4ub(0, 0, 128+64, 255);
-        glLineWidth(2.0);
-
-        glBegin(GL_LINES);
-
-        glVertex2f(x-b, y+w+b);
-        glVertex2f(x+w+b, y+w+b);
-
-        glVertex2f(x+w+b, y+w+b);
-        glVertex2f(x+w+b, y-b);
-
-        glVertex2f(x+w+b, y-b);
-        glVertex2f(x-b, y-b);
-
-        glVertex2f(x-b, y-b);
-        glVertex2f(x-b, y+w+b);
-
-        glEnd();
-
-        glLineWidth(1.0);
-    }
-
     glColor4ub(255, 255, 255, 255);
-
-
-
 
     /*
      * Draw stack numbers

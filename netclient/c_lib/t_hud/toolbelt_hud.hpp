@@ -18,6 +18,8 @@ class AgentToolbeltUI : public UIElement
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;
 
+    int selected_slot;
+
     void draw();
 
     int get_slot_at(int px, int py);
@@ -39,6 +41,10 @@ class AgentToolbeltUI : public UIElement
             t->set_depth(-0.1f);
         }
     }
+
+    AgentToolbeltUI()
+    : selected_slot(0)
+    {}
     
     ~AgentToolbeltUI()
     {

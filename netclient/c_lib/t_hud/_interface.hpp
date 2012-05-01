@@ -30,6 +30,9 @@ ContainerInputEvent left_mouse_up(int x, int y);
 ContainerInputEvent right_mouse_down(int x, int y);
 ContainerInputEvent right_mouse_up(int x, int y);
 ContainerInputEvent mouse_motion(int x, int y);
+ContainerInputEvent scroll_up();
+ContainerInputEvent scroll_down();
+ContainerInputEvent select_slot(int numkey);
 ContainerInputEvent null_input_event();
 
 // network

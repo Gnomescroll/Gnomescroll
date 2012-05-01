@@ -101,14 +101,14 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     return event;
 }
 
-static ContainerInputEvent null_event = {
+static const ContainerInputEvent NULL_EVENT = {
     NULL_CONTAINER,         // null container id
     NULL_SLOT   // null slot
 };
 
 ContainerInputEvent left_mouse_down(int x, int y)
 {
-    return null_event;
+    return NULL_EVENT;
 }
 
 ContainerInputEvent left_mouse_up(int x, int y)
@@ -118,7 +118,7 @@ ContainerInputEvent left_mouse_up(int x, int y)
 
 ContainerInputEvent right_mouse_down(int x, int y)
 {
-    return null_event;
+    return NULL_EVENT;
 }
 
 ContainerInputEvent right_mouse_up(int x, int y)
@@ -130,7 +130,47 @@ ContainerInputEvent mouse_motion(int x, int y)
 {
     mouse_x = x;
     mouse_y = y;
-    return null_event;
+    return NULL_EVENT;
+}
+
+ContainerInputEvent scroll_up()
+{
+    if (agent_toolbelt == NULL) return NULL_EVENT;
+    agent_toolbelt->selected_slot += 1;
+    agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
+    
+    ContainerInputEvent event;
+    event.container_id = agent_toolbelt->container_id;
+    event.slot = agent_toolbelt->selected_slot;
+    return event;
+}
+
+ContainerInputEvent scroll_down()
+{
+    if (agent_toolbelt == NULL) return NULL_EVENT;
+    agent_toolbelt->selected_slot -= 1;
+    agent_toolbelt->selected_slot %= agent_toolbelt->xdim;
+    if (agent_toolbelt->selected_slot < 0) agent_toolbelt->selected_slot += agent_toolbelt->xdim;
+    
+    ContainerInputEvent event;
+    event.container_id = agent_toolbelt->container_id;
+    event.slot = agent_toolbelt->selected_slot;
+    return event;
+}
+
+ContainerInputEvent select_slot(int numkey)
+{
+    if (agent_toolbelt == NULL) return NULL_EVENT;
+
+    if (numkey == 0) numkey = 10;
+    int slot = numkey-1;
+    if (slot < 0 || slot >= agent_toolbelt->xdim) return NULL_EVENT;
+    agent_toolbelt->selected_slot = slot;
+    
+    ContainerInputEvent event;
+    event.container_id = agent_toolbelt->container_id;
+    event.slot = slot;
+    return event;
 }
 
 /*
@@ -213,10 +253,11 @@ static void draw_grabbed_icon()
 
 void draw_hud()
 {
+    agent_toolbelt->draw();
+
     if (!hud_enabled) return;
 
     agent_container->draw();
-    agent_toolbelt->draw();
     //nanite_container->draw();
     //craft_bench_container->draw();
 
@@ -239,7 +280,8 @@ void init()
 
     agent_toolbelt = new AgentToolbeltUI;
     agent_toolbelt->xoff = (_xresf - (agent_toolbelt->border*agent_toolbelt->xdim + agent_toolbelt->inc1*(agent_toolbelt->xdim-1) + agent_toolbelt->border*2))/2;
-    agent_toolbelt->yoff = _yresf - (agent_toolbelt->border + agent_toolbelt->inc2);
+    //agent_toolbelt->yoff = _yresf - (agent_toolbelt->border + agent_toolbelt->inc2);
+    agent_toolbelt->yoff = _yresf - (agent_toolbelt->slot_size);
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;

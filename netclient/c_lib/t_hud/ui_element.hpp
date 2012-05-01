@@ -16,7 +16,6 @@ class UIElement
         float yoff;
 
         int container_id;
-        int selected_slot; //how is this set?
 
         HudText::Text* stack_numbers;
 
@@ -32,7 +31,7 @@ class UIElement
         virtual int get_slot_at(int px, int py) = 0;
 
         UIElement()
-        : visible(false), xoff(0), yoff(0), container_id(-1), selected_slot(NULL_SLOT),
+        : visible(false), xoff(0), yoff(0), container_id(-1),
         stack_numbers(NULL)
         {}
     

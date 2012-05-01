@@ -418,23 +418,23 @@ void container_mouse_motion_handler(SDL_Event* event)
 
 void agent_key_down_handler(SDL_Event* event)
 {
-
+    t_hud::ContainerInputEvent container_event;
     switch (event->key.keysym.sym)
     {
         case SDLK_k:
             run_lua_test();
             break;
 
-        case SDLK_9:
-            t_mech::add_mech();
-            break;
+        //case SDLK_9:
+            //t_mech::add_mech();
+            //break;
 
-        case SDLK_0:
-            t_mech::rotate_mech();
-            break;
+        //case SDLK_0:
+            //t_mech::rotate_mech();
+            //break;
 
         case SDLK_r:
-            //ClientState::playerAgent_state.action.reload();
+            Toolbelt::reload_event();
             break;
         
         case SDLK_LEFT:
@@ -450,37 +450,46 @@ void agent_key_down_handler(SDL_Event* event)
             HudCubeSelector::cube_selector.down();
             break;
 
-        //case SDLK_1:
-            //if (ClientState::playerAgent_state.action.switch_weapon(1-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_2:
-            //if (ClientState::playerAgent_state.action.switch_weapon(2-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_3:
-            //if (ClientState::playerAgent_state.action.switch_weapon(3-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_4:
-            //if (ClientState::playerAgent_state.action.switch_weapon(4-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_5:
-            //if (ClientState::playerAgent_state.action.switch_weapon(5-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_6:
-            //if (ClientState::playerAgent_state.action.switch_weapon(6-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_7:
-            //if (ClientState::playerAgent_state.action.switch_weapon(7-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_8:
-            //if (ClientState::playerAgent_state.action.switch_weapon(8-1)) agent_camera->unzoom();
-            //break;
-        //case SDLK_9:
-            //if (ClientState::playerAgent_state.action.switch_weapon(9-1)) agent_camera->unzoom();
-            //break;
+        case SDLK_1:
+            container_event = t_hud::select_slot(1);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_2:
+            container_event = t_hud::select_slot(2);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_3:
+            container_event = t_hud::select_slot(3);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_4:
+            container_event = t_hud::select_slot(4);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_5:
+            container_event = t_hud::select_slot(5);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_6:
+            container_event = t_hud::select_slot(6);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_7:
+            container_event = t_hud::select_slot(7);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_8:
+            container_event = t_hud::select_slot(8);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
+        case SDLK_9:
+            container_event = t_hud::select_slot(9);
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
             
         default: break;
     }
-
+    
 }
 
 void agent_key_up_handler(SDL_Event* event)
@@ -499,37 +508,31 @@ void agent_mouse_down_handler(SDL_Event* event)
 {
     PlayerAgent_state* p = &ClientState::playerAgent_state;
     if (p->you == NULL) return;
-    
+
+    t_hud::ContainerInputEvent container_event;
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            //p->action.fire();
+            Toolbelt::left_trigger_event();
             break;
 
         case SDL_BUTTON_RIGHT:
-            //if (p->you->weapons.can_zoom())
-                //agent_camera->toggle_zoom();
-            //if (p->you->weapons.active == Weapons::TYPE_block_applier)
-            //{
-                //int block = p->action.select_block();
-                //if (block)
-                    //HudCubeSelector::cube_selector.set_active_id(block);
-            //}
-            //else if (p->you->weapons.active == Weapons::TYPE_block_pick)
-                //p->action.pickup_item();
+            Toolbelt::right_trigger_event();
             break;
 
         case SDL_BUTTON_MIDDLE:
             // nothing
             break;
 
-        //case 4: // scroll up
-            //if (p->action.switch_weapon(-1)) agent_camera->unzoom();
-            //break;
+        case 4: // scroll up
+            container_event = t_hud::scroll_up();
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
 
-        //case 5: // scroll down
-            //if (p->action.switch_weapon(-2)) agent_camera->unzoom();
-            //break;
+        case 5: // scroll down
+            container_event = t_hud::scroll_down();
+            Toolbelt::toolbelt_item_selected_event(container_event.container_id, container_event.slot);
+            break;
 
         default: break;
     }
