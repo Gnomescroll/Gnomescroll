@@ -95,10 +95,10 @@ void set_slot_icon(int slot, int icon_id) {
     }
     slot_icons[slot] = icon_id;
 
-    // calculate maximum rendered width
-    int r_width = (slot+1) * 32;
-    if (r_width > rendered_width)
-        rendered_width = r_width;
+    //// calculate maximum rendered width
+    //int r_width = (slot+1) * 32;
+    //if (r_width > rendered_width)
+        //rendered_width = r_width;
 }
 
 

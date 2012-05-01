@@ -25,13 +25,6 @@ static const char help_text[] =
 "    Left click      Activate weapon\n"
 "    Right click     Zoom\n"
 "    Arrow keys      Control block selector\n"
-"    Weapons:\n"
-"    1               Laser\n"
-"    2               Disintegrator\n"
-"    3               Blocks\n"
-"    4               Grenades\n"
-"    5               Spawner Synthesizer\n"
-"    6               Turret Synthesizer\n"
 "    T, Enter        Chat\n"
 "    Y               Team Chat\n"
 "    H               Display help\n"
@@ -81,8 +74,8 @@ static struct HudDrawSettings
     bool chat_input;    // draw chat input area
     bool full_chat;     // draw chat messages (ignoring timeouts)
     bool scoreboard;
-    bool equipment;
-    int equipment_slot;
+    //bool equipment;
+    //int equipment_slot;
     bool compass;
     bool map;
     bool graphs;
@@ -138,14 +131,14 @@ void update_hud_draw_settings()
 
     hud_draw_settings.scoreboard = input_state.scoreboard;
 
-    hud_draw_settings.equipment = false;
-    hud_draw_settings.equipment_slot = -1;
-    if (ClientState::playerAgent_state.you != NULL)
-    {
-        hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
+    //hud_draw_settings.equipment = false;
+    //hud_draw_settings.equipment_slot = -1;
+    //if (ClientState::playerAgent_state.you != NULL)
+    //{
+        //hud_draw_settings.equipment = (input_state.input_mode == INPUT_STATE_AGENT);
         //if (hud_draw_settings.equipment)
             //hud_draw_settings.equipment_slot = ClientState::playerAgent_state.you->weapons.active;
-    }
+    //}
 
     hud_draw_settings.compass = true;
     hud_draw_settings.map = input_state.map;
@@ -202,8 +195,8 @@ void draw_hud_textures()
     if (hud_draw_settings.cube_selector)
         HudCubeSelector::cube_selector.draw();
 
-    if (hud_draw_settings.equipment)
-        HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
+    //if (hud_draw_settings.equipment)
+        //HudEquipment::draw_equipment(hud_draw_settings.equipment_slot);
 
     if (hud_draw_settings.compass)
         Compass::draw();
@@ -327,7 +320,7 @@ void draw_hud_text()
             {
                 hud->coins->set_text((char*)"");
                 hud->health->set_text((char*)"");
-                hud->weapon->set_text((char*)agent_viewer_text);
+                //hud->weapon->set_text((char*)agent_viewer_text);
             }
             else
             {
@@ -353,11 +346,11 @@ void draw_hud_text()
         {
             hud->coins->set_text((char*)"");
             hud->health->set_text((char*)no_agent_text);
-            hud->weapon->set_text((char*)"");
+            //hud->weapon->set_text((char*)"");
         }
         hud->coins->draw();
         hud->health->draw();
-        hud->weapon->draw();
+        //hud->weapon->draw();
     }
 
     end_font_draw();
@@ -444,12 +437,12 @@ void HUD::init()
     health->set_color(255,10,10,255);
     health->set_position(HudEquipment::rendered_width + 2, _yresf + 2);
 
-    weapon = HudText::text_list->create();
-    weapon->set_text((char*)"");
-    weapon->set_format((char*) weapon_format);
-    weapon->set_format_extra_length(Weapons::WEAPON_HUD_STRING_MAX - 2);
-    weapon->set_color(255,10,10,255);
-    weapon->set_position(2, _yresf - (line_height + 16));
+    //weapon = HudText::text_list->create();
+    //weapon->set_text((char*)"");
+    //weapon->set_format((char*) weapon_format);
+    //weapon->set_format_extra_length(Weapons::WEAPON_HUD_STRING_MAX - 2);
+    //weapon->set_color(255,10,10,255);
+    //weapon->set_position(2, _yresf - (line_height + 16));
     
     compass = HudText::text_list->create();
     compass->set_text((char*)"");
@@ -483,7 +476,7 @@ ping(NULL),
 reliable_ping(NULL),
 coins(NULL),
 health(NULL),
-weapon(NULL),
+//weapon(NULL),
 compass(NULL),
 confirm_quit(NULL),
 scoreboard(NULL),
@@ -508,8 +501,8 @@ HUD::~HUD()
         HudText::text_list->destroy(coins->id);
     if (health != NULL)
         HudText::text_list->destroy(health->id);
-    if (weapon != NULL)
-        HudText::text_list->destroy(weapon->id);
+    //if (weapon != NULL)
+        //HudText::text_list->destroy(weapon->id);
     if (compass != NULL)
         HudText::text_list->destroy(compass->id);
     if (confirm_quit != NULL)
