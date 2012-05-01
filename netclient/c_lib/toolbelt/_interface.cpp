@@ -67,6 +67,14 @@ void reload_event()
 namespace Toolbelt
 {
 
+ItemID get_agent_selected_item(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    int slot = agent_selected_slot[agent_id];
+    if (slot == NULL_SLOT) return NULL_ITEM;
+    return Item::get_agent_toolbelt_item(agent_id, slot);
+}
+
 void set_agent_toolbelt_slot(int agent_id, int slot)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);

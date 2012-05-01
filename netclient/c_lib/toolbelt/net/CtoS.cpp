@@ -2,6 +2,10 @@
 
 #include <toolbelt/_interface.hpp>
 
+#if DC_SERVER
+#include <toolbelt/server.hpp>
+#endif
+
 namespace Toolbelt
 {
 
@@ -19,21 +23,40 @@ inline void toolbelt_set_slot_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
     set_agent_toolbelt_slot(a->id, slot);
+
+    ItemID item_id = get_agent_selected_item(a->id);
+    if (item_id == NULL_ITEM) return;
+    broadcast_agent_set_active_item_packet(a->id, item_id);
 }
 
 inline void toolbelt_alpha_action_CtoS::handle() 
 {
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
 
+    ItemID item_id = get_agent_selected_item(a->id);
+    if (item_id == NULL_ITEM) return;
+    broadcast_agent_toolbelt_alpha_action_packet(a->id, item_id);
 }
 
 inline void toolbelt_beta_action_CtoS::handle() 
 {
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
 
+    ItemID item_id = get_agent_selected_item(a->id);
+    if (item_id == NULL_ITEM) return;
+    broadcast_agent_toolbelt_beta_action_packet(a->id, item_id);
 }
 
 inline void toolbelt_reload_action_CtoS::handle() 
 {
+    Agent_state* a = NetServer::agents[client_id];
+    if (a == NULL) return;
 
+    ItemID item_id = get_agent_selected_item(a->id);
+    if (item_id == NULL_ITEM) return;
+    broadcast_agent_toolbelt_item_reload_packet(a->id, item_id);
 }
 
 

@@ -1,7 +1,7 @@
 #include "client.hpp"
 
 #if DC_SERVER
-dont include this file in server
+dont_include_this_file_in_server
 #endif
 
 namespace Toolbelt

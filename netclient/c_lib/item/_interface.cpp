@@ -245,6 +245,15 @@ bool agent_owns_container(int agent_id, int container_id)
     return false;
 }
 
+ItemID get_agent_toolbelt_item(int agent_id, int slot)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    int toolbelt_id = get_agent_toolbelt(agent_id);
+    if (toolbelt_id == NULL_CONTAINER) return NULL_ITEM;
+    ItemContainer* toolbelt = item_container_list->get(toolbelt_id);
+    if (toolbelt == NULL) return NULL_ITEM;
+    return toolbelt->get_item(slot);
+}
 
 ItemID get_agent_hand(int agent_id)
 {
@@ -256,7 +265,15 @@ ItemID get_agent_hand(int agent_id)
 int get_agent_container(int agent_id)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    assert(agent_container_list != NULL);
     return agent_container_list[agent_id];
+}
+
+int get_agent_toolbelt(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    assert(agent_toolbelt_list != NULL);
+    return agent_toolbelt_list[agent_id];
 }
 
 static void assign_container_to_agent(ItemContainer* container, ItemContainerType type, int* container_list, int agent_id, int client_id)

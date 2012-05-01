@@ -29,6 +29,7 @@ void reload_event();
 namespace Toolbelt
 {
 
+ItemID get_agent_selected_item(int agent_id);
 void set_agent_toolbelt_slot(int agent_id, int slot);
 
 } // Toolbelt

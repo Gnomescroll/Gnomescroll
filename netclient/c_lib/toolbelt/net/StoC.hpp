@@ -3,4 +3,62 @@
 namespace Toolbelt
 {
 
+class toolbelt_set_active_item_StoC: public FixedSizeReliableNetPacketToClient<toolbelt_set_active_item_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint8_t item_id;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u8(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class toolbelt_item_alpha_action_StoC: public FixedSizeReliableNetPacketToClient<toolbelt_item_alpha_action_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint8_t item_id;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u8(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class toolbelt_item_beta_action_StoC: public FixedSizeReliableNetPacketToClient<toolbelt_item_beta_action_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint8_t item_id;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u8(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+class toolbelt_item_reload_action_StoC: public FixedSizeReliableNetPacketToClient<toolbelt_item_reload_action_StoC>
+{
+    public:
+        uint8_t agent_id;
+        uint8_t item_id;
+        
+        inline void packet(char* buff, int* buff_n, bool pack)
+        {
+            pack_u8(&agent_id, buff, buff_n, pack);
+            pack_u8(&item_id, buff, buff_n, pack);
+        }
+        inline void handle();
+};
+
+
+
 } // Toolbelt
