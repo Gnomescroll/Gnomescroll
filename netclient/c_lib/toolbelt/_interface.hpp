@@ -13,6 +13,9 @@ void teardown();
 namespace Toolbelt
 {
 
+// network events
+void assign_toolbelt(int container_id);
+
 // UI events
 void toolbelt_item_selected_event(int container_id, int slot);
 void left_trigger_event();
@@ -25,6 +28,8 @@ void reload_event();
 #if DC_SERVER
 namespace Toolbelt
 {
+
+void set_agent_toolbelt_slot(int agent_id, int slot);
 
 } // Toolbelt
 #endif

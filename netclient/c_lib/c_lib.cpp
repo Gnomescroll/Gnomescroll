@@ -145,7 +145,7 @@
 /* items */
 #include <item/_include.hpp>
 
-/* toobelt */
+/* toolbelt */
 #include <toolbelt/_include.hpp>
 
 /* hud */

@@ -78,6 +78,9 @@
 /* item */
 #include <item/_include.hpp>
 
+/* toolbelt */
+#include <toolbelt/_include.hpp>
+
 /* Game modes */
 #include <game/flag.cpp>
 #include <game/base.cpp>
@@ -150,6 +153,7 @@ int init_c_lib()
     lua_load_block_dat(); /* Load Block Dat */
 
     Item::init();
+    Toolbelt::init();
 
     ServerState::init();
     Particle::init_particles();
@@ -162,6 +166,8 @@ void close_c_lib()
     printf("Server closing...\n");
 
     t_map::end_t_map();
+    
+    Toolbelt::teardown();
     Item::teardown();
 
     teardown_chat_server();

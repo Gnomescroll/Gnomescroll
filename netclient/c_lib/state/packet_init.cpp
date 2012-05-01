@@ -16,6 +16,9 @@
 #include <item/net/CtoS.hpp>
 #include <item/net/StoC.hpp>
 
+#include <toolbelt/net/CtoS.hpp>
+#include <toolbelt/net/StoC.hpp>
+
 #include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
 typedef void (*pt2handler)(unsigned char*, int, int* read_bytes);
@@ -241,6 +244,11 @@ void RegisterMessages() {
     Item::remove_item_from_container_StoC::register_client_packet();
     Item::insert_item_in_hand_StoC::register_client_packet();
     Item::remove_item_from_hand_StoC::register_client_packet();
+
+    Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
+    Toolbelt::toolbelt_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_beta_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_reload_action_CtoS::register_server_packet();
 }
 
 }

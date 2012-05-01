@@ -5,6 +5,7 @@
 #include <item/_state.hpp>
 #include <item/client_item_container.hpp>
 #include <t_hud/_interface.hpp>
+#include <toolbelt/_interface.hpp>
 
 namespace Item
 {
@@ -68,6 +69,7 @@ inline void assign_item_container_StoC::handle()
             player_toolbelt_ui = new ItemContainerUI(ic->id);
             player_toolbelt_ui->init(ic->type, ic->xdim, ic->ydim);
             player_toolbelt_ui->load_data(ic->slot);
+            Toolbelt::assign_toolbelt(ic->id);
             break;
         case AGENT_NANITE:
             player_nanite_id = container_id;

@@ -31,11 +31,17 @@ void teardown()
 namespace Toolbelt
 {
 
+void assign_toolbelt(int container_id)
+{
+    toolbelt_id = container_id;
+}
+
 void toolbelt_item_selected_event(int container_id, int slot)
 {
     if (container_id == NULL_CONTAINER || container_id != toolbelt_id) return;
     // update selected item
     selected_slot = slot;
+    send_set_slot_packet(slot);
 }
 
 void left_trigger_event()
@@ -60,6 +66,13 @@ void reload_event()
 #if DC_SERVER
 namespace Toolbelt
 {
+
+void set_agent_toolbelt_slot(int agent_id, int slot)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    assert(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
+    agent_selected_slot[agent_id] = slot;
+}
 
 } // Toolbelt
 #endif
