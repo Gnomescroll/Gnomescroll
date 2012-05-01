@@ -62,6 +62,9 @@ void load_item_dat()
     item_def(7, IG_MINING_LASER , "mining_laser");
     sprite_def(i0, 3,5);
 
+    item_def(8, IG_GRENADE_LAUNCHER , "grenade_launcher");
+    sprite_def(i0, 1,7);
+
     #if DC_CLIENT
     LUA_save_item_texture();
     #endif

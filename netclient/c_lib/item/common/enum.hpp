@@ -44,6 +44,7 @@ typedef enum
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,
+    IG_GRENADE_LAUNCHER,
 } ItemGroup;
 
 /* No typedef for ItemType, use string names */

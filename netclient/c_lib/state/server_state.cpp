@@ -183,7 +183,7 @@ namespace ServerState
     // TODO -- move this test/convenince method
     void spawn_items(int n)
     {
-        int type = randrange(1,7);
+        int type = randrange(1,8);
         float x = randf() * map_dim.x;
         float y = randf() * map_dim.y;
         float z = 128.0f;
