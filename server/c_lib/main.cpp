@@ -71,7 +71,7 @@ void tick()
     ServerState::ctf->update();
     ServerState::ctf->tick();
 
-    ServerState::spawn_items(2);
+    //ServerState::spawn_items(2);
 
     Toolbelt::update_toolbelt_items();
 }

@@ -302,6 +302,11 @@ void assign_containers_to_agent(int agent_id, int client_id)
     
     ItemContainer* agent_toolbelt = item_container_list->create();
     assign_container_to_agent(agent_toolbelt, AGENT_TOOLBELT, agent_toolbelt_list, agent_id, client_id);
+
+    // put a grenade launcher in the toolbelt to selt
+    Item* grenade_launcher = create_item(8);
+    send_item_create(client_id, grenade_launcher->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);
     
     ItemContainer* agent_nanite = item_container_list->create();
     assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
