@@ -702,6 +702,12 @@ Vec3 Agent_state::camera_position()
     return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
+Vec3 Agent_state::arm_center()
+{
+    if (this->vox == NULL) return vec3_init(0,0,0);
+    return this->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+}
+
 int Agent_state::get_facing_block_type()
 {
     const float CUBE_SELECT_MAX_DISTANCE = 12.0f;

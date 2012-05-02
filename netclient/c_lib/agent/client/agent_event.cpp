@@ -257,7 +257,7 @@ void Agent_event::coins_changed(unsigned int coins)
 
 void Agent_event::tick_mining_laser()
 {
-    Animations::mining_laser_beam(this->a->camera_position(), this->a->s.forward_vector());
+    Animations::mining_laser_beam(this->a->arm_center(), this->a->s.forward_vector());
 }
 
 void Agent_event::fired_mining_laser()
@@ -299,7 +299,7 @@ void Agent_event::fired_weapon_at_object(int id, int type, int part)
     if (this->a->vox == NULL) return;
     // play laser anim out of arm
     const float hitscan_speed = 200.0f;
-    Vec3 arm_center = this->a->vox->get_part(AGENT_PART_RARM)->world_matrix.c;
+    Vec3 arm_center = this->a->arm_center();
     //f[0] = x - arm_center.x;
     //f[1] = y - arm_center.y;
     //f[2] = z - arm_center.z;
