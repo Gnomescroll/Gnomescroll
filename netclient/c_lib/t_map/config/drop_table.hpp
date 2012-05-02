@@ -34,7 +34,9 @@ int _current_drop_block_id;
 
 void def_drop(const char* block_name)
 {
+	//printf("err1 \n");
 	int block_id = t_map::dat_get_cube_id(block_name);
+	//printf("err2 \n");
 	_current_drop_block_id = block_id;
 }
 
@@ -94,6 +96,7 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 
 	for(int i=1; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
 
+		printf("err3\n");
 }
 
 }

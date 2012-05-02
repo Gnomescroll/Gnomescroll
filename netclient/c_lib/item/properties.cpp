@@ -103,7 +103,7 @@ void set_item_name(int id, char* name, int length)
 
 char* get_item_name(int id)
 {
-    assert(id < 0 || id >= MAX_ITEMS);
+    assert(id >= 0 || id < MAX_ITEMS);
     return (item_names + item_name_index[id]);
 }
 

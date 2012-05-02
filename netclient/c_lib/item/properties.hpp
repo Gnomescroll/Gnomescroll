@@ -1,5 +1,7 @@
 #pragma once
 
+#include <item/common/constant.hpp>
+
 namespace Item
 {
 
