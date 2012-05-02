@@ -61,7 +61,7 @@ void PlayerAgent_action::hitscan_laser()
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
 
-    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    Vec3 pos = this->p->camera_position();
     Vec3 look = agent_camera->forward_vector();
 
     struct Voxel_hitscan_target target;
@@ -197,7 +197,7 @@ void PlayerAgent_action::hitscan_laser()
 void PlayerAgent_action::tick_mining_laser()
 {
     if (this->p->you == NULL) return;
-    Animations::mining_laser_beam(this->p->camera_position(), this->p->camera_state.forward_vector());
+    Animations::mining_laser_beam(this->p->you->get_center(), this->target_direction);
 }
 
 
@@ -207,8 +207,8 @@ void PlayerAgent_action::fire_mining_laser()
     if (p->you->status.dead) return;
     if (p->you->status.team == 0) return;
 
-    Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
-    Vec3 vec = agent_camera->forward_vector();
+    Vec3 pos = this->p->camera_position();
+    Vec3 look = agent_camera->forward_vector();
 
     struct Voxel_hitscan_target target;
     float vox_distance;
@@ -220,10 +220,12 @@ void PlayerAgent_action::fire_mining_laser()
 
     Hitscan::HitscanTargetTypes target_type =
         Hitscan::hitscan_against_world(
-            pos, vec, this->p->agent_id, OBJECT_AGENT,
+            pos, look, this->p->agent_id, OBJECT_AGENT,
             &target, &vox_distance, collision_point,
             block_pos, side, &tile, &block_distance
         );
+
+    normalize_vector(&look);    // already normalized?
 
     // send packet
     hit_block_CtoS block_msg;
@@ -264,7 +266,7 @@ void PlayerAgent_action::fire_mining_laser()
                 }
                 Animations::blood_spray(
                     collision_point[0], collision_point[1], collision_point[2],
-                    vec.x, vec.y, vec.z
+                    look.x, look.y, look.z
                 );
                 Sound::pick_hit_agent(
                     collision_point[0], collision_point[1], collision_point[2],
@@ -290,13 +292,24 @@ void PlayerAgent_action::fire_mining_laser()
             block_msg.z = block_pos[2];
             block_msg.send();
 
-            collision_point[0] = pos.x + vec.x * block_distance;
-            collision_point[1] = pos.y + vec.y * block_distance;
-            collision_point[2] = pos.z + vec.z * block_distance;
+            // FOR SOME REASON COLLISION_POINT IS WORTHLESS AND WE HAVE TO CALCULATE IT HERE.
+
+            // multiply look vector by distance to collision
+            look = vec3_scalar_mult(look, block_distance);
+            // add agent position, now we have collision point
+            look = vec3_add(look, pos);
+            // copy this to collision_point, for block damage animation
+            collision_point[0] = look.x;
+            collision_point[1] = look.y;
+            collision_point[2] = look.z;
+            
+            // subtract translated animation origin from collision point (look) to get new vector
+            look = vec3_sub(vec3_init(collision_point[0], collision_point[1], collision_point[2]), this->p->you->get_center());
+            normalize_vector(&look);
 
             Animations::block_damage(
                 collision_point[0], collision_point[1], collision_point[2],
-                vec.x, vec.y, vec.z,
+                look.x, look.y, look.z,
                 tile, side
             );
             Sound::pick_hit_block(collision_point[0], collision_point[1], collision_point[2], 0,0,0);
@@ -306,6 +319,8 @@ void PlayerAgent_action::fire_mining_laser()
         default:
             break;
     }
+
+    this->target_direction = look;
 
     if (target_type == Hitscan::HITSCAN_TARGET_NONE)
     {
@@ -400,7 +415,7 @@ void PlayerAgent_action::fire_mining_laser()
     //if (p->you->status.dead) return;
     //if (p->you->status.team == 0) return;
 
-    //Vec3 pos = vec3_init(p->camera_state.x, p->camera_state.y, p->camera_z());
+    //Vec3 pos = this->p->camera_position();
     //Vec3 vec = agent_camera->forward_vector();
 
     //struct Voxel_hitscan_target target;

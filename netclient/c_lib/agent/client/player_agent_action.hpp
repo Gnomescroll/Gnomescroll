@@ -11,6 +11,13 @@ class PlayerAgent_action {
         PlayerAgent_state* p;
         
     public:
+
+        // use for adjusted animation vector
+        // firing vector is from camera position, but want to play animation
+        // from a different location animation does not block viewport
+        // but need this new vector to still point to target location
+        // compute this vector whenever a htiscan target is acquired
+        Vec3 target_direction;
     
         //void fire();
         void hitscan_laser();
