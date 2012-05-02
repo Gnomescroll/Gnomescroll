@@ -40,8 +40,8 @@ void set_container_id(ItemContainerType container_type, int container_id)
 */
 
 static bool hud_enabled = false;
-float mouse_x;
-float mouse_y;
+float mouse_x = -1;
+float mouse_y = -1;
 
 void enable_container_hud()
 {
@@ -50,6 +50,9 @@ void enable_container_hud()
 
 void disable_container_hud()
 {
+    // reset mouse state
+    mouse_x = -1;
+    mouse_y = -1;
     hud_enabled = false;
 }
 
