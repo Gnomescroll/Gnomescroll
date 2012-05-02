@@ -2,7 +2,7 @@
 
 #include <item/_interface.hpp>
 #include <item/common/constant.hpp>
-#include <item/common/struct.hpp>
+#include <item/config/item_attribute.hpp>
 
 namespace Item
 {
@@ -23,6 +23,11 @@ void init_properties()
 void tear_down_properties()
 {
     delete[] item_attribute_array;
+}
+
+class ItemAttribute* get_item_attributes(int item_type)
+{
+    return &item_attribute_array[item_type];
 }
 
 int get_sprite_index_for_id(ItemID id)

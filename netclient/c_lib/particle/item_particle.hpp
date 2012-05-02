@@ -17,8 +17,9 @@ void init_item_particle();
 void teardown_item_particle();
 #endif
 
-const int ITEM_PARTICLE_TTL = 30 * 36; // 12 seconds
-const float ITEM_PARTICLE_DAMPENING = 0.01;
+const int ITEM_PARTICLE_TTL = 600*30; // 5 minutes
+const float ITEM_PARTICLE_DAMPENING = 0.50;
+const float ITEM_PARTICLE_RADIUS = 0.35;
 
 const int PICKUP_PREVENTION_DELAY = 30 * 4; // 4 seconds
 
@@ -58,8 +59,7 @@ class ItemParticle //: public VerletComponent
         int ttl;
         void tick()
         {
-            //this->verlet_bounce(this->damp);
-            verlet.bounce_box(ITEM_PARTICLE_DAMPENING);
+            verlet.bounce_box(ITEM_PARTICLE_RADIUS);
             this->ttl--;
             #if DC_SERVER
             this->pickup_prevention--;
