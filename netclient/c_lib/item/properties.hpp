@@ -11,6 +11,7 @@ extern class ItemAttribute* item_attribute_array;
 void init_properties();
 
 class ItemAttribute* get_item_attributes(int item_type);
+int get_item_fire_rate(int item_type);
 
 int get_sprite_index_for_id(ItemID id);
 int get_sprite_index_for_type(int type);
@@ -20,4 +21,5 @@ char* get_item_name(int id);
 int get_item_id(char* name);
 
 int get_item_group_for_type(int item_type);
+
 }

@@ -42,6 +42,8 @@ void tick()
         t_map::t_map_sort_map_chunk_ques();
     }
 
+    Toolbelt::tick();
+
     ServerState::agent_list->update_models(); // sets skeleton
     
     Particle::grenade_list->tick();

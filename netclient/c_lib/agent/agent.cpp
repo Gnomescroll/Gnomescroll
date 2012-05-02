@@ -18,6 +18,8 @@
 #include <math.h>
 #include <common/random.h>
 
+#include <toolbelt/_interface.hpp>
+
 AgentState::AgentState()
 :
 seq(-1),
@@ -617,6 +619,8 @@ Agent_state::~Agent_state()
     msg.id = id;
     msg.broadcast();
     #endif
+
+    Toolbelt::remove_agent(this->id);
 
     if (this->vox != NULL) delete this->vox;
 }

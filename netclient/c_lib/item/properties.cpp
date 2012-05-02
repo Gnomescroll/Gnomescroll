@@ -30,6 +30,12 @@ class ItemAttribute* get_item_attributes(int item_type)
     return &item_attribute_array[item_type];
 }
 
+int get_item_fire_rate(int item_type)
+{
+    // TODO
+    return 5;
+}
+
 int get_sprite_index_for_id(ItemID id)
 {
     assert(id < MAX_ITEMS && id >= 0);

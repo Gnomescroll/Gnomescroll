@@ -96,6 +96,8 @@ int run()
             get_key_state();
             trigger_keys_held_down();
 
+            Toolbelt::tick();
+
             // tick animations
             Animations::animations_tick();
 
@@ -146,6 +148,7 @@ int run()
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
+        Toolbelt::update_selected_item_type();
 
         // update mouse
         poll_mouse();

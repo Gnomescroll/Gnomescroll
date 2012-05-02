@@ -11,7 +11,26 @@ namespace Toolbelt
 
 bool toolbelt_item_begin_alpha_action()
 {
+    // in here, begin the fire tick
+    // if %rate==0 do fire sound/animation
+
+    // server will have similar looking thing,
+    // which will do the actual calculations and send fire packets
+    // other clients will play sound/animation as always
+
+    // ^^ applies only for click-and-hold actions, like picking
+    // single click actions like laser rifle will trigger as always
+
+    
+
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
+
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    agent_fire_on[agent_id] = true;
+    agent_fire_tick[agent_id] = 0;
+
+    if (item_id == NULL_ITEM) return true;
     int item_group = Item::get_item_group(item_id);
     switch (item_group)
     {
@@ -25,18 +44,38 @@ bool toolbelt_item_begin_alpha_action()
             ClientState::playerAgent_state.action.throw_grenade();
             break;
         default:
-            break;
+            return true;
     }
     return true;
 }
 
 bool toolbelt_item_end_alpha_action()
 {
+    // stop advancing fire tick
+
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    agent_fire_on[agent_id] = false;
+    agent_fire_tick[agent_id] = 0;
+
+    ItemID item_id = Item::get_toolbelt_item(selected_slot);
+    int item_group = Item::get_item_group(item_id);
+    switch (item_group)
+    {
+        case IG_HITSCAN_WEAPON:
+        case IG_GRENADE_LAUNCHER:
+            return false;   // nothing happened. they arent click-and-hold
+        case IG_MINING_LASER:
+        default:
+            return true;    // the default action would be click and hold (punching air)
+    }
     return true;
 }
 
 bool toolbelt_item_beta_action()
 {
+    // beta actions are not click and hold
+    // 
     return true;
 }
 

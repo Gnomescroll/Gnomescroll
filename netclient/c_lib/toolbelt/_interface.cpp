@@ -6,6 +6,15 @@ namespace Toolbelt
 
 void init()
 {
+    assert(agent_selected_type == NULL);
+    assert(agent_fire_tick     == NULL);
+    assert(agent_fire_on       == NULL);
+
+    agent_selected_type = (int*)malloc(AGENT_MAX * sizeof(int));
+    for (int i=0; i<AGENT_MAX; agent_selected_type[i++] = NULL_ITEM_TYPE);
+    agent_fire_tick = (int*)calloc(AGENT_MAX, sizeof(int));
+    agent_fire_on   = (bool*)calloc(AGENT_MAX, sizeof(bool));
+    
     #if DC_CLIENT
     #endif
 
@@ -20,20 +29,88 @@ void init()
 
 void teardown()
 {
+    if (agent_selected_type != NULL) free(agent_selected_type);
+    if (agent_fire_tick != NULL)     free(agent_fire_tick);
+    if (agent_fire_on   != NULL)     free(agent_fire_on);
+
     #if DC_CLIENT
     #endif
+    
     #if DC_SERVER
     if (agent_selected_slot != NULL) free(agent_selected_slot);
     if (agent_selected_item != NULL) free(agent_selected_item);
     #endif
 }
 
+void tick()
+{
+    #if DC_SERVER
+    assert(agent_selected_item != NULL);
+    #endif
+    assert(agent_selected_type != NULL);
+    assert(agent_fire_tick     != NULL);
+    assert(agent_fire_on       != NULL);
+    // increment fire ticks if weapon down
+    for (int i=0; i<AGENT_MAX; i++)
+    {
+        if (!agent_fire_on[i]) continue;
+        agent_fire_tick[i]++;
+        int fire_rate = Item::get_item_fire_rate(agent_selected_type[i]);
+        if (agent_fire_tick[i] % fire_rate == 0)
+        {
+            #if DC_CLIENT
+            trigger_item_type(agent_selected_type[i]);
+            #endif
+            #if DC_SERVER
+            trigger_item(agent_selected_item[i]);
+            #endif
+        }
+    }
+}
+
+void remove_agent(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+
+    #if DC_SERVER
+    assert(agent_selected_item != NULL);
+    #endif
+    assert(agent_selected_type != NULL);
+    assert(agent_fire_tick     != NULL);
+    assert(agent_fire_on       != NULL);
+
+    #if DC_SERVER
+    agent_selected_item[agent_id] = NULL_ITEM;
+    #endif
+    agent_selected_type[agent_id] = NULL_ITEM_TYPE;
+    agent_fire_tick[agent_id] = 0;
+    agent_fire_on[agent_id] = false;
+}
 
 } // Toolbelt
 
 #if DC_CLIENT
 namespace Toolbelt
 {
+
+// there are edge cases where the server sets the item without client consent
+// in the selected slot
+// the item type needs to be periodically updated to ensure it is correct
+void update_selected_item_type()
+{
+    int agent_id = ClientState::playerAgent_state.agent_id;
+    if (agent_id < 0 || agent_id >= AGENT_MAX) return;
+    int item_type = NULL_ITEM_TYPE;
+    Item::ItemContainer* toolbelt = Item::get_container(toolbelt_id);
+    if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
+    agent_selected_type[agent_id] = item_type;
+    
+}
+
+void trigger_item_type(int item_type)
+{
+    //printf("trigger item type %d\n", item_type);   
+}
 
 void assign_toolbelt(int container_id)
 {
@@ -46,20 +123,21 @@ void toolbelt_item_selected_event(int container_id, int slot)
     // update selected item
     selected_slot = slot;
     send_set_slot_packet(slot);
+    update_selected_item_type();
 }
 
 void left_trigger_down_event()
 {
     // fire
-    toolbelt_item_begin_alpha_action();
-    send_begin_alpha_action_packet();
+    bool something_happened = toolbelt_item_begin_alpha_action();
+    if (something_happened) send_begin_alpha_action_packet();
 }
 
 void left_trigger_up_event()
 {
     // fire
-    toolbelt_item_end_alpha_action();
-    send_end_alpha_action_packet();
+    bool something_happened = toolbelt_item_end_alpha_action();
+    if (something_happened) send_end_alpha_action_packet();
 }
 
 void right_trigger_down_event()
@@ -88,8 +166,15 @@ void reload_event()
 namespace Toolbelt
 {
 
+void trigger_item(ItemID item_id)
+{
+    //printf("trigger item %d\n", item_id);   
+}
+
+
 void update_toolbelt_items()
 {
+    assert(agent_selected_type != NULL);
     assert(agent_selected_item != NULL);
     assert(agent_selected_slot != NULL);
     // make sure agent_selected_item is current
@@ -98,11 +183,14 @@ void update_toolbelt_items()
     {
         int slot = agent_selected_slot[agent_id];
         ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);
-        if (item_id != agent_selected_item[agent_id])
+        agent_selected_item[agent_id] = item_id;
+        int item_type = Item::get_item_type(item_id);
+        if (item_type != agent_selected_type[agent_id])
         {
-            agent_selected_item[agent_id] = item_id;
-            broadcast_agent_set_active_item_packet(agent_id, item_id);
+            agent_selected_type[agent_id] = item_type;
+            broadcast_agent_set_active_item_packet(agent_id, item_type);
         }
+        
     }
 }
 

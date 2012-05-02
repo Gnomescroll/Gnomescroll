@@ -1,6 +1,7 @@
 #include "CtoS.hpp"
 
 #include <toolbelt/_interface.hpp>
+#include <toolbelt/_state.hpp>
 
 #if DC_SERVER
 #include <toolbelt/server.hpp>
@@ -34,6 +35,8 @@ inline void toolbelt_begin_alpha_action_CtoS::handle()
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
 
+    agent_fire_on[a->id] = true;
+
     ItemID item_id = get_agent_selected_item(a->id);
     broadcast_agent_toolbelt_begin_alpha_action_packet(a->id, item_id);
 }
@@ -42,6 +45,8 @@ inline void toolbelt_end_alpha_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+
+    agent_fire_on[a->id] = false;
     broadcast_agent_toolbelt_end_alpha_action_packet(a->id);
 }
 

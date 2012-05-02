@@ -318,6 +318,14 @@ void assign_containers_to_agent(int agent_id, int client_id)
     Item* grenade_launcher = create_item(8);
     send_item_create(client_id, grenade_launcher->id);
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);
+
+    Item* laser_rifle = create_item(5);
+    send_item_create(client_id, laser_rifle->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);
+
+    Item* mining_laser = create_item(7);
+    send_item_create(client_id, mining_laser->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);
     
     ItemContainer* agent_nanite = item_container_list->create();
     assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);

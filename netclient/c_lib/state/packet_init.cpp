@@ -138,14 +138,6 @@ void RegisterMessages() {
     AgentDeaths_StoC::register_client_packet();
     AgentSuicides_StoC::register_client_packet();
 
-    //AgentActiveWeapon_CtoS::register_server_packet();
-    //AgentActiveWeapon_StoC::register_client_packet();
-    //AgentReloadWeapon_CtoS::register_server_packet();
-    //AgentReloadWeapon_StoC::register_client_packet();
-
-    //Weapons::WeaponAmmo_StoC::register_client_packet();
-    //Weapons::WeaponClip_StoC::register_client_packet();
-
     //// identification
     identify_CtoS::register_server_packet();
     identified_StoC::register_client_packet();
@@ -202,29 +194,6 @@ void RegisterMessages() {
 
     request_remaining_state_CtoS::register_server_packet();
 
-     //inventory
-    /*
-    inventory_create_StoC::register_client_packet();
-    inventory_destroy_StoC::register_client_packet();
-    add_item_to_inventory_StoC::register_client_packet();
-    remove_item_from_inventory_StoC::register_client_packet();
-    swap_item_in_inventory_StoC::register_client_packet();
-    swap_item_between_inventory_StoC::register_client_packet();
-    merge_stack_in_inventory_StoC::register_client_packet();
-    merge_stack_between_inventory_StoC::register_client_packet();
-    set_stack_inventory_StoC::register_client_packet();
-    */
-
-    // client actions
-    /*
-    add_item_to_inventory_CtoS::register_server_packet();
-    remove_item_from_inventory_CtoS::register_server_packet();
-    swap_item_in_inventory_CtoS::register_server_packet();
-    swap_item_between_inventory_CtoS::register_server_packet();
-    merge_stack_in_inventory_CtoS::register_server_packet();
-    merge_stack_between_inventory_CtoS::register_server_packet();
-    */
-    
     // item
     Item::item_create_StoC::register_client_packet();
     Item::item_state_StoC::register_client_packet();
@@ -250,6 +219,7 @@ void RegisterMessages() {
     Toolbelt::toolbelt_item_begin_alpha_action_StoC::register_client_packet();
     Toolbelt::toolbelt_item_end_alpha_action_StoC::register_client_packet();
     Toolbelt::toolbelt_item_reload_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_fire_action_StoC::register_client_packet();
 
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
     Toolbelt::toolbelt_begin_alpha_action_CtoS::register_server_packet();

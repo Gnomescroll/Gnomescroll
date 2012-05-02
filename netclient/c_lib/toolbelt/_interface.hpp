@@ -6,12 +6,19 @@ namespace Toolbelt
 
 void init();
 void teardown();
+void tick();
+
+void trigger_item(ItemID item_id);
+void remove_agent(int agent_id);
 
 } // Toolbelt
 
 #if DC_CLIENT
 namespace Toolbelt
 {
+
+void update_selected_item_type();
+void trigger_item_type(int item_type);
 
 // network events
 void assign_toolbelt(int container_id);
@@ -30,6 +37,8 @@ void reload_event();
 #if DC_SERVER
 namespace Toolbelt
 {
+
+void trigger_item(ItemID item_id);
 
 void update_toolbelt_items();
 

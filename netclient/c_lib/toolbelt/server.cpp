@@ -7,12 +7,12 @@ dont_include_this_file_in_client
 namespace Toolbelt
 {
 
-void broadcast_agent_set_active_item_packet(int agent_id, ItemID item_id)
+void broadcast_agent_set_active_item_packet(int agent_id, int item_type)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
     toolbelt_set_active_item_StoC msg;
     msg.agent_id = agent_id;
-    msg.item_id = item_id;
+    msg.item_type = item_type;
     msg.broadcast();
 }
 

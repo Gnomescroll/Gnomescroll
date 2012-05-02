@@ -4,6 +4,9 @@ namespace Toolbelt
 {
 
 //Common
+bool* agent_fire_on = NULL;
+int* agent_fire_tick = NULL;
+int* agent_selected_type = NULL;
 
 //Client
 #if DC_CLIENT
