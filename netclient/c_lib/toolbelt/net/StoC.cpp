@@ -18,6 +18,7 @@ inline void toolbelt_item_begin_alpha_action_StoC::handle()
     Agent_state* a = ClientState::agent_list->get(agent_id);
     if (a == NULL) return;
     agent_fire_on[a->id] = true;
+    agent_fire_tick[a->id] = 0;
 }
 
 inline void toolbelt_item_end_alpha_action_StoC::handle() 

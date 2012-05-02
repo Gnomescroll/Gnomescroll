@@ -699,7 +699,7 @@ float Agent_state::camera_z()
 
 Vec3 Agent_state::camera_position()
 {
-    return vec3_init(this->s.x, this->s.y, this->s.z + this->camera_z());
+    return vec3_init(this->s.x, this->s.y, this->camera_z());
 }
 
 int Agent_state::get_facing_block_type()
@@ -874,10 +874,10 @@ void Agent_state::update_model()
 
 
     Vec3 center;
-    if (this->vox->was_updated)
-        center = this->get_center();
+    if (this->vox->was_updated)         
+        center = this->get_center();    // model is fresh, use model center for more accurate culling
     else
-        center = this->get_position();
+        center = this->get_position();  // model is stale, must use agent position
         
     this->vox->was_updated = false;
     if (current_camera->first_person && this->is_you())
@@ -890,7 +890,6 @@ void Agent_state::update_model()
 
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
-    //Vec3 center = this->get_position();
     float radius = this->vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
