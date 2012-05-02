@@ -150,17 +150,18 @@ int init_c_lib()
     init_network();
 
     t_map::init_t_map();
-    lua_load_block_dat(); /* Load Block Dat */
 
     Item::init();
+
+    lua_load_block_dat(); /* Load Block Dat */
+    Item::load_item_dat();
+    //t_map::load_map_dat();
 
     Toolbelt::init();
 
     ServerState::init();
     Particle::init_particles();
 
-    Item::load_item_dat();
-    //t_map::load_map_dat();
     return 0;
 } 
 

@@ -227,10 +227,15 @@ int init_c_lib()
     Draw::init();
     t_map::init_t_map();
     HudCubeSelector::init();
-    lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
     Item::init();
+
+// Load Dats
+
+    //t_map::load_map_dat();
+    lua_load_block_dat();  /* Load Block Dat */
+    Item::load_item_dat();
 
     Toolbelt::init();
 
@@ -274,10 +279,7 @@ int init_c_lib()
     ClientState::init_ctf();
     
     Animations::init();
-// Load Dats
 
-    //t_map::load_map_dat();
-    Item::load_item_dat();
     return 0;
 }
 
