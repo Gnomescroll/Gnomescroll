@@ -227,6 +227,7 @@ int init_c_lib()
     Draw::init();
     t_map::init_t_map();
     HudCubeSelector::init();
+    lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
     Item::init();
@@ -234,9 +235,8 @@ int init_c_lib()
 // Load Dats
 
     //t_map::load_map_dat();
-    lua_load_block_dat();  /* Load Block Dat */
     Item::load_item_dat();
-
+    
     Toolbelt::init();
 
     t_hud::init();
