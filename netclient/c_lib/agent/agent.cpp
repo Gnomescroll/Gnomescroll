@@ -872,7 +872,13 @@ void Agent_state::update_model()
     #if DC_CLIENT
     if (this->vox == NULL) return;
 
-    
+
+    Vec3 center;
+    if (this->vox->was_updated)
+        center = this->get_center();
+    else
+        center = this->get_position();
+        
     this->vox->was_updated = false;
     if (current_camera->first_person && this->is_you())
     {   // your agent
@@ -884,7 +890,7 @@ void Agent_state::update_model()
 
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
-    Vec3 center = this->get_position();
+    //Vec3 center = this->get_position();
     float radius = this->vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
