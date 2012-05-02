@@ -63,15 +63,20 @@ void tick()
         if (agent_fire_tick[i] % fire_rate == 0)
         {
             #if DC_CLIENT
-            if (local_agent_id == i)
-                trigger_item_type_local(agent_selected_type[i]);
-            else
-                trigger_item_type(agent_selected_type[i]);
+            if (local_agent_id == i) trigger_local_agent_selected_item_type(agent_selected_type[i]);
+            trigger_agent_selected_item_type(i, agent_selected_type[i]);
             #endif
             #if DC_SERVER
-            trigger_item(agent_selected_item[i]);
+            trigger_agent_selected_item(agent_selected_item[i]);
             #endif
         }
+        #if DC_CLIENT
+        if (local_agent_id == i) tick_local_agent_selected_item_type(agent_selected_type[i]);
+        else tick_agent_selected_item_type(i, agent_selected_type[i]);
+        #endif
+        #if DC_SERVER
+        tick_agent_selected_item(agent_selected_item[i]);
+        #endif
         agent_fire_tick[i]++;
     }
 }
@@ -112,15 +117,36 @@ void update_selected_item_type()
     Item::ItemContainer* toolbelt = Item::get_container(toolbelt_id);
     if (toolbelt != NULL) item_type = Item::get_item_type(toolbelt->get_item(selected_slot));
     agent_selected_type[agent_id] = item_type;
-    
 }
 
-void trigger_item_type(int item_type)
+// tick for all agents (including local)
+// will play continuous animations/sounds
+void tick_agent_selected_item_type(int agent_id, int item_type)
 {
-    // just play the animation and sound
+    if (Item::get_item_group_for_type(item_type) != IG_MINING_LASER) return;
+    Agent_state* a = ClientState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    a->event.tick_mining_laser();
 }
 
-void trigger_item_type_local(int item_type)
+// trigger for all agents (including local)
+// will play animations/sounds
+void trigger_agent_selected_item_type(int agent_id, int item_type)
+{
+    Agent_state* a = ClientState::agent_list->get(agent_id);
+    if (a == NULL) return;
+    a->event.fired_mining_laser();
+}
+
+// tick for the local agent
+void tick_local_agent_selected_item_type(int item_type)
+{
+    ClientState::playerAgent_state.action.tick_mining_laser();
+}
+
+// trigger for the local agent
+// will send hitscan packets
+void trigger_local_agent_selected_item_type(int item_type)
 {
     ClientState::playerAgent_state.action.fire_mining_laser();
 }
@@ -179,7 +205,14 @@ void reload_event()
 namespace Toolbelt
 {
 
-void trigger_item(ItemID item_id)
+// use for continuous click-and-hold weapons
+void tick_agent_selected_item(ItemID item_id)
+{
+    
+}
+
+// use for fire_rate trigger events
+void trigger_agent_selected_item(ItemID item_id)
 {
     //printf("trigger item %d\n", item_id);
     

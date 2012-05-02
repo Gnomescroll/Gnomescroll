@@ -194,6 +194,13 @@ void PlayerAgent_action::hitscan_laser()
     );
 }
 
+void PlayerAgent_action::tick_mining_laser()
+{
+    if (this->p->you == NULL) return;
+    Animations::mining_laser_beam(this->p->camera_position(), this->p->camera_state.forward_vector());
+}
+
+
 void PlayerAgent_action::fire_mining_laser()
 {
     if (p->you == NULL) return;
@@ -306,7 +313,7 @@ void PlayerAgent_action::fire_mining_laser()
         none_msg.send();
     }
 
-    //Sound::pick_swung();
+    //Sound::fire_mining_laser();
 }
 
 //void PlayerAgent_action::set_block()

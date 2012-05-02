@@ -8,7 +8,7 @@ void init();
 void teardown();
 void tick();
 
-void trigger_item(ItemID item_id);
+void trigger_agent_selected_item(ItemID item_id);
 void remove_agent(int agent_id);
 
 } // Toolbelt
@@ -18,8 +18,10 @@ namespace Toolbelt
 {
 
 void update_selected_item_type();
-void trigger_item_type(int item_type);
-void trigger_item_type_local(int item_type);
+void tick_agent_selected_item_type(int agent_id, int item_type);
+void trigger_agent_selected_item_type(int agent_id, int item_type);
+void tick_local_agent_selected_item_type(int item_type);
+void trigger_local_agent_selected_item_type(int item_type);
 
 // network events
 void assign_toolbelt(int container_id);
@@ -39,7 +41,8 @@ void reload_event();
 namespace Toolbelt
 {
 
-void trigger_item(ItemID item_id);
+void tick_agent_selected_item(ItemID item_id);
+void trigger_agent_selected_item(ItemID item_id);
 
 void update_toolbelt_items();
 

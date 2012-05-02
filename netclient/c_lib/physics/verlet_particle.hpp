@@ -14,23 +14,23 @@ const float gravity = -9.8f;
 class VerletParticle
 
 {
-	public:
+    public:
 
-	//struct Vec3 old_position;
-	//struct Vec3 old_velocity;
-	struct Vec3 position;
-	struct Vec3 velocity;
+    //struct Vec3 old_position;
+    //struct Vec3 old_velocity;
+    struct Vec3 position;
+    struct Vec3 velocity;
 
-	float dampening;
+    float dampening;
 
-	bool bool_bounce();
-	void bounce();
+    bool bool_bounce();
+    void bounce();
 
-	void bounce_box(float radius);
-	void bounce_box_no_gravity(float radius);
-	bool bool_no_gravity();
+    void bounce_box(float radius);
+    void bounce_box_no_gravity(float radius);
+    bool bounce_no_gravity();
 
-	void radial(float xr, float yr);
+    void radial(float xr, float yr);
 };
 
 

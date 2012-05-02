@@ -34,6 +34,14 @@ class Agent_event {
         void dropped_flag();
         void scored_flag();
 
+        // new style weapon trigger events
+        // only triggers agent specific animations/sounds
+        void tick_mining_laser();   // continuous, while "on"
+        void fired_mining_laser();  // when fire rate tick triggers
+
+        // old style packet handler events
+        // still used; triggers target specific animations/sounds
+        // since that is required from server
         void fired_weapon_at_object(int id, int type, int part);
         void fired_weapon_at_block(float x, float y, float z, int cube, int side);
         void fired_weapon_at_nothing();

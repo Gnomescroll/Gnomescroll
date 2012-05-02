@@ -82,6 +82,7 @@ class PlayerAgent_state {
 
         float camera_z();
         float camera_height();
+        Vec3 camera_position();
 
         PlayerAgent_action action;
 

@@ -255,6 +255,16 @@ void Agent_event::coins_changed(unsigned int coins)
     this->a->status.coins = coins;
 }
 
+void Agent_event::tick_mining_laser()
+{
+    Animations::mining_laser_beam(this->a->camera_position(), this->a->s.forward_vector());
+}
+
+void Agent_event::fired_mining_laser()
+{
+    //Sound::fire_mining_laser();
+}
+
 void Agent_event::fired_weapon_at_object(int id, int type, int part)
 {
     float sx,sy,sz;

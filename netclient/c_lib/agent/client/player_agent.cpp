@@ -275,6 +275,12 @@ float PlayerAgent_state::camera_z()
     return this->camera_state.z + this->camera_height();
 }
 
+Vec3 PlayerAgent_state::camera_position()
+{
+    if (this->you == NULL) return vec3_init(0,0,0);
+    return vec3_init(this->camera_state.x, this->camera_state.y, this->camera_z());
+}
+
 void PlayerAgent_state::display_agent_names()
 {
     if (this->you == NULL) return;

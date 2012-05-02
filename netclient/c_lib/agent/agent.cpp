@@ -697,6 +697,11 @@ float Agent_state::camera_z()
     return this->s.z + this->camera_height();
 }
 
+Vec3 Agent_state::camera_position()
+{
+    return vec3_init(this->s.x, this->s.y, this->s.z + this->camera_z());
+}
+
 int Agent_state::get_facing_block_type()
 {
     const float CUBE_SELECT_MAX_DISTANCE = 12.0f;

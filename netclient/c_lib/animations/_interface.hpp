@@ -23,6 +23,7 @@ void draw_hitscan_laser_effect();
 void draw_mining_laser_effect();
 
 void create_hitscan_effect(float x, float y, float z, float vx, float vy, float vz);
-void create_mining_laser_particle();
+void create_mining_laser_particle(Vec3 position, Vec3 orientation, const float speed);
 
+void mining_laser_beam(Vec3 position, Vec3 orientation);
 }

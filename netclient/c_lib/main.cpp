@@ -121,20 +121,7 @@ int run()
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
         ClientState::update_for_draw();
-        Animations::create_mining_laser_particle();
 
-        //if (ClientState::playerAgent_state.you != NULL && !Objects::object_list->full(OBJECT_HEALTH_REFILL))
-        //{
-            //Objects::Object* refill = Objects::create(OBJECT_HEALTH_REFILL);
-            //Components::PhysicsComponent* state = (Components::PhysicsComponent*)refill->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
-            //if (state != NULL)
-            //{
-                //Vec3 position = ClientState::playerAgent_state.you->get_position();
-                //state->set_position(position);
-                //Objects::ready(refill);
-            //}
-        //}
-        
         //if (physics_ticks >= 2)
             //printf("Physics: %d ticks this frame\n", physics_ticks);
 
@@ -149,6 +136,11 @@ int run()
         NetClient::flush_to_net();
 
         Toolbelt::update_selected_item_type();
+
+        //-- TESTING --//
+        //if (ClientState::playerAgent_state.you != NULL)
+            //Animations::create_mining_laser_particle(ClientState::playerAgent_state.you->get_center(), ClientState::playerAgent_state.you->s.forward_vector());
+        //-- TESTING --//
 
         // update mouse
         poll_mouse();
