@@ -25,12 +25,8 @@ bool toolbelt_item_begin_alpha_action()
 
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
 
-    int agent_id = ClientState::playerAgent_state.agent_id;
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
-    agent_fire_on[agent_id] = true;
-    agent_fire_tick[agent_id] = 0;
+    bool repeats = false;
 
-    if (item_id == NULL_ITEM) return true;
     int item_group = Item::get_item_group(item_id);
     switch (item_group)
     {
@@ -38,7 +34,7 @@ bool toolbelt_item_begin_alpha_action()
             ClientState::playerAgent_state.action.hitscan_laser();
             break;
         case IG_MINING_LASER:
-            ClientState::playerAgent_state.action.hitscan_pick();
+            repeats = true;
             break;
         case IG_GRENADE_LAUNCHER:
             ClientState::playerAgent_state.action.throw_grenade();
@@ -46,6 +42,15 @@ bool toolbelt_item_begin_alpha_action()
         default:
             return true;
     }
+
+    if (repeats)
+    {   // set tick on
+        int agent_id = ClientState::playerAgent_state.agent_id;
+        assert(agent_id >= 0 && agent_id < AGENT_MAX);
+        agent_fire_on[agent_id] = true;
+        agent_fire_tick[agent_id] = 0;
+    }
+
     return true;
 }
 

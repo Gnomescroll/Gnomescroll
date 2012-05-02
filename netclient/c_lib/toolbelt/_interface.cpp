@@ -110,6 +110,9 @@ void update_selected_item_type()
 void trigger_item_type(int item_type)
 {
     //printf("trigger item type %d\n", item_type);   
+
+    ClientState::playerAgent_state.action.hitscan_pick();
+    // just play the animation and sound
 }
 
 void assign_toolbelt(int container_id)
@@ -168,7 +171,9 @@ namespace Toolbelt
 
 void trigger_item(ItemID item_id)
 {
-    //printf("trigger item %d\n", item_id);   
+    //printf("trigger item %d\n", item_id);
+
+    //ClientState::playerAgent_state.action.hitscan_pick();
 }
 
 
