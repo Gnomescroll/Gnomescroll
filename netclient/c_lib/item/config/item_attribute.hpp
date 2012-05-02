@@ -11,7 +11,8 @@ class ItemAttribute
 	int item_group_type;
 	
 	//IG_PLACER
-	char* placer_block_type;	//type of block that it creates
+	//char* placer_block_type;	//type of block that it creates
+	int placer_block_type_id;	//id of block type that it creates
 
 	//IG_HITSCAN_WEAPON
 	int hitscan_fire_cooldown;		// ms per bullet
@@ -36,7 +37,7 @@ class ItemAttribute
 	void init(int group_type)
 	{
 		item_group_type = group_type;
-		placer_block_type = NULL;
+		//placer_block_type = NULL;
 	}
 };
 

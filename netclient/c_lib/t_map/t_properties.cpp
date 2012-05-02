@@ -103,6 +103,11 @@ int get_cube_id(char* name)
     return -1;
 }
 
+int get_cube_id(const char* name)
+{
+    return get_cube_id((char*) name);
+}
+
 }
 
 /*

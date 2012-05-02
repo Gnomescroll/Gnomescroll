@@ -2,6 +2,8 @@
 
 #include "config_util.hpp"
 
+#include <t_map/t_properties.hpp>
+
 /*
 typedef enum
 {
@@ -11,6 +13,7 @@ typedef enum
     IG_HITSCAN_WEAPON,
     IG_MELEE_WEAPON,
     IG_MINING_LASER,
+    IG_GRENADE_LAUNCHER
 
 } ItemGroups;
 */
@@ -53,7 +56,7 @@ void load_item_dat()
 
     item_def(1, IG_PLACER , "regolith");
     sprite_def(i1, 2,3);
-    s.placer_block_type = (char*) "regolith";
+    s.placer_block_type_id = t_map::get_cube_id("regolith");
 
     item_def(2, IG_RESOURCE , "copper_ore");
     sprite_def(i1, 1,3);
@@ -76,9 +79,11 @@ void load_item_dat()
     s.melee_fire_cooldown = 250;
     s.melee_damage = 2;
 
-
     item_def(7, IG_MINING_LASER , "mining_laser");
     sprite_def(i0, 3,5);
+	s.mining_fire_cooldown = 200;
+	s.mining_damage = 1;
+	s.mining_block_damage = 3;
 
     item_def(8, IG_GRENADE_LAUNCHER , "grenade_launcher");
     sprite_def(i0, 1,7);
