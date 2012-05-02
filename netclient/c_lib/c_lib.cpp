@@ -230,13 +230,16 @@ int init_c_lib()
     lua_load_block_dat();  /* Load Block Dat */
     t_map::init_for_draw();
 
+
     Item::init();
 
 // Load Dats
 
     //t_map::load_map_dat();
     Item::load_item_dat();
-    
+
+    t_map::load_map_drop_dat(); //load drop dat after items
+
     Toolbelt::init();
 
     t_hud::init();

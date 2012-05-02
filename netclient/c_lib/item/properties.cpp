@@ -120,4 +120,17 @@ int get_item_group_for_type(int item_type)
     return group_array[item_type];
 }
 
+
+int dat_get_item_id(const char* name)
+{
+    int id = get_item_id((char*) name);
+    if(id == -1)
+    {
+        printf("Dat Loading Failure:item_id, dat failure, item %s does not exist! \n", name);
+        abort();
+    }   
+    return id;
+}
+
+
 }

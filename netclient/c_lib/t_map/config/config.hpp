@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config_util.hpp"
+#include "drop_table.hpp"
 
 namespace t_map
 {
@@ -27,7 +28,9 @@ void load_block_dat()
 void load_map_drop_dat()
 {
 
-
+	def_drop("regolith");
+	
+	end_drop_dat();
 }
 
 

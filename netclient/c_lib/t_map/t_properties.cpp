@@ -103,7 +103,7 @@ int get_cube_id(char* name)
     return -1;
 }
 
-int cube_id(const char* name)
+int dat_get_cube_id(const char* name)
 {
     int id = get_cube_id((char*) name);
     if(id == -1)

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace t_item
+namespace Item
 {
 
 extern int sprite_array[MAX_ITEMS];
@@ -21,5 +21,7 @@ char* get_item_name(int id);
 int get_item_id(char* name);
 
 int get_item_group_for_type(int item_type);
+
+int dat_get_item_id(const char* name);
 
 }

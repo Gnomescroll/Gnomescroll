@@ -10,7 +10,7 @@ struct cubeProperties
     bool solid;
     bool occludes;
     bool transparent;
-    bool reserved5;
+    bool drops_item;
     bool reserved6;
     bool reserved7;
     bool reserved8;
@@ -49,7 +49,8 @@ void set_cube_name(int id, char* name);
 
 char* get_cube_name(int id);
 int get_cube_id(char* name);
-int cube_id(const char* name);
+
+int dat_get_cube_id(const char* name);  //use for dat files
 }
 
 

@@ -56,7 +56,7 @@ void load_item_dat()
 
     item_def(1, IG_PLACER , "regolith");
     sprite_def(i1, 2,3);
-    s.placer_block_type_id = t_map::cube_id("regolith");
+    s.placer_block_type_id = t_map::dat_get_cube_id("regolith");
 
     item_def(2, IG_RESOURCE , "copper_ore");
     sprite_def(i1, 1,3);
