@@ -28,10 +28,8 @@ void Agent_list::update_map_manager_positions()
 void Agent_list::update_models() // doesnt actually draw, but updates draw/hitscan properties
 {
     for(int i=0; i<n_max; i++)
-    {
         if (this->a[i] != NULL)
             this->a[i]->update_model();
-    }
 }
 
 void Agent_list::quicksort_team(int beg, int end)

@@ -871,6 +871,7 @@ void Agent_state::update_model()
 {
     #if DC_CLIENT
     if (this->vox == NULL) return;
+
     
     this->vox->was_updated = false;
     if (current_camera->first_person && this->is_you())
@@ -883,18 +884,16 @@ void Agent_state::update_model()
 
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
-    Vec3 center = this->vox->get_part(0)->get_center();
+    Vec3 center = this->get_position();
     float radius = this->vox->get_part(0)->radius;
     if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
     {   // agent not in view fulcrum
         this->vox->set_draw(false);
         this->vox->set_hitscan(false);
-        if (this->event.bb != NULL)
-            this->event.bb->set_draw(false);
+        if (this->event.bb != NULL) this->event.bb->set_draw(false);
         return;
     }
-    if (this->event.bb != NULL)
-        this->event.bb->set_draw(true);
+    if (this->event.bb != NULL) this->event.bb->set_draw(true);
     if (this->crouched())
     {
         vox_dat = &VoxDats::agent_crouched;
@@ -914,8 +913,7 @@ void Agent_state::update_model()
             this->status.vox_crouched = false;
         }
     }
-    if (this->status.dead)
-        vox_dat = &VoxDats::agent_dead;
+    if (this->status.dead) vox_dat = &VoxDats::agent_dead;
         
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
@@ -947,8 +945,7 @@ void Agent_state::update_model()
             this->status.vox_crouched = false;
         }
     }
-    if (this->status.dead)
-        vox_dat = &VoxDats::agent_dead;
+    if (this->status.dead) vox_dat = &VoxDats::agent_dead;
 
     this->vox->set_vox_dat(vox_dat);
     this->update_legs();
