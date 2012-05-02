@@ -14,7 +14,7 @@ class PlayerAgent_action {
     
         //void fire();
         void hitscan_laser();
-        void hitscan_pick();
+        void fire_mining_laser();
         //void set_block();
         //bool switch_weapon(int i);
         //void reload();

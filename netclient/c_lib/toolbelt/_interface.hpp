@@ -19,6 +19,7 @@ namespace Toolbelt
 
 void update_selected_item_type();
 void trigger_item_type(int item_type);
+void trigger_item_type_local(int item_type);
 
 // network events
 void assign_toolbelt(int container_id);

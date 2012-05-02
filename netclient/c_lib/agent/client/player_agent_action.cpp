@@ -194,7 +194,7 @@ void PlayerAgent_action::hitscan_laser()
     );
 }
 
-void PlayerAgent_action::hitscan_pick()
+void PlayerAgent_action::fire_mining_laser()
 {
     if (p->you == NULL) return;
     if (p->you->status.dead) return;

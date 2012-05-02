@@ -50,21 +50,29 @@ void tick()
     assert(agent_selected_type != NULL);
     assert(agent_fire_tick     != NULL);
     assert(agent_fire_on       != NULL);
+
+    #if DC_CLIENT
+    int local_agent_id = ClientState::playerAgent_state.agent_id;
+    #endif
+    
     // increment fire ticks if weapon down
     for (int i=0; i<AGENT_MAX; i++)
     {
         if (!agent_fire_on[i]) continue;
-        agent_fire_tick[i]++;
         int fire_rate = Item::get_item_fire_rate(agent_selected_type[i]);
         if (agent_fire_tick[i] % fire_rate == 0)
         {
             #if DC_CLIENT
-            trigger_item_type(agent_selected_type[i]);
+            if (local_agent_id == i)
+                trigger_item_type_local(agent_selected_type[i]);
+            else
+                trigger_item_type(agent_selected_type[i]);
             #endif
             #if DC_SERVER
             trigger_item(agent_selected_item[i]);
             #endif
         }
+        agent_fire_tick[i]++;
     }
 }
 
@@ -109,10 +117,12 @@ void update_selected_item_type()
 
 void trigger_item_type(int item_type)
 {
-    //printf("trigger item type %d\n", item_type);   
-
-    ClientState::playerAgent_state.action.hitscan_pick();
     // just play the animation and sound
+}
+
+void trigger_item_type_local(int item_type)
+{
+    ClientState::playerAgent_state.action.fire_mining_laser();
 }
 
 void assign_toolbelt(int container_id)
@@ -172,8 +182,10 @@ namespace Toolbelt
 void trigger_item(ItemID item_id)
 {
     //printf("trigger item %d\n", item_id);
-
-    //ClientState::playerAgent_state.action.hitscan_pick();
+    
+    // adjust item durability/energy
+    // restrict events as needed
+    //  -- this need to be integrated with the old hitscan_pick packet handlers
 }
 
 
