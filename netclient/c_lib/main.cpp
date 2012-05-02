@@ -1,7 +1,7 @@
 #pragma once
 
 #include <defines.h>
-
+ 
 #include <state/client_state.hpp>
 #include <SDL/SDL_functions.h>
 #include <sound/sound.hpp>
@@ -20,7 +20,7 @@
 #include <common/profiling/frame_graph.hpp>
 
 //#include <t_mech/draw.hpp>
-
+ 
 bool _quit = false;
  
 namespace Main

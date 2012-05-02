@@ -37,5 +37,5 @@
 #endif
 
 #ifdef DC_CLIENT
-#include <net_lib/common/pviz.c>
+//#include <net_lib/benchmark/pviz.c>
 #endif

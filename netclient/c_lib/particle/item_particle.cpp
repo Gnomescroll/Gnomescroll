@@ -112,6 +112,7 @@ void ItemParticle::init(ItemID item_id, int item_type, float x, float y, float z
     #endif
     verlet.position = vec3_init(x,y,z);
     verlet.velocity = vec3_init(mx,my,mz);
+    verlet.dampening = ITEM_PARTICLE_DAMPENING;
 }
 
 #if DC_SERVER
