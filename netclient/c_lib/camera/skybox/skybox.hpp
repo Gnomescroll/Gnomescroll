@@ -42,7 +42,7 @@ static inline float rand_float()
 
 void generate_sky()
 {
-	printf("generate_sky \n");
+	//printf("generate_sky \n");
 
 	const int N = 1024;
 	star_list = new STAR[N];
@@ -95,7 +95,7 @@ void generate_sky()
 }
 void init()
 {
-	printf("INIT SKYBOX \n");
+	//printf("INIT SKYBOX \n");
 
 	surface = create_surface_from_file((char*) "./media/texture/skybox/Starsheet2.png");
 

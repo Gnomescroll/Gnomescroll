@@ -83,7 +83,7 @@ struct cubeProperties* get_cube(int id)
 void set_item_name(int id, char* name, int length)
 {
     assert(length > 0);
-    assert(id < 0 || id >= MAX_ITEMS);
+    assert(id >= 0 || id < MAX_ITEMS);
     
     if (length >= ITEM_NAME_MAX_LENGTH)
     {
@@ -100,6 +100,13 @@ void set_item_name(int id, char* name, int length)
     item_names[index] = '\0';
     index++;
 }
+
+void set_item_name(int id, char* name)
+{
+    int length = strlen(name);
+    set_item_name(id, name, length);
+}
+
 
 char* get_item_name(int id)
 {

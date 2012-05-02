@@ -23,7 +23,7 @@ local str = bl_ffi.new("char[128]");
 function register_spritesheet(filename)
   bl_ffi.copy(str, prefix .. filename);
   id =  bl_ffi.C.LUA_load_cube_texture_sheet(str);
-  print("registered spritesheet: " .. filename .. " id=" .. id);
+  --print("registered spritesheet: " .. filename .. " id=" .. id);
   return id
 end
 

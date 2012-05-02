@@ -288,7 +288,7 @@ b.texture.t = register_texture(t01,3,10);
 b.texture.b = register_texture(t01,5,10);
 b.hud = hud(56-16+7, b.texture.n);
 
-print("map_load_tiles: done");
+--print("map_load_tiles: done");
 
 --[[
 for i, block in pairs(block_id_table) do

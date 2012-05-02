@@ -13,7 +13,7 @@ GLuint mech_sheet = 0 ;
 void draw_init()
 {
 
-	printf("t_mech::draw_init() \n");
+	//printf("t_mech::draw_init() \n");
 
 	surface = create_surface_from_file((char*) "./media/texture/mechanism/wires.png");
 

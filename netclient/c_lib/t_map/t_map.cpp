@@ -36,7 +36,7 @@ Terrain_map* main_map;
 
 void init_t_map()
 {
-    printf("init_t_map() \n");
+    //printf("init_t_map() \n");
     static int init = 0;
     if(init != 0) 
     {
@@ -64,7 +64,7 @@ void init_t_map()
 #if DC_CLIENT
 void init_for_draw()
 {
-    printf("init for draw \n");
+    //printf("init for draw \n");
     init_cache();
     init_shaders();
 }

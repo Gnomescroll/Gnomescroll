@@ -1,10 +1,12 @@
 #pragma once
 
-#include <c_lib/item/common/enum.hpp>
+#include <item/common/enum.hpp>
 
 #if DC_CLIENT
-#include <c_lib/SDL/texture_sheet_loader.hpp>
+#include <SDL/texture_sheet_loader.hpp>
 #endif
+
+#include <item/properties.hpp>
 
 namespace Item
 {
@@ -39,6 +41,9 @@ void item_def(int type, int group, const char* name)
         abort();
     }
     group_array[type] = group; //check
+    
+    set_item_name(type, (char*) name);
+
 }
 
 void _set_attribute()

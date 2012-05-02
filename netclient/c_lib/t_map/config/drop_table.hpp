@@ -83,20 +83,17 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 	
 	sum = 0.0;
 	for(int i=0; i<max_drops; i++) sum += p[i];
-	printf("Normalized sum= %f \n", (float)sum);
+	printf("Droptable: normalized sum= %f \n", (float)sum);
 
 	double _mean_drop = 0.0;
 	for(int i=1; i<max_drops; i++)
 	{
 		_mean_drop += p[i];
 	}
-	printf("mean_drop= %f \n", ((float) mean) );
-
-
+	printf("Droptable: mean_drop= %f \n", ((float) _mean_drop) );
 
 	for(int i=1; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
 
-		printf("err3\n");
 }
 
 }

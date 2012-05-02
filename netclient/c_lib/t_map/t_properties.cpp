@@ -18,7 +18,7 @@ int cube_name_index[MAX_CUBES];
 
 void init_t_properties()
 {
-    printf("init_t_properties() \n");
+    //printf("init_t_properties() \n");
     
     if(cube_list != NULL) printf("ERROR: init_t_properties called twice\n");
 

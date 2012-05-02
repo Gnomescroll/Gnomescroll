@@ -9,7 +9,7 @@
 
 int init_image_loader()
 {
-    printf("image loader init\n");
+    //printf("image loader init\n");
     IMG_Init(IMG_INIT_PNG); // IMG_INIT_JPG|IMG_INIT_PNG
     return 0;
 }
