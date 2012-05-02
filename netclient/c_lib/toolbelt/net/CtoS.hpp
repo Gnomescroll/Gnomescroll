@@ -22,7 +22,16 @@ class toolbelt_set_slot_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt
     inline void handle();
 };
 
-class toolbelt_alpha_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_alpha_action_CtoS>
+class toolbelt_begin_alpha_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_begin_alpha_action_CtoS>
+{
+    public:
+    inline void packet(char* buff, int* buff_n, bool pack)
+    {
+    }
+    inline void handle();
+};
+
+class toolbelt_end_alpha_action_CtoS: public FixedSizeReliableNetPacketToServer<toolbelt_end_alpha_action_CtoS>
 {
     public:
     inline void packet(char* buff, int* buff_n, bool pack)

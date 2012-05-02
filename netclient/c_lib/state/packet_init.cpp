@@ -247,11 +247,13 @@ void RegisterMessages() {
 
     Toolbelt::toolbelt_set_active_item_StoC::register_client_packet();
     Toolbelt::toolbelt_item_beta_action_StoC::register_client_packet();
-    Toolbelt::toolbelt_item_alpha_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_begin_alpha_action_StoC::register_client_packet();
+    Toolbelt::toolbelt_item_end_alpha_action_StoC::register_client_packet();
     Toolbelt::toolbelt_item_reload_action_StoC::register_client_packet();
 
     Toolbelt::toolbelt_set_slot_CtoS::register_server_packet();
-    Toolbelt::toolbelt_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_begin_alpha_action_CtoS::register_server_packet();
+    Toolbelt::toolbelt_end_alpha_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_beta_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_reload_action_CtoS::register_server_packet();
 }

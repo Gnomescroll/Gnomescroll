@@ -9,7 +9,7 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
-bool toolbelt_item_alpha_action()
+bool toolbelt_item_begin_alpha_action()
 {
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
     int item_group = Item::get_item_group(item_id);
@@ -27,6 +27,11 @@ bool toolbelt_item_alpha_action()
         default:
             break;
     }
+    return true;
+}
+
+bool toolbelt_item_end_alpha_action()
+{
     return true;
 }
 

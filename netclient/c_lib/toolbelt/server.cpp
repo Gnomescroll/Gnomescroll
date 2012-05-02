@@ -16,12 +16,20 @@ void broadcast_agent_set_active_item_packet(int agent_id, ItemID item_id)
     msg.broadcast();
 }
 
-void broadcast_agent_toolbelt_alpha_action_packet(int agent_id, ItemID item_id)
+void broadcast_agent_toolbelt_begin_alpha_action_packet(int agent_id, ItemID item_id)
 {
     assert(agent_id >= 0 && agent_id < AGENT_MAX);
-    toolbelt_item_alpha_action_StoC msg;
+    toolbelt_item_begin_alpha_action_StoC msg;
     msg.agent_id = agent_id;
     msg.item_id = item_id;
+    msg.broadcast();
+}
+
+void broadcast_agent_toolbelt_end_alpha_action_packet(int agent_id)
+{
+    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    toolbelt_item_end_alpha_action_StoC msg;
+    msg.agent_id = agent_id;
     msg.broadcast();
 }
 

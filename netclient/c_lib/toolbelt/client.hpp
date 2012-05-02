@@ -7,7 +7,8 @@ dont_include_this_file_in_server
 namespace Toolbelt
 {
 
-bool toolbelt_item_alpha_action();
+bool toolbelt_item_begin_alpha_action();
+bool toolbelt_item_end_alpha_action();
 bool toolbelt_item_beta_action();
 bool toolbelt_item_reload_action();
 
@@ -19,9 +20,15 @@ void send_set_slot_packet(int slot)
     msg.send();
 }
 
-void send_alpha_action_packet()
+void send_begin_alpha_action_packet()
 {
-    toolbelt_alpha_action_CtoS msg;
+    toolbelt_begin_alpha_action_CtoS msg;
+    msg.send();
+}
+
+void send_end_alpha_action_packet()
+{
+    toolbelt_end_alpha_action_CtoS msg;
     msg.send();
 }
 

@@ -48,18 +48,29 @@ void toolbelt_item_selected_event(int container_id, int slot)
     send_set_slot_packet(slot);
 }
 
-void left_trigger_event()
+void left_trigger_down_event()
 {
     // fire
-    toolbelt_item_alpha_action();
-    send_alpha_action_packet();
+    toolbelt_item_begin_alpha_action();
+    send_begin_alpha_action_packet();
 }
 
-void right_trigger_event()
+void left_trigger_up_event()
+{
+    // fire
+    toolbelt_item_end_alpha_action();
+    send_end_alpha_action_packet();
+}
+
+void right_trigger_down_event()
 {
     // zoom
     bool something_happened = toolbelt_item_beta_action();
     if (something_happened) send_beta_action_packet();
+}
+
+void right_trigger_up_event()
+{
 }
 
 void reload_event()

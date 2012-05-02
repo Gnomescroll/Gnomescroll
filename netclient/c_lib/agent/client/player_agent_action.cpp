@@ -14,8 +14,8 @@
 
 //#include <t_map/net/t_CtoS.hpp>
 
-#define BLOCK_PICK_MAX_DISTANCE 4.0f
-#define MELEE_PICK_MAX_DISTANCE 2.7f
+const float BLOCK_PICK_MAX_DISTANCE = 4.0f;
+const float MELEE_PICK_MAX_DISTANCE = 2.7f;
 
 //void PlayerAgent_action::fire()
 //{

@@ -8,7 +8,8 @@ namespace Toolbelt
 {
 
 void broadcast_agent_set_active_item_packet(int agent_id, ItemID item_id);
-void broadcast_agent_toolbelt_alpha_action_packet(int agent_id, ItemID item_id);
+void broadcast_agent_toolbelt_begin_alpha_action_packet(int agent_id, ItemID item_id);
+void broadcast_agent_toolbelt_end_alpha_action_packet(int agent_id);
 void broadcast_agent_toolbelt_beta_action_packet(int agent_id, ItemID item_id);
 void broadcast_agent_toolbelt_item_reload_packet(int agent_id, ItemID item_id);
 

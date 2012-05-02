@@ -504,18 +504,17 @@ void agent_key_up_handler(SDL_Event* event)
 
 void agent_mouse_down_handler(SDL_Event* event)
 {
-    PlayerAgent_state* p = &ClientState::playerAgent_state;
-    if (p->you == NULL) return;
+    if (ClientState::playerAgent_state.you == NULL) return;
 
     t_hud::ContainerInputEvent container_event;
     switch (event->button.button)
     {
         case SDL_BUTTON_LEFT:
-            Toolbelt::left_trigger_event();
+            Toolbelt::left_trigger_down_event();
             break;
 
         case SDL_BUTTON_RIGHT:
-            Toolbelt::right_trigger_event();
+            Toolbelt::right_trigger_down_event();
             break;
 
         case SDL_BUTTON_MIDDLE:
@@ -536,7 +535,28 @@ void agent_mouse_down_handler(SDL_Event* event)
     }
 }
 
-void agent_mouse_up_handler(SDL_Event* event){}
+void agent_mouse_up_handler(SDL_Event* event)
+{
+    if (ClientState::playerAgent_state.you == NULL) return;
+
+    switch (event->button.button)
+    {
+        case SDL_BUTTON_LEFT:
+            Toolbelt::left_trigger_up_event();
+            break;
+
+        case SDL_BUTTON_RIGHT:
+            Toolbelt::right_trigger_up_event();
+            break;
+
+        case SDL_BUTTON_MIDDLE:
+            // nothing
+            break;
+
+        default: break;
+    }
+}
+
 void agent_mouse_motion_handler(SDL_Event* event){}
 
 void agent_key_state_handler(Uint8 *keystate, int numkeys,
