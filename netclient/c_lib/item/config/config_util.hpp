@@ -25,30 +25,30 @@ class ItemAttribute s;
 
 int _current_item_id = 0;
 
-void item_def(int id, int group, const char* name)
+void item_def(int type, int group, const char* name)
 {
-	if(id != 0) _set_attribute(); //assumes first id defined is 0
+    if(type != 0) _set_attribute(); //assumes first type defined is 0
 
-    _current_item_id = id;
+    _current_item_id = type;
 
     s.init(group);
     
-    if(group_array[id] != IG_ERROR)
+    if(group_array[type] != IG_ERROR)
     {
-        printf("ITEM CONFIG ERROR: item id conflict, id= %i \n", id);
+        printf("ITEM CONFIG ERROR: item type conflict, type= %i \n", type);
         abort();
     }
-    group_array[id] = group; //check
+    group_array[type] = group; //check
 }
 
 void _set_attribute()
 {
-	item_attribute_array[_current_item_id] = s;
+    item_attribute_array[_current_item_id] = s;
 }
 
 void end_item_dat()
 {
-	#if DC_CLIENT
+    #if DC_CLIENT
     LUA_save_item_texture();
     #endif
 }
@@ -65,7 +65,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     ypos -= 1;
     xpos -= 1;
 
-    if(xpos < 0 && ypos < 0)
+    if(xpos < 0 || ypos < 0)
     {
         printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than zero \n", _current_item_id);
         assert(false);
@@ -85,7 +85,7 @@ int sprite_alias(int spritesheet, int ypos, int xpos)
     ypos -= 1;
     xpos -= 1;
 
-    if(xpos < 0 && ypos < 0)
+    if(xpos < 0 || ypos < 0)
     {
         printf("ITEM CONFIG ERROR: sprite alias xpos,ypos less than zero \n");
         assert(false);

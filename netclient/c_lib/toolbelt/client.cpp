@@ -12,17 +12,16 @@ namespace Toolbelt
 bool toolbelt_item_alpha_action()
 {
     ItemID item_id = Item::get_toolbelt_item(selected_slot);
-    int item_type = Item::get_item_type(item_id);
-    switch (item_type)
+    int item_group = Item::get_item_group(item_id);
+    switch (item_group)
     {
-        case 5:
+        case IG_HITSCAN_WEAPON:
             ClientState::playerAgent_state.action.hitscan_laser();
             break;
-        case 7:
+        case IG_MINING_LASER:
             ClientState::playerAgent_state.action.hitscan_pick();
             break;
-        case 8: // todo -- use string names
-            // player agent action throw grenade
+        case IG_GRENADE_LAUNCHER:
             ClientState::playerAgent_state.action.throw_grenade();
             break;
         default:

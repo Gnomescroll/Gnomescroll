@@ -110,7 +110,7 @@ int get_item_id(char* name)
 }
 
 
-int get_item_group(int item_type)
+int get_item_group_for_type(int item_type)
 {
     return group_array[item_type];
 }

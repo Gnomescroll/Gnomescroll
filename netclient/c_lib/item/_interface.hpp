@@ -13,6 +13,7 @@ class ItemContainer* get_container(int id);
 class Item* get_item(ItemID id);
 //class Item* get_or_create_item(int item_type, ItemID item_id);
 int get_item_type(ItemID id);
+int get_item_group(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
 int get_stack_max(int item_type);

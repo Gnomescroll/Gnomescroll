@@ -59,7 +59,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
             if (item == NULL) return NULL;
             item->type = item_type;
-            //item->group = group_for_type(item_type):
+            item->group = get_item_group(item_type);
             return item;
         }
         #endif
@@ -70,7 +70,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
             Item* item = this->create();
             if (item == NULL) return NULL;
             item->type = item_type;
-            //item->group = group_for_type(item_type):
+            item->group = get_item_group(item_type);
             return item;
         }
         #endif
