@@ -78,6 +78,13 @@ int get_item_type(ItemID id)
     return item->type;
 }
 
+int get_item_group(ItemID id)
+{
+    Item* item = get_item(id);
+    if (item == NULL) return IG_ERROR;
+    return item->group;
+}
+
 int get_stack_size(ItemID id)
 {   // space used in a stack
     if (id == NULL_ITEM) return 1;

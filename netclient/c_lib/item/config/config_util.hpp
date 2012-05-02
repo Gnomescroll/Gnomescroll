@@ -65,7 +65,7 @@ void sprite_def(int spritesheet, int ypos, int xpos)
     ypos -= 1;
     xpos -= 1;
 
-    if(xpos < 0 && ypos < 0)
+    if(xpos < 0 || ypos < 0)
     {
         printf("ITEM CONFIG ERROR: id= %i xpos,ypos less than zero \n", _current_item_id);
         assert(false);
@@ -85,7 +85,7 @@ int sprite_alias(int spritesheet, int ypos, int xpos)
     ypos -= 1;
     xpos -= 1;
 
-    if(xpos < 0 && ypos < 0)
+    if(xpos < 0 || ypos < 0)
     {
         printf("ITEM CONFIG ERROR: sprite alias xpos,ypos less than zero \n");
         assert(false);
