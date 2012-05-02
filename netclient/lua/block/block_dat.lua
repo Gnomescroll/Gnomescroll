@@ -282,7 +282,7 @@ b.texture = iso_texture(t01,3,9);
 b.hud = hud(56+7, b.texture.n);
 
 
-b = NewSolidBlock(54, "srs1");
+b = NewSolidBlock(54, "regolith");
 b.texture = iso_texture(t01,4,10);
 b.texture.t = register_texture(t01,3,10);
 b.texture.b = register_texture(t01,5,10);
