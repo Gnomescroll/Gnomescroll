@@ -49,7 +49,7 @@ void set_cube_name(int id, char* name);
 
 char* get_cube_name(int id);
 int get_cube_id(char* name);
-int get_cube_id(const char* name);
+int cube_id(const char* name);
 }
 
 

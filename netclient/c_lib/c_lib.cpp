@@ -231,7 +231,6 @@ int init_c_lib()
     t_map::init_for_draw();
 
     Item::init();
-    Item::load_item_dat();
 
     Toolbelt::init();
 
@@ -275,7 +274,10 @@ int init_c_lib()
     ClientState::init_ctf();
     
     Animations::init();
+// Load Dats
 
+    //t_map::load_map_dat();
+    Item::load_item_dat();
     return 0;
 }
 

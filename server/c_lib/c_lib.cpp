@@ -153,11 +153,14 @@ int init_c_lib()
     lua_load_block_dat(); /* Load Block Dat */
 
     Item::init();
+
     Toolbelt::init();
 
     ServerState::init();
     Particle::init_particles();
 
+    Item::load_item_dat();
+    //t_map::load_map_dat();
     return 0;
 } 
 

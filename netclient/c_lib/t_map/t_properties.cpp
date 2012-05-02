@@ -103,9 +103,15 @@ int get_cube_id(char* name)
     return -1;
 }
 
-int get_cube_id(const char* name)
+int cube_id(const char* name)
 {
-    return get_cube_id((char*) name);
+    int id = get_cube_id((char*) name);
+    if(id == -1)
+    {
+        printf("Dat Loading Failure:cube_id, dat failure, cube %s does not exist! \n", name);
+        abort();
+    }   
+    return id; 
 }
 
 }

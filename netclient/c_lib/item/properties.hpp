@@ -18,4 +18,5 @@ void set_item_name(int id, char* name, int length);
 char* get_item_name(int id);
 int get_item_id(char* name);
 
+int get_item_group(int item_type);
 }
