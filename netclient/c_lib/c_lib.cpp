@@ -71,10 +71,7 @@
 #include <SDL/SDL_functions.c>
 
 /* Draw lists */
-#include <draw/constants.hpp>
 #include <draw/draw.cpp>
-#include <draw/items.cpp>
-#include <draw/lists.cpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>
@@ -225,7 +222,6 @@ int init_c_lib()
 
     init_image_loader();
     TextureSheetLoader::init();
-    Draw::init();
     t_map::init_t_map();
     HudCubeSelector::init();
     lua_load_block_dat();  /* Load Block Dat */
@@ -278,7 +274,6 @@ int init_c_lib()
     init_cameras();
     init_chat_client();
     Particle::draw_init();
-    init_item_texture();
 
     ClientState::init_ctf();
     
@@ -315,8 +310,6 @@ void close_c_lib() {
     ClientState::teardown();
     teardown_voxel_volume();
     HudText::teardown();
-    teardown_item_texture();
-    Draw::teardown();
     
     // free surfaces
     t_map::teardown_shader();

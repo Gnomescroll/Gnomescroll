@@ -135,11 +135,13 @@ int create_texture_from_file(char* filename, int* tex)
     surface=IMG_Load(filename);
     if (!surface)
     {
+        *tex = 0;
         printf("Error loading texture %s, %s \n", filename, IMG_GetError());
         return 1;
     }
     if (surface->format->BytesPerPixel != 4)
     {
+        *tex = 0;
         printf("IMG_Load: image is missing alpha channel \n");
         return 2;
     }
@@ -169,11 +171,13 @@ int create_texture_from_file(char* filename, GLuint* tex)
     surface=IMG_Load(filename);
     if (!surface)
     {
+        *tex = 0;
         printf("Error loading texture %s, %s \n", filename, IMG_GetError());
         return 1;
     }
     if (surface->format->BytesPerPixel != 4)
     {
+        *tex = 0;
         printf("IMG_Load: image is missing alpha channel \n");
         return 2;
     }
