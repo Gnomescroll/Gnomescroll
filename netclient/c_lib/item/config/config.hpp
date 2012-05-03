@@ -92,8 +92,7 @@ void load_item_dat()
     s.mining_fire_cooldown = 200;
     s.mining_damage = 1;
     s.mining_block_damage = 3;
-    //s.max_durability = 200;
-    s.max_durability = 20;
+    s.max_durability = 200;
     s.max_energy = 50;
     s.max_stack_size = 1;
 
