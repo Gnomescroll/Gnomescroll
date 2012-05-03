@@ -3,7 +3,7 @@
 #ifndef DC_CLIENT
     #define DC_CLIENT
 #endif
-
+ 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -16,7 +16,7 @@
 #include <common/compat_gl.h>
 #include <common/compat_al.h>
 
-
+  
 /* Compression */
 #include <common/compression/miniz.c>
 

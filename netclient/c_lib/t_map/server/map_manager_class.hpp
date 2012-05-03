@@ -111,6 +111,12 @@ class Map_manager
 
     ~Map_manager()
     {
+        for(int i=0; i< MAP_MANAGER_ALIAS_LIST_SIZE; i++)
+        {
+            if( alias_list[i] == NO_ALIAS) continue;
+            unsub(i);
+        }
+
         delete[] version_list;
 
         end_compressor();

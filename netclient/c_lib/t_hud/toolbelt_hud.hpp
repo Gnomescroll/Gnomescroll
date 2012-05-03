@@ -93,8 +93,11 @@ void AgentToolbeltUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    int g1 = 80-16; //color 1
+    int g2 = 80-8;  //color 2
+
     glBegin(GL_QUADS);
-    glColor4ub(80, 80, 80, 128+64);
+    glColor4ub(g1,g1,g1, 128+64); //128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {

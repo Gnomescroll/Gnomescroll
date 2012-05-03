@@ -1,7 +1,7 @@
 #pragma once
 
 #include <common/defines.h>
- 
+  
 #include <state/client_state.hpp>
 #include <SDL/SDL_functions.h>
 #include <sound/sound.hpp>
@@ -25,7 +25,7 @@ bool _quit = false;
  
 namespace Main
 {
- 
+
 void time_since(int n)
 {
     static int c_time = _GET_MS_TIME();;
