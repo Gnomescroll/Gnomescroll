@@ -1,6 +1,7 @@
 #include "item_container.hpp"
 
 #include <item/net/StoC.hpp>
+#include <item/item.hpp>
 #include <item/_interface.hpp>
 #include <item/_state.hpp>
 
@@ -14,6 +15,42 @@
 
 namespace Item
 {
+
+/* ItemContainer methods */
+
+void ItemContainer::insert_item(int slot, ItemID item_id)
+{
+    assert(item_id != NULL_ITEM);
+    assert(this->is_valid_slot(slot));
+    this->slot[slot] = item_id;
+    this->slot_count++;
+
+    Item* item = get_item_object(item_id);
+    assert(item != NULL);
+    item->container_id = this->id;
+    item->container_slot = slot;
+}
+
+void ItemContainer::remove_item(int slot)
+{
+    assert(this->is_valid_slot(slot));
+
+    ItemID item_id = this->slot[slot];
+    if (item_id != NULL_ITEM)
+    {
+        Item* item = get_item_object(this->slot[slot]);
+        assert(item != NULL);
+        item->container_id = this->id;
+        item->container_slot = slot;
+    }
+
+    this->slot[slot] = NULL_ITEM;
+    this->slot_count--;
+}
+
+
+
+/* Initializer */
 
 void init_container(ItemContainer* container, ItemContainerType type)
 {

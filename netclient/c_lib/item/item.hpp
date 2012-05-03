@@ -15,6 +15,9 @@ class Item
         int durability;
         int stack_size;
 
+        int container_id;
+        int container_slot;
+
     void init(int item_type);
 
     #if DC_SERVER
@@ -26,7 +29,9 @@ class Item
         group(NULL_ITEM_GROUP),
         type(NULL_ITEM_TYPE),
         durability(NULL_DURABILITY),
-        stack_size(1)
+        stack_size(1),
+        container_id(NULL_CONTAINER),
+        container_slot(NULL_SLOT)
     {}
 
 };

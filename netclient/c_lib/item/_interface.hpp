@@ -11,6 +11,7 @@ void init();
 void teardown();
 class ItemContainer* get_container(int id);
 class Item* get_item(ItemID id);
+class Item* get_item_object(ItemID id); // alias for get_item
 //class Item* get_or_create_item(int item_type, ItemID item_id);
 int get_item_type(ItemID id);
 int get_item_group(ItemID id);
