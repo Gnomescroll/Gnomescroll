@@ -120,15 +120,19 @@ void handle_block_drop(int x, int y, int z, int block_type)
 		for(int j=0; j < cidt->max_drops; j++)
 		{
 			//printf("drop roll %i: p=%f prob=%f \n", j, p, cidt->drop_probabilities[j]);
-			if(p >= cidt->drop_probabilities[j])
+			if(p < cidt->drop_probabilities[j])
 			{
-			    const float mom = 2.0f;
-		        x = (float)x + 0.5f + randf()*0.33;
-		        y = (float)y + 0.5f + randf()*0.33;
-		        z = (float)z + 0.05f;
-				Item::create_item_particle(cidt->item_type, x, y, z, 
-					(randf()-0.5f)*mom, (randf()-0.5f)*mom, mom );
+				if(j==0) return;
 
+				for(int k=0; k<j; k++)
+				{
+				    const float mom = 2.0f;
+			        x = (float)x + 0.5f + randf()*0.33;
+			        y = (float)y + 0.5f + randf()*0.33;
+			        z = (float)z + 0.05f;
+					Item::create_item_particle(cidt->item_type, x, y, z, 
+						(randf()-0.5f)*mom, (randf()-0.5f)*mom, mom );
+				}
 		        break;
 			}
 
