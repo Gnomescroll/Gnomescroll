@@ -53,6 +53,8 @@ void _set_attribute()
 
 void end_item_dat()
 {
+    _set_attribute();
+    
     #if DC_CLIENT
     LUA_save_item_texture();
     #endif
