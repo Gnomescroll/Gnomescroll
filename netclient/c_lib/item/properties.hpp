@@ -29,5 +29,6 @@ int get_item_group_for_type(int item_type);
 int dat_get_item_id(const char* name);
 
 int get_max_stack_size(int item_type);
+int get_max_energy(int item_type);
 
 }

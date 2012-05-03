@@ -147,4 +147,11 @@ int get_max_stack_size(int item_type)
     return attr->max_stack_size;
 }
 
+int get_max_energy(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->max_energy;
+}
+
 }

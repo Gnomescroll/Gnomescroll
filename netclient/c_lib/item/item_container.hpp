@@ -40,6 +40,8 @@ class ItemContainer
         int slot_count;
         ItemID* slot;
 
+        int owner;
+
         bool is_full()
         {
             assert(this->slot_count <= this->slot_max && this->slot_count >= 0);
@@ -77,20 +79,8 @@ class ItemContainer
             return this->slot[slot];
         }
 
-        void insert_item(int slot, ItemID item_id)
-        {
-            assert(item_id != NULL_ITEM);
-            assert(this->is_valid_slot(slot));
-            this->slot[slot] = item_id;
-            this->slot_count++;
-        }
-
-        void remove_item(int slot)
-        {
-            assert(this->is_valid_slot(slot));
-            this->slot[slot] = NULL_ITEM;
-            this->slot_count--;
-        }
+        void insert_item(int slot, ItemID item_id);
+        void remove_item(int slot);
 
         /* initializers */
 
@@ -105,6 +95,11 @@ class ItemContainer
             for (int i=0; i<this->slot_max; this->slot[i++] = NULL_ITEM);
         }
 
+        void assign_owner(int owner)
+        {
+            this->owner = owner;
+        }
+
         ~ItemContainer()
         {
            if (this->slot != NULL) delete[] this->slot;
@@ -113,7 +108,8 @@ class ItemContainer
         ItemContainer(int id)
         : id(id), type(CONTAINER_TYPE_NONE),
         xdim(0), ydim(0),
-        slot_max(0), slot_count(0), slot(NULL)
+        slot_max(0), slot_count(0), slot(NULL),
+        owner(NO_AGENT)
         {}
 };
 
