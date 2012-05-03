@@ -195,7 +195,6 @@ int run()
         glBegin(GL_QUADS);
 
         Particle::colored_minivox_list->draw();
-        //Draw::colored_minivox_list->draw();   // new entity system registries
         Components::colored_voxel_component_list->call();
         glEnd();
 
@@ -205,7 +204,6 @@ int run()
         glBegin(GL_QUADS);
 
         Particle::textured_minivox_list->draw();
-        //Draw::textured_minivox_list->draw();
         Components::textured_voxel_component_list->call();
 
         glEnd();
@@ -217,10 +215,6 @@ int run()
         */
 
         t_mech::draw();
-
-        //begin_item_draw();
-        //Draw::sprite_list->draw();
-        //end_item_draw();
 
         /*
             Skybox

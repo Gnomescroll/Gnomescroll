@@ -29,7 +29,6 @@ void broadcast_item_create(ItemID item_id)
 
 Item* send_item_create(int client_id, ItemID item_id)
 {
-    printf("send create %d\n", item_id);
     Item* item = get_item(item_id);
     if (item == NULL) return NULL;
     item_create_StoC msg;
