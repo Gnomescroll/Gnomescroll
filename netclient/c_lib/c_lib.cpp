@@ -71,7 +71,7 @@
 #include <SDL/SDL_functions.c>
 
 /* Draw lists */
-#include <draw/draw.cpp>
+#include <common/draw/draw.cpp>
 
 /* Voxel Models */
 #include <voxel/voxel_volume.cpp>
