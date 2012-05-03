@@ -1,8 +1,8 @@
 #pragma once
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 
-#include <options.hpp>
+#include <options/options.hpp>
 
 namespace HudFont
 {

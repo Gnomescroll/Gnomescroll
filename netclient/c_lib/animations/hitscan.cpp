@@ -5,7 +5,7 @@
 
 #include <camera/camera.hpp>
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <SDL/texture_loader.hpp>
 
 namespace Animations

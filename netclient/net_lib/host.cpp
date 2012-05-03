@@ -9,7 +9,7 @@
 
 #include <agent/net_agent.hpp>
 #include <state/packet_init.hpp>
-#include <options.hpp>
+#include <options/options.hpp>
 #include <state/client_state.hpp>
 
 const int DEFAULT_PORT = 4096;

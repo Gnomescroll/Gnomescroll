@@ -2,7 +2,7 @@
 
 #include <net_lib/common/net_peer.hpp>
 #include <net_lib/common/net_peer_manager.hpp>
-#include <defines.h>
+#include <common/defines.h>
 
 extern NetMessageArray_pool net_message_array_pool;
 

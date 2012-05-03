@@ -3,7 +3,7 @@
 #include <physics/affine.hpp>
 
 #include <voxel/voxel_hitscan.hpp>
-#include <defines.h>
+#include <common/defines.h>
 #include <common/random.h>
 
 // forward declarations

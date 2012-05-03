@@ -2,7 +2,7 @@
 
 #include <physics/ray_trace/ray_trace.hpp>
 #include <entity/constants.hpp>
-#include <defines.h>
+#include <common/defines.h>
 
 #include <agent/agent_status.hpp>
 #include <agent/agent_vox.hpp>

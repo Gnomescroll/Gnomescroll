@@ -1,6 +1,6 @@
 #pragma once
 
-//#include <compat_gl.h>
+//#include <common/compat_gl.h>
 
 
 const int MOUSE_INPUT_BUFFER_SIZE = 32;

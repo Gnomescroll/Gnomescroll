@@ -1,6 +1,6 @@
 #pragma once
 
-#include <defines.h>
+#include <common/defines.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +13,7 @@
 
 //options
 #include <common/option_macros.hpp>
-#include <options.cpp>
+#include <options/options.cpp>
  
 //utility
 #include <common/time/physics_timer.cpp>

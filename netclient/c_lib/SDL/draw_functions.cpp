@@ -1,6 +1,6 @@
 #include "draw_functions.hpp"
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <stdio.h>
 
 #include "SDL_functions.h"

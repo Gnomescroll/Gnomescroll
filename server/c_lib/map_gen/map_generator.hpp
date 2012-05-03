@@ -1,6 +1,6 @@
 #pragma once
 
-#include <options.hpp>
+#include <options/options.hpp>
 #include <t_map/t_map.hpp>
 #include <map_gen/noise.h>
 #include <map_gen/perlin.h>

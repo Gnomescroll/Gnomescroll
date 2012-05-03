@@ -11,7 +11,7 @@
 #include <particle/billboard_text_hud.hpp>
 #include <particle/billboard_sprite.hpp>
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <SDL/texture_loader.hpp>
 //#include <camera/camera.hpp>
 

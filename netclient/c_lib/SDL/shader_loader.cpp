@@ -1,6 +1,6 @@
 #include "shader_loader.hpp"
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 
 #include <stdio.h>
 #include <stdlib.h>

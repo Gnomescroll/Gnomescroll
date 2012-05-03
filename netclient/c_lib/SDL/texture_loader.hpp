@@ -1,6 +1,6 @@
 #pragma once
 
-//#include <compat_gl.h>
+//#include <common/compat_gl.h>
 
 struct Texture {
     int tex;

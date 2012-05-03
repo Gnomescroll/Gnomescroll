@@ -1,7 +1,7 @@
 #include "minivox_textured.hpp"
 
 #if DC_CLIENT
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <t_map/glsl/texture.hpp>
 #include <camera/fulstrum_test.hpp>
 #endif

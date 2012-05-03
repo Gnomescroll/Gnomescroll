@@ -3,7 +3,7 @@
 #include "../common/net_time.h"
 
 #ifdef DC_CLIENT
-	#include <compat_gl.h>
+	#include <common/compat_gl.h>
 #endif
 
 void pviz_start_frame();

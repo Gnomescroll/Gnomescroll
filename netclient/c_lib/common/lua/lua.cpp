@@ -161,7 +161,7 @@ int lua_load_block_dat()
 
 }
 
-#include <options.hpp>
+#include <options/options.hpp>
 
 namespace LUA
 {

@@ -1,6 +1,6 @@
 #include "cube_selector.hpp"
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

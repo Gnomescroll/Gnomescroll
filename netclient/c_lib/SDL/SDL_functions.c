@@ -1,6 +1,6 @@
 #include "SDL_functions.h"
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 
 #ifdef _WIN32
     #include "windows.h"

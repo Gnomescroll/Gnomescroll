@@ -1,6 +1,6 @@
 #pragma once
 
-#include <defines.h>
+#include <common/defines.h>
 #include <sound/triggers.hpp>
 
 namespace Sound {

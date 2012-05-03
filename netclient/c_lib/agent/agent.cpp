@@ -1,7 +1,7 @@
 #include "agent.hpp"
 
 #if DC_CLIENT
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #endif
 
 #include <agent/agent_vox.hpp>
@@ -14,7 +14,7 @@
 #include <agent/client/player_agent.hpp>
 #endif
 
-#include <defines.h>
+#include <common/defines.h>
 #include <math.h>
 #include <common/random.h>
 

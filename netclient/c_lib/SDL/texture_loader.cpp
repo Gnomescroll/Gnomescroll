@@ -1,6 +1,6 @@
 #include "./texture_loader.hpp"
 
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <math.h>
 
 #include <SDL/shader_loader.hpp>

@@ -3,7 +3,7 @@
 #include <math.h>
 
 #ifdef DC_CLIENT
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 
 #include <agent/agent.hpp>
 #include <agent/agent_vox.hpp>

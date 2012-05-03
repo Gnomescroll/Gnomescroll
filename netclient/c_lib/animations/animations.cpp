@@ -1,6 +1,6 @@
 #include "animations.hpp"
 
-#include <options.hpp>
+#include <options/options.hpp>
 //#include <particle/particle_lib.hpp>
 #include <common/random.h>
 #include <state/client_state.hpp>

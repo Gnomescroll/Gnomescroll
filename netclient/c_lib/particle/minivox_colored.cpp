@@ -1,7 +1,7 @@
 #include "minivox_colored.hpp"
 
 #if DC_CLIENT
-#include <compat_gl.h>
+#include <common/compat_gl.h>
 #include <camera/fulstrum_test.hpp>
 #endif
 

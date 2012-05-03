@@ -12,9 +12,9 @@
 #include <math.h>
 
 /* Common headers */
-#include "defines.h"
-#include "compat_gl.h"
-#include "compat_al.h"
+#include <common/defines.h>
+#include <common/compat_gl.h>
+#include <common/compat_al.h>
 
 
 /* Compression */
@@ -28,7 +28,7 @@
 
 /* configuration options */
 #include <common/option_macros.hpp>
-#include <options.cpp>
+#include <options/options.cpp>
 
 /* Network */
 #include <net_lib/net_lib.h>

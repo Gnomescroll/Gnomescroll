@@ -4,7 +4,7 @@
 #include <hud/cube_selector.hpp>
 #include <hud/font.hpp>
 #include <input/handlers.hpp>
-#include <options.hpp>
+#include <options/options.hpp>
 #include <common/profiling/frame_graph.hpp>
 //#include <draw/transparent.hpp>
 

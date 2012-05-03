@@ -3,7 +3,7 @@
 #include <agent/agent.hpp>
 #include <state/server_state.hpp>
 #include <state/client_state.hpp>
-#include <defines.h>
+#include <common/defines.h>
 //#include <weapons/weapons.hpp>
 //#include <monsters/monsters.hpp>
 //#include <inventory/inventory.hpp>

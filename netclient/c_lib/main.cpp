@@ -1,6 +1,6 @@
 #pragma once
 
-#include <defines.h>
+#include <common/defines.h>
  
 #include <state/client_state.hpp>
 #include <SDL/SDL_functions.h>
@@ -12,7 +12,7 @@
 #include <net_lib/host.hpp>
 #include <common/time/physics_timer.hpp>
 #include <t_map/_interface.hpp>
-#include <options.hpp>
+#include <options/options.hpp>
 #include <common/common.hpp>
 #include <item/particle/_interface.hpp>
 

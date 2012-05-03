@@ -1,6 +1,6 @@
 #pragma once
 
-#include <defines.h>
+#include <common/defines.h>
 
 const unsigned int GAME_MAX_PLAYERS = PLAYERS_MAX;
 const unsigned int N_TEAMS = 2;

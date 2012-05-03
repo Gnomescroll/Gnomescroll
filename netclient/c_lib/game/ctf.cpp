@@ -5,7 +5,7 @@
 #include <state/client_state.hpp>
 #include <game/packets.hpp>
 #include <common/random.h>
-#include <options.hpp>
+#include <options/options.hpp>
 
 #ifdef DC_CLIENT
 #include <hud/map.hpp>
