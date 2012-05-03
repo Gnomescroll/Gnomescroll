@@ -222,7 +222,7 @@ int get_lowest_solid_block(int x, int y)
     return i;
 }
 
-}   // t_map::
+}   // t_map
  
 
 int _get(int x, int y, int z)
@@ -257,7 +257,7 @@ void _set_broadcast(int x, int y, int z, int value)
 
 void send_map_metadata(int client_id)
 {
-    class t_map::map_metadata_StoC msg;
+    t_map::map_metadata_StoC msg;
     msg.x = map_dim.x;
     msg.y = map_dim.y;
     msg.z = map_dim.z;

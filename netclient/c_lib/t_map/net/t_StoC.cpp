@@ -8,7 +8,7 @@
 namespace t_map
 {
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 #include <animations/animations.hpp>
 #include <common/random.h>
@@ -170,7 +170,7 @@ void map_metadata_StoC::handle()
 #endif
 
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 void map_chunk_compressed_StoC::handle(char* buff, int byte_num) {}
 void map_chunk_uncompressed_StoC::handle(char* buff, int byte_size) {}
@@ -184,4 +184,4 @@ void map_metadata_StoC::handle() {}
 
 #endif
 
-}
+}   // t_map

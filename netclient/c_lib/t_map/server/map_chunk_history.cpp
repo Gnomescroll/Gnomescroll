@@ -48,4 +48,4 @@ void MAP_CHUNK_HISTORY::remove_subscriber(int client_id)
     chunk_aliases[i] = chunk_aliases[subscriber_num]; 
 }
 
-}
+}   // t_map

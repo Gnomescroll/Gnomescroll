@@ -5,9 +5,9 @@
 namespace t_map
 {
     
-#ifdef DC_CLIENT
-    void init_client_compressors();
-    void end_client_compressors();
+#if DC_CLIENT
+void init_client_compressors();
+void end_client_compressors();
 #endif
 
 class map_chunk_compressed_StoC: public MapMessageArrayPacketToClient<map_chunk_compressed_StoC>
@@ -149,4 +149,4 @@ class map_metadata_StoC: public MapMessagePacketToClient<map_metadata_StoC>
 
 };
 
-}
+}   // t_map

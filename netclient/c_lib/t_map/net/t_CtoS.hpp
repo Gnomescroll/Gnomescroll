@@ -23,4 +23,4 @@ class block_CtoS: public MapMessagePacketToServer<block_CtoS>
         inline void handle();
 };
 
-}
+}   // t_map

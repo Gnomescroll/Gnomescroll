@@ -51,7 +51,7 @@ char* get_cube_name(int id);
 int get_cube_id(char* name);
 
 int dat_get_cube_id(const char* name);  //use for dat files
-}
+}   // t_map
 
 
 /*

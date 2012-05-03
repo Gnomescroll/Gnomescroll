@@ -7,7 +7,7 @@
 namespace t_map
 {
 
-#ifdef DC_SERVER
+#if DC_SERVER
 
 void block_CtoS::handle() 
 {
@@ -16,10 +16,10 @@ void block_CtoS::handle()
 
 #endif
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 void block_CtoS::handle() {}
 
 #endif
 
-}
+}   // t_map

@@ -136,9 +136,7 @@ class Terrain_map_history
 
         chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
     }
-
-
-
 };
 
-}
+}   // t_map
+

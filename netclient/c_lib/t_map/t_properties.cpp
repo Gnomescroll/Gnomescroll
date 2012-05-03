@@ -116,7 +116,7 @@ int dat_get_cube_id(const char* name)
     return id; 
 }
 
-}
+}   // t_map
 
 /*
     LUA interface

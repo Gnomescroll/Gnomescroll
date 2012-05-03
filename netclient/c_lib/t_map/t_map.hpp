@@ -31,7 +31,7 @@ typedef enum TerrainModificationAction
  
 void init_t_map() GNOMESCROLL_API;
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 void init_for_draw() GNOMESCROLL_API;
 #endif
 
@@ -48,7 +48,7 @@ inline void set(int x, int y, int z, int value)
 }
 
 int apply_damage(int x, int y, int z, int dmg);
-#ifdef DC_SERVER
+#if DC_SERVER
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action);
 #endif
 
@@ -58,7 +58,7 @@ int get_lowest_open_block(int x, int y, int n);
 int get_highest_solid_block(int x, int y, int z=MAP_HEIGHT);
 int get_lowest_solid_block(int x, int y);
 
-}
+}   // t_map
 
 int _get(int x, int y, int z) GNOMESCROLL_API;
 void _set(int x, int y, int z, int value) GNOMESCROLL_API;
@@ -66,7 +66,7 @@ void _set(int x, int y, int z, int value) GNOMESCROLL_API;
 /*
     Deprecate eventually
 */
-#ifdef DC_SERVER
+#if DC_SERVER
 void _set_broadcast(int x, int y, int z, int value);
 /*
     Deprecated

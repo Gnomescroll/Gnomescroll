@@ -122,22 +122,21 @@ void handle_block_drop(int x, int y, int z, int block_type)
         {
             //printf("drop roll %i: p=%f prob=%f \n", j, p, cidt->drop_probabilities[j]);
             if(p >= cidt->drop_probabilities[j])
-			{
-				if(j==0) return;
+            {
+                if(j==0) return;
 
-				for(int k=0; k<j; k++)
-	            {
-	                const float mom = 2.0f;
-	                x = (float)x + 0.5f + randf()*0.33;
-	                y = (float)y + 0.5f + randf()*0.33;
-	                z = (float)z + 0.05f;
-	                ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
-	                    (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom );
-	                break;
-	            }
-
+                for(int k=0; k<j; k++)
+                {
+                    const float mom = 2.0f;
+                    x = (float)x + 0.5f + randf()*0.33;
+                    y = (float)y + 0.5f + randf()*0.33;
+                    z = (float)z + 0.05f;
+                    ItemParticle::create_item_particle(cidt->item_type, x, y, z, 
+                        (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom );
+                    break;
+                }
+            }
         }
-
     }
 }
 #endif
@@ -154,4 +153,4 @@ void handle_block_drop(int x, int y, int z, int block_type)
         Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
 */
 
-}
+}   // t_map
