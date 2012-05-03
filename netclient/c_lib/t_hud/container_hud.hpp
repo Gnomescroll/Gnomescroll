@@ -88,7 +88,8 @@ void AgentContainerUI::draw()
     glDisable(GL_TEXTURE_2D);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 //#if 0
     //glColor4ub(0, 0, 50, 64);
@@ -111,8 +112,11 @@ void AgentContainerUI::draw()
     //}
 //#endif
 
+    int g1 = 80-16;
+    int g2 = 80-8;
+
     glBegin(GL_QUADS);
-    glColor4ub(80, 80, 80, 128+64);
+    glColor4ub(g1,g1,g1, 128+64); //128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -125,7 +129,7 @@ void AgentContainerUI::draw()
         glVertex2f(x-inc2, y-inc2);
     }
 
-    glColor4ub(80, 80, 80, 128);
+    glColor4ub(g2,g2,g2, 128);
 
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
