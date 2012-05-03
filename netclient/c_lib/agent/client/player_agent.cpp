@@ -408,4 +408,72 @@ void PlayerAgent_state::pump_camera() {
     }
 }
 
+void PlayerAgent_state::update_model()
+{
+    Agent_state* a = this->you;
+    if (a == NULL) return;
+    if (a->vox == NULL) return;
+
+    Vec3 center;
+    if (a->vox->was_updated)         
+        center = a->get_center();    // model is fresh, use model center for more accurate culling
+    else
+        center = a->get_position();  // model is stale, must use agent position
+        
+    a->vox->was_updated = false;
+
+    // other agents
+    VoxDat* vox_dat = &VoxDats::agent;
+    float radius = a->vox->get_part(0)->radius;
+    if (sphere_fulstrum_test(center.x, center.y, center.z, radius) == false)
+    {   // agent not in view fulcrum
+        a->vox->set_draw(false);
+        a->vox->set_hitscan(false);
+        if (a->event.bb != NULL) a->event.bb->set_draw(false);
+        return;
+    }
+    if (a->event.bb != NULL) a->event.bb->set_draw(true);
+    if (a->crouched())
+    {
+        vox_dat = &VoxDats::agent_crouched;
+        if (!a->status.vox_crouched)
+        {
+            a->vox->set_vox_dat(vox_dat);
+            a->vox->reset_skeleton();
+            a->status.vox_crouched = true;
+            a->event.set_agent_vox_status(AGENT_VOX_IS_CROUCHED);
+        }
+    }
+    else
+    {
+        if (a->status.vox_crouched)
+        {   // was crouched last frame, but not a frame: restore standing model
+            a->vox->set_vox_dat(vox_dat);
+            a->vox->reset_skeleton();
+            a->status.vox_crouched = false;
+            a->event.set_agent_vox_status(AGENT_VOX_IS_STANDING);
+        }
+    }
+    if (a->status.dead)
+    {
+        vox_dat = &VoxDats::agent_dead;
+        a->event.set_agent_vox_status(AGENT_VOX_IS_DEAD);
+    }
+        
+    a->vox->set_vox_dat(vox_dat);
+    a->update_legs();
+    a->vox->update(a->s.x, a->s.y, a->s.z, a->s.theta, a->s.phi);
+    if (current_camera->first_person)
+    {
+        a->vox->set_draw(false);
+        a->vox->set_hitscan(false);
+    }
+    else
+    {
+        a->vox->set_draw(true);
+        a->vox->set_hitscan(true);
+    }
+}
+
+
 #endif

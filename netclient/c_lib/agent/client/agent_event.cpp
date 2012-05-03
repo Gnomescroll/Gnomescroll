@@ -174,14 +174,31 @@ void Agent_event::set_spawner(int pt)
 
 void Agent_event::crouched()
 {
+    printf("crouched\n");
+    this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent_crouched);
     this->a->vox->reset_skeleton();
 }
 
 void Agent_event::uncrouched()
 {
+    printf("uncrouched\n");
+    this->model_was_changed = true;
     this->a->vox->set_vox_dat(&VoxDats::agent);
     this->a->vox->reset_skeleton();
+}
+
+bool Agent_event::model_changed()
+{
+    bool changed = this->model_was_changed;
+    this->model_was_changed = false;
+    return changed;
+}
+
+void Agent_event::set_agent_vox_status(AgentVoxStatus status)
+{
+    if (this->vox_status != status) this->model_was_changed = true;
+    this->vox_status = status;
 }
 
 void Agent_event::reload_weapon(int type) {
@@ -469,5 +486,6 @@ Agent_event::Agent_event(Agent_state* owner)
 a(owner),
 r(0),g(0),b(0),
 first_time_receiving_coins(true),
+model_was_changed(true),
 bb(NULL)
 {}

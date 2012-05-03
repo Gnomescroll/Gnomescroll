@@ -320,13 +320,13 @@ void PlayerAgent_action::fire_mining_laser()
             break;
     }
 
-    this->target_direction = look;
-
     if (target_type == Hitscan::HITSCAN_TARGET_NONE)
     {
         melee_none_CtoS none_msg;
         none_msg.send();
     }
+
+    this->target_direction = look;
 
     //Sound::fire_mining_laser();
 }

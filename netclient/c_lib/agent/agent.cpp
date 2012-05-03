@@ -878,6 +878,11 @@ void Agent_state::update_model()
     #if DC_CLIENT
     if (this->vox == NULL) return;
 
+    if (this->is_you())
+    {   // your agent
+        ClientState::playerAgent_state.update_model();
+        return;
+    }
 
     Vec3 center;
     if (this->vox->was_updated)         
@@ -886,14 +891,6 @@ void Agent_state::update_model()
         center = this->get_position();  // model is stale, must use agent position
         
     this->vox->was_updated = false;
-    if (current_camera->first_person && this->is_you())
-    {   // your agent
-        this->vox->set_draw(false);
-        this->vox->set_hitscan(false);
-        this->vox->update(this->s.x, this->s.y, this->s.z, this->s.theta, this->s.phi);
-        return;
-    }
-
     // other agents
     VoxDat* vox_dat = &VoxDats::agent;
     float radius = this->vox->get_part(0)->radius;

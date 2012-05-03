@@ -4,11 +4,20 @@
 
 class Agent_state;
 
+typedef enum
+{
+    AGENT_VOX_IS_STANDING,
+    AGENT_VOX_IS_CROUCHED,
+    AGENT_VOX_IS_DEAD,
+} AgentVoxStatus;
+
 class Agent_event {
     private:
         Agent_state* a;
         unsigned char r,g,b;  // team colors
         bool first_time_receiving_coins;
+        AgentVoxStatus vox_status;
+        bool model_was_changed;
     public:
 
         class Particle::BillboardTextHud* bb;
@@ -22,6 +31,8 @@ class Agent_event {
         void born();
         void crouched();
         void uncrouched();
+        bool model_changed();
+        void set_agent_vox_status(AgentVoxStatus status);
         void life_changing(bool dead);
         void reload_weapon(int type);
 
