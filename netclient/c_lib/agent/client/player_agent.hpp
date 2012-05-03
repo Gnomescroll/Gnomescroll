@@ -84,6 +84,8 @@ class PlayerAgent_state {
         float camera_height();
         Vec3 camera_position();
 
+        void update_model();
+
         PlayerAgent_action action;
 
         bool identified;
