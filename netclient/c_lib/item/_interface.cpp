@@ -366,17 +366,14 @@ void assign_containers_to_agent(int agent_id, int client_id)
     // put a grenade launcher in the toolbelt to selt
     Item* grenade_launcher = create_item(8);
     grenade_launcher->energy = get_max_energy(grenade_launcher->type);
-    send_item_create(client_id, grenade_launcher->id);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);    // this will send the item create
 
     Item* laser_rifle = create_item(5);
     laser_rifle->energy = get_max_energy(laser_rifle->type);
-    send_item_create(client_id, laser_rifle->id);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);    // this will send the item create
 
     Item* mining_laser = create_item(7);
-    send_item_create(client_id, mining_laser->id);
-    auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);
+    auto_add_item_to_container(client_id, agent_toolbelt->id, mining_laser->id);    // this will send the item create
     
     ItemContainer* agent_nanite = item_container_list->create();
     assign_container_to_agent(agent_nanite, AGENT_NANITE, agent_nanite_list, agent_id, client_id);
