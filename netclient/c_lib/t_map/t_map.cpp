@@ -129,7 +129,9 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.broadcast();
 */
 
-    handle_block_drop(x,y,z, block_type);
+    if(cube_list[block_type].item_drop == true) 
+        handle_block_drop(x,y,z, block_type);
+
 /*
     const float mom = 2.0f;
     float p = randf();
