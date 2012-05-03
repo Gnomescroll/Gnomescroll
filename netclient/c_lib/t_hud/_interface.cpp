@@ -283,6 +283,14 @@ static void draw_grabbed_icon()
 
     HudFont::reset_default();
     HudFont::end_font_draw();
+
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+
+
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
 }
 
 

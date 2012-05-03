@@ -193,6 +193,7 @@ void Camera::world_projection()
     setup_fulstrum(fov, ratio, z_far, vec3_init(x,y,z), look, right, up);
 
     glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
     glColor3ub(255, 255, 255);
 }
 
@@ -213,8 +214,10 @@ void Camera::hud_projection() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+
+    //glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_TEXTURE_2D);
 }
 
 void Camera::forward_vector(float f[3])

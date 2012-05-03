@@ -269,13 +269,15 @@ void Voxel_render_list::draw()
         return;
     }
 
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+    glColor3b(255,255,255);
+
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_2D);
 
     glUseProgramObjectARB(voxel_shader_prog);
-
-    glColor3b(255,255,255);
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
@@ -345,6 +347,10 @@ void Voxel_render_list::draw()
 
     //glEnd();
     glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+
+    glColor3ub(255,255,255);
+
     //glShadeModel(shade_model);
 
 /*

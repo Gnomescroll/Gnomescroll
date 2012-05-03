@@ -164,7 +164,9 @@ int run()
             Start World Projetion
         */
         world_projection();
-        // draw client state
+        
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
 
 
         poll_mouse();
@@ -172,12 +174,18 @@ int run()
         /*
             Prep for draw
         */
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
+
         Animations::prep_insect_mob();
         Particle::prep_shrapnel();
 
         /*
             Map
         */
+
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
 
         poll_mouse();
         t_map::draw_map();
@@ -187,16 +195,20 @@ int run()
             Non-transparent
         */
 
+        GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
         ClientState::voxel_render_list->draw();
 
         // quads
-        glColor3ub(255,255,255);
         GL_ASSERT(GL_DEPTH_TEST, true);
+        GL_ASSERT(GL_BLEND, false);
         glBegin(GL_QUADS);
 
         Particle::colored_minivox_list->draw();
-        Components::colored_voxel_component_list->call();
+        //Components::colored_voxel_component_list->call();
         glEnd();
+
+        GL_ASSERT(GL_BLEND, false);
 
         glColor3ub(255,255,255);
         glEnable(GL_TEXTURE_2D);
@@ -207,13 +219,16 @@ int run()
         Components::textured_voxel_component_list->call();
 
         glEnd();
-        glDisable(GL_TEXTURE_2D);
-         
+        //glDisable(GL_TEXTURE_2D);
 
+        GL_ASSERT(GL_BLEND, false);
+
+        glColor3ub(255,255,255);
         /* 
             Alpha tested non-transparent
         */
 
+        ItemParticle::draw();
         t_mech::draw();
 
         /*
@@ -227,19 +242,9 @@ int run()
 
         Particle::billboard_text_list->draw();
         
-        Animations::draw_insect_mob();
+        //Animations::draw_insect_mob();
 
-        //Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
-        
-        // GL_ASSERT wouldnt shut up so i put these here
-        // no idea what triggered it
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
-        
-        glEnable(GL_TEXTURE_2D);
-
-        ItemParticle::draw();
-
+        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         // draw animations
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
@@ -251,11 +256,6 @@ int run()
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
-
-
-        glDisable(GL_TEXTURE_2D);
-        
-        Particle::billboard_text_list->draw();
 
         // update mouse
         poll_mouse();
