@@ -20,6 +20,19 @@ class Item
 
     void init(int item_type);
 
+    void print()
+    {
+        printf("Item:\n");
+        printf("ID %d\n", id);
+        printf("Group %d\n", group);
+        printf("Type %d\n", type);
+        printf("Energy %d\n", energy);
+        printf("Durability %d\n", durability);
+        printf("Stack size %d\n", stack_size);
+        printf("Container ID %d\n", container_id);
+        printf("Container slot %d\n", container_slot);
+    }
+
     #if DC_SERVER
     ~Item();
     #endif

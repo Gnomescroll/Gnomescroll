@@ -49,8 +49,9 @@ void send_container_item_create(int client_id, ItemID item_id, int container_id,
 static void pack_item_state(Item* item, item_state_StoC* msg)
 {
     msg->id = item->id;
-    msg->durability = item->durability;
     msg->stack_size = item->stack_size;
+    msg->durability = item->durability;
+    msg->energy = item->energy;
 }
 
 void send_item_state(int client_id, ItemID item_id)

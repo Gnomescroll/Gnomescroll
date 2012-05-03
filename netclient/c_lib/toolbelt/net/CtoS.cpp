@@ -47,7 +47,10 @@ inline void toolbelt_end_alpha_action_CtoS::handle()
     if (a == NULL) return;
 
     agent_fire_on[a->id] = false;
+    agent_fire_tick[a->id] = 0;
     broadcast_agent_toolbelt_end_alpha_action_packet(a->id);
+    // assume item state changed since turned on, send state if wasnt destroyed
+    Item::send_item_state(client_id, agent_selected_item[a->id]);
 }
 
 inline void toolbelt_beta_action_CtoS::handle() 

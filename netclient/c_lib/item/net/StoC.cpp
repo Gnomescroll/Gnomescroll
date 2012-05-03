@@ -30,8 +30,10 @@ inline void item_state_StoC::handle()
 {
     Item* item = item_list->get((ItemID)id);
     if (item == NULL) return;
-    item->durability = durability;
     item->stack_size = stack_size;
+    item->durability = durability;
+    item->energy = energy;
+    //item->print();
 }
 
 // Containers
