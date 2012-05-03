@@ -144,7 +144,7 @@ void create_hitscan_effect(float x, float y, float z, float vx, float vy, float 
 void mining_laser_beam(Vec3 position, Vec3 orientation)
 {
     const float speed = 6.0f;
-    const int n = 6;
+    const int n = 6; //6
     const float spread = 0.05;
     Vec3 step = vec3_scalar_mult(orientation, spread);
     for (int i=0; i<n; i++)
