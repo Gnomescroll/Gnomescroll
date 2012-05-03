@@ -129,6 +129,7 @@ void check_item_pickups()
 
 void throw_item(int agent_id, ItemID item_id)
 {
+    printf("throw\n");
     assert(item_id != NULL_ITEM);
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;

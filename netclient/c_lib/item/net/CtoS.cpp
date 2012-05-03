@@ -26,7 +26,7 @@ inline void container_action_alpha_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    if (!agent_owns_container(a->id, container_id)) return;
+    if (container_id != NULL_CONTAINER && !agent_owns_container(a->id, container_id)) return;
 
     ContainerActionType action = alpha_action_decision_tree(a->id, client_id, container_id, slot);
 
@@ -51,7 +51,7 @@ inline void container_action_beta_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
-    if (!agent_owns_container(a->id, container_id)) return;
+    if (container_id != NULL_CONTAINER && !agent_owns_container(a->id, container_id)) return;
 
     ContainerActionType action = beta_action_decision_tree(a->id, client_id, container_id, slot);
 
