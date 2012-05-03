@@ -106,13 +106,6 @@
 /* Agents */
 #include <agent/agent_include.h>
 
-/* Monsters */
-//#include <monsters/monsters.cpp>
-
-/* Weapons */
-#include <weapons/weapons.cpp>
-#include <weapons/packets.cpp>
-
 /* animations */
 #include <animations/_include.hpp>
 
