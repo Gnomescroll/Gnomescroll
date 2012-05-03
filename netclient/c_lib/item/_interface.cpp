@@ -71,6 +71,12 @@ Item* get_item(ItemID id)
     return item_list->get(id);
 }
 
+// alias for get_item
+class Item* get_item_object(ItemID id)
+{
+    return get_item(id);
+}
+
 int get_item_type(ItemID id)
 {
     Item* item = get_item(id);
@@ -105,6 +111,19 @@ int get_stack_space(ItemID id)
 
 void destroy_item(ItemID id)
 {
+    Item* item = get_item(id);
+    if (item == NULL) return;
+    int container_id = item->container_id;
+    int slot = item->container_slot;
+    ItemContainer* container = get_container(container_id);
+    if (container != NULL && slot != NULL_SLOT)
+    {
+        container->remove_item(slot);
+        #if DC_SERVER
+        Agent_state* a = STATE::agent_list->get(container->owner);
+        if (a != NULL) send_container_remove(container->owner, container_id, slot);
+        #endif
+    }
     item_list->destroy(id);
 }
 
@@ -297,6 +316,7 @@ static void assign_container_to_agent(ItemContainer* container, ItemContainerTyp
     assert(container != NULL);
     assert(container_list[agent_id] == NULL_ITEM);
     container_list[agent_id] = container->id;
+    container->assign_owner(agent_id);
     init_container(container, type);
     send_container_create(container, client_id);
     send_container_assign(container, client_id);
@@ -314,10 +334,12 @@ void assign_containers_to_agent(int agent_id, int client_id)
 
     // put a grenade launcher in the toolbelt to selt
     Item* grenade_launcher = create_item(8);
+    grenade_launcher->energy = get_max_energy(grenade_launcher->type);
     send_item_create(client_id, grenade_launcher->id);
     auto_add_item_to_container(client_id, agent_toolbelt->id, grenade_launcher->id);
 
     Item* laser_rifle = create_item(5);
+    laser_rifle->energy = get_max_energy(laser_rifle->type);
     send_item_create(client_id, laser_rifle->id);
     auto_add_item_to_container(client_id, agent_toolbelt->id, laser_rifle->id);
 
