@@ -16,8 +16,8 @@
 #include <item/net/CtoS.hpp>
 #include <item/net/StoC.hpp>
 
-#include <toolbelt/net/CtoS.hpp>
-#include <toolbelt/net/StoC.hpp>
+#include <item/toolbelt/net/CtoS.hpp>
+#include <item/toolbelt/net/StoC.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {

@@ -18,7 +18,7 @@
 #include <math.h>
 #include <common/random.h>
 
-#include <toolbelt/_interface.hpp>
+#include <item/toolbelt/_interface.hpp>
 
 AgentState::AgentState()
 :

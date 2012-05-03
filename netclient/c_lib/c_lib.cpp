@@ -134,7 +134,7 @@
 #include <item/_include.hpp>
 
 /* toolbelt */
-#include <toolbelt/_include.hpp>
+#include <item/toolbelt/_include.hpp>
 
 /* hud */
 #include <t_hud/_include.hpp>

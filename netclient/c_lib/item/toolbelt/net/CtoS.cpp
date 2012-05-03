@@ -1,10 +1,10 @@
 #include "CtoS.hpp"
 
-#include <toolbelt/_interface.hpp>
-#include <toolbelt/_state.hpp>
+#include <item/toolbelt/_interface.hpp>
+#include <item/toolbelt/_state.hpp>
 
 #if DC_SERVER
-#include <toolbelt/server.hpp>
+#include <item/toolbelt/server.hpp>
 #endif
 
 namespace Toolbelt

@@ -80,7 +80,7 @@
 #include <item/_include.hpp>
 
 /* toolbelt */
-#include <toolbelt/_include.hpp>
+#include <item/toolbelt/_include.hpp>
 
 /* Game modes */
 #include <game/flag.cpp>
@@ -92,13 +92,6 @@
 
 /* Agents */
 #include <agent/agent_include.h>
-
-/* Weapons */
-#include <weapons/weapons.cpp>
-#include <weapons/packets.cpp>
-
-/* monsters */
-//#include <monsters/monsters.cpp>
 
 /* chat */
 #include <chat/globals.hpp>

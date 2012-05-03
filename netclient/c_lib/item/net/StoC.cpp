@@ -5,7 +5,7 @@
 #include <item/_state.hpp>
 #include <item/client_item_container.hpp>
 #include <t_hud/_interface.hpp>
-#include <toolbelt/_interface.hpp>
+#include <item/toolbelt/_interface.hpp>
 
 namespace Item
 {
