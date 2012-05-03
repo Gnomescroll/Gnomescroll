@@ -96,7 +96,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         int slot_item_type = container->get_slot_type(slot);
         bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
         int slot_item_stack = container->get_slot_stack(slot);
-        int slot_item_space = get_stack_max(slot_item_type) - slot_item_stack;
+        int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
         #endif
 
         #if DC_SERVER
@@ -279,7 +279,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     int slot_item_type = container->get_slot_type(slot);
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
-    int slot_item_space = get_stack_max(slot_item_type) - slot_item_stack;
+    int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
 
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
     int hand_item_type = player_hand_type_ui;

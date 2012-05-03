@@ -41,7 +41,7 @@ class ItemContainerUI
             {
                 if (this->slot_type[i] == NULL_ITEM_TYPE) continue;
                 if (this->slot_type[i] == item_type   // stacks
-                && (get_stack_max(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
+                && (get_max_stack_size(this->slot_type[i]) - this->slot_stack[i]) >= stack_size) // stack will fit
                     return i;
             }
             return NULL_SLOT;

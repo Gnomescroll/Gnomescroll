@@ -9,6 +9,7 @@
 #include <common/compression/miniz.c>
 
 #include <common/list_assert.hpp>
+#include <common/asserts.hpp>
 
 //options
 #include <common/option_macros.hpp>

@@ -46,7 +46,7 @@ bool toolbelt_item_begin_alpha_action()
     if (repeats)
     {   // set tick on
         int agent_id = ClientState::playerAgent_state.agent_id;
-        assert(agent_id >= 0 && agent_id < AGENT_MAX);
+        ASSERT_VALID_AGENT_ID(agent_id);
         agent_fire_on[agent_id] = true;
         agent_fire_tick[agent_id] = 0;
     }
@@ -59,7 +59,7 @@ bool toolbelt_item_end_alpha_action()
     // stop advancing fire tick
 
     int agent_id = ClientState::playerAgent_state.agent_id;
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     agent_fire_on[agent_id] = false;
     agent_fire_tick[agent_id] = 0;
 

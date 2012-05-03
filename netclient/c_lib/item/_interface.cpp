@@ -98,12 +98,10 @@ int get_stack_space(ItemID id)
     if (id == NULL_ITEM) return 0;
     Item* item = get_item(id);
     assert(item != NULL);
-    int stack_space = STACK_SIZE_MAX - item->stack_size;
+    int stack_space = get_max_stack_size(item->type) - item->stack_size;
     assert(stack_space >= 0);
     return stack_space;
 }
-
-int get_stack_max(int item_type) { return STACK_SIZE_MAX; }
 
 void destroy_item(ItemID id)
 {
@@ -122,7 +120,7 @@ void merge_item_stack(ItemID src, ItemID dest)
 
     // add src's stack to dest
     dest_item->stack_size += src_item->stack_size;
-    assert(dest_item->stack_size <= STACK_SIZE_MAX);
+    assert(dest_item->stack_size <= get_max_stack_size(dest_item->type));
 }
 
 void merge_item_stack(ItemID src, ItemID dest, int amount)
@@ -138,7 +136,7 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
 
     // add src's stack to dest
     dest_item->stack_size += amount;
-    assert(dest_item->stack_size <= STACK_SIZE_MAX);
+    assert(dest_item->stack_size <= get_max_stack_size(dest_item->type));
     
     // remove from src
     src_item->stack_size -= amount;

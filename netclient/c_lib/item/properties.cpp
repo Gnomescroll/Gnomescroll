@@ -10,19 +10,20 @@ namespace Item
 
 int sprite_array[MAX_ITEMS]; //maps item id to sprite
 int group_array[MAX_ITEMS];
-class ItemAttribute* item_attribute_array;
+class ItemAttribute* item_attribute_array = NULL;
 
 void init_properties()
 {
     for (int i=0; i<MAX_ITEMS; sprite_array[i++] = ERROR_SPRITE);
     for (int i=0; i<MAX_ITEMS; group_array[i++] = IG_ERROR);
 
+    assert(item_attribute_array == NULL);
     item_attribute_array = new ItemAttribute[MAX_ITEMS];
 }
 
 void tear_down_properties()
 {
-    delete[] item_attribute_array;
+    if (item_attribute_array != NULL) delete[] item_attribute_array;
 }
 
 class ItemAttribute* get_item_attributes(int item_type)
@@ -127,7 +128,6 @@ int get_item_group_for_type(int item_type)
     return group_array[item_type];
 }
 
-
 int dat_get_item_id(const char* name)
 {
     int id = get_item_id((char*) name);
@@ -139,5 +139,12 @@ int dat_get_item_id(const char* name)
     return id;
 }
 
+
+int get_max_stack_size(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->max_stack_size;
+}
 
 }

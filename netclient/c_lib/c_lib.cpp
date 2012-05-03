@@ -36,6 +36,7 @@
 //utility
 #include <common/gl_assert.hpp>
 #include <common/list_assert.hpp>
+#include <common/asserts.hpp>
 #include <common/common.cpp>
 #include <common/files.cpp>
 

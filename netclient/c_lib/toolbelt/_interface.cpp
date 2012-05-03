@@ -83,7 +83,7 @@ void tick()
 
 void remove_agent(int agent_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
 
     #if DC_SERVER
     assert(agent_selected_item != NULL);
@@ -246,13 +246,13 @@ void update_toolbelt_items()
 
 ItemID get_agent_selected_item(int agent_id)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     return agent_selected_item[agent_id];
 }
 
 bool set_agent_toolbelt_slot(int agent_id, int slot)
 {
-    assert(agent_id >= 0 && agent_id < AGENT_MAX);
+    ASSERT_VALID_AGENT_ID(agent_id);
     assert(slot >= 0 && slot < TOOLBELT_MAX_SLOTS && slot != NULL_SLOT);
     agent_selected_slot[agent_id] = slot;
     ItemID item_id = Item::get_agent_toolbelt_item(agent_id, slot);

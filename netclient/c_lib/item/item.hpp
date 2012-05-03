@@ -10,9 +10,12 @@ class Item
         ItemID id;
         int group; //stack, laser, mining_laser
         int type;  // stone_block, dirt_block, mining_laser_beta,
-        
+
+        int energy;
         int durability;
         int stack_size;
+
+    void init(int item_type);
 
     #if DC_SERVER
     ~Item();
@@ -58,8 +61,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         {
             Item* item = Object_list<Item, ITEM_LIST_MAX>::create(item_id);
             if (item == NULL) return NULL;
-            item->type = item_type;
-            item->group = get_item_group_for_type(item_type);
+            item->init(item_type);
             return item;
         }
         #endif
@@ -69,8 +71,7 @@ class ItemList: public Object_list<Item, ITEM_LIST_MAX>
         {
             Item* item = this->create();
             if (item == NULL) return NULL;
-            item->type = item_type;
-            item->group = get_item_group_for_type(item_type);
+            item->init(item_type);
             return item;
         }
         #endif
