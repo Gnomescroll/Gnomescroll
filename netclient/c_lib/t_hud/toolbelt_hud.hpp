@@ -166,9 +166,12 @@ void AgentToolbeltUI::draw()
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
 
     int* slot_types = Item::get_container_ui_types(this->container_id);
-    int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
+    Item::ItemContainer* container = Item::get_container(this->container_id);
+    if (container == NULL) return;
+    ItemID* items = container->slot;
+    //int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
     if (slot_types == NULL) return;
-    assert(slot_stacks != NULL);
+    //assert(slot_stacks != NULL);
 
     glBegin(GL_QUADS);
 
@@ -259,9 +262,12 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        int count = slot_stacks[slot];
+        //int count = slot_stacks[slot];
+        Item::Item* item = Item::get_item(items[i]);
+        if (item == NULL) continue;
+        int count = item->durability;
         if (count <= 1) continue;
-        assert(count < 100); // the string is only large enough to hold "99"
+        assert(count < 1000); // the string is only large enough to hold "99"
         
         float x = xoff + border + i*(inc1+slot_size);
         x += slot_size - font_size/2;

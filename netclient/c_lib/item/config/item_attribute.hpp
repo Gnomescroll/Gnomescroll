@@ -34,8 +34,11 @@ class ItemAttribute
     int max_durability;
     int max_stack_size;
 
+    // behaviour
+    bool click_and_hold;    // does the item have click and hold behavior (e.g. mining laser)
+
     ItemAttribute()
-    : max_energy(1), max_durability(1), max_stack_size(1)
+    : max_energy(1), max_durability(1), max_stack_size(1), click_and_hold(false)
     {
         init(IG_ERROR);
     }

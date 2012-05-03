@@ -95,6 +95,7 @@ void load_item_dat()
     s.max_durability = 200;
     s.max_energy = 50;
     s.max_stack_size = 1;
+    s.click_and_hold = true;
 
     item_def(8, IG_GRENADE_LAUNCHER , "grenade_launcher");
     sprite_def(i0, 1,7);

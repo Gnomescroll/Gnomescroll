@@ -67,7 +67,7 @@ void tick()
             trigger_agent_selected_item_type(i, agent_selected_type[i]);
             #endif
             #if DC_SERVER
-            trigger_agent_selected_item(agent_selected_item[i]);
+            trigger_agent_selected_item(i, agent_selected_item[i]);
             #endif
         }
         #if DC_CLIENT
@@ -75,7 +75,7 @@ void tick()
         else tick_agent_selected_item_type(i, agent_selected_type[i]);
         #endif
         #if DC_SERVER
-        tick_agent_selected_item(agent_selected_item[i]);
+        tick_agent_selected_item(i, agent_selected_item[i]);
         #endif
         agent_fire_tick[i]++;
     }
@@ -142,6 +142,13 @@ void trigger_agent_selected_item_type(int agent_id, int item_type)
 void tick_local_agent_selected_item_type(int item_type)
 {
     ClientState::playerAgent_state.action.tick_mining_laser();
+    // modify predicted durability
+    Item::ItemContainer* container = Item::get_container(toolbelt_id);
+    if (container == NULL) return;
+    ItemID item_id = container->get_item(selected_slot);
+    Item::Item* item = Item::get_item(item_id);
+    if (item == NULL) return;
+    item->durability -= 1;
 }
 
 // trigger for the local agent
@@ -206,13 +213,20 @@ namespace Toolbelt
 {
 
 // use for continuous click-and-hold weapons
-void tick_agent_selected_item(ItemID item_id)
+void tick_agent_selected_item(int agent_id, ItemID item_id)
 {
-    
+    if (item_id == NULL_ITEM) return;
+
+    Item::Item* item = Item::get_item(item_id);
+    assert(item != NULL);
+
+    item->durability -= 1;
+
+    if (item->durability <= 0) Item::destroy_item(item_id);
 }
 
 // use for fire_rate trigger events
-void trigger_agent_selected_item(ItemID item_id)
+void trigger_agent_selected_item(int agent_id, ItemID item_id)
 {
     // adjust item durability/energy
     // restrict events as needed
@@ -223,10 +237,22 @@ void trigger_agent_selected_item(ItemID item_id)
 
     Item::Item* item = Item::get_item(item_id);
     assert(item != NULL);
-    //if (item->energy <= 0) return;
 
-    item->durability -= 1;
-    //item->energy -= 1;
+    // 2 modes here:
+    // items that are  not click-and-hold will have their new state sent out immediately (here)
+    // click-and-hold items will have their state sent out when they are turned off
+    // (or when they run out and die). the client will predict state until then
+    Item::ItemAttribute* attr = Item::get_item_attributes(item->type);
+    assert(attr != NULL);
+    if (!attr->click_and_hold)
+    {
+        Agent_state* a = ServerState::agent_list->get(agent_id);
+        if (a != NULL) Item::send_item_state(a->client_id, item_id);
+        agent_fire_on[agent_id] = false;
+        agent_fire_tick[agent_id] = 0;
+        item->durability -= 1;
+    }
+
     if (item->durability <= 0) Item::destroy_item(item_id);
 }
 
