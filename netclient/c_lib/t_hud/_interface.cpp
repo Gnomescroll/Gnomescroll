@@ -187,6 +187,44 @@ static void draw_grabbed_icon()
 {
     if (Item::player_hand_type_ui == NULL_ITEM_TYPE) return;
 
+    const float w = 32;
+
+    // center icon on mouse position
+    float x = mouse_x - (w / 2);
+    float y = _yresf - (mouse_y + (w / 2));
+
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glBegin(GL_QUADS);
+
+    // render durability
+    int durability = Item::player_hand_durability_ui;
+    if (durability != NULL_DURABILITY)
+    {
+        int max_durability = Item::get_max_durability(Item::player_hand_type_ui);
+        float ratio = ((float)durability)/((float)max_durability);
+        if (ratio >= 0.75)
+            glColor4ub(7, 247, 0, 128);    // green
+        else if (ratio >= 0.5)
+            glColor4ub(243, 247, 0, 128);  // yellow
+        else if (ratio >= 0.25)
+            glColor4ub(247, 159, 0, 128);  // orange
+        else if (ratio >= 0.05)
+            glColor4ub(247, 71, 0, 128);    // red-orange
+        else
+            glColor4ub(247, 14, 0, 128);   // red
+
+        glVertex2f(x,y+w);
+        glVertex2f(x+w, y+w);
+        glVertex2f(x+w, y);
+        glVertex2f(x, y);
+    }
+    glEnd();
+
     glDisable(GL_DEPTH_TEST); // move render somewhere
     glEnable(GL_BLEND);
 
@@ -195,13 +233,7 @@ static void draw_grabbed_icon()
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
 
     glBegin(GL_QUADS);
-    
-    const float w = 32;
-
-    // center icon on mouse position
-    float x = mouse_x - (w / 2);
-    float y = _yresf - (mouse_y + (w / 2));
-    
+        
     int tex_id = Item::get_sprite_index_for_type(Item::player_hand_type_ui);
 
     //const float iw = 8.0f; // icon_width
