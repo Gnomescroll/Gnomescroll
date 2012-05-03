@@ -8,7 +8,6 @@ void init_particles();
 void teardown_particles();
 
 extern class Grenade_list* grenade_list;
-extern class ItemParticle_list* item_particle_list;
 
 #if DC_CLIENT
 extern class  Shrapnel_list* shrapnel_list;
@@ -20,22 +19,6 @@ extern class  BillboardTextHud_list* billboard_text_hud_list;
 #endif
 #if DC_SERVER
 extern class  Grenade_shrapnel_list* grenade_shrapnel_list;
-#endif
-
-#if DC_CLIENT
-class ItemParticle* create_item_particle(
-    int particle_id, int item_type,
-    float x, float y, float z, 
-    float vx, float vy, float vz
-);
-#endif
-#if DC_SERVER
-class ItemParticle* create_item_particle(
-    int item_type,
-    float x, float y, float z, 
-    float vx, float vy, float vz
-);
-void broadcast_particle_item_create(int particle_id);
 #endif
 
 void destroy(int particle_id);

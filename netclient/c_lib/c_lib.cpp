@@ -132,9 +132,8 @@
 
 /* items */
 #include <item/_include.hpp>
-
-/* toolbelt */
 #include <item/toolbelt/_include.hpp>
+#include <item/particle/_include.hpp>
 
 /* hud */
 #include <t_hud/_include.hpp>
@@ -239,6 +238,7 @@ int init_c_lib()
     //t_mech::state_init();
 
     Particle::init_particles();
+    ItemParticle::init();
 
     Skybox::init();
     //Sound::test();
@@ -267,6 +267,7 @@ int init_c_lib()
     init_cameras();
     init_chat_client();
     Particle::draw_init();
+    ItemParticle::draw_init();
 
     ClientState::init_ctf();
     
@@ -287,8 +288,11 @@ void close_c_lib() {
     t_hud::teardown();
     t_mech::draw_teardown();
     //t_mech::state_teardown();
-
+    Particle::draw_teardown();
+    ItemParticle::draw_teardown();
+    
     Particle::teardown_particles();
+    ItemParticle::teardown();
 
     Skybox::teardown();
 

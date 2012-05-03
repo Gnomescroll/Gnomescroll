@@ -78,9 +78,8 @@
 
 /* item */
 #include <item/_include.hpp>
-
-/* toolbelt */
 #include <item/toolbelt/_include.hpp>
+#include <item/particle/_include.hpp>
 
 /* Game modes */
 #include <game/flag.cpp>
@@ -156,6 +155,7 @@ int init_c_lib()
 
     ServerState::init();
     Particle::init_particles();
+    ItemParticle::init();
 
     return 0;
 } 
@@ -173,6 +173,7 @@ void close_c_lib()
 
     ServerState::teardown();
     Particle::teardown_particles();
+    ItemParticle::teardown();
 
     Objects::teardown();    // Entity system
     Objects::teardown_net_interfaces();

@@ -10,14 +10,12 @@
 #include <t_map/net/t_CtoS.hpp>
 #include <t_map/net/t_StoC.hpp>
 
-#include <particle/net/CtoS.hpp>
-#include <particle/net/StoC.hpp>
-
 #include <item/net/CtoS.hpp>
 #include <item/net/StoC.hpp>
-
 #include <item/toolbelt/net/CtoS.hpp>
 #include <item/toolbelt/net/StoC.hpp>
+#include <item/particle/net/CtoS.hpp>
+#include <item/particle/net/StoC.hpp>
 
 #include <particle/grenade.hpp> // move into net folder in particles
 namespace PacketInit {
@@ -58,9 +56,6 @@ void RegisterMessages() {
 
     // particle system messages
     Particle::grenade_StoC::register_client_packet();
-    Particle::item_particle_create_StoC::register_client_packet();
-    Particle::item_particle_destroy_StoC::register_client_packet();
-    Particle::item_particle_picked_up_StoC::register_client_packet();
 
     /*
         Map Messages
@@ -226,6 +221,10 @@ void RegisterMessages() {
     Toolbelt::toolbelt_end_alpha_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_beta_action_CtoS::register_server_packet();
     Toolbelt::toolbelt_reload_action_CtoS::register_server_packet();
+
+    ItemParticle::item_particle_create_StoC::register_client_packet();
+    ItemParticle::item_particle_destroy_StoC::register_client_packet();
+    ItemParticle::item_particle_picked_up_StoC::register_client_packet();
 }
 
 }

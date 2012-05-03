@@ -108,7 +108,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             hand_item_durability = NULL_DURABILITY;
             #endif
             #if DC_SERVER
-            throw_item(agent_id, hand_item);
+            ItemParticle::throw_item(agent_id, hand_item);
             hand_item = NULL_ITEM;
             send_hand_remove(client_id);
             #endif

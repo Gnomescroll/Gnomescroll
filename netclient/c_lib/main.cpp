@@ -14,9 +14,9 @@
 #include <t_map/_interface.hpp>
 #include <options.hpp>
 #include <common/common.hpp>
+#include <item/particle/_interface.hpp>
 
 #include <entity/objects.hpp>
-
 #include <common/profiling/frame_graph.hpp>
 
 //#include <t_mech/draw.hpp>
@@ -238,7 +238,7 @@ int run()
         
         glEnable(GL_TEXTURE_2D);
 
-        Particle::item_particle_list->draw();
+        ItemParticle::draw();
 
         // draw animations
         Animations::draw_hitscan_effect();

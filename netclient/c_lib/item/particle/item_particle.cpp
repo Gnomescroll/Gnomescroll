@@ -1,11 +1,11 @@
 #include "item_particle.hpp"
 
-#include <particle/net/StoC.hpp>
+#include <item/particle/net/StoC.hpp>
 #include <item/_interface.hpp>
 
 #include <item/common/constant.hpp>
 
-namespace Particle
+namespace ItemParticle
 {
 
 #ifdef DC_CLIENT
@@ -20,7 +20,7 @@ void init_item_particle()
 
     if(s == NULL)
     {
-        printf("Particle::init_item_particle, error \n");
+        printf("ItemParticle::init_item_particle, error \n");
     }
 
     glEnable(GL_TEXTURE_2D);

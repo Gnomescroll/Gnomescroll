@@ -16,6 +16,7 @@
 #include <agent/client/player_agent.hpp>
 
 #include <particle/_interface.hpp>
+#include <item/particle/_interface.hpp>
 
 #if USE_OPENAL
 #include <sound/openal.hpp>
@@ -146,9 +147,9 @@ namespace ClientState {
 
     void tick()
     {
-        Particle::grenade_list->tick();
-        Particle::item_particle_list->tick();
+        ItemParticle::tick();
 
+        Particle::grenade_list->tick();
         Particle::shrapnel_list->tick();
         Particle::blood_list->tick();
         Particle::colored_minivox_list->tick();

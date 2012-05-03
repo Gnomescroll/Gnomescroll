@@ -2,7 +2,7 @@
 
 #include <net_lib/net.hpp>
 
-namespace Particle
+namespace ItemParticle
 {
 
 /*

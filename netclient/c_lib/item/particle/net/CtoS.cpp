@@ -4,7 +4,7 @@
 #include <state/server_state.hpp>
 #endif
 
-namespace Particle
+namespace ItemParticle
 {
 
 

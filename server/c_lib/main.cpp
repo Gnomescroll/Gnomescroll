@@ -47,7 +47,7 @@ void tick()
     ServerState::agent_list->update_models(); // sets skeleton
     
     Particle::grenade_list->tick();
-    Particle::item_particle_list->tick();
+    ItemParticle::tick();
 
     Objects::tick();
     Objects::harvest();
@@ -59,7 +59,7 @@ void tick()
 
     if(counter % 10 == 0)
     {
-        Item::check_item_pickups();
+        ItemParticle::check_item_pickups();
     }
 
     //const int monster_spawners = 10;

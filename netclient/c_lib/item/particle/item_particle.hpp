@@ -6,7 +6,7 @@
 
 #include <physics/verlet_particle.hpp>
 
-namespace Particle
+namespace ItemParticle
 {
 
 #ifdef DC_CLIENT
@@ -86,7 +86,7 @@ class ItemParticle //: public VerletComponent
 
 #include <common/template/object_list.hpp>
 
-namespace Particle
+namespace ItemParticle
 {
 
 const int ITEM_PARTICLE_MAX = 1024;

@@ -1,7 +1,5 @@
 #pragma once
 
-//typedef int ItemID;
-
 #include <item/common/enum.hpp>
 
 namespace Item
@@ -78,10 +76,6 @@ ItemID get_agent_toolbelt_item(int agent_id, int slot);
 void assign_container_to_agent(int agent_id, int client_id);
 
 class Item* create_item(int item_type);
-class Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz);
-
-void check_item_pickups();
-void throw_item(int agent_id, ItemID item_id);
 
 }
 #endif

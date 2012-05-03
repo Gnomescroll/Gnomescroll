@@ -1,5 +1,7 @@
 #pragma once
 
+#include <item/common/enum.hpp>
+
 // Common
 namespace Toolbelt
 {

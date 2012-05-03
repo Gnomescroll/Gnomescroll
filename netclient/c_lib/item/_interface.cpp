@@ -3,8 +3,8 @@
 
 #include <item/item_container.hpp>
 #include <item/item.hpp>
-
 #include <item/_state.hpp>
+#include <item/particle/_interface.hpp>
 
 #if DC_SERVER
 #include <item/net/StoC.hpp>
@@ -383,79 +383,6 @@ void assign_containers_to_agent(int agent_id, int client_id)
 Item* create_item(int item_type)
 {
     return item_list->create_type(item_type);
-}
-
-Item* create_item_particle(int item_type, float x, float y, float z, float vx, float vy, float vz)
-{    
-    Item* item = create_item(item_type);
-    if (item == NULL) return NULL;
-    Particle::ItemParticle* particle = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    if (particle == NULL) return item;
-    Particle::broadcast_particle_item_create(particle->id);
-    return item;
-}
-
-void check_item_pickups()
-{
-    using Particle::ItemParticle;
-    using Particle::item_particle_list;
-    using Particle::item_particle_picked_up_StoC;
-    
-    for (int i=0; i<item_particle_list->n_max; i++)
-    {
-        if (item_particle_list->a[i] == NULL) continue;
-        ItemParticle* item_particle = item_particle_list->a[i];
-        if (!item_particle->can_be_picked_up()) continue;
-        Item* item = get_item(item_particle->item_id);
-        assert(item != NULL);
-    
-        const static float pick_up_distance = 1.0f;
-        Agent_state* agent = nearest_living_agent_in_range(item_particle->verlet.position, pick_up_distance);
-        if (agent == NULL) continue;
-
-        int container_id = get_agent_container(agent->id);
-        if (container_id == NULL_CONTAINER) return;
-
-        // get slot for placing in container
-        int slot = auto_add_item_to_container(agent->client_id, container_id, item->id);   //insert item on server
-        if (slot == NULL_SLOT) return;
-
-        // update particle
-        item_particle->picked_up(agent->id);
-    }
-}
-
-void throw_item(int agent_id, ItemID item_id)
-{
-    assert(item_id != NULL_ITEM);
-    Agent_state* a = ServerState::agent_list->get(agent_id);
-    if (a == NULL) return;
-
-    Item* item = get_item(item_id);
-    if (item == NULL) return;
-
-    broadcast_item_destroy(item->id);
-
-    Vec3 position = a->get_center();
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
-
-    const float mom = 2.0f;
-    Vec3 force = a->s.forward_vector();
-    force.z = 0;
-    normalize_vector(&force);
-    force = vec3_scalar_mult(force, mom);
-    force = vec3_bias(force, (randf()-0.5f) * 30);
-    float vx = force.x;
-    float vy = force.y;
-    float vz = force.z;
-
-    // create particle
-    Particle::ItemParticle* particle = Particle::create_item_particle(item->id, item->type, x,y,z,vx,vy,vz);
-    if (particle == NULL) return;
-    Particle::broadcast_particle_item_create(particle->id);
-    particle->lock_pickup();
 }
 
 }
