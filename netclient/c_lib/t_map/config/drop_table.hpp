@@ -77,7 +77,7 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 		p[i] = tmp;
 		tmp *= falloff;
 	}
-	
+	 
 	//normalize distribution
 	double sum = 0.0;
 	for(int i=0; i<max_drops; i++) sum += p[i];

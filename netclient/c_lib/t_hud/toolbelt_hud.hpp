@@ -114,8 +114,11 @@ void AgentToolbeltUI::draw()
     //}
 //#endif
 
+    int g1 = 80-16; //color 1
+    int g2 = 80-8;  //color 2
+
     glBegin(GL_QUADS);
-    glColor4ub(80, 80, 80, 128+64);
+    glColor4ub(g1,g1,g1, 128+64); //128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -128,11 +131,12 @@ void AgentToolbeltUI::draw()
         glVertex2f(x-inc2, y-inc2);
     }
 
-    glColor4ub(80, 80, 80, 128);
+    glColor4ub(g2,g2,g2, 128);
 
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
+    
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
