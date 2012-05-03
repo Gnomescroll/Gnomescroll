@@ -10,7 +10,6 @@
 
 
 #ifdef DC_CLIENT
-#include <t_map/t_vbo.cpp>
 #include <t_map/t_vbo_draw.cpp>
 #include <t_map/t_vbo_update.cpp>
 
@@ -26,3 +25,5 @@
 #endif
 
 #include <t_map/config/config.hpp>
+
+#include <t_map/_interface.cpp>

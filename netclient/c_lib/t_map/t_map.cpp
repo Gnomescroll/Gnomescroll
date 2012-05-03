@@ -1,6 +1,7 @@
 #include "t_map.hpp"
 
-#include "t_vbo.hpp"
+#include <t_map/_interface.hpp>
+
 #include "t_properties.hpp"
 
 #include "t_map_class.hpp"
@@ -106,9 +107,14 @@ int apply_damage(int x, int y, int z, int dmg)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    int res = apply_damage(x,y,z, dmg);
+    int block_type;
+    int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
+/*
+    NOTE!!!
 
+    should only send to clients who are subscribed to map chunk
+*/
     block_action_StoC msg;
     msg.x = x;
     msg.y = y;
@@ -118,6 +124,8 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.broadcast();
 
 
+    //handle_block_drop(x,y,z, block_type);
+/*
     const float mom = 2.0f;
     float p = randf();
     if (p < 0.3)
@@ -128,7 +136,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         int type = randrange(0,7);
         Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     }
-
+*/
 }
 #endif
 

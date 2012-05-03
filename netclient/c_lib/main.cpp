@@ -11,7 +11,7 @@
 #include <animations/animations.hpp>
 #include <net_lib/host.hpp>
 #include <common/time/physics_timer.hpp>
-#include <t_map/t_vbo.hpp>
+#include <t_map/_interface.hpp>
 #include <options.hpp>
 #include <common/common.hpp>
 

@@ -1,5 +1,7 @@
 #include "t_vbo_draw.hpp"
 
+#include <t_map/t_vbo_class.hpp>
+
 #include <t_map/glsl/shader.hpp>
 #include <t_map/glsl/texture.hpp>
 

@@ -412,5 +412,4 @@ void Map_manager::unsub(int alias)
     //send unsubscribed
 }
 
-
 }

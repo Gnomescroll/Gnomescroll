@@ -10,7 +10,7 @@ struct cubeProperties
     bool solid;
     bool occludes;
     bool transparent;
-    bool drops_item;
+    bool item_drop; //does block drop items
     bool reserved6;
     bool reserved7;
     bool reserved8;

@@ -45,6 +45,8 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 	int item_id = Item::dat_get_item_id(item_name);
 	int block_id = _current_drop_block_id;
 
+	cube_list[block_id].item_drop = true;
+
 	if( meta_drop_table[block_id].num_drop == 0)
 	{
 		meta_drop_table[block_id].num_drop = 1;
@@ -86,14 +88,39 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 	printf("Droptable: normalized sum= %f \n", (float)sum);
 
 	double _mean_drop = 0.0;
-	for(int i=1; i<max_drops; i++)
+	for(int i=0; i<max_drops; i++)
 	{
 		_mean_drop += p[i];
 	}
 	printf("Droptable: mean_drop= %f \n", ((float) _mean_drop) );
 
-	for(int i=1; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
+	for(int i=0; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
 
+	for(int i=0; i<max_drops; i++)
+	{
+		double sum = 0.0;
+		for(int j=0; j <= i; j++) 
+		{
+			sum += p[j];
+		}
+		cide->drop_probabilities[i] = (float) sum;
+	}
+}
+
+
+void handle_block_drop(int x, int y, int z, int block_type)
+{
+/*
+    const float mom = 2.0f;
+    float p = randf();
+    if (p < 0.3)
+    {
+        x = (float)x + 0.5f + randf()*0.33;
+        y = (float)y + 0.5f + randf()*0.33;
+        z = (float)z + 0.05f;
+        int type = randrange(0,7);
+        Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+*/
 }
 
 }
