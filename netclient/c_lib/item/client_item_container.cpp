@@ -1,6 +1,8 @@
 #include "client_item_container.hpp"
 
-#if DC_CLIENT
+#if DC_SERVER
+dont_include_this_file_in_server
+#endif
 
 namespace Item
 {
@@ -8,4 +10,3 @@ namespace Item
 
 } // Item
 
-#endif

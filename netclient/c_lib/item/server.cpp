@@ -1,6 +1,8 @@
 #include "server.hpp"
 
-#if DC_SERVER
+#if DC_CLIENT
+dont_include_this_file_in_client
+#endif
 
 namespace Item
 {
@@ -107,6 +109,4 @@ int auto_add_item_to_container(int client_id, int container_id, ItemID item_id)
     return slot;
 }
 
-}
-
-#endif
+}   // Item
