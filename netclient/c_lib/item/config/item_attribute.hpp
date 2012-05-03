@@ -38,15 +38,20 @@ class ItemAttribute
     bool click_and_hold;    // does the item have click and hold behavior (e.g. mining laser)
 
     ItemAttribute()
-    : max_energy(1), max_durability(1), max_stack_size(1), click_and_hold(false)
+    // DONT PUT ANYTHING HERE OR BREAKS
     {
-        init(IG_ERROR);
+        load_defaults(IG_ERROR);
     }
 
-    void init(int group_type)
+    void load_defaults(int group_type)
     {
+        // PUT ALL DEFAULTS HERE
         item_group_type = group_type;
         //placer_block_type = NULL;
+        max_energy = NULL_ENERGY;
+        max_durability = NULL_DURABILITY;
+        max_stack_size = 1;
+        click_and_hold = false;
     }
 };
 

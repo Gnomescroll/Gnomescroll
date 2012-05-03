@@ -149,6 +149,8 @@ void tick_local_agent_selected_item_type(int item_type)
     Item::Item* item = Item::get_item(item_id);
     if (item == NULL) return;
     item->durability -= 1;
+    if (item->durability < 0) item->durability = 0;
+    Item::set_ui_slot_durability(toolbelt_id, selected_slot, item->durability);
 }
 
 // trigger for the local agent
@@ -221,7 +223,7 @@ void tick_agent_selected_item(int agent_id, ItemID item_id)
     assert(item != NULL);
 
     item->durability -= 1;
-
+    if (item->durability < 0) item->durability = 0;
     if (item->durability <= 0) Item::destroy_item(item_id);
 }
 
@@ -244,6 +246,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
     // (or when they run out and die). the client will predict state until then
     Item::ItemAttribute* attr = Item::get_item_attributes(item->type);
     assert(attr != NULL);
+
     if (!attr->click_and_hold)
     {
         Agent_state* a = ServerState::agent_list->get(agent_id);
@@ -252,7 +255,7 @@ void trigger_agent_selected_item(int agent_id, ItemID item_id)
         agent_fire_tick[agent_id] = 0;
         item->durability -= 1;
     }
-
+    if (item->durability < 0) item->durability = 0;
     if (item->durability <= 0) Item::destroy_item(item_id);
 }
 

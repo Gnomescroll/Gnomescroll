@@ -235,28 +235,30 @@ int run()
         
         Animations::draw_insect_mob();
 
-        Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
-        //Draw::sprite_list->draw();
+        //Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
+        
+        // GL_ASSERT wouldnt shut up so i put these here
+        // no idea what triggered it
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
         
         glEnable(GL_TEXTURE_2D);
 
-        //t_item::draw();
-        
         Particle::item_particle_list->draw();
-        //begin_item_draw();
-        //Components::billboard_sprite_component_list->call();
-        //end_item_draw();
+
+        // draw animations
+        Animations::draw_hitscan_effect();
+        Animations::draw_hitscan_laser_effect();
+        Animations::draw_mining_laser_effect();
+
+        poll_mouse();
 
         Particle::begin_particle_draw();
         Particle::grenade_list->draw();
         Particle::blood_list->draw();
         Particle::end_particle_draw();
 
-        poll_mouse();
-        // draw animations
-        Animations::draw_hitscan_effect();
-        Animations::draw_hitscan_laser_effect();
-        Animations::draw_mining_laser_effect();
+
         glDisable(GL_TEXTURE_2D);
         
         Particle::billboard_text_list->draw();

@@ -23,7 +23,8 @@ class ItemContainerUI
 
         int* slot_type;
         int* slot_stack;
-
+        int* slot_durability;
+        
         bool is_full()
         {
             assert(this->slot_count <= this->slot_max && this->slot_count >= 0);
@@ -55,6 +56,12 @@ class ItemContainerUI
             return NULL_SLOT;
         }
 
+        int get_slot_durability(int slot)
+        {
+            assert(this->is_valid_slot(slot));
+            return this->slot_durability[slot];
+        }
+
         int get_slot_stack(int slot)
         {
             assert(this->is_valid_slot(slot));
@@ -67,13 +74,14 @@ class ItemContainerUI
             return this->slot_type[slot];
         }
 
-        void insert_item(int slot, int item_type, int stack_size)
+        void insert_item(int slot, int item_type, int stack_size, int durability)
         {
             assert(item_type != NULL_ITEM_TYPE);
             assert(stack_size > 0);
             assert(this->is_valid_slot(slot));
             this->slot_type[slot] = item_type;
             this->slot_stack[slot] = stack_size;
+            this->slot_durability[slot] = durability;
             this->slot_count++;
         }
 
@@ -82,6 +90,7 @@ class ItemContainerUI
             assert(this->is_valid_slot(slot));
             this->slot_type[slot] = NULL_ITEM_TYPE;
             this->slot_stack[slot] = 1;
+            this->slot_durability[slot] = NULL_DURABILITY;
             this->slot_count--;
         }
 
@@ -95,11 +104,13 @@ class ItemContainerUI
                 {
                     this->slot_type[i] = NULL_ITEM_TYPE;
                     this->slot_stack[i] = 1;
+                    this->slot_durability[i] = NULL_DURABILITY;
                 }
                 else
                 {
                     this->slot_type[i] = get_item_type(slots[i]);
                     this->slot_stack[i] = get_stack_size(slots[i]);
+                    this->slot_durability[i] = get_item_durability(slots[i]);
                 }
             }
         }
@@ -113,20 +124,24 @@ class ItemContainerUI
             assert(this->slot_max < NULL_SLOT);
             this->slot_type = new int[this->slot_max];
             this->slot_stack = new int[this->slot_max];
+            this->slot_durability = new int[this->slot_max];
             for (int i=0; i<this->slot_max; this->slot_type[i++] = NULL_ITEM_TYPE);
             for (int i=0; i<this->slot_max; this->slot_stack[i++] = 1);
+            for (int i=0; i<this->slot_max; this->slot_durability[i++] = NULL_DURABILITY);
         }
 
         ~ItemContainerUI()
         {
            if (this->slot_type != NULL) delete[] this->slot_type;
            if (this->slot_stack != NULL) delete[] this->slot_stack;
+           if (this->slot_durability != NULL) delete[] this->slot_durability;
         }
 
         ItemContainerUI(int id)
         : id(id), type(CONTAINER_TYPE_NONE),
         xdim(0), ydim(0),
-        slot_max(0), slot_count(0), slot_type(NULL), slot_stack(NULL)
+        slot_max(0), slot_count(0),
+        slot_type(NULL), slot_stack(NULL), slot_durability(NULL)
         {}
 };
 

@@ -154,4 +154,12 @@ int get_max_energy(int item_type)
     return attr->max_energy;
 }
 
+int get_max_durability(int item_type)
+{
+    ItemAttribute* attr = get_item_attributes(item_type);
+    assert(attr != NULL);
+    return attr->max_durability;
+}
+
+
 }

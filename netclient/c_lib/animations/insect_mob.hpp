@@ -262,7 +262,7 @@ class Insect_mob_list: public Object_list<InsectMob, INSECT_MOB_MAX>
 
 void Insect_mob_list::prep()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
 
     if( needs_update == false) return;
     insect_mob_t += 0.04;
@@ -276,13 +276,13 @@ void Insect_mob_list::prep()
     }
     needs_update = false;
     insect_mob_vlist->buffer();
-#endif
+    #endif
 }
 
 
 void Insect_mob_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
 
     if(insect_mob_vlist->vertex_number == 0) return;
 
@@ -311,7 +311,7 @@ void Insect_mob_list::draw()
     glDisableVertexAttribArray(insect_mob_TexCoord);
     glUseProgramObjectARB(0);
 
-#endif
+    #endif
 }
 
 void Insect_mob_list::tick()

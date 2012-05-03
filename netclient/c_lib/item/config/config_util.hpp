@@ -33,7 +33,7 @@ void item_def(int type, int group, const char* name)
 
     _current_item_id = type;
 
-    s.init(group);
+    s.load_defaults(group);
     
     if(group_array[type] != IG_ERROR)
     {

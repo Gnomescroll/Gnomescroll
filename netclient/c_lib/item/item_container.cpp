@@ -87,6 +87,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
     int hand_item_type = player_hand_type_ui;
     int hand_item_stack = player_hand_stack_ui;
+    int hand_item_durability = player_hand_durability_ui;
     #endif
 
     #if DC_SERVER
@@ -104,6 +105,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             #if DC_CLIENT
             hand_item_type = NULL_ITEM_TYPE;
             hand_item_stack = 1;
+            hand_item_durability = NULL_DURABILITY;
             #endif
             #if DC_SERVER
             throw_item(agent_id, hand_item);
@@ -134,6 +136,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
         bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
         int slot_item_stack = container->get_slot_stack(slot);
         int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+        int slot_item_durability = container->get_slot_durability(slot);
         #endif
 
         #if DC_SERVER
@@ -170,6 +173,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                 container->remove_item(slot);
                 hand_item_type = slot_item_type;
                 hand_item_stack = slot_item_stack;
+                hand_item_durability = slot_item_durability;
                 #endif
                 #if DC_SERVER
                 container->remove_item(slot);
@@ -188,9 +192,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
             {   // HAND -> SLOT
                 // put hand item in slot
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, hand_item_stack);
+                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
                 hand_item_type = NULL_ITEM_TYPE;
                 hand_item_stack = 1;
+                hand_item_durability = NULL_DURABILITY;
                 #endif
                 #if DC_SERVER
                 container->insert_item(slot, hand_item);
@@ -211,9 +216,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                     {   // FULL STACK MERGE
                         // add stacks
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack);
+                        container->insert_item(slot, slot_item_type, slot_item_stack + hand_item_stack, slot_item_durability);
                         hand_item_type = NULL_ITEM_TYPE;
                         hand_item_stack = 1;
+                        hand_item_durability = NULL_DURABILITY;
                         #endif
                         #if DC_SERVER
                         merge_item_stack(hand_item, slot_item); // merge_item_stack(src, dest)
@@ -231,9 +237,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                         // the stack is full
                         {  // SWAP
                             #if DC_CLIENT
-                            container->insert_item(slot, hand_item_type, hand_item_stack);
+                            container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
                             hand_item_type = slot_item_type;
                             hand_item_stack = slot_item_stack;
+                            hand_item_durability = slot_item_durability;
                             #endif
                             #if DC_SERVER
                             container->insert_item(slot, hand_item);
@@ -247,7 +254,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                         // some of the hand stack will fit in the slot
                         {   // PARTIAL STACK MERGE
                             #if DC_CLIENT
-                            container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space);
+                            container->insert_item(slot, slot_item_type, slot_item_stack + slot_item_space, slot_item_durability);
                             //hand_item_type unchanged
                             hand_item_stack -= slot_item_space;
                             assert(hand_item_stack > 0);
@@ -267,9 +274,10 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
                 // types are different
                 {   // SWAP
                     #if DC_CLIENT
-                    container->insert_item(slot, hand_item_type, hand_item_stack);
+                    container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
                     hand_item_type = slot_item_type;
                     hand_item_stack = slot_item_stack;
+                    hand_item_durability = slot_item_durability;
                     #endif
                     #if DC_SERVER
                     container->insert_item(slot, hand_item);
@@ -286,6 +294,7 @@ ContainerActionType alpha_action_decision_tree(int agent_id, int client_id, int 
     #if DC_CLIENT
     player_hand_type_ui = hand_item_type;
     player_hand_stack_ui = hand_item_stack;
+    player_hand_durability_ui = hand_item_durability;
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;
@@ -317,10 +326,12 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     bool slot_empty = (slot_item_type == NULL_ITEM_TYPE);
     int slot_item_stack = container->get_slot_stack(slot);
     int slot_item_space = get_max_stack_size(slot_item_type) - slot_item_stack;
+    int slot_item_durability = container->get_slot_durability(slot);
 
     bool hand_empty = (player_hand_type_ui == NULL_ITEM_TYPE);
     int hand_item_type = player_hand_type_ui;
     int hand_item_stack = player_hand_stack_ui;
+    int hand_item_durability = player_hand_durability_ui;
     #endif
 
     #if DC_SERVER
@@ -364,7 +375,8 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                 #if DC_CLIENT
                 hand_item_type = slot_item_type;
                 hand_item_stack = slot_item_stack / 2;
-                container->insert_item(slot, slot_item_type, slot_item_stack - hand_item_stack);
+                hand_item_durability = slot_item_durability;
+                container->insert_item(slot, slot_item_type, slot_item_stack - hand_item_stack, slot_item_durability);
                 // slot item type unchanged
                 #endif
                 #if DC_SERVER
@@ -391,9 +403,10 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
             // only 1 in stack, do simple insert
             {
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, hand_item_stack);
+                container->insert_item(slot, hand_item_type, hand_item_stack, hand_item_durability);
                 hand_item_type = NULL_ITEM_TYPE;
                 hand_item_stack = 1;
+                hand_item_durability = NULL_DURABILITY;
                 #endif
                 #if DC_SERVER
                 container->insert_item(slot, hand_item);
@@ -407,7 +420,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
             // must split stack
             {
                 #if DC_CLIENT
-                container->insert_item(slot, hand_item_type, 1);
+                container->insert_item(slot, hand_item_type, 1, hand_item_durability);
                 // hand item type unchanged
                 hand_item_stack -= 1;
                 assert(hand_item_stack > 0);
@@ -436,9 +449,10 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                     // hand only had one
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + 1);
+                        container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
                         hand_item_type = NULL_ITEM_TYPE;
                         hand_item_stack = 1;
+                        hand_item_durability = NULL_DURABILITY;
                         #endif
                         #if DC_SERVER
                         merge_item_stack(hand_item, slot_item);
@@ -455,7 +469,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
                     // hand has >1 stack
                     {
                         #if DC_CLIENT
-                        container->insert_item(slot, slot_item_type, slot_item_stack + 1);
+                        container->insert_item(slot, slot_item_type, slot_item_stack + 1, slot_item_durability);
                         // hand item type unchanged
                         hand_item_stack -= 1;
                         assert(hand_item_stack > 0);
@@ -477,6 +491,7 @@ ContainerActionType beta_action_decision_tree(int agent_id, int client_id, int i
     #if DC_CLIENT
     player_hand_type_ui = hand_item_type;
     player_hand_stack_ui = hand_item_stack;
+    player_hand_durability_ui = hand_item_durability;
     #endif
     #if DC_SERVER
     agent_hand_list[client_id] = hand_item;

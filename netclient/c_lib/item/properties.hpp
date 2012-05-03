@@ -30,5 +30,6 @@ int dat_get_item_id(const char* name);
 
 int get_max_stack_size(int item_type);
 int get_max_energy(int item_type);
+int get_max_durability(int item_type);
 
 }

@@ -93,27 +93,6 @@ void AgentToolbeltUI::draw()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//#if 0
-    //glColor4ub(0, 0, 50, 64);
-
-    //{
-        //float x = container_hud_x_off;
-        //float y = container_hud_y_off;
-        //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
-        //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
-
-        //glBegin(GL_QUADS);
-
-        //glVertex2f(x, y+h, z);
-        //glVertex2f(x+w, y+h ,z);
-        //glVertex2f(x+w, y, z);
-        //glVertex2f(x, y, z);
-
-        //glEnd();
-
-    //}
-//#endif
-
     glBegin(GL_QUADS);
     glColor4ub(80, 80, 80, 128+64);
     for (int i=0; i<xdim; i++)
@@ -128,11 +107,40 @@ void AgentToolbeltUI::draw()
         glVertex2f(x-inc2, y-inc2);
     }
 
-    glColor4ub(80, 80, 80, 128);
+    int* slot_types = Item::get_container_ui_types(this->container_id);
+    int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
+    int* slot_durabilities = Item::get_container_ui_durabilities(this->container_id);
+    if (slot_types == NULL) return;
+    assert(slot_stacks != NULL);
+    assert(slot_durabilities != NULL);
 
+    //glColor4ub(80, 80, 80, 128);
+    // render durability
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
+        int slot = j*xdim + i;
+        float ratio = 1.0f;
+        int durability = slot_durabilities[slot];
+        if (durability != NULL_DURABILITY)
+        {
+            int max_durability = Item::get_max_durability(slot_types[slot]);
+            ratio = ((float)durability)/((float)max_durability);
+        }
+        if (durability == NULL_DURABILITY)
+            glColor4ub(80, 80, 80, 128);    // grey
+        else if (ratio >= 0.75)
+            glColor4ub(7, 247, 0, 128);    // green
+        else if (ratio >= 0.5)
+            glColor4ub(243, 247, 0, 128);  // yellow
+        else if (ratio >= 0.25)
+            glColor4ub(247, 159, 0, 128);  // orange
+        else if (ratio >= 0.05)
+            glColor4ub(247, 71, 0, 128);    // red-orange
+        else
+            glColor4ub(247, 14, 0, 128);   // red
+
+
         float x = xoff + border + i*(inc1+slot_size);
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
@@ -164,14 +172,6 @@ void AgentToolbeltUI::draw()
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
-
-    int* slot_types = Item::get_container_ui_types(this->container_id);
-    Item::ItemContainer* container = Item::get_container(this->container_id);
-    if (container == NULL) return;
-    ItemID* items = container->slot;
-    //int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
-    if (slot_types == NULL) return;
-    //assert(slot_stacks != NULL);
 
     glBegin(GL_QUADS);
 
@@ -262,12 +262,9 @@ void AgentToolbeltUI::draw()
     for (int j=0; j<this->ydim; j++)
     {
         const int slot = j * this->xdim + i;
-        //int count = slot_stacks[slot];
-        Item::Item* item = Item::get_item(items[i]);
-        if (item == NULL) continue;
-        int count = item->durability;
+        int count = slot_stacks[slot];
         if (count <= 1) continue;
-        assert(count < 1000); // the string is only large enough to hold "99"
+        assert(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
         float x = xoff + border + i*(inc1+slot_size);
         x += slot_size - font_size/2;

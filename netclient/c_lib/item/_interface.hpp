@@ -17,6 +17,7 @@ int get_item_type(ItemID id);
 int get_item_group(ItemID id);
 int get_stack_size(ItemID id);  // space used in a stack
 int get_stack_space(ItemID id); // space left in a stack
+int get_item_durability(ItemID id);
 
 void destroy_item(ItemID id);
 
@@ -31,7 +32,9 @@ CLIENT
 #if DC_CLIENT
 namespace Item
 {
-    
+
+void update_container_ui_from_state();
+
 void open_container();
 void close_container();
 
@@ -50,6 +53,7 @@ int get_sprite_index_for_type(int item_type);
 int* get_container_ui_types(int container_id);
 int* get_container_ui_stacks(int container_id);
 
+void set_ui_slot_durability(int container_id, int slot, int durability);
 }
 #endif 
 

@@ -106,7 +106,7 @@ class ItemParticle_list: public Object_list<ItemParticle, ITEM_PARTICLE_MAX>
 
 void ItemParticle_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     glColor3ub(255,255,255);
 
     GL_ASSERT(GL_TEXTURE_2D, true);
@@ -130,7 +130,7 @@ void ItemParticle_list::draw()
     glEnd();
 
     glDisable(GL_ALPHA_TEST);
-#endif
+    #endif
 }
 
 void ItemParticle_list::tick()

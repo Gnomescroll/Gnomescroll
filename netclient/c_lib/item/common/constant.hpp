@@ -4,6 +4,7 @@ const int NULL_SLOT = 0xff;           // invalid slot value
 const int NULL_ITEM_GROUP = 0xff;
 const int NULL_ITEM_TYPE = 0xff;
 const int NULL_DURABILITY = 0xffff;
+const int NULL_ENERGY = 0xffff;
 const int NULL_CONTAINER = 0xffff;
 const int NULL_PARTICLE = -1;
 const int ERROR_SPRITE = 48;

@@ -33,6 +33,10 @@ inline void item_state_StoC::handle()
     item->stack_size = stack_size;
     item->durability = durability;
     item->energy = energy;
+
+    // update UI
+    update_container_ui_from_state();
+    
     //item->print();
 }
 
@@ -99,7 +103,8 @@ inline void insert_item_in_container_StoC::handle()
     if (ui == NULL) return;
     int item_type = get_item_type((ItemID)item_id);
     int item_stack = get_stack_size((ItemID)item_id);
-    ui->insert_item(slot, item_type, item_stack);
+    int item_durability = get_item_durability((ItemID)item_id);
+    ui->insert_item(slot, item_type, item_stack, item_durability);
 }
 
 inline void remove_item_from_container_StoC::handle()
@@ -117,8 +122,10 @@ inline void insert_item_in_hand_StoC::handle()
     player_hand = (ItemID)item_id;
     int item_type = get_item_type((ItemID)item_id);
     int item_stack = get_stack_size((ItemID)item_id);
+    int item_durability = get_item_durability((ItemID)item_id);
     player_hand_type_ui = item_type;
     player_hand_stack_ui = item_stack;
+    player_hand_durability_ui = item_durability;
 }
 
 inline void remove_item_from_hand_StoC::handle()
@@ -126,6 +133,7 @@ inline void remove_item_from_hand_StoC::handle()
     player_hand = NULL_ITEM;
     player_hand_type_ui = NULL_ITEM_TYPE;
     player_hand_stack_ui = 1;
+    player_hand_durability_ui = NULL_DURABILITY;
 }
 
 // Action
@@ -140,11 +148,13 @@ inline void container_action_failed_StoC::handle()
     {
         player_hand_type_ui = NULL_ITEM_TYPE;
         player_hand_stack_ui = 1;
+        player_hand_durability_ui = 1;
     }
     else
     {
         player_hand_type_ui = get_item_type(player_hand);
         player_hand_stack_ui = get_stack_size(player_hand);
+        player_hand_durability_ui = get_item_durability(player_hand);
     }
 
     int container_id = get_event_container_id(event_id);

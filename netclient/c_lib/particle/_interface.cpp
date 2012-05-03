@@ -51,7 +51,7 @@ void init_particles()
     grenade_list = new Grenade_list;
     item_particle_list = new ItemParticle_list;
 
-#if DC_CLIENT
+    #if DC_CLIENT
     shrapnel_list = new Shrapnel_list;
     blood_list = new Blood_list;
 
@@ -61,11 +61,11 @@ void init_particles()
     billboard_text_hud_list = new BillboardTextHud_list;
 
     Particle::init_shrapnel();
-#endif
+    #endif
 
-#if DC_SERVER
+    #if DC_SERVER
     grenade_shrapnel_list = new Grenade_shrapnel_list;
-#endif
+    #endif
 
 
 }
@@ -75,7 +75,7 @@ void teardown_particles()
     delete grenade_list;
     delete item_particle_list;
 
-#if DC_CLIENT
+    #if DC_CLIENT
     delete shrapnel_list;
     delete blood_list;
     delete colored_minivox_list;
@@ -84,11 +84,11 @@ void teardown_particles()
     delete billboard_text_hud_list;
 
     Particle::teardown_shrapnel();
-#endif
+    #endif
 
-#if DC_SERVER
+    #if DC_SERVER
     delete grenade_shrapnel_list;
-#endif
+    #endif
 }
 
 
@@ -110,13 +110,13 @@ void draw_teardown()
 void begin_particle_draw()
 {
     assert(particle_texture != 0);
-    GL_ASSERT(GL_TEXTURE_2D, true);
 
     glColor4ub(255,255,255,255);
     glDepthMask(GL_FALSE);
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, particle_texture);
     glBegin(GL_QUADS);
 }

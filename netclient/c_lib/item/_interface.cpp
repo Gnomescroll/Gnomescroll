@@ -109,6 +109,13 @@ int get_stack_space(ItemID id)
     return stack_space;
 }
 
+int get_item_durability(ItemID id)
+{
+    Item* item = get_item(id);
+    if (item == NULL) return NULL_DURABILITY;
+    return item->durability;
+}
+
 void destroy_item(ItemID id)
 {
     Item* item = get_item(id);
@@ -168,6 +175,13 @@ void merge_item_stack(ItemID src, ItemID dest, int amount)
 #if DC_CLIENT
 namespace Item
 {
+
+void update_container_ui_from_state()
+{
+    if (player_container_ui != NULL) player_container_ui->load_data(player_container->slot);
+    if (player_toolbelt_ui  != NULL) player_toolbelt_ui->load_data(player_toolbelt->slot);
+    if (player_nanite_ui    != NULL) player_nanite_ui->load_data(player_nanite->slot);
+}
 
 void open_container()
 {
@@ -230,6 +244,23 @@ int* get_container_ui_stacks(int container_id)
     ItemContainerUI* container = get_container_ui(container_id);
     if (container == NULL) return NULL;
     return container->slot_stack;
+}
+
+int* get_container_ui_durabilities(int container_id)
+{
+    ItemContainerUI* container = get_container_ui(container_id);
+    if (container == NULL) return NULL;
+    return container->slot_durability;
+}
+
+void set_ui_slot_durability(int container_id, int slot, int durability)
+{
+    if (slot == NULL_SLOT) return;
+    ItemContainerUI* container = get_container_ui(container_id);
+    if (container == NULL) return;
+    int item_type = container->get_slot_type(slot);
+    int item_stack = container->get_slot_stack(slot);
+    container->insert_item(slot, item_type, item_stack, durability);
 }
 
 }

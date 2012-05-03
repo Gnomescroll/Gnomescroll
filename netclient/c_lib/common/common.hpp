@@ -41,3 +41,13 @@ void shuffle_int_array(int *array, size_t n)
         }
     }
 }
+
+int count_digits(int n)
+{
+    int digits = 0;
+    do {
+        digits++;
+        n /= 10;
+    } while (n > 0);
+    return digits;
+}

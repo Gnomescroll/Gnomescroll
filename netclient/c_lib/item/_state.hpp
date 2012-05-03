@@ -25,6 +25,7 @@ extern class ItemContainerUI* player_toolbelt_ui;
 extern class ItemContainerUI* player_nanite_ui;
 extern int player_hand_type_ui;
 extern int player_hand_stack_ui;
+extern int player_hand_durability_ui;
 #endif
 
 // Server

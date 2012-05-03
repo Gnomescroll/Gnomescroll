@@ -25,7 +25,7 @@ class ItemContainerUI* player_toolbelt_ui = NULL;
 class ItemContainerUI* player_nanite_ui = NULL;
 int player_hand_type_ui = NULL_ITEM_TYPE;
 int player_hand_stack_ui = 1;
-
+int player_hand_durability_ui = NULL_DURABILITY;
 #endif
 
 

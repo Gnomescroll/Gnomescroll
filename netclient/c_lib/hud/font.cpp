@@ -424,8 +424,8 @@ void start_font_draw()
 void end_font_draw()
 {
     if (bound_gl_font != NULL) glEnd();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_BLEND);
     bound_gl_font = NULL;
 }
 

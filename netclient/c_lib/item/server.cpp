@@ -10,7 +10,6 @@ static void pack_item_create(Item* item, item_create_StoC* msg)
     assert(item->id != NULL_ITEM);
     assert(item->type != NULL_ITEM_TYPE);
     assert(item->group != NULL_ITEM_GROUP);
-    assert(item->durability != NULL_DURABILITY);
     assert(item->stack_size > 0);
     msg->id = item->id;
     msg->type = item->type;

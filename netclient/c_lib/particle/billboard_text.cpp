@@ -207,7 +207,7 @@ void BillboardText_list::tick()
 
 void BillboardText_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if (num == 0) return;
     if (current_camera == NULL) return;
     if (HudFont::font == NULL) return;
@@ -222,7 +222,7 @@ void BillboardText_list::draw()
         a[i]->draw();
     }
     HudFont::end_font_draw();
-#endif
+    #endif
 }
 
 }
