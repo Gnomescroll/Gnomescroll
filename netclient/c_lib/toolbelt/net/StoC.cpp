@@ -8,8 +8,14 @@ namespace Toolbelt
 #if DC_CLIENT
 inline void toolbelt_set_active_item_StoC::handle() 
 {
-    if (agent_id == ClientState::playerAgent_state.agent_id) return;
+    //if (agent_id == ClientState::playerAgent_state.agent_id) return;
+    int old_type = agent_selected_type[agent_id];
     agent_selected_type[agent_id] = item_type;
+    if (old_type != item_type)
+    {   // the selected item was force-changed by the server
+        agent_fire_on[agent_id] = false;
+        agent_fire_tick[agent_id] = 0;
+    }
 }
 
 inline void toolbelt_item_begin_alpha_action_StoC::handle() 

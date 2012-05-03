@@ -214,9 +214,6 @@ void tick_agent_selected_item(ItemID item_id)
 // use for fire_rate trigger events
 void trigger_agent_selected_item(ItemID item_id)
 {
-    printf("tirgger %d\n", item_id);
-    //printf("trigger item %d\n", item_id);
-    
     // adjust item durability/energy
     // restrict events as needed
     //  -- this need to be integrated with the old hitscan_pick packet handlers
@@ -229,12 +226,8 @@ void trigger_agent_selected_item(ItemID item_id)
     //if (item->energy <= 0) return;
 
     item->durability -= 1;
-    item->energy -= 1;
-    if (item->durability <= 0)
-    {
-        Item::destroy_item(item_id);
-        printf("destroyed item from durability loss\n");
-    }
+    //item->energy -= 1;
+    if (item->durability <= 0) Item::destroy_item(item_id);
 }
 
 
@@ -254,6 +247,8 @@ void update_toolbelt_items()
         if (item_type != agent_selected_type[agent_id])
         {
             agent_selected_type[agent_id] = item_type;
+            agent_fire_on[agent_id] = false;
+            agent_fire_tick[agent_id] = 0;
             broadcast_agent_set_active_item_packet(agent_id, item_type);
         }
         

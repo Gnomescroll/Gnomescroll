@@ -15,11 +15,6 @@ void Item::init(int item_type)
     assert(attr != NULL);
     this->energy = attr->max_energy;
     this->durability = attr->max_durability;
-    //if (item_type == 8)
-    //{
-        printf("energy is %d\n", attr->max_energy);
-        printf("durability is %d\n", attr->max_durability);
-    //}
 }
 
 #if DC_SERVER
