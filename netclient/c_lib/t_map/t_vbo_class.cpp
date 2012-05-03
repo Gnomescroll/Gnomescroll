@@ -1,4 +1,4 @@
-#include "t_vbo.hpp"
+#include "t_vbo_class.hpp"
 
 namespace t_map
 {

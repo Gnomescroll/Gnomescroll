@@ -1,6 +1,7 @@
 #include "t_map.hpp"
 
-#include "t_vbo.hpp"
+#include <t_map/_interface.hpp>
+
 #include "t_properties.hpp"
 
 #include "t_map_class.hpp"
@@ -16,7 +17,7 @@
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
     #include <t_map/server/map_chunk_history.hpp>
-    #include <t_map/net/t_StoC.hpp>
+    //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
     #include <physics/vec3.hpp>
@@ -25,6 +26,7 @@
 
     #include <item/_interface.hpp>
 
+    #include <t_map/config/drop_table.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -106,9 +108,18 @@ int apply_damage(int x, int y, int z, int dmg)
 // apply block damage & broadcast the update to client
 void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAction action)
 {
-    int res = apply_damage(x,y,z, dmg);
+    int block_type;
+    int res = t_map::main_map->apply_damage(x,y,z, dmg, &block_type);
     if (res != 0) return;
+/*
+    NOTE!!!
 
+    should only send to clients who are subscribed to map chunk
+*/
+
+
+    map_history->send_block_action(x,y,z,res,action);
+/*
     block_action_StoC msg;
     msg.x = x;
     msg.y = y;
@@ -116,8 +127,12 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.val = res;
     msg.action = action;
     msg.broadcast();
+*/
 
+    if(cube_list[block_type].item_drop == true) 
+        handle_block_drop(x,y,z, block_type);
 
+/*
     const float mom = 2.0f;
     float p = randf();
     if (p < 0.3)
@@ -128,7 +143,7 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
         int type = randrange(0,7);
         Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
     }
-
+*/
 }
 #endif
 

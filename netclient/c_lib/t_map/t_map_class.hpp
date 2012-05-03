@@ -86,6 +86,8 @@ class Terrain_map
 
 
     int apply_damage(int x, int y, int z, int dmg);
+    int apply_damage(int x, int y, int z, int dmg, int* block_type);
+
 
 };
 

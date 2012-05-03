@@ -14,7 +14,7 @@ struct CubeItemDropMeta
 
 struct CubeItemDropTable
 {
-	int item_id;
+	int item_type;
 	int max_drops;	//number of entries
 	float* drop_probabilities;		//index into probability table
 };
@@ -42,8 +42,10 @@ void def_drop(const char* block_name)
 
 void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 {
-	int item_id = Item::dat_get_item_id(item_name);
+	int item_type = Item::dat_get_item_id(item_name);
 	int block_id = _current_drop_block_id;
+
+	cube_list[block_id].item_drop = true;
 
 	if( meta_drop_table[block_id].num_drop == 0)
 	{
@@ -59,7 +61,7 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 	cide = &item_drop_table[item_drop_table_index++];
 	item_drop_table_index++;
 
-	cide->item_id = item_id;
+	cide->item_type = item_type;
 	cide->max_drops = max_drops;
 	cide->drop_probabilities = &probability_table[probability_table_index];
 	probability_table_index += max_drops;
@@ -86,14 +88,66 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
 	printf("Droptable: normalized sum= %f \n", (float)sum);
 
 	double _mean_drop = 0.0;
-	for(int i=1; i<max_drops; i++)
+	for(int i=0; i<max_drops; i++)
 	{
 		_mean_drop += p[i];
 	}
 	printf("Droptable: mean_drop= %f \n", ((float) _mean_drop) );
 
-	for(int i=1; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
+	for(int i=0; i<max_drops; i++) cide->drop_probabilities[i] = (float) p[i];
 
+	for(int i=0; i<max_drops; i++)
+	{
+		double sum = 0.0;
+		for(int j=0; j <= i; j++) 
+		{
+			sum += p[j];
+		}
+		cide->drop_probabilities[i] = (float) sum;
+	}
 }
+
+#if DC_SERVER
+void handle_block_drop(int x, int y, int z, int block_type)
+{
+	for(int i=0; i < meta_drop_table[block_type].num_drop; i++)
+	{
+
+		CubeItemDropTable* cidt = &item_drop_table[i+meta_drop_table[block_type].index];
+
+		float p = randf();
+
+		for(int j=0; j < cidt->max_drops; j++)
+		{
+			//printf("drop roll %i: p=%f prob=%f \n", j, p, cidt->drop_probabilities[j]);
+			if(p >= cidt->drop_probabilities[j])
+			{
+			    const float mom = 2.0f;
+		        x = (float)x + 0.5f + randf()*0.33;
+		        y = (float)y + 0.5f + randf()*0.33;
+		        z = (float)z + 0.05f;
+				Item::create_item_particle(cidt->item_type, x, y, z, 
+					(randf()-0.5f)*mom, (randf()-0.5f)*mom, mom );
+
+		        break;
+			}
+
+		}
+
+	}
+}
+#endif
+
+/*
+    const float mom = 2.0f;
+    float p = randf();
+    if (p < 0.3)
+    {
+        x = (float)x + 0.5f + randf()*0.33;
+        y = (float)y + 0.5f + randf()*0.33;
+        z = (float)z + 0.05f;
+        int type = randrange(0,7);
+        Item::create_item_particle(type, x, y, z, (randf()-0.5f)*mom, (randf()-0.5f)*mom, mom);
+*/
 
 }

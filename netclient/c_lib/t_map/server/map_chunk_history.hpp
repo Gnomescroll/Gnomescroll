@@ -20,6 +20,7 @@
 //#include <t_map/t_map_class.hpp>
 //#include <t_map/net/t_StoC.hpp>
 #include <t_map/common/map_element.hpp>
+#include <t_map/net/t_StoC.hpp>
 
 namespace t_map
 {
@@ -78,6 +79,23 @@ class MAP_CHUNK_HISTORY
             //send element
         }
     }
+
+    void send_block_action(int x, int y, int z, int value, int action)
+    {
+
+        block_action_StoC msg;
+        msg.x = x;
+        msg.y = y;
+        msg.z = z;
+        msg.val = value;
+        msg.action = action;
+        //msg.broadcast();
+
+        for(int i=0; i < subscriber_num; i++)
+        {
+            msg.sendToClient(subscribers[i]);
+        }
+    }
 };
 
 class Terrain_map_history
@@ -96,6 +114,8 @@ class Terrain_map_history
     {
         xdim = (_xdim/16)*16; 
         ydim = (_ydim/16)*16;
+        assert(xdim == _xdim && ydim == _ydim);
+
         xchunk_dim = _xdim/16; 
         ychunk_dim = _ydim/16;
 
@@ -106,6 +126,18 @@ class Terrain_map_history
     {
         delete[] chunk;
     }
+
+    void send_block_action(int x, int y, int z, int value, int action)
+    {
+        assert(x >= 0 && x < xdim && y >= 0 && y < ydim);   //take this out eventually
+
+        int _x = x/16;
+        int _y = y/16;
+
+        chunk[xchunk_dim*_y + _x].send_block_action(x,y,z,value,action);
+    }
+
+
 
 };
 
