@@ -17,7 +17,7 @@
 #if DC_SERVER
     #include <t_map/server/manager.hpp>
     #include <t_map/server/map_chunk_history.hpp>
-    #include <t_map/net/t_StoC.hpp>
+    //#include <t_map/net/t_StoC.hpp>
 
     #include <common/random.h>
     #include <physics/vec3.hpp>
@@ -26,6 +26,7 @@
 
     #include <item/_interface.hpp>
 
+    #include <t_map/config/drop_table.hpp>
 #endif
 
 struct MapDimension map_dim = { 512,512,128 };
@@ -115,6 +116,10 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 
     should only send to clients who are subscribed to map chunk
 */
+
+
+    map_history->send_block_action(x,y,z,res,action);
+/*
     block_action_StoC msg;
     msg.x = x;
     msg.y = y;
@@ -122,9 +127,9 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
     msg.val = res;
     msg.action = action;
     msg.broadcast();
+*/
 
-
-    //handle_block_drop(x,y,z, block_type);
+    handle_block_drop(x,y,z, block_type);
 /*
     const float mom = 2.0f;
     float p = randf();

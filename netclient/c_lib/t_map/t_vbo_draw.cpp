@@ -81,10 +81,6 @@ void Vbo_map::prep_draw()
         //xy_circle_fulstrum_test(col->xpos, col->ypos, 8.0)
         {
             c_drawn++;
-            /*
-                Que up map VBOs to be drawn
-                !!! May want to sort VBOs in front to back order
-            */
 
             /*
                 Fulstrum culling
@@ -131,17 +127,6 @@ void Vbo_map::sort_draw()
 //float _normal_array[3*6];
 float _chunk_position[3] = {0};
 
-
-const float _normal_array[3*6] = 
-{ 
-    0.0,0.0,1.0,
-    0.0,0.0,-1.0,
-    1.0,0.0,0.0,
-    -1.0,0.0,0.0,
-    0.0,1.0,0.0,
-    0.0,-1.0,0.0,
-};
-
 void Vbo_map::draw_map() 
 {
     if(T_MAP_BACKUP_SHADER != 0)
@@ -176,7 +161,7 @@ void Vbo_map::draw_map()
 
     struct Map_vbo* vbo;
 
-    glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
+    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
     for(int i=0;i<draw_vbo_n;i++)
     {
@@ -241,7 +226,7 @@ void Vbo_map::draw_map_comptability()
 
     struct Map_vbo* vbo;
 
-    glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
+    //glUniform3fv(map_NormalArray , 6, (GLfloat*) _normal_array );
 
     for(int i=0;i<draw_vbo_n;i++)
     {

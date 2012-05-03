@@ -15,6 +15,8 @@
 #include <item/_interface.cpp>
 
 #include <item/config/config.hpp>
+#include <item/config/config_util.hpp>
+
 
 // Client
 #if DC_CLIENT

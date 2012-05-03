@@ -25,5 +25,7 @@
 #endif
 
 #include <t_map/config/config.hpp>
+#include <t_map/config/config_util.hpp>
+#include <t_map/config/drop_table.cpp>
 
 #include <t_map/_interface.cpp>
