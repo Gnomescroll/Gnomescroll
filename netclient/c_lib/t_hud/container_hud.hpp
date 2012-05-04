@@ -252,8 +252,8 @@ void AgentContainerUI::draw()
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_BLEND);
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_BLEND);
 }
 
 
