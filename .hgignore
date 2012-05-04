@@ -91,3 +91,5 @@ gnomescroll_client
 ./server
 
 gmon.out
+
+*.trace

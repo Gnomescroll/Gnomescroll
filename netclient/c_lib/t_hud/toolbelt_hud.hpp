@@ -109,6 +109,7 @@ void AgentToolbeltUI::draw()
         glVertex2f(x+w+inc2, y-inc2);
         glVertex2f(x-inc2, y-inc2);
     }
+    glEnd();
 
     int* slot_types = Item::get_container_ui_types(this->container_id);
     int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
@@ -119,6 +120,7 @@ void AgentToolbeltUI::draw()
 
     //glColor4ub(80, 80, 80, 128);
     // render durability
+    glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -152,8 +154,10 @@ void AgentToolbeltUI::draw()
         glVertex2f(x+w, y);
         glVertex2f(x, y);
     }
+    glEnd();
 
     // draw hover highlight
+    glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128 + 64);
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
     if (hover_slot != NULL_SLOT)
@@ -212,10 +216,10 @@ void AgentToolbeltUI::draw()
 
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
+
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-
-    glDisable(GL_TEXTURE_2D);
     
     // draw border highlight
     if (this->selected_slot != NULL_SLOT)
@@ -281,6 +285,9 @@ void AgentToolbeltUI::draw()
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_BLEND);
+
 }
 
 
