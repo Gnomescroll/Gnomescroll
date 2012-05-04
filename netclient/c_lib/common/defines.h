@@ -25,9 +25,6 @@ typedef unsigned int GLuint;
     #define NDEBUG 
 #endif
 
-#define TICK_DURATION 30.0f
-#define PLAYERS_MAX 64
-
 //Generic helper definitions for shared library support
 #if defined _WIN32 || defined __CYGWIN__
   #define GNOMESCROLL_DSO_IMPORT __declspec(dllimport)
@@ -65,5 +62,5 @@ typedef unsigned int GLuint;
 #define GS_ABORT printf("Call to abort() in %s:%d %s\n", __FILE__, __LINE__, __FUNCTION__); abort
 
 const int GAME_OBJECTS_MAX = 4096 * 4;
-//#define LUA_API GNOMESCROLL_API
-//#define LUA_API
+const float TICK_DURATION = 30.0f;
+const int PLAYERS_MAX = 64;
