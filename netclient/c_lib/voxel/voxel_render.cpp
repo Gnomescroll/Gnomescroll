@@ -138,21 +138,14 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 {
     if (vv == NULL) return;
-    int i;
-    for(i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    {
-        if(this->render_list[i] == vv)
-        {
-            num_elements--;
-            this->render_list[i] = NULL;
-            break;
-        }
-    }
+    if (vv->id < 0) return;
+    if (this->render_list[vv->id] == NULL) return;
+
+    this->num_elements--;
+    this->render_list[vv->id] = NULL;
 
     vv->id = -1;
     vv->voxel_render_list = NULL;
-    if (i == VOXEL_RENDER_LIST_SIZE)
-        printf("Voxel_render_list::unregister_voxel_volume error, volume was not on list \n");
 }
 
 void Voxel_render_list::update()
@@ -170,7 +163,7 @@ void Voxel_render_list::update_vertex_buffer_object()
     int volumes_updated = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL) continue;
+        if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
 
         vv = this->render_list[i];
         if( vv->needs_vbo_update == true )
@@ -187,11 +180,11 @@ void Voxel_render_list::update_vertex_buffer_object()
 
     _vbo->vnum = v_num;
 
-    if(volumes_updated == 0)
-    {
+    //if(volumes_updated == 0)
+    //{
     
-        return;         //no voxel volumes were updated
-    }
+        //return;         //no voxel volumes were updated
+    //}
 
     if(v_num == 0)
     {
@@ -214,7 +207,7 @@ void Voxel_render_list::update_vertex_buffer_object()
     int index = 0;
     for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL) continue;
+        if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
         vv = this->render_list[i];
 
         if (VOXEL_RENDER_DEBUG)
@@ -233,10 +226,10 @@ void Voxel_render_list::update_vertex_buffer_object()
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
 }
 
-void Voxel_render_list::draw()
-{
+//void Voxel_render_list::draw()
+//{
 
-}
+//}
 
 
 // Voxel_render_list_manager
@@ -326,6 +319,7 @@ void Voxel_render_list_manager::draw()
         Voxel_render_list* vrl = &this->lists[k];
         struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
 
+        vrl->update_vertex_buffer_object(); 
 
         if( _vbo->vnum == 0 ) 
         {
@@ -356,15 +350,15 @@ void Voxel_render_list_manager::draw()
             if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
             Voxel_volume* vv = vrl->render_list[i];
 
-            vrl->update_vertex_buffer_object(); 
-
-            if (vv->vvl.vnum == 0) continue;
             if (!sphere_fulstrum_test(
                 vv->world_matrix.v[3].x,
                 vv->world_matrix.v[3].y,
                 vv->world_matrix.v[3].z,
                 vv->radius
             )) continue;
+
+            //vrl->update_vertex_buffer_object(); 
+            if (vv->vvl.vnum == 0) continue;
         /*
             if (VOXEL_RENDER_DEBUG)
             { 
@@ -387,12 +381,12 @@ void Voxel_render_list_manager::draw()
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
             glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
 
-            if(_vbo->vnum < vv->vvl.vnum+vv->vvl.voff)
+            if(_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
                 printf("Voxel_render_list_manager::draw error!! would draw past VBO memory\n");
                 printf("vbo vnum= %i vv vnum= %i vv voff= %i \n", _vbo->vnum, vv->vvl.vnum, vv->vvl.voff);
                 printf("would read %i vertices past vbo \n", vv->vvl.vnum+vv->vvl.voff - _vbo->vnum);
-                abort();
+                GS_ABORT();
             }
             //printf("vnum= %i, vbo_id= %i voff=%i vnum_local %i \n", _vbo->vnum, _vbo->id, vv->vvl.voff,vv->vvl.vnum);
             glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );

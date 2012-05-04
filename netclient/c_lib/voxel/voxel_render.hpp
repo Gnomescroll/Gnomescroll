@@ -17,7 +17,6 @@ dont_include_this_file_on_server
 const int VOXEL_RENDER_LIST_SIZE = 1024;
 const int VOXEL_RENDER_LISTS = 16;
 
-
 struct VBOmeta
 {
     GLuint id;
@@ -51,7 +50,7 @@ class Voxel_render_list
         void unregister_voxel_volume(class Voxel_volume* vv);
 
         bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
-        void draw();
+        //void draw();
         void update();
 
     Voxel_render_list();

@@ -576,16 +576,9 @@ void Voxel_volume::update_vertex_list()
         return;
     }
     
-    if (index > VOXEL_VERTEX_SCRATCH_SIZE)
-    {
-        printf("WARNING: Voxel_volume::update_vertex_list -- vertex count %d exceeds allocated amount %d\n", index, 65536);
-        printf("Shrinking vertex count -- expect bugs\n");
-        index = VOXEL_VERTEX_SCRATCH_SIZE;
-    }
-    if (index < 0)
-    {
-        printf("WTF\n");
-    }
+    assert(index < VOXEL_VERTEX_SCRATCH_SIZE);
+    assert(index >= 0);
+
     vvl.vertex_list = new Voxel_vertex[index];
     memcpy(vvl.vertex_list, voxel_vertex_scratch_buffer, index*sizeof(Voxel_vertex));
     
