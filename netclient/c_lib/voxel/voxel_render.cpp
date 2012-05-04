@@ -148,10 +148,10 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
     vv->voxel_render_list = NULL;
 }
 
-void Voxel_render_list::update()
-{
-    this->update_vertex_buffer_object();
-}
+//void Voxel_render_list::update()
+//{
+    ////this->update_vertex_buffer_object();
+//}
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
@@ -391,9 +391,6 @@ void Voxel_render_list_manager::draw()
             //printf("vnum= %i, vbo_id= %i voff=%i vnum_local %i \n", _vbo->vnum, _vbo->id, vv->vvl.voff,vv->vvl.vnum);
             glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
         }
-
-
-
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);

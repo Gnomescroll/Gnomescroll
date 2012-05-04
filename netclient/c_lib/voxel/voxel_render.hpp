@@ -51,7 +51,7 @@ class Voxel_render_list
 
         bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
         //void draw();
-        void update();
+        //void update();
 
     Voxel_render_list();
     ~Voxel_render_list();
@@ -72,7 +72,8 @@ class Voxel_render_list_manager
         //}
         void update()
         {
-            for (int i=0; i<this->max; this->lists[i++].update());
+            // UPDATE IS BEING CALLED IN DRAW NOW
+            //for (int i=0; i<this->max; this->lists[i++].update());
         }
 
         void init(int max)
