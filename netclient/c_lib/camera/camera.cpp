@@ -214,7 +214,7 @@ void Camera::hud_projection() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
 
     //glDisable(GL_DEPTH_TEST);
     //glEnable(GL_TEXTURE_2D);
