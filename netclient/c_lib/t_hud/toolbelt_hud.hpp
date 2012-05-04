@@ -274,9 +274,9 @@ void AgentToolbeltUI::draw()
         assert(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
         float x = xoff + border + i*(inc1+slot_size);
-        x += slot_size - font_size/2;
+        x += slot_size - font_size;
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-        y += font_size/2;
+        y += font_size;
 
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);

@@ -286,9 +286,6 @@ static void draw_grabbed_icon()
     //glDisable(GL_TEXTURE_2D);
     //glDisable(GL_BLEND);
 
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
-
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
 }
