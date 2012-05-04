@@ -15,21 +15,14 @@ namespace ClientState {
     extern int frame_id;
 
     extern PlayerAgent_state playerAgent_state;
-    /* SINGLETONS
-     * Make sure to extern declare* in cython_imports
-     *          */
 
     extern class Agent_list* agent_list;
 
-    //  property lists
-    extern class  Voxel_render_list* voxel_render_list;
-    extern class  Voxel_hitscan_list* voxel_hitscan_list;
-    //extern class  SpawnerList* spawner_list;
-    //extern class  OwnedList* owned_list;
+    // property lists
+    extern class Voxel_render_list_manager* voxel_render_list;
+    extern class Voxel_hitscan_list* voxel_hitscan_list;
 
-    //extern class  GameObject_list* object_list;
-
-    extern class  CTF* ctf;
+    extern class CTF* ctf;
 
     extern char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     extern int last_ping_time;

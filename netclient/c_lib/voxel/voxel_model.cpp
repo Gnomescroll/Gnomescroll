@@ -1,24 +1,17 @@
 #include "voxel_model.hpp"
 
-#include <physics/affine.hpp>
-
-#include <voxel/voxel_hitscan.hpp>
 #include <common/defines.h>
 #include <common/random.h>
+#include <physics/affine.hpp>
+#include <voxel/voxel_hitscan.hpp>
 
-// forward declarations
 #if DC_CLIENT
 #include <voxel/voxel_render.hpp>
-namespace ClientState {
-    extern Voxel_render_list* voxel_render_list;
-    extern Voxel_hitscan_list* voxel_hitscan_list;
-    int get_team_color(int team, unsigned char *r, unsigned char *g, unsigned char *b);
-}
+#include <state/client_state.hpp>
 #endif
+
 #if DC_SERVER
-namespace ServerState {
-    extern Voxel_hitscan_list* voxel_hitscan_list;
-}
+#include <state/server_state.hpp>
 #endif
 
 //set offset and rotation

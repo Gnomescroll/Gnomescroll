@@ -29,17 +29,10 @@ namespace ClientState {
     int tick_id = 0;
     int frame_id = 0;
 
-    //using Animations::HitscanEffect_list;
-    //using Animations::HitscanLaserEffect_list;
+    Agent_list* agent_list = NULL;
 
-    class Agent_list* agent_list = NULL;
-
-    class Voxel_render_list* voxel_render_list;
-    class Voxel_hitscan_list* voxel_hitscan_list = NULL;
-    //class SpawnerList* spawner_list = NULL;
-    //class OwnedList* owned_list = NULL;
-
-    //class GameObject_list* object_list;
+    Voxel_render_list_manager* voxel_render_list;
+    Voxel_hitscan_list* voxel_hitscan_list = NULL;
 
     char desired_name[PLAYER_NAME_MAX_LENGTH+1];
     int last_ping_time;
@@ -53,12 +46,10 @@ namespace ClientState {
         
     void init_lists()
     {
-        voxel_render_list = new Voxel_render_list;
+        voxel_render_list = new Voxel_render_list_manager;
+        voxel_render_list->init();
         voxel_hitscan_list = new Voxel_hitscan_list;
-        //spawner_list = new SpawnerList;
-        //owned_list = new OwnedList;
-        
-        //object_list = new GameObject_list;
+
         agent_list = new Agent_list;
     }
 
@@ -66,16 +57,11 @@ namespace ClientState {
     {
         // voxel models
         delete agent_list;
-        //delete object_list;
 
         // voxel lists
         // must go after all voxels
         delete voxel_render_list;
         delete voxel_hitscan_list;
-
-        // behaviour lists
-        //delete spawner_list;
-        //delete owned_list;
     }
 
     static void init_ctf()
@@ -105,7 +91,7 @@ namespace ClientState {
             return;
         }
         init_lists();
-        voxel_render_list->init_voxel_render_list_shader1();
+        init_voxel_render_list_shader1();
     }
 
     void teardown()
@@ -117,7 +103,6 @@ namespace ClientState {
     void update()
     {
         ctf->update();
-        //object_list->update();
 
         if (playerAgent_state.you != NULL)
             HudMap::update_team(playerAgent_state.you->status.team);

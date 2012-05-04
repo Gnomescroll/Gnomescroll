@@ -13,12 +13,77 @@
 
 #include <input/handlers.hpp>
 
-const int VOXEL_RENDER_LIST_SIZE = 1024;
-
 #define VOXEL_RENDER_DEBUG 0
+
+// Shader
+
+static GLenum voxel_shader_vert = 0;
+static GLenum voxel_shader_frag = 0;
+static GLenum voxel_shader_prog = 0;
+
+int InRotationMatrix;
+int InTranslation;
+
+int InNormal;
+int InAO;
+int InTex;
+//int InSide;
+
+void init_voxel_render_list_shader1()
+{
+    static int init=0;
+    if (init++)
+    {
+        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init more than once\n");
+        return;
+    }
+    printf("init voxel shader\n");
+
+    int DEBUG = 0;
+
+    voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
+    voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    voxel_shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    char *vs, *fs;
+
+    vs = textFileRead((char*) "./media/shaders/voxel/voxel.vsh");
+    fs = textFileRead((char*) "./media/shaders/voxel/voxel.fsh");
+
+    glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
+    glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
+
+    glCompileShaderARB(voxel_shader_vert);
+    if(DEBUG) printShaderInfoLog(voxel_shader_vert);
+
+    glCompileShaderARB(voxel_shader_frag);
+    if(DEBUG) printShaderInfoLog(voxel_shader_frag);
+    
+    glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
+    glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
+
+    glLinkProgramARB(voxel_shader_prog);
+
+    if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
+
+    //uniforms
+    InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
+    InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
+    //attributes
+    InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
+    InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
+    InTex = glGetAttribLocation(voxel_shader_prog, "InTex");
+
+    free(vs);
+    free(fs);
+}
+
+// Voxel_render_list
+
 
 Voxel_render_list::Voxel_render_list()
 :
+id(-1),
 num_elements(0)
 {
     const int starting_size = 1024;
@@ -64,6 +129,7 @@ void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
             this->render_list[i] = vv;
             vv->id = i;
             vv->voxel_render_list = this;
+            vv->voxel_render_list_id = this->id;
             break;
         }
     }
@@ -165,67 +231,6 @@ void Voxel_render_list::update_vertex_buffer_object()
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
-}
-
-static GLenum voxel_shader_vert = 0;
-static GLenum voxel_shader_frag = 0;
-static GLenum voxel_shader_prog = 0;
-
-int InRotationMatrix;
-int InTranslation;
-
-int InNormal;
-int InAO;
-int InTex;
-//int InSide;
-
-void Voxel_render_list::init_voxel_render_list_shader1()
-{
-    static int init=0;
-    if (init++)
-    {
-        printf("Voxel_render_list::init_voxel_render_list_shader1, error, tried to init more than once\n");
-        return;
-    }
-    printf("init voxel shader\n");
-
-    int DEBUG = 0;
-
-    voxel_shader_prog = glCreateProgramObjectARB(); //glCreateProgram();
-    voxel_shader_vert = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    voxel_shader_frag = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    char *vs, *fs;
-
-    vs = textFileRead((char*) "./media/shaders/voxel/voxel.vsh");
-    fs = textFileRead((char*) "./media/shaders/voxel/voxel.fsh");
-
-    glShaderSourceARB(voxel_shader_vert, 1, (const GLcharARB**)&vs, NULL);
-    glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
-
-    glCompileShaderARB(voxel_shader_vert);
-    if(DEBUG) printShaderInfoLog(voxel_shader_vert);
-
-    glCompileShaderARB(voxel_shader_frag);
-    if(DEBUG) printShaderInfoLog(voxel_shader_frag);
-    
-    glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
-    glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
-
-    glLinkProgramARB(voxel_shader_prog);
-
-    if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
-
-    //uniforms
-    InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
-    InTranslation = glGetUniformLocationARB(voxel_shader_prog, "InTranslation");
-    //attributes
-    InNormal = glGetAttribLocation(voxel_shader_prog, "InNormal");
-    InAO = glGetAttribLocation(voxel_shader_prog, "InAO");
-    InTex = glGetAttribLocation(voxel_shader_prog, "InTex");
-
-    free(vs);
-    free(fs);
 }
 
 void Voxel_render_list::draw()
@@ -358,4 +363,38 @@ void Voxel_render_list::draw()
 */
     this->update_vertex_buffer_object(); 
 }
+
+
+// Voxel_render_list_manager
+
+void Voxel_render_list_manager::register_voxel_volume(class Voxel_volume* vv)
+{
+    assert(this->max > 0);
+    assert(this->lists != NULL);
+    // choose a list to register with
+    int smallest = 0;
+    int smallest_count = 99999999;
+    for (int i=0; i<this->max; i++)
+    {
+        if (this->lists[i].num_elements < smallest_count)
+        {
+            smallest = i;
+            smallest_count = this->lists[i].num_elements;
+        }
+    }
+    this->lists[smallest].register_voxel_volume(vv);
+}
+
+void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
+{
+    assert(this->max > 0);
+    assert(this->lists != NULL);
+    // unregister from correct list
+
+    int id = vv->voxel_render_list_id;
+    if (id < 0 || id >= this->max) return;
+    this->lists[id].unregister_voxel_volume(vv);
+}
+
+
 

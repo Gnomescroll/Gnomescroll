@@ -4,7 +4,9 @@
 #include <physics/affine.hpp>
 #include <voxel/voxel_hitscan.hpp>
 
-class Voxel_render_list; //forward declarations
+#if DC_CLIENT
+#include <voxel/voxel_render.hpp>
+#endif
 
 class Voxel_volume
 {
@@ -15,9 +17,9 @@ class Voxel_volume
 
     struct Affine* parent_world_matrix;
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     Voxel_vertex_list vvl;
-#endif
+    #endif
 
     int id;
     bool draw;
@@ -56,11 +58,11 @@ class Voxel_volume
     }
     inline struct Vec3 get_center(){ return world_matrix.v[3]; }
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     class Voxel_render_list* voxel_render_list;
-    void register_with_renderer(Voxel_render_list* vrl);
+    int voxel_render_list_id;
     void update_vertex_list();
-#endif
+    #endif
 
     void set_color(int x, int y, int z, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     void set_color(int x, int y, int z, unsigned char rgba[4]);
@@ -85,9 +87,9 @@ class Voxel_volume
     ~Voxel_volume();
 
     private:
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     inline void push_voxel_quad(Voxel_vertex* scratch, int* index, int x, int y, int z, int side, float* vset, float ox,float oy,float oz) __attribute((always_inline));
-#endif
+    #endif
 
     inline Voxel* get(unsigned int x, unsigned int y, unsigned int z) __attribute((always_inline));
 

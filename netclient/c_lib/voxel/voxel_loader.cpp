@@ -136,7 +136,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
     sscanf (buffer+index, "%d %d %d %n", &team_r, &team_g, &team_b, &read);
     index += read;
 
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     vox_dat->set_team(part_num, (bool)team, (unsigned char)team_r, (unsigned char)team_g, (unsigned char)team_b);
     #endif
 
@@ -162,7 +162,7 @@ void read_voxel_volume(char* file_name, int part_num, VoxDat* vox_dat)
         }
         index += read;
 
-        //#ifdef DC_CLIENT
+        //#if DC_CLIENT
         vox_dat->set_color(part_num, x,y,z, (unsigned char)r,(unsigned char)g,(unsigned char)b, 255);
         //#endif
         vox_num++;

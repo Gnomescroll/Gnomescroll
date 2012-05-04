@@ -4,14 +4,8 @@
 #include <state/server_state.hpp>
 #include <voxel/constants.hpp>
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 #include <voxel/voxel_render.hpp>
-
-void Voxel_volume::register_with_renderer(Voxel_render_list* vrl)
-{
-    vrl->register_voxel_volume(this);
-    voxel_render_list = vrl;
-}
 #endif
 
 const int VOXEL_VERTEX_SCRATCH_SIZE = 65536;
@@ -255,9 +249,9 @@ void Voxel_volume::init(int xdim, int ydim, int zdim, float scale)
 
     this->set_parameters(xdim, ydim, zdim, scale);
 
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     voxel_render_list = NULL;
-#endif
+    #endif
     voxel_hitscan_list = NULL;
 
     //printf("!!! %i %i %i \n", xdim,ydim,zdim );
@@ -292,6 +286,11 @@ radius(0),
 voxel(NULL),
 needs_vbo_update(false),
 damaged(false)
+#if DC_CLIENT
+,
+voxel_render_list(NULL),
+voxel_render_list_id(-1)
+#endif
 {}
 
 Voxel_volume::Voxel_volume(int xdim, int ydim, int zdim, float scale)
@@ -303,13 +302,18 @@ radius(0),
 voxel(NULL),
 needs_vbo_update(false),
 damaged(false)
+#if DC_CLIENT
+,
+voxel_render_list(NULL),
+voxel_render_list_id(-1)
+#endif
 {
     this->init(xdim, ydim, zdim, scale);
 }
 
 Voxel_volume::~Voxel_volume()
 {
-    #ifdef DC_CLIENT
+    #if DC_CLIENT
     if (voxel_render_list != NULL) printf("ERROR! voxel volume deconstructor, voxel_render_list not unregistered\n");
     #endif
     if (this->hitscan)
@@ -334,7 +338,7 @@ inline void Voxel_volume::set(int x, int y, int z, unsigned char r, unsigned cha
     damaged = true;
 }
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 
 #include <stdio.h>
 
@@ -611,7 +615,7 @@ void Voxel_volume::set_hitscan_properties(short entity_id, short entity_type, sh
 
 void Voxel_volume::draw_bounding_box()
 {
-#ifdef DC_CLIENT
+    #if DC_CLIENT
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0f);
 
@@ -664,8 +668,7 @@ void Voxel_volume::draw_bounding_box()
     glColor3ub(255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
-
-#endif
+    #endif
 }
 
 inline Voxel* Voxel_volume::get(unsigned int x, unsigned int y, unsigned int z) 

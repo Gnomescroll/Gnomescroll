@@ -15,7 +15,7 @@
 #include <options/options.hpp>
 #include <common/common.hpp>
 #include <item/particle/_interface.hpp>
-
+#include <voxel/voxel_render.hpp>
 #include <entity/objects.hpp>
 #include <common/profiling/frame_graph.hpp>
 

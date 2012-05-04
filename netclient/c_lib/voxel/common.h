@@ -65,7 +65,7 @@ struct Voxel_vertex
     };
 };
 
-#ifdef DC_CLIENT
+#if DC_CLIENT
 class Voxel_vertex_list
 {
     public:

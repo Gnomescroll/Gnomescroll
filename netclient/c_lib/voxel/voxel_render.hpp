@@ -1,9 +1,11 @@
 #pragma once
 
+#if DC_SERVER
+dont_include_this_file_on_server
+#endif
+
 #include <common/compat_gl.h>
-
 #include <voxel/voxel_volume.hpp>
-
 #include <SDL/shader_loader.hpp>
 
 //#include <physics/vector4.hpp>
@@ -12,10 +14,14 @@
     Double buffered drawing object template
 */
 
+const int VOXEL_RENDER_LIST_SIZE = 1024;
+const int VOXEL_RENDER_LISTS = 16;
+
+
 struct VBOmeta
 {
     GLuint id;
-    Voxel_vertex* vertex_list;
+    class Voxel_vertex* vertex_list;
     int vnum;
     int max_size; //in voxel vertex elements
     //use to prevent constant mallocing
@@ -29,31 +35,68 @@ class Voxel_volume_token
     int voff;   //offset of vertices
 };
 
-/*
-    Note: again, here need a list template for adding/removing/iterating
-    list, add, remove, swap, iterate
-*/
+void init_voxel_render_list_shader1();
 
 class Voxel_render_list
 {
     private:
-    Voxel_volume** render_list;
-    struct VBOmeta vbo_wrapper[2];
+        class Voxel_volume** render_list;
+        struct VBOmeta vbo_wrapper[2];
 
-    void update_vertex_buffer_object(); //gets called after draw
+        void update_vertex_buffer_object(); //gets called after draw
 
     public:
-    
-    int num_elements;
+        int id;
+        int num_elements;
 
-    void register_voxel_volume(Voxel_volume* vv);
-    void unregister_voxel_volume(Voxel_volume* vv);
+        void register_voxel_volume(class Voxel_volume* vv);
+        void unregister_voxel_volume(class Voxel_volume* vv);
 
-    void draw();
-    void update();
-
-    static void init_voxel_render_list_shader1();
+        bool full() { return this->num_elements >= VOXEL_RENDER_LIST_SIZE; }
+        void draw();
+        void update();
 
     Voxel_render_list();
     ~Voxel_render_list();
+};
+
+class Voxel_render_list_manager
+{
+    public:
+        Voxel_render_list* lists;
+        int max;
+
+        void register_voxel_volume(class Voxel_volume* vv);
+        void unregister_voxel_volume(class Voxel_volume* vv);
+
+        void draw()
+        {
+            for (int i=0; i<this->max; this->lists[i++].draw());
+        }
+        void update()
+        {
+            for (int i=0; i<this->max; this->lists[i++].update());
+        }
+
+        void init(int max)
+        {
+            assert(lists == NULL);
+            this->max = max;
+            this->lists = new Voxel_render_list[this->max];
+            for (int i=0; i<this->max; i++) this->lists[i].id = i;
+        }
+
+        void init()
+        {
+            this->init(VOXEL_RENDER_LISTS);
+        }
+
+    Voxel_render_list_manager()
+    : lists(NULL), max(0)
+    {}
+
+    ~Voxel_render_list_manager()
+    {
+        if (this->lists != NULL) delete[] this->lists;
+    }
 };
