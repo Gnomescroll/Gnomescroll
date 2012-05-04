@@ -89,28 +89,8 @@ void AgentContainerUI::draw()
 
     glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//#if 0
-    //glColor4ub(0, 0, 50, 64);
-
-    //{
-        //float x = container_hud_x_off;
-        //float y = container_hud_y_off;
-        //float w = 2*border + xdim*slot_size+ (xdim-1)*inc1;
-        //float h = 2*border + ydim*slot_size+ (ydim-1)*inc1;
-
-        //glBegin(GL_QUADS);
-
-        //glVertex2f(x, y+h, z);
-        //glVertex2f(x+w, y+h ,z);
-        //glVertex2f(x+w, y, z);
-        //glVertex2f(x, y, z);
-
-        //glEnd();
-
-    //}
-//#endif
 
     int g1 = 80-16; //color 1
     //int g2 = 80-8;  //color 2
@@ -128,7 +108,8 @@ void AgentContainerUI::draw()
         glVertex2f(x+w+inc2, y-inc2);
         glVertex2f(x-inc2, y-inc2);
     }
-
+    glEnd();
+    
     int* slot_types = Item::get_container_ui_types(this->container_id);
     int* slot_stacks = Item::get_container_ui_stacks(this->container_id);
     int* slot_durabilities = Item::get_container_ui_durabilities(this->container_id);
@@ -138,6 +119,7 @@ void AgentContainerUI::draw()
 
     //glColor4ub(80, 80, 80, 128);
     // render durability
+    glBegin(GL_QUADS);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -171,8 +153,10 @@ void AgentContainerUI::draw()
         glVertex2f(x+w, y);
         glVertex2f(x, y);
     }
-
+    glEnd();
+    
     // draw hover highlight
+    glBegin(GL_QUADS);
     glColor4ub(160, 160, 160, 128 + 64);
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
     if (hover_slot != NULL_SLOT)
@@ -189,7 +173,6 @@ void AgentContainerUI::draw()
         glVertex2f(x+w, y);
         glVertex2f(x, y);
     }
-
     glEnd();
 
     glColor4ub(255, 255, 255, 255);
@@ -232,10 +215,10 @@ void AgentContainerUI::draw()
 
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
+
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
-
-    glDisable(GL_TEXTURE_2D);
     
     glColor4ub(255, 255, 255, 255);
 
@@ -269,6 +252,8 @@ void AgentContainerUI::draw()
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
+    //glDisable(GL_TEXTURE_2D);
+    //glDisable(GL_BLEND);
 }
 
 
