@@ -143,14 +143,14 @@ int lua_load_block_dat()
     {
         /* If something went wrong, error message is at the top of the stack */
         fprintf(stderr, "lua_load_map_tiles: Couldn't load file: %s\n", lua_tostring(L, -1));
-        abort();
+        GS_ABORT();
     }
 
     result = lua_pcall(L, 0, LUA_MULTRET, 0);
     if (result) 
     {
         fprintf(stderr, "lua_load_map_tiles: Failed to run script: %s\n", lua_tostring(L, -1));
-        abort();
+        GS_ABORT();
     }
 
     lua_close(L);   /* Cya, Lua */
@@ -212,7 +212,7 @@ void load_options()
         if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
-            abort();
+            GS_ABORT();
         }
 
         lua_newtable(L);    //create options table
@@ -229,7 +229,7 @@ void load_options()
         if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
         {
             fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-            abort();
+            GS_ABORT();
         }
     }
     else
@@ -241,13 +241,13 @@ void load_options()
         if (luaL_loadfile(L, options_path)) 
         {
             fprintf(stderr, "register_int_option: Couldn't load file: %s\n", lua_tostring(L, -1));
-            abort();
+            GS_ABORT();
         }
 
         if (lua_pcall(L, 0, LUA_MULTRET, 0)) 
         {
             fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
-            abort();
+            GS_ABORT();
         }
     }
 
@@ -283,7 +283,7 @@ void register_int_option(const char* name, int* var)
     if(LUA_int_option_index >= 256)
     {
         printf("LUA OPTION ERROR\n");
-        abort();
+        GS_ABORT();
     }
 }
 
@@ -313,7 +313,7 @@ void register_uint_option(const char* name, unsigned int* var)
     if(LUA_uint_option_index >= 256)
     {
         printf("LUA OPTION ERROR\n");
-        abort();
+        GS_ABORT();
     }
 }
 
@@ -343,7 +343,7 @@ void register_bool_option(const char* name, bool* var)
     if(LUA_bool_option_index >= 256)
     {
         printf("LUA BOOL OPTION ERROR\n");
-        abort();
+        GS_ABORT();
     }
 }
 
@@ -373,7 +373,7 @@ void register_float_option(const char* name, float* var)
     if(LUA_float_option_index >= 256)
     {
         printf("LUA FLOAT OPTION ERROR\n");
-        abort();
+        GS_ABORT();
     }
 }
 
@@ -403,7 +403,7 @@ void register_string_option(const char* name, char** var)
     if(LUA_string_option_index >= 256)
     {
         printf("LUA STRING OPTION ERROR\n");
-        abort();
+        GS_ABORT();
     }
 }
 
@@ -424,7 +424,7 @@ extern "C"
         if(LUA::LUA_int_option_table[option_id] == NULL)
         {
             printf("LUA_set_int_option: error \n");
-            abort();
+            GS_ABORT();
         }
         *LUA::LUA_int_option_table[option_id] = value;
     }
@@ -435,7 +435,7 @@ extern "C"
         if(LUA::LUA_uint_option_table[option_id] == NULL)
         {
             printf("LUA_set_uint_option: error \n");
-            abort();
+            GS_ABORT();
         }
         *LUA::LUA_uint_option_table[option_id] = value;
     }
@@ -445,7 +445,7 @@ extern "C"
         if(LUA::LUA_bool_option_table[option_id] == NULL)
         {
             printf("LUA_set_int_option: error \n");
-            abort();
+            GS_ABORT();
         }
         if(value == 0)
         {
@@ -463,7 +463,7 @@ extern "C"
         if(LUA::LUA_float_option_table[option_id] == NULL)
         {
             printf("LUA_set_int_option: error \n");
-            abort();
+            GS_ABORT();
         }
         *LUA::LUA_float_option_table[option_id] = value;
     }
@@ -473,7 +473,7 @@ extern "C"
         if(LUA::LUA_string_option_table[option_id] == NULL)
         {
             printf("LUA_set_int_option: error \n");
-            abort();
+            GS_ABORT();
         }
         *LUA::LUA_string_option_table[option_id] = value;
     }

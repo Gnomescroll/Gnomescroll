@@ -65,7 +65,7 @@ void init_insect_mob_texture()
     if(s == NULL)
     {
         printf("init_insect_mob: texture load error\n");
-        abort();
+        GS_ABORT();
     }
  
     glEnable(GL_TEXTURE_2D);

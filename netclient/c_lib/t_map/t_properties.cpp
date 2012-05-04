@@ -111,7 +111,7 @@ int dat_get_cube_id(const char* name)
     if(id == -1)
     {
         printf("Dat Loading Failure:cube_id, dat failure, cube %s does not exist! \n", name);
-        abort();
+        GS_ABORT();
     }   
     return id; 
 }

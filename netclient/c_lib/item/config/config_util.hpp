@@ -38,7 +38,7 @@ void item_def(int type, int group, const char* name)
     if(group_array[type] != IG_ERROR)
     {
         printf("ITEM CONFIG ERROR: item type conflict, type= %i \n", type);
-        abort();
+        GS_ABORT();
     }
     group_array[type] = group; //check
     

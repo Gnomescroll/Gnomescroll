@@ -61,6 +61,9 @@ typedef unsigned int GLuint;
   #define GNOMESCROLL_LOCAL
 #endif
 
+//syntax: GS_ABORT();
+#define GS_ABORT printf("Call to abort() in %s:%d %s\n", __FILE__, __LINE__, __FUNCTION__); abort
+
 const int GAME_OBJECTS_MAX = 4096 * 4;
 //#define LUA_API GNOMESCROLL_API
 //#define LUA_API
