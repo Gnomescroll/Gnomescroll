@@ -121,7 +121,7 @@ void handle_block_drop(int x, int y, int z, int block_type)
         for(int j=0; j < cidt->max_drops; j++)
         {
             //printf("drop roll %i: p=%f prob=%f \n", j, p, cidt->drop_probabilities[j]);
-            if(p >= cidt->drop_probabilities[j])
+            if(p <= cidt->drop_probabilities[j])
             {
                 if(j==0) return;
 
