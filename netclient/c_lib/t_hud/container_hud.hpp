@@ -165,7 +165,6 @@ void AgentContainerUI::draw()
         int j = hover_slot / this->xdim;
         
         float x = xoff + border + i*(inc1+slot_size);
-        //(j+1)*(inc1+slot_size)
         float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
 
         glVertex2f(x,y+w);
@@ -181,6 +180,7 @@ void AgentContainerUI::draw()
 
     glBegin(GL_QUADS);
 
+    // draw icons
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
