@@ -288,6 +288,8 @@ void AgentToolbeltUI::draw()
     //glDisable(GL_TEXTURE_2D);
     //glDisable(GL_BLEND);
 
+    glEnable(GL_DEPTH_TEST); // move render somewhere
+    glDisable(GL_BLEND);
 }
 
 

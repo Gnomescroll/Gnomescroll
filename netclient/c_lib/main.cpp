@@ -237,6 +237,7 @@ int run()
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         // draw animations
+        glEnable(GL_DEPTH_TEST);
         Animations::draw_hitscan_effect();
         Animations::draw_hitscan_laser_effect();
         Animations::draw_mining_laser_effect();
