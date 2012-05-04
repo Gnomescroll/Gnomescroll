@@ -348,6 +348,12 @@ class linux64_production_ctx(ConfigurationContext):
     cmd = 'linux64'
     fun = 'linux64'
     
+class efence_ctx(ConfigurationContext):
+    cmd = 'efence'
+    fun = 'efence'
+
+def efence(ctx):
+    configure(ctx, add_flags=['-lefence'])
 
 def linux(ctx):
     production(ctx, add=['-shared-libgcc'])
