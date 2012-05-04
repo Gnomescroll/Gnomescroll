@@ -672,7 +672,7 @@ int Agent_state::crouched()
 float Agent_state::camera_height()
 {
     if (this->status.dead)
-        return CAMERA_HEIGHT_DEAD
+        return CAMERA_HEIGHT_DEAD;
     else if (this->crouched())
         return CAMERA_HEIGHT_CROUCHED;
     return CAMERA_HEIGHT;

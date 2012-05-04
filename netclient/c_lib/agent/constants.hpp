@@ -33,20 +33,20 @@ typedef enum
 
 /* Main */
 const int AGENT_MAX = PLAYERS_MAX;
-#define AGENT_HEIGHT 2.8f
-#define CAMERA_HEIGHT 2.5f
-#define AGENT_HEIGHT_CROUCHED 1.8f
-#define CAMERA_HEIGHT_CROUCHED 1.5f;
-#define CAMERA_HEIGHT_DEAD 0.3f;
-#define AGENT_SPEED 1.9f    // testing this, 2.8 seems too fast
-//#define AGENT_SPEED 2.8f  // was default
-//#define AGENT_SPEED 28.0f // uncomment for testing high speed
-#define AGENT_SPEED_CROUCHED 0.8f
-#define AGENT_BOX_RADIUS 0.38f
+const float AGENT_HEIGHT = 2.8f;
+const float CAMERA_HEIGHT = 2.5f;
+const float AGENT_HEIGHT_CROUCHED = 1.8f;
+const float CAMERA_HEIGHT_CROUCHED = 1.5f;
+const float CAMERA_HEIGHT_DEAD = 0.3f;
+const float AGENT_SPEED = 1.9f;  // testing this, 2.8 seems too fast
+//const float AGENT_SPEED = 2.8f; // was default
+//const float AGENT_SPEED = 28.0f; // uncomment for testing high speed
+const float AGENT_SPEED_CROUCHED = 0.8f;
+const float AGENT_BOX_RADIUS = 0.38f;
 const int NO_AGENT = 255; // works as long as < AGENT_MAX 
 
 /* Status */
-#define AGENT_HEALTH 100
+const int AGENT_HEALTH = 100;
 const int RESPAWN_TICKS = 30 * 4; // 4 seconds
 const int AGENT_BASE_PROXIMITY_EFFECT_RATE = 30 * 3; // 2 seconds
 const unsigned int PLAYER_NAME_MAX_LENGTH = 24;
@@ -61,8 +61,8 @@ const int AGENT_MAX_SPAWNERS = 3;
 
 /* Player */
 #if DC_CLIENT
-#define AGENT_STATE_HISTORY_SIZE 64
-#define AGENT_INTERPOLATION_DECAY 0.8f
+const int AGENT_STATE_HISTORY_SIZE = 64;
+const float AGENT_INTERPOLATION_DECAY  = 0.8f;
 const int JETPACK_TICKS_MAX = 30 * 10 * 2;
 const int JETPACK_DECAY_TICKS = 30 * 10;
 #endif
