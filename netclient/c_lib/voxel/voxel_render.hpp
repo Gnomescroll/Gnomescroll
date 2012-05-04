@@ -40,12 +40,12 @@ void init_voxel_render_list_shader1();
 class Voxel_render_list
 {
     private:
-        class Voxel_volume** render_list;
-        struct VBOmeta vbo_wrapper[2];
-
         void update_vertex_buffer_object(); //gets called after draw
 
     public:
+        class Voxel_volume** render_list;
+        struct VBOmeta vbo_wrapper[2];
+        
         int id;
         int num_elements;
 
@@ -69,10 +69,10 @@ class Voxel_render_list_manager
         void register_voxel_volume(class Voxel_volume* vv);
         void unregister_voxel_volume(class Voxel_volume* vv);
 
-        void draw()
-        {
-            for (int i=0; i<this->max; this->lists[i++].draw());
-        }
+        void draw();
+        //{
+        //    for (int i=0; i<this->max; this->lists[i++].draw());
+        //}
         void update()
         {
             for (int i=0; i<this->max; this->lists[i++].update());

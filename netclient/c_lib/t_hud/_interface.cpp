@@ -298,7 +298,7 @@ void draw_hud()
     if (!hud_enabled) return;
 
     agent_container->draw();
-    //nanite_container->draw();
+    nanite_container->draw();
     //craft_bench_container->draw();
 
     draw_grabbed_icon();

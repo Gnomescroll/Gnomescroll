@@ -9,6 +9,8 @@ extern unsigned int ItemSheetTexture;
 extern SDL_Surface* ItemGridSlotSurface;
 extern unsigned int ItemGridSlotTexture;
 
+extern unsigned int NaniteTexture;
+
 void init_texture();
 void teardown_texture();
 

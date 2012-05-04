@@ -13,8 +13,10 @@ class AgentNaniteUI : public UIElement
 
     static const float slot_size = 32;    // pixel dimension
 
-    static const int xdim = 9;    // slot dimensions
-    static const int ydim = 1;
+
+    //slots are 37 px in size
+    static const int xdim = 7;    // slot dimensions
+    static const int ydim = 6;
 
 
     void init() {}
@@ -30,14 +32,14 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     px -= xoff + border;
     py -= yoff - border;
 
-    float width  = xdim*slot_size + (xdim-1)*inc1;
-    float height = ydim*slot_size + (ydim-1)*inc1;
+    float width  = xdim*slot_size + (xdim-1)*inc1; //fix
+    float height = ydim*slot_size + (ydim-1)*inc1; //fix
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
 
-    int xslot = px / (inc1 + slot_size);
-    int yslot = py / (inc1 + slot_size);
+    int xslot = px / 37;
+    int yslot = py / 37;
 
     int slot = yslot * this->xdim + xslot;
     

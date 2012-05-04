@@ -235,133 +235,7 @@ void Voxel_render_list::update_vertex_buffer_object()
 
 void Voxel_render_list::draw()
 {
-    #if !PRODUCTION
-    if (input_state.skeleton_editor)
-    {
-        for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-        {
-            if (render_list[i] == NULL || !render_list[i]->draw ) continue;
-            Voxel_volume* vv = render_list[i];
 
-            if (vv->vvl.vnum == 0) continue;
-            if (!sphere_fulstrum_test(
-                vv->world_matrix.v[3].x,
-                vv->world_matrix.v[3].y,
-                vv->world_matrix.v[3].z,
-                vv->radius
-            )) continue;
-
-            vv->draw_bounding_box();
-        }
-    }
-    #endif
-
-    struct VBOmeta* _vbo = &vbo_wrapper[0];
-
-    //printf("Voxel_render::draw() if _vbo->vnum\n");
-    if( _vbo->vnum == 0 )
-    {
-        if (VOXEL_RENDER_DEBUG)
-            printf("Voxel_render_list::draw, vnum equals zero \n");
-        this->update_vertex_buffer_object();
-        return;
-    }
-    //printf("Voxel_render::draw() if _vbo->id\n");
-    if( _vbo->id == 0 )
-    {
-        if (VOXEL_RENDER_DEBUG)
-            printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
-        return;
-    }
-
-    GL_ASSERT(GL_DEPTH_TEST, true);
-    GL_ASSERT(GL_BLEND, false);
-    glColor3b(255,255,255);
-
-    glShadeModel(GL_FLAT);
-    glEnable(GL_CULL_FACE);
-    glDisable(GL_TEXTURE_2D);
-
-    glUseProgramObjectARB(voxel_shader_prog);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glEnableVertexAttribArray(InNormal);
-    glEnableVertexAttribArray(InAO);
-    glEnableVertexAttribArray(InTex);
-
-    glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
-    glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
-    
-    glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
-    glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
-    glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
-
-    //int drawn = 0;
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
-    {
-        if (this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
-        Voxel_volume* vv = this->render_list[i];
-
-        if (vv->vvl.vnum == 0) continue;
-        if (!sphere_fulstrum_test(
-            vv->world_matrix.v[3].x,
-            vv->world_matrix.v[3].y,
-            vv->world_matrix.v[3].z,
-            vv->radius
-        )) continue;
-
-        if (VOXEL_RENDER_DEBUG)
-        { 
-            printf("=== \n");
-
-            
-            printf("entity= %d, entity_type= %d, part_id= %d \n", 
-                vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
-
-            printf("parent_world_matrix= \n");
-            print_affine( *vv->parent_world_matrix );
-
-            printf("local_matrix= \n");
-            print_affine( vv->local_matrix );
-
-            printf("result= \n");
-            print_affine( vv->world_matrix );
-        }
-
-        glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
-        glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
-
-        glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
-    }
-    //printf("%i drawn \n", drawn);
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    //glDisableClientState(GL_NORMAL_ARRAY);
-
-    glDisableVertexAttribArray(InNormal);
-    glDisableVertexAttribArray(InAO);
-    glDisableVertexAttribArray(InTex);
-
-    glUseProgramObjectARB(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    //glEnd();
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-
-    glColor3ub(255,255,255);
-
-    //glShadeModel(shade_model);
-
-/*
-    Apply changes
-*/
-    this->update_vertex_buffer_object(); 
 }
 
 
@@ -398,3 +272,142 @@ void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
 
 
 
+void Voxel_render_list_manager::draw()
+{
+    #if !PRODUCTION
+    if (input_state.skeleton_editor)
+    {
+        for(int k=0; k < this->max; k++)
+        {
+            Voxel_render_list* vrl = &this->lists[k];
+
+            for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+            {
+                if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw ) continue;
+                Voxel_volume* vv = vrl->render_list[i];
+
+                if (vv->vvl.vnum == 0) continue;
+                if (!sphere_fulstrum_test(
+                    vv->world_matrix.v[3].x,
+                    vv->world_matrix.v[3].y,
+                    vv->world_matrix.v[3].z,
+                    vv->radius
+                )) continue;
+
+                vv->draw_bounding_box();
+            }
+        }
+    }
+    #endif
+
+
+
+    GL_ASSERT(GL_DEPTH_TEST, true);
+    GL_ASSERT(GL_BLEND, false);
+    glColor3b(255,255,255);
+
+    glShadeModel(GL_FLAT);
+    glEnable(GL_CULL_FACE);
+    glDisable(GL_TEXTURE_2D);
+
+    glUseProgramObjectARB(voxel_shader_prog);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    glEnableVertexAttribArray(InNormal);
+    glEnableVertexAttribArray(InAO);
+    glEnableVertexAttribArray(InTex);
+
+    for(int k=0; k < this->max; k++)
+    {
+        Voxel_render_list* vrl = &this->lists[k];
+        struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
+
+
+        if( _vbo->vnum == 0 )
+        {
+            if (VOXEL_RENDER_DEBUG)
+                printf("Voxel_render_list::draw, vnum equals zero \n");
+            continue;
+        }
+
+        if( _vbo->id == 0 )
+        {
+            if (VOXEL_RENDER_DEBUG)
+                printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
+            continue;
+        }
+
+        glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
+        
+        glVertexAttribPointer(InNormal, 3, GL_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)16);
+        glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
+        glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
+
+        //int drawn = 0;
+        for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+        {
+            if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
+            Voxel_volume* vv = vrl->render_list[i];
+
+            if (vv->vvl.vnum == 0) continue;
+            if (!sphere_fulstrum_test(
+                vv->world_matrix.v[3].x,
+                vv->world_matrix.v[3].y,
+                vv->world_matrix.v[3].z,
+                vv->radius
+            )) continue;
+
+            if (VOXEL_RENDER_DEBUG)
+            { 
+                printf("=== \n");
+
+                
+                printf("entity= %d, entity_type= %d, part_id= %d \n", 
+                    vv->vhe.entity_id, vv->vhe.entity_type, vv->vhe.part_id);
+
+                printf("parent_world_matrix= \n");
+                print_affine( *vv->parent_world_matrix );
+
+                printf("local_matrix= \n");
+                print_affine( vv->local_matrix );
+
+                printf("result= \n");
+                print_affine( vv->world_matrix );
+            }
+
+            glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
+            glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
+
+            glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
+        }
+    }
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    //glDisableClientState(GL_NORMAL_ARRAY);
+
+    glDisableVertexAttribArray(InNormal);
+    glDisableVertexAttribArray(InAO);
+    glDisableVertexAttribArray(InTex);
+
+    glUseProgramObjectARB(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    //glEnd();
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+
+    glColor3ub(255,255,255);
+
+    //glShadeModel(shade_model);
+
+/*
+    Apply changes
+*/
+    //this->update_vertex_buffer_object(); 
+}
