@@ -173,6 +173,10 @@ void tick_mob_bomb(Object* object)
     // acquire target
     motion->lock_target(position);
     if (motion->target_type == OBJECT_NONE) return;
+    //if (motion->target_type == OBJECT_NONE && motion->at_destination)
+    //{   // choose new destination
+        //motion->choose_destination();
+    //}
 
     // face the target
     motion->orient_to_target(position);    

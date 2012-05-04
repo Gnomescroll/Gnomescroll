@@ -5,6 +5,7 @@
 #include <physics/ray_trace/hitscan.hpp>
 #include <physics/ray_trace/handlers.hpp>
 #include <entity/network/packets.hpp>
+#include <common/random.h>
 
 namespace Components
 {
@@ -21,11 +22,19 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position, int team)
     );
     if (target == NULL)
     {
+        //if  (this->target_type != OBJECT_NONE)
+        //{
+            //this->en_route = false;
+            //this->at_destination = false;
+        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
+    //this->destination = target->get_position();
+    //this->en_route = true;
+    //this->at_destination = false;
 }
 
 void MotionTargetingComponent::lock_target(Vec3 camera_position)
@@ -34,11 +43,41 @@ void MotionTargetingComponent::lock_target(Vec3 camera_position)
     target = Hitscan::lock_agent_target(camera_position, &this->target_direction, this->sight_range);
     if (target == NULL)
     {
+        //if  (this->target_type != OBJECT_NONE)
+        //{
+            //this->en_route = false;
+            //this->at_destination = false;
+        //}
         this->target_type = OBJECT_NONE;
         return;
     }
     this->target_type = OBJECT_AGENT;
     this->target_id = target->id;
+    //this->destination = target->get_position();
+    //this->en_route = true;
+    //this->at_destination = false;
+}
+
+void MotionTargetingComponent::choose_destination()
+{
+    float x = (randf()-0.5f)*2 * this->destination_choice_x;
+    float y = (randf()-0.5f)*2 * this->destination_choice_y;
+
+    using Components::PhysicsComponent;
+    PhysicsComponent* physics = (PhysicsComponent*)this->object->get_component_interface(COMPONENT_INTERFACE_PHYSICS);
+    assert(physics != NULL);
+
+    Vec3 position = physics->get_position();
+    position.x += x;
+    if (position.x < 0) position.x = 0;
+    if (position.x > map_dim.x) position.x = map_dim.x;
+    position.y += y;
+    if (position.y < 0) position.y = 0;
+    if (position.y > map_dim.y) position.y = map_dim.y;
+    position.z = t_map::get_highest_open_block(position.x, position.y);
+    this->destination = position;
+    this->at_destination = false;
+    this->en_route = true;
 }
 
 void MotionTargetingComponent::orient_to_target(Vec3 camera_position)
@@ -85,7 +124,14 @@ bool MotionTargetingComponent::move_on_surface()
     }
 
     // set en_route if we are in motion
-    this->en_route = moved;    
+    this->en_route = moved;
+
+    //if (vec3_distance_squared(new_position, this->destination) < 1.0f)
+    //{
+        //this->en_route = false;
+        //this->at_destination = true;
+    //}
+    
     return moved;
 }
 
