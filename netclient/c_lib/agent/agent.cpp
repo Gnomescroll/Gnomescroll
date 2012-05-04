@@ -185,12 +185,12 @@ class AgentState _agent_tick(const struct Agent_control_state _cs, const struct 
     const float z_gravity = -3.0f / tr2;
     const float z_jetpack = (1.0f / tr2) - z_gravity;
 
-#if ADVANCED_JUMP
+    #if ADVANCED_JUMP
     const float JUMP_POWINITIAL = 1 * 0.17;
     const float JUMP_POWDEC = 0.2 * 0.24;
-#else
-    const float JUMP_POW = 1 * 0.40;
-#endif
+    #else
+    const float JUMP_POW = AGENT_JUMP_POWER;
+    #endif
     //const float z_bounce = 0.10f;
     //const float z_bounce_v_threshold = 1.5f / tr;
 

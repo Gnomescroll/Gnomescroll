@@ -33,16 +33,22 @@ typedef enum
 
 /* Main */
 const int AGENT_MAX = PLAYERS_MAX;
-const float AGENT_HEIGHT = 2.8f;
-const float CAMERA_HEIGHT = 2.5f;
+//const float AGENT_HEIGHT = 2.8f;
+//const float CAMERA_HEIGHT = 2.5f;
+const float AGENT_HEIGHT = 1.8f;
+const float CAMERA_HEIGHT = 1.5f;
 const float AGENT_HEIGHT_CROUCHED = 1.8f;
 const float CAMERA_HEIGHT_CROUCHED = 1.5f;
 const float CAMERA_HEIGHT_DEAD = 0.3f;
-const float AGENT_SPEED = 1.9f;  // testing this, 2.8 seems too fast
+//const float AGENT_SPEED = 1.9f;  // testing this, 2.8 seems too fast
+const float AGENT_SPEED = 0.9f;  // testing this, 2.8 seems too fast
 //const float AGENT_SPEED = 2.8f; // was default
 //const float AGENT_SPEED = 28.0f; // uncomment for testing high speed
-const float AGENT_SPEED_CROUCHED = 0.8f;
+const float AGENT_SPEED_CROUCHED = 0.9f;
+const float AGENT_JUMP_POWER = 0.25f;
+
 const float AGENT_BOX_RADIUS = 0.38f;
+
 const int NO_AGENT = 255; // works as long as < AGENT_MAX 
 
 /* Status */
