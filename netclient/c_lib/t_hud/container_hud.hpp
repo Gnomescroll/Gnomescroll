@@ -13,7 +13,7 @@ class AgentContainerUI : public UIElement
 
     //static const float border = 16;       // border around entire panel
     static const float border = 0;       // border around entire panel
-    static const float inc1 = 8; // spacing between slot icons
+    static const float inc1 = 5; // spacing between slot icons
     static const float inc2 = 2;  // border around a slot icon
 
     static const float slot_size = 32;    // pixel dimension
@@ -92,11 +92,11 @@ void AgentContainerUI::draw()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-    int g1 = 80-16; //color 1
+    int g1 = 127; //color 1
     //int g2 = 80-8;  //color 2
 
     glBegin(GL_QUADS);
-    glColor4ub(g1,g1,g1, 128+64); //128+64);
+    glColor4ub(g1,g1,g1, 255); //128+64);
     for (int i=0; i<xdim; i++)
     for (int j=0; j<ydim; j++)
     {
@@ -132,17 +132,17 @@ void AgentContainerUI::draw()
             ratio = ((float)durability)/((float)max_durability);
         }
         if (durability == NULL_DURABILITY)
-            glColor4ub(80, 80, 80, 128);    // grey
+            glColor4ub(80, 80, 80, 255);    // grey
         else if (ratio >= 0.75)
-            glColor4ub(7, 247, 0, 128);    // green
+            glColor4ub(7, 247, 0, 255);    // green
         else if (ratio >= 0.5)
-            glColor4ub(243, 247, 0, 128);  // yellow
+            glColor4ub(243, 247, 0, 255);  // yellow
         else if (ratio >= 0.25)
-            glColor4ub(247, 159, 0, 128);  // orange
+            glColor4ub(247, 159, 0, 255);  // orange
         else if (ratio >= 0.05)
-            glColor4ub(247, 71, 0, 128);    // red-orange
+            glColor4ub(247, 71, 0, 255);    // red-orange
         else
-            glColor4ub(247, 14, 0, 128);   // red
+            glColor4ub(247, 14, 0, 255);   // red
 
 
         float x = xoff + border + i*(inc1+slot_size);

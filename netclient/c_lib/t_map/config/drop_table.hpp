@@ -84,14 +84,14 @@ void add_drop(const char* item_name, float mean, float falloff, int max_drops)
     for(int i=0; i<max_drops; i++) sum += p[i];
     for(int i=0; i<max_drops; i++) p[i] = p[i] / sum;
     
-    sum = 0.0;
-    for(int i=0; i<max_drops; i++) sum += p[i];
-    printf("Droptable: normalized sum= %f \n", (float)sum);
+    //sum = 0.0;
+    //for(int i=0; i<max_drops; i++) sum += p[i];
+    //printf("Droptable: normalized sum= %f \n", (float)sum);
 
     double _mean_drop = 0.0;
     for(int i=0; i<max_drops; i++)
     {
-        _mean_drop += p[i];
+        _mean_drop += i*p[i];
     }
     printf("Droptable: mean_drop= %f \n", ((float) _mean_drop) );
 
