@@ -274,6 +274,8 @@ void Voxel_render_list_manager::unregister_voxel_volume(class Voxel_volume* vv)
 
 void Voxel_render_list_manager::draw()
 {
+
+/*
     #if !PRODUCTION
     if (input_state.skeleton_editor)
     {
@@ -298,8 +300,8 @@ void Voxel_render_list_manager::draw()
             }
         }
     }
-    #endif
-
+      #endif
+*/
 
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -325,19 +327,21 @@ void Voxel_render_list_manager::draw()
         struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
 
 
-        if( _vbo->vnum == 0 )
+        if( _vbo->vnum == 0 ) 
         {
-            if (VOXEL_RENDER_DEBUG)
-                printf("Voxel_render_list::draw, vnum equals zero \n");
+            //if (VOXEL_RENDER_DEBUG)
+            //    printf("Voxel_render_list::draw, vnum equals zero \n");
             continue;
         }
 
         if( _vbo->id == 0 )
         {
-            if (VOXEL_RENDER_DEBUG)
+            //if (VOXEL_RENDER_DEBUG)
                 printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
             continue;
         }
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
 
         glVertexPointer(3, GL_FLOAT, sizeof(struct Voxel_vertex), (GLvoid*)0);
         glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(struct Voxel_vertex), (GLvoid*)12);
@@ -346,13 +350,13 @@ void Voxel_render_list_manager::draw()
         glVertexAttribPointer(InAO, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(struct Voxel_vertex), (GLvoid*)20);
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
-
         //int drawn = 0;
         for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
             if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
             Voxel_volume* vv = vrl->render_list[i];
+
+            vrl->update_vertex_buffer_object(); 
 
             if (vv->vvl.vnum == 0) continue;
             if (!sphere_fulstrum_test(
@@ -361,7 +365,7 @@ void Voxel_render_list_manager::draw()
                 vv->world_matrix.v[3].z,
                 vv->radius
             )) continue;
-
+        /*
             if (VOXEL_RENDER_DEBUG)
             { 
                 printf("=== \n");
@@ -379,12 +383,23 @@ void Voxel_render_list_manager::draw()
                 printf("result= \n");
                 print_affine( vv->world_matrix );
             }
-
+        */
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
             glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
 
+            if(_vbo->vnum < vv->vvl.vnum+vv->vvl.voff)
+            {
+                printf("Voxel_render_list_manager::draw error!! would draw past VBO memory\n");
+                printf("vbo vnum= %i vv vnum= %i vv voff= %i \n", _vbo->vnum, vv->vvl.vnum, vv->vvl.voff);
+                printf("would read %i vertices past vbo \n", vv->vvl.vnum+vv->vvl.voff - _vbo->vnum);
+                abort();
+            }
+            //printf("vnum= %i, vbo_id= %i voff=%i vnum_local %i \n", _vbo->vnum, _vbo->id, vv->vvl.voff,vv->vvl.vnum);
             glDrawArrays( GL_QUADS, vv->vvl.voff, vv->vvl.vnum );
         }
+
+
+
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
