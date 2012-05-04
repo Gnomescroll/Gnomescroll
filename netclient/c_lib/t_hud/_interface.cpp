@@ -314,8 +314,8 @@ void draw_hud()
 void init()
 {
     agent_container = new AgentContainerUI;
-    agent_container->xoff = 300.0f;
-    agent_container->yoff = 100.0f;
+    agent_container->xoff = (_xresf - agent_container->width()) / 2;
+    agent_container->yoff = _yresf/2 - (agent_container->height()) / 2;
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;

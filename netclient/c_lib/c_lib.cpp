@@ -278,46 +278,73 @@ int init_c_lib()
 
 void close_c_lib() {
     printf("Closing game...\n");
- 
+
+    printf("t_map end t map\n");
     t_map::end_t_map();
 
+    printf("item teardown\n");
     Item::teardown();
+    printf("toolbelt teardown\n");
     Toolbelt::teardown();
 
+    printf("t_hud draw teardown\n");
     t_hud::draw_teardown();
+    printf("t_hud teardown\n");
     t_hud::teardown();
+    printf("t_mech draw teardown\n");
     t_mech::draw_teardown();
     //t_mech::state_teardown();
+    printf("particle draw teardown\n");
     Particle::draw_teardown();
+    printf("item particle draw teardown\n");
     ItemParticle::draw_teardown();
     
+    printf("particle teardown particles\n");
     Particle::teardown_particles();
+    printf("item particle teardown\n");
     ItemParticle::teardown();
 
+    printf("skybox teardown\n");
     Skybox::teardown();
 
+    printf("texture sheet loader teardown\n");
     TextureSheetLoader::teardown();
 
+    printf("netclient shutdown\n");
     NetClient::shutdown_net_client();
 
+    printf("camera teardown\n");
     teardown_cameras();
+    printf("hudfont teardown\n");
     HudFont::teardown();
+    printf("chat client teardown\n");
     teardown_chat_client();
 
+    printf("client state teardown\n");
     ClientState::teardown();
+
+    printf("objects teardown\n");
+    Objects::teardown();    // Entity system
+    printf("components teardown\n");
+    Components::teardown();
+    printf("object net interfaces teardown\n");
+    Objects::teardown_net_interfaces();
+    
+    printf("voxel volume teardown\n");
     teardown_voxel_volume();
+    printf("hud text teardown\n");
     HudText::teardown();
     
     // free surfaces
+    printf("t_map teardown\n");
     t_map::teardown_shader();
+    printf("hud map teardown\n");
     HudMap::teardown();
     //vn::teardown();
+    printf("sound close\n");
     Sound::close();
+    printf("SDL close\n");
     close_SDL();
-
-    Objects::teardown();    // Entity system
-    Components::teardown();
-    Objects::teardown_net_interfaces();
 
     printf("Game closed\n");
 
