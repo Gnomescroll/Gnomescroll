@@ -97,7 +97,7 @@ void update_hud_draw_settings()
     hud_draw_settings.connected = NetClient::Server.connected;
     hud_draw_settings.version_match = NetClient::Server.version_match;
     
-    hud_draw_settings.draw = input_state.hud;
+    hud_draw_settings.draw = Options::hud;
     hud_draw_settings.zoom = current_camera->zoomed;
     hud_draw_settings.cube_selector = false;
         //(ClientState::playerAgent_state.you != NULL
@@ -352,7 +352,6 @@ void draw_hud_text()
         hud->health->draw();
         //hud->weapon->draw();
     }
-
     end_font_draw();
 }
 
@@ -371,6 +370,8 @@ void draw_hud()
     //start_font_draw();
     draw_hud_text();
     //end_font_draw();
+
+    glColor4ub(255,255,255,255);
 }
 
 /* HUD */

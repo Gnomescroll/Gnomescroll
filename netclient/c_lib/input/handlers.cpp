@@ -63,9 +63,9 @@ void toggle_full_chat()
 void toggle_hud()
 {
     #if PRODUCTION
-    input_state.hud = true;
+    Options::hud = true;
     #else
-    input_state.hud = (!input_state.hud);
+    Options::hud = (!Options::hud);
     #endif
 }
 
@@ -163,7 +163,7 @@ void init_handlers()
     input_state.map = false;
     input_state.chat = false;
     input_state.full_chat = false;
-    input_state.hud = true;
+    //input_state.hud = true;
     input_state.skeleton_editor = false;
 
     input_state.can_jump = true;

@@ -415,8 +415,9 @@ void set_texture()
 void start_font_draw()
 {
     // all fonts must have alpha
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_TEXTURE_2D);
 }
 

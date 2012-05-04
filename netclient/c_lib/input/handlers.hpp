@@ -18,7 +18,7 @@ struct InputState
     bool map;
     bool chat;
     bool full_chat;
-    bool hud;
+    //bool hud;
     bool debug;
     bool skeleton_editor;
     bool graphs;
