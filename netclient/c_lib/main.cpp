@@ -100,23 +100,16 @@ int run()
 
             // tick animations
             Animations::animations_tick();
-
             // tick client state
             ClientState::tick(); 
-
-            //t_item::tick();
-
-            //if(ClientState::tick % 10 == 0) t_item::check_item_pickups();
-
             // update sound listener
             ClientState::playerAgent_state.update_sound();
-
             // update mouse
             poll_mouse();
 
             Objects::tick();    // update physics state
 
-            if (ClientState::tick_id % 30 == 0) ClientState::send_camera_state();
+            if (ClientState::tick_id % 15 == 0) ClientState::send_camera_state();
         }
         Objects::harvest(); // remove dead objects
         Objects::update(); // update render state
@@ -135,14 +128,13 @@ int run()
         NetClient::client_dispatch_network_events();
         NetClient::flush_to_net();
 
-        Toolbelt::update_selected_item_type();
+        //Toolbelt::update_selected_item_type();
 
         //-- TESTING --//
         //if (ClientState::playerAgent_state.you != NULL)
             //Animations::create_mining_laser_particle(ClientState::playerAgent_state.you->get_center(), ClientState::playerAgent_state.you->s.forward_vector());
         //-- TESTING --//
 
-        // update mouse
         poll_mouse();
 
         // set input options (set these in an options struct at load)   TODO
@@ -155,7 +147,6 @@ int run()
         // update camera state
         ClientState::update_camera();
 
-        // update mouse
         poll_mouse();
 
         frame_graph->frame_stage(2); // call draw functions
@@ -205,7 +196,7 @@ int run()
         glBegin(GL_QUADS);
 
         Particle::colored_minivox_list->draw();
-        //Components::colored_voxel_component_list->call();
+        Components::colored_voxel_component_list->call();
         glEnd();
 
         GL_ASSERT(GL_BLEND, false);
@@ -229,7 +220,7 @@ int run()
         */
 
         ItemParticle::draw();
-        t_mech::draw();
+        //t_mech::draw();
 
         /*
             Skybox
@@ -242,7 +233,7 @@ int run()
 
         Particle::billboard_text_list->draw();
         
-        //Animations::draw_insect_mob();
+        Animations::draw_insect_mob();
 
         Particle::draw_shrapnel(); //new style particles do not go in "begin particles"
         // draw animations
@@ -263,6 +254,8 @@ int run()
         /*
             Draw Hud
         */
+
+        
         if (Options::hud)
         {
             // switch to hud  projection
@@ -272,9 +265,9 @@ int run()
             Hud::set_hud_fps_display(fps_value);
             Hud::update_hud_draw_settings();
             Hud::draw_hud();
-            t_hud::draw_hud();
+            //t_hud::draw_hud();
         }
-
+        
         poll_mouse();
         // update sound
         Sound::update();
