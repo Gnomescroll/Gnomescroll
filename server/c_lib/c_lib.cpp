@@ -139,8 +139,8 @@ void signal_terminate_handler(int sig)
 int init_c_lib()
 {
     #ifdef linux
-    signal(SIGTERM, signal_terminate_handler);
-    signal(SIGINT, signal_terminate_handler);
+    signal(SIGTERM, signal_terminate_handler);  // kill <pid>
+    signal(SIGINT, signal_terminate_handler);   // ctrl-c
     #endif
     
     static int inited = 0;
