@@ -1,7 +1,11 @@
 #pragma once
 
+#ifdef max
+    #undef max
+#endif
+
 #ifndef DC_CLIENT
-    #define DC_CLIENT
+    #define DC_CLIENT 1
 #endif
  
 #include <stdio.h>

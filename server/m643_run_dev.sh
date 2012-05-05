@@ -1,1 +1,1 @@
-./run -ip 174.37.26.118 $@
+./run ./lua/settings_server_dev.lua
