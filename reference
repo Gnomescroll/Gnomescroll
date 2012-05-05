@@ -1,3 +1,7 @@
+Graphing gprof with Gprof2Dot:
+http://code.google.com/p/jrfonseca/wiki/Gprof2Dot#Debian/Ubuntu_users
+gprof path/to/your/executable | gprof2dot.py | dot -Tpng -o output.png
+
 Minecraft View Distance (radius): 
 Far: 200
 Normal: 128

@@ -10,6 +10,8 @@ syntax: glob
 
 *~
 
+gmon.out
+
 client
 server
 run

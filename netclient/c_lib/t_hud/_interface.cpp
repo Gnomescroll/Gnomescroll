@@ -315,7 +315,7 @@ void init()
 {
     agent_container = new AgentContainerUI;
     agent_container->xoff = (_xresf - agent_container->width()) / 2;
-    agent_container->yoff = _yresf/2 - (agent_container->height()) / 2;
+    agent_container->yoff = -150.0 + _yresf/2 - (agent_container->height()) / 2;
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
@@ -326,8 +326,8 @@ void init()
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;
-    nanite_container->xoff = 0.0f;
-    nanite_container->yoff = 0.0f;
+    nanite_container->xoff = (_xresf - agent_container->width()) / 2;
+    nanite_container->yoff = 150.0 + _yresf/2 - (agent_container->height()) / 2;
     nanite_container->init();
 
     grabbed_icon_stack_text = new HudText::Text;
