@@ -229,7 +229,6 @@ def build(bld):
         sound_framework = ['OpenAL']
     elif OS == 'Windows':
         sound_libraries = ['OpenAL32']
-        #bld.env.CXXFLAGS.append('-E')
     else:
         sound_libraries = ['openal']
 
