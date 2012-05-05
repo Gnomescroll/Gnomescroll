@@ -193,8 +193,8 @@ int run()
         // quads
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
+        
         glBegin(GL_QUADS);
-
         Particle::colored_minivox_list->draw();
         Components::colored_voxel_component_list->call();
         glEnd();

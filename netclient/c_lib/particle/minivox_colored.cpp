@@ -149,7 +149,7 @@ void ColoredMinivox::draw()
 
     if (point_fulstrum_test(x0, y0, z0) == false) return;
 
-    glColor3ub(this->r, this->g, this->b);
+    glColor4ub(this->r, this->g, this->b, 255);
 
     // fill vertex buffer
     int i,j;

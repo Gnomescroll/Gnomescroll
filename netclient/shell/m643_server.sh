@@ -1,1 +1,1 @@
-./run -s 174.37.26.119 $@
+./run ./lua/settings_production.lua

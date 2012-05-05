@@ -299,7 +299,7 @@ void Voxel_render_list_manager::draw()
 
     GL_ASSERT(GL_DEPTH_TEST, true);
     GL_ASSERT(GL_BLEND, false);
-    glColor3b(255,255,255);
+    glColor3ub(255,255,255);
 
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);

@@ -148,7 +148,7 @@ void Vbo_map::draw_map()
     glUseProgramObjectARB(map_shader[0]);
 
 
-    glColor3b(255,255,255);
+    glColor3ub(255,255,255);
 
     glBindTexture( GL_TEXTURE_2D_ARRAY, terrain_map_glsl );
 
@@ -213,7 +213,7 @@ void Vbo_map::draw_map_comptability()
     glEnable(GL_CULL_FACE);
 
 
-    glColor3b(255,255,255);
+    glColor3ub(255,255,255);
 
     glUseProgramObjectARB(map_shader[0]);
 
