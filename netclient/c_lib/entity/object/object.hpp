@@ -1,13 +1,14 @@
 #pragma once
 
 #include <entity/constants.hpp>
+#include <entity/component/component.hpp>
 #include <entity/network/interfaces.hpp>
 
-//forward declaration
-namespace Components
-{
-    class Component;
-}
+////forward declaration
+//namespace Components
+//{
+    //class Component;
+//}
 
 namespace Objects
 {
