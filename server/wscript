@@ -125,6 +125,7 @@ def build(bld):
         time_lib = ['rt']
     else:
         time_lib = []
+        bld.env.CXXFLAGS.append('-E')
     if OS == "Darwin":
         time_lib = []
 
