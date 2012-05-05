@@ -229,6 +229,7 @@ Vec3 vec3_bias(Vec3 v, const float bias)
     scalar return
 */
 
+static float vec3_dot(struct Vec3 v1, struct Vec3 v2) __attribute((always_inline));
 float vec3_dot(struct Vec3 v1, struct Vec3 v2) 
 {
     return v1.x*v2.x + v1.y*v2.y + v1.z*+v2.z;
@@ -241,7 +242,7 @@ float vec3_length(struct Vec3 v)
     return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
-float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
+static float vec3_length_squared(struct Vec3 v) __attribute((always_inline));
 
 float vec3_length_squared(struct Vec3 v) 
 {
