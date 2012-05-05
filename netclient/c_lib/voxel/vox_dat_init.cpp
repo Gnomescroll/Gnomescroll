@@ -31,8 +31,7 @@ void init()
 
     // monsters
     read_skeleton((char*)"./media/voxel/bomb.skeleton", &robot_bomb);
-    //read_skeleton((char*)"./media/voxel/robot_box.skeleton", &robot_box);
-    read_skeleton((char*)"./media/voxel/monster_spawner.skeleton", &robot_box);
+    read_skeleton((char*)"./media/voxel/robot_box.skeleton", &robot_box);
     read_skeleton((char*)"./media/voxel/monster_spawner.skeleton", &monster_spawner);
 
     // items
