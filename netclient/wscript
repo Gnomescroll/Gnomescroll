@@ -79,6 +79,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         cxxflags = ['-fpermissive'] #'-g', 
         # '-static', '-static-libgcc', '-static-libstdc++',
+        cxxflags += ['-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX']
     else:
         cxxflags = ['-ggdb', '-fPIC'] # '-lefence'
 
@@ -228,6 +229,7 @@ def build(bld):
         sound_framework = ['OpenAL']
     elif OS == 'Windows':
         sound_libraries = ['OpenAL32']
+        #bld.env.CXXFLAGS.append('-E')
     else:
         sound_libraries = ['openal']
 

@@ -61,7 +61,6 @@ def configure(conf, add_flags=[], rm_flags=[]):
     cxxflags = []
     if OS == 'Windows':
         cxxflags += ['-g', '-fpermissive', '-static-libgcc']
-        cxxflags += ['-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX']
     else:
         cxxflags += ['-ggdb','-fPIC']
 
@@ -125,7 +124,6 @@ def build(bld):
         time_lib = ['rt']
     else:
         time_lib = []
-        bld.env.CXXFLAGS.append('-E')
     if OS == "Darwin":
         time_lib = []
 
