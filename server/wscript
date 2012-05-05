@@ -60,7 +60,8 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     cxxflags = []
     if OS == 'Windows':
-        cxxflags += ['-g', '-fpermissive', '-static-libgcc', '-DNOMINMAX']
+        cxxflags += ['-g', '-fpermissive', '-static-libgcc']
+        cxxflags += ['-DWIN32_LEAN_AND_MEAN', '-DNOMINMAX']
     else:
         cxxflags += ['-ggdb','-fPIC']
 
