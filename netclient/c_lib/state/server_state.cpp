@@ -149,6 +149,8 @@ namespace ServerState
         Agent_state* agent = agent_list->get(client_id);
         if (agent == NULL) return;
         agent->status.send_inventories_to_client();
+
+        ItemParticle::send_particle_items_to_client(client_id);
     }
 
     //move somewhere

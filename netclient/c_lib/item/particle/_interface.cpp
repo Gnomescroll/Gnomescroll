@@ -55,7 +55,7 @@ ItemParticle* create_item_particle(
     float vx, float vy, float vz
 ) {
     ItemParticle* ip = item_particle_list->create(particle_id);
-    if (ip == NULL) return NULL; 
+    if (ip == NULL) return NULL;
     ip->init(item_type, x,y,z,vx,vy,vz);
     return ip;
 }
@@ -84,21 +84,40 @@ Item::Item* create_item_particle(int item_type, float x, float y, float z, float
     return item;
 }
 
-void broadcast_particle_item_create(int particle_id)
+static void pack_particle_item_create(int particle_id, item_particle_create_StoC* msg)
 {
     ItemParticle* particle = item_particle_list->get(particle_id);
     assert(particle != NULL);
+    
+    msg->id = particle->id;
+    msg->item_type = particle->item_type;
+    msg->x = particle->verlet.position.x;
+    msg->y = particle->verlet.position.y;
+    msg->z = particle->verlet.position.z;
+    msg->mx = particle->verlet.velocity.x;
+    msg->my = particle->verlet.velocity.y;
+    msg->mz = particle->verlet.velocity.z;
+}
 
+void broadcast_particle_item_create(int particle_id)
+{
     item_particle_create_StoC msg;
-    msg.id = particle->id;
-    msg.item_type = particle->item_type;
-    msg.x = particle->verlet.position.x;
-    msg.y = particle->verlet.position.y;
-    msg.z = particle->verlet.position.z;
-    msg.mx = particle->verlet.velocity.x;
-    msg.my = particle->verlet.velocity.y;
-    msg.mz = particle->verlet.velocity.z;
+    pack_particle_item_create(particle_id, &msg);
     msg.broadcast();
+}
+
+void send_particle_item_create_to_client(int particle_id, int client_id)
+{
+    item_particle_create_StoC msg;
+    pack_particle_item_create(particle_id, &msg);
+    msg.sendToClient(client_id);
+}
+
+void send_particle_items_to_client(int client_id)
+{
+    for (int i=0; i<item_particle_list->n_max; i++)
+        if (item_particle_list->a[i] != NULL)
+            send_particle_item_create_to_client(item_particle_list->a[i]->id, client_id);
 }
 
 void check_item_pickups()
@@ -129,7 +148,6 @@ void check_item_pickups()
 
 void throw_item(int agent_id, ItemID item_id)
 {
-    printf("throw\n");
     assert(item_id != NULL_ITEM);
     Agent_state* a = ServerState::agent_list->get(agent_id);
     if (a == NULL) return;
@@ -160,7 +178,6 @@ void throw_item(int agent_id, ItemID item_id)
     broadcast_particle_item_create(particle->id);
     particle->lock_pickup();
 }
-
 
 #endif
 
