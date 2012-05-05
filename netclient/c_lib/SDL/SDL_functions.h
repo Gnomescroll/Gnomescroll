@@ -2,6 +2,8 @@
 
 int _set_resolution(int xres, int yres, int fullscreen);
 
+int VersionMismatchBox();
+
 int init_video();
 void _del_video();
 int _swap_buffers();

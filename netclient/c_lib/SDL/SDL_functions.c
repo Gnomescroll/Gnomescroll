@@ -68,6 +68,28 @@ int DisplayBox()
     return 0;
 }
 
+int VersionMismatchBox()
+{
+#ifdef _WIN32
+    int msgboxID = MessageBox(
+        NULL,
+        (LPCSTR)L"Version out of date!  Install latest version from website",
+        (LPCSTR)L"http://gnomescroll.com",
+        MB_ICONWARNING | MB_DEFBUTTON2
+    );
+
+    switch (msgboxID)
+    {
+    case IDCANCEL:
+        // TODO: add code
+        break;
+    }
+
+    return msgboxID;
+#endif
+    return 0;
+}
+
 int _xres = 800;
 int _yres = 600;
 float _xresf = (float) _xres;

@@ -12,6 +12,8 @@
 #include <common/time/physics_timer.hpp>
 #include <chat/client.hpp>
 #include <chat/interface.hpp>
+
+#include <SDL/SDL_functions.h>
 #endif
 
 #if DC_SERVER
@@ -499,6 +501,10 @@ inline void version_StoC::handle()
     {
         printf("WARNING: Version mismatch\n");
         NetClient::Server.version_match = false;
+
+    #if DC_CLIENT
+        VersionMismatchBox();
+    #endif
     }
     else
         NetClient::Server.version_match = true;
