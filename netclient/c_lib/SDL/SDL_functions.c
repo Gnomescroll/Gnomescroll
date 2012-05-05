@@ -70,6 +70,8 @@ int DisplayBox()
 
 int VersionMismatchBox()
 {
+printf("VersionMismatchBox() \n");
+
 #ifdef _WIN32
     int msgboxID = MessageBox(
         NULL,
