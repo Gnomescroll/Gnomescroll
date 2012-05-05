@@ -1,10 +1,10 @@
 #pragma once
 
-//#include <entity/constants.hpp>
-//#include <entity/component/component.hpp>
-//#include <entity/network/interfaces.hpp>
+#include <entity/constants.hpp>
+#include <entity/component/component.hpp>
+#include <entity/network/interfaces.hpp>
 
-#include <windows.h>
+//#include <windows.h>
 
 namespace Objects
 {

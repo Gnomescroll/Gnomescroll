@@ -79,7 +79,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
     if OS == 'Windows':
         cxxflags = ['-fpermissive'] #'-g', 
         # '-static', '-static-libgcc', '-static-libstdc++',
-        cxxflags += ['-DNOMINMAX']
+        cxxflags += ['-DNOMINMAX', '-DCINTERFACE']
     else:
         cxxflags = ['-ggdb', '-fPIC'] # '-lefence'
 
