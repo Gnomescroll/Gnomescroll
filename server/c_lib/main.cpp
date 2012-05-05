@@ -24,7 +24,9 @@ void init()
     
     //t_gen::gen_map();
 
-    NetServer::init_server(127,0,0,1, Options::port);
+    int address[4];
+    address_from_string(Options::ip_address, address);
+    NetServer::init_server(address[0],address[1],address[2],address[3], Options::port);
     ServerState::start_game();
 
 }

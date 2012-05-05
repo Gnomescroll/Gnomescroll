@@ -51,3 +51,5 @@ int count_digits(int n)
     } while (n > 0);
     return digits;
 }
+
+void address_from_string(char* ip, int address[4]);
