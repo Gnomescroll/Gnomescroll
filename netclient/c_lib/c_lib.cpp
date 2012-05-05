@@ -1,9 +1,5 @@
 #pragma once
 
-#ifdef max
-    #undef max
-#endif
-
 #ifndef DC_CLIENT
     #define DC_CLIENT 1
 #endif
@@ -17,10 +13,6 @@
 
 #ifdef _WIN32
     #include "windows.h"
-#endif
-
-#ifdef max
-    #undef max
 #endif
 
 /* Common headers */

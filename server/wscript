@@ -60,7 +60,7 @@ def configure(conf, add_flags=[], rm_flags=[]):
 
     cxxflags = []
     if OS == 'Windows':
-        cxxflags += ['-g', '-fpermissive', '-static-libgcc']
+        cxxflags += ['-g', '-fpermissive', '-static-libgcc', '-DNOMINMAX']
     else:
         cxxflags += ['-ggdb','-fPIC']
 
@@ -78,9 +78,9 @@ def configure(conf, add_flags=[], rm_flags=[]):
          '-Wno-switch',
          '-DGNOMESCROLL_DSO_EXPORTS=1',
          '-DGNOMESCROLL_DSO=1',
-         '-DDC_VERSION=%d' % (version,)
+         '-DDC_VERSION=%d' % (version,),
     ]
-    
+
     cxxflags += extra_options
 
     cxxflags += [c for c in add_flags if c not in cxxflags]
