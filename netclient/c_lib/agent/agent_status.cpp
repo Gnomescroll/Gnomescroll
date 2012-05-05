@@ -278,6 +278,8 @@ int Agent_status::die()
     dead_msg.dead = dead;
     dead_msg.broadcast();
 
+    Toolbelt::agent_died(this->a->id);
+
     //this->inventory->remove_all_action();
     //this->toolbelt->remove_all_action();
     #endif

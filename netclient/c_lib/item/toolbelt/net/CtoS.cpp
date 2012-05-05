@@ -34,7 +34,8 @@ inline void toolbelt_begin_alpha_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
-
+    if (a->status.dead) return;
+    
     agent_fire_on[a->id] = true;
 
     ItemID item_id = get_agent_selected_item(a->id);
@@ -45,6 +46,7 @@ inline void toolbelt_end_alpha_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
 
     agent_fire_on[a->id] = false;
     agent_fire_tick[a->id] = 0;
@@ -57,6 +59,7 @@ inline void toolbelt_beta_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
 
     ItemID item_id = get_agent_selected_item(a->id);
     if (item_id == NULL_ITEM) return;
@@ -67,6 +70,7 @@ inline void toolbelt_reload_action_CtoS::handle()
 {
     Agent_state* a = NetServer::agents[client_id];
     if (a == NULL) return;
+    if (a->status.dead) return;
 
     ItemID item_id = get_agent_selected_item(a->id);
     if (item_id == NULL_ITEM) return;

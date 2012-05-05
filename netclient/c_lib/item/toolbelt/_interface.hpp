@@ -12,6 +12,7 @@ void tick();
 
 void trigger_agent_selected_item(ItemID item_id);
 void remove_agent(int agent_id);
+void agent_died(int agent_id);
 
 } // Toolbelt
 

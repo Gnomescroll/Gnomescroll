@@ -25,7 +25,8 @@ VoxDat turret;
 void init()
 {
     // agent
-    read_skeleton((char*)"./media/voxel/saves/agent.skeleton", &agent);
+    //read_skeleton((char*)"./media/voxel/saves/agent.skeleton", &agent);
+    read_skeleton((char*)"./media/voxel/saves/crouch.skeleton", &agent);
     read_skeleton((char*)"./media/voxel/saves/crouch.skeleton", &agent_crouched);
     read_skeleton((char*)"./media/voxel/saves/dead.skeleton", &agent_dead);
 

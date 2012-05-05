@@ -137,6 +137,7 @@ void Agent_event::died()
         this->a->vox->set_vox_dat(&VoxDats::agent_dead);
         this->a->vox->reset_skeleton();
     }
+    Toolbelt::agent_died(this->a->id);
 }
 
 void Agent_event::born()

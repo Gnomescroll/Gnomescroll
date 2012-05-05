@@ -100,6 +100,21 @@ void remove_agent(int agent_id)
     agent_fire_on[agent_id] = false;
 }
 
+void agent_died(int agent_id)
+{
+    ASSERT_VALID_AGENT_ID(agent_id);
+
+    #if DC_SERVER
+    assert(agent_selected_item != NULL);
+    #endif
+    assert(agent_selected_type != NULL);
+    assert(agent_fire_tick     != NULL);
+    assert(agent_fire_on       != NULL);
+
+    agent_fire_tick[agent_id] = 0;
+    agent_fire_on[agent_id] = false;
+}
+
 } // Toolbelt
 
 #if DC_CLIENT
@@ -167,6 +182,9 @@ void assign_toolbelt(int container_id)
 
 void toolbelt_item_selected_event(int container_id, int slot)
 {
+    // dont check for death here
+    // let them switch selected
+    // if we want to prevent this, we need to have the UI also check for dead
     if (container_id == NULL_CONTAINER || container_id != toolbelt_id) return;
     // update selected item
     selected_slot = slot;
@@ -176,6 +194,7 @@ void toolbelt_item_selected_event(int container_id, int slot)
 
 void left_trigger_down_event()
 {
+    if (ClientState::playerAgent_state.you == NULL || ClientState::playerAgent_state.you->status.dead) return;
     // fire
     bool something_happened = toolbelt_item_begin_alpha_action();
     if (something_happened) send_begin_alpha_action_packet();
@@ -183,6 +202,7 @@ void left_trigger_down_event()
 
 void left_trigger_up_event()
 {
+    if (ClientState::playerAgent_state.you == NULL || ClientState::playerAgent_state.you->status.dead) return;
     // fire
     bool something_happened = toolbelt_item_end_alpha_action();
     if (something_happened) send_end_alpha_action_packet();
@@ -190,6 +210,7 @@ void left_trigger_up_event()
 
 void right_trigger_down_event()
 {
+    if (ClientState::playerAgent_state.you == NULL || ClientState::playerAgent_state.you->status.dead) return;
     // zoom
     bool something_happened = toolbelt_item_beta_action();
     if (something_happened) send_beta_action_packet();
@@ -197,10 +218,12 @@ void right_trigger_down_event()
 
 void right_trigger_up_event()
 {
+    if (ClientState::playerAgent_state.you == NULL || ClientState::playerAgent_state.you->status.dead) return;
 }
 
 void reload_event()
 {
+    if (ClientState::playerAgent_state.you == NULL || ClientState::playerAgent_state.you->status.dead) return;
     // reload
     bool something_happened = toolbelt_item_reload_action();
     if (something_happened) send_reload_action_packet();
