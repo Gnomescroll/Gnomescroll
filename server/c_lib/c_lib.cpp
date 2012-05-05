@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef max
+    #undef max
+#endif
+
 #include <common/defines.h>
 
 #include <stdio.h>
