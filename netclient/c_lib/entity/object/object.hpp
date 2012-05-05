@@ -4,12 +4,6 @@
 #include <entity/component/component.hpp>
 #include <entity/network/interfaces.hpp>
 
-////forward declaration
-//namespace Components
-//{
-    //class Component;
-//}
-
 namespace Objects
 {
 
@@ -19,7 +13,7 @@ class Object
 {
     public:
         int n_components;
-        class Component** components;
+        Component** components;
 
         int id;
         ObjectType type;
@@ -50,9 +44,9 @@ class Object
         void broadcastDeath();
 
         // components
-        void add_component(int slot, class Component* component);
-        class Component* get_component(ComponentType type);
-        class Component* get_component_interface(ComponentInterfaceType interface);
+        void add_component(int slot, Component* component);
+        Component* get_component(ComponentType type);
+        Component* get_component_interface(ComponentInterfaceType interface);
 
         void init(int n_components);
 
