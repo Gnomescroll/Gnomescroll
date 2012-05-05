@@ -2,9 +2,9 @@
 
 #include <common/compat_gl.h>
 
-#ifdef _WIN32
-    #include "windows.h"
-#endif
+//#ifdef _WIN32
+//    #include "windows.h"
+//#endif
 
 //#ifdef linux
 //    #include <SDL/IMG_savepng.h>

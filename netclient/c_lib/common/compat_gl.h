@@ -6,7 +6,7 @@
         #include <SDL.h>
         #include <SDL_opengl.h>
 #elif _WIN32
-        #include <windows.h>
+        //#include <windows.h>
         #include <SDL.h>
         #include <GL/glew.h>
 #elif __APPLE__

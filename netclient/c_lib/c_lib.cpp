@@ -11,6 +11,10 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef _WIN32
+    #include "windows.h"
+#endif
+
 /* Common headers */
 #include <common/defines.h>
 #include <common/compat_gl.h>
