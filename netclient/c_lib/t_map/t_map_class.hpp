@@ -59,7 +59,7 @@ class Terrain_map
     bool chunk_heights_changed[MAP_CHUNK_WIDTH*MAP_CHUNK_HEIGHT];
     void reset_heights_read();
     void chunk_received(int cx, int cy);    // callback, used by decompressed chunk msg handler
-    unsigned char get_cached_height(int x, int y);
+    inline unsigned char get_cached_height(int x, int y);
     void update_heights(int x, int y, int z, int val);
     unsigned char column_heights[MAP_WIDTH * MAP_HEIGHT];               // 1x1 columns
     #endif

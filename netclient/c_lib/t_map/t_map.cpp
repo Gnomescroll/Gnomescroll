@@ -147,25 +147,28 @@ void apply_damage_broadcast(int x, int y, int z, int dmg, TerrainModificationAct
 }
 #endif
 
-int get_highest_open_block(int x, int y, int n) {
-    if (n < 1) {
+inline int get_highest_open_block(int x, int y, int n)
+{
+    if (n < 1)
+    {
         printf("WARNING: _get_highest_open_block :: called with n < 1\n");
         return -1;
     }
-    if (n==1) return get_highest_solid_block(x,y) + 1;
+    
+    if (n==1) return get_highest_open_block(x,y);
 
     int open=n;
     int block;
     int i;
 
-    for (i=ZMAX-1; i>=0; i--) {
+    for (i=ZMAX-1; i>=0; i--)
+    {
         block = _get(x,y,i);
-        if (!isSolid(block)) {
+        if (!isSolid(block))
             open++;
-        } else {
-            if (open >= n) {
-                return i+1;
-            }
+        else
+        {
+            if (open >= n) return i+1;
             open = 0;
         }
     }
@@ -173,21 +176,33 @@ int get_highest_open_block(int x, int y, int n) {
     return -1;
 }
 
-int get_highest_open_block(int x, int y) 
+inline int get_highest_open_block(int x, int y) 
 {
-    return get_highest_open_block(x,y,1);
+    #if DC_CLIENT
+    return main_map->column_heights[x + map_dim.y * y];
+    #endif
+
+    #if DC_SERVER
+    return get_highest_solid_block(x,y) + 1;
+    #endif
 }
 
-int get_highest_solid_block(int x, int y, int z)
+inline int get_highest_solid_block(int x, int y, int z)
 {
+    #if DC_CLIENT
+    return main_map->get_cached_height(x,y);
+    #endif
+
+    #if DC_SERVER
     int i = z-1;
     for (; i>=0; i--)
         if (isSolid(_get(x,y,i)))
             break;
     return i;
+    #endif
 }
 
-int get_lowest_open_block(int x, int y, int n)
+inline int get_lowest_open_block(int x, int y, int n)
 {
     if (n < 1) {
         printf("WARNING: _get_lowest_open_block :: called with n < 1\n");
@@ -210,7 +225,7 @@ int get_lowest_open_block(int x, int y, int n)
     return i;
 }
 
-int get_lowest_solid_block(int x, int y)
+inline int get_lowest_solid_block(int x, int y)
 {
     int i;
     for (i=0; i < ZMAX; i++) {

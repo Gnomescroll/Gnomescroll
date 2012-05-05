@@ -125,8 +125,24 @@ dont_include_this_file_in_client
 #include <unistd.h>
 //(size_t) sysconf(_SC_PAGESIZE);
 
+#ifdef linux
+#include <signal.h>
+
+void close_c_lib();
+void signal_terminate_handler(int sig)
+{
+    close_c_lib();
+    exit(1);
+}
+#endif
+
 int init_c_lib()
-{ 
+{
+    #ifdef linux
+    signal(SIGTERM, signal_terminate_handler);
+    signal(SIGINT, signal_terminate_handler);
+    #endif
+    
     static int inited = 0;
     if (inited++)
     {

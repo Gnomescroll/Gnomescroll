@@ -225,6 +225,18 @@ class extra_ctx(ConfigurationContext):
     cmd = 'extra'
     fun = 'extra'
 
+class profile_ctx(ConfigurationContext):
+    cmd = 'profile'
+    fun = 'profile'
+
+def profile(ctx):
+    configure(ctx)
+    ctx.env.CFLAGS.append('-O3')
+    ctx.env.CXXFLAGS.append('-O3')
+    ctx.env.CFLAGS.append('-pg')
+    ctx.env.CXXFLAGS.append('-pg')
+    ctx.env.append_value("LINKFLAGS", "-pg")
+
 def extra(ctx):
     configure(ctx, add_flags=['-Wextra'])
 

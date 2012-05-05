@@ -438,7 +438,7 @@ namespace t_map
         this->chunk_heights_changed[cx + cy*MAP_CHUNK_WIDTH] = true;
         this->height_changed = true;
 
-    #if DC_CLIENT
+        #if DC_CLIENT
         if(cx+1 < MAP_CHUNK_WIDTH)
         {
             if(chunk[ MAP_CHUNK_WIDTH*(cy) + cx+1 ] != NULL)
@@ -459,11 +459,11 @@ namespace t_map
             if(chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ] != NULL)
                 chunk[ MAP_CHUNK_WIDTH*(cy-1) + cx ]->needs_update = true;
         }
-    #endif
+        #endif
 
     }
     
-    unsigned char Terrain_map::get_cached_height(int x, int y)
+    inline unsigned char Terrain_map::get_cached_height(int x, int y)
     {
         return this->column_heights[x + y*MAP_WIDTH];
     }
