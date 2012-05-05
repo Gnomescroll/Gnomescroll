@@ -98,20 +98,20 @@ void Shrapnel_list::tick()
 
 void Shrapnel_list::prep()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     for(int i=0; i<this->num; i++)
     {
         a[i].prep();
     }
 
     shrapnel_vlist->buffer();
-#endif
+    #endif
 }
  
 
 void Shrapnel_list::draw()
 {
-#if DC_CLIENT
+    #if DC_CLIENT
     if(shrapnel_vlist->vertex_number == 0) return;
 
     assert(shrapnel_vlist->VBO != 0);
@@ -130,7 +130,7 @@ void Shrapnel_list::draw()
 
     //glEnable(GL_TEXTURE_2D);
 
-    glDisable(GL_TEXTURE_2D); //DEBUG
+    //glDisable(GL_TEXTURE_2D); //DEBUG
 
     glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -146,8 +146,8 @@ void Shrapnel_list::draw()
 
     glDisableClientState(GL_VERTEX_ARRAY);
 
-    glEnable(GL_TEXTURE_2D); //DEBUG
-#endif
+    //glEnable(GL_TEXTURE_2D); //DEBUG
+    #endif
 }
 
 }

@@ -406,7 +406,7 @@ void Voxel_render_list_manager::draw()
 
     //glEnd();
     glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
 
     glColor3ub(255,255,255);
 

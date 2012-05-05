@@ -192,7 +192,7 @@ void Vbo_map::draw_map()
 
     glUseProgramObjectARB(0);
 
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
 
     glShadeModel(GL_FLAT);
     glDisable(GL_CULL_FACE);

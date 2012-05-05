@@ -186,6 +186,7 @@ int run()
             Non-transparent
         */
 
+        GL_ASSERT(GL_TEXTURE_2D, false);
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
         ClientState::voxel_render_list->draw();
@@ -193,7 +194,7 @@ int run()
         // quads
         GL_ASSERT(GL_DEPTH_TEST, true);
         GL_ASSERT(GL_BLEND, false);
-        
+        GL_ASSERT(GL_TEXTURE_2D, false);
         glBegin(GL_QUADS);
         Particle::colored_minivox_list->draw();
         Components::colored_voxel_component_list->call();
