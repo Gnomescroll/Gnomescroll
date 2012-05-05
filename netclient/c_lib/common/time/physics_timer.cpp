@@ -9,9 +9,9 @@
 #include <mach/mach.h>
 #endif
 
-#ifdef _WIN32
-    #include <Windows.h>
-#endif
+//#ifdef _WIN32
+//    #include <Windows.h>
+//#endif
 
 int c_tick = 0;
 

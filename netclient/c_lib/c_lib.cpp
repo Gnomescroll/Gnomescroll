@@ -15,6 +15,10 @@
     #include "windows.h"
 #endif
 
+#ifdef max
+    #undef max
+#endif
+
 /* Common headers */
 #include <common/defines.h>
 #include <common/compat_gl.h>
