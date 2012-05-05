@@ -1,5 +1,13 @@
 #pragma once
 
+#ifndef DC_SERVER
+    #define DC_SERVER 1
+#endif
+
+#ifdef DC_CLIENT
+dont_include_this_file_in_client
+#endif
+
 #include <common/defines.h>
 
 #include <stdio.h>

@@ -3,7 +3,11 @@
 #ifndef DC_CLIENT
     #define DC_CLIENT 1
 #endif
- 
+
+#ifdef DC_SERVER
+dont_include_this_file_in_server
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -13,6 +17,7 @@
 
 #ifdef _WIN32
     #include "windows.h"
+    #undef interface
 #endif
 
 /* Common headers */
