@@ -70,25 +70,28 @@ int DisplayBox()
 
 int VersionMismatchBox()
 {
-printf("VersionMismatchBox() \n");
-
-#ifdef _WIN32
+    printf("VersionMismatchBox() \n");
+    #ifdef _WIN32
+    char message[] = "Version out of date!\nInstall latest version from website\nhttp://gnomescroll.com";
+    char title[] = "Version out of date!";
     int msgboxID = MessageBox(
         NULL,
-        (LPCSTR)L"Version out of date!  Install latest version from website",
-        (LPCSTR)L"http://gnomescroll.com",
-        MB_ICONWARNING | MB_DEFBUTTON2
+        //(LPCSTR)L"Version out of date!\nInstall latest version from website\nhttp://gnomescroll.com",
+        //(LPCSTR)L"Version out of date!",
+        (LPCTSTR)message,
+        (LPCTSTR)title,
+        MB_OK | MB_ICONWARNING
     );
 
     switch (msgboxID)
     {
-    case IDCANCEL:
-        // TODO: add code
-        break;
+        case IDCANCEL:
+            // TODO: add code
+            break;
     }
 
     return msgboxID;
-#endif
+    #endif
     return 0;
 }
 

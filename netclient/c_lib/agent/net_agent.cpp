@@ -502,9 +502,9 @@ inline void version_StoC::handle()
         printf("WARNING: Version mismatch\n");
         NetClient::Server.version_match = false;
 
-    #if DC_CLIENT
+        #if DC_CLIENT
         VersionMismatchBox();
-    #endif
+        #endif
     }
     else
         NetClient::Server.version_match = true;
