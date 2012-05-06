@@ -161,7 +161,7 @@ void AgentContainerUI::draw()
     
     // draw hover highlight
     glBegin(GL_QUADS);
-    glColor4ub(160, 160, 160, 255);
+    glColor4ub(160, 160, 160, 128);
     int hover_slot = this->get_slot_at(mouse_x, mouse_y);
     if (hover_slot != NULL_SLOT)
     {

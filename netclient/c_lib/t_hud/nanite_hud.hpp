@@ -221,6 +221,28 @@ void AgentNaniteUI::draw()
     glEnd();
 
 
+    glDisable(GL_TEXTURE_2D);
+    // draw hover highlight
+    glBegin(GL_QUADS);
+    glColor4ub(160, 160, 160, 128);
+    int hover_slot = this->get_slot_at(mouse_x, mouse_y);
+    if (hover_slot != NULL_SLOT)
+    {
+        int w = slot_size;
+        int xslot = hover_slot % this->xdim;
+        int yslot = hover_slot / this->xdim;
+        
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+
+        glVertex2f(x,y);
+        glVertex2f(x, y-w);
+        glVertex2f(x+w, y-w);
+        glVertex2f(x+w, y);
+    }
+    glEnd();
+
+
     glColor4ub(255, 255, 255, 255);
     glEnable(GL_TEXTURE_2D);
     glBindTexture( GL_TEXTURE_2D, ItemSheetTexture );
@@ -262,7 +284,6 @@ void AgentNaniteUI::draw()
         glTexCoord2f( tx_max, ty_min );
         glVertex2f(x+w, y);
     }
-
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -303,7 +324,7 @@ void AgentNaniteUI::draw()
 
     glDisable(GL_TEXTURE_2D);
 
-    u_dot(xoff,yoff);
+    //u_dot(xoff,yoff);
     glColor4ub(255, 255, 255, 255);
 }
 
