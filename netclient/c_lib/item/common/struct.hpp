@@ -26,8 +26,8 @@ class NaniteStoreItem
 	int nanite_cost;
 
 	int level;
-	int slotx;
-	int sloty;
+	int xslot;
+	int yslot;
 
 	NaniteStoreItem()
 	{
@@ -35,8 +35,8 @@ class NaniteStoreItem
 		nanite_cost = 0;
 		
 		level =-1;
-		slotx =-1;
-		sloty =-1;
+		xslot =-1;
+		yslot =-1;
 	}
 };
 
