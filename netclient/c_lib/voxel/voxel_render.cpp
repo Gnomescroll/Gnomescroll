@@ -54,17 +54,17 @@ void init_voxel_render_list_shader1()
     glShaderSourceARB(voxel_shader_frag, 1, (const GLcharARB**)&fs, NULL);
 
     glCompileShaderARB(voxel_shader_vert);
-    if(DEBUG) printShaderInfoLog(voxel_shader_vert);
+    if (DEBUG) printShaderInfoLog(voxel_shader_vert);
 
     glCompileShaderARB(voxel_shader_frag);
-    if(DEBUG) printShaderInfoLog(voxel_shader_frag);
+    if (DEBUG) printShaderInfoLog(voxel_shader_frag);
     
     glAttachObjectARB(voxel_shader_prog, voxel_shader_vert);
     glAttachObjectARB(voxel_shader_prog, voxel_shader_frag);
 
     glLinkProgramARB(voxel_shader_prog);
 
-    if(DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
+    if (DEBUG) printProgramInfoLog(voxel_shader_prog); // print diagonostic information
 
     //uniforms
     InRotationMatrix = glGetUniformLocationARB(voxel_shader_prog, "InRotationMatrix");
@@ -117,14 +117,14 @@ Voxel_render_list::~Voxel_render_list()
 
 void Voxel_render_list::register_voxel_volume(Voxel_volume* vv)
 {
-    if(num_elements >= VOXEL_RENDER_LIST_SIZE)
+    if (num_elements >= VOXEL_RENDER_LIST_SIZE)
     {
         printf("Voxel_render_list Error: number of voxel models exceeds VOXEL_RENDER_LIST_SIZE \n");
         return;
     }
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL)
+        if (this->render_list[i] == NULL)
         {
             num_elements++;
             this->render_list[i] = vv;
@@ -159,21 +159,18 @@ void Voxel_render_list::unregister_voxel_volume(Voxel_volume* vv)
 
 void Voxel_render_list::update_vertex_buffer_object()
 {
-    //if (!this->needs_update) return;
-    //this->needs_update = false;
-    
     Voxel_volume* vv;
 
     struct VBOmeta* _vbo = &vbo_wrapper[0];
     int v_num = 0;
     int volumes_updated = 0;
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        if(this->render_list[i] == NULL ) continue;
+        if (this->render_list[i] == NULL ) continue;
 
         vv = this->render_list[i];
         //if (!vv->draw) continue;
-        if( vv->needs_vbo_update == true )
+        if (vv->needs_vbo_update == true )
         {
             vv->needs_vbo_update = false;
             volumes_updated++;
@@ -185,10 +182,11 @@ void Voxel_render_list::update_vertex_buffer_object()
     _vbo->vnum = v_num;
     //printf("v_num = %i\n", v_num);
     
-    if(v_num == 0) return;
-    if(volumes_updated == 0) return; //return if nothing to update
-
-    if( v_num >= _vbo->max_size ) 
+    if (v_num == 0) return;
+    if (!this->needs_update && volumes_updated == 0) return; //return if nothing to update
+    this->needs_update = false;
+    
+    if (v_num >= _vbo->max_size ) 
     {
         while(v_num >= _vbo->max_size)
         {
@@ -198,21 +196,22 @@ void Voxel_render_list::update_vertex_buffer_object()
     }
 
     int index = 0;
-    for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+    for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
     {
-        //if(this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
-        if(this->render_list[i] == NULL) continue;
+        //if (this->render_list[i] == NULL || !this->render_list[i]->draw) continue;
+        if (this->render_list[i] == NULL) continue;
         vv = this->render_list[i];
 
-        if(vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
-        if(vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
+        if (vv->vvl.vnum == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 1: vv->vvl.vnum == 0 \n");
+        if (vv->vvl.vertex_list == 0) printf("Voxel_render_list::update_vertex_buffer_object, vox errro 3: vv->vvl.vertex_list == NULL \n");
 
 
         memcpy( &_vbo->vertex_list[index], vv->vvl.vertex_list, vv->vvl.vnum*sizeof(Voxel_vertex) );
         vv->vvl.voff = index;
         index += vv->vvl.vnum;
     }
-    if( _vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
+    assert(index == v_num);
+    if (_vbo->id == 0 )  glGenBuffers( 1, &_vbo->id );
     glBindBuffer(GL_ARRAY_BUFFER, _vbo->id);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), NULL, GL_STATIC_DRAW);
     glBufferData(GL_ARRAY_BUFFER, index*sizeof(Voxel_vertex), _vbo->vertex_list, GL_STATIC_DRAW);
@@ -264,11 +263,11 @@ void Voxel_render_list_manager::draw()
     #if !PRODUCTION
     if (input_state.skeleton_editor)
     {
-        for(int k=0; k < this->max; k++)
+        for (int k=0; k < this->max; k++)
         {
             Voxel_render_list* vrl = &this->lists[k];
 
-            for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+            for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
             {
                 if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw ) continue;
                 Voxel_volume* vv = vrl->render_list[i];
@@ -286,7 +285,7 @@ void Voxel_render_list_manager::draw()
         }
     }
       #endif
-*/
+//*/
 
 
     GL_ASSERT(GL_DEPTH_TEST, true);
@@ -306,21 +305,21 @@ void Voxel_render_list_manager::draw()
     glEnableVertexAttribArray(InAO);
     glEnableVertexAttribArray(InTex);
 
-    for(int k=0; k < this->max; k++)
+    for (int k=0; k < this->max; k++)
     {
         Voxel_render_list* vrl = &this->lists[k];
         struct VBOmeta* _vbo = &vrl->vbo_wrapper[0];
 
         vrl->update_vertex_buffer_object(); 
 
-        if( _vbo->vnum == 0 ) 
+        if (_vbo->vnum == 0)
         {
             //if (VOXEL_RENDER_DEBUG)
             //    printf("Voxel_render_list::draw, vnum equals zero \n");
             continue;
         }
 
-        if( _vbo->id == 0 )
+        if (_vbo->id == 0)
         {
             //if (VOXEL_RENDER_DEBUG)
                 printf("Voxel_render_list::draw, vbo is zero !!! SHOULD NOT OCCUR! \n");
@@ -337,10 +336,11 @@ void Voxel_render_list_manager::draw()
         glVertexAttribPointer(InTex, 2, GL_UNSIGNED_BYTE, GL_FALSE, sizeof(struct Voxel_vertex), (GLvoid*)24);
 
         //int drawn = 0;
-        for(int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
+        for (int i=0; i < VOXEL_RENDER_LIST_SIZE; i++)
         {
-            if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
-            if(_vbo->vnum ==0 ) continue;
+            //if (vrl->render_list[i] == NULL || !vrl->render_list[i]->draw) continue;
+            if (vrl->render_list[i] == NULL) continue;
+            if (_vbo->vnum ==0 ) continue;
             Voxel_volume* vv = vrl->render_list[i];
 
             if (!sphere_fulstrum_test(
@@ -356,7 +356,7 @@ void Voxel_render_list_manager::draw()
             glUniformMatrix3fv(InRotationMatrix, 1, false, (GLfloat*) vv->world_matrix._f );
             glUniform3fv(InTranslation, 1, (GLfloat*) (vv->world_matrix._f + 9) );
 
-            if(_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
+            if (_vbo->vnum < (int)(vv->vvl.vnum+vv->vvl.voff))
             {
                 printf("Voxel_render_list_manager::draw error!! would draw past VBO memory\n");
                 printf("vbo vnum= %i vv vnum= %i vv voff= %i \n", _vbo->vnum, vv->vvl.vnum, vv->vvl.voff);
@@ -385,7 +385,7 @@ void Voxel_render_list_manager::draw()
 
     glColor3ub(255,255,255);
 
-    for(int k=0; k < this->max; k++)
+    for (int k=0; k < this->max; k++)
     {
         Voxel_render_list* vrl = &this->lists[k];
         vrl->update_vertex_buffer_object(); 
