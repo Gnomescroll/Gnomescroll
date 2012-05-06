@@ -175,6 +175,7 @@ void get_nanite_store_item(int level, int xslot, int yslot, int* item_id, int* c
         {
             *item_id = n->item_id;
             *cost = n->nanite_cost;
+            printf("return: %i %i \n", xslot,yslot);
             return;
         }
     }
