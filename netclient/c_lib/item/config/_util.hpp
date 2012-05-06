@@ -145,7 +145,6 @@ void nanite_set(int level, int slotx, int sloty)
     n->sloty = sloty;
 
     _current_nanite_item_id++;
-
 }
 
 

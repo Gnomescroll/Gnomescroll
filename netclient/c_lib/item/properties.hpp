@@ -34,4 +34,5 @@ int get_max_stack_size(int item_type);
 int get_max_energy(int item_type);
 int get_max_durability(int item_type);
 
+void get_nanite_store_item(int level, int slotx, int sloty, int* item_id, int* cost);
 }

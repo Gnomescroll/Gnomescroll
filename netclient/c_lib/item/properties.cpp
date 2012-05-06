@@ -166,5 +166,24 @@ int get_max_durability(int item_type)
     return attr->max_durability;
 }
 
+void get_nanite_store_item(int level, int slotx, int sloty, int* item_id, int* cost)
+{
+    for(int i; i<256; i++)
+    {
+        class NaniteStoreItem* n = &nanite_store_item_array[i];
+        if(n->level == level && n->slotx == slotx && n->sloty == sloty)
+        {
+            *item_id = n->item_id;
+            *cost = n->nanite_cost;
+        }
+    }
+
+    printf("get_nanite_store_item error: level, slotx, sloty = %i %i %i does not exist\n",
+     level, slotx, sloty);
+    *item_id = 0;
+    *cost = 0;
+
+}
+
 
 }
