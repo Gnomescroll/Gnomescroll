@@ -3,6 +3,9 @@
 namespace t_hud
 {
 
+//Item
+//void get_nanite_store_item(int level, int slotx, int sloty, int* item_id, int* cost)
+
 /*
 enum NaniteUIregions
 {
@@ -49,10 +52,12 @@ int AgentNaniteUI::get_slot_at(int px, int py)
     float width  = xdim*slot_size; //221
     float height = ydim*slot_size; //147
 
-    printf("nanite click: %i %i \n", px, py);
+    //printf("nanite click: %i %i \n", px, py);
 
     if (px < 0 || px > width)  return NULL_SLOT;
     if (py < 0 || py > height) return NULL_SLOT;
+
+    printf("nanite click: %i %i \n", px, py);
 
     int xslot = px / slot_size;
     int yslot = py / slot_size;

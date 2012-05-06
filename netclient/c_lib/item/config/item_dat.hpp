@@ -103,6 +103,14 @@ void load_item_dat()
     s.max_energy = 100;
     s.max_stack_size = 1;
 
+    item_def(9, IG_RESOURCE , "rock_0");
+    sprite_def(i1, 1,4);
+    s.max_stack_size = 8;
+
+    item_def(10, IG_RESOURCE , "blue_cystal");
+    sprite_def(i0, 1,4);
+    s.max_stack_size = 8;
+
     end_item_dat();
 }
 

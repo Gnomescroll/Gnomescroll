@@ -125,7 +125,7 @@ int _current_nanite_item_id = 0;
 int _current_nanite_item_cost = 0;
 
 void nanite_item_def(const char* item_name, int cost);
-void nanite_set(int cost, int slotx, int sloty);
+void nanite_item_set(int cost, int slotx, int sloty);
 
 
 void nanite_item_def(const char* item_name, int cost)
@@ -134,7 +134,7 @@ void nanite_item_def(const char* item_name, int cost)
     _current_nanite_item_cost = cost;
 }
 
-void nanite_set(int level, int slotx, int sloty)
+void nanite_item_set(int level, int slotx, int sloty)
 {
     class NaniteStoreItem* n = &nanite_store_item_array[_current_nanite_item_id];
 
