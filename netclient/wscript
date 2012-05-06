@@ -373,8 +373,8 @@ def production_dev(ctx, add=[], rm=[]):
 
 def profile(ctx):
     configure(ctx)
-    ctx.env.CFLAGS.append('-O3')
-    ctx.env.CXXFLAGS.append('-O3')
+    #ctx.env.CFLAGS.append('-O3')
+    #ctx.env.CXXFLAGS.append('-O3')
     ctx.env.CFLAGS.append('-pg')
     ctx.env.CXXFLAGS.append('-pg')
     ctx.env.append_value("LINKFLAGS", "-pg")

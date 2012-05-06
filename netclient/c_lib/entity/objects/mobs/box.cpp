@@ -163,7 +163,8 @@ void die_mob_robot_box(Object* object)
 
 #if DC_SERVER
 void server_tick_mob_robot_box(Object* object)
-{    
+{
+    return;
     // must stay on ground -- apply terrain collision
     // wander randomly (TODO: network model with destinations)
     // TODO -- aggro component
@@ -301,6 +302,7 @@ void server_tick_mob_robot_box(Object* object)
 #if DC_CLIENT
 void client_tick_mob_robot_box(Object* object)
 {
+    return;
     using Components::WeaponTargetingComponent;
     WeaponTargetingComponent* weapon = (WeaponTargetingComponent*)object->get_component(COMPONENT_WEAPON_TARGETING);
 
@@ -371,14 +373,15 @@ void tick_mob_robot_box(Object* object)
 
 void update_mob_robot_box(Object* object)
 {
+    //return;
     typedef Components::PositionMomentumChangedPhysicsComponent PCP;
     using Components::VoxelModelComponent;
     
     PCP* physics = (PCP*)object->get_component(COMPONENT_POSITION_MOMENTUM_CHANGED);
     VoxelModelComponent* vox = (VoxelModelComponent*)object->get_component_interface(COMPONENT_INTERFACE_VOXEL_MODEL);
 
-    Vec3 angles = physics->get_angles();
-    vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
+    //Vec3 angles = physics->get_angles();
+    //vox->update(physics->get_position(), angles.x, angles.y, physics->changed);
     physics->changed = false;    // reset changed state
 }
 
