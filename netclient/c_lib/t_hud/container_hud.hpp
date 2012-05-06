@@ -37,6 +37,8 @@ class AgentContainerUI : public UIElement
 
     int get_slot_at(int px, int py);
 
+    bool point_inside(int px, int py) { return (this->get_slot_at(px,py) != NULL_SLOT); }
+
     void init()
     {
         assert(this->stack_numbers == NULL);

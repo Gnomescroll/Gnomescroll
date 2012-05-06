@@ -78,8 +78,8 @@ static UIElement* get_container_and_slot(int x, int y, int* slot)
     {
         container = inventories[i];
         if (container == NULL) continue;
+        if (!container->point_inside(x,y)) continue;
         slot_tmp = container->get_slot_at(x,y);
-        if (slot_tmp == NULL_SLOT) continue;
         closest_container = container;
         closest_slot = slot_tmp;
     }
@@ -101,12 +101,17 @@ static ContainerInputEvent get_container_hud_ui_event(int x, int y)
     ContainerInputEvent event;
     event.container_id = container_id;
     event.slot = slot;
+    event.nanite = (container != NULL
+                 && container->type == UI_ELEMENT_NANITE_CONTAINER
+                 && ((AgentNaniteUI*)container)->in_nanite_region(x,y));
+
     return event;
 }
 
 static const ContainerInputEvent NULL_EVENT = {
     NULL_CONTAINER,         // null container id
-    NULL_SLOT   // null slot
+    NULL_SLOT,   // null slot
+    false,  // nanite click
 };
 
 ContainerInputEvent left_mouse_down(int x, int y)
@@ -145,6 +150,7 @@ ContainerInputEvent scroll_up()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
+    event.nanite = false;
     return event;
 }
 
@@ -158,6 +164,7 @@ ContainerInputEvent scroll_down()
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = agent_toolbelt->selected_slot;
+    event.nanite = false;
     return event;
 }
 
@@ -173,6 +180,7 @@ ContainerInputEvent select_slot(int numkey)
     ContainerInputEvent event;
     event.container_id = agent_toolbelt->container_id;
     event.slot = slot;
+    event.nanite = false;
     return event;
 }
 
@@ -314,16 +322,19 @@ void draw_hud()
 void init()
 {
     agent_container = new AgentContainerUI;
+    agent_container->type = UI_ELEMENT_AGENT_CONTAINER;
     agent_container->xoff = (_xresf - agent_container->width())/2 + 1;  // +1 because the width is odd with odd valued inc1 and even valued xdim
     agent_container->yoff = _yresf/2 - (agent_container->height())/2;
     agent_container->init();
 
     agent_toolbelt = new AgentToolbeltUI;
+    agent_toolbelt->type = UI_ELEMENT_AGENT_TOOLBELT;
     agent_toolbelt->xoff = (_xresf - agent_toolbelt->width())/2;
     agent_toolbelt->yoff = _yresf - (agent_toolbelt->height());
     agent_toolbelt->init();
 
     nanite_container = new AgentNaniteUI;
+    nanite_container->type = UI_ELEMENT_NANITE_CONTAINER;
     nanite_container->xoff = (_xresf - nanite_container->width())/2;
     nanite_container->yoff = 150.0 + (_yresf + nanite_container->height())/2;
     nanite_container->init();

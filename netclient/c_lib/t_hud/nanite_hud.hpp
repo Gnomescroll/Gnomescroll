@@ -73,7 +73,16 @@ class AgentNaniteUI : public UIElement
     }
 
     int get_slot_at(int px, int py);
-    void handle_ui_event(int px, int py);
+
+    bool point_inside(int px, int py)
+    {
+        return (this->get_slot_at(px,py) != NULL_SLOT || this->in_nanite_region(px,py));
+    }
+
+
+    void handle_ui_event(int px, int py);   // remove this
+
+    bool in_nanite_region(int px, int py);
 
     void init()
     {
@@ -100,18 +109,20 @@ class AgentNaniteUI : public UIElement
     }
 };
 
-int AgentNaniteUI::get_slot_at(int px, int py)
+bool AgentNaniteUI::in_nanite_region(int px, int py)
 {
     // check nanite region
     int nx = px - (xoff + nanite_offset_x + nanite_border);
     int ny = py - (_yresf - yoff + nanite_offset_y + nanite_border);
 
     if (nx >= 0 && nx < nanite_width && ny >= 0 && ny < nanite_height)
-    {
-        //printf("In nanite region\n");
-        return NULL_SLOT;
-    }
-    
+        return true;
+    return false;
+}
+
+
+int AgentNaniteUI::get_slot_at(int px, int py)
+{
     //pixels from upper left
     px -= xoff + slot_offset_x;
     py -= _yresf - yoff + slot_offset_y;

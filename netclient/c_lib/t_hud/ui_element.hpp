@@ -11,6 +11,8 @@ class UIElement
 {
         public:
 
+        UIElementType type;
+
         bool visible;
         float xoff;
         float yoff;
@@ -27,9 +29,10 @@ class UIElement
         
         virtual void draw() = 0;
         virtual int get_slot_at(int px, int py) = 0;
+        virtual bool point_inside(int px, int py) = 0;
 
         UIElement()
-        : visible(false), xoff(0), yoff(0), container_id(-1)
+        : type(UI_ELEMENT_NONE), visible(false), xoff(0), yoff(0), container_id(-1)
         {}
     
         virtual ~UIElement() {} //abc virtual deconstructor
