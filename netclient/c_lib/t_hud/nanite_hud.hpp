@@ -211,7 +211,6 @@ void AgentNaniteUI::draw()
         Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
         if (item_id == NULL_ITEM) continue;
         int tex_id = Item::get_sprite_index_for_type(item_id);
-        tex_id = ERROR_SPRITE;
 
         const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot;
         const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
