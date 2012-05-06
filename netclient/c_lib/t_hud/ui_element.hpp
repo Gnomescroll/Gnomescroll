@@ -17,8 +17,6 @@ class UIElement
 
         int container_id;
 
-        HudText::Text* stack_numbers;
-
         void set_position(float x, float y)
         {
             xoff = x;
@@ -31,8 +29,7 @@ class UIElement
         virtual int get_slot_at(int px, int py) = 0;
 
         UIElement()
-        : visible(false), xoff(0), yoff(0), container_id(-1),
-        stack_numbers(NULL)
+        : visible(false), xoff(0), yoff(0), container_id(-1)
         {}
     
         virtual ~UIElement() {} //abc virtual deconstructor

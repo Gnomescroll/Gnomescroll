@@ -19,6 +19,10 @@ class AgentToolbeltUI : public UIElement
     static const int xdim = 9;    // slot dimensions
     static const int ydim = 1;
 
+    int selected_slot;
+
+    HudText::Text* stack_numbers;
+
     int width()
     {
         return xdim*slot_size + (xdim-1)*inc1 + inc2*2;
@@ -28,8 +32,6 @@ class AgentToolbeltUI : public UIElement
     {
         return ydim*slot_size + ydim*inc1 + inc2*2;
     }
-
-    int selected_slot;
 
     void draw();
 
@@ -53,8 +55,7 @@ class AgentToolbeltUI : public UIElement
         }
     }
 
-    AgentToolbeltUI()
-    : selected_slot(0)
+    AgentToolbeltUI() : selected_slot(0), stack_numbers(NULL)
     {}
     
     ~AgentToolbeltUI()
@@ -273,20 +274,17 @@ void AgentToolbeltUI::draw()
         if (count <= 1) continue;
         assert(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
-        float x = xoff + border + i*(inc1+slot_size);
-        x += slot_size - font_size;
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-        y += font_size;
-
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);
+
+        const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
+        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
+
         text->set_position(x,y);
         text->draw();
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
-    //glDisable(GL_TEXTURE_2D);
-    //glDisable(GL_BLEND);
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);

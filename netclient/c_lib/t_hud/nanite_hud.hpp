@@ -21,6 +21,8 @@ enum NaniteUIregions
 
 //221x147
 
+const int ITEM_PRICE_MAX_LENGTH = 4;
+
 void u_dot(float x, float y);
 
 class AgentNaniteUI : public UIElement
@@ -50,14 +52,14 @@ class AgentNaniteUI : public UIElement
     static const int nanite_width = 143;
     static const int nanite_height = 143;
     
-
     // slot region data
     static const int slot_offset_x = 149;   // offset to beginning of slot area border
     static const int slot_offset_y = 1;
     static const int slot_border = 2;
     static const int slot_border_gap = 1;
 
-    void init() {}
+    HudText::Text* prices;
+
     void draw();
 
     int width()
@@ -72,6 +74,30 @@ class AgentNaniteUI : public UIElement
 
     int get_slot_at(int px, int py);
     void handle_ui_event(int px, int py);
+
+    void init()
+    {
+        assert(this->prices == NULL);
+        
+        int max = (xdim * ydim) - 1;    // last slot is reserved
+        this->prices = new HudText::Text[max];
+        for (int i=0; i<max; i++)
+        {
+            HudText::Text* t = &this->prices[i];
+            t->set_format((char*) "%d");
+            t->set_format_extra_length(ITEM_PRICE_MAX_LENGTH + 1 - 2);
+            t->set_color(255,255,255,255);    // some kind of red
+            t->set_depth(-0.1f);
+        }
+    }
+
+    AgentNaniteUI() : prices(NULL)
+    {}
+
+    ~AgentNaniteUI()
+    {
+        if (this->prices != NULL) delete[] this->prices;
+    }
 };
 
 int AgentNaniteUI::get_slot_at(int px, int py)
@@ -239,26 +265,38 @@ void AgentNaniteUI::draw()
 
     glEnd();
 
+    glDisable(GL_TEXTURE_2D);
+
     //draw text for item cost in upper right
+    HudFont::start_font_draw();
+    const int font_size = 12;
+    HudFont::set_properties(font_size);
+    HudFont::set_texture();
+
+    HudText::Text* text;
     for (int xslot=0; xslot<xdim; xslot++)
     for (int yslot=0; yslot<ydim; yslot++)
     {
-        if (xslot == xdim-1 && yslot == ydim-1) continue;
+        const int slot = yslot*xdim + xslot;
+        if (slot == xdim*ydim-1) continue;  // skip last slot, reserved
 
         int item_id, cost;
-        Item::get_nanite_store_item(level,xslot,yslot, &item_id, &cost);
+        Item::get_nanite_store_item(level, xslot, yslot, &item_id, &cost);
         if (item_id == NULL_ITEM) continue;
 
-        //const float x = xoff+ 37*xslot;
-        //const float y = yoff- 37*yslot;
+        assert(count_digits(cost) < ITEM_PRICE_MAX_LENGTH);
 
-        //draw text for cost
+        text = &this->prices[slot];
+        text->update_formatted_string(1, cost);
 
-        //cost
+        const float x = xoff + slot_offset_x + slot_border*(2*xslot + 1) + slot_border_gap*xslot + slot_size*xslot + slot_size - text->get_width();
+        const float y = yoff - (slot_offset_y + slot_border*(2*yslot + 1) + slot_border_gap*yslot + slot_size*yslot);
+        
+        text->set_position(x,y);
+        text->draw();
     }
-
-
-
+    HudFont::reset_default();
+    HudFont::end_font_draw();
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);

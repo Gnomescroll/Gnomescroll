@@ -21,6 +21,8 @@ class AgentContainerUI : public UIElement
     static const int xdim = 6;    // slot dimensions
     static const int ydim = 3;
 
+    HudText::Text* stack_numbers;
+
     void draw();
 
     int width()
@@ -52,6 +54,9 @@ class AgentContainerUI : public UIElement
             t->set_depth(-0.1f);
         }
     }
+
+    AgentContainerUI() : stack_numbers(NULL)
+    {}
     
     ~AgentContainerUI()
     {
@@ -81,7 +86,6 @@ int AgentContainerUI::get_slot_at(int px, int py)
 
 void AgentContainerUI::draw()
 {
-
     const float w = slot_size;
 
     glDisable(GL_DEPTH_TEST); // move render somewhere
@@ -216,9 +220,6 @@ void AgentContainerUI::draw()
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
-
-    glEnable(GL_DEPTH_TEST); // move render somewhere
-    glDisable(GL_BLEND);
     
     glColor4ub(255, 255, 255, 255);
 
@@ -240,20 +241,17 @@ void AgentContainerUI::draw()
         if (count <= 1) continue;
         assert(count_digits(count) < STACK_COUNT_MAX_LENGTH);
         
-        float x = xoff + border + i*(inc1+slot_size);
-        x += slot_size - font_size;
-        float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size));
-        y += font_size;
-
         text = &this->stack_numbers[slot];
         text->update_formatted_string(1, count);
+
+        const float x = xoff + border + i*(inc1+slot_size) + slot_size - text->get_width();
+        const float y = _yresf - (yoff + border + (j+1)*(inc1+slot_size) - text->get_height());
+
         text->set_position(x,y);
         text->draw();
     }
     HudFont::reset_default();
     HudFont::end_font_draw();
-    //glDisable(GL_TEXTURE_2D);
-    //glDisable(GL_BLEND);
 
     glEnable(GL_DEPTH_TEST); // move render somewhere
     glDisable(GL_BLEND);
